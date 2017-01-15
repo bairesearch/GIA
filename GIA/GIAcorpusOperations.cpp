@@ -26,27 +26,11 @@
  * File Name: GIAcorpusOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i14b 27-January-2015
+ * Project Version: 2i15a 27-January-2015
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
 
-
-
-
-
-#include <ctime>
-#include <cstdlib>	//for random number generation
-#include <cmath>
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string>
-#include <string.h>
-#include <iostream>
-#include <fstream>
-#include <vector>
-using namespace std;
 
 #include "GIAcorpusOperations.h"
 #include "GIAcorpusDatabase.h"

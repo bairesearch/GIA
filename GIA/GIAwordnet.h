@@ -26,7 +26,7 @@
  * File Name: GIAwordnet.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i14b 27-January-2015
+ * Project Version: 2i15a 27-January-2015
  * Requirements: requires wordnet libraries to be installed
  * Description: searches wordnet database and parses wordnet output
  *
@@ -38,15 +38,6 @@
 
 #include "GIAglobalDefs.h"
 #include "wn.h"
-
-#include <iostream>
-#include <fstream>
-#include <ctime>
-#include <cstring>
-#include <cstdlib>	//for random number generation
-#include <cmath>
-#include <string>
-using namespace std;
 
 #define SYNONYMN_DETECTION_STATUS_OFF 0
 #define SYNONYMN_DETECTION_STATUS_QUERIES_ONLY 1

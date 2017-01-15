@@ -26,7 +26,7 @@
  * File Name: GIAcxlConversion.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2i14b 27-January-2015
+ * Project Version: 2i15a 27-January-2015
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  *
  *******************************************************************************/
@@ -35,17 +35,6 @@
 #ifndef HEADER_GIA_CXL_CONVERSION
 #define HEADER_GIA_CXL_CONVERSION
 
-
-
-#include <iostream>
-#include <fstream>
-#include <ctime>
-#include <cstring>
-#include <cstdlib>	//for random number generation
-#include <cmath>
-#include <string>
-#include <vector>
-using namespace std;
 
 #include "XMLparserClass.h"
 #include "GIAentityNodeClass.h"
