@@ -1000,8 +1000,22 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 		#endif
 		
 				
-		//cout << "pass B;" << endl;	
-		//cout << "0 pass; define properties (definite nouns); eg the house" << endl;
+		//cout << "pass B;" << endl;
+			
+		//cout << "0z pass; define properties (objects/subjects with properties; eg "Truffles which are picked are tasty." - Truffle must be an instance/property in this case);" << endl;
+		for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
+		{	
+			if(GIAEntityNodeArrayFilled[i])
+			{
+				if(((GIAEntityNodeArray[i]->isObjectTemp) && (GIAEntityNodeArray[i]->hasPropertyTemp)) || ((GIAEntityNodeArray[i]->isSubjectTemp) && (GIAEntityNodeArray[i]->hasPropertyTemp)))
+				{
+					addPropertyToPropertyDefinition(GIAEntityNodeArray[i]);	
+				}
+			}
+		}		
+
+			
+		//cout << "0a pass; define properties (definite nouns); eg the house" << endl;
 		if(GIA_ASSIGN_INSTANCE_PROPERTY_TO_ALL_DEFINITIVE_NOUNS == 1)
 		{
 			for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
@@ -1209,7 +1223,8 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			currentRelationInList = currentRelationInList->next;
 		}			
 									
-					
+
+		
 										
 		//cout << "1 pass; link properties (possessive relationships); eg joe's bike" << endl;
 		currentRelationInList = currentSentenceInList->firstRelationInList;
