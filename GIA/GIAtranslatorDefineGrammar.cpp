@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorDefineGrammar.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t4c 28-July-2013
+ * Project Version: 1t5a 28-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -444,6 +444,20 @@ void extractGrammaticalInformationFromPOStag(string * POStag, Feature * feature)
 		feature->grammaticalTenseModifierArray[GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE] = true;
 	}
 
+	//infinitive tense extraction (added 28 July 2013);
+	bool infinitiveDetected = false;
+	for(int i=0; i<FEATURE_POS_TAG_VERB_INFINITIVE_NUMBER_OF_TYPES; i++)
+	{
+		if(*POStag == posTagVerbInfinitiveArray[i])
+		{
+			infinitiveDetected = true;
+		}
+	}
+	if(infinitiveDetected)
+	{
+		feature->grammaticalTenseModifierArray[GRAMMATICAL_TENSE_MODIFIER_INFINITIVE] = true;
+	}
+	
 	//singular/plural detection;
 	bool pluralDetected = false;
 	for(int i=0; i<FEATURE_POS_TAG_PLURAL_NOUN_NUMBER_OF_TYPES; i++)
@@ -850,14 +864,14 @@ void applyPOSrelatedGrammaticalInfoToEntity(GIAentityNode * entity, Feature * cu
 		entity->grammaticalTenseModifierArrayTemp[grammaticalTenseModifierIndex] = currentFeatureInList->grammaticalTenseModifierArray[grammaticalTenseModifierIndex];
 	}
 	entity->grammaticalTenseTemp = currentFeatureInList->grammaticalTense;
-	#ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS
+	#ifdef GIA_SUPPORT_SPECIFIC_SUBSTANCE_CONCEPTS
 	if(!(entity->isSubstanceConcept))
 	{
 	#endif
 		entity->grammaticalNumber = currentFeatureInList->grammaticalNumber;
 		//cout << "entity->grammaticalNumber = " << entity->grammaticalNumber << endl;
 		//cout << "GRAM w = " << w << endl;			
-	#ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS
+	#ifdef GIA_SUPPORT_SPECIFIC_SUBSTANCE_CONCEPTS
 	}
 	#endif
 
@@ -867,6 +881,8 @@ void applyPOSrelatedGrammaticalInfoToEntity(GIAentityNode * entity, Feature * cu
 	#ifdef GIA_USE_STANFORD_CORENLP
 	entity->stanfordPOStemp = currentFeatureInList->stanfordPOS;
 	#endif	
+	
+	entity->foundPossibleInfinitiveVerbTemp = currentFeatureInList->foundPossibleInfinitiveVerb;	
 }
 
 

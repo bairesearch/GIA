@@ -23,7 +23,7 @@
  * File Name: GIAentityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t4c 28-July-2013
+ * Project Version: 1t5a 28-July-2013
  *
  *******************************************************************************/
 
@@ -79,6 +79,7 @@ GIAentityNode::GIAentityNode(void)
 	hasProgressiveTemp = false;
 	isSubstanceQuality = false;
 	isSubstanceConcept = false;
+	isActionConcept = false;
 	
 	//type = undefinedEntityType;
 	//instance = undefinedInstance;
@@ -125,6 +126,8 @@ GIAentityNode::GIAentityNode(void)
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	grammaticalDefiniteIndexOfDeterminerTemp = GIA_ENTITY_INDEX_UNDEFINED;
 	#endif
+	foundPossibleInfinitiveVerbTemp = false;
+	
 	isSubjectTemp = false;
 	isObjectTemp = false;
 	hasSubstanceTemp = false;

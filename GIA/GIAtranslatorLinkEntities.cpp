@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t4c 28-July-2013
+ * Project Version: 1t5a 28-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -325,7 +325,7 @@ void linkEntityDefinitionsAppositiveOfNouns(Sentence * currentSentenceInList, GI
 										
 						//cout << "thingEntity->isSubstanceConcept = " << thingEntity->isSubstance << endl;
 						//cout << "definitionEntity->isSubstanceConcept = " << definitionEntity->isSubstance << endl;
-						#ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS
+						#ifdef GIA_SUPPORT_SPECIFIC_SUBSTANCE_CONCEPTS
 						if(!(thingEntity->isSubstanceConcept) && (!(definitionEntity->isSubstanceConcept))) 	//only required with GIA_SUPPORT_SPECIFIC_CONCEPTS_ASSIGN_TO_PROPERNOUNS: || (definitionEntity->isName)))
 						{
 						#endif
@@ -359,7 +359,7 @@ void linkEntityDefinitionsAppositiveOfNouns(Sentence * currentSentenceInList, GI
 									//if no proper noun (or query) detected, each node is equal, eg the brown dog == the happy wolf]
 								}
 							}
-						#ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS
+						#ifdef GIA_SUPPORT_SPECIFIC_SUBSTANCE_CONCEPTS
 						}
 						#endif							
 					}
@@ -2603,6 +2603,8 @@ void linkDependentActionsType2(Sentence * currentSentenceInList, bool GIAentityN
 	param.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectConditionToEntity;
 	param.functionEntityRelationID[FUNC_ENT1] = REL1; param.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT2;
 	param.functionEntityRelationID[FUNC_ENT2] = REL1; param.functionEntityRelationEntityID[FUNC_ENT2] = REL_ENT1;
+	param.relationTestSpecialCaseIsAction[REL1][REL_ENT1] = true;	//added 28 July 2013
+	param.relationTestSpecialCaseIsAction[REL1][REL_ENT2] = true;	//added 28 July 2013
 	param.mustGenerateConditionTypeName = true; param.conditionTypeEntityDefaultName = GIA_TRANSLATOR_LINK_DEPENDENT_ACTIONS_DEFAULT_CONDITION_NAME; param.conditionTypeEntityDefaultIndex = FEATURE_INDEX_OF_ACTION_DEPENDENCY_GENERATED_CONDITION_UNKNOWN;
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	param.defaultSameSetRelationID = REL1; param.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_ACTIONS;

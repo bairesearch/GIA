@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorApplyAdvancedFeatures.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t4c 28-July-2013
+ * Project Version: 1t5a 28-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -81,5 +81,8 @@ void defineClausalComplementProperties(Sentence * currentSentenceInList, bool GI
 #endif
 #endif
 void defineTenseOnlyTimeConditions(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[]);
+#ifdef GIA_SUPPORT_SPECIFIC_ACTION_CONCEPTS	
+void defineActionConcepts(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[]);
+#endif
 
 #endif

@@ -23,7 +23,7 @@
  * File Name: GIAdraw.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t4c 28-July-2013
+ * Project Version: 1t5a 28-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -455,6 +455,10 @@ Reference * initialiseEntityNodeForPrinting(GIAentityNode * entityNode, int y, i
 				{
 					entityColour = GIA_DRAW_CONDITION_DEFINITION_NODE_COLOUR;	//clearly identify the definition of the action
 				}
+				else if(entityNode->isActionConcept)
+				{
+					entityColour = GIA_DRAW_ACTION_CONCEPT_NODE_COLOUR;
+				}				
 				else if(entityNode->isSubstance)
 				{
 					if(entityNode->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL)
@@ -468,8 +472,8 @@ Reference * initialiseEntityNodeForPrinting(GIAentityNode * entityNode, int y, i
 					}
 					else if(entityNode->isSubstanceConcept)
 					{
-						entityColour = GIA_DRAW_CONCEPT_NODE_COLOUR;
-					} 
+						entityColour = GIA_DRAW_SUBSTANCE_CONCEPT_NODE_COLOUR;
+					}
 					else
 					{
 						entityColour = GIA_DRAW_SUBSTANCE_NODE_COLOUR;
@@ -484,11 +488,11 @@ Reference * initialiseEntityNodeForPrinting(GIAentityNode * entityNode, int y, i
 						entityColour = GIA_DRAW_SUBSTANCE_QUANTITY_NODE_COLOUR;
 					}
 
-				}
+				}				
 				else if(entityNode->isAction)
 				{
 					entityColour = GIA_DRAW_ACTION_NODE_COLOUR;
-				}
+				} 				
 				/*
 				else if(entityNode->hasAssociatedTime)
 				{

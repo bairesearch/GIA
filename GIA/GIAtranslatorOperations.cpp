@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t4c 28-July-2013
+ * Project Version: 1t5a 28-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -335,6 +335,11 @@ void forwardInfoToNewSubstance(GIAentityNode * entity, GIAentityNode * newSubsta
 		//cout << "substance has progressive (eg lying/sitting/being happy)" << endl;
 	}
 
+	if(entity->foundPossibleInfinitiveVerbTemp)	//added 28 July 2013 to help support action concepts
+	{
+		newSubstance->foundPossibleInfinitiveVerbTemp = true;
+	}	
+	
 	/*//execution of addTenseOnlyTimeConditionToSubstance has been shifted from forwardInfoToNewSubstance to a separate function - 26 July 2013 
 	//cout << "entity = " << entity->entityName << endl;
 	//cout << "entity->grammaticalTenseTemp = " << entity->grammaticalTenseTemp << endl;	
@@ -413,7 +418,7 @@ GIAentityNode * addSubstance(GIAentityNode * entity)
 	entity->hasAssociatedInstanceTemp = true;	////temporary: used for GIA translator only - overwritten every time a new sentence is parsed
 	newSubstance->wordNetPOS = entity->wordNetPOS;
 	newSubstance->grammaticalNumber = entity->grammaticalNumber;
-	#ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS
+	#ifdef GIA_SUPPORT_SPECIFIC_SUBSTANCE_CONCEPTS
 	newSubstance->isSubstanceConcept = entity->isSubstanceConcept;
 	#endif
 	forwardInfoToNewSubstance(entity, newSubstance);
@@ -2045,6 +2050,7 @@ GIAgenericDepRelInterpretationParameters::GIAgenericDepRelInterpretationParamete
 	relationTestSpecialCasePOStemp = {{false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}};
 	relationArrayTestSpecialCasePOStemp = {{false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}};
 	relationTestSpecialCaseIsNotAction = {{false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}};
+	relationTestSpecialCaseIsAction = {{false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}};	
 	relationTestSpecialCaseIsNotToBeComplimentOfAction = {{false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}};
 	
 		//entity index match tests
@@ -2164,6 +2170,13 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 						passedRelation = false;	
 					}				
 				}
+				if(param->relationTestSpecialCaseIsAction[currentRelationID][relationEntityID])
+				{
+					if(!(param->GIAentityNodeArray[param->relationEntityIndex[currentRelationID][relationEntityID]]->isAction))
+					{
+						passedRelation = false;	
+					}				
+				}				
 				if(param->relationTestSpecialCaseIsNotToBeComplimentOfAction[currentRelationID][relationEntityID])
 				{
 					if(param->GIAentityNodeArray[param->relationEntityIndex[currentRelationID][relationEntityID]]->isToBeComplimentOfActionTemp)

@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t4c 28-July-2013
+ * Project Version: 1t5a 28-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -1130,7 +1130,7 @@ void identifyReferenceSetConceptEntityEntrance(GIAentityNode * entityNode, int *
 					passDefiniteSetChecks = true;
 				}
 				#endif
-				#ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS
+				#ifdef GIA_SUPPORT_SPECIFIC_SUBSTANCE_CONCEPTS
 				if(currentInstance->isSubstanceConcept)	//&& !(currentInstance->grammaticalDefiniteTemp) - not required, as this is assumed the case already given (currentInstance->isSubstanceConcept); NB "the red dogs" will not be designated as isSubstanceConcept - only "red dogs" will	
 				{
 					passDefiniteSetChecks = true;

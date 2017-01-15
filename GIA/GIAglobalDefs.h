@@ -23,7 +23,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t4c 28-July-2013
+ * Project Version: 1t5a 28-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -513,7 +513,10 @@
 
 #include "SHAREDglobalDefs.h"
 
+
 //variables currently being tested (1t1a+)
+#define GIA_SUPPORT_SPECIFIC_ACTION_CONCEPTS	
+#define GIA_WORKAROUND_RELEX_BUG_OCCASIONAL_QVAR_INDEX_SAME_AS_ANOTHER_RELATION_INDEX
 #define GIA_WORKAROUND_RELEX_BUG_OCCASIONAL_QVAR_INDEX_SAME_AS_ANOTHER_RELATION_INDEX
 #define GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
@@ -551,8 +554,8 @@
 
 //variables currently being tested (1q1a+)
 
-#define GIA_SUPPORT_SPECIFIC_CONCEPTS	//added 1q4a to take into account specific concepts eg 'red bears' as opposed to 'bears' //eg Red dogs are bad animals. / A blue chicken is a happy bird.
-#ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS
+#define GIA_SUPPORT_SPECIFIC_SUBSTANCE_CONCEPTS	//added 1q4a to take into account specific concepts eg 'red bears' as opposed to 'bears' //eg Red dogs are bad animals. / A blue chicken is a happy bird.
+#ifdef GIA_SUPPORT_SPECIFIC_SUBSTANCE_CONCEPTS
 	//#define GIA_SUPPORT_SPECIFIC_CONCEPTS_ASSIGN_TO_PROPERNOUNS	//added 1q10a [activated 1q10c] //removed 1t2d
 	//#define GIA_SUPPORT_SPECIFIC_CONCEPTS_ASSIGN_TO_PRONOUNS	//added 1q10a [activated 1q10c]	//removed 1s8c	//check this does not undo advanced referencing/quering...
 #endif

@@ -23,7 +23,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t4c 28-July-2013
+ * Project Version: 1t5a 28-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -1104,9 +1104,9 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 	#endif
 	defineSubstancesOfPossessivePrepositions(currentSentenceInList, GIAentityNodeArray);
 
-	#ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS
+	#ifdef GIA_SUPPORT_SPECIFIC_SUBSTANCE_CONCEPTS
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "0p pass; define substances concepts (ie specific concepts)" << endl;
+	cout << "0p pass; define substance concepts (ie specific substance concepts)" << endl;
 	#endif
 	defineSubstanceConcepts(GIAentityNodeArrayFilled, GIAentityNodeArray, referenceTypeHasDeterminateCrossReferenceNumberArray, featureArrayTemp);
 	#endif 
@@ -1339,12 +1339,19 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 		#endif
 		#endif
 	}
-
+		
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "4i pass; define tense only time conditions" << endl;
 	#endif
 	defineTenseOnlyTimeConditions(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
-	
+
+	#ifdef GIA_SUPPORT_SPECIFIC_ACTION_CONCEPTS
+	#ifdef GIA_TRANSLATOR_DEBUG
+	cout << "4j pass; define action concepts (ie specific action concepts)" << endl;
+	#endif
+	defineActionConcepts(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
+	#endif
+		
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	//record entityIndexTemp + sentenceIndexTemp for all substances in sentence (allows for referencing)...
 	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)

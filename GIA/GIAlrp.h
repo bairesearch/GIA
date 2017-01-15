@@ -23,7 +23,7 @@
  * File Name: GIAlrp.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t4c 28-July-2013
+ * Project Version: 1t5a 28-July-2013
  * Requirements: requires plain text file
  * Description: Language Reduction Preprocessor
  *
@@ -206,8 +206,8 @@ string convertStringToLowerCase(string * arbitraryCaseString);
 
 #ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS
 #ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_LIBERAL
-bool determineIfWordIsContinuousCaseWrapper(string word, string * baseNameFound);
-bool determineIfWordIsVerbContinuousCase(string word, GIALRPtag * firstTagInVerbList, string * baseNameFound);
+bool determineVerbCaseWrapper(string word, string * baseNameFound, int * grammaticalTenseModifier);
+bool determineVerbCase(string word, GIALRPtag * firstTagInVerbList, string * baseNameFound, int * grammaticalTenseModifier);
 #endif
 #ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_CONSERVATIVE
 bool determineIfWordIsIrregularVerbContinuousCaseWrapper(string word, string * baseNameFound);

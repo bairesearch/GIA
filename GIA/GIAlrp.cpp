@@ -23,7 +23,7 @@
  * File Name: GIAlrp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t4c 28-July-2013
+ * Project Version: 1t5a 28-July-2013
  * Requirements: requires plain text file
  * Description: Language Reduction Preprocessor
  *
@@ -1859,12 +1859,13 @@ string convertStringToLowerCase(string * arbitraryCaseString)
 
 
 #ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_LIBERAL
-bool determineIfWordIsContinuousCaseWrapper(string word, string * baseNameFound)
+//warning: this function is only currently developed for infinitive and continuous case
+bool determineVerbCaseWrapper(string word, string * baseNameFound, int * grammaticalTenseModifier)
 {
 	bool result = true;
-	bool foundVerbContinuousCase = false;
+	bool foundVerbCase = false;
 	string verbListFileName = lrpDataFolderName + GIA_LRP_VERB_DATABASE_FILE_NAME;
-	//cout << "determineIfWordIsContinuousCaseWrapper: " << endl;
+	//cout << "determineVerbCaseWrapper: " << endl;
 	if(!verbListLoaded)
 	{
 		cout << "!verbListLoaded (OpenGIA with GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_LIBERAL requires -lrpfolder to be set): verbListFileName = " << verbListFileName << endl;
@@ -1872,17 +1873,17 @@ bool determineIfWordIsContinuousCaseWrapper(string word, string * baseNameFound)
 	}
 	else
 	{
-		//cout << "determineIfWordIsVerbContinuousCase: " << endl;
-		foundVerbContinuousCase = determineIfWordIsVerbContinuousCase(word, firstTagInVerbListGlobal, baseNameFound);
-		//cout << "determineIfWordIsVerbContinuousCase end: " << endl;
+		//cout << "determineVerbCase: " << endl;
+		foundVerbCase = determineVerbCase(word, firstTagInVerbListGlobal, baseNameFound, grammaticalTenseModifier);
+		//cout << "determineVerbCase end: " << endl;
 	}
-	return foundVerbContinuousCase;
+	return foundVerbCase;
 }	
 
-
-bool determineIfWordIsVerbContinuousCase(string word, GIALRPtag * firstTagInVerbList, string * baseNameFound)
+//warning: this function is only currently developed for infinitive and continuous case
+bool determineVerbCase(string word, GIALRPtag * firstTagInVerbList, string * baseNameFound, int * grammaticalTenseModifier)
 {
-	bool foundVerbContinuousCase = false;
+	bool foundVerbCase = false;
 
 	/*
 	detectContinuousVerbBasic Algorithm:
@@ -1908,57 +1909,68 @@ bool determineIfWordIsVerbContinuousCase(string word, GIALRPtag * firstTagInVerb
 		//cout << "\t currentTagInVerbList->tagName = " << currentTagInVerbList->tagName << endl;
 		string wordLowerCase = convertStringToLowerCase(&word);
 		string base = currentTagInVerbList->tagName;
+		
+		if(wordLowerCase == base)
+		{
+			*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_INFINITIVE;
+			foundVerbCase = true;
+		}
+		else
+		{
+			//case 1: thinking
+			string hypotheticalVerbVariantCase1 = base + GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND;
+			if(wordLowerCase == hypotheticalVerbVariantCase1)
+			{
+				foundVerbCase = true;
+				*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE;
+				*baseNameFound = currentTagInVerbList->tagName;	
+			}		
 
-		//case 1: thinking
-		string hypotheticalVerbVariantCase1 = base + GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND;
-		if(wordLowerCase == hypotheticalVerbVariantCase1)
-		{
-			foundVerbContinuousCase = true;
-			*baseNameFound = currentTagInVerbList->tagName;	
-		}		
-		
-		//case 2: running - "run" + "n" [run n] + "ing" 
-		int baseStringLength = base.length();
-		int indexOfLastCharacterInBase = baseStringLength-1;
-		char lastCharacterInBase = base[indexOfLastCharacterInBase];
-		string hypotheticalVerbVariantCase2 = base + lastCharacterInBase + GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND;
-		if(wordLowerCase == hypotheticalVerbVariantCase2)
-		{
-			foundVerbContinuousCase = true;
-			*baseNameFound = currentTagInVerbList->tagName;	
+			//case 2: running - "run" + "n" [run n] + "ing" 
+			int baseStringLength = base.length();
+			int indexOfLastCharacterInBase = baseStringLength-1;
+			char lastCharacterInBase = base[indexOfLastCharacterInBase];
+			string hypotheticalVerbVariantCase2 = base + lastCharacterInBase + GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND;
+			if(wordLowerCase == hypotheticalVerbVariantCase2)
+			{
+				foundVerbCase = true;
+				*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE;
+				*baseNameFound = currentTagInVerbList->tagName;	
+			}
+
+			//case 3: changing - "chang" [change e] + "ing" 
+			string baseWithLastLetterDropped = base.substr(0, baseStringLength-1);
+			string hypotheticalVerbVariantCase3 = baseWithLastLetterDropped + GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND;
+			if(wordLowerCase == hypotheticalVerbVariantCase3)
+			{
+				foundVerbCase = true;
+				*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE;
+				*baseNameFound = currentTagInVerbList->tagName;	
+			}
+
+			//cout << "hypotheticalVerbVariantCase1 = " << hypotheticalVerbVariantCase1 << endl;
+			//cout << "hypotheticalVerbVariantCase2 = " << hypotheticalVerbVariantCase2 << endl;
+			//cout << "hypotheticalVerbVariantCase3 = " << hypotheticalVerbVariantCase3 << endl;
 		}
-					
-		//case 3: changing - "chang" [change e] + "ing" 
-		string baseWithLastLetterDropped = base.substr(0, baseStringLength-1);
-		string hypotheticalVerbVariantCase3 = baseWithLastLetterDropped + GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND;
-		if(wordLowerCase == hypotheticalVerbVariantCase3)
-		{
-			foundVerbContinuousCase = true;
-			*baseNameFound = currentTagInVerbList->tagName;	
-		}
-		
-		//cout << "hypotheticalVerbVariantCase1 = " << hypotheticalVerbVariantCase1 << endl;
-		//cout << "hypotheticalVerbVariantCase2 = " << hypotheticalVerbVariantCase2 << endl;
-		//cout << "hypotheticalVerbVariantCase3 = " << hypotheticalVerbVariantCase3 << endl;
 		
 		currentTagInVerbList = currentTagInVerbList->nextSentence;
 	}
 
 	#ifdef GIA_LRP_DEBUG
-	if(foundVerbContinuousCase)
+	if(foundVerbCase)
 	{
-		cout << "foundVerbContinuousCase baseNameFound = " << *baseNameFound << endl;
+		cout << "foundVerbCase baseNameFound = " << *baseNameFound << ", grammaticalTenseModifier = " << *grammaticalTenseModifier << endl;
 	}		
 	//cout << "baseWithLastLetterDropped = " << baseWithLastLetterDropped << endl;
 	#endif
 		
-	return foundVerbContinuousCase;
+	return foundVerbCase;
 }
 #endif
 
 
 #ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_CONSERVATIVE
-//NB determineIfWordIsIrregularVerbContinuousCaseWrapper() can be used instead of determineIfWordIsContinuousCaseWrapper(), as Stanford only has a problem identifying verbs (pos tag "VBG") when they are irregular varbs
+//NB determineIfWordIsIrregularVerbContinuousCaseWrapper() can be used instead of determineVerbCaseWrapper(), as Stanford only has a problem identifying verbs (pos tag "VBG") when they are irregular varbs
 bool determineIfWordIsIrregularVerbContinuousCaseWrapper(string word, string * baseNameFound)
 {
 	bool result = true;

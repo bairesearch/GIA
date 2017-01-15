@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t4c 28-July-2013
+ * Project Version: 1t5a 28-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -908,9 +908,11 @@ Recognizes named (PERSON, LOCATION, ORGANIZATION, MISC) and numerical entities (
 #define FEATURE_POS_TAG_VERB_PAST_NUMBER_OF_TYPES (2)
 #define FEATURE_POS_TAG_VERB_PRESENT_NUMBER_OF_TYPES (2)
 #define FEATURE_POS_TAG_VERB_PROGRESSIVE_NUMBER_OF_TYPES (1)
+#define FEATURE_POS_TAG_VERB_INFINITIVE_NUMBER_OF_TYPES (1)
 static string posTagVerbPastArray[FEATURE_POS_TAG_VERB_PAST_NUMBER_OF_TYPES] = {FEATURE_POS_TAG_VBD, FEATURE_POS_TAG_VBN};
 static string posTagVerbPresentArray[FEATURE_POS_TAG_VERB_PRESENT_NUMBER_OF_TYPES] = {FEATURE_POS_TAG_VBP, FEATURE_POS_TAG_VBZ};
 static string posTagVerbProgressiveArray[FEATURE_POS_TAG_VERB_PROGRESSIVE_NUMBER_OF_TYPES] = {FEATURE_POS_TAG_VBG};
+static string posTagVerbInfinitiveArray[FEATURE_POS_TAG_VERB_INFINITIVE_NUMBER_OF_TYPES] = {FEATURE_POS_TAG_VB};
 
 #define FEATURE_POS_TAG_PROPER_NOUN_NUMBER_OF_TYPES (2)
 #define FEATURE_POS_TAG_COMMON_NOUN_NUMBER_OF_TYPES (2)
@@ -1198,6 +1200,7 @@ public:
 	bool relationTestSpecialCasePOStemp[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];	
 	bool relationArrayTestSpecialCasePOStemp[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];
 	bool relationTestSpecialCaseIsNotAction[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];	
+	bool relationTestSpecialCaseIsAction[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];	
 	bool relationTestSpecialCaseIsNotToBeComplimentOfAction[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];	
 
 	

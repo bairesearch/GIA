@@ -23,7 +23,7 @@
  * File Name: GIAsentenceClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t4c 28-July-2013
+ * Project Version: 1t5a 28-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -231,6 +231,7 @@ public:
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	int grammaticalIsDefiniteIndexOfDeterminer;
 	#endif
+	bool foundPossibleInfinitiveVerb;	//added 28 July 2013 to help support action concepts
 
 	bool alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp;	//#ifdef GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES
 

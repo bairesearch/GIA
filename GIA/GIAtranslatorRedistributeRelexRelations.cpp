@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorRedistributeRelexRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t4c 28-July-2013
+ * Project Version: 1t5a 28-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -83,11 +83,31 @@ void redistributeStanfordAndRelexRelationsCorrectPOStagsAndLemmasOfAllContinuous
 //note this function tags all "continuous verbs" as VBG (even those which perhaps should be left as NNP because they appear at the beginning at the sentence eg "Swimming is good exercise.") 
 //note this function can perhaps only be strictly used in circumstances where the continuous verb appears at the end of the sentence eg GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_OLD_IMPLEMENTATION (because "-ing" cannot be used in itself to detect continuous verbs - as there are some which perhaps should be left as NNP when they appear at the beginning at the sentence eg "Swimming is good exercise.")
 bool correctContinuousVerbPOStagAndLemma(GIAentityNode * actionOrSubstanceEntity, Feature * currentFeature)
-{
-	bool foundContinuousVerb = false;
-	
+{	
 	//cout << "actionOrSubstanceEntity->entityName = " << actionOrSubstanceEntity->entityName << endl;
+
+	string baseNameFound = "";
+	int grammaticalTenseModifier = -1;
 	
+	bool foundContinuousOrInfinitiveVerb = determineVerbCaseWrapper(actionOrSubstanceEntity->wordOrig, &baseNameFound, &grammaticalTenseModifier);	
+	
+	//This section of code cannot be used as originally intended as some verb infinitives are also nouns (eg "yarn") - therefore must formally rely on correct infinitive tagging of verbs (use foundPossibleInfinitiveVerbTemp just in case)...
+	bool foundInfinitiveVerb = false;
+	if((actionOrSubstanceEntity->wordNetPOS == GRAMMATICAL_WORD_TYPE_VERB) && (actionOrSubstanceEntity->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_INFINITIVE] == true))
+	{
+		foundInfinitiveVerb = true;
+	}
+	else 
+	{
+		if(foundContinuousOrInfinitiveVerb && (grammaticalTenseModifier == GRAMMATICAL_TENSE_MODIFIER_INFINITIVE))
+		{
+			foundInfinitiveVerb = true;
+			actionOrSubstanceEntity->foundPossibleInfinitiveVerbTemp = true;
+			//mark possible infinitive found
+		}
+	}
+					
+	bool foundContinuousVerb = false;	
 	//if(actionOrSubstanceEntity->stanfordPOStemp == FEATURE_POS_TAG_VBG)		//Only Stanford Compatible
 	if((actionOrSubstanceEntity->wordNetPOS == GRAMMATICAL_WORD_TYPE_VERB) && (actionOrSubstanceEntity->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE] == true))	//Relex compatible
 	{
@@ -101,14 +121,15 @@ bool correctContinuousVerbPOStagAndLemma(GIAentityNode * actionOrSubstanceEntity
 	else 
 	{
 		//cout << "NB: GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS requires GIA_USE_LRP to be defined and -lrpfolder to be set" << endl;					
-		string baseNameFound = "";
 		//cout << "actionOrSubstanceEntity->entityName = " << actionOrSubstanceEntity->entityName << endl;
-		#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_LIBERAL	
-		if(determineIfWordIsContinuousCaseWrapper(actionOrSubstanceEntity->wordOrig, &baseNameFound))		
-		#elif defined GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_CONSERVATIVE
+		#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_CONSERVATIVE
 		if(determineIfWordIsIrregularVerbContinuousCaseWrapper(actionOrSubstanceEntity->wordOrig, &baseNameFound))
-		#endif 
-		{
+		#elif defined GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_LIBERAL	
+		if(foundContinuousOrInfinitiveVerb && (grammaticalTenseModifier == GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE))
+		#endif
+		{	
+			foundContinuousVerb = true;	
+			string stanfordPOS = FEATURE_POS_TAG_VBG;
 			//cout << "foundVerb2a" << endl;
 			/*
 			Wood is used for making milk.
@@ -122,21 +143,26 @@ bool correctContinuousVerbPOStagAndLemma(GIAentityNode * actionOrSubstanceEntity
 				//cout << "2 actionOrSubstanceEntity->entityName = " << actionOrSubstanceEntity->entityName << endl;
 				//cout << "2 baseNameFound = " << baseNameFound << endl;
 				actionOrSubstanceEntity->entityName = baseNameFound;
-								
-				currentFeature->stanfordPOS = FEATURE_POS_TAG_VBG;
+
+				//cout << "actionOrSubstanceEntity->wordOrig = " << actionOrSubstanceEntity->wordOrig << endl;
+				//cout << "actionOrSubstanceEntity->entityName = " << actionOrSubstanceEntity->entityName << endl;
+				//cout << "foundInfinitiveVerb = " << foundInfinitiveVerb << endl;
+				//cout << "foundContinuousVerb = " << foundContinuousVerb << endl;
+
+				currentFeature->stanfordPOS = stanfordPOS;
 				currentFeature->lemma = actionOrSubstanceEntity->entityName;
 
 				extractPOSrelatedGrammaticalInformationStanford(currentFeature);			//regenerate grammatical information for feature
 				applyPOSrelatedGrammaticalInfoToEntity(actionOrSubstanceEntity, currentFeature);	//regenerate grammatical information for entity			
 			}
+
 			
-			foundContinuousVerb = true;
 		}
 
 		/*
 		//STANFORD_PARSER_USE_POS_TAGS is no longer supported by GIA_TRANSLATOR_INTERPRET_OF_AS_OBJECT_FOR_CONTINUOUS_VERBS/redistributeStanfordRelationsInterpretOfAsObjectForContinuousVerbs()...
 		#ifdef STANFORD_PARSER_USE_POS_TAGS			
-		if(determineIfWordIsVerbContinuousCase(&(actionOrSubstanceEntity->wordOrig)))	//OR &(currentRelationInList->relationGovernor)	//NB must use wordOrig as only wordOrig is guaranteed to still have "ing" attached - the word may be stripped by stanford corenlp in generation of the lemma 
+		if(determineVerbCase(&(actionOrSubstanceEntity->wordOrig)))	//OR &(currentRelationInList->relationGovernor)	//NB must use wordOrig as only wordOrig is guaranteed to still have "ing" attached - the word may be stripped by stanford corenlp in generation of the lemma 
 		{
 			//cout << "foundVerb2b" << endl;
 			//What is wood used in the delivering of?
@@ -152,12 +178,13 @@ bool correctContinuousVerbPOStagAndLemma(GIAentityNode * actionOrSubstanceEntity
 		*/
 
 	}
+		
 	return foundContinuousVerb;
 }
 
 
 /*
-bool determineIfWordIsVerbContinuousCase(string * word)
+bool determineVerbCase(string * word)
 {
 	
 	//detectContinuousVerbBasic Algorithm:
@@ -193,7 +220,7 @@ bool determineIfWordIsVerbContinuousCase(string * word)
 	return foundVerbContinuousCase;
 
 }
-bool determineIfWordIsVerbContinuousCase(string * word)
+bool determineVerbCase(string * word)
 {
 	bool foundVerbContinuousCase = false;
 	int wordStringLength = word->length();

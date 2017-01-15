@@ -23,7 +23,7 @@
  * File Name: GIAentityNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t4c 28-July-2013
+ * Project Version: 1t5a 28-July-2013
  * NB a substance is an instance of an entity, any given entity may contain/comprise/have multiple substances - and substances are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -241,6 +241,7 @@ public:
 	bool hasAssociatedTime;
 	bool isSubstanceQuality;		//PRECISE ORIGINAL NAME: isSubstanceQualityOrAffection	//eg 'the locked door..' / 'Jim runs quickly' / 'Mr. Smith is late' 	[Not: Tom has an arm'/'Tom's bike']
 	bool isSubstanceConcept;		//added 1q4a to take into account specific concepts eg 'red bears' as opposed to 'bears' //eg Red dogs are bad animals. / A blue chicken is a happy bird.
+	bool isActionConcept;			//added 1t5a to take into account specific actions eg 'eating pies', 'to eat a pie'
 	
 	bool hasProgressiveTemp;	//PRECISE ORIGINALNAME: isActionOrSubstanceQualityState		//eg The cat is lying on the bed. / Mark is being happy.
 
@@ -328,6 +329,7 @@ public:
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	int grammaticalDefiniteIndexOfDeterminerTemp;	//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
 	#endif
+	bool foundPossibleInfinitiveVerbTemp;	//added 28 July 2013 to help support action concepts
 
 	bool isSubjectTemp;		//temporary: used for GIA translator only - overwritten every time a new sentence is parsed [10 May 2012: this shouldnt be needed anymore]
 	bool isObjectTemp;		//temporary: used for GIA translator only - overwritten every time a new sentence is parsed [10 May 2012: this shouldnt be needed anymore]
