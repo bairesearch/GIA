@@ -67,6 +67,9 @@ using namespace std;
 #define DRAW_Y_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE (15)	//should not be used during initialiseForPrint
 #define DRAW_X_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE (50)	//should not be used during initialiseForPrint
 
+#define DRAW_Y_SPACE_BETWEEN_CONDITION_DEFINITIONS_OF_SAME_NODE (15)	//should not be used during initialiseForPrint
+#define DRAW_X_SPACE_BETWEEN_CONDITION_DEFINITIONS_OF_SAME_NODE (50)	//should not be used during initialiseForPrint
+
 #define DRAW_Y_SPACE_BETWEEN_PROPERTY_DEFINITIONS_OF_SAME_NODE (30)	//should not be used during initialiseForPrint
 #define DRAW_X_SPACE_BETWEEN_PROPERTY_DEFINITIONS_OF_SAME_NODE (25)	//should not be used during initialiseForPrint
 
