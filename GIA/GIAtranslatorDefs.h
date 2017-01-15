@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h12g 21-January-2015
+ * Project Version: 2h13a 23-January-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -776,7 +776,6 @@ static string relationTypeAdjectiveImpliesSameSetNameArray[RELATION_TYPE_ADJECTI
 #define DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_BEING_DEFINITION_CONDITIONS (true)
 #define DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_HAVING_CONDITIONS (true)
 #define DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_PROPERTIES (true)				//this really depends on whether it is possessive or not
-#define DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_APPOS (true)
 #define DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_PARATAXIS (false)
 #define DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_CCCOMP (true)
 #define DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_INDIRECT_OBJECTS (false)			//changed 2h12e	

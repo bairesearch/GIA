@@ -24,7 +24,7 @@
  * File Name: GIArules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h12g 21-January-2015
+ * Project Version: 2h13a 23-January-2015
  *
  *******************************************************************************/
 -->
@@ -3138,11 +3138,14 @@
 				</paramDepRel>
 				<!-- #endif -->
 				
-				<!-- Required for NLC: added 2h11a -->
+				<!-- #ifndefGIA_DYNAMICALLY_LINK_PRENOMINAL_MODIFIERS_OF_NOUNS -->
+				
+				<!-- XML only function (not hard coded): added 2h11a, disabled 2h12h -->
 				<!-- #ifdefGIA_TRANSLATOR_ADAPT_ENTITY_LINKING_FOR_SUBSTANCE_CONCEPTS -->
-				<example><!--
+				<!--
+				<example>
 				The chess game is good.	_nn(game-3, chess-2)
-				--></example>
+				</example>
 				<paramDepRel mode="execute">
 				<option numberOfRelations="1" />
 				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="_nn" relationArrayTestSize="1" />
@@ -3150,27 +3153,32 @@
 				<option functionToExecuteUponFind="11" />
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="1" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" />
-				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
+				// #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 				<option defaultSameSetReferenceValue="true" />
-				<!-- #endif -->
+				// #endif
 				<option disableRelationDuringLink="true" REL="1" />
 				</paramDepRel>
+				-->
 				<!-- #endif -->
 				
 				<!-- #ifdefGIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DEPENDENT_AS_SUBSTANCE_INSTEAD_OF_GOVERNOR -->
-				<example><!--
-				Hamish smoked at the toy shop. _nn(shop[6], toy[5])
-				--></example>
+				<!--
+				<example>
+				//Hamish smoked at the toy shop. _nn(shop[6], toy[5])
+				</example>
 				<paramDepRel mode="execute">
 				<option numberOfRelations="1" />
 				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="_nn" relationArrayTestSize="1" />
 				<option functionToExecuteUponFind="4" />
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="1" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" />
-				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
+				//#ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 				<option defaultSameSetReferenceValue="true" />
-				<!-- #endif -->
+				//#endif
 				</paramDepRel>
+				-->
+				<!-- #endif -->
+				
 				<!-- #endif -->
 			</function>
 
@@ -3734,7 +3742,7 @@
 				</paramDepRel>
 				<!-- #endif -->
 
-				<!-- Required for NLC: added 2h11e -->
+				<!-- XML only function (not hard coded): added 2h11e -->
 				<!-- #ifdefGIA_TRANSLATOR_INTERPRET_OF_AS_POSSESSIVE_FOR_SUBSTANCES -->
 				<!-- #ifndefGIA_DO_NOT_SUPPORT_SPECIAL_CASE_3A_PREPOSITIONS_INTERPRET_PREPOSITION_OF_AS_EITHER_CONDITION_OR_SUBSTANCE_LINK_DEPENDING_UPON_ACTION_OR_SUBSTANCE -->
 				<example><!--
@@ -3764,29 +3772,31 @@
 				<!-- #endif -->
 				<!-- #endif -->
 				
-				<!-- Required for NLC: added 2h11d -->
+				<!-- XML only function (not hard coded): added 2h11d -->
 				<!-- #ifdefGIA_TRANSLATOR_ADAPT_ENTITY_LINKING_FOR_SUBSTANCE_CONCEPTS -->
-				<example><!--
+				<example>
+				<!--
 				Interpret "of" preposition as definition (substance concepts only)
 				The game of chess is good.	prep_of(game-2, chess-4)
 				but ignore cases where the subject of the preposition is an action;
-				--></example>
+				-->
+				</example>
 				<paramDepRel mode="execute">
 				<option numberOfRelations="1" />
 				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="of" relationArrayTestSize="1" />
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isSubstanceConcept" value="true" REL="1" REL_ENT="2" />
-				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isAction" value="false" REL="1" REL_ENT="1" /> <!-- Stanford Condition -->
-				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isToBeComplimentOfActionTemp" value="false" REL="1" REL_ENT="1" /> <!-- Relex Condition -->
-				<option disableRelationDuringLink="true" REL="1" /> <!-- required to prevent re-interpretation of prepositions in main preposition interpretation function linkConditions -->
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isAction" value="false" REL="1" REL_ENT="1" /> <!--Stanford Condition-->
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isToBeComplimentOfActionTemp" value="false" REL="1" REL_ENT="1" /> <!--Relex Condition-->
+				<option disableRelationDuringLink="true" REL="1" /> <!--required to prevent re-interpretation of prepositions in main preposition interpretation function linkConditions-->
 				<option functionToExecuteUponFind="11" />
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="1" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" />
-				<!-- #ifdefGIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR -->
+				<!--#ifdefGIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR-->
 				<option disableEntity="true" REL="1" REL_ENT="3" />
-				<!-- #endif -->
-				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
+				<!--#endif-->
+				<!--#ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION-->
 				<option defaultSameSetReferenceValue="true" />
-				<!-- #endif -->
+				<!--#endif-->
 				</paramDepRel>
 				<!-- #endif -->
 				

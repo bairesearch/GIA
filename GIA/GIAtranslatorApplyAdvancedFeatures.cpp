@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorApplyAdvancedFeatures.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h12g 21-January-2015
+ * Project Version: 2h13a 23-January-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -503,7 +503,7 @@ void extractQuantitiesStanfordCoreNLP(Sentence * currentSentenceInList, bool GIA
 									string conditionName = "quantityModifier";	//quantitySubstance->quantityModifierString //CHECKTHIS;
 
 									int featureIndexOfCondition = currentSentenceInList->conditionEntityArtificialIndexCurrent;
-									currentSentenceInList->conditionEntityArtificialIndexCurrent = currentSentenceInList->conditionEntityArtificialIndexCurrent + 1;
+									currentSentenceInList->conditionEntityArtificialIndexCurrent = currentSentenceInList->conditionEntityArtificialIndexCurrent - 1;
 
 									bool entityAlreadyExistant = false;
 									GIAentityNode * conditionEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAentityNodeArrayFilled, GIAentityNodeArray, featureIndexOfCondition, &conditionName, &entityAlreadyExistant, entityNodesActiveListConcepts);
@@ -653,7 +653,7 @@ void extractQuantitiesRelex(Sentence * currentSentenceInList, bool GIAentityNode
 								string conditionName = "quantityModifier";	//quantitySubstance->quantityModifierString //CHECKTHIS;
 
 								int featureIndexOfCondition = currentSentenceInList->conditionEntityArtificialIndexCurrent;
-								currentSentenceInList->conditionEntityArtificialIndexCurrent = currentSentenceInList->conditionEntityArtificialIndexCurrent + 1;
+								currentSentenceInList->conditionEntityArtificialIndexCurrent = currentSentenceInList->conditionEntityArtificialIndexCurrent - 1;
 
 								bool entityAlreadyExistant = false;
 								GIAentityNode * conditionEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAentityNodeArrayFilled, GIAentityNodeArray, featureIndexOfCondition, &conditionName, &entityAlreadyExistant, entityNodesActiveListConcepts);
@@ -780,7 +780,7 @@ void extractQuantitiesRelex(Sentence * currentSentenceInList, bool GIAentityNode
 
 						bool entityAlreadyExistant = false;
 						int featureIndexOfCondition = currentSentenceInList->conditionEntityArtificialIndexCurrent;
-						currentSentenceInList->conditionEntityArtificialIndexCurrent = currentSentenceInList->conditionEntityArtificialIndexCurrent + 1;
+						currentSentenceInList->conditionEntityArtificialIndexCurrent = currentSentenceInList->conditionEntityArtificialIndexCurrent - 1;
 						
 						GIAentityNode * conditionEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAentityNodeArrayFilled, GIAentityNodeArray, featureIndexOfCondition, &conditionName, &entityAlreadyExistant, entityNodesActiveListConcepts);
 
@@ -892,7 +892,7 @@ void extractMeasures(Sentence * currentSentenceInList, bool GIAentityNodeArrayFi
 				string conditionName = relationTypeMeasureNameArray[measureTypeIndex];
 				bool entityAlreadyExistant = false;
 				int featureIndexOfCondition = currentSentenceInList->conditionEntityArtificialIndexCurrent;
-				currentSentenceInList->conditionEntityArtificialIndexCurrent = currentSentenceInList->conditionEntityArtificialIndexCurrent + 1;
+				currentSentenceInList->conditionEntityArtificialIndexCurrent = currentSentenceInList->conditionEntityArtificialIndexCurrent - 1;
 				
 				GIAentityNode * conditionEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAentityNodeArrayFilled, GIAentityNodeArray, featureIndexOfCondition, &conditionName, &entityAlreadyExistant, entityNodesActiveListConcepts);
 
@@ -1038,12 +1038,12 @@ void defineToBeAndToDoConditions(Sentence * currentSentenceInList, bool GIAentit
 						if(currentRelationInList->relationType == RELATION_TYPE_COMPLIMENT_TO_BE)
 						{
 							featureIndexNewCondition = currentSentenceInList->conditionEntityArtificialIndexCurrent;
-							currentSentenceInList->conditionEntityArtificialIndexCurrent = currentSentenceInList->conditionEntityArtificialIndexCurrent + 1;
+							currentSentenceInList->conditionEntityArtificialIndexCurrent = currentSentenceInList->conditionEntityArtificialIndexCurrent - 1;
 						}
 						else if(currentRelationInList->relationType == RELATION_TYPE_COMPLIMENT_TO_DO)
 						{
 							featureIndexNewCondition = currentSentenceInList->conditionEntityArtificialIndexCurrent;
-							currentSentenceInList->conditionEntityArtificialIndexCurrent = currentSentenceInList->conditionEntityArtificialIndexCurrent + 1;
+							currentSentenceInList->conditionEntityArtificialIndexCurrent = currentSentenceInList->conditionEntityArtificialIndexCurrent - 1;
 						}
 
 						GIAentityNode * entityNode = GIAentityNodeArray[currentRelationInList->relationGovernorIndex];
