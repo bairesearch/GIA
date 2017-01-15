@@ -530,7 +530,7 @@ int main(int argc,char **argv)
 		double confidence = 0.0;
 		
 		GIAEntityNode* queryAnswerNode;
-		answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork(conceptEntityNodesList, conceptEntityNamesList, conceptEntityNodesListQuery, foundComparisonVariable, comparisonVariableNode, &foundAnswer, queryAnswerNode, &confidence);
+		queryAnswerNode = answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork(conceptEntityNodesList, conceptEntityNamesList, conceptEntityNodesListQuery, foundComparisonVariable, comparisonVariableNode, &foundAnswer, queryAnswerNode, &confidence);
 		
 		double maxConfidence = entityNodesCompleteListQuery->size();
 	
@@ -538,11 +538,14 @@ int main(int argc,char **argv)
 				 
 		if(foundAnswer)
 		{
+			cout << "foundAnswer" << endl;
+			
 			answerString = answerString + "\nAnswer found";
 			if(foundComparisonVariable)
 			{
 				answerString = answerString + "Exact Answer found: " + queryAnswerNode->entityName;	
 			}
+			cout << "ahsd2" << endl;
 		}
 		else
 		{
@@ -562,6 +565,8 @@ int main(int argc,char **argv)
 		sprintf(tempMaxConfidenceStringCharStar, "%0.6f", maxConfidence);		
 		answerString = answerString + "\nconfidence = " + tempConfidenceStringCharStar;			
 		answerString = answerString + "\nmax confidence = " + tempMaxConfidenceStringCharStar;	
+		
+		cout << "ahsd" << endl;
 								
 		char * fileByteArray = const_cast<char*>(answerString.c_str());
 		char * outputAnswerPlainTXTFileNameCharStar = const_cast<char*>(outputAnswerPlainTXTFileName.c_str());	

@@ -10,6 +10,7 @@
  *******************************************************************************/
  
  #include "GIAdatabase.h"
+
  
 //uses fast search algorithm
 GIAEntityNode * findOrAddEntityNodeByName(vector<GIAEntityNode*> *entityNodesCompleteList, vector<GIAEntityNode*> *conceptEntityNodesList, vector<string> *conceptEntityNamesList, string * entityNodeName, bool * found, long * index, bool addIfNonexistant, long * currentEntityNodeIDInCompleteList, long * currentEntityNodeIDInConceptEntityNodesList)
@@ -70,21 +71,16 @@ GIAEntityNode * findOrAddEntityNodeByName(vector<GIAEntityNode*> *entityNodesCom
 		string nameTemp;
 		long previousFindIndex = findIndex;
 		
-		//cout << "asd1" << endl;
-
 		previousTempName = conceptEntityNamesList->at(findIndex);	//requires start value
 		
-		//cout << "asd2" << endl;
-
-
 		bool first = true;
 		
 		while(searchOptionsAvailable)
 		{
 			nameTemp = conceptEntityNamesList->at(findIndex);
 			
-			/*
-			if(*entityNodeName == "red")
+			
+			if(*entityNodeName == "Jane")
 			{
 				cout << "vectorSize = "  << vectorSize << endl;
 				cout << "findIndex = " << findIndex << endl;
@@ -92,7 +88,7 @@ GIAEntityNode * findOrAddEntityNodeByName(vector<GIAEntityNode*> *entityNodesCom
 				cout << "nameTemp = " << nameTemp << endl;
 				cout << "*entityNodeName = " << *entityNodeName << endl;		      
 			}
-			*/
+			
 			
 			//cout << "vectorSize = "  << vectorSize << endl;
 			//cout << "findIndex = " << findIndex << endl;

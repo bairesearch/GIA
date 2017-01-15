@@ -18,6 +18,8 @@ void answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork(ve
 	double bestConfidence = 0.0;
 	double bestConfidenceAssumingFoundAnswer = 0.0;
 	
+	cout << "comparisonVariableNode->entityName = " << comparisonVariableNode->entityName << endl;
+	
 	GIAEntityNode * networkEntityNodeWhenSearchedResultsInBestConfidence = NULL;
 	GIAEntityNode * queryEntityNodeWhenSearchedResultsInBestConfidence = NULL;
 		
@@ -26,6 +28,8 @@ void answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork(ve
 	{//for each node in query semantic net;
 		
 		GIAEntityNode* currentQueryEntityNode = *entityIterQuery;
+		
+		cout << "currentQueryEntityNode->entityName = " << currentQueryEntityNode->entityName << endl;
 		
 		bool foundQueryEntityNodeName = false;
 		long queryEntityNodeIndex = -1;
@@ -69,6 +73,8 @@ void answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork(ve
 		}
 	}
 	
+	cout << "finished query round 1" << endl;
+
 	if(!detectComparisonVariable || !(*foundAnswer))
 	{//now set draw parameters for optimium solution...
 	
@@ -85,9 +91,63 @@ void answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork(ve
 		}
 		*confidence = (double)numberOfMatchedNodes;
 	}
+
+	cout << "finished query round 2" << endl;
 				
 }
 
+void testReferencedEntityNodeForNameMatch(GIAEntityNode * queryEntityNode, GIAEntityNode * entityNode, bool detectComparisonVariable, GIAEntityNode * comparisonVariableNode,  bool * foundAnswer, GIAEntityNode* queryAnswerNode, int * numberOfMatchedNodes, bool findBestInexactAnswerAndSetDrawParameters, bool isSuitableNodeTypeForInexactAnswer)
+{
+	bool foundMatch = false;
+	
+	if(queryEntityNode->entityName == entityNode->entityName)
+	{
+		if(detectComparisonVariable && comparisonVariableNode->hasQuantity && queryEntityNode->hasQuantity && entityNode->hasQuantity)
+		{//exact match found [NB if a quantity, the queryEntityNode's entityName will not have the comparisonVariable name (_$qVar) specified, and therefore a matched entity node entityName is required]
+			foundMatch = true;
+		}
+		else
+		{
+			testEntityNodeForQuery(queryEntityNode, entityNode, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters);
+			
+			if(isSuitableNodeTypeForInexactAnswer)
+			{
+				if(findBestInexactAnswerAndSetDrawParameters)
+				{
+					foundMatch = true;
+					cout << "foundBestInexactAnswerAndSetDrawParameters:" << comparisonVariableNode->entityName << endl;
+					//set queryAnswerNode if entityNode is an object;
+					/*eg;
+					Which house does did Jane buy?
+					Which house is that?
+					What day is it?
+					What house did Jane buy?
+					*/
+
+				}			
+			}
+		}
+	}
+	else if(detectComparisonVariable)
+	{
+		if(queryEntityNode->entityName == comparisonVariableNode->entityName)
+		{//exact match found
+			foundMatch = true;		
+		}
+	}
+	
+	if(foundMatch)
+	{
+		entityNode->isAnswerToQuery = true;
+		*foundAnswer = true; 
+		queryAnswerNode = entityNode;
+		cout << "foundAnswer:" << comparisonVariableNode->entityName << endl;
+		//CHECKTHIS; need to take into account vector of answers (not just a single answer)	
+	}
+	
+	
+}
+				
 //current queryEntityNode, currentEntityNode
 void testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntityNode * entityNode, bool detectComparisonVariable, GIAEntityNode* comparisonVariableNode, bool * foundAnswer, GIAEntityNode* queryAnswerNode, int * numberOfMatchedNodes, bool findBestInexactAnswerAndSetDrawParameters)
 {
@@ -115,7 +175,7 @@ void testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntityNode * ent
 		}
 		else
 		{
-			entityNode->testedForQueryComparison = true;				
+			entityNode->testedForQueryComparison = true;		//CHECK THIS - may not be appropriate to ensure this... [eg if a query has 2 properties of the same name...?]				
 		}
 		
 		if(entityNode->isProperty)
@@ -151,7 +211,6 @@ void testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntityNode * ent
 		cout << "\tentityNode->hasAssociatedPropertyIsAction = " << entityNode->hasAssociatedPropertyIsAction << endl;
 		*/
 		
-		entityNode->testedForQueryComparison = true;		//CHECK THIS - may not be appropriate to ensure this... [eg if a query has 2 properties of the same name...?]	
 			
 		vector<GIAEntityNode*>::iterator actionIterQuery;
 		vector<GIAEntityNode*>::iterator actionIter;
@@ -160,19 +219,8 @@ void testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntityNode * ent
 			for(actionIter = entityNode->IncomingActionNodeList.begin(); actionIter != entityNode->IncomingActionNodeList.end(); actionIter++) 
 			{
 				//cout << "A" << endl;
-				if((*actionIterQuery)->entityName == (*actionIter)->entityName)
-				{
-					testEntityNodeForQuery(*actionIterQuery, *actionIter, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters);
-				}
-				else if(detectComparisonVariable)
-				{
-					if((*actionIterQuery)->entityName == comparisonVariableNode->entityName)
-					{//exact match found
-						*foundAnswer = true; 
-						queryAnswerNode = *actionIter;
-						//CHECKTHIS; need to take into account vector of answers (not just a single answer)					
-					}
-				}
+				testReferencedEntityNodeForNameMatch(*actionIterQuery, *actionIter, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, false);
+			
 				//cout << "AA" << endl;
 			}
 		}			
@@ -181,19 +229,7 @@ void testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntityNode * ent
 			for(actionIter = entityNode->ActionNodeList.begin(); actionIter != entityNode->ActionNodeList.end(); actionIter++) 
 			{
 				//cout << "AAA" << endl;	
-				if((*actionIterQuery)->entityName == (*actionIter)->entityName)
-				{
-					testEntityNodeForQuery(*actionIterQuery, *actionIter, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters);
-				}
-				else if(detectComparisonVariable)
-				{
-					if((*actionIterQuery)->entityName == comparisonVariableNode->entityName)
-					{//exact match found
-						*foundAnswer = true; 
-						queryAnswerNode = *actionIter;
-						//CHECKTHIS; need to take into account vector of answers (not just a single answer)					
-					}
-				}				
+				testReferencedEntityNodeForNameMatch(*actionIterQuery, *actionIter, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, false);				
 				//cout << "AAAA" << endl;
 			}
 		}	
@@ -209,19 +245,8 @@ void testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntityNode * ent
 				//cout << "entityNode->actionSubjectEntity->testedForQueryComparison = " << entityNode->actionSubjectEntity->testedForQueryComparison << endl;
 				//cout << "entityNode->actionSubjectEntity->entityName = " << entityNode->actionSubjectEntity->entityName << endl;
 				//cout << "entityNode->actionObjectEntity->entityName = " << entityNode->actionObjectEntity->entityName << endl;
-				if(queryEntityNode->actionSubjectEntity->entityName == entityNode->actionSubjectEntity->entityName)
-				{
-					testEntityNodeForQuery(queryEntityNode->actionSubjectEntity, entityNode->actionSubjectEntity, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters);
-				}
-				else if(detectComparisonVariable)
-				{
-					if(queryEntityNode->actionSubjectEntity->entityName == comparisonVariableNode->entityName)
-					{//exact match found
-						*foundAnswer = true; 
-						queryAnswerNode = entityNode->actionSubjectEntity;
-						//CHECKTHIS; need to take into account vector of answers (not just a single answer)					
-					}
-				}				
+				testReferencedEntityNodeForNameMatch(queryEntityNode->actionSubjectEntity, entityNode->actionSubjectEntity, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, false);
+							
 				//cout << "b6" << endl;		
 			}	
 		}			
@@ -230,35 +255,9 @@ void testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntityNode * ent
 			if(entityNode->actionObjectEntity != NULL)
 			{		
 				//cout << "b7" << endl;
-				if(queryEntityNode->actionObjectEntity->entityName == entityNode->actionObjectEntity->entityName)
-				{
-					testEntityNodeForQuery(queryEntityNode->actionObjectEntity, entityNode->actionObjectEntity, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters);
-				
-					if(findBestInexactAnswerAndSetDrawParameters)
-					{
-						entityNode->isAnswerToQuery = true;
-						queryAnswerNode = entityNode->actionObjectEntity;
-						*foundAnswer = true;
-						//set queryAnswerNode if entityNode is an object;
-						/*eg;
-						Which house does did Jane buy?
-						Which house is that?
-						What day is it?
-						What house did Jane buy?
-						*/
 
-					}
-		
-				}
-				else if(detectComparisonVariable)
-				{
-					if(queryEntityNode->actionObjectEntity->entityName == comparisonVariableNode->entityName)
-					{//exact match found
-						*foundAnswer = true; 
-						queryAnswerNode = entityNode->actionObjectEntity;
-						//CHECKTHIS; need to take into account vector of answers (not just a single answer)					
-					}					
-				}
+				testReferencedEntityNodeForNameMatch(queryEntityNode->actionObjectEntity, entityNode->actionObjectEntity, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, true);
+				
 				//cout << "b8" << endl;		
 			}	
 		}
@@ -279,19 +278,8 @@ void testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntityNode * ent
 			ConditionNodeTypeListIterator = entityNode->ConditionNodeTypeList.begin();		
 			for(ConditionIter = entityNode->ConditionNodeList.begin(); ConditionIter != entityNode->ConditionNodeList.end(); ConditionIter++) 
 			{	
-				if((*ConditionIterQuery)->entityName == (*ConditionIter)->entityName)
-				{
-					testEntityNodeForQuery(*ConditionIterQuery, *ConditionIter, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters);
-				}
-				else if(detectComparisonVariable)
-				{
-					if((*ConditionIterQuery)->entityName == comparisonVariableNode->entityName)
-					{//exact match found
-						*foundAnswer = true; 
-						queryAnswerNode = *ConditionIter;
-						//CHECKTHIS; need to take into account vector of answers (not just a single answer)					
-					}				
-				}
+				testReferencedEntityNodeForNameMatch(*ConditionIterQuery, *ConditionIter, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, false);
+				
 				ConditionNodeTypeListIterator++;			
 			}			
 			ConditionNodeTypeListIteratorQuery++;			
@@ -323,19 +311,7 @@ void testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntityNode * ent
 			ConditionNodeTypeListIterator = entityNode->ConditionNodeTypeReverseList.begin();
 			for(ConditionIter = entityNode->ConditionNodeReverseList.begin(); ConditionIter != entityNode->ConditionNodeReverseList.end(); ConditionIter++) 
 			{	
-				if((*ConditionIterQuery)->entityName == (*ConditionIter)->entityName)
-				{
-					testEntityNodeForQuery(*ConditionIterQuery, *ConditionIter, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters);
-				}
-				else if(detectComparisonVariable)
-				{
-					if((*ConditionIterQuery)->entityName == comparisonVariableNode->entityName)
-					{//exact match found
-						*foundAnswer = true; 
-						queryAnswerNode = *ConditionIter;
-						//CHECKTHIS; need to take into account vector of answers (not just a single answer)					
-					}				
-				}
+				testReferencedEntityNodeForNameMatch(*ConditionIterQuery, *ConditionIter, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, false);
 				ConditionNodeTypeListIterator++;		
 			}	
 			ConditionNodeTypeListIteratorQuery++;		
@@ -353,19 +329,7 @@ void testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntityNode * ent
 			for(entityIter = entityNode->PropertyNodeList.begin(); entityIter != entityNode->PropertyNodeList.end(); entityIter++) 
 			{//DRAW SHOULD NOT BE REQUIRED	
 				//cout << "a31" << endl;
-				if((*entityIterQuery)->entityName == (*entityIter)->entityName)
-				{
-					testEntityNodeForQuery(*entityIterQuery, *entityIter, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters);
-				}
-				else if(detectComparisonVariable)
-				{
-					if((*entityIterQuery)->entityName == comparisonVariableNode->entityName)
-					{//exact match found
-						*foundAnswer = true; 
-						queryAnswerNode = *entityIter;
-						//CHECKTHIS; need to take into account vector of answers (not just a single answer)					
-					}					
-				}
+				testReferencedEntityNodeForNameMatch(*entityIterQuery, *entityIter, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, false);
 			}		
 		}
 		/*this has been removed 25 Sept - use entityNodeContainingThisProperty instead
@@ -383,19 +347,7 @@ void testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntityNode * ent
 			if(entityNode->entityNodeDefiningThisPropertyOrAction != NULL)
 			{
 				//cout << "a33" << endl;
-				if(queryEntityNode->entityNodeDefiningThisPropertyOrAction->entityName == entityNode->entityNodeDefiningThisPropertyOrAction->entityName)
-				{
-					testEntityNodeForQuery(queryEntityNode->entityNodeDefiningThisPropertyOrAction, entityNode->entityNodeDefiningThisPropertyOrAction, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters);
-				}
-				else if(detectComparisonVariable)
-				{
-					if(queryEntityNode->entityNodeDefiningThisPropertyOrAction->entityName == comparisonVariableNode->entityName)
-					{//exact match found
-						*foundAnswer = true; 
-						queryAnswerNode = entityNode->entityNodeDefiningThisPropertyOrAction;
-						//CHECKTHIS; need to take into account vector of answers (not just a single answer)					
-					}								
-				}
+				testReferencedEntityNodeForNameMatch(queryEntityNode->entityNodeDefiningThisPropertyOrAction, entityNode->entityNodeDefiningThisPropertyOrAction, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, false);
 			}		
 		}
 		//cout << "a3c" << endl;
@@ -404,19 +356,7 @@ void testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntityNode * ent
 			if(entityNode->entityNodeContainingThisProperty != NULL)
 			{
 				//cout << "a34" << endl;
-				if(queryEntityNode->entityNodeContainingThisProperty->entityName == entityNode->entityNodeContainingThisProperty->entityName)
-				{
-					testEntityNodeForQuery(queryEntityNode->entityNodeContainingThisProperty, entityNode->entityNodeContainingThisProperty, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters);
-				}
-				else if(detectComparisonVariable)
-				{
-					if(queryEntityNode->entityNodeContainingThisProperty->entityName == comparisonVariableNode->entityName)
-					{//exact match found
-						*foundAnswer = true; 
-						queryAnswerNode = entityNode->entityNodeContainingThisProperty;
-						//CHECKTHIS; need to take into account vector of answers (not just a single answer)					
-					}				
-				}
+				testReferencedEntityNodeForNameMatch(queryEntityNode->entityNodeContainingThisProperty, entityNode->entityNodeContainingThisProperty, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, false);
 			}
 		}
 		//cout << "a4" << endl;
@@ -428,19 +368,7 @@ void testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntityNode * ent
 		{
 			for(entityIter = entityNode->EntityNodeDefinitionList.begin(); entityIter != entityNode->EntityNodeDefinitionList.end(); entityIter++) 
 			{
-				if((*entityIterQuery)->entityName == (*entityIter)->entityName)
-				{
-					testEntityNodeForQuery(*entityIterQuery, *entityIter, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters);
-				}
-				else if(detectComparisonVariable)
-				{
-					if((*entityIterQuery)->entityName == comparisonVariableNode->entityName)
-					{//exact match found
-						*foundAnswer = true; 
-						queryAnswerNode = *entityIter;
-						//CHECKTHIS; need to take into account vector of answers (not just a single answer)					
-					}
-				}									
+				testReferencedEntityNodeForNameMatch(*entityIterQuery, *entityIter, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, false);				
 			}
 		}
 		//go reverse also...	
@@ -448,19 +376,7 @@ void testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntityNode * ent
 		{//DRAW SHOULD NOT BE REQUIRED, as this should be performed when drilling down into them 
 			for(entityIter = entityNode->EntityNodeDefinitionReverseList.begin(); entityIter != entityNode->EntityNodeDefinitionReverseList.end(); entityIter++) 
 			{//DRAW SHOULD NOT BE REQUIRED, as this should be performed when drilling down into them 
-				if((*entityIterQuery)->entityName == (*entityIter)->entityName)
-				{
-					testEntityNodeForQuery(*entityIterQuery, *entityIter, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters);
-				}
-				else if(detectComparisonVariable)
-				{
-					if((*entityIterQuery)->entityName == comparisonVariableNode->entityName)
-					{//exact match found
-						*foundAnswer = true; 
-						queryAnswerNode = *entityIter;
-						//CHECKTHIS; need to take into account vector of answers (not just a single answer)					
-					}
-				}						
+				testReferencedEntityNodeForNameMatch(*entityIterQuery, *entityIter, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, false);						
 			}
 		}
 		//cout << "a6" << endl;
@@ -473,19 +389,7 @@ void testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntityNode * ent
 			for(entityIter = entityNode->AssociatedPropertyNodeList.begin(); entityIter != entityNode->AssociatedPropertyNodeList.end(); entityIter++) 
 			{
 				//cout << "as0" << endl;
-				if((*entityIterQuery)->entityName == (*entityIter)->entityName)
-				{
-					testEntityNodeForQuery(*entityIterQuery, *entityIter, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters);
-				}
-				else if(detectComparisonVariable)
-				{
-					if((*entityIterQuery)->entityName == comparisonVariableNode->entityName)
-					{//exact match found
-						*foundAnswer = true; 
-						queryAnswerNode = *entityIter;
-						//CHECKTHIS; need to take into account vector of answers (not just a single answer)					
-					}
-				}						
+				testReferencedEntityNodeForNameMatch(*entityIterQuery, *entityIter, detectComparisonVariable, comparisonVariableNode, foundAnswer, queryAnswerNode, numberOfMatchedNodes, findBestInexactAnswerAndSetDrawParameters, false);						
 				//cout << "as1" << endl;
 			}
 		}	
