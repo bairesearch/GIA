@@ -23,7 +23,7 @@
  * File Name: GIAdatabase.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p10b 23-September-2012
+ * Project Version: 1p12a 26-September-2012
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: performs simple GIA database functions (storing nodes in ordered arrays/vectors/maps)
  *
@@ -574,29 +574,36 @@ void DBreadReferencesFile(string * referencesFileName, GIAEntityNode* entity)
 
 
 
-void openDatabase(bool readFromDatabase, string newDatabaseFolderName)
+void initialiseDatabase(bool readFromDatabase, string newDatabaseFolderName, bool useDatabase)
 {
-	databaseFolderName = newDatabaseFolderName;
-	
-	initialiseDBconceptEntityNodesLoadedList();
-
-	#ifndef GIA_DATABASE_CLEAR_CACHE_EVERY_SENTENCE
-	initialiseDBentityNodesTempActiveListComplete();
-	#endif
-
-	DBreadConceptEntityNodesLoadedList();
-
-	if(readFromDatabase)
+	if(useDatabase)
 	{
-		setUseDatabase(GIA_USE_DATABASE_TRUE_READ_ACTIVE);
+		databaseFolderName = newDatabaseFolderName;
+
+		initialiseDBconceptEntityNodesLoadedList();
+
+		#ifndef GIA_DATABASE_CLEAR_CACHE_EVERY_SENTENCE
+		initialiseDBentityNodesTempActiveListComplete();
+		#endif
+
+		DBreadConceptEntityNodesLoadedList();
+
+		if(readFromDatabase)
+		{
+			setUseDatabase(GIA_USE_DATABASE_TRUE_READ_ACTIVE);
+		}
+		else
+		{
+			setUseDatabase(GIA_USE_DATABASE_TRUE_READ_INACTIVE);
+		}
+		/*
+		setUseDatabase(GIA_USE_DATABASE_TRUE_READ_INACTIVE);	//OLD: at initialisation (/by default), do not activate read (use active list instead)
+		*/
 	}
 	else
 	{
-		setUseDatabase(GIA_USE_DATABASE_TRUE_READ_INACTIVE);
+		setUseDatabase(GIA_USE_DATABASE_FALSE);	
 	}
-	/*
-	setUseDatabase(GIA_USE_DATABASE_TRUE_READ_INACTIVE);	//OLD: at initialisation (/by default), do not activate read (use active list instead)
-	*/
 }
 
 void DBreadConceptEntityNodesLoadedList()	//unordered_map<string, bool> *DBconceptEntityNodesLoadedListLocal

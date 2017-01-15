@@ -23,7 +23,7 @@
  * File Name: GIAlrp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p10b 23-September-2012
+ * Project Version: 1p12a 26-September-2012
  * Requirements: requires plain text file
  * Description: Language Reduction Preprocessor
  *
@@ -37,10 +37,21 @@
 
 #include "GIAlrp.h"
 
-static string lrpDataFolderName; 	
-void initialiseLRP(string newlrpDataFolderName)
+#ifndef LINUX
+	#include <windows.h>
+#endif
+
+static string lrpDataFolderName;
+static bool useLRP; 
+	
+void initialiseLRP(string newlrpDataFolderName, bool newUseLRP)
 {
+	useLRP = newUseLRP;
 	lrpDataFolderName = newlrpDataFolderName;
+}
+bool getUseLRP()
+{
+	return useLRP;
 }
 
 GIALRPtag::GIALRPtag(void)
@@ -114,12 +125,28 @@ void setCurrentGIALRPtagTextCorrespondenceInfo(bool isQuery)
 		currentGIALRPtagTextCorrespondenceInfo = textGIALRPtagTextCorrespondenceInfo;
 	}
 }
-void initialiseCurrentGIALRPtagTextCorrespondenceInfo()
+void initialiseCurrentGIALRPtagTextCorrespondenceInfo(bool isQuery)
 {
-	queryGIALRPtagTextCorrespondenceInfo = new GIALRPtagTextCorrespondenceInfo();
-	textGIALRPtagTextCorrespondenceInfo = new GIALRPtagTextCorrespondenceInfo();
+	if(isQuery)
+	{
+		queryGIALRPtagTextCorrespondenceInfo = new GIALRPtagTextCorrespondenceInfo();
+	}
+	else
+	{
+		textGIALRPtagTextCorrespondenceInfo = new GIALRPtagTextCorrespondenceInfo();
+	}
 }
-
+void deinitialiseCurrentGIALRPtagTextCorrespondenceInfo(bool isQuery)
+{
+	if(isQuery)
+	{
+		delete queryGIALRPtagTextCorrespondenceInfo;
+	}
+	else
+	{
+		delete textGIALRPtagTextCorrespondenceInfo;
+	}
+}
 
 
 bool parseTextFileAndReduceLanguage(string plainTextInputFileName, string plainTextLRPOutputFileName, string plainTextLRPforNLPOutputFileName)
@@ -128,6 +155,9 @@ bool parseTextFileAndReduceLanguage(string plainTextInputFileName, string plainT
 	
 	#ifdef GIA_LRP_DEBUG
 	cout << "lrpDataFolderName= " << lrpDataFolderName << endl;
+	cout << "plainTextInputFileName = " << plainTextInputFileName << endl;
+	cout << "plainTextLRPOutputFileName = " << plainTextLRPOutputFileName << endl;
+	cout << "plainTextLRPforNLPOutputFileName = " << plainTextLRPforNLPOutputFileName << endl;	
 	#endif
 	
 	string irregularVerbListFileName = lrpDataFolderName + GIA_LRP_IRREGULARVERB_DATABASE_FILE_NAME;
@@ -156,7 +186,13 @@ bool parseTextFileAndReduceLanguage(string plainTextInputFileName, string plainT
 	{
 		result = false;
 	}
-	
+
+	#ifdef LINUX
+	chdir(tempFolderCharStar);
+	#else
+	::SetCurrentDirectory(tempFolderCharStar);
+	#endif	
+		
 	GIALRPtagTextCorrespondenceInfo * firstGIALRPtagCorrespondenceInfo = getCurrentGIALRPtagTextCorrespondenceInfo();
 	if(!searchAndReplaceAllPhrasalVerbsAndMultiwordPrepositions(firstTagInPlainText, firstTagInPhrasalVerbList, firstTagInMultiwordPrepositionList, plainTextLRPOutputFileName, plainTextLRPforNLPOutputFileName, firstGIALRPtagCorrespondenceInfo))
 	{
@@ -245,6 +281,8 @@ bool loadIrregularVerbList(string irregularVerbListFileName, GIALRPtag * firstTa
 		}
 		parseFileObject.close();
 	}
+	
+	return result;
 }
 
 
@@ -908,10 +946,18 @@ bool loadPlainTextFile(string plainTextInputFileName, GIALRPtag * firstTagInPlai
 						#endif								
 						currentTagInPlainTextSentence = currentTagInPlainTextSentence->nextTag;
 
-						if(currentToken == CHAR_FULLSTOP)
+						bool endOfSentencePunctuationMarkFound = false;
+						for(int i=0; i<GIA_NLP_NUMBER_OF_PUNCTUATION_MARK_CHARACTERS_END_OF_SENTENCE; i++)
+						{
+							if(currentToken == nlpPunctionMarkCharacterEndOfSentenceArray[i])
+							{
+								endOfSentencePunctuationMarkFound = true;
+							}
+						}
+						if(endOfSentencePunctuationMarkFound)
 						{
 							#ifdef GIA_LRP_DEBUG
-							//cout << "CHAR_FULLSTOP" << endl;
+							//cout << "endOfSentencePunctuationMarkFound" << endl;
 							//cout << "currentTagInPlainText->sentenceIndex = " << currentTagInPlainText->sentenceIndex << endl;							
 							#endif
 							currentTagInPlainText->nextSentence = new GIALRPtag();
@@ -942,7 +988,23 @@ bool loadPlainTextFile(string plainTextInputFileName, GIALRPtag * firstTagInPlai
 		}
 		parseFileObject.close();
 	}
-	
+
+	#ifdef GIA_LRP_DEBUG
+	currentTagInPlainText = firstTagInPlainText;
+	while(currentTagInPlainText->nextSentence != NULL)
+	{				
+		firstTagInPlainTextSentence = currentTagInPlainText;
+		currentTagInPlainTextSentence = firstTagInPlainTextSentence;
+		while(currentTagInPlainTextSentence->nextTag != NULL)
+		{			
+			cout << "currentTagInPlainTextSentence->tagName = " << currentTagInPlainTextSentence->tagName << endl;
+			
+			currentTagInPlainTextSentence = currentTagInPlainTextSentence->nextTag;
+		}
+		currentTagInPlainText = currentTagInPlainText->nextSentence;
+	}
+	#endif
+		
 	return result;
 }
 
@@ -1219,35 +1281,38 @@ bool searchAndReplaceAllPhrasalVerbsAndMultiwordPrepositions(GIALRPtag * firstTa
 
 					if(stillFoundVerbMatchOfArbitraryTense && foundAtLeastOneMatch)
 					{
-						#ifdef GIA_LRP_DEBUG
-						//cout << "u17" << endl;
-						#endif
-						if(numberTagSpecialTagsFound <= 1)
-						{//do not preprocess phrasal verbs with more than one special tag (ie sth/sb/swh) - as this generally involves more than a verb [verb sth preposition sth1] - added 1p1aTEMP5
-							//reduce all entities
+						if(currentTagInPhrasalVerb->nextTag == NULL)
+						{//make sure the entire multiword phrasal verb is matched (in case currentTagInPlainTextSentenceTemp reaches end of sentence without matching the multiword phrasal verb in its entirety)
 							#ifdef GIA_LRP_DEBUG
-							//cout << "u18" << endl;
+							//cout << "u17" << endl;
 							#endif
-							#ifdef GIA_LRP_DEBUG
-							cout << "currentTagInPlainTextSentenceTemp->tagName = " << currentTagInPlainTextSentenceTemp->tagName << endl;
-							#endif
-							if(phrasalVerbHasTagSpecial)
-							{
-								currentTagInCollapsedPhrasalVerb->nextTag->nextTag = currentTagInPlainTextSentenceTemp;		//NB currentTagInCollapsedPhrasalVerb->nextTag is the collapsed phrasal verb thing/place/body entity
-							}
-							else
-							{
-								currentTagInCollapsedPhrasalVerb->nextTag = currentTagInPlainTextSentenceTemp;	
-							}
-							#ifdef GIA_LRP_DEBUG
-							//cout << "u18b" << endl;
-							#endif
-							previousTagInPlainTextSentence->nextTag = firstTagInCollapsedPhrasalVerb;
+							if(numberTagSpecialTagsFound <= 1)
+							{//do not preprocess phrasal verbs with more than one special tag (ie sth/sb/swh) - as this generally involves more than a verb [verb sth preposition sth1] - added 1p1aTEMP5
+								//reduce all entities
+								#ifdef GIA_LRP_DEBUG
+								//cout << "u18" << endl;
+								#endif
+								#ifdef GIA_LRP_DEBUG
+								cout << "currentTagInPlainTextSentenceTemp->tagName = " << currentTagInPlainTextSentenceTemp->tagName << endl;
+								#endif
+								if(phrasalVerbHasTagSpecial)
+								{
+									currentTagInCollapsedPhrasalVerb->nextTag->nextTag = currentTagInPlainTextSentenceTemp;		//NB currentTagInCollapsedPhrasalVerb->nextTag is the collapsed phrasal verb thing/place/body entity
+								}
+								else
+								{
+									currentTagInCollapsedPhrasalVerb->nextTag = currentTagInPlainTextSentenceTemp;	
+								}
+								#ifdef GIA_LRP_DEBUG
+								//cout << "u18b" << endl;
+								#endif
+								previousTagInPlainTextSentence->nextTag = firstTagInCollapsedPhrasalVerb;
 
-							foundAtLeastOnePhrasalVerbInSentenceAndCollapsed = true;
-							#ifdef GIA_LRP_DEBUG
-							//cout << "u18c" << endl;
-							#endif
+								foundAtLeastOnePhrasalVerbInSentenceAndCollapsed = true;
+								#ifdef GIA_LRP_DEBUG
+								//cout << "u18c" << endl;
+								#endif
+							}
 						}
 					}
 					/*
@@ -1389,14 +1454,17 @@ bool searchAndReplaceAllPhrasalVerbsAndMultiwordPrepositions(GIALRPtag * firstTa
 
 				if(stillFoundPrepositionMatch && foundAtLeastOneMatch)
 				{
-					#ifdef GIA_LRP_DEBUG
-					cout << "u24d" << endl;
-					#endif
-					//reduce all entities
-					currentTagInCollapsedMultiwordPreposition->nextTag = currentTagInPlainTextSentenceTemp;
-					previousTagInPlainTextSentence->nextTag = firstTagInCollapsedMultiwordPreposition;
+					if(currentTagInMultiwordPreposition->nextTag == NULL)
+					{//make sure the entire multiword preposition is matched (in case currentTagInPlainTextSentenceTemp reaches end of sentence without matching the multiword preposition in its entirety)				
+						#ifdef GIA_LRP_DEBUG
+						cout << "u24d" << endl;
+						#endif
+						//reduce all entities
+						currentTagInCollapsedMultiwordPreposition->nextTag = currentTagInPlainTextSentenceTemp;
+						previousTagInPlainTextSentence->nextTag = firstTagInCollapsedMultiwordPreposition;
 
-					foundAtLeastOneMultiwordPrepositionInSentenceAndCollapsed = true;
+						foundAtLeastOneMultiwordPrepositionInSentenceAndCollapsed = true;
+					}
 				}
 
 				currentTagInMultiwordPrepositionList = currentTagInMultiwordPrepositionList->nextSentence;

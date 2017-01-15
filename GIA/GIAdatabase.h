@@ -23,7 +23,7 @@
  * File Name: GIAdatabase.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p10b 23-September-2012
+ * Project Version: 1p12a 26-September-2012
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: performs simple GIA database functions (storing nodes in ordered arrays/vectors/maps)
  *
@@ -82,7 +82,7 @@ using namespace std;
 	#define GIA_ACTIVE_LIST_ID_MAX_LENGTH_STRING "19"
 
 	#define GIA_DATABASE_FILESYSTEM_DEFAULT_DATABASE_NAME ((string)"GIAKBdatabase/")
-	#define GIA_DATABASE_FILESYSTEM_DEFAULT_SERVER_OR_MOUNT_NAME "/home/rich/source/"	 //this could be "/mnt/serverNameX/" once configuring appropriate NFS Linux File Sharing in /etc/fstab	
+	#define GIA_DATABASE_FILESYSTEM_DEFAULT_SERVER_OR_MOUNT_NAME "/home/systemusername/source/"	 //this could be "/mnt/serverNameX/" once configuring appropriate NFS Linux File Sharing in /etc/fstab	
 	#define GIA_DATABASE_CONCEPT_NAME_SUBDIRECTORY_INDEX_NUMBER_OF_LEVELS (3) 	//eg e/x/a/example
 	#define GIA_DATABASE_INSTANCE_ID_SUBDIRECTORY_INDEX_NUMBER_OF_LEVELS (3) 	//eg 1/2/3/instance123000000
 	#define GIA_DATABASE_INSTANCE_ID_MAX_ORDER (GIA_DATABASE_INSTANCE_ID_MAX_LENGTH-1)		//for 9, maximum number of instances becomes 999999999
@@ -201,7 +201,7 @@ bool checkIfFolderExistsAndIfNotMakeAndSetAsCurrent(string * folderName);
 string DBgenerateServerDatabaseName(string * entityName, int fileType);
 string DBgenerateFileName(string * entityName, long idInstance, int connectionType, int fileType);
 
-void openDatabase(bool readFromDatabase, string newDatabaseFolderName);
+void initialiseDatabase(bool readFromDatabase, string newDatabaseFolderName, bool useDatabase);
 	void DBreadConceptEntityNodesLoadedList();						//unordered_map<string, bool> *DBconceptEntityNodesLoadedList
 
 void DBreadVectorConnections(GIAEntityNode * entityNode, int connectionType);
