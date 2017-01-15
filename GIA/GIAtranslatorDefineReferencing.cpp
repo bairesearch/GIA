@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q3a 29-Sept-2013
+ * Project Version: 1u3c 29-Sept-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -1372,9 +1372,9 @@ void createGIAcoreferenceInListBasedUponIdentifiedReferenceSets(unordered_map<st
 			queryTraceParameters.level = 0;
 			#endif
 			#ifdef GIA_QUERY_SIMPLIFIED_SEARCH_ENFORCE
-			int result = testEntityNodeForQueryOrReferenceSet2(queryEntityWithMaxNumberNodesMatched, networkEntityWithMaxNumberNodesMatched, &numberOfMatchedNodesTemp, true, &numberOfMatchedNodesRequiredSynonymnDetectionTemp, TRACE_MODE_IS_QUERY_FALSE, &queryTraceParameters, &referenceTraceParameters);
+			bool result = testEntityNodeForQueryOrReferenceSet2(queryEntityWithMaxNumberNodesMatched, networkEntityWithMaxNumberNodesMatched, &numberOfMatchedNodesTemp, true, &numberOfMatchedNodesRequiredSynonymnDetectionTemp, TRACE_MODE_IS_QUERY_FALSE, &queryTraceParameters, &referenceTraceParameters);
 			#else
-			int result = testEntityNodeForQueryOrReferenceSet(queryEntityWithMaxNumberNodesMatched, networkEntityWithMaxNumberNodesMatched, &numberOfMatchedNodesTemp, true, &numberOfMatchedNodesRequiredSynonymnDetectionTemp, TRACE_MODE_IS_QUERY_FALSE, &queryTraceParameters, &referenceTraceParameters);			
+			bool result = testEntityNodeForQueryOrReferenceSet(queryEntityWithMaxNumberNodesMatched, networkEntityWithMaxNumberNodesMatched, &numberOfMatchedNodesTemp, true, &numberOfMatchedNodesRequiredSynonymnDetectionTemp, TRACE_MODE_IS_QUERY_FALSE, &queryTraceParameters, &referenceTraceParameters);			
 			#endif
 			
 			#ifdef GIA_USE_ADVANCED_REFERENCING
@@ -1477,9 +1477,10 @@ void createGIAcoreferenceInListBasedUponIdentifiedReferenceSet(unordered_map<str
 				if(foundQueryEntityNodeName)
 				{
 					#ifdef GIA_ADVANCED_REFERENCING_DEBUG
-					cout << "foundQueryEntityNodeName" << endl;
-					cout << "currentQueryEntityNode->entityName = " << currentQueryEntityNode->entityName << endl;
-					cout << "conceptEntityMatchingCurrentQueryEntity->entityName = " << conceptEntityMatchingCurrentQueryEntity->entityName << endl;
+					cout << "\tcreateGIAcoreferenceInListBasedUponIdentifiedReferenceSet" << endl;
+					cout << "\tfoundQueryEntityNodeName" << endl;
+					cout << "\tcurrentQueryEntityNode->entityName = " << currentQueryEntityNode->entityName << endl;
+					cout << "\tconceptEntityMatchingCurrentQueryEntity->entityName = " << conceptEntityMatchingCurrentQueryEntity->entityName << endl;
 					//cout << "currentQueryEntityNode->isConcept = " << currentQueryEntityNode->isConcept << endl;
 					//cout << "conceptEntityMatchingCurrentQueryEntity->isConcept = " << conceptEntityMatchingCurrentQueryEntity->isConcept << endl;
 					#endif
@@ -1522,15 +1523,15 @@ void createGIAcoreferenceInListBasedUponIdentifiedReferenceSet(unordered_map<str
 						#endif
 						{
 							*foundAtLeastOneMatch = true;
-
+								
 							*maxNumberOfMatchedNodes = numberOfMatchedNodesTemp;
 							*queryEntityWithMaxNumberNodesMatched = currentQueryEntityNode;
 							*networkEntityWithMaxNumberNodesMatched = conceptEntityMatchingCurrentQueryEntity;
 
 							#ifdef GIA_ADVANCED_REFERENCING_DEBUG
-							//cout << "\t\t numberOfMatchedNodesTemp = " << numberOfMatchedNodesTemp << endl;
-							//cout << "\t\t queryEntityWithMaxNumberNodesMatched->entityName = " << (*queryEntityWithMaxNumberNodesMatched)->entityName << endl;
-							//cout << "\t\t networkEntityWithMaxNumberNodesMatched->entityName = " << (*networkEntityWithMaxNumberNodesMatched)->entityName << endl;
+							cout << "\t\t numberOfMatchedNodesTemp = " << numberOfMatchedNodesTemp << endl;
+							cout << "\t\t queryEntityWithMaxNumberNodesMatched->entityName = " << (*queryEntityWithMaxNumberNodesMatched)->entityName << endl;
+							cout << "\t\t networkEntityWithMaxNumberNodesMatched->entityName = " << (*networkEntityWithMaxNumberNodesMatched)->entityName << endl;
 							#endif
 						}
 					}

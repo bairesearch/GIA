@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q3a 29-Sept-2013
+ * Project Version: 1u3c 29-Sept-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1264,9 +1264,11 @@ public:
 	bool disableEntityUseOriginalValues[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_GOVDEP_ENTITIES_PER_RELATION];	//for disabling an entity based on its original index
 	bool disableRelation[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS];
 	bool disableRelationDuringLink[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS];
+	
+	string functionName;
 };
 
-bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParameters * param, int currentRelationID, string functionName);
+bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParameters * param, int currentRelationID);
 
 #endif
 
@@ -1307,9 +1309,11 @@ public:
 
 		//for cleanup
 	bool disableEntity;
+	
+	string functionName;
 };
 
-bool genericEntityInterpretation(GIAgenericEntityInterpretationParameters * param, string functionName);
+bool genericEntityInterpretation(GIAgenericEntityInterpretationParameters * param);
 
 #endif
 

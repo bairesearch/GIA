@@ -23,7 +23,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q3a 29-Sept-2013
+ * Project Version: 1u3c 29-Sept-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -679,6 +679,23 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 #endif
 
 	#ifdef GIA_TRANSLATOR_DEBUG
+	cout << "\nBefore substance declarations: " << endl;
+	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
+	{
+		if(GIAentityNodeArrayFilled[i])
+		{
+			if(!(GIAentityNodeArray[i]->disabled))
+			{
+				cout << "\ti = " << i << endl;
+				cout << "GIAentityNodeArray[i]->entityName = " << GIAentityNodeArray[i]->entityName << endl;
+				cout << "GIAentityNodeArray[i]->isConcept = " << GIAentityNodeArray[i]->isConcept << endl;
+				cout << "GIAentityNodeArray[i]->isSubstanceConcept = " << GIAentityNodeArray[i]->isSubstanceConcept << endl;
+			}
+		}
+	}
+	#endif
+	
+	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "pass 4; disable Concept Entities Based On Feature Temp Entity Node Array" << endl;
 	#endif
 	//transfer disabled substances across execution#1 [this is required since GIAtranslatorRedistributeStanfordRelations operations are now done on temporary entity nodes GIAfeatureTempEntityNodeArray instead of concept entity nodes {whose values would have been automatically transferred their instances upon creation}...]
@@ -742,16 +759,17 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 	#endif
 		
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "After substance declarations: " << endl;
+	cout << "\nAfter substance declarations: " << endl;
 	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
 	{
 		if(GIAentityNodeArrayFilled[i])
 		{
 			if(!(GIAentityNodeArray[i]->disabled))
 			{
-				cout << "i = " << i << endl;
+				cout << "\ti = " << i << endl;
 				cout << "GIAentityNodeArray[i]->entityName = " << GIAentityNodeArray[i]->entityName << endl;
 				cout << "GIAentityNodeArray[i]->isConcept = " << GIAentityNodeArray[i]->isConcept << endl;
+				cout << "GIAentityNodeArray[i]->isSubstanceConcept = " << GIAentityNodeArray[i]->isSubstanceConcept << endl;
 			}
 		}
 	}
@@ -836,6 +854,11 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 				#else
 					GIAentityNode * conceptNode = getPrimaryConceptNodeDefiningInstance(GIAentityNodeArray[w]);
 				#endif
+					#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES
+					conceptNode->mustSetIsSubstanceConceptBasedOnApposRelation = false; //added 29 Sept 2013
+					conceptNode->alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp = false;	//added 29 Sept 2013
+					conceptNode->isPronounReference = false;	//added 29 Sept 2013
+					#endif
 				
 					if(conceptNode->sentenceIndexTemp == GIA_SENTENCE_INDEX_UNDEFINED)
 					{//do not overwrite sentenceIndex, as it needs to be drawn with first instance in network 
@@ -1084,10 +1107,12 @@ bool applyGIATranslatorGenericXMLparam(XMLparserTag * currentParamTag, bool depR
 		#endif
 		
 		GIAgenericDepRelInterpretationParameters paramDepRel(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, executeOrReassign);
+		paramDepRel.functionName = functionName;
 		paramDepRel.entityNodesActiveListConcepts = entityNodesActiveListConcepts;		
 		paramDepRel.NLPdependencyRelationsType = NLPdependencyRelationsType;
 		paramDepRel.executeOrReassign = executeOrReassign;			
 		GIAgenericEntityInterpretationParameters paramEntity(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, executeOrReassign);
+		paramEntity.functionName = functionName;
 		paramEntity.executeOrReassign = executeOrReassign;
 		bool passedAssert = true;
 		bool assertdisableRelationAfterFinish = false;
@@ -1269,7 +1294,7 @@ bool applyGIATranslatorGenericXMLparam(XMLparserTag * currentParamTag, bool depR
 			if(depRelOrEntity)
 			{
 				//cout << "genericDependecyRelationInterpretation()" << endl;							
-				if(genericDependecyRelationInterpretation(&paramDepRel, REL1, functionName))
+				if(genericDependecyRelationInterpretation(&paramDepRel, REL1))
 				{	
 					if(asssertsetDefiniteAfterFinish)
 					{
@@ -1285,7 +1310,7 @@ bool applyGIATranslatorGenericXMLparam(XMLparserTag * currentParamTag, bool depR
 			}
 			else
 			{
-				if(genericEntityInterpretation(&paramEntity, functionName))
+				if(genericEntityInterpretation(&paramEntity))
 				{
 					/*
 					if(functionName == "defineSubstanceConcepts")			

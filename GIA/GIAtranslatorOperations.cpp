@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q3a 29-Sept-2013
+ * Project Version: 1u3c 29-Sept-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -2137,12 +2137,14 @@ GIAgenericDepRelInterpretationParameters::GIAgenericDepRelInterpretationParamete
 	disableEntityUseOriginalValues = {{false, false}, {false, false}, {false, false}, {false, false}}; 	//for disabling an entity based on its original index
 	disableRelation = {false, false, false, false, false};
 	disableRelationDuringLink = {false, false, false, false, false};
+	
+	functionName = "";
 }
 GIAgenericDepRelInterpretationParameters::~GIAgenericDepRelInterpretationParameters(void)
 {
 }
 
-bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParameters * param, int currentRelationID, string functionName)
+bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParameters * param, int currentRelationID)
 {
 	//cout << "START genericDependecyRelationInterpretation: " << currentRelationID << endl;
 	bool result = false;
@@ -2272,7 +2274,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 					cout << currentRelationID << ": " << param->relation[currentRelationID]->relationType << "(" << param->relation[currentRelationID]->relationGovernor << ", " << param->relation[currentRelationID]->relationDependent << ")" << endl;
 					#endif
 					GIAgenericDepRelInterpretationParameters paramTemp = *param;	//this shouldnt be required anymore with relationFinalResult/relationEntityFinalResult/relationEntityIndexFinalResult... 	//only record parameters (eg relationEntity/relationEntityIndex) if successfully recused - this is required if additional commands are required to be executed based on the successful (result==true) recursion of genericDependecyRelationInterpretation (e.g. in GIAtranslatorRedistributeStanfordRelations.cpp)  
-					if(genericDependecyRelationInterpretation(&paramTemp, (currentRelationID+1), functionName))
+					if(genericDependecyRelationInterpretation(&paramTemp, (currentRelationID+1)))
 					{
 						result = true;
 						*param = paramTemp;	//this shouldnt be required anymore with relationFinalResult/relationEntityFinalResult/relationEntityIndexFinalResult... 	//only record parameters (eg relationEntity/relationEntityIndex) if successfully recused - this is required if additional commands are required to be executed based on the successful (result==true) recursion of genericDependecyRelationInterpretation (e.g. in GIAtranslatorRedistributeStanfordRelations.cpp)  
@@ -2365,7 +2367,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 						#endif
 						result = true;
 						
-						//cout << "genericDependecyRelationInterpretation() passed: function = " << functionName << endl;
+						//cout << "\t\t\genericDependecyRelationInterpretation() passed: function = " << param->functionName << endl;
 						
 						//record final values for further manipulation of variables after successful (match found) recursive execution of genericDependecyRelationInterpretation:
 						for(int relationID=0; relationID<GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS; relationID++)
@@ -2450,6 +2452,10 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 									}
 								}
 
+								//cout << "\t\tgenericDependecyRelationInterpretation() passed: function = " << param->functionName << endl;
+								//cout << "\t\tgenericEntityArrayInterpretation: " << param->GIAentityNodeArray[functionEntityIndex1]->entityName << endl;
+								//cout << "\t\tisSubstanceConcept: " << param->GIAentityNodeArray[functionEntityIndex1]->isSubstanceConcept << endl;
+									
 								if(param->functionToExecuteUponFind == GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addSubstanceToSubstanceDefinition)
 								{
 									param->GIAentityNodeArray[functionEntityIndex1] = addSubstanceToSubstanceDefinition(param->GIAentityNodeArray[functionEntityIndex1]);
@@ -2645,7 +2651,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 										#endif
 										bool auxillaryIndicatesDifferentReferenceSet = true;
 										GIAgenericDepRelInterpretationParameters paramTemp = *param;
-										if(genericDependecyRelationInterpretation(&paramTemp, (currentRelationID+1), functionName))
+										if(genericDependecyRelationInterpretation(&paramTemp, (currentRelationID+1)))
 										{
 											auxillaryIndicatesDifferentReferenceSet = false;
 										}
@@ -2768,12 +2774,14 @@ GIAgenericEntityInterpretationParameters::GIAgenericEntityInterpretationParamete
 	functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_undefined;
 		
 	disableEntity = false;
+	
+	functionName = "";
 }
 GIAgenericEntityInterpretationParameters::~GIAgenericEntityInterpretationParameters(void)
 {
 }
 
-bool genericEntityInterpretation(GIAgenericEntityInterpretationParameters * param, string functionName)
+bool genericEntityInterpretation(GIAgenericEntityInterpretationParameters * param)
 {
 	bool result = false;
 	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
@@ -2847,12 +2855,14 @@ bool genericEntityInterpretation(GIAgenericEntityInterpretationParameters * para
 				{
 					result = true;
 					
+					#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_DEBUG
+					cout << "\t\t\tgenericEntityInterpretation() passed: function = " << param->functionName << endl;
+					cout << "\t\tgenericEntityArrayInterpretation: " << param->GIAentityNodeArray[i]->entityName << endl;
+					cout << "\t\tisSubstanceConcept: " << param->GIAentityNodeArray[i]->isSubstanceConcept << endl;
+					#endif
+
 					if(param->executeOrReassign)
 					{
-						#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_DEBUG
-						cout << "genericEntityArrayInterpretation: " << param->GIAentityNodeArray[i]->entityName << endl;
-						#endif
-
 						if(param->functionToExecuteUponFind == GIA_GENERIC_ENTITY_INTERP_EXECUTE_FUNCTION_addSubstanceToSubstanceDefinition)
 						{
 							param->GIAentityNodeArray[i] = addSubstanceToSubstanceDefinition(param->GIAentityNodeArray[i]);
@@ -2873,6 +2883,8 @@ bool genericEntityInterpretation(GIAgenericEntityInterpretationParameters * para
 					}	
 					*/
 					setEntityCharacteristics(param->GIAentityNodeArray[i], &(param->specialCaseCharacteristicsAssignmentVector));	//this has been moved out in the case reassignment is required along with execution							
+					
+					//cout << "\t\tisSubstanceConcept after: " << param->GIAentityNodeArray[i]->isSubstanceConcept << endl;
 				}
 
 				//for cleanup

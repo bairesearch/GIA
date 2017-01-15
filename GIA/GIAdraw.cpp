@@ -23,7 +23,7 @@
  * File Name: GIAdraw.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q3a 29-Sept-2013
+ * Project Version: 1u3c 29-Sept-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -216,9 +216,12 @@ void determineBasicPrintPositionsOfAllNodes(vector<GIAentityNode*> *entityNodesA
 	}
 }
 
-Reference * initialiseEntityConnectionForPrinting(vec * pos1, GIAentityConnection * entityConnection, Reference * currentReferenceInPrintList, bool printType[], string connectionName, int entityDefinitionConnectionColour, XMLparserTag ** currentTag)
+Reference * initialiseEntityConnectionForPrinting(vec * pos1, GIAentityConnection * entityConnection, Reference * currentReferenceInPrintList, bool printType[], string connectionName, int entityConnectionColour, XMLparserTag ** currentTag)
 {
 	GIAentityNode * entityNodeToConnect = entityConnection->entity;
+	
+	//cout << "initialiseEntityConnectionForPrinting: entityNodeToConnect->entityName = " << entityNodeToConnect->entityName << endl;
+
 	#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX_ADVANCED
 	if((entityNodeToConnect->initialisedForPrinting) && !(entityConnection->initialisedForPrinting) && !(entityNodeToConnect->disabled))
 	//added condition 31 August 2013: only print connection if node has been printed
@@ -235,9 +238,9 @@ Reference * initialiseEntityConnectionForPrinting(vec * pos1, GIAentityConnectio
 		pos2.x = entityNodeToConnect->printX;
 		pos2.y = entityNodeToConnect->printY;
 		pos2.z = DRAW_CONNECTION_Z;
-		currentReferenceInPrintList = createReferenceConnectionWithText(currentReferenceInPrintList, pos1, &pos2, entityDefinitionConnectionColour, currentTag, connectionName, printType);
+		currentReferenceInPrintList = createReferenceConnectionWithText(currentReferenceInPrintList, pos1, &pos2, entityConnectionColour, currentTag, connectionName, printType);
 	}
-
+	
 	return currentReferenceInPrintList;
 }
 
@@ -253,6 +256,8 @@ Reference * initialiseEntityNodeForPrinting(GIAentityNode * entityNode, int y, i
 		//if(!(entityNode->initialisedForPrinting) || (entityNode->printY < y))
 		if(!(entityNode->initialisedForPrinting) && !(entityNode->disabled))
 		{
+			//cout << "initialiseEntityNodeForPrinting: entityNode->entityName = " << entityNode->entityName << endl;
+			
 			/*
 			cout << "\nentityNode->sentenceIndexTemp = " << entityNode->sentenceIndexTemp << endl;
 			cout << "entityNode->entityName = " << entityNode->entityName << endl;

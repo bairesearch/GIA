@@ -23,7 +23,7 @@
  * File Name: GIAquery.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q3a 29-Sept-2013
+ * Project Version: 1u3c 29-Sept-2013
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  * ?Limitations: will only locate a exact answer (based upon a comparison node) if it provides the maximum number of matched nodes
@@ -270,6 +270,8 @@ bool testEntityNodeForQueryOrReferenceSet2(GIAentityNode * queryEntityNode, GIAe
 							maxNumberMatchedNodes = numberOfMatchedNodesTemp;
 							foundBestAnswerCandidate = true;
 							networkEntityWithMaxNumberNodesMatched = (*connectionIter)->entity;
+							//cout << "foundBestAnswerCandidate = " << (*connectionIter)->entity->entityName << endl;
+
 						}
 					}
 
@@ -290,15 +292,16 @@ bool testEntityNodeForQueryOrReferenceSet2(GIAentityNode * queryEntityNode, GIAe
 					#ifdef GIA_USE_ADVANCED_REFERENCING
 					if(knownBestMatch)
 					{
-						//cout << "knownBestMatch" << endl;
+						//cout << "knownBestMatch: (*connectionIterQuery)->entity->entityName = " << (*connectionIterQuery)->entity->entityName << endl;
 						(*connectionIterQuery)->entity->entityCorrespondingBestMatch = networkEntityWithMaxNumberNodesMatched;		//this shouldn't be required for queries....
 					}
 					#endif
-										
-					int numberOfMatchedNodesTemp = 0;
-					int numberOfMatchedNodesRequiredSynonymnDetectionTemp = 0;
+
+					int numberOfMatchedNodesTemp = *numberOfMatchedNodes;
+					int numberOfMatchedNodesRequiredSynonymnDetectionTemp = *numberOfMatchedNodesRequiredSynonymnDetection;
 					if(!testReferencedEntityNodeForExactNameMatch2((*connectionIterQuery)->entity, networkEntityWithMaxNumberNodesMatched, &numberOfMatchedNodesTemp, knownBestMatch, &numberOfMatchedNodesRequiredSynonymnDetectionTemp, traceModeIsQuery, queryTraceParameters, referenceTraceParameters))
 					{
+						//for advanced referencing this should never be the case (it should always refind what was found originally)
 						exactMatch = false;
 					}
 					*numberOfMatchedNodes = numberOfMatchedNodesTemp;
@@ -307,6 +310,7 @@ bool testEntityNodeForQueryOrReferenceSet2(GIAentityNode * queryEntityNode, GIAe
 				else
 				{
 					exactMatch = false;
+					//cout << "!exactMatch2: (*connectionIterQuery)->entity->entityName = " << (*connectionIterQuery)->entity->entityName << endl;
 				}
 			}
 			#ifdef GIA_QUERY_DEBUG
