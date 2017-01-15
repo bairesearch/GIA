@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s1a 12-April-2013
+ * Project Version: 1s1b 12-April-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -385,10 +385,10 @@ GIAentityNode * addSubstance(GIAentityNode * entity)
 		entity->isQuery = false;
 		newSubstance->isQuery = true;
 		#ifdef GIA_SUPPORT_COMPARISON_VARIABLE_DEFINITION_VIA_ALTERNATE_METHOD_EG_SUPPORT_WHICH_QUERIES_ADVANCED
-		if(entity->isWhichQuery)
+		if(entity->isWhichOrEquivalentWhatQuery)
 		{
-			entity->isWhichQuery = false;
-			newSubstance->isWhichQuery = true;
+			entity->isWhichOrEquivalentWhatQuery = false;
+			newSubstance->isWhichOrEquivalentWhatQuery = true;
 		}
 		#endif
 	}
@@ -574,10 +574,10 @@ GIAentityNode * addAction(GIAentityNode * actionEntity)
 		actionEntity->isQuery = false;
 		newAction->isQuery = true;
 		#ifdef GIA_SUPPORT_COMPARISON_VARIABLE_DEFINITION_VIA_ALTERNATE_METHOD_EG_SUPPORT_WHICH_QUERIES_ADVANCED
-		if(actionEntity->isWhichQuery)
+		if(actionEntity->isWhichOrEquivalentWhatQuery)
 		{
-			actionEntity->isWhichQuery = false;
-			newAction->isWhichQuery = true;
+			actionEntity->isWhichOrEquivalentWhatQuery = false;
+			newAction->isWhichOrEquivalentWhatQuery = true;
 		}
 		#endif
 	}
@@ -1941,7 +1941,7 @@ void mergeEntityNodesAddAlias(GIAentityNode * entityNode, GIAentityNode * entity
 	if(entityNodeToMerge->isQuery)
 	{
 		entityNode->isQuery = entityNodeToMerge->isQuery;
-		entityNode->isWhichQuery = entityNodeToMerge->isWhichQuery;
+		entityNode->isWhichOrEquivalentWhatQuery = entityNodeToMerge->isWhichOrEquivalentWhatQuery;
 		#ifdef GIA_SUPPORT_ALIASES
 		entityNode->isNameQuery = entityNodeToMerge->isNameQuery;
 		#endif

@@ -23,7 +23,7 @@
  * File Name: GIAentityNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s1a 12-April-2013
+ * Project Version: 1s1b 12-April-2013
  * NB a substance is an instance of an entity, any given entity may contain/comprise/have multiple substances - and substances are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -353,7 +353,7 @@ public:
 	bool hasAssociatedInstanceTemp;	//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
 
 	bool isQuery;
-	bool isWhichQuery;
+	bool isWhichOrEquivalentWhatQuery;
 	#ifdef GIA_SUPPORT_ALIASES
 	bool isName;
 	bool isNameQuery;

@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorRedistributeStanfordRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s1a 12-April-2013
+ * Project Version: 1s1b 12-April-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -2498,10 +2498,15 @@ void redistributeStanfordRelationsCreateQueryVarsWhat(Sentence * currentSentence
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
+		/*
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
 		if(!(currentRelationInList->disabled))
 		{
 		#endif
+		*/
+		//if(currentRelationInList->relationType != RELATION_TYPE_DETERMINER)
+		if(GIAentityNodeArray[currentRelationInList->relationDependentIndex]->stanfordPOStemp != FEATURE_POS_TAG_WDT)
+		{
 			bool queryWhatRelationDependentFound = false;
 			for(int i=0; i<FEATURE_QUERY_WORD_WHAT_NUMBER_OF_TYPES; i++)
 			{
@@ -2515,10 +2520,12 @@ void redistributeStanfordRelationsCreateQueryVarsWhat(Sentence * currentSentence
 				currentRelationInList->relationDependent = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;
 				GIAentityNodeArray[currentRelationInList->relationDependentIndex]->entityName = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;	//convert "What" to _$qVar
 			}
-
+		}
+		/*
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
 		}
 		#endif
+		*/
 		currentRelationInList = currentRelationInList->next;
 	}
 }
