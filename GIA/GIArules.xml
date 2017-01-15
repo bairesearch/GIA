@@ -344,6 +344,66 @@
 				<!-- #endif -->
 			</function>
 
+			<!-- NLC Only -->
+			<!-- #ifdefNLC_USE_NON_STANDARD_CONDITION_CONDITION_CONNECTIONS_CONNECT_CONJUNCTIONS_TO_THEIR_RELEVANT_PREPOSITIONS -->
+			<function name="redistributeStanfordRelationsConjunctionAndSubjectAndPreposition">
+				
+				<example><!--
+				eg1 If the basket is near the house and is red, the dog is happy.
+					conj_and(is-4, red-10) + nsubj(is-4, basket-3) + prep_near(is-4, house-7) -> conj_and(near-x, red-10)
+				--></example>
+				<paramDepRel mode="redistribute">
+				<option numberOfRelations="3" />
+				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="_conj_and|_conj_or" relationArrayTestSize="2" />
+				<option useRelationTest="true" REL="2" REL_ENT="3" relationTest="_subj" />
+				<option expectToFindPrepositionTest="true" REL="3" />
+				<option useRelationTest="true" REL="1" REL_ENT="1" relationTest="be" />
+				<option useRelationIndexTest="true" REL="2" REL_ENT="1" relationIndexTestRelationID="1" relationIndexTestEntityID="1" />
+				<option useRelationIndexTest="true" REL="3" REL_ENT="1" relationIndexTestRelationID="1" relationIndexTestEntityID="1" />
+				<option useRedistributeRelationEntityIndexReassignment="true" REL="1" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="3" redistributeRelationEntityIndexReassignmentRelationEntityID="3" />
+				</paramDepRel>
+				
+				<example><!--
+				eg2 If the basket is red and is near the house, the dog is happy.
+					conj_and(red-5, is-7) + nsubj(is-7, basket-3) + prep_near(is-7, house-10) -> conj_and(red-5, near-x)
+				--></example>
+				<paramDepRel mode="redistribute">
+				<option numberOfRelations="3" />
+				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="_conj_and|_conj_or" relationArrayTestSize="2" />
+				<option useRelationTest="true" REL="2" REL_ENT="3" relationTest="_subj" />
+				<option expectToFindPrepositionTest="true" REL="3" />
+				<option useRelationTest="true" REL="1" REL_ENT="2" relationTest="be" />
+				<option useRelationIndexTest="true" REL="2" REL_ENT="1" relationIndexTestRelationID="1" relationIndexTestEntityID="2" />
+				<option useRelationIndexTest="true" REL="3" REL_ENT="1" relationIndexTestRelationID="1" relationIndexTestEntityID="2" />
+				<option useRedistributeRelationEntityIndexReassignment="true" REL="1" REL_ENT="2" redistributeRelationEntityIndexReassignmentRelationID="3" redistributeRelationEntityIndexReassignmentRelationEntityID="3" />
+				</paramDepRel>
+				
+				<example><!--
+				eg3 If the basket is near the house and is above the tray, the dog is happy.
+					conj_and(is-4, is-9) + nsubj(is-4, basket-3) + nsubj(is-9, basket-3) + prep_near(is-4, house-7) + prep_above(is-9, tray-12) -> conj_and(near-x, above-y)
+				--></example>
+				<!-- REDUNDANT (achieved by eg1 and eg2 combined):
+				<option numberOfRelations="5" />
+				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="_conj_and|_conj_or" relationArrayTestSize="2" />
+				<option useRelationTest="true" REL="2" REL_ENT="3" relationTest="_subj" />
+				<option useRelationTest="true" REL="3" REL_ENT="3" relationTest="_subj" />
+				<option expectToFindPrepositionTest="true" REL="4" />
+				<option expectToFindPrepositionTest="true" REL="5" />
+				<option useRelationTest="true" REL="1" REL_ENT="1" relationTest="be" />
+				<option useRelationTest="true" REL="1" REL_ENT="2" relationTest="be" />
+				<option useRelationIndexTest="true" REL="2" REL_ENT="1" relationIndexTestRelationID="1" relationIndexTestEntityID="1" />
+				<option useRelationIndexTest="true" REL="3" REL_ENT="1" relationIndexTestRelationID="1" relationIndexTestEntityID="2" />
+				<option useRelationIndexTest="true" REL="4" REL_ENT="1" relationIndexTestRelationID="2" relationIndexTestEntityID="1" />
+				<option useRelationIndexTest="true" REL="5" REL_ENT="1" relationIndexTestRelationID="3" relationIndexTestEntityID="1" />
+				<option parseDisabledRelation="true" REL="2" />
+				<option parseDisabledRelation="true" REL="3" />
+				<option useRedistributeRelationEntityIndexReassignment="true" REL="1" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="4" redistributeRelationEntityIndexReassignmentRelationEntityID="3" />
+				<option useRedistributeRelationEntityIndexReassignment="true" REL="1" REL_ENT="2" redistributeRelationEntityIndexReassignmentRelationID="5" redistributeRelationEntityIndexReassignmentRelationEntityID="3" />
+				</paramDepRel>
+				-->
+			</function>
+			<!-- #endif -->
+			
 			<function name="redistributeStanfordRelationsMultiwordPreposition">
 			<!-- #ifndefGIA_REDISTRIBUTE_STANFORD_RELATIONS_ACTION_PREPOSITION_ACTION -->
 				<!-- #ifdefGIA_REDISTRIBUTE_STANFORD_RELATIONS_DEP_AND_PREP_AND_XCOMP -->
@@ -1433,45 +1493,6 @@
 				<option disableRelation="true" REL="2" />
 				<option disableEntity="true" REL="2" REL_ENT="2" />
 				</paramDepRel>
-			</function>
-			
-			<!-- NLC Only -->
-			<function name="redistributeStanfordRelationsConjunctionAndSubjectAndPreposition">
-
-				<example><!--
-				eg1 If the basket is near the house and is red, the dog is happy.
-					conj_and(is-4, red-10) + nsubj(is-4, basket-3) + prep_near(is-4, house-7) -> conj_and(near-x, red-10)
-				--></example>
-				<paramDepRel mode="redistribute">
-				<option numberOfRelations="3" />
-				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="_conj_and|_conj_or" relationArrayTestSize="2" />
-				<option useRelationTest="true" REL="2" REL_ENT="3" relationTest="_subj" />
-				<option expectToFindPrepositionTest="true" REL="3" />
-				<option useRelationTest="true" REL="1" REL_ENT="1" relationTest="be" />
-				<option useRelationIndexTest="true" REL="2" REL_ENT="1" relationIndexTestRelationID="1" relationIndexTestEntityID="1" />
-				<!--<option useRelationIndexTest="true" REL="3" REL_ENT="1" relationIndexTestRelationID="1" relationIndexTestEntityID="1" />--> <!-- false; prep_near(is-4, house-7) is converted to prep_near(basket[3], house[7]) in redistributeStanfordRelationsMultiwordPreposition()-->
-				<option useRelationIndexTest="true" REL="3" REL_ENT="1" relationIndexTestRelationID="2" relationIndexTestEntityID="2" />
-				<option parseDisabledRelation="true" REL="2" /> 	<!--_nsubj relation will have been disabled when nsubj(is-4, basket-3)  + prep_near(is-4, house-7) is converted to prep_near(basket[3], house[7]) in redistributeStanfordRelationsMultiwordPreposition(), so must explicitly allow it to be parsed-->
-				<option useRedistributeRelationEntityIndexReassignment="true" REL="1" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="3" redistributeRelationEntityIndexReassignmentRelationEntityID="3" />
-				</paramDepRel>
-				
-				<example><!--
-				eg2 If the basket is red and is near the house, the dog is happy.	
-					conj_and(red-5, is-7) + nsubj(is-7, basket-3) + prep_near(is-7, house-10) -> conj_and(red-5, near-x)
-				--></example>
-				<paramDepRel mode="redistribute">
-				<option numberOfRelations="3" />
-				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="_conj_and|_conj_or" relationArrayTestSize="2" />
-				<option useRelationTest="true" REL="2" REL_ENT="3" relationTest="_subj" />
-				<option expectToFindPrepositionTest="true" REL="3" />
-				<option useRelationTest="true" REL="1" REL_ENT="2" relationTest="be" />
-				<option useRelationIndexTest="true" REL="2" REL_ENT="1" relationIndexTestRelationID="1" relationIndexTestEntityID="2" />
-				<!--<option useRelationIndexTest="true" REL="3" REL_ENT="1" relationIndexTestRelationID="1" relationIndexTestEntityID="2" />--> <!-- false; prep_near(is-4, house-7) is converted to prep_near(basket[3], house[7]) in redistributeStanfordRelationsMultiwordPreposition()-->
-				<option useRelationIndexTest="true" REL="3" REL_ENT="1" relationIndexTestRelationID="2" relationIndexTestEntityID="2" />
-				<option parseDisabledRelation="true" REL="2" /> 	<!--_nsubj relation will have been disabled when nsubj(is-4, basket-3)  + prep_near(is-4, house-7) is converted to prep_near(basket[3], house[7]) in redistributeStanfordRelationsMultiwordPreposition(), so must explicitly allow it to be parsed-->
-				<option useRedistributeRelationEntityIndexReassignment="true" REL="1" REL_ENT="2" redistributeRelationEntityIndexReassignmentRelationID="3" redistributeRelationEntityIndexReassignmentRelationEntityID="3" />
-				</paramDepRel>
-			
 			</function>
 
 			<function name="redistributeStanfordRelationsGenerateUnparsedQuantityModifers">

@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineGrammar.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f4a 04-July-2014
+ * Project Version: 2f4b 04-July-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -175,7 +175,8 @@ void locateAndAddAllFeatureTempEntities(Sentence * currentSentenceInList, bool G
 				if(!(GIAentityNodeArrayFilled[prepositionEntityIndex]))
 				{
 					GIAentityNodeArrayFilled[prepositionEntityIndex] = true;
-					//cout << "prepositionEntityIndex = " << prepositionEntityIndex << endl;
+					cout << "prepositionName = " << prepositionName << endl;
+					cout << "prepositionEntityIndex = " << prepositionEntityIndex << endl;
 					/*
 					//NB if concept type entity name has already been defined (GIAentityNodeArrayFilled[functionEntityIndex3]), then findOrAddEntityNodeByNameSimpleWrapperCondition will use it instead
 					bool entityAlreadyExistant = false;
