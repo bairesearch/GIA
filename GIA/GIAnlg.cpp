@@ -1,29 +1,29 @@
 /*******************************************************************************
- * 
+ *
  * This file is part of BAIPROJECT.
- * 
+ *
  * BAIPROJECT is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License version 3
  * only, as published by the Free Software Foundation.
- * 
+ *
  * BAIPROJECT is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License version 3 for more details
  * (a copy is included in the LICENSE file that accompanied this code).
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * version 3 along with BAIPROJECT.  If not, see <http://www.gnu.org/licenses/>
  * for a copy of the AGPLv3 License.
- * 
+ *
  *******************************************************************************/
- 
+
 /*******************************************************************************
  *
  * File Name: GIAnlg.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o6a 23-August-2012
+ * Project Version: 1p1a 08-September-2012
  * Requirements: requires GIA translated data, and NLG2 to be installed
  * Description: GIA natural language generation (using NLG2)
  *
@@ -601,12 +601,12 @@ void generateTwoEntitySentenceFromEntityConnection(GIAEntityNode * entityNode1, 
 			#ifdef NLG_TWO_ENTITY_SENTENCES_SUPPORT_ADVERBS_AND_ADJECTIVES
 			}
 			#endif
-		/*	
+		/*
 		}
 		else
 		{
 			if(entityNode2->isConcept)
-			{//isConcept		
+			{//isConcept
 				//cout << "warning: generateTwoEntitySentenceFromEntityConnection && (entityNode2->isConcept) && (connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES)" << endl;
 				//exit(0);
 			}
@@ -728,10 +728,10 @@ void generateTwoEntitySentenceFromEntityConnection(GIAEntityNode * entityNode1, 
 		//cout << "entityNode2->sourceReferencedInLanguageGeneration: " << entityNode2->entityName << endl;
 		entityNode1->sourceReferencedInLanguageGeneration = true;
 		entityNode2->sourceReferencedInLanguageGeneration = true;
-		
+
 		#ifdef NLG_TWO_ENTITY_SENTENCES_ADD_SINGLE_SUBSTANCE_AND_CONDITION_LINKS_DO_NOT_READD_SENTENCES_CONTAINED_THEREIN3_STRINGENT
 		if(!additionalLink)
-		{		
+		{
 		#endif
 			#ifdef NLG_TWO_ENTITY_SENTENCES_ADD_SINGLE_SUBSTANCE_AND_CONDITION_LINKS_DO_NOT_READD_SENTENCES_CONTAINED_THEREIN3
 			entityNode1->sourceAddedInLanguageGeneration = true;
@@ -982,7 +982,7 @@ void addDeterminate(GIAEntityNode * entityNode, string * entityTextExpanded)
 
 string calcDeterminate(GIAEntityNode * entityNode)
 {
-	
+
 	//first letter is vowel		//added 03 August 2012
 	bool firstLetterIsVowel = false;
 	#ifdef GIA_USE_NLG_NO_MORPHOLOGY_GENERATOR
@@ -1005,14 +1005,14 @@ string calcDeterminate(GIAEntityNode * entityNode)
 		 	firstLetterIsVowel = true;
 		}
 	}
-	
+
 	//noun_number
 	bool isPlural = false;	//added 03 August 2012
 	if(entityNode->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL)
 	{
 		isPlural = true;
 	}
-	
+
 	#ifdef GIA_NLG_SUPPORT_PERSON_AND_GENDER
 	//gender
 	bool isPerson = false;
@@ -1085,7 +1085,7 @@ string calcDeterminate(GIAEntityNode * entityNode)
 					{
 						if(firstLetterIsVowel)
 						{
-							determinate = GRAMMATICAL_DETERMINER_INDEFINITE_FIRST_LETTER_VOWEL;	//an					
+							determinate = GRAMMATICAL_DETERMINER_INDEFINITE_FIRST_LETTER_VOWEL;	//an
 						}
 						else
 						{
@@ -1116,7 +1116,7 @@ string calcDeterminate(GIAEntityNode * entityNode)
 		}
 	}
 	#endif
-	
+
 	string determinateFinal = "";
 	if(addDeterminate)
 	{
@@ -1130,7 +1130,7 @@ string calcDeterminate(GIAEntityNode * entityNode)
 				if(!isTime)
 				{
 				#endif
-		
+
 					determinateFinal = determinate + NLG_TEXT_SPACE;
 				#ifdef GIA_NLG_SUPPORT_TIME_CONDITIONS
 				}
@@ -1202,7 +1202,7 @@ string getWordOrig(GIAEntityNode * entityNode)
 
 string determineNLGdefinitionText(GIAEntityNode * entityNode)
 {
-	string nlgDefinitionText = "";	
+	string nlgDefinitionText = "";
 	bool isPlural = false;
 	if(entityNode->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL)
 	{
@@ -1221,7 +1221,7 @@ string determineNLGdefinitionText(GIAEntityNode * entityNode)
 
 string determineNLGpossessionText(GIAEntityNode * entityNode)
 {
-	string nlgPossessionText = "";	
+	string nlgPossessionText = "";
 	bool isPlural = false;
 	if(entityNode->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL)
 	{

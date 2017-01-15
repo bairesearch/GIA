@@ -1,29 +1,29 @@
 /*******************************************************************************
- * 
+ *
  * This file is part of BAIPROJECT.
- * 
+ *
  * BAIPROJECT is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License version 3
  * only, as published by the Free Software Foundation.
- * 
+ *
  * BAIPROJECT is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License version 3 for more details
  * (a copy is included in the LICENSE file that accompanied this code).
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * version 3 along with BAIPROJECT.  If not, see <http://www.gnu.org/licenses/>
  * for a copy of the AGPLv3 License.
- * 
+ *
  *******************************************************************************/
- 
+
 /*******************************************************************************
  *
  * File Name: GIAEntityNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o6a 23-August-2012
+ * Project Version: 1p1a 08-September-2012
  * NB a substance is an instance of an entity, any given entity may contain/comprise/have multiple substances - and substances are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -226,7 +226,7 @@ public:
 	#ifdef GIA_SUPPORT_ALIASES
 	vector<string> aliasList;
 	#endif
-	
+
 	bool isConcept;			//is this entity a concept? [added 10 May 2012]
 	bool isSubstance;		//is this entity a substance?
 	bool isAction;			//is this entity an action?
@@ -313,7 +313,7 @@ public:
 
 	bool grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES];	//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
 	int grammaticalTenseTemp; 	//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
-	int grammaticalNumber; 		
+	int grammaticalNumber;
 	bool grammaticalDefiniteTemp; 	//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
 	bool grammaticalRelexPersonOrStanfordProperNounTemp;	//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
 	int grammaticalGenderTemp; 	//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
@@ -394,7 +394,7 @@ public:
 	bool sourceAddedInLanguageGeneration;
 	bool sourceReferencedInLanguageGeneration;
 	#endif
-	
+
 	#ifdef GIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF
 	bool isName;
 	#endif

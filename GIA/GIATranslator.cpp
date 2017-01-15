@@ -1,29 +1,29 @@
 /*******************************************************************************
- * 
+ *
  * This file is part of BAIPROJECT.
- * 
+ *
  * BAIPROJECT is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License version 3
  * only, as published by the Free Software Foundation.
- * 
+ *
  * BAIPROJECT is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License version 3 for more details
  * (a copy is included in the LICENSE file that accompanied this code).
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * version 3 along with BAIPROJECT.  If not, see <http://www.gnu.org/licenses/>
  * for a copy of the AGPLv3 License.
- * 
+ *
  *******************************************************************************/
- 
+
 /*******************************************************************************
  *
  * File Name: GIATranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o6a 23-August-2012
+ * Project Version: 1p1a 08-September-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -434,21 +434,21 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 		#endif
 		#ifdef GIA_REDISTRIBUTE_RELATIONS_SUPPORT_WHAT_IS_THE_NAME_NUMBER_OF_QUERIES
 		if(currentSentenceInList->isQuestion)
-		{		
+		{
 			#ifdef GIA_TRANSLATOR_DEBUG
 			cout << "pass 1cZb; redistribute Relations - what is the name/number of? 	nsubj(is-2, name-4) / attr(is-2, What-1) {/ det(name-4, the-3)} / poss/prep_of(name-4, dog-8) -> appos(That-1, _$qVar[1])" << endl;
 			#endif
 			redistributeStanfordRelationsCreateQueryVarsWhatIsTheNameNumberOf(currentSentenceInList, GIAEntityNodeArrayFilled, GIAFeatureTempEntityNodeArray);
 		}
-		#endif		
+		#endif
 		#ifdef GIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF
 		#ifdef GIA_TRANSLATOR_DEBUG
 		cout << "pass 1cZc; redistribute Relations - intepret name of as definition (eg interpret 'The red dog's name is Max.' / 'The name of the red dog is Max.'	nsubj(Max-7, name-5) / poss/prep_of(name-5, dog-3) -> appos(dog-3, Max-7)" << endl;
 		#endif
-		redistributeStanfordRelationsInterpretNameOfAsDefinition(currentSentenceInList, GIAEntityNodeArrayFilled, GIAFeatureTempEntityNodeArray);		
+		redistributeStanfordRelationsInterpretNameOfAsDefinition(currentSentenceInList, GIAEntityNodeArrayFilled, GIAFeatureTempEntityNodeArray);
 		#endif
-				
-				
+
+
 		#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_6A_COLLAPSE_ADVMOD_RELATION_GOVERNOR_BE
 		#ifdef GIA_TRANSLATOR_DEBUG
 		cout << "pass 1c2; redistribute Stanford Relations -Collapse Advmod Relation Function Be (eg The rabbit is 20 meters away. 	nsubj(is-3, rabbit-2) / advmod(is-3, away-6) - > _predadj(rabbit-2, away-6)   +    Kane is late.	nsubj(late-3, Kane-1) / cop(late-3, is-2) -> _predadj(kane-1, late-3)          +    She is the one     nsubj(one-4, She-1) /cop(one-4, is-2) / det(one-4, the-3) -> appos(She-1, one-4)" << endl;
@@ -504,12 +504,12 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 			#endif
 			redistributeStanfordRelationsCreateQueryVars(currentSentenceInList, GIAEntityNodeArrayFilled, GIAFeatureTempEntityNodeArray);
 		}
-		
+
 		#ifdef GIA_TRANSLATOR_DEBUG
 		cout << "pass 1c11; redistribute Stanford Relations - partmod (eg Truffles picked during the spring are tasty.   partmod(truffle, pick) -> obj(pick, truffle) )" << endl;
 		#endif
 		redistributeStanfordRelationsPartmod(currentSentenceInList, GIAEntityNodeArrayFilled, GIAFeatureTempEntityNodeArray);
-					
+
 	}
 	#endif
 
@@ -643,7 +643,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 		#endif
 		#endif
 		#endif
-	#ifdef GIA_USE_ADVANCED_REFERENCING	
+	#ifdef GIA_USE_ADVANCED_REFERENCING
 	}
 	#endif
 
@@ -693,7 +693,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 	#endif
 	defineSubstancesDefiniteNouns(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, featureArrayTemp);
 	#endif
-	
+
 	/*
 	#ifdef GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES_OLD
 	#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1F_RELATIONS_TREAT_THAT_AS_A_PRONOUN_IE_SUBSTANCE
@@ -701,24 +701,24 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 	cout << "0kSHIFTED pass; define substances (non explicit pronouns eg 'that');" << endl;
 	#endif
 	defineSubstancesNonExplicitPronouns(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray);
-	#endif	
+	#endif
 	#endif
 	*/
-			
+
 	#ifdef GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "0c pass; define substances based on determinates of definition entities" << endl;
 	#endif
 	defineSubstancesBasedOnDeterminatesOfDefinitionEntities(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, referenceTypeHasDeterminateCrossReferenceNumberArray, featureArrayTemp);
 	#endif
-	
+
 	#ifdef GIA_ASSIGN_SUBSTANCE_TO_ALL_NOUNS_WITH_DETERMINATES
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "0d pass; define substances (nouns with determinates); eg a house, the house, the houses [all nouns with singular/plural are assumed to have determintes, and are therefore substances]" << endl;
 	#endif
 	defineSubstancesNounsWithDeterminates(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, referenceTypeHasDeterminateCrossReferenceNumberArray, featureArrayTemp);
 	#endif
-	
+
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "0e pass; define substances (nouns with adjectives); _amod; eg locked door, _advmod; eg cheetahs run quickly [NOT and c) _predadj; eg giants are red / joe is late]" << endl;
 	#endif
@@ -745,7 +745,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 	#endif
 	defineSubstancesPronouns(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, featureArrayTemp);
 	#endif
-	
+
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "0j pass; define substances (to_be);" << endl;
 	#endif
@@ -826,7 +826,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 	#else
 	linkEntityDefinitionsAppositiveOfNouns(currentSentenceInList, GIAEntityNodeArray);
 	#endif
-	
+
 	#ifdef GIA_TRANSLATOR_DEBUG
  	cout <<"3a pass; link dependent subject-object definition/composition/action relationships" << endl;
 	#endif

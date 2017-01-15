@@ -1,31 +1,31 @@
 /*******************************************************************************
- * 
+ *
  * This file is part of BAIPROJECT.
- * 
+ *
  * BAIPROJECT is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License version 3
  * only, as published by the Free Software Foundation.
- * 
+ *
  * BAIPROJECT is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License version 3 for more details
  * (a copy is included in the LICENSE file that accompanied this code).
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * version 3 along with BAIPROJECT.  If not, see <http://www.gnu.org/licenses/>
  * for a copy of the AGPLv3 License.
- * 
+ *
  *******************************************************************************/
- 
+
 /*******************************************************************************
  *
  * File Name: GIAParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o6a 23-August-2012
+ * Project Version: 1p1a 08-September-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
- * Description: Parses tabular subsections (Eg <relations>) of CFF File
+ * Description: Parses tabular subsections (Eg <relations>) of RelEx CFF/Stanford Parser File
  *
  *******************************************************************************/
 
@@ -33,15 +33,20 @@
 
 #include "GIAParser.h"
 #include "GIATranslatorOperations.h"	//required for convertStanfordRelationToRelex
+#ifdef GIA_USE_LRP
+#include "GIAlrp.h"
+#endif
 
 #define MAX_CHARACTERS_OF_WORD_IN_GIA_INPUT_DATA 150 //max characters of some word in input data. includes '\0' at end of a string
 
 
-string convertStanfordRelationToRelex(string * stanfordRelation)
-{
+void convertStanfordRelationToRelex(Relation * currentRelationInList, Sentence * currentSentenceInList)
+{	
+	string stanfordRelation = currentRelationInList->relationType;
+	
 	//prepend '_'
 	string relationTypeRelexStandard = "";
-	relationTypeRelexStandard = relationTypeRelexStandard + RELEX_DEPENDENCY_RELATION_PREPENDITION + *stanfordRelation;
+	relationTypeRelexStandard = relationTypeRelexStandard + RELEX_DEPENDENCY_RELATION_PREPENDITION + stanfordRelation;
 
 	//now deal with anamolies between dependency relation definitions;
 	for(int i=0; i<GIA_NUMBER_OF_RELEX_VERSUS_STANFORD_DEPENDENCY_RELATION_DISCREPANCIES; i++)
@@ -49,149 +54,54 @@ string convertStanfordRelationToRelex(string * stanfordRelation)
 		//cout << "relexVersusStanfordDependencyRelations[GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD][i] = " << relexVersusStanfordDependencyRelations[GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD][i] << endl;
 		//cout << "relexVersusStanfordDependencyRelations[GIA_DEPENDENCY_RELATIONS_TYPE_RELEX][i] = " << relexVersusStanfordDependencyRelations[GIA_DEPENDENCY_RELATIONS_TYPE_RELEX][i] << endl;
 
-		if(*stanfordRelation == relexVersusStanfordDependencyRelations[GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD][i])
+		if(stanfordRelation == relexVersusStanfordDependencyRelations[GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD][i])
 		{
 			relationTypeRelexStandard = relexVersusStanfordDependencyRelations[GIA_DEPENDENCY_RELATIONS_TYPE_RELEX][i];
 		}
 	}
 
 	bool stanfordPrepositionFound = false;
-	string tempString = convertStanfordPrepositionToRelex(stanfordRelation, GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD, &stanfordPrepositionFound);
+	string tempRelexPrepositionString = convertStanfordPrepositionToRelex(&stanfordRelation, GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD, &stanfordPrepositionFound);
 	if(stanfordPrepositionFound)
 	{
-		relationTypeRelexStandard = *stanfordRelation;	//do not modify stanford preposition relations "prep_...." to "_prep_..."
+		relationTypeRelexStandard = stanfordRelation;	//do not modify stanford preposition relations "prep_...." to "_prep_..."
 	}
 
-	return relationTypeRelexStandard;
-}
-
-
-void GIATHparseRelexRelationsText(string * relationsText, Relation * firstRelationInList, int * maxNumberOfWordsInSentence, bool NLPrelexCompatibilityMode)
-{
-	*maxNumberOfWordsInSentence = 0;
-
-	int numberOfCharactersInRelationsText = relationsText->length();
-
-	char currentItemString[MAX_CHARACTERS_OF_WORD_IN_GIA_INPUT_DATA] = "";
-	currentItemString[0] = '\0';
-
-	/* Data file layout example
-
-		_subj(slip[4], hand[3])
-		_poss(hand[3], John[1])
-	*/
-
-	Relation * currentRelation = firstRelationInList;
-
-	int relationIndex = 0;
-	int characterIndex = 0;
-
-	characterIndex++;	//skip first new line in .cff file
-
-	int currentRelationPart = 0;
-	//cout << "h1" << endl;
-
-	while (characterIndex < numberOfCharactersInRelationsText)
+	#ifdef GIA_USE_LRP
+	//if(stanfordPrepositionFound)
+	//{
+	//if necessary revert temporary/dummy NLP multiword preposition to official LRP form
+	bool foundOfficialLRPreplacementString = false;
+	Feature * tempFeature = new Feature();
+	tempFeature->word = tempRelexPrepositionString; 
+	revertNLPtagNameToOfficialLRPtagName(tempFeature, currentSentenceInList, currentRelationInList, true, &foundOfficialLRPreplacementString);
+	if(foundOfficialLRPreplacementString)
 	{
-		char c = (*relationsText)[characterIndex];
-		//cout << "c = " << c << endl;
-
-		switch(c)
+		string officialLRPentityName = tempFeature->word;
+		if(stanfordPrepositionFound)
 		{
-			case CHAR_NEWLINE:
-			{
-				/*
-				cout << "relation added;" << endl;
-				cout << "currentRelation->relationType = " << currentRelation->relationType << endl;
-				cout << "currentRelation->relationGovernor = " << currentRelation->relationGovernor << endl;
-				cout << "currentRelation->relationDependent = " << currentRelation->relationDependent << endl;
-				cout << "currentRelation->relationGovernorIndex = " << currentRelation->relationGovernorIndex << endl;
-				cout << "currentRelation->relationDependentIndex = " << currentRelation->relationDependentIndex << endl;
-				*/
-
-				Relation * newRelation = new Relation();
-				currentRelation->next = newRelation;
-				currentRelation = currentRelation->next;
-
-				currentRelationPart = 0;
-				currentItemString[0] = '\0';
-
-				relationIndex++;
-
-				break;
-			}
-			case CHAR_OPEN_BRACKET:
-			{
-				string relationType = currentItemString;
-				if(NLPrelexCompatibilityMode)
-				{
-					relationType = convertStanfordRelationToRelex(&relationType);
-				}
-				currentRelation->relationType = relationType;
-				currentItemString[0] = '\0';
-				currentRelationPart++;
-
-				break;
-			}
-			case CHAR_CLOSE_BRACKET:
-			{
-				break;
-			}
-			case CHAR_OPEN_SQUARE_BRACKET:
-			{
-				if(currentRelationPart == 1)
-				{
-					currentRelation->relationGovernor = currentItemString;
-				}
-				else if(currentRelationPart == 2)
-				{
-					currentRelation->relationDependent = currentItemString;
-				}
-				currentItemString[0] = '\0';
-
-				break;
-			}
-			case CHAR_CLOSE_SQUARE_BRACKET:
-			{
-				if(currentRelationPart == 1)
-				{
-					currentRelation->relationGovernorIndex = int(atof(currentItemString));
-				}
-				else if(currentRelationPart == 2)
-				{
-					currentRelation->relationDependentIndex = int(atof(currentItemString));
-				}
-
-				if(currentRelation->relationDependentIndex > *maxNumberOfWordsInSentence)
-				{
-					*maxNumberOfWordsInSentence = currentRelation->relationDependentIndex;
-				}
-
-				currentItemString[0] = '\0';
-				currentRelationPart++;
-
-				break;
-			}
-			case CHAR_COMMA:
-			{
-				characterIndex++;	//skip space in .cff file directly after comma
-
-				break;
-			}
-			default:
-			{
-				char characterString[2];
-				characterString[0] = c;
-				characterString[1] = '\0';
-				strcat(currentItemString, characterString);
-				break;
-			}
+			relationTypeRelexStandard = "";
+			relationTypeRelexStandard = relationTypeRelexStandard + STANFORD_PARSER_PREPOSITION_PREPEND + officialLRPentityName;
+			
 		}
-
-		characterIndex++;
+		else
+		{
+			relationTypeRelexStandard = officialLRPentityName;
+		}
+		#ifdef GIA_LRP_DEBUG
+		cout << "convertStanfordRelationToRelex() foundOfficialLRPreplacementString: tempRelexPrepositionString = " << tempRelexPrepositionString << ", relationTypeRelexStandard= " << relationTypeRelexStandard << endl;
+		#endif
 	}
-
+	delete tempFeature;
+	//}	
+	#endif
+	//cout << "relationTypeRelexStandard = " << relationTypeRelexStandard << endl;
+	currentRelationInList->relationType =  relationTypeRelexStandard;
+	//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
+	 
 }
+
+
 
 
 
@@ -238,6 +148,9 @@ void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * cu
 			currentRelation->relationGovernorIndex = relationGovernorIndex;
 			currentRelation->relationDependentIndex = relationDependentIndex;
 
+			//cout << "convertStanfordRelationToRelex: START" << endl;
+			convertStanfordRelationToRelex(currentRelation, currentSentenceInList);
+			//cout << "convertStanfordRelationToRelex: END" << endl;
 			if(!featuresNotPreviouslyFilled)
 			{
 				/*
@@ -263,7 +176,7 @@ void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * cu
 				currentRelation->relationGovernor = relationGovernor;
 				currentRelation->relationDependent = relationDependent;
 			}
-
+			
 
 			#ifdef GIA_STANFORD_DEPENDENCY_RELATIONS_DEBUG
 			cout << "relation added;" << endl;
@@ -297,7 +210,6 @@ void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * cu
 		else if(c == CHAR_OPEN_BRACKET)
 		{
 			relationType = currentItemString;
-			relationType = convertStanfordRelationToRelex(&relationType);
 
 			currentItemString[0] = '\0';
 			currentRelationPart++;
@@ -420,8 +332,10 @@ void GIATHparseStanfordParseWordsAndPOSTagsText(string * POStagsText, Sentence *
 #endif
 
 
-void GIATHparseFeaturesText(string * featuresText, Feature * firstFeatureInList, bool * isQuestion)
+void GIATHparseRelexFeaturesText(string * featuresText, Sentence * currentSentenceInList)
 {
+	Feature * firstFeatureInList = currentSentenceInList->firstFeatureInList;
+	  
 	int numberOfCharactersInRelationsText = featuresText->length();
 
 	char currentItemString[MAX_CHARACTERS_OF_WORD_IN_GIA_INPUT_DATA] = "";
@@ -474,11 +388,17 @@ void GIATHparseFeaturesText(string * featuresText, Feature * firstFeatureInList,
 					if(currentFeature->word == FEATURE_WORD_QUESTIONMARK)
 					{
 						//cout << "isQuestion == true" << endl;
-						*isQuestion = true;
+						currentSentenceInList->isQuestion = true;
 					}
 				}
 			#endif
 
+				#ifdef GIA_USE_LRP
+				bool foundOfficialLRPreplacementString = false;
+				Relation * currentRelationInListForPrepositionsOnlyIrrelevant = NULL;
+				revertNLPtagNameToOfficialLRPtagName(currentFeature, currentSentenceInList, currentRelationInListForPrepositionsOnlyIrrelevant, false, &foundOfficialLRPreplacementString);
+				#endif
+						
 				/*
 				cout << "feature added;" << endl;
 				cout << "currentFeature->entityIndex = " << currentFeature->entityIndex << endl;
@@ -554,6 +474,136 @@ void GIATHparseFeaturesText(string * featuresText, Feature * firstFeatureInList,
 
 }
 
+void GIATHparseRelexRelationsText(string * relationsText, Sentence * currentSentenceInList, int * maxNumberOfWordsInSentence, bool NLPrelexCompatibilityMode)
+{
+	Relation * firstRelationInList = currentSentenceInList->firstRelationInList;
+	int currentSentence = currentSentenceInList->sentenceIndex;
+	
+	*maxNumberOfWordsInSentence = 0;
+
+	int numberOfCharactersInRelationsText = relationsText->length();
+
+	char currentItemString[MAX_CHARACTERS_OF_WORD_IN_GIA_INPUT_DATA] = "";
+	currentItemString[0] = '\0';
+
+	/* Data file layout example
+
+		_subj(slip[4], hand[3])
+		_poss(hand[3], John[1])
+	*/
+
+	Relation * currentRelation = firstRelationInList;
+
+	int relationIndex = 0;
+	int characterIndex = 0;
+
+	characterIndex++;	//skip first new line in .cff file
+
+	int currentRelationPart = 0;
+	//cout << "h1" << endl;
+
+	while (characterIndex < numberOfCharactersInRelationsText)
+	{
+		char c = (*relationsText)[characterIndex];
+		//cout << "c = " << c << endl;
+
+		switch(c)
+		{
+			case CHAR_NEWLINE:
+			{
+				if(NLPrelexCompatibilityMode)
+				{
+					convertStanfordRelationToRelex(currentRelation, currentSentenceInList);
+				}
+							
+				/*
+				cout << "relation added;" << endl;
+				cout << "currentRelation->relationType = " << currentRelation->relationType << endl;
+				cout << "currentRelation->relationGovernor = " << currentRelation->relationGovernor << endl;
+				cout << "currentRelation->relationDependent = " << currentRelation->relationDependent << endl;
+				cout << "currentRelation->relationGovernorIndex = " << currentRelation->relationGovernorIndex << endl;
+				cout << "currentRelation->relationDependentIndex = " << currentRelation->relationDependentIndex << endl;
+				*/
+
+				Relation * newRelation = new Relation();
+				currentRelation->next = newRelation;
+				currentRelation = currentRelation->next;
+
+				currentRelationPart = 0;
+				currentItemString[0] = '\0';
+
+				relationIndex++;
+
+				break;
+			}
+			case CHAR_OPEN_BRACKET:
+			{
+				string relationType = currentItemString;
+				currentRelation->relationType = relationType;
+				currentItemString[0] = '\0';
+				currentRelationPart++;
+
+				break;
+			}
+			case CHAR_CLOSE_BRACKET:
+			{
+				break;
+			}
+			case CHAR_OPEN_SQUARE_BRACKET:
+			{
+				if(currentRelationPart == 1)
+				{
+					currentRelation->relationGovernor = currentItemString;
+				}
+				else if(currentRelationPart == 2)
+				{
+					currentRelation->relationDependent = currentItemString;
+				}
+				currentItemString[0] = '\0';
+
+				break;
+			}
+			case CHAR_CLOSE_SQUARE_BRACKET:
+			{
+				if(currentRelationPart == 1)
+				{
+					currentRelation->relationGovernorIndex = int(atof(currentItemString));
+				}
+				else if(currentRelationPart == 2)
+				{
+					currentRelation->relationDependentIndex = int(atof(currentItemString));
+				}
+
+				if(currentRelation->relationDependentIndex > *maxNumberOfWordsInSentence)
+				{
+					*maxNumberOfWordsInSentence = currentRelation->relationDependentIndex;
+				}
+
+				currentItemString[0] = '\0';
+				currentRelationPart++;
+
+				break;
+			}
+			case CHAR_COMMA:
+			{
+				characterIndex++;	//skip space in .cff file directly after comma
+
+				break;
+			}
+			default:
+			{
+				char characterString[2];
+				characterString[0] = c;
+				characterString[1] = '\0';
+				strcat(currentItemString, characterString);
+				break;
+			}
+		}
+
+		characterIndex++;
+	}
+
+}
 
 
 

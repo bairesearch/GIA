@@ -1,29 +1,29 @@
 /*******************************************************************************
- * 
+ *
  * This file is part of BAIPROJECT.
- * 
+ *
  * BAIPROJECT is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License version 3
  * only, as published by the Free Software Foundation.
- * 
+ *
  * BAIPROJECT is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License version 3 for more details
  * (a copy is included in the LICENSE file that accompanied this code).
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * version 3 along with BAIPROJECT.  If not, see <http://www.gnu.org/licenses/>
  * for a copy of the AGPLv3 License.
- * 
+ *
  *******************************************************************************/
- 
+
 /*******************************************************************************
  *
  * File Name: GIAXMLconversion.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o6a 23-August-2012
+ * Project Version: 1p1a 08-September-2012
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  * NB this function creates entity idActiveListReorderdIDforXMLsave values upon write to speed up linking process (does not use original idActiveList values)
  * NB this function creates entity idActiveList values upon read (it could create idActiveListReorderdIDforXMLsave values instead - however currently it is assumed that when an XML file is loaded, this will populate the idActiveList in its entirety)
@@ -583,7 +583,7 @@ bool parseEntityNodeTag(XMLParserTag * firstTagInEntityNode, GIAEntityNode * ent
 			convertAliasesStringToAliases(entityNode, attributeValue);
 			aliasesFound = true;
 		}
-		#endif		
+		#endif
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_confidence)
 		{
 			double attributeValue = atof(currentAttribute->value.c_str());
@@ -1169,15 +1169,15 @@ XMLParserTag * generateXMLEntityNodeTag(XMLParserTag * currentTagL1, GIAEntityNo
 	currentAttribute->nextAttribute = newAttribute;
 	currentAttribute = currentAttribute->nextAttribute;
 	#endif
-	
+
 	#ifdef GIA_SUPPORT_ALIASES
 	currentAttribute->name = NET_XML_ATTRIBUTE_aliases;
 	convertAliasesToAliasesString(currentEntity, &(currentAttribute->value));
-	
+
 	newAttribute = new XMLParserAttribute();
 	currentAttribute->nextAttribute = newAttribute;
 	currentAttribute = currentAttribute->nextAttribute;
-	#endif	
+	#endif
 
 	currentAttribute->name = NET_XML_ATTRIBUTE_confidence;
 	sprintf(tempString, "%0.6f", (currentEntity->confidence));
@@ -1598,4 +1598,4 @@ bool generateXMLConditionTimeNodeTagList(XMLParserTag * firstTagInConditionTimeN
 }
 
 
-	
+

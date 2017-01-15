@@ -1,29 +1,29 @@
 /*******************************************************************************
- * 
+ *
  * This file is part of BAIPROJECT.
- * 
+ *
  * BAIPROJECT is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License version 3
  * only, as published by the Free Software Foundation.
- * 
+ *
  * BAIPROJECT is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License version 3 for more details
  * (a copy is included in the LICENSE file that accompanied this code).
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * version 3 along with BAIPROJECT.  If not, see <http://www.gnu.org/licenses/>
  * for a copy of the AGPLv3 License.
- * 
+ *
  *******************************************************************************/
- 
+
 /*******************************************************************************
  *
  * File Name: GIAdatabase.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o6a 23-August-2012
+ * Project Version: 1p1a 08-September-2012
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: performs simple GIA database functions (storing nodes in ordered arrays/vectors/maps)
  *
@@ -950,7 +950,7 @@ void DBreadEntityNodeFile(string * entityFileName, GIAEntityNode* entity)
 
 		char entityNameCharStarTemp[GIA_DATABASE_ENTITY_NODE_NAME_MAX_LENGTH];
 		char wordOrigCharStarTemp[GIA_DATABASE_ENTITY_NODE_NAME_MAX_LENGTH];
-		char aliasesCharStarTemp[GIA_DATABASE_ENTITY_NODE_NAME_MAX_LENGTH];		
+		char aliasesCharStarTemp[GIA_DATABASE_ENTITY_NODE_NAME_MAX_LENGTH];
 		int result = fscanf(pFile, GIA_DATABASE_ENTITY_NODE_FILE_FORMAT_READ, &(entity->idActiveList), entityNameCharStarTemp, wordOrigCharStarTemp, aliasesCharStarTemp, &(entity->confidence), &isConcept, &isSubstance, &isAction, &isCondition, &hasAssociatedInstance, &hasAssociatedInstanceIsAction, &hasAssociatedInstanceIsCondition, &hasAssociatedTime, &isSubstanceQuality, &disabled, &(entity->conditionType), &(entity->grammaticalNumber), &hasQuantity, &hasMeasure);
 		if(result > 0)	//&& (result != EOF)
 		{
@@ -970,15 +970,15 @@ void DBreadEntityNodeFile(string * entityFileName, GIAEntityNode* entity)
 			*/
 
 			entity->entityName = entityNameCharStarTemp;
-			#ifdef GIA_USE_NLG_NO_MORPHOLOGY_GENERATOR		
+			#ifdef GIA_USE_NLG_NO_MORPHOLOGY_GENERATOR
 			entity->wordOrig = DBreplaceBlankString(string(wordOrigCharStarTemp));
 			//cout << "entityNameCharStarTemp = " << entityNameCharStarTemp << endl;
-			//cout << "wordOrigCharStarTemp = " << wordOrigCharStarTemp << endl;				
+			//cout << "wordOrigCharStarTemp = " << wordOrigCharStarTemp << endl;
 			#endif
 			#ifdef GIA_SUPPORT_ALIASES
 			string aliasesString = DBreplaceBlankString(string(aliasesCharStarTemp));
 			convertAliasesStringToAliases(entity, aliasesString);
-			#endif			
+			#endif
 			entity->isConcept = bool(isConcept);
 			entity->isSubstance = bool(isSubstance);
 			entity->isAction = bool(isAction);
@@ -1125,7 +1125,7 @@ void writeDatabase(vector<GIAEntityNode*> *entityNodesActiveListComplete)
 	for(vector<GIAEntityNode*>::iterator entityNodesActiveCompleteListIterator = entityNodesActiveListComplete->begin(); entityNodesActiveCompleteListIterator != entityNodesActiveListComplete->end(); entityNodesActiveCompleteListIterator++)
 	{
 		GIAEntityNode* entityNode = *entityNodesActiveCompleteListIterator;
-	
+
 		#ifdef GIA_DATABASE_DO_NOT_WRITE_DISABLED_ENTITY_NODES
 		if(!(entityNode->disabled))	//added 17 August 2012
 		{
@@ -1176,7 +1176,7 @@ void writeDatabase(vector<GIAEntityNode*> *entityNodesActiveListComplete)
 					*/
 				}
 			}
-		#ifdef GIA_DATABASE_DO_NOT_WRITE_DISABLED_ENTITY_NODES			
+		#ifdef GIA_DATABASE_DO_NOT_WRITE_DISABLED_ENTITY_NODES
 		}
 		#endif
 	}
@@ -1243,9 +1243,9 @@ void DBwriteEntityNodeFile(string * entityFileName, GIAEntityNode* entity)
 		string aliasesString = "";
 		#ifdef GIA_SUPPORT_ALIASES;
 		convertAliasesToAliasesString(entity, &aliasesString);
-		#endif	
+		#endif
 		aliasesString = DBaddBlankString(aliasesString);
-		
+
 		fprintf(pFile, GIA_DATABASE_ENTITY_NODE_FILE_FORMAT_WRITE, entity->idActiveList, (entity->entityName).c_str(), wordOrig.c_str(), aliasesString.c_str(), entity->confidence, int(entity->isConcept), int(entity->isSubstance), int(entity->isAction), int(entity->isCondition), int(entity->hasAssociatedInstance), int(entity->hasAssociatedInstanceIsAction), int(entity->hasAssociatedInstanceIsCondition), int(entity->hasAssociatedTime), int(entity->isSubstanceQuality), int(entity->disabled), entity->conditionType, entity->grammaticalNumber, int(entity->hasQuantity), int(entity->hasMeasure));
 		//fprintf(pFile, GIA_DATABASE_ENTITY_NODE_FILE_FORMAT_WRITE, entity->idActiveList, (entity->entityName).c_str());
 		//cout << "sf" << endl;
@@ -1349,7 +1349,7 @@ void DBmodifyVectorConnectionsReference(string * entityName, long idInstance, in
 	#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
 	cout << "DBmodifyVectorConnectionsReference(): entityName = " << *entityName << endl;
 	#endif
-	
+
 	/*
 	Format:
 	entityName,idInstance
@@ -1392,7 +1392,7 @@ void DBappendVectorConnectionsReference(string * entityName, long idInstance, in
 	#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
 	cout << "DBappendVectorConnectionsReference(): entityName = " << *entityName << endl;
 	#endif
-	
+
 	/*
 	Format:
 	entityName,idInstance

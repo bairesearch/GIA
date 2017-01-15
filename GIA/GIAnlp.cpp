@@ -1,29 +1,29 @@
 /*******************************************************************************
- * 
+ *
  * This file is part of BAIPROJECT.
- * 
+ *
  * BAIPROJECT is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License version 3
  * only, as published by the Free Software Foundation.
- * 
+ *
  * BAIPROJECT is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License version 3 for more details
  * (a copy is included in the LICENSE file that accompanied this code).
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * version 3 along with BAIPROJECT.  If not, see <http://www.gnu.org/licenses/>
  * for a copy of the AGPLv3 License.
- * 
+ *
  *******************************************************************************/
- 
+
 /*******************************************************************************
  *
  * File Name: GIAnlp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o6a 23-August-2012
+ * Project Version: 1p1a 08-September-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -51,6 +51,9 @@ using namespace std;
 #include "XMLrulesClass.h"
 #include "GIAParser.h"
 #include "GIATranslatorOperations.h" //required for featureNERTypeArray only
+#ifdef GIA_USE_LRP
+#include "GIAlrp.h"
+#endif
 
 #ifndef LINUX
 	#include <windows.h>
@@ -294,22 +297,12 @@ bool parseRelexFile(string inputTextNLPrelationXMLFileName, bool isQuery, Paragr
 								while(currentTagInParse->nextTag != NULL)
 								{
 
-									if(currentTagInParse->name == Relex_CFF_XML_TAG_relations)
-									{
-										if(parseRelations)
-										{
-											//cout << "currentTagInParse->value = " << currentTagInParse->value << endl;
-											int maxNumberOfWordsInSentence = 0;
-											GIATHparseRelexRelationsText(&(currentTagInParse->value), currentSentence->firstRelationInList, &maxNumberOfWordsInSentence, NLPrelexCompatibilityMode);
-											currentSentence->maxNumberOfWordsInSentence = maxNumberOfWordsInSentence;
-										}
-									}
-									else if(currentTagInParse->name == Relex_CFF_XML_TAG_features)
+									if(currentTagInParse->name == Relex_CFF_XML_TAG_features)
 									{
 										if(parseFeatures)
 										{
 											//cout << "currentTagInParse->value = " << currentTagInParse->value << endl;
-											GIATHparseFeaturesText(&(currentTagInParse->value), currentSentence->firstFeatureInList, &(currentSentence->isQuestion));
+											GIATHparseRelexFeaturesText(&(currentTagInParse->value), currentSentence);
 
 											if(isQuery)
 											{
@@ -323,6 +316,16 @@ bool parseRelexFile(string inputTextNLPrelationXMLFileName, bool isQuery, Paragr
 											}
 										}
 										//cout << "fini" << endl;
+									}
+									else if(currentTagInParse->name == Relex_CFF_XML_TAG_relations)
+									{
+										if(parseRelations)
+										{
+											//cout << "currentTagInParse->value = " << currentTagInParse->value << endl;
+											int maxNumberOfWordsInSentence = 0;
+											GIATHparseRelexRelationsText(&(currentTagInParse->value), currentSentence, &maxNumberOfWordsInSentence, NLPrelexCompatibilityMode);
+											currentSentence->maxNumberOfWordsInSentence = maxNumberOfWordsInSentence;
+										}
 									}
 
 									currentTagInParse = currentTagInParse->nextTag;
@@ -426,13 +429,7 @@ bool parseStanfordCoreNLPFile(string inputTextNLPrelationXMLFileName, bool isQue
 					else if(currentTagInToken->name == StanfordCoreNLP_XML_TAG_lemma)
 					{
 						string TagValue = currentTagInToken->value;
-						string lemma = TagValue;
-						#ifdef GIA_STANFORD_CORE_NLP_COMPENSATE_FOR_PRONOUN_LEMMA_CASE_ASSIGNMENT_BUG_MAKE_ALL_LEMMAS_LOWER_CASE
-						char firstCharacterOfLemma = lemma[0];
-						firstCharacterOfLemma = tolower(firstCharacterOfLemma);
-						lemma[0] = firstCharacterOfLemma;
-						#endif
-						currentFeatureInList->lemma = lemma;
+						currentFeatureInList->lemma = TagValue;
 					}
 					else if(currentTagInToken->name == StanfordCoreNLP_XML_TAG_CharacterOffsetBegin)
 					{
@@ -480,6 +477,20 @@ bool parseStanfordCoreNLPFile(string inputTextNLPrelationXMLFileName, bool isQue
 					currentTagInToken = currentTagInToken->nextTag;
 				}
 
+				#ifdef GIA_USE_LRP
+				bool foundOfficialLRPreplacementString = false;
+				Relation * currentRelationInListForPrepositionsOnlyIrrelevant = NULL;
+				revertNLPtagNameToOfficialLRPtagName(currentFeatureInList, currentSentence, currentRelationInListForPrepositionsOnlyIrrelevant, false, &foundOfficialLRPreplacementString);
+				#endif
+				#ifdef GIA_STANFORD_CORE_NLP_COMPENSATE_FOR_PRONOUN_LEMMA_CASE_ASSIGNMENT_BUG_MAKE_ALL_LEMMAS_LOWER_CASE
+				string lemma = currentFeatureInList->lemma;
+				char firstCharacterOfLemma = lemma[0];
+				firstCharacterOfLemma = tolower(firstCharacterOfLemma);
+				lemma[0] = firstCharacterOfLemma;
+				currentFeatureInList->lemma = lemma;
+				#endif
+				
+					
 				Feature * newFeature = new Feature();
 				newFeature->previous = currentFeatureInList;
 				currentFeatureInList->next = newFeature;
@@ -533,13 +544,13 @@ bool parseStanfordCoreNLPFile(string inputTextNLPrelationXMLFileName, bool isQue
 							XMLParserTag * dependentTagInDep = firstTagInDep->nextTag;
 
 							//cout << "currentTagInDependencies->firstAttribute->value = " << currentTagInDependencies->firstAttribute->value << endl;
-							string relationTypeRelexStandard = convertStanfordRelationToRelex(&(currentTagInDependencies->firstAttribute->value));
-							currentRelationInList->relationType = relationTypeRelexStandard;
-
 							string relationGovernorIndexString = governerTagInDep->firstAttribute->value;
 							string relationDependentIndexString = dependentTagInDep->firstAttribute->value;
 							currentRelationInList->relationGovernorIndex = atoi(relationGovernorIndexString.c_str());
 							currentRelationInList->relationDependentIndex = atoi(relationDependentIndexString.c_str());
+							
+							currentRelationInList->relationType = currentTagInDependencies->firstAttribute->value;
+							convertStanfordRelationToRelex(currentRelationInList, currentSentence);
 
 							/*
 							//don't use these, use lemmas instead (as per Stanford Core NLP/Relex dependency relation definitions)

@@ -1,29 +1,29 @@
 /*******************************************************************************
- * 
+ *
  * This file is part of BAIPROJECT.
- * 
+ *
  * BAIPROJECT is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License version 3
  * only, as published by the Free Software Foundation.
- * 
+ *
  * BAIPROJECT is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License version 3 for more details
  * (a copy is included in the LICENSE file that accompanied this code).
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * version 3 along with BAIPROJECT.  If not, see <http://www.gnu.org/licenses/>
  * for a copy of the AGPLv3 License.
- * 
+ *
  *******************************************************************************/
- 
+
 /*******************************************************************************
  *
  * File Name: GIATranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o6a 23-August-2012
+ * Project Version: 1p1a 08-September-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -74,7 +74,7 @@ using namespace std;
 	#define GIA_SUPPORT_WHO_QUERY_ALIAS_ANSWERS
 	#ifdef GIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF
 		//#assert GIA_REDISTRIBUTE_STANFORD_RELATIONS_IGNORE_NSUBJ_AND_PREPOSITION_AND_COP_AND_DET
-		#define GIA_REDISTRIBUTE_RELATIONS_SUPPORT_WHAT_IS_THE_NAME_NUMBER_OF_QUERIES	//added 8 August 2012	
+		#define GIA_REDISTRIBUTE_RELATIONS_SUPPORT_WHAT_IS_THE_NAME_NUMBER_OF_QUERIES	//added 8 August 2012
 		#define GIA_REDISTRIBUTE_RELATIONS_INTERPRET_OF_AS_POSSESSIVE_OF "of"
 		#define GIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF_SUBJECT_DEPENDENT_OR_GOVERNOR_NAME "name"
 		#define GIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF_SUBJECT_DEPENDENT_OR_GOVERNOR_NUMBER "number"
@@ -102,8 +102,8 @@ using namespace std;
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 		#define GIA_USE_ADVANCED_REFERENCING_IDENTIFY_DEFINITE_SETS_ONLY	//this is required considering reference look up of non definite sets is never desired
 		#ifdef GIA_USE_ADVANCED_REFERENCING_IDENTIFY_DEFINITE_SETS_ONLY
-			//#define GIA_USE_ADVANCED_REFERENCING_IDENTIFY_SETS_WITH_SUBJECT_OR_OBJECT_ONLY	//removed 12 August 2012 (NB original isObjectTemp/isSubjectTemp values are not retained currently - especially after advanced referencing update [GIA1n] - only derived isObjectTemp/isSubjectTemp values are retained [where as original values are left inside GIAFeatureTempEntityNodeArray], which do not include subjects/objects not involved in actions - eg property relationships as opposed to action relationships) 
-			#define GIA_USE_ADVANCED_REFERENCING_IDENTIFY_DEFINITE_SETS_ONLY_ACCEPT_PROPERNOUNS 	//added 12 August 2012	
+			//#define GIA_USE_ADVANCED_REFERENCING_IDENTIFY_SETS_WITH_SUBJECT_OR_OBJECT_ONLY	//removed 12 August 2012 (NB original isObjectTemp/isSubjectTemp values are not retained currently - especially after advanced referencing update [GIA1n] - only derived isObjectTemp/isSubjectTemp values are retained [where as original values are left inside GIAFeatureTempEntityNodeArray], which do not include subjects/objects not involved in actions - eg property relationships as opposed to action relationships)
+			#define GIA_USE_ADVANCED_REFERENCING_IDENTIFY_DEFINITE_SETS_ONLY_ACCEPT_PROPERNOUNS 	//added 12 August 2012
 		#endif
 		#define GIA_STANFORD_CORE_NLP_USE_CODEPENDENCIES
 		#ifdef GIA_STANFORD_CORE_NLP_USE_CODEPENDENCIES
@@ -376,7 +376,7 @@ using namespace std;
 
 //redundant 'that' nodes;
 #define STANFORD_RELATION_TYPE_COMPLEMENTIZER "complm" 			//complm(like, that)	He says that you like to swim				Relex: that(say, like) 		GIA: implement this as an action substance???
-#define RELATION_TYPE_COMPLEMENTIZER "_complm" 				
+#define RELATION_TYPE_COMPLEMENTIZER "_complm"
 #define RELATION_DEPENDENT_THAT "that"
 
 //stanford specific (non Relex) relations implemented in redistributeStanfordRelationsCreateQueryVars
@@ -744,11 +744,11 @@ Recognizes named (PERSON, LOCATION, ORGANIZATION, MISC) and numerical entities (
 #define RELATION_TYPE_HAVING_AND_BEING_CONDITIONS_PREPOSITIONS_NUMBER_OF_TYPES (2)
 static string linkHavingPropertyConditionsAndBeingDefinitionConditionsPrepositionsNameArray[RELATION_TYPE_HAVING_AND_BEING_CONDITIONS_PREPOSITIONS_NUMBER_OF_TYPES] = {PREPOSITION_BY, PREPOSITION_THROUGH};
 
-/*		
+/*
 #define GIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF_SUBJECT_DEPENDENT_OR_GOVERNOR_NUMBER_OF_TYPES (2)
 static string redistributionRelationsSupportNameOfSubjectDependentOrGovernorNameArray[GIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF_SUBJECT_DEPENDENT_OR_GOVERNOR_NUMBER_OF_TYPES] = {GIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF_SUBJECT_DEPENDENT_OR_GOVERNOR_NAME, GIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF_SUBJECT_DEPENDENT_OR_GOVERNOR_NUMBER};
 */
-	
+
 #define GIA_REDISTRIBUTE_STANFORD_RELATIONS_MULTIWORD_PREPOSITION_NUMBER_OF_INTERMEDIARY_RELATIONS_TYPEA (1)	//OLD: 3
 static string redistributionStanfordRelationsMultiwordPrepositionIntermediaryRelationsTypeA[GIA_REDISTRIBUTE_STANFORD_RELATIONS_MULTIWORD_PREPOSITION_NUMBER_OF_INTERMEDIARY_RELATIONS_TYPEA] = {RELATION_TYPE_COPULA};	//OLD: RELATION_TYPE_PASSIVE_AUX, RELATION_TYPE_MODAL_AUX
 #define GIA_REDISTRIBUTE_STANFORD_RELATIONS_MULTIWORD_PREPOSITION_NUMBER_OF_INTERMEDIARY_RELATIONS_TYPEB (1)

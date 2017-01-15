@@ -1,29 +1,29 @@
 /*******************************************************************************
- * 
+ *
  * This file is part of BAIPROJECT.
- * 
+ *
  * BAIPROJECT is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License version 3
  * only, as published by the Free Software Foundation.
- * 
+ *
  * BAIPROJECT is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License version 3 for more details
  * (a copy is included in the LICENSE file that accompanied this code).
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * version 3 along with BAIPROJECT.  If not, see <http://www.gnu.org/licenses/>
  * for a copy of the AGPLv3 License.
- * 
+ *
  *******************************************************************************/
- 
+
 /*******************************************************************************
  *
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o6a 23-August-2012
+ * Project Version: 1p1a 08-September-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -52,7 +52,9 @@
 #ifdef GIA_USE_NLG
 #include "GIAnlg.h"
 #endif
-
+#ifdef GIA_USE_LRP
+#include "GIAlrp.h"
+#endif
 #ifndef LINUX
 	#include <windows.h>
 #endif
@@ -98,6 +100,11 @@ static char errmessage[] = "Usage:  OpenGIA.exe [options]\n\n\twhere options are
 "\n\t-dbread            : read from database (GIA knowledge base) [improves referencing capacity]"
 "\n\t-dbwrite           : write to database (GIA knowledge base) [saves knowledge]"
 #endif
+"\n\t-lrp                               : language reduction preprocessor"
+"\n\t-olrptxt [string]                  : plain text .txt output filename with GIA language reduction preprocessor applied (def: inputTextWithLRP.txt)"
+"\n\t-olrptxtnlp [string]               : plain text .txt output filename with GIA language reduction preprocessor applied, word replacement with dummy prepositions/verbs for NLP compatibility (def: inputTextWithLRPforNLPonly.txt)"
+"\n\t-olrptxtq [string]                 : query plain text .txt output filename with GIA language reduction preprocessor applied (def: inputTextWithLRPQuery.txt)"
+"\n\t-olrptxtnlpq [string]              : query plain text .txt output filename with GIA language reduction preprocessor applied, word replacement with dummy prepositions/verbs for NLP compatibility (def: inputTextWithLRPforNLPonlyQuery.txt)"
 "\n"
 "\n\t-workingfolder [string]            : working directory name for input files (def: same as exe)"
 "\n\t-nlprelexfolder [string]           : directory name for Relex (def: same as exe)"
@@ -162,64 +169,44 @@ int main(int argc,char **argv)
 
 	bool useInputTextNLPrelationXMLFile = false;
 	string inputTextNLPrelationXMLFileName = "inputNLPrelation.xml";
-
 	bool useInputTextNLPfeatureXMLFile = false;
 	string inputTextNLPfeatureXMLFileName = "inputNLPfeature.xml";
-
 	bool useOutputTextCFFFile = false;
 	string outputTextCFFFileName = "outputNLP.cff";
-
 	bool useInputTextXMLFile = false;
 	string inputTextXMLFileName = "semanticNet.xml";
-
 	bool useOutputTextXMLFile = false;
 	string outputTextXMLFileName = "semanticNet.xml";
-
 	bool useOutputTextCXLFile = false;
 	string outputTextCXLFileName = "semanticNet.cxl";
-
 	bool useOutputTextLDRFile = false;
 	string outputTextLDRFileName = "semanticNet.ldr";
-
 	bool useOutputTextPPMFile = false;
 	string outputTextPPMFileName = "semanticNet.ppm";
-
 	bool useOutputTextSVGFile = false;
 	string outputTextSVGFileName = "semanticNet.svg";
-
 	bool useInputQueryPlainTXTFile = false;
 	string inputQueryPlainTXTFileName = "inputTextQuery.txt";
-
 	bool useInputQueryNLPrelationXMLFile = false;
 	string inputQueryNLPrelationXMLFileName = "inputNLPrelationQuery.xml";
-
 	bool useInputQueryNLPfeatureXMLFile = false;
 	string inputQueryNLPfeatureXMLFileName = "inputNLPfeatureQuery.xml";
-
 	bool useOutputQueryCFFFile = false;
 	string outputQueryCFFFileName = "outputNLPQuery.cff";
-
 	bool useInputQueryXMLFile = false;
 	string inputQueryXMLFileName = "semanticNetQuery.xml";
-
 	bool useOutputQueryXMLFile = false;
 	string outputQueryXMLFileName = "semanticNetQuery.xml";
-
 	bool useOutputQueryCXLFile = false;
 	string outputQueryCXLFileName = "semanticNetQuery.cxl";
-
 	bool useOutputQueryLDRFile = false;
 	string outputQueryLDRFileName = "semanticNetQuery.ldr";
-
 	bool useOutputQueryPPMFile = false;
 	string outputQueryPPMFileName = "semanticNetQuery.ppm";
-
 	bool useOutputQuerySVGFile = false;
 	string outputQuerySVGFileName = "semanticNetQuery.svg";
-
 	bool useOutputTextAllFile = false;
 	string outputTextAllFileName = "semanticNet";
-
 	bool useOutputTextAnswerPlainTXTFile = false;
 	string outputTextAnswerPlainTXTFileName = "answer.txt";
 
@@ -232,9 +219,27 @@ int main(int argc,char **argv)
 
 	bool useInputQuery = false;
 
+#ifdef GIA_USE_DATABASE
 	bool readFromDatabase = false;
 	bool writeToDatabase = false;
 	bool useDatabase = false;
+#endif
+
+#ifdef GIA_USE_LRP
+	bool useLRP = false;
+	bool useOutputLRPTextPlainTXTFile = false;
+	string outputLRPTextPlainTXTFileName = "inputTextWithLRP.txt";
+	bool useOutputLRPTextForNLPonlyPlainTXTFile = false;
+	string outputLRPTextForNLPonlyPlainTXTFileName = "inputTextWithLRPforNLPonly.txt";
+	bool useOutputQueryLRPTextPlainTXTFile = false;
+	string outputQueryLRPTextPlainTXTFileName = "inputTextWithLRPQuery.txt";
+	bool useOutputQueryLRPTextForNLPonlyPlainTXTFile = false;
+	string outputQueryLRPTextForNLPonlyPlainTXTFileName = "inputTextWithLRPforNLPonlyQuery.txt";
+	GIALRPtagTextCorrespondenceInfo * textGIALRPtagTextCorrespondenceInfo = new GIALRPtagTextCorrespondenceInfo();
+	GIALRPtagTextCorrespondenceInfo * queryGIALRPtagTextCorrespondenceInfo = new GIALRPtagTextCorrespondenceInfo();	
+	initialiseCurrentGIALRPtagTextCorrespondenceInfo();
+#endif
+
 
 	//bool train = false;
 	//bool form = true;
@@ -261,7 +266,7 @@ int main(int argc,char **argv)
 			useInputTextCodeextensionsTXTFileName = true;
 		}
 	#endif
-	
+
 		if(exists_argument(argc,argv,"-ionlprel"))
 		{
 			inputTextNLPrelationXMLFileName=get_char_argument(argc,argv,"-ionlprel");
@@ -500,6 +505,7 @@ int main(int argc,char **argv)
 			}
 		}
 
+	#ifdef GIA_USE_DATABASE
 		if(exists_argument(argc,argv,"-dbread"))
 		{
 			readFromDatabase = true;
@@ -510,7 +516,34 @@ int main(int argc,char **argv)
 			writeToDatabase = true;
 			useDatabase = true;
 		}
+	#endif
 
+	#ifdef GIA_USE_LRP
+		if(exists_argument(argc,argv,"-lrp"))
+		{
+			useLRP = true;
+		}
+		if(exists_argument(argc,argv,"-olrptxt"))
+		{
+			outputLRPTextPlainTXTFileName=get_char_argument(argc,argv,"-olrptxt");
+			useOutputLRPTextPlainTXTFile = true;
+		}
+		if(exists_argument(argc,argv,"-olrptxtnlp"))
+		{
+			outputLRPTextForNLPonlyPlainTXTFileName=get_char_argument(argc,argv,"-olrptxtnlp");
+			useOutputLRPTextForNLPonlyPlainTXTFile = true;
+		}
+		if(exists_argument(argc,argv,"-olrptxtq"))
+		{
+			outputQueryLRPTextPlainTXTFileName=get_char_argument(argc,argv,"-olrptxtq");
+			useOutputQueryLRPTextPlainTXTFile = true;
+		}
+		if(exists_argument(argc,argv,"-olrptxtnlpq"))
+		{
+			outputQueryLRPTextForNLPonlyPlainTXTFileName=get_char_argument(argc,argv,"-olrptxtnlpq");
+			useOutputQueryLRPTextForNLPonlyPlainTXTFile = true;
+		}
+	#endif
 
 		if (exists_argument(argc,argv,"-workingfolder"))
 		{
@@ -563,7 +596,7 @@ int main(int argc,char **argv)
 
 		if (exists_argument(argc,argv,"-version"))
 		{
-			cout << "OpenGIA.exe - Project Version: 1o6a 23-August-2012" << endl;
+			cout << "OpenGIA.exe - Project Version: 1p1a 08-September-2012" << endl;
 			exit(1);
 		}
 
@@ -726,6 +759,30 @@ int main(int argc,char **argv)
 			}
 		}
 	}
+	if(useLRP)
+	{
+		if(!useOutputLRPTextPlainTXTFile)
+		{
+			useOutputLRPTextPlainTXTFile = true;
+			outputLRPTextPlainTXTFileName = outputTextAllFileName + "afterLRP.txt";
+		}
+		if(!useOutputLRPTextForNLPonlyPlainTXTFile)
+		{
+			useOutputLRPTextForNLPonlyPlainTXTFile = true;
+			outputLRPTextForNLPonlyPlainTXTFileName = outputTextAllFileName + "afterLRPforNLPonly.txt";
+		}
+		if(!useOutputQueryLRPTextPlainTXTFile)
+		{
+			useOutputQueryLRPTextPlainTXTFile = true;
+			outputQueryLRPTextPlainTXTFileName = outputTextAllFileName + "afterLRPQuery.txt";
+		}
+		if(!useOutputQueryLRPTextForNLPonlyPlainTXTFile)
+		{
+			useOutputQueryLRPTextForNLPonlyPlainTXTFile = true;
+			outputQueryLRPTextForNLPonlyPlainTXTFileName = outputTextAllFileName + "afterLRPforNLPonlyQuery.txt";
+		}
+	}
+
 
 	/*
 	cout << errmessage << endl;
@@ -755,6 +812,27 @@ int main(int argc,char **argv)
 	cout << "rasterImageWidth = " << rasterImageWidth << endl;
 	cout << "rasterImageHeight = " << rasterImageHeight << endl;
 	*/
+
+#ifdef GIA_USE_LRP
+	if(useLRP)
+	{
+		setCurrentGIALRPtagTextCorrespondenceInfo(false);	//required for local variable access
+		if(!parseTextFileAndReduceLanguage(inputTextPlainTXTFileName, outputLRPTextPlainTXTFileName, outputLRPTextForNLPonlyPlainTXTFileName))
+		{
+			result = false;
+		}
+		if(useInputQuery)
+		{
+			setCurrentGIALRPtagTextCorrespondenceInfo(true);	//required for local variable access
+			if(!parseTextFileAndReduceLanguage(inputQueryPlainTXTFileName, outputQueryLRPTextPlainTXTFileName, outputQueryLRPTextForNLPonlyPlainTXTFileName))
+			{
+				result = false;
+			}
+		}
+		inputTextPlainTXTFileName = outputLRPTextForNLPonlyPlainTXTFileName;	//now perform NLP using NLP specific (dummy) version of LRP output
+		inputQueryPlainTXTFileName = outputQueryLRPTextForNLPonlyPlainTXTFileName;	//now perform NLP using NLP specific (dummy) version of LRP output
+	}
+#endif
 
 #ifdef USE_CE
 	bool useCodeextensionsHeirachy = false;
@@ -822,6 +900,12 @@ int main(int argc,char **argv)
 				executeNLPparser(inputTextPlainTXTFileName, inputTextNLPfeatureXMLFileName, NLPfeatureParser, NLPexeFolderArray);
 			}
 			useInputTextNLPrelationXMLFile = true;	//now will parse the NLP Parsed file
+
+			/*
+			#ifdef GIA_USE_LRP
+			convertRevertNLPtagNamesToOfficialLRPOutput(NLPdependencyRelationsParser, NLPfeatureParser, LRPTextForNLPonlyPlainTXTFileName, LRPTextPlainTXTFileName, inputTextNLPrelationXMLFileName, inputTextNLPfeatureXMLFileName);
+			#endif
+			*/
 		}
 	}
 
@@ -904,6 +988,12 @@ int main(int argc,char **argv)
 				executeNLPparser(inputQueryPlainTXTFileName, inputQueryNLPfeatureXMLFileName, queryNLPfeatureParser, NLPexeFolderArray);
 			}
 			useInputQueryNLPrelationXMLFile = true;	//now will parse the NLP Parsed file
+
+			/*
+			#ifdef GIA_USE_LRP
+			convertRevertNLPtagNamesToOfficialLRPOutput(queryNLPdependencyRelationsParser, queryNLPfeatureParser, outputQueryLRPTextForNLPonlyPlainTXTFileName, outputQueryLRPTextPlainTXTFileName, inputQueryTextNLPrelationXMLFileName, inputQueryTextNLPfeatureXMLFileName);
+			#endif
+			*/
 		}
 	}
 
@@ -1019,8 +1109,8 @@ int main(int argc,char **argv)
 				{
 					for(vector<string>::iterator aliasIter = queryAnswerNode->aliasList.begin(); aliasIter != queryAnswerNode->aliasList.end(); aliasIter++)
 					{
-						cout << "Exact Found Answer (alias): " << *aliasIter << endl;		//CHECKTHIS; this is not working yet	
-					}	
+						cout << "Exact Found Answer (alias): " << *aliasIter << endl;		//CHECKTHIS; this is not working yet
+					}
 				}
 				#endif
 				cout << "Exact Found Answer: " << queryAnswerNode->entityName << endl;
@@ -1270,6 +1360,7 @@ bool parseNLPParserFileAndCreateSemanticNetworkBasedUponDependencyGrammarParsedS
 
 	Paragraph * firstParagraphInList = new Paragraph();
 
+	setCurrentGIALRPtagTextCorrespondenceInfo(isQuery);	//required for local variable access
 	if(!parseNLPParserFile(inputTextNLPrelationXMLFileName, inputTextNLPfeatureXMLFileName, isQuery, firstParagraphInList, NLPfeatureParser, NLPdependencyRelationsParser, NLPrelexCompatibilityMode))
 	{
 		result = false;
@@ -1309,7 +1400,7 @@ bool createSemanticNetworkBasedUponDependencyGrammarParsedSentences(Paragraph * 
 		setUseDatabase(GIA_USE_DATABASE_FALSE);
 	}
 	#endif
-	
+
 	int NLPdependencyRelationsType = dependencyRelationsTypes[NLPdependencyRelationsParser];
 
 	Paragraph * currentParagraph = firstParagraphInList;
@@ -1364,7 +1455,7 @@ bool createSemanticNetworkBasedUponDependencyGrammarParsedSentences(Paragraph * 
 		setUseDatabase(useDatabaseOriginal);
 	}
 	#endif
-	
+
 	return result;
 }
 

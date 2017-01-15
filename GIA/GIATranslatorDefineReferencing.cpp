@@ -1,29 +1,29 @@
 /*******************************************************************************
- * 
+ *
  * This file is part of BAIPROJECT.
- * 
+ *
  * BAIPROJECT is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License version 3
  * only, as published by the Free Software Foundation.
- * 
+ *
  * BAIPROJECT is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License version 3 for more details
  * (a copy is included in the LICENSE file that accompanied this code).
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * version 3 along with BAIPROJECT.  If not, see <http://www.gnu.org/licenses/>
  * for a copy of the AGPLv3 License.
- * 
+ *
  *******************************************************************************/
- 
+
 /*******************************************************************************
  *
  * File Name: GIATranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o6a 23-August-2012
+ * Project Version: 1p1a 08-September-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -1100,7 +1100,7 @@ void identifyReferenceSetConceptEntityEntrance(GIAEntityNode * entityNode, int *
 		{
 			GIAEntityNode * currentInstance = (*connectionIter)->entity;
 			//cout << "currentInstance->entityName = " << currentInstance->entityName << endl;
-			
+
 			#ifdef GIA_USE_ADVANCED_REFERENCING_IDENTIFY_DEFINITE_SETS_ONLY
 			//do: CHECKTHIS; may need to re-execute identifyEntityTypes on EntityNodeArray after finishing executing GIATranslator.cpp convertSentenceRelationsIntoGIAnetworkNodes
 			#ifdef GIA_USE_ADVANCED_REFERENCING_IDENTIFY_SETS_WITH_SUBJECT_OR_OBJECT_ONLY
@@ -1215,7 +1215,7 @@ void createGIACoreferenceInListBasedUponIdentifiedReferenceSets(unordered_map<st
 		#endif
 		#ifdef GIA_USE_DATABASE
 		setUseDatabase(GIA_USE_DATABASE_FALSE);
-		#endif		
+		#endif
 		referenceTraceParameters.intrasentenceReference = true;
 		bool foundAtLeastOneMatchIntraSentence = false;
 		createGIACoreferenceInListBasedUponIdentifiedReferenceSet(sentenceConceptEntityNodesList, sentenceConceptEntityNodesList, &referenceTraceParameters, &maxNumberOfMatchedNodes, &queryEntityWithMaxNumberNodesMatched, &networkEntityWithMaxNumberNodesMatched, &foundAtLeastOneMatchIntraSentence);	//always perform intrasentence reference detection last (as this takes priority)
@@ -1233,7 +1233,7 @@ void createGIACoreferenceInListBasedUponIdentifiedReferenceSets(unordered_map<st
 		}
 		#ifdef GIA_USE_DATABASE
 		setUseDatabase(useDatabaseOriginal);
-		#endif		
+		#endif
 		#endif
 
 		#ifdef GIA_ADVANCED_REFERENCING_DEBUG

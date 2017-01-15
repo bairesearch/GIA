@@ -1,29 +1,29 @@
 /*******************************************************************************
- * 
+ *
  * This file is part of BAIPROJECT.
- * 
+ *
  * BAIPROJECT is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License version 3
  * only, as published by the Free Software Foundation.
- * 
+ *
  * BAIPROJECT is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License version 3 for more details
  * (a copy is included in the LICENSE file that accompanied this code).
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * version 3 along with BAIPROJECT.  If not, see <http://www.gnu.org/licenses/>
  * for a copy of the AGPLv3 License.
- * 
+ *
  *******************************************************************************/
- 
+
 /*******************************************************************************
  *
  * File Name: GIAquery.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o6a 23-August-2012
+ * Project Version: 1p1a 08-September-2012
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  * ?Limitations: will only locate a exact answer (based upon a comparison node) if it provides the maximum number of matched nodes
@@ -412,7 +412,7 @@ int testReferencedEntityNodeForExactNameMatch(GIAEntityNode * queryEntityNode, G
 						cout << "\t foundMatch:" << entityNode->entityName << endl;
 						#endif
 					}
-					#endif				
+					#endif
 				}
 				else
 				{
@@ -499,7 +499,7 @@ int testReferencedEntityNodeForExactNameMatch(GIAEntityNode * queryEntityNode, G
 				entityNode->testedForQueryComparisonTemp = true;
 				*numberOfMatchedNodes = *numberOfMatchedNodes + 1;
 				#endif
-				
+
 				#ifdef GIA_QUERY_SUPPORT_MULTIPLE_ANSWERS
 				if(!knownBestMatch)
 				{
@@ -732,7 +732,7 @@ int testReferencedEntityNodeForExactNameMatch(GIAEntityNode * queryEntityNode, G
 		//cout << "EXACT_MATCH_OUT_OF_BOUNDS1" << endl;
 		result = EXACT_MATCH_OUT_OF_BOUNDS;
 	}
-	
+
 	return result;
 }
 
@@ -905,9 +905,9 @@ bool testEntityNodeForQueryOrReferenceSet(GIAEntityNode * queryEntityNode, GIAEn
 		}
 		*/
 
-		
+
 		for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
-		{			
+		{
 			bool pass = true;
 			#ifndef GIA_QUERY_TRACE_CONCEPT_NODES_DEFINING_INSTANTIATIONS
 			if((i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE) && (traceModeIsQuery))	//check: do not trace instantinations for queries only
@@ -978,7 +978,7 @@ bool testEntityNodeForQueryOrReferenceSet(GIAEntityNode * queryEntityNode, GIAEn
 
 					//for(vector<GIAEntityConnection*>::iterator connectionIter = entityNode->entityVectorConnectionsArray[i].begin(); connectionIter != entityNode->entityVectorConnectionsArray[i].end(); connectionIter++)
 					for(vector<GIAEntityConnection*>::reverse_iterator connectionIter = entityNode->entityVectorConnectionsArray[i].rbegin(); connectionIter != entityNode->entityVectorConnectionsArray[i].rend(); connectionIter++)	//always search from end position first (to take the latest/newest reference/answer, if equal number of matched nodes is detected)
-					{	
+					{
 						#ifdef GIA_QUERY_MULTIPLE_ANSWERS_DEBUG
 						for(int level=0; level<currentLevel; level++)
 						{
@@ -1348,7 +1348,7 @@ bool testEntityNodeForQueryOrReferenceSet(GIAEntityNode * queryEntityNode, GIAEn
 					cout << "C. SDGG connectionIterQuery = " << (*connectionIterQuery)->entity->entityName << endl;
 					#endif
 
-				}				
+				}
 			}
 		}
 
@@ -1364,19 +1364,19 @@ bool testEntityNodeForQueryOrReferenceSet(GIAEntityNode * queryEntityNode, GIAEn
 					testEntityNodeForQueryOrReferenceSet((*connectionIter)->entity, entityNode, numberOfMatchedNodes, knownBestMatch, numberOfMatchedNodesRequiredSynonymnDetection, traceModeIsQuery, queryTraceParameters, referenceTraceParameters);
 
 				}
-							
+
 			}
 			for(vector<GIAEntityConnection*>::reverse_iterator connectionIter = entityNode->entityVectorConnectionsArray[i].rbegin(); connectionIter != entityNode->entityVectorConnectionsArray[i].rend(); connectionIter++)	//reverse iterator not required here
-			{		
+			{
 				if(entityNode->isSubstance && (*connectionIter)->entity->isSubstance)
 				{
 					//equality link found - enable pass through
 					testEntityNodeForQueryOrReferenceSet(queryEntityNode, (*connectionIter)->entity, numberOfMatchedNodes, knownBestMatch, numberOfMatchedNodesRequiredSynonymnDetection, traceModeIsQuery, queryTraceParameters, referenceTraceParameters);
 				}
-			}	
+			}
 		}
 		#endif
-				
+
 		//cout << "a7" << endl;
 
 		//cout << "a8" << endl;
@@ -1608,7 +1608,7 @@ bool compareEntityNames(GIAEntityNode * queryEntityNode, GIAEntityNode * entityN
 			{
 				entityNamesAreSynonymous = true;
 			}
-			
+
 			#ifdef GIA_SUPPORT_ALIASES
 			for(vector<string>::iterator aliasIter = entityNode->aliasList.begin(); aliasIter < entityNode->aliasList.end(); aliasIter++)
 			{
@@ -1618,22 +1618,22 @@ bool compareEntityNames(GIAEntityNode * queryEntityNode, GIAEntityNode * entityN
 					{
 						entityNamesAreSynonymous = true;
 					}
-				}			
+				}
 			}
 			for(vector<string>::iterator aliasIter = entityNode->aliasList.begin(); aliasIter < entityNode->aliasList.end(); aliasIter++)
 			{
 				if(checkIfWordIsContainedWithinOtherWordsSynsetsOrViceVersa(&(*aliasIter), &(queryEntityNode->entityName), entityNode->wordNetPOS))
 				{
 					entityNamesAreSynonymous = true;
-				}			
+				}
 			}
 			for(vector<string>::iterator aliasIterQuery = queryEntityNode->aliasList.begin(); aliasIterQuery < queryEntityNode->aliasList.end(); aliasIterQuery++)
 			{
 				if(checkIfWordIsContainedWithinOtherWordsSynsetsOrViceVersa(&(entityNode->entityName), &(*aliasIterQuery), entityNode->wordNetPOS))
 				{
 					entityNamesAreSynonymous = true;
-				}			
-			}				
+				}
+			}
 			#endif
 		}
 	}
@@ -1645,12 +1645,12 @@ bool compareEntityNames(GIAEntityNode * queryEntityNode, GIAEntityNode * entityN
 bool compareEntityAliases(GIAEntityNode * queryEntityNode, GIAEntityNode * entityNode)
 {
 	bool aliasMatchFound = false;
-	
+
 	if(queryEntityNode->entityName == entityNode->entityName)
 	{
 		aliasMatchFound = true;
 	}
-	
+
 	for(vector<string>::iterator aliasIter = entityNode->aliasList.begin(); aliasIter < entityNode->aliasList.end(); aliasIter++)
 	{
 		for(vector<string>::iterator aliasIterQuery = queryEntityNode->aliasList.begin(); aliasIterQuery < queryEntityNode->aliasList.end(); aliasIterQuery++)
@@ -1659,7 +1659,7 @@ bool compareEntityAliases(GIAEntityNode * queryEntityNode, GIAEntityNode * entit
 			{
 				aliasMatchFound = true;
 			}
-		}			
+		}
 	}
 	for(vector<string>::iterator aliasIter = entityNode->aliasList.begin(); aliasIter < entityNode->aliasList.end(); aliasIter++)
 	{
@@ -1674,11 +1674,11 @@ bool compareEntityAliases(GIAEntityNode * queryEntityNode, GIAEntityNode * entit
 		{
 			aliasMatchFound = true;
 		}
-	}		
+	}
 	return aliasMatchFound;
 }
 #endif
-			
+
 
 void generateTexualContextWithPreviousNodeForwards(string * queryAnswerContext, string sourceContext, GIAEntityNode* entityNode, GIAEntityNode* entityNodePrevious)
 {

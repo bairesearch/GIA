@@ -1,29 +1,29 @@
 /*******************************************************************************
- * 
+ *
  * This file is part of BAIPROJECT.
- * 
+ *
  * BAIPROJECT is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License version 3
  * only, as published by the Free Software Foundation.
- * 
+ *
  * BAIPROJECT is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License version 3 for more details
  * (a copy is included in the LICENSE file that accompanied this code).
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * version 3 along with BAIPROJECT.  If not, see <http://www.gnu.org/licenses/>
  * for a copy of the AGPLv3 License.
- * 
+ *
  *******************************************************************************/
- 
+
 /*******************************************************************************
  *
  * File Name: GIAEntityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o6a 23-August-2012
+ * Project Version: 1p1a 08-September-2012
  *
  *******************************************************************************/
 
@@ -64,7 +64,7 @@ GIAEntityNode::GIAEntityNode(void)
 	wordOrig = "";		//this needs to be added to XML i/o + file system database i/o [used for NLG2 bug]
 	#endif
 	confidence = 1.0;
-	
+
 	isConcept = false;
 	isSubstance = false;
 	isAction = false;
@@ -224,7 +224,7 @@ GIAEntityNode::GIAEntityNode(void)
 
 	#ifdef GIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF
 	isName = false;
-	#endif	
+	#endif
 }
 GIAEntityNode::~GIAEntityNode(void)
 {
@@ -386,7 +386,7 @@ string printQuantityNumberString(GIAEntityNode * entityNode)
 }
 
 #ifdef GIA_SUPPORT_ALIASES
-	
+
 void convertAliasesStringToAliases(GIAEntityNode * entityNode, string aliasesString)
 {
 	entityNode->aliasList = explode(aliasesString, GIA_ALIASES_CONVERT_TO_STRING_DELIMITER);
@@ -405,19 +405,19 @@ void convertAliasesToAliasesString(GIAEntityNode * entityNode, string * aliasesS
 }
 
 //http://stackoverflow.com/questions/890164/how-can-i-split-a-string-by-a-delimiter-into-an-array
-vector<string> explode(const string& str, const char& ch) 
+vector<string> explode(const string& str, const char& ch)
 {
 	string next = "";
 	vector<string> result;
 
 	// For each character in the string
-	for(string::const_iterator it = str.begin(); it != str.end(); it++) 
+	for(string::const_iterator it = str.begin(); it != str.end(); it++)
 	{
 		// If we've hit the terminal character
-		if(*it == ch) 
+		if(*it == ch)
 		{
 			// If we have some characters accumulated
-			if(next.length() > 0) 
+			if(next.length() > 0)
 			{
 				// Add them to the result vector
 				#ifdef GIA_ALIASES_DEBUG
@@ -426,8 +426,8 @@ vector<string> explode(const string& str, const char& ch)
 				result.push_back(next);
 				next = "";
 			}
-		} 
-		else 
+		}
+		else
 		{
 			// Accumulate the next character into the sequence
 			next += *it;

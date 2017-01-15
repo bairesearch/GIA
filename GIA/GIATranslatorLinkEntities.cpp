@@ -1,29 +1,29 @@
 /*******************************************************************************
- * 
+ *
  * This file is part of BAIPROJECT.
- * 
+ *
  * BAIPROJECT is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License version 3
  * only, as published by the Free Software Foundation.
- * 
+ *
  * BAIPROJECT is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License version 3 for more details
  * (a copy is included in the LICENSE file that accompanied this code).
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * version 3 along with BAIPROJECT.  If not, see <http://www.gnu.org/licenses/>
  * for a copy of the AGPLv3 License.
- * 
+ *
  *******************************************************************************/
- 
+
 /*******************************************************************************
  *
  * File Name: GIATranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o6a 23-August-2012
+ * Project Version: 1p1a 08-September-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -195,14 +195,14 @@ void linkEntityDefinitionsAppositiveOfNouns(Sentence * currentSentenceInList, GI
 				#else
 				bool sameReferenceSet = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
 				#endif
-				
+
 				#ifdef GIA_SUPPORT_ALIASES
 				bool treatDefinitionAsEquality = false;
 				bool treatDefinitionAsEqualityReversePrimary = false;
 				#ifdef GIA_USE_ADVANCED_REFERENCING
 				if(linkPreestablishedReferencesGIA)
-				{	
-				#endif				
+				{
+				#endif
 					if((thingEntity->isSubstance || thingEntity->isNameQuery) && (definitionEntity->isSubstance || definitionEntity->isNameQuery))
 					{//equality link found - add alias instead
 
@@ -214,7 +214,7 @@ void linkEntityDefinitionsAppositiveOfNouns(Sentence * currentSentenceInList, GI
 							if(definitionEntity->grammaticalRelexPersonOrStanfordProperNounTemp || definitionEntity->isNameQuery)
 							{
 								#ifdef GIA_ALIASES_DEBUG
-								cout << "linkEntityDefinitionsAppositiveOfNouns1" << endl; 
+								cout << "linkEntityDefinitionsAppositiveOfNouns1" << endl;
 								#endif
 								//eg max = the brown dog
 							}
@@ -235,7 +235,7 @@ void linkEntityDefinitionsAppositiveOfNouns(Sentence * currentSentenceInList, GI
 							}
 						#ifndef GIA_SUPPORT_WHAT_IS_THE_TIME_QUERY_ALIAS_ANSWERS
 						}
-						#endif							
+						#endif
 					}
 					#ifdef GIA_SUPPORT_WHAT_IS_THE_TIME_QUERY_ALIAS_ANSWERS
 					else if((thingEntity->isSubstance && thingEntity->entityName == FEATURE_RELEX_FLAG_TIME_NAME) && (definitionEntity->isQuery))
@@ -243,14 +243,14 @@ void linkEntityDefinitionsAppositiveOfNouns(Sentence * currentSentenceInList, GI
 						#ifdef GIA_ALIASES_DEBUG
 						cout << "linkEntityDefinitionsAppositiveOfNouns4" << endl;
 						#endif
-						//eg what is the time					
+						//eg what is the time
 						treatDefinitionAsEquality = true;
 						definitionEntity->isNameQuery = true;
 					}
 					#endif
-				#ifdef GIA_USE_ADVANCED_REFERENCING	
+				#ifdef GIA_USE_ADVANCED_REFERENCING
 				}
-				#endif				
+				#endif
 				if(treatDefinitionAsEquality)
 				{
 					if(treatDefinitionAsEqualityReversePrimary)
@@ -270,7 +270,7 @@ void linkEntityDefinitionsAppositiveOfNouns(Sentence * currentSentenceInList, GI
 						//if no proper noun (or query) detected, each node is equal, eg the brown dog == the happy wolf]
 						mergeEntityNodesAddAlias(thingEntity, definitionEntity);
 						GIAEntityNodeArray[definitionIndex] = GIAEntityNodeArray[thingIndex];
-					}				
+					}
 				}
 				else
 				{
@@ -1330,9 +1330,9 @@ void linkHavingPropertyConditionsAndBeingDefinitionConditions(Sentence * current
 					{
 						prepositionNamePassed = true;
 					}
-				}			
+				}
 				if(prepositionNamePassed)
-				{			
+				{
  					Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
 
 					while(currentRelationInList2->next != NULL)
@@ -1637,7 +1637,7 @@ void linkConditions(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFil
 						/*Stanford:
 						prep_of(grew-2, pie-6)
 						acomp(grew-2, tired-3)
-						nsubj(grew-2, She-1)						
+						nsubj(grew-2, She-1)
 						*/
 
 						//cout << "c" << endl;
@@ -1678,7 +1678,7 @@ void linkConditions(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFil
 			}
 			#endif
 			*/
-			
+
 			if(passed)
 			{
 				#ifdef GIA_USE_ADVANCED_REFERENCING
