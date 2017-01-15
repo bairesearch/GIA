@@ -23,7 +23,7 @@
  * File Name: GIAdatabase.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1r7a 14-November-2012
+ * Project Version: 1r8a 18-November-2012
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: performs simple GIA database functions (storing nodes in ordered arrays/vectors/maps)
  *
@@ -204,7 +204,7 @@ string DBgenerateFileName(string * entityName, long idInstance, int connectionTy
 void initialiseDatabase(bool readFromDatabase, string newDatabaseFolderName, bool useDatabase, vector<GIAentityNode*> *entityNodesActiveListComplete, unordered_map<string, GIAentityNode*> * entityNodesActiveListConcepts);
 	void DBreadConceptEntityNodesLoadedList();						//unordered_map<string, bool> *DBconceptEntityNodesLoadedList
 	#ifdef GIA_DATABASE_TEST_MODE_LOAD_ALL_ENTITIES_AND_CONNECTIONS_TO_ACTIVE_LIST_UPON_READ
-	void DBreadDatabase(vector<GIAentityNode*> *entityNodesActiveListComplete);
+	void DBreadDatabase(vector<GIAentityNode*> *entityNodesActiveListComplete, unordered_map<string, GIAentityNode*> * entityNodesActiveListConcepts);
 	#endif
 	
 void DBreadVectorConnections(GIAentityNode * entityNode, int connectionType);
