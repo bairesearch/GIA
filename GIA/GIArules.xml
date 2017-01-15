@@ -1289,6 +1289,14 @@
 					//OLD: nsubj(is-3, rabbit-2) + advmod(is-3, away-6) - > nsubj(away-6, rabbit-2) )
 				case added 15 May 2012 for ; nsubj(is-4, rabbit-2) + advmod(is-4, away-7) + rcmod(rabbit-2, is-4) -> _predadj(rabbit-2, away-7)
 				--></example>
+				<example>
+				<!--
+				The rabbit that is 20 meters away is fat.
+				nsubj(is-4, rabbit-2)
+				advmod(is-4, away-7)
+				rcmod(rabbit-2, is-4)
+				-->
+				</example>
 				<!-- #ifdefGIA_COLLAPSE_ADVMOD_RELATION_GOVERNOR_BE_TO_PREDADJ_NOT_SUBJ -->
 					<!-- #ifdefGIA_COLLAPSE_ADVMOD_RELATION_GOVERNOR_BE_TO_PREDADJ_NOT_SUBJ_OLD -->
 					<!--
@@ -1304,12 +1312,6 @@
 					<option useRedistributeRelationEntityIndexReassignment="true" REL="2" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="1" redistributeRelationEntityIndexReassignmentRelationEntityID="2" />
 					<option disableRelation="true" REL="1" />
 					//#ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION
-					<example>
-					The rabbit that is 20 meters away is fat.
-					nsubj(is-4, rabbit-2)
-					advmod(is-4, away-7)
-					rcmod(rabbit-2, is-4)
-					</example>
 					<option useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck="true" REL="2" />
 					<option useRelationTest="true" REL="3" REL_ENT="3" relationTest="_rcmod" />
 					<option useRelationIndexTest="true" REL="3" REL_ENT="1" relationIndexTestRelationID="1" relationIndexTestEntityID="2" />
@@ -1332,12 +1334,6 @@
 					<option useRedistributeRelationEntityIndexReassignment="true" REL="1" REL_ENT="2" redistributeRelationEntityIndexReassignmentRelationID="2" redistributeRelationEntityIndexReassignmentRelationEntityID="2" />
 					<option disableRelation="true" REL="2" />
 					<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
-					<example>
-					The rabbit that is 20 meters away is fat.
-					nsubj(is-4, rabbit-2)
-					advmod(is-4, away-7)
-					rcmod(rabbit-2, is-4)
-					</example>
 					<option useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck="true" REL="1" />
 					<option useRelationTest="true" REL="3" REL_ENT="3" relationTest="_rcmod" />
 					<option useRelationIndexTest="true" REL="3" REL_ENT="1" relationIndexTestRelationID="1" relationIndexTestEntityID="2" />
