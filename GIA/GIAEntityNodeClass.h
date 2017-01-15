@@ -216,6 +216,7 @@ public:
 	bool isObjectTemp;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
 	bool hasPropertyTemp;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
 	//bool hasQualityTemp;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
+	bool isObject;			//used for generating non exact answers during queries
 	
 	//bool isReferenceEntityInThisSentence;	//temporary: used for GIA translator reference paser only - cleared every time a new sentence is parsed
 	bool entityAlreadyDeclaredInThisContext;	//temporary: used for GIA translator reference paser only - cleared every time a new context (eg paragraph/manuscript) is parsed

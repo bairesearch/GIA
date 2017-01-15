@@ -14,9 +14,13 @@
 
 #define GIA_QUERY_TRACE_PAST_ANSWER	//default: disabled [temporarily testing enabled]
 //#define GIA_QUERY_TRACE_INSTANTIATIONS
-//#define GIA_QUERY_TRACE_INSTANTIATIONS_OLD_TEXTUAL_OUTPUT
-#define GIA_QUERY_RELEX_REQUIREMENTS_TO_FIND_INEXACT_ANSWER	//does not work, when the inexact answer expected is the object of the question, and not an arbitrary position within the question. need to identify objects in the question/text as a separate variable - not based on their incoming links.
-#define GIA_QUERY_RELEX_REQUIREMENTS_TO_FIND_INEXACT_ANSWER_ALLOW_SINGLE_ENTITY_MATCHES
+#ifdef GIA_QUERY_TRACE_INSTANTIATIONS
+	//#define GIA_QUERY_TRACE_INSTANTIATIONS_OLD_TEXTUAL_OUTPUT
+#endif
+#define GIA_QUERY_RELEX_REQUIREMENTS_TO_FIND_INEXACT_ANSWER	//does not work with GIA_QUERY_RELEX_REQUIREMENTS_TO_FIND_INEXACT_ANSWER, when the inexact answer expected is the object of the question, and not an arbitrary position within the question. need to identify answer entities in the question/text as a separate variable (eg object - but not necessarily) - not based on their incoming links.
+#ifdef GIA_QUERY_RELEX_REQUIREMENTS_TO_FIND_INEXACT_ANSWER
+	#define GIA_QUERY_RELEX_REQUIREMENTS_TO_FIND_INEXACT_ANSWER_ALLOW_SINGLE_ENTITY_MATCHES
+#endif
 
 //#define GIA_QUERY_PRINT_CONTEXT_EVEN_WHEN_EXACT_ANSWER_FOUND
 //#define GIA_QUERY_USE_ARTIFICIALLY_ADJUSTED_MAX_CONFIDENCE

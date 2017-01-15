@@ -193,7 +193,7 @@ GIAEntityNode * testReferencedEntityNodeForNameMatch(GIAEntityNode * queryEntity
 	
 	if((!findBestInexactAnswerAndSetDrawParameters && !(entityNode->testedForQueryComparison)) || (findBestInexactAnswerAndSetDrawParameters && !(entityNode->isAnswerContextToQuery)))
 	{
-		//cout << "IE-1" << endl;
+		cout << "IE-1" << endl;
 
 		
 		//cout << "\tqueryEntityNode = " << queryEntityNode->entityName << endl;
@@ -226,7 +226,7 @@ GIAEntityNode * testReferencedEntityNodeForNameMatch(GIAEntityNode * queryEntity
 		{
 			if(queryEntityNode->entityName == entityNode->entityName)	//allow non-equal conditions to be matched during network comparison
 			{
-				//cout << "IE0" << endl;
+				cout << "IE0" << endl;
 
 				if(detectComparisonVariable && comparisonVariableNode->hasQuantity && queryEntityNode->hasQuantity && entityNode->hasQuantity)
 				{//exact match found [NB if a quantity, the queryEntityNode's entityName will not have the comparisonVariable name (_$qVar) specified, and therefore a matched entity node entityName is required]
@@ -237,18 +237,18 @@ GIAEntityNode * testReferencedEntityNodeForNameMatch(GIAEntityNode * queryEntity
 				}
 				else
 				{
-					//cout << "IE1" << endl;
+					cout << "IE1" << endl;
 					if(isSuitableNodeTypeForInexactAnswer)
 					{
-						//cout << "IE2" << endl;
+						cout << "IE2" << endl;
 						
 						if(findBestInexactAnswerAndSetDrawParameters)
 						{
-							//cout << "IE3" << endl;
+							cout << "IE3" << endl;
 							foundMatch = true;
-							#ifdef GIA_QUERY_DEBUG
+							//#ifdef GIA_QUERY_DEBUG
 							cout << "foundBestInexactAnswerAndSetDrawParameters:" << entityNode->entityName << endl;
-							#endif
+							//#endif
 							//set queryAnswerNode if entityNode is an object;
 							/*eg;
 							Which house does did Jane buy?
@@ -363,7 +363,7 @@ GIAEntityNode * testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntit
 	
 		/*
 		cout << "testEntityNodeForQuery:" << endl;
-		cout << "entityNode = " << entityNode->entityName << endl;
+		cout << "\tentityNode = " << entityNode->entityName << endl;
 		*/
 		
 		if(findBestInexactAnswerAndSetDrawParameters)
@@ -377,6 +377,8 @@ GIAEntityNode * testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntit
 		}
 		
 		#ifdef GIA_QUERY_DEBUG
+		//cout << "\tfindBestInexactAnswerAndSetDrawParameters = " << findBestInexactAnswerAndSetDrawParameters << endl;
+		//cout << "\tqueryEntityNode->entityName = " << queryEntityNode->entityName << endl;
 		if(entityNode->isProperty)
 		{
 			cout << "entityNode = " << entityNode->entityName << " (is property)" << endl;		
@@ -407,7 +409,7 @@ GIAEntityNode * testEntityNodeForQuery(GIAEntityNode * queryEntityNode, GIAEntit
 		}
 		else
 		{
-			cout << "entityNode = " << entityNode->entityName << endl;
+			cout << "entityNode = " << entityNode->entityName << " (undefined/concept)" << endl;
 		}
 		#endif
 		

@@ -2537,13 +2537,13 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 									//added 1 May 11a (assign actions to instances (properties) of entities and not entities themselves where appropriate)
 										//NB definitions are only assigned to entities, not properties (instances of entities)
 
-									#ifdef GIA_TRANSLATOR_COMPENSATE_FOR_SWITCH_OBJ_SUB_QUESTIONS_ANOMALY_ADVANCED
+									#ifdef GIA_TRANSLATOR_COMPENSATE_FOR_SWITCH_OBJ_SUB_DEFINITION_QUESTIONS_ANOMALY_ADVANCED
 									if(currentSentenceInList->isQuestion == true)
 									#else
 									if(subjectEntityTemp->entityName == REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
 									#endif
 									{
-									#ifdef GIA_TRANSLATOR_COMPENSATE_FOR_SWITCH_OBJ_SUB_QUESTIONS_ANOMALY									
+									#ifdef GIA_TRANSLATOR_COMPENSATE_FOR_SWITCH_OBJ_SUB_DEFINITION_QUESTIONS_ANOMALY									
 										//switch object/subject variables [transform question into answer form]
 										addDefinitionToEntity(objectEntityTemp, subjectEntityTemp);
 									#else
