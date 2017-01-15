@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2b7d 12-January-2014
+ * Project Version: 2c1a 13-January-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -273,7 +273,7 @@ using namespace std;
 	#endif
 #endif
 
-#define GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
+//#define GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC	//disabled GIA 2c1a
 #define GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_BEING_EG_BEING_INTO_A_DEFINITION_BASIC
 
 #define GIA_TRANSLATOR_ACTION_DEFINITION_CODE_SIMPLIFICATION
@@ -531,7 +531,8 @@ static string relationGovernorDefinitionNameArray[RELATION_GOVERNOR_DEFINITION_N
 #define FEATURE_INDEX_OF_SPECIAL_CONDITION_UNKNOWN (MAX_NUMBER_OF_WORDS_PER_SENTENCE-11)
 #define FEATURE_INDEX_OF_TOBE_UNKNOWN (MAX_NUMBER_OF_WORDS_PER_SENTENCE-12)
 #define FEATURE_INDEX_OF_QUANTITY_TIMES_UNKNOWN (MAX_NUMBER_OF_WORDS_PER_SENTENCE-13)	//added 12 January 2013
-#define FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY (FEATURE_INDEX_OF_QUANTITY_TIMES_UNKNOWN)
+#define FEATURE_INDEX_OF_HAVE_UNKNOWN (MAX_NUMBER_OF_WORDS_PER_SENTENCE-14)		//added GIA 2c1a 13 January 2013
+#define FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY (FEATURE_INDEX_OF_HAVE_UNKNOWN)
 
 //questions;
 #define REFERENCE_TYPE_QUESTION_QUERY_WHO "who"
@@ -1340,7 +1341,7 @@ public:
 	bool mustGenerateConditionTypeName;
 	string conditionTypeEntityDefaultName;
 	int conditionTypeEntityDefaultIndex;
-
+	
 		//for cleanup
 	bool disableEntity[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_GOVDEP_ENTITIES_PER_RELATION];		//for entity1 and entity2
 	bool disableEntityUseOriginalValues[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_GOVDEP_ENTITIES_PER_RELATION];	//for disabling an entity based on its original index

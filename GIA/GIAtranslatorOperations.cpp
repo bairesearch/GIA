@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2b7d 12-January-2014
+ * Project Version: 2c1a 13-January-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -2564,9 +2564,12 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 								int functionEntityIndex4special = param->relationEntityIndex[param->functionEntityRelationID[FUNC_ENT4_SPECIAL]][param->functionEntityRelationEntityID[FUNC_ENT4_SPECIAL]];
 
 								//if(param->functionToExecuteUponFind is a condition....
-								if((param->functionToExecuteUponFind == GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectConditionToEntity) ||
-								  (param->functionToExecuteUponFind == GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectBeingDefinitionConditionToEntity) ||
-								  (param->functionToExecuteUponFind == GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectHavingPropertyConditionToEntity))
+								if((param->functionToExecuteUponFind == GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectConditionToEntity) 
+								#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
+								|| (param->functionToExecuteUponFind == GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectBeingDefinitionConditionToEntity)
+								|| (param->functionToExecuteUponFind == GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectHavingPropertyConditionToEntity)
+								#endif
+								)
 								{//if a condition is required to be created
 									string conditionTypeEntityName = "";
 									bool mustLookupOrGenerateConditionTypeConceptEntity = false;
@@ -2609,6 +2612,20 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 										//GIAentityNode * conditionTypeConceptEntity = above
 									}
 								}
+								#ifndef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
+								else if(param->functionToExecuteUponFind == GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectActionToEntity) 
+								{
+									if(param->mustGenerateConditionTypeName)
+									{
+										//create intermediary action 'have'
+										string conditionTypeEntityName = param->conditionTypeEntityDefaultName;
+										functionEntityIndex3 = param->conditionTypeEntityDefaultIndex;
+										bool entityAlreadyExistant = false;
+										param->GIAentityNodeArray[functionEntityIndex3] = findOrAddEntityNodeByNameSimpleWrapperCondition(param->GIAentityNodeArrayFilled, param->GIAentityNodeArray, functionEntityIndex3, &conditionTypeEntityName, &entityAlreadyExistant, param->entityNodesActiveListConcepts);
+										//GIAentityNode * conditionTypeConceptEntity = above
+									}
+								}
+								#endif
 
 								//cout << "\t\tgenericDependecyRelationInterpretation() passed: function = " << param->functionName << endl;
 								//cout << "\t\tgenericEntityArrayInterpretation: " << param->GIAentityNodeArray[functionEntityIndex1]->entityName << endl;
@@ -2638,37 +2655,46 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 								}
 								else if(param->functionToExecuteUponFind == GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectActionToEntity)
 								{
-									#ifdef GIA_USE_ADVANCED_REFERENCING
-									bool subjectFound = false;
-									for(int i=0; i<RELATION_TYPE_SUBJECT_NUMBER_OF_TYPES; i++)
-									{
-										if(param->relation[REL1]->relationType == relationTypeSubjectNameArray[i])
-										{
-											subjectFound = true;
-										}
-									}
-									if(!subjectFound)
-									{
-										cout << "error: addOrConnectActionToEntity && (relation[REL1]->relationType != ~RELATION_TYPE_SUBJECT)" << endl;
-									}
-									bool objectFound = false;
-									for(int i=0; i<RELATION_TYPE_OBJECT_NUMBER_OF_TYPES; i++)
-									{
-										if(param->relation[REL2]->relationType == relationTypeObjectNameArray[i])
-										{
-											objectFound = true;
-										}
-									}
-									if(!objectFound)
-									{
-										cout << "error: addOrConnectActionToEntity && (relation[REL1]->relationType != ~RELATION_TYPE_OBJECT)" << endl;
-									}
-									bool sameReferenceSetSubject = determineSameReferenceSetValue(DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_ACTIONS, param->relation[REL1]);
-									bool sameReferenceSetObject = determineSameReferenceSetValue(DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_ACTIONS, param->relation[REL2]);
-									#else
 									bool sameReferenceSetSubject = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
 									bool sameReferenceSetObject = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
+									#ifdef GIA_USE_ADVANCED_REFERENCING
+									if(param->mustGenerateConditionTypeName)
+									{
+										sameReferenceSetSubject = sameReferenceSet;
+										sameReferenceSetObject = sameReferenceSet;
+									}
+									else
+									{
+										bool subjectFound = false;
+										for(int i=0; i<RELATION_TYPE_SUBJECT_NUMBER_OF_TYPES; i++)
+										{
+											if(param->relation[REL1]->relationType == relationTypeSubjectNameArray[i])
+											{
+												subjectFound = true;
+											}
+										}
+										if(!subjectFound)
+										{
+											cout << "error: addOrConnectActionToEntity && (relation[REL1]->relationType != ~RELATION_TYPE_SUBJECT)" << endl;
+										}
+										bool objectFound = false;
+										for(int i=0; i<RELATION_TYPE_OBJECT_NUMBER_OF_TYPES; i++)
+										{
+											if(param->relation[REL2]->relationType == relationTypeObjectNameArray[i])
+											{
+												objectFound = true;
+											}
+										}
+										if(!objectFound)
+										{
+											cout << "error: addOrConnectActionToEntity && (relation[REL1]->relationType != ~RELATION_TYPE_OBJECT)" << endl;
+										}
+										sameReferenceSetSubject = determineSameReferenceSetValue(param->defaultSameSetReferenceValue, param->relation[REL1]);	//changed from DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_ACTIONS 2c1a to support !GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
+										sameReferenceSetObject = determineSameReferenceSetValue(param->defaultSameSetReferenceValue, param->relation[REL2]);	//changed from DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_ACTIONS 2c1a to support !GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
+
+									}
 									#endif
+
 									param->GIAentityNodeArray[functionEntityIndex3] = addOrConnectActionToEntity(param->GIAentityNodeArray[functionEntityIndex1], param->GIAentityNodeArray[functionEntityIndex2], param->GIAentityNodeArray[functionEntityIndex3], sameReferenceSetSubject, sameReferenceSetObject);
 									#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
 									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_SUBJECT, functionEntityIndex1, functionEntityIndex3, sameReferenceSetSubject);
@@ -2701,6 +2727,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_OBJECT, functionEntityIndex2, functionEntityIndex3, sameReferenceSet);
 									#endif
 								}
+								#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
 								else if(param->functionToExecuteUponFind == GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectBeingDefinitionConditionToEntity)
 								{
 									bool negative = param->GIAentityNodeArray[functionEntityIndex4special]->negative;
@@ -2721,6 +2748,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 									GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->GIAentityNodeArray, param->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES, functionEntityIndex3, functionEntityIndex2, sameReferenceSet);	//CHECKTHIS; must tag negative
 									#endif	
 								}
+								#endif
 								else if(param->functionToExecuteUponFind == GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addDefinitionToEntity)
 								{
 									addDefinitionToEntity(param->GIAentityNodeArray[functionEntityIndex1], param->GIAentityNodeArray[functionEntityIndex2], sameReferenceSet);

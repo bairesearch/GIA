@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2b3a 22-December-2013
+ * Project Version: 2c1a 13-January-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -69,6 +69,8 @@ void linkEntities(Sentence * currentSentenceInList, bool GIAentityNodeArrayFille
 		linkDependentActionsType1(currentSentenceInList, GIAentityNodeArray);
 	}
 	#endif
+	
+	#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
 	#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "2e pass; link Having Substance Conditions And Being Definition Conditions" << endl;
@@ -77,6 +79,7 @@ void linkEntities(Sentence * currentSentenceInList, bool GIAentityNodeArrayFille
 	cout << "eg3; Space is saved through/by being a chicken. prepc_through/by(saved-3, chicken-7) + cop(chicken-7, being-5) 	[Stanford Only]" << endl;
 	#endif
 	linkHavingPropertyConditionsAndBeingDefinitionConditions(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts, NLPdependencyRelationsType);
+	#endif
 	#endif
 
 	#ifdef GIA_TRANSLATOR_DEBUG
@@ -99,6 +102,7 @@ void linkEntities(Sentence * currentSentenceInList, bool GIAentityNodeArrayFille
 	#endif
 	linkSubjectOrObjectRelationships(currentSentenceInList, GIAentityNodeArray, entityNodesActiveListConcepts, NLPdependencyRelationsType);
 
+	#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
 	#ifndef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD)
 	{
@@ -109,6 +113,7 @@ void linkEntities(Sentence * currentSentenceInList, bool GIAentityNodeArrayFille
 		linkHavingPropertyConditionsAndBeingDefinitionConditions(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts, NLPdependencyRelationsType);
 		#endif
 	}
+	#endif
 	#endif
 
 	#ifdef GIA_TRANSLATOR_DEBUG
@@ -146,6 +151,7 @@ void linkPropertiesPossessiveRelationships(Sentence * currentSentenceInList, GIA
 	/*
 	Joe's bike is blue.	_poss(bike[3], Joe[1])
 	*/
+	#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
 	GIAgenericDepRelInterpretationParameters paramA(currentSentenceInList, NULL, GIAentityNodeArray, true);
 	paramA.numberOfRelations = 1;
 	paramA.useRelationArrayTest[REL1][REL_ENT3] = true; paramA.relationArrayTest[REL1][REL_ENT3] = relationTypePossessiveNameArray; paramA.relationArrayTestSize[REL1][REL_ENT3] = RELATION_TYPE_POSSESSIVE_NUMBER_OF_TYPES;
@@ -156,6 +162,19 @@ void linkPropertiesPossessiveRelationships(Sentence * currentSentenceInList, GIA
 	paramA.defaultSameSetRelationID = REL1; paramA.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_PROPERTIES;
 	#endif
 	genericDependecyRelationInterpretation(&paramA, REL1);
+	#else
+	GIAgenericDepRelInterpretationParameters paramA(currentSentenceInList, NULL, GIAentityNodeArray, true);
+	paramA.numberOfRelations = 1;
+	paramA.useRelationArrayTest[REL1][REL_ENT3] = true; paramA.relationArrayTest[REL1][REL_ENT3] = relationTypePossessiveNameArray; paramA.relationArrayTestSize[REL1][REL_ENT3] = RELATION_TYPE_POSSESSIVE_NUMBER_OF_TYPES;
+	paramA.mustGenerateConditionTypeName = true; paramA.conditionTypeEntityDefaultName = RELATION_ENTITY_HAVE; paramA.conditionTypeEntityDefaultIndex = FEATURE_INDEX_OF_HAVE_UNKNOWN;	//create intermediary action 'have'
+	paramA.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectActionToEntity;
+	paramA.functionEntityRelationID[FUNC_ENT1] = REL1; paramA.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT2;
+	paramA.functionEntityRelationID[FUNC_ENT2] = REL1; paramA.functionEntityRelationEntityID[FUNC_ENT2] = REL_ENT1;
+	#ifdef GIA_USE_ADVANCED_REFERENCING
+	paramA.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_PROPERTIES;
+	#endif
+	genericDependecyRelationInterpretation(&paramA, REL1);
+	#endif
 
 	/*
 	Hamish smoked at the toy shop.	_nn(shop[6], toy[5])
@@ -710,6 +729,7 @@ void linkDependentActionsType1(Sentence * currentSentenceInList, GIAentityNode *
 #endif
 }
 
+#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
 void linkHavingPropertyConditionsAndBeingDefinitionConditions(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, int NLPdependencyRelationsType)
 {
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
@@ -918,6 +938,7 @@ void linkHavingPropertyConditionsAndBeingDefinitionConditions(Sentence * current
 	}
 #endif
 }
+#endif
 
 void linkIndirectObjects(Sentence * currentSentenceInList, GIAentityNode * GIAentityNodeArray[])
 {
@@ -1079,7 +1100,6 @@ void linkSubjectObjectRelationships(Sentence * currentSentenceInList, GIAentityN
 	paramC.disableEntity[REL1][REL_ENT1] = true;	//disable "have" entity
 	#endif
 	genericDependecyRelationInterpretation(&paramC, REL1);
-	#endif
 	#ifdef GIA_USE_CORPUS_DATABASE
 	GIAgenericDepRelInterpretationParameters paramC2 = paramC;
 	paramC2.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addAuxiliaryToEntity;
@@ -1088,7 +1108,8 @@ void linkSubjectObjectRelationships(Sentence * currentSentenceInList, GIAentityN
 	paramC2.functionEntityRelationID[FUNC_ENT2] = REL2; paramC2.functionEntityRelationEntityID[FUNC_ENT2] = REL_ENT1;
 	genericDependecyRelationInterpretation(&paramC2, REL1);
 	#endif
-	
+	#endif
+
 	/*standard case D:
 	eg1 Tom rides the bike.	_subj(ride[2], Tom[1]) + _obj(ride[2], bike[4])
 	_obj(ride[2], bike[4])
@@ -1098,7 +1119,7 @@ void linkSubjectObjectRelationships(Sentence * currentSentenceInList, GIAentityN
 	paramD.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectActionToEntity;
 	paramD.functionEntityRelationID[FUNC_ENT3] = REL1; paramD.functionEntityRelationEntityID[FUNC_ENT3] = REL_ENT1;
 	#ifdef GIA_USE_ADVANCED_REFERENCING
-	//defaultSameSetReferenceValues are handled by genericDependecyRelationInterpretation();
+	paramD.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_ACTIONS;	//defaultSameSetReferenceValues are handled by genericDependecyRelationInterpretation();
 	#endif
 	genericDependecyRelationInterpretation(&paramD, REL1);
 
