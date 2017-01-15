@@ -3141,6 +3141,9 @@ void extractQuantities(Sentence * currentSentenceInList, GIAEntityNode * GIAEnti
 				GIAEntityNode * quantityProperty = quantityEntity->AssociatedInstanceNodeList.back();
 				quantityProperty->hasQuantity = true;
 				quantityProperty->quantityNumberString = currentRelationInList->relationArgument;
+				#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_2B
+				GIAEntityNodeArray[currentRelationInList->relationArgumentIndex]->disabled = true;
+				#endif
 				int quantityNumberInt = calculateQuantityNumberInt(quantityProperty->quantityNumberString);
 				quantityProperty->quantityNumber = quantityNumberInt;
 
@@ -3170,7 +3173,6 @@ void extractQuantities(Sentence * currentSentenceInList, GIAEntityNode * GIAEnti
 							*/
 							quantityProperty->quantityModifierString = currentRelationInList2->relationArgument;
 
-
 							//added 12 Oct 11; add quantity modifiers as conditions (eg "almost" lost)	
 							GIAEntityNode * entityNode = quantityProperty;
 							GIAEntityNode * conditionEntityNode = GIAEntityNodeArray[currentRelationInList2->relationArgumentIndex];
@@ -3190,6 +3192,10 @@ void extractQuantities(Sentence * currentSentenceInList, GIAEntityNode * GIAEnti
 					{
 						if(currentRelationInList2->relationFunction == currentRelationInList->relationArgument)
 						{
+							#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_2B
+							GIAEntityNodeArray[currentRelationInList2->relationArgumentIndex]->disabled = true;
+							#endif
+							
 							int quantityMultiplierInt = calculateQuantityMultiplierInt(currentRelationInList2->relationArgument);
 							quantityProperty->quantityNumber = quantityProperty->quantityNumber * quantityMultiplierInt;
 							quantityProperty->hasQuantityMultiplier = true;
