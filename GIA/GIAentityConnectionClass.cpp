@@ -23,7 +23,7 @@
  * File Name: GIAentityConnectionClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2b4a 05-January-2014
+ * Project Version: 2b5a 08-January-2014
  *
  *******************************************************************************/
 
@@ -35,7 +35,7 @@ GIAentityConnection::GIAentityConnection(void)
 {
 	confidence = GIA_ENTITY_CONNECTION_CONFIDENCE_BASE;
 
-	#ifdef GIA_USE_ADVANCED_REFERENCING
+	#ifdef GIA_USE_ADVANCED_REFERENCING_SEARCH_CODE
 	sameReferenceSet = false;	//CHECK THIS default value
 	#endif
 

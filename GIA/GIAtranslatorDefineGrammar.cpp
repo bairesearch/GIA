@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorDefineGrammar.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2b4a 05-January-2014
+ * Project Version: 2b5a 08-January-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -832,8 +832,10 @@ void applyGrammaticalInfoToAllEntities(bool GIAentityNodeArrayFilled[], GIAentit
 		if(GIAentityNodeArrayFilled[w])
 		{
 			GIAentityNode * entity = GIAentityNodeArray[w];
+			#ifdef GIA_USE_ADVANCED_REFERENCING
 			if(!(entity->wasReference))	//added GIA 2a5a - required for NLC; do not overwrite isDefinite=false (from "a dog") with isDefinite=true (from "the dog") when the variable is being re-referenced in context
 			{
+			#endif
 				#ifdef GIA_TRANSLATOR_DEBUG
 				//cout << "entity->entityName = " << entity->entityName << endl;
 				#endif
@@ -858,7 +860,9 @@ void applyGrammaticalInfoToAllEntities(bool GIAentityNodeArrayFilled[], GIAentit
 				entity->NormalizedNERtemp = currentFeatureInList->NormalizedNER;
 				entity->TimexTemp = currentFeatureInList->Timex;
 				#endif
+			#ifdef GIA_USE_ADVANCED_REFERENCING
 			}
+			#endif
 		}
 
 		currentFeatureInList = currentFeatureInList->next;

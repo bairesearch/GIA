@@ -23,7 +23,7 @@
  * File Name: GIAcorpusOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2b4a 05-January-2014
+ * Project Version: 2b5a 08-January-2014
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -147,6 +147,7 @@ string createSameReferenceSetRecord(bool sameReferenceSet)
 //preconditions: determineGIAconnectionistNetworkPOStypeNames() has been executed
 string regenerateSentenceText(Feature * firstFeatureInSentence, bool addPOSinfo, int NLPfeatureParser) 
 {
+	cout << "regenerateSentenceText1" << endl;
 	string sentenceText = "";
 	Feature * currentFeatureInSentence = firstFeatureInSentence;
 	while(currentFeatureInSentence->next != NULL)
@@ -162,6 +163,7 @@ string regenerateSentenceText(Feature * firstFeatureInSentence, bool addPOSinfo,
 		}
 		currentFeatureInSentence = currentFeatureInSentence->next;
 	}
+	cout << "regenerateSentenceText2" << endl;
 	return sentenceText;
 }
 

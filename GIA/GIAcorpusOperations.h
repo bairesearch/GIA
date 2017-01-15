@@ -23,7 +23,7 @@
  * File Name: GIAcorpusOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2b4a 05-January-2014
+ * Project Version: 2b5a 08-January-2014
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -136,7 +136,7 @@ static string grammaticalDeterminerIndefiniteArray[GRAMMATICAL_DETERMINER_INDEFI
 #define GIA_CONNECTIONIST_NETWORK_POS_TYPE_AUXILIARY_HAVING 21		//additional case required for GIA semantics extraction
 #define GIA_CONNECTIONIST_NETWORK_POS_TYPE_AUXILIARY_DOING 22		//additional case required for GIA semantics extraction
 #define GIA_CONNECTIONIST_NETWORK_POS_TYPE_NAME_ARRAY_NUMBER_OF_TYPES (23)
-static string GIAconnectionistNetworkPOStypeNameArray[GIA_CONNECTIONIST_NETWORK_POS_TYPE_NAME_ARRAY_NUMBER_OF_TYPES] = {"undefined", "coordinatingConjunction", "number", "determiner", "unknown", "predeterminer", "posessiveEnding", "modalAuxiliary", "preposition", "adjective", "noun", "adverb", "pronounPersonal", "pronounPossessive", "interjection", "verb", "wh", "punctuationDivision", "punctuationQuote", "isAuxillaryBeing", "isAuxillaryHaving", "isAuxillaryDoing"};
+static string GIAconnectionistNetworkPOStypeNameArray[GIA_CONNECTIONIST_NETWORK_POS_TYPE_NAME_ARRAY_NUMBER_OF_TYPES] = {"undefined", "coordinatingConjunction", "number", "determiner", "unknown", "predeterminer", "posessiveEnding", "modalAuxiliary", "preposition", "adjective", "noun", "adverb", "pronounPersonal", "pronounPossessive", "particle", "interjection", "verb", "wh", "punctuationDivision", "punctuationQuote", "isAuxillaryBeing", "isAuxillaryHaving", "isAuxillaryDoing"};
 static int featureRelexPOStypeCrossReferenceGIAconnectionistNetworkPOStypeArray[FEATURE_RELEX_POS_NUMBER_OF_TYPES] = {GIA_CONNECTIONIST_NETWORK_POS_TYPE_UNDEFINED, GIA_CONNECTIONIST_NETWORK_POS_TYPE_ADJECTIVE, GIA_CONNECTIONIST_NETWORK_POS_TYPE_ADVERB, GIA_CONNECTIONIST_NETWORK_POS_TYPE_PUNCTUATION_DIVISION, GIA_CONNECTIONIST_NETWORK_POS_TYPE_DETERMINER, GIA_CONNECTIONIST_NETWORK_POS_TYPE_NOUN, GIA_CONNECTIONIST_NETWORK_POS_TYPE_PARTICLE, GIA_CONNECTIONIST_NETWORK_POS_TYPE_PREPOSITION, GIA_CONNECTIONIST_NETWORK_POS_TYPE_PUNCTUATION_QUOTE, GIA_CONNECTIONIST_NETWORK_POS_TYPE_VERB, GIA_CONNECTIONIST_NETWORK_POS_TYPE_UNKNOWN};
 
 /*

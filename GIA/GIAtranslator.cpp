@@ -23,7 +23,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2b4a 05-January-2014
+ * Project Version: 2b5a 08-January-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -613,6 +613,10 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, unordered_map<long, GIAtimeConditionNode*> *timeConditionNodesActiveList, Sentence * firstSentenceInList, Sentence * currentSentenceInList, vector<GIAentityNode*> *sentenceConceptEntityNodesList, int NLPfeatureParser, int NLPdependencyRelationsType, bool NLPassumePreCollapsedStanfordRelations)
 #endif
 {
+	#ifndef GIA_USE_ADVANCED_REFERENCING
+	bool linkPreestablishedReferencesGIA = true;	//irrelevant
+	#endif
+	
 	#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
 	if(!linkPreestablishedReferencesGIA)
 	{
@@ -725,6 +729,7 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 		}
 	}
 	#endif
+	cout << "asd1" << endl;
 
 
 	#ifdef GIA_USE_STANFORD_DEPENDENCY_RELATIONS
@@ -737,6 +742,7 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 		#endif
 	}
 	#endif
+	cout << "asd1b" << endl;
 	#ifdef GIA_SUPPORT_ALIASES_RELEX_COMPATIBILITY
 	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_RELEX)
 	{
@@ -747,6 +753,7 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 		#endif
 	}
 	#endif
+	cout << "asd2" << endl;
 
 	#ifdef GIA_BOT_SWITCH_FIRST_AND_SECOND_PERSON
 	botSwitchFirstAndSecondPerson(currentSentenceInList, GIAentityNodeArrayFilled, GIAfeatureTempEntityNodeArray, NLPdependencyRelationsType);

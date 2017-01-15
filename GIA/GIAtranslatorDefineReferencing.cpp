@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2b4a 05-January-2014
+ * Project Version: 2b5a 08-January-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1119,209 +1119,6 @@ void identifyReferenceSetConceptEntityEntrance(GIAentityNode * entityNode, int *
 	}
 }
 
-bool identifyReferenceSetDetermineNextCourseOfAction(GIAentityNode * entityNode, bool sameReferenceSet, int referenceSetID, int minimumEntityIndexOfReferenceSet, bool isProperty)
-{
-	bool result = false;
-	if(sameReferenceSet)
-	{
-		bool referenceSetAlreadyAssigned = false;
-		#ifdef GIA_USE_1N1ATEMP1TO8_CHANGES
-		if(entityNode->referenceSetID != GIA_REFERENCE_SET_ID_UNDEFINED)		//do not retrace reference sets
-		#else
-		if(entityNode->referenceSetID == referenceSetID)				//do not retrace reference sets
-		#endif
-		{
-			referenceSetAlreadyAssigned = true;
-		}
-
-		/*
-		cout << "\nentityNode->entityName = " << entityNode->entityName << endl;
-		cout << "entityNode->referenceSetID = " << entityNode->referenceSetID << "(" << referenceSetAlreadyAssigned << ")" << endl;
-		cout << "entityNode->isConcept = " << entityNode->isConcept << endl;
-		cout << "minimumEntityIndexOfReferenceSet = " << minimumEntityIndexOfReferenceSet << endl;
-		cout << "entityNode->entityIndexTemp = " << entityNode->entityIndexTemp << endl;
-		cout << "entityNode->minimumEntityIndexOfReferenceSet = " << entityNode->minimumEntityIndexOfReferenceSet << endl;
-		*/
-
-		#ifdef GIA_ADVANCED_REFERENCING_ASSERT_MINIMUM_SENTENCE_INDEX_OF_REFERENCE_SET
-		if((!referenceSetAlreadyAssigned || (minimumEntityIndexOfReferenceSet < entityNode->minimumEntityIndexOfReferenceSet)) && ((entityNode->entityIndexTemp >= minimumEntityIndexOfReferenceSet) || isProperty))
-		/*
-		NB1 entityNode->minimumEntityIndexOfReferenceSet is only assigned when referenceSetAlreadyAssigned (referenceSetID != GIA_REFERENCE_SET_ID_UNDEFINED)
-		NB2 (!referenceSetAlreadyAssigned || (minimumEntityIndexOfReferenceSet < entityNode->minimumEntityIndexOfReferenceSet)): only replace reference set id when definining an earlier (ie larger) reference set in the sentence
-		NB3 (entityNode->entityIndexTemp >= minimumEntityIndexOfReferenceSet) || wasPropertyLink: all entities in reference set must occur after minimumEntityIndexOfReferenceSet in the sentence, unless it is a property eg "the blue cars"
-		word order must be used carefully,
-		eg1; "placed in the book of the house". For reference set to be assigned: (the node must not already be assigned a reference set OR the minimumEntityIndexOfReferenceSet is less than that used during the node's previous reference set assignment) AND the node must occur after minimumEntityIndexOfReferenceSet
-		     imagine if house was parsed first by GIA which it is not;
-		     eg reference set 1 identification: the house (!referenceSetAlreadyAssigned  && entityNode->entityIndexTemp >= minimumEntityIndexOfReferenceSet)
-		     eg reference set 1 reidentification: the book of the house (referenceSetAlreadyAssigned for "house", but; minimumEntityIndexOfReferenceSet < entityNode->minimumEntityIndexOfReferenceSet && entityNode->entityIndexTemp >= minimumEntityIndexOfReferenceSet) {overwrites smaller reference set 'the house'}
-		*/
-
-		#else
-		if(!referenceSetAlreadyAssigned)
-		#endif
-		{
-			//cout << "\tpass" << endl;
-			result =  true;
-			identifyReferenceSet(entityNode, referenceSetID, minimumEntityIndexOfReferenceSet);
-		}
-	}
-
-	return result;
-}
-
-void identifyReferenceSet(GIAentityNode * entityNode, int referenceSetID, int minimumEntityIndexOfReferenceSet)
-{
-	#ifdef GIA_ADVANCED_REFERENCING_DEBUG
-	cout << "identifyReferenceSet(): entityNode being traced = " << entityNode->entityName << endl;
-	cout << "identifyReferenceSet(): referenceSetID = " << referenceSetID << endl;
-	cout << "identifyReferenceSet(): isSubstanceConcept = " << entityNode->isSubstanceConcept << endl;
-	cout << "identifyReferenceSet(): isConcept = " << entityNode->isConcept << endl;
-	#endif
-	#ifdef GIA_ADVANCED_REFERENCING_DEBUG_TOO_LARGE_REFERENCE_SET
-	cout << "identifyReferenceSet(): " << entityNode->entityName << endl;
-	#endif
-
-	entityNode->referenceSetID = referenceSetID;
-	entityNode->minimumEntityIndexOfReferenceSet = minimumEntityIndexOfReferenceSet;
-
-	//cout << "\tentityNode->referenceSetID = " << entityNode->referenceSetID << endl;
-	//cout << "\tentityNode->minimumEntityIndexOfReferenceSet = " << entityNode->minimumEntityIndexOfReferenceSet << endl;
-	for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
-	{
-		if(!(entityNode->entityVectorConnectionsArray[i].empty()))
-		{
-			for(vector<GIAentityConnection*>::iterator connectionIter = entityNode->entityVectorConnectionsArray[i].begin(); connectionIter < entityNode->entityVectorConnectionsArray[i].end(); connectionIter++)
-			{
-				bool isProperty = false;
-				if(i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES)
-				{
-					isProperty = true;
-				}
-				identifyReferenceSetDetermineNextCourseOfAction((*connectionIter)->entity, ((*connectionIter)->sameReferenceSet), referenceSetID, minimumEntityIndexOfReferenceSet, isProperty);
-			}
-		}
-	}
-}
-
-
-#ifdef GIA_TRANSLATOR_DREAM_MODE_LINK_SPECIFIC_CONCEPTS_AND_ACTIONS
-
-void identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts(vector<GIAentityNode*> * entityNodesActiveListComplete)
-{
-	#ifdef GIA_DREAMMODE_REFERENCING_DEBUG
-	cout << "identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts" << endl;
-	#endif
-	int referenceSetID = 0;
-
-	for(vector<GIAentityNode*>::iterator entityNodesActiveListCompleteIter = entityNodesActiveListComplete->begin(); entityNodesActiveListCompleteIter != entityNodesActiveListComplete->end(); entityNodesActiveListCompleteIter++)
-	{
-		GIAentityNode * currentSpecificConcept = *entityNodesActiveListCompleteIter;
-		#ifdef GIA_DREAMMODE_REFERENCING_DEBUG
-		cout << "\t identifyReferenceSetsSpecificConcepts: " << entityNode->entityName << endl;
-		#endif
-
-		if(!(currentSpecificConcept->disabled))
-		{
-			if(currentSpecificConcept->isSubstanceConcept || currentSpecificConcept->isActionConcept)
-			{//implies !(currentSpecificConcept->isConcept)
-				#ifdef GIA_DREAMMODE_REFERENCING_DEBUG
-				cout << "isSubstanceConcept || isActionConcept Found" << endl;
-				#endif
-
-				int minimumEntityIndexOfReferenceSet = currentSpecificConcept->entityIndexTemp;
-
-				#ifdef GIA_DREAMMODE_REFERENCING_DEBUG
-				cout << "minimumSentenceIndexOfReferenceSet1 = " << currentSpecificConcept->grammaticalDefiniteIndexOfDeterminerTemp << endl;
-				cout << "minimumSentenceIndexOfReferenceSet2 = " << currentSpecificConcept->entityIndexTemp << endl;
-				#endif
-
-				if(identifyReferenceSetDetermineNextCourseOfAction(currentSpecificConcept, true, referenceSetID, minimumEntityIndexOfReferenceSet, false))
-				{
-					bool traceModeIsQuery = false;
-
-					//[*****^]
-					GIAreferenceTraceParameters referenceTraceParameters;
-					referenceTraceParameters.referenceSetID = referenceSetID;
-					referenceTraceParameters.linkSpecificConceptsAndActions = true;
-
-					#ifdef GIA_QUERY_SIMPLIFIED_SEARCH_ENFORCE_EXACT_MATCH
-					int irrelevant;
-					string printEntityNodeString = "";
-					int maxNumberOfMatchedNodesPossible = 0;
-					bool traceInstantiations = GIA_QUERY_TRACE_CONCEPT_NODES_DEFINING_INSTANTIATIONS_VALUE;
-					traceEntityNode(firstNodeConceptEntityNodesListQuery, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_DETERMINE_MAX_NUMBER_MATCHED_NODES_SAME_SET_ONLY, &maxNumberOfMatchedNodesPossible, NULL, false, referenceSetID, traceInstantiations);
-					traceEntityNode(currentQueryEntityNode, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISONTEMP, &irrelevant, &printEntityNodeString, false, NULL, traceInstantiations);
-					#endif
-
-					for(vector<GIAentityNode*>::iterator entityNodesActiveListCompleteIter = entityNodesActiveListComplete->begin(); entityNodesActiveListCompleteIter != entityNodesActiveListComplete->end(); entityNodesActiveListCompleteIter++)
-					{
-						GIAentityNode * entityNode = *entityNodesActiveListCompleteIter;
-						#ifdef GIA_DREAMMODE_REFERENCING_DEBUG
-						cout << "\t identifyReferenceSetsSpecificConcepts: " << entityNode->entityName << endl;
-						#endif
-
-						if(!(entityNode->disabled))
-						{
-							if(!(entityNode->isConcept))
-							{
-								GIAqueryTraceParameters queryTraceParameters;		//not used
-
-								//cout << "currentSpecificConcept->entityName = " << currentSpecificConcept->entityName << endl;
-								//cout << "entityNode->entityName = " << entityNode->entityName << endl;
-
-								int numberOfMatchedNodesTemp = 0;
-								int numberOfMatchedNodesRequiredSynonymnDetectionTemp = 0;
-								//bool exactMatch = testEntityNodeForQueryOrReferenceSet2(currentSpecificConcept, entityNode, &numberOfMatchedNodesTemp, false, &numberOfMatchedNodesRequiredSynonymnDetectionTemp, traceModeIsQuery, &queryTraceParameters, &referenceTraceParameters);
-								bool exactMatch = testReferencedEntityNodeForExactNameMatch2(currentSpecificConcept, entityNode, &numberOfMatchedNodesTemp, false, &numberOfMatchedNodesRequiredSynonymnDetectionTemp, traceModeIsQuery, &queryTraceParameters, &referenceTraceParameters);
-
-								if(exactMatch)
-								{
-									if(numberOfMatchedNodesTemp > 0)
-									{
-										//cout << "exactMatch: numberOfMatchedNodesTemp = " << numberOfMatchedNodesTemp << endl;
-
-										#ifdef GIA_QUERY_SIMPLIFIED_SEARCH_ENFORCE_EXACT_MATCH
-										if(numberOfMatchedNodesTemp == maxNumberOfMatchedNodesPossible)
-										{
-										#endif
-											//found instance in network matching substance concept...
-											#ifdef GIA_USE_ADVANCED_REFERENCING
-											bool sameReferenceSet = false;
-											#else
-											bool sameReferenceSet = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
-											#endif
-
-											addDefinitionToEntity(entityNode, currentSpecificConcept, sameReferenceSet);
-											#ifdef GIA_DREAMMODE_REFERENCING_DEBUG
-											cout << "identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts(): addDefinitionToEntity" << endl;
-											#endif
-										#ifdef GIA_QUERY_SIMPLIFIED_SEARCH_ENFORCE_EXACT_MATCH
-										}
-										#endif
-									}
-								}
-
-								//now reset the matched nodes as unpassed (required such that they are retracable using a the different path)
-								int irrelevant;
-								string printEntityNodeString = "";
-								bool traceInstantiations = GIA_QUERY_TRACE_CONCEPT_NODES_DEFINING_INSTANTIATIONS_VALUE;
-								traceEntityNode(currentSpecificConcept, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISONTEMP, &irrelevant, &printEntityNodeString, false, NULL, traceInstantiations);
-								traceEntityNode(entityNode, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISONTEMP, &irrelevant, &printEntityNodeString, false, NULL, traceInstantiations);
-							}
-						}
-					}
-
-					referenceSetID	= referenceSetID + 1;
-				}
-			}
-		}
-	}
-
-	int numberReferenceSets = referenceSetID;
-}
-
-#endif
-
 
 
 
@@ -1954,6 +1751,209 @@ void linkAdvancedReferencesGIA(Sentence * currentSentenceInList, bool GIAentityN
 #endif
 
 
+#ifdef GIA_TRANSLATOR_DREAM_MODE_LINK_SPECIFIC_CONCEPTS_AND_ACTIONS
+
+void identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts(vector<GIAentityNode*> * entityNodesActiveListComplete)
+{
+	#ifdef GIA_DREAMMODE_REFERENCING_DEBUG
+	cout << "identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts" << endl;
+	#endif
+	int referenceSetID = 0;
+
+	for(vector<GIAentityNode*>::iterator entityNodesActiveListCompleteIter = entityNodesActiveListComplete->begin(); entityNodesActiveListCompleteIter != entityNodesActiveListComplete->end(); entityNodesActiveListCompleteIter++)
+	{
+		GIAentityNode * currentSpecificConcept = *entityNodesActiveListCompleteIter;
+		#ifdef GIA_DREAMMODE_REFERENCING_DEBUG
+		cout << "\t identifyReferenceSetsSpecificConcepts: " << entityNode->entityName << endl;
+		#endif
+
+		if(!(currentSpecificConcept->disabled))
+		{
+			if(currentSpecificConcept->isSubstanceConcept || currentSpecificConcept->isActionConcept)
+			{//implies !(currentSpecificConcept->isConcept)
+				#ifdef GIA_DREAMMODE_REFERENCING_DEBUG
+				cout << "isSubstanceConcept || isActionConcept Found" << endl;
+				#endif
+
+				int minimumEntityIndexOfReferenceSet = currentSpecificConcept->entityIndexTemp;
+
+				#ifdef GIA_DREAMMODE_REFERENCING_DEBUG
+				cout << "minimumSentenceIndexOfReferenceSet1 = " << currentSpecificConcept->grammaticalDefiniteIndexOfDeterminerTemp << endl;
+				cout << "minimumSentenceIndexOfReferenceSet2 = " << currentSpecificConcept->entityIndexTemp << endl;
+				#endif
+
+				if(identifyReferenceSetDetermineNextCourseOfAction(currentSpecificConcept, true, referenceSetID, minimumEntityIndexOfReferenceSet, false))
+				{
+					bool traceModeIsQuery = false;
+
+					//[*****^]
+					GIAreferenceTraceParameters referenceTraceParameters;
+					referenceTraceParameters.referenceSetID = referenceSetID;
+					referenceTraceParameters.linkSpecificConceptsAndActions = true;
+
+					#ifdef GIA_QUERY_SIMPLIFIED_SEARCH_ENFORCE_EXACT_MATCH
+					int irrelevant;
+					string printEntityNodeString = "";
+					int maxNumberOfMatchedNodesPossible = 0;
+					bool traceInstantiations = GIA_QUERY_TRACE_CONCEPT_NODES_DEFINING_INSTANTIATIONS_VALUE;
+					traceEntityNode(firstNodeConceptEntityNodesListQuery, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_DETERMINE_MAX_NUMBER_MATCHED_NODES_SAME_SET_ONLY, &maxNumberOfMatchedNodesPossible, NULL, false, referenceSetID, traceInstantiations);
+					traceEntityNode(currentQueryEntityNode, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISONTEMP, &irrelevant, &printEntityNodeString, false, NULL, traceInstantiations);
+					#endif
+
+					for(vector<GIAentityNode*>::iterator entityNodesActiveListCompleteIter = entityNodesActiveListComplete->begin(); entityNodesActiveListCompleteIter != entityNodesActiveListComplete->end(); entityNodesActiveListCompleteIter++)
+					{
+						GIAentityNode * entityNode = *entityNodesActiveListCompleteIter;
+						#ifdef GIA_DREAMMODE_REFERENCING_DEBUG
+						cout << "\t identifyReferenceSetsSpecificConcepts: " << entityNode->entityName << endl;
+						#endif
+
+						if(!(entityNode->disabled))
+						{
+							if(!(entityNode->isConcept))
+							{
+								GIAqueryTraceParameters queryTraceParameters;		//not used
+
+								//cout << "currentSpecificConcept->entityName = " << currentSpecificConcept->entityName << endl;
+								//cout << "entityNode->entityName = " << entityNode->entityName << endl;
+
+								int numberOfMatchedNodesTemp = 0;
+								int numberOfMatchedNodesRequiredSynonymnDetectionTemp = 0;
+								//bool exactMatch = testEntityNodeForQueryOrReferenceSet2(currentSpecificConcept, entityNode, &numberOfMatchedNodesTemp, false, &numberOfMatchedNodesRequiredSynonymnDetectionTemp, traceModeIsQuery, &queryTraceParameters, &referenceTraceParameters);
+								bool exactMatch = testReferencedEntityNodeForExactNameMatch2(currentSpecificConcept, entityNode, &numberOfMatchedNodesTemp, false, &numberOfMatchedNodesRequiredSynonymnDetectionTemp, traceModeIsQuery, &queryTraceParameters, &referenceTraceParameters);
+
+								if(exactMatch)
+								{
+									if(numberOfMatchedNodesTemp > 0)
+									{
+										//cout << "exactMatch: numberOfMatchedNodesTemp = " << numberOfMatchedNodesTemp << endl;
+
+										#ifdef GIA_QUERY_SIMPLIFIED_SEARCH_ENFORCE_EXACT_MATCH
+										if(numberOfMatchedNodesTemp == maxNumberOfMatchedNodesPossible)
+										{
+										#endif
+											//found instance in network matching substance concept...
+											#ifdef GIA_USE_ADVANCED_REFERENCING
+											bool sameReferenceSet = false;
+											#else
+											bool sameReferenceSet = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
+											#endif
+
+											addDefinitionToEntity(entityNode, currentSpecificConcept, sameReferenceSet);
+											#ifdef GIA_DREAMMODE_REFERENCING_DEBUG
+											cout << "identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts(): addDefinitionToEntity" << endl;
+											#endif
+										#ifdef GIA_QUERY_SIMPLIFIED_SEARCH_ENFORCE_EXACT_MATCH
+										}
+										#endif
+									}
+								}
+
+								//now reset the matched nodes as unpassed (required such that they are retracable using a the different path)
+								int irrelevant;
+								string printEntityNodeString = "";
+								bool traceInstantiations = GIA_QUERY_TRACE_CONCEPT_NODES_DEFINING_INSTANTIATIONS_VALUE;
+								traceEntityNode(currentSpecificConcept, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISONTEMP, &irrelevant, &printEntityNodeString, false, NULL, traceInstantiations);
+								traceEntityNode(entityNode, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISONTEMP, &irrelevant, &printEntityNodeString, false, NULL, traceInstantiations);
+							}
+						}
+					}
+
+					referenceSetID	= referenceSetID + 1;
+				}
+			}
+		}
+	}
+
+	int numberReferenceSets = referenceSetID;
+}
+
+#endif
+
+#ifdef GIA_USE_ADVANCED_REFERENCING_SEARCH_CODE
+bool identifyReferenceSetDetermineNextCourseOfAction(GIAentityNode * entityNode, bool sameReferenceSet, int referenceSetID, int minimumEntityIndexOfReferenceSet, bool isProperty)
+{
+	bool result = false;
+	if(sameReferenceSet)
+	{
+		bool referenceSetAlreadyAssigned = false;
+		#ifdef GIA_USE_1N1ATEMP1TO8_CHANGES
+		if(entityNode->referenceSetID != GIA_REFERENCE_SET_ID_UNDEFINED)		//do not retrace reference sets
+		#else
+		if(entityNode->referenceSetID == referenceSetID)				//do not retrace reference sets
+		#endif
+		{
+			referenceSetAlreadyAssigned = true;
+		}
+
+		/*
+		cout << "\nentityNode->entityName = " << entityNode->entityName << endl;
+		cout << "entityNode->referenceSetID = " << entityNode->referenceSetID << "(" << referenceSetAlreadyAssigned << ")" << endl;
+		cout << "entityNode->isConcept = " << entityNode->isConcept << endl;
+		cout << "minimumEntityIndexOfReferenceSet = " << minimumEntityIndexOfReferenceSet << endl;
+		cout << "entityNode->entityIndexTemp = " << entityNode->entityIndexTemp << endl;
+		cout << "entityNode->minimumEntityIndexOfReferenceSet = " << entityNode->minimumEntityIndexOfReferenceSet << endl;
+		*/
+
+		#ifdef GIA_ADVANCED_REFERENCING_ASSERT_MINIMUM_SENTENCE_INDEX_OF_REFERENCE_SET
+		if((!referenceSetAlreadyAssigned || (minimumEntityIndexOfReferenceSet < entityNode->minimumEntityIndexOfReferenceSet)) && ((entityNode->entityIndexTemp >= minimumEntityIndexOfReferenceSet) || isProperty))
+		/*
+		NB1 entityNode->minimumEntityIndexOfReferenceSet is only assigned when referenceSetAlreadyAssigned (referenceSetID != GIA_REFERENCE_SET_ID_UNDEFINED)
+		NB2 (!referenceSetAlreadyAssigned || (minimumEntityIndexOfReferenceSet < entityNode->minimumEntityIndexOfReferenceSet)): only replace reference set id when definining an earlier (ie larger) reference set in the sentence
+		NB3 (entityNode->entityIndexTemp >= minimumEntityIndexOfReferenceSet) || wasPropertyLink: all entities in reference set must occur after minimumEntityIndexOfReferenceSet in the sentence, unless it is a property eg "the blue cars"
+		word order must be used carefully,
+		eg1; "placed in the book of the house". For reference set to be assigned: (the node must not already be assigned a reference set OR the minimumEntityIndexOfReferenceSet is less than that used during the node's previous reference set assignment) AND the node must occur after minimumEntityIndexOfReferenceSet
+		     imagine if house was parsed first by GIA which it is not;
+		     eg reference set 1 identification: the house (!referenceSetAlreadyAssigned  && entityNode->entityIndexTemp >= minimumEntityIndexOfReferenceSet)
+		     eg reference set 1 reidentification: the book of the house (referenceSetAlreadyAssigned for "house", but; minimumEntityIndexOfReferenceSet < entityNode->minimumEntityIndexOfReferenceSet && entityNode->entityIndexTemp >= minimumEntityIndexOfReferenceSet) {overwrites smaller reference set 'the house'}
+		*/
+
+		#else
+		if(!referenceSetAlreadyAssigned)
+		#endif
+		{
+			//cout << "\tpass" << endl;
+			result =  true;
+			identifyReferenceSet(entityNode, referenceSetID, minimumEntityIndexOfReferenceSet);
+		}
+	}
+
+	return result;
+}
+
+void identifyReferenceSet(GIAentityNode * entityNode, int referenceSetID, int minimumEntityIndexOfReferenceSet)
+{
+	#ifdef GIA_ADVANCED_REFERENCING_DEBUG
+	cout << "identifyReferenceSet(): entityNode being traced = " << entityNode->entityName << endl;
+	cout << "identifyReferenceSet(): referenceSetID = " << referenceSetID << endl;
+	cout << "identifyReferenceSet(): isSubstanceConcept = " << entityNode->isSubstanceConcept << endl;
+	cout << "identifyReferenceSet(): isConcept = " << entityNode->isConcept << endl;
+	#endif
+	#ifdef GIA_ADVANCED_REFERENCING_DEBUG_TOO_LARGE_REFERENCE_SET
+	cout << "identifyReferenceSet(): " << entityNode->entityName << endl;
+	#endif
+
+	entityNode->referenceSetID = referenceSetID;
+	entityNode->minimumEntityIndexOfReferenceSet = minimumEntityIndexOfReferenceSet;
+
+	//cout << "\tentityNode->referenceSetID = " << entityNode->referenceSetID << endl;
+	//cout << "\tentityNode->minimumEntityIndexOfReferenceSet = " << entityNode->minimumEntityIndexOfReferenceSet << endl;
+	for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
+	{
+		if(!(entityNode->entityVectorConnectionsArray[i].empty()))
+		{
+			for(vector<GIAentityConnection*>::iterator connectionIter = entityNode->entityVectorConnectionsArray[i].begin(); connectionIter < entityNode->entityVectorConnectionsArray[i].end(); connectionIter++)
+			{
+				bool isProperty = false;
+				if(i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES)
+				{
+					isProperty = true;
+				}
+				identifyReferenceSetDetermineNextCourseOfAction((*connectionIter)->entity, ((*connectionIter)->sameReferenceSet), referenceSetID, minimumEntityIndexOfReferenceSet, isProperty);
+			}
+		}
+	}
+}
+#endif
 
 
 /*

@@ -2433,7 +2433,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 						#endif
 						result = true;
 
-						//cout << "\t\t\genericDependecyRelationInterpretation() passed: function = " << param->functionName << endl;
+						cout << "\t\t\genericDependecyRelationInterpretation() passed: function = " << param->functionName << endl;
 
 						//record final values for further manipulation of variables after successful (match found) recursive execution of genericDependecyRelationInterpretation:
 						for(int relationID=0; relationID<GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS; relationID++)
@@ -2445,7 +2445,9 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 								param->relationEntityIndexFinalResult[relationID][relationEntityID] = param->relationEntityIndex[relationID][relationEntityID];
 							}
 						}
-
+						
+						cout << "afs1" << endl;
+						
 						if(!specialCaseAuxiliaryIndicatesDifferentReferenceSetCheck)
 						{
 							if(param->executeOrReassign)
@@ -2664,13 +2666,16 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 							else
 							{//reassign entities
 
+								cout << "afs2" << endl;
+								
 								for(int relationID=0; relationID<GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS; relationID++)
 								{
 									for(int relationEntityID=0; relationEntityID<GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION; relationEntityID++)
 									{
 										if(param->useRedistributeRelationEntityIndexReassignment[relationID][relationEntityID])
 										{
-											//cout << "relationID = " << relationID << ", relationEntityID = " << relationEntityID << endl;
+											cout << "useRedistributeRelationEntityIndexReassignment" << endl;
+											cout << "relationID = " << relationID << ", relationEntityID = " << relationEntityID << endl;
 											//reassign param index + entity values
 											if(param->redistributeRelationEntityIndexReassignmentUseOriginalValues[relationID][relationEntityID])
 											{
@@ -2703,14 +2708,17 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 												//cout << "param->relation[relationID]->relationType = " << param->relation[relationID]->relationType << endl;
 											}
 										}
+										cout << "finish useRedistributeRelationEntityIndexReassignment" << endl;
 										if(param->useSpecialCaseCharacteristicsRelationEntityIndexReassignment[relationID][relationEntityID])
 										{//not used often
+											cout << "useSpecialCaseCharacteristicsRelationEntityIndexReassignment" << endl;
 											GIAentityNode * currentEntity = param->GIAentityNodeArray[param->relationEntityIndex[relationID][relationEntityID]];
 											GIAentityNode * targetEntity = param->GIAentityNodeArray[param->relationEntityIndex[param->specialCaseCharacteristicsRelationEntityIndexReassignmentRelationID[relationID][relationEntityID]][param->specialCaseCharacteristicsRelationEntityIndexReassignmentRelationEntityID[relationID][relationEntityID]]];
 											EntityCharacteristic * entityCharacteristic = &(param->specialCaseCharacteristicsRelationEntityIndexReassignment[relationID][relationEntityID]);
 											getEntityCharacteristic(targetEntity, entityCharacteristic);
 											setEntityCharacteristic(currentEntity, entityCharacteristic);
 										}
+										cout << "finish useSpecialCaseCharacteristicsRelationEntityIndexReassignment" << endl;
 									}
 								}
 								for(int relationID=0; relationID<GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS; relationID++)
@@ -2721,6 +2729,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 										{
 											if(relationEntityID == REL_ENT1)
 											{
+												cout << "useRedistributeRelationEntityReassignment1" << endl;
 												param->relation[relationID]->relationGovernor = param->redistributeRelationEntityReassignment[relationID][relationEntityID];
 												param->GIAentityNodeArray[param->relationEntityIndex[relationID][relationEntityID]]->entityName = param->redistributeRelationEntityReassignment[relationID][relationEntityID];
 												/*
@@ -2733,6 +2742,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 											}
 											else if(relationEntityID == REL_ENT2)
 											{
+												cout << "useRedistributeRelationEntityReassignment2" << endl;
 												param->relation[relationID]->relationDependent = param->redistributeRelationEntityReassignment[relationID][relationEntityID];
 												param->GIAentityNodeArray[param->relationEntityIndex[relationID][relationEntityID]]->entityName = param->redistributeRelationEntityReassignment[relationID][relationEntityID];
 												/*
@@ -2745,14 +2755,18 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 											}
 											else if(relationEntityID == REL_ENT3)
 											{
+												cout << "useRedistributeRelationEntityReassignment3" << endl;
 												param->relation[relationID]->relationType = param->redistributeRelationEntityReassignment[relationID][relationEntityID];
 											}
+											cout << "finish useRedistributeRelationEntityReassignment" << endl;
 										}
 									}
 								}
+								cout << "special case reassignments:" << endl;
 								//special case reassignments
 								for(int relationID=0; relationID<GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS; relationID++)
 								{
+									cout << "q1" << endl;
 									#ifdef GIA_USE_ADVANCED_REFERENCING
 									if(param->useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck[relationID])
 									{
@@ -2772,11 +2786,12 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 									}
 									#endif
 
+									cout << "q2" << endl;
+									cout << "GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION = " << GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION << endl;
 									for(int relationEntityID=0; relationEntityID<GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION; relationEntityID++)
 									{
 										if(param->useRedistributeSpecialCaseRelationEntityReassignmentConcatonate[relationID][relationEntityID])
 										{
-
 											string concatonatedEntityNamePart1 = param->relationEntity[param->redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID[relationID][relationEntityID][0]][param->redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID[relationID][relationEntityID][0]];
 											string concatonatedEntityNamePart2 = param->relationEntity[param->redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID[relationID][relationEntityID][1]][param->redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID[relationID][relationEntityID][1]];
 											string concatonatedEntityName = concatonatedEntityNamePart1 + STANFORD_PARSER_PREPOSITION_DELIMITER + concatonatedEntityNamePart2;
@@ -2802,11 +2817,20 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 												//cout << "param->relation[relationID]->relationType = " << param->relation[relationID]->relationType << endl;
 											}
 										}
-
+										
+										cout << "zt1" << endl;
+										cout << "q2a" << endl;
+										cout << "relationID = " << relationID << endl;
+										cout << "relationEntityID = " << relationEntityID << endl;
+										cout << "param->relationEntityIndex[relationID][relationEntityID] = " << param->relationEntityIndex[relationID][relationEntityID] << endl;
 										setEntityCharacteristics(param->GIAentityNodeArray[param->relationEntityIndex[relationID][relationEntityID]], &(param->specialCaseCharacteristicsAssignmentVector[relationID][relationEntityID]));
+										cout << "zt2" << endl;
 									}
+									cout << "q3" << endl;
 								}
+								cout << "special case reassignments end" << endl;
 							}
+							cout << "prepare for cleanup;" << endl;
 
 							//for cleanup
 							for(int relationID=0; relationID<GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS; relationID++)

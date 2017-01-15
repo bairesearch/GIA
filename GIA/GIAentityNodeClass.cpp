@@ -23,7 +23,7 @@
  * File Name: GIAentityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2b4a 05-January-2014
+ * Project Version: 2b5a 08-January-2014
  *
  *******************************************************************************/
 
@@ -200,7 +200,7 @@ GIAentityNode::GIAentityNode(void)
 	testedForQueryComparisonTemp = false;
 	queryAnswerContext = false;
 	queryEntityTraced = false;
-	#ifdef GIA_USE_ADVANCED_REFERENCING
+	#ifdef GIA_USE_ADVANCED_REFERENCING_SEARCH_CODE
 	entityCorrespondingBestMatch = NULL;
 	#endif
 
@@ -212,9 +212,11 @@ GIAentityNode::GIAentityNode(void)
 		//CXL:
 	CXLdummyNode = false;
 		//referencing:
-	#ifdef GIA_USE_ADVANCED_REFERENCING
+	#ifdef GIA_USE_ADVANCED_REFERENCING_SEARCH_CODE
 	referenceSetID = GIA_REFERENCE_SET_ID_UNDEFINED;
 	minimumEntityIndexOfReferenceSet = GIA_REFERENCE_SET_ID_UNDEFINED;
+	#endif
+	#ifdef GIA_USE_ADVANCED_REFERENCING
 	#ifdef GIA_ADVANCED_REFERENCING_PREVENT_DOUBLE_LINKS
 	wasReferenceTemp = false;
 	#endif

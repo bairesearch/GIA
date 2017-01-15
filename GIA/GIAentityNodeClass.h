@@ -23,7 +23,7 @@
  * File Name: GIAentityNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2b4a 05-January-2014
+ * Project Version: 2b5a 08-January-2014
  * NB a substance is an instance of an entity, any given entity may contain/comprise/have multiple substances - and substances are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -385,7 +385,7 @@ public:
 	bool testedForQueryComparisonTemp; //added 17 May 2012 - support better trace routine
 	bool queryAnswerContext;
 	bool queryEntityTraced;	//temporary for determining max confidence
-	#ifdef GIA_USE_ADVANCED_REFERENCING
+	#ifdef GIA_USE_ADVANCED_REFERENCING_SEARCH_CODE
 	GIAentityNode* entityCorrespondingBestMatch;	 //best match entity node corresponding to this assumed query entity node	//does not take into account multiple diversions/answers [assumes single matches only]
 	#endif
 
@@ -397,9 +397,11 @@ public:
 		//CXL:
 	bool CXLdummyNode;
 		//referencing:
-	#ifdef GIA_USE_ADVANCED_REFERENCING
+	#ifdef GIA_USE_ADVANCED_REFERENCING_SEARCH_CODE
 	int referenceSetID;
 	int minimumEntityIndexOfReferenceSet;
+	#endif
+	#ifdef GIA_USE_ADVANCED_REFERENCING
 	#ifdef GIA_ADVANCED_REFERENCING_PREVENT_DOUBLE_LINKS
 	bool wasReferenceTemp;
 	#endif
