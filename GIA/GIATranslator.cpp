@@ -1085,6 +1085,7 @@ GIATimeConditionNode * findOrAddTimeNodeByNumber(vector<GIATimeConditionNode*> *
 	{
 		long findIndex = vectorSize/2;
 		long findRange = maximumLong(findIndex/2, 1);	//maximumLong(((findIndex+1)/2), 1);
+		long previousFindRange = findRange;
 		
 		int findRangeAtMinimaTimes = 0;
 
@@ -1107,7 +1108,7 @@ GIATimeConditionNode * findOrAddTimeNodeByNumber(vector<GIATimeConditionNode*> *
 
 			if(timeTemp > *timeNodeNumber)
 			{
-				if((previousTempTime < *timeNodeNumber) || (vectorSize==1))
+				if(((previousTempTime < *timeNodeNumber) && (previousFindRange == 1)) || (vectorSize==1))
 				{//optimum position lies inbetween
 					searchOptionsAvailable = false;
 					*found = false;	
@@ -1132,13 +1133,13 @@ GIATimeConditionNode * findOrAddTimeNodeByNumber(vector<GIATimeConditionNode*> *
 					}
 				}
 
-
+				previousFindRange = findRange;
 				findRange = maximumLong(findRange/2, 1);	//findRange = (findRange+1)/2;
 
 			}
 			else if(timeTemp < *timeNodeNumber)
 			{
-				if((previousTempTime > *timeNodeNumber) || (vectorSize==1))
+				if(((previousTempTime > *timeNodeNumber) && (previousFindRange == 1)) || (vectorSize==1))
 				{//optimum position lies inbetween
 					searchOptionsAvailable = false;
 					*found = false;
@@ -1165,6 +1166,7 @@ GIATimeConditionNode * findOrAddTimeNodeByNumber(vector<GIATimeConditionNode*> *
 					}
 				}
 
+				previousFindRange = findRange;
 				findRange = maximumLong(findRange/2, 1);	//findRange = (findRange+1)/2;
 
 			}

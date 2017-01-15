@@ -41,6 +41,8 @@ void determineBasicPrintPositionsOfAllNodes(vector<GIAEntityNode*> *indexOfEntit
 	
 	Reference * currentReferenceInPrintList = firstReferenceInPrintList;
 	
+	//initiateMaxXAtAParticularY();
+	
 	//first pass; determine maxXAtAParticularY	[and use these to centre each row {at a given y} respectively]
 	for (entityIter = indexOfEntityNodes->begin(); entityIter != indexOfEntityNodes->end(); entityIter++) 
 	{
