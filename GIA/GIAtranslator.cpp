@@ -23,7 +23,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2e4e 18-April-2014
+ * Project Version: 2e4f 19-April-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1526,11 +1526,24 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, Sentence *
 											{
 												if(GIAentityNodeArrayFilled[w])
 												{
-													if(GIAentityNodeArray[w]->disabled)
+													if(!(GIAentityNodeArray[w]->disabled))
 													{
-														cout << GIAentityNodeArray[w]->entityName << " disabled" << endl;
+														cout << GIAentityNodeArray[w]->entityName << " !disabled" << endl;
 													}
 												}
+											}
+											Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+											while(currentRelationInList->next != NULL)
+											{
+												if(!(currentRelationInList->disabled))
+												{
+													string relationType = currentRelationInList->relationType;
+													GIAentityNode * relationGoverner = GIAentityNodeArray[currentRelationInList->relationGovernorIndex];
+													GIAentityNode * relationDependent = GIAentityNodeArray[currentRelationInList->relationDependentIndex];
+
+													cout << currentRelationInList->relationType << "(" << currentRelationInList->relationGovernor << ", " << currentRelationInList->relationDependent << ")" << endl;
+												}
+												currentRelationInList = currentRelationInList->next;
 											}
 											*/
 

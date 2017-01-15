@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2e4e 18-April-2014
+ * Project Version: 2e4f 19-April-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -3031,22 +3031,29 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 									if(param->disableEntity[relationID][relationEntityID])
 									{
 										GIAentityNode * oldRedundantEntity;
-										if(param->disableEntityUseOriginalValues[relationID][relationEntityID])
+										#ifdef GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR
+										if(param->relationEntityIndexOriginal[relationID][relationEntityID] != -1)	//check whether attempting to disable a non-preposition (and therefore non-existant) relationType entity
 										{
-											oldRedundantEntity = param->GIAentityNodeArray[param->relationEntityIndexOriginal[relationID][relationEntityID]];
+										#endif
+											if(param->disableEntityUseOriginalValues[relationID][relationEntityID])
+											{
+												oldRedundantEntity = param->GIAentityNodeArray[param->relationEntityIndexOriginal[relationID][relationEntityID]];
+											}
+											else
+											{
+												oldRedundantEntity = param->GIAentityNodeArray[param->relationEntityIndex[relationID][relationEntityID]];
+											}
+											if((param->executeOrReassign) || param->useRedistributeSpecialCaseDisableInstanceAndConcept[relationID][relationEntityID])
+											{
+												disableInstanceAndConceptEntityBasedUponFirstSentenceToAppearInNetwork(oldRedundantEntity);
+											}
+											else
+											{
+												disableEntity(oldRedundantEntity);
+											}
+										#ifdef GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR
 										}
-										else
-										{
-											oldRedundantEntity = param->GIAentityNodeArray[param->relationEntityIndex[relationID][relationEntityID]];
-										}
-										if((param->executeOrReassign) || param->useRedistributeSpecialCaseDisableInstanceAndConcept[relationID][relationEntityID])
-										{
-											disableInstanceAndConceptEntityBasedUponFirstSentenceToAppearInNetwork(oldRedundantEntity);
-										}
-										else
-										{
-											disableEntity(oldRedundantEntity);
-										}
+										#endif
 									}
 								}
 								if(param->disableRelation[relationID])
