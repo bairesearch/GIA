@@ -136,7 +136,7 @@ bool linkEntitiesDynamicPrenominalModifierOfNounDirection(GIArelation* currentRe
 
 					if(instanceEntity->entityName == entity1->entityName)
 					{
-						for(vector<GIAentityConnection*>::iterator connectionIter2 = instanceEntity->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITIONS].begin(); connectionIter2 != instanceEntity->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITIONS].end(); connectionIter2++)
+						for(vector<GIAentityConnection*>::iterator connectionIter2 = instanceEntity->entityNodeDefinitionList->begin(); connectionIter2 != instanceEntity->entityNodeDefinitionList->end(); connectionIter2++)
 						{
 							if(!previousRelationshipFound)
 							{
@@ -166,7 +166,7 @@ bool linkEntitiesDynamicPrenominalModifierOfNounDirection(GIArelation* currentRe
 							}
 						}
 						#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
-						for(vector<GIAentityConnection*>::iterator connectionIter2 = instanceEntity->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES].begin(); connectionIter2 != instanceEntity->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES].end(); connectionIter2++)
+						for(vector<GIAentityConnection*>::iterator connectionIter2 = instanceEntity->propertyNodeList->begin(); connectionIter2 != instanceEntity->propertyNodeList->end(); connectionIter2++)
 						{
 							if(!previousRelationshipFound)
 							{
@@ -184,7 +184,7 @@ bool linkEntitiesDynamicPrenominalModifierOfNounDirection(GIArelation* currentRe
 							}
 						}
 						#else
-						for(vector<GIAentityConnection*>::iterator connectionIter2 = instanceEntity->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTIONS].begin(); connectionIter2 != instanceEntity->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTIONS].end(); connectionIter2++)
+						for(vector<GIAentityConnection*>::iterator connectionIter2 = instanceEntity->actionNodeList->begin(); connectionIter2 != instanceEntity->actionNodeList->end(); connectionIter2++)
 						{
 							if(!previousRelationshipFound)
 							{
@@ -228,7 +228,7 @@ bool linkEntitiesDynamicPrenominalModifierOfNounDirection(GIArelation* currentRe
 							}
 						}
 						#endif
-						for(vector<GIAentityConnection*>::iterator connectionIter2 = instanceEntity->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITIONS].begin(); connectionIter2 != instanceEntity->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITIONS].end(); connectionIter2++)
+						for(vector<GIAentityConnection*>::iterator connectionIter2 = instanceEntity->conditionNodeList->begin(); connectionIter2 != instanceEntity->conditionNodeList->end(); connectionIter2++)
 						{
 							if(!previousRelationshipFound)
 							{
