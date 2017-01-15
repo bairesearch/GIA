@@ -23,7 +23,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q6d 28-October-2012
+ * Project Version: 1q7a 02-November-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -102,7 +102,7 @@ static char errmessage[] = "Usage:  OpenGIA.exe [options]\n\n\twhere options are
 #ifdef GIA_USE_DATABASE
 "\n\t-dbread            : read from database (GIA knowledge base) [improves referencing capacity]"
 "\n\t-dbwrite           : write to database (GIA knowledge base) [saves knowledge]"
-"\n\t-dbfolder          : database base folder path (def: /home/systemusername/source/GIAKBdatabase/)"
+"\n\t-dbfolder          : database base folder path (def: /home/systemusername/source/GIAKBdatabase)"
 #endif
 #ifdef GIA_USE_LRP
 "\n\t-lrp                               : language reduction preprocessor"
@@ -533,6 +533,7 @@ int main(int argc,char **argv)
 		if(exists_argument(argc,argv,"-dbfolder"))
 		{
 			databaseFolderName=get_char_argument(argc,argv,"-dbfolder");
+			databaseFolderName = databaseFolderName + '/';
 		}		
 	#endif
 
@@ -564,6 +565,7 @@ int main(int argc,char **argv)
 		if(exists_argument(argc,argv,"-lrpfolder"))
 		{
 			lrpDataFolderName=get_char_argument(argc,argv,"-lrpfolder");
+			lrpDataFolderName = lrpDataFolderName + '/';
 		}
 		else
 		{
@@ -628,7 +630,7 @@ int main(int argc,char **argv)
 
 		if (exists_argument(argc,argv,"-version"))
 		{
-			cout << "OpenGIA.exe - Project Version: 1q6d 28-October-2012" << endl;
+			cout << "OpenGIA.exe - Project Version: 1q7a 02-November-2012" << endl;
 			exit(1);
 		}
 
