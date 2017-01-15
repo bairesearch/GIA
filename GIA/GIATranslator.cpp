@@ -917,7 +917,11 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 		#endif
 		defineObjectSubjectOfPreposition(currentSentenceInList, GIAEntityNodeArray);
 		
-		
+		#ifdef GIA_TRANSLATOR_DEBUG
+		cout << "3d pass; define conjunction conditions; eg Either Tom and/or Max eat the cake...." << endl;
+		#endif
+		defineConjunctionConditions(currentSentenceInList, GIAEntityNodeArray, conceptEntityNodesList);	
+				
 		
 		
 		#ifdef GIA_TRANSLATOR_DEBUG
@@ -953,8 +957,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 		#ifdef GIA_TRANSLATOR_DEBUG
 		cout << "4h pass; link properties (parataxis); eg the guy, Akari said, left..." << endl;
 		#endif
-		linkPropertiesParataxis(currentSentenceInList, GIAEntityNodeArray);
-						
+		linkPropertiesParataxis(currentSentenceInList, GIAEntityNodeArray);	
 		
 		
 		//cout << "5a pass; parse questions" << endl;	
@@ -3303,7 +3306,7 @@ void defineActionPropertyConditions(Sentence * currentSentenceInList, bool GIAEn
 		}	
 		#endif		
 
-		#ifdef GIA_USE_RELEX_1.4.0
+		#ifdef GIA_TRANSLATOR_EXPLICITLY_ADD_CONJUNCTION_CONDITIONS
 		for(int i=0; i<RELATION_TYPE_CONJUGATION_NUMBER_OF_TYPES; i++)
 		{
 			if(relationType == relationTypeConjugationNameArray[i])
@@ -3949,6 +3952,68 @@ void linkPropertiesParataxis(Sentence * currentSentenceInList, GIAEntityNode * G
 		currentRelationInList = currentRelationInList->next;
 	}	
 }
+
+#ifdef GIA_TRANSLATOR_EXPLICITLY_ADD_CONJUNCTION_CONDITIONS
+void defineConjunctionConditions(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *conceptEntityNodesList)
+{//NB defineConjunctionConditions() currently performs the same function as defineActionPropertyConditions()
+
+	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+	while(currentRelationInList->next != NULL)
+	{	
+		//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
+
+		int relationFunctionIndex = currentRelationInList->relationFunctionIndex;
+		int relationArgumentIndex = currentRelationInList->relationArgumentIndex;
+		string relationType = currentRelationInList->relationType;
+		GIAEntityNode * actionOrPropertyEntity = GIAEntityNodeArray[relationFunctionIndex];				
+		GIAEntityNode * actionOrPropertyConditionEntity = GIAEntityNodeArray[relationArgumentIndex];
+
+		bool passed = false;
+		for(int i=0; i<RELATION_TYPE_CONJUGATION_NUMBER_OF_TYPES; i++)
+		{
+			if(relationType == relationTypeConjugationNameArray[i])
+			{
+				passed = true;	
+			}
+		}
+		
+		if(passed)
+		{
+		
+			//CHECK THIS; check order - either select action or property first; NB there should not be both an associated action and an associated property in a given "Temp" context
+			if(actionOrPropertyEntity->hasAssociatedInstanceTemp)
+			{
+				actionOrPropertyEntity = actionOrPropertyEntity->AssociatedInstanceNodeList.back();	
+			}				
+
+			//CHECK THIS; check order - either select action or property first; NB there should not be both an associated action and an associated property in a given "Temp" context
+			if(actionOrPropertyConditionEntity->hasAssociatedInstanceTemp)
+			{
+				//cout << "actionOrPropertyConditionEntity->hasAssociatedInstanceTemp" << endl;
+				actionOrPropertyConditionEntity = actionOrPropertyConditionEntity->AssociatedInstanceNodeList.back();	//added 4 May 11a
+				//cout << "actionOrPropertyConditionEntity->entityName = " << actionOrPropertyConditionEntity->entityName << endl; 
+			}
+
+				
+			string conditionTypeName = relationType;
+			long entityIndex = -1;
+			bool entityAlreadyExistant = false;
+			//cout << "relationType = " << relationType << endl;
+			GIAEntityNode * conditionTypeConceptEntity = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, &conditionTypeName, &entityAlreadyExistant, &entityIndex, true, &currentEntityNodeIDInCompleteList, &currentEntityNodeIDInConceptEntityNodesList);	
+
+			#ifdef GIA_TRANSLATOR_DEBUG
+			cout << "actionOrPropertyEntity->entityName = " << actionOrPropertyEntity->entityName << endl;
+			cout << "actionOrPropertyConditionEntity->entityName = " << actionOrPropertyConditionEntity->entityName << endl;
+			cout << "conditionTypeConceptEntity->entityName = " << conditionTypeConceptEntity->entityName << endl; 			
+			#endif
+
+			addPropertyConditionToProperty(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeConceptEntity);				
+		}
+		
+		currentRelationInList = currentRelationInList->next;
+	}			
+}
+#endif
 
 
 				
