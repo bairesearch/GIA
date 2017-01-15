@@ -58,6 +58,7 @@ using namespace std;
 //#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D_RELATIONS_REMOVE_ARTEFACT_CONCEPT_ENTITY_NODES_ADVANCED
 //#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1E_RELATIONS_TREAT_UNQUALIFIED_RELATIONS_AS_CONDITIONS_ALSO	//NB this relates to GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B_RELATIONS_TREAT_ADVERB_PLUS_SUBJECT_PLUS_OBJECT_RELATION_ALL_WITH_A_DEFINITION_FUNCTION_AS_PROPERTY_LINKS
 //#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_2A_GRAMMAR_TREAT_PRESENT_PERFECT_AS_PAST_TENSE
+//#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1F_RELATIONS_INTERPRET_PREPOSITION_OF_AS_EITHER_CONDITION_OR_PROPERTY_LINK_DEPENDING_UPON_ACTION_OR_PROPERTY
 #ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1A_RELATIONS_DISREGARD_REDUNDANT_DEFINITION_RELATIONS
 	#define GIA_IGNORE_MEANINGLESS_RELATIONS
 #endif
@@ -185,7 +186,7 @@ using namespace std;
 */
 
 
-//?#define RELATION_TYPE_OF "of"		//eg [she grew tired] of it	{same as with it}
+#define RELATION_TYPE_OF "of"		//eg [she grew tired] of it	 "She grew tired of the pie."  / "The house of Kriton is blue."	//detect if function and argument are both nouns/property entities; if so then create a property connection. if a function is a verb/action, then create a condition connection.
 
 //action/property reasons [???]
 #define RELATION_TYPE_PREPOSITION_SUCH_THAT "such"

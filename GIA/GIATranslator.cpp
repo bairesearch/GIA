@@ -1040,8 +1040,69 @@ void createConditionBasedUponPreposition(GIAEntityNode * actionOrPropertyEntity,
 	//cout << "relationType = " << relationType << endl;
 	if(relationType[0] != RELATION_TYPE_PREPOSITION_FIRST_CHARACTER)
 	{//not valid for REFERENCE_TYPE_QUESTION_QUERY_VARIABLEs... [but this is not a problem because passedPropositionUnknown is processed last in the if/else switch below]
+
+		#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1F_RELATIONS_INTERPRET_PREPOSITION_OF_AS_EITHER_CONDITION_OR_PROPERTY_LINK_DEPENDING_UPON_ACTION_OR_PROPERTY
+		bool standardConditionConnectionPreposition = true;
+		if(relationType == RELATION_TYPE_OF)
+		{
+			standardConditionConnectionPreposition = false;
+			
+			//cout << "a" << endl;
+			
+			GIAEntityNode * actionOrProperty = actionOrPropertyEntity;
+			if(actionOrPropertyEntity->hasAssociatedInstanceTemp)
+			{
+				actionOrProperty = actionOrPropertyEntity->AssociatedInstanceNodeList.back();
+			}
+			
+			if(actionOrProperty->PropertyNodeReverseList.size() >= 1)	//CHECKTHIS; NB only concerned if it was created in the current context (eg sentence) - how can test this?		
+			{
+				//cout << "b" << endl;
+				if(actionOrProperty->PropertyNodeReverseList.back()->isAction)
+				{
+					/*
+					NB not in this case "She grew tired of the pie." 
+					of(tired[3], pie[6])
+					_to-be(grow[2], tired[3])
+					_subj(grow[2], she[1])
+					*/
+						
+					//cout << "c" << endl;
+					standardConditionConnectionPreposition = true;
+				}
+			}							
+			/*full list parse not necessarily, as only concerned about how the node has been defined within the given context/sentence
+			vector<GIAEntityNode*>::iterator entityIter;				
+			for(entityIter = entityNode->PropertyNodeReverseList.begin(); entityIter != entityNode->PropertyNodeReverseList.end(); entityIter++) 
+			{
+				...
+				//cout << "a32" << endl;	
+				currentReferenceInPrintList = initialiseEntityNodeForPrinting((*entityIter), y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
+
+			}
+			*/
+			
+			if(!standardConditionConnectionPreposition)
+			{
+				/*
+				NB this case "The house of Kriton is blue." should create 2 property connections (not just 1)
+				of(house[2], Kriton[4])
+				_predadj(house[2], blue[6])
+				*/				
+				addOrConnectPropertyToEntity(actionOrPropertyConditionEntity, actionOrPropertyEntity);			
+			}			
+		}
+		if(standardConditionConnectionPreposition)
+		{
+			//cout << "standardConditionConnectionPreposition" << endl;
+			passedPropositionUnknown = true;
+			passedPreposition = true;		
+		}		
+		#else
 		passedPropositionUnknown = true;
-		passedPreposition = true;
+		passedPreposition = true;		
+		#endif
+	
 	}
 		
 	if(passedPreposition)
