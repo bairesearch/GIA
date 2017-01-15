@@ -24,7 +24,7 @@
  * File Name: GIArules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2g4c 03-September-2014
+ * Project Version: 2g5a 05-September-2014
  *
  *******************************************************************************/
 -->
@@ -597,7 +597,7 @@
 				<option disableRelation="true" REL="1" />
 				<option useRedistributeRelationEntityIndexReassignment="true" REL="2" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="1" redistributeRelationEntityIndexReassignmentRelationEntityID="2" />
 				<option disableEntity="true" REL="1" REL_ENT="1" />
-				<!-- #ifdefGIA_USE_ADVANCED_REFERENCING -->
+				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<!--eg;
 				[case added 15 May 2012 for ]
 				The claims that are on the frame are blue.
@@ -898,7 +898,7 @@
 				<option disableRelation="true" REL="2" />
 				<option disableRelation="true" REL="3" />
 				<option disableEntity="true" REL="2" REL_ENT="1" />
-				<!-- #ifdefGIA_USE_ADVANCED_REFERENCING -->
+				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<!--
 				[case added 15 May 2012 for ]
 				<He rode the carriage that is near to the horse.
@@ -1343,7 +1343,7 @@
 						<option useRelationTest="true" REL="2" REL_ENT="3" relationTest="_cop" />
 						<option useRelationTest="true" REL="2" REL_ENT="2" relationTest="be" />
 						<option useRelationIndexTest="true" REL="2" REL_ENT="1" relationIndexTestRelationID="1" relationIndexTestEntityID="1" /> <!-- redundant test -->
-						<!-- #ifdefGIA_USE_ADVANCED_REFERENCING -->
+						<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 						<option useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck="true" REL="2" />
 						<option useRelationTest="true" REL="3" REL_ENT="1" relationTest="impossibleEntityName" /> <!-- an impossible check which is therefore guaranteed to set auxiliaryIndicatesDifferentReferenceSet to true -->
 						<!-- #endif -->
@@ -2917,7 +2917,7 @@
 				<option functionToExecuteUponFind="3" />
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="1" />
-				// #ifdefGIA_USE_ADVANCED_REFERENCING
+				// #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="true" />
 				// #endif
 				</paramDepRel>
@@ -2930,7 +2930,7 @@
 				<option functionToExecuteUponFind="5" />
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="1" />
-				<!-- #ifdefGIA_USE_ADVANCED_REFERENCING -->
+				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetReferenceValue="true" />
 				<!-- #endif -->
 				</paramDepRel>
@@ -2946,7 +2946,7 @@
 				<option functionToExecuteUponFind="4" />
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="1" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" />
-				<!-- #ifdefGIA_USE_ADVANCED_REFERENCING -->
+				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="true" />
 				<!-- #endif -->
 				</paramDepRel>
@@ -2977,7 +2977,7 @@
 				<option functionToExecuteUponFind="4" />
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="1" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" />
-				<!-- #ifdefGIA_USE_ADVANCED_REFERENCING -->
+				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="true" />
 				<!-- #endif -->
 				</paramDepRel>
@@ -2988,7 +2988,7 @@
 				<option functionToExecuteUponFind="4" />
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="1" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" />
-				<!-- #ifdefGIA_USE_ADVANCED_REFERENCING -->
+				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="false" />
 				<!-- #endif -->
 				</paramDepRel>								
@@ -3076,7 +3076,7 @@
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="2" FUNC_ENT="2" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="1" FUNC_ENT="3" functionEntityRelationEntityID="1" />
-				<!-- #ifdefGIA_USE_ADVANCED_REFERENCING -->
+				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="false" />
 				<!-- #endif -->
 				<option disableRelationDuringLink="true" REL="2" /> <!-- required to prevent action link from being created to object in secondary action interpretation function linkSubjectOrObjectRelationships() - added 17 July 2013 -->
@@ -3114,7 +3114,7 @@
 				<option useRelationTest="true" REL="1" REL_ENT="2" relationTest="have" />
 				<option functionToExecuteUponFind="10" />
 				<option mustGenerateConditionEntityIndex="true" />
-				//#ifdefGIA_USE_ADVANCED_REFERENCING
+				//#ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 				<option defaultSameSetRelationID="2" defaultSameSetReferenceValue="true" />
 				//#endif
 				<option disableEntity="true" REL="1" REL_ENT="2" />
@@ -3139,7 +3139,7 @@
 				<option useRelationTest="true" REL="1" REL_ENT="2" relationTest="be" />
 				<option functionToExecuteUponFind="9" />
 				<option mustGenerateConditionEntityIndex="true" />
-				//#ifdefGIA_USE_ADVANCED_REFERENCING
+				//#ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 				<option defaultSameSetRelationID="2" defaultSameSetReferenceValue="true" />
 				//#endif
 				<option disableEntity="true" REL="1" REL_ENT="2" />
@@ -3166,7 +3166,7 @@
 				<option useRelationTest="true" REL="2" REL_ENT="2" relationTest="be" />
 				<option functionToExecuteUponFind="9" />
 				<option mustGenerateConditionEntityIndex="true" />
-				//#ifdefGIA_USE_ADVANCED_REFERENCING
+				//#ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 				<option defaultSameSetRelationID="2" defaultSameSetReferenceValue="true" />
 				//#endif
 				<option disableEntity="true" REL="2" REL_ENT="2" />
@@ -3187,7 +3187,7 @@
 				<option functionToExecuteUponFind="3" />
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="2" FUNC_ENT="2" functionEntityRelationEntityID="2" />
-				<!-- #ifdefGIA_USE_ADVANCED_REFERENCING -->
+				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetReferenceValue="true" />
 				<!-- #endif -->
 				</paramDepRel>
@@ -3208,7 +3208,7 @@
 				<option functionToExecuteUponFind="4" />
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="1" />
-				<!-- #ifdefGIA_USE_ADVANCED_REFERENCING -->
+				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetReferenceValue="false" /> <!-- CHECK THIS??? -->
 				<!-- #endif -->
 				<option disableRelationDuringLink="true" REL="1" /> <!-- required to prevent action link from being created to object in secondary action interpretation function linkSubjectOrObjectRelationships() - added 17 July 2013 -->
@@ -3232,7 +3232,7 @@
 				<option functionEntityRelationID="2" FUNC_ENT="2" functionEntityRelationEntityID="2" />
 				<option useRelationArrayTest="true" REL="1" REL_ENT="1" relationArrayTest="be" relationArrayTestSize="1" />
 				<option functionToExecuteUponFind="11" />
-				<!-- #ifdefGIA_USE_ADVANCED_REFERENCING -->
+				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetReferenceValue="false" />
 				<!-- #endif -->
 				<option disableEntity="true" REL="1" REL_ENT="1" /> <!-- disable "be" entity -->
@@ -3260,7 +3260,7 @@
 				<option functionEntityRelationID="2" FUNC_ENT="2" functionEntityRelationEntityID="2" />
 				<option useRelationArrayTest="true" REL="1" REL_ENT="1" relationArrayTest="contains|comprise|have" relationArrayTestSize="3" />
 				<option functionToExecuteUponFind="3" />
-				//#ifdefGIA_USE_ADVANCED_REFERENCING
+				//#ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 				<option defaultSameSetReferenceValue="false" />
 				//#endif
 				//#ifndefGIA_USE_CORPUS_DATABASE
@@ -3301,7 +3301,7 @@
 				<option functionEntityRelationID="2" FUNC_ENT="2" functionEntityRelationEntityID="2" />
 				<option functionToExecuteUponFind="5" />
 				<option functionEntityRelationID="1" FUNC_ENT="3" functionEntityRelationEntityID="1" />
-				<!-- #ifdefGIA_USE_ADVANCED_REFERENCING -->
+				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetReferenceValue="false" />	<!-- defaultSameSetReferenceValues are handled by genericDependecyRelationInterpretation(); -->
 				<!-- #endif -->
 				</paramDepRel>
@@ -3320,7 +3320,7 @@
 				<option numberOfRelations="1" />
 				<option useRelationArrayTest="true" REL="1" REL_ENT="1" relationArrayTest="contains|comprise|has|have" relationArrayTestSize="4" relationArrayTestIsNegative="true" />
 				<option useRelationArrayTest="true" REL="1" REL_ENT="1" relationArrayTest="be" relationArrayTestSize="1" relationArrayTestIsNegative="true" />
-				<!-- #ifdefGIA_USE_ADVANCED_REFERENCING -->
+				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="false" />
 				<!-- #endif -->
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="2" />
@@ -3336,7 +3336,7 @@
 				<option numberOfRelations="1" />
 				<option useRelationArrayTest="true" REL="1" REL_ENT="1" relationArrayTest="contains|comprise|has|have" relationArrayTestSize="4" relationArrayTestIsNegative="true" />
 				<option useRelationArrayTest="true" REL="1" REL_ENT="1" relationArrayTest="be" relationArrayTestSize="1" relationArrayTestIsNegative="true" />
-				<!-- #ifdefGIA_USE_ADVANCED_REFERENCING -->
+				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="false" />
 				<!-- #endif -->
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="2" />
@@ -3361,7 +3361,7 @@
 				<option functionEntityRelationID="2" FUNC_ENT="1" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="2" FUNC_ENT="3" functionEntityRelationEntityID="1" />
-				<!-- #ifdefGIA_USE_ADVANCED_REFERENCING -->
+				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetReferenceValue="true" />
 				<!-- #endif -->
 				</paramDepRel>
@@ -3380,7 +3380,7 @@
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="1" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="1" FUNC_ENT="3" functionEntityRelationEntityID="3" />
-				<!-- #ifdefGIA_USE_ADVANCED_REFERENCING -->
+				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="true" />
 				<!-- #endif -->
 				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_conj_and" />
@@ -3396,7 +3396,7 @@
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="1" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="1" FUNC_ENT="3" functionEntityRelationEntityID="3" />
-				<!-- #ifdefGIA_USE_ADVANCED_REFERENCING -->
+				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="true" />
 				<!-- #endif -->
 				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_conj_or" />
@@ -3412,7 +3412,7 @@
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="1" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="1" FUNC_ENT="3" functionEntityRelationEntityID="3" />
-				<!-- #ifdefGIA_USE_ADVANCED_REFERENCING -->
+				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="true" />
 				<!-- #endif -->
 				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_conj_but" />
@@ -3428,7 +3428,7 @@
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="1" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="1" FUNC_ENT="3" functionEntityRelationEntityID="3" />
-				<!-- #ifdefGIA_USE_ADVANCED_REFERENCING -->
+				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="true" />
 				<!-- #endif -->
 				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_conj_yet" />
@@ -3444,7 +3444,7 @@
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="1" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="1" FUNC_ENT="3" functionEntityRelationEntityID="3" />
-				<!-- #ifdefGIA_USE_ADVANCED_REFERENCING -->
+				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="true" />
 				<!-- #endif -->
 				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_conj_nor" />
@@ -3471,7 +3471,7 @@
 				<!-- #ifdefGIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR -->
 				<option disableEntity="true" REL="1" REL_ENT="3" />
 				<!-- #endif -->
-				<!-- #ifdefGIA_USE_ADVANCED_REFERENCING -->
+				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="true" />
 				<!-- #endif -->
 				</paramDepRel>
@@ -3518,7 +3518,7 @@
 				<option functionToExecuteUponFind="4" />
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="1" />
-				<!-- #ifdefGIA_USE_ADVANCED_REFERENCING -->
+				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="true" />
 				<!-- #endif -->
 				</paramDepRel>
@@ -3537,7 +3537,7 @@
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="1" FUNC_ENT="3" functionEntityRelationEntityID="3" />
 				<option mustGenerateConditionEntityIndex="true" /> <!-- may be required as conditionType corresponds to a relation type (not relation subject or relation governor) [assuming a corresponding feature index for the relation type cannot be found in the feature array] -->
-				<!-- #ifdefGIA_USE_ADVANCED_REFERENCING -->
+				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="true" />
 				<!-- #endif -->
 				</paramDepRel>
@@ -3552,7 +3552,7 @@
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="1" FUNC_ENT="3" functionEntityRelationEntityID="3" />
 				<option mustGenerateConditionEntityIndex="true" /> <!-- may be required as conditionType corresponds to a relation type (not relation subject or relation governor) [assuming a corresponding feature index for the relation type cannot be found in the feature array] -->
-				<!-- #ifdefGIA_USE_ADVANCED_REFERENCING -->
+				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="true" />
 				<!-- #endif -->
 				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="_%atTime|_%atLocation|_%because|_%how" relationArrayTestSize="4" relationArrayTestIsNegative="false" />
@@ -3576,7 +3576,7 @@
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isAction" value="true" REL="1" REL_ENT="1" />
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isAction" value="true" REL="1" REL_ENT="2" />
 				<option mustGenerateConditionName="true" conditionEntityDefaultName="involves" mustGenerateConditionEntityIndex="true" />
-				<!-- #ifdefGIA_USE_ADVANCED_REFERENCING -->
+				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="false" />
 				<!-- #endif -->
 				</paramDepRel>
@@ -3605,7 +3605,7 @@
 				<option functionToExecuteUponFind="8" />
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="1" /> <!-- coincidentially this condition holds for both cases -->
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" /> <!-- coincidentially this condition holds for both 3 cases -->
-				<!-- #ifdefGIA_USE_ADVANCED_REFERENCING -->
+				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetReferenceValue="true" />
 				<!-- #endif -->
 				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="_measure_per|_measure_dependency" relationArrayTestSize="2" />
@@ -3617,7 +3617,7 @@
 				<option functionToExecuteUponFind="8" />
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="1" /> <!-- coincidentially this condition holds for both cases -->
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" /> <!-- coincidentially this condition holds for both 3 cases -->
-				<!-- #ifdefGIA_USE_ADVANCED_REFERENCING -->
+				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetReferenceValue="true" />
 				<!-- #endif -->
 				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="_measure_distance|_measure_size|_measure_time|_measure" relationArrayTestSize="4" />
@@ -3641,7 +3641,7 @@
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" />
 				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_to-be" />
 				<option functionToExecuteUponFind="4" />
-				//#ifdefGIA_USE_ADVANCED_REFERENCING
+				//#ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 				<option defaultSameSetReferenceValue="true" /> //eg The chicken ate the pie that likes to draw.
 				/#endif
 				</paramDepRel>
@@ -3656,7 +3656,7 @@
 				<option functionToExecuteUponFind="8" />
 				<option functionEntityRelationID="1" FUNC_ENT="3" functionEntityRelationEntityID="3" />
 				<option mustGenerateConditionEntityIndex="true" />
-				<!-- #ifdefGIA_USE_ADVANCED_REFERENCING -->
+				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetReferenceValue="true" /> <!-- eg The chicken ate the pie that likes to draw. -->
 				<!-- #endif -->
 				</paramDepRel>
@@ -3676,7 +3676,7 @@
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" />
 				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_to-do" />
 				<option functionToExecuteUponFind="4" />
-				//#ifdefGIA_USE_ADVANCED_REFERENCING
+				//#ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 				<option defaultSameSetReferenceValue="true" /> //eg The chicken ate the pie that likes to draw.
 				//#endif
 				</paramDepRel>
@@ -3691,7 +3691,7 @@
 				<option functionToExecuteUponFind="8" />
 				<option functionEntityRelationID="1" FUNC_ENT="3" functionEntityRelationEntityID="3" />
 				<option mustGenerateConditionEntityIndex="true" />
-				<!-- #ifdefGIA_USE_ADVANCED_REFERENCING -->
+				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetReferenceValue="true" /> <!-- eg The chicken ate the pie that likes to draw. -->
 				<!-- #endif -->
 				</paramDepRel>
@@ -3717,7 +3717,7 @@
 				<option functionToExecuteUponFind="4" />
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="1" />
-				<!-- #ifdefGIA_USE_ADVANCED_REFERENCING -->
+				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetReferenceValue="false" />
 				<!-- #endif -->
 				</paramDepRel>

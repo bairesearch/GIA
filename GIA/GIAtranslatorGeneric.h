@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorGeneric.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2g4c 03-September-2014
+ * Project Version: 2g5a 05-September-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -209,7 +209,7 @@ public:
 	EntityCharacteristic specialCaseCharacteristicsRelationEntityIndexReassignment[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];	//not used often (UNTESTED)
 
 		//for execution
-	#ifdef GIA_USE_ADVANCED_REFERENCING
+	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	int defaultSameSetRelationID;
 	bool defaultSameSetReferenceValue;
 	#endif

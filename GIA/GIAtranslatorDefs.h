@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2g4c 03-September-2014
+ * Project Version: 2g5a 05-September-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -97,36 +97,6 @@
 //#ifndef GIA_ASSIGN_SUBSTANCE_TO_PROPER_NOUNS	//this condition has been removed for debugging output replication purposes (although this condition is not necessary in practice)
 	#define FILL_NER_ARRAY_AFTER_RELEX_PARSE_FOR_STANFORD_EQUIVALENT_PROPER_NOUN_DETECTION 	//added 26 April 2012 [UNTESTED]
 //#endif
-
-#ifdef GIA_ENABLE_TEXTUAL_CONTEXT_REFERENCING
-	#ifdef GIA_USE_ADVANCED_REFERENCING
-		#define GIA_USE_ADVANCED_REFERENCING_IDENTIFY_DEFINITE_SETS_ONLY	//this is required considering reference look up of non definite sets is never desired
-		#ifdef GIA_USE_ADVANCED_REFERENCING_IDENTIFY_DEFINITE_SETS_ONLY
-			//#define GIA_USE_ADVANCED_REFERENCING_IDENTIFY_SETS_WITH_SUBJECT_OR_OBJECT_ONLY	//removed 12 August 2012 (NB original isObjectTemp/isSubjectTemp values are not retained currently - especially after advanced referencing update [GIA1n] - only derived isObjectTemp/isSubjectTemp values are retained [where as original values are left inside GIAfeatureTempEntityNodeArray], which do not include subjects/objects not involved in actions - eg property relationships as opposed to action relationships)
-			#define GIA_USE_ADVANCED_REFERENCING_IDENTIFY_DEFINITE_SETS_ONLY_ACCEPT_PROPERNOUNS 	//added 12 August 2012
-		#endif
-		#define GIA_STANFORD_CORE_NLP_USE_CODEPENDENCIES
-		#ifdef GIA_STANFORD_CORE_NLP_USE_CODEPENDENCIES
-			#define GIA_STANFORD_CORE_NLP_CODEPENDENCIES_ONLY_USE_PRONOMINAL_COREFERENCE_RESOLUTION		//if using advanced referencing, only use the pronominal coreferences from Stanford (it, she, he, etc)
-		#endif
-	#else
-		#define GIA_STANFORD_CORE_NLP_USE_CODEPENDENCIES	//default: on
-		#ifdef GIA_STANFORD_CORE_NLP_USE_CODEPENDENCIES
-			//#define GIA_STANFORD_CORE_NLP_USE_CODEPENDENCIES_ALL	//Not fully tested, but appears to work at least in simple scenarios
-			#ifndef GIA_STANFORD_CORE_NLP_USE_CODEPENDENCIES_ALL
-				#define GIA_STANFORD_CORE_NLP_CODEPENDENCIES_ONLY_USE_PRONOMINAL_COREFERENCE_RESOLUTION
-				#ifdef GIA_STANFORD_CORE_NLP_CODEPENDENCIES_ONLY_USE_PRONOMINAL_COREFERENCE_RESOLUTION
-					#define GIA_IMPLEMENT_NON_STANFORD_CORE_NLP_CODEPENDENCIES_CROSS_SENTENCE_REFERENCING
-				#endif
-			#endif
-		#else
-			#define GIA_IMPLEMENT_NON_STANFORD_CORE_NLP_CODEPENDENCIES_CROSS_SENTENCE_REFERENCING
-		#endif
-		#ifdef GIA_IMPLEMENT_NON_STANFORD_CORE_NLP_CODEPENDENCIES_CROSS_SENTENCE_REFERENCING
-			#define GIA_ENABLE_REFERENCE_LINKING_DO_NOT_USE_IF_REFERENCE_IS_NOT_DEFINITE_OR_PROPER_NOUN		/*to prevent the ambiguous blue chicken(s) being linked; eg A blue chicken is small. / A red chicken is fat. / The green chicken ate the pie. / A blue chicken is late.*/
-		#endif
-	#endif
-#endif
 
 #ifdef GIA_USE_1N1ATEMP1TO8_CHANGES
 	#ifdef USE_CE

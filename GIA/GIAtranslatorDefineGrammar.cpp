@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineGrammar.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2g4c 03-September-2014
+ * Project Version: 2g5a 05-September-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -148,7 +148,7 @@ void locateAndAddAllFeatureTempEntities(Sentence * currentSentenceInList, bool G
 				}
 				#endif
 
-				#ifdef GIA_USE_ADVANCED_REFERENCING
+				#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 				//this is required for fillGrammaticalArraysStanford findSubjObjRelationMatchingAuxiliaryAndSetNotSameReferenceSet()	[nb these values are applied to concept entities only]
 				GIAfeatureTempEntityNodeArray[relationIndex[i]]->entityIndexTemp = relationIndex[i];
 				GIAfeatureTempEntityNodeArray[relationIndex[i]]->sentenceIndexTemp = currentSentenceInList->sentenceIndex;
@@ -908,7 +908,7 @@ void fillGrammaticalArraysStanford(Sentence * currentSentenceInList,  bool GIAen
 				if(determiner == GRAMMATICAL_DETERMINER_DEFINITE)
 				{
 					featureArrayTemp[entityIndexOfNoun]->grammaticalIsDefinite = true;
-					#ifdef GIA_USE_ADVANCED_REFERENCING
+					#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 					featureArrayTemp[entityIndexOfNoun]->grammaticalIndexOfDeterminer = currentRelationInList->relationDependentIndex;
 					#endif
 
@@ -921,7 +921,7 @@ void fillGrammaticalArraysStanford(Sentence * currentSentenceInList,  bool GIAen
 				else if(determiner == GRAMMATICAL_DETERMINER_INDEFINITE_PLURAL)
 				{//added 2f11a 13-July-2014
 					featureArrayTemp[entityIndexOfNoun]->grammaticalIsIndefinitePlural = true;
-					#ifdef GIA_USE_ADVANCED_REFERENCING
+					#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 					featureArrayTemp[entityIndexOfNoun]->grammaticalIndexOfDeterminer = currentRelationInList->relationDependentIndex;
 					#endif
 				}
@@ -972,7 +972,7 @@ void applyGrammaticalInfoToAllEntities(bool GIAentityNodeArrayFilled[], GIAentit
 				entity->grammaticalIndefinitePluralTemp = currentFeatureInList->grammaticalIsIndefinitePlural;
 				entity->grammaticalProperNounTemp = currentFeatureInList->grammaticalIsProperNoun;
 				entity->grammaticalGenderTemp = currentFeatureInList->grammaticalGender;
-				#ifdef GIA_USE_ADVANCED_REFERENCING
+				#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 				entity->grammaticalIndexOfDeterminerTemp = currentFeatureInList->grammaticalIndexOfDeterminer;
 				//cout << "entity->grammaticalIndexOfDeterminerTemp = " << entity->grammaticalIndexOfDeterminerTemp << endl;
 				#endif

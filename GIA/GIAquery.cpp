@@ -26,7 +26,7 @@
  * File Name: GIAquery.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2g4c 03-September-2014
+ * Project Version: 2g5a 05-September-2014
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  * ?Limitations: will only locate a exact answer (based upon a comparison node) if it provides the maximum number of matched nodes
@@ -359,7 +359,7 @@ bool testEntityNodeForQueryOrReferenceSet2(GIAentityNode * queryEntityNode, GIAe
 						}
 						*/
 
-						#ifdef GIA_USE_ADVANCED_REFERENCING
+						#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 						if(knownBestMatch)
 						{
 							//cout << "knownBestMatch: (*connectionIterQuery)->entity->entityName = " << (*connectionIterQuery)->entity->entityName << endl;
@@ -607,7 +607,7 @@ bool testReferencedEntityNodeForExactNameMatch2(GIAentityNode * queryEntityNode,
 			}
 			#endif
 		}
-		#ifdef GIA_USE_ADVANCED_REFERENCING
+		#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 		else
 		{
 			#ifdef GIA_ADVANCED_REFERENCING_DEBUG
@@ -638,7 +638,7 @@ bool testReferencedEntityNodeForExactNameMatch2(GIAentityNode * queryEntityNode,
 					{
 					#endif
 						#ifndef GIA_ADVANCED_REFERENCING_ORIGINAL
-						if(queryEntityNode->idActiveList != entityNode->idActiveList)	//else they are exactly the same [NB with new implementation of GIA_USE_ADVANCED_REFERENCING, it will detect the same nodes as a reference match, so they need to be ignored when this happens]
+						if(queryEntityNode->idActiveList != entityNode->idActiveList)	//else they are exactly the same [NB with new implementation of GIA_RECORD_SAME_REFERENCE_SET_INFORMATION, it will detect the same nodes as a reference match, so they need to be ignored when this happens]
 						{
 						#endif
 							#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
@@ -1304,7 +1304,7 @@ int testReferencedEntityNodeForExactNameMatch(GIAentityNode * queryEntityNode, G
 			#endif
 
 		}
-		#ifdef GIA_USE_ADVANCED_REFERENCING
+		#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 		else
 		{
 			#ifdef GIA_ADVANCED_REFERENCING_DEBUG
@@ -1335,7 +1335,7 @@ int testReferencedEntityNodeForExactNameMatch(GIAentityNode * queryEntityNode, G
 					{
 					#endif
 						#ifndef GIA_ADVANCED_REFERENCING_ORIGINAL
-						if(queryEntityNode->idActiveList != entityNode->idActiveList)	//else they are exactly the same [NB with new implementation of GIA_USE_ADVANCED_REFERENCING, it will detect the same nodes as a reference match, so they need to be ignored when this happens]
+						if(queryEntityNode->idActiveList != entityNode->idActiveList)	//else they are exactly the same [NB with new implementation of GIA_RECORD_SAME_REFERENCE_SET_INFORMATION, it will detect the same nodes as a reference match, so they need to be ignored when this happens]
 						{
 						#endif
 							#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
@@ -2033,7 +2033,7 @@ bool testEntityNodeForQueryOrReferenceSet(GIAentityNode * queryEntityNode, GIAen
 						//cout << "numberOfMatchedNodesTempMax = " << numberOfMatchedNodesTempMax << endl;
 						#endif
 
-						#ifdef GIA_USE_ADVANCED_REFERENCING
+						#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 						if(knownBestMatch)
 						{
 							//cout << "knownBestMatch" << endl;
@@ -2642,7 +2642,7 @@ void traceEntityNodeDetermineNextCourseOfAction(string * printEntityNodeString, 
 	{
 		traceEntityNode(entityNode, function, numberOfMatchedNodes, printEntityNodeString, thisIsInstanceAndPreviousNodeWasDefinition, referenceSetID, traceInstantiations);
 	}
-	#ifdef GIA_USE_ADVANCED_REFERENCING
+	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	else if(function == GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_DETERMINE_MAX_NUMBER_MATCHED_NODES_SAME_SET_ONLY)
 	{
 		if(entityNode->referenceSetID == referenceSetID)

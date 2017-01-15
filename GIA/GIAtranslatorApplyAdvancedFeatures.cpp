@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorApplyAdvancedFeatures.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2g4c 03-September-2014
+ * Project Version: 2g5a 05-September-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -823,7 +823,7 @@ void extractMeasures(Sentence * currentSentenceInList, bool GIAentityNodeArrayFi
 	param.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectConditionToEntity;
 	param.functionEntityRelationID[FUNC_ENT1] = REL1; param.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT1;	//coincidentially this condition holds for both cases
 	param.functionEntityRelationID[FUNC_ENT2] = REL1; param.functionEntityRelationEntityID[FUNC_ENT2] = REL_ENT2;	//coincidentially this condition holds for both 3 cases
-	#ifdef GIA_USE_ADVANCED_REFERENCING
+	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	param.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE;
 	#endif
 
@@ -946,7 +946,7 @@ void defineToBeAndToDoConditions(Sentence * currentSentenceInList, bool GIAentit
 	GIAgenericDepRelInterpretationParameters paramA = param;
 	paramA.useRelationTest[REL1][REL_ENT3] = true; paramA.relationTest[REL1][REL_ENT3] = RELATION_TYPE_COMPLIMENT_TO_BE;
 	paramA.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectPropertyToEntity;
-	#ifdef GIA_USE_ADVANCED_REFERENCING
+	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	paramA.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_PROPERTIES;	//eg The chicken ate the pie that likes to draw.
 	#endif
 	genericDependecyRelationInterpretation(&paramA, REL1);
@@ -956,7 +956,7 @@ void defineToBeAndToDoConditions(Sentence * currentSentenceInList, bool GIAentit
 	paramA.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectConditionToEntity;
 	paramA.functionEntityRelationID[FUNC_ENT3] = REL1; paramA.functionEntityRelationEntityID[FUNC_ENT3] = REL_ENT3;
 	paramA.mustGenerateConditionEntityIndex = true;
-	#ifdef GIA_USE_ADVANCED_REFERENCING
+	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	paramA.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_CONDITIONS;	//eg The chicken ate the pie that likes to draw.
 	#endif
 	genericDependecyRelationInterpretation(&paramA, REL1);
@@ -971,7 +971,7 @@ void defineToBeAndToDoConditions(Sentence * currentSentenceInList, bool GIAentit
 	GIAgenericDepRelInterpretationParameters paramB = param;
 	paramB.useRelationTest[REL1][REL_ENT3] = true; paramB.relationTest[REL1][REL_ENT3] = RELATION_TYPE_COMPLIMENT_TO_DO;
 	paramB.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectPropertyToEntity;
-	#ifdef GIA_USE_ADVANCED_REFERENCING
+	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	paramB.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_PROPERTIES;	//eg The chicken ate the pie that likes to draw.
 	#endif
 	genericDependecyRelationInterpretation(&paramB, REL1);
@@ -981,7 +981,7 @@ void defineToBeAndToDoConditions(Sentence * currentSentenceInList, bool GIAentit
 	paramB.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectConditionToEntity;
 	paramB.functionEntityRelationID[FUNC_ENT3] = REL1; paramB.functionEntityRelationEntityID[FUNC_ENT3] = REL_ENT3;
 	paramB.mustGenerateConditionEntityIndex = true;
-	#ifdef GIA_USE_ADVANCED_REFERENCING
+	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	paramB.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_CONDITIONS;	//eg The chicken ate the pie that likes to draw.
 	#endif
 	genericDependecyRelationInterpretation(&paramB, REL1);
@@ -1132,7 +1132,7 @@ void linkPropertiesParataxis(Sentence * currentSentenceInList, bool GIAentityNod
 	param.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectPropertyToEntity;
 	param.functionEntityRelationID[FUNC_ENT1] = REL1; param.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT2;
 	param.functionEntityRelationID[FUNC_ENT2] = REL1; param.functionEntityRelationEntityID[FUNC_ENT2] = REL_ENT1;
-	#ifdef GIA_USE_ADVANCED_REFERENCING
+	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	param.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_PARATAXIS;
 	#endif
 	genericDependecyRelationInterpretation(&param, REL1);
@@ -1184,7 +1184,7 @@ void defineClausalComplementProperties(Sentence * currentSentenceInList, bool GI
 	param.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectPropertyToEntity;
 	param.functionEntityRelationID[FUNC_ENT1] = REL1; param.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT1;
 	param.functionEntityRelationID[FUNC_ENT2] = REL1; param.functionEntityRelationEntityID[FUNC_ENT2] = REL_ENT2;
-	#ifdef GIA_USE_ADVANCED_REFERENCING
+	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	param.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_CCCOMP;	//eg The guy, that Akari said was blue, left early in the morning. / He says that you like to swim.
 	#endif
 	genericDependecyRelationInterpretation(&param, REL1);

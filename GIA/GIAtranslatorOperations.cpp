@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2g4c 03-September-2014
+ * Project Version: 2g5a 05-September-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -398,7 +398,7 @@ void forwardInfoToNewSubstance(GIAentityNode * entity, GIAentityNode * newSubsta
 	newSubstance->grammaticalPronounTemp = entity->grammaticalPronounTemp;		//must forward grammatical info for GIAtranslatorDefineSubstances.cpp post substance declaration modifications (ie defineSubstanceConcepts)
 	newSubstance->mustSetIsSubstanceConceptBasedOnApposRelation = entity->mustSetIsSubstanceConceptBasedOnApposRelation;
 	#endif
-	#ifdef GIA_USE_ADVANCED_REFERENCING
+	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	newSubstance->grammaticalIndexOfDeterminerTemp = entity->grammaticalIndexOfDeterminerTemp;
 	#endif
 	#ifdef GIA_USE_STANFORD_CORENLP
@@ -1582,7 +1582,7 @@ GIAentityNode * getEntitySubstanceThatWasDeclaredInContext(GIAentityNode * entit
 }
 #endif
 
-#ifdef GIA_USE_ADVANCED_REFERENCING
+#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 bool determineSameReferenceSetValue(bool defaultSameSetValueForRelation, Relation * relation)
 {
 	bool auxiliaryIndicatesDifferentReferenceSet = relation->auxiliaryIndicatesDifferentReferenceSet;
@@ -1725,7 +1725,7 @@ GIAentityConnection * writeVectorConnection(GIAentityNode * entityNode, GIAentit
 			#endif			
 			vectorConnection->push_back(newConnection);
 
-			#ifdef GIA_USE_ADVANCED_REFERENCING
+			#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 			newConnection->sameReferenceSet = sameReferenceSet;
 			/*
 			#ifdef GIA_ADVANCED_REFERENCING_DEBUG
@@ -2107,7 +2107,7 @@ void mergeEntityNodesAddAlias(GIAentityNode * entityNode, GIAentityNode * entity
 						#ifdef GIA_ALIASES_DEBUG
 						cout << "connect entityNode (" << entityNode->entityName << ") to entityConnectedToEntityToMerge (" << entityConnectedToEntityToMerge->entityName << ") (x)" << endl;
 						#endif
-						#ifdef GIA_USE_ADVANCED_REFERENCING
+						#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 						bool sameReferenceSet = (*connectionIter)->sameReferenceSet;
 						#else
 						bool sameReferenceSet = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;

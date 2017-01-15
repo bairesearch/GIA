@@ -26,7 +26,7 @@
  * File Name: GIAdraw.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2g4c 03-September-2014
+ * Project Version: 2g5a 05-September-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -185,9 +185,12 @@ void determineBasicPrintPositionsOfAllNodes(vector<GIAentityNode*> *entityNodesA
 		printFromXMLcoordinatesAlreadyDefined = true;
 		maxNumberSentences = 1;
 	}
+	//cout << "maxNumberSentences = " << maxNumberSentences << endl;
 	for(int sentenceIndex=GIA_NLP_START_SENTENCE_INDEX; sentenceIndex <= maxNumberSentences; sentenceIndex++)
 	{
-		//cout << "*** sentenceIndex = " << sentenceIndex << endl;
+		#ifdef GIA_DRAW_DEBUG
+		cout << "*** sentenceIndex = " << sentenceIndex << endl;
+		#endif
 		for(entityIter = entityNodesActiveListComplete->begin(); entityIter != entityNodesActiveListComplete->end(); entityIter++)
 		{
 			#ifdef GIA_DRAW_DEBUG
@@ -241,7 +244,11 @@ Reference * initialiseEntityNodeForPrinting(GIAentityNode * entityNode, int y, i
 {
 	//cout << "1 entityNode->sentenceIndexTemp = " << entityNode->sentenceIndexTemp  << endl;
 	#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
+	#ifdef GIA_RECORD_WAS_REFERENCE_INFORMATION
 	if((entityNode->sentenceIndexTemp == sentenceIndex) || (entityNode->wasReference) || thisIsDefinitionAndPreviousNodeWasInstance || entityNode->printCoordsAlreadyDefined)	//condition (entityNode->wasReference) added 12 October 2012 1q3b
+	#else
+	if((entityNode->sentenceIndexTemp == sentenceIndex) || thisIsDefinitionAndPreviousNodeWasInstance || entityNode->printCoordsAlreadyDefined)
+	#endif
 	{
 	#endif
 		//cout << "2 " << endl;

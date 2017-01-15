@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2g4c 03-September-2014
+ * Project Version: 2g5a 05-September-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -609,12 +609,21 @@
 #include "SHAREDglobalDefs.h"
 
 #ifdef USE_NLC
-	#define GIA_STORE_CONNECTION_SENTENCE_INDEX	//added 2f15d 16-July-2014 [required for NLC 1g15a+]
-	#define GIA_TRANSLATOR_MARK_DOUBLE_LINKS_AS_REFERENCE_CONNECTIONS	//added 2f21a 20-August-2014 [required for NLC 1i2a+]
+	//#define NLC_ACTIVATE_PRE1j_CODE_FOR_DEBUG
+	#ifndef NLC_ACTIVATE_PRE1j_CODE_FOR_DEBUG
+		#define GIA_RECORD_SAME_REFERENCE_SET_INFORMATION	//separated from GIA_USE_ADVANCED_REFERENCING 2g5a/05 September 2014	//added 2g5a - required for advanced referencing, dream mode (identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts():identifyReferenceSetDetermineNextCourseOfAction():identifyReferenceSet()), and NLC 1j2a+
+		//#define GIA_TRANSLATOR_DREAM_MODE_CREATE_AND_LINK_NON_SPECIFIC_CONCEPTS_FOR_ALL_ENTITIES	//untested and unused
+	#endif
+	#define GIA_DISABLE_CROSS_SENTENCE_REFERENCING	//added 2g5a/05-September-2014 [required for NLC 1j2a+]
+	#define GIA_STORE_CONNECTION_SENTENCE_INDEX	//added 2f15d/16-July-2014 [required for NLC 1g15a+]
+	#ifdef NLC_ACTIVATE_PRE1j_CODE_FOR_DEBUG
+		#define GIA_TRANSLATOR_MARK_DOUBLE_LINKS_AS_REFERENCE_CONNECTIONS	//added 2f21a/20-August-2014 [required for NLC 1i2a+]	//disabled NLC 1j2a+
+	#endif
+	#define GIA_REMOVE_REDUNDANT_LOGICAL_CONDITION_ENTITIES	//added 2f13a/14-July-2014
+	#define GIA_CREATE_INDEPENDENT_CONJUNCTION_ENTITIES	//added 2f8a/09-July-2014	//NB this is only required for NLC_SUPPORT_LOGICAL_CONDITION_OPERATIONS_ADVANCED	
 #endif
 //#define GIA_ENABLE_WARNINGS
-#define GIA_REMOVE_REDUNDANT_LOGICAL_CONDITION_ENTITIES	//added 2f13a 14-July-2014
-#define GIA_CREATE_INDEPENDENT_CONJUNCTION_ENTITIES	//added 2f8a 09-July-2014
+
 
 //#define GIA_TRANSLATOR_ONLY_MERGE_ENTITY_NODES_WHEN_LINK_PREESTABLISHED_REFERENCES_GIA //disabled GIA 2c3c [disabling required for GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN] - CHECKTHIS does not cause problems with alternative test scenarios
 	//issue detected (yet to be patched) with the disabling of GIA_TRANSLATOR_ONLY_MERGE_ENTITY_NODES_WHEN_LINK_PREESTABLISHED_REFERENCES_GIA: advanced referencing of aliases failure
@@ -628,7 +637,7 @@
 */
 
 #ifndef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
-	#define GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR	//assumes GIA_CREATE_SUBSTANCE_CONCEPTS_FOR_ALL_CONCEPTS is true
+	#define GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR	//assumes GIA_CREATE_NON_SPECIFIC_SUBSTANCE_CONCEPTS_FOR_ALL_CONCEPTS is true
 	#ifdef GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR
 		#define GIA_SET_ENTITY_ENTITY_AND_SENTENCE_INDICIES_NORMALLY	//this is required for !GIA_TRANSLATOR_ONLY_MERGE_ENTITY_NODES_WHEN_LINK_PREESTABLISHED_REFERENCES_GIA
 	#endif
@@ -640,9 +649,7 @@
 	#define GIA_LRP_REDUCE_QUOTES_TO_SINGLE_WORDS_FILLER "_"	//this filler does not appear compatible with Relex (Stanford only); try another filler character (NB "-" doesn't work with Relex either)
 #endif
 
-#ifndef USE_NLC
 //#define GIA_USE_CORPUS_DATABASE	//disabled for OpenGIA
-#endif
 #ifdef GIA_USE_CORPUS_DATABASE
 	#define USE_GIA2		//GIA 2b1a - sets GIA into corpus read mode
 	#ifdef USE_GIA2
@@ -694,10 +701,8 @@
 	#define GIA_RECORD_MAX_FEATURE_INDEX
 #endif
 
-#define GIA_IDENTIFY_REFERENCE_SET_CONCEPT_ENTITY_ENTRANCE_DO_NOT_ENTER_ON_AN_ACTION_NODE	//GIA 2a8a	//this update is required for NLC if statement parsing //this update enforces orginal GIA specification: '//an action is considered by default not to be part of the same reference set as its subject/object (eg "the man fires the bow"). An rcmod /"that" is explicitly required for an action to be considered part of the same reference set as its subject/object (eg "the man that fires the bow...")'
-
-#define GIA_CREATE_SUBSTANCE_CONCEPTS_FOR_ALL_CONCEPTS		//GIA 2a7a		//this is recommended for NLC (untested) and required for USE_GIA2	//warning: GIA_CREATE_SUBSTANCE_CONCEPTS_FOR_ALL_CONCEPTS needs to be tested independently without USE_GIA2
-#ifdef GIA_CREATE_SUBSTANCE_CONCEPTS_FOR_ALL_CONCEPTS
+#define GIA_CREATE_NON_SPECIFIC_SUBSTANCE_CONCEPTS_FOR_ALL_CONCEPTS		//GIA 2a7a		//this is recommended for NLC (untested) and required for USE_GIA2	//warning: GIA_CREATE_NON_SPECIFIC_SUBSTANCE_CONCEPTS_FOR_ALL_CONCEPTS needs to be tested independently without USE_GIA2
+#ifdef GIA_CREATE_NON_SPECIFIC_SUBSTANCE_CONCEPTS_FOR_ALL_CONCEPTS
 	#define GIA_CREATE_NEW_SUBSTANCE_CONCEPT_FOR_EVERY_REFERENCE_TO_A_SUBSTANCE_CONCEPT	//GIA 2a10a
 #endif
 
@@ -710,8 +715,9 @@
 //variables currently being tested (1q1a+)
 #define GIA_TRANSLATOR_DREAM_MODE_LINK_SPECIFIC_CONCEPTS_AND_ACTIONS	//required for NLC
 #ifdef GIA_TRANSLATOR_DREAM_MODE_LINK_SPECIFIC_CONCEPTS_AND_ACTIONS
-	#define GIA_USE_ADVANCED_REFERENCING_SEARCH_CODE
+	#define GIA_RECORD_SAME_REFERENCE_SET_INFORMATION	//separated from GIA_USE_ADVANCED_REFERENCING 2g5a/05 September 2014	//added 2g5a - required for advanced referencing, dream mode (identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts():identifyReferenceSetDetermineNextCourseOfAction():identifyReferenceSet()), and NLC 1j2a+
 #endif
+
 #define GIA_QUERY_SIMPLIFIED_SEARCH
 #define GIA_QUERY_SIMPLIFIED_SEARCH_REPLACE_ADVANCED_SEARCH
 //#define GIA_QUERY_SIMPLIFIED_SEARCH_ENFORCE_EXACT_MATCH
@@ -863,27 +869,76 @@
 	//#define GIA_SEMANTIC_NET_DO_NOT_WRITE_CONNECTIONS_FROM_DISABLED_ENTITY_NODES	//optional to enable disbled node i/o without recording their connections
 #endif
 
-#define GIA_USE_ADVANCED_REFERENCING	//requires further testing
-#ifdef GIA_USE_ADVANCED_REFERENCING
-	#define GIA_USE_ADVANCED_REFERENCING_SEARCH_CODE
-	#define GIA_ADVANCED_REFERENCING_ENSURE_PLURALITY_MATCHES	//added 29 June 2013
-	#ifndef GIA_STORE_CONNECTION_SENTENCE_INDEX
-		#define GIA_ADVANCED_REFERENCING_PREVENT_DOUBLE_LINKS
+#ifndef GIA_DISABLE_CROSS_SENTENCE_REFERENCING
+	#define GIA_USE_ADVANCED_REFERENCING	//requires further testing
+	#ifdef GIA_USE_ADVANCED_REFERENCING
+		#define GIA_RECORD_SAME_REFERENCE_SET_INFORMATION	//separated from GIA_USE_ADVANCED_REFERENCING 2g5a/05 September 2014
+		#define GIA_RECORD_WAS_REFERENCE_INFORMATION
+		#ifndef GIA_STORE_CONNECTION_SENTENCE_INDEX
+			#define GIA_ADVANCED_REFERENCING_PREVENT_DOUBLE_LINKS
+		#endif
+		#define GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
+		#define GIA_ADVANCED_REFERENCING_ASSERT_MINIMUM_SENTENCE_INDEX_OF_REFERENCE_SET	//added 1m5aTEMP11 [requires Stanford Parser - incompatible with Relex - because it requires record of the sentence entity index of the determiner "the"; grammaticalIndexOfDeterminer/grammaticalIndexOfDeterminerTemp]
+		#define GIA_ADVANCED_REFERENCING_DO_NOT_REAPPLY_IS_SUBSTANCE_CONCEPT_TO_REFERENCES
+	#else
+		//#define GIA_USE_NON_ADVANCED_REFERENCING
 	#endif
-	//#define GIA_ADVANCED_REFERENCING_UPDATE_NOT_NECESSARY_OR_TESTED
-	#define GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
-	#define GIA_ADVANCED_REFERENCING_ORIGINAL
+#endif
+
+#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION	
+	#define GIA_IDENTIFY_REFERENCE_SET_CONCEPT_ENTITY_ENTRANCE_DO_NOT_ENTER_ON_AN_ACTION_NODE	//GIA 2a8a	//this update is required for NLC if statement parsing //this update enforces orginal GIA specification: '//an action is considered by default not to be part of the same reference set as its subject/object (eg "the man fires the bow"). An rcmod /"that" is explicitly required for an action to be considered part of the same reference set as its subject/object (eg "the man that fires the bow...")'
+	#define GIA_USE_ADVANCED_REFERENCING_IDENTIFY_DEFINITE_SETS_ONLY	//this is required considering reference look up of non definite sets is never desired
+	#ifdef GIA_USE_ADVANCED_REFERENCING_IDENTIFY_DEFINITE_SETS_ONLY
+		//#define GIA_USE_ADVANCED_REFERENCING_IDENTIFY_SETS_WITH_SUBJECT_OR_OBJECT_ONLY	//removed 12 August 2012 (NB original isObjectTemp/isSubjectTemp values are not retained currently - especially after advanced referencing update [GIA1n] - only derived isObjectTemp/isSubjectTemp values are retained [where as original values are left inside GIAfeatureTempEntityNodeArray], which do not include subjects/objects not involved in actions - eg property relationships as opposed to action relationships)
+		#define GIA_USE_ADVANCED_REFERENCING_IDENTIFY_DEFINITE_SETS_ONLY_ACCEPT_PROPERNOUNS 	//added 12 August 2012
+	#endif
+	//#define GIA_ADVANCED_REFERENCING_FIND_SUBJ_OBJ_RELATION_MATCHING_AUXILIARY_AND_SET_NOT_SAME_REFERENCE_SET
+	#define GIA_USE_ADVANCED_REFERENCING_SEARCH_CODE
+	#ifdef GIA_USE_ADVANCED_REFERENCING_SEARCH_CODE
+		#define GIA_ADVANCED_REFERENCING_ORIGINAL
+		//#define GIA_ADVANCED_REFERENCING_UPDATE_NOT_NECESSARY_OR_TESTED
+		#define GIA_ADVANCED_REFERENCING_ENSURE_PLURALITY_MATCHES	//added 29 June 2013
+	#endif
 	#define GIA_ADVANCED_REFERENCING_PREPOSITIONS
 	#define GIA_ADVANCED_REFERENCING_CONDITIONS		//all conditions; ie, not just preposition conditions
 	#define GIA_ADVANCED_REFERENCING_CONDITIONS_RELEX_SPECIFIC - added 2 July 2013 (requires testing)
-	#define GIA_ADVANCED_REFERENCING_ASSERT_MINIMUM_SENTENCE_INDEX_OF_REFERENCE_SET	//added 1m5aTEMP11 [requires Stanford Parser - incompatible with Relex - because it requires record of the sentence entity index of the determiner "the"; grammaticalIndexOfDeterminer/grammaticalIndexOfDeterminerTemp]
-	#define GIA_ADVANCED_REFERENCING_DO_NOT_REAPPLY_IS_SUBSTANCE_CONCEPT_TO_REFERENCES
-	//#define GIA_ADVANCED_REFERENCING_FIND_SUBJ_OBJ_RELATION_MATCHING_AUXILIARY_AND_SET_NOT_SAME_REFERENCE_SET
+#endif
+
+#define GIA_ENABLE_TEXTUAL_CONTEXT_REFERENCING			//default: on	//this enables pronoun detection	//OLD: {this needs to disable some additional parameters also... (NB substances are still being connected, and not created anew)}
+#ifdef GIA_ENABLE_TEXTUAL_CONTEXT_REFERENCING
+	#ifdef GIA_USE_ADVANCED_REFERENCING
+		#define GIA_STANFORD_CORE_NLP_USE_CODEPENDENCIES		//default: on
+		#ifdef GIA_STANFORD_CORE_NLP_USE_CODEPENDENCIES
+			#define GIA_STANFORD_CORE_NLP_CODEPENDENCIES_ONLY_USE_PRONOMINAL_COREFERENCE_RESOLUTION		//if using advanced referencing, only use the pronominal coreferences from Stanford (it, she, he, etc) [not optional]
+		#endif
+	#else
+		#ifdef GIA_USE_NON_ADVANCED_REFERENCING		
+			#define GIA_STANFORD_CORE_NLP_USE_CODEPENDENCIES	//default: on
+			#ifdef GIA_STANFORD_CORE_NLP_USE_CODEPENDENCIES
+				//#define GIA_STANFORD_CORE_NLP_USE_CODEPENDENCIES_ALL	//Not fully tested, but appears to work at least in simple scenarios
+				#ifndef GIA_STANFORD_CORE_NLP_USE_CODEPENDENCIES_ALL
+					#define GIA_STANFORD_CORE_NLP_CODEPENDENCIES_ONLY_USE_PRONOMINAL_COREFERENCE_RESOLUTION		//if using non-advanced referencing, only use pronominal coreferences from Stanford (it, she, he, etc) [optional]
+					#ifdef GIA_STANFORD_CORE_NLP_CODEPENDENCIES_ONLY_USE_PRONOMINAL_COREFERENCE_RESOLUTION
+						#define GIA_IMPLEMENT_NON_STANFORD_CORE_NLP_CODEPENDENCIES_CROSS_SENTENCE_REFERENCING
+					#endif
+				#endif
+			#else
+				#define GIA_IMPLEMENT_NON_STANFORD_CORE_NLP_CODEPENDENCIES_CROSS_SENTENCE_REFERENCING
+			#endif
+			#ifdef GIA_IMPLEMENT_NON_STANFORD_CORE_NLP_CODEPENDENCIES_CROSS_SENTENCE_REFERENCING
+				#define GIA_ENABLE_REFERENCE_LINKING_DO_NOT_USE_IF_REFERENCE_IS_NOT_DEFINITE_OR_PROPER_NOUN		/*to prevent the ambiguous blue chicken(s) being linked; eg A blue chicken is small. / A red chicken is fat. / The green chicken ate the pie. / A blue chicken is late.*/
+			#endif
+		#else
+			#define GIA_STANFORD_CORE_NLP_USE_CODEPENDENCIES		//default: on
+			#ifdef GIA_STANFORD_CORE_NLP_USE_CODEPENDENCIES
+				#define GIA_STANFORD_CORE_NLP_CODEPENDENCIES_ONLY_USE_PRONOMINAL_COREFERENCE_RESOLUTION		//if not using referencing, only use the pronominal coreferences from Stanford (it, she, he, etc) [not optional]
+			#endif		
+		#endif
+	#endif
 #endif
 
 //variables currently under attention for testing purposes
 
-#define GIA_ENABLE_TEXTUAL_CONTEXT_REFERENCING			//default: on	//this enables pronoun detection	//OLD: {this needs to disable some additional parameters also... (NB substances are still being connected, and not created anew)}
 #define WORDNET_SEARCH_RELATED_SYNSETS
 #define GIA_ASSIGN_SUBSTANCE_TO_PROPER_NOUNS		//this was (effectively) disabled before version 1h3b 	//NB used to be called 'GIA_DO_NOT_ASSIGN_SUBSTANCE_TO_PROPER_NOUNS'
 #define GIA_OUTPUT_INTERNAL_RELATIONS_IN_RELEX_FORMAT
@@ -1045,17 +1100,12 @@
 
 
 //~GIAdraw
-#define GIA_RECORD_WAS_REFERENCE_INFORMATION		//this is required by USE_NLC
 //#define GIA_DRAW_USE_PATENT			//modifies colours of nodes such that they print uniquely in black and white
 //#define GIA_CMAP_CONVERSION_SANITISED 	//use format akin to Cmap Tools / not GIA formatted. linking-phrase-list -> actions + conditions. concept-list -> concepts or substances
 #define GIA_DRAW_DISPLAY_ANSWER_CONTEXTS
-#ifdef GIA_ADVANCED_REFERENCING_PREPOSITIONS	//is this condition required?
-	#ifdef GIA_RECORD_WAS_REFERENCE_INFORMATION
-		#define GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
-		#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
-			#define GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX_ADVANCED		//more robust implementation (should activate when using GIA_USE_DATABASE to ensure all the semantic network connections are visible)
-		#endif
-	#endif
+#define GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
+#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
+	#define GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX_ADVANCED		//more robust implementation (should activate when using GIA_USE_DATABASE to ensure all the semantic network connections are visible)
 #endif
 
 #endif

@@ -26,7 +26,7 @@
  * File Name: GIAxmlConversion.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2g4c 03-September-2014
+ * Project Version: 2g5a 05-September-2014
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  *
  *******************************************************************************/
@@ -200,12 +200,15 @@ using namespace std;
 #define NET_XML_ATTRIBUTE_grammaticalIndefinitePluralTemp ((string)"grammaticalIndefinitePluralTemp")	//this is only used for NLC
 #define NET_XML_ATTRIBUTE_grammaticalProperNounTemp ((string)"grammaticalProperNounTemp")	//this is only used for NLC
 #define NET_XML_ATTRIBUTE_entityIndexTemp ((string)"entityIndexTemp")	//this is only used for NLC
-#define NET_XML_ATTRIBUTE_wasReference ((string)"wasReference")	//this is only used for NLC
+
 #define NET_XML_ATTRIBUTE_isQuery ((string)"isQuery")	//this is only used for NLC
+#ifdef GIA_USE_ADVANCED_REFERENCING
+#define NET_XML_ATTRIBUTE_wasReference ((string)"wasReference")	//this is only used for NLC
 #ifdef GIA_TRANSLATOR_MARK_DOUBLE_LINKS_AS_REFERENCE_CONNECTIONS
 #define NET_XML_ATTRIBUTE_isReference ((string)"isReference")	//this is only used for NLC
 #endif
-#ifdef GIA_USE_ADVANCED_REFERENCING_SEARCH_CODE
+#endif
+#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 #define NET_XML_ATTRIBUTE_sameReferenceSet ((string)"sameReferenceSet")	//this is only used for NLC
 #endif
 #endif

@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorGeneric.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2g4c 03-September-2014
+ * Project Version: 2g5a 05-September-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -123,7 +123,7 @@ GIAgenericDepRelInterpretationParameters::GIAgenericDepRelInterpretationParamete
 	initialiseIntArray2D(&specialCaseCharacteristicsRelationEntityIndexReassignmentRelationID[0][0], GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS, GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION, INT_DEFAULT_VALUE);						//not used often
 
 		//for execution
-	#ifdef GIA_USE_ADVANCED_REFERENCING
+	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	defaultSameSetRelationID = INT_DEFAULT_VALUE;
 	defaultSameSetReferenceValue = false;
 	#endif
@@ -497,7 +497,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 						{
 							if(param->executeOrReassign)
 							{//execute
-								#ifdef GIA_USE_ADVANCED_REFERENCING
+								#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 								bool sameReferenceSet;
 								if(param->defaultSameSetRelationID == INT_DEFAULT_VALUE)
 								{
@@ -640,7 +640,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 								{
 									bool sameReferenceSetSubject = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
 									bool sameReferenceSetObject = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
-									#ifdef GIA_USE_ADVANCED_REFERENCING
+									#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 									if(param->mustGenerateConditionName)
 									{
 										sameReferenceSetSubject = sameReferenceSet;
@@ -901,7 +901,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 								//special case reassignments
 								for(int relationID=0; relationID<GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS; relationID++)
 								{
-									#ifdef GIA_USE_ADVANCED_REFERENCING
+									#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 									if(param->useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck[relationID])
 									{
 										#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_DEBUG

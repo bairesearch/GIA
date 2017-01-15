@@ -26,7 +26,7 @@
  * File Name: GIAsentenceClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2g4c 03-September-2014
+ * Project Version: 2g5a 05-September-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -151,7 +151,7 @@ Relation::Relation(void)
 	prepositionCombinationAlreadyCreatedTemp = false;
 	#endif
 
-	#ifdef GIA_USE_ADVANCED_REFERENCING
+	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	auxiliaryIndicatesDifferentReferenceSet = false;
 	rcmodIndicatesSameReferenceSet = false;
 	#endif
@@ -213,7 +213,7 @@ Feature::Feature(void)
 	grammaticalGender = GRAMMATICAL_GENDER_UNDEFINED;
 	grammaticalIsPronoun = false;
 	grammaticalWordType = GRAMMATICAL_WORD_TYPE_UNDEFINED;
-	#ifdef GIA_USE_ADVANCED_REFERENCING
+	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	grammaticalIndexOfDeterminer = GIA_ENTITY_INDEX_UNDEFINED;
 	#endif
 	previousWordInSentenceIsTo = false;

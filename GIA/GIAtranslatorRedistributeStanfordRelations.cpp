@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorRedistributeStanfordRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2g4c 03-September-2014
+ * Project Version: 2g5a 05-September-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1141,7 +1141,7 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 	#endif
 
 	//eg1 look for nsubj/prep combination, eg nsubj(are-4, claims-3) + prep_on(are-4, frame-8) => prep_on(claims-3, frame-8)
-	//eg2 case added 15 May 2012 for GIA_USE_ADVANCED_REFERENCING; The claims that are on the frame are blue. , nsubj(are-4, claims-2) + prep_on(are-4, frame-7) + rcmod(claims-2, are-4)
+	//eg2 case added 15 May 2012 for GIA_RECORD_SAME_REFERENCE_SET_INFORMATION; The claims that are on the frame are blue. , nsubj(are-4, claims-2) + prep_on(are-4, frame-7) + rcmod(claims-2, are-4)
 		//OLD: look for nsubj/prep combination, eg nsubj(next-4, garage-2) + prep_to(next-4, house-7)	=> prep_subj(next_to, house) + prep_subj(next_to, garage)
 		//general parameters
 	GIAgenericDepRelInterpretationParameters paramC(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);
@@ -1161,9 +1161,9 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 	paramC.disableRelation[REL1] = true;
 	paramC.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT1] = true; paramC.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT1] = REL1; paramC.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT1] = REL_ENT2;
 	paramC.disableEntity[REL1][REL_ENT1] = true;
-	#ifdef GIA_USE_ADVANCED_REFERENCING
+	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	/*eg;
-	[case added 15 May 2012 for GIA_USE_ADVANCED_REFERENCING]
+	[case added 15 May 2012 for GIA_RECORD_SAME_REFERENCE_SET_INFORMATION]
 	The claims that are on the frame are blue.
 	nsubj(are-4, claims-2)
 	prep_on(are-4, frame-7)
@@ -1224,9 +1224,9 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 								#else
 									if((currentRelationInList->relationGovernor == RELATION_ENTITY_BE) && (currentRelationInList2->relationGovernor == RELATION_ENTITY_BE))
 									{
-										#ifdef GIA_USE_ADVANCED_REFERENCING
+										#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 										/*eg;
-										[case added 15 May 2012 for GIA_USE_ADVANCED_REFERENCING]
+										[case added 15 May 2012 for GIA_RECORD_SAME_REFERENCE_SET_INFORMATION]
 										The claims that are on the frame are blue.
 										nsubj(are-4, claims-2)
 										prep_on(are-4, frame-7)
@@ -1565,8 +1565,8 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 	paramOptMultA.disableRelation[REL2] = true;
 	paramOptMultA.disableRelation[REL3] = true;
 	paramOptMultA.disableEntity[REL2][REL_ENT1] = true;
-	#ifdef GIA_USE_ADVANCED_REFERENCING
-	//[case added 15 May 2012 for GIA_USE_ADVANCED_REFERENCING]
+	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
+	//[case added 15 May 2012 for GIA_RECORD_SAME_REFERENCE_SET_INFORMATION]
 	//He rode the carriage that is near to the horse.
 	//nsubj(near-7, carriage-4)
 	//cop(near-7, is-6)
@@ -1780,8 +1780,8 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 														*/
 														#endif
 
-															#ifdef GIA_USE_ADVANCED_REFERENCING
-															//[case added 15 May 2012 for GIA_USE_ADVANCED_REFERENCING]
+															#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
+															//[case added 15 May 2012 for GIA_RECORD_SAME_REFERENCE_SET_INFORMATION]
 															//He rode the carriage that is near to the horse.
 															//nsubj(near-7, carriage-4)
 															//cop(near-7, is-6)
@@ -2370,7 +2370,7 @@ void redistributeStanfordRelationsCollapseAdvmodRelationGovernorBe(Sentence * cu
 	/*
 	eg The rabbit is 20 meters away. 	nsubj(is-3, rabbit-2) + advmod(is-3, away-6) - > _predadj(rabbit-2, away-6)
 		//OLD: nsubj(is-3, rabbit-2) + advmod(is-3, away-6) - > nsubj(away-6, rabbit-2) )
-	case added 15 May 2012 for GIA_USE_ADVANCED_REFERENCING; nsubj(is-4, rabbit-2) + advmod(is-4, away-7) + rcmod(rabbit-2, is-4) -> _predadj(rabbit-2, away-7)
+	case added 15 May 2012 for GIA_RECORD_SAME_REFERENCE_SET_INFORMATION; nsubj(is-4, rabbit-2) + advmod(is-4, away-7) + rcmod(rabbit-2, is-4) -> _predadj(rabbit-2, away-7)
 	*/
 
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
@@ -2387,8 +2387,8 @@ void redistributeStanfordRelationsCollapseAdvmodRelationGovernorBe(Sentence * cu
 		param.useRedistributeRelationEntityReassignment[REL2][REL_ENT3] = true; param.redistributeRelationEntityReassignment[REL2][REL_ENT3] = RELATION_TYPE_ADJECTIVE_PREDADJ;
 		param.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT1] = true; param.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT1] = REL1; param.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT1] = REL_ENT2;
 		param.disableRelation[REL1] = true;
-		#ifdef GIA_USE_ADVANCED_REFERENCING
-		/*//case added 15 May 2012 for GIA_USE_ADVANCED_REFERENCING;
+		#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
+		/*//case added 15 May 2012 for GIA_RECORD_SAME_REFERENCE_SET_INFORMATION;
 		The rabbit that is 20 meters away is fat.
 		nsubj(is-4, rabbit-2)
 		advmod(is-4, away-7)
@@ -2446,8 +2446,8 @@ void redistributeStanfordRelationsCollapseAdvmodRelationGovernorBe(Sentence * cu
 										#ifdef GIA_COLLAPSE_ADVMOD_RELATION_GOVERNOR_BE_TO_PREDADJ_NOT_SUBJ_OLD
 										//CASE CURRENTLY DISABLED
 
-										#ifdef GIA_USE_ADVANCED_REFERENCING
-										//case added 15 May 2012 for GIA_USE_ADVANCED_REFERENCING;
+										#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
+										//case added 15 May 2012 for GIA_RECORD_SAME_REFERENCE_SET_INFORMATION;
 										The rabbit that is 20 meters away is fat.
 										nsubj(is-4, rabbit-2)
 										advmod(is-4, away-7)
@@ -2538,7 +2538,7 @@ void redistributeStanfordRelationsCollapseSubjectAndCopGenerateAdjectivesAndAppo
 	param.useRelationTest[REL2][REL_ENT3] = true; param.relationTest[REL2][REL_ENT3] = RELATION_TYPE_COPULA;
 	param.useRelationTest[REL2][REL_ENT2] = true; param.relationTest[REL2][REL_ENT2] = RELATION_ENTITY_BE;
 	param.useRelationIndexTest[REL2][REL_ENT1] = true; param.relationIndexTestRelationID[REL2][REL_ENT1] = REL1; param.relationIndexTestEntityID[REL2][REL_ENT1] = REL_ENT1;	//redundant test
-	#ifdef GIA_USE_ADVANCED_REFERENCING
+	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	param.useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck[REL2] = true;
 	param.useRelationTest[REL3][REL_ENT1] = true; param.relationTest[REL3][REL_ENT1] = "impossibleEntityName";	//an impossible check which is therefore guaranteed to set auxiliaryIndicatesDifferentReferenceSet to true
 	#endif
@@ -2696,7 +2696,7 @@ void redistributeStanfordRelationsCollapseSubjectAndCopGenerateAdjectivesAndAppo
 								if(currentRelationInList2->relationGovernorIndex == currentRelationInList->relationGovernorIndex)	//redundant test
 								{//found a matching object-subject relationship
 
-									#ifdef GIA_USE_ADVANCED_REFERENCING
+									#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 									currentRelationInList->auxiliaryIndicatesDifferentReferenceSet = true;
 									#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 									//cout << "\t\t\t4currentRelationInList->relationType = " << currentRelationInList->relationType << endl;

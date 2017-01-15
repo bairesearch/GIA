@@ -26,7 +26,7 @@
  * File Name: GIAentityNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2g4c 03-September-2014
+ * Project Version: 2g5a 05-September-2014
  * NB a substance is an instance of an entity, any given entity may contain/comprise/have multiple substances - and substances are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -361,7 +361,7 @@ public:
 	bool grammaticalProperNounTemp;	//Used to be called "grammaticalRelexPersonOrStanfordProperNounTemp" //temporary: used for GIA translator only - overwritten every time a new sentence is parsed
 	int grammaticalGenderTemp; 	//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
 	bool grammaticalPronounTemp;	//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
-	#ifdef GIA_USE_ADVANCED_REFERENCING
+	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	int grammaticalIndexOfDeterminerTemp;	//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
 	#endif
 	#ifdef GIA_USE_STANFORD_CORENLP
@@ -399,7 +399,7 @@ public:
 	bool testedForQueryComparisonTemp; //added 17 May 2012 - support better trace routine
 	bool queryAnswerContext;
 	bool queryEntityTraced;	//temporary for determining max confidence
-	#ifdef GIA_USE_ADVANCED_REFERENCING_SEARCH_CODE
+	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	GIAentityNode* entityCorrespondingBestMatch;	 //best match entity node corresponding to this assumed query entity node	//does not take into account multiple diversions/answers [assumes single matches only]
 	#endif
 
@@ -411,7 +411,7 @@ public:
 		//CXL:
 	bool CXLdummyNode;
 		//referencing:
-	#ifdef GIA_USE_ADVANCED_REFERENCING_SEARCH_CODE
+	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	int referenceSetID;
 	int minimumEntityIndexOfReferenceSet;
 	#endif

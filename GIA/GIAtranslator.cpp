@@ -26,7 +26,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2g4c 03-September-2014
+ * Project Version: 2g5a 05-September-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -93,8 +93,6 @@ bool parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyParsedSentence
 {
 	bool result = true;
 
-	//cout << "ak1" << endl;
-
 	setCurrentGIALRPtagTextCorrespondenceInfo(isQuery);	//required for local variable access
 	if(!parseGIA2file)
 	{
@@ -107,8 +105,6 @@ bool parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyParsedSentence
 	{
 		//semantic dependency relations and features have already been parsed
 	}
-
-	//cout << "ak2" << endl;
 
 	int NLPdependencyRelationsType = dependencyRelationsTypes[NLPdependencyRelationsParser];
 	if(NLPrelexCompatibilityMode)
@@ -129,11 +125,7 @@ bool parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyParsedSentence
 		result = false;
 	}
 
-	//cout << "ak3" << endl;
-
 	setCurrentDirectory(tempFolderCharStar);
-
-	//cout << "ak4" << endl;
 
 	if(!parseGIA2file)
 	{
@@ -144,9 +136,6 @@ bool parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyParsedSentence
 		#endif
 	}
 
-	//cout << "ak5" << endl;
-
-	#ifdef GIA_RECORD_WAS_REFERENCE_INFORMATION
 	//count maxNumberSentences
 	Sentence * currentSentenceInList = firstParagraphInList->firstSentenceInList;
 	while(currentSentenceInList->next != NULL)
@@ -157,9 +146,6 @@ bool parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyParsedSentence
 		}
 		currentSentenceInList = currentSentenceInList->next;
 	}
-	#endif
-
-	//cout << "ak6" << endl;
 
 	return result;
 }
@@ -256,15 +242,6 @@ void convertParagraphSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, 
 			GIAentityNode * entityNode = conceptEntityNodesListIter->second;
 			entityNode->entityAlreadyDeclaredInThisContext = false;
 		}
-
-		/*
-		long vectorSize = entityNodesActiveListConcepts->size();
-		for(int entityIndex=0; entityIndex<vectorSize; entityIndex++)
-		{
-			GIAentityNode * entityNode = entityNodesActiveListConcepts->at(entityIndex);
-			entityNode->entityAlreadyDeclaredInThisContext = false;
-		}
-		*/
 		#endif
 		#endif
 		currentParagraphInList = currentParagraphInList->next;
@@ -447,7 +424,7 @@ void convertSentenceRelationsIntoGIAnetworkNodesWrapper(unordered_map<string, GI
 	#endif
 
 	#ifdef GIA_ADVANCED_REFERENCING_DEBUG
-	cout << "\n\t\t\t error: GIA_USE_ADVANCED_REFERENCING is under development (1convertSentenceRelationsIntoGIAnetworkNodes)\n" << endl;
+	cout << "\n\t\t\t GIA_USE_ADVANCED_REFERENCING_DEBUG (1convertSentenceRelationsIntoGIAnetworkNodes)\n" << endl;
 	#endif
 
 	#ifndef GIA_FREE_MEMORY2
@@ -487,7 +464,7 @@ void convertSentenceRelationsIntoGIAnetworkNodesWrapper(unordered_map<string, GI
 	}
 
 	#ifdef GIA_ADVANCED_REFERENCING_DEBUG
-	cout << "\n\t\t\t error: GIA_USE_ADVANCED_REFERENCING is under development (2identifyReferenceSets)\n" << endl;
+	cout << "\n\t\t\t GIA_USE_ADVANCED_REFERENCING_DEBUG (2identifyReferenceSets)\n" << endl;
 	#endif
 
 	#ifdef GIA_ADVANCED_REFERENCING_DEBUG
@@ -520,7 +497,7 @@ void convertSentenceRelationsIntoGIAnetworkNodesWrapper(unordered_map<string, GI
 	#endif
 
 	#ifdef GIA_ADVANCED_REFERENCING_DEBUG
-	cout << "\n\t\t\t error: GIA_USE_ADVANCED_REFERENCING is under development (3createGIACoreferenceInListBasedUponIdentifiedReferenceSets)\n" << endl;
+	cout << "\n\t\t\t GIA_USE_ADVANCED_REFERENCING_DEBUG (3createGIACoreferenceInListBasedUponIdentifiedReferenceSets)\n" << endl;
 	#endif
 
 	#ifdef GIA_ADVANCED_REFERENCING_DEBUG_SIMPLE2
@@ -536,7 +513,7 @@ void convertSentenceRelationsIntoGIAnetworkNodesWrapper(unordered_map<string, GI
 	#endif
 
 	#ifdef GIA_ADVANCED_REFERENCING_DEBUG
-	cout << "\n\t\t\t error: GIA_USE_ADVANCED_REFERENCING is under development (4convertSentenceRelationsIntoGIAnetworkNodes)\n" << endl;
+	cout << "\n\t\t\t GIA_USE_ADVANCED_REFERENCING_DEBUG (4convertSentenceRelationsIntoGIAnetworkNodes)\n" << endl;
 	#endif
 
 	#ifdef GIA_FREE_MEMORY2
@@ -570,8 +547,6 @@ void convertSentenceRelationsIntoGIAnetworkNodesWrapper(unordered_map<string, GI
 		convertSentenceSyntacticRelationsIntoGIAnetworkNodes(entityNodesActiveListConcepts, timeConditionNodesActiveList, firstSentenceInList, currentSentenceInList, &sentenceConceptEntityNodesListTempNotUsed, NLPfeatureParser, NLPdependencyRelationsType, NLPassumePreCollapsedStanfordRelations, true, firstGIACoreferenceInList);
 	}
 
-	//cout << "ak1" << endl;
-
 	#ifdef GIA_FREE_MEMORY1
 	//Clear temporary variables;
 	delete firstGIACoreferenceInList;
@@ -589,7 +564,6 @@ void convertSentenceRelationsIntoGIAnetworkNodesWrapper(unordered_map<string, GI
 	#endif
 	delete sentenceConceptEntityNodesList;		//sentenceConceptEntityNodesList->clear();
 	delete sentenceTimeConditionNodesList;		//sentenceTimeConditionNodesList->clear();
-	//delete sentenceConceptEntityNodesListTempNotUsed1; 	//this is a local variable; no deletion required
 	#endif
 
 	#ifdef GIA_ADVANCED_REFERENCING_DEBUG_HIGHLIGHT_REFERENCE_SET_NODES_WITH_COLOURS
@@ -612,8 +586,6 @@ void convertSentenceRelationsIntoGIAnetworkNodesWrapper(unordered_map<string, GI
 		#endif
 	cout << "End for colours only...\n\n" << endl;
 	#endif
-
-	//cout << "ak2" << endl;
 #else
 
 	vector<GIAentityNode*> sentenceConceptEntityNodesListTempNotUsed;
@@ -641,24 +613,15 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 {
 	Relation * currentRelationInList;
 
-	/*
-	cout << "dependency relations: " << endl;
-	currentRelationInList = currentSentenceInList->firstRelationInList;
-	while(currentRelationInList->next != NULL)
-	{
-		string relationType = currentRelationInList->relationType;
-		cout << currentRelationInList->relationType << "(" << currentRelationInList->relationGovernor << "-" << currentRelationInList->relationGovernorIndex << ", " << currentRelationInList->relationDependent << "-" << currentRelationInList->relationDependentIndex << ")" << endl;
-		currentRelationInList = currentRelationInList->next;
-	}
-	*/
-
-
 	#ifndef GIA_USE_ADVANCED_REFERENCING
 	bool linkPreestablishedReferencesGIA = true;	//irrelevant
 	#endif
 
+	#ifdef GIA_TRANSLATOR_DEBUG
+	//cout << "\n\n convertSentenceSyntacticRelationsIntoGIAnetworkNodes() currentSentenceInList->sentenceIndex = " << currentSentenceInList->sentenceIndex << endl;
 	//cout << "\n\n\nconvertSentenceSyntacticRelationsIntoGIAnetworkNodes() linkPreestablishedReferencesGIA = " << linkPreestablishedReferencesGIA << endl;
-
+	#endif
+	
 	#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
 	string corpusFileName = "";
 	if(!linkPreestablishedReferencesGIA)
@@ -681,20 +644,12 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 	GIAentityNode * GIAentityNodeArray[MAX_NUMBER_OF_WORDS_PER_SENTENCE];
 	GIAentityNode * GIAfeatureTempEntityNodeArray[MAX_NUMBER_OF_WORDS_PER_SENTENCE];	//temporary array introduced 14 July 2012b, to handle grammatical information specific to instances of concept entities (not concept entities themselves) before those intances have been defined (in GIAtranslatorDefineSubstances.cpp)
 
-	//added 1 May 11a (assign actions to instances (substances) of entities and not entities themselves where appropriate)
-	//bool GIAEntityNodeArrayHasAssociatedSubstance[MAX_NUMBER_OF_WORDS_PER_SENTENCE];
-
 	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
 	{
 		GIAentityNodeArrayFilled[w] = false;
 		GIAconceptNodeArray[w] = NULL;		//added 10 May 2012
 		GIAentityNodeArray[w] = NULL;		//added 10 May 2012
 		GIAfeatureTempEntityNodeArray[w] = NULL;	//added  14 July 2012b
-
-		//added 1 May 11a (assign actions to instances (substances) of entities and not entities themselves where appropriate)
-		//GIAEntityNodeArrayHasAssociatedSubstance[w] = false;
-
-		//GIAActionNodeArrayFilled[w] = false;
 	}
 
 
@@ -717,20 +672,6 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 	}
 	#endif
 
-	/*
-	cout << "applyGrammaticalInfoToAllEntities: " << endl;
-	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
-	{
-		if(GIAentityNodeArrayFilled[w])
-		{
-			if(!(GIAfeatureTempEntityNodeArray[w]->disabled))
-			{
-				cout << GIAfeatureTempEntityNodeArray[w]->entityName << " !disabled " << w << endl;
-			}
-		}
-	}
-	*/
-
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "pass 1a; fillGrammaticalArrays" << endl;
 	#endif
@@ -748,39 +689,11 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 	#endif
 	//need to transfer featureArrayTemp->feature->entityDisabled information into GIAentityNodeArray...
 
-	/*
-	cout << "applyGrammaticalInfoToAllEntities: " << endl;
-	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
-	{
-		if(GIAentityNodeArrayFilled[w])
-		{
-			if(!(GIAfeatureTempEntityNodeArray[w]->disabled))
-			{
-				cout << GIAfeatureTempEntityNodeArray[w]->entityName << " !disabled " << w << endl;
-			}
-		}
-	}
-	*/
-
 	//this function is first only executed in a temporary fashion (where its output is only used by relex linkPronounReferencesRelex())
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "pass 1b; applyGrammaticalInfoToAllEntities [execution#1]" << endl;
 	#endif
  	applyGrammaticalInfoToAllEntities(GIAentityNodeArrayFilled, GIAfeatureTempEntityNodeArray, currentSentenceInList->firstFeatureInList);
-
-	/*
-	cout << "redistributeStanfordAndRelexRelationsCorrectPOStagsAndLemmasOfAllContinuousVerbs: " << endl;
-	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
-	{
-		if(GIAentityNodeArrayFilled[w])
-		{
-			if(!(GIAfeatureTempEntityNodeArray[w]->disabled))
-			{
-				cout << GIAfeatureTempEntityNodeArray[w]->entityName << " !disabled " << w << endl;
-			}
-		}
-	}
-	*/
 
 	#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS
 	#ifndef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_OLD_IMPLEMENTATION
@@ -801,37 +714,6 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 	#endif
 	#endif
 
-	/*
-	cout << "\nredistributeStanfordRelations/redistributeRelexRelations: " << endl;
-	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
-	{
-		if(GIAentityNodeArrayFilled[i])
-		{
-			if(!(GIAentityNodeArray[i]->disabled))
-			{
-				cout << "\ti = " << i << endl;
-				cout << "GIAentityNodeArray[i]->entityName = " << GIAentityNodeArray[i]->entityName << endl;
-				cout << "GIAentityNodeArray[i]->isConcept = " << GIAentityNodeArray[i]->isConcept << endl;
-				cout << "GIAentityNodeArray[i]->isSubstanceConcept = " << GIAentityNodeArray[i]->isSubstanceConcept << endl;
-			}
-		}
-	}
-	*/
-
-	/*
-	cout << "redistributeStanfordRelations: " << endl;
-	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
-	{
-		if(GIAentityNodeArrayFilled[w])
-		{
-			if(!(GIAfeatureTempEntityNodeArray[w]->disabled))
-			{
-				cout << GIAfeatureTempEntityNodeArray[w]->entityName << " !disabled " << w << endl;
-			}
-		}
-	}
-	*/
-
 	#ifdef GIA_TRANSLATOR_DEBUG
 	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
 	{
@@ -846,7 +728,7 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD)
 	{
 		#ifdef GIA_TRANSLATOR_XML_INTERPRETATION
-		applyGIATranslatorGenericXMLfunctions("GIAtranslatorRedistributeStanfordRelations", currentSentenceInList, GIAentityNodeArrayFilled, GIAfeatureTempEntityNodeArray, NULL, featureArrayTemp, NLPdependencyRelationsType, NLPfeatureParser, linkPreestablishedReferencesGIA);
+		applyGIATranslatorGenericXMLfunctions("GIAtranslatorRedistributeStanfordRelations", currentSentenceInList, GIAentityNodeArrayFilled, GIAfeatureTempEntityNodeArray, entityNodesActiveListConcepts, featureArrayTemp, NLPdependencyRelationsType, NLPfeatureParser, linkPreestablishedReferencesGIA);
 		#else
 		redistributeStanfordRelations(currentSentenceInList, GIAentityNodeArrayFilled, GIAfeatureTempEntityNodeArray, NLPfeatureParser, featureArrayTemp);
 		#endif
@@ -856,26 +738,12 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_RELEX)
 	{
 		#ifdef GIA_TRANSLATOR_XML_INTERPRETATION
-		applyGIATranslatorGenericXMLfunctions("GIAtranslatorRedistributeRelexRelations", currentSentenceInList, GIAentityNodeArrayFilled, GIAfeatureTempEntityNodeArray, NULL, featureArrayTemp, NLPdependencyRelationsType, NLPfeatureParser, linkPreestablishedReferencesGIA);
+		applyGIATranslatorGenericXMLfunctions("GIAtranslatorRedistributeRelexRelations", currentSentenceInList, GIAentityNodeArrayFilled, GIAfeatureTempEntityNodeArray, entityNodesActiveListConcepts, featureArrayTemp, NLPdependencyRelationsType, NLPfeatureParser, linkPreestablishedReferencesGIA);
 		#else
 		redistributeRelexRelations(currentSentenceInList, GIAentityNodeArrayFilled, GIAfeatureTempEntityNodeArray, NLPfeatureParser, featureArrayTemp);
 		#endif
 	}
 	#endif
-
-	/*
-	cout << "locateAndAddAllConceptEntities: " << endl;
-	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
-	{
-		if(GIAentityNodeArrayFilled[w])
-		{
-			if(!(GIAfeatureTempEntityNodeArray[w]->disabled))
-			{
-				cout << GIAfeatureTempEntityNodeArray[w]->entityName << " !disabled " << w << endl;
-			}
-		}
-	}
-	*/
 
 	#ifdef GIA_BOT_SWITCH_FIRST_AND_SECOND_PERSON
 	botSwitchFirstAndSecondPerson(currentSentenceInList, GIAentityNodeArrayFilled, GIAfeatureTempEntityNodeArray, NLPdependencyRelationsType);
@@ -949,8 +817,8 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 	}
 
 #ifndef GIA_ADVANCED_REFERENCING_DEBUG_DISABLE_LINKING
-	#ifdef GIA_USE_ADVANCED_REFERENCING
-	//if(!linkPreestablishedReferencesGIA)	//this condition has been disabled for debugging purposes
+	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
+	//if(!linkPreestablishedReferencesGIA)	//criteria not used as same reference set tags may be required for dream mode or post processing (not just advanced referencing)
 	//{
 		#ifdef GIA_TRANSLATOR_DEBUG
 		cout << "pass 1e; fill Explicit Reference Same Set Tags" << endl;
@@ -967,20 +835,6 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 	#endif
 	identifyEntityTypes(currentSentenceInList, GIAfeatureTempEntityNodeArray, NLPdependencyRelationsType);
 
-	/*
-	cout << "linkAdvancedReferencesGIA: " << endl;
-	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
-	{
-		if(GIAentityNodeArrayFilled[w])
-		{
-			if(GIAfeatureTempEntityNodeArray[w]->disabled)
-			{
-				cout << GIAfeatureTempEntityNodeArray[w]->entityName << " disabled" << endl;
-			}
-		}
-	}
-	*/
-
 	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
 	{
 		GIAentityNodeArray[w] = GIAconceptNodeArray[w];		//set default values of GIAentityNodeArray
@@ -991,7 +845,7 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 	if(linkPreestablishedReferencesGIA)
 	{
 		#ifdef GIA_ADVANCED_REFERENCING_DEBUG
-		cout << "\n\t\t\t error: GIA_USE_ADVANCED_REFERENCING is under development (5linkAdvancedReferencesGIA)\n" << endl;
+		cout << "\n\t\t\t GIA_USE_ADVANCED_REFERENCING_DEBUG (5linkAdvancedReferencesGIA)\n" << endl;
 		#endif
 		#ifdef GIA_TRANSLATOR_DEBUG
 		cout << "pass 3ii; link advanced references GIA (eg the red car is fast. Mike drove the red car.)" << endl;
@@ -1027,38 +881,6 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 	}
 	#endif
 #endif
-	/*
-	//#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "\ndisableConceptEntitiesBasedOnFeatureTempEntityNodeArray: " << endl;
-	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
-	{
-		if(GIAentityNodeArrayFilled[i])
-		{
-			if(!(GIAentityNodeArray[i]->disabled))
-			{
-				cout << "\ti = " << i << endl;
-				cout << "GIAentityNodeArray[i]->entityName = " << GIAentityNodeArray[i]->entityName << endl;
-				cout << "GIAentityNodeArray[i]->isConcept = " << GIAentityNodeArray[i]->isConcept << endl;
-				cout << "GIAentityNodeArray[i]->isSubstanceConcept = " << GIAentityNodeArray[i]->isSubstanceConcept << endl;
-			}
-		}
-	}
-	//#endif
-	*/
-
-	/*
-	cout << "disableConceptEntitiesBasedOnFeatureTempEntityNodeArray: " << endl;
-	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
-	{
-		if(GIAentityNodeArrayFilled[w])
-		{
-			if(GIAfeatureTempEntityNodeArray[w]->disabled)
-			{
-				cout << GIAfeatureTempEntityNodeArray[w]->entityName << " disabled" << endl;
-			}
-		}
-	}
-	*/
 
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "pass 4; disable concept entities based on feature temp entity node array" << endl;
@@ -1066,44 +888,6 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 	//transfer disabled substances across execution#1 [this is required since GIAtranslatorRedistributeStanfordRelations operations are now done on temporary entity nodes GIAfeatureTempEntityNodeArray instead of concept entity nodes {whose values would have been automatically transferred their instances upon creation}...]
 	disableConceptEntitiesBasedOnFeatureTempEntityNodeArray(GIAentityNodeArrayFilled, GIAconceptNodeArray, GIAfeatureTempEntityNodeArray);
 
-	#ifdef GIA_TRANSLATOR_DEBUG
-	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
-	{
-		if(featureArrayTemp[w] != NULL)
-		{
-			cout << "1: " << featureArrayTemp[w]->lemma << ", w = " << w << endl;
-		}
-	}
-
-	cout << "dependency relations: " << endl;
-	currentRelationInList = currentSentenceInList->firstRelationInList;
-	while(currentRelationInList->next != NULL)
-	{
-		if(!(currentRelationInList->disabled))
-		{
-			string relationType = currentRelationInList->relationType;
-			GIAentityNode * relationGoverner = GIAconceptNodeArray[currentRelationInList->relationGovernorIndex];
-			GIAentityNode * relationDependent = GIAconceptNodeArray[currentRelationInList->relationDependentIndex];
-
-			cout << currentRelationInList->relationType << "(" << currentRelationInList->relationGovernor << ", " << currentRelationInList->relationDependent << ")" << endl;
-		}
-		currentRelationInList = currentRelationInList->next;
-	}
-	cout << "features (tags): " << endl;
-	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
-	{
-		//cout << w << endl;
-		if(GIAentityNodeArrayFilled[w])
-		{
-			cout << "filled" << endl;
-			if(!(GIAconceptNodeArray[w]->disabled))
-			{
-				Feature * currentFeature = featureArrayTemp[w];
-				cout << w << " = " << currentFeature->lemma << endl;
-			}
-		}
-	}
-	#endif
 
 	#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES	// or GIA_USE_GENERIC_ENTITY_INTERPRETATION
  	//this is required as GIAtranslatorDefineSubstances.cpp now relies on entity grammar values rather than featureArrayTemp
@@ -1117,45 +901,11 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 	cout << "pass B:" << endl;
 	#endif
 
-	/*
-	cout << "\nsubstance declarations: " << endl;
-	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
-	{
-		if(GIAentityNodeArrayFilled[i])
-		{
-			if(!(GIAentityNodeArray[i]->disabled))
-			{
-				cout << "\ti = " << i << endl;
-				cout << "GIAentityNodeArray[i]->entityName = " << GIAentityNodeArray[i]->entityName << endl;
-				cout << "GIAentityNodeArray[i]->isConcept = " << GIAentityNodeArray[i]->isConcept << endl;
-				cout << "GIAentityNodeArray[i]->isSubstanceConcept = " << GIAentityNodeArray[i]->isSubstanceConcept << endl;
-			}
-		}
-	}
-	*/
-
 	#ifdef GIA_TRANSLATOR_XML_INTERPRETATION
-	applyGIATranslatorGenericXMLfunctions("GIAtranslatorDefineSubstances", currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, NULL, featureArrayTemp, NLPdependencyRelationsType, NLPfeatureParser, linkPreestablishedReferencesGIA);
+	applyGIATranslatorGenericXMLfunctions("GIAtranslatorDefineSubstances", currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts, featureArrayTemp, NLPdependencyRelationsType, NLPfeatureParser, linkPreestablishedReferencesGIA);
 	#else
 	defineSubstances(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, referenceTypeHasDeterminateCrossReferenceNumberArray, featureArrayTemp, NLPdependencyRelationsType);
 	#endif
-
-	/*
-	cout << "\ncollapseRedundantRelationAndMakeNegativeRelex: " << endl;
-	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
-	{
-		if(GIAentityNodeArrayFilled[i])
-		{
-			if(!(GIAentityNodeArray[i]->disabled))
-			{
-				cout << "\ti = " << i << endl;
-				cout << "GIAentityNodeArray[i]->entityName = " << GIAentityNodeArray[i]->entityName << endl;
-				cout << "GIAentityNodeArray[i]->isConcept = " << GIAentityNodeArray[i]->isConcept << endl;
-				cout << "GIAentityNodeArray[i]->isSubstanceConcept = " << GIAentityNodeArray[i]->isSubstanceConcept << endl;
-			}
-		}
-	}
-	*/
 
 	#ifndef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 	//Stanford version is executed after all substances have been generated (including actions)... [Upgrade translator - do not associate feature/grammatical info with concept entities; just leave them in the feature array until the concept instances have been generated]
@@ -1170,23 +920,6 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 	#endif
 	#endif
 
-	/*
-	cout << "\n applyGrammaticalInfoToAllEntities: " << endl;
-	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
-	{
-		if(GIAentityNodeArrayFilled[i])
-		{
-			if(!(GIAentityNodeArray[i]->disabled))
-			{
-				cout << "\ti = " << i << endl;
-				cout << "GIAentityNodeArray[i]->entityName = " << GIAentityNodeArray[i]->entityName << endl;
-				cout << "GIAentityNodeArray[i]->isConcept = " << GIAentityNodeArray[i]->isConcept << endl;
-				cout << "GIAentityNodeArray[i]->isSubstanceConcept = " << GIAentityNodeArray[i]->isSubstanceConcept << endl;
-			}
-		}
-	}
-	*/
-
 	#ifndef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES	// or GIA_USE_GENERIC_ENTITY_INTERPRETATION
 	//this function has been shifted, and applied to entity instances, not the concept entity array...
 	#ifdef GIA_TRANSLATOR_DEBUG
@@ -1194,23 +927,6 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 	#endif
  	applyGrammaticalInfoToAllEntities(GIAentityNodeArrayFilled, GIAentityNodeArray, currentSentenceInList->firstFeatureInList);
 	#endif
-
-	/*
-	cout << "\n identifyComparisonVariableAlternateMethod: " << endl;
-	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
-	{
-		if(GIAentityNodeArrayFilled[i])
-		{
-			if(!(GIAentityNodeArray[i]->disabled))
-			{
-				cout << "\ti = " << i << endl;
-				cout << "GIAentityNodeArray[i]->entityName = " << GIAentityNodeArray[i]->entityName << endl;
-				cout << "GIAentityNodeArray[i]->isConcept = " << GIAentityNodeArray[i]->isConcept << endl;
-				cout << "GIAentityNodeArray[i]->isSubstanceConcept = " << GIAentityNodeArray[i]->isSubstanceConcept << endl;
-			}
-		}
-	}
-	*/
 
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "pass 1b; identify comparison variable" << endl;
@@ -1222,23 +938,6 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 	#endif
 	//transfer disabled substances across execution#2 [this is required since GIAtranslatorRedistributeStanfordRelations operations are now done on temporary entity nodes GIAfeatureTempEntityNodeArray instead of concept entity nodes {whose values would have been automatically transferred their instances upon creation}...]
 	disableEntitiesBasedOnFeatureTempEntityNodeArray(GIAentityNodeArrayFilled, GIAentityNodeArray, GIAfeatureTempEntityNodeArray);
-
-	/*
-	cout << "\nlink entities: " << endl;
-	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
-	{
-		if(GIAentityNodeArrayFilled[i])
-		{
-			if(!(GIAentityNodeArray[i]->disabled))
-			{
-				cout << "\ti = " << i << endl;
-				cout << "GIAentityNodeArray[i]->entityName = " << GIAentityNodeArray[i]->entityName << endl;
-				cout << "GIAentityNodeArray[i]->isConcept = " << GIAentityNodeArray[i]->isConcept << endl;
-				cout << "GIAentityNodeArray[i]->isSubstanceConcept = " << GIAentityNodeArray[i]->isSubstanceConcept << endl;
-			}
-		}
-	}
-	*/
 
 	#ifdef GIA_TRANSLATOR_XML_INTERPRETATION
 	applyGIATranslatorGenericXMLfunctions("GIAtranslatorLinkEntities", currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts, featureArrayTemp, NLPdependencyRelationsType, NLPfeatureParser, linkPreestablishedReferencesGIA);
@@ -1260,82 +959,19 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 	#endif
 	#endif
 
-	/*
-	cout << "\n1 advanced feature: " << endl;
-	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
-	{
-		if(GIAentityNodeArrayFilled[i])
-		{
-			if(!(GIAentityNodeArray[i]->disabled))
-			{
-				cout << "\ti = " << i << endl;
-				cout << "GIAentityNodeArray[i]->entityName = " << GIAentityNodeArray[i]->entityName << endl;
-				cout << "GIAentityNodeArray[i]->isConcept = " << GIAentityNodeArray[i]->isConcept << endl;
-				cout << "GIAentityNodeArray[i]->isSubstanceConcept = " << GIAentityNodeArray[i]->isSubstanceConcept << endl;
-			}
-		}
-	}
-	*/
-
 	#ifdef GIA_TRANSLATOR_XML_INTERPRETATION
 	applyGIATranslatorGenericXMLfunctions("GIAtranslatorApplyAdvancedFeatures", currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts, featureArrayTemp, NLPdependencyRelationsType, NLPfeatureParser, linkPreestablishedReferencesGIA);
 	#endif
 
-	/*
-	cout << "\n2 advanced feature: " << endl;
-	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
-	{
-		if(GIAentityNodeArrayFilled[i])
-		{
-			if(!(GIAentityNodeArray[i]->disabled))
-			{
-				cout << "\ti = " << i << endl;
-				cout << "GIAentityNodeArray[i]->entityName = " << GIAentityNodeArray[i]->entityName << endl;
-				cout << "GIAentityNodeArray[i]->isConcept = " << GIAentityNodeArray[i]->isConcept << endl;
-				cout << "GIAentityNodeArray[i]->isSubstanceConcept = " << GIAentityNodeArray[i]->isSubstanceConcept << endl;
-			}
-		}
-	}
-	*/
 	applyAdvancedFeatures(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts, NLPdependencyRelationsType, NLPfeatureParser);
-	/*
-	cout << "\n3 advanced feature: " << endl;
-	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
-	{
-		if(GIAentityNodeArrayFilled[i])
-		{
-			if(!(GIAentityNodeArray[i]->disabled))
-			{
-				cout << "\ti = " << i << endl;
-				cout << "GIAentityNodeArray[i]->entityName = " << GIAentityNodeArray[i]->entityName << endl;
-				cout << "GIAentityNodeArray[i]->isConcept = " << GIAentityNodeArray[i]->isConcept << endl;
-				cout << "GIAentityNodeArray[i]->isSubstanceConcept = " << GIAentityNodeArray[i]->isSubstanceConcept << endl;
-			}
-		}
-	}
-	*/
-	/*
-	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
-	{
-		if(GIAentityNodeArrayFilled[i])
-		{
-			if(!(GIAentityNodeArray[i]->disabled))
-			{
-				cout << "\ti = " << i << endl;
-				cout << "GIAentityNodeArray[i]->entityName = " << GIAentityNodeArray[i]->entityName << endl;
-				cout << "GIAentityNodeArray[i]->wasReference = " << GIAentityNodeArray[i]->wasReference << endl;
-				cout << "GIAentityNodeArray[i]->isConcept = " << GIAentityNodeArray[i]->isConcept << endl;
-			}
-		}
-	}
-	*/
 
-	#ifdef GIA_USE_ADVANCED_REFERENCING
+	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	//record entityIndexTemp + sentenceIndexTemp for all substances in sentence (allows for referencing)...
 	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
 	{
 		if(GIAentityNodeArrayFilled[w])
 		{
+			#ifdef GIA_USE_ADVANCED_REFERENCING
 			#ifdef GIA_SET_ENTITY_ENTITY_AND_SENTENCE_INDICIES_NORMALLY
 			if(!(GIAentityNodeArray[w]->wasReference))
 			{
@@ -1403,8 +1039,13 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 				GIAentityNodeArray[w]->sentenceIndexTemp = currentSentenceInList->sentenceIndex;	//LIMITATION: if !GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR, this will not assign sentence indicies for prepositions...
 			}
 			#endif
+			#else
+				GIAentityNodeArray[w]->entityIndexTemp = w;
+				GIAentityNodeArray[w]->sentenceIndexTemp = currentSentenceInList->sentenceIndex;	//LIMITATION: if !GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR, this will not assign sentence indicies for prepositions...			
+				//cout << "GIAentityNodeArray[w]->sentenceIndexTemp = " << GIAentityNodeArray[w]->sentenceIndexTemp << endl;
+			#endif
 						
-			#ifdef GIA_RECORD_WAS_REFERENCE_INFORMATION
+			//#ifdef GIA_RECORD_WAS_REFERENCE_INFORMATION	//concept sentenceIndex information is also required for GIAdraw.cpp
 			//record sentenceIndex for concept entity nodes also (NB cannot use GIAconceptNodeArray here as it won't include concept entity nodes for prepositions)
 			if(!(GIAentityNodeArray[w]->entityNodeDefiningThisInstance->empty()))
 			{
@@ -1426,6 +1067,7 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 					{//do not overwrite sentenceIndex, as it needs to be drawn with first instance in network
 						//cout << "assigning: " <<  currentSentenceInList->sentenceIndex << endl;
 						conceptNode->sentenceIndexTemp = currentSentenceInList->sentenceIndex;
+						//cout << "conceptNode->sentenceIndexTemp = " << conceptNode->sentenceIndexTemp << endl;
 					}
 					/*No problem detected here:
 					if(conceptNode->sentenceIndexTemp == 0)
@@ -1437,7 +1079,7 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 				}
 				#endif
 			}
-			#endif
+			//#endif
 
 			#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 			//cout << GIAentityNodeArray[w]->entityName << ", w = " << w << endl;
@@ -1458,15 +1100,15 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 	#endif
 	//recordSentenceConceptNodesAsPermanentIfTheyAreStillEnabled(GIAentityNodeArrayFilled, GIAconceptNodeArray);		//this method is not sufficient, as some concept entity nodes (eg prepositions/conditions) are not contained within GIAconceptNodeArray
 	recordSentenceConceptNodesAsPermanentIfTheyAreStillEnabled(entityNodesActiveListConcepts);
+	
 	#ifdef GIA_TRANSLATOR_DEBUG
-	/*
+	cout << "\n\n recordSentenceConceptNodesAsPermanentIfTheyAreStillEnabled() currentSentenceInList->sentenceIndex = " << currentSentenceInList->sentenceIndex << endl;
 	unordered_map<string, GIAentityNode*> ::iterator conceptEntityNodesListIter2;
 	for(conceptEntityNodesListIter2 = entityNodesActiveListConcepts->begin(); conceptEntityNodesListIter2 != entityNodesActiveListConcepts->end(); conceptEntityNodesListIter2++)
 	{
 		GIAentityNode * entityNode = conceptEntityNodesListIter2->second;
 		cout << "entityNode->disabled = " << entityNode->entityName << ", " << int(entityNode->disabled) << endl;
 	}
-	*/
 	#endif
 
 	#ifdef GIA_IMPLEMENT_NON_STANFORD_CORE_NLP_CODEPENDENCIES_CROSS_SENTENCE_REFERENCING
@@ -1543,7 +1185,67 @@ void dreamModeLinkSpecificConceptsAndActions()
 	vector<GIAentityNode*> * entityNodesActiveListComplete = getTranslatorEntityNodesCompleteList();
 
 	identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts(entityNodesActiveListComplete);
+	
+	#ifdef GIA_TRANSLATOR_DREAM_MODE_CREATE_AND_LINK_NON_SPECIFIC_CONCEPTS_FOR_ALL_ENTITIES
+	createAndLinkNonSpecificConceptsForAllEntities(entityNodesActiveListComplete);
+	#endif
 }
+
+#ifdef GIA_TRANSLATOR_DREAM_MODE_CREATE_AND_LINK_NON_SPECIFIC_CONCEPTS_FOR_ALL_ENTITIES
+void createAndLinkNonSpecificConceptsForAllEntities(vector<GIAentityNode*> * entityNodesActiveListComplete)
+{
+	for(vector<GIAentityNode*>::iterator entityIter = entityNodesActiveListComplete->begin(); entityIter != entityNodesActiveListComplete->end(); entityIter++)
+	{	
+		GIAentityNode * entity = (*entityIter);
+		if((entity->isSubstance) && !(entity->isSubstanceConcept) && !(entity->isConcept))
+		{
+			GIAentityNode * conceptEntity = (entity->entityNodeDefiningThisInstance->back())->entity;
+
+			GIAentityNode * nonSpecificConceptEntity = NULL;
+			bool nonspecificSubstanceConceptAlreadyExists = false;
+			for(vector<GIAentityNode*>::iterator entityIter2 = entityNodesActiveListComplete->begin(); entityIter2 != entityNodesActiveListComplete->end(); entityIter2++)
+			{	
+				GIAentityNode * entity2 = (*entityIter2);
+				if((entity->isSubstance) && (entity2->isSubstanceConcept) && !(entity->isConcept))
+				{
+					if(entity2->entityName == entity->entityName)
+					{
+						bool hasPropertiesOrConditions = false;
+						if(!(entity2->propertyNodeList->empty()))
+						{
+							hasPropertiesOrConditions = true;
+						}
+						if(!(entity2->conditionNodeList->empty()))
+						{
+							hasPropertiesOrConditions = true;
+						}
+						if(!hasPropertiesOrConditions)
+						{
+							nonspecificSubstanceConceptAlreadyExists = true;
+							nonSpecificConceptEntity = entity2;
+						}
+					}
+				}
+			}
+			if(!nonspecificSubstanceConceptAlreadyExists)
+			{
+				nonSpecificConceptEntity = addSubstanceToSubstanceDefinition(conceptEntity);
+				nonSpecificConceptEntity->isSubstanceConcept = true;
+			}
+			
+			//found instance in network matching substance concept...
+			#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
+			bool sameReferenceSet = false;
+			#else
+			bool sameReferenceSet = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
+			#endif
+
+			addDefinitionToEntity(entity, nonSpecificConceptEntity, sameReferenceSet);		
+		}
+	}
+}
+#endif
+
 #endif
 
 

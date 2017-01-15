@@ -26,7 +26,7 @@
  * File Name: GIAxmlConversion.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2g4c 03-September-2014
+ * Project Version: 2g5a 05-September-2014
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  * NB this function creates entity idActiveListReorderdIDforXMLsave values upon write to speed up linking process (does not use original idActiveList values)
  * NB this function creates entity idActiveList values upon read (it could create idActiveListReorderdIDforXMLsave values instead - however currently it is assumed that when an XML file is loaded, this will populate the idActiveList in its entirety)
@@ -834,12 +834,14 @@ bool parseEntityNodeTag(XMLparserTag * firstTagInEntityNode, GIAentityNode * ent
 			entityNode->entityIndexTemp = attributeValue;
 			entityIndexFound = true;
 		}
+		#ifdef GIA_USE_ADVANCED_REFERENCING
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_wasReference)
 		{
 			int attributeValue = atoi(currentAttribute->value.c_str());
 			entityNode->wasReference = attributeValue;
 			wasReferenceFound = true;
 		}
+		#endif
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_isQuery)
 		{
 			int attributeValue = atoi(currentAttribute->value.c_str());
@@ -935,10 +937,12 @@ bool parseEntityVectorConnectionNodeListTag(XMLparserTag * firstTagInEntityVecto
 			#ifdef GIA_STORE_CONNECTION_SENTENCE_INDEX
 			bool sentenceIndexTempFound = false;
 			#endif
+			#ifdef GIA_USE_ADVANCED_REFERENCING
 			#ifdef GIA_TRANSLATOR_MARK_DOUBLE_LINKS_AS_REFERENCE_CONNECTIONS
 			bool isReferenceFound = false;
 			#endif
-			#ifdef GIA_USE_ADVANCED_REFERENCING_SEARCH_CODE
+			#endif
+			#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 			bool sameReferenceSetFound = false;
 			#endif
 			#endif
@@ -967,6 +971,7 @@ bool parseEntityVectorConnectionNodeListTag(XMLparserTag * firstTagInEntityVecto
 
 				}
 				#endif
+				#ifdef GIA_USE_ADVANCED_REFERENCING
 				#ifdef GIA_TRANSLATOR_MARK_DOUBLE_LINKS_AS_REFERENCE_CONNECTIONS
 				else if(currentAttribute->name == NET_XML_ATTRIBUTE_isReference)
 				{
@@ -979,7 +984,8 @@ bool parseEntityVectorConnectionNodeListTag(XMLparserTag * firstTagInEntityVecto
 
 				}
 				#endif
-				#ifdef GIA_USE_ADVANCED_REFERENCING_SEARCH_CODE
+				#endif
+				#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 				else if(currentAttribute->name == NET_XML_ATTRIBUTE_sameReferenceSet)
 				{
 					bool attributeValue = atoi(currentAttribute->value.c_str());
@@ -992,6 +998,7 @@ bool parseEntityVectorConnectionNodeListTag(XMLparserTag * firstTagInEntityVecto
 				}
 				#endif
 				#endif
+				
 
 				currentAttribute = currentAttribute->nextAttribute;
 			}
@@ -1652,6 +1659,7 @@ XMLparserTag * generateXMLentityNodeTag(XMLparserTag * currentTagL1, GIAentityNo
 	currentAttribute->nextAttribute = newAttribute;
 	currentAttribute = currentAttribute->nextAttribute;
 
+	#ifdef GIA_USE_ADVANCED_REFERENCING
 	currentAttribute->name = NET_XML_ATTRIBUTE_wasReference;
 	sprintf(tempString, "%d", (currentEntity->wasReference));
 	currentAttribute->value = tempString;
@@ -1659,7 +1667,8 @@ XMLparserTag * generateXMLentityNodeTag(XMLparserTag * currentTagL1, GIAentityNo
 	newAttribute = new XMLParserAttribute();
 	currentAttribute->nextAttribute = newAttribute;
 	currentAttribute = currentAttribute->nextAttribute;
-
+	#endif
+	
 	currentAttribute->name = NET_XML_ATTRIBUTE_isQuery;
 	sprintf(tempString, "%d", int(currentEntity->isQuery));
 	currentAttribute->value = tempString;
@@ -1720,6 +1729,7 @@ XMLparserTag * generateXMLentityNodeTag(XMLparserTag * currentTagL1, GIAentityNo
 						currentAttribute = currentAttribute->nextAttribute;
 						#endif
 						
+						#ifdef GIA_USE_ADVANCED_REFERENCING
 						#ifdef GIA_TRANSLATOR_MARK_DOUBLE_LINKS_AS_REFERENCE_CONNECTIONS
 						currentAttribute->name = NET_XML_ATTRIBUTE_isReference;
 						sprintf(tempString, "%d", int(connection->isReference));
@@ -1729,8 +1739,9 @@ XMLparserTag * generateXMLentityNodeTag(XMLparserTag * currentTagL1, GIAentityNo
 						currentAttribute->nextAttribute = newAttribute;
 						currentAttribute = currentAttribute->nextAttribute;
 						#endif
+						#endif
 						
-						#ifdef GIA_USE_ADVANCED_REFERENCING_SEARCH_CODE
+						#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 						currentAttribute->name = NET_XML_ATTRIBUTE_sameReferenceSet;
 						sprintf(tempString, "%d", int(connection->sameReferenceSet));
 						currentAttribute->value = tempString;
@@ -1739,6 +1750,7 @@ XMLparserTag * generateXMLentityNodeTag(XMLparserTag * currentTagL1, GIAentityNo
 						currentAttribute->nextAttribute = newAttribute;
 						currentAttribute = currentAttribute->nextAttribute;
 						#endif
+						
 						#endif
 
 						XMLparserTag * newTag3 = new XMLparserTag();	//had to add a null tag

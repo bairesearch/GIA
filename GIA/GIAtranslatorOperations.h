@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2g4c 03-September-2014
+ * Project Version: 2g5a 05-September-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -176,7 +176,7 @@ bool checkEntityHasSubstanceThatWasDeclaredInContext(GIAentityNode * entityNode)
 GIAentityNode * getEntitySubstanceThatWasDeclaredInContext(GIAentityNode * entityNode);			//current textual context (eg current paragraph) 	//added 1j7g 9 May 2012
 #endif
 
-#ifdef GIA_USE_ADVANCED_REFERENCING
+#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 bool determineSameReferenceSetValue(bool defaultSameSetValueForRelation, Relation * relation);
 #endif
 

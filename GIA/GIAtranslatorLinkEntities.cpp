@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2g4c 03-September-2014
+ * Project Version: 2g5a 05-September-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -161,7 +161,7 @@ void linkPropertiesPossessiveRelationships(Sentence * currentSentenceInList, GIA
 	paramA.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectPropertyToEntityAddOnlyIfOwnerIsProperty;
 	paramA.functionEntityRelationID[FUNC_ENT1] = REL1; paramA.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT2;
 	paramA.functionEntityRelationID[FUNC_ENT2] = REL1; paramA.functionEntityRelationEntityID[FUNC_ENT2] = REL_ENT1;
-	#ifdef GIA_USE_ADVANCED_REFERENCING
+	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	paramA.defaultSameSetRelationID = REL1; paramA.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_PROPERTIES;
 	#endif
 	genericDependecyRelationInterpretation(&paramA, REL1);
@@ -173,7 +173,7 @@ void linkPropertiesPossessiveRelationships(Sentence * currentSentenceInList, GIA
 	paramA.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectActionToEntity;
 	paramA.functionEntityRelationID[FUNC_ENT1] = REL1; paramA.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT2;
 	paramA.functionEntityRelationID[FUNC_ENT2] = REL1; paramA.functionEntityRelationEntityID[FUNC_ENT2] = REL_ENT1;
-	#ifdef GIA_USE_ADVANCED_REFERENCING
+	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	paramA.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_PROPERTIES;
 	#endif
 	genericDependecyRelationInterpretation(&paramA, REL1);
@@ -189,7 +189,7 @@ void linkPropertiesPossessiveRelationships(Sentence * currentSentenceInList, GIA
 	paramB.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectPropertyToEntity;
 	paramB.functionEntityRelationID[FUNC_ENT1] = REL1; paramB.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT1;
 	paramB.functionEntityRelationID[FUNC_ENT2] = REL1; paramB.functionEntityRelationEntityID[FUNC_ENT2] = REL_ENT2;
-	#ifdef GIA_USE_ADVANCED_REFERENCING
+	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	paramB.defaultSameSetRelationID = REL1; paramB.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_PROPERTIES;
 	#endif
 	genericDependecyRelationInterpretation(&paramB, REL1);
@@ -227,7 +227,7 @@ void linkPropertiesPossessiveRelationships(Sentence * currentSentenceInList, GIA
 				//cout << "ownerName = " << ownerEntity->entityName << endl;
 				#endif
 
-				#ifdef GIA_USE_ADVANCED_REFERENCING
+				#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 				bool sameReferenceSet = determineSameReferenceSetValue(DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_PROPERTIES, currentRelationInList);
 				#else
 				bool sameReferenceSet = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
@@ -271,7 +271,7 @@ void linkPropertiesPossessiveRelationships(Sentence * currentSentenceInList, GIA
 				cout << "substanceEntity = " << substanceEntity->entityName << endl;
 				#endif
 
-				#ifdef GIA_USE_ADVANCED_REFERENCING
+				#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 				bool sameReferenceSet = determineSameReferenceSetValue(DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_PROPERTIES, currentRelationInList);
 				#else
 				bool sameReferenceSet = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
@@ -301,7 +301,7 @@ void linkPropertiesDescriptiveRelationships(Sentence * currentSentenceInList, GI
 		param.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectPropertyToEntity;
 		param.functionEntityRelationID[FUNC_ENT1] = REL1; param.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT1;
 		param.functionEntityRelationID[FUNC_ENT2] = REL1; param.functionEntityRelationEntityID[FUNC_ENT2] = REL_ENT2;
-		#ifdef GIA_USE_ADVANCED_REFERENCING
+		#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 		param.defaultSameSetRelationID = REL1; param.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_PROPERTIES;
 		#endif
 		genericDependecyRelationInterpretation(&param, REL1);
@@ -313,7 +313,7 @@ void linkPropertiesDescriptiveRelationships(Sentence * currentSentenceInList, GI
 		param.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectPropertyToEntity;
 		param.functionEntityRelationID[FUNC_ENT1] = REL1; param.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT1;
 		param.functionEntityRelationID[FUNC_ENT2] = REL1; param.functionEntityRelationEntityID[FUNC_ENT2] = REL_ENT2;
-		#ifdef GIA_USE_ADVANCED_REFERENCING
+		#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 		param.defaultSameSetRelationID = REL1; param.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_PROPERTIES;
 		#endif
 		genericDependecyRelationInterpretation(&param, REL1);
@@ -324,7 +324,7 @@ void linkPropertiesDescriptiveRelationships(Sentence * currentSentenceInList, GI
 		paramB.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectPropertyToEntity;
 		paramB.functionEntityRelationID[FUNC_ENT1] = REL1; paramB.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT1;
 		paramB.functionEntityRelationID[FUNC_ENT2] = REL1; paramB.functionEntityRelationEntityID[FUNC_ENT2] = REL_ENT2;
-		#ifdef GIA_USE_ADVANCED_REFERENCING
+		#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 		paramB.defaultSameSetRelationID = REL1; paramB.defaultSameSetReferenceValue = false;
 		#endif
 		genericDependecyRelationInterpretation(&paramB, REL1);
@@ -392,7 +392,7 @@ void linkPropertiesDescriptiveRelationships(Sentence * currentSentenceInList, GI
 					}
 					*/
 
-					#ifdef GIA_USE_ADVANCED_REFERENCING
+					#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 					bool sameReferenceSet = determineSameReferenceSetValue(DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_PROPERTIES, currentRelationInList);
 					#else
 					bool sameReferenceSet = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
@@ -515,7 +515,7 @@ void linkEntityDefinitionsAppositiveOfNouns(Sentence * currentSentenceInList, GI
 				cout << "definitionEntity->isSubstance = " << definitionEntity->isSubstance << endl;
 				#endif
 
-				#ifdef GIA_USE_ADVANCED_REFERENCING
+				#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 				bool sameReferenceSet = determineSameReferenceSetValue(DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_APPOS, currentRelationInList);
 				#else
 				bool sameReferenceSet = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
@@ -665,7 +665,7 @@ void linkDependentActionsType1(Sentence * currentSentenceInList, GIAentityNode *
 	param.functionEntityRelationID[FUNC_ENT1] = REL1; param.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT2;
 	param.functionEntityRelationID[FUNC_ENT2] = REL2; param.functionEntityRelationEntityID[FUNC_ENT2] = REL_ENT2;
 	param.functionEntityRelationID[FUNC_ENT3] = REL1; param.functionEntityRelationEntityID[FUNC_ENT3] = REL_ENT1;
-	#ifdef GIA_USE_ADVANCED_REFERENCING
+	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	param.defaultSameSetRelationID = REL1; param.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_ACTIONS;
 	#endif
 	param.disableRelationDuringLink[REL2] = true;	//required to prevent action link from being created to object in secondary action interpretation function linkSubjectOrObjectRelationships() - added 17 July 2013
@@ -711,7 +711,7 @@ void linkDependentActionsType1(Sentence * currentSentenceInList, GIAentityNode *
 								cout << "conditionConceptEntity = " << conditionConceptEntity->entityName << endl;
 								#endif
 
-								#ifdef GIA_USE_ADVANCED_REFERENCING
+								#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 								bool sameReferenceSet = determineSameReferenceSetValue(DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_ACTIONS, currentRelationInList);
 								#else
 								bool sameReferenceSet = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
@@ -776,7 +776,7 @@ void linkHavingPropertyConditionsAndBeingDefinitionConditions(Sentence * current
 	paramA.useRelationTest[REL1][REL_ENT2] = true; paramA.relationTest[REL1][REL_ENT2] = RELATION_ENTITY_HAVE;
 	paramA.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectHavingPropertyConditionToEntity;
 	paramA.mustGenerateConditionEntityIndex = true;
-	#ifdef GIA_USE_ADVANCED_REFERENCING
+	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	paramA.defaultSameSetRelationID = REL2; paramA.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_HAVING_CONDITIONS;
 	#endif
 	paramA.disableEntity[REL1][REL_ENT2] = true;
@@ -791,7 +791,7 @@ void linkHavingPropertyConditionsAndBeingDefinitionConditions(Sentence * current
 	paramB.useRelationTest[REL1][REL_ENT2] = true; paramB.relationTest[REL1][REL_ENT2] = RELATION_ENTITY_BE;
 	paramB.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectBeingDefinitionConditionToEntity;
 	paramB.mustGenerateConditionEntityIndex = true;
-	#ifdef GIA_USE_ADVANCED_REFERENCING
+	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	paramB.defaultSameSetRelationID = REL2; paramB.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_BEING_DEFINITION_CONDITIONS;
 	#endif
 	paramB.disableEntity[REL1][REL_ENT2] = true;
@@ -808,7 +808,7 @@ void linkHavingPropertyConditionsAndBeingDefinitionConditions(Sentence * current
 	paramC.useRelationTest[REL2][REL_ENT2] = true; paramC.relationTest[REL2][REL_ENT2] = RELATION_ENTITY_BE;
 	paramC.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectBeingDefinitionConditionToEntity;
 	paramC.mustGenerateConditionEntityIndex = true;
-	#ifdef GIA_USE_ADVANCED_REFERENCING
+	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	paramC.defaultSameSetRelationID = REL2; paramC.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_BEING_DEFINITION_CONDITIONS;
 	#endif
 	paramC.disableEntity[REL2][REL_ENT2] = true;
@@ -875,7 +875,7 @@ void linkHavingPropertyConditionsAndBeingDefinitionConditions(Sentence * current
 										GIAentityNode * entityNode = GIAentityNodeArray[currentRelationInList->relationGovernorIndex];
 										GIAentityNode * conditionSubstanceNode = GIAentityNodeArray[currentRelationInList2->relationDependentIndex];
 
-										#ifdef GIA_USE_ADVANCED_REFERENCING
+										#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 										bool sameReferenceSet = determineSameReferenceSetValue(DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_HAVING_CONDITIONS, currentRelationInList2);	//linkHavingPropertyConditionsAndBeingDefinitionConditions check relation to use here... [the chicken saved through having a chicken is.... therefore default same set]
 										//sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_HAVING_CONDITIONS;	//more precisely
 										#else
@@ -921,7 +921,7 @@ void linkHavingPropertyConditionsAndBeingDefinitionConditions(Sentence * current
 										GIAentityNode * entityNode = GIAentityNodeArray[currentRelationInList->relationGovernorIndex];
 										GIAentityNode * conditionDefinitionNode = GIAentityNodeArray[currentRelationInList->relationDependentIndex];
 
-										#ifdef GIA_USE_ADVANCED_REFERENCING
+										#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 										bool sameReferenceSet = determineSameReferenceSetValue(DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_BEING_DEFINITION_CONDITIONS, currentRelationInList2);	//linkHavingPropertyConditionsAndBeingDefinitionConditions check relation to use here... [the chicken saved through being a chicken is.... therefore default same set]
 										//sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_BEING_DEFINITION_CONDITIONS;	//more precisely
 										#else
@@ -972,7 +972,7 @@ void linkIndirectObjects(Sentence * currentSentenceInList, GIAentityNode * GIAen
 	param.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectPropertyToEntityAddOnlyIfOwnerIsProperty;
 	param.functionEntityRelationID[FUNC_ENT1] = REL1; param.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT2;
 	param.functionEntityRelationID[FUNC_ENT2] = REL2; param.functionEntityRelationEntityID[FUNC_ENT2] = REL_ENT2;
-	#ifdef GIA_USE_ADVANCED_REFERENCING
+	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	param.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE;
 	#endif
 	genericDependecyRelationInterpretation(&param, REL1);
@@ -1053,7 +1053,7 @@ void linkSubjectObjectRelationships(Sentence * currentSentenceInList, GIAentityN
 	paramA.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectPropertyToEntity;
 	paramA.functionEntityRelationID[FUNC_ENT1] = REL1; paramA.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT2;
 	paramA.functionEntityRelationID[FUNC_ENT2] = REL1; paramA.functionEntityRelationEntityID[FUNC_ENT2] = REL_ENT1;
-	#ifdef GIA_USE_ADVANCED_REFERENCING
+	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	paramA.defaultSameSetReferenceValue = false;	//CHECK THIS???
 	#endif
 	paramA.disableRelationDuringLink[REL1] = true;	//required to prevent action link from being created to object in secondary action interpretation function linkSubjectOrObjectRelationships() - added 17 July 2013
@@ -1091,7 +1091,7 @@ void linkSubjectObjectRelationships(Sentence * currentSentenceInList, GIAentityN
 	GIAgenericDepRelInterpretationParameters paramB = param;
 	paramB.useRelationArrayTest[REL1][REL_ENT1] = true; paramB.relationArrayTest[REL1][REL_ENT1] = relationGovernorDefinitionNameArray; paramB.relationArrayTestSize[REL1][REL_ENT1] = RELATION_GOVERNOR_DEFINITION_NUMBER_OF_TYPES;
 	paramB.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addDefinitionToEntity;
-	#ifdef GIA_USE_ADVANCED_REFERENCING
+	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	paramB.defaultSameSetReferenceValue = false;
 	#endif
 	paramB.disableEntity[REL1][REL_ENT1] = true;	//disable "be" entity
@@ -1110,7 +1110,7 @@ void linkSubjectObjectRelationships(Sentence * currentSentenceInList, GIAentityN
 	GIAgenericDepRelInterpretationParameters paramC = param;
 	paramC.useRelationArrayTest[REL1][REL_ENT1] = true; paramC.relationArrayTest[REL1][REL_ENT1] = relationGovernorCompositionNameArray; paramC.relationArrayTestSize[REL1][REL_ENT1] = RELATION_GOVERNOR_COMPOSITION_NUMBER_OF_TYPES;
 	paramC.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectPropertyToEntityAddOnlyIfOwnerIsProperty;
-	#ifdef GIA_USE_ADVANCED_REFERENCING
+	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	paramC.defaultSameSetReferenceValue = false;
 	#endif
 	#ifndef GIA_USE_CORPUS_DATABASE
@@ -1135,7 +1135,7 @@ void linkSubjectObjectRelationships(Sentence * currentSentenceInList, GIAentityN
 	GIAgenericDepRelInterpretationParameters paramD = param;
 	paramD.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectActionToEntity;
 	paramD.functionEntityRelationID[FUNC_ENT3] = REL1; paramD.functionEntityRelationEntityID[FUNC_ENT3] = REL_ENT1;
-	#ifdef GIA_USE_ADVANCED_REFERENCING
+	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	paramD.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_ACTIONS;	//defaultSameSetReferenceValues are handled by genericDependecyRelationInterpretation();
 	#endif
 	genericDependecyRelationInterpretation(&paramD, REL1);
@@ -1692,7 +1692,7 @@ void linkSubjectObjectRelationships(Sentence * currentSentenceInList, GIAentityN
 											GIAentityNode * actionEntity = subjectObjectFunctionEntityArray[SUBJECT_INDEX];
 											int actionIndex = subjectObjectFunctionEntityIndexArray[SUBJECT_INDEX];
 
-											#ifdef GIA_USE_ADVANCED_REFERENCING
+											#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 											bool sameReferenceSet = determineSameReferenceSetValue(DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_ACTIONS, currentRelationInList);	//subject relation
 											#else
 											bool sameReferenceSet = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
@@ -1710,7 +1710,7 @@ void linkSubjectObjectRelationships(Sentence * currentSentenceInList, GIAentityN
 											//cout << "ownerName = " << ownerEntity->entityName << endl;
 											#endif
 
-											#ifdef GIA_USE_ADVANCED_REFERENCING
+											#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 											sameReferenceSet = determineSameReferenceSetValue(DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_PROPERTIES, currentRelationInList);	//subject relation
 											#else
 											sameReferenceSet = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
@@ -1745,7 +1745,7 @@ void linkSubjectObjectRelationships(Sentence * currentSentenceInList, GIAentityN
 											*/
 											#endif
 
-											#ifdef GIA_USE_ADVANCED_REFERENCING
+											#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 											bool sameReferenceSetSubject = determineSameReferenceSetValue(DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_ACTIONS, currentRelationInList);
 											bool sameReferenceSetObject = determineSameReferenceSetValue(DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_ACTIONS, currentRelationInList2);
 											#else
@@ -1935,7 +1935,7 @@ void linkSubjectOrObjectRelationships(Sentence * currentSentenceInList, GIAentit
 	param.numberOfRelations = 1;
 	param.useRelationArrayTest[REL1][REL_ENT1] = true; param.relationArrayTest[REL1][REL_ENT1] = relationGovernorCompositionNameArray; param.relationArrayTestSize[REL1][REL_ENT1] = RELATION_GOVERNOR_COMPOSITION_NUMBER_OF_TYPES; param.relationArrayTestIsNegative[REL1][REL_ENT1] = true;
 	param.useRelationArrayTest[REL1][REL_ENT1] = true; param.relationArrayTest[REL1][REL_ENT1] = relationGovernorDefinitionNameArray; param.relationArrayTestSize[REL1][REL_ENT1] = RELATION_GOVERNOR_DEFINITION_NUMBER_OF_TYPES; param.relationArrayTestIsNegative[REL1][REL_ENT1] = true;
-	#ifdef GIA_USE_ADVANCED_REFERENCING
+	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	param.defaultSameSetRelationID = REL1; param.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_ACTIONS;
 	#endif
 	param.functionEntityRelationID[FUNC_ENT1] = REL1; param.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT2;
@@ -2151,7 +2151,7 @@ void linkSubjectOrObjectRelationships(Sentence * currentSentenceInList, GIAentit
 							if(passsubject)
 							{//fired by joe..???? [is there a possible example of this?]
 
-								#ifdef GIA_USE_ADVANCED_REFERENCING
+								#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 								bool sameReferenceSetSubject = determineSameReferenceSetValue(DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_ACTIONS, currentRelationInList);
 								#else
 								bool sameReferenceSetSubject = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
@@ -2164,7 +2164,7 @@ void linkSubjectOrObjectRelationships(Sentence * currentSentenceInList, GIAentit
 							else if(passobject)
 							{//eg the bow was fired
 
-								#ifdef GIA_USE_ADVANCED_REFERENCING
+								#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 								bool sameReferenceSetObject = determineSameReferenceSetValue(DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_ACTIONS, currentRelationInList);
 								#else
 								bool sameReferenceSetObject = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
@@ -2208,7 +2208,7 @@ void linkObjectSubjectOfPreposition(Sentence * currentSentenceInList, bool GIAen
 	param.functionEntityRelationID[FUNC_ENT1] = REL2; param.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT2;
 	param.functionEntityRelationID[FUNC_ENT2] = REL1; param.functionEntityRelationEntityID[FUNC_ENT2] = REL_ENT2;
 	param.functionEntityRelationID[FUNC_ENT3] = REL2; param.functionEntityRelationEntityID[FUNC_ENT3] = REL_ENT1;
-	#ifdef GIA_USE_ADVANCED_REFERENCING
+	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	param.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_CONDITIONS;
 	#endif
 	genericDependecyRelationInterpretation(&param, REL1);
@@ -2324,7 +2324,7 @@ void linkConjunctionConditions(Sentence * currentSentenceInList, bool GIAentityN
 	param.functionEntityRelationID[FUNC_ENT1] = REL1; param.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT1;
 	param.functionEntityRelationID[FUNC_ENT2] = REL1; param.functionEntityRelationEntityID[FUNC_ENT2] = REL_ENT2;
 	param.functionEntityRelationID[FUNC_ENT3] = REL1; param.functionEntityRelationEntityID[FUNC_ENT3] = REL_ENT3;
-	#ifdef GIA_USE_ADVANCED_REFERENCING
+	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	param.defaultSameSetRelationID = REL1; param.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE;
 	#endif
 
@@ -2393,7 +2393,7 @@ void linkConjunctionConditions(Sentence * currentSentenceInList, bool GIAentityN
 				cout << "conditionEntity->entityName = " << conditionEntity->entityName << endl;
 				#endif
 
-				#ifdef GIA_USE_ADVANCED_REFERENCING
+				#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 				bool sameReferenceSet = determineSameReferenceSetValue(DEFAULT_SAME_REFERENCE_SET_VALUE, currentRelationInList);	//eg "and that has a house" versus "and has a house" ??? [untested]
 				#else
 				bool sameReferenceSet = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
@@ -2459,7 +2459,7 @@ void linkConditions(Sentence * currentSentenceInList, bool GIAentityNodeArrayFil
 	paramB.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectPropertyToEntity;
 	paramB.functionEntityRelationID[FUNC_ENT1] = REL1; paramB.functionEntityRelationEntityID[FUNC_ENT1] = REL_ENT2;
 	paramB.functionEntityRelationID[FUNC_ENT2] = REL1; paramB.functionEntityRelationEntityID[FUNC_ENT2] = REL_ENT1;
-	#ifdef GIA_USE_ADVANCED_REFERENCING
+	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	paramB.defaultSameSetRelationID = REL1; paramB.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_CONDITIONS;
 	#endif
 	genericDependecyRelationInterpretation(&paramB, REL1);
@@ -2485,7 +2485,7 @@ void linkConditions(Sentence * currentSentenceInList, bool GIAentityNodeArrayFil
 	paramC.functionEntityRelationID[FUNC_ENT2] = REL1; paramC.functionEntityRelationEntityID[FUNC_ENT2] = REL_ENT2;
 	paramC.functionEntityRelationID[FUNC_ENT3] = REL1; paramC.functionEntityRelationEntityID[FUNC_ENT3] = REL_ENT3;
 	paramC.mustGenerateConditionEntityIndex = true;	//may be required as conditionType corresponds to a relation type (not relation subject or relation governor) [assuming a corresponding feature index for the relation type cannot be found in the feature array]
-	#ifdef GIA_USE_ADVANCED_REFERENCING
+	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	paramC.defaultSameSetRelationID = REL1; paramC.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_CONDITIONS;
 	#endif
 	genericDependecyRelationInterpretation(&paramC, REL1);
@@ -2618,7 +2618,7 @@ void linkConditions(Sentence * currentSentenceInList, bool GIAentityNodeArrayFil
 					of(house[2], Kriton[4])
 					_predadj(house[2], blue[6])
 					*/
-					#ifdef GIA_USE_ADVANCED_REFERENCING
+					#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 					bool sameReferenceSet = determineSameReferenceSetValue(DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_CONDITIONS, currentRelationInList);
 					#else
 					bool sameReferenceSet = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
@@ -2632,7 +2632,7 @@ void linkConditions(Sentence * currentSentenceInList, bool GIAentityNodeArrayFil
 
 			if(passed)
 			{
-				#ifdef GIA_USE_ADVANCED_REFERENCING
+				#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 				bool sameReferenceSet = determineSameReferenceSetValue(DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_CONDITIONS, currentRelationInList);
 				#else
 				bool sameReferenceSet = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
@@ -2956,7 +2956,7 @@ void linkDependentActionsType2(Sentence * currentSentenceInList, bool GIAentityN
 	param.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT1].push_back(&relationTestSpecialCaseIsAction);
 	param.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT2].push_back(&relationTestSpecialCaseIsAction);
 	param.mustGenerateConditionName = true; param.conditionEntityDefaultName = GIA_TRANSLATOR_LINK_DEPENDENT_ACTIONS_DEFAULT_CONDITION_NAME; param.mustGenerateConditionEntityIndex = true;
-	#ifdef GIA_USE_ADVANCED_REFERENCING
+	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	param.defaultSameSetRelationID = REL1; param.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_ACTIONS;
 	#endif
 	genericDependecyRelationInterpretation(&param, REL1);
@@ -2984,7 +2984,7 @@ void linkDependentActionsType2(Sentence * currentSentenceInList, bool GIAentityN
 				//cout << "substanceName = " << substanceEntity->entityName << endl;
 				#endif
 
-				#ifdef GIA_USE_ADVANCED_REFERENCING
+				#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 				bool sameReferenceSet = determineSameReferenceSetValue(DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_ACTIONS, currentRelationInList);
 				#else
 				bool sameReferenceSet = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;

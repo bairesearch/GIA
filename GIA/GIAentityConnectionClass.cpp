@@ -26,7 +26,7 @@
  * File Name: GIAentityConnectionClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2g4c 03-September-2014
+ * Project Version: 2g5a 05-September-2014
  *
  *******************************************************************************/
 
@@ -38,7 +38,7 @@ GIAentityConnection::GIAentityConnection(void)
 {
 	confidence = GIA_ENTITY_CONNECTION_CONFIDENCE_BASE;
 
-	#ifdef GIA_USE_ADVANCED_REFERENCING_SEARCH_CODE
+	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	sameReferenceSet = false;	//CHECK THIS default value
 	#endif
 
@@ -61,8 +61,10 @@ GIAentityConnection::GIAentityConnection(void)
 	negative = false;
 	NLCcontextGenerated = false;
 	#endif
+	#ifdef GIA_USE_ADVANCED_REFERENCING
 	#ifdef GIA_TRANSLATOR_MARK_DOUBLE_LINKS_AS_REFERENCE_CONNECTIONS
 	isReference = false;
+	#endif
 	#endif
 	#ifdef GIA_STORE_CONNECTION_SENTENCE_INDEX
 	sentenceIndexTemp = GIA_SENTENCE_INDEX_UNDEFINED2;
@@ -81,7 +83,7 @@ GIAentityConnection::GIAentityConnection(string * startEntityName, long startIdI
 {
 	confidence = GIA_ENTITY_CONNECTION_CONFIDENCE_BASE;
 
-	#ifdef GIA_USE_ADVANCED_REFERENCING
+	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	sameReferenceSet = false;	//CHECK THIS default value
 	#endif
 
@@ -103,6 +105,11 @@ GIAentityConnection::GIAentityConnection(string * startEntityName, long startIdI
 	NLCparsedForlogicalConditionOperations = false;
 	negative = false;
 	NLCcontextGenerated = false;
+	#endif
+	#ifdef GIA_USE_ADVANCED_REFERENCING
+	#ifdef GIA_TRANSLATOR_MARK_DOUBLE_LINKS_AS_REFERENCE_CONNECTIONS
+	isReference = false;
+	#endif
 	#endif
 	#ifdef GIA_STORE_CONNECTION_SENTENCE_INDEX
 	sentenceIndexTemp = GIA_SENTENCE_INDEX_UNDEFINED2;

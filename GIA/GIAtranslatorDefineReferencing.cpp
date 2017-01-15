@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2g4c 03-September-2014
+ * Project Version: 2g5a 05-September-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -851,8 +851,7 @@ void linkPronounAndTextualContextReferencesStanfordCoreNLP(Sentence * currentSen
 }
 #endif
 
-//FUNCTION UNFINISHED
-#ifdef GIA_USE_ADVANCED_REFERENCING
+#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 
 void fillExplicitReferenceSameSetTags(Sentence * currentSentenceInList)
 {
@@ -1134,8 +1133,9 @@ void identifyReferenceSetConceptEntityEntrance(GIAentityNode * entityNode, int *
 	}
 }
 
+#endif
 
-
+#ifdef GIA_USE_ADVANCED_REFERENCING
 
 //based on answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork();
 void createGIAcoreferenceInListBasedUponIdentifiedReferenceSets(unordered_map<string, GIAentityNode*> *sentenceConceptEntityNodesList, unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, GIACoreference * firstGIACoreferenceInList, int numberReferenceSets)	//bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[]
@@ -1248,10 +1248,10 @@ void createGIAcoreferenceInListBasedUponIdentifiedReferenceSets(unordered_map<st
 			bool result = testEntityNodeForQueryOrReferenceSet(queryEntityWithMaxNumberNodesMatched, networkEntityWithMaxNumberNodesMatched, &numberOfMatchedNodesTemp, true, &numberOfMatchedNodesRequiredSynonymnDetectionTemp, TRACE_MODE_IS_QUERY_FALSE, &queryTraceParameters, &referenceTraceParameters);
 			#endif
 
-			#ifdef GIA_USE_ADVANCED_REFERENCING
+			//#ifdef GIA_USE_ADVANCED_REFERENCING	//assumed true
 			//required to set entityCorrespondingBestMatch of  the first node (concept) in the reference set trace. This should not be required as concept entity nodes of the same name (ie not pronouns) don't need referencing... It is just done for algorithmic consistency sake (considering other concept nodes in the reference set trace will have their entityCorrespondingBestMatch value set)
 			queryEntityWithMaxNumberNodesMatched->entityCorrespondingBestMatch = networkEntityWithMaxNumberNodesMatched;		//this shouldn't be required for queries....
-			#endif
+			//#endif
 
 			#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 			cout << "(foundAtLeastOneMatch)" << endl;
@@ -1918,7 +1918,7 @@ void identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts(vector<GI
 										{
 										#endif
 											//found instance in network matching substance concept...
-											#ifdef GIA_USE_ADVANCED_REFERENCING
+											#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 											bool sameReferenceSet = false;
 											#else
 											bool sameReferenceSet = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
@@ -1955,7 +1955,7 @@ void identifyReferenceSetsSpecificConceptsAndLinkWithSubstanceConcepts(vector<GI
 
 #endif
 
-#ifdef GIA_USE_ADVANCED_REFERENCING_SEARCH_CODE
+#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 bool identifyReferenceSetDetermineNextCourseOfAction(GIAentityNode * entityNode, bool sameReferenceSet, int referenceSetID, int minimumEntityIndexOfReferenceSet, bool isProperty)
 {
 	bool result = false;
