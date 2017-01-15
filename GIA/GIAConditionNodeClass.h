@@ -33,11 +33,26 @@ class GIAActionConditionNode;
 
 
 
+#define TIME_MONTH_JANUARY "January"
+#define TIME_MONTH_FEBRUARY "February"
+#define TIME_MONTH_MARCH "March"
+#define TIME_MONTH_APRIL "April"
+#define TIME_MONTH_MAY "May"
+#define TIME_MONTH_JUNE "June"
+#define TIME_MONTH_JULY "July"
+#define TIME_MONTH_AUGUST "August"
+#define TIME_MONTH_SEPTEMBER "September"
+#define TIME_MONTH_OCTOBER "October"
+#define TIME_MONTH_NOVEMBER "November"
+#define TIME_MONTH_DECEMBER "December"
+#define TIME_MONTH_NUMBER_OF_TYPES (12)
+
 
 #define GRAMMATICAL_TENSE_UNDEFINED (0)
 
-#define YEAR_UNDEFINED (-15000000000)	//before start of universe
-
+#define TIME_YEAR_UNDEFINED (-15000000000)	//before start of universe
+#define TIME_DAY_OF_MONTH_UNDEFINED (-1)
+#define TIME_MONTH_UNDEFINED (-1)	//OLD: 13th month
 
 class GIASharedConditionNode
 {
@@ -102,11 +117,15 @@ public:
 	enum
 	{
 		monday, tuesday, wednesday, thursday, friday, saturday, sunday, dayundefined
-	}day;
+	}dayOfWeek;
+	/*
 	enum
 	{
 		january, february, march, april, may, june, july, august, september, october, november, december, monthundefined
 	}month;
+	*/
+	int month;
+	int dayOfMonth;
 	long year;	//in years < 0AD is negative
 	double period;	//in seconds
 	long totalTimeInSeconds;
@@ -117,6 +136,12 @@ public:
 	GIATimeConditionNode * next;
 	*/
 };
+
+#define TIME_DATE_DISPLAY_FORMAT_AMERICAN (1)
+#define TIME_DATE_DISPLAY_FORMAT_STANDARD (2)
+#define TIME_DATE_DISPLAY_FORMAT_AUSTRALIAN (3)
+#define TIME_DATE_DISPLAY_FORMAT (TIME_DATE_DISPLAY_FORMAT_AUSTRALIAN)
+string generateDateTimeConditionName(int dayOfMonth, int month, long year);
 
 
 class GIALocationConditionNode

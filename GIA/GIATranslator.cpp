@@ -29,7 +29,9 @@ int referenceTypeHasDeterminateCrossReferenceNumberArray[GRAMMATICAL_NUMBER_TYPE
 string relationTypeAdjectiveWhichImplyEntityInstanceNameArray[RELATION_TYPE_ADJECTIVE_WHICH_IMPLY_ENTITY_INSTANCE_NUMBER_OF_TYPES] = {RELATION_TYPE_ADJECTIVE_1, RELATION_TYPE_ADJECTIVE_3};
 string relationTypeRequireSwitchingNameArray[RELATION_TYPE_REQUIRE_SWITCHING_NUMBER_OF_TYPES] = {RELATION_TYPE_OBJECT_THAT};
 
-
+//int timeMonthIntArray[TIME_MONTH_NUMBER_OF_TYPES] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
+string timeMonthStringArray[TIME_MONTH_NUMBER_OF_TYPES] = {TIME_MONTH_JANUARY, TIME_MONTH_FEBRUARY, TIME_MONTH_MARCH, TIME_MONTH_APRIL, TIME_MONTH_MAY, TIME_MONTH_JUNE, TIME_MONTH_JULY, TIME_MONTH_AUGUST, TIME_MONTH_SEPTEMBER, TIME_MONTH_OCTOBER, TIME_MONTH_NOVEMBER, TIME_MONTH_DECEMBER};
+	
 
 
 /* ORIGINAL v1a;
@@ -277,9 +279,7 @@ GIAActionNode * addAction(GIAEntityNode * actionEntity)
 }
 
 void addActionToSubject(GIAEntityNode * subjectEntity, GIAEntityNode * actionEntity)
-{
-	cout << "HERE" << endl;
-	
+{	
 	GIAActionNode * newOrExistingAction;
 	if(!(actionEntity->hasAssociatedActionTemp))
 	{
@@ -675,11 +675,8 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 				{	
 					bool passed2 = false;
 									
-					if(GIA_PERFORM_RELATION_FUNCTION_ARGUMENT_SWITCHING_ONLY_WHEN_PAIRED_WITH_SUBJECT)
-					{	
-						
-								
-													
+					if(GIA_PERFORM_RELATION_FUNCTION_ARGUMENT_SWITCHING_ONLY_WHEN_REQUIRED)
+					{						
 						//now find the associated object..
  						Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
 						while(currentRelationInList2->next != NULL)
@@ -705,12 +702,10 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 							}								
 							if(partnerTypeRequiredFoundSubj)
 							{
-								
-								
 								if(currentRelationInList2->relationFunctionIndex == currentRelationInList->relationArgumentIndex)
-								{//found a matching subject-that[obj] relationship
+								{//found a matching subject-that[obj] relationship that requires function/argument switching
 
-									//cout << "found a matching subject-that[obj] relationship" << endl;
+									//cout << "found a matching subject-that[obj] relationship that requires function/argument switching" << endl;
 									passed2 = true;
 									//cout << "partnerTypeRequiredFound: currentRelationInList2->relationType = " << currentRelationInList2->relationType << endl;
 								}
@@ -994,7 +989,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			{
 				//if(GIAEntityNodeArrayFilled[i])
 				//{ condition not required; assumed true with GRAMMATICAL_DEFINITE
-					if(!GIA_DO_NOT_ASSIGN_INSTANCE_PROPERTY_TO_PERSONS || !GIAEntityNodeGrammaticalIsPersonArray[i])
+					if(!GIA_DO_NOT_ASSIGN_INSTANCE_PROPERTY_TO_PERSONS_OR_DATES || (!GIAEntityNodeGrammaticalIsPersonArray[i] & !GIAEntityNodeIsDate[i]))
 					{
 						if(GIAEntityNodeGrammaticalIsDefiniteArray[i] == GRAMMATICAL_DEFINITE)
 						{
@@ -1012,7 +1007,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			{	
 				if(GIAEntityNodeArrayFilled[i])
 				{
-					if(!GIA_DO_NOT_ASSIGN_INSTANCE_PROPERTY_TO_PERSONS || !GIAEntityNodeGrammaticalIsPersonArray[i])
+					if(!GIA_DO_NOT_ASSIGN_INSTANCE_PROPERTY_TO_PERSONS_OR_DATES || (!GIAEntityNodeGrammaticalIsPersonArray[i] && !GIAEntityNodeIsDate[i]))
 					{
 						bool passed = false;
 						for(int j=0; j<GRAMMATICAL_NUMBER_TYPE_INDICATE_HAVE_DETERMINATE_NUMBER_OF_TYPES; j++)
@@ -1377,8 +1372,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
 														
 			if(currentRelationInList->relationType == RELATION_TYPE_INDIRECT_OBJECT)
-			{	
-									
+			{					
 				//now find the associated object..
  				Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
 				while(currentRelationInList2->next != NULL)
@@ -1434,7 +1428,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 					{
 						string timeConditionName = currentRelationInList->relationArgument; 
 						
-						//cout << "HERE" << endl;
+						cout << "HERE1" << endl;
 						cout << "actionName = " << actionNode->actionName << endl;
 						cout << "timeConditionName = " << timeConditionName << endl;
 
@@ -1586,6 +1580,103 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 		
 		}
 	
+		
+		//4b pass; extract dates	[this could be implemented/"shifted" to an earlier execution stage with some additional configuration]
+		for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
+		{
+			if(GIAEntityNodeArrayFilled[i])
+			{
+				GIAEntityNode * currentEntity = GIAEntityNodeArray[i];
+				if(currentEntity->hasAssociatedTime)
+				{			
+					GIAEntityNode * timeConditionEntity = currentEntity;
+					//cout << "as1" << endl;
+					if(timeConditionEntity->firstTimeConditionNodeInReverseList.back() != NULL)
+					{
+						//cout << "as2" << endl;
+
+						GIATimeConditionNode * tempTimeCondition = timeConditionEntity->firstTimeConditionNodeInReverseList.back();
+						string monthString = timeConditionEntity->entityName;
+						int monthInt = TIME_MONTH_UNDEFINED;
+						for(int i=0; i<TIME_MONTH_NUMBER_OF_TYPES; i++)
+						{
+							if(monthString == timeMonthStringArray[i])
+							{
+								monthInt = i+1;
+							}
+						}
+						tempTimeCondition->month = monthInt;
+						
+						//update/regenerate timeConditionName
+						tempTimeCondition->sharedCondition->conditionName = generateDateTimeConditionName(tempTimeCondition->dayOfMonth, tempTimeCondition->month, tempTimeCondition->year);
+					}
+					else
+					{
+						cout << "error: isolated date node found" << endl;
+						exit(0);	//remove this later
+					}
+				}
+			}
+		}	
+		currentRelationInList = currentSentenceInList->firstRelationInList;
+		while(currentRelationInList->next != NULL)
+		{	
+			//cout << "here1" << endl;
+			//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
+														
+			if((currentRelationInList->relationType == RELATION_TYPE_DATE_DAY) || (currentRelationInList->relationType == RELATION_TYPE_DATE_YEAR))
+			{	
+				//now locate and fill corresponding time condition node;	
+				for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
+				{
+					if(GIAEntityNodeArrayFilled[i])
+					{
+						GIAEntityNode * currentEntity = GIAEntityNodeArray[i];
+						if(currentEntity->hasAssociatedTime)
+						{			
+							GIAEntityNode * timeConditionEntity = currentEntity;
+
+							if(timeConditionEntity->entityName == currentRelationInList->relationFunction)
+							{	
+								if(timeConditionEntity->firstTimeConditionNodeInReverseList.back() != NULL)
+								{
+									GIATimeConditionNode * tempTimeCondition = timeConditionEntity->firstTimeConditionNodeInReverseList.back();
+
+									if(currentRelationInList->relationType == RELATION_TYPE_DATE_DAY)
+									{
+										//http://www.cplusplus.com/reference/clibrary/cstdlib/atoi/
+											//The string can contain additional characters after those that form the integral number, which are ignored and have no effect on the behavior of this function.	[eg "3rd" -> 3]
+										string dayOfMonthString = currentRelationInList->relationArgument;
+										char * dayOfMonthStringcharstar = const_cast<char*>(dayOfMonthString.c_str());
+										int dayOfMonthInt = atoi(dayOfMonthStringcharstar);
+										tempTimeCondition->dayOfMonth = dayOfMonthInt;
+										cout << "adding day of month: " << dayOfMonthInt << endl;
+										
+										//update/regenerate timeConditionName
+										tempTimeCondition->sharedCondition->conditionName = generateDateTimeConditionName(tempTimeCondition->dayOfMonth, tempTimeCondition->month, tempTimeCondition->year);
+									}
+									if(currentRelationInList->relationType == RELATION_TYPE_DATE_YEAR)
+									{
+										string yearString = currentRelationInList->relationArgument;
+										char * yearStringcharstar = const_cast<char*>(yearString.c_str());
+										int yearInt = atoi(yearStringcharstar);
+										tempTimeCondition->year = yearInt;
+										cout << "adding year: " << yearInt << endl;
+										
+										//update/regenerate timeConditionName
+										tempTimeCondition->sharedCondition->conditionName = generateDateTimeConditionName(tempTimeCondition->dayOfMonth, tempTimeCondition->month, tempTimeCondition->year);
+									}
+								}
+							}
+						}
+					}
+				}										
+			}
+			currentRelationInList = currentRelationInList->next;		
+		}
+		
+		//4c pass; extract measures, quantities	
+		
 		/*
 		//restore critical variables; temporary: used for GIA translator reference paser only - cleared every time a new sentence is parsed
 		for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)

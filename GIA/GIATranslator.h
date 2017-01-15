@@ -37,10 +37,10 @@ using namespace std;
 #define GIA_ASSIGN_UNIQUE_ACTION_NODE_TO_EACH_ACTION_INSTANCE_OF_A_GIVEN_ACTION_NAME (1)
 #define GIA_ASSIGN_INSTANCE_PROPERTY_TO_ALL_DEFINITIVE_NOUNS (1)		//NB must make this 0 for large.xml to work (NB this bug was issue introduced after GIA Archive - 1a5d - 04May11a, eg GIA Archive - 1a5e - 04May11a)
 #define GIA_ASSIGN_INSTANCE_PROPERTY_TO_ALL_NOUNS_WITH_DETERMINATES (1)
-#define GIA_DO_NOT_ASSIGN_INSTANCE_PROPERTY_TO_PERSONS (1)
+#define GIA_DO_NOT_ASSIGN_INSTANCE_PROPERTY_TO_PERSONS_OR_DATES (1)
 #define GIA_ALWAYS_ASSIGN_NEW_INSTANCE_PROPERTY_TO_DEFINITIVE_NOUNS (0)
 #define GIA_PERFORM_RELATION_FUNCTION_ARGUMENT_SWITCHING_WHERE_NECESSARY (1)
-#define GIA_PERFORM_RELATION_FUNCTION_ARGUMENT_SWITCHING_ONLY_WHEN_PAIRED_WITH_SUBJECT (1)
+#define GIA_PERFORM_RELATION_FUNCTION_ARGUMENT_SWITCHING_ONLY_WHEN_REQUIRED (1)
 
 #define SUBJECT_INDEX (0)
 #define OBJECT_INDEX (1)
@@ -50,35 +50,62 @@ using namespace std;
 		
 #define SECONDS_IN_YEAR (365*24*60*60)
 
-	//NB all of these cases/types need to be replaced with more complex grammar requirements (eg "on" can also mean "rides his bike on the road" [location], not just "rides his bike on tuesday" [time])
 
-//properties (attached to either another property or a straight entity)						
+
+//Relations;
+//?? NB all of these cases/types need to be replaced with more complex grammar requirements (eg "on" can also mean "rides his bike on the road" [location], not just "rides his bike on tuesday" [time])
+
+//Properties:	[NB properties are attached to either another property or a straight entity);]
+//properties (derived from obj/subj relationships);					
 #define RELATION_FUNCTION_COMPOSITION_1 "contains"	//eg x contains y
 #define RELATION_FUNCTION_COMPOSITION_2 "comprises"
 #define RELATION_FUNCTION_COMPOSITION_3 "has"						
+//properties (descriptive relationships)
 #define RELATION_TYPE_ADJECTIVE_1 "_amod"		//eg x is happy
 #define RELATION_TYPE_ADJECTIVE_2 "_predadj"						
 #define RELATION_TYPE_ADJECTIVE_3 "_advmod"
+//properties (possessive relationships)
 #define RELATION_TYPE_POSSESSIVE "_poss"	//eg his bike	[bike him]		/its bike
 #define RELATION_TYPE_PRENOMIAL_MODIFIER "_nn"
 
+//entities (concepts);					
+#define RELATION_FUNCTION_DEFINITION_1 "be"	//eg x is y
 #define RELATION_TYPE_APPOSITIVE_OF_NOUN "_appo"
 
-//DOING NOW: references: yet to integrate - see http://wiki.opencog.org/w/Ideas#Improved_reference_resolution for integration (also check for the existence of the "person" tag in the feature "tense" data block)
-#define RELATION_TYPE_QUANTITY "_quantity"	//eg his bike	[bike him]		/its bike
+//actions (obj/subj relationships)
+#define RELATION_TYPE_OBJECT "_obj"			//eg eats y	[? be y]
+#define RELATION_TYPE_OBJECT_TO "to"			//eg to y	//NB "to" is currently interpreted as an object of an action
+#define RELATION_TYPE_OBJECT_TO_BE "_to-be"		//eg grows tired / The rose smelled sweet / _to-be(smell, sweet) - CHECK THIS
+#define RELATION_TYPE_OBJECT_TO_DO "_to-do"		//eg Linas likes to row / _to-do(like, row) - CHECK THIS
+#define RELATION_TYPE_OBJECT_THAT "_that"		//there is a place that we go
+#define RELATION_TYPE_INDIRECT_OBJECT "_iobj"
+#define RELATION_TYPE_SUBJECT "_subj"	//eg x eats 	[? be x]
+#define RELATION_TYPE_SUBJECT_EXPLETIVE "_expl"		//eg goes there	//NB "there" is currently interpreted as a subject of an action
 
-/*
-#define REFERENCE_TYPE_POSSESSIVE_THEIR_OR_THEM "them"	
-#define REFERENCE_TYPE_POSSESSIVE_HIS "his"
-#define REFERENCE_TYPE_POSSESSIVE_HER "her"
-#define REFERENCE_TYPE_POSSESSIVE_OR_QUANTITY_ITS "its"
-#define REFERENCE_TYPE_PERSON_PLURAL_THEY "they"	
-#define REFERENCE_TYPE_PERSON_PLURAL_THEY "he"
-#define REFERENCE_TYPE_PERSON_PLURAL_THEY "she"
-#define REFERENCE_TYPE_PERSON_PLURAL_THEY "it"
-*/
+//dates, measures, quantities
+#define RELATION_TYPE_DATE_DAY "_date_day" 
+#define RELATION_TYPE_DATE_YEAR "_date_year"
+#define RELATION_TYPE_MEASURE_DISTANCE "_measure_distance" 
+#define RELATION_TYPE_MEASURE_PER "_measure_per"
+#define RELATION_TYPE_MEASURE_SIZE "_measure_size" 
+#define RELATION_TYPE_MEASURE_TIME "_measure_time"
+#define RELATION_TYPE_QUANTITY "_quantity"
+#define RELATION_TYPE_QUANTITY_MOD "_quantity_mult"
+#define RELATION_TYPE_QUANTITY_MULT "_measure_time"
+	//? DOING NOW: references: yet to integrate - see http://wiki.opencog.org/w/Ideas#Improved_reference_resolution for integration (also check for the existence of the "person" tag in the feature "tense" data block)
+	//? #define RELATION_TYPE_QUANTITY "_quantity"	//eg his bike	[bike him]		/its bike
 
+//predicates????
+//action/property conditions
+#define RELATION_TYPE_ON "on"		//eg rides on tuesday		[ride tuesday]		//this forms the action condition; "when"
+#define RELATION_TYPE_AT "at"		//eg rides at the palace	[ride palace]	//this forms the action condition; "where"
+#define RELATION_TYPE_WHEN "when"	//eg joe fires his bow when john drives fast.	[fire drive]	//this forms the action condition; "when" [not time, but in association with another action]
+#define RELATION_TYPE_BECAUSE "because"
+//?#define RELATION_TYPE_OF "of"		//eg [she grew tired] of it	{same as with it}
 
+//action/property reasons [???]
+#define RELATION_TYPE_SUCH_THAT "such"
+#define RELATION_TYPE_SO "so"
 
 
 #define RELATION_TYPE_OBJECT_NUMBER_OF_TYPES (5)
@@ -115,34 +142,17 @@ using namespace std;
 
 #define REFERENCE_TYPE_UNDEFINED 0
 
-//straight entities (concepts)					
-#define RELATION_FUNCTION_DEFINITION_1 "be"	//eg x is y
+/* is this required?
+#define REFERENCE_TYPE_POSSESSIVE_THEIR_OR_THEM "them"	
+#define REFERENCE_TYPE_POSSESSIVE_HIS "his"
+#define REFERENCE_TYPE_POSSESSIVE_HER "her"
+#define REFERENCE_TYPE_POSSESSIVE_OR_QUANTITY_ITS "its"
+#define REFERENCE_TYPE_PERSON_PLURAL_THEY "they"	
+#define REFERENCE_TYPE_PERSON_PLURAL_THEY "he"
+#define REFERENCE_TYPE_PERSON_PLURAL_THEY "she"
+#define REFERENCE_TYPE_PERSON_PLURAL_THEY "it"
+*/
 
-
-#define RELATION_TYPE_OBJECT "_obj"			//eg eats y	[? be y]
-#define RELATION_TYPE_OBJECT_TO "to"			//eg to y	//NB "to" is currently interpreted as an object of an action
-//not testyet;
-#define RELATION_TYPE_OBJECT_TO_BE "_to-be"		//eg grows tired / The rose smelled sweet / _to-be(smell, sweet) - CHECK THIS
-#define RELATION_TYPE_OBJECT_TO_DO "_to-do"		//eg Linas likes to row / _to-do(like, row) - CHECK THIS
-#define RELATION_TYPE_OBJECT_THAT "_that"	//there is a place that we go
-
-#define RELATION_TYPE_INDIRECT_OBJECT "_iobj"
-
-#define RELATION_TYPE_SUBJECT "_subj"	//eg x eats 	[? be x]
-#define RELATION_TYPE_SUBJECT_EXPLETIVE "_expl"		//eg goes there	//NB "there" is currently interpreted as a subject of an action
-
-
-	//predicates????
-//action/property conditions
-#define RELATION_TYPE_ON "on"		//eg rides on tuesday		[ride tuesday]		//this forms the action condition; "when"
-#define RELATION_TYPE_AT "at"		//eg rides at the palace	[ride palace]	//this forms the action condition; "where"
-#define RELATION_TYPE_WHEN "when"	//eg joe fires his bow when john drives fast.	[fire drive]	//this forms the action condition; "when" [not time, but in association with another action]
-#define RELATION_TYPE_BECAUSE "because"
-//?#define RELATION_TYPE_OF "of"		//eg [she grew tired] of it	{same as with it}
-
-//action/property reasons [???]
-#define RELATION_TYPE_SUCH_THAT "such"
-#define RELATION_TYPE_SO "so"
 
 
 
