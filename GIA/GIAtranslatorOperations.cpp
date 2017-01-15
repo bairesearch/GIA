@@ -2063,7 +2063,7 @@ bool checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContext(GIAentityNo
 			}
 		}
 		NLCsentence* indefiniteEntityNLCsentenceInList = currentNLCsentenceInList;
-
+		
 		if(foundIndefiniteEntitySentence)
 		{
 			bool foundDefiniteEntitySentence = false;
@@ -2087,9 +2087,10 @@ bool checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContext(GIAentityNo
 			NLCsentence* definiteEntityNLCsentenceInList = currentNLCsentenceInList;
 
 			#ifdef GIA_DEBUG
-			//cout << "definiteEntity = " << definiteEntity->entityName << endl;
-			//cout << "indefiniteEntity = " << indefiniteEntity->entityName << endl;
+			cout << "definiteEntity = " << definiteEntity->entityName << endl;
+			cout << "indefiniteEntity = " << indefiniteEntity->entityName << endl;
 			#endif
+			
 			if(foundDefiniteEntitySentence)
 			{
 				if(minimumIndentationBetweenIndefiniteAndIndefiniteEntitySentence < indefiniteEntityNLCsentenceInList->indentation)
