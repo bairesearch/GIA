@@ -941,18 +941,18 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 		{
 			for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
 			{
-				//if(GIAEntityNodeArrayFilled[i])
-				//{ //condition not required; assumed true with GRAMMATICAL_DEFINITE
+				if(GIAEntityNodeArrayFilled[i])
+				{ //condition required as GIAEntityNodeArrayFilled is not always true. With GRAMMATICAL_DEFINITE, eg "Mr" of "Mr Smith" will still be interpreted as a definite
 					if(!GIA_DO_NOT_ASSIGN_INSTANCE_PROPERTY_TO_PERSONS_OR_DATES || (!GIAEntityNodeGrammaticalIsPersonArray[i] & !GIAEntityNodeIsDate[i]))
 					{
 						if(GIAEntityNodeGrammaticalIsDefiniteArray[i] == GRAMMATICAL_DEFINITE)
 						{
-							//cout << "asd" << endl;
+							//cout << "as0" << endl;
 							//cout << "GIAEntityNodeArray[i]->entityName = " << GIAEntityNodeArray[i]->entityName << endl;			
 							addPropertyToPropertyDefinition(GIAEntityNodeArray[i]);			
 						}
 					}
-				//}
+				}
 			}
 		}
 		//cout << "0b pass; define properties (nouns with determinates); eg a house, the house, the houses [all nouns with singular/plural are assumed to have determintes, and are therefore properties]" << endl;
@@ -974,6 +974,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 						}
 						if(passed)
 						{
+							//cout << "as1" << endl;
 							addPropertyToPropertyDefinition(GIAEntityNodeArray[i]);
 						}
 					}
@@ -1003,6 +1004,8 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 				GIAEntityNode * thingEntity = GIAEntityNodeArray[relationFunctionIndex];
 				GIAEntityNode * propertyEntity = GIAEntityNodeArray[relationArgumentIndex];
 				
+				//cout << "as2" << endl;
+				
 				addPropertyToPropertyDefinition(thingEntity);					
 			}			
 			currentRelationInList = currentRelationInList->next;
@@ -1026,6 +1029,8 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 				int relationFunctionIndex = currentRelationInList->relationFunctionIndex;
 				GIAEntityNode * propertyEntity = GIAEntityNodeArray[relationFunctionIndex];
 				
+				//cout << "as3" << endl;
+				
 				addPropertyToPropertyDefinition(propertyEntity);					
 			}			
 			currentRelationInList = currentRelationInList->next;
@@ -1042,6 +1047,8 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 				int relationArgumentIndex = currentRelationInList->relationArgumentIndex;
 				GIAEntityNode * propertyEntity = GIAEntityNodeArray[relationArgumentIndex];
 				
+				//cout << "as4" << endl;
+				
 				addPropertyToPropertyDefinition(propertyEntity);					
 			}			
 			currentRelationInList = currentRelationInList->next;
@@ -1055,6 +1062,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 				{
 					if(GIAEntityNodeGrammaticalIsPronounArray[i] == GRAMMATICAL_PRONOUN)
 					{
+						//cout << "as5" << endl;
 						//cout << "asd" << endl;
 						//cout << "GIAEntityNodeArray[i]->entityName = " << GIAEntityNodeArray[i]->entityName << endl;			
 						addPropertyToPropertyDefinition(GIAEntityNodeArray[i]);			
@@ -1089,8 +1097,8 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 
 				GIAEntityNode * propertyEntity = GIAEntityNodeArray[relationFunctionIndex];
 				GIAEntityNode * ownerEntity = GIAEntityNodeArray[relationArgumentIndex];
-				cout << "propertyName = " << propertyEntity->entityName << endl;
-				cout << "ownerName = " << ownerEntity->entityName << endl;
+				//cout << "propertyName = " << propertyEntity->entityName << endl;
+				//cout << "ownerName = " << ownerEntity->entityName << endl;
 													
 				addOrConnectPropertyToEntity(ownerEntity, propertyEntity);
 			}			
