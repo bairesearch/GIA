@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h13a 23-January-2015
+ * Project Version: 2h14a 25-January-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -200,6 +200,15 @@ GIAentityNode * addOrConnectPropertyToEntityAddOnlyIfOwnerIsProperty(GIAentityNo
 //this has been created based upon addOrConnectPropertyToEntity
 GIAentityNode * connectPropertyToEntity(GIAentityNode * thingEntity, GIAentityNode * propertyEntity, bool sameReferenceSet)
 {
+	#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
+	#ifdef GIA_TRANSLATOR_DO_NOT_CREATE_SUBSTANCE_CONCEPT_PROPERTIES_FOR_NON_SUBSTANCE_CONCEPT_PARENTS
+	if(!(thingEntity->isSubstanceConcept))
+	{
+		propertyEntity->isSubstanceConcept = false;
+	}		
+	#endif
+	#endif
+
 	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
 	if(!(propertyEntity->disabled))
 	{
@@ -224,6 +233,15 @@ GIAentityNode * connectPropertyToEntity(GIAentityNode * thingEntity, GIAentityNo
 //changed some instances of addOrConnectPropertyToEntity to addPropertyToEntity
 GIAentityNode * addOrConnectPropertyToEntity(GIAentityNode * thingEntity, GIAentityNode * propertyEntity, bool sameReferenceSet)
 {
+	#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
+	#ifdef GIA_TRANSLATOR_DO_NOT_CREATE_SUBSTANCE_CONCEPT_PROPERTIES_FOR_NON_SUBSTANCE_CONCEPT_PARENTS
+	if(!(thingEntity->isSubstanceConcept))
+	{
+		propertyEntity->isSubstanceConcept = false;
+	}		
+	#endif
+	#endif
+	
 	GIAentityNode * newOrExistingSubstance = propertyEntity;
 
 	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
@@ -562,6 +580,18 @@ void addDefinitionToEntityMarkConnectionAsAlias(GIAentityNode * thingEntity, GIA
 	//replace action if already existant
 GIAentityNode * addOrConnectActionToEntity(GIAentityNode * subjectEntity, GIAentityNode * objectEntity, GIAentityNode * actionEntity, bool sameReferenceSetSubject, bool sameReferenceSetObject)
 {
+	#ifndef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
+	#ifdef GIA_TRANSLATOR_DO_NOT_CREATE_SUBSTANCE_CONCEPT_PROPERTIES_FOR_NON_SUBSTANCE_CONCEPT_PARENTS
+	if(actionEntity->entityName == RELATION_ENTITY_SPECIAL_POSSESSIVE)
+	{
+		if(!(subjectEntity->isSubstanceConcept))
+		{
+			objectEntity->isSubstanceConcept = false;
+		}		
+	}
+	#endif
+	#endif
+	
 	GIAentityNode * newOrExistingAction = actionEntity;
 	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
 	if(!(subjectEntity->disabled))
