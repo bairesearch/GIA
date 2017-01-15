@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineGrammar.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2m7b 11-September-2016
+ * Project Version: 2n1a 12-September-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -152,7 +152,7 @@ void locateAndAddAllFeatureTempEntities(GIAsentence* currentSentenceInList, bool
 				#endif
 
 				#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
-				//this is required for fillGrammaticalArraysStanford findSubjObjRelationMatchingAuxiliaryAndSetNotSameReferenceSet()	[nb these values are applied to concept entities only]
+				//this is required for fillGrammaticalArraysStanford findSubjObjRelationMatchingAuxiliaryAndSetNotSameReferenceSet()	[nb these values are applied to networkIndex entities only]
 				GIAfeatureTempEntityNodeArray[relationIndex[i]]->entityIndexTemp = relationIndex[i];
 				GIAfeatureTempEntityNodeArray[relationIndex[i]]->sentenceIndexTemp = currentSentenceInList->sentenceIndex;
 				#endif
@@ -189,9 +189,9 @@ void locateAndAddAllFeatureTempEntities(GIAsentence* currentSentenceInList, bool
 					cout << "prepositionEntityIndex = " << prepositionEntityIndex << endl;
 					*/
 					/*
-					//NB if concept type entity name has already been defined (GIAentityNodeArrayFilled[functionEntityIndex3]), then findOrAddEntityNodeByNameSimpleWrapperCondition will use it instead
+					//NB if networkIndex type entity name has already been defined (GIAentityNodeArrayFilled[functionEntityIndex3]), then findOrAddEntityNodeByNameSimpleWrapperCondition will use it instead
 					bool entityAlreadyExistant = false;
-					GIAentityNode* entity = findOrAddConceptEntityNodeByNameSimpleWrapper(&prepositionName, &entityAlreadyExistant, entityNodesActiveListConcepts);
+					GIAentityNode* entity = findOrAddNetworkIndexEntityNodeByNameSimpleWrapper(&prepositionName, &entityAlreadyExistant, entityNodesActiveListNetworkIndexs);
 					*/
 					GIAentityNode* featureTempEntity = new GIAentityNode();
 					featureTempEntity->entityName = prepositionName;
@@ -236,7 +236,7 @@ void locateAndAddAllFeatureTempEntities(GIAsentence* currentSentenceInList, bool
 }
 
 
-void locateAndAddAllConceptEntities(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts, vector<GIAentityNode*>* sentenceConceptEntityNodesList, int NLPdependencyRelationsType, GIAentityNode* GIAfeatureTempEntityNodeArray[])
+void locateAndAddAllNetworkIndexEntities(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexs, vector<GIAentityNode*>* sentenceNetworkIndexEntityNodesList, int NLPdependencyRelationsType, GIAentityNode* GIAfeatureTempEntityNodeArray[])
 {
 	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
 	{
@@ -249,13 +249,13 @@ void locateAndAddAllConceptEntities(GIAsentence* currentSentenceInList, bool GIA
 			#endif
 
 			bool entityAlreadyExistant = false;
-			GIAentityNode* entity = findOrAddConceptEntityNodeByNameSimpleWrapper(&(featureTempEntityNode->entityName), &entityAlreadyExistant, entityNodesActiveListConcepts, !(featureTempEntityNode->disabled));
+			GIAentityNode* entity = findOrAddNetworkIndexEntityNodeByNameSimpleWrapper(&(featureTempEntityNode->entityName), &entityAlreadyExistant, entityNodesActiveListNetworkIndexs, !(featureTempEntityNode->disabled));
 			#ifdef GIA_DEBUG
 			//cout << "entity->disabled = " << entity->disabled << endl;
 			#endif
 			GIAentityNodeArray[w] = entity;
 			entity->hasAssociatedInstanceTemp = false;
-			sentenceConceptEntityNodesList->push_back(entity);
+			sentenceNetworkIndexEntityNodesList->push_back(entity);
 			#ifdef GIA_TRANSLATOR_DEBUG
 			//cout << "entity->entityName = " << entity->entityName << endl;
 			#endif
@@ -1077,15 +1077,15 @@ void applyPOSrelatedGrammaticalInfoToEntity(GIAentityNode* entity, GIAfeature* c
 		entity->grammaticalTenseModifierArrayTemp[grammaticalTenseModifierIndex] = currentFeatureInList->grammaticalTenseModifierArray[grammaticalTenseModifierIndex];
 	}
 	entity->grammaticalTenseTemp = currentFeatureInList->grammaticalTense;
-	#ifdef GIA_SUPPORT_SPECIFIC_SUBSTANCE_CONCEPTS
-	if(!(entity->isSubstanceConcept))
+	#ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS
+	if(!(entity->isConcept))
 	{
 	#endif
 		entity->grammaticalNumber = currentFeatureInList->grammaticalNumber;
 		#ifdef GIA_DEBUG
 		//cout << "entity->grammaticalNumber = " << entity->grammaticalNumber << endl;
 		#endif
-	#ifdef GIA_SUPPORT_SPECIFIC_SUBSTANCE_CONCEPTS
+	#ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS
 	}
 	#endif
 

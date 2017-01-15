@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorRules.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2m7b 11-September-2016
+ * Project Version: 2n1a 12-September-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -39,7 +39,7 @@
 
 #ifdef GIA_TRANSLATOR_XML_INTERPRETATION
 
-bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts, GIAfeature* featureArrayTemp[], int NLPdependencyRelationsType, int NLPfeatureParser, bool linkPreestablishedReferencesGIA)
+bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexs, GIAfeature* featureArrayTemp[], int NLPdependencyRelationsType, int NLPfeatureParser, bool linkPreestablishedReferencesGIA)
 {
 	//int tempindex = 1;
 
@@ -145,11 +145,11 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, GIAsentenc
 											{
 												if(GIAentityNodeArrayFilled[w])
 												{
-													if(!(GIAentityNodeArray[w]->isConcept))
+													if(!(GIAentityNodeArray[w]->isNetworkIndex))
 													{
 														if(!(GIAentityNodeArray[w]->disabled))
 														{
-															cout << GIAentityNodeArray[w]->entityName << " !concept && !disabled" << endl;
+															cout << GIAentityNodeArray[w]->entityName << " !networkIndex && !disabled" << endl;
 														}
 													}
 												}
@@ -174,9 +174,9 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, GIAsentenc
 											if(currentSentenceInList->sentenceIndex == 20)
 											{
 												cout << "\t applyGIATranslatorGenericXMLparam: " << functionName << "{}:" << endl;
-												for(unordered_map<string, GIAentityNode*>::iterator conceptEntityNodesListIter2 = entityNodesActiveListConcepts->begin(); conceptEntityNodesListIter2 != entityNodesActiveListConcepts->end(); conceptEntityNodesListIter2++)
+												for(unordered_map<string, GIAentityNode*>::iterator networkIndexEntityNodesListIter2 = entityNodesActiveListNetworkIndexs->begin(); networkIndexEntityNodesListIter2 != entityNodesActiveListNetworkIndexs->end(); networkIndexEntityNodesListIter2++)
 												{
-													GIAentityNode* entityNode = conceptEntityNodesListIter2->second;
+													GIAentityNode* entityNode = networkIndexEntityNodesListIter2->second;
 													cout << "entityNode->disabled = " << entityNode->entityName << ", " << int(entityNode->disabled) << endl;
 												}
 											}
@@ -226,7 +226,7 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, GIAsentenc
 															//cout << "relationGoverner->grammaticalNumber = " << relationGoverner->grammaticalNumber << endl;
 															//cout << "relationGoverner->grammaticalDefiniteTemp = " << relationGoverner->grammaticalDefiniteTemp << endl;
 															//cout << "relationGoverner->grammaticalIndefinitePluralTemp = " << relationGoverner->grammaticalIndefinitePluralTemp << endl;
-															//cout << "relationGoverner->isSubstanceConcept = " << relationGoverner->isSubstanceConcept << endl;
+															//cout << "relationGoverner->isConcept = " << relationGoverner->isConcept << endl;
 
 															//cout << "relationDependent->grammaticalWordTypeTemp = " << relationDependent->grammaticalWordTypeTemp << endl;
 															//cout << "relationDependent->wasReference = " << relationDependent->wasReference << endl;
@@ -234,32 +234,32 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, GIAsentenc
 															//cout << "relationDependent->grammaticalNumber = " << relationDependent->grammaticalNumber << endl;
 															//cout << "relationDependent->grammaticalDefiniteTemp = " << relationDependent->grammaticalDefiniteTemp << endl;
 															//cout << "relationDependent->grammaticalIndefinitePluralTemp = " << relationDependent->grammaticalIndefinitePluralTemp << endl;
-															//cout << "relationDependent->isSubstanceConcept = " << relationDependent->isSubstanceConcept << endl;
+															//cout << "relationDependent->isConcept = " << relationDependent->isConcept << endl;
 
 															//cout << "relationGoverner->grammaticalNumber = " << relationGoverner->grammaticalNumber << endl;
 															//cout << "relationGoverner->grammaticalDefiniteTemp = " << relationGoverner->grammaticalDefiniteTemp << endl;
 															//cout << "relationGoverner->grammaticalIndefinitePluralTemp = " << relationGoverner->grammaticalIndefinitePluralTemp << endl;
 															//cout << "relationGoverner->grammaticalProperNounTemp = " << relationGoverner->grammaticalProperNounTemp << endl;
-															//cout << "relationGoverner->mustSetIsSubstanceConceptBasedOnApposRelation = " << relationGoverner->mustSetIsSubstanceConceptBasedOnApposRelation << endl;
+															//cout << "relationGoverner->mustSetIsConceptBasedOnApposRelation = " << relationGoverner->mustSetIsConceptBasedOnApposRelation << endl;
 															//cout << "alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp = " << relationGoverner->alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp << endl;
 
 															//cout << "relationDependent->grammaticalNumber = " << relationDependent->grammaticalNumber << endl;
 															//cout << "relationDependent->grammaticalDefiniteTemp = " << relationDependent->grammaticalDefiniteTemp << endl;
 															//cout << "relationDependent->grammaticalIndefinitePluralTemp = " << relationDependent->grammaticalIndefinitePluralTemp << endl;
 															//cout << "relationDependent->grammaticalProperNounTemp = " << relationDependent->grammaticalProperNounTemp << endl;
-															//cout << "relationDependent->mustSetIsSubstanceConceptBasedOnApposRelation = " << relationDependent->mustSetIsSubstanceConceptBasedOnApposRelation << endl;
+															//cout << "relationDependent->mustSetIsConceptBasedOnApposRelation = " << relationDependent->mustSetIsConceptBasedOnApposRelation << endl;
 															//cout << "alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp = " << relationDependent->alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp << endl;
 
 															//cout << "relationGoverner->isSubstance = " << relationGoverner->isSubstance << endl;
 															//cout << "relationGoverner->isNameQuery = " << relationGoverner->isNameQuery << endl;
-															//cout << "relationGoverner->isSubstanceConcept = " << relationGoverner->isSubstanceConcept << endl;
+															//cout << "relationGoverner->isConcept = " << relationGoverner->isConcept << endl;
 															//cout << "relationGoverner->hasAssociatedTime = " << relationGoverner->hasAssociatedTime << endl;
 															//cout << "relationGoverner->grammaticalProperNounTemp = " << relationGoverner->grammaticalProperNounTemp << endl;
 															//cout << "relationGoverner->isNameQuery = " << relationGoverner->isNameQuery << endl;
 
 															//cout << "relationDependent->isSubstance = " << relationDependent->isSubstance << endl;
 															//cout << "relationDependent->isNameQuery = " << relationDependent->isNameQuery << endl;
-															//cout << "relationDependent->isSubstanceConcept = " << relationDependent->isSubstanceConcept << endl;
+															//cout << "relationDependent->isConcept = " << relationDependent->isConcept << endl;
 															//cout << "relationDependent->hasAssociatedTime = " << relationDependent->hasAssociatedTime << endl;
 															//cout << "relationDependent->grammaticalProperNounTemp = " << relationDependent->grammaticalProperNounTemp << endl;
 															//cout << "relationDependent->isNameQuery = " << relationDependent->isNameQuery << endl;
@@ -274,7 +274,7 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, GIAsentenc
 											#endif
 
 											//load options and execute genericDependecyRelationInterpretation/genericEntityInterpretation
-											if(!applyGIATranslatorGenericXMLparam(currentParamTag, depRelOrEntity, executeOrReassign, currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts, featureArrayTemp, NLPdependencyRelationsType, NLPfeatureParser, linkPreestablishedReferencesGIA, functionName))
+											if(!applyGIATranslatorGenericXMLparam(currentParamTag, depRelOrEntity, executeOrReassign, currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListNetworkIndexs, featureArrayTemp, NLPdependencyRelationsType, NLPfeatureParser, linkPreestablishedReferencesGIA, functionName))
 											{
 											}
 											else
@@ -286,7 +286,7 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, GIAsentenc
 
 											#ifdef GIA_DEBUG
 											/*
-											if(functionName == "defineSubstanceConcepts")
+											if(functionName == "defineConcepts")
 											{
 												cout << "\t applyGIATranslatorGenericXMLparam: " << functionName << "{}:" << endl;
 												for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
@@ -302,7 +302,7 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, GIAsentenc
 															cout << "GIAentityNodeArray[w]->grammaticalDefiniteTemp" << GIAentityNodeArray[w]->grammaticalDefiniteTemp << endl;
 															cout << "GIAentityNodeArray[w]->grammaticalIndefinitePluralTemp" << GIAentityNodeArray[w]->grammaticalIndefinitePluralTemp << endl;
 															cout << "GIAentityNodeArray[w]->grammaticalProperNounTemp" << GIAentityNodeArray[w]->grammaticalProperNounTemp << endl;
-															cout << "GIAentityNodeArray[w]->isSubstanceConcept" << GIAentityNodeArray[w]->isSubstanceConcept << endl;
+															cout << "GIAentityNodeArray[w]->isConcept" << GIAentityNodeArray[w]->isConcept << endl;
 														}
 													}
 												}
@@ -347,7 +347,7 @@ bool applyGIATranslatorGenericXMLfunctions(string translatorFileName, GIAsentenc
 	return result;
 }
 
-bool applyGIATranslatorGenericXMLparam(XMLparserTag* currentParamTag, bool depRelOrEntity, bool executeOrReassign, GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts, GIAfeature* featureArrayTemp[], int NLPdependencyRelationsType, int NLPfeatureParser, bool linkPreestablishedReferencesGIA, string functionName)
+bool applyGIATranslatorGenericXMLparam(XMLparserTag* currentParamTag, bool depRelOrEntity, bool executeOrReassign, GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexs, GIAfeature* featureArrayTemp[], int NLPdependencyRelationsType, int NLPfeatureParser, bool linkPreestablishedReferencesGIA, string functionName)
 {
 	bool result = false;
 	if(currentParamTag->firstLowerLevelTag != NULL)
@@ -358,7 +358,7 @@ bool applyGIATranslatorGenericXMLparam(XMLparserTag* currentParamTag, bool depRe
 
 		GIAgenericDepRelInterpretationParameters paramDepRel(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, executeOrReassign);
 		paramDepRel.functionName = functionName;
-		paramDepRel.entityNodesActiveListConcepts = entityNodesActiveListConcepts;
+		paramDepRel.entityNodesActiveListNetworkIndexs = entityNodesActiveListNetworkIndexs;
 		paramDepRel.NLPdependencyRelationsType = NLPdependencyRelationsType;
 		paramDepRel.executeOrReassign = executeOrReassign;
 		GIAgenericEntityInterpretationParameters paramEntity(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, executeOrReassign);
@@ -824,7 +824,7 @@ bool genericDepRelInterpretationApplyOption(GIAgenericDepRelInterpretationParame
 	#ifdef GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES
 	genericEntityInterpretationApplyOptionint(&(paramDepRel->redistributeSpecialCaseRelationEntityReassignmentConcatonateType[REL][REL_ENT]), xmlAttribute, "redistributeSpecialCaseRelationEntityReassignmentConcatonateType", &foundMatch, false);
 	#endif
-	genericEntityInterpretationApplyOptionbool(&(paramDepRel->useRedistributeSpecialCaseDisableInstanceAndConcept[REL][REL_ENT]), xmlAttribute, "useRedistributeSpecialCaseDisableInstanceAndConcept", &foundMatch);
+	genericEntityInterpretationApplyOptionbool(&(paramDepRel->useRedistributeSpecialCaseDisableInstanceAndNetworkIndex[REL][REL_ENT]), xmlAttribute, "useRedistributeSpecialCaseDisableInstanceAndNetworkIndex", &foundMatch);
 	genericEntityInterpretationApplyOptionbool(&(paramDepRel->useSpecialCaseCharacteristicsRelationEntityIndexReassignment[REL][REL_ENT]), xmlAttribute, "useSpecialCaseCharacteristicsRelationEntityIndexReassignment", &foundMatch);
 	genericEntityInterpretationApplyOptionint(&(paramDepRel->specialCaseCharacteristicsRelationEntityIndexReassignmentRelationID[REL][REL_ENT]), xmlAttribute, "specialCaseCharacteristicsRelationEntityIndexReassignmentRelationID", &foundMatch, true);
 	genericEntityInterpretationApplyOptionint(&(paramDepRel->specialCaseCharacteristicsRelationEntityIndexReassignmentRelationEntityID[REL][REL_ENT]), xmlAttribute, "specialCaseCharacteristicsRelationEntityIndexReassignmentRelationEntityID", &foundMatch, true);

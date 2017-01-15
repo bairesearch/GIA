@@ -24,7 +24,7 @@
  * File Name: GIArules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2m7b 11-September-2016
+ * Project Version: 2n1a 12-September-2016
  *
  *******************************************************************************/
 -->
@@ -3400,11 +3400,11 @@
 				<!-- #endif -->
 			</function>
 
-			<!-- #ifdefGIA_CREATE_NON_SPECIFIC_SUBSTANCE_CONCEPTS_FOR_ALL_CONCEPTS -->
+			<!-- #ifdefGIA_CREATE_NON_SPECIFIC_CONCEPTS_FOR_ALL_NETWORK_INDEXS -->
 			<function name="defineSubstancesAllNodes">
 				<paramEntity mode="execute">
 				<option useEntityTest="true" entityTest="_$qVar" entityTestIsNegative="true" />
-				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isConcept" value="true" />
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isNetworkIndex" value="true" />
 				<option functionToExecuteUponFind="1" />
 				</paramEntity>
 			</function>
@@ -3413,16 +3413,16 @@
 			<function name="defineSubstancesBasedOnDeterminatesOfDefinitionEntities">
 
 				<example><!-- Added 09 August 2012
-				The bat is an animal - (definition connection, bat = substance, animal = concept) GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES_CASE_1_GOVERNOR_DEFINITE_DEPENDENT_INDEFINITE [assumes defineSubstancesDefiniteNouns() executed]
+				The bat is an animal - (definition connection, bat = substance, animal = networkIndex) GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES_CASE_1_GOVERNOR_DEFINITE_DEPENDENT_INDEFINITE [assumes defineSubstancesDefiniteNouns() executed]
 					eg2; The red bat is a xenomorph. The blue bat is a non-xenomorph.
 					NO: definite implies animal is an adjective/quality [check NLP]
-				Bats are animals. (definition connection, bat = concept, animal = concept) GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES_CASE_2_GOVERNOR_PLURAL_DEPENDENT_PLURAL
-				A book is an animal (definition connection, bat = concept, animal = concept) GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES_CASE_3_GOVERNOR_INDEFINITE_DEPENDENT_INDEFINITE
-				Bat is an animal. (definition connection, bat = concept or substance [if ] with isName==true, animal = concept) GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES_CASE_4_GOVERNOR_NAME_DEPENDENT_INDEFINITE
-				The bat is Max. (double definition connection, bat = substance, animal = concept or substance [if ] with isName==true) GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES_CASE_5_GOVERNOR_DEFINITE_DEPENDENT_NAME [assumes defineSubstancesDefiniteNouns() executed]
-				Bat is the animal. (double definition connection, bat = concept or substance [if ] with isName==true, animal = substance) GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES_CASE_6_GOVERNOR_NAME_DEPENDENT_DEFINITE
-				That is Jim. (double definition connection, that = substance, Jim = concept or substance [if ]) GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES_CASE_7_GOVERNOR_INDEFINITE_DEPENDENT_NAME
-				Max is Jim. (double definition connection, Max = concept or substance [if ], Jim = concept or substance [if ]) GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES_CASE_8_GOVERNOR_NAME_DEPENDENT_NAME {!--  case added 14 October 2012 --}
+				Bats are animals. (definition connection, bat = networkIndex, animal = networkIndex) GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES_CASE_2_GOVERNOR_PLURAL_DEPENDENT_PLURAL
+				A book is an animal (definition connection, bat = networkIndex, animal = networkIndex) GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES_CASE_3_GOVERNOR_INDEFINITE_DEPENDENT_INDEFINITE
+				Bat is an animal. (definition connection, bat = networkIndex or substance [if ] with isName==true, animal = networkIndex) GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES_CASE_4_GOVERNOR_NAME_DEPENDENT_INDEFINITE
+				The bat is Max. (double definition connection, bat = substance, animal = networkIndex or substance [if ] with isName==true) GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES_CASE_5_GOVERNOR_DEFINITE_DEPENDENT_NAME [assumes defineSubstancesDefiniteNouns() executed]
+				Bat is the animal. (double definition connection, bat = networkIndex or substance [if ] with isName==true, animal = substance) GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES_CASE_6_GOVERNOR_NAME_DEPENDENT_DEFINITE
+				That is Jim. (double definition connection, that = substance, Jim = networkIndex or substance [if ]) GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES_CASE_7_GOVERNOR_INDEFINITE_DEPENDENT_NAME
+				Max is Jim. (double definition connection, Max = networkIndex or substance [if ], Jim = networkIndex or substance [if ]) GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES_CASE_8_GOVERNOR_NAME_DEPENDENT_NAME {!--  case added 14 October 2012 --}
 				--></example>
 				<paramDepRel mode="redistribute">
 				<option numberOfRelations="1" />
@@ -3458,7 +3458,7 @@
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalDefiniteTemp" value="false" REL="1" REL_ENT="1" />
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalIndefinitePluralTemp" value="false" REL="1" REL_ENT="1" />
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalProperNounTemp" value="false" REL="1" REL_ENT="1" />
-				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="mustSetIsSubstanceConceptBasedOnApposRelation" value="true" REL="1" REL_ENT="1" />
+				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="mustSetIsConceptBasedOnApposRelation" value="true" REL="1" REL_ENT="1" />
 				</paramDepRel>
 
 				<paramDepRel mode="redistribute">
@@ -3468,14 +3468,14 @@
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalDefiniteTemp" value="false" REL="1" REL_ENT="2" />
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalIndefinitePluralTemp" value="false" REL="1" REL_ENT="2" />
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalProperNounTemp" value="false" REL="1" REL_ENT="2" />
-				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="mustSetIsSubstanceConceptBasedOnApposRelation" value="true" REL="1" REL_ENT="2" />
+				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="mustSetIsConceptBasedOnApposRelation" value="true" REL="1" REL_ENT="2" />
 				</paramDepRel>
 				
-				<!-- #ifdefGIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_ENSURE_DEPENDENT_IS_NOT_ASSIGNED_SUBSTANCE_CONCEPT -->
+				<!-- #ifdefGIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_ENSURE_DEPENDENT_IS_NOT_ASSIGNED_CONCEPT -->
 				<paramDepRel mode="redistribute">
 				<option numberOfRelations="1" />
 				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_nn" />
-				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="mustNotSetIsSubstanceConceptBasedOnPrenomonalModifierRelation" value="true" REL="1" REL_ENT="2" />
+				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="mustNotSetIsConceptBasedOnPrenomonalModifierRelation" value="true" REL="1" REL_ENT="2" />
 				</paramDepRel>				
 				<!-- #endif -->
 				
@@ -3518,11 +3518,11 @@
 			</function>
 			<!-- #endif -->		
 
-			<!-- #ifdefGIA_SUPPORT_SPECIFIC_SUBSTANCE_CONCEPTS -->
-			<function name="defineSubstanceConcepts">
+			<!-- #ifdefGIA_SUPPORT_SPECIFIC_CONCEPTS -->
+			<function name="defineConcepts">
 				<paramEntity mode="redistribute">
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalWordTypeTemp" value="1" />
-				<!-- #ifdefGIA_ADVANCED_REFERENCING_DO_NOT_REAPPLY_IS_SUBSTANCE_CONCEPT_TO_REFERENCES -->
+				<!-- #ifdefGIA_ADVANCED_REFERENCING_DO_NOT_REAPPLY_IS_CONCEPT_TO_REFERENCES -->
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="wasReference" value="false" />
 				<!-- #endif -->
 				<!-- #ifndefGIA_SUPPORT_SPECIFIC_CONCEPTS_ASSIGN_TO_PRONOUNS -->
@@ -3532,36 +3532,36 @@
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalDefiniteTemp" value="false" />
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalIndefinitePluralTemp" value="false" />
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalProperNounTemp" value="false" />
-				<!-- #ifdefGIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_ENSURE_DEPENDENT_IS_NOT_ASSIGNED_SUBSTANCE_CONCEPT -->
-				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="mustNotSetIsSubstanceConceptBasedOnPrenomonalModifierRelation" value="false" />			
+				<!-- #ifdefGIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_ENSURE_DEPENDENT_IS_NOT_ASSIGNED_CONCEPT -->
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="mustNotSetIsConceptBasedOnPrenomonalModifierRelation" value="false" />			
 				<!-- #endif -->				
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isNumberOf" value="false" />	<!-- added 2i22a -->
-				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="isSubstanceConcept" value="true" />
+				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="isConcept" value="true" />
 				</paramEntity>
 
 				<paramEntity mode="redistribute">
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalWordTypeTemp" value="1" />
-				<!-- #ifdefGIA_ADVANCED_REFERENCING_DO_NOT_REAPPLY_IS_SUBSTANCE_CONCEPT_TO_REFERENCES -->
+				<!-- #ifdefGIA_ADVANCED_REFERENCING_DO_NOT_REAPPLY_IS_CONCEPT_TO_REFERENCES -->
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="wasReference" value="false" />
 				<!-- #endif -->
 				<!-- #ifndefGIA_SUPPORT_SPECIFIC_CONCEPTS_ASSIGN_TO_PRONOUNS -->
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalPronounTemp" value="false" />
 				<!-- #endif -->
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isNumberOf" value="false" />	<!-- added 2i22a -->
-				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="mustSetIsSubstanceConceptBasedOnApposRelation" value="true" />
-				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="isSubstanceConcept" value="true" />
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="mustSetIsConceptBasedOnApposRelation" value="true" />
+				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="isConcept" value="true" />
 				</paramEntity>
 
 				<!-- #ifdefGIA_SUPPORT_SPECIFIC_CONCEPTS_ASSIGN_TO_PRONOUNS -->
 				<!--
 				<paramEntity mode="redistribute">
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalWordTypeTemp" value="1" />
-				{!-- #ifdefGIA_ADVANCED_REFERENCING_DO_NOT_REAPPLY_IS_SUBSTANCE_CONCEPT_TO_REFERENCES --}
+				{!-- #ifdefGIA_ADVANCED_REFERENCING_DO_NOT_REAPPLY_IS_CONCEPT_TO_REFERENCES --}
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="wasReference" value="false" />
 				{!-- #endif --}
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalPronounTemp" value="true" />
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isNumberOf" value="false" />	{!--added 2i22a --}
-				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="isSubstanceConcept" value="true" />
+				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="isConcept" value="true" />
 				</paramEntity>
 				-->
 				<!-- #endif -->
@@ -3570,12 +3570,12 @@
 				<!--
 				<paramEntity mode="redistribute">
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalWordTypeTemp" value="1" />
-				{!-- #ifdefGIA_ADVANCED_REFERENCING_DO_NOT_REAPPLY_IS_SUBSTANCE_CONCEPT_TO_REFERENCES --}
+				{!-- #ifdefGIA_ADVANCED_REFERENCING_DO_NOT_REAPPLY_IS_CONCEPT_TO_REFERENCES --}
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="wasReference" value="false" />
 				{!-- #endif --}
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalProperNounTemp" value="true" />
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isNumberOf" value="false" />	{!--added 2i22a --}
-				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="isSubstanceConcept" value="true" />
+				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="isConcept" value="true" />
 				</paramEntity>
 				-->
 				<!-- #endif -->
@@ -3617,7 +3617,7 @@
 			</function>
 			<!-- #endif -->	
 
-			<!-- #ifndefGIA_CREATE_NON_SPECIFIC_SUBSTANCE_CONCEPTS_FOR_ALL_CONCEPTS -->
+			<!-- #ifndefGIA_CREATE_NON_SPECIFIC_CONCEPTS_FOR_ALL_NETWORK_INDEXS -->
 			<!-- 
 			<function name="defineSubstancesObjectsAndSubjectsWithSubstances">
 				<paramEntity mode="execute">
@@ -3765,8 +3765,8 @@
 				</paramDepRel>
 			</function>
 
-			{!-- #ifdefGIA_SUPPORT_SPECIFIC_ACTION_CONCEPTS --}
-			<function name="defineSubstancesActionConcepts">
+			{!-- #ifdefGIA_SUPPORT_SPECIFIC_ACTION_NETWORK_INDEXS --}
+			<function name="defineSubstancesActionNetworkIndexs">
 				<example>{!--
 				eg 'swim' in 'To swim to the beach requires strength.'
 				--}</example>
@@ -3792,7 +3792,7 @@
 				<paramDepRel mode="execute">
 				<option numberOfRelations="1" />
 				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="_poss" relationArrayTestSize="1" />
-				{!-- #ifdefGIA_CREATE_NON_SPECIFIC_SUBSTANCE_CONCEPTS_FOR_ALL_CONCEPTS --}
+				{!-- #ifdefGIA_CREATE_NON_SPECIFIC_CONCEPTS_FOR_ALL_NETWORK_INDEXS --}
 				<option functionToExecuteUponFind="4" />
 				{!-- #else --}
 				{!-- <option functionToExecuteUponFind="3" /> --}
@@ -3836,7 +3836,7 @@
 				<paramDepRel mode="execute">
 				<option numberOfRelations="1" />
 				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="_poss" relationArrayTestSize="1" />
-				<!-- #ifdefGIA_CREATE_NON_SPECIFIC_SUBSTANCE_CONCEPTS_FOR_ALL_CONCEPTS -->
+				<!-- #ifdefGIA_CREATE_NON_SPECIFIC_CONCEPTS_FOR_ALL_NETWORK_INDEXS -->
 				<option functionToExecuteUponFind="4" />
 				<!-- #else -->
 				<!-- <option functionToExecuteUponFind="3" /> -->
@@ -3876,7 +3876,7 @@
 				
 				<!-- #ifndefGIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_PROPERTIES_OR_DEFINITIONS_DYNAMICALLY_LINK_PRENOMINAL_MODIFIERS_OF_NOUNS -->
 				<!-- XML only function (not hard coded): added 2i7a, disabled 2i8h -->
-				<!-- #ifdefGIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_PROPERTIES_OR_DEFINITIONS_ADAPT_ENTITY_LINKING_FOR_SUBSTANCE_CONCEPTS -->
+				<!-- #ifdefGIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_PROPERTIES_OR_DEFINITIONS_ADAPT_ENTITY_LINKING_FOR_CONCEPTS -->
 				<!--
 				<example>
 				The chess game is good.	_nn(game-3, chess-2)
@@ -3884,7 +3884,7 @@
 				<paramDepRel mode="execute">
 				<option numberOfRelations="1" />
 				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="_nn" relationArrayTestSize="1" />
-				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isSubstanceConcept" value="true" REL="1" REL_ENT="2" />
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isConcept" value="true" REL="1" REL_ENT="2" />
 				<option functionToExecuteUponFind="11" />
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="1" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" />
@@ -3979,9 +3979,9 @@
 				<specialCase type="specialCaseCharacteristicsTestOrVector" variable="isNameQuery" value="true" REL="1" REL_ENT="1" />
 				<specialCase type="specialCaseCharacteristicsTestOr2Vector" variable="isSubstance" value="true" REL="1" REL_ENT="2" />
 				<specialCase type="specialCaseCharacteristicsTestOr2Vector" variable="isNameQuery" value="true" REL="1" REL_ENT="2" />
-				<!-- #ifdefGIA_SUPPORT_SPECIFIC_SUBSTANCE_CONCEPTS -->
-				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isSubstanceConcept" value="false" REL="1" REL_ENT="1" />
-				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isSubstanceConcept" value="false" REL="1" REL_ENT="2" />
+				<!-- #ifdefGIA_SUPPORT_SPECIFIC_CONCEPTS -->
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isConcept" value="false" REL="1" REL_ENT="1" />
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isConcept" value="false" REL="1" REL_ENT="2" />
 				<!-- #endif -->
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="hasAssociatedTime" value="false" REL="1" REL_ENT="2" />
 				<specialCase type="specialCaseCharacteristicsTestOr3Vector" variable="grammaticalProperNounTemp" value="true" REL="1" REL_ENT="1" />
@@ -4009,9 +4009,9 @@
 				<specialCase type="specialCaseCharacteristicsTestOrVector" variable="isNameQuery" value="true" REL="1" REL_ENT="1" />
 				<specialCase type="specialCaseCharacteristicsTestOr2Vector" variable="isSubstance" value="true" REL="1" REL_ENT="2" />
 				<specialCase type="specialCaseCharacteristicsTestOr2Vector" variable="isNameQuery" value="true" REL="1" REL_ENT="2" />
-				<!-- #ifdefGIA_SUPPORT_SPECIFIC_SUBSTANCE_CONCEPTS -->
-				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isSubstanceConcept" value="false" REL="1" REL_ENT="1" />
-				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isSubstanceConcept" value="false" REL="1" REL_ENT="2" />
+				<!-- #ifdefGIA_SUPPORT_SPECIFIC_CONCEPTS -->
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isConcept" value="false" REL="1" REL_ENT="1" />
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isConcept" value="false" REL="1" REL_ENT="2" />
 				<!-- #endif -->
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="hasAssociatedTime" value="false" REL="1" REL_ENT="2" />
 				<option disableRelationDuringLink="true" REL="1" />
@@ -4188,7 +4188,7 @@
 				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_iobj" />
 				<option useRelationArrayTest="true" REL="2" REL_ENT="3" relationArrayTest="_obj|_that" relationArrayTestSize="2" />
 				<option useRelationIndexTest="true" REL="2" REL_ENT="1" relationIndexTestRelationID="1" relationIndexTestEntityID="1" />
-				<!-- #ifdefGIA_CREATE_NON_SPECIFIC_SUBSTANCE_CONCEPTS_FOR_ALL_CONCEPTS -->
+				<!-- #ifdefGIA_CREATE_NON_SPECIFIC_CONCEPTS_FOR_ALL_NETWORK_INDEXS -->
 				<option functionToExecuteUponFind="4" />
 				<!-- #else -->
 				<!-- <option functionToExecuteUponFind="3" /> -->
@@ -4273,7 +4273,7 @@
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="2" FUNC_ENT="2" functionEntityRelationEntityID="2" />
 				<option useRelationArrayTest="true" REL="1" REL_ENT="1" relationArrayTest="contains|comprise|have" relationArrayTestSize="3" />
-				{!-- #ifdefGIA_CREATE_NON_SPECIFIC_SUBSTANCE_CONCEPTS_FOR_ALL_CONCEPTS --}
+				{!-- #ifdefGIA_CREATE_NON_SPECIFIC_CONCEPTS_FOR_ALL_NETWORK_INDEXS --}
 				<option functionToExecuteUponFind="4" />
 				{!-- #else --}
 				{!-- <option functionToExecuteUponFind="3" /> --}
@@ -4470,7 +4470,7 @@
 				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="with" />
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isAction" value="false" REL="1" REL_ENT="1" />
 				<option disableRelationDuringLink="true" REL="1" />
-				{!-- #ifdefGIA_CREATE_NON_SPECIFIC_SUBSTANCE_CONCEPTS_FOR_ALL_CONCEPTS --}
+				{!-- #ifdefGIA_CREATE_NON_SPECIFIC_CONCEPTS_FOR_ALL_NETWORK_INDEXS --}
 				<option functionToExecuteUponFind="4" />
 				{!-- #else --}
 				{!-- <option functionToExecuteUponFind="3" /> --}
@@ -4531,7 +4531,7 @@
 				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="of" relationArrayTestSize="1" />
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalNumber" value="3" REL="1" REL_ENT="2" />	<!-- plural -->
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalDefiniteTemp" value="false" REL="1" REL_ENT="2" />	<!-- indefinite -->
-				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="isSubstanceConcept" value="false" REL="1" REL_ENT="2" />	<!-- ensure not interpreted as a substance concept -->
+				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="isConcept" value="false" REL="1" REL_ENT="2" />	<!-- ensure not interpreted as a substance networkIndex -->
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isAction" value="false" REL="1" REL_ENT="1" /> <!-- Stanford Condition -->
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isToBeComplimentOfActionTemp" value="false" REL="1" REL_ENT="1" /> <!-- Relex Condition -->
 				<option disableRelationDuringLink="true" REL="1" /> <!-- required to prevent re-interpretation of prepositions in main preposition interpretation function linkConditions -->
@@ -4559,7 +4559,7 @@
 				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="of" relationArrayTestSize="1" />
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalNumber" value="3" REL="1" REL_ENT="1" />	<!-- plural -->
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalDefiniteTemp" value="false" REL="1" REL_ENT="2" />	<!-- indefinite -->
-				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="isSubstanceConcept" value="false" REL="1" REL_ENT="2" />	<!-- ensure not interpreted as a substance concept -->
+				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="isConcept" value="false" REL="1" REL_ENT="2" />	<!-- ensure not interpreted as a substance networkIndex -->
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isAction" value="false" REL="1" REL_ENT="1" /> <!-- Stanford Condition -->
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isToBeComplimentOfActionTemp" value="false" REL="1" REL_ENT="1" /> <!-- Relex Condition -->
 				<option disableRelationDuringLink="true" REL="1" /> <!-- required to prevent re-interpretation of prepositions in main preposition interpretation function linkConditions -->
@@ -4612,11 +4612,11 @@
 			
 				<!-- #else -->
 				<!-- XML only function (not hard coded): added 2i7d -->
-				<!-- #ifdefGIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_PROPERTIES_OR_DEFINITIONS_ADAPT_ENTITY_LINKING_FOR_SUBSTANCE_CONCEPTS -->
+				<!-- #ifdefGIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_PROPERTIES_OR_DEFINITIONS_ADAPT_ENTITY_LINKING_FOR_CONCEPTS -->
 				<!--
 				<example>
 				{!--
-				Interpret "of" preposition as definition (substance concepts only)
+				Interpret "of" preposition as definition (substance networkIndexs only)
 				The game of chess is good.	prep_of(game-2, chess-4)
 				but ignore cases where the subject of the preposition is an action;
 				--}
@@ -4624,7 +4624,7 @@
 				<paramDepRel mode="execute">
 				<option numberOfRelations="1" />
 				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="of" relationArrayTestSize="1" />
-				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isSubstanceConcept" value="true" REL="1" REL_ENT="2" />
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isConcept" value="true" REL="1" REL_ENT="2" />
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isAction" value="false" REL="1" REL_ENT="1" /> {!--Stanford Condition--}
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isToBeComplimentOfActionTemp" value="false" REL="1" REL_ENT="1" /> {!--Relex Condition--}
 				<option disableRelationDuringLink="true" REL="1" /> {!--required to prevent re-interpretation of prepositions in main preposition interpretation function linkConditions--}
@@ -4934,7 +4934,7 @@
 				</paramEntity>
 			</function>
 			
-			<function name="defineActionConcepts1">
+			<function name="defineActionNetworkIndexs1">
 				<example>
 				eg She can run to the park. aux(run-3, can-2))
 				</example>
@@ -4944,7 +4944,7 @@
 				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_aux" />
 				<option useRelationTest="true" REL="1" REL_ENT="2" relationTest="can" />
 				<specialCase type="specialCaseCharacteristicsTestOrVector" variable="isAction" value="true" REL="1" REL_ENT="1" />
-				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="isActionConcept" value="true" REL="1" REL_ENT="1" />
+				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="isActionNetworkIndex" value="true" REL="1" REL_ENT="1" />
 				</paramDepRel>
 			</function>									
 		</file>								

@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2m7b 11-September-2016
+ * Project Version: 2n1a 12-September-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -129,7 +129,7 @@
 	#define GIA_DO_NOT_DISABLE_AUX_AND_COP_AT_START
 #endif
 
-#define GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES	//NB this only works for substances added to concept entities, not substances added to substances (however this should be OK, as disabling of nodes should take place before substances are added)
+#define GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_NETWORK_INDEX_ENTITIES	//NB this only works for substances added to networkIndex entities, not substances added to substances (however this should be OK, as disabling of nodes should take place before substances are added)
 
 
 
@@ -174,9 +174,9 @@
 //#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_3B_PREPOSITIONS_REDUCTION
 //#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1F_RELATIONS_TREAT_THAT_AS_A_PRONOUN_IE_SUBSTANCE
 //#define GIA_INTERPRET_EXPLETIVE_AS_SUBJECT_OF_ACTION
-//#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D_RELATIONS_REMOVE_ARTEFACT_CONCEPT_ENTITY_NODES
+//#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D_RELATIONS_REMOVE_ARTEFACT_NETWORK_INDEX_ENTITY_NODES
 //#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1E_RELATIONS_TREAT_UNQUALIFIED_RELATIONS_AS_CONDITIONS_ALSO	//NB this relates to GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B_RELATIONS_TREAT_ADVERB_PLUS_SUBJECT_PLUS_OBJECT_RELATION_ALL_WITH_A_DEFINITION_FUNCTION_AS_PROPERTY_LINKS
-//#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_4A_RELATIONS_DEFINE_SUBSTANCES_BASED_UPON_INDIRECT_OBJECTS	//added 27 April 2012 - required because of the case; "What did the officer give transportation to?" where transportation is not singular, and therefore will not be defined as a substance until indirectObjects are defined (after the action 'give' has already been linked to its concept entity). NB "What did the officer give a ride to?" does not face the same problem as 'ride' is tagged as singular by relex and therefore will be assigned as a substance before the action 'give' is linked to it
+//#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_4A_RELATIONS_DEFINE_SUBSTANCES_BASED_UPON_INDIRECT_OBJECTS	//added 27 April 2012 - required because of the case; "What did the officer give transportation to?" where transportation is not singular, and therefore will not be defined as a substance until indirectObjects are defined (after the action 'give' has already been linked to its networkIndex entity). NB "What did the officer give a ride to?" does not face the same problem as 'ride' is tagged as singular by relex and therefore will be assigned as a substance before the action 'give' is linked to it
 //#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_5A_RELATIONS_ASSIGN_TIME_NODES_IN_RELEX_THE_SAME_AS_STANFORD	//Case 5= stanford specific
 //#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_5B_RELATIONS_COMPENSATE_FOR_INACCURATE_STANFORD_DATE_TAGGING
 //#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_5C_FEATURES_STANFORD_NER_INDICATES_NAME_CONCATENATION_REQUIRES_POS_NNP
@@ -197,7 +197,7 @@
 		#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C_RELATIONS_TREAT_TODO_OR_TOBE_AND_SUBJECT_RELATION_AS_SUBSTANCE_LINK
 		//#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C_RELATIONS_TREAT_TODO_AND_SUBJECT_RELATION_WITH_BE_AS_DEFINITION_LINK
 		//#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C_RELATIONS_TREAT_TOBE_AND_SUBJECT_RELATION_AS_SUBSTANCE_LINK_AND_ACTION_DEFINITION
-		//#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D_RELATIONS_REMOVE_ARTEFACT_CONCEPT_ENTITY_NODES_ADVANCED	//Relex only at present [relies upon isAdjectiveNotAnAdvmodAndRelationGovernorIsNotBe() and GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B_RELATIONS_TREAT_ADVERB_PLUS_SUBJECT_PLUS_OBJECT_RELATION_ALL_WITH_A_DEFINITION_FUNCTION_AS_PROPERTY_LINKS]
+		//#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D_RELATIONS_REMOVE_ARTEFACT_NETWORK_INDEX_ENTITY_NODES_ADVANCED	//Relex only at present [relies upon isAdjectiveNotAnAdvmodAndRelationGovernorIsNotBe() and GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B_RELATIONS_TREAT_ADVERB_PLUS_SUBJECT_PLUS_OBJECT_RELATION_ALL_WITH_A_DEFINITION_FUNCTION_AS_PROPERTY_LINKS]
 		//#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_2A_GRAMMAR_TREAT_PRESENT_PERFECT_AS_PAST_TENSE							//Relex/Stanford independent
 		#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B_RELATIONS_TREAT_ADVERB_PLUS_SUBJECT_PLUS_OBJECT_RELATION_ALL_WITH_A_DEFINITION_FUNCTION_AS_PROPERTY_LINKS
 			#define GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_BEING_OR_HAVING_INTO_A_CONDITION_DEFINITION			//CHECK THIS; Stanford compatibility
@@ -368,7 +368,7 @@ used
 
 //#define ARBITRARY_SUBJECT_FINAL_IMPLEMENTATION	//in final implementation, the arbitrary subject should be determined during the referencing stage of sentence parsing
 #ifndef ARBITRARY_SUBJECT_FINAL_IMPLEMENTATION
-	#define ARBITRARY_SUBJECT_SPECIAL_CONCEPT_NODE_NAME "arbitrarySubject"
+	#define ARBITRARY_SUBJECT_SPECIAL_NETWORK_INDEX_NODE_NAME "arbitrarySubject"
 #endif
 
 
@@ -469,7 +469,7 @@ static string relationTypeQualityNameArray[RELATION_TYPE_QUALITY_NUMBER_OF_TYPES
 static string relationGovernorCompositionNameArray[RELATION_GOVERNOR_COMPOSITION_NUMBER_OF_TYPES] = {RELATION_GOVERNOR_COMPOSITION_1, RELATION_GOVERNOR_COMPOSITION_2, RELATION_GOVERNOR_COMPOSITION_3};
 
 
-//concepts:
+//networkIndexs:
 #define RELATION_GOVERNOR_DEFINITION_NUMBER_OF_TYPES 1
 #define RELATION_TYPE_APPOSITIVE_OF_NOUN "_appo"
 #define STANFORD_RELATION_TYPE_APPOSITIVE_OF_NOUN "appos"
@@ -499,7 +499,7 @@ static string relationGovernorDefinitionNameArray[RELATION_GOVERNOR_DEFINITION_N
 #define REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHEN "_%atTime"
 #define REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHERE "_%atLocation"
 #define REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHY "_%because"
-#define REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_HOW "_%how"	//these needs to be a new integer (and not "prep_how") to prevent concept entity node overwrite within redistributeStanfordRelationsCreateQueryVarsHowWhenWhereWhy()
+#define REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_HOW "_%how"	//these needs to be a new integer (and not "prep_how") to prevent networkIndex entity node overwrite within redistributeStanfordRelationsCreateQueryVarsHowWhenWhereWhy()
 //#define REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_QUANTITY_NUMBER_REPLACEMENT -9999
 #define REFERENCE_TYPE_QUESTION_QUERY_WHICH "which"
 #define REFERENCE_TYPE_QUESTION_QUERY_IS "is"

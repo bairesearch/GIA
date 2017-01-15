@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorRedistributeRelationsStanford.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2m7b 11-September-2016
+ * Project Version: 2n1a 12-September-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -4647,7 +4647,7 @@ void collapseRedundantRelationAndMakeNegativeStanford(GIAsentence* currentSenten
 	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_NEGATIVE;
 	param.disableRelation[REL1] = true;
 	param.disableEntity[REL1][REL_ENT2] = true; 	//disable "not" entity
-	//param.useRedistributeSpecialCaseDisableInstanceAndConcept[REL1][REL_ENT2]= true;	//no longer required because collapseRedundantRelationAndMakeNegativeRelex{} is executed during redistribution
+	//param.useRedistributeSpecialCaseDisableInstanceAndNetworkIndex[REL1][REL_ENT2]= true;	//no longer required because collapseRedundantRelationAndMakeNegativeRelex{} is executed during redistribution
 	//param.useRedistributeSpecialCaseNegativeAssignment[REL1][REL_ENT1] = true;
 	GIAentityCharacteristic useRedistributeSpecialCaseNegativeAssignment("negative", "true");
 	param.specialCaseCharacteristicsAssignmentVector[REL1][REL_ENT1].push_back(&useRedistributeSpecialCaseNegativeAssignment);
@@ -4666,7 +4666,7 @@ void collapseRedundantRelationAndMakeNegativeStanford(GIAsentence* currentSenten
 
 				currentRelationInList->disabled = true;
 				GIAentityNodeArray[currentRelationInList->relationGovernorIndex]->negative = true;
-				disableInstanceAndConceptEntityBasedUponFirstSentenceToAppearInNetwork(GIAentityNodeArray[currentRelationInList->relationDependentIndex]);
+				disableInstanceAndNetworkIndexEntityBasedUponFirstSentenceToAppearInNetwork(GIAentityNodeArray[currentRelationInList->relationDependentIndex]);
 			}
 
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD

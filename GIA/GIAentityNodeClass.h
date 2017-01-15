@@ -26,7 +26,7 @@
  * File Name: GIAentityNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2m7b 11-September-2016
+ * Project Version: 2n1a 12-September-2016
  * NB a substance is an instance of an entity, any given entity may contain/comprise/have multiple substances - and substances are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -49,8 +49,8 @@
 #include <cmath>
 #include <string>
 #include <vector>
-#include <unordered_map>		//required for GIA_USE_CONCEPT_ENTITY_NODE_MAP_NOT_VECTOR
-#include <utility> // make_pair	//required for GIA_USE_CONCEPT_ENTITY_NODE_MAP_NOT_VECTOR
+#include <unordered_map>		//required for GIA_USE_NETWORK_INDEX_ENTITY_NODE_MAP_NOT_VECTOR
+#include <utility> // make_pair	//required for GIA_USE_NETWORK_INDEX_ENTITY_NODE_MAP_NOT_VECTOR
 using namespace std;
 
 
@@ -142,7 +142,7 @@ using namespace std;
 #define GRAMMATICAL_TENSE_MODIFIER_IMPERATIVE 4		//eg Mow the grass! / ~VB
 #define GRAMMATICAL_TENSE_MODIFIER_POTENTIAL 5	//added 2h2a/2h2c: _able/_ive adjectives (ignore nouns)	//eg mowable / affirmative
 #define GRAMMATICAL_TENSE_MODIFIER_STATE 6	//added 2h2a	//eg is mowed (as opposed to was mowed)	//used for both states and affections - note noun versus verb base forms are not distinguished here by POS tagger; both are assigned VBN
-#define GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION 7	//added 2h2d: _ment/_ion nouns	//eg movement / transition	//note these are different than action concepts, as these define an instance of an action, not an action in general; eg "the movement"/"the transition"
+#define GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION 7	//added 2h2d: _ment/_ion nouns	//eg movement / transition	//note these are different than action networkIndexs, as these define an instance of an action, not an action in general; eg "the movement"/"the transition"
 #define GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES 8
 #define GRAMMATICAL_TENSE_MODIFIER_INFINITIVE_OR_IMPERATIVE_OR_PRESENT_NOT_THIRD_PERSON_SINGULAR_OR_STATE_TEMP (7)
 #define GRAMMATICAL_TENSE_MODIFIER_PAST_TENSE_OR_PAST_PARTICIPLE_OR_STATE_TEMP (8)
@@ -277,12 +277,12 @@ static int entityVectorConnectionEqualitiesArray[GIA_ENTITY_NUMBER_OF_VECTOR_CON
 class GIAentityConnection;
 
 #ifdef GIA_USE_DATABASE
-#ifndef GIA_USE_DATABASE_ALWAYS_LOAD_CONCEPT_NODE_REFERENCE_LISTS
-class GIAconceptEntityLoaded
+#ifndef GIA_USE_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS
+class GIAnetworkIndexEntityLoaded
 {
 public:
-	GIAconceptEntityLoaded(void);
-	~GIAconceptEntityLoaded(void);
+	GIAnetworkIndexEntityLoaded(void);
+	~GIAnetworkIndexEntityLoaded(void);
 
 	bool loaded;
 	long numberOfInstances;
@@ -310,7 +310,7 @@ public:
 	long idActiveList;
 	long idActiveEntityTypeList;
 	long idActiveListReorderdIDforXMLsave;	//for CXL output only
-	long idInstance; 		//not for concepts (this instance idActiveList of the concept entityName)
+	long idInstance; 		//not for networkIndexs (this instance idActiveList of the networkIndex entityName)
 
 
 	/*GIA Entity Name*/
@@ -325,7 +325,7 @@ public:
 
 
 	/*GIA Entity Type*/
-	bool isConcept;			//is this entity a concept? [added 10 May 2012]
+	bool isNetworkIndex;			//is this entity a networkIndex? [added 10 May 2012]
 	bool isSubstance;		//is this entity a substance?
 	bool isAction;			//is this entity an action?
 	bool isCondition;		//is this entity a condition?
@@ -334,15 +334,15 @@ public:
 	bool hasAssociatedInstanceIsCondition;
 	bool hasAssociatedTime;
 	bool isSubstanceQuality;		//PRECISE ORIGINAL NAME: isSubstanceQualityOrAffection	//eg 'the locked door..' / 'Jim runs quickly' / 'Mr. Smith is late' 	[Not: Tom has an arm'/'Tom's bike']
-	bool isSubstanceConcept;		//added 1q4a to take into account specific concepts eg 'red bears' as opposed to 'bears' //eg Red dogs are bad animals. / A blue chicken is a happy bird.
-	bool isActionConcept;			//added 1t5a to take into account specific actions eg 'eating pies', 'to eat a pie'
+	bool isConcept;		//added 1q4a to take into account specific networkIndexs eg 'red bears' as opposed to 'bears' //eg Red dogs are bad animals. / A blue chicken is a happy bird.
+	bool isActionNetworkIndex;			//added 1t5a to take into account specific actions eg 'eating pies', 'to eat a pie'
 	bool negative;	//for prepositional entities which will be collapsed into conditions only [in the future, this should also be used for substances and actions; but relex does not appear to output this information]
 
 
 	/*GIA Connections*/
 	vector<GIAentityConnection*> entityVectorConnectionsArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];		//allows for generic coding
 	#ifdef GIA_USE_DATABASE
-	//designed for a high scale database (eg 200,000 references per instance, 200,000 instances per concept)
+	//designed for a high scale database (eg 200,000 references per instance, 200,000 instances per networkIndex)
 	bool entityVectorConnectionsReferenceListLoadedArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];			//signifies whether all the vector connections in the reference list has been loaded from file and entityConnections entityNames+idInstance have therefore been populated. This is the first step required to enable loading of connections into RAM (see entityVectorConnectionsLoadedArray)
 	//bool entityVectorConnectionsLoadedArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];				//not used - vector connections are loaded into RAM on an individual basis. //signifies whether all the vector connection nodes have been loaded (eg from the db)
 	bool entityVectorConnectionsRemovedArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];					//signifies whether one or more vector connection nodes have been removed {ie the entire reference list must be updated}
@@ -352,7 +352,7 @@ public:
 	vector<GIAentityConnection*>* actionNodeList;	//where this entity is the subject of the action
 	vector<GIAentityConnection*>* incomingActionNodeList;	//where this entity is the object of the action
 	//actions only;
-	//NB actions can be performed by and on concepts, and by and on substances?
+	//NB actions can be performed by and on networkIndexs, and by and on substances?
 	vector<GIAentityConnection*>* actionSubjectEntity;	//record of entity that is the subject of this action instance
 	vector<GIAentityConnection*>* actionObjectEntity;	//record of which entity that is the object of this action instance
 		//condition connections;
@@ -361,20 +361,20 @@ public:
 	vector<GIAentityConnection*>* conditionNodeList;		//this substance requires the following...
 	vector<GIAentityConnection*>* incomingConditionNodeList;	//this substance is required by the following... //aka reason
 	//conditions only;
-	//NB conditions can be performed by and on concepts, and by and on substances?
+	//NB conditions can be performed by and on networkIndexs, and by and on substances?
 	vector<GIAentityConnection*>* conditionSubjectEntity;		//record of entity that is the subject of this action instance
 	vector<GIAentityConnection*>* conditionObjectEntity;		//record of which entity that is the object of this action instance
 		//substance connections;
 	//record list of all substances for this entity
 	vector<GIAentityConnection*>* propertyNodeList;
-	vector<GIAentityConnection*>* propertyNodeReverseList;			//if substance/action only:	//eg, Tom; OR;  Tom's Assets	//more than 1 thing can contain any given substance [eg "a cat has arms", and "a monkey has arms"]; but note this may only be applicable for concept entities [substance entities may possibly only be contained by {ie, be a substance of} a single entity]
+	vector<GIAentityConnection*>* propertyNodeReverseList;			//if substance/action only:	//eg, Tom; OR;  Tom's Assets	//more than 1 thing can contain any given substance [eg "a cat has arms", and "a monkey has arms"]; but note this may only be applicable for networkIndex entities [substance entities may possibly only be contained by {ie, be a substance of} a single entity]
 	//actions, substances, and conditions only
 	vector<GIAentityConnection*>* entityNodeDefiningThisInstance;					//if substance/action/condition only:					//NB by definition, only 1 thing can contain any given substance [considering a substance is an instance of an entity] - therefore this is not a vector
 		//entity connections;
 	//record parent and child entity definition nodes
 	vector<GIAentityConnection*>* entityNodeDefinitionList;			//this should logically reduce to a single entity, although not required, therefore it is a vector [eg, a dog is a mammal, which is an animal, but a dog is an animal also]
 	vector<GIAentityConnection*>* entityNodeDefinitionReverseList;			//more than one entity can be defined by this entity [eg if this entity is "animal", a bird is an animal, a mammal is an animal, etc]
-	//concepts only (not substances/"instances" of entities);
+	//networkIndexs only (not substances/"instances" of entities);
 	//associated actions and substances [ie does this entity also define an action/verb or a substance/adjective? [ie, it is not just a thing/noun]]
 	vector<GIAentityConnection*>* associatedInstanceNodeList;			//if this entity is not a substance/instance but defines one or more substances/instances
 		//time condition connections;
@@ -419,7 +419,7 @@ public:
 	#ifdef GIA_SUPPORT_PREDETERMINERS
 	int grammaticalPredeterminerTemp;
 	#ifndef GIA_DISABLE_CROSS_SENTENCE_REFERENCING
-	unordered_map<int, int> grammaticalPredeterminerTempSentenceArray;	//only for instances (not for concepts)	- required for GIA advanced referencing as different references to an entity may well have different predeterminers (eg each)
+	unordered_map<int, int> grammaticalPredeterminerTempSentenceArray;	//only for instances (not for networkIndexs)	- required for GIA advanced referencing as different references to an entity may well have different predeterminers (eg each)
 	#endif
 	#endif
 	#ifdef GIA_USE_STANFORD_CORENLP
@@ -465,8 +465,8 @@ public:
 
 
 	/*GIA Miscellaneous Internal Variables*/
-	bool disabled;	//temporary for concept entities: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
-	bool permanentConcept;	//concept entity is to be drawn/saved to XML (if false, this entity has been deemed redundant in semantic network generation)
+	bool disabled;	//temporary for networkIndex entities: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
+	bool permanentNetworkIndex;	//networkIndex entity is to be drawn/saved to XML (if false, this entity has been deemed redundant in semantic network generation)
 	bool firstSentenceToAppearInNetwork;
 		//CXL:
 	bool CXLdummyNode;
@@ -485,10 +485,10 @@ public:
 	#endif
 	#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES
 	bool alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp;	//#ifdef GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES
-	bool mustSetIsSubstanceConceptBasedOnApposRelation;
+	bool mustSetIsConceptBasedOnApposRelation;
 	bool isPronounReference;
-	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_ENSURE_DEPENDENT_IS_NOT_ASSIGNED_SUBSTANCE_CONCEPT
-	bool mustNotSetIsSubstanceConceptBasedOnPrenomonalModifierRelation;
+	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_ENSURE_DEPENDENT_IS_NOT_ASSIGNED_CONCEPT
+	bool mustNotSetIsConceptBasedOnPrenomonalModifierRelation;
 	#endif
 	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES
 	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES_DETECT_USER_DECLARED_SUBCLASS_ENTITIES
@@ -504,8 +504,8 @@ public:
 	#ifdef GIA_USE_DATABASE
 	bool added;	//implies database Update is Required
 	bool modified;	//implies database Update is Required
-	#ifndef GIA_USE_DATABASE_ALWAYS_LOAD_CONCEPT_NODE_REFERENCE_LISTS
-	GIAconceptEntityLoaded* conceptEntityLoaded;
+	#ifndef GIA_USE_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS
+	GIAnetworkIndexEntityLoaded* networkIndexEntityLoaded;
 	#endif
 	#endif
 		//nlg:
@@ -530,7 +530,7 @@ public:
 	string NLCoriginalNumericalVariableName;	//added NLC 1h1d/24-July-2014
 	bool NLCcontextGeneratedTemp;		//added NLC 1l2d/31-October-2014
 	bool NLCcategoryListCreatedTemp;	//added NLC 1l10d/06-November-2014
-	#ifdef GIA_SUPPORT_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS_SUBSTANCE_CONCEPTS
+	#ifdef GIA_SUPPORT_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS_CONCEPTS
 	bool NLCmathTextParsablePhraseEntity;
 	#endif
 	bool NLCisAlias;

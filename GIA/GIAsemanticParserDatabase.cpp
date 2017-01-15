@@ -21,7 +21,7 @@
  * File Name: GIAsemanticParserDatabase.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2m7b 11-September-2016
+ * Project Version: 2n1a 12-September-2016
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -213,7 +213,7 @@ bool loadSemanticParserCorpusDatabaseFile(GIAsentence* currentSentenceInList, GI
 }
 
 
-//NB idInstance 0 corresponds to the concept entity (null instance)
+//NB idInstance 0 corresponds to the networkIndex entity (null instance)
 string semanticParserCorpusDBgenerateFileName(GIAfeature* firstFeatureInList)
 {
 	string folderName = semanticParserDBgenerateFolderName(firstFeatureInList);

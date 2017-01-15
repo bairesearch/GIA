@@ -26,7 +26,7 @@
  * File Name: GIAdraw.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2m7b 11-September-2016
+ * Project Version: 2n1a 12-September-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -261,9 +261,9 @@ LDreference* initialiseEntityNodeForPrinting(GIAentityNode* entityNode, int y, i
 			cout << "\nentityNode->sentenceIndexTemp = " << entityNode->sentenceIndexTemp << endl;
 			cout << "entityNode->entityName = " << entityNode->entityName << endl;
 			cout << "entityNode->wasReference = " << entityNode->wasReference << endl;
-			if(entityNode->isConcept)
+			if(entityNode->isNetworkIndex)
 			{
-				cout << "entityNode = " << entityNode->entityName << " (is concept)" << endl;
+				cout << "entityNode = " << entityNode->entityName << " (is networkIndex)" << endl;
 			}
 			if(entityNode->wasReference)
 			{
@@ -498,9 +498,9 @@ LDreference* initialiseEntityNodeForPrinting(GIAentityNode* entityNode, int y, i
 				{
 					entityColour = GIA_DRAW_CONDITION_DEFINITION_NODE_COLOUR;	//clearly identify the definition of the action
 				}
-				else if(entityNode->isActionConcept)
+				else if(entityNode->isActionNetworkIndex)
 				{
-					entityColour = GIA_DRAW_ACTION_CONCEPT_NODE_COLOUR;
+					entityColour = GIA_DRAW_ACTION_NETWORK_INDEX_NODE_COLOUR;
 				}
 				else if(entityNode->isSubstance)
 				{
@@ -509,9 +509,9 @@ LDreference* initialiseEntityNodeForPrinting(GIAentityNode* entityNode, int y, i
 						boxThickness = GIA_DRAW_THICKNESS_THICK;
 					}
 
-					if(entityNode->isSubstanceConcept)
+					if(entityNode->isConcept)
 					{
-						entityColour = GIA_DRAW_SUBSTANCE_CONCEPT_NODE_COLOUR;
+						entityColour = GIA_DRAW_CONCEPT_NODE_COLOUR;
 					}
 					else if(entityNode->isSubstanceQuality)
 					{
@@ -551,12 +551,12 @@ LDreference* initialiseEntityNodeForPrinting(GIAentityNode* entityNode, int y, i
 					if(!(entityNode->isSubstance))
 					{
 						//added 2 May 11a (highlight entities which define substance nodes)
-						entityColour = GIA_DRAW_SUBSTANCE_DEFINITION_NODE_COLOUR;	//OLD: no colour modifier, just use basic entity colour; GIA_DRAW_CONCEPT_NODE_COLOUR;
+						entityColour = GIA_DRAW_SUBSTANCE_DEFINITION_NODE_COLOUR;	//OLD: no colour modifier, just use basic entity colour; GIA_DRAW_NETWORK_INDEX_NODE_COLOUR;
 					}
 				}
 				else
 				{
-					entityColour = GIA_DRAW_CONCEPT_NODE_COLOUR;
+					entityColour = GIA_DRAW_NETWORK_INDEX_NODE_COLOUR;
 				}
 
 				#ifdef GIA_ADVANCED_REFERENCING_DEBUG_HIGHLIGHT_REFERENCE_SET_NODES_WITH_COLOURS

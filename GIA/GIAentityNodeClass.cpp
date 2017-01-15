@@ -26,7 +26,7 @@
  * File Name: GIAentityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2m7b 11-September-2016
+ * Project Version: 2n1a 12-September-2016
  *
  *******************************************************************************/
 
@@ -42,8 +42,8 @@ string quantityModifierNameArray[QUANTITY_MODIFIER_NUMBER_OF_TYPES] = {"almost"}
 //int grammaticalTenseNameLengthsArray[GRAMMATICAL_TENSE_NUMBER_OF_TYPES] = {9, 7, 4, 6};
 
 #ifdef GIA_USE_DATABASE
-#ifndef GIA_USE_DATABASE_ALWAYS_LOAD_CONCEPT_NODE_REFERENCE_LISTS
-GIAconceptEntityLoaded::GIAconceptEntityLoaded(void)
+#ifndef GIA_USE_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS
+GIAnetworkIndexEntityLoaded::GIAnetworkIndexEntityLoaded(void)
 {
 	loaded = false;
 	numberOfInstances = 0;
@@ -51,7 +51,7 @@ GIAconceptEntityLoaded::GIAconceptEntityLoaded(void)
 	disabled = false;
 	#endif
 }
-GIAconceptEntityLoaded::~GIAconceptEntityLoaded(void)
+GIAnetworkIndexEntityLoaded::~GIAnetworkIndexEntityLoaded(void)
 {
 }
 #endif
@@ -62,9 +62,9 @@ GIAentityNode::GIAentityNode(void)
 {
 	/*GIA Internal Entity Referencing*/
 	idActiveList = 0;
-	idActiveEntityTypeList = 0;	//temporary ID reserved for specific entity types; concept, action, substance etc
+	idActiveEntityTypeList = 0;	//temporary ID reserved for specific entity types; networkIndex, action, substance etc
 	idActiveListReorderdIDforXMLsave = 0;
-	idInstance = 0;		//set as concept by default (GIA_DATABASE_NODE_CONCEPT_ID_INSTANCE)
+	idInstance = 0;		//set as networkIndex by default (GIA_DATABASE_NODE_NETWORK_INDEX_ID_INSTANCE)
 
 
 	/*GIA Entity Name*/
@@ -76,7 +76,7 @@ GIAentityNode::GIAentityNode(void)
 
 
 	/*GIA Entity Type*/
-	isConcept = false;
+	isNetworkIndex = false;
 	isSubstance = false;
 	isAction = false;
 	isCondition = false;
@@ -85,8 +85,8 @@ GIAentityNode::GIAentityNode(void)
 	hasAssociatedInstanceIsCondition = false;
 	hasAssociatedTime = false;
 	isSubstanceQuality = false;
-	isSubstanceConcept = false;
-	isActionConcept = false;
+	isConcept = false;
+	isActionNetworkIndex = false;
 	negative = false;
 
 
@@ -215,7 +215,7 @@ GIAentityNode::GIAentityNode(void)
 
 	/*GIA Miscellaneous Internal Variables*/
 	disabled = false;
-	permanentConcept = false;
+	permanentNetworkIndex = false;
 	firstSentenceToAppearInNetwork = true;
 		//CXL:
 	CXLdummyNode = false;
@@ -234,10 +234,10 @@ GIAentityNode::GIAentityNode(void)
 	#endif
 	#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES
 	alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp = false;		//#ifdef GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES
-	mustSetIsSubstanceConceptBasedOnApposRelation = false;
+	mustSetIsConceptBasedOnApposRelation = false;
 	isPronounReference = false;
-	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_ENSURE_DEPENDENT_IS_NOT_ASSIGNED_SUBSTANCE_CONCEPT
-	mustNotSetIsSubstanceConceptBasedOnPrenomonalModifierRelation = false;
+	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_ENSURE_DEPENDENT_IS_NOT_ASSIGNED_CONCEPT
+	mustNotSetIsConceptBasedOnPrenomonalModifierRelation = false;
 	#endif
 	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES
 	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES_DETECT_USER_DECLARED_SUBCLASS_ENTITIES
@@ -253,8 +253,8 @@ GIAentityNode::GIAentityNode(void)
 	#ifdef GIA_USE_DATABASE
 	added = false;		//implies database Update is Required		//CHECKTHIS removed 'bool' 21 July 2012
 	modified = false;	//implies database Update is Required		//CHECKTHIS removed 'bool' 21 July 2012
-	#ifndef GIA_USE_DATABASE_ALWAYS_LOAD_CONCEPT_NODE_REFERENCE_LISTS
-	conceptEntityLoaded = NULL;
+	#ifndef GIA_USE_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS
+	networkIndexEntityLoaded = NULL;
 	#endif
 	#endif
 		//nlg:
@@ -279,7 +279,7 @@ GIAentityNode::GIAentityNode(void)
 	NLCoriginalNumericalVariableName = "";
 	NLCcontextGeneratedTemp = false;
 	NLCcategoryListCreatedTemp = false;
-	#ifdef GIA_SUPPORT_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS_SUBSTANCE_CONCEPTS
+	#ifdef GIA_SUPPORT_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS_CONCEPTS
 	NLCmathTextParsablePhraseEntity = false;
 	#endif
 	NLCisAlias = false;
@@ -304,9 +304,9 @@ GIAentityNode::GIAentityNode(string newEntityName)	//must be synced with the abo
 {
 	GIA Internal Entity Referencing
 	idActiveList = 0;
-	idActiveEntityTypeList = 0;	//temporary ID reserved for specific entity types; concept, action, substance etc
+	idActiveEntityTypeList = 0;	//temporary ID reserved for specific entity types; networkIndex, action, substance etc
 	idActiveListReorderdIDforXMLsave = 0;
-	idInstance = 0;		//set as concept by default (GIA_DATABASE_NODE_CONCEPT_ID_INSTANCE)
+	idInstance = 0;		//set as networkIndex by default (GIA_DATABASE_NODE_NETWORK_INDEX_ID_INSTANCE)
 
 
 	GIA Entity Name
@@ -318,7 +318,7 @@ GIAentityNode::GIAentityNode(string newEntityName)	//must be synced with the abo
 
 
 	GIA Entity Type
-	isConcept = false;
+	isNetworkIndex = false;
 	isSubstance = false;
 	isAction = false;
 	isCondition = false;
@@ -327,8 +327,8 @@ GIAentityNode::GIAentityNode(string newEntityName)	//must be synced with the abo
 	hasAssociatedInstanceIsCondition = false;
 	hasAssociatedTime = false;
 	isSubstanceQuality = false;
-	isSubstanceConcept = false;
-	isActionConcept = false;
+	isConcept = false;
+	isActionNetworkIndex = false;
 	negative = false;
 
 
@@ -453,7 +453,7 @@ GIAentityNode::GIAentityNode(string newEntityName)	//must be synced with the abo
 
 	//GIA Miscellaneous Internal Variables
 	disabled = false;
-	permanentConcept = false;
+	permanentNetworkIndex = false;
 	firstSentenceToAppearInNetwork = true;
 		//CXL:
 	CXLdummyNode = false;
@@ -472,10 +472,10 @@ GIAentityNode::GIAentityNode(string newEntityName)	//must be synced with the abo
 	#endif
 	#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES
 	alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp = false;		//#ifdef GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES
-	mustSetIsSubstanceConceptBasedOnApposRelation = false;
+	mustSetIsConceptBasedOnApposRelation = false;
 	isPronounReference = false;
-	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_ENSURE_DEPENDENT_IS_NOT_ASSIGNED_SUBSTANCE_CONCEPT
-	mustNotSetIsSubstanceConceptBasedOnPrenomonalModifierRelation = false;
+	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_ENSURE_DEPENDENT_IS_NOT_ASSIGNED_CONCEPT
+	mustNotSetIsConceptBasedOnPrenomonalModifierRelation = false;
 	#endif	
 	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES
 	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES_DETECT_USER_DECLARED_SUBCLASS_ENTITIES
@@ -491,8 +491,8 @@ GIAentityNode::GIAentityNode(string newEntityName)	//must be synced with the abo
 	#ifdef GIA_USE_DATABASE
 	added = false;		//implies database Update is Required		//CHECKTHIS removed 'bool' 21 July 2012
 	modified = false;	//implies database Update is Required		//CHECKTHIS removed 'bool' 21 July 2012
-	#ifndef GIA_USE_DATABASE_ALWAYS_LOAD_CONCEPT_NODE_REFERENCE_LISTS
-	conceptEntityLoaded = NULL;
+	#ifndef GIA_USE_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS
+	networkIndexEntityLoaded = NULL;
 	#endif
 	#endif
 		//nlg:
@@ -550,8 +550,8 @@ GIAentityNode::~GIAentityNode(void)
 	}
 
 	#ifdef GIA_USE_DATABASE
-	#ifndef GIA_USE_DATABASE_ALWAYS_LOAD_CONCEPT_NODE_REFERENCE_LISTS
-	delete conceptEntityLoaded;
+	#ifndef GIA_USE_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS
+	delete networkIndexEntityLoaded;
 	#endif
 	#endif
 }
@@ -921,7 +921,7 @@ bool testEntityCharacteristic(GIAentityNode* entity, GIAentityCharacteristic* en
 	#endif
 	
 	/*GIA Entity Type*/
-	testEntityCharacteristicIterationbool(entity->isConcept, entityCharacteristic, "isConcept", &foundMatch);
+	testEntityCharacteristicIterationbool(entity->isNetworkIndex, entityCharacteristic, "isNetworkIndex", &foundMatch);
 	testEntityCharacteristicIterationbool(entity->isSubstance, entityCharacteristic, "isSubstance", &foundMatch);
 	testEntityCharacteristicIterationbool(entity->isAction, entityCharacteristic, "isAction", &foundMatch);
 	testEntityCharacteristicIterationbool(entity->isCondition, entityCharacteristic, "isCondition", &foundMatch);
@@ -930,8 +930,8 @@ bool testEntityCharacteristic(GIAentityNode* entity, GIAentityCharacteristic* en
 	testEntityCharacteristicIterationbool(entity->hasAssociatedInstanceIsCondition, entityCharacteristic, "hasAssociatedInstanceIsCondition", &foundMatch);
 	testEntityCharacteristicIterationbool(entity->hasAssociatedTime, entityCharacteristic, "hasAssociatedTime", &foundMatch);
 	testEntityCharacteristicIterationbool(entity->isSubstanceQuality, entityCharacteristic, "isSubstanceQuality", &foundMatch);
-	testEntityCharacteristicIterationbool(entity->isSubstanceConcept, entityCharacteristic, "isSubstanceConcept", &foundMatch);
-	testEntityCharacteristicIterationbool(entity->isActionConcept, entityCharacteristic, "isActionConcept", &foundMatch);
+	testEntityCharacteristicIterationbool(entity->isConcept, entityCharacteristic, "isConcept", &foundMatch);
+	testEntityCharacteristicIterationbool(entity->isActionNetworkIndex, entityCharacteristic, "isActionNetworkIndex", &foundMatch);
 	testEntityCharacteristicIterationbool(entity->negative, entityCharacteristic, "negative", &foundMatch);
 
 	/*GIA Connections*/
@@ -998,10 +998,10 @@ bool testEntityCharacteristic(GIAentityNode* entity, GIAentityCharacteristic* en
 	}
 	#endif
 	testEntityCharacteristicIterationbool(entity->alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp, entityCharacteristic, "alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp", &foundMatch);
-	testEntityCharacteristicIterationbool(entity->mustSetIsSubstanceConceptBasedOnApposRelation, entityCharacteristic, "mustSetIsSubstanceConceptBasedOnApposRelation", &foundMatch);
+	testEntityCharacteristicIterationbool(entity->mustSetIsConceptBasedOnApposRelation, entityCharacteristic, "mustSetIsConceptBasedOnApposRelation", &foundMatch);
 	testEntityCharacteristicIterationbool(entity->isPronounReference, entityCharacteristic, "isPronounReference", &foundMatch);
-	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_ENSURE_DEPENDENT_IS_NOT_ASSIGNED_SUBSTANCE_CONCEPT
-	testEntityCharacteristicIterationbool(entity->mustNotSetIsSubstanceConceptBasedOnPrenomonalModifierRelation, entityCharacteristic, "mustNotSetIsSubstanceConceptBasedOnPrenomonalModifierRelation", &foundMatch);
+	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_ENSURE_DEPENDENT_IS_NOT_ASSIGNED_CONCEPT
+	testEntityCharacteristicIterationbool(entity->mustNotSetIsConceptBasedOnPrenomonalModifierRelation, entityCharacteristic, "mustNotSetIsConceptBasedOnPrenomonalModifierRelation", &foundMatch);
 	#endif	
 	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES
 	testEntityCharacteristicIterationbool(entity->convertToSubClass, entityCharacteristic, "convertToSubClass", &foundMatch);
@@ -1107,7 +1107,7 @@ bool setEntityCharacteristic(GIAentityNode* entity, GIAentityCharacteristic* ent
 	#endif
 	
 	/*GIA Entity Type*/
-	setEntityCharacteristicIterationbool(&(entity->isConcept), entityCharacteristic, "isConcept", &foundMatch);
+	setEntityCharacteristicIterationbool(&(entity->isNetworkIndex), entityCharacteristic, "isNetworkIndex", &foundMatch);
 	setEntityCharacteristicIterationbool(&(entity->isSubstance), entityCharacteristic, "isSubstance", &foundMatch);
 	setEntityCharacteristicIterationbool(&(entity->isAction), entityCharacteristic, "isAction", &foundMatch);
 	setEntityCharacteristicIterationbool(&(entity->isCondition), entityCharacteristic, "isCondition", &foundMatch);
@@ -1116,8 +1116,8 @@ bool setEntityCharacteristic(GIAentityNode* entity, GIAentityCharacteristic* ent
 	setEntityCharacteristicIterationbool(&(entity->hasAssociatedInstanceIsCondition), entityCharacteristic, "hasAssociatedInstanceIsCondition", &foundMatch);
 	setEntityCharacteristicIterationbool(&(entity->hasAssociatedTime), entityCharacteristic, "hasAssociatedTime", &foundMatch);
 	setEntityCharacteristicIterationbool(&(entity->isSubstanceQuality), entityCharacteristic, "isSubstanceQuality", &foundMatch);
-	setEntityCharacteristicIterationbool(&(entity->isSubstanceConcept), entityCharacteristic, "isSubstanceConcept", &foundMatch);
-	setEntityCharacteristicIterationbool(&(entity->isActionConcept), entityCharacteristic, "isActionConcept", &foundMatch);
+	setEntityCharacteristicIterationbool(&(entity->isConcept), entityCharacteristic, "isConcept", &foundMatch);
+	setEntityCharacteristicIterationbool(&(entity->isActionNetworkIndex), entityCharacteristic, "isActionNetworkIndex", &foundMatch);
 	setEntityCharacteristicIterationbool(&(entity->negative), entityCharacteristic, "negative", &foundMatch);
 
 	/*GIA Connections*/
@@ -1180,10 +1180,10 @@ bool setEntityCharacteristic(GIAentityNode* entity, GIAentityCharacteristic* ent
 	setEntityCharacteristicIterationbool(&(entity->wasReference), entityCharacteristic, "wasReference", &foundMatch);
 	#endif
 	setEntityCharacteristicIterationbool(&(entity->alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp), entityCharacteristic, "alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp", &foundMatch);
-	setEntityCharacteristicIterationbool(&(entity->mustSetIsSubstanceConceptBasedOnApposRelation), entityCharacteristic, "mustSetIsSubstanceConceptBasedOnApposRelation", &foundMatch);
+	setEntityCharacteristicIterationbool(&(entity->mustSetIsConceptBasedOnApposRelation), entityCharacteristic, "mustSetIsConceptBasedOnApposRelation", &foundMatch);
 	setEntityCharacteristicIterationbool(&(entity->isPronounReference), entityCharacteristic, "isPronounReference", &foundMatch);
-	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_ENSURE_DEPENDENT_IS_NOT_ASSIGNED_SUBSTANCE_CONCEPT
-	setEntityCharacteristicIterationbool(&(entity->mustNotSetIsSubstanceConceptBasedOnPrenomonalModifierRelation), entityCharacteristic, "mustNotSetIsSubstanceConceptBasedOnPrenomonalModifierRelation", &foundMatch);
+	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_ENSURE_DEPENDENT_IS_NOT_ASSIGNED_CONCEPT
+	setEntityCharacteristicIterationbool(&(entity->mustNotSetIsConceptBasedOnPrenomonalModifierRelation), entityCharacteristic, "mustNotSetIsConceptBasedOnPrenomonalModifierRelation", &foundMatch);
 	#endif
 	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES
 	setEntityCharacteristicIterationbool(&(entity->convertToSubClass), entityCharacteristic, "convertToSubClass", &foundMatch);
@@ -1257,7 +1257,7 @@ bool getEntityCharacteristic(GIAentityNode* entity, GIAentityCharacteristic* ent
 	#endif
 
 	/*GIA Entity Type*/
-	getEntityCharacteristicIterationbool(entity->isConcept, entityCharacteristic, "isConcept", &foundMatch);
+	getEntityCharacteristicIterationbool(entity->isNetworkIndex, entityCharacteristic, "isNetworkIndex", &foundMatch);
 	getEntityCharacteristicIterationbool(entity->isSubstance, entityCharacteristic, "isSubstance", &foundMatch);
 	getEntityCharacteristicIterationbool(entity->isAction, entityCharacteristic, "isAction", &foundMatch);
 	getEntityCharacteristicIterationbool(entity->isCondition, entityCharacteristic, "isCondition", &foundMatch);
@@ -1266,8 +1266,8 @@ bool getEntityCharacteristic(GIAentityNode* entity, GIAentityCharacteristic* ent
 	getEntityCharacteristicIterationbool(entity->hasAssociatedInstanceIsCondition, entityCharacteristic, "hasAssociatedInstanceIsCondition", &foundMatch);
 	getEntityCharacteristicIterationbool(entity->hasAssociatedTime, entityCharacteristic, "hasAssociatedTime", &foundMatch);
 	getEntityCharacteristicIterationbool(entity->isSubstanceQuality, entityCharacteristic, "isSubstanceQuality", &foundMatch);
-	getEntityCharacteristicIterationbool(entity->isSubstanceConcept, entityCharacteristic, "isSubstanceConcept", &foundMatch);
-	getEntityCharacteristicIterationbool(entity->isActionConcept, entityCharacteristic, "isActionConcept", &foundMatch);
+	getEntityCharacteristicIterationbool(entity->isConcept, entityCharacteristic, "isConcept", &foundMatch);
+	getEntityCharacteristicIterationbool(entity->isActionNetworkIndex, entityCharacteristic, "isActionNetworkIndex", &foundMatch);
 	getEntityCharacteristicIterationbool(entity->negative, entityCharacteristic, "negative", &foundMatch);
 
 	/*GIA Connections*/
@@ -1329,10 +1329,10 @@ bool getEntityCharacteristic(GIAentityNode* entity, GIAentityCharacteristic* ent
 	getEntityCharacteristicIterationbool(entity->wasReference, entityCharacteristic, "wasReference", &foundMatch);
 	#endif
 	getEntityCharacteristicIterationbool(entity->alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp, entityCharacteristic, "alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp", &foundMatch);
-	getEntityCharacteristicIterationbool(entity->mustSetIsSubstanceConceptBasedOnApposRelation, entityCharacteristic, "mustSetIsSubstanceConceptBasedOnApposRelation", &foundMatch);
+	getEntityCharacteristicIterationbool(entity->mustSetIsConceptBasedOnApposRelation, entityCharacteristic, "mustSetIsConceptBasedOnApposRelation", &foundMatch);
 	getEntityCharacteristicIterationbool(entity->isPronounReference, entityCharacteristic, "isPronounReference", &foundMatch);
-	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_ENSURE_DEPENDENT_IS_NOT_ASSIGNED_SUBSTANCE_CONCEPT
-	getEntityCharacteristicIterationbool(entity->mustNotSetIsSubstanceConceptBasedOnPrenomonalModifierRelation, entityCharacteristic, "mustNotSetIsSubstanceConceptBasedOnPrenomonalModifierRelation", &foundMatch);
+	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_ENSURE_DEPENDENT_IS_NOT_ASSIGNED_CONCEPT
+	getEntityCharacteristicIterationbool(entity->mustNotSetIsConceptBasedOnPrenomonalModifierRelation, entityCharacteristic, "mustNotSetIsConceptBasedOnPrenomonalModifierRelation", &foundMatch);
 	#endif
 	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES
 	getEntityCharacteristicIterationbool(entity->convertToSubClass, entityCharacteristic, "convertToSubClass", &foundMatch);
@@ -1406,13 +1406,13 @@ bool isActionSpecialPossessive(GIAentityNode* actionEntity)
 
 
 /*
-void deleteAllEntitiesInConceptEntityNodeList(unordered_map<string, GIAentityNode*>* conceptEntityNodesList);
+void deleteAllEntitiesInNetworkIndexEntityNodeList(unordered_map<string, GIAentityNode*>* networkIndexEntityNodesList);
 {
-	for(vector<GIAentityNode*>::iterator conceptEntityNodesListIter = conceptEntityNodesList.begin(); conceptEntityNodesListIter != conceptEntityNodesList.end(); conceptEntityNodesListIter++)
+	for(vector<GIAentityNode*>::iterator networkIndexEntityNodesListIter = networkIndexEntityNodesList.begin(); networkIndexEntityNodesListIter != networkIndexEntityNodesList.end(); networkIndexEntityNodesListIter++)
 	{
-		GIAentityNode* conceptEntityNode = sentenceConceptEntityNodesListTempNotUsedIter->second;
+		GIAentityNode* networkIndexEntityNode = sentenceNetworkIndexEntityNodesListTempNotUsedIter->second;
 
-		for(vector<GIAentityNode*>::iterator instanceEntityNodesListIter = conceptEntityNode->associatedInstanceNodeList.begin(); instanceEntityNodesListIter != conceptEntityNode->associatedInstanceNodeList.end(); )
+		for(vector<GIAentityNode*>::iterator instanceEntityNodesListIter = networkIndexEntityNode->associatedInstanceNodeList.begin(); instanceEntityNodesListIter != networkIndexEntityNode->associatedInstanceNodeList.end(); )
 		{
 			GIAentityNode* instanceEntityNode = *instanceEntityNodesListIter;
 			for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
@@ -1426,23 +1426,23 @@ void deleteAllEntitiesInConceptEntityNodeList(unordered_map<string, GIAentityNod
 			#ifdef GIA_SUPPORT_ALIASES
 			delete aliasList;
 			#endif
-			#ifndef GIA_USE_DATABASE_ALWAYS_LOAD_CONCEPT_NODE_REFERENCE_LISTS
-			delete conceptEntityLoaded;
+			#ifndef GIA_USE_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS
+			delete networkIndexEntityLoaded;
 			#endif
 
-			instanceEntityNodesListIter = conceptEntityNode->associatedInstanceNodeList.erase(instanceEntityNodesListIter);
+			instanceEntityNodesListIter = networkIndexEntityNode->associatedInstanceNodeList.erase(instanceEntityNodesListIter);
 		}
 
 
-		GIAentityNode* currentInstanceInConcept = conceptEntityNodeTemp->
-		string entityNodeNameTemp = conceptEntityNodeTemp->entityName;
-		sentenceConceptEntityNodesListTempNotUsedMap.insert(pair<string, GIAentityNode*>(entityNodeNameTemp, conceptEntityNodeTemp));
+		GIAentityNode* currentInstanceInNetworkIndex = networkIndexEntityNodeTemp->
+		string entityNodeNameTemp = networkIndexEntityNodeTemp->entityName;
+		sentenceNetworkIndexEntityNodesListTempNotUsedMap.insert(pair<string, GIAentityNode*>(entityNodeNameTemp, networkIndexEntityNodeTemp));
 
 		#ifdef GIA_SUPPORT_ALIASES
 		delete aliasList;
 		#endif
-		#ifndef GIA_USE_DATABASE_ALWAYS_LOAD_CONCEPT_NODE_REFERENCE_LISTS
-		delete conceptEntityLoaded;
+		#ifndef GIA_USE_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS
+		delete networkIndexEntityLoaded;
 		#endif
 
 	}

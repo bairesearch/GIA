@@ -26,7 +26,7 @@
  * File Name: GIAquery.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2m7b 11-September-2016
+ * Project Version: 2n1a 12-September-2016
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  * ?Limitations: will only locate a exact answer (based upon a comparison node) if it provides the maximum number of matched nodes
@@ -40,7 +40,7 @@
 	#include "GIAwordnet.h"
 	#include "wn.h"
 #endif
-#include "GIAtranslatorOperations.h"	//required for getPrimaryConceptNodeDefiningInstance()
+#include "GIAtranslatorOperations.h"	//required for getPrimaryNetworkIndexNodeDefiningInstance()
 
 
 GIAqueryTraceParameters::GIAqueryTraceParameters(void)
@@ -118,8 +118,8 @@ GIAreferenceTraceParameters::GIAreferenceTraceParameters(void)
 	#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
 	intrasentenceReference = false;
 	#endif
-	#ifdef GIA_CREATE_NEW_SUBSTANCE_CONCEPT_FOR_EVERY_REFERENCE_TO_A_SUBSTANCE_CONCEPT
-	doNotParseQuerySubnetsWithSubstanceConcepts = false;
+	#ifdef GIA_CREATE_NEW_CONCEPT_FOR_EVERY_REFERENCE_TO_A_CONCEPT
+	doNotParseQuerySubnetsWithConcepts = false;
 	#endif
 
 	#ifdef GIA_SUPPORT_NLC_INTEGRATION_DEFINE_REFERENCE_CONTEXT_BY_TEXT_INDENTATION
@@ -135,11 +135,11 @@ GIAreferenceTraceParameters::GIAreferenceTraceParameters(void)
 	sameReferenceSetTests = false;
 	#endif
 
-	#ifdef GIA_ENABLE_SUBSTANCE_CONCEPT_ADVANCED_REFERENCING_ONLY
-	traceSubstanceConceptsOnly = false;
+	#ifdef GIA_ENABLE_CONCEPT_ADVANCED_REFERENCING_ONLY
+	traceConceptsOnly = false;
 	#endif
-	#ifdef GIA_SUPPORT_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS_SUBSTANCE_CONCEPTS
-	logicalConditionDisableTraceSubstanceConcepts = false;
+	#ifdef GIA_SUPPORT_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS_CONCEPTS
+	logicalConditionDisableTraceConcepts = false;
 	#endif
 }
 GIAreferenceTraceParameters::~GIAreferenceTraceParameters(void)
@@ -148,7 +148,7 @@ GIAreferenceTraceParameters::~GIAreferenceTraceParameters(void)
 
 
 #ifdef GIA_QUERY_SIMPLIFIED_SEARCH
-GIAentityNode* answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork2(unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts, unordered_map<string, GIAentityNode*>* entityNodesActiveListConceptsQuery, bool detectComparisonVariable, GIAentityNode* comparisonVariableNode, bool* foundAnswer, GIAentityNode* queryAnswerNode, double* numberOfMatchedNodes, string* queryAnswerContext)
+GIAentityNode* answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork2(unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexs, unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexsQuery, bool detectComparisonVariable, GIAentityNode* comparisonVariableNode, bool* foundAnswer, GIAentityNode* queryAnswerNode, double* numberOfMatchedNodes, string* queryAnswerContext)
 {
 	bool traceModeIsQuery = TRACE_MODE_IS_QUERY_TRUE;
 
@@ -157,7 +157,7 @@ GIAentityNode* answerQueryOrFindAndTagForHighlightingMatchingStructureInSemantic
 	bool foundBestAnswerCandidate = false;
 	int maxNumberMatchedNodes = 0;
 
-	for(unordered_map<string, GIAentityNode*>::iterator entityIterQuery = entityNodesActiveListConceptsQuery->begin(); entityIterQuery != entityNodesActiveListConceptsQuery->end(); entityIterQuery++)
+	for(unordered_map<string, GIAentityNode*>::iterator entityIterQuery = entityNodesActiveListNetworkIndexsQuery->begin(); entityIterQuery != entityNodesActiveListNetworkIndexsQuery->end(); entityIterQuery++)
 	{//for each node in query semantic net;
 
 		GIAentityNode* currentQueryEntityNode = entityIterQuery->second;
@@ -172,7 +172,7 @@ GIAentityNode* answerQueryOrFindAndTagForHighlightingMatchingStructureInSemantic
 				long queryEntityNodeIndex = INT_DEFAULT_VALUE;
 				string queryEntityNodeName = currentQueryEntityNode->entityName;
 
-				GIAentityNode* conceptEntityMatchingCurrentQueryEntity = findOrAddConceptEntityNodeByName(NULL, entityNodesActiveListConcepts, &queryEntityNodeName, &foundQueryEntityNodeName, &queryEntityNodeIndex, false, NULL, NULL, false);
+				GIAentityNode* networkIndexEntityMatchingCurrentQueryEntity = findOrAddNetworkIndexEntityNodeByName(NULL, entityNodesActiveListNetworkIndexs, &queryEntityNodeName, &foundQueryEntityNodeName, &queryEntityNodeIndex, false, NULL, NULL, false);
 
 				if(foundQueryEntityNodeName)
 				{
@@ -190,22 +190,22 @@ GIAentityNode* answerQueryOrFindAndTagForHighlightingMatchingStructureInSemantic
 
 					int numberOfMatchedNodesTemp = 0;
 					int numberOfMatchedNodesRequiredSynonymnDetectionTemp = 0;
-					bool exactMatch = testEntityNodeForQueryOrReferenceSet2(currentQueryEntityNode, conceptEntityMatchingCurrentQueryEntity, &numberOfMatchedNodesTemp, false, &numberOfMatchedNodesRequiredSynonymnDetectionTemp, traceModeIsQuery, &queryTraceParameters, &referenceTraceParameters);
+					bool exactMatch = testEntityNodeForQueryOrReferenceSet2(currentQueryEntityNode, networkIndexEntityMatchingCurrentQueryEntity, &numberOfMatchedNodesTemp, false, &numberOfMatchedNodesRequiredSynonymnDetectionTemp, traceModeIsQuery, &queryTraceParameters, &referenceTraceParameters);
 
 					if(numberOfMatchedNodesTemp > maxNumberMatchedNodes)
 					{
 						maxNumberMatchedNodes = numberOfMatchedNodesTemp;
 						foundBestAnswerCandidate = true;
-						networkEntityWithMaxNumberNodesMatched = conceptEntityMatchingCurrentQueryEntity;
+						networkEntityWithMaxNumberNodesMatched = networkIndexEntityMatchingCurrentQueryEntity;
 						queryEntityWithMaxNumberNodesMatched = currentQueryEntityNode;
 					}
 
 					//now reset the matched nodes as unpassed (required such that they are retracable using a the different path)
 					int irrelevant;
 					string printEntityNodeString = "";
-					bool traceInstantiations = GIA_QUERY_TRACE_CONCEPT_NODES_DEFINING_INSTANTIATIONS_VALUE;
+					bool traceInstantiations = GIA_QUERY_TRACE_NETWORK_INDEX_NODES_DEFINING_INSTANTIATIONS_VALUE;
 					traceEntityNode(currentQueryEntityNode, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISONTEMP, &irrelevant, &printEntityNodeString, false, NULL, traceInstantiations);
-					traceEntityNode(conceptEntityMatchingCurrentQueryEntity, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISONTEMP, &irrelevant, &printEntityNodeString, false, NULL, traceInstantiations);
+					traceEntityNode(networkIndexEntityMatchingCurrentQueryEntity, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISONTEMP, &irrelevant, &printEntityNodeString, false, NULL, traceInstantiations);
 				}
 			}
 		#ifdef GIA_QUERY_DO_NOT_SEARCH_DISABLED_NODES
@@ -273,7 +273,7 @@ bool testEntityNodeForQueryOrReferenceSet2(GIAentityNode* queryEntityNode, GIAen
 		for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
 		{
 			bool pass = true;
-			#ifndef GIA_QUERY_TRACE_CONCEPT_NODES_DEFINING_INSTANTIATIONS
+			#ifndef GIA_QUERY_TRACE_NETWORK_INDEX_NODES_DEFINING_INSTANTIATIONS
 			if(i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE)	//Removed && (traceModeIsQuery) GIA 2f19b 23-July-2014 (do not trace instantinations for queries only)
 			{
 				pass = false;
@@ -291,7 +291,7 @@ bool testEntityNodeForQueryOrReferenceSet2(GIAentityNode* queryEntityNode, GIAen
 					{
 					#endif
 						#ifdef GIA_QUERY_DEBUG
-						cout << "\n\nconnectionIterQuery = " << (*connectionIterQuery)->entity->entityName << ", isConcept = " << (*connectionIterQuery)->entity->isConcept << endl;
+						cout << "\n\nconnectionIterQuery = " << (*connectionIterQuery)->entity->entityName << ", isNetworkIndex = " << (*connectionIterQuery)->entity->isNetworkIndex << endl;
 						cout << "connectionIterQuery idInstance = " << (*connectionIterQuery)->entity->idInstance << endl;
 						cout << "connectionIterQuery entityIndexTemp = " << (*connectionIterQuery)->entity->entityIndexTemp << endl;
 						#endif
@@ -301,7 +301,7 @@ bool testEntityNodeForQueryOrReferenceSet2(GIAentityNode* queryEntityNode, GIAen
 						if(getUseDatabase() == GIA_USE_DATABASE_TRUE_READ_ACTIVE)
 						{
 							#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
-							cout << "GIAquery; entityNode->isConcept = " << entityNode->isConcept << endl;
+							cout << "GIAquery; entityNode->isNetworkIndex = " << entityNode->isNetworkIndex << endl;
 							cout << "GIAquery; entityNode->isSubstance = " << entityNode->isSubstance << endl;
 							//cout << "DBreadVectorConnections: " << entityNode->entityName << ", " << entityNode->idInstance << ", i=" << i << endl;
 							#endif
@@ -333,7 +333,7 @@ bool testEntityNodeForQueryOrReferenceSet2(GIAentityNode* queryEntityNode, GIAen
 							{
 							#endif
 								#ifdef GIA_QUERY_DEBUG
-								cout << "connectionIter = " << (*connectionIter)->entity->entityName << ", isConcept = " << (*connectionIter)->entity->isConcept << endl;
+								cout << "connectionIter = " << (*connectionIter)->entity->entityName << ", isNetworkIndex = " << (*connectionIter)->entity->isNetworkIndex << endl;
 								cout << "connectionIter idInstance = " << (*connectionIter)->entity->idInstance << endl;
 								cout << "connectionIter entityIndexTemp = " << (*connectionIter)->entity->entityIndexTemp << endl;
 								#endif
@@ -375,7 +375,7 @@ bool testEntityNodeForQueryOrReferenceSet2(GIAentityNode* queryEntityNode, GIAen
 								//now reset the matched nodes as unpassed (required such that they are retracable using a the different path)
 								int irrelevantInt;
 								string irrelevantString = "";
-								bool traceInstantiations = GIA_QUERY_TRACE_CONCEPT_NODES_DEFINING_INSTANTIATIONS_VALUE;		//clear all (why is this still required if GIA_QUERY_TRACE_CONCEPT_NODES_DEFINING_INSTANTIATIONS is off? - it is based on testing, but unknown as to why)
+								bool traceInstantiations = GIA_QUERY_TRACE_NETWORK_INDEX_NODES_DEFINING_INSTANTIATIONS_VALUE;		//clear all (why is this still required if GIA_QUERY_TRACE_NETWORK_INDEX_NODES_DEFINING_INSTANTIATIONS is off? - it is based on testing, but unknown as to why)
 								traceEntityNode((*connectionIter)->entity, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISONTEMP, &irrelevantInt, &irrelevantString, false, NULL, traceInstantiations);
 								traceEntityNode((*connectionIterQuery)->entity, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISONTEMP, &irrelevantInt, &irrelevantString, false, NULL, traceInstantiations);
 
@@ -435,7 +435,7 @@ bool testEntityNodeForQueryOrReferenceSet2(GIAentityNode* queryEntityNode, GIAen
 								cout << "!atLeastOneExactMatch" << endl;
 								cout << "(*connectionIterQuery)->entity->referenceSetID  = " << (*connectionIterQuery)->entity->referenceSetID << endl;
 								cout << "(*connectionIterQuery)->entity->entityName  = " << (*connectionIterQuery)->entity->entityName << endl;
-								cout << "(*connectionIterQuery)->entity->isConcept  = " << (*connectionIterQuery)->entity->isConcept << endl;
+								cout << "(*connectionIterQuery)->entity->isNetworkIndex  = " << (*connectionIterQuery)->entity->isNetworkIndex << endl;
 								*/
 								#endif
 								exactMatch = false;
@@ -584,7 +584,7 @@ bool testReferencedEntityNodeForExactNameMatch2(GIAentityNode* queryEntityNode, 
 						{
 							/*
 							if a 'which' query, then verify that the entityNode is defined by the comparisonVariableNode [ie has a definition corresponding to the comparisonVariableNode]
-							eg1 a dog eats the mud. dogs are animals. / which animal eats the mud?	[answer: 'dog' - which is an instance of 'dog' concept node, where the 'dog' concept node is defined by 'animal'
+							eg1 a dog eats the mud. dogs are animals. / which animal eats the mud?	[answer: 'dog' - which is an instance of 'dog' networkIndex node, where the 'dog' networkIndex node is defined by 'animal'
 								NB answer context text = "eat mud is done by dog" ['eat' is the first node traced, and 'dog' is the answer found'. NB the reason 'mud' is added to the answer context text, is because it is the actionObject, which is parsed after actionSubject in testEntityNodeForQuery {ie, after answer 'dog' has already been found}]
 									for this example, need to then verify that the answer 'dog' is defined in the primary semantic network as an animal
 
@@ -671,7 +671,7 @@ bool testReferencedEntityNodeForExactNameMatch2(GIAentityNode* queryEntityNode, 
 #endif
 
 
-GIAentityNode* answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork(unordered_map<string, GIAentityNode*>* entityNodesActiveListConcepts, unordered_map<string, GIAentityNode*>* entityNodesActiveListConceptsQuery, bool detectComparisonVariable, GIAentityNode* comparisonVariableNode, bool* foundAnswer, GIAentityNode* queryAnswerNode, double* numberOfMatchedNodes, string* queryAnswerContext)
+GIAentityNode* answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork(unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexs, unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexsQuery, bool detectComparisonVariable, GIAentityNode* comparisonVariableNode, bool* foundAnswer, GIAentityNode* queryAnswerNode, double* numberOfMatchedNodes, string* queryAnswerContext)
 {
 	bool traceModeIsQuery = TRACE_MODE_IS_QUERY_TRUE;
 
@@ -693,7 +693,7 @@ GIAentityNode* answerQueryOrFindAndTagForHighlightingMatchingStructureInSemantic
 
 	bool foundAtLeastOneMatch = false;
 
-	for(unordered_map<string, GIAentityNode*>::iterator entityIterQuery = entityNodesActiveListConceptsQuery->begin(); entityIterQuery != entityNodesActiveListConceptsQuery->end(); entityIterQuery++)
+	for(unordered_map<string, GIAentityNode*>::iterator entityIterQuery = entityNodesActiveListNetworkIndexsQuery->begin(); entityIterQuery != entityNodesActiveListNetworkIndexsQuery->end(); entityIterQuery++)
 	{//for each node in query semantic net;
 
 		#ifdef GIA_QUERY_DEBUG
@@ -715,7 +715,7 @@ GIAentityNode* answerQueryOrFindAndTagForHighlightingMatchingStructureInSemantic
 				long queryEntityNodeIndex = INT_DEFAULT_VALUE;
 				string queryEntityNodeName = currentQueryEntityNode->entityName;
 
-				GIAentityNode* conceptEntityMatchingCurrentQueryEntity = findOrAddConceptEntityNodeByName(NULL, entityNodesActiveListConcepts, &queryEntityNodeName, &foundQueryEntityNodeName, &queryEntityNodeIndex, false, NULL, NULL, false);
+				GIAentityNode* networkIndexEntityMatchingCurrentQueryEntity = findOrAddNetworkIndexEntityNodeByName(NULL, entityNodesActiveListNetworkIndexs, &queryEntityNodeName, &foundQueryEntityNodeName, &queryEntityNodeIndex, false, NULL, NULL, false);
 
 				if(foundQueryEntityNodeName)
 				{
@@ -724,7 +724,7 @@ GIAentityNode* answerQueryOrFindAndTagForHighlightingMatchingStructureInSemantic
 					cout << "\tcurrentQueryEntityNode->entityName = " << currentQueryEntityNode->entityName << endl;
 					#endif
 
-					//now start matching structure search for all substances of the identical concept node (to current query entity name) in Semantic Network
+					//now start matching structure search for all substances of the identical networkIndex node (to current query entity name) in Semantic Network
 
 					int numberOfMatchedNodesTemp = 0;
 					int numberOfMatchedNodesRequiredSynonymnDetectionTemp = 0;
@@ -735,8 +735,8 @@ GIAentityNode* answerQueryOrFindAndTagForHighlightingMatchingStructureInSemantic
 
 					GIAreferenceTraceParameters referenceTraceParameters;	//irrelevant
 
-					bool exactMatchIrrelevant = testEntityNodeForQueryOrReferenceSet(currentQueryEntityNode, conceptEntityMatchingCurrentQueryEntity, &numberOfMatchedNodesTemp, false, &numberOfMatchedNodesRequiredSynonymnDetectionTemp, traceModeIsQuery, &queryTraceParametersTemp, &referenceTraceParameters);
-					//queryAnswerNodeTemp = testEntityNodeForQuery(currentQueryEntityNode, conceptEntityMatchingCurrentQueryEntity, detectComparisonVariable, comparisonVariableNode, &foundAnswerTemp, queryAnswerNodeTemp, &numberOfMatchedNodesTemp, false, &queryPreviousAnswerNodeTemp, &queryAnswerContextTemp, false, false);
+					bool exactMatchIrrelevant = testEntityNodeForQueryOrReferenceSet(currentQueryEntityNode, networkIndexEntityMatchingCurrentQueryEntity, &numberOfMatchedNodesTemp, false, &numberOfMatchedNodesRequiredSynonymnDetectionTemp, traceModeIsQuery, &queryTraceParametersTemp, &referenceTraceParameters);
+					//queryAnswerNodeTemp = testEntityNodeForQuery(currentQueryEntityNode, networkIndexEntityMatchingCurrentQueryEntity, detectComparisonVariable, comparisonVariableNode, &foundAnswerTemp, queryAnswerNodeTemp, &numberOfMatchedNodesTemp, false, &queryPreviousAnswerNodeTemp, &queryAnswerContextTemp, false, false);
 					//NB entityNode->isAnswerContextToQuery is identical to entityNode->testedForQueryComparison
 
 					#ifdef GIA_QUERY_DEBUG
@@ -754,7 +754,7 @@ GIAentityNode* answerQueryOrFindAndTagForHighlightingMatchingStructureInSemantic
 						numberOfMatchedNodesTempMax = numberOfMatchedNodesTemp;
 						numberOfMatchedNodesRequiredSynonymnDetectionTempAtMax = numberOfMatchedNodesRequiredSynonymnDetectionTemp;
 
-						networkEntityWithMaxNumberNodesMatched = conceptEntityMatchingCurrentQueryEntity;
+						networkEntityWithMaxNumberNodesMatched = networkIndexEntityMatchingCurrentQueryEntity;
 						queryEntityWithMaxNumberNodesMatched = currentQueryEntityNode;
 
 						#ifdef GIA_QUERY_DEBUG
@@ -774,9 +774,9 @@ GIAentityNode* answerQueryOrFindAndTagForHighlightingMatchingStructureInSemantic
 					//now reset the matched nodes as unpassed (required such that they are retracable using a the different path)
 					int irrelevant;
 					string printEntityNodeString = "";
-					bool traceInstantiations = GIA_QUERY_TRACE_CONCEPT_NODES_DEFINING_INSTANTIATIONS_VALUE;
+					bool traceInstantiations = GIA_QUERY_TRACE_NETWORK_INDEX_NODES_DEFINING_INSTANTIATIONS_VALUE;
 					traceEntityNode(currentQueryEntityNode, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISONTEMP, &irrelevant, &printEntityNodeString, false, NULL, traceInstantiations);
-					traceEntityNode(conceptEntityMatchingCurrentQueryEntity, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISONTEMP, &irrelevant, &printEntityNodeString, false, NULL, traceInstantiations);
+					traceEntityNode(networkIndexEntityMatchingCurrentQueryEntity, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISONTEMP, &irrelevant, &printEntityNodeString, false, NULL, traceInstantiations);
 				}
 			}
 		#ifdef GIA_QUERY_DO_NOT_SEARCH_DISABLED_NODES
@@ -819,7 +819,7 @@ GIAentityNode* answerQueryOrFindAndTagForHighlightingMatchingStructureInSemantic
 		//now reset the matched nodes as unpassed (required such that they are retracable using a the different path)
 		int irrelevant;
 		string printEntityNodeString = "";
-		bool traceInstantiations = GIA_QUERY_TRACE_CONCEPT_NODES_DEFINING_INSTANTIATIONS_VALUE;
+		bool traceInstantiations = GIA_QUERY_TRACE_NETWORK_INDEX_NODES_DEFINING_INSTANTIATIONS_VALUE;
 		traceEntityNode(queryEntityWithMaxNumberNodesMatched, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISONTEMP, &irrelevant, &printEntityNodeString, false, NULL, traceInstantiations);		//is this required?	//added 13 July 2012
 		traceEntityNode(networkEntityWithMaxNumberNodesMatched, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISONTEMP, &irrelevant, &printEntityNodeString, false, NULL, traceInstantiations);				//added 13 July 2012
 		#endif
@@ -977,7 +977,7 @@ int testReferencedEntityNodeForExactNameMatch(GIAentityNode* queryEntityNode, GI
 						{
 							/*
 							if a 'which' query, then verify that the entityNode is defined by the comparisonVariableNode [ie has a definition corresponding to the comparisonVariableNode]
-							eg1 a dog eats the mud. dogs are animals. / which animal eats the mud?	[answer: 'dog' - which is an instance of 'dog' concept node, where the 'dog' concept node is defined by 'animal'
+							eg1 a dog eats the mud. dogs are animals. / which animal eats the mud?	[answer: 'dog' - which is an instance of 'dog' networkIndex node, where the 'dog' networkIndex node is defined by 'animal'
 								NB answer context text = "eat mud is done by dog" ['eat' is the first node traced, and 'dog' is the answer found'. NB the reason 'mud' is added to the answer context text, is because it is the actionObject, which is parsed after actionSubject in testEntityNodeForQuery {ie, after answer 'dog' has already been found}]
 									for this example, need to then verify that the answer 'dog' is defined in the primary semantic network as an animal
 
@@ -1239,7 +1239,7 @@ bool testEntityNodeForQueryOrReferenceSet(GIAentityNode* queryEntityNode, GIAent
 			{
 			#endif
 				#ifdef GIA_QUERY_TRACE_INSTANTIATIONS_DO_NOT_INCREMENT_NUMBER_OF_MATCHED_NODES
-				if(GIA_QUERY_TRACE_CONCEPT_NODES_DEFINING_INSTANTIATIONS_VALUE)
+				if(GIA_QUERY_TRACE_NETWORK_INDEX_NODES_DEFINING_INSTANTIATIONS_VALUE)
 				{
 				#endif
 					*numberOfMatchedNodes = *numberOfMatchedNodes + 1;
@@ -1273,9 +1273,9 @@ bool testEntityNodeForQueryOrReferenceSet(GIAentityNode* queryEntityNode, GIAent
 
 		#ifdef GIA_QUERY_DEBUG
 		//cout << "\tqueryEntityNode->entityName = " << queryEntityNode->entityName << endl;
-		if(entityNode->isConcept)
+		if(entityNode->isNetworkIndex)
 		{
-			cout << "entityNode = " << entityNode->entityName << " (is concept)" << endl;
+			cout << "entityNode = " << entityNode->entityName << " (is networkIndex)" << endl;
 		}
 		if(entityNode->isSubstance)
 		{
@@ -1307,7 +1307,7 @@ bool testEntityNodeForQueryOrReferenceSet(GIAentityNode* queryEntityNode, GIAent
 		}
 		else
 		{
-			cout << "entityNode = " << entityNode->entityName << " (undefined/concept)" << endl;
+			cout << "entityNode = " << entityNode->entityName << " (undefined/networkIndex)" << endl;
 		}
 		cout << "numberOfMatchedNodes = " <<* numberOfMatchedNodes << endl;
 		/*
@@ -1358,7 +1358,7 @@ bool testEntityNodeForQueryOrReferenceSet(GIAentityNode* queryEntityNode, GIAent
 		for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
 		{
 			bool pass = true;
-			#ifndef GIA_QUERY_TRACE_CONCEPT_NODES_DEFINING_INSTANTIATIONS
+			#ifndef GIA_QUERY_TRACE_NETWORK_INDEX_NODES_DEFINING_INSTANTIATIONS
 			if(i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE)	//Removed && (traceModeIsQuery) GIA 2f19b 23-July-2014 (do not trace instantinations for queries only)
 			{
 				pass = false;
@@ -1397,7 +1397,7 @@ bool testEntityNodeForQueryOrReferenceSet(GIAentityNode* queryEntityNode, GIAent
 							{
 								alreadyFoundAnAnswer = true;
 							}
-							#ifndef GIA_QUERY_TRACE_CONCEPT_NODES_DEFINING_INSTANTIATIONS
+							#ifndef GIA_QUERY_TRACE_NETWORK_INDEX_NODES_DEFINING_INSTANTIATIONS
 							if(i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES)	//check: do not trace instantinations for queries only
 							{
 								queryTraceParameters->thisIsInstanceAndPreviousNodeWasDefinition = true;
@@ -1421,7 +1421,7 @@ bool testEntityNodeForQueryOrReferenceSet(GIAentityNode* queryEntityNode, GIAent
 						if(getUseDatabase() == GIA_USE_DATABASE_TRUE_READ_ACTIVE)
 						{
 							#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
-							cout << "GIAquery; entityNode->isConcept = " << entityNode->isConcept << endl;
+							cout << "GIAquery; entityNode->isNetworkIndex = " << entityNode->isNetworkIndex << endl;
 							cout << "GIAquery; entityNode->isSubstance = " << entityNode->isSubstance << endl;
 							//cout << "DBreadVectorConnections: " << entityNode->entityName << ", " << entityNode->idInstance << ", i=" << i << endl;
 							#endif
@@ -1656,7 +1656,7 @@ bool testEntityNodeForQueryOrReferenceSet(GIAentityNode* queryEntityNode, GIAent
 							//now reset the matched nodes as unpassed (required such that they are retracable using a the different path)
 							int irrelevantInt;
 							string irrelevantString = "";
-							bool traceInstantiations = GIA_QUERY_TRACE_CONCEPT_NODES_DEFINING_INSTANTIATIONS_VALUE;		//clear all (why is this still required if GIA_QUERY_TRACE_CONCEPT_NODES_DEFINING_INSTANTIATIONS is off? - it is based on testing, but unknown as to why)
+							bool traceInstantiations = GIA_QUERY_TRACE_NETWORK_INDEX_NODES_DEFINING_INSTANTIATIONS_VALUE;		//clear all (why is this still required if GIA_QUERY_TRACE_NETWORK_INDEX_NODES_DEFINING_INSTANTIATIONS is off? - it is based on testing, but unknown as to why)
 							traceEntityNode((*connectionIter)->entity, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISONTEMP, &irrelevantInt, &irrelevantString, false, NULL, traceInstantiations);
 							traceEntityNode((*connectionIterQuery)->entity, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISONTEMP, &irrelevantInt, &irrelevantString, false, NULL, traceInstantiations);
 
@@ -1986,7 +1986,7 @@ bool verifyThatAnswerEntityIsDefinedByComparisonVariableNode(GIAentityNode* enti
 	{
 		if(!(entityNode->entityNodeDefiningThisInstance->empty()))
 		{
-			if(verifyThatAnswerEntityIsDefinedByComparisonVariableNode(getPrimaryConceptNodeDefiningInstance(entityNode), comparisonVariableNodeName))
+			if(verifyThatAnswerEntityIsDefinedByComparisonVariableNode(getPrimaryNetworkIndexNodeDefiningInstance(entityNode), comparisonVariableNodeName))
 			{
 				definitionFound = true;
 			}
@@ -2233,7 +2233,7 @@ void generateTexualContextEntityString(string* texualContextEntityString, GIAent
 	{
 	}
 	else
-	{//concept
+	{//networkIndex
 		entityPretext = entityPretext + "a ";
 	}
 
@@ -2243,11 +2243,11 @@ void generateTexualContextEntityString(string* texualContextEntityString, GIAent
 
 
 
-double determineMaxConfidenceOfQuerySemanticNetwork(unordered_map<string, GIAentityNode*>* entityNodesActiveListConceptsQuery)
+double determineMaxConfidenceOfQuerySemanticNetwork(unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexsQuery)
 {
 	double maxNumberOfMatchedNodes = 0.0;
 
-	for(unordered_map<string, GIAentityNode*>::iterator connectionIterQuery = entityNodesActiveListConceptsQuery->begin(); connectionIterQuery != entityNodesActiveListConceptsQuery->end(); connectionIterQuery++)
+	for(unordered_map<string, GIAentityNode*>::iterator connectionIterQuery = entityNodesActiveListNetworkIndexsQuery->begin(); connectionIterQuery != entityNodesActiveListNetworkIndexsQuery->end(); connectionIterQuery++)
 	{//for each node in query semantic net;
 
 		GIAentityNode* currentQueryEntityNode = connectionIterQuery->second;
@@ -2259,7 +2259,7 @@ double determineMaxConfidenceOfQuerySemanticNetwork(unordered_map<string, GIAent
 
 		int numberOfMatchedNodes = 0;
 		string queryAnswerContextTemp = "";
-		bool traceInstantiations = GIA_QUERY_TRACE_CONCEPT_NODES_DEFINING_INSTANTIATIONS_VALUE;
+		bool traceInstantiations = GIA_QUERY_TRACE_NETWORK_INDEX_NODES_DEFINING_INSTANTIATIONS_VALUE;
 		traceEntityNode(currentQueryEntityNode, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_DETERMINE_MAX_NUMBER_MATCHED_NODES, &numberOfMatchedNodes, &queryAnswerContextTemp, false, NULL, traceInstantiations);
 
 		if((double)numberOfMatchedNodes > maxNumberOfMatchedNodes)
@@ -2559,10 +2559,10 @@ void compareEntityReferenceTrace(GIAentityNode* queryEntityNode, GIAentityNode* 
 	cout << "(referenceTraceParameters->traceModeAssertSameReferenceSetID) = " << (referenceTraceParameters->traceModeAssertSameReferenceSetID) << endl;
 	*/
 	#endif
-	#ifdef GIA_CREATE_NEW_SUBSTANCE_CONCEPT_FOR_EVERY_REFERENCE_TO_A_SUBSTANCE_CONCEPT
-	//cout << "referenceTraceParameters->doNotParseQuerySubnetsWithSubstanceConcepts = " << referenceTraceParameters->doNotParseQuerySubnetsWithSubstanceConcepts << endl;
-	//cout << "queryEntityNode->isSubstanceConcept = " << queryEntityNode->isSubstanceConcept << endl;
-	if(!(referenceTraceParameters->doNotParseQuerySubnetsWithSubstanceConcepts) || !(queryEntityNode->isSubstanceConcept))
+	#ifdef GIA_CREATE_NEW_CONCEPT_FOR_EVERY_REFERENCE_TO_A_CONCEPT
+	//cout << "referenceTraceParameters->doNotParseQuerySubnetsWithConcepts = " << referenceTraceParameters->doNotParseQuerySubnetsWithConcepts << endl;
+	//cout << "queryEntityNode->isConcept = " << queryEntityNode->isConcept << endl;
+	if(!(referenceTraceParameters->doNotParseQuerySubnetsWithConcepts) || !(queryEntityNode->isConcept))
 	{
 	#endif
 		if((queryEntityNode->referenceSetID == referenceTraceParameters->referenceSetID) || !(referenceTraceParameters->traceModeAssertSameReferenceSetID))	//only trace paths of same reference set ID
@@ -2607,15 +2607,15 @@ void compareEntityReferenceTrace(GIAentityNode* queryEntityNode, GIAentityNode* 
 							cout << "compareEntityNamesResult: queryEntityNode->entityName = " << queryEntityNode->entityName << ", entityNode->entityName = " << entityNode->entityName << endl;
 
 							cout << "queryEntityNode->isSubstance = " << queryEntityNode->isSubstance << endl;
-							cout << "queryEntityNode->isSubstanceConcept = " << queryEntityNode->isSubstanceConcept << endl;
+							cout << "queryEntityNode->isConcept = " << queryEntityNode->isConcept << endl;
 							cout << "entityNode->isSubstance = " << entityNode->isSubstance << endl;
-							cout << "entityNode->isSubstanceConcept = " << entityNode->isSubstanceConcept << endl;
+							cout << "entityNode->isConcept = " << entityNode->isConcept << endl;
 							#endif
 
-							#ifdef GIA_SUPPORT_SPECIFIC_SUBSTANCE_CONCEPTS
+							#ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS
 							bool passSpecificConcepts = true;
-							if(((queryEntityNode->isSubstanceConcept) && !(entityNode->isSubstanceConcept)) ||
-							((entityNode->isSubstanceConcept) && !(queryEntityNode->isSubstanceConcept)))
+							if(((queryEntityNode->isConcept) && !(entityNode->isConcept)) ||
+							((entityNode->isConcept) && !(queryEntityNode->isConcept)))
 							{
 								passSpecificConcepts = false;
 								#ifdef GIA_DEBUG
@@ -2627,7 +2627,7 @@ void compareEntityReferenceTrace(GIAentityNode* queryEntityNode, GIAentityNode* 
 							{
 								//override passSpecificConcepts value:
 								#ifndef GIA_TRANSLATOR_DREAM_MODE_LINK_SPECIFIC_CONCEPTS_AND_ACTIONS_ADVANCED
-								if((entityNode->isSubstanceConcept) || (entityNode->isActionConcept))
+								if((entityNode->isConcept) || (entityNode->isActionNetworkIndex))
 								{
 									passSpecificConcepts = false;
 								}
@@ -2648,8 +2648,8 @@ void compareEntityReferenceTrace(GIAentityNode* queryEntityNode, GIAentityNode* 
 								if(((queryEntityNode->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL) && !(entityNode->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL)) ||
 								((entityNode->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL) && !(queryEntityNode->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL)))
 								{
-									if(!(entityNode->isSubstanceConcept && queryEntityNode->isSubstanceConcept))	//condition added 29 Sept 2013
-									{//if they are substance concepts, ignore plural (in fact substance concepts should not be assigned plural in the first place; this is an artefact of the english grammmar system: eg "blue chickens are strong")
+									if(!(entityNode->isConcept && queryEntityNode->isConcept))	//condition added 29 Sept 2013
+									{//if they are substance networkIndexs, ignore plural (in fact substance networkIndexs should not be assigned plural in the first place; this is an artefact of the english grammmar system: eg "blue chickens are strong")
 										passPluralityMatch = false;
 									}
 								}
@@ -2663,7 +2663,7 @@ void compareEntityReferenceTrace(GIAentityNode* queryEntityNode, GIAentityNode* 
 								{
 								#endif
 									#ifdef GIA_DEBUG
-									//cout << "\tpassed isSubstanceConcept tests" << endl;
+									//cout << "\tpassed isConcept tests" << endl;
 									#endif
 									#ifdef GIA_SUPPORT_NLC_INTEGRATION_DEFINE_REFERENCE_CONTEXT_BY_TEXT_INDENTATION
 									bool passReferenceContextMatch = true;
@@ -2682,29 +2682,29 @@ void compareEntityReferenceTrace(GIAentityNode* queryEntityNode, GIAentityNode* 
 									if(passReferenceContextMatch)
 									{
 									#endif
-										#ifdef GIA_SUPPORT_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS_SUBSTANCE_CONCEPTS
+										#ifdef GIA_SUPPORT_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS_CONCEPTS
 										if(!(entityNode->NLCmathTextParsablePhraseEntity))
 										{
 										#endif
-											#ifdef GIA_ENABLE_SUBSTANCE_CONCEPT_ADVANCED_REFERENCING_ONLY
-											bool passSubstanceConceptOnlyTraceRequirements = true;
-											if(referenceTraceParameters->traceSubstanceConceptsOnly)
+											#ifdef GIA_ENABLE_CONCEPT_ADVANCED_REFERENCING_ONLY
+											bool passConceptOnlyTraceRequirements = true;
+											if(referenceTraceParameters->traceConceptsOnly)
 											{
-												passSubstanceConceptOnlyTraceRequirements = false;
-												if(entityNode->isSubstanceConcept || entityNode->isSubstanceQuality)
+												passConceptOnlyTraceRequirements = false;
+												if(entityNode->isConcept || entityNode->isSubstanceQuality)
 												{
-													passSubstanceConceptOnlyTraceRequirements = true;
-													//rely on previous testReferencedEntityNodeForExactNameMatch2() passSpecificConcepts checks to test entityNode target (connectionIter) for isSubstanceConcept also
+													passConceptOnlyTraceRequirements = true;
+													//rely on previous testReferencedEntityNodeForExactNameMatch2() passSpecificConcepts checks to test entityNode target (connectionIter) for isConcept also
 												}
 											}
-											if(passSubstanceConceptOnlyTraceRequirements)
+											if(passConceptOnlyTraceRequirements)
 											{
 											#endif
-												#ifdef GIA_SUPPORT_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS_SUBSTANCE_CONCEPTS
+												#ifdef GIA_SUPPORT_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS_CONCEPTS
 												bool passLogicalConditionRequirements = true;
-												if(referenceTraceParameters->logicalConditionDisableTraceSubstanceConcepts)
+												if(referenceTraceParameters->logicalConditionDisableTraceConcepts)
 												{
-													if(entityNode->isSubstanceConcept)
+													if(entityNode->isConcept)
 													{
 														passLogicalConditionRequirements = false;
 													}
@@ -2744,13 +2744,13 @@ void compareEntityReferenceTrace(GIAentityNode* queryEntityNode, GIAentityNode* 
 															*resultOld = EXACT_MATCH_FAIL;
 														}
 													}
-												#ifdef GIA_SUPPORT_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS_SUBSTANCE_CONCEPTS
+												#ifdef GIA_SUPPORT_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS_CONCEPTS
 												}
 												#endif
-											#ifdef GIA_ENABLE_SUBSTANCE_CONCEPT_ADVANCED_REFERENCING_ONLY
+											#ifdef GIA_ENABLE_CONCEPT_ADVANCED_REFERENCING_ONLY
 											}
 											#endif
-										#ifdef GIA_SUPPORT_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS_SUBSTANCE_CONCEPTS
+										#ifdef GIA_SUPPORT_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS_CONCEPTS
 										}
 										#endif
 									#ifdef GIA_SUPPORT_NLC_INTEGRATION_DEFINE_REFERENCE_CONTEXT_BY_TEXT_INDENTATION
@@ -2765,7 +2765,7 @@ void compareEntityReferenceTrace(GIAentityNode* queryEntityNode, GIAentityNode* 
 									#endif
 								}
 								#endif
-							#ifdef GIA_SUPPORT_SPECIFIC_SUBSTANCE_CONCEPTS
+							#ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS
 							}
 							else
 							{
@@ -2828,7 +2828,7 @@ void compareEntityReferenceTrace(GIAentityNode* queryEntityNode, GIAentityNode* 
 			#endif
 			*resultOld = EXACT_MATCH_OUT_OF_BOUNDS;
 		}
-	#ifdef GIA_CREATE_NEW_SUBSTANCE_CONCEPT_FOR_EVERY_REFERENCE_TO_A_SUBSTANCE_CONCEPT
+	#ifdef GIA_CREATE_NEW_CONCEPT_FOR_EVERY_REFERENCE_TO_A_CONCEPT
 	}
 	#endif
 }

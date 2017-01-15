@@ -26,7 +26,7 @@
  * File Name: GIAnlg.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2m7b 11-September-2016
+ * Project Version: 2n1a 12-September-2016
  * Requirements: requires GIA translated data, and NLG2 to be installed
  * Description: GIA natural language generation (using NLG2)
  *
@@ -631,10 +631,10 @@ void generateTwoEntitySentenceFromEntityConnection(GIAentityNode* entityNode1, G
 		}
 		else
 		{
-			if(entityNode2->isConcept)
-			{//isConcept
+			if(entityNode2->isNetworkIndex)
+			{//isNetworkIndex
 				#ifdef GIA_NLG_DEBUG
-				//cout << "warning: generateTwoEntitySentenceFromEntityConnection && (entityNode2->isConcept) && (connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES)" << endl;
+				//cout << "warning: generateTwoEntitySentenceFromEntityConnection && (entityNode2->isNetworkIndex) && (connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES)" << endl;
 				#endif
 			}
 		}
@@ -867,7 +867,7 @@ void NLG2generateNLGinputViewFeatureTagsFromEntityNode(GIAentityNode* entityNode
 		//inflectionString = grammaticalWordTypeCrossReferenceInflectionArray[GRAMMATICAL_WORD_TYPE_PREP];	//no inflection for prepositions
 		posString = grammaticalWordTypeNameArray[GRAMMATICAL_WORD_TYPE_PREP];
 	}
-	else if((entityNode->isSubstance) && !(entityNode->isSubstanceConcept))
+	else if((entityNode->isSubstance) && !(entityNode->isConcept))
 	{
 		#ifdef NLG_TWO_ENTITY_SENTENCES_SUPPORT_ADVERBS_AND_ADJECTIVES
 		bool isSubstanceQuality = false;
@@ -904,8 +904,8 @@ void NLG2generateNLGinputViewFeatureTagsFromEntityNode(GIAentityNode* entityNode
 		}
 		#endif
 	}
-	else if(entityNode->isConcept || entityNode->isSubstanceConcept)
-	{//isConcept
+	else if(entityNode->isNetworkIndex || entityNode->isConcept)
+	{//isNetworkIndex
 		inflectionString = grammaticalWordTypeCrossReferenceInflectionArray[GRAMMATICAL_WORD_TYPE_NOUN];
 		posString = grammaticalWordTypeNameArray[GRAMMATICAL_WORD_TYPE_NOUN];
 	}
@@ -1094,7 +1094,7 @@ string calcDeterminate(GIAentityNode* entityNode)
 	{
 
 	}
-	else if((entityNode->isSubstance) && !(entityNode->isSubstanceConcept))
+	else if((entityNode->isSubstance) && !(entityNode->isConcept))
 	{
 		if(!(entityNode->isSubstanceQuality))
 		{
@@ -1126,8 +1126,8 @@ string calcDeterminate(GIAentityNode* entityNode)
 			}
 		}
 	}
-	else if((entityNode->isConcept) || (entityNode->isSubstanceConcept))
-	{//isConcept
+	else if((entityNode->isNetworkIndex) || (entityNode->isConcept))
+	{//isNetworkIndex
 
 	}
 

@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorRedistributeRelationsRelex.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2m7b 11-September-2016
+ * Project Version: 2n1a 12-September-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -139,7 +139,7 @@ void collapseRedundantRelationAndMakeNegativeRelex(GIAsentence* currentSentenceI
 	param.useRelationTest[REL2][REL_ENT3] = true; param.relationTest[REL2][REL_ENT3] = RELATION_TYPE_SUBJECT;
 	param.useRelationArrayTest[REL2][REL_ENT2] = true; param.relationArrayTest[REL2][REL_ENT2] = relationContextNegativeNameArray; param.relationArrayTestSize[REL2][REL_ENT2] = RELATION_TYPE_NEGATIVE_CONTEXT_NUMBER_OF_TYPES;
 	param.disableEntity[REL1][REL_ENT1] = true; 	//disable "not" entity -
-	//param.useRedistributeSpecialCaseDisableInstanceAndConcept[REL1][REL_ENT1]= true;	//no longer required because collapseRedundantRelationAndMakeNegativeRelex{} is executed during redistribution
+	//param.useRedistributeSpecialCaseDisableInstanceAndNetworkIndex[REL1][REL_ENT1]= true;	//no longer required because collapseRedundantRelationAndMakeNegativeRelex{} is executed during redistribution
 	param.useRedistributeRelationEntityIndexReassignment[REL2][REL_ENT2] = true; param.redistributeRelationEntityIndexReassignmentRelationID[REL2][REL_ENT2] = REL1; param.redistributeRelationEntityIndexReassignmentRelationEntityID[REL2][REL_ENT2] = REL_ENT2;
 	//param.useRedistributeSpecialCaseNegativeAssignment[REL2][REL_ENT1] = true;
 	GIAentityCharacteristic useRedistributeSpecialCaseNegativeAssignment("negative", "true");
@@ -190,8 +190,8 @@ void collapseRedundantRelationAndMakeNegativeRelex(GIAsentence* currentSentenceI
 								}
 								if(passed2)
 								{
-									disableInstanceAndConceptEntityBasedUponFirstSentenceToAppearInNetwork(GIAentityNodeArray[currentRelationInList2->relationGovernorIndex]);	//why has this been disabled? (probably for Draw - do not disable for GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK)
-									disableInstanceAndConceptEntityBasedUponFirstSentenceToAppearInNetwork(GIAentityNodeArray[currentRelationInList2->relationDependentIndex]);
+									disableInstanceAndNetworkIndexEntityBasedUponFirstSentenceToAppearInNetwork(GIAentityNodeArray[currentRelationInList2->relationGovernorIndex]);	//why has this been disabled? (probably for Draw - do not disable for GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK)
+									disableInstanceAndNetworkIndexEntityBasedUponFirstSentenceToAppearInNetwork(GIAentityNodeArray[currentRelationInList2->relationDependentIndex]);
 
 									GIAentityNodeArray[currentRelationInList2->relationDependentIndex] = GIAentityNodeArray[currentRelationInList->relationDependentIndex];
 									GIAentityNodeArray[currentRelationInList2->relationGovernorIndex]->negative = true;
