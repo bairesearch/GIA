@@ -328,25 +328,14 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "0j pass; define properties (has time);" << endl;
 	#endif		
-	definePropertiesHasTime(GIAEntityNodeArrayFilled, GIAEntityNodeArray);		
-	
-	/*
-	#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE_THAT_IS_PROBABLY_STANFORD_COMPATIBLE
-	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_RELEX)
-	{
+	definePropertiesHasTime(GIAEntityNodeArrayFilled, GIAEntityNodeArray);	
+
+	#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1F_RELATIONS_TREAT_THAT_AS_A_PRONOUN_IE_PROPERTY			
+	#ifdef GIA_TRANSLATOR_DEBUG
+	cout << "0k pass; define properties (non explicit pronouns eg 'that');" << endl;
 	#endif
-	*/
-		#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1F_RELATIONS_TREAT_THAT_AS_A_PRONOUN_IE_PROPERTY			
-		#ifdef GIA_TRANSLATOR_DEBUG
-		cout << "0k pass; define properties (non explicit pronouns eg 'that');" << endl;
-		#endif
-		definePropertiesNonExplicitPronouns(GIAEntityNodeArrayFilled, GIAEntityNodeArray);
-		#endif
-	/*
-	#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE_THAT_IS_PROBABLY_STANFORD_COMPATIBLE	
-	}
+	definePropertiesNonExplicitPronouns(GIAEntityNodeArrayFilled, GIAEntityNodeArray);
 	#endif
-	*/
 	
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "1 pass; link properties (possessive relationships); eg joe's bike" << endl;
@@ -383,12 +372,11 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 	#endif
 	defineObjectSubjectOfPreposition(currentSentenceInList, GIAEntityNodeArray, conceptEntityNodesList, NLPdependencyRelationsType);
 
-	
 #ifdef GIA_TRANSLATOR_EXPLICITLY_ADD_CONJUNCTION_CONDITIONS
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "3d pass; define conjunction conditions; eg Either Tom and/or Max eat the cake...." << endl;
 	#endif
-	defineConjunctionConditions(currentSentenceInList, GIAEntityNodeArray, conceptEntityNodesList, NLPdependencyRelationsType);	
+	defineConjunctionConditions(currentSentenceInList, GIAEntityNodeArray, conceptEntityNodesList);	
 #endif
 
 

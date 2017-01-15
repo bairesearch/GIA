@@ -30,7 +30,7 @@ using namespace std;
 
 string convertStanfordRelationToRelex(string * stanfordRelation);
 void GIATHparseRelexRelationsText(string * relationsText, Relation * firstRelationInList, int * maxNumberOfWordsInSentence, bool NLPrelexCompatibilityMode);
-void GIATHparseStanfordParserRelationsText(string * relationsText, Relation * firstRelationInList, int * maxNumberOfWordsInSentence);
+void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * currentSentenceInList, int * maxNumberOfWordsInSentence, bool featuresNotPreviouslyFilled);
 void GIATHparseFeaturesText(string * featuresText, Feature * firstFeatureInList, bool * isQuestion);
 
 

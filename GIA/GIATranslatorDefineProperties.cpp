@@ -283,7 +283,8 @@ void definePropertiesQuantityModifiers(Sentence * currentSentenceInList, GIAEnti
 }
 
 void definePropertiesExpletives(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[])
-{		
+{	
+	//eg There is 	_expl(be[2], there[1]) [Relex]	/ expl(is-2, There-1) [stanford]
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{			
@@ -294,9 +295,12 @@ void definePropertiesExpletives(Sentence * currentSentenceInList, GIAEntityNode 
 			int relationArgumentIndex = currentRelationInList->relationArgumentIndex;
 			GIAEntityNode * propertyEntity = GIAEntityNodeArray[relationArgumentIndex];
 
+			#ifdef GIA_INTERPRET_EXPLETIVE_AS_SUBJECT_OF_ACTION
 			//cout << "as4" << endl;
-
-			addPropertyToPropertyDefinition(propertyEntity);					
+			addPropertyToPropertyDefinition(propertyEntity);	
+			#else
+			propertyEntity->disabled = true;
+			#endif				
 		}			
 		currentRelationInList = currentRelationInList->next;
 	}

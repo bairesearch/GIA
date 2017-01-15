@@ -39,6 +39,7 @@ void extractDatesStanfordCoreNLP(Sentence * currentSentenceInList, bool GIAEntit
 {
 	//eliminate all redundant date relations eg num(December-4, 3rd-5)/num(December-4, 1990-7)/nn(3rd-5, December-4)/appos(3rd-5, 1990-7), where both the governer and the dependent have NER tag set to DATE
 
+	#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D_RELATIONS_REMOVE_ARTEFACT_CONCEPT_ENTITY_NODES		
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
@@ -49,12 +50,18 @@ void extractDatesStanfordCoreNLP(Sentence * currentSentenceInList, bool GIAEntit
 		{
 			//cout << "governerEntity->NERTemp = " << governerEntity->NERTemp << endl;
 			//cout << "dependentEntity->NERTemp = " << dependentEntity->NERTemp << endl;
-					
+				
 			dependentEntity->disabled = true;
+			
+			if(dependentEntity->hasAssociatedInstanceTemp)
+			{//disable its property also
+				(dependentEntity->AssociatedInstanceNodeList.back())->disabled = true;
+			}					
 		}
 		
 		currentRelationInList = currentRelationInList->next;
 	}
+	#endif	
 	
 	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
 	{
@@ -720,83 +727,75 @@ void linkPropertiesParataxis(Sentence * currentSentenceInList, GIAEntityNode * G
 	}	
 }
 
-void defineConjunctionConditions(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, int NLPdependencyRelationsType)
+void defineConjunctionConditions(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *conceptEntityNodesList)
 {//NB defineConjunctionConditions() currently performs the same function as defineActionPropertyConditions()
+	
+	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+	while(currentRelationInList->next != NULL)
+	{	
+		//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
 
-	#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE_THAT_IS_PROBABLY_STANFORD_COMPATIBLE
-	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_RELEX)
-	{
-	#endif
-			
-		Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
-		while(currentRelationInList->next != NULL)
-		{	
-			//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
+		int relationFunctionIndex = currentRelationInList->relationFunctionIndex;
+		int relationArgumentIndex = currentRelationInList->relationArgumentIndex;
+		string relationType = currentRelationInList->relationType;
+		GIAEntityNode * actionOrPropertyEntity = GIAEntityNodeArray[relationFunctionIndex];				
+		GIAEntityNode * actionOrPropertyConditionEntity = GIAEntityNodeArray[relationArgumentIndex];
 
-			int relationFunctionIndex = currentRelationInList->relationFunctionIndex;
-			int relationArgumentIndex = currentRelationInList->relationArgumentIndex;
-			string relationType = currentRelationInList->relationType;
-			GIAEntityNode * actionOrPropertyEntity = GIAEntityNodeArray[relationFunctionIndex];				
-			GIAEntityNode * actionOrPropertyConditionEntity = GIAEntityNodeArray[relationArgumentIndex];
-
-			bool passed = false;
-			for(int i=0; i<RELATION_TYPE_CONJUGATION_NUMBER_OF_TYPES; i++)
+		bool passed = false;
+		for(int i=0; i<RELATION_TYPE_CONJUGATION_NUMBER_OF_TYPES; i++)
+		{
+			if(relationType == relationTypeConjugationNameArray[i])
 			{
-				if(relationType == relationTypeConjugationNameArray[i])
-				{
-					passed = true;	
-					#ifdef GIA_TRANSLATOR_USE_BASIC_CONJUNCTION_CONDITION_TYPE_NAMES
-					relationType = relationTypeConjugationBasicNameArray[i];
-					#endif
-				}
-			}
-
-			if(passed)
-			{
-				//cout << "as1" << endl;
-
-				//CHECK THIS; check order - either select action or property first; NB there should not be both an associated action and an associated property in a given "Temp" context
-				if(actionOrPropertyEntity->hasAssociatedInstanceTemp)
-				{
-					actionOrPropertyEntity = actionOrPropertyEntity->AssociatedInstanceNodeList.back();	
-				}		
-
-				//cout << "as2" << endl;		
-
-				//CHECK THIS; check order - either select action or property first; NB there should not be both an associated action and an associated property in a given "Temp" context
-				if(actionOrPropertyConditionEntity->hasAssociatedInstanceTemp)
-				{
-					//cout << "actionOrPropertyConditionEntity->hasAssociatedInstanceTemp" << endl;
-					actionOrPropertyConditionEntity = actionOrPropertyConditionEntity->AssociatedInstanceNodeList.back();	//added 4 May 11a
-					//cout << "actionOrPropertyConditionEntity->entityName = " << actionOrPropertyConditionEntity->entityName << endl; 
-				}
-
-				//cout << "as3" << endl;
-
-
-				string conditionTypeName = relationType;
-				long entityIndex = -1;
-				bool entityAlreadyExistant = false;
-				//cout << "relationType = " << relationType << endl;
-				vector<GIAEntityNode*> * entityNodesCompleteList = getTranslatorEntityNodesCompleteList();
-				long * currentEntityNodeIDInCompleteList = getCurrentEntityNodeIDInCompleteList();
-				long * currentEntityNodeIDInConceptEntityNodesList = getCurrentEntityNodeIDInConceptEntityNodesList();				
-				GIAEntityNode * conditionTypeConceptEntity = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, &conditionTypeName, &entityAlreadyExistant, &entityIndex, true, currentEntityNodeIDInCompleteList, currentEntityNodeIDInConceptEntityNodesList);	
-
-				#ifdef GIA_TRANSLATOR_DEBUG
-				cout << "actionOrPropertyEntity->entityName = " << actionOrPropertyEntity->entityName << endl;
-				cout << "actionOrPropertyConditionEntity->entityName = " << actionOrPropertyConditionEntity->entityName << endl;
-				cout << "conditionTypeConceptEntity->entityName = " << conditionTypeConceptEntity->entityName << endl; 			
+				passed = true;	
+				#ifdef GIA_TRANSLATOR_USE_BASIC_CONJUNCTION_CONDITION_TYPE_NAMES
+				relationType = relationTypeConjugationBasicNameArray[i];
 				#endif
+			}
+		}
 
-				addConditionToProperty(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeConceptEntity);				
+		if(passed)
+		{
+			//cout << "as1" << endl;
+
+			//CHECK THIS; check order - either select action or property first; NB there should not be both an associated action and an associated property in a given "Temp" context
+			if(actionOrPropertyEntity->hasAssociatedInstanceTemp)
+			{
+				actionOrPropertyEntity = actionOrPropertyEntity->AssociatedInstanceNodeList.back();	
+			}		
+
+			//cout << "as2" << endl;		
+
+			//CHECK THIS; check order - either select action or property first; NB there should not be both an associated action and an associated property in a given "Temp" context
+			if(actionOrPropertyConditionEntity->hasAssociatedInstanceTemp)
+			{
+				//cout << "actionOrPropertyConditionEntity->hasAssociatedInstanceTemp" << endl;
+				actionOrPropertyConditionEntity = actionOrPropertyConditionEntity->AssociatedInstanceNodeList.back();	//added 4 May 11a
+				//cout << "actionOrPropertyConditionEntity->entityName = " << actionOrPropertyConditionEntity->entityName << endl; 
 			}
 
-			currentRelationInList = currentRelationInList->next;
-		}	
-	#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE_THAT_IS_PROBABLY_STANFORD_COMPATIBLE
-	}
-	#endif				
+			//cout << "as3" << endl;
+
+
+			string conditionTypeName = relationType;
+			long entityIndex = -1;
+			bool entityAlreadyExistant = false;
+			//cout << "relationType = " << relationType << endl;
+			vector<GIAEntityNode*> * entityNodesCompleteList = getTranslatorEntityNodesCompleteList();
+			long * currentEntityNodeIDInCompleteList = getCurrentEntityNodeIDInCompleteList();
+			long * currentEntityNodeIDInConceptEntityNodesList = getCurrentEntityNodeIDInConceptEntityNodesList();				
+			GIAEntityNode * conditionTypeConceptEntity = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, &conditionTypeName, &entityAlreadyExistant, &entityIndex, true, currentEntityNodeIDInCompleteList, currentEntityNodeIDInConceptEntityNodesList);	
+
+			#ifdef GIA_TRANSLATOR_DEBUG
+			cout << "actionOrPropertyEntity->entityName = " << actionOrPropertyEntity->entityName << endl;
+			cout << "actionOrPropertyConditionEntity->entityName = " << actionOrPropertyConditionEntity->entityName << endl;
+			cout << "conditionTypeConceptEntity->entityName = " << conditionTypeConceptEntity->entityName << endl; 			
+			#endif
+
+			addConditionToProperty(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeConceptEntity);				
+		}
+
+		currentRelationInList = currentRelationInList->next;
+	}				
 }
 
 

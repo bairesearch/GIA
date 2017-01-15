@@ -183,8 +183,17 @@ void GIATHparseRelexRelationsText(string * relationsText, Relation * firstRelati
 
 
 
-void GIATHparseStanfordParserRelationsText(string * relationsText, Relation * firstRelationInList, int * maxNumberOfWordsInSentence)
+void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * currentSentenceInList, int * maxNumberOfWordsInSentence, bool featuresNotPreviouslyFilled)
 {
+	Relation * firstRelationInList = currentSentenceInList->firstRelationInList;
+	Feature * firstFeatureInList = currentSentenceInList->firstFeatureInList;
+
+	string relationType;
+	string relationFunction;
+	string relationArgument;
+	int relationFunctionIndex;
+	int relationArgumentIndex;
+
 	*maxNumberOfWordsInSentence = 0;
 	
 	int numberOfCharactersInRelationsText = relationsText->length();
@@ -213,6 +222,36 @@ void GIATHparseStanfordParserRelationsText(string * relationsText, Relation * fi
 		
 		if(c == CHAR_NEW_LINE)
 		{
+			currentRelation->relationType = relationType;
+			currentRelation->relationFunctionIndex = relationFunctionIndex;
+			currentRelation->relationArgumentIndex = relationArgumentIndex;		
+			
+			if(!featuresNotPreviouslyFilled)
+			{
+				/*
+				//don't use these, use lemmas instead (as per Stanford Core NLP/Relex dependency relation definitions)
+				currentRelation->relationFunction = relationFunction;
+				currentRelation->relationArgument = relationArgument;						
+				*/				
+				Feature * currentFeatureInList = firstFeatureInList;
+				for(int f=0; currentFeatureInList->entityIndex != currentRelation->relationArgumentIndex; f++)
+				{
+					currentFeatureInList = currentFeatureInList->next;
+				}
+				currentRelation->relationArgument = currentFeatureInList->lemma;
+				currentFeatureInList = firstFeatureInList;
+				for(int f=0; currentFeatureInList->entityIndex != currentRelation->relationFunctionIndex; f++)
+				{
+					currentFeatureInList = currentFeatureInList->next;
+				} 				
+				currentRelation->relationFunction = currentFeatureInList->lemma;						
+			}
+			else
+			{
+				currentRelation->relationFunction = relationFunction;
+				currentRelation->relationArgument = relationArgument;			
+			}
+		
 			#ifdef GIA_STANFORD_DEPENDENCY_RELATIONS_DEBUG
 			cout << "relation added;" << endl;
 			cout << "currentRelation->relationType = " << currentRelation->relationType << endl;
@@ -242,11 +281,9 @@ void GIATHparseStanfordParserRelationsText(string * relationsText, Relation * fi
 		}
 		else if(c == CHAR_OPEN_BRACKET)
 		{
-			string relationType = currentItemString;
-
+			relationType = currentItemString;
 			relationType = convertStanfordRelationToRelex(&relationType);
 
-			currentRelation->relationType = relationType;
 			currentItemString[0] = '\0';
 			currentRelationPart++;
 		}	
@@ -254,11 +291,11 @@ void GIATHparseStanfordParserRelationsText(string * relationsText, Relation * fi
 		{
 			if(currentRelationPart == 1)
 			{	
-				currentRelation->relationFunction = currentItemString;
+				relationFunction = currentItemString;
 			}
 			else if(currentRelationPart == 2)
 			{
-				currentRelation->relationArgument = currentItemString;
+				relationArgument = currentItemString;
 			}
 			currentItemString[0] = '\0';
 		}
@@ -266,11 +303,11 @@ void GIATHparseStanfordParserRelationsText(string * relationsText, Relation * fi
 		{
 			if(currentRelationPart == 1)
 			{	
-				currentRelation->relationFunctionIndex = int(atof(currentItemString));
+				relationFunctionIndex = int(atof(currentItemString));
 			}
 			else if(currentRelationPart == 2)
 			{
-				currentRelation->relationArgumentIndex = int(atof(currentItemString));
+				relationArgumentIndex = int(atof(currentItemString));
 			}
 
 			if(currentRelation->relationArgumentIndex > *maxNumberOfWordsInSentence)

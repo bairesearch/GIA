@@ -450,7 +450,7 @@ bool parseStanfordCoreNLPFile(string inputTextNLPrelationXMLFileName, bool isQue
 							currentRelationInList->relationArgumentIndex = atoi(relationArgumentIndexString.c_str());
 
 							/*
-							//don't use these, use lemmas instead (as per Relex dependency relation definitions)
+							//don't use these, use lemmas instead (as per Stanford Core NLP/Relex dependency relation definitions)
 							currentRelationInList->relationFunction = governerTagInDep->value;
 							currentRelationInList->relationArgument = dependentTagInDep->value;						
 							*/				
@@ -661,8 +661,8 @@ bool parseStanfordParserFile(string inputTextNLPrelationXMLFileName, bool isQuer
 					if(parsingDependencyRelations)
 					{
 						int maxNumberOfWordsInSentence = 0;
-						Relation * firstRelationInList = currentSentence->firstRelationInList;
-						GIATHparseStanfordParserRelationsText(&currentDependencyRelationSetString, firstRelationInList, &maxNumberOfWordsInSentence);
+						bool featuresNotPreviouslyFilled = createNewSentences;
+						GIATHparseStanfordParserRelationsText(&currentDependencyRelationSetString, currentSentence, &maxNumberOfWordsInSentence, featuresNotPreviouslyFilled);
 						//cout << "currentDependencyRelationSetString = " << currentDependencyRelationSetString << endl;
 						currentDependencyRelationSetString = "";
 						if(createNewSentences)

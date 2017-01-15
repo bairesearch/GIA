@@ -799,7 +799,7 @@ void identifyEntityTypes(Sentence * currentSentenceInList, GIAEntityNode * GIAEn
 				passed = true;
 			}
 		}														
-		//if(currentRelationInList->relationType == RELATION_TYPE_SUBJECT || (currentRelationInList->relationType == RELATION_TYPE_SUBJECT_EXPLETIVE))
+		//if(currentRelationInList->relationType == RELATION_TYPE_SUBJECT)
 		if(passed)
 		{
 			int relationArgumentIndex = currentRelationInList->relationArgumentIndex;	
