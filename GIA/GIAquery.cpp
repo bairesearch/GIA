@@ -23,7 +23,7 @@
  * File Name: GIAquery.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1r11e 28-November-2012
+ * Project Version: 1r12a 28-November-2012
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  * ?Limitations: will only locate a exact answer (based upon a comparison node) if it provides the maximum number of matched nodes
@@ -682,7 +682,11 @@ int testReferencedEntityNodeForExactNameMatch(GIAentityNode * queryEntityNode, G
 								#endif
 								
 								#ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS
-								if((!(queryEntityNode->isSubstance) && !(entityNode->isSubstance)) || ((queryEntityNode->isSubstanceConcept) && (entityNode->isSubstanceConcept)) || (!(queryEntityNode->isSubstanceConcept) && !(entityNode->isSubstanceConcept)))
+								if((!(queryEntityNode->isSubstance) && !(entityNode->isSubstance)) 
+								|| ((queryEntityNode->isSubstanceConcept) && (entityNode->isSubstanceConcept)) 
+								|| (!(queryEntityNode->isSubstanceConcept) && !(entityNode->isSubstanceConcept)) 
+								|| ((queryEntityNode->isSubstanceConcept) && (entityNode->isSubstance) && !(entityNode->aliasList.empty())) 
+								|| ((entityNode->isSubstanceConcept) && (queryEntityNode->isSubstance) && !(queryEntityNode->aliasList.empty())))
 								{
 								#endif
 									if(testEntityNodeForQueryOrReferenceSet(queryEntityNode, entityNode, numberOfMatchedNodes, knownBestMatch, numberOfMatchedNodesRequiredSynonymnDetection, traceModeIsQuery, queryTraceParameters, referenceTraceParameters))
