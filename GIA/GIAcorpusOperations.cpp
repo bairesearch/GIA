@@ -23,7 +23,7 @@
  * File Name: GIAcorpusOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2c4d 19-January-2014
+ * Project Version: 2d1a 20-January-2014
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -66,27 +66,31 @@ void GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTra
 //this function [recording aux/cop/det syntatical dependency relations] is required to extract tense and perform instance/concept identification once GIA2 lookup has been performed: it is only currently supported by Stanford parser
 void GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrainSpecial(GIAentityNode ** GIAentityNodeArray, Sentence * currentSentenceInList, bool linkPreestablishedReferencesGIA, int NLPdependencyRelationsType)
 {
+	#ifndef GIA2_SUPPORT_USE_RELEX_COMPATIBILITY_MODE_FOR_FEATURE_PARSER_TO_GENERATE_ADDITIONAL_RELATIONS_REQUIED_BY_GIA2
 	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD)
 	{
+	#endif
 		if(!linkPreestablishedReferencesGIA)
 		{
 			Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
-				
+
 			while(currentRelationInList->next != NULL)
 			{
 				int entityIndex1 = currentRelationInList->relationGovernorIndex;
 				int entityIndex2 = currentRelationInList->relationDependentIndex;
 				bool sameReferenceSet =	false;	//irrelevant
-			
+
 				/*
 				if(!(currentRelationInList->disabled))
 				{
 				*/
+				//NB these must correspond to GIA2syntacticDependencyRelationSecondaryNameArray/GIA2_SYNTACTIC_DEPENDENCY_RELATION_SECONDARY_NUMBER_OF_TYPES:
+				
 				if(currentRelationInList->relationType == RELATION_TYPE_MODAL_AUX)	//same as auxiliary
 				{
 					GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNodeArray, currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_MODAL_AUXILIARY_OR_COPULA, entityIndex1, entityIndex2, sameReferenceSet);
 				}
-				
+
 				if(currentRelationInList->relationType == RELATION_TYPE_PASSIVE_AUX)
 				{
 					GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNodeArray, currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_MODAL_AUXILIARY_OR_COPULA, entityIndex1, entityIndex2, sameReferenceSet);
@@ -108,11 +112,13 @@ void GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTra
 				currentRelationInList = currentRelationInList->next;
 			}
 		}
+	#ifndef GIA2_SUPPORT_USE_RELEX_COMPATIBILITY_MODE_FOR_FEATURE_PARSER_TO_GENERATE_ADDITIONAL_RELATIONS_REQUIED_BY_GIA2
 	}
 	else
 	{
 		cout << "GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrainSpecial() error: function currently requires Stanford parser/CoreNLP" << endl;
 	}
+	#endif	
 }
 
 string generateGIA2semanticDependencyRelation(GIAentityNode ** GIAentityNodeArray, int connectionType, int entityIndex1, int entityIndex2, bool sameReferenceSet) 
@@ -181,7 +187,17 @@ string generateGIA2semanticDependencyRelation(GIAentityNode ** GIAentityNodeArra
 	//cout << "a2" << endl;
 		
 	string GIA2semanticDependencyRelation = "";
-	GIA2semanticDependencyRelation = GIA2semanticDependencyRelation + GIA2semanticDependencyRelationNameArray[connectionType] + "(" + entityWord1 + "-" + convertIntToString(entityIndex1) + ", " + entityWord2 + "-" + convertIntToString(entityIndex2) + ") " + createSameReferenceSetRecord(sameReferenceSet);
+	GIA2semanticDependencyRelation = generateGIA2semanticDependencyRelationSimple(entityWord1, entityWord2, GIA2semanticDependencyRelationNameArray[connectionType], entityIndex1, entityIndex2, sameReferenceSet);
+	//cout << "GIA2semanticDependencyRelation = " << GIA2semanticDependencyRelation << endl;
+	return GIA2semanticDependencyRelation;
+}
+
+string generateGIA2semanticDependencyRelationSimple(string entityName1, string entityName2, string semanticRelation, int entityIndex1, int entityIndex2, bool sameReferenceSet) 
+{
+	//cout << "a2" << endl;
+		
+	string GIA2semanticDependencyRelation = "";
+	GIA2semanticDependencyRelation = GIA2semanticDependencyRelation + semanticRelation + "(" + entityName1 + "-" + convertIntToString(entityIndex1) + ", " + entityName2 + "-" + convertIntToString(entityIndex2) + ") " + createSameReferenceSetRecord(sameReferenceSet);
 	//cout << "GIA2semanticDependencyRelation = " << GIA2semanticDependencyRelation << endl;
 	return GIA2semanticDependencyRelation;
 }
@@ -195,7 +211,7 @@ string createSameReferenceSetRecord(bool sameReferenceSet)
 //preconditions: determineGIAconnectionistNetworkPOStypeNames() has been executed
 string regenerateSentenceText(Feature * firstFeatureInSentence, bool addPOSinfo, int NLPfeatureParser) 
 {
-	cout << "regenerateSentenceText1" << endl;
+	//cout << "regenerateSentenceText1" << endl;
 	string sentenceText = "";
 	Feature * currentFeatureInSentence = firstFeatureInSentence;
 	while(currentFeatureInSentence->next != NULL)
@@ -211,7 +227,7 @@ string regenerateSentenceText(Feature * firstFeatureInSentence, bool addPOSinfo,
 		}
 		currentFeatureInSentence = currentFeatureInSentence->next;
 	}
-	cout << "regenerateSentenceText2" << endl;
+	//cout << "regenerateSentenceText2" << endl;
 	return sentenceText;
 }
 
@@ -227,7 +243,9 @@ void determineGIAconnectionistNetworkPOStypeNames(Feature * firstFeatureInList, 
 		}
 		else if(NLPfeatureParser == GIA_NLP_PARSER_RELEX) 
 		{
+			#ifndef GIA2_SUPPORT_USE_RELEX_COMPATIBILITY_MODE_FOR_FEATURE_PARSER_TO_GENERATE_ADDITIONAL_RELATIONS_REQUIED_BY_GIA2
 			cout << "warning: determineGIAconnectionistNetworkPOStypeNames() is supported, but Relex cannot generate det and aux syntactic relations (required to be stored by GIA connectionist network as 'GIA semantic relations' to reextract instances/substances and tense)" << endl;
+			#endif
 			determineGIAconnectionistNetworkPOStypeNameRelex(currentFeatureInSentence);
 		}
 	
@@ -546,6 +564,7 @@ void determineGIAconnectionistNetworkPOStypeNameRelex(Feature * currentFeatureIn
 	currentFeatureInSentence->GIAconnectionistNetworkPOStype = GIAconnectionistNetworkPOStype;
 	//cout << "GIAconnectionistNetworkPOStype = " << GIAconnectionistNetworkPOStype << endl;
 }
+
 
 #endif
 

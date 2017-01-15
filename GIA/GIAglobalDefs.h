@@ -23,7 +23,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2c4d 19-January-2014
+ * Project Version: 2d1a 20-January-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -557,8 +557,25 @@
 		#define GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_NAME_QUERY_TAG_TAG_NAME "isNameQuery"
 		#define GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_WHICH_OR_EQUIVALENT_WHAT_QUERY_TAG_TAG_NAME "isWhichOrEquivalentWhatQuery"
 	#endif
+	#define GIA2_CONNECTIONIST_NETWORK	//2d1a
+	#ifdef GIA2_CONNECTIONIST_NETWORK
+		#define GIA_RECORD_MAXIMUM_NUMBER_OF_WORDS_IN_SENTENCE	//NB maxNumberOfWordsInSentence is only currently used by GIA2
+		#define GIA_CORPUS_DATABASE_FILESYSTEM_USE_FLAT_FILE	//temporarily enabled for debugging
+		//#define GIA2_CONNECTIONIST_NETWORK_DEBUG		//temporary
+	#else
+		#define GIA_CORPUS_DATABASE_FILESYSTEM_USE_FLAT_FILE
+	#endif
+	#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
+		#define GIA2_SUPPORT_USE_RELEX_COMPATIBILITY_MODE_FOR_FEATURE_PARSER_TO_GENERATE_ADDITIONAL_RELATIONS_REQUIED_BY_GIA2
+	#endif
 #endif
 
+//#define GIA_RECORD_MAXIMUM_NUMBER_OF_WORDS_IN_SENTENCE_OR_MAX_FEATURE_INDEX	//added 2d1a (untested and unused but I think this is the more robust implementation)	//NB maxNumberOfWordsInSentence is only currently used by GIA2
+#ifdef GIA_RECORD_MAXIMUM_NUMBER_OF_WORDS_IN_SENTENCE_OR_MAX_FEATURE_INDEX
+	#define GIA_RECORD_MAXIMUM_NUMBER_OF_WORDS_IN_SENTENCE
+	#define GIA_RECORD_MAX_FEATURE_INDEX
+#endif
+		
 #define GIA_IDENTIFY_REFERENCE_SET_CONCEPT_ENTITY_ENTRANCE_DO_NOT_ENTER_ON_AN_ACTION_NODE	//GIA 2a8a	//this update is required for NLC if statement parsing //this update enforces orginal GIA specification: '//an action is considered by default not to be part of the same reference set as its subject/object (eg "the man fires the bow"). An rcmod /"that" is explicitly required for an action to be considered part of the same reference set as its subject/object (eg "the man that fires the bow...")'
 
 #define GIA_CREATE_SUBSTANCE_CONCEPTS_FOR_ALL_CONCEPTS		//GIA 2a7a		//this is recommended for NLC (untested) and required for USE_GIA2	//warning: GIA_CREATE_SUBSTANCE_CONCEPTS_FOR_ALL_CONCEPTS needs to be tested independently without USE_GIA2  
@@ -826,8 +843,10 @@
 	#endif
 	#ifdef LINUX
 		#define GIA_RELEX_EXECUTABLE_NAME "execute-relex.sh"
+		#define GIA_RELEX_WITH_STANFORD_COMPATIBILITY_MODE_EXECUTABLE_NAME "execute-relex-withStanfordCompatibilityMode.sh"
 	#else
 		#define GIA_RELEX_EXECUTABLE_NAME "execute-relex.bat"
+		#define GIA_RELEX_WITH_STANFORD_COMPATIBILITY_MODE_EXECUTABLE_NAME "execute-relex-withStanfordCompatibilityMode.bat"
 	#endif
 	#define GIA_USE_RELEX_1_4_0	//default: enabled (otherwise use Relex 1.3.0)
 	#ifdef GIA_USE_RELEX_1_4_0

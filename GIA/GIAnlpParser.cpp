@@ -23,7 +23,7 @@
  * File Name: GIAnlpParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2c4d 19-January-2014
+ * Project Version: 2d1a 20-January-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Parses tabular subsections (Eg <relations>) of RelEx CFF/Stanford Parser File
  *
@@ -117,9 +117,10 @@ void convertStanfordRelationToRelex(Relation * currentRelationInList, Sentence *
 
 
 
-
-void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * currentSentenceInList, int * maxNumberOfWordsInSentence, bool featuresNotPreviouslyFilled, bool parseGIA2file)
+//NB NLPrelexCompatibilityMode mode is only supported when !parseGIA2file; it is a special mode used when parsing Relex relations output with Stanford Compatibility Mode enabled
+void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * currentSentenceInList, int * maxNumberOfWordsInSentence, bool featuresNotPreviouslyFilled, bool parseGIA2file, bool NLPrelexCompatibilityMode)
 {
+	//cout << "relationsText = " << *relationsText << endl;
 	Relation * firstRelationInList = currentSentenceInList->firstRelationInList;
 	Feature * firstFeatureInList = currentSentenceInList->firstFeatureInList;
 
@@ -129,8 +130,10 @@ void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * cu
 	int relationGovernorIndex;
 	int relationDependentIndex;
 
+	#ifndef GIA_RECORD_MAXIMUM_NUMBER_OF_WORDS_IN_SENTENCE_OR_MAX_FEATURE_INDEX
 	*maxNumberOfWordsInSentence = 0;
-
+	#endif
+	
 	int numberOfCharactersInRelationsText = relationsText->length();
 
 	char currentItemString[MAX_CHARACTERS_OF_WORD_IN_GIA_INPUT_DATA] = "";
@@ -143,6 +146,12 @@ void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * cu
 	*/
 
 	Relation * currentRelation = firstRelationInList;
+	#ifdef GIA2_SUPPORT_USE_RELEX_COMPATIBILITY_MODE_FOR_FEATURE_PARSER_TO_GENERATE_ADDITIONAL_RELATIONS_REQUIED_BY_GIA2
+	while(currentRelation->next != NULL)
+	{
+		currentRelation = currentRelation->next;	//go to end of currently created relation list (as it may have already had secondary relations already added during NLPrelexCompatibilityMode) 
+	}
+	#endif
 
 	int relationIndex = 0;
 	int characterIndex = 0;
@@ -199,18 +208,21 @@ void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * cu
 			#ifdef GIA_NLP_DEBUG
 			//cout << "convertStanfordRelationToRelex" << endl;
 			#endif
-			if(!parseGIA2file)
-			{
-				currentRelation->relationGovernor = relationGovernor;
-				currentRelation->relationDependent = relationDependent;
-				convertStanfordRelationToRelex(currentRelation, currentSentenceInList);
-			}
 			
+
 			#ifdef GIA_NLP_DEBUG
 			//cout << "finish: convertStanfordRelationToRelex" << endl;
 			#endif
-			if(!featuresNotPreviouslyFilled)
+			
+			currentRelation->relationGovernor = relationGovernor;	//this will be overwritten if !featuresNotPreviouslyFilled
+			currentRelation->relationDependent = relationDependent;	//this will be overwritten if !featuresNotPreviouslyFilled
+			if(!parseGIA2file)
 			{
+				convertStanfordRelationToRelex(currentRelation, currentSentenceInList);
+			}
+				
+			if(!featuresNotPreviouslyFilled)
+			{			
 				/*
 				//don't use these, use lemmas instead (as per Stanford Core NLP/Relex dependency relation definitions)
 				currentRelation->relationGovernor = relationGovernor;
@@ -224,7 +236,7 @@ void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * cu
 				else if(currentRelation->relationDependentIndex < FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY)
 				{
 					#ifdef GIA2_SUPPORT_QUERIES
-					if(!(findString(relationDependent, REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)))
+					if(!parseGIA2file || !(findString(relationDependent, REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)))	//!parseGIA2file condition added GIA 1d1a
 					{
 					#endif
 						useLemmaFromFeatureSet = true;
@@ -262,24 +274,27 @@ void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * cu
 				}
 				//cout << "h4" << endl;
 				#ifdef GIA2_SUPPORT_QUERIES
-				if(findString(relationDependent, REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE))
+				if(parseGIA2file)	//condition added 1d1a
 				{
-					currentRelation->relationDependent = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;
-					if(currentRelation->relationDependentIndex < FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY)
+					if(findString(relationDependent, REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE))
 					{
-						currentFeatureInList->lemma = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;
+						currentRelation->relationDependent = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;
+						if(currentRelation->relationDependentIndex < FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY)
+						{
+							currentFeatureInList->lemma = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;
+						}
+						if(findString(relationDependent, GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_QUERY_TAG_TAG_NAME) || findString(relationDependent, GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_NAME_QUERY_TAG_TAG_NAME) || findString(relationDependent, GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_WHICH_OR_EQUIVALENT_WHAT_QUERY_TAG_TAG_NAME))
+						{
+							currentRelation->corpusSpecialRelationDependentIsQuery = relationDependent.substr(REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_LENGTH, relationDependent.length()-REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_LENGTH);
+						}
 					}
-					if(findString(relationDependent, GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_QUERY_TAG_TAG_NAME) || findString(relationDependent, GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_NAME_QUERY_TAG_TAG_NAME) || findString(relationDependent, GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_WHICH_OR_EQUIVALENT_WHAT_QUERY_TAG_TAG_NAME))
+					else
 					{
-						currentRelation->corpusSpecialRelationDependentIsQuery = relationDependent.substr(REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_LENGTH, relationDependent.length()-REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_LENGTH);
+						if(findString(relationDependent, GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_QUERY_TAG_TAG_NAME) || findString(relationDependent, GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_NAME_QUERY_TAG_TAG_NAME) || findString(relationDependent, GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_WHICH_OR_EQUIVALENT_WHAT_QUERY_TAG_TAG_NAME))
+						{
+							currentRelation->corpusSpecialRelationDependentIsQuery = relationDependent;
+						}				
 					}
-				}
-				else
-				{
-					if(findString(relationDependent, GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_QUERY_TAG_TAG_NAME) || findString(relationDependent, GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_NAME_QUERY_TAG_TAG_NAME) || findString(relationDependent, GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_WHICH_OR_EQUIVALENT_WHAT_QUERY_TAG_TAG_NAME))
-					{
-						currentRelation->corpusSpecialRelationDependentIsQuery = relationDependent;
-					}				
 				}
 				#endif		
 				//cout << "h5" << endl;
@@ -291,7 +306,7 @@ void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * cu
 				else if(currentRelation->relationGovernorIndex < FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY)
 				{
 					#ifdef GIA2_SUPPORT_QUERIES
-					if(!(findString(relationGovernor, REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)))
+					if(!parseGIA2file || !(findString(relationGovernor, REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)))	//!parseGIA2file condition added GIA 1d1a
 					{
 					#endif
 						useLemmaFromFeatureSet = true;
@@ -320,26 +335,29 @@ void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * cu
 				}
 				//cout << "h7" << endl;
 				#ifdef GIA2_SUPPORT_QUERIES
-				if(findString(relationGovernor, REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE))
+				if(parseGIA2file)	//condition added 1d1a
 				{
-					currentRelation->relationGovernor = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;
-					if(currentRelation->relationGovernorIndex < FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY)
+					if(findString(relationGovernor, REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE))
 					{
-						currentFeatureInList->lemma = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;
+						currentRelation->relationGovernor = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;
+						if(currentRelation->relationGovernorIndex < FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY)
+						{
+							currentFeatureInList->lemma = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;
+						}
+						if(findString(relationGovernor, GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_QUERY_TAG_TAG_NAME) || findString(relationGovernor, GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_NAME_QUERY_TAG_TAG_NAME) || findString(relationGovernor, GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_WHICH_OR_EQUIVALENT_WHAT_QUERY_TAG_TAG_NAME))
+						{
+							currentRelation->corpusSpecialRelationGovernorIsQuery = relationGovernor.substr(REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_LENGTH, relationGovernor.length()-REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_LENGTH);
+						}
 					}
-					if(findString(relationGovernor, GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_QUERY_TAG_TAG_NAME) || findString(relationGovernor, GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_NAME_QUERY_TAG_TAG_NAME) || findString(relationGovernor, GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_WHICH_OR_EQUIVALENT_WHAT_QUERY_TAG_TAG_NAME))
+					else
 					{
-						currentRelation->corpusSpecialRelationGovernorIsQuery = relationGovernor.substr(REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_LENGTH, relationGovernor.length()-REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_LENGTH);
+						if(findString(relationGovernor, GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_QUERY_TAG_TAG_NAME) || findString(relationGovernor, GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_NAME_QUERY_TAG_TAG_NAME) || findString(relationGovernor, GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_WHICH_OR_EQUIVALENT_WHAT_QUERY_TAG_TAG_NAME))
+						{
+							currentRelation->corpusSpecialRelationGovernorIsQuery = relationGovernor;
+						}				
 					}
+					//cout << "h8" << endl;
 				}
-				else
-				{
-					if(findString(relationGovernor, GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_QUERY_TAG_TAG_NAME) || findString(relationGovernor, GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_NAME_QUERY_TAG_TAG_NAME) || findString(relationGovernor, GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_WHICH_OR_EQUIVALENT_WHAT_QUERY_TAG_TAG_NAME))
-					{
-						currentRelation->corpusSpecialRelationGovernorIsQuery = relationGovernor;
-					}				
-				}
-				//cout << "h8" << endl;
 				#endif	
 			}
 			
@@ -355,17 +373,38 @@ void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * cu
 			//cout << currentRelation->relationType << "(" << currentRelation->relationGovernor << ", " << currentRelation->relationDependent << ")" << endl;
 			#endif
 
-			#ifdef GIA_NLP_PARSER_STANFORD_PARSER_DISABLE_ROOT_RELATION
-			if(currentRelation->relationType != RELATION_TYPE_ROOT)
+			#ifdef GIA2_SUPPORT_USE_RELEX_COMPATIBILITY_MODE_FOR_FEATURE_PARSER_TO_GENERATE_ADDITIONAL_RELATIONS_REQUIED_BY_GIA2
+			bool secondaryRelationDetected = false;
+			if(NLPrelexCompatibilityMode)
 			{
+				for(int i=0; i<GIA2_SYNTACTIC_DEPENDENCY_RELATION_SECONDARY_NUMBER_OF_TYPES; i++)
+				{
+					if(currentRelation->relationType == GIA2syntacticDependencyRelationSecondaryNameArray[i])
+					{
+						//cout << "secondaryRelationDetected" << endl;
+						secondaryRelationDetected = true;
+					}
+				}
+			}
+			if(!NLPrelexCompatibilityMode || secondaryRelationDetected)
+			{
+				//cout << "(!NLPrelexCompatibilityMode || secondaryRelationDetected): secondaryRelationDetected = " << secondaryRelationDetected << endl;
+			#endif
+
+				#ifdef GIA_NLP_PARSER_STANFORD_PARSER_DISABLE_ROOT_RELATION
+				if(currentRelation->relationType != RELATION_TYPE_ROOT)
+				{
+					Relation * newRelation = new Relation();
+					currentRelation->next = newRelation;
+					currentRelation = currentRelation->next;
+				}
+				#else
 				Relation * newRelation = new Relation();
 				currentRelation->next = newRelation;
 				currentRelation = currentRelation->next;
+				#endif
+			#ifdef GIA2_SUPPORT_USE_RELEX_COMPATIBILITY_MODE_FOR_FEATURE_PARSER_TO_GENERATE_ADDITIONAL_RELATIONS_REQUIED_BY_GIA2
 			}
-			#else
-			Relation * newRelation = new Relation();
-			currentRelation->next = newRelation;
-			currentRelation = currentRelation->next;
 			#endif
 
 			currentRelationPart = 0;
@@ -432,6 +471,10 @@ void GIATHparseStanfordParserRelationsText(string * relationsText, Sentence * cu
 					relationDependentIndex = int(atof(currentItemString));
 				}
 
+				if(currentRelation->relationGovernorIndex > *maxNumberOfWordsInSentence)
+				{
+					*maxNumberOfWordsInSentence = currentRelation->relationGovernorIndex;	//added GIA 2d1a
+				}
 				if(currentRelation->relationDependentIndex > *maxNumberOfWordsInSentence)
 				{
 					*maxNumberOfWordsInSentence = currentRelation->relationDependentIndex;
@@ -466,7 +509,7 @@ bool findString(string entityName, string stringToFind)
 }
 #endif
 
-void GIATHparseStanfordParseWordsAndPOStagsText(string * POStagsText, Sentence * currentSentenceInList, int * maxNumberOfWordsInSentence)
+void GIATHparseStanfordParseWordsAndPOStagsText(string * POStagsText, Sentence * currentSentenceInList, int * maxNumberOfWordsInSentence, bool createFeaturesGIA2only)
 {
 	Feature * firstFeatureInList = currentSentenceInList->firstFeatureInList;
 	Feature * currentFeatureInList = firstFeatureInList;
@@ -476,6 +519,8 @@ void GIATHparseStanfordParseWordsAndPOStagsText(string * POStagsText, Sentence *
 	int numberOfCharactersInWordsAndPOSTagsText = POStagsText->length();
 
 	char currentItemString[MAX_CHARACTERS_OF_WORD_IN_GIA_INPUT_DATA] = "";
+	string wordOrig = "";
+	string stanfordPOS = "";
 	currentItemString[0] = '\0';
 
 	/* Data file layout example
@@ -504,17 +549,52 @@ void GIATHparseStanfordParseWordsAndPOStagsText(string * POStagsText, Sentence *
 			}
 			else
 			{
-				currentFeatureInList->stanfordPOS = currentItemString;
+				stanfordPOS = currentItemString;
+				#ifdef GIA2_CONNECTIONIST_NETWORK
+				if(createFeaturesGIA2only)
+				{
+					string GIAconnectionistNetworkPOStypeName = stanfordPOS;
+					int GIAconnectionistNetworkPOStype = 0;	//ie GIA_CONNECTIONIST_NETWORK_POS_TYPE_UNDEFINED;
+					for(int i=0; i<GIA_CONNECTIONIST_NETWORK_POS_TYPE_NAME_ARRAY_NUMBER_OF_TYPES; i++)
+					{
+						if(GIAconnectionistNetworkPOStypeName == GIAconnectionistNetworkPOStypeNameArray[i])
+						{
+							GIAconnectionistNetworkPOStype = i;
+						}
+					}					
+					currentFeatureInList->GIAconnectionistNetworkPOStype = GIAconnectionistNetworkPOStype;
+					currentFeatureInList->word = wordOrig;
+					currentFeatureInList->lemma = wordOrig; //NB for GIA2 semantic relations file lemmas are stored instead of wordOrigs (but these are not used by GIA2 anyway; just for debugging)
+					Feature * newFeature = new Feature();
+					newFeature->previous = currentFeatureInList;
+					currentFeatureInList->next = newFeature;
+				}
+				else
+				{
+				#endif
+					#ifdef STANFORD_PARSER_USE_POS_TAGS	//overwrite
+					currentFeatureInList->stanfordPOS = stanfordPOS;
+					#endif
+				#ifdef GIA2_CONNECTIONIST_NETWORK
+				}
+				#endif
+
 				#ifdef GIA_STANFORD_DEPENDENCY_RELATIONS_DEBUG
 				cout << "DEBUG: GIATHparseStanfordParseWordsAndPOStagsText(): currentFeatureInList->stanfordPOS = " << currentFeatureInList->stanfordPOS << endl;
 				#endif
+				
+				*maxNumberOfWordsInSentence = *maxNumberOfWordsInSentence + 1;
+				
 				currentFeatureInList = currentFeatureInList->next;
 				readingWord = true;
 				currentItemString[0] = '\0';
+				stanfordPOS = "";
+				wordOrig = "";
 			}
 		}
 		else if(c == CHAR_FORWARDSLASH)
 		{
+			wordOrig = currentItemString;
 			readingWord = false;
 			currentItemString[0] = '\0';
 		}
@@ -531,9 +611,10 @@ void GIATHparseStanfordParseWordsAndPOStagsText(string * POStagsText, Sentence *
 }
 
 
-void GIATHparseRelexFeaturesText(string * featuresText, Sentence * currentSentenceInList)
+void GIATHparseRelexFeaturesText(string * featuresText, Sentence * currentSentenceInList, int * maxNumberOfWordsInSentence)
 {
 	Feature * firstFeatureInList = currentSentenceInList->firstFeatureInList;
+	*maxNumberOfWordsInSentence = 0;
 
 	int numberOfCharactersInRelationsText = featuresText->length();
 
@@ -618,6 +699,7 @@ void GIATHparseRelexFeaturesText(string * featuresText, Sentence * currentSenten
 				newFeature->previous = currentFeature;
 				currentFeature->next = newFeature;
 				currentFeature = currentFeature->next;
+				*maxNumberOfWordsInSentence = *maxNumberOfWordsInSentence + 1;
 
 				currentFeaturePart = 0;
 				currentItemString[0] = '\0';
@@ -685,8 +767,10 @@ void GIATHparseRelexRelationsText(string * relationsText, Sentence * currentSent
 	Relation * firstRelationInList = currentSentenceInList->firstRelationInList;
 	int currentSentence = currentSentenceInList->sentenceIndex;
 
+	#ifndef GIA_RECORD_MAXIMUM_NUMBER_OF_WORDS_IN_SENTENCE_OR_MAX_FEATURE_INDEX
 	*maxNumberOfWordsInSentence = 0;
-
+	#endif
+	
 	int numberOfCharactersInRelationsText = relationsText->length();
 
 	char currentItemString[MAX_CHARACTERS_OF_WORD_IN_GIA_INPUT_DATA] = "";
@@ -699,7 +783,13 @@ void GIATHparseRelexRelationsText(string * relationsText, Sentence * currentSent
 	*/
 
 	Relation * currentRelation = firstRelationInList;
-
+	#ifdef GIA2_SUPPORT_USE_RELEX_COMPATIBILITY_MODE_FOR_FEATURE_PARSER_TO_GENERATE_ADDITIONAL_RELATIONS_REQUIED_BY_GIA2
+	while(currentRelation->next != NULL)
+	{
+		currentRelation = currentRelation->next;	//go to end of currently created relation list (as it may have already had secondary relations already added during NLPrelexCompatibilityMode) 
+	}
+	#endif
+	
 	int relationIndex = 0;
 	int characterIndex = 0;
 
@@ -746,19 +836,22 @@ void GIATHparseRelexRelationsText(string * relationsText, Sentence * currentSent
 			{
 				string relationType = currentItemString;
 
-				//added 23 July 2013 - preprocess relex conj_or/conj_and as _conj_or/_conj_and
-				if(relationType == RELATION_TYPE_CONJUGATION_AND_RAW)
+				if(!NLPrelexCompatibilityMode)	//condition added 21 Jan 2014
 				{
-					relationType = RELATION_TYPE_CONJUGATION_AND;
-				}
-				else if(relationType == RELATION_TYPE_CONJUGATION_OR_RAW)
-				{
-					relationType = RELATION_TYPE_CONJUGATION_OR;
-				}
-				//added 23 July 2013 - preprocess relex prepositions to stanford format for robustness
-				if(relationType[0] != RELATION_TYPE_RELEX_NON_PREPOSITION_FIRST_CHARACTER)
-				{//not valid for REFERENCE_TYPE_QUESTION_QUERY_VARIABLEs that require to be interpreted as prepositions (these must be explicitly compensated for)...
-					relationType = string(STANFORD_PARSER_PREPOSITION_PREPEND) + relationType;
+					//added 23 July 2013 - preprocess relex conj_or/conj_and as _conj_or/_conj_and
+					if(relationType == RELATION_TYPE_CONJUGATION_AND_RAW)
+					{
+						relationType = RELATION_TYPE_CONJUGATION_AND;
+					}
+					else if(relationType == RELATION_TYPE_CONJUGATION_OR_RAW)
+					{
+						relationType = RELATION_TYPE_CONJUGATION_OR;
+					}
+					//added 23 July 2013 - preprocess relex prepositions to stanford format for robustness
+					if(relationType[0] != RELATION_TYPE_RELEX_NON_PREPOSITION_FIRST_CHARACTER)
+					{//not valid for REFERENCE_TYPE_QUESTION_QUERY_VARIABLEs that require to be interpreted as prepositions (these must be explicitly compensated for)...
+						relationType = string(STANFORD_PARSER_PREPOSITION_PREPEND) + relationType;
+					}
 				}
 
 				currentRelation->relationType = relationType;
@@ -796,6 +889,10 @@ void GIATHparseRelexRelationsText(string * relationsText, Sentence * currentSent
 					currentRelation->relationDependentIndex = int(atof(currentItemString));
 				}
 
+				if(currentRelation->relationGovernorIndex > *maxNumberOfWordsInSentence)
+				{
+					*maxNumberOfWordsInSentence = currentRelation->relationGovernorIndex;	//added GIA 2d1a
+				}
 				if(currentRelation->relationDependentIndex > *maxNumberOfWordsInSentence)
 				{
 					*maxNumberOfWordsInSentence = currentRelation->relationDependentIndex;

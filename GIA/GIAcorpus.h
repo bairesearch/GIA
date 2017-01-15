@@ -23,7 +23,7 @@
  * File Name: GIAcorpus.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2c4d 19-January-2014
+ * Project Version: 2d1a 20-January-2014
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/

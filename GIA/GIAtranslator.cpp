@@ -23,7 +23,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2c4d 19-January-2014
+ * Project Version: 2d1a 20-January-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -108,11 +108,21 @@ bool parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyParsedSentence
 	}
 	
 	//cout << "ak2" << endl;
-	
+
+	int NLPdependencyRelationsType = dependencyRelationsTypes[NLPdependencyRelationsParser];	
+	if(NLPrelexCompatibilityMode)
+	{//untested
+		if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_RELEX)
+		{
+			NLPdependencyRelationsType = GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD;
+			//assume dependency relations are in Stanford format from here on in
+		}
+	}
+
 	#ifdef USE_CE
-	if(!createSemanticNetworkBasedUponDependencyParsedSentences(firstParagraphInList, entityNodesActiveListComplete, entityNodesActiveListConcepts, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions, timeConditionNodesActiveList, isQuery, NLPfeatureParser, NLPdependencyRelationsParser, NLPassumePreCollapsedStanfordRelations, parseGIA2file, firstCodeextensionInHeirachy, codeextensionsList, useCodeextensionsHeirachy))
+	if(!createSemanticNetworkBasedUponDependencyParsedSentences(firstParagraphInList, entityNodesActiveListComplete, entityNodesActiveListConcepts, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions, timeConditionNodesActiveList, isQuery, NLPfeatureParser, NLPdependencyRelationsType, NLPassumePreCollapsedStanfordRelations, parseGIA2file, firstCodeextensionInHeirachy, codeextensionsList, useCodeextensionsHeirachy))
 	#else
-	if(!createSemanticNetworkBasedUponDependencyParsedSentences(firstParagraphInList, entityNodesActiveListComplete, entityNodesActiveListConcepts, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions, timeConditionNodesActiveList, isQuery, NLPfeatureParser, NLPdependencyRelationsParser, NLPassumePreCollapsedStanfordRelations, parseGIA2file))
+	if(!createSemanticNetworkBasedUponDependencyParsedSentences(firstParagraphInList, entityNodesActiveListComplete, entityNodesActiveListConcepts, entityNodesActiveListSubstances, entityNodesActiveListActions, entityNodesActiveListConditions, timeConditionNodesActiveList, isQuery, NLPfeatureParser, NLPdependencyRelationsType, NLPassumePreCollapsedStanfordRelations, parseGIA2file))
 	#endif
 	{
 		result = false;
@@ -158,9 +168,9 @@ bool parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyParsedSentence
 }
 
 #ifdef USE_CE
-bool createSemanticNetworkBasedUponDependencyParsedSentences(Paragraph * firstParagraphInList, vector<GIAentityNode*> *entityNodesActiveListComplete, unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, vector<GIAentityNode*> *entityNodesActiveListSubstances, vector<GIAentityNode*> *entityNodesActiveListActions, vector<GIAentityNode*> *entityNodesActiveListConditions, unordered_map<long, GIAtimeConditionNode*> *timeConditionNodesActiveList, bool isQuery, int NLPfeatureParser, int NLPdependencyRelationsParser, bool NLPassumePreCollapsedStanfordRelations, bool parseGIA2file, CECodeextension * firstCodeextensionInHeirachy, vector<CECodeextension*> * codeextensionsList, bool useCodeextensionsHeirachy)
+bool createSemanticNetworkBasedUponDependencyParsedSentences(Paragraph * firstParagraphInList, vector<GIAentityNode*> *entityNodesActiveListComplete, unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, vector<GIAentityNode*> *entityNodesActiveListSubstances, vector<GIAentityNode*> *entityNodesActiveListActions, vector<GIAentityNode*> *entityNodesActiveListConditions, unordered_map<long, GIAtimeConditionNode*> *timeConditionNodesActiveList, bool isQuery, int NLPfeatureParser, int NLPdependencyRelationsType, bool NLPassumePreCollapsedStanfordRelations, bool parseGIA2file, CECodeextension * firstCodeextensionInHeirachy, vector<CECodeextension*> * codeextensionsList, bool useCodeextensionsHeirachy)
 #else
-bool createSemanticNetworkBasedUponDependencyParsedSentences(Paragraph * firstParagraphInList, vector<GIAentityNode*> *entityNodesActiveListComplete, unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, vector<GIAentityNode*> *entityNodesActiveListSubstances, vector<GIAentityNode*> *entityNodesActiveListActions, vector<GIAentityNode*> *entityNodesActiveListConditions, unordered_map<long, GIAtimeConditionNode*> *timeConditionNodesActiveList, bool isQuery, int NLPfeatureParser, int NLPdependencyRelationsParser, bool NLPassumePreCollapsedStanfordRelations, bool parseGIA2file)
+bool createSemanticNetworkBasedUponDependencyParsedSentences(Paragraph * firstParagraphInList, vector<GIAentityNode*> *entityNodesActiveListComplete, unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, vector<GIAentityNode*> *entityNodesActiveListSubstances, vector<GIAentityNode*> *entityNodesActiveListActions, vector<GIAentityNode*> *entityNodesActiveListConditions, unordered_map<long, GIAtimeConditionNode*> *timeConditionNodesActiveList, bool isQuery, int NLPfeatureParser, int NLPdependencyRelationsType, bool NLPassumePreCollapsedStanfordRelations, bool parseGIA2file)
 #endif
 {
 	bool result = true;
@@ -172,8 +182,6 @@ bool createSemanticNetworkBasedUponDependencyParsedSentences(Paragraph * firstPa
 		setUseDatabase(GIA_USE_DATABASE_FALSE);
 	}
 	#endif
-
-	int NLPdependencyRelationsType = dependencyRelationsTypes[NLPdependencyRelationsParser];
 
 	Paragraph * currentParagraph = firstParagraphInList;
 	Sentence * firstSentenceInList = firstParagraphInList->firstSentenceInList;
@@ -655,10 +663,11 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 	//cout << "linkPreestablishedReferencesGIA = " << linkPreestablishedReferencesGIA << endl;
 	
 	#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
+	string corpusFileName = "";
 	if(!linkPreestablishedReferencesGIA)
 	{
 		determineGIAconnectionistNetworkPOStypeNames(currentSentenceInList->firstFeatureInList, NLPfeatureParser);
-		createNewCorpusFileAndOpenItForWriting(currentSentenceInList->firstFeatureInList);
+		corpusFileName = createNewCorpusFileAndOpenItForWriting(currentSentenceInList->firstFeatureInList);
 		string sentenceText = regenerateSentenceText(currentSentenceInList->firstFeatureInList, true, NLPfeatureParser);
 		sentenceText = sentenceText + STRING_NEW_LINE;	//required to add new line at end of parsingWordsAndTags as per Stanford Parser specification (see parseStanfordParserFile)
 		saveTextToCurrentCorpusFile(sentenceText);
@@ -696,7 +705,7 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 	cout << "pass A;" << endl;
 	cout << "pass 0; locate/add all entities [execution#1]" << endl;
 	#endif
-	locateAndAddAllFeatureTempEntities(currentSentenceInList, GIAentityNodeArrayFilled, GIAfeatureTempEntityNodeArray, NLPdependencyRelationsType, NLPfeatureParser);
+	locateAndAddAllFeatureTempEntities(currentSentenceInList, GIAentityNodeArrayFilled, GIAfeatureTempEntityNodeArray, NLPdependencyRelationsType);
 
 	Feature * featureArrayTemp[MAX_NUMBER_OF_WORDS_PER_SENTENCE];
 	generateTempFeatureArray(currentSentenceInList->firstFeatureInList, featureArrayTemp);	//regeneration required for Relex in case query variables detected
@@ -715,13 +724,13 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 	cout << "pass 1a; fillGrammaticalArrays" << endl;
 	#endif
 	#ifdef GIA_USE_RELEX
-	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_RELEX)		//CHECK THIS; why isnt this if(NLPfeatureParser == GIA_NLP_PARSER_RELEX)?
+	if(NLPfeatureParser == GIA_NLP_PARSER_RELEX)		//updated 2d1a 21 Jan 2013, OLD: if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_RELEX)
 	{
 		fillGrammaticalArraysRelex(currentSentenceInList);
 	}
 	#endif
 	#ifdef GIA_USE_STANFORD_DEPENDENCY_RELATIONS
-	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD)	//NB stanford dependency relations are required [ie not just Stanford POS tags] such that det/aux information can be extracted
+	else if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD)	//NB stanford dependency relations are required [ie not just Stanford POS tags] such that det/aux information can be extracted	//updated 2d1a 21 Jan 2013 - changed 'if' to 'else if' 
 	{
 		fillGrammaticalArraysStanford(currentSentenceInList, GIAentityNodeArrayFilled, GIAfeatureTempEntityNodeArray, NLPfeatureParser, featureArrayTemp);
 	}
@@ -793,7 +802,7 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "pass 1d; locate/add all entities [execution#2]" << endl;
 	#endif
-	locateAndAddAllConceptEntities(currentSentenceInList, GIAentityNodeArrayFilled, GIAconceptNodeArray, entityNodesActiveListConcepts, sentenceConceptEntityNodesList, NLPdependencyRelationsType, NLPfeatureParser, GIAfeatureTempEntityNodeArray);
+	locateAndAddAllConceptEntities(currentSentenceInList, GIAentityNodeArrayFilled, GIAconceptNodeArray, entityNodesActiveListConcepts, sentenceConceptEntityNodesList, NLPdependencyRelationsType, GIAfeatureTempEntityNodeArray);
 
 	#ifdef GIA_OUTPUT_INTERNAL_RELATIONS_IN_RELEX_FORMAT_DEBUG
 	cout << "dependency relations: " << endl;
@@ -1180,6 +1189,13 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 		string sentenceText = "";	//required to add new line at end of parsingTypedDependencies as per Stanford Parser specification (see parseStanfordParserFile)
 		saveTextToCurrentCorpusFile(sentenceText);
 		closeCorpusFile();
+		#ifdef GIA2_CONNECTIONIST_NETWORK
+		if(!generateAllPermutationsFromSemanticRelationsFile(corpusFileName, NLPfeatureParser))
+		{
+			cout << "generateAllPermutationsFromSemanticRelationsFile() failed" << endl;
+			exit(0); 
+		}
+		#endif
 	}
 	#endif
 }

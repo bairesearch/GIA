@@ -23,7 +23,7 @@
  * File Name: GIAcorpusOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2c4d 19-January-2014
+ * Project Version: 2d1a 20-January-2014
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -204,12 +204,15 @@ static string GIA2semanticDependencyRelationNameArray[GIA2_SEMANTIC_DEPENDENCY_R
 #else
 static string GIA2semanticDependencyRelationNameArray[GIA2_SEMANTIC_DEPENDENCY_RELATION_NUMBER_OF_TYPES] = {"actionSubject", "actionObject", "conditionSubject", "conditionObject", "property", "property", "definition", "definition", "instance", "actionSubject", "actionObject", "conditionSubject", "conditionObject", "instance", "determiner", "modalAuxiliaryOrCopula", "quantity"};
 #endif
+#define GIA2_SYNTACTIC_DEPENDENCY_RELATION_SECONDARY_NUMBER_OF_TYPES (4)
+static string GIA2syntacticDependencyRelationSecondaryNameArray[GIA2_SYNTACTIC_DEPENDENCY_RELATION_SECONDARY_NUMBER_OF_TYPES] = {RELATION_TYPE_MODAL_AUX, RELATION_TYPE_PASSIVE_AUX, RELATION_TYPE_COPULA, RELATION_TYPE_DETERMINER};
 #define GIA2_SEMANTIC_DEPENDENCY_RELATION_SECONDARY_NUMBER_OF_TYPES (3)
 static string GIA2semanticDependencyRelationSecondaryNameArray[GIA2_SEMANTIC_DEPENDENCY_RELATION_SECONDARY_NUMBER_OF_TYPES] = {"determiner", "compositionAuxiliary", "modalAuxiliaryOrCopula"};
 void GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAentityNode ** GIAentityNodeArray, Sentence * currentSentenceInList, int connectionType, int entityIndex1, int entityIndex2, bool sameReferenceSet);
 void GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrainSpecial(GIAentityNode ** GIAentityNodeArray, Sentence * currentSentenceInList, bool linkPreestablishedReferencesGIA, int NLPdependencyRelationsType);
 	string generateGIA2semanticDependencyRelation(GIAentityNode ** GIAentityNodeArray, int connectionType, int entityIndex1, int entityIndex2, bool sameReferenceSet);
-		string createSameReferenceSetRecord(bool sameReferenceSet);
+		string generateGIA2semanticDependencyRelationSimple(string entityName1, string entityName2, string semanticRelation, int entityIndex1, int entityIndex2, bool sameReferenceSet);
+			string createSameReferenceSetRecord(bool sameReferenceSet);
 string regenerateSentenceText(Feature * firstFeatureInSentence, bool addPOSinfo, int NLPfeatureParser);
 void determineGIAconnectionistNetworkPOStypeNames(Feature * firstFeatureInList, int NLPfeatureParser);
 	void determineGIAconnectionistNetworkPOStypeNameStanford(Feature * currentFeatureInSentence);

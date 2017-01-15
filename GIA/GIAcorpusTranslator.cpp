@@ -23,7 +23,7 @@
  * File Name: GIAcorpusTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2c4d 19-January-2014
+ * Project Version: 2d1a 20-January-2014
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -52,6 +52,10 @@ using namespace std;
 #include "GIAtranslatorDefineReferencing.h"
 #include "GIAtranslatorDefineSubstances.h"
 #include "GIAtranslatorApplyAdvancedFeatures.h"
+#ifdef GIA2_CONNECTIONIST_NETWORK
+#include "GIAnlp.h"
+#include "GIAcorpusDatabase.h"
+#endif
 
 #ifndef LINUX
 	#include <windows.h>
@@ -885,6 +889,124 @@ void defineQualitiesBasedOnSemanticRelations(Sentence * currentSentenceInList, b
 	}
 }
 
+#ifdef GIA2_CONNECTIONIST_NETWORK
+bool generateAllPermutationsFromSemanticRelationsFile(string corpusFileName, int NLPfeatureParser)
+{
+	//code based on loadCorpusFileSemanticDependencyRelations():
+	bool result = true;
+	Sentence * sentence = new Sentence();
+	bool createNewSentences = true;
+	bool parseGIA2file = true;
+	bool isQuery = false;	//irrelevant
+	#ifdef GIA2_CONNECTIONIST_NETWORK_DEBUG
+	cout << "generateAllPermutationsFromSemanticRelationsFile():" << endl;
+	#endif
+	if(!parseStanfordParserFile(corpusFileName, isQuery, sentence, createNewSentences, parseGIA2file, false))		//CHECK THIS; need to account for corpus.txt having multiple entries [eg different text but identical layout]
+	{
+		result = false;
+		cout << "generateAllPermutationsFromSemanticRelationsFile() error: !parseStanfordParserFile" << endl;
+	}
+	else
+	{	
+		Feature * dummyBlankFeature = new Feature();
+		#ifdef GIA2_CONNECTIONIST_NETWORK_DEBUG
+		cout << "parseStanfordParserFile() passed." << endl;
+		#endif
+		//now simulate GIA2 semantic relations for each subset of original sentence POS permutation
+		Feature * centralFeatureInSentence = sentence->firstFeatureInList;
+		for(int centralWord=1; centralWord<=sentence->maxNumberOfWordsInSentence; centralWord++)	//centralWord in subset
+		{
+			#ifdef GIA2_CONNECTIONIST_NETWORK_DEBUG
+			cout << "centralWord = " << centralWord << ", " << centralFeatureInSentence->lemma << endl;
+			#endif
+			Feature * recordOfFeatureAfterCentralFeatureInSentence = centralFeatureInSentence->next;
+			centralFeatureInSentence->next = dummyBlankFeature;	//temporarily disconnect node at end of sentence subset
+			
+			Feature * firstFeatureInSentenceSubset = sentence->firstFeatureInList;
+			for(int firstWord=1; firstWord<centralWord; firstWord++)	//firstWord in subset
+			{
+				#ifdef GIA2_CONNECTIONIST_NETWORK_DEBUG
+				cout << "firstWord = " << firstWord << ", " << firstFeatureInSentenceSubset->lemma << endl;
+				#endif
+				int subsetSize = centralWord-firstWord+1;	//subsetSize aka maxSpread
+
+				//code from convertSentenceSyntacticRelationsIntoGIAnetworkNodes():
+
+					//determineGIAconnectionistNetworkPOStypeNames(firstFeatureInSentenceSubset, NLPfeatureParser);
+				corpusFileName = createNewCorpusFileAndOpenItForWriting(firstFeatureInSentenceSubset);
+				string sentenceText = regenerateSentenceText(firstFeatureInSentenceSubset, true, NLPfeatureParser);
+				sentenceText = sentenceText + STRING_NEW_LINE;	//required to add new line at end of parsingWordsAndTags as per Stanford Parser specification (see parseStanfordParserFile)
+				saveTextToCurrentCorpusFile(sentenceText);
+				
+				Relation * currentRelationInList = sentence->firstRelationInList;
+				while(currentRelationInList->next != NULL)
+				{
+					if((currentRelationInList->relationGovernorIndex >= firstWord) && ((currentRelationInList->relationGovernorIndex <= centralWord) || (currentRelationInList->relationGovernorIndex > FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY)) 
+					&& (currentRelationInList->relationDependentIndex >= firstWord) && ((currentRelationInList->relationDependentIndex <= centralWord) || (currentRelationInList->relationDependentIndex > FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY)))
+					{
+						//regenerate semantic relation based on parsed Relation object
+						string GIA2semanticDependencyRelation = generateGIA2semanticDependencyRelationSimple(currentRelationInList->relationGovernor, currentRelationInList->relationDependent, currentRelationInList->relationType, currentRelationInList->relationGovernorIndex, currentRelationInList->relationDependentIndex, currentRelationInList->sameReferenceSet);
+						saveTextToCurrentCorpusFile(GIA2semanticDependencyRelation);
+					}
+					currentRelationInList = currentRelationInList->next;
+				}
+
+				sentenceText = "";	//required to add new line at end of parsingTypedDependencies as per Stanford Parser specification (see parseStanfordParserFile)
+				saveTextToCurrentCorpusFile(sentenceText);
+				closeCorpusFile();
+
+				firstFeatureInSentenceSubset = firstFeatureInSentenceSubset->next;
+			}
+			centralFeatureInSentence->next = recordOfFeatureAfterCentralFeatureInSentence;	//restore temporarily disconnected node at end of sentence subset
+			centralFeatureInSentence = centralFeatureInSentence->next;
+		}
+	}
+	
+	return result;	
+}
+/*Pseudo Code For Lookup
+Feature * currentFeatureInSentence = sentence->firstFeatureInList;
+for(int w=0; w<sentence->maxNumberOfWordsInSentence; w++)
+{
+	int centralWord = w;
+	bool foundMatchAtGivenSubset = false;
+	int subsetSize = centralWord;	//subsetSize aka maxSpread
+	int indexOfFirstWordInLocalisedSubset = 0;
+	while(!foundMatchAtGivenSubset)
+	{
+
+		//prefers to find the largest subset (pos sequence); stop once a subset is found. 
+		//Semantic relations are only generated based on word POS permuations existant before the centralWord. 
+		//Word POS permuations after the centralWord are ignored and are not used in semantic relation determination
+
+		if(findPOSsequenceInDatabase(currentSentenceInList->firstFeatureInList, indexOfFirstWordInLocalisedSubset, subsetSize))
+		{
+			foundMatchAtGivenSubset = true;
+			//now determine the required semantic connections between each node in the spread and the centralNode
+
+			//for(int r=0; r<subsetSize; r++)
+			//{//r == reference word
+			//	int referenceWordIndex = indexOfFirstWordInLocalisedSubset + r;
+			//	for(int p=0; p<GIA_CONNECTIONIST_NETWORK_POS_TYPE_NAME_ARRAY_NUMBER_OF_TYPES; p++)
+			//	{
+			//
+			//	}
+			//}
+
+
+		}
+		indexOfFirstWordInLocalisedSubset++;
+		subsetSize--;
+		if(indexOfFirstWordInLocalisedSubset == centralWord)
+		{
+			foundMatchAtGivenSubset = false;
+		}
+	}
+	for(int subsetSize =
+	currentFeatureInSentence = currentFeatureInSentence->next;
+}
+*/
+#endif
 
 
 

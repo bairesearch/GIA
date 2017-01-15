@@ -23,7 +23,7 @@
  * File Name: GIAnlp.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2c4d 19-January-2014
+ * Project Version: 2d1a 20-January-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -112,7 +112,7 @@ static string StanfordCoreNLP_relationSetAttributesNameArray[StanfordCoreNLP_num
 #endif
 static string StanfordCoreNLP_relationSetNameArray[StanfordCoreNLP_numberOfDependencySetsPerSentence] = {StanfordCoreNLP_XML_TAG_basicdependencies, StanfordCoreNLP_XML_TAG_collapseddependencies, StanfordCoreNLP_XML_TAG_collapsedccprocesseddependencies};
 
-void executeNLPparser(string inputTextPlainTXTfileName, string inputTextNLPXMLfileName, int NLPParser, string NLPexeFolderArray[], bool parseRelationsOrFeatures);
+void executeNLPparser(string inputTextPlainTXTfileName, string inputTextNLPXMLfileName, int NLPParser, string NLPexeFolderArray[], bool parseRelationsOrFeatures, bool NLPrelexCompatibilityMode);
 
 bool parseNLPparserFile(string inputTextNLPrelationXMLfileName, string inputTextNLPfeatureXMLfileName, bool isQuery, Paragraph * firstParagraphInList, int NLPfeatureParser, int NLPdependencyRelationsParser, bool NLPrelexCompatibilityMode);
 	bool parseNLPparserFeaturesFile(string inputTextNLPfeatureXMLfileName, bool isQuery, Paragraph * firstParagraphInList, int NLPfeatureParser, bool * createNewSentences);

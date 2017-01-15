@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorDefineGrammar.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2c4d 19-January-2014
+ * Project Version: 2d1a 20-January-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -35,7 +35,7 @@
 
 
 
-void locateAndAddAllFeatureTempEntities(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAfeatureTempEntityNodeArray[], int NLPdependencyRelationsType, int NLPfeatureParser)
+void locateAndAddAllFeatureTempEntities(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAfeatureTempEntityNodeArray[], int NLPdependencyRelationsType)
 {
 	if(currentSentenceInList->isQuestion)
 	{
@@ -88,7 +88,7 @@ void locateAndAddAllFeatureTempEntities(Sentence * currentSentenceInList, bool G
 		_pobj(_%atLocation[1], _$qVar[1])
 		_psubj(_%atLocation[1], ball[4])
 		*/
-		if(NLPfeatureParser == GIA_NLP_PARSER_RELEX)	//ie if(NLPfeatureParser != GIA_NLP_PARSER_STANFORD_CORENLP)
+		if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_RELEX)	//ie if(NLPdependencyRelationsType != GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD)		//updated 2d1a, OLD: if(NLPfeatureParser == GIA_NLP_PARSER_RELEX) //ie if(NLPfeatureParser != GIA_NLP_PARSER_STANFORD_CORENLP)
 		{
 			if(name[1] == REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
 			{//modify relation index [to prevent overlapping of comparison variable indicies with other indicies]
@@ -132,7 +132,7 @@ void locateAndAddAllFeatureTempEntities(Sentence * currentSentenceInList, bool G
 				//cout << "filling: " << relationIndex[i] << " " << name[i] << endl;
 
 				#ifndef GIA_REDISTRIBUTE_STANFORD_RELATIONS_QUERY_VARIABLE_DEBUG_DO_NOT_MAKE_FINAL_CHANGES_YET
-				if(NLPfeatureParser == GIA_NLP_PARSER_RELEX)	//ie if(NLPfeatureParser != GIA_NLP_PARSER_STANFORD_CORENLP)
+				if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_RELEX)	//ie if(NLPdependencyRelationsType != GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD)		//updated 2d1a, OLD: if(NLPfeatureParser == GIA_NLP_PARSER_RELEX) //ie if(NLPfeatureParser != GIA_NLP_PARSER_STANFORD_CORENLP)
 				{
 					if(i == 1)
 					{//argument index only
@@ -216,7 +216,7 @@ void locateAndAddAllFeatureTempEntities(Sentence * currentSentenceInList, bool G
 }
 
 
-void locateAndAddAllConceptEntities(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, vector<GIAentityNode*> *sentenceConceptEntityNodesList, int NLPdependencyRelationsType, int NLPfeatureParser, GIAentityNode * GIAfeatureTempEntityNodeArray[])
+void locateAndAddAllConceptEntities(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, vector<GIAentityNode*> *sentenceConceptEntityNodesList, int NLPdependencyRelationsType, GIAentityNode * GIAfeatureTempEntityNodeArray[])
 {
 	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
 	{
@@ -258,7 +258,7 @@ void locateAndAddAllConceptEntities(Sentence * currentSentenceInList, bool GIAen
 				#endif
 
 				#ifndef GIA_REDISTRIBUTE_STANFORD_RELATIONS_QUERY_VARIABLE_DEBUG_DO_NOT_MAKE_FINAL_CHANGES_YET
-				if(NLPfeatureParser == GIA_NLP_PARSER_RELEX)	//ie if(NLPfeatureParser != GIA_NLP_PARSER_STANFORD_CORENLP)
+				if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_RELEX)	//ie if(NLPdependencyRelationsType != GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD)		//updated 2d1a, OLD: if(NLPfeatureParser == GIA_NLP_PARSER_RELEX) //ie if(NLPfeatureParser != GIA_NLP_PARSER_STANFORD_CORENLP)
 				{
 					if(GIAfeatureTempEntityNodeArray[w]->isQuery)
 					{

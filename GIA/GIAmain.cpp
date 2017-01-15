@@ -23,7 +23,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2c4d 19-January-2014
+ * Project Version: 2d1a 20-January-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -480,7 +480,6 @@ int main(int argc,char **argv)
 				if(nlpcompmode == 1)
 				{
 					NLPrelexCompatibilityMode = true;
-					NLPassumePreCollapsedStanfordRelations = true;
 				}
 				else if(nlpcompmode == 2)
 				{
@@ -515,7 +514,6 @@ int main(int argc,char **argv)
 				if(nlpcompmodeq == 1)
 				{
 					queryNLPrelexCompatibilityMode = true;
-					queryNLPassumePreCollapsedStanfordRelations = true;
 				}
 				else if(nlpcompmodeq == 2)
 				{
@@ -1408,11 +1406,15 @@ int main2(int argc,char **argv)
 			else
 			{
 				#ifndef GIA2_DO_NOT_PARSE_DEPENDENCY_RELATION_FILE
-				executeNLPparser(inputTextPlainTXTfileName, inputTextNLPrelationXMLfileName, NLPdependencyRelationsParser, NLPexeFolderArray, true);
+				executeNLPparser(inputTextPlainTXTfileName, inputTextNLPrelationXMLfileName, NLPdependencyRelationsParser, NLPexeFolderArray, true, NLPrelexCompatibilityMode);	
 				if(inputTextNLPfeatureXMLfileName != inputTextNLPrelationXMLfileName)
 				{
 				#endif
-					executeNLPparser(inputTextPlainTXTfileName, inputTextNLPfeatureXMLfileName, NLPfeatureParser, NLPexeFolderArray, false);
+					#ifdef GIA2_SUPPORT_USE_RELEX_COMPATIBILITY_MODE_FOR_FEATURE_PARSER_TO_GENERATE_ADDITIONAL_RELATIONS_REQUIED_BY_GIA2
+					executeNLPparser(inputTextPlainTXTfileName, inputTextNLPfeatureXMLfileName, NLPfeatureParser, NLPexeFolderArray, false, true);
+					#else
+					executeNLPparser(inputTextPlainTXTfileName, inputTextNLPfeatureXMLfileName, NLPfeatureParser, NLPexeFolderArray, false, NLPrelexCompatibilityMode);			
+					#endif
 				#ifndef GIA2_DO_NOT_PARSE_DEPENDENCY_RELATION_FILE
 				}
 				#endif
@@ -1565,11 +1567,15 @@ int main2(int argc,char **argv)
 		else
 		{
 			#ifndef GIA2_DO_NOT_PARSE_DEPENDENCY_RELATION_FILE
-			executeNLPparser(inputQueryPlainTXTFileName, inputQueryNLPrelationXMLFileName, queryNLPdependencyRelationsParser, NLPexeFolderArray, true);
+			executeNLPparser(inputQueryPlainTXTFileName, inputQueryNLPrelationXMLFileName, queryNLPdependencyRelationsParser, NLPexeFolderArray, true, NLPrelexCompatibilityMode);
 			if(inputQueryNLPfeatureXMLFileName != inputQueryNLPrelationXMLFileName)
 			{
 			#endif
-				executeNLPparser(inputQueryPlainTXTFileName, inputQueryNLPfeatureXMLFileName, queryNLPfeatureParser, NLPexeFolderArray, false);
+				#ifdef GIA2_SUPPORT_USE_RELEX_COMPATIBILITY_MODE_FOR_FEATURE_PARSER_TO_GENERATE_ADDITIONAL_RELATIONS_REQUIED_BY_GIA2
+				executeNLPparser(inputQueryPlainTXTFileName, inputQueryNLPfeatureXMLFileName, queryNLPfeatureParser, NLPexeFolderArray, false, true);
+				#else
+				executeNLPparser(inputQueryPlainTXTFileName, inputQueryNLPfeatureXMLFileName, queryNLPfeatureParser, NLPexeFolderArray, false, NLPrelexCompatibilityMode);		
+				#endif
 			#ifndef GIA2_DO_NOT_PARSE_DEPENDENCY_RELATION_FILE
 			}
 			#endif
