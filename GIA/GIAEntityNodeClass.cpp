@@ -98,8 +98,11 @@ GIAEntityNode::GIAEntityNode(void)
 	hasAssociatedInstanceTemp = false;
 	
 	isQuery = false;
+	isWhichQuery = false;
 	isAnswerToQuery = false;
+	#ifdef GIA_QUERY_SUPPORT_NON_EXACT_QUERIES	
 	isAnswerContextToQuery = false;
+	#endif
 	testedForQueryComparison = false;
 
 	negative = false;

@@ -270,6 +270,13 @@ void addPropertyToPropertyDefinition(GIAEntityNode * propertyEntity)
 		{
 			propertyEntity->isQuery = false;
 			newProperty->isQuery = true;
+			#ifdef GIA_SUPPORT_COMPARISON_VARIABLE_DEFINITION_VIA_ALTERNATE_METHOD_EG_SUPPORT_WHICH_QUERIES_ADVANCED
+			if(propertyEntity->isWhichQuery)
+			{
+				propertyEntity->isWhichQuery = false;
+				newProperty->isWhichQuery = true;			
+			}
+			#endif
 		}
 		#endif		
 	}	
@@ -1349,6 +1356,7 @@ void identifyComparisonVariable(Sentence * currentSentenceInList, bool GIAEntity
 						{
 							GIAEntityNode * queryComparisonVariableEntityNode = GIAEntityNodeArray[currentFeatureInList->entityIndex];
 							queryComparisonVariableEntityNode->isQuery = true;
+							queryComparisonVariableEntityNode->isWhichQuery = true;
 							foundComparisonVariable = true;								
 							comparisonVariableNode = queryComparisonVariableEntityNode;
 							#ifdef GIA_TRANSLATOR_DEBUG

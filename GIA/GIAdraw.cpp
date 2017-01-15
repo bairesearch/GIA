@@ -436,10 +436,12 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 			{
 				entityColour = GIA_DRAW_QUERY_ANSWER_NODE_COLOUR;
 			}
+			#ifdef GIA_QUERY_SUPPORT_NON_EXACT_QUERIES
 			else if(entityNode->isAnswerContextToQuery)
 			{
 				entityColour = GIA_DRAW_QUERY_ANSWER_CONTEXT_NODE_COLOUR;
 			}
+			#endif
 			else if(entityNode->hasAssociatedInstanceIsAction)
 			{
 				if(entityNode->hasMeasure)

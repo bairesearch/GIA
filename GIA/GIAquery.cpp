@@ -21,7 +21,9 @@ GIAEntityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanti
 	#ifdef GIA_QUERY_DEBUG
 	if(detectComparisonVariable)
 	{
-		cout << "comparisonVariableNode->entityName = " << comparisonVariableNode->entityName << endl;
+		cout << "answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork" << endl;
+		cout << "detectComparisonVariable" << endl;
+		cout << "\tcomparisonVariableNode->entityName = " << comparisonVariableNode->entityName << endl;
 	}
 	#endif
 	
@@ -42,7 +44,8 @@ GIAEntityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanti
 		if(foundQueryEntityNodeName)
 		{
 			#ifdef GIA_QUERY_DEBUG
-			cout << "currentQueryEntityNode->entityName = " << currentQueryEntityNode->entityName << endl;
+			cout << "foundQueryEntityNodeName" << endl;
+			cout << "\tcurrentQueryEntityNode->entityName = " << currentQueryEntityNode->entityName << endl;
 			#endif
 				
 			//now start matching structure search for all properties of the identical concept node (to current query entity name) in Semantic Network
@@ -182,6 +185,39 @@ GIAEntityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanti
 }
 
 
+bool verifyThatAnswerEntityIsDefinedByComparisonVariableNode(GIAEntityNode * entityNode, string comparisonVariableNodeName)
+{
+	bool definitionFound = false;
+	
+	if(entityNode->entityName == comparisonVariableNodeName)
+	{
+		definitionFound = true;
+	}	
+	else
+	{
+		if(entityNode->entityNodeDefiningThisInstance != NULL)
+		{
+			if(verifyThatAnswerEntityIsDefinedByComparisonVariableNode(entityNode->entityNodeDefiningThisInstance, comparisonVariableNodeName))
+			{
+				definitionFound = true;
+			}		
+		}
+			
+		if(entityNode->EntityNodeDefinitionList.begin() != entityNode->EntityNodeDefinitionList.end())
+		{
+			for(entityNode->EntityNodeDefinitionListIterator = entityNode->EntityNodeDefinitionList.begin(); entityNode->EntityNodeDefinitionListIterator < entityNode->EntityNodeDefinitionList.end(); entityNode->EntityNodeDefinitionListIterator++)
+			{
+				if(verifyThatAnswerEntityIsDefinedByComparisonVariableNode(*(entityNode->EntityNodeDefinitionListIterator), comparisonVariableNodeName))
+				{
+					definitionFound = true;
+				}
+			}				
+		}
+	}
+			
+	return definitionFound;
+}
+
 
 
 
@@ -260,7 +296,7 @@ GIAEntityNode * testReferencedEntityNodeForNameMatch(GIAEntityNode * queryEntity
 					cout << "entityNode->quantityNumberString = " << entityNode->quantityNumberString << endl;
 					#endif
 				}
-				//#ifdef GIA_SUPPORT_COMPARISON_VARIABLE_DEFINITION_VIA_ALTERNATE_METHOD_EG_SUPPORT_WHICH_QUERIES	- this preprocessor definition needs to be moved to ...globalVars.h; as it is used in both GIAtranslator.cpp and GIAquery.cpp
+				#ifdef GIA_SUPPORT_COMPARISON_VARIABLE_DEFINITION_VIA_ALTERNATE_METHOD_EG_SUPPORT_WHICH_QUERIES
 				else if(queryEntityNode->isQuery)				
 				{//added support for which query (alternate method of comparison node detection/designation/definition) 
 					foundMatch = true;
@@ -269,10 +305,10 @@ GIAEntityNode * testReferencedEntityNodeForNameMatch(GIAEntityNode * queryEntity
 					cout << "\t foundMatch:" << entityNode->entityName << endl;
 					#endif					
 				}
-				//#endif
+				#endif
+				#ifdef GIA_QUERY_SUPPORT_NON_EXACT_QUERIES
 				else
 				{
-					#ifdef GIA_QUERY_SUPPORT_NON_EXACT_QUERIES
 					//cout << "IE1" << endl;
 					if(isSuitableNodeTypeForInexactAnswer)
 					{
@@ -296,8 +332,8 @@ GIAEntityNode * testReferencedEntityNodeForNameMatch(GIAEntityNode * queryEntity
 
 						}			
 					}
-					#endif
 				}
+				#endif
 			}
 			else if(detectComparisonVariable)
 			{
@@ -307,8 +343,29 @@ GIAEntityNode * testReferencedEntityNodeForNameMatch(GIAEntityNode * queryEntity
 					foundMatch = true;
 					#ifdef GIA_QUERY_DEBUG
 					cout << "detectComparisonVariable && (queryEntityNode->entityName == comparisonVariableNode->entityName)" << endl;
-					cout << "\t foundMatch:" << entityNode->entityName << endl;
-					#endif					
+					cout << "\t foundMatch:" << queryEntityNode->entityName << endl;
+					#endif	
+					
+					#ifdef GIA_SUPPORT_COMPARISON_VARIABLE_DEFINITION_VIA_ALTERNATE_METHOD_EG_SUPPORT_WHICH_QUERIES_ADVANCED
+					if(queryEntityNode->isWhichQuery)
+					{
+						/*
+						if a 'which' query, then verify that the entityNode is defined by the comparisonVariableNode [ie has a definition corresponding to the comparisonVariableNode]
+						eg1 a dog eats the mud. dogs are animals. / which animal eats the mud?	[answer: 'dog' - which is an instance of 'dog' concept node, where the 'dog' concept node is defined by 'animal' 
+							NB answer context text = "eat mud is done by dog" ['eat' is the first node traced, and 'dog' is the answer found'. NB sthe reason 'mud' is added to the answer context text, is because it is the actionObject, which is parsed after actionSubject in testEntityNodeForQuery {ie, after answer 'dog' has already been found}] 
+								for this example, need to then verify that the answer 'dog' is defined in the primary semantic network as an animal
+
+						*/
+						if(!verifyThatAnswerEntityIsDefinedByComparisonVariableNode(entityNode, comparisonVariableNode->entityName))
+						{
+							foundMatch = false;
+						}
+						else
+						{
+							//cout << "verifyThatAnswerEntityIsDefinedByComparisonVariableNode" << endl;
+						}
+					}
+					#endif									
 				}
 			}
 		}
@@ -362,6 +419,7 @@ GIAEntityNode * testReferencedEntityNodeForNameMatch(GIAEntityNode * queryEntity
 		#ifdef GIA_QUERY_USE_LONG_CONTEXT_TRACE
 		if(*foundAnswer)
 		{
+			//cout << "adding; " << queryAnswerContextTemp << " to backwards trace..." << endl;
 			*queryAnswerContext = *queryAnswerContext + queryAnswerContextTemp;
 				
 			generateTexualContextBackwards(queryAnswerContext, sourceContext, entityNode);
@@ -1096,6 +1154,11 @@ double determineMaxConfidenceOfQuerySemanticNetwork(vector<GIAEntityNode*> *conc
 	{//for each node in query semantic net;
 		
 		GIAEntityNode* currentQueryEntityNode = *entityIterQuery;
+
+		#ifdef GIA_QUERY_DEBUG
+		cout << "determineMaxConfidenceOfQuerySemanticNetwork" << endl;
+		cout << "\currentQueryEntityNode->entityName = " << currentQueryEntityNode->entityName << endl;
+		#endif
 		
 		int numberOfMatchedNodes = 0;	
 		string queryAnswerContextTemp = "";
@@ -1168,14 +1231,30 @@ void traceEntityNodeDetermineNextCourseOfAction(string * printEntityNodeString, 
 }
 void traceEntityNode(GIAEntityNode * entityNode, int function, int * numberOfMatchedNodes, string * printEntityNodeString, bool thisIsInstanceAndPreviousNodeWasDefinition)
 {
-	if(!(entityNode->queryEntityTraced))
+	bool pass = false;
+	if(function == GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISON)
+	{
+		if(entityNode->testedForQueryComparison)
+		{	
+			pass = true;
+			entityNode->testedForQueryComparison = false;
+		}		
+	}
+	else
+	{
+		if(!(entityNode->queryEntityTraced))
+		{	
+			pass = true;
+			entityNode->queryEntityTraced = true;
+		}
+	}
+	
+	if(pass)
 	{
 		/*
 		cout << "entityNode being traced = " << entityNode->entityName << endl;
 		cout << "*numberOfMatchedNodes = " << *numberOfMatchedNodes << endl;
 		*/
-		
-		entityNode->queryEntityTraced = true;
 		
 		#ifdef GIA_QUERY_TRACE_INSTANTIATIONS
 		*numberOfMatchedNodes = *numberOfMatchedNodes + 1;
@@ -1185,11 +1264,6 @@ void traceEntityNode(GIAEntityNode * entityNode, int function, int * numberOfMat
 			*numberOfMatchedNodes = *numberOfMatchedNodes + 1;
 		}
 		#endif
-		
-		if(GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISON)
-		{
-			entityNode->testedForQueryComparison = false;
-		}
 
 		//if(!(entityNode->hasAssociatedInstanceIsAction))
 		//{

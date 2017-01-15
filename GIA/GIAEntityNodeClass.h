@@ -26,6 +26,14 @@ using namespace std;
 
 #include "GIAConditionNodeClass.h"
 
+//!!!NB!!! these preprocessor definitions need to be moved to ...globalVars.h; as they are sused in both GIAtranslator.cpp and GIAquery.cpp
+#define GIA_SUPPORT_COMPARISON_VARIABLE_DEFINITION_VIA_ALTERNATE_METHOD_EG_SUPPORT_WHICH_QUERIES
+#ifdef GIA_SUPPORT_COMPARISON_VARIABLE_DEFINITION_VIA_ALTERNATE_METHOD_EG_SUPPORT_WHICH_QUERIES
+	#define GIA_SUPPORT_COMPARISON_VARIABLE_DEFINITION_VIA_ALTERNATE_METHOD_EG_SUPPORT_WHICH_QUERIES_ADVANCED	//allows for verification that answer node is of type identified by the which query eg verifies that the answer 'dog' [from text: 'the dog eats the mud. dogs are animals.'], is an animal with the query: 'which animal eats the mud?'
+#endif
+#define FEATURE_QUERY_WORD_ACCEPTED_BY_ALTERNATE_METHOD_NUMBER_OF_TYPES (1)
+
+
 #define GRAMMATICAL_TENSE_UNDEFINED 0
 #define GRAMMATICAL_TENSE_PRESENT 1
 #define GRAMMATICAL_TENSE_PAST 2
@@ -224,8 +232,11 @@ public:
 	bool hasAssociatedInstanceTemp;	//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
 
 	bool isQuery;
-	bool isAnswerToQuery;
+	bool isWhichQuery;
+	bool isAnswerToQuery;				
+	#ifdef GIA_QUERY_SUPPORT_NON_EXACT_QUERIES				
 	bool isAnswerContextToQuery;
+	#endif
 	bool testedForQueryComparison;
 	
 	bool negative;	//for prepositional entities which will be collapsed into conditions only [in the future, this should also be used for properties and actions; but relex does not appear to output this information]
