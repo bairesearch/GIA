@@ -609,6 +609,7 @@
 #include "SHAREDglobalDefs.h"
 
 #ifdef USE_NLC
+	//#define NLC_ACTIVATE_PRE1i_CODE_FOR_DEBUG
 	//#define NLC_ACTIVATE_PRE1j_CODE_FOR_DEBUG
 	#ifdef NLC_ACTIVATE_PRE1j_CODE_FOR_DEBUG
 		#define GIA_TRANSLATOR_MARK_DOUBLE_LINKS_AS_REFERENCE_CONNECTIONS	//added 2f21a/20-August-2014 [required for NLC 1i2a+]	//disabled NLC 1j2b+
