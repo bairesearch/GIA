@@ -3,7 +3,7 @@
  * File Name: GIATranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1k3e 11-May-2012
+ * Project Version: 1k4a 12-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors conceptEntityNodesList/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersList with a map
@@ -1132,6 +1132,133 @@ void defineIndirectObjects(Sentence * currentSentenceInList, GIAEntityNode * GIA
 }
 
 
+#ifdef GIA_USE_STANFORD_DEPENDENCY_RELATIONS
+void defineHavingPropertyConditionsAndBeingDefinitionConditions(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *conceptEntityNodesList)
+{
+	/*
+			Space is saved through having a chicken.
+			Space is saved by having a chicken.
+			Space is saved by being a chicken.
+				nsubjpass(saved-3, Space-1) / prepc_through(saved-3, having-5) / dobj(having-5, chicken-7)	[auxpass(saved-3, is-2)]
+				nsubjpass(saved-3, Space-1) / agent(saved-3, having-5) / dobj(having-5, chicken-7)
+				nsubjpass(saved-3, Space-1) / agent(saved-3, chicken-7) / cop(chicken-7, being-5) [auxpass(saved-3, is-2)]	
+
+	*/
+	
+	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+	while(currentRelationInList->next != NULL)
+	{	
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		if(!(currentRelationInList->disabled))
+		{			
+		#endif
+		
+			bool stanfordPrepositionFound = false;
+			string prepositionName = convertStanfordPrepositionToRelex(&(currentRelationInList->relationType), GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD, &stanfordPrepositionFound);
+	
+			//cout << "here1" << endl;
+			//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
+			
+			if(stanfordPrepositionFound)
+			{		
+ 				Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
+				
+				while(currentRelationInList2->next != NULL)
+				{					
+					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+					if(!(currentRelationInList2->disabled))
+					{			
+					#endif	
+						//cout << "AS1" << endl;
+				
+						#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_CONDITION_PROPERTY
+						if(currentRelationInList2->relationType == RELATION_TYPE_OBJECT)
+						{
+							//cout << "AS2" << endl;	
+							if(currentRelationInList2->relationGovernorIndex == currentRelationInList->relationDependentIndex)
+							{//found a matching relationship	
+								//cout << "AS3" << endl;
+								if(currentRelationInList->relationDependent == RELATION_ENTITY_HAVE)
+								{
+									//cout << "AS4" << endl;
+									currentRelationInList->disabled = true;	//required to prevent re-interpretation of prepositions in main preposition interpretation function createConditionBasedUponPreposition 
+									
+									string conditionTypeName = prepositionName;
+									long entityIndex = -1;
+									bool entityAlreadyExistant = false;
+									//cout << "prepositionName = " << prepositionName << endl;
+									vector<GIAEntityNode*> * entityNodesCompleteList = getTranslatorEntityNodesCompleteList();
+									long * currentEntityNodeIDInCompleteList = getCurrentEntityNodeIDInCompleteList();
+									long * currentEntityNodeIDInConceptEntityNodesList = getCurrentEntityNodeIDInConceptEntityNodesList();		
+									GIAEntityNode * conditionTypeConceptEntity = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, &conditionTypeName, &entityAlreadyExistant, &entityIndex, true, currentEntityNodeIDInCompleteList, currentEntityNodeIDInConceptEntityNodesList);	
+									if(entityAlreadyExistant)
+									{
+										applyEntityAlreadyExistsFunction(conditionTypeConceptEntity);
+									}	
+										
+									GIAEntityNode * haveEntity = GIAEntityNodeArray[currentRelationInList->relationDependentIndex];
+									bool negative = haveEntity->negative;
+									GIAEntityNode * entityNode = GIAEntityNodeArray[currentRelationInList->relationGovernorIndex];
+									GIAEntityNode * conditionPropertyNode = GIAEntityNodeArray[currentRelationInList2->relationDependentIndex];
+									addOrConnectHavingPropertyConditionToEntity(entityNode, conditionPropertyNode, conditionTypeConceptEntity, negative);	
+									
+									disableEntityBasedUponFirstSentenceToAppearInNetwork(haveEntity);								
+								}
+							}
+						}
+						#endif
+						#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_BEING_EG_BEING_INTO_A_CONDITION_DEFINITION
+						else if(currentRelationInList2->relationType == RELATION_TYPE_COPULA)
+						{	
+							//cout << "AS2" << endl;
+							if(currentRelationInList2->relationGovernorIndex == currentRelationInList->relationDependentIndex)
+							{//found a matching relationship	
+								//cout << "AS3" << endl;
+								if(currentRelationInList2->relationDependent == RELATION_ENTITY_BE)
+								{
+									//cout << "AS4" << endl;
+									currentRelationInList->disabled = true;	//required to prevent re-interpretation of prepositions in main preposition interpretation function createConditionBasedUponPreposition
+									
+									string conditionTypeName = prepositionName;
+									long entityIndex = -1;
+									bool entityAlreadyExistant = false;
+									//cout << "prepositionName = " << prepositionName << endl;
+									vector<GIAEntityNode*> * entityNodesCompleteList = getTranslatorEntityNodesCompleteList();
+									long * currentEntityNodeIDInCompleteList = getCurrentEntityNodeIDInCompleteList();
+									long * currentEntityNodeIDInConceptEntityNodesList = getCurrentEntityNodeIDInConceptEntityNodesList();		
+									GIAEntityNode * conditionTypeConceptEntity = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, &conditionTypeName, &entityAlreadyExistant, &entityIndex, true, currentEntityNodeIDInCompleteList, currentEntityNodeIDInConceptEntityNodesList);	
+									if(entityAlreadyExistant)
+									{
+										applyEntityAlreadyExistsFunction(conditionTypeConceptEntity);
+									}	
+																	
+									GIAEntityNode * beEntity = GIAEntityNodeArray[currentRelationInList2->relationDependentIndex];
+									bool negative = beEntity->negative;
+									GIAEntityNode * entityNode = GIAEntityNodeArray[currentRelationInList->relationGovernorIndex];
+									GIAEntityNode * conditionDefinitionNode = GIAEntityNodeArray[currentRelationInList->relationDependentIndex];
+									addOrConnectBeingDefinitionConditionToEntity(entityNode, conditionDefinitionNode, conditionTypeConceptEntity, negative);																
+								
+									disableEntityBasedUponFirstSentenceToAppearInNetwork(beEntity);
+
+								}	
+							}
+						}
+						#endif														
+						
+					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+					}			
+					#endif
+					currentRelationInList2 = currentRelationInList2->next;
+				}
+			}
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		}		
+		#endif
+			//cout << "here2" << endl;
+		currentRelationInList = currentRelationInList->next;
+	}
+}
+#endif
 
 void defineObjectSubjectOfPreposition(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, int NLPdependencyRelationsType)
 {
@@ -1229,11 +1356,11 @@ void defineActionPropertyConditions(Sentence * currentSentenceInList, bool GIAEn
 {
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
-	{	
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
-		if(!(currentRelationInList->disabled))
+	{						
+		//#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		if(!(currentRelationInList->disabled))	//required to prevent re-interpretation of prepositions in main preposition interpretation function createConditionBasedUponPreposition		
 		{			
-		#endif
+		//#endif
 			int actionOrPropertyIndex = currentRelationInList->relationGovernorIndex;
 			int actionOrPropertyConditionIndex = currentRelationInList->relationDependentIndex;
 			string relationType = currentRelationInList->relationType;
@@ -1348,9 +1475,9 @@ void defineActionPropertyConditions(Sentence * currentSentenceInList, bool GIAEn
 			{
 				createConditionBasedUponPreposition(actionOrPropertyEntity, actionOrPropertyConditionEntity, relationType, false, conceptEntityNodesList, NLPdependencyRelationsType);
 			}
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		//#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
 		}			
-		#endif
+		//#endif
 		
 		currentRelationInList = currentRelationInList->next;
 	}

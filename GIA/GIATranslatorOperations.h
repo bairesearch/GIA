@@ -3,7 +3,7 @@
  * File Name: GIATranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1k3e 11-May-2012
+ * Project Version: 1k4a 12-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -218,6 +218,7 @@ using namespace std;
 #define RELATION_GOVERNOR_COMPOSITION_2 "comprise"
 #define RELATION_GOVERNOR_COMPOSITION_3 "has"	
 #define RELATION_GOVERNOR_COMPOSITION_4 "have"
+#define RELATION_ENTITY_HAVE "have"
 #define RELATION_GOVERNOR_COMPOSITION_NUMBER_OF_TYPES (4)						
 //properties (descriptive relationships)
 #define RELATION_TYPE_ADJECTIVE_AMOD "_amod"	  //eg x is happy
@@ -324,7 +325,7 @@ used
 #define STANFORD_RELATION_TYPE_POSSESSIVE "possessive"
 #define STANFORD_RELATION_TYPE_PREPOSITION_MODIFIER2 "pmod"
 #define STANFORD_RELATION_TYPE_SEMANTIC_DEPENDENT "sdep"
-#define STANFORD_RELATION_TYPE_XSUBJ "xsubj"			//??
+#define STANFORD_RELATION_TYPE_XSUBJ "xsubj"			//?? imperative?
 #define RELATION_TYPE_XSUBJ "xsubj"	
 */
 #define STANFORD_RELATION_TYPE_PREPOSITION_MODIFIER "prep"	//deal with during stanford reduction (added 3 May 2012)
@@ -505,7 +506,7 @@ used
 
 //prepositions;
 #define STANFORD_PARSER_PREPOSITION_PREPEND "prep_"
-#define STANFORD_PARSER_PREPOSITION_PREPEND_LENGTH (5)
+#define STANFORD_PARSER_PREPOSITIONC_PREPEND "prepc_"
 #define STANFORD_PARSER_PREPOSITION_DELIMITER "_"
 
 /*************************************************************************************/
@@ -757,6 +758,9 @@ static string relexVersusStanfordDependencyRelations[GIA_DEPENDENCY_RELATIONS_NU
 	/*
 	//consider STANFORD_RELATION_TYPE_PASSIVE_NOMINAL_SUBJECT as SUBJECT not OBJECT??
 	*/
+
+#define REFERENCE_TYPE_STANFORD_PARSER_PREPOSITION_PREPEND_NUMBER_OF_TYPES (2)
+static string referenceTypeStanfordParserPrepositionPrependNameArray[REFERENCE_TYPE_STANFORD_PARSER_PREPOSITION_PREPEND_NUMBER_OF_TYPES] = {STANFORD_PARSER_PREPOSITION_PREPEND, STANFORD_PARSER_PREPOSITIONC_PREPEND};
 	
 	
 /*************************************************************************************/

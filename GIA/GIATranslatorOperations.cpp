@@ -3,7 +3,7 @@
  * File Name: GIATranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1k3e 11-May-2012
+ * Project Version: 1k4a 12-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors conceptEntityNodesList/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersList with a map
@@ -871,23 +871,30 @@ string convertStanfordPrepositionToRelex(string * preposition, int NLPdependency
 	string relexPreposition = *preposition;
 	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD)
 	{
-		int foundStanfordPrepositionPrepend = preposition->find(STANFORD_PARSER_PREPOSITION_PREPEND);	
-		if(foundStanfordPrepositionPrepend == string::npos)
+		string stanfordPrepositionPrependFound = "";	
+		bool multiwordPrepositionIntermediaryRelationTypeBFound = false;
+		for(int i=0; i<REFERENCE_TYPE_STANFORD_PARSER_PREPOSITION_PREPEND_NUMBER_OF_TYPES; i++)
 		{
-			/*
-			#ifdef GIA_STANFORD_DEPENDENCY_RELATIONS_DEBUG
-			cout << "convertStanfordPrepositionToRelex(): error - preposition 'prep_...' not found" << endl;
-			cout << "the following dependency relation was expected to be a preposition = " << *preposition << endl;
-			exit(0);
-			#endif
-			*/
-		}
-		else
-		{
-			int indexOfFirstRealCharacterInPreposition = STANFORD_PARSER_PREPOSITION_PREPEND_LENGTH;
-			int lengthOfPreposition = preposition->length() - (indexOfFirstRealCharacterInPreposition);
-			relexPreposition = preposition->substr(indexOfFirstRealCharacterInPreposition, lengthOfPreposition);
-			*stanfordPrepositionFound = true;
+			string currentStanfordPrepositionPrepend = referenceTypeStanfordParserPrepositionPrependNameArray[i];
+			int foundStanfordPrepositionPrepend = preposition->find(currentStanfordPrepositionPrepend);	
+			
+			if(foundStanfordPrepositionPrepend == string::npos)
+			{
+				/*
+				#ifdef GIA_STANFORD_DEPENDENCY_RELATIONS_DEBUG
+				cout << "convertStanfordPrepositionToRelex(): error - preposition 'prep_...' not found" << endl;
+				cout << "the following dependency relation was expected to be a preposition = " << *preposition << endl;
+				exit(0);
+				#endif
+				*/
+			}
+			else
+			{
+				int indexOfFirstRealCharacterInPreposition = currentStanfordPrepositionPrepend.length();
+				int lengthOfPreposition = preposition->length() - (indexOfFirstRealCharacterInPreposition);
+				relexPreposition = preposition->substr(indexOfFirstRealCharacterInPreposition, lengthOfPreposition);
+				*stanfordPrepositionFound = true;
+			}
 		}
 	}
 	return relexPreposition;

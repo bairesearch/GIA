@@ -3,7 +3,7 @@
  * File Name: GIATranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1k3e 11-May-2012
+ * Project Version: 1k4a 12-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors conceptEntityNodesList/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersList with a map
@@ -532,6 +532,16 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 	#endif
 	defineIndirectObjects(currentSentenceInList, GIAEntityNodeArray);
 
+	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD)
+	{
+		#ifdef GIA_USE_STANFORD_CORENLP
+		#ifdef GIA_TRANSLATOR_DEBUG
+		cout << "3c2 pass; define Having Property Conditions And Being Definition Conditions; eg Space is saved through having a chicken	prepc_through(saved-3, having-5) / dobj(having-5, chicken-7)" << endl;
+		#endif
+		defineHavingPropertyConditionsAndBeingDefinitionConditions(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, conceptEntityNodesList);
+		#endif
+	}
+	
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "3d pass; define object/subject of preposition" << endl;
 	#endif
