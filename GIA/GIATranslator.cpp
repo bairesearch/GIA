@@ -257,6 +257,7 @@ GIAEntityNode * addAction(GIAEntityNode * actionEntity)
 	actionEntity->AssociatedActionNodeList.push_back(newAction);
 	actionEntity->hasAssociatedAction = true;
 	actionEntity->hasAssociatedActionTemp = true;
+	newAction->isAction = true;
 	
 	//cout << "actionEntity->grammaticalTenseTemp = " << actionEntity->grammaticalTenseTemp << endl;
 	//cout << "actionEntity->entityName = " << actionEntity->entityName << endl;
