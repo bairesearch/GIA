@@ -12,114 +12,54 @@
 #include "GIAXMLconversion.h"
 
 //this function works and no longer needs to be tested
-#ifdef NN_XML_DEBUG
-bool testReadNetXMLFile()
+#ifdef GIA_XML_DEBUG
+bool testReadSemanticNetXMLFile1()
 {
 	bool result = true;
 
-	NeuronContainer * firstInputNeuronInNetwork = new NeuronContainer();	//the firstInputNeuronInNetwork object must be initialised here (in ANNXMLconversion.cpp scope). if it is initialised in another .cpp it will be come corrupted,
+	GIAEntityNode * firstEntityNodeInNetwork = new GIAEntityNode();	//the firstEntityNodeInNetwork object must be initialised here (in GIAXMLconversion.cpp scope). if it is initialised in another .cpp it will be come corrupted,
 
-	if(!readNetXMLFile(NET_XML_FILE_NAME, firstInputNeuronInNetwork))
+	if(!readSemanticNetXMLFile(GIA_SEMANTIC_NET_XML_FILE_NAME, firstEntityNodeInNetwork))
 	{
 		result = false;
 	}
 
-	#define TEMP_NET_XML_FILE_NAME1 "tempnet1.xml"
-	if(!writeNetXMLFile(TEMP_NET_XML_FILE_NAME1, firstInputNeuronInNetwork))
+	if(!writeSemanticNetXMLFile(GIA_SEMANTIC_NET_XML_FILE_NAME1, firstEntityNodeInNetwork))
 	{
 		result = false;
 	}
 	return result;
 }
 
-bool testReadNetXMLFile2(NeuronContainer * firstInputNeuronInNetwork)
+bool testReadSemanticNetXMLFile2(GIAEntityNode * firstEntityNodeInNetwork)
 {
 	bool result = true;
 
-	if(!writeNetXMLFile(NET_XML_FILE_NAME, firstInputNeuronInNetwork))
+	if(!writeSemanticNetXMLFile(GIA_SEMANTIC_NET_XML_FILE_NAME, firstEntityNodeInNetwork))
 	{
 		result = false;
 	}
 
-	NeuronContainer * tempFirstInputNeuronInNetwork = new NeuronContainer();
-	if(!readNetXMLFile(NET_XML_FILE_NAME, tempFirstInputNeuronInNetwork))
+	GIAEntityNode * tempfirstEntityNodeInNetwork = new GIAEntityNode();
+	if(!readSemanticNetXMLFile(GIA_SEMANTIC_NET_XML_FILE_NAME, tempfirstEntityNodeInNetwork))
 	{
 		result = false;
 	}
 
 	//cout << "here3" << endl;
-	#define TEMP_NET_XML_FILE_NAME1 "tempnet1.xml"
-	if(!writeNetXMLFile(TEMP_NET_XML_FILE_NAME1, tempFirstInputNeuronInNetwork))
+	if(!writeNetXMLFile(GIA_SEMANTIC_NET_XML_FILE_NAME1, tempfirstEntityNodeInNetwork))
 	{
 		result = false;
 	}
 	return result;
 }
-
 #endif
 
-NeuronContainer * readNetXMLFileAndRecordFormationVariables(string xmlFileName, NeuronContainer * firstInputNeuronInNetwork, long * numberOfInputNeurons, long * numberOfOutputNeurons)
-{
-	NeuronContainer * firstOutputNeuronInNetwork;
-
-	readNetXMLFile(xmlFileName, firstInputNeuronInNetwork);
-
-	firstOutputNeuronInNetwork = recordOutputNeuronAndNumInputAndOutputNeuronsInNetwork(firstInputNeuronInNetwork, numberOfInputNeurons, numberOfOutputNeurons);
-
-	return firstOutputNeuronInNetwork;
-}
-
-NeuronContainer * recordOutputNeuronAndNumInputAndOutputNeuronsInNetwork(NeuronContainer * firstInputNeuronInNetwork, long * numberOfInputNeurons, long * numberOfOutputNeurons)
-{
-	NeuronContainer * firstOutputNeuronInNetwork;
-
-	long networkLayer = 1;
-
-	NeuronContainer * currentNeuron = firstInputNeuronInNetwork;
-
-	bool stillMoreLayers = true;
-	while(stillMoreLayers)
-	{
-		bool currentLayerHasFrontLayer = false;
-
-		NeuronContainer * firstNeuronInLayer = currentNeuron;
-
-		bool numNeuronsInCurrentLayer = 0;
-		while(currentNeuron->nextNeuronContainer != NULL)
-		{
-			numNeuronsInCurrentLayer++;
-			currentNeuron = currentNeuron->nextNeuronContainer;
-		}
-
-		if(networkLayer == 1)
-		{
-			*numberOfInputNeurons = numNeuronsInCurrentLayer;
-		}
-
-
-		if(firstNeuronInLayer->hasFrontLayer)
-		{
-			currentNeuron=firstNeuronInLayer->firstNeuronInFrontLayer;
-			networkLayer++;
-		}
-		else
-		{
-			*numberOfOutputNeurons = numNeuronsInCurrentLayer;
-			firstOutputNeuronInNetwork = firstNeuronInLayer;
-			//cout << "firstOutputNeuronInNetwork ID = " << firstOutputNeuronInNetwork->neuron->id << endl;
-			stillMoreLayers = false;
-		}
-	}
-
-	return firstOutputNeuronInNetwork;
-}
-
-
-bool readNetXMLFile(string xmlFileName, NeuronContainer * firstInputNeuronInNetwork)
+bool readSemanticNetXMLFile(string xmlFileName, GIAEntityNode * firstEntityNodeInNetwork)
 {
 	bool result = true;
 
- 	XMLParserTag * firstTagInXMLFile = new XMLParserTag();	//the firstTagInXMLFile object must be initialised here (in ANNXMLconversion.cpp scope). if it is initialised in XMLParserClass.cpp else it will be come corrupted,
+ 	XMLParserTag * firstTagInXMLFile = new XMLParserTag();	//the firstTagInXMLFile object must be initialised here (in GIAXMLconversion.cpp scope). if it is initialised in XMLParserClass.cpp else it will be come corrupted,
 
 		//cout << "a" << endl;
 
@@ -127,31 +67,30 @@ bool readNetXMLFile(string xmlFileName, NeuronContainer * firstInputNeuronInNetw
  	{
 		result = false;
 	}
-
 		//cout << "b" << endl;
 
-	if(!parseNetTag(firstTagInXMLFile, firstInputNeuronInNetwork))
+	if(!parseSemanticNetTag(firstTagInXMLFile, firstEntityNodeInNetwork))
 	{
 		result = false;
 	}
 
 		//cout << "c" << endl;
 
-	if(!linkLayerXNeuronsBasedUponFrontNeuronConnectionContainerListNeuronIDs(firstInputNeuronInNetwork, firstInputNeuronInNetwork, false, NULL))
+	if(!linkEntities(firstEntityNodeInNetwork))
 	{
 		result = false;
 	}
 	return result;
 }
 
-bool writeNetXMLFile(string xmlFileName, NeuronContainer * firstInputNeuronInNetwork)
+bool writeSemanticNetXMLFile(string xmlFileName, GIAEntityNode * firstEntityNodeInNetwork)
 {
 	bool result = true;
 
  	XMLParserTag * firstTagInXMLFile = new XMLParserTag();	//the firstTagInXMLFile object must be initialised here (in ANNXMLconversion.cpp scope). if it is initialised in XMLParserClass.cpp else it will be come corrupted,
 
 	XMLParserTag * currentTagL0 = firstTagInXMLFile;
-	currentTagL0->name = NET_XML_TAG_network;
+	currentTagL0->name = NET_XML_TAG_semanticNetwork;
 	XMLParserTag * newTag0 = new XMLParserTag();	//had to add a null tag
 	currentTagL0->nextTag = newTag0;
 
@@ -161,14 +100,7 @@ bool writeNetXMLFile(string xmlFileName, NeuronContainer * firstInputNeuronInNet
 	XMLParserTag * newTag1 = new XMLParserTag();	//had to add a null tag
 	currentTagL1->nextTag = newTag1;
 
-	currentTagL1->name = NET_XML_TAG_subnet;
-	XMLParserTag * firstTagL2 = new XMLParserTag();
-	currentTagL1->firstLowerLevelTag = firstTagL2;
-	XMLParserTag * currentTagL2 = currentTagL1->firstLowerLevelTag;
-	XMLParserTag * newTag2 = new XMLParserTag();	//had to add a null tag
-	currentTagL2->nextTag = newTag2;
-
-	if(!generateXMLTagListBasedUponSubnet(currentTagL1->firstLowerLevelTag, firstInputNeuronInNetwork))
+	if(!generateXMLTagListBasedUponSemanticNetEntityList(currentTagL0->firstLowerLevelTag, firstEntityNodeInNetwork))
 	{
 		result = false;
 	}
@@ -188,14 +120,14 @@ bool writeNetXMLFile(string xmlFileName, NeuronContainer * firstInputNeuronInNet
 }
 
 
-bool generateXMLTagListBasedUponSubnet(XMLParserTag * firstTagInSubnet, NeuronContainer * firstNeuronContainerInSubnet)
+bool generateXMLTagListBasedUponSemanticNetEntityList(XMLParserTag * firstTagInSemanticNet, GIAEntityNode * firstEntityNodeInNetwork)
 {
 	//cout << "h3" << endl;
 
 	bool result = true;
 
-	XMLParserTag * currentTagL0 = firstTagInSubnet;
-	NeuronContainer * currentNeuron = firstNeuronContainerInSubnet;
+	XMLParserTag * currentTagL0 = firstTagInSemanticNet;
+	NeuronContainer * currentEntity = firstEntityNodeInNetwork;
 
 	bool stillMoreLayers = true;
 	while(stillMoreLayers)
@@ -581,164 +513,54 @@ NeuronContainer * findNeuronContainer(NeuronContainer * firstNeuronContainerInLa
 
 
 //Top Level
-bool parseNetTag(XMLParserTag * firstTagInNetwork, NeuronContainer * currentNeuron)
+bool parseSemanticNetTag(XMLParserTag * firstTagInNetwork, GIAEntityNode * firstEntityNodeInNetwork)
 {
 	bool result = true;
 
 	XMLParserTag * currentTagUpdatedL1 = firstTagInNetwork;
 
-	if(currentTagUpdatedL1->name == NET_XML_TAG_network)
+	if(currentTagUpdatedL1->name == NET_XML_TAG_semanticNetwork)
 	{
 		currentTagUpdatedL1 = currentTagUpdatedL1->firstLowerLevelTag;
 	}
 	else
 	{
-		cout << "parseNetTag error: network tag not detected";
+		cout << "parseSemanticNetTag error: semanticNetwork tag not detected";
 		result = false;
 	}
 
 	if(result)
 	{
-		if(currentTagUpdatedL1->name == NET_XML_TAG_iodescriptions)
+		GIAEntityNode * currentEntity = firstEntityNodeInNetwork;
+		 
+		while(currentTagUpdatedL1->nextTag != NULL)
 		{
-			XMLParserTag * currentTagUpdatedL2 = currentTagUpdatedL1->firstLowerLevelTag;
-			if(currentTagUpdatedL2->name == NET_XML_TAG_inputNeurons)
+			if(currentTagUpdatedL1->name == NET_XML_TAG_entityNode)
 			{
-				XMLParserTag * currentTagUpdatedL3 = currentTagUpdatedL2->firstLowerLevelTag;
-				while(currentTagUpdatedL3->nextTag != NULL)
+				if(!parseEntityNodeTag(currentTagUpdatedL1->firstLowerLevelTag, currentEntity)
 				{
-					if(currentTagUpdatedL3->name == NET_XML_TAG_description)
-					{
-						cout << "Input Neuron Description: " << currentTagUpdatedL3->value << endl;
-					}
-					else
-					{
-						cout << "parseInputNeuronsDescriptionTag error: description tag not detected";
-					}
-					currentTagUpdatedL3=currentTagUpdatedL3->nextTag;
-				}
-
-			}
-			else
-			{
-				cout << "parseIODescriptionsTag error: no inputNeurons tag detected";
-			}
-			currentTagUpdatedL2=currentTagUpdatedL2->nextTag;
-			if(currentTagUpdatedL2->name == NET_XML_TAG_outputNeurons)
-			{
-				XMLParserTag * currentTagUpdatedL3 = currentTagUpdatedL2->firstLowerLevelTag;
-				while(currentTagUpdatedL3->nextTag != NULL)
-				{
-					if(currentTagUpdatedL3->name == NET_XML_TAG_description)
-					{
-						cout << "Output Neuron Description: " << currentTagUpdatedL3->value << endl;
-					}
-					else
-					{
-						cout << "parseOutputNeuronsDescriptionTag error: description tag not detected";
-					}
-					currentTagUpdatedL3=currentTagUpdatedL3->nextTag;
+					result = false;
 				}
 			}
 			else
 			{
-				cout << "parseIODescriptionsTag error: no outputNeurons tag detected";
+				cout << "parseSemanticNetTag error: no entity tag detected";
+				result = false;
 			}
+			
+			GIAEntityNode * newEntity = GIAEntityNode();
+			currentEntity->next = newEntity;
+			currentEntity = currentEntity->next;
+			
 			currentTagUpdatedL1=currentTagUpdatedL1->nextTag;
 		}
-		if(currentTagUpdatedL1->name == NET_XML_TAG_subnet)
-		{
-			long wrongAndNotUsedIDCounter = 1;
-			if(!parseSubnetTag(currentTagUpdatedL1->firstLowerLevelTag, currentNeuron, 1, &wrongAndNotUsedIDCounter, 1))
-			{
-				result = false;
-			}
-		}
-		else
-		{
-			cout << "parseNetTag error: no subnet tag detected";
-		}
 	}
 
 	return result;
 }
 
-bool parseSubnetTag(XMLParserTag * firstTagInSubnet, NeuronContainer * firstNeuronInSubnet, long layerIDCounter, long * wrongAndNotUsedIDCounter, long subnetIDCounter)
-{
-	bool result = true;
 
-	NeuronContainer * currentNeuron = firstNeuronInSubnet;
-
-	XMLParserTag * currentTag = firstTagInSubnet;
-
-	NeuronContainer * recordOfFirstNeuronInPreviousLayer;	//to stop an additional layer being added
-
-	while(currentTag->nextTag != NULL)
-	{
-		if(currentTag->name == NET_XML_TAG_layer)
-		{
-			if(!parseLayerTag(currentTag->firstLowerLevelTag, currentNeuron, layerIDCounter++, 1, wrongAndNotUsedIDCounter, subnetIDCounter))
-			{
-				result = false;
-			}
-			else
-			{
-				recordOfFirstNeuronInPreviousLayer = currentNeuron;	//to stop an additional layer being added
-				NeuronContainer * newNeuron = new NeuronContainer();
-				currentNeuron->firstNeuronInFrontLayer = newNeuron;
-				currentNeuron = currentNeuron->firstNeuronInFrontLayer;
-			}
-		}
-		else
-		{
-			cout << "parseSubnetTag error: layer tag not detected";
-		}
-		currentTag=currentTag->nextTag;
-	}
-	recordOfFirstNeuronInPreviousLayer ->firstNeuronInFrontLayer=NULL;	//to stop an additional layer being added
-
-	return result;
-}
-
-bool parseLayerTag(XMLParserTag * firstTagInLayer, NeuronContainer * firstNeuronInLayer, long layerIDCounter, long orderIDCounter, long * wrongAndNotUsedIDCounter, long subnetIDCounter)
-{
-	bool result = true;
-
-	XMLParserTag * currentTag = firstTagInLayer;
-	NeuronContainer * currentNeuron = firstNeuronInLayer;
-
-	while(currentTag->nextTag != NULL)
-	{
-		if(currentTag->name == NET_XML_TAG_neuronContainer)
-		{
-			/*
-			if(subnetIDCounter > 1)
-			{
-				cout << "here1" << endl;
-			}
-			*/
-
-			if(!parseNeuronContainerTag(currentTag->firstLowerLevelTag, currentNeuron, layerIDCounter, orderIDCounter++, wrongAndNotUsedIDCounter, subnetIDCounter))
-			{
-				result = false;
-			}
-			*wrongAndNotUsedIDCounter = *wrongAndNotUsedIDCounter + 1;
-
-			NeuronContainer * newNeuron = new NeuronContainer();
-			currentNeuron->nextNeuronContainer = newNeuron;
-			currentNeuron = currentNeuron->nextNeuronContainer;
-		}
-		else
-		{
-			cout << "parseLayerTag error: neuron container tag not detected";
-		}
-		currentTag=currentTag->nextTag;
-	}
-	return result;
-}
-
-
-bool parseNeuronContainerTag(XMLParserTag * firstTagInNeuronContainer, NeuronContainer * currentNeuron, long layerIDCounter, long orderIDCounter, long * wrongAndNotUsedIDCounter, long subnetIDCounter)
+bool parseEntityNodeTag(XMLParserTag * firstTagInEntityNode, GIAEntityNode * entityNode)
 {
 	bool result = true;
 

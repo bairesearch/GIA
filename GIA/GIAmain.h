@@ -9,3 +9,5 @@
  *******************************************************************************/
  
 int main(int argc,char **argv);
+
+#define GIA_SEMANTIC_NET_XML_FILE_NAME "semanticNet.xml"

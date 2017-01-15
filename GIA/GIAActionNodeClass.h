@@ -24,12 +24,7 @@ using namespace std;
 
 
 class GIAEntityNode;
-
-class GIALocationConditionNode;
-class GIATimeConditionNode;
-class GIAPropertyConditionNode;
-class GIAActionConditionNode;
-class GIASharedConditionNode;
+class GIAConditionNode;
 
 /*
 //ConditionNodes;
@@ -45,7 +40,6 @@ class GIASharedConditionNode;
 
 //ReasonNodes;
 	//why
-	//PropertyReasonNode;	//in order to achieve a state of being
 	//ActionReasonNode;		//in order to perform an action
 */
 
@@ -74,21 +68,14 @@ public:
 	//list of conditions
 
 	//conditions: where, how, when
-	vector<GIATimeConditionNode*> TimeConditionNodeList;
-	vector<GIATimeConditionNode*>::iterator TimeConditionNodeListIterator;
-	vector<GIALocationConditionNode*> LocationConditionNodeList;
-	vector<GIALocationConditionNode*>::iterator LocationConditionNodeListIterator;
-	vector<GIAPropertyConditionNode*> PropertyConditionNodeList;
-	vector<GIAPropertyConditionNode*>::iterator PropertyConditionNodeListIterator;
-	vector<GIAActionConditionNode*> ActionConditionNodeList;
-	vector<GIAActionConditionNode*>::iterator ActionConditionNodeListIterator;
+	
+	vector<GIAConditionNode*> ConditionNodeList;
+	vector<GIAConditionNode*>::iterator ConditionNodeListIterator;
 
-	//reasons: why	[reverse action lookups]
-	vector<GIAPropertyConditionNode*> PropertyConditionNodeReverseList;
-	vector<GIAPropertyConditionNode*>::iterator PropertyConditionNodeReverseListIterator;
-	vector<GIAActionConditionNode*> ActionConditionNodeReverseList;
-	vector<GIAActionConditionNode*>::iterator ActionConditionNodeReverseListIterator;
-
+	//reasons: why	[reverse action lookups; NB these may only be action conditions]
+	vector<GIAConditionNode*> ConditionNodeReverseList;
+	vector<GIAConditionNode*>::iterator ConditionNodeReverseListIterator;	
+	
 	//a template entity for the associated concept of this action/verb (eg verb=study, associated entity/noun = study):
 	GIAEntityNode * entityNodeDefiningThisAction;
 	
@@ -98,9 +85,9 @@ public:
 	//record of which entity that is the object of this action instance
 	GIAEntityNode * actionObjectEntity;
 	
-	/*vector used instead for access time		
+	//flat tree structures are not used - this is only used for the semanticNet xml parse (read) process;	
 	GIAActionNode * next;
-	*/
+	
 };
 
 

@@ -25,13 +25,20 @@ using namespace std;
 
 class GIAEntityNode;
 class GIAActionNode;
-class GIASharedConditionNode;
-class GIALocationConditionNode;
+class GIAConditionNode;
 class GIATimeConditionNode;
+/*
+class GIALocationConditionNode;
 class GIAPropertyConditionNode;
 class GIAActionConditionNode;
+*/
 
-
+#define CONDITION_NODE_NUMBER_OF_TYPES (4)
+#define CONDITION_NODE_TYPE_UNDEFINED (0)
+#define CONDITION_NODE_TYPE_TIME (1)
+#define CONDITION_NODE_TYPE_LOCATION (2)
+#define CONDITION_NODE_TYPE_ACTION (3)
+#define CONDITION_NODE_TYPE_PROPERTY (4)
 
 #define TIME_MONTH_JANUARY "January"
 #define TIME_MONTH_FEBRUARY "February"
@@ -54,12 +61,12 @@ class GIAActionConditionNode;
 #define TIME_DAY_OF_MONTH_UNDEFINED (-1)
 #define TIME_MONTH_UNDEFINED (-1)	//OLD: 13th month
 
-class GIASharedConditionNode
+class GIAConditionNode
 {
 public:
 
-	GIASharedConditionNode(void);
-	~GIASharedConditionNode(void);
+	GIAConditionNode(void);
+	~GIAConditionNode(void);
 	
 	bool initialisedForPrinting;	
 	bool printed;
@@ -82,15 +89,24 @@ public:
 			//eg an entity named "tuesday" - this is not important
 			//NB this can be a property also [eg the action occured at "a house", or the action occured at "Tom's house"]
 
-	/*
+	/*OLD;
 	vector<GIAEntityNode*> firstProperty/Action/Location/TimeCondition;
 	vector<GIAEntityNode*>::iterator firstProperty/Action/Location/TimeConditionIterator;
 		//NB this property, condition, would generally be associated with the entity performing the action [or the entity upon which the action is applied?], but not necessarily [requires more thought] - it may depend upon how selfish the entity is
 	*/
 	
+	
 	bool parentIsAction;		//or parent is property
 	GIAActionNode * parentAction;		//ie, this condition is a condition for the parent action
 	GIAEntityNode * parentProperty;		//ie, this condition is a condition for the parent property
+	
+
+	int conditionType;	//added 25 Sept 11	
+	GIATimeConditionNode * timeConditionNode;		//if conditionType == CONDITION_NODE_TYPE_TIME
+	
+	//flat tree structures are not used - this is only used for the semanticNet xml parse (read) process;	
+	GIAConditionNode * next;
+	
 };
 
 
@@ -130,11 +146,6 @@ public:
 	double period;	//in seconds
 	long totalTimeInSeconds;
 	
-	GIASharedConditionNode * sharedCondition;
-	
-	/*vector used instead
-	GIATimeConditionNode * next;
-	*/
 };
 
 #define TIME_DATE_DISPLAY_FORMAT_AMERICAN (1)
@@ -142,56 +153,6 @@ public:
 #define TIME_DATE_DISPLAY_FORMAT_AUSTRALIAN (3)
 #define TIME_DATE_DISPLAY_FORMAT (TIME_DATE_DISPLAY_FORMAT_AUSTRALIAN)
 string generateDateTimeConditionName(int dayOfMonth, int month, long year);
-
-
-class GIALocationConditionNode
-{
-public:
-
-	GIALocationConditionNode(void);
-	~GIALocationConditionNode(void);
-	
-	//NEED to include some kind of absolute spatial coordinate system HERE
-	GIASharedConditionNode * sharedCondition;
-	
-	/*vector used instead
-	GIALocationConditionNode * next;
-	*/
-};
-
-
-class GIAActionConditionNode
-{
-public:
-
-	GIAActionConditionNode(void);
-	~GIAActionConditionNode(void);
-	
-	//NEED to include some kind of absolute justification/discerment measurement system HERE
-
-	//this MAY NEED to be replaced with a vector of action node pointers
-	GIASharedConditionNode * sharedCondition;
-	
-	/*vector used instead 
-	GIAReasonNode * next;
-	*/
-};
-
-
-class GIAPropertyConditionNode
-{
-public:
-
-	GIAPropertyConditionNode(void);
-	~GIAPropertyConditionNode(void);
-	
-	//NEED to include some kind of absolute justification/discerment measurement system HERE
-	GIASharedConditionNode * sharedCondition;
-	
-	/*vector used instead	
-	GIAReasonNode * next;
-	*/
-};
 
 
 #endif

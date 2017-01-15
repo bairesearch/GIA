@@ -185,6 +185,7 @@ void addActionToEntity(GIAEntityNode * subjectEntity, GIAEntityNode * objectEnti
 GIAActionNode * addAction(GIAEntityNode * actionEntity);
 void addActionToSubject(GIAEntityNode * subjectEntity, GIAEntityNode * actionEntity);
 void addActionToObject(GIAEntityNode * objectEntity, GIAEntityNode * actionEntity);
+
 void addLocationConditionToAction(GIAActionNode * actionNode, GIAEntityNode * locationConditionEntity);
 void addTimeConditionToAction(GIAActionNode * actionNode, GIAEntityNode * timeConditionEntity);
 void addLocationConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * locationConditionEntity);

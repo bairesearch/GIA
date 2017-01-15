@@ -15,6 +15,9 @@
 #include "XMLParserClass.h"
 #include "GIAEntityNodeClass.h"
 
+
+
+
 //#define ENFORCE_EXPLICIT_NET_XML_NEURON_ID_PARAMETERS
 //#define ENFORCE_EXPLICIT_NET_XML_NEURON_KEYPROPERTIES_PARAMETERS
 
@@ -27,15 +30,18 @@
 
 /*top level*/
 #define NET_XML_TAG_semanticNetwork ((string)"semanticNetwork")
+#define NET_XML_TAG_entityNodeContainer ((string)"entityNodeContainer")
+#define NET_XML_TAG_actionNodeContainer ((string)"actionNodeContainer")
+#define NET_XML_TAG_conditionNodeContainer ((string)"conditionNodeContainer")
 #define NET_XML_TAG_entityNode ((string)"entityNode")
 #define NET_XML_TAG_actionNode ((string)"actionNode")
-#define NET_XML_TAG_sharedConditionNode ((string)"sharedConditionNode")
+#define NET_XML_TAG_conditionNode ((string)"conditionNode")
 #define NET_XML_TAG_timeConditionNode ((string)"timeConditionNode")
 #define NET_XML_TAG_locationConditionNode ((string)"locationConditionNode")
 #define NET_XML_TAG_actionConditionNode ((string)"actionConditionNode")
 #define NET_XML_TAG_propertyConditionNode ((string)"propertyConditionNode")
 
-/*shared condition node*/
+/*condition node*/
 #define NET_XML_ATTRIBUTE_conditionName ((string)"conditionName")
 #define NET_XML_ATTRIBUTE_conditionIsAction ((string)"conditionIsAction")
 #define NET_XML_ATTRIBUTE_conditionAction ((string)"conditionAction")
@@ -43,6 +49,13 @@
 #define NET_XML_ATTRIBUTE_parentIsAction ((string)"parentIsAction")
 #define NET_XML_ATTRIBUTE_parentAction ((string)"parentAction")
 #define NET_XML_ATTRIBUTE_parentProperty ((string)"parentProperty")
+#define NET_XML_ATTRIBUTE_conditionType ((string)"conditionType")	//time,location,action,property
+#define NET_XML_ATTRIBUTE_timeConditionNode ((string)"timeConditionNode")
+#define NET_XML_ATTRIBUTE_locationConditionNode ((string)"locationConditionNode")
+#define NET_XML_ATTRIBUTE_propertyConditionNode ((string)"propertyConditionNode")
+#define NET_XML_ATTRIBUTE_actionConditionNode ((string)"actionConditionNode")
+
+
 /*
 #define NET_XML_ATTRIBUTE_printX ((string)"printX")
 #define NET_XML_ATTRIBUTE_printY ((string)"printY")
@@ -123,38 +136,33 @@
 #define NET_XML_TAG_AssociatedActionNodeList ((string)"AssociatedActionNodeList")
 #define NET_XML_TAG_AssociatedPropertyNodeList ((string)"AssociatedPropertyNodeList")
 //
-#define NET_XML_TAG_TimeConditionNodeList ((string)"TimeConditionNodeList")
-#define NET_XML_TAG_TimeConditionNodeReverseList ((string)"TimeConditionNodeReverseList")
-#define NET_XML_TAG_LocationConditionNodeList ((string)"LocationConditionNodeList")
-#define NET_XML_TAG_LocationConditionNodeReverseList ((string)"LocationConditionNodeReverseList")
-#define NET_XML_TAG_PropertyConditionNodeList ((string)"PropertyConditionNodeList")
-#define NET_XML_TAG_PropertyConditionNodeReverseList ((string)"PropertyConditionNodeReverseList")
-#define NET_XML_TAG_ActionConditionNodeList ((string)"ActionConditionNodeList")
-#define NET_XML_TAG_ActionConditionNodeReverseList ((string)"ActionConditionNodeReverseList")
 
 
 
-/*
-//#define NN_XML_DEBUG
-#ifdef NN_XML_DEBUG
-bool testReadNetXMLFile();
-bool testReadNetXMLFile2(NeuronContainer * firstInputNeuronInNetwork);
+#define GIA_XML_DEBUG
+#ifdef GIA_XML_DEBUG
+#define GIA_SEMANTIC_NET_XML_FILE_NAME1 "tempsemanticNet1.xml"
+bool testReadSemanticNetXMLFile1();
+bool testReadSemanticNetXMLFile2(GIAEntityNode * firstEntityInSemanticNetwork);
 #endif
-*/
+
 
 bool writeSemanticNetXMLFile(string xmlFileName, GIAEntityNode * firstEntityNodeInNetwork);
-	bool generateXMLTagListBasedUponEntityNode(XMLParserTag * firstTagInEntityNode, GIAEntityNode * entityNode);
-	bool generateXMLTagListBasedUponActionNode(XMLParserTag * firstTagInActionNode, GIAActionNode * actionNode);
-	bool generateXMLTagListBasedUponConditionNode(XMLParserTag * firstTagInTimeConditionNode, GIATimeConditionNode * timeConditionNode);
-	bool generateXMLTagListBasedUponConditionNode(XMLParserTag * firstTagInLocationConditionNode, GIALocationConditionNode * locationConditionNode);
-	bool generateXMLTagListBasedUponConditionNode(XMLParserTag * firstTagInActionConditionNode, GIAActionConditionNode * actionConditionNode);
-	bool generateXMLTagListBasedUponConditionNode(XMLParserTag * firstTagInPropertyConditionNode, GIAPropertyConditionNode * propertyConditionNode);
-		bool generateXMLTagListBasedUponConditionNode(XMLParserTag * firstTagInSharedConditionNode, GIASharedConditionNode * sharedConditionNode);		
+	bool generateXMLTagListBasedUponEntityContainerNode(XMLParserTag * firstTagInSemanticNet, GIAEntityNode * firstEntityNodeInNetwork);
+		bool generateXMLTagListBasedUponEntityNode(XMLParserTag * firstTagInEntityNode, GIAEntityNode * entityNode);
+	bool generateXMLTagListBasedUponActionContainerNode(XMLParserTag * firstTagInSemanticNet, GIAEntityNode * firstActionNodeInNetwork);
+		bool generateXMLTagListBasedUponActionNode(XMLParserTag * firstTagInActionNode, GIAActionNode * actionNode);
+	bool generateXMLTagListBasedUponConditionContainerNode(XMLParserTag * firstTagInSemanticNet, GIAConditionNode * firstConditionNodeInNetwork);
+		bool generateXMLTagListBasedUponConditionNode(XMLParserTag * firstTagInSemanticNet, GIAConditionNode * firstConditionNodeInNetwork);	
+			bool generateXMLTagListBasedUponTimeConditionNode(XMLParserTag * firstTagInTimeConditionNode, GIATimeConditionNode * timeConditionNode);
+			bool generateXMLTagListBasedUponLocationConditionNode(XMLParserTag * firstTagInLocationConditionNode, GIALocationConditionNode * locationConditionNode);
+			bool generateXMLTagListBasedUponActionConditionNode(XMLParserTag * firstTagInActionConditionNode, GIAActionConditionNode * actionConditionNode);
+			bool generateXMLTagListBasedUponPropertyConditionNode(XMLParserTag * firstTagInPropertyConditionNode, GIAPropertyConditionNode * propertyConditionNode);
 	
-NeuronContainer * readSemanticNetXMLFileAndRecordFormationVariables(string xmlFileName, GIAEntityNode * firstEntityNodeInNetwork);
-	bool readSemanticNetXMLFile(string xmlFileName, GIAEntityNode * firstEntityNodeInNetwork);
-		bool parseSemanticNetTag(XMLParserTag * firstTagInNetwork, GIAEntityNode * currentEntity);
-			bool parseEntityNodeTag(XMLParserTag * firstTagInEntityNode, GIAEntityNode * entityNode);
+bool readSemanticNetXMLFile(string xmlFileName, GIAEntityNode * firstEntityNodeInNetwork, GIAActionNode * firstActionNodeInNetwork, GIAConditionNode * firstConditionNodeInNetwork);
+	bool parseSemanticNetTag(XMLParserTag * firstTagInNetwork, GIAEntityNode * firstEntityNodeInNetwork, GIAActionNode * firstActionNodeInNetwork, GIAConditionNode * firstConditionNodeInNetwork;
+		bool parseEntityContainerNodeTag(XMLParserTag * firstTagInEntityNode, GIAEntityNode * firstEntityNodeInNetwork);
+			bool parseEntityNodeTag(XMLParserTag * firstTagInEntityNode, GIAEntityNode * currentEntityNode);
 				bool parseActionNodeListTag(XMLParserTag * firstTagInActionNodeList, GIAActionNode * entityNode);
 				bool parseIncomingActionNodeListTag(XMLParserTag * firstTagInIncomingActionNodeList, GIAEntityNode * entityNode);
 				bool parsePropertyNodeListTag(XMLParserTag * firstTagInPropertyNodeList, GIAEntityNode * entityNode);
@@ -163,31 +171,37 @@ NeuronContainer * readSemanticNetXMLFileAndRecordFormationVariables(string xmlFi
 				bool parseEntityNodeDefinitionReverseListTag(XMLParserTag * firstTagInEntityNodeDefinitionReverseList, GIAEntityNode * entityNode);
 				bool parseAssociatedActionNodeListTag(XMLParserTag * firstTagInAssociatedActionNodeList, GIAEntityNode * entityNode);
 				bool parseAssociatedPropertyNodeListTag(XMLParserTag * firstTagInAssociatedPropertyNodeList, GIAEntityNode * entityNode);
-				bool parseTimeConditionNodeListTag(XMLParserTag * firstTagInTimeConditionNodeList, GIAEntityNode * entityNode);
-				bool parseTimeConditionNodeReverseListTag(XMLParserTag * firstTagInTimeConditionNodeReverseList, GIAEntityNode * entityNode);
-				bool parseLocationConditionNodeListTag(XMLParserTag * firstTagInLocationConditionNodeList, GIAEntityNode * entityNode);
-				bool parseLocationConditionNodeReverseListTag(XMLParserTag * firstTagInLocationConditionNodeReverseList, GIAEntityNode * entityNode);
-				bool parsePropertyConditionNodeListTag(XMLParserTag * firstTagInPropertyConditionNodeList, GIAEntityNode * entityNode);
-				bool parsePropertyConditionNodeReverseListTag(XMLParserTag * firstTagInPropertyConditionNodeReverseList, GIAEntityNode * entityNode);
-				bool parseActionConditionNodeListTag(XMLParserTag * firstTagInActionConditionNodeList, GIAEntityNode * entityNode);
-				bool parseActionConditionNodeReverseListTag(XMLParserTag * firstTagInActionConditionNodeReverseList, GIAEntityNode * entityNode);
+				bool parseConditionNodeListTag(XMLParserTag * firstTagInConditionNodeList, GIAEntityNode * entityNode);
+				bool parseConditionNodeReverseListTag(XMLParserTag * firstTagInConditionNodeReverseList, GIAEntityNode * entityNode);
+					bool parseTimeConditionNodeListTag(XMLParserTag * firstTagInTimeConditionNodeList, GIAEntityNode * entityNode);
+					bool parseTimeConditionNodeReverseListTag(XMLParserTag * firstTagInTimeConditionNodeReverseList, GIAEntityNode * entityNode);
+					bool parseLocationConditionNodeListTag(XMLParserTag * firstTagInLocationConditionNodeList, GIAEntityNode * entityNode);
+					bool parseLocationConditionNodeReverseListTag(XMLParserTag * firstTagInLocationConditionNodeReverseList, GIAEntityNode * entityNode);
+					bool parsePropertyConditionNodeListTag(XMLParserTag * firstTagInPropertyConditionNodeList, GIAEntityNode * entityNode);
+					bool parsePropertyConditionNodeReverseListTag(XMLParserTag * firstTagInPropertyConditionNodeReverseList, GIAEntityNode * entityNode);
+					bool parseActionConditionNodeListTag(XMLParserTag * firstTagInActionConditionNodeList, GIAEntityNode * entityNode);
+					bool parseActionConditionNodeReverseListTag(XMLParserTag * firstTagInActionConditionNodeReverseList, GIAEntityNode * entityNode);
+		bool parseActionContainerNodeTag(XMLParserTag * firstTagInEntityNode, GIAActionNode * firstActionNodeInNetwork);	
 			bool parseActionNodeTag(XMLParserTag * firstTagInActionNode, GIAActionNode * actionNode);
-				bool parseTimeConditionNodeListTag(XMLParserTag * firstTagInTimeConditionNodeList, GIAActionNode * currentActionNode);
-				bool parseLocationConditionNodeListTag(XMLParserTag * firstTagInLocationConditionNodeList, GIAActionNode * currentActionNode);
-				bool parsePropertyConditionNodeListTag(XMLParserTag * firstTagInPropertyConditionNodeList, GIAActionNode * currentActionNode);
-				bool parseActionConditionNodeListTag(XMLParserTag * firstTagInActionConditionNodeList, GIAActionNode * currentActionNode);
-				bool parsePropertyConditionNodeReverseListTag(XMLParserTag * firstTagInPropertyConditionNodeReverseList, GIAActionNode * currentActionNode);
-				bool parseActionConditionNodeReverseListTag(XMLParserTag * firstTagInActionConditionNodeReverseList, GIAActionNode * currentActionNode);				
-			bool parseConditionNodeTag(XMLParserTag * firstTagInTimeConditionNode, GIAEntityNode * timeConditionNode);
-			bool parseConditionNodeTag(XMLParserTag * firstTagInLocationConditionNode, GIAEntityNode * locationConditionNode);
-			bool parseConditionNodeTag(XMLParserTag * firstTagInActionConditionNode, GIAEntityNode * actionConditionNode);
-			bool parseConditionNodeTag(XMLParserTag * firstTagInPropertyConditionNode, GIAEntityNode * propertyConditionNode);
-				bool parseConditionNodeTag(XMLParserTag * firstTagInSharedConditionNode, GIASharedConditionNode * sharedConditionNode);					
-			
-	/*
-		bool linkEntityNodeConnections(NeuronContainer * firstNeuronContainerInLayer, NeuronContainer * firstInputNeuronInNetwork, bool hasBackLayer, NeuronContainer * firstNeuronContainerInBackLayer);
-			NeuronContainer * findNeuronContainer(NeuronContainer * firstNeuronContainerInLayer, long neuronIDToFind, bool * result);
-	NeuronContainer * recordOutputNeuronAndNumInputAndOutputNeuronsInNetwork(NeuronContainer * firstInputNeuronInNetwork, long * numberOfInputNeurons, long * numberOfOutputNeurons);
-	*/
+				bool parseTimeConditionNodeListTag(XMLParserTag * firstTagInTimeConditionNodeList, GIAActionNode * actionNode);
+				bool parseLocationConditionNodeListTag(XMLParserTag * firstTagInLocationConditionNodeList, GIAActionNode * actionNode);
+				bool parsePropertyConditionNodeListTag(XMLParserTag * firstTagInPropertyConditionNodeList, GIAActionNode * actionNode);
+				bool parseActionConditionNodeListTag(XMLParserTag * firstTagInActionConditionNodeList, GIAActionNode * actionNode);
+				bool parsePropertyConditionNodeReverseListTag(XMLParserTag * firstTagInPropertyConditionNodeReverseList, GIAActionNode * actionNode);
+				bool parseActionConditionNodeReverseListTag(XMLParserTag * firstTagInActionConditionNodeReverseList, GIAActionNode * actionNode);				
+		bool parseConditionContainerNodeTag(XMLParserTag * firstTagInEntityNode, GIAConditionNode * firstConditionNodeInNetwork);	
+			bool parseConditionNodeTag(XMLParserTag * firstTagInTimeConditionNode, GIAConditionNode * conditionNode);
+				bool parseLocationConditionNodeTag(XMLParserTag * firstTagInLocationConditionNode, GIAEntityNode * locationConditionNode);
+				bool parseActionConditionNodeTag(XMLParserTag * firstTagInActionConditionNode, GIAEntityNode * actionConditionNode);
+				bool parsePropertyConditionNodeTag(XMLParserTag * firstTagInPropertyConditionNode, GIAEntityNode * propertyConditionNode);
+				bool parseSharedConditionNodeTag(XMLParserTag * firstTagInSharedConditionNode, GIASharedConditionNode * sharedConditionNode);
+					
+bool linkEntities(GIAEntityNode * firstEntityNodeInNetwork);
+
+/*
+	bool linkEntityNodeConnections(NeuronContainer * firstNeuronContainerInLayer, NeuronContainer * firstInputNeuronInNetwork, bool hasBackLayer, NeuronContainer * firstNeuronContainerInBackLayer);
+		NeuronContainer * findNeuronContainer(NeuronContainer * firstNeuronContainerInLayer, long neuronIDToFind, bool * result);
+NeuronContainer * recordOutputNeuronAndNumInputAndOutputNeuronsInNetwork(NeuronContainer * firstInputNeuronInNetwork, long * numberOfInputNeurons, long * numberOfOutputNeurons);
+*/
 
 #endif

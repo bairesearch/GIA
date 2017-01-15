@@ -173,26 +173,36 @@ void connnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * prope
 
 void addTenseOnlyTimeConditionToProperty(GIAEntityNode * propertyNode, int tense)
 {
+	GIAConditionNode * newCondition = new GIAConditionNode();
+	newCondition->conditionName = grammaticalTenseNameArray[tense];
+	newCondition->conditionEntity = NULL;
+	newCondition->parentProperty = propertyNode;
+	newCondition->parentIsAction = false;
+	newCondition->conditionIsAction = false;
+	
+	newCondition->conditionType = CONDITION_NODE_TYPE_TIME;
 	GIATimeConditionNode * newTimeCondition = new GIATimeConditionNode();
-	newTimeCondition->sharedCondition->conditionName = grammaticalTenseNameArray[tense];
 	newTimeCondition->tense = tense;
-	newTimeCondition->sharedCondition->conditionEntity = NULL;
-	newTimeCondition->sharedCondition->parentProperty = propertyNode;
-	newTimeCondition->sharedCondition->parentIsAction = false;
-	newTimeCondition->sharedCondition->conditionIsAction = false;
-	propertyNode->TimeConditionNodeList.push_back(newTimeCondition);
+	newCondition->timeConditionNode = newTimeCondition;
+	
+	propertyNode->ConditionNodeList.push_back(newCondition);
 }
 
 void addTenseOnlyTimeConditionToAction(GIAActionNode * actionNode, int tense)
 {
+	GIAConditionNode * newCondition = new GIAConditionNode();
+	newCondition->conditionName = grammaticalTenseNameArray[tense];
+	newCondition->conditionEntity = NULL;
+	newCondition->parentAction = actionNode;
+	newCondition->parentIsAction = true;
+	newCondition->conditionIsAction = false;
+	
+	newCondition->conditionType = CONDITION_NODE_TYPE_TIME;
 	GIATimeConditionNode * newTimeCondition = new GIATimeConditionNode();
-	newTimeCondition->sharedCondition->conditionName = grammaticalTenseNameArray[tense];
 	newTimeCondition->tense = tense;
-	newTimeCondition->sharedCondition->conditionEntity = NULL;
-	newTimeCondition->sharedCondition->parentAction = actionNode;
-	newTimeCondition->sharedCondition->parentIsAction = true;
-	newTimeCondition->sharedCondition->conditionIsAction = false;
-	actionNode->TimeConditionNodeList.push_back(newTimeCondition);
+	newCondition->timeConditionNode = newTimeCondition;
+		
+	actionNode->ConditionNodeList.push_back(newCondition);
 }
 
 
@@ -340,52 +350,68 @@ void addActionToObject(GIAEntityNode * objectEntity, GIAEntityNode * actionEntit
 
 void addLocationConditionToAction(GIAActionNode * actionNode, GIAEntityNode * locationConditionEntity)
 {
-	GIALocationConditionNode * newLocationCondition = new GIALocationConditionNode();
-	newLocationCondition->sharedCondition->conditionName = locationConditionEntity->entityName;
-	newLocationCondition->sharedCondition->conditionEntity = locationConditionEntity;
-	newLocationCondition->sharedCondition->parentAction = actionNode;
-	newLocationCondition->sharedCondition->parentIsAction = true;
-	newLocationCondition->sharedCondition->conditionIsAction = false;
-	actionNode->LocationConditionNodeList.push_back(newLocationCondition);
-	locationConditionEntity->LocationConditionNodeReverseList.push_back(newLocationCondition);
+	GIAConditionNode * newCondition = new GIAConditionNode();
+	newCondition->conditionName = locationConditionEntity->entityName;
+	newCondition->conditionEntity = locationConditionEntity;
+	newCondition->parentAction = actionNode;
+	newCondition->parentIsAction = true;
+	newCondition->conditionIsAction = false;
+	
+	newCondition->conditionType = CONDITION_NODE_TYPE_LOCATION;
+	
+	actionNode->ConditionNodeList.push_back(newCondition);
+	locationConditionEntity->ConditionNodeReverseList.push_back(newCondition);
 }
 
 void addTimeConditionToAction(GIAActionNode * actionNode, GIAEntityNode * timeConditionEntity)
 {
-	GIATimeConditionNode * newTimeCondition = new GIATimeConditionNode();
-	newTimeCondition->sharedCondition->conditionName = timeConditionEntity->entityName;
+	GIAConditionNode * newCondition = new GIAConditionNode();
+	newCondition->conditionName = timeConditionEntity->entityName;
 	//TO DO: parse time info here [into seconds since start of universe, totalTimeInSeconds]
-	newTimeCondition->sharedCondition->conditionEntity = timeConditionEntity;
-	newTimeCondition->sharedCondition->parentAction = actionNode;
-	newTimeCondition->sharedCondition->parentIsAction = true;
-	newTimeCondition->sharedCondition->conditionIsAction = false;
-	actionNode->TimeConditionNodeList.push_back(newTimeCondition);
-	timeConditionEntity->TimeConditionNodeReverseList.push_back(newTimeCondition);
+	newCondition->conditionEntity = timeConditionEntity;
+	newCondition->parentAction = actionNode;
+	newCondition->parentIsAction = true;
+	newCondition->conditionIsAction = false;
+	
+	newCondition->conditionType = CONDITION_NODE_TYPE_TIME;
+	GIATimeConditionNode * newTimeCondition = new GIATimeConditionNode();
+	newCondition->timeConditionNode = newTimeCondition;
+		
+	actionNode->ConditionNodeList.push_back(newCondition);
+	timeConditionEntity->ConditionNodeReverseList.push_back(newCondition);
 }
 
 void addLocationConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * locationConditionEntity)
 {
-	GIALocationConditionNode * newLocationCondition = new GIALocationConditionNode();
-	newLocationCondition->sharedCondition->conditionName = locationConditionEntity->entityName;
-	newLocationCondition->sharedCondition->conditionEntity = locationConditionEntity;
-	newLocationCondition->sharedCondition->parentProperty = propertyNode;
-	newLocationCondition->sharedCondition->parentIsAction = false;
-	newLocationCondition->sharedCondition->conditionIsAction = false;
-	propertyNode->LocationConditionNodeList.push_back(newLocationCondition);
-	locationConditionEntity->LocationConditionNodeReverseList.push_back(newLocationCondition);
+	GIAConditionNode * newCondition = new GIAConditionNode();
+	newCondition->conditionName = locationConditionEntity->entityName;
+	newCondition->conditionEntity = locationConditionEntity;
+	newCondition->parentProperty = propertyNode;
+	newCondition->parentIsAction = false;
+	newCondition->conditionIsAction = false;
+	
+	newCondition->conditionType = CONDITION_NODE_TYPE_LOCATION;
+	
+	propertyNode->ConditionNodeList.push_back(newCondition);
+	locationConditionEntity->ConditionNodeReverseList.push_back(newCondition);
 }
 
 void addTimeConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * timeConditionEntity)
 {
-	GIATimeConditionNode * newTimeCondition = new GIATimeConditionNode();
-	newTimeCondition->sharedCondition->conditionName = timeConditionEntity->entityName;
+	GIAConditionNode * newCondition = new GIAConditionNode();
+	newCondition->conditionName = timeConditionEntity->entityName;
 	//TO DO: parse time info here [into seconds since start of universe, totalTimeInSeconds]
-	newTimeCondition->sharedCondition->conditionEntity = timeConditionEntity;
-	newTimeCondition->sharedCondition->parentProperty = propertyNode;
-	newTimeCondition->sharedCondition->parentIsAction = false;
-	newTimeCondition->sharedCondition->conditionIsAction = false;
-	propertyNode->TimeConditionNodeList.push_back(newTimeCondition);
-	timeConditionEntity->TimeConditionNodeReverseList.push_back(newTimeCondition);
+	newCondition->conditionEntity = timeConditionEntity;
+	newCondition->parentProperty = propertyNode;
+	newCondition->parentIsAction = false;
+	newCondition->conditionIsAction = false;
+	
+	newCondition->conditionType = CONDITION_NODE_TYPE_TIME;
+	GIATimeConditionNode * newTimeCondition = new GIATimeConditionNode();
+	newCondition->timeConditionNode = newTimeCondition;	
+	
+	propertyNode->ConditionNodeList.push_back(newCondition);
+	timeConditionEntity->ConditionNodeReverseList.push_back(newCondition);
 }
 
 
@@ -393,54 +419,62 @@ void addTimeConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * ti
 
 void addActionConditionToAction(GIAActionNode * actionNode, GIAActionNode * actionConditionActionNode)
 {
-	GIAActionConditionNode * newActionCondition = new GIAActionConditionNode();
-	newActionCondition->sharedCondition->conditionName = actionConditionActionNode->actionName;
-	newActionCondition->sharedCondition->conditionAction = actionConditionActionNode;
-	newActionCondition->sharedCondition->parentAction = actionNode;
-	newActionCondition->sharedCondition->parentIsAction = true;
-	newActionCondition->sharedCondition->conditionIsAction = true;
-	actionNode->ActionConditionNodeList.push_back(newActionCondition);
+	GIAConditionNode * newCondition = new GIAConditionNode();
+	newCondition->conditionName = actionConditionActionNode->actionName;
+	newCondition->conditionAction = actionConditionActionNode;
+	newCondition->parentAction = actionNode;
+	newCondition->parentIsAction = true;
+	newCondition->conditionIsAction = true;
 	
-	actionConditionActionNode->ActionConditionNodeReverseList.push_back(newActionCondition);
+	newCondition->conditionType = CONDITION_NODE_TYPE_ACTION;
+	
+	actionNode->ConditionNodeList.push_back(newCondition);
+	actionConditionActionNode->ConditionNodeReverseList.push_back(newCondition);
 }
 
 void addPropertyConditionToAction(GIAActionNode * actionNode, GIAEntityNode * propertyConditionEntity)
 {
-	GIAPropertyConditionNode * newPropertyCondition = new GIAPropertyConditionNode();
-	newPropertyCondition->sharedCondition->conditionName = propertyConditionEntity->entityName;
-	newPropertyCondition->sharedCondition->conditionEntity = propertyConditionEntity;
-	newPropertyCondition->sharedCondition->parentAction = actionNode;
-	newPropertyCondition->sharedCondition->parentIsAction = true;
-	newPropertyCondition->sharedCondition->conditionIsAction = false;
-	actionNode->PropertyConditionNodeList.push_back(newPropertyCondition);
+	GIAConditionNode * newCondition = new GIAConditionNode();
+	newCondition->conditionName = propertyConditionEntity->entityName;
+	newCondition->conditionEntity = propertyConditionEntity;
+	newCondition->parentAction = actionNode;
+	newCondition->parentIsAction = true;
+	newCondition->conditionIsAction = false;
 	
-	propertyConditionEntity->PropertyConditionNodeReverseList.push_back(newPropertyCondition);
+	newCondition->conditionType = CONDITION_NODE_TYPE_PROPERTY;
+	
+	actionNode->ConditionNodeList.push_back(newCondition);
+	propertyConditionEntity->ConditionNodeReverseList.push_back(newCondition);
 }
 
 void addActionConditionToProperty(GIAEntityNode * propertyNode, GIAActionNode * actionConditionActionNode)
 {
-	GIAActionConditionNode * newActionCondition = new GIAActionConditionNode();
-	newActionCondition->sharedCondition->conditionName = actionConditionActionNode->actionName;
-	newActionCondition->sharedCondition->conditionAction = actionConditionActionNode;
-	newActionCondition->sharedCondition->parentProperty = propertyNode;
-	newActionCondition->sharedCondition->parentIsAction = false;
-	newActionCondition->sharedCondition->conditionIsAction = true;
-	propertyNode->ActionConditionNodeList.push_back(newActionCondition);
+	GIAConditionNode * newCondition = new GIAConditionNode();
+	newCondition->conditionName = actionConditionActionNode->actionName;
+	newCondition->conditionAction = actionConditionActionNode;
+	newCondition->parentProperty = propertyNode;
+	newCondition->parentIsAction = false;
+	newCondition->conditionIsAction = true;
 	
-	actionConditionActionNode->ActionConditionNodeReverseList.push_back(newActionCondition);
+	newCondition->conditionType = CONDITION_NODE_TYPE_ACTION;
+	
+	propertyNode->ConditionNodeList.push_back(newCondition);
+	actionConditionActionNode->ConditionNodeReverseList.push_back(newCondition);
 }
 
 void addPropertyConditionToProperty(GIAEntityNode * propertyNode, GIAEntityNode * propertyConditionEntity)
 {
-	GIAPropertyConditionNode * newPropertyCondition = new GIAPropertyConditionNode();
-	newPropertyCondition->sharedCondition->conditionName = propertyConditionEntity->entityName;
-	newPropertyCondition->sharedCondition->conditionEntity = propertyConditionEntity;
-	newPropertyCondition->sharedCondition->parentProperty = propertyNode;
-	newPropertyCondition->sharedCondition->parentIsAction = false;
-	newPropertyCondition->sharedCondition->conditionIsAction = false;
-	propertyNode->PropertyConditionNodeList.push_back(newPropertyCondition);
+	GIAConditionNode * newCondition = new GIAConditionNode();
+	newCondition->conditionName = propertyConditionEntity->entityName;
+	newCondition->conditionEntity = propertyConditionEntity;
+	newCondition->parentProperty = propertyNode;
+	newCondition->parentIsAction = false;
+	newCondition->conditionIsAction = false;
 	
-	propertyConditionEntity->PropertyConditionNodeReverseList.push_back(newPropertyCondition);
+	newCondition->conditionType = CONDITION_NODE_TYPE_PROPERTY;
+	
+	propertyNode->ConditionNodeList.push_back(newCondition);
+	propertyConditionEntity->ConditionNodeReverseList.push_back(newCondition);
 }
 
 
@@ -482,7 +516,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 	long firstTimeInNetwork = -14*(10^9)*SECONDS_IN_YEAR;
 	string firstTimeNameInNetwork = "beginning";
 	GIATimeConditionNode * firstTimeNodeInNetwork = new GIATimeConditionNode();
-	firstTimeNodeInNetwork->sharedCondition->conditionName = firstTimeNameInNetwork;
+	firstTimeNodeInNetwork->conditionName = firstTimeNameInNetwork;
 	firstTimeNodeInNetwork->totalTimeInSeconds = firstTimeInNetwork;
 	indexOfTimeNodes->push_back(firstTimeNodeInNetwork);
 	indexOfTimeNumbers->push_back(firstTimeInNetwork);		
@@ -1641,11 +1675,11 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 				{			
 					GIAEntityNode * timeConditionEntity = currentEntity;
 					//cout << "as1" << endl;
-					if(timeConditionEntity->TimeConditionNodeReverseList.back() != NULL)
+					if(timeConditionEntity->ConditionNodeReverseList.back() != NULL)
 					{
 						//cout << "as2" << endl;
 
-						GIATimeConditionNode * tempTimeCondition = timeConditionEntity->TimeConditionNodeReverseList.back();
+						GIAConditionNode * tempTimeCondition = timeConditionEntity->ConditionNodeReverseList.back();
 						string monthString = timeConditionEntity->entityName;
 						int monthInt = TIME_MONTH_UNDEFINED;
 						for(int i=0; i<TIME_MONTH_NUMBER_OF_TYPES; i++)
@@ -1655,10 +1689,10 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 								monthInt = i+1;
 							}
 						}
-						tempTimeCondition->month = monthInt;
+						tempTimeCondition->timeConditionNode->month = monthInt;
 						
 						//update/regenerate timeConditionName
-						tempTimeCondition->sharedCondition->conditionName = generateDateTimeConditionName(tempTimeCondition->dayOfMonth, tempTimeCondition->month, tempTimeCondition->year);
+						tempTimeCondition->conditionName = generateDateTimeConditionName(tempTimeCondition->timeConditionNode->dayOfMonth, tempTimeCondition->timeConditionNode->month, tempTimeCondition->timeConditionNode->year);
 					}
 					else
 					{
@@ -1688,9 +1722,9 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 
 							if(timeConditionEntity->entityName == currentRelationInList->relationFunction)
 							{	
-								if(timeConditionEntity->TimeConditionNodeReverseList.back() != NULL)
+								if(timeConditionEntity->ConditionNodeReverseList.back() != NULL)
 								{
-									GIATimeConditionNode * tempTimeCondition = timeConditionEntity->TimeConditionNodeReverseList.back();
+									GIAConditionNode * tempTimeCondition = timeConditionEntity->ConditionNodeReverseList.back();
 
 									if(currentRelationInList->relationType == RELATION_TYPE_DATE_DAY)
 									{
@@ -1699,22 +1733,22 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 										string dayOfMonthString = currentRelationInList->relationArgument;
 										char * dayOfMonthStringcharstar = const_cast<char*>(dayOfMonthString.c_str());
 										int dayOfMonthInt = atoi(dayOfMonthStringcharstar);
-										tempTimeCondition->dayOfMonth = dayOfMonthInt;
+										tempTimeCondition->timeConditionNode->dayOfMonth = dayOfMonthInt;
 										cout << "adding day of month: " << dayOfMonthInt << endl;
 										
 										//update/regenerate timeConditionName
-										tempTimeCondition->sharedCondition->conditionName = generateDateTimeConditionName(tempTimeCondition->dayOfMonth, tempTimeCondition->month, tempTimeCondition->year);
+										tempTimeCondition->conditionName = generateDateTimeConditionName(tempTimeCondition->timeConditionNode->dayOfMonth, tempTimeCondition->timeConditionNode->month, tempTimeCondition->timeConditionNode->year);
 									}
 									if(currentRelationInList->relationType == RELATION_TYPE_DATE_YEAR)
 									{
 										string yearString = currentRelationInList->relationArgument;
 										char * yearStringcharstar = const_cast<char*>(yearString.c_str());
 										int yearInt = atoi(yearStringcharstar);
-										tempTimeCondition->year = yearInt;
+										tempTimeCondition->timeConditionNode->year = yearInt;
 										cout << "adding year: " << yearInt << endl;
 										
 										//update/regenerate timeConditionName
-										tempTimeCondition->sharedCondition->conditionName = generateDateTimeConditionName(tempTimeCondition->dayOfMonth, tempTimeCondition->month, tempTimeCondition->year);
+										tempTimeCondition->conditionName = generateDateTimeConditionName(tempTimeCondition->timeConditionNode->dayOfMonth, tempTimeCondition->timeConditionNode->month, tempTimeCondition->timeConditionNode->year);
 									}
 								}
 							}

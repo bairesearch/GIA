@@ -31,9 +31,7 @@ GIAActionNode::GIAActionNode(void)
 	actionSubjectEntity = NULL;
 	actionObjectEntity = NULL;
 		
-	/*
 	next = NULL;
-	*/
 }
 GIAActionNode::~GIAActionNode(void)
 {

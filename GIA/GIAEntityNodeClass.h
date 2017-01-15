@@ -25,10 +25,7 @@ using namespace std;
 
 
 class GIAActionNode;
-class GIALocationConditionNode;
-class GIAPropertyConditionNode;
-class GIAActionConditionNode;
-class GIATimeConditionNode;
+class GIAConditionNode;
 
 #define GRAMMATICAL_TENSE_UNDEFINED 0
 #define GRAMMATICAL_TENSE_PRESENT 1
@@ -146,22 +143,25 @@ public:
 	vector<GIAActionNode*> IncomingActionNodeList;
 	vector<GIAActionNode*>::iterator IncomingActionNodeListIterator;
 	
+		//properties only
 	//property connections;
 	//record list of all properties for this entity
 	vector<GIAEntityNode*> PropertyNodeList;
 	vector<GIAEntityNode*>::iterator PropertyNodeListIterator;
+	/*this has been removed 25 Sept - use entityNodeContainingThisProperty instead
 	vector<GIAEntityNode*> PropertyNodeReverseList;				//if property only: 
 	vector<GIAEntityNode*>::iterator PropertyNodeReverseListIterator;	//if property only:
+	*/
 	GIAEntityNode * entityNodeContainingThisProperty;				//if property only:	//eg, Tom; OR;  Tom's Assets	//NB by definition, only 1 thing can contain any given property [considering a property is an instance of an entity] - therefore this is not a vector
 	GIAEntityNode * entityNodeDefiningThisProperty;					//if property only:					//NB by definition, only 1 thing can contain any given property [considering a property is an instance of an entity] - therefore this is not a vector
 	
+		//pure entites only (not properties/"instances" of entities)
 	//entity connections;										
 	//record parent and child entity definition nodes
 	vector<GIAEntityNode*> EntityNodeDefinitionList;				//if not property only: 	//this should logically reduce to a single entity, although not required, therefore it is a vector [eg, a dog is a mammal, which is an animal, but a dog is an animal also]
 	vector<GIAEntityNode*>::iterator EntityNodeDefinitionListIterator;	//if not property only: 
 	vector<GIAEntityNode*> EntityNodeDefinitionReverseList;			//if not property only: 	//more than one entity can be defined by this entity [eg if this entity is "animal", a bird is an animal, a mammal is an animal, etc]
 	vector<GIAEntityNode*>::iterator EntityNodeDefinitionReverseListIterator;	//if not property only: 
-	
 	//associated actions and properties [ie does this entity also define an action/verb or a property/adjective? [ie, it is not just a thing/noun]]
 	vector<GIAActionNode*> AssociatedActionNodeList;				//if not property only: if type == definesAnActionVerb
 	vector<GIAActionNode*>::iterator AssociatedActionNodeListIterator;	//if not property only: if type == definesAnActionVerb
@@ -169,28 +169,14 @@ public:
 	vector<GIAEntityNode*>::iterator AssociatedPropertyNodeListIterator;	//if not property only: if type == definesAPropertyAdjective (ie, if this entity is not a property/instance but defines one or more properties/instances)
 	
 	//conditions connections: conditions and reverse conditions (reason) lookups [condition and reason respectively]
-	vector<GIATimeConditionNode*> TimeConditionNodeList;
-	vector<GIATimeConditionNode*>::iterator TimeConditionNodeListIterator;		
-	vector<GIATimeConditionNode*> TimeConditionNodeReverseList;
-	vector<GIATimeConditionNode*>::iterator TimeConditionNodeReverseListIterator;		
-	vector<GIALocationConditionNode*> LocationConditionNodeList;	
-	vector<GIALocationConditionNode*>::iterator LocationConditionNodeListIterator;		
-	vector<GIALocationConditionNode*> LocationConditionNodeReverseList;	
-	vector<GIALocationConditionNode*>::iterator LocationConditionNodeReverseListIterator;	
-	vector<GIAPropertyConditionNode*> PropertyConditionNodeList;				//this property requires the following properties 
-	vector<GIAPropertyConditionNode*>::iterator PropertyConditionNodeListIterator;		//this property requires the following properties	
-	vector<GIAPropertyConditionNode*> PropertyConditionNodeReverseList;			//this property is required by the following properties	//aka reason [a property needs this property]
-	vector<GIAPropertyConditionNode*>::iterator PropertyConditionNodeReverseListIterator;	//this property is required by the following properties	//aka reason [a property needs this property]
-	vector<GIAActionConditionNode*> ActionConditionNodeList;					//this property requires the following actions 
-	vector<GIAActionConditionNode*>::iterator ActionConditionNodeListIterator;		//this property requires the following actions	
-	vector<GIAActionConditionNode*> ActionConditionNodeReverseList;				//this property is required by the following actions	//aka reason [an action needs this Action]
-	vector<GIAActionConditionNode*>::iterator ActionConditionNodeReverseListIterator;	//this property is required by the following actions	//aka reason [an action needs this Action]
+	vector<GIAConditionNode*> ConditionNodeList;		//this property requires the following...
+	vector<GIAConditionNode*>::iterator ConditionNodeListIterator;		
+	vector<GIAConditionNode*> ConditionNodeReverseList;	//this property is required by the following... //aka reason	[NB these may only be property, location, {and time action condtions}, not action conditions]
+	vector<GIAConditionNode*>::iterator ConditionNodeReverseListIterator;		
 	
-	
-	/*flat tree structures are not used			
-	//this MAY NEED to be replaced with a vector of entity node pointers
+	//flat tree structures are not used - this is only used for the semanticNet xml parse (read) process;		
 	GIAEntityNode * next;
-	*/
+	
 };
 
 int calculateQuantityNumberInt(string quantityNumberString);

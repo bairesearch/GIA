@@ -12,7 +12,7 @@
 
 
 
-GIASharedConditionNode::GIASharedConditionNode(void)
+GIAConditionNode::GIAConditionNode(void)
 {
 	initialisedForPrinting = false;
 	printed = false;
@@ -29,15 +29,18 @@ GIASharedConditionNode::GIASharedConditionNode(void)
 	conditionIsAction = false;
 	conditionAction = NULL;
 	conditionEntity = NULL;
+	
 	parentIsAction = false;
 	parentAction = NULL;
 	parentProperty = NULL;
+	
+	conditionType = CONDITION_NODE_TYPE_UNDEFINED;
+	timeConditionNode = NULL;
 		
-	/*
 	next = NULL;
-	*/
+	
 }
-GIASharedConditionNode::~GIASharedConditionNode(void)
+GIAConditionNode::~GIAConditionNode(void)
 {
 	/*
 	if(next != NULL)
@@ -45,16 +48,13 @@ GIASharedConditionNode::~GIASharedConditionNode(void)
 		delete next;
 	}
 	*/
-
 }
 
 
 
 //~? [eg past, wednesday, etc]
 GIATimeConditionNode::GIATimeConditionNode(void)
-{
-	sharedCondition = new GIASharedConditionNode(); 
-	
+{	
 	tense = GRAMMATICAL_TENSE_UNDEFINED;
 	//tense = tenseundefined;
 	second = -1.0;
@@ -67,78 +67,11 @@ GIATimeConditionNode::GIATimeConditionNode(void)
 	period = -1;
 	totalTimeInSeconds = 0;
 	
-	/*
-	next = NULL;
-	*/
 }
 GIATimeConditionNode::~GIATimeConditionNode(void)
 {
-	delete sharedCondition;	
-	/*
-	if(next != NULL)
-	{
-		delete next;
-	}
-	*/
 }
 
-
-GIAPropertyConditionNode::GIAPropertyConditionNode(void)
-{	
-	sharedCondition = new GIASharedConditionNode();
-	/*
-	next = NULL;
-	*/
-}
-GIAPropertyConditionNode::~GIAPropertyConditionNode(void)
-{	
-	delete sharedCondition;
-	/*
-	if(next != NULL)
-	{
-		delete next;
-	}
-	*/
-}
-
-
-GIAActionConditionNode::GIAActionConditionNode(void)
-{
-	sharedCondition = new GIASharedConditionNode();
-	/*
-	next = NULL;
-	*/
-}
-GIAActionConditionNode::~GIAActionConditionNode(void)
-{	
-	delete sharedCondition;
-	/*
-	if(next != NULL)
-	{
-		delete next;
-	}
-	*/
-}
-
-
-
-GIALocationConditionNode::GIALocationConditionNode(void)
-{
-	sharedCondition = new GIASharedConditionNode();
-	/*
-	next = NULL;
-	*/
-}
-GIALocationConditionNode::~GIALocationConditionNode(void)
-{
-	delete sharedCondition;	
-	/*
-	if(next != NULL)
-	{
-		delete next;
-	}
-	*/
-}
 
 string generateDateTimeConditionName(int dayOfMonth, int month, long year)
 {
