@@ -270,7 +270,7 @@ void linkEntityDefinitionsAppositiveOfNouns(Sentence * currentSentenceInList, GI
 							cout << "definitionEntity->isSubstance = " << definitionEntity->isSubstance << endl;
 							#endif
 
-							#ifndef GIA_SUPPORT_WHAT_IS_THE_TIME_QUERY_ALIAS_ANSWERS
+							#ifndef GIA_SUPPORT_WHAT_IS_THE_TIME_QUERY_ALIAS_ANSWERS_ONLY_WORK_WITH_STANFORD
 							if(!(definitionEntity->hasAssociatedTime))
 							{
 							#endif
@@ -297,14 +297,14 @@ void linkEntityDefinitionsAppositiveOfNouns(Sentence * currentSentenceInList, GI
 									#endif
 									//if no proper noun (or query) detected, each node is equal, eg the brown dog == the happy wolf]
 								}
-							#ifndef GIA_SUPPORT_WHAT_IS_THE_TIME_QUERY_ALIAS_ANSWERS
+							#ifndef GIA_SUPPORT_WHAT_IS_THE_TIME_QUERY_ALIAS_ANSWERS_ONLY_WORK_WITH_STANFORD
 							}
 							#endif
 						#ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS
 						}
 						#endif							
 					}
-					#ifdef GIA_SUPPORT_WHAT_IS_THE_TIME_QUERY_ALIAS_ANSWERS
+					#ifdef GIA_SUPPORT_WHAT_IS_THE_TIME_QUERY_ALIAS_ANSWERS_ONLY_WORK_WITH_STANFORD
 					else if((thingEntity->isSubstance && thingEntity->entityName == FEATURE_RELEX_FLAG_TIME_NAME) && (definitionEntity->isQuery))
 					{
 						#ifdef GIA_SUPPORT_SPECIFIC_CONCEPTS

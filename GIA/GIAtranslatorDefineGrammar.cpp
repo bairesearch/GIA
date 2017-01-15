@@ -740,8 +740,13 @@ void fillGrammaticalArraysStanford(Sentence * currentSentenceInList,  bool GIAen
 				#endif				
 				int entityIndexOfDeterminier = currentRelationInList->relationDependentIndex;
 				int entityIndexOfNoun = currentRelationInList->relationGovernorIndex;
-				GIAfeatureTempEntityNodeArray[entityIndexOfDeterminier]->disabled = true;
-
+				
+				if((determiner == GRAMMATICAL_DETERMINER_DEFINITE) || (determiner == GRAMMATICAL_DETERMINER_INDEFINITE_PLURAL) || (determiner == GRAMMATICAL_DETERMINER_INDEFINITE))
+				{//if condition added 4 July 2013 to ensure only real determiners (the, some, a) are disabled [and not "What" in det(time-2, What-1)]
+				
+					GIAfeatureTempEntityNodeArray[entityIndexOfDeterminier]->disabled = true;
+				}
+				
 				if((determiner == GRAMMATICAL_DETERMINER_DEFINITE) || (determiner == GRAMMATICAL_DETERMINER_INDEFINITE_PLURAL))
 				{
 					featureArrayTemp[entityIndexOfNoun]->grammaticalIsDefinite = true;
