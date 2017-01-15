@@ -942,14 +942,15 @@ void createConditionBasedUponPreposition(GIAEntityNode * actionOrPropertyEntity,
 			}
 		}
 	}
-
+	//cout << "relationType = " << relationType << endl;
+	if(relationType[0] != RELATION_TYPE_PREPOSITION_FIRST_CHARACTER)
+	{//not valid for REFERENCE_TYPE_QUESTION_QUERY_VARIABLEs... [but this is not a problem because passedPropositionUnknown is processed last in the if/else switch below]
+		passedPropositionUnknown = true;
+		passedPreposition = true;
+	}
+		
 	if(passedPreposition)
 	{
-		//cout << "relationType = " << relationType << endl;
-		if(relationType[0] != RELATION_TYPE_PREPOSITION_FIRST_CHARACTER)
-		{//not valid for REFERENCE_TYPE_QUESTION_QUERY_VARIABLEs... [but this is not a problem because passedPropositionUnknown is processed last in the if/else switch below]
-			passedPropositionUnknown = true;
-		}
 		
 		string conditionTypeName = relationType;
 		long entityIndex = -1;
@@ -967,9 +968,9 @@ void createConditionBasedUponPreposition(GIAEntityNode * actionOrPropertyEntity,
 		//CHECK THIS; check order - either select action or property first; NB there should not be both an associated action and an associated property in a given "Temp" context
 		if(actionOrPropertyConditionEntity->hasAssociatedInstanceTemp)
 		{
-			//cout << "actionOrPropertyConditionEntity->hasAssociatedInstanceTemp" << endl;
+			cout << "actionOrPropertyConditionEntity->hasAssociatedInstanceTemp" << endl;
 			actionOrPropertyConditionEntity = actionOrPropertyConditionEntity->AssociatedInstanceNodeList.back();	//added 4 May 11a
-			//cout << "actionOrPropertyConditionEntity->entityName = " << actionOrPropertyConditionEntity->entityName << endl; 
+			cout << "actionOrPropertyConditionEntity->entityName = " << actionOrPropertyConditionEntity->entityName << endl; 
 		}
 
 		if(passedPropositionTime)
