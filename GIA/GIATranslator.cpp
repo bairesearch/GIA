@@ -230,7 +230,7 @@ void convertParagraphSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, 
 #ifdef USE_CE
 void convertParagraphSentenceRelationsIntoGIAnetworkNodesBasedUponClaimHeirachy(unordered_map<string, GIAEntityNode*> *conceptEntityNodesList, vector<GIATimeConditionNode*> *timeConditionNodesList, vector<long> *timeConditionNumbersList, Paragraph * firstParagraphInList, CEClaim * firstClaimInHeirachy, vector<CEClaim*> * claimsList)
 {
-	if(firstParagraphInList->next != NULL)
+	if(firstParagraphInList->next->next != NULL)
 	{
 		cout << "convertParagraphSentenceRelationsIntoGIAnetworkNodesBasedUponClaimHeirachy(): error - CE only supports a single paragraph of text, one claim per line" << endl;
 		exit(0);
@@ -245,19 +245,10 @@ void convertParagraphSentenceRelationsIntoGIAnetworkNodesBasedUponClaimHeirachy(
 
 		vector<GIAEntityNode*> *sentenceConceptEntityNodesList = &(currentClaimInHeirachy->relevantConceptEntityNodeList);
 
+		setAllClaimEntitiesInHeirachyToUndeclaredInThisContext(firstClaimInHeirachy);
 		setParentClaimEntitiesAsAlreadyDeclaredInThisContext(currentClaimInHeirachy);
 
 		convertSentenceRelationsIntoGIAnetworkNodes(conceptEntityNodesList, timeConditionNodesList, timeConditionNumbersList, firstSentenceInList, currentSentenceInList, sentenceConceptEntityNodesList);
-
-				/*
-				//restore critical variables: used for GIA translator reference paser only - cleared every time a new paragraph is parsed
-				unordered_map<string, GIAEntityNode*> ::iterator conceptEntityNodesListIter;
-				for(conceptEntityNodesListIter = conceptEntityNodesList->begin(); conceptEntityNodesListIter != conceptEntityNodesList->end(); conceptEntityNodesListIter++) 
-				{	
-					GIAEntityNode * entityNode = conceptEntityNodesListIter->second;
-					entityNode->entityAlreadyDeclaredInThisContext = false;
-				}
-				*/
 						
 		currentSentenceInList = currentSentenceInList->next;
 	}

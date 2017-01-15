@@ -218,7 +218,11 @@ int main(int argc,char **argv)
 
 	//basic execution flow outline; if no dataset or xml inputText file is specified, just form network - do not train network
 
-	if(exists_argument(argc,argv,"-itxt") || exists_argument(argc,argv,"-irelex") || exists_argument(argc,argv,"-ixml"))
+	#ifdef USE_CE
+	if(exists_argument(argc,argv,"-iclaims"))
+	#else
+	if(exists_argument(argc,argv,"-itxt") || exists_argument(argc,argv,"-irelex") || exists_argument(argc,argv,"-ixml"))	
+	#endif
 	{
 		if(exists_argument(argc,argv,"-itxt"))
 		{
