@@ -263,6 +263,7 @@ GIAentityNode::GIAentityNode(void)
 	NLCcontextGenerated = false;
 	NLCoriginalNumericalVariableName = "";
 	NLCcontextGeneratedTemp = false;
+	NLCcategoryListCreatedTemp = false;
 	#endif
 }
 GIAentityNode::~GIAentityNode(void)
