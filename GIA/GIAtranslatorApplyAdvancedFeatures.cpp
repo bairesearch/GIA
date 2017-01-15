@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorApplyAdvancedFeatures.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h12e 21-January-2015
+ * Project Version: 2h12f 21-January-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -946,7 +946,11 @@ void defineToBeAndToDoConditions(Sentence * currentSentenceInList, bool GIAentit
 	paramA.useRelationTest[REL1][REL_ENT3] = true; paramA.relationTest[REL1][REL_ENT3] = RELATION_TYPE_COMPLIMENT_TO_BE;
 	paramA.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectPropertyToEntity;
 	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
-	paramA.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_PROPERTIES;	//eg The chicken ate the pie that likes to draw.
+	//paramA.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_PROPERTIES;	//old before 2h12e
+	paramA.defaultSameSetRelationID = REL1; paramA.defaultSameSetReferenceValue = false;	//determine reference set; eg The pastry tasted awesome./The chicken ate the pie that tasted awesome.
+	paramA.useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck[REL1] = true;
+	paramA.useRelationTest[REL2][REL_ENT3] = true; paramA.relationTest[REL2][REL_ENT3] = RELATION_TYPE_RELATIVE_CLAUSE_MODIFIER;
+	paramA.useRelationIndexTest[REL2][REL_ENT2] = true; paramA.relationIndexTestRelationID[REL2][REL_ENT2] = REL1; paramA.relationIndexTestEntityID[REL2][REL_ENT2] = REL_ENT1;
 	#endif
 	genericDependecyRelationInterpretation(&paramA, REL1);
 	#else
@@ -955,7 +959,11 @@ void defineToBeAndToDoConditions(Sentence * currentSentenceInList, bool GIAentit
 	paramA.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectConditionToEntity;
 	paramA.functionEntityRelationID[FUNC_ENT3] = REL1; paramA.functionEntityRelationEntityID[FUNC_ENT3] = REL_ENT3;
 	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
-	paramA.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_CONDITIONS;	//eg The chicken ate the pie that likes to draw.
+	//paramA.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_CONDITIONS;	//old before 2h12e
+	paramA.defaultSameSetRelationID = REL1; paramA.defaultSameSetReferenceValue = false;	//determine reference set; eg The pastry tasted awesome./The chicken ate the pie that tasted awesome.
+	paramA.useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck[REL1] = true;
+	paramA.useRelationTest[REL2][REL_ENT3] = true; paramA.relationTest[REL2][REL_ENT3] = RELATION_TYPE_RELATIVE_CLAUSE_MODIFIER;
+	paramA.useRelationIndexTest[REL2][REL_ENT2] = true; paramA.relationIndexTestRelationID[REL2][REL_ENT2] = REL1; paramA.relationIndexTestEntityID[REL2][REL_ENT2] = REL_ENT1;
 	#endif
 	genericDependecyRelationInterpretation(&paramA, REL1);
 	#endif
@@ -970,7 +978,11 @@ void defineToBeAndToDoConditions(Sentence * currentSentenceInList, bool GIAentit
 	paramB.useRelationTest[REL1][REL_ENT3] = true; paramB.relationTest[REL1][REL_ENT3] = RELATION_TYPE_COMPLIMENT_TO_DO;
 	paramB.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectPropertyToEntity;
 	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
-	paramB.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_PROPERTIES;	//eg The chicken ate the pie that likes to draw.
+	//paramB.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_PROPERTIES;	//old before 2h12e
+	paramA.defaultSameSetRelationID = REL1; paramA.defaultSameSetReferenceValue = false;	//determine same reference set; eg Jezel likes to draw./The chicken ate the pie that likes to draw.
+	paramA.useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck[REL1] = true;
+	paramA.useRelationTest[REL2][REL_ENT3] = true; paramA.relationTest[REL2][REL_ENT3] = RELATION_TYPE_RELATIVE_CLAUSE_MODIFIER;
+	paramA.useRelationIndexTest[REL2][REL_ENT2] = true; paramA.relationIndexTestRelationID[REL2][REL_ENT2] = REL1; paramA.relationIndexTestEntityID[REL2][REL_ENT2] = REL_ENT1;
 	#endif
 	genericDependecyRelationInterpretation(&paramB, REL1);
 	#else
@@ -979,7 +991,11 @@ void defineToBeAndToDoConditions(Sentence * currentSentenceInList, bool GIAentit
 	paramB.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectConditionToEntity;
 	paramB.functionEntityRelationID[FUNC_ENT3] = REL1; paramB.functionEntityRelationEntityID[FUNC_ENT3] = REL_ENT3;
 	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
-	paramB.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_CONDITIONS;	//eg The chicken ate the pie that likes to draw.
+	//paramB.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_CONDITIONS;	//old before 2h12e
+	paramA.defaultSameSetRelationID = REL1; paramA.defaultSameSetReferenceValue = false;	//determine same reference set; eg Jezel likes to draw./The chicken ate the pie that likes to draw.
+	paramA.useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck[REL1] = true;
+	paramA.useRelationTest[REL2][REL_ENT3] = true; paramA.relationTest[REL2][REL_ENT3] = RELATION_TYPE_RELATIVE_CLAUSE_MODIFIER;
+	paramA.useRelationIndexTest[REL2][REL_ENT2] = true; paramA.relationIndexTestRelationID[REL2][REL_ENT2] = REL1; paramA.relationIndexTestEntityID[REL2][REL_ENT2] = REL_ENT1;
 	#endif
 	genericDependecyRelationInterpretation(&paramB, REL1);
 	#endif

@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineSubstances.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h12e 21-January-2015
+ * Project Version: 2h12f 21-January-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1306,7 +1306,7 @@ void defineSubstancesOfPossessivePrepositions(Sentence * currentSentenceInList, 
 {
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES
 	/*
-	eg _to-be(grow[2], tired[3])
+	eg She grew tired of the pie.	_to-be(grow[2], tired[3])
 	*/
 	//test this generalisation 2 August 2013
 	GIAgenericDepRelInterpretationParameters paramA(currentSentenceInList, NULL, GIAentityNodeArray, false);

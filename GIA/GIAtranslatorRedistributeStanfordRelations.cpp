@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorRedistributeStanfordRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2h12e 21-January-2015
+ * Project Version: 2h12f 21-January-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -202,11 +202,13 @@ void redistributeStanfordRelations(Sentence * currentSentenceInList, bool GIAent
 	redistributeStanfordRelationsDependencyPreposition(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
 	#endif
 
+	#ifdef STANFORD_CORENLP_DISABLE_INDEPENDENT_POS_TAGGER_WHEN_PARSING_DEPENDENCY_RELATIONS
 	#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "1c19 pass; redistributeStanfordRelationsAuxHave (eg Red dogs have flies.	aux(flies-4, have-3) + nsubj(flies-4, dogs-2) -> obj(have-3, flies-4) + nsubj(have-3, dogs-2)" << endl;	//updated 2f12a 13-July-2014
 	#endif
 	redistributeStanfordRelationsAuxHave(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
+	#endif
 	#endif
 
 	#ifdef GIA_DO_NOT_DISABLE_AUX_AND_COP_AT_START
@@ -2435,6 +2437,18 @@ void redistributeStanfordRelationsCollapseAdvmodRelationGovernorBe(Sentence * cu
 		param.useRedistributeRelationEntityIndexReassignment[REL1][REL_ENT1] = true; param.redistributeRelationEntityIndexReassignmentRelationID[REL1][REL_ENT1] = REL1; param.redistributeRelationEntityIndexReassignmentRelationEntityID[REL1][REL_ENT1] = REL_ENT2;
 		param.useRedistributeRelationEntityIndexReassignment[REL1][REL_ENT2] = true; param.redistributeRelationEntityIndexReassignmentRelationID[REL1][REL_ENT2] = REL2; param.redistributeRelationEntityIndexReassignmentRelationEntityID[REL1][REL_ENT2] = REL_ENT2;
 		param.disableRelation[REL2] = true;
+		#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
+		/*//case added 15 May 2012 for GIA_RECORD_SAME_REFERENCE_SET_INFORMATION;
+		The rabbit that is 20 meters away is fat.
+		nsubj(is-4, rabbit-2)
+		advmod(is-4, away-7)
+		rcmod(rabbit-2, is-4)
+		*/
+		param.useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck[REL1] = true;
+		param.useRelationTest[REL3][REL_ENT3] = true; param.relationTest[REL3][REL_ENT3] = RELATION_TYPE_RELATIVE_CLAUSE_MODIFIER;
+		param.useRelationIndexTest[REL3][REL_ENT1] = true; param.relationIndexTestRelationID[REL3][REL_ENT1] = REL1; param.relationIndexTestEntityID[REL3][REL_ENT1] = REL_ENT2;
+		param.useRelationIndexTest[REL3][REL_ENT2] = true; param.relationIndexTestRelationID[REL3][REL_ENT2] = REL1; param.relationIndexTestEntityID[REL3][REL_ENT2] = REL_ENT1;
+		#endif
 		genericDependecyRelationInterpretation(&param, REL1);
 		#endif
 	#else
@@ -4270,6 +4284,9 @@ void redistributeStanfordRelationsInterpretOfAsObjectForContinuousVerbs(Sentence
 	param.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT1].push_back(&relationTestSpecialCaseContinousVerbA);
 	param.specialCaseCharacteristicsTestAndVector[REL1][REL_ENT1].push_back(&relationTestSpecialCaseContinousVerbB);
 	param.useRedistributeRelationEntityReassignment[REL1][REL_ENT3] = true; param.redistributeRelationEntityReassignment[REL1][REL_ENT3] = RELATION_TYPE_OBJECT;
+	#ifdef GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR
+	param.disableEntity[REL1][REL_ENT3] = true;	//added 2h8b
+	#endif
 	genericDependecyRelationInterpretation(&param, REL1);
 
 	#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_OLD_IMPLEMENTATION
@@ -4504,7 +4521,9 @@ void redistributeStanfordRelationsDependencyPreposition(Sentence * currentSenten
 #endif
 }
 
-//redistributeStanfordRelationsAuxHave() was designed for faulty case "flies" is incorrectly tagged by stanford parser in "Red dogs have flies." (a fault which occurs with STANFORD_CORENLP_DISABLE_INDEPENDENT_POS_TAGGER_WHEN_PARSING_DEPENDENCY_RELATIONS, when using Stanford Parser in conjunction with Stanford CoreNLP. redistributeStanfordRelationsAuxHave() was temporarily disabled @GIA 2c2a [because it was incompatible with "The chicken has not eaten a pie."])
+// updated and reactivated 2f12a 13-July-2014
+// redistributeStanfordRelationsAuxHave() was designed for faulty case "flies" is incorrectly tagged by stanford parser in "Red dogs have flies." (a fault which occurs with STANFORD_CORENLP_DISABLE_INDEPENDENT_POS_TAGGER_WHEN_PARSING_DEPENDENCY_RELATIONS, when using Stanford Parser in conjunction with Stanford CoreNLP. redistributeStanfordRelationsAuxHave() was temporarily disabled @GIA 2c2a [because it was incompatible with "The chicken has not eaten a pie."])
+#ifdef STANFORD_CORENLP_DISABLE_INDEPENDENT_POS_TAGGER_WHEN_PARSING_DEPENDENCY_RELATIONS
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 void redistributeStanfordRelationsAuxHave(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
 {
@@ -4539,6 +4558,7 @@ void redistributeStanfordRelationsAuxHave(Sentence * currentSentenceInList, bool
 	//not coded as this function was developed after GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
 //#endif
 }
+#endif
 #endif
 
 
