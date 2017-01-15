@@ -26,7 +26,7 @@
  * File Name: GIAlrp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2j6d 10-June-2015
+ * Project Version: 2j6e 10-June-2015
  * Requirements: requires plain text file
  * Description: Language Reduction Preprocessor
  *
@@ -1021,12 +1021,12 @@ bool loadPlainTextFile(string plainTextInputFileName, GIALRPtag* firstTagInPlain
 		bool punctuationMarkFound = false;
 		if(charInCharArray(currentToken, nlpPunctionMarkCharacterArray, GIA_NLP_NUMBER_OF_PUNCTUATION_MARK_CHARACTERS))
 		{
-			#ifdef GIA_LRP_NLP_PARSABLE_PHRASE_SUPPORT_FILENAMES_WITH_FULLSTOPS
-			if(!isIntrawordFullStop(currentToken, charCount, &fileContents))
+			#ifdef GIA_LRP_NLP_PARSABLE_PHRASE_SUPPORT_FILENAMES_WITH_FULLSTOPS_AND_FLOATS_AND_TIMES
+			if(!isIntrawordPunctuationMark(currentToken, charCount, &fileContents))
 			{
 			#endif
 				punctuationMarkFound = true;
-			#ifdef GIA_LRP_NLP_PARSABLE_PHRASE_SUPPORT_FILENAMES_WITH_FULLSTOPS
+			#ifdef GIA_LRP_NLP_PARSABLE_PHRASE_SUPPORT_FILENAMES_WITH_FULLSTOPS_AND_FLOATS_AND_TIMES
 			}
 			#endif
 		}
@@ -1112,12 +1112,12 @@ bool loadPlainTextFile(string plainTextInputFileName, GIALRPtag* firstTagInPlain
 							bool endOfSentencePunctuationMarkFound = false;
 							if(charInCharArray(currentToken, nlpPunctionMarkCharacterEndOfSentenceArray, GIA_NLP_NUMBER_OF_PUNCTUATION_MARK_CHARACTERS_END_OF_SENTENCE))
 							{
-								#ifdef GIA_LRP_NLP_PARSABLE_PHRASE_SUPPORT_FILENAMES_WITH_FULLSTOPS
-								if(!isIntrawordFullStop(currentToken, charCount, &fileContents))
+								#ifdef GIA_LRP_NLP_PARSABLE_PHRASE_SUPPORT_FILENAMES_WITH_FULLSTOPS_AND_FLOATS_AND_TIMES
+								if(!isIntrawordPunctuationMark(currentToken, charCount, &fileContents))
 								{
 								#endif
 									endOfSentencePunctuationMarkFound = true;
-								#ifdef GIA_LRP_NLP_PARSABLE_PHRASE_SUPPORT_FILENAMES_WITH_FULLSTOPS
+								#ifdef GIA_LRP_NLP_PARSABLE_PHRASE_SUPPORT_FILENAMES_WITH_FULLSTOPS_AND_FLOATS_AND_TIMES
 								}
 								#endif
 							}
@@ -1178,21 +1178,25 @@ bool loadPlainTextFile(string plainTextInputFileName, GIALRPtag* firstTagInPlain
 	return result;
 }
 
-#ifdef GIA_LRP_NLP_PARSABLE_PHRASE_SUPPORT_FILENAMES_WITH_FULLSTOPS
-bool isIntrawordFullStop(char currentToken, int indextOfCurrentToken, string* lineContents)
+#ifdef GIA_LRP_NLP_PARSABLE_PHRASE_SUPPORT_FILENAMES_WITH_FULLSTOPS_AND_FLOATS_AND_TIMES
+bool isIntrawordPunctuationMark(char currentToken, int indextOfCurrentToken, string* lineContents)
 {
-	bool isFullStopImmediatelySucceededByAlphabeticalCharacter = false;
-	if(currentToken == CHAR_FULLSTOP)
+	bool intrawordPunctuationMark = false;
+	if((currentToken == CHAR_FULLSTOP) || (currentToken == CHAR_COLON))	//updated 2j6e (added CHAR_COLON for times, eg 06:45)
 	{
 		if(indextOfCurrentToken < lineContents->length()-1)	//ensure fullstop is not immediately succeded by an alphabetical character, which indicates that the fullstop is part of a filename, eg "people.xml"
 		{	
-			char characterImmediatelySucceedingFullStop = (*lineContents)[indextOfCurrentToken+1];
-			isFullStopImmediatelySucceededByAlphabeticalCharacter = charInCharArray(characterImmediatelySucceedingFullStop, GIALRPNLPparsableCharacters, GIA_LRP_NLP_PARSABLE_PHRASE_CHARACTERS_NUMBER_OF_TYPES);
-			//cout << "fullStopImmediatelySucceededByAlphabeticalCharacter: characterImmediatelySucceedingFullStop = " << characterImmediatelySucceedingFullStop << endl;
-			//cout << "fullStopImmediatelySucceededByAlphabeticalCharacter: fullStopImmediatelySucceededByAlphabeticalCharacter = " << fullStopImmediatelySucceededByAlphabeticalCharacter << endl;
+			char characterImmediatelySucceedingPunctuationMark = (*lineContents)[indextOfCurrentToken+1];
+			bool isPunctuationMarkImmediatelySucceededByAlphanumericCharacter = charInCharArray(characterImmediatelySucceedingPunctuationMark, GIALRPNLPparsableCharacters, GIA_LRP_NLP_PARSABLE_PHRASE_CHARACTERS_NUMBER_OF_TYPES);
+			//cout << "isIntrawordPunctuationMark{}: characterImmediatelySucceedingPunctuationMark = " << characterImmediatelySucceedingPunctuationMark << endl;
+			//cout << "isIntrawordPunctuationMark{}: isPunctuationMarkImmediatelySucceededByAlphanumericCharacter = " << isPunctuationMarkImmediatelySucceededByAlphanumericCharacter << endl;
+			if(isPunctuationMarkImmediatelySucceededByAlphanumericCharacter)
+			{
+				intrawordPunctuationMark = true;
+			}		
 		}
 	}
-	return isFullStopImmediatelySucceededByAlphabeticalCharacter;
+	return intrawordPunctuationMark;
 }
 #endif
 
