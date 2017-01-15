@@ -23,7 +23,7 @@
  * File Name: GIATranslatorApplyAdvancedFeatures.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o1a 09-August-2012
+ * Project Version: 1o2a 10-August-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -89,7 +89,7 @@ void extractDatesStanfordCoreNLP(Sentence * currentSentenceInList, bool GIAEntit
 								//cout << "timeEntity->NormalizedNERTemp = " << timeEntity->NormalizedNERTemp << endl;
 								timeEntity->timeConditionNode->conditionName = timeEntity->NormalizedNERTemp;
 
-								//this case appears to be required for queries... (_%qvar/_%atTime), noting that qVar is not assigned a property (but remains a concept node)
+								//this case appears to be required for queries... (_%qvar/_%atTime), noting that qVar is not assigned a substance (but remains a concept node)
 								/*
 								#ifdef GIA_TRANSLATOR_DEBUG
 								cout << "timeEntity->NormalizedNERTemp = " << timeEntity->NormalizedNERTemp << endl;
@@ -328,27 +328,27 @@ void extractQuantitiesStanfordCoreNLP(Sentence * currentSentenceInList, bool GIA
 
 				if(quantityEntity->NERTemp != FEATURE_NER_DATE)		//do not assume quantity entities when dealing with Stanford Dates (as they have already been parsed).
 				{
-					GIAEntityNode * quantityProperty = quantityEntity;
-					quantityProperty->hasQuantity = true;
-					if((quantityProperty->NormalizedNERTemp != "") && (quantityProperty->NormalizedNERTemp != "0.0"))		//added 0.0 for a stanford anomaly 11 May 2012
+					GIAEntityNode * quantitySubstance = quantityEntity;
+					quantitySubstance->hasQuantity = true;
+					if((quantitySubstance->NormalizedNERTemp != "") && (quantitySubstance->NormalizedNERTemp != "0.0"))		//added 0.0 for a stanford anomaly 11 May 2012
 					{
-						quantityProperty->quantityNumberString = quantityProperty->NormalizedNERTemp;
+						quantitySubstance->quantityNumberString = quantitySubstance->NormalizedNERTemp;
 					}
 					else
 					{
-						quantityProperty->quantityNumberString = currentRelationInList->relationDependent;
+						quantitySubstance->quantityNumberString = currentRelationInList->relationDependent;
 					}
 
-					int quantityNumberInt = calculateQuantityNumberInt(quantityProperty->quantityNumberString);
-					quantityProperty->quantityNumber = quantityNumberInt;
+					int quantityNumberInt = calculateQuantityNumberInt(quantitySubstance->quantityNumberString);
+					quantitySubstance->quantityNumber = quantityNumberInt;
 
 					disableInstanceAndConceptEntityBasedUponFirstSentenceToAppearInNetwork(GIAEntityNodeArray[currentRelationInList->relationDependentIndex]);
 
 					if(currentRelationInList->relationDependent == REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
 					{//update comparison variable (set it to the quantity)
-						quantityProperty->isQuery = true;
+						quantitySubstance->isQuery = true;
 						GIAEntityNodeArray[currentRelationInList->relationDependentIndex]->isQuery = false;
-						setComparisonVariableNode(quantityProperty);
+						setComparisonVariableNode(quantitySubstance);
 					}
 
 
@@ -371,16 +371,16 @@ void extractQuantitiesStanfordCoreNLP(Sentence * currentSentenceInList, bool GIA
 
 									/*
 									int quantityModifierInt = calculateQuantityModifierInt(currentRelationInList2->relationDependent);
-									quantityProperty->quantityModifier = quantityModifierInt;
+									quantitySubstance->quantityModifier = quantityModifierInt;
 									*/
-									quantityProperty->quantityModifierString = currentRelationInList2->relationDependent;
+									quantitySubstance->quantityModifierString = currentRelationInList2->relationDependent;
 
 									//added 12 Oct 11; add quantity modifiers as conditions (eg "almost" lost)
-									GIAEntityNode * entityNode = quantityProperty;
+									GIAEntityNode * entityNode = quantitySubstance;
 									GIAEntityNode * conditionEntityNode = GIAEntityNodeArray[currentRelationInList2->relationDependentIndex];
-									//GIAEntityNode * conditionTypeEntity = quantityProperty->quantityModifierString;
+									//GIAEntityNode * conditionTypeEntity = quantitySubstance->quantityModifierString;
 
-									string conditionTypeName = "quantityModifier";	//quantityProperty->quantityModifierString //CHECKTHIS;
+									string conditionTypeName = "quantityModifier";	//quantitySubstance->quantityModifierString //CHECKTHIS;
 
 									bool entityAlreadyExistant = false;
 									GIAEntityNode * conditionTypeEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAEntityNodeArrayFilled, GIAEntityNodeArray, FEATURE_INDEX_OF_QUANTITY_MODIFIER_UNKNOWN, &conditionTypeName, &entityAlreadyExistant, entityNodesActiveListConcepts);
@@ -437,10 +437,10 @@ void extractQuantitiesStanfordCoreNLP(Sentence * currentSentenceInList, bool GIA
 					if(!(currentEntity->hasAssociatedTime))
 					{//do not assume quantity entities when dealing with Stanford Dates, eg num(March-5, 11th-6)  / num(March-5, 1973-8)
 
-						GIAEntityNode * quantityProperty = currentEntity;
-						quantityProperty->hasQuantity = true;
-						quantityProperty->quantityNumberString = currentEntity->NormalizedNERTemp;
-						cout << "adding quantity: " << quantityProperty << endl;
+						GIAEntityNode * quantitySubstance = currentEntity;
+						quantitySubstance->hasQuantity = true;
+						quantitySubstance->quantityNumberString = currentEntity->NormalizedNERTemp;
+						cout << "adding quantity: " << quantitySubstance << endl;
 						cout << "quantityNumberString: " << currentEntity->NormalizedNERTemp << endl;
 					}
 				}
@@ -476,20 +476,20 @@ void extractQuantitiesRelex(Sentence * currentSentenceInList, bool GIAEntityNode
 				GIAEntityNode * quantityEntity = GIAEntityNodeArray[currentRelationInList->relationGovernorIndex];
 
 
-				GIAEntityNode * quantityProperty = quantityEntity;
-				quantityProperty->hasQuantity = true;
-				quantityProperty->quantityNumberString = currentRelationInList->relationDependent;
+				GIAEntityNode * quantitySubstance = quantityEntity;
+				quantitySubstance->hasQuantity = true;
+				quantitySubstance->quantityNumberString = currentRelationInList->relationDependent;
 
 				disableInstanceAndConceptEntityBasedUponFirstSentenceToAppearInNetwork(GIAEntityNodeArray[currentRelationInList->relationDependentIndex]);
 
-				int quantityNumberInt = calculateQuantityNumberInt(quantityProperty->quantityNumberString);
-				quantityProperty->quantityNumber = quantityNumberInt;
+				int quantityNumberInt = calculateQuantityNumberInt(quantitySubstance->quantityNumberString);
+				quantitySubstance->quantityNumber = quantityNumberInt;
 
 				if(currentRelationInList->relationDependent == REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
 				{//update comparison variable (set it to the quantity)
-					quantityProperty->isQuery = true;
+					quantitySubstance->isQuery = true;
 					GIAEntityNodeArray[currentRelationInList->relationDependentIndex]->isQuery = false;
-					setComparisonVariableNode(quantityProperty);
+					setComparisonVariableNode(quantitySubstance);
 				}
 
 				//now locate quantity modifiers and multiplicators
@@ -511,16 +511,16 @@ void extractQuantitiesRelex(Sentence * currentSentenceInList, bool GIAEntityNode
 
 								/*
 								int quantityModifierInt = calculateQuantityModifierInt(currentRelationInList2->relationDependent);
-								quantityProperty->quantityModifier = quantityModifierInt;
+								quantitySubstance->quantityModifier = quantityModifierInt;
 								*/
-								quantityProperty->quantityModifierString = currentRelationInList2->relationDependent;
+								quantitySubstance->quantityModifierString = currentRelationInList2->relationDependent;
 
 								//added 12 Oct 11; add quantity modifiers as conditions (eg "almost" lost)
-								GIAEntityNode * entityNode = quantityProperty;
+								GIAEntityNode * entityNode = quantitySubstance;
 								GIAEntityNode * conditionEntityNode = GIAEntityNodeArray[currentRelationInList2->relationDependentIndex];
-								//GIAEntityNode * conditionTypeEntity = quantityProperty->quantityModifierString;
+								//GIAEntityNode * conditionTypeEntity = quantitySubstance->quantityModifierString;
 
-								string conditionTypeName = "quantityModifier";	//quantityProperty->quantityModifierString //CHECKTHIS;
+								string conditionTypeName = "quantityModifier";	//quantitySubstance->quantityModifierString //CHECKTHIS;
 
 								bool entityAlreadyExistant = false;
 								GIAEntityNode * conditionTypeEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAEntityNodeArrayFilled, GIAEntityNodeArray, FEATURE_INDEX_OF_QUANTITY_MODIFIER_UNKNOWN, &conditionTypeName, &entityAlreadyExistant, entityNodesActiveListConcepts);
@@ -541,8 +541,8 @@ void extractQuantitiesRelex(Sentence * currentSentenceInList, bool GIAEntityNode
 								disableInstanceAndConceptEntityBasedUponFirstSentenceToAppearInNetwork(GIAEntityNodeArray[currentRelationInList2->relationDependentIndex]);
 
 								int quantityMultiplierInt = calculateQuantityMultiplierInt(currentRelationInList2->relationDependent);
-								quantityProperty->quantityNumber = quantityProperty->quantityNumber * quantityMultiplierInt;
-								quantityProperty->hasQuantityMultiplier = true;
+								quantitySubstance->quantityNumber = quantitySubstance->quantityNumber * quantityMultiplierInt;
+								quantitySubstance->hasQuantityMultiplier = true;
 							}
 						}
 					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
@@ -588,12 +588,12 @@ void extractQuantitiesRelex(Sentence * currentSentenceInList, bool GIAEntityNode
 					if(foundQuantityOwner)
 					{
 						//disconnect quantity node from existing connections (not including definitions) - NOT YET CODED.
-						disconnectNodeFromAllButDefinitions(quantityProperty);
+						disconnectNodeFromAllButDefinitions(quantitySubstance);
 
-						GIAEntityNode * measureProperty = quantityProperty;	//convert quantity property to measure property
-						measureProperty->hasQuantity = false;
-						measureProperty->hasMeasure = true;
-						measureProperty->measureType = MEASURE_TYPE_PER;
+						GIAEntityNode * measureSubstance = quantitySubstance;	//convert quantity substance to measure substance
+						measureSubstance->hasQuantity = false;
+						measureSubstance->hasMeasure = true;
+						measureSubstance->measureType = MEASURE_TYPE_PER;
 
 						GIAEntityNode * newQuantityTimesEntity = new GIAEntityNode();
 						#ifdef GIA_USE_DATABASE
@@ -603,16 +603,16 @@ void extractQuantitiesRelex(Sentence * currentSentenceInList, bool GIAEntityNode
 						if(getSaveNetwork())
 						{
 							long * currentEntityNodeIDInCompleteList = getCurrentEntityNodeIDInCompleteList();
-							long * currentEntityNodeIDInPropertyEntityNodesList = getCurrentEntityNodeIDInPropertyEntityNodesList();
+							long * currentEntityNodeIDInSubstanceEntityNodesList = getCurrentEntityNodeIDInSubstanceEntityNodesList();
 							newQuantityTimesEntity->idActiveList = *currentEntityNodeIDInCompleteList;
-							newQuantityTimesEntity->idActiveEntityTypeList = *currentEntityNodeIDInPropertyEntityNodesList;
+							newQuantityTimesEntity->idActiveEntityTypeList = *currentEntityNodeIDInSubstanceEntityNodesList;
 
 							vector<GIAEntityNode*> *entityNodesActiveListComplete = getTranslatorEntityNodesCompleteList();
 							entityNodesActiveListComplete->push_back(newQuantityTimesEntity);
 							(*currentEntityNodeIDInCompleteList)++;
-							vector<GIAEntityNode*> * entityNodesActiveListProperties = getTranslatorPropertyEntityNodesList();
-							entityNodesActiveListProperties->push_back(newQuantityTimesEntity);
-							(*currentEntityNodeIDInPropertyEntityNodesList)++;
+							vector<GIAEntityNode*> * entityNodesActiveListSubstances = getTranslatorSubstanceEntityNodesList();
+							entityNodesActiveListSubstances->push_back(newQuantityTimesEntity);
+							(*currentEntityNodeIDInSubstanceEntityNodesList)++;
 						}
 						else
 						{
@@ -625,10 +625,10 @@ void extractQuantitiesRelex(Sentence * currentSentenceInList, bool GIAEntityNode
 
 						//reconnect refreshed quantity (times) node;
 						bool sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE;	//CHECK; sameReferenceSet value...
-						addOrConnectPropertyToEntity(entityToConnectMeasurePerEntity, newQuantityTimesEntity, sameReferenceSet);
+						connectPropertyToEntity(entityToConnectMeasurePerEntity, newQuantityTimesEntity, sameReferenceSet);
 
 						if(newQuantityTimesEntity->hasAssociatedInstanceTemp)
-						{//assumed true since its property was just explicitly created
+						{//assumed true since its substance was just explicitly created
 							newQuantityTimesEntity = (newQuantityTimesEntity->AssociatedInstanceNodeList->back())->entity;
 						}
 						newQuantityTimesEntity->hasQuantity = true;
@@ -644,9 +644,9 @@ void extractQuantitiesRelex(Sentence * currentSentenceInList, bool GIAEntityNode
 						sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE;	//CHECK; sameReferenceSet value...
 
 						#ifdef GIA_ADVANCED_REFERENCING_CONDITIONS
-						GIAEntityNodeArray[FEATURE_INDEX_OF_MEASURE_PER_UNKNOWN] = addOrConnectConditionToEntity(newQuantityTimesEntity, measureProperty, conditionTypeEntity, sameReferenceSet);
+						GIAEntityNodeArray[FEATURE_INDEX_OF_MEASURE_PER_UNKNOWN] = addOrConnectConditionToEntity(newQuantityTimesEntity, measureSubstance, conditionTypeEntity, sameReferenceSet);
 						#else
-						addOrConnectConditionToEntity(newQuantityTimesEntity, measureProperty, conditionTypeEntity, sameReferenceSet);
+						addOrConnectConditionToEntity(newQuantityTimesEntity, measureSubstance, conditionTypeEntity, sameReferenceSet);
 						#endif
 					}
 				}
@@ -707,12 +707,12 @@ void extractMeasures(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFi
 				GIAEntityNode * measureEntity = GIAEntityNodeArray[relationMeasureIndex];
 				GIAEntityNode * quantityEntity = GIAEntityNodeArray[relationQuantityIndex];
 
-				GIAEntityNode * measurePropertyEntity = measureEntity;
-				measurePropertyEntity->hasMeasure = true;
-				measurePropertyEntity->measureType = measureTypeIndex;
+				GIAEntityNode * measureSubstanceEntity = measureEntity;
+				measureSubstanceEntity->hasMeasure = true;
+				measureSubstanceEntity->measureType = measureTypeIndex;
 
 				#ifdef GIA_TRANSLATOR_DEBUG
-				cout << "measurePropertyName = " << measurePropertyEntity->entityName << endl;
+				cout << "measureSubstanceName = " << measureSubstanceEntity->entityName << endl;
 				cout << "quantityEntityName = " << quantityEntity->entityName << endl;
 				#endif
 
@@ -725,20 +725,20 @@ void extractMeasures(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFi
 				#ifdef GIA_ADVANCED_REFERENCING_CONDITIONS
 				if(measureDependencyFound)
 				{
-					GIAEntityNodeArray[FEATURE_INDEX_OF_MEASURE_UNKNOWN] = addOrConnectConditionToEntity(quantityEntity, measurePropertyEntity, conditionTypeEntity, sameReferenceSet);
+					GIAEntityNodeArray[FEATURE_INDEX_OF_MEASURE_UNKNOWN] = addOrConnectConditionToEntity(quantityEntity, measureSubstanceEntity, conditionTypeEntity, sameReferenceSet);
 				}
 				else
 				{
-					GIAEntityNodeArray[FEATURE_INDEX_OF_MEASURE_UNKNOWN] = addOrConnectConditionToEntity(measurePropertyEntity, quantityEntity, conditionTypeEntity, sameReferenceSet);
+					GIAEntityNodeArray[FEATURE_INDEX_OF_MEASURE_UNKNOWN] = addOrConnectConditionToEntity(measureSubstanceEntity, quantityEntity, conditionTypeEntity, sameReferenceSet);
 				}
 				#else
 				if(measureDependencyFound)
 				{
-					addOrConnectConditionToEntity(quantityEntity, measurePropertyEntity, conditionTypeEntity, sameReferenceSet);
+					addOrConnectConditionToEntity(quantityEntity, measureSubstanceEntity, conditionTypeEntity, sameReferenceSet);
 				}
 				else
 				{
-					addOrConnectConditionToEntity(measurePropertyEntity, quantityEntity, conditionTypeEntity, sameReferenceSet);
+					addOrConnectConditionToEntity(measureSubstanceEntity, quantityEntity, conditionTypeEntity, sameReferenceSet);
 				}
 				#endif
 			}
@@ -778,9 +778,9 @@ void extractQualities(Sentence * currentSentenceInList, bool GIAEntityNodeArrayF
 					int relationGovernorIndex = currentRelationInList->relationGovernorIndex;
 					int relationDependentIndex = currentRelationInList->relationDependentIndex;
 					GIAEntityNode * thingEntity = GIAEntityNodeArray[relationGovernorIndex];
-					GIAEntityNode * propertyEntity = GIAEntityNodeArray[relationDependentIndex];
+					GIAEntityNode * substanceEntity = GIAEntityNodeArray[relationDependentIndex];
 
-					propertyEntity->hasQuality = true;	//[eg2 The locked door.. / Jim runs quickly / Mr. Smith is late {_amod/_advmod/_predadj}]
+					substanceEntity->hasQuality = true;	//[eg2 The locked door.. / Jim runs quickly / Mr. Smith is late {_amod/_advmod/_predadj}]
 				}
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
@@ -791,7 +791,7 @@ void extractQualities(Sentence * currentSentenceInList, bool GIAEntityNodeArrayF
 }
 
 
-void defineToBeAndToDoProperties(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts)
+void defineToBeAndToDoPropertiesAndConditions(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts)
 {
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
@@ -816,20 +816,20 @@ void defineToBeAndToDoProperties(Sentence * currentSentenceInList, bool GIAEntit
 				if(currentRelationInList->relationType == RELATION_TYPE_COMPLIMENT_TO_BE)
 				{
 					int entityIndex = currentRelationInList->relationGovernorIndex;
-					int propertyIndex = currentRelationInList->relationDependentIndex;
+					int substanceIndex = currentRelationInList->relationDependentIndex;
 
 					GIAEntityNode * entityNode = GIAEntityNodeArray[entityIndex];
-					GIAEntityNode * propertyEntity = GIAEntityNodeArray[propertyIndex];
+					GIAEntityNode * substanceEntity = GIAEntityNodeArray[substanceIndex];
 
-					bool sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_PROPERTIES; 	//eg Linas likes to row / The chicken ate the pie that likes to row.
-					GIAEntityNodeArray[propertyIndex] = addOrConnectPropertyToEntity(entityNode, propertyEntity, sameReferenceSet);
+					bool sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_PROPERTIES; 	//eg The rose smelled sweet. / The chicken ate the pie that smelled sweet.
+					GIAEntityNodeArray[substanceIndex] = connectPropertyToEntity(entityNode, substanceEntity, sameReferenceSet);
 				}
 				else if(currentRelationInList->relationType == RELATION_TYPE_COMPLIMENT_TO_DO)
 				{
-					#ifndef GIA_DEBUG_ENABLE_REDUNDANT_TO_DO_PROPERTY_CONNECTIONS_TO_DEMONSTRATE_DRAW_FAILURE
-					#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C_RELATIONS_TREAT_TODO_AND_SUBJECT_RELATION_AS_PROPERTY_LINK
+					#ifndef GIA_DEBUG_ENABLE_REDUNDANT_TO_DO_SUBSTANCE_CONNECTIONS_TO_DEMONSTRATE_DRAW_FAILURE
+					#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C_RELATIONS_TREAT_TODO_AND_SUBJECT_RELATION_AS_SUBSTANCE_LINK
 					if(GIAEntityNodeArray[currentRelationInList->relationGovernorIndex]->entityName != RELATION_ENTITY_BE)
-					{//this condition is required to support GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C_RELATIONS_TREAT_TODO_AND_SUBJECT_RELATION_AS_PROPERTY_LINK
+					{//this condition is required to support GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C_RELATIONS_TREAT_TODO_AND_SUBJECT_RELATION_AS_SUBSTANCE_LINK
 					#endif
 					#endif
 
@@ -840,7 +840,7 @@ void defineToBeAndToDoProperties(Sentence * currentSentenceInList, bool GIAEntit
 						bool entityAlreadyExistant = false;
 						GIAEntityNode * conditionTypeEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAEntityNodeArrayFilled, GIAEntityNodeArray, FEATURE_INDEX_OF_TODO_UNKNOWN, &conditionTypeEntityNodeName, &entityAlreadyExistant, entityNodesActiveListConcepts);
 
-						bool sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_CONDITIONS;
+						bool sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_CONDITIONS;	//eg Linas likes to row. / The chicken ate the pie that likes to row.
 
 						#ifdef GIA_ADVANCED_REFERENCING_CONDITIONS
 						GIAEntityNodeArray[FEATURE_INDEX_OF_TODO_UNKNOWN] = addOrConnectConditionToEntity(entityNode, conditionEntityNode, conditionTypeEntity, sameReferenceSet);
@@ -848,8 +848,8 @@ void defineToBeAndToDoProperties(Sentence * currentSentenceInList, bool GIAEntit
 						addOrConnectConditionToEntity(entityNode, conditionEntityNode, conditionTypeEntity, sameReferenceSet);
 						#endif
 
-					#ifndef GIA_DEBUG_ENABLE_REDUNDANT_TO_DO_PROPERTY_CONNECTIONS_TO_DEMONSTRATE_DRAW_FAILURE
-					#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C_RELATIONS_TREAT_TODO_AND_SUBJECT_RELATION_AS_PROPERTY_LINK
+					#ifndef GIA_DEBUG_ENABLE_REDUNDANT_TO_DO_SUBSTANCE_CONNECTIONS_TO_DEMONSTRATE_DRAW_FAILURE
+					#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C_RELATIONS_TREAT_TODO_AND_SUBJECT_RELATION_AS_SUBSTANCE_LINK
 					}
 					#endif
 					#endif
@@ -862,7 +862,7 @@ void defineToBeAndToDoProperties(Sentence * currentSentenceInList, bool GIAEntit
 	}
 }
 
-void linkPropertiesParataxis(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[])
+void linkSubstancesParataxis(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[])
 {
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
@@ -875,18 +875,18 @@ void linkPropertiesParataxis(Sentence * currentSentenceInList, bool GIAEntityNod
 			{
 				//cout << "RELATION_TYPE_PARATAXIS" << endl;
 
-				string propertyName = currentRelationInList->relationGovernor;
+				string substanceName = currentRelationInList->relationGovernor;
 				string actionName = currentRelationInList->relationDependent;
-				int propertyIndex = currentRelationInList->relationGovernorIndex;
+				int substanceIndex = currentRelationInList->relationGovernorIndex;
 				int actionIndex = currentRelationInList->relationDependentIndex;
 
-				GIAEntityNode * propertyEntity = GIAEntityNodeArray[propertyIndex];
+				GIAEntityNode * substanceEntity = GIAEntityNodeArray[substanceIndex];
 				GIAEntityNode * actionEntity = GIAEntityNodeArray[actionIndex];
-				//cout << "propertyName = " << propertyEntity->entityName << endl;
+				//cout << "substanceName = " << substanceEntity->entityName << endl;
 				//cout << "actionName = " << actionEntity->entityName << endl;
 
 				bool sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_PARATAXIS; 		//eg The guy, John said, left early in the morning.	[NB The guy, that John said was blue, left early in the morning. / He says that you like to swim.  does not generate parataxis, so these cases needn't be considered here...]
-				GIAEntityNodeArray[propertyIndex] = addOrConnectPropertyToEntity(actionEntity, propertyEntity, sameReferenceSet);
+				GIAEntityNodeArray[substanceIndex] = connectPropertyToEntity(actionEntity, substanceEntity, sameReferenceSet);
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
 		}
@@ -896,7 +896,7 @@ void linkPropertiesParataxis(Sentence * currentSentenceInList, bool GIAEntityNod
 }
 
 void linkConjunctionConditions(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts)
-{//NB linkConjunctionConditions() currently performs the same function as linkActionPropertyConditions()
+{//NB linkConjunctionConditions() currently performs the same function as linkConditions()
 
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
@@ -910,8 +910,8 @@ void linkConjunctionConditions(Sentence * currentSentenceInList, bool GIAEntityN
 			int relationGovernorIndex = currentRelationInList->relationGovernorIndex;
 			int relationDependentIndex = currentRelationInList->relationDependentIndex;
 			string relationType = currentRelationInList->relationType;
-			GIAEntityNode * actionOrPropertyEntity = GIAEntityNodeArray[relationGovernorIndex];
-			GIAEntityNode * actionOrPropertyConditionEntity = GIAEntityNodeArray[relationDependentIndex];
+			GIAEntityNode * actionOrSubstanceEntity = GIAEntityNodeArray[relationGovernorIndex];
+			GIAEntityNode * actionOrSubstanceConditionEntity = GIAEntityNodeArray[relationDependentIndex];
 
 			bool passed = false;
 			for(int i=0; i<RELATION_TYPE_CONJUGATION_NUMBER_OF_TYPES; i++)
@@ -935,8 +935,8 @@ void linkConjunctionConditions(Sentence * currentSentenceInList, bool GIAEntityN
 				GIAEntityNode * conditionTypeEntity = findOrAddEntityNodeByNameSimpleWrapperCondition(GIAEntityNodeArrayFilled, GIAEntityNodeArray, FEATURE_INDEX_OF_CONJUNCTION_UNKNOWN, &conditionTypeName, &entityAlreadyExistant, entityNodesActiveListConcepts);
 
 				#ifdef GIA_TRANSLATOR_DEBUG
-				cout << "actionOrPropertyEntity->entityName = " << actionOrPropertyEntity->entityName << endl;
-				cout << "actionOrPropertyConditionEntity->entityName = " << actionOrPropertyConditionEntity->entityName << endl;
+				cout << "actionOrSubstanceEntity->entityName = " << actionOrSubstanceEntity->entityName << endl;
+				cout << "actionOrSubstanceConditionEntity->entityName = " << actionOrSubstanceConditionEntity->entityName << endl;
 				cout << "conditionTypeEntity->entityName = " << conditionTypeEntity->entityName << endl;
 				#endif
 
@@ -947,9 +947,9 @@ void linkConjunctionConditions(Sentence * currentSentenceInList, bool GIAEntityN
 				#endif
 
 				#ifdef GIA_ADVANCED_REFERENCING_CONDITIONS
-				GIAEntityNodeArray[FEATURE_INDEX_OF_CONJUNCTION_UNKNOWN] = addOrConnectConditionToEntity(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeEntity, sameReferenceSet);
+				GIAEntityNodeArray[FEATURE_INDEX_OF_CONJUNCTION_UNKNOWN] = addOrConnectConditionToEntity(actionOrSubstanceEntity, actionOrSubstanceConditionEntity, conditionTypeEntity, sameReferenceSet);
 				#else
-				addOrConnectConditionToEntity(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeEntity, sameReferenceSet);
+				addOrConnectConditionToEntity(actionOrSubstanceEntity, actionOrSubstanceConditionEntity, conditionTypeEntity, sameReferenceSet);
 				#endif
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
@@ -961,7 +961,7 @@ void linkConjunctionConditions(Sentence * currentSentenceInList, bool GIAEntityN
 
 
 #ifdef GIA_USE_STANFORD_DEPENDENCY_RELATIONS
-void defineClausalComplementProperties(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[])
+void defineClausalComplementSubstances(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[])
 {
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
@@ -976,18 +976,18 @@ void defineClausalComplementProperties(Sentence * currentSentenceInList, bool GI
 				//eg ccomp(say, like)	He says that you like to swim
 
 				string actionName = currentRelationInList->relationGovernor;
-				string propertyName = currentRelationInList->relationDependent;
+				string substanceName = currentRelationInList->relationDependent;
 
 				int actionIndex = currentRelationInList->relationGovernorIndex;
-				int propertyIndex = currentRelationInList->relationDependentIndex;
+				int substanceIndex = currentRelationInList->relationDependentIndex;
 
 				GIAEntityNode * actionEntity = GIAEntityNodeArray[actionIndex];
-				GIAEntityNode * propertyEntity = GIAEntityNodeArray[propertyIndex];
+				GIAEntityNode * substanceEntity = GIAEntityNodeArray[substanceIndex];
 				//cout << "actionName = " << actionEntity->entityName << endl;
-				//cout << "propertyName = " << propertyEntity->entityName << endl;
+				//cout << "substanceName = " << substanceEntity->entityName << endl;
 
 				bool sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_CCCOMP; 	//eg The guy, that John said was blue, left early in the morning. / He says that you like to swim.
-				GIAEntityNodeArray[propertyIndex] = addOrConnectPropertyToEntity(actionEntity, propertyEntity, sameReferenceSet);
+				GIAEntityNodeArray[substanceIndex] = connectPropertyToEntity(actionEntity, substanceEntity, sameReferenceSet);
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
 		}

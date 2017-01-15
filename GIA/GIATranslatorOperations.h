@@ -23,7 +23,7 @@
  * File Name: GIATranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o1a 09-August-2012
+ * Project Version: 1o2a 10-August-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -51,13 +51,13 @@ using namespace std;
 #include "GIAConditionNodeClass.h"
 
 
-#define GIA_DEFINE_PROPERTIES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES	//added 9 August 2012
-#ifdef GIA_DEFINE_PROPERTIES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES
-	#define GIA_DEFINE_PROPERTIES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES_CASE_1_GOVERNOR_DEFINITE_DEPENDENT_INDEFINITE
-	#define GIA_DEFINE_PROPERTIES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES_CASE_2_GOVERNOR_PLURAL_DEPENDENT_PLURAL
-	#define GIA_DEFINE_PROPERTIES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES_CASE_3_GOVERNOR_INDEFINITE_DEPENDENT_INDEFINITE
-	#define GIA_DEFINE_PROPERTIES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES_CASE_4_GOVERNOR_NAME_DEPENDENT_INDEFINITE
-	#define GIA_DEFINE_PROPERTIES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES_CASE_5_GOVERNOR_DEFINITE_DEPENDENT_NAME
+#define GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES	//added 9 August 2012
+#ifdef GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES
+	#define GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES_CASE_1_GOVERNOR_DEFINITE_DEPENDENT_INDEFINITE
+	#define GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES_CASE_2_GOVERNOR_PLURAL_DEPENDENT_PLURAL
+	#define GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES_CASE_3_GOVERNOR_INDEFINITE_DEPENDENT_INDEFINITE
+	#define GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES_CASE_4_GOVERNOR_NAME_DEPENDENT_INDEFINITE
+	#define GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES_CASE_5_GOVERNOR_DEFINITE_DEPENDENT_NAME
 #endif
 
 #define GIA_REDISTRIBUTE_RELATIONS_INTERPRET_OF_AS_POSSESSIVE	//added 8 August 2012
@@ -84,10 +84,10 @@ using namespace std;
 
 
 
-//#ifdef GIA_ASSIGN_INSTANCE_PROPERTY_TO_PROPER_NOUNS	//this condition has been removed for debugging output replication purposes (although this condition is not necessary in practice?)
+//#ifdef GIA_ASSIGN_SUBSTANCE_TO_PROPER_NOUNS	//this condition has been removed for debugging output replication purposes (although this condition is not necessary in practice?)
 	#define GIA_STANFORD_CORE_NLP_COMPENSATE_FOR_PRONOUN_LEMMA_CASE_ASSIGNMENT_BUG_MAKE_ALL_LEMMAS_LOWER_CASE	//used to resolve the issue where 'time'/'freedom' and 'Time'/'Freedom' are not matched etc
 //#endif
-//#ifndef GIA_ASSIGN_INSTANCE_PROPERTY_TO_PROPER_NOUNS	//this condition has been removed for debugging output replication purposes (although this condition is not necessary in practice)
+//#ifndef GIA_ASSIGN_SUBSTANCE_TO_PROPER_NOUNS	//this condition has been removed for debugging output replication purposes (although this condition is not necessary in practice)
 	#define FILL_NER_ARRAY_AFTER_RELEX_PARSE_FOR_STANFORD_EQUIVALENT_PROPER_NOUN_DETECTION 	//added 26 April 2012 [UNTESTED]
 //#endif
 
@@ -128,7 +128,7 @@ using namespace std;
 
 
 //#define GIA_DO_NOT_PARSE_DISABLED_RELATIONS	//test only
-#define GIA_DO_NOT_ADD_PROPERTIES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES	//NB this only works for properties added to concept entities, not properties added to properties (however this should be OK, as disabling of nodes should take place before properties are added)
+#define GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES	//NB this only works for substances added to concept entities, not substances added to substances (however this should be OK, as disabling of nodes should take place before substances are added)
 
 
 
@@ -151,7 +151,7 @@ using namespace std;
 //#define USE_SUPPORT_MULTIPLE_ACTION_INSTANCES_PER_ACTION_ENTITY_INDEX_IN_A_GIVEN_SENTENCE
 //#define USE_OLD_SUBJ_OBJ_ONLY_ONE_PAIR_RESTRICTION_METHOD 	//default: disabled
 
-//#define GIA_DEBUG_ENABLE_REDUNDANT_TO_DO_PROPERTY_CONNECTIONS_TO_DEMONSTRATE_DRAW_FAILURE
+//#define GIA_DEBUG_ENABLE_REDUNDANT_TO_DO_SUBSTANCE_CONNECTIONS_TO_DEMONSTRATE_DRAW_FAILURE
 
 
 #define GIA_DEAL_WITH_TEMPORARY_ISSUE
@@ -160,7 +160,7 @@ using namespace std;
 	//#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B2_IGNORE_DUPLICATE_COMPARISON_VARIABLES_IN_QUERY	//OR this is required
 #endif
 
-//#define GIA_TRANSLATOR_USE_NEW_ACTION_SUBJECT_RELATION_GOVERNOR_DEFINITION_IMPLEMENTATION	//if undefined then "tom is being an idiot"= an instance of tom is an idoit. if defined then tom has (a property) of idiocy [NOT YET IMPLEMENTED]
+//#define GIA_TRANSLATOR_USE_NEW_ACTION_SUBJECT_RELATION_GOVERNOR_DEFINITION_IMPLEMENTATION	//if undefined then "tom is being an idiot"= an instance of tom is an idoit. if defined then tom has (a substance) of idiocy [NOT YET IMPLEMENTED]
 
 
 //Stanford/Relex independent conditions:
@@ -169,11 +169,11 @@ using namespace std;
 	#define GIA_IGNORE_MEANINGLESS_RELATIONS
 #endif
 //#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_3B_PREPOSITIONS_REDUCTION
-//#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1F_RELATIONS_TREAT_THAT_AS_A_PRONOUN_IE_PROPERTY
+//#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1F_RELATIONS_TREAT_THAT_AS_A_PRONOUN_IE_SUBSTANCE
 //#define GIA_INTERPRET_EXPLETIVE_AS_SUBJECT_OF_ACTION
 //#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D_RELATIONS_REMOVE_ARTEFACT_CONCEPT_ENTITY_NODES
 //#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1E_RELATIONS_TREAT_UNQUALIFIED_RELATIONS_AS_CONDITIONS_ALSO	//NB this relates to GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B_RELATIONS_TREAT_ADVERB_PLUS_SUBJECT_PLUS_OBJECT_RELATION_ALL_WITH_A_DEFINITION_FUNCTION_AS_PROPERTY_LINKS
-//#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_4A_RELATIONS_DEFINE_PROPERTIES_BASED_UPON_INDIRECT_OBJECTS	//added 27 April 2012 - required because of the case; "What did the officer give transportation to?" where transportation is not singular, and therefore will not be defined as a property until indirectObjects are defined (after the action 'give' has already been linked to its concept entity). NB "What did the officer give a ride to?" does not face the same problem as 'ride' is tagged as singular by relex and therefore will be assigned as a property before the action 'give' is linked to it
+//#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_4A_RELATIONS_DEFINE_SUBSTANCES_BASED_UPON_INDIRECT_OBJECTS	//added 27 April 2012 - required because of the case; "What did the officer give transportation to?" where transportation is not singular, and therefore will not be defined as a substance until indirectObjects are defined (after the action 'give' has already been linked to its concept entity). NB "What did the officer give a ride to?" does not face the same problem as 'ride' is tagged as singular by relex and therefore will be assigned as a substance before the action 'give' is linked to it
 //#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_5A_RELATIONS_ASSIGN_TIME_NODES_IN_RELEX_THE_SAME_AS_STANFORD	//Case 5= stanford specific
 //#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_5B_RELATIONS_COMPENSATE_FOR_INACCURATE_STANFORD_DATE_TAGGING
 //#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_5C_FEATURES_STANFORD_NER_INDICATES_NAME_CONCATENATION_REQUIRES_POS_NNP
@@ -182,15 +182,15 @@ using namespace std;
 
 	//GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE_THAT_IS_PROBABLY_STANFORD_COMPATIBLE:
 
-		//#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_3A_PREPOSITIONS_INTERPRET_PREPOSITION_OF_AS_EITHER_CONDITION_OR_PROPERTY_LINK_DEPENDING_UPON_ACTION_OR_PROPERTY
+		//#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_3A_PREPOSITIONS_INTERPRET_PREPOSITION_OF_AS_EITHER_CONDITION_OR_SUBSTANCE_LINK_DEPENDING_UPON_ACTION_OR_SUBSTANCE
 
 	//GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE:
 
 		//#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B_RELATIONS_TREAT_ADVERB_PLUS_SUBJECT_RELATION_AS_ACTION_CONDITION
 		//#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B_RELATIONS_TREAT_ADVERB_PLUS_OBJECT_PLUS_SUBJECT_RELATION_WHERE_ADVERB_HAS_SAME_ARGUMENT_AS_SUBJECT_AS_CONDITION
 		//#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B_RELATIONS_TREAT_ADVERB_PLUS_SUBJECT_PLUS_OBJECT_RELATION_ALL_WITH_A_DEFINITION_FUNCTION_AS_PROPERTY_LINKS
-		//#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C_RELATIONS_TREAT_TODO_AND_SUBJECT_RELATION_AS_PROPERTY_LINK
-		//#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C_RELATIONS_TREAT_TOBE_AND_SUBJECT_RELATION_AS_PROPERTY_LINK_AND_ACTION_DEFINITION
+		//#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C_RELATIONS_TREAT_TODO_AND_SUBJECT_RELATION_AS_SUBSTANCE_LINK
+		//#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C_RELATIONS_TREAT_TOBE_AND_SUBJECT_RELATION_AS_SUBSTANCE_LINK_AND_ACTION_DEFINITION
 		//#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1D_RELATIONS_REMOVE_ARTEFACT_CONCEPT_ENTITY_NODES_ADVANCED	//Relex only at present [relies upon isAdjectiveNotAnAdvmodAndRelationGovernorIsNotBe() and GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B_RELATIONS_TREAT_ADVERB_PLUS_SUBJECT_PLUS_OBJECT_RELATION_ALL_WITH_A_DEFINITION_FUNCTION_AS_PROPERTY_LINKS]
 		//#define GIA_DO_NOT_SUPPORT_SPECIAL_CASE_2A_GRAMMAR_TREAT_PRESENT_PERFECT_AS_PAST_TENSE							//Relex/Stanford independent
 		#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B_RELATIONS_TREAT_ADVERB_PLUS_SUBJECT_PLUS_OBJECT_RELATION_ALL_WITH_A_DEFINITION_FUNCTION_AS_PROPERTY_LINKS
@@ -241,18 +241,18 @@ using namespace std;
 	#define RELATION_TYPE_PREPOSITION_REDUCTION_UNDEFINED_REPLACEMENT_STRING ((string)"pour")
 #endif
 
-#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1F_RELATIONS_TREAT_THAT_AS_A_PRONOUN_IE_PROPERTY
-	#define RELATION_TYPE_TREAT_AS_PRONOUN_IE_PROPERTY_NUMBER_OF_TYPES (1)
+#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1F_RELATIONS_TREAT_THAT_AS_A_PRONOUN_IE_SUBSTANCE
+	#define RELATION_TYPE_TREAT_AS_PRONOUN_IE_SUBSTANCE_NUMBER_OF_TYPES (1)
 #endif
 
 
 
 #define GIA_ASSIGN_UNIQUE_ACTION_NODE_TO_EACH_ACTION_INSTANCE_OF_A_GIVEN_ACTION_NAME	//always true
-#define GIA_ASSIGN_INSTANCE_PROPERTY_TO_ALL_DEFINITIVE_NOUNS		//NB must disable this for large.xml to work (NB this bug was issue introduced after GIA Archive - 1a5d - 04May11a, eg GIA Archive - 1a5e - 04May11a)
-#define GIA_ASSIGN_INSTANCE_PROPERTY_TO_ALL_NOUNS_WITH_DETERMINATES
-#define GIA_ASSIGN_INSTANCE_PROPERTY_TO_ALL_PRONOUNS
-//#define GIA_ALWAYS_ASSIGN_NEW_INSTANCE_PROPERTY_WHEN_DEFINING_A_PROPERTY
-//#define GIA_ALWAYS_ASSIGN_NEW_INSTANCE_PROPERTY_WHEN_ATTACHING_A_PROPERTY
+#define GIA_ASSIGN_SUBSTANCE_TO_ALL_DEFINITIVE_NOUNS		//NB must disable this for large.xml to work (NB this bug was issue introduced after GIA Archive - 1a5d - 04May11a, eg GIA Archive - 1a5e - 04May11a)
+#define GIA_ASSIGN_SUBSTANCE_TO_ALL_NOUNS_WITH_DETERMINATES
+#define GIA_ASSIGN_SUBSTANCE_TO_ALL_PRONOUNS
+//#define GIA_ALWAYS_ASSIGN_NEW_SUBSTANCE_WHEN_DEFINING_A_SUBSTANCE
+//#define GIA_ALWAYS_ASSIGN_NEW_SUBSTANCE_WHEN_ATTACHING_A_SUBSTANCE
 
 #define SUBJECT_INDEX (0)
 #define OBJECT_INDEX (1)
@@ -275,21 +275,21 @@ using namespace std;
 
 //?? NB all of these cases/types need to be replaced with more complex grammar requirements (eg "on" can also mean "rides his bike on the road" [location], not just "rides his bike on tuesday" [time])
 
-//Properties:	[NB properties are attached to either another property or a straight entity);]
-//properties (derived from obj/subj relationships);
+//Substances:	[NB substances are attached to either another substance or a straight entity);]
+//substances (derived from obj/subj relationships);
 #define RELATION_GOVERNOR_COMPOSITION_1 "contains"	//eg x contains y
 #define RELATION_GOVERNOR_COMPOSITION_2 "comprise"
 #define RELATION_GOVERNOR_COMPOSITION_3 "has"
 #define RELATION_GOVERNOR_COMPOSITION_4 "have"
 #define RELATION_ENTITY_HAVE "have"
 #define RELATION_GOVERNOR_COMPOSITION_NUMBER_OF_TYPES (4)
-//properties (descriptive relationships)
+//substances (descriptive relationships)
 #define RELATION_TYPE_ADJECTIVE_AMOD "_amod"	  //eg x is happy
 #define RELATION_TYPE_ADJECTIVE_PREDADJ "_predadj"
 #define RELATION_TYPE_ADJECTIVE_ADVMOD "_advmod"
 #define RELATION_TYPE_ADJECTIVE_NUMBER_OF_TYPES (3)
 #define RELATION_TYPE_ADJECTIVE_WHICH_IMPLY_ENTITY_INSTANCE_NUMBER_OF_TYPES (2)
-//properties (possessive relationships)
+//substances (possessive relationships)
 #define RELATION_TYPE_POSSESSIVE "_poss"	//eg his bike	[bike him]		/its bike
 #define RELATION_TYPE_PRENOMIAL_MODIFIER "_nn"
 #define RELATION_TYPE_POSSESSIVE_NUMBER_OF_TYPES (2)
@@ -332,8 +332,8 @@ using namespace std;
 //stanford specific (non Relex) relations implemented in redistributeStanfordRelationsAdverbalClauseModifierAndComplement()/redistributeStanfordRelationsClausalSubject()/redistributeStanfordRelationsPhrasalVerbParticle()/redistributeStanfordRelationsMultiwordPreposition():
 #define STANFORD_RELATION_TYPE_ADVERBAL_CLAUSE_MODIFIER "advcl" 			//advcl(happen, fall)	The accident happened as the night was falling. 	Relex: as(happen, fall)
 #define STANFORD_RELATION_TYPE_COMPLEMENT_OF_ADVERBAL_CLAUSE_MODIFIER "mark"		//mark(fall, as)  	The accident happened as the night was falling. 	Relex: as(happen, fall)
-#define STANFORD_RELATION_TYPE_CLAUSAL_COMPLEMENT "ccomp" 				//ccomp(say, like)	He says that you like to swim				Relex: that(say, like) 		GIA: implement this as an action property
-//#define STANFORD_RELATION_TYPE_COMPLEMENTIZER "complm" 				//complm(like, that)	He says that you like to swim				Relex: that(say, like) 		GIA: implement this as an action property???
+#define STANFORD_RELATION_TYPE_CLAUSAL_COMPLEMENT "ccomp" 				//ccomp(say, like)	He says that you like to swim				Relex: that(say, like) 		GIA: implement this as an action substance
+//#define STANFORD_RELATION_TYPE_COMPLEMENTIZER "complm" 				//complm(like, that)	He says that you like to swim				Relex: that(say, like) 		GIA: implement this as an action substance???
 #define STANFORD_RELATION_TYPE_CLAUSAL_SUBJECT "csubj" 					//csubj (make, say)	What she said makes sense. [dobj ( said-3 , What-1 )]	Relex:  Generated by Stanford; Relex uses plain _subj. 			GIA applies it to the object; ie subj (make, What)
 #define STANFORD_RELATION_TYPE_NEGATIVE "neg" 						//neg(have, n't) 	haven't 						Relex usually generates NEGATIVE-FLAG(have, T)
 //#define STANFORD_RELATION_TYPE_COMPLEMENT_OF_PREPOSITION "pcomp" 			//pcomp(garden, in)	It happened in the garden 				Relex: RelEx uses the general prepositional relations instead, e.g. in(happen, garden)  {OR pobj (go, store)/ pcomp (go, to) => to(go, store)} 	//only used by Stanford uncollapsed dependencies:
@@ -409,7 +409,7 @@ used
 	#ifdef GIA_WORKAROUND_RELEX_BUG_OCCASIONAL_RELATION_DEPENDENT_INDEX_MINUS_1
 		#define GIA_WORKAROUND_RELEX_BUG_OCCASIONAL_RELATION_DEPENDENT_INDEX_MINUS_1_REPLACEMENT_INDEX (MAX_NUMBER_OF_WORDS_PER_SENTENCE-2)
 	#endif
-	//#define GIA_TRANSLATOR_EXPLICITLY_ADD_CONJUNCTION_CONDITIONS	//not necessarily currently as; linkConjunctionConditions() currently performs the same function as linkActionPropertyConditions(). It is used at the moment such that the conjunction prepositions are added to the start of the list
+	//#define GIA_TRANSLATOR_EXPLICITLY_ADD_CONJUNCTION_CONDITIONS	//not necessarily currently as; linkConjunctionConditions() currently performs the same function as linkConditions(). It is used at the moment such that the conjunction prepositions are added to the start of the list
 #endif
 
 #define RELATION_TYPE_CONJUGATION_AND "conj_and"
@@ -429,7 +429,7 @@ used
 #endif
 
 
-//tobe/todo (properties/conditions);
+//tobe/todo (substances/conditions);
 #define RELATION_TYPE_COMPLIMENT_TO_BE "_to-be"		//eg grows tired / The rose smelled sweet / _to-be(smell, sweet) - CHECK THIS
 #define RELATION_TYPE_COMPLIMENT_TO_DO "_to-do"		//eg Linas likes to row / _to-do(like, row) - CHECK THIS
 #define STANFORD_RELATION_TYPE_COMPLIMENT_TO_BE "acomp"	//NB added '_' for conversion purposes
@@ -437,8 +437,8 @@ used
 #define RELATION_TYPE_COMPLIMENT_TO_BE_INDEX (0)
 #define RELATION_TYPE_COMPLIMENT_TO_DO_INDEX (1)
 #define RELATION_TYPE_COMPLEMENTS_NUMBER_OF_TYPES (2)
-#define RELATION_TYPE_OBJECT_SPECIAL_TO_DO_PROPERTY_NUMBER_OF_TYPES (1)
-#define RELATION_TYPE_OBJECT_SPECIAL_TO_BE_PROPERTY_NUMBER_OF_TYPES (1)
+#define RELATION_TYPE_OBJECT_SPECIAL_TO_DO_SUBSTANCE_NUMBER_OF_TYPES (1)
+#define RELATION_TYPE_OBJECT_SPECIAL_TO_BE_SUBSTANCE_NUMBER_OF_TYPES (1)
 #define RELATION_DEPENDENT_DO "do"
 
 //dates, measures, and quantities;
@@ -508,9 +508,9 @@ used
 */
 
 
-#define RELATION_TYPE_OF "of"		//eg [she grew tired] of it	 "She grew tired of the pie."  / "The house of Kriton is blue."	//detect if function and argument are both nouns/property entities; if so then create a property connection. if a function is a verb/action, then create a condition connection.
+#define RELATION_TYPE_OF "of"		//eg [she grew tired] of it	 "She grew tired of the pie."  / "The house of Kriton is blue."	//detect if function and argument are both nouns/substance entities; if so then create a substance connection. if a function is a verb/action, then create a condition connection.
 
-//action/property reasons [NOT YET IMPLEMENTED ???]
+//action/substance reasons [NOT YET IMPLEMENTED ???]
 #define RELATION_TYPE_PREPOSITION_SUCH_THAT "such"
 #define RELATION_TYPE_PREPOSITION_SO "so"
 #define RELATION_TYPE_PREPOSITION_REASON_NUMBER_OF_TYPES (2)
@@ -796,15 +796,15 @@ static string relationGovernorCompositionNameArray[RELATION_GOVERNOR_COMPOSITION
 static string relationGovernorDefinitionNameArray[RELATION_GOVERNOR_DEFINITION_NUMBER_OF_TYPES] = {RELATION_ENTITY_BE};
 
 static string relationTypeObjectSpecialConditionMeasureDistanceOrStanfordUnknownNameArray[RELATION_TYPE_OBJECT_SPECIAL_CONDITION_MEASURE_DISTANCE_OR_STANFORD_UNKNOWN_NUMBER_OF_TYPES] = {RELATION_TYPE_MEASURE_DISTANCE, RELATION_TYPE_MEASURE_UNKNOWN};
-static string relationTypeObjectSpecialConditionToDoPropertyNameArray[RELATION_TYPE_OBJECT_SPECIAL_TO_DO_PROPERTY_NUMBER_OF_TYPES] = {RELATION_TYPE_COMPLIMENT_TO_DO};
-static string relationTypeObjectSpecialConditionToBePropertyNameArray[RELATION_TYPE_OBJECT_SPECIAL_TO_BE_PROPERTY_NUMBER_OF_TYPES] = {RELATION_TYPE_COMPLIMENT_TO_BE};
+static string relationTypeObjectSpecialConditionToDoSubstanceNameArray[RELATION_TYPE_OBJECT_SPECIAL_TO_DO_SUBSTANCE_NUMBER_OF_TYPES] = {RELATION_TYPE_COMPLIMENT_TO_DO};
+static string relationTypeObjectSpecialConditionToBeSubstanceNameArray[RELATION_TYPE_OBJECT_SPECIAL_TO_BE_SUBSTANCE_NUMBER_OF_TYPES] = {RELATION_TYPE_COMPLIMENT_TO_BE};
 
 static string relationTypeComplementsNameArray[RELATION_TYPE_COMPLEMENTS_NUMBER_OF_TYPES] = {RELATION_TYPE_COMPLIMENT_TO_BE, RELATION_TYPE_COMPLIMENT_TO_DO};
 
 static string relationTypeAdjectiveWhichImplyEntityInstanceNameArray[RELATION_TYPE_ADJECTIVE_WHICH_IMPLY_ENTITY_INSTANCE_NUMBER_OF_TYPES] = {RELATION_TYPE_ADJECTIVE_AMOD, RELATION_TYPE_ADJECTIVE_ADVMOD};
 static string relationTypeRequireSwitchingNameArray[RELATION_TYPE_REQUIRE_SWITCHING_NUMBER_OF_TYPES] = {RELATION_TYPE_OBJECT_THAT};
-#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1F_RELATIONS_TREAT_THAT_AS_A_PRONOUN_IE_PROPERTY
-static string relationTypeTreatAsPronounIeProperty[RELATION_TYPE_TREAT_AS_PRONOUN_IE_PROPERTY_NUMBER_OF_TYPES] = {"that"};
+#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1F_RELATIONS_TREAT_THAT_AS_A_PRONOUN_IE_SUBSTANCE
+static string relationTypeTreatAsPronounIeSubstance[RELATION_TYPE_TREAT_AS_PRONOUN_IE_SUBSTANCE_NUMBER_OF_TYPES] = {"that"};
 #endif
 
 static string relationTypeQuantityOrMeasureNameArray[RELATION_TYPE_QUANTITY_OR_MEASURE_NUMBER_OF_TYPES] = {RELATION_TYPE_QUANTITY, RELATION_TYPE_MEASURE_DISTANCE, RELATION_TYPE_MEASURE_SIZE, RELATION_TYPE_MEASURE_TIME, RELATION_TYPE_MEASURE_UNKNOWN};
@@ -851,11 +851,11 @@ static string relationTypeImpliesSameSetNameArray[RELATION_TYPE_IMPLIES_SAME_SET
 static string relationTypeAdjectiveImpliesSameSetNameArray[RELATION_TYPE_ADJECTIVE_IMPLIES_SAME_SET_NUMBER_OF_TYPES] = {RELATION_TYPE_ADJECTIVE_AMOD, RELATION_TYPE_ADJECTIVE_ADVMOD};
 */
 
-//#define DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_PROPERTIES (true)	//there is no default case; it depends upon what kind of property
+//#define DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_PROPERTIES (true)	//there is no default case; it depends upon what kind of substance
 #define DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_ACTIONS (false)	//an action is considered by default not to be part of the same reference set as its subject/object (eg "the man fires the bow"). An rcmod /"that" is explicitly required for an action to be considered part of the same reference set as its subject/object (eg "the man that fires the bow...")
 #define DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_CONDITIONS (true)	//a condition is considered by default to be part of the same reference set as its subject/object (eg "the cat near the park..." == "the cat that is near the park..."). A copular "is" is explicitly required for a condition to be considered not part of the same reference set as its subject/object (eg "the cat is near the park")
 #define DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_BEING_DEFINITION_CONDITIONS (true)
-#define DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_HAVING_PROPERTY_CONDITIONS (true)
+#define DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_HAVING_CONDITIONS (true)
 #define DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_PROPERTIES (true)
 #define DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_APPOS (true)
 #define DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_PARATAXIS (false)
@@ -914,27 +914,28 @@ void initialiseGIATranslatorForTexualContextOperations();
 bool isAdjectiveNotAnAdvmodAndRelationGovernorIsNotBe(Relation * currentRelationInList, GIAEntityNode * GIAEntityNodeArray[], int relationGovernorIndex, int NLPdependencyRelationsType);
 bool isAdjectiveNotConnectedToObjectOrSubject(Sentence * currentSentenceInList, Relation * currentRelationInList, int NLPdependencyRelationsType);								//Stanford Compatible
 
-GIAEntityNode * addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * propertyEntity, bool sameReferenceSet);
-GIAEntityNode * addPropertyToPropertyDefinition(GIAEntityNode * propertyEntity);
-	GIAEntityNode * addProperty(GIAEntityNode * entity);
+GIAEntityNode * addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * propertyEntity, bool sameReferenceSet);	//Not used anymore
+GIAEntityNode * connectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * propertyEntity, bool sameReferenceSet);
+GIAEntityNode * addSubstanceToSubstanceDefinition(GIAEntityNode * substanceEntity);
+	GIAEntityNode * addSubstance(GIAEntityNode * entity);
 
-void addTenseOnlyTimeConditionToProperty(GIAEntityNode * propertyNode, int tense, bool isProgressive);
+void addTenseOnlyTimeConditionToSubstance(GIAEntityNode * substanceNode, int tense, bool isProgressive);
 
 void addDefinitionToEntity(GIAEntityNode * thingEntity, GIAEntityNode * definitionEntity, bool sameReferenceSet);
 
-GIAEntityNode * addActionToEntity(GIAEntityNode * subjectEntity, GIAEntityNode * objectEntity, GIAEntityNode * actionEntity, bool sameReferenceSetSubject, bool sameReferenceSetObject);
-GIAEntityNode * addActionToSubject(GIAEntityNode * subjectEntity, GIAEntityNode * actionEntity, bool sameReferenceSet);
-GIAEntityNode * addActionToObject(GIAEntityNode * objectEntity, GIAEntityNode * actionEntity, bool sameReferenceSet);
-	void addActionInstanceToSubject(GIAEntityNode * subjectEntity, GIAEntityNode * newOrExistingAction, bool sameReferenceSet);
-	void addActionInstanceToObject(GIAEntityNode * objectEntity, GIAEntityNode * newOrExistingAction, bool sameReferenceSet);
-GIAEntityNode * addActionToActionDefinitionDefineProperties(GIAEntityNode * actionEntity);
+GIAEntityNode * addOrConnectActionToEntity(GIAEntityNode * subjectEntity, GIAEntityNode * objectEntity, GIAEntityNode * actionEntity, bool sameReferenceSetSubject, bool sameReferenceSetObject);
+GIAEntityNode * addOrConnectActionToSubject(GIAEntityNode * subjectEntity, GIAEntityNode * actionEntity, bool sameReferenceSet);
+GIAEntityNode * addOrConnectActionToObject(GIAEntityNode * objectEntity, GIAEntityNode * actionEntity, bool sameReferenceSet);
+	void connectActionInstanceToSubject(GIAEntityNode * subjectEntity, GIAEntityNode * newOrExistingAction, bool sameReferenceSet);
+	void connectActionInstanceToObject(GIAEntityNode * objectEntity, GIAEntityNode * newOrExistingAction, bool sameReferenceSet);
+GIAEntityNode * addActionToActionDefinitionDefineSubstances(GIAEntityNode * actionEntity);
 GIAEntityNode * addActionToActionDefinition(GIAEntityNode * actionEntity);
-	void upgradePropertyToAction(GIAEntityNode * property);
+	void upgradeSubstanceToAction(GIAEntityNode * substance);
 	GIAEntityNode * addAction(GIAEntityNode * actionEntity);
 
 GIAEntityNode * addOrConnectConditionToEntity(GIAEntityNode * entityNode, GIAEntityNode * conditionEntityNode, GIAEntityNode * conditionTypeEntity, bool sameReferenceSet);
 GIAEntityNode * addOrConnectBeingDefinitionConditionToEntity(GIAEntityNode * entityNode, GIAEntityNode * conditionDefinitionNode, GIAEntityNode * conditionTypeEntity, bool negative, bool sameReferenceSet);
-GIAEntityNode * addOrConnectHavingPropertyConditionToEntity(GIAEntityNode * entityNode, GIAEntityNode * conditionPropertyNode, GIAEntityNode * conditionTypeEntity, bool negative, bool sameReferenceSet);
+GIAEntityNode * addOrConnectHavingSubstanceConditionToEntity(GIAEntityNode * entityNode, GIAEntityNode * conditionSubstanceNode, GIAEntityNode * conditionTypeEntity, bool negative, bool sameReferenceSet);
 	GIAEntityNode * addCondition(GIAEntityNode * conditionEntity);
 
 string convertStanfordPrepositionToRelex(string * preposition, int NLPdependencyRelationsType, bool * stanfordPrepositionFound);				//Stanford Compatible
@@ -943,13 +944,13 @@ string convertStanfordPrepositionToRelex(string * preposition, int NLPdependency
 
 void setTranslatorEntityNodesCompleteList(vector<GIAEntityNode*> * newEntityNodesCompleteList);
 //void setTranslatorConceptEntityNodesList(vector<GIAEntityNode*> * newConceptEntityNodesList);
-void setTranslatorPropertyEntityNodesList(vector<GIAEntityNode*> * newPropertyEntityNodesList);
+void setTranslatorSubstanceEntityNodesList(vector<GIAEntityNode*> * newSubstanceEntityNodesList);
 void setTranslatorActionEntityNodesList(vector<GIAEntityNode*> * newActionEntityNodesList);
 void setTranslatorConditionEntityNodesList(vector<GIAEntityNode*> * newConditionEntityNodesList);
 
 vector<GIAEntityNode*> * getTranslatorEntityNodesCompleteList();
 //vector<GIAEntityNode*> * getTranslatorConceptEntityNodesList();
-vector<GIAEntityNode*> * getTranslatorPropertyEntityNodesList();
+vector<GIAEntityNode*> * getTranslatorSubstanceEntityNodesList();
 vector<GIAEntityNode*> * getTranslatorActionEntityNodesList();
 vector<GIAEntityNode*> * getTranslatorConditionEntityNodesList();
 
@@ -963,7 +964,7 @@ void setComparisonVariableNode(GIAEntityNode* newComparisonVariableNode);
 
 long * getCurrentEntityNodeIDInCompleteList();
 long * getCurrentEntityNodeIDInConceptEntityNodesList();
-long * getCurrentEntityNodeIDInPropertyEntityNodesList();
+long * getCurrentEntityNodeIDInSubstanceEntityNodesList();
 long * getCurrentEntityNodeIDInActionEntityNodesList();
 long * getCurrentEntityNodeIDInConditionEntityNodesList();
 
@@ -986,12 +987,12 @@ void convertStanfordPOSTagToRelexPOSTypeAndWordnetWordType(string * POStag, stri
 void generateTempFeatureArray(Feature * firstFeatureInList, Feature * featureArrayTemp[]);	//used for intrafunction memory allocation purposes only
 
 #ifdef GIA_IMPLEMENT_NON_STANFORD_CORE_NLP_CODEPENDENCIES_CROSS_SENTENCE_REFERENCING
-//bool checkEntityHasPropertyThatWasDeclaredInContextAndIsUnique(GIAEntityNode * entityNode, int entityIndexTemp, int sentenceIndexTemp);		//NOT REQUIRED: redundant: this unique check is redundant considering if a concept entity has a property that was declared in the immediate context, ie sentence, then the entity node being queried will be the property itself (and not its concept)	//added 1j8a 10 May 2012
-bool checkEntityHasPropertyThatWasDeclaredInContext(GIAEntityNode * entityNode);			//current textual context (eg current paragraph) 	//added 1j7d 9 May 2012
-GIAEntityNode * getEntityPropertyThatWasDeclaredInContext(GIAEntityNode * entityNode);			//current textual context (eg current paragraph) 	//added 1j7g 9 May 2012
+//bool checkEntityHasSubstanceThatWasDeclaredInContextAndIsUnique(GIAEntityNode * entityNode, int entityIndexTemp, int sentenceIndexTemp);		//NOT REQUIRED: redundant: this unique check is redundant considering if a concept entity has a substance that was declared in the immediate context, ie sentence, then the entity node being queried will be the substance itself (and not its concept)	//added 1j8a 10 May 2012
+bool checkEntityHasSubstanceThatWasDeclaredInContext(GIAEntityNode * entityNode);			//current textual context (eg current paragraph) 	//added 1j7d 9 May 2012
+GIAEntityNode * getEntitySubstanceThatWasDeclaredInContext(GIAEntityNode * entityNode);			//current textual context (eg current paragraph) 	//added 1j7g 9 May 2012
 #endif
 
-void forwardTimeInfoToNewProperty(GIAEntityNode * entity, GIAEntityNode * newProperty);
+void forwardTimeInfoToNewSubstance(GIAEntityNode * entity, GIAEntityNode * newSubstance);
 
 #ifdef GIA_USE_ADVANCED_REFERENCING
 bool determineSameReferenceSetValue(bool defaultSameSetValueForRelation, Relation * relation);

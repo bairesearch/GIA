@@ -23,7 +23,7 @@
  * File Name: GIASentenceClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o1a 09-August-2012
+ * Project Version: 1o2a 10-August-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -48,7 +48,7 @@ using namespace std;
 //#define FEATURE_GRAMMATICAL_TENSE_DATE "date"
 #define FEATURE_WORD_QUESTIONMARK "?"
 
-//from http://wiki.opencog.org/w/Word_properties (intermediary - used for translation purposes into WordNet int wordNetPOS only)
+//from http://wiki.opencog.org/w/Word_substances (intermediary - used for translation purposes into WordNet int wordNetPOS only)
 #define FEATURE_RELEX_POS_TYPE_ADJECTIVE (1)
 #define FEATURE_RELEX_POS_TYPE_ADVERB (2)
 #define FEATURE_RELEX_POS_TYPE_CONJUNCTION (3)
@@ -218,7 +218,7 @@ public:
 	int grammaticalIsDefiniteIndexOfDeterminer;
 	#endif
 
-	bool alreadyAssignedPropertiesBasedOnDeterminatesOfDefinitionEntitiesTemp;	//#ifdef GIA_DEFINE_PROPERTIES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES
+	bool alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp;	//#ifdef GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES
 	
 	bool isPronounReference;
 

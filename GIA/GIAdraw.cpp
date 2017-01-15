@@ -23,7 +23,7 @@
  * File Name: GIAdraw.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o1a 09-August-2012
+ * Project Version: 1o2a 10-August-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -111,9 +111,9 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 	if(!(entityNode->initialisedForPrinting) && !(entityNode->disabled))
 	{
 		#ifdef GIA_DRAW_DEBUG
-		if(entityNode->isProperty)
+		if(entityNode->isSubstance)
 		{
-			cout << "entityNode = " << entityNode->entityName << " (is property)" << endl;
+			cout << "entityNode = " << entityNode->entityName << " (is substance)" << endl;
 		}
 		else if(entityNode->isAction)
 		{
@@ -129,11 +129,11 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 		}
 		else if(entityNode->hasAssociatedInstanceIsAction)
 		{
-			cout << "entityNode = " << entityNode->entityName << " (has associated property is action)" << endl;
+			cout << "entityNode = " << entityNode->entityName << " (has associated instance is action)" << endl;
 		}
 		else if(entityNode->hasAssociatedInstanceIsCondition)
 		{
-			cout << "entityNode = " << entityNode->entityName << " (has associated property is condition)" << endl;
+			cout << "entityNode = " << entityNode->entityName << " (has associated instance is condition)" << endl;
 		}
 		else if(entityNode->hasAssociatedTime)
 		{
@@ -148,7 +148,7 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 
 
 		//cout << "\tentityNode->isAction = " << entityNode->isAction << endl;
-		//cout << "\tentityNode->isProperty = " << entityNode->isProperty << endl;
+		//cout << "\tentityNode->isSubstance = " << entityNode->isSubstance << endl;
 		//cout << "\tentityNode->hasAssociatedInstance = " << entityNode->hasAssociatedInstance << endl;
 		//cout << "\tentityNode->hasAssociatedInstanceIsAction = " << entityNode->hasAssociatedInstanceIsAction << endl;
 
@@ -172,9 +172,9 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 		//cout << "a1" << endl;
 
 		int entityDefinitionConnectionColour;
-		if(entityNode->isProperty)
+		if(entityNode->isSubstance)
 		{
-			entityDefinitionConnectionColour = GIA_DRAW_PROPERTY_DEFINITION_CONNECTION_COLOUR;
+			entityDefinitionConnectionColour = GIA_DRAW_SUBSTANCE_DEFINITION_CONNECTION_COLOUR;
 		}
 		else if(entityNode->isAction)
 		{
@@ -187,7 +187,7 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 		}
 		else
 		{
-			entityDefinitionConnectionColour = GIA_DRAW_PROPERTY_DEFINITION_CONNECTION_COLOUR;
+			entityDefinitionConnectionColour = GIA_DRAW_SUBSTANCE_DEFINITION_CONNECTION_COLOUR;
 		}
 
 		for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
@@ -289,7 +289,7 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 				*/
 				if(entityNode->hasMeasure)
 				{
-					entityColour = GIA_DRAW_PROPERTY_MEASURE_NODE_COLOUR;
+					entityColour = GIA_DRAW_SUBSTANCE_MEASURE_NODE_COLOUR;
 				}
 				else
 				{
@@ -300,7 +300,7 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 			{
 				entityColour = GIA_DRAW_CONDITION_DEFINITION_NODE_COLOUR;	//clearly identify the definition of the action
 			}
-			else if(entityNode->isProperty)
+			else if(entityNode->isSubstance)
 			{
 				if(entityNode->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL)
 				{
@@ -309,20 +309,20 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 
 				if(entityNode->hasQuality)
 				{
-					entityColour = GIA_DRAW_PROPERTY_QUALITY_NODE_COLOUR;
+					entityColour = GIA_DRAW_SUBSTANCE_QUALITY_NODE_COLOUR;
 				}
 				else
 				{
-					entityColour = GIA_DRAW_PROPERTY_NODE_COLOUR;
+					entityColour = GIA_DRAW_SUBSTANCE_NODE_COLOUR;
 				}
 
 				if(entityNode->hasMeasure)
 				{
-					entityColour = GIA_DRAW_PROPERTY_MEASURE_NODE_COLOUR;
+					entityColour = GIA_DRAW_SUBSTANCE_MEASURE_NODE_COLOUR;
 				}
 				else if(entityNode->hasQuantity)
 				{
-					entityColour = GIA_DRAW_PROPERTY_QUANTITY_NODE_COLOUR;
+					entityColour = GIA_DRAW_SUBSTANCE_QUANTITY_NODE_COLOUR;
 				}
 
 			}
@@ -341,11 +341,11 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 				entityColour = GIA_DRAW_CONDITION_NODE_COLOUR;	//clear identify a time node
 			}
 			else if(entityNode->hasAssociatedInstance)
-			{//the original spec seemed to imply that entities that have associated properties (ie, that define properties) are special but they don't appear to be
-				if(!(entityNode->isProperty))
+			{//the original spec seemed to imply that entities that have associated substances (ie, that define substances) are special but they don't appear to be
+				if(!(entityNode->isSubstance))
 				{
-					//added 2 May 11a (highlight entities which define property nodes)
-					entityColour = GIA_DRAW_PROPERTY_DEFINITION_NODE_COLOUR;	//OLD: no colour modifier, just use basic entity colour; GIA_DRAW_CONCEPT_NODE_COLOUR;
+					//added 2 May 11a (highlight entities which define substance nodes)
+					entityColour = GIA_DRAW_SUBSTANCE_DEFINITION_NODE_COLOUR;	//OLD: no colour modifier, just use basic entity colour; GIA_DRAW_CONCEPT_NODE_COLOUR;
 				}
 			}
 			else
@@ -395,9 +395,9 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 		//cout << "a8" << endl;
 
 		#ifdef GIA_DRAW_DEBUG
-		if(entityNode->isProperty)
+		if(entityNode->isSubstance)
 		{
-			cout << "Exiting: entityNode = " << entityNode->entityName << " (is property)" << endl;
+			cout << "Exiting: entityNode = " << entityNode->entityName << " (is substance)" << endl;
 		}
 		else if(entityNode->isAction)
 		{
@@ -409,15 +409,15 @@ Reference * initialiseEntityNodeForPrinting(GIAEntityNode * entityNode, int y, i
 		}
 		else if(entityNode->hasAssociatedInstance)
 		{
-			cout << "Exiting: entityNode = " << entityNode->entityName << " (has associated property)" << endl;
+			cout << "Exiting: entityNode = " << entityNode->entityName << " (has associated instance)" << endl;
 		}
 		else if(entityNode->hasAssociatedInstanceIsAction)
 		{
-			cout << "Exiting: entityNode = " << entityNode->entityName << " (has associated property is action)" << endl;
+			cout << "Exiting: entityNode = " << entityNode->entityName << " (has associated instance is action)" << endl;
 		}
 		else if(entityNode->hasAssociatedInstanceIsCondition)
 		{
-			cout << "Exiting: entityNode = " << entityNode->entityName << " (has associated property is condition)" << endl;
+			cout << "Exiting: entityNode = " << entityNode->entityName << " (has associated instance is condition)" << endl;
 		}
 		else if(entityNode->hasAssociatedTime)
 		{

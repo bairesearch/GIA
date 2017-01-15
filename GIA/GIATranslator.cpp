@@ -23,7 +23,7 @@
  * File Name: GIATranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o1a 09-August-2012
+ * Project Version: 1o2a 10-August-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -36,7 +36,7 @@
 #include "GIATranslatorDefineGrammar.h"
 #include "GIATranslatorRedistributeStanfordRelations.h"
 #include "GIATranslatorDefineReferencing.h"
-#include "GIATranslatorDefineProperties.h"
+#include "GIATranslatorDefineSubstances.h"
 #include "GIATranslatorLinkEntities.h"
 #include "GIATranslatorApplyAdvancedFeatures.h"
 #include "GIAdatabase.h"
@@ -241,10 +241,10 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 	bool GIAEntityNodeArrayFilled[MAX_NUMBER_OF_WORDS_PER_SENTENCE];		//NB could also use currentSentence->maxNumberOfWordsInSentence
 	GIAEntityNode * GIAConceptNodeArray[MAX_NUMBER_OF_WORDS_PER_SENTENCE];
 	GIAEntityNode * GIAEntityNodeArray[MAX_NUMBER_OF_WORDS_PER_SENTENCE];
-	GIAEntityNode * GIAFeatureTempEntityNodeArray[MAX_NUMBER_OF_WORDS_PER_SENTENCE];	//temporary array introduced 14 July 2012b, to handle grammatical information specific to instances of concept entities (not concept entities themselves) before those intances have been defined (in GIATranslatorDefineProperties.cpp)
+	GIAEntityNode * GIAFeatureTempEntityNodeArray[MAX_NUMBER_OF_WORDS_PER_SENTENCE];	//temporary array introduced 14 July 2012b, to handle grammatical information specific to instances of concept entities (not concept entities themselves) before those intances have been defined (in GIATranslatorDefineSubstances.cpp)
 
-	//added 1 May 11a (assign actions to instances (properties) of entities and not entities themselves where appropriate)
-	//bool GIAEntityNodeArrayHasAssociatedProperty[MAX_NUMBER_OF_WORDS_PER_SENTENCE];
+	//added 1 May 11a (assign actions to instances (substances) of entities and not entities themselves where appropriate)
+	//bool GIAEntityNodeArrayHasAssociatedSubstance[MAX_NUMBER_OF_WORDS_PER_SENTENCE];
 
 	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
 	{
@@ -253,8 +253,8 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 		GIAEntityNodeArray[w] = NULL;		//added 10 May 2012
 		GIAFeatureTempEntityNodeArray[w] = NULL;	//added  14 July 2012b
 
-		//added 1 May 11a (assign actions to instances (properties) of entities and not entities themselves where appropriate)
-		//GIAEntityNodeArrayHasAssociatedProperty[w] = false;
+		//added 1 May 11a (assign actions to instances (substances) of entities and not entities themselves where appropriate)
+		//GIAEntityNodeArrayHasAssociatedSubstance[w] = false;
 
 		//GIAActionNodeArrayFilled[w] = false;
 	}
@@ -546,7 +546,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 	switchArgumentsAndFunctionsWhereNecessary(currentSentenceInList, NLPdependencyRelationsType);
 
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "pass 2; identify entity types [define entities as objects, subjects, and being possessive of properties];" << endl;
+	cout << "pass 2; identify entity types [define entities as objects, subjects, and being possessive of substances];" << endl;
 	#endif
 	identifyEntityTypes(currentSentenceInList, GIAFeatureTempEntityNodeArray, NLPdependencyRelationsType);
 
@@ -596,7 +596,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 	}
 	#endif
 
-	//transfer disabled properties across execution#1 [this is required since GIATranslatorRedistributeStanfordRelations operations are now done on temporary entity nodes GIAFeatureTempEntityNodeArray instead of concept entity nodes {whose values would have been automatically transferred their instances upon creation}...]
+	//transfer disabled substances across execution#1 [this is required since GIATranslatorRedistributeStanfordRelations operations are now done on temporary entity nodes GIAFeatureTempEntityNodeArray instead of concept entity nodes {whose values would have been automatically transferred their instances upon creation}...]
 	disableConceptEntitiesBasedOnFeatureTempEntityNodeArray(GIAEntityNodeArrayFilled, GIAConceptNodeArray, GIAFeatureTempEntityNodeArray);
 
 	#ifdef GIA_TRANSLATOR_DEBUG
@@ -632,90 +632,90 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "pass B;" << endl;
-	cout << "0z pass; define properties (objects/subjects with properties; eg 'Truffles which are picked are tasty.' - Truffle must be an instance/property in this case); _obj(pick[4], truffle[1]), _predadj(truffle[1], tasty[6])" << endl;
+	cout << "0z pass; define substances (objects/subjects with substances; eg 'Truffles which are picked are tasty.' - Truffle must be an instance/substance in this case); _obj(pick[4], truffle[1]), _predadj(truffle[1], tasty[6])" << endl;
 	#endif
-	definePropertiesObjectsAndSubjectsWithProperties(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, GIAFeatureTempEntityNodeArray);
+	defineSubstancesObjectsAndSubjectsWithSubstances(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, GIAFeatureTempEntityNodeArray);
 
-	#ifdef GIA_ASSIGN_INSTANCE_PROPERTY_TO_ALL_DEFINITIVE_NOUNS
+	#ifdef GIA_ASSIGN_SUBSTANCE_TO_ALL_DEFINITIVE_NOUNS
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "0a pass; define properties (definite nouns); eg the house" << endl;
+	cout << "0a pass; define substances (definite nouns); eg the house" << endl;
 	#endif
-	definePropertiesDefiniteNouns(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, featureArrayTemp);
+	defineSubstancesDefiniteNouns(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, featureArrayTemp);
 	#endif
 	
-	#ifdef GIA_DEFINE_PROPERTIES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES
+	#ifdef GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "0b pass; define properties based upon definitions" << endl;
+	cout << "0b pass; define substances based upon definitions" << endl;
 	#endif
-	definePropertiesBasedOnDeterminatesOfDefinitionEntities(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, referenceTypeHasDeterminateCrossReferenceNumberArray, featureArrayTemp);
+	defineSubstancesBasedOnDeterminatesOfDefinitionEntities(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, referenceTypeHasDeterminateCrossReferenceNumberArray, featureArrayTemp);
 	#endif
 	
-	#ifdef GIA_ASSIGN_INSTANCE_PROPERTY_TO_ALL_NOUNS_WITH_DETERMINATES
+	#ifdef GIA_ASSIGN_SUBSTANCE_TO_ALL_NOUNS_WITH_DETERMINATES
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "0b pass; define properties (nouns with determinates); eg a house, the house, the houses [all nouns with singular/plural are assumed to have determintes, and are therefore properties]" << endl;
+	cout << "0b pass; define substances (nouns with determinates); eg a house, the house, the houses [all nouns with singular/plural are assumed to have determintes, and are therefore substances]" << endl;
 	#endif
-	definePropertiesNounsWithDeterminates(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, referenceTypeHasDeterminateCrossReferenceNumberArray, featureArrayTemp);
-	#endif
-	
-	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "0c pass; define properties (nouns with adjectives); _amod; eg locked door, _advmod; eg cheetahs run quickly [NOT and c) _predadj; eg giants are red / joe is late]" << endl;
-	#endif
-	definePropertiesNounsWithAdjectives(currentSentenceInList, GIAEntityNodeArray, NLPdependencyRelationsType);
-
-	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "0d pass; define properties (quantities [not quantity mods/multipiers, not measure pers] and measures);" << endl;
-	#endif
-	definePropertiesQuantitiesAndMeasures(currentSentenceInList, GIAEntityNodeArray);
-
-	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "0e pass; define properties (quantity mods);" << endl;
-	#endif
-	definePropertiesQuantityModifiers(currentSentenceInList, GIAEntityNodeArray);
-
-	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "0f pass; define properties (expletives eg 'there' in 'there is a place');" << endl;
-	#endif
-	definePropertiesExpletives(currentSentenceInList, GIAEntityNodeArray);
-
-	#ifdef GIA_ASSIGN_INSTANCE_PROPERTY_TO_ALL_PRONOUNS
-	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "0g pass; define properties (pronouns eg 'we'/'I');" << endl;
-	#endif
-	definePropertiesPronouns(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, featureArrayTemp);
+	defineSubstancesNounsWithDeterminates(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, referenceTypeHasDeterminateCrossReferenceNumberArray, featureArrayTemp);
 	#endif
 	
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "0h pass; define properties (to_be);" << endl;
+	cout << "0c pass; define substances (nouns with adjectives); _amod; eg locked door, _advmod; eg cheetahs run quickly [NOT and c) _predadj; eg giants are red / joe is late]" << endl;
 	#endif
-	definePropertiesToBe(currentSentenceInList, GIAEntityNodeArray);
+	defineSubstancesNounsWithAdjectives(currentSentenceInList, GIAEntityNodeArray, NLPdependencyRelationsType);
 
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "0i pass; define properties (to_do);" << endl;
+	cout << "0d pass; define substances (quantities [not quantity mods/multipiers, not measure pers] and measures);" << endl;
 	#endif
-	definePropertiesToDo(currentSentenceInList, GIAEntityNodeArray);
+	defineSubstancesQuantitiesAndMeasures(currentSentenceInList, GIAEntityNodeArray);
 
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "0j pass; define properties (has time);" << endl;
+	cout << "0e pass; define substances (quantity mods);" << endl;
 	#endif
-	definePropertiesHasTime(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, featureArrayTemp);
+	defineSubstancesQuantityModifiers(currentSentenceInList, GIAEntityNodeArray);
 
-	#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1F_RELATIONS_TREAT_THAT_AS_A_PRONOUN_IE_PROPERTY
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "0k pass; define properties (non explicit pronouns eg 'that');" << endl;
+	cout << "0f pass; define substances (expletives eg 'there' in 'there is a place');" << endl;
 	#endif
-	definePropertiesNonExplicitPronouns(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray);
-	#endif
+	defineSubstancesExpletives(currentSentenceInList, GIAEntityNodeArray);
 
-	#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_4A_RELATIONS_DEFINE_PROPERTIES_BASED_UPON_INDIRECT_OBJECTS
+	#ifdef GIA_ASSIGN_SUBSTANCE_TO_ALL_PRONOUNS
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "0l pass; define properties indirect objects;" << endl;
+	cout << "0g pass; define substances (pronouns eg 'we'/'I');" << endl;
 	#endif
-	definePropertiesIndirectObjects(currentSentenceInList, GIAEntityNodeArray);
+	defineSubstancesPronouns(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, featureArrayTemp);
+	#endif
+	
+	#ifdef GIA_TRANSLATOR_DEBUG
+	cout << "0h pass; define substances (to_be);" << endl;
+	#endif
+	defineSubstancesToBe(currentSentenceInList, GIAEntityNodeArray);
+
+	#ifdef GIA_TRANSLATOR_DEBUG
+	cout << "0i pass; define substances (to_do);" << endl;
+	#endif
+	defineSubstancesToDo(currentSentenceInList, GIAEntityNodeArray);
+
+	#ifdef GIA_TRANSLATOR_DEBUG
+	cout << "0j pass; define substances (has time);" << endl;
+	#endif
+	defineSubstancesHasTime(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, featureArrayTemp);
+
+	#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1F_RELATIONS_TREAT_THAT_AS_A_PRONOUN_IE_SUBSTANCE
+	#ifdef GIA_TRANSLATOR_DEBUG
+	cout << "0k pass; define substances (non explicit pronouns eg 'that');" << endl;
+	#endif
+	defineSubstancesNonExplicitPronouns(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray);
+	#endif
+
+	#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_4A_RELATIONS_DEFINE_SUBSTANCES_BASED_UPON_INDIRECT_OBJECTS
+	#ifdef GIA_TRANSLATOR_DEBUG
+	cout << "0l pass; define substances indirect objects;" << endl;
+	#endif
+	defineSubstancesIndirectObjects(currentSentenceInList, GIAEntityNodeArray);
 	#endif
 
 
 
-	//Stanford version needs to be shifted after all properties have been generated (including actions)... [Upgrade translator - do not associate feature/grammatical info with concept entities; just leave them in the feature array until the concept instances have been generated]
+	//Stanford version needs to be shifted after all substances have been generated (including actions)... [Upgrade translator - do not associate feature/grammatical info with concept entities; just leave them in the feature array until the concept instances have been generated]
 	#ifdef GIA_USE_RELEX
 	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_RELEX)
 	{
@@ -740,21 +740,21 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "pass 1d; disable Entities Based On Feature Temp Entity Node Array" << endl;
 	#endif
-	//transfer disabled properties across execution#2 [this is required since GIATranslatorRedistributeStanfordRelations operations are now done on temporary entity nodes GIAFeatureTempEntityNodeArray instead of concept entity nodes {whose values would have been automatically transferred their instances upon creation}...]
+	//transfer disabled substances across execution#2 [this is required since GIATranslatorRedistributeStanfordRelations operations are now done on temporary entity nodes GIAFeatureTempEntityNodeArray instead of concept entity nodes {whose values would have been automatically transferred their instances upon creation}...]
 	disableEntitiesBasedOnFeatureTempEntityNodeArray(GIAEntityNodeArrayFilled, GIAEntityNodeArray, GIAFeatureTempEntityNodeArray);
 
 
 
 
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "2a pass; link properties (possessive relationships); eg joe's bike" << endl;
+	cout << "2a pass; link substances (possessive relationships); eg joe's bike" << endl;
 	#endif
-	linkPropertiesPossessiveRelationships(currentSentenceInList, GIAEntityNodeArray);
+	linkSubstancesPossessiveRelationships(currentSentenceInList, GIAEntityNodeArray);
 
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "2b pass; link properties (descriptive relationships); eg joe is happy" << endl;
+	cout << "2b pass; link substances (descriptive relationships); eg joe is happy" << endl;
 	#endif
-	linkPropertiesDescriptiveRelationships(currentSentenceInList, GIAEntityNodeArray, NLPdependencyRelationsType);
+	linkSubstancesDescriptiveRelationships(currentSentenceInList, GIAEntityNodeArray, NLPdependencyRelationsType);
 
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "2c pass; link entity definitions (appositive of nouns only)" << endl;
@@ -772,7 +772,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 	linkSubjectOrObjectRelationships(currentSentenceInList, GIAEntityNodeArray, entityNodesActiveListConcepts, NLPdependencyRelationsType);
 
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "3c pass; link properties (define indirect objects)" << endl;
+	cout << "3c pass; link substances (define indirect objects)" << endl;
 	#endif
 	linkIndirectObjects(currentSentenceInList, GIAEntityNodeArray);
 
@@ -780,9 +780,9 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 	{
 		#ifdef GIA_USE_STANFORD_CORENLP
 		#ifdef GIA_TRANSLATOR_DEBUG
-		cout << "3c2 pass; link Having Property Conditions And Being Definition Conditions; eg Space is saved through having a chicken	prepc_through(saved-3, having-5) / dobj(having-5, chicken-7)" << endl;
+		cout << "3c2 pass; link Having Substance Conditions And Being Definition Conditions; eg Space is saved through having a chicken	prepc_through(saved-3, having-5) / dobj(having-5, chicken-7)" << endl;
 		#endif
-		linkHavingPropertyConditionsAndBeingDefinitionConditions(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, entityNodesActiveListConcepts);
+		linkHavingSubstanceConditionsAndBeingDefinitionConditions(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, entityNodesActiveListConcepts);
 		#endif
 	}
 
@@ -799,11 +799,11 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 #endif
 
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "3f pass; define action/property conditions" << endl;
+	cout << "3f pass; define action/substance conditions" << endl;
 	#endif
-	linkActionPropertyConditions(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, entityNodesActiveListConcepts, NLPdependencyRelationsType);
+	linkConditions(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, entityNodesActiveListConcepts, NLPdependencyRelationsType);
 
-	//Stanford version has been shifted to after all properties have been generated (including actions)... [Upgrade translator - do not associate feature/grammatical info with concept entities; just leave them in the feature array until the concept instances have been generated]
+	//Stanford version has been shifted to after all substances have been generated (including actions)... [Upgrade translator - do not associate feature/grammatical info with concept entities; just leave them in the feature array until the concept instances have been generated]
 	#ifdef GIA_USE_STANFORD_DEPENDENCY_RELATIONS
 	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD)
 	{
@@ -826,14 +826,14 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 	extractQuantities(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, entityNodesActiveListConcepts, NLPfeatureParser);
 
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "4d pass; extract measures and link properties (measure-quantity relationships)" << endl;
+	cout << "4d pass; extract measures and link substances (measure-quantity relationships)" << endl;
 	#endif
 	extractMeasures(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, entityNodesActiveListConcepts);
 
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "4e/4f pass; define to_be/to_do conditions" << endl;
 	#endif
-	defineToBeAndToDoProperties(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, entityNodesActiveListConcepts);
+	defineToBeAndToDoPropertiesAndConditions(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, entityNodesActiveListConcepts);
 
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "4g pass; extract qualities" << endl;
@@ -841,22 +841,22 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 	extractQualities(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, entityNodesActiveListConcepts, NLPdependencyRelationsType);
 
 	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "4h pass; link properties (parataxis); eg the guy, Akari said, left..." << endl;
+	cout << "4h pass; link substances (parataxis); eg the guy, Akari said, left..." << endl;
 	#endif
-	linkPropertiesParataxis(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray);
+	linkSubstancesParataxis(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray);
 
 	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD)
 	{
 		#ifdef GIA_USE_STANFORD_CORENLP
 		#ifdef GIA_TRANSLATOR_DEBUG
-		cout << "4i pass; define Clausal Complement Properties (ccomp); eg ccomp(say, like)	He says that you like to swim" << endl;
+		cout << "4i pass; define Clausal Complement Substances (ccomp); eg ccomp(say, like)	He says that you like to swim" << endl;
 		#endif
-		defineClausalComplementProperties(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray);
+		defineClausalComplementSubstances(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray);
 		#endif
 	}
 
 	#ifdef GIA_USE_ADVANCED_REFERENCING
-	//record entityIndexTemp + sentenceIndexTemp for all properties in sentence (allows for referencing)...
+	//record entityIndexTemp + sentenceIndexTemp for all substances in sentence (allows for referencing)...
 	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
 	{
 		if(GIAEntityNodeArrayFilled[w])

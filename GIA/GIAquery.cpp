@@ -23,7 +23,7 @@
  * File Name: GIAquery.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o1a 09-August-2012
+ * Project Version: 1o2a 10-August-2012
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  * ?Limitations: will only locate a exact answer (based upon a comparison node) if it provides the maximum number of matched nodes
@@ -161,7 +161,7 @@ GIAEntityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanti
 			cout << "\tcurrentQueryEntityNode->entityName = " << currentQueryEntityNode->entityName << endl;
 			#endif
 
-			//now start matching structure search for all properties of the identical concept node (to current query entity name) in Semantic Network
+			//now start matching structure search for all substances of the identical concept node (to current query entity name) in Semantic Network
 
 			int numberOfMatchedNodesTemp = 0;
 			int numberOfMatchedNodesRequiredSynonymnDetectionTemp = 0;
@@ -801,9 +801,9 @@ bool testEntityNodeForQueryOrReferenceSet(GIAEntityNode * queryEntityNode, GIAEn
 
 		#ifdef GIA_QUERY_DEBUG
 		//cout << "\tqueryEntityNode->entityName = " << queryEntityNode->entityName << endl;
-		if(entityNode->isProperty)
+		if(entityNode->isSubstance)
 		{
-			cout << "entityNode = " << entityNode->entityName << " (is property)" << endl;
+			cout << "entityNode = " << entityNode->entityName << " (is substance)" << endl;
 		}
 		else if(entityNode->isAction)
 		{
@@ -819,11 +819,11 @@ bool testEntityNodeForQueryOrReferenceSet(GIAEntityNode * queryEntityNode, GIAEn
 		}
 		else if(entityNode->hasAssociatedInstanceIsAction)
 		{
-			cout << "entityNode = " << entityNode->entityName << " (has associated property is action)" << endl;
+			cout << "entityNode = " << entityNode->entityName << " (has associated instance is action)" << endl;
 		}
 		else if(entityNode->hasAssociatedInstanceIsCondition)
 		{
-			cout << "entityNode = " << entityNode->entityName << " (has associated property is condition)" << endl;
+			cout << "entityNode = " << entityNode->entityName << " (has associated instance is condition)" << endl;
 		}
 		else if(entityNode->hasAssociatedTime)
 		{
@@ -840,7 +840,7 @@ bool testEntityNodeForQueryOrReferenceSet(GIAEntityNode * queryEntityNode, GIAEn
 
 		/*
 		cout << "\tentityNode->isAction = " << entityNode->isAction << endl;
-		cout << "\tentityNode->isProperty = " << entityNode->isProperty << endl;
+		cout << "\tentityNode->isSubstance = " << entityNode->isSubstance << endl;
 		cout << "\tentityNode->hasAssociatedInstance = " << entityNode->hasAssociatedInstance << endl;
 		cout << "\tentityNode->hasAssociatedInstanceIsAction = " << entityNode->hasAssociatedInstanceIsAction << endl;
 		*/
@@ -938,7 +938,7 @@ bool testEntityNodeForQueryOrReferenceSet(GIAEntityNode * queryEntityNode, GIAEn
 					{
 						#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
 						cout << "GIAquery; entityNode->isConcept = " << entityNode->isConcept << endl;
-						cout << "GIAquery; entityNode->isProperty = " << entityNode->isProperty << endl;
+						cout << "GIAquery; entityNode->isSubstance = " << entityNode->isSubstance << endl;
 						#endif
 						DBreadVectorConnections(entityNode, i);		//this is important, as it will read all of the vector connections from the database for this node (conferred 25 May 2012)
 					}
@@ -1331,9 +1331,9 @@ bool testEntityNodeForQueryOrReferenceSet(GIAEntityNode * queryEntityNode, GIAEn
 
 		//cout << "a8" << endl;
 		#ifdef GIA_QUERY_DEBUG
-		if(entityNode->isProperty)
+		if(entityNode->isSubstance)
 		{
-			cout << "Exiting: entityNode = " << entityNode->entityName << " (is property)" << endl;
+			cout << "Exiting: entityNode = " << entityNode->entityName << " (is substance)" << endl;
 		}
 		else if(entityNode->isAction)
 		{
@@ -1345,15 +1345,15 @@ bool testEntityNodeForQueryOrReferenceSet(GIAEntityNode * queryEntityNode, GIAEn
 		}
 		else if(entityNode->hasAssociatedInstance)
 		{
-			cout << "Exiting: entityNode = " << entityNode->entityName << " (has associated property)" << endl;
+			cout << "Exiting: entityNode = " << entityNode->entityName << " (has associated instance)" << endl;
 		}
 		else if(entityNode->hasAssociatedInstanceIsAction)
 		{
-			cout << "Exiting: entityNode = " << entityNode->entityName << " (has associated property is action)" << endl;
+			cout << "Exiting: entityNode = " << entityNode->entityName << " (has associated instance is action)" << endl;
 		}
 		else if(entityNode->hasAssociatedInstanceIsCondition)
 		{
-			cout << "Exiting: entityNode = " << entityNode->entityName << " (has associated property is condition)" << endl;
+			cout << "Exiting: entityNode = " << entityNode->entityName << " (has associated instance is condition)" << endl;
 		}
 		else if(entityNode->hasAssociatedTime)
 		{
@@ -1401,7 +1401,7 @@ bool determineIfBestAnswerCandidate(bool traceModeIsQuery, bool queryTraceParame
 			//cout << "determineIfBestAnswerCandidate: numberOfMatchedNodesTempMax = " << numberOfMatchedNodesTempMax << endl;
 
 			if(numberOfMatchedNodesTemp > numberOfMatchedNodesTempMax)
-			{//first traces (ie traces of newest instances/properties) take priority
+			{//first traces (ie traces of newest instances/substances) take priority
 				bestAnswerCandidate = true;
 			}
 			else if(traceModeIsQuery && !alreadyFoundAnAnswer && queryTraceParametersTempFoundAnswer && (numberOfMatchedNodesTemp == numberOfMatchedNodesTempMax))
@@ -1432,7 +1432,7 @@ bool determineIfBestAnswerCandidate(bool traceModeIsQuery, bool queryTraceParame
 			if(passExactMatchRequirements)
 			{
 				if(numberOfMatchedNodesTemp > numberOfMatchedNodesTempMax)
-				{//first traces (ie traces of newest instances/properties) take priority
+				{//first traces (ie traces of newest instances/substances) take priority
 					bestAnswerCandidate = true;
 				}
 				else if((numberOfMatchedNodesRequiredSynonymnDetectionTemp < numberOfMatchedNodesRequiredSynonymnDetectionTempAtMax) && (numberOfMatchedNodesTemp == numberOfMatchedNodesTempMax))
@@ -1629,7 +1629,7 @@ void generateTexualContextEntityString(string * texualContextEntityString, GIAEn
 		string quantityNumberStringTemp = printQuantityNumberString(entityNode);
 		entityPretext = entityPretext + quantityNumberStringTemp + " ";
 	}
-	else if(entityNode->isProperty)
+	else if(entityNode->isSubstance)
 	{
 	}
 	else if(entityNode->isAction)
@@ -1689,8 +1689,8 @@ void printEntityNodeQualitiesOnly(GIAEntityNode * entityNode, string * printEnti
 	//cout << "entityNode->entityName = " << entityNode->entityName << endl;
 	for(vector<GIAEntityConnection*>::iterator connectionIter = entityNode->PropertyNodeList->begin(); connectionIter < entityNode->PropertyNodeList->end(); connectionIter++)
 	{
-		GIAEntityNode * propertyNode = (*connectionIter)->entity;
-		if(propertyNode->hasQuality)
+		GIAEntityNode * substanceNode = (*connectionIter)->entity;
+		if(substanceNode->hasQuality)
 		{
 			if(numberQualities > 0)
 			{
@@ -1702,7 +1702,7 @@ void printEntityNodeQualitiesOnly(GIAEntityNode * entityNode, string * printEnti
 			}
 			numberQualities++;
 
-			*printEntityNodeString = *printEntityNodeString + "Type: " + propertyNode->entityName;
+			*printEntityNodeString = *printEntityNodeString + "Type: " + substanceNode->entityName;
 		}
 	}
 

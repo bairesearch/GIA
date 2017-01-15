@@ -23,7 +23,7 @@
  * File Name: GIATranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o1a 09-August-2012
+ * Project Version: 1o2a 10-August-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -291,9 +291,9 @@ void identifyEntityTypes(Sentence * currentSentenceInList, GIAEntityNode * GIAEn
 		if(!(currentRelationInList->disabled))
 		{
 		#endif
-			//possessive of properties [NB plural/singular indicates definite noun - eg a robin, the robin, the robins - which is therefore a property (entity instance):
+			//possessive of substances [NB plural/singular indicates definite noun - eg a robin, the robin, the robins - which is therefore a substance (entity instance):
 
-			//possessive of properties:
+			//possessive of substances:
 
 			bool passed = false;
 			for(int i=0; i<RELATION_TYPE_POSSESSIVE_NUMBER_OF_TYPES; i++)
@@ -308,12 +308,12 @@ void identifyEntityTypes(Sentence * currentSentenceInList, GIAEntityNode * GIAEn
 			{
 				int relationGovernorIndex = currentRelationInList->relationGovernorIndex;
 				int relationDependentIndex = currentRelationInList->relationDependentIndex;
-				GIAEntityNode * propertyEntity = GIAEntityNodeArray[relationGovernorIndex];
+				GIAEntityNode * substanceEntity = GIAEntityNodeArray[relationGovernorIndex];
 				GIAEntityNode * ownerEntity = GIAEntityNodeArray[relationDependentIndex];
-				ownerEntity->hasPropertyTemp = true;
+				ownerEntity->hasSubstanceTemp = true;
 			}
 
-			//possessive of properties:
+			//possessive of substances:
 
 			passed = false;
 			for(int i=0; i<RELATION_TYPE_ADJECTIVE_NUMBER_OF_TYPES; i++)
@@ -333,9 +333,9 @@ void identifyEntityTypes(Sentence * currentSentenceInList, GIAEntityNode * GIAEn
 					int relationGovernorIndex = currentRelationInList->relationGovernorIndex;
 					int relationDependentIndex = currentRelationInList->relationDependentIndex;
 					GIAEntityNode * thingEntity = GIAEntityNodeArray[relationGovernorIndex];
-					GIAEntityNode * propertyEntity = GIAEntityNodeArray[relationDependentIndex];
-					thingEntity->hasPropertyTemp = true;
-					//propertyEntity->hasQualityTemp = true;	//[eg2 The locked door.. / Jim runs quickly / Mr. Smith is late {_amod/_advmod/_predadj}]
+					GIAEntityNode * substanceEntity = GIAEntityNodeArray[relationDependentIndex];
+					thingEntity->hasSubstanceTemp = true;
+					//substanceEntity->hasQualityTemp = true;	//[eg2 The locked door.. / Jim runs quickly / Mr. Smith is late {_amod/_advmod/_predadj}]
 				}
 			}
 
@@ -381,7 +381,7 @@ void identifyEntityTypes(Sentence * currentSentenceInList, GIAEntityNode * GIAEn
 	}
 }
 
-//updated 22 May 2012 with GIAConceptNodeArray+GIAEntityNodeArray (and properties add)
+//updated 22 May 2012 with GIAConceptNodeArray+GIAEntityNodeArray (and substances add)
 void linkPronounReferencesRelex(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAFeatureTempEntityNodeArray[], GIAEntityNode * GIAEntityNodeArray[], unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts, Feature * featureArrayTemp[])
 {
 	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
@@ -516,9 +516,9 @@ void linkPronounReferencesRelex(Sentence * currentSentenceInList, bool GIAEntity
 											referenceSourceHasBeenFound = true;
 											referenceSource = currentEntityInWhichReferenceSourceIsBeingSearchedFor;
 										}
-										else if((currentEntityInWhichReferenceSourceIsBeingSearchedFor->hasPropertyTemp) && (s2 > 0))
+										else if((currentEntityInWhichReferenceSourceIsBeingSearchedFor->hasSubstanceTemp) && (s2 > 0))
 										{
-											//cout << "currentEntityInWhichReferenceSourceIsBeingSearchedFor->hasPropertyTemp = " << currentEntityInWhichReferenceSourceIsBeingSearchedFor->hasPropertyTemp << endl;
+											//cout << "currentEntityInWhichReferenceSourceIsBeingSearchedFor->hasSubstanceTemp = " << currentEntityInWhichReferenceSourceIsBeingSearchedFor->hasSubstanceTemp << endl;
 											referenceSourceHasBeenFound = true;
 											referenceSource = currentEntityInWhichReferenceSourceIsBeingSearchedFor;
 										}
@@ -555,43 +555,43 @@ void linkPronounReferencesRelex(Sentence * currentSentenceInList, bool GIAEntity
 
 						disableEntity(GIAFeatureTempEntityNodeArray[w]);
 
-					#ifdef GIA_USE_ORIGINAL_PRONOMINAL_COREFERENCE_RESOLUTION_IGNORE_PROPERTIES_TAKE_CONCEPTS_ONLY
+					#ifdef GIA_USE_ORIGINAL_PRONOMINAL_COREFERENCE_RESOLUTION_IGNORE_SUBSTANCES_TAKE_CONCEPTS_ONLY
 						GIAConceptNodeArray[w] = referenceSource;
 						featureArrayTemp[w]->isPronounReference = true;
 						applyConceptEntityAlreadyExistsFunction(referenceSource, true);
 					#else
 
 						//cout << "ad3" << endl;
-						bool conceptHasAProperty = false;
-						//now find the property in the referenceSource concept entity that matches the referenceSource sentence/entity index
+						bool conceptHasASubstance = false;
+						//now find the substance in the referenceSource concept entity that matches the referenceSource sentence/entity index
 						for(vector<GIAEntityConnection*>::iterator connectionIter = referenceSource->AssociatedInstanceNodeList->begin(); connectionIter != referenceSource->AssociatedInstanceNodeList->end(); connectionIter++)
 						{
 							//cout << "ad4" << endl;
 
-							GIAEntityNode * property = (*connectionIter)->entity;
+							GIAEntityNode * substance = (*connectionIter)->entity;
 							/*
-							cout << "property->sentenceIndexTemp = " << property->sentenceIndexTemp << endl;
-							cout << "property->entityIndexTemp = " << property->entityIndexTemp << endl;
+							cout << "substance->sentenceIndexTemp = " << substance->sentenceIndexTemp << endl;
+							cout << "substance->entityIndexTemp = " << substance->entityIndexTemp << endl;
 							cout << "referenceSourceSentenceIndex = " << referenceSourceSentenceIndex << endl;
 							cout << "referenceSourceEntityNodeIndex = " << referenceSourceEntityNodeIndex << endl;
 							*/
-							if(!conceptHasAProperty)
-							{//take first instance/property in list
+							if(!conceptHasASubstance)
+							{//take first instance/substance in list
 
 								#ifdef GIA_TRANSLATOR_DEBUG
-								cout << "NonPronoun/property referenceSourceHasBeenFound: assigning " << GIAEntityNodeArray[w]->entityName << " to " << referenceSource->entityName << "." << endl;
+								cout << "NonPronoun/substance referenceSourceHasBeenFound: assigning " << GIAEntityNodeArray[w]->entityName << " to " << referenceSource->entityName << "." << endl;
 								#endif
 
-								//found the property in the referenceSource concept entity that matches the referenceSource sentence/entity index
+								//found the substance in the referenceSource concept entity that matches the referenceSource sentence/entity index
 								//now only link them
 
 								featureArrayTemp[w]->isPronounReference = true;
-								GIAEntityNodeArray[w] = property;
+								GIAEntityNodeArray[w] = substance;
 							}
 
-							conceptHasAProperty = true;
+							conceptHasASubstance = true;
 						}
-						if(!conceptHasAProperty)
+						if(!conceptHasASubstance)
 						{
 							#ifdef GIA_TRANSLATOR_DEBUG
 							cout << "referenceSourceHasBeenFound: assigning " << GIAEntityNodeArray[w]->entityName << " to " << referenceSource->entityName << "." << endl;
@@ -728,34 +728,34 @@ void linkPronounAndTextualContextReferencesStanfordCoreNLP(Sentence * currentSen
 							{
 							#endif
 								//cout << "ad3" << endl;
-								bool conceptHasAProperty = false;
-								//now find the property in the referenceSource concept entity that matches the referenceSource sentence/entity index
+								bool conceptHasASubstance = false;
+								//now find the substance in the referenceSource concept entity that matches the referenceSource sentence/entity index
 								for(vector<GIAEntityConnection*>::iterator connectionIter = referenceSource->AssociatedInstanceNodeList->begin(); connectionIter != referenceSource->AssociatedInstanceNodeList->end(); connectionIter++)
 								{
 									//cout << "ad4" << endl;
 
-									GIAEntityNode * property = (*connectionIter)->entity;
+									GIAEntityNode * substance = (*connectionIter)->entity;
 									/*
-									cout << "property->sentenceIndexTemp = " << property->sentenceIndexTemp << endl;
-									cout << "property->entityIndexTemp = " << property->entityIndexTemp << endl;
+									cout << "substance->sentenceIndexTemp = " << substance->sentenceIndexTemp << endl;
+									cout << "substance->entityIndexTemp = " << substance->entityIndexTemp << endl;
 									cout << "referenceSourceSentenceIndex = " << referenceSourceSentenceIndex << endl;
 									cout << "referenceSourceEntityNodeIndex = " << referenceSourceEntityNodeIndex << endl;
 									*/
-									if((property->sentenceIndexTemp == referenceSourceSentenceIndex) && (property->entityIndexTemp == referenceSourceEntityNodeIndex))
+									if((substance->sentenceIndexTemp == referenceSourceSentenceIndex) && (substance->entityIndexTemp == referenceSourceEntityNodeIndex))
 									{
 										#ifdef GIA_STANFORD_CORENLP_CODEPENDENCY_PRONOMINAL_REFERENCING_DEBUG
-										cout << "NonPronoun/property referenceSourceHasBeenFound: assigning " << GIAEntityNodeArray[currentSentenceEntityNodeIndex]->entityName << " to " << referenceSource->entityName << "." << endl;
+										cout << "NonPronoun/substance referenceSourceHasBeenFound: assigning " << GIAEntityNodeArray[currentSentenceEntityNodeIndex]->entityName << " to " << referenceSource->entityName << "." << endl;
 										#endif
 
-										//found the property in the referenceSource concept entity that matches the referenceSource sentence/entity index
+										//found the substance in the referenceSource concept entity that matches the referenceSource sentence/entity index
 										//now only link them
 										#ifdef GIA_STANFORD_CORE_NLP_CODEPENDENCIES_DO_NOT_USE_IF_REFERENCE_IS_NOT_DEFINITE_OR_PROPER_NOUN
 										if(referenceFeature->grammaticalDefinite || referenceFeature->grammaticalRelexPersonOrStanfordProperNoun)
 										{
-											GIAEntityNodeArray[currentSentenceEntityNodeIndex] = property;
+											GIAEntityNodeArray[currentSentenceEntityNodeIndex] = substance;
 										}
 										#else
-										GIAEntityNodeArray[currentSentenceEntityNodeIndex] = property;
+										GIAEntityNodeArray[currentSentenceEntityNodeIndex] = substance;
 										#endif
 
 										if(coreferenceIsPronoun)
@@ -763,10 +763,10 @@ void linkPronounAndTextualContextReferencesStanfordCoreNLP(Sentence * currentSen
 											featureArrayTemp[currentSentenceEntityNodeIndex]->isPronounReference = true;
 										}
 									}
-									conceptHasAProperty = true;
+									conceptHasASubstance = true;
 								}
-								#ifndef GIA_USE_ORIGINAL_PRONOMINAL_COREFERENCE_RESOLUTION_IGNORE_PROPERTIES_TAKE_CONCEPTS_ONLY
-								if(!conceptHasAProperty)
+								#ifndef GIA_USE_ORIGINAL_PRONOMINAL_COREFERENCE_RESOLUTION_IGNORE_SUBSTANCES_TAKE_CONCEPTS_ONLY
+								if(!conceptHasASubstance)
 								{
 									#ifdef GIA_STANFORD_CORENLP_CODEPENDENCY_PRONOMINAL_REFERENCING_DEBUG
 									cout << "referenceSourceHasBeenFound: assigning " << GIAEntityNodeArray[currentSentenceEntityNodeIndex]->entityName << " to " << referenceSource->entityName << "." << endl;
@@ -1348,7 +1348,7 @@ void createGIACoreferenceInListBasedUponIdentifiedReferenceSet(unordered_map<str
 				cout << "conceptEntityMatchingCurrentQueryEntity->entityName = " << conceptEntityMatchingCurrentQueryEntity->entityName << endl;
 				#endif
 
-				//now start matching structure search for all properties of the identical concept node (to current query entity name) in Semantic Network
+				//now start matching structure search for all substances of the identical concept node (to current query entity name) in Semantic Network
 
 				int numberOfMatchedNodesTemp = 0;
 				int numberOfMatchedNodesRequiredSynonymnDetectionTemp = 0;
@@ -1552,7 +1552,7 @@ void linkAdvancedReferencesGIA(Sentence * currentSentenceInList, bool GIAEntityN
 							GIAEntityNode * referenceSourceConceptEntity = findOrAddConceptEntityNodeByNameSimpleWrapper(&(currentMentionInList->entityName), &entityNameFound, entityNodesActiveListConcepts);
 							if(entityNameFound)
 							{
-								//now find the property in the referenceSource concept entity that matches the referenceSource idActiveList (there is no concept linking; as concept nodes are identical for reference and referenceSource)
+								//now find the substance in the referenceSource concept entity that matches the referenceSource idActiveList (there is no concept linking; as concept nodes are identical for reference and referenceSource)
 								for(vector<GIAEntityConnection*>::iterator connectionIter = referenceSourceConceptEntity->AssociatedInstanceNodeList->begin(); connectionIter != referenceSourceConceptEntity->AssociatedInstanceNodeList->end(); connectionIter++)
 								{
 									//cout << "ad4" << endl;
@@ -1596,8 +1596,8 @@ void linkAdvancedReferencesGIA(Sentence * currentSentenceInList, bool GIAEntityN
 						{
 							int referenceEntityIndex = currentMentionInList->entityIndex;
 
-							//create a new property and share it between the reference and the reference source
-							GIAEntityNodeArray[referenceEntityIndex] = addPropertyToPropertyDefinition(GIAEntityNodeArray[referenceEntityIndex]);
+							//create a new substance and share it between the reference and the reference source
+							GIAEntityNodeArray[referenceEntityIndex] = addSubstanceToSubstanceDefinition(GIAEntityNodeArray[referenceEntityIndex]);
 							GIAEntityNodeArray[intrasentenceReferenceSourceIndex] = GIAEntityNodeArray[referenceEntityIndex];
 							#ifdef GIA_ADVANCED_REFERENCING_PREVENT_DOUBLE_LINKS
 							GIAEntityNodeArray[intrasentenceReferenceSourceIndex]->wasReferenceTemp = true;
@@ -1753,9 +1753,9 @@ void linkAdvancedReferencesGIA(Sentence * currentSentenceInList, bool GIAEntityN
 /*
 void identifyEntityTypesLocal(Relation * currentRelationInList, int NLPdependencyRelationsType, GIAEntityNode * governor, GIAEntityNode * dependent)
 {
-	//possessive of properties [NB plural/singular indicates definite noun - eg a robin, the robin, the robins - which is therefore a property (entity instance):
+	//possessive of substances [NB plural/singular indicates definite noun - eg a robin, the robin, the robins - which is therefore a substance (entity instance):
 
-	//possessive of properties:
+	//possessive of substances:
 
 	bool passed = false;
 	for(int i=0; i<RELATION_TYPE_POSSESSIVE_NUMBER_OF_TYPES; i++)
@@ -1768,13 +1768,13 @@ void identifyEntityTypesLocal(Relation * currentRelationInList, int NLPdependenc
 	//if(currentRelationInList->relationType == RELATION_TYPE_POSSESSIVE)
 	if(passed)
 	{
-		dependent->hasPropertyTemp = true;
+		dependent->hasSubstanceTemp = true;
 		#ifdef GIA_ENABLE_REFERENCE_LINKING_BASED_UPON_PRONOUNS_RELEX_USE_ORIGINAL_KNOWN_WORKING_CODE
-		dependent->hasPropertyTemp2 = true;	//only required for linkPronounReferencesRelex(). Not necessary otherwise, as this is set in GIATranslatorOperations.cpp
+		dependent->hasSubstanceTemp2 = true;	//only required for linkPronounReferencesRelex(). Not necessary otherwise, as this is set in GIATranslatorOperations.cpp
 		#endif
 	}
 
-	//possessive of properties:
+	//possessive of substances:
 
 	passed = false;
 	for(int i=0; i<RELATION_TYPE_ADJECTIVE_NUMBER_OF_TYPES; i++)
@@ -1791,9 +1791,9 @@ void identifyEntityTypesLocal(Relation * currentRelationInList, int NLPdependenc
 
 		if(passed2)
 		{
-			governor->hasPropertyTemp = true;
+			governor->hasSubstanceTemp = true;
 			#ifdef GIA_ENABLE_REFERENCE_LINKING_BASED_UPON_PRONOUNS_RELEX_USE_ORIGINAL_KNOWN_WORKING_CODE
-			governor->hasPropertyTemp2 = true;	//only required for linkPronounReferencesRelex(). Not necessary otherwise, as this is set in GIATranslatorOperations.cpp
+			governor->hasSubstanceTemp2 = true;	//only required for linkPronounReferencesRelex(). Not necessary otherwise, as this is set in GIATranslatorOperations.cpp
 			#endif
 		}
 	}

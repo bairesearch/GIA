@@ -23,7 +23,7 @@
  * File Name: GIATranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o1a 09-August-2012
+ * Project Version: 1o2a 10-August-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -36,13 +36,13 @@
 
 static long currentEntityNodeIDInCompleteList;				//For GIA XML generation only
 static long currentEntityNodeIDInConceptEntityNodesList;		//For GIA XML generation only
-static long currentEntityNodeIDInPropertyEntityNodesList;		//For GIA XML generation only
+static long currentEntityNodeIDInSubstanceEntityNodesList;		//For GIA XML generation only
 static long currentEntityNodeIDInActionEntityNodesList;			//For GIA XML generation only
 static long currentEntityNodeIDInConditionEntityNodesList;		//For GIA XML generation only
 
 static vector<GIAEntityNode*> * entityNodesActiveListComplete;		//For GIA XML generation only
 //static vector<GIAEntityNode*> * entityNodesActiveListConcepts;
-static vector<GIAEntityNode*> * entityNodesActiveListProperties;		//For GIA XML generation only
+static vector<GIAEntityNode*> * entityNodesActiveListSubstances;		//For GIA XML generation only
 static vector<GIAEntityNode*> * entityNodesActiveListActions;			//For GIA XML generation only
 static vector<GIAEntityNode*> * entityNodesActiveListConditions;		//For GIA XML generation only
 
@@ -62,7 +62,7 @@ void initialiseGIATranslatorForTexualContextOperations()
 
 	currentEntityNodeIDInCompleteList = 0;
 	currentEntityNodeIDInConceptEntityNodesList = 0;
-	currentEntityNodeIDInPropertyEntityNodesList = 0;
+	currentEntityNodeIDInSubstanceEntityNodesList = 0;
 	currentEntityNodeIDInActionEntityNodesList = 0;
 	currentEntityNodeIDInConditionEntityNodesList = 0;
 
@@ -172,7 +172,7 @@ bool isAdjectiveNotConnectedToObjectOrSubject(Sentence * currentSentenceInList, 
 				if(partnerTypeRequiredFound)
 				{
 					if(currentRelationInList->relationDependentIndex == currentRelationInList3->relationDependentIndex)
-					{//do not add property, if _advmod argument (eg 'by') is connected to a subject/object
+					{//do not add substance, if _advmod argument (eg 'by') is connected to a subject/object
 						passed2 = false;
 						//cout << "ASFS" << endl;
 					}
@@ -193,12 +193,36 @@ bool isAdjectiveNotConnectedToObjectOrSubject(Sentence * currentSentenceInList, 
 }
 
 
+//this has been created based upon addOrConnectPropertyToEntity
+GIAEntityNode * connectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * propertyEntity, bool sameReferenceSet)
+{
+	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
+	if(!(propertyEntity->disabled))
+	{
+	if(!(thingEntity->disabled))
+	{
+	#endif
 
+		thingEntity->hasSubstanceTemp = true;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
+
+		//configure entity node containing this substance
+		writeVectorConnection(thingEntity, propertyEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES, sameReferenceSet);
+		writeVectorConnection(propertyEntity, thingEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_PROPERTIES, sameReferenceSet);
+
+	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
+	}
+	}
+	#endif
+	
+	return propertyEntity;	//just return original propertyEntity (for compatibility)
+}
+
+//changed all instances of addOrConnectPropertyToEntity to addPropertyToEntity - now must rely upon GIATranslatorDefineSubstances.cpp completely to define substances
 GIAEntityNode * addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * propertyEntity, bool sameReferenceSet)
 {
-	GIAEntityNode * newOrExistingProperty = propertyEntity;
+	GIAEntityNode * newOrExistingSubstance = propertyEntity;
 
-	#ifdef GIA_DO_NOT_ADD_PROPERTIES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
+	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
 	if(!(propertyEntity->disabled))
 	{
 	if(!(thingEntity->disabled))
@@ -206,64 +230,65 @@ GIAEntityNode * addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEnt
 	#endif
 		if(!(propertyEntity->isConcept))
 		{
-			GIAEntityNode * existingProperty = propertyEntity;
+			GIAEntityNode * existingSubstance = propertyEntity;
 
 			/*
-			if(propertyEntity->hasQualityTemp)
+			if(substanceEntity->hasQualityTemp)
 			{
-				existingProperty->hasQuality = true;
+				existingSubstance->hasQuality = true;
 			}
 			*/
 
-			thingEntity->hasPropertyTemp = true;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
+			thingEntity->hasSubstanceTemp = true;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
 
-			//configure entity node containing this property
-			writeVectorConnection(thingEntity, existingProperty, GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES, sameReferenceSet);
-			writeVectorConnection(existingProperty, thingEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_PROPERTIES, sameReferenceSet);
+			//configure entity node containing this substance
+			writeVectorConnection(thingEntity, existingSubstance, GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES, sameReferenceSet);
+			writeVectorConnection(existingSubstance, thingEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_PROPERTIES, sameReferenceSet);
 
-			newOrExistingProperty = existingProperty;
+			newOrExistingSubstance = existingSubstance;
 
 		}
 		else
 		{
 			//cout << "thingEntity = " << thingEntity->entityName << endl;
 
-			GIAEntityNode * newProperty = addProperty(propertyEntity);
+			GIAEntityNode * newSubstance = addSubstance(propertyEntity);
 
 			/*
-			if(propertyEntity->hasQualityTemp)
+			if(substanceEntity->hasQualityTemp)
 			{
-				newProperty->hasQuality = true;
+				newSubstance->hasQuality = true;
 			}
 			*/
 
-			writeVectorConnection(newProperty, thingEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_PROPERTIES, sameReferenceSet);
-			writeVectorConnection(thingEntity, newProperty, GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES, sameReferenceSet);
+			writeVectorConnection(newSubstance, thingEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_PROPERTIES, sameReferenceSet);
+			writeVectorConnection(thingEntity, newSubstance, GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES, sameReferenceSet);
 
-			thingEntity->hasPropertyTemp = true;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
+			thingEntity->hasSubstanceTemp = true;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
 
-			newOrExistingProperty = newProperty;
+			newOrExistingSubstance = newSubstance;
 		}
-	#ifdef GIA_DO_NOT_ADD_PROPERTIES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
+	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
 	}
 	}
 	#endif
 
-	return newOrExistingProperty;
+	return newOrExistingSubstance;
 }
 
-GIAEntityNode * addPropertyToPropertyDefinition(GIAEntityNode * propertyEntity)
+
+GIAEntityNode * addSubstanceToSubstanceDefinition(GIAEntityNode * substanceEntity)
 {
 	//cout << "df1" << endl;
-	GIAEntityNode * newOrExistingProperty = propertyEntity;
+	GIAEntityNode * newOrExistingSubstance = substanceEntity;
 
-	#ifdef GIA_DO_NOT_ADD_PROPERTIES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
-	if(!(propertyEntity->disabled))
+	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
+	if(!(substanceEntity->disabled))
 	{
 	#endif
-		if(propertyEntity->isConcept)
+		if(substanceEntity->isConcept)
 		{
-			//cout << "\t\t addPropertyToPropertyDefinition; propertyEntity->entityName = " << propertyEntity->entityName << endl;
+			//cout << "\t\t addSubstanceToSubstanceDefinition; substanceEntity->entityName = " << substanceEntity->entityName << endl;
 
 			#ifdef GIA_IMPLEMENT_NON_STANFORD_CORE_NLP_CODEPENDENCIES_CROSS_SENTENCE_REFERENCING
 				/*
@@ -274,15 +299,15 @@ GIAEntityNode * addPropertyToPropertyDefinition(GIAEntityNode * propertyEntity)
 				The blue chicken is late.
 				*/
 				#ifdef GIA_ENABLE_REFERENCE_LINKING_DO_NOT_USE_IF_REFERENCE_IS_NOT_DEFINITE_OR_PROPER_NOUN
-				if(checkEntityHasPropertyThatWasDeclaredInContext(propertyEntity) && (propertyEntity->grammaticalDefiniteTemp || propertyEntity->grammaticalRelexPersonOrStanfordProperNounTemp))	//NB the grammaticalRelexPersonOrStanfordProperNounTemp condition should only be required here if GIA_ASSIGN_INSTANCE_PROPERTY_TO_PROPER_NOUNS is set to true
+				if(checkEntityHasSubstanceThatWasDeclaredInContext(substanceEntity) && (substanceEntity->grammaticalDefiniteTemp || substanceEntity->grammaticalRelexPersonOrStanfordProperNounTemp))	//NB the grammaticalRelexPersonOrStanfordProperNounTemp condition should only be required here if GIA_ASSIGN_SUBSTANCE_TO_PROPER_NOUNS is set to true
 				#else
-				if(checkEntityHasPropertyThatWasDeclaredInContext(propertyEntity))
+				if(checkEntityHasSubstanceThatWasDeclaredInContext(substanceEntity))
 				#endif
 				{
-					//cout << "\tbreak; assigning: propertyEntity->entityName = " << propertyEntity->entityName << endl;
-					newOrExistingProperty = getEntityPropertyThatWasDeclaredInContext(propertyEntity);
+					//cout << "\tbreak; assigning: substanceEntity->entityName = " << substanceEntity->entityName << endl;
+					newOrExistingSubstance = getEntitySubstanceThatWasDeclaredInContext(substanceEntity);
 					/*
-					if(newOrExistingProperty->isConcept)
+					if(newOrExistingSubstance->isConcept)
 					{
 						cout << "\tERROR" << endl;
 					}
@@ -290,93 +315,93 @@ GIAEntityNode * addPropertyToPropertyDefinition(GIAEntityNode * propertyEntity)
 				}
 				else
 				{
-					//cout << "\tbreak; adding: propertyEntity->entityName = " << propertyEntity->entityName << endl;
-					newOrExistingProperty = addProperty(propertyEntity);
+					//cout << "\tbreak; adding: substanceEntity->entityName = " << substanceEntity->entityName << endl;
+					newOrExistingSubstance = addSubstance(substanceEntity);
 				}
 			#else
-				//cout << "\tbreak2; propertyEntity->entityName = " << propertyEntity->entityName << endl;
-				newOrExistingProperty = addProperty(propertyEntity);
+				//cout << "\tbreak2; substanceEntity->entityName = " << substanceEntity->entityName << endl;
+				newOrExistingSubstance = addSubstance(substanceEntity);
 
 				/*
-				cout << "addPropertyToPropertyDefinition():" << endl;
-				cout << "\tnewOrExistingProperty->entityName = " << newOrExistingProperty->entityName << endl;
+				cout << "addSubstanceToSubstanceDefinition():" << endl;
+				cout << "\tnewOrExistingSubstance->entityName = " << newOrExistingSubstance->entityName << endl;
 				*/
 			#endif
 		}
 		else
 		{
-			newOrExistingProperty = propertyEntity;
+			newOrExistingSubstance = substanceEntity;
 		}
 
-	#ifdef GIA_DO_NOT_ADD_PROPERTIES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
+	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
 	}
 	#endif
 	//cout << "df2" << endl;
 
-	return newOrExistingProperty;
+	return newOrExistingSubstance;
 }
 
-void forwardTimeInfoToNewProperty(GIAEntityNode * entity, GIAEntityNode * newProperty)
+void forwardTimeInfoToNewSubstance(GIAEntityNode * entity, GIAEntityNode * newSubstance)
 {
 	if(entity->hasAssociatedTime)
 	{
-		newProperty->hasAssociatedTime = true;
+		newSubstance->hasAssociatedTime = true;
 	}
-	newProperty->NormalizedNERTemp = entity->NormalizedNERTemp;	//always required (not just for time info / time condition related)
-	newProperty->NERTemp = entity->NERTemp;
+	newSubstance->NormalizedNERTemp = entity->NormalizedNERTemp;	//always required (not just for time info / time condition related)
+	newSubstance->NERTemp = entity->NERTemp;
 
 	if(entity->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE] == true)
 	{
-		newProperty->hasProgressiveTemp = true;
-		//cout << "property has progressive (eg lying/sitting/being happy)" << endl;
+		newSubstance->hasProgressiveTemp = true;
+		//cout << "substance has progressive (eg lying/sitting/being happy)" << endl;
 	}
 
-	if(entity->grammaticalTenseTemp > GRAMMATICAL_TENSE_PRESENT || newProperty->hasProgressiveTemp)
+	if(entity->grammaticalTenseTemp > GRAMMATICAL_TENSE_PRESENT || newSubstance->hasProgressiveTemp)
 	{//ie, tense = GRAMMATICAL_TENSE_FUTURE/GRAMMATICAL_TENSE_PAST
-		addTenseOnlyTimeConditionToProperty(newProperty, entity->grammaticalTenseTemp, newProperty->hasProgressiveTemp);
+		addTenseOnlyTimeConditionToSubstance(newSubstance, entity->grammaticalTenseTemp, newSubstance->hasProgressiveTemp);
 	}
 }
 
-GIAEntityNode * addProperty(GIAEntityNode * entity)
+GIAEntityNode * addSubstance(GIAEntityNode * entity)
 {
 
-	//configure property node
-	GIAEntityNode * newProperty = new GIAEntityNode();
+	//configure substance node
+	GIAEntityNode * newSubstance = new GIAEntityNode();
 	#ifdef GIA_USE_DATABASE
-	newProperty->added = true;
+	newSubstance->added = true;
 	#endif
 
 	if(saveNetwork)
 	{
-		newProperty->idActiveList = currentEntityNodeIDInCompleteList;
-		newProperty->idActiveEntityTypeList = currentEntityNodeIDInPropertyEntityNodesList;
+		newSubstance->idActiveList = currentEntityNodeIDInCompleteList;
+		newSubstance->idActiveEntityTypeList = currentEntityNodeIDInSubstanceEntityNodesList;
 
-		entityNodesActiveListComplete->push_back(newProperty);
+		entityNodesActiveListComplete->push_back(newSubstance);
 		currentEntityNodeIDInCompleteList++;
-		entityNodesActiveListProperties->push_back(newProperty);
-		currentEntityNodeIDInPropertyEntityNodesList++;
+		entityNodesActiveListSubstances->push_back(newSubstance);
+		currentEntityNodeIDInSubstanceEntityNodesList++;
 	}
 	else
 	{
-		newProperty->idActiveList = currentEntityNodeIDInSentenceCompleteList;
+		newSubstance->idActiveList = currentEntityNodeIDInSentenceCompleteList;
 		currentEntityNodeIDInSentenceCompleteList++;
 	}
 
-	newProperty->entityName = entity->entityName;
+	newSubstance->entityName = entity->entityName;
 	#ifdef GIA_USE_NLG_NO_MORPHOLOGY_GENERATOR
-	newProperty->wordOrig = entity->wordOrig;
+	newSubstance->wordOrig = entity->wordOrig;
 	#endif
-	newProperty->idInstance = determineNextIdInstance(entity);
-	newProperty->isProperty = true;
+	newSubstance->idInstance = determineNextIdInstance(entity);
+	newSubstance->isSubstance = true;
 
 	entity->hasAssociatedInstance = true;
 	entity->hasAssociatedInstanceTemp = true;	////temporary: used for GIA translator only - overwritten every time a new sentence is parsed
-	newProperty->wordNetPOS = entity->wordNetPOS;
-	newProperty->grammaticalNumber = entity->grammaticalNumber;
-	forwardTimeInfoToNewProperty(entity, newProperty);
+	newSubstance->wordNetPOS = entity->wordNetPOS;
+	newSubstance->grammaticalNumber = entity->grammaticalNumber;
+	forwardTimeInfoToNewSubstance(entity, newSubstance);
 
-	writeVectorConnection(newProperty, entity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE, BASIC_DEFINING_INSTANCE_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN);
-	writeVectorConnection(entity, newProperty, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES, VECTOR_ASSOCIATED_INSTANCES_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN);
+	writeVectorConnection(newSubstance, entity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE, BASIC_DEFINING_INSTANCE_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN);
+	writeVectorConnection(entity, newSubstance, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES, VECTOR_ASSOCIATED_INSTANCES_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN);
 
 	#ifdef GIA_IMPLEMENT_NON_STANFORD_CORE_NLP_CODEPENDENCIES_CROSS_SENTENCE_REFERENCING
 	entity->entityAlreadyDeclaredInThisContext = true;	//temporary: used for GIA translator reference paser only - cleared every time a new context (eg paragraph/manuscript) is parsed
@@ -387,60 +412,60 @@ GIAEntityNode * addProperty(GIAEntityNode * entity)
 	if(entity->isQuery)
 	{
 		entity->isQuery = false;
-		newProperty->isQuery = true;
+		newSubstance->isQuery = true;
 		#ifdef GIA_SUPPORT_COMPARISON_VARIABLE_DEFINITION_VIA_ALTERNATE_METHOD_EG_SUPPORT_WHICH_QUERIES_ADVANCED
 		if(entity->isWhichQuery)
 		{
 			entity->isWhichQuery = false;
-			newProperty->isWhichQuery = true;
+			newSubstance->isWhichQuery = true;
 		}
 		#endif
 	}
 	#endif
 
 
-	return newProperty;
+	return newSubstance;
 }
 
 
-void upgradePropertyToAction(GIAEntityNode * property)
+void upgradeSubstanceToAction(GIAEntityNode * substance)
 {
-	GIAEntityNode * existingAction = property;
+	GIAEntityNode * existingAction = substance;
 
-	//CHECK THIS; must remove from property list, and add to action list
+	//CHECK THIS; must remove from substance list, and add to action list
 	(existingAction->entityNodeDefiningThisInstance->back())->entity->hasAssociatedInstanceIsAction = true;
-	existingAction->isProperty = false;
+	existingAction->isSubstance = false;
 	existingAction->isAction = true;
 
 	if(saveNetwork)
 	{
 		//cout << "existingAction->idActiveEntityTypeList = " << existingAction->idActiveEntityTypeList << endl;
 		int i=0;
-		bool propertyEntityNodesListIteratorIsFound = false;
- 		vector<GIAEntityNode*>::iterator propertyEntityNodesListIteratorFound;
-		for(vector<GIAEntityNode*>::iterator propertyEntityNodesListIterator = entityNodesActiveListProperties->begin(); propertyEntityNodesListIterator != entityNodesActiveListProperties->end(); propertyEntityNodesListIterator++)
+		bool substanceEntityNodesListIteratorIsFound = false;
+ 		vector<GIAEntityNode*>::iterator substanceEntityNodesListIteratorFound;
+		for(vector<GIAEntityNode*>::iterator substanceEntityNodesListIterator = entityNodesActiveListSubstances->begin(); substanceEntityNodesListIterator != entityNodesActiveListSubstances->end(); substanceEntityNodesListIterator++)
 		{
-			if((*propertyEntityNodesListIterator)->idActiveEntityTypeList == existingAction->idActiveEntityTypeList)
+			if((*substanceEntityNodesListIterator)->idActiveEntityTypeList == existingAction->idActiveEntityTypeList)
 			{
-				propertyEntityNodesListIteratorFound = propertyEntityNodesListIterator;
-				propertyEntityNodesListIteratorIsFound = true;
+				substanceEntityNodesListIteratorFound = substanceEntityNodesListIterator;
+				substanceEntityNodesListIteratorIsFound = true;
 			}
 			//cout << "i = " << i << endl;
-			//cout << "(*propertyEntityNodesListIterator)->entityName = " << (*propertyEntityNodesListIterator)->entityName << endl;
+			//cout << "(*substanceEntityNodesListIterator)->entityName = " << (*substanceEntityNodesListIterator)->entityName << endl;
 			i++;
 		}
-		if(!propertyEntityNodesListIteratorIsFound)
+		if(!substanceEntityNodesListIteratorIsFound)
 		{
 			cout << "error: !...EntityNodesListIteratorIsFound" << endl;
 			exit(0);
 		}
-		entityNodesActiveListProperties->erase(propertyEntityNodesListIteratorFound);
+		entityNodesActiveListSubstances->erase(substanceEntityNodesListIteratorFound);
 
 		/*//removed 8 May 2012
-		vector<GIAEntityNode*>::iterator propertyEntityNodesListIterator = entityNodesActiveListProperties->begin();
-		advance(propertyEntityNodesListIterator,existingAction->idActiveEntityTypeList);
-		entityNodesActiveListProperties->erase(propertyEntityNodesListIterator);
-		currentEntityNodeIDInPropertyEntityNodesList--;
+		vector<GIAEntityNode*>::iterator substanceEntityNodesListIterator = entityNodesActiveListSubstances->begin();
+		advance(substanceEntityNodesListIterator,existingAction->idActiveEntityTypeList);
+		entityNodesActiveListSubstances->erase(substanceEntityNodesListIterator);
+		currentEntityNodeIDInSubstanceEntityNodesList--;
 		*/
 
 		entityNodesActiveListActions->push_back(existingAction);
@@ -448,13 +473,13 @@ void upgradePropertyToAction(GIAEntityNode * property)
 	}
 }
 
-GIAEntityNode * addActionToActionDefinitionDefineProperties(GIAEntityNode * actionEntity)
+GIAEntityNode * addActionToActionDefinitionDefineSubstances(GIAEntityNode * actionEntity)
 {
 	//cout << "SD1" << endl;
 
 	GIAEntityNode * newOrExistingAction = actionEntity;
 
-	#ifdef GIA_DO_NOT_ADD_PROPERTIES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
+	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
 	if(!(actionEntity->disabled))
 	{
 	#endif
@@ -463,13 +488,13 @@ GIAEntityNode * addActionToActionDefinitionDefineProperties(GIAEntityNode * acti
 		{
 			#ifdef GIA_IMPLEMENT_NON_STANFORD_CORE_NLP_CODEPENDENCIES_CROSS_SENTENCE_REFERENCING
 				#ifdef GIA_ENABLE_REFERENCE_LINKING_DO_NOT_USE_IF_REFERENCE_IS_NOT_DEFINITE_OR_PROPER_NOUN
-				if(checkEntityHasPropertyThatWasDeclaredInContext(actionEntity) && (actionEntity->grammaticalDefiniteTemp || actionEntity->grammaticalRelexPersonOrStanfordProperNounTemp))	//NB the grammaticalRelexPersonOrStanfordProperNounTemp condition should only be required here if GIA_ASSIGN_INSTANCE_PROPERTY_TO_PROPER_NOUNS is set to true
+				if(checkEntityHasSubstanceThatWasDeclaredInContext(actionEntity) && (actionEntity->grammaticalDefiniteTemp || actionEntity->grammaticalRelexPersonOrStanfordProperNounTemp))	//NB the grammaticalRelexPersonOrStanfordProperNounTemp condition should only be required here if GIA_ASSIGN_SUBSTANCE_TO_PROPER_NOUNS is set to true
 				#else
-				if(checkEntityHasPropertyThatWasDeclaredInContext(actionEntity))
+				if(checkEntityHasSubstanceThatWasDeclaredInContext(actionEntity))
 				#endif
 				{
 					//cout << "\tbreak; actionEntity->entityName = " << actionEntity->entityName << endl;
-					newOrExistingAction = getEntityPropertyThatWasDeclaredInContext(actionEntity);
+					newOrExistingAction = getEntitySubstanceThatWasDeclaredInContext(actionEntity);
 				}
 				else
 				{
@@ -483,8 +508,8 @@ GIAEntityNode * addActionToActionDefinitionDefineProperties(GIAEntityNode * acti
 		else
 		{
 			if(actionEntity->isAction == false)
-			{//upgrade associated property to action
-				upgradePropertyToAction(actionEntity);
+			{//upgrade associated substance to action
+				upgradeSubstanceToAction(actionEntity);
 				newOrExistingAction = actionEntity;
 			}
 			else
@@ -497,7 +522,7 @@ GIAEntityNode * addActionToActionDefinitionDefineProperties(GIAEntityNode * acti
 			}
 		}
 
-	#ifdef GIA_DO_NOT_ADD_PROPERTIES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
+	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
 	}
 	#endif
 
@@ -511,7 +536,7 @@ GIAEntityNode * addActionToActionDefinition(GIAEntityNode * actionEntity)
 {
 	GIAEntityNode * newOrExistingAction = actionEntity;
 
-	#ifdef GIA_DO_NOT_ADD_PROPERTIES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
+	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
 	if(!(actionEntity->disabled))
 	{
 	#endif
@@ -524,8 +549,8 @@ GIAEntityNode * addActionToActionDefinition(GIAEntityNode * actionEntity)
 		else
 		{
 			if(actionEntity->isAction == false)
-			{//upgrade associated property to action
-				upgradePropertyToAction(actionEntity);
+			{//upgrade associated substance to action
+				upgradeSubstanceToAction(actionEntity);
 				newOrExistingAction = actionEntity;
 			}
 			else
@@ -538,7 +563,7 @@ GIAEntityNode * addActionToActionDefinition(GIAEntityNode * actionEntity)
 			}
 		}
 
-	#ifdef GIA_DO_NOT_ADD_PROPERTIES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
+	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
 	}
 	#endif
 
@@ -587,9 +612,9 @@ GIAEntityNode * addAction(GIAEntityNode * actionEntity)
 	actionEntity->hasAssociatedInstanceTemp = true;
 	newAction->wordNetPOS = actionEntity->wordNetPOS;
 	newAction->isAction = true;
-	//WHY WOULD THIS EVER BE REQURIED?; newAction->entityNodeContainingThisProperty = NULL;
+	//WHY WOULD THIS EVER BE REQURIED?; newAction->entityNodeContainingThisSubstance = NULL;
 
-	forwardTimeInfoToNewProperty(actionEntity, newAction);
+	forwardTimeInfoToNewSubstance(actionEntity, newAction);
 
 	#ifdef GIA_SUPPORT_COMPARISON_VARIABLE_DEFINITION_VIA_ALTERNATE_METHOD_EG_SUPPORT_WHICH_QUERIES
 	if(actionEntity->isQuery)
@@ -623,14 +648,14 @@ GIAEntityNode * addAction(GIAEntityNode * actionEntity)
 
 /*
 #ifdef GIA_USE_TIME_NODE_INDEXING
-void addTenseOnlyTimeConditionToProperty(GIAEntityNode * propertyNode, int tense, vector<GIATimeConditionNode*> *timeConditionNodesActiveList, vector<long> *timeConditionNumbersActiveList)
+void addTenseOnlyTimeConditionToSubstance(GIAEntityNode * substanceNode, int tense, vector<GIATimeConditionNode*> *timeConditionNodesActiveList, vector<long> *timeConditionNumbersActiveList)
 #else
-void addTenseOnlyTimeConditionToProperty(GIAEntityNode * propertyNode, int tense)
+void addTenseOnlyTimeConditionToSubstance(GIAEntityNode * substanceNode, int tense)
 #endif
 */
-void addTenseOnlyTimeConditionToProperty(GIAEntityNode * propertyNode, int tense, bool isProgressive)
+void addTenseOnlyTimeConditionToSubstance(GIAEntityNode * substanceNode, int tense, bool isProgressive)
 {
-	propertyNode->conditionType = CONDITION_NODE_TYPE_TIME;
+	substanceNode->conditionType = CONDITION_NODE_TYPE_TIME;
 
 	/*
 	if(isProgressive)
@@ -659,14 +684,14 @@ void addTenseOnlyTimeConditionToProperty(GIAEntityNode * propertyNode, int tense
 	{
 		newTimeCondition->isProgressive = true;
 	}
-	propertyNode->timeConditionNode = newTimeCondition;
+	substanceNode->timeConditionNode = newTimeCondition;
 
 
 }
 
 void addDefinitionToEntity(GIAEntityNode * thingEntity, GIAEntityNode * definitionEntity, bool sameReferenceSet)
 {
-	#ifdef GIA_DO_NOT_ADD_PROPERTIES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
+	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
 	if(!(thingEntity->disabled))
 	{
 	if(!(definitionEntity->disabled))
@@ -677,7 +702,7 @@ void addDefinitionToEntity(GIAEntityNode * thingEntity, GIAEntityNode * definiti
 		writeVectorConnection(thingEntity, definitionEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITIONS, sameReferenceSet);
 		writeVectorConnection(definitionEntity, thingEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_DEFINITIONS, sameReferenceSet);
 
-	#ifdef GIA_DO_NOT_ADD_PROPERTIES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
+	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
 	}
 	}
 	#endif
@@ -685,10 +710,10 @@ void addDefinitionToEntity(GIAEntityNode * thingEntity, GIAEntityNode * definiti
 
 	//conditions required to be added [eg when, where, how, why]
 	//replace action if already existant
-GIAEntityNode * addActionToEntity(GIAEntityNode * subjectEntity, GIAEntityNode * objectEntity, GIAEntityNode * actionEntity, bool sameReferenceSetSubject, bool sameReferenceSetObject)
+GIAEntityNode * addOrConnectActionToEntity(GIAEntityNode * subjectEntity, GIAEntityNode * objectEntity, GIAEntityNode * actionEntity, bool sameReferenceSetSubject, bool sameReferenceSetObject)
 {
 	GIAEntityNode * newOrExistingAction = actionEntity;
-	#ifdef GIA_DO_NOT_ADD_PROPERTIES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
+	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
 	if(!(subjectEntity->disabled))
 	{
 	if(!(objectEntity->disabled))
@@ -699,11 +724,11 @@ GIAEntityNode * addActionToEntity(GIAEntityNode * subjectEntity, GIAEntityNode *
 
 	newOrExistingAction = addActionToActionDefinition(actionEntity);
 
-	addActionInstanceToSubject(subjectEntity, newOrExistingAction, sameReferenceSetSubject);
+	connectActionInstanceToSubject(subjectEntity, newOrExistingAction, sameReferenceSetSubject);
 
-	addActionInstanceToObject(objectEntity, newOrExistingAction, sameReferenceSetObject);
+	connectActionInstanceToObject(objectEntity, newOrExistingAction, sameReferenceSetObject);
 
-	#ifdef GIA_DO_NOT_ADD_PROPERTIES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
+	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
 	}
 	}
 	}
@@ -712,7 +737,7 @@ GIAEntityNode * addActionToEntity(GIAEntityNode * subjectEntity, GIAEntityNode *
 }
 
 
-void addActionInstanceToSubject(GIAEntityNode * subjectEntity, GIAEntityNode * newOrExistingAction, bool sameReferenceSet)
+void connectActionInstanceToSubject(GIAEntityNode * subjectEntity, GIAEntityNode * newOrExistingAction, bool sameReferenceSet)
 {
 	//configure subject entity node
 	writeVectorConnection(subjectEntity, newOrExistingAction, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTIONS, sameReferenceSet);
@@ -724,19 +749,19 @@ void addActionInstanceToSubject(GIAEntityNode * subjectEntity, GIAEntityNode * n
 }
 
 
-GIAEntityNode * addActionToSubject(GIAEntityNode * subjectEntity, GIAEntityNode * actionEntity, bool sameReferenceSet)
+GIAEntityNode * addOrConnectActionToSubject(GIAEntityNode * subjectEntity, GIAEntityNode * actionEntity, bool sameReferenceSet)
 {
 	GIAEntityNode * newOrExistingAction = actionEntity;
 
-	#ifdef GIA_DO_NOT_ADD_PROPERTIES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
+	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
 	if(!(subjectEntity->disabled))
 	{
 	if(!(actionEntity->disabled))
 	{
 	#endif
 		newOrExistingAction = addActionToActionDefinition(actionEntity);
-		addActionInstanceToSubject(subjectEntity, newOrExistingAction, sameReferenceSet);
-	#ifdef GIA_DO_NOT_ADD_PROPERTIES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
+		connectActionInstanceToSubject(subjectEntity, newOrExistingAction, sameReferenceSet);
+	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
 	}
 	}
 	#endif
@@ -744,7 +769,7 @@ GIAEntityNode * addActionToSubject(GIAEntityNode * subjectEntity, GIAEntityNode 
 	return newOrExistingAction;
 }
 
-void addActionInstanceToObject(GIAEntityNode * objectEntity, GIAEntityNode * newOrExistingAction, bool sameReferenceSet)
+void connectActionInstanceToObject(GIAEntityNode * objectEntity, GIAEntityNode * newOrExistingAction, bool sameReferenceSet)
 {
 	//configure object entity node
 	writeVectorConnection(objectEntity, newOrExistingAction, GIA_ENTITY_VECTOR_CONNECTION_TYPE_INCOMING_ACTIONS, sameReferenceSet);
@@ -753,11 +778,11 @@ void addActionInstanceToObject(GIAEntityNode * objectEntity, GIAEntityNode * new
 	objectEntity->isObjectTemp = true; 	//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
 }
 
-GIAEntityNode * addActionToObject(GIAEntityNode * objectEntity, GIAEntityNode * actionEntity, bool sameReferenceSet)
+GIAEntityNode * addOrConnectActionToObject(GIAEntityNode * objectEntity, GIAEntityNode * actionEntity, bool sameReferenceSet)
 {
 	GIAEntityNode * newOrExistingAction = actionEntity;
 
-	#ifdef GIA_DO_NOT_ADD_PROPERTIES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
+	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
 	if(!(objectEntity->disabled))
 	{
 	if(!(actionEntity->disabled))
@@ -766,8 +791,8 @@ GIAEntityNode * addActionToObject(GIAEntityNode * objectEntity, GIAEntityNode * 
 		//cout << "vf3a" << endl;
 		newOrExistingAction = addActionToActionDefinition(actionEntity);
 		//cout << "vf3b" << endl;
-		addActionInstanceToObject(objectEntity, newOrExistingAction, sameReferenceSet);
-	#ifdef GIA_DO_NOT_ADD_PROPERTIES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
+		connectActionInstanceToObject(objectEntity, newOrExistingAction, sameReferenceSet);
+	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
 	}
 	}
 	#endif
@@ -780,7 +805,7 @@ GIAEntityNode * addOrConnectConditionToEntity(GIAEntityNode * entityNode, GIAEnt
 {
 	GIAEntityNode * newOrExistingCondition = conditionTypeEntity;
 
-	#ifdef GIA_DO_NOT_ADD_PROPERTIES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
+	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
 	if(!(entityNode->disabled))
 	{
 	if(!(conditionEntityNode->disabled))
@@ -794,9 +819,9 @@ GIAEntityNode * addOrConnectConditionToEntity(GIAEntityNode * entityNode, GIAEnt
 
 			GIAEntityNode * existingCondition = conditionTypeEntity;
 
-			//entityNode->hasPropertyTemp = true;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
+			//entityNode->hasSubstanceTemp = true;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
 
-			//configure entity node containing this property
+			//configure entity node containing this substance
 			writeVectorConnection(existingCondition, entityNode, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT, sameReferenceSet);
 			writeVectorConnection(existingCondition, conditionEntityNode, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_OBJECT, sameReferenceSet);
 			writeVectorConnection(entityNode, existingCondition, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITIONS, sameReferenceSet);
@@ -816,12 +841,12 @@ GIAEntityNode * addOrConnectConditionToEntity(GIAEntityNode * entityNode, GIAEnt
 			writeVectorConnection(entityNode, newCondition, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITIONS, sameReferenceSet);
 			writeVectorConnection(conditionEntityNode, newCondition, GIA_ENTITY_VECTOR_CONNECTION_TYPE_INCOMING_CONDITIONS, sameReferenceSet);
 
-			//entityNode->hasPropertyTemp = true;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
+			//entityNode->hasSubstanceTemp = true;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
 
 			newOrExistingCondition = newCondition;
 		}
 
-	#ifdef GIA_DO_NOT_ADD_PROPERTIES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
+	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
 	}
 	}
 	}
@@ -851,7 +876,7 @@ GIAEntityNode * addOrConnectBeingDefinitionConditionToEntity(GIAEntityNode * ent
 {
 	GIAEntityNode * newOrExistingCondition = conditionTypeEntity;
 
-	#ifdef GIA_DO_NOT_ADD_PROPERTIES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
+	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
 	if(!(entityNode->disabled))
 	{
 	if(!(conditionDefinitionNode->disabled))
@@ -866,9 +891,9 @@ GIAEntityNode * addOrConnectBeingDefinitionConditionToEntity(GIAEntityNode * ent
 
 			GIAEntityNode * existingCondition = conditionTypeEntity;
 
-			//entityNode->hasPropertyTemp = true;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
+			//entityNode->hasSubstanceTemp = true;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
 
-			//configure entity node containing this property
+			//configure entity node containing this substance
 			writeVectorConnection(existingCondition, entityNode, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT, sameReferenceSet);
 			writeVectorConnection(entityNode, existingCondition, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITIONS, sameReferenceSet);
 			writeVectorConnection(existingCondition, conditionDefinitionNode, GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITIONS, sameReferenceSet);
@@ -890,12 +915,12 @@ GIAEntityNode * addOrConnectBeingDefinitionConditionToEntity(GIAEntityNode * ent
 			writeVectorConnection(newCondition, conditionDefinitionNode, GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITIONS, sameReferenceSet);
 			writeVectorConnection(conditionDefinitionNode, newCondition, GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_DEFINITIONS, sameReferenceSet);
 
-			//entityNode->hasPropertyTemp = true;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
+			//entityNode->hasSubstanceTemp = true;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
 
 			newOrExistingCondition = newCondition;
 		}
 
-	#ifdef GIA_DO_NOT_ADD_PROPERTIES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
+	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
 	}
 	}
 	}
@@ -904,14 +929,14 @@ GIAEntityNode * addOrConnectBeingDefinitionConditionToEntity(GIAEntityNode * ent
 	return newOrExistingCondition;
 }
 
-GIAEntityNode * addOrConnectHavingPropertyConditionToEntity(GIAEntityNode * entityNode, GIAEntityNode * conditionPropertyNode, GIAEntityNode * conditionTypeEntity, bool negative, bool sameReferenceSet)
+GIAEntityNode * addOrConnectHavingSubstanceConditionToEntity(GIAEntityNode * entityNode, GIAEntityNode * conditionSubstanceNode, GIAEntityNode * conditionTypeEntity, bool negative, bool sameReferenceSet)
 {
 	GIAEntityNode * newOrExistingCondition = conditionTypeEntity;
 
-	#ifdef GIA_DO_NOT_ADD_PROPERTIES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
+	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
 	if(!(entityNode->disabled))
 	{
-	if(!(conditionPropertyNode->disabled))
+	if(!(conditionSubstanceNode->disabled))
 	{
 	if(!(conditionTypeEntity->disabled))
 	{
@@ -923,13 +948,13 @@ GIAEntityNode * addOrConnectHavingPropertyConditionToEntity(GIAEntityNode * enti
 
 			GIAEntityNode * existingCondition = conditionTypeEntity;
 
-			//entityNode->hasPropertyTemp = true;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
+			//entityNode->hasSubstanceTemp = true;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
 
-			//configure entity node containing this property
+			//configure entity node containing this substance
 			writeVectorConnection(existingCondition, entityNode, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT, sameReferenceSet);
 			writeVectorConnection(entityNode, existingCondition, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITIONS, sameReferenceSet);
-			writeVectorConnection(conditionPropertyNode, existingCondition, GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_PROPERTIES, sameReferenceSet);
-			writeVectorConnection(existingCondition, conditionPropertyNode, GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES, sameReferenceSet);
+			writeVectorConnection(conditionSubstanceNode, existingCondition, GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_PROPERTIES, sameReferenceSet);
+			writeVectorConnection(existingCondition, conditionSubstanceNode, GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES, sameReferenceSet);
 
 			newOrExistingCondition = existingCondition;
 
@@ -943,15 +968,15 @@ GIAEntityNode * addOrConnectHavingPropertyConditionToEntity(GIAEntityNode * enti
 
 			writeVectorConnection(newCondition, entityNode, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT, sameReferenceSet);
 			writeVectorConnection(entityNode, newCondition, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITIONS, sameReferenceSet);
-			writeVectorConnection(conditionPropertyNode, newCondition, GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_PROPERTIES, sameReferenceSet);
-			writeVectorConnection(newCondition, conditionPropertyNode, GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES, sameReferenceSet);
+			writeVectorConnection(conditionSubstanceNode, newCondition, GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_PROPERTIES, sameReferenceSet);
+			writeVectorConnection(newCondition, conditionSubstanceNode, GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES, sameReferenceSet);
 
-			//entityNode->hasPropertyTemp = true;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
+			//entityNode->hasSubstanceTemp = true;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
 
 			newOrExistingCondition = newCondition;
 		}
 
-	#ifdef GIA_DO_NOT_ADD_PROPERTIES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
+	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES
 	}
 	}
 	}
@@ -1058,9 +1083,9 @@ void setTranslatorConceptEntityNodesList(vector<GIAEntityNode*> * newConceptEnti
 	entityNodesActiveListConcepts = newConceptEntityNodesList;
 }
 */
-void setTranslatorPropertyEntityNodesList(vector<GIAEntityNode*> * newPropertyEntityNodesList)
+void setTranslatorSubstanceEntityNodesList(vector<GIAEntityNode*> * newSubstanceEntityNodesList)
 {
-	entityNodesActiveListProperties = newPropertyEntityNodesList;
+	entityNodesActiveListSubstances = newSubstanceEntityNodesList;
 }
 void setTranslatorActionEntityNodesList(vector<GIAEntityNode*> * newActionEntityNodesList)
 {
@@ -1083,9 +1108,9 @@ vector<GIAEntityNode*> * getTranslatorConceptEntityNodesList()
 	return entityNodesActiveListConcepts;
 }
 */
-vector<GIAEntityNode*> * getTranslatorPropertyEntityNodesList()
+vector<GIAEntityNode*> * getTranslatorSubstanceEntityNodesList()
 {
-	return entityNodesActiveListProperties;
+	return entityNodesActiveListSubstances;
 }
 vector<GIAEntityNode*> * getTranslatorActionEntityNodesList()
 {
@@ -1132,9 +1157,9 @@ long * getCurrentEntityNodeIDInConceptEntityNodesList()
 {
 	return &currentEntityNodeIDInConceptEntityNodesList;
 }
-long * getCurrentEntityNodeIDInPropertyEntityNodesList()
+long * getCurrentEntityNodeIDInSubstanceEntityNodesList()
 {
-	return &currentEntityNodeIDInPropertyEntityNodesList;
+	return &currentEntityNodeIDInSubstanceEntityNodesList;
 }
 long * getCurrentEntityNodeIDInActionEntityNodesList()
 {
@@ -1200,7 +1225,7 @@ void disableConceptEntityAndInstanceBasedUponFirstSentenceToAppearInNetwork(GIAE
 	{
 		GIAEntityNode * associateInstance = (entity->AssociatedInstanceNodeList->back())->entity;
 		//cout << "associateInstance->disabled = " << associateInstance->entityName << endl;
-		associateInstance->disabled = true;	//and disable their associated instances (property nodes)
+		associateInstance->disabled = true;	//and disable their associated instances (substance nodes)
 	}
 	#endif
 }
@@ -1338,15 +1363,15 @@ void generateTempFeatureArray(Feature * firstFeatureInList, Feature * featureArr
 #ifdef GIA_IMPLEMENT_NON_STANFORD_CORE_NLP_CODEPENDENCIES_CROSS_SENTENCE_REFERENCING
 
 /*
-//NOT REQUIRED: redundant: this unique check is redundant considering if a concept entity has a property that was declared in the immediate context, ie sentence, then the entity node being queried will be the property itself (and not its concept)
-bool checkEntityHasPropertyThatWasDeclaredInContextAndIsUnique(GIAEntityNode * entityNode, int entityIndexTemp, int sentenceIndexTemp)
+//NOT REQUIRED: redundant: this unique check is redundant considering if a concept entity has a substance that was declared in the immediate context, ie sentence, then the entity node being queried will be the substance itself (and not its concept)
+bool checkEntityHasSubstanceThatWasDeclaredInContextAndIsUnique(GIAEntityNode * entityNode, int entityIndexTemp, int sentenceIndexTemp)
 {
 	bool result = false;
 
-	if(checkEntityHasPropertyThatWasDeclaredInContext(entityNode))
+	if(checkEntityHasSubstanceThatWasDeclaredInContext(entityNode))
 	{
-		GIAEntityNode * entityPropertyDeclaredInContext = getEntityPropertyThatWasDeclaredInContext(entityNode);
-		if(!((entityPropertyDeclaredInContext->entityIndexTemp == entityIndexTemp) && (entityPropertyDeclaredInContext->sentenceIndexTemp == sentenceIndexTemp)))
+		GIAEntityNode * entitySubstanceDeclaredInContext = getEntitySubstanceThatWasDeclaredInContext(entityNode);
+		if(!((entitySubstanceDeclaredInContext->entityIndexTemp == entityIndexTemp) && (entitySubstanceDeclaredInContext->sentenceIndexTemp == sentenceIndexTemp)))
 		{
 			result = true;
 		}
@@ -1356,7 +1381,7 @@ bool checkEntityHasPropertyThatWasDeclaredInContextAndIsUnique(GIAEntityNode * e
 }
 */
 
-bool checkEntityHasPropertyThatWasDeclaredInContext(GIAEntityNode * entityNode)
+bool checkEntityHasSubstanceThatWasDeclaredInContext(GIAEntityNode * entityNode)
 {
 	bool result = false;
 
@@ -1368,7 +1393,7 @@ bool checkEntityHasPropertyThatWasDeclaredInContext(GIAEntityNode * entityNode)
 	return result;
 }
 
-GIAEntityNode * getEntityPropertyThatWasDeclaredInContext(GIAEntityNode * entityNode)
+GIAEntityNode * getEntitySubstanceThatWasDeclaredInContext(GIAEntityNode * entityNode)
 {
 	GIAEntityNode * entityNodeAssociatedInstance = entityNode;
 
@@ -1538,7 +1563,7 @@ long determineNextIdInstance(GIAEntityNode * entity)
 	GIAEntityNode * conceptEntity;
 	if(!(entity->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE].empty()))
 	{
-		//the current entity is a property of a concept entity
+		//the current entity is a substance of a concept entity
 		conceptEntity = entity->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE].back()->entity;
 		#ifdef GIA_DATABASE_DEBUG
 		cout << "\t\tDEBUG: determineNextIdInstance(); 1a. conceptEntity->entityName = " << conceptEntity->entityName << endl;
@@ -1595,12 +1620,12 @@ long determineNextIdInstance(GIAEntityNode * entity)
 
 #ifdef GIA_USE_DATABASE
 void addEntityNodeToActiveLists(GIAEntityNode * entity, unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts)
-{//NB add reference set entity to active list complete + appropriate list (property/action/condition) [NB the reference set entity will already be added to concept active list entityNodesActiveListConcepts...] - this function enables references to be written to XML
+{//NB add reference set entity to active list complete + appropriate list (substance/action/condition) [NB the reference set entity will already be added to concept active list entityNodesActiveListConcepts...] - this function enables references to be written to XML
 
 	/*already available locally...
 	long * currentEntityNodeIDInCompleteList = getCurrentEntityNodeIDInCompleteList();
 	long * currentEntityNodeIDInConceptEntityNodesList = getCurrentEntityNodeIDInConceptEntityNodesList();
-	long * currentEntityNodeIDInPropertyEntityNodesList = getCurrentEntityNodeIDInPropertyEntityNodesList();
+	long * currentEntityNodeIDInSubstanceEntityNodesList = getCurrentEntityNodeIDInSubstanceEntityNodesList();
 	long * currentEntityNodeIDInActionEntityNodesList = getCurrentEntityNodeIDInActionEntityNodesList();
 	long * currentEntityNodeIDInConditionEntityNodesList = getCurrentEntityNodeIDInConditionEntityNodesList();
 	*/
@@ -1623,11 +1648,11 @@ void addEntityNodeToActiveLists(GIAEntityNode * entity, unordered_map<string, GI
 			entityNodesActiveListConditions->push_back(entity);
 			currentEntityNodeIDInConditionEntityNodesList++;
 		}
-		else if(entity->isProperty)
+		else if(entity->isSubstance)
 		{
-			entity->idActiveEntityTypeList = currentEntityNodeIDInPropertyEntityNodesList;
-			entityNodesActiveListProperties->push_back(entity);
-			currentEntityNodeIDInPropertyEntityNodesList++;
+			entity->idActiveEntityTypeList = currentEntityNodeIDInSubstanceEntityNodesList;
+			entityNodesActiveListSubstances->push_back(entity);
+			currentEntityNodeIDInSubstanceEntityNodesList++;
 		}
 
 		entity->idActiveList = currentEntityNodeIDInCompleteList;

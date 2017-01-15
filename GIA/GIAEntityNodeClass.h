@@ -23,8 +23,8 @@
  * File Name: GIAEntityNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o1a 09-August-2012
- * NB a property is an instance of an entity, any given entity may contain/comprise/have multiple properties - and properties are unrelated to definitions between entities [they just define what comprises any given entity]
+ * Project Version: 1o2a 10-August-2012
+ * NB a substance is an instance of an entity, any given entity may contain/comprise/have multiple substances - and substances are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
 
@@ -162,7 +162,7 @@ static string grammaticalWordTypeNameArray[GRAMMATICAL_WORD_TYPE_NUMBER_OF_TYPES
 #define GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE (13)	//GIA_ENTITY_BASIC_CONNECTION_TYPE_INSTANCE_DEFINITION
 static string entityVectorConnectionNameArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {"actions", "incomingActions", "conditions", "incomingConditions", "properties", "reverseProperties", "definitions", "reverseDefinitions", "associatedInstances","actionSubject", "actionObject", "conditionSubject", "conditionObject", "nodeDefiningInstance"};	//instanceDefinition
 static string entityVectorConnectionSourceContextArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {"is ", "", "", "", "has ", "possessed by ", "is ", "defines ", "","is done by ", "", "", "", ""};
-static string entityVectorConnectionContextArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {"outgoingAction(s)", "incomingAction(s)", "conditionNode(s)", "incomingConditionNode(s)", "propertyNode(s)", "propertyNode(s)", "entityNodeDefinition(s)", "incomingEntityNodeDefinition(s)", "associatedInstanceNodes(s)", "actionSubjectEntity", "actionObjectEntity", "conditionSubjectEntity", "conditionObjectEntity", "entityNodeDefiningThisInstance"};
+static string entityVectorConnectionContextArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {"outgoingAction(s)", "incomingAction(s)", "conditionNode(s)", "incomingConditionNode(s)", "propertyNode(s)", "reversePropertyNode(s)", "entityNodeDefinition(s)", "reverseEntityNodeDefinition(s)", "associatedInstanceNodes(s)", "actionSubjectEntity", "actionObjectEntity", "conditionSubjectEntity", "conditionObjectEntity", "entityNodeDefiningThisInstance"};
 static bool entityVectorConnectionThisIsInstanceAndPreviousNodeWasDefinitionArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {false, false, false, false, false, false, false, false, true, false, false, false, false, false};
 //ORIG: static bool entityVectorConnectionIsConditionArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {false, false, true, true, false, false, false, false, false, false, false, true, true, false};
 static bool entityVectorConnectionIsConditionArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {false, false, true, true, false, false, false, false, false, false, false, false, false, false};
@@ -217,23 +217,16 @@ public:
 	double confidence;
 
 	bool isConcept;			//is this entity a concept? [added 10 May 2012]
-	bool isProperty;		//is this entity a property?
+	bool isSubstance;		//is this entity a substance?
 	bool isAction;			//is this entity an action?
 	bool isCondition;		//is this entity a condition?
-	bool hasAssociatedInstance;	//this boolean appears to only represent whether this entity defines a child property node [and not whether it contains one]
+	bool hasAssociatedInstance;	//this boolean appears to only represent whether this entity defines a child substance node [and not whether it contains one]
 	bool hasAssociatedInstanceIsAction;
 	bool hasAssociatedInstanceIsCondition;
 	bool hasAssociatedTime;
-	bool hasQuality;		//PRECISE ORIGINAL NAME: isPropertyQualityOrAffection	//eg 'the locked door..' / 'Jim runs quickly' / 'Mr. Smith is late' 	[Not: Tom has an arm'/'Tom's bike']
+	bool hasQuality;		//PRECISE ORIGINAL NAME: isSubstanceQualityOrAffection	//eg 'the locked door..' / 'Jim runs quickly' / 'Mr. Smith is late' 	[Not: Tom has an arm'/'Tom's bike']
 
-	bool hasProgressiveTemp;	//PRECISE ORIGINALNAME: isActionOrPropertyState		//eg The cat is lying on the bed. / Mark is being happy.
-
-	/*instances are now arbitrary, every entity is an instance of its parent(s) in some form or another...
-	enum
-	{
-		isinstance, notinstance, undefinedInstance
-	}instance;	//is the following entity known to be an instance?
-	*/
+	bool hasProgressiveTemp;	//PRECISE ORIGINALNAME: isActionOrSubstanceState		//eg The cat is lying on the bed. / Mark is being happy.
 
 	vector<GIAEntityConnection*> entityVectorConnectionsArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];		//allows for generic coding
 	#ifdef GIA_USE_ADVANCED_REFERENCING
@@ -253,18 +246,18 @@ public:
 	vector<GIAEntityConnection*> * IncomingActionNodeList;	//where this entity is the object of the action
 
 		//actions only;
-	//NB actions can be performed by and on concepts, and by and on properties?
+	//NB actions can be performed by and on concepts, and by and on substances?
 	vector<GIAEntityConnection*> * actionSubjectEntity;	//record of entity that is the subject of this action instance
 	vector<GIAEntityConnection*> * actionObjectEntity;	//record of which entity that is the object of this action instance
 
 	//condition connections;
 		//non-conditions only (?);
 	//conditions connections: conditions and reverse conditions (reason) lookups [condition and reason respectively]
-	vector<GIAEntityConnection*> * ConditionNodeList;		//this property requires the following...
-	vector<GIAEntityConnection*> * IncomingConditionNodeList;	//this property is required by the following... //aka reason	[NB these may only be property, location, {and time action condtions}, not action conditions]
+	vector<GIAEntityConnection*> * ConditionNodeList;		//this substance requires the following...
+	vector<GIAEntityConnection*> * IncomingConditionNodeList;	//this substance is required by the following... //aka reason	[NB these may only be substance, location, {and time action condtions}, not action conditions]
 
 		//conditions only;
-	//NB conditions can be performed by and on concepts, and by and on properties?
+	//NB conditions can be performed by and on concepts, and by and on substances?
 	vector<GIAEntityConnection*> * conditionSubjectEntity;		//record of entity that is the subject of this action instance
 	vector<GIAEntityConnection*> * conditionObjectEntity;		//record of which entity that is the object of this action instance
 
@@ -272,27 +265,24 @@ public:
 	int conditionType;	//added 25 Sept 11
 	GIATimeConditionNode * timeConditionNode;		//if conditionType == CONDITION_NODE_TYPE_TIME
 
-	//property connections;
-	//record list of all properties for this entity
+	//substance connections;
+	//record list of all substances for this entity
 	vector<GIAEntityConnection*> * PropertyNodeList;
-		//properties only [is this possible for actions also? - may require upgrade in future]
-	//GIAEntityConnection * entityNodeContainingThisProperty;		//removed 8 Dec 2011			//OLD: if property/action only:	//OLD: eg, Tom; OR;  Tom's Assets	//OLD: NB by definition, only 1 thing can contain any given property [considering a property is an instance of an entity] - therefore this is not a vector
-	vector<GIAEntityConnection*> * PropertyNodeReverseList;			//if property/action only:	//eg, Tom; OR;  Tom's Assets	//more than 1 thing can contain any given property [eg "a cat has arms", and "a monkey has arms"]; but note this may only be applicable for concept entities [property entities may possibly only be contained by {ie, be a property of} a single entity]
+		//substances only [is this possible for actions also? - may require upgrade in future]
+	//GIAEntityConnection * entityNodeContainingThisSubstance;		//removed 8 Dec 2011			//OLD: if substance/action only:	//OLD: eg, Tom; OR;  Tom's Assets	//OLD: NB by definition, only 1 thing can contain any given substance [considering a substance is an instance of an entity] - therefore this is not a vector
+	vector<GIAEntityConnection*> * PropertyNodeReverseList;			//if substance/action only:	//eg, Tom; OR;  Tom's Assets	//more than 1 thing can contain any given substance [eg "a cat has arms", and "a monkey has arms"]; but note this may only be applicable for concept entities [substance entities may possibly only be contained by {ie, be a substance of} a single entity]
 
-		//actions, properties, and conditions only
-	vector<GIAEntityConnection*> * entityNodeDefiningThisInstance;					//if property/action/condition only:					//NB by definition, only 1 thing can contain any given property [considering a property is an instance of an entity] - therefore this is not a vector
+		//actions, substances, and conditions only
+	vector<GIAEntityConnection*> * entityNodeDefiningThisInstance;					//if substance/action/condition only:					//NB by definition, only 1 thing can contain any given substance [considering a substance is an instance of an entity] - therefore this is not a vector
 
 
-		//concepts only (not properties/"instances" of entities);
+		//concepts only (not substances/"instances" of entities);
 	//entity connections;
 	//record parent and child entity definition nodes
-	vector<GIAEntityConnection*> * EntityNodeDefinitionList;			//if not property only: 	//this should logically reduce to a single entity, although not required, therefore it is a vector [eg, a dog is a mammal, which is an animal, but a dog is an animal also]
-	vector<GIAEntityConnection*> * EntityNodeDefinitionReverseList;			//if not property only: 	//more than one entity can be defined by this entity [eg if this entity is "animal", a bird is an animal, a mammal is an animal, etc]
-	//associated actions and properties [ie does this entity also define an action/verb or a property/adjective? [ie, it is not just a thing/noun]]
-	vector<GIAEntityConnection*> * AssociatedInstanceNodeList;			//if not property only: if type == definesAPropertyAdjective (ie, if this entity is not a property/instance but defines one or more properties/instances)
-
-	//CHECKTHIS; what is the difference between EntityNodeDefinitionList and entityNodeDefiningThisInstance? - it appears to achieve a similar purpose; ANSWER - one is direct definition [definition of instance] the other is not
-	//CHECKTHIS; what is the difference between EntityNodeDefinitionReverseList and AssociatedInstanceNodeList? - it appears to achieve a similar purpose; ANSWER - one is direct definition [definition of instance] the other is not
+	vector<GIAEntityConnection*> * EntityNodeDefinitionList;			//this should logically reduce to a single entity, although not required, therefore it is a vector [eg, a dog is a mammal, which is an animal, but a dog is an animal also]
+	vector<GIAEntityConnection*> * EntityNodeDefinitionReverseList;			//more than one entity can be defined by this entity [eg if this entity is "animal", a bird is an animal, a mammal is an animal, etc]
+	//associated actions and substances [ie does this entity also define an action/verb or a substance/adjective? [ie, it is not just a thing/noun]]
+	vector<GIAEntityConnection*> * AssociatedInstanceNodeList;			//if this entity is not a substance/instance but defines one or more substances/instances
 
 	bool hasQuantity;
 	int quantityNumber;		//eg 6
@@ -326,7 +316,7 @@ public:
 
 	bool isSubjectTemp;		//temporary: used for GIA translator only - overwritten every time a new sentence is parsed [10 May 2012: this shouldnt be needed anymore]
 	bool isObjectTemp;		//temporary: used for GIA translator only - overwritten every time a new sentence is parsed [10 May 2012: this shouldnt be needed anymore]
-	bool hasPropertyTemp;		//temporary: used for GIA translator only - overwritten every time a new sentence is parsed [10 May 2012: this shouldnt be needed anymore]
+	bool hasSubstanceTemp;		//temporary: used for GIA translator only - overwritten every time a new sentence is parsed [10 May 2012: this shouldnt be needed anymore]
 	//bool hasQualityTemp;		//temporary: used for GIA translator only - overwritten every time a new sentence is parsed [10 May 2012: this shouldnt be needed anymore]
 	int entityIndexTemp;		//temporary: used for GIA translator reference paser only - overwritten every time a new textual context (eg paragraph) is parsed (used for Stanford CoreNLP referencing only?)
 	int sentenceIndexTemp;		//temporary: used for GIA translator reference paser only - overwritten every time a new textual context (eg paragraph) is parsed (used for Stanford CoreNLP referencing only?)
@@ -355,7 +345,7 @@ public:
 	bool testedForQueryComparisonTemp; //added 17 May 2012 - support better trace routine
 	bool queryAnswerContext;
 
-	bool negative;	//for prepositional entities which will be collapsed into conditions only [in the future, this should also be used for properties and actions; but relex does not appear to output this information]
+	bool negative;	//for prepositional entities which will be collapsed into conditions only [in the future, this should also be used for substances and actions; but relex does not appear to output this information]
 
 	bool disableParsingAsAPrepositionRelationTemp;
 
@@ -369,12 +359,6 @@ public:
 	bool firstSentenceToAppearInNetwork;
 
 	int wordNetPOS;			//added 26 April 2012 (used for compatibility with wordnet)
-	/*
-	enum
-	{
-		definesAThingNoun, definesAPropertyAdjective, definesAnActionVerb, undefinedEntityType
-	}type;	//is the following entity known to be an instance?
-	*/
 
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	int referenceSetID;

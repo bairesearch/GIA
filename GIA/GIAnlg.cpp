@@ -23,7 +23,7 @@
  * File Name: GIAnlg.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o1a 09-August-2012
+ * Project Version: 1o2a 10-August-2012
  * Requirements: requires GIA translated data, and NLG2 to be installed
  * Description: GIA natural language generation (using NLG2)
  *
@@ -49,9 +49,9 @@ NLGSentence * generateLanguageFromEntityNode(GIAEntityNode * entityNode, NLGSent
 	if(!(entityNode->parsedForLanguageGeneration) && !(entityNode->disabled))
 	{
 		#ifdef GIA_NLG_DEBUG
-		if(entityNode->isProperty)
+		if(entityNode->isSubstance)
 		{
-			cout << "entityNode = " << entityNode->entityName << " (is property)" << endl;
+			cout << "entityNode = " << entityNode->entityName << " (is substance)" << endl;
 		}
 		else if(entityNode->isAction)
 		{
@@ -67,11 +67,11 @@ NLGSentence * generateLanguageFromEntityNode(GIAEntityNode * entityNode, NLGSent
 		}
 		else if(entityNode->hasAssociatedInstanceIsAction)
 		{
-			cout << "entityNode = " << entityNode->entityName << " (has associated property is action)" << endl;
+			cout << "entityNode = " << entityNode->entityName << " (has associated instance is action)" << endl;
 		}
 		else if(entityNode->hasAssociatedInstanceIsCondition)
 		{
-			cout << "entityNode = " << entityNode->entityName << " (has associated property is condition)" << endl;
+			cout << "entityNode = " << entityNode->entityName << " (has associated instance is condition)" << endl;
 		}
 		else if(entityNode->hasAssociatedTime)
 		{
@@ -86,14 +86,14 @@ NLGSentence * generateLanguageFromEntityNode(GIAEntityNode * entityNode, NLGSent
 
 
 		//cout << "\tentityNode->isAction = " << entityNode->isAction << endl;
-		//cout << "\tentityNode->isProperty = " << entityNode->isProperty << endl;
+		//cout << "\tentityNode->isSubstance = " << entityNode->isSubstance << endl;
 		//cout << "\tentityNode->hasAssociatedInstance = " << entityNode->hasAssociatedInstance << endl;
 		//cout << "\tentityNode->hasAssociatedInstanceIsAction = " << entityNode->hasAssociatedInstanceIsAction << endl;
 
 
 		entityNode->parsedForLanguageGeneration = true;
 
-		#ifdef NLG_THREE_ENTITY_SENTENCES_ADD_SINGLE_PROPERTY_AND_CONDITION_LINKS_DO_NOT_READD_THREE_ENTITY_SENTENCES_CONTAINED_THEREIN3a
+		#ifdef NLG_THREE_ENTITY_SENTENCES_ADD_SINGLE_SUBSTANCE_AND_CONDITION_LINKS_DO_NOT_READD_THREE_ENTITY_SENTENCES_CONTAINED_THEREIN3a
 		if(!(entityNode->sourceAddedInLanguageGeneration))
 		{
 		#endif
@@ -125,7 +125,7 @@ NLGSentence * generateLanguageFromEntityNode(GIAEntityNode * entityNode, NLGSent
 					currentNLGsentenceUpdated = currentNLGsentenceUpdated->next;
 				}
 			}
-		#ifdef NLG_THREE_ENTITY_SENTENCES_ADD_SINGLE_PROPERTY_AND_CONDITION_LINKS_DO_NOT_READD_THREE_ENTITY_SENTENCES_CONTAINED_THEREIN3a
+		#ifdef NLG_THREE_ENTITY_SENTENCES_ADD_SINGLE_SUBSTANCE_AND_CONDITION_LINKS_DO_NOT_READD_THREE_ENTITY_SENTENCES_CONTAINED_THEREIN3a
 		}
 		#endif
 
@@ -137,7 +137,7 @@ NLGSentence * generateLanguageFromEntityNode(GIAEntityNode * entityNode, NLGSent
 			{
 				if(nlgSentenceTwoEntitiesGenerateVectorConnectionsArray[i])
 				{
-					#ifdef NLG_THREE_ENTITY_SENTENCES_ADD_SINGLE_PROPERTY_AND_CONDITION_LINKS_DO_NOT_READD_TWO_ENTITY_SENTENCES_CONTAINED_THEREIN3a
+					#ifdef NLG_THREE_ENTITY_SENTENCES_ADD_SINGLE_SUBSTANCE_AND_CONDITION_LINKS_DO_NOT_READD_TWO_ENTITY_SENTENCES_CONTAINED_THEREIN3a
 					if(!(entityNode->sourceAddedInLanguageGeneration))
 					{
 					#endif
@@ -152,7 +152,7 @@ NLGSentence * generateLanguageFromEntityNode(GIAEntityNode * entityNode, NLGSent
 							currentNLGsentenceUpdated->next = newNLGsentence;
 							currentNLGsentenceUpdated = currentNLGsentenceUpdated->next;
 						}
-					#ifdef NLG_THREE_ENTITY_SENTENCES_ADD_SINGLE_PROPERTY_AND_CONDITION_LINKS_DO_NOT_READD_TWO_ENTITY_SENTENCES_CONTAINED_THEREIN3a
+					#ifdef NLG_THREE_ENTITY_SENTENCES_ADD_SINGLE_SUBSTANCE_AND_CONDITION_LINKS_DO_NOT_READD_TWO_ENTITY_SENTENCES_CONTAINED_THEREIN3a
 					}
 					#endif
 				}
@@ -167,9 +167,9 @@ NLGSentence * generateLanguageFromEntityNode(GIAEntityNode * entityNode, NLGSent
 		//cout << "a8" << endl;
 
 		#ifdef GIA_NLG_DEBUG
-		if(entityNode->isProperty)
+		if(entityNode->isSubstance)
 		{
-			cout << "Exiting: entityNode = " << entityNode->entityName << " (is property)" << endl;
+			cout << "Exiting: entityNode = " << entityNode->entityName << " (is substance)" << endl;
 		}
 		else if(entityNode->isAction)
 		{
@@ -181,15 +181,15 @@ NLGSentence * generateLanguageFromEntityNode(GIAEntityNode * entityNode, NLGSent
 		}
 		else if(entityNode->hasAssociatedInstance)
 		{
-			cout << "Exiting: entityNode = " << entityNode->entityName << " (has associated property)" << endl;
+			cout << "Exiting: entityNode = " << entityNode->entityName << " (has associated instance)" << endl;
 		}
 		else if(entityNode->hasAssociatedInstanceIsAction)
 		{
-			cout << "Exiting: entityNode = " << entityNode->entityName << " (has associated property is action)" << endl;
+			cout << "Exiting: entityNode = " << entityNode->entityName << " (has associated instance is action)" << endl;
 		}
 		else if(entityNode->hasAssociatedInstanceIsCondition)
 		{
-			cout << "Exiting: entityNode = " << entityNode->entityName << " (has associated property is condition)" << endl;
+			cout << "Exiting: entityNode = " << entityNode->entityName << " (has associated instance is condition)" << endl;
 		}
 		else if(entityNode->hasAssociatedTime)
 		{
@@ -293,11 +293,11 @@ void generateThreeEntitySentenceFromEntityNode(GIAEntityNode * entityNode0, stri
 #endif
 	//cout << "af4" << endl;
 
-	#ifdef NLG_THREE_ENTITY_SENTENCES_ADD_SINGLE_PROPERTY_AND_CONDITION_LINKS
+	#ifdef NLG_THREE_ENTITY_SENTENCES_ADD_SINGLE_SUBSTANCE_AND_CONDITION_LINKS
 	if(supportAdditionalLinks)
 	{
-		//bool entityNodeHasAdditionalConnection[3][NLG_INPUTVIEW_THREE_ENTITY_SENTENCES_ADD_SINGLE_PROPERTY_AND_CONDITION_LINKS_NUMBER_ADDITIONAL_CONNECTIONS];
-		//int entityNodeHasAdditionalConnectionIndex[3][NLG_INPUTVIEW_THREE_ENTITY_SENTENCES_ADD_SINGLE_PROPERTY_AND_CONDITION_LINKS_NUMBER_ADDITIONAL_CONNECTIONS];
+		//bool entityNodeHasAdditionalConnection[3][NLG_INPUTVIEW_THREE_ENTITY_SENTENCES_ADD_SINGLE_SUBSTANCE_AND_CONDITION_LINKS_NUMBER_ADDITIONAL_CONNECTIONS];
+		//int entityNodeHasAdditionalConnectionIndex[3][NLG_INPUTVIEW_THREE_ENTITY_SENTENCES_ADD_SINGLE_SUBSTANCE_AND_CONDITION_LINKS_NUMBER_ADDITIONAL_CONNECTIONS];
 		GIAEntityNode * entityNodeArray[3];
 		entityNodeArray[0] = entityNode0;
 		entityNodeArray[1] = entityNode1;
@@ -310,7 +310,7 @@ void generateThreeEntitySentenceFromEntityNode(GIAEntityNode * entityNode0, stri
 		#endif
 
 		//cout << "af5" << endl;
-		for(int i=0; i<NLG_INPUTVIEW_THREE_ENTITY_SENTENCES_ADD_SINGLE_PROPERTY_AND_CONDITION_LINKS_NUMBER_ADDITIONAL_CONNECTIONS; i++)
+		for(int i=0; i<NLG_INPUTVIEW_THREE_ENTITY_SENTENCES_ADD_SINGLE_SUBSTANCE_AND_CONDITION_LINKS_NUMBER_ADDITIONAL_CONNECTIONS; i++)
 		{
 			//cout << "af6" << endl;
 			for(int entityNodeIndex=0; entityNodeIndex<3; entityNodeIndex++)
@@ -332,7 +332,7 @@ void generateThreeEntitySentenceFromEntityNode(GIAEntityNode * entityNode0, stri
 						*/
 
 						if(entityNodeArray[entityNodeIndex]->entityVectorConnectionsArray[vectorConnectionIndex].size() == 1)
-						{//entity contains single property or condition
+						{//entity contains single substance or condition
 							//cout << "af9" << endl;
 							GIAEntityConnection * entityConnectionAdditional = entityNodeArray[entityNodeIndex]->entityVectorConnectionsArray[vectorConnectionIndex].back();
 							GIAEntityNode * entityNodeAdditional = entityConnectionAdditional->entity;
@@ -363,7 +363,7 @@ void generateThreeEntitySentenceFromEntityNode(GIAEntityNode * entityNode0, stri
 									//cout << "vectorConnectionIndex = " << vectorConnectionIndex << endl;
 									//cout << "entityNodeAdditional->entityName = " << entityNodeAdditional->entityName << endl;
 									//cout << "af12" << endl;
-									#ifdef NLG_THREE_ENTITY_SENTENCES_ADD_SINGLE_PROPERTY_AND_CONDITION_LINKS_DO_NOT_READD_THREE_ENTITY_SENTENCES_CONTAINED_THEREIN3b
+									#ifdef NLG_THREE_ENTITY_SENTENCES_ADD_SINGLE_SUBSTANCE_AND_CONDITION_LINKS_DO_NOT_READD_THREE_ENTITY_SENTENCES_CONTAINED_THEREIN3b
 									if(!(entityNodeAdditional->sourceAddedInLanguageGeneration))
 									{
 									#endif
@@ -373,16 +373,16 @@ void generateThreeEntitySentenceFromEntityNode(GIAEntityNode * entityNode0, stri
 										generateThreeEntitySentenceFromEntityNode(entityNodeAdditional, &(entityTextExpandedArray[entityNodeIndex]), nlgSentenceThreeEntitiesGenerateAdditionsIsThreeEntityVectorConnectionsArray[0], nlgSentenceThreeEntitiesGenerateAdditionsIsThreeEntityVectorConnectionsArray[1], currentEntityIndexAdditional, false);
 										#endif
 
-										#ifdef NLG_THREE_ENTITY_SENTENCES_ADD_SINGLE_PROPERTY_AND_CONDITION_LINKS_DO_NOT_READD_THREE_ENTITY_SENTENCES_CONTAINED_THEREIN3c
+										#ifdef NLG_THREE_ENTITY_SENTENCES_ADD_SINGLE_SUBSTANCE_AND_CONDITION_LINKS_DO_NOT_READD_THREE_ENTITY_SENTENCES_CONTAINED_THEREIN3c
 										entityNodeArray[entityNodeIndex]->sourceAddedInLanguageGeneration = true;
 										#endif
-									#ifdef NLG_THREE_ENTITY_SENTENCES_ADD_SINGLE_PROPERTY_AND_CONDITION_LINKS_DO_NOT_READD_THREE_ENTITY_SENTENCES_CONTAINED_THEREIN3b
+									#ifdef NLG_THREE_ENTITY_SENTENCES_ADD_SINGLE_SUBSTANCE_AND_CONDITION_LINKS_DO_NOT_READD_THREE_ENTITY_SENTENCES_CONTAINED_THEREIN3b
 									}
 									#endif
 								}
 								else
 								{
-									#ifdef NLG_THREE_ENTITY_SENTENCES_ADD_SINGLE_PROPERTY_AND_CONDITION_LINKS_DO_NOT_READD_TWO_ENTITY_SENTENCES_CONTAINED_THEREIN3b
+									#ifdef NLG_THREE_ENTITY_SENTENCES_ADD_SINGLE_SUBSTANCE_AND_CONDITION_LINKS_DO_NOT_READD_TWO_ENTITY_SENTENCES_CONTAINED_THEREIN3b
 									if(!(entityNodeArray[entityNodeIndex]->sourceAddedInLanguageGeneration))
 									{
 									#endif
@@ -393,10 +393,10 @@ void generateThreeEntitySentenceFromEntityNode(GIAEntityNode * entityNode0, stri
 										generateTwoEntitySentenceFromEntityConnection(entityNodeArray[entityNodeIndex], entityConnectionAdditional, &(entityTextExpandedArray[entityNodeIndex]), nlgSentenceThreeEntitiesGenerateAdditionsVectorConnectionsArray[i], currentEntityIndexAdditional, true);
 										#endif
 
-										#ifdef NLG_THREE_ENTITY_SENTENCES_ADD_SINGLE_PROPERTY_AND_CONDITION_LINKS_DO_NOT_READD_TWO_ENTITY_SENTENCES_CONTAINED_THEREIN3c
+										#ifdef NLG_THREE_ENTITY_SENTENCES_ADD_SINGLE_SUBSTANCE_AND_CONDITION_LINKS_DO_NOT_READD_TWO_ENTITY_SENTENCES_CONTAINED_THEREIN3c
 										entityNodeArray[entityNodeIndex]->sourceAddedInLanguageGeneration = true;
 										#endif
-									#ifdef NLG_THREE_ENTITY_SENTENCES_ADD_SINGLE_PROPERTY_AND_CONDITION_LINKS_DO_NOT_READD_TWO_ENTITY_SENTENCES_CONTAINED_THEREIN3b
+									#ifdef NLG_THREE_ENTITY_SENTENCES_ADD_SINGLE_SUBSTANCE_AND_CONDITION_LINKS_DO_NOT_READD_TWO_ENTITY_SENTENCES_CONTAINED_THEREIN3b
 									}
 									#endif
 								}
@@ -470,14 +470,14 @@ void generateThreeEntitySentenceFromEntityNode(GIAEntityNode * entityNode0, stri
 		{
 			//cout << "entityNode0->sourceReferencedInLanguageGeneration: " << entityNode0->entityName << endl;
 			entityNode0->sourceReferencedInLanguageGeneration = true;
-			#ifdef NLG_THREE_ENTITY_SENTENCES_ADD_SINGLE_PROPERTY_AND_CONDITION_LINKS_DO_NOT_READD_SENTENCES_CONTAINED_THEREIN3_STRINGENT
+			#ifdef NLG_THREE_ENTITY_SENTENCES_ADD_SINGLE_SUBSTANCE_AND_CONDITION_LINKS_DO_NOT_READD_SENTENCES_CONTAINED_THEREIN3_STRINGENT
 			if(supportAdditionalLinks)
 			{
 			#endif
-				#ifdef NLG_THREE_ENTITY_SENTENCES_ADD_SINGLE_PROPERTY_AND_CONDITION_LINKS_DO_NOT_READD_SENTENCES_CONTAINED_THEREIN3
+				#ifdef NLG_THREE_ENTITY_SENTENCES_ADD_SINGLE_SUBSTANCE_AND_CONDITION_LINKS_DO_NOT_READD_SENTENCES_CONTAINED_THEREIN3
 				entityNode0->sourceAddedInLanguageGeneration = true;
 				#endif
-			#ifdef NLG_THREE_ENTITY_SENTENCES_ADD_SINGLE_PROPERTY_AND_CONDITION_LINKS_DO_NOT_READD_SENTENCES_CONTAINED_THEREIN3_STRINGENT
+			#ifdef NLG_THREE_ENTITY_SENTENCES_ADD_SINGLE_SUBSTANCE_AND_CONDITION_LINKS_DO_NOT_READD_SENTENCES_CONTAINED_THEREIN3_STRINGENT
 			}
 			#endif
 		}
@@ -554,8 +554,10 @@ void generateTwoEntitySentenceFromEntityConnection(GIAEntityNode * entityNode1, 
 
 	if(connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES)
 	{
-		if(entityNode2->isProperty)
+		/*
+		if(entityNode2->isSubstance)
 		{
+		*/
 			//cout << "helsinki" << endl;
 
 			#ifdef NLG_TWO_ENTITY_SENTENCES_SUPPORT_ADVERBS_AND_ADJECTIVES
@@ -599,15 +601,17 @@ void generateTwoEntitySentenceFromEntityConnection(GIAEntityNode * entityNode1, 
 			#ifdef NLG_TWO_ENTITY_SENTENCES_SUPPORT_ADVERBS_AND_ADJECTIVES
 			}
 			#endif
+		/*	
 		}
 		else
 		{
 			if(entityNode2->isConcept)
 			{//isConcept		
-				cout << "error: generateTwoEntitySentenceFromEntityConnection && (entityNode2->isConcept) && (connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES)" << endl;
+				//cout << "warning: generateTwoEntitySentenceFromEntityConnection && (entityNode2->isConcept) && (connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES)" << endl;
 				//exit(0);
 			}
 		}
+		*/
 	}
 	else if(connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITIONS)
 	{
@@ -725,14 +729,14 @@ void generateTwoEntitySentenceFromEntityConnection(GIAEntityNode * entityNode1, 
 		entityNode1->sourceReferencedInLanguageGeneration = true;
 		entityNode2->sourceReferencedInLanguageGeneration = true;
 		
-		#ifdef NLG_TWO_ENTITY_SENTENCES_ADD_SINGLE_PROPERTY_AND_CONDITION_LINKS_DO_NOT_READD_SENTENCES_CONTAINED_THEREIN3_STRINGENT
+		#ifdef NLG_TWO_ENTITY_SENTENCES_ADD_SINGLE_SUBSTANCE_AND_CONDITION_LINKS_DO_NOT_READD_SENTENCES_CONTAINED_THEREIN3_STRINGENT
 		if(!additionalLink)
 		{		
 		#endif
-			#ifdef NLG_TWO_ENTITY_SENTENCES_ADD_SINGLE_PROPERTY_AND_CONDITION_LINKS_DO_NOT_READD_SENTENCES_CONTAINED_THEREIN3
+			#ifdef NLG_TWO_ENTITY_SENTENCES_ADD_SINGLE_SUBSTANCE_AND_CONDITION_LINKS_DO_NOT_READD_SENTENCES_CONTAINED_THEREIN3
 			entityNode1->sourceAddedInLanguageGeneration = true;
 			#endif
-		#ifdef NLG_TWO_ENTITY_SENTENCES_ADD_SINGLE_PROPERTY_AND_CONDITION_LINKS_DO_NOT_READD_SENTENCES_CONTAINED_THEREIN3_STRINGENT
+		#ifdef NLG_TWO_ENTITY_SENTENCES_ADD_SINGLE_SUBSTANCE_AND_CONDITION_LINKS_DO_NOT_READD_SENTENCES_CONTAINED_THEREIN3_STRINGENT
 		}
 		#endif
 	//}
@@ -830,25 +834,25 @@ void NLG2generateNLGInputViewFeatureTagsFromEntityNode(GIAEntityNode * entityNod
 		//inflectionString = grammaticalWordTypeCrossReferenceInflectionArray[GRAMMATICAL_WORD_TYPE_PREP];	//no inflection for prepositions
 		posString = grammaticalWordTypeNameArray[GRAMMATICAL_WORD_TYPE_PREP];
 	}
-	else if(entityNode->isProperty)
+	else if(entityNode->isSubstance)
 	{
 		#ifdef NLG_TWO_ENTITY_SENTENCES_SUPPORT_ADVERBS_AND_ADJECTIVES
 		bool hasQuality = false;
 		if(entityNode->hasQuality)
 		{
 			hasQuality = true;
-			bool propertyOwnerIsAction = false;
+			bool substanceOwnerIsAction = false;
 			if(!(entityNode->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_PROPERTIES].empty()))
 			{
-				GIAEntityNode * propertyOwner = entityNode->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_PROPERTIES].back()->entity;
-				if(propertyOwner->isAction)
+				GIAEntityNode * substanceOwner = entityNode->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_PROPERTIES].back()->entity;
+				if(substanceOwner->isAction)
 				{
-					propertyOwnerIsAction = true;
+					substanceOwnerIsAction = true;
 					//inflectionString = grammaticalWordTypeCrossReferenceInflectionArray[GRAMMATICAL_WORD_TYPE_ADV];	//no inflection for adjectives?
 					posString = grammaticalWordTypeNameArray[GRAMMATICAL_WORD_TYPE_ADV];
 				}
 			}
-			if(!propertyOwnerIsAction)
+			if(!substanceOwnerIsAction)
 			{
 				//inflectionString = grammaticalWordTypeCrossReferenceInflectionArray[GRAMMATICAL_WORD_TYPE_ADJ];	//no inflection for adverbs?
 				posString = grammaticalWordTypeNameArray[GRAMMATICAL_WORD_TYPE_ADJ];
@@ -1057,7 +1061,7 @@ string calcDeterminate(GIAEntityNode * entityNode)
 	{
 
 	}
-	else if(entityNode->isProperty)
+	else if(entityNode->isSubstance)
 	{
 		if(!(entityNode->hasQuality))
 		{

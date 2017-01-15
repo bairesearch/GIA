@@ -23,7 +23,7 @@
  * File Name: GIAEntityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o1a 09-August-2012
+ * Project Version: 1o2a 10-August-2012
  *
  *******************************************************************************/
 
@@ -55,7 +55,7 @@ GIAconceptEntityLoaded::~GIAconceptEntityLoaded(void)
 GIAEntityNode::GIAEntityNode(void)
 {
 	idActiveList = 0;
-	idActiveEntityTypeList = 0;	//temporary ID reserved for specific entity types; concept, action, property etc
+	idActiveEntityTypeList = 0;	//temporary ID reserved for specific entity types; concept, action, substance etc
 	idActiveListReorderdIDforXMLsave = 0;
 	idInstance = 0;
 
@@ -66,7 +66,7 @@ GIAEntityNode::GIAEntityNode(void)
 	confidence = 1.0;
 
 	isConcept = false;
-	isProperty = false;
+	isSubstance = false;
 	isAction = false;
 	isCondition = false;
 	hasAssociatedInstance = false;
@@ -87,7 +87,7 @@ GIAEntityNode::GIAEntityNode(void)
 	conditionType = CONDITION_NODE_TYPE_UNDEFINED;
 	timeConditionNode = NULL;
 
-	//entityNodeContainingThisProperty = NULL;				//if property only:	//eg, Tom; OR;  Tom's Assets	//NB by definition, only 1 thing can contain any given property [considering a property is an instance of an entity] - therefore this is not a Basic
+	//entityNodeContainingThisSubstance = NULL;				//if substance only:	//eg, Tom; OR;  Tom's Assets	//NB by definition, only 1 thing can contain any given substance [considering a substance is an instance of an entity] - therefore this is not a Basic
 	entityNodeDefiningThisInstance = NULL;
 
 	hasQuantity = false;
@@ -123,7 +123,7 @@ GIAEntityNode::GIAEntityNode(void)
 	#endif
 	isSubjectTemp = false;
 	isObjectTemp = false;
-	hasPropertyTemp = false;
+	hasSubstanceTemp = false;
 	//hasQualityTemp = false;
 	entityIndexTemp = 0;
 	sentenceIndexTemp = 0;
@@ -154,7 +154,7 @@ GIAEntityNode::GIAEntityNode(void)
 
 	/*
 	entityVectorConnectionsSpecialConditionsHavingBeingArray[GIA_ENTITY_VECTOR_CONNECTION_SPECIAL_CONDITIONS_HAVING_BEING_TYPE_DEFINITIONS] = EntityNodeDefinitionList;
-	entityVectorConnectionsSpecialConditionsHavingBeingArray[GIA_ENTITY_VECTOR_CONNECTION_SPECIAL_CONDITIONS_HAVING_BEING_TYPE_PROPERTIES] = PropertyNodeList;
+	entityVectorConnectionsSpecialConditionsHavingBeingArray[GIA_ENTITY_VECTOR_CONNECTION_SPECIAL_CONDITIONS_HAVING_BEING_TYPE_SUBSTANCES] = PropertyNodeList;
 	*/
 
 	#ifdef GIA_USE_ADVANCED_REFERENCING

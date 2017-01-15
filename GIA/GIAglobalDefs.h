@@ -23,7 +23,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1o1a 09-August-2012
+ * Project Version: 1o2a 10-August-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -56,8 +56,8 @@
  *		To Compile Wordnet 3.0 in Visual Studio 2010 (to create wn.lib);
  *		Install WordNet_3.0_win32-setup.exe (from SourceForge [/ Google Source?])
  *		extract C:\Program Files (x86)\WordNet\3.0\src\wn source project.zip
- *		wn project - properties - General - Common Language Runtime Support - No Common Language Runtime Support
- *		wn project - properties - General - Static Library (.lib)
+ *		wn project - substances - General - Common Language Runtime Support - No Common Language Runtime Support
+ *		wn project - substances - General - Static Library (.lib)
  *		Build All
  *
  *******************************************************************************/
@@ -102,12 +102,12 @@
 
 //variables currently under attention for testing purposes
 
-#define GIA_ENABLE_TEXTUAL_CONTEXT_REFERENCING			//default: on	//this enables pronoun detection	//OLD: {this needs to disable some additional parameters also... (NB properties are still being connected, and not created anew)}
+#define GIA_ENABLE_TEXTUAL_CONTEXT_REFERENCING			//default: on	//this enables pronoun detection	//OLD: {this needs to disable some additional parameters also... (NB substances are still being connected, and not created anew)}
 #define WORDNET_SEARCH_RELATED_SYNSETS
-#define GIA_ASSIGN_INSTANCE_PROPERTY_TO_PROPER_NOUNS		//this was (effectively) disabled before version 1h3b 	//NB used to be called 'GIA_DO_NOT_ASSIGN_INSTANCE_PROPERTY_TO_PROPER_NOUNS'
+#define GIA_ASSIGN_SUBSTANCE_TO_PROPER_NOUNS		//this was (effectively) disabled before version 1h3b 	//NB used to be called 'GIA_DO_NOT_ASSIGN_SUBSTANCE_TO_PROPER_NOUNS'
 #define GIA_OUTPUT_INTERNAL_RELATIONS_IN_RELEX_FORMAT
 //#define GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE2
-/*#define GIA_USE_ORIGINAL_PRONOMINAL_COREFERENCE_RESOLUTION_IGNORE_PROPERTIES_TAKE_CONCEPTS_ONLY	//untested (removed 1l1c)*/	//commented out completely
+/*#define GIA_USE_ORIGINAL_PRONOMINAL_COREFERENCE_RESOLUTION_IGNORE_SUBSTANCES_TAKE_CONCEPTS_ONLY	//untested (removed 1l1c)*/	//commented out completely
 #define GIA_ID_INSTANCE_ALLOW_INSTANCE_DELETIONS
 #define GIA_USE_ADVANCED_REFERENCING_FIND_ALL_RELATIONS_MATCHING_AUXILLARY_AND_SET_DIFFERENT_REFERENCE_SET
 
@@ -234,7 +234,7 @@
 
 //~GIAdraw
 //#define GIA_DRAW_USE_PATENT			//modifies colours of nodes such that they print uniquely in black and white
-//#define GIA_CMAP_CONVERSION_SANITISED 	//use format akin to Cmap Tools / not GIA formatted. linking-phrase-list -> actions + conditions. concept-list -> concepts or properties
+//#define GIA_CMAP_CONVERSION_SANITISED 	//use format akin to Cmap Tools / not GIA formatted. linking-phrase-list -> actions + conditions. concept-list -> concepts or substances
 #define GIA_DRAW_DISPLAY_ANSWER_CONTEXTS
 
 #endif
