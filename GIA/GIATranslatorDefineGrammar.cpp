@@ -3,7 +3,7 @@
  * File Name: GIATranslatorDefineGrammar.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l6a 09-June-2012
+ * Project Version: 1m1a 20-June-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -87,7 +87,7 @@ void locateAndAddAllConceptEntities(Sentence * currentSentenceInList, bool GIAEn
 			if(!GIAEntityNodeArrayFilled[relationIndex[i]])
 			{
 				bool entityAlreadyExistant = false;
-				GIAEntityNode * entity = findOrAddEntityNodeByNameSimpleWrapper(&(name[i]), &entityAlreadyExistant, entityNodesActiveListConcepts);
+				GIAEntityNode * entity = findOrAddConceptEntityNodeByNameSimpleWrapper(&(name[i]), &entityAlreadyExistant, entityNodesActiveListConcepts);
 				
 				GIAEntityNodeArrayFilled[relationIndex[i]] = true;
 				GIAEntityNodeArray[relationIndex[i]] = entity;

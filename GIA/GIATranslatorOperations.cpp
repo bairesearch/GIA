@@ -3,7 +3,7 @@
  * File Name: GIATranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l6a 09-June-2012
+ * Project Version: 1m1a 20-June-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -1364,19 +1364,21 @@ GIAEntityNode * findOrAddEntityNodeByNameSimpleWrapperCondition(bool GIAEntityNo
 	}
 	else
 	{
-		conditionTypeEntity = findOrAddEntityNodeByNameSimpleWrapper(entityNodeName, entityAlreadyExistant, entityNodesActiveListConcepts);
+		conditionTypeEntity = findOrAddConceptEntityNodeByNameSimpleWrapper(entityNodeName, entityAlreadyExistant, entityNodesActiveListConcepts);
 		GIAEntityNodeArrayFilled[featureIndex] = true;
 	}
 	#else									
-	conditionTypeEntity = findOrAddEntityNodeByNameSimpleWrapper(entityNodeName, entityAlreadyExistant, entityNodesActiveListConcepts);
+	conditionTypeEntity = findOrAddConceptEntityNodeByNameSimpleWrapper(entityNodeName, entityAlreadyExistant, entityNodesActiveListConcepts);
 	#endif
 	
 	return conditionTypeEntity;
 }	
 
-GIAEntityNode * findOrAddEntityNodeByNameSimpleWrapper(string * entityNodeName, bool * entityAlreadyExistant, unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts)
+GIAEntityNode * findOrAddConceptEntityNodeByNameSimpleWrapper(string * entityNodeName, bool * entityAlreadyExistant, unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts)
 {
 	GIAEntityNode * entityNodeFound = NULL;
+	
+	/*already available locally...
 	long * currentEntityNodeIDInCompleteList;
 	long * currentEntityNodeIDInConceptEntityNodesList;
 	vector<GIAEntityNode*> * entityNodesActiveListComplete;
@@ -1391,9 +1393,10 @@ GIAEntityNode * findOrAddEntityNodeByNameSimpleWrapper(string * entityNodeName, 
 		currentEntityNodeIDInCompleteList = getCurrentEntityNodeIDInSentenceCompleteList();
 		currentEntityNodeIDInConceptEntityNodesList = getCurrentEntityNodeIDInSentenceConceptEntityNodesList();	
 	}
+	*/
 
 	long entityIndex = -1;
-	entityNodeFound = findOrAddConceptEntityNodeByName(entityNodesActiveListComplete, entityNodesActiveListConcepts, entityNodeName, entityAlreadyExistant, &entityIndex, true, currentEntityNodeIDInCompleteList, currentEntityNodeIDInConceptEntityNodesList, saveNetwork);
+	entityNodeFound = findOrAddConceptEntityNodeByName(entityNodesActiveListComplete, entityNodesActiveListConcepts, entityNodeName, entityAlreadyExistant, &entityIndex, true, &currentEntityNodeIDInCompleteList, &currentEntityNodeIDInConceptEntityNodesList, saveNetwork);
 	if(entityAlreadyExistant)
 	{
 		applyEntityAlreadyExistsFunction(entityNodeFound);
@@ -1429,14 +1432,17 @@ void writeVectorConnection(GIAEntityNode * entityNode, GIAEntityNode * entityNod
 	#endif
 	
 	#ifdef GIA_USE_DATABASE
-	if(getUseDatabase())
-	{
+	if((getUseDatabase() == GIA_USE_DATABASE_TRUE_READ_ACTIVE) || (getUseDatabase() == GIA_USE_DATABASE_TRUE_READ_INACTIVE))	//NB even if not accessing the database for new information (read), still prepare nodes for database write
+	{	
+		//#ifdef GIA_USE_DATABASE_ALWAYS_LOAD_CONCEPT_NODE_REFERENCE_LISTS		//why is this preprocessor check not required???
 		//required for database syncronisation with RAM
 		if(!(entityNode->entityVectorConnectionsReferenceListLoadedArray[connectionType]))
 		{
 			cout << "error: writeVectorConnection called, but entityVectorConnectionsReferenceListLoadedArray set to false" << endl;
 			exit(0);
-		}	
+		}
+		//#endif
+			
 		newConnection->entityName = entityNodeToAdd->entityName;
 		newConnection->idInstance = entityNodeToAdd->idInstance;
 		newConnection->loaded = true;
@@ -1449,35 +1455,114 @@ void writeVectorConnection(GIAEntityNode * entityNode, GIAEntityNode * entityNod
 long determineNextIdInstance(GIAEntityNode * entity)
 {
 	long nextIdInstance;	
-		
+	#ifdef GIA_DATABASE_DEBUG
+	cout << "\t\tDEBUG: determineNextIdInstance(); 0. entity->entityName = " << entity->entityName << endl; 
+	cout << "\t\tDEBUG: determineNextIdInstance(); 0. entity->idInstance = " << entity->idInstance << endl; 	
+	#endif
 	GIAEntityNode * conceptEntity;
 	if(!(entity->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE].empty()))
 	{	
 		//the current entity is a property of a concept entity
 		conceptEntity = entity->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE].back()->entity;		
+		#ifdef GIA_DATABASE_DEBUG
+		cout << "\t\tDEBUG: determineNextIdInstance(); 1a. conceptEntity->entityName = " << conceptEntity->entityName << endl; 
+		cout << "\t\tDEBUG: determineNextIdInstance(); 1a. conceptEntity->idInstance = " << conceptEntity->idInstance << endl; 
+		#endif
 	}
 	else
 	{
 		//the current entity is a concept entity
 		conceptEntity = entity;
+		#ifdef GIA_DATABASE_DEBUG
+		cout << "\t\tDEBUG: determineNextIdInstance(); 1b. conceptEntity->entityName = " << conceptEntity->entityName << endl;
+		cout << "\t\tDEBUG: determineNextIdInstance(); 1b. conceptEntity->idInstance = " << conceptEntity->idInstance << endl; 
+		#endif
 	}
 	
+#ifdef GIA_USE_DATABASE_ALWAYS_LOAD_CONCEPT_NODE_REFERENCE_LISTS
 	#ifdef GIA_ID_INSTANCE_ALLOW_INSTANCE_DELETIONS
 	if(!(conceptEntity->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES].empty()))
 	{
 		long previousIdInstance = conceptEntity->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES].back()->entity->idInstance;
 		nextIdInstance = previousIdInstance + 1;
+		#ifdef GIA_DATABASE_DEBUG
+		cout << "\t\tDEBUG: determineNextIdInstance(); 2a. nextIdInstance = " << nextIdInstance << endl; 
+		#endif
 	}	
 	else
 	{
 		nextIdInstance = GIA_DATABASE_NODE_CONCEPT_ID_INSTANCE + 1;
+		#ifdef GIA_DATABASE_DEBUG
+		cout << "\t\tDEBUG: determineNextIdInstance(); 2b. nextIdInstance = " << nextIdInstance << endl; 		
+		#endif
 	}	
 	#else
 	long numberOfInstances =  conceptEntity->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES].size();
 	nextIdInstance = numberOfInstances;	
 	#endif
+#else
+	if(conceptEntity->conceptEntityLoaded == NULL)
+	{
+		cout <<"ERROR: (conceptEntity->conceptEntityLoaded == NULL)" << endl;
+	}
+	GIAconceptEntityLoaded * conceptEntityLoaded = conceptEntity->conceptEntityLoaded;
+	#ifdef GIA_DATABASE_DEBUG
+	cout << "conceptEntityLoaded->numberOfInstances = " << conceptEntityLoaded->numberOfInstances << endl;
+	#endif
+	conceptEntityLoaded->numberOfInstances = conceptEntityLoaded->numberOfInstances + 1;
+	nextIdInstance = conceptEntityLoaded->numberOfInstances;
+#endif
 	
 	return nextIdInstance;
 }
 
+
+#ifdef GIA_USE_DATABASE
+void addEntityNodeToActiveLists(GIAEntityNode * entity, unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts)
+{//NB add reference set entity to active list complete + appropriate list (property/action/condition) [NB the reference set entity will already be added to concept active list entityNodesActiveListConcepts...] - this function enables references to be written to XML
+
+	/*already available locally...
+	long * currentEntityNodeIDInCompleteList = getCurrentEntityNodeIDInCompleteList();
+	long * currentEntityNodeIDInConceptEntityNodesList = getCurrentEntityNodeIDInConceptEntityNodesList();
+	long * currentEntityNodeIDInPropertyEntityNodesList = getCurrentEntityNodeIDInPropertyEntityNodesList();
+	long * currentEntityNodeIDInActionEntityNodesList = getCurrentEntityNodeIDInActionEntityNodesList();
+	long * currentEntityNodeIDInConditionEntityNodesList = getCurrentEntityNodeIDInConditionEntityNodesList();
+	*/
+	
+	if(saveNetwork)
+	{
+		if(entity->isConcept)
+		{
+			//do nothing - assume reference set entity already added to concept active list (in createGIACoreferenceInListBasedUponIdentifiedReferenceSets())
+		}
+		else if(entity->isAction)
+		{
+			entity->idActiveEntityTypeList = currentEntityNodeIDInActionEntityNodesList;
+			entityNodesActiveListActions->push_back(entity);
+			currentEntityNodeIDInActionEntityNodesList++;
+		}	
+		else if(entity->isCondition)
+		{
+			entity->idActiveEntityTypeList = currentEntityNodeIDInConditionEntityNodesList;
+			entityNodesActiveListConditions->push_back(entity);
+			currentEntityNodeIDInConditionEntityNodesList++;		
+		}	
+		else if(entity->isProperty)
+		{
+			entity->idActiveEntityTypeList = currentEntityNodeIDInPropertyEntityNodesList;
+			entityNodesActiveListProperties->push_back(entity);
+			currentEntityNodeIDInPropertyEntityNodesList++;			
+		}
+			
+		entity->idActiveList = currentEntityNodeIDInCompleteList;
+		entityNodesActiveListComplete->push_back(entity);
+		currentEntityNodeIDInCompleteList++;
+	}
+	else
+	{//this case should never be used...
+		entity->idActiveList = currentEntityNodeIDInSentenceCompleteList;
+		currentEntityNodeIDInSentenceCompleteList++;
+	}
+}
+#endif
 

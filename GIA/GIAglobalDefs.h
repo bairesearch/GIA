@@ -3,7 +3,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l6a 09-June-2012
+ * Project Version: 1m1a 20-June-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -15,9 +15,11 @@
 #include "SHAREDglobalDefs.h"
 
 //variables currently been tested (1l3?)
-//#define GIA_USE_DATABASE	//this needs to be debugged (not yet tested)	
+#define GIA_USE_DATABASE	//this needs to be debugged (not yet tested)	
 #ifdef GIA_USE_DATABASE
 	#define GIA_USE_DATABASE_FILESYSTEM
+	//#define GIA_USE_DATABASE_ALWAYS_LOAD_CONCEPT_NODE_REFERENCE_LISTS
+	#define GIA_DATABASE_CLEAR_CACHE_EVERY_SENTENCE
 #endif
 #define GIA_USE_ADVANCED_REFERENCING	//this needs to be debugged (not yet tested)
 #ifdef GIA_USE_ADVANCED_REFERENCING
@@ -41,9 +43,10 @@
 //#define GIA_TRIAL_WORD_NET_SYNONYM_LOOKUP
 
 //Debug;
-//#define GIA_ADVANCED_REFERENCING_DEBUG		//this needs to be debugged (not yet tested)
-//#define GIA_ADVANCED_REFERENCING_DEBUG_HIGHLIGHT_REFERENCE_SET_CONNECTIONS_WITH_COLOURS
+//#define GIA_DATABASE_DEBUG_FILESYSTEM_IO	
 //#define GIA_DATABASE_DEBUG			//this needs to be debugged (not yet tested)
+//#define GIA_ADVANCED_REFERENCING_DEBUG		//just finished first debug using this (1l5f)
+//#define GIA_ADVANCED_REFERENCING_DEBUG_HIGHLIGHT_REFERENCE_SET_CONNECTIONS_WITH_COLOURS
 //#define GIA_QUERY_MULTIPLE_ANSWERS_DEBUG	//just finished first debug using this (1l2a)
 //#define GIA_REDISTRIBUTE_STANFORD_RELATIONS_QUERY_VARIABLE_DEBUG
 //#define GIA_REDISTRIBUTE_STANFORD_RELATIONS_QUERY_VARIABLE_DEBUG_DO_NOT_MAKE_FINAL_CHANGES_YET

@@ -3,7 +3,7 @@
  * File Name: GIAEntityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l6a 09-June-2012
+ * Project Version: 1m1a 20-June-2012
  *
  *******************************************************************************/
 
@@ -18,6 +18,16 @@ string quantityModifierNameArray[QUANTITY_MODIFIER_NUMBER_OF_TYPES] = {"almost"}
 
 //int grammaticalTenseNameLengthsArray[GRAMMATICAL_TENSE_NUMBER_OF_TYPES] = {9, 7, 4, 6};
 
+#ifndef GIA_USE_DATABASE_ALWAYS_LOAD_CONCEPT_NODE_REFERENCE_LISTS
+GIAconceptEntityLoaded::GIAconceptEntityLoaded(void)
+{
+	loaded = false;
+	numberOfInstances = 0;	
+}
+GIAconceptEntityLoaded::~GIAconceptEntityLoaded(void)
+{
+}
+#endif
 
 //~nouns
 GIAEntityNode::GIAEntityNode(void)
@@ -112,7 +122,7 @@ GIAEntityNode::GIAEntityNode(void)
 	entityNodeDefiningThisInstance = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE]);
 
 	#ifdef GIA_USE_DATABASE
-	DBsetEntityConnectionsLoaded(this, true);	//for now, assume that a new entity will be configured with its connections loaded into RAM
+	DBsetEntityConnectionsReferenceListsLoaded(this, true);	//for now, assume that a new entity will be configured with its connections loaded into RAM
 	#endif
 	
 	/*
@@ -174,14 +184,20 @@ GIAEntityNode::GIAEntityNode(void)
 	#ifdef GIA_USE_DATABASE
 	bool added = false;	//implies database Update is Required
 	bool modified = false;	//implies database Update is Required
+	
+	#ifndef GIA_USE_DATABASE_ALWAYS_LOAD_CONCEPT_NODE_REFERENCE_LISTS
+	conceptEntityLoaded = NULL;
+	#endif	
 	#endif	
 }
 GIAEntityNode::~GIAEntityNode(void)
 {
 }
 
+
+
 #ifdef GIA_USE_DATABASE
-void DBsetEntityConnectionsLoaded(GIAEntityNode * entityNode, bool loaded)
+void DBsetEntityConnectionsReferenceListsLoaded(GIAEntityNode * entityNode, bool loaded)
 {
 	for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
 	{

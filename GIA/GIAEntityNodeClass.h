@@ -3,7 +3,7 @@
  * File Name: GIAEntityNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l6a 09-June-2012
+ * Project Version: 1m1a 20-June-2012
  * NB a property is an instance of an entity, any given entity may contain/comprise/have multiple properties - and properties are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -160,6 +160,18 @@ static string entityVectorConnectionDrawConnectionNameArray[GIA_ENTITY_NUMBER_OF
 
 class GIAEntityConnection;
 
+#ifndef GIA_USE_DATABASE_ALWAYS_LOAD_CONCEPT_NODE_REFERENCE_LISTS
+class GIAconceptEntityLoaded
+{
+public:
+	GIAconceptEntityLoaded(void);
+	~GIAconceptEntityLoaded(void);
+	
+	bool loaded;
+	long numberOfInstances; 
+};
+#endif
+
 class GIAEntityNode
 {
 public:
@@ -201,8 +213,8 @@ public:
 	
 	#ifdef GIA_USE_DATABASE
 	//designed for a high scale database (eg 200,000 references per instance, 200,000 instances per concept)	
-	bool entityVectorConnectionsReferenceListLoadedArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];			//signifies whether all the vector connections in the reference list has been loaded from file and entityConnectionsNameArray/entityConnectionsIDArray have therefore been populated. This is the first step required to enable loading of connections into RAM (see entityVectorConnectionsLoadedArray)
-	//bool entityVectorConnectionsLoadedArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];					//not used - vector connections are loaded into RAM on an individual basis. //signifies whether all the vector connection nodes have been loaded (eg from the db)	
+	bool entityVectorConnectionsReferenceListLoadedArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];			//signifies whether all the vector connections in the reference list has been loaded from file and entityConnections entityNames+idInstance have therefore been populated. This is the first step required to enable loading of connections into RAM (see entityVectorConnectionsLoadedArray)
+	//bool entityVectorConnectionsLoadedArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];				//not used - vector connections are loaded into RAM on an individual basis. //signifies whether all the vector connection nodes have been loaded (eg from the db)	
 	bool entityVectorConnectionsRemovedArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];					//signifies whether one or more vector connection nodes have been removed {ie the entire reference list must be updated}
 	#endif
 
@@ -344,11 +356,19 @@ public:
 	#ifdef GIA_USE_DATABASE
 	bool added;	//implies database Update is Required
 	bool modified;	//implies database Update is Required
+
+	#ifndef GIA_USE_DATABASE_ALWAYS_LOAD_CONCEPT_NODE_REFERENCE_LISTS
+	GIAconceptEntityLoaded * conceptEntityLoaded;
 	#endif
+	#endif
+	
+
 };
 
+
+
 #ifdef GIA_USE_DATABASE
-void DBsetEntityConnectionsLoaded(GIAEntityNode * entityNode, bool loaded);
+void DBsetEntityConnectionsReferenceListsLoaded(GIAEntityNode * entityNode, bool loaded);
 #endif
 
 void disconnectNodeFromAllButDefinitions(GIAEntityNode * entityNode);

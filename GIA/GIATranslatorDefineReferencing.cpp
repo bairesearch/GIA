@@ -3,7 +3,7 @@
  * File Name: GIATranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1l6a 09-June-2012
+ * Project Version: 1m1a 20-June-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -117,7 +117,7 @@ void identifyComparisonVariableAlternateMethod(Sentence * currentSentenceInList,
 						/*
 						string queryComparisonVariableName = currentFeatureInList->word
 						bool entityAlreadyExistant = false;
-						GIAEntityNode * queryComparisonVariableEntityNode = findOrAddEntityNodeByNameSimpleWrapper(&queryComparisonVariableName, &entityAlreadyExistant);						
+						GIAEntityNode * queryComparisonVariableEntityNode = findOrAddConceptEntityNodeByNameSimpleWrapper(&queryComparisonVariableName, &entityAlreadyExistant);						
 						//CHECK THIS; !applyEntityAlreadyExistsFunction
 						*/
 						if(GIAEntityNodeArrayFilled[currentFeatureInList->entityIndex])
@@ -425,7 +425,7 @@ void linkPronounReferencesRelex(Sentence * currentSentenceInList, bool GIAEntity
 							if(entityName != "")
 							{
 								bool entityAlreadyExistant = false;
-								GIAEntityNode * currentEntityInWhichReferenceSourceIsBeingSearchedFor = findOrAddEntityNodeByNameSimpleWrapper(&entityName, &entityAlreadyExistant, entityNodesActiveListConcepts);
+								GIAEntityNode * currentEntityInWhichReferenceSourceIsBeingSearchedFor = findOrAddConceptEntityNodeByNameSimpleWrapper(&entityName, &entityAlreadyExistant, entityNodesActiveListConcepts);
 								//CHECK THIS; !applyEntityAlreadyExistsFunction
 								
 								if(entityAlreadyExistant)
@@ -662,7 +662,7 @@ void linkPronounAndTextualContextReferencesStanfordCoreNLP(Sentence * currentSen
 										string entityName = currentFeatureInList->lemma;	//CHECK THIS; assumes [at least one instance of] the reference source will always occur as a relation argument/dependent (ie, will not find the reference source if it only occurs as a relation function/governer)					
 
 										bool entityAlreadyExistant = false;
-										GIAEntityNode * currentEntityInWhichReferenceSourceIsBeingSearchedFor = findOrAddEntityNodeByNameSimpleWrapper(&entityName, &entityAlreadyExistant, entityNodesActiveListConcepts);
+										GIAEntityNode * currentEntityInWhichReferenceSourceIsBeingSearchedFor = findOrAddConceptEntityNodeByNameSimpleWrapper(&entityName, &entityAlreadyExistant, entityNodesActiveListConcepts);
 										//CHECK THIS; !applyEntityAlreadyExistsFunction
 										
 										/*
@@ -1150,7 +1150,16 @@ void identityReferenceSet(GIAEntityNode * entityNode, int referenceSetID)
 void createGIACoreferenceInListBasedUponIdentifiedReferenceSets(unordered_map<string, GIAEntityNode*> *sentenceConceptEntityNodesList, unordered_map<string, GIAEntityNode*> *entityNodesActiveListConcepts, GIACoreference * firstGIACoreferenceInList, int numberReferenceSets)	//bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[]
 {
 	unordered_map<string, GIAEntityNode*> * entityNodesActiveListConceptsQuery = sentenceConceptEntityNodesList;
-	
+
+	#ifdef GIA_DATABASE_CLEAR_CACHE_EVERY_SENTENCE
+	#ifdef GIA_USE_DATABASE
+	if(getUseDatabase() == GIA_USE_DATABASE_TRUE_READ_ACTIVE)
+	{	
+		initialiseDBentityNodesTempActiveListComplete();
+	}
+	#endif
+	#endif
+						
 	for(int referenceSetID=0; referenceSetID<numberReferenceSets; referenceSetID++)
 	{	
 		#ifdef GIA_ADVANCED_REFERENCING_DEBUG
@@ -1306,7 +1315,16 @@ void createGIACoreferenceInListBasedUponIdentifiedReferenceSets(unordered_map<st
 		#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 		cout << "\nfinished reference trace round 2" << endl;
 		#endif			
-	}	
+	}
+	
+	#ifdef GIA_DATABASE_CLEAR_CACHE_EVERY_SENTENCE
+	#ifdef GIA_USE_DATABASE
+	if(getUseDatabase() == GIA_USE_DATABASE_TRUE_READ_ACTIVE)
+	{	
+		clearDBentityNodesTempActiveListComplete();
+	}
+	#endif	
+	#endif	
 }
 
 
@@ -1401,14 +1419,11 @@ void linkAdvancedReferencesGIA(Sentence * currentSentenceInList, bool GIAEntityN
 				if(!foundReferenceSource)
 				{
 					if(currentMentionInList->representative)
-					{					
+					{				
 						bool entityNameFound = false;
-						GIAEntityNode * referenceSourceConceptEntity = findOrAddEntityNodeByNameSimpleWrapper(&(currentMentionInList->entityName), &entityNameFound, entityNodesActiveListConcepts);
+						GIAEntityNode * referenceSourceConceptEntity = findOrAddConceptEntityNodeByNameSimpleWrapper(&(currentMentionInList->entityName), &entityNameFound, entityNodesActiveListConcepts);
 						if(entityNameFound)
-						{
-							#ifdef GIA_USE_DATABASE
-							//assumes references have already been loaded into RAM (during their establishment)				
-							#endif
+						{					
 							//now find the property in the referenceSource concept entity that matches the referenceSource idActiveList (there is no concept linking; as concept nodes are identical for reference and referenceSource)
 							for(vector<GIAEntityConnection*>::iterator connectionIter = referenceSourceConceptEntity->AssociatedInstanceNodeList->begin(); connectionIter != referenceSourceConceptEntity->AssociatedInstanceNodeList->end(); connectionIter++) 
 							{
@@ -1419,13 +1434,11 @@ void linkAdvancedReferencesGIA(Sentence * currentSentenceInList, bool GIAEntityN
 								cout << "property->entityIndexTemp = " << property->entityIndexTemp << endl;
 								cout << "referenceSourceEntityNodeIndex = " << referenceSourceEntityNodeIndex << endl;
 								*/
-								if(property->idActiveList == currentMentionInList->idActiveList)
+								if(property->idActiveList == currentMentionInList->idActiveList)		//NB these activeList IDs [idActiveList] are not official - they are only used for referencing - and are overwritten
 								{
-									
 									#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 									cout << "foundReferenceSource: property->entityName = " << property->entityName << endl;
 									#endif
-									
 									
 									referenceSource = property;
 									foundReferenceSource = true;
@@ -1476,7 +1489,18 @@ void linkAdvancedReferencesGIA(Sentence * currentSentenceInList, bool GIAEntityN
 						#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 						cout << "linkAdvancedReferencesGIA: referenceSource->entityName = " << referenceSource->entityName << endl;
 						cout << "linkAdvancedReferencesGIA: GIAEntityNodeArray[entityIndex]->entityName = " << GIAEntityNodeArray[entityIndex]->entityName << endl;
-						#endif						
+						#endif
+
+						
+						#ifdef GIA_USE_DATABASE
+						if(getUseDatabase() == GIA_USE_DATABASE_TRUE_READ_ACTIVE)
+						{
+							addEntityNodeToActiveLists(referenceSource, entityNodesActiveListConcepts);
+							//referenceSource->modified = true;	//used to re-write the node to the database (in case it has been updated)
+							
+						}
+						#endif					
+						
 					}
 				}
 
