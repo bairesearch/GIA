@@ -25,7 +25,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2e5a 17-May-2014
+ * Project Version: 2e5b 17-May-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -43,7 +43,7 @@
  *		Install External Package 1 - Freeglut
  *		--------------------------------------
  *
- *			(Linux Ubuntu 13.1 Only)
+ *			(Linux Ubuntu 14.04 Only)
  *			sudo apt-get install freeglut3 OR;
  *			sudo dpkg -i freeglut3_2.8.1-1_amd64.deb
  *
@@ -74,9 +74,9 @@
  *		Install External Package 2 - Wordnet libraries
  *		--------------------------------------
  *
- *			(Linux Ubuntu 13.1 Only)
+ *			(Linux Ubuntu 14.04 Only)
  *			sudo apt-get install wordnet wordnet-dev[?] wordnet-sense-index OR;
- *			sudo dpkg -i wordnet_1%3a3.0-31_amd64.deb wordnet-base_1%3a3.0-31_all.deb wordnet-dev_1%3a3.0-31_amd64.deb wordnet-gui_1%3a3.0-31_amd64.deb wordnet-sense-index_1%3a3.0-31_all.deb
+ *			sudo dpkg -i wordnet_1%3a3.0-32_amd64.deb wordnet-base_1%3a3.0-32_all.deb wordnet-dev_1%3a3.0-32_amd64.deb wordnet-gui_1%3a3.0-32_amd64.deb wordnet-sense-index_1%3a3.0-32_all.deb
  *
  *			(Linux EL5 Only)
  *			yum install wordnet OR;
@@ -138,12 +138,9 @@
  *			/opt/GATE-4.0/lib/ontotext.jar:\
  *			"
  *
- *		Relex may be downloaded (and installed) via;
- *
- *
  *		1. 	Install Java Development Tools (eg openjdk and openjdk-devel)
  *
- *				Ubuntu 13.1 example;
+ *				Ubuntu 14.04 example;
  *
  *				sudo apt-get install openjdk-7-jdk OR;
  *				sudo dpkg -i openjdk-7-jdk_7u51-2.4.4-0ubuntu0.13.10.1_amd64.deb (and dependencies)
@@ -159,10 +156,9 @@
  *				rpm -i java-1.6.0-openjdk-devel-1.6.0.0-1.36.b17.el6_0.x86_64.rpm / java-1.6.0-openjdk-devel-1.6.0.0-1.39.b17.el6_0.x86_64.rpm
  *				rpm -i java-1.6.0-openjdk-1.6.0.0-1.36.b17.el6_0.x86_64.rpm / java-1.6.0-openjdk-1.6.0.0-1.39.b17.el6_0.x86_64.rpm
  *
- *
  *		2. 	Install Link Parser
  *
- *				Ubuntu 13.1 example;
+ *				Ubuntu 14.04 example;
  *
  *				sudo apt-get install link-grammar liblink-grammar4-dev liblink-grammar4-java OR;
  *				sudo dpkg -i liblink-grammar4_4.7.4-2_amd64.deb liblink-grammar4-dev_4.7.4-2_amd64.deb liblink-grammar4-java_4.7.4-2_amd64.deb (and dependencies)
@@ -179,10 +175,9 @@
  *				su root
  *				make install
  *
- *
  *		3. 	Install WordNet dependencies (eg tcl and tk)
  *
- *				Ubuntu 13.1 example;
+ *				Ubuntu 14.04 example;
  *
  *				sudo apt-get install tcl8.5 tcl8.5-lib tk8.5 tk8.5-lib OR;
  *				sudo dpkg -i tcl8.5_8.5.13-1ubuntu4_amd64.deb tcl8.5-lib_8.5.13-1ubuntu4_amd64.deb tk8.5_8.5.11-2ubuntu4_amd64.deb tk8.5-lib_8.5.11-2ubuntu4_amd64.deb (and dependencies)
@@ -204,10 +199,9 @@
  *				rpm -i tk-8.5.7-5.el6.x86_64.rpm
  *				rpm -i tk-devel-8.5.7-5.el6.x86_64.rpm
  *
- *
  *		4.	Install WordNet
  *
- *				Ubuntu 13.1 example;
+ *				Ubuntu 14.04 example;
  *
  *				sudo apt-get install wordnet wordnet-dev wordnet-sense-index OR;
  *				sudo dpkg -i wordnet_1%3a3.0-31_amd64.deb wordnet-base_1%3a3.0-31_all.deb wordnet-dev_1%3a3.0-31_amd64.deb wordnet-gui_1%3a3.0-31_amd64.deb wordnet-sense-index_1%3a3.0-31_all.deb
@@ -224,7 +218,7 @@
  *		5.	Install JWNL Java wordnet library
  *			(download: http://sourceforge.net/projects/jwordnet/)
  *
- *				Ubuntu 13.1 example;
+ *				Ubuntu 14.04 example;
  *
  *				unzip jwnl14-rc2.zip
  *				cd jwnl14-rc2
@@ -245,10 +239,9 @@
  *				chmod 777 /usr/share/java/jwnl.jar
  *				chmod 777 /usr/local/share/java/jwnl.jar
  *
- *
  *		6. 	Install Relex Dependencies (ant)
  *
- *				Ubuntu 13.1 example;
+ *				Ubuntu 14.04 example;
  *
  *				sudo apt-get install ant
  *				sudo apt-get install libcommons-logging-java
@@ -270,32 +263,30 @@
  *				rpm -i jakarta-commons-logging-1.0.4-10.el6.noarch.rpm?
  *				rpm -i ant-commons-logging-1.7.1-13.el6.x86_64.rpm
  *
- *
  *		7. 	Install Gate 4.0 (optional)
  *			(download: http://gate.ac.uk/download/)
- *			[user needs to have logged in as root at least one time in the past before able to run this from root]
- *			Redhat EL5/EL6 example;
+ *			
+ *				Redhat EL5/EL6 example;
+ *				[user needs to have logged in as root at least one time in the past before able to run this from root]
  *
- *			su root
- *			java -jar gate-4.0-build2752-installer-other.jar
- *				run through GUI;
- *				set installation path to /opt/GATE-4.0
- *				tick sources and development documentation
- *				install
- *
+ *				su root
+ *				java -jar gate-4.0-build2752-installer-other.jar
+ *					run through GUI;
+ *					set installation path to /opt/GATE-4.0
+ *					tick sources and development documentation
+ *					install
  *
  *		8. 	Install GNU getopt (optional) (not required for Ubuntu)
  *			(download: http://www.java2s.com/Code/Jar/GHI/Downloadgetoptjar.htm)
  *
- *			Redhat EL5/EL6 example;
+ *				Redhat EL5/EL6 example;
  *
- *			unzip getopt.jar.zip
- *			cd getopt.jar.zip_FILES
- *			su root
- *			cp getopt.jar /usr/share/java/gnu-getopt.jar
+ *				unzip getopt.jar.zip
+ *				cd getopt.jar.zip_FILES
+ *				su root
+ *				cp getopt.jar /usr/share/java/gnu-getopt.jar
  *
  *			[not required for Ubuntu: install the "libgetopt-java" package].
- *
  *
  *		9.	Install opennlp (optional)
  *			(download: http://sourceforge.net/projects/opennlp/)
@@ -313,12 +304,11 @@
  *				cp lib/jwnl-1.3.3.jar /usr/local/share/java/jwnl.jar
  *				cp lib/trove.jar /usr/local/share/java/
  *
- *
  *		10. 	Install Relex
  *			(download: http://sourceforge.net/projects/relex/
  *			alternate: https://launchpad.net/relex/+download)
  *
- *				Ubuntu 13.1 example;
+ *				Ubuntu 14.04 example;
  *
  *				tar -xvf relex-1.4.0.tar.gz
  *				cd relex-1.4.0
@@ -336,7 +326,7 @@
  *
  *		11.	Configure relex xml files for wordnet
  *
- *				Ubuntu 13.1 example;
+ *				Ubuntu 14.04 example;
  *
  *				cd relex-1.4.0/data/wordnet
  *				gedit file_properties.xml
@@ -458,7 +448,7 @@
  *		Compile/Link External Package 1 - Freeglut development libraries
  *		--------------------------------------
  *
- *			(Linux Ubuntu 13.1 Only)
+ *			(Linux Ubuntu 14.04 Only)
  *			sudo apt-get install freeglut3-dev OR;
  *			sudo dpkg -i freeglut3-dev_2.8.1-1_amd64.deb
  *
@@ -505,7 +495,7 @@
  *		Compile/Link External Package 2 - Wordnet development libraries
  *		--------------------------------------
  *
- *			(Linux Ubuntu 13.1 Only)
+ *			(Linux Ubuntu 14.04 Only)
  *			sudo apt-get install wordnet wordnet-dev wordnet-sense-index OR;
  *			sudo dpkg -i wordnet_1%3a3.0-31_amd64.deb wordnet-base_1%3a3.0-31_all.deb wordnet-dev_1%3a3.0-31_amd64.deb wordnet-gui_1%3a3.0-31_amd64.deb wordnet-sense-index_1%3a3.0-31_all.deb
  *
