@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p3b 14-January-2017
+ * Project Version: 2p3c 14-January-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -34,11 +34,11 @@
  * 		Dependencies Introduction
  *		=================================
  *
- *		The source for OpenGIA is written in ISO C++, some of which may require ISO/IEC 14882:2011 (C++11).
+ *		The source for GIA is written in ISO C++, some of which may require ISO/IEC 14882:2011 (C++11).
  *
- *		OpenGIA requires the following software to be pre-installed;
+ *		GIA requires the following software to be pre-installed;
  *
- *		OpenGIA Execution Dependencies Installation
+ *		GIA Execution Dependencies Installation
  *		=================================
  *
  *		Install External Package 1 - Freeglut
@@ -528,7 +528,7 @@
  *			rpm -i dos2unixXXX.rpm
  *
  *
- *		OpenGIA Development Dependencies Installation
+ *		GIA Development Dependencies Installation
  *		=================================
  *
  *		Install External Package 1 - Freeglut development libraries
@@ -651,10 +651,10 @@
  *
  *
  *
- *		OpenGIA Compilation
+ *		GIA Compilation
  *		=================================
  *
- *		Compile OpenGIA.exe
+ *		Compile GIA.exe
  *
  *			(Linux Only)
  *			open SHAREDglobalDefs.h,
@@ -682,23 +682,23 @@
  *		Linux EL5/EL6/UB14:
  *
  *		Examples using NLP input from Relex;
- *		./OpenGIA.exe -lrpfolder "/home/systemusername/source/LRPdata" -itxt inputText.txt -oall semanticNet -nlprelation 0 -nlpfeature 0 -nlprelationq 0 -nlpfeatureq 0 -nlprelexfolder "/home/systemusername/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "/home/systemusername/stanford/coreNLP/stanford-corenlp-full-2015-04-20" -nlpstanfordparserfolder "/home/systemusername/stanford/parser/stanford-parser-full-2015-04-20" -notshow
- *		./OpenGIA.exe -lrpfolder "/home/systemusername/source/LRPdata" -itxt inputText.txt -itxtq inputTextQuery.txt -oall semanticNet -nlprelation 0 -nlpfeature 0 -nlprelationq 0 -nlpfeatureq 0 -nlprelexfolder "/home/systemusername/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "/home/systemusername/stanford/coreNLP/stanford-corenlp-full-2015-04-20" -nlpstanfordparserfolder "/home/systemusername/stanford/parser/stanford-parser-full-2015-04-20" -notshow
+ *		./GIA.exe -lrpfolder "/home/systemusername/source/LRPdata" -itxt inputText.txt -oall semanticNet -nlprelation 0 -nlpfeature 0 -nlprelationq 0 -nlpfeatureq 0 -nlprelexfolder "/home/systemusername/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "/home/systemusername/stanford/coreNLP/stanford-corenlp-full-2015-04-20" -nlpstanfordparserfolder "/home/systemusername/stanford/parser/stanford-parser-full-2015-04-20" -notshow
+ *		./GIA.exe -lrpfolder "/home/systemusername/source/LRPdata" -itxt inputText.txt -itxtq inputTextQuery.txt -oall semanticNet -nlprelation 0 -nlpfeature 0 -nlprelationq 0 -nlpfeatureq 0 -nlprelexfolder "/home/systemusername/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "/home/systemusername/stanford/coreNLP/stanford-corenlp-full-2015-04-20" -nlpstanfordparserfolder "/home/systemusername/stanford/parser/stanford-parser-full-2015-04-20" -notshow
  *		Example using NLP input from Stanford Core NLP;
- *		./OpenGIA.exe -lrpfolder "/home/systemusername/source/LRPdata" -itxt inputText.txt -oall semanticNet -nlprelation 1 -nlpfeature 1 -nlprelexfolder "/home/systemusername/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "/home/systemusername/stanford/coreNLP/stanford-corenlp-full-2015-04-20" -nlpstanfordparserfolder "/home/systemusername/stanford/parser/stanford-parser-full-2015-04-20" -notshow
- *		./OpenGIA.exe -lrpfolder "/home/systemusername/source/LRPdata" -itxt inputText.txt -itxtq inputTextQuery.txt -oall semanticNet -nlprelation 1 -nlpfeature 1 -nlprelationq 1 -nlpfeatureq 1 -nlprelexfolder "/home/systemusername/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "/home/systemusername/stanford/coreNLP/stanford-corenlp-full-2015-04-20" -nlpstanfordparserfolder "/home/systemusername/stanford/parser/stanford-parser-full-2015-04-20" -notshow
+ *		./GIA.exe -lrpfolder "/home/systemusername/source/LRPdata" -itxt inputText.txt -oall semanticNet -nlprelation 1 -nlpfeature 1 -nlprelexfolder "/home/systemusername/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "/home/systemusername/stanford/coreNLP/stanford-corenlp-full-2015-04-20" -nlpstanfordparserfolder "/home/systemusername/stanford/parser/stanford-parser-full-2015-04-20" -notshow
+ *		./GIA.exe -lrpfolder "/home/systemusername/source/LRPdata" -itxt inputText.txt -itxtq inputTextQuery.txt -oall semanticNet -nlprelation 1 -nlpfeature 1 -nlprelationq 1 -nlpfeatureq 1 -nlprelexfolder "/home/systemusername/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "/home/systemusername/stanford/coreNLP/stanford-corenlp-full-2015-04-20" -nlpstanfordparserfolder "/home/systemusername/stanford/parser/stanford-parser-full-2015-04-20" -notshow
  *		Example using NLP input from Stanford Parser + Stanford Core NLP;
- *		./OpenGIA.exe -lrpfolder "/home/systemusername/source/LRPdata" -itxt inputText.txt -oall semanticNet -nlprelation 2 -nlpfeature 1 -nlprelationq 2 -nlpfeatureq 1 -nlprelexfolder "/home/systemusername/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "/home/systemusername/stanford/coreNLP/stanford-corenlp-full-2015-04-20" -nlpstanfordparserfolder "/home/systemusername/stanford/parser/stanford-parser-full-2015-04-20" -notshow
- *		./OpenGIA.exe -lrpfolder "/home/systemusername/source/LRPdata" -itxt inputText.txt -itxtq inputTextQuery.txt -oall semanticNet -nlprelation 2 -nlpfeature 1 -nlprelationq 2 -nlpfeatureq 1 -nlprelexfolder "/home/systemusername/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "/home/systemusername/stanford/coreNLP/stanford-corenlp-full-2015-04-20" -nlpstanfordparserfolder "/home/systemusername/stanford/parser/stanford-parser-full-2015-04-20" -notshow > answer.txt
- *		./OpenGIA.exe -lrpfolder "/home/systemusername/source/LRPdata" -syndet 1 -itxt inputText.txt -oall semanticNet -nlprelation 2 -nlpfeature 1 -nlprelationq 2 -nlpfeatureq 1 -nlprelexfolder "/home/systemusername/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "/home/systemusername/stanford/coreNLP/stanford-corenlp-full-2015-04-20" -nlpstanfordparserfolder "/home/systemusername/stanford/parser/stanford-parser-full-2015-04-20" -notshow
+ *		./GIA.exe -lrpfolder "/home/systemusername/source/LRPdata" -itxt inputText.txt -oall semanticNet -nlprelation 2 -nlpfeature 1 -nlprelationq 2 -nlpfeatureq 1 -nlprelexfolder "/home/systemusername/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "/home/systemusername/stanford/coreNLP/stanford-corenlp-full-2015-04-20" -nlpstanfordparserfolder "/home/systemusername/stanford/parser/stanford-parser-full-2015-04-20" -notshow
+ *		./GIA.exe -lrpfolder "/home/systemusername/source/LRPdata" -itxt inputText.txt -itxtq inputTextQuery.txt -oall semanticNet -nlprelation 2 -nlpfeature 1 -nlprelationq 2 -nlpfeatureq 1 -nlprelexfolder "/home/systemusername/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "/home/systemusername/stanford/coreNLP/stanford-corenlp-full-2015-04-20" -nlpstanfordparserfolder "/home/systemusername/stanford/parser/stanford-parser-full-2015-04-20" -notshow > answer.txt
+ *		./GIA.exe -lrpfolder "/home/systemusername/source/LRPdata" -syndet 1 -itxt inputText.txt -oall semanticNet -nlprelation 2 -nlpfeature 1 -nlprelationq 2 -nlpfeatureq 1 -nlprelexfolder "/home/systemusername/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "/home/systemusername/stanford/coreNLP/stanford-corenlp-full-2015-04-20" -nlpstanfordparserfolder "/home/systemusername/stanford/parser/stanford-parser-full-2015-04-20" -notshow
  *
  *		Windows XP/7/8:
  *		Example using NLP input from Stanford Core NLP;
- *		OpenGIA.exe -lrpfolder "C:/Files/source/LRPdata" -itxt inputText.txt -oall semanticNet -nlprelation 1 -nlpfeature 1 -nlprelationq 1 -nlpfeatureq 1 -nlprelexfolder "C:/Files/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "C:/Files/stanford/coreNLP/stanford-corenlp-full-2015-04-20" -nlpstanfordparserfolder "C:/Files/stanford/parser/stanford-parser-full-2015-04-20" -notshow
- *		OpenGIA.exe -lrpfolder "C:/Files/source/LRPdata" -itxt inputText.txt -itxtq inputTextQuery.txt -oall semanticNet -nlprelation 1 -nlpfeature 1 -nlprelationq 1 -nlpfeatureq 1 -nlprelexfolder "C:/Files/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "C:/Files/stanford/coreNLP/stanford-corenlp-full-2015-04-20" -nlpstanfordparserfolder "C:/Files/stanford/parser/stanford-parser-full-2015-04-20" -notshow
+ *		GIA.exe -lrpfolder "C:/Files/source/LRPdata" -itxt inputText.txt -oall semanticNet -nlprelation 1 -nlpfeature 1 -nlprelationq 1 -nlpfeatureq 1 -nlprelexfolder "C:/Files/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "C:/Files/stanford/coreNLP/stanford-corenlp-full-2015-04-20" -nlpstanfordparserfolder "C:/Files/stanford/parser/stanford-parser-full-2015-04-20" -notshow
+ *		GIA.exe -lrpfolder "C:/Files/source/LRPdata" -itxt inputText.txt -itxtq inputTextQuery.txt -oall semanticNet -nlprelation 1 -nlpfeature 1 -nlprelationq 1 -nlpfeatureq 1 -nlprelexfolder "C:/Files/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "C:/Files/stanford/coreNLP/stanford-corenlp-full-2015-04-20" -nlpstanfordparserfolder "C:/Files/stanford/parser/stanford-parser-full-2015-04-20" -notshow
  *		Example using NLP input from Stanford Parser + Stanford Core NLP;
- *		OpenGIA.exe -lrpfolder "C:/Files/source/LRPdata" -itxt inputText.txt -oall semanticNet -nlprelation 2 -nlpfeature 1 -nlprelationq 2 -nlpfeatureq 1 -nlprelexfolder "C:/Files/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "C:/Files/stanford/coreNLP/stanford-corenlp-full-2015-04-20" -nlpstanfordparserfolder "C:/Files/stanford/parser/stanford-parser-full-2015-04-20" -notshow
- *		OpenGIA.exe -lrpfolder "C:/Files/source/LRPdata" -itxt inputText.txt -itxtq inputTextQuery.txt -oall semanticNet -nlprelation 2 -nlpfeature 1 -nlprelationq 2 -nlpfeatureq 1 -nlprelexfolder "C:/Files/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "C:/Files/stanford/coreNLP/stanford-corenlp-full-2015-04-20" -nlpstanfordparserfolder "C:/Files/stanford/parser/stanford-parser-full-2015-04-20" -notshow
+ *		GIA.exe -lrpfolder "C:/Files/source/LRPdata" -itxt inputText.txt -oall semanticNet -nlprelation 2 -nlpfeature 1 -nlprelationq 2 -nlpfeatureq 1 -nlprelexfolder "C:/Files/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "C:/Files/stanford/coreNLP/stanford-corenlp-full-2015-04-20" -nlpstanfordparserfolder "C:/Files/stanford/parser/stanford-parser-full-2015-04-20" -notshow
+ *		GIA.exe -lrpfolder "C:/Files/source/LRPdata" -itxt inputText.txt -itxtq inputTextQuery.txt -oall semanticNet -nlprelation 2 -nlpfeature 1 -nlprelationq 2 -nlpfeatureq 1 -nlprelexfolder "C:/Files/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "C:/Files/stanford/coreNLP/stanford-corenlp-full-2015-04-20" -nlpstanfordparserfolder "C:/Files/stanford/parser/stanford-parser-full-2015-04-20" -notshow
  *
  *		Filesystem Database Configuration;
  *		---------------------------------
@@ -727,7 +727,7 @@
 #ifdef USE_NLC
 	#define GIA_DISABLE_CROSS_SENTENCE_REFERENCING	//added 2g5a/05-September-2014 - required for NLC 1j2b+, optional for NLC 1k11a+
 #endif
-//#define GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER	//disabled for OpenGIA (OLD: GIA_CORPUS_DATABASE)
+//#define GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
 
 
 //#define GIA_DEBUG_DISABLE_1g_CODE
