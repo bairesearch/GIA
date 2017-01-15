@@ -20,7 +20,7 @@
 
 /*******************************************************************************
  *
- * File Name: GIAbot.h
+ * File Name: GIAtranslatorRedistributeRelexRelations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
  * Project Version: 1t1a 06-July-2013
@@ -30,8 +30,8 @@
  *******************************************************************************/
 
 
-#ifndef HEADER_GIA_BOT
-#define HEADER_GIA_BOT
+#ifndef HEADER_GIA_TRANSLATOR_REDISTRIBUTE_RELEX_RELATIONS
+#define HEADER_GIA_TRANSLATOR_REDISTRIBUTE_RELEX_RELATIONS
 
 #include <iostream>
 #include <fstream>
@@ -43,21 +43,30 @@
 #include <vector>
 using namespace std;
 
-
 #include "GIAglobalDefs.h"
 #include "GIAsentenceClass.h"
 #include "GIAentityNodeClass.h"
 #include "GIAentityConnectionClass.h"
 #include "GIAconditionNodeClass.h"
 
-#define FEATURE_FIRST_PERSON_NUMBER_OF_TYPES (5)
-#define FEATURE_SECOND_PERSON_NUMBER_OF_TYPES (5)
-static string featureSecondPersonNameArray[FEATURE_SECOND_PERSON_NUMBER_OF_TYPES] = {"you","you","your","yours","yourself"};
-static string featureFirstPersonNameArray[FEATURE_FIRST_PERSON_NUMBER_OF_TYPES] = {"i","me","my","mine","myself"};
-
-#ifdef GIA_BOT_SWITCH_FIRST_AND_SECOND_PERSON
-void botSwitchFirstAndSecondPerson(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], int NLPdependencyRelationsType);
+//should move the following to GIAtranslatorRedistributeRelations.h/.cpp
+#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS
+bool detectContinuousVerbBasic(string * verb);
+void redistributeStanfordAndRelexRelationsCorrectPOStagsAndLemmasOfAllContinuousVerbs(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], Feature * featureArrayTemp[]);	//Stanford Specific? (may require Relex equivalent redistribution function)
+	bool correctContinuousVerbPOStagAndLemma(GIAentityNode * actionOrSubstanceEntity, Feature * currentFeature);
+		//bool determineIfWordIsVerbContinuousCase(string * word);
+	
 #endif
 
+//should move the following to GIAtranslatorRedistributeRelexRelations.h/.cpp:
+#ifdef GIA_SUPPORT_ALIASES_RELEX_COMPATIBILITY
+void redistributeRelexRelationsCollapseSubjectAndObjectGenerateAppos(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], int NLPfeatureParser, Feature * featureArrayTemp[]);
+#endif
+#ifdef GIA_SUPPORT_WHO_QUERY_ALIAS_ANSWERS
+void redistributeRelexRelationsDetectNameQueries(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], Feature * featureArrayTemp[]);
+#endif
+#ifdef GIA_TRANSLATOR_INTERPRET_OF_AS_OBJECT_FOR_CONTINUOUS_VERBS
+void redistributeRelexRelationsInterpretOfAsObjectForContinuousVerbs(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], int NLPdependencyRelationsType);
+#endif
 
 #endif

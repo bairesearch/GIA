@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorApplyAdvancedFeatures.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s10d 05-July-2013
+ * Project Version: 1t1a 06-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * ?TO DO: extract date information of entities from relex <features> tag area
@@ -173,7 +173,7 @@ void extractDatesRelex(Sentence * currentSentenceInList, bool GIAentityNodeArray
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		if(!(currentRelationInList->disabled))
 		{
 		#endif
@@ -244,7 +244,7 @@ void extractDatesRelex(Sentence * currentSentenceInList, bool GIAentityNodeArray
 					}
 				}
 			}
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		}
 		#endif
 		currentRelationInList = currentRelationInList->next;
@@ -311,7 +311,7 @@ void extractQuantitiesStanfordCoreNLP(Sentence * currentSentenceInList, bool GIA
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		if(!(currentRelationInList->disabled))
 		{
 		#endif
@@ -357,7 +357,7 @@ void extractQuantitiesStanfordCoreNLP(Sentence * currentSentenceInList, bool GIA
 					Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
 					while(currentRelationInList2->next != NULL)
 					{
-						#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+						#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 						if(!(currentRelationInList2->disabled))
 						{
 						#endif
@@ -394,7 +394,7 @@ void extractQuantitiesStanfordCoreNLP(Sentence * currentSentenceInList, bool GIA
 								}
 
 							}
-						#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+						#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 						}
 						#endif
 
@@ -402,7 +402,7 @@ void extractQuantitiesStanfordCoreNLP(Sentence * currentSentenceInList, bool GIA
 					}
 				}
 			}
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		}
 		#endif
 		currentRelationInList = currentRelationInList->next;
@@ -457,7 +457,7 @@ void extractQuantitiesRelex(Sentence * currentSentenceInList, bool GIAentityNode
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		if(!(currentRelationInList->disabled))
 		{
 		#endif
@@ -494,7 +494,7 @@ void extractQuantitiesRelex(Sentence * currentSentenceInList, bool GIAentityNode
 				Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
 				while(currentRelationInList2->next != NULL)
 				{
-					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 					if(!(currentRelationInList2->disabled))
 					{
 					#endif
@@ -541,7 +541,7 @@ void extractQuantitiesRelex(Sentence * currentSentenceInList, bool GIAentityNode
 								quantitySubstance->hasQuantityMultiplier = true;
 							}
 						}
-					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 					}
 					#endif
 
@@ -565,7 +565,7 @@ void extractQuantitiesRelex(Sentence * currentSentenceInList, bool GIAentityNode
 					Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
 					while(currentRelationInList2->next != NULL)
 					{
-						#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+						#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 						if(!(currentRelationInList2->disabled))
 						{
 						#endif
@@ -574,7 +574,7 @@ void extractQuantitiesRelex(Sentence * currentSentenceInList, bool GIAentityNode
 								entityToConnectMeasurePerEntity = GIAentityNodeArray[currentRelationInList2->relationGovernorIndex];	//eg row
 								foundQuantityOwner = true;
 							}
-						#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+						#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 						}
 						#endif
 
@@ -647,7 +647,7 @@ void extractQuantitiesRelex(Sentence * currentSentenceInList, bool GIAentityNode
 					}
 				}
 			}
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		}
 		#endif
 		currentRelationInList = currentRelationInList->next;
@@ -660,7 +660,7 @@ void extractMeasures(Sentence * currentSentenceInList, bool GIAentityNodeArrayFi
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		if(!(currentRelationInList->disabled))
 		{
 		#endif
@@ -736,7 +736,7 @@ void extractMeasures(Sentence * currentSentenceInList, bool GIAentityNodeArrayFi
 				}
 				#endif
 			}
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		}
 		#endif
 		currentRelationInList = currentRelationInList->next;
@@ -748,7 +748,7 @@ void extractQualities(Sentence * currentSentenceInList, bool GIAentityNodeArrayF
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		if(!(currentRelationInList->disabled))
 		{
 		#endif
@@ -783,7 +783,7 @@ void extractQualities(Sentence * currentSentenceInList, bool GIAentityNodeArrayF
 					substanceEntity->isSubstanceQuality = true;	//[eg2 The locked door.. / Jim runs quickly / Mr. Smith is late {_amod/_advmod/_predadj}]
 				}
 			}
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		}
 		#endif
 		currentRelationInList = currentRelationInList->next;
@@ -796,7 +796,7 @@ void defineToBeAndToDoPropertiesAndConditions(Sentence * currentSentenceInList, 
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		if(!(currentRelationInList->disabled))
 		{
 		#endif
@@ -855,7 +855,7 @@ void defineToBeAndToDoPropertiesAndConditions(Sentence * currentSentenceInList, 
 					#endif
 				}
 			}
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		}
 		#endif
 		currentRelationInList = currentRelationInList->next;
@@ -867,7 +867,7 @@ void linkPropertiesParataxis(Sentence * currentSentenceInList, bool GIAentityNod
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		if(!(currentRelationInList->disabled))
 		{
 		#endif
@@ -888,7 +888,7 @@ void linkPropertiesParataxis(Sentence * currentSentenceInList, bool GIAentityNod
 				bool sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_PARATAXIS; 		//eg The guy, John said, left early in the morning.	[NB The guy, that John said was blue, left early in the morning. / He says that you like to swim.  does not generate parataxis, so these cases needn't be considered here...]
 				GIAentityNodeArray[substanceIndex] = addOrConnectPropertyToEntity(actionEntity, substanceEntity, sameReferenceSet);
 			}
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		}
 		#endif
 		currentRelationInList = currentRelationInList->next;
@@ -901,7 +901,7 @@ void linkConjunctionConditions(Sentence * currentSentenceInList, bool GIAentityN
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		if(!(currentRelationInList->disabled))
 		{
 		#endif
@@ -948,7 +948,7 @@ void linkConjunctionConditions(Sentence * currentSentenceInList, bool GIAentityN
 				addOrConnectConditionToEntity(actionOrSubstanceEntity, actionOrSubstanceConditionEntity, conditionTypeEntity, sameReferenceSet);
 				#endif
 			}
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		}
 		#endif
 		currentRelationInList = currentRelationInList->next;
@@ -963,7 +963,7 @@ void defineClausalComplementProperties(Sentence * currentSentenceInList, bool GI
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		if(!(currentRelationInList->disabled))
 		{
 		#endif
@@ -988,7 +988,7 @@ void defineClausalComplementProperties(Sentence * currentSentenceInList, bool GI
 				bool sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_CCCOMP; 	//eg The guy, that John said was blue, left early in the morning. / He says that you like to swim.
 				GIAentityNodeArray[substanceIndex] = addOrConnectPropertyToEntity(actionEntity, substanceEntity, sameReferenceSet);
 			}
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		}
 		#endif
 		currentRelationInList = currentRelationInList->next;

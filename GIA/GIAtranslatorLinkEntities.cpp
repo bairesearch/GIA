@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s10d 05-July-2013
+ * Project Version: 1t1a 06-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -46,7 +46,7 @@ void linkPropertiesPossessiveRelationships(Sentence * currentSentenceInList, GIA
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		if(!(currentRelationInList->disabled))
 		{
 		#endif
@@ -82,7 +82,7 @@ void linkPropertiesPossessiveRelationships(Sentence * currentSentenceInList, GIA
 				#endif
 				GIAentityNodeArray[substanceIndex] = addOrConnectPropertyToEntityAddOnlyIfOwnerIsProperty(ownerEntity, substanceEntity, sameReferenceSet);
 			}
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		}
 		#endif
 		currentRelationInList = currentRelationInList->next;
@@ -92,7 +92,7 @@ void linkPropertiesPossessiveRelationships(Sentence * currentSentenceInList, GIA
 	currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		if(!(currentRelationInList->disabled))
 		{
 		#endif
@@ -126,7 +126,7 @@ void linkPropertiesPossessiveRelationships(Sentence * currentSentenceInList, GIA
 				#endif
 				GIAentityNodeArray[substanceIndex] = addOrConnectPropertyToEntity(thingEntity, substanceEntity, sameReferenceSet);
 			}
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		}
 		#endif
 		currentRelationInList = currentRelationInList->next;
@@ -140,7 +140,7 @@ void linkPropertiesDescriptiveRelationships(Sentence * currentSentenceInList, GI
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		if(!(currentRelationInList->disabled))
 		{
 		#endif
@@ -203,7 +203,7 @@ void linkPropertiesDescriptiveRelationships(Sentence * currentSentenceInList, GI
 					GIAentityNodeArray[substanceIndex] = addOrConnectPropertyToEntity(thingEntity, substanceEntity, sameReferenceSet);
 				}
 			}
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		}
 		#endif
 		currentRelationInList = currentRelationInList->next;
@@ -220,7 +220,7 @@ void linkEntityDefinitionsAppositiveOfNouns(Sentence * currentSentenceInList, GI
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		if(!(currentRelationInList->disabled))		//?this condition may be required to prevent redundant RELATION_TYPE_APPOSITIVE_OF_NOUN relations eg in 'Where is the ball?'
 		{
 		#endif
@@ -377,7 +377,7 @@ void linkEntityDefinitionsAppositiveOfNouns(Sentence * currentSentenceInList, GI
 				}
 				#endif
 			}
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		}
 		#endif
 		currentRelationInList = currentRelationInList->next;
@@ -395,7 +395,7 @@ void linkSubjectOrObjectRelationships(Sentence * currentSentenceInList, GIAentit
 
 	while(currentRelationInList->next != NULL)
 	{
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		if(!(currentRelationInList->disabled))
 		{
 		#endif
@@ -485,7 +485,7 @@ void linkSubjectOrObjectRelationships(Sentence * currentSentenceInList, GIAentit
 							Relation * currentRelationInList3 = currentSentenceInList->firstRelationInList;
 							while(currentRelationInList3->next != NULL)
 							{
-								#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+								#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 								if(!(currentRelationInList2->disabled))
 								{
 								#endif
@@ -550,7 +550,7 @@ void linkSubjectOrObjectRelationships(Sentence * currentSentenceInList, GIAentit
 											#endif
 										}
 									}
-								#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+								#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 								}
 								#endif
 								currentRelationInList3 = currentRelationInList3->next;
@@ -603,7 +603,7 @@ void linkSubjectOrObjectRelationships(Sentence * currentSentenceInList, GIAentit
 					}
 				}
 			}
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		}
 		#endif
 		currentRelationInList = currentRelationInList->next;
@@ -630,7 +630,7 @@ void linkSubjectObjectRelationships(Sentence * currentSentenceInList, GIAentityN
 
 	while(currentRelationInList->next != NULL)
 	{
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		if(!(currentRelationInList->disabled))
 		{
 		#endif
@@ -681,7 +681,7 @@ void linkSubjectObjectRelationships(Sentence * currentSentenceInList, GIAentityN
  				Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
 				while(currentRelationInList2->next != NULL)
 				{
-					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 					if(!(currentRelationInList2->disabled))
 					{
 					#endif
@@ -819,7 +819,7 @@ void linkSubjectObjectRelationships(Sentence * currentSentenceInList, GIAentityN
 										Relation * currentRelationInList3 = currentSentenceInList->firstRelationInList;
 										while(currentRelationInList3->next != NULL)
 										{
-											#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+											#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 											if(!(currentRelationInList3->disabled))
 											{
 											#endif
@@ -1009,7 +1009,7 @@ void linkSubjectObjectRelationships(Sentence * currentSentenceInList, GIAentityN
 													#endif
 												}
 
-											#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+											#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 											}
 											#endif
 											currentRelationInList3 = currentRelationInList3->next;
@@ -1048,7 +1048,7 @@ void linkSubjectObjectRelationships(Sentence * currentSentenceInList, GIAentityN
 											#else
 											if(subjectEntityTemp->entityName == REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
 											#endif
-											{//this section of code is only used for RelEx: NB Stanford CoreNLP ouputs "what is"/"who is" queries in appos format (not in obj/subj format)
+											{//this section of code is no longer used for RelEx: NB both Relex and Stanford CoreNLP ouput "what is"/"who is" queries in appos format (not in obj/subj format)
 											#ifdef GIA_TRANSLATOR_COMPENSATE_FOR_SWITCH_OBJ_SUB_DEFINITION_QUESTIONS_ANOMALY
 												//cout << "GIA_TRANSLATOR_COMPENSATE_FOR_SWITCH_OBJ_SUB_DEFINITION_QUESTIONS_ANOMALY" << endl;
 												//switch object/subject variables [transform question into answer form]
@@ -1260,7 +1260,7 @@ void linkSubjectObjectRelationships(Sentence * currentSentenceInList, GIAentityN
 												Relation * currentRelationInList3 = currentSentenceInList->firstRelationInList;
 												while(currentRelationInList3->next != NULL)
 												{
-													#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+													#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 													if(!(currentRelationInList3->disabled))
 													{
 													#endif
@@ -1314,7 +1314,7 @@ void linkSubjectObjectRelationships(Sentence * currentSentenceInList, GIAentityN
 																}
 															}
 														}
-													#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+													#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 													}
 													#endif
 
@@ -1362,14 +1362,14 @@ void linkSubjectObjectRelationships(Sentence * currentSentenceInList, GIAentityN
 								}
 							}
 						}
-					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 					}
 					#endif
 					currentRelationInList2 = currentRelationInList2->next;
 				}
 			}
 
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		}
 		#endif
 		currentRelationInList = currentRelationInList->next;
@@ -1383,7 +1383,7 @@ void linkIndirectObjects(Sentence * currentSentenceInList, GIAentityNode * GIAen
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		if(!(currentRelationInList->disabled))
 		{
 		#endif
@@ -1393,7 +1393,7 @@ void linkIndirectObjects(Sentence * currentSentenceInList, GIAentityNode * GIAen
  				Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
 				while(currentRelationInList2->next != NULL)
 				{
-					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 					if(!(currentRelationInList2->disabled))
 					{
 					#endif
@@ -1423,14 +1423,14 @@ void linkIndirectObjects(Sentence * currentSentenceInList, GIAentityNode * GIAen
 								GIAentityNodeArray[substanceIndex] = addOrConnectPropertyToEntityAddOnlyIfOwnerIsProperty(thingEntity, substanceEntity, sameReferenceSet);
 							}
 						}
-					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 					}
 					#endif
 
 					currentRelationInList2 = currentRelationInList2->next;
 				}
 			}
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		}
 		#endif
 		currentRelationInList = currentRelationInList->next;
@@ -1454,7 +1454,7 @@ void linkHavingPropertyConditionsAndBeingDefinitionConditions(Sentence * current
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		if(!(currentRelationInList->disabled))
 		{
 		#endif
@@ -1478,7 +1478,7 @@ void linkHavingPropertyConditionsAndBeingDefinitionConditions(Sentence * current
 
 					while(currentRelationInList2->next != NULL)
 					{
-						#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+						#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 						if(!(currentRelationInList2->disabled))
 						{
 						#endif
@@ -1570,14 +1570,14 @@ void linkHavingPropertyConditionsAndBeingDefinitionConditions(Sentence * current
 							}
 							#endif
 
-						#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+						#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 						}
 						#endif
 						currentRelationInList2 = currentRelationInList2->next;
 					}
 				}
 			}
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		}
 		#endif
 		currentRelationInList = currentRelationInList->next;
@@ -1591,7 +1591,7 @@ void linkObjectSubjectOfPreposition(Sentence * currentSentenceInList, bool GIAen
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		if(!(currentRelationInList->disabled))
 		{
 		#endif
@@ -1601,7 +1601,7 @@ void linkObjectSubjectOfPreposition(Sentence * currentSentenceInList, bool GIAen
  				Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
 				while(currentRelationInList2->next != NULL)
 				{
-					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 					if(!(currentRelationInList2->disabled))
 					{
 					#endif
@@ -1661,14 +1661,14 @@ void linkObjectSubjectOfPreposition(Sentence * currentSentenceInList, bool GIAen
 
 							}
 						}
-					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 					}
 					#endif
 
 					currentRelationInList2 = currentRelationInList2->next;
 				}
 			}
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		}
 		#endif
 		currentRelationInList = currentRelationInList->next;
@@ -1681,7 +1681,7 @@ void linkConditions(Sentence * currentSentenceInList, bool GIAentityNodeArrayFil
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
-		//#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		//#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		if(!(currentRelationInList->disabled))	//required to prevent re-interpretation of prepositions in main preposition interpretation function createConditionBasedUponPreposition
 		{
 		//#endif
@@ -1818,62 +1818,12 @@ void linkConditions(Sentence * currentSentenceInList, bool GIAentityNodeArrayFil
 				#endif
 				createConditionBasedUponPreposition(actionOrSubstanceEntity, actionOrSubstanceConditionEntity, relationType, false, currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListConcepts, NLPdependencyRelationsType, sameReferenceSet);
 			}
-		//#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		//#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		}
 		//#endif
 
 		currentRelationInList = currentRelationInList->next;
 	}
-}
-
-bool determineFeatureIndexOfPreposition(Sentence * currentSentenceInList, string * prepositionName, int * indexOfPreposition)
-{
-	#ifdef GIA_TRANSLATOR_DEBUG
-	//cout << "*prepositionName = " << *prepositionName << endl;
-	#endif
-	
-	bool prepositionFeatureFound = false;
-	Feature * currentFeatureInList = currentSentenceInList->firstFeatureInList;
-	while(currentFeatureInList->next != NULL)
-	{
-		string singleWordPreposition = *prepositionName;
-		int indexOfPrepositionDelimiter = prepositionName->rfind(STANFORD_PARSER_PREPOSITION_DELIMITER);	//find last occurance
-		if(indexOfPrepositionDelimiter != string::npos)
-		{
-			int lengthOfSingleWordPreposition = prepositionName->length() - indexOfPrepositionDelimiter - 1;
-			singleWordPreposition = prepositionName->substr(indexOfPrepositionDelimiter+1, lengthOfSingleWordPreposition);
-			if(indexOfPrepositionDelimiter == prepositionName->length()-1)
-			{
-				cout << "determineFeatureIndexOfPreposition: illegal multiword preposition; (indexOfPrepositionDelimiter == prepositionName->length()-1)" << endl;
-				cout << "prepositionName = " << *prepositionName << endl;
-				exit(0);
-			}
-		}
-
-		/*OLD: find first occurance; not possible as the first word in multiword prepositions has often already been assigned an entity array index, eg He rode the carriage that is near to the horse. nsubj(near-7, carriage-4) / prep_to(near-7, horse-10) -> prep_near_to(carriage-4, horse-10)
-		string singleWordPreposition = *prepositionName;
-		int indexOfPrepositionDelimiter = prepositionName->find(STANFORD_PARSER_PREPOSITION_DELIMITER);
-		if(indexOfPrepositionDelimiter != string::npos)
-		{
-			int lengthOfSingleWordPreposition = indexOfPrepositionDelimiter;
-			singleWordPreposition = prepositionName->substr(0, lengthOfSingleWordPreposition);
-			if(indexOfPrepositionDelimiter == 0)
-			{
-				cout << "determineFeatureIndexOfPreposition: illegal multiword preposition; indexOfPrepositionDelimiter == 0" << endl;
-				cout << "prepositionName = " << *prepositionName << endl;
-				exit(0);
-			}
-		}
-		*/
-
-		if(currentFeatureInList->lemma == singleWordPreposition)
-		{
-			prepositionFeatureFound = true;
-			*indexOfPreposition = currentFeatureInList->entityIndex;
-		}
-		currentFeatureInList = currentFeatureInList->next;
-	}
-	return prepositionFeatureFound;
 }
 
 void createConditionBasedUponPreposition(GIAentityNode * actionOrSubstanceEntity, GIAentityNode * actionOrSubstanceConditionEntity, string relationType, bool negative, Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, int NLPdependencyRelationsType, bool sameReferenceSet)
@@ -2190,7 +2140,7 @@ void linkDependentActionsType1(Sentence * currentSentenceInList, GIAentityNode *
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		if(!(currentRelationInList->disabled))
 		{
 		#endif
@@ -2200,7 +2150,7 @@ void linkDependentActionsType1(Sentence * currentSentenceInList, GIAentityNode *
 				
 				while(currentRelationInList2->next != NULL)
 				{
-					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 					if(!(currentRelationInList2->disabled))
 					{
 					#endif
@@ -2242,13 +2192,13 @@ void linkDependentActionsType1(Sentence * currentSentenceInList, GIAentityNode *
 								#endif
 							}
 						}
-					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 					}
 					#endif
 					currentRelationInList2 = currentRelationInList2->next;
 				}
 			}
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		}
 		#endif
 		currentRelationInList = currentRelationInList->next;
@@ -2268,7 +2218,7 @@ void linkDependentActionsType2(Sentence * currentSentenceInList, bool GIAentityN
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		if(!(currentRelationInList->disabled))
 		{
 		#endif
@@ -2310,7 +2260,7 @@ void linkDependentActionsType2(Sentence * currentSentenceInList, bool GIAentityN
 				//GIAentityNodeArray[substanceIndex] = addOrConnectPropertyToEntityAddOnlyIfOwnerIsProperty(ownerEntity, substanceEntity, sameReferenceSet);	- check if this might ever be required instead
 				*/
 			}
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		}
 		#endif
 		currentRelationInList = currentRelationInList->next;

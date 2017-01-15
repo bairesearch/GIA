@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorDefineSubstances.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s10d 05-July-2013
+ * Project Version: 1t1a 06-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -63,7 +63,7 @@ void collapseRedundantRelationAndMakeNegativeStanford(Sentence * currentSentence
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		if(!(currentRelationInList->disabled))
 		{
 		#endif
@@ -76,7 +76,7 @@ void collapseRedundantRelationAndMakeNegativeStanford(Sentence * currentSentence
 				disableInstanceAndConceptEntityBasedUponFirstSentenceToAppearInNetwork(GIAentityNodeArray[currentRelationInList->relationDependentIndex]);
 			}
 
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		}
 		#endif
 		currentRelationInList = currentRelationInList->next;
@@ -92,7 +92,7 @@ void collapseRedundantRelationAndMakeNegativeRelex(Sentence * currentSentenceInL
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		if(!(currentRelationInList->disabled))
 		{
 		#endif
@@ -112,7 +112,7 @@ void collapseRedundantRelationAndMakeNegativeRelex(Sentence * currentSentenceInL
 					Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
 					while(currentRelationInList2->next != NULL)
 					{
-						#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+						#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 						if(!(currentRelationInList2->disabled))
 						{
 						#endif
@@ -140,14 +140,14 @@ void collapseRedundantRelationAndMakeNegativeRelex(Sentence * currentSentenceInL
 									currentRelationInList->disabled = true;
 								}
 							}
-						#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+						#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 						}
 						#endif
 						currentRelationInList2 = currentRelationInList2->next;
 					}
 				}
 			}
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		}
 		#endif
 		currentRelationInList = currentRelationInList->next;
@@ -224,7 +224,7 @@ void defineSubstancesBasedOnDeterminatesOfDefinitionEntities(Sentence * currentS
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{
-		//#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS		//disabled nodes must be ignored, else disabled name definitions (eg name is Tom) will conflict (eg "The red dog's name is Tom.")
+		//#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD		//disabled nodes must be ignored, else disabled name definitions (eg name is Tom) will conflict (eg "The red dog's name is Tom.")
 		if(!(currentRelationInList->disabled))
 		{
 		//#endif
@@ -425,7 +425,7 @@ void defineSubstancesBasedOnDeterminatesOfDefinitionEntities(Sentence * currentS
 			#endif
 						
 			}
-		//#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		//#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		}
 		//#endif
 		currentRelationInList = currentRelationInList->next;
@@ -486,7 +486,7 @@ void defineSubstancesNounsWithAdjectivesOrPrenominalModifiers(Sentence * current
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		if(!(currentRelationInList->disabled))
 		{
 		#endif
@@ -519,7 +519,7 @@ void defineSubstancesNounsWithAdjectivesOrPrenominalModifiers(Sentence * current
 					#endif
 				}
 			}
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		}
 		#endif
 		currentRelationInList = currentRelationInList->next;
@@ -529,7 +529,7 @@ void defineSubstancesNounsWithAdjectivesOrPrenominalModifiers(Sentence * current
 	currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		if(!(currentRelationInList->disabled))
 		{
 		#endif
@@ -570,7 +570,7 @@ void defineSubstancesNounsWithAdjectivesOrPrenominalModifiers(Sentence * current
 				cout << "defineSubstancesNounsWithAdjectivesOrPrenominalModifiers: " << thingEntity->entityName << endl;
 				#endif				
 			}
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		}
 		#endif
 		currentRelationInList = currentRelationInList->next;
@@ -583,7 +583,7 @@ void defineSubstancesQuantitiesAndMeasures(Sentence * currentSentenceInList, GIA
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		if(!(currentRelationInList->disabled))
 		{
 		#endif
@@ -606,7 +606,7 @@ void defineSubstancesQuantitiesAndMeasures(Sentence * currentSentenceInList, GIA
 				cout << "defineSubstancesQuantitiesAndMeasures: " << substanceEntity->entityName << endl;
 				#endif
 			}
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		}
 		#endif
 
@@ -619,7 +619,7 @@ void defineSubstancesQuantityModifiers(Sentence * currentSentenceInList, GIAenti
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		if(!(currentRelationInList->disabled))
 		{
 		#endif
@@ -642,7 +642,7 @@ void defineSubstancesQuantityModifiers(Sentence * currentSentenceInList, GIAenti
 				cout << "defineSubstancesQuantityModifiers: " << substanceEntity->entityName << endl;
 				#endif
 			}
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		}
 		#endif
 
@@ -656,7 +656,7 @@ void defineSubstancesExpletives(Sentence * currentSentenceInList, GIAentityNode 
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		if(!(currentRelationInList->disabled))
 		{
 		#endif
@@ -676,7 +676,7 @@ void defineSubstancesExpletives(Sentence * currentSentenceInList, GIAentityNode 
 				disableInstanceAndConceptEntityBasedUponFirstSentenceToAppearInNetwork(substanceEntity);
 				#endif
 			}
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		}
 		#endif
 		currentRelationInList = currentRelationInList->next;
@@ -713,7 +713,7 @@ void defineSubstancesToBe(Sentence * currentSentenceInList, GIAentityNode * GIAe
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		if(!(currentRelationInList->disabled))
 		{
 		#endif
@@ -730,7 +730,7 @@ void defineSubstancesToBe(Sentence * currentSentenceInList, GIAentityNode * GIAe
 				cout << "defineSubstancesToBe: " << substanceEntity->entityName << endl;
 				#endif
 			}
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		}
 		#endif
 
@@ -743,7 +743,7 @@ void defineActionsToDo(Sentence * currentSentenceInList, GIAentityNode * GIAenti
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		if(!(currentRelationInList->disabled))
 		{
 		#endif
@@ -760,7 +760,7 @@ void defineActionsToDo(Sentence * currentSentenceInList, GIAentityNode * GIAenti
 				cout << "defineActionsToDo: " << actionEntity->entityName << endl;
 				#endif
 			}
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		}
 		#endif
 
@@ -826,7 +826,7 @@ void defineSubstancesIndirectObjects(Sentence * currentSentenceInList, GIAentity
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		if(!(currentRelationInList->disabled))
 		{
 		#endif
@@ -836,7 +836,7 @@ void defineSubstancesIndirectObjects(Sentence * currentSentenceInList, GIAentity
  				Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
 				while(currentRelationInList2->next != NULL)
 				{
-					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 					if(!(currentRelationInList2->disabled))
 					{
 					#endif
@@ -867,14 +867,14 @@ void defineSubstancesIndirectObjects(Sentence * currentSentenceInList, GIAentity
 								#endif
 							}
 						}
-					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 					}
 					#endif
 
 					currentRelationInList2 = currentRelationInList2->next;
 				}
 			}
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		}
 		#endif
 		currentRelationInList = currentRelationInList->next;
@@ -979,7 +979,7 @@ void defineSubstancesOfPossessivePrepositions(Sentence * currentSentenceInList, 
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		if(!(currentRelationInList->disabled))
 		{
 		#endif
@@ -1035,7 +1035,7 @@ void defineSubstancesOfPossessivePrepositions(Sentence * currentSentenceInList, 
 				}							
 			}
 					
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		}
 		#endif
 		currentRelationInList = currentRelationInList->next;

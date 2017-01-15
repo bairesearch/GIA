@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s10d 05-July-2013
+ * Project Version: 1t1a 06-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -89,7 +89,6 @@ using namespace std;
 	#ifdef GIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF
 		//#assert GIA_REDISTRIBUTE_STANFORD_RELATIONS_IGNORE_NSUBJ_AND_PREPOSITION_AND_COP_AND_DET
 		#define GIA_REDISTRIBUTE_RELATIONS_SUPPORT_WHAT_IS_THE_NAME_NUMBER_OF_QUERIES	//added 8 August 2012
-		#define GIA_REDISTRIBUTE_RELATIONS_INTERPRET_OF_AS_POSSESSIVE_OF "of"
 		#define GIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF_SUBJECT_DEPENDENT_OR_GOVERNOR_NAME "name"
 		#define GIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF_SUBJECT_DEPENDENT_OR_GOVERNOR_NUMBER "number"
 	#endif
@@ -163,7 +162,14 @@ using namespace std;
 //#define GIA_ENFORCE_USE_OF_RELATION_TYPE_PREPOSITION_TIME_NUMBER_OF_TYPES
 
 
-//#define GIA_DO_NOT_PARSE_DISABLED_RELATIONS	//test only
+#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
+	#define GIA_DO_NOT_DISABLE_AUX_AND_COP_AT_START
+#endif
+//#define GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD	//test only
+#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
+	#define GIA_DO_NOT_DISABLE_AUX_AND_COP_AT_START
+#endif
+
 #define GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_CONCEPT_ENTITIES	//NB this only works for substances added to concept entities, not substances added to substances (however this should be OK, as disabling of nodes should take place before substances are added)
 
 
@@ -302,17 +308,6 @@ using namespace std;
 #define MAX_NUMBER_OF_WORDS_PER_SENTENCE (1000)
 
 #define SECONDS_IN_YEAR (365*24*60*60)
-
-#define FEATURE_INDEX_OF_PREPOSITION_UNKNOWN (MAX_NUMBER_OF_WORDS_PER_SENTENCE-2)
-#define FEATURE_INDEX_OF_HAVING_UNKNOWN (MAX_NUMBER_OF_WORDS_PER_SENTENCE-3)
-#define FEATURE_INDEX_OF_BEING_UNKNOWN (MAX_NUMBER_OF_WORDS_PER_SENTENCE-4)
-#define FEATURE_INDEX_OF_QUANTITY_MODIFIER_UNKNOWN (MAX_NUMBER_OF_WORDS_PER_SENTENCE-5)
-#define FEATURE_INDEX_OF_MEASURE_PER_UNKNOWN (MAX_NUMBER_OF_WORDS_PER_SENTENCE-6)
-#define FEATURE_INDEX_OF_MEASURE_UNKNOWN (MAX_NUMBER_OF_WORDS_PER_SENTENCE-7)
-#define FEATURE_INDEX_OF_TODO_UNKNOWN (MAX_NUMBER_OF_WORDS_PER_SENTENCE-8)
-#define FEATURE_INDEX_OF_CONJUNCTION_UNKNOWN (MAX_NUMBER_OF_WORDS_PER_SENTENCE-9)
-#define FEATURE_INDEX_OF_ACTION_DEPENDENCY_GENERATED_CONDITION_UNKNOWN (MAX_NUMBER_OF_WORDS_PER_SENTENCE-10)
-#define FEATURE_INDEX_OF_SPECIAL_CONDITION_UNKNOWN (MAX_NUMBER_OF_WORDS_PER_SENTENCE-11)
 
 
 
@@ -507,6 +502,25 @@ static string relationGovernorCompositionNameArray[RELATION_GOVERNOR_COMPOSITION
 static string relationGovernorDefinitionNameArray[RELATION_GOVERNOR_DEFINITION_NUMBER_OF_TYPES] = {RELATION_ENTITY_BE};
 
 
+//dependent on questions;
+#define REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_RELATION_DEPENDENT_INDEX (MAX_NUMBER_OF_WORDS_PER_SENTENCE-1)
+#ifdef GIA_USE_RELEX_1_4_0
+	#define GIA_WORKAROUND_RELEX_BUG_OCCASIONAL_RELATION_DEPENDENT_INDEX_MINUS_1
+	#ifdef GIA_WORKAROUND_RELEX_BUG_OCCASIONAL_RELATION_DEPENDENT_INDEX_MINUS_1
+		#define GIA_WORKAROUND_RELEX_BUG_OCCASIONAL_RELATION_DEPENDENT_INDEX_MINUS_1_REPLACEMENT_INDEX (MAX_NUMBER_OF_WORDS_PER_SENTENCE-2)
+	#endif
+#endif	
+#define FEATURE_INDEX_OF_PREPOSITION_UNKNOWN (MAX_NUMBER_OF_WORDS_PER_SENTENCE-2)
+#define FEATURE_INDEX_OF_HAVING_UNKNOWN (MAX_NUMBER_OF_WORDS_PER_SENTENCE-3)
+#define FEATURE_INDEX_OF_BEING_UNKNOWN (MAX_NUMBER_OF_WORDS_PER_SENTENCE-4)
+#define FEATURE_INDEX_OF_QUANTITY_MODIFIER_UNKNOWN (MAX_NUMBER_OF_WORDS_PER_SENTENCE-5)
+#define FEATURE_INDEX_OF_MEASURE_PER_UNKNOWN (MAX_NUMBER_OF_WORDS_PER_SENTENCE-6)
+#define FEATURE_INDEX_OF_MEASURE_UNKNOWN (MAX_NUMBER_OF_WORDS_PER_SENTENCE-7)
+#define FEATURE_INDEX_OF_TODO_UNKNOWN (MAX_NUMBER_OF_WORDS_PER_SENTENCE-8)
+#define FEATURE_INDEX_OF_CONJUNCTION_UNKNOWN (MAX_NUMBER_OF_WORDS_PER_SENTENCE-9)
+#define FEATURE_INDEX_OF_ACTION_DEPENDENCY_GENERATED_CONDITION_UNKNOWN (MAX_NUMBER_OF_WORDS_PER_SENTENCE-10)
+#define FEATURE_INDEX_OF_SPECIAL_CONDITION_UNKNOWN (MAX_NUMBER_OF_WORDS_PER_SENTENCE-11)
+
 //questions;
 #define REFERENCE_TYPE_QUESTION_QUERY_WHO "who"
 #define REFERENCE_TYPE_QUESTION_QUERY_WHAT "what"
@@ -518,7 +532,6 @@ static string relationGovernorDefinitionNameArray[RELATION_GOVERNOR_DEFINITION_N
 #define REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHERE "_%atLocation"
 #define REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_WHY "_%because"
 #define REFERENCE_TYPE_QUESTION_QUERY_VARIABLE_HOW "_%how"	//these needs to be a new integer (and not "prep_how") to prevent concept entity node overwrite within redistributeStanfordRelationsCreateQueryVarsHowWhenWhereWhy()
-#define REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_RELATION_DEPENDENT_INDEX (MAX_NUMBER_OF_WORDS_PER_SENTENCE-1)
 //#define REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_QUANTITY_NUMBER_REPLACEMENT -9999
 #define REFERENCE_TYPE_QUESTION_QUERY_WHICH "which"
 #define REFERENCE_TYPE_QUESTION_QUERY_IS "is"
@@ -614,12 +627,8 @@ static string relationTypePossessivePrepositionsNameArray[RELATION_TYPE_POSSESSI
 static string relationContextNegativeNameArray[RELATION_TYPE_NEGATIVE_CONTEXT_NUMBER_OF_TYPES] = {RELATION_TYPE_NEGATIVE_CONTEXT_1};
 
 
-//conjugations;
+//conjugations;	
 #ifdef GIA_USE_RELEX_1_4_0
-	#define GIA_WORKAROUND_RELEX_BUG_OCCASIONAL_RELATION_DEPENDENT_INDEX_MINUS_1
-	#ifdef GIA_WORKAROUND_RELEX_BUG_OCCASIONAL_RELATION_DEPENDENT_INDEX_MINUS_1
-		#define GIA_WORKAROUND_RELEX_BUG_OCCASIONAL_RELATION_DEPENDENT_INDEX_MINUS_1_REPLACEMENT_INDEX (MAX_NUMBER_OF_WORDS_PER_SENTENCE-2)
-	#endif
 	//#define GIA_TRANSLATOR_EXPLICITLY_ADD_CONJUNCTION_CONDITIONS	//not necessarily currently as; linkConjunctionConditions() currently performs the same function as linkConditions(). It is used at the moment such that the conjunction prepositions are added to the start of the list
 #endif
 #define RELATION_TYPE_CONJUGATION_AND "conj_and"
@@ -981,7 +990,7 @@ bool isAdjectiveNotConnectedToObjectOrSubject(Sentence * currentSentenceInList, 
 
 GIAentityNode * addOrConnectPropertyToEntityAddOnlyIfOwnerIsProperty(GIAentityNode * thingEntity, GIAentityNode * propertyEntity, bool sameReferenceSet);
 	GIAentityNode * connectPropertyToEntity(GIAentityNode * thingEntity, GIAentityNode * propertyEntity, bool sameReferenceSet);
-	GIAentityNode * addOrConnectPropertyToEntity(GIAentityNode * thingEntity, GIAentityNode * propertyEntity, bool sameReferenceSet);	//Not used anymore
+	GIAentityNode * addOrConnectPropertyToEntity(GIAentityNode * thingEntity, GIAentityNode * propertyEntity, bool sameReferenceSet);	//WRONG: Not used anymore
 GIAentityNode * addSubstanceToSubstanceDefinition(GIAentityNode * substanceEntity);
 	GIAentityNode * addSubstance(GIAentityNode * entity);
 
@@ -1089,5 +1098,147 @@ void addInstanceEntityNodeToActiveLists(GIAentityNode * entity);
 #ifdef GIA_SUPPORT_ALIASES
 void mergeEntityNodesAddAlias(GIAentityNode * entityNode, GIAentityNode * entityNodeToMerge);
 #endif
+
+#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
+
+#define GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_undefined (-1)
+#define GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addSubstanceToSubstanceDefinition (1)
+#define GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addActionToActionDefinitionDefineSubstances (2)
+#define GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectPropertyToEntityAddOnlyIfOwnerIsProperty (3)
+#define GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectPropertyToEntity (4)
+#define GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectActionToEntity (5)
+#define GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectActionToSubject (6)
+#define GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectActionToObject (7)
+#define GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectConditionToEntity (8)
+#define GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectBeingDefinitionConditionToEntity (9)
+#define GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectHavingPropertyConditionToEntity (10)
+#define GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addDefinitionToEntity (11)
+
+#define REL1 (0)	//GIA_GENERIC_DEP_REL_INTERP_REL
+#define REL2 (1)
+#define REL3 (2)
+#define REL4 (3)
+#define REL5 (4)
+#define GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS (5)
+#define REL_ENT1 (0)		//for test/redistribution - governor
+#define REL_ENT2 (1)		//for test/redistribution - dependent
+#define REL_ENT3 (2)		//for test/redistribution - type
+#define GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION (3)
+#define GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_GOVDEP_ENTITIES_PER_RELATION (2)
+#define FUNC_ENT1_PRIMARY (0)		//for function execution
+#define FUNC_ENT2_SECONDARY (1)		//for function execution
+#define FUNC_ENT3_INTERMEDIARY (2)	//for function execution
+#define FUNC_ENT4_SPECIAL (3)		//for function specific special value determinations
+#define GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_FUNCTION (4)
+#define FUNCTION_ENTITY_RELATION_ID_NONEXISTANT_MUST_GENERATE (-9999)
+#define FUNCTION_ENTITY_RELATION_ENTITY_ID_NONEXISTANT_MUST_GENERATE (-9999)
+
+class GIAgenericDepRelInterpretationParameters
+{
+public:
+	GIAgenericDepRelInterpretationParameters(Sentence * newcurrentSentenceInList, bool newGIAentityNodeArrayFilled[], GIAentityNode * newGIAentityNodeArray[], bool executeOrReassign);
+	~GIAgenericDepRelInterpretationParameters(void);
+
+		//general parameters
+	Sentence * currentSentenceInList;
+	bool * GIAentityNodeArrayFilled;
+	GIAentityNode ** GIAentityNodeArray;		
+	unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts;
+	int NLPdependencyRelationsType; 
+
+		//execute function based on relations content or redistribute entities within relations
+	bool executeOrReassign;
+	
+	//for relation1, relation2, relation3, and relation4 [GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS]:
+		//for entity1 (eg substanceEntity), entity2 (eg conditionEntity, propertyEntity), and entity3/intermediaryEntity (eg conditionTypeEntity, actionEntity) [3]:
+		
+		//relations to parse
+	int numberOfRelations;
+	bool parseDisabledRelation[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS];
+	
+	Relation * relation[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS];
+	
+		//found values
+	string relationEntity[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];
+	int relationEntityIndex[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_GOVDEP_ENTITIES_PER_RELATION];
+	bool relationEntityPrepFound[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS];
+		//required to swap variables via redistributeRelationEntityIndexReassignmentUseOriginalValues;
+	string relationEntityOriginal[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];
+	int relationEntityIndexOriginal[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_GOVDEP_ENTITIES_PER_RELATION];		
+	
+	/*
+	//for Alternate Implementation:		
+	//updated values (used in case useRedistributeRelationEntityReassignment is applied after useRedistributeRelationEntityIndexReassignment);
+	bool useRelationEntityIndexUpdated[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_GOVDEP_ENTITIES_PER_RELATION];
+	int relationEntityIndexUpdated[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_GOVDEP_ENTITIES_PER_RELATION];
+	*/
+	
+		//predefined values tests
+	bool useRelationTest[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];
+	string relationTest[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];
+	bool relationTestIsNegative[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];	
+	bool useRelationArrayTest[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];	//if !useRelationTest[x][REL_ENT0_TYPE_OR_INTERMEDIARY], then useRelationArrayTest[x][REL_ENT0_TYPE_OR_INTERMEDIARY] (as a relation type test must be applied for each parsed relation)
+	string * relationArrayTest[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];
+	int relationArrayTestSize[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];
+	bool relationArrayTestIsNegative[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];	
+	bool expectToFindPrepositionTest[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS];
+		//special cases
+	bool relationTestSpecialCaseOfOrPossType[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS];	//special case to compensate for similar semantic meaning of "of" and "poss" relation types
+	bool relationTestSpecialCaseContinousVerb[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];	//special case to check for continuous verbs
+	bool relationTestSpecialCaseNotDefinite[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];
+	bool relationTestSpecialCasePOStemp[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];	
+	bool relationArrayTestSpecialCasePOStemp[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];
+
+	
+		//entity index match tests
+	bool useRelationIndexTest[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];
+	int relationIndexTestRelationID[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];
+	int relationIndexTestEntityID[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];		//used to be called "relationIndexTest"		
+		//NB for relationType tests use relationType as indicies are not available			
+	bool relationIndexTestIsNegative[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];
+	
+		//for redistribution
+	bool useRedistributeRelationEntityIndexReassignment[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];				//for relation1, relation2, relation3, and relation4; for entity1, entity2, and entity3 - for reassigning relation entities 
+	int redistributeRelationEntityIndexReassignmentRelationID[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];			//for relation1, relation2, relation3, and relation4; for entity1, entity2, and entity3 - relation1, relation2, relation3, or relation4 - for reassigning relation entities 
+	int redistributeRelationEntityIndexReassignmentRelationEntityID[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];		//for relation1, relation2, relation3, and relation4; for entity1, entity2, and entity3 - relationType, relationGovernorIndex, or relationDependentIndex - for reassigning relation entities	
+	bool redistributeRelationEntityIndexReassignmentUseOriginalValues[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];		//for relation1, relation2, relation3, and relation4; for entity1, entity2, and entity3 - for reassigning relation entities 
+	bool useRedistributeRelationEntityReassignment[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];					//for entity1, entity2, and entity3 - for renaming relation entities 
+	string redistributeRelationEntityReassignment[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];					//for entity1, entity2, and entity3 - relationType, relationGovernorIndex, or relationDependentIndex - for renaming relation entities	
+		//special cases
+	bool useRedistributeSpecialCaseAuxillaryIndicatesDifferentReferenceSetCheck[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS];
+	bool useRedistributeSpecialCaseRelationEntityReassignmentConcatonate[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];
+	int redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION][2];		
+	int redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION][2];
+	bool useRedistributeSpecialCaseIsNameQueryAssignment[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];
+	bool useRedistributeSpecialCaseIsNameAssignment[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];
+	
+		
+		//for execution
+	#ifdef GIA_USE_ADVANCED_REFERENCING
+	int defaultSameSetReferenceID; 
+	int defaultSameSetReferenceValue;
+	#endif	
+	int functionEntityRelationID[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_FUNCTION];		//for entity1, entity2, and entity3 [and entity4 for special tests] - relation1, relation2, relation3, or relation4
+	int functionEntityRelationEntityID[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_FUNCTION];	//for entity1, entity2, and entity3 [and entity4 for special tests] - relationType, relationGovernorIndex, or relationDependentIndex	
+	int functionToExecuteUponFind;
+		//special cases
+	bool mustGenerateConditionTypeConceptEntity;
+	bool expectToFindPreposition;
+	int conditionTypeEntityDefaultIndex;
+	bool mustGenerateConditionTypeName;
+	string conditionTypeEntityDefaultName;
+	
+		//for cleanup
+	bool disableEntity[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_GOVDEP_ENTITIES_PER_RELATION];		//for entity1 and entity2
+	bool disableEntityUseOriginalValues[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_GOVDEP_ENTITIES_PER_RELATION];	//for disabling an entity based on its original index
+	bool disableRelation[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS];
+};
+
+bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParameters * param, int currentRelationID);
+
+#endif
+
+bool determineFeatureIndexOfPreposition(Sentence * currentSentenceInList, string * prepositionName, int * indexOfPreposition);
+
 
 #endif

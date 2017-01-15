@@ -23,7 +23,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s10d 05-July-2013
+ * Project Version: 1t1a 06-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -513,8 +513,11 @@
 
 #include "SHAREDglobalDefs.h"
 
+//variables currently being tested (1t1a+)
+#define GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
+//#define GIA_GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_DEBUG
+										
 //variables currently being tested (1s1a+)
-
 #define GIA_STANFORD_CORE_NLP_VERSION_2013_04_04_OR_GREATER	//disable this if using previously tested version of Stanford CoreNLP (stanford-corenlp-2012-04-03)
 #define GIA_TRANSLATOR_REDISTRIBUTE_RELATIONS_WORKAROUND_STANFORD_BUG_SINGLE_DIGIT_TIMES_MARKED_AS_ADJECTIVE
 #define GIA_1S8E_LOW_PRI_RELEX_UPDATE_CHECK_THAT_IT_DOESNT_BREAK_STANFORD_OPTIMISATION_REMOVE_TIME_QUERY_ALIAS_ANSWERS

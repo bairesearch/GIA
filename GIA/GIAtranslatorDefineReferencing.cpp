@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s10d 05-July-2013
+ * Project Version: 1t1a 06-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -231,7 +231,7 @@ void switchArgumentsAndFunctionsWhereNecessary(Sentence * currentSentenceInList,
 			Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 			while(currentRelationInList->next != NULL)
 			{
-				#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+				#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 				if(!(currentRelationInList->disabled))
 				{
 				#endif
@@ -253,7 +253,7 @@ void switchArgumentsAndFunctionsWhereNecessary(Sentence * currentSentenceInList,
  							Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
 							while(currentRelationInList2->next != NULL)
 							{
-								#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+								#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 								if(!(currentRelationInList2->disabled))
 								{
 								#endif
@@ -286,7 +286,7 @@ void switchArgumentsAndFunctionsWhereNecessary(Sentence * currentSentenceInList,
 											#endif												
 										}
 									}
-								#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+								#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 								}
 								#endif
 
@@ -306,7 +306,7 @@ void switchArgumentsAndFunctionsWhereNecessary(Sentence * currentSentenceInList,
 							currentRelationInList->relationDependentIndex = currentRelationInList->relationGovernorIndex;
 							currentRelationInList->relationGovernorIndex = tempIndex;
 						}
-					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 					}
 					#endif
 				}
@@ -317,7 +317,7 @@ void switchArgumentsAndFunctionsWhereNecessary(Sentence * currentSentenceInList,
 		Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 		while(currentRelationInList->next != NULL)
 		{
-			#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+			#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 			if(!(currentRelationInList->disabled))
 			{
 			#endif
@@ -326,7 +326,7 @@ void switchArgumentsAndFunctionsWhereNecessary(Sentence * currentSentenceInList,
 					currentRelationInList->relationType = RELATION_TYPE_OBJECT_THAT_RELEX;	
 				}	
 			
-			#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+			#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 			}
 			#endif		
 			currentRelationInList = currentRelationInList->next;
@@ -342,7 +342,7 @@ void identifyEntityTypes(Sentence * currentSentenceInList, GIAentityNode * GIAen
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		if(!(currentRelationInList->disabled))
 		{
 		#endif
@@ -463,7 +463,7 @@ void identifyEntityTypes(Sentence * currentSentenceInList, GIAentityNode * GIAen
 				GIAentityNode * actionEntity = GIAentityNodeArray[relationGovernorIndex];
 				actionEntity->isActionTemp = true;
 			}
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		}
 		#endif
 		currentRelationInList = currentRelationInList->next;
@@ -940,7 +940,7 @@ void fillExplicitReferenceSameSetTags(Sentence * currentSentenceInList)
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		if(!(currentRelationInList->disabled))
 		{
 		#endif
@@ -949,7 +949,7 @@ void fillExplicitReferenceSameSetTags(Sentence * currentSentenceInList)
 				Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
  				while(currentRelationInList2->next != NULL)
 				{
-					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 					if(!(currentRelationInList2->disabled))
 					{
 					#endif
@@ -1052,7 +1052,7 @@ void fillExplicitReferenceSameSetTags(Sentence * currentSentenceInList)
 								currentRelationInList3 = currentRelationInList3->next;
 							}
 						}
-					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 					}
 					#endif
 
@@ -1060,7 +1060,7 @@ void fillExplicitReferenceSameSetTags(Sentence * currentSentenceInList)
 				}
 			}
 
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		}
 		#endif
 
@@ -1100,7 +1100,7 @@ int identifyReferenceSets(unordered_map<string, GIAentityNode*> *sentenceConcept
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		if(!(currentRelationInList->disabled))
 		{
 		#endif
@@ -1131,7 +1131,7 @@ int identifyReferenceSets(unordered_map<string, GIAentityNode*> *sentenceConcept
 					}
 				}
 			}
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		}
 		#endif
 
@@ -2059,7 +2059,7 @@ void identifyEntityTypes(Sentence * currentSentenceInList, GIAentityNode * GIAen
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		if(!(currentRelationInList->disabled))
 		{
 		#endif
@@ -2068,7 +2068,7 @@ void identifyEntityTypes(Sentence * currentSentenceInList, GIAentityNode * GIAen
 			GIAentityNode * governorTemp = GIAentityNodeArray[relationGovernorIndex];
 			GIAentityNode * dependentTemp = GIAentityNodeArray[relationDependentIndex];
 			identifyEntityTypesLocal(currentRelationInList, NLPdependencyRelationsType, &governorTemp, &dependentTemp);
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		}
 		#endif
 		currentRelationInList = currentRelationInList->next;

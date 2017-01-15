@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorRedistributeStanfordRelations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s10d 05-July-2013
+ * Project Version: 1t1a 06-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -56,6 +56,7 @@ void disableRedundantNodesStanfordCoreNLP(Sentence * currentSentenceInList, bool
 
 #ifdef GIA_USE_STANFORD_DEPENDENCY_RELATIONS
 void disableRedundantNodesStanfordParser(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[]);
+void redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionAction(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[]);
 void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[]);		//Stanford Specific
 #ifdef GIA_REDISTRIBUTE_RELATIONS_INTERPRET_OF_AS_POSSESSIVE_FOR_SUBSTANCES
 void redistributeStanfordRelationsInterpretOfAsPossessive(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[]);		//this should be supported for both Stanford + Relex, but has been untested for Relex
@@ -80,7 +81,6 @@ void redistributeStanfordRelationsCreateQueryVars(Sentence * currentSentenceInLi
 	void redistributeStanfordRelationsCreateQueryVarsWhich(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[]);
 	void redistributeStanfordRelationsCreateQueryVarsHowWhenWhereWhy(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[]);
 	void redistributeStanfordRelationsCreateQueryVarsWhat(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[]);
-	void redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionAction(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[]);
 void redistributeStanfordRelationsPartmod(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[]);
 #ifdef GIA_TRANSLATOR_INTERPRET_OF_AS_OBJECT_FOR_CONTINUOUS_VERBS
 void redistributeStanfordRelationsInterpretOfAsObjectForContinuousVerbs(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], int NLPdependencyRelationsType, int NLPfeatureParser, Feature * featureArrayTemp[]);	//Stanford Specific? (may require Relex equivalent redistribution function)
@@ -89,26 +89,9 @@ void redistributeStanfordRelationsInterpretOfAsObjectForContinuousVerbs(Sentence
 void redistributeStanfordRelationsExpletives(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], int NLPdependencyRelationsType);	//Stanford Specific? (may require Relex equivalent redistribution function)
 #endif
 void redistributeStanfordRelationsDependencyPreposition(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[]);	//Stanford Specific? (may require Relex equivalent redistribution function)
+#ifdef GIA_DO_NOT_DISABLE_AUX_AND_COP_AT_START
+void redistributeStanfordRelationsDisableAuxAndCop(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[]);
 #endif
-
-//should move the following to GIAtranslatorRedistributeRelations.h/.cpp
-#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS
-bool detectContinuousVerbBasic(string * verb);
-void redistributeStanfordAndRelexRelationsCorrectPOStagsAndLemmasOfAllContinuousVerbs(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], Feature * featureArrayTemp[]);	//Stanford Specific? (may require Relex equivalent redistribution function)
-	bool correctContinuousVerbPOStagAndLemma(GIAentityNode * actionOrSubstanceEntity, Feature * currentFeature);
-		//bool determineIfWordIsVerbContinuousCase(string * word);
-	
-#endif
-
-//should move the following to GIAtranslatorRedistributeRelexRelations.h/.cpp:
-#ifdef GIA_SUPPORT_ALIASES_RELEX_COMPATIBILITY
-void redistributeRelexRelationsCollapseSubjectAndObjectGenerateAppos(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], int NLPfeatureParser, Feature * featureArrayTemp[]);
-#endif
-#ifdef GIA_SUPPORT_WHO_QUERY_ALIAS_ANSWERS
-void redistributeRelexRelationsDetectNameQueries(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], Feature * featureArrayTemp[]);
-#endif
-#ifdef GIA_TRANSLATOR_INTERPRET_OF_AS_OBJECT_FOR_CONTINUOUS_VERBS
-void redistributeRelexRelationsInterpretOfAsObjectForContinuousVerbs(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], int NLPdependencyRelationsType);
 #endif
 
 #endif

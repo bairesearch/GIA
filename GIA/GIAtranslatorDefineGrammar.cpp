@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorDefineGrammar.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s10d 05-July-2013
+ * Project Version: 1t1a 06-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -71,7 +71,6 @@ void locateAndAddAllFeatureTempEntities(Sentence * currentSentenceInList, bool G
 			#endif
 		}
 		#endif
-
 
 		int relationIndex[2];
 		relationIndex[0] = currentRelationInList->relationGovernorIndex;
@@ -561,7 +560,7 @@ void findSubjObjRelationMatchingAuxillaryAndSetNotSameReferenceSet(Sentence * cu
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		if(!(currentRelationInList->disabled))
 		{
 		#endif
@@ -600,7 +599,7 @@ void findSubjObjRelationMatchingAuxillaryAndSetNotSameReferenceSet(Sentence * cu
 			#ifndef GIA_USE_ADVANCED_REFERENCING_FIND_ALL_RELATIONS_MATCHING_AUXILLARY_AND_SET_DIFFERENT_REFERENCE_SET
 			}
 			#endif
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		}
 		#endif
 
@@ -623,14 +622,14 @@ void fillGrammaticalArraysStanford(Sentence * currentSentenceInList,  bool GIAen
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		if(!(currentRelationInList->disabled))
 		{
 		#endif
 			//perfect tense extraction:
 			if(currentRelationInList->relationType == RELATION_TYPE_MODAL_AUX)
 			{
-				#ifndef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+				#ifndef GIA_DO_NOT_DISABLE_AUX_AND_COP_AT_START
 				currentRelationInList->disabled = true;
 				#endif
 
@@ -655,7 +654,7 @@ void fillGrammaticalArraysStanford(Sentence * currentSentenceInList,  bool GIAen
 			//passive tense extraction:
 			if(currentRelationInList->relationType == RELATION_TYPE_PASSIVE_AUX)
 			{
-				#ifndef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+				#ifndef GIA_DO_NOT_DISABLE_AUX_AND_COP_AT_START
 				currentRelationInList->disabled = true;
 				#endif
 
@@ -681,7 +680,7 @@ void fillGrammaticalArraysStanford(Sentence * currentSentenceInList,  bool GIAen
 			//NB copulas take precedence over auxillaries in formation of past tense (eg he has been sick;     nsubj ( sick-4 , he-1 ) / aux ( sick-4 , has-2 ) / cop ( sick-4 , been-3 ) )
 			if(currentRelationInList->relationType == RELATION_TYPE_COPULA)
 			{
-				#ifndef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+				#ifndef GIA_DO_NOT_DISABLE_AUX_AND_COP_AT_START
 				currentRelationInList->disabled = true;
 				#endif
 
@@ -710,7 +709,7 @@ void fillGrammaticalArraysStanford(Sentence * currentSentenceInList,  bool GIAen
 			//overwrite current tense derivations with GRAMMATICAL_TENSE_FUTURE if there is an auxillary containing 'will'
 			if(currentRelationInList->relationType == RELATION_TYPE_MODAL_AUX)	//|| (currentRelationInList->relationType == RELATION_TYPE_PASSIVE_AUX)
 			{
-				#ifndef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+				#ifndef GIA_DO_NOT_DISABLE_AUX_AND_COP_AT_START
 				currentRelationInList->disabled = true;
 				#endif
 
@@ -729,7 +728,7 @@ void fillGrammaticalArraysStanford(Sentence * currentSentenceInList,  bool GIAen
 			//definite/indefinite extraction:
 			if(currentRelationInList->relationType == RELATION_TYPE_DETERMINER)
 			{
-				#ifndef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+				#ifndef GIA_DO_NOT_DISABLE_AUX_AND_COP_AT_START
 				currentRelationInList->disabled = true;
 				#endif
 
@@ -770,16 +769,12 @@ void fillGrammaticalArraysStanford(Sentence * currentSentenceInList,  bool GIAen
 				*/
 
 			}
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		}
 		#endif
 
 		currentRelationInList = currentRelationInList->next;
 	}
-
-
-
-
 }
 #endif
 

@@ -23,7 +23,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s10d 05-July-2013
+ * Project Version: 1t1a 06-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -34,6 +34,7 @@
 #include "GIAtranslator.h"
 #include "GIAtranslatorOperations.h"
 #include "GIAtranslatorDefineGrammar.h"
+#include "GIAtranslatorRedistributeRelexRelations.h"
 #include "GIAtranslatorRedistributeStanfordRelations.h"
 #include "GIAtranslatorDefineReferencing.h"
 #include "GIAtranslatorDefineSubstances.h"
@@ -433,7 +434,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 
 	Feature * featureArrayTemp[MAX_NUMBER_OF_WORDS_PER_SENTENCE];
 	generateTempFeatureArray(currentSentenceInList->firstFeatureInList, featureArrayTemp);	//regeneration required for Relex in case query variables detected
-
+	
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "pass 1a; fillGrammaticalArrays" << endl;
 	#endif
@@ -537,9 +538,8 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 	}	
 	*/	
 	#endif
-	#endif
-		
-
+	#endif		
+	
 	#ifdef GIA_USE_STANFORD_DEPENDENCY_RELATIONS
 	if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD)
 	{
@@ -561,7 +561,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 		{
 		#endif
 			#ifdef GIA_TRANSLATOR_DEBUG
-			cout << "pass 1c3; redistribute Stanford Relations NSubj And Preposition" << endl;
+			cout << "pass 1c3; redistribute Stanford Relations Multiword Preposition" << endl;
 			#endif
 			redistributeStanfordRelationsMultiwordPreposition(currentSentenceInList, GIAentityNodeArrayFilled, GIAfeatureTempEntityNodeArray);
 		#ifdef GIA_LRP_DISABLE_REDISTRIBUTE_RELATIONS_POST_NLP_MULTIWORD_PREPOSITION_REDUCTION
@@ -576,13 +576,17 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 		redistributeStanfordRelationsInterpretOfAsPossessive(currentSentenceInList, GIAentityNodeArrayFilled, GIAfeatureTempEntityNodeArray);
 		#endif
 		#ifdef GIA_REDISTRIBUTE_RELATIONS_SUPPORT_WHAT_IS_THE_NAME_NUMBER_OF_QUERIES
+		#ifndef GIA_GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_DEBUG
 		if(currentSentenceInList->isQuestion)
 		{
+		#endif
 			#ifdef GIA_TRANSLATOR_DEBUG
 			cout << "pass 1c4b; redistribute Relations - what is the name/number of? 	nsubj(is-2, name-4) / attr(is-2, What-1) {/ det(name-4, the-3)} / poss/prep_of(name-4, dog-8) -> appos(That-1, _$qVar[1])" << endl;
 			#endif
 			redistributeStanfordRelationsCreateQueryVarsWhatIsTheNameNumberOf(currentSentenceInList, GIAentityNodeArrayFilled, GIAfeatureTempEntityNodeArray);
+		#ifndef GIA_GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_DEBUG
 		}
+		#endif
 		#endif
 		#ifdef GIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF
 		#ifdef GIA_TRANSLATOR_DEBUG
@@ -655,14 +659,17 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 		#endif
 		redistributeStanfordRelationsPhrasalVerbParticle(currentSentenceInList, GIAentityNodeArrayFilled, GIAfeatureTempEntityNodeArray);
 
-
+		#ifndef GIA_GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_DEBUG
 		if(currentSentenceInList->isQuestion)
 		{
+		#endif
 			#ifdef GIA_TRANSLATOR_DEBUG
 			cout << "pass 1c13; redistribute Stanford Relations - Create Query Vars (eg interpret 'who is that' / 'what is the time.'  attr(is-2, Who-1) / attr(is-2, What-1) | interpret 'how much'/'how many' | interpret 'which' det(house-2, Which-1) | interpret how/when/where/why advmod(happen-5, How-1) / advmod(leave-4, When-1) / advmod(is-2, Where-1) / advmod(fall-5, Why-1)	 )" << endl;
 			#endif
 			redistributeStanfordRelationsCreateQueryVars(currentSentenceInList, GIAentityNodeArrayFilled, GIAfeatureTempEntityNodeArray, featureArrayTemp);
+		#ifndef GIA_GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_DEBUG
 		}
+		#endif
 
 		#ifdef GIA_TRANSLATOR_DEBUG
 		cout << "pass 1c14; redistribute Stanford Relations - partmod (eg Truffles picked during the spring are tasty.   partmod(truffle, pick) -> obj(pick, truffle) )" << endl;
@@ -692,7 +699,14 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 		#endif
 		redistributeStanfordRelationsDependencyPreposition(currentSentenceInList, GIAentityNodeArrayFilled, GIAfeatureTempEntityNodeArray);
 		#endif
-
+		
+		#ifdef GIA_DO_NOT_DISABLE_AUX_AND_COP_AT_START
+		//added 12 July 2013
+		#ifdef GIA_TRANSLATOR_DEBUG
+		cout << "pass 1c18; redistribute Stanford Relations - disable Aux And Cop Relations" << endl;
+		#endif		
+		redistributeStanfordRelationsDisableAuxAndCop(currentSentenceInList, GIAentityNodeArrayFilled, GIAfeatureTempEntityNodeArray);
+		#endif
 	}
 	else 
 	#endif
