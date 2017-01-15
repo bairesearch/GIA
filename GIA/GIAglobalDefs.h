@@ -23,7 +23,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n9a 07-August-2012
+ * Project Version: 1n9b 07-August-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -74,6 +74,9 @@
 #ifdef GIA_USE_NLG
 	#define GIA_USE_NLG_OUTPUT_TO_COMMAND_LINE
 	//#define GIA_USE_NLG2
+	#ifdef GIA_USE_NLG2
+		#define GIA_NLG_DEBUG_MANUALLY_HARDCODE_INTO_NLG2
+	#endif	
 	#define GIA_USE_NLG_NO_MORPHOLOGY_GENERATOR	//NB even NLG2 requires origWord not lemma, so a morphology generator is required in both
 #endif
 #define STANFORD_PARSER_USE_POS_TAGS	//added 23 July 2012 to support Stanford Parser POS tags (which are sometimes more accurate than stanford CoreNLP pos tags)
@@ -115,9 +118,6 @@
 
 //Debug [Disable these for official build];
 //#define GIA_NLG_DEBUG
-#ifdef GIA_USE_NLG2
-	#define GIA_NLG_DEBUG_MANUALLY_HARDCODE_INTO_NLG2
-#endif
 //#define GIA_ADVANCED_REFERENCING_DEBUG_TOO_LARGE_REFERENCE_SET
 //#define GIA_ADVANCED_REFERENCING_DEBUG_HIGHLIGHT_REFERENCE_SET_CONNECTIONS_WITH_COLOURS
 //#define GIA_ADVANCED_REFERENCING_DEBUG_HIGHLIGHT_REFERENCE_SET_NODES_WITH_COLOURS

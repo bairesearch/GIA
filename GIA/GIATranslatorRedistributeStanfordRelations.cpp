@@ -23,7 +23,7 @@
  * File Name: GIATranslatorRedistributeStanfordRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n9a 07-August-2012
+ * Project Version: 1n9b 07-August-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -1472,36 +1472,6 @@ void redistributeStanfordRelationsClausalSubject(Sentence * currentSentenceInLis
 	}
 }
 
-/*OLD: now merged with redistributeStanfordRelationsPrtAndTmod()
-void redistributeStanfordRelationsPhrasalVerbParticle(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[])
-{
-	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
- 	while(currentRelationInList->next != NULL)
-	{
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
-		if(!(currentRelationInList->disabled))
-		{
-		#endif
-			if(currentRelationInList->relationType == RELATION_TYPE_PHRASAL_VERB_PARTICLE)
-			{
-				//cout << "RELATION_TYPE_PHRASAL_VERB_PARTICLE" << endl;
-				//eg They shut down the station. 	prt(shut, down)
-
-				GIAEntityNode * governerEntity = GIAEntityNodeArray[currentRelationInList->relationGovernorIndex];
-				GIAEntityNode * dependentEntity = GIAEntityNodeArray[currentRelationInList->relationDependentIndex];
-				governerEntity->entityName = governerEntity->entityName + "_" + dependentEntity->entityName;
-				//cout << "governerEntity->entityName = " <<governerEntity->entityName << endl;
-
-				disableEntity(dependentEntity);
-			}
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
-		}
-		#endif
-		currentRelationInList = currentRelationInList->next;
-	}
-}
-*/
-
 void redistributeStanfordRelationsConjunctionAndCoordinate(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[])
 {
 	//eg	I eat a pie or tom rows the boat. 	cc(pie-4, or-5)  / conj(pie-4, tom-6)
@@ -1712,7 +1682,7 @@ void redistributeStanfordRelationsGenerateMeasures(Sentence * currentSentenceInL
 	}
 }
 
-void redistributeStanfordRelationsPrtAndTmod(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[])
+void redistributeStanfordRelationsPhrasalVerbParticle(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[])
 {
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
@@ -1726,9 +1696,10 @@ void redistributeStanfordRelationsPrtAndTmod(Sentence * currentSentenceInList, b
 
 			if(currentRelationInList->relationType == RELATION_TYPE_PHRASAL_VERB_PARTICLE)
 			{
+				bool foundTemporalModifierOrObjectOfPreposition = false;
+			
+				#ifdef GIA_USE_REDISTRIBUTE_STANFORD_RELATIONS_PHRASAL_VERB_PARTICLE_AND_TEMPORAL_MODIFIER
  				Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
-				bool foundTemporalModifier = false;
-
 				while(currentRelationInList2->next != NULL)
 				{
 					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
@@ -1749,7 +1720,7 @@ void redistributeStanfordRelationsPrtAndTmod(Sentence * currentSentenceInList, b
 								string newPrepositionName = "";
 								newPrepositionName = newPrepositionName + STANFORD_PARSER_PREPOSITION_PREPEND + currentRelationInList->relationDependent;	//oldPreposition->entityName
 								currentRelationInList2->relationType = newPrepositionName;
-								foundTemporalModifier = true;
+								foundTemporalModifierOrObjectOfPreposition = true;
 							}
 						}
 					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
@@ -1757,10 +1728,47 @@ void redistributeStanfordRelationsPrtAndTmod(Sentence * currentSentenceInList, b
 					#endif
 					currentRelationInList2 = currentRelationInList2->next;
 				}
+				#endif
+				
+				#ifdef GIA_USE_REDISTRIBUTE_STANFORD_RELATIONS_PHRASAL_VERB_PARTICLE_AND_OBJECT_OF_PREPOSITION
+				//case added 7 August 2012b
+ 				currentRelationInList2 = currentSentenceInList->firstRelationInList;
+				while(currentRelationInList2->next != NULL)
+				{
+					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+					if(!(currentRelationInList2->disabled))
+					{
+					#endif
+						if(currentRelationInList2->relationType == RELATION_TYPE_PREPOSITION_OBJECT_OF_PREPOSITION)
+						{
+							if(currentRelationInList2->relationGovernorIndex == currentRelationInList->relationDependentIndex)
+							{//found a matching relationship
+
+								//cout << "\t\t\tSAF" << endl;
+
+								//What does the red laser work on?	prt(work-6, on-7) / pobj(on-7, What-1) -> on(work-6, What-1)	//case added 7 August 2012b
+
+								currentRelationInList->disabled = true;
+								GIAEntityNode * oldPreposition = GIAEntityNodeArray[currentRelationInList->relationDependentIndex];
+								string newPrepositionName = "";
+								newPrepositionName = newPrepositionName + STANFORD_PARSER_PREPOSITION_PREPEND + currentRelationInList->relationDependent;	//oldPreposition->entityName
+								currentRelationInList2->relationType = newPrepositionName;
+								currentRelationInList2->relationGovernor =  currentRelationInList->relationGovernor;
+								currentRelationInList2->relationGovernorIndex = currentRelationInList->relationGovernorIndex;
+								  
+								foundTemporalModifierOrObjectOfPreposition = true;
+							}
+						}
+					#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+					}
+					#endif
+					currentRelationInList2 = currentRelationInList2->next;
+				}
+				#endif
 
 
 				#ifdef GIA_USE_REDISTRIBUTE_STANFORD_RELATIONS_PHRASAL_VERB_PARTICLE
-				if(!foundTemporalModifier)
+				if(!foundTemporalModifierOrObjectOfPreposition)
 				{
 					if(!(currentRelationInList->disabled))	//added 3 June 2012
 					{//do not parse it again, in the case it has already been parsed in redistributeStanfordRelationsMultiwordPreposition()
@@ -1773,9 +1781,13 @@ void redistributeStanfordRelationsPrtAndTmod(Sentence * currentSentenceInList, b
 						GIAEntityNode * governerEntity = GIAEntityNodeArray[currentRelationInList->relationGovernorIndex];
 						GIAEntityNode * dependentEntity = GIAEntityNodeArray[currentRelationInList->relationDependentIndex];
 						governerEntity->entityName = governerEntity->entityName + "_" + dependentEntity->entityName;
+
 						//cout << "governerEntity->entityName = " <<governerEntity->entityName << endl;
 
 						disableEntity(dependentEntity);
+						
+						//currentRelationInList->disabled = true;
+						//currentRelationInList->relationGovernor = governerEntity->entityName;
 					}
 				}
 				#endif

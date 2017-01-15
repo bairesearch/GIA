@@ -23,7 +23,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n9a 07-August-2012
+ * Project Version: 1n9b 07-August-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -657,7 +657,7 @@ int main(int argc,char **argv)
 
 		if (exists_argument(argc,argv,"-version"))
 		{
-			cout << "OpenGIA.exe - Project Version: 1n9a 07-August-2012" << endl;
+			cout << "OpenGIA.exe - Project Version: 1n9b 07-August-2012" << endl;
 			exit(1);
 		}
 
@@ -1245,6 +1245,7 @@ int main(int argc,char **argv)
 		GIAEntityNode * entityNode = conceptEntityNodesListMapIter->second;
 		currentNLGsentence = generateLanguageFromEntityNode(entityNode, currentNLGsentence, false, 0);
 	}
+	#ifdef GIA_NLG_DEBUG
 	#ifdef GIA_USE_NLG_OUTPUT_TO_COMMAND_LINE
 	cout << "DEBUG: NLG generated text = " << endl;
 	#ifdef GIA_USE_NLG2
@@ -1257,6 +1258,7 @@ int main(int argc,char **argv)
 		//execute NLG2 on this text
 		currentNLGsentence = currentNLGsentence->next;
 	}
+	#endif
 	#endif
 	#endif
 

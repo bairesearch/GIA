@@ -23,7 +23,7 @@
  * File Name: GIAnlg.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n9a 07-August-2012
+ * Project Version: 1n9b 07-August-2012
  * Requirements: requires GIA translated data, and NLG2 to be installed
  * Description: GIA natural language generation (using NLG2)
  *
@@ -545,11 +545,11 @@ void generateTwoEntitySentenceFromEntityConnection(GIAEntityNode * entityNode1, 
 
 	if(entityNode2->isAction)
 	{
-		cout << "error: generateTwoEntitySentenceFromEntityConnection && (entityNode1->isAction)" << endl;
+		//cout << "warning: generateTwoEntitySentenceFromEntityConnection && (entityNode2->isAction)" << endl;
 	}
 	else if(entityNode2->isCondition)
 	{
-		cout << "error: generateTwoEntitySentenceFromEntityConnection && (entityNode1->isCondition)" << endl;
+		//cout << "warning: generateTwoEntitySentenceFromEntityConnection && (entityNode2->isCondition)" << endl;
 	}
 
 	if(connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES)
@@ -601,9 +601,12 @@ void generateTwoEntitySentenceFromEntityConnection(GIAEntityNode * entityNode1, 
 			#endif
 		}
 		else
-		{//isConcept
-			cout << "error: generateTwoEntitySentenceFromEntityConnection && (entityNode1->isConcept) && (connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES)" << endl;
-			//exit(0);
+		{
+			if(entityNode2->isConcept)
+			{//isConcept		
+				cout << "error: generateTwoEntitySentenceFromEntityConnection && (entityNode2->isConcept) && (connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES)" << endl;
+				//exit(0);
+			}
 		}
 	}
 	else if(connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITIONS)
