@@ -29,11 +29,13 @@ using namespace std;
 #include "GIAActionNodeClass.h"
 #include "GIAConditionNodeClass.h"
 
-#define GIA_SEMANTIC_NET_XML_NULL_NODE_ID "-1"
+#define GIA_SEMANTIC_NET_DO_NOT_ADD_EMPTY_TAGS
+#define GIA_SEMANTIC_NET_DO_NOT_ADD_EMPTY_ATTRIBUTES
 
 #define GIA_SEMANTIC_NET_XML_FILE_NAME "semanticNet.xml"
 #define GIA_SEMANTIC_NET_XML_FILE_NAME1 "semanticNet1.xml"
 
+#define GIA_SEMANTIC_NET_XML_NULL_NODE_ID "-1"
 
 
 //#define ENFORCE_EXPLICIT_NET_XML_NEURON_ID_PARAMETERS

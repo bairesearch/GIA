@@ -52,7 +52,7 @@ GIAEntityNode::GIAEntityNode(void)
 	measureType = MEASURE_TYPE_UNDEFINED;
 
 	initialisedForPrinting = false;
-	printed = false;
+	//printed = false;
 	printX = 0;
 	printY = 0;
 	printXIndex = 0;

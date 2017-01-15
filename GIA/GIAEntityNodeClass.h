@@ -153,7 +153,7 @@ public:
 	
 		
 	bool initialisedForPrinting;
-	bool printed;
+	//bool printed;
 	int printX;
 	int printY;
 	int printXIndex;

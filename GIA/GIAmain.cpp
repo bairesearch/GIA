@@ -130,17 +130,17 @@ int main(int argc,char **argv)
 	printGIAnetworkNodes(&indexOfEntityNodes, rasterImageWidth, rasterImageHeight, outputFileName, display);
 
 	
-	/*
 	string semanticNetXMLFileName = GIA_SEMANTIC_NET_XML_FILE_NAME;
 	if(!writeSemanticNetXMLFile(semanticNetXMLFileName, getTranslatorEntityNodesCompleteList(), getTranslatorActionNodesCompleteList(), getTranslatorConditionNodesCompleteList()))
 	{
 		result = false;
 	}
-	*/
-	string semanticNetXMLFileName = GIA_SEMANTIC_NET_XML_FILE_NAME;
+	
+	/*
 	if(!testReadSemanticNetXMLFile2(getTranslatorEntityNodesCompleteList(), getTranslatorActionNodesCompleteList(), getTranslatorConditionNodesCompleteList()))
 	{
 		result = false;
 	}
+	*/
 	
 }
