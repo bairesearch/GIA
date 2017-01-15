@@ -13,8 +13,8 @@
 
 #include "GIATranslator.h"
 
-string relationTypePropositionLocationOrTimeNameArray[RELATION_TYPE_PROPOSITION_LOCATION_OR_TIME_NUMBER_OF_TYPES] = {RELATION_TYPE_PROPOSITION_AT, RELATION_TYPE_PROPOSITION_ON, RELATION_TYPE_PROPOSITION_TO};
-string relationTypePropositionActionOrPropertyNameArray[RELATION_TYPE_PROPOSITION_ACTION_OR_PROPERTY_NUMBER_OF_TYPES] = {RELATION_TYPE_PROPOSITION_WHEN, RELATION_TYPE_PROPOSITION_BECAUSE};
+string relationTypePropositionLocationOrTimeNameArray[RELATION_TYPE_PREPOSITION_LOCATION_OR_TIME_NUMBER_OF_TYPES] = {RELATION_TYPE_PREPOSITION_AT, RELATION_TYPE_PREPOSITION_ON, RELATION_TYPE_PREPOSITION_TO};
+string relationTypePropositionActionOrPropertyNameArray[RELATION_TYPE_PREPOSITION_ACTION_OR_PROPERTY_NUMBER_OF_TYPES] = {RELATION_TYPE_PREPOSITION_WHEN, RELATION_TYPE_PREPOSITION_BECAUSE};
 
 string relationTypeObjectNameArray[RELATION_TYPE_OBJECT_NUMBER_OF_TYPES] = {RELATION_TYPE_OBJECT, RELATION_TYPE_OBJECT_THAT};
 string relationTypeSubjectNameArray[RELATION_TYPE_SUBJECT_NUMBER_OF_TYPES] = {RELATION_TYPE_SUBJECT, RELATION_TYPE_SUBJECT_EXPLETIVE};
@@ -480,6 +480,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 		//added 1 May 11a (assign actions to instances (properties) of entities and not entities themselves where appropriate)
 		//bool GIAEntityNodeArrayHasAssociatedProperty[MAX_NUMBER_OF_WORDS_PER_SENTENCE];
 
+		bool GIAEntityNodeIsAReference[MAX_NUMBER_OF_WORDS_PER_SENTENCE];
 	
 		for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
 		{					
@@ -491,6 +492,8 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			GIAEntityNodeGrammaticalGenderArray[w] = GRAMMATICAL_NUMBER_UNDEFINED;
 			//GIAEntityNodeGrammaticalHasCountArray[w] = GRAMMATICAL_NUMBER_UNDEFINED;
 			GIAEntityNodeGrammaticalIsPronounArray[w] = GRAMMATICAL_PRONOUN_UNDEFINED;
+			
+			GIAEntityNodeIsAReference[w] = false;
 			
 			GIAEntityNodeArrayFilled[w] = false;
 
@@ -819,7 +822,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 
 					if(((currentGIAEntityNode->entityName == referenceTypePossessiveNameArray[i]) || (currentGIAEntityNode->entityName == referenceTypePersonNameArray[i])) && (currentGIAEntityNode->grammaticalPronounTemp == GRAMMATICAL_PRONOUN))
 					{//pronoun required for currentGIAEntityNode
-						cout << "currentGIAEntityNode->entityName = " << currentGIAEntityNode->entityName << endl;
+						//cout << "currentGIAEntityNode->entityName = " << currentGIAEntityNode->entityName << endl;
 						//now go for a search in tree for given / this sentence + previous sentence until find candidate reference source
 
 						GIAEntityNode * referenceSource = NULL;
@@ -829,7 +832,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 						int s2 = 0;
 						while(!referenceSourceHasBeenFound && stillSentencesToSearch) 
 						{
-							cout << "s2 = " << s2 << endl;
+							//cout << "s2 = " << s2 << endl;
 
 							Relation * currentRelationInWhichReferenceSourceIsBeingSearchedFor = currentSentenceInWhichReferenceSourceIsBeingSearchedFor->firstRelationInList;
 							int maxWordLimit = 999999;
@@ -840,14 +843,14 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 							int w2 = 0;
 							while((currentRelationInWhichReferenceSourceIsBeingSearchedFor->next != NULL) && (w2 < maxWordLimit))
 							{
-								cout << "w2 = " << w2 << endl;
+								//cout << "w2 = " << w2 << endl;
 
 								long entityIndex = -1;
 								bool entityAlreadyExistant = false;
 
 								string entityName = currentRelationInWhichReferenceSourceIsBeingSearchedFor->relationArgument;
 											
-								//cout << "entityName = " << entityName << endl;
+								//cout << "currentRelationInWhichReferenceSourceIsBeingSearchedFor = " << entityName << endl;
 											
 								if(entityName != "")
 								{
@@ -867,6 +870,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 										//{
 											if(currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalNumberTemp != referenceTypePersonCrossReferenceNumberArray[i])
 											{
+												//cout << "a1" << endl;
 												entityPassesGrammaticalTestsForReference = false;
 											}
 										//}
@@ -875,6 +879,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 										//{
 											if(currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalGenderTemp != referenceTypePersonCrossReferenceGenderArray[i])
 											{
+												//cout << "a2" << endl;
 												entityPassesGrammaticalTestsForReference = false;
 											}
 										//}
@@ -883,6 +888,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 										//{
 											if(currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalDefiniteTemp != referenceTypePersonCrossReferenceDefiniteArray[i])
 											{
+												//cout << "a3" << endl;
 												entityPassesGrammaticalTestsForReference = false;
 											}
 										//}
@@ -891,12 +897,14 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 										//{
 											if(currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalPersonTemp != referenceTypePersonCrossReferencePersonArray[i])
 											{
+												//cout << "a4" << endl;
 												entityPassesGrammaticalTestsForReference = false;
 											}
 											
 											
 											if(currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalPronounTemp == GRAMMATICAL_PRONOUN)
 											{
+												//cout << "a5" << endl;
 												entityPassesGrammaticalTestsForReference = false;
 											}
 											
@@ -968,6 +976,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 							cout << "referenceSourceHasBeenFound: assigning " << GIAEntityNodeArray[w]->entityName << " to " << referenceSource->entityName << "." << endl;
 							//referenceSource->isReferenceEntityInThisSentence = true;
 							GIAEntityNodeArray[w] =	referenceSource;
+							GIAEntityNodeIsAReference[w] = true;
 						}			
 					}
 				}
@@ -984,13 +993,16 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			{
 				if(GIAEntityNodeArrayFilled[i])
 				{ //condition required as GIAEntityNodeArrayFilled is not always true. With GRAMMATICAL_DEFINITE, eg "Mr" of "Mr Smith" will still be interpreted as a definite
-					if(!GIA_DO_NOT_ASSIGN_INSTANCE_PROPERTY_TO_PERSONS_OR_DATES || (!GIAEntityNodeGrammaticalIsPersonArray[i] & !GIAEntityNodeIsDate[i]))
-					{
-						if(GIAEntityNodeGrammaticalIsDefiniteArray[i] == GRAMMATICAL_DEFINITE)
+					if(!GIAEntityNodeIsAReference[i])
+					{//do not define properties based upon references (as the grammatical information is no longer correct, and it has already been done previously if necessary to the referenced entity)
+						if(!GIA_DO_NOT_ASSIGN_INSTANCE_PROPERTY_TO_PERSONS_OR_DATES || (!GIAEntityNodeGrammaticalIsPersonArray[i] & !GIAEntityNodeIsDate[i]))
 						{
-							//cout << "as0" << endl;
-							//cout << "GIAEntityNodeArray[i]->entityName = " << GIAEntityNodeArray[i]->entityName << endl;			
-							addPropertyToPropertyDefinition(GIAEntityNodeArray[i]);			
+							if(GIAEntityNodeGrammaticalIsDefiniteArray[i] == GRAMMATICAL_DEFINITE)
+							{
+								//cout << "as0" << endl;
+								//cout << "GIAEntityNodeArray[i]->entityName = " << GIAEntityNodeArray[i]->entityName << endl;			
+								addPropertyToPropertyDefinition(GIAEntityNodeArray[i]);			
+							}
 						}
 					}
 				}
@@ -1003,20 +1015,23 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			{	
 				if(GIAEntityNodeArrayFilled[i])
 				{
-					if(!GIA_DO_NOT_ASSIGN_INSTANCE_PROPERTY_TO_PERSONS_OR_DATES || (!GIAEntityNodeGrammaticalIsPersonArray[i] && !GIAEntityNodeIsDate[i]))
-					{
-						bool passed = false;
-						for(int j=0; j<GRAMMATICAL_NUMBER_TYPE_INDICATE_HAVE_DETERMINATE_NUMBER_OF_TYPES; j++)
+					if(!GIAEntityNodeIsAReference[i])
+					{//do not define properties based upon references (as the grammatical information is no longer correct, and it has already been done previously if necessary to the referenced entity)
+						if(!GIA_DO_NOT_ASSIGN_INSTANCE_PROPERTY_TO_PERSONS_OR_DATES || (!GIAEntityNodeGrammaticalIsPersonArray[i] && !GIAEntityNodeIsDate[i]))
 						{
-							if(GIAEntityNodeArray[i]->grammaticalNumberTemp == referenceTypeHasDeterminateCrossReferenceNumberArray[j])
+							bool passed = false;
+							for(int j=0; j<GRAMMATICAL_NUMBER_TYPE_INDICATE_HAVE_DETERMINATE_NUMBER_OF_TYPES; j++)
 							{
-								passed = true;
+								if(GIAEntityNodeArray[i]->grammaticalNumberTemp == referenceTypeHasDeterminateCrossReferenceNumberArray[j])
+								{
+									passed = true;
+								}
 							}
-						}
-						if(passed)
-						{
-							//cout << "as1" << endl;
-							addPropertyToPropertyDefinition(GIAEntityNodeArray[i]);
+							if(passed)
+							{
+								//cout << "as1" << endl;
+								addPropertyToPropertyDefinition(GIAEntityNodeArray[i]);
+							}
 						}
 					}
 				}
@@ -1129,12 +1144,16 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			{
 				if(GIAEntityNodeArrayFilled[i])
 				{
-					if(GIAEntityNodeGrammaticalIsPronounArray[i] == GRAMMATICAL_PRONOUN)
-					{
-						//cout << "as5" << endl;
-						//cout << "asd" << endl;
-						//cout << "GIAEntityNodeArray[i]->entityName = " << GIAEntityNodeArray[i]->entityName << endl;			
-						addPropertyToPropertyDefinition(GIAEntityNodeArray[i]);			
+					if(!GIAEntityNodeIsAReference[i])
+					{//do not define properties based upon references (as the grammatical information is no longer correct, and it has already been done previously if necessary to the referenced entity)
+				
+						if(GIAEntityNodeGrammaticalIsPronounArray[i] == GRAMMATICAL_PRONOUN)
+						{
+							//cout << "as5" << endl;
+							//cout << "asd" << endl;
+							//cout << "GIAEntityNodeArray[i]->entityName = " << GIAEntityNodeArray[i]->entityName << endl;			
+							addPropertyToPropertyDefinition(GIAEntityNodeArray[i]);			
+						}
 					}
 				}
 			}
@@ -1448,7 +1467,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 								else
 								{//assume that the subject-object relationships is an action
 									string actionName = currentRelationInList->relationFunction;
-									cout << "1 actionName = " << actionName << endl;
+									//cout << "1 actionName = " << actionName << endl;
 									GIAEntityNode * actionEntity = GIAEntityNodeArray[relationFunctionIndex];
 									
 									//added 1 May 11a (assign actions to instances (properties) of entities and not entities themselves where appropriate)
@@ -1491,7 +1510,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 						else
 						{//assume that the subject-object relationships is an action
 							string actionName = currentRelationInList->relationFunction;
-							cout << "2 actionName = " << actionName << endl;
+							//cout << "2 actionName = " << actionName << endl;
 							GIAEntityNode * actionEntity = GIAEntityNodeArray[relationFunctionIndex];
 
 							//addAction(actionEntity);	//WHY WAS THIS HERE????
@@ -1572,14 +1591,14 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			//cout << "here1" << endl;
 			//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
 														
-			if(currentRelationInList->relationType == RELATION_TYPE_PROPOSITION_OBJECT_OF_PROPOSITION)
+			if(currentRelationInList->relationType == RELATION_TYPE_PREPOSITION_OBJECT_OF_PREPOSITION)
 			{					
 				//now find the associated object..
  				Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
 				while(currentRelationInList2->next != NULL)
 				{	
 					bool partnerTypeRequiredFound = false;					
-					if(currentRelationInList2->relationType == RELATION_TYPE_PROPOSITION_SUBJECT_OF_PROPOSITION)
+					if(currentRelationInList2->relationType == RELATION_TYPE_PREPOSITION_SUBJECT_OF_PREPOSITION)
 					{
 						partnerTypeRequiredFound = true;
 					}
@@ -1617,14 +1636,14 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			bool passedPropositionLocationOrTime = false;
 			bool passedPropositionActionOrProperty = false;
 			bool passedPropositionUnkown = false;
-			for(int i=0; i<RELATION_TYPE_PROPOSITION_LOCATION_OR_TIME_NUMBER_OF_TYPES; i++)
+			for(int i=0; i<RELATION_TYPE_PREPOSITION_LOCATION_OR_TIME_NUMBER_OF_TYPES; i++)
 			{
 				if(currentRelationInList->relationType == relationTypePropositionLocationOrTimeNameArray[i])
 				{
 					passedPropositionLocationOrTime = true;
 				}
 			}
-			for(int i=0; i<RELATION_TYPE_PROPOSITION_ACTION_OR_PROPERTY_NUMBER_OF_TYPES; i++)
+			for(int i=0; i<RELATION_TYPE_PREPOSITION_ACTION_OR_PROPERTY_NUMBER_OF_TYPES; i++)
 			{
 				if(currentRelationInList->relationType == relationTypePropositionActionOrPropertyNameArray[i])
 				{
@@ -1632,7 +1651,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 				}
 			}
 			
-			if(currentRelationInList->relationType[0] != RELATION_TYPE_PROPOSITION_FIRST_CHARACTER)
+			if(currentRelationInList->relationType[0] != RELATION_TYPE_PREPOSITION_FIRST_CHARACTER)
 			{
 				passedPropositionUnkown = true;
 			}
@@ -2016,18 +2035,29 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 		}
 		*/
 
-					
-	
+		#ifdef GIA_ENABLE_REFERENCE_LINKING_BASED_UPON_PRONOUNS_CLEAR_REFERENCES_EVERY_SENTENCE	
+		//restore critical variables: used for GIA translator reference paser only - cleared every time a new sentence is parsed (Clearing should actually be applied to each paragraph/manuscript instead)
+		long vectorSize = indexOfEntityNames->size();
+		for(int entityIndex=0; entityIndex<vectorSize; entityIndex++)
+		{	
+			GIAEntityNode * entityNode = indexOfEntityNodes->at(entityIndex);
+			entityNode->entityAlreadyDeclaredInThisContext = false;
+		}
+		#endif
+							
 		currentSentenceInList = currentSentenceInList->next;
 	}
-	
-	//restore critical variables; temporary: used for GIA translator reference paser only - cleared every time a new context (eg paragraph/manuscript) is parsed
+
+	#ifndef GIA_ENABLE_REFERENCE_LINKING_BASED_UPON_PRONOUNS_CLEAR_REFERENCES_EVERY_SENTENCE	
+	//restore critical variables: used for GIA translator reference paser only - cleared every time a new sentence is parsed (Clearing should actually be applied to each paragraph/manuscript instead)
 	long vectorSize = indexOfEntityNames->size();
 	for(int entityIndex=0; entityIndex<vectorSize; entityIndex++)
 	{	
 		GIAEntityNode * entityNode = indexOfEntityNodes->at(entityIndex);
 		entityNode->entityAlreadyDeclaredInThisContext = false;
-	}	
+	}
+	#endif
+
 }
 
 long maximumLong(long a, long b)
