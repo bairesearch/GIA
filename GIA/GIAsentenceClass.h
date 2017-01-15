@@ -23,7 +23,7 @@
  * File Name: GIAsentenceClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t2m 24-July-2013
+ * Project Version: 1t3a 25-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -165,7 +165,10 @@ public:
 	int relationGovernorIndex;
 
 	bool disabled;
-
+	//#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
+	bool disabledDuringLink;
+	//#endif
+	
 	#ifdef GIA_USE_RELEX
 	bool subjObjRelationAlreadyAdded;	//Relex Only
 	#endif

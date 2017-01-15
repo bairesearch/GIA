@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorRedistributeStanfordRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t2m 24-July-2013
+ * Project Version: 1t3a 25-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -59,95 +59,107 @@ void disableRedundantNodesStanfordCoreNLP(Sentence * currentSentenceInList, bool
 		if(!(currentRelationInList->disabled))
 		{
 		#endif
-			GIAentityNode * governerEntity = GIAentityNodeArray[currentRelationInList->relationGovernorIndex];
-			GIAentityNode * dependentEntity = GIAentityNodeArray[currentRelationInList->relationDependentIndex];
-
-			bool governerAndDependentBothHaveSameNERvalue = false;
-			for(int i=0; i<FEATURE_NER_EXPLICIT_NUMBER_TYPES; i++)
+			bool relationTypeConjuction = false;
+			for(int i=0; i<RELATION_TYPE_CONJUGATION_NUMBER_OF_TYPES; i++)
 			{
-				if((governerEntity->NERTemp == featureNERexplicitTypeArray[i]) && (dependentEntity->NERTemp == featureNERexplicitTypeArray[i]))
+				if(currentRelationInList->relationType == relationTypeConjugationNameArray[i])
 				{
-					governerAndDependentBothHaveSameNERvalue = true;
+					relationTypeConjuction = true;
 				}
-			}
-
-			bool governerIsPersonAndRelationTypeIsPrenominalModifier = false;			
-			#ifdef GIA_STANFORD_CORE_NLP_VERSION_2013_04_04_OR_GREATER
-			//the assignment of NER values implementation appears to have changed in Stanford Core NLP
-			if((governerEntity->NERTemp == FEATURE_NER_PERSON) && (currentRelationInList->relationType == RELATION_TYPE_PRENOMIAL_MODIFIER))
-			{
-				governerIsPersonAndRelationTypeIsPrenominalModifier = true;
-			}
-			#endif
+			}		
+			if(!relationTypeConjuction)
+			{//added 25 July 2013
 			
-			/*
-			cout << "governerEntity->entityName = " << governerEntity->entityName << endl;
-			cout << "dependentEntity->entityName = " << dependentEntity->entityName << endl;
-			cout << "governerEntity->NERTemp = " << governerEntity->NERTemp << endl;
-			cout << "dependentEntity->NERTemp = " << dependentEntity->NERTemp << endl;
-			*/
-						
-			//if(((governerEntity->NERTemp == FEATURE_NER_DATE) && (dependentEntity->NERTemp == FEATURE_NER_DATE)) || ((governerEntity->NERTemp == FEATURE_NER_MONEY) && (dependentEntity->NERTemp == FEATURE_NER_MONEY)) || ((governerEntity->NERTemp == FEATURE_NER_NUMBER) && (dependentEntity->NERTemp == FEATURE_NER_NUMBER)) || ((governerEntity->NERTemp == FEATURE_NER_TIME) && (dependentEntity->NERTemp == FEATURE_NER_TIME)))
-			if(governerAndDependentBothHaveSameNERvalue || governerIsPersonAndRelationTypeIsPrenominalModifier)
-			{
-				//cout << "governerEntity->entityName = " << governerEntity->entityName << endl;
-				//cout << "dependentEntity->entityName = " << dependentEntity->entityName << endl;
-				
-				bool featureNERindicatesNameConcatenationRequired = false;
-				for(int i=0; i<FEATURE_NER_INDICATES_NAME_CONCATENATION_REQUIRED_NUMBER_TYPES; i++)
+				GIAentityNode * governerEntity = GIAentityNodeArray[currentRelationInList->relationGovernorIndex];
+				GIAentityNode * dependentEntity = GIAentityNodeArray[currentRelationInList->relationDependentIndex];
+
+				bool governerAndDependentBothHaveSameNERvalue = false;
+				for(int i=0; i<FEATURE_NER_EXPLICIT_NUMBER_TYPES; i++)
 				{
-					if(governerEntity->NERTemp == featureNERindicatesNameConcatenationRequiredTypeArray[i])
+					if((governerEntity->NERTemp == featureNERexplicitTypeArray[i]) && (dependentEntity->NERTemp == featureNERexplicitTypeArray[i]))
 					{
-						featureNERindicatesNameConcatenationRequired = true;
+						governerAndDependentBothHaveSameNERvalue = true;
 					}
 				}
 
-				//if((governerEntity->NERTemp == FEATURE_NER_PERSON) || (governerEntity->NERTemp == FEATURE_NER_LOCATION) || (governerEntity->NERTemp == FEATURE_NER_ORGANIZATION) || (governerEntity->NERTemp == FEATURE_NER_MISC))
-				if(featureNERindicatesNameConcatenationRequired)
+				bool governerIsPersonAndRelationTypeIsPrenominalModifier = false;			
+				#ifdef GIA_STANFORD_CORE_NLP_VERSION_2013_04_04_OR_GREATER
+				//the assignment of NER values implementation appears to have changed in Stanford Core NLP
+				if((governerEntity->NERTemp == FEATURE_NER_PERSON) && (currentRelationInList->relationType == RELATION_TYPE_PRENOMIAL_MODIFIER))
 				{
-					bool featureNERindicatesNameConcatenationRequiredAllowedByPOS = false;
-					#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_5C_FEATURES_STANFORD_NER_INDICATES_NAME_CONCATENATION_REQUIRES_POS_NNP
-					if((dependentEntity->stanfordPOStemp == FEATURE_POS_TAG_NNP) && (governerEntity->stanfordPOStemp == FEATURE_POS_TAG_NNP))
-					{
-						featureNERindicatesNameConcatenationRequiredAllowedByPOS = true;
-					}
-					#else
-					featureNERindicatesNameConcatenationRequiredAllowedByPOS = true;
-					#endif
+					governerIsPersonAndRelationTypeIsPrenominalModifier = true;
+				}
+				#endif
 
-					if(featureNERindicatesNameConcatenationRequiredAllowedByPOS)
+				/*
+				cout << "governerEntity->entityName = " << governerEntity->entityName << endl;
+				cout << "dependentEntity->entityName = " << dependentEntity->entityName << endl;
+				cout << "governerEntity->NERTemp = " << governerEntity->NERTemp << endl;
+				cout << "dependentEntity->NERTemp = " << dependentEntity->NERTemp << endl;
+				*/
+
+				//if(((governerEntity->NERTemp == FEATURE_NER_DATE) && (dependentEntity->NERTemp == FEATURE_NER_DATE)) || ((governerEntity->NERTemp == FEATURE_NER_MONEY) && (dependentEntity->NERTemp == FEATURE_NER_MONEY)) || ((governerEntity->NERTemp == FEATURE_NER_NUMBER) && (dependentEntity->NERTemp == FEATURE_NER_NUMBER)) || ((governerEntity->NERTemp == FEATURE_NER_TIME) && (dependentEntity->NERTemp == FEATURE_NER_TIME)))
+				if(governerAndDependentBothHaveSameNERvalue || governerIsPersonAndRelationTypeIsPrenominalModifier)
+				{
+					//cout << "governerEntity->entityName = " << governerEntity->entityName << endl;
+					//cout << "dependentEntity->entityName = " << dependentEntity->entityName << endl;
+
+					bool featureNERindicatesNameConcatenationRequired = false;
+					for(int i=0; i<FEATURE_NER_INDICATES_NAME_CONCATENATION_REQUIRED_NUMBER_TYPES; i++)
 					{
-						governerEntity->entityName = dependentEntity->entityName + FEATURE_NER_NAME_CONCATENATION_TOKEN + governerEntity->entityName;	//join names together
-						/*//OLD: before moving disableRedundantNodesStanfordCoreNLP() forward in execution heirachy (GIATranslatorDefineGrammarAndReferencing.cpp)
-						if(governerEntity->hasAssociatedInstanceTemp)
-						{//disable its substance also
-							(governerEntity->associatedInstanceNodeList.back())->entityName = governerEntity->entityName;	//join names together
+						if(governerEntity->NERTemp == featureNERindicatesNameConcatenationRequiredTypeArray[i])
+						{
+							featureNERindicatesNameConcatenationRequired = true;
 						}
-						*/
+					}
 
+					//if((governerEntity->NERTemp == FEATURE_NER_PERSON) || (governerEntity->NERTemp == FEATURE_NER_LOCATION) || (governerEntity->NERTemp == FEATURE_NER_ORGANIZATION) || (governerEntity->NERTemp == FEATURE_NER_MISC))
+					if(featureNERindicatesNameConcatenationRequired)
+					{
+						bool featureNERindicatesNameConcatenationRequiredAllowedByPOS = false;
+						#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_5C_FEATURES_STANFORD_NER_INDICATES_NAME_CONCATENATION_REQUIRES_POS_NNP
+						if((dependentEntity->stanfordPOStemp == FEATURE_POS_TAG_NNP) && (governerEntity->stanfordPOStemp == FEATURE_POS_TAG_NNP))
+						{
+							featureNERindicatesNameConcatenationRequiredAllowedByPOS = true;
+						}
+						#else
+						featureNERindicatesNameConcatenationRequiredAllowedByPOS = true;
+						#endif
+
+						if(featureNERindicatesNameConcatenationRequiredAllowedByPOS)
+						{
+							governerEntity->entityName = dependentEntity->entityName + FEATURE_NER_NAME_CONCATENATION_TOKEN + governerEntity->entityName;	//join names together
+							/*//OLD: before moving disableRedundantNodesStanfordCoreNLP() forward in execution heirachy (GIATranslatorDefineGrammarAndReferencing.cpp)
+							if(governerEntity->hasAssociatedInstanceTemp)
+							{//disable its substance also
+								(governerEntity->associatedInstanceNodeList.back())->entityName = governerEntity->entityName;	//join names together
+							}
+							*/
+
+							#ifdef GIA_STANFORD_DEPENDENCY_RELATIONS_DEBUG
+							//cout << "governerEntity->NERTemp = " << governerEntity->NERTemp << endl;
+							//cout << "dependentEntity->NERTemp = " << dependentEntity->NERTemp << endl;
+							#endif
+
+							currentRelationInList->disabled = true;
+
+							disableEntity(dependentEntity);
+						}
+					}
+					else
+					{	
 						#ifdef GIA_STANFORD_DEPENDENCY_RELATIONS_DEBUG
 						//cout << "governerEntity->NERTemp = " << governerEntity->NERTemp << endl;
 						//cout << "dependentEntity->NERTemp = " << dependentEntity->NERTemp << endl;
 						#endif
-						
-						currentRelationInList->disabled = true;
+
+						//currentRelationInList->disabled = true;	//removed 14 July 2013 for GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK (leave quantity dependency relations active) [although unncessary since quantity link generalisation remains unimplemented]
 
 						disableEntity(dependentEntity);
+
 					}
-				}
-				else
-				{	
-					#ifdef GIA_STANFORD_DEPENDENCY_RELATIONS_DEBUG
-					//cout << "governerEntity->NERTemp = " << governerEntity->NERTemp << endl;
-					//cout << "dependentEntity->NERTemp = " << dependentEntity->NERTemp << endl;
-					#endif
-					
-					//currentRelationInList->disabled = true;	//removed 14 July 2013 for GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK (leave quantity dependency relations active) [although unncessary since quantity link generalisation remains unimplemented]
-
-					disableEntity(dependentEntity);
 
 				}
-
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		}
@@ -364,7 +376,7 @@ void redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionActio
 	//cout << "\n" << endl;
 	
 	//added 28 October 2012
- 	currentRelationInList = currentSentenceInList->firstRelationInList;
+ 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	bool foundFirstPreposition = false;
 	while(currentRelationInList->next != NULL)
 	{

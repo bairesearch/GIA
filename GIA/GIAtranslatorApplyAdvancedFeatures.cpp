@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorApplyAdvancedFeatures.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t2m 24-July-2013
+ * Project Version: 1t3a 25-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * ?TO DO: extract date information of entities from relex <features> tag area
@@ -677,12 +677,12 @@ void extractMeasures(Sentence * currentSentenceInList, bool GIAentityNodeArrayFi
 	GIAgenericDepRelInterpretationParameters paramA = param;
 	paramA.useRelationArrayTest[REL1][REL_ENT3] = true; paramA.relationArrayTest[REL1][REL_ENT3] = relationTypeMeasureDependencyNameArray; paramA.relationArrayTestSize[REL1][REL_ENT3] = RELATION_TYPE_MEASURE_DEPENDENCY_NUMBER_OF_TYPES;	
 	paramA.mustGenerateConditionTypeName = true; paramA.conditionTypeEntityDefaultName = RELATION_TYPE_MEASURE_DEPENDENCY_UNKNOWN; paramA.conditionTypeEntityDefaultIndex = FEATURE_INDEX_OF_MEASURE_PER_UNKNOWN; //NB GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK does not support the full array of Relex measure/dependency types, and FEATURE_INDEX_OF_MEASURE_PER_UNKNOWN is now used instead of FEATURE_INDEX_OF_MEASURE_UNKNOWN to allow both measure and measure per entities to be used in same sentence
-	genericDependecyRelationInterpretation(&paramA, 1);
+	genericDependecyRelationInterpretation(&paramA, REL1);
 		
 	GIAgenericDepRelInterpretationParameters paramB = param;	
 	paramB.useRelationArrayTest[REL1][REL_ENT3] = true; paramB.relationArrayTest[REL1][REL_ENT3] = relationTypeMeasureNotDependencyNameArray; paramB.relationArrayTestSize[REL1][REL_ENT3] = RELATION_TYPE_MEASURE_NOT_DEPENDENCY_NUMBER_OF_TYPES;	
 	paramB.mustGenerateConditionTypeName = true; paramB.conditionTypeEntityDefaultName = RELATION_TYPE_MEASURE_UNKNOWN; paramB.conditionTypeEntityDefaultIndex = FEATURE_INDEX_OF_MEASURE_UNKNOWN;	//NB GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK does not support the full array of Relex measure/dependency types
-	genericDependecyRelationInterpretation(&paramB, 1);
+	genericDependecyRelationInterpretation(&paramB, REL1);
 #else
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
@@ -771,68 +771,6 @@ void extractMeasures(Sentence * currentSentenceInList, bool GIAentityNodeArrayFi
 #endif
 }
 
-void extractQualities(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, int NLPdependencyRelationsType)
-{
-	/* 
-	eg The broken pencil fell apart. / Giants are red. [Joe is happy.] / Tom runs quickly.	_amod(pencil, broken) / _predadj(giants, red) / _advmod(run, quick)
-	*/
-#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
-	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
-	param.numberOfRelations = 1;
-	param.useRelationArrayTest[REL1][REL_ENT3] = true; param.relationArrayTest[REL1][REL_ENT3] = relationTypeAdjectiveNameArray; param.relationArrayTestSize[REL1][REL_ENT3] = RELATION_TYPE_ADJECTIVE_NUMBER_OF_TYPES;
-	param.useRedistributeSpecialCaseQualityAssignment[REL1][REL_ENT2] = true;
-	genericDependecyRelationInterpretation(&param, 1);
-#else
-	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
-	while(currentRelationInList->next != NULL)
-	{
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
-		if(!(currentRelationInList->disabled))
-		{
-		#endif
-			bool passed = false;
-			for(int i=0; i<RELATION_TYPE_ADJECTIVE_NUMBER_OF_TYPES; i++)
-			{
-				if(currentRelationInList->relationType == relationTypeAdjectiveNameArray[i])
-				{
-					passed = true;
-				}
-			}
-			//if((currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_AMOD) || (currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_PREDADJ) || (currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_ADVMOD))
-			if(passed)
-			{
-				#ifndef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
-				bool passed2 = true;
-				#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE_THAT_IS_PROBABLY_STANFORD_COMPATIBLE
-				if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_RELEX)
-				{
-				#endif
-					passed2 = isAdjectiveNotConnectedToObjectOrSubject(currentSentenceInList, currentRelationInList, NLPdependencyRelationsType);
-				#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE_THAT_IS_PROBABLY_STANFORD_COMPATIBLE
-				}
-				#endif
-				
-				if(passed2)
-				{
-				#endif
-					int relationGovernorIndex = currentRelationInList->relationGovernorIndex;
-					int relationDependentIndex = currentRelationInList->relationDependentIndex;
-					GIAentityNode * thingEntity = GIAentityNodeArray[relationGovernorIndex];
-					GIAentityNode * substanceEntity = GIAentityNodeArray[relationDependentIndex];
-
-					substanceEntity->isSubstanceQuality = true;	//[eg2 The locked door.. / Jim runs quickly / Mr. Smith is late {_amod/_advmod/_predadj}]
-				#ifndef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
-				}
-				#endif
-			}
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
-		}
-		#endif
-		currentRelationInList = currentRelationInList->next;
-	}
-#endif	
-}
-
 
 void defineToBeAndToDoPropertiesAndConditions(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts)
 {
@@ -854,21 +792,21 @@ void defineToBeAndToDoPropertiesAndConditions(Sentence * currentSentenceInList, 
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	paramA.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_PROPERTIES;	//eg The chicken ate the pie that tasted awesome.
 	#endif	
-	genericDependecyRelationInterpretation(&paramA, 1);
+	genericDependecyRelationInterpretation(&paramA, REL1);
 	
 	/*
 	eg Jezel likes to draw. _to-do(like[2], draw[4]) + _subj(like[2], Jezel[1])
 	_to-do(like[2], draw[4])
 	_subj(like[2], Jezel[1])	//will have been already interpreted as an action by linkSubjectOrObjectRelationships()
 	*/
-	#ifdef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C_RELATIONS_TREAT_TODO_AND_SUBJECT_RELATION_AS_SUBSTANCE_LINK
+	#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1C_RELATIONS_TREAT_TODO_AND_SUBJECT_RELATION_AS_SUBSTANCE_LINK
 	GIAgenericDepRelInterpretationParameters paramB = param;
 	paramB.useRelationTest[REL1][REL_ENT3] = true; paramB.relationTest[REL1][REL_ENT3] = RELATION_TYPE_COMPLIMENT_TO_DO;
 	paramB.functionToExecuteUponFind = GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectPropertyToEntity;
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	paramB.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_PROPERTIES;	//eg The chicken ate the pie that likes to draw.
 	#endif		
-	genericDependecyRelationInterpretation(&paramB, 1);
+	genericDependecyRelationInterpretation(&paramB, REL1);
 	#else
 	GIAgenericDepRelInterpretationParameters paramB = param;
 	paramB.useRelationTest[REL1][REL_ENT3] = true; paramB.relationTest[REL1][REL_ENT3] = RELATION_TYPE_COMPLIMENT_TO_DO;
@@ -878,7 +816,7 @@ void defineToBeAndToDoPropertiesAndConditions(Sentence * currentSentenceInList, 
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	paramB.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_CONDITIONS;	//eg The chicken ate the pie that likes to draw.
 	#endif	
-	genericDependecyRelationInterpretation(&paramB, 1);
+	genericDependecyRelationInterpretation(&paramB, REL1);
 	#endif
 	
 #else
@@ -954,6 +892,69 @@ void defineToBeAndToDoPropertiesAndConditions(Sentence * currentSentenceInList, 
 #endif
 }
 
+void extractQualities(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, int NLPdependencyRelationsType)
+{
+	/* 
+	eg The broken pencil fell apart. / Giants are red. [Joe is happy.] / Tom runs quickly.	_amod(pencil, broken) / _predadj(giants, red) / _advmod(run, quick)
+	*/
+#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
+	GIAgenericDepRelInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, false);	
+	param.numberOfRelations = 1;
+	param.useRelationArrayTest[REL1][REL_ENT3] = true; param.relationArrayTest[REL1][REL_ENT3] = relationTypeAdjectiveNameArray; param.relationArrayTestSize[REL1][REL_ENT3] = RELATION_TYPE_ADJECTIVE_NUMBER_OF_TYPES;
+	param.useRedistributeSpecialCaseQualityAssignment[REL1][REL_ENT2] = true;
+	genericDependecyRelationInterpretation(&param, REL1);
+#else
+	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+	while(currentRelationInList->next != NULL)
+	{
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
+		if(!(currentRelationInList->disabled))
+		{
+		#endif
+			bool passed = false;
+			for(int i=0; i<RELATION_TYPE_ADJECTIVE_NUMBER_OF_TYPES; i++)
+			{
+				if(currentRelationInList->relationType == relationTypeAdjectiveNameArray[i])
+				{
+					passed = true;
+				}
+			}
+			//if((currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_AMOD) || (currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_PREDADJ) || (currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_ADVMOD))
+			if(passed)
+			{
+				#ifndef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+				bool passed2 = true;
+				#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE_THAT_IS_PROBABLY_STANFORD_COMPATIBLE
+				if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_RELEX)
+				{
+				#endif
+					passed2 = isAdjectiveNotConnectedToObjectOrSubject(currentSentenceInList, currentRelationInList, NLPdependencyRelationsType);
+				#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE_THAT_IS_PROBABLY_STANFORD_COMPATIBLE
+				}
+				#endif
+				
+				if(passed2)
+				{
+				#endif
+					int relationGovernorIndex = currentRelationInList->relationGovernorIndex;
+					int relationDependentIndex = currentRelationInList->relationDependentIndex;
+					GIAentityNode * thingEntity = GIAentityNodeArray[relationGovernorIndex];
+					GIAentityNode * substanceEntity = GIAentityNodeArray[relationDependentIndex];
+
+					substanceEntity->isSubstanceQuality = true;	//[eg2 The locked door.. / Jim runs quickly / Mr. Smith is late {_amod/_advmod/_predadj}]
+				#ifndef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+				}
+				#endif
+			}
+		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
+		}
+		#endif
+		currentRelationInList = currentRelationInList->next;
+	}
+#endif	
+}
+
+
 void linkPropertiesParataxis(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
 {
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
@@ -966,7 +967,7 @@ void linkPropertiesParataxis(Sentence * currentSentenceInList, bool GIAentityNod
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	param.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_PARATAXIS;
 	#endif	
-	genericDependecyRelationInterpretation(&param, 1);
+	genericDependecyRelationInterpretation(&param, REL1);
 #else
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
@@ -1021,12 +1022,12 @@ void linkConjunctionConditions(Sentence * currentSentenceInList, bool GIAentityN
 	GIAgenericDepRelInterpretationParameters paramA = param;	
 	paramA.useRelationTest[REL1][REL_ENT3] = true; paramA.relationTest[REL1][REL_ENT3] = RELATION_TYPE_CONJUGATION_AND;	
 	paramA.conditionTypeEntityDefaultName = RELATION_TYPE_CONJUGATION_AND_BASIC; //change the conditionType name (_conj_and -> and)
-	genericDependecyRelationInterpretation(&paramA, 1);
+	genericDependecyRelationInterpretation(&paramA, REL1);
 	
 	GIAgenericDepRelInterpretationParameters paramB = param;
 	paramB.useRelationTest[REL1][REL_ENT3] = true; paramB.relationTest[REL1][REL_ENT3] = RELATION_TYPE_CONJUGATION_OR;
 	paramB.conditionTypeEntityDefaultName = RELATION_TYPE_CONJUGATION_OR_BASIC; //change the conditionType name (_conj_or -> or)
-	genericDependecyRelationInterpretation(&paramB, 1);
+	genericDependecyRelationInterpretation(&paramB, REL1);
 #else	
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
@@ -1104,7 +1105,7 @@ void defineClausalComplementProperties(Sentence * currentSentenceInList, bool GI
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	param.defaultSameSetReferenceValue = DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_CCCOMP;	//eg The guy, that Akari said was blue, left early in the morning. / He says that you like to swim.
 	#endif	
-	genericDependecyRelationInterpretation(&param, 1);
+	genericDependecyRelationInterpretation(&param, REL1);
 #else	
 	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)

@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t2m 24-July-2013
+ * Project Version: 1t3a 25-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -837,6 +837,11 @@ GIAentityNode * addOrConnectConditionToEntity(GIAentityNode * entityNode, GIAent
 		
 		newOrExistingCondition = addConditionToConditionDefinition(conditionTypeEntity);
 
+		#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+		//required to compensate for defineSubstancesActions() being exectuted before linkDependentActionsType1()
+		newOrExistingCondition->isSubstance = false;	//required because defineSubstancesActions() defines substances [not actions]
+		newOrExistingCondition->isCondition = true;
+		#endif
 		//entityNode->hasSubstanceTemp = true;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
 
 		//configure entity node containing this substance
@@ -1392,7 +1397,6 @@ GIAentityNode * getEntitySubstanceThatWasDeclaredInContext(GIAentityNode * entit
 #ifdef GIA_USE_ADVANCED_REFERENCING
 bool determineSameReferenceSetValue(bool defaultSameSetValueForRelation, Relation * relation)
 {
-
 	bool auxillaryIndicatesDifferentReferenceSet = relation->auxillaryIndicatesDifferentReferenceSet;
 	bool rcmodIndicatesSameReferenceSet = relation->rcmodIndicatesSameReferenceSet;
 
@@ -1406,7 +1410,6 @@ bool determineSameReferenceSetValue(bool defaultSameSetValueForRelation, Relatio
 		sameReferenceSet = true;
 	}
 
-
 	#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 	cout << "\ndetermineSameReferenceSetValue():" << endl;
 	cout << "\t" << relation->relationType << "(" << relation->relationGovernor << ", " << relation->relationDependent << ")" << endl;
@@ -1415,7 +1418,6 @@ bool determineSameReferenceSetValue(bool defaultSameSetValueForRelation, Relatio
 	cout << "\tdefaultSameSetValueForRelation = " << defaultSameSetValueForRelation << endl;
 	cout << "\tsameReferenceSet = " << sameReferenceSet << endl;
 	#endif
-
 
 	return sameReferenceSet;
 }
@@ -2008,6 +2010,7 @@ GIAgenericDepRelInterpretationParameters::GIAgenericDepRelInterpretationParamete
 		//relations to parse
 	numberOfRelations = 1;
 	parseDisabledRelation = {false, false, false, false, false};
+	parseDisabledRelationDuringLink = {false, false, false, false, false};	//not currently used
 
 		//found values
 	relation = {NULL, NULL, NULL, NULL};		
@@ -2080,6 +2083,7 @@ GIAgenericDepRelInterpretationParameters::GIAgenericDepRelInterpretationParamete
 	disableEntity = {{false, false}, {false, false}, {false, false}, {false, false}}; 	//for entity1 and entity2 only
 	disableEntityUseOriginalValues = {{false, false}, {false, false}, {false, false}, {false, false}}; 	//for disabling an entity based on its original index
 	disableRelation = {false, false, false, false, false};
+	disableRelationDuringLink = {false, false, false, false, false};
 		
 }
 GIAgenericDepRelInterpretationParameters::~GIAgenericDepRelInterpretationParameters(void)
@@ -2106,8 +2110,8 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 		!(param->relation[currentRelationID]->disabled) is to prevent parsing of disabled relations (unless param->parseDisabledRelation[currentRelationID] has been explicitly set)
 		!relationPreviouslyUsed is to prevent reusing a relation
 		*/
-		if(param->parseDisabledRelation[currentRelationID] || !(currentRelationInList->disabled) && !relationPreviouslyUsed)
-		{
+		if((param->parseDisabledRelation[currentRelationID] || !(currentRelationInList->disabled)) && (param->parseDisabledRelationDuringLink[currentRelationID] || !(currentRelationInList->disabledDuringLink)) && !relationPreviouslyUsed)
+		{			
 			param->relation[currentRelationID] = currentRelationInList;
 			
 			//predefined values tests
@@ -2286,7 +2290,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 					}	
 					for(int relationID=minRelationToTest; relationID<maxRelationToTest; relationID++)
 					{
-						for(int relationEntityID=0; relationEntityID<GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_GOVDEP_ENTITIES_PER_RELATION; relationEntityID++)
+						for(int relationEntityID=0; relationEntityID<GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION; relationEntityID++)	//changed from GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_GOVDEP_ENTITIES_PER_RELATION 25 July 2013
 						{
 							if(param->useRelationIndexTest[relationID][relationEntityID])
 							{
@@ -2436,7 +2440,7 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 								}							
 								else if(param->functionToExecuteUponFind == GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectPropertyToEntity)
 								{
-									param->GIAentityNodeArray[functionEntityIndex2] =  addOrConnectPropertyToEntityAddOnlyIfOwnerIsProperty(param->GIAentityNodeArray[functionEntityIndex1], param->GIAentityNodeArray[functionEntityIndex2], sameReferenceSet);
+									param->GIAentityNodeArray[functionEntityIndex2] =  addOrConnectPropertyToEntity(param->GIAentityNodeArray[functionEntityIndex1], param->GIAentityNodeArray[functionEntityIndex2], sameReferenceSet);
 								}							
 								else if(param->functionToExecuteUponFind == GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectActionToEntity)
 								{
@@ -2467,20 +2471,22 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 								}							
 								else if(param->functionToExecuteUponFind == GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectConditionToEntity)
 								{
+									//cout << "param->GIAentityNodeArray[functionEntityIndex1] = " << param->GIAentityNodeArray[functionEntityIndex1]->entityName << endl; 
+									//cout << "param->GIAentityNodeArray[functionEntityIndex2] = " << param->GIAentityNodeArray[functionEntityIndex2]->entityName << endl;
+									//cout << "param->GIAentityNodeArray[functionEntityIndex3] = " << param->GIAentityNodeArray[functionEntityIndex3]->entityName << endl;
+									//cout << "sameReferenceSet = " << sameReferenceSet << endl;
 									param->GIAentityNodeArray[functionEntityIndex3] = addOrConnectConditionToEntity(param->GIAentityNodeArray[functionEntityIndex1], param->GIAentityNodeArray[functionEntityIndex2], param->GIAentityNodeArray[functionEntityIndex3], sameReferenceSet);
 								}							
 								else if(param->functionToExecuteUponFind == GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectBeingDefinitionConditionToEntity)
 								{
-									cout << "a1" << endl;
 									bool negative = param->GIAentityNodeArray[functionEntityIndex4special]->negative;
-									cout << "negative = " << negative << endl;
+									//cout << "negative = " << negative << endl;
 									param->GIAentityNodeArray[functionEntityIndex3] = addOrConnectBeingDefinitionConditionToEntity(param->GIAentityNodeArray[functionEntityIndex1], param->GIAentityNodeArray[functionEntityIndex2], param->GIAentityNodeArray[functionEntityIndex3], negative, sameReferenceSet);
 								}						
 								else if(param->functionToExecuteUponFind == GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectHavingPropertyConditionToEntity)
 								{	
-									cout << "a2" << endl;
 									bool negative = param->GIAentityNodeArray[functionEntityIndex4special]->negative;						
-									cout << "negative = " << negative << endl;
+									//cout << "negative = " << negative << endl;
 									param->GIAentityNodeArray[functionEntityIndex3] = addOrConnectHavingPropertyConditionToEntity(param->GIAentityNodeArray[functionEntityIndex1], param->GIAentityNodeArray[functionEntityIndex2], param->GIAentityNodeArray[functionEntityIndex3], negative, sameReferenceSet);
 								}
 								else if(param->functionToExecuteUponFind == GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addDefinitionToEntity)
@@ -2671,6 +2677,10 @@ bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParame
 								{
 									param->relation[relationID]->disabled =  true;
 								}
+								if(param->disableRelationDuringLink[relationID])
+								{
+									param->relation[relationID]->disabledDuringLink =  true;
+								}								
 							}
 						}						
 					}					

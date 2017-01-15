@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t2m 24-July-2013
+ * Project Version: 1t3a 25-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -728,10 +728,10 @@ static string relationTypeMeasureNameArray[RELATION_TYPE_MEASURE_NUMBER_OF_TYPES
 static int relationTypeMeasureNameTypeIndexArray[RELATION_TYPE_MEASURE_NUMBER_OF_TYPES] = {MEASURE_TYPE_DISTANCE, MEASURE_TYPE_PER, MEASURE_TYPE_SIZE, MEASURE_TYPE_TIME, MEASURE_TYPE_UNKNOWN, MEASURE_DEPENDENCY_UNKNOWN};
 #define RELATION_TYPE_MEASURE_DEPENDENCY_NUMBER_OF_TYPES (2)
 static string relationTypeMeasureDependencyNameArray[RELATION_TYPE_MEASURE_DEPENDENCY_NUMBER_OF_TYPES] = {RELATION_TYPE_MEASURE_PER, RELATION_TYPE_MEASURE_DEPENDENCY_UNKNOWN};
-#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
+//#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 #define RELATION_TYPE_MEASURE_NOT_DEPENDENCY_NUMBER_OF_TYPES (4)
 static string relationTypeMeasureNotDependencyNameArray[RELATION_TYPE_MEASURE_NOT_DEPENDENCY_NUMBER_OF_TYPES] = {RELATION_TYPE_MEASURE_DISTANCE, RELATION_TYPE_MEASURE_SIZE, RELATION_TYPE_MEASURE_TIME, RELATION_TYPE_MEASURE_UNKNOWN};
-#endif
+//#endif
 #define RELATION_TYPE_QUANTITY_ARGUMENT_IMPLY_MEASURE_PER_NUMBER_OF_TYPES (1)
 static string relationTypeQuantityArgumentImplyMeasurePerNameArray[RELATION_TYPE_QUANTITY_ARGUMENT_IMPLY_MEASURE_PER_NUMBER_OF_TYPES] = {"every"};
 
@@ -1167,6 +1167,7 @@ public:
 		//relations to parse
 	int numberOfRelations;
 	bool parseDisabledRelation[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS];
+	bool parseDisabledRelationDuringLink[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS];
 	
 		//found values
 	Relation * relation[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS];		
@@ -1243,6 +1244,7 @@ public:
 	bool disableEntity[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_GOVDEP_ENTITIES_PER_RELATION];		//for entity1 and entity2
 	bool disableEntityUseOriginalValues[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_GOVDEP_ENTITIES_PER_RELATION];	//for disabling an entity based on its original index
 	bool disableRelation[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS];
+	bool disableRelationDuringLink[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS];
 };
 
 bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParameters * param, int currentRelationID);

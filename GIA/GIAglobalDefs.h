@@ -23,7 +23,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t2m 24-July-2013
+ * Project Version: 1t3a 25-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -521,9 +521,9 @@
 #define GIA_WORKAROUND_RELEX_BUG_OCCASIONAL_QVAR_INDEX_SAME_AS_ANOTHER_RELATION_INDEX
 #define GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
 #ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
-	#define GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION	//1t1a
-	//#define GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK		//1t2a
-	//#define GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES		//1t2b
+	#define GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION	//1t1a (tested 1ttd, tested with generalised link entity preparation generalised redistribution modifications 1t2m)
+	#define GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK			//1t2a (tested 1t3a)
+	#define GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES		//1t2b (tested 1t3a)
 #endif
 #define GIA_DEPENDENCY_RELATIONS_TYPE_RELEX_PARSE_QUESTIONS_IN_NON_QUERY_INPUTTEXT	//allows questions to be properly parsed during relation redistribution when they are added to inputText also (instead of just inputTextQuery) 
 //#define GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_DEBUG	
