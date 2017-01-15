@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorDefineGrammar.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2014 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2f12b 14-July-2014
+ * Project Version: 2f13a 14-July-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -188,6 +188,56 @@ void locateAndAddAllFeatureTempEntities(Sentence * currentSentenceInList, bool G
 					featureTempEntity->entityName = prepositionName;
 					GIAfeatureTempEntityNodeArray[prepositionEntityIndex] = featureTempEntity;
 				}
+				#ifdef GIA_REMOVE_REDUNDANT_LOGICAL_CONDITION_ENTITIES
+				//added GIA 2f13a - to account for scenarios in which 2 prepositions with identical type (eg for) and subject (eg eat) are being created; eg prep_for(eat[13], apple[8]) and prep_for(eat[13], basket[3]) in "For all baskets in the house and apples in the tree, eat the pie."
+				//disable the relation without a conjunction conditionConnection
+				//bool foundLogicalConditionOperationBasic = textInTextArray(prepositionName, logicalConditionOperationsArray, NLC_LOGICAL_CONDITION_OPERATIONS_NUMBER_OF_TYPES, &logicalOperation);
+				if(prepositionName == RELATION_TYPE_PREPOSITION_FOR)
+				{//eg for/while/if
+				
+					//cout << "prepositionName == RELATION_TYPE_PREPOSITION_FOR" << endl;
+					bool primaryLogicalConditionRelation = false;
+					Relation * currentRelationInList3 = currentSentenceInList->firstRelationInList;
+ 					while(currentRelationInList3->next != NULL)
+					{
+						bool conjunctionConditionFound = textInTextArray(currentRelationInList3->relationType, relationTypeConjugationNameArray, RELATION_TYPE_CONJUGATION_NUMBER_OF_TYPES);
+						if(conjunctionConditionFound)
+						{
+							if(currentRelationInList3->relationGovernorIndex == currentRelationInList->relationDependentIndex)
+							{
+								//preposition has an outgoing conjunction connection; take this as the primary relation and disable all others
+								primaryLogicalConditionRelation = true;
+								//cout << "primaryLogicalConditionRelation" << endl;
+							}
+						}
+						currentRelationInList3 = currentRelationInList3->next;
+					}
+					if(primaryLogicalConditionRelation)
+					{				
+						Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
+ 						while(currentRelationInList2->next != NULL)
+						{
+							if(currentRelationInList2->relationType == currentRelationInList->relationType)
+							{
+								//found matching preposition
+								if(currentRelationInList2->relationGovernorIndex == currentRelationInList->relationGovernorIndex)
+								{
+									//found matching preposition subject
+									if(currentRelationInList2 != currentRelationInList)
+									{
+										//redundant logical condition preposition relation found: disable it
+										currentRelationInList2->disabled = true;
+										#ifdef GIA_TRANSLATOR_DEBUG
+										cout << "redundant logical condition preposition relation found: disable it" << endl;
+										#endif
+									}
+								}
+							}
+							currentRelationInList2 = currentRelationInList2->next;
+						}
+					}
+				}
+				#endif
 			}
 		}
 		currentRelationInList = currentRelationInList->next;
