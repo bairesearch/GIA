@@ -47,7 +47,11 @@ using namespace std;
 
 #define GIA_DRAW_ACTION_NODE_COLOUR (DAT_FILE_COLOUR_GREEN)				//this was green in the original spec	
 #define GIA_DRAW_ACTION_SUBJECT_CONNECTION_COLOUR (DAT_FILE_COLOUR_GREEN)			//this was black in the original spec	
-#define GIA_DRAW_ACTION_OBJECT_CONNECTION_COLOUR (DAT_FILE_COLOUR_YELLOW)			//this was black in the original spec	
+#ifdef GIA_DRAW_USE_CONNECTION_TYPE_NAME_TEXT == (true)
+	#define GIA_DRAW_ACTION_OBJECT_CONNECTION_COLOUR (DAT_FILE_COLOUR_GREEN)			//this was black in the original spec	
+#else
+	#define GIA_DRAW_ACTION_OBJECT_CONNECTION_COLOUR (DAT_FILE_COLOUR_YELLOW)
+#endif
 #define GIA_DRAW_ACTION_DEFINITION_CONNECTION_COLOUR (DAT_FILE_COLOUR_BROWN)		//colour not defined in original GIA spec
 #define GIA_DRAW_ACTION_DEFINITION_NODE_COLOUR (DAT_FILE_COLOUR_BROWN)			//this was dark green to original GIA spec
 

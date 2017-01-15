@@ -31,6 +31,7 @@ string relationTypeAdjectiveWhichImplyEntityInstanceNameArray[RELATION_TYPE_ADJE
 string relationTypeRequireSwitchingNameArray[RELATION_TYPE_REQUIRE_SWITCHING_NUMBER_OF_TYPES] = {RELATION_TYPE_OBJECT_THAT};
 
 string relationTypeQuantityOrMeasureNameArray[RELATION_TYPE_QUANTITY_OR_MEASURE_NUMBER_OF_TYPES] = {RELATION_TYPE_QUANTITY, RELATION_TYPE_MEASURE_DISTANCE, RELATION_TYPE_MEASURE_SIZE, RELATION_TYPE_MEASURE_TIME};
+string relationTypeQuantityOrMeasureSwitchedNameArray[RELATION_TYPE_QUANTITY_OR_MEASURE_SWITCHED_NUMBER_OF_TYPES] = {RELATION_TYPE_QUANTITY_MOD};
 string relationTypeMeasureNameArray[RELATION_TYPE_MEASURE_NUMBER_OF_TYPES] = {RELATION_TYPE_MEASURE_DISTANCE, RELATION_TYPE_MEASURE_SIZE, RELATION_TYPE_MEASURE_TIME};
 
 
@@ -1011,7 +1012,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			currentRelationInList = currentRelationInList->next;
 		}				
 		
-		//cout << "0d pass; define properties (quantities [not quantity mods/multipiers] and measures);" << endl;
+		//cout << "0d/e pass; define properties (quantities [not quantity mods/multipiers] and measures);" << endl;
 		currentRelationInList = currentSentenceInList->firstRelationInList;
  		while(currentRelationInList->next != NULL)
 		{			
@@ -1032,11 +1033,31 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 				//cout << "as3" << endl;
 				
 				addPropertyToPropertyDefinition(propertyEntity);					
-			}			
+			}
+			
+			
+			passed = false;
+			for(int i=0; i<RELATION_TYPE_QUANTITY_OR_MEASURE_SWITCHED_NUMBER_OF_TYPES; i++)
+			{
+				if(currentRelationInList->relationType == relationTypeQuantityOrMeasureSwitchedNameArray[i])
+				{
+					passed = true;
+				}
+			}						
+			if(passed)
+			{
+				//create a new property for the entity and assign a property definition entity if not already created
+				int relationArgumentIndex = currentRelationInList->relationArgumentIndex;
+				GIAEntityNode * propertyEntity = GIAEntityNodeArray[relationArgumentIndex];
+				
+				//cout << "as3" << endl;
+				addPropertyToPropertyDefinition(propertyEntity);					
+			}
+						
 			currentRelationInList = currentRelationInList->next;
 		}				
 		
-		//cout << "0e pass; define properties (expletives eg "there" in "there is a place");" << endl;
+		//cout << "0f pass; define properties (expletives eg "there" in "there is a place");" << endl;
 		currentRelationInList = currentSentenceInList->firstRelationInList;
  		while(currentRelationInList->next != NULL)
 		{			
@@ -1054,6 +1075,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			currentRelationInList = currentRelationInList->next;
 		}
 
+		//cout << "0g pass; define properties (pronouns eg "we"/"I");" << endl;
 		if(GIA_ASSIGN_INSTANCE_PROPERTY_TO_ALL_PRONOUNS == 1)
 		{
 			for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
@@ -1734,7 +1756,16 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 								int quantityModifierInt = calculateQuantityModifierInt(currentRelationInList2->relationArgument);
 								quantityProperty->quantityModifier = quantityModifierInt;
 								*/
-								quantityProperty->quantityModifierString = currentRelationInList->relationArgument;
+								quantityProperty->quantityModifierString = currentRelationInList2->relationArgument;
+							
+							
+								//added 12 Oct 11; add quantity modifiers as conditions (eg "almost" lost)	
+								GIAEntityNode * entityNode = quantityProperty;
+								GIAEntityNode * conditionEntityNode = GIAEntityNodeArray[currentRelationInList2->relationArgumentIndex];
+								string conditionName = quantityProperty->quantityModifierString;
+
+								addOrConnectPropertyConditionToEntity(entityNode, conditionEntityNode, "quantityModifier");
+															
 							}
 
 						}	
