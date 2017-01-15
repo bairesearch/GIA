@@ -13,6 +13,8 @@
 #define HEADER_GIA_ENTITY_NODE_CLASS
 
 
+#define GIA_USE_CONCEPT_ENTITY_NODE_MAP_NOT_VECTOR
+
 #include <iostream>
 #include <fstream>
 #include <ctime>
@@ -21,6 +23,8 @@
 #include <cmath>
 #include <string>
 #include <vector>
+#include <map>			//required for GIA_USE_CONCEPT_ENTITY_NODE_MAP_NOT_VECTOR
+#include <utility> // make_pair	//required for GIA_USE_CONCEPT_ENTITY_NODE_MAP_NOT_VECTOR
 using namespace std;
 
 

@@ -9,9 +9,48 @@
  *
  *******************************************************************************/
  
- #include "GIAdatabase.h"
+#include "GIAdatabase.h"
 
- 
+#ifdef GIA_USE_CONCEPT_ENTITY_NODE_MAP_NOT_VECTOR
+//uses fast search algorithm
+GIAEntityNode * findOrAddEntityNodeByName(vector<GIAEntityNode*> *entityNodesCompleteList, map<string, GIAEntityNode*> *conceptEntityNodesList, string * entityNodeName, bool * found, long * index, bool addIfNonexistant, long * currentEntityNodeIDInCompleteList, long * currentEntityNodeIDInConceptEntityNodesList)
+{
+	GIAEntityNode * entityNodeFound = NULL;
+	
+	map<string, GIAEntityNode*> ::iterator conceptEntityNodesListIterator;
+	conceptEntityNodesListIterator = conceptEntityNodesList->find(*entityNodeName);
+	if(conceptEntityNodesListIterator != conceptEntityNodesList->end())
+	{//concept entity found	
+		#ifdef GIA_DATABASE_DEBUG
+		cout << "\tentity node found; " << *entityNodeName << endl;
+		#endif		
+		entityNodeFound = conceptEntityNodesListIterator->second;
+		*found = true;
+	}
+	else
+	{//concept entity not found - add it to the map
+		
+		#ifdef GIA_DATABASE_DEBUG
+		cout << "adding entity node; " << *entityNodeName << endl;
+		#endif
+
+		entityNodeFound = new GIAEntityNode();
+		entityNodeFound->id = *currentEntityNodeIDInCompleteList;
+		entityNodeFound->idSecondary = *currentEntityNodeIDInConceptEntityNodesList;
+
+		entityNodesCompleteList->push_back(entityNodeFound);
+		(*currentEntityNodeIDInCompleteList) = (*currentEntityNodeIDInCompleteList) + 1;
+		
+		//conceptEntityNodesList[entityNodeName] = entityNodeFound;
+		conceptEntityNodesList->insert(pair<string, GIAEntityNode*>(*entityNodeName, entityNodeFound));
+		(*currentEntityNodeIDInConceptEntityNodesList) = (*currentEntityNodeIDInConceptEntityNodesList) + 1;
+
+		entityNodeFound->entityName = *entityNodeName;	
+	}
+
+	return entityNodeFound;
+}
+#else 
 //uses fast search algorithm
 GIAEntityNode * findOrAddEntityNodeByName(vector<GIAEntityNode*> *entityNodesCompleteList, vector<GIAEntityNode*> *conceptEntityNodesList, vector<string> *conceptEntityNamesList, string * entityNodeName, bool * found, long * index, bool addIfNonexistant, long * currentEntityNodeIDInCompleteList, long * currentEntityNodeIDInConceptEntityNodesList)
 {
@@ -254,8 +293,6 @@ GIAEntityNode * findOrAddEntityNodeByName(vector<GIAEntityNode*> *entityNodesCom
 				
 	return entityNodeFound;
 }
-
-
 #ifdef GIA_USE_TIME_NODE_INDEXING
 //CHECK THIS, it has been updated based upon above code as a template
 GIATimeConditionNode * findOrAddTimeNodeByNumber(vector<GIATimeConditionNode*> *timeConditionNodesList, vector<long> *timeConditionNumbersList, long * timeNodeNumber, bool * found, long * index, bool addIfNonexistant, GIATimeConditionNode * prexistingTimeConditionNode)
@@ -436,10 +473,7 @@ GIATimeConditionNode * findOrAddTimeNodeByNumber(vector<GIATimeConditionNode*> *
 	return timeNodeFound;
 }
 #endif
-
-
-
-
+#endif
 GIAEntityNode * findEntityNodeByID(long EntityNodeID, vector<GIAEntityNode*> *entityNodesCompleteList)
 {
 	GIAEntityNode * foundEntityNode = NULL;
@@ -459,6 +493,8 @@ GIAEntityNode * findEntityNodeByID(long EntityNodeID, vector<GIAEntityNode*> *en
 	
 	return foundEntityNode;
 }
+
+
 
 long maximumLong(long a, long b)
 {

@@ -13,7 +13,7 @@
 #include "GIAquery.h"
 #include "GIAdatabase.h"
 
-GIAEntityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork(vector<GIAEntityNode*> *conceptEntityNodesList, vector<string> *conceptEntityNamesList, vector<GIAEntityNode*> *conceptEntityNodesListQuery, bool detectComparisonVariable, GIAEntityNode* comparisonVariableNode, bool * foundAnswer, GIAEntityNode* queryAnswerNode, double * confidence, GIAEntityNode** queryAnswerPreviousNode, string * queryAnswerContext)
+GIAEntityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork(map<string, GIAEntityNode*> *conceptEntityNodesList, map<string, GIAEntityNode*> *conceptEntityNodesListQuery, bool detectComparisonVariable, GIAEntityNode* comparisonVariableNode, bool * foundAnswer, GIAEntityNode* queryAnswerNode, double * confidence, GIAEntityNode** queryAnswerPreviousNode, string * queryAnswerContext)
 {
 	double bestConfidence = 0.0;
 	double bestConfidenceAssumingFoundAnswer = 0.0;
@@ -32,16 +32,16 @@ GIAEntityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanti
 	
 	bool foundAtLeastOneMatch = false;
 		
-	vector<GIAEntityNode*>::iterator entityIterQuery;
+	map<string, GIAEntityNode*>::iterator entityIterQuery;
 	for(entityIterQuery = conceptEntityNodesListQuery->begin(); entityIterQuery != conceptEntityNodesListQuery->end(); entityIterQuery++) 
 	{//for each node in query semantic net;
 		
-		GIAEntityNode* currentQueryEntityNode = *entityIterQuery;
+		GIAEntityNode* currentQueryEntityNode = entityIterQuery->second;
 		
 		bool foundQueryEntityNodeName = false;
 		long queryEntityNodeIndex = -1;
 		string queryEntityNodeName = currentQueryEntityNode->entityName;
-		GIAEntityNode * conceptEntityMatchingCurrentQueryEntity = findOrAddEntityNodeByName(NULL, conceptEntityNodesList, conceptEntityNamesList, &queryEntityNodeName, &foundQueryEntityNodeName, &queryEntityNodeIndex, false, NULL, NULL);
+		GIAEntityNode * conceptEntityMatchingCurrentQueryEntity = findOrAddEntityNodeByName(NULL, conceptEntityNodesList, &queryEntityNodeName, &foundQueryEntityNodeName, &queryEntityNodeIndex, false, NULL, NULL);
 		
 		if(foundQueryEntityNodeName)
 		{
@@ -1177,15 +1177,15 @@ void generateTexualContextEntityString(string * texualContextEntityString, GIAEn
 
 
 
-double determineMaxConfidenceOfQuerySemanticNetwork(vector<GIAEntityNode*> *conceptEntityNodesListQuery)
+double determineMaxConfidenceOfQuerySemanticNetwork(map<string, GIAEntityNode*> *conceptEntityNodesListQuery)
 {
 	double bestConfidence = 0.0;
 				
-	vector<GIAEntityNode*>::iterator entityIterQuery;
+	map<string, GIAEntityNode*>::iterator entityIterQuery;
 	for(entityIterQuery = conceptEntityNodesListQuery->begin(); entityIterQuery != conceptEntityNodesListQuery->end(); entityIterQuery++) 
 	{//for each node in query semantic net;
 		
-		GIAEntityNode* currentQueryEntityNode = *entityIterQuery;
+		GIAEntityNode* currentQueryEntityNode = entityIterQuery->second;
 
 		#ifdef GIA_QUERY_DEBUG
 		cout << "determineMaxConfidenceOfQuerySemanticNetwork" << endl;

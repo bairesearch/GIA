@@ -368,20 +368,18 @@ int main(int argc,char **argv)
 	
 		
 	vector<GIAEntityNode*> * entityNodesCompleteList = new vector<GIAEntityNode*>;
-	vector<GIAEntityNode*> * conceptEntityNodesList = new vector<GIAEntityNode*>;
+	map<string, GIAEntityNode*> * conceptEntityNodesList = new map<string, GIAEntityNode*>;
 	vector<GIAEntityNode*> * propertyEntityNodesList = new vector<GIAEntityNode*>;
 	vector<GIAEntityNode*> * actionEntityNodesList = new vector<GIAEntityNode*>;
 	vector<GIAEntityNode*> * conditionEntityNodesList = new vector<GIAEntityNode*>;
-	vector<string> * conceptEntityNamesList = new vector<string>;
 	vector<GIATimeConditionNode*> * timeConditionNodesList = new vector<GIATimeConditionNode*>;
 	vector<long> * timeConditionNumbersList = new vector<long>;	
 		
 	vector<GIAEntityNode*> * entityNodesCompleteListQuery = new vector<GIAEntityNode*>;	
-	vector<GIAEntityNode*> * conceptEntityNodesListQuery = new vector<GIAEntityNode*>;			//not required - declared for symmetry
+	map<string, GIAEntityNode*> * conceptEntityNodesListQuery = new map<string, GIAEntityNode*>;
 	vector<GIAEntityNode*> * propertyEntityNodesListQuery = new  vector<GIAEntityNode*>;			//not required - declared for symmetry
 	vector<GIAEntityNode*> * actionEntityNodesListQuery = new vector<GIAEntityNode*>;			//not required - declared for symmetry
 	vector<GIAEntityNode*> * conditionEntityNodesListQuery = new vector<GIAEntityNode*>;			//not required - declared for symmetry	
-	vector<string> * conceptEntityNamesListQuery = new vector<string>;					//not required - declared for symmetry
 	vector<GIATimeConditionNode*> * timeConditionNodesListQuery = new vector<GIATimeConditionNode*>;
 	vector<long> * timeConditionNumbersListQuery = new vector<long>;	
 			
@@ -454,7 +452,7 @@ int main(int argc,char **argv)
 		else
 		{
 			//cout << "as" << endl;
-			if(!parseRelexFile(inputTextRelexXMLFileName, entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList, conditionEntityNodesList, conceptEntityNamesList, timeConditionNodesList, timeConditionNumbersList, false))
+			if(!parseRelexFile(inputTextRelexXMLFileName, entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList, conditionEntityNodesList, timeConditionNodesList, timeConditionNumbersList, false))
 			{
 				result = false;
 			}
@@ -476,7 +474,7 @@ int main(int argc,char **argv)
 		}
 		else
 		{		
-			if(!readSemanticNetXMLFile(inputTextXMLFileName, entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList, conditionEntityNodesList, conceptEntityNamesList))
+			if(!readSemanticNetXMLFileOptimised(inputTextXMLFileName, entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList, conditionEntityNodesList))
 			{
 				result = false;
 			}
@@ -512,7 +510,7 @@ int main(int argc,char **argv)
 		}
 		else
 		{
-			if(!parseRelexFile(inputQueryRelexXMLFileName, entityNodesCompleteListQuery, conceptEntityNodesListQuery, propertyEntityNodesListQuery, actionEntityNodesListQuery, conditionEntityNodesListQuery, conceptEntityNamesListQuery, timeConditionNodesListQuery, timeConditionNumbersListQuery, true))
+			if(!parseRelexFile(inputQueryRelexXMLFileName, entityNodesCompleteListQuery, conceptEntityNodesListQuery, propertyEntityNodesListQuery, actionEntityNodesListQuery, conditionEntityNodesListQuery, timeConditionNodesListQuery, timeConditionNumbersListQuery, true))
 			{
 				result = false;
 			}
@@ -542,7 +540,7 @@ int main(int argc,char **argv)
 		else
 		{		
 			entityNodesCompleteListQuery = new vector<GIAEntityNode*>;
-			if(!readSemanticNetXMLFile(inputQueryXMLFileName, entityNodesCompleteListQuery, conceptEntityNodesListQuery, propertyEntityNodesListQuery, actionEntityNodesListQuery, conditionEntityNodesListQuery, conceptEntityNamesListQuery))
+			if(!readSemanticNetXMLFileOptimised(inputQueryXMLFileName, entityNodesCompleteListQuery, conceptEntityNodesListQuery, propertyEntityNodesListQuery, actionEntityNodesListQuery, conditionEntityNodesListQuery))
 			{
 				result = false;
 			}
@@ -569,7 +567,7 @@ int main(int argc,char **argv)
 		GIAEntityNode* queryAnswerPreviousNode;
 		string queryAnswerContext = "";
 		//cout << "a" << endl;
-		queryAnswerNode = answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork(conceptEntityNodesList, conceptEntityNamesList, conceptEntityNodesListQuery, foundComparisonVariable, comparisonVariableNode, &foundAnswer, queryAnswerNode, &confidence, &queryAnswerPreviousNode, &queryAnswerContext);
+		queryAnswerNode = answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork(conceptEntityNodesList, conceptEntityNodesListQuery, foundComparisonVariable, comparisonVariableNode, &foundAnswer, queryAnswerNode, &confidence, &queryAnswerPreviousNode, &queryAnswerContext);
 		//cout << "b" << endl;
 		
 		double maxConfidence = determineMaxConfidenceOfQuerySemanticNetwork(conceptEntityNodesListQuery);		//OLD [simple]: entityNodesCompleteListQuery->size();
@@ -706,14 +704,14 @@ int main(int argc,char **argv)
 	}			
 	
 	#ifdef GIA_XML_DEBUG_TEST_WRITE_READ_WRITE
-	if(!testReadSemanticNetXMLFile2(entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList, conditionEntityNodesList, conceptEntityNamesList))
+	if(!testReadSemanticNetXMLFile2(entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList, conditionEntityNodesList))
 	{
 		result = false;
 	}
 	#else				
 	if(useOutputTextXMLFile)
 	{			
-		if(!writeSemanticNetXMLFile(outputTextXMLFileName, entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList, conditionEntityNodesList, conceptEntityNamesList))
+		if(!writeSemanticNetXMLFileOptimised(outputTextXMLFileName, entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList, conditionEntityNodesList))
 		{
 			result = false;
 		}
@@ -755,7 +753,7 @@ void executeRelex(string inputTextPlainTXTFileName, string inputTextRelexXMLFile
 
 
 	
-bool parseRelexFile(string inputTextRelexXMLFileName, vector<GIAEntityNode*> *entityNodesCompleteList, vector<GIAEntityNode*> *conceptEntityNodesList, vector<GIAEntityNode*> *propertyEntityNodesList, vector<GIAEntityNode*> *actionEntityNodesList, vector<GIAEntityNode*> *conditionEntityNodesList, vector<string> * conceptEntityNamesList, vector<GIATimeConditionNode*> * timeConditionNodesList, vector<long> * timeConditionNumbersList, bool isQuery)
+bool parseRelexFile(string inputTextRelexXMLFileName, vector<GIAEntityNode*> *entityNodesCompleteList, map<string, GIAEntityNode*> *conceptEntityNodesList, vector<GIAEntityNode*> *propertyEntityNodesList, vector<GIAEntityNode*> *actionEntityNodesList, vector<GIAEntityNode*> *conditionEntityNodesList, vector<GIATimeConditionNode*> * timeConditionNodesList, vector<long> * timeConditionNumbersList, bool isQuery)
 {
 	bool result = true;
 	
@@ -835,7 +833,7 @@ bool parseRelexFile(string inputTextRelexXMLFileName, vector<GIAEntityNode*> *en
 	setTranslatorPropertyEntityNodesList(propertyEntityNodesList);
 	setTranslatorActionEntityNodesList(actionEntityNodesList);
 	setTranslatorConditionEntityNodesList(conditionEntityNodesList);
-	convertSentenceRelationsIntoGIAnetworkNodes(conceptEntityNodesList, conceptEntityNamesList, timeConditionNodesList, timeConditionNumbersList, firstSentenceInList);
+	convertSentenceRelationsIntoGIAnetworkNodes(conceptEntityNodesList, timeConditionNodesList, timeConditionNumbersList, firstSentenceInList);
 	
 	return result;
 }

@@ -25,14 +25,13 @@ bool testReadSemanticNetXMLFile1()
 	vector<GIAEntityNode*> *propertyEntityNodesList;
 	vector<GIAEntityNode*> *actionEntityNodesList;
 	vector<GIAEntityNode*> *conditionEntityNodesList;
-	vector<string> *conceptEntityNamesList;
 	
-	if(!readSemanticNetXMLFile(GIA_SEMANTIC_NET_XML_FILE_NAME, entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList, conditionEntityNodesList, conceptEntityNamesList))
+	if(!readSemanticNetXMLFile(GIA_SEMANTIC_NET_XML_FILE_NAME, entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList, conditionEntityNodesList))
 	{
 		result = false;
 	}
 
-	if(!writeSemanticNetXMLFile(GIA_SEMANTIC_NET_XML_FILE_NAME1, entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList, conditionEntityNodesList, conceptEntityNamesList))
+	if(!writeSemanticNetXMLFile(GIA_SEMANTIC_NET_XML_FILE_NAME1, entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList, conditionEntityNodesList))
 	{
 		result = false;
 	}
@@ -40,11 +39,11 @@ bool testReadSemanticNetXMLFile1()
 	return result;
 }
 
-bool testReadSemanticNetXMLFile2(vector<GIAEntityNode*> *entityNodesCompleteList, vector<GIAEntityNode*> *conceptEntityNodesList, vector<GIAEntityNode*> *propertyEntityNodesList, vector<GIAEntityNode*> *actionEntityNodesList, vector<GIAEntityNode*> *conditionEntityNodesList, vector<string> * conceptEntityNamesList)
+bool testReadSemanticNetXMLFile2(vector<GIAEntityNode*> *entityNodesCompleteList, vector<GIAEntityNode*> *conceptEntityNodesList, vector<GIAEntityNode*> *propertyEntityNodesList, vector<GIAEntityNode*> *actionEntityNodesList, vector<GIAEntityNode*> *conditionEntityNodesList)
 {
 	bool result = true;
 
-	if(!writeSemanticNetXMLFile(GIA_SEMANTIC_NET_XML_FILE_NAME, entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList, conditionEntityNodesList, conceptEntityNamesList))
+	if(!writeSemanticNetXMLFile(GIA_SEMANTIC_NET_XML_FILE_NAME, entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList, conditionEntityNodesList))
 	{
 		result = false;
 	}
@@ -54,15 +53,14 @@ bool testReadSemanticNetXMLFile2(vector<GIAEntityNode*> *entityNodesCompleteList
 	vector<GIAEntityNode*> temppropertyEntityNodesList;
 	vector<GIAEntityNode*> tempactionEntityNodesList;
 	vector<GIAEntityNode*> tempconditionEntityNodesList;
-	vector<string> tempconceptEntityNamesList;
 	
-	if(!readSemanticNetXMLFile(GIA_SEMANTIC_NET_XML_FILE_NAME, &tempentityNodesCompleteList, &tempconceptEntityNodesList, &temppropertyEntityNodesList, &tempactionEntityNodesList, &tempconditionEntityNodesList, &tempconceptEntityNamesList))
+	if(!readSemanticNetXMLFile(GIA_SEMANTIC_NET_XML_FILE_NAME, &tempentityNodesCompleteList, &tempconceptEntityNodesList, &temppropertyEntityNodesList, &tempactionEntityNodesList, &tempconditionEntityNodesList))
 	{
 		result = false;
 	}
 
 	//cout << "here3" << endl;
-	if(!writeSemanticNetXMLFile(GIA_SEMANTIC_NET_XML_FILE_NAME1, &tempentityNodesCompleteList, &tempconceptEntityNodesList, &temppropertyEntityNodesList, &tempactionEntityNodesList, &tempconditionEntityNodesList, &tempconceptEntityNamesList))
+	if(!writeSemanticNetXMLFile(GIA_SEMANTIC_NET_XML_FILE_NAME1, &tempentityNodesCompleteList, &tempconceptEntityNodesList, &temppropertyEntityNodesList, &tempactionEntityNodesList, &tempconditionEntityNodesList))
 	{
 		result = false;
 	}
@@ -70,7 +68,28 @@ bool testReadSemanticNetXMLFile2(vector<GIAEntityNode*> *entityNodesCompleteList
 }
 #endif
 
-bool readSemanticNetXMLFile(string xmlFileName, vector<GIAEntityNode*> *entityNodesCompleteList, vector<GIAEntityNode*> *conceptEntityNodesList, vector<GIAEntityNode*> *propertyEntityNodesList, vector<GIAEntityNode*> *actionEntityNodesList, vector<GIAEntityNode*> *conditionEntityNodesList, vector<string> * conceptEntityNamesList)
+bool readSemanticNetXMLFileOptimised(string xmlFileName, vector<GIAEntityNode*> *entityNodesCompleteList, map<string, GIAEntityNode*> *conceptEntityNodesListMap, vector<GIAEntityNode*> *propertyEntityNodesList, vector<GIAEntityNode*> *actionEntityNodesList, vector<GIAEntityNode*> *conditionEntityNodesList)
+{
+	bool result = false;
+	
+	vector<GIAEntityNode*> *conceptEntityNodesList = new vector<GIAEntityNode*>;
+	readSemanticNetXMLFile(xmlFileName, entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList, conditionEntityNodesList);
+	
+	//now convert entityNodesCompleteList to entityNodesCompleteListMap;
+	long vectorSize = conceptEntityNodesList->size();
+	for(int entityIndex=0; entityIndex<vectorSize; entityIndex++)
+	{	
+		GIAEntityNode * entityNode = conceptEntityNodesList->at(entityIndex);
+		//conceptEntityNodesList[entityNodeName] = entityNodeFound;
+		conceptEntityNodesListMap->insert(pair<string, GIAEntityNode*>(entityNode->entityName, entityNode));	
+	}
+		//cout << "c" << endl;
+		
+	return result;
+}
+
+
+bool readSemanticNetXMLFile(string xmlFileName, vector<GIAEntityNode*> *entityNodesCompleteList, vector<GIAEntityNode*> *conceptEntityNodesList, vector<GIAEntityNode*> *propertyEntityNodesList, vector<GIAEntityNode*> *actionEntityNodesList, vector<GIAEntityNode*> *conditionEntityNodesList)
 {
 	bool result = true;
 
@@ -83,25 +102,22 @@ bool readSemanticNetXMLFile(string xmlFileName, vector<GIAEntityNode*> *entityNo
 		result = false;
 	}
 		//cout << "b" << endl;
-
-	if(!parseSemanticNetTag(firstTagInXMLFile, entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList, conditionEntityNodesList, conceptEntityNamesList, false))
+	if(!parseSemanticNetTag(firstTagInXMLFile, entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList, conditionEntityNodesList, false))
 	{
 		result = false;
 	}
 		//cout << "b2" << endl;
-	if(!parseSemanticNetTag(firstTagInXMLFile, entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList, conditionEntityNodesList, conceptEntityNamesList, true))
+	if(!parseSemanticNetTag(firstTagInXMLFile, entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList, conditionEntityNodesList, true))
 	{
 		result = false;
 	}
-	
 		//cout << "c" << endl;
-
 	
 	return result;
 }
 
 //Top Level
-bool parseSemanticNetTag(XMLParserTag * firstTagInNetwork, vector<GIAEntityNode*> *entityNodesCompleteList, vector<GIAEntityNode*> *conceptEntityNodesList, vector<GIAEntityNode*> *propertyEntityNodesList, vector<GIAEntityNode*> *actionEntityNodesList, vector<GIAEntityNode*> *conditionEntityNodesList, vector<string> * conceptEntityNamesList, bool linkConnections)
+bool parseSemanticNetTag(XMLParserTag * firstTagInNetwork, vector<GIAEntityNode*> *entityNodesCompleteList, vector<GIAEntityNode*> *conceptEntityNodesList, vector<GIAEntityNode*> *propertyEntityNodesList, vector<GIAEntityNode*> *actionEntityNodesList, vector<GIAEntityNode*> *conditionEntityNodesList, bool linkConnections)
 {
 	bool result = true;
 
@@ -165,7 +181,7 @@ bool parseSemanticNetTag(XMLParserTag * firstTagInNetwork, vector<GIAEntityNode*
 						
 						/*
 						string conceptEntityName = currentTagUpdatedL3->firstAttribute->nextAttribute->value;
-						GIAEntityNode * tempNode = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, conceptEntityNamesList, &conceptEntityName, &foundTemp, &indexTemp, true, &currentEntityNodeIDInCompleteList, &currentEntityNodeIDInConceptEntityNodesList);
+						GIAEntityNode * tempNode = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, &conceptEntityName, &foundTemp, &indexTemp, true, &currentEntityNodeIDInCompleteList, &currentEntityNodeIDInConceptEntityNodesList);
 						*/
 						
 						
@@ -212,7 +228,7 @@ bool parseSemanticNetTag(XMLParserTag * firstTagInNetwork, vector<GIAEntityNode*
 						cout << "Concept Entity Node name: " << currentTagUpdatedL3->firstAttribute->nextAttribute->value << endl;	
 						#endif
 						
-						conceptEntityNamesList->push_back(currentTagUpdatedL3->firstAttribute->nextAttribute->value);		
+						//conceptEntityNamesList->push_back(currentTagUpdatedL3->firstAttribute->nextAttribute->value);		
 										
 										
 						/*
@@ -1146,8 +1162,23 @@ bool parseTimeConditionNodeTag(XMLParserTag * firstTagInTimeConditionNode, GIATi
 
 
 
+bool writeSemanticNetXMLFileOptimised(string xmlFileName, vector<GIAEntityNode*> *entityNodesCompleteList, map<string, GIAEntityNode*> *conceptEntityNodesListMap, vector<GIAEntityNode*> *propertyEntityNodesList, vector<GIAEntityNode*> *actionEntityNodesList, vector<GIAEntityNode*> *conditionEntityNodesList)
+{	
+	vector<GIAEntityNode*> * conceptEntityNodesList = new vector<GIAEntityNode*>;
+	map<string, GIAEntityNode*> ::iterator conceptEntityNodesListMapIter;
+	for(conceptEntityNodesListMapIter = conceptEntityNodesListMap->begin(); conceptEntityNodesListMapIter != conceptEntityNodesListMap->end(); conceptEntityNodesListMapIter++) 
+	{	
+		GIAEntityNode * entityNode = conceptEntityNodesListMapIter->second;
+		conceptEntityNodesList->push_back(entityNode);
+	}	
+	
+	bool result;
+	result = writeSemanticNetXMLFile(xmlFileName, entityNodesCompleteList, conceptEntityNodesList, propertyEntityNodesList, actionEntityNodesList, conditionEntityNodesList);
+	return result;
+}
 
-bool writeSemanticNetXMLFile(string xmlFileName, vector<GIAEntityNode*> *entityNodesCompleteList, vector<GIAEntityNode*> *conceptEntityNodesList, vector<GIAEntityNode*> *propertyEntityNodesList, vector<GIAEntityNode*> *actionEntityNodesList, vector<GIAEntityNode*> *conditionEntityNodesList, vector<string> * conceptEntityNamesList)
+
+bool writeSemanticNetXMLFile(string xmlFileName, vector<GIAEntityNode*> *entityNodesCompleteList, vector<GIAEntityNode*> *conceptEntityNodesList, vector<GIAEntityNode*> *propertyEntityNodesList, vector<GIAEntityNode*> *actionEntityNodesList, vector<GIAEntityNode*> *conditionEntityNodesList)
 {
 	bool result = true;
 
