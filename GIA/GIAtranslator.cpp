@@ -26,7 +26,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2k3b 10-July-2015
+ * Project Version: 2k3c 10-July-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -467,16 +467,16 @@ void convertSentenceRelationsIntoGIAnetworkNodesWrapper(unordered_map<string, GI
 		#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
 		if(parseGIA2file)
 		{
-			if(currentSentenceInList->corpusLookupSuccessful)
+			if(currentSentenceInList->semanticParserSuccessful)
 			{
 				convertSentenceSemanticRelationsIntoGIAnetworkNodes(sentenceConceptEntityNodesList, sentenceTimeConditionNodesList, firstSentenceInList, currentSentenceInListTemp, &sentenceConceptEntityNodesListTempNotUsed1, &entityNodesActiveListSentencesTempNotUsed, NLPfeatureParser, false, NULL);
-				//cout << "2 corpusLookupSuccessful" << endl;
+				//cout << "2 semanticParserSuccessful" << endl;
 			}
 		}
 		#endif
-		if(!parseGIA2file || (parseGIA2file && !(currentSentenceInList->corpusLookupSuccessful)))
+		if(!parseGIA2file || (parseGIA2file && !(currentSentenceInList->semanticParserSuccessful)))
 		{
-			//cout << "2 !corpusLookupSuccessful" << endl;
+			//cout << "2 !semanticParserSuccessful" << endl;
 			convertSentenceSyntacticRelationsIntoGIAnetworkNodes(sentenceConceptEntityNodesList, sentenceTimeConditionNodesList, firstSentenceInList, currentSentenceInListTemp, &sentenceConceptEntityNodesListTempNotUsed1, &entityNodesActiveListSentencesTempNotUsed, NLPfeatureParser, NLPdependencyRelationsType, NLPassumePreCollapsedStanfordRelations, false, NULL);
 		}
 
@@ -554,13 +554,13 @@ void convertSentenceRelationsIntoGIAnetworkNodesWrapper(unordered_map<string, GI
 		#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
 		if(parseGIA2file)
 		{
-			if(currentSentenceInList->corpusLookupSuccessful)
+			if(currentSentenceInList->semanticParserSuccessful)
 			{
 				convertSentenceSemanticRelationsIntoGIAnetworkNodes(entityNodesActiveListConcepts, timeConditionNodesActiveList, firstSentenceInList, currentSentenceInList, &sentenceConceptEntityNodesListTempNotUsed, entityNodesActiveListSentences, NLPfeatureParser, true, firstGIACoreferenceInList);
 			}
 		}
 		#endif
-		if(!parseGIA2file || (parseGIA2file && !(currentSentenceInList->corpusLookupSuccessful)))
+		if(!parseGIA2file || (parseGIA2file && !(currentSentenceInList->semanticParserSuccessful)))
 		{
 			convertSentenceSyntacticRelationsIntoGIAnetworkNodes(entityNodesActiveListConcepts, timeConditionNodesActiveList, firstSentenceInList, currentSentenceInList, &sentenceConceptEntityNodesListTempNotUsed, entityNodesActiveListSentences, NLPfeatureParser, NLPdependencyRelationsType, NLPassumePreCollapsedStanfordRelations, true, firstGIACoreferenceInList);
 		}
@@ -612,13 +612,13 @@ void convertSentenceRelationsIntoGIAnetworkNodesWrapper(unordered_map<string, GI
 		#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
 		if(parseGIA2file)
 		{
-			if(currentSentenceInList->corpusLookupSuccessful)
+			if(currentSentenceInList->semanticParserSuccessful)
 			{
 				convertSentenceSemanticRelationsIntoGIAnetworkNodes(entityNodesActiveListConcepts, timeConditionNodesActiveList, firstSentenceInList, currentSentenceInList, &sentenceConceptEntityNodesListTempNotUsed, entityNodesActiveListSentences, NLPfeatureParser, false, NULL);
 			}
 		}
 		#endif
-		if(!parseGIA2file || (parseGIA2file && !(currentSentenceInList->corpusLookupSuccessful)))
+		if(!parseGIA2file || (parseGIA2file && !(currentSentenceInList->semanticParserSuccessful)))
 		{
 			convertSentenceSyntacticRelationsIntoGIAnetworkNodes(entityNodesActiveListConcepts, timeConditionNodesActiveList, firstSentenceInList, currentSentenceInList, &sentenceConceptEntityNodesListTempNotUsed, entityNodesActiveListSentences, NLPfeatureParser, NLPdependencyRelationsType, NLPassumePreCollapsedStanfordRelations, false, NULL);
 		}
@@ -644,7 +644,7 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 	string corpusFileName = "";
 	if(!linkPreestablishedReferencesGIA)
 	{
-		determineGIAconnectionistNetworkPOStypeNames(currentSentenceInList->firstFeatureInList, NLPfeatureParser);
+		//determineGIAconnectionistNetworkPOStypeNames(currentSentenceInList->firstFeatureInList, NLPfeatureParser);
 		prepareSemanticParserDatabaseForWriting();
 	}
 	#endif
@@ -1218,6 +1218,7 @@ void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, 
 	#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
 	if(!linkPreestablishedReferencesGIA)
 	{
+		determineGIAconnectionistNetworkPOStypeNames(currentSentenceInList->firstFeatureInList, NLPfeatureParser);
 		#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER_UNOPTIMISED_TEXT_CORPUS
 		writeSemanticParserCorpusFile(currentSentenceInList->firstFeatureInList);
 		#endif

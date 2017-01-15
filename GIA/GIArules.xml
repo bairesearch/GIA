@@ -24,7 +24,7 @@
  * File Name: GIArules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2k3b 10-July-2015
+ * Project Version: 2k3c 10-July-2015
  *
  *******************************************************************************/
 -->
@@ -3640,34 +3640,21 @@
 				</paramDepRel>
 				-->
 				<!-- #else -->
-				<!-- #ifdef GIA_RECORD_POSSESSION_AUXILIARY_HAS_INFORMATION -->
 				<!-- #ifdef GIA_RECORD_POSSESSION_AUXILIARY_HAS_INFORMATION_GENERAL_IMPLEMENTATION -->
-				<paramDepRel mode="execute">
-				<option numberOfRelations="1" />
-				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="_poss" relationArrayTestSize="1" />
-				<option mustGenerateConditionName="true" conditionEntityDefaultName="poss" />	<!-- "poss" is a special have action for _poss cases only (ie artificial have auxiliary) -->
-				<option functionToExecuteUponFind="5" />
-				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="2" />
-				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="1" />
-				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
-				<option defaultSameSetReferenceValue="true" />
-				<!-- #endif -->
-				</paramDepRel>
-				<!-- #else -->				
 				<!--
 				<paramDepRel mode="execute">
 				<option numberOfRelations="1" />
 				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="_poss" relationArrayTestSize="1" />
-				<option functionToExecuteUponFind="3" />
+				<option mustGenerateConditionName="true" conditionEntityDefaultName="poss" />	//"poss" is a special have action for _poss cases only (ie artificial have auxiliary)
+				<option functionToExecuteUponFind="5" />
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="1" />
-				// #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION
-				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="true" />
-				// #endif
+				//#ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION
+				<option defaultSameSetReferenceValue="true" />
+				//#endif
 				</paramDepRel>
 				-->
-				<!-- #else -->		
-				<!--		
+				<!-- #else -->			
 				<paramDepRel mode="execute">
 				<option numberOfRelations="1" />
 				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="_poss" relationArrayTestSize="1" />
@@ -3675,11 +3662,23 @@
 				<option functionToExecuteUponFind="5" />
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="1" />
-				// #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION
+				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetReferenceValue="true" />
-				// #endif
+				<!-- #endif -->
 				</paramDepRel>
-				-->
+				<!-- #ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC_HYBRID -->	
+				<!-- add an additional property connection -->			
+				<paramDepRel mode="execute">
+				<option numberOfRelations="1" />
+				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="_poss" relationArrayTestSize="1" />
+				<option functionToExecuteUponFind="3" />
+				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="2" />
+				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="1" />
+				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
+				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="true" />
+				<!-- #endif -->
+				</paramDepRel>
+				<!-- #endif -->	
 				<!-- #endif -->
 				
 				

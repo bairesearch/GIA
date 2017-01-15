@@ -26,7 +26,7 @@
  * File Name: GIAnlp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2k3b 10-July-2015
+ * Project Version: 2k3c 10-July-2015
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -331,7 +331,7 @@ bool parseRelexFile(string inputTextNLPrelationXMLfileName, bool isQuery, GIApar
 						{
 							if(currentTag->name == Relex_CFF_XML_TAG_sentence)
 							{
-								if(!onlyParseIfCorpusLookupFailed || !(currentSentence->corpusLookupSuccessful))
+								if(!onlyParseIfCorpusLookupFailed || !(currentSentence->semanticParserSuccessful))
 								{
 									//locate and record sentence index
 									XMLParserAttribute* firstAttributeInSentenceTag = currentTag->firstAttribute;
@@ -508,7 +508,7 @@ bool parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQue
 				bool invalidSentenceFoundIsolatedFullStop = false;
 				#endif
 
-				if(!onlyParseIfCorpusLookupFailed || !(currentSentence->corpusLookupSuccessful))
+				if(!onlyParseIfCorpusLookupFailed || !(currentSentence->semanticParserSuccessful))
 				{
 					string sentenceIndexString = currentTagInSentences->firstAttribute->value;
 					currentSentence->sentenceIndex = convertStringToInt(sentenceIndexString);
@@ -1123,7 +1123,7 @@ bool parseStanfordParserFile(string inputTextNLPrelationXMLfileName, bool isQuer
 						#endif
 
 						//cout << "at23" << endl;
-						if((!parseGIA2file && (!onlyParseIfCorpusLookupFailed || !(currentSentence->corpusLookupSuccessful))) || (parseGIA2file && createNewSentences))	//added createNewSentences condition GIA 2d1a [for generateAllPermutationsFromSemanticRelationsFile()]
+						if((!parseGIA2file && (!onlyParseIfCorpusLookupFailed || !(currentSentence->semanticParserSuccessful))) || (parseGIA2file && createNewSentences))	//added createNewSentences condition GIA 2d1a [for generateAllPermutationsFromSemanticRelationsFile()]
 						{
 							//cout << "GIATHparseStanfordParseWordsAndPOStagsText: " << endl;
 							int maxNumberOfWordsInSentence = 0;
@@ -1169,7 +1169,7 @@ bool parseStanfordParserFile(string inputTextNLPrelationXMLfileName, bool isQuer
 						//cout << "GIATHparseStanfordParserRelationsText: currentStanfordParserOutputParagraphString = " << currentStanfordParserOutputParagraphString << endl;
 						#endif
 
-						if(!onlyParseIfCorpusLookupFailed || !(currentSentence->corpusLookupSuccessful))
+						if(!onlyParseIfCorpusLookupFailed || !(currentSentence->semanticParserSuccessful))
 						{
 							#ifdef GIA_RECORD_MAXIMUM_NUMBER_OF_WORDS_IN_SENTENCE_OR_MAX_FEATURE_INDEX
 							int maxNumberOfWordsInSentence = currentSentence->maxNumberOfWordsInSentence;

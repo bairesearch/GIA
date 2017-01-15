@@ -26,7 +26,7 @@
  * File Name: GIAsemanticParserOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2k3b 10-July-2015
+ * Project Version: 2k3c 10-July-2015
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -256,7 +256,7 @@ string generateCorpusFileHeaderText(GIAfeature* firstFeatureInSentence, bool add
 		
 		if(addPOSinfo)
 		{
-			string GIAconnectionistNetworkPOStypeName = GIAconnectionistNetworkPOStypeNameArray[currentFeatureInSentence->GIAconnectionistNetworkPOStype];
+			string GIAconnectionistNetworkPOStypeName = GIAconnectionistNetworkPOStypeNameArray[currentFeatureInSentence->GIAsemanticParserPOStype];
 			sentenceText = sentenceText + currentFeatureInSentence->word + CHAR_FORWARDSLASH + GIAconnectionistNetworkPOStypeName + appendString;	//~Stanford Parser format; see parseStanfordParserFile{}:GIATHparseStanfordParseWordsAndPOStagsText()
 		}
 		else
@@ -274,6 +274,7 @@ string generateCorpusFileHeaderText(GIAfeature* firstFeatureInSentence, bool add
 
 void determineGIAconnectionistNetworkPOStypeNames(GIAfeature* firstFeatureInList, int NLPfeatureParser)
 {
+	//cout << "\n\n\ndetermineGIAconnectionistNetworkPOStypeNames{}:" << endl;
 	GIAfeature* currentFeatureInSentence = firstFeatureInList;
 	while(currentFeatureInSentence->next != NULL)
 	{
@@ -281,6 +282,7 @@ void determineGIAconnectionistNetworkPOStypeNames(GIAfeature* firstFeatureInList
 		if((NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP) || (NLPfeatureParser == GIA_NLP_PARSER_STANFORD_PARSER))
 		{
 			determineGIAconnectionistNetworkPOStypeNameStanford(currentFeatureInSentence);
+			//cout << "currentFeatureInSentence->GIAsemanticParserPOStype = " << currentFeatureInSentence->GIAsemanticParserPOStype << endl;
 		}
 		else if(NLPfeatureParser == GIA_NLP_PARSER_RELEX)
 		{
@@ -296,140 +298,139 @@ void determineGIAconnectionistNetworkPOStypeNames(GIAfeature* firstFeatureInList
 
 void determineGIAconnectionistNetworkPOStypeNameStanford(GIAfeature* currentFeatureInSentence)
 {
-	int GIAconnectionistNetworkPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_UNDEFINED;
-	string GIAconnectionistNetworkPOStypeName = "";
+	int GIAsemanticParserPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_UNDEFINED;
 
 	for(int i=0; i<FEATURE_POS_TAG_COORDINATINGCONJUNCTION_ARRAY_NUMBER_OF_TYPES; i++)
 	{
 		if(currentFeatureInSentence->stanfordPOS == featurePOStagCoordinatingConjunctionArray[i])
 		{
-			GIAconnectionistNetworkPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_COORDINATINGCONJUNCTION;
+			GIAsemanticParserPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_COORDINATINGCONJUNCTION;
 		}
 	}
 	for(int i=0; i<FEATURE_POS_TAG_NUMBER_ARRAY_NUMBER_OF_TYPES; i++)
 	{
 		if(currentFeatureInSentence->stanfordPOS == featurePOStagNumberArray[i])
 		{
-			GIAconnectionistNetworkPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_NUMBER;
+			GIAsemanticParserPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_NUMBER;
 		}
 	}
 	for(int i=0; i<FEATURE_POS_TAG_DETERMINER_ARRAY_NUMBER_OF_TYPES; i++)
 	{
 		if(currentFeatureInSentence->stanfordPOS == featurePOStagDeterminerArray[i])
 		{
-			GIAconnectionistNetworkPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_DETERMINER;
+			GIAsemanticParserPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_DETERMINER;
 		}
 	}
 	for(int i=0; i<FEATURE_POS_TAG_UNKNOWN_ARRAY_NUMBER_OF_TYPES; i++)
 	{
 		if(currentFeatureInSentence->stanfordPOS == featurePOStagUnknownArray[i])
 		{
-			GIAconnectionistNetworkPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_UNKNOWN;
+			GIAsemanticParserPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_UNKNOWN;
 		}
 	}
 	for(int i=0; i<FEATURE_POS_TAG_PREDETERMINER_ARRAY_NUMBER_OF_TYPES; i++)
 	{
 		if(currentFeatureInSentence->stanfordPOS == featurePOStagPredeterminerArray[i])
 		{
-			GIAconnectionistNetworkPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_PREDETERMINER;
+			GIAsemanticParserPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_PREDETERMINER;
 		}
 	}
 	for(int i=0; i<FEATURE_POS_TAG_POSSESSIVEENDING_ARRAY_NUMBER_OF_TYPES; i++)
 	{
 		if(currentFeatureInSentence->stanfordPOS == featurePOStagPossessiveEndingArray[i])
 		{
-			GIAconnectionistNetworkPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_POSSESSIVEENDING;
+			GIAsemanticParserPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_POSSESSIVEENDING;
 		}
 	}
 	for(int i=0; i<FEATURE_POS_TAG_MODALAUXILIARY_ARRAY_NUMBER_OF_TYPES; i++)
 	{
 		if(currentFeatureInSentence->stanfordPOS == featurePOStagModalAuxiliaryArray[i])
 		{
-			GIAconnectionistNetworkPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_MODALAUXILIARY;
+			GIAsemanticParserPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_MODALAUXILIARY;
 		}
 	}
 	for(int i=0; i<FEATURE_POS_TAG_PREPOSITION_ARRAY_NUMBER_OF_TYPES; i++)
 	{
 		if(currentFeatureInSentence->stanfordPOS == featurePOStagPrepositionArray[i])
 		{
-			GIAconnectionistNetworkPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_PREPOSITION;
+			GIAsemanticParserPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_PREPOSITION;
 		}
 	}
 	for(int i=0; i<FEATURE_POS_TAG_ADJECTIVE_ARRAY_NUMBER_OF_TYPES; i++)
 	{
 		if(currentFeatureInSentence->stanfordPOS == featurePOStagAdjectiveArray[i])
 		{
-			GIAconnectionistNetworkPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_ADJECTIVE;
+			GIAsemanticParserPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_ADJECTIVE;
 		}
 	}
 	for(int i=0; i<FEATURE_POS_TAG_NOUN_ARRAY_NUMBER_OF_TYPES; i++)
 	{
 		if(currentFeatureInSentence->stanfordPOS == featurePOStagNounArray[i])
 		{
-			GIAconnectionistNetworkPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_NOUN;
+			GIAsemanticParserPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_NOUN;
 		}
 	}
 	for(int i=0; i<FEATURE_POS_TAG_ADVERB_ARRAY_NUMBER_OF_TYPES; i++)
 	{
 		if(currentFeatureInSentence->stanfordPOS == featurePOStagAdverbArray[i])
 		{
-			GIAconnectionistNetworkPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_ADVERB;
+			GIAsemanticParserPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_ADVERB;
 		}
 	}
 	for(int i=0; i<FEATURE_POS_TAG_PRONOUN_PERSONAL_ARRAY_NUMBER_OF_TYPES; i++)
 	{
 		if(currentFeatureInSentence->stanfordPOS == featurePOStagPronounPersonalArray[i])
 		{
-			GIAconnectionistNetworkPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_PRONOUN_PERSONAL;
+			GIAsemanticParserPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_PRONOUN_PERSONAL;
 		}
 	}
 	for(int i=0; i<FEATURE_POS_TAG_PRONOUN_POSSESSIVE_ARRAY_NUMBER_OF_TYPES; i++)
 	{
 		if(currentFeatureInSentence->stanfordPOS == featurePOStagPronounPossessiveArray[i])
 		{
-			GIAconnectionistNetworkPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_PRONOUN_POSSESSIVE;
+			GIAsemanticParserPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_PRONOUN_POSSESSIVE;
 		}
 	}
 	for(int i=0; i<FEATURE_POS_TAG_PARTICLE_ARRAY_NUMBER_OF_TYPES; i++)
 	{
 		if(currentFeatureInSentence->stanfordPOS == featurePOStagParticleArray[i])
 		{
-			GIAconnectionistNetworkPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_PARTICLE;
+			GIAsemanticParserPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_PARTICLE;
 		}
 	}
 	for(int i=0; i<FEATURE_POS_TAG_INTERJECTION_ARRAY_NUMBER_OF_TYPES; i++)
 	{
 		if(currentFeatureInSentence->stanfordPOS == featurePOStagInterjectionArray[i])
 		{
-			GIAconnectionistNetworkPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_INTERJECTION;
+			GIAsemanticParserPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_INTERJECTION;
 		}
 	}
 	for(int i=0; i<FEATURE_POS_TAG_VERB_ARRAY_NUMBER_OF_TYPES; i++)
 	{
 		if(currentFeatureInSentence->stanfordPOS == featurePOStagVerbArray[i])
 		{
-			GIAconnectionistNetworkPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_VERB;
+			GIAsemanticParserPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_VERB;
 		}
 	}
 	for(int i=0; i<FEATURE_POS_TAG_WH_ARRAY_NUMBER_OF_TYPES; i++)
 	{
 		if(currentFeatureInSentence->stanfordPOS == featurePOStagWhArray[i])
 		{
-			GIAconnectionistNetworkPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_WH;
+			GIAsemanticParserPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_WH;
 		}
 	}
 	for(int i=0; i<FEATURE_POS_TAG_PUNCTUATION_DIVISION_ARRAY_NUMBER_OF_TYPES; i++)
 	{
 		if(currentFeatureInSentence->stanfordPOS == featurePOStagPunctuationDivisionArray[i])
 		{
-			GIAconnectionistNetworkPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_PUNCTUATION_DIVISION;
+			GIAsemanticParserPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_PUNCTUATION_DIVISION;
 		}
 	}
 	for(int i=0; i<FEATURE_POS_TAG_PUNCTUATION_QUOTE_ARRAY_NUMBER_OF_TYPES; i++)
 	{
 		if(currentFeatureInSentence->stanfordPOS == featurePOStagPunctuationQuoteArray[i])
 		{
-			GIAconnectionistNetworkPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_PUNCTUATION_QUOTE;
+			GIAsemanticParserPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_PUNCTUATION_QUOTE;
 		}
 	}
 	//additional cases required for GIA semantics extraction;
@@ -437,21 +438,21 @@ void determineGIAconnectionistNetworkPOStypeNameStanford(GIAfeature* currentFeat
 	{
 		if(currentFeatureInSentence->lemma == entityAuxiliaryBeingArray[i])
 		{
-			GIAconnectionistNetworkPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_AUXILIARY_BEING;
+			GIAsemanticParserPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_AUXILIARY_BEING;
 		}
 	}
 	for(int i=0; i<ENTITY_AUXILIARY_HAVING_ARRAY_NUMBER_OF_TYPES; i++)
 	{
 		if(currentFeatureInSentence->lemma == entityAuxiliaryHavingArray[i])
 		{
-			GIAconnectionistNetworkPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_AUXILIARY_HAVING;
+			GIAsemanticParserPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_AUXILIARY_HAVING;
 		}
 	}
 	for(int i=0; i<ENTITY_AUXILIARY_DOING_ARRAY_NUMBER_OF_TYPES; i++)
 	{
 		if(currentFeatureInSentence->lemma == entityAuxiliaryDoingArray[i])
 		{
-			GIAconnectionistNetworkPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_AUXILIARY_DOING;
+			GIAsemanticParserPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_AUXILIARY_DOING;
 		}
 	}
 	#ifdef GIA2_RECORD_DETERMINERS_AS_DEFINITE_INDEFINITE_SPECIFIC
@@ -459,7 +460,7 @@ void determineGIAconnectionistNetworkPOStypeNameStanford(GIAfeature* currentFeat
 	{
 		if(currentFeatureInSentence->lemma == grammaticalDeterminerIndefiniteArray[i])
 		{
-			GIAconnectionistNetworkPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_DETERMINER_LIMITED_INDEFINITE;
+			GIAsemanticParserPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_DETERMINER_LIMITED_INDEFINITE;
 		}
 	}
 	#endif
@@ -488,15 +489,15 @@ void determineGIAconnectionistNetworkPOStypeNameStanford(GIAfeature* currentFeat
 	}
 	*/
 
-	currentFeatureInSentence->GIAconnectionistNetworkPOStype = GIAconnectionistNetworkPOStype;
-	//cout << "GIAconnectionistNetworkPOStype = " << GIAconnectionistNetworkPOStype << endl;
+	currentFeatureInSentence->GIAsemanticParserPOStype = GIAsemanticParserPOStype;
+	//cout << "GIAsemanticParserPOStype = " << GIAsemanticParserPOStype << endl;
 
 }
 
 
 void determineGIAconnectionistNetworkPOStypeNameRelex(GIAfeature* currentFeatureInSentence)
 {
-	int GIAconnectionistNetworkPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_UNDEFINED;
+	int GIAsemanticParserPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_UNDEFINED;
 	//cout << "currentFeatureInSentence->type = " << currentFeatureInSentence->type << endl;
 	for(int i=0; i<FEATURE_RELEX_POS_NUMBER_OF_TYPES; i++)
 	{
@@ -505,7 +506,7 @@ void determineGIAconnectionistNetworkPOStypeNameRelex(GIAfeature* currentFeature
 			//cout << "featureRelexPOStypeArray[i] = " << featureRelexPOStypeArray[i] << endl;
 			//cout << "i = " << i << endl;
 			//cout << "featureRelexPOStypeCrossReferenceGIAconnectionistNetworkPOStypeArray[i] = " << featureRelexPOStypeCrossReferenceGIAconnectionistNetworkPOStypeArray[i] << endl;
-			GIAconnectionistNetworkPOStype = featureRelexPOStypeCrossReferenceGIAconnectionistNetworkPOStypeArray[i];
+			GIAsemanticParserPOStype = featureRelexPOStypeCrossReferenceGIAconnectionistNetworkPOStypeArray[i];
 		}
 	}
 
@@ -514,56 +515,56 @@ void determineGIAconnectionistNetworkPOStypeNameRelex(GIAfeature* currentFeature
 	{
 		if(currentFeatureInSentence->lemma == entityWhArray[i])
 		{
-			GIAconnectionistNetworkPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_WH;
+			GIAsemanticParserPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_WH;
 		}
 	}
 	for(int i=0; i<ENTITY_COORDINATINGCONJUNCTION_ARRAY_NUMBER_OF_TYPES; i++)
 	{
 		if(currentFeatureInSentence->lemma == entityCoordinatingConjunctionArray[i])
 		{
-			GIAconnectionistNetworkPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_COORDINATINGCONJUNCTION;
+			GIAsemanticParserPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_COORDINATINGCONJUNCTION;
 		}
 	}
 	for(int i=0; i<ENTITY_POSSESSIVEENDING_NUMBER_OF_TYPES; i++)
 	{
 		if(currentFeatureInSentence->lemma == entityPossessiveEndingArray[i])
 		{
-			GIAconnectionistNetworkPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_POSSESSIVEENDING;
+			GIAsemanticParserPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_POSSESSIVEENDING;
 		}
 	}
 	for(int i=0; i<ENTITY_MODALAUXILIARY_NUMBER_OF_TYPES; i++)
 	{
 		if(currentFeatureInSentence->lemma == entityModalAuxiliaryArray[i])
 		{
-			GIAconnectionistNetworkPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_MODALAUXILIARY;
+			GIAsemanticParserPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_MODALAUXILIARY;
 		}
 	}
 	for(int i=0; i<ENTITY_CARDINALNUMBER_ARRAY_NUMBER_OF_TYPES; i++)
 	{
 		if((currentFeatureInSentence->lemma).find(entityCardinalNumberArray[i]) != CPP_STRING_FIND_RESULT_FAIL_VALUE)
 		{
-			GIAconnectionistNetworkPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_NUMBER;
+			GIAsemanticParserPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_NUMBER;
 		}
 	}
 	for(int i=0; i<ENTITY_PRONOUN_PERSONAL_ARRAY_NUMBER_OF_TYPES; i++)
 	{
 		if(currentFeatureInSentence->lemma == entityPronounPersonalArray[i])
 		{
-			GIAconnectionistNetworkPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_PRONOUN_PERSONAL;
+			GIAsemanticParserPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_PRONOUN_PERSONAL;
 		}
 	}
 	for(int i=0; i<ENTITY_PRONOUN_POSSESSIVE_ARRAY_NUMBER_OF_TYPES; i++)
 	{
 		if(currentFeatureInSentence->lemma == entityPronounPossessiveArray[i])
 		{
-			GIAconnectionistNetworkPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_PRONOUN_POSSESSIVE;
+			GIAsemanticParserPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_PRONOUN_POSSESSIVE;
 		}
 	}
 	for(int i=0; i<ENTITY_PREDETERMINER_ARRAY_NUMBER_OF_TYPES; i++)
 	{
 		if(currentFeatureInSentence->lemma == entityPredeterminerArray[i])
 		{
-			GIAconnectionistNetworkPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_PREDETERMINER;
+			GIAsemanticParserPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_PREDETERMINER;
 		}
 	}
 
@@ -574,21 +575,21 @@ void determineGIAconnectionistNetworkPOStypeNameRelex(GIAfeature* currentFeature
 	{
 		if(currentFeatureInSentence->lemma == entityAuxiliaryBeingArray[i])
 		{
-			GIAconnectionistNetworkPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_AUXILIARY_BEING;
+			GIAsemanticParserPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_AUXILIARY_BEING;
 		}
 	}
 	for(int i=0; i<ENTITY_AUXILIARY_HAVING_ARRAY_NUMBER_OF_TYPES; i++)
 	{
 		if(currentFeatureInSentence->lemma == entityAuxiliaryHavingArray[i])
 		{
-			GIAconnectionistNetworkPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_AUXILIARY_HAVING;
+			GIAsemanticParserPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_AUXILIARY_HAVING;
 		}
 	}
 	for(int i=0; i<ENTITY_AUXILIARY_DOING_ARRAY_NUMBER_OF_TYPES; i++)
 	{
 		if(currentFeatureInSentence->lemma == entityAuxiliaryDoingArray[i])
 		{
-			GIAconnectionistNetworkPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_AUXILIARY_DOING;
+			GIAsemanticParserPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_AUXILIARY_DOING;
 		}
 	}
 
@@ -597,13 +598,13 @@ void determineGIAconnectionistNetworkPOStypeNameRelex(GIAfeature* currentFeature
 	{
 		if(currentFeatureInSentence->lemma == grammaticalDeterminerIndefiniteArray[i])
 		{
-			GIAconnectionistNetworkPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_DETERMINER_LIMITED_INDEFINITE;
+			GIAsemanticParserPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_DETERMINER_LIMITED_INDEFINITE;
 		}
 	}
 	#endif
 
-	currentFeatureInSentence->GIAconnectionistNetworkPOStype = GIAconnectionistNetworkPOStype;
-	//cout << "GIAconnectionistNetworkPOStype = " << GIAconnectionistNetworkPOStype << endl;
+	currentFeatureInSentence->GIAsemanticParserPOStype = GIAsemanticParserPOStype;
+	//cout << "GIAsemanticParserPOStype = " << GIAsemanticParserPOStype << endl;
 }
 
 #ifdef GIA2_SEMANTIC_PARSER
@@ -727,6 +728,14 @@ GIAfeature* generateOptimisedFeatureSubsetBasedOnContextualConjunctions(GIAfeatu
 	}
 	
 	return firstFeatureInOptimisedSentenceSubset;
+}
+#endif
+#ifdef GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE
+int calculateFirstWordInTupleIndexRelative(int firstWordInTupleIndex, int firstWordInSentenceSubsetIndex)
+{
+	int firstWordInTupleIndexRelative = firstWordInTupleIndex - firstWordInSentenceSubsetIndex + 1;
+	return firstWordInTupleIndexRelative;
+
 }
 #endif
 #endif

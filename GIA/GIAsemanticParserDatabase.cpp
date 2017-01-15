@@ -26,7 +26,7 @@
  * File Name: GIAsemanticParserDatabase.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2k3b 10-July-2015
+ * Project Version: 2k3c 10-July-2015
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -66,23 +66,23 @@ string semanticParserDBgenerateFolderName(GIAfeature* firstFeatureInList)
 	
 	//eg network/server/GIAsemanticParserDatabase/de/no/ve/de/no/corpus.txt
 	int fileType = 0;	//irrelevant
-	//cout << "firstFeatureInList->GIAconnectionistNetworkPOStype = " << firstFeatureInList->GIAconnectionistNetworkPOStype << endl;
-	string serverName = DBgenerateServerDatabaseName(&(GIAconnectionistNetworkPOStypeNameAbbreviationArray[firstFeatureInList->GIAconnectionistNetworkPOStype]), fileType, GIA_SEMANTIC_PARSER_DATABASE_FILESYSTEM_DEFAULT_DATABASE_NAME, semanticParserDatabaseFolderName);
+	//cout << "firstFeatureInList->GIAsemanticParserPOStype = " << firstFeatureInList->GIAsemanticParserPOStype << endl;
+	string serverName = DBgenerateServerDatabaseName(&(GIAconnectionistNetworkPOStypeNameAbbreviationArray[firstFeatureInList->GIAsemanticParserPOStype]), fileType, GIA_SEMANTIC_PARSER_DATABASE_FILESYSTEM_DEFAULT_DATABASE_NAME, semanticParserDatabaseFolderName);
 
 	//#ifdef GIA_DATABASE_DEBUG_FILESYSTEM_IO
-	//cout << "1fileName = " << serverName << endl;
+	//cout << "semanticParserDBgenerateFolderName{}: fileName = " << serverName << endl;
 	//#endif
 	DBsetCurrentDirectory(&serverName);
 
 	GIAfeature* currentFeatureInSentence = firstFeatureInList;
 	while(currentFeatureInSentence->next != NULL)
 	{
-		string folderName = GIAconnectionistNetworkPOStypeNameAbbreviationArray[currentFeatureInSentence->GIAconnectionistNetworkPOStype];
+		string POStypeAbbreviationName = GIAconnectionistNetworkPOStypeNameAbbreviationArray[currentFeatureInSentence->GIAsemanticParserPOStype];
 		#ifdef GIA_SEMANTIC_PARSER_DATABASE_FILESYSTEM_USE_FLAT_FILE
-		folderName = folderName + folderName;					//eg network/server/GIAsemanticParserDatabase/denovedenocorpus.txt
+		folderName = folderName + POStypeAbbreviationName;					//eg network/server/GIAsemanticParserDatabase/denovedenocorpus.txt
 		#else
-		folderName = folderName + folderName + "/";
-		checkIfFolderExistsAndIfNotMakeAndSetAsCurrent(&folderName);		//eg network/server/GIAsemanticParserDatabase/de/no/ve/de/no/corpus.txt
+		folderName = folderName + POStypeAbbreviationName + "/";
+		checkIfFolderExistsAndIfNotMakeAndSetAsCurrent(&POStypeAbbreviationName);		//eg network/server/GIAsemanticParserDatabase/de/no/ve/de/no/corpus.txt
 		#endif
 		currentFeatureInSentence = currentFeatureInSentence->next;
 	}
@@ -151,13 +151,13 @@ bool loadSemanticParserCorpusDatabaseFile(GIAsentence* currentSentenceInList, GI
 	if(!parseStanfordParserFile(corpusFileName, isQuery, currentSentenceInList, createNewSentences, parseGIA2file, false))		//CHECK THIS; need to account for corpus.txt having multiple entries [eg different text but identical layout]
 	{
 		result = false;
-		//cout << "1 !corpusLookupSuccessful" << endl;
-		currentSentenceInList->corpusLookupSuccessful = false;
+		//cout << "1 !semanticParserSuccessful" << endl;
+		currentSentenceInList->semanticParserSuccessful = false;
 	}
 	else
 	{
-		//cout << "1 corpusLookupSuccessful" << endl;
-		currentSentenceInList->corpusLookupSuccessful = true;
+		//cout << "1 semanticParserSuccessful" << endl;
+		currentSentenceInList->semanticParserSuccessful = true;
 	}
 	//cout << "g3" << endl;
 	return result;
@@ -317,6 +317,7 @@ bool loadSemanticParserOptimisedDatabaseFile(GIAfeature* firstFeatureInListorSub
 			lineIndex++;
 		}
 	}	
+	return result;
 }
 
 void writeSemanticParserOptimisedDatabaseFile(GIAfeature* firstFeatureInListorSubset, int firstWordInTupleIndex, int semanticDependencyRelationType, bool directionGovernorToDependent, bool sameReferenceSet)
@@ -431,7 +432,7 @@ int calculateSemanticRelationTypeFromOptimisedDatabaseSemanticRelationType(int s
 string semanticParserOptimisedDBgenerateFileName(GIAfeature* firstFeatureInList, int indexOfFirstWordInTupleBeingAssessedForSemanticRelationAssignment)
 {
 	string folderName = semanticParserDBgenerateFolderName(firstFeatureInList);
-
+	
 	#ifdef GIA_SEMANTIC_PARSER_DATABASE_FILESYSTEM_USE_FLAT_FILE
 	string fileName = folderName + GIA_SEMANTIC_PARSER_DATABASE_FILESYSTEM_DEFAULT_FILE_NAME + convertIntToString(indexOfFirstWordInTupleBeingAssessedForSemanticRelationAssignment) + GIA_SEMANTIC_PARSER_DATABASE_FILESYSTEM_DEFAULT_FILE_EXTENSION_NAME;
 	#else

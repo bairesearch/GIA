@@ -26,7 +26,7 @@
  * File Name: GIAsemanticParserOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2k3b 10-July-2015
+ * Project Version: 2k3c 10-July-2015
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -57,6 +57,9 @@ void determineGIAconnectionistNetworkPOStypeNames(GIAfeature* firstFeatureInList
 #ifdef GIA2_SEMANTIC_PARSER
 #ifdef GIA2_SEMANTIC_PARSER_OPTIMISE_BASED_ON_CONJUNCTIONS
 GIAfeature* generateOptimisedFeatureSubsetBasedOnContextualConjunctions(GIAfeature* firstFeatureInSentenceSubset, int centralWord, bool* optimisedBasedOnContextualConjunctions);
+#endif
+#ifdef GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE
+int calculateFirstWordInTupleIndexRelative(int firstWordInTupleIndex, int firstWordInSentenceSubsetIndex);
 #endif
 #endif
 

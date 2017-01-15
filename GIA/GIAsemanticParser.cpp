@@ -26,7 +26,7 @@
  * File Name: GIAsemanticParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2k3b 10-July-2015
+ * Project Version: 2k3c 10-July-2015
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -147,7 +147,7 @@ bool lookupCorpusFiles(GIAsentence* firstSentenceInList, int NLPfeatureParser)
 	while(currentSentenceInList->next != NULL)
 	{
 		determineGIAconnectionistNetworkPOStypeNames(currentSentenceInList->firstFeatureInList, NLPfeatureParser);
-		currentSentenceInList->corpusLookupSuccessful = true;
+		currentSentenceInList->semanticParserSuccessful = true;
 		
 		/*
 		GIAfeature* currentFeatureInList = currentSentenceInList->firstFeatureInList;
@@ -217,7 +217,8 @@ bool lookupCorpusFiles(GIAsentence* firstSentenceInList, int NLPfeatureParser)
 							#ifdef GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE
 							for(int firstWordInTupleIndex = GIA_NLP_START_ENTITY_INDEX; firstWordInTupleIndex <= maxIndexOfFirstWordInTuple; firstWordInTupleIndex++)
 							{
-								int GIA2semanticDependencyRelationProbabilityTotalArray[GIA2_SEMANTIC_DEPENDENCY_RELATION_NUMBER_OF_TYPES] = {0};
+								int GIA2semanticDependencyRelationProbabilityTotalArray[GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE_SEMANTIC_RELATION_NUMBER_OF_TYPES];
+								initialiseIntArray(GIA2semanticDependencyRelationProbabilityTotalArray, GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE_SEMANTIC_RELATION_NUMBER_OF_TYPES, 0);
 							#endif
 								GIAfeature* firstFeatureInSentenceSubset = firstFeatureInSentenceSubsetInitial;
 								while(firstFeatureInSentenceSubset->entityIndex <= maxIndexOfFirstWordInTuple)		//changed 2k1a for GIA2_SEMANTIC_PARSER_OPTIMISE_BASED_ON_CONJUNCTIONS compatibility: verify that feature entityIndices are not mutated by GIA referencing*	//OLD:	for(int firstWordInSentenceSubsetIndex=1; firstWordInSentenceSubsetIndex<=secondWordInTupleIndex-(GIA2_CONNECTIONIST_NETWORK_MIN_SUBSET_SIZE-1); firstWordInSentenceSubsetIndex++)	
@@ -249,10 +250,11 @@ bool lookupCorpusFiles(GIAsentence* firstSentenceInList, int NLPfeatureParser)
 										#endif
 
 										#ifdef GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE
+										int firstWordInTupleIndexRelative = calculateFirstWordInTupleIndexRelative(firstWordInTupleIndex, firstWordInSentenceSubsetIndex);
 										int GIA2semanticDependencyRelationProbabilityArray[GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE_SEMANTIC_RELATION_NUMBER_OF_TYPES];
 										int GIA2semanticDependencyRelationAssignedArray[GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE_SEMANTIC_RELATION_NUMBER_OF_TYPES];
 										int GIA2semanticDependencyRelationRejectedArray[GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE_SEMANTIC_RELATION_NUMBER_OF_TYPES];
-										if(loadSemanticParserOptimisedDatabaseFile(firstFeatureInSentenceSubset, firstWordInTupleIndex, GIA2semanticDependencyRelationProbabilityArray, GIA2semanticDependencyRelationAssignedArray, GIA2semanticDependencyRelationRejectedArray))
+										if(loadSemanticParserOptimisedDatabaseFile(firstFeatureInSentenceSubset, firstWordInTupleIndexRelative, GIA2semanticDependencyRelationProbabilityArray, GIA2semanticDependencyRelationAssignedArray, GIA2semanticDependencyRelationRejectedArray))
 										{
 											for(int i=0; i<GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE_SEMANTIC_RELATION_NUMBER_OF_TYPES; i++)
 											{
@@ -273,22 +275,24 @@ bool lookupCorpusFiles(GIAsentence* firstSentenceInList, int NLPfeatureParser)
 								}
 							#ifdef GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE
 								int maxProbabilityOfSemanticRelationTypesInTuple = 0;
-								int semanticRelationTypeBidirectionalInTupleWithMaxProbability = INT_DEFAULT_VALUE;
+								int semanticRelationTypeOptimisedDatabase = INT_DEFAULT_VALUE;
 								for(int i=0; i<GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE_SEMANTIC_RELATION_NUMBER_OF_TYPES; i++)
 								{
 									if(GIA2semanticDependencyRelationProbabilityTotalArray[i] > maxProbabilityOfSemanticRelationTypesInTuple)
 									{
 										maxProbabilityOfSemanticRelationTypesInTuple = GIA2semanticDependencyRelationProbabilityTotalArray[i];
-										semanticRelationTypeBidirectionalInTupleWithMaxProbability = i;
+										semanticRelationTypeOptimisedDatabase = i;
 									}
 								}
-								if(semanticRelationTypeBidirectionalInTupleWithMaxProbability != INT_DEFAULT_VALUE)
+								if(semanticRelationTypeOptimisedDatabase != INT_DEFAULT_VALUE)
 								{
 									#ifdef GIA2_SEMANTIC_PARSER_DEBUG
 									cout << "maxProbabilityOfSemanticRelationTypesInTuple = " << maxProbabilityOfSemanticRelationTypesInTuple << endl;
-									cout << "semanticRelationTypeBidirectionalInTupleWithMaxProbability = " << semanticRelationTypeBidirectionalInTupleWithMaxProbability << endl;
+									cout << "semanticRelationTypeOptimisedDatabase = " << semanticRelationTypeOptimisedDatabase << endl;
 									#endif
-									addTupleSemanticRelationToSentence(currentSentenceInList, semanticRelationTypeBidirectionalInTupleWithMaxProbability, firstWordInTupleIndex, secondWordInTupleIndex);
+									
+									int firstWordInTupleIndexRelative = calculateFirstWordInTupleIndexRelative(firstWordInTupleIndex, firstFeatureInSentenceSubsetInitial->entityIndex);
+									addTupleSemanticRelationToSentence(currentSentenceInList, semanticRelationTypeOptimisedDatabase, firstWordInTupleIndexRelative, secondWordInTupleIndex);
 									foundACorpusSubsetForSecondWordInTuple = true;	//CHECKTHIS
 								}
 							}
@@ -311,12 +315,12 @@ bool lookupCorpusFiles(GIAsentence* firstSentenceInList, int NLPfeatureParser)
 			{
 				result = false;
 				#ifndef GIA2_PARSE_PARTIALLY_FILLED_SEMANTIC_RELATIONS
-				currentSentenceInList->corpusLookupSuccessful = false;
+				currentSentenceInList->semanticParserSuccessful = false;
 				#endif
 			}
 			#else
 			result = false;
-			currentSentenceInList->corpusLookupSuccessful = false;
+			currentSentenceInList->semanticParserSuccessful = false;
 			#endif
 		#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER_UNOPTIMISED_TEXT_CORPUS
 		}
