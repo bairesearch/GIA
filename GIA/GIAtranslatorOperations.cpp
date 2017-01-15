@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2d4a 06-February-2014
+ * Project Version: 2d4b 12-February-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1965,19 +1965,19 @@ void mergeEntityNodesAddAlias(GIAentityNode * entityNode, GIAentityNode * entity
 	{
 		entityNode->aliasList.push_back(entityNodeToMerge->entityName);
 
-		//#ifdef GIA_ALIASES_DEBUG
+		#ifdef GIA_ALIASES_DEBUG
 		cout << "\n" << endl;
 		cout << "entityNode->entityName = " << entityNode->entityName << endl;
 		cout << "entityNodeToMerge->entityName = " << entityNodeToMerge->entityName << endl;
 		cout << "entityNode->isConcept = " << entityNode->isConcept << endl;
 		cout << "entityNodeToMerge->isConcept = " << entityNodeToMerge->isConcept << endl;
-		//#endif
+		#endif
 
 		for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
 		{
 			for(vector<GIAentityConnection*>::iterator connectionIter = entityNodeToMerge->entityVectorConnectionsArray[i].begin(); connectionIter != entityNodeToMerge->entityVectorConnectionsArray[i].end(); )
 			{
-				cout << "h1" << endl;
+				//cout << "h1" << endl;
 				
 				bool connectionIterErased = false;
 				//connect entityNodeToMerge ambient node to entityNode
