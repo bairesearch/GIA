@@ -23,7 +23,7 @@
  * File Name: GIAquery.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p6a 22-September-2012
+ * Project Version: 1p7a 22-September-2012
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  *
@@ -164,7 +164,9 @@ GIAEntityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanti
 		bool determineMatchParameters(bool exactMatchFoundTemp, bool traceIsQuery, int referenceTraceParametersTraceMode, int numberOfMatchedNodesTempMax, bool * exactMatch);
 		bool determineIfBestAnswerCandidate(bool traceModeIsQuery, bool queryTraceParametersTempFoundAnswer, bool alreadyFoundAnAnswer, int numberOfMatchedNodesTemp, int numberOfMatchedNodesTempMax, int numberOfMatchedNodesRequiredSynonymnDetectionTemp, int numberOfMatchedNodesRequiredSynonymnDetectionTempAtMax, int referenceTraceParametersTraceMode, int exactMatchTemp);
 
-bool compareEntityNames(GIAEntityNode * queryEntityNode, GIAEntityNode * entityNode);
+#ifdef GIA_USE_SYNONYMN_DETECTION
+bool compareEntitySynonyms(GIAEntityNode * queryEntityNode, GIAEntityNode * entityNode);
+#endif
 #ifdef GIA_SUPPORT_ALIASES
 bool compareEntityAliases(GIAEntityNode * queryEntityNode, GIAEntityNode * entityNode);
 #endif

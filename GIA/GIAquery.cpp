@@ -23,7 +23,7 @@
  * File Name: GIAquery.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p6a 22-September-2012
+ * Project Version: 1p7a 22-September-2012
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  * ?Limitations: will only locate a exact answer (based upon a comparison node) if it provides the maximum number of matched nodes
@@ -371,11 +371,18 @@ int testReferencedEntityNodeForExactNameMatch(GIAEntityNode * queryEntityNode, G
 		#ifdef GIA_USE_SYNONYMN_DETECTION
 		else
 		{
-			if(compareEntityNames(queryEntityNode, entityNode))
+			#ifdef GIA_USE_SYNONYMN_DETECTION_ONLY_DURING_QUERIES
+			if(traceModeIsQuery)
 			{
-				compareEntityNamesResult = true;
-				*numberOfMatchedNodesRequiredSynonymnDetection = *numberOfMatchedNodesRequiredSynonymnDetection + 1;
+			#endif
+				if(compareEntitySynonyms(queryEntityNode, entityNode))
+				{
+					compareEntityNamesResult = true;
+					*numberOfMatchedNodesRequiredSynonymnDetection = *numberOfMatchedNodesRequiredSynonymnDetection + 1;
+				}
+			#ifdef GIA_USE_SYNONYMN_DETECTION_ONLY_DURING_QUERIES	
 			}
+			#endif
 		}
 		#endif
 
@@ -539,7 +546,7 @@ int testReferencedEntityNodeForExactNameMatch(GIAEntityNode * queryEntityNode, G
 
 		#ifdef GIA_QUERY_ALLOW_ANSWER_OF_NON_IDENTICAL_CONDITION_TYPES
 			bool nonMatchingConditions = false;
-			if(!compareEntityNamesResult && queryTraceParameters->isCondition)		//now supports unimplemented preposition reduction (need to modify compareEntityNames() to support synonomous prepositions), 	OLD: before 21 May 2012: if((queryEntityNode->entityName != entityNode->entityName) && queryTraceParameters->isCondition)
+			if(!compareEntityNamesResult && queryTraceParameters->isCondition)		//now supports unimplemented preposition reduction (need to modify compareEntitySynonyms() to support synonomous prepositions), 	OLD: before 21 May 2012: if((queryEntityNode->entityName != entityNode->entityName) && queryTraceParameters->isCondition)
 			{
 				nonMatchingConditions = true;
 			}
@@ -1570,18 +1577,19 @@ bool verifyThatAnswerEntityIsDefinedByComparisonVariableNode(GIAEntityNode * ent
 }
 
 
-
-bool compareEntityNames(GIAEntityNode * queryEntityNode, GIAEntityNode * entityNode)
+#ifdef GIA_USE_SYNONYMN_DETECTION
+bool compareEntitySynonyms(GIAEntityNode * queryEntityNode, GIAEntityNode * entityNode)
 {
 	bool entityNamesAreSynonymous = false;
 
 	#ifndef USE_WORDNET
-	cout << "compareEntityNames() error: requires USE_WORDNET" << endl;
+	cout << "compareEntitySynonyms() error: requires USE_WORDNET" << endl;
 	exit(0);
 	#endif
 
-	//cout << "\t compareEntityNames: queryEntityNode " << queryEntityNode->entityName << ", with entityNode " << entityNode->entityName << endl;
+	//cout << "\t compareEntitySynonyms: queryEntityNode " << queryEntityNode->entityName << ", with entityNode " << entityNode->entityName << endl;
 
+	/*
 	#ifdef GIA_SUPPORT_ALIASES
 	if(compareEntityAliases(queryEntityNode, entityNode))
 	#else
@@ -1592,54 +1600,60 @@ bool compareEntityNames(GIAEntityNode * queryEntityNode, GIAEntityNode * entityN
 	}
 	else
 	{
-		if(queryEntityNode->wordNetPOS != entityNode->wordNetPOS)	//error checking
+	*/
+	
+	if(queryEntityNode->wordNetPOS != entityNode->wordNetPOS)	//error checking
+	{
+		/*
+		#ifdef GIA_WORDNET_DEBUG
+		cout << "compareEntitySynonyms() warning: (queryEntityNode->wordNetPOS != entityNode->wordNetPOS)" << endl;
+		cout << "queryEntityNode->wordNetPOS " << queryEntityNode->entityName << " = " << queryEntityNode->wordNetPOS << endl;
+		cout << "entityNode->wordNetPOS = " << entityNode->entityName << " = " << entityNode->wordNetPOS << endl;
+		#endif
+		*/
+	}
+	else
+	{
+		if(checkIfWordIsContainedWithinOtherWordsSynsetsOrViceVersa(&(entityNode->entityName), &(queryEntityNode->entityName), entityNode->wordNetPOS))
 		{
-			/*
-			#ifdef GIA_WORDNET_DEBUG
-			cout << "compareEntityNames() warning: (queryEntityNode->wordNetPOS != entityNode->wordNetPOS)" << endl;
-			cout << "queryEntityNode->wordNetPOS " << queryEntityNode->entityName << " = " << queryEntityNode->wordNetPOS << endl;
-			cout << "entityNode->wordNetPOS = " << entityNode->entityName << " = " << entityNode->wordNetPOS << endl;
-			#endif
-			*/
+			entityNamesAreSynonymous = true;
 		}
-		else
+
+		#ifdef GIA_SUPPORT_ALIASES
+		for(vector<string>::iterator aliasIter = entityNode->aliasList.begin(); aliasIter < entityNode->aliasList.end(); aliasIter++)
 		{
-			if(checkIfWordIsContainedWithinOtherWordsSynsetsOrViceVersa(&(entityNode->entityName), &(queryEntityNode->entityName), entityNode->wordNetPOS))
+			for(vector<string>::iterator aliasIterQuery = queryEntityNode->aliasList.begin(); aliasIterQuery < queryEntityNode->aliasList.end(); aliasIterQuery++)
+			{
+				if(checkIfWordIsContainedWithinOtherWordsSynsetsOrViceVersa(&(*aliasIter), &(*aliasIterQuery), entityNode->wordNetPOS))
+				{
+					entityNamesAreSynonymous = true;
+				}
+			}
+		}
+		for(vector<string>::iterator aliasIter = entityNode->aliasList.begin(); aliasIter < entityNode->aliasList.end(); aliasIter++)
+		{
+			if(checkIfWordIsContainedWithinOtherWordsSynsetsOrViceVersa(&(*aliasIter), &(queryEntityNode->entityName), entityNode->wordNetPOS))
 			{
 				entityNamesAreSynonymous = true;
 			}
-
-			#ifdef GIA_SUPPORT_ALIASES
-			for(vector<string>::iterator aliasIter = entityNode->aliasList.begin(); aliasIter < entityNode->aliasList.end(); aliasIter++)
-			{
-				for(vector<string>::iterator aliasIterQuery = queryEntityNode->aliasList.begin(); aliasIterQuery < queryEntityNode->aliasList.end(); aliasIterQuery++)
-				{
-					if(checkIfWordIsContainedWithinOtherWordsSynsetsOrViceVersa(&(*aliasIter), &(*aliasIterQuery), entityNode->wordNetPOS))
-					{
-						entityNamesAreSynonymous = true;
-					}
-				}
-			}
-			for(vector<string>::iterator aliasIter = entityNode->aliasList.begin(); aliasIter < entityNode->aliasList.end(); aliasIter++)
-			{
-				if(checkIfWordIsContainedWithinOtherWordsSynsetsOrViceVersa(&(*aliasIter), &(queryEntityNode->entityName), entityNode->wordNetPOS))
-				{
-					entityNamesAreSynonymous = true;
-				}
-			}
-			for(vector<string>::iterator aliasIterQuery = queryEntityNode->aliasList.begin(); aliasIterQuery < queryEntityNode->aliasList.end(); aliasIterQuery++)
-			{
-				if(checkIfWordIsContainedWithinOtherWordsSynsetsOrViceVersa(&(entityNode->entityName), &(*aliasIterQuery), entityNode->wordNetPOS))
-				{
-					entityNamesAreSynonymous = true;
-				}
-			}
-			#endif
 		}
+		for(vector<string>::iterator aliasIterQuery = queryEntityNode->aliasList.begin(); aliasIterQuery < queryEntityNode->aliasList.end(); aliasIterQuery++)
+		{
+			if(checkIfWordIsContainedWithinOtherWordsSynsetsOrViceVersa(&(entityNode->entityName), &(*aliasIterQuery), entityNode->wordNetPOS))
+			{
+				entityNamesAreSynonymous = true;
+			}
+		}
+		#endif
 	}
+	
+	/*
+	}
+	*/
 
 	return entityNamesAreSynonymous;
 }
+#endif
 
 #ifdef GIA_SUPPORT_ALIASES
 bool compareEntityAliases(GIAEntityNode * queryEntityNode, GIAEntityNode * entityNode)

@@ -23,7 +23,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p6a 22-September-2012
+ * Project Version: 1p7a 22-September-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -136,7 +136,9 @@ int main(int argc,char **argv)
 	#endif
 
 	#ifdef USE_WORDNET
+	#ifndef GIA_USE_SYNONYMN_DETECTION_ONLY_DURING_QUERIES
 	initialiseWordNet();
+	#endif
 	#endif
 
 	//print execution time
@@ -610,7 +612,7 @@ int main(int argc,char **argv)
 
 		if (exists_argument(argc,argv,"-version"))
 		{
-			cout << "OpenGIA.exe - Project Version: 1p6a 22-September-2012" << endl;
+			cout << "OpenGIA.exe - Project Version: 1p7a 22-September-2012" << endl;
 			exit(1);
 		}
 
@@ -890,6 +892,7 @@ int main(int argc,char **argv)
 
 	for(int inputFileNameIndex=0; inputFileNameIndex<numberOfInputFilesInList; inputFileNameIndex++)	//CHECKTHIS: change back to 0
 	{
+		
 		#ifdef LINUX
 		chdir(workingFolderCharStar);
 		#else
@@ -1204,6 +1207,13 @@ int main(int argc,char **argv)
 			2. return missing variables
 			3. NB for which/what questions, make the software just locate the identical structure, and if necessary return the parent of the primary substance (eg the parent of the "object" of the question)
 		*/
+
+		#ifdef USE_WORDNET
+		#ifdef GIA_USE_SYNONYMN_DETECTION_ONLY_DURING_QUERIES
+		initialiseWordNet();
+		#endif
+		#endif
+		
 
 		bool foundComparisonVariable = getFoundComparisonVariable();
 		GIAEntityNode* comparisonVariableNode = getComparisonVariableNode();

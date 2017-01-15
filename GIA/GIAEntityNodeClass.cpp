@@ -23,7 +23,7 @@
  * File Name: GIAEntityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1p6a 22-September-2012
+ * Project Version: 1p7a 22-September-2012
  *
  *******************************************************************************/
 
@@ -233,19 +233,28 @@ GIAEntityNode::~GIAEntityNode(void)
 	{
 		for(vector<GIAEntityConnection*>::iterator connectionIter = entityVectorConnectionsArray[i].begin(); connectionIter != entityVectorConnectionsArray[i].end(); connectionIter++)
 		{
+			//cout << "deleting: vector connection: " << endl;
+			//cout << "deleting: vector connection: " << (*connectionIter)->entityName << endl;
 			delete *connectionIter;
 		}
 		entityVectorConnectionsArray[i].clear();
 	}
 
-	#ifdef GIA_SUPPORT_ALIASES
-	aliasList.clear();
-	#endif	
 	#ifdef GIA_USE_DATABASE	
 	#ifndef GIA_USE_DATABASE_ALWAYS_LOAD_CONCEPT_NODE_REFERENCE_LISTS
 	delete conceptEntityLoaded;
 	#endif
 	#endif	
+}
+
+void deleteEntitiesInEntityNodeList(vector<GIAEntityNode*> * entityNodesActiveListComplete)
+{
+	for(vector<GIAEntityNode*>::iterator entityIter = entityNodesActiveListComplete->begin(); entityIter != entityNodesActiveListComplete->end(); entityIter++)
+	{
+		GIAEntityNode * entityNode = *entityIter;
+		//cout << "deleting: entityNode: " << entityNode->entityName << endl;
+		delete entityNode;
+	}
 }
 
 
@@ -459,15 +468,6 @@ vector<string> explode(const string& str, const char& ch)
 
 #endif
 
-void deleteEntitiesInEntityNodeList(vector<GIAEntityNode*> * entityNodesActiveListComplete)
-{
-	for(vector<GIAEntityNode*>::iterator entityIter = entityNodesActiveListComplete->begin(); entityIter != entityNodesActiveListComplete->end(); entityIter++)
-	{
-		GIAEntityNode * entityNode = *entityIter;
-		
-		delete entityNode;
-	}
-}
 
 
 /*
