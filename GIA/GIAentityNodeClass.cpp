@@ -275,6 +275,7 @@ GIAentityNode::GIAentityNode(void)
 	NLCmathTextParsablePhraseEntity = false;
 	#endif
 	NLCisAlias = false;
+	NLCidInstanceBackup = INT_DEFAULT_VALUE;
 	#endif
 
 	#ifdef GIA_LRP_NORMALISE_PREPOSITIONS
@@ -501,6 +502,11 @@ GIAentityNode::GIAentityNode(string newEntityName)	//must be synced with the abo
 	NLCoriginalNumericalVariableName = "";
 	NLCcontextGeneratedTemp = false;
 	NLCcategoryListCreatedTemp = false;
+	#ifdef GIA_SUPPORT_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS_CONCEPTS
+	NLCmathTextParsablePhraseEntity = false;
+	#endif
+	NLCisAlias = false;
+	NLCidInstanceBackup = INT_DEFAULT_VALUE;
 	#endif
 
 	#ifdef GIA_LRP_NORMALISE_PREPOSITIONS

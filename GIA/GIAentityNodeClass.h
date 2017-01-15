@@ -542,6 +542,7 @@ public:
 	bool NLCmathTextParsablePhraseEntity;
 	#endif
 	bool NLCisAlias;
+	bool NLCidInstanceBackup;
 	#endif
 
 	#ifdef GIA_LRP_NORMALISE_PREPOSITIONS
