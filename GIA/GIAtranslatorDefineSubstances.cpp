@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorDefineSubstances.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2c3a 15-January-2014
+ * Project Version: 2c3b 15-January-2014
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -53,7 +53,7 @@ void defineSubstances(Sentence * currentSentenceInList, bool GIAentityNodeArrayF
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "0a2 pass; define substances all nodes" << endl;
 	#endif
-	defineSubstancesAllNodes(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, featureArrayTemp);
+	defineSubstancesAllNodes(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray);
 	#endif
 		
 	#ifdef GIA_ASSIGN_SUBSTANCE_TO_ALL_DEFINITIVE_NOUNS
@@ -254,24 +254,6 @@ void defineSubstancesExpletives(Sentence * currentSentenceInList, GIAentityNode 
 	}
 #endif
 }
-
-
-#ifdef GIA_CREATE_SUBSTANCE_CONCEPTS_FOR_ALL_CONCEPTS
-void defineSubstancesAllNodes(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
-{
-	#ifdef GIA_USE_GENERIC_ENTITY_INTERPRETATION
-	GIAgenericEntityInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, true);
-	param.useEntityTest = true; param.entityTest = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE; param.entityTestIsNegative = true;
-	EntityCharacteristic entityCharacteristicsTest1("isConcept", "true");
-	param.specialCaseCharacteristicsTestAndVector.push_back(&entityCharacteristicsTest1);
-	param.functionToExecuteUponFind = GIA_GENERIC_ENTITY_INTERP_EXECUTE_FUNCTION_addSubstanceToSubstanceDefinition;
-	genericEntityInterpretation(&param);
-	#else
-	cout << "defineSubstancesAllNodes() error: not coded as this function was developed after GIA_USE_GENERIC_ENTITY_INTERPRETATION" << endl;
-	#endif	
-}
-#endif
-
 
 void defineSubstancesDefiniteNouns(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], Feature * featureArrayTemp[])
 {
@@ -1515,3 +1497,16 @@ void defineSubstancesActionConcepts(Sentence * currentSentenceInList, bool GIAen
 }
 #endif
 
+void defineSubstancesAllNodes(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[])
+{
+	#ifdef GIA_USE_GENERIC_ENTITY_INTERPRETATION
+	GIAgenericEntityInterpretationParameters param(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, true);
+	param.useEntityTest = true; param.entityTest = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE; param.entityTestIsNegative = true;
+	EntityCharacteristic entityCharacteristicsTest1("isConcept", "true");
+	param.specialCaseCharacteristicsTestAndVector.push_back(&entityCharacteristicsTest1);
+	param.functionToExecuteUponFind = GIA_GENERIC_ENTITY_INTERP_EXECUTE_FUNCTION_addSubstanceToSubstanceDefinition;
+	genericEntityInterpretation(&param);
+	#else
+	cout << "defineSubstancesAllNodes() error: not coded as this function was developed after GIA_USE_GENERIC_ENTITY_INTERPRETATION" << endl;
+	#endif	
+}

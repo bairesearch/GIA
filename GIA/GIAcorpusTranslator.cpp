@@ -23,7 +23,7 @@
  * File Name: GIAcorpusTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2c3a 14-January-2014
+ * Project Version: 2c3b 15-January-2014
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -351,7 +351,7 @@ void locateAndAddAllConceptEntitiesBasedOnSemanticRelations(Sentence * currentSe
 
 void fillGrammaticalTenseArraysStanfordBasedOnSemanticRelations(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAentityNodeArray[], Feature * featureArrayTemp[])
 {
-	Relation * currentRelationInList
+	Relation * currentRelationInList;
 	
 	#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
 	currentRelationInList = currentSentenceInList->firstRelationInList;
@@ -670,12 +670,14 @@ void defineConnectionsBasedOnSemanticRelations(Sentence * currentSentenceInList,
 				addDefinitionToEntity(entity1, entity2, sameReferenceSet);
 				currentRelationInList->disabled = true;
 			}
+			#ifdef GIA2_RECORD_DETERMINERS_AS_DEFINITE_INDEFINITE_SPECIFIC
 			else if(currentRelationInList->relationType == GIA2semanticDependencyRelationNameArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_MERGE_ENTITY_NODES_ADD_ALIAS])
 			{
 				mergeEntityNodesAddAlias(entity1, entity2);
 				GIAentityNodeArray[entity2Index] = GIAentityNodeArray[entity1Index];
 				currentRelationInList->disabled = true;
 			}
+			#endif
 			else
 			{
 
