@@ -3,7 +3,7 @@
  * File Name: GIAEntityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1j8a 10-May-2012
+ * Project Version: 1j8b 10-May-2012
  *
  *******************************************************************************/
 
@@ -90,10 +90,8 @@ GIAEntityNode::GIAEntityNode(void)
 	isSubjectTemp2 = false;
 	isObjectTemp2 = false;
 	hasPropertyTemp2 = false;
-	/*
 	entityIndexTemp = 0;
 	sentenceIndexTemp = 0;
-	*/
 	
 	#ifdef GIA_USE_STANFORD_CORENLP
 	/*

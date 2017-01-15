@@ -3,7 +3,7 @@
  * File Name: GIATranslatorApplyAdvancedFeatures.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1j8a 10-May-2012
+ * Project Version: 1j8b 10-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors conceptEntityNodesList/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersList with a map
@@ -48,52 +48,41 @@ void extractDatesStanfordCoreNLP(Sentence * currentSentenceInList, bool GIAEntit
 			GIAEntityNode * currentEntity = GIAEntityNodeArray[i];
 			if(!(currentEntity->disabled))
 			{				
-				if(currentEntity->hasAssociatedTime)
+				if(currentEntity->conditionType == CONDITION_NODE_TYPE_TIME)
 				{
-					//cout << "currentEntity->entityName = " << currentEntity->entityName << endl;
-				
 					GIAEntityNode * timeEntity = currentEntity;
-					if(timeEntity->hasAssociatedInstanceTemp)	//CHECKTHIS; only use the instance if it was was created in the immediate context (eg sentence)
-					{
-						timeEntity = timeEntity->AssociatedInstanceNodeList.back();
-					}
-					else
-					{
-						#ifdef GIA_TRANSLATOR_DEBUG
-						cout << "error: isolated date concept node found (ie has no instance) [0]" << endl;
-						#else
-						cout << "error: [confidential 0]" << endl;	
-						#endif
-					}	
+					//cout << "currentEntity->entityName = " << currentEntity->entityName << endl;	
 
-					if(timeEntity->conditionType == CONDITION_NODE_TYPE_TIME)	
+					if(timeEntity->timeConditionNode != NULL)
 					{
-						if(timeEntity->timeConditionNode != NULL)
+						if(!(timeEntity->timeConditionNode->tenseOnlyTimeCondition))
 						{
-							//cout << "currentEntity->NormalizedNERTemp = " << currentEntity->NormalizedNERTemp << endl;
-							timeEntity->timeConditionNode->conditionName = currentEntity->NormalizedNERTemp;
-						}
-						else
-						{
-							#ifdef GIA_TRANSLATOR_DEBUG
-							cout << "error: isolated date node found (not declared as a time condition) [1]" << endl;
-							#else
-							cout << "error: [confidential 1]" << endl;	
-							#endif
-							exit(0);	//remove this later
+							if(timeEntity->entityNodeDefiningThisInstance != NULL)
+							{//required for anomaly
+								//cout << "timeEntity->entityNodeDefiningThisInstance->NormalizedNERTemp = " << timeEntity->entityNodeDefiningThisInstance->NormalizedNERTemp << endl;
+								timeEntity->timeConditionNode->conditionName = timeEntity->entityNodeDefiningThisInstance->NormalizedNERTemp;
+							}
+							else
+							{					
+								#ifdef GIA_TRANSLATOR_DEBUG
+								cout << "timeEntity->NormalizedNERTemp = " << timeEntity->NormalizedNERTemp << endl;
+								cout << "error: timeEntity->entityNodeDefiningThisInstance != NULL [1b]" << endl;
+								#else
+								cout << "error: [confidential 1b]" << endl;	
+								#endif
+								exit(0);						
+							}
 						}
 					}
 					else
 					{
-						#ifdef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_5B_RELATIONS_COMPENSATE_FOR_INACCURATE_STANFORD_DATE_TAGGING
 						#ifdef GIA_TRANSLATOR_DEBUG
-						cout << "error: isolated date node found (not declared as a time condition) [2]" << endl;
+						cout << "error: isolated date node found (not declared as a time condition) [1]" << endl;
 						#else
-						cout << "error: [confidential 2]" << endl;
+						cout << "error: [confidential 1]" << endl;	
 						#endif
-						exit(0);	//remove this later	
-						#endif					
-					}			
+						exit(0);	//remove this later
+					}
 				}
 			}
 		}
@@ -111,30 +100,16 @@ void extractDatesRelex(Sentence * currentSentenceInList, bool GIAEntityNodeArray
 		if(GIAEntityNodeArrayFilled[i])
 		{
 			GIAEntityNode * currentEntity = GIAEntityNodeArray[i];
-			if(currentEntity->hasAssociatedTime)
+			if(currentEntity->conditionType == CONDITION_NODE_TYPE_TIME)
 			{
 				GIAEntityNode * timeEntity = currentEntity;
-				if(timeEntity->hasAssociatedInstanceTemp)	//CHECKTHIS; only use the instance if it was was created in the immediate context (eg sentence)
+				if(timeEntity->timeConditionNode != NULL)
 				{
-					timeEntity = timeEntity->AssociatedInstanceNodeList.back();
-				}
-				else
-				{
-					#ifdef GIA_TRANSLATOR_DEBUG
-					cout << "error: isolated date concept node found (ie has no instance) [0]" << endl;
-					#else
-					cout << "error: [confidential 0]" << endl;	
-					#endif
-				}	
-				
-				if(timeEntity->conditionType == CONDITION_NODE_TYPE_TIME)	
-				{
-					if(timeEntity->timeConditionNode != NULL)
+					if(!(timeEntity->timeConditionNode->tenseOnlyTimeCondition))
 					{
-						GIAEntityNode * timeConditionEntity = timeEntity;
 						//cout << "as1" << endl;
 
-						string monthString = timeConditionEntity->entityName;
+						string monthString = timeEntity->entityName;
 						int monthInt = TIME_MONTH_UNDEFINED;
 						for(int i=0; i<TIME_MONTH_NUMBER_OF_TYPES; i++)
 						{
@@ -143,30 +118,21 @@ void extractDatesRelex(Sentence * currentSentenceInList, bool GIAEntityNodeArray
 								monthInt = i+1;
 							}
 						}
-						timeConditionEntity->timeConditionNode->month = monthInt;
+						timeEntity->timeConditionNode->month = monthInt;
 
 						//update/regenerate timeConditionName
-						timeConditionEntity->timeConditionNode->conditionName = generateDateTimeConditionName(timeConditionEntity->timeConditionNode->dayOfMonth, timeConditionEntity->timeConditionNode->month, timeConditionEntity->timeConditionNode->year);
+						timeEntity->timeConditionNode->conditionName = generateDateTimeConditionName(timeEntity->timeConditionNode->dayOfMonth, timeEntity->timeConditionNode->month, timeEntity->timeConditionNode->year);
 							//OLD; timeConditionEntity->entityName
-					}
-					else
-					{
-						#ifdef GIA_TRANSLATOR_DEBUG
-						cout << "error: isolated date node found (not declared as a time condition) [1]" << endl;
-						#else
-						cout << "error: [confidential 1]" << endl;	
-						#endif
-						exit(0);	//remove this later
 					}
 				}
 				else
 				{
 					#ifdef GIA_TRANSLATOR_DEBUG
-					cout << "error: isolated date node found (not declared as a time condition) [2]" << endl;
+					cout << "error: isolated date node found (not declared as a time condition) [1]" << endl;
 					#else
-					cout << "error: [confidential 2]" << endl;
+					cout << "error: [confidential 1]" << endl;	
 					#endif
-					exit(0);	//remove this later						
+					exit(0);	//remove this later
 				}
 			}
 		}
@@ -189,30 +155,17 @@ void extractDatesRelex(Sentence * currentSentenceInList, bool GIAEntityNodeArray
 					if(GIAEntityNodeArrayFilled[i])
 					{
 						GIAEntityNode * currentEntity = GIAEntityNodeArray[i];
-						if(currentEntity->hasAssociatedTime)
+						if(currentEntity->conditionType == CONDITION_NODE_TYPE_TIME)
 						{	
-							GIAEntityNode * timeEntity = currentEntity;			
-							if(timeEntity->hasAssociatedInstanceTemp)	//CHECKTHIS; only use the instance if it was was created in the immediate context (eg sentence)
-							{
-								timeEntity = timeEntity->AssociatedInstanceNodeList.back();
-							}
-							else
-							{
-								#ifdef GIA_TRANSLATOR_DEBUG
-								cout << "error: isolated date concept node found (ie has no instance) [0]" << endl;
-								#else
-								cout << "error: [confidential 0]" << endl;	
-								#endif
-							}
-
+							GIAEntityNode * timeEntity = currentEntity;
 							GIAEntityNode * timeConditionEntity = timeEntity;
 
 							if(timeConditionEntity->entityName == currentRelationInList->relationGovernor)
 							{	
-								if(timeEntity->conditionType == CONDITION_NODE_TYPE_TIME)	
-								{
-									if(timeEntity->timeConditionNode != NULL)
-									{									
+								if(timeEntity->timeConditionNode != NULL)
+								{		
+									if(!(timeEntity->timeConditionNode->tenseOnlyTimeCondition))
+									{							
 										if(currentRelationInList->relationType == RELATION_TYPE_DATE_DAY)
 										{
 											disableEntityBasedUponFirstSentenceToAppearInNetwork(GIAEntityNodeArray[currentRelationInList->relationDependentIndex]);
@@ -250,21 +203,12 @@ void extractDatesRelex(Sentence * currentSentenceInList, bool GIAEntityNodeArray
 											//tempTimeCondition->entityName
 										}
 									}
-									else
-									{
-										cout << "error: isolated date node found (not declared as a time condition)" << endl;
-										exit(0);	//remove this later
-									}										
 								}
 								else
 								{
-									#ifdef GIA_TRANSLATOR_DEBUG
-									cout << "error: isolated date node found (not declared as a time condition) [3]" << endl;
-									#else
-									cout << "error: [confidential 3]" << endl;
-									#endif
-									exit(0);	//remove this later						
-								}
+									cout << "error: isolated date node found (not declared as a time condition)" << endl;
+									exit(0);	//remove this later
+								}										
 							}
 						}
 					}
@@ -282,25 +226,11 @@ void extractDatesRelex(Sentence * currentSentenceInList, bool GIAEntityNodeArray
 		if(GIAEntityNodeArrayFilled[i])
 		{
 			GIAEntityNode * currentEntity = GIAEntityNodeArray[i];
-			if(currentEntity->hasAssociatedTime)
-			{
-				GIAEntityNode * timeEntity = currentEntity;			
-				if(timeEntity->hasAssociatedInstanceTemp)	//CHECKTHIS; only use the instance if it was was created in the immediate context (eg sentence)
+			if(currentEntity->conditionType == CONDITION_NODE_TYPE_TIME)
+			{	
+				if(timeEntity->timeConditionNode != NULL)
 				{
-					timeEntity = timeEntity->AssociatedInstanceNodeList.back();
-				}
-				else
-				{
-					#ifdef GIA_TRANSLATOR_DEBUG
-					cout << "error: isolated date concept node found (ie has no instance)" << endl;
-					#else
-					cout << "error: [confidential 0]" << endl;	
-					#endif
-				}	
-							
-				if(timeEntity->conditionType == CONDITION_NODE_TYPE_TIME)	
-				{
-					if(timeEntity->timeConditionNode != NULL)
+					if(!(timeEntity->timeConditionNode->tenseOnlyTimeCondition))
 					{
 						//replace current entity time condition node with generated time condition node.
 
@@ -308,16 +238,6 @@ void extractDatesRelex(Sentence * currentSentenceInList, bool GIAEntityNodeArray
 						bool argumentEntityAlreadyExistant = false;
 						long timeConditionTotalTimeInSeconds = calculateTotalTimeInSeconds(timeConditionEntity->timeConditionNode->dayOfMonth, timeConditionEntity->timeConditionNode->month, timeConditionEntity->timeConditionNode->year);
 						timeEntity->timeConditionNode = findOrAddTimeNodeByNumber(timeConditionNodesList, conceptEntityNamesList, timeConditionTotalTimeInSeconds, &argumentEntityAlreadyExistant, &timeConditionEntityIndex, true, timeEntity->timeConditionNode);
-
-					}
-					else
-					{
-						#ifdef GIA_TRANSLATOR_DEBUG
-						cout << "error: isolated date node found (not declared as a time condition)" << endl;
-						#else
-						cout << "error: [confidential 4]" << endl;
-						#endif
-						exit(0);	//remove this later
 					}
 				}
 				else
@@ -325,11 +245,10 @@ void extractDatesRelex(Sentence * currentSentenceInList, bool GIAEntityNodeArray
 					#ifdef GIA_TRANSLATOR_DEBUG
 					cout << "error: isolated date node found (not declared as a time condition)" << endl;
 					#else
-					cout << "error: [confidential 5]" << endl;
+					cout << "error: [confidential 4]" << endl;
 					#endif
-					exit(0);	//remove this later						
+					exit(0);	//remove this later
 				}
-
 			}
 		}
 	}	
@@ -377,84 +296,80 @@ void extractQuantitiesStanfordCoreNLP(Sentence * currentSentenceInList, GIAEntit
 
 				GIAEntityNode * quantityEntity = GIAEntityNodeArray[currentRelationInList->relationGovernorIndex];
 
-				if(quantityEntity->NERTemp != FEATURE_NER_DATE)		//do not assume quantity entities when dealing with Stanford Dates (as they have already been parsed).	//OLD: if(!(quantityEntity->hasAssociatedTime))  [NO because must support times, eg The operation happened at 3:30pm. num(pm-6, 3:30-5)prep_at(happened-3, pm-6)]
+				if(quantityEntity->NERTemp != FEATURE_NER_DATE)		//do not assume quantity entities when dealing with Stanford Dates (as they have already been parsed).
 				{
-					if(quantityEntity->hasAssociatedInstanceTemp)		//CHECKTHIS; only use the instance if it was was created in the immediate context (eg sentence)		//changed 9 May 2012
-					//if(quantityEntity->AssociatedInstanceNodeList.size() >= 1)	//OR if(quantityEntity->hasAssociatedInstance)?		
+					GIAEntityNode * quantityProperty = quantityEntity;
+					quantityProperty->hasQuantity = true;
+					if((quantityProperty->NormalizedNERTemp != "") && (quantityProperty->NormalizedNERTemp != "0.0"))		//added 0.0 for a stanford anomaly 11 May 2012
 					{
-						GIAEntityNode * quantityProperty = quantityEntity->AssociatedInstanceNodeList.back();
-						quantityProperty->hasQuantity = true;
-						if(quantityEntity->NormalizedNERTemp != "")
-						{
-							quantityProperty->quantityNumberString = quantityEntity->NormalizedNERTemp;					
-						}
-						else
-						{
-							quantityProperty->quantityNumberString = currentRelationInList->relationDependent;
-						}
+						quantityProperty->quantityNumberString = quantityProperty->NormalizedNERTemp;					
+					}
+					else
+					{
+						quantityProperty->quantityNumberString = currentRelationInList->relationDependent;
+					}
 
-						disableEntityBasedUponFirstSentenceToAppearInNetwork(GIAEntityNodeArray[currentRelationInList->relationDependentIndex]);
+					disableEntityBasedUponFirstSentenceToAppearInNetwork(GIAEntityNodeArray[currentRelationInList->relationDependentIndex]);
 
-						if(currentRelationInList->relationDependent == REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
-						{//update comparison variable (set it to the quantity)	
-							quantityProperty->isQuery = true;
-							GIAEntityNodeArray[currentRelationInList->relationDependentIndex]->isQuery = false;
-							setComparisonVariableNode(quantityProperty);		
-						}
+					if(currentRelationInList->relationDependent == REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
+					{//update comparison variable (set it to the quantity)	
+						quantityProperty->isQuery = true;
+						GIAEntityNodeArray[currentRelationInList->relationDependentIndex]->isQuery = false;
+						setComparisonVariableNode(quantityProperty);		
+					}
 
 
-						//now locate quantity modifiers
-						Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
-						while(currentRelationInList2->next != NULL)
-						{	
-							#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
-							if(!(currentRelationInList2->disabled))
-							{			
-							#endif						
-								//cout << "here1" << endl;
-								//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
+					//now locate quantity modifiers
+					Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
+					while(currentRelationInList2->next != NULL)
+					{	
+						#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+						if(!(currentRelationInList2->disabled))
+						{			
+						#endif						
+							//cout << "here1" << endl;
+							//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
 
-								if(currentRelationInList2->relationType == RELATION_TYPE_QUANTITY_MOD)
-								{	
-									if(currentRelationInList2->relationGovernor == currentRelationInList->relationGovernor)
+							if(currentRelationInList2->relationType == RELATION_TYPE_QUANTITY_MOD)
+							{	
+								if(currentRelationInList2->relationGovernor == currentRelationInList->relationGovernor)
+								{
+									//cout << "AAAA" << endl;
+
+									/*
+									int quantityModifierInt = calculateQuantityModifierInt(currentRelationInList2->relationDependent);
+									quantityProperty->quantityModifier = quantityModifierInt;
+									*/
+									quantityProperty->quantityModifierString = currentRelationInList2->relationDependent;
+
+									//added 12 Oct 11; add quantity modifiers as conditions (eg "almost" lost)	
+									GIAEntityNode * entityNode = quantityProperty;
+									GIAEntityNode * conditionEntityNode = GIAEntityNodeArray[currentRelationInList2->relationDependentIndex];
+									//GIAEntityNode * conditionTypeConceptEntity = quantityProperty->quantityModifierString;
+
+									string conditionTypeName = "quantityModifier";	//quantityProperty->quantityModifierString //CHECKTHIS; 
+									long entityIndex = -1;
+									bool entityAlreadyExistant = false;
+									vector<GIAEntityNode*> * entityNodesCompleteList = getTranslatorEntityNodesCompleteList();
+									long * currentEntityNodeIDInCompleteList = getCurrentEntityNodeIDInCompleteList();
+									long * currentEntityNodeIDInConceptEntityNodesList = getCurrentEntityNodeIDInConceptEntityNodesList();
+									GIAEntityNode * conditionTypeConceptEntity = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, &conditionTypeName, &entityAlreadyExistant, &entityIndex, true, currentEntityNodeIDInCompleteList, currentEntityNodeIDInConceptEntityNodesList);
+									if(entityAlreadyExistant)
 									{
-										//cout << "AAAA" << endl;
-
-										/*
-										int quantityModifierInt = calculateQuantityModifierInt(currentRelationInList2->relationDependent);
-										quantityProperty->quantityModifier = quantityModifierInt;
-										*/
-										quantityProperty->quantityModifierString = currentRelationInList2->relationDependent;
-
-										//added 12 Oct 11; add quantity modifiers as conditions (eg "almost" lost)	
-										GIAEntityNode * entityNode = quantityProperty;
-										GIAEntityNode * conditionEntityNode = GIAEntityNodeArray[currentRelationInList2->relationDependentIndex];
-										//GIAEntityNode * conditionTypeConceptEntity = quantityProperty->quantityModifierString;
-
-										string conditionTypeName = "quantityModifier";	//quantityProperty->quantityModifierString //CHECKTHIS; 
-										long entityIndex = -1;
-										bool entityAlreadyExistant = false;
-										vector<GIAEntityNode*> * entityNodesCompleteList = getTranslatorEntityNodesCompleteList();
-										long * currentEntityNodeIDInCompleteList = getCurrentEntityNodeIDInCompleteList();
-										long * currentEntityNodeIDInConceptEntityNodesList = getCurrentEntityNodeIDInConceptEntityNodesList();
-										GIAEntityNode * conditionTypeConceptEntity = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, &conditionTypeName, &entityAlreadyExistant, &entityIndex, true, currentEntityNodeIDInCompleteList, currentEntityNodeIDInConceptEntityNodesList);
-										if(entityAlreadyExistant)
-										{
-											applyEntityAlreadyExistsFunction(conditionTypeConceptEntity);
-										}
-
-										addOrConnectPropertyConditionToEntity(entityNode, conditionEntityNode, conditionTypeConceptEntity);
-
+										applyEntityAlreadyExistsFunction(conditionTypeConceptEntity);
 									}
 
-								}
-							#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
-							}			
-							#endif															
+									addOrConnectPropertyConditionToEntity(entityNode, conditionEntityNode, conditionTypeConceptEntity);
 
-							currentRelationInList2 = currentRelationInList2->next;
-						}																			
-					}	
+								}
+
+							}
+						#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+						}			
+						#endif															
+
+						currentRelationInList2 = currentRelationInList2->next;
+					}																			
 				}
 			}							
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
@@ -491,15 +406,11 @@ void extractQuantitiesStanfordCoreNLP(Sentence * currentSentenceInList, GIAEntit
 					if(!(currentEntity->hasAssociatedTime))
 					{//do not assume quantity entities when dealing with Stanford Dates, eg num(March-5, 11th-6)  / num(March-5, 1973-8)
 
-						if(currentEntity->hasAssociatedInstanceTemp)		//CHECKTHIS; only use the instance if it was was created in the immediate context (eg sentence)		//changed 9 May 2012
-						//if(currentEntity->AssociatedInstanceNodeList.size() >= 1)	//OR if(currentEntity->hasAssociatedInstance)?
-						{
-							GIAEntityNode * quantityProperty = currentEntity->AssociatedInstanceNodeList.back();
-							quantityProperty->hasQuantity = true;
-							quantityProperty->quantityNumberString = currentEntity->NormalizedNERTemp;
-							cout << "adding quantity: " << quantityProperty << endl; 
-							cout << "quantityNumberString: " << currentEntity->NormalizedNERTemp << endl; 
-						}
+						GIAEntityNode * quantityProperty = currentEntity;
+						quantityProperty->hasQuantity = true;
+						quantityProperty->quantityNumberString = currentEntity->NormalizedNERTemp;
+						cout << "adding quantity: " << quantityProperty << endl; 
+						cout << "quantityNumberString: " << currentEntity->NormalizedNERTemp << endl; 
 					}		
 				}
 				//cout << "asd2" << endl;
@@ -538,171 +449,166 @@ void extractQuantitiesRelex(Sentence * currentSentenceInList, GIAEntityNode * GI
 				{//do not assume quantity entities when dealing with Stanford Dates, eg num(March-5, 11th-6)  / num(March-5, 1973-8)
 				*/
 				
-					if(quantityEntity->hasAssociatedInstanceTemp)		//CHECKTHIS; only use the instance if it was was created in the immediate context (eg sentence)		//changed 9 May 2012			
-					//if(quantityEntity->AssociatedInstanceNodeList.size() >= 1)	//OR if(quantityEntity->hasAssociatedInstance)?
+					GIAEntityNode * quantityProperty;
+					quantityProperty->hasQuantity = true;
+					quantityProperty->quantityNumberString = currentRelationInList->relationDependent;
+
+					disableEntityBasedUponFirstSentenceToAppearInNetwork(GIAEntityNodeArray[currentRelationInList->relationDependentIndex]);
+
+					int quantityNumberInt = calculateQuantityNumberInt(quantityProperty->quantityNumberString);
+					quantityProperty->quantityNumber = quantityNumberInt;
+
+					if(currentRelationInList->relationDependent == REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
+					{//update comparison variable (set it to the quantity)	
+						quantityProperty->isQuery = true;
+						GIAEntityNodeArray[currentRelationInList->relationDependentIndex]->isQuery = false;
+						setComparisonVariableNode(quantityProperty);		
+					}
+
+					//now locate quantity modifiers and multiplicators
+					Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
+					while(currentRelationInList2->next != NULL)
+					{	
+						#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+						if(!(currentRelationInList2->disabled))
+						{			
+						#endif						
+							//cout << "here1" << endl;
+							//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
+
+							if(currentRelationInList2->relationType == RELATION_TYPE_QUANTITY_MOD)
+							{	
+								if(currentRelationInList2->relationGovernor == currentRelationInList->relationGovernor)
+								{
+									//cout << "AAAA" << endl;
+
+									/*
+									int quantityModifierInt = calculateQuantityModifierInt(currentRelationInList2->relationDependent);
+									quantityProperty->quantityModifier = quantityModifierInt;
+									*/
+									quantityProperty->quantityModifierString = currentRelationInList2->relationDependent;
+
+									//added 12 Oct 11; add quantity modifiers as conditions (eg "almost" lost)	
+									GIAEntityNode * entityNode = quantityProperty;
+									GIAEntityNode * conditionEntityNode = GIAEntityNodeArray[currentRelationInList2->relationDependentIndex];
+									//GIAEntityNode * conditionTypeConceptEntity = quantityProperty->quantityModifierString;
+
+									string conditionTypeName = "quantityModifier";	//quantityProperty->quantityModifierString //CHECKTHIS; 
+									long entityIndex = -1;
+									bool entityAlreadyExistant = false;
+									vector<GIAEntityNode*> * entityNodesCompleteList = getTranslatorEntityNodesCompleteList();
+									long * currentEntityNodeIDInCompleteList = getCurrentEntityNodeIDInCompleteList();
+									long * currentEntityNodeIDInConceptEntityNodesList = getCurrentEntityNodeIDInConceptEntityNodesList();
+									GIAEntityNode * conditionTypeConceptEntity = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, &conditionTypeName, &entityAlreadyExistant, &entityIndex, true, currentEntityNodeIDInCompleteList, currentEntityNodeIDInConceptEntityNodesList);
+									if(entityAlreadyExistant)
+									{
+										applyEntityAlreadyExistsFunction(conditionTypeConceptEntity);
+									}
+
+									addOrConnectPropertyConditionToEntity(entityNode, conditionEntityNode, conditionTypeConceptEntity);
+
+								}
+
+							}	
+							if(currentRelationInList2->relationType == RELATION_TYPE_QUANTITY_MULT)
+							{
+								if(currentRelationInList2->relationGovernor == currentRelationInList->relationDependent)
+								{
+									disableEntityBasedUponFirstSentenceToAppearInNetwork(GIAEntityNodeArray[currentRelationInList2->relationDependentIndex]);
+
+									int quantityMultiplierInt = calculateQuantityMultiplierInt(currentRelationInList2->relationDependent);
+									quantityProperty->quantityNumber = quantityProperty->quantityNumber * quantityMultiplierInt;
+									quantityProperty->hasQuantityMultiplier = true;
+								}						
+							}
+						#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+						}		
+						#endif					
+
+						currentRelationInList2 = currentRelationInList2->next;
+					}	
+
+
+					bool relationTypeQuantityArgumentImplyMeasurePer = false;
+					for(int i=0; i<RELATION_TYPE_QUANTITY_ARGUMENT_IMPLY_MEASURE_PER_NUMBER_OF_TYPES; i++)
 					{
-						GIAEntityNode * quantityProperty = quantityEntity->AssociatedInstanceNodeList.back();
-						quantityProperty->hasQuantity = true;
-						quantityProperty->quantityNumberString = currentRelationInList->relationDependent;
-
-						disableEntityBasedUponFirstSentenceToAppearInNetwork(GIAEntityNodeArray[currentRelationInList->relationDependentIndex]);
-
-						int quantityNumberInt = calculateQuantityNumberInt(quantityProperty->quantityNumberString);
-						quantityProperty->quantityNumber = quantityNumberInt;
-
-						if(currentRelationInList->relationDependent == REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
-						{//update comparison variable (set it to the quantity)	
-							quantityProperty->isQuery = true;
-							GIAEntityNodeArray[currentRelationInList->relationDependentIndex]->isQuery = false;
-							setComparisonVariableNode(quantityProperty);		
+						if(currentRelationInList->relationDependent == relationTypeQuantityArgumentImplyMeasurePerNameArray[i])
+						{
+							relationTypeQuantityArgumentImplyMeasurePer = true;
 						}
+					}																		
+					if(relationTypeQuantityArgumentImplyMeasurePer)
+					{//eg "every hour" or "every day" - convert to measure_per system
 
-						//now locate quantity modifiers and multiplicators
+						GIAEntityNode * entityToConnectMeasurePerEntity;
+						bool foundQuantityOwner = false;
 						Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
 						while(currentRelationInList2->next != NULL)
 						{	
 							#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
 							if(!(currentRelationInList2->disabled))
 							{			
-							#endif						
-								//cout << "here1" << endl;
-								//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
-
-								if(currentRelationInList2->relationType == RELATION_TYPE_QUANTITY_MOD)
-								{	
-									if(currentRelationInList2->relationGovernor == currentRelationInList->relationGovernor)
-									{
-										//cout << "AAAA" << endl;
-
-										/*
-										int quantityModifierInt = calculateQuantityModifierInt(currentRelationInList2->relationDependent);
-										quantityProperty->quantityModifier = quantityModifierInt;
-										*/
-										quantityProperty->quantityModifierString = currentRelationInList2->relationDependent;
-
-										//added 12 Oct 11; add quantity modifiers as conditions (eg "almost" lost)	
-										GIAEntityNode * entityNode = quantityProperty;
-										GIAEntityNode * conditionEntityNode = GIAEntityNodeArray[currentRelationInList2->relationDependentIndex];
-										//GIAEntityNode * conditionTypeConceptEntity = quantityProperty->quantityModifierString;
-
-										string conditionTypeName = "quantityModifier";	//quantityProperty->quantityModifierString //CHECKTHIS; 
-										long entityIndex = -1;
-										bool entityAlreadyExistant = false;
-										vector<GIAEntityNode*> * entityNodesCompleteList = getTranslatorEntityNodesCompleteList();
-										long * currentEntityNodeIDInCompleteList = getCurrentEntityNodeIDInCompleteList();
-										long * currentEntityNodeIDInConceptEntityNodesList = getCurrentEntityNodeIDInConceptEntityNodesList();
-										GIAEntityNode * conditionTypeConceptEntity = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, &conditionTypeName, &entityAlreadyExistant, &entityIndex, true, currentEntityNodeIDInCompleteList, currentEntityNodeIDInConceptEntityNodesList);
-										if(entityAlreadyExistant)
-										{
-											applyEntityAlreadyExistsFunction(conditionTypeConceptEntity);
-										}
-
-										addOrConnectPropertyConditionToEntity(entityNode, conditionEntityNode, conditionTypeConceptEntity);
-
-									}
-
+							#endif							
+								if(currentRelationInList2->relationDependent == currentRelationInList->relationGovernor)
+								{		
+									entityToConnectMeasurePerEntity = GIAEntityNodeArray[currentRelationInList2->relationGovernorIndex];	//eg row
+									foundQuantityOwner = true;
 								}	
-								if(currentRelationInList2->relationType == RELATION_TYPE_QUANTITY_MULT)
-								{
-									if(currentRelationInList2->relationGovernor == currentRelationInList->relationDependent)
-									{
-										disableEntityBasedUponFirstSentenceToAppearInNetwork(GIAEntityNodeArray[currentRelationInList2->relationDependentIndex]);
-
-										int quantityMultiplierInt = calculateQuantityMultiplierInt(currentRelationInList2->relationDependent);
-										quantityProperty->quantityNumber = quantityProperty->quantityNumber * quantityMultiplierInt;
-										quantityProperty->hasQuantityMultiplier = true;
-									}						
-								}
 							#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
-							}		
-							#endif					
+							}			
+							#endif									
 
 							currentRelationInList2 = currentRelationInList2->next;
 						}	
 
-
-						bool relationTypeQuantityArgumentImplyMeasurePer = false;
-						for(int i=0; i<RELATION_TYPE_QUANTITY_ARGUMENT_IMPLY_MEASURE_PER_NUMBER_OF_TYPES; i++)
+						if(foundQuantityOwner)
 						{
-							if(currentRelationInList->relationDependent == relationTypeQuantityArgumentImplyMeasurePerNameArray[i])
-							{
-								relationTypeQuantityArgumentImplyMeasurePer = true;
+							//disconnect quantity node from existing connections (not including definitions) - NOT YET CODED.
+							disconnectNodeFromAllButDefinitions(quantityProperty);
+
+							GIAEntityNode * measureProperty = quantityProperty;	//convert quantity property to measure property
+							measureProperty->hasQuantity = false;
+							measureProperty->hasMeasure = true;
+							measureProperty->measureType = MEASURE_TYPE_PER;						
+
+							GIAEntityNode * newQuantityTimesEntity = new GIAEntityNode();
+							long * currentEntityNodeIDInCompleteList = getCurrentEntityNodeIDInCompleteList();
+							long * currentEntityNodeIDInPropertyEntityNodesList = getCurrentEntityNodeIDInPropertyEntityNodesList();
+							newQuantityTimesEntity->id = *currentEntityNodeIDInCompleteList;
+							newQuantityTimesEntity->idSecondary = *currentEntityNodeIDInPropertyEntityNodesList;
+
+							vector<GIAEntityNode*> * entityNodesCompleteList = getTranslatorEntityNodesCompleteList();
+							entityNodesCompleteList->push_back(newQuantityTimesEntity);
+							(*currentEntityNodeIDInCompleteList)++;
+							vector<GIAEntityNode*> * propertyEntityNodesList = getTranslatorPropertyEntityNodesList();
+							propertyEntityNodesList->push_back(newQuantityTimesEntity);
+							(*currentEntityNodeIDInPropertyEntityNodesList)++;
+
+							newQuantityTimesEntity->entityName = "times";
+
+							//reconnect refreshed quantity (times) node;
+							addOrConnectPropertyToEntity(entityToConnectMeasurePerEntity, newQuantityTimesEntity);
+
+							if(newQuantityTimesEntity->hasAssociatedInstanceTemp)
+							{//assumed true since its property was just explicitly created
+								newQuantityTimesEntity = newQuantityTimesEntity->AssociatedInstanceNodeList.back();
 							}
-						}																		
-						if(relationTypeQuantityArgumentImplyMeasurePer)
-						{//eg "every hour" or "every day" - convert to measure_per system
+							newQuantityTimesEntity->hasQuantity = true;
+							newQuantityTimesEntity->quantityNumber = 1;
+							newQuantityTimesEntity->quantityNumberString = "1";
 
-							GIAEntityNode * entityToConnectMeasurePerEntity;
-							bool foundQuantityOwner = false;
-							Relation * currentRelationInList2 = currentSentenceInList->firstRelationInList;
-							while(currentRelationInList2->next != NULL)
-							{	
-								#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
-								if(!(currentRelationInList2->disabled))
-								{			
-								#endif							
-									if(currentRelationInList2->relationDependent == currentRelationInList->relationGovernor)
-									{		
-										entityToConnectMeasurePerEntity = GIAEntityNodeArray[currentRelationInList2->relationGovernorIndex];	//eg row
-										foundQuantityOwner = true;
-									}	
-								#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
-								}			
-								#endif									
-
-								currentRelationInList2 = currentRelationInList2->next;
-							}	
-
-							if(foundQuantityOwner)
+							string conditionTypeName = RELATION_TYPE_MEASURE_PER;
+							long entityIndex = -1;
+							bool entityAlreadyExistant = false;
+							long * currentEntityNodeIDInConceptEntityNodesList = getCurrentEntityNodeIDInConceptEntityNodesList();						
+							GIAEntityNode * conditionTypeConceptEntity = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, &conditionTypeName, &entityAlreadyExistant, &entityIndex, true, currentEntityNodeIDInCompleteList, currentEntityNodeIDInConceptEntityNodesList);
+							if(entityAlreadyExistant)
 							{
-								//disconnect quantity node from existing connections (not including definitions) - NOT YET CODED.
-								disconnectNodeFromAllButDefinitions(quantityProperty);
-
-								GIAEntityNode * measureProperty = quantityProperty;	//convert quantity property to measure property
-								measureProperty->hasQuantity = false;
-								measureProperty->hasMeasure = true;
-								measureProperty->measureType = MEASURE_TYPE_PER;						
-
-								GIAEntityNode * newQuantityTimesEntity = new GIAEntityNode();
-								long * currentEntityNodeIDInCompleteList = getCurrentEntityNodeIDInCompleteList();
-								long * currentEntityNodeIDInPropertyEntityNodesList = getCurrentEntityNodeIDInPropertyEntityNodesList();
-								newQuantityTimesEntity->id = *currentEntityNodeIDInCompleteList;
-								newQuantityTimesEntity->idSecondary = *currentEntityNodeIDInPropertyEntityNodesList;
-
-								vector<GIAEntityNode*> * entityNodesCompleteList = getTranslatorEntityNodesCompleteList();
-								entityNodesCompleteList->push_back(newQuantityTimesEntity);
-								(*currentEntityNodeIDInCompleteList)++;
-								vector<GIAEntityNode*> * propertyEntityNodesList = getTranslatorPropertyEntityNodesList();
-								propertyEntityNodesList->push_back(newQuantityTimesEntity);
-								(*currentEntityNodeIDInPropertyEntityNodesList)++;
-
-								newQuantityTimesEntity->entityName = "times";
-
-								//reconnect refreshed quantity (times) node;
-								addOrConnectPropertyToEntity(entityToConnectMeasurePerEntity, newQuantityTimesEntity);
-
-								if(newQuantityTimesEntity->hasAssociatedInstanceTemp)
-								{//assumed true since its property was just explicitly created
-									newQuantityTimesEntity = newQuantityTimesEntity->AssociatedInstanceNodeList.back();
-								}
-								newQuantityTimesEntity->hasQuantity = true;
-								newQuantityTimesEntity->quantityNumber = 1;
-								newQuantityTimesEntity->quantityNumberString = "1";
-
-								string conditionTypeName = RELATION_TYPE_MEASURE_PER;
-								long entityIndex = -1;
-								bool entityAlreadyExistant = false;
-								long * currentEntityNodeIDInConceptEntityNodesList = getCurrentEntityNodeIDInConceptEntityNodesList();						
-								GIAEntityNode * conditionTypeConceptEntity = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, &conditionTypeName, &entityAlreadyExistant, &entityIndex, true, currentEntityNodeIDInCompleteList, currentEntityNodeIDInConceptEntityNodesList);
-								if(entityAlreadyExistant)
-								{
-									applyEntityAlreadyExistsFunction(conditionTypeConceptEntity);
-								}
-
-								//now add measure_per condition node
-								addOrConnectPropertyConditionToEntity(newQuantityTimesEntity, measureProperty, conditionTypeConceptEntity);
-
+								applyEntityAlreadyExistsFunction(conditionTypeConceptEntity);
 							}
+
+							//now add measure_per condition node
+							addOrConnectPropertyConditionToEntity(newQuantityTimesEntity, measureProperty, conditionTypeConceptEntity);
 
 						}
 					/*
@@ -766,39 +672,35 @@ void extractMeasures(Sentence * currentSentenceInList, GIAEntityNode * GIAEntity
 				GIAEntityNode * measureEntity = GIAEntityNodeArray[relationMeasureIndex];
 				GIAEntityNode * quantityEntity = GIAEntityNodeArray[relationQuantityIndex];
 				
-				if(measureEntity->hasAssociatedInstanceTemp)		//CHECKTHIS; only use the instance if it was was created in the immediate context (eg sentence)			//changed 9 May 2012					
-				//if(measureEntity->AssociatedInstanceNodeList.size() >= 1)	//OR if(measureEntity->hasAssociatedInstance)?
+				GIAEntityNode * measurePropertyEntity = measureEntity;
+				measurePropertyEntity->hasMeasure = true;
+				measurePropertyEntity->measureType = measureTypeIndex;
+
+				#ifdef GIA_TRANSLATOR_DEBUG									
+				cout << "measurePropertyName = " << measurePropertyEntity->entityName << endl;
+				cout << "quantityEntityName = " << quantityEntity->entityName << endl;
+				#endif
+
+				string conditionTypeName = relationTypeMeasureNameArray[measureTypeIndex];
+				long entityIndex = -1;
+				bool entityAlreadyExistant = false;
+				vector<GIAEntityNode*> * entityNodesCompleteList = getTranslatorEntityNodesCompleteList();
+				long * currentEntityNodeIDInCompleteList = getCurrentEntityNodeIDInCompleteList();
+				long * currentEntityNodeIDInConceptEntityNodesList = getCurrentEntityNodeIDInConceptEntityNodesList();				
+				GIAEntityNode * conditionTypeConceptEntity = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, &conditionTypeName, &entityAlreadyExistant, &entityIndex, true, currentEntityNodeIDInCompleteList, currentEntityNodeIDInConceptEntityNodesList);
+				if(entityAlreadyExistant)
 				{
-					GIAEntityNode * measurePropertyEntity = measureEntity->AssociatedInstanceNodeList.back();
-					measurePropertyEntity->hasMeasure = true;
-					measurePropertyEntity->measureType = measureTypeIndex;
+					applyEntityAlreadyExistsFunction(conditionTypeConceptEntity);
+				}
 
-					#ifdef GIA_TRANSLATOR_DEBUG									
-					cout << "measurePropertyName = " << measurePropertyEntity->entityName << endl;
-					cout << "quantityEntityName = " << quantityEntity->entityName << endl;
-					#endif
+				if(measureDependencyFound)
+				{
+					addOrConnectPropertyConditionToEntity(quantityEntity, measurePropertyEntity, conditionTypeConceptEntity);
+				}
+				else
+				{
+					addOrConnectPropertyConditionToEntity(measurePropertyEntity, quantityEntity, conditionTypeConceptEntity);
 
-					string conditionTypeName = relationTypeMeasureNameArray[measureTypeIndex];
-					long entityIndex = -1;
-					bool entityAlreadyExistant = false;
-					vector<GIAEntityNode*> * entityNodesCompleteList = getTranslatorEntityNodesCompleteList();
-					long * currentEntityNodeIDInCompleteList = getCurrentEntityNodeIDInCompleteList();
-					long * currentEntityNodeIDInConceptEntityNodesList = getCurrentEntityNodeIDInConceptEntityNodesList();				
-					GIAEntityNode * conditionTypeConceptEntity = findOrAddEntityNodeByName(entityNodesCompleteList, conceptEntityNodesList, &conditionTypeName, &entityAlreadyExistant, &entityIndex, true, currentEntityNodeIDInCompleteList, currentEntityNodeIDInConceptEntityNodesList);
-					if(entityAlreadyExistant)
-					{
-						applyEntityAlreadyExistsFunction(conditionTypeConceptEntity);
-					}
-
-					if(measureDependencyFound)
-					{
-						addOrConnectPropertyConditionToEntity(quantityEntity, measurePropertyEntity, conditionTypeConceptEntity);
-					}
-					else
-					{
-						addOrConnectPropertyConditionToEntity(measurePropertyEntity, quantityEntity, conditionTypeConceptEntity);
-
-					}
 				}								
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
@@ -839,12 +741,7 @@ void extractQualities(Sentence * currentSentenceInList, GIAEntityNode * GIAEntit
 					GIAEntityNode * thingEntity = GIAEntityNodeArray[relationGovernorIndex];
 					GIAEntityNode * propertyEntity = GIAEntityNodeArray[relationDependentIndex];
 
-					if(propertyEntity->hasAssociatedInstanceTemp)		//CHECKTHIS; only use the instance if it was was created in the immediate context (eg sentence)		//changed 9 May 2012							
-					//if(propertyEntity->AssociatedInstanceNodeList.size() >= 1)	//OR if(propertyEntity->hasAssociatedInstance)?
-					{
-						GIAEntityNode * qualityPropertyEntity = propertyEntity->AssociatedInstanceNodeList.back();
-						qualityPropertyEntity->hasQuality = true;	//[eg2 The locked door.. / Jim runs quickly / Mr. Smith is late {_amod/_advmod/_predadj}]	
-					}
+					propertyEntity->hasQuality = true;	//[eg2 The locked door.. / Jim runs quickly / Mr. Smith is late {_amod/_advmod/_predadj}]
 				}
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS

@@ -3,7 +3,7 @@
  * File Name: GIATranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1j8a 10-May-2012
+ * Project Version: 1j8b 10-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors conceptEntityNodesList/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersList with a map
@@ -132,7 +132,7 @@ void linkEntityDefinitionsAppositiveOfNouns(Sentence * currentSentenceInList, GI
 
 				#ifdef GIA_TRANSLATOR_DEBUG
 				cout << "propertyName = " << propertyEntity->entityName << endl;
-				cout << "entityName = " << definitionEntity->entityName << endl;
+				cout << "definitionEntity = " << definitionEntity->entityName << endl;
 				#endif
 
 				addDefinitionToEntity(propertyEntity, definitionEntity);									
@@ -162,9 +162,11 @@ void defineSubjectOrObjectRelationships(Sentence * currentSentenceInList, GIAEnt
 			int relationGovernorIndex = currentRelationInList->relationGovernorIndex;
 			int relationDependentIndex = currentRelationInList->relationDependentIndex;
 			subjectObjectName = currentRelationInList->relationDependent;
-			subjectObjectEntity = GIAEntityNodeArray[relationDependentIndex];
-			subjectObjectFunctionEntity = GIAEntityNodeArray[relationGovernorIndex]; 
-			
+			int subjectObjectEntityIndex = relationDependentIndex;
+			int subjectObjectFunctionEntityIndex = relationGovernorIndex;			
+			subjectObjectEntity = GIAEntityNodeArray[subjectObjectEntityIndex];
+			subjectObjectFunctionEntity = GIAEntityNodeArray[subjectObjectFunctionEntityIndex]; 
+
 			bool passed = false;
 			bool passsubject = false;
 			bool passobject = false;
@@ -225,7 +227,8 @@ void defineSubjectOrObjectRelationships(Sentence * currentSentenceInList, GIAEnt
 					{//assume that the subject-object relationships is an action
 						string actionName = currentRelationInList->relationGovernor;
 						//cout << "2 actionName = " << actionName << endl;
-						GIAEntityNode * actionEntity = GIAEntityNodeArray[relationGovernorIndex];
+						int actionIndex = subjectObjectFunctionEntityIndex;	//relationGovernorIndex
+						GIAEntityNode * actionEntity = GIAEntityNodeArray[actionIndex];
 
 
 						bool subjectOrObjectIsConnectedToAnAdvMod = false;
@@ -248,6 +251,7 @@ void defineSubjectOrObjectRelationships(Sentence * currentSentenceInList, GIAEnt
 										//cout << "ASD" << endl;
 
 										GIAEntityNode * actionOrPropertyConditionEntity;
+										int actionIndex;
 										if(passsubject && (subjectObjectEntity->entityName == currentRelationInList3->relationDependent))
 										{//subject is connected to an _advmod
 											/*eg 1 Space is saved by running fast.
@@ -257,6 +261,7 @@ void defineSubjectOrObjectRelationships(Sentence * currentSentenceInList, GIAEnt
 											_subj(run[5], by[4])											
 											*/
 											actionOrPropertyConditionEntity = subjectObjectFunctionEntity;
+											actionIndex = subjectObjectFunctionEntityIndex;
 											subjectOrObjectIsConnectedToAnAdvMod = true;
 
 										}
@@ -269,6 +274,7 @@ void defineSubjectOrObjectRelationships(Sentence * currentSentenceInList, GIAEnt
 											_obj(for[6], _$qVar[1])									
 											*/
 											actionOrPropertyConditionEntity = subjectObjectEntity;
+											actionIndex = subjectObjectEntityIndex;
 											subjectOrObjectIsConnectedToAnAdvMod = true;
 										}
 										else
@@ -288,9 +294,10 @@ void defineSubjectOrObjectRelationships(Sentence * currentSentenceInList, GIAEnt
 											#endif
 
 											//cout << "actionOrPropertyConditionEntity= " << actionOrPropertyConditionEntity->entityName << endl;
-
-											addActionToActionDefinition(actionOrPropertyConditionEntity);
-
+											
+											GIAEntityNodeArray[actionIndex] = addActionToActionDefinition(actionOrPropertyConditionEntity);
+											actionOrPropertyConditionEntity = GIAEntityNodeArray[actionIndex];
+											
 											//cout << "actionOrPropertyConditionEntity = " << actionOrPropertyConditionEntity->entityName << endl;
 											//cout << "actionOrPropertyEntity = " << actionOrPropertyEntity->entityName << endl;
 											//cout << "conditionTypeConceptEntity = " << conditionTypeConceptEntity->entityName << endl;
@@ -324,7 +331,7 @@ void defineSubjectOrObjectRelationships(Sentence * currentSentenceInList, GIAEnt
 								//added 1 May 11a (assign actions to instances (properties) of entities and not entities themselves where appropriate)
 								GIAEntityNode * subjectEntityTemp = subjectObjectEntity;
 								//cout << "vf1" << endl;
-								addActionToSubject(subjectObjectEntity, actionEntity);	
+								GIAEntityNodeArray[actionIndex] = addActionToSubject(subjectObjectEntity, actionEntity);	
 								//cout << "vf2" << endl;
 							}
 							else if(passobject)
@@ -334,7 +341,7 @@ void defineSubjectOrObjectRelationships(Sentence * currentSentenceInList, GIAEnt
 								GIAEntityNode * objectEntityTemp = subjectObjectEntity;
 
 								//cout << "vf3" << endl;
-								addActionToObject(objectEntityTemp, actionEntity);
+								GIAEntityNodeArray[actionIndex] = addActionToObject(objectEntityTemp, actionEntity);
 								//cout << "vf4" << endl;
 							}
 
@@ -596,12 +603,14 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 														{
 															//standard action/property condion (ie action condition in this context)
 															actionOrPropertyConditionEntity = subjectObjectFunctionEntityArray[SUBJECT_INDEX];
+															int actionIndex = subjectObjectFunctionEntityIndexArray[SUBJECT_INDEX];
 															//cout << "actionOrPropertyConditionEntity = " << actionOrPropertyConditionEntity->entityName << endl;
-															addActionToActionDefinition(actionOrPropertyConditionEntity);	//not required is done later?
+															GIAEntityNodeArray[actionIndex] = addActionToActionDefinition(actionOrPropertyConditionEntity);	//not required is done later?
+															actionOrPropertyConditionEntity = GIAEntityNodeArray[actionIndex];
 															addOrConnectPropertyConditionToEntity(actionOrPropertyEntity, actionOrPropertyConditionEntity, conditionTypeConceptEntity);
 
 															GIAEntityNode * actionEntity = actionOrPropertyConditionEntity;
-															addActionToObject(objectEntityTemp, actionEntity);																			
+															GIAEntityNodeArray[actionIndex] = addActionToObject(objectEntityTemp, actionEntity);																			
 														}									
 
 													#else
@@ -644,8 +653,9 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 														else
 														{
 															actionOrPropertyConditionEntity = subjectObjectFunctionEntityArray[SUBJECT_INDEX];
+															int actionIndex = subjectObjectFunctionEntityIndexArray[SUBJECT_INDEX];
 															//cout << "actionOrPropertyConditionEntity = " << actionOrPropertyConditionEntity->entityName << endl;
-															addActionToActionDefinition(actionOrPropertyConditionEntity);	//not required is done later?
+															GIAEntityNodeArray[actionIndex] = addActionToActionDefinition(actionOrPropertyConditionEntity);	//not required is done later?
 														}
 
 														#ifndef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_BEING_EG_BEING_INTO_AN_ARBITRARY_SUBJECT_DEFINITION
@@ -852,8 +862,9 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 											//added 1 May 11a (assign actions to instances (properties) of entities and not entities themselves where appropriate)
 											GIAEntityNode * objectEntityTempUpdated = subjectObjectEntityArray[SUBJECT_INDEX];
 											GIAEntityNode * actionEntity = subjectObjectFunctionEntityArray[SUBJECT_INDEX];
-
-											addActionToObject(objectEntityTempUpdated, actionEntity);
+											int actionIndex = subjectObjectFunctionEntityIndexArray[SUBJECT_INDEX];
+											
+											GIAEntityNodeArray[actionIndex] = addActionToObject(objectEntityTempUpdated, actionEntity);
 
 											//create a property link between the subject and object
 											GIAEntityNode * propertyEntity = subjectObjectEntityArray[OBJECT_INDEX];
@@ -870,7 +881,8 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 										{//assume that the subject-object relationships is an action
 											string actionName = currentRelationInList->relationGovernor;
 											//cout << "1 actionName = " << actionName << endl;
-											GIAEntityNode * actionEntity = GIAEntityNodeArray[relationGovernorIndex];
+											int actionIndex = relationGovernorIndex;
+											GIAEntityNode * actionEntity = GIAEntityNodeArray[actionIndex];
 
 											//added 1 May 11a (assign actions to instances (properties) of entities and not entities themselves where appropriate)
 
@@ -885,7 +897,7 @@ void defineSubjectObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 											cout << "relationDependentIndex2 = " << relationDependentIndex2 << endl;
 											*/
 
-											addActionToEntity(subjectEntityTemp, objectEntityTemp, actionEntity);
+											GIAEntityNodeArray[actionIndex] = addActionToEntity(subjectEntityTemp, objectEntityTemp, actionEntity);
 										}
 									}
 
@@ -1518,7 +1530,7 @@ void createConditionBasedUponPreposition(GIAEntityNode * actionOrPropertyEntity,
 	}
 	else if(passedPropositionTime)
 	{//required for extractDatesStanfordCoreNLP 
-					
+			
 		addTimeToProperty(actionOrPropertyConditionEntity);	
 	}
 }
@@ -1554,7 +1566,7 @@ string performPrepositionReduction(string relationType)
 
 void addTimeToProperty(GIAEntityNode * timeConditionEntity)
 {	
-	//cout << "addTimeConditionToProperty propertyNode->entityName = " << propertyNode->entityName << endl;
+	//cout << "addTimeToProperty timeConditionEntity->entityName = " << timeConditionEntity->entityName << endl;
 	timeConditionEntity->conditionType = CONDITION_NODE_TYPE_TIME;
 	
 	GIATimeConditionNode * newTimeCondition = new GIATimeConditionNode();

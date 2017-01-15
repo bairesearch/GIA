@@ -3,7 +3,7 @@
  * File Name: GIATranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1j8a 10-May-2012
+ * Project Version: 1j8b 10-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors conceptEntityNodesList/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersList with a map
@@ -427,17 +427,17 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "0z pass; define properties (objects/subjects with properties; eg 'Truffles which are picked are tasty.' - Truffle must be an instance/property in this case); _obj(pick[4], truffle[1]), _predadj(truffle[1], tasty[6])" << endl;
 	#endif
-	definePropertiesObjectsAndSubjectsWithProperties(GIAEntityNodeArrayFilled, GIAEntityNodeArray);
+	definePropertiesObjectsAndSubjectsWithProperties(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, GIAConceptNodeArray);
 
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "0a pass; define properties (definite nouns); eg the house" << endl;
 	#endif
-	definePropertiesDefiniteNouns(GIAEntityNodeArrayFilled, GIAEntityNodeArray, featureArrayTemp);
+	definePropertiesDefiniteNouns(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, featureArrayTemp);
 
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "0b pass; define properties (nouns with determinates); eg a house, the house, the houses [all nouns with singular/plural are assumed to have determintes, and are therefore properties]" << endl;
 	#endif
-	definePropertiesNounsWithDeterminates(GIAEntityNodeArrayFilled, GIAEntityNodeArray, referenceTypeHasDeterminateCrossReferenceNumberArray, featureArrayTemp);
+	definePropertiesNounsWithDeterminates(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, referenceTypeHasDeterminateCrossReferenceNumberArray, featureArrayTemp, GIAConceptNodeArray);
 
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "0c pass; define properties (nouns with adjectives); _amod; eg locked door, _advmod; eg cheetahs run quickly [NOT and c) _predadj; eg giants are red / joe is late]" << endl;
@@ -462,7 +462,7 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "0g pass; define properties (pronouns eg 'we'/'I');" << endl;
 	#endif
-	definePropertiesPronouns(GIAEntityNodeArrayFilled, GIAEntityNodeArray, featureArrayTemp);
+	definePropertiesPronouns(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, featureArrayTemp);
 
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "0h pass; define properties (to_be);" << endl;
@@ -477,13 +477,13 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAEntity
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "0j pass; define properties (has time);" << endl;
 	#endif		
-	definePropertiesHasTime(GIAEntityNodeArrayFilled, GIAEntityNodeArray);	
+	definePropertiesHasTime(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray, GIAConceptNodeArray);	
 
 	#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1F_RELATIONS_TREAT_THAT_AS_A_PRONOUN_IE_PROPERTY			
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "0k pass; define properties (non explicit pronouns eg 'that');" << endl;
 	#endif
-	definePropertiesNonExplicitPronouns(GIAEntityNodeArrayFilled, GIAEntityNodeArray);
+	definePropertiesNonExplicitPronouns(currentSentenceInList, GIAEntityNodeArrayFilled, GIAEntityNodeArray);
 	#endif
 	
 	#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_4A_RELATIONS_DEFINE_PROPERTIES_BASED_UPON_INDIRECT_OBJECTS			

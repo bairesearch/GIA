@@ -3,7 +3,7 @@
  * File Name: GIATranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1j8a 10-May-2012
+ * Project Version: 1j8b 10-May-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -806,19 +806,21 @@ bool isAdjectiveNotAnAdvmodAndRelationGovernorIsNotBe(Relation * currentRelation
 bool isAdjectiveNotConnectedToObjectOrSubject(Sentence * currentSentenceInList, Relation * currentRelationInList, int NLPdependencyRelationsType);								//Stanford Compatible
 
 GIAEntityNode * addOrConnectPropertyToEntity(GIAEntityNode * thingEntity, GIAEntityNode * propertyEntity);
-GIAEntityNode * addPropertyToPropertyDefinition(GIAEntityNode * propertyEntity);
+GIAEntityNode * addPropertyToPropertyDefinition(GIAEntityNode * propertyEntity, int entityIndexTemp, int sentenceIndexTemp);
 	GIAEntityNode * addProperty(GIAEntityNode * propertyEntity);
 	
 void addTenseOnlyTimeConditionToProperty(GIAEntityNode * propertyNode, int tense, bool isProgressive);
 
 void addDefinitionToEntity(GIAEntityNode * thingEntity, GIAEntityNode * definitionEntity);
 
-void addActionToEntity(GIAEntityNode * subjectEntity, GIAEntityNode * objectEntity, GIAEntityNode * actionEntity);
-void addActionToSubject(GIAEntityNode * subjectEntity, GIAEntityNode * actionEntity);
-void addActionToObject(GIAEntityNode * objectEntity, GIAEntityNode * actionEntity);
+GIAEntityNode * addActionToEntity(GIAEntityNode * subjectEntity, GIAEntityNode * objectEntity, GIAEntityNode * actionEntity);
+GIAEntityNode * addActionToSubject(GIAEntityNode * subjectEntity, GIAEntityNode * actionEntity);
+GIAEntityNode * addActionToObject(GIAEntityNode * objectEntity, GIAEntityNode * actionEntity);
 	void addActionInstanceToSubject(GIAEntityNode * subjectEntity, GIAEntityNode * newOrExistingAction);
 	void addActionInstanceToObject(GIAEntityNode * objectEntity, GIAEntityNode * newOrExistingAction);	
+GIAEntityNode * addActionToActionDefinition(GIAEntityNode * actionEntity, int entityIndexTemp, int sentenceIndexTemp);
 GIAEntityNode * addActionToActionDefinition(GIAEntityNode * actionEntity);
+	void upgradePropertyToAction(GIAEntityNode * property);
 	GIAEntityNode * addAction(GIAEntityNode * actionEntity);			
 		
 void addOrConnectPropertyConditionToEntity(GIAEntityNode * entityNode, GIAEntityNode * conditionEntityNode, GIAEntityNode * conditionTypeConceptEntity);
@@ -884,9 +886,11 @@ void convertStanfordPOSTagToRelexPOSTypeAndWordnetWordType(string * POStag, stri
 
 void generateTempFeatureArray(Feature * firstFeatureInList, Feature * featureArrayTemp[]);	//used for intrafunction memory allocation purposes only
 
-//bool checkEntityHasPropertyThatWasDeclaredInContextAndIsUnique(GIAEntityNode * entityNode, int entityIndexTemp, int sentenceIndexTemp);				//added 1j8a 10 May 2012
+bool checkEntityHasPropertyThatWasDeclaredInContextAndIsUnique(GIAEntityNode * entityNode, int entityIndexTemp, int sentenceIndexTemp);				//added 1j8a 10 May 2012
 
 bool checkEntityHasPropertyThatWasDeclaredInContext(GIAEntityNode * entityNode);			//current textual context (eg current paragraph) 	//added 1j7d 9 May 2012
 GIAEntityNode * getEntityPropertyThatWasDeclaredInContext(GIAEntityNode * entityNode);			//current textual context (eg current paragraph) 	//added 1j7g 9 May 2012
+
+void fowardTimeInfoToNewProperty(GIAEntityNode * entity, GIAEntityNode * newProperty);
 
 #endif
