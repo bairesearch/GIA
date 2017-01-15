@@ -26,7 +26,7 @@
  * File Name: GIAxmlConversion.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2o8a 25-October-2016
+ * Project Version: 2o8b 25-October-2016
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  * NB this function creates entity idActiveListReorderdIDforXMLsave values upon write to speed up linking process (does not use original idActiveList values)
  * NB this function creates entity idActiveList values upon read (it could create idActiveListReorderdIDforXMLsave values instead - however currently it is assumed that when an XML file is loaded, this will populate the idActiveList in its entirety)
@@ -311,6 +311,7 @@ bool parseEntityNodeTag(XMLparserTag* firstTagInEntityNode, GIAentityNode* entit
 	bool grammaticalNumberFound = false;
 	#ifdef GIA_XML_RECORD_ADDITIONAL_VARIABLES
 	bool grammaticalTenseModifierArrayTempFound = false;
+	bool grammaticalTenseTempFound = false;
 	bool grammaticalDefiniteTempFound = false;
 	bool grammaticalIndefinitePluralTempFound = false;
 	bool grammaticalProperNounTempFound = false;
@@ -536,6 +537,12 @@ bool parseEntityNodeTag(XMLparserTag* firstTagInEntityNode, GIAentityNode* entit
 				convertStringToBooleanArray(attributeValue, entityNode->grammaticalTenseModifierArrayTemp, GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES);
 				grammaticalTenseModifierArrayTempFound = true;
 			}
+			else if(currentAttribute->name == NET_XML_ATTRIBUTE_grammaticalTenseTemp)
+			{
+				string attributeValue = currentAttribute->value;
+				entityNode->grammaticalTenseTemp = convertStringToInt(currentAttribute->value);
+				grammaticalTenseTempFound = true;
+			}
 			else if(currentAttribute->name == NET_XML_ATTRIBUTE_grammaticalDefiniteTemp)
 			{
 				int attributeValue = convertStringToInt(currentAttribute->value);
@@ -742,6 +749,11 @@ bool parseEntityVectorConnectionNodeListTag(XMLparserTag* firstTagInEntityVector
 			#ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
 			bool isAliasFound = false;
 			#endif
+			#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC_RECORD_AUX_INFO
+			bool negativeFound = false;
+			bool grammaticalTenseModifierArrayTempFound = false;
+			bool grammaticalTenseTempFound = false;
+			#endif
 			#endif
 
 			while(currentAttribute->nextAttribute != NULL)
@@ -800,6 +812,26 @@ bool parseEntityVectorConnectionNodeListTag(XMLparserTag* firstTagInEntityVector
 					#ifdef GIA_SEMANTIC_NET_XML_DEBUG
 					//cout << "connection idActiveList = " << idActiveList << endl;
 					#endif
+				}
+				#endif
+				#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC_RECORD_AUX_INFO
+				else if(currentAttribute->name == NET_XML_ATTRIBUTE_negative)
+				{
+					bool attributeValue = convertStringToInt(currentAttribute->value);
+					newConnection->negative = attributeValue;
+					negativeFound = true;
+				}
+				else if(currentAttribute->name == NET_XML_ATTRIBUTE_grammaticalTenseModifierArrayTemp)
+				{
+					string attributeValue = currentAttribute->value;
+					convertStringToBooleanArray(attributeValue, newConnection->grammaticalTenseModifierArrayTemp, GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES);
+					grammaticalTenseModifierArrayTempFound = true;
+				}
+				else if(currentAttribute->name == NET_XML_ATTRIBUTE_grammaticalTenseTemp)
+				{
+					string attributeValue = currentAttribute->value;
+					newConnection->grammaticalTenseTemp = convertStringToInt(currentAttribute->value);
+					grammaticalTenseTempFound = true;
 				}
 				#endif
 				#endif
@@ -1240,6 +1272,10 @@ XMLparserTag* generateXMLentityNodeTag(XMLparserTag* currentTagL1, GIAentityNode
 	currentAttribute->value = convertBooleanArrayToString(currentEntity->grammaticalTenseModifierArrayTemp, GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES);
 	currentAttribute = createNewAttribute(currentAttribute);
 
+	currentAttribute->name = NET_XML_ATTRIBUTE_grammaticalTenseTemp;
+	currentAttribute->value = convertIntToString(int(currentEntity->grammaticalTenseTemp));
+	currentAttribute = createNewAttribute(currentAttribute);
+
 	currentAttribute->name = NET_XML_ATTRIBUTE_grammaticalDefiniteTemp;
 	currentAttribute->value = convertIntToString(int(currentEntity->grammaticalDefiniteTemp));
 	currentAttribute = createNewAttribute(currentAttribute);
@@ -1373,6 +1409,20 @@ XMLparserTag* generateXMLentityNodeTag(XMLparserTag* currentTagL1, GIAentityNode
 						#ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
 						currentAttribute->name = NET_XML_ATTRIBUTE_isAlias;
 						currentAttribute->value = convertIntToString(int(connection->isAlias));
+						currentAttribute = createNewAttribute(currentAttribute);
+						#endif
+						
+						#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC_RECORD_AUX_INFO
+						currentAttribute->name = NET_XML_ATTRIBUTE_grammaticalTenseModifierArrayTemp;
+						currentAttribute->value = convertBooleanArrayToString(currentEntity->grammaticalTenseModifierArrayTemp, GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES);
+						currentAttribute = createNewAttribute(currentAttribute);
+					
+						currentAttribute->name = NET_XML_ATTRIBUTE_grammaticalTenseTemp;
+						currentAttribute->value = convertIntToString(int(currentEntity->grammaticalTenseTemp));
+						currentAttribute = createNewAttribute(currentAttribute);
+						
+						currentAttribute->name = NET_XML_ATTRIBUTE_negative;
+						currentAttribute->value = convertIntToString(int(currentEntity->negative));
 						currentAttribute = createNewAttribute(currentAttribute);
 						#endif
 

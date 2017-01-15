@@ -26,7 +26,7 @@
  * File Name: GIAxmlConversion.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2o8a 25-October-2016
+ * Project Version: 2o8b 25-October-2016
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  *
  *******************************************************************************/
@@ -182,6 +182,7 @@ static string entityTypeNodeContainerXMLtags[GIA_ENTITY_NUMBER_OF_TYPES] = {NET_
 #define NET_XML_ATTRIBUTE_isAlias ((string)"isAlias")	//this is only used for NLC
 #endif
 #define NET_XML_ATTRIBUTE_grammaticalTenseModifierArrayTemp ((string)"grammaticalTenseModifierArrayTemp")	//this is only used for NLC
+#define NET_XML_ATTRIBUTE_grammaticalTenseTemp ((string)"grammaticalTenseTemp")	//this is only used for NLC
 #endif
 
 #ifdef GIA_LRP_NORMALISE_PREPOSITIONS
@@ -195,6 +196,7 @@ static string entityTypeNodeContainerXMLtags[GIA_ENTITY_NUMBER_OF_TYPES] = {NET_
 #endif
 #endif
 #endif
+
 
 static string entityVectorConnectionXMLtagNameArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {NET_XML_TAG_ActionNodeList, NET_XML_TAG_IncomingActionNodeList, NET_XML_TAG_ConditionNodeList, NET_XML_TAG_IncomingConditionNodeList, NET_XML_TAG_SubstanceNodeList, NET_XML_TAG_SubstanceNodeReverseList, NET_XML_TAG_EntityNodeDefinitionList, NET_XML_TAG_EntityNodeDefinitionReverseList, NET_XML_TAG_AssociatedSubstanceNodeList, NET_XML_TAG_actionSubjectEntity, NET_XML_TAG_actionObjectEntity, NET_XML_TAG_conditionSubjectEntity, NET_XML_TAG_conditionObjectEntity, NET_XML_TAG_entityNodeDefiningThisSubstance};
 static string entityVectorConnectionXMLtagNameCrossReferenceNodeTypeArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {NET_XML_TAG_actionNodeReference, NET_XML_TAG_actionNodeReference, NET_XML_TAG_conditionNodeReference, NET_XML_TAG_conditionNodeReference, NET_XML_TAG_entityNodeReference, NET_XML_TAG_entityNodeReference, NET_XML_TAG_entityNodeReference, NET_XML_TAG_entityNodeReference, NET_XML_TAG_entityNodeReference, NET_XML_TAG_entityNodeReference, NET_XML_TAG_entityNodeReference, NET_XML_TAG_entityNodeReference, NET_XML_TAG_entityNodeReference, NET_XML_TAG_entityNodeReference};
