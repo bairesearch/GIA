@@ -23,7 +23,7 @@
  * File Name: GIAxmlConversion.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t8d 31-August-2013
+ * Project Version: 1t9a 14-Sept-2013
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  * NB this function creates entity idActiveListReorderdIDforXMLsave values upon write to speed up linking process (does not use original idActiveList values)
  * NB this function creates entity idActiveList values upon read (it could create idActiveListReorderdIDforXMLsave values instead - however currently it is assumed that when an XML file is loaded, this will populate the idActiveList in its entirety)
@@ -549,6 +549,10 @@ bool parseEntityNodeTag(XMLparserTag * firstTagInEntityNode, GIAentityNode * ent
 	bool printTextXFound = false;
 	bool printTextYFound = false;
 
+	#ifdef USE_NLPI
+	bool sentenceIndexFound = false;
+	#endif
+	
 	bool entityVectorConnectionNodeFoundArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];
 	for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
 	{
@@ -784,6 +788,15 @@ bool parseEntityNodeTag(XMLparserTag * firstTagInEntityNode, GIAentityNode * ent
 			entityNode->printCoordsAlreadyDefined = true;
 		}
 
+		#ifdef USE_NLPI
+		else if(currentAttribute->name == NET_XML_ATTRIBUTE_sentenceIndex)
+		{
+			int attributeValue = atoi(currentAttribute->value.c_str());
+			entityNode->sentenceIndexTemp = attributeValue;
+			sentenceIndexFound = true;
+		}
+		#endif
+		
 		currentAttribute = currentAttribute->nextAttribute;
 	}
 
@@ -1474,6 +1487,15 @@ XMLparserTag * generateXMLentityNodeTag(XMLparserTag * currentTagL1, GIAentityNo
 	}
 	#endif
 
+	#ifdef USE_NLPI
+	currentAttribute->name = NET_XML_ATTRIBUTE_sentenceIndex;
+	sprintf(tempString, "%d", (currentEntity->sentenceIndexTemp));
+	currentAttribute->value = tempString;
+
+	newAttribute = new XMLParserAttribute();
+	currentAttribute->nextAttribute = newAttribute;
+	currentAttribute = currentAttribute->nextAttribute;
+	#endif
 
 	XMLparserTag * firstTagL3;
 	XMLparserTag * currentTagL3;

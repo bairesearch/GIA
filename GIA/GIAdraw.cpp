@@ -23,7 +23,7 @@
  * File Name: GIAdraw.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t8d 31-August-2013
+ * Project Version: 1t9a 14-Sept-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -226,7 +226,9 @@ Reference * initialiseEntityConnectionForPrinting(vec * pos1, GIAentityConnectio
 	if(!(entityNodeToConnect->disabled))
 	#endif
 	{
+		#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX_ADVANCED
 		entityConnection->initialisedForPrinting = true;
+		#endif
 		
 		//may accidentially overwrite adjacent nodes that have already been printed here; be careful...
 		vec pos2;

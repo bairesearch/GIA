@@ -23,7 +23,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1t8d 31-August-2013
+ * Project Version: 1t9a 14-Sept-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -672,6 +672,9 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	//if(!linkPreestablishedReferencesGIA)	//this condition has been disabled for debugging purposes
 	//{
+		#ifdef GIA_TRANSLATOR_DEBUG
+		cout << "pass 1e; fill Explicit Reference Same Set Tags" << endl;
+		#endif	
 		//identify explicit same set linkages
 		//eg "the guy that robbed the bank" in "the guy that robbed the bank is tall"
 		fillExplicitReferenceSameSetTags(currentSentenceInList);
@@ -731,6 +734,10 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 	}
 	#endif
 #endif
+
+	#ifdef GIA_TRANSLATOR_DEBUG
+	cout << "pass 4; disable Concept Entities Based On Feature Temp Entity Node Array" << endl;
+	#endif
 	//transfer disabled substances across execution#1 [this is required since GIAtranslatorRedistributeStanfordRelations operations are now done on temporary entity nodes GIAfeatureTempEntityNodeArray instead of concept entity nodes {whose values would have been automatically transferred their instances upon creation}...]
 	disableConceptEntitiesBasedOnFeatureTempEntityNodeArray(GIAentityNodeArrayFilled, GIAconceptNodeArray, GIAfeatureTempEntityNodeArray);
 
@@ -775,9 +782,16 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 
 	#ifdef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES	// or GIA_USE_GENERIC_ENTITY_INTERPRETATION
  	//this is required as GIAtranslatorDefineSubstances.cpp now relies on entity grammar values rather than featureArrayTemp
+	#ifdef GIA_TRANSLATOR_DEBUG
+	cout << "pass 5 [execution#2]; apply Grammatical Info To All Entities" << endl;
+	#endif	
 	applyGrammaticalInfoToAllEntities(GIAentityNodeArrayFilled, GIAentityNodeArray, currentSentenceInList->firstFeatureInList);
 	#endif
 
+	#ifdef GIA_TRANSLATOR_DEBUG
+	cout << "pass B:" << endl;
+	#endif
+	
 	#ifdef GIA_TRANSLATOR_XML_INTERPRETATION
 	applyGIATranslatorGenericXMLfunctions("GIAtranslatorDefineSubstances", currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, NULL, featureArrayTemp, NLPdependencyRelationsType, NLPfeatureParser, linkPreestablishedReferencesGIA);
 	#else
@@ -813,12 +827,14 @@ void convertSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentity
 	#endif
 	#endif
 
+	#ifndef GIA_USE_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES	// or GIA_USE_GENERIC_ENTITY_INTERPRETATION
 	//this function has been shifted, and applied to entity instances, not the concept entity array...
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "pass 1a [execution#2]; apply Grammatical Info To All Entities" << endl;
 	#endif
  	applyGrammaticalInfoToAllEntities(GIAentityNodeArrayFilled, GIAentityNodeArray, currentSentenceInList->firstFeatureInList);
-
+	#endif
+	
 	/*
 	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
 	{
