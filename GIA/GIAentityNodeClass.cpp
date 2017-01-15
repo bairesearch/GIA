@@ -243,7 +243,7 @@ GIAentityNode::GIAentityNode(void)
 	
 	#ifdef USE_NLPI
 	parsedForNLPIcodeBlocks = false;
-	parsedForNLPIclassHeirarchy = false;
+	//parsedForNLPIclassHeirarchy = false;
 	#endif	
 }
 GIAentityNode::~GIAentityNode(void)
