@@ -252,6 +252,7 @@ GIAentityNode::GIAentityNode(void)
 	//parsedForNLCclassHeirarchy = false;
 	NLCisSingularArgument = false;
 	NLClocalListVariableHasBeenDeclared = false;
+	NLClocalListVariableHasBeenInitialised = false;
 	NLCconditionLogicalOperations = false;
 	NLCconjunctionCondition = false;
 	NLClogicalConditionConjunctionIndex = INT_DEFAULT_VALUE;

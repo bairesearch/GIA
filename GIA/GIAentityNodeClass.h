@@ -444,7 +444,8 @@ public:
 	//bool parsedForNLCcodeBlocksActionRound;
 	//bool parsedForNLCclassHeirarchy;
 	bool NLCisSingularArgument;
-	bool NLClocalListVariableHasBeenDeclared;
+	bool NLClocalListVariableHasBeenDeclared;	//added NLC 1g8a 11-July-2014
+	bool NLClocalListVariableHasBeenInitialised;	//renamed NLC 1g8a 11-July-2014
 	bool NLCconditionLogicalOperations;
 	bool NLCconjunctionCondition;
 	int NLClogicalConditionConjunctionIndex;
