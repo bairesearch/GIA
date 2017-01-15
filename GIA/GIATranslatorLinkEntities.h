@@ -23,7 +23,7 @@
  * File Name: GIATranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q6b 28-October-2012
+ * Project Version: 1q6c 28-October-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -49,6 +49,7 @@ using namespace std;
 #include "GIAEntityNodeClass.h"
 #include "GIAEntityConnectionClass.h"
 #include "GIAConditionNodeClass.h"
+
 
 //1-3
 void linkPropertiesPossessiveRelationships(Sentence * currentSentenceInList, GIAEntityNode * GIAEntityNodeArray[]);								//Stanford Compatible
@@ -78,6 +79,5 @@ bool determineFeatureIndexOfPreposition(Sentence * currentSentenceInList, string
 #ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_3B_PREPOSITIONS_REDUCTION
 string performPrepositionReduction(string relationType);
 #endif
-
 
 #endif

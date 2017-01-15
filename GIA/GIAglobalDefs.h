@@ -23,7 +23,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q6b 28-October-2012
+ * Project Version: 1q6c 28-October-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -515,6 +515,7 @@
 
 //variables currently being tested (1o1a+)
 
+
 #define GIA_SUPPORT_SPECIFIC_CONCEPTS	//added 1q4a to take into account specific concepts eg 'red bears' as opposed to 'bears' //eg Red dogs are bad animals. / A blue chicken is a happy bird.
 	//NB the phrase 'substance concept'/'substance quality' is a misnomer, as concepts and qualities are not really substances [NB concepts are considered secondary substances in Aristotle's categories, but GIA has a separate Entity class for concepts marked by isConcept: which is confusingly not being used in this case of 'specific concepts' - a software development/history artefact]" << endl;
 	
@@ -555,6 +556,7 @@
 
 #define GIA_USE_LRP
 #ifdef GIA_USE_LRP
+	#define GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS	//added 28 October 2012b - requires GIA_USE_LRP
 	//#define GIA_LRP_DISABLE_REDISTRIBUTE_RELATIONS_POST_NLP_MULTIWORD_PREPOSITION_REDUCTION
 #endif
 
@@ -619,10 +621,10 @@
 //#define GIA_ALIASES_DEBUG
 //#define GIA_ADVANCED_REFERENCING_DEBUG  	  //just finished first debug using this (1l5f)
 //#define GIA_QUERY_DEBUG
+//#define GIA_QUERY_MULTIPLE_ANSWERS_DEBUG      //just finished first debug using this (1l2a)
 //#define GIA_STANFORD_CORENLP_CODEPENDENCY_PRONOMINAL_REFERENCING_DEBUG
 //#define GIA_DATABASE_DEBUG_FILESYSTEM_IO
 //#define GIA_DATABASE_DEBUG		  //this needs to be debugged (not yet tested)
-//#define GIA_QUERY_MULTIPLE_ANSWERS_DEBUG      //just finished first debug using this (1l2a)
 //#define GIA_REDISTRIBUTE_STANFORD_RELATIONS_QUERY_VARIABLE_DEBUG
 //#define GIA_REDISTRIBUTE_STANFORD_RELATIONS_QUERY_VARIABLE_DEBUG_DO_NOT_MAKE_FINAL_CHANGES_YET
 //#define GIA_OUTPUT_INTERNAL_RELATIONS_IN_RELEX_FORMAT_DEBUG

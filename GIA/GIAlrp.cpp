@@ -23,7 +23,7 @@
  * File Name: GIAlrp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q6b 28-October-2012
+ * Project Version: 1q6c 28-October-2012
  * Requirements: requires plain text file
  * Description: Language Reduction Preprocessor
  *
@@ -253,7 +253,8 @@ bool loadIrregularVerbList(string irregularVerbListFileName, GIALRPtag * firstTa
 				if(currentToken == CHAR_NEWLINE)
 				{
 					currentTagInIrregularVerbList->nextSentence = new GIALRPtag();
-					currentTagInIrregularVerbList = currentTagInIrregularVerbList->nextSentence;				
+					currentTagInIrregularVerbList = currentTagInIrregularVerbList->nextSentence;	
+					currentTagInIrregularVerb = currentTagInIrregularVerbList;			
 				}
 
 				wordIndex = 0;
@@ -1768,3 +1769,63 @@ string convertStringToLowerCase(string * arbitraryCaseString)
 	}
 	return lowerCaseString;
 }
+
+
+
+#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS
+//NB determineIfWordIsIrregularVerbContinuousCaseWrapper() could be used instead of determineIfWordIsVerbContinuousCase(), as Stanford only has a problem identifying verbs (pos tag "VBG") when they are irregular varbs
+bool determineIfWordIsIrregularVerbContinuousCaseWrapper(string word, string * baseNameFound)
+{
+	bool result = true;
+	bool foundIrregularVerbContinuousCase = false;
+	string irregularVerbListFileName = lrpDataFolderName + GIA_LRP_IRREGULARVERB_DATABASE_FILE_NAME;
+	GIALRPtag * firstTagInIrregularVerbList = new GIALRPtag();
+	if(!loadIrregularVerbList(irregularVerbListFileName, firstTagInIrregularVerbList))
+	{
+		cout << "!loadIrregularVerbList (OpenGIA with GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS requires -lrpfolder to be set): irregularVerbListFileName = " << irregularVerbListFileName << endl;
+		result = false;
+	}
+	else
+	{
+		foundIrregularVerbContinuousCase = determineIfWordIsIrregularVerbContinuousCase(word, firstTagInIrregularVerbList, baseNameFound);
+	}
+	return foundIrregularVerbContinuousCase;
+}	
+
+
+bool determineIfWordIsIrregularVerbContinuousCase(string word, GIALRPtag * firstTagInIrregularVerbList, string * baseNameFound)
+{
+	bool foundIrregularVerbContinuousCase = false;
+
+	bool irregularVerbFound = false;
+	GIALRPtag * currentTagInIrregularVerbList = firstTagInIrregularVerbList;
+	while(currentTagInIrregularVerbList->nextSentence != NULL)
+	{
+		//cout << "currentTagInIrregularVerbList->tagName = " << currentTagInIrregularVerbList->tagName << endl;
+		
+		string irregularVerbBaseForm = currentTagInIrregularVerbList->tagName;
+		int irregularVerbBaseFormLength = irregularVerbBaseForm.length();
+				
+		string baseWithLastLetterDropped = irregularVerbBaseForm.substr(0, irregularVerbBaseFormLength-1);
+		#ifdef GIA_LRP_DEBUG
+		//cout << "baseWithLastLetterDropped = " << baseWithLastLetterDropped << endl;
+		#endif
+
+		string irregularVerbContinuousForm1 =  irregularVerbBaseForm + GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND;
+		string irregularVerbContinuousForm2 = baseWithLastLetterDropped + GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND;
+
+		if((word == irregularVerbContinuousForm1) || (word == irregularVerbContinuousForm2))
+		{
+			//cout << "foundIrregularVerbContinuousCase" << endl;
+			//cout << "irregularVerbBaseForm = " << irregularVerbBaseForm << endl;
+			foundIrregularVerbContinuousCase = true;
+			*baseNameFound = irregularVerbBaseForm;
+		}
+		
+		currentTagInIrregularVerbList = currentTagInIrregularVerbList->nextSentence;
+	}
+
+	return foundIrregularVerbContinuousCase;
+}
+#endif
+

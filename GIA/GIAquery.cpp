@@ -23,7 +23,7 @@
  * File Name: GIAquery.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q6b 28-October-2012
+ * Project Version: 1q6c 28-October-2012
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  * ?Limitations: will only locate a exact answer (based upon a comparison node) if it provides the maximum number of matched nodes
@@ -142,6 +142,9 @@ GIAEntityNode * answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanti
 
 		#ifdef GIA_QUERY_DEBUG
 		cout << "\n\t\t\t**********************Query Trace Start: entityIterQuery->second->entityName = " << entityIterQuery->second->entityName << endl;
+		#endif
+		#ifdef GIA_QUERY_MULTIPLE_ANSWERS_DEBUG
+		cout << "\n\t\t\t**********************Query Trace Start: entityIterQuery->second->entityName = " << entityIterQuery->second->entityName << endl;	
 		#endif
 		GIAEntityNode* currentQueryEntityNode = entityIterQuery->second;
 
@@ -1751,6 +1754,12 @@ bool compareEntityAliases(GIAEntityNode * queryEntityNode, GIAEntityNode * entit
 	{
 		if(*aliasIterQuery == entityNode->entityName)
 		{
+			/*
+			if(queryEntityNode->entityName == "making")
+			{
+				cout << "entityNode->entityName = " << entityNode->entityName << endl;
+			}	
+			*/	
 			aliasMatchFound = true;
 		}
 	}

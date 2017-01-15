@@ -23,7 +23,7 @@
  * File Name: GIATranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q6b 28-October-2012
+ * Project Version: 1q6c 28-October-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -34,6 +34,7 @@
 #include "GIATranslatorLinkEntities.h"
 #include "GIATranslatorOperations.h"
 #include "GIAdatabase.h"
+
 
 
 
@@ -518,14 +519,14 @@ void linkSubjectOrObjectRelationships(Sentence * currentSentenceInList, GIAEntit
 							{//eg the bow was fired
 
 								#ifdef GIA_USE_ADVANCED_REFERENCING
-								bool sameReferenceSetSubject = determineSameReferenceSetValue(DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_ACTIONS, currentRelationInList);
+								bool sameReferenceSetObject = determineSameReferenceSetValue(DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_ACTIONS, currentRelationInList);
 								#else
-								bool sameReferenceSetSubject = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
+								bool sameReferenceSetObject = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
 								#endif
 
 								//added 1 May 11a (assign actions to instances (substances) of entities and not entities themselves where appropriate)
 								GIAEntityNode * objectEntityTemp = subjectObjectEntity;
-								GIAEntityNodeArray[actionIndex] = addOrConnectActionToObject(objectEntityTemp, actionEntity, sameReferenceSetSubject);
+								GIAEntityNodeArray[actionIndex] = addOrConnectActionToObject(objectEntityTemp, actionEntity, sameReferenceSetObject);
 							}
 
 						}
@@ -1631,57 +1632,59 @@ void linkConditions(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFil
 			{
 			#endif
 			*/
-			#ifdef GIA_TRANSLATOR_INTERPRET_OF_AS_POSSESSIVE
-				#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_3A_PREPOSITIONS_INTERPRET_PREPOSITION_OF_AS_EITHER_CONDITION_OR_SUBSTANCE_LINK_DEPENDING_UPON_ACTION_OR_SUBSTANCE
-				bool stanfordPrepositionFound = false;
-				if(convertStanfordPrepositionToRelex(&relationType, NLPdependencyRelationsType, &stanfordPrepositionFound) == RELATION_TYPE_OF)
+			
+			#ifdef GIA_TRANSLATOR_INTERPRET_OF_AS_POSSESSIVE_FOR_SUBSTANCES
+			#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_3A_PREPOSITIONS_INTERPRET_PREPOSITION_OF_AS_EITHER_CONDITION_OR_SUBSTANCE_LINK_DEPENDING_UPON_ACTION_OR_SUBSTANCE
+			bool stanfordPrepositionFound = false;
+			if(convertStanfordPrepositionToRelex(&relationType, NLPdependencyRelationsType, &stanfordPrepositionFound) == RELATION_TYPE_OF)
+			{
+				bool foundAction = false;
+
+				//this section was completely changed (perhaps fixed) in version 10 May 2012 - test this...
+				if(actionOrSubstanceEntity->isAction)
 				{
-					passed = false;
-
-					//this section was completely changed (perhaps fixed) in version 10 May 2012 - test this...
-					if(actionOrSubstanceEntity->isAction)
-					{
-						/*Relex:
-						NB not in this case "She grew tired of the pie."
-						of(tired[3], pie[6])
-						_to-be(grow[2], tired[3])
-						_subj(grow[2], she[1])
-						*/
-						/*Stanford:
-						prep_of(grew-2, pie-6)
-						acomp(grew-2, tired-3)
-						nsubj(grew-2, She-1)
-						*/
-
-						passed = true;
-					}
-
-					/*full list parse not necessarily, as only concerned about how the node has been defined within the given context/sentence
-					vector<GIAEntityNode*>::iterator entityIter;
-					for(entityIter = entityNode->PropertyNodeReverseList.begin(); entityIter != entityNode->PropertyNodeReverseList.end(); entityIter++)
-					{
-						...
-						currentReferenceInPrintList = initialiseEntityNodeForPrinting((*entityIter), y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
-
-					}
+					/*Relex:
+					NB not in this case "She grew tired of the pie."
+					of(tired[3], pie[6])
+					_to-be(grow[2], tired[3])
+					_subj(grow[2], she[1])
+					*/
+					/*Stanford:
+					prep_of(grew-2, pie-6)
+					acomp(grew-2, tired-3)
+					nsubj(grew-2, She-1)
 					*/
 
-					if(!passed)
-					{
-						/*
-						NB this case "The house of Kriton is blue." should create 2 substance connections (not just 1)
-						of(house[2], Kriton[4])
-						_predadj(house[2], blue[6])
-						*/
-						#ifdef GIA_USE_ADVANCED_REFERENCING
-						bool sameReferenceSet = determineSameReferenceSetValue(DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_CONDITIONS, currentRelationInList);
-						#else
-						bool sameReferenceSet = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
-						#endif
-						GIAEntityNodeArray[actionOrSubstanceIndex] = addOrConnectPropertyToEntityAddOnlyIfOwnerIsProperty(actionOrSubstanceConditionEntity, actionOrSubstanceEntity, sameReferenceSet);
-					}
+					foundAction = true;
 				}
-				#endif
+
+				/*full list parse not necessarily, as only concerned about how the node has been defined within the given context/sentence
+				vector<GIAEntityNode*>::iterator entityIter;
+				for(entityIter = entityNode->PropertyNodeReverseList.begin(); entityIter != entityNode->PropertyNodeReverseList.end(); entityIter++)
+				{
+					...
+					currentReferenceInPrintList = initialiseEntityNodeForPrinting((*entityIter), y+q, x+r, initialiseOrPrint, currentReferenceInPrintList, writeFileObject);
+
+				}
+				*/
+
+				if(!foundAction)
+				{
+					/*
+					NB this case "The house of Kriton is blue." should create 2 substance connections (not just 1)
+					of(house[2], Kriton[4])
+					_predadj(house[2], blue[6])
+					*/
+					#ifdef GIA_USE_ADVANCED_REFERENCING
+					bool sameReferenceSet = determineSameReferenceSetValue(DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_CONDITIONS, currentRelationInList);
+					#else
+					bool sameReferenceSet = IRRELVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
+					#endif
+					GIAEntityNodeArray[actionOrSubstanceIndex] = addOrConnectPropertyToEntityAddOnlyIfOwnerIsProperty(actionOrSubstanceConditionEntity, actionOrSubstanceEntity, sameReferenceSet);
+					passed = false;				
+				}
+			}
+			#endif
 			#endif
 			/*
 			#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE_THAT_IS_PROBABLY_STANFORD_COMPATIBLE
@@ -2052,4 +2055,5 @@ GIAEntityNode * addGenericConditionToEntity(GIAEntityNode * substanceNode, GIAEn
 
 	return addOrConnectConditionToEntity(substanceNode, substanceConditionEntity, conditionTypeConceptEntity, sameReferenceSet);
 }
+
 

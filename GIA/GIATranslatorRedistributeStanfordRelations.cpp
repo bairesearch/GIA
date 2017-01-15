@@ -23,7 +23,7 @@
  * File Name: GIATranslatorRedistributeStanfordRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1q6b 28-October-2012
+ * Project Version: 1q6c 28-October-2012
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIATimeConditionNode/timeConditionNumbersActiveList with a map
@@ -33,7 +33,9 @@
 
 #include "GIATranslatorRedistributeStanfordRelations.h"
 #include "GIATranslatorOperations.h"
-
+#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS
+	#include "GIAlrp.h"
+#endif
 
 
 #ifdef GIA_USE_STANFORD_CORENLP
@@ -1060,7 +1062,7 @@ void redistributeStanfordRelationsMultiwordPreposition(Sentence * currentSentenc
 
 
 
-#ifdef GIA_REDISTRIBUTE_RELATIONS_INTERPRET_OF_AS_POSSESSIVE
+#ifdef GIA_REDISTRIBUTE_RELATIONS_INTERPRET_OF_AS_POSSESSIVE_FOR_SUBSTANCES
 void redistributeStanfordRelationsInterpretOfAsPossessive(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[])
 {
 	//eg The ball of the red dog is green..   prep_of(ball-2, dog-6) ->  poss(ball-5, dog-3)
@@ -1166,7 +1168,7 @@ void redistributeStanfordRelationsCreateQueryVarsWhatIsTheNameNumberOf(Sentence 
 												{
 												#endif
 
-													#ifdef GIA_REDISTRIBUTE_RELATIONS_INTERPRET_OF_AS_POSSESSIVE
+													#ifdef GIA_REDISTRIBUTE_RELATIONS_INTERPRET_OF_AS_POSSESSIVE_FOR_SUBSTANCES
 													if(currentRelationInList3->relationType == RELATION_TYPE_POSSESSIVE)
 													#else
 													bool stanfordPrepositionFound = false;
@@ -1287,7 +1289,7 @@ void redistributeStanfordRelationsInterpretNameOfAsDefinition(Sentence * current
 						if(!(currentRelationInList2->disabled))
 						{
 						//#endif
-							#ifdef GIA_REDISTRIBUTE_RELATIONS_INTERPRET_OF_AS_POSSESSIVE
+							#ifdef GIA_REDISTRIBUTE_RELATIONS_INTERPRET_OF_AS_POSSESSIVE_FOR_SUBSTANCES
 							if(currentRelationInList2->relationType == RELATION_TYPE_POSSESSIVE)
 							#else
 							bool stanfordPrepositionFound = false;
@@ -2759,6 +2761,125 @@ void redistributeStanfordRelationsCreateQueryVarsAdjustForActionPrepositionActio
 		currentRelationInList = currentRelationInList->next;
 	}
 }
+
+
+#ifdef GIA_TRANSLATOR_INTERPRET_OF_AS_OBJECT_FOR_CONTINUOUS_VERBS
+//Added 28 October 2012b
+void redistributeStanfordRelationsInterpretOfAsObjectForContinuousVerbs(Sentence * currentSentenceInList, bool GIAEntityNodeArrayFilled[], GIAEntityNode * GIAEntityNodeArray[], int NLPdependencyRelationsType)
+{
+	//eg What is wood used in the delivering of?   interpret prep_of(xing, y) as obj(xing, y) )
+
+	Relation * currentRelationInList = currentSentenceInList->firstRelationInList;
+	while(currentRelationInList->next != NULL)
+	{
+		//#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		if(!(currentRelationInList->disabled))	//required to prevent re-interpretation of prepositions in main preposition interpretation function createConditionBasedUponPreposition
+		{
+		//#endif
+		
+			int actionOrSubstanceIndex = currentRelationInList->relationGovernorIndex;
+			int actionOrSubstanceConditionIndex = currentRelationInList->relationDependentIndex;
+			string relationType = currentRelationInList->relationType;
+			GIAEntityNode * actionOrSubstanceEntity = GIAEntityNodeArray[actionOrSubstanceIndex];
+			GIAEntityNode * actionOrSubstanceConditionEntity = GIAEntityNodeArray[actionOrSubstanceConditionIndex];		
+
+			bool stanfordPrepositionFound = false;
+			if(convertStanfordPrepositionToRelex(&relationType, NLPdependencyRelationsType, &stanfordPrepositionFound) == RELATION_TYPE_OF)
+			{
+				#ifdef GIA_TRANSLATOR_INTERPRET_OF_AS_OBJECT_FOR_CONTINUOUS_VERBS
+				//cout << "actionOrSubstanceEntity->stanfordPOSTemp = " << actionOrSubstanceEntity->stanfordPOSTemp << endl;
+				//cout << "actionOrSubstanceEntity->wordNetPOS = " << actionOrSubstanceEntity->wordNetPOS << endl;				
+				bool foundContinuousVerb = false;
+				if(actionOrSubstanceEntity->stanfordPOSTemp == FEATURE_POS_TAG_VBG)
+				//if(actionOrSubstanceEntity->wordNetPOS == GRAMMATICAL_WORD_TYPE_VERB)
+				{
+					/*
+					Wood is used for delivering milk.
+					What is wood used in the delivering of?
+					NB delivering is correctly tagged as VBG by stanford CoreNLP (NN by Stanford Parser; and this incorrect value is recorded assuming STANFORD_PARSER_USE_POS_TAGS is set)
+					*/
+					//cout << "foundVerb1" << endl;
+					foundContinuousVerb = true;
+				}
+				else 
+				{
+					#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS
+					//cout << "NB: GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS requires GIA_USE_LRP to be defined and -lrpfolder to be set" << endl;					
+					string baseNameFound = "";
+					if(determineIfWordIsIrregularVerbContinuousCaseWrapper(actionOrSubstanceEntity->wordOrig, &baseNameFound))
+					{
+						//cout << "foundVerb2a" << endl;
+						/*
+						Wood is used for making milk.
+						What is wood used in the making of?
+						NB making is an irregular verb and will be tagged incorrectly by both Stanford coreNLP and Stanford Parser					
+						*/	
+						if(actionOrSubstanceEntity->wordOrig == actionOrSubstanceEntity->entityName)	//OR if(actionOrSubstanceEntity->entityName != baseNameFound)
+						{	
+							//change irregular verb name eg making to base irregular verb base name eg make
+							actionOrSubstanceEntity->entityName = baseNameFound;
+							currentRelationInList->relationGovernor = baseNameFound;
+						}
+						
+						foundContinuousVerb = true;
+					}
+					#endif	
+					#ifdef STANFORD_PARSER_USE_POS_TAGS			
+					if(determineIfWordIsVerbContinuousCase(&(actionOrSubstanceEntity->wordOrig)))	//OR &(currentRelationInList->relationGovernor)	//NB must use wordOrig as only wordOrig is guaranteed to still have "ing" attached - the word may be stripped by stanford corenlp in generation of the lemma 
+					{
+						//cout << "foundVerb2b" << endl;
+						/*
+						Wood is used for delivering milk.
+						What is wood used in the delivering of?
+												
+							Wood is used for making milk.
+							What is wood used in the making of?
+							NB making is an irregular verb and will be tagged incorrectly by both Stanford coreNLP and Stanford Parser	
+							still fails because "making" remains recorded as the lemma not "make"
+							a solution involves GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS									
+						*/					
+						foundContinuousVerb = true;
+					}
+					#endif
+					
+				}
+				
+				if(foundContinuousVerb)
+				{
+					currentRelationInList->relationType = RELATION_TYPE_OBJECT;				
+				}
+				#endif
+			}
+
+		//#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS
+		}
+		//#endif
+
+		currentRelationInList = currentRelationInList->next;
+	}
+}
+
+/*
+NB determineIfWordIsIrregularVerbContinuousCaseWrapper() could be used instead of determineIfWordIsVerbContinuousCase(), as Stanford CoreNLP only has a problem identifying verbs (pos tag "VBG") when they are irregular verbs. NB Stanford Parser appears to have a problem with all irregular continous verbs.
+*/
+bool determineIfWordIsVerbContinuousCase(string * word)
+{
+	bool foundVerbContinuousCase = false;
+	int wordStringLength = word->length();
+	//cout << "word = " << *word << endl;
+	//cout << "wordStringLength = " << wordStringLength << endl;
+	int wordTenseFormContinuousAppendLength = string(GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND).length();
+	string lastThreeLettersOfWord = word->substr(wordStringLength-wordTenseFormContinuousAppendLength, wordTenseFormContinuousAppendLength);
+	//cout << "wordTenseFormContinuousAppendLength = " << wordTenseFormContinuousAppendLength << endl;
+	//cout << "lastThreeLettersOfWord = " << lastThreeLettersOfWord << endl;
+	if(lastThreeLettersOfWord == GIA_LRP_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND)
+	{
+		foundVerbContinuousCase = true;
+	}
+	return foundVerbContinuousCase;
+}
+#endif
+
 
 #endif
 
