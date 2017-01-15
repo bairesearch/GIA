@@ -79,7 +79,10 @@ public:
 	bool isSubjectTemp;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
 	bool isObjectTemp;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
 	bool hasPropertyTemp;		//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
+	
 	//bool isReferenceEntityInThisSentence;	//temporary: used for GIA translator reference paser only - cleared every time a new sentence is parsed
+	bool entityAlreadyDeclaredInThisContext;	//temporary: used for GIA translator reference paser only - cleared every time a new context (eg paragraph/manuscript) is parsed
+
 	bool hasAssociatedPropertyTemp;	//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
 	bool hasAssociatedActionTemp;	//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
 	
