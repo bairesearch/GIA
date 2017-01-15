@@ -23,7 +23,7 @@
  * File Name: GIAentityNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2a3a 29-October-2013
+ * Project Version: 2a4a 09-November-2013
  * NB a substance is an instance of an entity, any given entity may contain/comprise/have multiple substances - and substances are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -101,8 +101,6 @@ using namespace std;
 #define GRAMMATICAL_NUMBER_SINGULAR_STRING "2"
 #define GRAMMATICAL_NUMBER_PLURAL_STRING "3"
 
-#define GRAMMATICAL_DEFINITE_UNDEFINED false
-#define GRAMMATICAL_DEFINITE true
 #define GRAMMATICAL_DEFINITE_NAME "definite"
 
 #define GRAMMATICAL_PERSON_UNDEFINED false
@@ -117,8 +115,6 @@ using namespace std;
 
 #define GRAMMATICAL_CATEGORY_UNDEFINED (0)
 
-#define GRAMMATICAL_PRONOUN_UNDEFINED false
-#define GRAMMATICAL_PRONOUN true
 #define GRAMMATICAL_PRONOUN_NAME "pronoun"
 
 //#define GRAMMATICAL_COUNT_UNDEFINED 0

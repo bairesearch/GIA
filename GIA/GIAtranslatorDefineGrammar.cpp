@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorDefineGrammar.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2a3a 29-October-2013
+ * Project Version: 2a4a 09-November-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -318,7 +318,14 @@ void fillGrammaticalArraysRelex(Sentence * currentSentenceInList)
 		}
 		if((currentFeatureInList->grammar).find(GRAMMATICAL_DEFINITE_NAME) != -1)
 		{
-			currentFeatureInList->grammaticalIsDefinite = GRAMMATICAL_DEFINITE;
+			#ifdef GIA_RELEX_FIX_DO_NOT_ASSIGN_DEFINITE_IF_UNCOUNTABLE
+			if(currentFeatureInList->grammaticalNumber != GRAMMATICAL_NUMBER_UNCOUNTABLE)
+			{
+			#endif
+				currentFeatureInList->grammaticalIsDefinite = true;
+			#ifdef GIA_RELEX_FIX_DO_NOT_ASSIGN_DEFINITE_IF_UNCOUNTABLE
+			}
+			#endif
 			#ifdef GIA_TRANSLATOR_DEBUG
 			//cout << "isDefinite currentFeatureInList->entityIndex = " << currentFeatureInList->entityIndex << endl;
 			#endif
@@ -351,7 +358,7 @@ void fillGrammaticalArraysRelex(Sentence * currentSentenceInList)
 
 		if((currentFeatureInList->grammar).find(GRAMMATICAL_PRONOUN_NAME) != -1)
 		{
-			currentFeatureInList->grammaticalIsPronoun = GRAMMATICAL_PRONOUN;
+			currentFeatureInList->grammaticalIsPronoun = true;
 			#ifdef GIA_TRANSLATOR_DEBUG
 			//cout << "isPronoun currentFeatureInList->entityIndex = " << currentFeatureInList->entityIndex << endl;
 			#endif
@@ -387,7 +394,7 @@ void fillGrammaticalArraysRelex(Sentence * currentSentenceInList)
 		#else
 		if((currentFeatureInList->grammar).find(GRAMMATICAL_PERSON_NAME) != -1)
 		{
-			currentFeatureInList->grammaticalIsProperNoun = GRAMMATICAL_PERSON;
+			currentFeatureInList->grammaticalIsProperNoun = true;
 			#ifdef GIA_TRANSLATOR_DEBUG
 			//cout << "isPerson currentFeatureInList->entityIndex = " << currentFeatureInList->entityIndex << endl;
 			#endif

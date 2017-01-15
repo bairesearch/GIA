@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2a3a 29-October-2013
+ * Project Version: 2a4a 09-November-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -375,7 +375,7 @@ void linkPronounReferencesRelex(Sentence * currentSentenceInList, bool GIAentity
 				#ifdef GIA_PRONOUN_REFERENCING_DEBUG
 				cout << "i = " << i << endl;
 				#endif
-				if(((currentGIAEntityNode->entityName == referenceTypePossessiveNameArray[i]) || (currentGIAEntityNode->entityName == referenceTypePersonNameArray[i])) && (currentGIAEntityNode->grammaticalPronounTemp == GRAMMATICAL_PRONOUN))
+				if(((currentGIAEntityNode->entityName == referenceTypePossessiveNameArray[i]) || (currentGIAEntityNode->entityName == referenceTypePersonNameArray[i])) && (currentGIAEntityNode->grammaticalPronounTemp))
 				{//pronoun required for currentGIAEntityNode
 					//cout << "currentGIAEntityNode->entityName = " << currentGIAEntityNode->entityName << endl;
 					//now go for a search in tree for given / this sentence + previous sentence until find candidate reference source
@@ -468,7 +468,7 @@ void linkPronounReferencesRelex(Sentence * currentSentenceInList, bool GIAentity
 										}
 
 
-										if(currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalPronounTemp == GRAMMATICAL_PRONOUN)
+										if(currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalPronounTemp)
 										{
 											#ifdef GIA_PRONOUN_REFERENCING_DEBUG
 											cout << "(currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalPronounTemp == GRAMMATICAL_PRONOUN)" << endl;

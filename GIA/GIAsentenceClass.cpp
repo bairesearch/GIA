@@ -23,7 +23,7 @@
  * File Name: GIAsentenceClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2a3a 29-October-2013
+ * Project Version: 2a4a 09-November-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -199,7 +199,7 @@ Feature::Feature(void)
 	grammaticalIsDefinite = false;
 	grammaticalIsProperNoun = false;
 	grammaticalGender = GRAMMATICAL_GENDER_UNDEFINED;
-	grammaticalIsPronoun = GRAMMATICAL_PRONOUN_UNDEFINED;
+	grammaticalIsPronoun = false;
 	grammaticalWordType = GRAMMATICAL_WORD_TYPE_UNDEFINED;
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	grammaticalIsDefiniteIndexOfDeterminer = GIA_ENTITY_INDEX_UNDEFINED;

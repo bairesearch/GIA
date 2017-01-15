@@ -23,7 +23,7 @@
  * File Name: GIAentityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2a3a 29-October-2013
+ * Project Version: 2a4a 09-November-2013
  *
  *******************************************************************************/
 
@@ -117,11 +117,11 @@ GIAentityNode::GIAentityNode(void)
 		grammaticalTenseModifierArrayTemp[grammaticalTenseModifierIndex] = false;
 	}
 	grammaticalTenseTemp = GRAMMATICAL_TENSE_UNDEFINED;
-	grammaticalDefiniteTemp = GRAMMATICAL_DEFINITE_UNDEFINED;
-	grammaticalProperNounTemp = GRAMMATICAL_PERSON_UNDEFINED;
+	grammaticalDefiniteTemp = false;
+	grammaticalProperNounTemp = false;
 	grammaticalGenderTemp = GRAMMATICAL_GENDER_UNDEFINED;
 	//grammaticalCountTemp = GRAMMATICAL_COUNT_UNDEFINED;
-	grammaticalPronounTemp = GRAMMATICAL_PRONOUN_UNDEFINED;
+	grammaticalPronounTemp = false;
 	#ifdef GIA_USE_ADVANCED_REFERENCING
 	grammaticalDefiniteIndexOfDeterminerTemp = GIA_ENTITY_INDEX_UNDEFINED;
 	#endif

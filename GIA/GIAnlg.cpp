@@ -23,7 +23,7 @@
  * File Name: GIAnlg.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2a3a 29-October-2013
+ * Project Version: 2a4a 09-November-2013
  * Requirements: requires GIA translated data, and NLG2 to be installed
  * Description: GIA natural language generation (using NLG2)
  *
@@ -1089,7 +1089,7 @@ string calcDeterminate(GIAentityNode * entityNode)
 	}
 
 	bool isPronoun = false;
-	if(entityNode->grammaticalPronounTemp == GRAMMATICAL_PRONOUN)
+	if(entityNode->grammaticalPronounTemp)
 	{
 		isPronoun = true;
 	}
