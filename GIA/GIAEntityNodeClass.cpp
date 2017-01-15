@@ -3,7 +3,7 @@
  * File Name: GIAEntityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n3a 19-July-2012
+ * Project Version: 1n4a 21-July-2012
  *
  *******************************************************************************/
 
@@ -188,13 +188,17 @@ GIAEntityNode::GIAEntityNode(void)
 	#endif
 
 	#ifdef GIA_USE_DATABASE
-	bool added = false;	//implies database Update is Required
-	bool modified = false;	//implies database Update is Required
+	added = false;		//implies database Update is Required		//CHECKTHIS removed 'bool' 21 July 2012
+	modified = false;	//implies database Update is Required		//CHECKTHIS removed 'bool' 21 July 2012
 
 	#ifndef GIA_USE_DATABASE_ALWAYS_LOAD_CONCEPT_NODE_REFERENCE_LISTS
 	conceptEntityLoaded = NULL;
 	#endif
 	#endif
+	
+	#ifdef GIA_USE_NLG
+	parsedForLanguageGeneration = false;
+	#endif	
 }
 GIAEntityNode::~GIAEntityNode(void)
 {

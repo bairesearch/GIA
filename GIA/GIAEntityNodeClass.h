@@ -3,7 +3,7 @@
  * File Name: GIAEntityNodeClass.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2012 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1n3a 19-July-2012
+ * Project Version: 1n4a 21-July-2012
  * NB a property is an instance of an entity, any given entity may contain/comprise/have multiple properties - and properties are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -30,15 +30,18 @@
 #include <utility> // make_pair	//required for GIA_USE_CONCEPT_ENTITY_NODE_MAP_NOT_VECTOR
 using namespace std;
 
+#define GRAMMATICAL_TENSE_CONCATONATOR_RELEX "_"
+
 //extracted from wn.h (WordNet 3.0 library header)
 #define GRAMMATICAL_WORD_TYPE_UNDEFINED (0)
 #define GRAMMATICAL_WORD_TYPE_NOUN (1)
 #define GRAMMATICAL_WORD_TYPE_VERB (2)
 #define GRAMMATICAL_WORD_TYPE_ADJ (3)
 #define GRAMMATICAL_WORD_TYPE_ADV (4)
-#define GRAMMATICAL_WORD_TYPE_SATELLITE (5)	/* not really a part of speech */
+#define GRAMMATICAL_WORD_TYPE_PREP (5)
+#define GRAMMATICAL_WORD_TYPE_SATELLITE (6)	/* not really a part of speech */
 #define GRAMMATICAL_WORD_TYPE_ADJSAT (SATELLITE)
-#define GRAMMATICAL_WORD_TYPE_NUMBER_OF_TYPES (6)
+#define GRAMMATICAL_WORD_TYPE_NUMBER_OF_TYPES (7)
 
 #define GRAMMATICAL_TENSE_UNDEFINED 0
 #define GRAMMATICAL_TENSE_PRESENT 1
@@ -120,7 +123,7 @@ static string grammaticalTenseModifierNameArray[GRAMMATICAL_TENSE_MODIFIER_NUMBE
 static string grammaticalNumberNameArray[GRAMMATICAL_NUMBER_NUMBER_OF_TYPES] = {"undefined", "uncountable", "singular", "plural"};
 static string grammaticalGenderNameArray[GRAMMATICAL_GENDER_NUMBER_OF_TYPES] = {"undefined", "person", "masculine", "feminine"};
 
-static string grammaticalWordTypeNameArray[GRAMMATICAL_WORD_TYPE_NUMBER_OF_TYPES] = {"undefined", "noun", "verb", "adj", "adv", "satellite"};	//must be same as FEATURE_RELEX_POS_TYPE_NOUN_NAME, FEATURE_RELEX_POS_TYPE_VERB_NAME, FEATURE_RELEX_POS_TYPE_ADJECTIVE_NAME, FEATURE_RELEX_POS_TYPE_ADVERB_NAME
+static string grammaticalWordTypeNameArray[GRAMMATICAL_WORD_TYPE_NUMBER_OF_TYPES] = {"undefined", "noun", "verb", "adj", "adv", "prep", "satellite"};	//must be same as FEATURE_RELEX_POS_TYPE_NOUN_NAME, FEATURE_RELEX_POS_TYPE_VERB_NAME, FEATURE_RELEX_POS_TYPE_ADJECTIVE_NAME, FEATURE_RELEX_POS_TYPE_ADVERB_NAME
 
 
 #define GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES (14)
@@ -366,7 +369,10 @@ public:
 	GIAconceptEntityLoaded * conceptEntityLoaded;
 	#endif
 	#endif
-
+	
+	#ifdef GIA_USE_NLG
+	bool parsedForLanguageGeneration;
+	#endif
 
 };
 
