@@ -26,7 +26,7 @@
  * File Name: GIAquery.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2015 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2j16b 06-July-2015
+ * Project Version: 2j17a 07-July-2015
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  * ?Limitations: will only locate a exact answer (based upon a comparison node) if it provides the maximum number of matched nodes
@@ -904,7 +904,7 @@ GIAentityNode* answerQueryOrFindAndTagForHighlightingMatchingStructureInSemantic
 	bool traceModeIsQuery = TRACE_MODE_IS_QUERY_TRUE;
 
 	int numberOfMatchedNodesTempMax = 0;
-	int numberOfMatchedNodesRequiredSynonymnDetectionTempAtMax;
+	int numberOfMatchedNodesRequiredSynonymnDetectionTempAtMax = 0;
 	bool foundAnAnswer = false;	//this is not really used, and is more of an artefact...
 
 	#ifdef GIA_QUERY_DEBUG
@@ -972,7 +972,7 @@ GIAentityNode* answerQueryOrFindAndTagForHighlightingMatchingStructureInSemantic
 					cout << "numberOfMatchedNodesTemp = " << numberOfMatchedNodesTemp << endl;
 					#endif
 
-					bool irrelevantBool;
+					bool irrelevantBool = false;
 					bool bestAnswerCandidate = determineIfBestAnswerCandidate(traceModeIsQuery, queryTraceParametersTemp.foundAnswer, foundAnAnswer, numberOfMatchedNodesTemp, numberOfMatchedNodesTempMax, numberOfMatchedNodesRequiredSynonymnDetectionTemp, numberOfMatchedNodesRequiredSynonymnDetectionTempAtMax, irrelevantBool, exactMatchIrrelevant);
 					//NB are only interested in answers if they give the max or equal to max node matches.. (otherwise answers are now disgarded; as of GIA1l...)
 					if(bestAnswerCandidate)
