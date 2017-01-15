@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s10c 05-July-2013
+ * Project Version: 1s10d 05-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -473,6 +473,8 @@ void identifyEntityTypes(Sentence * currentSentenceInList, GIAentityNode * GIAen
 //updated 22 May 2012 with GIAconceptNodeArray+GIAentityNodeArray (and substances add)
 void linkPronounReferencesRelex(Sentence * currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode * GIAfeatureTempEntityNodeArray[], GIAentityNode * GIAentityNodeArray[], unordered_map<string, GIAentityNode*> *entityNodesActiveListConcepts, Feature * featureArrayTemp[])
 {
+	cout << "warning: linkPronounReferencesRelex() is not robust - it requires further development" << endl;
+	
 	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
 	{
 		if(GIAentityNodeArrayFilled[w])

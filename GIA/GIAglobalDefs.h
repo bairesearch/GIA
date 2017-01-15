@@ -23,7 +23,7 @@
  * File Name: GIAglobalsDefs.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s10c 05-July-2013
+ * Project Version: 1s10d 05-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -520,6 +520,7 @@
 #define GIA_1S8E_LOW_PRI_RELEX_UPDATE_CHECK_THAT_IT_DOESNT_BREAK_STANFORD_OPTIMISATION_REMOVE_TIME_QUERY_ALIAS_ANSWERS
 #define GIA_1S8D_LOW_PRI_RELEX_UPDATE_CHECK_THAT_IT_DOESNT_BREAK_STANFORD_OPTIMISATION_APPLY_FIX_TO_IS_NAME_QUERY_PROPOGATION
 #define GIA_1S8C_LOW_PRI_RELEX_UPDATE_CHECK_THAT_IT_DOESNT_BREAK_STANFORD_OPTIMISATION_REMOVE_ASSSIGNMENT_OF_SPECIFIC_CONCEPTS_TO_PRONOUNS
+//#define GIA_1S3A_ADD_INTERPRETION_OF_IN_AS_POSSESSIVE_FOR_SUBSTANCES	//disabled in GIA 1s10d due to misinterpretation of "in" in "Apples are used for eating in the forest."
 
 
 //variables currently being tested (1r1a+)

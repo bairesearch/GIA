@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorOperations.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s10c 05-July-2013
+ * Project Version: 1s10d 05-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -57,7 +57,9 @@ using namespace std;
 
 
 #define GIA_TRANSLATOR_INTERPRET_OF_AS_POSSESSIVE_FOR_SUBSTANCES	//added 11 August 2012	[this is designed to work with GIA_SUPPORT_ALIASES]
-	#define GIA_TRANSLATOR_INTERPRET_IN_AS_POSSESSIVE_FOR_SUBSTANCES
+	#ifdef GIA_1S3A_ADD_INTERPRETION_OF_IN_AS_POSSESSIVE_FOR_SUBSTANCES
+		#define GIA_TRANSLATOR_INTERPRET_IN_AS_POSSESSIVE_FOR_SUBSTANCES
+	#endif
 	//#define GIA_REDISTRIBUTE_RELATIONS_INTERPRET_OF_AS_POSSESSIVE_FOR_SUBSTANCES	//added 8 August 2012		//Not used - already coded - reuse Relex code in linkConditions instead (GIA_TRANSLATOR_INTERPRET_OF_AS_POSSESSIVE_FOR_SUBSTANCES)
 #ifndef STANFORD_PARSER_USE_POS_TAGS
 	#define GIA_TRANSLATOR_INTERPRET_OF_AS_OBJECT_FOR_CONTINUOUS_VERBS //added 28 October 2012b
@@ -602,7 +604,7 @@ static string relationContextPropositionReasonNameArray[REFERENCE_TYPE_QUESTION_
 static string relationTypePossessivePrepositionsNameArray[RELATION_TYPE_POSSESSIVE_PREPOSITIONS_NUMBER_OF_TYPES] = {RELATION_TYPE_PREPOSITION_OF, RELATION_TYPE_PREPOSITION_IN};
 #else
 #define RELATION_TYPE_POSSESSIVE_PREPOSITIONS_NUMBER_OF_TYPES (1)
-static string relationTypePossessivePrepositionsNameArray[RELATION_TYPE_POSSESSIVE_PREPOSITIONS_NUMBER_OF_TYPES] = {RELATION_TYPE_PREPOSITION_IN};
+static string relationTypePossessivePrepositionsNameArray[RELATION_TYPE_POSSESSIVE_PREPOSITIONS_NUMBER_OF_TYPES] = {RELATION_TYPE_PREPOSITION_OF};
 #endif
 
 

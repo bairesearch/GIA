@@ -23,7 +23,7 @@
  * File Name: GIAtranslatorLinkEntities.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2013 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 1s10c 05-July-2013
+ * Project Version: 1s10d 05-July-2013
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * TO DO: replace vectors entityNodesActiveListConcepts/conceptEntityNamesList with a map, and replace vectors GIAtimeConditionNode/timeConditionNumbersActiveList with a map
@@ -833,7 +833,9 @@ void linkSubjectObjectRelationships(Sentence * currentSentenceInList, GIAentityN
 														GIAentityNode * actionOrSubstanceConditionEntity;
 														GIAentityNode * actionOrSubstanceEntity = GIAentityNodeArray[currentRelationInList3->relationGovernorIndex];
 														GIAentityNode * conditionTypeConceptEntity = subjectEntityTemp;
-
+														
+														conditionTypeConceptEntity->isSubstanceQuality = false;	//added 5 July 2013	//eg Apples are used for making juice.	- to prevent for from being left marked as a quality based on the original _advmod relation
+														
 														subjectIsConnectedToAnAdvMod = true;
 
 														/*eg;  Space is saved by having a chicken.
@@ -881,6 +883,7 @@ void linkSubjectObjectRelationships(Sentence * currentSentenceInList, GIAentityN
 														{
 															//standard action/substance condion (ie action condition in this context)
 															actionOrSubstanceConditionEntity = subjectObjectFunctionEntityArray[SUBJECT_INDEX];
+															cout << "actionOrSubstanceConditionEntity = " << actionOrSubstanceConditionEntity->entityName << endl;															
 															int actionIndex = subjectObjectFunctionEntityIndexArray[SUBJECT_INDEX];
 															#ifdef GIA_TRANSLATOR_DEBUG
 															//cout << "actionOrSubstanceConditionEntity = " << actionOrSubstanceConditionEntity->entityName << endl;
@@ -1682,6 +1685,7 @@ void linkConditions(Sentence * currentSentenceInList, bool GIAentityNodeArrayFil
 		if(!(currentRelationInList->disabled))	//required to prevent re-interpretation of prepositions in main preposition interpretation function createConditionBasedUponPreposition
 		{
 		//#endif
+			
 			int actionOrSubstanceIndex = currentRelationInList->relationGovernorIndex;
 			int actionOrSubstanceConditionIndex = currentRelationInList->relationDependentIndex;
 			string relationType = currentRelationInList->relationType;
