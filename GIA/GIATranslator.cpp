@@ -13,18 +13,15 @@
 
 #include "GIATranslator.h"
 
+string relationTypePrepositionLocationOrTimeNameArray[RELATION_TYPE_PREPOSITION_LOCATION_OR_TIME_NUMBER_OF_TYPES] = {RELATION_TYPE_PREPOSITION_AT, RELATION_TYPE_PREPOSITION_ON, RELATION_TYPE_PREPOSITION_TO};
+string relationTypePrepositionActionOrPropertyNameArray[RELATION_TYPE_PREPOSITION_ACTION_OR_PROPERTY_NUMBER_OF_TYPES] = {RELATION_TYPE_PREPOSITION_WHEN, RELATION_TYPE_PREPOSITION_BECAUSE};
 
-string relationTypeObjectNameArray[RELATION_TYPE_OBJECT_NUMBER_OF_TYPES] = {RELATION_TYPE_OBJECT, RELATION_TYPE_OBJECT_TO, RELATION_TYPE_OBJECT_TO_BE, RELATION_TYPE_OBJECT_TO_DO, RELATION_TYPE_OBJECT_THAT};
-//int relationTypeObjectNameLengthsArray[RELATION_TYPE_OBJECT_NUMBER_OF_TYPES] = {4, 2, 6, 6};
+string relationTypeObjectNameArray[RELATION_TYPE_OBJECT_NUMBER_OF_TYPES] = {RELATION_TYPE_OBJECT, RELATION_TYPE_OBJECT_THAT};
 string relationTypeSubjectNameArray[RELATION_TYPE_SUBJECT_NUMBER_OF_TYPES] = {RELATION_TYPE_SUBJECT, RELATION_TYPE_SUBJECT_EXPLETIVE};
-//int relationTypeSubjectNameLengthsArray[RELATION_TYPE_SUBJECT_NUMBER_OF_TYPES] = {5, 5};
 string relationTypeAdjectiveNameArray[RELATION_TYPE_ADJECTIVE_NUMBER_OF_TYPES] = {RELATION_TYPE_ADJECTIVE_1, RELATION_TYPE_ADJECTIVE_2, RELATION_TYPE_ADJECTIVE_3};
-//int relationTypeAdjectiveNameLengthsArray[RELATION_TYPE_ADJECTIVE_NUMBER_OF_TYPES] = {5, 8, 7};
 string relationTypePossessiveNameArray[RELATION_TYPE_POSSESSIVE_NUMBER_OF_TYPES] = {RELATION_TYPE_POSSESSIVE, RELATION_TYPE_PRENOMIAL_MODIFIER};
-//int relationTypePossessiveNameLengthsArray[RELATION_TYPE_POSSESSIVE_NUMBER_OF_TYPES] = {5, 3};
 
 string relationFunctionCompositionNameArray[RELATION_FUNCTION_COMPOSITION_NUMBER_OF_TYPES] = {RELATION_FUNCTION_COMPOSITION_1, RELATION_FUNCTION_COMPOSITION_2, RELATION_FUNCTION_COMPOSITION_3, RELATION_FUNCTION_COMPOSITION_4};
-//int relationFunctionCompositionNameLengthsArray[RELATION_FUNCTION_COMPOSITION_NUMBER_OF_TYPES] = {8, 9, 3};
 string relationFunctionDefinitionNameArray[RELATION_FUNCTION_DEFINITION_NUMBER_OF_TYPES] = {RELATION_FUNCTION_DEFINITION_1};
 
 
@@ -1620,11 +1617,35 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 			int relationFunctionIndex = currentRelationInList->relationFunctionIndex;
 			int relationArgumentIndex = currentRelationInList->relationArgumentIndex;
 				
-			if((currentRelationInList->relationType == RELATION_TYPE_AT) || (currentRelationInList->relationType == RELATION_TYPE_ON))
+			bool passedPrepositionLocationOrTime = false;
+			bool passedPrepositionActionOrProperty = false;
+			for(int i=0; i<RELATION_TYPE_PREPOSITION_LOCATION_OR_TIME_NUMBER_OF_TYPES; i++)
+			{
+				if(currentRelationInList->relationType == relationTypePrepositionLocationOrTimeNameArray[i])
+				{
+					passedPrepositionLocationOrTime = true;
+				}
+			}
+			for(int i=0; i<RELATION_TYPE_PREPOSITION_ACTION_OR_PROPERTY_NUMBER_OF_TYPES; i++)
+			{
+				if(currentRelationInList->relationType == relationTypePrepositionActionOrPropertyNameArray[i])
+				{
+					passedPrepositionActionOrProperty = true;
+				}
+			}									
+			if(passedPrepositionLocationOrTime)
 			{
 				GIAEntityNode * actionOrPropertyEntity = GIAEntityNodeArray[relationFunctionIndex];				
 				GIAEntityNode * timeOrLocationConditionEntity = GIAEntityNodeArray[relationArgumentIndex];
 
+				bool actionOrPropertyEntityHasAssociatedPropertyTemp = false;
+				if(actionOrPropertyEntity->hasAssociatedPropertyTemp)
+				{
+					actionOrPropertyEntityHasAssociatedPropertyTemp = true;
+					actionOrPropertyEntity = actionOrPropertyEntity->AssociatedPropertyNodeList.back();	
+				}
+				
+				/*
 				if(actionOrPropertyEntity->hasAssociatedActionTemp)
 				{
 					GIAActionNode * actionNode = actionOrPropertyEntity->AssociatedActionNodeList.back();
@@ -1656,12 +1677,10 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 						addLocationConditionToAction(actionNode, timeOrLocationConditionEntity);
 					}
 				}
-				else if(actionOrPropertyEntity->hasAssociatedPropertyTemp)
-				//else if(actionOrPropertyEntity->hasAssociatedProperty)
-				//else if(actionOrPropertyEntity->isProperty)		//?added 1 May 11a (assign action conditions to instances (properties) of entities and not entities themselves where appropriate)		
+				else */
+				if(actionOrPropertyEntityHasAssociatedPropertyTemp)
 				{
-					GIAEntityNode * propertyNode = actionOrPropertyEntity->AssociatedPropertyNodeList.back();
-					//GIAEntityNode * propertyNode = actionOrPropertyEntity;		//?added 1 May 11a (assign action conditions to instances (properties) of entities and not entities themselves where appropriate)	
+					GIAEntityNode * propertyNode = actionOrPropertyEntity;
 					
 					if(timeOrLocationConditionEntity->hasAssociatedTime)
 					{
@@ -1696,11 +1715,19 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 				
 
 			}		
-			else if((currentRelationInList->relationType == RELATION_TYPE_WHEN) || (currentRelationInList->relationType == RELATION_TYPE_BECAUSE))
+			else if(passedPrepositionActionOrProperty)
 			{
 				GIAEntityNode * actionOrPropertyEntity = GIAEntityNodeArray[relationFunctionIndex];				
 				GIAEntityNode * actionOrPropertyConditionEntity = GIAEntityNodeArray[relationArgumentIndex];
-								
+						
+				bool actionOrPropertyEntityHasAssociatedPropertyTemp = false;
+				if(actionOrPropertyEntity->hasAssociatedPropertyTemp)
+				{
+					actionOrPropertyEntityHasAssociatedPropertyTemp = true;
+					actionOrPropertyEntity = actionOrPropertyEntity->AssociatedPropertyNodeList.back();	
+				}
+					
+				/*							
 				if(actionOrPropertyEntity->hasAssociatedActionTemp)
 				{				
 					GIAActionNode * actionNode = actionOrPropertyEntity->AssociatedActionNodeList.back();
@@ -1737,12 +1764,10 @@ void convertSentenceRelationsIntoGIAnetworkNodes(vector<GIAEntityNode*> *indexOf
 						cout << "actionOrPropertyConditionEntity = " << actionOrPropertyConditionEntity << endl;
 					}
 				}
-				else if(actionOrPropertyEntity->hasAssociatedPropertyTemp)
-				//else if(actionOrPropertyEntity->hasAssociatedProperty)
-				//else if(actionOrPropertyEntity->isProperty)	//?added 1 May 11a (assign action conditions to instances (properties) of entities and not entities themselves where appropriate)	
+				else*/
+				if(actionOrPropertyEntityHasAssociatedPropertyTemp)
 				{
-					GIAEntityNode * propertyNode = actionOrPropertyEntity->AssociatedPropertyNodeList.back();
-					//GIAEntityNode * propertyNode = actionOrPropertyEntity;		//?added 1 May 11a (assign action conditions to instances (properties) of entities and not entities themselves where appropriate)	
+					GIAEntityNode * propertyNode = actionOrPropertyEntity;
 					
 					if(actionOrPropertyConditionEntity->hasAssociatedActionTemp)
 					{//eg the stars are bright when john rides his bike

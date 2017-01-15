@@ -80,13 +80,16 @@ using namespace std;
 
 //actions (obj/subj relationships)
 #define RELATION_TYPE_OBJECT "_obj"			//eg eats y	[? be y]
-#define RELATION_TYPE_OBJECT_TO "to"			//eg to y	//NB "to" is currently interpreted as an object of an action
-#define RELATION_TYPE_OBJECT_TO_BE "_to-be"		//eg grows tired / The rose smelled sweet / _to-be(smell, sweet) - CHECK THIS
-#define RELATION_TYPE_OBJECT_TO_DO "_to-do"		//eg Linas likes to row / _to-do(like, row) - CHECK THIS
 #define RELATION_TYPE_OBJECT_THAT "_that"		//there is a place that we go
 #define RELATION_TYPE_INDIRECT_OBJECT "_iobj"
 #define RELATION_TYPE_SUBJECT "_subj"	//eg x eats 	[? be x]
 #define RELATION_TYPE_SUBJECT_EXPLETIVE "_expl"		//eg goes there	//NB "there" is currently interpreted as a subject of an action
+
+
+//
+#define RELATION_TYPE_UNKNOWN_TO_BE "_to-be"		//eg grows tired / The rose smelled sweet / _to-be(smell, sweet) - CHECK THIS
+#define RELATION_TYPE_UNKNOWN_TO_DO "_to-do"		//eg Linas likes to row / _to-do(like, row) - CHECK THIS
+
 
 //dates, measures, quantities
 #define RELATION_TYPE_DATE_DAY "_date_day" 
@@ -103,15 +106,20 @@ using namespace std;
 
 //predicates????
 //action/property conditions
-#define RELATION_TYPE_ON "on"		//eg rides on tuesday		[ride tuesday]		//this forms the action condition; "when"
-#define RELATION_TYPE_AT "at"		//eg rides at the palace	[ride palace]	//this forms the action condition; "where"
-#define RELATION_TYPE_WHEN "when"	//eg joe fires his bow when john drives fast.	[fire drive]	//this forms the action condition; "when" [not time, but in association with another action]
-#define RELATION_TYPE_BECAUSE "because"
+#define RELATION_TYPE_PREPOSITION_ON "on"		//eg rides on tuesday		[ride tuesday]		//this forms the action condition; "when"
+#define RELATION_TYPE_PREPOSITION_AT "at"		//eg rides at the palace	[ride palace]	//this forms the action condition; "where"
+#define RELATION_TYPE_PREPOSITION_TO "to"		//eg rides to the shops 			//this forms the action condition; "where"	
+#define RELATION_TYPE_PREPOSITION_LOCATION_OR_TIME_NUMBER_OF_TYPES (3)
+#define RELATION_TYPE_PREPOSITION_WHEN "when"	//eg joe fires his bow when john drives fast.	[fire drive]	//this forms the action condition; "when" [not time, but in association with another action]
+#define RELATION_TYPE_PREPOSITION_BECAUSE "because"
+#define RELATION_TYPE_PREPOSITION_ACTION_OR_PROPERTY_NUMBER_OF_TYPES (2)
+
 //?#define RELATION_TYPE_OF "of"		//eg [she grew tired] of it	{same as with it}
 
 //action/property reasons [???]
-#define RELATION_TYPE_SUCH_THAT "such"
-#define RELATION_TYPE_SO "so"
+#define RELATION_TYPE_PREPOSITION_SUCH_THAT "such"
+#define RELATION_TYPE_PREPOSITION_SO "so"
+#define RELATION_TYPE_PREPOSITION_REASON_NUMBER_OF_TYPES (2)
 
 #define RELATION_TYPE_QUANTITY_OR_MEASURE_NUMBER_OF_TYPES (4)
 #define RELATION_TYPE_MEASURE_NUMBER_OF_TYPES (3)
