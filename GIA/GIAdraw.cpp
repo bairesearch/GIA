@@ -527,8 +527,10 @@ Reference * initialiseTimeConditionNodeForPrinting(GIATimeConditionNode * timeCo
 
 	currentReferenceInPrintList = createBox(currentReferenceInPrintList, &pos1, GIA_DRAW_CONDITION_NODE_WIDTH, GIA_DRAW_CONDITION_NODE_HEIGHT, GIA_DRAW_CONDITION_NODE_COLOUR, &(timeConditionNode->conditionName), writeFileObject, GIA_DRAW_THICKNESS_NORMAL);
 
+	#ifdef GIA_DRAW_DEBUG
 	cout << "Exiting: timeConditionNode = " << timeConditionNode->conditionName << endl;
-
+	#endif
+	
 	return currentReferenceInPrintList;	//does this need to be newCurrentReferenceInPrintList?
 }
 

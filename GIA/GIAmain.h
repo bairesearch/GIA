@@ -14,7 +14,7 @@
 
 #include "GIAEntityNodeClass.h"
  
-#define GIA_XML_DEBUG_TEST_WRITE_READ_WRITE
+//#define GIA_XML_DEBUG_TEST_WRITE_READ_WRITE
 
 #define GIA_RELEX_EXECUTABLE_NAME "execute-relex.sh"
 //OLD: #define GIA_RELEX_EXECUTABLE_RELATIVE_PATH_NAME "/relex-1.3.0/"	//gets added to executable path name

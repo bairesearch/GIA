@@ -537,21 +537,32 @@ int main(int argc,char **argv)
 		string answerString = "";
 				 
 		if(foundAnswer)
-		{			
-			answerString = answerString + "\nAnswer found";
+		{	
+			cout << "Answer Found." << endl;					
+			answerString = answerString + "\nAnswer found.";
 			if(foundComparisonVariable)
 			{
-				answerString = answerString + "Exact Answer found: " + queryAnswerNode->entityName;	
+				cout << "Exact Found Answer:" << queryAnswerNode->entityName << endl;
+				answerString = answerString + "\nExact Answer found: " + queryAnswerNode->entityName;	
+				if(comparisonVariableNode->hasQuantity)
+				{
+					cout << "Quantity number:" << queryAnswerNode->quantityNumber << endl;
+					char tempQuantityNumberStringCharStar[100]; 
+					sprintf(tempQuantityNumberStringCharStar, "%d", queryAnswerNode->quantityNumber);					
+					answerString = answerString + "\nQuantity number: " + tempQuantityNumberStringCharStar;	
+				}
 			}
 			//cout << "ahsd2" << endl;
 		}
 		else
 		{
-			answerString = answerString + "\nAnswer Not Found";
+			cout << "Answer Not Found." << endl;
+			answerString = answerString + "\nAnswer Not Found.";
 		}
 		
 		if(!(foundAnswer && foundComparisonVariable))
 		{
+			cout << "Best Inexact Answer Found:" << queryAnswerNode->entityName << endl;
 			answerString = answerString + "\nBest Inexact Answer Found:" + queryAnswerNode->entityName;
 			answerString = answerString + printEntityNode(queryAnswerNode);	
 		}
