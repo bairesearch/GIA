@@ -26,7 +26,7 @@
  * File Name: GIAtranslator.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2m7a 11-September-2016
+ * Project Version: 2m7b 11-September-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1397,7 +1397,7 @@ void createAdditionalSubclassEntities(bool GIAentityNodeArrayFilled[], GIAentity
 							#endif	
 
 							GIAentityNode* definitionConceptEntity = getPrimaryConceptNodeDefiningInstance(definitionEntity);
-							linkSubclassEntitiesWithParentClassEntities(definitionConceptEntity, subClassConceptEntity, true, false);	//alias links xenomorph substance concept with xenomorph_bat substance concept
+							linkSubclassEntitiesWithParentClassEntities(definitionConceptEntity, subClassConceptEntity, false, false);	//links xenomorph substance concept with xenomorph_bat substance concept
 
 							/* //changed 2m7a
 							bool sameReferenceSet = false;	//this is required for dreamModeLinkSpecificConceptsAndActions
