@@ -26,7 +26,7 @@
  * File Name: GIAxmlConversion.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n7b 03-October-2016
+ * Project Version: 2n8a 03-October-2016
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  * NB this function creates entity idActiveListReorderdIDforXMLsave values upon write to speed up linking process (does not use original idActiveList values)
  * NB this function creates entity idActiveList values upon read (it could create idActiveListReorderdIDforXMLsave values instead - however currently it is assumed that when an XML file is loaded, this will populate the idActiveList in its entirety)
@@ -327,7 +327,7 @@ bool parseEntityNodeTag(XMLparserTag* firstTagInEntityNode, GIAentityNode* entit
 
 	bool disabledFound = false;
 	#ifdef GIA_SUPPORT_EXPLETIVES
-	
+	bool isExpletiveFound = false;
 	#endif
 	
 	#ifdef GIA_LRP_NORMALISE_PREPOSITIONS
@@ -598,6 +598,14 @@ bool parseEntityNodeTag(XMLparserTag* firstTagInEntityNode, GIAentityNode* entit
 				entityNode->disabled = attributeValue;
 				disabledFound = true;
 			}
+			#ifdef GIA_SUPPORT_EXPLETIVES
+			else if(currentAttribute->name == NET_XML_ATTRIBUTE_isExpletive)
+			{
+				bool attributeValue = convertStringToInt(currentAttribute->value);
+				entityNode->isExpletive = attributeValue;
+				isExpletiveFound = true;
+			}
+			#endif
 
 			#ifdef GIA_LRP_NORMALISE_PREPOSITIONS
 			#ifdef GIA_LRP_DETECT_PREPOSITION_TYPE
@@ -1272,6 +1280,12 @@ XMLparserTag* generateXMLentityNodeTag(XMLparserTag* currentTagL1, GIAentityNode
 	currentAttribute->value = convertIntToString(int(currentEntity->disabled));
 	currentAttribute = createNewAttribute(currentAttribute);
 
+	#ifdef GIA_SUPPORT_EXPLETIVES
+	currentAttribute->name = NET_XML_ATTRIBUTE_isExpletive;
+	currentAttribute->value = convertIntToString(int(currentEntity->isExpletive));
+	currentAttribute = createNewAttribute(currentAttribute);
+	#endif
+			
 
 	#ifdef GIA_LRP_NORMALISE_PREPOSITIONS
 	#ifdef GIA_LRP_DETECT_PREPOSITION_TYPE

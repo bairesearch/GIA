@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorApplyAdvancedFeatures.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n7b 03-October-2016
+ * Project Version: 2n8a 03-October-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1313,8 +1313,6 @@ void defineActionConcepts1(GIAsentence* currentSentenceInList, bool GIAentityNod
 	param.useRelationTest[REL1][REL_ENT2] = true; param.relationTest[REL1][REL_ENT2] = RELATION_ENTITY_CAN;
 	GIAentityCharacteristic entityCharacteristicsTest("entityType", GIA_ENTITY_TYPE_TYPE_ACTION_STRING);
 	param.specialCaseCharacteristicsTestOrVector[REL1][REL_ENT1].push_back(&entityCharacteristicsTest);
-	GIAentityCharacteristic useRedistributeSpecialCaseAssignment1("entityType", GIA_ENTITY_TYPE_TYPE_CONCEPT_STRING);
-	param.specialCaseCharacteristicsAssignmentVector[REL1][REL_ENT1].push_back(&useRedistributeSpecialCaseAssignment1);
 	GIAentityCharacteristic useRedistributeSpecialCaseAssignment2("isActionConcept", "true");
 	param.specialCaseCharacteristicsAssignmentVector[REL1][REL_ENT1].push_back(&useRedistributeSpecialCaseAssignment2);
 	genericDependecyRelationInterpretation(&param, REL1);
@@ -1340,7 +1338,7 @@ void defineActionConcepts2(GIAsentence* currentSentenceInList, bool GIAentityNod
 			//cout << "entity->grammaticalTenseTemp = " << entity->grammaticalTenseTemp << endl;
 			#endif
 
-			//if(entity->entityType == GIA_ENTITY_TYPE_TYPE_ACTION)	//do not check for isAction; because action networkIndexes are assigned for nodes which have not been defined as actions by GIA; eg "eating is fun"
+			//if(entity->entityType == GIA_ENTITY_TYPE_TYPE_ACTION)	//do not check for isAction; because action concepts are assigned for nodes which have not been defined as actions by GIA; eg "eating is fun" [CHECKTHIS; this is not the same as the XML implementation]
 			//Condition A.
 			if((entity->grammaticalWordTypeTemp == GRAMMATICAL_WORD_TYPE_VERB) && ((entity->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE] == true) || (entity->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_INFINITIVE] == true)))
 			{
@@ -1365,7 +1363,7 @@ void defineActionConcepts2(GIAsentence* currentSentenceInList, bool GIAentityNod
 						if(foundActionNetworkIndex)
 						{
 							//GIAentityNodeArray[i] = addInstanceToInstanceDefinition(entity, GIA_ENTITY_TYPE_TYPE_ACTION);	//is this required?
-							GIAentityNodeArray[i]->entityType = GIA_ENTITY_TYPE_TYPE_CONCEPT;
+							GIAentityNodeArray[i]->entityType = GIA_ENTITY_TYPE_TYPE_ACTION;
 							GIAentityNodeArray[i]->isActionConcept = true;
 						}
 					}

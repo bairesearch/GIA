@@ -26,7 +26,7 @@
  * File Name: GIAdraw.h
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2016 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2n7b 03-October-2016
+ * Project Version: 2n8a 03-October-2016
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -488,14 +488,7 @@ LDreference* initialiseEntityNodeForPrinting(GIAentityNode* entityNode, int y, i
 				}
 				else if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_CONCEPT)
 				{
-					if(entityNode->isActionConcept)
-					{
-						entityColour = GIA_DRAW_ACTION_CONCEPT_NODE_COLOUR;
-					}
-					else
-					{
-						entityColour = GIA_DRAW_CONCEPT_NODE_COLOUR;
-					}
+					entityColour = GIA_DRAW_CONCEPT_NODE_COLOUR;
 				}
 				else if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_QUALITY)
 				{
@@ -503,7 +496,14 @@ LDreference* initialiseEntityNodeForPrinting(GIAentityNode* entityNode, int y, i
 				}
 				else if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_ACTION)
 				{
-					entityColour = GIA_DRAW_ACTION_NODE_COLOUR;
+					if(entityNode->isActionConcept)
+					{
+						entityColour = GIA_DRAW_ACTION_CONCEPT_NODE_COLOUR;
+					}
+					else
+					{
+						entityColour = GIA_DRAW_ACTION_NODE_COLOUR;
+					}
 				}
 				/*
 				else if(entityNode->hasAssociatedTime)
