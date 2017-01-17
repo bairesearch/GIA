@@ -26,12 +26,12 @@
  * File Name: GIAentityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p3c 14-January-2017
+ * Project Version: 2p4a 17-January-2017
  *
  *******************************************************************************/
 
 
-#include "GIAentityNodeClass.h"
+#include "GIAentityNodeClass.hpp"
 
 
 string quantityNumberLowNameArray[QUANTITY_NUMBER_LOW_NUMBER_OF_TYPES] = {"zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen"};
