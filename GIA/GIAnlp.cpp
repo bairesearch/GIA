@@ -26,13 +26,13 @@
  * File Name: GIAnlp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p3c 14-January-2017
+ * Project Version: 2p4a 17-January-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
 
 
-#include "GIAnlp.h"
+#include "GIAnlp.hpp"
 #ifdef GIA_LRP
 #endif
 

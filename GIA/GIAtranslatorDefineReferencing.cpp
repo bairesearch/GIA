@@ -26,14 +26,14 @@
  * File Name: GIAtranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p3c 14-January-2017
+ * Project Version: 2p4a 17-January-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
  *******************************************************************************/
 
 
-#include "GIAtranslatorDefineReferencing.h"
+#include "GIAtranslatorDefineReferencing.hpp"
 
 //unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes
 void GIAtranslatorDefineReferencingClass::identifyComparisonVariableAlternateMethod(const GIAsentence* currentSentenceInList, const bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], const int NLPfeatureParser)

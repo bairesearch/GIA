@@ -23,17 +23,17 @@
 
 /*******************************************************************************
  *
- * File Name: GIAdatabase.h
+ * File Name: GIAdatabase.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p3c 14-January-2017
+ * Project Version: 2p4a 17-January-2017
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: performs simple GIA database functions (storing nodes in ordered arrays/vectors/maps)
  *
  *******************************************************************************/
 
 
-#include "GIAdatabase.h"
+#include "GIAdatabase.hpp"
 
 #define CHAR_NEWLINE '\n'
 

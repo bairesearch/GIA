@@ -21,13 +21,13 @@
  * File Name: GIAsemanticParserTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p3c 14-January-2017
+ * Project Version: 2p4a 17-January-2017
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
 
 
-#include "GIAsemanticParserTranslator.h"
+#include "GIAsemanticParserTranslator.hpp"
 #ifdef GIA2_SEMANTIC_PARSER
 #endif
 #ifdef GIA_BOT

@@ -26,12 +26,12 @@
  * File Name: GIAconditionNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p3c 14-January-2017
+ * Project Version: 2p4a 17-January-2017
  *
  *******************************************************************************/
 
 
-#include "GIAconditionNodeClass.h"
+#include "GIAconditionNodeClass.hpp"
 
 //~? [eg past, wednesday, etc]
 GIAtimeConditionNode::GIAtimeConditionNode(void)
