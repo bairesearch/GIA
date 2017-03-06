@@ -2,9 +2,8 @@
  *
  * This file is part of BAIPROJECT.
  *
- * BAIPROJECT is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License version 3
- * only, as published by the Free Software Foundation. The use of
+ * BAIPROJECT is licensed under the GNU Affero General Public License
+ * version 3, as published by the Free Software Foundation. The use of
  * intermediary programs or interfaces including file i/o is considered
  * remote network interaction. This does not imply such arrangements
  * do not constitute derivative works.
@@ -26,7 +25,7 @@
  * File Name: GIAxmlConversion.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p4c 17-January-2017
+ * Project Version: 2p4d 17-January-2017
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  * NB this function creates entity idActiveListReorderdIDforXMLsave values upon write to speed up linking process (does not use original idActiveList values)
  * NB this function creates entity idActiveList values upon read (it could create idActiveListReorderdIDforXMLsave values instead - however currently it is assumed that when an XML file is loaded, this will populate the idActiveList in its entirety)
