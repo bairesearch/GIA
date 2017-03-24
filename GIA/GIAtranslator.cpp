@@ -25,7 +25,7 @@
  * File Name: GIAtranslator.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1f 26-February-2017
+ * Project Version: 3a1g 26-February-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -645,7 +645,6 @@ bool GIAtranslatorClass::convertSentenceSyntacticRelationsIntoGIAnetworkNodes(GI
 	}
 
 #ifndef GIA_ADVANCED_REFERENCING_DISABLE_LINKING
-	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	//if(!linkPreestablishedReferencesGIA)	//criteria not used as same reference set tags may be required for dream mode or post processing (not just advanced referencing)
 	//{
 		#ifdef GIA_TRANSLATOR_DEBUG
@@ -655,7 +654,6 @@ bool GIAtranslatorClass::convertSentenceSyntacticRelationsIntoGIAnetworkNodes(GI
 		//eg "the guy that robbed the bank" in "the guy that robbed the bank is tall"
 		GIAtranslatorDefineReferencing.fillExplicitReferenceSameSetTags(translatorVariables->currentSentenceInList);
 	//}
-	#endif
 #endif
 	
 	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
@@ -783,7 +781,7 @@ bool GIAtranslatorClass::convertSentenceSyntacticRelationsIntoGIAnetworkNodes(GI
 
 	vector<GIAentityNode*>* entityNodesActiveListSentence = new vector<GIAentityNode*>;
 
-	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
+
 	//record entityIndexTemp + sentenceIndexTemp for all substances in sentence (allows for referencing)...
 	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
 	{
@@ -900,7 +898,7 @@ bool GIAtranslatorClass::convertSentenceSyntacticRelationsIntoGIAnetworkNodes(GI
 				}
 				if(GIAentityNodeArray[w]->sentenceIndexTemp != translatorVariables->currentSentenceInList->sentenceIndex)
 				{
-					GIAentityNodeArray[w]->sentenceIndexTemp = translatorVariables->currentSentenceInList->sentenceIndex;	//LIMITATION: if !GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR, this will not assign sentence indicies for prepositions...
+					GIAentityNodeArray[w]->sentenceIndexTemp = translatorVariables->currentSentenceInList->sentenceIndex;
 					#ifdef GIA_REFERENCING_UPDATE_ENTITY_INDEXES_OF_REFERENCE_SOURCE_TO_THOSE_OF_CURRENT_SENTENCE
 					cout << "convertSentenceSyntacticRelationsIntoGIAnetworkNodes{} error: GIAentityNodeArray[" << w << "]->sentenceIndexTemp != " << translatorVariables->currentSentenceInList->sentenceIndex << endl;
 					exit(EXIT_ERROR);
@@ -935,7 +933,7 @@ bool GIAtranslatorClass::convertSentenceSyntacticRelationsIntoGIAnetworkNodes(GI
 						#ifdef GIA_DEBUG
 						//cout << "networkIndexNode->sentenceIndexTemp = " << networkIndexNode->sentenceIndexTemp << endl;
 						#endif
-						cout << "convertSentenceSyntacticRelationsIntoGIAnetworkNodes{} error: GIAentityNodeArray[" << w << "] sentenceIndexTemp undefined, this is an artificial entity" << endl;
+						cout << "convertSentenceSyntacticRelationsIntoGIAnetworkNodes{} error: GIAentityNodeArray[" << w << "]->networkIndexNode->sentenceIndexTemp undefined" << endl;
 						exit(EXIT_ERROR);
 					}
 					/*No problem detected here:
@@ -955,7 +953,7 @@ bool GIAtranslatorClass::convertSentenceSyntacticRelationsIntoGIAnetworkNodes(GI
 			#endif
 		}
 	}
-	#endif
+	
 
 	#ifdef GIA_CREATE_SHORTCUTS_TO_CONCEPT_ENTITIES
 	createShortcutsToConceptEntities(translatorVariables);
@@ -1366,12 +1364,7 @@ void GIAtranslatorClass::createAndLinkNonSpecificConceptsForAllEntities(GIAtrans
 			}
 
 			//found instance in network matching concept...
-			#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 			bool sameReferenceSet = false;
-			#else
-			bool sameReferenceSet = IRRELEVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
-			#endif
-
 			GIAtranslatorOperations.connectDefinitionToEntity(entity, nonSpecificConceptEntity, sameReferenceSet);
 		}
 	}
@@ -1463,9 +1456,8 @@ void GIAtranslatorClass::invertOrDuplicateConditionsIfRequired(GIAtranslatorVari
 
 void GIAtranslatorClass::createNewInverseConditionEntity(GIArelation* currentRelationInList, GIAtranslatorVariablesClass* translatorVariables, string inverseConditionName)
 {
-	//requires GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR_NEW?
 	int inverseConditionEntityIndex = translatorVariables->currentSentenceInList->relationshipEntityArtificialIndexCurrent;
-	translatorVariables->currentSentenceInList->relationshipEntityArtificialIndexCurrent = translatorVariables->currentSentenceInList->relationshipEntityArtificialIndexCurrent - 1;
+	translatorVariables->currentSentenceInList->relationshipEntityArtificialIndexCurrent = translatorVariables->currentSentenceInList->relationshipEntityArtificialIndexCurrent + 1;
 
 	translatorVariables->GIAentityNodeArrayFilled[inverseConditionEntityIndex] = true;
 	GIAentityNode* inverseConditionEntity = new GIAentityNode();

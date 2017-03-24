@@ -25,7 +25,7 @@
  * File Name: GIAxmlConversion.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1f 26-February-2017
+ * Project Version: 3a1g 26-February-2017
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  * NB this function creates entity idActiveListReorderdIDforXMLsave values upon write to speed up linking process (does not use original idActiveList values)
  * NB this function creates entity idActiveList values upon read (it could create idActiveListReorderdIDforXMLsave values instead - however currently it is assumed that when an XML file is loaded, this will populate the idActiveList in its entirety)
@@ -729,17 +729,13 @@ bool GIAxmlConversionClass::parseEntityVectorConnectionNodeListTag(const XMLpars
 
 			bool idFound = false;
 			#ifdef GIA_XML_RECORD_ADDITIONAL_VARIABLES
-			#ifdef GIA_STORE_CONNECTION_SENTENCE_INDEX
 			bool sentenceIndexTempFound = false;
-			#endif
 			#ifdef GIA_ADVANCED_REFERENCING
 			#ifdef GIA_TRANSLATOR_MARK_DOUBLE_LINKS_AS_REFERENCE_CONNECTIONS
 			bool isReferenceFound = false;
 			#endif
 			#endif
-			#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 			bool sameReferenceSetFound = false;
-			#endif
 			
 			#ifndef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
 			#ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
@@ -766,7 +762,6 @@ bool GIAxmlConversionClass::parseEntityVectorConnectionNodeListTag(const XMLpars
 					#endif
 				}
 				#ifdef GIA_XML_RECORD_ADDITIONAL_VARIABLES
-				#ifdef GIA_STORE_CONNECTION_SENTENCE_INDEX
 				else if(currentAttribute->name == NET_XML_ATTRIBUTE_sentenceIndexTemp)
 				{
 					int attributeValue = SHAREDvars.convertStringToInt(currentAttribute->value);
@@ -776,7 +771,6 @@ bool GIAxmlConversionClass::parseEntityVectorConnectionNodeListTag(const XMLpars
 					//cout << "connection idActiveList = " << idActiveList << endl;
 					#endif
 				}
-				#endif
 				#ifdef GIA_ADVANCED_REFERENCING
 				#ifdef GIA_TRANSLATOR_MARK_DOUBLE_LINKS_AS_REFERENCE_CONNECTIONS
 				else if(currentAttribute->name == NET_XML_ATTRIBUTE_isReference)
@@ -790,7 +784,6 @@ bool GIAxmlConversionClass::parseEntityVectorConnectionNodeListTag(const XMLpars
 				}
 				#endif
 				#endif
-				#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 				else if(currentAttribute->name == NET_XML_ATTRIBUTE_sameReferenceSet)
 				{
 					bool attributeValue = SHAREDvars.convertStringToInt(currentAttribute->value);
@@ -800,7 +793,6 @@ bool GIAxmlConversionClass::parseEntityVectorConnectionNodeListTag(const XMLpars
 					//cout << "connection idActiveList = " << idActiveList << endl;
 					#endif
 				}
-				#endif
 				
 				#ifndef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
 				#ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
@@ -1390,11 +1382,9 @@ XMLparserTag* GIAxmlConversionClass::generateXMLentityNodeTag(XMLparserTag* curr
 						currentAttribute = XMLparserClass.createNewAttribute(currentAttribute);
 
 						#ifdef GIA_XML_RECORD_ADDITIONAL_VARIABLES
-						#ifdef GIA_STORE_CONNECTION_SENTENCE_INDEX
 						currentAttribute->name = NET_XML_ATTRIBUTE_sentenceIndexTemp;
 						currentAttribute->value = SHAREDvars.convertIntToString(connection->sentenceIndexTemp);
 						currentAttribute = XMLparserClass.createNewAttribute(currentAttribute);
-						#endif
 
 						#ifdef GIA_ADVANCED_REFERENCING
 						#ifdef GIA_TRANSLATOR_MARK_DOUBLE_LINKS_AS_REFERENCE_CONNECTIONS
@@ -1404,11 +1394,9 @@ XMLparserTag* GIAxmlConversionClass::generateXMLentityNodeTag(XMLparserTag* curr
 						#endif
 						#endif
 
-						#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 						currentAttribute->name = NET_XML_ATTRIBUTE_sameReferenceSet;
 						currentAttribute->value = SHAREDvars.convertIntToString(int(connection->sameReferenceSet));
 						currentAttribute = XMLparserClass.createNewAttribute(currentAttribute);
-						#endif
 
 						#ifndef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
 						#ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING

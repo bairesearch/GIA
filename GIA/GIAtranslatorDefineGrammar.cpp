@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorDefineGrammar.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1f 26-February-2017
+ * Project Version: 3a1g 26-February-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -148,18 +148,15 @@ void GIAtranslatorDefineGrammarClass::locateAndAddAllFeatureTempEntities(GIAtran
 				}
 				#endif
 
-				#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 				//this is required for fillGrammaticalArraysStanford findSubjObjRelationMatchingAuxiliaryAndSetNotSameReferenceSet()	[nb these values are applied to networkIndex entities only]
 				translatorVariables->GIAfeatureTempEntityNodeArray[relationIndex[i]]->entityIndexTemp = relationIndex[i];
 				translatorVariables->GIAfeatureTempEntityNodeArray[relationIndex[i]]->sentenceIndexTemp = translatorVariables->currentSentenceInList->sentenceIndex;
-				#endif
 			}
 		}
 
 		currentRelationInList = currentRelationInList->next;
 	}
 
-	#ifdef GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR
 	currentRelationInList = translatorVariables->currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{
@@ -174,9 +171,7 @@ void GIAtranslatorDefineGrammarClass::locateAndAddAllFeatureTempEntities(GIAtran
 			bool prepositionFeatureFound = GIAtranslatorGeneric.determineFeatureIndexOfPreposition(translatorVariables->currentSentenceInList, currentRelationInList, &prepositionEntityIndex);
 			if(prepositionFeatureFound)
 			{
-				#ifdef GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR_NEW
 				currentRelationInList->relationTypeIndex = prepositionEntityIndex;
-				#endif
 
 				if(!(translatorVariables->GIAentityNodeArrayFilled[prepositionEntityIndex]))
 				{
@@ -202,7 +197,6 @@ void GIAtranslatorDefineGrammarClass::locateAndAddAllFeatureTempEntities(GIAtran
 		}
 		currentRelationInList = currentRelationInList->next;
 	}
-	#endif
 
 	#ifdef GIA_STANFORD_DEPENDENCY_RELATIONS_DEBUG
 
@@ -697,9 +691,7 @@ void GIAtranslatorDefineGrammarClass::fillGrammaticalArraysStanford(GIAtranslato
 				if(definiteDeterminerFound)
 				{
 					translatorVariables->featureArrayTemp[entityIndexOfNoun]->grammaticalIsDefinite = true;
-					#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 					translatorVariables->featureArrayTemp[entityIndexOfNoun]->grammaticalIndexOfDeterminer = currentRelationInList->relationDependentIndex;
-					#endif
 
 					#ifdef GIA_TRANSLATOR_DEBUG
 					//cout << "(determiner == GRAMMATICAL_DETERMINER_DEFINITE)" << endl;
@@ -710,9 +702,7 @@ void GIAtranslatorDefineGrammarClass::fillGrammaticalArraysStanford(GIAtranslato
 				else if(determiner == GRAMMATICAL_DETERMINER_INDEFINITE_PLURAL)
 				{//added 2f11a 13-July-2014
 					translatorVariables->featureArrayTemp[entityIndexOfNoun]->grammaticalIsIndefinitePlural = true;
-					#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 					translatorVariables->featureArrayTemp[entityIndexOfNoun]->grammaticalIndexOfDeterminer = currentRelationInList->relationDependentIndex;
-					#endif
 				}
 				/*
 				else if(determiner == GRAMMATICAL_DETERMINER_INDEFINITE_SINGULAR)
@@ -1055,10 +1045,8 @@ void GIAtranslatorDefineGrammarClass::applyGrammaticalInfoToAllEntities(GIAtrans
 				entity->grammaticalIndefinitePluralTemp = currentFeatureInList->grammaticalIsIndefinitePlural;
 				entity->grammaticalProperNounTemp = currentFeatureInList->grammaticalIsProperNoun;
 				entity->grammaticalGenderTemp = currentFeatureInList->grammaticalGender;
-				#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 				entity->grammaticalIndexOfDeterminerTemp = currentFeatureInList->grammaticalIndexOfDeterminer;
 				//cout << "entity->grammaticalIndexOfDeterminerTemp = " << entity->grammaticalIndexOfDeterminerTemp << endl;
-				#endif
 				#ifdef GIA_PREDETERMINERS
 				entity->grammaticalPredeterminerTemp = currentFeatureInList->grammaticalPredeterminer;
 				#endif

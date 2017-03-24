@@ -25,7 +25,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1f 26-February-2017
+ * Project Version: 3a1g 26-February-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -958,11 +958,9 @@
 		#define GIA2_CORRECT_POSTAGS_FIX1	//2j5a
 		#define GIA2_CORRECT_POSTAGS_FIX2	//2j5d
 	#endif
-	//#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION	//has not yet been defined
-		#ifndef GIA_RECORD_POSSESSION_AUXILIARY_HAS_INFORMATION
-			//#define GIA_RECORD_RCMOD_SET_INFORMATION	//added 2j8a, disabled 2k3a (not supported by GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE), no longer supported 2l5b 	//was only required to identify subject (primary entity holding math value) in nlp parsable phrase, but possessionAuxiliaryHave is now used for this purpose	//originally implemented 2i16a but rejected
-		#endif
-	//#endif
+	#ifndef GIA_RECORD_POSSESSION_AUXILIARY_HAS_INFORMATION
+		//#define GIA_RECORD_RCMOD_SET_INFORMATION	//added 2j8a, disabled 2k3a (not supported by GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE), no longer supported 2l5b 	//was only required to identify subject (primary entity holding math value) in nlp parsable phrase, but possessionAuxiliaryHave is now used for this purpose	//originally implemented 2i16a but rejected
+	#endif
 #endif
 
 #ifndef GIA_DEBUG_DISABLE_2g_CODE
@@ -984,7 +982,7 @@
 			#define GIA_NLC_INTEGRATION_DEFINE_REFERENCE_CONTEXT_BY_TEXT_INDENTATION	//added 2g10a/17-October-2014	//requires NLC preprocessor to be executed to extract text indentation, NLCpreprocessorSentenceClass.h, and setNLCsentence() to be called before executing GIA
 		#endif
 	#endif
-	#define GIA_STORE_CONNECTION_SENTENCE_INDEX	//added 2f15d/16-July-2014 [required for NLC 1g15a+]
+	#define GIA_STORE_CONNECTION_SENTENCE_INDEX	//mandatory 3a1a	//added 2f15d/16-July-2014 [required for NLC 1g15a+]
 	#define GIA_REMOVE_REDUNDANT_LOGICAL_CONDITION_ENTITIES	//added 2f13a/14-July-2014
 	#define GIA_XML_RECORD_ADDITIONAL_VARIABLES
 #endif
@@ -1044,7 +1042,7 @@
 				#endif
 			#endif
 			#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DETECT_PREPOSITION_TYPE		//added 2h1a/14-November-2014 - required for NLC 1m1a+
-			#define GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR_NEW	//added 2h1c/14-November-2014 - required for NLC 1m1a+
+			#define GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR_NEW	//mandatory 3a1a	//added 2h1c/14-November-2014 - required for NLC 1m1a+
 		#endif
 		#define GIA_ACTIONS_OF_ACTIONS
 		#ifdef GIA_ACTIONS_OF_ACTIONS
@@ -1079,7 +1077,7 @@
 #define GIA_NON_STANDARD_CONDITION_CONDITION_CONNECTIONS_CONNECT_CONJUNCTIONS_TO_THEIR_RELEVANT_PREPOSITIONS	//required for USE_NLC
 
 //#ifndef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC	//requirement removed 2o6a
-	#define GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR	//assumes GIA_CREATE_NON_SPECIFIC_CONCEPTS_FOR_ALL_NETWORK_INDEXES is true (why is this required?)
+	#define GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR	//mandatory 3a1a //assumes GIA_CREATE_NON_SPECIFIC_CONCEPTS_FOR_ALL_NETWORK_INDEXES is true (why is this required?)
 	#ifdef GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR
 		#define GIA_SET_ENTITY_ENTITY_AND_SENTENCE_INDICIES_NORMALLY	//this is required for !GIA_TRANSLATOR_ONLY_MERGE_ENTITY_NODES_WHEN_LINK_PREESTABLISHED_REFERENCES_GIA
 	#endif
@@ -1214,14 +1212,7 @@
 	//#define GIA_SPECIFIC_CONCEPTS_ASSIGN_TO_PRONOUNS	//added 1q10a [activated 1q10c]	//removed 1s8c	//check this does not undo advanced referencing/quering...
 #endif
 	//NB the phrase 'concept'/'substance quality' is a misnomer, as networkIndexes and qualities are not really substances [NB networkIndexes are considered secondary substances in Aristotle's categories, but GIA has a separate Entity class for networkIndexes marked by isNetworkIndex: which is confusingly not being used in this case of 'specific networkIndexes' - a software development/history artefact]" << endl;
-
-#ifndef GIA_STORE_CONNECTION_SENTENCE_INDEX
-	#define GIA_TRANSLATOR_PREVENT_DOUBLE_LINKS_ASSIGN_CONFIDENCES
-#endif
-#ifdef GIA_TRANSLATOR_PREVENT_DOUBLE_LINKS_ASSIGN_CONFIDENCES
-	#define GIA_TRANSLATOR_PREVENT_DOUBLE_LINKS_ASSIGN_CONFIDENCES_PROPERTIES_AND_DEFINITIONS
-	#define GIA_TRANSLATOR_PREVENT_DOUBLE_LINKS_ASSIGN_CONFIDENCES_ACTIONS_AND_CONDITIONS
-#endif
+	
 
 //variables currently being tested (1p1a+)
 
@@ -1328,7 +1319,7 @@
 	//#define GIA_SEMANTIC_NET_DO_NOT_WRITE_CONNECTIONS_FROM_DISABLED_ENTITY_NODES	//optional to enable disbled node i/o without recording their connections
 #endif
 
-#define GIA_RECORD_SAME_REFERENCE_SET_INFORMATION	//separated from GIA_ADVANCED_REFERENCING 2g5a/05 September 2014	//added 2g5a - required for advanced referencing, dream mode (identifyReferenceSetsSpecificConceptsAndLinkWithConcepts{}:identifyReferenceSetDetermineNextCourseOfAction{}:identifyReferenceSet()), and NLC 1j2b+
+#define GIA_RECORD_SAME_REFERENCE_SET_INFORMATION	//mandatory 3a1a	//separated from GIA_ADVANCED_REFERENCING 2g5a/05 September 2014	//added 2g5a - required for advanced referencing, dream mode (identifyReferenceSetsSpecificConceptsAndLinkWithConcepts{}:identifyReferenceSetDetermineNextCourseOfAction{}:identifyReferenceSet()), and NLC 1j2b+
 #ifndef GIA_DISABLE_CROSS_SENTENCE_REFERENCING
 	#define GIA_ADVANCED_REFERENCING
 #endif
@@ -1338,9 +1329,6 @@
 #ifdef GIA_ADVANCED_REFERENCING
 	#define GIA_TRANSLATOR_MARK_DOUBLE_LINKS_AS_REFERENCE_CONNECTIONS	//added 2f21a/20-August-2014 - required for NLC 1i2a+, disabled NLC for 1j2b+, optional for NLC 1k11a+
 	#define GIA_RECORD_WAS_REFERENCE_INFORMATION
-	#ifndef GIA_STORE_CONNECTION_SENTENCE_INDEX
-		#define GIA_ADVANCED_REFERENCING_PREVENT_DOUBLE_LINKS
-	#endif
 	#ifdef USE_NLC
 		#ifndef GIA_DISABLE_CROSS_SENTENCE_REFERENCING	//ie #ifndef GIA_ENABLE_CONCEPT_ADVANCED_REFERENCING_ONLY. Note NLC does not require intrasentence referencing when NLC_USE_ADVANCED_REFERENCING is enabled (ie GIA_DISABLE_CROSS_SENTENCE_REFERENCING is enabled)
 			#define GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
@@ -1573,7 +1561,7 @@
 #ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
 	#define GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX_ADVANCED		//more robust implementation (should activate when using GIA_DATABASE to ensure all the semantic network connections are visible)
 	#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX_ADVANCED
-		#define GIA_DRAW_ONLY_PRINT_CONNECTIONS_IN_ONE_DIRECTION	//prevents duplication of connection printing
+		//#define GIA_DRAW_ONLY_PRINT_CONNECTIONS_IN_ONE_DIRECTION	//prevents duplication of connection printing
 	#endif
 #endif
 //#ifdef USE_NLC

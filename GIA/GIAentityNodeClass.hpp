@@ -25,7 +25,7 @@
  * File Name: GIAentityNodeClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1f 26-February-2017
+ * Project Version: 3a1g 26-February-2017
  * NB a substance is an instance of an entity, any given entity may contain/comprise/have multiple substances - and substances are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -423,9 +423,7 @@ public:
 	bool grammaticalProperNounTemp;	//Used to be called "grammaticalRelexPersonOrStanfordProperNounTemp" //temporary: used for GIA translator only - overwritten every time a new sentence is parsed
 	int grammaticalGenderTemp; 	//temporary: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
 	bool grammaticalPronounTemp;	//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
-	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	int grammaticalIndexOfDeterminerTemp;	//temporary: used for GIA translator only - overwritten every time a new sentence is parsed
-	#endif
 	#ifdef GIA_PREDETERMINERS
 	int grammaticalPredeterminerTemp;
 	#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_REFERENCING_OF_ENTITIES_WITH_PREDETERMINERS
@@ -465,9 +463,7 @@ public:
 	bool testedForQueryComparisonTemp; //added 17 May 2012 - support better trace routine
 	bool queryAnswerContext;
 	bool queryEntityTraced;	//temporary for determining max confidence
-	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	GIAentityNode* entityCorrespondingBestMatch;	 //best match entity node corresponding to this assumed query entity node	//does not take into account multiple diversions/answers [assumes single matches only]
-	#endif
 
 
 	/*GIA Miscellaneous Internal Variables*/
@@ -477,10 +473,8 @@ public:
 		//CXL:
 	bool CXLdummyNode;
 		//referencing:
-	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	int referenceSetID;
 	int minimumEntityIndexOfReferenceSet;
-	#endif
 	#ifdef GIA_ADVANCED_REFERENCING
 	#ifdef GIA_ADVANCED_REFERENCING_PREVENT_DOUBLE_LINKS
 	bool wasReferenceTemp;
@@ -602,9 +596,9 @@ public:
 class GIAentityNodeClassClass
 {
 	private: SHAREDvarsClass SHAREDvars;
-#ifdef GIA_DATABASE
+	#ifdef GIA_DATABASE
 	public: void DBsetEntityConnectionsReferenceListsLoaded(GIAentityNode* entityNode, bool loaded);
-#endif
+	#endif
 
 	public: void disconnectNodeFromAllButDefinitions(const GIAentityNode* entityNode);
 
@@ -616,16 +610,16 @@ class GIAentityNodeClassClass
 	public: string printQuantityNumberString(const GIAentityNode* entityNode);
 
 
-#ifdef GIA_ALIASES
+	#ifdef GIA_ALIASES
 	public: void convertAliasesStringToAliases(GIAentityNode* entityNode, string aliasesString);
 	public: void convertAliasesToAliasesString(GIAentityNode* entityNode, string* aliasesString);
 	private: vector<string> explode(const string& str, const char& ch);
 	public: string* convertDelimitedStringToArray(const string str, const char delimiter);
-#endif
+	#endif
 
 	public: void deleteEntitiesInEntityNodeList(vector<GIAentityNode*>* entityNodesActiveListComplete);
 
-#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
+	#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
 	public: bool testEntityCharacteristics(const GIAentityNode* entity, vector<GIAentityCharacteristic*>* redistributeSpecialCasePropertiesTestVector, const bool andOrOr);
 		public: bool testEntityCharacteristic(const GIAentityNode* entity, const GIAentityCharacteristic* entityCharacteristic);
 			private: void testEntityCharacteristicIterationbool(const bool entityVal, const GIAentityCharacteristic* entityCharacteristicTest, const string iterationVariable, bool* foundMatch);
@@ -636,18 +630,18 @@ class GIAentityNodeClassClass
 			private: void setEntityCharacteristicIterationbool(bool* entityVal, const GIAentityCharacteristic* entityCharacteristicSet, const string iterationVariable, bool* foundMatch);
 			private: void setEntityCharacteristicIterationint(int* entityVal, const GIAentityCharacteristic* entityCharacteristicSet, const string iterationVariable, bool* foundMatch);
 			private: void setEntityCharacteristicIterationstring(string* entityVal, const GIAentityCharacteristic* entityCharacteristicSet, const string iterationVariable, bool* foundMatch);
-	#define ENTITY_CHARACTERISTIC_MAX_VALUE_SIZE (100)
+		#define ENTITY_CHARACTERISTIC_MAX_VALUE_SIZE (100)
 		public: bool getEntityCharacteristic(const GIAentityNode* entity, GIAentityCharacteristic* entityCharacteristic);	//fills in entityCharacteristic->value based on entityCharacteristic->name
 			private: void getEntityCharacteristicIterationbool(const bool entityVal, GIAentityCharacteristic* entityCharacteristicGet, const string iterationVariable, bool* foundMatch);
 			private: void getEntityCharacteristicIterationint(const int entityVal, GIAentityCharacteristic* entityCharacteristicGet, const string iterationVariable, bool* foundMatch);
 			private: void getEntityCharacteristicIterationstring(const string entityVal, GIAentityCharacteristic* entityCharacteristicGet, const string iterationVariable, bool* foundMatch);
-#endif
+		#endif
 
-#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES
+	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES
 	public: string getParentClassEntityNameFromSubClassEntityName(string subClassEntityName);
 	public: string getChildClassEntityNameFromSubClassEntityName(const string subClassEntityName);
 	public: string createSubClassEntityName(const string childEntityName, const string parentEntityName);
-#endif
+	#endif
 
 	public: bool detectPredeterminerNonReference(const GIAentityNode* entity);
 	

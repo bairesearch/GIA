@@ -25,7 +25,7 @@
  * File Name: GIAentityConnectionClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1f 26-February-2017
+ * Project Version: 3a1g 26-February-2017
  * NB a substance is an instance of an entity, any given entity may contain/comprise/have multiple substances - and substances are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -90,6 +90,8 @@ public:
 	GIAentityConnection(void);
 	~GIAentityConnection(void);
 	GIAentityConnection(string* entityName, long idInstance);
+	
+	void initialiseDefaultValues(void);
 
 	GIAentityNode* entity;
 	#ifdef GIA_ENTITY_CONNECTION_RECORD_ENTITY_ORIGIN
@@ -100,9 +102,7 @@ public:
 	#endif
 	double confidence;
 
-	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	bool sameReferenceSet;
-	#endif
 
 	#ifdef GIA_DATABASE
 	bool referenceLoaded;
@@ -145,9 +145,7 @@ public:
 	bool isReference;	//added NLC 1i2a/20-August-2014
 	#endif
 	#endif
-	#ifdef GIA_STORE_CONNECTION_SENTENCE_INDEX
 	int sentenceIndexTemp;
-	#endif
 
 	/*
 	#ifdef GIA_NLG

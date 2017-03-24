@@ -25,7 +25,7 @@
  * File Name: GIAentityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1f 26-February-2017
+ * Project Version: 3a1g 26-February-2017
  *
  *******************************************************************************/
 
@@ -119,9 +119,7 @@ GIAentityNode::GIAentityNode(void)
 	grammaticalGenderTemp = GRAMMATICAL_GENDER_UNDEFINED;
 	//grammaticalCountTemp = GRAMMATICAL_COUNT_UNDEFINED;
 	grammaticalPronounTemp = false;
-	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	grammaticalIndexOfDeterminerTemp = GIA_ENTITY_INDEX_UNDEFINED;
-	#endif
 	#ifdef GIA_PREDETERMINERS
 	grammaticalPredeterminerTemp = GRAMMATICAL_PREDETERMINER_UNDEFINED;
 	#endif
@@ -181,9 +179,7 @@ GIAentityNode::GIAentityNode(void)
 	testedForQueryComparisonTemp = false;
 	queryAnswerContext = false;
 	queryEntityTraced = false;
-	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	entityCorrespondingBestMatch = NULL;
-	#endif
 
 
 	/*GIA Miscellaneous Internal Variables*/
@@ -193,10 +189,8 @@ GIAentityNode::GIAentityNode(void)
 		//CXL:
 	CXLdummyNode = false;
 		//referencing:
-	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	referenceSetID = GIA_REFERENCE_SET_ID_UNDEFINED;
 	minimumEntityIndexOfReferenceSet = GIA_REFERENCE_SET_ID_UNDEFINED;
-	#endif
 	#ifdef GIA_ADVANCED_REFERENCING
 	#ifdef GIA_ADVANCED_REFERENCING_PREVENT_DOUBLE_LINKS
 	wasReferenceTemp = false;
@@ -717,9 +711,7 @@ bool GIAentityNodeClassClass::testEntityCharacteristic(const GIAentityNode* enti
 	this->testEntityCharacteristicIterationbool(entity->grammaticalProperNounTemp, entityCharacteristic, "grammaticalProperNounTemp", &foundMatch);
 	this->testEntityCharacteristicIterationint(entity->grammaticalGenderTemp, entityCharacteristic, "grammaticalGenderTemp", &foundMatch);
 	this->testEntityCharacteristicIterationbool(entity->grammaticalPronounTemp, entityCharacteristic, "grammaticalPronounTemp", &foundMatch);
-	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	this->testEntityCharacteristicIterationint(entity->grammaticalIndexOfDeterminerTemp, entityCharacteristic, "grammaticalIndexOfDeterminerTemp", &foundMatch);
-	#endif
 	#ifdef GIA_STANFORD_CORENLP
 	this->testEntityCharacteristicIterationstring(entity->stanfordPOStemp, entityCharacteristic, "stanfordPOStemp", &foundMatch);
 	this->testEntityCharacteristicIterationstring(entity->NormalizedNERtemp, entityCharacteristic, "NormalizedNERtemp", &foundMatch);
@@ -894,9 +886,7 @@ bool GIAentityNodeClassClass::setEntityCharacteristic(GIAentityNode* entity, GIA
 	this->setEntityCharacteristicIterationbool(&(entity->grammaticalProperNounTemp), entityCharacteristic, "grammaticalProperNounTemp", &foundMatch);
 	this->setEntityCharacteristicIterationint(&(entity->grammaticalGenderTemp), entityCharacteristic, "grammaticalGenderTemp", &foundMatch);
 	this->setEntityCharacteristicIterationbool(&(entity->grammaticalPronounTemp), entityCharacteristic, "grammaticalPronounTemp", &foundMatch);
-	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	this->setEntityCharacteristicIterationint(&(entity->grammaticalIndexOfDeterminerTemp), entityCharacteristic, "grammaticalIndexOfDeterminerTemp", &foundMatch);
-	#endif
 	#ifdef GIA_STANFORD_CORENLP
 	this->setEntityCharacteristicIterationstring(&(entity->stanfordPOStemp), entityCharacteristic, "stanfordPOStemp", &foundMatch);
 	this->setEntityCharacteristicIterationstring(&(entity->NormalizedNERtemp), entityCharacteristic, "NormalizedNERtemp", &foundMatch);
@@ -1036,9 +1026,7 @@ bool GIAentityNodeClassClass::getEntityCharacteristic(const GIAentityNode* entit
 	this->getEntityCharacteristicIterationbool(entity->grammaticalProperNounTemp, entityCharacteristic, "grammaticalProperNounTemp", &foundMatch);
 	this->getEntityCharacteristicIterationint(entity->grammaticalGenderTemp, entityCharacteristic, "grammaticalGenderTemp", &foundMatch);
 	this->getEntityCharacteristicIterationbool(entity->grammaticalPronounTemp, entityCharacteristic, "grammaticalPronounTemp", &foundMatch);
-	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	this->getEntityCharacteristicIterationint(entity->grammaticalIndexOfDeterminerTemp, entityCharacteristic, "grammaticalIndexOfDeterminerTemp", &foundMatch);
-	#endif
 	#ifdef GIA_STANFORD_CORENLP
 	this->getEntityCharacteristicIterationstring(entity->stanfordPOStemp, entityCharacteristic, "stanfordPOStemp", &foundMatch);
 	this->getEntityCharacteristicIterationstring(entity->NormalizedNERtemp, entityCharacteristic, "NormalizedNERtemp", &foundMatch);

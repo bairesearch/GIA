@@ -25,7 +25,7 @@
  * File Name: GIAsentenceClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1f 26-February-2017
+ * Project Version: 3a1g 26-February-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -43,7 +43,7 @@
 
 #define MAX_NUMBER_OF_RELATIONS_PER_SENTENCE (1000)
 #define MAX_NUMBER_OF_WORDS_PER_SENTENCE (1000)
-#define MAX_NUMBER_OF_ARTIFICIAL_WORDS_PER_SENTENCE (100)
+#define SENTENCE_FIRST_ARTIFICIAL_INDEX (900)	//update REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_RELATION_DEPENDENT_INDEX
 
 //from http://wiki.opencog.org/w/Word_substances (intermediary - used for translation purposes into WordNet int grammaticalWordTypeTemp only)
 #define FEATURE_RELEX_POS_TYPE_ADJECTIVE (1)
@@ -153,9 +153,7 @@ public:
 	~GIArelation(void);
 
 	string relationType;
-	#ifdef GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR_NEW
 	int relationTypeIndex;
-	#endif
 	string relationGovernor;
 	int relationGovernorIndex;
 	string relationDependent;
@@ -183,10 +181,8 @@ public:
 	bool prepositionCombinationAlreadyCreatedTemp;
 	#endif
 
-	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	bool auxiliaryIndicatesDifferentReferenceSet;
 	bool rcmodIndicatesSameReferenceSet;
-	#endif
 
 	#ifdef GIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF
 	bool isNameTemp;
@@ -259,9 +255,7 @@ public:
 	int grammaticalGender;
 	bool grammaticalIsPronoun;
 	int grammaticalWordType;	//grammaticalWordTypeTemp
-	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	int grammaticalIndexOfDeterminer;
-	#endif
 	bool previousWordInSentenceIsTo;
 	#ifdef GIA_PREDETERMINERS
 	int grammaticalPredeterminer;
@@ -343,10 +337,10 @@ class GIAsentenceClassClass
 	public: void copySentences(GIAsentence* sentenceToCopy, GIAsentence* newSentence);
 	private: void copyRelations(GIArelation* firstRelationInListToCopy, GIArelation* firstRelationInList);
 	private: void copyFeatures(GIAfeature* firstFeatureInListToCopy, GIAfeature* firstFeatureInList);
-#ifdef GIA_STANFORD_CORENLP
+	#ifdef GIA_STANFORD_CORENLP
 	private: void copyStanfordCoreferences(GIAstanfordCoreNLPcoreference* firstCoreferenceInListToCopy, GIAstanfordCoreNLPcoreference* firstCoreferenceInList);
 	private: void copyStanfordMention(GIAstanfordCoreNLPmention* firstMentionInListToCopy, GIAstanfordCoreNLPmention* firstMentionInList);
-#endif
+	#endif
 
 	public: int calculateNumberOfWordsInSentence(const GIAfeature* firstFeatureInList);
 };

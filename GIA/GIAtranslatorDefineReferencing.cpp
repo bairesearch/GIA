@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1f 26-February-2017
+ * Project Version: 3a1g 26-February-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -657,9 +657,9 @@ void GIAtranslatorDefineReferencingClass::linkPronounAndTextualContextReferences
 											referenceSource->entityIndexTemp = currentSentenceEntityNodeIndex;
 											#endif
 											substance->entityIndexTemp = currentSentenceEntityNodeIndex;
-											if((currentSentenceEntityNodeIndex <= translatorVariables->currentSentenceInList->relationshipEntityArtificialIndexCurrent) && (currentSentenceEntityNodeIndex > (MAX_NUMBER_OF_WORDS_PER_SENTENCE-MAX_NUMBER_OF_ARTIFICIAL_WORDS_PER_SENTENCE)))
+											if(currentSentenceEntityNodeIndex >= translatorVariables->currentSentenceInList->relationshipEntityArtificialIndexCurrent)
 											{
-												translatorVariables->currentSentenceInList->relationshipEntityArtificialIndexCurrent = currentSentenceEntityNodeIndex - 1;
+												translatorVariables->currentSentenceInList->relationshipEntityArtificialIndexCurrent = currentSentenceEntityNodeIndex + 1;
 											}
 											#endif
 											
@@ -709,9 +709,9 @@ void GIAtranslatorDefineReferencingClass::linkPronounAndTextualContextReferences
 									#ifdef GIA_REFERENCING_UPDATE_ENTITY_INDEXES_OF_REFERENCE_SOURCE_TO_THOSE_OF_CURRENT_SENTENCE_NETWORK_INDICES
 									referenceSource->entityIndexTemp = currentSentenceEntityNodeIndex;
 									#endif
-									if((currentSentenceEntityNodeIndex <= translatorVariables->currentSentenceInList->relationshipEntityArtificialIndexCurrent) && (currentSentenceEntityNodeIndex > (MAX_NUMBER_OF_WORDS_PER_SENTENCE-MAX_NUMBER_OF_ARTIFICIAL_WORDS_PER_SENTENCE)))
+									if(currentSentenceEntityNodeIndex >= translatorVariables->currentSentenceInList->relationshipEntityArtificialIndexCurrent)
 									{
-										translatorVariables->currentSentenceInList->relationshipEntityArtificialIndexCurrent = currentSentenceEntityNodeIndex - 1;
+										translatorVariables->currentSentenceInList->relationshipEntityArtificialIndexCurrent = currentSentenceEntityNodeIndex + 1;
 									}
 									#endif
 									#ifdef GIA_RECORD_WAS_REFERENCE_INFORMATION
@@ -739,7 +739,6 @@ void GIAtranslatorDefineReferencingClass::linkPronounAndTextualContextReferences
 }
 #endif
 
-#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 
 void GIAtranslatorDefineReferencingClass::fillExplicitReferenceSameSetTags(GIAsentence* currentSentenceInList)
 {
@@ -1023,7 +1022,6 @@ void GIAtranslatorDefineReferencingClass::identifyReferenceSetNetworkIndexEntity
 	}
 }
 
-#endif
 
 #ifdef GIA_ADVANCED_REFERENCING
 
@@ -1764,9 +1762,9 @@ void GIAtranslatorDefineReferencingClass::linkAdvancedReferencesGIA(GIAtranslato
 							referenceSourceNetworkIndexEntity->entityIndexTemp = referenceEntityIndex;
 							#endif
 							referenceSource->entityIndexTemp = referenceEntityIndex; 
-							if((referenceEntityIndex <= translatorVariables->currentSentenceInList->relationshipEntityArtificialIndexCurrent) && (referenceEntityIndex > (MAX_NUMBER_OF_WORDS_PER_SENTENCE-MAX_NUMBER_OF_ARTIFICIAL_WORDS_PER_SENTENCE)))
+							if(referenceEntityIndex >= translatorVariables->currentSentenceInList->relationshipEntityArtificialIndexCurrent)
 							{
-								translatorVariables->currentSentenceInList->relationshipEntityArtificialIndexCurrent = referenceEntityIndex - 1;
+								translatorVariables->currentSentenceInList->relationshipEntityArtificialIndexCurrent = referenceEntityIndex + 1;
 							}
 							cout << "linkAdvancedReferencesGIA: new referenceSource->entityIndexTemp = " << referenceSource->entityIndexTemp << endl;
 							#endif
@@ -1880,11 +1878,7 @@ void GIAtranslatorDefineReferencingClass::identifyReferenceSetsSpecificConceptsA
 										if(numberOfMatchedNodesTemp == maxNumberOfMatchedNodesPossible)
 										{
 										#endif
-											#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 											bool sameReferenceSet = false;
-											#else
-											bool sameReferenceSet = IRRELEVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
-											#endif
 
 											#ifdef GIA_TRANSLATOR_DREAM_MODE_LINK_SPECIFIC_CONCEPTS_AND_ACTIONS_ADVANCED
 											if(entityNode->entityType == GIA_ENTITY_TYPE_CONCEPT)
@@ -1980,7 +1974,6 @@ void GIAtranslatorDefineReferencingClass::identifyReferenceSetsSpecificConceptsA
 }
 #endif
 
-#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 bool GIAtranslatorDefineReferencingClass::identifyReferenceSetDetermineNextCourseOfAction(GIAentityNode* entityNode, const bool sameReferenceSet, int referenceSetID, int minimumEntityIndexOfReferenceSet, const bool isProperty)
 {
 	bool result = false;
@@ -2103,6 +2096,5 @@ void GIAtranslatorDefineReferencingClass::identifyReferenceSet(GIAentityNode* en
 	}
 	#endif
 }
-#endif
 
 

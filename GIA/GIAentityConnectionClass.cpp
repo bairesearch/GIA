@@ -25,7 +25,7 @@
  * File Name: GIAentityConnectionClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1f 26-February-2017
+ * Project Version: 3a1g 26-February-2017
  *
  *******************************************************************************/
 
@@ -34,6 +34,23 @@
 
 
 GIAentityConnection::GIAentityConnection(void)
+{
+	initialiseDefaultValues();
+}
+GIAentityConnection::~GIAentityConnection(void)
+{
+}
+GIAentityConnection::GIAentityConnection(string* startEntityName, long startIdInstance)
+{
+	initialiseDefaultValues();
+	#ifdef GIA_DATABASE
+	entityName = *startEntityName;
+	idInstance = startIdInstance;
+	#endif
+}
+
+
+void GIAentityConnection::initialiseDefaultValues(void)
 {
 	entity = NULL;
 	#ifdef GIA_ENTITY_CONNECTION_RECORD_ENTITY_ORIGIN
@@ -45,9 +62,7 @@ GIAentityConnection::GIAentityConnection(void)
 	
 	confidence = GIA_ENTITY_CONNECTION_CONFIDENCE_BASE;
 
-	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
-	sameReferenceSet = false;	//CHECKTHIS default value
-	#endif
+	sameReferenceSet = false;
 
 	#ifdef GIA_DATABASE
 	referenceLoaded = false;
@@ -89,62 +104,11 @@ GIAentityConnection::GIAentityConnection(void)
 	isReference = false;
 	#endif
 	#endif
-	#ifdef GIA_STORE_CONNECTION_SENTENCE_INDEX
 	sentenceIndexTemp = GIA_SENTENCE_INDEX_UNDEFINED2;
-	#endif
 
 	/*
 	#ifdef GIA_NLG
 	parsedForLanguageGeneration = false;
 	#endif
 	*/
-}
-GIAentityConnection::~GIAentityConnection(void)
-{
-}
-GIAentityConnection::GIAentityConnection(string* startEntityName, long startIdInstance)
-{
-	confidence = GIA_ENTITY_CONNECTION_CONFIDENCE_BASE;
-
-	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
-	sameReferenceSet = false;	//CHECK THIS default value
-	#endif
-
-	#ifdef GIA_DATABASE
-	referenceLoaded = false;
-	entityName = *startEntityName;
-	idInstance = startIdInstance;
-	loaded = false;
-	modified = false;
-	added = false;
-	#endif
-
-	#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX_ADVANCED
-	initialisedForPrinting = false;
-	#endif
-
-	#ifdef USE_NLC
-	NLCparsedForCodeBlocks = false;
-	NLCparsedForlogicalConditionOperations = false;
-	negative = false;
-	NLCcontextGenerated = false;
-	#endif
-	#ifdef GIA_ADVANCED_REFERENCING
-	#ifdef GIA_TRANSLATOR_MARK_DOUBLE_LINKS_AS_REFERENCE_CONNECTIONS
-	isReference = false;
-	#endif
-	#endif
-	#ifdef GIA_STORE_CONNECTION_SENTENCE_INDEX
-	sentenceIndexTemp = GIA_SENTENCE_INDEX_UNDEFINED2;
-	#endif
-	#ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
-	isAlias = false;
-	#endif
-
-	/*
-	#ifdef GIA_NLG
-	parsedForLanguageGeneration = false;
-	#endif
-	*/
-}
-
+}	

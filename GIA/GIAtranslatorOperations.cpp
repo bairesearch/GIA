@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1f 26-February-2017
+ * Project Version: 3a1g 26-February-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -49,9 +49,6 @@ NLCpreprocessorSentence* firstNLCsentenceInListLocalGIA;
 static bool foundComparisonVariable;
 static GIAentityNode* comparisonVariableNode;
 
-#ifdef GIA_STORE_CONNECTION_SENTENCE_INDEX
-static int currentSentenceIndex;
-#endif
 
 
 
@@ -533,9 +530,6 @@ GIAentityNode* GIAtranslatorOperationsClass::addOrConnectRelationshipToEntity(GI
 	{
 	#endif
 	
-		#ifdef GIA_TRANSLATOR_PREVENT_DOUBLE_LINKS_ASSIGN_CONFIDENCES_ACTIONS_AND_CONDITIONS
-		newOrExistingRelationship = this->useExistingRelationshipIfExistant(newOrExistingRelationship, relationshipSubjectEntity, relationshipObjectEntity, relationshipEntity, relationshipEntityType);
-		#endif
 		newOrExistingRelationship = this->addInstanceToInstanceDefinition(relationshipEntity, relationshipEntityType, translatorVariables);
 		#ifdef GIA_PREVENT_CONCEPTS_FROM_BEEN_ADDED_AS_CHILDREN_OF_NON_CONCEPTS
 		this->setRelationshipObjectToSubstanceIfNecessary(relationshipEntity, relationshipObjectEntity, relationshipEntityType);
@@ -859,9 +853,7 @@ void GIAtranslatorOperationsClass::forwardInfoToNewSubstance(GIAentityNode* enti
 	newSubstance->grammaticalPronounTemp = entity->grammaticalPronounTemp;		//must forward grammatical info for GIAtranslatorDefineSubstances.cpp post substance declaration modifications (ie defineConcepts)
 	newSubstance->mustSetIsConceptBasedOnApposRelation = entity->mustSetIsConceptBasedOnApposRelation;
 	#endif
-	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	newSubstance->grammaticalIndexOfDeterminerTemp = entity->grammaticalIndexOfDeterminerTemp;
-	#endif
 	#ifdef GIA_PREDETERMINERS
 	newSubstance->grammaticalPredeterminerTemp = entity->grammaticalPredeterminerTemp;
 	#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_REFERENCING_OF_ENTITIES_WITH_PREDETERMINERS
@@ -1246,7 +1238,6 @@ void GIAtranslatorOperationsClass::generateTempFeatureArray(GIAfeature* firstFea
 	*/
 }
 
-#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 bool GIAtranslatorOperationsClass::determineSameReferenceSetValue(bool defaultSameSetValueForRelation, const GIArelation* relation)
 {
 	bool auxiliaryIndicatesDifferentReferenceSet = relation->auxiliaryIndicatesDifferentReferenceSet;
@@ -1273,7 +1264,6 @@ bool GIAtranslatorOperationsClass::determineSameReferenceSetValue(bool defaultSa
 
 	return sameReferenceSet;
 }
-#endif
 
 
 
@@ -1379,7 +1369,7 @@ GIAentityNode* GIAtranslatorOperationsClass::addEntityNodeByNameSimpleWrapperRel
 GIAentityNode* GIAtranslatorOperationsClass::addEntityNodeByNameSimpleWrapperRelationshipArtificial(const string relationshipEntityName, GIAtranslatorVariablesClass* translatorVariables)
 {
 	int relationshipEntityIndex = translatorVariables->currentSentenceInList->relationshipEntityArtificialIndexCurrent;
-	translatorVariables->currentSentenceInList->relationshipEntityArtificialIndexCurrent = translatorVariables->currentSentenceInList->relationshipEntityArtificialIndexCurrent - 1;
+	translatorVariables->currentSentenceInList->relationshipEntityArtificialIndexCurrent = translatorVariables->currentSentenceInList->relationshipEntityArtificialIndexCurrent + 1;
 
 	GIAentityNode* relationshipEntity = findOrAddEntityNodeByNameSimpleWrapperRelationship(relationshipEntityIndex, &relationshipEntityName, translatorVariables);
 	
@@ -1580,84 +1570,67 @@ GIAentityConnection* GIAtranslatorOperationsClass::writeVectorConnection(GIAenti
 		if(!this->findSameSentenceEntityNodePointerInVector(entityNode, entityNodeToAdd, connectionType, &connectionFound2, translatorVariables->sentenceIndex))
 		{
 		#endif
-			#ifdef GIA_TRANSLATOR_PREVENT_DOUBLE_LINKS_ASSIGN_CONFIDENCES_PROPERTIES_AND_DEFINITIONS
-			//see if link already exists between the two nodes, and if so increment the confidence
-			GIAentityConnection* connectionFound1 = NULL;
-			if(this->findEntityNodePointerInVector(entityNode, entityNodeToAdd, connectionType, &connectionFound1)
+			vector<GIAentityConnection*>* vectorConnection = &(entityNode->entityVectorConnectionsArray[connectionType]);
+			#ifndef GIA_TRANSLATOR_MARK_DOUBLE_LINKS_AS_REFERENCE_CONNECTIONS
+			if(entityVectorConnectionIsBasicArray[connectionType])
 			{
-				connectionFound1->confidence = connectionFound->confidence + GIA_ENTITY_CONNECTION_CONFIDENCE_INCREMENT;
-			}
-			else
-			{
-			#endif
-				vector<GIAentityConnection*>* vectorConnection = &(entityNode->entityVectorConnectionsArray[connectionType]);
-				#ifndef GIA_TRANSLATOR_MARK_DOUBLE_LINKS_AS_REFERENCE_CONNECTIONS
-				if(entityVectorConnectionIsBasicArray[connectionType])
+				#ifdef GIA_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE
+				if(connectionType != GIA_ENTITY_VECTOR_CONNECTION_TYPE_INSTANCE_REVERSE)
 				{
-					#ifdef GIA_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE
-					if(connectionType != GIA_ENTITY_VECTOR_CONNECTION_TYPE_INSTANCE_REVERSE)
-					{
-					#endif
-						vectorConnection->clear();	//clear the vector (basic connections only support 1 node)
-					#ifdef GIA_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE
-					}
-					#endif
+				#endif
+					vectorConnection->clear();	//clear the vector (basic connections only support 1 node)
+				#ifdef GIA_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE
 				}
 				#endif
-
-				newConnection = new GIAentityConnection();
-				newConnection->entity = entityNodeToAdd;
-				#ifdef GIA_ENTITY_CONNECTION_RECORD_ENTITY_ORIGIN
-				newConnection->entityOrigin = entityNode;
-				#ifdef GIA_ENTITY_CONNECTION_RECORD_RELATIONSHIP_TYPE
-				newConnection->connectionType = connectionType;
-				#endif
-				#endif
-				#ifdef GIA_TRANSLATOR_MARK_DOUBLE_LINKS_AS_REFERENCE_CONNECTIONS
-				GIAentityConnection* connectionFound3 = NULL;
-				if(this->findEntityNodePointerInVector(entityNode, entityNodeToAdd, connectionType, &connectionFound3))
-				{
-					newConnection->isReference = true;
-				}
-				#endif
-				vectorConnection->push_back(newConnection);
-
-				#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
-				newConnection->sameReferenceSet = sameReferenceSet;
-				/*
-				#ifdef GIA_ADVANCED_REFERENCING_DEBUG
-				cout << "writeVectorConnection: newConnection->sameReferenceSet = " << sameReferenceSet << endl;
-				#endif
-				*/
-				#endif
-
-				#ifdef GIA_DATABASE
-				if((GIAdatabase.getUseDatabase() == GIA_DATABASE_TRUE_READ_ACTIVE) || (GIAdatabase.getUseDatabase() == GIA_DATABASE_TRUE_READ_INACTIVE))	//NB even if not accessing the database for new information (read), still prepare nodes for database write
-				{
-					//#ifdef GIA_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS		//why is this preprocessor check not required???
-					//required for database syncronisation with RAM
-					if(!(entityNode->entityVectorConnectionsReferenceListLoadedArray[connectionType]))
-					{
-						cout << "error: writeVectorConnection called, but entityVectorConnectionsReferenceListLoadedArray set to false" << endl;
-						cout << "entityNode = " << entityNode->entityName << ", entityNodeToAdd = " << entityNodeToAdd->entityName << ", connectionType = " << connectionType << endl;
-						exit(EXIT_ERROR);
-					}
-					//#endif
-
-					newConnection->entityName = entityNodeToAdd->entityName;
-					newConnection->idInstance = entityNodeToAdd->idInstance;
-					newConnection->loaded = true;
-					newConnection->modified = false;
-					newConnection->added = true;		//this allows for fast update of the DB (append reference connections)
-				}
-				#endif
-
-				#ifdef GIA_STORE_CONNECTION_SENTENCE_INDEX
-				newConnection->sentenceIndexTemp = translatorVariables->sentenceIndex;
-				#endif
-			#ifdef GIA_TRANSLATOR_PREVENT_DOUBLE_LINKS_ASSIGN_CONFIDENCES_PROPERTIES_AND_DEFINITIONS
 			}
 			#endif
+
+			newConnection = new GIAentityConnection();
+			newConnection->entity = entityNodeToAdd;
+			#ifdef GIA_ENTITY_CONNECTION_RECORD_ENTITY_ORIGIN
+			newConnection->entityOrigin = entityNode;
+			#ifdef GIA_ENTITY_CONNECTION_RECORD_RELATIONSHIP_TYPE
+			newConnection->connectionType = connectionType;
+			#endif
+			#endif
+			#ifdef GIA_TRANSLATOR_MARK_DOUBLE_LINKS_AS_REFERENCE_CONNECTIONS
+			GIAentityConnection* connectionFound3 = NULL;
+			if(this->findEntityNodePointerInVector(entityNode, entityNodeToAdd, connectionType, &connectionFound3))
+			{
+				newConnection->isReference = true;
+			}
+			#endif
+			vectorConnection->push_back(newConnection);
+
+			newConnection->sameReferenceSet = sameReferenceSet;
+			/*
+			#ifdef GIA_ADVANCED_REFERENCING_DEBUG
+			cout << "writeVectorConnection: newConnection->sameReferenceSet = " << sameReferenceSet << endl;
+			#endif
+			*/
+
+			#ifdef GIA_DATABASE
+			if((GIAdatabase.getUseDatabase() == GIA_DATABASE_TRUE_READ_ACTIVE) || (GIAdatabase.getUseDatabase() == GIA_DATABASE_TRUE_READ_INACTIVE))	//NB even if not accessing the database for new information (read), still prepare nodes for database write
+			{
+				//#ifdef GIA_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS		//why is this preprocessor check not required???
+				//required for database syncronisation with RAM
+				if(!(entityNode->entityVectorConnectionsReferenceListLoadedArray[connectionType]))
+				{
+					cout << "error: writeVectorConnection called, but entityVectorConnectionsReferenceListLoadedArray set to false" << endl;
+					cout << "entityNode = " << entityNode->entityName << ", entityNodeToAdd = " << entityNodeToAdd->entityName << ", connectionType = " << connectionType << endl;
+					exit(EXIT_ERROR);
+				}
+				//#endif
+
+				newConnection->entityName = entityNodeToAdd->entityName;
+				newConnection->idInstance = entityNodeToAdd->idInstance;
+				newConnection->loaded = true;
+				newConnection->modified = false;
+				newConnection->added = true;		//this allows for fast update of the DB (append reference connections)
+			}
+			#endif
+
+			newConnection->sentenceIndexTemp = translatorVariables->sentenceIndex;
 		#ifdef GIA_ADVANCED_REFERENCING_PREVENT_DOUBLE_LINKS_IN_SAME_SENTENCE
 		}
 		#endif
@@ -1961,11 +1934,7 @@ void GIAtranslatorOperationsClass::mergeEntityNodesAddAlias(GIAentityNode* entit
 						#ifdef GIA_ALIASES_DEBUG
 						cout << "connect entityNode (" << entityNode->entityName << ") to entityConnectedToEntityToMerge (" << entityConnectedToEntityToMerge->entityName << ") (x)" << endl;
 						#endif
-						#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 						bool sameReferenceSet = (*connectionIter)->sameReferenceSet;
-						#else
-						bool sameReferenceSet = IRRELEVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
-						#endif
 						this->writeVectorConnection(entityNode, entityConnectedToEntityToMerge, i, sameReferenceSet, translatorVariables);
 					#ifndef GIA_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE
 					}

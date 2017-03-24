@@ -25,7 +25,7 @@
  * File Name: GIAsemanticParserTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1f 26-February-2017
+ * Project Version: 3a1g 26-February-2017
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -230,7 +230,6 @@ void GIAsemanticParserTranslatorClass::convertSentenceSemanticRelationsIntoGIAne
 	cout << "set sentenceIndexTemp/entityIndexTemp" << endl;
 	#endif
 
-	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	//record entityIndexTemp + sentenceIndexTemp for all substances in sentence (allows for referencing)...
 	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
 	{
@@ -241,6 +240,7 @@ void GIAsemanticParserTranslatorClass::convertSentenceSemanticRelationsIntoGIAne
 			if(GIAentityNodeArray[w]->sentenceIndexTemp == GIA_SENTENCE_INDEX_UNDEFINED)	//added condition 2j5b [check this is required]
 			{
 				GIAentityNodeArray[w]->sentenceIndexTemp = translatorVariables->currentSentenceInList->sentenceIndex;
+				cout << "convertSentenceSemanticRelationsIntoGIAnetworkNodes{} error: GIAentityNodeArray[" << w << "]->sentenceIndexTemp undefined" << endl;
 			}
 			//record sentenceIndex for networkIndex entity nodes also (NB cannot use GIAnetworkIndexNodeArray here as it won't necessarily include networkIndex entity nodes for prepositions [for dynamic linking])
 			if(!(GIAentityNodeArray[w]->instanceReverseNodeList->empty()))
@@ -256,6 +256,7 @@ void GIAsemanticParserTranslatorClass::convertSentenceSemanticRelationsIntoGIAne
 
 					if(networkIndexNode->entityIndexTemp == GIA_ENTITY_INDEX_UNDEFINED)	//added condition 2j5b [check this is required]
 					{
+						cout << "convertSentenceSemanticRelationsIntoGIAnetworkNodes{} error: GIAentityNodeArray[" << w << "]->networkIndexNode->entityIndexTemp undefined" << endl;
 						networkIndexNode->entityIndexTemp = w;
 					}
 					if(networkIndexNode->sentenceIndexTemp == GIA_SENTENCE_INDEX_UNDEFINED)
@@ -264,6 +265,7 @@ void GIAsemanticParserTranslatorClass::convertSentenceSemanticRelationsIntoGIAne
 						#ifdef GIA_DEBUG
 						//cout << "networkIndexNode->sentenceIndexTemp = " << networkIndexNode->sentenceIndexTemp << endl;
 						#endif
+						cout << "convertSentenceSemanticRelationsIntoGIAnetworkNodes{} error: GIAentityNodeArray[" << w << "]->networkIndexNode->sentenceIndexTemp undefined" << endl;
 					}
 
 				#ifdef GIA_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE
@@ -277,13 +279,13 @@ void GIAsemanticParserTranslatorClass::convertSentenceSemanticRelationsIntoGIAne
 			if(GIAnetworkIndexNodeArray[w]->sentenceIndexTemp == GIA_SENTENCE_INDEX_UNDEFINED)
 			{//do not overwrite sentenceIndex, as it needs to be drawn with first instance in network
 				GIAnetworkIndexNodeArray[w]->sentenceIndexTemp = translatorVariables->currentSentenceInList->sentenceIndex;
+				cout << "convertSentenceSemanticRelationsIntoGIAnetworkNodes{} error: GIAnetworkIndexNodeArray[" << w << "]->sentenceIndexTemp undefined" << endl;
 			}
 			#endif
 			//#endif
 
 		}
 	}
-	#endif
 
 	#ifdef GIA_SEMANTIC_PARSER_TRANSLATOR_DEBUG
 	cout << "record sentence nodes as permanent if they are still enabled" << endl;
@@ -975,9 +977,8 @@ void GIAsemanticParserTranslatorClass::invertOrDuplicateConditionsIfRequiredSema
 //based on createNewInverseConditionEntity{}
 GIAentityNode* GIAsemanticParserTranslatorClass::createNewInverseConditionEntitySemantic(GIAtranslatorVariablesClass* translatorVariables, string inverseConditionName)
 {
-	//requires GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR_NEW?
 	int inverseConditionEntityIndex = translatorVariables->currentSentenceInList->relationshipEntityArtificialIndexCurrent;
-	translatorVariables->currentSentenceInList->relationshipEntityArtificialIndexCurrent = translatorVariables->currentSentenceInList->relationshipEntityArtificialIndexCurrent - 1;
+	translatorVariables->currentSentenceInList->relationshipEntityArtificialIndexCurrent = translatorVariables->currentSentenceInList->relationshipEntityArtificialIndexCurrent + 1;
 
 	//CHECKTHIS;
 	/*//not possible as networkIndex entities have already been defined (locateAndAddAllNetworkIndexEntitiesBasedOnSemanticRelations has already been executed) unlike createNewInverseConditionEntity{}

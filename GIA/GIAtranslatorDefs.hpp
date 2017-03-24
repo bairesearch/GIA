@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1f 26-February-2017
+ * Project Version: 3a1g 26-February-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -139,10 +139,9 @@
 //#define GIA_OPTIMISE_PERFORMANCE_FOR_RELEX_PATENT_QUERIES_REPLICATION_RATHER_THAN_RELEX_PATENT_SYNTACTIC_PROTOTYPE_OUTPUT_REPLICATION			//not ever used - old for testing
 //#define GIA_COLLAPSE_COP_RELATION_DEPENDENT_BE_TO_APPOS_NOT_PREDADJ_OLD										//not ever used - old for testing
 
-#ifndef GIA_TRANSLATOR_PREVENT_DOUBLE_LINKS_ASSIGN_CONFIDENCES_ACTIONS_AND_CONDITIONS
-	#define GIA_SUPPORT_MULTIPLE_ACTION_INSTANCES_PER_ACTION
-	#define GIA_SUPPORT_MULTIPLE_CONDITION_INSTANCES_PER_CONDITION
-#endif
+#define GIA_SUPPORT_MULTIPLE_ACTION_INSTANCES_PER_ACTION
+#define GIA_SUPPORT_MULTIPLE_CONDITION_INSTANCES_PER_CONDITION
+
 //#define USE_OLD_SUBJ_OBJ_ONLY_ONE_PAIR_RESTRICTION_METHOD 	//default: disabled
 
 
@@ -457,7 +456,7 @@ static string relationGovernorDefinitionNameArray[RELATION_GOVERNOR_DEFINITION_N
 
 
 //dependent on questions;
-#define REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_RELATION_DEPENDENT_INDEX (MAX_NUMBER_OF_WORDS_PER_SENTENCE-1)
+#define REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_RELATION_DEPENDENT_INDEX (SENTENCE_FIRST_ARTIFICIAL_INDEX-1)	//899
 #ifdef GIA_RELEX_1_4_0
 	#define GIA_WORKAROUND_RELEX_BUG_OCCASIONAL_RELATION_DEPENDENT_INDEX_MINUS_1
 	#ifdef GIA_WORKAROUND_RELEX_BUG_OCCASIONAL_RELATION_DEPENDENT_INDEX_MINUS_1

@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorLinkEntitiesDynamic.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1f 26-February-2017
+ * Project Version: 3a1g 26-February-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -102,11 +102,7 @@ void GIAtranslatorLinkEntitiesDynamicClass::linkEntitiesDynamicPrenominalModifie
 				GIAentityNode* entity1 = translatorVariables->GIAentityNodeArray[entity1Index];
 				GIAentityNode* entity2 = translatorVariables->GIAentityNodeArray[entity2Index];
 
-				#ifdef GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR_NEW
 				int relationTypeIndex = currentRelationInList->relationTypeIndex;
-				#else
-				int relationTypeIndex = INT_DEFAULT_VALUE;
-				#endif
 
 				#ifdef GIA_TRANSLATOR_DEBUG
 				cout << "entity1 = " << entity1->entityName << endl;
@@ -149,11 +145,7 @@ void GIAtranslatorLinkEntitiesDynamicClass::linkEntitiesDynamicPrenominalModifie
 					#ifdef GIA_TRANSLATOR_DEBUG
 					cout << "!previousRelationshipFound: creating default property link" << endl;
 					#endif
-					#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 					bool sameReferenceSet = true;
-					#else
-					bool sameReferenceSet = IRRELEVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
-					#endif
 
 					this->connectPropertyToEntityFull(translatorVariables, entity1, entity2, entity1Index, entity2Index, sameReferenceSet, true);
 					//OLD: translatorVariables->GIAentityNodeArray[entity2Index] = connectPropertyToEntity(entity1, entity2, sameReferenceSet);
@@ -173,11 +165,7 @@ bool GIAtranslatorLinkEntitiesDynamicClass::linkEntitiesDynamicPrenominalModifie
 	bool previousPropertyRelationshipFound = false;
 	bool previousConditionRelationshipFound = false;
 
-	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	bool sameReferenceSet = true;
-	#else
-	bool sameReferenceSet = IRRELEVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
-	#endif
 
 	//find the most recent reference (latest sentence);
 	for(map<int, vector<GIAentityNode*>*>::reverse_iterator sentenceIter = entityNodesActiveListSentences->rbegin(); sentenceIter != entityNodesActiveListSentences->rend(); sentenceIter++)
@@ -287,11 +275,7 @@ void GIAtranslatorLinkEntitiesDynamicClass::linkEntitiesDynamicFromConditions(GI
 	Move the red chicken from the pie to the apple.
 	*/
 
-	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	bool sameReferenceSet = true;
-	#else
-	bool sameReferenceSet = IRRELEVANT_SAME_REFERENCE_SET_VALUE_NO_ADVANCED_REFERENCING;
-	#endif
 
 	GIArelation* currentRelationInList = translatorVariables->currentSentenceInList->firstRelationInList;
 	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
@@ -565,22 +549,12 @@ void GIAtranslatorLinkEntitiesDynamicClass::connectPropertyToEntityFull(GIAtrans
 int GIAtranslatorLinkEntitiesDynamicClass::connectConditionToEntityFull(GIAtranslatorVariablesClass* translatorVariables, GIAentityNode* entity1, GIAentityNode* entity2, int entity1Index, int entity2Index, const string conditionEntityName, int conditionIndex, bool sameReferenceSet)
 {
 	GIAentityNode* conditionNetworkIndexEntity;
-	#ifdef GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR_NEW
 	int featureIndexOfPreposition = conditionIndex;
 	if(featureIndexOfPreposition == INT_DEFAULT_VALUE)
 	{
 		featureIndexOfPreposition = translatorVariables->currentSentenceInList->relationshipEntityArtificialIndexCurrent;
-		translatorVariables->currentSentenceInList->relationshipEntityArtificialIndexCurrent = translatorVariables->currentSentenceInList->relationshipEntityArtificialIndexCurrent - 1;
+		translatorVariables->currentSentenceInList->relationshipEntityArtificialIndexCurrent = translatorVariables->currentSentenceInList->relationshipEntityArtificialIndexCurrent + 1;
 	}
-	#else
-	int featureIndexOfPreposition = INT_DEFAULT_VALUE;
-	bool prepositionFeatureFound = determineFeatureIndexOfPreposition(translatorVariables->currentSentenceInList, currentRelationInList, &featureIndexOfPreposition);
-	if(!prepositionFeatureFound)
-	{
-		featureIndexOfPreposition = translatorVariables->currentSentenceInList->relationshipEntityArtificialIndexCurrent;
-		translatorVariables->currentSentenceInList->relationshipEntityArtificialIndexCurrent = translatorVariables->currentSentenceInList->relationshipEntityArtificialIndexCurrent - 1;
-	}
-	#endif
 
 	bool entityAlreadyExistant = false;
 	string conditionName = conditionEntityName;	//conditionRelationshipEntity->entityName;

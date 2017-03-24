@@ -26,7 +26,7 @@
  * File Name: GIArules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1f 26-February-2017
+ * Project Version: 3a1g 26-February-2017
  *
  *******************************************************************************/
 -->
@@ -505,12 +505,10 @@
 				<option useRelationIndexTest="true" REL="1" REL_ENT="1" relationIndexTestRelationID="2" relationIndexTestEntityID="1" />
 				<option useRelationIndexTest="true" REL="2" REL_ENT="1" relationIndexTestRelationID="3" relationIndexTestEntityID="1" />
 				<option useRelationTest="true" REL="2" REL_ENT="2" relationTest="be" />
-				
 				<option useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck="true" REL="1" />
-				<option useRelationTest="true" REL="4" REL_ENT="3" relationTest="_rcmod" />
-				<option useRelationIndexTest="true" REL="4" REL_ENT="1" relationIndexTestRelationID="1" relationIndexTestEntityID="2" />
-				<option useRelationIndexTest="true" REL="4" REL_ENT="2" relationIndexTestRelationID="1" relationIndexTestEntityID="1" />
-				
+					<option useRelationTest="true" REL="4" REL_ENT="3" relationTest="_rcmod" />
+					<option useRelationIndexTest="true" REL="4" REL_ENT="1" relationIndexTestRelationID="1" relationIndexTestEntityID="2" />
+					<option useRelationIndexTest="true" REL="4" REL_ENT="2" relationIndexTestRelationID="1" relationIndexTestEntityID="1" />
 				<option useRedistributeRelationEntityIndexReassignment="true" REL="1" REL_ENT="3" redistributeRelationEntityIndexReassignmentRelationID="3" redistributeRelationEntityIndexReassignmentRelationEntityID="2" />
 				<option useRedistributeRelationEntityIndexReassignment="true" REL="1" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="1" redistributeRelationEntityIndexReassignmentRelationEntityID="2" />
 				<option useRedistributeRelationEntityIndexReassignment="true" REL="1" REL_ENT="2" redistributeRelationEntityIndexReassignmentRelationID="1" redistributeRelationEntityIndexReassignmentRelationEntityID="1" redistributeRelationEntityIndexReassignmentUseOriginalValues="true" />
@@ -696,9 +694,7 @@
 				<assert variable="assignPredeterminerAfterFinish" REL="2" REL_ENT="2" assertPostProcessingValue="each" />
 				<option disableEntity="true" REL="2" REL_ENT="1" /> <!-- not compatible with NLC_SUPPORT_LOGICAL_CONDITION_OPERATIONS_ADVANCED -->
 				<option disableRelation="true" REL="2" />
-				<!-- #ifdefGIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR -->
 				<option disableEntity="true" REL="2" REL_ENT="3" />
-				<!-- #endif -->
 				</paramDepRel>	
 				<paramDepRel mode="redistribute">
 				<option numberOfRelations="2" />
@@ -711,9 +707,7 @@
 				<assert variable="assignPredeterminerAfterFinish" REL="2" REL_ENT="2" assertPostProcessingValue="every" />
 				<option disableEntity="true" REL="2" REL_ENT="1" /> <!-- not compatible with NLC_SUPPORT_LOGICAL_CONDITION_OPERATIONS_ADVANCED -->
 				<option disableRelation="true" REL="2" />
-				<!-- #ifdefGIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR -->
 				<option disableEntity="true" REL="2" REL_ENT="3" />
-				<!-- #endif -->
 				</paramDepRel>	
 				<paramDepRel mode="redistribute">
 				<option numberOfRelations="2" />
@@ -726,9 +720,7 @@
 				<assert variable="assignPredeterminerAfterFinish" REL="2" REL_ENT="2" assertPostProcessingValue="all" />
 				<option disableEntity="true" REL="2" REL_ENT="1" /> <!-- not compatible with NLC_SUPPORT_LOGICAL_CONDITION_OPERATIONS_ADVANCED -->
 				<option disableRelation="true" REL="2" />
-				<!-- #ifdefGIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR -->
 				<option disableEntity="true" REL="2" REL_ENT="3" />
-				<!-- #endif -->
 				</paramDepRel>	
 								
 				<paramDepRel mode="redistribute">
@@ -1249,7 +1241,6 @@
 				conj_and(frame-8, mechanism-17)
 				--></example>
 				
-				<!-- #ifdefGIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR -->
 				<!-- <=GIA_STANFORD_PARSER_AND_CORENLP_VERSION_2014_04_04_OR_GREATER only? GIA_STANFORD_PARSER_AND_CORENLP_VERSION_2015_04_20_OR_GREATER uses redistributeStanfordRelationsCase -->
 				<example><!--
 				eg [case added GIA 2c1c] 
@@ -1270,7 +1261,6 @@
 				<option useRelationTest="true" REL="3" REL_ENT="1" relationTest="be" />
 				<option useRedistributeRelationEntityIndexReassignment="true" REL="3" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="2" redistributeRelationEntityIndexReassignmentRelationEntityID="3" />
 				</paramDepRel>
-				<!-- #endif -->
 				
 				<example><!--
 				eg1 look for nsubj/prep combination, eg nsubj(are-4, claims-3) + prep_on(are-4, frame-8) => prep_on(claims-3, frame-8)
@@ -1297,7 +1287,6 @@
 				<option disableRelation="true" REL="1" />
 				<option useRedistributeRelationEntityIndexReassignment="true" REL="2" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="1" redistributeRelationEntityIndexReassignmentRelationEntityID="2" />
 				<option disableEntity="true" REL="1" REL_ENT="1" />
-				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<!--eg;
 				[case added 15 May 2012 for ]
 				The claims that are on the frame are blue.
@@ -1306,11 +1295,10 @@
 				rcmod(claims-2, are-4)
 				-->
 				<option useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck="true" REL="2" />
-				<option useRelationTest="true" REL="3" REL_ENT="3" relationTest="_rcmod" />
-				<option useRelationIndexTest="true" REL="3" REL_ENT="2" relationIndexTestRelationID="1" relationIndexTestEntityID="1" />
-				<option useRelationIndexTest="true" REL="3" REL_ENT="1" relationIndexTestRelationID="1" relationIndexTestEntityID="2" />
-				<option useRelationTest="true" REL="3" REL_ENT="2" relationTest="be" />
-				<!-- #endif -->
+					<option useRelationTest="true" REL="3" REL_ENT="3" relationTest="_rcmod" />
+					<option useRelationIndexTest="true" REL="3" REL_ENT="2" relationIndexTestRelationID="1" relationIndexTestEntityID="1" />
+					<option useRelationIndexTest="true" REL="3" REL_ENT="1" relationIndexTestRelationID="1" relationIndexTestEntityID="2" />
+					<option useRelationTest="true" REL="3" REL_ENT="2" relationTest="be" />
 				</paramDepRel>
 				<!-- #endif -->
 			</function>
@@ -1600,7 +1588,6 @@
 				<option disableRelation="true" REL="2" />
 				<option disableRelation="true" REL="3" />
 				<option disableEntity="true" REL="2" REL_ENT="1" />
-				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<!--
 				[case added 15 May 2012 for ]
 				<He rode the carriage that is near to the horse.
@@ -1610,10 +1597,9 @@
 				<prep_to(near-7, horse-10)
 				-->
 				<option useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck="true" REL="1" />
-				<option useRelationTest="true" REL="4" REL_ENT="3" relationTest="_rcmod" />
-				<option useRelationIndexTest="true" REL="4" REL_ENT="2" relationIndexTestRelationID="3" relationIndexTestEntityID="1" />
-				<option useRelationIndexTest="true" REL="4" REL_ENT="1" relationIndexTestRelationID="3" relationIndexTestEntityID="2" />
-				<!-- #endif -->
+					<option useRelationTest="true" REL="4" REL_ENT="3" relationTest="_rcmod" />
+					<option useRelationIndexTest="true" REL="4" REL_ENT="2" relationIndexTestRelationID="3" relationIndexTestEntityID="1" />
+					<option useRelationIndexTest="true" REL="4" REL_ENT="1" relationIndexTestRelationID="3" relationIndexTestEntityID="2" />
 				<option useRedistributeSpecialCaseRelationEntityReassignmentConcatonate="true" REL="1" REL_ENT="3" />
 					<option redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID="2" REL="1" REL_ENT="3" swapIndex="1" redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID="1" />
 					<option redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID="1" REL="1" REL_ENT="3" swapIndex="2" redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID="3" />
@@ -1965,9 +1951,7 @@
 				<option useRelationIndexTest="true" REL="1" REL_ENT="2" relationIndexTestRelationID="2" relationIndexTestEntityID="1" />
 				<option disableRelation="true" REL="1" />
 				<option disableEntity="true" REL="1" REL_ENT="2" />
-				<!-- #ifdefGIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR -->
 				<option disableEntity="true" REL="2" REL_ENT="3" />
-				<!-- #endif -->
 				<option useRedistributeRelationEntityReassignment="true" REL="2" REL_ENT="3" redistributeRelationEntityReassignment="_appo" />
 				<option useRedistributeRelationEntityIndexReassignment="true" REL="2" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="2" redistributeRelationEntityIndexReassignmentRelationEntityID="2" />
 				<option useRedistributeRelationEntityIndexReassignment="true" REL="2" REL_ENT="2" redistributeRelationEntityIndexReassignmentRelationID="1" redistributeRelationEntityIndexReassignmentRelationEntityID="1" />
@@ -1983,9 +1967,7 @@
 				<option useRelationIndexTest="true" REL="1" REL_ENT="1" relationIndexTestRelationID="2" relationIndexTestEntityID="1" />
 				<option disableRelation="true" REL="1" />
 				<option disableEntity="true" REL="1" REL_ENT="1" />
-				<!-- #ifdefGIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR -->
 				<option disableEntity="true" REL="2" REL_ENT="3" />
-				<!-- #endif -->
 				<option useRedistributeRelationEntityReassignment="true" REL="2" REL_ENT="3" redistributeRelationEntityReassignment="_appo" />
 				<option useRedistributeRelationEntityIndexReassignment="true" REL="2" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="2" redistributeRelationEntityIndexReassignmentRelationEntityID="2" />
 				<option useRedistributeRelationEntityIndexReassignment="true" REL="2" REL_ENT="2" redistributeRelationEntityIndexReassignmentRelationID="1" redistributeRelationEntityIndexReassignmentRelationEntityID="2" />
@@ -2023,12 +2005,10 @@
 					<option useRedistributeRelationEntityReassignment="true" REL="2" REL_ENT="3" redistributeRelationEntityReassignment="_predadj" />
 					<option useRedistributeRelationEntityIndexReassignment="true" REL="2" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="1" redistributeRelationEntityIndexReassignmentRelationEntityID="2" />
 					<option disableRelation="true" REL="1" />
-					{!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION --}
 					<option useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck="true" REL="2" />
-					<option useRelationTest="true" REL="3" REL_ENT="3" relationTest="_rcmod" />
-					<option useRelationIndexTest="true" REL="3" REL_ENT="1" relationIndexTestRelationID="1" relationIndexTestEntityID="2" />
-					<option useRelationTest="true" REL="3" REL_ENT="2" relationTest="be" />
-					{!-- #endif --}
+						<option useRelationTest="true" REL="3" REL_ENT="3" relationTest="_rcmod" />
+						<option useRelationIndexTest="true" REL="3" REL_ENT="1" relationIndexTestRelationID="1" relationIndexTestEntityID="2" />
+						<option useRelationTest="true" REL="3" REL_ENT="2" relationTest="be" />
 					</paramDepRel>
 					-->
 					<!-- #else -->
@@ -2045,12 +2025,10 @@
 					<option useRedistributeRelationEntityIndexReassignment="true" REL="1" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="1" redistributeRelationEntityIndexReassignmentRelationEntityID="2" />
 					<option useRedistributeRelationEntityIndexReassignment="true" REL="1" REL_ENT="2" redistributeRelationEntityIndexReassignmentRelationID="2" redistributeRelationEntityIndexReassignmentRelationEntityID="2" />
 					<option disableRelation="true" REL="2" />
-					<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 					<option useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck="true" REL="1" />
-					<option useRelationTest="true" REL="3" REL_ENT="3" relationTest="_rcmod" />
-					<option useRelationIndexTest="true" REL="3" REL_ENT="1" relationIndexTestRelationID="1" relationIndexTestEntityID="2" />
-					<option useRelationIndexTest="true" REL="3" REL_ENT="2" relationIndexTestRelationID="1" relationIndexTestEntityID="1" />
-					<!-- #endif -->
+						<option useRelationTest="true" REL="3" REL_ENT="3" relationTest="_rcmod" />
+						<option useRelationIndexTest="true" REL="3" REL_ENT="1" relationIndexTestRelationID="1" relationIndexTestEntityID="2" />
+						<option useRelationIndexTest="true" REL="3" REL_ENT="2" relationIndexTestRelationID="1" relationIndexTestEntityID="1" />
 					</paramDepRel>
 					<!-- #endif -->
 				<!-- #else -->
@@ -2111,12 +2089,10 @@
 						<option useRedistributeRelationEntityIndexReassignment="true" REL="1" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="1" redistributeRelationEntityIndexReassignmentRelationEntityID="2" />
 						<option useRedistributeRelationEntityIndexReassignment="true" REL="1" REL_ENT="2" redistributeRelationEntityIndexReassignmentRelationID="2" redistributeRelationEntityIndexReassignmentRelationEntityID="1" />
 						<option disableRelation="true" REL="2" />
-						<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 						<option useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck="true" REL="1" />
-						<option useRelationTest="true" REL="3" REL_ENT="3" relationTest="_rcmod" />
-						<option useRelationIndexTest="true" REL="3" REL_ENT="1" relationIndexTestRelationID="1" relationIndexTestEntityID="2" />
-						<option useRelationIndexTest="true" REL="3" REL_ENT="2" relationIndexTestRelationID="1" relationIndexTestEntityID="1" />
-						<!-- #endif -->
+							<option useRelationTest="true" REL="3" REL_ENT="3" relationTest="_rcmod" />
+							<option useRelationIndexTest="true" REL="3" REL_ENT="1" relationIndexTestRelationID="1" relationIndexTestEntityID="2" />
+							<option useRelationIndexTest="true" REL="3" REL_ENT="2" relationIndexTestRelationID="1" relationIndexTestEntityID="1" />
 						</paramDepRel>
 
 						<paramDepRel mode="redistribute">
@@ -2135,12 +2111,10 @@
 						<option useRedistributeRelationEntityIndexReassignment="true" REL="1" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="1" redistributeRelationEntityIndexReassignmentRelationEntityID="2" />
 						<option useRedistributeRelationEntityIndexReassignment="true" REL="1" REL_ENT="2" redistributeRelationEntityIndexReassignmentRelationID="2" redistributeRelationEntityIndexReassignmentRelationEntityID="1" />
 						<option disableRelation="true" REL="2" />
-						<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 						<option useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck="true" REL="1" />
-						<option useRelationTest="true" REL="3" REL_ENT="3" relationTest="_rcmod" />
-						<option useRelationIndexTest="true" REL="3" REL_ENT="1" relationIndexTestRelationID="1" relationIndexTestEntityID="2" />
-						<option useRelationIndexTest="true" REL="3" REL_ENT="2" relationIndexTestRelationID="1" relationIndexTestEntityID="1" />
-						<!-- #endif -->
+							<option useRelationTest="true" REL="3" REL_ENT="3" relationTest="_rcmod" />
+							<option useRelationIndexTest="true" REL="3" REL_ENT="1" relationIndexTestRelationID="1" relationIndexTestEntityID="2" />
+							<option useRelationIndexTest="true" REL="3" REL_ENT="2" relationIndexTestRelationID="1" relationIndexTestEntityID="1" />
 						</paramDepRel>
 
 						<!-- must switch subject to object; -->
@@ -2812,9 +2786,7 @@
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalWordTypeTemp" value="2" REL="1" REL_ENT="1" />
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalTenseModifierArrayTemp" value="true" arrayIndex="0" REL="1" REL_ENT="1" />
 				<option useRedistributeRelationEntityReassignment="true" REL="1" REL_ENT="3" redistributeRelationEntityReassignment="_obj" />
-				<!-- #ifdefGIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR -->
 				<option disableEntity="true" REL="1" REL_ENT="3" />	<!-- added 2i4b -->
-				<!-- #endif -->
 				</paramDepRel>
 			</function>
 			<!-- #endif -->
@@ -3457,9 +3429,7 @@
 				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="convertToSubClass" value="true" REL="1" REL_ENT="1" />
 				<option disableRelation="true" REL="1" />
 				<option disableEntity="true" REL="1" REL_ENT="2" />
-				{!-- #ifdefGIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR --}
 				<option disableEntity="true" REL="1" REL_ENT="3" />
-				{!-- #endif --}
 				</paramDepRel>
 	
 				{!-- function added 2n9a --} 
@@ -4130,9 +4100,7 @@
 				<option functionToExecuteUponFind="4" />
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="1" />
-				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="true" />
-				<!-- #endif -->
 				</paramDepRel>
 			</function>
 				
@@ -4162,9 +4130,7 @@
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="1" />			
 				<!-- #endif -->
-				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetReferenceValue="true" />
-				<!-- #endif -->
 				<option disableRelationDuringLink="true" REL="1" />
 				</paramDepRel>
 				<!-- #endif -->
@@ -4182,9 +4148,7 @@
 				<option functionToExecuteUponFind="4" />
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="1" />
-				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetReferenceValue="true" />
-				<!-- #endif -->
 				<option disableRelationDuringLink="true" REL="1" />
 				</paramDepRel>
 				
@@ -4205,9 +4169,7 @@
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="1" />		
 				-->
 				<!-- #endif -->
-				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetReferenceValue="true" />
-				<!-- #endif -->
 				<option disableRelationDuringLink="true" REL="1" />
 				</paramDepRel>
 
@@ -4241,9 +4203,7 @@
 				<option functionToExecuteUponFind="4" />
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="1" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" />
-				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="true" />
-				<!-- #endif -->
 				</paramDepRel>
 				
 				<paramDepRel mode="execute">
@@ -4252,9 +4212,7 @@
 				<option functionToExecuteUponFind="4" />
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="1" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" />
-				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="false" />
-				<!-- #endif -->
 				</paramDepRel>								
 				
 				<!-- #endif -->
@@ -4278,9 +4236,7 @@
 				<specialCase type="specialCaseCharacteristicsTestOr3Vector" variable="grammaticalProperNounTemp" value="true" REL="1" REL_ENT="1" />
 				<specialCase type="specialCaseCharacteristicsTestOr3Vector" variable="isNameQuery" value="true" REL="1" REL_ENT="1" />
 				<option disableRelationDuringLink="true" REL="1" />
-				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="false" />
-				<!-- #endif -->
 				<!-- #ifdefGIA_DISABLE_ALIAS_ENTITY_MERGING -->
 				<option functionToExecuteUponFind="14" />
 				<!-- #else -->
@@ -4302,9 +4258,7 @@
 				<specialCase type="specialCaseCharacteristicsTestOr2Vector" variable="isNameQuery" value="true" REL="1" REL_ENT="2" />
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="hasAssociatedTime" value="false" REL="1" REL_ENT="2" />
 				<option disableRelationDuringLink="true" REL="1" />
-				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="false" />
-				<!-- #endif -->
 				<!-- #ifdefGIA_DISABLE_ALIAS_ENTITY_MERGING -->
 				<option functionToExecuteUponFind="14" />
 				<!-- #else -->
@@ -4323,9 +4277,7 @@
 				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_appo" />
 				<specialCase type="specialCaseCharacteristicsTestOrVector" variable="isName" value="true" REL="1" REL_ENT="2" />
 				<option disableRelationDuringLink="true" REL="1" />
-				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="false" />
-				<!-- #endif -->
 				<!-- #ifdefGIA_DISABLE_ALIAS_ENTITY_MERGING -->
 				<option functionToExecuteUponFind="14" />
 				<!-- #else -->
@@ -4338,9 +4290,7 @@
 				<paramDepRel mode="execute">
 				<option numberOfRelations="1" />
 				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_appo" />
-				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="false" />
-				<!-- #endif -->
 				<option functionToExecuteUponFind="11" />
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="1" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" />
@@ -4370,9 +4320,7 @@
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="2" FUNC_ENT="2" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="1" FUNC_ENT="3" functionEntityRelationEntityID="1" />
-				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="false" />
-				<!-- #endif -->
 				<option disableRelationDuringLink="true" REL="2" /> <!-- required to prevent action link from being created to object in secondary action interpretation function linkSubjectOrObjectRelationships() - added 17 July 2013 -->
 				</paramDepRel>
 			</function>
@@ -4389,15 +4337,13 @@
 				<option functionToExecuteUponFind="4" />
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="2" FUNC_ENT="2" functionEntityRelationEntityID="2" />
-				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<!-- <option defaultSameSetReferenceValue="true" /> -->	<!-- CHECKTHIS; OLD: before 2h2c -->
 				<!-- FUTURE GIA - rcmod tests (useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck) won't work for relex execution in GIArules.xml. Therefore all rcmod tests (useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck) should be brought back to stanford specific code; GIAtranslatorRedistributeRelationsStanford -->
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="false" />
-				<option useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck="true" REL="1" />
-				<option useRelationTest="true" REL="3" REL_ENT="3" relationTest="_rcmod" />
-				<option useRelationIndexTest="true" REL="3" REL_ENT="2" relationIndexTestRelationID="1" relationIndexTestEntityID="1" />
-				<option useRelationIndexTest="true" REL="3" REL_ENT="2" relationIndexTestRelationID="2" relationIndexTestEntityID="1" />
-				<!-- #endif -->
+					<option useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck="true" REL="1" />
+					<option useRelationTest="true" REL="3" REL_ENT="3" relationTest="_rcmod" />
+					<option useRelationIndexTest="true" REL="3" REL_ENT="2" relationIndexTestRelationID="1" relationIndexTestEntityID="1" />
+					<option useRelationIndexTest="true" REL="3" REL_ENT="2" relationIndexTestRelationID="2" relationIndexTestEntityID="1" />
 				</paramDepRel>
 			</function>
 
@@ -4416,9 +4362,7 @@
 				<option functionToExecuteUponFind="4" />
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="1" />
-				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="false" />
-				<!-- #endif -->
 				<option disableRelationDuringLink="true" REL="1" /> <!-- required to prevent action link from being created to object in secondary action interpretation function linkSubjectOrObjectRelationships() - added 17 July 2013 -->
 				</paramDepRel>
 				<!-- #endif -->
@@ -4440,12 +4384,10 @@
 				<option functionEntityRelationID="2" FUNC_ENT="2" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="1" FUNC_ENT="3" functionEntityRelationEntityID="1" />
 				<option functionToExecuteUponFind="15" />
-				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="false" />
-				<option useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck="true" REL="1" />
-				<option useRelationTest="true" REL="3" REL_ENT="3" relationTest="_rcmod" />
-				<option useRelationIndexTest="true" REL="3" REL_ENT="2" relationIndexTestRelationID="1" relationIndexTestEntityID="1" />
-				<!-- #endif -->
+					<option useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck="true" REL="1" />
+					<option useRelationTest="true" REL="3" REL_ENT="3" relationTest="_rcmod" />
+					<option useRelationIndexTest="true" REL="3" REL_ENT="2" relationIndexTestRelationID="1" relationIndexTestEntityID="1" />
 				</paramDepRel>
 
 				<example><!--special case C: passcomposition [Relex and Stanford]
@@ -4468,12 +4410,10 @@
 				<option functionEntityRelationID="2" FUNC_ENT="2" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="1" FUNC_ENT="3" functionEntityRelationEntityID="1" />
 				<option functionToExecuteUponFind="16" />
-				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="false" />
-				<option useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck="true" REL="1" />
-				<option useRelationTest="true" REL="3" REL_ENT="3" relationTest="_rcmod" />
-				<option useRelationIndexTest="true" REL="3" REL_ENT="2" relationIndexTestRelationID="1" relationIndexTestEntityID="1" />
-				<!-- #endif -->
+					<option useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck="true" REL="1" />
+					<option useRelationTest="true" REL="3" REL_ENT="3" relationTest="_rcmod" />
+					<option useRelationIndexTest="true" REL="3" REL_ENT="2" relationIndexTestRelationID="1" relationIndexTestEntityID="1" />
 				</paramDepRel>
 				
 				<example><!--standard case D:
@@ -4492,9 +4432,7 @@
 				<option functionEntityRelationID="2" FUNC_ENT="2" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="1" FUNC_ENT="3" functionEntityRelationEntityID="1" />
 				<option functionToExecuteUponFind="5" />
-				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetReferenceValue="false" />	<!-- defaultSameSetReferenceValues are handled specially by genericDependecyRelationInterpretation(); defaultSameSetRelationID not required to be set for subjectObject actions -->
-				<!-- #endif -->
 				</paramDepRel>
 			</function>
 
@@ -4510,9 +4448,7 @@
 				<paramDepRel mode="execute">
 				<option numberOfRelations="1" />
 				<option useRelationArrayTest="true" REL="1" REL_ENT="1" relationArrayTest="have" relationArrayTestSize="1" />
-				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="false" />
-				<!-- #endif -->
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="1" />
 				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="_obj" relationArrayTestSize="1" />
@@ -4527,9 +4463,7 @@
 				<paramDepRel mode="execute">
 				<option numberOfRelations="1" />
 				<option useRelationArrayTest="true" REL="1" REL_ENT="1" relationArrayTest="be" relationArrayTestSize="1" />
-				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="false" />
-				<!-- #endif -->
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="1" />
 				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="_obj" relationArrayTestSize="1" />
@@ -4553,9 +4487,7 @@
 				<option numberOfRelations="1" />
 				<option useRelationArrayTest="true" REL="1" REL_ENT="1" relationArrayTest="contains|comprise|has|have" relationArrayTestSize="4" relationArrayTestIsNegative="true" />
 				<option useRelationArrayTest="true" REL="1" REL_ENT="1" relationArrayTest="be" relationArrayTestSize="1" relationArrayTestIsNegative="true" />
-				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="false" />
-				<!-- #endif -->
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="1" />
 				<option functionToExecuteUponFind="6" />
@@ -4569,9 +4501,7 @@
 				<option numberOfRelations="1" />
 				<option useRelationArrayTest="true" REL="1" REL_ENT="1" relationArrayTest="contains|comprise|has|have" relationArrayTestSize="4" relationArrayTestIsNegative="true" />
 				<option useRelationArrayTest="true" REL="1" REL_ENT="1" relationArrayTest="be" relationArrayTestSize="1" relationArrayTestIsNegative="true" />
-				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="false" />
-				<!-- #endif -->
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="1" />
 				<option functionToExecuteUponFind="7" />
@@ -4594,9 +4524,7 @@
 				<option functionEntityRelationID="2" FUNC_ENT="1" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="2" FUNC_ENT="3" functionEntityRelationEntityID="1" />
-				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetReferenceValue="true" />
-				<!-- #endif -->
 				</paramDepRel>
 			</function>
 
@@ -4610,9 +4538,7 @@
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="1" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="1" FUNC_ENT="3" functionEntityRelationEntityID="3" />
-				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="true" />
-				<!-- #endif -->
 				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_conj_and" />
 				<option conditionEntityDefaultName="and" /> <!-- change the conditionType name (_conj_and -> and) -->
 				</paramDepRel>
@@ -4623,9 +4549,7 @@
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="1" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="1" FUNC_ENT="3" functionEntityRelationEntityID="3" />
-				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="true" />
-				<!-- #endif -->
 				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_conj_or" />
 				<option conditionEntityDefaultName="or" /> <!-- change the conditionType name (_conj_or -> or) -->
 				</paramDepRel>
@@ -4636,9 +4560,7 @@
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="1" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="1" FUNC_ENT="3" functionEntityRelationEntityID="3" />
-				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="true" />
-				<!-- #endif -->
 				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_conj_but" />
 				<option conditionEntityDefaultName="but" /> <!-- change the conditionType name (_conj_but -> but) -->
 				</paramDepRel>
@@ -4649,9 +4571,7 @@
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="1" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="1" FUNC_ENT="3" functionEntityRelationEntityID="3" />
-				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="true" />
-				<!-- #endif -->
 				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_conj_yet" />
 				<option conditionEntityDefaultName="yet" /> <!-- change the conditionType name (_conj_yet -> yet) -->
 				</paramDepRel>
@@ -4662,9 +4582,7 @@
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="1" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="1" FUNC_ENT="3" functionEntityRelationEntityID="3" />
-				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="true" />
-				<!-- #endif -->
 				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_conj_nor" />
 				<option conditionEntityDefaultName="nor" /> <!-- change the conditionType name (_conj_nor -> nor) -->
 				</paramDepRel>
@@ -4687,12 +4605,8 @@
 				<option functionToExecuteUponFind="4" />
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="1" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" />
-				<!-- #ifdefGIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR -->
 				<option disableEntity="true" REL="1" REL_ENT="3" />
-				<!-- #endif -->
-				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="true" />
-				<!-- #endif -->
 				</paramDepRel>
 				
 			</function>
@@ -4732,12 +4646,8 @@
 				<option functionToExecuteUponFind="4" />
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="1" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" />
-				<!-- #ifdefGIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR -->
 				<option disableEntity="true" REL="1" REL_ENT="3" />
-				<!-- #endif -->
-				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="true" />
-				<!-- #endif -->
 				</paramDepRel>
 				<!-- #endif -->
 				
@@ -4761,12 +4671,8 @@
 				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="grammaticalDefiniteTemp" value="false" REL="1" REL_ENT="1" />	<!-- added 2i26a: required for NLC -->
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="1" />
-				<!-- #ifdefGIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR -->
 				<option disableEntity="true" REL="1" REL_ENT="3" />
-				<!-- #endif -->
-				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="true" />
-				<!-- #endif -->
 				</paramDepRel>
 				<!-- #endif -->
 				
@@ -4796,12 +4702,8 @@
 				<!-- #endif -->
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="1" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" />
-				<!-- #ifdefGIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR -->
 				<option disableEntity="true" REL="1" REL_ENT="3" />
-				<!-- #endif -->
-				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="true" />
-				<!-- #endif -->
 				</paramDepRel>	
 				<!-- #endif -->
 			
@@ -4824,12 +4726,8 @@
 				<option functionToExecuteUponFind="4" />
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="1" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" />
-				<!-- #ifdefGIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR -->
 				<option disableEntity="true" REL="1" REL_ENT="3" />
-				<!-- #endif -->
-				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="true" />
-				<!-- #endif -->
 				</paramDepRel>
 
 				<example>
@@ -4850,12 +4748,8 @@
 				<option functionToExecuteUponFind="4" />
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="1" />
-				<!-- #ifdefGIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR -->
 				<option disableEntity="true" REL="1" REL_ENT="3" />
-				<!-- #endif -->
-				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="true" />
-				<!-- #endif -->		
 				</paramDepRel>	
 				
 				<!-- #endif -->
@@ -4874,9 +4768,7 @@
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="1" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="1" FUNC_ENT="3" functionEntityRelationEntityID="3" />
-				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="true" />
-				<!-- #endif -->
 				</paramDepRel>
 
 				<!-- interpret $qVar relationTypes as conditions: -->
@@ -4888,9 +4780,7 @@
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="1" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="1" FUNC_ENT="3" functionEntityRelationEntityID="3" />
-				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="true" />
-				<!-- #endif -->
 				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="_%atTime|_%atLocation|_%because|_%how" relationArrayTestSize="4" relationArrayTestIsNegative="false" />
 				</paramDepRel>
 			</function>
@@ -4912,9 +4802,7 @@
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="entityType" value="3" REL="1" REL_ENT="1" />
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="entityType" value="3" REL="1" REL_ENT="2" />
 				<option mustGenerateConditionName="true" conditionEntityDefaultName="involves" />
-				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="false" />
-				<!-- #endif -->
 				</paramDepRel>
 			</function>		
 		</file>
@@ -4944,9 +4832,7 @@
 				<option functionToExecuteUponFind="8" />
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="1" /> <!-- coincidentially this condition holds for both cases -->
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" /> <!-- coincidentially this condition holds for both 3 cases -->
-				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetReferenceValue="true" />
-				<!-- #endif -->
 				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="_measure_per|_measure_dependency" relationArrayTestSize="2" />
 				<option mustGenerateConditionName="true" conditionEntityDefaultName="_measure_dependency" /> <!-- NB does not support the full array of Relex measure/dependency types, and ((1000)-6) is now used instead of ((1000)-7) to allow both measure and measure per entities to be used in same sentence -->
 				</paramDepRel>
@@ -4956,9 +4842,7 @@
 				<option functionToExecuteUponFind="8" />
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="1" /> <!-- coincidentially this condition holds for both cases -->
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" /> <!-- coincidentially this condition holds for both 3 cases -->
-				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetReferenceValue="true" />
-				<!-- #endif -->
 				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="_measure_distance|_measure_size|_measure_time|_measure" relationArrayTestSize="4" />
 				<option mustGenerateConditionName="true" conditionEntityDefaultName="_measure" /> <!-- NB does not support the full array of Relex measure/dependency types -->
 				</paramDepRel>
@@ -4980,13 +4864,12 @@
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" />
 				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_to-be" />
 				<option functionToExecuteUponFind="4" />
-				{!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION --}
 				{!-- <defaultSameSetReferenceValue="true" />	//CHECKTHIS; OLD: before 2i8e --}
 				{!--  FUTURE GIA - rcmod tests (useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck) won't work for relex execution in GIArules.xml. Therefore all rcmod tests (useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck) should be brought back to stanford specific code; GIAtranslatorRedistributeRelationsStanford --}
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="false" /> {!-- determine reference set; eg The pastry tasted awesome./The chicken ate the pie that tasted awesome. --}
-				<option useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck="true" REL="1" />
-				<option useRelationTest="true" REL="2" REL_ENT="3" relationTest="_rcmod" />
-				<option useRelationIndexTest="true" REL="2" REL_ENT="2" relationIndexTestRelationID="1" relationIndexTestEntityID="1" />				
+					<option useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck="true" REL="1" />
+					<option useRelationTest="true" REL="2" REL_ENT="3" relationTest="_rcmod" />
+					<option useRelationIndexTest="true" REL="2" REL_ENT="2" relationIndexTestRelationID="1" relationIndexTestEntityID="1" />				
 				{!-- #endif --}
 				</paramDepRel>
 				-->
@@ -4999,14 +4882,12 @@
 				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_to-be" />
 				<option functionToExecuteUponFind="8" />
 				<option functionEntityRelationID="1" FUNC_ENT="3" functionEntityRelationEntityID="3" />
-				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<!-- <defaultSameSetReferenceValue="true" /> 	{!-- CHECKTHIS; OLD: before 2i8e --} -->
 				<!-- FUTURE GIA - rcmod tests (useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck) won't work for relex execution in GIArules.xml. Therefore all rcmod tests (useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck) should be brought back to stanford specific code; GIAtranslatorRedistributeRelationsStanford -->
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="false" /> <!-- determine same reference set; eg The pastry tasted awesome./The chicken ate the pie that tasted awesome. -->
-				<option useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck="true" REL="1" />
-				<option useRelationTest="true" REL="2" REL_ENT="3" relationTest="_rcmod" />
-				<option useRelationIndexTest="true" REL="2" REL_ENT="2" relationIndexTestRelationID="1" relationIndexTestEntityID="1" />
-				<!-- #endif -->
+					<option useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck="true" REL="1" />
+					<option useRelationTest="true" REL="2" REL_ENT="3" relationTest="_rcmod" />
+					<option useRelationIndexTest="true" REL="2" REL_ENT="2" relationIndexTestRelationID="1" relationIndexTestEntityID="1" />
 				</paramDepRel>
 				<!-- #endif -->
 
@@ -5024,14 +4905,12 @@
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" />
 				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_to-do" />
 				<option functionToExecuteUponFind="4" />
-				{!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION --}
 				{!-- <defaultSameSetReferenceValue="true" />	//CHECKTHIS; OLD: before 2i8e --}
 				{!--  FUTURE GIA - rcmod tests (useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck) won't work for relex execution in GIArules.xml. Therefore all rcmod tests (useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck) should be brought back to stanford specific code; GIAtranslatorRedistributeRelationsStanford --}
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="false" /> {!-- determine same reference set; eg Jezel likes to draw./The chicken ate the pie that likes to draw. --}
-				<option useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck="true" REL="1" />
-				<option useRelationTest="true" REL="2" REL_ENT="3" relationTest="_rcmod" />
-				<option useRelationIndexTest="true" REL="2" REL_ENT="2" relationIndexTestRelationID="1" relationIndexTestEntityID="1" />
-				{!-- #endif --}
+					<option useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck="true" REL="1" />
+					<option useRelationTest="true" REL="2" REL_ENT="3" relationTest="_rcmod" />
+					<option useRelationIndexTest="true" REL="2" REL_ENT="2" relationIndexTestRelationID="1" relationIndexTestEntityID="1" />
 				</paramDepRel>
 				-->
 				<!-- #else -->
@@ -5043,14 +4922,12 @@
 				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_to-do" />
 				<option functionToExecuteUponFind="8" />
 				<option functionEntityRelationID="1" FUNC_ENT="3" functionEntityRelationEntityID="3" />
-				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<!-- <defaultSameSetReferenceValue="true" /> 	{!-- CHECKTHIS; OLD: before 2i8e --} -->
 				<!-- FUTURE GIA - rcmod tests (useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck) won't work for relex execution in GIArules.xml. Therefore all rcmod tests (useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck) should be brought back to stanford specific code; GIAtranslatorRedistributeRelationsStanford -->
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="false" /> <!-- determine same reference set; eg Jezel likes to draw./The chicken ate the pie that likes to draw. -->
-				<option useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck="true" REL="1" />
-				<option useRelationTest="true" REL="2" REL_ENT="3" relationTest="_rcmod" />
-				<option useRelationIndexTest="true" REL="2" REL_ENT="2" relationIndexTestRelationID="1" relationIndexTestEntityID="1" />
-				<!-- #endif -->
+					<option useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck="true" REL="1" />
+					<option useRelationTest="true" REL="2" REL_ENT="3" relationTest="_rcmod" />
+					<option useRelationIndexTest="true" REL="2" REL_ENT="2" relationIndexTestRelationID="1" relationIndexTestEntityID="1" />
 				</paramDepRel>
 				<!-- #endif -->
 			</function>
@@ -5074,9 +4951,7 @@
 				<option functionToExecuteUponFind="4" />
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="1" />
-				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetReferenceValue="false" />
-				<!-- #endif -->
 				</paramDepRel>
 			</function>
 

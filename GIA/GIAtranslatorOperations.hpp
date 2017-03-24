@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1f 26-February-2017
+ * Project Version: 3a1g 26-February-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -124,11 +124,11 @@ class GIAtranslatorOperationsClass
 {
 	private: GIApreprocessorMultiwordReductionClass GIApreprocessorMultiwordReduction;
 	private: GIAdatabaseClass GIAdatabase;
-#ifdef GIA_NLC_INTEGRATION
-#ifdef GIA_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS_CONCEPTS
+	#ifdef GIA_NLC_INTEGRATION
+	#ifdef GIA_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS_CONCEPTS
 	private: NLCpreprocessorSentenceClassClass NLCpreprocessorSentenceClass;
-#endif
-#endif
+	#endif
+	#endif
 	private: GIAentityNodeClassClass GIAentityNodeClass;
 
 	
@@ -189,11 +189,11 @@ class GIAtranslatorOperationsClass
 	public: void connectEntities(GIAentityNode* entity1, GIAentityNode* entity2, const int connectionType, const int connectionTypeInverse, const bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables);
 
 
-//double check that isAdjectiveNotAnAdvmodAndRelationGovernorIsNotBe and isAdjectiveNotConnectedToObjectOrSubject and are no longer required with GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
-#ifndef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+	//double check that isAdjectiveNotAnAdvmodAndRelationGovernorIsNotBe and isAdjectiveNotConnectedToObjectOrSubject and are no longer required with GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
+	#ifndef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 	public: bool isAdjectiveNotAnAdvmodAndRelationGovernorIsNotBe(const GIArelation* currentRelationInList, GIAentityNode* GIAentityNodeArray[], int relationGovernorIndex, const int NLPdependencyRelationsType);
 	public: bool isAdjectiveNotConnectedToObjectOrSubject(const GIAsentence* currentSentenceInList, const GIArelation* currentRelationInList, const int NLPdependencyRelationsType);								//Stanford Compatible
-#endif
+	#endif
 	
 	public: GIAentityNode* addInstanceToInstanceDefinition(GIAentityNode* entity, int instanceType, GIAtranslatorVariablesClass* translatorVariables);
 		private: GIAentityNode* addInstance(GIAentityNode* entity, const int instanceType, GIAtranslatorVariablesClass* translatorVariables);
@@ -223,9 +223,7 @@ class GIAtranslatorOperationsClass
 
 	public: void generateTempFeatureArray(GIAfeature* firstFeatureInList, GIAfeature* featureArrayTemp[]);	//used for intrafunction memory allocation purposes only
 
-#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	public: bool determineSameReferenceSetValue(bool defaultSameSetValueForRelation, const GIArelation* relation);
-#endif
 
 	#ifdef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
 	public: GIAentityNode* addPropertyRelationshipToEntity(GIAentityNode* relationshipSubjectEntity, GIAentityNode* relationshipObjectEntity, bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables);
@@ -264,37 +262,37 @@ class GIAtranslatorOperationsClass
 
 	private: long determineNextIdInstance(GIAentityNode* entity);
 
-#ifdef GIA_DATABASE
-/*//replaced with optimised function findEntityNodesActiveListCompleteFastIndexDBactive()
-bool entityInActiveListComplete(string* entityName, long idInstance);
-bool entityInActiveListComplete(GIAentityNode* entity);
-*/
+	#ifdef GIA_DATABASE
+	/*//replaced with optimised function findEntityNodesActiveListCompleteFastIndexDBactive()
+	bool entityInActiveListComplete(string* entityName, long idInstance);
+	bool entityInActiveListComplete(GIAentityNode* entity);
+	*/
 	public: void addInstanceEntityNodeToActiveLists(GIAentityNode* entity, GIAtranslatorVariablesClass* translatorVariables);
-#endif
+	#endif
 
-#ifdef GIA_ALIASES
+	#ifdef GIA_ALIASES
 	public: void mergeEntityNodesAddAlias(GIAentityNode* entityNode, GIAentityNode* entityNodeToMerge, GIAtranslatorVariablesClass* translatorVariables);
-#endif
+	#endif
 
 	public: GIAentityNode* getPrimaryNetworkIndexNodeDefiningInstance(GIAentityNode* instanceEntity);
 
-#ifdef GIA_NLC_INTEGRATION
+	#ifdef GIA_NLC_INTEGRATION
 	private: NLCpreprocessorSentence* getFirstNLCsentenceInListGIA();
 	public: void setFirstNLCsentenceInListGIA(NLCpreprocessorSentence* firstNLCsentenceInListNew);
-#ifdef GIA_NLC_INTEGRATION_DEFINE_REFERENCE_CONTEXT_BY_TEXT_INDENTATION
+	#ifdef GIA_NLC_INTEGRATION_DEFINE_REFERENCE_CONTEXT_BY_TEXT_INDENTATION
 	public: bool checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContextGIA(const GIAentityNode* indefiniteEntity, const GIAentityNode* definiteEntity, int* indentationDifferenceFound);
-#endif
-#ifdef GIA_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS_CONCEPTS
+	#endif
+	#ifdef GIA_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS_CONCEPTS
 	public: bool checkIfSentenceIsMathTextParsablePhrase(const GIAsentence* currentSentenceInList);
-#endif
-#endif
+	#endif
+	#endif
 
-#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES
+	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES
 	public: GIAentityNode* createNewNonspecificConcept(GIAentityNode* networkIndexEntity, GIAtranslatorVariablesClass* translatorVariables);
 	public: GIAentityNode* getNonspecificConceptEntityFromNetworkIndex(GIAentityNode* networkIndexEntity);
 	public: GIAentityNode* getNonspecificConceptEntityFromInstance(GIAentityNode* instanceEntity);
 		private: bool isNonspecificConceptEntity(GIAentityNode* entity);
-#endif
+	#endif
 };
 
 

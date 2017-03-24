@@ -25,7 +25,7 @@
  * File Name: GIAquery.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1f 26-February-2017
+ * Project Version: 3a1g 26-February-2017
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  * ?Limitations: will only locate a exact answer (based upon a comparison node) if it provides the maximum number of matched nodes
@@ -122,9 +122,7 @@ GIAreferenceTraceParameters::GIAreferenceTraceParameters(void)
 	referenceSetDefiniteEntity = NULL;
 	//firstSentenceInList = NULL;
 	#endif
-	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	ensureSameReferenceSetQueryConnections = false;
-	#endif
 
 	#ifdef GIA_REFERENCING_QUERY_SUPPORT_SAME_REFERENCE_SET_TESTS
 	sameReferenceSetTests = false;
@@ -281,10 +279,8 @@ bool GIAqueryClass::testEntityNodeForQueryOrReferenceSet2(GIAentityNode* queryEn
 				for(vector<GIAentityConnection*>::iterator connectionIterQuery = queryEntityNode->entityVectorConnectionsArray[connectionType].begin(); connectionIterQuery != queryEntityNode->entityVectorConnectionsArray[connectionType].end(); connectionIterQuery++)
 				{
 					GIAentityNode* queryEntityNodeTarget = (*connectionIterQuery)->entity;
-					#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 					if(traceModeIsQuery || !(referenceTraceParameters->ensureSameReferenceSetQueryConnections) || (*connectionIterQuery)->sameReferenceSet)
 					{
-					#endif
 						#ifdef GIA_QUERY_DEBUG
 						cout << "\n\n queryEntityNodeTarget = " << queryEntityNodeTarget->entityName << ", entityType = " << queryEntityNodeTarget->entityType << endl;
 						cout << "queryEntityNodeTarget idInstance = " << queryEntityNodeTarget->idInstance << endl;
@@ -445,7 +441,6 @@ bool GIAqueryClass::testEntityNodeForQueryOrReferenceSet2(GIAentityNode* queryEn
 							}
 							*/
 
-							#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 							if(knownBestMatch)
 							{
 								#ifdef GIA_DEBUG
@@ -453,7 +448,6 @@ bool GIAqueryClass::testEntityNodeForQueryOrReferenceSet2(GIAentityNode* queryEn
 								#endif
 								queryEntityNodeTarget->entityCorrespondingBestMatch = networkEntityWithMaxNumberNodesMatched;		//this shouldn't be required for queries....
 							}
-							#endif
 
 							int numberOfMatchedNodesTemp = *numberOfMatchedNodes;
 							int numberOfMatchedNodesRequiredSynonymnDetectionTemp = *numberOfMatchedNodesRequiredSynonymnDetection;
@@ -486,9 +480,7 @@ bool GIAqueryClass::testEntityNodeForQueryOrReferenceSet2(GIAentityNode* queryEn
 							}
 						}
 						#endif
-					#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 					}
-					#endif
 				}
 				#ifdef GIA_QUERY_DEBUG
 				//cout << "finished: connectionType = " << connectionType << endl;
@@ -693,13 +685,11 @@ bool GIAqueryClass::testReferencedEntityNodeForExactNameMatch2(GIAentityNode* qu
 				}
 				#endif
 			}
-			#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 			else
 			{
 				int resultOldTemp = EXACT_MATCH_OUT_OF_BOUNDS;
 				this->compareEntityReferenceTrace(queryEntityNode, entityNode, numberOfMatchedNodes, knownBestMatch, numberOfMatchedNodesRequiredSynonymnDetection, traceModeIsQuery, queryTraceParameters, referenceTraceParameters, compareEntityNamesResult, &exactMatch, true, &resultOldTemp);
 			}
-			#endif
 		}
 		else
 		{
@@ -1205,13 +1195,11 @@ int GIAqueryClass::testReferencedEntityNodeForExactNameMatch(GIAentityNode* quer
 				#endif
 
 			}
-			#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 			else
 			{
 				bool exactMatchTemp = false;
 				this->compareEntityReferenceTrace(queryEntityNode, entityNode, numberOfMatchedNodes, knownBestMatch, numberOfMatchedNodesRequiredSynonymnDetection, traceModeIsQuery, queryTraceParameters, referenceTraceParameters, compareEntityNamesResult, &exactMatchTemp, false, &result);
 			}
-			#endif
 		}
 		else
 		{
@@ -1418,10 +1406,8 @@ bool GIAqueryClass::testEntityNodeForQueryOrReferenceSet(GIAentityNode* queryEnt
 					#ifdef GIA_QUERY_DEBUG
 					//cout << "queryEntityNodeTarget = " << queryEntityNodeTarget->entityName << endl;
 					#endif
-					#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 					if(traceModeIsQuery || !(referenceTraceParameters->ensureSameReferenceSetQueryConnections) || (*connectionIterQuery)->sameReferenceSet)
 					{
-					#endif
 						bool alreadyFoundAnAnswer = false;
 						if(traceModeIsQuery)
 						{
@@ -1824,7 +1810,6 @@ bool GIAqueryClass::testEntityNodeForQueryOrReferenceSet(GIAentityNode* queryEnt
 							//cout << "numberOfMatchedNodesTempMax = " << numberOfMatchedNodesTempMax << endl;
 							#endif
 
-							#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 							if(knownBestMatch)
 							{
 								#ifdef GIA_DEBUG
@@ -1832,7 +1817,6 @@ bool GIAqueryClass::testEntityNodeForQueryOrReferenceSet(GIAentityNode* queryEnt
 								#endif
 								queryEntityNodeTarget->entityCorrespondingBestMatch = queryEntityCorrespondingBestMatch;		//this shouldn't be required for queries....
 							}
-							#endif
 							//now set the matched nodes as already passed (required such that they are not retraced...)
 
 							int numberOfMatchedNodesTemp = *numberOfMatchedNodes;
@@ -1868,9 +1852,7 @@ bool GIAqueryClass::testEntityNodeForQueryOrReferenceSet(GIAentityNode* queryEnt
 						#ifdef GIA_QUERY_DEBUG
 						//cout << "finished: queryEntityNodeTarget = " << queryEntityNodeTarget->entityName << endl;
 						#endif
-					#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 					}
-					#endif
 				}
 				#ifdef GIA_QUERY_DEBUG
 				//cout << "finished: connectionType = " << connectionType << endl;
@@ -2413,7 +2395,6 @@ void GIAqueryClass::traceEntityNodeDetermineNextCourseOfAction(string* printEnti
 	{
 		this->traceEntityNode(entityNode, function, numberOfMatchedNodes, printEntityNodeString, thisIsInstanceAndPreviousNodeWasDefinition, referenceSetID, traceInstantiations);
 	}
-	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	else if(function == GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_DETERMINE_MAX_NUMBER_MATCHED_NODES_SAME_SET_ONLY)
 	{
 		if(entityNode->referenceSetID == referenceSetID)
@@ -2421,7 +2402,6 @@ void GIAqueryClass::traceEntityNodeDetermineNextCourseOfAction(string* printEnti
 			this->traceEntityNode(entityNode, function, numberOfMatchedNodes, printEntityNodeString, thisIsInstanceAndPreviousNodeWasDefinition, referenceSetID, traceInstantiations);
 		}
 	}
-	#endif
 	else
 	{
 		cout << "error: illegal trace entity nodes function" << endl;

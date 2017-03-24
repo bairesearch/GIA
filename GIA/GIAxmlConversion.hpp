@@ -25,7 +25,7 @@
  * File Name: GIAxmlConversion.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1f 26-February-2017
+ * Project Version: 3a1g 26-February-2017
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  *
  *******************************************************************************/
@@ -213,9 +213,8 @@ static string entityVectorConnectionXMLtagNameCrossReferenceNodeTypeArray[GIA_EN
 #define NET_XML_ATTRIBUTE_period ((string)"period")
 #define NET_XML_ATTRIBUTE_totalTimeInSeconds ((string)"totalTimeInSeconds")
 
-
 #define GIA_XML_DEBUG
-#ifdef GIA_XML_DEBUG
+
 #define GIA_SEMANTIC_NET_XML_FILE_NAME1 "tempsemanticNet1.xml"
 class GIAxmlConversionClass
 {
@@ -223,9 +222,11 @@ class GIAxmlConversionClass
 	private: SHAREDvarsClass SHAREDvars;
 	private: GIAentityNodeClassClass GIAentityNodeClass;
 	private: GIAdatabaseClass GIAdatabase;
+	
+	#ifdef GIA_XML_DEBUG
 	private: bool testReadSemanticNetXMLFile1();
 	public: bool testReadSemanticNetXMLFile2(vector<GIAentityNode*>* entityNodesActiveListComplete, const vector<GIAentityNode*>* entityNodesActiveListNetworkIndexes);
-#endif
+	#endif
 
 	public: bool writeSemanticNetXMLFileOptimised(const string xmlFileName, vector<GIAentityNode*>* entityNodesActiveListComplete, unordered_map<string, GIAentityNode*>* networkIndexEntityNodesListMap);
 		private: bool writeSemanticNetXMLFile(const string xmlFileName, vector<GIAentityNode*>* entityNodesActiveListComplete, const vector<GIAentityNode*>* entityNodesActiveListNetworkIndexes);

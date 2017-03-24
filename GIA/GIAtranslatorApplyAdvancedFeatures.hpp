@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorApplyAdvancedFeatures.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1f 26-February-2017
+ * Project Version: 3a1g 26-February-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -57,31 +57,31 @@ class GIAtranslatorApplyAdvancedFeaturesClass
 	private: GIAtranslatorGenericClass GIAtranslatorGeneric;
 	public: void applyAdvancedFeatures(GIAtranslatorVariablesClass* translatorVariables);
 		private: void extractDates(GIAtranslatorVariablesClass* translatorVariables);					//Stanford Compatible
-		#ifdef GIA_RELEX
+			#ifdef GIA_RELEX
 			private: void extractDatesRelex(GIAtranslatorVariablesClass* translatorVariables);
-		#endif
-		#ifdef GIA_STANFORD_CORENLP
+			#endif
+			#ifdef GIA_STANFORD_CORENLP
 			private: void extractDatesStanfordCoreNLP(GIAtranslatorVariablesClass* translatorVariables);					//Stanford Specific	[requires NERTemp info to be set, + need to know if timeConditionNodes have already been added; if not add them now]
-		#endif
+			#endif
 				public: void addTimeToSubstance(GIAentityNode* timeConditionEntity);
 		private: void extractQuantities(GIAtranslatorVariablesClass* translatorVariables);	//Stanford Compatible
-		#ifdef GIA_RELEX
+			#ifdef GIA_RELEX
 			private: void extractQuantitiesRelex(GIAtranslatorVariablesClass* translatorVariables);
-		#endif
-		#ifdef GIA_STANFORD_CORENLP
+			#endif
+			#ifdef GIA_STANFORD_CORENLP
 			private: void extractQuantitiesStanfordCoreNLP(GIAtranslatorVariablesClass* translatorVariables);		//Stanford Specific	[requires NERTemp info to be set]
-		#endif
+			#endif
 
 		public: void defineTenseOnlyTimeConditions(GIAtranslatorVariablesClass* translatorVariables);	//#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER || #ifdef GIA_TRANSLATOR_XML_INTERPRETATION
 
-	#ifdef GIA_SPECIFIC_ACTION_NETWORK_INDEXES
+		#ifdef GIA_SPECIFIC_ACTION_NETWORK_INDEXES
 		private: void defineActionConcepts1(GIAtranslatorVariablesClass* translatorVariables);
 		private: void defineActionConcepts2(GIAtranslatorVariablesClass* translatorVariables);
-	#endif
+		#endif
 
-	#ifdef GIA_CREATE_NEW_CONCEPT_FOR_EVERY_REFERENCE_TO_A_CONCEPT
+		#ifdef GIA_CREATE_NEW_CONCEPT_FOR_EVERY_REFERENCE_TO_A_CONCEPT
 		private: void updateConceptDesignationBasedPropertyOwnerContext(GIAtranslatorVariablesClass* translatorVariables);
-	#endif
+		#endif
 };
 	
 

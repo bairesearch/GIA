@@ -25,7 +25,7 @@
  * File Name: GIAsemanticParserDatabase.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1f 26-February-2017
+ * Project Version: 3a1g 26-February-2017
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -63,32 +63,32 @@ class GIAsemanticParserDatabaseClass
 	public: void initialiseSemanticParserDatabase(const string newSemanticParserDatabaseFolderName);
 	public: void prepareSemanticParserDatabaseForWriting();
 	private: string semanticParserDBgenerateFolderName(const GIAfeature* firstFeatureInList);
-#ifndef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER_UNOPTIMISED_TEXT_CORPUS_OLD
+	#ifndef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER_UNOPTIMISED_TEXT_CORPUS_OLD
 	public: GIArelation* getFirstRelationInSemanticParserSentenceList();
 	public: GIArelation* getCurrentRelationInSemanticParserSentenceList();
 	private: void prepareSemanticParserSemanticRelationListForWriting();
-#endif
+	#endif
 
-#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER_UNOPTIMISED_TEXT_CORPUS
-#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER_UNOPTIMISED_TEXT_CORPUS_OLD
+	#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER_UNOPTIMISED_TEXT_CORPUS
+	#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER_UNOPTIMISED_TEXT_CORPUS_OLD
 	public: void prepareSemanticParserCorpusDatabaseFileTextForWriting();
 	public: void saveTextLineToCorpusFileString(const string sentenceText);
 	public: void saveTextToCorpusFileString(const string sentenceText);
-/*
-void removeTextFromCorpusFileString(string sentenceText);
-void removeTextLineFromCorpusFileString(string sentenceText);
-*/
+	/*
+	void removeTextFromCorpusFileString(string sentenceText);
+	void removeTextLineFromCorpusFileString(string sentenceText);
+	*/
 	public: void writeSemanticParserCorpusFile(const GIAfeature* firstFeatureInSentence);
-#else
+	#else
 	public: string generateSemanticParserCorpusSemanticRelationsText(const GIArelation* firstSemanticRelationInList);
-#endif
+	#endif
 	public: void writeSemanticParserCorpusFile(const GIAfeature* firstFeatureInSentence, const string* sentenceSemanticRelationsText);
 	public: bool loadSemanticParserCorpusDatabaseFile(GIAsentence* currentSentenceInList, const GIAfeature* firstFeatureInListorSubset);
 	public: string semanticParserCorpusDBgenerateFileName(const GIAfeature* firstFeatureInList);
-#endif
+	#endif
 
-#ifdef GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE
-#define SEMANTIC_RELATION_TYPE_NON_EXISTENT (INT_DEFAULT_VALUE)
+	#ifdef GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE
+	#define SEMANTIC_RELATION_TYPE_NON_EXISTENT (INT_DEFAULT_VALUE)
 	public: bool loadSemanticParserOptimisedDatabaseFile(const GIAfeature* firstFeatureInListorSubset, const int indexOfFirstWordInTupleBeingAssessedForSemanticRelationAssignment, int GIA2semanticDependencyRelationProbabilityArray[], int GIA2semanticDependencyRelationAssignedArray[], int GIA2semanticDependencyRelationRejectedArray[]);
 	public: void writeSemanticParserOptimisedDatabaseFile(const GIAfeature* firstFeatureInListorSubset, const int firstWordInTupleIndex, const int semanticDependencyRelationType, const bool directionGovernorToDependent, const bool sameReferenceSet);
 	public: void initialiseIntArray(int intArray[], const int size, int value);
@@ -99,7 +99,7 @@ void removeTextLineFromCorpusFileString(string sentenceText);
 	private: string semanticParserOptimisedDBgenerateFileName(const GIAfeature* firstFeatureInList, const int indexOfFirstWordInTupleBeingAssessedForSemanticRelationAssignment);
 	public: void addTupleSemanticRelationToSentence(GIAsentence* currentSentenceInList, const int semanticRelationTypeOptimisedDatabase, const int firstWordInTupleIndex, const int secondWordInTupleIndex);
 	public: void generateGIA2semanticDependencyRelationObject(GIArelation* GIA2semanticDependencyRelation, string entityName1, string entityName2, string semanticRelation, int entityIndex1, int entityIndex2, bool sameReferenceSet);
-#endif
+	#endif
 
 };
 

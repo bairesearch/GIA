@@ -25,7 +25,7 @@
  * File Name: GIAsentenceClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1f 26-February-2017
+ * Project Version: 3a1g 26-February-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -130,9 +130,7 @@ GIAcoreference::~GIAcoreference(void)
 GIArelation::GIArelation(void)
 {
 	relationType = "";
-	#ifdef GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR_NEW
 	relationTypeIndex = INT_DEFAULT_VALUE;
-	#endif
 	relationDependent = "";
 	relationDependentIndex = INT_DEFAULT_VALUE;
 	relationGovernor = "";
@@ -160,10 +158,8 @@ GIArelation::GIArelation(void)
 	prepositionCombinationAlreadyCreatedTemp = false;
 	#endif
 
-	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	auxiliaryIndicatesDifferentReferenceSet = false;
 	rcmodIndicatesSameReferenceSet = false;
-	#endif
 
 	#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
 	sameReferenceSet = false;
@@ -238,9 +234,7 @@ GIAfeature::GIAfeature(void)
 	grammaticalGender = GRAMMATICAL_GENDER_UNDEFINED;
 	grammaticalIsPronoun = false;
 	grammaticalWordType = GRAMMATICAL_WORD_TYPE_UNDEFINED;
-	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	grammaticalIndexOfDeterminer = GIA_ENTITY_INDEX_UNDEFINED;
-	#endif
 	#ifdef GIA_PREDETERMINERS
 	grammaticalPredeterminer = GRAMMATICAL_PREDETERMINER_UNDEFINED;
 	#endif
@@ -303,7 +297,7 @@ GIAsentence::GIAsentence(void)
 
 	semanticParserSuccessful = false;
 
-	relationshipEntityArtificialIndexCurrent = MAX_NUMBER_OF_WORDS_PER_SENTENCE - 2;	//NB REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_RELATION_DEPENDENT_INDEX = (MAX_NUMBER_OF_WORDS_PER_SENTENCE-1)
+	relationshipEntityArtificialIndexCurrent = SENTENCE_FIRST_ARTIFICIAL_INDEX;
 }
 
 GIAsentence::~GIAsentence(void)
@@ -391,9 +385,7 @@ void GIAsentenceClassClass::copyRelations(GIArelation* firstRelationInListToCopy
 	{
 
 		currentRelation->relationType = currentRelationToCopy->relationType;
-		#ifdef GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR_NEW
 		currentRelation->relationTypeIndex = currentRelationToCopy->relationTypeIndex;
-		#endif
 		currentRelation->relationDependent = currentRelationToCopy->relationDependent;
 		currentRelation->relationDependentIndex = currentRelationToCopy->relationDependentIndex;
 		currentRelation->relationGovernor = currentRelationToCopy->relationGovernor;

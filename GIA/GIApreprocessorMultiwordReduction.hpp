@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorMultiwordReduction.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1f 26-February-2017
+ * Project Version: 3a1g 26-February-2017
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  *
@@ -283,18 +283,18 @@ class GIApreprocessorMultiwordReductionClass
 	public: void revertNLPtagNameToOfficialLRPtagName(GIAfeature* feature, const GIAsentence* currentSentenceInList, const GIArelation* currentRelationInListForPrepositionsOnly, const bool isPreposition, bool* foundOfficialLRPreplacementString);
 	#endif
 
-#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS
-#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_LIBERAL
+	#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS
+	#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_LIBERAL
 	public: bool determineVerbCaseWrapper(const string word, string* baseNameFound, int* grammaticalTenseModifier);
 		private: bool determineVerbCaseAdditional(const string word, GIApreprocessorMultiwordReductiontag* firstTagInVerbList, string* baseNameFound, int* grammaticalTenseModifier);
 			private: void testVerbCase(string tagName, const string wordLowerCase, const string baseTenseFormStart, string baseTenseFormAppend, int* numberOfCharactersInBaseTenseFormAppend, bool* foundVerbCase, string* baseNameFound, int* grammaticalTenseModifier, int grammaticalTenseModifierNew);
 
-#endif
-#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_CONSERVATIVE
+	#endif
+	#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_CONSERVATIVE
 	public: bool determineIfWordIsIrregularVerbContinuousCaseWrapper(const string word, string* baseNameFound);
 		private: bool determineIfWordIsIrregularVerbContinuousCase(const string word, GIApreprocessorMultiwordReductiontag* firstTagInIrregularVerbList, string* baseNameFound);
-#endif
-#endif
+	#endif
+	#endif
 
 	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_LOAD_INVERSE_PREPOSITIONS_LIST
 	private: bool loadPrepositionsInverseList(const string prepositionsInverseListFileName, GIApreprocessorMultiwordReductiontag* firstTagInPrepositionsInverseList);

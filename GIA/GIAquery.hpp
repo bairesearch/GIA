@@ -25,7 +25,7 @@
  * File Name: GIAquery.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1f 26-February-2017
+ * Project Version: 3a1g 26-February-2017
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  *
@@ -174,9 +174,7 @@ public:
 	GIAentityNode* referenceSetDefiniteEntity;
 	//GIAsentence* firstSentenceInList;
 	#endif
-	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	bool ensureSameReferenceSetQueryConnections;	//added 2i29a	//CHECKTHIS; check ensureSameReferenceSetQueryConnections is not required for dreammode (identifyReferenceSetsSpecificConceptsAndLinkWithConcepts)
-	#endif
 
 	#ifdef GIA_REFERENCING_QUERY_SUPPORT_SAME_REFERENCE_SET_TESTS
 	bool sameReferenceSetTests;
@@ -204,15 +202,15 @@ class GIAqueryClass
 				private: bool verifyThatAnswerEntityIsDefinedByComparisonVariableNode(GIAentityNode* entityNode, const string comparisonVariableNodeName);
 			private: bool determineMatchParameters(const bool exactMatchFoundTemp, const bool traceIsQuery, const int referenceTraceParametersTraceMode, const int numberOfMatchedNodesTempMax, bool* exactMatch);
 			private: bool determineIfBestAnswerCandidate(const bool traceModeIsQuery, const bool queryTraceParametersTempFoundAnswer, const bool alreadyFoundAnAnswer, const int numberOfMatchedNodesTemp, const int numberOfMatchedNodesTempMax, const int numberOfMatchedNodesRequiredSynonymnDetectionTemp, const int numberOfMatchedNodesRequiredSynonymnDetectionTempAtMax, const int referenceTraceParametersTraceMode, const int exactMatchTemp);
-#ifdef GIA_QUERY_SIMPLIFIED_SEARCH
+	#ifdef GIA_QUERY_SIMPLIFIED_SEARCH
 	private: GIAentityNode* answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork2(unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexesQuery, const bool detectComparisonVariable, GIAentityNode* comparisonVariableNode, const bool* foundAnswer, GIAentityNode* queryAnswerNode, const double* numberOfMatchedNodes, const string* queryAnswerContext);
 		public: bool testEntityNodeForQueryOrReferenceSet2(GIAentityNode* queryEntityNode, GIAentityNode* entityNode, int* numberOfMatchedNodes, const bool knownBestMatch, int* numberOfMatchedNodesRequiredSynonymnDetection, const bool traceModeIsQuery, GIAqueryTraceParameters* queryTraceParameters, const GIAreferenceTraceParameters* referenceTraceParameters);
 			public: bool testReferencedEntityNodeForExactNameMatch2(GIAentityNode* queryEntityNode, GIAentityNode* entityNode, int* numberOfMatchedNodes, const bool knownBestMatch, int* numberOfMatchedNodesRequiredSynonymnDetection, const bool traceModeIsQuery, GIAqueryTraceParameters* queryTraceParameters, const GIAreferenceTraceParameters* referenceTraceParameters);
-#endif
+	#endif
 
-#ifdef GIA_SYNONYMN_DETECTION
+	#ifdef GIA_SYNONYMN_DETECTION
 	private: bool compareEntitySynonyms(GIAentityNode* queryEntityNode, GIAentityNode* entityNode);
-#endif
+	#endif
 	private: bool compareEntityAliases(GIAentityNode* queryEntityNode, GIAentityNode* entityNode);
 	private: void generateTexualContextWithPreviousNodeForwards(string* queryAnswerContext, string sourceContext, GIAentityNode* entityNode, GIAentityNode* entityNodePrevious);
 		private: void generateTexualContextForwards(string* queryAnswerContext, string sourceContext, GIAentityNode* entityNode);
