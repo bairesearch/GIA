@@ -25,7 +25,7 @@
  * File Name: GIAdraw.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1b 26-February-2017
+ * Project Version: 3a1c 26-February-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -47,18 +47,18 @@ void GIAdrawClass::printGIAnetworkNodes(vector<GIAentityNode*>* entityNodesActiv
 	XMLparserTag* currentTagInSVGFile = firstTagInSVGFile;
 
 	bool printType[3];
-	printType[DRAW_CREATE_LDR_REFERENCES] = false;
-	printType[DRAW_CREATE_SVG_REFERENCES] = false;
-	printType[DRAW_CREATE_LDR_OR_SVG_REFERENCES] = false;
+	printType[GIA_DRAW_CREATE_LDR_REFERENCES] = false;
+	printType[GIA_DRAW_CREATE_SVG_REFERENCES] = false;
+	printType[GIA_DRAW_CREATE_LDR_OR_SVG_REFERENCES] = false;
 	if(useOutputLDRfile || display)
 	{// || useOutputPPMfile - implied
-		printType[DRAW_CREATE_LDR_REFERENCES] = true;
-		printType[DRAW_CREATE_LDR_OR_SVG_REFERENCES] = true;
+		printType[GIA_DRAW_CREATE_LDR_REFERENCES] = true;
+		printType[GIA_DRAW_CREATE_LDR_OR_SVG_REFERENCES] = true;
 	}
 	if(useOutputSVGfile)
 	{
-		printType[DRAW_CREATE_SVG_REFERENCES] = true;
-		printType[DRAW_CREATE_LDR_OR_SVG_REFERENCES] = true;
+		printType[GIA_DRAW_CREATE_SVG_REFERENCES] = true;
+		printType[GIA_DRAW_CREATE_LDR_OR_SVG_REFERENCES] = true;
 	}
 
 	LDreference* firstReferenceInPrintList = new LDreference();
@@ -73,7 +73,7 @@ void GIAdrawClass::printGIAnetworkNodes(vector<GIAentityNode*>* entityNodesActiv
 		delete firstTagInSVGFile;
 	}
 
-	if(printType[DRAW_CREATE_LDR_REFERENCES] == true)
+	if(printType[GIA_DRAW_CREATE_LDR_REFERENCES] == true)
 	{
 		LDreferenceManipulation.writeReferencesToFile(outputFileNameLDR, firstReferenceInPrintList);
 	}
@@ -215,7 +215,7 @@ LDreference* GIAdrawClass::initialiseEntityConnectionForPrinting(vec* pos1, GIAe
 		vec pos2;
 		pos2.x = entityNodeToConnect->printX;
 		pos2.y = entityNodeToConnect->printY;
-		pos2.z = DRAW_CONNECTION_Z;
+		pos2.z = GIA_DRAW_CONNECTION_Z;
 
 		//connectionName = connectionName + convertIntToString(entityConnection->sentenceIndexTemp);
 
@@ -289,7 +289,7 @@ LDreference* GIAdrawClass::initialiseEntityNodeForPrinting(GIAentityNode* entity
 
 			entityNode->initialisedForPrinting = true;
 
-			maxXAtAParticularY[y] = maxXAtAParticularY[y] + DRAW_X_SPACE_BETWEEN_ENTITIES;	//only used, for indepdendent network visualisation (eg, when rendering next sentence)
+			maxXAtAParticularY[y] = maxXAtAParticularY[y] + GIA_DRAW_X_SPACE_BETWEEN_ENTITIES;	//only used, for indepdendent network visualisation (eg, when rendering next sentence)
 
 			if(entityNode->printCoordsAlreadyDefined)
 			{
@@ -308,7 +308,7 @@ LDreference* GIAdrawClass::initialiseEntityNodeForPrinting(GIAentityNode* entity
 
 			pos1.x = entityNode->printX;
 			pos1.y = entityNode->printY;
-			pos1.z = DRAW_CONNECTION_Z;
+			pos1.z = GIA_DRAW_CONNECTION_Z;
 
 
 			int entityDefinitionConnectionColour = GIA_DRAW_CONNECTION_DEFINING_INSTANCE_COLOUR;
@@ -353,17 +353,7 @@ LDreference* GIAdrawClass::initialiseEntityNodeForPrinting(GIAentityNode* entity
 
 					bool pass = true;
 					int entityConnectionColour = entityVectorConnectionDrawColourNameArray[i];
-					if(i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_INSTANCE_REVERSE)
-					{
-						if(printType[DRAW_CREATE_LDR_OR_SVG_REFERENCES])
-						{
-							entityConnectionColour = entityDefinitionConnectionColour;
-						}
-						else
-						{
-							pass = false;
-						}
-					}
+
 					/*
 					//this shouldn't be necessary:
 					#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX_ADVANCED
@@ -412,27 +402,27 @@ LDreference* GIAdrawClass::initialiseEntityNodeForPrinting(GIAentityNode* entity
 				}
 			}
 
-			q = DRAW_Y_SPACE_BETWEEN_CONDITION_NODES;
-			r = DRAW_X_SPACE_BETWEEN_CONDITION_NODES;
+			q = GIA_DRAW_Y_SPACE_BETWEEN_CONDITION_NODES;
+			r = GIA_DRAW_X_SPACE_BETWEEN_CONDITION_NODES;
 			if(entityNode->conditionType == CONDITION_NODE_TYPE_TIME)
 			{
 				int timeConditionNodePrintX = x+r;
 				int timeConditionNodePrintY = y+q;
 				currentReferenceInPrintList = this->initialiseTimeConditionNodeForPrinting(entityNode->timeConditionNode, timeConditionNodePrintY, timeConditionNodePrintX, printType, currentReferenceInPrintList, currentTag);
 
-				q = q+DRAW_Y_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE;
+				q = q+GIA_DRAW_Y_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE;
 
 				//may accidentially overwrite adjacent nodes that have already been printed here; be careful...
 				vec pos2;
 				pos2.x = timeConditionNodePrintX;
 				pos2.y = timeConditionNodePrintY;
-				pos2.z = DRAW_CONNECTION_Z;
+				pos2.z = GIA_DRAW_CONNECTION_Z;
 				currentReferenceInPrintList = this->createReferenceConnectionWithText(currentReferenceInPrintList, &pos1, &pos2, GIA_DRAW_CONDITION_TIME_CONNECTION_COLOUR, currentTag, "time", printType);
 
 			}
 
 
-			if(printType[DRAW_CREATE_LDR_OR_SVG_REFERENCES] == true)
+			if(printType[GIA_DRAW_CREATE_LDR_OR_SVG_REFERENCES] == true)
 			{
 				//may accidentially overwrite adjacent nodes that have already been printed here; be careful...
 
@@ -631,7 +621,7 @@ LDreference* GIAdrawClass::initialiseTimeConditionNodeForPrinting(GIAtimeConditi
 
 	pos1.x = timeConditionNodePrintX;
 	pos1.y = timeConditionNodePrintY;
-	pos1.z = DRAW_CONNECTION_Z;
+	pos1.z = GIA_DRAW_CONNECTION_Z;
 
 	//may accidentially overwrite adjacent nodes/connections that have already been printed here; be careful...
 
@@ -673,7 +663,7 @@ LDreference* GIAdrawClass::createReferenceConnectionWithText(LDreference* curren
 		vect.y = (pos1->y + pos2->y)/2;
 		vect.z = (pos1->z + pos2->z)/2;
 
-		if(printType[DRAW_CREATE_LDR_REFERENCES] == true)
+		if(printType[GIA_DRAW_CREATE_LDR_REFERENCES] == true)
 		{
 			int numSpritesAdded;	//not used
 			vec positionLDR;
@@ -682,13 +672,13 @@ LDreference* GIAdrawClass::createReferenceConnectionWithText(LDreference* curren
 			positionLDR.z = vect.z - GIA_OUTPUT_Z_POSITION_CONNECTIONS;
 			newCurrentReferenceInPrintList = LDsprite.LDaddBasicTextualSpriteStringToReferenceList(connectionTypeName, newCurrentReferenceInPrintList, &positionLDR, &numSpritesAdded, false, DAT_FILE_COLOUR_BLACK, 0.3);	//add sprite text within box
 		}
-		if(printType[DRAW_CREATE_SVG_REFERENCES] == true)
+		if(printType[GIA_DRAW_CREATE_SVG_REFERENCES] == true)
 		{
 			vec positionSVG;
 			positionSVG.x = vect.x - GIA_DRAW_BASICENTITY_NODE_WIDTH/3;
 			positionSVG.y = vect.y - GIA_DRAW_BASICENTITY_NODE_HEIGHT/4;
 			positionSVG.z = GIA_OUTPUT_Z_POSITION_CONNECTIONS;
-			LDsvg.writeSVGtext(currentTag, connectionTypeName, &positionSVG, SVG_SCALE_FACTOR*SVG_TEXT_SCALE_FACTOR, DAT_FILE_COLOUR_BLACK);
+			LDsvg.writeSVGtext(currentTag, connectionTypeName, &positionSVG, GIA_SVG_SCALE_FACTOR*GIA_SVG_TEXT_SCALE_FACTOR, DAT_FILE_COLOUR_BLACK);
 		}
 	}
 
@@ -699,7 +689,7 @@ LDreference* GIAdrawClass::createReferenceConnection(LDreference* currentReferen
 {
 	LDreference* newCurrentReferenceInPrintList = currentReferenceInPrintList;
 
-	if(printType[DRAW_CREATE_LDR_REFERENCES] == true)
+	if(printType[GIA_DRAW_CREATE_LDR_REFERENCES] == true)
 	{
 		#ifdef GIA_DRAW_DEBUG
 		//cout << "drawing connection" << endl;
@@ -738,7 +728,7 @@ LDreference* GIAdrawClass::createReferenceConnection(LDreference* currentReferen
 		newCurrentReferenceInPrintList = newCurrentReferenceInPrintList->next;
 	}
 
-	if(printType[DRAW_CREATE_SVG_REFERENCES] == true)
+	if(printType[GIA_DRAW_CREATE_SVG_REFERENCES] == true)
 	{
 		pos1->z = GIA_OUTPUT_Z_POSITION_CONNECTIONS;
 		pos2->z = GIA_OUTPUT_Z_POSITION_CONNECTIONS;
@@ -756,7 +746,7 @@ LDreference* GIAdrawClass::createBox(LDreference* currentReferenceInPrintList, v
 {
 	LDreference* newCurrentReferenceInPrintList = currentReferenceInPrintList;
 
-	if(printType[DRAW_CREATE_LDR_REFERENCES] == true)
+	if(printType[GIA_DRAW_CREATE_LDR_REFERENCES] == true)
 	{
 
 		newCurrentReferenceInPrintList->type = REFERENCE_TYPE_QUAD;
@@ -874,7 +864,7 @@ LDreference* GIAdrawClass::createBox(LDreference* currentReferenceInPrintList, v
 		newCurrentReferenceInPrintList = LDsprite.LDaddBasicTextualSpriteStringToReferenceList(*text, newCurrentReferenceInPrintList, &positionLDR, &numSpritesAdded, false, DAT_FILE_COLOUR_BLACK, 0.3);	//add sprite text within box
 	}
 
-	if(printType[DRAW_CREATE_SVG_REFERENCES] == true)
+	if(printType[GIA_DRAW_CREATE_SVG_REFERENCES] == true)
 	{
 		vec positionSVG;
 		positionSVG.x = vect->x + GIA_DRAW_BASICENTITY_NODE_WIDTH/2;
@@ -884,7 +874,7 @@ LDreference* GIAdrawClass::createBox(LDreference* currentReferenceInPrintList, v
 		positionSVG.x = vect->x - GIA_DRAW_BASICENTITY_NODE_WIDTH/3;
 		positionSVG.y = vect->y - GIA_DRAW_BASICENTITY_NODE_HEIGHT/4;
 		positionSVG.z = GIA_OUTPUT_Z_POSITION_TEXT;
-		LDsvg.writeSVGtext(currentTag,* text, &positionSVG, SVG_SCALE_FACTOR*SVG_TEXT_SCALE_FACTOR, DAT_FILE_COLOUR_BLACK);
+		LDsvg.writeSVGtext(currentTag,* text, &positionSVG, GIA_SVG_SCALE_FACTOR*GIA_SVG_TEXT_SCALE_FACTOR, DAT_FILE_COLOUR_BLACK);
 	}
 
 	return newCurrentReferenceInPrintList;
