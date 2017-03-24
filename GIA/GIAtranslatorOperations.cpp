@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1g 26-February-2017
+ * Project Version: 3a1h 26-February-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1322,13 +1322,13 @@ GIAentityNode* GIAtranslatorOperationsClass::findOrAddEntityNodeByNameSimpleWrap
 	GIAentityNode* relationshipEntity = NULL;
 	if(!findExistingRelationshipInSentenceEntityArray(relationshipSubjectEntity, relationshipObjectEntity, relationshipEntityType, &relationshipEntity, translatorVariables))
 	{
-		relationshipEntity = addEntityNodeByNameSimpleWrapperRelationshipArtificial(relationshipEntityName, translatorVariables);
+		relationshipEntity = addEntityNodeByNameSimpleWrapperRelationshipArtificial(relationshipEntityType, relationshipEntityName, translatorVariables);
 	}
 	
 	return relationshipEntity;	
 }
 
-bool GIAtranslatorOperationsClass::findExistingRelationshipInSentenceEntityArray(GIAentityNode* relationshipSubjectEntity, GIAentityNode* relationshipObjectEntity, int relationshipEntityType, GIAentityNode** relationshipEntity, GIAtranslatorVariablesClass* translatorVariables)
+bool GIAtranslatorOperationsClass::findExistingRelationshipInSentenceEntityArray(GIAentityNode* relationshipSubjectEntity, GIAentityNode* relationshipObjectEntity, const int relationshipEntityType, GIAentityNode** relationshipEntity, GIAtranslatorVariablesClass* translatorVariables)
 {
 	//NB an artificial or non-artificial relationship may have been created in a previous sentence
 	
@@ -1360,18 +1360,22 @@ bool GIAtranslatorOperationsClass::findExistingRelationshipInSentenceEntityArray
 
 GIAentityNode* GIAtranslatorOperationsClass::addEntityNodeByNameSimpleWrapperRelationshipArtificialProperty(GIAtranslatorVariablesClass* translatorVariables)	//not used
 {
-	return addEntityNodeByNameSimpleWrapperRelationshipArtificial(RELATION_ENTITY_SPECIAL_RELATIONSHIP_NAME_FOR_EFFECTIVE_PROPERTIES, translatorVariables);
+	return addEntityNodeByNameSimpleWrapperRelationshipArtificial(GIA_ENTITY_TYPE_PROPERTY, RELATION_ENTITY_SPECIAL_RELATIONSHIP_NAME_FOR_EFFECTIVE_PROPERTIES, translatorVariables);
 }
 GIAentityNode* GIAtranslatorOperationsClass::addEntityNodeByNameSimpleWrapperRelationshipArtificialDefinition(GIAtranslatorVariablesClass* translatorVariables)	//not used
 {
-	return addEntityNodeByNameSimpleWrapperRelationshipArtificial(RELATION_ENTITY_SPECIAL_RELATIONSHIP_NAME_FOR_EFFECTIVE_DEFINITIONS, translatorVariables);
+	return addEntityNodeByNameSimpleWrapperRelationshipArtificial(GIA_ENTITY_TYPE_DEFINITION, RELATION_ENTITY_SPECIAL_RELATIONSHIP_NAME_FOR_EFFECTIVE_DEFINITIONS, translatorVariables);
 }
-GIAentityNode* GIAtranslatorOperationsClass::addEntityNodeByNameSimpleWrapperRelationshipArtificial(const string relationshipEntityName, GIAtranslatorVariablesClass* translatorVariables)
+GIAentityNode* GIAtranslatorOperationsClass::addEntityNodeByNameSimpleWrapperRelationshipArtificial(const int relationshipEntityType, const string relationshipEntityName, GIAtranslatorVariablesClass* translatorVariables)
 {
 	int relationshipEntityIndex = translatorVariables->currentSentenceInList->relationshipEntityArtificialIndexCurrent;
 	translatorVariables->currentSentenceInList->relationshipEntityArtificialIndexCurrent = translatorVariables->currentSentenceInList->relationshipEntityArtificialIndexCurrent + 1;
 
 	GIAentityNode* relationshipEntity = findOrAddEntityNodeByNameSimpleWrapperRelationship(relationshipEntityIndex, &relationshipEntityName, translatorVariables);
+	
+	//added 3a1g
+	relationshipEntity = addInstanceToInstanceDefinition(relationshipEntity, relationshipEntityType, translatorVariables);
+	translatorVariables->GIAentityNodeArray[relationshipEntityIndex] = relationshipEntity;
 	
 	relationshipEntity->isArtificialAuxiliary = true;
 	

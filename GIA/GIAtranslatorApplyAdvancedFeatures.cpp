@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorApplyAdvancedFeatures.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1g 26-February-2017
+ * Project Version: 3a1h 26-February-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -630,7 +630,7 @@ void GIAtranslatorApplyAdvancedFeaturesClass::extractQuantitiesRelex(GIAtranslat
 						measureSubstance->hasMeasure = true;
 						measureSubstance->measureType = MEASURE_TYPE_PER;
 
-						GIAentityNode* newQuantityTimesEntity = GIAtranslatorOperations.addEntityNodeByNameSimpleWrapperRelationshipArtificial("times", translatorVariables);	//CHECKTHIS
+						GIAentityNode* newQuantityTimesEntity = GIAtranslatorOperations.addEntityNodeByNameSimpleWrapperRelationshipArtificial(GIA_ENTITY_TYPE_SUBSTANCE, "times", translatorVariables);	//CHECKTHIS (this is not an artificial relationship entity being created, it is an artificial substance entity); probably need to rename addEntityNodeByNameSimpleWrapperRelationshipArtificial to addEntityNodeByNameSimpleWrapperArtificial
 						//newQuantityTimesEntity->isArtificialAuxiliary = false;	//?
 						#ifdef GIA_DATABASE
 						newQuantityTimesEntity->added = true;
