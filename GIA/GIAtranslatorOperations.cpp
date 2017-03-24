@@ -282,6 +282,7 @@ GIAentityNode* GIAtranslatorOperationsClass::getRelationshipObjectEntity(GIAenti
 	{
 		//DEBUG only; note this should never be the case (if a property/definition relationship source is defined, then its target should be defined)
 		cout << "GIAtranslatorOperationsClass::getRelationshipObjectEntity error{}: relationshipEntity->relationshipObjectEntity->empty()" << endl;
+		cout << "relationshipEntity->entityName = " << relationshipEntity->entityName << endl;
 		exit(EXIT_ERROR);
 	}
 	GIAentityNode* objectEntity = ((relationshipEntity->relationshipObjectEntity)->back())->entity;

@@ -2,7 +2,7 @@
 
 CC=g++
 #CFLAGS=-c -Wall
-CFLAGS=-c -W --no-warn -std=c++0x -ggdb
+CFLAGS=-c -W --no-warn -std=c++0x
 LDFLAGS=-lglut -lGL -lGLU -lwordnet
 SOURCES= GIAmain.cpp GIAnlpParser.cpp GIAtranslator.cpp GIAtranslatorDefineGrammar.cpp GIAtranslatorDefineReferencing.cpp GIAtranslatorRedistributeRelations.cpp GIAtranslatorRedistributeRelationsStanford.cpp GIAtranslatorRedistributeRelationsRelex.cpp GIAtranslatorDefineSubstances.cpp GIAtranslatorLinkEntities.cpp GIAtranslatorLinkEntitiesDynamic.cpp GIAtranslatorApplyAdvancedFeatures.cpp GIAtranslatorOperations.cpp GIAentityNodeClass.cpp GIAentityConnectionClass.cpp GIAconditionNodeClass.cpp GIAsentenceClass.cpp GIAdraw.cpp GIAxmlConversion.cpp GIAcxlConversion.cpp GIAquery.cpp GIAdatabase.cpp GIAnlp.cpp GIAwordnet.cpp GIAnlg.cpp GIApreprocessor.cpp GIApreprocessorSentenceClass.cpp GIApreprocessorMultiwordReduction.cpp GIApreprocessorLogicReference.cpp GIApreprocessorReferenceSet.cpp GIAbot.cpp GIAtranslatorGeneric.cpp GIAtranslatorRules.cpp GIAsemanticParser.cpp GIAsemanticParserOperations.cpp GIAsemanticParserTranslator.cpp GIAsemanticParserDatabase.cpp XMLparserClass.cpp XMLrulesClass.cpp LDsvg.cpp LDopengl.cpp LDparser.cpp LDsprite.cpp LDreferenceManipulation.cpp LDreferenceClass.cpp RTpixelMaps.cpp RTppm.cpp RTviewinfo.cpp SHAREDglobalDefs.cpp SHAREDvector.cpp SHAREDvars.cpp
 
