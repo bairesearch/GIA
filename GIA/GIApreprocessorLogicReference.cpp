@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorLogicReference.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3a1u 26-February-2017
+ * Project Version: 3a2a 21-March-2017
  * Requirements: requires plain text file
  * Description: Logic Reference preprocessor
  *
@@ -61,9 +61,6 @@ bool GIApreprocessorLogicReferenceClass::extractGIApreprocessorLogicReferenceCla
 		}
 		if(foundPreprocessorTag)
 		{
-			#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE
-			//cout << "GIApreprocessor::extractGIApreprocessorLogicReferenceClasses{} debug: foundPreprocessorTag" << endl;
-			#endif
 			
 			XMLparserTag* currentTagInPreprocessor = firstTagInPreprocessorTag;
 			bool foundLogicReferencePreprocessorTag = false;
@@ -82,18 +79,12 @@ bool GIApreprocessorLogicReferenceClass::extractGIApreprocessorLogicReferenceCla
 			//error checking only:
 			if(foundLogicReferencePreprocessorTag)
 			{
-				#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE
-				//cout << "GIApreprocessor::extractGIApreprocessorLogicReferenceClasses{} debug: foundLogicReferencePreprocessorTag" << endl;
-				#endif
 				
 				XMLparserTag* currentTagInLogicReferencePreprocessor = firstTagInLogicReferencePreprocessorTag;
 				while(currentTagInLogicReferencePreprocessor->nextTag != NULL)
 				{
 					if(currentTagInLogicReferencePreprocessor->name == GIA_PREPROCESSOR_XML_TAG_class)
 					{	
-						#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE
-						//cout << "GIApreprocessor::extractGIApreprocessorLogicReferenceClasses{} debug: foundClassTag" << endl;
-						#endif
 						
 						bool foundClass = true;
 						int logicReferenceClass = GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_UNDEFINED;
@@ -136,9 +127,6 @@ bool GIApreprocessorLogicReferenceClass::extractGIApreprocessorLogicReferenceCla
 							{
 								if(currentTagInClass->name == GIA_PREPROCESSOR_XML_TAG_type)
 								{
-									#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE
-									//cout << "GIApreprocessor::extractGIApreprocessorLogicReferenceClasses{} debug: GIA_PREPROCESSOR_XML_TAG_type" << endl;
-									#endif
 									
 									if(currentTagInClass->firstAttribute->name == GIA_PREPROCESSOR_XML_ATTRIBUTE_name)
 									{
@@ -156,9 +144,6 @@ bool GIApreprocessorLogicReferenceClass::extractGIApreprocessorLogicReferenceCla
 									{
 										if(currentTagInType->name == GIA_PREPROCESSOR_XML_TAG_instance)
 										{
-											#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE
-											//cout << "GIApreprocessor::extractGIApreprocessorLogicReferenceClasses{} debug: GIA_PREPROCESSOR_XML_TAG_instance" << endl;
-											#endif
 											
 											if(currentTagInType->firstAttribute->name == GIA_PREPROCESSOR_XML_ATTRIBUTE_name)
 											{

@@ -25,7 +25,7 @@
  * File Name: GIAnlp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1u 26-February-2017
+ * Project Version: 3a2a 21-March-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -107,9 +107,6 @@ void GIAnlpClass::executeNLPparser(const string inputTextPlainTXTfileName, const
 
 	SHAREDvars.setCurrentDirectory(NLPexeFolder);
 
-	#ifdef GIA_NLP_DEBUG
-	cout << "system(" << executeNLPCommand << ");" << endl;
-	#endif
 	system(executeNLPCommand.c_str());
 
 	SHAREDvars.setCurrentDirectory(outputFolder);
@@ -147,13 +144,6 @@ bool GIAnlpClass::parseNLPparserFile(const string inputTextNLPrelationXMLfileNam
 
 	bool createNewSentences = true;
 
-	#ifdef GIA_NLP_DEBUG
-	cout << "inputTextNLPrelationXMLfileName = " << inputTextNLPrelationXMLfileName << endl;
-	cout << "inputTextNLPfeatureXMLfileName = " << inputTextNLPfeatureXMLfileName << endl;
-	cout << "NLPfeatureParser = " << NLPfeatureParser << endl;
-	cout << "NLPdependencyRelationsParser = " << NLPdependencyRelationsParser << endl;
-	cout << "NLPrelexCompatibilityMode = " << NLPrelexCompatibilityMode << endl;
-	#endif
 
 	//Parse Features
 	if(!this->parseNLPparserFeaturesFile(inputTextNLPfeatureXMLfileName, isQuery, firstParagraphInList, NLPfeatureParser, &createNewSentences))
@@ -161,9 +151,6 @@ bool GIAnlpClass::parseNLPparserFile(const string inputTextNLPrelationXMLfileNam
 		result = false;
 	}
 
-	#ifdef GIA_NLP_DEBUG
-	cout << "finished parsing features. Parse dependency relations:" << endl;
-	#endif
 
 	//Parse Relations
 	if(result)
@@ -184,9 +171,6 @@ bool GIAnlpClass::parseNLPparserFeaturesFile(const string inputTextNLPfeatureXML
 	#ifdef GIA_RELEX
 	if(NLPfeatureParser == GIA_NLP_PARSER_RELEX)
 	{
-		#ifdef GIA_NLP_DEBUG
-		cout << "parseRelexFile" << endl;
-		#endif
 		#ifdef GIA2_SUPPORT_USE_RELEX_COMPATIBILITY_MODE_FOR_FEATURE_PARSER_TO_GENERATE_ADDITIONAL_RELATIONS_REQUIRED_BY_GIA2
 		bool NLPrelexCompatibilityMode = true;		//GIA2_SUPPORT_USE_RELEX_COMPATIBILITY_MODE_FOR_FEATURE_PARSER_TO_GENERATE_ADDITIONAL_RELATIONS_REQUIRED_BY_GIA2 - use stanford compatibilty mode only when parsing features, and only add special relations; RELATION_TYPE_MODAL_AUX, RELATION_TYPE_PASSIVE_AUX, RELATION_TYPE_COPULA, RELATION_TYPE_DETERMINER
 		#else
@@ -202,9 +186,6 @@ bool GIAnlpClass::parseNLPparserFeaturesFile(const string inputTextNLPfeatureXML
 	#ifdef GIA_STANFORD_CORENLP
 	if(NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP)
 	{
-		#ifdef GIA_NLP_DEBUG
-		cout << "parseStanfordCoreNLPfile" << endl;
-		#endif
 		if(!this->parseStanfordCoreNLPfile(inputTextNLPfeatureXMLfileName, isQuery, firstParagraphInList, false, true,* createNewSentences, false))
 		{
 			result = false;
@@ -217,9 +198,6 @@ bool GIAnlpClass::parseNLPparserFeaturesFile(const string inputTextNLPfeatureXML
 	if(NLPfeatureParser == GIA_NLP_PARSER_STANFORD_PARSER)
 	{
 		//stanford parser does not create lemmas and so can't be used for full GIA feature extraction
-		#ifdef GIA_NLP_DEBUG
-		cout << "parseStanfordParserFile" << endl;
-		#endif
 		/*
 		if(isQuery)
 		{
@@ -243,9 +221,6 @@ bool GIAnlpClass::parseNLPparserRelationsFile(const string inputTextNLPrelationX
 	#ifdef GIA_RELEX
 	if(NLPdependencyRelationsParser == GIA_NLP_PARSER_RELEX)
 	{
-		#ifdef GIA_NLP_DEBUG
-		cout << "parseRelexFile" << endl;
-		#endif
 		if(!this->parseRelexFile(inputTextNLPrelationXMLfileName, isQuery, firstParagraphInList, true, false, NLPrelexCompatibilityMode, createNewSentences, onlyParseIfCorpusLookupFailed))
 		{
 			result = false;
@@ -255,9 +230,6 @@ bool GIAnlpClass::parseNLPparserRelationsFile(const string inputTextNLPrelationX
 	#ifdef GIA_STANFORD_CORENLP
 	if(NLPdependencyRelationsParser == GIA_NLP_PARSER_STANFORD_CORENLP)
 	{
-		#ifdef GIA_NLP_DEBUG
-		cout << "parseStanfordCoreNLPfile" << endl;
-		#endif
 		if(!this->parseStanfordCoreNLPfile(inputTextNLPrelationXMLfileName, isQuery, firstParagraphInList, true, false, createNewSentences, onlyParseIfCorpusLookupFailed))
 		{
 			result = false;
@@ -267,17 +239,11 @@ bool GIAnlpClass::parseNLPparserRelationsFile(const string inputTextNLPrelationX
 	#ifdef GIA_STANFORD_PARSER
 	if(NLPdependencyRelationsParser == GIA_NLP_PARSER_STANFORD_PARSER)
 	{
-		#ifdef GIA_NLP_DEBUG
-		cout << "parseStanfordParserFile" << endl;
-		#endif
 		if(!this->parseStanfordParserFile(inputTextNLPrelationXMLfileName, isQuery, firstParagraphInList, createNewSentences, onlyParseIfCorpusLookupFailed))
 		{
 			result = false;
 		}
 	}
-	#endif
-	#ifdef GIA_NLP_DEBUG
-	cout << "finished parsing dependency relations." << endl;
 	#endif
 
 	return result;
@@ -361,9 +327,6 @@ bool GIAnlpClass::parseRelexFile(const string inputTextNLPrelationXMLfileName, c
 											{
 												if(parseFeatures)
 												{
-													#ifdef GIA_NLP_DEBUG
-													//cout << "GIATHparseRelexFeaturesText: currentTagInParse->value = " << currentTagInParse->value << endl;
-													#endif
 													int maxNumberOfWordsInSentence = 0;
 													GIAnlpParser.GIATHparseRelexFeaturesText(&(currentTagInParse->value), currentSentence, &maxNumberOfWordsInSentence);
 													#ifdef GIA_RECORD_MAXIMUM_NUMBER_OF_WORDS_IN_SENTENCE
@@ -385,9 +348,6 @@ bool GIAnlpClass::parseRelexFile(const string inputTextNLPrelationXMLfileName, c
 											{
 												if(parseRelations)
 												{
-													#ifdef GIA_NLP_DEBUG
-													//cout << "GIATHparseRelexRelationsText: currentTagInParse->value = " << currentTagInParse->value << endl;
-													#endif
 													#ifdef GIA_RECORD_MAXIMUM_NUMBER_OF_WORDS_IN_SENTENCE_OR_MAX_FEATURE_INDEX
 													int maxNumberOfWordsInSentence = currentSentence->maxNumberOfWordsInSentence;
 													#else
@@ -406,16 +366,10 @@ bool GIAnlpClass::parseRelexFile(const string inputTextNLPrelationXMLfileName, c
 													string relationsText = currentTagInParse->value;
 													if(relationsText[0] == '\n')
 													{
-														#ifdef GIA_DEBUG
-														//cout << "(relationsText[0] == \n)" << endl;
-														#endif
 														relationsText = relationsText.substr(1, (relationsText.length() -1));
 													}
 
 													GIAnlpParser.GIATHparseStanfordParserRelationsText(&relationsText, currentSentence, &maxNumberOfWordsInSentence, featuresNotPreviouslyFilled, false, NLPrelexCompatibilityMode);
-													#ifdef GIA_NLP_DEBUG
-													//cout << "finished GIATHparseStanfordParserRelationsText" << endl;
-													#endif
 												}
 												#endif
 											}
@@ -466,9 +420,6 @@ bool GIAnlpClass::parseStanfordCoreNLPfile(const string inputTextNLPrelationXMLf
 {
 	bool result = true;
 
-	#ifdef GIA_NLP_DEBUG
-	//cout << "inputTextNLPrelationXMLfileName = " << inputTextNLPrelationXMLfileName << endl;
-	#endif
 
 	GIAparagraph* currentParagraph = firstParagraphInList;
 	GIAparagraph* newParagraph = new GIAparagraph();
@@ -505,9 +456,6 @@ bool GIAnlpClass::parseStanfordCoreNLPfile(const string inputTextNLPrelationXMLf
 				{
 					string sentenceIndexString = currentTagInSentences->firstAttribute->value;
 					currentSentence->sentenceIndex = SHAREDvars.convertStringToInt(sentenceIndexString);
-					#ifdef GIA_NLP_DEBUG
-					//cout << "currentSentence->sentenceIndex = " << currentSentence->sentenceIndex << endl;
-					#endif
 
 					XMLparserTag* firstTagInSentence = XMLparserClass.parseTagDownALevel(currentTagInSentences, StanfordCoreNLP_XML_TAG_sentence, &result);
 
@@ -520,9 +468,6 @@ bool GIAnlpClass::parseStanfordCoreNLPfile(const string inputTextNLPrelationXMLf
 					XMLparserTag* currentTagInTokens = firstTagInTokens;
 					bool isQuestion = false;
 
-					#ifdef GIA_NLP_DEBUG
-					//cout << "parseFeatures: " << endl;
-					#endif
 					int maxNumberOfWordsInSentence = 0;
 
 					while(currentTagInTokens->nextTag != NULL)
@@ -599,9 +544,6 @@ bool GIAnlpClass::parseStanfordCoreNLPfile(const string inputTextNLPrelationXMLf
 										if(TagValue == featureNERtypeArray[i])
 										{
 											currentNER = i;
-											#ifdef GIA_WORDNET_DEBUG
-											//cout << "nerType currentFeatureIndex = " << currentNER << endl;
-											#endif
 										}
 									}
 									currentFeatureInList->NER = currentNER;
@@ -622,9 +564,6 @@ bool GIAnlpClass::parseStanfordCoreNLPfile(const string inputTextNLPrelationXMLf
 							{//only interested in POS tags if not parsing features (as POS tags in GIA must always match dependency relation POS tags)
 								if(currentTagInToken->name == StanfordCoreNLP_XML_TAG_POS)	//overwrite pos tag values if necessary...
 								{
-									#ifdef GIA_NLP_DEBUG
-									//cout << "StanfordCoreNLP_XML_TAG_POS = " << currentTagInToken->value << endl;
-									#endif
 									string TagValue = currentTagInToken->value;
 									currentFeatureInList->stanfordPOS = TagValue;
 								}
@@ -667,10 +606,6 @@ bool GIAnlpClass::parseStanfordCoreNLPfile(const string inputTextNLPrelationXMLf
 							}
 							#endif
 						}
-						#ifdef GIA_NLP_DEBUG
-						//cout << "currentFeatureInList->entityIndex = " << currentFeatureInList->entityIndex << endl;
-						//cout << "currentFeatureInList->word = " << currentFeatureInList->word << endl;
-						#endif
 
 						#ifdef GIA_INCONSISTENCY_BETWEEN_STANFORD_PARSER_AND_STANFORD_CORENLP_PARSING_OF_CONSECUTIVE_FULL_STOPS
 						if(lastFeatureEntityIndex == GIA_NLP_START_ENTITY_INDEX)
@@ -709,9 +644,6 @@ bool GIAnlpClass::parseStanfordCoreNLPfile(const string inputTextNLPrelationXMLf
 						{
 							if(isQuestion)
 							{
-								#ifdef GIA_NLP_DEBUG
-								//cout << "Stanford CoreNLP found question" << endl;
-								#endif
 								currentSentence->isQuestion = true;
 							}
 							else
@@ -735,9 +667,6 @@ bool GIAnlpClass::parseStanfordCoreNLPfile(const string inputTextNLPrelationXMLf
 						maxNumberOfWordsInSentence = currentSentence->maxNumberOfWordsInSentence;
 						#else
 						int maxNumberOfWordsInSentence = 0;
-						#endif
-						#ifdef GIA_NLP_DEBUG
-						//cout << "parseRelations: " << endl;
 						#endif
 						for(int dependenciesSetIndex=0; dependenciesSetIndex< StanfordCoreNLP_numberOfDependencySetsPerSentence; dependenciesSetIndex++)
 						{
@@ -770,11 +699,6 @@ bool GIAnlpClass::parseStanfordCoreNLPfile(const string inputTextNLPrelationXMLf
 
 										GIAnlpParser.convertStanfordRelationToRelex(currentRelationInList, currentSentence);
 
-										#ifdef GIA_NLP_DEBUG
-										//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
-										//cout << "currentRelationInList->relationGovernorIndex = " << currentRelationInList->relationGovernorIndex << endl;
-										//cout << "currentRelationInList->relationDependentIndex = " << currentRelationInList->relationDependentIndex << endl;
-										#endif
 
 										#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
 										if(!(currentRelationInList->relationGovernorRevertedToOfficialLRPTemp))
@@ -801,10 +725,6 @@ bool GIAnlpClass::parseStanfordCoreNLPfile(const string inputTextNLPrelationXMLf
 										}
 										#endif
 
-										#ifdef GIA_NLP_DEBUG
-										//cout << "currentRelationInList->relationGovernor = " << currentRelationInList->relationGovernor << endl;
-										//cout << "currentRelationInList->relationDependent = " << currentRelationInList->relationDependent << endl;
-										#endif
 
 										//added GIA 2d1a
 										if(currentRelationInList->relationGovernorIndex > maxNumberOfWordsInSentence)
@@ -846,9 +766,6 @@ bool GIAnlpClass::parseStanfordCoreNLPfile(const string inputTextNLPrelationXMLf
 				#ifdef GIA_INCONSISTENCY_BETWEEN_STANFORD_PARSER_AND_STANFORD_CORENLP_PARSING_OF_CONSECUTIVE_FULL_STOPS
 				if(invalidSentenceFoundIsolatedFullStop)
 				{
-					#ifdef GIA_NLP_DEBUG
-					//cout << "\n\ninvalidSentenceFoundIsolatedFullStop\n\n" << endl;
-					#endif
 					//currentSentence->firstFeatureInList = new GIAfeature();	//shouldn't be required, it will be overwritten automatically
 				}
 				else
@@ -899,9 +816,6 @@ bool GIAnlpClass::parseStanfordCoreNLPfile(const string inputTextNLPrelationXMLf
 							string representativeString = currentTagInnCoreference->firstAttribute->value;
 							if(representativeString == "true")
 							{
-								#ifdef GIA_NLP_DEBUG
-								cout << "representative found" << endl;
-								#endif
 								currentMentionInList->representative = true;
 							}
 						}
@@ -950,62 +864,6 @@ bool GIAnlpClass::parseStanfordCoreNLPfile(const string inputTextNLPrelationXMLf
 			}
 		}
 
-		#ifdef GIA_NLP_DEBUG
-		currentSentence = firstParagraphInList->firstSentenceInList;
-		while(currentSentence->next != NULL)
-		{
-			cout << "currentSentence->sentenceIndex = " << currentSentence->sentenceIndex << endl;
-
-			GIArelation* currentRelationInList = currentSentence->firstRelationInList;
-			while(currentRelationInList->next != NULL)
-			{
-				cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
-				cout << "currentRelationInList->relationDependent = " << currentRelationInList->relationDependent << endl;
-				cout << "currentRelationInList->relationDependentIndex = " << currentRelationInList->relationDependentIndex << endl;
-				cout << "currentRelationInList->relationGovernor = " << currentRelationInList->relationGovernor << endl;
-				cout << "currentRelationInList->relationGovernorIndex = " << currentRelationInList->relationGovernorIndex << endl;
-
-				currentRelationInList = currentRelationInList->next;
-			}
-			GIAfeature* currentFeatureInList = currentSentence->firstFeatureInList;
-			while(currentFeatureInList->next != NULL)
-			{
-				cout << "currentFeatureInList->entityIndex = " << currentFeatureInList->entityIndex << endl;
-				cout << "currentFeatureInList->word = " << currentFeatureInList->word << endl;
-				cout << "currentFeatureInList->lemma = " << currentFeatureInList->lemma << endl;
-				cout << "currentFeatureInList->type = " << currentFeatureInList->type << endl;
-				cout << "currentFeatureInList->grammar = " << currentFeatureInList->grammar << endl;
-				cout << "currentFeatureInList->CharacterOffsetBegin = " << currentFeatureInList->CharacterOffsetBegin << endl;
-				cout << "currentFeatureInList->CharacterOffsetEnd = " << currentFeatureInList->CharacterOffsetEnd << endl;
-				cout << "currentFeatureInList->stanfordPOS = " << currentFeatureInList->stanfordPOS << endl;
-				cout << "currentFeatureInList->NER = " << currentFeatureInList->NER << endl;
-				cout << "currentFeatureInList->NormalizedNER = " << currentFeatureInList->NormalizedNER << endl;
-				cout << "currentFeatureInList->Timex = " << currentFeatureInList->Timex << endl;
-
-				currentFeatureInList = currentFeatureInList->next;
-			}
-
-			currentSentence = currentSentence->next;
-		}
-		currentCoreferenceInList = firstParagraphInList->firstSentenceInList->firstCoreferenceInList;
-		while(currentCoreferenceInList->next != NULL)
-		{
-			GIAstanfordCoreNLPmention* currentMentionInList = currentCoreferenceInList->firstMentionInList;
-			while(currentMentionInList->next != NULL)
-			{
-				cout << "currentMentionInList->representative = " << int(currentMentionInList->representative) << endl;
-				cout << "currentMentionInList->sentence = " << currentMentionInList->sentence << endl;
-				cout << "currentMentionInList->start = " << currentMentionInList->start << endl;
-				cout << "currentMentionInList->end = " << currentMentionInList->end << endl;
-				cout << "currentMentionInList->head = " << currentMentionInList->head << endl;
-
-				currentMentionInList = currentMentionInList->next;
-			}
-			currentCoreferenceInList = currentCoreferenceInList->next;
-		}
-
-		//cout << "GIA_NLP_DEBUG complete" << endl;
-		#endif
 	}
 
 	delete firstTagInXMLFile;
@@ -1082,9 +940,6 @@ bool GIAnlpClass::parseStanfordParserFile(const string inputTextNLPrelationXMLfi
 		bool newLineDetected = false;
 		while(parseFileObject.get(currentToken))
 		{
-			#ifdef GIA_NLP_DEBUG
-			//cout << currentToken;
-			#endif
 
 			if(currentToken == CHAR_NEWLINE)
 			{
@@ -1103,9 +958,6 @@ bool GIAnlpClass::parseStanfordParserFile(const string inputTextNLPrelationXMLfi
 							int numberOfSentencesSkipped = this->countSubstring(currentStanfordParserOutputParagraphString, STANFORD_PARSER_SENTENCE_SKIPPED_TEXT);
 							for(int i=0; i<numberOfSentencesSkipped; i++)
 							{
-								#ifdef GIA_NLP_DEBUG
-								//cout << "numberOfSentencesSkipped = " << numberOfSentencesSkipped << endl;
-								#endif
 								if(createNewSentences)
 								{
 									GIAsentence* newSentence = new GIAsentence();
@@ -1119,13 +971,7 @@ bool GIAnlpClass::parseStanfordParserFile(const string inputTextNLPrelationXMLfi
 
 						if((!parseGIA2file && (!onlyParseIfCorpusLookupFailed || !(currentSentence->semanticParserSuccessful))) || (parseGIA2file && createNewSentences))	//added createNewSentences condition GIA 2d1a [for generateAllPermutationsFromSemanticRelationsFile()]
 						{
-							#ifdef GIA_NLP_DEBUG
-							//cout << "GIATHparseStanfordParseWordsAndPOStagsText: " << endl;
-							#endif
 							int maxNumberOfWordsInSentence = 0;
-							#ifdef GIA_NLP_DEBUG
-							cout << "currentStanfordParserOutputParagraphString = " << currentStanfordParserOutputParagraphString << endl;
-							#endif
 							if(!parseGIA2file && createNewSentences)
 							{
 								cout << "parseStanfordParserFile{} error: (!parseGIA2file && createNewSentences); Stanford Parser output cannot be used to create new sentences as it contains no lemmas" << endl;
@@ -1161,9 +1007,6 @@ bool GIAnlpClass::parseStanfordParserFile(const string inputTextNLPrelationXMLfi
 					}
 					else if(parsingTypedDependencies)
 					{
-						#ifdef GIA_NLP_DEBUG
-						//cout << "GIATHparseStanfordParserRelationsText: currentStanfordParserOutputParagraphString = " << currentStanfordParserOutputParagraphString << endl;
-						#endif
 
 						if(!onlyParseIfCorpusLookupFailed || !(currentSentence->semanticParserSuccessful))
 						{
@@ -1174,9 +1017,6 @@ bool GIAnlpClass::parseStanfordParserFile(const string inputTextNLPrelationXMLfi
 							#endif
 							bool featuresNotPreviouslyFilled = createNewSentences;
 							GIAnlpParser.GIATHparseStanfordParserRelationsText(&currentStanfordParserOutputParagraphString, currentSentence, &maxNumberOfWordsInSentence, featuresNotPreviouslyFilled, parseGIA2file, false);
-							#ifdef GIA_NLP_DEBUG
-							//cout << "finished GIATHparseStanfordParserRelationsText" << endl;
-							#endif
 							if(createNewSentences)
 							{
 								GIAsentence* newSentence = new GIAsentence();
@@ -1211,27 +1051,6 @@ bool GIAnlpClass::parseStanfordParserFile(const string inputTextNLPrelationXMLfi
 		}
 	}
 
-	#ifdef GIA_NLP_DEBUG
-	currentSentence = firstSentenceInList;
-	while(currentSentence->next != NULL)
-	{
-		cout << "currentSentence->sentenceIndex = " << currentSentence->sentenceIndex << endl;
-
-		GIArelation* currentRelationInList = currentSentence->firstRelationInList;
-		while(currentRelationInList->next != NULL)
-		{
-			cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
-			cout << "currentRelationInList->relationDependent = " << currentRelationInList->relationDependent << endl;
-			cout << "currentRelationInList->relationDependentIndex = " << currentRelationInList->relationDependentIndex << endl;
-			cout << "currentRelationInList->relationGovernor = " << currentRelationInList->relationGovernor << endl;
-			cout << "currentRelationInList->relationGovernorIndex = " << currentRelationInList->relationGovernorIndex << endl;
-
-			currentRelationInList = currentRelationInList->next;
-		}
-
-		currentSentence = currentSentence->next;
-	}
-	#endif
 
 	return result;
 }

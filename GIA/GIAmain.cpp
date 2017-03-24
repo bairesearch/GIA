@@ -25,7 +25,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1u 26-February-2017
+ * Project Version: 3a2a 21-March-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -591,7 +591,7 @@ int main(const int argc, const char** argv)
 
 		if(SHAREDvarsClass().argumentExists(argc, argv, "-version"))
 		{
-			cout << "GIA.exe - Project Version: 3a1u 26-February-2017" << endl;
+			cout << "GIA.exe - Project Version: 3a2a 21-March-2017" << endl;
 			exit(EXIT_OK);
 		}
 
@@ -938,12 +938,6 @@ bool GIAmainClass::executeGIA2()
 
 	bool result = true;
 
-	#ifdef GIA_MAIN_DEBUG
-	//cout << "inputFolder = " << inputFolder << endl;
-	//cout << "outputFolder = " << outputFolder << endl;
-	//cout << "NPLrelationExeFolderCharStar = " << NPLrelationExeFolderCharStar << endl;
-	//cout << "NPLfeatureExeFolderCharStar = " << NPLfeatureExeFolderCharStar << endl;
-	#endif
 
 	if(!XMLrulesClass.parseGIArulesXMLfile())
 	{
@@ -1107,36 +1101,6 @@ bool GIAmainClass::executeGIA2()
 	}
 
 
-	#ifdef GIA_MAIN_DEBUG
-	cout << errmessage << endl;
-	cout << "Parameters to be used:" << endl;
-	cout << "inputTextPlainTXTfileName = " << inputTextPlainTXTfileName << endl;
-	cout << "inputTextNLPrelationXMLfileName = " << inputTextNLPrelationXMLfileName << endl;
-	cout << "inputTextNLPfeatureXMLfileName = " << inputTextNLPfeatureXMLfileName << endl;
-	cout << "inputTextXMLFileName = " << inputTextXMLFileName << endl;
-	cout << "outputTextXMLFileName = " << outputTextXMLFileName << endl;
-	cout << "outputTextCXLFileName = " << outputTextCXLFileName << endl;
-	cout << "outputTextLDRFileName = " << outputTextLDRFileName << endl;
-	cout << "outputTextPPMFileName = " << outputTextPPMFileName << endl;
-	cout << "outputTextSVGFileName = " << outputTextSVGFileName << endl;
-	cout << "outputTextCFFFileName = " << outputTextCFFFileName << endl;
-	cout << "inputQueryPlainTXTFileName = " << inputQueryPlainTXTFileName << endl;
-	cout << "inputQueryNLPrelationXMLFileName = " << inputQueryNLPrelationXMLFileName << endl;
-	cout << "inputQueryNLPfeatureXMLFileName = " << inputQueryNLPfeatureXMLFileName << endl;
-	cout << "inputQueryXMLFileName = " << inputQueryXMLFileName << endl;
-	cout << "outputQueryXMLFileName = " << outputQueryXMLFileName << endl;
-	cout << "outputQueryCXLFileName = " << outputQueryCXLFileName << endl;
-	cout << "outputQueryLDRFileName = " << outputQueryLDRFileName << endl;
-	cout << "outputQueryPPMFileName = " << outputQueryPPMFileName << endl;
-	cout << "outputQuerySVGFileName = " << outputQuerySVGFileName << endl;
-	cout << "outputQueryCFFFileName = " << outputQueryCFFFileName << endl;
-	#ifdef GIA_QUERY_WRITE_ANSWER_TO_FILE
-	cout << "useOutputTextAnswerPlainTXTFile = " << useOutputTextAnswerPlainTXTFile << endl;
-	#endif
-	cout << "displayInOpenGLAndOutputScreenshot = " << displayInOpenGLAndOutputScreenshot << endl;
-	cout << "rasterImageWidth = " << rasterImageWidth << endl;
-	cout << "rasterImageHeight = " << rasterImageHeight << endl;
-	#endif
 
 
 
@@ -1290,9 +1254,6 @@ bool GIAmainClass::executeGIA2()
 
 		if(useInputTextPlainTXTFile)
 		{
-			#ifdef GIA_MAIN_DEBUG
-			//cout << "useInputTextPlainTXTFile" << endl;
-			#endif
 			/*
 			if(useInputTextNLPrelationXMLFile)
 			{
@@ -1329,12 +1290,6 @@ bool GIAmainClass::executeGIA2()
 		
 		if(useInputTextNLPrelationXMLFile)
 		{
-			#ifdef GIA_MAIN_DEBUG
-			//cout << "useInputTextNLPrelationXMLFile" << endl;
-			//cout << "inputTextNLPrelationXMLfileName = " << inputTextNLPrelationXMLfileName << endl;
-			//cout << "inputTextNLPfeatureXMLfileName = " << inputTextNLPfeatureXMLfileName << endl;
-			//cout << "outputTextCFFFileName = " << outputTextCFFFileName << endl;
-			#endif
 			if(useInputTextXMLFile)
 			{
 				cout << "error: useInputTextXMLFile && useInputTextNLPrelationXMLFile" << endl;
@@ -1360,9 +1315,6 @@ bool GIAmainClass::executeGIA2()
 
 		if(useInputTextXMLFile)
 		{
-			#ifdef GIA_MAIN_DEBUG
-			//cout << "useInputTextXMLFile" << endl;
-			#endif
 			if(useInputTextPlainTXTFile)
 			{
 				cout << "error: useInputTextXMLFile && useInputTextPlainTXTFile" << endl;
@@ -1379,9 +1331,6 @@ bool GIAmainClass::executeGIA2()
 				{
 					result = false;
 				}
-				#ifdef GIA_TRANSLATOR_DEBUG
-				cout << "record networkIndex nodes as permanent if they are disabled (prepare for use in GIA)" << endl;
-				#endif
 				GIAtranslatorOperations.recordNetworkIndexNodesAsNonPermanentIfTheyAreDisabled(translatorVariables->entityNodesActiveListNetworkIndexes);	//prepare for use in GIA
 
 			}
@@ -1413,9 +1362,6 @@ bool GIAmainClass::executeGIA2()
 
 		if(useInputQueryPlainTXTFile)
 		{
-			#ifdef GIA_MAIN_DEBUG
-			//cout << "useInputQueryPlainTXTFile" << endl;
-			#endif
 			/*
 			if(useInputQueryNLPrelationXMLFile)
 			{
@@ -1452,9 +1398,6 @@ bool GIAmainClass::executeGIA2()
 
 		if(useInputQueryNLPrelationXMLFile)
 		{
-			#ifdef GIA_MAIN_DEBUG
-			//cout << "useInputQueryNLPrelationXMLFile" << endl;
-			#endif
 			if(useInputQueryXMLFile)
 			{
 				cout << "error: useInputQueryXMLFile && useInputQueryNLPrelationXMLFile" << endl;
@@ -1488,9 +1431,6 @@ bool GIAmainClass::executeGIA2()
 
 		if(useInputQueryXMLFile)
 		{
-			#ifdef GIA_MAIN_DEBUG
-			//cout << "useInputQueryXMLFile" << endl;
-			#endif
 			if(useInputQueryPlainTXTFile)
 			{
 				cout << "error: useInputQueryXMLFile && useInputQueryPlainTXTFile" << endl;
@@ -1508,9 +1448,6 @@ bool GIAmainClass::executeGIA2()
 				{
 					result = false;
 				}
-				#ifdef GIA_TRANSLATOR_DEBUG
-				cout << "record networkIndex nodes as permanent if they are disabled (prepare for use in GIA)" << endl;
-				#endif
 				GIAtranslatorOperations.recordNetworkIndexNodesAsNonPermanentIfTheyAreDisabled(translatorVariablesQuery->entityNodesActiveListNetworkIndexes);	//prepare for use in GIA
 
 			}
@@ -1647,9 +1584,6 @@ bool GIAmainClass::executeGIA2()
 		answerString = answerString + "\nconfidence = " + tempConfidenceString;
 		answerString = answerString + "\nmax confidence = " + tempMaxConfidenceString;
 
-		#ifdef GIA_DEBUG
-		//cout << "outputFolder = " << outputFolder << endl;
-		#endif
 		SHAREDvars.setCurrentDirectory(outputFolder);
 
 		#ifdef GIA_QUERY_WRITE_ANSWER_TO_FILE
@@ -1665,9 +1599,6 @@ bool GIAmainClass::executeGIA2()
 	}
 	#endif
 
-	#ifdef GIA_DEBUG
-	//cout << "outputFolder = " << outputFolder << endl;
-	#endif
 	SHAREDvars.setCurrentDirectory(outputFolder);
 
 	if(printOutput)
@@ -1675,12 +1606,7 @@ bool GIAmainClass::executeGIA2()
 		GIAdraw.printGIAnetworkNodes(translatorVariables->entityNodesActiveListComplete, rasterImageWidth, rasterImageHeight, outputTextLDRFileName, outputTextSVGFileName, outputTextPPMFileName, displayInOpenGLAndOutputScreenshot, useOutputTextLDRFile, useOutputTextPPMFile, useOutputTextSVGFile, translatorVariables->maxNumberSentences);
 	}
 
-	#ifdef GIA_XML_DEBUG_TEST_WRITE_READ_WRITE
-	if(!GIAxmlConversion.testReadSemanticNetXMLFile2(entityNodesActiveListComplete, entityNodesActiveListNetworkIndexes))
-	{
-		result = false;
-	}
-	#else
+	#ifndef GIA_XML_DEBUG_TEST_WRITE_READ_WRITE
 
 	if(useOutputTextXMLFile)
 	{

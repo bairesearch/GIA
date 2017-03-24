@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorLinkEntitiesDynamic.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1u 26-February-2017
+ * Project Version: 3a2a 21-March-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -40,16 +40,10 @@
 void GIAtranslatorLinkEntitiesDynamicClass::linkEntitiesDynamic(GIAtranslatorVariablesClass* translatorVariables)
 {
 	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_PROPERTIES_OR_DEFINITIONS_DYNAMICALLY_LINK_PRENOMINAL_MODIFIERS_OF_NOUNS
-	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "section B3a; linkEntitiesDynamicPrenominalModifierOfNoun{}:" << endl;
-	#endif
 	this->linkEntitiesDynamicPrenominalModifierOfNoun(translatorVariables);
 	#endif
 
 	#ifdef GIA_DYNAMICALLY_LINK_FROM_CONDITIONS
-	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "section B3b; linkEntitiesDynamicFromConditions{}:" << endl;
-	#endif
 	this->linkEntitiesDynamicFromConditions(translatorVariables);
 	#endif
 }
@@ -70,9 +64,6 @@ void GIAtranslatorLinkEntitiesDynamicClass::linkEntitiesDynamicPrenominalModifie
 	GIArelation* currentRelationInList = translatorVariables->currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{
-		#ifdef GIA_DEBUG
-		//cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
-		#endif
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		if(!(currentRelationInList->disabled))
 		{
@@ -91,9 +82,6 @@ void GIAtranslatorLinkEntitiesDynamicClass::linkEntitiesDynamicPrenominalModifie
 			if(prenominalModifierFound)
 			{
 				//prenominal modifier found...
-				#ifdef GIA_DEBUG
-				//cout << "prenominal modifier found" << endl;
-				#endif
 
 				string entity1Name = currentRelationInList->relationGovernor;
 				string entity2Name = currentRelationInList->relationDependent;
@@ -104,10 +92,6 @@ void GIAtranslatorLinkEntitiesDynamicClass::linkEntitiesDynamicPrenominalModifie
 
 				int relationTypeIndex = currentRelationInList->relationTypeIndex;
 
-				#ifdef GIA_TRANSLATOR_DEBUG
-				cout << "entity1 = " << entity1->entityName << endl;
-				cout << "entity2 = " << entity2->entityName << endl;
-				#endif
 
 				//check if chess (dependent) [primary] is a game (governor), or if goal (dependent) has a line (governor) [primary], or if shop (governor) has toy (dependent), or if line (dependent) is in the goal (dependent)
 				bool direction1Found = false;
@@ -142,9 +126,6 @@ void GIAtranslatorLinkEntitiesDynamicClass::linkEntitiesDynamicPrenominalModifie
 					*/
 
 					//use default linking (property link)
-					#ifdef GIA_TRANSLATOR_DEBUG
-					cout << "!previousRelationshipFound: creating default property link" << endl;
-					#endif
 					bool sameReferenceSet = true;
 
 					this->connectPropertyToEntityFull(translatorVariables, entity1, entity2, entity1Index, entity2Index, sameReferenceSet, true);
@@ -204,12 +185,6 @@ bool GIAtranslatorLinkEntitiesDynamicClass::linkEntitiesDynamicPrenominalModifie
 							}
 							else if(previousPropertyRelationshipFound)
 							{
-								#ifdef GIA_TRANSLATOR_DEBUG
-								cout << "entity1 = " << entity1->entityName << endl;
-								cout << "entity2 = " << entity2->entityName << endl;
-								cout << "entity1->grammaticalDefiniteTemp = " << entity1->grammaticalDefiniteTemp << endl;
-								cout << "entity2->grammaticalDefiniteTemp = " << entity2->grammaticalDefiniteTemp << endl;
-								#endif
 
 								#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_PROPERTIES_OR_DEFINITIONS_DYNAMICALLY_LINK_PRENOMINAL_MODIFIERS_OF_NOUNS_ENSURE_PROPERTY_PARENT_IS_DEFINITE
 								if(entity2->grammaticalDefiniteTemp)
@@ -239,17 +214,11 @@ bool GIAtranslatorLinkEntitiesDynamicClass::linkEntitiesDynamicPrenominalModifie
 								#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_TWOWAY_PREPOSITIONS
 								if(currentRelationInList->relationTwoWay)	//limitation only works when GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_conditionToEntity is called based on a single GIArelation
 								{
-									#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_INVERSE_PREPOSITIONS_DEBUG
-									cout << "currentRelationInList->relationTwoWay detected" << endl;
-									#endif
 									translatorVariables->GIAentityNodeArray[featureIndexOfPreposition]->conditionTwoWay = true;	//sets conditionTwoWay for condition substance not networkIndex
 								}
 								#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED
 								if(currentRelationInList->inverseRelationTwoWay)	//limitation only works when GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_conditionToEntity is called based on a single GIArelation
 								{
-									#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_INVERSE_PREPOSITIONS_DEBUG
-									cout << "currentRelationInList->inverseRelationTwoWay detected" << endl;
-									#endif
 									translatorVariables->GIAentityNodeArray[featureIndexOfPreposition]->inverseConditionTwoWay = true;	//sets inverseConditionTwoWay for condition substance not networkIndex
 								}
 								#endif
@@ -284,9 +253,6 @@ void GIAtranslatorLinkEntitiesDynamicClass::linkEntitiesDynamicFromConditions(GI
 		{
 			if(SHAREDvars.textInTextArray(translatorVariables->GIAentityNodeArray[w]->entityName, relationTypePrepositionFromNameArray, RELATION_TYPE_PREPOSITION_FROM_NUMBER_OF_TYPES))
 			{
-				#ifdef GIA_DEBUG
-				//cout << "fromCondition" << endl;
-				#endif
 				GIAentityNode* fromCondition = translatorVariables->GIAentityNodeArray[w];
 
 				if(!(fromCondition->relationshipObjectEntity->empty()))
@@ -315,9 +281,6 @@ void GIAtranslatorLinkEntitiesDynamicClass::linkEntitiesDynamicFromConditions(GI
 									  \
 									   pie
 								*/
-								#ifdef GIA_DEBUG
-								//cout << "fromConditionSubject->isAction" << endl;
-								#endif
 
 								if(!(fromConditionSubject->relationshipObjectEntity->empty()))
 								{
@@ -377,9 +340,6 @@ void GIAtranslatorLinkEntitiesDynamicClass::linkEntitiesDynamicFromConditions(GI
 												{
 													if(previousPropertyRelationshipFoundTemp)
 													{
-														#ifdef GIA_DEBUG
-														//cout << "previousPropertyRelationshipFound" << endl;
-														#endif
 														previousRelationshipFound = true;
 														previousPropertyRelationshipFound = true;
 													}
@@ -394,9 +354,6 @@ void GIAtranslatorLinkEntitiesDynamicClass::linkEntitiesDynamicFromConditions(GI
 														#ifdef GIA_DYNAMICALLY_LINK_FROM_CONDITIONS_ONLY_ACCEPT_AT_CONDITIONS
 
 														#endif
-															#ifdef GIA_DEBUG
-															//cout << "previousConditionRelationshipFound" << endl;
-															#endif
 															previousRelationshipFound = true;
 															previousConditionRelationshipFound = true;
 														#ifdef GIA_DYNAMICALLY_LINK_FROM_CONDITIONS_ONLY_ACCEPT_AT_CONDITIONS
@@ -412,9 +369,6 @@ void GIAtranslatorLinkEntitiesDynamicClass::linkEntitiesDynamicFromConditions(GI
 
 							if(previousPropertyRelationshipFound || !previousRelationshipFound)
 							{
-								#ifdef GIA_TRANSLATOR_DEBUG
-								cout << "linkEntitiesDynamicFromConditions{}: (previousPropertyRelationshipFound || !previousRelationshipFound)" << endl;
-								#endif
 
 								bool direction = false;	//always define from condition artificial property parent relationship as a poss relationship (this is done for NLC compatibility; such that NLC will parse the same reference set child entity)
 								int sourceLocationEntityIndex = this->getEntityIndex(translatorVariables, sourceLocationEntity);
@@ -423,9 +377,6 @@ void GIAtranslatorLinkEntitiesDynamicClass::linkEntitiesDynamicFromConditions(GI
 							}
 							else if(previousConditionRelationshipFound)
 							{
-								#ifdef GIA_TRANSLATOR_DEBUG
-								cout << "linkEntitiesDynamicFromConditions{}: previousConditionRelationshipFound" << endl;
-								#endif
 
 								int sourceLocationEntityIndex = this->getEntityIndex(translatorVariables, sourceLocationEntity);
 								int sourceEntityIndex = this->getEntityIndex(translatorVariables, sourceEntity);
@@ -457,9 +408,6 @@ bool GIAtranslatorLinkEntitiesDynamicClass::findPreviousRelationship(GIAentityNo
 
 				*targetEntityFound = definitionRelationshipObjectEntity;
 
-				#ifdef GIA_TRANSLATOR_DEBUG
-				cout << "previousDefinitionRelationshipFound" << endl;
-				#endif
 			}
 		}
 	}
@@ -475,9 +423,6 @@ bool GIAtranslatorLinkEntitiesDynamicClass::findPreviousRelationship(GIAentityNo
 
 				*targetEntityFound = propertyRelationshipObjectEntity;	//REDUNDANT
 
-				#ifdef GIA_TRANSLATOR_DEBUG
-				cout << "previousPropertyRelationshipFound" << endl;
-				#endif
 			}
 		}
 	}

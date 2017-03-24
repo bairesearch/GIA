@@ -25,7 +25,7 @@
  * File Name: GIAentityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1u 26-February-2017
+ * Project Version: 3a2a 21-March-2017
  *
  *******************************************************************************/
 
@@ -301,9 +301,6 @@ GIAentityNode::~GIAentityNode(void)
 	{
 		for(vector<GIAentityConnection*>::iterator connectionIter = entityVectorConnectionsArray[i].begin(); connectionIter != entityVectorConnectionsArray[i].end(); connectionIter++)
 		{
-			#ifdef GIA_FREE_MEMORY_DEBUG
-			//cout << "deleting: vector connection: " << (*connectionIter)->entityName << endl;
-			#endif
 			delete* connectionIter;
 		}
 		entityVectorConnectionsArray[i].clear();
@@ -321,9 +318,6 @@ void GIAentityNodeClassClass::deleteEntitiesInEntityNodeList(vector<GIAentityNod
 	for(vector<GIAentityNode*>::iterator entityIter = entityNodesActiveListComplete->begin(); entityIter != entityNodesActiveListComplete->end(); entityIter++)
 	{
 		GIAentityNode* entityNode = *entityIter;
-		#ifdef GIA_FREE_MEMORY_DEBUG
-		cout << "deleting: entityNode: " << entityNode->entityName << endl;
-		#endif
 		delete entityNode;
 	}
 }
@@ -492,9 +486,6 @@ void GIAentityNodeClassClass::convertAliasesToAliasesString(GIAentityNode* entit
 	for(vector<string>::iterator aliasIter = entityNode->aliasList.begin(); aliasIter != entityNode->aliasList.end(); aliasIter++)
 	{
 		*aliasesString = *aliasesString +* aliasIter + GIA_ALIASES_CONVERT_TO_STRING_DELIMITER;
-		#ifdef GIA_ALIASES_DEBUG
-		cout << "*aliasesString = " <<* aliasesString << endl;
-		#endif
 	}
 }
 
@@ -514,9 +505,6 @@ vector<string> GIAentityNodeClassClass::explode(const string& str, const char& c
 			if(next.length() > 0)
 			{
 				// Add them to the result vector
-				#ifdef GIA_ALIASES_DEBUG
-				cout << "found alias: " << next << endl;
-				#endif
 				result.push_back(next);
 				next = "";
 			}
@@ -550,9 +538,6 @@ string* GIAentityNodeClassClass::convertDelimitedStringToArray(const string str,
 		if(str[i] == delimiter)
 		{
 			stringArray[delimiterCount] = currentString;
-			#ifdef GIA_DEBUG
-			//cout << "convertDelimitedStringToArray: " << currentString << endl;
-			#endif
 			currentString = "";
 			delimiterCount++;
 		}
@@ -563,9 +548,6 @@ string* GIAentityNodeClassClass::convertDelimitedStringToArray(const string str,
 	}
 	//add last array item;
 	stringArray[delimiterCount] = currentString;
-	#ifdef GIA_DEBUG
-	//cout << "convertDelimitedStringToArray: " << currentString << endl;
-	#endif
 	currentString = "";
 	delimiterCount++;
 
@@ -676,9 +658,6 @@ bool GIAentityNodeClassClass::testEntityCharacteristic(const GIAentityNode* enti
 	bool foundMatch = false;
 	bool illegalVariable = false;
 
-	#ifdef GIA_DEBUG
-	//cout << "testEntityCharacteristic{}:" << entityCharacteristic->name << ": " << entityCharacteristic->value << endl;
-	#endif
 
 	/*GIA Entity Type*/
 	this->testEntityCharacteristicIterationint(entity->entityType, entityCharacteristic, "entityType", &foundMatch);
@@ -809,9 +788,6 @@ void GIAentityNodeClassClass::testEntityCharacteristicIterationbool(const bool e
 		//bool entityCharacteristicTestValue = convertStringToInt(entityCharacteristicTest->value);		//if GIA Translator XML file booleans are defined as '1'/'0' instead of 'true'/'false'
 		if(entityCharacteristicTestValue == entityVal)
 		{
-			#ifdef GIA_DEBUG
-			//cout << "testEntityCharacteristicIterationbool{}: " << entityCharacteristicTest->name << " = " << entityCharacteristicTestValue << endl;
-			#endif
 			*foundMatch = true;
 		}
 	}
@@ -823,9 +799,6 @@ void GIAentityNodeClassClass::testEntityCharacteristicIterationint(const int ent
 		int entityCharacteristicTestValue = SHAREDvars.convertStringToInt(entityCharacteristicTest->value);
 		if(entityCharacteristicTestValue == entityVal)
 		{
-			#ifdef GIA_DEBUG
-			//cout << "testEntityCharacteristicIterationint{}: " << entityCharacteristicTest->name << " = " << entityCharacteristicTestValue << endl;
-			#endif
 			*foundMatch = true;
 		}
 	}
@@ -837,9 +810,6 @@ void GIAentityNodeClassClass::testEntityCharacteristicIterationstring(const stri
 		string entityCharacteristicTestValue = entityCharacteristicTest->value;
 		if(entityCharacteristicTestValue == entityVal)
 		{
-			#ifdef GIA_DEBUG
-			//cout << "testEntityCharacteristicIterationstring{}: " << entityCharacteristicTest->name << " = " << entityCharacteristicTestValue << endl;
-			#endif
 			*foundMatch = true;
 		}
 	}
@@ -850,9 +820,6 @@ bool GIAentityNodeClassClass::setEntityCharacteristic(GIAentityNode* entity, GIA
 {
 	bool foundMatch = false;
 
-	#ifdef GIA_DEBUG
-	//cout << "setEntityCharacteristic{}:" << entityCharacteristic->name << ": " << entityCharacteristic->value << endl;
-	#endif
 
 	/*GIA Entity Type*/
 	this->setEntityCharacteristicIterationint(&(entity->entityType), entityCharacteristic, "entityType", &foundMatch);
@@ -953,9 +920,6 @@ void GIAentityNodeClassClass::setEntityCharacteristicIterationbool(bool* entityV
 		{
 			cout << "testEntityCharacteristicIterationbool{} error: illegal entityCharacteristicTestValue for " << iterationVariable << ": " << entityCharacteristicSet->value << endl;
 		}
-		#ifdef GIA_DEBUG
-		//cout << "setEntityCharacteristicIterationbool{}: " << entityCharacteristicSet->name << " = " << entityCharacteristicSetValue << endl;
-		#endif
 
 		*entityVal = entityCharacteristicSetValue;
 		*foundMatch = true;
@@ -966,9 +930,6 @@ void GIAentityNodeClassClass::setEntityCharacteristicIterationint(int* entityVal
 	if(entityCharacteristicSet->name == iterationVariable)
 	{
 		int entityCharacteristicSetValue = SHAREDvars.convertStringToInt(entityCharacteristicSet->value);
-		#ifdef GIA_DEBUG
-		//cout << "setEntityCharacteristicIterationint{}: " << entityCharacteristicSet->name << " = " << entityCharacteristicSetValue << endl;
-		#endif
 		*entityVal = entityCharacteristicSetValue;
 		*foundMatch = true;
 	}
@@ -978,9 +939,6 @@ void GIAentityNodeClassClass::setEntityCharacteristicIterationstring(string* ent
 	if(entityCharacteristicSet->name == iterationVariable)
 	{
 		string entityCharacteristicSetValue = entityCharacteristicSet->value;
-		#ifdef GIA_DEBUG
-		//cout << "setEntityCharacteristicIterationstring{}: " << entityCharacteristicSet->name << " = " << entityCharacteristicSetValue << endl;
-		#endif
 		*entityVal = entityCharacteristicSetValue;
 		*foundMatch = true;
 	}
@@ -989,9 +947,6 @@ void GIAentityNodeClassClass::setEntityCharacteristicIterationstring(string* ent
 bool GIAentityNodeClassClass::getEntityCharacteristic(const GIAentityNode* entity, GIAentityCharacteristic* entityCharacteristic)
 {
 	bool foundMatch = false;
-	#ifdef GIA_DEBUG
-	//cout << "testEntityCharacteristic{}:" << entityCharacteristic->name << ": " << entityCharacteristic->value << endl;
-	#endif
 
 	/*GIA Entity Type*/
 	this->getEntityCharacteristicIterationint(entity->entityType, entityCharacteristic, "entityType", &foundMatch);

@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorRules.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1u 26-February-2017
+ * Project Version: 3a2a 21-March-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -65,9 +65,6 @@ bool GIAtranslatorRulesClass::applyGIATranslatorGenericXMLfunctions(const string
 				{
 					if(currentFileTag->firstAttribute->value == translatorFileName)
 					{
-						#ifdef GIA_TRANSLATOR_XML_INTERPRETATION_DEBUG
-						cout << "applyGIATranslatorGenericXMLfunctions translatorFileName: " << translatorFileName << endl;
-						#endif
 						/*
 						if(translatorFileName == "GIAtranslatorLinkEntities")
 						{
@@ -87,9 +84,6 @@ bool GIAtranslatorRulesClass::applyGIATranslatorGenericXMLfunctions(const string
 									functionName = currentFunctionTag->firstAttribute->value;
 								}
 
-								#ifdef GIA_TRANSLATOR_XML_INTERPRETATION_DEBUG
-								cout << "applyGIATranslatorGenericXMLfunctions functionName: " << functionName << endl;
-								#endif
 
 								if(currentFunctionTag->firstLowerLevelTag != NULL)
 								{
@@ -121,27 +115,6 @@ bool GIAtranslatorRulesClass::applyGIATranslatorGenericXMLfunctions(const string
 												}
 											}
 											
-											#ifdef GIA_DEBUG
-											/*
-											if(functionName == "linkSubjectObjectRelationships")
-											{
-												cout << "" << endl;
-												GIArelation* currentRelationInList = translatorVariables->currentSentenceInList->firstRelationInList;
-												while(currentRelationInList->next != NULL)
-												{
-													if(!(currentRelationInList->disabled))
-													{
-														string relationType = currentRelationInList->relationType;
-														GIAentityNode* relationGoverner = translatorVariables->GIAentityNodeArray[currentRelationInList->relationGovernorIndex];
-														GIAentityNode* relationDependent = translatorVariables->GIAentityNodeArray[currentRelationInList->relationDependentIndex];
-
-														cout << currentRelationInList->relationType << "(" << currentRelationInList->relationGovernor << ", " << currentRelationInList->relationDependent << ")" << endl;
-													}
-													currentRelationInList = currentRelationInList->next;
-												}
-											}
-											*/
-											#endif
 											
 											//load options and execute genericDependecyRelationInterpretation/genericEntityInterpretation
 											if(!this->applyGIATranslatorGenericXMLparam(currentParamTag, depRelOrEntity, executeOrReassign, translatorVariables, linkPreestablishedReferencesGIA, functionName))
@@ -149,36 +122,8 @@ bool GIAtranslatorRulesClass::applyGIATranslatorGenericXMLfunctions(const string
 											}
 											else
 											{
-												#ifdef GIA_DEBUG
-												//cout << "\t\t applyGIATranslatorGenericXMLparam passed: " << functionName << endl;
-												#endif
 											}
 
-											#ifdef GIA_DEBUG
-											/*
-											if(functionName == "defineConcepts")
-											{
-												cout << "\t applyGIATranslatorGenericXMLparam: " << functionName << "{}:" << endl;
-												for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
-												{
-													if(translatorVariables->GIAentityNodeArrayFilled[w])
-													{
-														if(translatorVariables->GIAentityNodeArray[w]->entityName == "chess")
-														{
-															cout << "GIAentityNodeArray[w]->grammaticalWordTypeTemp" << translatorVariables->GIAentityNodeArray[w]->grammaticalWordTypeTemp << endl;
-															//cout << "GIAentityNodeArray[w]->wasReference" << translatorVariables->GIAentityNodeArray[w]->wasReference << endl;
-															cout << "GIAentityNodeArray[w]->grammaticalPronounTemp" << translatorVariables->GIAentityNodeArray[w]->grammaticalPronounTemp << endl;
-															cout << "GIAentityNodeArray[w]->grammaticalNumber" << translatorVariables->GIAentityNodeArray[w]->grammaticalNumber << endl;
-															cout << "GIAentityNodeArray[w]->grammaticalDefiniteTemp" << translatorVariables->GIAentityNodeArray[w]->grammaticalDefiniteTemp << endl;
-															cout << "GIAentityNodeArray[w]->grammaticalIndefinitePluralTemp" << translatorVariables->GIAentityNodeArray[w]->grammaticalIndefinitePluralTemp << endl;
-															cout << "GIAentityNodeArray[w]->grammaticalProperNounTemp" << translatorVariables->GIAentityNodeArray[w]->grammaticalProperNounTemp << endl;
-															cout << "GIAentityNodeArray[w]->isConcept" << translatorVariables->GIAentityNodeArray[w]->isConcept << endl;
-														}
-													}
-												}
-											}
-											*/
-											#endif
 										}
 										currentParamTag = currentParamTag->nextTag;
 									}
@@ -201,9 +146,6 @@ bool GIAtranslatorRulesClass::applyGIATranslatorGenericXMLparam(XMLparserTag* cu
 	bool result = false;
 	if(currentParamTag->firstLowerLevelTag != NULL)
 	{
-		#ifdef GIA_TRANSLATOR_XML_INTERPRETATION_DEBUG
-		cout << "\tapplyGIATranslatorGenericXMLparam: " << currentParamTag->name << endl;
-		#endif
 
 		GIAgenericDepRelInterpretationParameters paramDepRel(translatorVariables, executeOrReassign);
 		paramDepRel.functionName = functionName;
@@ -228,10 +170,6 @@ bool GIAtranslatorRulesClass::applyGIATranslatorGenericXMLparam(XMLparserTag* cu
 		XMLparserTag* currentConfigurationTag = firstConfigurationTag;
 		while(currentConfigurationTag->nextTag != NULL)
 		{
-			#ifdef GIA_TRANSLATOR_XML_INTERPRETATION_DEBUG
-			cout << "currentConfigurationTag->name: " << currentConfigurationTag->name << endl;
-			cout << "currentConfigurationTag->firstAttribute->name: " << currentConfigurationTag->firstAttribute->name << endl;
-			#endif
 
 			string RELstring = "";
 			string REL_ENTstring = "";
@@ -244,23 +182,14 @@ bool GIAtranslatorRulesClass::applyGIATranslatorGenericXMLparam(XMLparserTag* cu
 			if(XMLparserClass.getAttribute(currentConfigurationTag, RULES_XML_ATTRIBUTE_REL, &RELstring))
 			{
 				REL = SHAREDvars.convertStringToInt(RELstring) - 1;
-				#ifdef GIA_DEBUG
-				//cout << "REL = " << REL << endl;
-				#endif
 			}
 			if(XMLparserClass.getAttribute(currentConfigurationTag, RULES_XML_ATTRIBUTE_REL_ENT, &REL_ENTstring))
 			{
 				REL_ENT = SHAREDvars.convertStringToInt(REL_ENTstring) - 1;
-				#ifdef GIA_DEBUG
-				//cout << "REL_ENT = " << REL_ENT << endl;
-				#endif
 			}
 			if(XMLparserClass.getAttribute(currentConfigurationTag, RULES_XML_ATTRIBUTE_FUNC_ENT, &FUNC_ENTstring))
 			{
 				FUNC_ENT = SHAREDvars.convertStringToInt(FUNC_ENTstring) - 1;
-				#ifdef GIA_DEBUG
-				//cout << "FUNC_ENT = " << FUNC_ENT << endl;
-				#endif
 			}
 			if(XMLparserClass.getAttribute(currentConfigurationTag, RULES_XML_ATTRIBUTE_swapIndex, &swapIndexstring))
 			{
@@ -314,15 +243,8 @@ bool GIAtranslatorRulesClass::applyGIATranslatorGenericXMLparam(XMLparserTag* cu
 						{
 							for(int i=0; i<FEATURE_QUERY_WORD_ACCEPTED_BY_ALTERNATE_METHOD_NUMBER_OF_TYPES; i++)
 							{
-								#ifdef GIA_DEBUG
-								//cout << "featureQueryWordAcceptedByAlternateMethodNameArray[i] = " << featureQueryWordAcceptedByAlternateMethodNameArray[i] << endl;
-								//cout << "translatorVariables->featureArrayTemp[GIA_NLP_START_ENTITY_INDEX]->lemma = " << translatorVariables->featureArrayTemp[GIA_NLP_START_ENTITY_INDEX]->lemma << endl;	crashes
-								#endif
 								if(translatorVariables->featureArrayTemp[GIA_NLP_START_ENTITY_INDEX]->lemma == featureQueryWordAcceptedByAlternateMethodNameArray[i])
 								{
-									#ifdef GIA_DEBUG
-									//cout << "whichOrWhatQueryFound" << endl;
-									#endif
 									whichOrWhatQueryFound = true;
 								}
 							}
@@ -341,9 +263,6 @@ bool GIAtranslatorRulesClass::applyGIATranslatorGenericXMLparam(XMLparserTag* cu
 						{
 							if(translatorVariables->featureArrayTemp[GIA_NLP_START_ENTITY_INDEX]->lemma == REFERENCE_TYPE_QUESTION_QUERY_WHO)
 							{
-								#ifdef GIA_DEBUG
-								//cout << "found who" << endl;
-								#endif
 								firstWordOfSentenceIsWho = true;
 							}
 						}
@@ -372,9 +291,6 @@ bool GIAtranslatorRulesClass::applyGIATranslatorGenericXMLparam(XMLparserTag* cu
 					{
 						assertdisableRelationAfterFinish = true;
 						asssertPostProcessingREL = REL;
-						#ifdef GIA_DEBUG
-						//cout << "disableRelationAfterFinish: asssertPostProcessingREL = " << asssertPostProcessingREL << endl;
-						#endif
 					}
 					else if(assertAttribute->value == "setDefiniteAfterFinish")
 					{
@@ -440,15 +356,9 @@ bool GIAtranslatorRulesClass::applyGIATranslatorGenericXMLparam(XMLparserTag* cu
 		{
 			if(depRelOrEntity)
 			{
-				#ifdef GIA_DEBUG
-				//cout << "genericDependecyRelationInterpretation{}" << endl;
-				#endif
 				if(GIAtranslatorGeneric.genericDependecyRelationInterpretation(&paramDepRel, REL1))
 				{
 					result = true;
-					#ifdef GIA_DEBUG
-					//cout << "\t\t genericDependecyRelationInterpretation passed: " << functionName << endl;
-					#endif
 					if(asssertsetDefiniteAfterFinish)
 					{
 						translatorVariables->featureArrayTemp[paramDepRel.relationEntityIndexFinalResult[asssertPostProcessingREL][asssertPostProcessingREL_ENT]]->grammaticalIsDefinite = true;
@@ -467,10 +377,6 @@ bool GIAtranslatorRulesClass::applyGIATranslatorGenericXMLparam(XMLparserTag* cu
 						int arrayIndexOfResultFound = GRAMMATICAL_PREDETERMINER_UNDEFINED;
 						if(SHAREDvars.textInTextArray(assertPostProcessingValue, entityPredeterminerSmallNameArray, GRAMMATICAL_PREDETERMINER_SMALL_ARRAY_NUMBER_OF_TYPES, &arrayIndexOfResultFound))
 						{
-							#ifdef GIA_DEBUG
-							//cout << "arrayIndexOfResultFound = " << arrayIndexOfResultFound << endl;
-							//cout << featureArrayTemp[paramDepRel.relationEntityIndexFinalResult[asssertPostProcessingREL][asssertPostProcessingREL_ENT]]->word << endl;
-							#endif
 							translatorVariables->featureArrayTemp[paramDepRel.relationEntityIndexFinalResult[asssertPostProcessingREL][asssertPostProcessingREL_ENT]]->grammaticalPredeterminer = arrayIndexOfResultFound;
 						}
 					}
@@ -478,9 +384,6 @@ bool GIAtranslatorRulesClass::applyGIATranslatorGenericXMLparam(XMLparserTag* cu
 				}
 				else
 				{
-					#ifdef GIA_DEBUG
-					//cout << "\t\t genericDependecyRelationInterpretation failed: " << functionName << endl;
-					#endif
 				}
 			}
 			else
@@ -488,21 +391,12 @@ bool GIAtranslatorRulesClass::applyGIATranslatorGenericXMLparam(XMLparserTag* cu
 				if(GIAtranslatorGeneric.genericEntityInterpretation(&paramEntity))
 				{
 					result = true;
-					#ifdef GIA_DEBUG
-					//cout << "\t\t genericEntityInterpretation passed: " << functionName << endl;
-					#endif
 				}
 				else
 				{
-					#ifdef GIA_DEBUG
-					//cout << "\t\t genericEntityInterpretation failed: " << functionName << endl;
-					#endif
 				}
 			}
 		}
-		#ifdef GIA_TRANSLATOR_XML_INTERPRETATION_DEBUG
-		cout << "\tEND: applyGIATranslatorGenericXMLparam: " << currentParamTag->name << endl;
-		#endif
 	}
 	else
 	{
@@ -790,9 +684,6 @@ bool GIAtranslatorRulesClass::genericEntityInterpretationApplyOptionbool(bool* p
 		//bool paramOptionSetValue = convertStringToInt(xmlAttribute->value);		//if GIA Translator XML file booleans are defined as '1'/'0' instead of 'true'/'false'
 		*paramVal = paramOptionSetValue;
 
-		#ifdef GIA_DEBUG
-		//cout << "genericEntityInterpretationApplyOptionbool{}: " << xmlAttribute->name << " = " << paramOptionSetValue << endl;
-		#endif
 		*foundMatch = true;
 		result = true;
 	}
@@ -810,9 +701,6 @@ bool GIAtranslatorRulesClass::genericEntityInterpretationApplyOptionint(int* par
 		}
 		*paramVal = paramOptionSetValue;
 
-		#ifdef GIA_DEBUG
-		//cout << "genericEntityInterpretationApplyOptionint{}: " << xmlAttribute->name << " = " << paramOptionSetValue << endl;
-		#endif
 		*foundMatch = true;
 		result = true;
 	}
@@ -826,9 +714,6 @@ bool GIAtranslatorRulesClass::genericEntityInterpretationApplyOptionstring(strin
 		string paramOptionSetValue = xmlAttribute->value;
 		*paramVal = paramOptionSetValue;
 
-		#ifdef GIA_DEBUG
-		//cout << "testEntityCharacteristicIterationstring{}: " << xmlAttribute->name << " = " << paramOptionSetValue << endl;
-		#endif
 		*foundMatch = true;
 		result = true;
 	}
@@ -843,9 +728,6 @@ bool GIAtranslatorRulesClass::genericEntityInterpretationApplyOptionstringarray(
 
 		*paramVal = GIAentityNodeClass.convertDelimitedStringToArray(paramOptionSetValue, GIA_TRANSLATOR_XML_INTERPRETATION_ARRAY_DELIMITER);
 
-		#ifdef GIA_DEBUG
-		//cout << "testEntityCharacteristicIterationstringarray{}: " << xmlAttribute->name << " = " << paramOptionSetValue << endl;
-		#endif
 		*foundMatch = true;
 		result = true;
 	}

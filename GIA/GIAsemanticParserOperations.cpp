@@ -25,7 +25,7 @@
  * File Name: GIAsemanticParserOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1u 26-February-2017
+ * Project Version: 3a2a 21-March-2017
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -42,9 +42,6 @@
 
 void GIAsemanticParserOperationsClass::GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(constEffective GIAentityNode** GIAentityNodeArray, const GIAsentence* currentSentenceInList, int connectionType, int entityIndex1, int entityIndex2, bool sameReferenceSet)
 {
-	#ifdef GIA_DEBUG
-	//cout << "GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain: " << endl;
-	#endif
 	string GIA2semanticDependencyRelationText = "";
 	GIArelation* GIA2semanticDependencyRelation = GIAsemanticParserDatabase.getCurrentRelationInSemanticParserSentenceList();
 	this->generateGIA2semanticDependencyRelation(GIAentityNodeArray, connectionType, entityIndex1, entityIndex2, sameReferenceSet, &GIA2semanticDependencyRelationText, GIA2semanticDependencyRelation);
@@ -186,10 +183,6 @@ void GIAsemanticParserOperationsClass::generateGIA2semanticDependencyRelation(co
 	#else
 	string entityWord1 = GIAentityNodeArray[entityIndex1]->wordOrig;
 	string entityWord2 = GIAentityNodeArray[entityIndex2]->wordOrig;
-	#ifdef GIA_DEBUG
-	//cout << "entityWord1 = " << entityWord1 << endl;
-	//cout << "entityWord2 = " << entityWord2 << endl;
-	#endif
 	//lemmas are in general not recorded as they are irrelevant (wordOrig is only recorded for debugging purposes and internal/manual/inhouse development of the corpus); only the entity indicies require recording
 	if(entityWord1 == "")
 	{//why does GIAentityNodes in GIAentityNodeArray that correspond to prepositions not have a "wordOrig" but only have an entityName? (is it related to LRP?)
@@ -203,9 +196,6 @@ void GIAsemanticParserOperationsClass::generateGIA2semanticDependencyRelation(co
 
 	#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER_UNOPTIMISED_TEXT_CORPUS_OLD
 	*GIA2semanticDependencyRelation = this->generateGIA2semanticDependencyRelationText(entityWord1, entityWord2, GIA2semanticDependencyRelationNameArray[connectionType], entityIndex1, entityIndex2, sameReferenceSet);
-	#ifdef GIA_DEBUG
-	//cout << "GIA2semanticDependencyRelation = " << GIA2semanticDependencyRelation << endl;
-	#endif
 	#else
 	GIAsemanticParserDatabase.generateGIA2semanticDependencyRelationObject(GIA2semanticDependencyRelation, entityWord1, entityWord2, GIA2semanticDependencyRelationNameArray[connectionType], entityIndex1, entityIndex2, sameReferenceSet);
 	#endif
@@ -216,9 +206,6 @@ string GIAsemanticParserOperationsClass::generateGIA2semanticDependencyRelationT
 {
 	string GIA2semanticDependencyRelation = "";
 	GIA2semanticDependencyRelation = GIA2semanticDependencyRelation + semanticRelation + "(" + entityName1 + "-" + SHAREDvars.convertIntToString(entityIndex1) + ", " + entityName2 + "-" + SHAREDvars.convertIntToString(entityIndex2) + ") " + this->createSameReferenceSetRecord(sameReferenceSet);
-	#ifdef GIA_DEBUG
-	//cout << "GIA2semanticDependencyRelation = " << GIA2semanticDependencyRelation << endl;
-	#endif
 	return GIA2semanticDependencyRelation;
 }
 
@@ -231,9 +218,6 @@ string GIAsemanticParserOperationsClass::createSameReferenceSetRecord(const bool
 //preconditions: determineGIAconnectionistNetworkPOStypeNames() has been executed
 string GIAsemanticParserOperationsClass::generateCorpusFileHeaderText(const GIAfeature* firstFeatureInSentence, const bool addPOSinfo)
 {
-	#ifdef GIA_DEBUG
-	//cout << "generateCorupusFileHeaderText{}:" << endl;
-	#endif
 	string sentenceText = "";
 	const GIAfeature* currentFeatureInSentence = firstFeatureInSentence;
 	while(currentFeatureInSentence->next != NULL)
@@ -263,21 +247,12 @@ string GIAsemanticParserOperationsClass::generateCorpusFileHeaderText(const GIAf
 
 void GIAsemanticParserOperationsClass::determineGIAconnectionistNetworkPOStypeNames(GIAfeature* firstFeatureInList, const int NLPfeatureParser)
 {
-	#ifdef GIA_DEBUG
-	//cout << "\n\n\ndetermineGIAconnectionistNetworkPOStypeNames{}:" << endl;
-	#endif
 	GIAfeature* currentFeatureInSentence = firstFeatureInList;
 	while(currentFeatureInSentence->next != NULL)
 	{
-		#ifdef GIA_DEBUG
-		//cout << "currentFeatureInSentence->word = " << currentFeatureInSentence->word << endl;
-		#endif
 		if((NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP) || (NLPfeatureParser == GIA_NLP_PARSER_STANFORD_PARSER))
 		{
 			this->determineGIAconnectionistNetworkPOStypeNameStanford(currentFeatureInSentence);
-			#ifdef GIA_DEBUG
-			//cout << "currentFeatureInSentence->GIAsemanticParserPOStype = " << currentFeatureInSentence->GIAsemanticParserPOStype << endl;
-			#endif
 		}
 		else if(NLPfeatureParser == GIA_NLP_PARSER_RELEX)
 		{
@@ -485,9 +460,6 @@ void GIAsemanticParserOperationsClass::determineGIAconnectionistNetworkPOStypeNa
 	*/
 
 	currentFeatureInSentence->GIAsemanticParserPOStype = GIAsemanticParserPOStype;
-	#ifdef GIA_DEBUG
-	//cout << "GIAsemanticParserPOStype = " << GIAsemanticParserPOStype << endl;
-	#endif
 }
 
 
@@ -499,11 +471,6 @@ void GIAsemanticParserOperationsClass::determineGIAconnectionistNetworkPOStypeNa
 	{
 		if(featureRelexPOStypeArray[i] == currentFeatureInSentence->type)
 		{
-			#ifdef GIA_DEBUG
-			//cout << "featureRelexPOStypeArray[i] = " << featureRelexPOStypeArray[i] << endl;
-			//cout << "i = " << i << endl;
-			//cout << "featureRelexPOStypeCrossReferenceGIAconnectionistNetworkPOStypeArray[i] = " << featureRelexPOStypeCrossReferenceGIAconnectionistNetworkPOStypeArray[i] << endl;
-			#endif
 			GIAsemanticParserPOStype = featureRelexPOStypeCrossReferenceGIAconnectionistNetworkPOStypeArray[i];
 		}
 	}
@@ -602,9 +569,6 @@ void GIAsemanticParserOperationsClass::determineGIAconnectionistNetworkPOStypeNa
 	#endif
 
 	currentFeatureInSentence->GIAsemanticParserPOStype = GIAsemanticParserPOStype;
-	#ifdef GIA_DEBUG
-	//cout << "GIAsemanticParserPOStype = " << GIAsemanticParserPOStype << endl;
-	#endif
 }
 
 #ifdef GIA2_SEMANTIC_PARSER
@@ -615,9 +579,6 @@ GIAfeature* GIAsemanticParserOperationsClass::generateOptimisedFeatureSubsetBase
 {
 	bool result = true;
 
-	#ifdef GIA_SEMANTIC_PARSER_TRANSLATOR_DEBUG
-	cout << "generateOptimisedFeatureSubsetBasedOnContextualConjunctions: firstFeatureInSentenceSubset->word = " << firstFeatureInSentenceSubset->word << endl;
-	#endif
 
 	bool commaDetected = false;
 	int indexOfFirstCommaDetected = INT_DEFAULT_VALUE;

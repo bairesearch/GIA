@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1u 26-February-2017
+ * Project Version: 3a2a 21-March-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -282,7 +282,6 @@ GIAentityNode* GIAtranslatorOperationsClass::getRelationshipObjectEntity(GIAenti
 	{
 		//DEBUG only; note this should never be the case (if a property/definition relationship source is defined, then its target should be defined)
 		cout << "GIAtranslatorOperationsClass::getRelationshipObjectEntity error{}: relationshipEntity->relationshipObjectEntity->empty()" << endl;
-		cout << "relationshipEntity->entityName = " << relationshipEntity->entityName << endl;
 		exit(EXIT_ERROR);
 	}
 	GIAentityNode* objectEntity = ((relationshipEntity->relationshipObjectEntity)->back())->entity;
@@ -694,9 +693,6 @@ bool GIAtranslatorOperationsClass::isAdjectiveNotAnAdvmodAndRelationGovernorIsNo
 		{//added condition Fri 27 Jan - remove 'be' node artefacts
 			this->disableNetworkIndexEntityBasedUponFirstSentenceToAppearInNetwork(GIAentityNodeArray[relationGovernorIndex]);
 			result = false;
-			#ifdef GIA_TRANSLATOR_DEBUG
-			//cout << "GIAentityNodeArray[relationGovernorIndex]->disabled = true" << endl;
-			#endif
 		}
 		#endif
 	#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE
@@ -924,11 +920,6 @@ void GIAtranslatorOperationsClass::forwardInfoToNewSubstance(GIAentityNode* enti
 
 	newSubstance->entityIndexTemp = entity->entityIndexTemp;
 	newSubstance->sentenceIndexTemp = entity->sentenceIndexTemp;
-	#ifdef GIA_ADVANCED_REFERENCING_DEBUG_INTRASENTENCE_EXTRA
-	cout << "\nnewSubstance->entityName = " << newSubstance->entityName << endl;
-	cout << "newSubstance->entityIndexTemp = " << newSubstance->entityIndexTemp << endl;
-	//cout << "newSubstance->sentenceIndexTemp = " << newSubstance->sentenceIndexTemp << endl;
-	#endif
 
 	#ifdef GIA_NUMBER_OF
 	if(entity->isNumberOf)
@@ -1184,13 +1175,6 @@ void GIAtranslatorOperationsClass::convertRelexPOStypeToWordnetWordType(const st
 		}
 	}
 
-	#ifdef GIA_WORDNET_DEBUG
-	/*
-	cout << "convertRelexPOStypeToWordnetWordType{}: " << endl;
-	cout << "relexPOStype = " <<* relexPOStype << endl;
-	cout << "grammaticalWordTypeTemp = " <<* grammaticalWordTypeTemp << endl;
-	*/
-	#endif
 }
 
 void GIAtranslatorOperationsClass::convertStanfordPOStagToRelexPOStypeAndWordnetWordType(const string* POStag, string* relexPOStype, int* grammaticalWordTypeTemp)
@@ -1206,14 +1190,6 @@ void GIAtranslatorOperationsClass::convertStanfordPOStagToRelexPOStypeAndWordnet
 
 	this->convertRelexPOStypeToWordnetWordType(relexPOStype, grammaticalWordTypeTemp);
 
-	#ifdef GIA_WORDNET_DEBUG
-	/*
-	cout << "convertStanfordPOStagToRelexPOStypeAndWordnetWordType{}: " << endl;
-	cout << "POStag = " <<* POStag << endl;
-	cout << "relexPOStype = " <<* relexPOStype << endl;
-	cout << "grammaticalWordTypeTemp = " <<* grammaticalWordTypeTemp << endl;
-	*/
-	#endif
 
 }
 
@@ -1227,9 +1203,6 @@ void GIAtranslatorOperationsClass::generateTempFeatureArray(GIAfeature* firstFea
 	GIAfeature* currentFeatureInList = firstFeatureInList;
 	while(currentFeatureInList->next != NULL)
 	{
-		#ifdef GIA_DEBUG
-		//cout << "currentFeatureInList->entityIndex = " << currentFeatureInList->entityIndex << endl;
-		#endif
 		featureArrayTemp[currentFeatureInList->entityIndex] = currentFeatureInList;
 		currentFeatureInList = currentFeatureInList->next;
 	}
@@ -1262,14 +1235,6 @@ bool GIAtranslatorOperationsClass::determineSameReferenceSetValue(bool defaultSa
 		sameReferenceSet = true;
 	}
 
-	#ifdef GIA_ADVANCED_REFERENCING_DEBUG
-	cout << "\ndetermineSameReferenceSetValue:" << endl;
-	cout << "\t" << relation->relationType << "(" << relation->relationGovernor << ", " << relation->relationDependent << ")" << endl;
-	cout << "\tauxiliaryIndicatesDifferentReferenceSet = " << auxiliaryIndicatesDifferentReferenceSet << endl;
-	cout << "\trcmodIndicatesSameReferenceSet = " << rcmodIndicatesSameReferenceSet << endl;
-	cout << "\tdefaultSameSetValueForRelation = " << defaultSameSetValueForRelation << endl;
-	cout << "\tsameReferenceSet = " << sameReferenceSet << endl;
-	#endif
 
 	return sameReferenceSet;
 }
@@ -1713,20 +1678,12 @@ bool GIAtranslatorOperationsClass::findEntityNodeNameInVector(GIAentityNode* ent
 long GIAtranslatorOperationsClass::determineNextIdInstance(GIAentityNode* entity)
 {
 	long nextIdInstance;
-	#ifdef GIA_DATABASE_DEBUG
-	cout << "\t\tDEBUG: determineNextIdInstance{}; 0. entity->entityName = " << entity->entityName << endl;
-	cout << "\t\tDEBUG: determineNextIdInstance{}; 0. entity->idInstance = " << entity->idInstance << endl;
-	#endif
 	GIAentityNode* networkIndexEntity;
 	#ifdef GIA_APPLY_BUG_WORKAROUND_WHERE_A_NETWORK_INDEX_ENTITY_OF_INSTANCE_0_CAN_HAVE_NODE_DEFINING_INSTANCE
 	if(entity->idInstance == GIA_DATABASE_NODE_NETWORK_INDEX_ID_INSTANCE)
 	{
 		//the current entity is a networkIndex entity
 		networkIndexEntity = entity;
-		#ifdef GIA_DATABASE_DEBUG
-		cout << "\t\tDEBUG: determineNextIdInstance{}; 1b. networkIndexEntity->entityName = " << networkIndexEntity->entityName << endl;
-		cout << "\t\tDEBUG: determineNextIdInstance{}; 1b. networkIndexEntity->idInstance = " << networkIndexEntity->idInstance << endl;
-		#endif
 	}
 	else
 	{
@@ -1735,19 +1692,11 @@ long GIAtranslatorOperationsClass::determineNextIdInstance(GIAentityNode* entity
 		{
 			//the current entity is a substance of a networkIndex entity
 			networkIndexEntity = this->getPrimaryNetworkIndexNodeDefiningInstance(entity);
-			#ifdef GIA_DATABASE_DEBUG
-			cout << "\t\tDEBUG: determineNextIdInstance{}; 1a. networkIndexEntity->entityName = " << networkIndexEntity->entityName << endl;
-			cout << "\t\tDEBUG: determineNextIdInstance{}; 1a. networkIndexEntity->idInstance = " << networkIndexEntity->idInstance << endl;
-			#endif
 		}
 		else
 		{
 			//the current entity is a networkIndex entity
 			networkIndexEntity = entity;
-			#ifdef GIA_DATABASE_DEBUG
-			cout << "\t\tDEBUG: determineNextIdInstance{}; 1b. networkIndexEntity->entityName = " << networkIndexEntity->entityName << endl;
-			cout << "\t\tDEBUG: determineNextIdInstance{}; 1b. networkIndexEntity->idInstance = " << networkIndexEntity->idInstance << endl;
-			#endif
 		}
 	#ifdef GIA_APPLY_BUG_WORKAROUND_WHERE_A_NETWORK_INDEX_ENTITY_OF_INSTANCE_0_CAN_HAVE_NODE_DEFINING_INSTANCE
 	}
@@ -1761,16 +1710,10 @@ long GIAtranslatorOperationsClass::determineNextIdInstance(GIAentityNode* entity
 	{
 		long previousIdInstance = networkIndexEntity->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_INSTANCE].back()->entity->idInstance;
 		nextIdInstance = previousIdInstance + 1;
-		#ifdef GIA_DATABASE_DEBUG
-		cout << "\t\tDEBUG: determineNextIdInstance{}; 2a. nextIdInstance = " << nextIdInstance << endl;
-		#endif
 	}
 	else
 	{
 		nextIdInstance = GIA_DATABASE_NODE_NETWORK_INDEX_ID_INSTANCE + 1;
-		#ifdef GIA_DATABASE_DEBUG
-		cout << "\t\tDEBUG: determineNextIdInstance{}; 2b. nextIdInstance = " << nextIdInstance << endl;
-		#endif
 	}
 	#else
 	long numberOfInstances =  networkIndexEntity->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_INSTANCE].size();
@@ -1782,16 +1725,10 @@ long GIAtranslatorOperationsClass::determineNextIdInstance(GIAentityNode* entity
 	{
 		long previousIdInstance = networkIndexEntity->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_INSTANCE].back()->entity->idInstance;
 		nextIdInstance = previousIdInstance + 1;
-		#ifdef GIA_DATABASE_DEBUG
-		cout << "\t\tDEBUG: determineNextIdInstance{}; 2a. nextIdInstance = " << nextIdInstance << endl;
-		#endif
 	}
 	else
 	{
 		nextIdInstance = GIA_DATABASE_NODE_NETWORK_INDEX_ID_INSTANCE + 1;
-		#ifdef GIA_DATABASE_DEBUG
-		cout << "\t\tDEBUG: determineNextIdInstance{}; 2b. nextIdInstance = " << nextIdInstance << endl;
-		#endif
 	}
 	#else
 	long numberOfInstances =  networkIndexEntity->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_INSTANCE].size();
@@ -1803,9 +1740,6 @@ long GIAtranslatorOperationsClass::determineNextIdInstance(GIAentityNode* entity
 		cout <<"ERROR: (networkIndexEntity->networkIndexEntityLoaded == NULL)" << endl;
 	}
 	GIAnetworkIndexEntityLoaded* networkIndexEntityLoaded = networkIndexEntity->networkIndexEntityLoaded;
-	#ifdef GIA_DATABASE_DEBUG
-	cout << "networkIndexEntityLoaded->numberOfInstances = " << networkIndexEntityLoaded->numberOfInstances << endl;
-	#endif
 	networkIndexEntityLoaded->numberOfInstances = networkIndexEntityLoaded->numberOfInstances + 1;
 	nextIdInstance = networkIndexEntityLoaded->numberOfInstances;
 #endif
@@ -1848,22 +1782,12 @@ bool GIAtranslatorOperationsClass::mergeEntityNodesAddAlias(GIAentityNode* entit
 	bool result = true;
 	if(entityNode == entityNodeToMerge)	//before 3a1o: (entityNode->idActiveList == entityNodeToMerge->idActiveList)
 	{
-		#ifdef GIA_ALIASES_DEBUG
-		cout << "treatDefinitionAsEquality: already merged" << endl;
-		#endif
 		result = false;
 	}
 	else
 	{
 		entityNode->aliasList.push_back(entityNodeToMerge->entityName);
 
-		#ifdef GIA_ALIASES_DEBUG
-		cout << "\n" << endl;
-		cout << "entityNode->entityName = " << entityNode->entityName << endl;
-		cout << "entityNodeToMerge->entityName = " << entityNodeToMerge->entityName << endl;
-		cout << "entityNode->entityType = " << entityNode->entityType << endl;
-		cout << "entityNodeToMerge->entityType = " << entityNodeToMerge->entityType << endl;
-		#endif
 
 		for(int connectionType=0; connectionType<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; connectionType++)
 		{
@@ -1873,16 +1797,6 @@ bool GIAtranslatorOperationsClass::mergeEntityNodesAddAlias(GIAentityNode* entit
 				//connect entityNodeToMerge ambient node to entityNode
 				GIAentityNode* entityConnectedToEntityToMerge = (*connectionIter)->entity;
 
-				#ifdef GIA_ALIASES_DEBUG
-				if(entityConnectedToEntityToMerge->entityType == GIA_ENTITY_TYPE_NETWORK_INDEX)
-				{
-					cout << "entityConnectedToEntityToMerge->entityName = " << entityConnectedToEntityToMerge->entityName << " (networkIndex)" << endl;
-				}
-				else
-				{
-					cout << "entityConnectedToEntityToMerge->entityName = " << entityConnectedToEntityToMerge->entityName << endl;
-				}
-				#endif
 
 				if(entityNode != entityConnectedToEntityToMerge)
 				{//added 29 November 2012
@@ -1894,16 +1808,6 @@ bool GIAtranslatorOperationsClass::mergeEntityNodesAddAlias(GIAentityNode* entit
 						bool connectionIter2Erased = false;
 						GIAentityNode* entityConnectedToEntityConnectedToEntityToMerge = (*connectionIter2)->entity;
 
-						#ifdef GIA_ALIASES_DEBUG
-						if(entityConnectedToEntityConnectedToEntityToMerge->entityType == GIA_ENTITY_TYPE_NETWORK_INDEX)
-						{
-							cout << "entityConnectedToEntityConnectedToEntityToMerge->entityName = " << entityConnectedToEntityConnectedToEntityToMerge->entityName << " (networkIndex)" << endl;
-						}
-						else
-						{
-							cout << "entityConnectedToEntityConnectedToEntityToMerge->entityName = " << entityConnectedToEntityConnectedToEntityToMerge->entityName << endl;
-						}
-						#endif
 
 						if(entityNodeToMerge == entityConnectedToEntityConnectedToEntityToMerge)	//OR (entityNodeToMerge == entityConnectedToEntityConnectedToEntityToMerge)?
 						{
@@ -1912,9 +1816,6 @@ bool GIAtranslatorOperationsClass::mergeEntityNodesAddAlias(GIAentityNode* entit
 							if((entityConnectedToEntityToMerge->entityType == GIA_ENTITY_TYPE_NETWORK_INDEX) && (connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_INSTANCE_REVERSE))
 							{//restored 29 November 2012, and condition (connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_INSTANCE_REVERSE) added
 								//disconnect entityConnectedToEntityConnectedToEntityToMerge from entityConnectedToEntityToMerge (networkIndex) (z2)
-								#ifdef GIA_ALIASES_DEBUG
-								cout << "disconnect entityConnectedToEntityConnectedToEntityToMerge (" << entityConnectedToEntityConnectedToEntityToMerge->entityName << ") from entityConnectedToEntityToMerge (" << entityConnectedToEntityToMerge->entityName << ") (networkIndex) (z2)" << endl;
-								#endif
 								//delete* connectionIter2;	//delete connection
 								connectionIter2 = entityConnectedToEntityToMerge->entityVectorConnectionsArray[connectionTypeInverted].erase(connectionIter2);		//(*connectionIter2)->entity = NULL;	//need a better delete routine
 								connectionIter2Erased = true;
@@ -1927,9 +1828,6 @@ bool GIAtranslatorOperationsClass::mergeEntityNodesAddAlias(GIAentityNode* entit
 							{
 							#endif
 								//connect entityConnectedToEntityConnectedToEntityToMerge back to entityNode (z)
-								#ifdef GIA_ALIASES_DEBUG
-								cout << "change entityConnectedToEntityConnectedToEntityToMerge (" << entityConnectedToEntityConnectedToEntityToMerge->entityName << ") to entityNode (" << entityNode->entityName << ") (z)" << endl;
-								#endif
 
 								(*connectionIter2)->entity = entityNode;
 								#ifdef GIA_DATABASE
@@ -1955,9 +1853,6 @@ bool GIAtranslatorOperationsClass::mergeEntityNodesAddAlias(GIAentityNode* entit
 					if(!((entityConnectedToEntityToMerge->entityType == GIA_ENTITY_TYPE_NETWORK_INDEX) && (connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_INSTANCE_REVERSE)))
 					{
 					#endif
-						#ifdef GIA_ALIASES_DEBUG
-						cout << "connect entityNode (" << entityNode->entityName << ") to entityConnectedToEntityToMerge (" << entityConnectedToEntityToMerge->entityName << ") (x)" << endl;
-						#endif
 						bool sameReferenceSet = (*connectionIter)->sameReferenceSet;
 						this->writeVectorConnection(entityNode, entityConnectedToEntityToMerge, connectionType, sameReferenceSet, translatorVariables);
 					#ifndef GIA_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE
@@ -1966,16 +1861,6 @@ bool GIAtranslatorOperationsClass::mergeEntityNodesAddAlias(GIAentityNode* entit
 				}
 
 				//disconnect entityConnectedToEntityToMerge from entityNodeToMerge
-				#ifdef GIA_ALIASES_DEBUG
-				if(entityConnectedToEntityToMerge->entityType == GIA_ENTITY_TYPE_NETWORK_INDEX)
-				{
-					cout << "disconnect entityConnectedToEntityToMerge (" << entityConnectedToEntityToMerge->entityName << ") (networkIndex) from entityNodeToMerge (" << entityNodeToMerge->entityName << ") (x2)" << endl;
-				}
-				else
-				{
-					cout << "disconnect entityConnectedToEntityToMerge (" << entityConnectedToEntityToMerge->entityName << ") from entityNodeToMerge (" << entityNodeToMerge->entityName << ") (x2)" << endl;
-				}
-				#endif
 				//delete* connectionIter;	//delete connection
 				connectionIter = entityNodeToMerge->entityVectorConnectionsArray[connectionType].erase(connectionIter);		//(*connectionIter)->entity = NULL;	//need a better delete routine
 				connectionIterErased = true;
@@ -1998,16 +1883,9 @@ bool GIAtranslatorOperationsClass::mergeEntityNodesAddAlias(GIAentityNode* entit
 			{
 				bool connectionIterErased = false;
 				GIAentityNode* entityConnectedToEntity = (*connectionIter)->entity;
-				#ifdef GIA_ALIASES_DEBUG
-				cout << "entityConnectedToEntity->entityName = " << entityConnectedToEntity->entityName << endl;
-				cout << "entityNodeToMerge->entityName = " << entityNodeToMerge->entityName << endl;
-				#endif
 				if(entityConnectedToEntity == entityNodeToMerge)
 				{
 					//disconnect entityNodeToMerge from entityNode (y)
-					#ifdef GIA_ALIASES_DEBUG
-					cout << "disconnect entityNodeToMerge (" << entityNodeToMerge->entityName << ") from entityNode (" << entityNode->entityName << ") (y)" << endl;
-					#endif
 					connectionIter = entityNode->entityVectorConnectionsArray[connectionType].erase(connectionIter);		//(*connectionIter)->entity = NULL;	//need a better delete routine
 					connectionIterErased = true;
 					#ifdef GIA_DATABASE
@@ -2044,9 +1922,6 @@ bool GIAtranslatorOperationsClass::mergeEntityNodesAddAlias(GIAentityNode* entit
 		}
 		if(entityNodeToMerge->isQuery)
 		{
-			#ifdef GIA_DEBUG
-			//cout << "entityNodeToMerge->isQuery = " << entityNodeToMerge->isQuery << endl;
-			#endif
 			entityNode->isQuery = entityNodeToMerge->isQuery;
 			entityNode->isWhichOrEquivalentWhatQuery = entityNodeToMerge->isWhichOrEquivalentWhatQuery;
 			#ifdef GIA_ALIASES
@@ -2066,13 +1941,6 @@ bool GIAtranslatorOperationsClass::mergeEntityNodesAddAlias(GIAentityNode* entit
 
 		//entityNode->entityIndexTemp = entityNodeToMerge->entityIndexTemp;	//added 3a1o
 
-		#ifdef GIA_ALIASES_DEBUG
-		cout << "finished: mergeEntityNodesAddAlias" << endl;
-		cout << "entityNode->entityName = " << entityNode->entityName << endl;
-		cout << "entityNode->aliasList[0] = " << entityNode->aliasList[0] << endl;
-		cout << "entityNode->entityIndexTemp = " << entityNode->entityIndexTemp << endl;
-		cout << "entityNodeToMerge->entityIndexTemp = " << entityNodeToMerge->entityIndexTemp << endl;
-		#endif
 	}
 	return result;
 }
@@ -2093,9 +1961,6 @@ GIAentityNode* GIAtranslatorOperationsClass::getPrimaryNetworkIndexNodeDefiningI
 		{
 		#endif
 		#endif
-			#ifdef GIA_DEBUG
-			//cout << "primaryNetworkIndexNodeDefiningInstance = networkIndexEntityNode" << endl;
-			#endif
 			primaryNetworkIndexNodeDefiningInstance = networkIndexEntityNode;
 		#ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
 		#ifndef USE_NLC
@@ -2166,40 +2031,24 @@ bool GIAtranslatorOperationsClass::checkIndefiniteEntityCorrespondingToDefiniteE
 			}
 			NLCpreprocessorSentence* definiteEntityNLCsentenceInList = currentNLCsentenceInList;
 
-			#ifdef GIA_DEBUG
-			cout << "definiteEntity = " << definiteEntity->entityName << endl;
-			cout << "indefiniteEntity = " << indefiniteEntity->entityName << endl;
-			#endif
 			
 			if(foundDefiniteEntitySentence)
 			{
 				if(minimumIndentationBetweenIndefiniteAndIndefiniteEntitySentence < indefiniteEntityNLCsentenceInList->indentation)
 				{
-				       #ifdef GIA_DEBUG
-				       //cout << "checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContextGIA{}: no reference found" << endl;
-				       #endif
 				}
 				else
 				{
-				       #ifdef GIA_DEBUG
-				       //cout << "checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContextGIA{}: entity declared in this function" << endl;
-				       #endif
 				       foundIndefiniteEntity = true;
 				       *indentationDifferenceFound = definiteEntityNLCsentenceInList->indentation - indefiniteEntityNLCsentenceInList->indentation;
 				}
 			}
 			else
 			{
-			       #ifdef GIA_DEBUG
-			       //cout << "checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContextGIA{} error: !foundDefiniteEntitySentence" << endl;
-			       #endif
 			}
 		}
 		else
 		{
-			#ifdef GIA_DEBUG
-			//cout << "checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContextGIA{} error: !foundIndefiniteEntitySentence" << endl;
-			#endif
 		}
 	}
 

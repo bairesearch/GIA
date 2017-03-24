@@ -25,7 +25,7 @@
  * File Name: GIAcxlConversion.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1u 26-February-2017
+ * Project Version: 3a2a 21-March-2017
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  * NB this function creates entity idActiveListReorderdIDforXMLsave values upon write to speed up linking process (does not use original idActiveList values)
  *
@@ -153,9 +153,6 @@ bool GIAcxlConversionClass::writeCmapToolsCXLfile(const string xmlFileName, vect
 		result = false;
 	}
 
-	#ifdef GIA_SEMANTIC_NET_CXL_DEBUG
-	cout << "DEBUG generateXMLTagListBasedUponSubnet done " << endl;
-	#endif
 
  	if(!XMLparserClass.writeXMLfile(xmlFileName, firstTagInXMLFile))
  	{
@@ -164,9 +161,6 @@ bool GIAcxlConversionClass::writeCmapToolsCXLfile(const string xmlFileName, vect
 
 	delete firstTagInXMLFile;
 
-	#ifdef GIA_SEMANTIC_NET_CXL_DEBUG
-	cout << "DEBUG writeXMLfile done " << endl;
-	#endif
 
 	return result;
 }
@@ -256,16 +250,10 @@ XMLparserTag* GIAcxlConversionClass::addToCXLentityNodeTagList(XMLparserTag* cur
 				if(currentEntity->instanceNodeList->empty())
 				{//if GIA_CMAP_CONVERSION_SANITISED_DO_NOT_ADD_REDUNDANT_NETWORK_INDEX_NODES; then do not add a networkIndex entity if it has an associated instance (substance node)
 				#endif
-					#ifdef GIA_SEMANTIC_NET_CXL_DEBUG
-					cout << "DEBUG: currentEntity->entityName = " << currentEntity->entityName << endl;
-					#endif
 
 					#ifdef GIA_SEMANTIC_NET_CXL_REORDER_NETWORK_INDEX_IDS_UPON_CXL_WRITE_INSTEAD_OF_CXL_READ
 					currentEntity->idActiveListReorderdIDforXMLsave = *currentCmapNodeIDinCmapNodeList;
 					long currentEntityID = currentEntity->idActiveListReorderdIDforXMLsave;
-					#ifdef GIA_SEMANTIC_NET_CXL_DEBUG
-					cout << "DEBUG: currentEntity->idActiveListReorderdIDforXMLsave = " << currentEntity->idActiveListReorderdIDforXMLsave << endl;
-					#endif
 					#elif defined GIA_SEMANTIC_NET_CXL_REORDER_NETWORK_INDEX_IDS_UPON_CXL_WRITE_INSTEAD_OF_CXL_READ_OLD
 					//idActiveListReorderdIDforXMLsave already set
 					long currentEntityID = currentEntity->idActiveListReorderdIDforXMLsave;
@@ -508,25 +496,16 @@ XMLparserTag* GIAcxlConversionClass::addToCXLconnectionNodeTagList(XMLparserTag*
 								GIAentityConnectionClass* entityObjectConnection = entityObjectVectorConnection->begin();	//this could equally be back() as there is only 1 subject/object connection
 
 								string connectionTypeName = currentEntity->entityName;
-								#ifdef GIA_SEMANTIC_NET_CXL_DEBUG
-								cout << "connectionTypeName = " << connectionTypeName << endl;
-								#endif
 								long linkingPhraseID = currentEntity->idActiveListReorderdIDforXMLsave;
 								if(subjectIsEmpty)
 								{
 									entitySubjectConnection->entity = new GIAentityNode();
 									entitySubjectConnection->entity->CXLdummyNode = true;
-									#ifdef GIA_SEMANTIC_NET_CXL_DEBUG
-									cout << "entitySubjectConnection->entity == NULL" << endl;
-									#endif
 								}
 								if(objectIsEmpty)
 								{
 									entityObjectConnection->entity = new GIAentityNode();
 									entityObjectConnection->entity->CXLdummyNode = true;
-									#ifdef GIA_SEMANTIC_NET_CXL_DEBUG
-									cout << "entityObjectConnection->entity == NULL" << endl;
-									#endif
 								}
 								if(!(subjectIsEmpty && objectIsEmpty))
 								{
@@ -608,10 +587,6 @@ XMLparserTag* GIAcxlConversionClass::generateCXLconnectionNodeTagAndLinkingPhras
 	int entity1ID = entity1->idActiveListReorderdIDforXMLsave;
 	int entity2ID = entity2->idActiveListReorderdIDforXMLsave;
 	#elif defined GIA_SEMANTIC_NET_CXL_REORDER_NETWORK_INDEX_IDS_UPON_CXL_WRITE_INSTEAD_OF_CXL_READ_OLD
-	#ifdef GIA_SEMANTIC_NET_CXL_DEBUG
-	cout << "entity1->idActiveListReorderdIDforXMLsave = " << entity1->idActiveListReorderdIDforXMLsave << endl;
-	cout << "entity2->idActiveListReorderdIDforXMLsave = " << entity2->idActiveListReorderdIDforXMLsave << endl;
-	#endif
 	int entity1ID = entity1->idActiveListReorderdIDforXMLsave;
 	int entity2ID = entity2->idActiveListReorderdIDforXMLsave;
 	#else
@@ -619,10 +594,6 @@ XMLparserTag* GIAcxlConversionClass::generateCXLconnectionNodeTagAndLinkingPhras
 	int entity2ID = entity2->idActiveList;
 	#endif
 
-	#ifdef GIA_SEMANTIC_NET_CXL_DEBUG
-	cout << "entity1ID = " << entity1ID << endl;
-	cout << "entity2ID = " << entity2ID << endl;
-	#endif
 
 	int entity1X =  entity1->printX;
 	int entity2X =  entity2->printX;
@@ -676,11 +647,6 @@ XMLparserTag* GIAcxlConversionClass::generateCXLconnectionNodeTagAndLinkingPhras
 
 	if(!alreadyMadeConnection)
 	{
-		#ifdef GIA_SEMANTIC_NET_CXL_DEBUG
-		cout << "currentTagL1->name = " << currentTagL1->name << endl;
-		cout << "entity1ID = " << entity1ID << endl;
-		cout << "connectionID = " << connectionID << endl;
-		#endif
 		if(!(entity1->CXLdummyNode))
 		{
 			currentTagL1 = this->generateCXLconnectionNodeTag(currentTagL1, entity1ID, connectionID);
@@ -705,10 +671,6 @@ XMLparserTag* GIAcxlConversionClass::generateCXLconnectionNodeTag(XMLparserTag* 
 {
 	bool result = true;
 
-	#ifdef GIA_SEMANTIC_NET_CXL_DEBUG
-	cout << "fromID = " << fromID << endl;
-	cout << "toID = " << toID << endl;
-	#endif
 
 	//generate neuron connection tag
 	currentTagL1->name = NET_CXL_TAG_connection;

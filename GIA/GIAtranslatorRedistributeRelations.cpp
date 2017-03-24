@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorRedistributeRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1u 26-February-2017
+ * Project Version: 3a2a 21-March-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -58,13 +58,6 @@ void GIAtranslatorRedistributeRelationsClass::redistributeStanfordAndRelexRelati
 			GIAentityNode* governorEntity = translatorVariables->GIAentityNodeArray[governorIndex];
 			GIAentityNode* dependentEntity = translatorVariables->GIAentityNodeArray[dependentIndex];
 
-			#ifdef GIA_TRANSLATOR_REDISTRIBUTE_RELATIONS_DEBUG
-			cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
-			cout << "governorEntity->entityName = " << governorEntity->entityName << endl;
-			cout << "dependentEntity->entityName = " << dependentEntity->entityName << endl;
-			cout << "governorIndex = " << governorIndex << endl;
-			cout << "dependentIndex = " << dependentIndex << endl;
-			#endif
 			#ifdef GIA2_CORRECT_POSTAGS_FIX2
 			if(translatorVariables->featureArrayTemp[governorIndex] != NULL)
 			{
@@ -104,20 +97,11 @@ bool GIAtranslatorRedistributeRelationsClass::correctVerbPOStagAndLemma(GIAentit
 	if(actionOrSubstanceEntity->wordOrig != "")		//required to ignore dynamically generated entities, e.g. "have"/"$qvar"/etc
 	{
 	#endif
-		#ifdef GIA_TRANSLATOR_REDISTRIBUTE_RELATIONS_DEBUG
-		//cout << "\tcorrectVerbPOStagAndLemma{}:" << endl;
-		//cout << "actionOrSubstanceEntity->entityName = " << actionOrSubstanceEntity->entityName << endl;
-		#endif
 
 		string baseNameFound = "";
 		int grammaticalTenseModifier = INT_DEFAULT_VALUE;
 
 		bool foundContinuousOrInfinitiveOrImperativeOrPotentialVerb = GIApreprocessorMultiwordReduction.determineVerbCaseWrapper(actionOrSubstanceEntity->wordOrig, &baseNameFound, &grammaticalTenseModifier);
-		#ifdef GIA_TRANSLATOR_REDISTRIBUTE_RELATIONS_DEBUG
-		//cout << "foundContinuousOrInfinitiveOrImperativeOrPotentialVerb = " << foundContinuousOrInfinitiveOrImperativeOrPotentialVerb << endl;
-		//cout << "actionOrSubstanceEntity->wordOrig = " << actionOrSubstanceEntity->wordOrig << endl;
-		//cout << "baseNameFound = " << baseNameFound << endl;
-		#endif
 
 		//This section of code cannot be used as originally intended as some verb infinitives are also nouns (eg "yarn") - therefore must formally rely on correct infinitive tagging of verbs...
 		if((actionOrSubstanceEntity->grammaticalWordTypeTemp == GRAMMATICAL_WORD_TYPE_VERB) && ((actionOrSubstanceEntity->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_INFINITIVE] == true) || (actionOrSubstanceEntity->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_IMPERATIVE] == true)))
@@ -156,19 +140,12 @@ bool GIAtranslatorRedistributeRelationsClass::correctVerbPOStagAndLemma(GIAentit
 		else
 		{
 			//FUTURE GIA - consider updating correctVerbPOStagAndLemma{}; currently detecting all instances of "ing"/VBG. This is required such that appropriate instances can be marked as action networkIndexes eg "swimming involves/requires...". Alternatively consider marking these words directly here as GRAMMATICAL_TENSE_MODIFIER_INFINITIVE (ie GRAMMATICAL_TENSE_MODIFIER_ACTIONNETWORK_INDEX) such that they can be assigned action networkIndex by defineActionConcepts2{}
-			#ifdef GIA_TRANSLATOR_REDISTRIBUTE_RELATIONS_DEBUG
-			//cout << "NB: GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS requires GIA_PREPROCESSOR_MULTIWORD_REDUCTION to be defined and -lrpfolder to be set" << endl;
-			//cout << "1 actionOrSubstanceEntity->entityName = " << actionOrSubstanceEntity->entityName << endl;
-			#endif
 			#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_CONSERVATIVE
 			if(GIApreprocessorMultiwordReduction.determineIfWordIsIrregularVerbContinuousCaseWrapper(actionOrSubstanceEntity->wordOrig, &baseNameFound))
 			#elif defined GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_LIBERAL
 			if(foundContinuousOrInfinitiveOrImperativeOrPotentialVerb && (grammaticalTenseModifier == GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE_TEMP))
 			#endif
 			{
-				#ifdef GIA_TRANSLATOR_REDISTRIBUTE_RELATIONS_DEBUG
-				//cout << "GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS: 2 actionOrSubstanceEntity->entityName = " << actionOrSubstanceEntity->entityName << endl;
-				#endif
 
 				string stanfordPOS = FEATURE_POS_TAG_VERB_VBG;
 				/*
@@ -179,9 +156,6 @@ bool GIAtranslatorRedistributeRelationsClass::correctVerbPOStagAndLemma(GIAentit
 				string wordOrigLowerCase = SHAREDvars.convertStringToLowerCase(&(actionOrSubstanceEntity->wordOrig));
 				if(wordOrigLowerCase == actionOrSubstanceEntity->entityName)	//OR if(actionOrSubstanceEntity->entityName != baseNameFound)	//eg if wordOrig = Swimming, and entityName = swimming; then apply the lemma correction
 				{
-					#ifdef GIA_TRANSLATOR_REDISTRIBUTE_RELATIONS_DEBUG
-					//cout << "3 actionOrSubstanceEntity->entityName = " << actionOrSubstanceEntity->entityName << endl;
-					#endif
 
 					updatedLemma = true;
 					actionOrSubstanceEntity->entityName = baseNameFound;	//change irregular verb name eg making to base irregular verb base name eg make
@@ -227,9 +201,6 @@ bool GIAtranslatorRedistributeRelationsClass::correctVerbPOStagAndLemma(GIAentit
 			if(actionOrSubstanceEntity->grammaticalWordTypeTemp == GRAMMATICAL_WORD_TYPE_ADJ)	//NB "able" words will be marked as JJ/adjective or NN/noun by Stanford/Relex POS tagger (but ignore nouns)
 			{
 				string stanfordPOS = FEATURE_POS_TAG_VERB_VBPOTENTIAL;
-				#ifdef GIA_TRANSLATOR_REDISTRIBUTE_RELATIONS_DEBUG
-				//cout << "foundVerb FEATURE_POS_TAG_VERB_VBPOTENTIAL" << endl;
-				#endif
 
 				string wordOrigLowerCase = SHAREDvars.convertStringToLowerCase(&(actionOrSubstanceEntity->wordOrig));
 				if(wordOrigLowerCase == actionOrSubstanceEntity->entityName)	//OR if(actionOrSubstanceEntity->entityName != baseNameFound)	//eg if wordOrig = runnable, and entityName (NLP identified lemma) = runnable; then apply the lemma correction
@@ -257,9 +228,6 @@ bool GIAtranslatorRedistributeRelationsClass::correctVerbPOStagAndLemma(GIAentit
 			if((actionOrSubstanceEntity->grammaticalWordTypeTemp == GRAMMATICAL_WORD_TYPE_ADJ))	//NB "ive" words will be marked as JJ/adjective or NN/noun by Stanford/Relex POS tagger (but ignore nouns)
 			{
 				string stanfordPOS = FEATURE_POS_TAG_VERB_VBPOTENTIALINVERSE;
-				#ifdef GIA_TRANSLATOR_REDISTRIBUTE_RELATIONS_DEBUG
-				//cout << "foundVerb FEATURE_POS_TAG_VERB_VBPOTENTIALINVERSE" << endl;
-				#endif
 
 				string wordOrigLowerCase = SHAREDvars.convertStringToLowerCase(&(actionOrSubstanceEntity->wordOrig));
 				if(wordOrigLowerCase == actionOrSubstanceEntity->entityName)	//OR if(actionOrSubstanceEntity->entityName != baseNameFound)	//eg if wordOrig = runnable, and entityName (NLP identified lemma) = runnable; then apply the lemma correction
@@ -288,9 +256,6 @@ bool GIAtranslatorRedistributeRelationsClass::correctVerbPOStagAndLemma(GIAentit
 		{
 			if(actionOrSubstanceEntity->grammaticalWordTypeTemp == GRAMMATICAL_WORD_TYPE_ADJ)	//NB "is ..." and "is ..ed" (not Stanford CoreNLP/Relex) verbs may be marked as JJ/adjective by Stanford/Relex POS tagger eg "It is open"/"He is tired."
 			{
-				#ifdef GIA_TRANSLATOR_REDISTRIBUTE_RELATIONS_DEBUG
-				//cout << "foundVerb FEATURE_POS_TAG_VERB_VBSTATE" << endl;
-				#endif
 				string stanfordPOS = FEATURE_POS_TAG_VERB_VBSTATE;
 
 				currentFeature->stanfordPOS = stanfordPOS;
@@ -304,9 +269,6 @@ bool GIAtranslatorRedistributeRelationsClass::correctVerbPOStagAndLemma(GIAentit
 		{
 			if(actionOrSubstanceEntity->grammaticalWordTypeTemp == GRAMMATICAL_WORD_TYPE_NOUN)	//NB "ion"/"ment" words will be marked as NN/noun by Stanford/Relex POS tagger
 			{
-				#ifdef GIA_TRANSLATOR_REDISTRIBUTE_RELATIONS_DEBUG
-				//cout << "foundVerb FEATURE_POS_TAG_VERB_VBDESCRIPTION" << endl;
-				#endif
 				string stanfordPOS = FEATURE_POS_TAG_VERB_VBDESCRIPTION;
 
 				string wordOrigLowerCase = SHAREDvars.convertStringToLowerCase(&(actionOrSubstanceEntity->wordOrig));

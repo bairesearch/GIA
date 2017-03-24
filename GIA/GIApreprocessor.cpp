@@ -25,7 +25,7 @@
  * File Name: GIApreprocessor.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3a1u 26-February-2017
+ * Project Version: 3a2a 21-March-2017
  * Requirements: requires plain text file
  * Description: Logical Condition and Reference Set preprocessor
  *
@@ -152,11 +152,6 @@ bool GIApreprocessorClass::preprocessSentencesForGIA(const string inputFileName,
 			sentenceIndexOriginal++;	
 		}
 	}
-	#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE
-	cout << "create preprocessed file, outputFileName = " << outputFileName << endl;
-	cout  << "outputTextContents = \n" << outputTextContents << endl;
-	cout  << "outputTextContentsForNLP = \n" << outputTextContentsForNLP << endl;
-	#endif
 	SHAREDvars.setCurrentDirectory(outputFolder);	//save output files to output folder
 	SHAREDvars.writeStringToFile(outputFileName, &outputTextContents);
 	SHAREDvars.writeStringToFile(outputFileNameLRPforNLP, &outputTextContentsForNLP);
@@ -173,10 +168,6 @@ bool GIApreprocessorClass::preprocessSentencesForGIA(const string inputFileName,
 	}
 	#endif
 
-	#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_PREMATURE_QUIT
-	cout << "Premature quit for debug" << endl;
-	exit(EXIT_ERROR);
-	#endif
 
 	return result;
 }
@@ -185,10 +176,6 @@ bool GIApreprocessorClass::generateGIApreprocessorSentence(const string* sentenc
 {
 	bool result = true;
 	
-	#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE
-	cout << "create new sentence" << endl;
-	cout << "sentenceIndexOriginal = " << sentenceIndexOriginal << ": sentenceContentsOriginal = " << *sentenceContentsOriginal << endl;
-	#endif
 
 	#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
 	if(!GIApreprocessorLogicReferenceObject.executeLogicReferencePreprocessor(sentenceContentsOriginal, *currentGIApreprocessorSentenceInList, firstLogicReferenceClassTag))
@@ -458,9 +445,6 @@ bool GIApreprocessorClass::updateGIApreprocessorMultiwordReductionTagTextCorresp
 	
 	
 	//output new file
-	#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE
-	cout << "create preprocessed file, outputFileName = " << outputFileName << endl;
-	#endif
 	SHAREDvars.setCurrentDirectory(outputFolder);	//save output files to output folder
 	if(!GIApreprocessorMultiwordReduction.writeTagListToFile(firstTagInPlainText, outputFileName, "NA", false))	
 	{

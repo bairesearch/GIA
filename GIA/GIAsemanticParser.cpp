@@ -25,7 +25,7 @@
  * File Name: GIAsemanticParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1u 26-February-2017
+ * Project Version: 3a2a 21-March-2017
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -147,9 +147,6 @@ bool GIAsemanticParserClass::lookupSemanticParserFiles(GIAsentence* firstSentenc
 		#endif
 			#ifdef GIA2_SEMANTIC_PARSER
 			//if corpus file not found, then search for apppropriate corpus file subsets...
-			#ifdef GIA2_SEMANTIC_PARSER_DEBUG
-			cout << "lookupSemanticParserFiles{} GIA2_SEMANTIC_PARSER case not yet tested" << endl;
-			#endif
 			GIAfeature* dummyBlankFeature = new GIAfeature();
 			//now simulate GIA2 semantic relations for each subset of original sentence POS permutation
 			GIAfeature* secondWordInTupleFeature = currentSentenceInList->firstFeatureInList;
@@ -176,9 +173,6 @@ bool GIAsemanticParserClass::lookupSemanticParserFiles(GIAsentence* firstSentenc
 					if(!notFoundASubsetForAtLeastTwoWords)	//NB !notFoundASubsetForAtLeastTwoWords condition is optional; it is used because syntactic relations will be used in this case regardless, see "warning: GIA2 corpus entry not found (will generate corpus entry)"
 					{
 					#endif
-						#ifdef GIA2_SEMANTIC_PARSER_DEBUG
-						cout << "secondWordInTupleIndex = " << secondWordInTupleIndex << ", " << secondWordInTupleFeature->lemma << endl;
-						#endif
 						GIAfeature* recordOfFeatureAfterSecondWordInTupleFeature = secondWordInTupleFeature->next;
 						secondWordInTupleFeature->next = dummyBlankFeature;	//temporarily disconnect node at end of sentence subset
 						#ifdef GIA2_SEMANTIC_PARSER_EXPECT_TO_FIND_DATABASE_FILES_FOR_ALL_FEATURE_PERMUTATIONS
@@ -199,9 +193,6 @@ bool GIAsemanticParserClass::lookupSemanticParserFiles(GIAsentence* firstSentenc
 							GIAfeature* firstFeatureInSentenceSubsetInitial = currentSentenceInList->firstFeatureInList;
 						#endif
 							int maxIndexOfFirstWordInTuple = (secondWordInTupleFeature->entityIndex - (GIA2_CONNECTIONIST_NETWORK_MIN_SUBSET_SIZE-1));
-							#ifdef GIA2_SEMANTIC_PARSER_DEBUG
-							cout << "\tmaxIndexOfFirstWordInTuple = " << maxIndexOfFirstWordInTuple << endl;
-							#endif
 							#ifdef GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE
 							for(int firstWordInTupleIndex = GIA_NLP_START_ENTITY_INDEX; firstWordInTupleIndex <= maxIndexOfFirstWordInTuple; firstWordInTupleIndex++)
 							{
@@ -216,10 +207,6 @@ bool GIAsemanticParserClass::lookupSemanticParserFiles(GIAsentence* firstSentenc
 									if(firstWordInTupleIndex >= firstWordInSentenceSubsetIndex)
 									{
 									#endif
-										#ifdef GIA2_SEMANTIC_PARSER_DEBUG
-										cout << "\t\tfirstWordInTupleIndex = " << firstWordInTupleIndex << endl;
-										cout << "\t\t\tfirstWordInSentenceSubsetIndex = " << firstWordInSentenceSubsetIndex << ", " << firstFeatureInSentenceSubset->lemma << endl;
-										#endif
 										#ifdef GIA2_SEMANTIC_PARSER_UNOPTIMISED_TEXT_CORPUS
 										if(!foundACorpusSubsetForSecondWordInTuple)
 										{
@@ -284,12 +271,6 @@ bool GIAsemanticParserClass::lookupSemanticParserFiles(GIAsentence* firstSentenc
 								{
 									int firstWordInTupleIndexRelative = GIAsemanticParserOperations.calculateFirstWordInTupleIndexRelative(firstWordInTupleIndex, firstFeatureInSentenceSubsetInitial->entityIndex);
 
-									#ifdef GIA2_SEMANTIC_PARSER_DEBUG
-									cout << "maxProbabilityOfSemanticRelationTypesInTuple = " << maxProbabilityOfSemanticRelationTypesInTuple << endl;
-									cout << "semanticRelationTypeOptimisedDatabase = " << semanticRelationTypeOptimisedDatabase << endl;
-									cout << "firstWordInTupleIndexRelative = " << firstWordInTupleIndexRelative << endl;
-									cout << "secondWordInTupleIndex = " << secondWordInTupleIndex << endl;
-									#endif
 
 									GIAsemanticParserDatabase.addTupleSemanticRelationToSentence(currentSentenceInList, semanticRelationTypeOptimisedDatabase, firstWordInTupleIndexRelative, secondWordInTupleIndex);
 								}

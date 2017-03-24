@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorApplyAdvancedFeatures.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1u 26-February-2017
+ * Project Version: 3a2a 21-March-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -40,27 +40,15 @@
 
 void GIAtranslatorApplyAdvancedFeaturesClass::applyAdvancedFeatures(GIAtranslatorVariablesClass* translatorVariables)
 {
-	#ifdef GIA_TRANSLATOR_DEBUG
-	cout <<"section B4i; extractDates; eg The battle happened on March 11th, 1973. _date_day(December, 3rd) /_date_year(December, 1990)" << endl;	//[this could be implemented/"shifted" to an earlier execution stage with some additional configuration]
-	#endif
 	this->extractDates(translatorVariables);
 
-	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "section B4j; extractQuantities; eg He lost three dollars. /   He lost almost three dollars. / He lost three hundred dollars. _quantity(dollar, three) / _quantity_mod(three, almost) / _quantity_mult(hundred, three) " << endl;
-	#endif
 	this->extractQuantities(translatorVariables);
 
 	#ifdef GIA_SPECIFIC_ACTION_NETWORK_INDEXES
-	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "section B4k; defineActionConcepts2" << endl;
-	#endif
 	this->defineActionConcepts2(translatorVariables);
 	#endif
 
 	#ifdef GIA_CREATE_NEW_CONCEPT_FOR_EVERY_REFERENCE_TO_A_CONCEPT
-	#ifdef GIA_TRANSLATOR_DEBUG
-	cout << "section B4l; updateConceptDesignationBasedPropertyOwnerContext" << endl;
-	#endif
 	this->updateConceptDesignationBasedPropertyOwnerContext(translatorVariables);
 	#endif
 }
@@ -103,9 +91,6 @@ void GIAtranslatorApplyAdvancedFeaturesClass::extractDatesStanfordCoreNLP(GIAtra
 				{
 				#endif
 					GIAentityNode* timeEntity = currentEntity;
-					#ifdef GIA_TRANSLATOR_DEBUG
-					//cout << "currentEntity->entityName = " << currentEntity->entityName << endl;
-					#endif
 
 					if(timeEntity->timeConditionNode != NULL)
 					{
@@ -122,9 +107,6 @@ void GIAtranslatorApplyAdvancedFeaturesClass::extractDatesStanfordCoreNLP(GIAtra
 							else
 							{
 							*/
-								#ifdef GIA_TRANSLATOR_DEBUG
-								//cout << "timeEntity->NormalizedNERtemp = " << timeEntity->NormalizedNERtemp << endl;
-								#endif
 								timeEntity->timeConditionNode->conditionName = timeEntity->NormalizedNERtemp;
 
 								//this case appears to be required for queries... (_%qvar/_%atTime), noting that qVar is not assigned a substance (but remains a networkIndex node)
@@ -144,9 +126,7 @@ void GIAtranslatorApplyAdvancedFeaturesClass::extractDatesStanfordCoreNLP(GIAtra
 					}
 					else
 					{
-						#ifdef GIA_TRANSLATOR_DEBUG
-						cout << "error: isolated date node found (not declared as a time condition) [1]" << endl;
-						#else
+						#ifndef GIA_TRANSLATOR_DEBUG
 						cout << "error: [confidential 1]" << endl;
 						#endif
 						exit(EXIT_ERROR);	//remove this later
@@ -199,9 +179,7 @@ void GIAtranslatorApplyAdvancedFeaturesClass::extractDatesRelex(GIAtranslatorVar
 				}
 				else
 				{
-					#ifdef GIA_TRANSLATOR_DEBUG
-					cout << "error: isolated date node found (not declared as a time condition) [1]" << endl;
-					#else
+					#ifndef GIA_TRANSLATOR_DEBUG
 					cout << "error: [confidential 1]" << endl;
 					#endif
 					exit(EXIT_ERROR);	//remove this later
@@ -245,9 +223,6 @@ void GIAtranslatorApplyAdvancedFeaturesClass::extractDatesRelex(GIAtranslatorVar
 											int dayOfMonthInt = SHAREDvars.convertStringToInt(dayOfMonthString);
 											timeConditionEntity->timeConditionNode->dayOfMonth = dayOfMonthInt;
 
-											#ifdef GIA_TRANSLATOR_DEBUG
-											cout << "adding day of month: " << dayOfMonthInt << endl;
-											#endif
 
 											//update/regenerate timeConditionName
 											timeConditionEntity->timeConditionNode->conditionName = GIAconditionNodeClass.generateDateTimeConditionName(timeConditionEntity->timeConditionNode->dayOfMonth, timeConditionEntity->timeConditionNode->month, timeConditionEntity->timeConditionNode->year);
@@ -261,9 +236,6 @@ void GIAtranslatorApplyAdvancedFeaturesClass::extractDatesRelex(GIAtranslatorVar
 											int yearInt = SHAREDvars.convertStringToInt(yearString);
 											timeConditionEntity->timeConditionNode->year = yearInt;
 
-											#ifdef GIA_TRANSLATOR_DEBUG
-											cout << "adding year: " << yearInt << endl;
-											#endif
 
 											//update/regenerate timeConditionName
 											timeConditionEntity->timeConditionNode->conditionName = GIAconditionNodeClass.generateDateTimeConditionName(timeConditionEntity->timeConditionNode->dayOfMonth, timeConditionEntity->timeConditionNode->month, timeConditionEntity->timeConditionNode->year);
@@ -287,9 +259,6 @@ void GIAtranslatorApplyAdvancedFeaturesClass::extractDatesRelex(GIAtranslatorVar
 		currentRelationInList = currentRelationInList->next;
 	}
 	#ifdef GIA_TIME_NODE_INDEXING
-	#ifdef GIA_TRANSLATOR_DEBUG
-	//cout <<"add time condition nodes to index [for fast lookup by time]" << endl;
-	#endif
 	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
 	{
 		if(translatorVariables->GIAentityNodeArrayFilled[i])
@@ -311,9 +280,7 @@ void GIAtranslatorApplyAdvancedFeaturesClass::extractDatesRelex(GIAtranslatorVar
 				}
 				else
 				{
-					#ifdef GIA_TRANSLATOR_DEBUG
-					cout << "error: isolated date node found (not declared as a time condition)" << endl;
-					#else
+					#ifndef GIA_TRANSLATOR_DEBUG
 					cout << "error: [confidential 4]" << endl;
 					#endif
 					exit(EXIT_ERROR);	//remove this later
@@ -327,9 +294,6 @@ void GIAtranslatorApplyAdvancedFeaturesClass::extractDatesRelex(GIAtranslatorVar
 
 void GIAtranslatorApplyAdvancedFeaturesClass::addTimeToSubstance(GIAentityNode* timeConditionEntity)
 {
-	#ifdef GIA_TRANSLATOR_DEBUG
-	//cout << "addTimeToSubstance timeConditionEntity->entityName = " << timeConditionEntity->entityName << endl;
-	#endif
 	timeConditionEntity->conditionType = CONDITION_NODE_TYPE_TIME;
 
 	GIAtimeConditionNode* newTimeCondition = new GIAtimeConditionNode();
@@ -397,12 +361,6 @@ void GIAtranslatorApplyAdvancedFeaturesClass::extractQuantitiesStanfordCoreNLP(G
 		#endif
 			if(currentRelationInList->relationType == RELATION_TYPE_QUANTITY)
 			{
-				#ifdef GIA_TRANSLATOR_DEBUG
-				cout << "extractQuantitiesStanfordCoreNLP{}" << endl;
-				cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
-				cout << "currentRelationInList->relationGovernor = " << currentRelationInList->relationGovernor << endl;
-				cout << "currentRelationInList->relationDependent = " << currentRelationInList->relationDependent << endl;
-				#endif
 
 				GIAentityNode* quantityEntity = translatorVariables->GIAentityNodeArray[currentRelationInList->relationGovernorIndex];
 
@@ -425,9 +383,6 @@ void GIAtranslatorApplyAdvancedFeaturesClass::extractQuantitiesStanfordCoreNLP(G
 
 					int quantityNumberInt = GIAentityNodeClass.calculateQuantityNumberInt(quantitySubstance->quantityNumberString);
 					quantitySubstance->quantityNumber = quantityNumberInt;
-					#ifdef GIA_DEBUG
-					//cout << "quantitySubstance->quantityNumber = " << quantitySubstance->quantityNumber << endl;
-					#endif
 					quantitySubstance->entityType = GIA_ENTITY_TYPE_SUBSTANCE;	//added 2a11a [because defineConcepts() does not have access to quantity data]
 
 					GIAtranslatorOperations.disableInstanceAndNetworkIndexEntityBasedUponFirstSentenceToAppearInNetwork(translatorVariables->GIAentityNodeArray[currentRelationInList->relationDependentIndex]);
@@ -451,9 +406,6 @@ void GIAtranslatorApplyAdvancedFeaturesClass::extractQuantitiesStanfordCoreNLP(G
 							{
 								if((currentRelationInList2->relationGovernor == currentRelationInList->relationDependent) || (currentRelationInList2->relationGovernor == currentRelationInList->relationGovernor))	//OLD before GIA 2b7d/2c2b: if(currentRelationInList2->relationGovernor ==currentRelationInList->relationGovernor)
 								{
-									#ifdef GIA_TRANSLATOR_DEBUG
-									//cout << "add quantityModifier" << endl;
-									#endif
 									/*
 									int quantityModifierInt = calculateQuantityModifierInt(currentRelationInList2->relationDependent);
 									quantitySubstance->quantityModifier = quantityModifierInt;
@@ -505,13 +457,6 @@ void GIAtranslatorApplyAdvancedFeaturesClass::extractQuantitiesRelex(GIAtranslat
 				GIAsemanticParserOperations.GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(translatorVariables->GIAentityNodeArray, translatorVariables->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_QUANTITY, currentRelationInList->relationGovernorIndex, currentRelationInList->relationDependentIndex, false);
 				#endif
 
-				#ifdef GIA_TRANSLATOR_DEBUG
-				/*
-				cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
-				cout << "currentRelationInList->relationGovernor = " << currentRelationInList->relationGovernor << endl;
-				cout << "currentRelationInList->relationDependent = " << currentRelationInList->relationDependent << endl;
-				*/
-				#endif
 
 				GIAentityNode* quantityEntity = translatorVariables->GIAentityNodeArray[currentRelationInList->relationGovernorIndex];
 
@@ -545,9 +490,6 @@ void GIAtranslatorApplyAdvancedFeaturesClass::extractQuantitiesRelex(GIAtranslat
 						{
 							if((currentRelationInList2->relationGovernor == currentRelationInList->relationDependent) || (currentRelationInList2->relationGovernor == currentRelationInList->relationGovernor))	//OLD before GIA 2c2b: if(currentRelationInList2->relationGovernor ==currentRelationInList->relationGovernor)
 							{
-								#ifdef GIA_TRANSLATOR_DEBUG
-								//cout << "add quantityModifier" << endl;
-								#endif
 								/*
 								int quantityModifierInt = calculateQuantityModifierInt(currentRelationInList2->relationDependent);
 								quantitySubstance->quantityModifier = quantityModifierInt;
@@ -706,10 +648,6 @@ void GIAtranslatorApplyAdvancedFeaturesClass::defineActionConcepts2(GIAtranslato
 		if(translatorVariables->GIAentityNodeArrayFilled[i])
 		{
 			GIAentityNode* entity = translatorVariables->GIAentityNodeArray[i];
-			#ifdef GIA_DEBUG
-			//cout << "entity = " << entity->entityName << endl;
-			//cout << "entity->grammaticalTenseTemp = " << entity->grammaticalTenseTemp << endl;
-			#endif
 
 			//if(entity->entityType == GIA_ENTITY_TYPE_ACTION)	//do not check for isAction; because action concepts are assigned for nodes which have not been defined as actions by GIA; eg "eating is fun" [CHECKTHIS; this is not the same as the XML implementation]
 			//Condition A.

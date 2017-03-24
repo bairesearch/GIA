@@ -25,7 +25,7 @@
  * File Name: GIAwordnet.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1u 26-February-2017
+ * Project Version: 3a2a 21-March-2017
  * Requirements: requires wordnet libraries to be installed
  * Description: searches wordnet database and parses wordnet output
  *
@@ -130,34 +130,18 @@ bool GIAwordnetClass::checkIfWordIsContainedWithinOtherWordsSynsetsOrViceVersa(s
 	bool entityNamesAreSynonymous = false;
 
 
-	#ifdef GIA_WORDNET_DEBUG_OUTPUT_SYNONYMNS
-	*word = "ride";
-	*otherWord = "lift";
-	#endif
 
 	if(this->checkIfWordIsContainedWithinAnotherWordsSynsets(word, otherWord, wordNetPOS))
 	{
 		entityNamesAreSynonymous = true;
-		#ifdef GIA_WORDNET_DEBUG
-		//cout << "\t synon FOUND" << endl;
-		#endif
 	}
 
 
 	if(this->checkIfWordIsContainedWithinAnotherWordsSynsets(otherWord, word, wordNetPOS))
 	{
 		entityNamesAreSynonymous = true;
-		#ifdef GIA_WORDNET_DEBUG
-		//cout << "\t synon FOUND" << endl;
-		#endif
 	}
 
-	#ifdef GIA_WORDNET_DEBUG_OUTPUT_SYNONYMNS
-	if(entityNamesAreSynonymous)
-	{
-		exit(EXIT_ERROR);
-	}
-	#endif
 
 	return entityNamesAreSynonymous;
 }
@@ -172,14 +156,6 @@ bool GIAwordnetClass::checkIfWordIsContainedWithinAnotherWordsSynsets(const stri
 
 		bool wordIsFound = false;
 
-		#ifdef GIA_WORDNET_DEBUG
-		/*
-		cout << "*word = " <<* word << endl;
-		cout << "*otherWord = " <<* otherWord << endl;
-		cout << "wordNetPOS = " << wordNetPOS << endl;
-		cout << "similarityType = " << similarityType << endl;
-		*/
-		#endif
 
 		SynsetPtr firstSenseInList = this->findSynsets(word, &wordIsFound, wordNetPOS, similarityType);
 
@@ -257,20 +233,9 @@ SynsetPtr GIAwordnetClass::findSynsets(const string* word, bool* wordIsFound, co
 {
 	char* wordCharStar = const_cast<char*>(word->c_str());
 
-	#ifdef GIA_WORDNET_DEBUG
-	/*
-	cout << "findSynsets{}" << endl;
-	cout << "wordCharStar = " << wordCharStar << endl;
-	cout << "wordNetPOS = " << wordNetPOS << endl;
-	*/
-	#endif
 
 	SynsetPtr firstSenseInList = findtheinfo_ds(wordCharStar, wordNetPOS, similarityType, 0);	//returns pointer to the first Synset struct in a Synset struct linked list containing word/searchStr
 
-	#ifdef GIA_WORDNET_DEBUG
-	//char* sensePrintedOutput = findtheinfo(wordCharStar, wordNetPOS, similarityType, 0);		//similarityType/OVERVIEW
-	//cout << "findtheinfo sensePrintedOutput = " << sensePrintedOutput << endl;
-	#endif
 
 	if(firstSenseInList == NULL)
 	{
@@ -297,9 +262,6 @@ SynsetPtr GIAwordnetClass::checkIfSynsetListContainsSynonymousEntityNamesAndReco
 	bool stillSensesToGo = true;
 	while(stillSensesToGo)
 	{
-		#ifdef GIA_WORDNET_DEBUG
-		//cout << "currentSenseInList->ptrcount = " << currentSenseInList->ptrcount << endl;
-		#endif
 		for(int pointerIndex = CURRENTSYNSETPOINTERINDEX; pointerIndex<currentSenseInList->ptrcount; pointerIndex++)	//updated 2 June 2012 to properly account for CURRENTSYNSETPOINTERINDEX
 		{
 			for(int similarityTypeIndex = 0; similarityTypeIndex<WORDNET_DATA_ENTRY_POINTERS_INDICATING_RELATED_SYNSETS_NUMBER_OF_TYPES; similarityTypeIndex++)
@@ -318,15 +280,8 @@ SynsetPtr GIAwordnetClass::checkIfSynsetListContainsSynonymousEntityNamesAndReco
 				}
 				else
 				{
-					#ifdef GIA_WORDNET_DEBUG
-					//cout << "similarityTypeIndex = " << similarityTypeIndex << endl;
-					#endif
 					if(currentSenseInList->ptrtyp[pointerIndex] == wordnetDataEntryPointersIndicatingRelatedSynsetsArray[similarityTypeIndex])
 					{
-						#ifdef GIA_WORDNET_DEBUG
-						//cout << "passed" << endl;
-						//cout << "currentSenseInList->ptrtyp[pointerIndex] = " << currentSenseInList->ptrtyp[pointerIndex] << endl;
-						#endif
 						//if ptrtyp indicates related synset, then go to ptroff
 						passed = true;
 						char* wordInterestedIn = const_cast<char*>(word->c_str());
@@ -337,27 +292,15 @@ SynsetPtr GIAwordnetClass::checkIfSynsetListContainsSynonymousEntityNamesAndReco
 
 				if(passed)
 				{
-					#ifdef GIA_WORDNET_DEBUG
-					cout << "senseIndex = " << senseIndex << endl;
-					cout << "currentRelatedSense->wcount = " << currentRelatedSense->wcount << endl;
-					#endif
 					if(compareEntityNames)
 					{
 						for(int w=0; w< currentRelatedSense->wcount; w++)
 						{
-							#ifdef GIA_WORDNET_DEBUG
-							cout << "word = " << currentRelatedSense->words[w] << endl;
-							#endif
 
 							string currentWord = currentRelatedSense->words[w];
 							if(currentWord == *otherWord)
 							{
 								*entityNamesAreSynonymous = true;
-								#ifdef GIA_WORDNET_DEBUG
-								cout << "match found - entityNamesAreSynonymous:" << endl;
-								cout << "currentRelatedSense->words[w] = " << currentRelatedSense->words[w] << endl;
-								cout << "otherWord = " <<* otherWord << endl;
-								#endif
 
 								/*
 								if(compareEntityNames)
@@ -379,15 +322,6 @@ SynsetPtr GIAwordnetClass::checkIfSynsetListContainsSynonymousEntityNamesAndReco
 						int senseNumber = *(currentRelatedSense->wnsns);
 						int tagCount = GetTagcnt(idxOfFirstWordInWords, senseNumber);
 
-						#ifdef GIA_WORDNET_DEBUG
-						cout << "whichword = " << currentRelatedSense->whichword << endl;		//which word in words[] corresponds to word/searchStr
-						cout << "indexInData = " << currentRelatedSense->hereiam << endl;	      //index [first column] from data.wordNetPOS (eg data.noun) for the sense/usage of word/searchStr
-						cout << "idxOfFirstWordInWords = " << idxOfFirstWordInWords << endl;
-						cout << "idxOfFirstWordInWords->off_cnt " << idxOfFirstWordInWords->off_cnt << endl;  //total number of senses of first word in words[] (see index.wordNetPOS (eg index.noun) - the total number of pointers listed)
-						cout << "senseNumber = " << senseNumber << endl;      //sense number of the first word in words[] (corresponding to the sense of word/searchStr) - second last column of sense.wordNetPOS (eg sense.noun)
-						cout << "tagCount = " << tagCount << endl;	      //popularity of sense (number of times the sense passed has been tagged according to the cntlist file) - last column of sense.wordNetPOS (eg sense.noun)
-						cout << " " << endl;
-						#endif
 
 
 						free_index(idxOfFirstWordInWords);	//Free an index structure
@@ -414,37 +348,6 @@ SynsetPtr GIAwordnetClass::checkIfSynsetListContainsSynonymousEntityNamesAndReco
 						}
 					}
 
-					#ifdef GIA_WORDNET_DEBUG
-					/*
-					for(int q=1; q<= idxOfFirstWordInWords->off_cnt; q++)
-					{
-						cout << "tagcount = " << GetTagcnt(idxOfFirstWordInWords, q) << endl;
-					}
-
-					cout << "hereiam = " << currentRelatedSense->hereiam << endl;		//index [first column] from data.wordNetPOS (eg data.noun) for the sense/usage of word/searchStr
-					cout << "sstype = " << currentRelatedSense->sstype << endl;
-					cout << "fnum = " << currentRelatedSense->fnum << endl;
-					cout << "pos = " << currentRelatedSense->pos << endl;
-					cout << "wcount = " << currentRelatedSense->wcount << endl;
-					cout << "words = " << currentRelatedSense->words << endl;
-					cout << "lexid = " << currentRelatedSense->lexid << endl;
-					cout << "wnsns = " <<* (currentRelatedSense->wnsns) << endl;			//sense number of the first word in words[] - corresponding to the sense of word/searchStr
-					cout << "whichword = " << currentRelatedSense->whichword << endl;		//which word in words[] corresponds to word/searchStr
-					cout << "ptrcount = " << currentRelatedSense->ptrcount << endl;
-					cout << "ptrtyp = " << currentRelatedSense->ptrtyp << endl;
-					cout << "ptroff = " << currentRelatedSense->ptroff << endl;
-					cout << "ppos = " << currentRelatedSense->ppos << endl;
-					cout << "pto = " << currentRelatedSense->pto << endl;
-					cout << "pfrm = " << currentRelatedSense->pfrm << endl;
-					cout << "fcount = " << currentRelatedSense->fcount << endl;
-					cout << "frmid = " << currentRelatedSense->frmid << endl;
-					cout << "frmto = " << currentRelatedSense->frmto << endl;
-					cout << "defn = " << currentRelatedSense->defn << endl;
-					cout << "key = " << currentRelatedSense->key << endl;
-					cout << "searchtype = " << currentRelatedSense->searchtype << endl;
-					cout << " " << endl;
-					*/
-					#endif
 				}
 
 				if(passedNewSynsetMustFree)
@@ -500,10 +403,6 @@ void GIAwordnetClass::findSynonymsOLD(const string word, bool* wordIsFound, stri
 
 	//now convert numberOfSensesString to number (this becomes the number of 'senses')
 	int numberSenses = SHAREDvars.convertStringToInt(numberOfSensesString);
-	#ifdef GIA_WORDNET_DEBUG
-	cout << "output = " << output << endl;
-	cout << "numberSenses = " << numberSenses << endl;
-	#endif
 
 	if(!this->recordUntilCharacterOrEscapeCharacterOLD(charIndex, output, &charIndex, &lineString, CHAR_NEWLINE, CHAR_END_OF_STRING))	//wait till end of header
 	{
@@ -541,9 +440,6 @@ void GIAwordnetClass::findSynonymsOLD(const string word, bool* wordIsFound, stri
 		string senseString = SHAREDvars.convertIntToString(sense);
 		string senseEntryTitleStringExpected = "";
 		senseEntryTitleStringExpected = senseEntryTitleStringExpected + WORDNET_SENSE_STRING + " " + senseString;
-		#ifdef GIA_WORDNET_DEBUG
-		//cout << "senseEntryTitleStringExpected = " << senseEntryTitleStringExpected << endl;
-		#endif
 
 		if(senseEntryTitleStringExpected != lineString)
 		{
@@ -591,12 +487,6 @@ void GIAwordnetClass::findSynonymsOLD(const string word, bool* wordIsFound, stri
 
 	}
 
-	#ifdef GIA_WORDNET_DEBUG
-	for(int i=0;i<numberOfSynonyms ; i++)
-	{
-		cout << "listOfSynonyms[i] = " << listOfSynonyms[i] << endl;
-	}
-	#endif
 
 	if(numberSenses > 0)
 	{

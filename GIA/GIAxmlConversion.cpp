@@ -25,7 +25,7 @@
  * File Name: GIAxmlConversion.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1u 26-February-2017
+ * Project Version: 3a2a 21-March-2017
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  * NB this function creates entity idActiveListReorderdIDforXMLsave values upon write to speed up linking process (does not use original idActiveList values)
  * NB this function creates entity idActiveList values upon read (it could create idActiveListReorderdIDforXMLsave values instead - however currently it is assumed that when an XML file is loaded, this will populate the idActiveList in its entirety)
@@ -36,51 +36,6 @@
 #include "GIAxmlConversion.hpp"
 
 //this function works and no longer needs to be tested
-#ifdef GIA_XML_DEBUG
-bool GIAxmlConversionClass::testReadSemanticNetXMLFile1()
-{
-	bool result = true;
-
-	vector<GIAentityNode*>* entityNodesActiveListComplete;	//the entityNodesActiveListComplete object must be initialised here (in GIAxmlConversion.cpp scope). if it is initialised in another .cpp it will be come corrupted,
-	vector<GIAentityNode*>* entityNodesActiveListNetworkIndexes;
-
-	if(!this->readSemanticNetXMLfile(GIA_SEMANTIC_NET_XML_FILE_NAME, entityNodesActiveListComplete, entityNodesActiveListNetworkIndexes))
-	{
-		result = false;
-	}
-
-	if(!this->writeSemanticNetXMLFile(GIA_SEMANTIC_NET_XML_FILE_NAME1, entityNodesActiveListComplete, entityNodesActiveListNetworkIndexes))
-	{
-		result = false;
-	}
-
-	return result;
-}
-
-bool GIAxmlConversionClass::testReadSemanticNetXMLFile2(vector<GIAentityNode*>* entityNodesActiveListComplete, const vector<GIAentityNode*>* entityNodesActiveListNetworkIndexes)
-{
-	bool result = true;
-
-	if(!this->writeSemanticNetXMLFile(GIA_SEMANTIC_NET_XML_FILE_NAME, entityNodesActiveListComplete, entityNodesActiveListNetworkIndexes))
-	{
-		result = false;
-	}
-
-	vector<GIAentityNode*> tempentityNodesActiveListComplete;
-	vector<GIAentityNode*> tempentityNodesActiveListNetworkIndexes;
-
-	if(!this->readSemanticNetXMLfile(GIA_SEMANTIC_NET_XML_FILE_NAME, &tempentityNodesActiveListComplete, &tempentityNodesActiveListNetworkIndexes))
-	{
-		result = false;
-	}
-
-	if(!this->writeSemanticNetXMLFile(GIA_SEMANTIC_NET_XML_FILE_NAME1, &tempentityNodesActiveListComplete, &tempentityNodesActiveListNetworkIndexes))
-	{
-		result = false;
-	}
-	return result;
-}
-#endif
 
 bool GIAxmlConversionClass::readSemanticNetXMLfileOptimised(const string xmlFileName, vector<GIAentityNode*>* entityNodesActiveListComplete, unordered_map<string, GIAentityNode*>* networkIndexEntityNodesListMap, map<int, vector<GIAentityNode*>*>* entityNodesActiveListSentences)
 {
@@ -186,9 +141,6 @@ bool GIAxmlConversionClass::parseSemanticNetTag(XMLparserTag* firstTagInNetwork,
 		{
 			if(currentTagUpdatedL2->name == entityTypeNodeContainerXMLtags[entityType])
 			{
-				#ifdef GIA_SEMANTIC_NET_XML_DEBUG
-				//cout << "entityTypeNodeContainerXMLtags[entityType] = " << entityTypeNodeContainerXMLtags[entityType] << endl;
-				#endif
 
 				if(!this->parseSemanticEntityTypeNodeContainerTag(currentTagUpdatedL2, entityNodesActiveListComplete, entityNodesActiveListArray[entityType], linkConnections, &currentEntityNodeIDinCompleteList))
 				{
@@ -217,9 +169,6 @@ bool GIAxmlConversionClass::parseSemanticEntityTypeNodeContainerTag(XMLparserTag
 	{
 		if(currentTagUpdatedL3->name == NET_XML_TAG_entityNode)
 		{
-			#ifdef GIA_SEMANTIC_NET_XML_DEBUG
-			cout << "currentEntityNodeIDinCompleteList = " << *currentEntityNodeIDinCompleteList << endl;
-			#endif
 
 			GIAentityNode* currentEntity = NULL;
 
@@ -244,20 +193,12 @@ bool GIAxmlConversionClass::parseSemanticEntityTypeNodeContainerTag(XMLparserTag
 				result = false;
 			}
 
-			#ifdef GIA_SEMANTIC_NET_XML_DEBUG
-			cout << "currentEntity->entityName = " << currentEntity->entityName << endl;
-			cout << "currentEntity->idActiveList = " << currentEntity->idActiveList << endl;
-			#endif
 		}
 		else
 		{
 			if(currentTagUpdatedL3->name != "")
 			{//NB networkIndex entities nodes should always exist, so this condition is not required (at the moment)
 				cout << "parseSemanticEntityTypeNodeContainerTag error 1: entity node tag not detected" << endl;
-				#ifdef GIA_DEBUG
-				//cout << "tag found: " << currentTagUpdatedL3->name << endl;
-				//cout << "tag expected: " << NET_XML_TAG_entityNode << endl;
-				#endif
 			}
 		}
 		currentTagUpdatedL3=currentTagUpdatedL3->nextTag;
@@ -356,9 +297,6 @@ bool GIAxmlConversionClass::parseEntityNodeTag(XMLparserTag* firstTagInEntityNod
 				long attributeValue = SHAREDvars.convertStringToLong(currentAttribute->value);
 				entityNode->idActiveList = attributeValue;
 				idFound = true;
-				#ifdef GIA_SEMANTIC_NET_XML_DEBUG
-				//cout << "entityNode->idActiveList = " << entityNode->idActiveList << endl;
-				#endif
 			}
 			else if(currentAttribute->name == NET_XML_ATTRIBUTE_entityName)
 			{
@@ -668,9 +606,6 @@ bool GIAxmlConversionClass::parseEntityNodeTag(XMLparserTag* firstTagInEntityNod
 
 			if(currentTagUpdatedL3->name == NET_XML_TAG_timeConditionNode)
 			{
-				#ifdef GIA_SEMANTIC_NET_XML_DEBUG
-				//cout << "timeConditionNode: " << endl;
-				#endif
 				entityNode->timeConditionNode = new GIAtimeConditionNode();
 				if(!this->parseTimeConditionNodeTag(currentTagUpdatedL3, entityNode->timeConditionNode))
 				{
@@ -723,9 +658,6 @@ bool GIAxmlConversionClass::parseEntityVectorConnectionNodeListTag(const XMLpars
 	{
 		if(currentTagUpdatedL1->name == entityVectorConnectionXMLtagNameCrossReferenceNodeTypeArray[entityVectorConnectionIndex])
 		{
-			#ifdef GIA_SEMANTIC_NET_XML_DEBUG
-			//cout <<  entityVectorConnectionXMLtagNameCrossReferenceNodeTypeArray[entityVectorConnectionIndex] << " nodeReference: " << endl;
-			#endif
 			const XMLparserAttribute* currentAttribute = currentTagUpdatedL1->firstAttribute;
 
 			long idActiveList = INT_DEFAULT_VALUE;
@@ -761,9 +693,6 @@ bool GIAxmlConversionClass::parseEntityVectorConnectionNodeListTag(const XMLpars
 					long attributeValue = SHAREDvars.convertStringToLong(currentAttribute->value);
 					idActiveList = attributeValue;
 					idFound = true;
-					#ifdef GIA_SEMANTIC_NET_XML_DEBUG
-					//cout << "connection idActiveList = " << idActiveList << endl;
-					#endif
 				}
 				#ifdef GIA_XML_RECORD_ADDITIONAL_VARIABLES
 				else if(currentAttribute->name == NET_XML_ATTRIBUTE_sentenceIndexTemp)
@@ -771,9 +700,6 @@ bool GIAxmlConversionClass::parseEntityVectorConnectionNodeListTag(const XMLpars
 					int attributeValue = SHAREDvars.convertStringToInt(currentAttribute->value);
 					newConnection->sentenceIndexTemp = attributeValue;
 					sentenceIndexTempFound = true;
-					#ifdef GIA_SEMANTIC_NET_XML_DEBUG
-					//cout << "connection idActiveList = " << idActiveList << endl;
-					#endif
 				}
 				#ifdef GIA_ADVANCED_REFERENCING
 				#ifdef GIA_TRANSLATOR_MARK_DOUBLE_LINKS_AS_REFERENCE_CONNECTIONS
@@ -782,9 +708,6 @@ bool GIAxmlConversionClass::parseEntityVectorConnectionNodeListTag(const XMLpars
 					bool attributeValue = SHAREDvars.convertStringToInt(currentAttribute->value);
 					newConnection->isReference = attributeValue;
 					isReferenceFound = true;
-					#ifdef GIA_SEMANTIC_NET_XML_DEBUG
-					//cout << "connection idActiveList = " << idActiveList << endl;
-					#endif
 				}
 				#endif
 				#endif
@@ -793,9 +716,6 @@ bool GIAxmlConversionClass::parseEntityVectorConnectionNodeListTag(const XMLpars
 					bool attributeValue = SHAREDvars.convertStringToInt(currentAttribute->value);
 					newConnection->sameReferenceSet = attributeValue;
 					sameReferenceSetFound = true;
-					#ifdef GIA_SEMANTIC_NET_XML_DEBUG
-					//cout << "connection idActiveList = " << idActiveList << endl;
-					#endif
 				}
 				
 				#ifndef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
@@ -805,9 +725,6 @@ bool GIAxmlConversionClass::parseEntityVectorConnectionNodeListTag(const XMLpars
 					bool attributeValue = SHAREDvars.convertStringToInt(currentAttribute->value);
 					newConnection->isAlias = attributeValue;
 					isAliasFound = true;
-					#ifdef GIA_SEMANTIC_NET_XML_DEBUG
-					//cout << "connection idActiveList = " << idActiveList << endl;
-					#endif
 				}
 				#endif
 				#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC_RECORD_AUX_INFO
@@ -855,11 +772,6 @@ bool GIAxmlConversionClass::parseEntityVectorConnectionNodeListTag(const XMLpars
 				newConnection->added = true;
 				#endif
 				entityNode->entityVectorConnectionsArray[entityVectorConnectionIndex].push_back(newConnection);
-				#ifdef GIA_SEMANTIC_NET_XML_DEBUG
-				cout << "linking " << entityNode->entityName << " to " << targetEntity->entityName << endl;
-				cout << "entityVectorConnectionIndex = " << entityVectorConnectionIndex << endl;
-				cout << "idActiveList = " << idActiveList << endl;
-				#endif
 			}
 			else
 			{
@@ -1022,9 +934,6 @@ bool GIAxmlConversionClass::writeSemanticNetXMLFile(const string xmlFileName, ve
 	currentEntityNodeIDinEntityNodesActiveCompleteList = 0;
 	for(int entityType=0; entityType<GIA_ENTITY_NUMBER_OF_TYPES; entityType++)
 	{
-		#ifdef GIA_SEMANTIC_NET_XML_DEBUG
-		//cout << "(!this->generateXMLentityNodeTagList(currentTagL1, entityNodesActiveListNetworkIndexes, NET_XML_TAG_networkIndexEntityNodeContainer, &currentEntityNodeIDinEntityNodesActiveCompleteList))" << endl;
-		#endif
 
 		if(!this->generateXMLentityNodeTagList(currentTagL1, entityNodesActiveListComplete, entityTypeNodeContainerXMLtags[entityType], &currentEntityNodeIDinEntityNodesActiveCompleteList, entityType))
 		{
@@ -1537,9 +1446,6 @@ string GIAxmlConversionClass::convertBooleanArrayToString(const bool booleanArra
 		string tempStr = SHAREDvars.convertIntToString(int(booleanArray[i]));
 		str = str + tempStr;
 	}
-	#ifdef GIA_DEBUG
-	//cout << "convertBooleanArrayToString = " << str << endl;
-	#endif
 	return str;
 
 }
@@ -1551,8 +1457,5 @@ void GIAxmlConversionClass::convertStringToBooleanArray(const string str, bool b
 		string tempStr = "";
 		tempStr = tempStr + str[i];
 		booleanArray[i] = SHAREDvars.convertStringToInt(tempStr);
-		#ifdef GIA_DEBUG
-		//cout << "convertStringToBooleanArray booleanArray[i]  = " << SHAREDvars.convertStringToInt(tempStr) << endl;
-		#endif
 	}
 }

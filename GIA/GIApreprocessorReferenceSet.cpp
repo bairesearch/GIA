@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorReferenceSet.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3a1u 26-February-2017
+ * Project Version: 3a2a 21-March-2017
  * Requirements: requires plain text file
  * Description: Reference Set preprocessor
  *
@@ -60,9 +60,6 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(string* l
 {
 	bool result = true;
 	
-	#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE
-	cout << "GIApreprocessorClass::executeReferenceSetPreprocessor{} debug: logicReferenceVariableContents = " << *logicReferenceVariableContents << endl;
-	#endif
 	
 	//Perform auxiliary detection by looking for the word "has/have/has had" / "is/was/will be" preceding the second word of the relation (ignoring intermediary determiners; a/the). Perform same reference set detection by checking for "that/which" before the auxiliary.
 	//Reference set reduction preprocessor - rrp. 3. reference sets; look for "is" not following that/which or infinitive/present/continuous/past[/past participle?] tense verbs (eg move/moves/moving/moved) not following that/which [or intemediary auxiliaries eg that is running] or determiners (the/a) or possessive pronouns (his/her/its).
@@ -93,9 +90,6 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(string* l
 		string currentWord = *iter;
 		currentWord = SHAREDvars.convertStringToLowerCase(&currentWord);	//required for imperatives where the action is defined as the first word in the sentence 
 		int wordIndexOfHypotheticalPreceedingThatWhich = wordIndex-1;
-		#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE
-		cout << "GIApreprocessorClass::executeReferenceSetPreprocessor{} debug: currentWord = " << currentWord << endl;
-		#endif
 					
 		bool currentWordIsReferenceSetDelimiter = false;
 		//auxiliary detection
@@ -105,9 +99,6 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(string* l
 		
 		if(detectAuxiliary(currentWord))
 		{
-			#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE
-			cout << "GIApreprocessorClass::executeReferenceSetPreprocessor{} debug: foundAuxiliary, currentWord = " << currentWord << endl;
-			#endif
 			foundAuxiliary = true;
 			currentWordIsReferenceSetDelimiter = true;
 		}
@@ -184,9 +175,6 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(string* l
 			}
 			else
 			{
-				#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE
-				cout << "GIApreprocessorClass::executeReferenceSetPreprocessor{} debug: referenceSetDelimiterDetected, currentWord = " << currentWord << endl;
-				#endif
 				
 				if(currentWordIsReferenceSetDelimiterPreceededByThatWhich)
 				{
@@ -207,9 +195,6 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(string* l
 		
 		if(referenceSetDelimiterDetected && parsingReferenceSetDelimiter && !currentWordIsReferenceSetDelimiter)
 		{
-			#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE
-			cout << "(referenceSetDelimiterDetected && parsingReferenceSetDelimiter && !currentWordIsReferenceSetDelimiter)" << endl;
-			#endif
 				
 			#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_SUB_REFERENCE_SETS
 			//add a subreference set to the subject/object

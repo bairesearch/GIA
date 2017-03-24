@@ -25,7 +25,7 @@
  * File Name: GIAdraw.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1u 26-February-2017
+ * Project Version: 3a2a 21-March-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -166,19 +166,10 @@ bool GIAdrawClass::determineBasicPrintPositionsOfAllNodes(vector<GIAentityNode*>
 		printFromXMLcoordinatesAlreadyDefined = true;
 		maxNumberSentences = 1;
 	}
-	#ifdef GIA_DEBUG
-	//cout << "maxNumberSentences = " << maxNumberSentences << endl;
-	#endif
 	for(int sentenceIndex=GIA_NLP_START_SENTENCE_INDEX; sentenceIndex <= maxNumberSentences; sentenceIndex++)
 	{
-		#ifdef GIA_DRAW_DEBUG
-		cout << "*** sentenceIndex = " << sentenceIndex << endl;
-		#endif
 		for(vector<GIAentityNode*>::iterator entityIter = entityNodesActiveListComplete->begin(); entityIter != entityNodesActiveListComplete->end(); entityIter++)
 		{
-			#ifdef GIA_DRAW_DEBUG
-			cout << "\ttracing..." << (*entityIter)->entityName << endl;
-			#endif
 
 			//this->initiateMaxXAtParticularY();
 			xInitial = maxXAtAParticularY[yInitial];
@@ -198,9 +189,6 @@ bool GIAdrawClass::initialiseEntityConnectionForPrinting(vec* pos1, GIAentityCon
 	bool result = true;
 	GIAentityNode* entityNodeToConnect = entityConnection->entity;
 
-	#ifdef GIA_DEBUG
-	//cout << "initialiseEntityConnectionForPrinting: entityNodeToConnect->entityName = " << entityNodeToConnect->entityName << endl;
-	#endif
 
 	#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX_ADVANCED
 	if((entityNodeToConnect->initialisedForPrinting) && !(entityConnection->initialisedForPrinting) && !(entityNodeToConnect->disabled))
@@ -243,52 +231,7 @@ bool GIAdrawClass::initialiseEntityNodeForPrinting(GIAentityNode* entityNode, in
 		//if(!(entityNode->initialisedForPrinting) || (entityNode->printY < y))
 		if(!(entityNode->initialisedForPrinting) && !(entityNode->disabled))
 		{
-			#ifdef GIA_DEBUG
-			//cout << "initialiseEntityNodeForPrinting: entityNode->entityName = " << entityNode->entityName << endl;
-			/*
-			cout << "\nentityNode->sentenceIndexTemp = " << entityNode->sentenceIndexTemp << endl;
-			cout << "entityNode->entityName = " << entityNode->entityName << endl;
-			cout << "entityNode->wasReference = " << entityNode->wasReference << endl;
-			if(entityNode->entityType == GIA_ENTITY_TYPE_NETWORK_INDEX)
-			{
-				cout << "entityNode = " << entityNode->entityName << " (is networkIndex)" << endl;
-			}
-			if(entityNode->wasReference)
-			{
-				cout << "entityNode = " << entityNode->entityName << " (wasReference)" << endl;
-			}
-			*/
-			#endif
 
-			#ifdef GIA_DRAW_DEBUG
-			if(entityNode->entityType == GIA_ENTITY_TYPE_SUBSTANCE)
-			{
-				cout << "entityNode = " << entityNode->entityName << " (is substance)" << endl;
-			}
-			else if(entityNode->entityType == GIA_ENTITY_TYPE_ACTION)
-			{
-				cout << "entityNode = " << entityNode->entityName << " (is action)" << endl;
-			}
-			else if(entityNode->entityType == GIA_ENTITY_TYPE_CONDITION)
-			{
-				cout << "entityNode = " << entityNode->entityName << " (is condition)" << endl;
-			}
-			else if(entityNode->hasAssociatedInstance)
-			{
-				cout << "entityNode = " << entityNode->entityName << " (has associated instance)" << endl;
-			}
-			else if(entityNode->hasAssociatedTime)
-			{
-				cout << "entityNode = " << entityNode->entityName << " (has associated time)" << endl;
-			}
-			else
-			{
-				cout << "entityNode = " << entityNode->entityName << endl;
-			}
-			//cout << "\tentityNode->isAction = " << entityNode->isAction << endl;
-			//cout << "\tentityNode->isSubstance = " << entityNode->isSubstance << endl;
-			//cout << "\tentityNode->hasAssociatedInstance = " << entityNode->hasAssociatedInstance << endl;
-			#endif
 
 
 			entityNode->initialisedForPrinting = true;
@@ -343,9 +286,6 @@ bool GIAdrawClass::initialiseEntityNodeForPrinting(GIAentityNode* entityNode, in
 				{
 					GIAentityConnection* connection = *connectionIter;
 					
-					#ifdef GIA_DEBUG
-					//cout << "\ti = " << connectionType << ", initialiseEntityNodeForPrinting; " << connection->entity->entityName << endl;
-					#endif
 					bool thisIsDefinitionAndPreviousNodeWasInstance = false;
 					#ifdef GIA_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE
 					if(connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_INSTANCE_REVERSE)
@@ -409,16 +349,6 @@ bool GIAdrawClass::initialiseEntityNodeForPrinting(GIAentityNode* entityNode, in
 					{
 						if(entityVectorConnectionDrawConnectionArray[connectionType])
 						{
-							#ifdef GIA_DRAW_DEBUG_HIGHLIGHT_REFERENCE_SET_CONNECTIONS_WITH_COLOURS
-							if(connection->sameReferenceSet)
-							{
-								entityConnectionColour = DAT_FILE_COLOUR_GREEN;
-							}
-							else
-							{
-								entityConnectionColour = DAT_FILE_COLOUR_RED;
-							}
-							#endif
 
 							this->initialiseEntityConnectionForPrinting(&pos1, connection, printType, connectionName, entityConnectionColour, currentReferenceInPrintList, currentTag);
 						}
@@ -553,40 +483,6 @@ bool GIAdrawClass::initialiseEntityNodeForPrinting(GIAentityNode* entityNode, in
 			}
 
 
-			#ifdef GIA_DRAW_DEBUG
-			if(entityNode->entityType == GIA_ENTITY_TYPE_SUBSTANCE)
-			{
-				cout << "Exiting: entityNode = " << entityNode->entityName << " (is substance)" << endl;
-			}
-			else if(entityNode->entityType == GIA_ENTITY_TYPE_ACTION)
-			{
-				cout << "Exiting: entityNode = " << entityNode->entityName << " (is action)" << endl;
-			}
-			else if(entityNode->entityType == GIA_ENTITY_TYPE_CONDITION)
-			{
-				cout << "Exiting: entityNode = " << entityNode->entityName << " (is condition)" << endl;
-			}
-			else if(entityNode->entityType == GIA_ENTITY_TYPE_PROPERTY)
-			{
-				cout << "Exiting: entityNode = " << entityNode->entityName << " (is property)" << endl;
-			}
-			else if(entityNode->entityType == GIA_ENTITY_TYPE_DEFINITION)
-			{
-				cout << "Exiting: entityNode = " << entityNode->entityName << " (is definition)" << endl;
-			}
-			else if(entityNode->hasAssociatedInstance)
-			{
-				cout << "Exiting: entityNode = " << entityNode->entityName << " (has associated instance)" << endl;
-			}
-			else if(entityNode->hasAssociatedTime)
-			{
-				cout << "Exiting: entityNode = " << entityNode->entityName << " (has associated time)" << endl;
-			}
-			else
-			{
-				cout << "Exiting: entityNode = " << entityNode->entityName << endl;
-			}
-			#endif
 
 		}
 	#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
@@ -637,9 +533,6 @@ bool GIAdrawClass::initialiseTimeConditionNodeForPrinting(GIAtimeConditionNode* 
 	this->createBox(currentReferenceInPrintList, &pos1, GIA_DRAW_CONDITION_NODE_WIDTH, GIA_DRAW_CONDITION_NODE_HEIGHT, timeConditionNodeColour, &(timeConditionNode->conditionName), currentReferenceInPrintList, currentTag, GIA_DRAW_THICKNESS_NORMAL, printType);
 	*/
 
-	#ifdef GIA_DRAW_DEBUG
-	cout << "Exiting: timeConditionNode = " << timeConditionNode->conditionName << endl;
-	#endif
 
 	return result;
 }
@@ -686,9 +579,6 @@ bool GIAdrawClass::createReferenceConnection(vec* pos1, vec* pos2, int colour, L
 	
 	if(printType[GIA_DRAW_CREATE_LDR_REFERENCES] == true)
 	{
-		#ifdef GIA_DRAW_DEBUG
-		//cout << "drawing connection" << endl;
-		#endif
 
 		(*currentReferenceInPrintList)->type = REFERENCE_TYPE_LINE;
 		(*currentReferenceInPrintList)->colour = colour;
@@ -702,21 +592,6 @@ bool GIAdrawClass::createReferenceConnection(vec* pos1, vec* pos2, int colour, L
 		(*currentReferenceInPrintList)->vertex2relativePosition.y = pos2->y;
 		(*currentReferenceInPrintList)->vertex2relativePosition.z = pos2->z;
 
-		#ifdef GIA_DRAW_DEBUG
-		/*
-		cout << "createFileOrFunctionReferenceConnection{}:" << endl;
-		cout << "currentReferenceInAboveList->name = " << currentReferenceInAboveList->name << endl;
-		cout << "reference->name = " << reference->name << endl;
-		cout << "(*currentReferenceInPrintList)->type = " << (*currentReferenceInPrintList)->type << endl;
-		cout << "(*currentReferenceInPrintList)->colour = " << (*currentReferenceInPrintList)->colour << endl;
-		cout << "(*currentReferenceInPrintList)->vertex1relativePosition.x = " << (*currentReferenceInPrintList)->vertex1relativePosition.x << endl;
-		cout << "(*currentReferenceInPrintList)->vertex1relativePosition.y = " << (*currentReferenceInPrintList)->vertex1relativePosition.y << endl;
-		cout << "(*currentReferenceInPrintList)->vertex1relativePosition.z = " << (*currentReferenceInPrintList)->vertex1relativePosition.z << endl;
-		cout << "(*currentReferenceInPrintList)->vertex2relativePosition.x = " << (*currentReferenceInPrintList)->vertex2relativePosition.x << endl;
-		cout << "(*currentReferenceInPrintList)->vertex2relativePosition.y = " << (*currentReferenceInPrintList)->vertex2relativePosition.y << endl;
-		cout << "(*currentReferenceInPrintList)->vertex2relativePosition.z = " << (*currentReferenceInPrintList)->vertex2relativePosition.z << endl;
-		*/
-		#endif
 
 		LDreference* newDispayReference = new LDreference();
 		(*currentReferenceInPrintList)->next = newDispayReference;
@@ -763,26 +638,6 @@ bool GIAdrawClass::createBox(vec* vect, const double width, const double height,
 		(*currentReferenceInPrintList)->vertex4relativePosition.y = vect->y - height/2.0;
 		(*currentReferenceInPrintList)->vertex4relativePosition.z = vect->z;
 
-		#ifdef GIA_DRAW_DEBUG
-		/*
-		cout << "createFileOrFunctionReferenceBox{}:" << endl;
-		cout << "reference->name = " << reference->name << endl;
-		cout << "(*currentReferenceInPrintList)->type = " << (*currentReferenceInPrintList)->type << endl;
-		cout << "(*currentReferenceInPrintList)->colour = " << (*currentReferenceInPrintList)->colour << endl;
-		cout << "(*currentReferenceInPrintList)->vertex1relativePosition.x = " << (*currentReferenceInPrintList)->vertex1relativePosition.x << endl;
-		cout << "(*currentReferenceInPrintList)->vertex1relativePosition.y = " << (*currentReferenceInPrintList)->vertex1relativePosition.y << endl;
-		cout << "(*currentReferenceInPrintList)->vertex1relativePosition.z = " << (*currentReferenceInPrintList)->vertex1relativePosition.z << endl;
-		cout << "(*currentReferenceInPrintList)->vertex2relativePosition.x = " << (*currentReferenceInPrintList)->vertex2relativePosition.x << endl;
-		cout << "(*currentReferenceInPrintList)->vertex2relativePosition.y = " << (*currentReferenceInPrintList)->vertex2relativePosition.y << endl;
-		cout << "(*currentReferenceInPrintList)->vertex2relativePosition.z = " << (*currentReferenceInPrintList)->vertex2relativePosition.z << endl;
-		cout << "(*currentReferenceInPrintList)->vertex3relativePosition.x = " << (*currentReferenceInPrintList)->vertex3relativePosition.x << endl;
-		cout << "(*currentReferenceInPrintList)->vertex3relativePosition.y = " << (*currentReferenceInPrintList)->vertex3relativePosition.y << endl;
-		cout << "(*currentReferenceInPrintList)->vertex3relativePosition.z = " << (*currentReferenceInPrintList)->vertex3relativePosition.z << endl;
-		cout << "(*currentReferenceInPrintList)->vertex4relativePosition.x = " << (*currentReferenceInPrintList)->vertex4relativePosition.x << endl;
-		cout << "(*currentReferenceInPrintList)->vertex4relativePosition.y = " << (*currentReferenceInPrintList)->vertex4relativePosition.y << endl;
-		cout << "(*currentReferenceInPrintList)->vertex4relativePosition.z = " << (*currentReferenceInPrintList)->vertex4relativePosition.z << endl;
-		*/
-		#endif
 
 		LDreference* newDispayReference;
 

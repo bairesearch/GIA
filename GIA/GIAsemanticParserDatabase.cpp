@@ -25,7 +25,7 @@
  * File Name: GIAsemanticParserDatabase.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1u 26-February-2017
+ * Project Version: 3a2a 21-March-2017
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -60,14 +60,8 @@ string GIAsemanticParserDatabaseClass::semanticParserDBgenerateFolderName(const 
 
 	//eg network/server/GIAsemanticParserDatabase/de/no/ve/de/no/corpus.txt
 	int fileType = 0;	//irrelevant
-	#ifdef GIA_DEBUG
-	//cout << "firstFeatureInList->GIAsemanticParserPOStype = " << firstFeatureInList->GIAsemanticParserPOStype << endl;
-	#endif
 	string serverName = GIAdatabase.DBgenerateServerDatabaseName(&(GIAconnectionistNetworkPOStypeNameAbbreviationArray[firstFeatureInList->GIAsemanticParserPOStype]), fileType, GIA_SEMANTIC_PARSER_DATABASE_FILESYSTEM_DEFAULT_DATABASE_NAME, semanticParserDatabaseFolderName);
 
-	#ifdef GIA2_SEMANTIC_PARSER_DEBUG
-	//cout << "semanticParserDBgenerateFolderName{}: fileName = " << serverName << endl;
-	#endif
 	GIAdatabase.DBsetCurrentDirectory(&serverName);
 
 	const GIAfeature* currentFeatureInSentence = firstFeatureInList;
@@ -197,16 +191,10 @@ bool GIAsemanticParserDatabaseClass::loadSemanticParserCorpusDatabaseFile(GIAsen
 	if(!GIAnlp.parseStanfordParserFile(corpusFileName, isQuery, currentSentenceInList, createNewSentences, parseGIA2file, false))		//CHECK THIS; need to account for corpus.txt having multiple entries [eg different text but identical layout]
 	{
 		result = false;
-		#ifdef GIA_DEBUG
-		//cout << "!semanticParserSuccessful" << endl;
-		#endif
 		currentSentenceInList->semanticParserSuccessful = false;
 	}
 	else
 	{
-		#ifdef GIA_DEBUG
-		//cout << "semanticParserSuccessful" << endl;
-		#endif
 		currentSentenceInList->semanticParserSuccessful = true;
 	}
 	return result;
@@ -224,9 +212,6 @@ string GIAsemanticParserDatabaseClass::semanticParserCorpusDBgenerateFileName(co
 	string fileName = GIA_SEMANTIC_PARSER_DATABASE_FILESYSTEM_DEFAULT_FILE_NAME;
 	#endif
 
-	#ifdef GIA2_SEMANTIC_PARSER_DEBUG
-	cout << "fileName = " << fileName << endl;
-	#endif
 
 	return fileName;
 }
@@ -256,10 +241,6 @@ bool GIAsemanticParserDatabaseClass::loadSemanticParserOptimisedDatabaseFile(con
 		int lineIndex = 0;
 		while(getline(parseFileObject, currentLine))
 		{
-			#ifdef GIA2_SEMANTIC_PARSER_DEBUG
-			cout << "lineIndex: " << lineIndex << endl;
-			cout << "semanticRelation = " << GIA2semanticDependencyRelationNameArray[lineIndex];
-			#endif
 			if(lineIndex >= GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE_SEMANTIC_RELATION_NUMBER_OF_TYPES)
 			{
 				cout << "loadSemanticParserOptimisedDatabaseFile{} error: (lineIndex >= GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE_SEMANTIC_RELATION_NUMBER_OF_TYPES)" << endl;
@@ -312,11 +293,6 @@ bool GIAsemanticParserDatabaseClass::loadSemanticParserOptimisedDatabaseFile(con
 			GIA2semanticDependencyRelationAssignedArray[lineIndex] = numberOfSemanticRelationsAssignedForTuple;
 			GIA2semanticDependencyRelationRejectedArray[lineIndex] = numberOfSemanticRelationsRejectedForTuple;
 
-			#ifdef GIA2_SEMANTIC_PARSER_DEBUG
-			cout << "numberOfSemanticRelationsAssignedForTuple = " << numberOfSemanticRelationsAssignedForTuple << endl;
-			cout << "numberOfSemanticRelationsRejectedForTuple = " << numberOfSemanticRelationsRejectedForTuple << endl;
-			cout << "probabilityMetric = " << probabilityMetric << endl;
-			#endif
 
 			lineIndex++;
 		}
@@ -365,9 +341,6 @@ void GIAsemanticParserDatabaseClass::writeSemanticParserOptimisedDatabaseFile(co
 		string numberOfSemanticRelationsRejectedForTupleString = SHAREDvars.convertIntToString(GIA2semanticDependencyRelationRejectedArray[i]);
 		string numberOfSemanticRelationsProbabilityForTupleString = SHAREDvars.convertIntToString(GIA2semanticDependencyRelationProbabilityArray[i]);
 		string currentLine =  numberOfSemanticRelationsAssignedForTupleString + GIA_SEMANTIC_PARSER_OPTIMISED_DATABASE_SEMANTIC_RELATION_COUNT_DELIMITER + numberOfSemanticRelationsRejectedForTupleString + CHAR_NEWLINE;
-		#ifdef GIA2_SEMANTIC_PARSER_DEBUG
-		cout << "writeSemanticParserOptimisedDatabaseFile{}: currentLine = " << currentLine << endl;
-		#endif
 		semanticRelationsDatabaseFileString = semanticRelationsDatabaseFileString + currentLine;
 	}
 
@@ -436,9 +409,6 @@ string GIAsemanticParserDatabaseClass::semanticParserOptimisedDBgenerateFileName
 	string fileName = GIA_SEMANTIC_PARSER_DATABASE_FILESYSTEM_DEFAULT_FILE_NAME + SHAREDvars.convertIntToString(indexOfFirstWordInTupleBeingAssessedForSemanticRelationAssignment) + GIA_SEMANTIC_PARSER_DATABASE_FILESYSTEM_DEFAULT_FILE_EXTENSION_NAME;
 	#endif
 
-	#ifdef GIA2_SEMANTIC_PARSER_DEBUG
-	cout << "fileName = " << fileName << endl;
-	#endif
 
 	return fileName;
 }
@@ -487,14 +457,6 @@ void GIAsemanticParserDatabaseClass::addTupleSemanticRelationToSentence(GIAsente
 		currentFeatureInList = currentFeatureInList->next;
 	}
 
-	#ifdef GIA2_SEMANTIC_PARSER_DEBUG
-	cout << "\naddTupleSemanticRelationToSentence{}:" << endl;
-	cout << "governorEntityName = " << governorEntityName << endl;
-	cout << "dependentEntityName = " << dependentEntityName << endl;
-	cout << "governorIndex = " << governorIndex << endl;
-	cout << "dependentIndex = " << dependentIndex << endl;
-	cout << "directionGovernorToDependent = " << directionGovernorToDependent << endl;
-	#endif
 
 	//get the last relation in the list..
 	GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;

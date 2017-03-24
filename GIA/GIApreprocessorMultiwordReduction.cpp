@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorMultiwordReduction.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1u 26-February-2017
+ * Project Version: 3a2a 21-March-2017
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  *
@@ -297,12 +297,6 @@ bool GIApreprocessorMultiwordReductionClass::parseTextFileAndReduceLanguage(cons
 {
 	bool result = true;
 
-	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DEBUG
-	cout << "lrpDataFolderName= " << lrpDataFolderName << endl;
-	cout << "plainTextInputFileName = " << plainTextInputFileName << endl;
-	cout << "plainTextLRPoutputFileName = " << plainTextLRPoutputFileName << endl;
-	cout << "plainTextLRPforNLPoutputFileName = " << plainTextLRPforNLPoutputFileName << endl;
-	#endif
 
 	string irregularVerbListFileName = lrpDataFolderName + GIA_PREPROCESSOR_MULTIWORD_REDUCTION_IRREGULARVERB_DATABASE_FILE_NAME;
 	GIApreprocessorMultiwordReductiontag* firstTagInIrregularVerbList = new GIApreprocessorMultiwordReductiontag();
@@ -398,13 +392,6 @@ bool GIApreprocessorMultiwordReductionClass::loadIrregularVerbList(const string 
 				{
 					currentTagInIrregularVerb->tagName = currentWord;
 				}
-				#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DEBUG
-				cout <<	"adding Tag: tagName = " << currentTagInIrregularVerb->tagName << endl;
-				if(currentWordAlternate)
-				{
-					cout <<	"adding Tag: alternateTag = " << currentTagInIrregularVerb->alternateTag->tagName << endl;
-				}
-				#endif
 
 				currentTagInIrregularVerb->nextTag = new GIApreprocessorMultiwordReductiontag();
 				currentTagInIrregularVerb = currentTagInIrregularVerb->nextTag;
@@ -528,13 +515,6 @@ bool GIApreprocessorMultiwordReductionClass::loadPhrasalVerbDataAndGenerateAllTe
 					{
 						this->generateTenseVariantsOfVerbBase(currentTagInPhrasalVerb, firstTagInIrregularVerbList);
 					}
-					#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DEBUG
-					cout <<	"adding Tag: tagName = " << currentTagInPhrasalVerb->tagName << endl;
-					if(currentWordAlternate)
-					{
-						cout << "(alternate)" << endl;
-					}
-					#endif
 
 
 					currentTagInPhrasalVerb->nextTag = new GIApreprocessorMultiwordReductiontag();
@@ -549,17 +529,11 @@ bool GIApreprocessorMultiwordReductionClass::loadPhrasalVerbDataAndGenerateAllTe
 
 					if(currentToken == CHAR_NEWLINE)
 					{
-						#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DEBUG
-						//cout << "adding Tag: tagName = " << currentTagInPhrasalVerbList->tagName << endl;
-						#endif
 						currentTagInPhrasalVerbList->nextSentence = new GIApreprocessorMultiwordReductiontag();
 						currentTagInPhrasalVerbList = currentTagInPhrasalVerbList->nextSentence;
 						if(currentPhrasalVerbAlternate)
 						{
 							//revert to non-alternate phrasal verb...
-							#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DEBUG
-							cout << "currentPhrasalVerbAlternate" << endl;
-							#endif
 							currentTagInPhrasalVerbList = recordOfNonAlternateTagInPhrasalVerbList;
 							currentTagInPhrasalVerbList->nextSentence = new GIApreprocessorMultiwordReductiontag();
 							currentTagInPhrasalVerbList = currentTagInPhrasalVerbList->nextSentence;
@@ -598,22 +572,12 @@ bool GIApreprocessorMultiwordReductionClass::loadPhrasalVerbDataAndGenerateAllTe
 				//COPY2
 
 				currentTagInPhrasalVerb->tagName = currentWord;		//NB current implementation can take into account 2 or more alternate tags (eg x/y/z)...
-				#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DEBUG
-				cout <<	"adding Tag: tagName = " << currentTagInPhrasalVerb->tagName << endl;
-				if(currentWordAlternate)
-				{
-					cout << "(alternate)" << endl;
-				}
-				#endif
 				if(currentWordOptional)
 				{
 					currentTagInPhrasalVerb->optional = true;
 				}
 				if(parsingVerbBase)
 				{
-					#ifdef GIA_DEBUG
-					//cout << "warning: parsingVerbBase && (currentToken == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_ALTERNATE) - ignoring second alternate base" << endl;
-					#endif
 					currentTagInPhrasalVerb->base = true;
 				}
 				else
@@ -635,10 +599,6 @@ bool GIApreprocessorMultiwordReductionClass::loadPhrasalVerbDataAndGenerateAllTe
 				{
 					this->generateTenseVariantsOfVerbBase(currentTagInPhrasalVerb, firstTagInIrregularVerbList);
 				}
-				#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DEBUG
-				cout <<	"adding Tag: tagName = " << currentTagInPhrasalVerb->tagName << endl;
-				cout << "(alternate)" << endl;
-				#endif
 				if(!currentWordAlternate)
 				{//added 1p1aTEMP6d
 					recordOfNonAlternateTagInPhrasalVerb = currentTagInPhrasalVerb;
@@ -672,15 +632,6 @@ bool GIApreprocessorMultiwordReductionClass::loadPhrasalVerbDataAndGenerateAllTe
 	}
 
 
-	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DEBUG
-	currentTagInPhrasalVerbList = firstTagInPhrasalVerbList;
-	while(currentTagInPhrasalVerbList->nextSentence != NULL)
-	{
-		cout << "currentTagInPhrasalVerbList->tagName = " << currentTagInPhrasalVerbList->tagName << endl;
-		currentTagInPhrasalVerbList = currentTagInPhrasalVerbList->nextSentence;
-	}
-	//exit(EXIT_ERROR);
-	#endif
 
 
 	return result;
@@ -748,17 +699,6 @@ bool GIApreprocessorMultiwordReductionClass::generateTenseVariantsOfVerbBase(GIA
 	char lastCharacterInBase = base[indexOfLastCharacterInBase];
 	char secondLastCharacterInBase = base[indexOfSecondLastCharacterInBase];
 	char thirdLastCharacterInBase = base[indexOfThirdLastCharacterInBase];
-	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DEBUG
-	/*
-	cout << "baseStringLength = " << baseStringLength << endl;
-	cout << "indexOfLastCharacterInBase = " << indexOfLastCharacterInBase << endl;
-	cout << "indexOfSecondLastCharacterInBase = " << indexOfSecondLastCharacterInBase << endl;
-	cout << "indexOfThirdLastCharacterInBase = " << indexOfThirdLastCharacterInBase << endl;
-	cout << "lastCharacterInBase = " << lastCharacterInBase << endl;
-	cout << "secondLastCharacterInBase = " << secondLastCharacterInBase << endl;
-	cout << "thirdLastCharacterInBase = " << thirdLastCharacterInBase << endl;
-	*/
-	#endif
 	bool lastCharacterIsVowel = false;
 	bool secondLastCharacterIsVowel = false;
 	bool thirdLastCharacterIsVowel = false;
@@ -822,9 +762,6 @@ bool GIApreprocessorMultiwordReductionClass::generateTenseVariantsOfVerbBase(GIA
 	}
 
 	string baseWithLastLetterDropped = base.substr(0, baseStringLength-1);
-	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DEBUG
-	//cout << "baseWithLastLetterDropped = " << baseWithLastLetterDropped << endl;
-	#endif
 
 	//generate (ie record) infinitive tense form [for consistency; even though this is the same as tagName...]
 	baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_INFINITIVE][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = base;
@@ -833,9 +770,6 @@ bool GIApreprocessorMultiwordReductionClass::generateTenseVariantsOfVerbBase(GIA
 	//Rule 1: Words ending with a Consonant-Vowel-Consonant Pattern
 	if(rule1)
 	{
-		#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DEBUG
-		cout << "(rule1)" << endl;
-		#endif
 
 		//a. generate present tense form
 		baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = base + GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT_APPEND;
@@ -882,9 +816,6 @@ bool GIApreprocessorMultiwordReductionClass::generateTenseVariantsOfVerbBase(GIA
 	//Rule 2: Words ending in E
 	else if(rule2)
 	{
-		#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DEBUG
-		cout << "(rule2)" << endl;
-		#endif
 
 		//a. generate present tense form
 		baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = base + GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT_APPEND;
@@ -908,9 +839,6 @@ bool GIApreprocessorMultiwordReductionClass::generateTenseVariantsOfVerbBase(GIA
 	//Rule 3: Words ending in Y
 	else if(rule3a)
 	{
-		#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DEBUG
-		cout << "(rule3a)" << endl;
-		#endif
 
 		//a. generate present tense form
 		baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = baseWithLastLetterDropped + GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT_APPEND_CASE3;
@@ -934,11 +862,6 @@ bool GIApreprocessorMultiwordReductionClass::generateTenseVariantsOfVerbBase(GIA
 	//Rule 4: Other words...
 	else if(rule3b || rule4)
 	{
-		#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DEBUG
-		cout << "(rule3b || rule4)" << endl;
-		cout << "rule3b = " << rule3b << endl;
-		cout << "rule4 = " << rule4 << endl;
-		#endif
 
 		//a. generate present tense form
 		baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = base + GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT_APPEND;
@@ -964,17 +887,6 @@ bool GIApreprocessorMultiwordReductionClass::generateTenseVariantsOfVerbBase(GIA
 		this->copyDefaultVerbTenseFormsToAlternateTenseForms(baseTag, irregularVerbFound);
 	}
 
-	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DEBUG
-	cout << "baseTag->tagName = " << baseTag->tagName << endl;
-	cout << "baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT][STANDARD] = " << baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] << endl;
-	cout << "baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS][STANDARD] = " << baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD]  << endl;
-	cout << "baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PAST][STANDARD] = " << baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PAST][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD]  << endl;
-	cout << "baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PASTPARTICIPLE][STANDARD] = " << baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PASTPARTICIPLE][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD]  << endl;
-	cout << "baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT][ALTERNATE] = " << baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_ALTERNATE] << endl;
-	cout << "baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS][ALTERNATE] = " << baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_ALTERNATE]  << endl;
-	cout << "baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PAST][ALTERNATE] = " << baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PAST][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_ALTERNATE]  << endl;
-	cout << "baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PASTPARTICIPLE][ALTERNATE] = " << baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PASTPARTICIPLE][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_ALTERNATE]  << endl;
-	#endif
 
 
 	return result;
@@ -1053,10 +965,6 @@ bool GIApreprocessorMultiwordReductionClass::loadPlainTextFile(const string plai
 				currentTagInPlainTextSentence->entityIndex = entityIndex;
 				currentTagInPlainTextSentence->sentenceIndex = sentenceIndex;
 				currentTagInPlainTextSentence->nextTag = new GIApreprocessorMultiwordReductiontag();
-				#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DEBUG
-				cout <<  "adding Tag: " << currentTagInPlainTextSentence->tagName << endl;
-				//cout << "currentTagInPlainTextSentence->sentenceIndex = " << currentTagInPlainTextSentence->sentenceIndex << endl;
-				#endif
 				currentTagInPlainTextSentence = currentTagInPlainTextSentence->nextTag;
 				entityIndex++;
 				currentWord = "";
@@ -1086,10 +994,6 @@ bool GIApreprocessorMultiwordReductionClass::loadPlainTextFile(const string plai
 							currentTagInPlainTextSentence->entityIndex = entityIndex;
 							currentTagInPlainTextSentence->sentenceIndex = sentenceIndex;
 							currentTagInPlainTextSentence->nextTag = new GIApreprocessorMultiwordReductiontag();
-							#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DEBUG
-							cout <<  "adding Tag: " << currentTagInPlainTextSentence->tagName << endl;
-							//cout << "currentTagInPlainTextSentence->sentenceIndex = " << currentTagInPlainTextSentence->sentenceIndex << endl;
-							#endif
 							currentTagInPlainTextSentence = currentTagInPlainTextSentence->nextTag;
 							entityIndex++;
 						#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_REDUCE_QUOTES_TO_SINGLE_WORDS
@@ -1101,9 +1005,6 @@ bool GIApreprocessorMultiwordReductionClass::loadPlainTextFile(const string plai
 							currentTagInPlainTextSentence->entityIndex = entityIndex;
 							currentTagInPlainTextSentence->sentenceIndex = sentenceIndex;
 							currentTagInPlainTextSentence->nextTag = new GIApreprocessorMultiwordReductiontag();
-							#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DEBUG
-							cout <<  "adding Tag: " << currentTagInPlainTextSentence->tagName << endl;
-							#endif
 							currentTagInPlainTextSentence = currentTagInPlainTextSentence->nextTag;
 
 							bool endOfSentencePunctuationMarkFound = false;
@@ -1120,10 +1021,6 @@ bool GIApreprocessorMultiwordReductionClass::loadPlainTextFile(const string plai
 							}
 							if(endOfSentencePunctuationMarkFound)
 							{
-								#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DEBUG
-								//cout << "endOfSentencePunctuationMarkFound" << endl;
-								//cout << "currentTagInPlainText->sentenceIndex = " << currentTagInPlainText->sentenceIndex << endl;
-								#endif
 								currentTagInPlainText->sentenceIndex = sentenceIndex;	//added 3a1a
 								currentTagInPlainText->nextSentence = new GIApreprocessorMultiwordReductiontag();
 								currentTagInPlainText = currentTagInPlainText->nextSentence;
@@ -1157,21 +1054,6 @@ bool GIApreprocessorMultiwordReductionClass::loadPlainTextFile(const string plai
 		charCount++;
 	}
 
-	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DEBUG
-	currentTagInPlainText = firstTagInPlainText;
-	while(currentTagInPlainText->nextSentence != NULL)
-	{
-		firstTagInPlainTextSentence = currentTagInPlainText;
-		currentTagInPlainTextSentence = firstTagInPlainTextSentence;
-		while(currentTagInPlainTextSentence->nextTag != NULL)
-		{
-			cout << "currentTagInPlainTextSentence->tagName = " << currentTagInPlainTextSentence->tagName << endl;
-
-			currentTagInPlainTextSentence = currentTagInPlainTextSentence->nextTag;
-		}
-		currentTagInPlainText = currentTagInPlainText->nextSentence;
-	}
-	#endif
 
 	return result;
 }
@@ -1187,10 +1069,6 @@ bool GIApreprocessorMultiwordReductionClass::isIntrawordPunctuationMark(const in
 		{
 			char characterImmediatelySucceedingPunctuationMark = (*lineContents)[indexOfCurrentToken+1];
 			bool isPunctuationMarkImmediatelySucceededByAlphanumericCharacter = SHAREDvars.charInCharArray(characterImmediatelySucceedingPunctuationMark, GIApreprocessorMultiwordReductionNLPparsableCharacters, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_CHARACTERS_NUMBER_OF_TYPES);
-			#ifdef GIA_DEBUG
-			//cout << "isIntrawordPunctuationMark{}: characterImmediatelySucceedingPunctuationMark = " << characterImmediatelySucceedingPunctuationMark << endl;
-			//cout << "isIntrawordPunctuationMark{}: isPunctuationMarkImmediatelySucceededByAlphanumericCharacter = " << isPunctuationMarkImmediatelySucceededByAlphanumericCharacter << endl;
-			#endif
 			if(isPunctuationMarkImmediatelySucceededByAlphanumericCharacter)
 			{
 				intrawordPunctuationMark = true;
@@ -1212,26 +1090,17 @@ bool GIApreprocessorMultiwordReductionClass::searchAndReplacePhrasalVerbs(GIApre
 	GIApreprocessorMultiwordReductiontag* currentTagInPlainText = firstTagInPlainText;
 	while(currentTagInPlainText->nextSentence != NULL)
 	{
-		#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DEBUG
-		//cout << "currentTagInPlainText->sentenceIndex = " << currentTagInPlainText->sentenceIndex << endl;
-		#endif
 
 		GIApreprocessorMultiwordReductiontag* firstTagInPlainTextSentence = currentTagInPlainText;
 		GIApreprocessorMultiwordReductiontag* currentTagInPlainTextSentence = firstTagInPlainTextSentence;
 		GIApreprocessorMultiwordReductiontag* previousTagInPlainTextSentence = NULL;
 		while(currentTagInPlainTextSentence->nextTag != NULL)
 		{
-			#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DEBUG
-			//cout << "currentTagInPlainTextSentence->tagName = " << currentTagInPlainTextSentence->tagName << endl;
-			#endif
 
 			bool foundAtLeastOnePhrasalVerbInSentenceAndCollapsed = false;
 			GIApreprocessorMultiwordReductiontag* currentTagInPhrasalVerbList = firstTagInPhrasalVerbList;
 			while(currentTagInPhrasalVerbList->nextSentence != NULL)
 			{
-				#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DEBUG
-				//cout << "currentTagInPhrasalVerbList->tagName = " << currentTagInPhrasalVerbList->tagName << endl;
-				#endif
 
 				GIApreprocessorMultiwordReductiontag* currentTagInPhrasalVerbListAlternate = currentTagInPhrasalVerbList;
 				bool alternatePhrasalVerb = false;
@@ -1256,10 +1125,6 @@ bool GIApreprocessorMultiwordReductionClass::searchAndReplacePhrasalVerbs(GIApre
 					bool phrasalVerbHasTagSpecial = false;
 					while((currentTagInPhrasalVerb->nextTag != NULL) && (currentTagInPlainTextSentenceTemp->nextTag != NULL) && (stillFoundVerbMatchOfArbitraryTense))
 					{
-						#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DEBUG
-						//cout << "currentTagInPhrasalVerb->tagName = " << currentTagInPhrasalVerb->tagName << endl;
-						//cout << "currentTagInPlainTextSentenceTemp->tagName = " << currentTagInPlainTextSentenceTemp->tagName << endl;
-						#endif
 						bool currentTagInPhrasalVerbOptionalAndNotFound = false;
 						bool currentTagInPhrasalVerbSpecialAndNotFound = false;
 
@@ -1293,25 +1158,11 @@ bool GIApreprocessorMultiwordReductionClass::searchAndReplacePhrasalVerbs(GIApre
 									{
 										for(int j=0; j<GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_MAX_NUM_TENSE_FORM_VERSIONS; j++)
 										{
-											#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DEBUG
-											/*
-											//cout << "currentTagInPhrasalVerb->tagName =" << currentTagInPhrasalVerb->tagName << endl;
-											//cout << "(currentTagInPhrasalVerb->tagName).length()  =" << (currentTagInPhrasalVerb->tagName).length() << endl;
-											if(currentTagInPhrasalVerb->tagName == "up")
-											{
-												cout << "currentTagInPhrasalVerb->grammaticalTenseFormsArray[i][j] = " << currentTagInPhrasalVerb->grammaticalTenseFormsArray[i][j] << endl;
-												cout << "currentTagInPlainTextSentenceTempAlternate->tagName = " << currentTagInPlainTextSentenceTempAlternate->tagName << endl;
-											}
-											*/
-											#endif
 											if(currentTagInPhrasalVerb->grammaticalTenseFormsArray[i][j] == currentTagInPlainTextSentenceTempAlternate->tagName)		//USED TO BE currentTagInCollapsedPhrasalVerb before 6 Sept 2012
 											{
 												currentTagInCollapsedPhrasalVerb->grammaticalTenseFormDetected = i;								//USED TO BE AND STILL IS currentTagInCollapsedPhrasalVerb before 6 Sept 2012
 												generatedTagNameLemma = currentTagInPhrasalVerb->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_INFINITIVE][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD];
 												foundVerbMatchOfArbitraryTenseTemp = true;
-												#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DEBUG
-												cout << "foundVerbMatchOfArbitraryTenseTemp: " << currentTagInPlainTextSentenceTempAlternate->tagName << ", i = " << i << endl;
-												#endif
 											}
 										}
 									}
@@ -1321,9 +1172,6 @@ bool GIApreprocessorMultiwordReductionClass::searchAndReplacePhrasalVerbs(GIApre
 									if(currentTagInPhrasalVerb->tagName == currentTagInPlainTextSentenceTempAlternate->tagName)
 									{
 										foundVerbMatchOfArbitraryTenseTemp = true;
-										#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DEBUG
-										cout << "foundVerbMatchOfArbitraryTenseTemp: " << currentTagInPlainTextSentenceTempAlternate->tagName << endl;
-										#endif
 									}
 								}
 								if(currentTagInPlainTextSentenceTempAlternate->alternateTag != NULL)
@@ -1379,9 +1227,6 @@ bool GIApreprocessorMultiwordReductionClass::searchAndReplacePhrasalVerbs(GIApre
 								{
 									currentTagInCollapsedPhrasalVerb->tagNameLemma = currentTagInCollapsedPhrasalVerb->tagNameLemma + currentTagInPlainTextSentenceTemp->tagName + GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_MULTIWORD_WORD_DELIMITER;
 								}
-								#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DEBUG
-								cout << "currentTagInCollapsedPhrasalVerb->tagName  = " << currentTagInCollapsedPhrasalVerb->tagName << endl;
-								#endif
 							}
 						}
 
@@ -1422,9 +1267,6 @@ bool GIApreprocessorMultiwordReductionClass::searchAndReplacePhrasalVerbs(GIApre
 							if(numberTagSpecialTagsFound <= 1)
 							{//do not preprocess phrasal verbs with more than one special tag (ie sth/sb/swh) - as this generally involves more than a verb [verb sth preposition sth1] - added 1p1aTEMP5
 								//reduce all entities
-								#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DEBUG
-								cout << "currentTagInPlainTextSentenceTemp->tagName = " << currentTagInPlainTextSentenceTemp->tagName << endl;
-								#endif
 								if(phrasalVerbHasTagSpecial)
 								{
 									currentTagInCollapsedPhrasalVerb->nextTag->nextTag = currentTagInPlainTextSentenceTemp;		//NB currentTagInCollapsedPhrasalVerb->nextTag is the collapsed phrasal verb thing/place/body entity
@@ -1458,17 +1300,11 @@ bool GIApreprocessorMultiwordReductionClass::searchAndReplacePhrasalVerbs(GIApre
 			}
 			if(foundAtLeastOnePhrasalVerbInSentenceAndCollapsed)
 			{
-				#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DEBUG
-				cout << "foundAtLeastOnePhrasalVerbInSentenceAndCollapsed" << endl;
-				#endif
 				//renumberEntityIndiciesInSentence();
 				GIApreprocessorMultiwordReductiontag* currentTagInPlainTextSentenceTemp2 = firstTagInPlainTextSentence;
 				int newEntityIndex = GIA_NLP_START_ENTITY_INDEX;
 				while(currentTagInPlainTextSentenceTemp2->nextTag != NULL)
 				{
-					#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DEBUG
-					cout << "currentTagInPlainTextSentenceTemp2->tagName = " << currentTagInPlainTextSentenceTemp2->tagName << endl;
-					#endif
 					//if(currentTagInPlainTextSentenceTemp2->collapsedPhrasalVerbExactDefinedSectionTemp)
 					if(currentTagInPlainTextSentenceTemp2->collapsedPhrasalVerbExactDefinedSection)
 					{//create a new correspondenceInfo
@@ -1484,17 +1320,6 @@ bool GIApreprocessorMultiwordReductionClass::searchAndReplacePhrasalVerbs(GIApre
 						currentCorrespondenceInfo->lemmaWithLRP = currentTagInPlainTextSentenceTemp2->tagNameLemma;
 						currentCorrespondenceInfo->wordWithLRP = currentTagInPlainTextSentenceTemp2->tagName;
 						currentCorrespondenceInfo->wordWithLRPforNLPonly = generateWordWithLRPforNLPonly(currentTagInPlainTextSentenceTemp2);
-						#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DEBUG
-						cout << "currentTagInPlainTextSentenceTemp2->grammaticalTenseFormDetected = " << currentTagInPlainTextSentenceTemp2->grammaticalTenseFormDetected << endl;
-						cout << "currentTagInPlainText->sentenceIndex = " << currentTagInPlainText->sentenceIndex << endl;
-						cout << "currentCorrespondenceInfo->entityIndex = " << currentCorrespondenceInfo->entityIndex << endl;
-						cout << "currentCorrespondenceInfo->lemmaWithLRP = " << currentCorrespondenceInfo->lemmaWithLRP << endl;
-						cout << "currentCorrespondenceInfo->wordWithLRP = " << currentCorrespondenceInfo->wordWithLRP << endl;
-						cout << "currentCorrespondenceInfo->wordWithLRPforNLPonly = " << currentCorrespondenceInfo->wordWithLRPforNLPonly << endl;
-						cout << "\t\t\tnew correspondenceInfo: " << currentCorrespondenceInfo->wordWithLRP << ", wordWithLRPforNLPonly = " << currentCorrespondenceInfo->wordWithLRPforNLPonly << endl;
-						cout << "\tcurrentCorrespondenceInfo->sentenceIndex = " << currentCorrespondenceInfo->sentenceIndex << endl;
-						cout << "\tcurrentCorrespondenceInfo->entityIndex = " << currentCorrespondenceInfo->entityIndex << endl;
-						#endif
 						currentCorrespondenceInfo->next = new GIApreprocessorMultiwordReductionTagTextCorrespondenceInfo();
 						currentCorrespondenceInfo = currentCorrespondenceInfo->next;
 					}
@@ -1565,9 +1390,6 @@ bool GIApreprocessorMultiwordReductionClass::loadMultiwordWordList(const string 
 			if((currentToken == CHAR_NEWLINE) || (currentToken == CHAR_SPACE))
 			{
 				currentTagInMultiwordWord->tagName = currentWord;
-				#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DEBUG
-				cout <<  "adding Tag: " << currentTagInMultiwordWord->tagName << endl;
-				#endif
 				currentTagInMultiwordWord->nextTag = new GIApreprocessorMultiwordReductiontag();
 				currentTagInMultiwordWord = currentTagInMultiwordWord->nextTag;
 				if(currentToken == CHAR_NEWLINE)
@@ -1605,9 +1427,6 @@ bool GIApreprocessorMultiwordReductionClass::searchAndReplaceMultiwordWordList(G
 	GIApreprocessorMultiwordReductiontag* currentTagInPlainText = firstTagInPlainText;
 	while(currentTagInPlainText->nextSentence != NULL)
 	{
-		#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DEBUG1
-		//cout << "currentTagInPlainText->sentenceIndex = " << currentTagInPlainText->sentenceIndex << endl;
-		#endif
 
 		GIApreprocessorMultiwordReductiontag* firstTagInPlainTextSentence = currentTagInPlainText;
 		GIApreprocessorMultiwordReductiontag* currentTagInPlainTextSentence = firstTagInPlainTextSentence;
@@ -1625,10 +1444,6 @@ bool GIApreprocessorMultiwordReductionClass::searchAndReplaceMultiwordWordList(G
 				GIApreprocessorMultiwordReductiontag* currentTagInCollapsedMultiwordWord = firstTagInCollapsedMultiwordWord;
 				const GIApreprocessorMultiwordReductiontag* firstTagInMultiwordWord = currentTagInMultiwordWordList;
 				const GIApreprocessorMultiwordReductiontag* currentTagInMultiwordWord = firstTagInMultiwordWord;
-				#ifdef GIA_DEBUG
-				//cout << "currentTagInPlainTextSentenceTemp->tagName = " << currentTagInPlainTextSentenceTemp->tagName << endl;
-				//cout << "currentTagInMultiwordWord->tagName = " << currentTagInMultiwordWord->tagName << endl;
-				#endif
 				while((currentTagInMultiwordWord->nextTag != NULL) && (currentTagInPlainTextSentenceTemp->nextTag != NULL) && (stillFoundWordMatch))
 				{
 					if(currentTagInMultiwordWord->tagName != currentTagInPlainTextSentenceTemp->tagName)
@@ -1637,9 +1452,6 @@ bool GIApreprocessorMultiwordReductionClass::searchAndReplaceMultiwordWordList(G
 					}
 					else
 					{
-						#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DEBUG1
-						cout << "currentTagInPlainTextSentenceTemp->tagName  = " << currentTagInPlainTextSentenceTemp->tagName << endl;
-						#endif
 						currentTagInCollapsedMultiwordWord->collapsedMultiwordWord = true;
 						currentTagInCollapsedMultiwordWord->collapsedMultiwordWordTemp = true;	//this is reset everytime searchAndReplaceMultiwordWordList is executed to prevent collapsedMultiwordWord from being redetected
 						currentTagInCollapsedMultiwordWord->collapsedMultiwordWordType = wordListType;
@@ -1670,14 +1482,8 @@ bool GIApreprocessorMultiwordReductionClass::searchAndReplaceMultiwordWordList(G
 				GIApreprocessorMultiwordReductiontag* currentTagInPlainTextSentenceTemp2 = firstTagInPlainTextSentence;
 				int newEntityIndex = GIA_NLP_START_ENTITY_INDEX;
 				//int collapsedMultiwordWordIndex = 0;
-				#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DEBUG1
-				cout << "foundAtLeastOneMultiwordWordInSentenceAndCollapsed" << endl;
-				#endif
 				while(currentTagInPlainTextSentenceTemp2->nextTag != NULL)
 				{
-					#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DEBUG1
-					cout << "currentTagInPlainTextSentenceTemp2->tagName = " << currentTagInPlainTextSentenceTemp2->tagName << endl;
-					#endif
 					if(currentTagInPlainTextSentenceTemp2->collapsedMultiwordWordTemp)
 					{//create a new correspondenceInfo
 						currentTagInPlainTextSentenceTemp2->collapsedMultiwordWordTemp = false;
@@ -1692,11 +1498,6 @@ bool GIApreprocessorMultiwordReductionClass::searchAndReplaceMultiwordWordList(G
 						currentCorrespondenceInfo->wordWithLRP = currentTagInPlainTextSentenceTemp2->tagName;
 						currentCorrespondenceInfo->wordWithLRPforNLPonly = generateWordWithLRPforNLPonly(currentTagInPlainTextSentenceTemp2); //lrpDummyCollapsedMultiwordWordLemmaNameForNLPArray[collapsedMultiwordWordIndex];
 						//collapsedMultiwordWordIndex++;
-						#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DEBUG1
-						cout << "new correspondenceInfo: " << currentCorrespondenceInfo->wordWithLRP << ", wordWithLRPforNLPonly = " << currentCorrespondenceInfo->wordWithLRPforNLPonly << endl;
-						cout << "\tcurrentCorrespondenceInfo->sentenceIndex = " << currentCorrespondenceInfo->sentenceIndex << endl;
-						cout << "\tcurrentCorrespondenceInfo->entityIndex = " << currentCorrespondenceInfo->entityIndex << endl;
-						#endif
 						currentCorrespondenceInfo->next = new GIApreprocessorMultiwordReductionTagTextCorrespondenceInfo();
 						currentCorrespondenceInfo = currentCorrespondenceInfo->next;
 					}
@@ -1860,33 +1661,15 @@ void GIApreprocessorMultiwordReductionClass::revertNLPtagNameToOfficialLRPtagNam
 	GIApreprocessorMultiwordReductionTagTextCorrespondenceInfo* currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo = firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo;
 	while(currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->next != NULL)
 	{
-		#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DEBUG2
-		cout << "\tword = " << word << endl;
-		cout << "currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->lemmaWithLRP = " << currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->lemmaWithLRP << endl;
-		cout << "currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->wordWithLRP = " << currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->wordWithLRP << endl;
-		cout << "currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->wordWithLRPforNLPonly = " << currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->wordWithLRPforNLPonly << endl;
-		cout << "sentenceIndex = " << sentenceIndex << endl;
-		cout << "currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->sentenceIndex = " << currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->sentenceIndex << endl;
-		#endif
 
 		if(currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->sentenceIndex == sentenceIndex)
 		{
-			#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DEBUG2
-			cout << "currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->wordWithLRP = " << currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->wordWithLRP << endl;
-			#endif
 
 			if(word == currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->wordWithLRPforNLPonly)
 			{
-				#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DEBUG2
-				cout << "currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->wordWithLRP = " << currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->wordWithLRP << endl;
-				cout << "currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->wordWithLRPforNLPonly = " << currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->wordWithLRPforNLPonly << endl;
-				#endif
 
 				if(isPreposition)
 				{
-					#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DEBUG2
-					cout << "isPreposition" << endl;
-					#endif
 
 					//now search entire sentence->feature list and find entity/word that has same name, and has the governor/dependent closest to it...
 					string relationGovernor = currentRelationInListForPrepositionsOnly->relationGovernor;
@@ -1899,52 +1682,29 @@ void GIApreprocessorMultiwordReductionClass::revertNLPtagNameToOfficialLRPtagNam
 					int indexOfLastInstanceOfGovernor = GIA_ENTITY_INDEX_UNDEFINED;
 					int indexOfLastInstanceOfDependent = GIA_ENTITY_INDEX_UNDEFINED;
 					bool foundPrepositionGovernorAndDependentInFeatureList = false;
-					#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DEBUG2
-					cout << "relationGovernor = " << relationGovernor << endl;
-					cout << "relationDependent = " << relationDependent << endl;
-					cout << "word = " << word << endl;
-					#endif
 
 					while(currentFeatureInList->next != NULL)
 					{
-						#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DEBUG2
-						cout << "currentFeatureInList->word = " << currentFeatureInList->word << endl;
-						#endif
 						if(currentFeatureInList->wordWithLRPforNLPonly == relationGovernor)
 						{
-							#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DEBUG2
-							cout << "(currentFeatureInList->wordWithLRPforNLPonly == relationGovernor)" << endl;
-							#endif
 							indexOfLastInstanceOfGovernor = currentFeatureInList->entityIndex;
 						}
 						if(currentFeatureInList->word == currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->wordWithLRP)	//NB currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->wordWithLRP has already been assigned to feature lemma via previous non-preposition execution of revertNLPtagNameToOfficialLRPtagName
 						{
-							#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DEBUG2
-							cout << "(currentFeatureInList->word == word)" << endl;
-							#endif
 							indexOfLastInstanceOfPreposition = currentFeatureInList->entityIndex;
 						}
 						if(currentFeatureInList->wordWithLRPforNLPonly == relationDependent)
 						{
-							#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DEBUG2
-							cout << "(currentFeatureInList->wordWithLRPforNLPonly == relationDependent)" << endl;
-							#endif
 
 							indexOfLastInstanceOfDependent = currentFeatureInList->entityIndex;
 							if((indexOfLastInstanceOfPreposition != GIA_ENTITY_INDEX_UNDEFINED) && (indexOfLastInstanceOfGovernor != GIA_ENTITY_INDEX_UNDEFINED))
 							{
-								#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DEBUG2
-								//cout << "(indexOfLastInstanceOfPreposition != GIA_ENTITY_INDEX_UNDEFINED) && (indexOfLastInstanceOfGovernor != GIA_ENTITY_INDEX_UNDEFINED)" << endl;
-								#endif
 
 								int proximityOfPrepositionToGovernor = indexOfLastInstanceOfPreposition - indexOfLastInstanceOfGovernor;
 								int proximityOfPrepositionToDependent = indexOfLastInstanceOfDependent - indexOfLastInstanceOfPreposition;
 								int totalProximityOfPrepositionToGovernorAndDependent = proximityOfPrepositionToGovernor + proximityOfPrepositionToDependent;
 								if(totalProximityOfPrepositionToGovernorAndDependent < minimumProximityOfGovernorDependentWords)
 								{
-									#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DEBUG2
-									//cout << "minimumProximityOfGovernorDependentWords = " << minimumProximityOfGovernorDependentWords << endl;
-									#endif
 									minimumProximityOfGovernorDependentWords = totalProximityOfPrepositionToGovernorAndDependent;
 									indexOfPrepositionWithMinimumProximityOfGovernorDependentWords = indexOfLastInstanceOfPreposition;
 									foundPrepositionGovernorAndDependentInFeatureList = true;
@@ -1961,10 +1721,6 @@ void GIApreprocessorMultiwordReductionClass::revertNLPtagNameToOfficialLRPtagNam
 							feature->word = currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->wordWithLRP;
 							//feature->lemma = currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->wordWithLRP;			//lemma is not defined for prepositions
 							feature->featureRevertedToOfficialLRPTemp = true;
-							#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DEBUG2
-							cout << "(currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->entityIndex == indexOfPrepositionWithMinimumProximityOfGovernorDependentWords)" << endl;
-							cout << "revertNLPtagNameToOfficialLRPtagName{}: foundCorrespondingLRPtag, wordWithLRPforNLPonly = " << currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->wordWithLRPforNLPonly << ", wordWithLRP = " << currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->wordWithLRP << endl;
-							#endif
 							foundCorrespondingLRPtag = true;
 						}
 					}
@@ -1977,25 +1733,12 @@ void GIApreprocessorMultiwordReductionClass::revertNLPtagNameToOfficialLRPtagNam
 				}
 				else
 				{
-					#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DEBUG2
-					/*
-					cout << "!isPreposition" << endl;
-					cout << "currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->entityIndex = " << currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->entityIndex << endl;
-					cout << "entityIndexForNonPrepositionsOnly = " << entityIndexForNonPrepositionsOnly << endl;
-					*/
-					#endif
 					if(currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->entityIndex == entityIndexForNonPrepositionsOnly)
 					{
 						feature->word = currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->wordWithLRP;
 						feature->lemma = currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->lemmaWithLRP;
 						feature->featureRevertedToOfficialLRPTemp = true;
 
-						#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DEBUG2
-						cout << "\t(currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->entityIndex == entityIndexForNonPrepositionsOnly)" << endl;
-						cout << "feature->word = " << feature->word << endl;
-						cout << "feature->lemma = " << feature->lemma << endl;
-						cout << "revertNLPtagNameToOfficialLRPtagName{}: foundCorrespondingLRPtag, wordWithLRPforNLPonly = " << currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->wordWithLRPforNLPonly << ", wordWithLRP = " << currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->wordWithLRP << endl;
-						#endif
 						foundCorrespondingLRPtag = true;
 					}
 				}
@@ -2005,9 +1748,6 @@ void GIApreprocessorMultiwordReductionClass::revertNLPtagNameToOfficialLRPtagNam
 	}
 	if(!foundCorrespondingLRPtag)
 	{
-		#ifdef GIA_DEBUG
-		//cout << "revertNLPtagNameToOfficialLRPtagName() warning: !foundCorrespondingLRPtag; " << lemma << endl;
-		#endif
 	}
 	else
 	{
@@ -2025,9 +1765,6 @@ bool GIApreprocessorMultiwordReductionClass::determineVerbCaseWrapper(const stri
 	bool result = true;
 	bool foundVerbCase = false;
 	string verbListFileName = lrpDataFolderName + GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_FILE_NAME;
-	#ifdef GIA_DEBUG
-	//cout << "determineVerbCaseWrapper: " << endl;
-	#endif
 	if(!verbListLoaded)
 	{
 		cout << "!verbListLoaded (GIA with GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_LIBERAL requires -lrpfolder to be set): verbListFileName = " << verbListFileName << endl;
@@ -2035,9 +1772,6 @@ bool GIApreprocessorMultiwordReductionClass::determineVerbCaseWrapper(const stri
 	}
 	else
 	{
-		#ifdef GIA_DEBUG
-		//cout << "determineVerbCaseAdditional: " << endl;
-		#endif
 		foundVerbCase = this->determineVerbCaseAdditional(word, firstTagInVerbListGlobal, baseNameFound, grammaticalTenseModifier);
 	}
 	return foundVerbCase;
@@ -2206,13 +1940,6 @@ bool GIApreprocessorMultiwordReductionClass::determineVerbCaseAdditional(const s
 		currentTagInVerbList = currentTagInVerbList->nextSentence;
 	}
 
-	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DEBUG
-	if(foundVerbCase)
-	{
-		cout << "foundVerbCase baseNameFound = " <<* baseNameFound << ", grammaticalTenseModifier = " <<* grammaticalTenseModifier << endl;
-	}
-	//cout << "baseWithLast1LettersDropped = " << baseWithLast1LettersDropped << endl;
-	#endif
 
 	return foundVerbCase;
 }
@@ -2271,10 +1998,6 @@ bool GIApreprocessorMultiwordReductionClass::determineIfWordIsIrregularVerbConti
 			{
 				if(wordLowerCase == currentTagInIrregularVerb->tagName)
 				{
-					#ifdef GIA_DEBUG
-					//cout << "foundIrregularVerbContinuousCase" << endl;
-					//cout << "irregularVerbBaseForm = " << currentTagInIrregularVerbList->tagName << endl;
-					#endif
 					foundIrregularVerbContinuousCase = true;
 					*baseNameFound = currentTagInIrregularVerbList->tagName;
 				}
@@ -2283,9 +2006,6 @@ bool GIApreprocessorMultiwordReductionClass::determineIfWordIsIrregularVerbConti
 			irregularVerbTagIndex++;
 		}
 
-		#ifdef GIA_DEBUG
-		//cout << "currentTagInIrregularVerbList->tagName = " << currentTagInIrregularVerbList->tagName << endl;
-		#endif
 
 		/*OLD (before RBB addition of continuous cases to wikipedia english irregular verb list - ie final/4th column of WikipediaIrregularVerbs.txt):
 
@@ -2344,9 +2064,6 @@ bool GIApreprocessorMultiwordReductionClass::loadPrepositionsInverseList(const s
 		{
 			if(currentToken == CHAR_NEWLINE)
 			{
-				#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DEBUG
-				cout <<	"adding Tag: tagName = " << currentWord << endl;
-				#endif
 
 				currentTagInRow->tagName = currentWord;
 				currentTagInRow->nextTag = new GIApreprocessorMultiwordReductiontag();
@@ -2361,9 +2078,6 @@ bool GIApreprocessorMultiwordReductionClass::loadPrepositionsInverseList(const s
 			}
 			else if(currentToken == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_INVERSEPREPOSITIONS_DATABASE_TAG_NEXTCOLUMN)
 			{
-				#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DEBUG
-				cout <<	"adding Tag: tagName = " << currentWord << endl;
-				#endif
 
 				currentTagInRow->tagName = currentWord;
 				currentTagInRow->nextTag = new GIApreprocessorMultiwordReductiontag();
@@ -2397,9 +2111,6 @@ void GIApreprocessorMultiwordReductionClass::detectIfInverseOrTwoWayConditionReq
 	GIApreprocessorMultiwordReductiontag* currentTagInPrepositionsInverseList = firstTagInPrepositionsInverseList;
 	while(currentTagInPrepositionsInverseList->nextSentence != NULL)
 	{
-		#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_INVERSE_PREPOSITIONS_DEBUG
-		//cout << "qcurrentTagInPlainText->sentenceIndex = " << currentTagInPlainText->sentenceIndex << endl;
-		#endif
 
 		GIApreprocessorMultiwordReductiontag* firstTagInPrepositionsInverseListSentence = currentTagInPrepositionsInverseList;
 		GIApreprocessorMultiwordReductiontag* currentTagInPrepositionsInverseListSentence = firstTagInPrepositionsInverseListSentence;
@@ -2418,16 +2129,10 @@ void GIApreprocessorMultiwordReductionClass::detectIfInverseOrTwoWayConditionReq
 					if(currentTagInPrepositionsInverseListSentence->tagName == conditionNameNew)
 					{
 						*twoWayConditionRequired = true;
-						#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_INVERSE_PREPOSITIONS_DEBUG
-						cout << "detectIfInverseOrTwoWayConditionRequired{}: twoWayConditionRequired: conditionName = " << conditionName << endl;
-						#endif
 					}
 					else
 					{
 						foundConditionToInvert = true;
-						#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_INVERSE_PREPOSITIONS_DEBUG
-						cout << "detectIfInverseOrTwoWayConditionRequired{}: foundConditionToInvert: conditionName = " << conditionName << endl;
-						#endif
 					}
 				}
 			}
@@ -2439,9 +2144,6 @@ void GIApreprocessorMultiwordReductionClass::detectIfInverseOrTwoWayConditionReq
 					{
 						*inverseConditionRequired = true;
 						*inverseConditionName = conditionNameNew;
-						#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_INVERSE_PREPOSITIONS_DEBUG
-						cout << "detectIfInverseOrTwoWayConditionRequired{}: inverseConditionRequired: conditionNameNew = " << conditionNameNew << endl;
-						#endif
 					}
 				}
 			}
@@ -2463,9 +2165,6 @@ bool GIApreprocessorMultiwordReductionClass::identifyConditionType(GIAentityNode
 	GIApreprocessorMultiwordReductiontag* currentTagInPrepositionsInverseList = firstTagInPrepositionsInverseList;
 	while(currentTagInPrepositionsInverseList->nextSentence != NULL)
 	{
-		#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_INVERSE_PREPOSITIONS_DEBUG
-		//cout << "qcurrentTagInPlainText->sentenceIndex = " << currentTagInPlainText->sentenceIndex << endl;
-		#endif
 
 		if(currentTagInPrepositionsInverseList->tagName == conditionRelationshipEntity->entityName)	//the first tag in the sentence object corresponds to the preposition name
 		{
@@ -2476,9 +2175,6 @@ bool GIApreprocessorMultiwordReductionClass::identifyConditionType(GIAentityNode
 				if(i == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_INVERSEPREPOSITIONS_DATABASE_TAG_TYPE)
 				{
 					conditionRelationshipEntity->conditionType2 = currentTagInPrepositionsInverseListSentence->tagName;
-					#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_INVERSE_PREPOSITIONS_DEBUG
-					cout << "identifyConditionTypeAndInvertIfNecessary{}: conditionRelationshipEntity->conditionType2 = " << conditionRelationshipEntity->conditionType2 << endl;
-					#endif
 					conditionTypeIdentified = true;
 				}
 				currentTagInPrepositionsInverseListSentence = currentTagInPrepositionsInverseListSentence->nextTag;
@@ -2501,9 +2197,6 @@ bool GIApreprocessorMultiwordReductionClass::identifyConditionType(GIAentityNode
 bool GIApreprocessorMultiwordReductionClass::parseVerbDataGenerateAllTenseVariants()
 {
 	bool result = true;
-	#ifdef GIA_DEBUG
-	//cout << "loadVerbDataAndGenerateAllTenseVariants: " << endl;
-	#endif
 	if(!verbListLoaded || !irregularVerbListLoaded)
 	{
 		cout << "!loadVerbDataAndGenerateAllTenseVariants (GIA with GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE requires -lrpfolder to be set)" << endl;
