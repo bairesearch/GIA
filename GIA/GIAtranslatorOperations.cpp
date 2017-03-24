@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1t 26-February-2017
+ * Project Version: 3a1u 26-February-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -109,6 +109,7 @@ GIAtranslatorVariablesClass::~GIAtranslatorVariablesClass(void)
 }
 
 
+#ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
 bool GIAtranslatorOperationsClass::connectionIsAlias(const GIAentityConnection* connection)
 {
 	bool isAlias = false;
@@ -122,6 +123,7 @@ bool GIAtranslatorOperationsClass::connectionIsAlias(const GIAentityConnection* 
 	}
 	return isAlias;
 }
+#endif
 
 
 bool GIAtranslatorOperationsClass::connectionIsRelationship(GIAentityConnection* connection)
@@ -2084,13 +2086,21 @@ GIAentityNode* GIAtranslatorOperationsClass::getPrimaryNetworkIndexNodeDefiningI
 	for(vector<GIAentityConnection*>::iterator connectionIter = instanceEntity->instanceReverseNodeList->begin(); connectionIter != instanceEntity->instanceReverseNodeList->end(); connectionIter++)
 	{
 		GIAentityNode* networkIndexEntityNode = (*connectionIter)->entity;
-		if(instanceEntity->entityName == networkIndexEntityNode->entityName)
+		#ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
+		#ifndef USE_NLC
+		if(instanceEntity->entityName == networkIndexEntityNode->entityName)	//this check is incompatible with NLC_ADVANCED_REFERENCING_SUPPORT_ALIASES (in which an entity name may be changed by NLC; entity2->entityName = aliasClassName;)
 		{
+		#endif
+		#endif
 			#ifdef GIA_DEBUG
 			//cout << "primaryNetworkIndexNodeDefiningInstance = networkIndexEntityNode" << endl;
 			#endif
 			primaryNetworkIndexNodeDefiningInstance = networkIndexEntityNode;
+		#ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
+		#ifndef USE_NLC
 		}
+		#endif
+		#endif
 	}
 	#else
 	if(!(instanceEntity->instanceReverseNodeList->empty()))

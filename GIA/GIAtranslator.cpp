@@ -25,7 +25,7 @@
  * File Name: GIAtranslator.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1t 26-February-2017
+ * Project Version: 3a1u 26-February-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -33,20 +33,7 @@
 
 
 #include "GIAtranslator.hpp"
-/*
-#ifdef GIA_TEMPORARY_COMPILATION_GCC_FLAG_E_PREPROCESS_TRANSLATOR_XML_FILES
-#OCCLUDEDFORCSinclude "xmlConversion/GIAtranslatorRedistributeRelationsRelex.xml"
-#OCCLUDEDFORCSinclude "xmlConversion/GIAtranslatorRedistributeRelationsStanford.xml"
-#OCCLUDEDFORCSinclude "xmlConversion/GIAtranslatorDefineSubstances.xml"
-#OCCLUDEDFORCSinclude "xmlConversion/GIAtranslatorLinkEntities.xml"
-#OCCLUDEDFORCSinclude "xmlConversion/GIAtranslatorApplyAdvancedFeatures.xml"
-#else
-*/
-/*
-#endif
-*/
-//#ifdef GIA_OUTPUT_INTERNAL_RELATIONS_IN_RELEX_FORMAT_DEBUG
-//#endif
+
 #ifdef GIA_BOT
 #endif
 #ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
