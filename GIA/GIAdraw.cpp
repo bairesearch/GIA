@@ -25,7 +25,7 @@
  * File Name: GIAdraw.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1q 26-February-2017
+ * Project Version: 3a1r 26-February-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -378,7 +378,6 @@ bool GIAdrawClass::initialiseEntityNodeForPrinting(GIAentityNode* entityNode, in
 						//pass = false;	//not compatible with GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
 						
 						int connectionTypeGenerated;
-						#ifdef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
 						if(connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_RELATIONSHIP_SUBJECT)
 						{
 							connectionTypeGenerated = GIAtranslatorOperations.generateConnectionType(entityNode->entityType);
@@ -389,11 +388,8 @@ bool GIAdrawClass::initialiseEntityNodeForPrinting(GIAentityNode* entityNode, in
 						}
 						else
 						{
-						#endif
 							connectionTypeGenerated = inverseVectorConnectionsArray[connectionType];	
-						#ifdef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
 						}
-						#endif
 						
 						connectionName = entityVectorConnectionDrawConnectionNameArray[connectionTypeGenerated];
 						
@@ -459,6 +455,9 @@ bool GIAdrawClass::initialiseEntityNodeForPrinting(GIAentityNode* entityNode, in
 				int boxThickness = GIA_DRAW_THICKNESS_NORMAL;
 
 				int entityColour;
+				entityColour = entityNodeTypeColourArray[entityNode->entityType];
+				
+				//special entity cases;
 				if(entityNode->isQuery)
 				{
 					entityColour = GIA_DRAW_QUERY_QUESTION_NODE_COLOUR;
@@ -487,19 +486,6 @@ bool GIAdrawClass::initialiseEntityNodeForPrinting(GIAentityNode* entityNode, in
 					{
 						entityColour = GIA_DRAW_SUBSTANCE_QUANTITY_NODE_COLOUR;
 					}
-					else
-					{
-						entityColour = GIA_DRAW_SUBSTANCE_NODE_COLOUR;
-					}
-
-				}
-				else if(entityNode->entityType == GIA_ENTITY_TYPE_CONCEPT)
-				{
-					entityColour = GIA_DRAW_CONCEPT_NODE_COLOUR;
-				}
-				else if(entityNode->entityType == GIA_ENTITY_TYPE_QUALITY)
-				{
-					entityColour = GIA_DRAW_SUBSTANCE_QUALITY_NODE_COLOUR;
 				}
 				else if(entityNode->entityType == GIA_ENTITY_TYPE_ACTION)
 				{
@@ -507,18 +493,6 @@ bool GIAdrawClass::initialiseEntityNodeForPrinting(GIAentityNode* entityNode, in
 					{
 						entityColour = GIA_DRAW_ACTION_CONCEPT_NODE_COLOUR;
 					}
-					else
-					{
-						entityColour = GIA_DRAW_ACTION_NODE_COLOUR;
-					}
-				}
-				else if(entityNode->entityType == GIA_ENTITY_TYPE_DEFINITION)
-				{
-					entityColour = GIA_DRAW_DEFINITION_NODE_COLOUR;
-				}
-				else if(entityNode->entityType == GIA_ENTITY_TYPE_PROPERTY)
-				{
-					entityColour = GIA_DRAW_PROPERTY_NODE_COLOUR;
 				}
 				/*
 				else if(entityNode->hasAssociatedTime)
@@ -526,19 +500,6 @@ bool GIAdrawClass::initialiseEntityNodeForPrinting(GIAentityNode* entityNode, in
 					entityColour = GIA_DRAW_CONDITION_DEFINITION_TIME_NODE_COLOUR;	//clear identify a time node
 				}
 				*/
-				else if(entityNode->entityType == GIA_ENTITY_TYPE_CONDITION)
-				{
-					entityColour = GIA_DRAW_CONDITION_NODE_COLOUR;	//clear identify a time node
-				}
-				else if(entityNode->entityType == GIA_ENTITY_TYPE_NETWORK_INDEX)
-				{
-					entityColour = GIA_DRAW_NETWORK_INDEX_NODE_COLOUR;
-				}
-				else
-				{
-					cout << "initialiseEntityNodeForPrinting{} error: illegal entityNode->entityType: " << entityNode->entityType << endl;
-					exit(EXIT_ERROR);
-				}
 
 				#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
 				if(entityNode->isLogicReferenceEntity)

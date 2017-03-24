@@ -25,7 +25,7 @@
  * File Name: GIAentityConnectionClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1q 26-February-2017
+ * Project Version: 3a1r 26-February-2017
  *
  *******************************************************************************/
 
@@ -77,7 +77,7 @@ void GIAentityConnection::initialiseDefaultValues(void)
 	initialisedForPrinting = false;
 	#endif
 
-	#ifdef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
+	#ifndef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
 	#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC_RECORD_AUX_INFO
 	#ifdef GIA_RECORD_POSSESSION_AUXILIARY_HAS_INFORMATION
 	possessionAuxiliaryHave = false;
@@ -92,7 +92,7 @@ void GIAentityConnection::initialiseDefaultValues(void)
 	#endif
 	
 	#ifdef USE_NLC
-	#ifndef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC_RECORD_AUX_INFO
+	#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC_RECORD_AUX_INFO
 	negative = false;	//already defined
 	#endif
 	NLCparsedForCodeBlocks = false;
