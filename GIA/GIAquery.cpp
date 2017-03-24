@@ -25,7 +25,7 @@
  * File Name: GIAquery.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a2c 21-March-2017
+ * Project Version: 3a2d 21-March-2017
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  * ?Limitations: will only locate a exact answer (based upon a comparison node) if it provides the maximum number of matched nodes
@@ -1852,22 +1852,35 @@ void GIAqueryClass::traceEntityNode(GIAentityNode* entityNode, const int functio
 
 	if(pass)
 	{
-
+		
 		#ifdef GIA_QUERY_TRACE_INSTANTIATIONS_DO_NOT_INCREMENT_NUMBER_OF_MATCHED_NODES
+		bool passMatchNodesIncrement = false;
 		if(traceInstantiations)
 		{
-		#endif
-			*numberOfMatchedNodes = *numberOfMatchedNodes + 1;
-		#ifdef GIA_QUERY_TRACE_INSTANTIATIONS_DO_NOT_INCREMENT_NUMBER_OF_MATCHED_NODES
+			passMatchNodesIncrement = true;
 		}
 		else
 		{
 			if(!thisIsInstanceAndPreviousNodeWasDefinition)
 			{
-				*numberOfMatchedNodes = *numberOfMatchedNodes + 1;
+				passMatchNodesIncrement = true;
 			}
 		}
+		#else
+		bool passMatchNodesIncrement = true;
 		#endif
+		
+		#ifdef GIA_QUERY_SKIP_OVER_PROPERTY_AND_DEFINITION_RELATIONSHIP_ENTITIES_QUERIES
+		if(entityTypesIsPropertyOrDefinitionRelationshipArray[entityNode->entityType])
+		{
+			passMatchNodesIncrement = false;
+		}
+		#endif
+	
+		if(passMatchNodesIncrement)
+		{
+			*numberOfMatchedNodes = *numberOfMatchedNodes + 1;
+		}
 
 		for(int connectionType=0; connectionType<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; connectionType++)
 		{
