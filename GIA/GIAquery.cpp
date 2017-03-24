@@ -25,7 +25,7 @@
  * File Name: GIAquery.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a2a 21-March-2017
+ * Project Version: 3a2b 21-March-2017
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  * ?Limitations: will only locate a exact answer (based upon a comparison node) if it provides the maximum number of matched nodes
@@ -58,6 +58,10 @@ GIAqueryTraceParameters::GIAqueryTraceParameters(void)
 	queryTraceParametersTemp.sourceEntityNode;				//not required for testEntityNodeForQuery
 	queryTraceParametersTemp.sourceContext;					//not required for testEntityNodeForQuery
 	*/
+	
+	#ifdef GIA_QUERY_SKIP_OVER_PROPERTY_AND_DEFINITION_RELATIONSHIP_ENTITIES
+	skipOverPropertyAndDefinitionRelationshipEntities = true;
+	#endif
 }
 GIAqueryTraceParameters::~GIAqueryTraceParameters(void)
 {
@@ -92,6 +96,9 @@ GIAqueryTraceParameters::GIAqueryTraceParameters(GIAqueryTraceParameters* queryT
 	sourceEntityNode = queryTraceParametersToCopy->sourceEntityNode;
 	sourceContext = queryTraceParametersToCopy->sourceContext;
 
+	#ifdef GIA_QUERY_SKIP_OVER_PROPERTY_AND_DEFINITION_RELATIONSHIP_ENTITIES
+	skipOverPropertyAndDefinitionRelationshipEntities = true;
+	#endif
 }
 
 
@@ -127,6 +134,10 @@ GIAreferenceTraceParameters::GIAreferenceTraceParameters(void)
 	#endif
 	#ifdef GIA_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS_CONCEPTS
 	logicalConditionDisableTraceConcepts = false;
+	#endif
+	
+	#ifdef GIA_QUERY_SKIP_OVER_PROPERTY_AND_DEFINITION_RELATIONSHIP_ENTITIES
+	skipOverPropertyAndDefinitionRelationshipEntities = true;
 	#endif
 }
 GIAreferenceTraceParameters::~GIAreferenceTraceParameters(void)
@@ -281,40 +292,45 @@ bool GIAqueryClass::testEntityNodeForQueryOrReferenceSet2(GIAentityNode* queryEn
 							#endif
 							
 								#ifdef GIA_QUERY_SKIP_OVER_PROPERTY_AND_DEFINITION_RELATIONSHIP_ENTITIES
-								//GIA3a1a: skip over property/definition enities (go directly to their object)
-								bool skipRelationshipEntity = false;
-								if(((queryEntityNodeTarget->entityType == GIA_ENTITY_TYPE_PROPERTY) && (entityNodeTarget->entityType == GIA_ENTITY_TYPE_PROPERTY)) ||
-								((queryEntityNodeTarget->entityType == GIA_ENTITY_TYPE_DEFINITION) && (entityNodeTarget->entityType == GIA_ENTITY_TYPE_DEFINITION)))
+								if((!traceModeIsQuery && referenceTraceParameters->skipOverPropertyAndDefinitionRelationshipEntities) || (traceModeIsQuery && queryTraceParameters->skipOverPropertyAndDefinitionRelationshipEntities))
 								{
-									if((connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTY) || (connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITION))
+									//GIA3a1a: skip over property/definition enities (go directly to their object)
+									bool skipRelationshipEntity = false;
+									if(((queryEntityNodeTarget->entityType == GIA_ENTITY_TYPE_PROPERTY) && (entityNodeTarget->entityType == GIA_ENTITY_TYPE_PROPERTY)) ||
+									((queryEntityNodeTarget->entityType == GIA_ENTITY_TYPE_DEFINITION) && (entityNodeTarget->entityType == GIA_ENTITY_TYPE_DEFINITION)))
 									{
-										#ifdef GIA_DATABASE
-										#ifndef GIA_DATABASE_TEST_MODE_LOAD_ALL_ENTITIES_AND_CONNECTIONS_TO_ACTIVE_LIST_UPON_READ
-										if(GIAdatabase.getUseDatabase() == GIA_DATABASE_TRUE_READ_ACTIVE)
+										if((connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTY) || (connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITION))
 										{
-											GIAdatabase.DBreadVectorConnections(entityNodeTarget, GIA_ENTITY_VECTOR_CONNECTION_TYPE_RELATIONSHIP_OBJECT);
+											cout << "skipping2" << endl;
+											#ifdef GIA_DATABASE
+											#ifndef GIA_DATABASE_TEST_MODE_LOAD_ALL_ENTITIES_AND_CONNECTIONS_TO_ACTIVE_LIST_UPON_READ
+											if(GIAdatabase.getUseDatabase() == GIA_DATABASE_TRUE_READ_ACTIVE)
+											{
+												GIAdatabase.DBreadVectorConnections(entityNodeTarget, GIA_ENTITY_VECTOR_CONNECTION_TYPE_RELATIONSHIP_OBJECT);
+											}
+											#endif
+											#endif
+											//cout << "skipRelationshipEntity" << endl;
+											skipRelationshipEntity = true;
+											queryEntityNodeTarget = GIAtranslatorOperations.getRelationshipObjectEntity(queryEntityNodeTarget);
+											entityNodeTarget = GIAtranslatorOperations.getRelationshipObjectEntity(entityNodeTarget);
 										}
-										#endif
-										#endif
-										//cout << "skipRelationshipEntity" << endl;
-										skipRelationshipEntity = true;
-										queryEntityNodeTarget = GIAtranslatorOperations.getRelationshipObjectEntity(queryEntityNodeTarget);
-										entityNodeTarget = GIAtranslatorOperations.getRelationshipObjectEntity(entityNodeTarget);
-									}
-									else if((connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTY_REVERSE) || (connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITION_REVERSE))
-									{
-										#ifdef GIA_DATABASE
-										#ifndef GIA_DATABASE_TEST_MODE_LOAD_ALL_ENTITIES_AND_CONNECTIONS_TO_ACTIVE_LIST_UPON_READ
-										if(GIAdatabase.getUseDatabase() == GIA_DATABASE_TRUE_READ_ACTIVE)
+										else if((connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTY_REVERSE) || (connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITION_REVERSE))
 										{
-											GIAdatabase.DBreadVectorConnections(entityNodeTarget, GIA_ENTITY_VECTOR_CONNECTION_TYPE_RELATIONSHIP_SUBJECT);
+											cout << "skipping2" << endl;
+											#ifdef GIA_DATABASE
+											#ifndef GIA_DATABASE_TEST_MODE_LOAD_ALL_ENTITIES_AND_CONNECTIONS_TO_ACTIVE_LIST_UPON_READ
+											if(GIAdatabase.getUseDatabase() == GIA_DATABASE_TRUE_READ_ACTIVE)
+											{
+												GIAdatabase.DBreadVectorConnections(entityNodeTarget, GIA_ENTITY_VECTOR_CONNECTION_TYPE_RELATIONSHIP_SUBJECT);
+											}
+											#endif
+											#endif
+											//cout << "skipRelationshipEntity" << endl;
+											skipRelationshipEntity = true;
+											queryEntityNodeTarget = GIAtranslatorOperations.getRelationshipSubjectEntity(queryEntityNodeTarget);
+											entityNodeTarget = GIAtranslatorOperations.getRelationshipSubjectEntity(entityNodeTarget);							
 										}
-										#endif
-										#endif
-										//cout << "skipRelationshipEntity" << endl;
-										skipRelationshipEntity = true;
-										queryEntityNodeTarget = GIAtranslatorOperations.getRelationshipSubjectEntity(queryEntityNodeTarget);
-										entityNodeTarget = GIAtranslatorOperations.getRelationshipSubjectEntity(entityNodeTarget);							
 									}
 								}
 								#endif							
@@ -1097,38 +1113,43 @@ bool GIAqueryClass::testEntityNodeForQueryOrReferenceSet(GIAentityNode* queryEnt
 							
 							
 							#ifdef GIA_QUERY_SKIP_OVER_PROPERTY_AND_DEFINITION_RELATIONSHIP_ENTITIES
-							//GIA3a1a: skip over property/definition enities (go directly to their object)
-							bool skipRelationshipEntity = false;
-							if(((queryEntityNodeTarget->entityType == GIA_ENTITY_TYPE_PROPERTY) && (entityNodeTarget->entityType == GIA_ENTITY_TYPE_PROPERTY)) ||
-							((queryEntityNodeTarget->entityType == GIA_ENTITY_TYPE_DEFINITION) && (entityNodeTarget->entityType == GIA_ENTITY_TYPE_DEFINITION)))
+							if((!traceModeIsQuery && referenceTraceParameters->skipOverPropertyAndDefinitionRelationshipEntities) || (traceModeIsQuery && queryTraceParameters->skipOverPropertyAndDefinitionRelationshipEntities))
 							{
-								if((connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTY) || (connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITION))
+								//GIA3a1a: skip over property/definition enities (go directly to their object)
+								bool skipRelationshipEntity = false;
+								if(((queryEntityNodeTarget->entityType == GIA_ENTITY_TYPE_PROPERTY) && (entityNodeTarget->entityType == GIA_ENTITY_TYPE_PROPERTY)) ||
+								((queryEntityNodeTarget->entityType == GIA_ENTITY_TYPE_DEFINITION) && (entityNodeTarget->entityType == GIA_ENTITY_TYPE_DEFINITION)))
 								{
-									#ifdef GIA_DATABASE
-									#ifndef GIA_DATABASE_TEST_MODE_LOAD_ALL_ENTITIES_AND_CONNECTIONS_TO_ACTIVE_LIST_UPON_READ
-									if(GIAdatabase.getUseDatabase() == GIA_DATABASE_TRUE_READ_ACTIVE)
+									if((connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTY) || (connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITION))
 									{
-										GIAdatabase.DBreadVectorConnections(entityNodeTarget, GIA_ENTITY_VECTOR_CONNECTION_TYPE_RELATIONSHIP_SUBJECT);
+										cout << "skipping3" << endl;
+										#ifdef GIA_DATABASE
+										#ifndef GIA_DATABASE_TEST_MODE_LOAD_ALL_ENTITIES_AND_CONNECTIONS_TO_ACTIVE_LIST_UPON_READ
+										if(GIAdatabase.getUseDatabase() == GIA_DATABASE_TRUE_READ_ACTIVE)
+										{
+											GIAdatabase.DBreadVectorConnections(entityNodeTarget, GIA_ENTITY_VECTOR_CONNECTION_TYPE_RELATIONSHIP_SUBJECT);
+										}
+										#endif
+										#endif
+										skipRelationshipEntity = true;
+										queryEntityNodeTarget = GIAtranslatorOperations.getRelationshipObjectEntity(queryEntityNodeTarget);
+										entityNodeTarget = GIAtranslatorOperations.getRelationshipObjectEntity(entityNodeTarget);
 									}
-									#endif
-									#endif
-									skipRelationshipEntity = true;
-									queryEntityNodeTarget = GIAtranslatorOperations.getRelationshipObjectEntity(queryEntityNodeTarget);
-									entityNodeTarget = GIAtranslatorOperations.getRelationshipObjectEntity(entityNodeTarget);
-								}
-								else if((connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTY_REVERSE) || (connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITION_REVERSE))
-								{
-									#ifdef GIA_DATABASE
-									#ifndef GIA_DATABASE_TEST_MODE_LOAD_ALL_ENTITIES_AND_CONNECTIONS_TO_ACTIVE_LIST_UPON_READ
-									if(GIAdatabase.getUseDatabase() == GIA_DATABASE_TRUE_READ_ACTIVE)
+									else if((connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTY_REVERSE) || (connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITION_REVERSE))
 									{
-										GIAdatabase.DBreadVectorConnections(entityNodeTarget, GIA_ENTITY_VECTOR_CONNECTION_TYPE_RELATIONSHIP_OBJECT);
+										cout << "skipping3" << endl;
+										#ifdef GIA_DATABASE
+										#ifndef GIA_DATABASE_TEST_MODE_LOAD_ALL_ENTITIES_AND_CONNECTIONS_TO_ACTIVE_LIST_UPON_READ
+										if(GIAdatabase.getUseDatabase() == GIA_DATABASE_TRUE_READ_ACTIVE)
+										{
+											GIAdatabase.DBreadVectorConnections(entityNodeTarget, GIA_ENTITY_VECTOR_CONNECTION_TYPE_RELATIONSHIP_OBJECT);
+										}
+										#endif
+										#endif
+										skipRelationshipEntity = true;
+										queryEntityNodeTarget = GIAtranslatorOperations.getRelationshipSubjectEntity(queryEntityNodeTarget);
+										entityNodeTarget = GIAtranslatorOperations.getRelationshipSubjectEntity(entityNodeTarget);							
 									}
-									#endif
-									#endif
-									skipRelationshipEntity = true;
-									queryEntityNodeTarget = GIAtranslatorOperations.getRelationshipSubjectEntity(queryEntityNodeTarget);
-									entityNodeTarget = GIAtranslatorOperations.getRelationshipSubjectEntity(entityNodeTarget);							
 								}
 							}
 							#endif
@@ -1881,22 +1902,37 @@ bool GIAqueryClass::compareEntityStandard(GIAentityNode* queryEntityNode, GIAent
 	{
 		compareEntityNamesResult = true;
 	}
+	
 	#ifdef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
-	#ifndef GIA_QUERY_SKIP_OVER_PROPERTY_AND_DEFINITION_RELATIONSHIP_ENTITIES
-	//this code could be moved to a separate function eg in GIAentityNode to make use of entityTypesIsRelationshipArray
-	else if(((queryEntityNode->entityType == GIA_ENTITY_TYPE_PROPERTY) && (queryEntityNode->entityType == GIA_ENTITY_TYPE_PROPERTY)) ||
-	((queryEntityNode->entityType == GIA_ENTITY_TYPE_DEFINITION) && (queryEntityNode->entityType == GIA_ENTITY_TYPE_DEFINITION)))
+	if(!compareEntityNamesResult)
 	{
-		compareEntityNamesResult = true;
+		#ifdef GIA_QUERY_SKIP_OVER_PROPERTY_AND_DEFINITION_RELATIONSHIP_ENTITIES
+		if((!traceModeIsQuery && !(referenceTraceParameters->skipOverPropertyAndDefinitionRelationshipEntities)) || (traceModeIsQuery && !(queryTraceParameters->skipOverPropertyAndDefinitionRelationshipEntities)))
+		{
+			cout << "skipping1" << endl;
+		#endif
+			//this code could be moved to a separate function eg in GIAentityNode to make use of entityTypesIsRelationshipArray
+			if(((queryEntityNode->entityType == GIA_ENTITY_TYPE_PROPERTY) && (queryEntityNode->entityType == GIA_ENTITY_TYPE_PROPERTY)) ||
+			((queryEntityNode->entityType == GIA_ENTITY_TYPE_DEFINITION) && (queryEntityNode->entityType == GIA_ENTITY_TYPE_DEFINITION)))
+			{
+				compareEntityNamesResult = true;
+			}
+		#ifdef GIA_QUERY_SKIP_OVER_PROPERTY_AND_DEFINITION_RELATIONSHIP_ENTITIES
+		}
+		#endif
 	}
 	#endif
-	#endif
-	else if(this->compareEntityAliases(queryEntityNode, entityNode))
+	
+	if(!compareEntityNamesResult)
 	{
-		compareEntityNamesResult = true;
+		if(this->compareEntityAliases(queryEntityNode, entityNode))
+		{
+			compareEntityNamesResult = true;
+		}
 	}
+	
 	#ifdef GIA_SYNONYMN_DETECTION
-	else
+	if(!compareEntityNamesResult)
 	{
 		int synonymnDetectionStatus = GIAwordnet.getSynonymnDetectionStatus();
 		if(synonymnDetectionStatus != SYNONYMN_DETECTION_STATUS_OFF)
@@ -1921,44 +1957,47 @@ bool GIAqueryClass::compareEntityStandard(GIAentityNode* queryEntityNode, GIAent
 	#endif
 
 	#ifdef GIA_REFERENCING_WILD_CARDS
- 	if(!traceModeIsQuery)
+	if(!compareEntityNamesResult)
 	{
-		#ifdef GIA_QUERY_DO_NOT_SEARCH_DISABLED_NODES
-		if(!(queryEntityNode->disabled) && !(entityNode->disabled))
+ 		if(!traceModeIsQuery)
 		{
-		#endif
-			#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
-			if(!(referenceTraceParameters->intrasentenceReference))
+			#ifdef GIA_QUERY_DO_NOT_SEARCH_DISABLED_NODES
+			if(!(queryEntityNode->disabled) && !(entityNode->disabled))
 			{
 			#endif
-				#ifdef GIA_TRANSLATOR_DREAM_MODE_LINK_SPECIFIC_CONCEPTS_AND_ACTIONS
-				if(!(referenceTraceParameters->linkSpecificConceptsAndActions))
+				#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
+				if(!(referenceTraceParameters->intrasentenceReference))
 				{
 				#endif
-					if(entityNode->entityType == GIA_ENTITY_TYPE_ACTION)
+					#ifdef GIA_TRANSLATOR_DREAM_MODE_LINK_SPECIFIC_CONCEPTS_AND_ACTIONS
+					if(!(referenceTraceParameters->linkSpecificConceptsAndActions))
 					{
-						if(SHAREDvars.textInTextArray(queryEntityNode->entityName, giaReferencingWildCardActionArray, GIA_REFERENCING_WILD_CARDS_ACTIONS_NUMBER_OF_TYPES))
+					#endif
+						if(entityNode->entityType == GIA_ENTITY_TYPE_ACTION)
 						{
-							compareEntityNamesResult = true;
+							if(SHAREDvars.textInTextArray(queryEntityNode->entityName, giaReferencingWildCardActionArray, GIA_REFERENCING_WILD_CARDS_ACTIONS_NUMBER_OF_TYPES))
+							{
+								compareEntityNamesResult = true;
+							}
 						}
-					}
-					else
-					{
-						if(SHAREDvars.textInTextArray(queryEntityNode->entityName, giaReferencingWildCardSubstanceArray, GIA_REFERENCING_WILD_CARDS_SUBSTANCES_NUMBER_OF_TYPES))
+						else
 						{
-							compareEntityNamesResult = true;
+							if(SHAREDvars.textInTextArray(queryEntityNode->entityName, giaReferencingWildCardSubstanceArray, GIA_REFERENCING_WILD_CARDS_SUBSTANCES_NUMBER_OF_TYPES))
+							{
+								compareEntityNamesResult = true;
+							}
 						}
+					#ifdef GIA_TRANSLATOR_DREAM_MODE_LINK_SPECIFIC_CONCEPTS_AND_ACTIONS
 					}
-				#ifdef GIA_TRANSLATOR_DREAM_MODE_LINK_SPECIFIC_CONCEPTS_AND_ACTIONS
+					#endif
+				#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
 				}
 				#endif
-			#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
+
+			#ifdef GIA_QUERY_DO_NOT_SEARCH_DISABLED_NODES
 			}
 			#endif
-
-		#ifdef GIA_QUERY_DO_NOT_SEARCH_DISABLED_NODES
 		}
-		#endif
 	}
 	#endif
 

@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a2a 21-March-2017
+ * Project Version: 3a2b 21-March-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -45,19 +45,20 @@ void GIAtranslatorDefineReferencingClass::identifyComparisonVariableAlternateMet
 
 	if(expectToFindComparisonVariable)
 	{
-			for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
+		for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
+		{
+			if(translatorVariables->GIAentityNodeArrayFilled[i])
 			{
-				if(translatorVariables->GIAentityNodeArrayFilled[i])
+				GIAentityNode* entityNode = translatorVariables->GIAentityNodeArray[i];
+				if(entityNode->entityName == REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
 				{
-					GIAentityNode* entityNode = translatorVariables->GIAentityNodeArray[i];
-					if(entityNode->entityName == REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
-					{
-						entityNode->isQuery = true;
-						GIAtranslatorOperations.setComparisonVariableNode(entityNode);
-						GIAtranslatorOperations.setFoundComparisonVariable(true);
-					}
+					entityNode->isQuery = true;
+					GIAtranslatorOperations.setComparisonVariableNode(entityNode);
+					GIAtranslatorOperations.setFoundComparisonVariable(true);
 				}
 			}
+		}
+		
 		#ifdef GIA_COMPARISON_VARIABLE_DEFINITION_VIA_ALTERNATE_METHOD_EG_SUPPORT_WHICH_QUERIES
 		if(!GIAtranslatorOperations.getFoundComparisonVariable())
 		{//define comparison variable; define required answer entity as the next noun after the question word/lemma eg "house/person"
@@ -863,6 +864,10 @@ void GIAtranslatorDefineReferencingClass::createGIAcoreferenceInListBasedUponIde
 		GIAreferenceTraceParameters referenceTraceParameters;
 		referenceTraceParameters.referenceSetID = referenceSetID;
 
+		#ifdef GIA_QUERY_SKIP_OVER_PROPERTY_AND_DEFINITION_RELATIONSHIP_ENTITIES
+		referenceTraceParameters.skipOverPropertyAndDefinitionRelationshipEntities = false;
+		#endif
+	
 		#ifdef GIA_NLC_INTEGRATION_DEFINE_REFERENCE_CONTEXT_BY_TEXT_INDENTATION
 		referenceTraceParameters.referenceSetDefiniteEntity = referenceSetDefiniteEntity;
 		//referenceTraceParameters.firstSentenceInList = firstSentenceInList;

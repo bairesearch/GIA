@@ -25,7 +25,7 @@
  * File Name: GIAquery.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a2a 21-March-2017
+ * Project Version: 3a2b 21-March-2017
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  *
@@ -142,6 +142,10 @@ public:
 	#ifdef GIA_QUERY_DEBUG_LEVEL
 	int level;
 	#endif
+	
+	#ifdef GIA_QUERY_SKIP_OVER_PROPERTY_AND_DEFINITION_RELATIONSHIP_ENTITIES
+	bool skipOverPropertyAndDefinitionRelationshipEntities;
+	#endif
 };
 
 //shared with GIAtranslatorDefineReferencing.cpp
@@ -183,6 +187,10 @@ public:
 	#endif
 	#ifdef GIA_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS_CONCEPTS
 	bool logicalConditionDisableTraceConcepts;
+	#endif
+	
+	#ifdef GIA_QUERY_SKIP_OVER_PROPERTY_AND_DEFINITION_RELATIONSHIP_ENTITIES
+	bool skipOverPropertyAndDefinitionRelationshipEntities;
 	#endif
 };
 
