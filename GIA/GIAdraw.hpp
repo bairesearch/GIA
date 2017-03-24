@@ -25,7 +25,7 @@
  * File Name: GIAdraw.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1j 26-February-2017
+ * Project Version: 3a1k 26-February-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -260,125 +260,22 @@ class GIAdrawClass
 	private: LDspriteClass LDsprite;
 	public: void printGIAnetworkNodes(vector<GIAentityNode*>* entityNodesActiveListComplete, int width, const int height, const string outputFileNameLDR, const string outputFileNameSVG, const string outputFileNamePPM, const bool display, const bool useOutputLDRfile, const bool useOutputPPMfile, const bool useOutputSVGfile, int maxNumberSentences);
 
-	private: void determineBasicPrintPositionsOfAllNodes(vector<GIAentityNode*>* entityNodesActiveListComplete, bool printType[], LDreference* firstReferenceInPrintList, XMLparserTag** currentTag, int maxNumberSentences);
+	public: bool determineBasicPrintPositionsOfAllNodes(vector<GIAentityNode*>* entityNodesActiveListComplete, bool printType[], LDreference* firstReferenceInPrintList, XMLparserTag* firstTagInSVGFile, int maxNumberSentences);
 
 	private: void initiateMaxXAtParticularY();
-	private: LDreference* initialiseEntityNodeForPrinting(GIAentityNode* entityNode, int y, int x, bool printType[], LDreference* currentReferenceInPrintList, XMLparserTag** currentTag, int sentenceIndex, bool thisIsDefinitionAndPreviousNodeWasInstance);
-		private: LDreference* initialiseEntityConnectionForPrinting(vec* pos1, GIAentityConnection* entityConnection, LDreference* currentReferenceInPrintList, bool printType[], string connectionName, int entityConnectionColour, XMLparserTag** currentTag);
-		private: LDreference* initialiseTimeConditionNodeForPrinting(GIAtimeConditionNode* timeConditionNode, const int y, const int x, bool printType[], LDreference* currentReferenceInPrintList, XMLparserTag** currentTag);
+	private: bool initialiseEntityConnectionForPrinting(vec* pos1, GIAentityConnection* entityConnection, bool printType[], string connectionName, int entityConnectionColour, LDreference** currentReferenceInPrintList, XMLparserTag** currentTag);
+		private: bool initialiseEntityNodeForPrinting(GIAentityNode* entityNode, int y, int x, bool printType[], LDreference** currentReferenceInPrintList, XMLparserTag** currentTag, int sentenceIndex, bool thisIsDefinitionAndPreviousNodeWasInstance);
+		private: bool initialiseTimeConditionNodeForPrinting(GIAtimeConditionNode* timeConditionNode, const int y, const int x, bool printType[], LDreference** currentReferenceInPrintList, XMLparserTag** currentTag);
 
-	private: LDreference* createReferenceConnectionWithText(LDreference* currentReferenceInPrintList, vec* pos1, vec* pos2, int colour, XMLparserTag** currentTag, string connectionTypeName, bool printType[]);
-		private: LDreference* createReferenceConnection(LDreference* currentReferenceInPrintList, vec* pos1, vec* pos2, int colour, XMLparserTag** currentTag, const bool printType[]);
-	private: LDreference* createBox(LDreference* currentReferenceInPrintList, vec* vect, const double width, const double height, int colour, string* text, XMLparserTag** currentTag, const int thickness, const bool printType[]);
+	private: bool createReferenceConnectionWithText(vec* pos1, vec* pos2, int colour, LDreference** currentReferenceInPrintList, XMLparserTag** currentTag, string connectionTypeName, bool printType[]);
+		private: bool createReferenceConnection(vec* pos1, vec* pos2, int colour, LDreference** currentReferenceInPrintList, XMLparserTag** currentTag, const bool printType[]);
+	private: bool createBox(vec* vect, const double width, const double height, int colour, string* text, LDreference** currentReferenceInPrintList, XMLparserTag** currentTag, const int thickness, const bool printType[]);
+
 };
 
 
 
 
-
-/*
-#define GIA_OUTPUT_Z_POSITION_FILE_CONNECTIONS (0.6)
-#define GIA_OUTPUT_Z_POSITION_FILE_CONTAINER_BIG_BOX (0.5)
-#define GIA_OUTPUT_Z_POSITION_FUNCTION_CONNECTIONS (0.4)
-#define GIA_OUTPUT_Z_POSITION_FILE_AND_FUNCTION_BOX (0.3)
-#define GIA_OUTPUT_Z_POSITION_FILE_AND_FUNCTION_TEXT (0.2)
-
-#define GIA_FILE_OR_FUNCTION_TEXT_BOX_SCALE_FACTOR_X (0.4)
-#define GIA_FILE_OR_FUNCTION_TEXT_BOX_BOX_SCALE_FACTOR_Y_LDR (0.05)
-#define GIA_FILE_OR_FUNCTION_TEXT_BOX_TEXT_SCALE_FACTOR_Y_SVG (0.03)
-#define GIA_FILE_OR_FUNCTION_TEXT_BOX_TEXT_SCALE_FACTOR_Y_SVG_B (0.067)
-#define GIA_FILE_OR_FUNCTION_TEXT_BOX_BOX_SCALE_FACTOR_X_SPACING_FRACTION_SVG (0.8)
-#define GIA_FILE_OR_FUNCTION_TEXT_BOX_BOX_SCALE_FACTOR_Y_SPACING_FRACTION_SVG (0.1)
-
-#define GIA_FILE_FUNCTIONS_DISABLED_VECTOROBJECTS_SCALE_FACTOR (500)
-#define GIA_FILE_FUNCTIONS_ENABLED_VECTOROBJECTS_SCALE_FACTOR (200)
-#define GIA_FILE_MAX_TEXT_LENGTH (20)
-#define GIA_FILE_TEXT_BOX_PADDING_FRACTION_OF_TEXT_LENGTH (1.25)
-#define GIA_FILE_FUNCTIONS_DISABLED_TEXT_BOX_SCALE_FACTOR_X_SPACING_FRACTION (0.9)
-#define GIA_FILE_FUNCTIONS_DISABLED_TEXT_BOX_SCALE_FACTOR_Y_SPACING_FRACTION (0.3)
-#define GIA_FILE_FUNCTIONS_ENABLED_TEXT_BOX_SCALE_FACTOR_X_SPACING_FRACTION (0.7)
-#define GIA_FILE_FUNCTIONS_ENABLED_TEXT_BOX_SCALE_FACTOR_Y_SPACING_FRACTION (1.0)
-#define GIA_FILE_FUNCTIONS_ENABLED_LARGE_BOX_SCALE_FACTOR_X (5.0)
-#define GIA_FILE_FUNCTIONS_ENABLED_LARGE_BOX_SCALE_FACTOR_X_SPACING_FRACTION_B (0.65)
-#define GIA_FILE_FUNCTIONS_ENABLED_LARGE_BOX_SCALE_FACTOR_Y_SPACING_FRACTION_B (0.9)
-#define GIA_FILE_FUNCTIONS_ENABLED_LARGE_BOX_SCALE_FACTOR_Y_SPACING_FRACTION_C (0.4)
-#define GIA_FILE_TEXT_BOX_OUTLINE_WIDTH_SVG (0.3)
-
-#define GIA_FUNCTION_VECTOROBJECTS_SCALE_FACTOR (50)
-#define GIA_FUNCTION_MAX_TEXT_LENGTH (25)
-#define GIA_FUNCTION_TEXT_BOX_PADDING_FRACTION_OF_TEXT_LENGTH (1.00)
-#define GIA_FUNCTION_TEXT_BOX_SCALE_FACTOR_Y_SPACING_FRACTION (0.7)
-#define GIA_FUNCTION_TEXT_BOX_OUTLINE_WIDTH_SVG (0.1)
-
-#define GIA_LAYER_0_COLOUR (6)
-#define GIA_LAYER_1_COLOUR (1)
-#define GIA_LAYER_2_COLOUR (2)
-#define GIA_LAYER_3_COLOUR (3)
-#define GIA_LAYER_4_COLOUR (4)
-#define GIA_LAYER_5_COLOUR (22)
-#define GIA_LAYER_6_COLOUR (25)
-#define GIA_LAYER_7_COLOUR (14)
-#define GIA_LAYER_8_COLOUR (5)
-#define GIA_LAYER_9_COLOUR (7)
-#define GIA_LAYER_10_COLOUR (8)
-#define GIA_LAYER_11_COLOUR (0)
-#define GIA_LAYER_12_COLOUR (15)
-
-#define GIA_FUNCTION_CONNECTION_HIGHLIGHT_COLOUR (5)
-#define GIA_FUNCTION_BOX_HIGHLIGHT_COLOUR (5)
-*/
-
-/*
-#define GIA_OUTPUT_Z_POSITION_FILE_CONNECTIONS_NAME "GIA_OUTPUT_Z_POSITION_FILE_CONNECTIONS"
-#define GIA_OUTPUT_Z_POSITION_FILE_CONTAINER_BIG_BOX_NAME "GIA_OUTPUT_Z_POSITION_FILE_CONTAINER_BIG_BOX"
-#define GIA_OUTPUT_Z_POSITION_FUNCTION_CONNECTIONS_NAME "GIA_OUTPUT_Z_POSITION_FUNCTION_CONNECTIONS"
-#define GIA_OUTPUT_Z_POSITION_FILE_AND_FUNCTION_BOX_NAME "GIA_OUTPUT_Z_POSITION_FILE_AND_FUNCTION_BOX"
-#define GIA_OUTPUT_Z_POSITION_FILE_AND_FUNCTION_TEXT_NAME "GIA_OUTPUT_Z_POSITION_FILE_AND_FUNCTION_TEXT"
-
-#define GIA_FILE_OR_FUNCTION_TEXT_BOX_SCALE_FACTOR_X_NAME "GIA_FILE_OR_FUNCTION_TEXT_BOX_SCALE_FACTOR_X"
-#define GIA_FILE_OR_FUNCTION_TEXT_BOX_BOX_SCALE_FACTOR_Y_LDR_NAME "GIA_FILE_OR_FUNCTION_TEXT_BOX_BOX_SCALE_FACTOR_Y_LDR"
-#define GIA_FILE_OR_FUNCTION_TEXT_BOX_TEXT_SCALE_FACTOR_Y_SVG_NAME "GIA_FILE_OR_FUNCTION_TEXT_BOX_TEXT_SCALE_FACTOR_Y_SVG"
-#define GIA_FILE_OR_FUNCTION_TEXT_BOX_TEXT_SCALE_FACTOR_Y_SVG_B_NAME "GIA_FILE_OR_FUNCTION_TEXT_BOX_TEXT_SCALE_FACTOR_Y_SVG_B"
-#define GIA_FILE_OR_FUNCTION_TEXT_BOX_BOX_SCALE_FACTOR_X_SPACING_FRACTION_SVG_NAME "GIA_FILE_OR_FUNCTION_TEXT_BOX_BOX_SCALE_FACTOR_X_SPACING_FRACTION_SVG"
-#define GIA_FILE_OR_FUNCTION_TEXT_BOX_BOX_SCALE_FACTOR_Y_SPACING_FRACTION_SVG_NAME "GIA_FILE_OR_FUNCTION_TEXT_BOX_BOX_SCALE_FACTOR_Y_SPACING_FRACTION_SVG"
-
-#define GIA_FILE_FUNCTIONS_DISABLED_VECTOROBJECTS_SCALE_FACTOR_NAME "GIA_FILE_FUNCTIONS_DISABLED_VECTOROBJECTS_SCALE_FACTOR"
-#define GIA_FILE_FUNCTIONS_ENABLED_VECTOROBJECTS_SCALE_FACTOR_NAME "GIA_FILE_FUNCTIONS_ENABLED_VECTOROBJECTS_SCALE_FACTOR"
-#define GIA_FILE_MAX_TEXT_LENGTH_NAME "GIA_FILE_MAX_TEXT_LENGTH"
-#define GIA_FILE_TEXT_BOX_PADDING_FRACTION_OF_TEXT_LENGTH_NAME "GIA_FILE_TEXT_BOX_PADDING_FRACTION_OF_TEXT_LENGTH"
-#define GIA_FILE_FUNCTIONS_DISABLED_TEXT_BOX_SCALE_FACTOR_X_SPACING_FRACTION_NAME "GIA_FILE_FUNCTIONS_DISABLED_TEXT_BOX_SCALE_FACTOR_X_SPACING_FRACTION"
-#define GIA_FILE_FUNCTIONS_DISABLED_TEXT_BOX_SCALE_FACTOR_Y_SPACING_FRACTION_NAME "GIA_FILE_FUNCTIONS_DISABLED_TEXT_BOX_SCALE_FACTOR_Y_SPACING_FRACTION"
-#define GIA_FILE_FUNCTIONS_ENABLED_TEXT_BOX_SCALE_FACTOR_X_SPACING_FRACTION_NAME "GIA_FILE_FUNCTIONS_ENABLED_TEXT_BOX_SCALE_FACTOR_X_SPACING_FRACTION"
-#define GIA_FILE_FUNCTIONS_ENABLED_TEXT_BOX_SCALE_FACTOR_Y_SPACING_FRACTION_NAME "GIA_FILE_FUNCTIONS_ENABLED_TEXT_BOX_SCALE_FACTOR_Y_SPACING_FRACTION"
-#define GIA_FILE_FUNCTIONS_ENABLED_LARGE_BOX_SCALE_FACTOR_X_NAME "GIA_FILE_FUNCTIONS_ENABLED_LARGE_BOX_SCALE_FACTOR_X"
-#define GIA_FILE_FUNCTIONS_ENABLED_LARGE_BOX_SCALE_FACTOR_X_SPACING_FRACTION_B_NAME "GIA_FILE_FUNCTIONS_ENABLED_LARGE_BOX_SCALE_FACTOR_X_SPACING_FRACTION_B"
-#define GIA_FILE_FUNCTIONS_ENABLED_LARGE_BOX_SCALE_FACTOR_Y_SPACING_FRACTION_B_NAME "GIA_FILE_FUNCTIONS_ENABLED_LARGE_BOX_SCALE_FACTOR_Y_SPACING_FRACTION_B"
-#define GIA_FILE_FUNCTIONS_ENABLED_LARGE_BOX_SCALE_FACTOR_Y_SPACING_FRACTION_C_NAME "GIA_FILE_FUNCTIONS_ENABLED_LARGE_BOX_SCALE_FACTOR_Y_SPACING_FRACTION_C"
-#define GIA_FILE_TEXT_BOX_OUTLINE_WIDTH_SVG_NAME "GIA_FILE_TEXT_BOX_OUTLINE_WIDTH_SVG"
-
-#define GIA_FUNCTION_VECTOROBJECTS_SCALE_FACTOR_NAME "GIA_FUNCTION_VECTOROBJECTS_SCALE_FACTOR"
-#define GIA_FUNCTION_MAX_TEXT_LENGTH_NAME "GIA_FUNCTION_MAX_TEXT_LENGTH"
-#define GIA_FUNCTION_TEXT_BOX_PADDING_FRACTION_OF_TEXT_LENGTH_NAME "GIA_FUNCTION_TEXT_BOX_PADDING_FRACTION_OF_TEXT_LENGTH"
-#define GIA_FUNCTION_TEXT_BOX_SCALE_FACTOR_Y_SPACING_FRACTION_NAME "GIA_FUNCTION_TEXT_BOX_SCALE_FACTOR_Y_SPACING_FRACTION"
-#define GIA_FUNCTION_TEXT_BOX_OUTLINE_WIDTH_SVG_NAME "GIA_FUNCTION_TEXT_BOX_OUTLINE_WIDTH_SVG"
-
-#define GIA_LAYER_0_COLOUR_NAME "GIA_LAYER_0_COLOUR"
-#define GIA_LAYER_1_COLOUR_NAME "GIA_LAYER_1_COLOUR"
-#define GIA_LAYER_2_COLOUR_NAME "GIA_LAYER_2_COLOUR"
-#define GIA_LAYER_3_COLOUR_NAME "GIA_LAYER_3_COLOUR"
-#define GIA_LAYER_4_COLOUR_NAME "GIA_LAYER_4_COLOUR"
-#define GIA_LAYER_5_COLOUR_NAME "GIA_LAYER_5_COLOUR"
-#define GIA_LAYER_6_COLOUR_NAME "GIA_LAYER_6_COLOUR"
-#define GIA_LAYER_7_COLOUR_NAME "GIA_LAYER_7_COLOUR"
-#define GIA_LAYER_8_COLOUR_NAME "GIA_LAYER_8_COLOUR"
-#define GIA_LAYER_9_COLOUR_NAME "GIA_LAYER_9_COLOUR"
-#define GIA_LAYER_10_COLOUR_NAME "GIA_LAYER_10_COLOUR"
-#define GIA_LAYER_11_COLOUR_NAME "GIA_LAYER_11_COLOUR"
-#define GIA_LAYER_12_COLOUR_NAME "GIA_LAYER_12_COLOUR"
-
-#define GIA_FUNCTION_CONNECTION_HIGHLIGHT_COLOUR_NAME "GIA_FUNCTION_CONNECTION_HIGHLIGHT_COLOUR"
-#define GIA_FUNCTION_BOX_HIGHLIGHT_COLOUR_NAME "GIA_FUNCTION_BOX_HIGHLIGHT_COLOUR"
-*/
 
 
 

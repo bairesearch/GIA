@@ -25,7 +25,7 @@
  * File Name: GIAdraw.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1j 26-February-2017
+ * Project Version: 3a1k 26-February-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -44,7 +44,6 @@ void GIAdrawClass::printGIAnetworkNodes(vector<GIAentityNode*>* entityNodesActiv
 	bool result = true;
 
 	XMLparserTag* firstTagInSVGFile = new XMLparserTag();
-	XMLparserTag* currentTagInSVGFile = firstTagInSVGFile;
 
 	bool printType[3];
 	printType[GIA_DRAW_CREATE_LDR_REFERENCES] = false;
@@ -62,7 +61,7 @@ void GIAdrawClass::printGIAnetworkNodes(vector<GIAentityNode*>* entityNodesActiv
 	}
 
 	LDreference* firstReferenceInPrintList = new LDreference();
-	this->determineBasicPrintPositionsOfAllNodes(entityNodesActiveListComplete, printType, firstReferenceInPrintList, &currentTagInSVGFile, maxNumberSentences);
+	this->determineBasicPrintPositionsOfAllNodes(entityNodesActiveListComplete, printType, firstReferenceInPrintList, firstTagInSVGFile, maxNumberSentences);
 
 	if(useOutputSVGfile)
 	{
@@ -148,10 +147,10 @@ void GIAdrawClass::initiateMaxXAtParticularY()
 }
 
 
-void GIAdrawClass::determineBasicPrintPositionsOfAllNodes(vector<GIAentityNode*>* entityNodesActiveListComplete, bool printType[], LDreference* firstReferenceInPrintList, XMLparserTag** currentTag, int maxNumberSentences)
+bool GIAdrawClass::determineBasicPrintPositionsOfAllNodes(vector<GIAentityNode*>* entityNodesActiveListComplete, bool printType[], LDreference* firstReferenceInPrintList, XMLparserTag* firstTagInSVGFile, int maxNumberSentences)
 {
-	LDreference* currentReferenceInPrintList = firstReferenceInPrintList;
-
+	bool result = true;
+	
 	this->initiateMaxXAtParticularY();
 	int xInitial = DRAW_X_INITIAL_OFFSET;
 	int yInitial = DRAW_Y_INITIAL_OFFSET;
@@ -187,13 +186,16 @@ void GIAdrawClass::determineBasicPrintPositionsOfAllNodes(vector<GIAentityNode*>
 
 			bool thisIsDefinitionAndPreviousNodeWasInstance = false;
 
-			currentReferenceInPrintList = this->initialiseEntityNodeForPrinting((*entityIter), yInitial, xInitial, printType, currentReferenceInPrintList, currentTag, sentenceIndex, thisIsDefinitionAndPreviousNodeWasInstance);
+			this->initialiseEntityNodeForPrinting((*entityIter), yInitial, xInitial, printType, &firstReferenceInPrintList, &firstTagInSVGFile, sentenceIndex, thisIsDefinitionAndPreviousNodeWasInstance);
 		}
 	}
+	
+	return result;
 }
 
-LDreference* GIAdrawClass::initialiseEntityConnectionForPrinting(vec* pos1, GIAentityConnection* entityConnection, LDreference* currentReferenceInPrintList, bool printType[], string connectionName, int entityConnectionColour, XMLparserTag** currentTag)
+bool GIAdrawClass::initialiseEntityConnectionForPrinting(vec* pos1, GIAentityConnection* entityConnection, bool printType[], string connectionName, int entityConnectionColour, LDreference** currentReferenceInPrintList, XMLparserTag** currentTag)
 {
+	bool result = true;
 	GIAentityNode* entityNodeToConnect = entityConnection->entity;
 
 	#ifdef GIA_DEBUG
@@ -219,15 +221,17 @@ LDreference* GIAdrawClass::initialiseEntityConnectionForPrinting(vec* pos1, GIAe
 
 		//connectionName = connectionName + convertIntToString(entityConnection->sentenceIndexTemp);
 
-		currentReferenceInPrintList = this->createReferenceConnectionWithText(currentReferenceInPrintList, pos1, &pos2, entityConnectionColour, currentTag, connectionName, printType);
+		this->createReferenceConnectionWithText(pos1, &pos2, entityConnectionColour, currentReferenceInPrintList, currentTag, connectionName, printType);
 	}
 
-	return currentReferenceInPrintList;
+	return result;
 }
 
 
-LDreference* GIAdrawClass::initialiseEntityNodeForPrinting(GIAentityNode* entityNode, int y, int x, bool printType[], LDreference* currentReferenceInPrintList, XMLparserTag** currentTag, int sentenceIndex, bool thisIsDefinitionAndPreviousNodeWasInstance)
+bool GIAdrawClass::initialiseEntityNodeForPrinting(GIAentityNode* entityNode, int y, int x, bool printType[], LDreference** currentReferenceInPrintList, XMLparserTag** currentTag, int sentenceIndex, bool thisIsDefinitionAndPreviousNodeWasInstance)
 {
+	bool result = true;
+	
 	#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
 	#ifdef GIA_RECORD_WAS_REFERENCE_INFORMATION
 	if((entityNode->sentenceIndexTemp == sentenceIndex) || (entityNode->wasReference) || thisIsDefinitionAndPreviousNodeWasInstance || entityNode->printCoordsAlreadyDefined)	//condition (entityNode->wasReference) added 12 October 2012 1q3b
@@ -349,7 +353,7 @@ LDreference* GIAdrawClass::initialiseEntityNodeForPrinting(GIAentityNode* entity
 						thisIsDefinitionAndPreviousNodeWasInstance = true;
 					}
 					#endif
-					currentReferenceInPrintList = this->initialiseEntityNodeForPrinting(connection->entity, y+q, x+r, printType, currentReferenceInPrintList, currentTag, sentenceIndex, thisIsDefinitionAndPreviousNodeWasInstance);
+					this->initialiseEntityNodeForPrinting(connection->entity, y+q, x+r, printType, currentReferenceInPrintList, currentTag, sentenceIndex, thisIsDefinitionAndPreviousNodeWasInstance);
 
 					bool pass = true;
 					int entityConnectionColour = entityVectorConnectionDrawColourNameArray[connectionType];
@@ -398,9 +402,9 @@ LDreference* GIAdrawClass::initialiseEntityNodeForPrinting(GIAentityNode* entity
 							#ifdef GIA_DRAW_PRINT_CONNECTION_SENTENCE_INDEX
 							//string connectionName = SHAREDvars.convertIntToString(connection->sentenceIndexTemp);
 							string connectionName = string("s") + SHAREDvars.convertIntToString(connection->sentenceIndexTemp) + entityVectorConnectionNameArray[connectionType];
-							currentReferenceInPrintList = this->initialiseEntityConnectionForPrinting(&pos1, connection, currentReferenceInPrintList, printType, connectionName, entityConnectionColour, currentTag);
+							this->initialiseEntityConnectionForPrinting(&pos1, connection, printType, connectionName, entityConnectionColour, currentReferenceInPrintList, currentTag);
 							#else
-							currentReferenceInPrintList = this->initialiseEntityConnectionForPrinting(&pos1, connection, currentReferenceInPrintList, printType, entityVectorConnectionDrawConnectionNameArray[connectionType], entityConnectionColour, currentTag);
+							this->initialiseEntityConnectionForPrinting(&pos1, connection, printType, entityVectorConnectionDrawConnectionNameArray[connectionType], entityConnectionColour, currentReferenceInPrintList, currentTag);
 							#endif
 						}
 					}
@@ -415,7 +419,7 @@ LDreference* GIAdrawClass::initialiseEntityNodeForPrinting(GIAentityNode* entity
 			{
 				int timeConditionNodePrintX = x+r;
 				int timeConditionNodePrintY = y+q;
-				currentReferenceInPrintList = this->initialiseTimeConditionNodeForPrinting(entityNode->timeConditionNode, timeConditionNodePrintY, timeConditionNodePrintX, printType, currentReferenceInPrintList, currentTag);
+				this->initialiseTimeConditionNodeForPrinting(entityNode->timeConditionNode, timeConditionNodePrintY, timeConditionNodePrintX, printType, currentReferenceInPrintList, currentTag);
 
 				q = q+GIA_DRAW_Y_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE;
 
@@ -424,7 +428,7 @@ LDreference* GIAdrawClass::initialiseEntityNodeForPrinting(GIAentityNode* entity
 				pos2.x = timeConditionNodePrintX;
 				pos2.y = timeConditionNodePrintY;
 				pos2.z = GIA_DRAW_CONNECTION_Z;
-				currentReferenceInPrintList = this->createReferenceConnectionWithText(currentReferenceInPrintList, &pos1, &pos2, GIA_DRAW_CONDITION_TIME_CONNECTION_COLOUR, currentTag, "time", printType);
+				this->createReferenceConnectionWithText(&pos1, &pos2, GIA_DRAW_CONDITION_TIME_CONNECTION_COLOUR, currentReferenceInPrintList, currentTag, "time", printType);
 
 			}
 
@@ -565,7 +569,7 @@ LDreference* GIAdrawClass::initialiseEntityNodeForPrinting(GIAentityNode* entity
 
 				//nameOfBox = nameOfBox + SHAREDvars.convertIntToString(entityNode->grammaticalDefiniteTemp);
 
-				currentReferenceInPrintList = this->createBox(currentReferenceInPrintList, &pos1, GIA_DRAW_ACTION_NODE_WIDTH, GIA_DRAW_ACTION_NODE_HEIGHT, entityColour, &nameOfBox, currentTag, boxThickness, printType);
+				this->createBox(&pos1, GIA_DRAW_ACTION_NODE_WIDTH, GIA_DRAW_ACTION_NODE_HEIGHT, entityColour, &nameOfBox, currentReferenceInPrintList, currentTag, boxThickness, printType);
 			}
 
 
@@ -609,16 +613,17 @@ LDreference* GIAdrawClass::initialiseEntityNodeForPrinting(GIAentityNode* entity
 	}
 	#endif
 
-	return currentReferenceInPrintList;	//does this need to be newCurrentReferenceInPrintList?
+	return result;
 
 }
 
 
 
 
-LDreference* GIAdrawClass::initialiseTimeConditionNodeForPrinting(GIAtimeConditionNode* timeConditionNode, const int y, const int x, bool printType[], LDreference* currentReferenceInPrintList, XMLparserTag** currentTag)
+bool GIAdrawClass::initialiseTimeConditionNodeForPrinting(GIAtimeConditionNode* timeConditionNode, const int y, const int x, bool printType[], LDreference** currentReferenceInPrintList, XMLparserTag** currentTag)
 {
-
+	bool result = true;
+	
 	int timeConditionNodePrintX = x;
 	int timeConditionNodePrintY = y;
 
@@ -641,7 +646,7 @@ LDreference* GIAdrawClass::initialiseTimeConditionNodeForPrinting(GIAtimeConditi
 	{
 		boxThickness = GIA_DRAW_THICKNESS_THICK;
 	}
-	currentReferenceInPrintList = this->createBox(currentReferenceInPrintList, &pos1, GIA_DRAW_CONDITION_NODE_WIDTH, GIA_DRAW_CONDITION_NODE_HEIGHT, GIA_DRAW_CONDITION_TIME_NODE_COLOUR, &(timeConditionNode->conditionName), currentTag, boxThickness, printType);
+	this->createBox(&pos1, GIA_DRAW_CONDITION_NODE_WIDTH, GIA_DRAW_CONDITION_NODE_HEIGHT, GIA_DRAW_CONDITION_TIME_NODE_COLOUR, &(timeConditionNode->conditionName), currentReferenceInPrintList, currentTag, boxThickness, printType);
 
 	/*
 	int timeConditionNodeColour = GIA_DRAW_CONDITION_TIME_NODE_COLOUR;
@@ -649,22 +654,22 @@ LDreference* GIAdrawClass::initialiseTimeConditionNodeForPrinting(GIAtimeConditi
 	{
 		timeConditionNodeColour = GIA_DRAW_CONDITION_TIME_STATE_NODE_COLOUR;
 	}
-	currentReferenceInPrintList = this->createBox(currentReferenceInPrintList, &pos1, GIA_DRAW_CONDITION_NODE_WIDTH, GIA_DRAW_CONDITION_NODE_HEIGHT, timeConditionNodeColour, &(timeConditionNode->conditionName), currentTag, GIA_DRAW_THICKNESS_NORMAL, printType);
+	this->createBox(currentReferenceInPrintList, &pos1, GIA_DRAW_CONDITION_NODE_WIDTH, GIA_DRAW_CONDITION_NODE_HEIGHT, timeConditionNodeColour, &(timeConditionNode->conditionName), currentReferenceInPrintList, currentTag, GIA_DRAW_THICKNESS_NORMAL, printType);
 	*/
 
 	#ifdef GIA_DRAW_DEBUG
 	cout << "Exiting: timeConditionNode = " << timeConditionNode->conditionName << endl;
 	#endif
 
-	return currentReferenceInPrintList;	//does this need to be newCurrentReferenceInPrintList?
+	return result;
 }
 
 
-LDreference* GIAdrawClass::createReferenceConnectionWithText(LDreference* currentReferenceInPrintList, vec* pos1, vec* pos2, int colour, XMLparserTag** currentTag, string connectionTypeName, bool printType[])
+bool GIAdrawClass::createReferenceConnectionWithText(vec* pos1, vec* pos2, int colour, LDreference** currentReferenceInPrintList, XMLparserTag** currentTag, string connectionTypeName, bool printType[])
 {
-	LDreference* newCurrentReferenceInPrintList = currentReferenceInPrintList;
-
-	newCurrentReferenceInPrintList = this->createReferenceConnection(newCurrentReferenceInPrintList, pos1, pos2, colour, currentTag, printType);
+	bool result = true;
+	
+	this->createReferenceConnection(pos1, pos2, colour, currentReferenceInPrintList, currentTag, printType);
 
 	if(GIA_DRAW_USE_CONNECTION_TYPE_NAME_TEXT)
 	{
@@ -680,7 +685,7 @@ LDreference* GIAdrawClass::createReferenceConnectionWithText(LDreference* curren
 			positionLDR.x = vect.x - GIA_DRAW_BASICENTITY_NODE_WIDTH/4;
 			positionLDR.y = vect.y - GIA_DRAW_BASICENTITY_NODE_HEIGHT/4;
 			positionLDR.z = vect.z - GIA_OUTPUT_Z_POSITION_CONNECTIONS;
-			newCurrentReferenceInPrintList = LDsprite.LDaddBasicTextualSpriteStringToReferenceList(connectionTypeName, newCurrentReferenceInPrintList, &positionLDR, &numSpritesAdded, false, DAT_FILE_COLOUR_BLACK, 0.3);	//add sprite text within box
+			*currentReferenceInPrintList = LDsprite.LDaddBasicTextualSpriteStringToReferenceList(connectionTypeName, *currentReferenceInPrintList, &positionLDR, &numSpritesAdded, false, DAT_FILE_COLOUR_BLACK, 0.3);	//add sprite text within box
 		}
 		if(printType[GIA_DRAW_CREATE_SVG_REFERENCES] == true)
 		{
@@ -692,50 +697,50 @@ LDreference* GIAdrawClass::createReferenceConnectionWithText(LDreference* curren
 		}
 	}
 
-	return newCurrentReferenceInPrintList;
+	return result;
 }
 
-LDreference* GIAdrawClass::createReferenceConnection(LDreference* currentReferenceInPrintList, vec* pos1, vec* pos2, int colour, XMLparserTag** currentTag, const bool printType[])
+bool GIAdrawClass::createReferenceConnection(vec* pos1, vec* pos2, int colour, LDreference** currentReferenceInPrintList, XMLparserTag** currentTag, const bool printType[])
 {
-	LDreference* newCurrentReferenceInPrintList = currentReferenceInPrintList;
-
+	bool result = true;
+	
 	if(printType[GIA_DRAW_CREATE_LDR_REFERENCES] == true)
 	{
 		#ifdef GIA_DRAW_DEBUG
 		//cout << "drawing connection" << endl;
 		#endif
 
-		newCurrentReferenceInPrintList->type = REFERENCE_TYPE_LINE;
-		newCurrentReferenceInPrintList->colour = colour;
+		(*currentReferenceInPrintList)->type = REFERENCE_TYPE_LINE;
+		(*currentReferenceInPrintList)->colour = colour;
 
-		newCurrentReferenceInPrintList->vertex1relativePosition.x = pos1->x;
-		newCurrentReferenceInPrintList->vertex1relativePosition.y = pos1->y;
-		newCurrentReferenceInPrintList->vertex1relativePosition.z = pos1->z;
+		(*currentReferenceInPrintList)->vertex1relativePosition.x = pos1->x;
+		(*currentReferenceInPrintList)->vertex1relativePosition.y = pos1->y;
+		(*currentReferenceInPrintList)->vertex1relativePosition.z = pos1->z;
 
 
-		newCurrentReferenceInPrintList->vertex2relativePosition.x = pos2->x;
-		newCurrentReferenceInPrintList->vertex2relativePosition.y = pos2->y;
-		newCurrentReferenceInPrintList->vertex2relativePosition.z = pos2->z;
+		(*currentReferenceInPrintList)->vertex2relativePosition.x = pos2->x;
+		(*currentReferenceInPrintList)->vertex2relativePosition.y = pos2->y;
+		(*currentReferenceInPrintList)->vertex2relativePosition.z = pos2->z;
 
 		#ifdef GIA_DRAW_DEBUG
 		/*
 		cout << "createFileOrFunctionReferenceConnection{}:" << endl;
 		cout << "currentReferenceInAboveList->name = " << currentReferenceInAboveList->name << endl;
 		cout << "reference->name = " << reference->name << endl;
-		cout << "newCurrentReferenceInPrintList->type = " << newCurrentReferenceInPrintList->type << endl;
-		cout << "newCurrentReferenceInPrintList->colour = " << newCurrentReferenceInPrintList->colour << endl;
-		cout << "newCurrentReferenceInPrintList->vertex1relativePosition.x = " << newCurrentReferenceInPrintList->vertex1relativePosition.x << endl;
-		cout << "newCurrentReferenceInPrintList->vertex1relativePosition.y = " << newCurrentReferenceInPrintList->vertex1relativePosition.y << endl;
-		cout << "newCurrentReferenceInPrintList->vertex1relativePosition.z = " << newCurrentReferenceInPrintList->vertex1relativePosition.z << endl;
-		cout << "newCurrentReferenceInPrintList->vertex2relativePosition.x = " << newCurrentReferenceInPrintList->vertex2relativePosition.x << endl;
-		cout << "newCurrentReferenceInPrintList->vertex2relativePosition.y = " << newCurrentReferenceInPrintList->vertex2relativePosition.y << endl;
-		cout << "newCurrentReferenceInPrintList->vertex2relativePosition.z = " << newCurrentReferenceInPrintList->vertex2relativePosition.z << endl;
+		cout << "(*currentReferenceInPrintList)->type = " << (*currentReferenceInPrintList)->type << endl;
+		cout << "(*currentReferenceInPrintList)->colour = " << (*currentReferenceInPrintList)->colour << endl;
+		cout << "(*currentReferenceInPrintList)->vertex1relativePosition.x = " << (*currentReferenceInPrintList)->vertex1relativePosition.x << endl;
+		cout << "(*currentReferenceInPrintList)->vertex1relativePosition.y = " << (*currentReferenceInPrintList)->vertex1relativePosition.y << endl;
+		cout << "(*currentReferenceInPrintList)->vertex1relativePosition.z = " << (*currentReferenceInPrintList)->vertex1relativePosition.z << endl;
+		cout << "(*currentReferenceInPrintList)->vertex2relativePosition.x = " << (*currentReferenceInPrintList)->vertex2relativePosition.x << endl;
+		cout << "(*currentReferenceInPrintList)->vertex2relativePosition.y = " << (*currentReferenceInPrintList)->vertex2relativePosition.y << endl;
+		cout << "(*currentReferenceInPrintList)->vertex2relativePosition.z = " << (*currentReferenceInPrintList)->vertex2relativePosition.z << endl;
 		*/
 		#endif
 
 		LDreference* newDispayReference = new LDreference();
-		newCurrentReferenceInPrintList->next = newDispayReference;
-		newCurrentReferenceInPrintList = newCurrentReferenceInPrintList->next;
+		(*currentReferenceInPrintList)->next = newDispayReference;
+		(*currentReferenceInPrintList) = (*currentReferenceInPrintList)->next;
 	}
 
 	if(printType[GIA_DRAW_CREATE_SVG_REFERENCES] == true)
@@ -745,133 +750,133 @@ LDreference* GIAdrawClass::createReferenceConnection(LDreference* currentReferen
 		LDsvg.writeSVGline(currentTag, pos1, pos2, colour);
 	}
 
-	return newCurrentReferenceInPrintList;
+	return result;
 }
 
 
 
 //consider using elipse instead; <ellipse cx="240" cy="100" rx="220" ry="30">
 
-LDreference* GIAdrawClass::createBox(LDreference* currentReferenceInPrintList, vec* vect, const double width, const double height, int colour, string* text, XMLparserTag** currentTag, const int thickness, const bool printType[])
+bool GIAdrawClass::createBox(vec* vect, const double width, const double height, int colour, string* text, LDreference** currentReferenceInPrintList, XMLparserTag** currentTag, const int thickness, const bool printType[])
 {
-	LDreference* newCurrentReferenceInPrintList = currentReferenceInPrintList;
-
+	bool result = true;
+	
 	if(printType[GIA_DRAW_CREATE_LDR_REFERENCES] == true)
 	{
 
-		newCurrentReferenceInPrintList->type = REFERENCE_TYPE_QUAD;
-		newCurrentReferenceInPrintList->colour = colour;
+		(*currentReferenceInPrintList)->type = REFERENCE_TYPE_QUAD;
+		(*currentReferenceInPrintList)->colour = colour;
 
-		newCurrentReferenceInPrintList->vertex1relativePosition.x = vect->x - width/2.0;
-		newCurrentReferenceInPrintList->vertex1relativePosition.y = vect->y + height/2.0;
-		newCurrentReferenceInPrintList->vertex1relativePosition.z = vect->z;
+		(*currentReferenceInPrintList)->vertex1relativePosition.x = vect->x - width/2.0;
+		(*currentReferenceInPrintList)->vertex1relativePosition.y = vect->y + height/2.0;
+		(*currentReferenceInPrintList)->vertex1relativePosition.z = vect->z;
 
-		newCurrentReferenceInPrintList->vertex2relativePosition.x = vect->x + width/2.0;
-		newCurrentReferenceInPrintList->vertex2relativePosition.y = vect->y + height/2.0;
-		newCurrentReferenceInPrintList->vertex2relativePosition.z = vect->z;
+		(*currentReferenceInPrintList)->vertex2relativePosition.x = vect->x + width/2.0;
+		(*currentReferenceInPrintList)->vertex2relativePosition.y = vect->y + height/2.0;
+		(*currentReferenceInPrintList)->vertex2relativePosition.z = vect->z;
 
-		newCurrentReferenceInPrintList->vertex3relativePosition.x = vect->x + width/2.0;
-		newCurrentReferenceInPrintList->vertex3relativePosition.y = vect->y - height/2.0;
-		newCurrentReferenceInPrintList->vertex3relativePosition.z = vect->z;
+		(*currentReferenceInPrintList)->vertex3relativePosition.x = vect->x + width/2.0;
+		(*currentReferenceInPrintList)->vertex3relativePosition.y = vect->y - height/2.0;
+		(*currentReferenceInPrintList)->vertex3relativePosition.z = vect->z;
 
-		newCurrentReferenceInPrintList->vertex4relativePosition.x = vect->x - width/2.0;
-		newCurrentReferenceInPrintList->vertex4relativePosition.y = vect->y - height/2.0;
-		newCurrentReferenceInPrintList->vertex4relativePosition.z = vect->z;
+		(*currentReferenceInPrintList)->vertex4relativePosition.x = vect->x - width/2.0;
+		(*currentReferenceInPrintList)->vertex4relativePosition.y = vect->y - height/2.0;
+		(*currentReferenceInPrintList)->vertex4relativePosition.z = vect->z;
 
 		#ifdef GIA_DRAW_DEBUG
 		/*
 		cout << "createFileOrFunctionReferenceBox{}:" << endl;
 		cout << "reference->name = " << reference->name << endl;
-		cout << "newCurrentReferenceInPrintList->type = " << newCurrentReferenceInPrintList->type << endl;
-		cout << "newCurrentReferenceInPrintList->colour = " << newCurrentReferenceInPrintList->colour << endl;
-		cout << "newCurrentReferenceInPrintList->vertex1relativePosition.x = " << newCurrentReferenceInPrintList->vertex1relativePosition.x << endl;
-		cout << "newCurrentReferenceInPrintList->vertex1relativePosition.y = " << newCurrentReferenceInPrintList->vertex1relativePosition.y << endl;
-		cout << "newCurrentReferenceInPrintList->vertex1relativePosition.z = " << newCurrentReferenceInPrintList->vertex1relativePosition.z << endl;
-		cout << "newCurrentReferenceInPrintList->vertex2relativePosition.x = " << newCurrentReferenceInPrintList->vertex2relativePosition.x << endl;
-		cout << "newCurrentReferenceInPrintList->vertex2relativePosition.y = " << newCurrentReferenceInPrintList->vertex2relativePosition.y << endl;
-		cout << "newCurrentReferenceInPrintList->vertex2relativePosition.z = " << newCurrentReferenceInPrintList->vertex2relativePosition.z << endl;
-		cout << "newCurrentReferenceInPrintList->vertex3relativePosition.x = " << newCurrentReferenceInPrintList->vertex3relativePosition.x << endl;
-		cout << "newCurrentReferenceInPrintList->vertex3relativePosition.y = " << newCurrentReferenceInPrintList->vertex3relativePosition.y << endl;
-		cout << "newCurrentReferenceInPrintList->vertex3relativePosition.z = " << newCurrentReferenceInPrintList->vertex3relativePosition.z << endl;
-		cout << "newCurrentReferenceInPrintList->vertex4relativePosition.x = " << newCurrentReferenceInPrintList->vertex4relativePosition.x << endl;
-		cout << "newCurrentReferenceInPrintList->vertex4relativePosition.y = " << newCurrentReferenceInPrintList->vertex4relativePosition.y << endl;
-		cout << "newCurrentReferenceInPrintList->vertex4relativePosition.z = " << newCurrentReferenceInPrintList->vertex4relativePosition.z << endl;
+		cout << "(*currentReferenceInPrintList)->type = " << (*currentReferenceInPrintList)->type << endl;
+		cout << "(*currentReferenceInPrintList)->colour = " << (*currentReferenceInPrintList)->colour << endl;
+		cout << "(*currentReferenceInPrintList)->vertex1relativePosition.x = " << (*currentReferenceInPrintList)->vertex1relativePosition.x << endl;
+		cout << "(*currentReferenceInPrintList)->vertex1relativePosition.y = " << (*currentReferenceInPrintList)->vertex1relativePosition.y << endl;
+		cout << "(*currentReferenceInPrintList)->vertex1relativePosition.z = " << (*currentReferenceInPrintList)->vertex1relativePosition.z << endl;
+		cout << "(*currentReferenceInPrintList)->vertex2relativePosition.x = " << (*currentReferenceInPrintList)->vertex2relativePosition.x << endl;
+		cout << "(*currentReferenceInPrintList)->vertex2relativePosition.y = " << (*currentReferenceInPrintList)->vertex2relativePosition.y << endl;
+		cout << "(*currentReferenceInPrintList)->vertex2relativePosition.z = " << (*currentReferenceInPrintList)->vertex2relativePosition.z << endl;
+		cout << "(*currentReferenceInPrintList)->vertex3relativePosition.x = " << (*currentReferenceInPrintList)->vertex3relativePosition.x << endl;
+		cout << "(*currentReferenceInPrintList)->vertex3relativePosition.y = " << (*currentReferenceInPrintList)->vertex3relativePosition.y << endl;
+		cout << "(*currentReferenceInPrintList)->vertex3relativePosition.z = " << (*currentReferenceInPrintList)->vertex3relativePosition.z << endl;
+		cout << "(*currentReferenceInPrintList)->vertex4relativePosition.x = " << (*currentReferenceInPrintList)->vertex4relativePosition.x << endl;
+		cout << "(*currentReferenceInPrintList)->vertex4relativePosition.y = " << (*currentReferenceInPrintList)->vertex4relativePosition.y << endl;
+		cout << "(*currentReferenceInPrintList)->vertex4relativePosition.z = " << (*currentReferenceInPrintList)->vertex4relativePosition.z << endl;
 		*/
 		#endif
 
 		LDreference* newDispayReference;
 
 		newDispayReference = new LDreference();
-		newCurrentReferenceInPrintList->next = newDispayReference;
-		newCurrentReferenceInPrintList = newCurrentReferenceInPrintList->next;
+		(*currentReferenceInPrintList)->next = newDispayReference;
+		(*currentReferenceInPrintList) = (*currentReferenceInPrintList)->next;
 
-		newCurrentReferenceInPrintList->type = REFERENCE_TYPE_LINE;
-		newCurrentReferenceInPrintList->colour = DAT_FILE_COLOUR_BLACK;
+		(*currentReferenceInPrintList)->type = REFERENCE_TYPE_LINE;
+		(*currentReferenceInPrintList)->colour = DAT_FILE_COLOUR_BLACK;
 
-		newCurrentReferenceInPrintList->vertex1relativePosition.x = vect->x - width/2.0;
-		newCurrentReferenceInPrintList->vertex1relativePosition.y = vect->y + height/2.0;
-		newCurrentReferenceInPrintList->vertex1relativePosition.z = vect->z;
+		(*currentReferenceInPrintList)->vertex1relativePosition.x = vect->x - width/2.0;
+		(*currentReferenceInPrintList)->vertex1relativePosition.y = vect->y + height/2.0;
+		(*currentReferenceInPrintList)->vertex1relativePosition.z = vect->z;
 
-		newCurrentReferenceInPrintList->vertex2relativePosition.x = vect->x + width/2.0;
-		newCurrentReferenceInPrintList->vertex2relativePosition.y = vect->y + height/2.0;
-		newCurrentReferenceInPrintList->vertex2relativePosition.z = vect->z;
-
-		newDispayReference = new LDreference();
-		newCurrentReferenceInPrintList->next = newDispayReference;
-		newCurrentReferenceInPrintList = newCurrentReferenceInPrintList->next;
-
-		newCurrentReferenceInPrintList->type = REFERENCE_TYPE_LINE;
-		newCurrentReferenceInPrintList->colour = DAT_FILE_COLOUR_BLACK;
-
-		newCurrentReferenceInPrintList->vertex1relativePosition.x = vect->x + width/2.0;
-		newCurrentReferenceInPrintList->vertex1relativePosition.y = vect->y + height/2.0;
-		newCurrentReferenceInPrintList->vertex1relativePosition.z = vect->z;
-
-		newCurrentReferenceInPrintList->vertex2relativePosition.x = vect->x + width/2.0;
-		newCurrentReferenceInPrintList->vertex2relativePosition.y = vect->y - height/2.0;
-		newCurrentReferenceInPrintList->vertex2relativePosition.z = vect->z;
+		(*currentReferenceInPrintList)->vertex2relativePosition.x = vect->x + width/2.0;
+		(*currentReferenceInPrintList)->vertex2relativePosition.y = vect->y + height/2.0;
+		(*currentReferenceInPrintList)->vertex2relativePosition.z = vect->z;
 
 		newDispayReference = new LDreference();
-		newCurrentReferenceInPrintList->next = newDispayReference;
-		newCurrentReferenceInPrintList = newCurrentReferenceInPrintList->next;
+		(*currentReferenceInPrintList)->next = newDispayReference;
+		(*currentReferenceInPrintList) = (*currentReferenceInPrintList)->next;
 
-		newCurrentReferenceInPrintList->type = REFERENCE_TYPE_LINE;
-		newCurrentReferenceInPrintList->colour = DAT_FILE_COLOUR_BLACK;
+		(*currentReferenceInPrintList)->type = REFERENCE_TYPE_LINE;
+		(*currentReferenceInPrintList)->colour = DAT_FILE_COLOUR_BLACK;
 
-		newCurrentReferenceInPrintList->vertex1relativePosition.x = vect->x + width/2.0;
-		newCurrentReferenceInPrintList->vertex1relativePosition.y = vect->y - height/2.0;
-		newCurrentReferenceInPrintList->vertex1relativePosition.z = vect->z;
+		(*currentReferenceInPrintList)->vertex1relativePosition.x = vect->x + width/2.0;
+		(*currentReferenceInPrintList)->vertex1relativePosition.y = vect->y + height/2.0;
+		(*currentReferenceInPrintList)->vertex1relativePosition.z = vect->z;
 
-		newCurrentReferenceInPrintList->vertex2relativePosition.x = vect->x - width/2.0;
-		newCurrentReferenceInPrintList->vertex2relativePosition.y = vect->y - height/2.0;
-		newCurrentReferenceInPrintList->vertex2relativePosition.z = vect->z;
-
-		newDispayReference = new LDreference();
-		newCurrentReferenceInPrintList->next = newDispayReference;
-		newCurrentReferenceInPrintList = newCurrentReferenceInPrintList->next;
-
-		newCurrentReferenceInPrintList->type = REFERENCE_TYPE_LINE;
-		newCurrentReferenceInPrintList->colour = DAT_FILE_COLOUR_BLACK;
-
-		newCurrentReferenceInPrintList->vertex1relativePosition.x = vect->x - width/2.0;
-		newCurrentReferenceInPrintList->vertex1relativePosition.y = vect->y + height/2.0;
-		newCurrentReferenceInPrintList->vertex1relativePosition.z = vect->z;
-
-		newCurrentReferenceInPrintList->vertex2relativePosition.x = vect->x - width/2.0;
-		newCurrentReferenceInPrintList->vertex2relativePosition.y = vect->y - height/2.0;
-		newCurrentReferenceInPrintList->vertex2relativePosition.z = vect->z;
-
+		(*currentReferenceInPrintList)->vertex2relativePosition.x = vect->x + width/2.0;
+		(*currentReferenceInPrintList)->vertex2relativePosition.y = vect->y - height/2.0;
+		(*currentReferenceInPrintList)->vertex2relativePosition.z = vect->z;
 
 		newDispayReference = new LDreference();
-		newCurrentReferenceInPrintList->next = newDispayReference;
-		newCurrentReferenceInPrintList = newCurrentReferenceInPrintList->next;
+		(*currentReferenceInPrintList)->next = newDispayReference;
+		(*currentReferenceInPrintList) = (*currentReferenceInPrintList)->next;
+
+		(*currentReferenceInPrintList)->type = REFERENCE_TYPE_LINE;
+		(*currentReferenceInPrintList)->colour = DAT_FILE_COLOUR_BLACK;
+
+		(*currentReferenceInPrintList)->vertex1relativePosition.x = vect->x + width/2.0;
+		(*currentReferenceInPrintList)->vertex1relativePosition.y = vect->y - height/2.0;
+		(*currentReferenceInPrintList)->vertex1relativePosition.z = vect->z;
+
+		(*currentReferenceInPrintList)->vertex2relativePosition.x = vect->x - width/2.0;
+		(*currentReferenceInPrintList)->vertex2relativePosition.y = vect->y - height/2.0;
+		(*currentReferenceInPrintList)->vertex2relativePosition.z = vect->z;
+
+		newDispayReference = new LDreference();
+		(*currentReferenceInPrintList)->next = newDispayReference;
+		(*currentReferenceInPrintList) = (*currentReferenceInPrintList)->next;
+
+		(*currentReferenceInPrintList)->type = REFERENCE_TYPE_LINE;
+		(*currentReferenceInPrintList)->colour = DAT_FILE_COLOUR_BLACK;
+
+		(*currentReferenceInPrintList)->vertex1relativePosition.x = vect->x - width/2.0;
+		(*currentReferenceInPrintList)->vertex1relativePosition.y = vect->y + height/2.0;
+		(*currentReferenceInPrintList)->vertex1relativePosition.z = vect->z;
+
+		(*currentReferenceInPrintList)->vertex2relativePosition.x = vect->x - width/2.0;
+		(*currentReferenceInPrintList)->vertex2relativePosition.y = vect->y - height/2.0;
+		(*currentReferenceInPrintList)->vertex2relativePosition.z = vect->z;
+
+
+		newDispayReference = new LDreference();
+		(*currentReferenceInPrintList)->next = newDispayReference;
+		(*currentReferenceInPrintList) = (*currentReferenceInPrintList)->next;
 
 		int numSpritesAdded;	//not used
 		vec positionLDR;
 		positionLDR.x = vect->x - GIA_DRAW_BASICENTITY_NODE_WIDTH/4;
 		positionLDR.y = vect->y - GIA_DRAW_BASICENTITY_NODE_HEIGHT/4;
-		positionLDR.z = vect->z  -GIA_OUTPUT_Z_POSITION_NODES;
-		newCurrentReferenceInPrintList = LDsprite.LDaddBasicTextualSpriteStringToReferenceList(*text, newCurrentReferenceInPrintList, &positionLDR, &numSpritesAdded, false, DAT_FILE_COLOUR_BLACK, 0.3);	//add sprite text within box
+		positionLDR.z = vect->z - GIA_OUTPUT_Z_POSITION_NODES;
+		(*currentReferenceInPrintList) = LDsprite.LDaddBasicTextualSpriteStringToReferenceList(*text, (*currentReferenceInPrintList), &positionLDR, &numSpritesAdded, false, DAT_FILE_COLOUR_BLACK, 0.3);	//add sprite text within box
 	}
 
 	if(printType[GIA_DRAW_CREATE_SVG_REFERENCES] == true)
@@ -887,7 +892,7 @@ LDreference* GIAdrawClass::createBox(LDreference* currentReferenceInPrintList, v
 		LDsvg.writeSVGtext(currentTag,* text, &positionSVG, GIA_SVG_SCALE_FACTOR*GIA_SVG_TEXT_SCALE_FACTOR, DAT_FILE_COLOUR_BLACK);
 	}
 
-	return newCurrentReferenceInPrintList;
+	return result;
 }
 
 
@@ -895,266 +900,5 @@ LDreference* GIAdrawClass::createBox(LDreference* currentReferenceInPrintList, v
 
 
 
-
-
-/*
-static double GIA_OUTPUT_Z_POSITION_FILE_CONNECTIONS;
-static double GIA_OUTPUT_Z_POSITION_FILE_CONTAINER_BIG_BOX;
-static double GIA_OUTPUT_Z_POSITION_FUNCTION_CONNECTIONS;
-static double GIA_OUTPUT_Z_POSITION_FILE_AND_FUNCTION_BOX;
-static double GIA_OUTPUT_Z_POSITION_FILE_AND_FUNCTION_TEXT;
-
-static double GIA_FILE_OR_FUNCTION_TEXT_BOX_SCALE_FACTOR_X;
-static double GIA_FILE_OR_FUNCTION_TEXT_BOX_BOX_SCALE_FACTOR_Y_LDR;
-static double GIA_FILE_OR_FUNCTION_TEXT_BOX_TEXT_SCALE_FACTOR_Y_SVG;
-static double GIA_FILE_OR_FUNCTION_TEXT_BOX_TEXT_SCALE_FACTOR_Y_SVG_B;
-static double GIA_FILE_OR_FUNCTION_TEXT_BOX_BOX_SCALE_FACTOR_X_SPACING_FRACTION_SVG;
-static double GIA_FILE_OR_FUNCTION_TEXT_BOX_BOX_SCALE_FACTOR_Y_SPACING_FRACTION_SVG;
-
-static double GIA_FILE_FUNCTIONS_DISABLED_VECTOROBJECTS_SCALE_FACTOR;
-static double GIA_FILE_FUNCTIONS_ENABLED_VECTOROBJECTS_SCALE_FACTOR;
-static double GIA_FILE_MAX_TEXT_LENGTH;
-static double GIA_FILE_TEXT_BOX_PADDING_FRACTION_OF_TEXT_LENGTH;
-static double GIA_FILE_FUNCTIONS_DISABLED_TEXT_BOX_SCALE_FACTOR_X_SPACING_FRACTION;
-static double GIA_FILE_FUNCTIONS_DISABLED_TEXT_BOX_SCALE_FACTOR_Y_SPACING_FRACTION;
-static double GIA_FILE_FUNCTIONS_ENABLED_TEXT_BOX_SCALE_FACTOR_X_SPACING_FRACTION;
-static double GIA_FILE_FUNCTIONS_ENABLED_TEXT_BOX_SCALE_FACTOR_Y_SPACING_FRACTION;
-static double GIA_FILE_FUNCTIONS_ENABLED_LARGE_BOX_SCALE_FACTOR_X;
-static double GIA_FILE_FUNCTIONS_ENABLED_LARGE_BOX_SCALE_FACTOR_X_SPACING_FRACTION_B;
-static double GIA_FILE_FUNCTIONS_ENABLED_LARGE_BOX_SCALE_FACTOR_Y_SPACING_FRACTION_B;
-static double GIA_FILE_FUNCTIONS_ENABLED_LARGE_BOX_SCALE_FACTOR_Y_SPACING_FRACTION_C;
-static double GIA_FILE_TEXT_BOX_OUTLINE_WIDTH_SVG;
-
-static double GIA_FUNCTION_VECTOROBJECTS_SCALE_FACTOR;
-static double GIA_FUNCTION_MAX_TEXT_LENGTH;
-static double GIA_FUNCTION_TEXT_BOX_PADDING_FRACTION_OF_TEXT_LENGTH;
-static double GIA_FUNCTION_TEXT_BOX_SCALE_FACTOR_Y_SPACING_FRACTION;
-static double GIA_FUNCTION_TEXT_BOX_OUTLINE_WIDTH_SVG;
-
-static int GIA_LAYER_0_COLOUR;
-static int GIA_LAYER_1_COLOUR;
-static int GIA_LAYER_2_COLOUR;
-static int GIA_LAYER_3_COLOUR;
-static int GIA_LAYER_4_COLOUR;
-static int GIA_LAYER_5_COLOUR;
-static int GIA_LAYER_6_COLOUR;
-static int GIA_LAYER_7_COLOUR;
-static int GIA_LAYER_8_COLOUR;
-static int GIA_LAYER_9_COLOUR;
-static int GIA_LAYER_10_COLOUR;
-static int GIA_LAYER_11_COLOUR;
-static int GIA_LAYER_12_COLOUR;
-
-static int GIA_FUNCTION_CONNECTION_HIGHLIGHT_COLOUR;
-static int GIA_FUNCTION_BOX_HIGHLIGHT_COLOUR;
-
-
-
-void fillInGIARulesExternVariables()
-{
-	//extract common sprite variables from either xml file (LRRC or ANN)
-
-	XMLrulesClass* currentReferenceRulesClass = CSrulesDraw;
-
-	while(currentReferenceRulesClass->next != NULL)
-	{
-
-		if(currentReferenceRulesClass->name == GIA_OUTPUT_Z_POSITION_FILE_CONNECTIONS_NAME)
-		{
-			GIA_OUTPUT_Z_POSITION_FILE_CONNECTIONS = currentReferenceRulesClass->fractionalValue;
-		}
-		else if(currentReferenceRulesClass->name == GIA_OUTPUT_Z_POSITION_FILE_CONTAINER_BIG_BOX_NAME)
-		{
-			GIA_OUTPUT_Z_POSITION_FILE_CONTAINER_BIG_BOX = currentReferenceRulesClass->fractionalValue;
-		}
-		else if(currentReferenceRulesClass->name == GIA_OUTPUT_Z_POSITION_FUNCTION_CONNECTIONS_NAME)
-		{
-			GIA_OUTPUT_Z_POSITION_FUNCTION_CONNECTIONS = currentReferenceRulesClass->fractionalValue;
-		}
-		else if(currentReferenceRulesClass->name == GIA_OUTPUT_Z_POSITION_FILE_AND_FUNCTION_BOX_NAME)
-		{
-			GIA_OUTPUT_Z_POSITION_FILE_AND_FUNCTION_BOX = currentReferenceRulesClass->fractionalValue;
-		}
-		else if(currentReferenceRulesClass->name == GIA_OUTPUT_Z_POSITION_FILE_AND_FUNCTION_TEXT_NAME)
-		{
-			GIA_OUTPUT_Z_POSITION_FILE_AND_FUNCTION_TEXT = currentReferenceRulesClass->fractionalValue;
-		}
-
-
-		else if(currentReferenceRulesClass->name == GIA_FILE_OR_FUNCTION_TEXT_BOX_SCALE_FACTOR_X_NAME)
-		{
-			GIA_FILE_OR_FUNCTION_TEXT_BOX_SCALE_FACTOR_X = currentReferenceRulesClass->fractionalValue;
-		}
-		else if(currentReferenceRulesClass->name == GIA_FILE_OR_FUNCTION_TEXT_BOX_BOX_SCALE_FACTOR_Y_LDR_NAME)
-		{
-			GIA_FILE_OR_FUNCTION_TEXT_BOX_BOX_SCALE_FACTOR_Y_LDR  = currentReferenceRulesClass->fractionalValue;
-		}
-		else if(currentReferenceRulesClass->name == GIA_FILE_OR_FUNCTION_TEXT_BOX_TEXT_SCALE_FACTOR_Y_SVG_NAME)
-		{
-			GIA_FILE_OR_FUNCTION_TEXT_BOX_TEXT_SCALE_FACTOR_Y_SVG = currentReferenceRulesClass->fractionalValue;
-		}
-		else if(currentReferenceRulesClass->name == GIA_FILE_OR_FUNCTION_TEXT_BOX_TEXT_SCALE_FACTOR_Y_SVG_B_NAME)
-		{
-			GIA_FILE_OR_FUNCTION_TEXT_BOX_TEXT_SCALE_FACTOR_Y_SVG_B = currentReferenceRulesClass->fractionalValue;
-		}
-		else if(currentReferenceRulesClass->name == GIA_FILE_OR_FUNCTION_TEXT_BOX_BOX_SCALE_FACTOR_X_SPACING_FRACTION_SVG_NAME)
-		{
-			GIA_FILE_OR_FUNCTION_TEXT_BOX_BOX_SCALE_FACTOR_X_SPACING_FRACTION_SVG = currentReferenceRulesClass->fractionalValue;
-		}
-		else if(currentReferenceRulesClass->name == GIA_FILE_OR_FUNCTION_TEXT_BOX_BOX_SCALE_FACTOR_Y_SPACING_FRACTION_SVG_NAME)
-		{
-			GIA_FILE_OR_FUNCTION_TEXT_BOX_BOX_SCALE_FACTOR_Y_SPACING_FRACTION_SVG = currentReferenceRulesClass->fractionalValue;
-		}
-
-
-		else if(currentReferenceRulesClass->name == GIA_FILE_FUNCTIONS_DISABLED_VECTOROBJECTS_SCALE_FACTOR_NAME)
-		{
-			GIA_FILE_FUNCTIONS_DISABLED_VECTOROBJECTS_SCALE_FACTOR = currentReferenceRulesClass->fractionalValue;
-		}
-		else if(currentReferenceRulesClass->name == GIA_FILE_FUNCTIONS_ENABLED_VECTOROBJECTS_SCALE_FACTOR_NAME)
-		{
-			GIA_FILE_FUNCTIONS_ENABLED_VECTOROBJECTS_SCALE_FACTOR = currentReferenceRulesClass->fractionalValue;
-		}
-		else if(currentReferenceRulesClass->name == GIA_FILE_MAX_TEXT_LENGTH_NAME)
-		{
-			GIA_FILE_MAX_TEXT_LENGTH = currentReferenceRulesClass->fractionalValue;
-		}
-		else if(currentReferenceRulesClass->name == GIA_FILE_TEXT_BOX_PADDING_FRACTION_OF_TEXT_LENGTH_NAME)
-		{
-			GIA_FILE_TEXT_BOX_PADDING_FRACTION_OF_TEXT_LENGTH = currentReferenceRulesClass->fractionalValue;
-		}
-		else if(currentReferenceRulesClass->name == GIA_FILE_FUNCTIONS_DISABLED_TEXT_BOX_SCALE_FACTOR_X_SPACING_FRACTION_NAME)
-		{
-			GIA_FILE_FUNCTIONS_DISABLED_TEXT_BOX_SCALE_FACTOR_X_SPACING_FRACTION = currentReferenceRulesClass->fractionalValue;
-		}
-		else if(currentReferenceRulesClass->name == GIA_FILE_FUNCTIONS_DISABLED_TEXT_BOX_SCALE_FACTOR_Y_SPACING_FRACTION_NAME)
-		{
-			GIA_FILE_FUNCTIONS_DISABLED_TEXT_BOX_SCALE_FACTOR_Y_SPACING_FRACTION = currentReferenceRulesClass->fractionalValue;
-		}
-		else if(currentReferenceRulesClass->name == GIA_FILE_FUNCTIONS_ENABLED_TEXT_BOX_SCALE_FACTOR_X_SPACING_FRACTION_NAME)
-		{
-			GIA_FILE_FUNCTIONS_ENABLED_TEXT_BOX_SCALE_FACTOR_X_SPACING_FRACTION = currentReferenceRulesClass->fractionalValue;
-		}
-		else if(currentReferenceRulesClass->name == GIA_FILE_FUNCTIONS_ENABLED_TEXT_BOX_SCALE_FACTOR_Y_SPACING_FRACTION_NAME)
-		{
-			GIA_FILE_FUNCTIONS_ENABLED_TEXT_BOX_SCALE_FACTOR_Y_SPACING_FRACTION = currentReferenceRulesClass->fractionalValue;
-		}
-		else if(currentReferenceRulesClass->name == GIA_FILE_FUNCTIONS_ENABLED_LARGE_BOX_SCALE_FACTOR_X_NAME)
-		{
-			GIA_FILE_FUNCTIONS_ENABLED_LARGE_BOX_SCALE_FACTOR_X = currentReferenceRulesClass->fractionalValue;
-		}
-		else if(currentReferenceRulesClass->name == GIA_FILE_FUNCTIONS_ENABLED_LARGE_BOX_SCALE_FACTOR_X_SPACING_FRACTION_B_NAME)
-		{
-			GIA_FILE_FUNCTIONS_ENABLED_LARGE_BOX_SCALE_FACTOR_X_SPACING_FRACTION_B = currentReferenceRulesClass->fractionalValue;
-		}
-		else if(currentReferenceRulesClass->name == GIA_FILE_FUNCTIONS_ENABLED_LARGE_BOX_SCALE_FACTOR_Y_SPACING_FRACTION_B_NAME)
-		{
-			GIA_FILE_FUNCTIONS_ENABLED_LARGE_BOX_SCALE_FACTOR_Y_SPACING_FRACTION_B = currentReferenceRulesClass->fractionalValue;
-		}
-		else if(currentReferenceRulesClass->name == GIA_FILE_FUNCTIONS_ENABLED_LARGE_BOX_SCALE_FACTOR_Y_SPACING_FRACTION_C_NAME)
-		{
-			GIA_FILE_FUNCTIONS_ENABLED_LARGE_BOX_SCALE_FACTOR_Y_SPACING_FRACTION_C = currentReferenceRulesClass->fractionalValue;
-		}
-		else if(currentReferenceRulesClass->name == GIA_FILE_TEXT_BOX_OUTLINE_WIDTH_SVG_NAME)
-		{
-			GIA_FILE_TEXT_BOX_OUTLINE_WIDTH_SVG = currentReferenceRulesClass->fractionalValue;
-		}
-
-
-
-		else if(currentReferenceRulesClass->name == GIA_FUNCTION_VECTOROBJECTS_SCALE_FACTOR_NAME)
-		{
-			GIA_FUNCTION_VECTOROBJECTS_SCALE_FACTOR = currentReferenceRulesClass->fractionalValue;
-		}
-		else if(currentReferenceRulesClass->name == GIA_FUNCTION_MAX_TEXT_LENGTH_NAME)
-		{
-			GIA_FUNCTION_MAX_TEXT_LENGTH = currentReferenceRulesClass->fractionalValue;
-		}
-		else if(currentReferenceRulesClass->name == GIA_FUNCTION_TEXT_BOX_PADDING_FRACTION_OF_TEXT_LENGTH_NAME)
-		{
-			GIA_FUNCTION_TEXT_BOX_PADDING_FRACTION_OF_TEXT_LENGTH = currentReferenceRulesClass->fractionalValue;
-		}
-		else if(currentReferenceRulesClass->name == GIA_FUNCTION_TEXT_BOX_SCALE_FACTOR_Y_SPACING_FRACTION_NAME)
-		{
-			GIA_FUNCTION_TEXT_BOX_SCALE_FACTOR_Y_SPACING_FRACTION = currentReferenceRulesClass->fractionalValue;
-		}
-		else if(currentReferenceRulesClass->name == GIA_FUNCTION_TEXT_BOX_OUTLINE_WIDTH_SVG_NAME)
-		{
-			GIA_FUNCTION_TEXT_BOX_OUTLINE_WIDTH_SVG = currentReferenceRulesClass->fractionalValue;
-		}
-
-
-		else if(currentReferenceRulesClass->name == GIA_LAYER_0_COLOUR_NAME)
-		{
-			GIA_LAYER_0_COLOUR = currentReferenceRulesClass->fractionalValue;
-		}
-		else if(currentReferenceRulesClass->name == GIA_LAYER_1_COLOUR_NAME)
-		{
-			GIA_LAYER_1_COLOUR = currentReferenceRulesClass->fractionalValue;
-		}
-		else if(currentReferenceRulesClass->name == GIA_LAYER_2_COLOUR_NAME)
-		{
-			GIA_LAYER_2_COLOUR = currentReferenceRulesClass->fractionalValue;
-		}
-		else if(currentReferenceRulesClass->name == GIA_LAYER_3_COLOUR_NAME)
-		{
-			GIA_LAYER_3_COLOUR = currentReferenceRulesClass->fractionalValue;
-		}
-		else if(currentReferenceRulesClass->name == GIA_LAYER_4_COLOUR_NAME)
-		{
-			GIA_LAYER_4_COLOUR = currentReferenceRulesClass->fractionalValue;
-		}
-		else if(currentReferenceRulesClass->name == GIA_LAYER_5_COLOUR_NAME)
-		{
-			GIA_LAYER_5_COLOUR = currentReferenceRulesClass->fractionalValue;
-		}
-		else if(currentReferenceRulesClass->name == GIA_LAYER_6_COLOUR_NAME)
-		{
-			GIA_LAYER_6_COLOUR = currentReferenceRulesClass->fractionalValue;
-		}
-		else if(currentReferenceRulesClass->name == GIA_LAYER_7_COLOUR_NAME)
-		{
-			GIA_LAYER_7_COLOUR = currentReferenceRulesClass->fractionalValue;
-		}
-		else if(currentReferenceRulesClass->name == GIA_LAYER_8_COLOUR_NAME)
-		{
-			GIA_LAYER_8_COLOUR = currentReferenceRulesClass->fractionalValue;
-		}
-		else if(currentReferenceRulesClass->name == GIA_LAYER_9_COLOUR_NAME)
-		{
-			GIA_LAYER_9_COLOUR = currentReferenceRulesClass->fractionalValue;
-		}
-		else if(currentReferenceRulesClass->name == GIA_LAYER_10_COLOUR_NAME)
-		{
-			GIA_LAYER_10_COLOUR = currentReferenceRulesClass->fractionalValue;
-		}
-		else if(currentReferenceRulesClass->name == GIA_LAYER_11_COLOUR_NAME)
-		{
-			GIA_LAYER_11_COLOUR = currentReferenceRulesClass->fractionalValue;
-		}
-		else if(currentReferenceRulesClass->name == GIA_LAYER_12_COLOUR_NAME)
-		{
-			GIA_LAYER_12_COLOUR = currentReferenceRulesClass->fractionalValue;
-		}
-
-
-		else if(currentReferenceRulesClass->name == GIA_FUNCTION_CONNECTION_HIGHLIGHT_COLOUR_NAME)
-		{
-			GIA_FUNCTION_CONNECTION_HIGHLIGHT_COLOUR = currentReferenceRulesClass->fractionalValue;
-		}
-		else if(currentReferenceRulesClass->name == GIA_FUNCTION_BOX_HIGHLIGHT_COLOUR_NAME)
-		{
-			GIA_FUNCTION_BOX_HIGHLIGHT_COLOUR = currentReferenceRulesClass->fractionalValue;
-		}
-		else
-		{
-
-		}
-
-		currentReferenceRulesClass = currentReferenceRulesClass->next;
-	}
-
-}
-*/
 
 
