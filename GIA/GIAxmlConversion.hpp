@@ -25,7 +25,7 @@
  * File Name: GIAxmlConversion.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1p 26-February-2017
+ * Project Version: 3a1q 26-February-2017
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  *
  *******************************************************************************/
@@ -60,13 +60,16 @@
 #define NET_XML_TAG_semanticNetwork ((string)"semanticNetwork")
 	#define NET_XML_TAG_networkIndexEntityNodeContainer ((string)"networkIndexEntityNodeContainer")
 	#define NET_XML_TAG_substanceEntityNodeContainer ((string)"substanceEntityNodeContainer")
+	#define NET_XML_TAG_conceptEntityNodeContainer ((string)"conceptEntityNodeContainer")
 	#define NET_XML_TAG_actionEntityNodeContainer ((string)"actionEntityNodeContainer")
 	#define NET_XML_TAG_conditionEntityNodeContainer ((string)"conditionEntityNodeContainer")
-	#define NET_XML_TAG_conceptEntityNodeContainer ((string)"conceptEntityNodeContainer")
+	#define NET_XML_TAG_propertyEntityNodeContainer ((string)"propertyEntityNodeContainer")
+	#define NET_XML_TAG_definitionEntityNodeContainer ((string)"definitionEntityNodeContainer")
 	#define NET_XML_TAG_qualityEntityNodeContainer ((string)"qualityEntityNodeContainer")
 		#define NET_XML_TAG_timeConditionNode ((string)"timeConditionNode")
 		#define NET_XML_TAG_entityNode ((string)"entityNode")
-static string entityTypeNodeContainerXMLtags[GIA_ENTITY_NUMBER_OF_TYPES] = {NET_XML_TAG_networkIndexEntityNodeContainer, NET_XML_TAG_substanceEntityNodeContainer, NET_XML_TAG_actionEntityNodeContainer, NET_XML_TAG_conditionEntityNodeContainer, NET_XML_TAG_conceptEntityNodeContainer, NET_XML_TAG_qualityEntityNodeContainer};
+static string entityTypeNodeContainerXMLtags[GIA_ENTITY_NUMBER_OF_TYPES] = {NET_XML_TAG_networkIndexEntityNodeContainer, NET_XML_TAG_substanceEntityNodeContainer, NET_XML_TAG_conceptEntityNodeContainer, NET_XML_TAG_actionEntityNodeContainer, NET_XML_TAG_conditionEntityNodeContainer, NET_XML_TAG_propertyEntityNodeContainer, NET_XML_TAG_definitionEntityNodeContainer, NET_XML_TAG_qualityEntityNodeContainer};
+
 
 #define NET_XML_TAG_actionNodeReference ((string)"actionNodeReference")
 #define NET_XML_TAG_conditionNodeReference ((string)"conditionNodeReference")

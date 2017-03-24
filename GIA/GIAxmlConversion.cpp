@@ -25,7 +25,7 @@
  * File Name: GIAxmlConversion.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1p 26-February-2017
+ * Project Version: 3a1q 26-February-2017
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  * NB this function creates entity idActiveListReorderdIDforXMLsave values upon write to speed up linking process (does not use original idActiveList values)
  * NB this function creates entity idActiveList values upon read (it could create idActiveListReorderdIDforXMLsave values instead - however currently it is assumed that when an XML file is loaded, this will populate the idActiveList in its entirety)
@@ -152,18 +152,22 @@ bool GIAxmlConversionClass::parseSemanticNetTag(XMLparserTag* firstTagInNetwork,
 
 	//not used;
 	vector<GIAentityNode*> entityNodesActiveListSubstances;
+	vector<GIAentityNode*> entityNodesActiveListConcepts;
 	vector<GIAentityNode*> entityNodesActiveListActions;
 	vector<GIAentityNode*> entityNodesActiveListConditions;
-	vector<GIAentityNode*> entityNodesActiveListConcepts;
+	vector<GIAentityNode*> entityNodesActiveListProperties;
+	vector<GIAentityNode*> entityNodesActiveListDefinitions;
 	vector<GIAentityNode*> entityNodesActiveListQualities;
 	vector<GIAentityNode*>* entityNodesActiveListArray[GIA_ENTITY_NUMBER_OF_TYPES];
 	entityNodesActiveListArray[GIA_ENTITY_TYPE_NETWORK_INDEX] = entityNodesActiveListNetworkIndexes;
 	entityNodesActiveListArray[GIA_ENTITY_TYPE_SUBSTANCE] = &entityNodesActiveListSubstances;
+	entityNodesActiveListArray[GIA_ENTITY_TYPE_CONCEPT] = &entityNodesActiveListConcepts;
 	entityNodesActiveListArray[GIA_ENTITY_TYPE_ACTION] = &entityNodesActiveListActions;
 	entityNodesActiveListArray[GIA_ENTITY_TYPE_CONDITION] = &entityNodesActiveListConditions;
-	entityNodesActiveListArray[GIA_ENTITY_TYPE_CONCEPT] = &entityNodesActiveListConcepts;
+	entityNodesActiveListArray[GIA_ENTITY_TYPE_PROPERTY] = &entityNodesActiveListProperties;
+	entityNodesActiveListArray[GIA_ENTITY_TYPE_DEFINITION] = &entityNodesActiveListDefinitions;
 	entityNodesActiveListArray[GIA_ENTITY_TYPE_QUALITY] = &entityNodesActiveListQualities;
-
+	
 	if(currentTagUpdatedL1->name == NET_XML_TAG_semanticNetwork)
 	{
 	}
