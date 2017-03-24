@@ -25,7 +25,7 @@
  * File Name: GIAtranslator.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1o 26-February-2017
+ * Project Version: 3a1p 26-February-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -339,7 +339,6 @@ bool GIAtranslatorClass::convertSentenceRelationsIntoGIAnetworkNodesWrapper(GIAt
 	{
 		#ifdef GIA_DATABASE
 		int useDatabaseOriginal = GIAdatabase.getUseDatabase();
-		GIAdatabase.setUseDatabase(GIA_DATABASE_FALSE);
 		#endif
 
 		GIAcoreference* firstGIAcoreferenceInList = new GIAcoreference();
@@ -348,12 +347,14 @@ bool GIAtranslatorClass::convertSentenceRelationsIntoGIAnetworkNodesWrapper(GIAt
 		//backup current database structures and create temporary database structures for !linkPreestablishedReferencesGIA run;
 		unordered_map<string, GIAentityNode*>* entityNodesActiveListCompleteFastIndexDBactiveOriginal;
 		unordered_map<string, GIAentityNode*>* entityNodesActiveListCompleteFastIndexDBactiveTemp;
+		#ifdef GIA_DATABASE
 		if(GIAdatabase.getUseDatabase() != GIA_DATABASE_FALSE)
 		{
 			entityNodesActiveListCompleteFastIndexDBactiveOriginal = GIAdatabase.getDBentityNodesActiveListCompleteFastIndexDBactive();
 			entityNodesActiveListCompleteFastIndexDBactiveTemp = new unordered_map<string, GIAentityNode*>;
 			GIAdatabase.setDBentityNodesActiveListCompleteFastIndexDBactive(entityNodesActiveListCompleteFastIndexDBactiveTemp);
 		}
+		#endif
 		
 		//create temporary memory structures for !linkPreestablishedReferencesGIA run;
 		GIAtranslatorVariablesClass translatorVariablesPrelim = *translatorVariables;
@@ -371,6 +372,10 @@ bool GIAtranslatorClass::convertSentenceRelationsIntoGIAnetworkNodesWrapper(GIAt
 		translatorVariablesPrelim.entityNodesActiveListSentences = &entityNodesActiveListSentencesTemp;
 		translatorVariablesPrelim.saveNetwork = false;
 
+		#ifdef GIA_DATABASE
+		GIAdatabase.setUseDatabase(GIA_DATABASE_FALSE);
+		#endif
+		
 		#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 		cout << "\n\t\t\t GIA_ADVANCED_REFERENCING_DEBUG (1convertSentenceRelationsIntoGIAnetworkNodes)\n" << endl;
 		#endif
@@ -400,25 +405,9 @@ bool GIAtranslatorClass::convertSentenceRelationsIntoGIAnetworkNodesWrapper(GIAt
 		cout << "\n\t\t\t GIA_ADVANCED_REFERENCING_DEBUG (2identifyReferenceSets)\n" << endl;
 		#endif
 
-
-
 		vector<GIAentityNode*> referenceSetDefiniteEntityList;
 		int numberReferenceSets = GIAtranslatorDefineReferencing.identifyReferenceSets(&sentenceNetworkIndexEntityNodesList, translatorVariables->NLPdependencyRelationsType, &referenceSetDefiniteEntityList);	//NB NLPdependencyRelationsType is no longer used here
-		
-		/*
-		//debug:
-		cout << "translatorVariablesPrelim->sentenceIndex = " << translatorVariablesPrelim.sentenceIndex << endl;
-		for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
-		{	
-			if(translatorVariablesPrelim.GIAentityNodeArrayFilled[w])
-			{
-				GIAentityNode* entity = translatorVariablesPrelim.GIAentityNodeArray[w];
-				cout << "entity->entityName = " << entity->entityName << endl;
-				cout << "entity->referenceSetID = " << entity->referenceSetID << endl;
-			}
-		}
-		*/
-		
+	
 		#ifdef GIA_DATABASE
 		GIAdatabase.setUseDatabase(useDatabaseOriginal);
 		#endif
@@ -438,10 +427,12 @@ bool GIAtranslatorClass::convertSentenceRelationsIntoGIAnetworkNodesWrapper(GIAt
 		cout << "\n\t\t\t GIA_ADVANCED_REFERENCING_DEBUG (4convertSentenceRelationsIntoGIAnetworkNodes)\n" << endl;
 		#endif
 
+		#ifdef GIA_DATABASE
 		if(GIAdatabase.getUseDatabase() != GIA_DATABASE_FALSE)
 		{
 			GIAdatabase.setDBentityNodesActiveListCompleteFastIndexDBactive(entityNodesActiveListCompleteFastIndexDBactiveOriginal);
 		}
+		#endif
 
 		vector<GIAentityNode*> sentenceNetworkIndexEntityNodesListTemp2;
 		translatorVariables->sentenceNetworkIndexEntityNodesList = &sentenceNetworkIndexEntityNodesListTemp2;
@@ -460,13 +451,15 @@ bool GIAtranslatorClass::convertSentenceRelationsIntoGIAnetworkNodesWrapper(GIAt
 			this->convertSentenceSyntacticRelationsIntoGIAnetworkNodes(translatorVariables, true, firstGIAcoreferenceInList);
 		}
 
-		//Clear temporary variables;
+		//clear temporary variables;
 		delete firstGIAcoreferenceInList;
 		GIAentityNodeClass.deleteEntitiesInEntityNodeList(&entityNodesActiveListCompleteTemp);	//what about entities that have been referenced via advanced referencing (and were not added via direct database access) - won't these be deleted also?
+		#ifdef GIA_DATABASE
 		if(GIAdatabase.getUseDatabase() != GIA_DATABASE_FALSE)
 		{
 			delete entityNodesActiveListCompleteFastIndexDBactiveTemp;	//entityNodesActiveListCompleteFastIndexTemp->clear();
 		}
+		#endif
 	}
 	else
 	{
@@ -825,10 +818,10 @@ bool GIAtranslatorClass::convertSentenceSyntacticRelationsIntoGIAnetworkNodes(GI
 			}
 			#endif
 
-			//this is now just debugging:
-			#ifdef GIA_SET_ENTITY_ENTITY_AND_SENTENCE_INDICIES_NORMALLY
+			
 			if(!(entity->wasReference))
 			{
+				//this is now just debugging:
 				#ifdef GIA_ADVANCED_REFERENCING_DEBUG_INTRASENTENCE_EXTRA
 				cout << "\nw = " << w << endl;
 				cout << "translatorVariables->currentSentenceInList->sentenceIndex = " << translatorVariables->currentSentenceInList->sentenceIndex << endl;
@@ -858,25 +851,24 @@ bool GIAtranslatorClass::convertSentenceSyntacticRelationsIntoGIAnetworkNodes(GI
 				if(entity->entityIndexTemp != w)
 				{
 					#ifdef GIA_REFERENCING_UPDATE_ENTITY_INDEXES_OF_REFERENCE_SOURCE_TO_THOSE_OF_CURRENT_SENTENCE
-					if(entity->entityType != GIA_ENTITY_TYPE_NETWORK_INDEX)
-					{
-						cout << "convertSentenceSyntacticRelationsIntoGIAnetworkNodes{} warning: GIAentityNodeArray[" << w << "]->entityIndexTemp != " << w << endl;
-						cout << "this should be a merged entity" << endl;
-						cout << "entity->entityName = " << entity->entityName << endl;
-						cout << "entity->entityType = " << entity->entityType << endl;
-						cout << "entity->entityIndexTemp = " << entity->entityIndexTemp << endl;
-						cout << "entity->sentenceIndexTemp = " << entity->sentenceIndexTemp << endl;
-						//exit(EXIT_ERROR);
-					}
+					/*
+					cout << "convertSentenceSyntacticRelationsIntoGIAnetworkNodes{} warning: GIAentityNodeArray[" << w << "]->entityIndexTemp != " << w << endl;
+					cout << "this should be a merged entity" << endl;
+					cout << "entity->entityName = " << entity->entityName << endl;
+					cout << "entity->entityType = " << entity->entityType << endl;
+					cout << "entity->entityIndexTemp = " << entity->entityIndexTemp << endl;
+					cout << "entity->sentenceIndexTemp = " << entity->sentenceIndexTemp << endl;
+					*/
 					#endif
 				}
 				if(entity->sentenceIndexTemp != translatorVariables->currentSentenceInList->sentenceIndex)
 				{
 					#ifdef GIA_REFERENCING_UPDATE_ENTITY_INDEXES_OF_REFERENCE_SOURCE_TO_THOSE_OF_CURRENT_SENTENCE
-					cout << "convertSentenceSyntacticRelationsIntoGIAnetworkNodes{} warning: GIAentityNodeArray[" << w << "]->sentenceIndexTemp != " << translatorVariables->currentSentenceInList->sentenceIndex << endl;
+					//cout << "convertSentenceSyntacticRelationsIntoGIAnetworkNodes{} warning: GIAentityNodeArray[" << w << "]->sentenceIndexTemp != " << translatorVariables->currentSentenceInList->sentenceIndex << endl;
 					#endif
 				}
-				#ifndef GIA_REFERENCING_UPDATE_ENTITY_INDEXES_OF_REFERENCE_SOURCE_TO_THOSE_OF_CURRENT_SENTENCE
+				
+				//#ifndef GIA_REFERENCING_UPDATE_ENTITY_INDEXES_OF_REFERENCE_SOURCE_TO_THOSE_OF_CURRENT_SENTENCE
 				//look for double references, and if found assume possible intrasentence referencing capabilities (assign unique entityIndexTemp values; ie their original entity indices);
 				if(featureArrayTemp[w] != NULL)
 				{
@@ -900,27 +892,21 @@ bool GIAtranslatorClass::convertSentenceSyntacticRelationsIntoGIAnetworkNodes(GI
 						}
 					}
 				}
-				#endif
+				//#endif
 			}
-			#endif
 			#else
 				if(entity->entityIndexTemp != w)
 				{
 					entity->entityIndexTemp = w;
 					#ifdef GIA_REFERENCING_UPDATE_ENTITY_INDEXES_OF_REFERENCE_SOURCE_TO_THOSE_OF_CURRENT_SENTENCE
-					//if(entity->entityType != GIA_ENTITY_TYPE_NETWORK_INDEX)
-					//{
-						cout << "convertSentenceSyntacticRelationsIntoGIAnetworkNodes{} error: GIAentityNodeArray[" << w << "]->entityIndexTemp != " << w << endl;
-						exit(EXIT_ERROR);
-					//}
+					//cout << "convertSentenceSyntacticRelationsIntoGIAnetworkNodes{} warning: GIAentityNodeArray[" << w << "]->entityIndexTemp != " << w << endl;
 					#endif
 				}
 				if(entity->sentenceIndexTemp != translatorVariables->currentSentenceInList->sentenceIndex)
 				{
 					entity->sentenceIndexTemp = translatorVariables->currentSentenceInList->sentenceIndex;
 					#ifdef GIA_REFERENCING_UPDATE_ENTITY_INDEXES_OF_REFERENCE_SOURCE_TO_THOSE_OF_CURRENT_SENTENCE
-					cout << "convertSentenceSyntacticRelationsIntoGIAnetworkNodes{} error: GIAentityNodeArray[" << w << "]->sentenceIndexTemp != " << translatorVariables->currentSentenceInList->sentenceIndex << endl;
-					exit(EXIT_ERROR);
+					//cout << "convertSentenceSyntacticRelationsIntoGIAnetworkNodes{} warning: GIAentityNodeArray[" << w << "]->sentenceIndexTemp != " << translatorVariables->currentSentenceInList->sentenceIndex << endl;
 					#endif
 				}
 				#ifdef GIA_DEBUG
@@ -952,8 +938,8 @@ bool GIAtranslatorClass::convertSentenceSyntacticRelationsIntoGIAnetworkNodes(GI
 						#ifdef GIA_DEBUG
 						//cout << "networkIndexNode->sentenceIndexTemp = " << networkIndexNode->sentenceIndexTemp << endl;
 						#endif
-						cout << "convertSentenceSyntacticRelationsIntoGIAnetworkNodes{} error: GIAentityNodeArray[" << w << "]->networkIndexNode->sentenceIndexTemp undefined" << endl;
-						exit(EXIT_ERROR);
+						cout << "convertSentenceSyntacticRelationsIntoGIAnetworkNodes{} warning: GIAentityNodeArray[" << w << "]->networkIndexNode->sentenceIndexTemp undefined" << endl;
+						//exit(EXIT_ERROR);
 					}
 					/*No problem detected here:
 					if(networkIndexNode->sentenceIndexTemp == 0)
@@ -1112,10 +1098,8 @@ void GIAtranslatorClass::createParentsOfSubclassEntities(GIAtranslatorVariablesC
 					//cout << "creating parentClassNetworkIndexEntity: " << parentClassName << endl;
 					translatorVariables->sentenceNetworkIndexEntityNodesList->push_back(parentClassNetworkIndexEntity);
 
-					#ifdef GIA_SET_ENTITY_ENTITY_AND_SENTENCE_INDICIES_NORMALLY
 					parentClassNetworkIndexEntity->entityIndexTemp = GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES_ARTIFICAL_ENTITY_INDEX;	//there is no entity index associated with the artifically added subclass parent networkIndex
 					parentClassNetworkIndexEntity->sentenceIndexTemp = subclassNetworkIndexEntity->sentenceIndexTemp;
-					#endif
 
 					this->linkSubclassEntitiesWithParentClassEntities(subclassNetworkIndexEntity, parentClassNetworkIndexEntity, false, false, translatorVariables);
 				}
@@ -1186,10 +1170,8 @@ void GIAtranslatorClass::createAdditionalSubclassEntities(GIAtranslatorVariables
 							#endif
 							translatorVariables->sentenceNetworkIndexEntityNodesList->push_back(subClassNetworkIndexEntity);
 
-							#ifdef GIA_SET_ENTITY_ENTITY_AND_SENTENCE_INDICIES_NORMALLY
 							subClassNetworkIndexEntity->entityIndexTemp = GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES_ARTIFICAL_ENTITY_INDEX;	//there is no entity index associated with the artifically added subclass parent networkIndex
 							subClassNetworkIndexEntity->sentenceIndexTemp = entity->sentenceIndexTemp;
-							#endif
 
 							GIAentityNode* definitionNetworkIndexEntity = GIAtranslatorOperations.getPrimaryNetworkIndexNodeDefiningInstance(definitionRelationshipObjectEntity);
 							this->linkSubclassEntitiesWithParentClassEntities(definitionNetworkIndexEntity, subClassNetworkIndexEntity, false, false, translatorVariables);	//links xenomorph concept with xenomorph_bat concept

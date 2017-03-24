@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorDefineGrammar.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1o 26-February-2017
+ * Project Version: 3a1p 26-February-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -187,10 +187,8 @@ void GIAtranslatorDefineGrammarClass::locateAndAddAllFeatureTempEntities(GIAtran
 					*/
 					GIAentityNode* featureTempEntity = new GIAentityNode();
 					featureTempEntity->entityName = prepositionName;
-					#ifdef GIA_SET_ENTITY_ENTITY_AND_SENTENCE_INDICIES_NORMALLY
 					featureTempEntity->entityIndexTemp = prepositionEntityIndex;
 					featureTempEntity->sentenceIndexTemp = translatorVariables->currentSentenceInList->sentenceIndex;
-					#endif
 					translatorVariables->GIAfeatureTempEntityNodeArray[prepositionEntityIndex] = featureTempEntity;
 				}
 			}
@@ -256,13 +254,11 @@ void GIAtranslatorDefineGrammarClass::locateAndAddAllNetworkIndexEntities(GIAtra
 			//cout << "entity->entityName = " << entity->entityName << endl;
 			#endif
 
-			#ifdef GIA_SET_ENTITY_ENTITY_AND_SENTENCE_INDICIES_NORMALLY
 			entity->entityIndexTemp = featureTempEntityNode->entityIndexTemp;
 			entity->sentenceIndexTemp = featureTempEntityNode->sentenceIndexTemp;
 			#ifdef GIA_ADVANCED_REFERENCING_DEBUG_INTRASENTENCE_EXTRA
 			cout << "\nentity->entityName = " << entity->entityName << endl;
 			cout << "entity->entityIndexTemp = " << entity->entityIndexTemp << endl;
-			#endif
 			#endif
 
 			#ifndef GIA_REDISTRIBUTE_STANFORD_RELATIONS_QUERY_VARIABLE_DEBUG_DO_NOT_MAKE_FINAL_CHANGES_YET

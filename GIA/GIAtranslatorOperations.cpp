@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1o 26-February-2017
+ * Project Version: 3a1p 26-February-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -902,14 +902,12 @@ void GIAtranslatorOperationsClass::forwardInfoToNewSubstance(GIAentityNode* enti
 		newSubstance->negative = true;
 	}
 
-	#ifdef GIA_SET_ENTITY_ENTITY_AND_SENTENCE_INDICIES_NORMALLY
 	newSubstance->entityIndexTemp = entity->entityIndexTemp;
 	newSubstance->sentenceIndexTemp = entity->sentenceIndexTemp;
 	#ifdef GIA_ADVANCED_REFERENCING_DEBUG_INTRASENTENCE_EXTRA
 	cout << "\nnewSubstance->entityName = " << newSubstance->entityName << endl;
 	cout << "newSubstance->entityIndexTemp = " << newSubstance->entityIndexTemp << endl;
 	//cout << "newSubstance->sentenceIndexTemp = " << newSubstance->sentenceIndexTemp << endl;
-	#endif
 	#endif
 
 	#ifdef GIA_NUMBER_OF
@@ -1511,8 +1509,10 @@ GIAentityNode* GIAtranslatorOperationsClass::findOrAddEntityNodeByNameSimpleWrap
 	#endif
 	
 	//added 3a1j;
+	#ifdef GIA_REFERENCING_UPDATE_ENTITY_INDEXES_OF_REFERENCE_SOURCE_TO_THOSE_OF_CURRENT_SENTENCE
 	conditionRelationshipEntity->entityIndexTemp = featureIndex;	//added 3a1n (for (translatorVariables->GIAentityNodeArrayFilled[featureIndex]) and/or !GIA_ADVANCED_REFERENCING_CONDITIONS cases) 
 	conditionRelationshipEntity->sentenceIndexTemp = translatorVariables->sentenceIndex;
+	#endif
 	conditionRelationshipEntity = addInstanceToInstanceDefinition(conditionRelationshipEntity, GIA_ENTITY_TYPE_CONDITION, translatorVariables);
 	translatorVariables->GIAentityNodeArray[featureIndex] = conditionRelationshipEntity;
 	
@@ -2195,11 +2195,9 @@ bool GIAtranslatorOperationsClass::checkIfSentenceIsMathTextParsablePhrase(const
 GIAentityNode* GIAtranslatorOperationsClass::createNewNonspecificConcept(GIAentityNode* networkIndexEntity, GIAtranslatorVariablesClass* translatorVariables)
 {
 	GIAentityNode* nonspecificConcept = this->addInstanceToInstanceDefinition(networkIndexEntity, GIA_ENTITY_TYPE_CONCEPT, translatorVariables);
-	#ifdef GIA_SET_ENTITY_ENTITY_AND_SENTENCE_INDICIES_NORMALLY
 	//this enables GIA drawing of concept
 	nonspecificConcept->entityIndexTemp = GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES_ARTIFICAL_ENTITY_INDEX;	//there is no entity index associated with the artifically added concept
 	nonspecificConcept->sentenceIndexTemp = networkIndexEntity->sentenceIndexTemp;
-	#endif
 	return nonspecificConcept;
 }
 

@@ -25,7 +25,7 @@
  * File Name: GIAquery.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1o 26-February-2017
+ * Project Version: 3a1p 26-February-2017
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  * ?Limitations: will only locate a exact answer (based upon a comparison node) if it provides the maximum number of matched nodes
@@ -1249,10 +1249,8 @@ bool GIAqueryClass::testEntityNodeForQueryOrReferenceSet(GIAentityNode* queryEnt
 
 		entityNode->testedForQueryComparison = true;
 		queryEntityNode->testedForQueryComparison = true;
-		#ifdef GIA_1N1ATEMP1TO8_CHANGES
 		entityNode->testedForQueryComparisonTemp = false;		//added 13 July 2012 [Should not be required - redundant]
 		queryEntityNode->testedForQueryComparisonTemp = false;		//added 13 July 2012 [Should not be required - redundant]
-		#endif
 
 		#ifdef GIA_ADVANCED_REFERENCING_DEBUG_TOO_LARGE_REFERENCE_SET
 		if(queryTraceParameters->level < 10)
@@ -2628,10 +2626,8 @@ void GIAqueryClass::compareEntityReferenceTrace(GIAentityNode* queryEntityNode, 
 			//cout << "A2: ((queryEntityNode->referenceSetID == referenceTraceParameters->referenceSetID) || !(referenceTraceParameters->traceModeAssertSameReferenceSetID))" << endl;
 			#endif
 
-			#ifdef GIA_1N1ATEMP1TO8_CHANGES
 			if(queryEntityNode->referenceSetID != GIA_REFERENCE_SET_ID_UNDEFINED)		//added 13 July 2012
 			{
-			#endif
 				#ifndef GIA_ADVANCED_REFERENCING_ORIGINAL
 				if(queryEntityNode->idActiveList != entityNode->idActiveList)	//else they are exactly the same [NB with new implementation of GIA_RECORD_SAME_REFERENCE_SET_INFORMATION, it will detect the same nodes as a reference match, so they need to be ignored when this happens]
 				{
@@ -2915,7 +2911,6 @@ void GIAqueryClass::compareEntityReferenceTrace(GIAentityNode* queryEntityNode, 
 					*resultOld = EXACT_MATCH_FAIL;	//CHECKTHIS
 				}
 				#endif
-			#ifdef GIA_1N1ATEMP1TO8_CHANGES
 			}
 			else
 			{
@@ -2924,7 +2919,6 @@ void GIAqueryClass::compareEntityReferenceTrace(GIAentityNode* queryEntityNode, 
 				#endif
 				*resultOld = EXACT_MATCH_OUT_OF_BOUNDS;	//CHECKTHIS
 			}
-			#endif
 		}
 		else
 		{

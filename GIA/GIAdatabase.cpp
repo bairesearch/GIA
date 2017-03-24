@@ -25,7 +25,7 @@
  * File Name: GIAdatabase.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1o 26-February-2017
+ * Project Version: 3a1p 26-February-2017
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: performs simple GIA database functions (storing nodes in ordered arrays/vectors/maps)
  *
@@ -1869,9 +1869,9 @@ string GIAdatabaseClass::createEntityNodesActiveListCompleteFastIndexIndex(const
 	entityNodesTempActiveListCompleteIndex = entityNodesTempActiveListCompleteIndex + *entityName + idInstanceString;
 
 	#ifdef GIA_DATABASE_DEBUG
-	//cout << "*entityName = " <<* entityName << endl;
-	//cout << "idInstance = " << idInstance << endl;
-	//cout << "entityNodesTempActiveListCompleteIndex = " << entityNodesTempActiveListCompleteIndex << endl;
+	cout << "*entityName = " <<* entityName << endl;
+	cout << "idInstance = " << idInstance << endl;
+	cout << "entityNodesTempActiveListCompleteIndex = " << entityNodesTempActiveListCompleteIndex << endl;
 	#endif
 
 	return entityNodesTempActiveListCompleteIndex;
@@ -1892,7 +1892,6 @@ void GIAdatabaseClass::addEntityNodesActiveListCompleteFastIndex(GIAentityNode* 
 	string entityName = entityNode->entityName;
 	long idInstance = entityNode->idInstance;
 	string entityNodesTempActiveListCompleteIndex = this->createEntityNodesActiveListCompleteFastIndexIndex(&entityName, idInstance);
-
 	entityNodesActiveListCompleteFastIndex->insert(pair<string, GIAentityNode*>(entityNodesTempActiveListCompleteIndex, entityNode));
 }
 

@@ -25,7 +25,7 @@
  * File Name: GIAquery.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1o 26-February-2017
+ * Project Version: 3a1p 26-February-2017
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  *
@@ -44,9 +44,7 @@
 	#include "wn.h"
 #include "GIAtranslatorOperations.hpp"	//required for getPrimaryNetworkIndexNodeDefiningInstance()
 
-#ifdef GIA_1N1ATEMP1TO8_CHANGES
-	#define GIA_QUERY_DO_NOT_RECORD_IF_COMPLETELY_MISMATCHED_TRACE_PATHS		//added 13 July 2012
-#endif
+#define GIA_QUERY_DO_NOT_RECORD_IF_COMPLETELY_MISMATCHED_TRACE_PATHS		//added 13 July 2012
 #define GIA_QUERY_SUPPORT_MULTIPLE_ANSWERS					//default: enabled	//added 21 May 2012
 #define GIA_QUERY_ALLOW_ANSWER_OF_NON_IDENTICAL_CONDITION_TYPES			//default: enabled
 #ifdef GIA_QUERY_ALLOW_ANSWER_OF_NON_IDENTICAL_CONDITION_TYPES

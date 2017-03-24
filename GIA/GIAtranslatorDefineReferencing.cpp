@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1o 26-February-2017
+ * Project Version: 3a1p 26-February-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -890,9 +890,7 @@ int GIAtranslatorDefineReferencingClass::identifyReferenceSets(unordered_map<str
 		haveSentenceEntityIndexOfDeterminers = true;
 	}
 
-	#ifdef GIA_1N1ATEMP1TO8_CHANGES
 	this->resetReferenceSets(sentenceNetworkIndexEntityNodesList);
-	#endif
 
 	int referenceSetID = 0;
 
@@ -1185,12 +1183,8 @@ void GIAtranslatorDefineReferencingClass::createGIAcoreferenceInListBasedUponIde
 			int irrelevantInt;
 			string irrelevantString = "";
 			bool traceInstantiations = GIA_QUERY_TRACE_NETWORK_INDEX_NODES_DEFINING_INSTANTIATIONS_VALUE;
-			#ifdef GIA_1N1ATEMP1TO8_CHANGES
 			GIAquery.traceEntityNode(queryEntityWithMaxNumberNodesMatched, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISONTEMP, &irrelevantInt, &irrelevantString, false, NULL, traceInstantiations);		//is this required?	//added 13 July 2012
 			GIAquery.traceEntityNode(networkEntityWithMaxNumberNodesMatched, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISONTEMP, &irrelevantInt, &irrelevantString, false, NULL, traceInstantiations);					//added 13 July 2012
-			#else
-			GIAquery.traceEntityNode(queryEntityWithMaxNumberNodesMatched, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISON, &irrelevantInt, &irrelevantString, false, NULL, traceInstantiations);
-			#endif
 
 			//this routine should now record, for each query node, a corresponding (vector of) best match entity node [this 1-x mapping should be used in the final generation of GIAcoreference* firstGIAcoreferenceInList
 
@@ -1974,11 +1968,7 @@ bool GIAtranslatorDefineReferencingClass::identifyReferenceSetDetermineNextCours
 	if(sameReferenceSet)
 	{
 		bool referenceSetAlreadyAssigned = false;
-		#ifdef GIA_1N1ATEMP1TO8_CHANGES
 		if(entityNode->referenceSetID != GIA_REFERENCE_SET_ID_UNDEFINED)		//do not retrace reference sets
-		#else
-		if(entityNode->referenceSetID == referenceSetID)				//do not retrace reference sets
-		#endif
 		{
 			referenceSetAlreadyAssigned = true;
 		}
@@ -2038,13 +2028,11 @@ bool GIAtranslatorDefineReferencingClass::identifyReferenceSetDetermineNextCours
 		#ifdef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
 		}
 		#endif
-		#ifdef GIA_SET_ENTITY_ENTITY_AND_SENTENCE_INDICIES_NORMALLY
 		//added 2f19e 24-July-2014
 		if(entityNode->entityType == GIA_ENTITY_TYPE_NETWORK_INDEX)
 		{
 			pass = false;
 		}
-		#endif
 		#else
 		if(referenceSetAlreadyAssigned)
 		{

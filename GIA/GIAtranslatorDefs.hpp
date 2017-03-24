@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1o 26-February-2017
+ * Project Version: 3a1p 26-February-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -98,11 +98,9 @@
 	#define FILL_NER_ARRAY_AFTER_RELEX_PARSE_FOR_STANFORD_EQUIVALENT_PROPER_NOUN_DETECTION 	//added 26 April 2012 [UNTESTED]
 //#endif
 
-#ifdef GIA_1N1ATEMP1TO8_CHANGES
-	#ifdef USE_CE
-		#ifdef GIA_STANFORD_CORE_NLP_USE_CODEPENDENCIES
-			#define GIA_ENABLE_TEXTUAL_CONTEXT_REFERENCING_ONLY_ACCEPT_INTRASENTENCE_STANFORD_COREFERENCES		//this is required, as CE will construct temporary codeextension heirachies not containing every sentence; thereby nullifying stanford coreNLP codependencies out of these temporary heirachies
-		#endif
+#ifdef USE_CE
+	#ifdef GIA_STANFORD_CORE_NLP_USE_CODEPENDENCIES
+		#define GIA_ENABLE_TEXTUAL_CONTEXT_REFERENCING_ONLY_ACCEPT_INTRASENTENCE_STANFORD_COREFERENCES		//this is required, as CE will construct temporary codeextension heirachies not containing every sentence; thereby nullifying stanford coreNLP codependencies out of these temporary heirachies
 	#endif
 #endif
 
