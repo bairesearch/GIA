@@ -25,7 +25,7 @@
  * File Name: GIAxmlConversion.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1d 26-February-2017
+ * Project Version: 3a1e 26-February-2017
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  * NB this function creates entity idActiveListReorderdIDforXMLsave values upon write to speed up linking process (does not use original idActiveList values)
  * NB this function creates entity idActiveList values upon read (it could create idActiveListReorderdIDforXMLsave values instead - however currently it is assumed that when an XML file is loaded, this will populate the idActiveList in its entirety)
@@ -740,9 +740,18 @@ bool GIAxmlConversionClass::parseEntityVectorConnectionNodeListTag(const XMLpars
 			#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 			bool sameReferenceSetFound = false;
 			#endif
+			
+			#ifndef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
 			#ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
 			bool isAliasFound = false;
 			#endif
+			#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC_RECORD_AUX_INFO
+			bool negativeFound = false;
+			bool grammaticalTenseModifierArrayTempFound = false;
+			bool grammaticalTenseTempFound = false;
+			#endif
+			#endif
+			
 			#endif
 
 			while(currentAttribute->nextAttribute != NULL)
@@ -792,6 +801,8 @@ bool GIAxmlConversionClass::parseEntityVectorConnectionNodeListTag(const XMLpars
 					#endif
 				}
 				#endif
+				
+				#ifndef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
 				#ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
 				else if(currentAttribute->name == NET_XML_ATTRIBUTE_isAlias)
 				{
@@ -803,6 +814,28 @@ bool GIAxmlConversionClass::parseEntityVectorConnectionNodeListTag(const XMLpars
 					#endif
 				}
 				#endif
+				#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC_RECORD_AUX_INFO
+				else if(currentAttribute->name == NET_XML_ATTRIBUTE_negative)
+				{
+					bool attributeValue = SHAREDvars.convertStringToInt(currentAttribute->value);
+					newConnection->negative = attributeValue;
+					negativeFound = true;
+				}
+				else if(currentAttribute->name == NET_XML_ATTRIBUTE_grammaticalTenseModifierArrayTemp)
+				{
+					string attributeValue = currentAttribute->value;
+					this->convertStringToBooleanArray(attributeValue, newConnection->grammaticalTenseModifierArrayTemp, GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES);
+					grammaticalTenseModifierArrayTempFound = true;
+				}
+				else if(currentAttribute->name == NET_XML_ATTRIBUTE_grammaticalTenseTemp)
+				{
+					string attributeValue = currentAttribute->value;
+					newConnection->grammaticalTenseTemp = SHAREDvars.convertStringToInt(currentAttribute->value);
+					grammaticalTenseTempFound = true;
+				}
+				#endif
+				#endif
+				
 				#endif
 
 				currentAttribute = currentAttribute->nextAttribute;
@@ -813,6 +846,9 @@ bool GIAxmlConversionClass::parseEntityVectorConnectionNodeListTag(const XMLpars
 				newConnection->entity = targetEntity;
 				#ifdef GIA_ENTITY_CONNECTION_RECORD_ENTITY_ORIGIN
 				newConnection->entityOrigin = entityNode;
+				#ifdef GIA_ENTITY_CONNECTION_RECORD_RELATIONSHIP_TYPE
+				newConnection->connectionType = entityVectorConnectionIndex;
+				#endif
 				#endif
 				#ifdef GIA_DATABASE
 				newConnection->referenceLoaded = true;
@@ -1374,10 +1410,26 @@ XMLparserTag* GIAxmlConversionClass::generateXMLentityNodeTag(XMLparserTag* curr
 						currentAttribute = XMLparserClass.createNewAttribute(currentAttribute);
 						#endif
 
+						#ifndef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
 						#ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
 						currentAttribute->name = NET_XML_ATTRIBUTE_isAlias;
 						currentAttribute->value = SHAREDvars.convertIntToString(int(connection->isAlias));
 						currentAttribute = XMLparserClass.createNewAttribute(currentAttribute);
+						#endif
+
+						#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC_RECORD_AUX_INFO
+						currentAttribute->name = NET_XML_ATTRIBUTE_grammaticalTenseModifierArrayTemp;
+						currentAttribute->value = this->convertBooleanArrayToString(currentEntity->grammaticalTenseModifierArrayTemp, GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES);
+						currentAttribute = XMLparserClass.createNewAttribute(currentAttribute);
+					
+						currentAttribute->name = NET_XML_ATTRIBUTE_grammaticalTenseTemp;
+						currentAttribute->value = SHAREDvars.convertIntToString(int(currentEntity->grammaticalTenseTemp));
+						currentAttribute = XMLparserClass.createNewAttribute(currentAttribute);
+						
+						currentAttribute->name = NET_XML_ATTRIBUTE_negative;
+						currentAttribute->value = SHAREDvars.convertIntToString(int(currentEntity->negative));
+						currentAttribute = XMLparserClass.createNewAttribute(currentAttribute);
+						#endif
 						#endif
 
 						#endif

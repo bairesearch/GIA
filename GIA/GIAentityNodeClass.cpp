@@ -25,7 +25,7 @@
  * File Name: GIAentityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1d 26-February-2017
+ * Project Version: 3a1e 26-February-2017
  *
  *******************************************************************************/
 
@@ -79,8 +79,9 @@ GIAentityNode::GIAentityNode(void)
 	hasAssociatedInstance = false;
 	hasAssociatedTime = false;
 	negative = false;
+	#ifdef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
 	isArtificialAuxiliary = false;
-
+	#endif
 
 	/*GIA Special Variables (Quantities/Measures)*/
 	hasQuantity = false;
@@ -241,8 +242,10 @@ GIAentityNode::GIAentityNode(void)
 	sourceReferencedInLanguageGeneration = false;
 	#endif
 
+	#ifdef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
 	#ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
 	isAlias = false;
+	#endif
 	#endif
 	
 	#ifdef USE_NLC
@@ -1122,16 +1125,6 @@ void GIAentityNodeClassClass::getEntityCharacteristicIterationstring(const strin
 }
 #endif
 
-bool GIAentityNodeClassClass::isActionSpecialPossessive(const GIAentityNode* actionRelationshipEntity)
-{
-	bool result = false;
-	if(actionRelationshipEntity->entityName == RELATION_ENTITY_SPECIAL_RELATIONSHIP_NAME_FOR_EFFECTIVE_PROPERTIES)
-	{
-		result = true;
-	}
-	return result;
-}
-
 
 
 /*
@@ -1232,6 +1225,13 @@ bool GIAentityNodeClassClass::entityIsRelationship(const GIAentityNode* entity)
 	{
 		relationshipEntity = true;
 	}
+	#ifndef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
+	if(entityTypesIsPropertyOrDefinitionRelationshipArray[entity->entityType])
+	{
+		cout << "!GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS: GIAentityNodeClassClass::entityIsRelationship error{}: entityTypesIsPropertyOrDefinitionRelationshipArray[entity->entityType]" << endl;
+		exit(EXIT_ERROR);
+	}
+	#endif
 	return relationshipEntity;
 }
 

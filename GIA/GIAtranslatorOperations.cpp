@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1d 26-February-2017
+ * Project Version: 3a1e 26-February-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -114,29 +114,112 @@ GIAtranslatorVariablesClass::~GIAtranslatorVariablesClass(void)
 
 
 
-/*
-GIAentityNode* GIAtranslatorOperationsClass::getPropertyRelationshipObjectEntity(GIAentityNode* relationshipEntity)
-{
-	return getRelationshipObjectEntity(relationshipConnection);
+
+bool GIAtranslatorOperationsClass::connectionIsRelationship(GIAentityConnection* connection)
+{	
+	bool result = false;
+	#ifdef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
+	GIAentityNode* entity = connection->entity;
+	if(GIAentityNodeClass.entityIsRelationship(entity))
+	{
+		result = true;
+	}
+	#else
+	if(entityVectorConnectionIsPropertyOrDefinitionArray[relationshipConnection->connectionType])
+	{
+		result = true;
+	}
+	else
+	{
+		GIAentityNode* entity = connection->entity;
+		if(GIAentityNodeClass.entityIsRelationship(entity))
+		{
+			result = true;
+		}
+	}	
+	#endif
+	return result;
 }
-GIAentityNode* GIAtranslatorOperationsClass::getPropertyRelationshipSubjectEntity(GIAentityNode* relationshipEntity)
+
+
+#ifdef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
+
+int GIAtranslatorOperationsClass::generateConnectionType(int relationshipEntityType)
 {
-	return getRelationshipSubjectEntity(relationshipConnectionReverse);
+	int connectionType = entityTypesCrossReferenceEntityVectorConnectionArray[relationshipEntityType];
+	if(connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_UNKNOWN)
+	{
+		cout << "generateConnectionType error{}: (connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_UNKNOWN)" << endl;
+	}
+	return connectionType;
 }
-GIAentityNode* GIAtranslatorOperationsClass::getDefinitionRelationshipObjectEntity(GIAentityNode* relationshipEntity)
+
+int GIAtranslatorOperationsClass::generateConnectionTypeReverse(int relationshipEntityType)
 {
-	return getRelationshipObjectEntity(relationshipConnection);
+	int connectionType = entityTypesCrossReferenceEntityVectorConnectionReverseArray[relationshipEntityType];
+	if(connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_UNKNOWN)
+	{
+		cout << "generateConnectionType error{}: (connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_UNKNOWN)" << endl;
+	}
+	return connectionType;
 }
-GIAentityNode* GIAtranslatorOperationsClass::getDefinitionRelationshipSubjectEntity(GIAentityNode* relationshipEntity)
+
+int GIAtranslatorOperationsClass::generateInvertedConnectionType(GIAentityNode* entity, const int connectionType)
 {
-	return getRelationshipSubjectEntity(relationshipConnectionReverse);
+	int connectionTypeInverted = inverseVectorConnectionsArray[connectionType];
+	if(connectionTypeInverted == GIA_ENTITY_VECTOR_CONNECTION_TYPE_UNKNOWN)
+	{
+		if(entityTypesIsRelationshipArray[entity->entityType])
+		{
+			if(connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_RELATIONSHIP_SUBJECT)
+			{
+				connectionTypeInverted = entityTypesCrossReferenceEntityVectorConnectionArray[entity->entityType];
+			}
+			else if(connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_RELATIONSHIP_OBJECT)
+			{
+				connectionTypeInverted = entityTypesCrossReferenceEntityVectorConnectionReverseArray[entity->entityType];
+			}
+		}
+		else
+		{
+			cout << "GIAtranslatorOperationsClass::generateInvertedConnectionType{} error: (connectionTypeInverted == GIA_ENTITY_VECTOR_CONNECTION_TYPE_UNKNOWN) && !(entityTypesIsRelationshipArray[entity->entityType])" << endl;
+			exit(EXIT_ERROR);
+		}
+	}
+	return connectionTypeInverted;
 }
-*/
+#endif
+
+
+
+
+GIAentityNode* GIAtranslatorOperationsClass::getPropertyRelationshipTargetEntity(GIAentityNode* relationshipEntity)
+{
+	GIAentityNode* relationshipObjectEntity = NULL;
+	#ifdef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
+	relationshipObjectEntity = getRelationshipObjectEntity(relationshipEntity);
+	#else
+	relationshipObjectEntity = relationshipEntity;
+	#endif
+	return relationshipObjectEntity;
+}
+GIAentityNode* GIAtranslatorOperationsClass::getDefinitionRelationshipTargetEntity(GIAentityNode* relationshipEntity)
+{
+	GIAentityNode* relationshipObjectEntity = NULL;
+	#ifdef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
+	relationshipObjectEntity = getRelationshipObjectEntity(relationshipEntity);
+	#else
+	relationshipObjectEntity = relationshipEntity;
+	#endif
+	return relationshipObjectEntity;
+}
+
 
 GIAentityNode* GIAtranslatorOperationsClass::getDefinitionRelationshipObjectEntity(GIAentityConnection* relationshipConnection)
 {
 	return getRelationshipObjectEntity(relationshipConnection);
 }
+//NB if !GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS: GIAentityConnection* relationshipConnectionReverse needn't be reverse
 GIAentityNode* GIAtranslatorOperationsClass::getDefinitionRelationshipSubjectEntity(GIAentityConnection* relationshipConnectionReverse)
 {
 	return getRelationshipSubjectEntity(relationshipConnectionReverse);
@@ -145,6 +228,7 @@ GIAentityNode* GIAtranslatorOperationsClass::getPropertyRelationshipObjectEntity
 {
 	return getRelationshipObjectEntity(relationshipConnection);
 }
+//NB if !GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS: GIAentityConnection* relationshipConnectionReverse needn't be reverse
 GIAentityNode* GIAtranslatorOperationsClass::getPropertyRelationshipSubjectEntity(GIAentityConnection* relationshipConnectionReverse)
 {
 	return getRelationshipSubjectEntity(relationshipConnectionReverse);
@@ -153,12 +237,38 @@ GIAentityNode* GIAtranslatorOperationsClass::getPropertyRelationshipSubjectEntit
 
 GIAentityNode* GIAtranslatorOperationsClass::getRelationshipObjectEntity(GIAentityConnection* relationshipConnection)
 {
+	GIAentityNode* relationshipObjectEntity = NULL;
+	#ifdef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
 	GIAentityNode* relationshipEntity = relationshipConnection->entity;
-	return getRelationshipObjectEntity(relationshipEntity);
-	
+	relationshipObjectEntity = getRelationshipObjectEntity(relationshipEntity);
+	#else
+	if(entityVectorConnectionIsRelationshipPropertyOrDefinitionForwardArray[relationshipConnection->connectionType])
+	{
+		relationshipObjectEntity = relationshipConnectionReverse->entity;
+	}
+	else if(entityVectorConnectionIsRelationshipPropertyOrDefinitionReverseArray[relationshipConnection->connectionType])
+	{
+		relationshipObjectEntity = relationshipConnectionReverse->entityOrigin;
+	}	
+	else
+	{
+		GIAentityNode* relationshipEntity = relationshipConnectionReverse->entity;
+		relationshipObjectEntity = getRelationshipObjectEntity(relationshipEntity);	
+	}
+	#endif
+	return relationshipObjectEntity;
 }
+
 GIAentityNode* GIAtranslatorOperationsClass::getRelationshipObjectEntity(GIAentityNode* relationshipEntity)
 {
+	#ifndef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
+	if(entityTypesIsPropertyOrDefinitionRelationshipArray(relationshipEntity->entityType))
+	{
+		cout << "!GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS: GIAtranslatorOperationsClass::getRelationshipObjectEntity error{}: entityTypesIsPropertyOrDefinitionRelationshipArray(relationshipEntity->entityType)" << endl;
+		exit(EXIT_ERROR);		
+	}
+	#endif
+	
 	if(relationshipEntity->relationshipObjectEntity->empty())
 	{
 		//DEBUG only; note this should never be the case (if a property/definition relationship source is defined, then its target should be defined)
@@ -169,13 +279,40 @@ GIAentityNode* GIAtranslatorOperationsClass::getRelationshipObjectEntity(GIAenti
 	return objectEntity;
 }
 
+//NB if !GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS: GIAentityConnection* relationshipConnectionReverse needn't be reverse
 GIAentityNode* GIAtranslatorOperationsClass::getRelationshipSubjectEntity(GIAentityConnection* relationshipConnectionReverse)
 {
+	GIAentityNode* relationshipSubjectEntity = NULL;
+	#ifdef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
 	GIAentityNode* relationshipEntity = relationshipConnectionReverse->entity;
-	return getRelationshipSubjectEntity(relationshipEntity);
+	relationshipSubjectEntity = getRelationshipSubjectEntity(relationshipEntity);
+	#else
+	if(entityVectorConnectionIsRelationshipPropertyOrDefinitionReverseArray[relationshipConnectionReverse->connectionType])
+	{
+		relationshipSubjectEntity = relationshipConnectionReverse->entity;
+	}
+	else if(entityVectorConnectionIsRelationshipPropertyOrDefinitionForwardArray[relationshipConnectionReverse->connectionType])
+	{
+		relationshipSubjectEntity = relationshipConnectionReverse->entityOrigin;
+	}
+	else
+	{
+		GIAentityNode* relationshipEntity = relationshipConnectionReverse->entity;
+		relationshipSubjectEntity = getRelationshipSubjectEntity(relationshipEntity);	
+	}
+	#endif
+	return relationshipSubjectEntity;
 }
 GIAentityNode* GIAtranslatorOperationsClass::getRelationshipSubjectEntity(GIAentityNode* relationshipEntity)
 {
+	#ifndef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
+	if(entityTypesIsPropertyOrDefinitionRelationshipArray(relationshipEntity->entityType))
+	{
+		cout << "!GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS: GIAtranslatorOperationsClass::getRelationshipSubjectEntity error{}: entityTypesIsPropertyOrDefinitionRelationshipArray(relationshipEntity->entityType)" << endl;
+		exit(EXIT_ERROR);		
+	}
+	#endif
+	
 	if(relationshipEntity->relationshipSubjectEntity->empty())
 	{
 		//DEBUG only; note this should never be the case (if a property/definition relationship source is defined, then its target should be defined)
@@ -191,6 +328,18 @@ GIAentityNode* GIAtranslatorOperationsClass::getRelationshipSubjectEntity(GIAent
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+#ifdef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
 
 GIAentityNode* GIAtranslatorOperationsClass::connectPropertyToEntity(GIAentityNode* propertyRelationshipSubjectEntity, GIAentityNode* propertyRelationshipObjectEntity, GIAentityNode* propertyRelationshipEntity, bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables)
 {
@@ -211,6 +360,112 @@ GIAentityNode* GIAtranslatorOperationsClass::connectDefinitionToEntityMarkConnec
 	newOrExistingDefinition->isAlias = true;
 	return newOrExistingDefinition;
 }
+#endif
+
+
+GIAentityNode* GIAtranslatorOperationsClass::connectBeingDefinitionToEntity(GIAentityNode* definitionRelationshipObjectEntity, GIAentityNode* definitionRelationshipEntity, bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables)
+{	
+	GIAentityNode* newOrExistingDefinition = addOrConnectRelationshipToObject(definitionRelationshipObjectEntity, definitionRelationshipEntity, sameReferenceSet, GIA_ENTITY_TYPE_DEFINITION, translatorVariables);
+	return newOrExistingDefinition;
+}
+
+GIAentityNode* GIAtranslatorOperationsClass::connectHavingPropertyToEntity(GIAentityNode* propertyRelationshipObjectEntity, GIAentityNode* propertyRelationshipEntity, bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables)
+{
+	GIAentityNode* newOrExistingDefinition = addOrConnectRelationshipToObject(propertyRelationshipObjectEntity, propertyRelationshipEntity, sameReferenceSet, GIA_ENTITY_TYPE_DEFINITION, translatorVariables);
+	return newOrExistingDefinition;
+}
+
+#else
+
+void GIAtranslatorOperationsClass::connectDirectPropertyToEntity(GIAentityNode* relationshipSubjectEntity, GIAentityNode* relationshipObjectEntity, GIAentityNode* auxHaveEntity, bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables)
+{
+	connectDirectRelationshipToEntity(relationshipSubjectEntity, relationshipObjectEntity, auxHaveEntity, sameReferenceSet, GIA_ENTITY_TYPE_PROPERTY, translatorVariables, false);
+}
+
+void GIAtranslatorOperationsClass::connectDirectDefinitionToEntity(GIAentityNode* relationshipSubjectEntity, GIAentityNode* relationshipObjectEntity, GIAentityNode* auxHaveEntity, bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables)
+{
+	connectDirectRelationshipToEntity(relationshipSubjectEntity, relationshipObjectEntity, auxHaveEntity, sameReferenceSet, GIA_ENTITY_TYPE_DEFINITION, translatorVariables, false);
+}
+
+void GIAtranslatorOperationsClass::connectDirectPropertyToEntity(GIAentityNode* relationshipSubjectEntity, GIAentityNode* relationshipObjectEntity, bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables)
+{
+	connectDirectRelationshipToEntity(relationshipSubjectEntity, relationshipObjectEntity, NULL, sameReferenceSet, GIA_ENTITY_TYPE_PROPERTY, translatorVariables, false);
+}
+
+void GIAtranslatorOperationsClass::connectDirectDefinitionToEntity(GIAentityNode* relationshipSubjectEntity, GIAentityNode* relationshipObjectEntity, bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables)
+{
+	connectDirectRelationshipToEntity(relationshipSubjectEntity, relationshipObjectEntity, NULL, sameReferenceSet, GIA_ENTITY_TYPE_DEFINITION, translatorVariables, false);
+}
+
+#ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
+void GIAtranslatorOperationsClass::connectDirectDefinitionToEntityMarkConnectionAsAlias(GIAentityNode* definitionRelationshipSubjectEntity, GIAentityNode* definitionRelationshipObjectEntity, bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables)
+{
+	connectDirectRelationshipToEntity(relationshipSubjectEntity, relationshipObjectEntity, NULL, sameReferenceSet, GIA_ENTITY_TYPE_DEFINITION, translatorVariables, true);
+}
+#endif
+
+void GIAtranslatorOperationsClass::connectDirectRelationshipToEntity(GIAentityNode* relationshipSubjectEntity, GIAentityNode* relationshipObjectEntity, GIAentityNode* auxHaveEntity, bool sameReferenceSet, const int relationshipEntityType, GIAtranslatorVariablesClass* translatorVariables, bool markConnectionAsAlias)
+{
+	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_NETWORK_INDEX_ENTITIES
+	if(!(relationshipSubjectEntity->disabled))
+	{
+	if(!(relationshipObjectEntity->disabled))
+	{
+	#endif
+	
+		#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC_RECORD_AUX_INFO		
+		if(auxHaveEntity != NULL)
+		{
+			if(auxHaveEntity->negative)
+			{
+				connection1->negative = auxHaveEntity->negative;
+				connection2->negative = auxHaveEntity->negative;
+				copy(auxHaveEntity->grammaticalTenseModifierArrayTemp, auxHaveEntity->grammaticalTenseModifierArrayTemp+GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES, connection1->grammaticalTenseModifierArrayTemp);
+				copy(auxHaveEntity->grammaticalTenseModifierArrayTemp, auxHaveEntity->grammaticalTenseModifierArrayTemp+GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES, connection1->grammaticalTenseModifierArrayTemp);
+				connection1->grammaticalTenseTemp = auxHaveEntity->grammaticalTenseTemp;
+				connection2->grammaticalTenseTemp = auxHaveEntity->grammaticalTenseTemp;
+				#ifdef GIA_RECORD_POSSESSION_AUXILIARY_HAS_INFORMATION
+				if(relationshipEntityType == GIA_ENTITY_TYPE_PROPERTY)
+				{
+					connection1->possessionAuxiliaryHave = true;
+					connection2->possessionAuxiliaryHave = true;
+				}
+				#endif
+			}		
+		}
+		#endif
+		
+		#ifdef GIA_PREVENT_CONCEPTS_FROM_BEEN_ADDED_AS_CHILDREN_OF_NON_CONCEPTS
+		this->setRelationshipObjectToSubstanceIfNecessary(relationshipEntity, relationshipObjectEntity, relationshipEntityType);
+		#endif
+	
+		if(relationshipEntityType == GIA_ENTITY_TYPE_PROPERTY)
+		{
+			GIAentityConnection* connection1 = this->writeVectorConnection(thingEntity, propertyEntitySubstance, GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES, sameReferenceSet);
+			GIAentityConnection* connection2 = this->writeVectorConnection(propertyEntitySubstance, thingEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_PROPERTIES, sameReferenceSet);
+		}
+		else if(relationshipEntityType == GIA_ENTITY_TYPE_DEFINITION)
+		{
+			GIAentityConnection* connection1 = this->writeVectorConnection(thingEntity, propertyEntitySubstance, GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITIONS, sameReferenceSet);
+			GIAentityConnection* connection2 = this->writeVectorConnection(propertyEntitySubstance, thingEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_DEFINITIONS, sameReferenceSet);
+			if(markConnectionAsAlias)
+			{
+				connection1->isAlias = true;
+				connection2->isAlias = true;		
+			}
+		}
+		else
+		{
+			cout << "GIAtranslatorOperationsClass::connectDirectRelationshipToEntity{} error: illegal relationshipEntityType; relationshipEntityType = " << relationshipEntityType << endl;
+			exit(EXIT_ERROR);
+		}
+
+	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_NETWORK_INDEX_ENTITIES
+	}
+	}
+	#endif
+}
+
 #endif
 
 
@@ -255,19 +510,6 @@ GIAentityNode* GIAtranslatorOperationsClass::connectConditionToObject(GIAentityN
 {
 	GIAentityNode* newOrExistingCondition = addOrConnectRelationshipToObject(conditionRelationshipObjectEntity, conditionRelationshipEntity, sameReferenceSet, GIA_ENTITY_TYPE_CONDITION, translatorVariables);
 	return newOrExistingCondition;
-}
-
-
-GIAentityNode* GIAtranslatorOperationsClass::connectBeingDefinitionToEntity(GIAentityNode* definitionRelationshipObjectEntity, GIAentityNode* definitionRelationshipEntity, bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables)
-{	
-	GIAentityNode* newOrExistingDefinition = addOrConnectRelationshipToObject(definitionRelationshipObjectEntity, definitionRelationshipEntity, sameReferenceSet, GIA_ENTITY_TYPE_DEFINITION, translatorVariables);
-	return newOrExistingDefinition;
-}
-
-GIAentityNode* GIAtranslatorOperationsClass::connectHavingPropertyToEntity(GIAentityNode* propertyRelationshipObjectEntity, GIAentityNode* propertyRelationshipEntity, bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables)
-{
-	GIAentityNode* newOrExistingDefinition = addOrConnectRelationshipToObject(propertyRelationshipObjectEntity, propertyRelationshipEntity, sameReferenceSet, GIA_ENTITY_TYPE_DEFINITION, translatorVariables);
-	return newOrExistingDefinition;
 }
 
 
@@ -398,26 +640,6 @@ void GIAtranslatorOperationsClass::setRelationshipObjectToSubstanceIfNecessary(G
 	}
 }
 #endif
-			
-int GIAtranslatorOperationsClass::generateConnectionType(int relationshipEntityType)
-{
-	int connectionType = entityTypesCrossReferenceEntityVectorConnectionArray[relationshipEntityType];
-	if(connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_UNKNOWN)
-	{
-		cout << "generateConnectionType error{}: (connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_UNKNOWN)" << endl;
-	}
-	return connectionType;
-}
-
-int GIAtranslatorOperationsClass::generateConnectionTypeReverse(int relationshipEntityType)
-{
-	int connectionType = entityTypesCrossReferenceEntityVectorConnectionReverseArray[relationshipEntityType];
-	if(connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_UNKNOWN)
-	{
-		cout << "generateConnectionType error{}: (connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_UNKNOWN)" << endl;
-	}
-	return connectionType;
-}
 
 void GIAtranslatorOperationsClass::connectRelationshipInstanceToSubject(GIAentityNode* subjectEntity, GIAentityNode* newOrExistingRelationship, bool sameReferenceSet, const int relationshipEntityType, GIAtranslatorVariablesClass* translatorVariables)
 {
@@ -1054,68 +1276,131 @@ bool GIAtranslatorOperationsClass::determineSameReferenceSetValue(bool defaultSa
 #endif
 
 
+
+
+#ifdef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS	
+
 GIAentityNode* GIAtranslatorOperationsClass::addPropertyRelationshipToEntity(GIAentityNode* relationshipSubjectEntity, GIAentityNode* relationshipObjectEntity, bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables)
 {
-	return addRelationshipToEntity(relationshipSubjectEntity, relationshipObjectEntity, sameReferenceSet, GIA_ENTITY_TYPE_PROPERTY, RELATION_ENTITY_SPECIAL_RELATIONSHIP_NAME_FOR_EFFECTIVE_PROPERTIES, translatorVariables, true);
+	return addRelationshipArtificialToEntity(relationshipSubjectEntity, relationshipObjectEntity, sameReferenceSet, GIA_ENTITY_TYPE_PROPERTY, RELATION_ENTITY_SPECIAL_RELATIONSHIP_NAME_FOR_EFFECTIVE_PROPERTIES, translatorVariables);
 }
 GIAentityNode* GIAtranslatorOperationsClass::addDefinitionRelationshipToEntity(GIAentityNode* relationshipSubjectEntity, GIAentityNode* relationshipObjectEntity, bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables)
 {
-	return addRelationshipToEntity(relationshipSubjectEntity, relationshipObjectEntity, sameReferenceSet, GIA_ENTITY_TYPE_DEFINITION, RELATION_ENTITY_SPECIAL_RELATIONSHIP_NAME_FOR_EFFECTIVE_DEFINITIONS, translatorVariables, true);
+	return addRelationshipArtificialToEntity(relationshipSubjectEntity, relationshipObjectEntity, sameReferenceSet, GIA_ENTITY_TYPE_DEFINITION, RELATION_ENTITY_SPECIAL_RELATIONSHIP_NAME_FOR_EFFECTIVE_DEFINITIONS, translatorVariables);
 }
-GIAentityNode* GIAtranslatorOperationsClass::addRelationshipToEntity(GIAentityNode* relationshipSubjectEntity, GIAentityNode* relationshipObjectEntity, bool sameReferenceSet, const int relationshipEntityType, const string relationshipEntityName, GIAtranslatorVariablesClass* translatorVariables, bool isArtificial)
+GIAentityNode* GIAtranslatorOperationsClass::addConditionRelationshipArtificialToEntity(GIAentityNode* relationshipSubjectEntity, GIAentityNode* relationshipObjectEntity, const string conditionName, bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables)
 {
-	GIAentityNode* relationshipEntity = findOrAddEntityNodeByNameSimpleWrapperRelationship(relationshipEntityName, translatorVariables, isArtificial);
+	return addRelationshipArtificialToEntity(relationshipSubjectEntity, relationshipObjectEntity, sameReferenceSet, GIA_ENTITY_TYPE_CONDITION, conditionName, translatorVariables);
+}
+GIAentityNode* GIAtranslatorOperationsClass::addRelationshipArtificialToEntity(GIAentityNode* relationshipSubjectEntity, GIAentityNode* relationshipObjectEntity, bool sameReferenceSet, const int relationshipEntityType, const string relationshipEntityName, GIAtranslatorVariablesClass* translatorVariables)
+{
+	GIAentityNode* relationshipEntity = findOrAddEntityNodeByNameSimpleWrapperRelationshipArtificial(relationshipSubjectEntity, relationshipObjectEntity, relationshipEntityType, relationshipEntityName, translatorVariables);
 
 	if(relationshipEntityType == GIA_ENTITY_TYPE_DEFINITION)
 	{
-		relationshipEntity = connectDefinitionToEntity(relationshipSubjectEntity, relationshipObjectEntity, relationshipEntity, sameReferenceSet, translatorVariables);	//create new instance
+		relationshipEntity = connectDefinitionToEntity(relationshipSubjectEntity, relationshipObjectEntity, relationshipEntity, sameReferenceSet, translatorVariables);
 	}
 	else if(relationshipEntityType == GIA_ENTITY_TYPE_PROPERTY)
 	{
-		relationshipEntity = connectPropertyToEntity(relationshipSubjectEntity, relationshipObjectEntity, relationshipEntity, sameReferenceSet, translatorVariables);	//create new instance	
+		relationshipEntity = connectPropertyToEntity(relationshipSubjectEntity, relationshipObjectEntity, relationshipEntity, sameReferenceSet, translatorVariables);
 	}
 	else if(relationshipEntityType == GIA_ENTITY_TYPE_CONDITION)
 	{
-		relationshipEntity = connectConditionToEntity(relationshipSubjectEntity, relationshipObjectEntity, relationshipEntity, sameReferenceSet, translatorVariables);	//create new instance	
+		relationshipEntity = connectConditionToEntity(relationshipSubjectEntity, relationshipObjectEntity, relationshipEntity, sameReferenceSet, translatorVariables);
 	}
 	else
 	{
-		cout << "GIAtranslatorOperationsClass::addRelationshipToEntity{} error: unsupported relationshipEntityType; relationshipEntityType = " << relationshipEntityType << endl;
+		cout << "GIAtranslatorOperationsClass::addRelationshipArtificialToEntity{} error: unsupported relationshipEntityType; relationshipEntityType = " << relationshipEntityType << endl;
 		exit(EXIT_ERROR);
 	}
 
 	return relationshipEntity;
 }
-GIAentityNode* GIAtranslatorOperationsClass::findOrAddEntityNodeByNameSimpleWrapperRelationshipArtificialProperty(GIAtranslatorVariablesClass* translatorVariables)
+
+
+GIAentityNode* GIAtranslatorOperationsClass::findOrAddEntityNodeByNameSimpleWrapperRelationshipArtificialProperty(GIAentityNode* propertyRelationshipSubjectEntity, GIAentityNode* propertyRelationshipObjectEntity, GIAtranslatorVariablesClass* translatorVariables)
 {
-	return findOrAddEntityNodeByNameSimpleWrapperRelationship(RELATION_ENTITY_SPECIAL_RELATIONSHIP_NAME_FOR_EFFECTIVE_PROPERTIES, translatorVariables, true);
+	return findOrAddEntityNodeByNameSimpleWrapperRelationshipArtificial(propertyRelationshipSubjectEntity, propertyRelationshipObjectEntity, GIA_ENTITY_TYPE_PROPERTY, RELATION_ENTITY_SPECIAL_RELATIONSHIP_NAME_FOR_EFFECTIVE_PROPERTIES, translatorVariables);
 }
-GIAentityNode* GIAtranslatorOperationsClass::findOrAddEntityNodeByNameSimpleWrapperRelationshipArtificialDefinition(GIAtranslatorVariablesClass* translatorVariables)
+GIAentityNode* GIAtranslatorOperationsClass::findOrAddEntityNodeByNameSimpleWrapperRelationshipArtificialDefinition(GIAentityNode* definitionRelationshipSubjectEntity, GIAentityNode* definitionRelationshipObjectEntity, GIAtranslatorVariablesClass* translatorVariables)
 {
-	return findOrAddEntityNodeByNameSimpleWrapperRelationship(RELATION_ENTITY_SPECIAL_RELATIONSHIP_NAME_FOR_EFFECTIVE_DEFINITIONS, translatorVariables, true);
+	return findOrAddEntityNodeByNameSimpleWrapperRelationshipArtificial(definitionRelationshipSubjectEntity, definitionRelationshipObjectEntity, GIA_ENTITY_TYPE_DEFINITION, RELATION_ENTITY_SPECIAL_RELATIONSHIP_NAME_FOR_EFFECTIVE_DEFINITIONS, translatorVariables);
 }
-GIAentityNode* GIAtranslatorOperationsClass::findOrAddEntityNodeByNameSimpleWrapperRelationship(const string relationshipEntityName, GIAtranslatorVariablesClass* translatorVariables, bool isArtificial)
+
+GIAentityNode* GIAtranslatorOperationsClass::findOrAddEntityNodeByNameSimpleWrapperRelationshipArtificial(GIAentityNode* relationshipSubjectEntity, GIAentityNode* relationshipObjectEntity, const int relationshipEntityType, const string relationshipEntityName, GIAtranslatorVariablesClass* translatorVariables)
+{
+	GIAentityNode* relationshipEntity = NULL;
+	if(!findExistingRelationshipInSentenceEntityArray(relationshipSubjectEntity, relationshipObjectEntity, relationshipEntityType, &relationshipEntity, translatorVariables))
+	{
+		relationshipEntity = addEntityNodeByNameSimpleWrapperRelationshipArtificial(relationshipEntityName, translatorVariables);
+	}
+	
+	return relationshipEntity;	
+}
+
+bool GIAtranslatorOperationsClass::findExistingRelationshipInSentenceEntityArray(GIAentityNode* relationshipSubjectEntity, GIAentityNode* relationshipObjectEntity, int relationshipEntityType, GIAentityNode** relationshipEntity, GIAtranslatorVariablesClass* translatorVariables)
+{
+	//NB an artificial or non-artificial relationship may have been created in a previous sentence
+	
+	bool foundExistingRelationship = false;
+	int connectionType = generateConnectionType(relationshipEntityType);
+	int connectionTypeReverse = generateConnectionTypeReverse(relationshipEntityType);
+	for(vector<GIAentityConnection*>::iterator connectionIter = relationshipSubjectEntity->entityVectorConnectionsArray[connectionType].begin(); connectionIter != relationshipSubjectEntity->entityVectorConnectionsArray[connectionType].end(); connectionIter++)
+	{
+		if(getRelationshipObjectEntity((*connectionIter)) == relationshipObjectEntity)
+		{
+			*relationshipEntity = (*connectionIter)->entity;
+			foundExistingRelationship = true;
+		} 
+	}
+	/*
+	//redundant
+	for(vector<GIAentityConnection*>::iterator connectionIter = relationshipObjectEntity->entityVectorConnectionsArray[connectionTypeReverse].begin(); connectionIter != relationshipObjectEntity->entityVectorConnectionsArray[connectionTypeReverse].end(); connectionIter++)
+	{	
+		if(getRelationshipSubjectEntity((*connectionIter)) == relationshipSubjectEntity)
+		{
+			*relationshipEntity = (*connectionIter)->entity;
+			foundExistingRelationship = true;
+		}		
+	}
+	*/
+			
+	return foundExistingRelationship;
+}
+
+GIAentityNode* GIAtranslatorOperationsClass::addEntityNodeByNameSimpleWrapperRelationshipArtificialProperty(GIAtranslatorVariablesClass* translatorVariables)	//not used
+{
+	return addEntityNodeByNameSimpleWrapperRelationshipArtificial(RELATION_ENTITY_SPECIAL_RELATIONSHIP_NAME_FOR_EFFECTIVE_PROPERTIES, translatorVariables);
+}
+GIAentityNode* GIAtranslatorOperationsClass::addEntityNodeByNameSimpleWrapperRelationshipArtificialDefinition(GIAtranslatorVariablesClass* translatorVariables)	//not used
+{
+	return addEntityNodeByNameSimpleWrapperRelationshipArtificial(RELATION_ENTITY_SPECIAL_RELATIONSHIP_NAME_FOR_EFFECTIVE_DEFINITIONS, translatorVariables);
+}
+GIAentityNode* GIAtranslatorOperationsClass::addEntityNodeByNameSimpleWrapperRelationshipArtificial(const string relationshipEntityName, GIAtranslatorVariablesClass* translatorVariables)
 {
 	int relationshipEntityIndex = translatorVariables->currentSentenceInList->relationshipEntityArtificialIndexCurrent;
 	translatorVariables->currentSentenceInList->relationshipEntityArtificialIndexCurrent = translatorVariables->currentSentenceInList->relationshipEntityArtificialIndexCurrent - 1;
 
 	GIAentityNode* relationshipEntity = findOrAddEntityNodeByNameSimpleWrapperRelationship(relationshipEntityIndex, &relationshipEntityName, translatorVariables);
 	
+	relationshipEntity->isArtificialAuxiliary = true;
+	
 	return relationshipEntity;	
 }
 
 
+//"2" functions executed after parsing sentences (ie no sentence entity arrays):
 GIAentityNode* GIAtranslatorOperationsClass::addPropertyRelationshipToEntity2(GIAentityNode* relationshipSubjectEntity, GIAentityNode* relationshipObjectEntity, bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariablesSentencesParsed)
 {
-	return addRelationshipToEntity2(relationshipSubjectEntity, relationshipObjectEntity, sameReferenceSet, GIA_ENTITY_TYPE_PROPERTY, RELATION_ENTITY_SPECIAL_RELATIONSHIP_NAME_FOR_EFFECTIVE_PROPERTIES, translatorVariablesSentencesParsed, true);
+	return addRelationshipArtificialToEntity2(relationshipSubjectEntity, relationshipObjectEntity, sameReferenceSet, GIA_ENTITY_TYPE_PROPERTY, RELATION_ENTITY_SPECIAL_RELATIONSHIP_NAME_FOR_EFFECTIVE_PROPERTIES, translatorVariablesSentencesParsed);
 }
 GIAentityNode* GIAtranslatorOperationsClass::addDefinitionRelationshipToEntity2(GIAentityNode* relationshipSubjectEntity, GIAentityNode* relationshipObjectEntity, bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariablesSentencesParsed)
 {
-	return addRelationshipToEntity2(relationshipSubjectEntity, relationshipObjectEntity, sameReferenceSet, GIA_ENTITY_TYPE_DEFINITION, RELATION_ENTITY_SPECIAL_RELATIONSHIP_NAME_FOR_EFFECTIVE_DEFINITIONS, translatorVariablesSentencesParsed, true);
+	return addRelationshipArtificialToEntity2(relationshipSubjectEntity, relationshipObjectEntity, sameReferenceSet, GIA_ENTITY_TYPE_DEFINITION, RELATION_ENTITY_SPECIAL_RELATIONSHIP_NAME_FOR_EFFECTIVE_DEFINITIONS, translatorVariablesSentencesParsed);
 }
-GIAentityNode* GIAtranslatorOperationsClass::addRelationshipToEntity2(GIAentityNode* relationshipSubjectEntity, GIAentityNode* relationshipObjectEntity, bool sameReferenceSet, const int relationshipEntityType, const string relationshipEntityName, GIAtranslatorVariablesClass* translatorVariablesSentencesParsed, bool isArtificial)
+GIAentityNode* GIAtranslatorOperationsClass::addRelationshipArtificialToEntity2(GIAentityNode* relationshipSubjectEntity, GIAentityNode* relationshipObjectEntity, bool sameReferenceSet, const int relationshipEntityType, const string relationshipEntityName, GIAtranslatorVariablesClass* translatorVariablesSentencesParsed)
 {
-	GIAentityNode* relationshipEntity = findOrAddEntityNodeByNameSimpleWrapperRelationship2(relationshipEntityName, translatorVariablesSentencesParsed, isArtificial);
+	GIAentityNode* relationshipEntity = findOrAddEntityNodeByNameSimpleWrapperRelationship2(relationshipEntityName, translatorVariablesSentencesParsed, true);
 
 	if(relationshipEntityType == GIA_ENTITY_TYPE_DEFINITION)
 	{
@@ -1157,13 +1442,89 @@ GIAentityNode* GIAtranslatorOperationsClass::findOrAddEntityNodeByNameSimpleWrap
 	return relationshipEntity;
 }
 
+#else
+
+GIAentityNode* GIAtranslatorOperationsClass::addPropertyRelationshipToEntity(GIAentityNode* relationshipSubjectEntity, GIAentityNode* relationshipObjectEntity, bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables)
+{
+	return addDirectRelationshipArtificialToEntity(relationshipSubjectEntity, relationshipObjectEntity, sameReferenceSet, GIA_ENTITY_TYPE_PROPERTY, translatorVariables);
+}
+GIAentityNode* GIAtranslatorOperationsClass::addDefinitionRelationshipToEntity(GIAentityNode* relationshipSubjectEntity, GIAentityNode* relationshipObjectEntity, bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables)
+{
+	return addDirectRelationshipArtificialToEntity(relationshipSubjectEntity, relationshipObjectEntity, sameReferenceSet, GIA_ENTITY_TYPE_DEFINITION, translatorVariables);
+}
+GIAentityNode* GIAtranslatorOperationsClass::addDirectRelationshipArtificialToEntity(GIAentityNode* relationshipSubjectEntity, GIAentityNode* relationshipObjectEntity, bool sameReferenceSet, const int relationshipEntityType, GIAtranslatorVariablesClass* translatorVariables)
+{
+	if(relationshipEntityType == GIA_ENTITY_TYPE_DEFINITION)
+	{
+		relationshipEntity = connectDirectDefinitionToEntity(relationshipSubjectEntity, relationshipObjectEntity, relationshipEntity, sameReferenceSet, translatorVariables);
+	}
+	else if(relationshipEntityType == GIA_ENTITY_TYPE_PROPERTY)
+	{
+		relationshipEntity = connectDirectPropertyToEntity(relationshipSubjectEntity, relationshipObjectEntity, relationshipEntity, sameReferenceSet, translatorVariables);
+	}
+	else
+	{
+		cout << "GIAtranslatorOperationsClass::addDirectRelationshipArtificialToEntity{} error: unsupported relationshipEntityType; relationshipEntityType = " << relationshipEntityType << endl;
+		exit(EXIT_ERROR);
+	}
+
+	return relationshipEntity;
+}
+
+//"2" functions executed after parsing sentences (ie no sentence entity arrays):
+GIAentityNode* GIAtranslatorOperationsClass::addPropertyRelationshipToEntity2(GIAentityNode* relationshipSubjectEntity, GIAentityNode* relationshipObjectEntity, bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariablesSentencesParsed)
+{
+	return addDirectRelationshipArtificialToEntity2(relationshipSubjectEntity, relationshipObjectEntity, sameReferenceSet, GIA_ENTITY_TYPE_PROPERTY, translatorVariablesSentencesParsed);
+}
+GIAentityNode* GIAtranslatorOperationsClass::addDefinitionRelationshipToEntity2(GIAentityNode* relationshipSubjectEntity, GIAentityNode* relationshipObjectEntity, bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariablesSentencesParsed)
+{
+	return addDirectRelationshipArtificialToEntity2(relationshipSubjectEntity, relationshipObjectEntity, sameReferenceSet, GIA_ENTITY_TYPE_DEFINITION, translatorVariablesSentencesParsed);
+}
+GIAentityNode* GIAtranslatorOperationsClass::addDirectRelationshipArtificialToEntity2(GIAentityNode* relationshipSubjectEntity, GIAentityNode* relationshipObjectEntity, bool sameReferenceSet, const int relationshipEntityType, GIAtranslatorVariablesClass* translatorVariablesSentencesParsed)
+{
+	if(relationshipEntityType == GIA_ENTITY_TYPE_DEFINITION)
+	{
+		relationshipEntity = connectDirectDefinitionToEntity(relationshipSubjectEntity, relationshipObjectEntity, sameReferenceSet, translatorVariablesSentencesParsed);	//create new instance
+	}
+	else if(relationshipEntityType == GIA_ENTITY_TYPE_PROPERTY)
+	{
+		relationshipEntity = connectDirectPropertyToEntity(relationshipSubjectEntity, relationshipObjectEntity, sameReferenceSet, translatorVariablesSentencesParsed);	//create new instance	
+	}
+	else
+	{
+		cout << "GIAtranslatorOperationsClass::addRelationshipToEntity2{} error: unsupported relationshipEntityType; relationshipEntityType = " << relationshipEntityType << endl;
+		exit(EXIT_ERROR);
+	}
+	
+	translatorVariablesSentencesParsed->entityNodesActiveListComplete->push_back(relationshipEntity);
+	//now add the relationshipEntity to entityNodesActiveListSentences such that it can be found quickly in the future (e.g. by a high level application)
+	map<int, vector<GIAentityNode*>*>::iterator entityNodesActiveListSentenceIter = translatorVariablesSentencesParsed->entityNodesActiveListSentences->find(translatorVariablesSentencesParsed->sentenceIndex);	
+	if(entityNodesActiveListSentenceIter != translatorVariablesSentencesParsed->entityNodesActiveListSentences->end())
+	{
+		vector<GIAentityNode*>* entityNodesActiveListSentence = entityNodesActiveListSentenceIter->second;
+		entityNodesActiveListSentence->push_back(relationshipEntity);	
+	}
+
+	return relationshipEntity;
+}
+#endif
+
 
 
 GIAentityNode* GIAtranslatorOperationsClass::findOrAddEntityNodeByNameSimpleWrapperRelationshipCondition(int featureIndex, const string* entityNodeName, bool* entityAlreadyExistant, GIAtranslatorVariablesClass* translatorVariables)
 {
 	GIAentityNode* conditionRelationshipEntity;
 	#ifdef GIA_ADVANCED_REFERENCING_CONDITIONS
-	conditionRelationshipEntity = this->findOrAddEntityNodeByNameSimpleWrapperRelationship(featureIndex, entityNodeName, translatorVariables);
+	if(translatorVariables->GIAentityNodeArrayFilled[featureIndex])
+	{
+		conditionRelationshipEntity = translatorVariables->GIAentityNodeArray[featureIndex];
+		cout << "featureIndex = " << featureIndex << endl;
+		cout << "conditionRelationshipEntity->entityIndexTemp = " << conditionRelationshipEntity->entityIndexTemp << endl;
+	}
+	else
+	{
+		conditionRelationshipEntity = this->findOrAddEntityNodeByNameSimpleWrapperRelationship(featureIndex, entityNodeName, translatorVariables);
+	}
 	#else
 	conditionRelationshipEntity = this->findOrAddNetworkIndexEntityNodeByNameSimpleWrapper(entityNodeName, entityAlreadyExistant, translatorVariables);
 	#endif
@@ -1174,22 +1535,16 @@ GIAentityNode* GIAtranslatorOperationsClass::findOrAddEntityNodeByNameSimpleWrap
 GIAentityNode* GIAtranslatorOperationsClass::findOrAddEntityNodeByNameSimpleWrapperRelationship(int featureIndex, const string* entityNodeName, GIAtranslatorVariablesClass* translatorVariables)
 {
 	bool entityAlreadyExistant = false;
-	GIAentityNode* relationshipEntity;
-	if(translatorVariables->GIAentityNodeArrayFilled[featureIndex])
-	{
-		relationshipEntity = translatorVariables->GIAentityNodeArray[featureIndex];
-	}
-	else
-	{
-		relationshipEntity = this->findOrAddNetworkIndexEntityNodeByNameSimpleWrapper(entityNodeName, &entityAlreadyExistant, translatorVariables);
-		translatorVariables->GIAentityNodeArrayFilled[featureIndex] = true;
-		relationshipEntity->entityIndexTemp = featureIndex;
-		translatorVariables->GIAentityNodeArray[featureIndex] = relationshipEntity;
-		relationshipEntity->sentenceIndexTemp = translatorVariables->sentenceIndex;
-	}
+	GIAentityNode* relationshipEntity = this->findOrAddNetworkIndexEntityNodeByNameSimpleWrapper(entityNodeName, &entityAlreadyExistant, translatorVariables);
+	translatorVariables->GIAentityNodeArrayFilled[featureIndex] = true;
+	relationshipEntity->entityIndexTemp = featureIndex;
+	translatorVariables->GIAentityNodeArray[featureIndex] = relationshipEntity;
+	relationshipEntity->sentenceIndexTemp = translatorVariables->sentenceIndex;
 	
 	return relationshipEntity;
 }
+
+
 
 
 GIAentityNode* GIAtranslatorOperationsClass::findOrAddNetworkIndexEntityNodeByNameSimpleWrapper(const string* entityNodeName, bool* entityAlreadyExistant, GIAtranslatorVariablesClass* translatorVariables)
@@ -1254,6 +1609,9 @@ GIAentityConnection* GIAtranslatorOperationsClass::writeVectorConnection(GIAenti
 				newConnection->entity = entityNodeToAdd;
 				#ifdef GIA_ENTITY_CONNECTION_RECORD_ENTITY_ORIGIN
 				newConnection->entityOrigin = entityNode;
+				#ifdef GIA_ENTITY_CONNECTION_RECORD_RELATIONSHIP_TYPE
+				newConnection->connectionType = connectionType;
+				#endif
 				#endif
 				#ifdef GIA_TRANSLATOR_MARK_DOUBLE_LINKS_AS_REFERENCE_CONNECTIONS
 				GIAentityConnection* connectionFound3 = NULL;
@@ -1533,7 +1891,7 @@ void GIAtranslatorOperationsClass::mergeEntityNodesAddAlias(GIAentityNode* entit
 				{//added 29 November 2012
 
 					//disconnect reference sources from each other, as their connection between each other will be redeclared in current context
-					int iInverted = generateInvertedConnection(entityConnectedToEntityToMerge, i);
+					int iInverted = generateInvertedConnectionType(entityConnectedToEntityToMerge, i);
 					for(vector<GIAentityConnection*>::iterator connectionIter2 = entityConnectedToEntityToMerge->entityVectorConnectionsArray[iInverted].begin(); connectionIter2 != entityConnectedToEntityToMerge->entityVectorConnectionsArray[iInverted].end(); )
 					{
 						bool connectionIter2Erased = false;
@@ -1722,31 +2080,6 @@ void GIAtranslatorOperationsClass::mergeEntityNodesAddAlias(GIAentityNode* entit
 	}
 }
 #endif
-
-int GIAtranslatorOperationsClass::generateInvertedConnection(GIAentityNode* entity, const int connectionType)
-{
-	int connectionTypeInverted = inverseVectorConnectionsArray[connectionType];
-	if(connectionTypeInverted == GIA_ENTITY_VECTOR_CONNECTION_TYPE_UNKNOWN)
-	{
-		if(entityTypesIsRelationshipArray[entity->entityType])
-		{
-			if(connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_RELATIONSHIP_SUBJECT)
-			{
-				connectionTypeInverted = entityTypesCrossReferenceEntityVectorConnectionArray[entity->entityType];
-			}
-			else if(connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_RELATIONSHIP_OBJECT)
-			{
-				connectionTypeInverted = entityTypesCrossReferenceEntityVectorConnectionReverseArray[entity->entityType];
-			}
-		}
-		else
-		{
-			cout << "GIAtranslatorOperationsClass::generateInvertedConnection{} error: (connectionTypeInverted == GIA_ENTITY_VECTOR_CONNECTION_TYPE_UNKNOWN) && !(entityTypesIsRelationshipArray[entity->entityType])" << endl;
-			exit(EXIT_ERROR);
-		}
-	}
-	return connectionTypeInverted;
-}
 
 
 GIAentityNode* GIAtranslatorOperationsClass::getPrimaryNetworkIndexNodeDefiningInstance(GIAentityNode* instanceEntity)

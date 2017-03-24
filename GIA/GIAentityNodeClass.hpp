@@ -25,7 +25,7 @@
  * File Name: GIAentityNodeClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1d 26-February-2017
+ * Project Version: 3a1e 26-February-2017
  * NB a substance is an instance of an entity, any given entity may contain/comprise/have multiple substances - and substances are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -76,6 +76,9 @@ using namespace std;
 #define GIA_ENTITY_TYPE_QUALITY_STRING "7"
 static bool entityTypesIsRelationshipArray[GIA_ENTITY_NUMBER_OF_TYPES] = {false, false, false, true, true, true, true, false};
 static bool entityTypesAutomaticallyUpgradeUponInstanceSelectionArray[GIA_ENTITY_NUMBER_OF_TYPES] = {false, false, true, true, true, true, true, false};	//NB this is currently the same as entityTypesIsRelationshipArray except for GIA_ENTITY_TYPE_CONCEPT
+static bool entityTypesIsActionOrConditionRelationshipArray[GIA_ENTITY_NUMBER_OF_TYPES] = {false, false, false, true, true, false, false, false};
+static bool entityTypesIsPropertyOrDefinitionRelationshipArray[GIA_ENTITY_NUMBER_OF_TYPES] = {false, false, false, false, false, true, true, false};
+
 
 #define GIA_RELATIONSHIP_ENTITY_NUMBER_OF_TYPES (4)
 static int relationshipEntityTypesArray[GIA_RELATIONSHIP_ENTITY_NUMBER_OF_TYPES] = {GIA_ENTITY_TYPE_ACTION, GIA_ENTITY_TYPE_CONDITION, GIA_ENTITY_TYPE_PROPERTY, GIA_ENTITY_TYPE_DEFINITION};
@@ -284,6 +287,12 @@ static int entityTypesCrossReferenceEntityVectorConnectionArray[GIA_ENTITY_NUMBE
 static int entityTypesCrossReferenceEntityVectorConnectionReverseArray[GIA_ENTITY_NUMBER_OF_TYPES] = {GIA_ENTITY_VECTOR_CONNECTION_TYPE_UNKNOWN, GIA_ENTITY_VECTOR_CONNECTION_TYPE_UNKNOWN, GIA_ENTITY_VECTOR_CONNECTION_TYPE_UNKNOWN, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_REVERSE, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_REVERSE, GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTY_REVERSE, GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITION_REVERSE, GIA_ENTITY_VECTOR_CONNECTION_TYPE_UNKNOWN};
 
 static bool entityVectorConnectionIsRelationshipSubjectObjectArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {false, false, false, false, false, false, false, false, true, true, false, false};
+static bool entityVectorConnectionIsRelationshipForwardArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {true, false, true, false, true, false, true, false, false, false, false, false};
+static bool entityVectorConnectionIsRelationshipReverseArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {false, true, false, true, false, true, false, true, false, false, false, false};
+static bool entityVectorConnectionIsRelationshipPropertyOrDefinitionForwardArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {false, false, false, false, true, false, true, false, false, false, false, false};
+static bool entityVectorConnectionIsRelationshipPropertyOrDefinitionReverseArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {false, false, false, false, false, true, false, true, false, false, false, false};
+static bool entityVectorConnectionIsPropertyOrDefinitionArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {false, false, false, false, true, true, true, true, false, false, false, false};
+
 
 
 
@@ -352,9 +361,11 @@ public:
 	bool isActionConcept;			//added 1t5a to take into account specific actions eg 'eating pies', 'to eat a pie'
 	bool hasAssociatedInstance;	//this boolean appears to only represent whether this entity defines a child substance node [and not whether it contains one]
 	bool hasAssociatedTime;
-	bool negative;	//for prepositional entities which will be collapsed into conditions only [in the future, this should also be used for substances and actions; but relex does not appear to output this information]
+	bool negative;	//if !GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS: for prepositional entities which will be collapsed into conditions only //NB relex does not appear to output this information for properties and actions
+	#ifdef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
 	bool isArtificialAuxiliary;	//a new entity was created for an implicit auxiliary (property/definition relationship entities only)
-
+	#endif
+	
 	/*GIA Connections*/
 	vector<GIAentityConnection*> entityVectorConnectionsArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];		//allows for generic coding
 	#ifdef GIA_DATABASE
@@ -516,8 +527,10 @@ public:
 	bool sourceReferencedInLanguageGeneration;
 	#endif
 
+	#ifdef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
 	#ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
 	bool isAlias = false;
+	#endif
 	#endif
 	
 	#ifdef USE_NLC
@@ -629,8 +642,6 @@ class GIAentityNodeClassClass
 			private: void getEntityCharacteristicIterationint(const int entityVal, GIAentityCharacteristic* entityCharacteristicGet, const string iterationVariable, bool* foundMatch);
 			private: void getEntityCharacteristicIterationstring(const string entityVal, GIAentityCharacteristic* entityCharacteristicGet, const string iterationVariable, bool* foundMatch);
 #endif
-
-	public: bool isActionSpecialPossessive(const GIAentityNode* actionRelationshipEntity);
 
 #ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES
 	public: string getParentClassEntityNameFromSubClassEntityName(string subClassEntityName);

@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorApplyAdvancedFeatures.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1d 26-February-2017
+ * Project Version: 3a1e 26-February-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -468,7 +468,8 @@ void GIAtranslatorApplyAdvancedFeaturesClass::extractQuantitiesStanfordCoreNLP(G
 									string conditionName = "quantityModifier";	//quantitySubstance->quantityModifierString //CHECKTHIS;
 
 									bool sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE;	//CHECK; sameReferenceSet value...
-									GIAtranslatorGeneric.addRelationshipToEntityAndGenerateSemanticRelations(entityNode, relationshipObjectEntity, sameReferenceSet, GIA_ENTITY_TYPE_CONDITION, conditionName, translatorVariables, false, currentRelationInList->relationGovernorIndex, currentRelationInList2->relationDependentIndex);
+									//GIAtranslatorGeneric.addRelationshipArtificialToEntityAndGenerateSemanticRelations(entityNode, relationshipObjectEntity, sameReferenceSet, GIA_ENTITY_TYPE_CONDITION, conditionName, translatorVariables, false, currentRelationInList->relationGovernorIndex, currentRelationInList2->relationDependentIndex);	//GIA semantic parser output is unsupported for artifical conditions
+									GIAtranslatorOperations.addConditionRelationshipArtificialToEntity(entityNode, relationshipObjectEntity, conditionName, sameReferenceSet, translatorVariables);
 								}
 
 							}
@@ -560,7 +561,8 @@ void GIAtranslatorApplyAdvancedFeaturesClass::extractQuantitiesRelex(GIAtranslat
 								bool sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE;	//CHECK; sameReferenceSet value...
 
 								string conditionName = "quantityModifier";	//quantitySubstance->quantityModifierString //CHECKTHIS;
-								GIAtranslatorGeneric.addRelationshipToEntityAndGenerateSemanticRelations(entityNode, relationshipObjectEntity, sameReferenceSet, GIA_ENTITY_TYPE_CONDITION, conditionName, translatorVariables, false, currentRelationInList->relationGovernorIndex, currentRelationInList2->relationDependentIndex);
+								//GIAtranslatorGeneric.addRelationshipArtificialToEntityAndGenerateSemanticRelations(entityNode, relationshipObjectEntity, sameReferenceSet, GIA_ENTITY_TYPE_CONDITION, conditionName, translatorVariables, false, currentRelationInList->relationGovernorIndex, currentRelationInList2->relationDependentIndex);	//GIA semantic parser output is unsupported for artifical conditions
+								GIAtranslatorOperations.addConditionRelationshipArtificialToEntity(entityNode, relationshipObjectEntity, conditionName, sameReferenceSet, translatorVariables);
 							}
 
 						}
@@ -628,8 +630,7 @@ void GIAtranslatorApplyAdvancedFeaturesClass::extractQuantitiesRelex(GIAtranslat
 						measureSubstance->hasMeasure = true;
 						measureSubstance->measureType = MEASURE_TYPE_PER;
 
-						bool isArtificial = false;
-						GIAentityNode* newQuantityTimesEntity = GIAtranslatorOperations.findOrAddEntityNodeByNameSimpleWrapperRelationship("times", translatorVariables, isArtificial);
+						GIAentityNode* newQuantityTimesEntity = GIAtranslatorOperations.addEntityNodeByNameSimpleWrapperRelationshipArtificial("times", translatorVariables);	//CHECKTHIS
 						//newQuantityTimesEntity->isArtificialAuxiliary = false;	//?
 						#ifdef GIA_DATABASE
 						newQuantityTimesEntity->added = true;
@@ -648,9 +649,8 @@ void GIAtranslatorApplyAdvancedFeaturesClass::extractQuantitiesRelex(GIAtranslat
 						newQuantityTimesEntity->quantityNumberString = "1";
 
 						string conditionName = RELATION_TYPE_MEASURE_PER;
-						//GIAtranslatorGeneric.addRelationshipToEntityAndGenerateSemanticRelations(newQuantityTimesEntity, measureSubstance, sameReferenceSet, GIA_ENTITY_TYPE_CONDITION, conditionName, translatorVariables, false, FEATURE_INDEX_OF_QUANTITY_TIMES_UNKNOWN, currentRelationInList->relationGovernorIndex);	//this (conditionRelationshipSubjectEntity<->condition connection) is not currently been generated correctly by GIA1	//GIA semantic parser output is unsupported by extractQuantitiesRelex
-						GIAtranslatorOperations.addRelationshipToEntity(newQuantityTimesEntity, measureSubstance, sameReferenceSet, GIA_ENTITY_TYPE_CONDITION, conditionName, translatorVariables, false);
-				
+						//GIAtranslatorGeneric.addRelationshipArtificialToEntityAndGenerateSemanticRelations(newQuantityTimesEntity, measureSubstance, sameReferenceSet, GIA_ENTITY_TYPE_CONDITION, conditionName, translatorVariables, false, FEATURE_INDEX_OF_QUANTITY_TIMES_UNKNOWN, currentRelationInList->relationGovernorIndex);	//this (conditionRelationshipSubjectEntity<->condition connection) is not currently been generated correctly by GIA1	//GIA semantic parser output is unsupported for artifical conditions
+						GIAtranslatorOperations.addConditionRelationshipArtificialToEntity(newQuantityTimesEntity, measureSubstance, conditionName, sameReferenceSet, translatorVariables);
 					}
 				}
 			}

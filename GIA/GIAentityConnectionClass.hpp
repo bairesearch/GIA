@@ -25,7 +25,7 @@
  * File Name: GIAentityConnectionClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1d 26-February-2017
+ * Project Version: 3a1e 26-February-2017
  * NB a substance is an instance of an entity, any given entity may contain/comprise/have multiple substances - and substances are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -94,6 +94,9 @@ public:
 	GIAentityNode* entity;
 	#ifdef GIA_ENTITY_CONNECTION_RECORD_ENTITY_ORIGIN
 	GIAentityNode* entityOrigin;
+	#ifdef GIA_ENTITY_CONNECTION_RECORD_RELATIONSHIP_TYPE
+	int connectionType;
+	#endif
 	#endif
 	double confidence;
 
@@ -115,11 +118,24 @@ public:
 	bool initialisedForPrinting;
 	#endif
 
-	#ifdef USE_NLC
+	#ifdef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
+	#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC_RECORD_AUX_INFO
+	#ifdef GIA_RECORD_POSSESSION_AUXILIARY_HAS_INFORMATION
+	bool possessionAuxiliaryHave;	//added 1k3a	//3a1a: set by GIA
+	#endif
 	bool negative;
+	bool grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES];
+	int grammaticalTenseTemp;
+	#endif
+	#ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
+	bool isAlias;
+	#endif
 	#endif
 	
 	#ifdef USE_NLC
+	#ifndef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC_RECORD_AUX_INFO
+	bool negative;	//already defined
+	#endif
 	bool NLCparsedForCodeBlocks;
 	bool NLCparsedForlogicalConditionOperations;
 	bool NLCcontextGenerated;	//added NLC 1g14b/15-July-2014
@@ -131,9 +147,6 @@ public:
 	#endif
 	#ifdef GIA_STORE_CONNECTION_SENTENCE_INDEX
 	int sentenceIndexTemp;
-	#endif
-	#ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
-	bool isAlias;
 	#endif
 
 	/*

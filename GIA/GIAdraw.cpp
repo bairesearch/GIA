@@ -25,7 +25,7 @@
  * File Name: GIAdraw.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1d 26-February-2017
+ * Project Version: 3a1e 26-February-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -313,21 +313,21 @@ LDreference* GIAdrawClass::initialiseEntityNodeForPrinting(GIAentityNode* entity
 
 			int entityDefinitionConnectionColour = GIA_DRAW_CONNECTION_DEFINING_INSTANCE_COLOUR;
 
-			for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
+			for(int connectionType=0; connectionType<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; connectionType++)
 			{
-				int q = entityVectorConnectionDrawPosYinitialArray[i];
-				int r = entityVectorConnectionDrawPosXinitialArray[i];
-				int qSpacing = entityVectorConnectionDrawPosYspacingArray[i];
+				int q = entityVectorConnectionDrawPosYinitialArray[connectionType];
+				int r = entityVectorConnectionDrawPosXinitialArray[connectionType];
+				int qSpacing = entityVectorConnectionDrawPosYspacingArray[connectionType];
 				
 				if(GIAentityNodeClass.entityIsRelationship(entityNode))
 				{
-					if(i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_RELATIONSHIP_SUBJECT)
+					if(connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_RELATIONSHIP_SUBJECT)
 					{
 						q = -relationshipEntityVectorConnectionDrawPosYinitialArray[GIAentityNodeClass.getRelationshipEntityRelativeTypeIndex(entityNode)];
 						r = -relationshipEntityVectorConnectionDrawPosXinitialArray[GIAentityNodeClass.getRelationshipEntityRelativeTypeIndex(entityNode)];
 						qSpacing = -relationshipEntityVectorConnectionDrawPosYspacingArray[GIAentityNodeClass.getRelationshipEntityRelativeTypeIndex(entityNode)];
 					}
-					else if(i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_RELATIONSHIP_OBJECT)
+					else if(connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_RELATIONSHIP_OBJECT)
 					{
 						q = relationshipEntityVectorConnectionDrawPosYinitialArray[GIAentityNodeClass.getRelationshipEntityRelativeTypeIndex(entityNode)];
 						r = relationshipEntityVectorConnectionDrawPosXinitialArray[GIAentityNodeClass.getRelationshipEntityRelativeTypeIndex(entityNode)];
@@ -335,16 +335,16 @@ LDreference* GIAdrawClass::initialiseEntityNodeForPrinting(GIAentityNode* entity
 					}
 				}
 
-				for(vector<GIAentityConnection*>::iterator connectionIter = entityNode->entityVectorConnectionsArray[i].begin(); connectionIter != entityNode->entityVectorConnectionsArray[i].end(); connectionIter++)
+				for(vector<GIAentityConnection*>::iterator connectionIter = entityNode->entityVectorConnectionsArray[connectionType].begin(); connectionIter != entityNode->entityVectorConnectionsArray[connectionType].end(); connectionIter++)
 				{
 					GIAentityConnection* connection = *connectionIter;
 					
 					#ifdef GIA_DEBUG
-					//cout << "\ti = " << i << ", initialiseEntityNodeForPrinting; " << connection->entity->entityName << endl;
+					//cout << "\ti = " << connectionType << ", initialiseEntityNodeForPrinting; " << connection->entity->entityName << endl;
 					#endif
 					bool thisIsDefinitionAndPreviousNodeWasInstance = false;
 					#ifdef GIA_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE
-					if(i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_INSTANCE_REVERSE)
+					if(connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_INSTANCE_REVERSE)
 					{
 						thisIsDefinitionAndPreviousNodeWasInstance = true;
 					}
@@ -352,12 +352,12 @@ LDreference* GIAdrawClass::initialiseEntityNodeForPrinting(GIAentityNode* entity
 					currentReferenceInPrintList = this->initialiseEntityNodeForPrinting(connection->entity, y+q, x+r, printType, currentReferenceInPrintList, currentTag, sentenceIndex, thisIsDefinitionAndPreviousNodeWasInstance);
 
 					bool pass = true;
-					int entityConnectionColour = entityVectorConnectionDrawColourNameArray[i];
+					int entityConnectionColour = entityVectorConnectionDrawColourNameArray[connectionType];
 
 					/*
 					//this shouldn't be necessary:
 					#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX_ADVANCED
-					if(i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_INSTANCE)
+					if(connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_INSTANCE)
 					{
 						if(GIAentityNodeClass.entityIsRelationship(connection->entity))
 						{
@@ -367,6 +367,13 @@ LDreference* GIAdrawClass::initialiseEntityNodeForPrinting(GIAentityNode* entity
 					#endif				
 					*/
 					
+					#ifdef GIA_DRAW_ONLY_PRINT_CONNECTIONS_IN_ONE_DIRECTION
+					if(!entityVectorConnectionDrawPrintConnectionArray[connectionType])
+					{
+						pass = false;
+					}
+					#endif
+					
 					#ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
 					if(connection->isAlias)
 					{
@@ -375,7 +382,7 @@ LDreference* GIAdrawClass::initialiseEntityNodeForPrinting(GIAentityNode* entity
 					#endif
 					if(pass)
 					{
-						if(entityVectorConnectionDrawConnectionArray[i])
+						if(entityVectorConnectionDrawConnectionArray[connectionType])
 						{
 							#ifdef GIA_ADVANCED_REFERENCING_DEBUG_HIGHLIGHT_REFERENCE_SET_CONNECTIONS_WITH_COLOURS
 							if(connection->sameReferenceSet)
@@ -390,10 +397,10 @@ LDreference* GIAdrawClass::initialiseEntityNodeForPrinting(GIAentityNode* entity
 
 							#ifdef GIA_DRAW_PRINT_CONNECTION_SENTENCE_INDEX
 							//string connectionName = SHAREDvars.convertIntToString(connection->sentenceIndexTemp);
-							string connectionName = string("s") + SHAREDvars.convertIntToString(connection->sentenceIndexTemp) + entityVectorConnectionNameArray[i];
+							string connectionName = string("s") + SHAREDvars.convertIntToString(connection->sentenceIndexTemp) + entityVectorConnectionNameArray[connectionType];
 							currentReferenceInPrintList = this->initialiseEntityConnectionForPrinting(&pos1, connection, currentReferenceInPrintList, printType, connectionName, entityConnectionColour, currentTag);
 							#else
-							currentReferenceInPrintList = this->initialiseEntityConnectionForPrinting(&pos1, connection, currentReferenceInPrintList, printType, entityVectorConnectionDrawConnectionNameArray[i], entityConnectionColour, currentTag);
+							currentReferenceInPrintList = this->initialiseEntityConnectionForPrinting(&pos1, connection, currentReferenceInPrintList, printType, entityVectorConnectionDrawConnectionNameArray[connectionType], entityConnectionColour, currentTag);
 							#endif
 						}
 					}
@@ -551,6 +558,9 @@ LDreference* GIAdrawClass::initialiseEntityNodeForPrinting(GIAentityNode* entity
 				#endif
 				#ifdef GIA_DRAW_PRINT_ENTITY_SENTENCE_INDEX
 				nameOfBox = nameOfBox + SHAREDvars.convertIntToString(entityNode->sentenceIndexTemp);
+				#endif
+				#ifdef GIA_DRAW_PRINT_ENTITY_ENTITY_INDEX
+				nameOfBox = nameOfBox + SHAREDvars.convertIntToString(entityNode->entityIndexTemp);
 				#endif
 
 				//nameOfBox = nameOfBox + SHAREDvars.convertIntToString(entityNode->grammaticalDefiniteTemp);
