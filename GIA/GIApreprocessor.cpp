@@ -25,7 +25,7 @@
  * File Name: GIApreprocessor.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3a2d 21-March-2017
+ * Project Version: 3a3a 22-March-2017
  * Requirements: requires plain text file
  * Description: Logical Condition and Reference Set preprocessor
  *
@@ -69,12 +69,12 @@ bool GIApreprocessorClass::preprocessTextForGIA(string* inputTextPlainTXTfileNam
 	#endif
 	
 	#ifdef GIA_PREPROCESSOR_SENTENCE
-	if(!preprocessSentencesForGIA(outputLRPTextPlainTXTFileNameIntermediaryMultiword, firstGIApreprocessorSentenceInList, outputLRPTextPlainTXTFileNameIntermediarySentence, outputLRPTextForNLPonlyPlainTXTFileNameIntermediarySentence))
+	if(!preprocessSentencesForGIA(outputLRPTextPlainTXTFileNameIntermediaryMultiword, translatorVariables->firstGIApreprocessorSentenceInList, outputLRPTextPlainTXTFileNameIntermediarySentence, outputLRPTextForNLPonlyPlainTXTFileNameIntermediarySentence))
 	{
 		result = false;
 	}
 	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
-	if(!updateGIApreprocessorMultiwordReductionTagTextCorrespondenceInfo(outputLRPTextForNLPonlyPlainTXTFileNameIntermediarySentence, firstGIApreprocessorSentenceInList, isQuery, outputLRPTextForNLPonlyPlainTXTFileName))
+	if(!updateGIApreprocessorMultiwordReductionTagTextCorrespondenceInfo(outputLRPTextForNLPonlyPlainTXTFileNameIntermediarySentence, translatorVariables->firstGIApreprocessorSentenceInList, isQuery, outputLRPTextForNLPonlyPlainTXTFileName))
 	{
 		result = false;
 	}			
@@ -597,8 +597,7 @@ bool GIApreprocessorClass::connectPreprocessorSentenceReferenceSetEntitiesToLogi
 		#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_OUTPUT_LOGIC_REFERENCE_SETS_FOR_HIGH_LEVEL_SEMANTIC_PARSE
 		GIAentityNode* logicReferenceEntity = getEntity(currentLogicReferenceInList, entityNodesActiveListSentences);
 		#else
-		GIAentityNode* logicReferenceEntity = createNewRelationshipEntity(currentLogicReferenceInList->logicReferenceContents, translatorVariables);
-		logicReferenceEntity = GIAtranslatorOperations.addInstanceToInstanceDefinition(logicReferenceEntity, GIA_ENTITY_TYPE_ACTION, translatorVariables);
+		GIAentityNode* logicReferenceEntity = createNewRelationshipEntity(currentLogicReferenceInList->logicReferenceVariable->logicReferenceVariableName, GIA_ENTITY_TYPE_ACTION, translatorVariables);	//OLD: currentLogicReferenceInList->logicReferenceContents
 		logicReferenceEntity->isLogicReferenceEntity = true;
 		#endif
 		#endif
@@ -861,18 +860,18 @@ void GIApreprocessorClass::changeSentenceIndexOfEntityNodesAndConnections(const 
 
 
 
-void GIApreprocessorClass::connectRelationshipToTarget(GIAentityNode* relationship, GIAentityNode* targetEntity, bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables)
+void GIApreprocessorClass::connectRelationshipToTarget(GIAentityNode* relationship, GIAentityNode* targetEntity, const bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables)
 {
 	int connectionTypeTargetToRelationship = generateConnectionTypeTargetToRelationship(relationship);
 	GIAtranslatorOperations.connectEntities(relationship, targetEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_RELATIONSHIP_OBJECT, connectionTypeTargetToRelationship, sameReferenceSet, translatorVariables);
 }
-void GIApreprocessorClass::connectRelationshipToSource(GIAentityNode* relationship, GIAentityNode* sourceEntity, bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables)
+void GIApreprocessorClass::connectRelationshipToSource(GIAentityNode* relationship, GIAentityNode* sourceEntity, const bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables)
 {
 	int connectionTypeSourceToRelationship = generateConnectionTypeSourceToRelationship(relationship);
 	GIAtranslatorOperations.connectEntities(relationship, sourceEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_RELATIONSHIP_SUBJECT, connectionTypeSourceToRelationship, sameReferenceSet, translatorVariables);
 }
 
-GIAentityNode* GIApreprocessorClass::createNewRelationshipEntity(string relationshipEntityName, GIAtranslatorVariablesClass* translatorVariables)
+GIAentityNode* GIApreprocessorClass::createNewRelationshipEntity(string relationshipEntityName, const int relationshipEntityType, GIAtranslatorVariablesClass* translatorVariables)
 {
 	/*
 	//NB see findOrAddEntityNodeByNameSimpleWrapperRelationshipArtificial{} / GIAtranslatorGeneric.cpp:genericDependecyRelationInterpretation{}:findOrAddNetworkIndexEntityByNameSimpleWrapperRelationship{};
@@ -882,31 +881,44 @@ GIAentityNode* GIApreprocessorClass::createNewRelationshipEntity(string relation
 	*/
 	
 	#ifdef GIA_PREPROCESSOR_SENTENCE_RECONCILE_REFERENCES_AFTER_SEMANTIC_PARSING_EVERY_SENTENCE
-	GIAentityNode* relationshipEntity = GIAtranslatorOperations.findOrAddNetworkIndexEntityByNameSimpleWrapperRelationship(relationshipEntityName, translatorVariables, false);	
+	GIAentityNode* relationshipEntity = GIAtranslatorOperations.addEntityNodeByNameSimpleWrapperRelationshipArtificial(relationshipEntityType, relationshipEntityName, translatorVariables);	
 	#else
-	GIAentityNode* relationshipEntity = GIAtranslatorOperations.findOrAddEntityNodeByNameSimpleWrapperRelationship2(relationshipEntityName, translatorVariables, false);
+	GIAentityNode* relationshipEntity = GIAtranslatorOperations.addEntityNodeByNameSimpleWrapperRelationshipArtificial2(relationshipEntityType, relationshipEntityName, translatorVariables);
 	#endif
 	
 	return relationshipEntity;
 }
 
 
-GIAentityNode* GIApreprocessorClass::createNewRelationshipAndConnectToSource(GIAentityNode* sourceEntity, GIApreprocessorLogicReferenceVariable* logicReferenceVariable, bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables)	//OLD: this will create an intermediary action/possession("have") node if necessary
+GIAentityNode* GIApreprocessorClass::createNewRelationshipAndConnectToSource(GIAentityNode* sourceEntity, GIApreprocessorLogicReferenceVariable* logicReferenceVariable, const bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables)
 {
+	return createNewRelationshipAndConnectToSource(sourceEntity, logicReferenceVariable->referenceSetDelimiter, logicReferenceVariable->referenceSetObject, sameReferenceSet, translatorVariables);
+	/*OR;
 	GIAentityNode* relationshipEntity = createNewRelationship(logicReferenceVariable, translatorVariables);
+	connectRelationshipToSource(relationshipEntity, sourceEntity, sameReferenceSet, translatorVariables);
+	return relationshipEntity;
+	*/	
+}
+GIAentityNode* GIApreprocessorClass::createNewRelationshipAndConnectToSource(GIAentityNode* sourceEntity, GIApreprocessorSubReferenceSet* relationshipReference, GIApreprocessorSubReferenceSet* relationshipObject, const bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables)	//OLD: this will create an intermediary action/possession("have") node if necessary
+{
+	GIAentityNode* relationshipEntity = createNewRelationship(relationshipReference, relationshipObject, translatorVariables);
 	connectRelationshipToSource(relationshipEntity, sourceEntity, sameReferenceSet, translatorVariables);
 	return relationshipEntity;
 }
 
+
 GIAentityNode* GIApreprocessorClass::createNewRelationship(GIApreprocessorLogicReferenceVariable* logicReferenceVariable, GIAtranslatorVariablesClass* translatorVariables)
 {
-	//GIApreprocessorSubReferenceSet* relationshipReference = logicReferenceVariable->referenceSetDelimiter;
-	
+	return createNewRelationship(logicReferenceVariable->referenceSetDelimiter, logicReferenceVariable->referenceSetObject, translatorVariables);
+}
+GIAentityNode* GIApreprocessorClass::createNewRelationship(GIApreprocessorSubReferenceSet* relationshipReference, GIApreprocessorSubReferenceSet* relationshipObject, GIAtranslatorVariablesClass* translatorVariables)
+{
+	//FUTURE: upgrade createNewRelationship:getRelationshipNameAndType to detect auxiliary tense information, and any associated adverb/adjectives within relationshipReference [else use GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_SUB_REFERENCE_SETS_RECORD_SAME_REFERENCE_SET_DELIMITERS: this is currently required to process delimiter (eg being/having/verb/preposition) tense, adverbs (eg very near), and adjectives (eg rides fast) using NLP]
+
 	int relationshipEntityType = GIA_ENTITY_TYPE_UNDEFINED;
 	string relationshipName = "";
-	getRelationshipNameAndType(logicReferenceVariable, &relationshipEntityType, &relationshipName);
-	GIAentityNode* relationshipEntity = createNewRelationshipEntity(relationshipName, translatorVariables);
-	relationshipEntity->entityType = relationshipEntityType;
+	getRelationshipNameAndType(relationshipReference, relationshipObject, &relationshipEntityType, &relationshipName);
+	GIAentityNode* relationshipEntity = createNewRelationshipEntity(relationshipName, relationshipEntityType, translatorVariables);
 	return relationshipEntity;
 }
 
@@ -964,7 +976,7 @@ GIAentityNode* GIApreprocessorClass::getEntity(GIApreprocessorLogicReference* cu
 #endif
 
 
-bool GIApreprocessorClass::findPrimaryEntityAndReconcileSubReferenceSets(GIAentityNode** primaryEntity, GIApreprocessorSubReferenceSet* firstSubReferenceSetInList, GIAtranslatorVariablesClass* translatorVariables, int referenceSetType)
+bool GIApreprocessorClass::findPrimaryEntityAndReconcileSubReferenceSets(GIAentityNode** primaryEntity, GIApreprocessorSubReferenceSet* firstSubReferenceSetInList, GIAtranslatorVariablesClass* translatorVariables, const int referenceSetType)
 {
 	GIApreprocessorSubReferenceSet* currentSubReferenceSetInList = firstSubReferenceSetInList;
 	GIAentityNode* lastDelimiterEntity = NULL;
@@ -995,9 +1007,17 @@ bool GIApreprocessorClass::findPrimaryEntityAndReconcileSubReferenceSets(GIAenti
 					if(currentSubReferenceSetInList->isReferenceSetDelimiter)
 					{
 						//OLD: lastDelimiterEntity = createNewRelationshipAndConnectToSource(*primaryEntity, intermediaryPrimaryEntity);
-						lastDelimiterEntity = intermediaryPrimaryEntity;
+						
 						bool sameReferenceSet = true;	//"that"/"which" imply sameReferenceSet
-						connectRelationshipToSource(lastDelimiterEntity, *primaryEntity, sameReferenceSet, translatorVariables);
+						if(currentSubReferenceSetInList->delimiterSpecialCase == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_SPECIAL_CASE_DELIMITER_AND_OBJECT_REFER_TO_PREVIOUS_DELIMITER_VERB)
+						{
+							connectRelationshipToSource(intermediaryPrimaryEntity, lastDelimiterEntity, sameReferenceSet, translatorVariables);	//eg tom rides the bike near the ball -> rides near
+						}
+						else
+						{
+							connectRelationshipToSource(intermediaryPrimaryEntity, *primaryEntity, sameReferenceSet, translatorVariables);
+						}
+						lastDelimiterEntity = intermediaryPrimaryEntity;
 					}
 					else
 					{
@@ -1021,7 +1041,7 @@ bool GIApreprocessorClass::findPrimaryEntityAndReconcileSubReferenceSets(GIAenti
 		}
 		else
 		{
-			lastDelimiterEntity = createNewRelationshipAndConnectToSource(*primaryEntity, currentSubReferenceSetInList, true);	//OLD: this will create an intermediary action/possession("have") node if necessary
+			lastDelimiterEntity = createNewRelationshipAndConnectToSource(*primaryEntity, currentSubReferenceSetInList, currentSubReferenceSetInList->next, true);	//OLD: this will create an intermediary action/possession("have") node if necessary
 		}
 		#endif
 		#endif
@@ -1065,7 +1085,7 @@ void GIApreprocessorClass::deleteExternalConnectionsToConnection(GIAentityConnec
 
 
 
-bool GIApreprocessorClass::findPrimaryEntityBasedOnSentenceIndexAndTypeAndDeleteDummyVariableConnections(GIApreprocessorSubReferenceSet* currentSubReferenceSetInList, GIAtranslatorVariablesClass* translatorVariables, int referenceSetType, GIAentityNode** primaryEntity)
+bool GIApreprocessorClass::findPrimaryEntityBasedOnSentenceIndexAndTypeAndDeleteDummyVariableConnections(GIApreprocessorSubReferenceSet* currentSubReferenceSetInList, GIAtranslatorVariablesClass* translatorVariables, const int referenceSetType, GIAentityNode** primaryEntity)
 {
 	bool result = true;
 	#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_SUB_REFERENCE_SETS_RECORD_SAME_REFERENCE_SET_DELIMITERS
@@ -1290,27 +1310,35 @@ int GIApreprocessorClass::generateConnectionTypeSourceToRelationship(GIAentityNo
 }
 
 //FUTURE GIA - upgrade getRelationshipNameAndType to use context to determine relationship type; property, condition, action, or definition? else how to distinguish between is adjective (eg tom is red) and is definition (a tom is red)?: need to look for the determiner of the subject/object (a x is a y/xs are ys/x is a y). actions (verb detection) and properties (have auxiliary detection) are ok.
-bool GIApreprocessorClass::getRelationshipNameAndType(GIApreprocessorLogicReferenceVariable* logicReferenceVariable, int* relationshipEntityType, string* relationshipName)
+bool GIApreprocessorClass::getRelationshipNameAndType(GIApreprocessorSubReferenceSet* relationshipReference, GIApreprocessorSubReferenceSet* relationshipObject, int* relationshipEntityType, string* relationshipName)
 {
 	bool result = true; 
 	
-	GIApreprocessorSubReferenceSet* relationshipReference = logicReferenceVariable->referenceSetDelimiter;
-
 	/*
 	algorithm for relationship type detection;
 		if verb then action
-		if having aux then property
-		if doing aux then action
-		if being aux (is, was etc) then:
+			ignore: the move, the fast move, the very fast move
+			eg tom moves the ball
+			eg tom does move the ball [may be preceeded by an auxiliary]
+			eg tom rides fast	[may be preceeded by an adjective. object must refer to previous verb delimiter: delimiterSpecialCase == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_SPECIAL_CASE_OBJECT_REFERS_TO_PREVIOUS_DELIMITER_VERB]
+			eg tom rides very fast	[may be preceeded by an adverb and adjective. object must refer to previous verb delimiter: delimiterSpecialCase == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_SPECIAL_CASE_OBJECT_REFERS_TO_PREVIOUS_DELIMITER_VERB]
+		else if preposition then condition
+			eg tom is near the ball 	[may be preceeded by an auxiliary]
+			eg tom is certainly near the ball [may be preceeded by an auxiliary and adverb]
+			eg tom rides the bike near the ball 	[may not be preceeded by an auxiliary, in which case the condition refers to {ie is subsequently linked by GIA to} the preceeding referenceSetDelimiter (eg verb): delimiterSpecialCase == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_SPECIAL_CASE_DELIMITER_AND_OBJECT_REFER_TO_PREVIOUS_DELIMITER_VERB]
+		else if having aux then property
+			eg tom has the ball
+			eg tom is having the ball	[may be preceeded by a being auxiliary]
+		else if doing aux then action
+			eg tom is doing {FUTURE: the move}	[upgrade executeReferenceSetPreprocessor; may be preceeded by a being auxiliary {FUTURE: may be succeeded by a delimiter and verb}]
+		else if being aux (is, was etc) then:
 			if object is adjective then property [quality] eg Tom is red..
 				if object is adverb + adjective then property [quality] eg Tom is very red
 				NO: if object is quality then property [quality]
-			if object is preposition then condition eg Tom is near..
-				if object is adverb + preposition then condition g Tom is certainly near?
 			Else is definition eg Tom is a
 				Note can't just detect determiner (a) as there won't necessarily be one, eg Toms are humans / Toms are red
-			NB very/certainly are adverbs...
-			NB cold/blue/red are adjectives
+		NB very/certainly/not are adverbs...
+		NB cold/blue/red are adjectives
 	*/
 	
 	string delimiterContents = relationshipReference->subReferenceSetContents;	//referenceSetDelimiterName
@@ -1325,63 +1353,67 @@ bool GIApreprocessorClass::getRelationshipNameAndType(GIApreprocessorLogicRefere
 	}
 	cout << "relationshipName = " << *relationshipName << endl;
 	
-	bool auxiliaryFound = false;
-	bool verbFound = false;
-	if(GIApreprocessorReferenceSet.detectAuxiliary(*relationshipName))
+	if(relationshipReference->delimiterType == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_AUXILIARY)	//GIApreprocessorReferenceSet.detectAuxiliary(*relationshipName)
 	{
-		auxiliaryFound = true;
 	}
-	else
+	else if(relationshipReference->delimiterType == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_VERB)
 	{
-		verbFound = false;
 		*relationshipEntityType = GIA_ENTITY_TYPE_ACTION;
 	}
+	else if(relationshipReference->delimiterType == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_PREPOSITION)
+	{
+		*relationshipEntityType = GIA_ENTITY_TYPE_CONDITION;		
+	}
 	
-	if(auxiliaryFound)
+	if(relationshipReference->delimiterType == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_AUXILIARY)
 	{	
 		string firstWordAfterAuxiliary = "";
 		string secondWordAfterAuxiliary = "";
 		bool hasFirstWordAfterAuxiliary = false;
 		bool hasSecondWordAfterAuxiliary = false;
-		if(logicReferenceVariable->referenceSetObject->subReferenceSetContents != "")
+		if(relationshipObject != NULL)
 		{
-			string referenceSetObjectContents = logicReferenceVariable->referenceSetObject->subReferenceSetContents;
-			int referenceSetObjectContentsIndexOfFirstSpace = referenceSetObjectContents.find(CHAR_SPACE);	
-			if(referenceSetObjectContentsIndexOfFirstSpace != CPP_STRING_FIND_RESULT_FAIL_VALUE)
+			if(relationshipObject->subReferenceSetContents != "")
 			{
-				firstWordAfterAuxiliary = referenceSetObjectContents.substr(referenceSetObjectContentsIndexOfFirstSpace);
-				cout << "firstWordAfterAuxiliary = " << firstWordAfterAuxiliary << endl;
-				hasFirstWordAfterAuxiliary = true;
-				
-				int referenceSetObjectContentsIndexOfSecondSpace = referenceSetObjectContents.find(CHAR_SPACE, referenceSetObjectContentsIndexOfFirstSpace);	
-				if(referenceSetObjectContentsIndexOfSecondSpace != CPP_STRING_FIND_RESULT_FAIL_VALUE)
+				string referenceSetObjectContents = relationshipObject->subReferenceSetContents;
+				int referenceSetObjectContentsIndexOfFirstSpace = referenceSetObjectContents.find(CHAR_SPACE);	
+				if(referenceSetObjectContentsIndexOfFirstSpace != CPP_STRING_FIND_RESULT_FAIL_VALUE)
 				{
-					secondWordAfterAuxiliary = referenceSetObjectContents.substr(referenceSetObjectContentsIndexOfFirstSpace+1, referenceSetObjectContentsIndexOfSecondSpace-referenceSetObjectContentsIndexOfFirstSpace-1);
-					cout << "secondWordAfterAuxiliary = " << secondWordAfterAuxiliary << endl;
-					hasSecondWordAfterAuxiliary = true;
+					firstWordAfterAuxiliary = referenceSetObjectContents.substr(referenceSetObjectContentsIndexOfFirstSpace);
+					cout << "firstWordAfterAuxiliary = " << firstWordAfterAuxiliary << endl;
+					hasFirstWordAfterAuxiliary = true;
+
+					int referenceSetObjectContentsIndexOfSecondSpace = referenceSetObjectContents.find(CHAR_SPACE, referenceSetObjectContentsIndexOfFirstSpace);	
+					if(referenceSetObjectContentsIndexOfSecondSpace != CPP_STRING_FIND_RESULT_FAIL_VALUE)
+					{
+						secondWordAfterAuxiliary = referenceSetObjectContents.substr(referenceSetObjectContentsIndexOfFirstSpace+1, referenceSetObjectContentsIndexOfSecondSpace-referenceSetObjectContentsIndexOfFirstSpace-1);
+						cout << "secondWordAfterAuxiliary = " << secondWordAfterAuxiliary << endl;
+						hasSecondWordAfterAuxiliary = true;
+					}
+					else
+					{
+						secondWordAfterAuxiliary = referenceSetObjectContents.substr(referenceSetObjectContentsIndexOfFirstSpace+1);
+						hasSecondWordAfterAuxiliary = true;
+					}
 				}
 				else
 				{
-					secondWordAfterAuxiliary = referenceSetObjectContents.substr(referenceSetObjectContentsIndexOfFirstSpace+1);
-					hasSecondWordAfterAuxiliary = true;
+					firstWordAfterAuxiliary = referenceSetObjectContents;
+					hasFirstWordAfterAuxiliary = true;
 				}
 			}
-			else
-			{
-				firstWordAfterAuxiliary = referenceSetObjectContents;
-				hasFirstWordAfterAuxiliary = true;
-			}
+		}
+		else
+		{
+			cout << "GIApreprocessorClass::getRelationshipNameAndType{} error: (relationshipObject == NULL)" << endl;
+			exit(EXIT_ERROR);
 		}
 		
 		if(hasFirstWordAfterAuxiliary)
 		{
 			if(SHAREDvars.textInTextArray(*relationshipName, entityAuxiliaryBeingArray, ENTITY_AUXILIARY_BEING_ARRAY_NUMBER_OF_TYPES))
 			{
-				if(GIApreprocessorMultiwordReduction.determineIsPreposition(firstWordAfterAuxiliary) || (hasSecondWordAfterAuxiliary && GIApreprocessorMultiwordReduction.determineIsAdverb(firstWordAfterAuxiliary) && GIApreprocessorMultiwordReduction.determineIsPreposition(secondWordAfterAuxiliary)))
-				{
-					*relationshipEntityType = GIA_ENTITY_TYPE_CONDITION;
-				}
-				else if(GIApreprocessorMultiwordReduction.determineIsAdjective(firstWordAfterAuxiliary) || (hasSecondWordAfterAuxiliary && GIApreprocessorMultiwordReduction.determineIsAdverb(firstWordAfterAuxiliary) && GIApreprocessorMultiwordReduction.determineIsAdjective(secondWordAfterAuxiliary)))
+				if(GIApreprocessorMultiwordReduction.determineIsAdjective(firstWordAfterAuxiliary) || (hasSecondWordAfterAuxiliary && GIApreprocessorMultiwordReduction.determineIsAdverb(firstWordAfterAuxiliary) && GIApreprocessorMultiwordReduction.determineIsAdjective(secondWordAfterAuxiliary)))
 				{
 					*relationshipEntityType = GIA_ENTITY_TYPE_PROPERTY;
 					//FUTURE GIA: if GIA_ENTITY_TYPE_PROPERTY detected via determineIsAdjective(firstWordAfterAuxiliary)||determineIsAdjective(secondWordAfterAuxiliary), then need to set the relationshipEntityObject to GIA_ENTITY_TYPE_QUALITY also

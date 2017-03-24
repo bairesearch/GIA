@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorReferenceSet.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3a2d 21-March-2017
+ * Project Version: 3a3a 22-March-2017
  * Requirements: requires plain text file
  * Description: Reference Set preprocessor
  *
@@ -56,10 +56,11 @@ Past participles can often be found in participle phrases. A participle phrase a
 NB there is no easy rcmod detection in these cases
 */
 
-bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(string* logicReferenceVariableContents, vector<string>* logicReferenceVariableWordList, GIApreprocessorLogicReferenceVariable* logicReferenceVariable, bool expectToFindSubjectAuxObjectLogicReferenceVariable, int wordIndexSentence)
+bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(string* logicReferenceVariableContents, vector<string>* logicReferenceVariableWordList, GIApreprocessorLogicReferenceVariable* logicReferenceVariable, const bool expectToFindSubjectAuxObjectLogicReferenceVariable, const int wordIndexSentence)
 {
 	bool result = true;
-	
+
+	//see getRelationshipNameAndType for algorithm for relationship type detection
 	
 	//Perform auxiliary detection by looking for the word "has/have/has had" / "is/was/will be" preceding the second word of the relation (ignoring intermediary determiners; a/the). Perform same reference set detection by checking for "that/which" before the auxiliary.
 	//Reference set reduction preprocessor - rrp. 3. reference sets; look for "is" not following that/which or infinitive/present/continuous/past[/past participle?] tense verbs (eg move/moves/moving/moved) not following that/which [or intemediary auxiliaries eg that is running] or determiners (the/a) or possessive pronouns (his/her/its).
@@ -76,73 +77,135 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(string* l
 	
 	//sub or full referenceSet variables;			
 	bool referenceSetDelimiterDetected = false;
-	bool referenceSetDelimiterPreceededByThatWhich = false;
+	#ifndef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_SUB_REFERENCE_SETS
+	int delimiterType = GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_UNDEFINED;
+	int delimiterSpecialCase = GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_SPECIAL_CASE_UNDEFINED;
+	#endif
+	bool referenceSetDelimiterIndicatesSameReferenceSet = false;
 	int firstIndexOfReferenceSetDelimiter = INT_DEFAULT_VALUE;
 	#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_SUB_REFERENCE_SETS
 	int lastIndexOfReferenceSetDelimiterText = 0;
 	#endif
 	bool parsingReferenceSetDelimiter = false;
+
 	
+		
 	//detect auxiliary or verb (present/past/future tense)
 	int wordIndex = 0;
-	for(vector<string>::iterator iter = logicReferenceVariableWordList->begin(); iter < logicReferenceVariableWordList->end(); iter++)
+	for(int wordIndex = 0; wordIndex<logicReferenceVariableWordList->size(); wordIndex++)
 	{
-		string currentWord = *iter;
+		string currentWord = (*logicReferenceVariableWordList)[wordIndex];
 		currentWord = SHAREDvars.convertStringToLowerCase(&currentWord);	//required for imperatives where the action is defined as the first word in the sentence 
 		int wordIndexOfHypotheticalPreceedingThatWhich = wordIndex-1;
 					
 		bool currentWordIsReferenceSetDelimiter = false;
 		//auxiliary detection
-		bool foundAuxiliary = false;
-		bool foundVerbCase = false;
+		bool currentDelimiterType = GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_UNDEFINED;
+		bool currentDelimiterSpecialCase = GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_SPECIAL_CASE_UNDEFINED;
 		int grammaticalBaseTenseForm = INT_DEFAULT_VALUE;
 		
 		if(detectAuxiliary(currentWord))
 		{
-			foundAuxiliary = true;
 			currentWordIsReferenceSetDelimiter = true;
+			currentDelimiterType = GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_AUXILIARY;
 		}
-		else
+		else if(GIApreprocessorMultiwordReduction.determineVerbCaseStandardWithAdditional(currentWord, &grammaticalBaseTenseForm))	//OLD: determineVerbCaseStandard
 		{
 			//infinitive/present/past tense verb detection (NB infinitive detection is required for a) future tense detection and b) imperatives where the action is defined as the first word in the sentence)
-			bool foundVerbCase = GIApreprocessorMultiwordReduction.determineVerbCaseStandardWithAdditional(currentWord, &grammaticalBaseTenseForm);	//OLD: determineVerbCaseStandard
-			if(foundVerbCase)
+			/*
+			#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_MAX_NUM_TENSE_FORMS (5)	//run (infinitive), runs (present), running (continuous), ran (past), run (past partiple)
+			#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_INFINITIVE (0)
+			#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT (1)
+			#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS (2)
+			#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PAST (3)
+			#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PASTPARTICIPLE (4)
+			*/
+
+			bool referenceSetDelimiterVerbPreceededByDeterminerOrPossessivePronoun = false;
+			if(wordIndex-1 >= 0)
 			{
-				/*
-				#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_MAX_NUM_TENSE_FORMS (5)	//run (infinitive), runs (present), running (continuous), ran (past), run (past partiple)
-				#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_INFINITIVE (0)
-				#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT (1)
-				#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS (2)
-				#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PAST (3)
-				#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PASTPARTICIPLE (4)
-				*/
-				
-				bool referenceSetDelimiterVerbPreceededByDeterminerOrPossessivePronoun = false;
-				if(wordIndex-1 >= 0)
+				//eg the [det] walk [verb]
+				if(SHAREDvars.textInTextArray((*logicReferenceVariableWordList)[wordIndex-1], relationDeterminerArray, GRAMMATICAL_DETERMINER_ARRAY_NUMBER_OF_TYPES) || 
+				SHAREDvars.textInTextArray((*logicReferenceVariableWordList)[wordIndex-1], entityPronounPossessiveArray, ENTITY_PRONOUN_POSSESSIVE_ARRAY_NUMBER_OF_TYPES))
 				{
-					if(SHAREDvars.textInTextArray((*logicReferenceVariableWordList)[wordIndex-1], relationDeterminerArray, GRAMMATICAL_DETERMINER_ARRAY_NUMBER_OF_TYPES))
-					{
-						referenceSetDelimiterVerbPreceededByDeterminerOrPossessivePronoun = true;
-					}
-					if(SHAREDvars.textInTextArray((*logicReferenceVariableWordList)[wordIndex-1], entityPronounPossessiveArray, ENTITY_PRONOUN_POSSESSIVE_ARRAY_NUMBER_OF_TYPES))
+					referenceSetDelimiterVerbPreceededByDeterminerOrPossessivePronoun = true;
+				}
+			}
+			if(wordIndex-2 >= 0)
+			{
+				//eg the [det] wonderful [adj] walk [verb]
+				if(SHAREDvars.textInTextArray((*logicReferenceVariableWordList)[wordIndex-2], relationDeterminerArray, GRAMMATICAL_DETERMINER_ARRAY_NUMBER_OF_TYPES) || 
+				SHAREDvars.textInTextArray((*logicReferenceVariableWordList)[wordIndex-2], entityPronounPossessiveArray, ENTITY_PRONOUN_POSSESSIVE_ARRAY_NUMBER_OF_TYPES))
+				{
+					if(GIApreprocessorMultiwordReduction.determineIsAdjective((*logicReferenceVariableWordList)[wordIndex-1]))
 					{
 						referenceSetDelimiterVerbPreceededByDeterminerOrPossessivePronoun = true;
 					}
 				}
-				if(!referenceSetDelimiterVerbPreceededByDeterminerOrPossessivePronoun)
+			}
+			if(wordIndex-3 >= 0)
+			{
+				//eg the [det] very [adv] wonderful [adj] walk [verb]
+				if(SHAREDvars.textInTextArray((*logicReferenceVariableWordList)[wordIndex-3], relationDeterminerArray, GRAMMATICAL_DETERMINER_ARRAY_NUMBER_OF_TYPES) || 
+				SHAREDvars.textInTextArray((*logicReferenceVariableWordList)[wordIndex-3], entityPronounPossessiveArray, ENTITY_PRONOUN_POSSESSIVE_ARRAY_NUMBER_OF_TYPES))
 				{
-					currentWordIsReferenceSetDelimiter = true;
-
-					//not required: verify that the verb is not preceeded by one or more auxiliaries (because it will have already been detected by foundAuxiliary when testing the previously parsed auxiliary)
+					if(GIApreprocessorMultiwordReduction.determineIsAdverb((*logicReferenceVariableWordList)[wordIndex-2]))
+					{
+						if(GIApreprocessorMultiwordReduction.determineIsAdjective((*logicReferenceVariableWordList)[wordIndex-1]))
+						{
+							referenceSetDelimiterVerbPreceededByDeterminerOrPossessivePronoun = true;
+						}
+					}
+				}
+			}
+			if(!referenceSetDelimiterVerbPreceededByDeterminerOrPossessivePronoun)
+			{
+				currentWordIsReferenceSetDelimiter = true;
+				currentDelimiterType = GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_VERB;
+				//not required: verify that the verb is not preceeded by one or more auxiliaries (because it will have already been detected by (currentDelimiterType == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_AUXILIARY) when testing the previously parsed auxiliary)
+			
+			
+				if(wordIndex+1 < logicReferenceVariableWordList->size())
+				{
+					if(GIApreprocessorMultiwordReduction.determineIsAdjective((*logicReferenceVariableWordList)[wordIndex+1]))
+					{
+						//eg Tom rides fast
+						currentDelimiterSpecialCase = GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_SPECIAL_CASE_OBJECT_REFERS_TO_PREVIOUS_DELIMITER_VERB;
+						#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITERS_CONTAIN_VERB_ADJECTIVES
+						wordIndex = wordIndex + 1;
+						#endif
+					}
+				}
+				if(wordIndex+2 < logicReferenceVariableWordList->size())
+				{
+					if(GIApreprocessorMultiwordReduction.determineIsAdverb((*logicReferenceVariableWordList)[wordIndex+1]))
+					{
+						if(GIApreprocessorMultiwordReduction.determineIsAdjective((*logicReferenceVariableWordList)[wordIndex+2]))
+						{
+							//eg Tom rides very fast
+							currentDelimiterSpecialCase = GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_SPECIAL_CASE_OBJECT_REFERS_TO_PREVIOUS_DELIMITER_VERB;
+							#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITERS_CONTAIN_VERB_ADJECTIVES
+							wordIndex = wordIndex + 2;
+							#endif
+						}
+					}
 				}
 			}
 		}
+		else if(GIApreprocessorMultiwordReduction.determineIsPreposition(currentWord))
+		{
+			currentWordIsReferenceSetDelimiter = true;
+			currentDelimiterType = GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_PREPOSITION;
+		}
 
+		int lastIndexOfPreviousReferenceSet = INT_DEFAULT_VALUE;
+		bool referenceSetDelimiterRefersToPreviousDelimiterVerb = false;
 		if(currentWordIsReferenceSetDelimiter)
 		{
-			//verify that the auxiliary/verb is not preceeded by a modal auxiliary (e.g. for future case verbs; will), in which case must test the word prior to the modal auxiliary for that/which
 			bool previousWordIsModalAuxiliary = false;
-			if(foundAuxiliary || (foundVerbCase && (grammaticalBaseTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_INFINITIVE)))
+			
+			//verify that the auxiliary/verb is not preceeded by a modal auxiliary (e.g. for future cases; will be/have/ride), in which case must test the word prior to the modal auxiliary for that/which
+			if((currentDelimiterType == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_AUXILIARY) || ((currentDelimiterType == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_VERB) && (grammaticalBaseTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_INFINITIVE)))
 			{
 				if(wordIndex-1 >= 0)
 				{
@@ -153,7 +216,47 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(string* l
 					}
 				}
 			}
-
+			//verify that the auxiliary/verb is not preceeded by an auxiliary (e.g. for doing auxiliaries; is being/having/doing, or for verbs; is riding, or for prepositions; is near), in which case must test the word prior to the modal auxiliary for that/which
+			else if((currentDelimiterType == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_AUXILIARY) || ((currentDelimiterType == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_VERB) && (grammaticalBaseTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_INFINITIVE)) || (currentDelimiterType == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_PREPOSITION))
+			{
+				if(wordIndex-1 >= 0)
+				{
+					if(detectAuxiliary((*logicReferenceVariableWordList)[wordIndex-1]))
+					{	
+						//eg that is riding
+						previousWordIsModalAuxiliary = true;
+						wordIndexOfHypotheticalPreceedingThatWhich--;
+						if(wordIndex-2 >= 0)
+						{
+							if(SHAREDvars.textInTextArray((*logicReferenceVariableWordList)[wordIndex-1], entityModalAuxiliaryArray, ENTITY_MODALAUXILIARY_NUMBER_OF_TYPES))
+							{
+								//eg that will be riding
+								wordIndexOfHypotheticalPreceedingThatWhich--;
+							}
+						}
+					}
+					else
+					{
+						if((currentDelimiterType == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_PREPOSITION))
+						{
+							if(GIApreprocessorMultiwordReduction.determineIsAdverb((*logicReferenceVariableWordList)[wordIndex-1]))
+							{
+								if(wordIndex-2 >= 0)
+								{
+									if(detectAuxiliary((*logicReferenceVariableWordList)[wordIndex-2]))
+									{
+										//eg is very near / is not near
+										previousWordIsModalAuxiliary = true;
+										wordIndexOfHypotheticalPreceedingThatWhich = wordIndexOfHypotheticalPreceedingThatWhich-2;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			
+			
 			bool currentWordIsReferenceSetDelimiterPreceededByThatWhich = false;
 			if(wordIndexOfHypotheticalPreceedingThatWhich >= 0)
 			{
@@ -164,6 +267,14 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(string* l
 			}
 
 
+			//NB if((currentDelimiterType == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_PREPOSITION)): "that near" is not legal english (only "that is near"), but will be accepted here anyway
+			//NB near to should have previously been compressed to near_to by GIA_PREPROCESSOR_MULTIWORD_REDUCTION
+			if((currentDelimiterType == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_PREPOSITION) && !previousWordIsModalAuxiliary && !currentWordIsReferenceSetDelimiterPreceededByThatWhich)
+			{
+				//eg the dog eats the apple near the bike.	[preposition near refers to verb eat]	[as compared to the dog eats the apple that is near the bike].
+				currentDelimiterSpecialCase = GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_SPECIAL_CASE_DELIMITER_AND_OBJECT_REFER_TO_PREVIOUS_DELIMITER_VERB;
+			}
+			
 			if(referenceSetDelimiterDetected)
 			{
 				if(!parsingReferenceSetDelimiter)
@@ -175,21 +286,30 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(string* l
 			}
 			else
 			{
-				
-				if(currentWordIsReferenceSetDelimiterPreceededByThatWhich)
+				if(referenceSetDelimiterRefersToPreviousDelimiterVerb)
 				{
-					referenceSetDelimiterPreceededByThatWhich = true;
+					referenceSetDelimiterIndicatesSameReferenceSet = true;
+					firstIndexOfReferenceSetDelimiter = wordIndexOfHypotheticalPreceedingThatWhich;
+					lastIndexOfPreviousReferenceSet = wordIndexOfHypotheticalPreceedingThatWhich - 1;
 				}
-				referenceSetDelimiterDetected = true;
-				parsingReferenceSetDelimiter = true;
-				if(previousWordIsModalAuxiliary)
+				else if(currentWordIsReferenceSetDelimiterPreceededByThatWhich)
 				{
-					firstIndexOfReferenceSetDelimiter = wordIndex-1;
+					referenceSetDelimiterIndicatesSameReferenceSet = true;
+					#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITERS_DISCARD_THAT_WHICH
+					firstIndexOfReferenceSetDelimiter = wordIndexOfHypotheticalPreceedingThatWhich + 1;	//NB the "that/which" will be removed from the text
+					#else
+					firstIndexOfReferenceSetDelimiter = wordIndexOfHypotheticalPreceedingThatWhich;
+					#endif
+					lastIndexOfPreviousReferenceSet = wordIndexOfHypotheticalPreceedingThatWhich - 1;
 				}
 				else
 				{
-					firstIndexOfReferenceSetDelimiter = wordIndex;
+					firstIndexOfReferenceSetDelimiter = wordIndexOfHypotheticalPreceedingThatWhich;
+					lastIndexOfPreviousReferenceSet = wordIndexOfHypotheticalPreceedingThatWhich - 1;
 				}
+				referenceSetDelimiterDetected = true;
+				parsingReferenceSetDelimiter = true;
+
 			}
 		}
 		
@@ -201,9 +321,9 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(string* l
 			if(!referenceSetDelimiterDetectedFull)
 			{
 				string subReferenceSetText = "";
-				if(formSubReferenceSetTextFromWordList(logicReferenceVariableWordList, &subReferenceSetText, lastIndexOfReferenceSetDelimiterText, firstIndexOfReferenceSetDelimiter-1))
+				if(formSubReferenceSetTextFromWordList(logicReferenceVariableWordList, &subReferenceSetText, lastIndexOfReferenceSetDelimiterText, lastIndexOfPreviousReferenceSet))
 				{
-					addSubReferenceSetToReferenceSet(logicReferenceVariable->referenceSetSubject, subReferenceSetText, false, lastIndexOfReferenceSetDelimiterText, wordIndexSentence);
+					addSubReferenceSetToReferenceSet(logicReferenceVariable->referenceSetSubject, subReferenceSetText, false, lastIndexOfReferenceSetDelimiterText, wordIndexSentence, BOOL_NA, BOOL_NA);
 				}
 
 				#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_SUB_REFERENCE_SETS_RECORD_SAME_REFERENCE_SET_DELIMITERS
@@ -211,25 +331,25 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(string* l
 				subReferenceSetText = "";
 				if(formSubReferenceSetTextFromWordList(logicReferenceVariableWordList, &subReferenceSetText, firstIndexOfReferenceSetDelimiter, wordIndex-1))
 				{
-					if(referenceSetDelimiterPreceededByThatWhich)
+					if(referenceSetDelimiterIndicatesSameReferenceSet)
 					{
-						addSubReferenceSetToReferenceSet(logicReferenceVariable->referenceSetSubject, subReferenceSetText, true, firstIndexOfReferenceSetDelimiter, wordIndexSentence);
+						addSubReferenceSetToReferenceSet(logicReferenceVariable->referenceSetSubject, subReferenceSetText, true, firstIndexOfReferenceSetDelimiter, wordIndexSentence, currentDelimiterType, currentDelimiterSpecialCase);
 					}
 					else
 					{
-						addReferenceSetToReferenceSet(logicReferenceVariable->referenceSetDelimiter, subReferenceSetText, true, firstIndexOfReferenceSetDelimiter, wordIndexSentence);
+						addReferenceSetToReferenceSet(logicReferenceVariable->referenceSetDelimiter, subReferenceSetText, true, firstIndexOfReferenceSetDelimiter, wordIndexSentence, currentDelimiterType, currentDelimiterSpecialCase);
 					}
 				}
 				#endif
 			}
 			else
 			{
-				if(referenceSetDelimiterPreceededByThatWhich)
+				if(referenceSetDelimiterIndicatesSameReferenceSet)
 				{
 					string subReferenceSetText = "";
-					if(formSubReferenceSetTextFromWordList(logicReferenceVariableWordList, &subReferenceSetText, lastIndexOfReferenceSetDelimiterText, firstIndexOfReferenceSetDelimiter-1))
+					if(formSubReferenceSetTextFromWordList(logicReferenceVariableWordList, &subReferenceSetText, lastIndexOfReferenceSetDelimiterText, lastIndexOfPreviousReferenceSet))
 					{
-						addSubReferenceSetToReferenceSet(logicReferenceVariable->referenceSetObject, subReferenceSetText, false, lastIndexOfReferenceSetDelimiterText, wordIndexSentence);
+						addSubReferenceSetToReferenceSet(logicReferenceVariable->referenceSetObject, subReferenceSetText, false, lastIndexOfReferenceSetDelimiterText, wordIndexSentence, BOOL_NA, BOOL_NA);
 					}
 					
 					#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_SUB_REFERENCE_SETS_RECORD_SAME_REFERENCE_SET_DELIMITERS
@@ -237,7 +357,7 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(string* l
 					subReferenceSetText = "";
 					if(formSubReferenceSetTextFromWordList(logicReferenceVariableWordList, &subReferenceSetText, firstIndexOfReferenceSetDelimiter, wordIndex-1))
 					{
-						addSubReferenceSetToReferenceSet(logicReferenceVariable->referenceSetObject, subReferenceSetText, true, firstIndexOfReferenceSetDelimiter, wordIndexSentence);
+						addSubReferenceSetToReferenceSet(logicReferenceVariable->referenceSetObject, subReferenceSetText, true, firstIndexOfReferenceSetDelimiter, wordIndexSentence, currentDelimiterType, currentDelimiterSpecialCase);
 					}
 					#endif
 				}
@@ -249,7 +369,7 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(string* l
 			}
 			#endif
 
-			if(!referenceSetDelimiterPreceededByThatWhich)
+			if(!referenceSetDelimiterIndicatesSameReferenceSet)
 			{
 				if(referenceSetDelimiterDetectedFull)
 				{
@@ -259,6 +379,10 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(string* l
 				else
 				{
 					referenceSetDelimiterDetectedFull = true;
+					#ifndef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_SUB_REFERENCE_SETS
+					delimiterType = currentDelimiterType;
+					delimiterSpecialCase = currentDelimiterSpecialCase;
+					#endif
 					firstIndexOfReferenceSetDelimiterFull = firstIndexOfReferenceSetDelimiter;
 					lastIndexOfReferenceSetDelimiterTextFull = wordIndex;
 				}
@@ -266,13 +390,11 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(string* l
 			
 			parsingReferenceSetDelimiter = false;
 			referenceSetDelimiterDetected = false;
-			referenceSetDelimiterPreceededByThatWhich = false;
+			referenceSetDelimiterIndicatesSameReferenceSet = false;
 			#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_SUB_REFERENCE_SETS
 			lastIndexOfReferenceSetDelimiterText = wordIndex;
 			#endif
 		}
-		
-		wordIndex++;
 	}
 	
 	#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_SUB_REFERENCE_SETS
@@ -282,7 +404,7 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(string* l
 		string subReferenceSetText = "";
 		if(formSubReferenceSetTextFromWordList(logicReferenceVariableWordList, &subReferenceSetText, lastIndexOfReferenceSetDelimiterText, logicReferenceVariableWordList->size()-1))
 		{
-			addSubReferenceSetToReferenceSet(logicReferenceVariable->referenceSetObject, subReferenceSetText, false, lastIndexOfReferenceSetDelimiterText, wordIndexSentence);
+			addSubReferenceSetToReferenceSet(logicReferenceVariable->referenceSetObject, subReferenceSetText, false, lastIndexOfReferenceSetDelimiterText, wordIndexSentence, BOOL_NA, BOOL_NA);
 		}	
 	}
 	else
@@ -290,7 +412,7 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(string* l
 		string subReferenceSetText = "";
 		if(formSubReferenceSetTextFromWordList(logicReferenceVariableWordList, &subReferenceSetText, lastIndexOfReferenceSetDelimiterText, logicReferenceVariableWordList->size()-1))
 		{
-			addSubReferenceSetToReferenceSet(logicReferenceVariable->referenceSetSubject, subReferenceSetText, false, lastIndexOfReferenceSetDelimiterText, wordIndexSentence);
+			addSubReferenceSetToReferenceSet(logicReferenceVariable->referenceSetSubject, subReferenceSetText, false, lastIndexOfReferenceSetDelimiterText, wordIndexSentence, BOOL_NA, BOOL_NA);
 		}	
 	}
 	#else
@@ -304,13 +426,13 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(string* l
 		string referenceSetDelimiterText = "";
 		if(formSubReferenceSetTextFromWordList(logicReferenceVariableWordList, &referenceSetSubjectText, 0, firstIndexOfReferenceSetDelimiterFull-1)
 		{
-			addReferenceSetToReferenceSet(logicReferenceVariable->referenceSetSubject, subReferenceSetText, false, lastIndexOfReferenceSetDelimiterText, wordIndexSentence);
+			addReferenceSetToReferenceSet(logicReferenceVariable->referenceSetSubject, subReferenceSetText, false, lastIndexOfReferenceSetDelimiterText, wordIndexSentence, BOOL_NA, BOOL_NA);
 		}
 		if(formSubReferenceSetTextFromWordList(logicReferenceVariableWordList, &referenceSetObjectText, firstIndexOfReferenceSetDelimiterFull, lastIndexOfReferenceSetDelimiterTextFull-1))
 		{
-			addReferenceSetToReferenceSet(logicReferenceVariable->referenceSetObject, subReferenceSetText, true, lastIndexOfReferenceSetDelimiterText, wordIndexSentence);
+			addReferenceSetToReferenceSet(logicReferenceVariable->referenceSetObject, subReferenceSetText, true, lastIndexOfReferenceSetDelimiterText, wordIndexSentence, delimiterType, delimiterSpecialCase);
 		}
-		if(formSubReferenceSetTextFromWordList(logicReferenceVariableWordList, &referenceSetDelimiterText, lastIndexOfReferenceSetDelimiterTextFull, logicReferenceVariableWordList->size())
+		if(formSubReferenceSetTextFromWordList(logicReferenceVariableWordList, &referenceSetDelimiterText, lastIndexOfReferenceSetDelimiterTextFull, logicReferenceVariableWordList->size(), BOOL_NA, BOOL_NA)
 		{
 			addReferenceSetToReferenceSet(logicReferenceVariable->referenceSetDelimiter, subReferenceSetText, false, lastIndexOfReferenceSetDelimiterText, wordIndexSentence);
 		}		
@@ -366,7 +488,7 @@ bool GIApreprocessorReferenceSetClass::formSubReferenceSetTextFromWordList(vecto
 	return result;
 }
 
-bool GIApreprocessorReferenceSetClass::addSubReferenceSetToReferenceSet(GIApreprocessorSubReferenceSet* firstSubReferenceSetInList, string subReferenceSetText, bool referenceSetDelimiter, int wordIndexLogicReference, int wordIndexSentence)
+bool GIApreprocessorReferenceSetClass::addSubReferenceSetToReferenceSet(GIApreprocessorSubReferenceSet* firstSubReferenceSetInList, string subReferenceSetText, const bool referenceSetDelimiter, const int wordIndexLogicReference, const int wordIndexSentence, const int delimiterType, const int delimiterSpecialCase)
 {
 	bool result = true;
 	
@@ -381,14 +503,19 @@ bool GIApreprocessorReferenceSetClass::addSubReferenceSetToReferenceSet(GIAprepr
 	currentSubReferenceSetInList->firstIndexOfReferenceSetText = wordIndexLogicReference + wordIndexSentence;
 	currentSubReferenceSetInList->lastIndexOfReferenceSetText = currentSubReferenceSetInList->firstIndexOfReferenceSetText + subReferenceSetText.length();
 	#endif
+	if(referenceSetDelimiter)
+	{
+		currentSubReferenceSetInList->delimiterType = delimiterType;
+		currentSubReferenceSetInList->delimiterSpecialCase = delimiterSpecialCase;
+	}
 	currentSubReferenceSetInList->next = new GIApreprocessorSubReferenceSet();
 	
 	return result;
 }
 
-bool GIApreprocessorReferenceSetClass::addReferenceSetToReferenceSet(GIApreprocessorSubReferenceSet* firstSubReferenceSetInList, string subReferenceSetText, bool referenceSetDelimiter, int wordIndexLogicReference, int wordIndexSentence)
+bool GIApreprocessorReferenceSetClass::addReferenceSetToReferenceSet(GIApreprocessorSubReferenceSet* firstSubReferenceSetInList, string subReferenceSetText, const bool referenceSetDelimiter, const int wordIndexLogicReference, const int wordIndexSentence, const int delimiterType, const int delimiterSpecialCase)
 {
-	return addSubReferenceSetToReferenceSet(firstSubReferenceSetInList, subReferenceSetText, referenceSetDelimiter, wordIndexLogicReference, wordIndexSentence);
+	return addSubReferenceSetToReferenceSet(firstSubReferenceSetInList, subReferenceSetText, referenceSetDelimiter, wordIndexLogicReference, wordIndexSentence, delimiterType, delimiterSpecialCase);
 }
 
 

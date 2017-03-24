@@ -25,7 +25,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a2d 21-March-2017
+ * Project Version: 3a3a 22-March-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -765,7 +765,9 @@
 	#ifdef GIA_PREPROCESSOR
 		//#define GIA_PREPROCESSOR_SUPPORT_PUNCTUATION_MARKS_WITH_PRECEEDING_WHITE_SPACE	//not yet coded: do not currently support punctuation marks with preceeding white space. Currently skip (do not parse) multiple white space/punctuation characters (eg ". "/".."/"  "/" .")	
 		#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_REDUCE_ALL_WORD_TYPES	//don't just reduce multiword prepositions (reduce multiword verbs, nouns, adjectives and adverbs also)
-		//#define GIA_PREPROCESSOR_SENTENCE	//3a1a
+		#ifndef USE_NLC
+			#define GIA_PREPROCESSOR_SENTENCE	//3a1a (should disable with NLC)
+		#endif
 		#ifdef GIA_PREPROCESSOR_SENTENCE
 			#define GIA_PREPROCESSOR_SENTENCE_RECONCILE_REFERENCES_AFTER_SEMANTIC_PARSING_EVERY_SENTENCE
 			#define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
@@ -795,6 +797,7 @@
 			#endif
 			#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET
 			#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET
+				
 				#define GIA_PREPROCESSOR_REASSIGN_UNIQUE_SENTENCE_INDICES_FOR_LOGIC_REFERENCE_VARIABLES	//after parsing semantic relations for individual reference sets, GIA will assign every entity in the logic reference structure the same sentenceIndex, and each logic reference variable (with all its reference sets) the same sentence index
 				#ifdef GIA_PREPROCESSOR_REASSIGN_UNIQUE_SENTENCE_INDICES_FOR_LOGIC_REFERENCE_VARIABLES
 					//after parsing semantic relations for individual reference sets, GIA will assign every entity in the original pre-preprocessed sentence to the same sentenceIndex
@@ -802,10 +805,14 @@
 					//#define GIA_PREPROCESSOR_REASSIGN_UNIQUE_SENTENCE_INDICES_FOR_LOGIC_REFERENCE_VARIABLES_IGNORE_CONNECTIONS_TO_SENTENCE_LOGIC_REFERENCE_SET	//use this if the connection between the logicReference entity and the logicReferenceVariable should have the sentenceIndex of the currentGIApreprocessorSentenceInList rather than that of the logicReferenceVariable 
 				#endif
 					
-				#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITERS	//eg The car had a bike. -> GIAdummyactionsubject + "had " + GIAdummyactionobject
 				#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_SUB_REFERENCE_SETS	//this improves NLP/GIA translator semantic parser (by reducing the size of the text chunks being processed)
 				#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_SUB_REFERENCE_SETS
-					#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_SUB_REFERENCE_SETS_RECORD_SAME_REFERENCE_SET_DELIMITERS
+					#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_SUB_REFERENCE_SETS_RECORD_SAME_REFERENCE_SET_DELIMITERS	//this is currently required to process delimiter (eg being/having/verb/preposition) tense, adverbs (eg very near), and adjectives (eg rides fast) using NLP 
+					#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_SUB_REFERENCE_SETS_DELIMITERS	//mandatory	//eg The car had a bike. -> GIAdummyactionsubject + "had " + GIAdummyactionobject
+					#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_SUB_REFERENCE_SETS_DELIMITERS
+						#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITERS_DISCARD_THAT_WHICH
+						#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITERS_CONTAIN_VERB_ADJECTIVES	//this is currently required to process verb delimiter adjectives (eg rides fast) using NLP 
+					#endif
 				#endif
 				#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT	//this is required a) for third party NLP (as opposed to GIA direct semantic relation parser) and b) to relink logic reference variable entities without a subject/delimiter back to the high level logic reference GIA network structure 
 				#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT
@@ -819,8 +826,8 @@
 				#endif	
 				#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_LOAD_IRREGULAR_VERB_LIST
 				#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_LOAD_WORD_LISTS
-				#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_RCMOD_SAME_REFERENCE_SET_DELIMITER_NUMBER_OF_TYPES (2)
-				static string preprocessorRcmodSameReferenceSetDelimiter[GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_RCMOD_SAME_REFERENCE_SET_DELIMITER_NUMBER_OF_TYPES] = {"that", "which"};		//see preprocessorMathRcmodSameReferenceSetDelimiter
+				#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_RCMOD_SAME_REFERENCE_SET_DELIMITER_NUMBER_OF_TYPES (3)
+				static string preprocessorRcmodSameReferenceSetDelimiter[GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_RCMOD_SAME_REFERENCE_SET_DELIMITER_NUMBER_OF_TYPES] = {"that", "which", "that's"};		//see preprocessorMathRcmodSameReferenceSetDelimiter
 			#else
 				#define GIA_PREPROCESSOR_ASSIGN_UNIQUE_SENTENCE_INDICES_FOR_LOGIC_REFERENCE_VARIABLES	//mandatory
 			#endif

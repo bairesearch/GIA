@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorReferenceSet.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3a2d 21-March-2017
+ * Project Version: 3a3a 22-March-2017
  * Requirements: requires plain text file
  * Description: Reference Set preprocessor
  *
@@ -45,11 +45,11 @@ class GIApreprocessorReferenceSetClass
 	private: GIApreprocessorSentenceClassClass GIApreprocessorSentenceClass;
 	private: GIApreprocessorMultiwordReductionClass GIApreprocessorMultiwordReduction;
 	#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET
-	public: bool executeReferenceSetPreprocessor(string* logicReferenceVariableContents, vector<string>* logicReferenceVariableWordList, GIApreprocessorLogicReferenceVariable* logicReferenceVariable, bool expectToFindSubjectAuxObjectLogicReferenceVariable, int wordIndexSentence);
+	public: bool executeReferenceSetPreprocessor(string* logicReferenceVariableContents, vector<string>* logicReferenceVariableWordList, GIApreprocessorLogicReferenceVariable* logicReferenceVariable, const bool expectToFindSubjectAuxObjectLogicReferenceVariable, const int wordIndexSentence);
 			public: bool detectAuxiliary(const string currentWord);
-			private: bool formSubReferenceSetTextFromWordList(vector<string>* logicReferenceVariableWordList, string* subReferenceSetText, int firstIndexOfSubReferenceSet, int lastIndexOfSubReferenceSet);
-			private: bool addSubReferenceSetToReferenceSet(GIApreprocessorSubReferenceSet* firstSubReferenceSetInList, string subReferenceSetText, bool referenceSetDelimiter, int wordIndexLogicReference, int wordIndexSentence);
-			private: bool addReferenceSetToReferenceSet(GIApreprocessorSubReferenceSet* firstSubReferenceSetInList, string subReferenceSetText, bool referenceSetDelimiter, int wordIndexLogicReference, int wordIndexSentence);
+			private: bool formSubReferenceSetTextFromWordList(vector<string>* logicReferenceVariableWordList, string* subReferenceSetText, const int firstIndexOfSubReferenceSet, const int lastIndexOfSubReferenceSet);
+			private: bool addSubReferenceSetToReferenceSet(GIApreprocessorSubReferenceSet* firstSubReferenceSetInList, string subReferenceSetText, const bool referenceSetDelimiter, const int wordIndexLogicReference, const int wordIndexSentence, const int delimiterType, const int delimiterSpecialCase);
+			private: bool addReferenceSetToReferenceSet(GIApreprocessorSubReferenceSet* firstSubReferenceSetInList, string subReferenceSetText, const bool referenceSetDelimiter, const int wordIndexLogicReference, const int wordIndexSentence, const int delimiterType, const int delimiterSpecialCase);
 	public: bool hasReferenceSet(GIApreprocessorSubReferenceSet* referenceSet);
 	public: void setReferenceSetText(GIApreprocessorSubReferenceSet* referenceSet, string text);
 	public: string getReferenceSetText(GIApreprocessorSubReferenceSet* referenceSet);

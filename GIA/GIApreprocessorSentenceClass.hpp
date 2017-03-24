@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorSentenceClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3a2d 21-March-2017
+ * Project Version: 3a3a 22-March-2017
  * Requirements: requires plain text file
  * Description: Logical Condition and Reference Set preprocessor
  *
@@ -114,6 +114,17 @@ static string GIApreprocessorLogicReferenceVariableNames[GIA_PREPROCESSOR_SENTEN
 #define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_TYPE_DELIMITER (3)	//this is a virtual (fake) reference set created for data storage consistency purposes only
 
 
+#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_UNDEFINED (0)
+#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_AUXILIARY (1)	//eg tom has/is the ball
+#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_VERB (2)	//eg tom moves the ball
+#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_PREPOSITION (3) 	//eg tom is near the ball 
+
+#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_SPECIAL_CASE_UNDEFINED (0)
+#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_SPECIAL_CASE_DELIMITER_AND_OBJECT_REFER_TO_PREVIOUS_DELIMITER_VERB (1)	//eg tom rides the bike near the ball
+#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_SPECIAL_CASE_OBJECT_REFERS_TO_PREVIOUS_DELIMITER_VERB (2) 	//eg Tom rides fast
+
+#define BOOL_NA (false)
+
 class GIApreprocessorSubReferenceSet
 {
 public:
@@ -136,6 +147,10 @@ public:
 	
 	bool isReferenceSetDelimiter;
 	GIApreprocessorSubReferenceSet* next;
+	
+	//for optimisation purposes;
+	int delimiterType;
+	int delimiterSpecialCase;
 };
 
 class GIApreprocessorLogicReferenceVariable
