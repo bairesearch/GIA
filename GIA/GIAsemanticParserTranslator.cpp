@@ -25,7 +25,7 @@
  * File Name: GIAsemanticParserTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1h 26-February-2017
+ * Project Version: 3a1j 26-February-2017
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -743,9 +743,8 @@ void GIAsemanticParserTranslatorClass::defineConnectionsBasedOnSemanticRelations
 				//see "create intermediary auxiliary 'have'/'be' (property/definition relationship entity)" of GIAtranslatorGeneric.cpp:genericDependecyRelationInterpretation
 				string relationshipEntityName = RELATION_ENTITY_SPECIAL_RELATIONSHIP_NAME_FOR_EFFECTIVE_PROPERTIES;
 				GIAentityNode* relationshipEntity = this->createNewRelationshipEntitySemantic(relationshipEntityName, translatorVariables);
-				int relationshipEntityIndex = relationshipEntity->entityIndexTemp;
 
-				translatorVariables->GIAentityNodeArray[relationshipEntityIndex] = GIAtranslatorOperations.connectPropertyToEntity(entity1, entity2, relationshipEntity, sameReferenceSet);
+				GIAtranslatorOperations.connectPropertyToEntity(entity1, entity2, relationshipEntity, sameReferenceSet);
 				currentRelationInList->disabled = true;
 			}
 			else if(currentRelationInList->relationType == GIA2semanticDependencyRelationNameArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTY])
@@ -764,7 +763,7 @@ void GIAsemanticParserTranslatorClass::defineConnectionsBasedOnSemanticRelations
 							int entity2IndexRelation2 = currentRelationInList2->relationGovernorIndex;
 							GIAentityNode* entity2relation2 = translatorVariables->GIAentityNodeArray[entity2IndexRelation2];
 
-							translatorVariables->GIAentityNodeArray[entity3Index] = GIAtranslatorOperations.connectPropertyToEntity(entity1, entity2relation2, entity3, sameReferenceSet);
+							GIAtranslatorOperations.connectPropertyToEntity(entity1, entity2relation2, entity3, sameReferenceSet);
 							foundMatchingObject = true;
 							currentRelationInList2->disabled = true;
 						}
@@ -795,7 +794,7 @@ void GIAsemanticParserTranslatorClass::defineConnectionsBasedOnSemanticRelations
 							int entity2IndexRelation2 = currentRelationInList2->relationGovernorIndex;
 							GIAentityNode* entity2relation2 = translatorVariables->GIAentityNodeArray[entity2IndexRelation2];
 
-							translatorVariables->GIAentityNodeArray[entity3Index] = GIAtranslatorOperations.connectActionToEntity(entity1, entity2relation2, entity3, sameReferenceSet);
+							GIAtranslatorOperations.connectActionToEntity(entity1, entity2relation2, entity3, sameReferenceSet);
 							foundMatchingObject = true;
 							currentRelationInList2->disabled = true;
 						}
@@ -805,13 +804,13 @@ void GIAsemanticParserTranslatorClass::defineConnectionsBasedOnSemanticRelations
 
 				if(!foundMatchingObject)
 				{
-					translatorVariables->GIAentityNodeArray[entity2Index] = GIAtranslatorOperations.connectActionToSubject(entity1, entity2, sameReferenceSet);
+					GIAtranslatorOperations.connectActionToSubject(entity1, entity2, sameReferenceSet);
 				}
 				currentRelationInList->disabled = true;
 			}
 			else if(currentRelationInList->relationType == GIA2semanticDependencyRelationNameArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_REVERSE])
 			{
-				translatorVariables->GIAentityNodeArray[entity2Index] = GIAtranslatorOperations.connectActionToObject(entity1, entity2, sameReferenceSet);
+				GIAtranslatorOperations.connectActionToObject(entity1, entity2, sameReferenceSet);
 				currentRelationInList->disabled = true;
 			}
 			else if(currentRelationInList->relationType == GIA2semanticDependencyRelationNameArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION])
@@ -836,7 +835,7 @@ void GIAsemanticParserTranslatorClass::defineConnectionsBasedOnSemanticRelations
 							#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_PREPOSITIONS
 							this->invertOrDuplicateConditionsIfRequiredSemantic(translatorVariables, entity1, entity2relation2, entity3, sameReferenceSet);
 							#else
-							translatorVariables->GIAentityNodeArray[entity3Index] = GIAtranslatorOperations.connectConditionToEntity(entity1, entity2relation2, entity3, sameReferenceSet);
+							GIAtranslatorOperations.connectConditionToEntity(entity1, entity2relation2, entity3, sameReferenceSet);
 							#endif
 						}
 					}
@@ -844,7 +843,7 @@ void GIAsemanticParserTranslatorClass::defineConnectionsBasedOnSemanticRelations
 				}
 				if(!foundMatchingObject)
 				{
-					translatorVariables->GIAentityNodeArray[entity2Index] = GIAtranslatorOperations.connectConditionToSubject(entity1, entity2, sameReferenceSet);
+					GIAtranslatorOperations.connectConditionToSubject(entity1, entity2, sameReferenceSet);
 					cout << "defineConnectionsBasedOnSemanticRelations{} warning: (currentRelationInList->relationType == GIA2semanticDependencyRelationNameArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION]) && (!foundMatchingObject) [ie without matching GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_REVERSE]" << endl;
 				}
 				currentRelationInList->disabled = true;
@@ -853,16 +852,15 @@ void GIAsemanticParserTranslatorClass::defineConnectionsBasedOnSemanticRelations
 			{
 				//NB THIS SHOULDNT BE required as there is never an isolated condition-object connection declared according to current GIA specification [but due to bug, it is required for Relex with measure dependency cases eg 'He runs every hour.'];
 				cout << "defineConnectionsBasedOnSemanticRelations{} warning: (currentRelationInList->relationType == GIA2semanticDependencyRelationNameArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_REVERSE]) without matching GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION" << endl;
-				translatorVariables->GIAentityNodeArray[entity2Index] = GIAtranslatorOperations.connectConditionToObject(entity1, entity2, sameReferenceSet);
+				GIAtranslatorOperations.connectConditionToObject(entity1, entity2, sameReferenceSet);
 			}
 			else if(currentRelationInList->relationType == GIA2semanticDependencyRelationNameArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITION_DIRECT])
 			{
 				//see "create intermediary auxiliary 'have'/'be' (property/definition relationship entity)" of GIAtranslatorGeneric.cpp:genericDependecyRelationInterpretation
 				string relationshipEntityName = RELATION_ENTITY_SPECIAL_RELATIONSHIP_NAME_FOR_EFFECTIVE_DEFINITIONS;
 				GIAentityNode* relationshipEntity = this->createNewRelationshipEntitySemantic(relationshipEntityName, translatorVariables);
-				int relationshipEntityIndex = relationshipEntity->entityIndexTemp;
 
-				translatorVariables->GIAentityNodeArray[relationshipEntityIndex] = GIAtranslatorOperations.connectDefinitionToEntity(entity1, entity2, relationshipEntity, relationshipEntity, sameReferenceSet);
+				GIAtranslatorOperations.connectDefinitionToEntity(entity1, entity2, relationshipEntity, relationshipEntity, sameReferenceSet);
 				currentRelationInList->disabled = true;
 			}
 			#ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
@@ -872,9 +870,8 @@ void GIAsemanticParserTranslatorClass::defineConnectionsBasedOnSemanticRelations
 				//see "create intermediary auxiliary 'have'/'be' (property/definition relationship entity)" of GIAtranslatorGeneric.cpp:genericDependecyRelationInterpretation
 				string relationshipEntityName = RELATION_ENTITY_SPECIAL_RELATIONSHIP_NAME_FOR_EFFECTIVE_DEFINITIONS;
 				GIAentityNode* relationshipEntity = this->createNewRelationshipEntitySemantic(relationshipEntityName, translatorVariables);
-				int relationshipEntityIndex = relationshipEntity->entityIndexTemp;
 				
-				translatorVariables->GIAentityNodeArray[relationshipEntityIndex] = GIAtranslatorOperations.connectDefinitionToEntityMarkConnectionAsAlias(entity1, entity2, relationshipEntity, sameReferenceSet);
+				GIAtranslatorOperations.connectDefinitionToEntityMarkConnectionAsAlias(entity1, entity2, relationshipEntity, sameReferenceSet);
 				currentRelationInList->disabled = true;	//CHECKTHIS
 			}			
 			#else
@@ -903,7 +900,7 @@ void GIAsemanticParserTranslatorClass::defineConnectionsBasedOnSemanticRelations
 							int entity2IndexRelation2 = currentRelationInList2->relationGovernorIndex;
 							GIAentityNode* entity2relation2 = translatorVariables->GIAentityNodeArray[entity2IndexRelation2];
 
-							translatorVariables->GIAentityNodeArray[entity3Index] = GIAtranslatorOperations.connectDefinitionToEntity(entity1, entity2relation2, entity3, sameReferenceSet);
+							GIAtranslatorOperations.connectDefinitionToEntity(entity1, entity2relation2, entity3, sameReferenceSet);
 							foundMatchingObject = true;
 							currentRelationInList2->disabled = true;
 						}
@@ -1012,7 +1009,7 @@ GIAentityNode* GIAsemanticParserTranslatorClass::createNewRelationshipEntitySema
 	translatorVariables->GIAentityNodeArray[relationshipEntityIndex] = relationshipEntity;
 	*/
 	
-	GIAentityNode* relationshipEntity = GIAtranslatorOperations.findOrAddEntityNodeByNameSimpleWrapperRelationship(&relationshipEntityName, entityNodesActiveListNetworkIndexes, true);
+	GIAentityNode* relationshipEntity = GIAtranslatorOperations.findOrAddNetworkIndexEntityByNameSimpleWrapperRelationship(&relationshipEntityName, entityNodesActiveListNetworkIndexes, true);
 
 	//why not set relationshipEntity->sentenceIndexTemp?
 

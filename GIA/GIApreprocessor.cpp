@@ -25,7 +25,7 @@
  * File Name: GIApreprocessor.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3a1h 26-February-2017
+ * Project Version: 3a1j 26-February-2017
  * Requirements: requires plain text file
  * Description: Logical Condition and Reference Set preprocessor
  *
@@ -891,14 +891,14 @@ void GIApreprocessorClass::connectRelationshipToSource(GIAentityNode* relationsh
 GIAentityNode* GIApreprocessorClass::createNewRelationshipEntity(string relationshipEntityName, GIAtranslatorVariablesClass* translatorVariables)
 {
 	/*
-	//NB see findOrAddEntityNodeByNameSimpleWrapperRelationshipArtificial{} / GIAtranslatorGeneric.cpp:genericDependecyRelationInterpretation{}:findOrAddEntityNodeByNameSimpleWrapperRelationship{};
+	//NB see findOrAddEntityNodeByNameSimpleWrapperRelationshipArtificial{} / GIAtranslatorGeneric.cpp:genericDependecyRelationInterpretation{}:findOrAddNetworkIndexEntityByNameSimpleWrapperRelationship{};
 	//a new entity index is not required to be created because connectPreprocessorSentenceReferenceSetEntitiesToLogicReferenceEntities is currently executed after GIAtranslator (or at least after the sentence has been parsed by GIAtranslator)
 	functionEntityIndex3 = currentSentenceInList->relationshipEntityArtificialIndexCurrent;
 	currentSentenceInList->relationshipEntityArtificialIndexCurrent = param->currentSentenceInList->relationshipEntityArtificialIndexCurrent + 1;
 	*/
 	
 	#ifdef GIA_PREPROCESSOR_SENTENCE_RECONCILE_REFERENCES_AFTER_SEMANTIC_PARSING_EVERY_SENTENCE
-	GIAentityNode* relationshipEntity = GIAtranslatorOperations.findOrAddEntityNodeByNameSimpleWrapperRelationship(relationshipEntityName, translatorVariables, false);	
+	GIAentityNode* relationshipEntity = GIAtranslatorOperations.findOrAddNetworkIndexEntityByNameSimpleWrapperRelationship(relationshipEntityName, translatorVariables, false);	
 	#else
 	GIAentityNode* relationshipEntity = GIAtranslatorOperations.findOrAddEntityNodeByNameSimpleWrapperRelationship2(relationshipEntityName, translatorVariables, false);
 	#endif

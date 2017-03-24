@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1h 26-February-2017
+ * Project Version: 3a1j 26-February-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -530,7 +530,6 @@ GIAentityNode* GIAtranslatorOperationsClass::addOrConnectRelationshipToEntity(GI
 	{
 	#endif
 	
-		newOrExistingRelationship = this->addInstanceToInstanceDefinition(relationshipEntity, relationshipEntityType, translatorVariables);
 		#ifdef GIA_PREVENT_CONCEPTS_FROM_BEEN_ADDED_AS_CHILDREN_OF_NON_CONCEPTS
 		this->setRelationshipObjectToSubstanceIfNecessary(relationshipEntity, relationshipObjectEntity, relationshipEntityType);
 		#endif
@@ -559,7 +558,6 @@ GIAentityNode* GIAtranslatorOperationsClass::addOrConnectRelationshipToSubject(G
 	if(!(relationshipEntity->disabled))
 	{
 	#endif
-		newOrExistingRelationship = this->addInstanceToInstanceDefinition(relationshipEntity, relationshipEntityType, translatorVariables);
 		this->connectRelationshipInstanceToSubject(relationshipSubjectEntity, newOrExistingRelationship, sameReferenceSet, relationshipEntityType, translatorVariables);
 
 	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_NETWORK_INDEX_ENTITIES
@@ -580,7 +578,6 @@ GIAentityNode* GIAtranslatorOperationsClass::addOrConnectRelationshipToObject(GI
 	if(!(relationshipEntity->disabled))
 	{
 	#endif
-		newOrExistingRelationship = this->addInstanceToInstanceDefinition(relationshipEntity, relationshipEntityType, translatorVariables);
 		this->connectRelationshipInstanceToObject(relationshipObjectEntity, newOrExistingRelationship, sameReferenceSet, relationshipEntityType, translatorVariables);
 
 	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_NETWORK_INDEX_ENTITIES
@@ -1303,7 +1300,7 @@ GIAentityNode* GIAtranslatorOperationsClass::addRelationshipArtificialToEntity(G
 		cout << "GIAtranslatorOperationsClass::addRelationshipArtificialToEntity{} error: unsupported relationshipEntityType; relationshipEntityType = " << relationshipEntityType << endl;
 		exit(EXIT_ERROR);
 	}
-
+	
 	return relationshipEntity;
 }
 
@@ -1371,7 +1368,11 @@ GIAentityNode* GIAtranslatorOperationsClass::addEntityNodeByNameSimpleWrapperRel
 	int relationshipEntityIndex = translatorVariables->currentSentenceInList->relationshipEntityArtificialIndexCurrent;
 	translatorVariables->currentSentenceInList->relationshipEntityArtificialIndexCurrent = translatorVariables->currentSentenceInList->relationshipEntityArtificialIndexCurrent + 1;
 
-	GIAentityNode* relationshipEntity = findOrAddEntityNodeByNameSimpleWrapperRelationship(relationshipEntityIndex, &relationshipEntityName, translatorVariables);
+	GIAentityNode* relationshipEntity = findOrAddNetworkIndexEntityByNameSimpleWrapperRelationship(relationshipEntityIndex, &relationshipEntityName, translatorVariables);
+	
+	//added 3a1j;
+	relationshipEntity = addInstanceToInstanceDefinition(relationshipEntity, relationshipEntityType, translatorVariables);
+	translatorVariables->GIAentityNodeArray[relationshipEntityIndex] = relationshipEntity;
 	
 	relationshipEntity->isArtificialAuxiliary = true;
 	
@@ -1513,16 +1514,20 @@ GIAentityNode* GIAtranslatorOperationsClass::findOrAddEntityNodeByNameSimpleWrap
 	}
 	else
 	{
-		conditionRelationshipEntity = this->findOrAddEntityNodeByNameSimpleWrapperRelationship(featureIndex, entityNodeName, translatorVariables);
+		conditionRelationshipEntity = this->findOrAddNetworkIndexEntityByNameSimpleWrapperRelationship(featureIndex, entityNodeName, translatorVariables);		
 	}
 	#else
-	conditionRelationshipEntity = this->findOrAddNetworkIndexEntityNodeByNameSimpleWrapper(entityNodeName, entityAlreadyExistant, translatorVariables);
+	conditionRelationshipEntity = this->findOrAddNetworkIndexEntityNodeByNameSimpleWrapper(entityNodeName, entityAlreadyExistant, translatorVariables);	
 	#endif
-
+	
+	//added 3a1j;
+	conditionRelationshipEntity = addInstanceToInstanceDefinition(conditionRelationshipEntity, GIA_ENTITY_TYPE_CONDITION, translatorVariables);
+	translatorVariables->GIAentityNodeArray[featureIndex] = conditionRelationshipEntity;
+	
 	return conditionRelationshipEntity;
 }
 
-GIAentityNode* GIAtranslatorOperationsClass::findOrAddEntityNodeByNameSimpleWrapperRelationship(int featureIndex, const string* entityNodeName, GIAtranslatorVariablesClass* translatorVariables)
+GIAentityNode* GIAtranslatorOperationsClass::findOrAddNetworkIndexEntityByNameSimpleWrapperRelationship(int featureIndex, const string* entityNodeName, GIAtranslatorVariablesClass* translatorVariables)
 {
 	bool entityAlreadyExistant = false;
 	GIAentityNode* relationshipEntity = this->findOrAddNetworkIndexEntityNodeByNameSimpleWrapper(entityNodeName, &entityAlreadyExistant, translatorVariables);
@@ -1533,8 +1538,6 @@ GIAentityNode* GIAtranslatorOperationsClass::findOrAddEntityNodeByNameSimpleWrap
 	
 	return relationshipEntity;
 }
-
-
 
 
 GIAentityNode* GIAtranslatorOperationsClass::findOrAddNetworkIndexEntityNodeByNameSimpleWrapper(const string* entityNodeName, bool* entityAlreadyExistant, GIAtranslatorVariablesClass* translatorVariables)
