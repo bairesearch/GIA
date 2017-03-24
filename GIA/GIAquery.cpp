@@ -25,7 +25,7 @@
  * File Name: GIAquery.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a2b 21-March-2017
+ * Project Version: 3a2c 21-March-2017
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  * ?Limitations: will only locate a exact answer (based upon a comparison node) if it provides the maximum number of matched nodes
@@ -60,7 +60,11 @@ GIAqueryTraceParameters::GIAqueryTraceParameters(void)
 	*/
 	
 	#ifdef GIA_QUERY_SKIP_OVER_PROPERTY_AND_DEFINITION_RELATIONSHIP_ENTITIES
+	#ifdef GIA_QUERY_SKIP_OVER_PROPERTY_AND_DEFINITION_RELATIONSHIP_ENTITIES_QUERIES
 	skipOverPropertyAndDefinitionRelationshipEntities = true;
+	#else
+	skipOverPropertyAndDefinitionRelationshipEntities = false;
+	#endif
 	#endif
 }
 GIAqueryTraceParameters::~GIAqueryTraceParameters(void)
@@ -97,7 +101,11 @@ GIAqueryTraceParameters::GIAqueryTraceParameters(GIAqueryTraceParameters* queryT
 	sourceContext = queryTraceParametersToCopy->sourceContext;
 
 	#ifdef GIA_QUERY_SKIP_OVER_PROPERTY_AND_DEFINITION_RELATIONSHIP_ENTITIES
+	#ifdef GIA_QUERY_SKIP_OVER_PROPERTY_AND_DEFINITION_RELATIONSHIP_ENTITIES_QUERIES
 	skipOverPropertyAndDefinitionRelationshipEntities = true;
+	#else
+	skipOverPropertyAndDefinitionRelationshipEntities = false;
+	#endif
 	#endif
 }
 
@@ -301,7 +309,7 @@ bool GIAqueryClass::testEntityNodeForQueryOrReferenceSet2(GIAentityNode* queryEn
 									{
 										if((connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTY) || (connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITION))
 										{
-											cout << "skipping2" << endl;
+											//cout << "skipping2" << endl;
 											#ifdef GIA_DATABASE
 											#ifndef GIA_DATABASE_TEST_MODE_LOAD_ALL_ENTITIES_AND_CONNECTIONS_TO_ACTIVE_LIST_UPON_READ
 											if(GIAdatabase.getUseDatabase() == GIA_DATABASE_TRUE_READ_ACTIVE)
@@ -317,7 +325,7 @@ bool GIAqueryClass::testEntityNodeForQueryOrReferenceSet2(GIAentityNode* queryEn
 										}
 										else if((connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTY_REVERSE) || (connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITION_REVERSE))
 										{
-											cout << "skipping2" << endl;
+											//cout << "skipping2" << endl;
 											#ifdef GIA_DATABASE
 											#ifndef GIA_DATABASE_TEST_MODE_LOAD_ALL_ENTITIES_AND_CONNECTIONS_TO_ACTIVE_LIST_UPON_READ
 											if(GIAdatabase.getUseDatabase() == GIA_DATABASE_TRUE_READ_ACTIVE)
@@ -1122,7 +1130,7 @@ bool GIAqueryClass::testEntityNodeForQueryOrReferenceSet(GIAentityNode* queryEnt
 								{
 									if((connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTY) || (connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITION))
 									{
-										cout << "skipping3" << endl;
+										//cout << "skipping3" << endl;
 										#ifdef GIA_DATABASE
 										#ifndef GIA_DATABASE_TEST_MODE_LOAD_ALL_ENTITIES_AND_CONNECTIONS_TO_ACTIVE_LIST_UPON_READ
 										if(GIAdatabase.getUseDatabase() == GIA_DATABASE_TRUE_READ_ACTIVE)
@@ -1137,7 +1145,7 @@ bool GIAqueryClass::testEntityNodeForQueryOrReferenceSet(GIAentityNode* queryEnt
 									}
 									else if((connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTY_REVERSE) || (connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITION_REVERSE))
 									{
-										cout << "skipping3" << endl;
+										//cout << "skipping3" << endl;
 										#ifdef GIA_DATABASE
 										#ifndef GIA_DATABASE_TEST_MODE_LOAD_ALL_ENTITIES_AND_CONNECTIONS_TO_ACTIVE_LIST_UPON_READ
 										if(GIAdatabase.getUseDatabase() == GIA_DATABASE_TRUE_READ_ACTIVE)
@@ -1909,7 +1917,7 @@ bool GIAqueryClass::compareEntityStandard(GIAentityNode* queryEntityNode, GIAent
 		#ifdef GIA_QUERY_SKIP_OVER_PROPERTY_AND_DEFINITION_RELATIONSHIP_ENTITIES
 		if((!traceModeIsQuery && !(referenceTraceParameters->skipOverPropertyAndDefinitionRelationshipEntities)) || (traceModeIsQuery && !(queryTraceParameters->skipOverPropertyAndDefinitionRelationshipEntities)))
 		{
-			cout << "skipping1" << endl;
+			//cout << "skipping1" << endl;
 		#endif
 			//this code could be moved to a separate function eg in GIAentityNode to make use of entityTypesIsRelationshipArray
 			if(((queryEntityNode->entityType == GIA_ENTITY_TYPE_PROPERTY) && (queryEntityNode->entityType == GIA_ENTITY_TYPE_PROPERTY)) ||

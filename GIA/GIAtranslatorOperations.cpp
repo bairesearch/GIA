@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a2b 21-March-2017
+ * Project Version: 3a2c 21-March-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1443,8 +1443,8 @@ GIAentityNode* GIAtranslatorOperationsClass::addRelationshipArtificialToEntity2(
 {
 	bool result = true;
 	
-	#ifdef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS	
-	GIAentityNode* relationshipEntity = findOrAddEntityNodeByNameSimpleWrapperRelationship2(relationshipEntityName, translatorVariablesSentencesParsed, true);
+	#ifdef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
+	GIAentityNode* relationshipEntity = findOrAddEntityNodeByNameSimpleWrapperRelationshipArtificial2(relationshipSubjectEntity, relationshipObjectEntity, relationshipEntityType, relationshipEntityName, translatorVariablesSentencesParsed);
 	#else
 	GIAentityNode* relationshipEntity = NULL;
 	#endif
@@ -1504,21 +1504,38 @@ GIAentityNode* GIAtranslatorOperationsClass::addRelationshipArtificialToEntity2(
 	
 	return relationshipEntity;
 }
-
-GIAentityNode* GIAtranslatorOperationsClass::findOrAddEntityNodeByNameSimpleWrapperRelationship2(const string relationshipEntityName, GIAtranslatorVariablesClass* translatorVariablesSentencesParsed, bool isArtificial)
+#ifdef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS	
+GIAentityNode* GIAtranslatorOperationsClass::findOrAddEntityNodeByNameSimpleWrapperRelationshipArtificial2(GIAentityNode* relationshipSubjectEntity, GIAentityNode* relationshipObjectEntity, const int relationshipEntityType, const string relationshipEntityName, GIAtranslatorVariablesClass* translatorVariablesSentencesParsed)
+{
+	GIAentityNode* relationshipEntity = NULL;
+	if(!findExistingRelationshipInSentenceEntityArray(relationshipSubjectEntity, relationshipObjectEntity, relationshipEntityType, &relationshipEntity, translatorVariablesSentencesParsed))	//added 3a2b (see <=3a1j for equivalent change);
+	{
+		relationshipEntity = addEntityNodeByNameSimpleWrapperRelationshipArtificial2(relationshipEntityType, relationshipEntityName, translatorVariablesSentencesParsed);
+	}
+	
+	return relationshipEntity;	
+}
+GIAentityNode* GIAtranslatorOperationsClass::addEntityNodeByNameSimpleWrapperRelationshipArtificial2(const int relationshipEntityType, const string relationshipEntityName, GIAtranslatorVariablesClass* translatorVariablesSentencesParsed)
+{
+	GIAentityNode* relationshipEntity = findOrAddNetworkIndexEntityByNameSimpleWrapperRelationship2(relationshipEntityName, translatorVariablesSentencesParsed);
+	
+	//added 3a2b (see 3a1j for equivalent change);
+	relationshipEntity = addInstanceToInstanceDefinition(relationshipEntity, relationshipEntityType, translatorVariablesSentencesParsed);
+	
+	#ifdef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
+	relationshipEntity->isArtificialAuxiliary = true;
+	#endif
+	
+	return relationshipEntity;	
+}
+GIAentityNode* GIAtranslatorOperationsClass::findOrAddNetworkIndexEntityByNameSimpleWrapperRelationship2(const string relationshipEntityName, GIAtranslatorVariablesClass* translatorVariablesSentencesParsed)
 {
 	bool entityAlreadyExistant = false;
 	GIAentityNode* relationshipEntity = findOrAddNetworkIndexEntityNodeByNameSimpleWrapper(&relationshipEntityName, &entityAlreadyExistant, translatorVariablesSentencesParsed);
 	
-	#ifdef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
-	if(isArtificial)
-	{
-		relationshipEntity->isArtificialAuxiliary = true;	
-	}
-	#endif
-	
 	return relationshipEntity;
 }
+#endif
 
 
 
