@@ -25,7 +25,7 @@
  * File Name: GIAdraw.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1r 26-February-2017
+ * Project Version: 3a1s 26-February-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -400,7 +400,7 @@ bool GIAdrawClass::initialiseEntityNodeForPrinting(GIAentityNode* entityNode, in
 					#endif
 					
 					#ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
-					if(connection->isAlias)
+					if(GIAtranslatorOperations.connectionIsAlias(connection))
 					{
 						entityConnectionColour = GIA_DRAW_DEFINITION_MARK_AS_ALIAS_CONNECTION_COLOUR;
 					}

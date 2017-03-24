@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1r 26-February-2017
+ * Project Version: 3a1s 26-February-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1900,10 +1900,12 @@ void GIAtranslatorDefineReferencingClass::identifyReferenceSetsSpecificConceptsA
 												if(instanceEntity != NULL)
 												{
 													translatorVariables->sentenceIndex = instanceEntity->sentenceIndexTemp;	//sentenceIndex here is artifical, could equally use currentSpecificConcept->sentenceIndexTemp
-													GIAentityNode* definitionRelationshipEntity = GIAtranslatorOperations.addDefinitionRelationshipToEntity2(instanceEntity, currentSpecificConcept, sameReferenceSet, translatorVariables);
+													GIAtranslatorOperations.addDefinitionRelationshipToEntity2(instanceEntity, currentSpecificConcept, sameReferenceSet, translatorVariables);
+													#ifdef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
 													entityNodesActiveListCompleteIter = find(translatorVariables->entityNodesActiveListComplete->begin(), translatorVariables->entityNodesActiveListComplete->end(), currentSpecificConcept);	//reset iterator - added 3a1a
 													entityNodesActiveListCompleteIter2 = find(translatorVariables->entityNodesActiveListComplete->begin(), translatorVariables->entityNodesActiveListComplete->end(), entityNode);   //reset iterator - added 3a1a
-												
+													#endif
+													
 													#ifdef GIA_DREAMMODE_REFERENCING_DEBUG
 													cout << "identifyReferenceSetsSpecificConceptsAndLinkWithConcepts{}: connectDefinitionToEntity" << endl;
 													#endif
@@ -1918,9 +1920,11 @@ void GIAtranslatorDefineReferencingClass::identifyReferenceSetsSpecificConceptsA
 												//found instance in network matching concept...
 													
 												translatorVariables->sentenceIndex = entityNode->sentenceIndexTemp;	//sentenceIndex here is artifical, could equally use currentSpecificConcept->sentenceIndexTemp
-												GIAentityNode* definitionRelationshipEntity = GIAtranslatorOperations.addDefinitionRelationshipToEntity2(entityNode, currentSpecificConcept, sameReferenceSet, translatorVariables);
+												GIAtranslatorOperations.addDefinitionRelationshipToEntity2(entityNode, currentSpecificConcept, sameReferenceSet, translatorVariables);
+												#ifdef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
 												entityNodesActiveListCompleteIter = find(translatorVariables->entityNodesActiveListComplete->begin(), translatorVariables->entityNodesActiveListComplete->end(), currentSpecificConcept);	//reset iterator - added 3a1a
 												entityNodesActiveListCompleteIter2 = find(translatorVariables->entityNodesActiveListComplete->begin(), translatorVariables->entityNodesActiveListComplete->end(), entityNode);   //reset iterator - added 3a1a
+												#endif
 												
 												#ifdef GIA_DREAMMODE_REFERENCING_DEBUG
 												cout << "identifyReferenceSetsSpecificConceptsAndLinkWithConcepts{}: connectDefinitionToEntity" << endl;

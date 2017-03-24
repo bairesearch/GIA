@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1r 26-February-2017
+ * Project Version: 3a1s 26-February-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -109,7 +109,19 @@ GIAtranslatorVariablesClass::~GIAtranslatorVariablesClass(void)
 }
 
 
-
+bool GIAtranslatorOperationsClass::connectionIsAlias(const GIAentityConnection* connection)
+{
+	bool isAlias = false;
+	#ifdef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
+	if(connection->entity->isAlias)
+	#else
+	if(connection->isAlias)
+	#endif
+	{
+		isAlias = true;
+	}
+	return isAlias;
+}
 
 
 bool GIAtranslatorOperationsClass::connectionIsRelationship(GIAentityConnection* connection)
@@ -350,7 +362,7 @@ bool GIAtranslatorOperationsClass::connectDefinitionToEntity(GIAentityNode* defi
 bool GIAtranslatorOperationsClass::connectDefinitionToEntityMarkConnectionAsAlias(GIAentityNode* definitionRelationshipSubjectEntity, GIAentityNode* definitionRelationshipObjectEntity, GIAentityNode* definitionRelationshipEntity, bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables)
 {
 	bool result = connectDefinitionToEntity(definitionRelationshipSubjectEntity, definitionRelationshipObjectEntity, definitionRelationshipEntity, sameReferenceSet, translatorVariables);
-	newOrExistingDefinition->isAlias = true;
+	definitionRelationshipEntity->isAlias = true;
 	return result;
 }
 #endif
@@ -358,14 +370,12 @@ bool GIAtranslatorOperationsClass::connectDefinitionToEntityMarkConnectionAsAlia
 
 bool GIAtranslatorOperationsClass::connectBeingDefinitionToEntity(GIAentityNode* definitionRelationshipObjectEntity, GIAentityNode* definitionRelationshipEntity, bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables)
 {	
-	GIAentityNode* newOrExistingDefinition = connectRelationshipToObject(definitionRelationshipObjectEntity, definitionRelationshipEntity, sameReferenceSet, GIA_ENTITY_TYPE_DEFINITION, translatorVariables);
-	return newOrExistingDefinition;
+	return connectRelationshipToObject(definitionRelationshipObjectEntity, definitionRelationshipEntity, sameReferenceSet, GIA_ENTITY_TYPE_DEFINITION, translatorVariables);
 }
 
 bool GIAtranslatorOperationsClass::connectHavingPropertyToEntity(GIAentityNode* propertyRelationshipObjectEntity, GIAentityNode* propertyRelationshipEntity, bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables)
 {
-	GIAentityNode* newOrExistingDefinition = connectRelationshipToObject(propertyRelationshipObjectEntity, propertyRelationshipEntity, sameReferenceSet, GIA_ENTITY_TYPE_DEFINITION, translatorVariables);
-	return newOrExistingDefinition;
+	return connectRelationshipToObject(propertyRelationshipObjectEntity, propertyRelationshipEntity, sameReferenceSet, GIA_ENTITY_TYPE_DEFINITION, translatorVariables);
 }
 
 #else
@@ -393,7 +403,7 @@ bool GIAtranslatorOperationsClass::connectDirectDefinitionToEntity(GIAentityNode
 #ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
 bool GIAtranslatorOperationsClass::connectDirectDefinitionToEntityMarkConnectionAsAlias(GIAentityNode* definitionRelationshipSubjectEntity, GIAentityNode* definitionRelationshipObjectEntity, bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables)
 {
-	return connectDirectRelationshipToEntity(relationshipSubjectEntity, relationshipObjectEntity, NULL, sameReferenceSet, GIA_ENTITY_TYPE_DEFINITION, translatorVariables, true);
+	return connectDirectRelationshipToEntity(definitionRelationshipSubjectEntity, definitionRelationshipObjectEntity, NULL, sameReferenceSet, GIA_ENTITY_TYPE_DEFINITION, translatorVariables, true);
 }
 #endif
 
@@ -1508,15 +1518,22 @@ GIAentityNode* GIAtranslatorOperationsClass::addRelationshipArtificialToEntity2(
 		exit(EXIT_ERROR);
 	}
 	
-	translatorVariablesSentencesParsed->entityNodesActiveListComplete->push_back(relationshipEntity);
-	//now add the relationshipEntity to entityNodesActiveListSentences such that it can be found quickly in the future (e.g. by a high level application)
-	map<int, vector<GIAentityNode*>*>::iterator entityNodesActiveListSentenceIter = translatorVariablesSentencesParsed->entityNodesActiveListSentences->find(translatorVariablesSentencesParsed->sentenceIndex);	
-	if(entityNodesActiveListSentenceIter != translatorVariablesSentencesParsed->entityNodesActiveListSentences->end())
+	#ifndef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS	
+	if(relationshipEntityType == GIA_ENTITY_TYPE_CONDITION)
 	{
-		vector<GIAentityNode*>* entityNodesActiveListSentence = entityNodesActiveListSentenceIter->second;
-		entityNodesActiveListSentence->push_back(relationshipEntity);	
+	#endif
+		translatorVariablesSentencesParsed->entityNodesActiveListComplete->push_back(relationshipEntity);
+		//now add the relationshipEntity to entityNodesActiveListSentences such that it can be found quickly in the future (e.g. by a high level application)
+		map<int, vector<GIAentityNode*>*>::iterator entityNodesActiveListSentenceIter = translatorVariablesSentencesParsed->entityNodesActiveListSentences->find(translatorVariablesSentencesParsed->sentenceIndex);	
+		if(entityNodesActiveListSentenceIter != translatorVariablesSentencesParsed->entityNodesActiveListSentences->end())
+		{
+			vector<GIAentityNode*>* entityNodesActiveListSentence = entityNodesActiveListSentenceIter->second;
+			entityNodesActiveListSentence->push_back(relationshipEntity);	
+		}
+	#ifndef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS	
 	}
-
+	#endif
+	
 	return relationshipEntity;
 }
 

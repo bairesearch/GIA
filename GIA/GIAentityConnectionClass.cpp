@@ -25,7 +25,7 @@
  * File Name: GIAentityConnectionClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1r 26-February-2017
+ * Project Version: 3a1s 26-February-2017
  *
  *******************************************************************************/
 
@@ -82,6 +82,7 @@ void GIAentityConnection::initialiseDefaultValues(void)
 	#ifdef GIA_RECORD_POSSESSION_AUXILIARY_HAS_INFORMATION
 	possessionAuxiliaryHave = false;
 	#endif
+	#define GIA_ENTITY_CONNECTION_NEGATIVE_DEFINED
 	negative = false;
 	//grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES] = NULL;
 	grammaticalTenseTemp = GRAMMATICAL_TENSE_UNDEFINED;
@@ -92,7 +93,7 @@ void GIAentityConnection::initialiseDefaultValues(void)
 	#endif
 	
 	#ifdef USE_NLC
-	#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC_RECORD_AUX_INFO
+	#ifndef GIA_ENTITY_CONNECTION_NEGATIVE_DEFINED
 	negative = false;	//already defined
 	#endif
 	NLCparsedForCodeBlocks = false;
