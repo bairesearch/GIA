@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1l 26-February-2017
+ * Project Version: 3a1m 26-February-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -519,8 +519,6 @@ GIAentityNode* GIAtranslatorOperationsClass::connectConditionToObject(GIAentityN
 
 GIAentityNode* GIAtranslatorOperationsClass::addOrConnectRelationshipToEntity(GIAentityNode* relationshipSubjectEntity, GIAentityNode* relationshipObjectEntity, GIAentityNode* relationshipEntity, bool sameReferenceSet, const int relationshipEntityType, GIAtranslatorVariablesClass* translatorVariables)
 {
-	GIAentityNode* newOrExistingRelationship = relationshipEntity;
-
 	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_NETWORK_INDEX_ENTITIES
 	if(!(relationshipSubjectEntity->disabled))
 	{
@@ -529,14 +527,16 @@ GIAentityNode* GIAtranslatorOperationsClass::addOrConnectRelationshipToEntity(GI
 	if(!(relationshipEntity->disabled))
 	{
 	#endif
-	
+		
+		relationshipEntity->entityType = relationshipEntityType;
+		
 		#ifdef GIA_PREVENT_CONCEPTS_FROM_BEEN_ADDED_AS_CHILDREN_OF_NON_CONCEPTS
 		this->setRelationshipObjectToSubstanceIfNecessary(relationshipEntity, relationshipObjectEntity, relationshipEntityType);
 		#endif
 	
 		//configure entity node containing this substance
-		this->connectRelationshipInstanceToSubject(relationshipSubjectEntity, newOrExistingRelationship, sameReferenceSet, relationshipEntityType, translatorVariables);
-		this->connectRelationshipInstanceToObject(relationshipObjectEntity, newOrExistingRelationship, sameReferenceSet, relationshipEntityType, translatorVariables);
+		this->connectRelationshipInstanceToSubject(relationshipSubjectEntity, relationshipEntity, sameReferenceSet, relationshipEntityType, translatorVariables);
+		this->connectRelationshipInstanceToObject(relationshipObjectEntity, relationshipEntity, sameReferenceSet, relationshipEntityType, translatorVariables);
 
 
 	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_NETWORK_INDEX_ENTITIES
@@ -545,47 +545,47 @@ GIAentityNode* GIAtranslatorOperationsClass::addOrConnectRelationshipToEntity(GI
 	}
 	#endif
 	
-	return newOrExistingRelationship;
+	return relationshipEntity;
 }
 
 GIAentityNode* GIAtranslatorOperationsClass::addOrConnectRelationshipToSubject(GIAentityNode* relationshipSubjectEntity, GIAentityNode* relationshipEntity, bool sameReferenceSet, const int relationshipEntityType, GIAtranslatorVariablesClass* translatorVariables)
 {
-	GIAentityNode* newOrExistingRelationship = relationshipEntity;
-
 	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_NETWORK_INDEX_ENTITIES
 	if(!(relationshipSubjectEntity->disabled))
 	{
 	if(!(relationshipEntity->disabled))
 	{
 	#endif
-		this->connectRelationshipInstanceToSubject(relationshipSubjectEntity, newOrExistingRelationship, sameReferenceSet, relationshipEntityType, translatorVariables);
+		relationshipEntity->entityType = relationshipEntityType;
+		
+		this->connectRelationshipInstanceToSubject(relationshipSubjectEntity, relationshipEntity, sameReferenceSet, relationshipEntityType, translatorVariables);
 
 	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_NETWORK_INDEX_ENTITIES
 	}
 	}
 	#endif
-
-	return newOrExistingRelationship;
+	
+	return relationshipEntity;
 }
 
 GIAentityNode* GIAtranslatorOperationsClass::addOrConnectRelationshipToObject(GIAentityNode* relationshipObjectEntity, GIAentityNode* relationshipEntity, bool sameReferenceSet, const int relationshipEntityType, GIAtranslatorVariablesClass* translatorVariables)
 {
-	GIAentityNode* newOrExistingRelationship = relationshipEntity;
-
 	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_NETWORK_INDEX_ENTITIES
 	if(!(relationshipObjectEntity->disabled))
 	{
 	if(!(relationshipEntity->disabled))
 	{
 	#endif
-		this->connectRelationshipInstanceToObject(relationshipObjectEntity, newOrExistingRelationship, sameReferenceSet, relationshipEntityType, translatorVariables);
+		relationshipEntity->entityType = relationshipEntityType;
+		
+		this->connectRelationshipInstanceToObject(relationshipObjectEntity, relationshipEntity, sameReferenceSet, relationshipEntityType, translatorVariables);
 
 	#ifdef GIA_DO_NOT_ADD_SUBSTANCES_ACTIONS_AND_CONDITIONS_TO_DISABLED_NETWORK_INDEX_ENTITIES
 	}
 	}
 	#endif
-
-	return newOrExistingRelationship;
+	
+	return relationshipEntity;
 }
 
 
@@ -1508,8 +1508,6 @@ GIAentityNode* GIAtranslatorOperationsClass::findOrAddEntityNodeByNameSimpleWrap
 	if(translatorVariables->GIAentityNodeArrayFilled[featureIndex])
 	{
 		conditionRelationshipEntity = translatorVariables->GIAentityNodeArray[featureIndex];
-		cout << "featureIndex = " << featureIndex << endl;
-		cout << "conditionRelationshipEntity->entityIndexTemp = " << conditionRelationshipEntity->entityIndexTemp << endl;
 	}
 	else
 	{

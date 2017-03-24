@@ -25,7 +25,7 @@
  * File Name: GIAdraw.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1l 26-February-2017
+ * Project Version: 3a1m 26-February-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -41,6 +41,7 @@
 #include "GIAentityNodeClass.hpp"
 #include "GIAentityConnectionClass.hpp"
 #include "GIAconditionNodeClass.hpp"
+#include "GIAtranslatorOperations.hpp"	//required for generateConnectionType/generateConnectionTypeReverse
 #include "XMLrulesClass.hpp"
 #include "LDsvg.hpp"
 #include "LDopengl.hpp"
@@ -258,6 +259,8 @@ class GIAdrawClass
 	private: SHAREDvarsClass SHAREDvars;
 	private: GIAentityNodeClassClass GIAentityNodeClass;
 	private: LDspriteClass LDsprite;
+	private: GIAtranslatorOperationsClass GIAtranslatorOperations;
+	
 	public: void printGIAnetworkNodes(vector<GIAentityNode*>* entityNodesActiveListComplete, int width, const int height, const string outputFileNameLDR, const string outputFileNameSVG, const string outputFileNamePPM, const bool display, const bool useOutputLDRfile, const bool useOutputPPMfile, const bool useOutputSVGfile, int maxNumberSentences);
 
 	public: bool determineBasicPrintPositionsOfAllNodes(vector<GIAentityNode*>* entityNodesActiveListComplete, bool printType[], LDreference* firstReferenceInPrintList, XMLparserTag* firstTagInSVGFile, int maxNumberSentences);

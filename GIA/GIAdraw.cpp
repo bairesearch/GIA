@@ -25,7 +25,7 @@
  * File Name: GIAdraw.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1l 26-February-2017
+ * Project Version: 3a1m 26-February-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -371,11 +371,36 @@ bool GIAdrawClass::initialiseEntityNodeForPrinting(GIAentityNode* entityNode, in
 					#endif				
 					*/
 					
+					string connectionName = entityVectorConnectionDrawConnectionNameArray[connectionType];
 					#ifdef GIA_DRAW_ONLY_PRINT_CONNECTIONS_IN_ONE_DIRECTION
 					if(!entityVectorConnectionDrawPrintConnectionArray[connectionType])
 					{
-						pass = false;
+						//pass = false;	//not compatible with GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
+						
+						int connectionTypeGenerated;
+						#ifdef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
+						if(connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_RELATIONSHIP_SUBJECT)
+						{
+							connectionTypeGenerated = GIAtranslatorOperations.generateConnectionType(entityNode->entityType);
+						}
+						else if(connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_RELATIONSHIP_OBJECT)
+						{
+							connectionTypeGenerated = GIAtranslatorOperations.generateConnectionTypeReverse(entityNode->entityType);
+						}
+						else
+						{
+						#endif
+							connectionTypeGenerated = inverseVectorConnectionsArray[connectionType];	
+						#ifdef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
+						}
+						#endif
+						
+						connectionName = entityVectorConnectionDrawConnectionNameArray[connectionTypeGenerated];
+						
 					}
+					#endif
+					#ifdef GIA_DRAW_PRINT_CONNECTION_SENTENCE_INDEX
+					connectionName = string("s") + SHAREDvars.convertIntToString(connection->sentenceIndexTemp) + connectionName;
 					#endif
 					
 					#ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
@@ -399,12 +424,6 @@ bool GIAdrawClass::initialiseEntityNodeForPrinting(GIAentityNode* entityNode, in
 							}
 							#endif
 
-							#ifdef GIA_DRAW_PRINT_CONNECTION_SENTENCE_INDEX
-							//string connectionName = SHAREDvars.convertIntToString(connection->sentenceIndexTemp);
-							string connectionName = string("s") + SHAREDvars.convertIntToString(connection->sentenceIndexTemp) + entityVectorConnectionNameArray[connectionType];
-							#else
-							string connectionName = entityVectorConnectionDrawConnectionNameArray[connectionType];
-							#endif
 							this->initialiseEntityConnectionForPrinting(&pos1, connection, printType, connectionName, entityConnectionColour, currentReferenceInPrintList, currentTag);
 						}
 					}
