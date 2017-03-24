@@ -732,7 +732,7 @@
 #ifndef GIA_DEBUG_DISABLE_3a_CODE
 
 	//this provides a a major architectural change:
-	#define GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS	//creates an artificial have/be entity node for every property/definition connection [required to store time information consistently and reference the connection]	//this is required for GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
+	//#define GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS	//creates an artificial have/be entity node for every property/definition connection [required to store time information consistently and reference the connection]	//this is required for GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
 	#ifdef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
 		//#define GIA_QUERY_SKIP_OVER_PROPERTY_AND_DEFINITION_RELATIONSHIP_ENTITIES	//this (or an alternative implementation) is required for GIA3
 	#else
