@@ -25,7 +25,7 @@
  * File Name: GIApreprocessor.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3a3a 22-March-2017
+ * Project Version: 3a3b 22-March-2017
  * Requirements: requires plain text file
  * Description: Logical Condition and Reference Set preprocessor
  *
@@ -152,6 +152,11 @@ bool GIApreprocessorClass::preprocessSentencesForGIA(const string inputFileName,
 			sentenceIndexOriginal++;	
 		}
 	}
+	//#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE
+	cout << "create preprocessed file, outputFileName = " << outputFileName << endl;
+	cout  << "outputTextContents = \n" << outputTextContents << endl;
+	cout  << "outputTextContentsForNLP = \n" << outputTextContentsForNLP << endl;
+	//#endif
 	SHAREDvars.setCurrentDirectory(outputFolder);	//save output files to output folder
 	SHAREDvars.writeStringToFile(outputFileName, &outputTextContents);
 	SHAREDvars.writeStringToFile(outputFileNameLRPforNLP, &outputTextContentsForNLP);
@@ -168,6 +173,10 @@ bool GIApreprocessorClass::preprocessSentencesForGIA(const string inputFileName,
 	}
 	#endif
 
+	#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_PREMATURE_QUIT
+	cout << "Premature quit for debug" << endl;
+	exit(EXIT_ERROR);
+	#endif
 
 	return result;
 }
@@ -353,7 +362,7 @@ void GIApreprocessorClass::addSentenceToSentenceContentsPreprocessedLogicReferen
 		#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_SUB_REFERENCE_SETS_RECORD_SAME_REFERENCE_SET_DELIMITERS
 		if(referenceSet->isReferenceSetDelimiter)
 		{
-			referenceSet->subReferenceSetContentsOutputForNLP = string(GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_SUBJECT) + referenceSet->subReferenceSetContents + GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_OBJECT + CHAR_FULLSTOP;
+			referenceSet->subReferenceSetContentsOutputForNLP = string(GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_SUBJECT_FULL) + referenceSet->subReferenceSetContents + GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_OBJECT_FULL + CHAR_FULLSTOP;
 		} 
 		else
 		{
@@ -362,12 +371,12 @@ void GIApreprocessorClass::addSentenceToSentenceContentsPreprocessedLogicReferen
 			if(referenceSetType == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_TYPE_SUBJECT)
 			{
 			#endif
-				referenceSet->subReferenceSetContentsOutputForNLP = referenceSet->subReferenceSetContents + GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP + GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_OBJECT + CHAR_FULLSTOP;
+				referenceSet->subReferenceSetContentsOutputForNLP = referenceSet->subReferenceSetContents + GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_FULL + GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_OBJECT_FULL + CHAR_FULLSTOP;
 			#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_SUBJECT_OR_OBJECT_AND_DELIMITER
 			}
 			else if(referenceSetType == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_TYPE_OBJECT)
 			{
-				referenceSet->subReferenceSetContentsOutputForNLP = string(GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_SUBJECT) + GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP + referenceSet->subReferenceSetContents + CHAR_FULLSTOP;
+				referenceSet->subReferenceSetContentsOutputForNLP = string(GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_SUBJECT_FULL) + GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_FULL + referenceSet->subReferenceSetContents + CHAR_FULLSTOP;
 			} 
 			#endif
 		#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_SUB_REFERENCE_SETS_RECORD_SAME_REFERENCE_SET_DELIMITERS
@@ -637,14 +646,14 @@ bool GIApreprocessorClass::connectPreprocessorSentenceReferenceSetEntitiesToLogi
 			GIAentityNode* referenceSetActionEntity = NULL;
 			if(subjectDefined)
 			{
-				if(!findPrimaryEntityAndReconcileSubReferenceSets(&subjectEntity, currentLogicReferenceInList->logicReferenceVariable->referenceSetSubject, translatorVariables, GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_TYPE_SUBJECT))
+				if(!findPrimaryEntityAndReconcileSubReferenceSets(&subjectEntity, currentLogicReferenceInList->logicReferenceVariable->referenceSetSubject, NULL, translatorVariables, GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_TYPE_SUBJECT))
 				{
 					result = false;
 				}
 			}
 			if(objectDefined)
 			{
-				if(!findPrimaryEntityAndReconcileSubReferenceSets(&objectEntity, currentLogicReferenceInList->logicReferenceVariable->referenceSetObject, translatorVariables, GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_TYPE_OBJECT))
+				if(!findPrimaryEntityAndReconcileSubReferenceSets(&objectEntity, currentLogicReferenceInList->logicReferenceVariable->referenceSetObject, delimiterEntity, translatorVariables, GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_TYPE_OBJECT))
 				{
 					result = false;
 				}
@@ -976,10 +985,9 @@ GIAentityNode* GIApreprocessorClass::getEntity(GIApreprocessorLogicReference* cu
 #endif
 
 
-bool GIApreprocessorClass::findPrimaryEntityAndReconcileSubReferenceSets(GIAentityNode** primaryEntity, GIApreprocessorSubReferenceSet* firstSubReferenceSetInList, GIAtranslatorVariablesClass* translatorVariables, const int referenceSetType)
+bool GIApreprocessorClass::findPrimaryEntityAndReconcileSubReferenceSets(GIAentityNode** primaryEntity, GIApreprocessorSubReferenceSet* firstSubReferenceSetInList, GIAentityNode* lastDelimiterEntity, GIAtranslatorVariablesClass* translatorVariables, const int referenceSetType)
 {
 	GIApreprocessorSubReferenceSet* currentSubReferenceSetInList = firstSubReferenceSetInList;
-	GIAentityNode* lastDelimiterEntity = NULL;
 	while(currentSubReferenceSetInList->next != NULL)
 	{
 		#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_SUB_REFERENCE_SETS
@@ -1011,7 +1019,15 @@ bool GIApreprocessorClass::findPrimaryEntityAndReconcileSubReferenceSets(GIAenti
 						bool sameReferenceSet = true;	//"that"/"which" imply sameReferenceSet
 						if(currentSubReferenceSetInList->delimiterSpecialCase == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_SPECIAL_CASE_DELIMITER_AND_OBJECT_REFER_TO_PREVIOUS_DELIMITER_VERB)
 						{
-							connectRelationshipToSource(intermediaryPrimaryEntity, lastDelimiterEntity, sameReferenceSet, translatorVariables);	//eg tom rides the bike near the ball -> rides near
+							if(lastDelimiterEntity != NULL)
+							{
+								connectRelationshipToSource(intermediaryPrimaryEntity, lastDelimiterEntity, sameReferenceSet, translatorVariables);	//eg tom rides the bike near the ball -> rides near
+							}
+							else
+							{
+								cout << "GIApreprocessor::findPrimaryEntityAndReconcileSubReferenceSets{} error: (currentSubReferenceSetInList->delimiterSpecialCase == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_SPECIAL_CASE_DELIMITER_AND_OBJECT_REFER_TO_PREVIOUS_DELIMITER_VERB) && (lastDelimiterEntity == NULL)" << endl;	
+								exit(EXIT_ERROR);
+							}
 						}
 						else
 						{
@@ -1103,7 +1119,6 @@ bool GIApreprocessorClass::findPrimaryEntityBasedOnSentenceIndexAndTypeAndDelete
 		{
 			result = false;
 		}
-		deleteExternalConnectionsToConnection(parentEntityToPrimaryEntityConnection1);
 
 		GIAentityNode* objectParentEntity = NULL;
 		if(!findParentEntityBasedOnSentenceIndex(currentSubReferenceSetInList, translatorVariables, GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_OBJECT, &objectParentEntity))
@@ -1115,9 +1130,13 @@ bool GIApreprocessorClass::findPrimaryEntityBasedOnSentenceIndexAndTypeAndDelete
 		{
 			result = false;
 		}
-		deleteExternalConnectionsToConnection(parentEntityToPrimaryEntityConnection2);
 		
 		*primaryEntity = parentEntityToPrimaryEntityConnection1->entity;	//OR	*primaryEntity = parentEntityToPrimaryEntityConnection2->entity;
+
+		deleteExternalConnectionsToConnection(parentEntityToPrimaryEntityConnection1);
+		deleteExternalConnectionsToConnection(parentEntityToPrimaryEntityConnection2);	
+		subjectParentEntity->disabled = true;	//disable if not already disabled
+		objectParentEntity->disabled = true;	//disable if not already disabled
 	}
 	else
 	{
@@ -1153,6 +1172,8 @@ bool GIApreprocessorClass::findPrimaryEntityBasedOnSentenceIndexAndTypeAndDelete
 			
 			deleteExternalConnectionsToConnection(parentEntityToPrimaryEntityConnection1);
 			deleteExternalConnectionsToConnection(parentEntityToPrimaryEntityConnection2);
+			relationshipParentEntity->disabled = true;	//disable if not already disabled
+			objectParentEntity->disabled = true;		//disable if not already disabled
 			
 			*primaryEntity = parentEntityToPrimaryEntityConnection1->entity;
 		#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_SUBJECT_OR_OBJECT_AND_DELIMITER
@@ -1186,7 +1207,9 @@ bool GIApreprocessorClass::findPrimaryEntityBasedOnSentenceIndexAndTypeAndDelete
 			
 			deleteExternalConnectionsToConnection(parentEntityToPrimaryEntityConnection1);
 			deleteExternalConnectionsToConnection(parentEntityToPrimaryEntityConnection2);	
-			
+			subjectParentEntity->disabled = true;		//disable if not already disabled
+			relationshipParentEntity->disabled = true;	//disable if not already disabled
+				
 			*primaryEntity = parentEntityToPrimaryEntityConnection2->entity;
 		}
 		#endif
