@@ -25,7 +25,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a3c 22-March-2017
+ * Project Version: 3a3d 22-March-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -831,7 +831,7 @@
 					#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_SUBJECT_FULL string("The " GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_SUBJECT)
 					#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_OBJECT_FULL string("the " GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_OBJECT)
 					#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_LEMMA "compartmentalise"
-					#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_SUBJECT_OR_OBJECT_AND_DELIMITER	//set reference set as subject/object before semantic relation parse
+					#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_SUBJECT_OR_OBJECT_AND_DELIMITER	//set reference set as subject/object before semantic relation parse	//this is required to parse object conditions that are parsed by GIA as properties/conditions (instead of actions) of the relationship eg Tom rides to the park ('to' is connected to 'ride') 
 					#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_SUBJECT_OR_OBJECT_AND_DELIMITER
 						#define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_SET_CONJUNCTION_AND_OR_TEXT_TO_REFERENCE_SET_OBJECT_BEFORE_SEMANTIC_RELATION_PARSE
 					#endif
