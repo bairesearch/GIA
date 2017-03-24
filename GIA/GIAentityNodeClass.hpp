@@ -25,7 +25,7 @@
  * File Name: GIAentityNodeClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1m 26-February-2017
+ * Project Version: 3a1n 26-February-2017
  * NB a substance is an instance of an entity, any given entity may contain/comprise/have multiple substances - and substances are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -75,7 +75,7 @@ using namespace std;
 #define GIA_ENTITY_TYPE_DEFINITION_STRING "6"
 #define GIA_ENTITY_TYPE_QUALITY_STRING "7"
 static bool entityTypesIsRelationshipArray[GIA_ENTITY_NUMBER_OF_TYPES] = {false, false, false, true, true, true, true, false};
-static bool entityTypesAutomaticallyUpgradeUponInstanceSelectionArray[GIA_ENTITY_NUMBER_OF_TYPES] = {false, false, true, true, true, true, true, false};	//NB this is currently the same as entityTypesIsRelationshipArray except for GIA_ENTITY_TYPE_CONCEPT
+static bool entityTypesAutomaticallyUpgradeUponInstanceSelectionArray[GIA_ENTITY_NUMBER_OF_TYPES] = {false, true, true, true, true, true, true, false};	//NB this is currently the same as entityTypesIsRelationshipArray except for GIA_ENTITY_TYPE_CONCEPT
 static bool entityTypesIsActionOrConditionRelationshipArray[GIA_ENTITY_NUMBER_OF_TYPES] = {false, false, false, true, true, false, false, false};
 static bool entityTypesIsPropertyOrDefinitionRelationshipArray[GIA_ENTITY_NUMBER_OF_TYPES] = {false, false, false, false, false, true, true, false};
 

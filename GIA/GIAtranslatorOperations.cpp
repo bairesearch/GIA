@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1m 26-February-2017
+ * Project Version: 3a1n 26-February-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -801,15 +801,8 @@ GIAentityNode* GIAtranslatorOperationsClass::addInstance(GIAentityNode* entity, 
 	#endif
 	*/
 
-	if(instanceType == GIA_ENTITY_TYPE_CONDITION)
-	{
-		newInstance->negative = entity->negative;	//check forwardInfoToNewSubstance{} is not required
-	}
-	else
-	{
-		this->forwardInfoToNewSubstance(entity, newInstance);
-	}
-
+	this->forwardInfoToNewSubstance(entity, newInstance);
+	
 	this->writeVectorConnection(newInstance, entity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_INSTANCE_REVERSE, BASIC_DEFINING_INSTANCE_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN, translatorVariables);
 	this->writeVectorConnection(entity, newInstance, GIA_ENTITY_VECTOR_CONNECTION_TYPE_INSTANCE, VECTOR_ASSOCIATED_INSTANCES_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN, translatorVariables);
 
@@ -1511,15 +1504,22 @@ GIAentityNode* GIAtranslatorOperationsClass::findOrAddEntityNodeByNameSimpleWrap
 	}
 	else
 	{
-		conditionRelationshipEntity = this->findOrAddNetworkIndexEntityByNameSimpleWrapperRelationship(featureIndex, entityNodeName, translatorVariables);		
+		conditionRelationshipEntity = this->findOrAddNetworkIndexEntityByNameSimpleWrapperRelationship(featureIndex, entityNodeName, translatorVariables);
 	}
 	#else
 	conditionRelationshipEntity = this->findOrAddNetworkIndexEntityNodeByNameSimpleWrapper(entityNodeName, entityAlreadyExistant, translatorVariables);	
 	#endif
 	
 	//added 3a1j;
+	cout << "conditionRelationshipEntity->entityType = " << (conditionRelationshipEntity->entityType) << endl;
+	cout << "conditionRelationshipEntity->disabled = " << conditionRelationshipEntity->disabled << endl;
+	conditionRelationshipEntity->entityIndexTemp = featureIndex;	//added 3a1n (for (translatorVariables->GIAentityNodeArrayFilled[featureIndex]) and/or !GIA_ADVANCED_REFERENCING_CONDITIONS cases) 
+	conditionRelationshipEntity->sentenceIndexTemp = translatorVariables->sentenceIndex;
 	conditionRelationshipEntity = addInstanceToInstanceDefinition(conditionRelationshipEntity, GIA_ENTITY_TYPE_CONDITION, translatorVariables);
+	cout << "conditionRelationshipEntity->entityType = " << (conditionRelationshipEntity->entityType) << endl;
 	translatorVariables->GIAentityNodeArray[featureIndex] = conditionRelationshipEntity;
+	cout << "conditionRelationshipEntity->entityIndexTemp = " << conditionRelationshipEntity->entityIndexTemp << endl;
+	cout << "featureIndex = " << featureIndex << endl;
 	
 	return conditionRelationshipEntity;
 }
@@ -1529,8 +1529,8 @@ GIAentityNode* GIAtranslatorOperationsClass::findOrAddNetworkIndexEntityByNameSi
 	bool entityAlreadyExistant = false;
 	GIAentityNode* relationshipEntity = this->findOrAddNetworkIndexEntityNodeByNameSimpleWrapper(entityNodeName, &entityAlreadyExistant, translatorVariables);
 	translatorVariables->GIAentityNodeArrayFilled[featureIndex] = true;
-	relationshipEntity->entityIndexTemp = featureIndex;
 	translatorVariables->GIAentityNodeArray[featureIndex] = relationshipEntity;
+	relationshipEntity->entityIndexTemp = featureIndex;
 	relationshipEntity->sentenceIndexTemp = translatorVariables->sentenceIndex;
 	
 	return relationshipEntity;
@@ -1547,7 +1547,7 @@ GIAentityNode* GIAtranslatorOperationsClass::findOrAddNetworkIndexEntityNodeByNa
 	GIAentityNode* entityNodeFound = NULL;
 
 	entityNodeFound = GIAdatabase.findOrAddNetworkIndexEntityNodeByName(translatorVariables->entityNodesActiveListComplete, translatorVariables->entityNodesActiveListNetworkIndexes, entityNodeName, entityAlreadyExistant, true, &(translatorVariables->currentEntityNodeIDInCompleteList), &(translatorVariables->currentEntityNodeIDInNetworkIndexEntityNodesList), translatorVariables->saveNetwork);
-
+	
 	this->applyNetworkIndexEntityAlreadyExistsFunction(entityNodeFound, *entityAlreadyExistant, tempEntityEnabled);
 
 	return entityNodeFound;

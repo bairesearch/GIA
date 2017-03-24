@@ -25,7 +25,7 @@
  * File Name: GIAtranslator.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1m 26-February-2017
+ * Project Version: 3a1n 26-February-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -801,7 +801,9 @@ bool GIAtranslatorClass::convertSentenceSyntacticRelationsIntoGIAnetworkNodes(GI
 	{
 		if(GIAentityNodeArrayFilled[w])
 		{
-			entityNodesActiveListSentence->push_back(GIAentityNodeArray[w]);
+			GIAentityNode* entity = GIAentityNodeArray[w];
+			
+			entityNodesActiveListSentence->push_back(entity);
 
 			#ifdef GIA_ADVANCED_REFERENCING
 
@@ -809,12 +811,12 @@ bool GIAtranslatorClass::convertSentenceSyntacticRelationsIntoGIAnetworkNodes(GI
 			if(GIAtranslatorOperations.checkIfSentenceIsMathTextParsablePhrase(translatorVariables->currentSentenceInList))
 			{
 				#ifndef GIA_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS
-				if(GIAentityNodeArray[w]->entityType == GIA_ENTITY_TYPE_CONCEPT)
+				if(entity->entityType == GIA_ENTITY_TYPE_CONCEPT)
 				{
 				#endif
-					if(!(GIAentityNodeArray[w]->wasReference))	//redundant?
+					if(!(entity->wasReference))	//redundant?
 					{
-						GIAentityNodeArray[w]->NLCmathTextParsablePhraseEntity = true;
+						entity->NLCmathTextParsablePhraseEntity = true;
 					}
 				#ifndef GIA_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS
 				}
@@ -824,48 +826,49 @@ bool GIAtranslatorClass::convertSentenceSyntacticRelationsIntoGIAnetworkNodes(GI
 
 			//this is now just debugging:
 			#ifdef GIA_SET_ENTITY_ENTITY_AND_SENTENCE_INDICIES_NORMALLY
-			if(!(GIAentityNodeArray[w]->wasReference))
+			if(!(entity->wasReference))
 			{
-				#ifdef GIA_ADVANCED_REFERENCING_DEBUG_INTRASENTENCE_EXTRA
+				//#ifdef GIA_ADVANCED_REFERENCING_DEBUG_INTRASENTENCE_EXTRA
 				cout << "\nw = " << w << endl;
 				cout << "translatorVariables->currentSentenceInList->sentenceIndex = " << translatorVariables->currentSentenceInList->sentenceIndex << endl;
-				cout << "GIAentityNodeArray[w]->entityIndexTemp = " << GIAentityNodeArray[w]->entityIndexTemp << endl;
-				cout << "GIAentityNodeArray[w]->sentenceIndexTemp = " << GIAentityNodeArray[w]->sentenceIndexTemp << endl;
-				#endif
-				if(GIAentityNodeArray[w]->entityIndexTemp == GIA_ENTITY_INDEX_UNDEFINED)
+				cout << "entity->entityIndexTemp = " << entity->entityIndexTemp << endl;
+				cout << "entity->sentenceIndexTemp = " << entity->sentenceIndexTemp << endl;
+				cout << "entity->entityName = " << entity->entityName << endl;
+				//#endif
+				if(entity->entityIndexTemp == GIA_ENTITY_INDEX_UNDEFINED)
 				{
 					//do not overwrite sentence index of source
-					GIAentityNodeArray[w]->entityIndexTemp = w;
+					entity->entityIndexTemp = w;
 					#ifdef GIA_REFERENCING_UPDATE_ENTITY_INDEXES_OF_REFERENCE_SOURCE_TO_THOSE_OF_CURRENT_SENTENCE
 					cout << "convertSentenceSyntacticRelationsIntoGIAnetworkNodes{} error: GIAentityNodeArray[" << w << "]->entityIndexTemp undefined, this is an artificial entity" << endl;
 					exit(EXIT_ERROR);
 					#endif
 				}
-				if(GIAentityNodeArray[w]->sentenceIndexTemp == GIA_SENTENCE_INDEX_UNDEFINED)
+				if(entity->sentenceIndexTemp == GIA_SENTENCE_INDEX_UNDEFINED)
 				{
 					//do not overwrite sentence index of source
-					GIAentityNodeArray[w]->sentenceIndexTemp = translatorVariables->currentSentenceInList->sentenceIndex;
+					entity->sentenceIndexTemp = translatorVariables->currentSentenceInList->sentenceIndex;
 					#ifdef GIA_REFERENCING_UPDATE_ENTITY_INDEXES_OF_REFERENCE_SOURCE_TO_THOSE_OF_CURRENT_SENTENCE
 					cout << "convertSentenceSyntacticRelationsIntoGIAnetworkNodes{} error: GIAentityNodeArray[" << w << "]->sentenceIndexTemp undefined, this is an artificial entity" << endl;
 					exit(EXIT_ERROR);
 					#endif
 					
 				}
-				if(GIAentityNodeArray[w]->entityIndexTemp != w)
+				if(entity->entityIndexTemp != w)
 				{
 					#ifdef GIA_REFERENCING_UPDATE_ENTITY_INDEXES_OF_REFERENCE_SOURCE_TO_THOSE_OF_CURRENT_SENTENCE
-					if(GIAentityNodeArray[w]->entityType != GIA_ENTITY_TYPE_NETWORK_INDEX)
+					if(entity->entityType != GIA_ENTITY_TYPE_NETWORK_INDEX)
 					{
 						cout << "convertSentenceSyntacticRelationsIntoGIAnetworkNodes{} error: GIAentityNodeArray[" << w << "]->entityIndexTemp != " << w << endl;
-						cout << "GIAentityNodeArray[w]->entityIndexTemp = " << GIAentityNodeArray[w]->entityIndexTemp << endl;
-						cout << "GIAentityNodeArray[w]->entityName = " << GIAentityNodeArray[w]->entityName << endl;
-						cout << "GIAentityNodeArray[w]->sentenceIndexTemp = " << GIAentityNodeArray[w]->sentenceIndexTemp << endl;
-						cout << "GIAentityNodeArray[w]->entityType = " << GIAentityNodeArray[w]->entityType << endl;
+						cout << "entity->entityIndexTemp = " << entity->entityIndexTemp << endl;
+						cout << "entity->entityName = " << entity->entityName << endl;
+						cout << "entity->sentenceIndexTemp = " << entity->sentenceIndexTemp << endl;
+						cout << "entity->entityType = " << entity->entityType << endl;
 						exit(EXIT_ERROR);
 					}
 					#endif
 				}
-				if(GIAentityNodeArray[w]->sentenceIndexTemp != translatorVariables->currentSentenceInList->sentenceIndex)
+				if(entity->sentenceIndexTemp != translatorVariables->currentSentenceInList->sentenceIndex)
 				{
 					#ifdef GIA_REFERENCING_UPDATE_ENTITY_INDEXES_OF_REFERENCE_SOURCE_TO_THOSE_OF_CURRENT_SENTENCE
 					cout << "convertSentenceSyntacticRelationsIntoGIAnetworkNodes{} warning: GIAentityNodeArray[" << w << "]->sentenceIndexTemp != " << translatorVariables->currentSentenceInList->sentenceIndex << endl;
@@ -889,7 +892,7 @@ bool GIAtranslatorClass::convertSentenceSyntacticRelationsIntoGIAnetworkNodes(GI
 									#ifdef GIA_ADVANCED_REFERENCING_DEBUG_INTRASENTENCE_EXTRA
 									cout << "w != w2" << endl;
 									#endif
-									GIAentityNodeArray[w]->entityIndexTemp = w;	//this is required for intrasentence advanced referencing (reactivated 2f19e 24-July-2014)
+									entity->entityIndexTemp = w;	//this is required for intrasentence advanced referencing (reactivated 2f19e 24-July-2014)
 								}
 							}
 						}
@@ -899,41 +902,41 @@ bool GIAtranslatorClass::convertSentenceSyntacticRelationsIntoGIAnetworkNodes(GI
 			}
 			#endif
 			#else
-				if(GIAentityNodeArray[w]->entityIndexTemp != w)
+				if(entity->entityIndexTemp != w)
 				{
-					GIAentityNodeArray[w]->entityIndexTemp = w;
+					entity->entityIndexTemp = w;
 					#ifdef GIA_REFERENCING_UPDATE_ENTITY_INDEXES_OF_REFERENCE_SOURCE_TO_THOSE_OF_CURRENT_SENTENCE
-					//if(GIAentityNodeArray[w]->entityType != GIA_ENTITY_TYPE_NETWORK_INDEX)
+					//if(entity->entityType != GIA_ENTITY_TYPE_NETWORK_INDEX)
 					//{
 						cout << "convertSentenceSyntacticRelationsIntoGIAnetworkNodes{} error: GIAentityNodeArray[" << w << "]->entityIndexTemp != " << w << endl;
 						exit(EXIT_ERROR);
 					//}
 					#endif
 				}
-				if(GIAentityNodeArray[w]->sentenceIndexTemp != translatorVariables->currentSentenceInList->sentenceIndex)
+				if(entity->sentenceIndexTemp != translatorVariables->currentSentenceInList->sentenceIndex)
 				{
-					GIAentityNodeArray[w]->sentenceIndexTemp = translatorVariables->currentSentenceInList->sentenceIndex;
+					entity->sentenceIndexTemp = translatorVariables->currentSentenceInList->sentenceIndex;
 					#ifdef GIA_REFERENCING_UPDATE_ENTITY_INDEXES_OF_REFERENCE_SOURCE_TO_THOSE_OF_CURRENT_SENTENCE
 					cout << "convertSentenceSyntacticRelationsIntoGIAnetworkNodes{} error: GIAentityNodeArray[" << w << "]->sentenceIndexTemp != " << translatorVariables->currentSentenceInList->sentenceIndex << endl;
 					exit(EXIT_ERROR);
 					#endif
 				}
 				#ifdef GIA_DEBUG
-				//cout << "GIAentityNodeArray[w]->sentenceIndexTemp = " << GIAentityNodeArray[w]->sentenceIndexTemp << endl;
+				//cout << "entity->sentenceIndexTemp = " << entity->sentenceIndexTemp << endl;
 				#endif
 			#endif
 
 			//#ifdef GIA_RECORD_WAS_REFERENCE_INFORMATION	//networkIndex sentenceIndex information is also required for GIAdraw.cpp
 			//record sentenceIndex for networkIndex entity nodes also (NB cannot use GIAnetworkIndexNodeArray here as it won't include networkIndex entity nodes for prepositions)
-			if(!(GIAentityNodeArray[w]->instanceReverseNodeList->empty()))
+			if(!(entity->instanceReverseNodeList->empty()))
 			{
 				#ifdef GIA_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE
-				GIAentityNode* instanceEntity = GIAentityNodeArray[w];
+				GIAentityNode* instanceEntity = entity;
 				for(vector<GIAentityConnection*>::iterator connectionIter = instanceEntity->instanceReverseNodeList->begin(); connectionIter != instanceEntity->instanceReverseNodeList->end(); connectionIter++)
 				{
 					GIAentityNode* networkIndexNode = (*connectionIter)->entity;
 				#else
-					GIAentityNode* networkIndexNode = GIAtranslatorOperations.getPrimaryNetworkIndexNodeDefiningInstance(GIAentityNodeArray[w]);
+					GIAentityNode* networkIndexNode = GIAtranslatorOperations.getPrimaryNetworkIndexNodeDefiningInstance(entity);
 				#endif
 					#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES
 					networkIndexNode->mustSetIsConceptBasedOnApposRelation = false; //added 29 Sept 2013
@@ -963,7 +966,7 @@ bool GIAtranslatorClass::convertSentenceSyntacticRelationsIntoGIAnetworkNodes(GI
 			//#endif
 
 			#ifdef GIA_ADVANCED_REFERENCING_DEBUG
-			//cout << GIAentityNodeArray[w]->entityName << ", w = " << w << endl;
+			//cout << entity->entityName << ", w = " << w << endl;
 			#endif
 		}
 	}
@@ -1475,6 +1478,7 @@ void GIAtranslatorClass::createNewInverseConditionEntity(GIArelation* currentRel
 
 	translatorVariables->GIAentityNodeArrayFilled[inverseConditionEntityIndex] = true;
 	GIAentityNode* inverseConditionEntity = new GIAentityNode();
+	inverseConditionEntity->sentenceIndexTemp = translatorVariables->sentenceIndex;
 	inverseConditionEntity->entityName = inverseConditionName;
 	inverseConditionEntity->wordOrig = inverseConditionName;	//is this necessary?
 	//why not set inverseConditionEntity->entityIndexTemp and inverseConditionEntity->sentenceIndexTemp?
