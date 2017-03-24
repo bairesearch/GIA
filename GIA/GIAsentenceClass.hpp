@@ -25,7 +25,7 @@
  * File Name: GIAsentenceClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1e 26-February-2017
+ * Project Version: 3a1f 26-February-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -43,6 +43,7 @@
 
 #define MAX_NUMBER_OF_RELATIONS_PER_SENTENCE (1000)
 #define MAX_NUMBER_OF_WORDS_PER_SENTENCE (1000)
+#define MAX_NUMBER_OF_ARTIFICIAL_WORDS_PER_SENTENCE (100)
 
 //from http://wiki.opencog.org/w/Word_substances (intermediary - used for translation purposes into WordNet int grammaticalWordTypeTemp only)
 #define FEATURE_RELEX_POS_TYPE_ADJECTIVE (1)

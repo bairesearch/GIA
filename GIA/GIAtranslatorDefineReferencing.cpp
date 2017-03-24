@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1e 26-February-2017
+ * Project Version: 3a1f 26-February-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -652,6 +652,17 @@ void GIAtranslatorDefineReferencingClass::linkPronounAndTextualContextReferences
 										{
 										#endif
 											translatorVariables->GIAentityNodeArray[currentSentenceEntityNodeIndex] = substance;
+											#ifdef GIA_REFERENCING_UPDATE_ENTITY_INDEXES_OF_REFERENCE_SOURCE_TO_THOSE_OF_CURRENT_SENTENCE
+											#ifdef GIA_REFERENCING_UPDATE_ENTITY_INDEXES_OF_REFERENCE_SOURCE_TO_THOSE_OF_CURRENT_SENTENCE_NETWORK_INDICES
+											referenceSource->entityIndexTemp = currentSentenceEntityNodeIndex;
+											#endif
+											substance->entityIndexTemp = currentSentenceEntityNodeIndex;
+											if((currentSentenceEntityNodeIndex <= translatorVariables->currentSentenceInList->relationshipEntityArtificialIndexCurrent) && (currentSentenceEntityNodeIndex > (MAX_NUMBER_OF_WORDS_PER_SENTENCE-MAX_NUMBER_OF_ARTIFICIAL_WORDS_PER_SENTENCE)))
+											{
+												translatorVariables->currentSentenceInList->relationshipEntityArtificialIndexCurrent = currentSentenceEntityNodeIndex - 1;
+											}
+											#endif
+											
 											#ifdef GIA_RECORD_WAS_REFERENCE_INFORMATION
 											if(referenceSourceSentenceIndex != translatorVariables->currentSentenceInList->sentenceIndex)
 											{//Added condition GIA 2f7a - 06 July 2014 (wasReference is only used for intersentence references)
@@ -694,6 +705,15 @@ void GIAtranslatorDefineReferencingClass::linkPronounAndTextualContextReferences
 									}
 
 									translatorVariables->GIAentityNodeArray[currentSentenceEntityNodeIndex] = referenceSource;		//GIAnetworkIndexNodeArray[currentSentenceEntityNodeIndex] = referenceSource;
+									#ifdef GIA_REFERENCING_UPDATE_ENTITY_INDEXES_OF_REFERENCE_SOURCE_TO_THOSE_OF_CURRENT_SENTENCE
+									#ifdef GIA_REFERENCING_UPDATE_ENTITY_INDEXES_OF_REFERENCE_SOURCE_TO_THOSE_OF_CURRENT_SENTENCE_NETWORK_INDICES
+									referenceSource->entityIndexTemp = currentSentenceEntityNodeIndex;
+									#endif
+									if((currentSentenceEntityNodeIndex <= translatorVariables->currentSentenceInList->relationshipEntityArtificialIndexCurrent) && (currentSentenceEntityNodeIndex > (MAX_NUMBER_OF_WORDS_PER_SENTENCE-MAX_NUMBER_OF_ARTIFICIAL_WORDS_PER_SENTENCE)))
+									{
+										translatorVariables->currentSentenceInList->relationshipEntityArtificialIndexCurrent = currentSentenceEntityNodeIndex - 1;
+									}
+									#endif
 									#ifdef GIA_RECORD_WAS_REFERENCE_INFORMATION
 									if(referenceSourceSentenceIndex != translatorVariables->currentSentenceInList->sentenceIndex)
 									{//Added condition GIA 2f7a - 06 July 2014 (wasReference is only used for intersentence references)
@@ -1473,6 +1493,7 @@ void GIAtranslatorDefineReferencingClass::linkAdvancedReferencesGIA(GIAtranslato
 			GIAMention* currentMentionInList = firstMentionInList;
 			GIAMention* sourceMentionInList = NULL;
 			GIAentityNode* referenceSource = NULL;
+			GIAentityNode* referenceSourceNetworkIndexEntity = NULL;
 			#ifdef GIA_ADVANCED_REFERENCING_PREVENT_DOUBLE_LINKS
 			GIAentityNode* referenceSourceNetworkIndex = NULL;
 			#endif
@@ -1518,7 +1539,7 @@ void GIAtranslatorDefineReferencingClass::linkAdvancedReferencesGIA(GIAtranslato
 							//cout << "findOrAddNetworkIndexEntityNodeByNameSimpleWrapper" << endl;
 							#endif
 
-							GIAentityNode* referenceSourceNetworkIndexEntity = GIAtranslatorOperations.findOrAddNetworkIndexEntityNodeByNameSimpleWrapper(&(currentMentionInList->entityName), &entityNameFound, translatorVariables);
+							referenceSourceNetworkIndexEntity = GIAtranslatorOperations.findOrAddNetworkIndexEntityNodeByNameSimpleWrapper(&(currentMentionInList->entityName), &entityNameFound, translatorVariables);
 							if(entityNameFound)
 							{
 								#ifdef GIA_DEBUG
@@ -1725,7 +1746,7 @@ void GIAtranslatorDefineReferencingClass::linkAdvancedReferencesGIA(GIAtranslato
 							#endif
 							#endif
 
-							#ifdef GIA_ADVANCED_REFERENCING_DEBUG_SIMPLE
+							//#ifdef GIA_ADVANCED_REFERENCING_DEBUG_SIMPLE
 							cout << "linkAdvancedReferencesGIA: referenceSource->entityName = " << referenceSource->entityName << endl;
 							cout << "linkAdvancedReferencesGIA: GIAentityNodeArray[referenceEntityIndex]->entityName = " << translatorVariables->GIAentityNodeArray[referenceEntityIndex]->entityName << endl;
 							/*
@@ -1735,8 +1756,20 @@ void GIAtranslatorDefineReferencingClass::linkAdvancedReferencesGIA(GIAtranslato
 								cout << "GIAentityNodeArray[referenceEntityIndex]->isSubstance" << endl;
 							}
 							*/
+							//#endif
+							
+							#ifdef GIA_REFERENCING_UPDATE_ENTITY_INDEXES_OF_REFERENCE_SOURCE_TO_THOSE_OF_CURRENT_SENTENCE
+							cout << "linkAdvancedReferencesGIA: old referenceSource->entityIndexTemp = " << referenceSource->entityIndexTemp << endl;
+							#ifdef GIA_REFERENCING_UPDATE_ENTITY_INDEXES_OF_REFERENCE_SOURCE_TO_THOSE_OF_CURRENT_SENTENCE_NETWORK_INDICES
+							referenceSourceNetworkIndexEntity->entityIndexTemp = referenceEntityIndex;
 							#endif
-
+							referenceSource->entityIndexTemp = referenceEntityIndex; 
+							if((referenceEntityIndex <= translatorVariables->currentSentenceInList->relationshipEntityArtificialIndexCurrent) && (referenceEntityIndex > (MAX_NUMBER_OF_WORDS_PER_SENTENCE-MAX_NUMBER_OF_ARTIFICIAL_WORDS_PER_SENTENCE)))
+							{
+								translatorVariables->currentSentenceInList->relationshipEntityArtificialIndexCurrent = referenceEntityIndex - 1;
+							}
+							cout << "linkAdvancedReferencesGIA: new referenceSource->entityIndexTemp = " << referenceSource->entityIndexTemp << endl;
+							#endif
 
 							#ifdef GIA_DATABASE
 							if(GIAdatabase.getUseDatabase() == GIA_DATABASE_TRUE_READ_ACTIVE)
