@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1n 26-February-2017
+ * Project Version: 3a1o 26-February-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1511,15 +1511,10 @@ GIAentityNode* GIAtranslatorOperationsClass::findOrAddEntityNodeByNameSimpleWrap
 	#endif
 	
 	//added 3a1j;
-	cout << "conditionRelationshipEntity->entityType = " << (conditionRelationshipEntity->entityType) << endl;
-	cout << "conditionRelationshipEntity->disabled = " << conditionRelationshipEntity->disabled << endl;
 	conditionRelationshipEntity->entityIndexTemp = featureIndex;	//added 3a1n (for (translatorVariables->GIAentityNodeArrayFilled[featureIndex]) and/or !GIA_ADVANCED_REFERENCING_CONDITIONS cases) 
 	conditionRelationshipEntity->sentenceIndexTemp = translatorVariables->sentenceIndex;
 	conditionRelationshipEntity = addInstanceToInstanceDefinition(conditionRelationshipEntity, GIA_ENTITY_TYPE_CONDITION, translatorVariables);
-	cout << "conditionRelationshipEntity->entityType = " << (conditionRelationshipEntity->entityType) << endl;
 	translatorVariables->GIAentityNodeArray[featureIndex] = conditionRelationshipEntity;
-	cout << "conditionRelationshipEntity->entityIndexTemp = " << conditionRelationshipEntity->entityIndexTemp << endl;
-	cout << "featureIndex = " << featureIndex << endl;
 	
 	return conditionRelationshipEntity;
 }
@@ -1821,13 +1816,15 @@ void GIAtranslatorOperationsClass::addInstanceEntityNodeToActiveLists(GIAentityN
 #endif
 
 #ifdef GIA_ALIASES
-void GIAtranslatorOperationsClass::mergeEntityNodesAddAlias(GIAentityNode* entityNode, GIAentityNode* entityNodeToMerge, GIAtranslatorVariablesClass* translatorVariables)
+bool GIAtranslatorOperationsClass::mergeEntityNodesAddAlias(GIAentityNode* entityNode, GIAentityNode* entityNodeToMerge, GIAtranslatorVariablesClass* translatorVariables)
 {
-	if(entityNode->idActiveList == entityNodeToMerge->idActiveList)
+	bool result = true;
+	if(entityNode == entityNodeToMerge)	//before 3a1o: (entityNode->idActiveList == entityNodeToMerge->idActiveList)
 	{
 		#ifdef GIA_ALIASES_DEBUG
 		cout << "treatDefinitionAsEquality: already merged" << endl;
 		#endif
+		result = false;
 	}
 	else
 	{
@@ -2040,13 +2037,17 @@ void GIAtranslatorOperationsClass::mergeEntityNodesAddAlias(GIAentityNode* entit
 
 		this->disableEntity(entityNodeToMerge);
 
+		//entityNode->entityIndexTemp = entityNodeToMerge->entityIndexTemp;	//added 3a1o
+
 		#ifdef GIA_ALIASES_DEBUG
 		cout << "finished: mergeEntityNodesAddAlias" << endl;
 		cout << "entityNode->entityName = " << entityNode->entityName << endl;
 		cout << "entityNode->aliasList[0] = " << entityNode->aliasList[0] << endl;
 		cout << "entityNode->entityIndexTemp = " << entityNode->entityIndexTemp << endl;
+		cout << "entityNodeToMerge->entityIndexTemp = " << entityNodeToMerge->entityIndexTemp << endl;
 		#endif
 	}
+	return result;
 }
 #endif
 

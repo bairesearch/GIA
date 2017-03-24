@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1n 26-February-2017
+ * Project Version: 3a1o 26-February-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -656,7 +656,9 @@ void GIAtranslatorDefineReferencingClass::linkPronounAndTextualContextReferences
 											#ifdef GIA_REFERENCING_UPDATE_ENTITY_INDEXES_OF_REFERENCE_SOURCE_TO_THOSE_OF_CURRENT_SENTENCE_NETWORK_INDICES
 											referenceSource->entityIndexTemp = currentSentenceEntityNodeIndex;
 											#endif
+											cout << "substance->entityIndexTemp = " << substance->entityIndexTemp << endl;
 											substance->entityIndexTemp = currentSentenceEntityNodeIndex;
+											cout << "substance->entityIndexTemp = " << substance->entityIndexTemp << endl;
 											if(currentSentenceEntityNodeIndex >= translatorVariables->currentSentenceInList->relationshipEntityArtificialIndexCurrent)
 											{
 												translatorVariables->currentSentenceInList->relationshipEntityArtificialIndexCurrent = currentSentenceEntityNodeIndex + 1;

@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorGeneric.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1n 26-February-2017
+ * Project Version: 3a1o 26-February-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -633,9 +633,6 @@ bool GIAtranslatorGenericClass::genericDependecyRelationInterpretation(GIAgeneri
 									{
 										//NB if networkIndex type entity name has already been defined (GIAentityNodeArrayFilled[functionEntityIndex3]), then findOrAddEntityNodeByNameSimpleWrapperRelationshipCondition will use it instead
 										bool entityAlreadyExistant = false;
-										cout << "mustLookupOrGenerateConditionNetworkIndexEntity" << endl;
-										cout << "functionEntityIndex3 = " << functionEntityIndex3 << endl;
-										cout << "conditionEntityName = " << conditionEntityName << endl;
 										GIAtranslatorOperations.findOrAddEntityNodeByNameSimpleWrapperRelationshipCondition(functionEntityIndex3, &conditionEntityName, &entityAlreadyExistant, &(param->translatorVariables));
 									}
 								}
@@ -874,13 +871,17 @@ bool GIAtranslatorGenericClass::genericDependecyRelationInterpretation(GIAgeneri
 									GIAsemanticParserOperations.GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(param->translatorVariables.GIAentityNodeArray, param->translatorVariables.currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITION_DIRECT, functionEntityIndex1, functionEntityIndex2, sameReferenceSet);
 									#endif
 									#endif
-									GIAtranslatorOperations.mergeEntityNodesAddAlias(param->translatorVariables.GIAentityNodeArray[functionEntityIndex1], param->translatorVariables.GIAentityNodeArray[functionEntityIndex2], &(param->translatorVariables));
-									param->translatorVariables.GIAentityNodeArray[functionEntityIndex2] = param->translatorVariables.GIAentityNodeArray[functionEntityIndex1];
+									bool notAlreadyMerged = GIAtranslatorOperations.mergeEntityNodesAddAlias(param->translatorVariables.GIAentityNodeArray[functionEntityIndex1], param->translatorVariables.GIAentityNodeArray[functionEntityIndex2], &(param->translatorVariables));
+									if(notAlreadyMerged)
+									{
+										param->translatorVariables.GIAentityNodeArray[functionEntityIndex2] = param->translatorVariables.GIAentityNodeArray[functionEntityIndex1];
+									}
 								}
 								#endif
 								#ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
 								else if(param->functionToExecuteUponFind == GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_connectDefinitionToEntityMarkConnectionAsAlias)
 								{
+									cout << "ag2" << endl;
 									#ifdef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
 									GIAtranslatorOperations.connectDefinitionToEntityMarkConnectionAsAlias(param->translatorVariables.GIAentityNodeArray[functionEntityIndex1], param->translatorVariables.GIAentityNodeArray[functionEntityIndex2], param->translatorVariables.GIAentityNodeArray[functionEntityIndex3], sameReferenceSet, &(param->translatorVariables));
 									#else

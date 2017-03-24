@@ -25,7 +25,7 @@
  * File Name: GIAtranslator.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1n 26-February-2017
+ * Project Version: 3a1o 26-February-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -722,7 +722,7 @@ bool GIAtranslatorClass::convertSentenceSyntacticRelationsIntoGIAnetworkNodes(GI
 	#endif
 	//transfer disabled substances across execution#1 [this is required since GIAtranslatorRedistributeRelationsStanford operations are now done on temporary entity nodes GIAfeatureTempEntityNodeArray instead of networkIndex entity nodes {whose values would have been automatically transferred to their instances upon creation}...]
 	this->disableNetworkIndexEntitiesBasedOnFeatureTempEntityNodeArray(translatorVariables);
-
+			
 
 	#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES	// or GIA_GENERIC_ENTITY_INTERPRETATION
  	//this is required as GIAtranslatorDefineSubstances.cpp now relies on entity grammar values rather than featureArrayTemp
@@ -763,13 +763,14 @@ bool GIAtranslatorClass::convertSentenceSyntacticRelationsIntoGIAnetworkNodes(GI
 	//transfer disabled substances across execution#2 [this is required since GIAtranslatorRedistributeRelationsStanford operations are now done on temporary entity nodes GIAfeatureTempEntityNodeArray instead of networkIndex entity nodes {whose values would have been automatically transferred to their instances upon creation}...]
 	this->disableEntitiesBasedOnFeatureTempEntityNodeArray(translatorVariables);
 
+	
 	#ifdef GIA_TRANSLATOR_DEBUG
 	cout << "section B2; linkEntities" << endl;
 	#endif
 	#ifdef GIA_TRANSLATOR_XML_INTERPRETATION
 	GIAtranslatorRules.applyGIATranslatorGenericXMLfunctions("GIAtranslatorLinkEntities", translatorVariables, linkPreestablishedReferencesGIA);
 	#endif
-
+	
 	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES
 	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES_ENABLE_INCONSISTENT_REFERENCING
 	this->createAdditionalSubclassEntities(translatorVariables);
@@ -828,13 +829,13 @@ bool GIAtranslatorClass::convertSentenceSyntacticRelationsIntoGIAnetworkNodes(GI
 			#ifdef GIA_SET_ENTITY_ENTITY_AND_SENTENCE_INDICIES_NORMALLY
 			if(!(entity->wasReference))
 			{
-				//#ifdef GIA_ADVANCED_REFERENCING_DEBUG_INTRASENTENCE_EXTRA
+				#ifdef GIA_ADVANCED_REFERENCING_DEBUG_INTRASENTENCE_EXTRA
 				cout << "\nw = " << w << endl;
 				cout << "translatorVariables->currentSentenceInList->sentenceIndex = " << translatorVariables->currentSentenceInList->sentenceIndex << endl;
 				cout << "entity->entityIndexTemp = " << entity->entityIndexTemp << endl;
 				cout << "entity->sentenceIndexTemp = " << entity->sentenceIndexTemp << endl;
 				cout << "entity->entityName = " << entity->entityName << endl;
-				//#endif
+				#endif
 				if(entity->entityIndexTemp == GIA_ENTITY_INDEX_UNDEFINED)
 				{
 					//do not overwrite sentence index of source
@@ -859,12 +860,13 @@ bool GIAtranslatorClass::convertSentenceSyntacticRelationsIntoGIAnetworkNodes(GI
 					#ifdef GIA_REFERENCING_UPDATE_ENTITY_INDEXES_OF_REFERENCE_SOURCE_TO_THOSE_OF_CURRENT_SENTENCE
 					if(entity->entityType != GIA_ENTITY_TYPE_NETWORK_INDEX)
 					{
-						cout << "convertSentenceSyntacticRelationsIntoGIAnetworkNodes{} error: GIAentityNodeArray[" << w << "]->entityIndexTemp != " << w << endl;
-						cout << "entity->entityIndexTemp = " << entity->entityIndexTemp << endl;
+						cout << "convertSentenceSyntacticRelationsIntoGIAnetworkNodes{} warning: GIAentityNodeArray[" << w << "]->entityIndexTemp != " << w << endl;
+						cout << "this should be a merged entity" << endl;
 						cout << "entity->entityName = " << entity->entityName << endl;
-						cout << "entity->sentenceIndexTemp = " << entity->sentenceIndexTemp << endl;
 						cout << "entity->entityType = " << entity->entityType << endl;
-						exit(EXIT_ERROR);
+						cout << "entity->entityIndexTemp = " << entity->entityIndexTemp << endl;
+						cout << "entity->sentenceIndexTemp = " << entity->sentenceIndexTemp << endl;
+						//exit(EXIT_ERROR);
 					}
 					#endif
 				}

@@ -25,7 +25,7 @@
  * File Name: GIAsemanticParserTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1n 26-February-2017
+ * Project Version: 3a1o 26-February-2017
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -878,8 +878,11 @@ void GIAsemanticParserTranslatorClass::defineConnectionsBasedOnSemanticRelations
 			#ifdef GIA2_RECORD_DETERMINERS_AS_DEFINITE_INDEFINITE_SPECIFIC
 			else if(currentRelationInList->relationType == GIA2semanticDependencyRelationNameArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_MERGE_ENTITY_NODES_ADD_ALIAS])
 			{
-				GIAtranslatorOperations.mergeEntityNodesAddAlias(entity1, entity2);
-				translatorVariables->GIAentityNodeArray[entity2Index] = translatorVariables->GIAentityNodeArray[entity1Index];
+				bool notAlreadyMerged = GIAtranslatorOperations.mergeEntityNodesAddAlias(entity1, entity2);
+				if(notAlreadyMerged)
+				{
+					translatorVariables->GIAentityNodeArray[entity2Index] = translatorVariables->GIAentityNodeArray[entity1Index];
+				}
 				currentRelationInList->disabled = true;
 			}
 			#endif
