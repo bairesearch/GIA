@@ -25,7 +25,7 @@
  * File Name: GIAentityConnectionClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p4d 17-January-2017
+ * Project Version: 3a1a 26-February-2017
  * NB a substance is an instance of an entity, any given entity may contain/comprise/have multiple substances - and substances are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -52,6 +52,7 @@
 using namespace std;
 
 #ifndef HEADER_GIA_ENTITY_NODE_CLASS
+#define GRAMMATICAL_TENSE_UNDEFINED 0
 #define GRAMMATICAL_TENSE_PRESENT 1		//eg mow / ~VBP
 #define GRAMMATICAL_TENSE_PAST 2		//eg mowed / ~VBD
 #define GRAMMATICAL_TENSE_FUTURE 3		//eg will mow / ?
@@ -91,13 +92,13 @@ public:
 	GIAentityConnection(string* entityName, long idInstance);
 
 	GIAentityNode* entity;
+	#ifdef GIA_ENTITY_CONNECTION_RECORD_ENTITY_ORIGIN
+	GIAentityNode* entityOrigin;
+	#endif
 	double confidence;
 
 	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	bool sameReferenceSet;
-	#ifdef GIA_RECORD_POSSESSION_AUXILIARY_HAS_INFORMATION
-	bool possessionAuxiliaryHave;	//added 1k3a	//NB this is currently only set by a !GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC post processor (eg NLC transformTheActionOfPossessionEgHavingIntoAproperty). For more a general implementation it should be set by GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC also
-	#endif
 	#endif
 
 	#ifdef GIA_DATABASE
@@ -114,14 +115,8 @@ public:
 	bool initialisedForPrinting;
 	#endif
 
-	#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC_RECORD_AUX_INFO
-	bool negative;
-	bool grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES];
-	int grammaticalTenseTemp;
-	#else
 	#ifdef USE_NLC
 	bool negative;
-	#endif
 	#endif
 	
 	#ifdef USE_NLC
@@ -147,6 +142,7 @@ public:
 	#endif
 	*/
 };
+
 
 #endif
 

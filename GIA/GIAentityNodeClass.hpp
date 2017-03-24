@@ -25,7 +25,7 @@
  * File Name: GIAentityNodeClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p4d 17-January-2017
+ * Project Version: 3a1a 26-February-2017
  * NB a substance is an instance of an entity, any given entity may contain/comprise/have multiple substances - and substances are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -56,33 +56,42 @@ using namespace std;
 #define GIA_ENTITY_ID_INSTANCE_FIRST_INSTANCE_ENTITY (1)
 
 //entity types added 2n1c
-#define GIA_ENTITY_TYPE_TYPE_UNDEFINED (-1)
-#define GIA_ENTITY_TYPE_TYPE_NETWORK_INDEX (0)
-#define GIA_ENTITY_TYPE_TYPE_SUBSTANCE (1)
-#define GIA_ENTITY_TYPE_TYPE_ACTION (2)
-#define GIA_ENTITY_TYPE_TYPE_CONDITION (3)
-#define GIA_ENTITY_TYPE_TYPE_CONCEPT (4)
-#define GIA_ENTITY_TYPE_TYPE_QUALITY (5)
-#define GIA_ENTITY_NUMBER_OF_TYPES (6)
-#define GIA_ENTITY_TYPE_TYPE_NETWORK_INDEX_STRING "0"
-#define GIA_ENTITY_TYPE_TYPE_SUBSTANCE_STRING "1"
-#define GIA_ENTITY_TYPE_TYPE_ACTION_STRING "2"
-#define GIA_ENTITY_TYPE_TYPE_CONDITION_STRING "3"
-#define GIA_ENTITY_TYPE_TYPE_CONCEPT_STRING "4"
-#define GIA_ENTITY_TYPE_TYPE_QUALITY_STRING "5"
+#define GIA_ENTITY_TYPE_UNDEFINED (-1)
+#define GIA_ENTITY_TYPE_NETWORK_INDEX (0)
+#define GIA_ENTITY_TYPE_SUBSTANCE (1)
+#define GIA_ENTITY_TYPE_CONCEPT (2)
+#define GIA_ENTITY_TYPE_ACTION (3)
+#define GIA_ENTITY_TYPE_CONDITION (4)
+#define GIA_ENTITY_TYPE_PROPERTY (5)
+#define GIA_ENTITY_TYPE_DEFINITION (6)
+#define GIA_ENTITY_TYPE_QUALITY (7)
+#define GIA_ENTITY_NUMBER_OF_TYPES (8)
+#define GIA_ENTITY_TYPE_NETWORK_INDEX_STRING "0"
+#define GIA_ENTITY_TYPE_SUBSTANCE_STRING "1"
+#define GIA_ENTITY_TYPE_ACTION_STRING "2"
+#define GIA_ENTITY_TYPE_CONDITION_STRING "3"
+#define GIA_ENTITY_TYPE_CONCEPT_STRING "4"
+#define GIA_ENTITY_TYPE_PROPERTY_STRING "5"
+#define GIA_ENTITY_TYPE_DEFINITION_STRING "6"
+#define GIA_ENTITY_TYPE_QUALITY_STRING "7"
+static bool entityTypesIsRelationshipArray[GIA_ENTITY_NUMBER_OF_TYPES] = {false, false, false, true, true, true, true, false};
+static bool entityTypesAutomaticallyUpgradeUponInstanceSelectionArray[GIA_ENTITY_NUMBER_OF_TYPES] = {false, false, true, true, true, true, true, false};	//NB this is currently the same as entityTypesIsRelationshipArray except for GIA_ENTITY_TYPE_CONCEPT
 
+#define GIA_RELATIONSHIP_ENTITY_NUMBER_OF_TYPES (4)
+static int relationshipEntityTypesArray[GIA_RELATIONSHIP_ENTITY_NUMBER_OF_TYPES] = {GIA_ENTITY_TYPE_ACTION, GIA_ENTITY_TYPE_CONDITION, GIA_ENTITY_TYPE_PROPERTY, GIA_ENTITY_TYPE_DEFINITION};
+#define GIA_RELATIONSHIP_ENTITY_OFFSET_TO_FIRST_RELATIVE_TYPE_INDEX (GIA_ENTITY_TYPE_ACTION) 	//NB the first relationship entity relative type index is defined as 0
 
 //#ifdef GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES
 	#define GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_MULTIWORD_PREPOSITION (0)
 	#define GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_TITLE (1)
 	#define GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_QUOTES (2)
 	#define GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_SUBCLASS (3)
-	#define GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_MULTIWORD_PREPOSITION_DELIMITER "_"	//this is now equivalent to STANFORD_PARSER_PREPOSITION_DELIMITER
+	#define GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_MULTIWORD_WORD_DELIMITER "_"	//this is now equivalent to STANFORD_PARSER_PREPOSITION_DELIMITER
 	#define GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_TITLE_DELIMITER "_"
 	#define GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_QUOTES_DELIMITER "_"	//this filler does not appear compatible with Relex (Stanford only); try another filler character (NB "-" doesn't work with Relex either)
 	#define GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_SUBCLASS_DELIMITER "_"
 	#define GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_NUMBER_OF_TYPES (4)
-	static string concatenationTypesArray[GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_NUMBER_OF_TYPES] = {GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_MULTIWORD_PREPOSITION_DELIMITER, GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_TITLE_DELIMITER, GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_QUOTES_DELIMITER, GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_SUBCLASS_DELIMITER};
+	static string concatenationTypesArray[GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_NUMBER_OF_TYPES] = {GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_MULTIWORD_WORD_DELIMITER, GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_TITLE_DELIMITER, GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_QUOTES_DELIMITER, GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_SUBCLASS_DELIMITER};
 //#endif
 
 #define GRAMMATICAL_WORD_TYPE_UNDEFINED (0)
@@ -108,22 +117,14 @@ using namespace std;
 
 #define GRAMMATICAL_TENSE_CONCATONATOR_RELEX "_"
 
-//these have been moved from GIAtranslatorOperations.h as RELATION_ENTITY_SPECIAL_ACTION_NAME_FOR_EFFECTIVE_PROPERTIES is used by GIAdraw.cpp
+//these have been moved from GIAtranslatorOperations.h as RELATION_ENTITY_SPECIAL_RELATIONSHIP_NAME_FOR_EFFECTIVE_PROPERTIES is used by GIAdraw.cpp
 #define RELATION_ENTITY_HAVE "have"
 #define RELATION_ENTITY_CAN "can"
 #define RELATION_ENTITY_BE "be"	//eg x is y
 #define RELATION_ENTITY_IT "it"		//used to handle Relex special case query "What [time] is it?"
 
-#ifndef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
-	#define RELATION_ENTITY_SPECIAL_ACTION_NAME_FOR_EFFECTIVE_PROPERTIES (RELATION_ENTITY_HAVE)
-	#ifdef GIA_RECORD_POSSESSION_AUXILIARY_HAS_INFORMATION_GENERAL_IMPLEMENTATION
-		#define RELATION_ENTITY_SPECIAL_ACTION_NAME_FOR_EFFECTIVE_PROPERTIES_NUMBER_OF_TYPES (2)
-		#define RELATION_ENTITY_SPECIAL_ACTION_NAME_FOR_EFFECTIVE_PROPERTIES_HAVE (RELATION_ENTITY_HAVE)
-		#define RELATION_ENTITY_SPECIAL_ACTION_NAME_FOR_EFFECTIVE_PROPERTIES_POSS "poss"	//NB "poss" is an artificial "have" auxiliary
-		static string relationEntitySpecialActionNameForEffectivePropertiesArray[RELATION_ENTITY_SPECIAL_ACTION_NAME_FOR_EFFECTIVE_PROPERTIES_NUMBER_OF_TYPES] = {RELATION_ENTITY_SPECIAL_ACTION_NAME_FOR_EFFECTIVE_PROPERTIES_HAVE, RELATION_ENTITY_SPECIAL_ACTION_NAME_FOR_EFFECTIVE_PROPERTIES_POSS};
-	#endif
-#endif
-
+#define RELATION_ENTITY_SPECIAL_RELATIONSHIP_NAME_FOR_EFFECTIVE_PROPERTIES "property"	//(RELATION_ENTITY_HAVE)	//implicitPropertyAuxiliary	//implicitHave
+#define RELATION_ENTITY_SPECIAL_RELATIONSHIP_NAME_FOR_EFFECTIVE_DEFINITIONS "definition"	//(RELATION_ENTITY_BE)	//implicitDefinitionAuxiliary	//implicitBe
 
 //extracted from wn.h (WordNet 3.0 library header)
 #define GRAMMATICAL_WORD_TYPE_UNDEFINED (0)
@@ -146,6 +147,7 @@ using namespace std;
 #define GRAMMATICAL_WORD_TYPE_ADJSAT_STRING "6"
 
 #ifndef HEADER_GIA_ENTITY_CONNECTION_CLASS
+#define GRAMMATICAL_TENSE_UNDEFINED 0
 #define GRAMMATICAL_TENSE_PRESENT 1		//eg mow / ~VBP
 #define GRAMMATICAL_TENSE_PAST 2		//eg mowed / ~VBD
 #define GRAMMATICAL_TENSE_FUTURE 3		//eg will mow / ?
@@ -250,40 +252,43 @@ static string grammaticalGenderNameArray[GRAMMATICAL_GENDER_NUMBER_OF_TYPES] = {
 static string grammaticalWordTypeNameArray[GRAMMATICAL_WORD_TYPE_NUMBER_OF_TYPES] = {"undefined", "noun", "verb", "adj", "adv", "prep", "satellite"};	//must be same as FEATURE_RELEX_POS_TYPE_NOUN_NAME, FEATURE_RELEX_POS_TYPE_VERB_NAME, FEATURE_RELEX_POS_TYPE_ADJECTIVE_NAME, FEATURE_RELEX_POS_TYPE_ADVERB_NAME
 
 
-#define GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES (14)
-#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTIONS (0)
-#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_INCOMING_ACTIONS (1)
-#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITIONS (2)
-#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_INCOMING_CONDITIONS (3)
-#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES (4)
-#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_PROPERTIES (5)
-#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITIONS (6)
-#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_DEFINITIONS (7)
-#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES (8)
-#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_SUBJECT (9)
-#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_OBJECT (10)
-#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT (11)
-#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_OBJECT (12)
-#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE (13)	//GIA_ENTITY_BASIC_CONNECTION_TYPE_INSTANCE_DEFINITION
-static string entityVectorConnectionNameArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {"actions", "incomingActions", "conditions", "incomingConditions", "properties", "reverseProperties", "definitions", "reverseDefinitions", "associatedInstances","actionSubject", "actionObject", "conditionSubject", "conditionObject", "nodeDefiningInstance"};	//instanceDefinition
-static string entityVectorConnectionSourceContextArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {"is ", "", "", "", "has ", "possessed by ", "is ", "defines ", "","is done by ", "", "", "", ""};
-static string entityVectorConnectionContextArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {"outgoingAction(s)", "incomingAction(s)", "conditionNode(s)", "incomingConditionNode(s)", "propertyNode(s)", "reversePropertyNode(s)", "entityNodeDefinition(s)", "reverseEntityNodeDefinition(s)", "associatedInstanceNodes(s)", "actionSubjectEntity", "actionObjectEntity", "conditionSubjectEntity", "conditionObjectEntity", "entityNodeDefiningThisInstance"};
-static bool entityVectorConnectionThisIsInstanceAndPreviousNodeWasDefinitionArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {false, false, false, false, false, false, false, false, true, false, false, false, false, false};
-//ORIG: static bool entityVectorConnectionIsConditionArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {false, false, true, true, false, false, false, false, false, false, false, true, true, false};
-static bool entityVectorConnectionIsConditionArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {false, false, true, true, false, false, false, false, false, false, false, false, false, false};
-static bool entityVectorConnectionIsBasicArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {false,false,false,false,false,false,false,false,false,true,true,true,true,true};
-static string entityVectorConnectionDrawConnectionNameArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {"subject", "object", "subject", "object", "property", "property", "definition", "definition", "instance", "subject", "object", "subject", "object", "instance"};
+#define GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES (12)
+#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION (0)
+#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_REVERSE (1)
+#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION (2)
+#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_REVERSE (3)
+#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTY (4)
+#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTY_REVERSE (5)
+#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITION (6)
+#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITION_REVERSE (7)
+#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_RELATIONSHIP_SUBJECT (8)
+#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_RELATIONSHIP_OBJECT (9)
+#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_INSTANCE (10)
+#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_INSTANCE_REVERSE (11)		//NB instanceReverse translates to the "definition" of the instance word
+static string entityVectorConnectionNameArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {"action", "actionReverse", "condition", "conditionReverse", "property", "propertyReverse", "definition", "definitionReverse", "relationshipSubject", "relationshipObject", "instance", "instanceReverse"};
+static string entityVectorConnectionSourceContextArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {"", "", "", "", "", "", "", "", "", "", "", ""};
+static string entityVectorConnectionContextArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {"outgoingAction(s)", "actionReverse(s)", "conditionNode(s)", "conditionReverse(s)", "property(s)", "propertyReverse(s)", "definition(s)", "definitionReverse(s)", "relationshipSubject", "relationshipObject", "instance", "instanceReverse"};
+static bool entityVectorConnectionThisIsInstanceAndPreviousNodeWasDefinitionArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {false, false, false, false, false, false, false, false, false, false, true, false};
+static bool entityVectorConnectionIsConditionArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {false, false, true, true, false, false, false, false, false, false, false, false};
+static bool entityVectorConnectionIsBasicArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {false, false, false, false, false, false, false, false, true, true, false, true};
+static string entityVectorConnectionDrawConnectionNameArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {"subject", "object", "subject", "object", "subject", "object", "subject", "object", "subject", "object", "instance", "instance"};
 #define GIA_ENTITY_TIME_CONDITION_NODE_NAME "timeCondition"
 #define GIA_ENTITY_NODE_NAME "entity"
 /*
 #define GIA_ENTITY_VECTOR_CONNECTION_SPECIAL_CONDITIONS_HAVING_BEING_TYPES (2)
 */
 
-static int inverseVectorConnectionsArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_SUBJECT, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_OBJECT, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_OBJECT, GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_PROPERTIES, GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES, GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_DEFINITIONS, GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITIONS, GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTIONS, GIA_ENTITY_VECTOR_CONNECTION_TYPE_INCOMING_ACTIONS, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITIONS, GIA_ENTITY_VECTOR_CONNECTION_TYPE_INCOMING_CONDITIONS, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES};
+#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_UNKNOWN (-1)
+static int inverseVectorConnectionsArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {GIA_ENTITY_VECTOR_CONNECTION_TYPE_RELATIONSHIP_SUBJECT, GIA_ENTITY_VECTOR_CONNECTION_TYPE_RELATIONSHIP_OBJECT, GIA_ENTITY_VECTOR_CONNECTION_TYPE_RELATIONSHIP_SUBJECT, GIA_ENTITY_VECTOR_CONNECTION_TYPE_RELATIONSHIP_OBJECT, GIA_ENTITY_VECTOR_CONNECTION_TYPE_RELATIONSHIP_SUBJECT, GIA_ENTITY_VECTOR_CONNECTION_TYPE_RELATIONSHIP_OBJECT, GIA_ENTITY_VECTOR_CONNECTION_TYPE_RELATIONSHIP_SUBJECT, GIA_ENTITY_VECTOR_CONNECTION_TYPE_RELATIONSHIP_OBJECT, GIA_ENTITY_VECTOR_CONNECTION_TYPE_UNKNOWN, GIA_ENTITY_VECTOR_CONNECTION_TYPE_UNKNOWN, GIA_ENTITY_VECTOR_CONNECTION_TYPE_INSTANCE_REVERSE, GIA_ENTITY_VECTOR_CONNECTION_TYPE_INSTANCE}; 
+static int entityTypesCrossReferenceEntityVectorConnectionArray[GIA_ENTITY_NUMBER_OF_TYPES] = {GIA_ENTITY_VECTOR_CONNECTION_TYPE_UNKNOWN, GIA_ENTITY_VECTOR_CONNECTION_TYPE_UNKNOWN, GIA_ENTITY_VECTOR_CONNECTION_TYPE_UNKNOWN, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION, GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTY, GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITION, GIA_ENTITY_VECTOR_CONNECTION_TYPE_UNKNOWN};
+static int entityTypesCrossReferenceEntityVectorConnectionReverseArray[GIA_ENTITY_NUMBER_OF_TYPES] = {GIA_ENTITY_VECTOR_CONNECTION_TYPE_UNKNOWN, GIA_ENTITY_VECTOR_CONNECTION_TYPE_UNKNOWN, GIA_ENTITY_VECTOR_CONNECTION_TYPE_UNKNOWN, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_REVERSE, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_REVERSE, GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTY_REVERSE, GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITION_REVERSE, GIA_ENTITY_VECTOR_CONNECTION_TYPE_UNKNOWN};
+
+static bool entityVectorConnectionIsRelationshipSubjectObjectArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {false, false, false, false, false, false, false, false, true, true, false, false};
+
 
 
 #define GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES_EQUALITIES (2)
-static int entityVectorConnectionEqualitiesArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES_EQUALITIES] = {GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITIONS, GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_DEFINITIONS};
+static int entityVectorConnectionEqualitiesArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES_EQUALITIES] = {GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITION, GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITION_REVERSE};
 
 
 #define VECTOR_ASSOCIATED_INSTANCES_SAME_REFERENCE_SET_IRRELEVANT_OR_UNKNOWN (true)
@@ -348,7 +353,7 @@ public:
 	bool hasAssociatedInstance;	//this boolean appears to only represent whether this entity defines a child substance node [and not whether it contains one]
 	bool hasAssociatedTime;
 	bool negative;	//for prepositional entities which will be collapsed into conditions only [in the future, this should also be used for substances and actions; but relex does not appear to output this information]
-
+	bool isArtificialAuxiliary;	//a new entity was created for an implicit auxiliary (property/definition relationship entities only)
 
 	/*GIA Connections*/
 	vector<GIAentityConnection*> entityVectorConnectionsArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];		//allows for generic coding
@@ -358,36 +363,19 @@ public:
 	//bool entityVectorConnectionsLoadedArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];				//not used - vector connections are loaded into RAM on an individual basis. //signifies whether all the vector connection nodes have been loaded (eg from the db)
 	bool entityVectorConnectionsRemovedArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES];					//signifies whether one or more vector connection nodes have been removed {ie the entire reference list must be updated}
 	#endif
-		//action connections;
-	//non-actions only;
-	vector<GIAentityConnection*>* actionNodeList;	//where this entity is the subject of the action
-	vector<GIAentityConnection*>* incomingActionNodeList;	//where this entity is the object of the action
-	//actions only;
-	//NB actions can be performed by and on networkIndexes, and by and on substances?
-	vector<GIAentityConnection*>* actionSubjectEntity;	//record of entity that is the subject of this action instance
-	vector<GIAentityConnection*>* actionObjectEntity;	//record of which entity that is the object of this action instance
-		//condition connections;
-	//non-conditions only;
-	//conditions connections: conditions and reverse conditions (reason) lookups [condition and reason respectively]
-	vector<GIAentityConnection*>* conditionNodeList;		//this substance requires the following...
-	vector<GIAentityConnection*>* incomingConditionNodeList;	//this substance is required by the following... //aka reason
-	//conditions only;
-	//NB conditions can be performed by and on networkIndexes, and by and on substances?
-	vector<GIAentityConnection*>* conditionSubjectEntity;		//record of entity that is the subject of this action instance
-	vector<GIAentityConnection*>* conditionObjectEntity;		//record of which entity that is the object of this action instance
-		//substance connections;
-	//record list of all substances for this entity
+	
+	vector<GIAentityConnection*>* actionNodeList;
+	vector<GIAentityConnection*>* actionReverseNodeList;
+	vector<GIAentityConnection*>* conditionNodeList;
+	vector<GIAentityConnection*>* conditionReverseNodeList;
 	vector<GIAentityConnection*>* propertyNodeList;
-	vector<GIAentityConnection*>* propertyNodeReverseList;			//if substance/action only:	//eg, Tom; OR;  Tom's Assets	//more than 1 thing can contain any given substance [eg "a cat has arms", and "a monkey has arms"]; but note this may only be applicable for networkIndex entities [substance entities may possibly only be contained by {ie, be a substance of} a single entity]
-	//actions, substances, and conditions only
-	vector<GIAentityConnection*>* entityNodeDefiningThisInstance;					//if substance/action/condition only:					//NB by definition, only 1 thing can contain any given substance [considering a substance is an instance of an entity] - therefore this is not a vector
-		//entity connections;
-	//record parent and child entity definition nodes
-	vector<GIAentityConnection*>* entityNodeDefinitionList;			//this should logically reduce to a single entity, although not required, therefore it is a vector [eg, a dog is a mammal, which is an animal, but a dog is an animal also]
-	vector<GIAentityConnection*>* entityNodeDefinitionReverseList;			//more than one entity can be defined by this entity [eg if this entity is "animal", a bird is an animal, a mammal is an animal, etc]
-	//networkIndexes only (not substances/"instances" of entities);
-	//associated actions and substances [ie does this entity also define an action/verb or a substance/adjective? [ie, it is not just a thing/noun]]
-	vector<GIAentityConnection*>* associatedInstanceNodeList;			//if this entity is not a substance/instance but defines one or more substances/instances
+	vector<GIAentityConnection*>* propertyReverseNodeList;
+	vector<GIAentityConnection*>* definitionNodeList;
+	vector<GIAentityConnection*>* definitionReverseNodeList;
+	vector<GIAentityConnection*>* relationshipSubjectEntity;
+	vector<GIAentityConnection*>* relationshipObjectEntity;
+	vector<GIAentityConnection*>* instanceNodeList;
+	vector<GIAentityConnection*>* instanceReverseNodeList;	//NB instanceReverse translates to the "definition" of the instance word
 		//time condition connections;
 	int conditionType;	//added 25 Sept 11
 	GIAtimeConditionNode* timeConditionNode;		//if conditionType == CONDITION_NODE_TYPE_TIME
@@ -442,10 +430,6 @@ public:
 
 
 	/*GIA Translator Temporary Variables*/
-	bool isSubjectTemp;		//temporary: used for GIA translator only - overwritten every time a new sentence is parsed [10 May 2012: this shouldnt be needed anymore]
-	bool isObjectTemp;		//temporary: used for GIA translator only - overwritten every time a new sentence is parsed [10 May 2012: this shouldnt be needed anymore]
-	bool hasSubstanceTemp;		//temporary: used for GIA translator only - overwritten every time a new sentence is parsed [10 May 2012: this shouldnt be needed anymore]
-	bool isActionTemp;		//temporary: used for GIA translator only - overwritten every time a new sentence is parsed [10 May 2012: this shouldnt be needed anymore]
 	int entityIndexTemp;		//temporary: used for GIA translator reference paser only - overwritten every time a new textual context (eg paragraph) is parsed (used for Stanford CoreNLP referencing only?)
 	int sentenceIndexTemp;		//temporary: used for GIA translator reference paser only - overwritten every time a new textual context (eg paragraph) is parsed (used for Stanford CoreNLP referencing only?)
 	bool isToBeComplimentOfActionTemp;	//required for Relex (linkConditions()/defineSubstancesOfPossessivePrepositions())
@@ -532,6 +516,10 @@ public:
 	bool sourceReferencedInLanguageGeneration;
 	#endif
 
+	#ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
+	bool isAlias = false;
+	#endif
+	
 	#ifdef USE_NLC
 	bool NLCparsedForCodeBlocks;
 	//bool parsedForNLCcodeBlocksActionRound;
@@ -555,16 +543,24 @@ public:
 	bool NLCfirstInstanceOfProperNounInContext;
 	#endif
 
-	#ifdef GIA_LRP_NORMALISE_PREPOSITIONS
-	#ifdef GIA_LRP_DETECT_PREPOSITION_TYPE
+	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_PREPOSITIONS
+	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DETECT_PREPOSITION_TYPE
 	string conditionType2;	//added 2h1a/14-November-2014 - required for NLC 1m1a+
 	#endif
-	#ifdef GIA_LRP_NORMALISE_TWOWAY_PREPOSITIONS
+	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_TWOWAY_PREPOSITIONS
 	bool conditionTwoWay;		//added 2h1e/14-November-2014 - required for NLC 1m1e+
-	#ifdef GIA_LRP_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED
+	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED
 	bool inverseConditionTwoWay;	//added 2h1e/14-November-2014 - required for NLC 1m1e+
 	#endif
 	#endif
+	#endif
+	
+	#ifdef GIA_CREATE_SHORTCUTS_TO_CONCEPT_ENTITIES
+	GIAentityNode* shortcutToNonspecificConceptEntity;	//defined for network index entities only
+	vector<GIAentityNode*> shortcutsToSpecificConceptEntities;	//defined for network index entities only
+	#endif
+	#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
+	bool isLogicReferenceEntity;
 	#endif
 };
 
@@ -634,9 +630,7 @@ class GIAentityNodeClassClass
 			private: void getEntityCharacteristicIterationstring(const string entityVal, GIAentityCharacteristic* entityCharacteristicGet, const string iterationVariable, bool* foundMatch);
 #endif
 
-#ifndef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
-	public: bool isActionSpecialPossessive(const GIAentityNode* actionEntity);
-#endif
+	public: bool isActionSpecialPossessive(const GIAentityNode* actionRelationshipEntity);
 
 #ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES
 	public: string getParentClassEntityNameFromSubClassEntityName(string subClassEntityName);
@@ -645,6 +639,10 @@ class GIAentityNodeClassClass
 #endif
 
 	public: bool detectPredeterminerNonReference(const GIAentityNode* entity);
+	
+	public: bool entityIsRelationship(const GIAentityNode* entity);
+	public: int getRelationshipEntityRelativeTypeIndex(const GIAentityNode* entity);
+
 };
 
 #endif

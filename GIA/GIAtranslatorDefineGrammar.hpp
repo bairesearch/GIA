@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorDefineGrammar.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p4d 17-January-2017
+ * Project Version: 3a1a 26-February-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -54,15 +54,15 @@ class GIAtranslatorDefineGrammarClass
 	private: GIAtranslatorOperationsClass GIAtranslatorOperations;
 	private: GIAtranslatorGenericClass GIAtranslatorGeneric;
 	private: SHAREDvarsClass SHAREDvars;
-	public: void locateAndAddAllFeatureTempEntities(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAfeatureTempEntityNodeArray[], const int NLPdependencyRelationsType);
-	public: void locateAndAddAllNetworkIndexEntities(const GIAsentence* currentSentenceInList, const bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, vector<GIAentityNode*>* sentenceNetworkIndexEntityNodesList, const int NLPdependencyRelationsType, GIAentityNode* GIAfeatureTempEntityNodeArray[]);
+	public: void locateAndAddAllFeatureTempEntities(GIAtranslatorVariablesClass* translatorVariables);
+	public: void locateAndAddAllNetworkIndexEntities(GIAtranslatorVariablesClass* translatorVariables);
 
 #ifdef GIA_RELEX
 	public: void fillGrammaticalArraysRelex(GIAsentence* currentSentenceInList);
 #endif
 //uses dependency relations to derive grammar [uses stanfordPOS/NER information to derive grammar, if NLPfeatureParser == Stanford Core NLP]
 #ifdef GIA_STANFORD_DEPENDENCY_RELATIONS
-	public: void fillGrammaticalArraysStanford(GIAsentence* currentSentenceInList,  const bool GIAentityNodeArrayFilled[], GIAentityNode* GIAfeatureTempEntityNodeArray[], const int NLPfeatureParser, GIAfeature* featureArrayTemp[]);
+	public: void fillGrammaticalArraysStanford(GIAtranslatorVariablesClass* translatorVariables);
 		private: void extractPastTense(GIAfeature* featureWithEntityIndex, const int entityIndexContainingTenseIndication, const GIAfeature* firstFeatureInList, const int NLPfeatureParser);
 			private: void extractPastTenseFromPOStag(const string* POStag, GIAfeature* feature);
 		public: void extractGrammaticalInformationStanford(GIAfeature* firstFeatureInList, const int NLPfeatureParser);
@@ -70,7 +70,7 @@ class GIAtranslatorDefineGrammarClass
 				private: void extractGrammaticalInformationFromPOStag(const string* POStag, GIAfeature* feature);
 #endif
 
-	public: void applyGrammaticalInfoToAllEntities(const bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], GIAfeature* firstFeatureInSentence);
+	public: void applyGrammaticalInfoToAllEntities(GIAtranslatorVariablesClass* translatorVariables, GIAfeature* firstFeatureInSentencee);
 		public: void applyPOSrelatedGrammaticalInfoToEntity(GIAentityNode* entity, GIAfeature* currentFeatureInList);
 
 #ifdef GIA_ADVANCED_REFERENCING_FIND_SUBJ_OBJ_RELATION_MATCHING_AUXILIARY_AND_SET_NOT_SAME_REFERENCE_SET

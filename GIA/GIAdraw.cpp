@@ -25,7 +25,7 @@
  * File Name: GIAdraw.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p4d 17-January-2017
+ * Project Version: 3a1a 26-February-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -90,7 +90,7 @@ void GIAdrawClass::printGIAnetworkNodes(vector<GIAentityNode*>* entityNodesActiv
 		if(!LDparser.parseFile(topLevelSceneFileName, initialReferenceInSceneFile, topLevelReferenceInSceneFile, true))
 		{//file does not exist
 			cout << "The file: " << topLevelSceneFileName << " does not exist in the directory" << endl;
-			exit(0);
+			exit(EXIT_ERROR);
 		}
 		LDreferenceManipulation.write2DreferenceListCollapsedTo1DtoFile(topLevelSceneFileNameCollapsed, initialReferenceInSceneFile);
 		/* method2: why doesnt this work - "invalid dat file for conversion to rgb"
@@ -98,10 +98,8 @@ void GIAdrawClass::printGIAnetworkNodes(vector<GIAentityNode*>* entityNodesActiv
 		LDreferenceManipulation.write2DreferenceListCollapsedTo1DtoFile(topLevelSceneFileNameCollapsed, firstReferenceInPrintList);
 		*/
 
-		#ifdef GIA_FREE_MEMORY1
 		delete initialReferenceInSceneFile;
 		delete topLevelReferenceInSceneFile;
-		#endif
 
 
 		unsigned char* rgbMap = new unsigned char[width*height*RGB_NUM];
@@ -114,17 +112,15 @@ void GIAdrawClass::printGIAnetworkNodes(vector<GIAentityNode*>* entityNodesActiv
 		if(!LDparser.parseFile(topLevelSceneFileNameCollapsed, initialReferenceInCollapsedSceneFile, topLevelReferenceInCollapsedSceneFile, true))
 		{//file does not exist
 			cout << "The file: " << topLevelSceneFileNameCollapsed << " does not exist in the directory" << endl;
-			exit(0);
+			exit(EXIT_ERROR);
 		}
 
 		LDopengl.drawPrimitivesReferenceListToOpenGLandCreateRGBmapBasic(initialReferenceInCollapsedSceneFile, width, height, rgbMap);
 		LDopengl.drawPrimitivesReferenceListToOpenGLandCreateRGBmapBasic(initialReferenceInCollapsedSceneFile, width, height, rgbMap);
 			//due to opengl code bug, need to execute this function twice.
 
-		#ifdef GIA_FREE_MEMORY1
 		//delete initialReferenceInCollapsedSceneFile;	//this cannot be deleted because it is still used by glutDisplayFunc
 		delete topLevelReferenceInCollapsedSceneFile;
-		#endif
 
 		if(useOutputPPMfile)
 		{
@@ -139,10 +135,7 @@ void GIAdrawClass::printGIAnetworkNodes(vector<GIAentityNode*>* entityNodesActiv
 		//must use an external program to view the .ldr file (Eg LDView)
 	}
 
-
-	#ifdef GIA_FREE_MEMORY1
 	delete firstReferenceInPrintList;
-	#endif
 }
 
 void GIAdrawClass::initiateMaxXAtParticularY()
@@ -252,7 +245,7 @@ LDreference* GIAdrawClass::initialiseEntityNodeForPrinting(GIAentityNode* entity
 			cout << "\nentityNode->sentenceIndexTemp = " << entityNode->sentenceIndexTemp << endl;
 			cout << "entityNode->entityName = " << entityNode->entityName << endl;
 			cout << "entityNode->wasReference = " << entityNode->wasReference << endl;
-			if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_NETWORK_INDEX)
+			if(entityNode->entityType == GIA_ENTITY_TYPE_NETWORK_INDEX)
 			{
 				cout << "entityNode = " << entityNode->entityName << " (is networkIndex)" << endl;
 			}
@@ -264,15 +257,15 @@ LDreference* GIAdrawClass::initialiseEntityNodeForPrinting(GIAentityNode* entity
 			#endif
 
 			#ifdef GIA_DRAW_DEBUG
-			if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_SUBSTANCE)
+			if(entityNode->entityType == GIA_ENTITY_TYPE_SUBSTANCE)
 			{
 				cout << "entityNode = " << entityNode->entityName << " (is substance)" << endl;
 			}
-			else if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_ACTION)
+			else if(entityNode->entityType == GIA_ENTITY_TYPE_ACTION)
 			{
 				cout << "entityNode = " << entityNode->entityName << " (is action)" << endl;
 			}
-			else if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_CONDITION)
+			else if(entityNode->entityType == GIA_ENTITY_TYPE_CONDITION)
 			{
 				cout << "entityNode = " << entityNode->entityName << " (is condition)" << endl;
 			}
@@ -318,61 +311,51 @@ LDreference* GIAdrawClass::initialiseEntityNodeForPrinting(GIAentityNode* entity
 			pos1.z = DRAW_CONNECTION_Z;
 
 
-			int entityDefinitionConnectionColour;
-			if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_SUBSTANCE)
-			{
-				entityDefinitionConnectionColour = GIA_DRAW_SUBSTANCE_DEFINITION_CONNECTION_COLOUR;
-			}
-			else if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_ACTION)
-			{
-				entityDefinitionConnectionColour = GIA_DRAW_ACTION_DEFINITION_CONNECTION_COLOUR;
-			}
-			else if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_CONDITION)
-			{
-				entityDefinitionConnectionColour = GIA_DRAW_CONDITION_DEFINITION_CONNECTION_COLOUR;
-			}
-			else
-			{
-				entityDefinitionConnectionColour = GIA_DRAW_SUBSTANCE_DEFINITION_CONNECTION_COLOUR;
-			}
+			int entityDefinitionConnectionColour = GIA_DRAW_CONNECTION_DEFINING_INSTANCE_COLOUR;
 
 			for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
 			{
 				int q = entityVectorConnectionDrawPosYinitialArray[i];
 				int r = entityVectorConnectionDrawPosXinitialArray[i];
+				int qSpacing = entityVectorConnectionDrawPosYspacingArray[i];
+				
+				if(GIAentityNodeClass.entityIsRelationship(entityNode))
+				{
+					if(i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_RELATIONSHIP_SUBJECT)
+					{
+						q = -relationshipEntityVectorConnectionDrawPosYinitialArray[GIAentityNodeClass.getRelationshipEntityRelativeTypeIndex(entityNode)];
+						r = -relationshipEntityVectorConnectionDrawPosXinitialArray[GIAentityNodeClass.getRelationshipEntityRelativeTypeIndex(entityNode)];
+						qSpacing = -relationshipEntityVectorConnectionDrawPosYspacingArray[GIAentityNodeClass.getRelationshipEntityRelativeTypeIndex(entityNode)];
+					}
+					else if(i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_RELATIONSHIP_OBJECT)
+					{
+						q = relationshipEntityVectorConnectionDrawPosYinitialArray[GIAentityNodeClass.getRelationshipEntityRelativeTypeIndex(entityNode)];
+						r = relationshipEntityVectorConnectionDrawPosXinitialArray[GIAentityNodeClass.getRelationshipEntityRelativeTypeIndex(entityNode)];
+						qSpacing = relationshipEntityVectorConnectionDrawPosYspacingArray[GIAentityNodeClass.getRelationshipEntityRelativeTypeIndex(entityNode)];
+					}
+				}
 
 				for(vector<GIAentityConnection*>::iterator connectionIter = entityNode->entityVectorConnectionsArray[i].begin(); connectionIter != entityNode->entityVectorConnectionsArray[i].end(); connectionIter++)
 				{
-					int qTemp = q;
-					int rTemp = r;
-					#ifndef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
-					if(GIAentityNodeClass.isActionSpecialPossessive(entityNode) || GIAentityNodeClass.isActionSpecialPossessive((*connectionIter)->entity))
-					{
-						if((i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTIONS) || (i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_INCOMING_ACTIONS) || (i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_SUBJECT) || (i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_OBJECT))
-						{
-							qTemp = r/4;
-							rTemp = q/4;
-						}
-					}
-					#endif
-
+					GIAentityConnection* connection = *connectionIter;
+					
 					#ifdef GIA_DEBUG
-					//cout << "\ti = " << i << ", initialiseEntityNodeForPrinting; " << (*connectionIter)->entity->entityName << endl;
+					//cout << "\ti = " << i << ", initialiseEntityNodeForPrinting; " << connection->entity->entityName << endl;
 					#endif
 					bool thisIsDefinitionAndPreviousNodeWasInstance = false;
 					#ifdef GIA_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE
-					if(i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE)
+					if(i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_INSTANCE_REVERSE)
 					{
 						thisIsDefinitionAndPreviousNodeWasInstance = true;
 					}
 					#endif
-					currentReferenceInPrintList = this->initialiseEntityNodeForPrinting((*connectionIter)->entity, y+qTemp, x+rTemp, printType, currentReferenceInPrintList, currentTag, sentenceIndex, thisIsDefinitionAndPreviousNodeWasInstance);
+					currentReferenceInPrintList = this->initialiseEntityNodeForPrinting(connection->entity, y+q, x+r, printType, currentReferenceInPrintList, currentTag, sentenceIndex, thisIsDefinitionAndPreviousNodeWasInstance);
 
 					bool pass = true;
 					int entityConnectionColour = entityVectorConnectionDrawColourNameArray[i];
-					if(i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE)
+					if(i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_INSTANCE_REVERSE)
 					{
-						if(printType[DRAW_CREATE_LDR_OR_SVG_REFERENCES] == true)
+						if(printType[DRAW_CREATE_LDR_OR_SVG_REFERENCES])
 						{
 							entityConnectionColour = entityDefinitionConnectionColour;
 						}
@@ -381,8 +364,21 @@ LDreference* GIAdrawClass::initialiseEntityNodeForPrinting(GIAentityNode* entity
 							pass = false;
 						}
 					}
+					/*
+					//this shouldn't be necessary:
+					#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX_ADVANCED
+					if(i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_INSTANCE)
+					{
+						if(GIAentityNodeClass.entityIsRelationship(connection->entity))
+						{
+							pass = false;
+						}
+					}	
+					#endif				
+					*/
+					
 					#ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
-					if((*connectionIter)->isAlias)
+					if(connection->isAlias)
 					{
 						entityConnectionColour = GIA_DRAW_DEFINITION_MARK_AS_ALIAS_CONNECTION_COLOUR;
 					}
@@ -392,7 +388,7 @@ LDreference* GIAdrawClass::initialiseEntityNodeForPrinting(GIAentityNode* entity
 						if(entityVectorConnectionDrawConnectionArray[i])
 						{
 							#ifdef GIA_ADVANCED_REFERENCING_DEBUG_HIGHLIGHT_REFERENCE_SET_CONNECTIONS_WITH_COLOURS
-							if((*connectionIter)->sameReferenceSet)
+							if(connection->sameReferenceSet)
 							{
 								entityConnectionColour = DAT_FILE_COLOUR_GREEN;
 							}
@@ -402,17 +398,17 @@ LDreference* GIAdrawClass::initialiseEntityNodeForPrinting(GIAentityNode* entity
 							}
 							#endif
 
-							#ifdef GIA_DRAW_PRINT_CONNECTION_SENTENCE_INDICES
-							//string connectionName = SHAREDvars.convertIntToString((*connectionIter)->sentenceIndexTemp);
-							string connectionName = string("s") + SHAREDvars.convertIntToString((*connectionIter)->sentenceIndexTemp) + entityVectorConnectionNameArray[i];
-							currentReferenceInPrintList = this->initialiseEntityConnectionForPrinting(&pos1,* connectionIter, currentReferenceInPrintList, printType, connectionName, entityConnectionColour, currentTag);
+							#ifdef GIA_DRAW_PRINT_CONNECTION_SENTENCE_INDEX
+							//string connectionName = SHAREDvars.convertIntToString(connection->sentenceIndexTemp);
+							string connectionName = string("s") + SHAREDvars.convertIntToString(connection->sentenceIndexTemp) + entityVectorConnectionNameArray[i];
+							currentReferenceInPrintList = this->initialiseEntityConnectionForPrinting(&pos1, connection, currentReferenceInPrintList, printType, connectionName, entityConnectionColour, currentTag);
 							#else
-							currentReferenceInPrintList = this->initialiseEntityConnectionForPrinting(&pos1,* connectionIter, currentReferenceInPrintList, printType, entityVectorConnectionDrawConnectionNameArray[i], entityConnectionColour, currentTag);
+							currentReferenceInPrintList = this->initialiseEntityConnectionForPrinting(&pos1, connection, currentReferenceInPrintList, printType, entityVectorConnectionDrawConnectionNameArray[i], entityConnectionColour, currentTag);
 							#endif
 						}
 					}
 
-					q = q + entityVectorConnectionDrawPosYspacingArray[i];
+					q = q + qSpacing;
 				}
 			}
 
@@ -457,7 +453,7 @@ LDreference* GIAdrawClass::initialiseEntityNodeForPrinting(GIAentityNode* entity
 					entityColour = GIA_DRAW_QUERY_ANSWER_CONTEXT_NODE_COLOUR;
 				}
 				#endif
-				else if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_SUBSTANCE)
+				else if(entityNode->entityType == GIA_ENTITY_TYPE_SUBSTANCE)
 				{
 					if(entityNode->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL)
 					{
@@ -477,15 +473,15 @@ LDreference* GIAdrawClass::initialiseEntityNodeForPrinting(GIAentityNode* entity
 					}
 
 				}
-				else if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_CONCEPT)
+				else if(entityNode->entityType == GIA_ENTITY_TYPE_CONCEPT)
 				{
 					entityColour = GIA_DRAW_CONCEPT_NODE_COLOUR;
 				}
-				else if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_QUALITY)
+				else if(entityNode->entityType == GIA_ENTITY_TYPE_QUALITY)
 				{
 					entityColour = GIA_DRAW_SUBSTANCE_QUALITY_NODE_COLOUR;
 				}
-				else if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_ACTION)
+				else if(entityNode->entityType == GIA_ENTITY_TYPE_ACTION)
 				{
 					if(entityNode->isActionConcept)
 					{
@@ -496,75 +492,41 @@ LDreference* GIAdrawClass::initialiseEntityNodeForPrinting(GIAentityNode* entity
 						entityColour = GIA_DRAW_ACTION_NODE_COLOUR;
 					}
 				}
+				else if(entityNode->entityType == GIA_ENTITY_TYPE_DEFINITION)
+				{
+					entityColour = GIA_DRAW_DEFINITION_NODE_COLOUR;
+				}
+				else if(entityNode->entityType == GIA_ENTITY_TYPE_PROPERTY)
+				{
+					entityColour = GIA_DRAW_PROPERTY_NODE_COLOUR;
+				}
 				/*
 				else if(entityNode->hasAssociatedTime)
 				{
 					entityColour = GIA_DRAW_CONDITION_DEFINITION_TIME_NODE_COLOUR;	//clear identify a time node
 				}
 				*/
-				else if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_CONDITION)
+				else if(entityNode->entityType == GIA_ENTITY_TYPE_CONDITION)
 				{
 					entityColour = GIA_DRAW_CONDITION_NODE_COLOUR;	//clear identify a time node
 				}
-				else if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_NETWORK_INDEX)
+				else if(entityNode->entityType == GIA_ENTITY_TYPE_NETWORK_INDEX)
 				{
-					/*
-					if(entityNode->hasAssociatedInstanceIsAction)
-					{
-						#ifdef GIA_DRAW_DEBUG
-						//if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_ACTION)
-						//{
-						//	cout << "(entityNode->hasAssociatedInstanceIsAction) && (entityNode->entityType == GIA_ENTITY_TYPE_TYPE_ACTION)" << endl;
-						//}
-						#endif
-						if(entityNode->hasMeasure)
-						{
-							entityColour = GIA_DRAW_SUBSTANCE_MEASURE_NODE_COLOUR;
-						}
-						else
-						{
-							entityColour = GIA_DRAW_ACTION_DEFINITION_NODE_COLOUR;	//clearly identify the definition of the action
-						}
-					}
-					else if(entityNode->hasAssociatedInstanceIsCondition)
-					{
-						entityColour = GIA_DRAW_CONDITION_DEFINITION_NODE_COLOUR;	//clearly identify the definition of the action
-					}
-					*/
-					if(entityNode->hasAssociatedInstance)
-					{//the original spec seemed to imply that entities that have associated substances (ie, that define substances) are special but they don't appear to be
-						//added 2 May 11a (highlight entities which define substance nodes)
-						entityColour = GIA_DRAW_SUBSTANCE_DEFINITION_NODE_COLOUR;	//OLD: no colour modifier, just use basic entity colour; GIA_DRAW_NETWORK_INDEX_NODE_COLOUR;
-					}
-					else
-					{
-						entityColour = GIA_DRAW_NETWORK_INDEX_NODE_COLOUR;
-					}
+					entityColour = GIA_DRAW_NETWORK_INDEX_NODE_COLOUR;
 				}
 				else
 				{
 					cout << "initialiseEntityNodeForPrinting{} error: illegal entityNode->entityType: " << entityNode->entityType << endl;
-					exit(0);
+					exit(EXIT_ERROR);
 				}
 
-				#ifdef GIA_ADVANCED_REFERENCING_DEBUG_HIGHLIGHT_REFERENCE_SET_NODES_WITH_COLOURS
-				if(entityNode->referenceSetID == GIA_REFERENCE_SET_ID_UNDEFINED)
+				#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
+				if(entityNode->isLogicReferenceEntity)
 				{
-					entityColour = DAT_FILE_COLOUR_RED;
-				}
-				else
-				{
-					entityColour = DAT_FILE_COLOUR_GREEN;
+					entityColour = GIA_DRAW_LOGIC_REFERENCE_ENTITY_COLOUR;
 				}
 				#endif
-
-				#ifndef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
-				if(GIAentityNodeClass.isActionSpecialPossessive(entityNode))
-				{
-					entityColour = GIA_DRAW_ACTION_SPECIAL_POSSESSIVE_NODE_COLOUR;
-				}
-				#endif
-
+					
 				//first, print this action node.
 				string nameOfBox = "";
 				if(entityNode->hasQuantity)
@@ -589,12 +551,16 @@ LDreference* GIAdrawClass::initialiseEntityNodeForPrinting(GIAentityNode* entity
 				{
 					nameOfBox = entityNode->entityName;
 				}
-				#ifdef GIA_DRAW_PRINT_INSTANCE_ID
+				
+				#ifdef GIA_DRAW_PRINT_ENTITY_INSTANCE_ID
 				//nameOfBox = SHAREDvars.convertIntToString(entityNode->referenceSetID);
 				nameOfBox = nameOfBox + SHAREDvars.convertIntToString(entityNode->idInstance);
 				#endif
-				#ifdef GIA_DRAW_PRINT_ACTIVELIST_ID
+				#ifdef GIA_DRAW_PRINT_ENTITY_ACTIVELIST_ID
 				nameOfBox = nameOfBox + SHAREDvars.convertIntToString(entityNode->idActiveList);
+				#endif
+				#ifdef GIA_DRAW_PRINT_ENTITY_SENTENCE_INDEX
+				nameOfBox = nameOfBox + SHAREDvars.convertIntToString(entityNode->sentenceIndexTemp);
 				#endif
 
 				//nameOfBox = nameOfBox + SHAREDvars.convertIntToString(entityNode->grammaticalDefiniteTemp);
@@ -604,17 +570,25 @@ LDreference* GIAdrawClass::initialiseEntityNodeForPrinting(GIAentityNode* entity
 
 
 			#ifdef GIA_DRAW_DEBUG
-			if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_SUBSTANCE)
+			if(entityNode->entityType == GIA_ENTITY_TYPE_SUBSTANCE)
 			{
 				cout << "Exiting: entityNode = " << entityNode->entityName << " (is substance)" << endl;
 			}
-			else if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_ACTION)
+			else if(entityNode->entityType == GIA_ENTITY_TYPE_ACTION)
 			{
 				cout << "Exiting: entityNode = " << entityNode->entityName << " (is action)" << endl;
 			}
-			else if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_CONDITION)
+			else if(entityNode->entityType == GIA_ENTITY_TYPE_CONDITION)
 			{
 				cout << "Exiting: entityNode = " << entityNode->entityName << " (is condition)" << endl;
+			}
+			else if(entityNode->entityType == GIA_ENTITY_TYPE_PROPERTY)
+			{
+				cout << "Exiting: entityNode = " << entityNode->entityName << " (is property)" << endl;
+			}
+			else if(entityNode->entityType == GIA_ENTITY_TYPE_DEFINITION)
+			{
+				cout << "Exiting: entityNode = " << entityNode->entityName << " (is definition)" << endl;
 			}
 			else if(entityNode->hasAssociatedInstance)
 			{

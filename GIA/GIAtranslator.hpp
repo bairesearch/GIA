@@ -25,7 +25,7 @@
  * File Name: GIAtranslator.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p4d 17-January-2017
+ * Project Version: 3a1a 26-February-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -60,12 +60,15 @@
 #include "GIAnlp.hpp"	//required because parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyParsedSentences was shifted from GIAmain.cpp
 #include "GIAnlpParser.hpp"
 #include "GIAbot.hpp"
-#include "GIAlrp.hpp"
+#include "GIApreprocessorMultiwordReduction.hpp"
 #include "GIAsemanticParserOperations.hpp"
 #include "GIAsemanticParserTranslator.hpp"
 #include "GIAsemanticParserDatabase.hpp"
 #include "GIAtranslatorRules.hpp"
 #include "GIAtranslatorGeneric.hpp"
+#ifdef GIA_PREPROCESSOR_SENTENCE
+#include "GIApreprocessor.hpp"
+#endif
 #include "SHAREDvars.hpp"	//file io
 
 
@@ -73,7 +76,7 @@ class GIAtranslatorClass
 {
 	private: GIAtranslatorOperationsClass GIAtranslatorOperations;
 	private: SHAREDvarsClass SHAREDvars;
-	private: GIAlrpClass GIAlrp;
+	private: GIApreprocessorMultiwordReductionClass GIApreprocessorMultiwordReduction;
 	private: GIAnlpClass GIAnlp;
 	private: GIAdatabaseClass GIAdatabase;
 	private: GIAsentenceClassClass GIAsentenceClass;
@@ -96,56 +99,54 @@ class GIAtranslatorClass
 	private: GIAtranslatorApplyAdvancedFeaturesClass GIAtranslatorApplyAdvancedFeatures;
 	private: GIAbotClass GIAbot;
 	private: GIAtranslatorRulesClass GIAtranslatorRules;
-	private: void initialiseGIATranslatorForTexualContext();
-
-/*
-#ifdef USE_CE
-bool parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyParsedSentencesCE(GIAparagraph* firstParagraphInList, string inputTextNLPrelationXMLfileName, string inputTextNLPfeatureXMLfileName, string outputCFFfileName, string NLPexeFolderArray[], vector<GIAentityNode*>* entityNodesActiveListComplete, unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, map<int, vector<GIAentityNode*>*>* entityNodesActiveListSentences, unordered_map<long, GIAtimeConditionNode*>* timeConditionNodesActiveList, bool isQuery, int NLPfeatureParser, int NLPdependencyRelationsParser, bool NLPrelexCompatibilityMode, bool NLPassumePreCollapsedStanfordRelations, int* maxNumberSentences, bool parseGIA2file, CECodeextension* firstCodeextensionInHeirachy, vector<CECodeextension*>* codeextensionsList, bool useCodeextensionsHeirachy);
-#endif
-*/
-	public: bool parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyParsedSentences(GIAparagraph* firstParagraphInList, const string inputTextNLPrelationXMLfileName, const string inputTextNLPfeatureXMLfileName, const string outputCFFfileName, const string NLPexeFolderArray[], vector<GIAentityNode*>* entityNodesActiveListComplete, unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, map<int, vector<GIAentityNode*>*>* entityNodesActiveListSentences, unordered_map<long, GIAtimeConditionNode*>* timeConditionNodesActiveList, const bool isQuery, int NLPfeatureParser, const int NLPdependencyRelationsParser, const bool NLPrelexCompatibilityMode, bool NLPassumePreCollapsedStanfordRelations, int* maxNumberSentences, const bool parseGIA2file);
-	/*
-	#ifdef USE_CE
-	bool createSemanticNetworkBasedUponDependencyParsedSentencesCE(GIAparagraph* firstParagraphInList, vector<GIAentityNode*>* entityNodesActiveListComplete, unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, map<int, vector<GIAentityNode*>*>* entityNodesActiveListSentences, unordered_map<long, GIAtimeConditionNode*>* timeConditionNodesActiveList, bool isQuery, int NLPfeatureParser, int NLPdependencyRelationsType, bool NLPassumePreCollapsedStanfordRelations, bool parseGIA2file, CECodeextension* firstCodeextensionInHeirachy, vector<CECodeextension*>* codeextensionsList, bool useCodeextensionsHeirachy);
+	#ifdef GIA_PREPROCESSOR_SENTENCE
+	private: GIApreprocessorClass GIApreprocessor;
 	#endif
-	*/
-		private: bool createSemanticNetworkBasedUponDependencyParsedSentences(GIAparagraph* firstParagraphInList, vector<GIAentityNode*>* entityNodesActiveListComplete, unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, map<int, vector<GIAentityNode*>*>* entityNodesActiveListSentences, unordered_map<long, GIAtimeConditionNode*>* timeConditionNodesActiveList, const bool isQuery, int NLPfeatureParser, int NLPdependencyRelationsType, bool NLPassumePreCollapsedStanfordRelations, const bool parseGIA2file);
+	public: bool parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyParsedSentences(GIAtranslatorVariablesClass* translatorVariables, const string inputTextNLPrelationXMLfileName, const string inputTextNLPfeatureXMLfileName, const string outputCFFfileName, const string NLPexeFolderArray[]);
+		private: bool createSemanticNetworkBasedUponDependencyParsedSentences(GIAtranslatorVariablesClass* translatorVariables);
 		#ifdef GIA_RELEX_UPDATE_ADD_PARAGRAPH_TAGS
-			private: void convertParagraphSentenceRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, map<int, vector<GIAentityNode*>*>* entityNodesActiveListSentences, const unordered_map<long, GIAtimeConditionNode*>* timeConditionNodesActiveList, GIAparagraph* firstParagraphInList, const int NLPfeatureParser, int NLPdependencyRelationsType, const bool NLPassumePreCollapsedStanfordRelations, const bool parseGIA2file);
+			private: bool convertParagraphSentenceRelationsIntoGIAnetworkNodes(GIAtranslatorVariablesClass* translatorVariables);
 		#endif
 			#ifdef USE_CE
-				private: void convertSentenceListRelationsIntoGIAnetworkNodesBasedUponCodeextensionHeirachy(unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, map<int, vector<GIAentityNode*>*>* entityNodesActiveListSentences, unordered_map<long, GIAtimeConditionNode*>* timeConditionNodesActiveList, GIAsentence* firstSentenceInList, const CECodeextension* firstCodeextensionInHeirachy, vector<CECodeextension*>* codeextensionsList, const int NLPfeatureParser, int NLPdependencyRelationsType, const bool NLPassumePreCollapsedStanfordRelations);
-					private: void convertCEsentenceListRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, map<int, vector<GIAentityNode*>*>* entityNodesActiveListSentences, const unordered_map<long, GIAtimeConditionNode*>* timeConditionNodesActiveList, GIAsentence* firstSentenceInList, const int NLPfeatureParser, int NLPdependencyRelationsType, const bool NLPassumePreCollapsedStanfordRelations);
+				private: bool convertSentenceListRelationsIntoGIAnetworkNodesBasedUponCodeextensionHeirachy(GIAtranslatorVariablesClass* translatorVariables);
+					private: bool convertCEsentenceListRelationsIntoGIAnetworkNodes(GIAtranslatorVariablesClass* translatorVariables);
 			#endif
-				private: void convertSentenceListRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, map<int, vector<GIAentityNode*>*>* entityNodesActiveListSentences, const unordered_map<long, GIAtimeConditionNode*>* timeConditionNodesActiveList, GIAsentence* firstSentenceInList, const int NLPfeatureParser, int NLPdependencyRelationsType, const bool NLPassumePreCollapsedStanfordRelations, const bool parseGIA2file);
-					private: void convertSentenceRelationsIntoGIAnetworkNodesWrapper(unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, map<int, vector<GIAentityNode*>*>* entityNodesActiveListSentences, const unordered_map<long, GIAtimeConditionNode*>* timeConditionNodesActiveList, const GIAsentence* firstSentenceInList, GIAsentence* currentSentenceInList, const int NLPfeatureParser, int NLPdependencyRelationsType, const bool NLPassumePreCollapsedStanfordRelations, const bool parseGIA2file);
-						private: void convertSentenceSyntacticRelationsIntoGIAnetworkNodes(unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, const unordered_map<long, GIAtimeConditionNode*>* timeConditionNodesActiveList, const GIAsentence* firstSentenceInList, GIAsentence* currentSentenceInList, vector<GIAentityNode*>* sentenceNetworkIndexEntityNodesList, map<int, vector<GIAentityNode*>*>* entityNodesActiveListSentences, const int NLPfeatureParser, int NLPdependencyRelationsType, const bool NLPassumePreCollapsedStanfordRelations, const bool linkPreestablishedReferencesGIA, GIAcoreference* firstGIAcoreferenceInList);
-							private: void disableNetworkIndexEntitiesBasedOnFeatureTempEntityNodeArray(const bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], constEffective GIAentityNode* GIAfeatureTempEntityNodeArray[]);
-							private: void disableEntitiesBasedOnFeatureTempEntityNodeArray(const bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], constEffective GIAentityNode* GIAfeatureTempEntityNodeArray[]);		//added 15 July 2012
+				private: bool convertSentenceListRelationsIntoGIAnetworkNodes(GIAtranslatorVariablesClass* translatorVariables);
+					private: bool convertSentenceRelationsIntoGIAnetworkNodesWrapper(GIAtranslatorVariablesClass* translatorVariables);
+						private: bool convertSentenceSyntacticRelationsIntoGIAnetworkNodes(GIAtranslatorVariablesClass* translatorVariables, const bool linkPreestablishedReferencesGIA, GIAcoreference* firstGIAcoreferenceInList);
+							private: void disableNetworkIndexEntitiesBasedOnFeatureTempEntityNodeArray(GIAtranslatorVariablesClass* translatorVariables);
+							private: void disableEntitiesBasedOnFeatureTempEntityNodeArray(GIAtranslatorVariablesClass* translatorVariables);		//added 15 July 2012
 						#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES
-							private: void createParentsOfSubclassEntities(const bool GIAentityNodeArrayFilled[], GIAentityNode* GIAnetworkIndexNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, vector<GIAentityNode*>* sentenceNetworkIndexEntityNodesList);
+							private: void createParentsOfSubclassEntities(GIAtranslatorVariablesClass* translatorVariables);
 						#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES_ENABLE_INCONSISTENT_REFERENCING
-							private: void createAdditionalSubclassEntities(const bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, vector<GIAentityNode*>* sentenceNetworkIndexEntityNodesList, const int sentenceIndex);
+							private: void createAdditionalSubclassEntities(GIAtranslatorVariablesClass* translatorVariables);
 						#endif
-								private: void linkSubclassEntitiesWithParentClassEntities(GIAentityNode* subclassNetworkIndexEntity, GIAentityNode* parentClassNetworkIndexEntity, const bool linkAsAlias, const bool onlyLinkIfSubclassOrParentConceptNotFound);
+								private: void linkSubclassEntitiesWithParentClassEntities(GIAentityNode* subclassNetworkIndexEntity, GIAentityNode* parentClassNetworkIndexEntity, const bool linkAsAlias, const bool onlyLinkIfSubclassOrParentConceptNotFound, GIAtranslatorVariablesClass* translatorVariables);
 						#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES_DETECT_USER_DECLARED_SUBCLASS_ENTITIES
-							private: void detectUserDeclaredSubclassEntities(const bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[]);
+							private: void detectUserDeclaredSubclassEntities(GIAtranslatorVariablesClass* translatorVariables);
 						#endif
 						#endif
 
-			#ifdef GIA_TRANSLATOR_DREAM_MODE_LINK_SPECIFIC_CONCEPTS_AND_ACTIONS
-				private: void dreamModeLinkSpecificConceptsAndActions();
-				#ifdef GIA_TRANSLATOR_DREAM_MODE_CREATE_AND_LINK_NON_SPECIFIC_CONCEPTS_FOR_ALL_ENTITIES
-					private: void createAndLinkNonSpecificConceptsForAllEntities(vector<GIAentityNode*>* entityNodesActiveListComplete);
-				#endif
-			#endif
+				bool performGIApostProcessing(GIAtranslatorVariablesClass* translatorVariables);
+					#ifdef GIA_TRANSLATOR_DREAM_MODE_LINK_SPECIFIC_CONCEPTS_AND_ACTIONS
+					private: void dreamModeLinkSpecificConceptsAndActions(GIAtranslatorVariablesClass* translatorVariables);
+					#ifdef GIA_TRANSLATOR_DREAM_MODE_CREATE_AND_LINK_NON_SPECIFIC_CONCEPTS_FOR_ALL_ENTITIES
+						private: void createAndLinkNonSpecificConceptsForAllEntities(GIAtranslatorVariablesClass* translatorVariables);
+					#endif
+					#endif
 
 	//?substance to substance relationship - these they in actual fact represent different levels of detail in information to substance to action / action to action nodes - direct substance to substance relationships are missing the action/connectivity information
 
-#ifdef GIA_LRP_NORMALISE_PREPOSITIONS
-	private: void invertOrDuplicateConditionsIfRequired(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], GIAfeature* featureArrayTemp[]);
-		private: void createNewInverseConditionEntity(GIArelation* currentRelationInList, GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], string inverseConditionName, GIAfeature* featureArrayTemp[]);
+#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_PREPOSITIONS
+	private: void invertOrDuplicateConditionsIfRequired(GIAtranslatorVariablesClass* translatorVariables);
+		private: void createNewInverseConditionEntity(GIArelation* currentRelationInList, GIAtranslatorVariablesClass* translatorVariables, string inverseConditionName);
 #endif
+
+#ifdef GIA_CREATE_SHORTCUTS_TO_CONCEPT_ENTITIES
+void createShortcutsToConceptEntities(GIAtranslatorVariablesClass* translatorVariables);
+	bool hasSameReferenceSetConnections(GIAentityNode* entity, GIAtranslatorVariablesClass* translatorVariables);
+#endif
+
 };
 
 

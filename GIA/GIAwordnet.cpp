@@ -25,7 +25,7 @@
  * File Name: GIAwordnet.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p4d 17-January-2017
+ * Project Version: 3a1a 26-February-2017
  * Requirements: requires wordnet libraries to be installed
  * Description: searches wordnet database and parses wordnet output
  *
@@ -53,7 +53,7 @@ void GIAwordnetClass::initialiseWordNet(const int newSynonymnDetectionStatus)
 	char* wordExampleCharStar = const_cast<char*>(wordExample.c_str());
 	char* output = findtheinfo(wordExampleCharStar,1,5,0);
 	cout << "wordnet output = " << output << endl;
-	//exit(0);
+	//exit(EXIT_ERROR);
 	string wordExample = "pretty";
 	string wordExample2 = "beautiful";	//boring
 	bool wordIsFound = false;
@@ -64,7 +64,7 @@ void GIAwordnetClass::initialiseWordNet(const int newSynonymnDetectionStatus)
 	cout << "wordExample2 = " << wordExample2 << endl;
 	cout << "synFound = " << synFound << endl;
 	//findSynonymsOLD(wordExample, &wordIsFound, listOfSynonyms, wordNetPOS);
-	exit(0);
+	exit(EXIT_ERROR);
 	#endif
 
 }
@@ -155,7 +155,7 @@ bool GIAwordnetClass::checkIfWordIsContainedWithinOtherWordsSynsetsOrViceVersa(s
 	#ifdef GIA_WORDNET_DEBUG_OUTPUT_SYNONYMNS
 	if(entityNamesAreSynonymous)
 	{
-		exit(0);
+		exit(EXIT_ERROR);
 	}
 	#endif
 
@@ -188,17 +188,13 @@ bool GIAwordnetClass::checkIfWordIsContainedWithinAnotherWordsSynsets(const stri
 			int irrelevantNotUsed = 0;
 			bool senseOutputWithHighestTagsPassedNewSynsetMustFree = false;
 			SynsetPtr senseOutputWithHighestTags = this->checkIfSynsetListContainsSynonymousEntityNamesAndRecordMostPopularSynset(firstSenseInList, wordNetPOS, &irrelevantNotUsed, &entityNamesAreSynonymous, word, otherWord, true, &senseOutputWithHighestTagsPassedNewSynsetMustFree);
-			#ifdef GIA_FREE_MEMORY3
 			if(senseOutputWithHighestTagsPassedNewSynsetMustFree)
 			{
 				free_synset(senseOutputWithHighestTags);	//Free a synset	//CHECK THIS; senseOutputWithHighestTags may not have been allocated as yet (do not assume free_synset safe to dealloc a NULL SynsetPtr)
 			}
-			#endif
 		}
 
-		#ifdef GIA_FREE_MEMORY3
 		free_syns(firstSenseInList);	//Free a synset linked list allocated by findtheinfo_ds()
-		#endif
 	}
 
 	return entityNamesAreSynonymous;
@@ -226,7 +222,6 @@ SynsetPtr GIAwordnetClass::findMostPopularSynsets(const string* word, bool* word
 
 			if(maximumNumberOfTags > maximumNumberOfTagsAcrossSimilarityTypes)
 			{
-				#ifdef GIA_FREE_MEMORY3
 				if(senseOutputWithHighestTagsAcrossSimilarityTypes != NULL)
 				{//senseOutputWithHighestTagsAcrossSimilarityTypes may not have been allocated as yet (do not assume free_synset safe to dealloc a NULL SynsetPtr)
 					if(senseOutputWithHighestTagsAcrossSimilarityTypesMustFree)
@@ -242,18 +237,16 @@ SynsetPtr GIAwordnetClass::findMostPopularSynsets(const string* word, bool* word
 				{
 					senseOutputWithHighestTagsAcrossSimilarityTypesMustFree = false;
 				}
-				#endif
+
 				maximumNumberOfTagsAcrossSimilarityTypes = maximumNumberOfTags;
 				senseOutputWithHighestTagsAcrossSimilarityTypes = senseOutputWithHighestTags;
 			}
 			else
 			{
-				#ifdef GIA_FREE_MEMORY3
 				if(senseOutputWithHighestTagsPassedNewSynsetMustFree)
 				{
 					free_synset(senseOutputWithHighestTags);	//Free a synset	//CHECK THIS; senseOutputWithHighestTags may not have been allocated as yet (do not assume free_synset safe to dealloc a NULL SynsetPtr)
 				}
-				#endif
 			}
 		}
 	}
@@ -397,15 +390,11 @@ SynsetPtr GIAwordnetClass::checkIfSynsetListContainsSynonymousEntityNamesAndReco
 						#endif
 
 
-						#ifdef GIA_FREE_MEMORY3
 						free_index(idxOfFirstWordInWords);	//Free an index structure
-						#endif
-
 
 						if(tagCount >* maximumNumberOfTags)
 						{
 							*maximumNumberOfTags = tagCount;
-							#ifdef GIA_FREE_MEMORY3
 							if(senseOutputWithHighestTags != NULL)
 							{//senseOutputWithHighestTags may not have been allocated as yet (do not assume free_synset safe to dealloc a NULL SynsetPtr)
 								if(*senseOutputWithHighestTagsPassedNewSynsetMustFree)
@@ -421,7 +410,6 @@ SynsetPtr GIAwordnetClass::checkIfSynsetListContainsSynonymousEntityNamesAndReco
 							{
 								*senseOutputWithHighestTagsPassedNewSynsetMustFree = false;
 							}
-							#endif
 							senseOutputWithHighestTags = currentRelatedSense;
 						}
 					}
@@ -459,7 +447,6 @@ SynsetPtr GIAwordnetClass::checkIfSynsetListContainsSynonymousEntityNamesAndReco
 					#endif
 				}
 
-				#ifdef GIA_FREE_MEMORY3
 				if(passedNewSynsetMustFree)
 				{
 					if(currentRelatedSense != senseOutputWithHighestTags)
@@ -467,7 +454,6 @@ SynsetPtr GIAwordnetClass::checkIfSynsetListContainsSynonymousEntityNamesAndReco
 						free_synset(currentRelatedSense);	//Free a synset
 					}
 				}
-				#endif
 			}
 
 		}
@@ -509,7 +495,7 @@ void GIAwordnetClass::findSynonymsOLD(const string word, bool* wordIsFound, stri
 		cout << "findSynonyms error: number of senses string not found" << endl;
 		cout << "charIndex = " << charIndex << endl;
 		cout << "lineIndex = " << lineIndex << endl;
-		exit(0);
+		exit(EXIT_ERROR);
 	}
 
 	//now convert numberOfSensesString to number (this becomes the number of 'senses')
@@ -524,7 +510,7 @@ void GIAwordnetClass::findSynonymsOLD(const string word, bool* wordIsFound, stri
 		cout << "findSynonyms error: new line not found" << endl;
 		cout << "charIndex = " << charIndex << endl;
 		cout << "lineIndex = " << lineIndex << endl;
-		exit(0);
+		exit(EXIT_ERROR);
 	}
 	lineIndex++;
 
@@ -538,7 +524,7 @@ void GIAwordnetClass::findSynonymsOLD(const string word, bool* wordIsFound, stri
 			cout << "findSynonyms error: deformation (double new line not found)" << endl;
 			cout << "charIndex = " << charIndex << endl;
 			cout << "lineIndex = " << lineIndex << endl;
-			exit(0);
+			exit(EXIT_ERROR);
 		}
 		charIndex++;
 		lineIndex++;
@@ -548,7 +534,7 @@ void GIAwordnetClass::findSynonymsOLD(const string word, bool* wordIsFound, stri
 			cout << "findSynonyms error: new line not found" << endl;
 			cout << "charIndex = " << charIndex << endl;
 			cout << "lineIndex = " << lineIndex << endl;
-			exit(0);
+			exit(EXIT_ERROR);
 		}
 		lineIndex++;
 
@@ -566,7 +552,7 @@ void GIAwordnetClass::findSynonymsOLD(const string word, bool* wordIsFound, stri
 			cout << "lineIndex = " << lineIndex << endl;
 			cout << "senseEntryTitleStringExpected = " << senseEntryTitleStringExpected << endl;
 			cout << "lineString = " << lineString << endl;
-			exit(0);
+			exit(EXIT_ERROR);
 		}
 
 		if(sense == 1)
@@ -584,7 +570,7 @@ void GIAwordnetClass::findSynonymsOLD(const string word, bool* wordIsFound, stri
 					cout << "findSynonyms error: space not found after synonymn" << endl;
 					cout << "charIndex = " << charIndex << endl;
 					cout << "lineIndex = " << lineIndex << endl;
-					exit(0);
+					exit(EXIT_ERROR);
 					result = false;
 				}
 				charIndex++;
@@ -600,7 +586,7 @@ void GIAwordnetClass::findSynonymsOLD(const string word, bool* wordIsFound, stri
 			cout << "findSynonyms error: new line not found" << endl;
 			cout << "charIndex = " << charIndex << endl;
 			cout << "lineIndex = " << lineIndex << endl;
-			exit(0);
+			exit(EXIT_ERROR);
 		}
 
 	}

@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorRedistributeRelations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p4d 17-January-2017
+ * Project Version: 3a1a 26-February-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -41,7 +41,7 @@
 #include "GIAentityConnectionClass.hpp"
 #include "GIAconditionNodeClass.hpp"
 #include "GIAtranslatorOperations.hpp"
-	#include "GIAlrp.hpp"
+	#include "GIApreprocessorMultiwordReduction.hpp"
 #include "GIAtranslatorDefineGrammar.hpp"
 #include "SHAREDvars.hpp"	//required for convertStringToLowerCase
 
@@ -50,12 +50,12 @@
 class GIAtranslatorRedistributeRelationsClass
 {
 	private: SHAREDvarsClass SHAREDvars;
-	private: GIAlrpClass GIAlrp;
+	private: GIApreprocessorMultiwordReductionClass GIApreprocessorMultiwordReduction;
 	private: GIAtranslatorDefineGrammarClass GIAtranslatorDefineGrammar;
-	public: void redistributeStanfordAndRelexRelationsCorrectPOStagsAndLemmasOfAllVerbs(GIAsentence* currentSentenceInList, const bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], GIAfeature* featureArrayTemp[]);	//Stanford Specific? (may require Relex equivalent redistribution function)
+	public: void redistributeStanfordAndRelexRelationsCorrectPOStagsAndLemmasOfAllVerbs(GIAtranslatorVariablesClass* translatorVariables);
 		private: bool correctVerbPOStagAndLemma(GIAentityNode* actionOrSubstanceEntity, GIAfeature* currentFeature);
 };
-		//bool determineVerbCase(string* word);
+		//bool determineVerbCaseAdditional(string* word);
 
 #endif
 

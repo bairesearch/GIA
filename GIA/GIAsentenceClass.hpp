@@ -25,7 +25,7 @@
  * File Name: GIAsentenceClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p4d 17-January-2017
+ * Project Version: 3a1a 26-February-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -159,12 +159,12 @@ public:
 	int relationGovernorIndex;
 	string relationDependent;
 	int relationDependentIndex;
-	#ifdef GIA_LRP
+	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
 	bool relationGovernorRevertedToOfficialLRPTemp;
 	bool relationDependentRevertedToOfficialLRPTemp;
 	#endif
 
-	#ifdef GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS
+	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_INVERSE_PREPOSITIONS
 	string relationTypeNonInversed;
 	int relationTypeIndexNonInversed;
 	#endif
@@ -199,14 +199,14 @@ public:
 	#endif
 	#endif
 
-	#ifdef GIA_LRP_NORMALISE_PREPOSITIONS
+	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_PREPOSITIONS
 	bool inverseRelation;
-	#ifdef GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS
+	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_INVERSE_PREPOSITIONS
 	bool inverseRelationSingle;
 	#endif
-	#ifdef GIA_LRP_NORMALISE_TWOWAY_PREPOSITIONS
+	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_TWOWAY_PREPOSITIONS
 	bool relationTwoWay;
-	#ifdef GIA_LRP_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED
+	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED
 	bool inverseRelationTwoWay;
 	#endif
 	#endif
@@ -226,10 +226,10 @@ public:
 	int entityIndex;
 	string word;
 	string lemma;
-	#ifdef GIA_LRP
+	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
 	string wordWithLRPforNLPonly;
 	#endif
-	#ifdef GIA_LRP
+	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
 	bool featureRevertedToOfficialLRPTemp;	//not currently used
 	#endif
 
@@ -321,7 +321,7 @@ public:
 
 	bool semanticParserSuccessful;
 
-	int conditionEntityArtificialIndexCurrent;	//added 2g1a/25-August-2014
+	int relationshipEntityArtificialIndexCurrent;	//added 2g1a/25-August-2014
 };
 
 class GIAparagraph

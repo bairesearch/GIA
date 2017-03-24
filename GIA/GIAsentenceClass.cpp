@@ -25,7 +25,7 @@
  * File Name: GIAsentenceClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p4d 17-January-2017
+ * Project Version: 3a1a 26-February-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -142,7 +142,7 @@ GIArelation::GIArelation(void)
 	relationDependentRevertedToOfficialLRPTemp = false;
 	#endif
 
-	#ifdef GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS
+	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_INVERSE_PREPOSITIONS
 	relationTypeNonInversed = "";
 	relationTypeIndexNonInversed = INT_DEFAULT_VALUE;
 	#endif
@@ -173,14 +173,14 @@ GIArelation::GIArelation(void)
 	#endif
 	#endif
 
-	#ifdef GIA_LRP_NORMALISE_PREPOSITIONS
+	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_PREPOSITIONS
 	inverseRelation = false;
-	#ifdef GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS
+	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_INVERSE_PREPOSITIONS
 	inverseRelationSingle = false;
 	#endif
-	#ifdef GIA_LRP_NORMALISE_TWOWAY_PREPOSITIONS
+	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_TWOWAY_PREPOSITIONS
 	relationTwoWay = false;
-	#ifdef GIA_LRP_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED
+	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED
 	inverseRelationTwoWay = false;
 	#endif
 	#endif
@@ -203,10 +203,10 @@ GIAfeature::GIAfeature(void)
 	entityIndex = 0;
 	word = "";
 	lemma = "";
-	#ifdef GIA_LRP
+	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
 	wordWithLRPforNLPonly = "";
 	#endif
-	#ifdef GIA_LRP
+	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
 	featureRevertedToOfficialLRPTemp = "";
 	#endif
 
@@ -303,7 +303,7 @@ GIAsentence::GIAsentence(void)
 
 	semanticParserSuccessful = false;
 
-	conditionEntityArtificialIndexCurrent = MAX_NUMBER_OF_WORDS_PER_SENTENCE - 2;	//NB REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_RELATION_DEPENDENT_INDEX = (MAX_NUMBER_OF_WORDS_PER_SENTENCE-1)
+	relationshipEntityArtificialIndexCurrent = MAX_NUMBER_OF_WORDS_PER_SENTENCE - 2;	//NB REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_RELATION_DEPENDENT_INDEX = (MAX_NUMBER_OF_WORDS_PER_SENTENCE-1)
 }
 
 GIAsentence::~GIAsentence(void)
@@ -318,13 +318,11 @@ GIAsentence::~GIAsentence(void)
 		delete firstFeatureInList;
 	}
 
-	#ifdef GIA_FREE_MEMORY1
 	#ifdef GIA_STANFORD_CORENLP
 	if(firstCoreferenceInList != NULL)	//added 21 Sept 2012
 	{
 		delete firstCoreferenceInList;
 	}
-	#endif
 	#endif
 
 	if(next != NULL)

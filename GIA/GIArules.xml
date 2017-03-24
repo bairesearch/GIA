@@ -26,7 +26,7 @@
  * File Name: GIArules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p4d 17-January-2017
+ * Project Version: 3a1a 26-February-2017
  *
  *******************************************************************************/
 -->
@@ -105,6 +105,388 @@
 		<miscellaneousItem name="GIA_ENTITY_BOX_HIGHLIGHT_COLOUR" stringValue="" fractionalValue="5" />
 		
 	</draw>
+	<preprocessor>
+		<logicReference>
+			<!-- NB ,/and/or treatment is hard coded -->
+			<class name="undefined">
+				<type name="unknown">
+				</type>
+				<type name="imperative">
+				</type>
+				<type name="statement">
+				</type>		
+			</class>
+			<class name="conjunction">
+				<!-- expectOptionalCommaBeforeLogicRef_And_SubjectDelimiterObjectAfterTypeName -->
+				<!-- non-NLCrules.xml/WikipediaEnglishClubMultiwordPrepositions.txt additions (these are conjunctions): -->
+				<!--
+				eg;
+				[The house is blue] and the chicken is happy.
+				[The house is blue], and the chicken is happy.
+				-->
+				<type name="and">
+					<instance name="and" />
+				</type>	
+				<type name="or">
+					<instance name="or" />
+				</type>
+				<!--
+				eg;
+				Therefore the chicken is happy.
+				[The house is blue], therefore the chicken is happy.
+				-->
+				<type name="conclusion">
+					<instance name="so" />
+					<instance name="therefore" />	
+				</type>
+				<type name="logicalCondition">
+					<instance name="for" />
+					<instance name="if" />	
+				</type>
+			</class>
+			<class name="verb">
+				<!-- expectSubjectBeforeTypeName_And_ThatAndSubjectDelimiterObjectAfterTypeName_Or_ObjectAfterTypeName -->
+				<!-- non-NLCrules.xml/WikipediaEnglishClubMultiwordPrepositions.txt additions (these are verbs): -->
+				<!--
+				eg;
+				The apple proposed that the house is blue.
+				The apple proposed the house.
+					FUTURE: ["The house is blue",] suggested the apple.
+					FUTURE: ["The house is blue",] the apple suggested.
+				CONSIDER: [The house is blue,] the apple proposed.
+				-->
+				<!-- if the delimiter is followed by that, then expect no comma and the logic ref object to be a subject-delimiter-object group -->
+				<type name="proposition">
+					<instance name="said" />
+					<instance name="proposed" />
+					<instance name="stated" />
+					<instance name="suggested" />
+					<instance name="identified" />
+					<instance name="confirmed" />
+					<instance name="verified" />
+					<instance name="speculated" />
+					<instance name="says" />
+					<instance name="proposes" />
+					<instance name="states" />
+					<instance name="suggests" />
+					<instance name="identifies" />
+					<instance name="confirms" />
+					<instance name="verifies" />
+					<instance name="speculates" />
+				</type>
+			</class>
+			<class name="preposition">
+				<!-- expectCommaBeforeOrAfterLogicRef_And_ObjectAfterTypeName -->
+				<!--
+				eg;
+				The house is blue, considering the pie.
+				Considering the pie, the house is blue.
+				-->
+				<type name="regarding">
+					<!-- <instance name="about" /> ? -->
+					<instance name="anenst" />
+					<instance name="anent" />
+					<instance name="apropos" />
+					<instance name="concerning" />
+					<instance name="considering" />
+					<instance name="despite" />
+					<instance name="given" />
+					<instance name="pace" />
+					<instance name="re" />
+					<instance name="regarding" />
+					<instance name="respecting" />
+					<instance name="as_regards" />
+					<instance name="as_to" />
+					<instance name="further_to" /><!-- ? -->
+					<instance name="in_view_of" />
+					<instance name="with_reference_to" />
+					<instance name="with_regard_to" />
+					<instance name="with_respect_to" />
+					<instance name="with_a_view_to" />
+				</type>
+				<type name="stance">
+					<instance name="against" />
+					<instance name="anti" />
+					<instance name="like" />
+					<instance name="pace" />
+					<instance name="pro" />
+					<instance name="unlike" />
+					<instance name="according_to" /><!-- ? -->
+					<instance name="as_per" /><!-- ? -->
+					<instance name="contrary_to" /><!-- ? -->
+					<instance name="pursuant_to" /><!-- ? -->
+					<instance name="where_as" /><!-- ? -->
+					<instance name="as_opposed_to" /><!-- ? -->
+					<instance name="in_accordance_with" /><!-- ? -->
+					<instance name="in_favour_of" />
+					<instance name="on_account_of" /><!-- ? -->
+					<instance name="on_behalf_of" />
+				</type>
+				<type name="qualifier">
+					<instance name="absent" />
+					<instance name="bar" />
+					<instance name="barring" />
+					<instance name="but" />
+					<instance name="counting" />
+					<instance name="except" />
+					<instance name="excepting" />
+					<instance name="excluding" />
+					<instance name="failing" />
+					<instance name="including" />
+					<instance name="notwithstanding" />
+					<instance name="opposite" />
+					<instance name="pending" />
+					<instance name="sans" />
+					<instance name="save" />
+					<instance name="saving" />
+					<instance name="touching" />
+					<instance name="versus" />
+					<instance name="vice" />
+					<instance name="apart_from" />
+					<instance name="aside_from" />
+					<instance name="but_for" />
+					<instance name="except_for" />
+					<instance name="instead_of" />
+					<instance name="regardless_of" />
+					<instance name="save_for" />
+					<instance name="as_well_as" />
+					<instance name="in_addition_to" />
+					<instance name="in_lieu_of" />
+					<instance name="in_place_of" />
+					<instance name="in_spite_of" />
+				</type>
+				<type name="time">
+					<instance name="afore" />
+					<instance name="after" />
+					<instance name="by" />
+					<instance name="circa" />
+					<instance name="during" />
+					<instance name="following" />
+					<instance name="from" />
+					<instance name="on" />
+					<instance name="past" />
+					<instance name="pending" />
+					<instance name="since" />
+					<instance name="till" />
+					<instance name="until" />
+					<instance name="unto" />
+					<instance name="upon" />
+					<instance name="as of" />
+					<instance name="preparatory_to" />
+					<instance name="prior_to" />
+					<instance name="subsequent_to" />
+					<instance name="up_to" />
+					<instance name="as_soon_as" />
+					<!-- non-NLCrules.xml/WikipediaEnglishClubMultiwordPrepositions.txt additions: -->
+					<instance name="when" />
+				</type>
+				<type name="means of achieving action">
+					<instance name="by" />
+				</type>
+				<type name="similar">
+					<instance name="cum" />
+					<instance name="a la" />
+					<instance name="" />
+				</type>
+				<type name="purpose">
+					<instance name="for" />
+					<instance name="because_of" />
+					<instance name="depending_on" />
+					<instance name="due_to" />
+					<instance name="owing_to" />
+					<instance name="thanks_to" />
+					<instance name="by_means_of" />
+					<instance name="by_virtue_of" />
+					<instance name="for_the_sake_of" />
+					<instance name="in_case_of" />
+					<instance name="in_face_of" />
+					<instance name="in_order_to" />
+					<instance name="in_point_of" />
+					<instance name="on_account_of" />
+				</type>
+				<type name="with">
+					<instance name="with" />
+					<instance name="without" />
+					<instance name="along with" />
+					<instance name="" />
+				</type>
+				<!-- #ifdefGIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_SUPPORT_PREPOSITIONS_WITH_THAT -->
+				<type name="verbPropositionAlternateThat">
+					<instance name="saying" />
+					<instance name="proposing" />
+					<instance name="stating" />
+					<instance name="suggesting" />
+					<instance name="identifying" />
+					<instance name="confirming" />
+					<instance name="verifying" />
+					<instance name="speculating" />		
+				</type>
+				<!-- #endif -->
+			</class>
+			<!--
+			<class name="prepositionOrConjunction">
+				{!-- expectCommaBeforeOrAfterLogicRef_And_ObjectAfterTypeName_withThat --}
+				{!-- these rules are ignored and added here for explanation only. GIA takes expectCommaBeforeOrAfterLogicRef_And_ObjectAfterTypeName, and performs a dynamic detection of "that" --}
+				{!--
+				eg;
+				The house is blue, considering that the pie is red.
+				Considering that the pie is red, the house is blue.
+				--}
+				<type name="prepositionOrConjunctionWithThat">
+					<instance name="considering" />
+					<instance name="given" />
+					<instance name="barring" />
+					<instance name="excepting" />
+					<instance name="except" />
+					<instance name="notwithstanding" />
+				</type>
+				<type name="verbPropositionAlternateThat">
+					<instance name="saying" />
+					<instance name="proposing" />
+					<instance name="stating" />
+					<instance name="suggesting" />
+					<instance name="identifying" />
+					<instance name="confirming" />
+					<instance name="verifying" />
+					<instance name="speculating" />					
+				</type>	
+			</class>
+			-->
+		</logicReference>
+		<statistics>
+			<class name="math">
+				<!-- check underscoring; should only be used for multiword prepositions -->
+				<type name="numerosity">
+					<!-- non-NLCrules.xml/WikipediaEnglishClubMultiwordPrepositions.txt additions: -->
+					<instance name="all" />
+					<instance name="every" />
+					<instance name="some" />
+					<instance name="only some" />
+					<instance name="many" />
+					<instance name="not all" />
+					<instance name="not every" />
+					<instance name="not many" />
+				</type>
+				<type name="math">
+					<instance name="less" />
+					<instance name="minus" />
+					<instance name="modulo" />
+					<instance name="per" />
+					<instance name="plus" />
+					<instance name="times" />
+				</type>
+				<type name="comparison">
+					<instance name="than" />
+				</type>	
+				<type name="distanceComparison">
+					<instance name="as_far_as" />
+				</type>
+				<type name="lengthComparison">
+					<instance name="as_long_as" />
+				</type>	
+				<!-- eg Tom said that A is B, but not all Qs are D -->
+				<!-- eg not all Qs are D, but Tom said that A is B. -->
+			</class>
+		</statistics>
+		<spatioTemporalNetwork>
+			<class name="position">
+				<type name="position1" notes="position">
+					<instance name="abaft" />
+					<instance name="abeam" />
+					<instance name="aboard" />
+					<instance name="above" />
+					<instance name="across" />
+					<instance name="afore" />
+					<instance name="after" />
+					<instance name="athwart" />
+					<instance name="atop" />
+					<instance name="before" />
+					<instance name="behind" />
+					<instance name="below" />
+					<instance name="beneath" />
+					<instance name="on" />
+					<instance name="off" />
+					<instance name="over" />
+					<instance name="under" />
+					<instance name="underneath" />
+					<instance name="upon" />
+					<instance name="ahead_of" />
+					<instance name="forward_of" />
+					<instance name="left_of" />
+					<instance name="on_board" />
+					<instance name="right_of" />
+					<instance name="in_front_of" />
+					<instance name="on_top_of" />
+				</type>
+				<type name="position2" notes="near">
+					<instance name="about" />
+					<instance name="among" />
+					<instance name="among" />
+					<instance name="amongst" />
+					<instance name="apud" />
+					<instance name="around" />
+					<instance name="by" />
+					<instance name="in" />
+					<instance name="near" />
+					<instance name="near_to" />
+					<instance name="next_to" />
+				</type>
+				<type name="position3" notes="proximity">
+					<instance name="against" />
+					<instance name="alongside" />
+					<instance name="beside" />
+					<instance name="besides" />
+					<instance name="beyond" />
+					<instance name="outside" />
+					<instance name="past" /><!-- ? -->
+					<instance name="round" /><!-- ? -->
+					<instance name="vis-a-vis" /><!-- ? -->
+					<instance name="away_from" />
+					<instance name="close_to" />
+					<instance name="far_from" />
+				</type>
+				<type name="position4" notes="between">
+					<instance name="amid" />
+					<instance name="amidst" />
+					<instance name="anenst" />
+					<instance name="anent" />
+					<instance name="aside" />
+					<instance name="astride" />
+					<instance name="between" />
+					<instance name="forenenst" /><!-- ? -->
+					<instance name="inside" />
+					<instance name="mid" />
+					<instance name="midst" />
+					<instance name="within" />
+					<instance name="in_between" />
+					<instance name="inside_of" />
+					<instance name="outside_of" />
+				</type>
+				<type name="spatiotemporal">
+					<instance name="aboard" />
+					<instance name="across" />
+					<instance name="along" />
+					<instance name="from" />
+					<instance name="into" />
+					<instance name="onto" />
+					<instance name="over" />
+					<instance name="round" />
+					<instance name="through" />
+					<instance name="throughout" />
+					<instance name="toward" />
+					<instance name="towards" />
+					<instance name="via" />
+					<instance name="back_to" />
+					<instance name="in_to" />
+					<instance name="on_to" />
+					<instance name="out_from" />
+					<instance name="out_of" />
+				</type>
+			</class>
+		</spatioTemporalNetwork>
+		<referenceSet>
+		</referenceSet>
+	</preprocessor>
 	<translator>
 		<file name="GIAtranslatorRedistributeRelationsStanford">
 			
@@ -2562,7 +2944,6 @@
 			</function>
 			<!-- #endif -->
 			
-			<!-- #ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC -->
 			<function name="collapseRedundantRelationAndMakeNegativeStanford">
 				<example>
 				eg The chicken has not eaten a pie.: neg(eaten-5, not-4)
@@ -2575,7 +2956,6 @@
 				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="negative" value="true" REL="1" REL_ENT="1" />
 				</paramDepRel>
 			</function>	
-			<!-- #endif -->
 
 			<!-- this is now handled by fillGrammaticalArraysStanford;
 			<function name="redistributeStanfordRelationsDisablePredeterminers">
@@ -2731,6 +3111,7 @@
 				<option disableRelation="true" REL="1" />
 				</paramDepRel>
 				
+				<!-- OLD (check this code can be removed) -->
 				<!-- #ifndef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC -->
 				<!--
 				<paramDepRel mode="redistribute">
@@ -2954,6 +3335,7 @@
 				<!-- #ifndefGIA_STANFORD_PARSER_CONNECT_PREPOSITIONS_TO_ACTION_RATHER_THAN_ACTION_OBJECT_GENERALISE_ACTION_TYPES -->
 				<option useRelationArrayTest="true" REL="1" REL_ENT="1" relationArrayTest="move|copy" relationArrayTestSize="2" />
 				<!-- #else -->
+				<!-- OLD (check this code can be removed) -->
 				<!-- #ifndefGIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC -->
 				<!-- <option useRelationTest="true" REL="1" REL_ENT="1" relationArrayTest="have" relationArrayTestSize="1" relationTestIsNegative="true" /> -->
 				<!-- #endif -->		
@@ -2980,6 +3362,7 @@
 				{!-- #ifndefGIA_STANFORD_PARSER_CONNECT_PREPOSITIONS_TO_ACTION_RATHER_THAN_ACTION_OBJECT_GENERALISE_ACTION_TYPES --}
 				<option useRelationArrayTest="true" REL="1" REL_ENT="1" relationArrayTest="move|copy" relationArrayTestSize="2" />
 				{!-- #else  --}
+				{!-- OLD (check this code can be removed) --}
 				{!-- #ifndefGIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC --}
 				{!-- <option useRelationTest="true" REL="1" REL_ENT="1" relationArrayTest="have" relationArrayTestSize="1" relationTestIsNegative="true" /> --}
 				{!-- #endif --}
@@ -3314,7 +3697,6 @@
 
 			<!-- #ifndefGIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B_RELATIONS_TREAT_ADVERB_PLUS_OBJECT_PLUS_SUBJECT_RELATION_WHERE_ADVERB_HAS_SAME_ARGUMENT_AS_SUBJECT_AS_CONDITION -->
 			<function name="redistributeRelexRelationsAdverbPlusObjectPlusSubjectRelationWhereAdverbHasSameArgumentAsSubjectAsCondition">
-				<!-- #ifdefGIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_BEING_OR_HAVING_INTO_A_CONDITION_DEFINITION -->
 				<example><!--eg1; Space is saved by having a chicken. _subj(have[5], by[4]) + _obj(have[5], chicken[7]) + _advmod(save[3], by[4]) -> dobj(have[5], chicken[7]) + prep_by(save[3], have[5]) {required for interpretation by linkHavingPropertyConditionsAndBeingDefinitionConditions}
 				_subj(have[5], by[4])
 				_obj(have[5], chicken[7])
@@ -3327,7 +3709,7 @@
 				_advmod(save[3], by[4])
 				_obj(save[3], space[1]) [IRRELEVANT]
 				--></example>
-				<example><!--eg3; Space is saved by moving a chicken. _subj(move[5], by[4]) + _obj(move[5], chicken[7]) + _advmod(save[3], by[4]) -> -> dobj(move[5], chicken[7]) + prep_by(save[3], move[5])
+				<example><!--eg3; Space is saved by moving a chicken. _subj(move[5], by[4]) + _obj(move[5], chicken[7]) + _advmod(save[3], by[4]) -> dobj(move[5], chicken[7]) + prep_by(save[3], move[5])
 				_subj(move[5], by[4])
 				_obj(move[5], chicken[7])
 				_advmod(save[3], by[4])
@@ -3344,7 +3726,27 @@
 				<option useRedistributeRelationEntityIndexReassignment="true" REL="3" REL_ENT="2" redistributeRelationEntityIndexReassignmentRelationID="1" redistributeRelationEntityIndexReassignmentRelationEntityID="1" />
 				<option useRedistributeRelationEntityIndexReassignment="true" REL="3" REL_ENT="3" redistributeRelationEntityIndexReassignmentRelationID="1" redistributeRelationEntityIndexReassignmentRelationEntityID="2" />
 				</paramDepRel>
-				<!-- #endif -->
+				
+				<!--
+				Space is saved through/by being a chicken. prepc_through/by(saved-3, chicken-7) + cop(chicken-7, being-5) -> prep_through/by(saved-3, being-5) + dobj(being-5, chicken-7) [Stanford Only]
+				-->
+				</example>
+				<paramDepRel mode="redistribute">
+				<option NLPdependencyRelationsType="NLPdependencyRelationsType" />
+				<option numberOfRelations="2" />
+				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="by|through" relationArrayTestSize="2" />
+				<option expectToFindPrepositionTest="true" REL="1" /> <!-- redundant test (maintained for consistency only with old non- code) -->
+				<option useRelationIndexTest="true" REL="2" REL_ENT="1" relationIndexTestRelationID="1" relationIndexTestEntityID="2" /> <!-- coincidentially this condition holds for all 3 cases -->
+				<option useRelationTest="true" REL="2" REL_ENT="3" relationTest="_cop" />
+				<option useRelationTest="true" REL="2" REL_ENT="2" relationTest="be" />
+				<option useRedistributeRelationEntityReassignment="true" REL="2" REL_ENT="3" redistributeRelationEntityReassignment="_obj" />
+				<option useRedistributeRelationEntityIndexReassignment="true" REL="1" REL_ENT="2" redistributeRelationEntityIndexReassignmentRelationID="2" redistributeRelationEntityIndexReassignmentRelationEntityID="2" redistributeRelationEntityIndexReassignmentUseOriginalValues="true" />
+				<option useRedistributeRelationEntityIndexReassignment="true" REL="2" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="2" redistributeRelationEntityIndexReassignmentRelationEntityID="2" redistributeRelationEntityIndexReassignmentUseOriginalValues="true" />
+				<option useRedistributeRelationEntityIndexReassignment="true" REL="2" REL_ENT="2" redistributeRelationEntityIndexReassignmentRelationID="1" redistributeRelationEntityIndexReassignmentRelationEntityID="2" redistributeRelationEntityIndexReassignmentUseOriginalValues="true" />
+				</paramDepRel>
+			</function>
+			
+			
 			</function>
 			<!-- #endif -->
 
@@ -3494,7 +3896,6 @@
 				<!-- #endif -->
 			</function>
 
-			<!-- #ifdefGIA_CREATE_NON_SPECIFIC_CONCEPTS_FOR_ALL_NETWORK_INDEXES -->
 			<function name="defineSubstancesAllNodes">
 				<paramEntity mode="execute">
 				<option useEntityTest="true" entityTest="_$qVar" entityTestIsNegative="true" />
@@ -3502,7 +3903,6 @@
 				<option functionToExecuteUponFind="1" />
 				</paramEntity>
 			</function>
-			<!-- #endif -->
 
 			<function name="defineSubstancesBasedOnDeterminatesOfDefinitionEntities">
 
@@ -3630,7 +4030,7 @@
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="mustNotSetIsConceptBasedOnPrenomonalModifierRelation" value="false" />			
 				<!-- #endif -->				
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isNumberOf" value="false" />	<!-- added 2i22a -->
-				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="entityType" value="4" />
+				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="entityType" value="2" />
 				</paramEntity>
 
 				<paramEntity mode="redistribute">
@@ -3643,7 +4043,7 @@
 				<!-- #endif -->
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isNumberOf" value="false" />	<!-- added 2i22a -->
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="mustSetIsConceptBasedOnApposRelation" value="true" />
-				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="entityType" value="4" />
+				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="entityType" value="2" />
 				</paramEntity>
 
 				<!-- #ifdefGIA_SPECIFIC_CONCEPTS_ASSIGN_TO_PRONOUNS -->
@@ -3655,7 +4055,7 @@
 				{!-- #endif --}
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalPronounTemp" value="true" />
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isNumberOf" value="false" />	{!--added 2i22a --}
-				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="entityType" value="4" />
+				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="entityType" value="2" />
 				</paramEntity>
 				-->
 				<!-- #endif -->
@@ -3669,7 +4069,7 @@
 				{!-- #endif --}
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalProperNounTemp" value="true" />
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isNumberOf" value="false" />	{!--added 2i22a --}
-				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="entityType" value="4" />
+				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="entityType" value="2" />
 				</paramEntity>
 				-->
 				<!-- #endif -->
@@ -3710,170 +4110,6 @@
 				</paramEntity>
 			</function>
 			<!-- #endif -->	
-
-			<!-- #ifndefGIA_CREATE_NON_SPECIFIC_CONCEPTS_FOR_ALL_NETWORK_INDEXES -->
-			<!-- 
-			<function name="defineSubstancesObjectsAndSubjectsWithSubstances">
-				<paramEntity mode="execute">
-				<specialCase type="specialCaseCharacteristicsTestOrVector" variable="isObjectTemp" value="true" />
-				<specialCase type="specialCaseCharacteristicsTestOrVector" variable="isSubjectTemp" value="true" />
-				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="hasSubstanceTemp" value="true" />
-				<option functionToExecuteUponFind="1" />
-				</paramEntity>
-			</function>
-			
-			<function name="defineSubstancesDefiniteNouns">
-				<paramEntity mode="execute">
-				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isPronounReference" value="false" />
-				{!-- #ifndefGIA_ASSIGN_SUBSTANCE_TO_PROPER_NOUNS --}
-				{!-- <specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalProperNounTemp" value="false" /> --}
-				{!-- #endif --}
-				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalDefiniteTemp" value="true" />
-				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalIndefinitePlural" value="true" />
-				<option functionToExecuteUponFind="1" />
-				</paramEntity>
-			</function>
-
-			<function name="defineSubstancesNounsWithDeterminates">
-				<paramEntity mode="execute">
-				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isPronounReference" value="false" />
-				{!-- #ifndefGIA_ASSIGN_SUBSTANCE_TO_PROPER_NOUNS --}
-				{!-- <specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalProperNounTemp" value="false" /> --}
-				{!-- #endif --}
-				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalNumber" value="2" />
-				{!-- #ifdefGIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES --}
-				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp" value="false" />
-				<{!-- #endif --}
-				<option functionToExecuteUponFind="1" />
-				</paramEntity>
-			</function>
-
-			<function name="defineSubstancesNounsWithAdjectivesOrPrenominalModifiers">
-				<paramDepRel mode="execute">
-				<option numberOfRelations="1" />
-				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="_amod|_advmod" relationArrayTestSize="2" />
-				<option functionToExecuteUponFind="1" />
-				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="1" />
-				</paramDepRel>
-
-				{!-- #ifdefGIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_PROPERTIES_DEFINE_NOUNS_WITH_PRENOMINAL_MODIFIERS_AS_SUBSTANCES --}
-				<paramDepRel mode="execute">
-				<option numberOfRelations="1" />
-				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="_nn" relationArrayTestSize="1" />
-				<option functionToExecuteUponFind="1" />
-				{!-- #ifdefGIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_PROPERTIES_TAKE_DEPENDENT_AS_PROPERTY_INSTEAD_OF_GOVERNOR --}
-				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="1" />
-				{!-- #else --}
-				{!-- <option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="2" /> --}
-				{!-- #endif --}
-				</paramDepRel>
-				{!-- #endif --}
-			</function>
-
-			<function name="defineSubstancesQuantitiesAndMeasures">
-				<paramDepRel mode="execute">
-				<option numberOfRelations="1" />
-				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="_quantity|_measure_distance|_measure_size|_measure_time|_measure" relationArrayTestSize="5" />
-				<option functionToExecuteUponFind="1" />
-				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="1" />
-				</paramDepRel>
-			</function>
-
-			<function name="defineSubstancesQuantityModifiers">
-				<paramDepRel mode="execute">
-				<option numberOfRelations="1" />
-				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="_quantity_mod|_measure_per|_measure_dependency" relationArrayTestSize="3" />
-				<option functionToExecuteUponFind="1" />
-				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="2" />
-				</paramDepRel>
-			</function>
-
-			<function name="defineSubstancesPronouns">
-				<paramEntity mode="execute">
-				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isPronounReference" value="false" />
-				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalPronounTemp" value="true" />
-				<option functionToExecuteUponFind="1" />
-				</paramEntity>
-			</function>
-
-			<function name="defineSubstancesToBe">
-				<paramDepRel mode="execute">
-				<option numberOfRelations="1" />
-				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_to-be" />
-				<option functionToExecuteUponFind="1" />
-				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="2" />
-				</paramDepRel>
-			</function>
-			
-			<function name="defineSubstancesHasTime">
-				<paramEntity mode="execute">
-				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="hasAssociatedTime" value="true" />
-				<option functionToExecuteUponFind="1" />
-				</paramEntity>
-			</function>
-
-			<function name="defineSubstancesIndirectObjects">
-				<paramDepRel mode="execute">
-				<option numberOfRelations="2" />
-				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_iobj" />
-				<option useRelationArrayTest="true" REL="2" REL_ENT="3" relationArrayTest="_obj|_that" relationArrayTestSize="2" />
-				<option useRelationIndexTest="true" REL="2" REL_ENT="1" relationIndexTestRelationID="1" relationIndexTestEntityID="1" />
-				<option functionToExecuteUponFind="1" />
-				<option functionEntityRelationID="2" FUNC_ENT="1" functionEntityRelationEntityID="2" />
-				</paramDepRel>
-			</function>
-
-			<function name="defineSubstancesOfPossessivePrepositions">
-				<example>{!--
-				eg She grew tired of the pie.	_to-be(grow[2], tired[3])
-				--}</example>
-				<paramDepRel mode="execute">
-				<option numberOfRelations="1" />
-				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="of" relationArrayTestSize="1" />
-				{!-- <option relationTestSpecialCaseIsNotAction="true" REL="1" REL_ENT="1" /> --}
-				{!-- <option relationTestSpecialCaseIsNotToBeComplimentOfAction="true" REL="1" REL_ENT="1" /> --}
-				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isAction" value="false" REL="1" REL_ENT="1" /> {!-- Stanford Condition --}
-				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isToBeComplimentOfActionTemp" value="false" REL="1" REL_ENT="1" /> {!-- Relex Condition --}
-				<option functionToExecuteUponFind="1" />
-				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="1" />
-				</paramDepRel>
-			</function>
-			<function name="defineSubstancesActions">
-				<example>{!--
-				eg 'run' in 'Tom runs' _subj(run[2], Tom[1])
-				#ifdefGIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
-				exceptions required for linkHavingPropertyConditionsAndBeingDefinitionConditions{}:
-					'having a chicken'/being a chicken': dobj(having-5, chicken-7) / dobj(be-5, chicken-7)]
-				#endif
-				no exceptions required for linkSubjectObjectRelationships(); this will cause no problems:
-						eg The rabbit is 20 meters away. _subj(away[6], rabbit[2]) + _measure_distance(away[6], meter[5]) [away is a substance of rabbit, not a condition of rabbit]
-				--}</example>
-				<paramDepRel mode="execute">
-				<option numberOfRelations="1" />
-				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="_subj|_obj" relationArrayTestSize="2" />
-				{!-- #ifdefGIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC --}
-				{!-- <option useRelationArrayTest="true" REL="1" REL_ENT="1" relationArrayTest="have|be" relationArrayTestSize="2" relationArrayTestIsNegative="true" />  //exceptions required for linkHavingPropertyConditionsAndBeingDefinitionConditions() --}
-				{!-- #endif --}
-				<option functionToExecuteUponFind="1" />
-				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="1" />
-				</paramDepRel>
-			</function>
-
-			{!-- #ifdefGIA_SPECIFIC_ACTION_NETWORK_INDEXES --}
-			<function name="defineSubstancesActionNetworkIndexes">
-				<example>{!--
-				eg 'swim' in 'To swim to the beach requires strength.'
-				--}</example>
-				<paramEntity mode="execute">
-				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalWordTypeTemp" value="2" />
-				<specialCase type="specialCaseCharacteristicsTestOrVector" variable="grammaticalTenseModifierArrayTemp" value="true" arrayIndex="0" />
-				<specialCase type="specialCaseCharacteristicsTestOrVector" variable="grammaticalTenseModifierArrayTemp" value="true" arrayIndex="3" />
-				<option functionToExecuteUponFind="1" />
-				</paramEntity>
-			</function>
-			{!-- #endif --}	
-			-->
-			<!-- #endif -->
 			
 		</file>
 		<file name="GIAtranslatorLinkEntities">
@@ -3882,74 +4118,17 @@
 				Joe's bike is blue.	_poss(bike[3], Joe[1])
 				--></example>
 				
-				<!-- #ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC -->
-				
-				<paramDepRel mode="execute">
-				<option numberOfRelations="1" />
-				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="_poss" relationArrayTestSize="1" />
-				<!-- #ifdefGIA_CREATE_NON_SPECIFIC_CONCEPTS_FOR_ALL_NETWORK_INDEXES -->
-				<option functionToExecuteUponFind="4" />
-				<!-- #else -->
-				<!-- <option functionToExecuteUponFind="3" /> -->
-				<!-- #endif -->
-				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="2" />
-				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="1" />
-				<!--  #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
-				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="true" />
-				<!--  #endif -->
-				</paramDepRel>
-				
-				<!-- #else -->
-				<!-- #ifdef GIA_RECORD_POSSESSION_AUXILIARY_HAS_INFORMATION_GENERAL_IMPLEMENTATION -->
-				<!--
-				<paramDepRel mode="execute">
-				<option numberOfRelations="1" />
-				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="_poss" relationArrayTestSize="1" />
-				<option mustGenerateConditionName="true" conditionEntityDefaultName="poss" />	{!-- "poss" is a special have action for _poss cases only (ie artificial have auxiliary) --}
-				<option functionToExecuteUponFind="5" />
-				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="2" />
-				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="1" />
-				{!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION --}
-				<option defaultSameSetReferenceValue="true" />
-				{!-- #endif --}
-				</paramDepRel>
-				-->
-				<!-- #else -->	
-				<!--		
 				<paramDepRel mode="execute">
 				<option numberOfRelations="1" />
 				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="_poss" relationArrayTestSize="1" />
 				<option mustGenerateConditionName="true" conditionEntityDefaultName="have" />
-				<option functionToExecuteUponFind="5" />
-				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="2" />
-				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="1" />
-				{!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION --}
-				<option defaultSameSetReferenceValue="true" />
-				{!-- #endif --}
-				</paramDepRel>
-				-->
-				<!-- #ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC_HYBRID -->
-				<!--	
-				{!-- add an additional property connection --}			
-				<paramDepRel mode="execute">
-				<option numberOfRelations="1" />
-				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="_poss" relationArrayTestSize="1" />
-				{!-- #ifdefGIA_CREATE_NON_SPECIFIC_CONCEPTS_FOR_ALL_NETWORK_INDEXES --}
 				<option functionToExecuteUponFind="4" />
-				{!-- #else --}
-				{!-- <option functionToExecuteUponFind="3" /> --}
-				{!-- #endif --}
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="1" />
-				{!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION --}
+				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="true" />
-				{!-- #endif --}
-				</paramDepRel>
-				{!-- #endif --}	
-				-->
-				
 				<!-- #endif -->
-				
+				</paramDepRel>
 				
 				<!-- #ifdefGIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES -->
 				<!-- XML only function (not hard coded): added 2m1c -->
@@ -3984,7 +4163,7 @@
 				<paramDepRel mode="execute">
 				<option numberOfRelations="1" />
 				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="_nn" relationArrayTestSize="1" />
-				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="entityType" value="4" REL="1" REL_ENT="2" />
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="entityType" value="2" REL="1" REL_ENT="2" />
 				<option functionToExecuteUponFind="11" />
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="1" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" />
@@ -4181,102 +4360,7 @@
 				<option disableRelationDuringLink="true" REL="2" /> <!-- required to prevent action link from being created to object in secondary action interpretation function linkSubjectOrObjectRelationships() - added 17 July 2013 -->
 				</paramDepRel>
 			</function>
-
-			<!-- #ifdefGIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC -->
-			<function name="linkHavingPropertyConditionsAndBeingDefinitionConditions">
-				<example>
-				<!--
-				Stanford;
-				Space is saved through/by having a chicken. prepc_through/by(saved-3, having-5) + dobj(having-5, chicken-7) + nsubjpass(saved-3, Space-1) [IRRELEVANT] + auxpass(saved-3, is-2) [IRRELEVANT]
-				Space is saved through/by being a chicken. prepc_through/by(saved-3, chicken-7) + cop(chicken-7, being-5) + nsubjpass(saved-3, Space-1) [IRRELEVANT] + auxpass(saved-3, is-2) [IRRELEVANT]
-				Relex;
-				Space is saved through/by having a chicken. prep_through/by(saved-3, having-5) + dobj(having-5, chicken-7) [check that through(save[3], chicken[7]) + _obj(save[3], space[1]) is first reduced by redistributeRelexRelationsAdverbPlusObjectPlusSubjectRelationWhereAdverbHasSameArgumentAsSubjectAsCondition]
-				Space is saved through/by being a chicken. prep_through/by(saved-3, be-5) + dobj(be-5, chicken-7) [check that _obj(be[5], chicken[7]) + _to-do(through[4], be[5]) + _predadj(space[1], through[4]) is first reduced by redistributeRelexRelationsAdverbPlusObjectPlusSubjectRelationWhereAdverbHasSameArgumentAsSubjectAsCondition]
-				-->
-				</example>
-
-				<example>
-				<!--
-				Space is saved through/by having a chicken. prepc/prep_through/by(saved-3, having-5) + dobj(having-5, chicken-7) [note Relex currently fails to parse 'through having/being' but can parse 'by having/being']
-				-->
-				</example>
-				<paramDepRel mode="execute">
-				<option NLPdependencyRelationsType="NLPdependencyRelationsType" />
-				<option numberOfRelations="2" />
-				<option disableRelationDuringLink="true" REL="1" /> <!-- required to prevent re-interpretation of prepositions in main preposition interpretation function linkConditions() -->
-				<option disableRelationDuringLink="true" REL="2" /> <!-- required to prevent re-interpretation of prepositions in secondary action interpretation function linkSubjectOrObjectRelationships() - added 17 July 2013 -->
-				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="by|through" relationArrayTestSize="2" />
-				<option expectToFindPrepositionTest="true" REL="1" /> <!-- redundant test (maintained for consistency only with old non- code) -->
-				<option useRelationIndexTest="true" REL="2" REL_ENT="1" relationIndexTestRelationID="1" relationIndexTestEntityID="2" /> <!-- coincidentially this condition holds for all 3 cases -->
-				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="1" /> <!-- coincidentially this condition holds for all 3 cases -->
-				<option functionEntityRelationID="2" FUNC_ENT="2" functionEntityRelationEntityID="2" />
-				<option functionEntityRelationID="1" FUNC_ENT="3" functionEntityRelationEntityID="3" /> <!-- coincidentially this condition holds for all 3 cases -->
-				<option functionEntityRelationID="1" FUNC_ENT="4" functionEntityRelationEntityID="2" />
-				<option useRelationTest="true" REL="2" REL_ENT="3" relationTest="_obj" />
-				<option useRelationTest="true" REL="1" REL_ENT="2" relationTest="have" />
-				<option functionToExecuteUponFind="10" />
-				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
-				<option defaultSameSetRelationID="2" defaultSameSetReferenceValue="true" />
-				<!-- #endif -->
-				<option disableEntity="true" REL="1" REL_ENT="2" />
-				</paramDepRel>
-
-				<example>
-				<!--
-				Space is saved through/by being a chicken. prep_through/by(saved-3, be-5) + dobj(be-5, chicken-7) [Relex Only - note Relex currently fails to parse 'through having/being' but can parse 'by having/being']
-				-->
-				</example>
-				<paramDepRel mode="execute">
-				<option NLPdependencyRelationsType="NLPdependencyRelationsType" />
-				<option numberOfRelations="2" />
-				<option disableRelationDuringLink="true" REL="1" /> <!-- required to prevent re-interpretation of prepositions in main preposition interpretation function linkConditions() -->
-				<option disableRelationDuringLink="true" REL="2" /> <!-- required to prevent re-interpretation of prepositions in secondary action interpretation function linkSubjectOrObjectRelationships() -->
-				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="by|through" relationArrayTestSize="2" />
-				<option expectToFindPrepositionTest="true" REL="1" /> <!-- redundant test (maintained for consistency only with old non- code) -->
-				<option useRelationIndexTest="true" REL="2" REL_ENT="1" relationIndexTestRelationID="1" relationIndexTestEntityID="2" /> <!-- coincidentially this condition holds for all 3 cases -->
-				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="1" /> <!-- coincidentially this condition holds for all 3 cases -->
-				<option functionEntityRelationID="2" FUNC_ENT="2" functionEntityRelationEntityID="2" />
-				<option functionEntityRelationID="1" FUNC_ENT="3" functionEntityRelationEntityID="3" /> <!-- coincidentially this condition holds for all 3 cases -->
-				<option functionEntityRelationID="1" FUNC_ENT="4" functionEntityRelationEntityID="2" />
-				<option useRelationTest="true" REL="2" REL_ENT="3" relationTest="_obj" />
-				<option useRelationTest="true" REL="1" REL_ENT="2" relationTest="be" />
-				<option functionToExecuteUponFind="9" />
-				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
-				<option defaultSameSetRelationID="2" defaultSameSetReferenceValue="true" />
-				<!-- #endif -->
-				<option disableEntity="true" REL="1" REL_ENT="2" />
-				</paramDepRel>
-
-				<example>
-				<!--
-				Space is saved through/by being a chicken. prepc_through/by(saved-3, chicken-7) + cop(chicken-7, being-5) [Stanford Only]
-				-->
-				</example>
-				<paramDepRel mode="execute">
-				<option NLPdependencyRelationsType="NLPdependencyRelationsType" />
-				<option numberOfRelations="2" />
-				<option disableRelationDuringLink="true" REL="1" /> <!-- required to prevent re-interpretation of prepositions in main preposition interpretation function linkConditions() -->
-				<option disableRelationDuringLink="true" REL="2" /> <!-- required to prevent re-interpretation of prepositions in secondary action interpretation function linkSubjectOrObjectRelationships() - added 17 July 2013 -->
-				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="by|through" relationArrayTestSize="2" />
-				<option expectToFindPrepositionTest="true" REL="1" /> <!-- redundant test (maintained for consistency only with old non- code) -->
-				<option useRelationIndexTest="true" REL="2" REL_ENT="1" relationIndexTestRelationID="1" relationIndexTestEntityID="2" /> <!-- coincidentially this condition holds for all 3 cases -->
-				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="1" /> <!-- coincidentially this condition holds for all 3 cases -->
-				<option functionEntityRelationID="2" FUNC_ENT="2" functionEntityRelationEntityID="2" />
-				<option functionEntityRelationID="1" FUNC_ENT="3" functionEntityRelationEntityID="3" /> <!-- coincidentially this condition holds for all 3 cases -->
-				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" />
-				<option functionEntityRelationID="2" FUNC_ENT="4" functionEntityRelationEntityID="2" />
-				<option useRelationTest="true" REL="2" REL_ENT="3" relationTest="_cop" />
-				<option parseDisabledRelation="true" REL="2" /> <!-- copula will have been disabled, so must explicitly allow it to be parsed -->
-				<option useRelationTest="true" REL="2" REL_ENT="2" relationTest="be" />
-				<option functionToExecuteUponFind="9" />
-				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
-				<option defaultSameSetRelationID="2" defaultSameSetReferenceValue="true" />
-				<!-- #endif -->
-				<option disableEntity="true" REL="2" REL_ENT="2" />
-				</paramDepRel>
-			</function>
-			<!-- #endif -->
-			
+					
 			<function name="linkIndirectObjects">
 				<example><!--
 				eg The officer gave the youth a ride. _iobj(give, youth) + _obj(give[3], ride[7])
@@ -4286,11 +4370,7 @@
 				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_iobj" />
 				<option useRelationArrayTest="true" REL="2" REL_ENT="3" relationArrayTest="_obj|_that" relationArrayTestSize="2" />
 				<option useRelationIndexTest="true" REL="2" REL_ENT="1" relationIndexTestRelationID="1" relationIndexTestEntityID="1" />
-				<!-- #ifdefGIA_CREATE_NON_SPECIFIC_CONCEPTS_FOR_ALL_NETWORK_INDEXES -->
 				<option functionToExecuteUponFind="4" />
-				<!-- #else -->
-				<!-- <option functionToExecuteUponFind="3" /> -->
-				<!-- #endif -->
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="2" FUNC_ENT="2" functionEntityRelationEntityID="2" />
 				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
@@ -4327,7 +4407,6 @@
 				</paramDepRel>
 				<!-- #endif -->
 
-				<!-- #ifdefGIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_BEING_EG_BEING_INTO_A_DEFINITION_BASIC -->
 				<example><!--special case B: passdefinition [Relex only? Note Stanford produces different relations that get interpreted as appo]
 				eg A bat is an animal. _subj(be[3], bat[2]) + _obj(be[3], animal[5])
 				_obj(be[3], animal[5])
@@ -4338,20 +4417,21 @@
 				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="_subj" relationArrayTestSize="1" />
 				<option useRelationArrayTest="true" REL="2" REL_ENT="3" relationArrayTest="_obj|_that" relationArrayTestSize="2" />
 				<option useRelationIndexTest="true" REL="1" REL_ENT="1" relationIndexTestRelationID="2" relationIndexTestEntityID="1" />
-				<option disableRelationDuringLink="true" REL="1" /> <!-- required to prevent action link from being created to object in secondary action interpretation function linkSubjectOrObjectRelationships() - added 17 July 2013 -->
-				<option disableRelationDuringLink="true" REL="2" /> <!-- required to prevent action link from being created to object in secondary action interpretation function linkSubjectOrObjectRelationships() - added 17 July 2013 -->
+				<option useRelationArrayTest="true" REL="1" REL_ENT="1" relationArrayTest="be" relationArrayTestSize="1" />
+				<option disableRelationDuringLink="true" REL="1" />
+				<option disableRelationDuringLink="true" REL="2" />
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="2" FUNC_ENT="2" functionEntityRelationEntityID="2" />
-				<option useRelationArrayTest="true" REL="1" REL_ENT="1" relationArrayTest="be" relationArrayTestSize="1" />
-				<option functionToExecuteUponFind="11" />
+				<option functionEntityRelationID="1" FUNC_ENT="3" functionEntityRelationEntityID="1" />
+				<option functionToExecuteUponFind="15" />
 				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
-				<option defaultSameSetReferenceValue="false" />
+				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="false" />
+				<option useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck="true" REL="1" />
+				<option useRelationTest="true" REL="3" REL_ENT="3" relationTest="_rcmod" />
+				<option useRelationIndexTest="true" REL="3" REL_ENT="2" relationIndexTestRelationID="1" relationIndexTestEntityID="1" />
 				<!-- #endif -->
-				<option disableEntity="true" REL="1" REL_ENT="1" /> <!-- disable "be" entity -->
 				</paramDepRel>
-				<!-- #endif -->
 
-				<!-- #ifdefGIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC -->
 				<example><!--special case C: passcomposition [Relex and Stanford]
 				eg1 Tom comprises happiness. _subj(comprise[2], Tom[1]) + _obj(comprise[2], happiness[3])
 				_obj(comprise[2], happiness[3])
@@ -4365,51 +4445,20 @@
 				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="_subj" relationArrayTestSize="1" />
 				<option useRelationArrayTest="true" REL="2" REL_ENT="3" relationArrayTest="_obj|_that" relationArrayTestSize="2" />
 				<option useRelationIndexTest="true" REL="1" REL_ENT="1" relationIndexTestRelationID="2" relationIndexTestEntityID="1" />
-				<!-- #ifndefGIA_CORPUS_DATABASE --><!--
-				<option disableRelationDuringLink="true" REL="1" />	{!-- required to prevent action link from being created to object in secondary action interpretation function linkSubjectOrObjectRelationships() - added 17 July 2013 --}
-				<option disableRelationDuringLink="true" REL="2" />	{!-- required to prevent action link from being created to object in secondary action interpretation function linkSubjectOrObjectRelationships() - added 17 July 2013 --}
-				--><!-- #endif -->
+				<option useRelationArrayTest="true" REL="1" REL_ENT="1" relationArrayTest="contains|comprise|have" relationArrayTestSize="3" />
+				<option disableRelationDuringLink="true" REL="1" />
+				<option disableRelationDuringLink="true" REL="2" />
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="2" FUNC_ENT="2" functionEntityRelationEntityID="2" />
-				<option useRelationArrayTest="true" REL="1" REL_ENT="1" relationArrayTest="contains|comprise|have" relationArrayTestSize="3" />
-				<!-- #ifdefGIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC_RECORD_AUX_INFO -->
 				<option functionEntityRelationID="1" FUNC_ENT="3" functionEntityRelationEntityID="1" />
-				<option functionToExecuteUponFind="15" />
-				<!-- #else -->
-				<!--
-				{!-- #ifdefGIA_CREATE_NON_SPECIFIC_CONCEPTS_FOR_ALL_NETWORK_INDEXES --}
-				{!-- <option functionToExecuteUponFind="4" /> --}
-				{!-- #else --}
-				{!-- <option functionToExecuteUponFind="3" /> --}
-				{!-- #endif --}
-				-->
-				<!-- #endif -->
+				<option functionToExecuteUponFind="16" />
 				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="false" />
 				<option useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck="true" REL="1" />
 				<option useRelationTest="true" REL="3" REL_ENT="3" relationTest="_rcmod" />
 				<option useRelationIndexTest="true" REL="3" REL_ENT="2" relationIndexTestRelationID="1" relationIndexTestEntityID="1" />
 				<!-- #endif -->
-				<!-- #ifndefGIA_CORPUS_DATABASE -->
-				<!-- <option disableEntity="true" REL="1" REL_ENT="1" /> {!-- disable "have" entity --} -->
-				<!-- #endif -->
 				</paramDepRel>
-				<!-- #ifdefGIA_CORPUS_DATABASE -->
-				<paramDepRel mode="execute">
-				<option numberOfRelations="2" />
-				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="_subj" relationArrayTestSize="1" />
-				<option useRelationArrayTest="true" REL="2" REL_ENT="3" relationArrayTest="_obj|_that" relationArrayTestSize="2" />
-				<option useRelationIndexTest="true" REL="1" REL_ENT="1" relationIndexTestRelationID="2" relationIndexTestEntityID="1" />
-				<option disableRelationDuringLink="true" REL="1" />	<!-- required to prevent action link from being created to object in secondary action interpretation function linkSubjectOrObjectRelationships() - added 17 July 2013 -->
-				<option disableRelationDuringLink="true" REL="2" />	<!-- required to prevent action link from being created to object in secondary action interpretation function linkSubjectOrObjectRelationships() - added 17 July 2013 -->
-				<option functionEntityRelationID="2" FUNC_ENT="1" functionEntityRelationEntityID="2" />
-				<option functionEntityRelationID="2" FUNC_ENT="2" functionEntityRelationEntityID="1" />
-				<option useRelationArrayTest="true" REL="1" REL_ENT="1" relationArrayTest="contains|comprise|have" relationArrayTestSize="3" />
-				<option functionToExecuteUponFind="13" />
-				<option disableEntity="true" REL="1" REL_ENT="1" /> <!-- disable "have" entity -->
-				</paramDepRel>
-				<!-- #endif -->
-				<!-- #endif -->
 				
 				<example><!--standard case D:
 				eg1 Tom rides the bike. _subj(ride[2], Tom[1]) + _obj(ride[2], bike[4])
@@ -4425,15 +4474,55 @@
 				<option disableRelationDuringLink="true" REL="2" /> <!-- required to prevent action link from being created to object in secondary action interpretation function linkSubjectOrObjectRelationships() - added 17 July 2013 -->
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="2" FUNC_ENT="2" functionEntityRelationEntityID="2" />
-				<option functionToExecuteUponFind="5" />
 				<option functionEntityRelationID="1" FUNC_ENT="3" functionEntityRelationEntityID="1" />
+				<option functionToExecuteUponFind="5" />
 				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetReferenceValue="false" />	<!-- defaultSameSetReferenceValues are handled specially by genericDependecyRelationInterpretation(); defaultSameSetRelationID not required to be set for subjectObject actions -->
 				<!-- #endif -->
 				</paramDepRel>
 			</function>
 
+			<function name="linkHavingPropertyAndBeingDefinitions">
+				<!-- this function is now an extension of linkSubjectOrObjectRelationships for the specific case where the action is having/being -->
+		
+				<example><!--
+				Relex + Stanford (NB see redistributeRelexRelationsAdverbPlusObjectPlusSubjectRelationWhereAdverbHasSameArgumentAsSubjectAsCondition for preprocessing corrections to Stanford relations in being case);
+				Space is saved through/by having a chicken. prepc_through/by(saved-3, having-5) [IRRELEVANT] + dobj(having-5, chicken-7) + nsubjpass(saved-3, Space-1) [IRRELEVANT] + auxpass(saved-3, is-2) [IRRELEVANT]
+				Having a chicken is great.	[CHECKTHIS]
+				--></example>
+				<paramDepRel mode="execute">
+				<option numberOfRelations="1" />
+				<option useRelationArrayTest="true" REL="1" REL_ENT="1" relationArrayTest="have" relationArrayTestSize="1" />
+				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
+				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="false" />
+				<!-- #endif -->
+				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="2" />
+				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="1" />
+				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="_obj" relationArrayTestSize="1" />
+				<option functionToExecuteUponFind="10" />
+				</paramDepRel>
+
+				<example><!--
+				Relex + Stanford (NB see redistributeRelexRelationsAdverbPlusObjectPlusSubjectRelationWhereAdverbHasSameArgumentAsSubjectAsCondition for preprocessing corrections to Stanford relations in being case);
+				Space is saved through/by being a chicken. prep_through/by(saved-3, being-5) [IRRELEVANT] + dobj(being-5, chicken-7)
+				Being a chicken is great.	[CHECKTHIS]
+				--></example>
+				<paramDepRel mode="execute">
+				<option numberOfRelations="1" />
+				<option useRelationArrayTest="true" REL="1" REL_ENT="1" relationArrayTest="be" relationArrayTestSize="1" />
+				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
+				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="false" />
+				<!-- #endif -->
+				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="2" />
+				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="1" />
+				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="_obj" relationArrayTestSize="1" />
+				<option functionToExecuteUponFind="9" />
+				</paramDepRel>
+							
+			</function>
+				
 			<function name="linkSubjectOrObjectRelationships">
+			
 				<example><!--
 				Tom runs quickly. _subj(run[2], Tom[1])
 				The bike was ridden. _obj(ride[4], bike[2])
@@ -4470,6 +4559,7 @@
 				<option functionToExecuteUponFind="7" />
 				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="_obj|_that" relationArrayTestSize="2" />
 				</paramDepRel>
+
 			</function>
 
 			<!-- is this still used by Stanford? [appears to be Relex only] -->
@@ -4571,17 +4661,12 @@
 					prep_with(city[2], house[5])
 				--></example>
 				
-				<!-- #ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC -->
 				<paramDepRel mode="execute">
 				<option numberOfRelations="1" />
 				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="with" />
-				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="entityType" value="2" negative="true" REL="1" REL_ENT="1" />
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="entityType" value="3" negative="true" REL="1" REL_ENT="1" />
 				<option disableRelationDuringLink="true" REL="1" />
-				<!-- #ifdefGIA_CREATE_NON_SPECIFIC_CONCEPTS_FOR_ALL_NETWORK_INDEXES -->
 				<option functionToExecuteUponFind="4" />
-				<!-- #else -->
-				<!-- <option functionToExecuteUponFind="3" /> -->
-				<!-- #endif -->
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="1" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" />
 				<!-- #ifdefGIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR -->
@@ -4591,27 +4676,6 @@
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="true" />
 				<!-- #endif -->
 				</paramDepRel>
-				
-				<!-- #else -->
-				<!--
-				<paramDepRel mode="execute">
-				<option numberOfRelations="1" />
-				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="with" relationArrayTestSize="1" />
-				<specialCase type="specialCaseCharacteristicsTestAndVector"  variable="entityType" value="2" negative="true" REL="1" REL_ENT="1" />
-				<option disableRelationDuringLink="true" REL="1" />
-				<option mustGenerateConditionName="true" conditionEntityDefaultName="have" />
-				<option functionToExecuteUponFind="5" />
-				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="1" />
-				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" />
-				{!-- #ifdefGIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR --}
-				<option disableEntity="true" REL="1" REL_ENT="3" />
-				{!-- #endif --}
-				{!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION --}
-				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="true" />
-				{!-- #endif --}
-				</paramDepRel>
-				-->
-				<!-- #endif -->
 				
 			</function>
 			
@@ -4640,7 +4704,7 @@
 				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="of" relationArrayTestSize="1" />
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalNumber" value="3" REL="1" REL_ENT="2" />	<!-- plural -->
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalDefiniteTemp" value="false" REL="1" REL_ENT="2" />	<!-- indefinite -->
-				<!--<specialCase type="specialCaseCharacteristicsTestAndVector" variable="entityType" value="2" negative="true" REL="1" REL_ENT="1" />--> <!-- REDUNDANT --> <!-- Stanford Condition -->
+				<!--<specialCase type="specialCaseCharacteristicsTestAndVector" variable="entityType" value="3" negative="true" REL="1" REL_ENT="1" />--> <!-- REDUNDANT --> <!-- Stanford Condition -->
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isToBeComplimentOfActionTemp" value="false" REL="1" REL_ENT="1" /> <!-- Relex Condition -->
 				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="entityType" value="1" REL="1" REL_ENT="2" />	<!-- ensure not interpreted as a concept -->
 				<option disableRelationDuringLink="true" REL="1" /> <!-- required to prevent re-interpretation of prepositions in main preposition interpretation function linkConditions -->
@@ -4668,7 +4732,7 @@
 				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="of" relationArrayTestSize="1" />
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalNumber" value="3" REL="1" REL_ENT="1" />	<!-- plural -->
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalDefiniteTemp" value="false" REL="1" REL_ENT="2" />	<!-- indefinite -->
-				<!--<specialCase type="specialCaseCharacteristicsTestAndVector" variable="entityType" value="2" negative="true" REL="1" REL_ENT="1" />--> <!-- REDUNDANT --> <!-- Stanford Condition -->
+				<!--<specialCase type="specialCaseCharacteristicsTestAndVector" variable="entityType" value="3" negative="true" REL="1" REL_ENT="1" />--> <!-- REDUNDANT --> <!-- Stanford Condition -->
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isToBeComplimentOfActionTemp" value="false" REL="1" REL_ENT="1" /> <!-- Relex Condition -->
 				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="entityType" value="1" REL="1" REL_ENT="2" />	<!-- ensure not interpreted as a concept -->
 				<option disableRelationDuringLink="true" REL="1" /> <!-- required to prevent re-interpretation of prepositions in main preposition interpretation function linkConditions -->
@@ -4701,7 +4765,7 @@
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalProperNounTemp" value="true" REL="1" REL_ENT="2" />
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalNumber" negative="true" value="3" REL="1" REL_ENT="2" />
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalNumber" negative="true" value="3" REL="1" REL_ENT="1" />
-				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="entityType" value="2" negative="true" REL="1" REL_ENT="1" /> <!-- Stanford Condition -->
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="entityType" value="3" negative="true" REL="1" REL_ENT="1" /> <!-- Stanford Condition -->
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isToBeComplimentOfActionTemp" value="false" REL="1" REL_ENT="1" /> <!-- Relex Condition -->
 				<option disableRelationDuringLink="true" REL="1" /> <!-- required to prevent re-interpretation of prepositions in main preposition interpretation function linkConditions -->
 				<!-- #ifdefGIA_DISABLE_ALIAS_ENTITY_MERGING -->
@@ -4733,8 +4797,8 @@
 				<paramDepRel mode="execute">
 				<option numberOfRelations="1" />
 				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="of" relationArrayTestSize="1" />
-				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="entityType" value="4" REL="1" REL_ENT="2" />
-				{!--<specialCase type="specialCaseCharacteristicsTestAndVector" variable="entityType" value="2" negative="true" REL="1" REL_ENT="1" />--} {!--REDUNDANT--} {!--Stanford Condition--}
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="entityType" value="2" REL="1" REL_ENT="2" />
+				{!--<specialCase type="specialCaseCharacteristicsTestAndVector" variable="entityType" value="3" negative="true" REL="1" REL_ENT="1" />--} {!--REDUNDANT--} {!--Stanford Condition--}
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isToBeComplimentOfActionTemp" value="false" REL="1" REL_ENT="1" /> {!--Relex Condition--}
 				<option disableRelationDuringLink="true" REL="1" /> {!--required to prevent re-interpretation of prepositions in main preposition interpretation function linkConditions--}
 				<option functionToExecuteUponFind="11" />
@@ -4768,13 +4832,13 @@
 				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="of" relationArrayTestSize="1" />
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalNumber" negative="true" value="3" REL="1" REL_ENT="2" /> {!-- added 2i7e --}
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalNumber" negative="true" value="3" REL="1" REL_ENT="1" /> {!-- added 2m1a --}
-				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="entityType" value="2" negative="true" REL="1" REL_ENT="1" /> {!-- Stanford Condition --}
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="entityType" value="3" negative="true" REL="1" REL_ENT="1" /> {!-- Stanford Condition --}
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isToBeComplimentOfActionTemp" value="false" REL="1" REL_ENT="1" /> {!-- Relex Condition --}
 				<option disableRelationDuringLink="true" REL="1" /> {!-- required to prevent re-interpretation of prepositions in main preposition interpretation function linkConditions --}
 				<option functionToExecuteUponFind="4" />
 				{!-- #ifdefGIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_QUALITIES --}	{!-- added 2m1a --}
 				{!--
-				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="entityType" value="5" REL="1" REL_ENT="2" />
+				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="entityType" value="7" REL="1" REL_ENT="2" />
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="1" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" />
 				--}
@@ -4842,8 +4906,8 @@
 				<option functionToExecuteUponFind="8" />
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="1" />
-				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="entityType" value="2" REL="1" REL_ENT="1" />
-				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="entityType" value="2" REL="1" REL_ENT="2" />
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="entityType" value="3" REL="1" REL_ENT="1" />
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="entityType" value="3" REL="1" REL_ENT="2" />
 				<option mustGenerateConditionName="true" conditionEntityDefaultName="involves" />
 				<!-- #ifdefGIA_RECORD_SAME_REFERENCE_SET_INFORMATION -->
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="false" />
@@ -4852,6 +4916,7 @@
 			</function>		
 		</file>
 		<file name="GIAtranslatorApplyAdvancedFeatures">
+			<!-- OLD (check this code can be removed) -->
 			<!-- #ifndef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC -->
 			<!--
 			<function name="collapseRedundantRelationAndMakeNegativeStanford">
@@ -4999,7 +5064,7 @@
 				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="_amod|_predadj|_advmod" relationArrayTestSize="3" />
 				<!-- #endif -->
 				<!-- <option useRedistributeSpecialCaseQualityAssignment="true" REL="1" REL_ENT="2" /> -->
-				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="entityType" value="5" REL="1" REL_ENT="2" />
+				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="entityType" value="7" REL="1" REL_ENT="2" />
 				</paramDepRel>
 			</function>
 
@@ -5054,8 +5119,8 @@
 				<option parseDisabledRelation="true" REL="1" /> <!-- aux will have been disabled, so must explicitly allow it to be parsed -->
 				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_aux" />
 				<option useRelationTest="true" REL="1" REL_ENT="2" relationTest="can" />
-				<specialCase type="specialCaseCharacteristicsTestOrVector" variable="entityType" value="2" REL="1" REL_ENT="1" />
-				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="entityType" value="2" REL="1" REL_ENT="1" />
+				<specialCase type="specialCaseCharacteristicsTestOrVector" variable="entityType" value="3" REL="1" REL_ENT="1" />
+				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="entityType" value="3" REL="1" REL_ENT="1" />
 				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="isActionConcept" value="true" REL="1" REL_ENT="1" />
 				</paramDepRel>
 			</function>									

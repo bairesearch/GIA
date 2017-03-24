@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p4d 17-January-2017
+ * Project Version: 3a1a 26-February-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -41,6 +41,7 @@
 #define GIA_TRANSLATOR_LINK_DEPENDENT_ACTIONS_TYPE2			//added 29 June 2013 - 1s7c / modified [to condition] 30 June 2013 - 1s7f
 #define GIA_TRANSLATOR_LINK_DEPENDENT_ACTIONS_DEFAULT_CONDITION_NAME "involves"
 #define GIA_REDISTRIBUTE_STANFORD_RELATIONS_DEP_AND_PREP		//added 30 June 2013 - 1s7f
+
 
 
 #define GIA_TRANSLATOR_INTERPRET_OF_AS_POSSESSIVE_FOR_SUBSTANCES	//added 11 August 2012	[this is designed to work with GIA_ALIASES]
@@ -101,14 +102,6 @@
 	#ifdef USE_CE
 		#ifdef GIA_STANFORD_CORE_NLP_USE_CODEPENDENCIES
 			#define GIA_ENABLE_TEXTUAL_CONTEXT_REFERENCING_ONLY_ACCEPT_INTRASENTENCE_STANFORD_COREFERENCES		//this is required, as CE will construct temporary codeextension heirachies not containing every sentence; thereby nullifying stanford coreNLP codependencies out of these temporary heirachies
-		#endif
-	#endif
-#endif
-
-#ifdef USE_CE
-	#ifdef GIA_WITH_CE_USE_ALL_CODEEXTENSION_COMBINATIONS
-		#ifdef GIA_IMPLEMENT_NON_STANFORD_CORE_NLP_CODEPENDENCIES_CROSS_SENTENCE_REFERENCING
-			#define GIA_WITH_CE_OLD
 		#endif
 	#endif
 #endif
@@ -200,15 +193,8 @@
 			#define GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_BEING_OR_HAVING_INTO_A_CONDITION_DEFINITION			//CHECK THIS; Stanford compatibility
 		#endif
 		#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B_RELATIONS_TREAT_ADVERB_PLUS_OBJECT_PLUS_SUBJECT_RELATION_WHERE_ADVERB_HAS_SAME_ARGUMENT_AS_SUBJECT_AS_CONDITION
-			#define GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_BEING_OR_HAVING_INTO_A_CONDITION_DEFINITION
-			#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_BEING_OR_HAVING_INTO_A_CONDITION_DEFINITION
-				#define GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_CONDITION_PROPERTY		//CHECK THIS; Stanford compatibility
-				#define GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_BEING_EG_BEING_INTO_A_CONDITION_DEFINITION		//CHECK THIS; Stanford compatibility
-			#else
-				#define GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_AN_ARBITRARY_SUBJECT_PROPERTY	//CHECK THIS; Stanford compatibility
-				#define GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_BEING_EG_BEING_INTO_AN_ARBITRARY_SUBJECT_DEFINITION	//CHECK THIS; Stanford compatibility
-
-			#endif
+			#define GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_AN_ARBITRARY_SUBJECT_PROPERTY	//CHECK THIS; Stanford compatibility
+			#define GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_BEING_EG_BEING_INTO_AN_ARBITRARY_SUBJECT_DEFINITION	//CHECK THIS; Stanford compatibility
 		#endif
 		#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B_RELATIONS_TREAT_ADVERB_PLUS_SUBJECT_RELATION_AS_ACTION_CONDITION
 			#ifndef GIA_DO_NOT_SUPPORT_SPECIAL_CASE_1B2_IGNORE_DUPLICATE_COMPARISON_VARIABLES_IN_QUERY
@@ -378,6 +364,8 @@ used
 
 
 #define GRAMMATICAL_NUMBER_TYPE_INDICATE_HAVE_DETERMINATE_NUMBER_OF_TYPES 1
+static int dependencyRelationsTypes[GIA_NLP_PARSER_NUMBER_OF_TYPES] = {GIA_NLP_DEPENDENCY_RELATIONS_PARSER_RELEX_DEFAULT_DEPENDENCY_RELATIONS_TYPE, GIA_NLP_DEPENDENCY_RELATIONS_PARSER_STANFORD_CORENLP_DEFAULT_DEPENDENCY_RELATIONS_TYPE, GIA_NLP_DEPENDENCY_RELATIONS_PARSER_STANFORD_PARSER_DEFAULT_DEPENDENCY_RELATIONS_TYPE};
+static int referenceTypeHasDeterminateCrossReferenceNumberArray[GRAMMATICAL_NUMBER_TYPE_INDICATE_HAVE_DETERMINATE_NUMBER_OF_TYPES] = {GRAMMATICAL_NUMBER_SINGULAR};
 
 
 #define REFERENCE_TYPE_LOCATION "there"				//_advmod
@@ -1093,6 +1081,10 @@ static string entityPredeterminerSmallNameArray[GRAMMATICAL_PREDETERMINER_SMALL_
 #define GRAMMATICAL_DETERMINER_POTENTIALLY_SINGULAR_ARRAY_NUMBER_OF_TYPES (4)
 static string relationDeterminerPotentiallySingularArray[GRAMMATICAL_DETERMINER_POTENTIALLY_SINGULAR_ARRAY_NUMBER_OF_TYPES] = {GRAMMATICAL_DETERMINER_DEFINITE, GRAMMATICAL_DETERMINER_INDEFINITE_SINGULAR, GRAMMATICAL_DETERMINER_DEFINITE_EACH, GRAMMATICAL_DETERMINER_DEFINITE_EVERY};
 #endif
+
+#define GRAMMATICAL_DETERMINER_ARRAY_NUMBER_OF_TYPES (7)
+static string relationDeterminerArray[GRAMMATICAL_DETERMINER_ARRAY_NUMBER_OF_TYPES] = {GRAMMATICAL_DETERMINER_DEFINITE, GRAMMATICAL_DETERMINER_INDEFINITE_SINGULAR, GRAMMATICAL_DETERMINER_INDEFINITE_PLURAL, GRAMMATICAL_DETERMINER_INDEFINITE_SINGULAR_FIRST_LETTER_VOWEL, GRAMMATICAL_DETERMINER_DEFINITE_EACH, GRAMMATICAL_DETERMINER_DEFINITE_EVERY, GRAMMATICAL_DETERMINER_INDEFINITE_ALL};
+
 /*************************************************************************************/
 
 
@@ -1112,6 +1104,41 @@ static string entityCoordinatingConjunctionArray[ENTITY_COORDINATINGCONJUNCTION_
 	The ball is neither blue nor red.
 	The ball is tall yet fast.
 	*/
+
+
+
+//http://en.wikipedia.org/wiki/English_auxiliaries_and_contractions
+#define ENTITY_AUXILIARY_BEING_ARRAY_NUMBER_OF_TYPES (7)
+#define ENTITY_AUXILIARY_HAVING_ARRAY_NUMBER_OF_TYPES (3)
+#define ENTITY_AUXILIARY_DOING_ARRAY_NUMBER_OF_TYPES (3)
+static string entityAuxiliaryBeingArray[ENTITY_AUXILIARY_BEING_ARRAY_NUMBER_OF_TYPES] = {"am", "is", "are", "was", "were", "be", "being"};	//RBB added "be"/"being"
+static string entityAuxiliaryHavingArray[ENTITY_AUXILIARY_HAVING_ARRAY_NUMBER_OF_TYPES] = {"have", "has", "had"};
+static string entityAuxiliaryDoingArray[ENTITY_AUXILIARY_DOING_ARRAY_NUMBER_OF_TYPES] = {"do", "does", "did"};
+
+//additional cases not identified by [/mapped to existing] Relex Word Type:
+#define ENTITY_WH_ARRAY_NUMBER_OF_TYPES (9)
+static string entityWhArray[ENTITY_WH_ARRAY_NUMBER_OF_TYPES] = {"which", "what", "who", "whom", "whose", "where", "when", "how", "why"};	//http://courses.washington.edu/hypertxt/csar-v02/penntable.html + http://www.computing.dcu.ie/~acahill/tagset.html
+
+#define ENTITY_POSSESSIVEENDING_NUMBER_OF_TYPES (2)
+static string entityPossessiveEndingArray[ENTITY_POSSESSIVEENDING_NUMBER_OF_TYPES] = {"'s", "'"};
+#define ENTITY_MODALAUXILIARY_NUMBER_OF_TYPES (9)
+static string entityModalAuxiliaryArray[ENTITY_MODALAUXILIARY_NUMBER_OF_TYPES] = {"can", "could", "may", "might", "must", "shall", "should", "will", "would"};	//en.wikipedia.org/wiki/Modal_verb
+#define ENTITY_CARDINALNUMBER_ARRAY_NUMBER_OF_TYPES (43)
+static string entityCardinalNumberArray[ENTITY_CARDINALNUMBER_ARRAY_NUMBER_OF_TYPES] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9","zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine","ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety", "hundred", "thousand", "million", "billion", "trillion"};
+#define ENTITY_PRONOUN_PERSONAL_ARRAY_NUMBER_OF_TYPES (16)
+static string entityPronounPersonalArray[ENTITY_PRONOUN_PERSONAL_ARRAY_NUMBER_OF_TYPES] = {"I", "you", "he", "she", "it", "me", "you", "him", "her", "it", "we", "you", "they", "us", "you", "them"};			//http://grammar.ccc.commnet.edu/grammar/cases.htm#cases
+#define ENTITY_PRONOUN_POSSESSIVE_ARRAY_NUMBER_OF_TYPES (14)
+static string entityPronounPossessiveArray[ENTITY_PRONOUN_POSSESSIVE_ARRAY_NUMBER_OF_TYPES] = {"my", "mine", "your", "yours", "his", "her", "hers", "its", "our", "ours", "your", "yours", "their", "theirs"};	//http://grammar.ccc.commnet.edu/grammar/cases.htm#cases
+#define ENTITY_PREDETERMINER_ARRAY_NUMBER_OF_TYPES (13)
+static string entityPredeterminerArray[ENTITY_PREDETERMINER_ARRAY_NUMBER_OF_TYPES] = {"all", "both", "double", "half", "quadruple", "quite", "rather", "such", "times", "treble", "twice", "quarter", "many"};	//removed "what"	//http://englishwithyeasir.blogspot.com.au/2013/05/predeterminers.html
+	//predeterminer could be merged with adjective
+
+//not required for Stanford CoreNLP as "an" lemma is "a" (but is required for Relex)
+#define GRAMMATICAL_DETERMINER_LIMITED_INDEFINITE_NUMBER_OF_TYPES (2)
+static string grammaticalDeterminerIndefiniteArray[GRAMMATICAL_DETERMINER_LIMITED_INDEFINITE_NUMBER_OF_TYPES] = {GRAMMATICAL_DETERMINER_INDEFINITE_SINGULAR, GRAMMATICAL_DETERMINER_INDEFINITE_SINGULAR_FIRST_LETTER_VOWEL};	//NB this intentionally discludes GRAMMATICAL_DETERMINER_INDEFINITE_PLURAL "some" as this is handled the same as a definite determinier by GIA2 POS tag system
+
+
+
 
 #ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
 
@@ -1162,37 +1189,6 @@ static string featurePOStagPunctuationDivisionArray[FEATURE_POS_TAG_PUNCTUATION_
 #endif
 static string featurePOStagPunctuationQuoteArray[FEATURE_POS_TAG_PUNCTUATION_QUOTE_ARRAY_NUMBER_OF_TYPES] = {FEATURE_POS_TAG_PUNCTUATION_QUOTE_FULLSTOP, FEATURE_POS_TAG_PUNCTUATION_QUOTE_LEFTBRACKET, FEATURE_POS_TAG_PUNCTUATION_QUOTE_RIGHTBRACKET, FEATURE_POS_TAG_PUNCTUATION_QUOTE_STRAIGHTDOUBLEQUOTE, FEATURE_POS_TAG_PUNCTUATION_QUOTE_LEFTOPENSINGLEQUOTE, FEATURE_POS_TAG_PUNCTUATION_QUOTE_LEFTOPENDOUBLEQUOTE, FEATURE_POS_TAG_PUNCTUATION_QUOTE_RIGHTCLOSESINGLEQUOTE, FEATURE_POS_TAG_PUNCTUATION_QUOTE_RIGHTCLOSEDOUBLEQUOTE};
 
-//http://en.wikipedia.org/wiki/English_auxiliaries_and_contractions
-#define ENTITY_AUXILIARY_BEING_ARRAY_NUMBER_OF_TYPES (7)
-#define ENTITY_AUXILIARY_HAVING_ARRAY_NUMBER_OF_TYPES (3)
-#define ENTITY_AUXILIARY_DOING_ARRAY_NUMBER_OF_TYPES (3)
-static string entityAuxiliaryBeingArray[ENTITY_AUXILIARY_BEING_ARRAY_NUMBER_OF_TYPES] = {"am", "is", "are", "was", "were", "be", "being"};	//RBB added "be"/"being"
-static string entityAuxiliaryHavingArray[ENTITY_AUXILIARY_HAVING_ARRAY_NUMBER_OF_TYPES] = {"have", "has", "had"};
-static string entityAuxiliaryDoingArray[ENTITY_AUXILIARY_DOING_ARRAY_NUMBER_OF_TYPES] = {"do", "does", "did"};
-
-//additional cases not identified by [/mapped to existing] Relex Word Type:
-#define ENTITY_WH_ARRAY_NUMBER_OF_TYPES (9)
-static string entityWhArray[ENTITY_WH_ARRAY_NUMBER_OF_TYPES] = {"which", "what", "who", "whom", "whose","where","when","how","why"};	//http://courses.washington.edu/hypertxt/csar-v02/penntable.html + http://www.computing.dcu.ie/~acahill/tagset.html
-
-#define ENTITY_POSSESSIVEENDING_NUMBER_OF_TYPES (2)
-static string entityPossessiveEndingArray[ENTITY_POSSESSIVEENDING_NUMBER_OF_TYPES] = {"'s", "'"};
-#define ENTITY_MODALAUXILIARY_NUMBER_OF_TYPES (9)
-static string entityModalAuxiliaryArray[ENTITY_MODALAUXILIARY_NUMBER_OF_TYPES] = {"can", "could", "may", "might", "must", "shall", "should", "will", "would"};	//en.wikipedia.org/wiki/Modal_verb
-#define ENTITY_CARDINALNUMBER_ARRAY_NUMBER_OF_TYPES (43)
-static string entityCardinalNumberArray[ENTITY_CARDINALNUMBER_ARRAY_NUMBER_OF_TYPES] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9","zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine","ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety", "hundred", "thousand", "million", "billion", "trillion"};
-#define ENTITY_PRONOUN_PERSONAL_ARRAY_NUMBER_OF_TYPES (16)
-static string entityPronounPersonalArray[ENTITY_PRONOUN_PERSONAL_ARRAY_NUMBER_OF_TYPES] = {"I", "you", "he", "she", "it", "me", "you", "him", "her", "it", "we", "you", "they", "us", "you", "them"};			//http://grammar.ccc.commnet.edu/grammar/cases.htm#cases
-#define ENTITY_PRONOUN_POSSESSIVE_ARRAY_NUMBER_OF_TYPES (14)
-static string entityPronounPossessiveArray[ENTITY_PRONOUN_POSSESSIVE_ARRAY_NUMBER_OF_TYPES] = {"my", "mine", "your", "yours", "his", "her", "hers", "its", "our", "ours", "your", "yours", "their", "theirs"};	//http://grammar.ccc.commnet.edu/grammar/cases.htm#cases
-#define ENTITY_PREDETERMINER_ARRAY_NUMBER_OF_TYPES (13)
-static string entityPredeterminerArray[ENTITY_PREDETERMINER_ARRAY_NUMBER_OF_TYPES] = {"all", "both", "double", "half", "quadruple", "quite", "rather", "such", "times", "treble", "twice", "quarter", "many"};	//removed "what"	//http://englishwithyeasir.blogspot.com.au/2013/05/predeterminers.html
-	//predeterminer could be merged with adjective
-
-//not required for Stanford CoreNLP as "an" lemma is "a" (but is required for Relex)
-#define GRAMMATICAL_DETERMINER_LIMITED_INDEFINITE_NUMBER_OF_TYPES (2)
-static string grammaticalDeterminerIndefiniteArray[GRAMMATICAL_DETERMINER_LIMITED_INDEFINITE_NUMBER_OF_TYPES] = {GRAMMATICAL_DETERMINER_INDEFINITE_SINGULAR, GRAMMATICAL_DETERMINER_INDEFINITE_SINGULAR_FIRST_LETTER_VOWEL};	//NB this intentionally discludes GRAMMATICAL_DETERMINER_INDEFINITE_PLURAL "some" as this is handled the same as a definite determinier by GIA2 POS tag system
-
-
 #define GIA_SEMANTIC_PARSER_POS_TYPE_UNDEFINED 0		//added in case Stanford POS extraction does not equate exactly to PENN tree bank specification
 #define GIA_SEMANTIC_PARSER_POS_TYPE_COORDINATINGCONJUNCTION 1
 #define GIA_SEMANTIC_PARSER_POS_TYPE_NUMBER 2
@@ -1214,7 +1210,7 @@ static string grammaticalDeterminerIndefiniteArray[GRAMMATICAL_DETERMINER_LIMITE
 #define GIA_SEMANTIC_PARSER_POS_TYPE_PUNCTUATION_DIVISION 18
 #define GIA_SEMANTIC_PARSER_POS_TYPE_PUNCTUATION_QUOTE 19
 #define GIA_SEMANTIC_PARSER_POS_TYPE_AUXILIARY_BEING 20		//additional case required for GIA semantics extraction
-#define GIA_SEMANTIC_PARSER_POS_TYPE_AUXILIARY_HAVING 21		//additional case required for GIA semantics extraction	//check this is still required now that GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC is disabled GIA 2c+
+#define GIA_SEMANTIC_PARSER_POS_TYPE_AUXILIARY_HAVING 21		//additional case required for GIA semantics extraction
 #define GIA_SEMANTIC_PARSER_POS_TYPE_AUXILIARY_DOING 22		//additional case required for GIA semantics extraction
 #define GIA_SEMANTIC_PARSER_POS_TYPE_DETERMINER_LIMITED_INDEFINITE 23
 #define GIA_SEMANTIC_PARSER_POS_TYPE_SPECIAL_REDUCED_CONJUNCTION 24
@@ -1260,12 +1256,12 @@ static string relationAuxiliaryPastTenseNameArray[RELATION_AUXILIARY_PAST_TENSE_
 static string relationAuxiliaryFutureTenseNameArray[RELATION_AUXILIARY_FUTURE_TENSE_NAME_ARRAY_NUMBER_OF_TYPES] = {"will"};	//FUTURE: take into account all principal modal verbs; can, could, may, might, must, shall, should, will, would
 //must use LRP to determine continuous tense..
 
+#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTY_DIRECT (12)
+#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITION_DIRECT (13)
 #define GIA_ENTITY_VECTOR_CONNECTION_TYPE_DETERMINER (14)
 #define GIA_ENTITY_VECTOR_CONNECTION_TYPE_MODAL_AUXILIARY_OR_COPULA (15)
 #define GIA_ENTITY_VECTOR_CONNECTION_TYPE_QUANTITY (16)
-#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
-	#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_COMPOSITION_AUXILIARY (17)
-#endif
+#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_COMPOSITION_AUXILIARY_NOT_USED (17)
 #ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
 	#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITION_MARK_CONNECTION_AS_ALIAS (18)
 	#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_MERGE_OR_ALIAS_NAME "alias"
@@ -1281,9 +1277,9 @@ static string relationAuxiliaryFutureTenseNameArray[RELATION_AUXILIARY_FUTURE_TE
 #ifdef GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE
 	#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_NONE (20)
 #endif
-#define GIA2_SEMANTIC_DEPENDENCY_RELATION_NUMBER_OF_TYPES (GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES + 7)	//extends GIAentityNodeClass.h GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES
+#define GIA2_SEMANTIC_DEPENDENCY_RELATION_NUMBER_OF_TYPES (GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES + 10)	//extends GIAentityNodeClass.h GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES
 
-static string GIA2semanticDependencyRelationNameArray[GIA2_SEMANTIC_DEPENDENCY_RELATION_NUMBER_OF_TYPES] = {"actionSubject", "actionObject", "conditionSubject", "conditionObject", "property", "property", "definition", "definition", "instance", "actionSubject", "actionObject", "conditionSubject", "conditionObject", "instance", "determiner", "modalAuxiliaryOrCopula", "quantity", "compositionAuxiliary", GIA_ENTITY_VECTOR_CONNECTION_TYPE_MERGE_OR_ALIAS_NAME, "prenominalModifier", "none"};
+static string GIA2semanticDependencyRelationNameArray[GIA2_SEMANTIC_DEPENDENCY_RELATION_NUMBER_OF_TYPES] = {"action", "actionReverse", "condition", "conditionReverse", "property", "propertyReverse", "definition", "definitionReverse", "relationshipSubject", "relationshipObject", "instance", "instanceReverse", "propertyDirect", "definitionDirect", "determiner", "modalAuxiliaryOrCopula", "quantity", "compositionAuxiliaryNOTUSED", GIA_ENTITY_VECTOR_CONNECTION_TYPE_MERGE_OR_ALIAS_NAME, "prenominalModifier", "none"};
 #ifdef GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE
 #define GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE_SEMANTIC_RELATION_NUMBER_OF_DIRECTIONS (2)
 #define GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE_SEMANTIC_RELATION_NUMBER_OF_SAMEREFERENCESET (2)

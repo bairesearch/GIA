@@ -25,14 +25,14 @@
  * File Name: GIAnlp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p4d 17-January-2017
+ * Project Version: 3a1a 26-February-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
 
 
 #include "GIAnlp.hpp"
-#ifdef GIA_LRP
+#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
 #endif
 
 #ifndef LINUX
@@ -43,8 +43,8 @@
 void GIAnlpClass::executeNLPparser(const string inputTextPlainTXTfileName, const string inputTextNLPXMLfileName, const int NLPParser, const string NLPexeFolderArray[], const bool parseRelationsOrFeatures, const bool NLPrelexCompatibilityMode)
 {
 	/*
-	NB execute NLP on current folder not saved working folder (this is required for when a preprocessor eg LRP/CE has been executed on the input text):
-	so must assume current folder has been set to the folder where the [pre-processed] plain text file exists (if not the actual working folder)
+	NB execute NLP on current folder not saved input folder (this is required for when a preprocessor eg LRP/CE has been executed on the input text):
+	so must assume current folder has been set to the folder where the [pre-processed] plain text file exists (if not the actual input folder)
 	*/
 	string currentFolder = SHAREDvars.getCurrentDirectory();
 
@@ -103,7 +103,7 @@ void GIAnlpClass::executeNLPparser(const string inputTextPlainTXTfileName, const
 
 	//execute NLP parser on plain text
 	string executeNLPCommand = "";
-	executeNLPCommand = executeNLPCommand + NLPexeFolder + "/" + NLPParserExecutableName + " " + inputTextPlainTXTfileName + " " + inputTextNLPXMLfileName + " " + currentFolder + " " + tempFolder + " " + StanfordCoreNLPdefaultOutputFileExtensionAppend;
+	executeNLPCommand = executeNLPCommand + NLPexeFolder + "/" + NLPParserExecutableName + " " + inputTextPlainTXTfileName + " " + inputTextNLPXMLfileName + " " + currentFolder + " " + outputFolder + " " + StanfordCoreNLPdefaultOutputFileExtensionAppend;
 
 	SHAREDvars.setCurrentDirectory(NLPexeFolder);
 
@@ -112,7 +112,7 @@ void GIAnlpClass::executeNLPparser(const string inputTextPlainTXTfileName, const
 	#endif
 	system(executeNLPCommand.c_str());
 
-	SHAREDvars.setCurrentDirectory(tempFolder);
+	SHAREDvars.setCurrentDirectory(outputFolder);
 
 	#ifdef GIA_STANFORD_CORENLP
 	if(NLPParser == GIA_NLP_PARSER_STANFORD_CORENLP)
@@ -228,7 +228,7 @@ bool GIAnlpClass::parseNLPparserFeaturesFile(const string inputTextNLPfeatureXML
 		}
 		*/
 		cout << "error: parseNLPparserFeaturesFile{} does not parse features when (NLPfeatureParser == GIA_NLP_PARSER_STANFORD_PARSER). GIAfeature extraction is not supported with GIA_NLP_PARSER_STANFORD_PARSER because Stanford Parser does not identify lemmas. Set feature parser to RelEx or Stanford Core NLP to extract features" << endl;
-		exit(0);
+		exit(EXIT_ERROR);
 	}
 	#endif
 	#endif
@@ -343,7 +343,7 @@ bool GIAnlpClass::parseRelexFile(const string inputTextNLPrelationXMLfileName, c
 									if(!foundSentenceIndexAttribute)
 									{
 										cout << "error: sentence index attribute expected" << endl;
-										exit(0);
+										exit(EXIT_ERROR);
 									}
 
 									XMLparserTag* firstTagInSentence;
@@ -375,7 +375,7 @@ bool GIAnlpClass::parseRelexFile(const string inputTextNLPrelationXMLfileName, c
 														if(!(currentSentence->isQuestion))
 														{
 															cout << "error: GIA query is not a question" << endl;
-															exit(0);
+															exit(EXIT_ERROR);
 														}
 														#endif
 													}
@@ -454,9 +454,7 @@ bool GIAnlpClass::parseRelexFile(const string inputTextNLPrelationXMLfileName, c
 		#endif
 	}
 
-	#ifndef GIA_FREE_MEMORY1
 	delete firstTagInXMLFile;
-	#endif
 
 	return result;
 }
@@ -643,12 +641,12 @@ bool GIAnlpClass::parseStanfordCoreNLPfile(const string inputTextNLPrelationXMLf
 
 						if(parseFeatures)
 						{//process lemma only if parsing features
-							#ifdef GIA_LRP
-							if(GIAlrp.getUseLRP())
+							#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_REPLACE_OUTPUT_FOR_NLP_TEMPORARILY
+							if(GIApreprocessorMultiwordReduction.getUseLRP())
 							{
 								bool foundOfficialLRPreplacementString = false;
 								GIArelation* currentRelationInListForPrepositionsOnlyIrrelevant = NULL;
-								GIAlrp.revertNLPtagNameToOfficialLRPtagName(currentFeatureInList, currentSentence, currentRelationInListForPrepositionsOnlyIrrelevant, false, &foundOfficialLRPreplacementString);
+								GIApreprocessorMultiwordReduction.revertNLPtagNameToOfficialLRPtagName(currentFeatureInList, currentSentence, currentRelationInListForPrepositionsOnlyIrrelevant, false, &foundOfficialLRPreplacementString);
 							}
 							#endif
 
@@ -720,7 +718,7 @@ bool GIAnlpClass::parseStanfordCoreNLPfile(const string inputTextNLPrelationXMLf
 							{
 								#ifdef GIA_QUERIES_MUST_BE_QUESTIONS
 								cout << "error: GIA query is not a question" << endl;
-								exit(0);
+								exit(EXIT_ERROR);
 								#endif
 							}
 						}
@@ -778,7 +776,7 @@ bool GIAnlpClass::parseStanfordCoreNLPfile(const string inputTextNLPrelationXMLf
 										//cout << "currentRelationInList->relationDependentIndex = " << currentRelationInList->relationDependentIndex << endl;
 										#endif
 
-										#ifdef GIA_LRP
+										#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
 										if(!(currentRelationInList->relationGovernorRevertedToOfficialLRPTemp))
 										{
 										#endif
@@ -788,7 +786,7 @@ bool GIAnlpClass::parseStanfordCoreNLPfile(const string inputTextNLPrelationXMLf
 												currentFeatureInList = currentFeatureInList->next;
 											}
 											currentRelationInList->relationGovernor = currentFeatureInList->lemma;
-										#ifdef GIA_LRP
+										#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
 										}
 										if(!(currentRelationInList->relationDependentRevertedToOfficialLRPTemp))
 										{
@@ -799,7 +797,7 @@ bool GIAnlpClass::parseStanfordCoreNLPfile(const string inputTextNLPrelationXMLf
 												currentFeatureInList = currentFeatureInList->next;
 											}
 											currentRelationInList->relationDependent = currentFeatureInList->lemma;
-										#ifdef GIA_LRP
+										#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
 										}
 										#endif
 
@@ -1010,9 +1008,7 @@ bool GIAnlpClass::parseStanfordCoreNLPfile(const string inputTextNLPrelationXMLf
 		#endif
 	}
 
-	#ifdef GIA_FREE_MEMORY1
 	delete firstTagInXMLFile;
-	#endif
 
 	return result;
 }

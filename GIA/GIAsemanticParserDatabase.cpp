@@ -25,7 +25,7 @@
  * File Name: GIAsemanticParserDatabase.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p4d 17-January-2017
+ * Project Version: 3a1a 26-February-2017
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -265,7 +265,7 @@ bool GIAsemanticParserDatabaseClass::loadSemanticParserOptimisedDatabaseFile(con
 				cout << "loadSemanticParserOptimisedDatabaseFile{} error: (lineIndex >= GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE_SEMANTIC_RELATION_NUMBER_OF_TYPES)" << endl;
 				cout << "semanticRelationDatabaseFileName = " << semanticRelationDatabaseFileName << endl;
 				cout << "currentLine = " << currentLine << endl;
-				exit(0);
+				exit(EXIT_ERROR);
 			}
 
 			bool parsingNumberOfSemanticRelationsAssignedForTuple = true;
@@ -288,7 +288,7 @@ bool GIAsemanticParserDatabaseClass::loadSemanticParserOptimisedDatabaseFile(con
 						cout << "loadSemanticParserOptimisedDatabaseFile{} error: !parsingNumberOfSemanticRelationsAssignedForTuple && (currentLine[i] == GIA_SEMANTIC_PARSER_OPTIMISED_DATABASE_SEMANTIC_RELATION_COUNT_DELIMITER)" << endl;
 						cout << "semanticRelationDatabaseFileName = " << semanticRelationDatabaseFileName << endl;
 						cout << "currentLine = " << currentLine << endl;
-						exit(0);
+						exit(EXIT_ERROR);
 					}
 				}
 				else

@@ -25,7 +25,7 @@
  * File Name: GIAmain.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p4d 17-January-2017
+ * Project Version: 3a1a 26-February-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -54,7 +54,8 @@
 #include "LDopengl.hpp"
 #include "GIAwordnet.hpp"
 #include "GIAnlg.hpp"
-#include "GIAlrp.hpp"
+#include "GIApreprocessor.hpp"
+#include "GIApreprocessorMultiwordReduction.hpp"
 #include "GIAsemanticParser.hpp"
 #include "GIAsemanticParserDatabase.hpp"
 
@@ -63,8 +64,8 @@
 
 
 
-#ifndef USE_NLC
-	int main(const int argc, const char** argv);
+#ifdef COMPILE_GIA
+int main(const int argc, const char** argv);
 #endif
 
 class GIAmainClass
@@ -73,7 +74,8 @@ class GIAmainClass
 	private: GIAtranslatorClass GIAtranslator;
 	private: GIAtranslatorOperationsClass GIAtranslatorOperations;
 	private: GIAdatabaseClass GIAdatabase;
-	private: GIAlrpClass GIAlrp;
+	private: GIApreprocessorClass GIApreprocessor;
+	private: GIApreprocessorMultiwordReductionClass GIApreprocessorMultiwordReduction;
 	private: GIAnlpClass GIAnlp;
 	private: XMLrulesClassClass XMLrulesClass;
 	private: GIAqueryClass GIAquery;
@@ -91,25 +93,18 @@ class GIAmainClass
 
 public: bool executeGIA(
 
-	int NLPfeatureParser,
-	int NLPdependencyRelationsParser,
-	bool NLPrelexCompatibilityMode,
-	bool NLPassumePreCollapsedStanfordRelations,
-
-	int queryNLPfeatureParser,
-	int queryNLPdependencyRelationsParser,
-	bool queryNLPrelexCompatibilityMode	,
-	bool queryNLPassumePreCollapsedStanfordRelations,
+	GIAtranslatorVariablesClass* translatorVariables,
+	GIAtranslatorVariablesClass* translatorVariablesQuery,
 
 	string NLPexeFolderArray[],
 
 	bool useInputTextPlainTXTFile,
 	string inputTextPlainTXTfileName,
 
-#ifdef USE_CE
+	#ifdef USE_CE
 	bool useInputTextCodeextensionsTXTFileName,
 	string inputTextCodeextensionsTXTFileName,
-#endif
+	#endif
 
 	bool useInputTextNLPrelationXMLFile,
 	string inputTextNLPrelationXMLfileName,
@@ -151,12 +146,14 @@ public: bool executeGIA(
 	string outputQuerySVGFileName,
 	bool useOutputTextAllFile,
 	string outputTextAllFileName,
+	#ifdef GIA_QUERY_WRITE_ANSWER_TO_FILE
 	bool useOutputTextAnswerPlainTXTFile,
 	string outputTextAnswerPlainTXTFileName,
+	#endif
 
-#ifdef GIA_INPUT_FILE_LISTS
+	#ifdef GIA_INPUT_FILE_LISTS
 	bool inputFileList,
-#endif
+	#endif
 	bool printOutput,
 	bool printOutputQuery,
 	bool displayInOpenGLAndOutputScreenshot,
@@ -166,49 +163,35 @@ public: bool executeGIA(
 
 	bool useInputQuery,
 
-#ifdef GIA_DATABASE
+	#ifdef GIA_DATABASE
 	bool readFromDatabase,
 	bool writeToDatabase,
 	bool useDatabase,
 	string databaseFolderName,
-#endif
+	#endif
 
-#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
+	#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
 	string semanticParserDatabaseFolderName,
-#endif
+	#endif
 
-#ifdef GIA_LRP
+	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
 	bool useLRP,
 	bool useOutputLRPTextPlainTXTFile,
 	string outputLRPTextPlainTXTFileName,
-	bool useOutputLRPTextForNLPonlyPlainTXTFile,
-	string outputLRPTextForNLPonlyPlainTXTFileName,
 	bool useOutputQueryLRPTextPlainTXTFile,
 	string outputQueryLRPTextPlainTXTFileName,
-	bool useOutputQueryLRPTextForNLPonlyPlainTXTFile,
-	string outputQueryLRPTextForNLPonlyPlainTXTFileName,
 	string lrpDataFolderName,
-#endif
+	#endif
 
-#ifdef USE_WORDNET
-	int synonymnDetectionStatus,
-#endif
+	#ifdef USE_WORDNET
+	int synonymnDetectionStatus
+	#endif
 
-	vector<GIAentityNode*>* entityNodesActiveListComplete,
-	unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes,
-	map<int, vector<GIAentityNode*>*>* entityNodesActiveListSentences,
-	unordered_map<long, GIAtimeConditionNode*>* timeConditionNodesActiveList,
-
-	int* maxNumberSentences
 	);
 
-#ifdef GIA_INPUT_FILE_LISTS
-	public: int getFilesFromFileList(const string inputListFileName, string* inputFileNameArray);
-#endif
-
-#ifdef USE_CS_WORKAROUND
+	#ifdef USE_CS_WORKAROUND
 	public: bool executeGIA2();
-#endif
+	#endif
 };
 
 #endif

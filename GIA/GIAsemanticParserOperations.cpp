@@ -25,7 +25,7 @@
  * File Name: GIAsemanticParserOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p4d 17-January-2017
+ * Project Version: 3a1a 26-February-2017
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -644,7 +644,7 @@ GIAfeature* GIAsemanticParserOperationsClass::generateOptimisedFeatureSubsetBase
 				cout << "currentFeatureInSentenceSubset->entityIndex = " << currentFeatureInSentenceSubset->entityIndex << endl;
 				cout << "featureIndex = " << featureIndex << endl;
 				cout << "currentFeatureInSentenceSubset->lemma = " << currentFeatureInSentenceSubset->lemma << endl;
-				exit(0);
+				exit(EXIT_ERROR);
 			}
 
 			if(currentFeatureInSentenceSubset->word == STRING_COMMA)

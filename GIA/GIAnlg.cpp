@@ -25,7 +25,7 @@
  * File Name: GIAnlg.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p4d 17-January-2017
+ * Project Version: 3a1a 26-February-2017
  * Requirements: requires GIA translated data, and NLG2 to be installed
  * Description: GIA natural language generation (using NLG2)
  *
@@ -36,985 +36,609 @@
 
 #ifdef GIA_NLG
 
-GIANLGSentence::GIANLGSentence(void)
+GIANLGentity::GIANLGentity(void)
 {
-	NLGInputViewText = "";
+	entityGrammatisedText = "";
 
 	next = NULL;
 }
 
-GIANLGSentence* GIAnlgClass::generateLanguageFromEntityNode(GIAentityNode* entityNode, GIANLGSentence* currentNLGsentence, bool isQueryAnswerContext, int isQueryAnswerContextRound)
+string GIAnlgClass::generateLanguageFromNonWhichQuery(GIAentityNode* comparisonVariableNode, GIAentityNode* queryAnswerNode)
 {
-	GIANLGSentence* currentNLGsentenceUpdated = currentNLGsentence;
-	if(!(entityNode->parsedForLanguageGeneration) && !(entityNode->disabled))
+	string answerString = "";
+	
+	GIANLGentity* firstNLGentityInQuestionContext = new GIANLGentity();
+	GIANLGentity* firstNLGentityInRelationshipNode = new GIANLGentity();
+	GIANLGentity* firstNLGentityInAnswerNode = new GIANLGentity();
+	GIANLGentity* currentNLGentityInQuestionContext = firstNLGentityInQuestionContext;
+	GIANLGentity* currentNLGentityInRelationshipNode = firstNLGentityInRelationshipNode;
+	
+	//find the !sameReferencceSet connection of the entityNode (comparisonVariableNode) - there should only be 1 !sameReferencceSet connection and this should correspond to the previous word in the question
+	GIAentityNode* relationshipEntity = NULL;
+	GIAentityNode* relationshipEntitySubject = NULL;	//lastNodeInQuestionContextReferenceSet
+	bool relationshipEntitySubjectFound = false;	//lastNodeInQuestionContextReferenceSetFound
+	for(int connectionType=0; connectionType<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; connectionType++)
 	{
-		#ifdef GIA_NLG_DEBUG
-		if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_SUBSTANCE)
+		if(connectionType != GIA_ENTITY_VECTOR_CONNECTION_TYPE_INSTANCE_REVERSE)
 		{
-			cout << "entityNode = " << entityNode->entityName << " (is substance)" << endl;
-		}
-		else if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_ACTION)
-		{
-			cout << "entityNode = " << entityNode->entityName << " (is action)" << endl;
-		}
-		else if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_CONDITION)
-		{
-			cout << "entityNode = " << entityNode->entityName << " (is condition)" << endl;
-		}
-		else if(entityNode->hasAssociatedInstance)
-		{
-			cout << "entityNode = " << entityNode->entityName << " (has associated instance)" << endl;
-		}
-		else if(entityNode->hasAssociatedTime)
-		{
-			cout << "entityNode = " << entityNode->entityName << " (has associated time)" << endl;
-		}
-		else
-		{
-			cout << "entityNode = " << entityNode->entityName << endl;
-		}
-		//cout << "\tentityNode->isAction = " << entityNode->isAction << endl;
-		//cout << "\tentityNode->isSubstance = " << entityNode->isSubstance << endl;
-		//cout << "\tentityNode->hasAssociatedInstance = " << entityNode->hasAssociatedInstance << endl;
-		#endif
-
-
-		entityNode->parsedForLanguageGeneration = true;
-
-		#ifdef NLG_THREE_ENTITY_SENTENCES_ADD_SINGLE_SUBSTANCE_AND_CONDITION_LINKS_DO_NOT_READD_THREE_ENTITY_SENTENCES_CONTAINED_THEREIN3a
-		if(!(entityNode->sourceAddedInLanguageGeneration))
-		{
-		#endif
- 			bool supportAdditionalLinks = true;
-			if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_ACTION)
+			for(vector<GIAentityConnection*>::iterator connectionIter = comparisonVariableNode->entityVectorConnectionsArray[connectionType].begin(); connectionIter != comparisonVariableNode->entityVectorConnectionsArray[connectionType].end(); connectionIter++)
 			{
-				if(!isQueryAnswerContext || (isQueryAnswerContextRound == 1))
+				GIAentityConnection* connection = *connectionIter;
+				if(!(connection->sameReferenceSet))
 				{
-					#ifdef GIA_NLG_DEBUG
-					cout << "\t\t(!isQueryAnswerContext || (isQueryAnswerContextRound == 1))" << endl;
-					#endif
-					this->generateThreeEntitySentenceFromEntityNode(entityNode, &(currentNLGsentenceUpdated->NLGInputViewText), GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_SUBJECT, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_OBJECT, 1, supportAdditionalLinks);
-					#ifdef GIA_NLG2
-					this->NLG2generateNLGinputViewFeatureTagsGenericPerSentence(&(currentNLGsentenceUpdated->NLGInputViewText));
-					#endif
-					GIANLGSentence* newNLGsentence = new GIANLGSentence();
-					currentNLGsentenceUpdated->next = newNLGsentence;
-					currentNLGsentenceUpdated = currentNLGsentenceUpdated->next;
-				}
-			}
-			else if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_CONDITION)
-			{
-				if(!isQueryAnswerContext || (isQueryAnswerContextRound == 2))
-				{
-					#ifdef GIA_NLG_DEBUG
-					cout << "\t\t(!isQueryAnswerContext || (isQueryAnswerContextRound == 2))" << endl;
-					#endif
-					this->generateThreeEntitySentenceFromEntityNode(entityNode, &(currentNLGsentenceUpdated->NLGInputViewText), GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_OBJECT, 1, supportAdditionalLinks);
-					#ifdef GIA_NLG2
-					this->NLG2generateNLGinputViewFeatureTagsGenericPerSentence(&(currentNLGsentenceUpdated->NLGInputViewText));
-					#endif
-					GIANLGSentence* newNLGsentence = new GIANLGSentence();
-					currentNLGsentenceUpdated->next = newNLGsentence;
-					currentNLGsentenceUpdated = currentNLGsentenceUpdated->next;
-				}
-			}
-		#ifdef NLG_THREE_ENTITY_SENTENCES_ADD_SINGLE_SUBSTANCE_AND_CONDITION_LINKS_DO_NOT_READD_THREE_ENTITY_SENTENCES_CONTAINED_THEREIN3a
-		}
-		#endif
-
-		for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
-		{
-			for(vector<GIAentityConnection*>::iterator connectionIter = entityNode->entityVectorConnectionsArray[i].begin(); connectionIter != entityNode->entityVectorConnectionsArray[i].end(); connectionIter++)
-			{
-				if(nlgSentenceTwoEntitiesGenerateVectorConnectionsArray[i])
-				{
-					#ifdef NLG_THREE_ENTITY_SENTENCES_ADD_SINGLE_SUBSTANCE_AND_CONDITION_LINKS_DO_NOT_READD_TWO_ENTITY_SENTENCES_CONTAINED_THEREIN3a
-					if(!(entityNode->sourceAddedInLanguageGeneration))
-					{
-					#endif
-						if(!isQueryAnswerContext || (isQueryAnswerContextRound == 3))
-						{
-							this->generateTwoEntitySentenceFromEntityConnection(entityNode,* connectionIter, &(currentNLGsentenceUpdated->NLGInputViewText), i, 1, false);
-
-							#ifdef GIA_NLG2
-							this->NLG2generateNLGinputViewFeatureTagsGenericPerSentence(&(currentNLGsentenceUpdated->NLGInputViewText));
-							#endif
-							GIANLGSentence* newNLGsentence = new GIANLGSentence();
-							currentNLGsentenceUpdated->next = newNLGsentence;
-							currentNLGsentenceUpdated = currentNLGsentenceUpdated->next;
-						}
-					#ifdef NLG_THREE_ENTITY_SENTENCES_ADD_SINGLE_SUBSTANCE_AND_CONDITION_LINKS_DO_NOT_READD_TWO_ENTITY_SENTENCES_CONTAINED_THEREIN3a
-					}
-					#endif
-				}
-
-				if(!isQueryAnswerContext || (isQueryAnswerContext && ((*connectionIter)->entity->queryAnswerContext) || ((*connectionIter)->entity->isAnswerToQuery)))
-				{
-					currentNLGsentenceUpdated = this->generateLanguageFromEntityNode((*connectionIter)->entity, currentNLGsentenceUpdated, isQueryAnswerContext, isQueryAnswerContextRound);
+					relationshipEntity = connection->entity;
+					relationshipEntitySubject = GIAtranslatorOperations.getRelationshipSubjectEntity(connection->entity);
+					relationshipEntitySubjectFound =  true;
 				}
 			}
 		}
-
-		#ifdef GIA_NLG_DEBUG
-		if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_SUBSTANCE)
-		{
-			cout << "Exiting: entityNode = " << entityNode->entityName << " (is substance)" << endl;
-		}
-		else if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_ACTION)
-		{
-			cout << "Exiting: entityNode = " << entityNode->entityName << " (is action)" << endl;
-		}
-		else if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_CONDITION)
-		{
-			cout << "Exiting: entityNode = " << entityNode->entityName << " (is condition)" << endl;
-		}
-		else if(entityNode->hasAssociatedInstance)
-		{
-			cout << "Exiting: entityNode = " << entityNode->entityName << " (has associated instance)" << endl;
-		}
-		else if(entityNode->hasAssociatedTime)
-		{
-			cout << "Exiting: entityNode = " << entityNode->entityName << " (has associated time)" << endl;
-		}
-		else
-		{
-			cout << "Exiting: entityNode = " << entityNode->entityName << endl;
-		}
-		#endif
-
 	}
-	return currentNLGsentenceUpdated;
-}
-
-
-//startEntityIndex should be 1 for first calcs...
-void GIAnlgClass::generateThreeEntitySentenceFromEntityNode(GIAentityNode* entityNode0, string* generatedText, int connectionType1, int connectionType2, const int startEntityIndex, const bool supportAdditionalLinks)
-{
-	#ifdef GIA_NLG_DEBUG
-	cout << "\ngenerateThreeEntitySentenceFromEntityNode: " << entityNode0->entityName << endl;
-	if(supportAdditionalLinks)
+	if(relationshipEntitySubjectFound)
 	{
-		cout << "\tsupportAdditionalLinks" << endl;
+		if(!generateLanguageFromTextIteration(relationshipEntitySubject, &currentNLGentityInQuestionContext, true, true, 0, false))
+		{
+			cout << "GIAnlgClass::generateLanguageFromNonWhichQuery error: !generateLanguageFromTextIteration" << endl;
+			exit(EXIT_ERROR);		
+		}
+
+		/*
+		if(!generateLanguageFromSameSentenceReferenceSet(relationshipEntitySubject, firstNLGentityInQuestionContext, true))
+		{
+			cout << "GIAnlgClass::generateLanguageFromNonWhichQuery error: !generateLanguageFromSameSentenceReferenceSet(relationshipEntitySubject, firstNLGentityInQuestionContext)" << endl;
+			exit(EXIT_ERROR);			
+		}
+		*/
 	}
 	else
 	{
-		cout << "\t!supportAdditionalLinks" << endl;
+		cout << "GIAnlgClass::generateLanguageFromNonWhichQuery error: !lastNodeInQuestionContextReferenceSetFound" << endl;
+		exit(EXIT_ERROR);
 	}
-	cout << "\tconnectionType1 = " << connectionType1 << endl;
-	cout << "\tconnectionType2 = " << connectionType2 << endl;
+	
+	if(!generateRelationshipEntityLanguage(relationshipEntity, &currentNLGentityInRelationshipNode, false))
+	{
+		cout << "GIAnlgClass::generateLanguageFromNonWhichQuery error: !generateRelationshipEntityLanguage(relationshipEntity, currentNLGentityInRelationshipNode, false))" << endl;
+		exit(EXIT_ERROR);	
+	}
+
+	#ifdef GIA_ALIASES
+	if(comparisonVariableNode->isNameQuery)	//who query
+	{
+		for(vector<string>::iterator aliasIter = queryAnswerNode->aliasList.begin(); aliasIter != queryAnswerNode->aliasList.end(); aliasIter++)
+		{
+			firstNLGentityInAnswerNode->entityGrammatisedText = firstNLGentityInAnswerNode->entityGrammatisedText + *aliasIter;	//CHECKTHIS; this is not working yet?
+		}
+	}
+	else
+	{
 	#endif
-
-	GIAentityNode* entityNode1 = NULL;
-	GIAentityNode* entityNode2 = NULL;
-	bool entityNodeAvailableArray[3];
-	entityNodeAvailableArray[0] = true;
-	entityNodeAvailableArray[1] = false;
-	entityNodeAvailableArray[2] = false;
-	string determinateArray[3];
-	bool inputNodeFound = false;
-	bool outputNodeFound = false;
-	if(!(entityNode0->entityVectorConnectionsArray[connectionType1]).empty())
-	{
-		inputNodeFound = true;
-	}
-	if(!(entityNode0->entityVectorConnectionsArray[connectionType2]).empty())
-	{
-		outputNodeFound = true;
-	}
-	if(inputNodeFound && outputNodeFound)
-	{
-		entityNodeAvailableArray[1] = true;
-		entityNodeAvailableArray[2] = true;
-		entityNode1 = (entityNode0->entityVectorConnectionsArray[connectionType1]).back()->entity;
-		entityNode2 = (entityNode0->entityVectorConnectionsArray[connectionType2]).back()->entity;
-	}
-	else if(!inputNodeFound && outputNodeFound)
-	{
-		//if((entityNode0->entityVectorConnectionsArray[connectionType2]).back()->entity->isSubjectTemp)	[not possible as isSubjectTemp is not set officially based on NLP relations, but on GIA semantic relationships ie action input/output]
-		if((entityNode0->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_INCOMING_CONDITIONS]).empty())
-		{//added 28 Oct 2012; to handle case "Corn is eaten by.."
-			entityNodeAvailableArray[1] = true;
-			entityNode1 = (entityNode0->entityVectorConnectionsArray[connectionType2]).back()->entity;
-		}
-		else
+		if(comparisonVariableNode->hasQuantity)	//how many query
 		{
-			entityNodeAvailableArray[2] = true;
-			entityNode2 = (entityNode0->entityVectorConnectionsArray[connectionType2]).back()->entity;
+			firstNLGentityInAnswerNode->entityGrammatisedText = firstNLGentityInAnswerNode->entityGrammatisedText + SHAREDvars.convertIntToString(queryAnswerNode->quantityNumber) + GIA_NLG_TEXT_SPACE;
+			//queryAnswerNode->grammaticalNumber = GRAMMATICAL_NUMBER_PLURAL;	//should already be true
 		}
+		
+		firstNLGentityInAnswerNode->entityGrammatisedText = firstNLGentityInAnswerNode->entityGrammatisedText + calcNounWord(queryAnswerNode);
+		
+	#ifdef GIA_ALIASES
 	}
-	else if(inputNodeFound && !outputNodeFound)
+	#endif
+				
+	
+	answerString = answerString + generateLanguageFromNLGentityList(firstNLGentityInQuestionContext);
+	answerString = answerString + generateLanguageFromNLGentityList(firstNLGentityInRelationshipNode);
+	answerString = answerString + generateLanguageFromNLGentityList(firstNLGentityInAnswerNode);
+	
+	return answerString;
+}
+	
+string GIAnlgClass::generateLanguageFromWhichQuery(GIAentityNode* comparisonVariableNode, GIAentityNode* queryAnswerNode)
+{
+	string answerString = "";
+	
+	GIANLGentity* firstNLGentityInAnswerContext = new GIANLGentity();
+	GIANLGentity* firstNLGentityInRelationshipNode = new GIANLGentity();
+	GIANLGentity* firstNLGentityInQuestionContext = new GIANLGentity();
+	GIANLGentity* currentNLGentityInAnswerContext = firstNLGentityInAnswerContext;
+	GIANLGentity* currentNLGentityInRelationshipNode = firstNLGentityInRelationshipNode;
+	GIANLGentity* currentNLGentityInQuestionContext = firstNLGentityInQuestionContext;
+		
+	if(!generateLanguageFromTextIteration(queryAnswerNode, &currentNLGentityInAnswerContext, false, true, 0, false))
 	{
-		entityNodeAvailableArray[1] = true;
-		entityNode1 = (entityNode0->entityVectorConnectionsArray[connectionType1]).back()->entity;
+		cout << "GIAnlgClass::generateLanguageFromWhichQuery error: !generateLanguageFromTextIteration(queryAnswerNode, firstNLGentityInAnswerContext, false..." << endl;
+		exit(EXIT_ERROR);			
+	}
+	
+	GIAentityNode* relationshipEntity = new GIAentityNode();	//temporary auxiliary entity
+	relationshipEntity->entityType = GIA_ENTITY_TYPE_DEFINITION;
+	if(!generateRelationshipEntityLanguage(relationshipEntity, &currentNLGentityInRelationshipNode, false))
+	{
+		cout << "GIAnlgClass::generateLanguageFromNonWhichQuery error: !generateRelationshipEntityLanguage(relationshipEntity, currentNLGentityInRelationshipNode, false))" << endl;
+		exit(EXIT_ERROR);	
 	}
 
-	if(entityNodeAvailableArray[0])
+	if(!generateLanguageFromTextIteration(comparisonVariableNode, &currentNLGentityInQuestionContext, true, true, 0, false))
 	{
-		determinateArray[0] = this->calcDeterminate(entityNode0);
+		cout << "GIAnlgClass::generateLanguageFromWhichQuery error: !generateLanguageFromTextIteration(comparisonVariableNode, firstNLGentityInQuestionContext, true..." << endl;
+		exit(EXIT_ERROR);			
 	}
-	if(entityNodeAvailableArray[1])
-	{
-		determinateArray[1] = this->calcDeterminate(entityNode1);
-	}
-	if(entityNodeAvailableArray[2])
-	{
-		determinateArray[2] = this->calcDeterminate(entityNode2);
-	}
+	
+	answerString = answerString + generateLanguageFromNLGentityList(firstNLGentityInAnswerContext);
+	answerString = answerString + generateLanguageFromNLGentityList(firstNLGentityInRelationshipNode);
+	answerString = answerString + generateLanguageFromNLGentityList(firstNLGentityInQuestionContext);
+	
+	return answerString;
+}
 
-#ifdef GIA_NLG2
-	int entityIndex0 = startEntityIndex + 0;
-	int entityIndex1 = startEntityIndex + 1;
-	int entityIndex2 = startEntityIndex + 2;
-	string entityIndex0string = SHAREDvars.convertIntToString(entityIndex0);
-	string entityIndex1string = SHAREDvars.convertIntToString(entityIndex1);
-	string entityIndex2string = SHAREDvars.convertIntToString(entityIndex2);
+string GIAnlgClass::generateLanguageFromNLGentityList(GIANLGentity* firstNLGentityInContext)
+{
+	string languageString = "";
 
-	this->NLG2generateNLGinputViewFeatureTagsFromEntityNode(entityNode0, entityIndex0, generatedText);
-	if(entityNodeAvailableArray[1])
+	GIANLGentity* currentNLGentity = firstNLGentityInContext;
+	while(currentNLGentity->next != NULL)
 	{
-		this->NLG2generateNLGinputViewFeatureTagsFromEntityNode(entityNode1, entityIndex1, generatedText);
+		languageString = languageString + currentNLGentity->entityGrammatisedText;
+		currentNLGentity = currentNLGentity->next;
 	}
-	if(entityNodeAvailableArray[2])
-	{
-		this->NLG2generateNLGinputViewFeatureTagsFromEntityNode(entityNode2, entityIndex2, generatedText);
-	}
-#else
-	string entityTextExpandedArray[3];
-	for(int i=0; i<3; i++)
-	{
-		entityTextExpandedArray[i] = "";
-	}
-	entityTextExpandedArray[0] = this->getWordOrig(entityNode0);
-	if(entityNodeAvailableArray[1])
-	{
-		entityTextExpandedArray[1] = this->getWordOrig(entityNode1);
-	}
-	if(entityNodeAvailableArray[2])
-	{
-		entityTextExpandedArray[2] = this->getWordOrig(entityNode2);
-	}
-#endif
+	
+	return languageString;
+}
 
-	#ifdef NLG_THREE_ENTITY_SENTENCES_ADD_SINGLE_SUBSTANCE_AND_CONDITION_LINKS
-	if(supportAdditionalLinks)
-	{
-		//bool entityNodeHasAdditionalConnection[3][NLG_INPUTVIEW_THREE_ENTITY_SENTENCES_ADD_SINGLE_SUBSTANCE_AND_CONDITION_LINKS_NUMBER_ADDITIONAL_CONNECTIONS];
-		//int entityNodeHasAdditionalConnectionIndex[3][NLG_INPUTVIEW_THREE_ENTITY_SENTENCES_ADD_SINGLE_SUBSTANCE_AND_CONDITION_LINKS_NUMBER_ADDITIONAL_CONNECTIONS];
-		GIAentityNode* entityNodeArray[3];
-		entityNodeArray[0] = entityNode0;
-		entityNodeArray[1] = entityNode1;
-		entityNodeArray[2] = entityNode2;
-		bool entityNode2HasCondition = false;
-		#ifdef GIA_NLG2
-		int currentEntityIndexAdditional = entityIndex2 + 1;
-		#else
-		int currentEntityIndexAdditional = GIA_NLG_INDEX_IRRELEVANT;
-		#endif
 
-		for(int i=0; i<NLG_INPUTVIEW_THREE_ENTITY_SENTENCES_ADD_SINGLE_SUBSTANCE_AND_CONDITION_LINKS_NUMBER_ADDITIONAL_CONNECTIONS; i++)
+/*
+bool GIAnlgClass::generateLanguageFromSameSentenceReferenceSetParent(GIAentityNode* firstEntityInSameReferenceSet, GIANLGentity* firstNLGentity)
+{
+	bool result = true;
+	GIAentityNode* parentEntity = getParentEntityInSameReferenceSet(firstEntityInSameReferenceSet);
+	if(!generateLanguageFromTextIteration(parentEntity, firstNLGentity, true, true, 0, false))
+	{
+		result = false;
+	}
+	return result;
+}
+
+bool GIAnlgClass::getParentEntityInSameReferenceSet(GIAentityNode* currentEntityInSameReferenceSet, GIAentityNode** parentEntity)
+{
+	bool foundParentEntity = false;
+	for(int connectionType=0; connectionType<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; connectionType++)
+	{
+		if(entityVectorConnectionGoToParentArray[connectionType])
 		{
-			for(int entityNodeIndex=0; entityNodeIndex<3; entityNodeIndex++)
+			for(vector<GIAentityConnection*>::iterator connectionIter = currentEntityInSameReferenceSet->entityVectorConnectionsArray[connectionType].begin(); connectionIter != currentEntityInSameReferenceSet->entityVectorConnectionsArray[connectionType].end(); connectionIter++)
 			{
-				if(entityNodeAvailableArray[entityNodeIndex])
+				GIAentityConnection* connection = *connectionIter;
+				if(connection->sameReferenceSet)
 				{
-					//entityNodeHasAdditionalConnection[entityNodeIndex][i] = false;
-					int vectorConnectionIndex = nlgSentenceThreeEntitiesGenerateAdditionsVectorConnectionsArray[i];
-					if((connectionType1 != nlgSentenceThreeEntitiesGenerateAdditionsIsThreeEntityVectorConnectionsArray[0]) && (connectionType2 != nlgSentenceThreeEntitiesGenerateAdditionsIsThreeEntityVectorConnectionsArray[1]))
-					{//do not add double conditions/prepositions...
-						#ifdef GIA_NLG_DEBUG
-						//cout << "entityNodeArray[entityNodeIndex]->entityName = " << entityNodeArray[entityNodeIndex]->entityName << endl;
-						//cout << "entityNodeArray[entityNodeIndex]->entityVectorConnectionsArray[vectorConnectionIndex].size() = " << entityNodeArray[entityNodeIndex]->entityVectorConnectionsArray[vectorConnectionIndex].size() << endl;
-						#endif
-
-						if(entityNodeArray[entityNodeIndex]->entityVectorConnectionsArray[vectorConnectionIndex].size() == 1)
-						{//entity contains single substance or condition
-							GIAentityConnection* entityConnectionAdditional = entityNodeArray[entityNodeIndex]->entityVectorConnectionsArray[vectorConnectionIndex].back();
-							GIAentityNode* entityNodeAdditional = entityConnectionAdditional->entity;
-
-							bool passAdditionalExtraRequirements = false;
-							if(vectorConnectionIndex == GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES)
-							{
-								if(entityNodeAdditional->entityType == GIA_ENTITY_TYPE_TYPE_QUALITY)
-								{
-									passAdditionalExtraRequirements = true;
-								}
-							}
-							else
-							{
-								passAdditionalExtraRequirements = true;
-							}
-
-							if(passAdditionalExtraRequirements)
-							{
-								//entityNodeHasAdditionalConnection[entityNodeIndex][i] = true;
-								//entityNodeHasAdditionalConnectionIndex[entityNodeIndex][i] = currentEntityIndexAdditional;
-								if(nlgSentenceThreeEntitiesGenerateAdditionsIsThreeEntityConnection[i])
-								{
-									#ifdef GIA_NLG_DEBUG
-									//cout << "entityNodeIndex = " << entityNodeIndex << endl;
-									//cout << "vectorConnectionIndex = " << vectorConnectionIndex << endl;
-									//cout << "entityNodeAdditional->entityName = " << entityNodeAdditional->entityName << endl;
-									#endif
-									#ifdef NLG_THREE_ENTITY_SENTENCES_ADD_SINGLE_SUBSTANCE_AND_CONDITION_LINKS_DO_NOT_READD_THREE_ENTITY_SENTENCES_CONTAINED_THEREIN3b
-									if(!(entityNodeAdditional->sourceAddedInLanguageGeneration))
-									{
-									#endif
-										#ifdef GIA_NLG_DEBUG
-										cout << "\t\t(!(entityNodeAdditional->sourceAddedInLanguageGeneration))" << endl;
-										#endif
-										#ifdef GIA_NLG2
-										this->generateThreeEntitySentenceFromEntityNode(entityNodeAdditional, generatedText, nlgSentenceThreeEntitiesGenerateAdditionsIsThreeEntityConnection[i], nlgSentenceThreeEntitiesGenerateAdditionsIsThreeEntityConnection[i]+1, currentEntityIndexAdditional, false);
-										#else
-										this->generateThreeEntitySentenceFromEntityNode(entityNodeAdditional, &(entityTextExpandedArray[entityNodeIndex]), nlgSentenceThreeEntitiesGenerateAdditionsIsThreeEntityVectorConnectionsArray[0], nlgSentenceThreeEntitiesGenerateAdditionsIsThreeEntityVectorConnectionsArray[1], currentEntityIndexAdditional, false);
-										#endif
-
-										#ifdef NLG_THREE_ENTITY_SENTENCES_ADD_SINGLE_SUBSTANCE_AND_CONDITION_LINKS_DO_NOT_READD_THREE_ENTITY_SENTENCES_CONTAINED_THEREIN3c
-										entityNodeArray[entityNodeIndex]->sourceAddedInLanguageGeneration = true;
-										#endif
-									#ifdef NLG_THREE_ENTITY_SENTENCES_ADD_SINGLE_SUBSTANCE_AND_CONDITION_LINKS_DO_NOT_READD_THREE_ENTITY_SENTENCES_CONTAINED_THEREIN3b
-									}
-									#endif
-								}
-								else
-								{
-									#ifdef NLG_THREE_ENTITY_SENTENCES_ADD_SINGLE_SUBSTANCE_AND_CONDITION_LINKS_DO_NOT_READD_TWO_ENTITY_SENTENCES_CONTAINED_THEREIN3b
-									if(!(entityNodeArray[entityNodeIndex]->sourceAddedInLanguageGeneration))
-									{
-									#endif
-										#ifdef GIA_NLG_DEBUG
-										cout << "\t\t(!(entityNodeArray[entityNodeIndex]->sourceAddedInLanguageGeneration))" << endl;
-										#endif
-										#ifdef GIA_NLG2
-										this->generateTwoEntitySentenceFromEntityConnection(entityNodeArray[entityNodeIndex], entityConnectionAdditional, generatedText, nlgSentenceThreeEntitiesGenerateAdditionsVectorConnectionsArray[i], currentEntityIndexAdditional, true);
-										#else
-										this->generateTwoEntitySentenceFromEntityConnection(entityNodeArray[entityNodeIndex], entityConnectionAdditional, &(entityTextExpandedArray[entityNodeIndex]), nlgSentenceThreeEntitiesGenerateAdditionsVectorConnectionsArray[i], currentEntityIndexAdditional, true);
-										#endif
-
-										#ifdef NLG_THREE_ENTITY_SENTENCES_ADD_SINGLE_SUBSTANCE_AND_CONDITION_LINKS_DO_NOT_READD_TWO_ENTITY_SENTENCES_CONTAINED_THEREIN3c
-										entityNodeArray[entityNodeIndex]->sourceAddedInLanguageGeneration = true;
-										#endif
-									#ifdef NLG_THREE_ENTITY_SENTENCES_ADD_SINGLE_SUBSTANCE_AND_CONDITION_LINKS_DO_NOT_READD_TWO_ENTITY_SENTENCES_CONTAINED_THEREIN3b
-									}
-									#endif
-								}
-
-								currentEntityIndexAdditional++;
-							}
-						}
+					GIAentityNode* parentEntityTemp = NULL;
+					if(getParentEntityInSameReferenceSet(connection->entity, &parentEntityTemp))
+					{
+						*parentEntity = parentEntityTemp;
+						foundParentEntity = true;
 					}
 				}
 			}
 		}
 	}
-	#endif
-
-#ifdef GIA_NLG2
-	string nlgDependencyRelation1 = this->NLG2generateNLGinputViewLine(nlgSentenceThreeEntitiesDependencyRelationVectorConnectionsArray[connectionType1], entityIndex0string, entityIndex1string);
-	string nlgDependencyRelation2 = this->NLG2generateNLGinputViewLine(nlgSentenceThreeEntitiesDependencyRelationVectorConnectionsArray[connectionType2], entityIndex0string, entityIndex2string);
-
-	#ifdef GIA_NLG_DEBUG
-	cout << "generateThreeEntitySentenceFromEntityNode{}: " << entityNode0->entityName << endl;
-	cout << "nlgDependencyRelation1 = " << nlgDependencyRelation1 << endl;
-	cout << "nlgDependencyRelation2 = " << nlgDependencyRelation2 << endl;
-	#endif
-	*generatedText = *generatedText + nlgDependencyRelation1;
-	*generatedText = *generatedText + nlgDependencyRelation2;
-#else
-	#ifdef GIA_NLG_DEBUG
-	cout << "generateThreeEntitySentenceFromEntityNode{}: " << entityNode0->entityName << endl;
-	cout << "entityTextExpandedArray[0] = " << entityTextExpandedArray[0] << endl;
-	cout << "entityTextExpandedArray[1] = " << entityTextExpandedArray[1] << endl;
-	cout << "entityTextExpandedArray[2] = " << entityTextExpandedArray[2] << endl;
-	#endif
-
-	entityTextExpandedArray[0] = determinateArray[0] + entityTextExpandedArray[0];
-	if(supportAdditionalLinks)
-	{
-		entityTextExpandedArray[1] = determinateArray[1] + entityTextExpandedArray[1];
-	}
-	entityTextExpandedArray[2] = determinateArray[2] + entityTextExpandedArray[2];
-
-	if(supportAdditionalLinks)
-	{//is a condition link; add copular- eg the dog is near the park.
-		if((connectionType1 == nlgSentenceThreeEntitiesGenerateAdditionsIsThreeEntityVectorConnectionsArray[0]) && (connectionType2 == nlgSentenceThreeEntitiesGenerateAdditionsIsThreeEntityVectorConnectionsArray[1]))
-		{
-			string nlgDefinitionText = this->determineNLGdefinitionText(entityNode1);	//added 03 August 2012
-			entityTextExpandedArray[0] = nlgDefinitionText + NLG_TEXT_SPACE + entityTextExpandedArray[0];
-		}
-	}
-	if(entityNodeAvailableArray[1])
-	{
-		if(supportAdditionalLinks)
-		{
-			*generatedText = *generatedText + NLG_TEXT_SPACE + entityTextExpandedArray[1];
-		}
-	}
-	*generatedText = *generatedText + NLG_TEXT_SPACE + entityTextExpandedArray[0];
-	if(entityNodeAvailableArray[2])
-	{
-		*generatedText = *generatedText + NLG_TEXT_SPACE + entityTextExpandedArray[2];
-	}
-
-	#ifdef GIA_NLG_DEBUG
-	cout << "*generatedText = " <<* generatedText << endl;
-	#endif
-
-#endif
-	/*
-	if(supportAdditionalLinks)
-	{
-	*/
-	#ifdef GIA_NLG_DEBUG
-	//cout << "generateThreeEntitySentenceFromEntityNode:" << endl;
-	#endif
-	if(entityNodeAvailableArray[0])
-	{
-		#ifdef GIA_NLG_DEBUG
-		//cout << "entityNode0->sourceReferencedInLanguageGeneration: " << entityNode0->entityName << endl;
-		#endif
-		entityNode0->sourceReferencedInLanguageGeneration = true;
-		#ifdef NLG_THREE_ENTITY_SENTENCES_ADD_SINGLE_SUBSTANCE_AND_CONDITION_LINKS_DO_NOT_READD_SENTENCES_CONTAINED_THEREIN3_STRINGENT
-		if(supportAdditionalLinks)
-		{
-		#endif
-			#ifdef NLG_THREE_ENTITY_SENTENCES_ADD_SINGLE_SUBSTANCE_AND_CONDITION_LINKS_DO_NOT_READD_SENTENCES_CONTAINED_THEREIN3
-			entityNode0->sourceAddedInLanguageGeneration = true;
-			#endif
-		#ifdef NLG_THREE_ENTITY_SENTENCES_ADD_SINGLE_SUBSTANCE_AND_CONDITION_LINKS_DO_NOT_READD_SENTENCES_CONTAINED_THEREIN3_STRINGENT
-		}
-		#endif
-	}
-	if(entityNodeAvailableArray[1])
-	{
-		#ifdef GIA_NLG_DEBUG
-		//cout << "entityNode1->sourceReferencedInLanguageGeneration: " << entityNode1->entityName << endl;
-		#endif
-		entityNode1->sourceReferencedInLanguageGeneration = true;
-	}
-	if(entityNodeAvailableArray[2])
-	{
-		#ifdef GIA_NLG_DEBUG
-		//cout << "entityNode2->sourceReferencedInLanguageGeneration: " << entityNode2->entityName << endl;
-		#endif
-		entityNode2->sourceReferencedInLanguageGeneration = true;
-	}
-	/*
-	}
-	*/
-
-	#ifdef GIA_NLG_DEBUG
-	cout << "Exiting: generateThreeEntitySentenceFromEntityNode: " << entityNode0->entityName << endl;
-	#endif
+	
+	return foundParentEntity;
 }
+*/
 
-void GIAnlgClass::generateTwoEntitySentenceFromEntityConnection(GIAentityNode* entityNode1, GIAentityConnection* entityConnection, string* generatedText, const int connectionType, const int startEntityIndex, const bool additionalLink)
+bool GIAnlgClass::generateLanguageFromTextIteration(GIAentityNode* currentEntity, GIANLGentity** currentNLGentity, bool parseSameReferenceSetOnly, bool isSameReferenceSetIteration, int interationIndex, bool isRelationshipReverseIteration)
 {
-	/*
-	if(!(entityConnection->parsedForLanguageGeneration))	//&& !(entityConnection->disabled)
+	bool result = true;
+
+	#ifdef GIA_NLG_ADD_AUXILIARIES_TO_SAME_REFERENCE_SET_QUALITIES
+	bool passQualityPrelimChecks = true;
+	if(isSameReferenceSetIteration)
 	{
-	*/
-
-	GIAentityNode* entityNode2 = entityConnection->entity;
-
-	#ifdef GIA_NLG_DEBUG
-	cout << "generateTwoEntitySentenceFromEntityConnection: " << entityNode1->entityName << endl;
+		if(currentEntity->entityType == GIA_ENTITY_TYPE_QUALITY)
+		{
+			passQualityPrelimChecks = false;
+		}
+	}
+	if(passQualityPrelimChecks)	
+	{
 	#endif
-
-#ifdef GIA_NLG2
-	int entityIndex1 = startEntityIndex + 1;
-	int entityIndex2 = startEntityIndex + 2;
-	int entityIndex0 = startEntityIndex + 0;
-	string entityIndex1string = SHAREDvars.convertIntToString(entityIndex1);
-	string entityIndex2string = SHAREDvars.convertIntToString(entityIndex2);
-	string entityIndex0string = SHAREDvars.convertIntToString(entityIndex0);
-
-	bool generateTwoDependencyRelations = false;
-	string nlgDependencyRelationType1 = "";
-	string nlgDependencyRelationType2 = "";
-	string nlgDependencyRelationSharedArgument = "";
-#else
-	string entityTextExpandedArray[3];
-	for(int i=0; i<3; i++)
-	{
-		entityTextExpandedArray[i] = "";
-	}
-	bool generateLinkingWord = false;
-	string linkingWord = "";
-	bool prepend = false;
-	entityTextExpandedArray[0] = "";
-	entityTextExpandedArray[1] = this->getWordOrig(entityNode1);
-	entityTextExpandedArray[2] = this->getWordOrig(entityNode2);
-#endif
-
-
-
-	if(entityNode2->entityType == GIA_ENTITY_TYPE_TYPE_ACTION)
-	{
-		#ifdef GIA_NLG_DEBUG
-		//cout << "warning: generateTwoEntitySentenceFromEntityConnection && (entityNode2->entityType == GIA_ENTITY_TYPE_TYPE_ACTION)" << endl;
-		#endif
-	}
-	else if(entityNode2->entityType == GIA_ENTITY_TYPE_TYPE_CONDITION)
-	{
-		#ifdef GIA_NLG_DEBUG
-		//cout << "warning: generateTwoEntitySentenceFromEntityConnection && (entityNode2->entityType == GIA_ENTITY_TYPE_TYPE_CONDITION)" << endl;
-		#endif
-	}
-
-	if(connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES)
-	{
-		/*
-		if(entityNode2->entityType == GIA_ENTITY_TYPE_TYPE_SUBSTANCE)
+	
+		if(GIAentityNodeClass.entityIsRelationship(currentEntity))
 		{
-		*/
-		#ifdef NLG_TWO_ENTITY_SENTENCES_SUPPORT_ADVERBS_AND_ADJECTIVES
-		bool isSubstanceQuality = false;
-		if(entityNode2->entityType == GIA_ENTITY_TYPE_TYPE_QUALITY)
-		{
-			isSubstanceQuality = true;
-			if(entityNode1->entityType == GIA_ENTITY_TYPE_TYPE_ACTION)
+			if(isRelationshipReverseIteration)
 			{
-				#ifdef GIA_NLG2
-				nlgDependencyRelationType1 = RELATION_TYPE_ADJECTIVE_ADVMOD
-				#else
-				#endif
+				generateRelationshipEntityLanguageActionReverse(currentEntity, currentNLGentity, isSameReferenceSetIteration);
 			}
 			else
 			{
-				#ifdef GIA_NLG2
-				nlgDependencyRelationType1 = RELATION_TYPE_ADJECTIVE_AMOD;		//or RELATION_TYPE_ADJECTIVE_PREDADJ?
-				#else
-				prepend = true;
-				#endif
+				generateRelationshipEntityLanguage(currentEntity, currentNLGentity, isSameReferenceSetIteration);
 			}
-		}
-		if(!isSubstanceQuality)
-		{
-		#endif
-			//eg possessive and/or tom has a bike
-			#ifdef GIA_NLG2
-			#ifdef NLG_INPUTVIEW_TWO_ENTITY_SENTENCES_SUPPORT_TWO_DEPENDENCY_RELATIONS
-			generateTwoDependencyRelations = true;
-			nlgDependencyRelationType1 = RELATION_TYPE_SUBJECT;
-			nlgDependencyRelationType2 = RELATION_TYPE_OBJECT;
-			nlgDependencyRelationSharedArgument = RELATION_ENTITY_HAVE;
-			#else
-			nlgDependencyRelationType1 = RELATION_TYPE_POSSESSIVE;
-			#endif
-			#else
-			generateLinkingWord = true;
-			linkingWord = this->determineNLGpossessionText(entityNode1);	//added 03 August 2012
-			#endif
-		#ifdef NLG_TWO_ENTITY_SENTENCES_SUPPORT_ADVERBS_AND_ADJECTIVES
-		}
-		#endif
-		/*
 		}
 		else
-		{
-			if(entityNode2->entityType == GIA_ENTITY_TYPE_TYPE_NETWORK_INDEX)
-			{//isNetworkIndex
-				#ifdef GIA_NLG_DEBUG
-				//cout << "warning: generateTwoEntitySentenceFromEntityConnection && (entityNode2->entityType == GIA_ENTITY_TYPE_TYPE_NETWORK_INDEX) && (connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES)" << endl;
-				#endif
+		{						
+			if(!generateQualityPrependText(currentEntity, currentNLGentity, true))
+			{
+				result = false;
+			}
+			bool definite = true;	//CHECKTHIS
+			if(!generateNounEntityLanguage(currentEntity, currentNLGentity, definite))
+			{
+				result = false;
 			}
 		}
-		*/
-	}
-	else if(connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITIONS)
-	{
-		#ifdef GIA_NLG2
-		#ifdef NLG_INPUTVIEW_TWO_ENTITY_SENTENCES_SUPPORT_TWO_DEPENDENCY_RELATIONS
-		generateTwoDependencyRelations = true;
-		nlgDependencyRelationType1 = RELATION_TYPE_SUBJECT;
-		nlgDependencyRelationType2 = RELATION_TYPE_OBJECT;
-		nlgDependencyRelationSharedArgument = RELATION_ENTITY_BE;
-		#else
-		nlgDependencyRelationType1 = RELATION_TYPE_APPOSITIVE_OF_NOUN;
-		#endif
-		#else
-		generateLinkingWord = true;
-		linkingWord = this->determineNLGdefinitionText(entityNode1);	//added 03 August 2012
-		#endif
-	}
 
-#ifdef GIA_NLG2
-	if(generateTwoDependencyRelations)
-	{
-		GIAentityNode* entityNode0 = new GIAentityNode();
-		entityNode0->entityName = nlgDependencyRelationSharedArgument;
-		entityNode0->entityType = GIA_ENTITY_TYPE_TYPE_ACTION;	//NB "have"/"be" are interpreted as actions/verbs by NLP/stanford/relex (but reduced by GIA)
-		this->NLG2generateNLGinputViewFeatureTagsFromEntityNode(entityNode0, entityIndex0, generatedText);
-		this->NLG2generateNLGinputViewFeatureTagsFromEntityNode(entityNode1, entityIndex1, generatedText);
-		this->NLG2generateNLGinputViewFeatureTagsFromEntityNode(entityNode2, entityIndex2, generatedText);
-		string nlgDependencyRelation1 = this->NLG2generateNLGinputViewLine(nlgDependencyRelationType1, entityIndex0string, entityIndex1string);
-		string nlgDependencyRelation2 = this->NLG2generateNLGinputViewLine(nlgDependencyRelationType2, entityIndex0string, entityIndex2string);
-
-		#ifdef GIA_NLG_DEBUG
-		cout << "generateTwoEntitySentenceFromEntityConnection{}:" << endl;
-		cout << "nlgDependencyRelation1 = " << nlgDependencyRelation1 << endl;
-		cout << "nlgDependencyRelation2 = " << nlgDependencyRelation2 << endl;
-		#endif
-		*generatedText = *generatedText + nlgDependencyRelation1;
-		*generatedText = *generatedText + nlgDependencyRelation2;
-
-		delete entityNode0;
-	}
-	else
-	{
-		this->NLG2generateNLGinputViewFeatureTagsFromEntityNode(entityNode1, entityIndex1, generatedText);
-		this->NLG2generateNLGinputViewFeatureTagsFromEntityNode(entityNode2, entityIndex2, generatedText);
-		string nlgDependencyRelation1 = this->NLG2generateNLGinputViewLine(nlgDependencyRelationType1, entityIndex1string, entityIndex2string);
-
-		#ifdef GIA_NLG_DEBUG
-		cout << "generateTwoEntitySentenceFromEntityConnection{}:" << endl;
-		cout << "nlgDependencyRelation1 = " << nlgDependencyRelation1 << endl;
-		#endif
-		*generatedText = *generatedText + nlgDependencyRelation1;
-	}
-#else
-
-	#ifdef GIA_NLG_DEBUG
-	cout << "generateTwoEntitySentenceFromEntityConnection{}:" << endl;
-	cout << "entityTextExpandedArray[0] = " << entityTextExpandedArray[0] << endl;
-	cout << "entityTextExpandedArray[1] = " << entityTextExpandedArray[1] << endl;
-	cout << "entityTextExpandedArray[2] = " << entityTextExpandedArray[2] << endl;
-	#endif
-
-	if(prepend)
-	{
-		//assert !generateLinkingWord
-		if(additionalLink)
+		if(parseSameReferenceSetOnly || (interationIndex < GIA_NLG_GENERATE_LANGUAGE_MAX_NUM_ITERATIONS))
 		{
-			*generatedText = entityTextExpandedArray[2] + NLG_TEXT_SPACE +* generatedText;
-		}
-		else
-		{
-			this->addDeterminate(entityNode1, &(entityTextExpandedArray[1]));
-			//*generatedText = *generatedText + NLG_TEXT_SPACE + entityTextExpandedArray[2] + NLG_TEXT_SPACE + entityTextExpandedArray[1];
-			string nlgDefinitionText = this->determineNLGdefinitionText(entityNode1);	//added 03 August 2012
-			*generatedText = *generatedText + entityTextExpandedArray[1] + NLG_TEXT_SPACE + nlgDefinitionText + NLG_TEXT_SPACE + entityTextExpandedArray[2];
-		}
-	}
-	else
-	{
-
-
-		if(!additionalLink)
-		{
-			this->addDeterminate(entityNode1, &(entityTextExpandedArray[1]));
-			*generatedText = *generatedText + NLG_TEXT_SPACE + entityTextExpandedArray[1];
-		}
-
-		if(generateLinkingWord)
-		{
-			GIAentityNode* entityNode0 = new GIAentityNode();
-			entityNode0->entityName = linkingWord;
-			entityNode0->entityType = GIA_ENTITY_TYPE_TYPE_ACTION;	//NB "have"/"be" are interpreted as actions/verbs by NLP/stanford/relex (but reduced by GIA)
-			entityTextExpandedArray[0] = linkingWord;
-
-			this->addDeterminate(entityNode0, &(entityTextExpandedArray[0]));
-			*generatedText = *generatedText + NLG_TEXT_SPACE + entityTextExpandedArray[0];
-
-			delete entityNode0;
-		}
-
-		this->addDeterminate(entityNode2, &(entityTextExpandedArray[2]));
-		*generatedText = *generatedText + NLG_TEXT_SPACE + entityTextExpandedArray[2];
-	}
-
-	#ifdef GIA_NLG_DEBUG
-	cout << "generateTwoEntitySentenceFromEntityConnection{}:" << endl;
-	cout << "generatedText = " <<* generatedText << endl;
-	#endif
-#endif
-
-	/*
-	if(!additionalLink)
-	{
-	*/
-	#ifdef GIA_NLG_DEBUG
-	//cout << "generateTwoEntitySentenceFromEntityNode:" << endl;
-	//cout << "entityNode1->sourceReferencedInLanguageGeneration: " << entityNode1->entityName << endl;
-	//cout << "entityNode2->sourceReferencedInLanguageGeneration: " << entityNode2->entityName << endl;
-	#endif
-	entityNode1->sourceReferencedInLanguageGeneration = true;
-	entityNode2->sourceReferencedInLanguageGeneration = true;
-
-	#ifdef NLG_TWO_ENTITY_SENTENCES_ADD_SINGLE_SUBSTANCE_AND_CONDITION_LINKS_DO_NOT_READD_SENTENCES_CONTAINED_THEREIN3_STRINGENT
-	if(!additionalLink)
-	{
-	#endif
-		#ifdef NLG_TWO_ENTITY_SENTENCES_ADD_SINGLE_SUBSTANCE_AND_CONDITION_LINKS_DO_NOT_READD_SENTENCES_CONTAINED_THEREIN3
-		entityNode1->sourceAddedInLanguageGeneration = true;
-		#endif
-	#ifdef NLG_TWO_ENTITY_SENTENCES_ADD_SINGLE_SUBSTANCE_AND_CONDITION_LINKS_DO_NOT_READD_SENTENCES_CONTAINED_THEREIN3_STRINGENT
-	}
-	#endif
-	/*
-	}
-	*/
-
-	#ifdef GIA_NLG_DEBUG
-	cout << "Exiting: generateTwoEntitySentenceFromEntityConnection" << endl;
-	#endif
-
-	/*
-	}
-	*/
-}
-
-#ifdef GIA_NLG2
-void GIAnlgClass::NLG2generateNLGinputViewFeatureTagsGenericPerSentence(string* generatedNLGinputViewTags)
-{
-	string NLGInputViewFeatureTagPosDeterminateDefinite = this->NLG2generateNLGinputViewLine(NLG_INPUTVIEW_FEATURE_TAG_NAME_POS, NLG_INPUTVIEW_FEATURE_TAG_GOVERNOR_DEFINITE, NLG_INPUTVIEW_FEATURE_TAG_DEPENDENT_DETERMINATE);
-	string NLGInputViewFeatureTagPosDeterminateIndefinite = this->NLG2generateNLGinputViewLine(NLG_INPUTVIEW_FEATURE_TAG_NAME_POS, NLG_INPUTVIEW_FEATURE_TAG_GOVERNOR_INDEFINITE, NLG_INPUTVIEW_FEATURE_TAG_DEPENDENT_DETERMINATE);
-	string NLGInputViewFeatureTagPosPunctuationFullstop = this->NLG2generateNLGinputViewLine(NLG_INPUTVIEW_FEATURE_TAG_NAME_POS, NLG_INPUTVIEW_FEATURE_TAG_GOVERNOR_FULLSTOP, NLG_INPUTVIEW_FEATURE_TAG_DEPENDENT_FULLSTOP);
-
-	#ifdef GIA_NLG_DEBUG
-	cout << "NLG2generateNLGinputViewFeatureTagsGenericPerSentence{}:" << endl;
-	cout << "NLGInputViewFeatureTagPosDeterminateDefinite = " << NLGInputViewFeatureTagPosDeterminateDefinite << endl;
-	cout << "NLGInputViewFeatureTagPosDeterminateIndefinite = " << NLGInputViewFeatureTagPosDeterminateIndefinite << endl;
-	cout << "NLGInputViewFeatureTagPosPunctuationFullstop = " << NLGInputViewFeatureTagPosPunctuationFullstop << endl;
-	#endif
-
-	*generatedNLGinputViewTags = *generatedNLGinputViewTags + NLGInputViewFeatureTagPosDeterminateDefinite;
-	*generatedNLGinputViewTags = *generatedNLGinputViewTags + NLGInputViewFeatureTagPosDeterminateIndefinite;
-	*generatedNLGinputViewTags = *generatedNLGinputViewTags + NLGInputViewFeatureTagPosPunctuationFullstop;
-}
-
-void GIAnlgClass::NLG2generateNLGinputViewFeatureTagsFromEntityNode(GIAentityNode* entityNode, const int entityIndex, string* generatedNLGinputViewTags)
-{
-	string entityIndexString = SHAREDvars.convertIntToString(entityIndex);
-
-	//lemma
-	string NLGInputViewFeatureTagLemma = this->NLG2generateNLGinputViewLine(NLG_INPUTVIEW_FEATURE_TAG_NAME_LEMMA, entityIndexString, this->getWordOrig(entityNode));
-
-	//tense
-	//string wordName = entityNode->entityName;
-	string NLGInputViewFeatureTagTense = "";
-	if(entityNode->conditionType == CONDITION_NODE_TYPE_TIME)
-	{
-		GIAtimeConditionNode* timeCondition = entityNode->timeConditionNode;
-
-		if(timeCondition->tenseOnlyTimeCondition)
-		{
-			string tenseString = "";
-			if(timeCondition->tense != GRAMMATICAL_TENSE_UNDEFINED)
+			if(isRelationshipReverseIteration)
 			{
-				//GRAMMATICAL_TENSE_PRESENT, GRAMMATICAL_TENSE_PAST, GRAMMATICAL_TENSE_FUTURE
-				tenseString = grammaticalTenseNameArray[timeCondition->tense];
+				//special exception; parse action subject
+				for(vector<GIAentityConnection*>::iterator connectionIter = currentEntity->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_RELATIONSHIP_SUBJECT].begin(); connectionIter != currentEntity->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_RELATIONSHIP_SUBJECT].end(); connectionIter++)
+				{	
+					GIAentityConnection* connection = *connectionIter;
+					if(connection->sameReferenceSet || !parseSameReferenceSetOnly)
+					{
+						GIAentityNode* entity = connection->entity;
+						if(!generateLanguageFromTextIteration(entity, currentNLGentity, parseSameReferenceSetOnly, true, interationIndex+1, false))
+						{
+							result = false;
+						}
+					}
+				}	
 			}
-			if(timeCondition->isProgressive)
+			else
 			{
-				tenseString = tenseString + GRAMMATICAL_TENSE_CONCATONATOR_RELEX + grammaticalTenseModifierNameArray[GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE];
-			}
-			/*
-			if(timeCondition->isImperative)
-			{
-				tenseString = tenseString + GRAMMATICAL_TENSE_CONCATONATOR_RELEX + grammaticalTenseModifierNameArray[GRAMMATICAL_TENSE_MODIFIER_IMPERATIVE];
-			}
-			*/
-
-			//eg tense(decide, past)
-			string NLGInputViewFeatureTagTense = this->NLG2generateNLGinputViewLine(NLG_INPUTVIEW_FEATURE_TAG_NAME_TENSE, entityIndexString, tenseString);
-		}
-		else
-		{
-			//wordName = wordName + "(" + timeCondition->conditionName + ")";
-		}
-	}
-
-	//noun_number
-	string nounNumberString = "";
-	string NLGInputViewFeatureTagNounNumber = "";
-	if((entityNode->grammaticalNumber != GRAMMATICAL_NUMBER_UNDEFINED) && (entityNode->grammaticalNumber != GRAMMATICAL_NUMBER_UNCOUNTABLE))
-	{
-		nounNumberString = grammaticalNumberNameArray[entityNode->grammaticalNumber];
-		NLGInputViewFeatureTagNounNumber = this->NLG2generateNLGinputViewLine(NLG_INPUTVIEW_FEATURE_TAG_NAME_NOUNNUMBER, entityIndexString, nounNumberString);
-	}
-
-	//pos + inflection
-	string inflectionString = "";
-	string posString = "";
-	bool isDefinite = false;
-	if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_ACTION)
-	{
-		inflectionString = grammaticalWordTypeCrossReferenceInflectionArray[GRAMMATICAL_WORD_TYPE_VERB];
-		posString = grammaticalWordTypeNameArray[GRAMMATICAL_WORD_TYPE_VERB];
-	}
-	else if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_CONDITION)
-	{
-		//inflectionString = grammaticalWordTypeCrossReferenceInflectionArray[GRAMMATICAL_WORD_TYPE_PREP];	//no inflection for prepositions
-		posString = grammaticalWordTypeNameArray[GRAMMATICAL_WORD_TYPE_PREP];
-	}
-	else if((entityNode->entityType == GIA_ENTITY_TYPE_TYPE_SUBSTANCE) && !(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_CONCEPT))
-	{
-		#ifdef NLG_TWO_ENTITY_SENTENCES_SUPPORT_ADVERBS_AND_ADJECTIVES
-		bool isSubstanceQuality = false;
-		if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_QUALITY)
-		{
-			isSubstanceQuality = true;
-			bool substanceOwnerIsAction = false;
-			if(!(entityNode->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_PROPERTIES].empty()))
-			{
-				GIAentityNode* substanceOwner = entityNode->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_PROPERTIES].back()->entity;
-				if(substanceOwner->entityType == GIA_ENTITY_TYPE_TYPE_ACTION)
+				//special exception; parse reverse conditions
+				for(vector<GIAentityConnection*>::iterator connectionIter = currentEntity->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_REVERSE].begin(); connectionIter != currentEntity->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_REVERSE].end(); connectionIter++)
 				{
-					substanceOwnerIsAction = true;
-					//inflectionString = grammaticalWordTypeCrossReferenceInflectionArray[GRAMMATICAL_WORD_TYPE_ADV];	//no inflection for adjectives?
-					posString = grammaticalWordTypeNameArray[GRAMMATICAL_WORD_TYPE_ADV];
+					int qualityCount = 0;
+					vector<GIANLGentity*> NLGentitiesInSection;
+					GIAentityConnection* connection = *connectionIter;
+					if(connection->sameReferenceSet || !parseSameReferenceSetOnly)
+					{
+						GIAentityNode* actionRelationshipEntity = connection->entity;
+						qualityCount++;
+						NLGentitiesInSection.push_back(*currentNLGentity);
+						if(!generateLanguageFromTextIteration(actionRelationshipEntity, currentNLGentity, parseSameReferenceSetOnly, true, interationIndex+1, true))
+						{
+							result = false;
+						}
+					}
+					if(!generateConjunctionOfNLGentitiesInSection(qualityCount, &NLGentitiesInSection))
+					{
+						result = false;
+					}
+				}
+
+				for(int connectionType=0; connectionType<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; connectionType++)
+				{
+					int qualityCount = 0;
+					vector<GIANLGentity*> NLGentitiesInSection;
+					if(entityVectorConnectionGoToChildArray[connectionType])
+					{
+						for(vector<GIAentityConnection*>::iterator connectionIter = currentEntity->entityVectorConnectionsArray[connectionType].begin(); connectionIter != currentEntity->entityVectorConnectionsArray[connectionType].end(); connectionIter++)
+						{
+							GIAentityConnection* connection = *connectionIter;
+							if(connection->sameReferenceSet || !parseSameReferenceSetOnly)
+							{
+								GIAentityNode* entity = connection->entity;
+								qualityCount++;
+								NLGentitiesInSection.push_back(*currentNLGentity);
+								if(!generateLanguageFromTextIteration(entity, currentNLGentity, parseSameReferenceSetOnly, true, interationIndex+1, false))
+								{
+									result = false;
+								}
+							}
+						}
+					}
+					if(!entityVectorConnectionIsRelationshipSubjectObjectArray[connectionType])
+					{
+						if(!generateConjunctionOfNLGentitiesInSection(qualityCount, &NLGentitiesInSection))
+						{
+							result = false;
+						}
+					}
 				}
 			}
-			if(!substanceOwnerIsAction)
+		}
+	#ifdef GIA_NLG_ADD_AUXILIARIES_TO_SAME_REFERENCE_SET_QUALITIES
+	}
+	#endif
+		
+	return result;
+}
+
+bool GIAnlgClass::generateQualityPrependText(GIAentityNode* currentEntity, GIANLGentity** currentNLGentity, bool testSameReferenceSet)	//specific to english
+{
+	bool result = true;
+	
+	string qualityText = "";	//eg the blue apple / the blue and happy apple / the blue, happy and bright apple
+	int qualityCount = 0;
+	//GIANLGentity* firstNLGentityInSection = *currentNLGentity;
+	vector<GIANLGentity*> NLGentitiesInSection;
+	for(vector<GIAentityConnection*>::iterator connectionIter = currentEntity->entityVectorConnectionsArray[GIA_ENTITY_TYPE_PROPERTY].begin(); connectionIter != currentEntity->entityVectorConnectionsArray[GIA_ENTITY_TYPE_PROPERTY].end(); connectionIter++)
+	{
+		GIAentityConnection* connection = *connectionIter;
+		GIAentityNode* relationshipEntityObject = GIAtranslatorOperations.getRelationshipObjectEntity(connection);
+		if(connection->sameReferenceSet || !testSameReferenceSet)
+		{
+			if(relationshipEntityObject->entityType == GIA_ENTITY_TYPE_QUALITY)
 			{
-				//inflectionString = grammaticalWordTypeCrossReferenceInflectionArray[GRAMMATICAL_WORD_TYPE_ADJ];	//no inflection for adverbs?
-				posString = grammaticalWordTypeNameArray[GRAMMATICAL_WORD_TYPE_ADJ];
+				NLGentitiesInSection.push_back((*currentNLGentity));
+				#ifdef GIA_NLG_MORPHOLOGY_GENERATOR
+				(*currentNLGentity)->entityGrammatisedText = generateMorphology(relationshipEntityObject);
+				#else
+				(*currentNLGentity)->entityGrammatisedText = relationshipEntityObject->entityName;	//qualities/adjectives don't have lemmas and so don't require morphological generation
+				#endif
+				(*currentNLGentity)->next = new GIANLGentity();
+				(*currentNLGentity) = (*currentNLGentity)->next;
+				qualityCount++;
+			}		
+		}
+	}
+	
+	if(!generateConjunctionOfNLGentitiesInSection(qualityCount, &NLGentitiesInSection))
+	{
+		result = false;
+	}
+	
+	return result;
+}
+
+bool GIAnlgClass::generateConjunctionOfNLGentitiesInSection(int qualityCountMax, vector<GIANLGentity*>* NLGentitiesInSection)
+{
+	bool result = true;
+	
+	int qualityCount = 1;
+	for(vector<GIANLGentity*>::iterator iter = NLGentitiesInSection->begin(); iter != NLGentitiesInSection->end(); iter++)
+	{
+		GIANLGentity* currentNLGentityInSection = *iter;
+		if(qualityCount < qualityCountMax-1)
+		{
+			currentNLGentityInSection->entityGrammatisedText = currentNLGentityInSection->entityGrammatisedText + GIA_NLG_RELATIONSHIP_ENTITY_CONJUNCTION_AND_IMPLICIT;		
+		}
+		else if(qualityCount < qualityCountMax)
+		{
+			currentNLGentityInSection->entityGrammatisedText = currentNLGentityInSection->entityGrammatisedText + GIA_NLG_RELATIONSHIP_ENTITY_CONJUNCTION_AND;
+		}
+		else if(qualityCount == qualityCountMax)
+		{
+
+		}
+		qualityCount++;
+	}	
+	
+	return result;	
+}
+
+/*
+bool GIAnlgClass::generateConjunctionOfNLGentitiesInSection(int qualityCountMax, GIANLGentity* firstNLGentityInSection)
+{
+	bool result = true;
+	
+	GIANLGentity* currentNLGentityInSection = firstNLGentityInSection;
+	qualityCount = 1;
+	while(currentNLGentityInSection->next != NULL)
+	{
+		if(qualityCount < qualityCountMax-1)
+		{
+			currentNLGentityInSection->entityGrammatisedText = currentNLGentityInSection->entityGrammatisedText + GIA_NLG_RELATIONSHIP_ENTITY_CONJUNCTION_AND_IMPLICIT;		
+		}
+		else if(qualityCount < qualityCountMax)
+		{
+			currentNLGentityInSection->entityGrammatisedText = currentNLGentityInSection->entityGrammatisedText + GIA_NLG_RELATIONSHIP_ENTITY_CONJUNCTION_AND;
+		}
+		else if(qualityCount == qualityCountMax)
+		{
+
+		}
+		qualityCount++;
+		currentNLGentityInSection = currentNLGentityInSection->next;
+	}	
+	
+	return result;	
+}
+*/
+
+
+
+
+
+
+
+bool GIAnlgClass::generateRelationshipEntityLanguage(GIAentityNode* relationshipEntity, GIANLGentity** currentNLGentity, bool sameReferenceSet)
+{
+	bool result = false;
+	
+	string relationshipEntityText = "";
+
+	bool generateAuxiliary = true;	//this variable is only relevant for non-actions
+	if(sameReferenceSet)
+	{
+		#ifndef GIA_NLG_ADD_AUXILIARIES_TO_SAME_REFERENCE_SET_CONDITIONS
+		if(relationshipEntity->entityType == GIA_ENTITY_TYPE_CONDITION)
+		{
+			generateAuxiliary = false;
+		}
+		#endif
+		#ifndef GIA_NLG_ADD_AUXILIARIES_TO_SAME_REFERENCE_SET_QUALITIES
+		else if(relationshipEntity->entityType == GIA_ENTITY_TYPE_PROPERTY)
+		{
+			//if property is a quality, then use "is" as auxiliary
+			GIAentityNode* relationshipEntityObject = GIAtranslatorOperations.getRelationshipObjectEntity(relationshipEntity);
+			if(relationshipEntityObject->entityType == GIA_ENTITY_TYPE_QUALITY)
+			{
+				generateAuxiliary = false;	
 			}
 		}
-		if(!isSubstanceQuality)
-		{
 		#endif
-			inflectionString = grammaticalWordTypeCrossReferenceInflectionArray[GRAMMATICAL_WORD_TYPE_NOUN];
-			posString = grammaticalWordTypeNameArray[GRAMMATICAL_WORD_TYPE_NOUN];
-			if(!(entityNode->sourceReferencedInLanguageGeneration))
-			{
-				isDefinite = true;
-			}
-		#ifdef NLG_TWO_ENTITY_SENTENCES_SUPPORT_ADVERBS_AND_ADJECTIVES
-		}
-		#endif
-	}
-	else if(entityNode->isNetworkIndex || entityNode->entityType == GIA_ENTITY_TYPE_TYPE_CONCEPT)
-	{//isNetworkIndex
-		inflectionString = grammaticalWordTypeCrossReferenceInflectionArray[GRAMMATICAL_WORD_TYPE_NOUN];
-		posString = grammaticalWordTypeNameArray[GRAMMATICAL_WORD_TYPE_NOUN];
-	}
-	string NLGInputViewFeatureTagInflection = this->NLG2generateNLGinputViewLine(NLG_INPUTVIEW_FEATURE_TAG_NAME_INFLECTION, entityIndexString, inflectionString);
-	string NLGInputViewFeatureTagPos = this->NLG2generateNLGinputViewLine(NLG_INPUTVIEW_FEATURE_TAG_NAME_POS, entityIndexString, posString);
-
-	//flag definite
-	string NLGInputViewFeatureTagFlagDefinite = "";
-	if(isDefinite)
-	{
-		NLGInputViewFeatureTagFlagDefinite = this->NLG2generateNLGinputViewLine(NLG_INPUTVIEW_FEATURE_TAG_NAME_FLAG_DEFINITE, entityIndexString, NLG_INPUTVIEW_FEATURE_TAG_DEPENDENT_FLAG_DEFINITE);
-	}
-
-	#ifdef GIA_NLG_SUPPORT_PERSON_AND_GENDER
-	//gender
-	bool isPerson = false;
-	bool hasGender = false;
-	string genderString = "";
-	string NLGInputViewFeatureTagFlagPerson = "";
-	string NLGInputViewFeatureTagGender = "";
-	if(entityNode->grammaticalGenderTemp != GRAMMATICAL_GENDER_UNDEFINED)
-	{
-		//relex compatible only
-		if(entityNode->grammaticalGenderTemp == GRAMMATICAL_GENDER_PERSON)
+		
+		if(generateAuxiliary)
 		{
-			isPerson = true;
+			relationshipEntityText = relationshipEntityText + GIA_NLG_REFERENCE_SET_RCMOD_SAME_REFERENCE_SET;
 		}
-		else
-		{
-			isPerson = true;
-			genderString = grammaticalGenderNameArray[entityNode->grammaticalGenderTemp];
-			hasGender = true;
-		}
+	}
+	
+	if(relationshipEntity->entityType == GIA_ENTITY_TYPE_ACTION)
+	{
+		relationshipEntityText = relationshipEntityText + generateMorphologyAction(relationshipEntity);
 	}
 	else
 	{
-		//stanford/relex compatible
-		//NB GIAEntityNodeGrammaticalGenderArray is not currently filled by fillGrammaticalArraysStanford()	[see GIAtranslatorDefineGrammar.cpp]
-		if(entityNode->grammaticalProperNounTemp)
+		if(relationshipEntity->entityType == GIA_ENTITY_TYPE_CONDITION)
 		{
-			isPerson = true;
+			if(generateAuxiliary)
+			{
+				relationshipEntityText = relationshipEntityText + generateMorphologyRelationshipAuxiliaryBe(relationshipEntity);
+			}
+			relationshipEntityText = relationshipEntityText + generateMorphologyCondition(relationshipEntity);
 		}
-
+		else if(relationshipEntity->entityType == GIA_ENTITY_TYPE_PROPERTY)
+		{
+			if(generateAuxiliary)
+			{
+				//if property is a quality, then use "is" as auxiliary
+				GIAentityNode* relationshipEntityObject = GIAtranslatorOperations.getRelationshipObjectEntity(relationshipEntity);
+				if(relationshipEntityObject->entityType == GIA_ENTITY_TYPE_QUALITY)
+				{
+					relationshipEntityText = relationshipEntityText + generateMorphologyRelationshipAuxiliaryBe(relationshipEntity);
+				}
+				else
+				{
+					relationshipEntityText = relationshipEntityText + generateMorphologyRelationshipAuxiliaryHave(relationshipEntity);
+				}
+			}
+		}
+		if(relationshipEntity->entityType == GIA_ENTITY_TYPE_DEFINITION)
+		{
+			if(generateAuxiliary)
+			{
+				relationshipEntityText = relationshipEntityText + generateMorphologyRelationshipAuxiliaryBe(relationshipEntity);
+			}
+		}	
 	}
-	if(hasGender)
-	{
-		NLGInputViewFeatureTagGender = this->NLG2generateNLGinputViewLine(NLG_INPUTVIEW_FEATURE_TAG_NAME_GENDER, entityIndexString, genderString);
-	}
-	else if(isPerson)
-	{
-		NLGInputViewFeatureTagFlagPerson = this->NLG2generateNLGinputViewLine(NLG_INPUTVIEW_FEATURE_TAG_NAME_FLAG_PERSON, entityIndexString, NLG_INPUTVIEW_FEATURE_TAG_DEPENDENT_FLAG_PERSON);
-	}
-	#endif
 
+	(*currentNLGentity)->entityGrammatisedText = relationshipEntityText;
+	(*currentNLGentity)->next = new GIANLGentity();
+	(*currentNLGentity) = (*currentNLGentity)->next;
+	
+	return result;
+}
 
-	#ifdef GIA_NLG_DEBUG
-	cout << "NLG2generateNLGinputViewFeatureTagsFromEntityNode{}:" << endl;
-	cout << "NLGInputViewFeatureTagLemma = " << NLGInputViewFeatureTagLemma << endl;
-	cout << "NLGInputViewFeatureTagFlagDefinite = " << NLGInputViewFeatureTagFlagDefinite << endl;
-	#ifdef GIA_NLG_SUPPORT_PERSON_AND_GENDER
-	cout << "NLGInputViewFeatureTagGender = " << NLGInputViewFeatureTagGender << endl;
-	#endif
-	cout << "NLGInputViewFeatureTagTense = " << NLGInputViewFeatureTagTense << endl;
-	cout << "NLGInputViewFeatureTagNounNumber = " << NLGInputViewFeatureTagNounNumber << endl;
-	cout << "NLGInputViewFeatureTagInflection = " << NLGInputViewFeatureTagInflection << endl;
-	#ifdef GIA_NLG_SUPPORT_PERSON_AND_GENDER
-	cout << "NLGInputViewFeatureTagFlagPerson = " << NLGInputViewFeatureTagFlagPerson << endl;
-	#endif
-	cout << "NLGInputViewFeatureTagPos = " << NLGInputViewFeatureTagPos << endl;
-	#endif
-	*generatedNLGinputViewTags = *generatedNLGinputViewTags + NLGInputViewFeatureTagLemma;
-	*generatedNLGinputViewTags = *generatedNLGinputViewTags + NLGInputViewFeatureTagFlagDefinite;
-	#ifdef GIA_NLG_SUPPORT_PERSON_AND_GENDER
-	*generatedNLGinputViewTags = *generatedNLGinputViewTags + NLGInputViewFeatureTagGender;
-	#endif
-	*generatedNLGinputViewTags = *generatedNLGinputViewTags + NLGInputViewFeatureTagTense;
-	*generatedNLGinputViewTags = *generatedNLGinputViewTags + NLGInputViewFeatureTagNounNumber;
-	*generatedNLGinputViewTags = *generatedNLGinputViewTags + NLGInputViewFeatureTagInflection;
-	#ifdef GIA_NLG_SUPPORT_PERSON_AND_GENDER
-	*generatedNLGinputViewTags = *generatedNLGinputViewTags + NLGInputViewFeatureTagFlagPerson;
-	#endif
-	*generatedNLGinputViewTags = *generatedNLGinputViewTags + NLGInputViewFeatureTagPos;
-
+bool GIAnlgClass::generateRelationshipEntityLanguageActionReverse(GIAentityNode* relationshipEntity,  GIANLGentity** currentNLGentity, bool sameReferenceSet)
+{
+	bool result = false;
+	
+	string relationshipEntityText = "";
+	
+	relationshipEntityText = relationshipEntityText + generateMorphologyRelationshipAuxiliaryBe(relationshipEntity);
+	relationshipEntityText = relationshipEntityText + generateMorphologyActionReverse(relationshipEntity);
+	relationshipEntityText = relationshipEntityText + GIA_NLG_RELATIONSHIP_ENTITY_ACTION_REVERSE;
+	
+	(*currentNLGentity)->entityGrammatisedText = relationshipEntityText;
+	(*currentNLGentity)->next = new GIANLGentity();
+	(*currentNLGentity) = (*currentNLGentity)->next;
+	
+	return result;
 }
 
 
 
 
-string GIAnlgClass::NLG2generateNLGinputViewLine(const string type, const string governor, const string dependent)
+string GIAnlgClass::generateMorphologyAction(GIAentityNode* relationshipEntity)
 {
-	#ifdef GIA_NLG_DEBUG_MANUALLY_HARDCODE_INTO_NLG2
-	string NLGInputViewLine = "\"" + type + "(" + governor + ", " + dependent + ")" + "\\n\" +" + "\n";
+	string relationshipEntityText = "";
+	#ifdef GIA_NLG_MORPHOLOGY_GENERATOR
+	relationshipEntityText = generateMorphology(relationshipEntity);	//OR generateVerbCase
+	//consider; that did ride VS that rode 
 	#else
-	string NLGInputViewLine = type + "(" + governor + ", " + dependent + ")" + "\n";
-	#endif
-	return NLGInputViewLine;
-}
-
-#else
-
-
-void GIAnlgClass::addDeterminate(const GIAentityNode* entityNode, string* entityTextExpanded)
-{
-	string determinate = this->calcDeterminate(entityNode);
-	*entityTextExpanded = determinate +* entityTextExpanded;
-}
-
-string GIAnlgClass::calcDeterminate(const GIAentityNode* entityNode)
-{
-
-	//first letter is vowel		//added 03 August 2012
-	bool firstLetterIsVowel = false;
-	#ifdef GIA_NLG_NO_MORPHOLOGY_GENERATOR
-	string wordOrig = "";
+	relationshipEntityText = relationshipEntity->entityName;
+	/*
 	if(entityNode->wordOrig != "")
 	{
-		wordOrig = entityNode->wordOrig;		//IMPORTANT; due to bug in nlg2, nlg2 currently requires the original word, not the lemma
+		relationshipEntityText = relationshipEntity->wordOrig;
 	}
 	else
 	{
-		wordOrig = entityNode->entityName;
+		relationshipEntityText = relationshipEntity->entityName;
 	}
-	#else
-	wordOrig = generateMorphology(entityNode);
+	*/
 	#endif
+	relationshipEntityText = relationshipEntityText + GIA_NLG_TEXT_SPACE;
+	return relationshipEntityText;
+}
+
+string GIAnlgClass::generateMorphologyActionReverse(GIAentityNode* relationshipEntity)
+{
+	string relationshipEntityText = "";
+	#ifdef GIA_NLG_MORPHOLOGY_GENERATOR
+	relationshipEntityText = generateMorphologyPastParticiple(relationshipEntity);
+	//eg that was ridden by
+	#else
+	relationshipEntityText = relationshipEntity->entityName;
+	#endif
+	relationshipEntityText = relationshipEntityText + GIA_NLG_TEXT_SPACE;
+	return relationshipEntityText;
+}
+
+string GIAnlgClass::generateMorphologyCondition(GIAentityNode* relationshipEntity)
+{
+	string relationshipEntityText = "";
+	relationshipEntityText = relationshipEntityText + relationshipEntity->entityName;	//eg "near"
+	relationshipEntityText = relationshipEntityText + GIA_NLG_TEXT_SPACE;
+	return relationshipEntityText;
+}
+
+
+
+string GIAnlgClass::generateMorphologyRelationshipAuxiliaryBe(GIAentityNode* relationshipEntity)
+{
+	string relationshipEntityText = "";
+	GIAentityNode* relationshipEntitySubject = GIAtranslatorOperations.getRelationshipSubjectEntity(relationshipEntity);
+	#ifdef GIA_NLG_MORPHOLOGY_GENERATOR
+	relationshipEntityText = generateMorphology(relationshipEntity);	
+	#else
+	relationshipEntityText = relationshipEntityText + entityRelationshipTenseNumerosityCrossReferenceBeAuxiliaryArray[relationshipEntity->grammaticalTenseTemp][relationshipEntitySubject->grammaticalNumber];
+	#endif
+	return relationshipEntityText;
+}
+
+string GIAnlgClass::generateMorphologyRelationshipAuxiliaryHave(GIAentityNode* relationshipEntity)
+{
+	string relationshipEntityText = "";
+	GIAentityNode* relationshipEntitySubject = GIAtranslatorOperations.getRelationshipSubjectEntity(relationshipEntity);
+	#ifdef GIA_NLG_MORPHOLOGY_GENERATOR
+	relationshipEntityText = generateMorphology(relationshipEntity);
+	#else
+	relationshipEntityText = relationshipEntityText + entityRelationshipTenseNumerosityCrossReferenceHaveAuxiliaryArray[relationshipEntity->grammaticalTenseTemp][relationshipEntitySubject->grammaticalNumber];
+	#endif
+	return relationshipEntityText;
+}
+
+
+
+
+
+bool GIAnlgClass::generateNounEntityLanguage(GIAentityNode* nounEntity, GIANLGentity** currentNLGentity, bool definite)
+{
+	bool result = false;
+	
+	string nounEntityText = "";
+	nounEntityText = nounEntityText + calcDeterminate(nounEntity, definite);
+	nounEntityText = nounEntityText + calcNounWord(nounEntity);
+	
+	(*currentNLGentity)->entityGrammatisedText = nounEntityText;
+	(*currentNLGentity)->next = new GIANLGentity();
+	(*currentNLGentity) = (*currentNLGentity)->next;
+	
+	return result;
+}
+
+string GIAnlgClass::calcDeterminate(const GIAentityNode* entityNode, const bool definite)
+{
+	//first letter is vowel		//added 03 August 2012
+	bool firstLetterIsVowel = false;
+	string word = entityNode->entityName;
 	for(int i=0; i<NLG_NUMBER_OF_VOWELS; i++)
 	{
-		if(tolower(wordOrig[0]) == vowelArray[i])
+		if(tolower(word[0]) == vowelArray[i])
 		{
 		 	firstLetterIsVowel = true;
 		}
@@ -1067,50 +691,44 @@ string GIAnlgClass::calcDeterminate(const GIAentityNode* entityNode)
 	//determinate
 	bool addDeterminate = false;
 	string determinate = "";
-	if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_ACTION)
+	if(GIAentityNodeClass.entityIsRelationship(entityNode))
 	{
-
+		cout << " GIAnlgClass::calcDeterminate{} error: entityIsRelationship(entityNode)" << endl;
 	}
-	else if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_CONDITION)
+	else if((entityNode->entityType == GIA_ENTITY_TYPE_CONCEPT) || (entityNode->entityType == GIA_ENTITY_TYPE_QUALITY) || (entityNode->entityType == GIA_ENTITY_TYPE_NETWORK_INDEX))
 	{
-
+		
 	}
-	else if((entityNode->entityType == GIA_ENTITY_TYPE_TYPE_SUBSTANCE) && !(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_CONCEPT))
+	else if(entityNode->entityType == GIA_ENTITY_TYPE_SUBSTANCE)
 	{
-		if(!(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_QUALITY))
+		if(definite)
 		{
-			if(entityNode->sourceReferencedInLanguageGeneration)
+			determinate = GRAMMATICAL_DETERMINER_DEFINITE;	//the
+			addDeterminate = true;
+		}
+		else
+		{	if(!(entityNode->hasQuantity))
 			{
-				determinate = GRAMMATICAL_DETERMINER_DEFINITE;	//the
-				addDeterminate = true;
-			}
-			else
-			{	if(!(entityNode->hasQuantity))
+				if(isPlural)	//added 03 August 2012
 				{
-					if(isPlural)	//added 03 August 2012
+					determinate = GRAMMATICAL_DETERMINER_INDEFINITE_PLURAL;	//some
+				}
+				else
+				{
+					if(firstLetterIsVowel)
 					{
-						determinate = GRAMMATICAL_DETERMINER_INDEFINITE_PLURAL;	//some
+						determinate = GRAMMATICAL_DETERMINER_INDEFINITE_SINGULAR_FIRST_LETTER_VOWEL;	//an
 					}
 					else
 					{
-						if(firstLetterIsVowel)
-						{
-							determinate = GRAMMATICAL_DETERMINER_INDEFINITE_SINGULAR_FIRST_LETTER_VOWEL;	//an
-						}
-						else
-						{
-							determinate = GRAMMATICAL_DETERMINER_INDEFINITE_SINGULAR;	//a
-						}
+						determinate = GRAMMATICAL_DETERMINER_INDEFINITE_SINGULAR;	//a
 					}
-					addDeterminate = true;
 				}
+				addDeterminate = true;
 			}
-		}
+		}	
 	}
-	else if((entityNode->entityType == GIA_ENTITY_TYPE_TYPE_NETWORK_INDEX) || (entityNode->entityType == GIA_ENTITY_TYPE_TYPE_CONCEPT))
-	{//isNetworkIndex
 
-	}
 
 	//time
 	#ifdef GIA_NLG_SUPPORT_TIME_CONDITIONS
@@ -1141,7 +759,7 @@ string GIAnlgClass::calcDeterminate(const GIAentityNode* entityNode)
 				{
 				#endif
 
-					determinateFinal = determinate + NLG_TEXT_SPACE;
+					determinateFinal = determinate + GIA_NLG_TEXT_SPACE;
 				#ifdef GIA_NLG_SUPPORT_TIME_CONDITIONS
 				}
 				#endif
@@ -1154,22 +772,20 @@ string GIAnlgClass::calcDeterminate(const GIAentityNode* entityNode)
 }
 
 
-#endif
-
-string GIAnlgClass::getWordOrig(const GIAentityNode* entityNode)
+string GIAnlgClass::calcNounWord(const GIAentityNode* entityNode)
 {
-	string wordOrig = "";
+	string nounWord = "";
 	#ifdef GIA_NLG_NO_MORPHOLOGY_GENERATOR
 	if(entityNode->wordOrig != "")
 	{
-		wordOrig = entityNode->wordOrig;		//IMPORTANT; due to bug in nlg2, nlg2 currently requires the original word, not the lemma
+		nounWord = entityNode->wordOrig;		//IMPORTANT; due to bug in nlg2, nlg2 currently requires the original word, not the lemma
 	}
 	else
 	{
-		wordOrig = entityNode->entityName;
+		nounWord = entityNode->entityName;
 	}
 	#else
-	wordOrig = generateMorphology(entityNode);
+	nounWord = generateMorphology(entityNode);
 	#endif
 
 	//prepend quantity/negative indicator - added 25 July 2012
@@ -1184,69 +800,49 @@ string GIAnlgClass::getWordOrig(const GIAentityNode* entityNode)
 		{
 			quantityNumberStringTemp = GIAentityNodeClass.printQuantityNumberString(entityNode);
 		}
-		wordOrig = quantityNumberStringTemp + " " + wordOrig;
+		nounWord = quantityNumberStringTemp + GIA_NLG_TEXT_SPACE + nounWord;
 
 	}
 	else if(entityNode->negative)
 	{
-		wordOrig = string(RELATION_TYPE_NEGATIVE_CONTEXT_1) + " " + wordOrig;
+		nounWord = string(RELATION_TYPE_NEGATIVE_CONTEXT_1) + " " + nounWord;
 	}
+	#ifdef GIA_NLG_SUPPORT_TIME_CONDITIONS
 	else if(entityNode->conditionType == CONDITION_NODE_TYPE_TIME)	//added 4 August 2012
 	{
 		if(entityNode->timeConditionNode != NULL)
 		{
 			if(!(entityNode->timeConditionNode->tenseOnlyTimeCondition))
 			{
-				wordOrig = entityNode->timeConditionNode->conditionName;
+				nounWord = entityNode->timeConditionNode->conditionName;
 			}
 		}
 	}
+	#endif
 	else
 	{
 
 	}
 
-	return wordOrig;
+	return nounWord;
 }
 
 
-string GIAnlgClass::determineNLGdefinitionText(const GIAentityNode* entityNode)
+string GIAnlgClass::generatePlurality(string entityName, int grammaticalNumber)
 {
-	string nlgDefinitionText = "";
-	bool isPlural = false;
-	if(entityNode->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL)
+	string entityMorph = "";
+	if(grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL)
 	{
-		isPlural = true;
-	}
-	if(isPlural)
-	{
-		nlgDefinitionText = NLG_DEFINITION_TEXT_PLURAL;
+		entityMorph = entityName + GIA_NLG_MORPH_PLURALITY_APPEND;
 	}
 	else
 	{
-		nlgDefinitionText = NLG_DEFINITION_TEXT;
+		entityMorph = entityName;
 	}
-	return nlgDefinitionText;
+	return entityMorph;
 }
 
-string GIAnlgClass::determineNLGpossessionText(const GIAentityNode* entityNode)
-{
-	string nlgPossessionText = "";
-	bool isPlural = false;
-	if(entityNode->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL)
-	{
-		isPlural = true;
-	}
-	if(isPlural)
-	{
-		nlgPossessionText = NLG_POSSESSIVE_TEXT_PLURAL;
-	}
-	else
-	{
-		nlgPossessionText = NLG_POSSESSIVE_TEXT;
-	}
-	return nlgPossessionText;
-}
+
 
 
 #endif

@@ -25,7 +25,7 @@
  * File Name: GIAcxlConversion.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p4d 17-January-2017
+ * Project Version: 3a1a 26-February-2017
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  * NB this function creates entity idActiveListReorderdIDforXMLsave values upon write to speed up linking process (does not use original idActiveList values)
  *
@@ -46,9 +46,7 @@ bool GIAcxlConversionClass::writeCmapToolsCXLFileOptimised(const string xmlFileN
 	bool result;
 	result = this->writeCmapToolsCXLfile(xmlFileName, entityNodesActiveListComplete, entityNodesActiveListNetworkIndexes);
 
-	#ifdef GIA_FREE_MEMORY1
 	delete entityNodesActiveListNetworkIndexes;
-	#endif
 
 	return result;
 }
@@ -164,9 +162,7 @@ bool GIAcxlConversionClass::writeCmapToolsCXLfile(const string xmlFileName, vect
 		result = false;
 	}
 
-	#ifdef GIA_FREE_MEMORY1
 	delete firstTagInXMLFile;
-	#endif
 
 	#ifdef GIA_SEMANTIC_NET_CXL_DEBUG
 	cout << "DEBUG writeXMLfile done " << endl;
@@ -215,15 +211,15 @@ bool GIAcxlConversionClass::generateCXLentityNodeTagList(XMLparserTag* firstTagI
 	#ifdef GIA_CMAP_CONVERSION_SANITISED
 	if(networkIndexOrLinkingPhraseList)
 	{
-		currentTagL1 = this->addToCXLentityNodeTagList(currentTagL1, entityNodesActiveListComplete, currentCmapNodeIDinCmapNodeList, networkIndexOrLinkingPhraseList, appearanceList, GIA_ENTITY_TYPE_TYPE_SUBSTANCE);
-		currentTagL1 = this->addToCXLentityNodeTagList(currentTagL1, entityNodesActiveListComplete, currentCmapNodeIDinCmapNodeList, networkIndexOrLinkingPhraseList, appearanceList, GIA_ENTITY_TYPE_TYPE_CONCEPT);
-		currentTagL1 = this->addToCXLentityNodeTagList(currentTagL1, entityNodesActiveListComplete, currentCmapNodeIDinCmapNodeList, networkIndexOrLinkingPhraseList, appearanceList, GIA_ENTITY_TYPE_TYPE_NETWORK_INDEX);
-		currentTagL1 = this->addToCXLentityNodeTagList(currentTagL1, entityNodesActiveListComplete, currentCmapNodeIDinCmapNodeList, networkIndexOrLinkingPhraseList, appearanceList, GIA_ENTITY_TYPE_TYPE_QUALITY);
+		currentTagL1 = this->addToCXLentityNodeTagList(currentTagL1, entityNodesActiveListComplete, currentCmapNodeIDinCmapNodeList, networkIndexOrLinkingPhraseList, appearanceList, GIA_ENTITY_TYPE_SUBSTANCE);
+		currentTagL1 = this->addToCXLentityNodeTagList(currentTagL1, entityNodesActiveListComplete, currentCmapNodeIDinCmapNodeList, networkIndexOrLinkingPhraseList, appearanceList, GIA_ENTITY_TYPE_CONCEPT);
+		currentTagL1 = this->addToCXLentityNodeTagList(currentTagL1, entityNodesActiveListComplete, currentCmapNodeIDinCmapNodeList, networkIndexOrLinkingPhraseList, appearanceList, GIA_ENTITY_TYPE_NETWORK_INDEX);
+		currentTagL1 = this->addToCXLentityNodeTagList(currentTagL1, entityNodesActiveListComplete, currentCmapNodeIDinCmapNodeList, networkIndexOrLinkingPhraseList, appearanceList, GIA_ENTITY_TYPE_QUALITY);
 	}
 	else
 	{
-		currentTagL1 = this->addToCXLentityNodeTagList(currentTagL1, entityNodesActiveListComplete, currentCmapNodeIDinCmapNodeList, networkIndexOrLinkingPhraseList, appearanceList, GIA_ENTITY_TYPE_TYPE_ACTION);	//required for timeCondition node printing
-		currentTagL1 = this->addToCXLentityNodeTagList(currentTagL1, entityNodesActiveListComplete, currentCmapNodeIDinCmapNodeList, networkIndexOrLinkingPhraseList, appearanceList, GIA_ENTITY_TYPE_TYPE_CONDITION);	//required for timeCondition node printing
+		currentTagL1 = this->addToCXLentityNodeTagList(currentTagL1, entityNodesActiveListComplete, currentCmapNodeIDinCmapNodeList, networkIndexOrLinkingPhraseList, appearanceList, GIA_ENTITY_TYPE_ACTION);	//required for timeCondition node printing
+		currentTagL1 = this->addToCXLentityNodeTagList(currentTagL1, entityNodesActiveListComplete, currentCmapNodeIDinCmapNodeList, networkIndexOrLinkingPhraseList, appearanceList, GIA_ENTITY_TYPE_CONDITION);	//required for timeCondition node printing
 	}
 	#else
 	for(int entityType=0; entityType<GIA_ENTITY_NUMBER_OF_TYPES; entityType++)
@@ -257,7 +253,7 @@ XMLparserTag* GIAcxlConversionClass::addToCXLentityNodeTagList(XMLparserTag* cur
 			if(!(currentEntity->disabled))
 			{
 				#ifdef GIA_CMAP_CONVERSION_SANITISED_DO_NOT_ADD_REDUNDANT_NETWORK_INDEX_NODES
-				if(currentEntity->associatedInstanceNodeList->empty())
+				if(currentEntity->instanceNodeList->empty())
 				{//if GIA_CMAP_CONVERSION_SANITISED_DO_NOT_ADD_REDUNDANT_NETWORK_INDEX_NODES; then do not add a networkIndex entity if it has an associated instance (substance node)
 				#endif
 					#ifdef GIA_SEMANTIC_NET_CXL_DEBUG
@@ -387,15 +383,15 @@ bool GIAcxlConversionClass::checkIfPassedRedundantNetworkIndexNodeRemoval(GIAent
 	bool result = false;
 
 	#ifdef GIA_CMAP_CONVERSION_SANITISED_DO_NOT_ADD_REDUNDANT_NETWORK_INDEX_NODES_OLD
-	if(currentEntity->associatedInstanceNodeList->empty())
+	if(currentEntity->instanceNodeList->empty())
 	{//if GIA_CMAP_CONVERSION_SANITISED_DO_NOT_ADD_REDUNDANT_NETWORK_INDEX_NODES; then do not add a networkIndex entity if it has an associated instance (substance node)
-	//if((currentEntity->entityType == GIA_ENTITY_TYPE_TYPE_ACTION) || (currentEntity->entityType == GIA_ENTITY_TYPE_TYPE_SUBSTANCE) || (currentEntity->entityType == GIA_ENTITY_TYPE_TYPE_CONCEPT) || (currentEntity->entityType == GIA_ENTITY_TYPE_TYPE_CONDITION))
+	//if((currentEntity->entityType == GIA_ENTITY_TYPE_ACTION) || (currentEntity->entityType == GIA_ENTITY_TYPE_SUBSTANCE) || (currentEntity->entityType == GIA_ENTITY_TYPE_CONCEPT) || (currentEntity->entityType == GIA_ENTITY_TYPE_CONDITION))
 	//{//do not add raw networkIndex nodes
 		result = true;
 	}
 	#else
 
-	if(currentEntity->associatedInstanceNodeList->empty())
+	if(currentEntity->instanceNodeList->empty())
 	{
 		//entity does not have an associated instance [entity is either a raw/isolated networkIndex node, or it is a substance]
 		result = true;
@@ -404,25 +400,16 @@ bool GIAcxlConversionClass::checkIfPassedRedundantNetworkIndexNodeRemoval(GIAent
 	{
 		//entity has an associated instance [entity is a networkIndex node]
 
-		if(!(currentEntity->actionSubjectEntity->empty()))
+		if(!(currentEntity->relationshipSubjectEntity->empty()))
 		{
 			result = true;
 		}
-		if(!(currentEntity->actionObjectEntity->empty()))
-		{
-			result = true;
-		}
-
-		if(!(currentEntity->conditionSubjectEntity->empty()))
-		{
-			result = true;
-		}
-		if(!(currentEntity->conditionObjectEntity->empty()))
+		if(!(currentEntity->relationshipObjectEntity->empty()))
 		{
 			result = true;
 		}
 
-		if(!(currentEntity->entityNodeDefiningThisInstance->empty()))
+		if(!(currentEntity->instanceReverseNodeList->empty()))
 		{//this shouldnt be defined, since this entity is a networkIndex node, not a substance node
 			result = true;
 		}
@@ -432,7 +419,7 @@ bool GIAcxlConversionClass::checkIfPassedRedundantNetworkIndexNodeRemoval(GIAent
 		{
 			result = true;
 		}
-		if(!(currentEntity->incomingActionNodeList->empty()))
+		if(!(currentEntity->actionReverseNodeList->empty()))
 		{
 			result = true;
 		}
@@ -442,7 +429,7 @@ bool GIAcxlConversionClass::checkIfPassedRedundantNetworkIndexNodeRemoval(GIAent
 			result = true;
 		}
 
-		if(!(currentEntity->incomingConditionNodeList->empty()))
+		if(!(currentEntity->conditionReverseNodeList->empty()))
 		{
 			result = true;
 		}
@@ -453,17 +440,17 @@ bool GIAcxlConversionClass::checkIfPassedRedundantNetworkIndexNodeRemoval(GIAent
 			result = true;
 		}
 
-		if(!(currentEntity->propertyNodeReverseList->empty()))
+		if(!(currentEntity->propertyReverseNodeList->empty()))
 		{
 			result = true;
 		}
 
-		if(!(currentEntity->entityNodeDefinitionList->empty()))
+		if(!(currentEntity->definitionNodeList->empty()))
 		{
 			result = true;
 		}
 
-		if(!(currentEntity->entityNodeDefinitionReverseList->empty()))
+		if(!(currentEntity->definitionReverseNodeList->empty()))
 		{
 			result = true;
 		}
@@ -500,22 +487,12 @@ XMLparserTag* GIAcxlConversionClass::addToCXLconnectionNodeTagList(XMLparserTag*
 					{
 						#ifdef GIA_CMAP_CONVERSION_SANITISED
 						//directly link action/condition subject/objects together (like in a standard/CMapTools networkIndex map)
-						if(((i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_SUBJECT) || (i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_OBJECT)) || ((i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT) || (i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_OBJECT)))
+						if(((i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_RELATIONSHIP_SUBJECT) || (i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_RELATIONSHIP_OBJECT))
 						{
-							if((currentEntity->entityType == GIA_ENTITY_TYPE_TYPE_ACTION) || (currentEntity->entityType == GIA_ENTITY_TYPE_TYPE_CONDITION))
+							if(entityIsRelationship(currentEntity))
 							{
-								vector<GIAentityConnectionClass*>* entitySubjectVectorConnection;
-								vector<GIAentityConnectionClass*>* entityObjectVectorConnection;
-								if(currentEntity->entityType == GIA_ENTITY_TYPE_TYPE_ACTION)
-								{
-									entitySubjectVectorConnection = currentEntity->actionSubjectEntity;
-									entityObjectVectorConnection = currentEntity->actionObjectEntity;
-								}
-								else if(currentEntity->entityType == GIA_ENTITY_TYPE_TYPE_CONDITION)
-								{
-									entitySubjectVectorConnection = currentEntity->conditionSubjectEntity;
-									entityObjectVectorConnection = currentEntity->conditionObjectEntity;
-								}
+								vector<GIAentityConnectionClass*>* entitySubjectVectorConnection = currentEntity->relationshipSubjectEntity;
+								vector<GIAentityConnectionClass*>* entityObjectVectorConnection = currentEntity->relationshipObjectEntity;
 
 								bool subjectIsEmpty = false;
 								bool objectIsEmpty = false;
@@ -527,9 +504,8 @@ XMLparserTag* GIAcxlConversionClass::addToCXLconnectionNodeTagList(XMLparserTag*
 								{
 									objectIsEmpty = true;
 								}
-								GIAentityConnectionClass* entitySubjectConnection = entitySubjectVectorConnection->begin();
-								GIAentityConnectionClass* entityObjectConnection = entityObjectVectorConnection->begin();
-
+								GIAentityConnectionClass* entitySubjectConnection = entitySubjectVectorConnection->begin();	//this could equally be back() as there is only 1 subject/object connection
+								GIAentityConnectionClass* entityObjectConnection = entityObjectVectorConnection->begin();	//this could equally be back() as there is only 1 subject/object connection
 
 								string connectionTypeName = currentEntity->entityName;
 								#ifdef GIA_SEMANTIC_NET_CXL_DEBUG
@@ -577,7 +553,7 @@ XMLparserTag* GIAcxlConversionClass::addToCXLconnectionNodeTagList(XMLparserTag*
 								{
 									bool pass = true;
 									#ifdef GIA_CMAP_CONVERSION_SANITISED_DO_NOT_ADD_REDUNDANT_NETWORK_INDEX_NODES_OLD
-									if(i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE)
+									if(i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_INSTANCE_REVERSE)
 									{
 										pass = false;
 									}

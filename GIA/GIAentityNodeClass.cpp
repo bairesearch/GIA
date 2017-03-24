@@ -25,7 +25,7 @@
  * File Name: GIAentityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p4d 17-January-2017
+ * Project Version: 3a1a 26-February-2017
  *
  *******************************************************************************/
 
@@ -74,11 +74,12 @@ GIAentityNode::GIAentityNode(void)
 
 
 	/*GIA Entity Type*/
-	entityType = GIA_ENTITY_TYPE_TYPE_UNDEFINED;
+	entityType = GIA_ENTITY_TYPE_UNDEFINED;
 	isActionConcept = false;
 	hasAssociatedInstance = false;
 	hasAssociatedTime = false;
 	negative = false;
+	isArtificialAuxiliary = false;
 
 
 	/*GIA Special Variables (Quantities/Measures)*/
@@ -135,18 +136,12 @@ GIAentityNode::GIAentityNode(void)
 	#endif
 
 	/*GIA Translator Temporary Variables*/
-	isSubjectTemp = false;
-	isObjectTemp = false;
-	hasSubstanceTemp = false;
-	//hasQualityTemp = false;
-	isActionTemp = false;
 	entityIndexTemp = GIA_ENTITY_INDEX_UNDEFINED;	//was 0 before 11 October 2012
 	sentenceIndexTemp = GIA_SENTENCE_INDEX_UNDEFINED;	//was 0 before 11 October 2012
 	isToBeComplimentOfActionTemp = false;
 	#ifndef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 	disableParsingAsPrepositionRelationTemp = false;
 	#endif
-	entityAlreadyDeclaredInThisContext = false;
 	hasAssociatedInstanceTemp = false;
 	#ifdef GIA_ALIASES
 	isName = false;
@@ -158,34 +153,20 @@ GIAentityNode::GIAentityNode(void)
 	
 	/*GIA Connections*/
 	//to minimise query/referencing code
-	actionNodeList = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTIONS]);
-	incomingActionNodeList = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_INCOMING_ACTIONS]);
-	conditionNodeList = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITIONS]);
-	incomingConditionNodeList = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_INCOMING_CONDITIONS]);
-	propertyNodeList = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES]);
-	propertyNodeReverseList = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_PROPERTIES]);
-	entityNodeDefinitionList = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITIONS]);
-	entityNodeDefinitionReverseList = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_REVERSE_DEFINITIONS]);
-	associatedInstanceNodeList = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES]);
-	actionSubjectEntity = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_SUBJECT]);
-	actionObjectEntity = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_OBJECT]);
-	conditionSubjectEntity = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_SUBJECT]);
-	conditionObjectEntity = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_OBJECT]);
-	entityNodeDefiningThisInstance = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE]);
+	actionNodeList = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION]);
+	actionReverseNodeList = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_REVERSE]);
+	conditionNodeList = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION]);
+	conditionReverseNodeList = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_REVERSE]);
+	propertyNodeList = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTY]);
+	propertyReverseNodeList = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTY_REVERSE]);
+	definitionNodeList = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITION]);
+	definitionReverseNodeList = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITION_REVERSE]);
+	relationshipSubjectEntity = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_RELATIONSHIP_SUBJECT]);
+	relationshipObjectEntity = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_RELATIONSHIP_OBJECT]);	
+	instanceNodeList = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_INSTANCE]);
+	instanceReverseNodeList = &(entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_INSTANCE_REVERSE]);
 	#ifdef GIA_DATABASE
 	GIAentityNodeClassClass().DBsetEntityConnectionsReferenceListsLoaded(this, true);	//for now, assume that a new entity will be configured with its connections loaded into RAM
-	#endif
-	/*
-	entityVectorConnectionsSpecialConditionsHavingBeingArray[GIA_ENTITY_VECTOR_CONNECTION_SPECIAL_CONDITIONS_HAVING_BEING_TYPE_DEFINITIONS] = entityNodeDefinitionList;
-	entityVectorConnectionsSpecialConditionsHavingBeingArray[GIA_ENTITY_VECTOR_CONNECTION_SPECIAL_CONDITIONS_HAVING_BEING_TYPE_SUBSTANCES] = propertyNodeList;
-	*/
-	#ifdef GIA_ADVANCED_REFERENCING
-	/* initialisation shouldnt be necessary...
-	for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
-	{
-		entityVectorConnectionsParametersSameReferenceSetArray[i] = new vector<GIAentityNode*>();
-	}
-	*/
 	#endif
 	conditionType = CONDITION_NODE_TYPE_UNDEFINED;
 	timeConditionNode = NULL;
@@ -260,6 +241,10 @@ GIAentityNode::GIAentityNode(void)
 	sourceReferencedInLanguageGeneration = false;
 	#endif
 
+	#ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
+	isAlias = false;
+	#endif
+	
 	#ifdef USE_NLC
 	NLCparsedForCodeBlocks = false;
 	//parsedForNLCcodeBlocksActionRound = false;
@@ -283,16 +268,24 @@ GIAentityNode::GIAentityNode(void)
 	NLCfirstInstanceOfProperNounInContext = false;
 	#endif
 
-	#ifdef GIA_LRP_NORMALISE_PREPOSITIONS
-	#ifdef GIA_LRP_DETECT_PREPOSITION_TYPE
+	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_PREPOSITIONS
+	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DETECT_PREPOSITION_TYPE
 	conditionType2 = "";
 	#endif
-	#ifdef GIA_LRP_NORMALISE_TWOWAY_PREPOSITIONS
+	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_TWOWAY_PREPOSITIONS
 	conditionTwoWay = false;
-	#ifdef GIA_LRP_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED
+	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED
 	inverseConditionTwoWay = false;
 	#endif
 	#endif
+	#endif
+	
+	#ifdef GIA_CREATE_SHORTCUTS_TO_CONCEPT_ENTITIES
+	shortcutToNonspecificConceptEntity = NULL;
+	//shortcutsToSpecificConceptEntities = NULL;
+	#endif
+	#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
+	isLogicReferenceEntity = false;
 	#endif
 }
 /*
@@ -357,18 +350,18 @@ void GIAentityNodeClassClass::disconnectNodeFromAllButDefinitions(const GIAentit
 	cout << "warning: disconnectNodeFromAllButDefinitions{} not yet coded" << endl;
 	/* need to delete its instance from the reverse lists of each node of each list of this entity...
 	actionNodeList->clear();
-	incomingActionNodeList->clear();
+	actionReverseNodeList->clear();
 
-	incomingActionNodeList->clear();
-	incomingActionNodeList->clear();
-	incomingActionNodeList->clear();
-	incomingActionNodeList->clear();
-	incomingActionNodeList->clear();
-	incomingActionNodeList->clear();
-	incomingActionNodeList->clear();
-	incomingActionNodeList->clear();
-	incomingActionNodeList->clear();
-	incomingActionNodeList->clear();
+	actionReverseNodeList->clear();
+	actionReverseNodeList->clear();
+	actionReverseNodeList->clear();
+	actionReverseNodeList->clear();
+	actionReverseNodeList->clear();
+	actionReverseNodeList->clear();
+	actionReverseNodeList->clear();
+	actionReverseNodeList->clear();
+	actionReverseNodeList->clear();
+	actionReverseNodeList->clear();
 	*/
 }
 
@@ -732,17 +725,12 @@ bool GIAentityNodeClassClass::testEntityCharacteristic(const GIAentityNode* enti
 	this->testEntityCharacteristicIterationint(entity->NERTemp, entityCharacteristic, "NERTemp", &foundMatch);
 
 	/*GIA Translator Temporary Variables*/
-	this->testEntityCharacteristicIterationbool(entity->isSubjectTemp, entityCharacteristic, "isSubjectTemp", &foundMatch);
-	this->testEntityCharacteristicIterationbool(entity->isObjectTemp, entityCharacteristic, "isObjectTemp", &foundMatch);
-	this->testEntityCharacteristicIterationbool(entity->hasSubstanceTemp, entityCharacteristic, "hasSubstanceTemp", &foundMatch);
-	this->testEntityCharacteristicIterationbool(entity->isActionTemp, entityCharacteristic, "isActionTemp", &foundMatch);
 	this->testEntityCharacteristicIterationint(entity->entityIndexTemp, entityCharacteristic, "entityIndexTemp", &foundMatch);
 	this->testEntityCharacteristicIterationint(entity->sentenceIndexTemp, entityCharacteristic, "sentenceIndexTemp", &foundMatch);
 	this->testEntityCharacteristicIterationbool(entity->isToBeComplimentOfActionTemp, entityCharacteristic, "isToBeComplimentOfActionTemp", &foundMatch);
 	#ifndef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 	this->testEntityCharacteristicIterationbool(entity->disableParsingAsPrepositionRelationTemp, entityCharacteristic, "disableParsingAsPrepositionRelationTemp", &foundMatch);
 	#endif
-	this->testEntityCharacteristicIterationbool(entity->entityAlreadyDeclaredInThisContext, entityCharacteristic, "entityAlreadyDeclaredInThisContext", &foundMatch);
 	this->testEntityCharacteristicIterationbool(entity->hasAssociatedInstanceTemp, entityCharacteristic, "hasAssociatedInstanceTemp", &foundMatch);
 	#ifdef GIA_ALIASES
 	this->testEntityCharacteristicIterationbool(entity->isName, entityCharacteristic, "isName", &foundMatch);
@@ -915,17 +903,12 @@ bool GIAentityNodeClassClass::setEntityCharacteristic(GIAentityNode* entity, GIA
 
 
 	/*GIA Translator Temporary Variables*/
-	this->setEntityCharacteristicIterationbool(&(entity->isSubjectTemp), entityCharacteristic, "isSubjectTemp", &foundMatch);
-	this->setEntityCharacteristicIterationbool(&(entity->isObjectTemp), entityCharacteristic, "isObjectTemp", &foundMatch);
-	this->setEntityCharacteristicIterationbool(&(entity->hasSubstanceTemp), entityCharacteristic, "hasSubstanceTemp", &foundMatch);
-	this->setEntityCharacteristicIterationbool(&(entity->isActionTemp), entityCharacteristic, "isActionTemp", &foundMatch);
 	this->setEntityCharacteristicIterationint(&(entity->entityIndexTemp), entityCharacteristic, "entityIndexTemp", &foundMatch);
 	this->setEntityCharacteristicIterationint(&(entity->sentenceIndexTemp), entityCharacteristic, "sentenceIndexTemp", &foundMatch);
 	this->setEntityCharacteristicIterationbool(&(entity->isToBeComplimentOfActionTemp), entityCharacteristic, "isToBeComplimentOfActionTemp", &foundMatch);
 	#ifndef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 	this->setEntityCharacteristicIterationbool(&(entity->disableParsingAsPrepositionRelationTemp), entityCharacteristic, "disableParsingAsPrepositionRelationTemp", &foundMatch);
 	#endif
-	this->setEntityCharacteristicIterationbool(&(entity->entityAlreadyDeclaredInThisContext), entityCharacteristic, "entityAlreadyDeclaredInThisContext", &foundMatch);
 	this->setEntityCharacteristicIterationbool(&(entity->hasAssociatedInstanceTemp), entityCharacteristic, "hasAssociatedInstanceTemp", &foundMatch);
 	#ifdef GIA_ALIASES
 	this->setEntityCharacteristicIterationbool(&(entity->isName), entityCharacteristic, "isName", &foundMatch);
@@ -1061,17 +1044,12 @@ bool GIAentityNodeClassClass::getEntityCharacteristic(const GIAentityNode* entit
 	this->getEntityCharacteristicIterationint(entity->NERTemp, entityCharacteristic, "NERTemp", &foundMatch);
 
 	/*GIA Translator Temporary Variables*/
-	this->getEntityCharacteristicIterationbool(entity->isSubjectTemp, entityCharacteristic, "isSubjectTemp", &foundMatch);
-	this->getEntityCharacteristicIterationbool(entity->isObjectTemp, entityCharacteristic, "isObjectTemp", &foundMatch);
-	this->getEntityCharacteristicIterationbool(entity->hasSubstanceTemp, entityCharacteristic, "hasSubstanceTemp", &foundMatch);
-	this->getEntityCharacteristicIterationbool(entity->isActionTemp, entityCharacteristic, "isActionTemp", &foundMatch);
 	this->getEntityCharacteristicIterationint(entity->entityIndexTemp, entityCharacteristic, "entityIndexTemp", &foundMatch);
 	this->getEntityCharacteristicIterationint(entity->sentenceIndexTemp, entityCharacteristic, "sentenceIndexTemp", &foundMatch);
 	this->getEntityCharacteristicIterationbool(entity->isToBeComplimentOfActionTemp, entityCharacteristic, "isToBeComplimentOfActionTemp", &foundMatch);
 	#ifndef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 	this->getEntityCharacteristicIterationbool(entity->disableParsingAsPrepositionRelationTemp, entityCharacteristic, "disableParsingAsPrepositionRelationTemp", &foundMatch);
 	#endif
-	this->getEntityCharacteristicIterationbool(entity->entityAlreadyDeclaredInThisContext, entityCharacteristic, "entityAlreadyDeclaredInThisContext", &foundMatch);
 	this->getEntityCharacteristicIterationbool(entity->hasAssociatedInstanceTemp, entityCharacteristic, "hasAssociatedInstanceTemp", &foundMatch);
 	#ifdef GIA_ALIASES
 	this->getEntityCharacteristicIterationbool(entity->isName, entityCharacteristic, "isName", &foundMatch);
@@ -1144,24 +1122,15 @@ void GIAentityNodeClassClass::getEntityCharacteristicIterationstring(const strin
 }
 #endif
 
-#ifndef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC
-bool GIAentityNodeClassClass::isActionSpecialPossessive(const GIAentityNode* actionEntity)
+bool GIAentityNodeClassClass::isActionSpecialPossessive(const GIAentityNode* actionRelationshipEntity)
 {
 	bool result = false;
-	#ifdef GIA_RECORD_POSSESSION_AUXILIARY_HAS_INFORMATION_GENERAL_IMPLEMENTATION
-	if(SHAREDvars.textInTextArray(actionEntity->entityName, relationEntitySpecialActionNameForEffectivePropertiesArray, RELATION_ENTITY_SPECIAL_ACTION_NAME_FOR_EFFECTIVE_PROPERTIES_NUMBER_OF_TYPES))
-	{
-		result == true;
-	}
-	#else
-	if(actionEntity->entityName == RELATION_ENTITY_SPECIAL_ACTION_NAME_FOR_EFFECTIVE_PROPERTIES)
+	if(actionRelationshipEntity->entityName == RELATION_ENTITY_SPECIAL_RELATIONSHIP_NAME_FOR_EFFECTIVE_PROPERTIES)
 	{
 		result = true;
 	}
-	#endif
 	return result;
 }
-#endif
 
 
 
@@ -1172,7 +1141,7 @@ void deleteAllEntitiesInNetworkIndexEntityNodeList(unordered_map<string, GIAenti
 	{
 		GIAentityNode* networkIndexEntityNode = sentenceNetworkIndexEntityNodesListTempNotUsedIter->second;
 
-		for(vector<GIAentityNode*>::iterator instanceEntityNodesListIter = networkIndexEntityNode->associatedInstanceNodeList.begin(); instanceEntityNodesListIter != networkIndexEntityNode->associatedInstanceNodeList.end(); )
+		for(vector<GIAentityNode*>::iterator instanceEntityNodesListIter = networkIndexEntityNode->instanceNodeList.begin(); instanceEntityNodesListIter != networkIndexEntityNode->instanceNodeList.end(); )
 		{
 			GIAentityNode* instanceEntityNode = *instanceEntityNodesListIter;
 			for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
@@ -1190,7 +1159,7 @@ void deleteAllEntitiesInNetworkIndexEntityNodeList(unordered_map<string, GIAenti
 			delete networkIndexEntityLoaded;
 			#endif
 
-			instanceEntityNodesListIter = networkIndexEntityNode->associatedInstanceNodeList.erase(instanceEntityNodesListIter);
+			instanceEntityNodesListIter = networkIndexEntityNode->instanceNodeList.erase(instanceEntityNodesListIter);
 		}
 
 
@@ -1252,6 +1221,22 @@ bool GIAentityNodeClassClass::detectPredeterminerNonReference(const GIAentityNod
 	bool predeterminerDetected = false;
 	predeterminerDetected = SHAREDvars.intInIntArray(entity->grammaticalPredeterminerTemp, entityPredeterminerSmallArray, GRAMMATICAL_PREDETERMINER_SMALL_ARRAY_NUMBER_OF_TYPES);
 	return predeterminerDetected;
+}
+
+bool GIAentityNodeClassClass::entityIsRelationship(const GIAentityNode* entity)
+{
+	bool relationshipEntity = false;
+	if(entityTypesIsRelationshipArray[entity->entityType])
+	{
+		relationshipEntity = true;
+	}
+	return relationshipEntity;
+}
+
+int GIAentityNodeClassClass::getRelationshipEntityRelativeTypeIndex(const GIAentityNode* entity)
+{
+	int relationshipEntityRelativeTypeIndex = entity->entityType - GIA_RELATIONSHIP_ENTITY_OFFSET_TO_FIRST_RELATIVE_TYPE_INDEX;
+	return relationshipEntityRelativeTypeIndex;
 }
 
 

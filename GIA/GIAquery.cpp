@@ -25,7 +25,7 @@
  * File Name: GIAquery.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p4d 17-January-2017
+ * Project Version: 3a1a 26-February-2017
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  * ?Limitations: will only locate a exact answer (based upon a comparison node) if it provides the maximum number of matched nodes
@@ -164,10 +164,9 @@ GIAentityNode* GIAqueryClass::answerQueryOrFindAndTagForHighlightingMatchingStru
 			if(currentQueryEntityNode->entityName != REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)	//added 22 August 2012
 			{
 				bool foundQueryEntityNodeName = false;
-				long queryEntityNodeIndex = INT_DEFAULT_VALUE;
 				string queryEntityNodeName = currentQueryEntityNode->entityName;
 
-				GIAentityNode* networkIndexEntityMatchingCurrentQueryEntity = GIAdatabase.findOrAddNetworkIndexEntityNodeByName(NULL, entityNodesActiveListNetworkIndexes, &queryEntityNodeName, &foundQueryEntityNodeName, &queryEntityNodeIndex, false, NULL, NULL, false);
+				GIAentityNode* networkIndexEntityMatchingCurrentQueryEntity = GIAdatabase.findOrAddNetworkIndexEntityNodeByName(NULL, entityNodesActiveListNetworkIndexes, &queryEntityNodeName, &foundQueryEntityNodeName, false, NULL, NULL, false);
 
 				if(foundQueryEntityNodeName)
 				{
@@ -269,7 +268,7 @@ bool GIAqueryClass::testEntityNodeForQueryOrReferenceSet2(GIAentityNode* queryEn
 		{
 			bool pass = true;
 			#ifndef GIA_QUERY_TRACE_NETWORK_INDEX_NODES_DEFINING_INSTANTIATIONS
-			if(i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE)	//Removed && (traceModeIsQuery) GIA 2f19b 23-July-2014 (do not trace instantinations for queries only)
+			if(i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_INSTANCE_REVERSE)	//Removed && (traceModeIsQuery) GIA 2f19b 23-July-2014 (do not trace instantinations for queries only)
 			{
 				pass = false;
 			}
@@ -579,7 +578,7 @@ bool GIAqueryClass::testReferencedEntityNodeForExactNameMatch2(GIAentityNode* qu
 							/*
 							if a 'which' query, then verify that the entityNode is defined by the comparisonVariableNode [ie has a definition corresponding to the comparisonVariableNode]
 							eg1 a dog eats the mud. dogs are animals. / which animal eats the mud?	[answer: 'dog' - which is an instance of 'dog' networkIndex node, where the 'dog' networkIndex node is defined by 'animal'
-								NB answer context text = "eat mud is done by dog" ['eat' is the first node traced, and 'dog' is the answer found'. NB the reason 'mud' is added to the answer context text, is because it is the actionObject, which is parsed after actionSubject in testEntityNodeForQuery {ie, after answer 'dog' has already been found}]
+								NB answer context text = "eat mud is done by dog" ['eat' is the first node traced, and 'dog' is the answer found'. NB the reason 'mud' is added to the answer context text, is because it is the actionRelationshipObjectEntity, which is parsed after actionRelationshipSubjectEntity in testEntityNodeForQuery {ie, after answer 'dog' has already been found}]
 									for this example, need to then verify that the answer 'dog' is defined in the primary semantic network as an animal
 
 							*/
@@ -706,10 +705,9 @@ GIAentityNode* GIAqueryClass::answerQueryOrFindAndTagForHighlightingMatchingStru
 			if(currentQueryEntityNode->entityName != REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)	//added 22 August 2012
 			{
 				bool foundQueryEntityNodeName = false;
-				long queryEntityNodeIndex = INT_DEFAULT_VALUE;
 				string queryEntityNodeName = currentQueryEntityNode->entityName;
 
-				GIAentityNode* networkIndexEntityMatchingCurrentQueryEntity = GIAdatabase.findOrAddNetworkIndexEntityNodeByName(NULL, entityNodesActiveListNetworkIndexes, &queryEntityNodeName, &foundQueryEntityNodeName, &queryEntityNodeIndex, false, NULL, NULL, false);
+				GIAentityNode* networkIndexEntityMatchingCurrentQueryEntity = GIAdatabase.findOrAddNetworkIndexEntityNodeByName(NULL, entityNodesActiveListNetworkIndexes, &queryEntityNodeName, &foundQueryEntityNodeName, false, NULL, NULL, false);
 
 				if(foundQueryEntityNodeName)
 				{
@@ -909,7 +907,7 @@ int GIAqueryClass::testReferencedEntityNodeForExactNameMatch(GIAentityNode* quer
 			if((queryEntityNode->testedForQueryComparison) || (queryEntityNode->testedForQueryComparisonTemp))
 			{
 				cout << "as2" << endl;
-				exit(0);
+				exit(EXIT_ERROR);
 			}
 			*/
 			#endif
@@ -972,7 +970,7 @@ int GIAqueryClass::testReferencedEntityNodeForExactNameMatch(GIAentityNode* quer
 							/*
 							if a 'which' query, then verify that the entityNode is defined by the comparisonVariableNode [ie has a definition corresponding to the comparisonVariableNode]
 							eg1 a dog eats the mud. dogs are animals. / which animal eats the mud?	[answer: 'dog' - which is an instance of 'dog' networkIndex node, where the 'dog' networkIndex node is defined by 'animal'
-								NB answer context text = "eat mud is done by dog" ['eat' is the first node traced, and 'dog' is the answer found'. NB the reason 'mud' is added to the answer context text, is because it is the actionObject, which is parsed after actionSubject in testEntityNodeForQuery {ie, after answer 'dog' has already been found}]
+								NB answer context text = "eat mud is done by dog" ['eat' is the first node traced, and 'dog' is the answer found'. NB the reason 'mud' is added to the answer context text, is because it is the actionRelationshipObjectEntity, which is parsed after actionRelationshipSubjectEntity in testEntityNodeForQuery {ie, after answer 'dog' has already been found}]
 									for this example, need to then verify that the answer 'dog' is defined in the primary semantic network as an animal
 
 							*/
@@ -1267,21 +1265,29 @@ bool GIAqueryClass::testEntityNodeForQueryOrReferenceSet(GIAentityNode* queryEnt
 
 		#ifdef GIA_QUERY_DEBUG
 		//cout << "\tqueryEntityNode->entityName = " << queryEntityNode->entityName << endl;
-		if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_NETWORK_INDEX)
+		if(entityNode->entityType == GIA_ENTITY_TYPE_NETWORK_INDEX)
 		{
 			cout << "entityNode = " << entityNode->entityName << " (is networkIndex)" << endl;
 		}
-		if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_SUBSTANCE)
+		if(entityNode->entityType == GIA_ENTITY_TYPE_SUBSTANCE)
 		{
 			cout << "entityNode = " << entityNode->entityName << " (is substance)" << endl;
 		}
-		else if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_ACTION)
+		else if(entityNode->entityType == GIA_ENTITY_TYPE_ACTION)
 		{
 			cout << "entityNode = " << entityNode->entityName << " (is action)" << endl;
 		}
-		else if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_CONDITION)
+		else if(entityNode->entityType == GIA_ENTITY_TYPE_CONDITION)
 		{
 			cout << "entityNode = " << entityNode->entityName << " (is condition)" << endl;
+		}
+		else if(entityNode->entityType == GIA_ENTITY_TYPE_PROPERTY)
+		{
+			cout << "entityNode = " << entityNode->entityName << " (is property)" << endl;
+		}
+		else if(entityNode->entityType == GIA_ENTITY_TYPE_DEFINITION)
+		{
+			cout << "entityNode = " << entityNode->entityName << " (is definition)" << endl;
 		}
 		else if(entityNode->hasAssociatedInstance)
 		{
@@ -1312,13 +1318,13 @@ bool GIAqueryClass::testEntityNodeForQueryOrReferenceSet(GIAentityNode* queryEnt
 			{
 				if(queryTraceParameters->detectComparisonVariable)
 				{
-					if(queryEntityNode->conditionObjectEntity != NULL)
+					if(queryEntityNode->relationshipObjectEntity != NULL)
 					{
 						queryTraceParameters->isCondition = false;
 						queryTraceParameters->sourceEntityNode = entityNode;
 
 						//NB entityNode and queryEntityNode are conditions
-						for(vector<GIAentityNode*>::iterator connectionIter = entityNode->entityNodeDefinitionList.begin(); connectionIter != entityNode->entityNodeDefinitionList.end(); connectionIter++)
+						for(vector<GIAentityNode*>::iterator connectionIter = entityNode->definitionNodeList.begin(); connectionIter != entityNode->definitionNodeList.end(); connectionIter++)
 						{
 							queryTraceParameters->sourceContext = "being ";
 							//cout << "\t 2A sourceIsConditionAndHasComparisonVariableAttached" << endl;
@@ -1344,7 +1350,7 @@ bool GIAqueryClass::testEntityNodeForQueryOrReferenceSet(GIAentityNode* queryEnt
 		{
 			bool pass = true;
 			#ifndef GIA_QUERY_TRACE_NETWORK_INDEX_NODES_DEFINING_INSTANTIATIONS
-			if(i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE)	//Removed && (traceModeIsQuery) GIA 2f19b 23-July-2014 (do not trace instantinations for queries only)
+			if(i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_INSTANCE_REVERSE)	//Removed && (traceModeIsQuery) GIA 2f19b 23-July-2014 (do not trace instantinations for queries only)
 			{
 				pass = false;
 			}
@@ -1383,7 +1389,7 @@ bool GIAqueryClass::testEntityNodeForQueryOrReferenceSet(GIAentityNode* queryEnt
 								alreadyFoundAnAnswer = true;
 							}
 							#ifndef GIA_QUERY_TRACE_NETWORK_INDEX_NODES_DEFINING_INSTANTIATIONS
-							if(i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES)	//check: do not trace instantinations for queries only
+							if(i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_INSTANCE)	//check: do not trace instantinations for queries only
 							{
 								queryTraceParameters->thisIsInstanceAndPreviousNodeWasDefinition = true;
 							}
@@ -1775,7 +1781,7 @@ bool GIAqueryClass::testEntityNodeForQueryOrReferenceSet(GIAentityNode* queryEnt
 		{
 			for(vector<GIAentityConnection*>::iterator connectionIterQuery = queryEntityNode->entityVectorConnectionsArray[entityVectorConnectionEqualitiesArray[i]].begin(); connectionIterQuery != queryEntityNode->entityVectorConnectionsArray[entityVectorConnectionEqualitiesArray[i]].end(); connectionIterQuery++)
 			{
-				if(entityNode->isSubstance && (*connectionIter)->entity->entityType == GIA_ENTITY_TYPE_TYPE_SUBSTANCE)
+				if(entityNode->isSubstance && (*connectionIter)->entity->entityType == GIA_ENTITY_TYPE_SUBSTANCE)
 				{
 					//equality link found - enable pass through
 					this->testEntityNodeForQueryOrReferenceSet((*connectionIter)->entity, entityNode, numberOfMatchedNodes, knownBestMatch, numberOfMatchedNodesRequiredSynonymnDetection, traceModeIsQuery, queryTraceParameters, referenceTraceParameters);
@@ -1785,7 +1791,7 @@ bool GIAqueryClass::testEntityNodeForQueryOrReferenceSet(GIAentityNode* queryEnt
 			}
 			for(vector<GIAentityConnection*>::reverse_iterator connectionIter = entityNode->entityVectorConnectionsArray[i].rbegin(); connectionIter != entityNode->entityVectorConnectionsArray[i].rend(); connectionIter++)	//reverse iterator not required here
 			{
-				if(entityNode->isSubstance && (*connectionIter)->entity->entityType == GIA_ENTITY_TYPE_TYPE_SUBSTANCE)
+				if(entityNode->isSubstance && (*connectionIter)->entity->entityType == GIA_ENTITY_TYPE_SUBSTANCE)
 				{
 					//equality link found - enable pass through
 					this->testEntityNodeForQueryOrReferenceSet(queryEntityNode, (*connectionIter)->entity, numberOfMatchedNodes, knownBestMatch, numberOfMatchedNodesRequiredSynonymnDetection, traceModeIsQuery, queryTraceParameters, referenceTraceParameters);
@@ -1795,17 +1801,25 @@ bool GIAqueryClass::testEntityNodeForQueryOrReferenceSet(GIAentityNode* queryEnt
 		#endif
 
 		#ifdef GIA_QUERY_DEBUG
-		if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_SUBSTANCE)
+		if(entityNode->entityType == GIA_ENTITY_TYPE_SUBSTANCE)
 		{
 			cout << "Exiting: entityNode = " << entityNode->entityName << " (is substance)" << endl;
 		}
-		else if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_ACTION)
+		else if(entityNode->entityType == GIA_ENTITY_TYPE_ACTION)
 		{
 			cout << "Exiting: entityNode = " << entityNode->entityName << " (is action)" << endl;
 		}
-		else if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_CONDITION)
+		else if(entityNode->entityType == GIA_ENTITY_TYPE_CONDITION)
 		{
 			cout << "Exiting: entityNode = " << entityNode->entityName << " (is condition)" << endl;
+		}
+		else if(entityNode->entityType == GIA_ENTITY_TYPE_PROPERTY)
+		{
+			cout << "Exiting: entityNode = " << entityNode->entityName << " (is property)" << endl;
+		}
+		else if(entityNode->entityType == GIA_ENTITY_TYPE_DEFINITION)
+		{
+			cout << "Exiting: entityNode = " << entityNode->entityName << " (is definition)" << endl;
 		}
 		else if(entityNode->hasAssociatedInstance)
 		{
@@ -1961,7 +1975,7 @@ bool GIAqueryClass::verifyThatAnswerEntityIsDefinedByComparisonVariableNode(GIAe
 	}
 	else
 	{
-		if(!(entityNode->entityNodeDefiningThisInstance->empty()))
+		if(!(entityNode->instanceReverseNodeList->empty()))
 		{
 			if(this->verifyThatAnswerEntityIsDefinedByComparisonVariableNode(GIAtranslatorOperations.getPrimaryNetworkIndexNodeDefiningInstance(entityNode), comparisonVariableNodeName))
 			{
@@ -1969,9 +1983,9 @@ bool GIAqueryClass::verifyThatAnswerEntityIsDefinedByComparisonVariableNode(GIAe
 			}
 		}
 
-		if(!(entityNode->entityNodeDefinitionList->empty()))
+		if(!(entityNode->definitionNodeList->empty()))
 		{
-			for(vector<GIAentityConnection*>::iterator connectionIter = entityNode->entityNodeDefinitionList->begin(); connectionIter < entityNode->entityNodeDefinitionList->end(); connectionIter++)
+			for(vector<GIAentityConnection*>::iterator connectionIter = entityNode->definitionNodeList->begin(); connectionIter < entityNode->definitionNodeList->end(); connectionIter++)
 			{
 				if(this->verifyThatAnswerEntityIsDefinedByComparisonVariableNode((*connectionIter)->entity, comparisonVariableNodeName))
 				{
@@ -1992,7 +2006,7 @@ bool GIAqueryClass::compareEntitySynonyms(GIAentityNode* queryEntityNode, GIAent
 
 	#ifndef USE_WORDNET
 	cout << "compareEntitySynonyms{} error: requires USE_WORDNET" << endl;
-	exit(0);
+	exit(EXIT_ERROR);
 	#endif
 
 	#ifdef GIA_WORDNET_DEBUG
@@ -2079,18 +2093,6 @@ bool GIAqueryClass::compareEntityAliases(GIAentityNode* queryEntityNode, GIAenti
 	if(!(queryEntityNode->disabled) && !(entityNode->disabled))
 	{
 	#endif
-		#ifdef GIA_RECORD_POSSESSION_AUXILIARY_HAS_INFORMATION_GENERAL_IMPLEMENTATION
-		//match "have" and "poss" special possessive actions
-		if(GIAentityNodeClass.isActionSpecialPossessive(queryEntityNode) && GIAentityNodeClass.isActionSpecialPossessive(entityNode))
-		{
-			aliasMatchFound = true;
-		}
-		#endif
-
-		if(queryEntityNode->entityName == entityNode->entityName)
-		{
-			aliasMatchFound = true;
-		}
 
 		#ifdef GIA_ALIASES
 
@@ -2200,13 +2202,19 @@ void GIAqueryClass::generateTexualContextEntityString(string* texualContextEntit
 		string quantityNumberStringTemp = GIAentityNodeClass.printQuantityNumberString(entityNode);
 		entityPretext = entityPretext + quantityNumberStringTemp + " ";
 	}
-	else if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_SUBSTANCE)
+	else if(entityNode->entityType == GIA_ENTITY_TYPE_SUBSTANCE)
 	{
 	}
-	else if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_ACTION)
+	else if(entityNode->entityType == GIA_ENTITY_TYPE_ACTION)
 	{
 	}
-	else if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_CONDITION)
+	else if(entityNode->entityType == GIA_ENTITY_TYPE_CONDITION)
+	{
+	}
+	else if(entityNode->entityType == GIA_ENTITY_TYPE_PROPERTY)
+	{
+	}
+	else if(entityNode->entityType == GIA_ENTITY_TYPE_CONDITION)
 	{
 	}
 	else
@@ -2262,7 +2270,7 @@ void GIAqueryClass::printEntityNodeQualitiesOnly(GIAentityNode* entityNode, stri
 	for(vector<GIAentityConnection*>::iterator connectionIter = entityNode->propertyNodeList->begin(); connectionIter < entityNode->propertyNodeList->end(); connectionIter++)
 	{
 		GIAentityNode* substanceNode = (*connectionIter)->entity;
-		if(substanceNode->entityType == GIA_ENTITY_TYPE_TYPE_QUALITY)
+		if(substanceNode->entityType == GIA_ENTITY_TYPE_QUALITY)
 		{
 			if(numberQualities > 0)
 			{
@@ -2339,7 +2347,7 @@ void GIAqueryClass::traceEntityNodeDetermineNextCourseOfAction(string* printEnti
 	else
 	{
 		cout << "error: illegal trace entity nodes function" << endl;
-		exit(0);
+		exit(EXIT_ERROR);
 	}
 
 }
@@ -2417,7 +2425,7 @@ void GIAqueryClass::traceEntityNode(GIAentityNode* entityNode, const int functio
 			bool pass2 = true;
 			if(!traceInstantiations)
 			{
-				if(i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE)
+				if(i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_INSTANCE_REVERSE)
 				{
 					pass2 = false;
 				}
@@ -2449,7 +2457,17 @@ bool GIAqueryClass::compareEntityStandard(GIAentityNode* queryEntityNode, GIAent
 {
 	bool compareEntityNamesResult = false;
 
-	if(this->compareEntityAliases(queryEntityNode, entityNode))
+	if(queryEntityNode->entityName == entityNode->entityName)
+	{
+		compareEntityNamesResult = true;
+	}
+	//this code could be moved to a separate function eg in GIAentityNode to make use of entityTypesIsRelationshipArray
+	else if(((queryEntityNode->entityType == GIA_ENTITY_TYPE_PROPERTY) && (queryEntityNode->entityType == GIA_ENTITY_TYPE_PROPERTY)) ||
+	((queryEntityNode->entityType == GIA_ENTITY_TYPE_DEFINITION) && (queryEntityNode->entityType == GIA_ENTITY_TYPE_DEFINITION)))
+	{
+		compareEntityNamesResult = true;
+	}
+	else if(this->compareEntityAliases(queryEntityNode, entityNode))
 	{
 		compareEntityNamesResult = true;
 	}
@@ -2493,7 +2511,7 @@ bool GIAqueryClass::compareEntityStandard(GIAentityNode* queryEntityNode, GIAent
 				if(!(referenceTraceParameters->linkSpecificConceptsAndActions))
 				{
 				#endif
-					if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_ACTION)
+					if(entityNode->entityType == GIA_ENTITY_TYPE_ACTION)
 					{
 						if(SHAREDvars.textInTextArray(queryEntityNode->entityName, giaReferencingWildCardActionArray, GIA_REFERENCING_WILD_CARDS_ACTIONS_NUMBER_OF_TYPES))
 						{
@@ -2539,7 +2557,7 @@ void GIAqueryClass::compareEntityReferenceTrace(GIAentityNode* queryEntityNode, 
 	#ifdef GIA_CREATE_NEW_CONCEPT_FOR_EVERY_REFERENCE_TO_A_CONCEPT
 	//cout << "referenceTraceParameters->doNotParseQuerySubnetsWithConcepts = " << referenceTraceParameters->doNotParseQuerySubnetsWithConcepts << endl;
 	//cout << "queryEntityNode->isConcept = " << queryEntityNode->isConcept << endl;
-	if(!(referenceTraceParameters->doNotParseQuerySubnetsWithConcepts) || !(queryEntityNode->entityType == GIA_ENTITY_TYPE_TYPE_CONCEPT))
+	if(!(referenceTraceParameters->doNotParseQuerySubnetsWithConcepts) || !(queryEntityNode->entityType == GIA_ENTITY_TYPE_CONCEPT))
 	{
 	#endif
 		if((queryEntityNode->referenceSetID == referenceTraceParameters->referenceSetID) || !(referenceTraceParameters->traceModeAssertSameReferenceSetID))	//only trace paths of same reference set ID
@@ -2589,8 +2607,8 @@ void GIAqueryClass::compareEntityReferenceTrace(GIAentityNode* queryEntityNode, 
 
 							#ifdef GIA_SPECIFIC_CONCEPTS
 							bool passSpecificConcepts = true;
-							if(((queryEntityNode->entityType == GIA_ENTITY_TYPE_TYPE_CONCEPT) && !(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_CONCEPT)) ||
-							((entityNode->entityType == GIA_ENTITY_TYPE_TYPE_CONCEPT) && !(queryEntityNode->entityType == GIA_ENTITY_TYPE_TYPE_CONCEPT)))
+							if(((queryEntityNode->entityType == GIA_ENTITY_TYPE_CONCEPT) && !(entityNode->entityType == GIA_ENTITY_TYPE_CONCEPT)) ||
+							((entityNode->entityType == GIA_ENTITY_TYPE_CONCEPT) && !(queryEntityNode->entityType == GIA_ENTITY_TYPE_CONCEPT)))
 							{
 								passSpecificConcepts = false;
 								#ifdef GIA_DEBUG
@@ -2602,7 +2620,7 @@ void GIAqueryClass::compareEntityReferenceTrace(GIAentityNode* queryEntityNode, 
 							{
 								//override passSpecificConcepts value:
 								#ifndef GIA_TRANSLATOR_DREAM_MODE_LINK_SPECIFIC_CONCEPTS_AND_ACTIONS_ADVANCED
-								if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_CONCEPT)
+								if(entityNode->entityType == GIA_ENTITY_TYPE_CONCEPT)
 								{
 									passSpecificConcepts = false;
 								}
@@ -2623,7 +2641,7 @@ void GIAqueryClass::compareEntityReferenceTrace(GIAentityNode* queryEntityNode, 
 								if(((queryEntityNode->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL) && !(entityNode->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL)) ||
 								((entityNode->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL) && !(queryEntityNode->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL)))
 								{
-									if(!(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_CONCEPT && queryEntityNode->entityType == GIA_ENTITY_TYPE_TYPE_CONCEPT))	//condition added 29 Sept 2013
+									if(!(entityNode->entityType == GIA_ENTITY_TYPE_CONCEPT && queryEntityNode->entityType == GIA_ENTITY_TYPE_CONCEPT))	//condition added 29 Sept 2013
 									{//if they are concepts, ignore plural (in fact concepts should not be assigned plural in the first place; this is an artefact of the english grammmar system: eg "blue chickens are strong")
 										passPluralityMatch = false;
 									}
@@ -2715,7 +2733,7 @@ void GIAqueryClass::compareEntityReferenceTrace(GIAentityNode* queryEntityNode, 
 											if(referenceTraceParameters->traceConceptsOnly)
 											{
 												passConceptOnlyTraceRequirements = false;
-												if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_CONCEPT || entityNode->entityType == GIA_ENTITY_TYPE_TYPE_QUALITY)
+												if(entityNode->entityType == GIA_ENTITY_TYPE_CONCEPT || entityNode->entityType == GIA_ENTITY_TYPE_QUALITY)
 												{
 													passConceptOnlyTraceRequirements = true;
 													//rely on previous testReferencedEntityNodeForExactNameMatch2() passSpecificConcepts checks to test entityNode target (connectionIter) for isConcept also
@@ -2728,7 +2746,7 @@ void GIAqueryClass::compareEntityReferenceTrace(GIAentityNode* queryEntityNode, 
 												bool passLogicalConditionRequirements = true;
 												if(referenceTraceParameters->logicalConditionDisableTraceConcepts)
 												{
-													if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_CONCEPT)
+													if(entityNode->entityType == GIA_ENTITY_TYPE_CONCEPT)
 													{
 														passLogicalConditionRequirements = false;
 													}

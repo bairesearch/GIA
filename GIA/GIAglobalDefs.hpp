@@ -25,7 +25,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p4d 17-January-2017
+ * Project Version: 3a1a 26-February-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -728,17 +728,101 @@
 #endif
 //#define GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
 
+//#define GIA_DEBUG_DISABLE_3a_CODE
+#ifndef GIA_DEBUG_DISABLE_3a_CODE
+	//#define GIA_NLG_MORPHOLOGY_GENERATOR
+	#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_REINSERT_NEWLINE_CHARACTERS_AFTER_EVERY_SENTENCE
+	#define GIA_ENTITY_CONNECTION_RECORD_ENTITY_ORIGIN
+	#define GIA_CREATE_SHORTCUTS_TO_CONCEPT_ENTITIES
+	//#define GIA_NLG		//NLG codebase has been upgraded so is now defined in GIA_DEBUG_DISABLE_3a_CODE
+	#ifdef GIA_NLG	//not yet defined
+		#define GIA_NLG_ADD_AUXILIARIES_TO_SAME_REFERENCE_SET_QUALITIES	//eg "the dog that is blue" (vs "the blue dog")
+		#define GIA_NLG_ADD_AUXILIARIES_TO_SAME_REFERENCE_SET_CONDITIONS	//eg "the dog that is near" (vs "the dog near the house")
+	#endif
+	//#define GIA_ADD_INSTANCES_TO_ACTIVE_LIST_AFTER_PARSE_SENTENCE 	//?
+	#define GIA_PREPROCESSOR
+	#ifdef GIA_PREPROCESSOR
+		//#define GIA_PREPROCESSOR_SUPPORT_PUNCTUATION_MARKS_WITH_PRECEEDING_WHITE_SPACE	//not yet coded: do not currently support punctuation marks with preceeding white space. Currently skip (do not parse) multiple white space/punctuation characters (eg ". "/".."/"  "/" .")	
+		#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_REDUCE_ALL_WORD_TYPES	//don't just reduce multiword prepositions (reduce multiword verbs, nouns, adjectives and adverbs also)
+		//#define GIA_PREPROCESSOR_SENTENCE	//3a1a
+		#ifdef GIA_PREPROCESSOR_SENTENCE
+			#define GIA_PREPROCESSOR_SENTENCE_RECONCILE_REFERENCES_AFTER_SEMANTIC_PARSING_EVERY_SENTENCE
+			#define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
+			#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
+				//#define GIA_PREPROCESSOR_SENTENCE_TEMPORARY_SENTENCE_INDEX (-2)
+				#define GIA_PREPROCESSOR_REASSIGN_UNIQUE_SENTENCE_INDICES_FOR_SENTENCES
+				#ifdef GIA_PREPROCESSOR_REASSIGN_UNIQUE_SENTENCE_INDICES_FOR_SENTENCES
+					#define GIA_PREPROCESSOR_ASSIGN_UNIQUE_SENTENCE_INDICES_FOR_SENTENCES
+				#endif
 
-//#define GIA_DEBUG_DISABLE_1g_CODE
-//#define GIA_DEBUG_DISABLE_1h_CODE
-//#define GIA_DEBUG_DISABLE_1i_CODE
-//#define GIA_DEBUG_DISABLE_1j_CODE
-//#define GIA_DEBUG_DISABLE_1k_CODE
-//#define GIA_DEBUG_DISABLE_1l_CODE
-//#define GIA_DEBUG_DISABLE_1m_CODE
-//#define GIA_DEBUG_DISABLE_1n_CODE
-//#define GIA_DEBUG_DISABLE_1o_CODE
-#ifndef GIA_DEBUG_DISABLE_1o_CODE
+				#define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_REMOVE_DOUBLE_WHITE_SPACE
+				//#define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_OUTPUT_LOGIC_REFERENCE_SETS_FOR_HIGH_LEVEL_SEMANTIC_PARSE	//this is not required as the information is contained within GIApreprocessorLogicReference structure and it can be manually derived (without NLP)
+				#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_OUTPUT_LOGIC_REFERENCE_SETS_FOR_HIGH_LEVEL_SEMANTIC_PARSE
+					#define GIA_PREPROCESSOR_ASSIGN_UNIQUE_SENTENCE_INDICES_FOR_SENTENCES	//mandatory
+				#endif
+				#define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_RECURSION	//eg It is proposed that [X is Q] but [all [chickens are blue] except for [Tom]], Tom said that [Mary said [the car goes to the fair]], I think that [Tom thinks [I am happy]]
+				//#define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_ABSTRACT_CONJUNCTIONS	//eg eg subsequent_to and before (FUTURE: and -> subsequent_to + before)
+				#define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_SKIP_APPENDED_THAT	//eg Tom said that... ['that' will not be recorded in the logical condition variable]
+				#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_SKIP_APPENDED_THAT
+					#define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_SKIP_APPENDED_THAT_NAME "that "
+					#define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_SUPPORT_PREPOSITIONS_WITH_THAT
+				#endif
+				//#define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CONJUNCTIONS_ADD_EXPLICIT_SUBJECT_TEXT_FOR_CONJUNCTIONS	//CHECKTHIS (based on splitMathDetectedLineIntoNLPparsablePhrasesLogicalConditionAddExplicitSubjectTextForConjunctions)
+				#define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_ASSUME_PARSING_REFERENCE_VARIABLE_AT_START_OF_SENTENCE	//required for some logic references (eg propositions; "Tom said that B"), but not other logic references (eg regarding; "Regards Q...")
+				#define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_NEW_LOGIC_REFERENCE_CHAR (CHAR_COMMA)
+			#endif
+			#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET
+			#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET
+				#define GIA_PREPROCESSOR_REASSIGN_UNIQUE_SENTENCE_INDICES_FOR_LOGIC_REFERENCE_VARIABLES	//after parsing semantic relations for individual reference sets, GIA will assign every entity in the logic reference structure the same sentenceIndex, and each logic reference variable (with all its reference sets) the same sentence index
+				#ifdef GIA_PREPROCESSOR_REASSIGN_UNIQUE_SENTENCE_INDICES_FOR_LOGIC_REFERENCE_VARIABLES
+					//after parsing semantic relations for individual reference sets, GIA will assign every entity in the original pre-preprocessed sentence to the same sentenceIndex
+					#define GIA_PREPROCESSOR_ASSIGN_UNIQUE_SENTENCE_INDICES_FOR_LOGIC_REFERENCE_VARIABLES
+					//#define GIA_PREPROCESSOR_REASSIGN_UNIQUE_SENTENCE_INDICES_FOR_LOGIC_REFERENCE_VARIABLES_IGNORE_CONNECTIONS_TO_SENTENCE_LOGIC_REFERENCE_SET	//use this if the connection between the logicReference entity and the logicReferenceVariable should have the sentenceIndex of the currentGIApreprocessorSentenceInList rather than that of the logicReferenceVariable 
+				#endif
+					
+				#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITERS	//eg The car had a bike. -> GIAdummyactionsubject + "had " + GIAdummyactionobject
+				#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_SUB_REFERENCE_SETS	//this improves NLP/GIA translator semantic parser (by reducing the size of the text chunks being processed)
+				#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_SUB_REFERENCE_SETS
+					#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_SUB_REFERENCE_SETS_RECORD_SAME_REFERENCE_SET_DELIMITERS
+				#endif
+				#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT	//this is required a) for third party NLP (as opposed to GIA direct semantic relation parser) and b) to relink logic reference variable entities without a subject/delimiter back to the high level logic reference GIA network structure 
+				#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT
+					#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP "giadummyrelationship"	//verify no conflict with NLC_PREPROCESSOR_INTERPRET_SINGLE_WORD_SENTENCES_AS_ACTIONS_DUMMY_TEXT_ACTION	//"do"?
+					#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_OBJECT "giadummyrelationshipobject"	//verify no conflict with NLC_PREPROCESSOR_INTERPRET_SINGLE_WORD_SENTENCES_AS_ACTIONS_DUMMY_TEXT_ACTION_OBJECT	//"this"?
+					#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_SUBJECT "giadummyrelationshipsubject"	//verify no conflict with NLC_PREPROCESSOR_INTERPRET_SINGLE_WORD_SENTENCES_AS_ACTIONS_DUMMY_TEXT_ACTION_SUBJECT	//"they"?
+					#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_SUBJECT_OR_OBJECT_AND_DELIMITER	//set reference set as subject/object before semantic relation parse
+					#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_SUBJECT_OR_OBJECT_AND_DELIMITER
+						#define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_SET_CONJUNCTION_AND_OR_TEXT_TO_REFERENCE_SET_OBJECT_BEFORE_SEMANTIC_RELATION_PARSE
+					#endif
+				#endif	
+				#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_LOAD_IRREGULAR_VERB_LIST
+				#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_LOAD_WORD_LISTS
+				#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_RCMOD_SAME_REFERENCE_SET_DELIMITER_NUMBER_OF_TYPES (2)
+				static string preprocessorRcmodSameReferenceSetDelimiter[GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_RCMOD_SAME_REFERENCE_SET_DELIMITER_NUMBER_OF_TYPES] = {"that", "which"};		//see preprocessorMathRcmodSameReferenceSetDelimiter
+			#else
+				#define GIA_PREPROCESSOR_ASSIGN_UNIQUE_SENTENCE_INDICES_FOR_LOGIC_REFERENCE_VARIABLES	//mandatory
+			#endif
+			//#define GIA_PREPROCESSOR_RECORD_PARSABLE_PHRASE_POSITION_APPROXIMATE	//unimplemented
+			//#define GIA_PREPROCESSOR_SUPPORT_MULTILINE_SENTENCES	//unimplemented
+			#define GIA_DEBUG_PREPROCESSOR_SENTENCE	//temp debug			
+			#define GIA_PREPROCESSOR_SENTENCE_PRINT_OUTPUT	//temp debug
+			#define GIA_DEBUG_PREPROCESSOR_SENTENCE_PREMATURE_QUIT	//temp debug
+			#define GIA_PREPROCESSOR_INTERMEDIARY_MULTIWORD_FILE_EXTENSION ".intermediary.multiword"
+			#define GIA_PREPROCESSOR_INTERMEDIARY_SENTENCE_FILE_EXTENSION ".intermediary.sentence"
+		#endif
+	#endif
+#endif
+
+//#define GIA_DEBUG_DISABLE_2g_CODE
+//#define GIA_DEBUG_DISABLE_2h_CODE
+//#define GIA_DEBUG_DISABLE_2i_CODE
+//#define GIA_DEBUG_DISABLE_2j_CODE
+//#define GIA_DEBUG_DISABLE_2k_CODE
+//#define GIA_DEBUG_DISABLE_2l_CODE
+//#define GIA_DEBUG_DISABLE_2m_CODE
+//#define GIA_DEBUG_DISABLE_2n_CODE
+//#define GIA_DEBUG_DISABLE_2o_CODE
+#ifndef GIA_DEBUG_DISABLE_2o_CODE
 	#ifdef USE_NLC
 		#ifndef GIA_DISABLE_CROSS_SENTENCE_REFERENCING
 			#define GIA_ADVANCED_REFERENCING_PREVENT_REFERENCING_OF_PLURAL_ENTITIES	//2o7b (assumes that the application built on GIA, eg NLC, can handle their referencing independently)	
@@ -747,10 +831,12 @@
 			//#endif
 		#endif
 	#endif
+	/*Code removed 3a1a;
 	#define GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC	//disabled 2c1a, reenabled 2o6a	//required for !GIA_DISABLE_CROSS_SENTENCE_REFERENCING	//NB if modified, need to update GIArules.xml accordingly
 	#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC			
 		#define GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC_RECORD_AUX_INFO	//2o6a
 	#endif
+	*/
 	#define GIA_ADVANCED_REFERENCING_ENSURE_QUANTITY_MATCHES	//2o2a
 	#ifdef GIA_ADVANCED_REFERENCING_ENSURE_QUANTITY_MATCHES
 		//#define GIA_ADVANCED_REFERENCING_ENSURE_QUANTITY_MATCHES_SUPPORT_QUERY_PLURAL_TO_QUANTITY_MATCH	//added 2o5a, removed 2o7a
@@ -761,7 +847,7 @@
 		#endif
 	#endif
 #endif
-#ifndef GIA_DEBUG_DISABLE_1n_CODE
+#ifndef GIA_DEBUG_DISABLE_2n_CODE
 	#define GIA_EXPLETIVES	//2n7b
 	#ifdef GIA_EXPLETIVES
 		#define GIA_EXPLETIVES_WORKAROUND_STANFORD_ANOMALY_HAS_ASSIGNMENTS		//2n7b
@@ -770,7 +856,7 @@
 		#endif
 	#endif
 #endif
-#ifndef GIA_DEBUG_DISABLE_1m_CODE
+#ifndef GIA_DEBUG_DISABLE_2m_CODE
 	#define GIA_SYNONYMN_DETECTION_DISABLE_DURING_SPECIFIC_CONCEPT_ACTION_LINKING	//2m3a
 	#define GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES	//2m2a
 	#define GIA_TRANSLATOR_INTERPRET_OF_AS_POSSESSIVE_FOR_SUBSTANCES_PLURAL_GOVERNOR	//2m1b
@@ -793,7 +879,7 @@
 #ifndef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DISABLE_PROPERTIES_OR_DEFINITIONS
 	#define GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_PROPERTIES_OR_DEFINITIONS
 #endif
-#ifndef GIA_DEBUG_DISABLE_1l_CODE
+#ifndef GIA_DEBUG_DISABLE_2l_CODE
 	#define GIA_REFERENCING_WILD_CARDS	//2l3a	//interpret something/anything entities as GIA wild card - affects both GIA advanced referencing and queries
 	#ifdef GIA_REFERENCING_WILD_CARDS
 		#define GIA_REFERENCING_WILD_CARDS_SUBSTANCES_NUMBER_OF_TYPES (2)
@@ -803,7 +889,7 @@
 	#endif
 #endif
 
-#ifndef GIA_DEBUG_DISABLE_1k_CODE
+#ifndef GIA_DEBUG_DISABLE_2k_CODE
 	//#ifdef GIA2_SEMANTIC_PARSER	//has not yet been defined
 		#define GIA2_SEMANTIC_PARSER_OPTIMISE_BASED_ON_CONJUNCTIONS	//2k1a [UNTESTED]		//NB training a connectionist network with this optimisation requires the NLP to directly connect the primary entity (object) in each subphrase to the subject, with the conjunction relations being auxiliary to these connections (not supported by Stanford Parser/CoreNLP at present; to implement a workaround see NLC removeRedundantConditionConjunctions/addConjunctionsConnectedToConditionConjunctionObject for related code)
 		#define GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE	//2k3a
@@ -829,18 +915,20 @@
 			//#define GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER_UNOPTIMISED_TEXT_CORPUS_OLD	//disabled 2k3d
 		#endif
 	//#endif
+	/*Code removed 3a1a;
 	#define GIA_RECORD_POSSESSION_AUXILIARY_HAS_INFORMATION	//added 2k3a	//supported by GIA2 including GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE (unlike GIA_RECORD_RCMOD_SET_INFORMATION)  //only required to identify subject (primary entity holding math value) in nlp parsable phrase
 	#ifdef GIA_RECORD_POSSESSION_AUXILIARY_HAS_INFORMATION
 		//#ifndef GIA_DISABLE_CROSS_SENTENCE_REFERENCING	//note this preprocessor check is not enforced: use the new implementation regardless of whether GIA advanced referencing is set or not set
 			//#define GIA_RECORD_POSSESSION_AUXILIARY_HAS_INFORMATION_GENERAL_IMPLEMENTATION	//added 2k3a, removed 2k3c //record possessionAuxiliaryHaveArtificial info	//required by GIA advanced referencing
-			#ifndef GIA_DEBUG_DISABLE_1o_CODE
+			#ifndef GIA_DEBUG_DISABLE_2o_CODE
 				#define GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC_HYBRID	//added 2k3c	//NB if modified, need to update GIArules.xml accordingly
 			#endif
 		//#endif
 	#endif
+	*/
 #endif
 
-#ifndef GIA_DEBUG_DISABLE_1j_CODE
+#ifndef GIA_DEBUG_DISABLE_2j_CODE
 	#define GIA_STANFORD_PARSER_AND_CORENLP_VERSION_2015_04_20_OR_GREATER	//takes into account changes in dependency relations generated by Stanford
 	#ifdef GIA_STANFORD_PARSER_AND_CORENLP_VERSION_2015_04_20_OR_GREATER
 		#define GIA_STANFORD_PARSER_VERSION_2015_04_20_BUG_FAILURE_TO_PARSE_SHORT_POSSESSIVE_CASES	//eg "The dog's value."
@@ -872,10 +960,10 @@
 	//#endif
 #endif
 
-#ifndef GIA_DEBUG_DISABLE_1g_CODE
+#ifndef GIA_DEBUG_DISABLE_2g_CODE
 	#define GIA_NUMBER_OF	//added 2g9a/24-September-2014
 	#ifdef USE_NLC
-		#define GIA_NLC_INTEGRATION	//GIA uses NLCsentence code
+		#define GIA_NLC_INTEGRATION	//GIA uses NLCpreprocessorSentence code
 		#ifdef GIA_NLC_INTEGRATION
 			#define GIA_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS_CONCEPTS 	//added 2i24a
 		#endif
@@ -896,19 +984,17 @@
 	#define GIA_XML_RECORD_ADDITIONAL_VARIABLES
 #endif
 
-#define GIA_CREATE_NON_SPECIFIC_CONCEPTS_FOR_ALL_NETWORK_INDEXES		//GIA 2a7a		//this is recommended for NLC and required for USE_GIA2	//warning: GIA_CREATE_NON_SPECIFIC_CONCEPTS_FOR_ALL_NETWORK_INDEXES needs to be tested independently without USE_GIA2
-#ifndef GIA_DEBUG_DISABLE_1i_CODE
+#define GIA_CREATE_NON_SPECIFIC_CONCEPTS_FOR_ALL_NETWORK_INDEXES		//mandatory as of 3a1a	//2a7a
+#ifndef GIA_DEBUG_DISABLE_2i_CODE
 	//#ifdef GIA_TRANSLATOR_INTERPRET_OF_AS_POSSESSIVE_FOR_SUBSTANCES	//defined out of scope
 		#define GIA_TRANSLATOR_INTERPRET_OF_AS_POSSESSIVE_FOR_SUBSTANCES_PLURAL_DEPENDENT	//added 2i7e
 	//endif
 	#define GIA_PREDETERMINERS	//added 2i34a
 	#define GIA_PREVENT_CONCEPTS_FROM_BEEN_ADDED_AS_CHILDREN_OF_NON_CONCEPTS	//2i20a
 	#ifdef GIA_DISABLE_CROSS_SENTENCE_REFERENCING
-		#ifdef USE_NLC
-			#define GIA_ENABLE_CONCEPT_ADVANCED_REFERENCING_ONLY	//2i19c	//NB this requires !GIA_QUERY_TRACE_NETWORK_INDEX_NODES_DEFINING_INSTANTIATIONS	//designed for GIA_CREATE_NON_SPECIFIC_CONCEPTS_FOR_ALL_NETWORK_INDEXES
-			#ifdef GIA_ENABLE_CONCEPT_ADVANCED_REFERENCING_ONLY
-				#define GIA_ENABLE_CONCEPT_ADVANCED_REFERENCING	//2i19e
-			#endif
+		#define GIA_ENABLE_CONCEPT_ADVANCED_REFERENCING_ONLY	//2i19c	//NB this requires !GIA_QUERY_TRACE_NETWORK_INDEX_NODES_DEFINING_INSTANTIATIONS	//designed for GIA_CREATE_NON_SPECIFIC_CONCEPTS_FOR_ALL_NETWORK_INDEXES
+		#ifdef GIA_ENABLE_CONCEPT_ADVANCED_REFERENCING_ONLY
+			#define GIA_ENABLE_CONCEPT_ADVANCED_REFERENCING	//2i19e
 		#endif
 	#else
 		#define GIA_ENABLE_CONCEPT_ADVANCED_REFERENCING	//2i19e
@@ -916,7 +1002,7 @@
 	#ifndef GIA_ENABLE_CONCEPT_ADVANCED_REFERENCING
 		#define GIA_TRANSLATOR_DREAM_MODE_LINK_SPECIFIC_CONCEPTS_AND_ACTIONS_ADVANCED //2i19a, disabled 2i27a
 	#endif
-	#define GIA_LRP_NLP_PARSABLE_PHRASE_SUPPORT_FILENAMES_WITH_FULLSTOPS_AND_FLOATS_AND_TIMES	//2i18a
+	#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_FILENAMES_WITH_FULLSTOPS_AND_FLOATS_AND_TIMES	//2i18a
 	#define GIA_TRANSLATOR_CONVERT_AMOD_WITH_NUMBERS_TO_QUANTITY_RELATION	//2i12a
 	#define GIA_TRANSLATOR_DO_NOT_CREATE_CONCEPT_PROPERTIES_FOR_NON_CONCEPT_PARENTS	//2i10a
 	#ifdef GIA_CREATE_NON_SPECIFIC_CONCEPTS_FOR_ALL_NETWORK_INDEXES
@@ -940,21 +1026,22 @@
 	#define GIA_CREATE_NEW_CONCEPT_FOR_EVERY_REFERENCE_TO_A_CONCEPT	//GIA 2a10a	//disabled 2i19b
 #endif
 
-#ifndef GIA_DEBUG_DISABLE_1h_CODE
+#ifndef GIA_DEBUG_DISABLE_2h_CODE
 	#define GIA_SPATIOTEMPORAL_NETWORK		//yet to implement ~2h2a/17-November-2014+
 	#ifdef GIA_SPATIOTEMPORAL_NETWORK
-		#define GIA_LRP_NORMALISE_PREPOSITIONS	//added 2h1a/14-November-2014 - required for NLC 1m1a+
-		#ifdef GIA_LRP_NORMALISE_PREPOSITIONS
-			#define GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS
-			#define GIA_LRP_NORMALISE_TWOWAY_PREPOSITIONS
-			#ifdef GIA_LRP_NORMALISE_TWOWAY_PREPOSITIONS
+		#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_PREPOSITIONS	//added 2h1a/14-November-2014 - required for NLC 1m1a+
+		#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_PREPOSITIONS
+			#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_LOAD_INVERSE_PREPOSITIONS_LIST
+			#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_INVERSE_PREPOSITIONS
+			#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_TWOWAY_PREPOSITIONS
+			#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_TWOWAY_PREPOSITIONS
 				#ifdef GIA_DISABLE_CROSS_SENTENCE_REFERENCING
-					#define GIA_LRP_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_DISABLED	//only create twoway condition links in derivatives (eg NLC)
+					#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_DISABLED	//only create twoway condition links in derivatives (eg NLC)
 				#else
-					#define GIA_LRP_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED	//required for GIA advanced referencing
+					#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED	//required for GIA advanced referencing
 				#endif
 			#endif
-			#define GIA_LRP_DETECT_PREPOSITION_TYPE		//added 2h1a/14-November-2014 - required for NLC 1m1a+
+			#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DETECT_PREPOSITION_TYPE		//added 2h1a/14-November-2014 - required for NLC 1m1a+
 			#define GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR_NEW	//added 2h1c/14-November-2014 - required for NLC 1m1a+
 		#endif
 		#define GIA_ACTIONS_OF_ACTIONS
@@ -972,7 +1059,7 @@
 	#endif
 #endif
 
-#ifndef GIA_DEBUG_DISABLE_1g_CODE
+#ifndef GIA_DEBUG_DISABLE_2g_CODE
 	#ifdef USE_NLC
 		#ifndef GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR_NEW
 			#define GIA_CREATE_INDEPENDENT_CONJUNCTION_ENTITIES	//added 2f8a/09-July-2014	//NB this is only required for NLC_SUPPORT_LOGICAL_CONDITION_OPERATIONS_ADVANCED
@@ -995,13 +1082,15 @@
 		#define GIA_SET_ENTITY_ENTITY_AND_SENTENCE_INDICIES_NORMALLY	//this is required for !GIA_TRANSLATOR_ONLY_MERGE_ENTITY_NODES_WHEN_LINK_PREESTABLISHED_REFERENCES_GIA
 	#endif
 //#endif
+/*Code removed 3a1a;
 #define GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_BEING_EG_BEING_INTO_A_DEFINITION_BASIC
+*/
 
 #ifdef USE_NLC
 	#define GIA_ASSUME_QUOTES_HAVE_BEEN_REDUCED_TO_SINGLE_WORDS	//added 2i36a
 #else
-	//#define GIA_LRP_REDUCE_QUOTES_TO_SINGLE_WORDS	//GIA 2b4a	//disabled 2i36a
-	#ifdef GIA_LRP_REDUCE_QUOTES_TO_SINGLE_WORDS
+	//#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_REDUCE_QUOTES_TO_SINGLE_WORDS	//GIA 2b4a	//disabled 2i36a
+	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_REDUCE_QUOTES_TO_SINGLE_WORDS
 		#define GIA_ASSUME_QUOTES_HAVE_BEEN_REDUCED_TO_SINGLE_WORDS	//added 2i36a
 	#endif
 #endif
@@ -1076,13 +1165,13 @@
 
 //variables currently being tested (1t1a+)
 #define GIA_TRANSLATOR_XML_INTERPRETATION
-//#define GIA_TEMPORARY_COMPILATION_GCC_FLAG_E_PREPROCESS_TRANSLATOR_XML_FILES	//for use with compileGIAstopAfterPreprocessingXML.bat only: g++ -E GIAmain.cpp GIAparser.cpp GIAtranslator.cpp GIAtranslatorDefineGrammar.cpp GIAtranslatorDefineReferencing.cpp GIAtranslatorRedistributeRelationsStanford.xml GIAtranslatorRedistributeRelationsRelex.xml GIAtranslatorDefineSubstances.xml GIAtranslatorLinkEntities.xml GIAtranslatorApplyAdvancedFeatures.xml GIAtranslatorOperations.cpp GIAentityNodeClass.cpp GIAentityConnectionClass.cpp GIAconditionNodeClass.cpp GIAsentenceClass.cpp GIAdraw.cpp GIAxmlConversion.cpp GIAcxlConversion.cpp GIAquery.cpp GIAdatabase.cpp GIAnlp.cpp GIAwordnet.cpp GIAnlg.cpp GIAlrp.cpp GIAbot.cpp XMLparserClass.cpp XMLrulesClass.cpp LDsvg.cpp LDopengl.cpp LDparser.cpp LDsprite.cpp LDreferenceManipulation.cpp LDreferenceClass.cpp RToperations.cpp  RTparser.cpp  RTpixelMaps.cpp  RTppm.cpp  RTraytracer.cpp  RTreferenceManipulation.cpp  RTscene.cpp  RTviewinfo.cpp SHAREDglobalDefs.cpp SHAREDvector.cpp SHAREDvars.cpp
+//#define GIA_TEMPORARY_COMPILATION_GCC_FLAG_E_PREPROCESS_TRANSLATOR_XML_FILES	//for use with compileGIAstopAfterPreprocessingXML.bat only: g++ -E GIAmain.cpp GIAparser.cpp GIAtranslator.cpp GIAtranslatorDefineGrammar.cpp GIAtranslatorDefineReferencing.cpp GIAtranslatorRedistributeRelationsStanford.xml GIAtranslatorRedistributeRelationsRelex.xml GIAtranslatorDefineSubstances.xml GIAtranslatorLinkEntities.xml GIAtranslatorApplyAdvancedFeatures.xml GIAtranslatorOperations.cpp GIAentityNodeClass.cpp GIAentityConnectionClass.cpp GIAconditionNodeClass.cpp GIAsentenceClass.cpp GIAdraw.cpp GIAxmlConversion.cpp GIAcxlConversion.cpp GIAquery.cpp GIAdatabase.cpp GIAnlp.cpp GIAwordnet.cpp GIAnlg.cpp GIApreprocessorMultiwordReduction.cpp GIAbot.cpp XMLparserClass.cpp XMLrulesClass.cpp LDsvg.cpp LDopengl.cpp LDparser.cpp LDsprite.cpp LDreferenceManipulation.cpp LDreferenceClass.cpp RToperations.cpp  RTparser.cpp  RTpixelMaps.cpp  RTppm.cpp  RTraytracer.cpp  RTreferenceManipulation.cpp  RTscene.cpp  RTviewinfo.cpp SHAREDglobalDefs.cpp SHAREDvector.cpp SHAREDvars.cpp
 //#define GIA_DO_NOT_USE_UNTESTED_BUGFIX_REGARDING_grammaticalDefiniteIndexOfDeterminerTemp	//1t6b
 #define GIA_SPECIFIC_ACTION_NETWORK_INDEXES
 #define GIA_WORKAROUND_RELEX_BUG_OCCASIONAL_QVAR_INDEX_SAME_AS_ANOTHER_RELATION_INDEX
 #define GIA_WORKAROUND_RELEX_BUG_OCCASIONAL_QVAR_INDEX_SAME_AS_ANOTHER_RELATION_INDEX
-#define GIA_GENERIC_ENTITY_INTERPRETATION						//1t6b
-#define GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
+#define GIA_GENERIC_ENTITY_INTERPRETATION	//mandatory 3a1a					//1t6b
+#define GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION	//mandatory 3a1a
 #ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
 	#define GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION	//1t1a (tested 1ttd, tested with generalised link entity preparation generalised redistribution modifications 1t2m)
 	#define GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK			//1t2a (tested 1t3a)
@@ -1135,7 +1224,7 @@
 //variables currently being tested (1p1a+)
 
 #define STANFORD_CORENLP_DISABLE_INDEPENDENT_POS_TAGGER_WHEN_PARSING_DEPENDENCY_RELATIONS	//added 22 Sept to enable Stanford CoreNLP to be used to parse dependency relations with comparable (NOT: same) accuracy as stanford parser (ie when stanford CoreNLP is set as both relation and feature parser)
-#ifndef GIA_DEBUG_DISABLE_1i_CODE
+#ifndef GIA_DEBUG_DISABLE_2i_CODE
 	#ifndef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER		//NB GIA2 doesn't support STANFORD_PARSER_USE_POS_TAGS (because the semantic relations word types being written must match those being read [and read can only use feature parser])
 		#define STANFORD_PARSER_USE_POS_TAGS	//added 23 July 2012 to support Stanford Parser POS tags instead of Stanford CoreNLP POS tags (Stanford Parser POS tags are sometimes more accurate than Stanford CoreNLP POS tags)
 	#endif
@@ -1145,32 +1234,36 @@
 #endif
 
 #define GIA_APPLY_BUG_WORKAROUND_WHERE_A_NETWORK_INDEX_ENTITY_OF_INSTANCE_0_CAN_HAVE_NODE_DEFINING_INSTANCE
-#define GIA_FREE_MEMORY
-#ifdef GIA_FREE_MEMORY
-	#define GIA_FREE_MEMORY1
-	#define GIA_FREE_MEMORY2
-	#define GIA_FREE_MEMORY3
-#endif
+
 
 #define GIA_INPUT_FILE_LISTS
 #define GIA_INCONSISTENCY_BETWEEN_STANFORD_PARSER_AND_STANFORD_CORENLP_PARSING_OF_CONSECUTIVE_FULL_STOPS
 
 //#define GIA_QUERIES_MUST_BE_QUESTIONS	//disabled 30 June 2012
 
-#define GIA_LRP
-#ifdef GIA_LRP
+
+#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION
+#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
+	#define GIA_PREPROCESSOR	//required for legacy support of GIA_PREPROCESSOR_MULTIWORD_REDUCTION
+	#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_REPLACE_OUTPUT_FOR_NLP_TEMPORARILY
 	#define GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS
 	#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS
-		//#define GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_CONSERVATIVE	//added 28 October 2012b - requires GIA_LRP for reading of WikipediaIrregularVerbs.txt - this is used to normalise the tagging of continuous verbs (eg in the making of): it is not 100% successful as corrections are limited to irregular continous verbs (WikipediaIrregularVerbs.txt)
-		#define GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_LIBERAL		//alternate implementation added 5 July 2013 - requires GIA_LRP for reading of WordnetVerbs.txt - this is used to normalise the tagging of continuous verbs (eg in the making of)
+		//#define GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_CONSERVATIVE	//added 28 October 2012b - requires GIA_PREPROCESSOR_MULTIWORD_REDUCTION for reading of WikipediaIrregularVerbs.txt - this is used to normalise the tagging of continuous verbs (eg in the making of): it is not 100% successful as corrections are limited to irregular continous verbs (WikipediaIrregularVerbs.txt)
+		#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_CONSERVATIVE
+			#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_LOAD_IRREGULAR_VERB_LIST
+		#endif
+		#define GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_LIBERAL		//alternate implementation added 5 July 2013 - requires GIA_PREPROCESSOR_MULTIWORD_REDUCTION for reading of WordnetVerbs.txt - this is used to normalise the tagging of continuous verbs (eg in the making of)
+		#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_LIBERAL
+			#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_LOAD_WORD_LISTS
+		#endif
 		//#define GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_OLD_IMPLEMENTATION
-		#ifndef GIA_DEBUG_DISABLE_1h_CODE
+		#ifndef GIA_DEBUG_DISABLE_2h_CODE
 			#define GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_CORRECT_POS_TAGS_EVEN_IF_LEMMAS_DETECTED_BY_NLP_PROGRESSIVE_CASE		//this is required for both STANFORD_PARSER_USE_POS_TAGS (because stanford tags some verbs eg delivering as noun) and STANFORD_CORENLP_POS_TAGS_BUG_GIA_WORKAROUND_SET_DETERMINER_DEPENDENT_TO_NOUN (because it overwrites verb/vbg determiners eg delivering as noun)
 			//#define GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_CORRECT_POS_TAGS_EVEN_IF_LEMMAS_DETECTED_BY_NLP		//this would require thorough testing before enabling (plus it is not required at present)
 		#endif
 	#endif
 	#define GIA_WORD_ORIG	//NB wordOrig is now used by more than just NLG (it is also used by LRP)
-	//#define GIA_LRP_DISABLE_REDISTRIBUTE_RELATIONS_POST_NLP_MULTIWORD_PREPOSITION_REDUCTION
+	//#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DISABLE_REDISTRIBUTE_RELATIONS_POST_NLP_MULTIWORD_PREPOSITION_REDUCTION
 #endif
 
 //variables currently being tested (1o1a+)
@@ -1195,7 +1288,7 @@
 #endif
 #define GIA_TEMPORARILY_DISABLE_GIA_XML_READ_CHECKS
 
-#define GIA_NLG
+//#define GIA_NLG
 #ifdef GIA_NLG
 	#define GIA_NLG_OUTPUT_TO_COMMAND_LINE
 	//#define GIA_NLG2
@@ -1263,7 +1356,6 @@
 	#define GIA_IDENTIFY_REFERENCE_SET_NETWORK_INDEX_ENTITY_ENTRANCE_DO_NOT_ENTER_ON_AN_ACTION_NODE	//GIA 2a8a	//this update is required for NLC if statement parsing //this update enforces orginal GIA specification: '//an action is considered by default not to be part of the same reference set as its subject/object (eg "the man fires the bow"). An rcmod /"that" is explicitly required for an action to be considered part of the same reference set as its subject/object (eg "the man that fires the bow...")'
 	#define GIA_ADVANCED_REFERENCING_IDENTIFY_DEFINITE_SETS_ONLY	//this is required considering reference look up of non definite sets is never desired
 	#ifdef GIA_ADVANCED_REFERENCING_IDENTIFY_DEFINITE_SETS_ONLY
-		//#define GIA_ADVANCED_REFERENCING_IDENTIFY_SETS_WITH_SUBJECT_OR_OBJECT_ONLY	//removed 12 August 2012 (NB original isObjectTemp/isSubjectTemp values are not retained currently - especially after advanced referencing update [GIA1n] - only derived isObjectTemp/isSubjectTemp values are retained [where as original values are left inside GIAfeatureTempEntityNodeArray], which do not include subjects/objects not involved in actions - eg property relationships as opposed to action relationships)
 		#define GIA_ADVANCED_REFERENCING_IDENTIFY_DEFINITE_SETS_ACCEPT_PROPERNOUNS 	//added 12 August 2012
 	#endif
 	//#define GIA_ADVANCED_REFERENCING_FIND_SUBJ_OBJ_RELATION_MATCHING_AUXILIARY_AND_SET_NOT_SAME_REFERENCE_SET
@@ -1294,15 +1386,7 @@
 				//#define GIA_STANFORD_CORE_NLP_USE_CODEPENDENCIES_ALL	//Not fully tested, but appears to work at least in simple scenarios
 				#ifndef GIA_STANFORD_CORE_NLP_USE_CODEPENDENCIES_ALL
 					#define GIA_STANFORD_CORE_NLP_CODEPENDENCIES_ONLY_USE_PRONOMINAL_COREFERENCE_RESOLUTION		//if using non-advanced referencing, only use pronominal coreferences from Stanford (it, she, he, etc) [optional]
-					#ifdef GIA_STANFORD_CORE_NLP_CODEPENDENCIES_ONLY_USE_PRONOMINAL_COREFERENCE_RESOLUTION
-						#define GIA_IMPLEMENT_NON_STANFORD_CORE_NLP_CODEPENDENCIES_CROSS_SENTENCE_REFERENCING	//depreciated 1n2b
-					#endif
 				#endif
-			#else
-				#define GIA_IMPLEMENT_NON_STANFORD_CORE_NLP_CODEPENDENCIES_CROSS_SENTENCE_REFERENCING	//depreciated 1n2b
-			#endif
-			#ifdef GIA_IMPLEMENT_NON_STANFORD_CORE_NLP_CODEPENDENCIES_CROSS_SENTENCE_REFERENCING
-				#define GIA_ENABLE_REFERENCE_LINKING_DO_NOT_USE_IF_REFERENCE_IS_NOT_DEFINITE_OR_PROPER_NOUN		/*to prevent the ambiguous blue chicken(s) being linked; eg A blue chicken is small. / A red chicken is fat. / The green chicken ate the pie. / A blue chicken is late.*/
 			#endif
 		#else
 			#define GIA_STANFORD_CORE_NLP_USE_CODEPENDENCIES		//default: on
@@ -1342,13 +1426,15 @@
 
 //#define GIA2_SEMANTIC_PARSER_DEBUG
 //#define GIA_SEMANTIC_PARSER_TRANSLATOR_DEBUG
-//#define GIA_LRP_NORMALISE_INVERSE_PREPOSITIONS_DEBUG
+//#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_INVERSE_PREPOSITIONS_DEBUG
+//#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DEBUG
+//#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DEBUG1
+//#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DEBUG2
 //#define GIA_DREAMMODE_REFERENCING_DEBUG
 //#define GIA_ADVANCED_REFERENCING_DEBUG_SIMPLE
 //#define GIA_TRANSLATOR_XML_INTERPRETATION_DEBUG
 //#define GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_DEBUG
 //#define GIA_TRANSLATOR_DEFINE_SUBSTANCES_DEBUG
-//#define GIA_LRP_DEBUG
 //#define GIA_NLG_DEBUG
 //#define GIA_ADVANCED_REFERENCING_DEBUG_TOO_LARGE_REFERENCE_SET
 //#define GIA_ALIASES_DEBUG
@@ -1358,7 +1444,7 @@
 //#define GIA_QUERY_MULTIPLE_ANSWERS_DEBUG      //finished first debug using this (1l2a)
 //#define GIA_STANFORD_CORENLP_CODEPENDENCY_PRONOMINAL_REFERENCING_DEBUG
 //#define GIA_DATABASE_DEBUG_FILESYSTEM_IO
-//#define GIA_DATABASE_DEBUG	  //this needs to be debugged (not yet tested)
+//#define GIA_DATABASE_DEBUG    //this needs to be debugged (not yet tested)
 //#define GIA_REDISTRIBUTE_STANFORD_RELATIONS_QUERY_VARIABLE_DEBUG
 //#define GIA_REDISTRIBUTE_STANFORD_RELATIONS_QUERY_VARIABLE_DEBUG_DO_NOT_MAKE_FINAL_CHANGES_YET
 //#define GIA_OUTPUT_INTERNAL_RELATIONS_IN_RELEX_FORMAT_DEBUG
@@ -1373,13 +1459,9 @@
 //#define GIA_FREE_MEMORY_DEBUG
 //#define GIA_MAIN_DEBUG
 //#define GIA_PRONOUN_REFERENCING_DEBUG
+//#define GIA_TRANSLATOR_REDISTRIBUTE_RELATIONS_DEBUG
 
 
-#define GIA_ADVANCED_REFERENCING_DEBUG_HIGHLIGHT_REFERENCE_SET_CONNECTIONS_WITH_COLOURS
-//#define GIA_ADVANCED_REFERENCING_DEBUG_HIGHLIGHT_REFERENCE_SET_NODES_WITH_COLOURS
-#ifdef GIA_ADVANCED_REFERENCING_DEBUG_HIGHLIGHT_REFERENCE_SET_NODES_WITH_COLOURS
-	//#define GIA_ADVANCED_REFERENCING_DEBUG_HIGHLIGHT_REFERENCE_SET_NODES_WITH_COLOURS_WORK_WITH_MULTIPLE_SENTENCES
-#endif
 //#define GIA_ADVANCED_REFERENCING_DISABLE_LINKING
 
 
@@ -1469,7 +1551,7 @@
 #endif
 
 //~GIAmain
-//#define GIA_DO_NOT_PRINT_RESULTS
+//#define GIA_QUERY_WRITE_ANSWER_TO_FILE
 
 //~GIAquery
 #define GIA_QUERY_DOUBLE_ERROR (0.0001)
@@ -1483,18 +1565,18 @@
 
 
 //~GIAdraw
-//#define GIA_DRAW_USE_PATENT			//modifies colours of nodes such that they print uniquely in black and white
 //#define GIA_CMAP_CONVERSION_SANITISED 	//use format akin to Cmap Tools / not GIA formatted. linking-phrase-list -> actions + conditions. networkIndex-list -> networkIndexes or substances
 #define GIA_DRAW_DISPLAY_ANSWER_CONTEXTS
 #define GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
 #ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
 	#define GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX_ADVANCED		//more robust implementation (should activate when using GIA_DATABASE to ensure all the semantic network connections are visible)
 #endif
-#ifdef USE_NLC
-	//#define GIA_DRAW_PRINT_INSTANCE_ID
-	#define GIA_DRAW_PRINT_ACTIVELIST_ID
-	#define GIA_DRAW_PRINT_CONNECTION_SENTENCE_INDICES
-#endif
+//#ifdef USE_NLC
+	//#define GIA_DRAW_PRINT_ENTITY_INSTANCE_ID
+	//#define GIA_DRAW_PRINT_ENTITY_ACTIVELIST_ID
+	#define GIA_DRAW_PRINT_ENTITY_SENTENCE_INDEX
+	#define GIA_DRAW_PRINT_CONNECTION_SENTENCE_INDEX
+//#endif
 #define GIA_SEMANTIC_NET_XML_REORDER_NETWORK_INDEX_IDS_UPON_XML_WRITE_INSTEAD_OF_XML_READ
 
 

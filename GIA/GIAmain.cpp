@@ -25,7 +25,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p4d 17-January-2017
+ * Project Version: 3a1a 26-February-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -36,7 +36,7 @@
 #endif
 #ifdef GIA_NLG
 #endif
-#ifdef GIA_LRP
+#ifdef GIA_PREPROCESSOR
 #endif
 #ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
 #endif
@@ -74,7 +74,9 @@ static char errmessage[] = "Usage:  GIA.exe [options]\n\n\twhere options are any
 "\n\t-oppmq [string]    : query semantic network display .ppm raster graphics output filename (def: semanticNetQuery.ppm)"
 "\n\t-ocffq [string]    : query semantic network NLP parser generated .cff output filename (def: semanticNetQuery.cff)"
 "\n\t-oall [string]     : semantic network display xml/.svg/.ldr/.ppm default generic output filename (def: semanticNet)"
+#ifdef GIA_QUERY_WRITE_ANSWER_TO_FILE
 "\n\t-oanswer [string]  : plain text .txt file containing the answer to the query (def: answer.txt)"
+#endif
 "\n\t-notshow           : do not display output in opengl"
 "\n\t-width [int]       : raster graphics width in pixels (def: 640)"
 "\n\t-height [int]      : raster graphics height in pixels (def: 480)"
@@ -92,28 +94,26 @@ static char errmessage[] = "Usage:  GIA.exe [options]\n\n\twhere options are any
 #ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
 "\n\t-dbsemanticparserfolder [string]   : direct semantic parser (corpus or optimised) database base folder path (def: /home/systemusername/source/GIAsemanticparserdatabase)"
 #endif
-#ifdef GIA_LRP
+#ifdef GIA_PREPROCESSOR
 "\n\t-lrp                               : language reduction preprocessor"
 "\n\t-olrptxt [string]                  : plain text .txt output filename with GIA language reduction preprocessor applied (def: inputTextWithLRP.txt)"
-"\n\t-olrptxtnlp [string]               : plain text .txt output filename with GIA language reduction preprocessor applied, word replacement with dummy prepositions/verbs for NLP compatibility (def: inputTextWithLRPforNLPonly.txt)"
 "\n\t-olrptxtq [string]                 : query plain text .txt output filename with GIA language reduction preprocessor applied (def: inputTextWithLRPQuery.txt)"
-"\n\t-olrptxtnlpq [string]              : query plain text .txt output filename with GIA language reduction preprocessor applied, word replacement with dummy prepositions/verbs for NLP compatibility (def: inputTextWithLRPforNLPonlyQuery.txt)"
 "\n\t-lrpfolder [string]                : folder of LRP data files (list of multiword verbs, multiword prepositions etc) (def: same as exe)"
 #endif
 #ifdef USE_WORDNET
 "\n\t-syndet                            : wordnet synonymn detection (0 - off, 1 - during queries only, 2 - during referencing and queries [def])"
 #endif
 "\n"
-"\n\t-workingfolder [string]            : working directory name for input files (def: same as exe)"
+"\n\t-inputfolder [string]              : input directory name for input files (def: same as exe)"
 "\n\t-nlprelexfolder [string]           : directory name for Relex (def: same as exe)"
 "\n\t-nlpstanfordcorenlpfolder [string] : directory name for Stanford Parser (def: same as nlprelexefolder)"
 "\n\t-nlpstanfordparserfolder [string]  : directory name for Stanford CoreNLP (def: same as nlprelexefolder)"
-"\n\t-tempfolder [string]               : temp directory name for temporary and output files (def: same as exe)"
+"\n\t-outputfolder [string]             : output directory name for temporary and output files (def: same as exe)"
 "\n"
 "\n\n\t-version         : print version"
 "\n\n\tThis program performs GIA (General Intelligence Algorithm) operations - creates semantic network based upon NLP dependencies file (.xml) or GIA semantic network file (.xml); outputs semantic network to GIA semantic network file (.xml); displays semantic network (using opengl); prints semantic network to raster image (.ppm), 3D vector graphics (.ldr), or 2D vector graphics (.svg).\n\n";
 
-#ifndef USE_NLC
+#ifdef COMPILE_GIA
 int main(const int argc, const char** argv)
 {
 	//print execution time
@@ -142,10 +142,10 @@ int main(const int argc, const char** argv)
 	bool useInputTextPlainTXTFile = false;
 	string inputTextPlainTXTfileName = "inputText.txt";
 
-#ifdef USE_CE
+	#ifdef USE_CE
 	bool useInputTextCodeextensionsTXTFileName = false;
 	string inputTextCodeextensionsTXTFileName = "codeextensionsEnumerated.txt";
-#endif
+	#endif
 
 	bool useInputTextNLPrelationXMLFile = false;
 	string inputTextNLPrelationXMLfileName = "inputNLPrelation.xml";
@@ -187,12 +187,14 @@ int main(const int argc, const char** argv)
 	string outputQuerySVGFileName = "semanticNetQuery.svg";
 	bool useOutputTextAllFile = false;
 	string outputTextAllFileName = "semanticNet";
+	#ifdef GIA_QUERY_WRITE_ANSWER_TO_FILE
 	bool useOutputTextAnswerPlainTXTFile = false;
 	string outputTextAnswerPlainTXTFileName = "answer.txt";
-
-#ifdef GIA_INPUT_FILE_LISTS
+	#endif
+	
+	#ifdef GIA_INPUT_FILE_LISTS
 	bool inputFileList = false;
-#endif
+	#endif
 	bool printOutput = false;
 	bool printOutputQuery = false;
 	bool displayInOpenGLAndOutputScreenshot = true;
@@ -202,36 +204,32 @@ int main(const int argc, const char** argv)
 
 	bool useInputQuery = false;
 
-#ifdef GIA_DATABASE
+	#ifdef GIA_DATABASE
 	bool readFromDatabase = false;
 	bool writeToDatabase = false;
 	bool useDatabase = false;
 	string databaseFolderName = GIA_DATABASE_FILESYSTEM_DEFAULT_SERVER_OR_MOUNT_NAME_BASE + GIA_DATABASE_FILESYSTEM_DEFAULT_DATABASE_NAME;
-#endif
-#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
+	#endif
+	#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
 	string semanticParserDatabaseFolderName = GIA_DATABASE_FILESYSTEM_DEFAULT_SERVER_OR_MOUNT_NAME_BASE + GIA_SEMANTIC_PARSER_DATABASE_FILESYSTEM_DEFAULT_DATABASE_NAME;
-#endif
+	#endif
 
-#ifdef GIA_LRP
+	#ifdef GIA_PREPROCESSOR
 	bool useLRP = false;
 	bool useOutputLRPTextPlainTXTFile = false;
 	string outputLRPTextPlainTXTFileName = "inputTextWithLRP.txt";
-	bool useOutputLRPTextForNLPonlyPlainTXTFile = false;
-	string outputLRPTextForNLPonlyPlainTXTFileName = "inputTextWithLRPforNLPonly.txt";
 	bool useOutputQueryLRPTextPlainTXTFile = false;
 	string outputQueryLRPTextPlainTXTFileName = "inputTextWithLRPQuery.txt";
-	bool useOutputQueryLRPTextForNLPonlyPlainTXTFile = false;
-	string outputQueryLRPTextForNLPonlyPlainTXTFileName = "inputTextWithLRPforNLPonlyQuery.txt";
 	string lrpDataFolderName = "";
-#endif
+	#endif
 
-#ifdef USE_WORDNET
+	#ifdef USE_WORDNET
 	#ifdef GIA_SYNONYMN_DETECTION_DEFAULT_QUERIES_AND_ADVANCED_REFERENCING
 	int synonymnDetectionStatus = SYNONYMN_DETECTION_STATUS_QUERIES_AND_ADVANCED_REFERENCING;
 	#else
 	int synonymnDetectionStatus = SYNONYMN_DETECTION_STATUS_QUERIES_ONLY;
 	#endif
-#endif
+	#endif
 
 	//bool train = false;
 	//bool form = true;
@@ -250,14 +248,14 @@ int main(const int argc, const char** argv)
 			useInputTextPlainTXTFile = true;
 		}
 
-	#ifdef USE_CE
+		#ifdef USE_CE
 		if(SHAREDvarsClass().argumentExists(argc, argv, "-icodeextensions"))
 		{
 			inputTextCodeextensionsTXTFileName = SHAREDvarsClass().getStringArgument(argc, argv, "-icodeextensions");
 			useInputTextCodeextensionsTXTFileName = true;
 			cout << "inputTextCodeextensionsTXTFileName = " << inputTextCodeextensionsTXTFileName << endl;	//print input file name required for diagnosis
 		}
-	#endif
+		#endif
 
 		if(SHAREDvarsClass().argumentExists(argc, argv, "-ionlprel"))
 		{
@@ -304,12 +302,12 @@ int main(const int argc, const char** argv)
 			useInputQuery = true;
 		}
 
-	#ifdef GIA_INPUT_FILE_LISTS
+		#ifdef GIA_INPUT_FILE_LISTS
 		if(SHAREDvarsClass().argumentExists(argc, argv, "-ilist"))
 		{
 			inputFileList = true;
 		}
-	#endif
+		#endif
 
 		if(SHAREDvarsClass().argumentExists(argc, argv, "-ocff"))
 		{
@@ -396,20 +394,13 @@ int main(const int argc, const char** argv)
 			printOutput = true;
 		}
 
+		#ifdef GIA_QUERY_WRITE_ANSWER_TO_FILE
 		if(SHAREDvarsClass().argumentExists(argc, argv, "-oanswer"))
 		{
 			outputTextAnswerPlainTXTFileName = SHAREDvarsClass().getStringArgument(argc, argv, "-oanswer");
 			useOutputTextAnswerPlainTXTFile = true;
 		}
-
-		/*
-		if(SHAREDvarsClass().argumentExists(argc, argv, "-train"))
-		{
-			int trainInt
-			trainInt = SHAREDvarsClass().getFloatArgument(argc, argv, "-train");
-			train = (bool)trainInt;
-		}
-		*/
+		#endif
 
 		if(SHAREDvarsClass().argumentExists(argc, argv, "-notshow"))
 		{
@@ -458,7 +449,7 @@ int main(const int argc, const char** argv)
 			else
 			{
 				cout << "error: nlpcompmode set but (NLPdependencyRelationsParser != GIA_NLP_PARSER_RELEX)" << endl;
-				exit(0);
+				exit(EXIT_ERROR);
 			}
 		}
 
@@ -492,11 +483,11 @@ int main(const int argc, const char** argv)
 			else
 			{
 				cout << "error: nlpcompmodeq set but (queryNLPdependencyRelationsParser != GIA_NLP_PARSER_RELEX)" << endl;
-				exit(0);
+				exit(EXIT_ERROR);
 			}
 		}
 
-	#ifdef GIA_DATABASE
+		#ifdef GIA_DATABASE
 		if(SHAREDvarsClass().argumentExists(argc, argv, "-dbread"))
 		{
 			readFromDatabase = true;
@@ -512,16 +503,16 @@ int main(const int argc, const char** argv)
 			databaseFolderName = SHAREDvarsClass().getStringArgument(argc, argv, "-dbfolder");
 			databaseFolderName = databaseFolderName + '/';
 		}
-	#endif
-	#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
+		#endif
+		#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
 		if(SHAREDvarsClass().argumentExists(argc, argv, "-dbsemanticparserfolder"))
 		{
 			semanticParserDatabaseFolderName = SHAREDvarsClass().getStringArgument(argc, argv, "-dbsemanticparserfolder");
 			semanticParserDatabaseFolderName = semanticParserDatabaseFolderName + '/';
 		}
-	#endif
+		#endif
 
-	#ifdef GIA_LRP
+		#ifdef GIA_PREPROCESSOR
 		if(SHAREDvarsClass().argumentExists(argc, argv, "-lrp"))
 		{
 			useLRP = true;
@@ -531,20 +522,10 @@ int main(const int argc, const char** argv)
 			outputLRPTextPlainTXTFileName = SHAREDvarsClass().getStringArgument(argc, argv, "-olrptxt");
 			useOutputLRPTextPlainTXTFile = true;
 		}
-		if(SHAREDvarsClass().argumentExists(argc, argv, "-olrptxtnlp"))
-		{
-			outputLRPTextForNLPonlyPlainTXTFileName = SHAREDvarsClass().getStringArgument(argc, argv, "-olrptxtnlp");
-			useOutputLRPTextForNLPonlyPlainTXTFile = true;
-		}
 		if(SHAREDvarsClass().argumentExists(argc, argv, "-olrptxtq"))
 		{
 			outputQueryLRPTextPlainTXTFileName = SHAREDvarsClass().getStringArgument(argc, argv, "-olrptxtq");
 			useOutputQueryLRPTextPlainTXTFile = true;
-		}
-		if(SHAREDvarsClass().argumentExists(argc, argv, "-olrptxtnlpq"))
-		{
-			outputQueryLRPTextForNLPonlyPlainTXTFileName = SHAREDvarsClass().getStringArgument(argc, argv, "-olrptxtnlpq");
-			useOutputQueryLRPTextForNLPonlyPlainTXTFile = true;
 		}
 		if(SHAREDvarsClass().argumentExists(argc, argv, "-lrpfolder"))
 		{
@@ -555,21 +536,21 @@ int main(const int argc, const char** argv)
 		{
 			lrpDataFolderName = currentFolder;
 		}
-	#endif
-	#ifdef USE_WORDNET
+		#endif
+		#ifdef USE_WORDNET
 		if(SHAREDvarsClass().argumentExists(argc, argv, "-syndet"))
 		{
 			synonymnDetectionStatus = int(SHAREDvarsClass().getFloatArgument(argc, argv, "-syndet"));
 		}
-	#endif
+		#endif
 
-		if(SHAREDvarsClass().argumentExists(argc, argv, "-workingfolder"))
+		if(SHAREDvarsClass().argumentExists(argc, argv, "-inputfolder"))
 		{
-			workingFolder = SHAREDvarsClass().getStringArgument(argc, argv, "-workingfolder");
+			inputFolder = SHAREDvarsClass().getStringArgument(argc, argv, "-inputfolder");
 		}
 		else
 		{
-			workingFolder = currentFolder;
+			inputFolder = currentFolder;
 		}
 
 		if(SHAREDvarsClass().argumentExists(argc, argv, "-nlprelexfolder"))
@@ -597,21 +578,21 @@ int main(const int argc, const char** argv)
 			NLPexeFolderArray[GIA_NLP_PARSER_STANFORD_PARSER] = currentFolder;
 		}
 
-		if(SHAREDvarsClass().argumentExists(argc, argv, "-tempfolder"))
+		if(SHAREDvarsClass().argumentExists(argc, argv, "-outputfolder"))
 		{
-			tempFolder = SHAREDvarsClass().getStringArgument(argc, argv, "-tempfolder");
+			outputFolder = SHAREDvarsClass().getStringArgument(argc, argv, "-outputfolder");
 		}
 		else
 		{
-			tempFolder = currentFolder;
+			outputFolder = currentFolder;
 		}
 
-		SHAREDvarsClass().setCurrentDirectory(workingFolder);
+		SHAREDvarsClass().setCurrentDirectory(inputFolder);
 
 		if(SHAREDvarsClass().argumentExists(argc, argv, "-version"))
 		{
-			cout << "GIA.exe - Project Version: 2p4d 17-January-2017" << endl;
-			exit(1);
+			cout << "GIA.exe - Project Version: 3a1a 26-February-2017" << endl;
+			exit(EXIT_OK);
 		}
 
 
@@ -620,37 +601,45 @@ int main(const int argc, const char** argv)
 	{
 		cout << "error: GIA requires either a plain text inputText file (.txt), an NPL parsed inputText file (.xml) or GIA semantic network (.xml) to be defined" << endl;
 		printf(errmessage);
-		exit(1);
+		exit(EXIT_ERROR);
 	}
 
-	vector<GIAentityNode*>* entityNodesActiveListComplete = new vector<GIAentityNode*>;
-	unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes = new unordered_map<string, GIAentityNode*>;
-	map<int, vector<GIAentityNode*>*>* entityNodesActiveListSentences = new map<int, vector<GIAentityNode*>*>;
-	unordered_map<long, GIAtimeConditionNode*>* timeConditionNodesActiveList = new unordered_map<long, GIAtimeConditionNode*>;
+	GIAtranslatorVariablesClass* translatorVariables = new GIAtranslatorVariablesClass();
+	translatorVariables->isQuery = false;
+	translatorVariables->entityNodesActiveListComplete = new vector<GIAentityNode*>;
+	translatorVariables->entityNodesActiveListNetworkIndexes = new unordered_map<string, GIAentityNode*>;
+	translatorVariables->timeConditionNodesActiveList = new unordered_map<long, GIAtimeConditionNode*>;
+	translatorVariables->entityNodesActiveListSentences = new map<int, vector<GIAentityNode*>*>;
+	translatorVariables->NLPfeatureParser = NLPfeatureParser;
+	translatorVariables->NLPdependencyRelationsParser = NLPdependencyRelationsParser;
+	translatorVariables->NLPrelexCompatibilityMode = NLPrelexCompatibilityMode;
+	translatorVariables->NLPassumePreCollapsedStanfordRelations = NLPassumePreCollapsedStanfordRelations;
 
-	int maxNumberSentences;
-
+	GIAtranslatorVariablesClass* translatorVariablesQuery = new GIAtranslatorVariablesClass();
+	translatorVariablesQuery->isQuery = true;
+	translatorVariablesQuery->entityNodesActiveListComplete = new vector<GIAentityNode*>;
+	translatorVariablesQuery->entityNodesActiveListNetworkIndexes = new unordered_map<string, GIAentityNode*>;
+	translatorVariablesQuery->timeConditionNodesActiveList = new unordered_map<long, GIAtimeConditionNode*>;
+	translatorVariablesQuery->entityNodesActiveListSentences = new map<int, vector<GIAentityNode*>*>;
+	translatorVariablesQuery->NLPfeatureParser = queryNLPfeatureParser;
+	translatorVariablesQuery->NLPdependencyRelationsParser = queryNLPdependencyRelationsParser;
+	translatorVariablesQuery->NLPrelexCompatibilityMode = queryNLPrelexCompatibilityMode;
+	translatorVariablesQuery->NLPassumePreCollapsedStanfordRelations = queryNLPassumePreCollapsedStanfordRelations;
+	
 	GIAmainClass().executeGIA(
 
-		NLPfeatureParser,
-		NLPdependencyRelationsParser,
-		NLPrelexCompatibilityMode,
-		NLPassumePreCollapsedStanfordRelations,
-
-		queryNLPfeatureParser,
-		queryNLPdependencyRelationsParser,
-		queryNLPrelexCompatibilityMode     ,
-		queryNLPassumePreCollapsedStanfordRelations,
+		translatorVariables,
+		translatorVariablesQuery,
 
 		NLPexeFolderArray,
 
 		useInputTextPlainTXTFile,
 		inputTextPlainTXTfileName,
 
-	#ifdef USE_CE
+		#ifdef USE_CE
 		useInputTextCodeextensionsTXTFileName,
 		inputTextCodeextensionsTXTFileName,
-	#endif
+		#endif
 
 		useInputTextNLPrelationXMLFile,
 		inputTextNLPrelationXMLfileName,
@@ -692,12 +681,14 @@ int main(const int argc, const char** argv)
 		outputQuerySVGFileName,
 		useOutputTextAllFile,
 		outputTextAllFileName,
+		#ifdef GIA_QUERY_WRITE_ANSWER_TO_FILE
 		useOutputTextAnswerPlainTXTFile,
 		outputTextAnswerPlainTXTFileName,
+		#endif
 
-	#ifdef GIA_INPUT_FILE_LISTS
+		#ifdef GIA_INPUT_FILE_LISTS
 		inputFileList,
-	#endif
+		#endif
 		printOutput,
 		printOutputQuery,
 		displayInOpenGLAndOutputScreenshot,
@@ -707,40 +698,30 @@ int main(const int argc, const char** argv)
 
 		useInputQuery,
 
-	#ifdef GIA_DATABASE
+		#ifdef GIA_DATABASE
 		readFromDatabase,
 		writeToDatabase,
 		useDatabase,
 		databaseFolderName,
-	#endif
+		#endif
 
-	#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
+		#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
 		semanticParserDatabaseFolderName,
-	#endif
+		#endif
 
-	#ifdef GIA_LRP
+		#ifdef GIA_PREPROCESSOR
 		useLRP,
 		useOutputLRPTextPlainTXTFile,
 		outputLRPTextPlainTXTFileName,
-		useOutputLRPTextForNLPonlyPlainTXTFile,
-		outputLRPTextForNLPonlyPlainTXTFileName,
 		useOutputQueryLRPTextPlainTXTFile,
 		outputQueryLRPTextPlainTXTFileName,
-		useOutputQueryLRPTextForNLPonlyPlainTXTFile,
-		outputQueryLRPTextForNLPonlyPlainTXTFileName,
 		lrpDataFolderName,
-	#endif
+		#endif
 
-	#ifdef USE_WORDNET
-		synonymnDetectionStatus,
-	#endif
+		#ifdef USE_WORDNET
+		synonymnDetectionStatus
+		#endif
 
-		entityNodesActiveListComplete,
-		entityNodesActiveListNetworkIndexes,
-		entityNodesActiveListSentences,
-		timeConditionNodesActiveList,
-
-		&maxNumberSentences
 	);
 
 	//print execution time (end)
@@ -754,25 +735,18 @@ int main(const int argc, const char** argv)
 
 bool GIAmainClass::executeGIA(
 
-	int NLPfeatureParser,
-	int NLPdependencyRelationsParser,
-	bool NLPrelexCompatibilityMode,
-	bool NLPassumePreCollapsedStanfordRelations,
-
-	int queryNLPfeatureParser,
-	int queryNLPdependencyRelationsParser,
-	bool queryNLPrelexCompatibilityMode	,
-	bool queryNLPassumePreCollapsedStanfordRelations,
+	GIAtranslatorVariablesClass* translatorVariables,
+	GIAtranslatorVariablesClass* translatorVariablesQuery,
 
 	string NLPexeFolderArray[],
 
 	bool useInputTextPlainTXTFile,
 	string inputTextPlainTXTfileName,
 
-#ifdef USE_CE
+	#ifdef USE_CE
 	bool useInputTextCodeextensionsTXTFileName,
 	string inputTextCodeextensionsTXTFileName,
-#endif
+	#endif
 
 	bool useInputTextNLPrelationXMLFile,
 	string inputTextNLPrelationXMLfileName,
@@ -814,12 +788,14 @@ bool GIAmainClass::executeGIA(
 	string outputQuerySVGFileName,
 	bool useOutputTextAllFile,
 	string outputTextAllFileName,
+	#ifdef GIA_QUERY_WRITE_ANSWER_TO_FILE
 	bool useOutputTextAnswerPlainTXTFile,
 	string outputTextAnswerPlainTXTFileName,
+	#endif
 
-#ifdef GIA_INPUT_FILE_LISTS
+	#ifdef GIA_INPUT_FILE_LISTS
 	bool inputFileList,
-#endif
+	#endif
 	bool printOutput,
 	bool printOutputQuery,
 	bool displayInOpenGLAndOutputScreenshot,
@@ -829,39 +805,28 @@ bool GIAmainClass::executeGIA(
 
 	bool useInputQuery,
 
-#ifdef GIA_DATABASE
+	#ifdef GIA_DATABASE
 	bool readFromDatabase,
 	bool writeToDatabase,
 	bool useDatabase,
 	string databaseFolderName,
-#endif
-#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
+	#endif
+	#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
 	string semanticParserDatabaseFolderName,
-#endif
+	#endif
 
-#ifdef GIA_LRP
+	#ifdef GIA_PREPROCESSOR
 	bool useLRP,
 	bool useOutputLRPTextPlainTXTFile,
 	string outputLRPTextPlainTXTFileName,
-	bool useOutputLRPTextForNLPonlyPlainTXTFile,
-	string outputLRPTextForNLPonlyPlainTXTFileName,
 	bool useOutputQueryLRPTextPlainTXTFile,
 	string outputQueryLRPTextPlainTXTFileName,
-	bool useOutputQueryLRPTextForNLPonlyPlainTXTFile,
-	string outputQueryLRPTextForNLPonlyPlainTXTFileName,
 	string lrpDataFolderName,
-#endif
+	#endif
 
-#ifdef USE_WORDNET
-	int synonymnDetectionStatus,
-#endif
-
-	vector<GIAentityNode*>* entityNodesActiveListComplete,
-	unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes,
-	map<int, vector<GIAentityNode*>*>* entityNodesActiveListSentences,
-	unordered_map<long, GIAtimeConditionNode*>* timeConditionNodesActiveList,
-
-	int* maxNumberSentences
+	#ifdef USE_WORDNET
+	int synonymnDetectionStatus
+	#endif
 	)
 {
 #ifdef USE_CS_WORKAROUND
@@ -886,10 +851,10 @@ bool GIAmainClass::executeGIA2()
 	cout << useInputTextPlainTXTFile << endl;
 	cout << inputTextPlainTXTfileName << endl;
 
-#ifdef USE_CE
+	#ifdef USE_CE
 	cout << useInputTextCodeextensionsTXTFileName << endl;
 	cout << inputTextCodeextensionsTXTFileName << endl;
-#endif
+	#endif
 
 	cout << useInputTextNLPrelationXMLFile << endl;
 	cout << inputTextNLPrelationXMLfileName << endl;
@@ -931,12 +896,14 @@ bool GIAmainClass::executeGIA2()
 	cout << outputQuerySVGFileName << endl;
 	cout << useOutputTextAllFile << endl;
 	cout << outputTextAllFileName << endl;
+	#ifdef GIA_QUERY_WRITE_ANSWER_TO_FILE
 	cout << useOutputTextAnswerPlainTXTFile << endl;
 	cout << outputTextAnswerPlainTXTFileName << endl;
+	#endif
 
-#ifdef GIA_INPUT_FILE_LISTS
+	#ifdef GIA_INPUT_FILE_LISTS
 	cout << inputFileList << endl;
-#endif
+	#endif
 	cout << printOutput << endl;
 	cout << printOutputQuery << endl;
 	cout << displayInOpenGLAndOutputScreenshot << endl;
@@ -946,41 +913,34 @@ bool GIAmainClass::executeGIA2()
 
 	cout << useInputQuery << endl;
 
-#ifdef GIA_DATABASE
+	#ifdef GIA_DATABASE
 	cout << readFromDatabase << endl;
 	cout << writeToDatabase << endl;
 	cout << useDatabase << endl;
 	cout << databaseFolderName << endl;
-#endif
+	#endif
 
-#ifdef GIA_LRP
+	#ifdef GIA_PREPROCESSOR
 	cout << useLRP << endl;
 	cout << useOutputLRPTextPlainTXTFile << endl;
 	cout << outputLRPTextPlainTXTFileName << endl;
-	cout << useOutputLRPTextForNLPonlyPlainTXTFile << endl;
-	cout << outputLRPTextForNLPonlyPlainTXTFileName << endl;
 	cout << useOutputQueryLRPTextPlainTXTFile << endl;
 	cout << outputQueryLRPTextPlainTXTFileName << endl;
-	cout << useOutputQueryLRPTextForNLPonlyPlainTXTFile << endl;
-	cout << outputQueryLRPTextForNLPonlyPlainTXTFileName << endl;
 	cout << lrpDataFolderName << endl;
-#endif
+	#endif
 
-#ifdef USE_WORDNET
+	#ifdef USE_WORDNET
 	cout << synonymnDetectionStatus << endl;
-#endif
-	exit(0);
+	#endif
+	exit(EXIT_ERROR);
 	*/
 
 
 	bool result = true;
 
-	*maxNumberSentences = 0;		//variable only used with GIA_RECORD_WAS_REFERENCE_INFORMATION
-
-
 	#ifdef GIA_MAIN_DEBUG
-	//cout << "workingFolder = " << workingFolder << endl;
-	//cout << "tempFolder = " << tempFolder << endl;
+	//cout << "inputFolder = " << inputFolder << endl;
+	//cout << "outputFolder = " << outputFolder << endl;
 	//cout << "NPLrelationExeFolderCharStar = " << NPLrelationExeFolderCharStar << endl;
 	//cout << "NPLfeatureExeFolderCharStar = " << NPLfeatureExeFolderCharStar << endl;
 	#endif
@@ -988,20 +948,15 @@ bool GIAmainClass::executeGIA2()
 	if(!XMLrulesClass.parseGIArulesXMLfile())
 	{
 		cout << "error: GIArules.xml file not detected" << endl;
-		exit(0);
+		exit(EXIT_ERROR);
 	}
 	LDsprite.fillInLDspriteExternVariables();
 	///GIA specific rules.xml file is not used at the moment	[once right variables have been decided upon they will be fed to xml]
 	//fillInGIARulesExternVariables();
 
-	vector<GIAentityNode*>* entityNodesActiveListCompleteQuery = new vector<GIAentityNode*>;
-	unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexesQuery = new unordered_map<string, GIAentityNode*>;
-	unordered_map<long, GIAtimeConditionNode*>* timeConditionNodesActiveListQuery = new unordered_map<long, GIAtimeConditionNode*>;
-	map<int, vector<GIAentityNode*>*>* entityNodesActiveListSentencesQuery = new map<int, vector<GIAentityNode*>*>;
-
 	#ifdef GIA_DATABASE
-	GIAdatabase.initialiseDatabase(readFromDatabase, databaseFolderName, useDatabase, entityNodesActiveListComplete, entityNodesActiveListNetworkIndexes);
-	SHAREDvars.setCurrentDirectory(workingFolder);
+	GIAdatabase.initialiseDatabase(readFromDatabase, databaseFolderName, useDatabase, translatorVariables->entityNodesActiveListComplete, translatorVariables->entityNodesActiveListNetworkIndexes);
+	SHAREDvars.setCurrentDirectory(inputFolder);
 	#endif
 
 	#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
@@ -1012,13 +967,13 @@ bool GIAmainClass::executeGIA2()
 	GIAwordnet.initialiseWordNet(synonymnDetectionStatus);
 	#endif
 
-	#ifdef GIA_LRP
-	if(!GIAlrp.initialiseLRP(lrpDataFolderName, useLRP))
+	#ifdef GIA_PREPROCESSOR
+	if(!GIApreprocessorMultiwordReduction.initialiseLRP(lrpDataFolderName, useLRP))
 	{
 		result = false;
 	}
 	#endif
-
+	
 	if(printOutput)
 	{
 		if(!useOutputTextXMLFile)
@@ -1075,7 +1030,7 @@ bool GIAmainClass::executeGIA2()
 		{
 			LDopengl.initiateOpenGL(rasterImageWidth, rasterImageHeight, 0, 0, false);
 		}
-		//exit(0);
+		//exit(EXIT_ERROR);
 
 		if(useInputQuery)
 		{
@@ -1141,22 +1096,12 @@ bool GIAmainClass::executeGIA2()
 			useOutputLRPTextPlainTXTFile = true;
 			outputLRPTextPlainTXTFileName = outputTextAllFileName + "afterLRP.txt";
 		}
-		if(!useOutputLRPTextForNLPonlyPlainTXTFile)
-		{
-			useOutputLRPTextForNLPonlyPlainTXTFile = true;
-			outputLRPTextForNLPonlyPlainTXTFileName = outputTextAllFileName + "afterLRPforNLPonly.txt";
-		}
 		if(useInputQuery)
 		{
 			if(!useOutputQueryLRPTextPlainTXTFile)
 			{
 				useOutputQueryLRPTextPlainTXTFile = true;
 				outputQueryLRPTextPlainTXTFileName = outputTextAllFileName + "afterLRPQuery.txt";
-			}
-			if(!useOutputQueryLRPTextForNLPonlyPlainTXTFile)
-			{
-				useOutputQueryLRPTextForNLPonlyPlainTXTFile = true;
-				outputQueryLRPTextForNLPonlyPlainTXTFileName = outputTextAllFileName + "afterLRPforNLPonlyQuery.txt";
 			}
 		}
 	}
@@ -1185,7 +1130,9 @@ bool GIAmainClass::executeGIA2()
 	cout << "outputQueryPPMFileName = " << outputQueryPPMFileName << endl;
 	cout << "outputQuerySVGFileName = " << outputQuerySVGFileName << endl;
 	cout << "outputQueryCFFFileName = " << outputQueryCFFFileName << endl;
+	#ifdef GIA_QUERY_WRITE_ANSWER_TO_FILE
 	cout << "useOutputTextAnswerPlainTXTFile = " << useOutputTextAnswerPlainTXTFile << endl;
+	#endif
 	cout << "displayInOpenGLAndOutputScreenshot = " << displayInOpenGLAndOutputScreenshot << endl;
 	cout << "rasterImageWidth = " << rasterImageWidth << endl;
 	cout << "rasterImageHeight = " << rasterImageHeight << endl;
@@ -1193,7 +1140,7 @@ bool GIAmainClass::executeGIA2()
 
 
 
-#ifdef GIA_INPUT_FILE_LISTS
+	#ifdef GIA_INPUT_FILE_LISTS
 	int numberOfInputFilesInList = 1;
 	string* inputTextPlainTXTFileNameArray = new string[GIA_MAXIMUM_NUMBER_OF_FILES_IN_INPUT_FILE_LIST];
 	#ifdef USE_CE
@@ -1204,37 +1151,51 @@ bool GIAmainClass::executeGIA2()
 	string* inputTextXMLFileNameArray = new string[GIA_MAXIMUM_NUMBER_OF_FILES_IN_INPUT_FILE_LIST];
 	string outputTextCFFFileNameBase = outputTextCFFFileName;
 	string outputLRPTextPlainTXTFileNameBase = outputLRPTextPlainTXTFileName;
-	string outputLRPTextForNLPonlyPlainTXTFileNameBase = outputLRPTextForNLPonlyPlainTXTFileName;
 	if(inputFileList)
 	{
 		if(useInputTextPlainTXTFile)
 		{
-			numberOfInputFilesInList = this->getFilesFromFileList(inputTextPlainTXTfileName, inputTextPlainTXTFileNameArray);
+			if(!SHAREDvars.getFilesFromFileList(inputTextPlainTXTfileName, inputTextPlainTXTFileNameArray, &numberOfInputFilesInList))
+			{
+				cout << "main{} error: !getFilesFromFileList: " << inputTextPlainTXTfileName << endl;
+			}
 		}
-	#ifdef USE_CE
+		#ifdef USE_CE
 		if(useInputTextCodeextensionsTXTFileName)
 		{
-			numberOfInputFilesInList = this->getFilesFromFileList(inputTextCodeextensionsTXTFileName, inputTextCodeextensionsTXTFileNameArray);
+			if(!SHAREDvars.getFilesFromFileList(inputTextCodeextensionsTXTFileName, inputTextCodeextensionsTXTFileNameArray, &numberOfInputFilesInList))
+			{
+				cout << "main{} error: !getFilesFromFileList: " << inputTextCodeextensionsTXTFileName << endl;
+			}
 		}
-	#endif
+		#endif
 		if(useInputTextNLPrelationXMLFile)
 		{
-			numberOfInputFilesInList = this->getFilesFromFileList(inputTextNLPrelationXMLfileName, inputTextNLPrelationXMLFileNameArray);
+			if(!SHAREDvars.getFilesFromFileList(inputTextNLPrelationXMLfileName, inputTextNLPrelationXMLFileNameArray, &numberOfInputFilesInList))
+			{
+				cout << "main{} error: !getFilesFromFileList: " << inputTextNLPrelationXMLfileName << endl;
+			}
 		}
 		if(useInputTextNLPfeatureXMLFile)
 		{
-			numberOfInputFilesInList = this->getFilesFromFileList(inputTextNLPfeatureXMLfileName, inputTextNLPfeatureXMLFileNameArray);
+			if(!SHAREDvars.getFilesFromFileList(inputTextNLPfeatureXMLfileName, inputTextNLPfeatureXMLFileNameArray, &numberOfInputFilesInList))
+			{
+				cout << "main{} error: !getFilesFromFileList: " << inputTextNLPfeatureXMLfileName << endl;
+			}
 		}
 
 		if(useInputTextXMLFile)
 		{
-			numberOfInputFilesInList = this->getFilesFromFileList(inputTextXMLFileName, inputTextXMLFileNameArray);
+			if(!SHAREDvars.getFilesFromFileList(inputTextXMLFileName, inputTextXMLFileNameArray, &numberOfInputFilesInList))
+			{
+				cout << "main{} error: !getFilesFromFileList: " << inputTextXMLFileName << endl;
+			}
 		}
 	}
 
 	for(int inputFileNameIndex=0; inputFileNameIndex<numberOfInputFilesInList; inputFileNameIndex++)	//CHECKTHIS: change back to 0
 	{
-		SHAREDvars.setCurrentDirectory(workingFolder);
+		SHAREDvars.setCurrentDirectory(inputFolder);
 
 		if(inputFileList)
 		{
@@ -1265,33 +1226,26 @@ bool GIAmainClass::executeGIA2()
 			string inputFileNameIndexString = SHAREDvars.convertIntToString(inputFileNameIndex);
 			outputTextCFFFileName = outputTextCFFFileNameBase + "." + inputFileNameIndexString;
 			outputLRPTextPlainTXTFileName = outputLRPTextPlainTXTFileNameBase + "." + inputFileNameIndexString;
-			outputLRPTextForNLPonlyPlainTXTFileName = outputLRPTextForNLPonlyPlainTXTFileNameBase + "." + inputFileNameIndexString;
 		}
-#endif
-
-		#ifdef GIA_LRP
+	#endif
+		
+		#ifdef GIA_PREPROCESSOR
 		if(useLRP)
 		{
-			GIAlrp.initialiseCurrentGIALRPtagTextCorrespondenceInfo(false);
-			GIAlrp.setCurrentGIALRPtagTextCorrespondenceInfo(false);	//required for local variable access
-			if(!GIAlrp.parseTextFileAndReduceLanguage(inputTextPlainTXTfileName, outputLRPTextPlainTXTFileName, outputLRPTextForNLPonlyPlainTXTFileName))
+			if(!GIApreprocessor.preprocessTextForGIA(&inputTextPlainTXTfileName, outputLRPTextPlainTXTFileName, false, translatorVariables))
 			{
 				result = false;
 			}
-			inputTextPlainTXTfileName = outputLRPTextForNLPonlyPlainTXTFileName;	//now perform NLP using NLP specific (dummy) version of LRP output
 		}
 		#endif
 
 		#ifdef USE_CE
-		bool useCodeextensionsHeirachy = false;
-		CECodeextension* firstCodeextensionInHeirachy = NULL;
-		vector<CECodeextension*>* codeextensionsList;
 		if(useInputTextCodeextensionsTXTFileName)
 		{
 			#ifdef GIA_WITH_CE_USE_CODEEXTENSION_HEIRACHY
-			useCodeextensionsHeirachy = true;
+			translatorVariables->useCodeextensionsHeirachy = true;
 			#else
-			useCodeextensionsHeirachy = false;		//have GIA parse codeextension list like any ordinary file (do not execute GIA for each codeextension dependency hierarchical combination)
+			translatorVariables->useCodeextensionsHeirachy = false;		//have GIA parse codeextension list like any ordinary file (do not execute GIA for each codeextension dependency hierarchical combination)
 			#endif
 
 			//generate codeextensions heirachy
@@ -1304,10 +1258,10 @@ bool GIAmainClass::executeGIA2()
 			#endif
 
 			bool generateCodeextensionClassHeirachy = true;		//NB this is required for external applications needing to extract codeextensions layout information using CE
-			firstCodeextensionInHeirachy = new CECodeextension();
-			codeextensionsList = new vector<CECodeextension*>;
+			translatorVariables->firstCodeextensionInHeirachy = new CECodeextension();
+			translatorVariables->codeextensionsList = new vector<CECodeextension*>;
 
-			if(!deriveScodeextensionPrependAndCreateCodeextensionsLayout(inputTextCodeextensionsTXTFileName, inputTextPlainTXTfileName, deriveSubcodeextensionPrepend, generateCodeextensionClassHeirachy, firstCodeextensionInHeirachy, codeextensionsList))
+			if(!deriveScodeextensionPrependAndCreateCodeextensionsLayout(inputTextCodeextensionsTXTFileName, inputTextPlainTXTfileName, deriveSubcodeextensionPrepend, generateCodeextensionClassHeirachy, translatorVariables->firstCodeextensionInHeirachy, translatorVariables->codeextensionsList))
 			{
 				result = false;
 			}
@@ -1325,13 +1279,14 @@ bool GIAmainClass::executeGIA2()
 			}
 		}
 		#endif
-
+		
 		if(inputFileList)
 		{
 			cout << "inputTextPlainTXTfileName = " << inputTextPlainTXTfileName << endl;
 			cout << "inputTextNLPrelationXMLfileName = " << inputTextNLPrelationXMLfileName << endl;
 			cout << "inputTextNLPfeatureXMLfileName = " << inputTextNLPfeatureXMLfileName << endl;
 		}
+
 
 		if(useInputTextPlainTXTFile)
 		{
@@ -1342,42 +1297,36 @@ bool GIAmainClass::executeGIA2()
 			if(useInputTextNLPrelationXMLFile)
 			{
 				cout << "error: useInputTextPlainTXTFile && useInputTextNLPrelationXMLFile" << endl;
-				exit(0);
+				exit(EXIT_ERROR);
 			}
 			else
 			*/
 			if(useInputTextXMLFile)
 			{
 				cout << "error: useInputTextPlainTXTFile && useInputTextXMLFile" << endl;
-				exit(0);
+				exit(EXIT_ERROR);
 			}
 			else
 			{
 				#ifndef GIA2_DO_NOT_PARSE_DEPENDENCY_RELATION_FILE
-				GIAnlp.executeNLPparser(inputTextPlainTXTfileName, inputTextNLPrelationXMLfileName, NLPdependencyRelationsParser, NLPexeFolderArray, true, NLPrelexCompatibilityMode);
+				GIAnlp.executeNLPparser(inputTextPlainTXTfileName, inputTextNLPrelationXMLfileName, translatorVariables->NLPdependencyRelationsParser, NLPexeFolderArray, true, translatorVariables->NLPrelexCompatibilityMode);
 				if(inputTextNLPfeatureXMLfileName != inputTextNLPrelationXMLfileName)
 				{
 				#endif
 					#ifdef GIA2_SUPPORT_USE_RELEX_COMPATIBILITY_MODE_FOR_FEATURE_PARSER_TO_GENERATE_ADDITIONAL_RELATIONS_REQUIRED_BY_GIA2
-					GIAnlp.executeNLPparser(inputTextPlainTXTfileName, inputTextNLPfeatureXMLfileName, NLPfeatureParser, NLPexeFolderArray, false, true);
+					GIAnlp.executeNLPparser(inputTextPlainTXTfileName, inputTextNLPfeatureXMLfileName, translatorVariables->NLPfeatureParser, NLPexeFolderArray, false, true);
 					#else
-					GIAnlp.executeNLPparser(inputTextPlainTXTfileName, inputTextNLPfeatureXMLfileName, NLPfeatureParser, NLPexeFolderArray, false, NLPrelexCompatibilityMode);
+					GIAnlp.executeNLPparser(inputTextPlainTXTfileName, inputTextNLPfeatureXMLfileName, translatorVariables->NLPfeatureParser, NLPexeFolderArray, false, translatorVariables->NLPrelexCompatibilityMode);
 					#endif
 				#ifndef GIA2_DO_NOT_PARSE_DEPENDENCY_RELATION_FILE
 				}
 				#endif
 				useInputTextNLPrelationXMLFile = true;	//now will parse the NLP Parsed file
 
-				SHAREDvars.setCurrentDirectory(tempFolder);
-
-				/*
-				#ifdef GIA_LRP
-				convertRevertNLPtagNamesToOfficialLRPOutput(NLPdependencyRelationsParser, NLPfeatureParser, LRPTextForNLPonlyPlainTXTFileName, LRPTextPlainTXTFileName, inputTextNLPrelationXMLfileName, inputTextNLPfeatureXMLfileName);
-				#endif
-				*/
+				SHAREDvars.setCurrentDirectory(outputFolder);
 			}
 		}
-
+		
 		if(useInputTextNLPrelationXMLFile)
 		{
 			#ifdef GIA_MAIN_DEBUG
@@ -1389,29 +1338,23 @@ bool GIAmainClass::executeGIA2()
 			if(useInputTextXMLFile)
 			{
 				cout << "error: useInputTextXMLFile && useInputTextNLPrelationXMLFile" << endl;
-				exit(0);
+				exit(EXIT_ERROR);
 			}
 			else
 			{
-				GIAparagraph* firstParagraphInList = new GIAparagraph();
+				translatorVariables->firstParagraphInList = new GIAparagraph();
 				#ifdef USE_GIA2
-				if(!GIAsemanticParser.performSemanticParserLookupAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences(firstParagraphInList, inputTextPlainTXTfileName, inputTextNLPrelationXMLfileName, inputTextNLPfeatureXMLfileName, outputTextCFFFileName, NLPexeFolderArray, entityNodesActiveListComplete, entityNodesActiveListNetworkIndexes, entityNodesActiveListSentences, timeConditionNodesActiveList, false, NLPfeatureParser, NLPdependencyRelationsParser, NLPrelexCompatibilityMode, NLPassumePreCollapsedStanfordRelations, maxNumberSentences))
+				if(!GIAsemanticParser.performSemanticParserLookupAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences(translatorVariables, inputTextPlainTXTfileName, inputTextNLPrelationXMLfileName, inputTextNLPfeatureXMLfileName, outputTextCFFFileName, NLPexeFolderArray))
 				{
 					result = false;
 				}
 				#else
-				#ifdef USE_CE
-				if(!parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyParsedSentencesCE(firstParagraphInList, inputTextNLPrelationXMLfileName, inputTextNLPfeatureXMLfileName, outputTextCFFFileName, NLPexeFolderArray, entityNodesActiveListComplete, entityNodesActiveListNetworkIndexes, entityNodesActiveListSentences, timeConditionNodesActiveList, false, NLPfeatureParser, NLPdependencyRelationsParser, NLPrelexCompatibilityMode, NLPassumePreCollapsedStanfordRelations, maxNumberSentences, false, firstCodeextensionInHeirachy, codeextensionsList, useCodeextensionsHeirachy))
-				#else
-				if(!GIAtranslator.parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyParsedSentences(firstParagraphInList, inputTextNLPrelationXMLfileName, inputTextNLPfeatureXMLfileName, outputTextCFFFileName, NLPexeFolderArray, entityNodesActiveListComplete, entityNodesActiveListNetworkIndexes, entityNodesActiveListSentences, timeConditionNodesActiveList, false, NLPfeatureParser, NLPdependencyRelationsParser, NLPrelexCompatibilityMode, NLPassumePreCollapsedStanfordRelations, maxNumberSentences, false))
-				#endif
+				if(!GIAtranslator.parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyParsedSentences(translatorVariables, inputTextNLPrelationXMLfileName, inputTextNLPfeatureXMLfileName, outputTextCFFFileName, NLPexeFolderArray))
 				{
 					result = false;
 				}
 				#endif
-				#ifdef GIA_FREE_MEMORY1
-				delete firstParagraphInList;
-				#endif
+				delete translatorVariables->firstParagraphInList;
 			}
 		}
 
@@ -1423,190 +1366,171 @@ bool GIAmainClass::executeGIA2()
 			if(useInputTextPlainTXTFile)
 			{
 				cout << "error: useInputTextXMLFile && useInputTextPlainTXTFile" << endl;
-				exit(0);
+				exit(EXIT_ERROR);
 			}
 			if(useInputTextNLPrelationXMLFile)
 			{
 				cout << "error: useInputTextXMLFile && useInputTextNLPrelationXMLFile" << endl;
-				exit(0);
+				exit(EXIT_ERROR);
 			}
 			else
 			{
-				if(!GIAxmlConversion.readSemanticNetXMLfileOptimised(inputTextXMLFileName, entityNodesActiveListComplete, entityNodesActiveListNetworkIndexes, entityNodesActiveListSentences))
+				if(!GIAxmlConversion.readSemanticNetXMLfileOptimised(inputTextXMLFileName, translatorVariables->entityNodesActiveListComplete, translatorVariables->entityNodesActiveListNetworkIndexes, translatorVariables->entityNodesActiveListSentences))
 				{
 					result = false;
 				}
 				#ifdef GIA_TRANSLATOR_DEBUG
 				cout << "record networkIndex nodes as permanent if they are disabled (prepare for use in GIA)" << endl;
 				#endif
-				GIAtranslatorOperations.recordNetworkIndexNodesAsNonPermanentIfTheyAreDisabled(entityNodesActiveListNetworkIndexes);	//prepare for use in GIA
+				GIAtranslatorOperations.recordNetworkIndexNodesAsNonPermanentIfTheyAreDisabled(translatorVariables->entityNodesActiveListNetworkIndexes);	//prepare for use in GIA
 
 			}
 		}
 
-		#ifdef GIA_LRP
+		#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
 		if(useLRP)
 		{
-			GIAlrp.deinitialiseCurrentGIALRPtagTextCorrespondenceInfo(false);	//required for local variable access
+			GIApreprocessorMultiwordReduction.deinitialiseActiveGIApreprocessorMultiwordReductionTagTextCorrespondenceInfo(false);	//required for local variable access
 		}
 		#endif
 #ifdef GIA_INPUT_FILE_LISTS
 	}
 #endif
 
-	SHAREDvars.setCurrentDirectory(workingFolder);
-
-#ifdef GIA_LRP
-	if(useLRP)
-	{
-		if(useInputQuery)
-		{
-			#ifdef GIA_DEBUG
-			//cout << "inputQueryPlainTXTFileName = " << inputQueryPlainTXTFileName << endl;
-			//cout << "outputQueryLRPTextPlainTXTFileName = " << outputQueryLRPTextPlainTXTFileName << endl;
-			//cout << "outputQueryLRPTextForNLPonlyPlainTXTFileName = " << outputQueryLRPTextForNLPonlyPlainTXTFileName << endl;
-			#endif
-
-			GIAlrp.initialiseCurrentGIALRPtagTextCorrespondenceInfo(true);
-			GIAlrp.setCurrentGIALRPtagTextCorrespondenceInfo(true);	//required for local variable access
-			if(!GIAlrp.parseTextFileAndReduceLanguage(inputQueryPlainTXTFileName, outputQueryLRPTextPlainTXTFileName, outputQueryLRPTextForNLPonlyPlainTXTFileName))
-			{
-				result = false;
-			}
-		}
-		inputQueryPlainTXTFileName = outputQueryLRPTextForNLPonlyPlainTXTFileName;	//now perform NLP using NLP specific (dummy) version of LRP output
-	}
-#endif
-
-	if(useInputQueryPlainTXTFile)
-	{
-		#ifdef GIA_MAIN_DEBUG
-		//cout << "useInputQueryPlainTXTFile" << endl;
-		#endif
-		/*
-		if(useInputQueryNLPrelationXMLFile)
-		{
-			cout << "error: useInputQueryPlainTXTFile && useInputQueryNLPrelationXMLFile" << endl;
-			exit(0);
-		}
-		else
-		*/
-		if(useInputQueryXMLFile)
-		{
-			cout << "error: useInputQueryPlainTXTFile && useInputQueryXMLFile" << endl;
-			exit(0);
-		}
-		else
-		{
-			#ifndef GIA2_DO_NOT_PARSE_DEPENDENCY_RELATION_FILE
-			GIAnlp.executeNLPparser(inputQueryPlainTXTFileName, inputQueryNLPrelationXMLFileName, queryNLPdependencyRelationsParser, NLPexeFolderArray, true, NLPrelexCompatibilityMode);
-			if(inputQueryNLPfeatureXMLFileName != inputQueryNLPrelationXMLFileName)
-			{
-			#endif
-				#ifdef GIA2_SUPPORT_USE_RELEX_COMPATIBILITY_MODE_FOR_FEATURE_PARSER_TO_GENERATE_ADDITIONAL_RELATIONS_REQUIRED_BY_GIA2
-				GIAnlp.executeNLPparser(inputQueryPlainTXTFileName, inputQueryNLPfeatureXMLFileName, queryNLPfeatureParser, NLPexeFolderArray, false, true);
-				#else
-				GIAnlp.executeNLPparser(inputQueryPlainTXTFileName, inputQueryNLPfeatureXMLFileName, queryNLPfeatureParser, NLPexeFolderArray, false, NLPrelexCompatibilityMode);
-				#endif
-			#ifndef GIA2_DO_NOT_PARSE_DEPENDENCY_RELATION_FILE
-			}
-			#endif
-			useInputQueryNLPrelationXMLFile = true;	//now will parse the NLP Parsed file
-
-			SHAREDvars.setCurrentDirectory(tempFolder);
-
-			/*
-			#ifdef GIA_LRP
-			convertRevertNLPtagNamesToOfficialLRPOutput(queryNLPdependencyRelationsParser, queryNLPfeatureParser, outputQueryLRPTextForNLPonlyPlainTXTFileName, outputQueryLRPTextPlainTXTFileName, inputQueryTextNLPrelationXMLFileName, inputQueryTextNLPfeatureXMLFileName);
-			#endif
-			*/
-		}
-	}
-
-	if(useInputQueryNLPrelationXMLFile)
-	{
-		#ifdef GIA_MAIN_DEBUG
-		//cout << "useInputQueryNLPrelationXMLFile" << endl;
-		#endif
-		if(useInputQueryXMLFile)
-		{
-			cout << "error: useInputQueryXMLFile && useInputQueryNLPrelationXMLFile" << endl;
-			exit(0);
-		}
-		else
-		{
-			GIAparagraph* firstParagraphInList = new GIAparagraph();
-			#ifdef USE_GIA2
-			if(!GIAsemanticParser.performSemanticParserLookupAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences(firstParagraphInList, inputQueryPlainTXTFileName, inputQueryNLPrelationXMLFileName, inputQueryNLPfeatureXMLFileName, outputQueryCFFFileName, NLPexeFolderArray, entityNodesActiveListCompleteQuery, entityNodesActiveListNetworkIndexesQuery, entityNodesActiveListSentencesQuery, timeConditionNodesActiveListQuery, true, queryNLPfeatureParser, queryNLPdependencyRelationsParser, queryNLPrelexCompatibilityMode, NLPassumePreCollapsedStanfordRelations, maxNumberSentences))
-			{
-				result = false;
-			}
-			#else
-			#ifdef USE_CE
-			CECodeextension* firstCodeextensionInHeirachy;
-			vector<CECodeextension*>* codeextensionsList;
-			if(!parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyParsedSentencesCE(firstParagraphInList, inputQueryNLPrelationXMLFileName, inputQueryNLPfeatureXMLFileName, outputQueryCFFFileName, NLPexeFolderArray, entityNodesActiveListCompleteQuery, entityNodesActiveListNetworkIndexesQuery, entityNodesActiveListSentencesQuery, timeConditionNodesActiveListQuery, true, queryNLPfeatureParser, queryNLPdependencyRelationsParser, queryNLPrelexCompatibilityMode, NLPassumePreCollapsedStanfordRelations, maxNumberSentences, false, firstCodeextensionInHeirachy, codeextensionsList, false))
-			#else
-			if(!GIAtranslator.parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyParsedSentences(firstParagraphInList, inputQueryNLPrelationXMLFileName, inputQueryNLPfeatureXMLFileName, outputQueryCFFFileName, NLPexeFolderArray, entityNodesActiveListCompleteQuery, entityNodesActiveListNetworkIndexesQuery, entityNodesActiveListSentencesQuery, timeConditionNodesActiveListQuery, true, queryNLPfeatureParser, queryNLPdependencyRelationsParser, queryNLPrelexCompatibilityMode, NLPassumePreCollapsedStanfordRelations, maxNumberSentences, false))
-			#endif
-			{
-				result = false;
-			}
-			#endif
-			#ifdef GIA_FREE_MEMORY1
-			delete firstParagraphInList;
-			#endif
-		}
-
-		if(useOutputQueryXMLFile)
-		{
-			if(!GIAxmlConversion.writeSemanticNetXMLFileOptimised(outputQueryXMLFileName, entityNodesActiveListCompleteQuery, entityNodesActiveListNetworkIndexesQuery))
-			{
-				result = false;
-			}
-		}
-	}
-
-	if(useInputQueryXMLFile)
-	{
-		#ifdef GIA_MAIN_DEBUG
-		//cout << "useInputQueryXMLFile" << endl;
-		#endif
-		if(useInputQueryPlainTXTFile)
-		{
-			cout << "error: useInputQueryXMLFile && useInputQueryPlainTXTFile" << endl;
-			exit(0);
-		}
-		if(useInputQueryNLPrelationXMLFile)
-		{
-			cout << "error: useInputQueryXMLFile && useInputQueryNLPrelationXMLFile" << endl;
-			exit(0);
-		}
-		else
-		{
-			entityNodesActiveListCompleteQuery = new vector<GIAentityNode*>;
-			if(!GIAxmlConversion.readSemanticNetXMLfileOptimised(inputQueryXMLFileName, entityNodesActiveListCompleteQuery, entityNodesActiveListNetworkIndexesQuery, entityNodesActiveListSentencesQuery))
-			{
-				result = false;
-			}
-			#ifdef GIA_TRANSLATOR_DEBUG
-			cout << "record networkIndex nodes as permanent if they are disabled (prepare for use in GIA)" << endl;
-			#endif
-			GIAtranslatorOperations.recordNetworkIndexNodesAsNonPermanentIfTheyAreDisabled(entityNodesActiveListNetworkIndexesQuery);	//prepare for use in GIA
-
-		}
-	}
-
+	SHAREDvars.setCurrentDirectory(inputFolder);
 
 	if(useInputQuery)
 	{
+		#ifdef GIA_PREPROCESSOR
+		if(useLRP)
+		{
+			if(!GIApreprocessor.preprocessTextForGIA(&inputQueryPlainTXTFileName, outputQueryLRPTextPlainTXTFileName, true, translatorVariablesQuery))
+			{
+				result = false;
+			}
+		}
+		#endif
+
+		if(useInputQueryPlainTXTFile)
+		{
+			#ifdef GIA_MAIN_DEBUG
+			//cout << "useInputQueryPlainTXTFile" << endl;
+			#endif
+			/*
+			if(useInputQueryNLPrelationXMLFile)
+			{
+				cout << "error: useInputQueryPlainTXTFile && useInputQueryNLPrelationXMLFile" << endl;
+				exit(EXIT_ERROR);
+			}
+			else
+			*/
+			if(useInputQueryXMLFile)
+			{
+				cout << "error: useInputQueryPlainTXTFile && useInputQueryXMLFile" << endl;
+				exit(EXIT_ERROR);
+			}
+			else
+			{
+				#ifndef GIA2_DO_NOT_PARSE_DEPENDENCY_RELATION_FILE
+				GIAnlp.executeNLPparser(inputQueryPlainTXTFileName, inputQueryNLPrelationXMLFileName, translatorVariablesQuery->NLPdependencyRelationsParser, NLPexeFolderArray, true, translatorVariablesQuery->NLPrelexCompatibilityMode);
+				if(inputQueryNLPfeatureXMLFileName != inputQueryNLPrelationXMLFileName)
+				{
+				#endif
+					#ifdef GIA2_SUPPORT_USE_RELEX_COMPATIBILITY_MODE_FOR_FEATURE_PARSER_TO_GENERATE_ADDITIONAL_RELATIONS_REQUIRED_BY_GIA2
+					GIAnlp.executeNLPparser(inputQueryPlainTXTFileName, inputQueryNLPfeatureXMLFileName, translatorVariablesQuery->NLPfeatureParser, NLPexeFolderArray, false, true);
+					#else
+					GIAnlp.executeNLPparser(inputQueryPlainTXTFileName, inputQueryNLPfeatureXMLFileName, translatorVariablesQuery->NLPfeatureParser, NLPexeFolderArray, false, translatorVariablesQuery->NLPrelexCompatibilityMode);
+					#endif
+				#ifndef GIA2_DO_NOT_PARSE_DEPENDENCY_RELATION_FILE
+				}
+				#endif
+				useInputQueryNLPrelationXMLFile = true;	//now will parse the NLP Parsed file
+
+				SHAREDvars.setCurrentDirectory(outputFolder);
+			}
+		}
+
+		if(useInputQueryNLPrelationXMLFile)
+		{
+			#ifdef GIA_MAIN_DEBUG
+			//cout << "useInputQueryNLPrelationXMLFile" << endl;
+			#endif
+			if(useInputQueryXMLFile)
+			{
+				cout << "error: useInputQueryXMLFile && useInputQueryNLPrelationXMLFile" << endl;
+				exit(EXIT_ERROR);
+			}
+			else
+			{
+				translatorVariablesQuery->firstParagraphInList = new GIAparagraph();
+				#ifdef USE_GIA2
+				if(!GIAsemanticParser.performSemanticParserLookupAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences(translatorVariablesQuery, inputQueryPlainTXTFileName, inputQueryNLPrelationXMLFileName, inputQueryNLPfeatureXMLFileName, outputQueryCFFFileName, NLPexeFolderArray))
+				{
+					result = false;
+				}
+				#else
+				if(!GIAtranslator.parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyParsedSentences(translatorVariablesQuery, inputQueryNLPrelationXMLFileName, inputQueryNLPfeatureXMLFileName, outputQueryCFFFileName, NLPexeFolderArray))
+				{
+					result = false;
+				}
+				#endif
+				delete translatorVariablesQuery->firstParagraphInList;
+			}
+
+			if(useOutputQueryXMLFile)
+			{
+				if(!GIAxmlConversion.writeSemanticNetXMLFileOptimised(outputQueryXMLFileName, translatorVariablesQuery->entityNodesActiveListComplete, translatorVariablesQuery->entityNodesActiveListNetworkIndexes))
+				{
+					result = false;
+				}
+			}
+		}
+
+		if(useInputQueryXMLFile)
+		{
+			#ifdef GIA_MAIN_DEBUG
+			//cout << "useInputQueryXMLFile" << endl;
+			#endif
+			if(useInputQueryPlainTXTFile)
+			{
+				cout << "error: useInputQueryXMLFile && useInputQueryPlainTXTFile" << endl;
+				exit(EXIT_ERROR);
+			}
+			if(useInputQueryNLPrelationXMLFile)
+			{
+				cout << "error: useInputQueryXMLFile && useInputQueryNLPrelationXMLFile" << endl;
+				exit(EXIT_ERROR);
+			}
+			else
+			{
+				translatorVariablesQuery->entityNodesActiveListComplete = new vector<GIAentityNode*>;
+				if(!GIAxmlConversion.readSemanticNetXMLfileOptimised(inputQueryXMLFileName, translatorVariablesQuery->entityNodesActiveListComplete, translatorVariablesQuery->entityNodesActiveListNetworkIndexes, translatorVariablesQuery->entityNodesActiveListSentences))
+				{
+					result = false;
+				}
+				#ifdef GIA_TRANSLATOR_DEBUG
+				cout << "record networkIndex nodes as permanent if they are disabled (prepare for use in GIA)" << endl;
+				#endif
+				GIAtranslatorOperations.recordNetworkIndexNodesAsNonPermanentIfTheyAreDisabled(translatorVariablesQuery->entityNodesActiveListNetworkIndexes);	//prepare for use in GIA
+
+			}
+		}
+
+		#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
+		if(useLRP)
+		{
+			GIApreprocessorMultiwordReduction.deinitialiseActiveGIApreprocessorMultiwordReductionTagTextCorrespondenceInfo(true);	//required for local variable access
+		}
+		#endif
+
+
 		if(printOutputQuery)	//moved here in version 1i8a
 		{
-			GIAdraw.printGIAnetworkNodes(entityNodesActiveListCompleteQuery, rasterImageWidth, rasterImageHeight, outputQueryLDRFileName, outputQuerySVGFileName, outputQueryPPMFileName, displayInOpenGLAndOutputScreenshot, useOutputQueryLDRFile, useOutputQueryPPMFile, useOutputQuerySVGFile,* maxNumberSentences);
+			GIAdraw.printGIAnetworkNodes(translatorVariablesQuery->entityNodesActiveListComplete, rasterImageWidth, rasterImageHeight, outputQueryLDRFileName, outputQuerySVGFileName, outputQueryPPMFileName, displayInOpenGLAndOutputScreenshot, useOutputQueryLDRFile, useOutputQueryPPMFile, useOutputQuerySVGFile, translatorVariablesQuery->maxNumberSentences);
 		}
 		if(useOutputQueryCXLFile)	//moved here in version 1i8a
 		{
-			if(!GIAcxlConversion.writeCmapToolsCXLFileOptimised(outputQueryCXLFileName, entityNodesActiveListCompleteQuery, entityNodesActiveListNetworkIndexesQuery))
+			if(!GIAcxlConversion.writeCmapToolsCXLFileOptimised(outputQueryCXLFileName, translatorVariablesQuery->entityNodesActiveListComplete, translatorVariablesQuery->entityNodesActiveListNetworkIndexes))
 			{
 				result = false;
 			}
@@ -1626,84 +1550,55 @@ bool GIAmainClass::executeGIA2()
 
 		GIAentityNode* queryAnswerNode = NULL;
 		string queryAnswerContext = "";
-		queryAnswerNode = GIAquery.answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork(entityNodesActiveListNetworkIndexes, entityNodesActiveListNetworkIndexesQuery, foundComparisonVariable, comparisonVariableNode, &foundAnswer, queryAnswerNode, &confidence, &queryAnswerContext);
+		queryAnswerNode = GIAquery.answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork(translatorVariables->entityNodesActiveListNetworkIndexes, translatorVariablesQuery->entityNodesActiveListNetworkIndexes, foundComparisonVariable, comparisonVariableNode, &foundAnswer, queryAnswerNode, &confidence, &queryAnswerContext);
 
-		double maxConfidence = GIAquery.determineMaxConfidenceOfQuerySemanticNetwork(entityNodesActiveListNetworkIndexesQuery);		//OLD [simple]: entityNodesActiveListCompleteQuery->size();
+		double maxConfidence = GIAquery.determineMaxConfidenceOfQuerySemanticNetwork(translatorVariablesQuery->entityNodesActiveListNetworkIndexes);		//OLD [simple]: entityNodesActiveListCompleteQuery->size();
 
 		string answerString = "";
-
 		if(foundAnswer)
 		{
-
-			#ifndef GIA_DO_NOT_PRINT_RESULTS
-			cout << "Answer Found." << endl;
-			#endif
 			answerString = answerString + "\nAnswer found.";
 			if(foundComparisonVariable)
 			{
-				#ifndef GIA_DO_NOT_PRINT_RESULTS
 				#ifdef GIA_ALIASES
 				if(comparisonVariableNode->isNameQuery)
 				{
 					for(vector<string>::iterator aliasIter = queryAnswerNode->aliasList.begin(); aliasIter != queryAnswerNode->aliasList.end(); aliasIter++)
 					{
-						cout << "Exact Found Answer (alias): " <<* aliasIter << endl;		//CHECKTHIS; this is not working yet
+						answerString = answerString + "\nExact Found Answer (alias): " + *aliasIter;	//CHECKTHIS; this is not working yet?
 					}
 				}
-				#endif
-				cout << "Exact Found Answer: " << queryAnswerNode->entityName << endl;
 				#endif
 				answerString = answerString + "\nExact Answer found: " + queryAnswerNode->entityName;
 				if(comparisonVariableNode->hasQuantity)
 				{
-					#ifndef GIA_DO_NOT_PRINT_RESULTS
-					cout << "Quantity number: " << queryAnswerNode->quantityNumber << endl;
-					#endif
 					string tempQuantityNumberString = SHAREDvars.convertIntToString(queryAnswerNode->quantityNumber);
 					answerString = answerString + "\nQuantity number: " + tempQuantityNumberString;
 				}
-				/*
-				if(queryAnswerPreviousNode->entityType == GIA_ENTITY_TYPE_TYPE_CONDITION)
-				{
-					#ifndef GIA_DO_NOT_PRINT_RESULTS
-					cout << "Answer is a Condition of type/preposition:" << queryAnswerPreviousNode->entityName << endl;
-					#endif
-					answerString = answerString + "\nAnswer is a Condition of type/preposition: " + queryAnswerPreviousNode->entityName;
-				}
-				*/
 			}
 		}
 		else
 		{
 			if(foundComparisonVariable)
 			{
-				#ifndef GIA_DO_NOT_PRINT_RESULTS
-				cout << "Answer Not Found." << endl;
-				#endif
 				answerString = answerString + "\nAnswer Not Found.";
 			}
 			else
 			{
-			#ifdef GIA_QUERY_TRACE_INSTANTIATIONS_DO_NOT_INCREMENT_NUMBER_OF_MATCHED_NODES
+				#ifdef GIA_QUERY_TRACE_INSTANTIATIONS_DO_NOT_INCREMENT_NUMBER_OF_MATCHED_NODES
 				#ifdef GIA_QUERY_RELAX_CONFIDENCE_REQUIREMENTS_FOR_YES
 				if(((maxConfidence <= (3.0+GIA_QUERY_DOUBLE_ERROR)) && (confidence >= (maxConfidence-(0.0+GIA_QUERY_DOUBLE_ERROR)))) || ((maxConfidence >= (4.0-GIA_QUERY_DOUBLE_ERROR)) && (confidence >= (maxConfidence-(1.0+GIA_QUERY_DOUBLE_ERROR)))))
 				#else
 				if(confidence >= (maxConfidence-GIA_QUERY_DOUBLE_ERROR))
 				#endif
-			#else
+				#else
 				if(confidence >= (maxConfidence-1-GIA_QUERY_DOUBLE_ERROR))
-			#endif
+				#endif
 				{
-					#ifndef GIA_DO_NOT_PRINT_RESULTS
-					cout << "Answer: Yes." << endl;
-					#endif
 					answerString = answerString + "\nAnswer: Yes.";
 				}
 				else
 				{
-					#ifndef GIA_DO_NOT_PRINT_RESULTS
-					cout << "Answer: No." << endl;
-					#endif
 					answerString = answerString + "\nAnswer: No.";
 				}
 			}
@@ -1711,25 +1606,11 @@ bool GIAmainClass::executeGIA2()
 
 		if(foundAnswer && !foundComparisonVariable)
 		{
-			#ifndef GIA_DO_NOT_PRINT_RESULTS
-			cout << "Best Inexact Answer Found: " << queryAnswerNode->entityName << endl;
-			#endif
 			answerString = answerString + "\nBest Inexact Answer Found: " + queryAnswerNode->entityName;
 		}
 
 		if(foundAnswer)
 		{
-		#ifdef GIA_COMPILE_PRINT_INEXACT_ANSWER_AMBIENT_CONTEXT
-			int irrelevant;
-			string printEntityNodeString = "";
-			#ifdef GIA_QUERY_TRACE_NETWORK_INDEX_NODES_DEFINING_INSTANTIATIONS
-			bool traceInstantiations = true;
-			#else
-			bool traceInstantiations = false;
-			#endif
-			GIAquery.traceEntityNode(queryAnswerNode, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_PRINT, &irrelevant, &printEntityNodeString, false, NULL, traceInstantiations);
-			answerString = answerString + printEntityNodeString;
-		#else
 			string printEntityNodeQualitiesString = "";
 			GIAquery.printEntityNodeQualitiesOnly(queryAnswerNode, &printEntityNodeQualitiesString);
 			cout << printEntityNodeQualitiesString;
@@ -1739,41 +1620,21 @@ bool GIAmainClass::executeGIA2()
 			GIAquery.printEntityTimeConditionNodeOnly(queryAnswerNode, &printEntityNodeTimeConditionString);
 			cout << printEntityNodeTimeConditionString;
 			answerString = answerString + printEntityNodeTimeConditionString;
-		#endif
+
 
 			//print AnswerPreviousNode relationship with answerNode
-			#ifndef GIA_DO_NOT_PRINT_RESULTS
+			
 			answerString = answerString + "\nAnswer Context: " + queryAnswerContext;
-			cout << "Answer Context: " << queryAnswerContext << endl;
-			#endif
 
 			#ifdef GIA_NLG
-			GIANLGSentence* firstNLGsentence = new GIANLGSentence();
 			//look for action links
-			GIANLGSentence* currentNLGsentence = GIAnlg.generateLanguageFromEntityNode(queryAnswerNode, firstNLGsentence, true, 1);
-			int irrelevant;
-			string printEntityNodeString = "";
-			bool traceInstantiations = false;
-			GIAquery.traceEntityNode(queryAnswerNode, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_PARSEDFORLANGUAGEGENERATION, &irrelevant, &printEntityNodeString, false, NULL, traceInstantiations);
-			if(firstNLGsentence->NLGInputViewText == "")
+			if(comparisonVariableNode->isWhichOrEquivalentWhatQuery)
 			{
-				//look for condition links
-				GIANLGSentence* currentNLGsentence = GIAnlg.generateLanguageFromEntityNode(queryAnswerNode, firstNLGsentence, true, 2);
-				GIAquery.traceEntityNode(queryAnswerNode, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_PARSEDFORLANGUAGEGENERATION, &irrelevant, &printEntityNodeString, false, NULL, traceInstantiations);
-
+				answerString = answerString + GIAnlg.generateLanguageFromWhichQuery(comparisonVariableNode, queryAnswerNode);
 			}
-			if(firstNLGsentence->NLGInputViewText == "")
+			else
 			{
-				//look for substance/definition links
-				GIANLGSentence* currentNLGsentence = GIAnlg.generateLanguageFromEntityNode(queryAnswerNode, firstNLGsentence, true, 3);
-				GIAquery.traceEntityNode(queryAnswerNode, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_PARSEDFORLANGUAGEGENERATION, &irrelevant, &printEntityNodeString, false, NULL, traceInstantiations);
-			}
-
-			currentNLGsentence = firstNLGsentence;
-			while(currentNLGsentence->next != NULL)
-			{
-				cout << "Answer Context (NLG): " << currentNLGsentence->NLGInputViewText << endl;
-				currentNLGsentence = currentNLGsentence->next;
+				answerString = answerString + GIAnlg.generateLanguageFromNonWhichQuery(comparisonVariableNode, queryAnswerNode);				
 			}
 			#endif
 		}
@@ -1785,35 +1646,33 @@ bool GIAmainClass::executeGIA2()
 		string tempMaxConfidenceString = SHAREDvars.convertDoubleToString(maxConfidencePrint, "%0.6f");
 		answerString = answerString + "\nconfidence = " + tempConfidenceString;
 		answerString = answerString + "\nmax confidence = " + tempMaxConfidenceString;
-		#ifndef GIA_DO_NOT_PRINT_RESULTS
-		cout << "confidence: " << tempConfidenceString << endl;
-		cout << "max confidence: " << tempMaxConfidenceString << endl;
-		#endif
 
 		#ifdef GIA_DEBUG
-		//cout << "tempFolder = " << tempFolder << endl;
+		//cout << "outputFolder = " << outputFolder << endl;
 		#endif
-		SHAREDvars.setCurrentDirectory(tempFolder);
+		SHAREDvars.setCurrentDirectory(outputFolder);
 
-		/*
-		char* fileByteArray = const_cast<char*>(answerString.c_str());
-		char* outputTextAnswerPlainTXTFileNameCharStar = const_cast<char*>(outputTextAnswerPlainTXTFileName.c_str());
-		writeByteArrayToFile(outputTextAnswerPlainTXTFileNameCharStar, fileByteArray, answerString.length());
-		*/
+		#ifdef GIA_QUERY_WRITE_ANSWER_TO_FILE
+		writeStringToFile(outputTextAnswerPlainTXTFileName, &answerString);
+		#else		
+		cout << answerString << endl;
+		#endif
 	}
+	#ifdef GIA_QUERY_WRITE_ANSWER_TO_FILE
 	else if(useOutputTextAnswerPlainTXTFile)
 	{
 		cout << "error: outputText answer require a query to be set" << endl;
 	}
+	#endif
 
 	#ifdef GIA_DEBUG
-	//cout << "tempFolder = " << tempFolder << endl;
+	//cout << "outputFolder = " << outputFolder << endl;
 	#endif
-	SHAREDvars.setCurrentDirectory(tempFolder);
+	SHAREDvars.setCurrentDirectory(outputFolder);
 
 	if(printOutput)
 	{
-		GIAdraw.printGIAnetworkNodes(entityNodesActiveListComplete, rasterImageWidth, rasterImageHeight, outputTextLDRFileName, outputTextSVGFileName, outputTextPPMFileName, displayInOpenGLAndOutputScreenshot, useOutputTextLDRFile, useOutputTextPPMFile, useOutputTextSVGFile,* maxNumberSentences);
+		GIAdraw.printGIAnetworkNodes(translatorVariables->entityNodesActiveListComplete, rasterImageWidth, rasterImageHeight, outputTextLDRFileName, outputTextSVGFileName, outputTextPPMFileName, displayInOpenGLAndOutputScreenshot, useOutputTextLDRFile, useOutputTextPPMFile, useOutputTextSVGFile, translatorVariables->maxNumberSentences);
 	}
 
 	#ifdef GIA_XML_DEBUG_TEST_WRITE_READ_WRITE
@@ -1825,51 +1684,25 @@ bool GIAmainClass::executeGIA2()
 
 	if(useOutputTextXMLFile)
 	{
-		if(!GIAxmlConversion.writeSemanticNetXMLFileOptimised(outputTextXMLFileName, entityNodesActiveListComplete, entityNodesActiveListNetworkIndexes))
+		if(!GIAxmlConversion.writeSemanticNetXMLFileOptimised(outputTextXMLFileName, translatorVariables->entityNodesActiveListComplete, translatorVariables->entityNodesActiveListNetworkIndexes))
 		{
 			result = false;
 		}
 	}
 	if(useOutputTextCXLFile)
 	{
-		if(!GIAcxlConversion.writeCmapToolsCXLFileOptimised(outputTextCXLFileName, entityNodesActiveListComplete, entityNodesActiveListNetworkIndexes))
+		if(!GIAcxlConversion.writeCmapToolsCXLFileOptimised(outputTextCXLFileName, translatorVariables->entityNodesActiveListComplete, translatorVariables->entityNodesActiveListNetworkIndexes))
 		{
 			result = false;
 		}
 	}
-
-	#ifdef GIA_NLG
-	GIANLGSentence* firstNLGsentence = new GIANLGSentence();
-	GIANLGSentence* currentNLGsentence = firstNLGsentence;
-	string generatedText = "";
-	for(unordered_map<string, GIAentityNode*>::iterator networkIndexEntityNodesListMapIter = entityNodesActiveListNetworkIndexes->begin(); networkIndexEntityNodesListMapIter != entityNodesActiveListNetworkIndexes->end(); networkIndexEntityNodesListMapIter++)
-	{
-		GIAentityNode* entityNode = networkIndexEntityNodesListMapIter->second;
-		currentNLGsentence = GIAnlg.generateLanguageFromEntityNode(entityNode, currentNLGsentence, false, 0);
-	}
-	#ifdef GIA_NLG_DEBUG
-	#ifdef GIA_NLG_OUTPUT_TO_COMMAND_LINE
-	cout << "DEBUG: NLG generated text = " << endl;
-	#ifdef GIA_NLG2
-	cout << "(input text into NLG2)" << endl;
-	#endif
-	currentNLGsentence = firstNLGsentence;
-	while(currentNLGsentence->next != NULL)
-	{
-		cout << currentNLGsentence->NLGInputViewText << endl;
-		//execute NLG2 on this text
-		currentNLGsentence = currentNLGsentence->next;
-	}
-	#endif
-	#endif
-	#endif
 
 	#ifdef GIA_DATABASE
 	if(useDatabase)
 	{
 		#ifdef GIA_DATABASE_DO_NOT_WRITE_DISABLED_ENTITY_NODES
 		//set networkIndexEntityLoaded disabled values (used by DBwriteNetworkIndexEntityNodesLoadedList() to prevent the writing of disabled networkIndex nodes...)
-		for(unordered_map<string, GIAentityNode*>::iterator networkIndexEntityNodesListMapIter = entityNodesActiveListNetworkIndexes->begin(); networkIndexEntityNodesListMapIter != entityNodesActiveListNetworkIndexes->end(); networkIndexEntityNodesListMapIter++)
+		for(unordered_map<string, GIAentityNode*>::iterator networkIndexEntityNodesListMapIter = translatorVariables->entityNodesActiveListNetworkIndexes->begin(); networkIndexEntityNodesListMapIter != translatorVariables->entityNodesActiveListNetworkIndexes->end(); networkIndexEntityNodesListMapIter++)
 		{
 			GIAentityNode* entityNode = networkIndexEntityNodesListMapIter->second;
 			if(entityNode->disabled)
@@ -1882,7 +1715,7 @@ bool GIAmainClass::executeGIA2()
 		if(writeToDatabase)
 		{
 			//NB currently uses entityNodesActiveListComplete to record which nodes might possibly require an update on the server
-			GIAdatabase.writeAndCloseDatabase(entityNodesActiveListComplete);
+			GIAdatabase.writeAndCloseDatabase(translatorVariables->entityNodesActiveListComplete);
 		}
 		else
 		{
@@ -1900,53 +1733,6 @@ bool GIAmainClass::executeGIA2()
 	return result;
 }
 
-
-
-
-
-#ifdef GIA_INPUT_FILE_LISTS
-int GIAmainClass::getFilesFromFileList(const string inputListFileName, string* inputFileNameArray)
-{
-	bool result = true;
-	int numberOfInputFilesInList = 0;
-	ifstream parseFileObject(inputListFileName.c_str());
-	if(!parseFileObject.rdbuf()->is_open())
-	{
-		//txt file does not exist in current directory.
-		cout << "Error: input list file does not exist in current directory: " << inputListFileName << endl;
-		result = false;
-	}
-	else
-	{
-		char currentToken;
-		int fileNameIndex = 0;
-		int charCount = 0;
-		string currentFileName = "";
-		while(parseFileObject.get(currentToken))
-		{
-			if(currentToken == CHAR_NEWLINE)
-			{
-				inputFileNameArray[fileNameIndex] = currentFileName;
-				#ifdef GIA_MAIN_DEBUG
-				//cout << "currentFileName = " << currentFileName << endl;
-				#endif
-				currentFileName = "";
-				fileNameIndex++;
-			}
-			else
-			{
-				currentFileName = currentFileName + currentToken;
-			}
-			charCount++;
-		}
-		numberOfInputFilesInList = fileNameIndex;
-	}
-	#ifdef GIA_MAIN_DEBUG
-	//cout << "numberOfInputFilesInList = " << numberOfInputFilesInList << endl;
-	#endif
-	return numberOfInputFilesInList;
-}
-#endif
 
 
 

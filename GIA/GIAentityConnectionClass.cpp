@@ -25,7 +25,7 @@
  * File Name: GIAentityConnectionClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p4d 17-January-2017
+ * Project Version: 3a1a 26-February-2017
  *
  *******************************************************************************/
 
@@ -35,13 +35,15 @@
 
 GIAentityConnection::GIAentityConnection(void)
 {
+	entity = NULL;
+	#ifdef GIA_ENTITY_CONNECTION_RECORD_ENTITY_ORIGIN
+	entityOrigin = NULL;
+	#endif
+	
 	confidence = GIA_ENTITY_CONNECTION_CONFIDENCE_BASE;
 
 	#ifdef GIA_RECORD_SAME_REFERENCE_SET_INFORMATION
 	sameReferenceSet = false;	//CHECKTHIS default value
-	#ifdef GIA_RECORD_POSSESSION_AUXILIARY_HAS_INFORMATION
-	possessionAuxiliaryHave = false;
-	#endif
 	#endif
 
 	#ifdef GIA_DATABASE
@@ -70,9 +72,6 @@ GIAentityConnection::GIAentityConnection(void)
 	#endif
 	#ifdef GIA_STORE_CONNECTION_SENTENCE_INDEX
 	sentenceIndexTemp = GIA_SENTENCE_INDEX_UNDEFINED2;
-	#endif
-	#ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
-	isAlias = false;
 	#endif
 
 	/*

@@ -25,7 +25,7 @@
  * File Name: GIAcxlConversion.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p4d 17-January-2017
+ * Project Version: 3a1a 26-February-2017
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  *
  *******************************************************************************/
@@ -84,7 +84,7 @@
 #define NET_CXL_ATTRIBUTE_x ((string)"x")
 #define NET_CXL_ATTRIBUTE_y ((string)"y")
 
-static bool entityVectorConnectionCXLwriteArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {false,false,false,false,false,true,true,false,false,true,true,true,true,true};
+static bool entityVectorConnectionCXLwriteArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {true, false, true, false, true, false, true, false, true, true, true, false};	//CHECKTHIS
 
 class GIAcxlConversionClass
 {

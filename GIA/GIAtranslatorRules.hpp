@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorRules.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p4d 17-January-2017
+ * Project Version: 3a1a 26-February-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -76,8 +76,8 @@ class GIAtranslatorRulesClass
 	private: SHAREDvarsClass SHAREDvars;
 	private: GIAtranslatorGenericClass GIAtranslatorGeneric;
 	private: GIAentityNodeClassClass GIAentityNodeClass;
-	public: bool applyGIATranslatorGenericXMLfunctions(const string translatorFileName, GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, GIAfeature* featureArrayTemp[], const int NLPdependencyRelationsType, const int NLPfeatureParser, const bool linkPreestablishedReferencesGIA);
-		private: bool applyGIATranslatorGenericXMLparam(XMLparserTag* currentParamTag, const bool depRelOrEntity, bool executeOrReassign, GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, GIAfeature* featureArrayTemp[], const int NLPdependencyRelationsType, const int NLPfeatureParser, const bool linkPreestablishedReferencesGIA, const string functionName);
+	public: bool applyGIATranslatorGenericXMLfunctions(const string translatorFileName, GIAtranslatorVariablesClass* translatorVariables, const bool linkPreestablishedReferencesGIA);
+		private: bool applyGIATranslatorGenericXMLparam(XMLparserTag* currentParamTag, const bool depRelOrEntity, bool executeOrReassign, GIAtranslatorVariablesClass* translatorVariables, const bool linkPreestablishedReferencesGIA, const string functionName);
 			private: bool genericDepRelInterpretationApplyOptions(GIAgenericDepRelInterpretationParameters* paramDepRel, const XMLparserTag* xmlTag, int REL, int REL_ENT, int FUNC_ENT, int swapIndex);
 				private: bool genericDepRelInterpretationApplyOption(GIAgenericDepRelInterpretationParameters* paramDepRel, const XMLparserAttribute* xmlAttribute, int REL, int REL_ENT, int FUNC_ENT, int swapIndex);
 			private: bool genericEntityInterpretationApplyOptions(GIAgenericEntityInterpretationParameters* paramEntity, const XMLparserTag* xmlTag);

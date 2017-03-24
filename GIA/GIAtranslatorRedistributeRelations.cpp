@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorRedistributeRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p4d 17-January-2017
+ * Project Version: 3a1a 26-February-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -41,11 +41,11 @@
 #ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS
 
 //NB Translator:fillGrammaticalArraysStanford{}:extractGrammaticalInformationStanford{}:extractPOSrelatedGrammaticalInformationStanford{}:extractGrammaticalInformationFromPOStag{} performs initial infinitive/imperative determination based on NLP tags and previous word "to" (and sets previousWordInSentenceIsTo for redistributeStanfordAndRelexRelationsCorrectPOStagsAndLemmasOfAllVerbs{}:extractPOSrelatedGrammaticalInformationStanford{}:extractGrammaticalInformationFromPOStag{} to reperform infinitive/imperative determination in case Stanford parser/CoreNLP failed to tag the word correctly ie as VB);
-void GIAtranslatorRedistributeRelationsClass::redistributeStanfordAndRelexRelationsCorrectPOStagsAndLemmasOfAllVerbs(GIAsentence* currentSentenceInList, const bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], GIAfeature* featureArrayTemp[])
+void GIAtranslatorRedistributeRelationsClass::redistributeStanfordAndRelexRelationsCorrectPOStagsAndLemmasOfAllVerbs(GIAtranslatorVariablesClass* translatorVariables)
 {
 	//eg What is wood used in the delivering of?   interpret prep_of(xing, y) as obj(xing, y) )
 
-	GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
+	GIArelation* currentRelationInList = translatorVariables->currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
 		//#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
@@ -55,10 +55,10 @@ void GIAtranslatorRedistributeRelationsClass::redistributeStanfordAndRelexRelati
 
 			int governorIndex = currentRelationInList->relationGovernorIndex;
 			int dependentIndex = currentRelationInList->relationDependentIndex;
-			GIAentityNode* governorEntity = GIAentityNodeArray[governorIndex];
-			GIAentityNode* dependentEntity = GIAentityNodeArray[dependentIndex];
+			GIAentityNode* governorEntity = translatorVariables->GIAentityNodeArray[governorIndex];
+			GIAentityNode* dependentEntity = translatorVariables->GIAentityNodeArray[dependentIndex];
 
-			#ifdef GIA_DEBUG
+			#ifdef GIA_TRANSLATOR_REDISTRIBUTE_RELATIONS_DEBUG
 			cout << "currentRelationInList->relationType = " << currentRelationInList->relationType << endl;
 			cout << "governorEntity->entityName = " << governorEntity->entityName << endl;
 			cout << "dependentEntity->entityName = " << dependentEntity->entityName << endl;
@@ -66,19 +66,19 @@ void GIAtranslatorRedistributeRelationsClass::redistributeStanfordAndRelexRelati
 			cout << "dependentIndex = " << dependentIndex << endl;
 			#endif
 			#ifdef GIA2_CORRECT_POSTAGS_FIX2
-			if(featureArrayTemp[governorIndex] != NULL)
+			if(translatorVariables->featureArrayTemp[governorIndex] != NULL)
 			{
 			#endif
-				if(this->correctVerbPOStagAndLemma(governorEntity, featureArrayTemp[governorIndex]))
+				if(this->correctVerbPOStagAndLemma(governorEntity, translatorVariables->featureArrayTemp[governorIndex]))
 				{
 					currentRelationInList->relationGovernor = governorEntity->entityName;
 				}
 			#ifdef GIA2_CORRECT_POSTAGS_FIX2
 			}
-			if(featureArrayTemp[dependentIndex] != NULL)
+			if(translatorVariables->featureArrayTemp[dependentIndex] != NULL)
 			{
 			#endif
-				if(this->correctVerbPOStagAndLemma(dependentEntity, featureArrayTemp[dependentIndex]))
+				if(this->correctVerbPOStagAndLemma(dependentEntity, translatorVariables->featureArrayTemp[dependentIndex]))
 				{
 					currentRelationInList->relationDependent = dependentEntity->entityName;
 				}
@@ -104,7 +104,7 @@ bool GIAtranslatorRedistributeRelationsClass::correctVerbPOStagAndLemma(GIAentit
 	if(actionOrSubstanceEntity->wordOrig != "")		//required to ignore dynamically generated entities, e.g. "have"/"$qvar"/etc
 	{
 	#endif
-		#ifdef GIA_DEBUG
+		#ifdef GIA_TRANSLATOR_REDISTRIBUTE_RELATIONS_DEBUG
 		//cout << "\tcorrectVerbPOStagAndLemma{}:" << endl;
 		//cout << "actionOrSubstanceEntity->entityName = " << actionOrSubstanceEntity->entityName << endl;
 		#endif
@@ -112,8 +112,8 @@ bool GIAtranslatorRedistributeRelationsClass::correctVerbPOStagAndLemma(GIAentit
 		string baseNameFound = "";
 		int grammaticalTenseModifier = INT_DEFAULT_VALUE;
 
-		bool foundContinuousOrInfinitiveOrImperativeOrPotentialVerb = GIAlrp.determineVerbCaseWrapper(actionOrSubstanceEntity->wordOrig, &baseNameFound, &grammaticalTenseModifier);
-		#ifdef GIA_DEBUG
+		bool foundContinuousOrInfinitiveOrImperativeOrPotentialVerb = GIApreprocessorMultiwordReduction.determineVerbCaseWrapper(actionOrSubstanceEntity->wordOrig, &baseNameFound, &grammaticalTenseModifier);
+		#ifdef GIA_TRANSLATOR_REDISTRIBUTE_RELATIONS_DEBUG
 		//cout << "foundContinuousOrInfinitiveOrImperativeOrPotentialVerb = " << foundContinuousOrInfinitiveOrImperativeOrPotentialVerb << endl;
 		//cout << "actionOrSubstanceEntity->wordOrig = " << actionOrSubstanceEntity->wordOrig << endl;
 		//cout << "baseNameFound = " << baseNameFound << endl;
@@ -156,17 +156,17 @@ bool GIAtranslatorRedistributeRelationsClass::correctVerbPOStagAndLemma(GIAentit
 		else
 		{
 			//FUTURE GIA - consider updating correctVerbPOStagAndLemma{}; currently detecting all instances of "ing"/VBG. This is required such that appropriate instances can be marked as action networkIndexes eg "swimming involves/requires...". Alternatively consider marking these words directly here as GRAMMATICAL_TENSE_MODIFIER_INFINITIVE (ie GRAMMATICAL_TENSE_MODIFIER_ACTIONNETWORK_INDEX) such that they can be assigned action networkIndex by defineActionConcepts2{}
-			#ifdef GIA_DEBUG
-			//cout << "NB: GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS requires GIA_LRP to be defined and -lrpfolder to be set" << endl;
+			#ifdef GIA_TRANSLATOR_REDISTRIBUTE_RELATIONS_DEBUG
+			//cout << "NB: GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS requires GIA_PREPROCESSOR_MULTIWORD_REDUCTION to be defined and -lrpfolder to be set" << endl;
 			//cout << "1 actionOrSubstanceEntity->entityName = " << actionOrSubstanceEntity->entityName << endl;
 			#endif
 			#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_CONSERVATIVE
-			if(GIAlrp.determineIfWordIsIrregularVerbContinuousCaseWrapper(actionOrSubstanceEntity->wordOrig, &baseNameFound))
+			if(GIApreprocessorMultiwordReduction.determineIfWordIsIrregularVerbContinuousCaseWrapper(actionOrSubstanceEntity->wordOrig, &baseNameFound))
 			#elif defined GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_LIBERAL
 			if(foundContinuousOrInfinitiveOrImperativeOrPotentialVerb && (grammaticalTenseModifier == GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE_TEMP))
 			#endif
 			{
-				#ifdef GIA_DEBUG
+				#ifdef GIA_TRANSLATOR_REDISTRIBUTE_RELATIONS_DEBUG
 				//cout << "GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS: 2 actionOrSubstanceEntity->entityName = " << actionOrSubstanceEntity->entityName << endl;
 				#endif
 
@@ -179,7 +179,7 @@ bool GIAtranslatorRedistributeRelationsClass::correctVerbPOStagAndLemma(GIAentit
 				string wordOrigLowerCase = SHAREDvars.convertStringToLowerCase(&(actionOrSubstanceEntity->wordOrig));
 				if(wordOrigLowerCase == actionOrSubstanceEntity->entityName)	//OR if(actionOrSubstanceEntity->entityName != baseNameFound)	//eg if wordOrig = Swimming, and entityName = swimming; then apply the lemma correction
 				{
-					#ifdef GIA_DEBUG
+					#ifdef GIA_TRANSLATOR_REDISTRIBUTE_RELATIONS_DEBUG
 					//cout << "3 actionOrSubstanceEntity->entityName = " << actionOrSubstanceEntity->entityName << endl;
 					#endif
 
@@ -203,9 +203,9 @@ bool GIAtranslatorRedistributeRelationsClass::correctVerbPOStagAndLemma(GIAentit
 			/*
 			//STANFORD_PARSER_USE_POS_TAGS is no longer supported by GIA_TRANSLATOR_INTERPRET_OF_AS_OBJECT_FOR_CONTINUOUS_VERBS/redistributeStanfordRelationsInterpretOfAsObjectForContinuousVerbs{}...
 			#ifdef STANFORD_PARSER_USE_POS_TAGS
-			if(determineVerbCase(&(actionOrSubstanceEntity->wordOrig)))	//OR &(currentRelationInList->relationGovernor)	//NB must use wordOrig as only wordOrig is guaranteed to still have "ing" attached - the word may be stripped by stanford corenlp in generation of the lemma
+			if(determineVerbCaseAdditional(&(actionOrSubstanceEntity->wordOrig)))	//OR &(currentRelationInList->relationGovernor)	//NB must use wordOrig as only wordOrig is guaranteed to still have "ing" attached - the word may be stripped by stanford corenlp in generation of the lemma
 			{
-				#ifdef GIA_DEBUG
+				#ifdef GIA_TRANSLATOR_REDISTRIBUTE_RELATIONS_DEBUG
 				//cout << "foundVerb" << endl;
 				#endif
 				//What is wood used in the delivering of?
@@ -227,7 +227,7 @@ bool GIAtranslatorRedistributeRelationsClass::correctVerbPOStagAndLemma(GIAentit
 			if(actionOrSubstanceEntity->grammaticalWordTypeTemp == GRAMMATICAL_WORD_TYPE_ADJ)	//NB "able" words will be marked as JJ/adjective or NN/noun by Stanford/Relex POS tagger (but ignore nouns)
 			{
 				string stanfordPOS = FEATURE_POS_TAG_VERB_VBPOTENTIAL;
-				#ifdef GIA_DEBUG
+				#ifdef GIA_TRANSLATOR_REDISTRIBUTE_RELATIONS_DEBUG
 				//cout << "foundVerb FEATURE_POS_TAG_VERB_VBPOTENTIAL" << endl;
 				#endif
 
@@ -257,7 +257,7 @@ bool GIAtranslatorRedistributeRelationsClass::correctVerbPOStagAndLemma(GIAentit
 			if((actionOrSubstanceEntity->grammaticalWordTypeTemp == GRAMMATICAL_WORD_TYPE_ADJ))	//NB "ive" words will be marked as JJ/adjective or NN/noun by Stanford/Relex POS tagger (but ignore nouns)
 			{
 				string stanfordPOS = FEATURE_POS_TAG_VERB_VBPOTENTIALINVERSE;
-				#ifdef GIA_DEBUG
+				#ifdef GIA_TRANSLATOR_REDISTRIBUTE_RELATIONS_DEBUG
 				//cout << "foundVerb FEATURE_POS_TAG_VERB_VBPOTENTIALINVERSE" << endl;
 				#endif
 
@@ -288,7 +288,7 @@ bool GIAtranslatorRedistributeRelationsClass::correctVerbPOStagAndLemma(GIAentit
 		{
 			if(actionOrSubstanceEntity->grammaticalWordTypeTemp == GRAMMATICAL_WORD_TYPE_ADJ)	//NB "is ..." and "is ..ed" (not Stanford CoreNLP/Relex) verbs may be marked as JJ/adjective by Stanford/Relex POS tagger eg "It is open"/"He is tired."
 			{
-				#ifdef GIA_DEBUG
+				#ifdef GIA_TRANSLATOR_REDISTRIBUTE_RELATIONS_DEBUG
 				//cout << "foundVerb FEATURE_POS_TAG_VERB_VBSTATE" << endl;
 				#endif
 				string stanfordPOS = FEATURE_POS_TAG_VERB_VBSTATE;
@@ -304,7 +304,7 @@ bool GIAtranslatorRedistributeRelationsClass::correctVerbPOStagAndLemma(GIAentit
 		{
 			if(actionOrSubstanceEntity->grammaticalWordTypeTemp == GRAMMATICAL_WORD_TYPE_NOUN)	//NB "ion"/"ment" words will be marked as NN/noun by Stanford/Relex POS tagger
 			{
-				#ifdef GIA_DEBUG
+				#ifdef GIA_TRANSLATOR_REDISTRIBUTE_RELATIONS_DEBUG
 				//cout << "foundVerb FEATURE_POS_TAG_VERB_VBDESCRIPTION" << endl;
 				#endif
 				string stanfordPOS = FEATURE_POS_TAG_VERB_VBDESCRIPTION;
@@ -336,70 +336,6 @@ bool GIAtranslatorRedistributeRelationsClass::correctVerbPOStagAndLemma(GIAentit
 
 	return updatedLemma;
 }
-
-
-/*
-bool determineVerbCase(string* word)
-{
-
-	//detectContinuousVerbBasic Algorithm:
-	//Note a simple "ing" appendition check is not possible as some nouns end in ing also eg "thing"]
-	//Case 1. thinking
-	//Case 2. changing - "chang" [change e] + "ing"
-	//Case 3. running - "run" + "n" [run n] + "ing"
-
-	//ongoing?
-	//outstanding?
-	//being?
-	//becoming?
-
-
-	bool foundVerbContinuousCase = false;
-
-	if(word->length() > GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND_LENGTH)
-	{
-		continuousVerbFound = true;
-		string ing = GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND;
-		int ingIndex = 0;
-		for(int i = word->length()-GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND_LENGTH; i < word->length(); i++)
-		{
-			if((*word)[i] != ing[ingIndex])
-			{
-				foundVerbContinuousCase = true;
-			}
-		}
-	}
-
-	cout << "continuousVerbFound" << endl;
-
-	return foundVerbContinuousCase;
-
-}
-bool determineVerbCase(string* word)
-{
-	bool foundVerbContinuousCase = false;
-	int wordStringLength = word->length();
-	#ifdef GIA_DEBUG
-	//cout << "word = " <<* word << endl;
-	//cout << "wordStringLength = " << wordStringLength << endl;
-	#endif
-	if(wordStringLength > GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND)
-	{
-		int wordTenseFormContinuousAppendLength = string(GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND).length();
-		string lastThreeLettersOfWord = word->substr(wordStringLength-wordTenseFormContinuousAppendLength, wordTenseFormContinuousAppendLength);
-		#ifdef GIA_DEBUG
-		//cout << "wordTenseFormContinuousAppendLength = " << wordTenseFormContinuousAppendLength << endl;
-		//cout << "lastThreeLettersOfWord = " << lastThreeLettersOfWord << endl;
-		#endif
-		if(lastThreeLettersOfWord == GIA_LRP_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND)
-		{
-			foundVerbContinuousCase = true;
-		}
-	}
-	return foundVerbContinuousCase;
-}
-*/
-
 
 
 #endif

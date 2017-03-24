@@ -25,7 +25,7 @@
  * File Name: GIAnlp.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p4d 17-January-2017
+ * Project Version: 3a1a 26-February-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -40,7 +40,7 @@
 #include "XMLrulesClass.hpp"
 #include "GIAnlpParser.hpp"
 #include "GIAtranslatorDefs.hpp" //required for featureNERtypeArray only
-#include "GIAlrp.hpp"
+#include "GIApreprocessorMultiwordReduction.hpp"
 #include "SHAREDvars.hpp"	//file io
 
 #define STANFORD_PARSER_SENTENCE_SKIP_SUPPORT
@@ -125,7 +125,7 @@ class GIAnlpClass
 	private: SHAREDvarsClass SHAREDvars;
 	private: XMLparserClassClass XMLparserClass;
 	private: GIAnlpParserClass GIAnlpParser;
-	private: GIAlrpClass GIAlrp;
+	private: GIApreprocessorMultiwordReductionClass GIApreprocessorMultiwordReduction;
 	public: void executeNLPparser(const string inputTextPlainTXTfileName, const string inputTextNLPXMLfileName, const int NLPParser, const string NLPexeFolderArray[], const bool parseRelationsOrFeatures, const bool NLPrelexCompatibilityMode);
 
 	public: bool parseNLPparserFile(const string inputTextNLPrelationXMLfileName, const string inputTextNLPfeatureXMLfileName, const bool isQuery, GIAparagraph* firstParagraphInList, const int NLPfeatureParser, const int NLPdependencyRelationsParser, const bool NLPrelexCompatibilityMode);

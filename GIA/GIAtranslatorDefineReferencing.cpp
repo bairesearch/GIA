@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p4d 17-January-2017
+ * Project Version: 3a1a 26-February-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -35,10 +35,10 @@
 #include "GIAtranslatorDefineReferencing.hpp"
 
 //unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes
-void GIAtranslatorDefineReferencingClass::identifyComparisonVariableAlternateMethod(const GIAsentence* currentSentenceInList, const bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], const int NLPfeatureParser)
+void GIAtranslatorDefineReferencingClass::identifyComparisonVariableAlternateMethod(GIAtranslatorVariablesClass* translatorVariables)
 {
 	bool expectToFindComparisonVariable = false;
-	if(currentSentenceInList->isQuestion)
+	if(translatorVariables->currentSentenceInList->isQuestion)
 	{
 		expectToFindComparisonVariable = true;
 		#ifdef GIA_TRANSLATOR_DEBUG
@@ -49,14 +49,14 @@ void GIAtranslatorDefineReferencingClass::identifyComparisonVariableAlternateMet
 	if(expectToFindComparisonVariable)
 	{
 		#ifdef GIA_REDISTRIBUTE_STANFORD_RELATIONS_QUERY_VARIABLE_DEBUG_DO_NOT_MAKE_FINAL_CHANGES_YET
-		if(NLPfeatureParser != GIA_NLP_PARSER_RELEX)	//ie if(NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP)
+		if(translatorVariables->NLPfeatureParser != GIA_NLP_PARSER_RELEX)	//ie if(NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP)
 		{
 		#endif
 			for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
 			{
-				if(GIAentityNodeArrayFilled[i])
+				if(translatorVariables->GIAentityNodeArrayFilled[i])
 				{
-					GIAentityNode* entityNode = GIAentityNodeArray[i];
+					GIAentityNode* entityNode = translatorVariables->GIAentityNodeArray[i];
 					if(entityNode->entityName == REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
 					{
 						entityNode->isQuery = true;
@@ -78,7 +78,7 @@ void GIAtranslatorDefineReferencingClass::identifyComparisonVariableAlternateMet
 			bool foundComparisonVariableAlternateMethod = false;
 
 			bool foundQueryWordAcceptedByAlternateMethod = false;
-			const GIAfeature* currentFeatureInList = currentSentenceInList->firstFeatureInList;
+			const GIAfeature* currentFeatureInList = translatorVariables->currentSentenceInList->firstFeatureInList;
 			while(currentFeatureInList->next != NULL)
 			{
 				bool passed = false;
@@ -93,7 +93,7 @@ void GIAtranslatorDefineReferencingClass::identifyComparisonVariableAlternateMet
 					}
 					else
 					{//ie if(NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP)
-						GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
+						GIArelation* currentRelationInList = translatorVariables->currentSentenceInList->firstRelationInList;
 						while(currentRelationInList->next != NULL)
 						{
 							if(currentRelationInList->relationType == RELATION_TYPE_DETERMINER)	//only supported by Stanford
@@ -120,7 +120,7 @@ void GIAtranslatorDefineReferencingClass::identifyComparisonVariableAlternateMet
 						#endif
 
 						#ifndef GIA_REDISTRIBUTE_STANFORD_RELATIONS_QUERY_VARIABLE_DEBUG_DO_NOT_MAKE_FINAL_CHANGES_YET
-						if(NLPfeatureParser == GIA_NLP_PARSER_RELEX)
+						if(translatorVariables->NLPfeatureParser == GIA_NLP_PARSER_RELEX)
 						{
 						#endif
 							if((currentFeatureInList->word == featureQueryWordAcceptedByAlternateMethodNameArray[i]) && (currentFeatureInList->lemma == featureQueryWordAcceptedByAlternateMethodNameArray[i]) && (currentFeatureInList->type == FEATURE_RELEX_POS_TYPE_ADJECTIVE_NAME) && (currentFeatureInList->grammar == featureQueryWordAcceptedByAlternateMethodNameArray[i]))
@@ -132,7 +132,7 @@ void GIAtranslatorDefineReferencingClass::identifyComparisonVariableAlternateMet
 							}
 						#ifndef GIA_REDISTRIBUTE_STANFORD_RELATIONS_QUERY_VARIABLE_DEBUG_DO_NOT_MAKE_FINAL_CHANGES_YET
 						}
-						else if(NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP)
+						else if(translatorVariables->NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP)
 						{
 							//cannot check the word value here, as the word recorded by the Stanford parser may be capitalised
 							if((currentFeatureInList->lemma == featureQueryWordAcceptedByAlternateMethodNameArray[i]) && (currentFeatureInList->stanfordPOS == FEATURE_POS_TAG_WH_DETERMINER_WDT))
@@ -177,9 +177,9 @@ void GIAtranslatorDefineReferencingClass::identifyComparisonVariableAlternateMet
 						GIAentityNode* queryComparisonVariableEntityNode = findOrAddNetworkIndexEntityNodeByNameSimpleWrapper(&queryComparisonVariableName, &entityAlreadyExistant);
 						//CHECK THIS; !applyNetworkIndexEntityAlreadyExistsFunction
 						*/
-						if(GIAentityNodeArrayFilled[currentFeatureInList->entityIndex])
+						if(translatorVariables->GIAentityNodeArrayFilled[currentFeatureInList->entityIndex])
 						{
-							GIAentityNode* queryComparisonVariableEntityNode = GIAentityNodeArray[currentFeatureInList->entityIndex];
+							GIAentityNode* queryComparisonVariableEntityNode = translatorVariables->GIAentityNodeArray[currentFeatureInList->entityIndex];
 							queryComparisonVariableEntityNode->isQuery = true;
 							queryComparisonVariableEntityNode->isWhichOrEquivalentWhatQuery = true;
 							#ifdef GIA_WHICH_QUERY_ALIAS_ANSWERS
@@ -210,7 +210,7 @@ void GIAtranslatorDefineReferencingClass::identifyComparisonVariableAlternateMet
 		if(foundComparisonVariableTemp)
 		{
 			cout << "error: expectToFindComparisonVariable && foundComparisonVariable" << endl;
-			exit(0);
+			exit(EXIT_ERROR);
 		}
 	}
 	*/
@@ -218,145 +218,8 @@ void GIAtranslatorDefineReferencingClass::identifyComparisonVariableAlternateMet
 
 
 
-void GIAtranslatorDefineReferencingClass::identifyEntityTypes(const GIAsentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[], const int NLPdependencyRelationsType)
-{
-	const GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
-	while(currentRelationInList->next != NULL)
-	{
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
-		if(!(currentRelationInList->disabled))
-		{
-		#endif
-			//possessive of substances [NB plural/singular indicates definite noun - eg a robin, the robin, the robins - which is therefore a substance (entity instance):
-
-			//possessive of substances:
-
-			bool passed = false;
-			for(int i=0; i<RELATION_TYPE_POSSESSIVE_NUMBER_OF_TYPES; i++)
-			{
-				if(currentRelationInList->relationType == relationTypePossessiveNameArray[i])
-				{
-					passed = true;
-				}
-			}
-			//if(currentRelationInList->relationType == RELATION_TYPE_POSSESSIVE)
-			#ifndef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_PROPERTIES_TAKE_DEPENDENT_AS_PROPERTY_INSTEAD_OF_GOVERNOR
-			for(int i=0; i<RELATION_TYPE_PRENOMINAL_MODIFIER_NUMBER_OF_TYPES; i++)
-			{
-				if(currentRelationInList->relationType == relationTypePrenominalModifierNameArray[i])
-				{
-					passed = true;
-				}
-			}
-			#endif
-			if(passed)
-			{
-				int relationGovernorIndex = currentRelationInList->relationGovernorIndex;
-				int relationDependentIndex = currentRelationInList->relationDependentIndex;
-				GIAentityNode* substanceEntity = GIAentityNodeArray[relationGovernorIndex];
-				GIAentityNode* ownerEntity = GIAentityNodeArray[relationDependentIndex];
-				ownerEntity->hasSubstanceTemp = true;
-			}
-
-			//possessive of substances:
-
-			passed = false;
-			for(int i=0; i<RELATION_TYPE_ADJECTIVE_NUMBER_OF_TYPES; i++)
-			{
-				if(currentRelationInList->relationType == relationTypeAdjectiveNameArray[i])
-				{
-					passed = true;
-				}
-			}
-			#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_PROPERTIES_TAKE_DEPENDENT_AS_PROPERTY_INSTEAD_OF_GOVERNOR
-			for(int i=0; i<RELATION_TYPE_PRENOMINAL_MODIFIER_NUMBER_OF_TYPES; i++)
-			{
-				if(currentRelationInList->relationType == relationTypePrenominalModifierNameArray[i])
-				{
-					passed = true;
-				}
-			}
-			#endif
-			//if((currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_AMOD) || (currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_PREDADJ) || (currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_ADVMOD))
-			if(passed)
-			{
-				#ifndef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
-				bool passed2 = true;
-				#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE_THAT_IS_PROBABLY_STANFORD_COMPATIBLE
-				if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_RELEX)
-				{
-				#endif
-					bool passed2 = GIAtranslatorOperations.isAdjectiveNotConnectedToObjectOrSubject(currentSentenceInList, currentRelationInList, NLPdependencyRelationsType);
-				#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE_THAT_IS_PROBABLY_STANFORD_COMPATIBLE
-				}
-				#endif
-
-				if(passed2)
-				{
-				#endif
-					int relationGovernorIndex = currentRelationInList->relationGovernorIndex;
-					int relationDependentIndex = currentRelationInList->relationDependentIndex;
-					GIAentityNode* thingEntity = GIAentityNodeArray[relationGovernorIndex];
-					GIAentityNode* substanceEntity = GIAentityNodeArray[relationDependentIndex];
-					thingEntity->hasSubstanceTemp = true;
-					//substanceEntity->hasQualityTemp = true;	//[eg2 The locked door.. / Jim runs quickly / Mr. Smith is late {_amod/_advmod/_predadj}]
-				#ifndef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
-				}
-				#endif
-			}
-
-			//has subject:
-
-			passed = false;
-			for(int i=0; i<RELATION_TYPE_SUBJECT_NUMBER_OF_TYPES; i++)
-			{
-				if(currentRelationInList->relationType == relationTypeSubjectNameArray[i])
-				{
-					passed = true;
-				}
-			}
-			//if(currentRelationInList->relationType == RELATION_TYPE_SUBJECT)
-			if(passed)
-			{
-				int relationDependentIndex = currentRelationInList->relationDependentIndex;
-				GIAentityNode* subjectEntity = GIAentityNodeArray[relationDependentIndex];
-				subjectEntity->isSubjectTemp = true;
-
-				int relationGovernorIndex = currentRelationInList->relationGovernorIndex;
-				GIAentityNode* actionEntity = GIAentityNodeArray[relationGovernorIndex];
-				actionEntity->isActionTemp = true;
-			}
-
-			//has object:
-
-			passed = false;
-			for(int i=0; i<RELATION_TYPE_OBJECT_NUMBER_OF_TYPES; i++)
-			{
-				if(currentRelationInList->relationType == relationTypeObjectNameArray[i])
-				{
-					passed = true;
-				}
-			}
-			//if((currentRelationInList->relationType == RELATION_TYPE_OBJECT) || (currentRelationInList->relationType == RELATION_TYPE_OBJECT_TO))
-			if(passed)
-			{
-				int relationDependentIndex = currentRelationInList->relationDependentIndex;
-				GIAentityNode* objectEntity = GIAentityNodeArray[relationDependentIndex];
-				objectEntity->isObjectTemp = true;
-
-				int relationGovernorIndex = currentRelationInList->relationGovernorIndex;
-				GIAentityNode* actionEntity = GIAentityNodeArray[relationGovernorIndex];
-				actionEntity->isActionTemp = true;
-			}
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
-		}
-		#endif
-		currentRelationInList = currentRelationInList->next;
-	}
-}
-
 //updated 22 May 2012 with GIAnetworkIndexNodeArray+GIAentityNodeArray (and substances add)
-void GIAtranslatorDefineReferencingClass::linkPronounReferencesRelex(GIAsentence* currentSentenceInList, const bool GIAentityNodeArrayFilled[], GIAentityNode* GIAfeatureTempEntityNodeArray[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, GIAfeature* featureArrayTemp[])
+void GIAtranslatorDefineReferencingClass::linkPronounReferencesRelex(GIAtranslatorVariablesClass* translatorVariables)
 {
 	#ifdef GIA_WARNINGS
 	cout << "warning: linkPronounReferencesRelex{} is not robust - it requires further development" << endl;
@@ -364,9 +227,9 @@ void GIAtranslatorDefineReferencingClass::linkPronounReferencesRelex(GIAsentence
 
 	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
 	{
-		if(GIAentityNodeArrayFilled[w])
+		if(translatorVariables->GIAentityNodeArrayFilled[w])
 		{
-			GIAentityNode* currentGIAEntityNode = GIAfeatureTempEntityNodeArray[w];
+			GIAentityNode* currentGIAEntityNode = translatorVariables->GIAfeatureTempEntityNodeArray[w];
 			#ifdef GIA_PRONOUN_REFERENCING_DEBUG
 			cout << "currentGIAEntityNode->entityName = " << currentGIAEntityNode->entityName << endl;
 			#endif
@@ -385,7 +248,7 @@ void GIAtranslatorDefineReferencingClass::linkPronounReferencesRelex(GIAsentence
 					GIAentityNode* referenceSource = NULL;
 					bool referenceSourceHasBeenFound = false;
 					bool stillSentencesToSearch = true;
-					GIAsentence* currentSentenceInWhichReferenceSourceIsBeingSearchedFor = currentSentenceInList;
+					GIAsentence* currentSentenceInWhichReferenceSourceIsBeingSearchedFor = translatorVariables->currentSentenceInList;
 					int s2 = 0;
 					while(!referenceSourceHasBeenFound && stillSentencesToSearch)
 					{
@@ -414,7 +277,7 @@ void GIAtranslatorDefineReferencingClass::linkPronounReferencesRelex(GIAsentence
 							if(entityName != "")
 							{
 								bool entityAlreadyExistant = false;
-								GIAentityNode* currentEntityInWhichReferenceSourceIsBeingSearchedFor = GIAtranslatorOperations.findOrAddNetworkIndexEntityNodeByNameSimpleWrapper(&entityName, &entityAlreadyExistant, entityNodesActiveListNetworkIndexes);
+								GIAentityNode* currentEntityInWhichReferenceSourceIsBeingSearchedFor = GIAtranslatorOperations.findOrAddNetworkIndexEntityNodeByNameSimpleWrapper(&entityName, &entityAlreadyExistant, translatorVariables);
 								//CHECK THIS; !applyNetworkIndexEntityAlreadyExistsFunction
 
 								if(entityAlreadyExistant)
@@ -498,6 +361,10 @@ void GIAtranslatorDefineReferencingClass::linkPronounReferencesRelex(GIAsentence
 										cout << "currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalProperNounTemp = " << currentEntityInWhichReferenceSourceIsBeingSearchedFor->grammaticalProperNounTemp << endl;
 										#endif
 
+										referenceSourceHasBeenFound = true;
+										referenceSource = currentEntityInWhichReferenceSourceIsBeingSearchedFor;
+										
+										/*
 										if(currentEntityInWhichReferenceSourceIsBeingSearchedFor->isSubjectTemp)
 										{
 											#ifdef GIA_PRONOUN_REFERENCING_DEBUG
@@ -522,13 +389,14 @@ void GIAtranslatorDefineReferencingClass::linkPronounReferencesRelex(GIAsentence
 											referenceSourceHasBeenFound = true;
 											referenceSource = currentEntityInWhichReferenceSourceIsBeingSearchedFor;
 										}
+										*/
 									}
 								}
 								else
 								{
 									#ifdef GIA_PRONOUN_REFERENCING_DEBUG
 									cout << "error: !entityAlreadyExistant" << endl;	//will be non-existant in the case of intermediary words like "the"
-									//exit(0);
+									//exit(EXIT_ERROR);
 									#endif
 								}
 							}
@@ -552,24 +420,24 @@ void GIAtranslatorDefineReferencingClass::linkPronounReferencesRelex(GIAsentence
 					if(referenceSourceHasBeenFound)
 					{//remap entity; eg He to John
 						#ifdef GIA_TRANSLATOR_DEBUG
-						cout << "referenceSourceHasBeenFound: assigning " << GIAfeatureTempEntityNodeArray[w]->entityName << " to " << referenceSource->entityName << "." << endl;
+						cout << "referenceSourceHasBeenFound: assigning " << translatorVariables->GIAfeatureTempEntityNodeArray[w]->entityName << " to " << referenceSource->entityName << "." << endl;
 						#endif
 
-						GIAtranslatorOperations.disableEntity(GIAfeatureTempEntityNodeArray[w]);
+						GIAtranslatorOperations.disableEntity(translatorVariables->GIAfeatureTempEntityNodeArray[w]);
 
 					#ifdef GIA_ORIGINAL_PRONOMINAL_COREFERENCE_RESOLUTION_IGNORE_SUBSTANCES_TAKE_NETWORK_INDEXES_ONLY
-						GIAnetworkIndexNodeArray[w] = referenceSource;
+						translatorVariables->GIAnetworkIndexNodeArray[w] = referenceSource;
 						#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES
 						referenceSource->isPronounReference = true;
 						#else
-						featureArrayTemp[w]->isPronounReference = true;
+						translatorVariables->featureArrayTemp[w]->isPronounReference = true;
 						#endif
 						GIAtranslatorOperations.applyNetworkIndexEntityAlreadyExistsFunction(referenceSource, true, true);
 					#else
 
 						bool networkIndexHasASubstance = false;
 						//now find the substance in the referenceSource networkIndex entity that matches the referenceSource sentence/entity index
-						for(vector<GIAentityConnection*>::iterator connectionIter = referenceSource->associatedInstanceNodeList->begin(); connectionIter != referenceSource->associatedInstanceNodeList->end(); connectionIter++)
+						for(vector<GIAentityConnection*>::iterator connectionIter = referenceSource->instanceNodeList->begin(); connectionIter != referenceSource->instanceNodeList->end(); connectionIter++)
 						{
 							GIAentityNode* substance = (*connectionIter)->entity;
 							#ifdef GIA_PRONOUN_REFERENCING_DEBUG
@@ -582,7 +450,7 @@ void GIAtranslatorDefineReferencingClass::linkPronounReferencesRelex(GIAsentence
 							{//take first instance/substance in list
 
 								#ifdef GIA_TRANSLATOR_DEBUG
-								cout << "NonPronoun/substance referenceSourceHasBeenFound: assigning " << GIAentityNodeArray[w]->entityName << " to " << referenceSource->entityName << "." << endl;
+								cout << "NonPronoun/substance referenceSourceHasBeenFound: assigning " << translatorVariables->GIAentityNodeArray[w]->entityName << " to " << referenceSource->entityName << "." << endl;
 								#endif
 
 								//found the substance in the referenceSource networkIndex entity that matches the referenceSource sentence/entity index
@@ -592,11 +460,11 @@ void GIAtranslatorDefineReferencingClass::linkPronounReferencesRelex(GIAsentence
 								substance->isPronounReference = true;
 								referenceSource->isPronounReference = true;
 								#else
-								featureArrayTemp[w]->isPronounReference = true;
+								translatorVariables->featureArrayTemp[w]->isPronounReference = true;
 								#endif
-								GIAentityNodeArray[w] = substance;
+								translatorVariables->GIAentityNodeArray[w] = substance;
 								#ifdef GIA_RECORD_WAS_REFERENCE_INFORMATION
-								if(referenceSource->sentenceIndexTemp != currentSentenceInList->sentenceIndex)
+								if(referenceSource->sentenceIndexTemp != translatorVariables->currentSentenceInList->sentenceIndex)
 								{//Added condition GIA 2f7a - 06 July 2014 (wasReference is only used for intersentence references)
 									substance->wasReference = true;
 									referenceSource->wasReference = true;
@@ -609,17 +477,17 @@ void GIAtranslatorDefineReferencingClass::linkPronounReferencesRelex(GIAsentence
 						if(!networkIndexHasASubstance)
 						{
 							#ifdef GIA_TRANSLATOR_DEBUG
-							cout << "referenceSourceHasBeenFound: assigning " << GIAentityNodeArray[w]->entityName << " to " << referenceSource->entityName << "." << endl;
+							cout << "referenceSourceHasBeenFound: assigning " << translatorVariables->GIAentityNodeArray[w]->entityName << " to " << referenceSource->entityName << "." << endl;
 							#endif
 
 							#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES
 							referenceSource->isPronounReference = true;
 							#else
-							featureArrayTemp[w]->isPronounReference = true;
+							translatorVariables->featureArrayTemp[w]->isPronounReference = true;
 							#endif
-							GIAentityNodeArray[w] = referenceSource;
+							translatorVariables->GIAentityNodeArray[w] = referenceSource;
 							#ifdef GIA_RECORD_WAS_REFERENCE_INFORMATION
-							if(referenceSource->sentenceIndexTemp != currentSentenceInList->sentenceIndex)
+							if(referenceSource->sentenceIndexTemp != translatorVariables->currentSentenceInList->sentenceIndex)
 							{//Added condition GIA 2f7a - 06 July 2014 (wasReference is only used for intersentence references)
 								referenceSource->wasReference = true;
 							}
@@ -636,7 +504,7 @@ void GIAtranslatorDefineReferencingClass::linkPronounReferencesRelex(GIAsentence
 
 
 #ifdef GIA_STANFORD_CORENLP
-void GIAtranslatorDefineReferencingClass::linkPronounAndTextualContextReferencesStanfordCoreNLP(GIAsentence* currentSentenceInList, const bool GIAentityNodeArrayFilled[], GIAentityNode* GIAfeatureTempEntityNodeArray[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, const GIAstanfordCoreNLPcoreference* firstCoreferenceInList, GIAfeature* featureArrayTemp[])
+void GIAtranslatorDefineReferencingClass::linkPronounAndTextualContextReferencesStanfordCoreNLP(GIAtranslatorVariablesClass* translatorVariables, const GIAstanfordCoreNLPcoreference* firstCoreferenceInList)
 {
 	#ifdef GIA_PRONOUN_REFERENCING_DEBUG
 	//cout << "linkPronounAndTextualContextReferencesStanfordCoreNLP{}" << endl;
@@ -666,12 +534,12 @@ void GIAtranslatorDefineReferencingClass::linkPronounAndTextualContextReferences
 					#endif
 
 					#ifdef GIA_ENABLE_TEXTUAL_CONTEXT_REFERENCING_ONLY_ACCEPT_INTRASENTENCE_STANFORD_COREFERENCES
-					if(referenceSourceSentenceIndex == currentSentenceInList->sentenceIndex)
+					if(referenceSourceSentenceIndex == translatorVariables->currentSentenceInList->sentenceIndex)
 					#else
-					if(referenceSourceSentenceIndex <= currentSentenceInList->sentenceIndex)
+					if(referenceSourceSentenceIndex <= translatorVariables->currentSentenceInList->sentenceIndex)
 					#endif
 					{
-						GIAsentence* currentSentenceInWhichReferenceSourceIsBeingSearchedFor = currentSentenceInList;
+						GIAsentence* currentSentenceInWhichReferenceSourceIsBeingSearchedFor = translatorVariables->currentSentenceInList;
 						bool stillExistsPreviousSentence = true;
 						while(stillExistsPreviousSentence)
 						{
@@ -691,7 +559,7 @@ void GIAtranslatorDefineReferencingClass::linkPronounAndTextualContextReferences
 										string entityName = currentFeatureInList->lemma;	//CHECK THIS; assumes [at least one instance of] the reference source will always occur as a relation argument/dependent (ie, will not find the reference source if it only occurs as a relation function/governer)
 
 										bool entityAlreadyExistant = false;
-										GIAentityNode* currentEntityInWhichReferenceSourceIsBeingSearchedFor = GIAtranslatorOperations.findOrAddNetworkIndexEntityNodeByNameSimpleWrapper(&entityName, &entityAlreadyExistant, entityNodesActiveListNetworkIndexes);
+										GIAentityNode* currentEntityInWhichReferenceSourceIsBeingSearchedFor = GIAtranslatorOperations.findOrAddNetworkIndexEntityNodeByNameSimpleWrapper(&entityName, &entityAlreadyExistant, translatorVariables);
 										//CHECK THIS; !applyNetworkIndexEntityAlreadyExistsFunction
 
 										#ifdef GIA_PRONOUN_REFERENCING_DEBUG
@@ -737,12 +605,12 @@ void GIAtranslatorDefineReferencingClass::linkPronounAndTextualContextReferences
 				if(!(currentMentionInList->representative))
 				{//continue only for references, eg pronoun (not for their source, eg name)
 
-					if(currentMentionInList->sentence == currentSentenceInList->sentenceIndex)
+					if(currentMentionInList->sentence == translatorVariables->currentSentenceInList->sentenceIndex)
 					{
 						int currentSentenceEntityNodeIndex = currentMentionInList->head;
-						if(GIAentityNodeArrayFilled[currentSentenceEntityNodeIndex])
+						if(translatorVariables->GIAentityNodeArrayFilled[currentSentenceEntityNodeIndex])
 						{
-							GIAfeature* referenceFeature = featureArrayTemp[currentSentenceEntityNodeIndex];
+							GIAfeature* referenceFeature = translatorVariables->featureArrayTemp[currentSentenceEntityNodeIndex];
 
 							bool coreferenceIsPronoun = false;
 							//use stanfordPOS information to ensure that the reference is a pronoun - NB alternatively, could use referenceTypePersonNameArray and referenceTypePossessiveNameArray (as there is only a limited set of pronouns in english)
@@ -760,7 +628,7 @@ void GIAtranslatorDefineReferencingClass::linkPronounAndTextualContextReferences
 							#endif
 								bool networkIndexHasASubstance = false;
 								//now find the substance in the referenceSource networkIndex entity that matches the referenceSource sentence/entity index
-								for(vector<GIAentityConnection*>::iterator connectionIter = referenceSource->associatedInstanceNodeList->begin(); connectionIter != referenceSource->associatedInstanceNodeList->end(); connectionIter++)
+								for(vector<GIAentityConnection*>::iterator connectionIter = referenceSource->instanceNodeList->begin(); connectionIter != referenceSource->instanceNodeList->end(); connectionIter++)
 								{
 									GIAentityNode* substance = (*connectionIter)->entity;
 									#ifdef GIA_PRONOUN_REFERENCING_DEBUG
@@ -774,7 +642,7 @@ void GIAtranslatorDefineReferencingClass::linkPronounAndTextualContextReferences
 									if((substance->sentenceIndexTemp == referenceSourceSentenceIndex) && (substance->entityIndexTemp == referenceSourceEntityNodeIndex))
 									{
 										#ifdef GIA_STANFORD_CORENLP_CODEPENDENCY_PRONOMINAL_REFERENCING_DEBUG
-										cout << "NonPronoun/substance referenceSourceHasBeenFound: assigning " << GIAentityNodeArray[currentSentenceEntityNodeIndex]->entityName << " to " << referenceSource->entityName << "." << endl;
+										cout << "NonPronoun/substance referenceSourceHasBeenFound: assigning " << translatorVariables->GIAentityNodeArray[currentSentenceEntityNodeIndex]->entityName << " to " << referenceSource->entityName << "." << endl;
 										#endif
 
 										//found the substance in the referenceSource networkIndex entity that matches the referenceSource sentence/entity index
@@ -783,9 +651,9 @@ void GIAtranslatorDefineReferencingClass::linkPronounAndTextualContextReferences
 										if(referenceFeature->grammaticalDefinite || referenceFeature->grammaticalRelexPersonOrStanfordProperNoun)
 										{
 										#endif
-											GIAentityNodeArray[currentSentenceEntityNodeIndex] = substance;
+											translatorVariables->GIAentityNodeArray[currentSentenceEntityNodeIndex] = substance;
 											#ifdef GIA_RECORD_WAS_REFERENCE_INFORMATION
-											if(referenceSourceSentenceIndex != currentSentenceInList->sentenceIndex)
+											if(referenceSourceSentenceIndex != translatorVariables->currentSentenceInList->sentenceIndex)
 											{//Added condition GIA 2f7a - 06 July 2014 (wasReference is only used for intersentence references)
 												substance->wasReference = true;
 												referenceSource->wasReference = true;
@@ -797,7 +665,7 @@ void GIAtranslatorDefineReferencingClass::linkPronounAndTextualContextReferences
 												substance->isPronounReference = true;
 												referenceSource->isPronounReference = true;
 												#else
-												featureArrayTemp[currentSentenceEntityNodeIndex]->isPronounReference = true;
+												translatorVariables->featureArrayTemp[currentSentenceEntityNodeIndex]->isPronounReference = true;
 												#endif
 											}
 										#ifdef GIA_STANFORD_CORE_NLP_CODEPENDENCIES_DO_NOT_USE_IF_REFERENCE_IS_NOT_DEFINITE_OR_PROPER_NOUN
@@ -812,22 +680,22 @@ void GIAtranslatorDefineReferencingClass::linkPronounAndTextualContextReferences
 								if(!networkIndexHasASubstance)
 								{
 									#ifdef GIA_STANFORD_CORENLP_CODEPENDENCY_PRONOMINAL_REFERENCING_DEBUG
-									cout << "referenceSourceHasBeenFound: assigning " << GIAentityNodeArray[currentSentenceEntityNodeIndex]->entityName << " to " << referenceSource->entityName << "." << endl;
+									cout << "referenceSourceHasBeenFound: assigning " << translatorVariables->GIAentityNodeArray[currentSentenceEntityNodeIndex]->entityName << " to " << referenceSource->entityName << "." << endl;
 									#endif
 
 									if(coreferenceIsPronoun)
 									{
-										GIAtranslatorOperations.disableEntity(GIAfeatureTempEntityNodeArray[currentSentenceEntityNodeIndex]);
+										GIAtranslatorOperations.disableEntity(translatorVariables->GIAfeatureTempEntityNodeArray[currentSentenceEntityNodeIndex]);
 										#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES
 										referenceSource->isPronounReference = true;
 										#else
-										featureArrayTemp[currentSentenceEntityNodeIndex]->isPronounReference = true;
+										translatorVariables->featureArrayTemp[currentSentenceEntityNodeIndex]->isPronounReference = true;
 										#endif
 									}
 
-									GIAentityNodeArray[currentSentenceEntityNodeIndex] = referenceSource;		//GIAnetworkIndexNodeArray[currentSentenceEntityNodeIndex] = referenceSource;
+									translatorVariables->GIAentityNodeArray[currentSentenceEntityNodeIndex] = referenceSource;		//GIAnetworkIndexNodeArray[currentSentenceEntityNodeIndex] = referenceSource;
 									#ifdef GIA_RECORD_WAS_REFERENCE_INFORMATION
-									if(referenceSourceSentenceIndex != currentSentenceInList->sentenceIndex)
+									if(referenceSourceSentenceIndex != translatorVariables->currentSentenceInList->sentenceIndex)
 									{//Added condition GIA 2f7a - 06 July 2014 (wasReference is only used for intersentence references)
 										referenceSource->wasReference = true;
 									}
@@ -1040,9 +908,9 @@ void GIAtranslatorDefineReferencingClass::identifyReferenceSetNetworkIndexEntity
 	cout << "identifyReferenceSetEntrance{}: " << entityNode->entityName << endl;
 	#endif
 
-	if(!(entityNode->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES].empty()))
+	if(!(entityNode->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_INSTANCE].empty()))
 	{
-		for(vector<GIAentityConnection*>::iterator connectionIter = entityNode->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES].begin(); connectionIter < entityNode->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES].end(); connectionIter++)
+		for(vector<GIAentityConnection*>::iterator connectionIter = entityNode->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_INSTANCE].begin(); connectionIter < entityNode->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_INSTANCE].end(); connectionIter++)
 		{
 			GIAentityNode* currentInstance = (*connectionIter)->entity;
 			#ifdef GIA_ADVANCED_REFERENCING_DEBUG
@@ -1050,94 +918,85 @@ void GIAtranslatorDefineReferencingClass::identifyReferenceSetNetworkIndexEntity
 			#endif
 
 			#ifdef GIA_ADVANCED_REFERENCING_IDENTIFY_DEFINITE_SETS_ONLY
-			//do: CHECKTHIS; may need to re-execute identifyEntityTypes on EntityNodeArray after finishing executing GIAtranslator.cpp convertSentenceSyntacticRelationsIntoGIAnetworkNodes
-			#ifdef GIA_ADVANCED_REFERENCING_IDENTIFY_SETS_WITH_SUBJECT_OR_OBJECT_ONLY
-			if((currentInstance->isSubjectTemp) || (currentInstance->isObjectTemp))
+			#ifdef GIA_ADVANCED_REFERENCING_DEBUG
+			cout << "subj Found" << endl;
+			#endif
+
+			bool passDefiniteSetChecks = false;
+			if(currentInstance->grammaticalDefiniteTemp)
 			{
-			#endif
-				#ifdef GIA_ADVANCED_REFERENCING_DEBUG
-				cout << "subj Found" << endl;
-				#endif
-
-				bool passDefiniteSetChecks = false;
-				if(currentInstance->grammaticalDefiniteTemp)
-				{
-					passDefiniteSetChecks = true;
-				}
-				#ifdef GIA_ADVANCED_REFERENCING_IDENTIFY_DEFINITE_SETS_ACCEPT_PROPERNOUNS
-				if(currentInstance->grammaticalProperNounTemp)
-				{
-					passDefiniteSetChecks = true;
-				}
-				#endif
-				#ifdef GIA_SPECIFIC_CONCEPTS
-				if(currentInstance->entityType == GIA_ENTITY_TYPE_TYPE_CONCEPT)	//&& !(currentInstance->grammaticalDefiniteTemp) - not required, as this is assumed the case already given (currentInstance->entityType == GIA_ENTITY_TYPE_TYPE_CONCEPT); NB "the red dogs" will not be designated as isConcept - only "red dogs" will
-				{
-					passDefiniteSetChecks = true;
-				}
-				#endif
-				#ifdef GIA_IDENTIFY_REFERENCE_SET_NETWORK_INDEX_ENTITY_ENTRANCE_DO_NOT_ENTER_ON_AN_ACTION_NODE
-				if(currentInstance->entityType == GIA_ENTITY_TYPE_TYPE_ACTION)
-				{
-					passDefiniteSetChecks = false;
-				}
-				#endif
-
-				#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES_DISABLE_REFERENCING_OF_SUBCLASS_ARTIFICIAL_ENTITIES
-				if(currentInstance->entityIndexTemp == GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES_ARTIFICAL_ENTITY_INDEX)
-				{
-					passDefiniteSetChecks = false;
-				}
-				#endif
-
-				if(passDefiniteSetChecks)
-				{
-			#endif
-					#ifdef GIA_ADVANCED_REFERENCING_DEBUG_TOO_LARGE_REFERENCE_SET
-					cout << "DEBUG: grammaticalDefiniteTemp Found: " << entityNode->entityName << endl;
-					#endif
-
-					#ifdef GIA_ADVANCED_REFERENCING_DEBUG
-					cout << "grammaticalDefiniteTemp Found" << endl;
-					#endif
-
-					/*OLD:
-					int minimumEntityIndexOfReferenceSet;
-					if(haveSentenceEntityIndexOfDeterminers)
-					{
-						minimumEntityIndexOfReferenceSet = currentInstance->grammaticalIndexOfDeterminerTemp;
-						cout << "\n1minimumEntityIndexOfReferenceSet = " << minimumEntityIndexOfReferenceSet << endl;
-					}
-					else
-					{
-						cout << "\n!haveSentenceEntityIndexOfDeterminers" << endl;
-						minimumEntityIndexOfReferenceSet = currentInstance->entityIndexTemp;
-					}
-					*/
-					int minimumEntityIndexOfReferenceSet = currentInstance->entityIndexTemp;
-
-					//currentInstance->minimumEntityIndexOfReferenceSet = minimumEntityIndexOfReferenceSet;	//added 28 Sept 2013
-
-					#ifdef GIA_ADVANCED_REFERENCING_DEBUG_TOO_LARGE_REFERENCE_SET
-					cout << "minimumSentenceIndexOfReferenceSet1 = " << currentInstance->grammaticalIndexOfDeterminerTemp << endl;
-					cout << "minimumSentenceIndexOfReferenceSet2 = " << currentInstance->entityIndexTemp << endl;
-					#endif
-
-					if(this->identifyReferenceSetDetermineNextCourseOfAction(currentInstance, true,* referenceSetID, minimumEntityIndexOfReferenceSet, false))
-					{
-						*referenceSetID	= *referenceSetID + 1;
-						referenceSetDefiniteEntityList->push_back(currentInstance);
-						#ifdef GIA_DEBUG
-						//cout << "*referenceSetID++ = " <<* referenceSetID << endl;
-						#endif
-					}
-
-			#ifdef GIA_ADVANCED_REFERENCING_IDENTIFY_DEFINITE_SETS_ONLY
-
-				}
-			#ifdef GIA_ADVANCED_REFERENCING_IDENTIFY_SETS_WITH_SUBJECT_OR_OBJECT_ONLY
+				passDefiniteSetChecks = true;
+			}
+			#ifdef GIA_ADVANCED_REFERENCING_IDENTIFY_DEFINITE_SETS_ACCEPT_PROPERNOUNS
+			if(currentInstance->grammaticalProperNounTemp)
+			{
+				passDefiniteSetChecks = true;
 			}
 			#endif
+			#ifdef GIA_SPECIFIC_CONCEPTS
+			if(currentInstance->entityType == GIA_ENTITY_TYPE_CONCEPT)	//&& !(currentInstance->grammaticalDefiniteTemp) - not required, as this is assumed the case already given (currentInstance->entityType == GIA_ENTITY_TYPE_CONCEPT); NB "the red dogs" will not be designated as isConcept - only "red dogs" will
+			{
+				passDefiniteSetChecks = true;
+			}
+			#endif
+			#ifdef GIA_IDENTIFY_REFERENCE_SET_NETWORK_INDEX_ENTITY_ENTRANCE_DO_NOT_ENTER_ON_AN_ACTION_NODE
+			if(currentInstance->entityType == GIA_ENTITY_TYPE_ACTION)
+			{
+				passDefiniteSetChecks = false;
+			}
+			#endif
+
+			#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES_DISABLE_REFERENCING_OF_SUBCLASS_ARTIFICIAL_ENTITIES
+			if(currentInstance->entityIndexTemp == GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES_ARTIFICAL_ENTITY_INDEX)
+			{
+				passDefiniteSetChecks = false;
+			}
+			#endif
+
+			if(passDefiniteSetChecks)
+			{
+			#endif
+				#ifdef GIA_ADVANCED_REFERENCING_DEBUG_TOO_LARGE_REFERENCE_SET
+				cout << "DEBUG: grammaticalDefiniteTemp Found: " << entityNode->entityName << endl;
+				#endif
+
+				#ifdef GIA_ADVANCED_REFERENCING_DEBUG
+				cout << "grammaticalDefiniteTemp Found" << endl;
+				#endif
+
+				/*OLD:
+				int minimumEntityIndexOfReferenceSet;
+				if(haveSentenceEntityIndexOfDeterminers)
+				{
+					minimumEntityIndexOfReferenceSet = currentInstance->grammaticalIndexOfDeterminerTemp;
+					cout << "\n1minimumEntityIndexOfReferenceSet = " << minimumEntityIndexOfReferenceSet << endl;
+				}
+				else
+				{
+					cout << "\n!haveSentenceEntityIndexOfDeterminers" << endl;
+					minimumEntityIndexOfReferenceSet = currentInstance->entityIndexTemp;
+				}
+				*/
+				int minimumEntityIndexOfReferenceSet = currentInstance->entityIndexTemp;
+
+				//currentInstance->minimumEntityIndexOfReferenceSet = minimumEntityIndexOfReferenceSet;	//added 28 Sept 2013
+
+				#ifdef GIA_ADVANCED_REFERENCING_DEBUG_TOO_LARGE_REFERENCE_SET
+				cout << "minimumSentenceIndexOfReferenceSet1 = " << currentInstance->grammaticalIndexOfDeterminerTemp << endl;
+				cout << "minimumSentenceIndexOfReferenceSet2 = " << currentInstance->entityIndexTemp << endl;
+				#endif
+
+				if(this->identifyReferenceSetDetermineNextCourseOfAction(currentInstance, true,* referenceSetID, minimumEntityIndexOfReferenceSet, false))
+				{
+					*referenceSetID	= *referenceSetID + 1;
+					referenceSetDefiniteEntityList->push_back(currentInstance);
+					#ifdef GIA_DEBUG
+					//cout << "*referenceSetID++ = " <<* referenceSetID << endl;
+					#endif
+				}
+
+			#ifdef GIA_ADVANCED_REFERENCING_IDENTIFY_DEFINITE_SETS_ONLY
+				}
 			#endif
 
 		}
@@ -1394,13 +1253,12 @@ void GIAtranslatorDefineReferencingClass::createGIAcoreferenceInListBasedUponIde
 			*/
 				bool saveNetwork = false;
 				bool foundQueryEntityNodeName = false;
-				long queryEntityNodeIndex = -1;
 				string queryEntityNodeName = currentQueryEntityNode->entityName;
 				#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 				cout << "referenceSetID = " << referenceSetID << endl;
 				#endif
 
-				GIAentityNode* networkIndexEntityMatchingCurrentQueryEntity = GIAdatabase.findOrAddNetworkIndexEntityNodeByName(NULL, entityNodesActiveListNetworkIndexes, &queryEntityNodeName, &foundQueryEntityNodeName, &queryEntityNodeIndex, false, NULL, NULL, false);
+				GIAentityNode* networkIndexEntityMatchingCurrentQueryEntity = GIAdatabase.findOrAddNetworkIndexEntityNodeByName(NULL, entityNodesActiveListNetworkIndexes, &queryEntityNodeName, &foundQueryEntityNodeName, false, NULL, NULL, false);
 
 				if(foundQueryEntityNodeName)
 				{
@@ -1502,7 +1360,7 @@ GIAcoreference* GIAtranslatorDefineReferencingClass::generateCoreferenceListBase
 
 		if(entityNode->entityCorrespondingBestMatch != NULL)
 		{
-			if(!(entityNode->entityNodeDefiningThisInstance->empty()))
+			if(!(entityNode->instanceReverseNodeList->empty()))
 			{//do not reference networkIndex entities - condition added 16 July 2012
 
 				#ifdef GIA_ADVANCED_REFERENCING_DEBUG
@@ -1596,7 +1454,7 @@ GIAcoreference* GIAtranslatorDefineReferencingClass::generateCoreferenceListBase
 
 
 
-void GIAtranslatorDefineReferencingClass::linkAdvancedReferencesGIA(const GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, GIAcoreference* firstCoreferenceInList, GIAfeature* featureArrayTemp[], GIAentityNode* GIAfeatureTempEntityNodeArray[], GIAentityNode* GIAnetworkIndexNodeArray[])
+void GIAtranslatorDefineReferencingClass::linkAdvancedReferencesGIA(GIAtranslatorVariablesClass* translatorVariables, GIAcoreference* firstCoreferenceInList)
 {
 	#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 	cout << "linkAdvancedReferencesGIA{}" << endl;
@@ -1645,7 +1503,7 @@ void GIAtranslatorDefineReferencingClass::linkAdvancedReferencesGIA(const GIAsen
 						if(currentMentionInList->intrasentenceReference)
 						{
 							int referenceSourceEntityIndex = currentMentionInList->entityIndex;
-							//referenceSource = GIAentityNodeArray[referenceSourceEntityIndex];
+							//referenceSource = translatorVariables->GIAentityNodeArray[referenceSourceEntityIndex];
 							intrasentenceReferenceSourceIndex = referenceSourceEntityIndex;
 							foundReferenceSource = true;
 							#ifdef GIA_ADVANCED_REFERENCING_DEBUG
@@ -1660,7 +1518,7 @@ void GIAtranslatorDefineReferencingClass::linkAdvancedReferencesGIA(const GIAsen
 							//cout << "findOrAddNetworkIndexEntityNodeByNameSimpleWrapper" << endl;
 							#endif
 
-							GIAentityNode* referenceSourceNetworkIndexEntity = GIAtranslatorOperations.findOrAddNetworkIndexEntityNodeByNameSimpleWrapper(&(currentMentionInList->entityName), &entityNameFound, entityNodesActiveListNetworkIndexes);
+							GIAentityNode* referenceSourceNetworkIndexEntity = GIAtranslatorOperations.findOrAddNetworkIndexEntityNodeByNameSimpleWrapper(&(currentMentionInList->entityName), &entityNameFound, translatorVariables);
 							if(entityNameFound)
 							{
 								#ifdef GIA_DEBUG
@@ -1671,14 +1529,14 @@ void GIAtranslatorDefineReferencingClass::linkAdvancedReferencesGIA(const GIAsen
 								#ifndef GIA_DATABASE_TEST_MODE_LOAD_ALL_ENTITIES_AND_CONNECTIONS_TO_ACTIVE_LIST_UPON_READ
 								if(GIAdatabase.getUseDatabase() == GIA_DATABASE_TRUE_READ_ACTIVE)
 								{
-									GIAdatabase.DBreadVectorConnections(referenceSourceNetworkIndexEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_ASSOCIATED_INSTANCES);		//read the associated instance vector connections from the database for the networkIndex node of the reference node (which has not necessarily already been loaded in the case of GIA_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE) - enabling the reference node to be found linkAdvancedReferencesGIA (added 28 November 2012b)
+									GIAdatabase.DBreadVectorConnections(referenceSourceNetworkIndexEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_INSTANCE);		//read the associated instance vector connections from the database for the networkIndex node of the reference node (which has not necessarily already been loaded in the case of GIA_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE) - enabling the reference node to be found linkAdvancedReferencesGIA (added 28 November 2012b)
 								}
 								#endif
 								#endif
 								#endif
 
 								//now find the substance in the referenceSource networkIndex entity that matches the referenceSource idActiveList (there is no networkIndex linking; as networkIndex nodes are identical for reference and referenceSource)
-								for(vector<GIAentityConnection*>::iterator connectionIter = referenceSourceNetworkIndexEntity->associatedInstanceNodeList->begin(); connectionIter != referenceSourceNetworkIndexEntity->associatedInstanceNodeList->end(); connectionIter++)
+								for(vector<GIAentityConnection*>::iterator connectionIter = referenceSourceNetworkIndexEntity->instanceNodeList->begin(); connectionIter != referenceSourceNetworkIndexEntity->instanceNodeList->end(); connectionIter++)
 								{
 									GIAentityNode* instance = (*connectionIter)->entity;
 
@@ -1746,23 +1604,23 @@ void GIAtranslatorDefineReferencingClass::linkAdvancedReferencesGIA(const GIAsen
 							//create a new substance and share it between the reference and the reference source
 							/*Removed 1 October 2013
 							#ifdef GIA_RECORD_WAS_REFERENCE_INFORMATION
-							GIAentityNodeArray[referenceEntityIndex]->wasReference = true;	//assign to networkIndex
+							translatorVariables->GIAentityNodeArray[referenceEntityIndex]->wasReference = true;	//assign to networkIndex
 							#endif
 							#ifdef GIA_ADVANCED_REFERENCING_PREVENT_DOUBLE_LINKS
-							GIAentityNodeArray[referenceEntityIndex]->wasReferenceTemp = true;
+							translatorVariables->GIAentityNodeArray[referenceEntityIndex]->wasReferenceTemp = true;
 							#endif
 							*/
-							GIAentityNodeArray[referenceEntityIndex] = GIAtranslatorOperations.addInstanceToInstanceDefinition(GIAentityNodeArray[referenceEntityIndex], GIA_ENTITY_TYPE_TYPE_SUBSTANCE);
-							GIAentityNodeArray[intrasentenceReferenceSourceIndex] = GIAentityNodeArray[referenceEntityIndex];
+							translatorVariables->GIAentityNodeArray[referenceEntityIndex] = GIAtranslatorOperations.addInstanceToInstanceDefinition(translatorVariables->GIAentityNodeArray[referenceEntityIndex], GIA_ENTITY_TYPE_SUBSTANCE, translatorVariables);
+							translatorVariables->GIAentityNodeArray[intrasentenceReferenceSourceIndex] = translatorVariables->GIAentityNodeArray[referenceEntityIndex];
 
 							/*Removed GIA 2f7a - 06 July 2014 (wasReference is only used for intersentence references)
 							#ifdef GIA_RECORD_WAS_REFERENCE_INFORMATION
-							GIAentityNodeArray[intrasentenceReferenceSourceIndex]->wasReference = true;	//added 1 October 2013
+							translatorVariables->GIAentityNodeArray[intrasentenceReferenceSourceIndex]->wasReference = true;	//added 1 October 2013
 							#endif
 							*/
 							/*Removed 1 October 2013
 							#ifdef GIA_ADVANCED_REFERENCING_PREVENT_DOUBLE_LINKS
-							GIAentityNodeArray[intrasentenceReferenceSourceIndex]->wasReferenceTemp = true;	//added 1 October 2013
+							translatorVariables->GIAentityNodeArray[intrasentenceReferenceSourceIndex]->wasReferenceTemp = true;	//added 1 October 2013
 							#endif
 							*/
 
@@ -1773,8 +1631,8 @@ void GIAtranslatorDefineReferencingClass::linkAdvancedReferencesGIA(const GIAsen
 							#endif
 
 							#ifdef GIA_ADVANCED_REFERENCING_DEBUG_SIMPLE
-							cout << "linkAdvancedReferencesGIA: GIAentityNodeArray[referenceEntityIndex]->entityName = " << GIAentityNodeArray[referenceEntityIndex]->entityName << endl;
-							cout << "linkAdvancedReferencesGIA: GIAentityNodeArray[intrasentenceReferenceSourceIndex]->entityName = " << GIAentityNodeArray[intrasentenceReferenceSourceIndex]->entityName << endl;
+							cout << "linkAdvancedReferencesGIA: GIAentityNodeArray[referenceEntityIndex]->entityName = " << translatorVariables->GIAentityNodeArray[referenceEntityIndex]->entityName << endl;
+							cout << "linkAdvancedReferencesGIA: GIAentityNodeArray[intrasentenceReferenceSourceIndex]->entityName = " << translatorVariables->GIAentityNodeArray[intrasentenceReferenceSourceIndex]->entityName << endl;
 							#endif
 						}
 						else
@@ -1798,7 +1656,7 @@ void GIAtranslatorDefineReferencingClass::linkAdvancedReferencesGIA(const GIAsen
 							#ifdef GIA_ADVANCED_REFERENCING_DEBUG_SIMPLE2
 							cout << "reference->entityName = " << reference->entityName << endl;
 							#endif
-							if(reference->entityType == GIA_ENTITY_TYPE_TYPE_NETWORK_INDEX)
+							if(reference->entityType == GIA_ENTITY_TYPE_NETWORK_INDEX)
 							{
 								cout << "linkAdvancedReferencesGIA{}: reference->isNetworkIndex" << endl;
 							}
@@ -1829,25 +1687,25 @@ void GIAtranslatorDefineReferencingClass::linkAdvancedReferencesGIA(const GIAsen
 							*/
 
 							#ifdef GIA_ADVANCED_REFERENCING_PREPOSITIONS
-							if(GIAentityNodeArrayFilled[referenceEntityIndex])
+							if(translatorVariables->GIAentityNodeArrayFilled[referenceEntityIndex])
 							{
 							#endif
 								#ifdef GIA_ADVANCED_REFERENCING_DEBUG
-								cout << "linkAdvancedReferencesGIA: reference->entityName = " << GIAentityNodeArray[referenceEntityIndex]->entityName << endl;
+								cout << "linkAdvancedReferencesGIA: reference->entityName = " << translatorVariables->GIAentityNodeArray[referenceEntityIndex]->entityName << endl;
 								#endif
 							#ifdef GIA_ADVANCED_REFERENCING_PREPOSITIONS
 							}
 							else
 							{
-								GIAentityNodeArrayFilled[referenceEntityIndex] = true;	//preposition reference
-								GIAfeatureTempEntityNodeArray[referenceEntityIndex] = referenceSource;		//added for GIA 1n7c 31-July-2012 to correct bug as resultant of advanced referencing - fill in array
-								featureArrayTemp[referenceEntityIndex] = new GIAfeature();				//added for GIA 1n7c 31-July-2012 to correct bug as resultant of advanced referencing - fill in array
-								GIAnetworkIndexNodeArray[referenceEntityIndex] = referenceSource;			//added for GIA 1n7c 31-July-2012 to correct bug as resultant of advanced referencing - fill in array
+								translatorVariables->GIAentityNodeArrayFilled[referenceEntityIndex] = true;	//preposition reference
+								translatorVariables->GIAfeatureTempEntityNodeArray[referenceEntityIndex] = referenceSource;		//added for GIA 1n7c 31-July-2012 to correct bug as resultant of advanced referencing - fill in array
+								translatorVariables->featureArrayTemp[referenceEntityIndex] = new GIAfeature();				//added for GIA 1n7c 31-July-2012 to correct bug as resultant of advanced referencing - fill in array
+								translatorVariables->GIAnetworkIndexNodeArray[referenceEntityIndex] = referenceSource;			//added for GIA 1n7c 31-July-2012 to correct bug as resultant of advanced referencing - fill in array
 							}
 							#endif
 
 
-							GIAentityNodeArray[referenceEntityIndex] = referenceSource;
+							translatorVariables->GIAentityNodeArray[referenceEntityIndex] = referenceSource;
 							#ifdef GIA_ADVANCED_REFERENCING_PREVENT_DOUBLE_LINKS
 							referenceSource->wasReferenceTemp = true;
 							#endif
@@ -1860,19 +1718,19 @@ void GIAtranslatorDefineReferencingClass::linkAdvancedReferencesGIA(const GIAsen
 							#ifdef GIA_PREDETERMINERS
 							if(referenceSource->grammaticalPredeterminerTemp == GRAMMATICAL_PREDETERMINER_UNDEFINED)
 							{
-								referenceSource->grammaticalPredeterminerTemp = featureArrayTemp[referenceEntityIndex]->grammaticalPredeterminer;	//only update the default (sentence independent) predeterminer of reference if no predeterminer found previously - NB the default (sentence independent) predeterminer is used by GIAxmlConversion only at present and shouldnt be used at all by !GIA_DISABLE_CROSS_SENTENCE_REFERENCING
+								referenceSource->grammaticalPredeterminerTemp = translatorVariables->featureArrayTemp[referenceEntityIndex]->grammaticalPredeterminer;	//only update the default (sentence independent) predeterminer of reference if no predeterminer found previously - NB the default (sentence independent) predeterminer is used by GIAxmlConversion only at present and shouldnt be used at all by !GIA_DISABLE_CROSS_SENTENCE_REFERENCING
 							}
 							#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_REFERENCING_OF_ENTITIES_WITH_PREDETERMINERS
-							referenceSource->grammaticalPredeterminerTempSentenceArray.insert(make_pair(currentSentenceInList->sentenceIndex, featureArrayTemp[referenceEntityIndex]->grammaticalPredeterminer));	//added 2i34a
+							referenceSource->grammaticalPredeterminerTempSentenceArray.insert(make_pair(currentSentenceInList->sentenceIndex, translatorVariables->featureArrayTemp[referenceEntityIndex]->grammaticalPredeterminer));	//added 2i34a
 							#endif
 							#endif
 
 							#ifdef GIA_ADVANCED_REFERENCING_DEBUG_SIMPLE
 							cout << "linkAdvancedReferencesGIA: referenceSource->entityName = " << referenceSource->entityName << endl;
-							cout << "linkAdvancedReferencesGIA: GIAentityNodeArray[referenceEntityIndex]->entityName = " << GIAentityNodeArray[referenceEntityIndex]->entityName << endl;
+							cout << "linkAdvancedReferencesGIA: GIAentityNodeArray[referenceEntityIndex]->entityName = " << translatorVariables->GIAentityNodeArray[referenceEntityIndex]->entityName << endl;
 							/*
-							cout << "GIAentityNodeArray[referenceEntityIndex]->wasReferenceTemp = " << GIAentityNodeArray[referenceEntityIndex]->wasReferenceTemp << endl;
-							if(GIAentityNodeArray[referenceEntityIndex]->entityType == GIA_ENTITY_TYPE_TYPE_SUBSTANCE)
+							cout << "GIAentityNodeArray[referenceEntityIndex]->wasReferenceTemp = " << translatorVariables->GIAentityNodeArray[referenceEntityIndex]->wasReferenceTemp << endl;
+							if(GIAentityNodeArray[referenceEntityIndex]->entityType == GIA_ENTITY_TYPE_SUBSTANCE)
 							{
 								cout << "GIAentityNodeArray[referenceEntityIndex]->isSubstance" << endl;
 							}
@@ -1887,7 +1745,7 @@ void GIAtranslatorDefineReferencingClass::linkAdvancedReferencesGIA(const GIAsen
 								GIAentityNode* tempNode = GIAdatabase.findEntityNodesActiveListCompleteFastIndexDBactive(&(referenceSource->entityName), referenceSource->idInstance, &foundReferenceSourceInActiveList);
 								if(!foundReferenceSourceInActiveList)	//OR GIAdatabase.findEntityNodesActiveListCompleteFastIndexDBactive(referenceSource) OR if(!entityInActiveListComplete(referenceSource->entityName, referenceSource->idInstance))
 								{
-									GIAtranslatorOperations.addInstanceEntityNodeToActiveLists(referenceSource);
+									GIAtranslatorOperations.addInstanceEntityNodeToActiveLists(referenceSource, translatorVariables);
 									//referenceSource->modified = true;	//used to re-write the node to the database (in case it has been updated)
 								}
 							}
@@ -1912,14 +1770,14 @@ void GIAtranslatorDefineReferencingClass::linkAdvancedReferencesGIA(const GIAsen
 
 
 #ifdef GIA_TRANSLATOR_DREAM_MODE_LINK_SPECIFIC_CONCEPTS_AND_ACTIONS
-void GIAtranslatorDefineReferencingClass::identifyReferenceSetsSpecificConceptsAndLinkWithConcepts(vector<GIAentityNode*>* entityNodesActiveListComplete)
+void GIAtranslatorDefineReferencingClass::identifyReferenceSetsSpecificConceptsAndLinkWithConcepts(GIAtranslatorVariablesClass* translatorVariables)
 {
 	#ifdef GIA_DREAMMODE_REFERENCING_DEBUG
 	cout << "identifyReferenceSetsSpecificConceptsAndLinkWithConcepts" << endl;
 	#endif
 	int referenceSetID = 0;
 
-	for(vector<GIAentityNode*>::iterator entityNodesActiveListCompleteIter = entityNodesActiveListComplete->begin(); entityNodesActiveListCompleteIter != entityNodesActiveListComplete->end(); entityNodesActiveListCompleteIter++)
+	for(vector<GIAentityNode*>::iterator entityNodesActiveListCompleteIter = translatorVariables->entityNodesActiveListComplete->begin(); entityNodesActiveListCompleteIter != translatorVariables->entityNodesActiveListComplete->end(); entityNodesActiveListCompleteIter++)
 	{
 		GIAentityNode* currentSpecificConcept = *entityNodesActiveListCompleteIter;
 		#ifdef GIA_DREAMMODE_REFERENCING_DEBUG
@@ -1928,8 +1786,8 @@ void GIAtranslatorDefineReferencingClass::identifyReferenceSetsSpecificConceptsA
 
 		if(!(currentSpecificConcept->disabled))
 		{
-			if(currentSpecificConcept->entityType == GIA_ENTITY_TYPE_TYPE_CONCEPT)
-			{//implies !(currentSpecificConcept->entityType == GIA_ENTITY_TYPE_TYPE_NETWORK_INDEX)
+			if(currentSpecificConcept->entityType == GIA_ENTITY_TYPE_CONCEPT)
+			{//implies !(currentSpecificConcept->entityType == GIA_ENTITY_TYPE_NETWORK_INDEX)
 				#ifdef GIA_DREAMMODE_REFERENCING_DEBUG
 				cout << "isConcept Found" << endl;
 				#endif
@@ -1958,16 +1816,18 @@ void GIAtranslatorDefineReferencingClass::identifyReferenceSetsSpecificConceptsA
 					GIAquery.traceEntityNode(currentQueryEntityNode, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISONTEMP, &irrelevant, &printEntityNodeString, false, NULL, traceInstantiations);
 					#endif
 
-					for(vector<GIAentityNode*>::iterator entityNodesActiveListCompleteIter = entityNodesActiveListComplete->begin(); entityNodesActiveListCompleteIter != entityNodesActiveListComplete->end(); entityNodesActiveListCompleteIter++)
+					for(vector<GIAentityNode*>::iterator entityNodesActiveListCompleteIter2 = translatorVariables->entityNodesActiveListComplete->begin(); entityNodesActiveListCompleteIter2 != translatorVariables->entityNodesActiveListComplete->end(); entityNodesActiveListCompleteIter2++)
 					{
-						GIAentityNode* entityNode = *entityNodesActiveListCompleteIter;
+						
+						GIAentityNode* entityNode = *entityNodesActiveListCompleteIter2;
+						
 						#ifdef GIA_DREAMMODE_REFERENCING_DEBUG
 						cout << "\t identifyReferenceSetsSpecificConcepts: " << entityNode->entityName << endl;
 						#endif
 
 						if(!(entityNode->disabled))
 						{
-							if(!(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_NETWORK_INDEX))
+							if(!(entityNode->entityType == GIA_ENTITY_TYPE_NETWORK_INDEX))
 							{
 								GIAqueryTraceParameters queryTraceParameters;		//not used
 
@@ -1994,7 +1854,7 @@ void GIAtranslatorDefineReferencingClass::identifyReferenceSetsSpecificConceptsA
 											#endif
 
 											#ifdef GIA_TRANSLATOR_DREAM_MODE_LINK_SPECIFIC_CONCEPTS_AND_ACTIONS_ADVANCED
-											if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_CONCEPT)
+											if(entityNode->entityType == GIA_ENTITY_TYPE_CONCEPT)
 											{
 												//eg3 Blue birds are tall. The happy eagle is a blue bird.
 												#ifdef GIA_DEBUG
@@ -2005,14 +1865,14 @@ void GIAtranslatorDefineReferencingClass::identifyReferenceSetsSpecificConceptsA
 
 												/*
 												//this method may not be appropriate for GIA_ADVANCED_REFERENCING; if concepts advanced reference each other in the future:
-												if(!(entityNode->entityNodeDefinitionReverseList->empty())
+												if(!(entityNode->definitionReverseNodeList->empty())
 												{
-													GIAentityNode* instanceEntity = (entityNode->entityNodeDefinitionReverseList->begin())->entity;	//take the first entity, and ensure its sentenceID is identical to that of its substance; indicated it was the original definition declared in the sentence
+													GIAentityNode* instanceEntity = (entityNode->definitionReverseNodeList->begin())->entity;	//take the first entity, and ensure its sentenceID is identical to that of its substance; indicated it was the original definition declared in the sentence
 
 												}
 												*/
 												GIAentityNode* instanceEntity = NULL;;
-												for(vector<GIAentityConnection*>::iterator definitionNodeReverseListIterator = entityNode->entityNodeDefinitionReverseList->begin(); definitionNodeReverseListIterator < entityNode->entityNodeDefinitionReverseList->end(); definitionNodeReverseListIterator++)
+												for(vector<GIAentityConnection*>::iterator definitionNodeReverseListIterator = entityNode->definitionReverseNodeList->begin(); definitionNodeReverseListIterator < entityNode->definitionReverseNodeList->end(); definitionNodeReverseListIterator++)
 												{
 													if((*definitionNodeReverseListIterator)->entity->sentenceIndexTemp == entityNode->sentenceIndexTemp)
 													{
@@ -2024,9 +1884,13 @@ void GIAtranslatorDefineReferencingClass::identifyReferenceSetsSpecificConceptsA
 												}
 												if(instanceEntity != NULL)
 												{
-													GIAtranslatorOperations.addDefinitionToEntity(instanceEntity, currentSpecificConcept, sameReferenceSet);
+													translatorVariables->sentenceIndex = instanceEntity->sentenceIndexTemp;	//sentenceIndex here is artifical, could equally use currentSpecificConcept->sentenceIndexTemp
+													GIAentityNode* definitionRelationshipEntity = GIAtranslatorOperations.addDefinitionRelationshipToEntity2(instanceEntity, currentSpecificConcept, sameReferenceSet, translatorVariables);
+													entityNodesActiveListCompleteIter = find(translatorVariables->entityNodesActiveListComplete->begin(), translatorVariables->entityNodesActiveListComplete->end(), currentSpecificConcept);	//reset iterator - added 3a1a
+													entityNodesActiveListCompleteIter2 = find(translatorVariables->entityNodesActiveListComplete->begin(), translatorVariables->entityNodesActiveListComplete->end(), entityNode);   //reset iterator - added 3a1a
+												
 													#ifdef GIA_DREAMMODE_REFERENCING_DEBUG
-													cout << "identifyReferenceSetsSpecificConceptsAndLinkWithConcepts{}: addDefinitionToEntity" << endl;
+													cout << "identifyReferenceSetsSpecificConceptsAndLinkWithConcepts{}: connectDefinitionToEntity" << endl;
 													#endif
 												}
 											}
@@ -2037,9 +1901,14 @@ void GIAtranslatorDefineReferencingClass::identifyReferenceSetsSpecificConceptsA
 												//eg2 The yellow banana is a fruit. The yellow fruit is tasty.
 
 												//found instance in network matching concept...
-												GIAtranslatorOperations.addDefinitionToEntity(entityNode, currentSpecificConcept, sameReferenceSet);
+													
+												translatorVariables->sentenceIndex = entityNode->sentenceIndexTemp;	//sentenceIndex here is artifical, could equally use currentSpecificConcept->sentenceIndexTemp
+												GIAentityNode* definitionRelationshipEntity = GIAtranslatorOperations.addDefinitionRelationshipToEntity2(entityNode, currentSpecificConcept, sameReferenceSet, translatorVariables);
+												entityNodesActiveListCompleteIter = find(translatorVariables->entityNodesActiveListComplete->begin(), translatorVariables->entityNodesActiveListComplete->end(), currentSpecificConcept);	//reset iterator - added 3a1a
+												entityNodesActiveListCompleteIter2 = find(translatorVariables->entityNodesActiveListComplete->begin(), translatorVariables->entityNodesActiveListComplete->end(), entityNode);   //reset iterator - added 3a1a
+												
 												#ifdef GIA_DREAMMODE_REFERENCING_DEBUG
-												cout << "identifyReferenceSetsSpecificConceptsAndLinkWithConcepts{}: addDefinitionToEntity" << endl;
+												cout << "identifyReferenceSetsSpecificConceptsAndLinkWithConcepts{}: connectDefinitionToEntity" << endl;
 												cout << "entityNode = " << entityNode->entityName << endl;
 												cout << "currentSpecificConcept = " << currentSpecificConcept->entityName << endl;
 												cout << "numberOfMatchedNodesTemp = " << numberOfMatchedNodesTemp << endl;
@@ -2074,6 +1943,7 @@ void GIAtranslatorDefineReferencingClass::identifyReferenceSetsSpecificConceptsA
 			}
 		}
 	}
+
 }
 #endif
 
@@ -2127,7 +1997,7 @@ bool GIAtranslatorDefineReferencingClass::identifyReferenceSetDetermineNextCours
 		}
 		#ifdef GIA_SET_ENTITY_ENTITY_AND_SENTENCE_INDICIES_NORMALLY
 		//added 2f19e 24-July-2014
-		if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_NETWORK_INDEX)
+		if(entityNode->entityType == GIA_ENTITY_TYPE_NETWORK_INDEX)
 		{
 			pass = false;
 		}
@@ -2188,7 +2058,7 @@ void GIAtranslatorDefineReferencingClass::identifyReferenceSet(GIAentityNode* en
 				for(vector<GIAentityConnection*>::iterator connectionIter = entityNode->entityVectorConnectionsArray[i].begin(); connectionIter < entityNode->entityVectorConnectionsArray[i].end(); connectionIter++)
 				{
 					bool isProperty = false;
-					if(i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTIES)
+					if(i == GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTY)
 					{
 						isProperty = true;
 					}
@@ -2203,200 +2073,3 @@ void GIAtranslatorDefineReferencingClass::identifyReferenceSet(GIAentityNode* en
 #endif
 
 
-/*
-	#ifdef GIA_ADVANCED_REFERENCING_PREVENT_DOUBLE_LINKS
-	//required to reset wasReferenceTemp for next time
-	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
-	{
-		//cout << w << endl;
-		if(GIAentityNodeArrayFilled[w])
-		{
-			if(GIAentityNodeArray[w]->wasReferenceTemp)
-			{
-				GIAentityNode* reference = GIAentityNodeArray[w];
-				for(int i=0; i<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; i++)
-				{
-					for(vector<GIAentityConnection*>::iterator connectionIter = reference->entityVectorConnectionsArray[i].begin(); connectionIter != reference->entityVectorConnectionsArray[i].end(); connectionIter++)
-					{
-						//connect reference ambient node to referenceSource
-						GIAentityNode* entityConnectedToReference = (*connectionIter)->entity;
-						if(entityConnectedToReference->wasReferenceTemp)
-						{
-							//disconnect reference sources from each other, as their connection between each other will be redeclared in current context
-							int iInverted = inverseVectorConnectionsArray[i];
-							for(vector<GIAentityConnection*>::iterator connectionIter2 = entityConnectedToReference->entityVectorConnectionsArray[iInverted].begin(); connectionIter2 != entityConnectedToReference->entityVectorConnectionsArray[iInverted].end(); connectionIter2++)
-							{
-								GIAentityNode* entityConnectedToEntityConnectedToReference = (*connectionIter2)->entity;
-								if(reference->idActiveList == entityConnectedToEntityConnectedToReference->idActiveList)	//OR (reference == entityConnectedToEntityConnectedToReference)?
-								{
-									(*connectionIter2)->entity = referenceSource;
-									#ifdef GIA_DATABASE
-									(*connectionIter2)->modified = true;
-									//referenceSource->modified = true;		//this shouldnt be required...
-									#endif
-								}
-							}
-
-							//connect referenceSource to reference ambient node
-							writeVectorConnection(referenceSource, entityConnectedToReference, i, (*connectionIter)->sameReferenceSet);
-
-						}
-
-						//connect referenceSource to reference ambient node
-						writeVectorConnection(referenceSource, entityConnectedToReference, i, (*connectionIter)->sameReferenceSet);
-					}
-				}
-
-				GIAentityNodeArray[w]->wasReferenceTemp = false;
-			}
-		}
-	}
-
-	//required to reset wasReferenceTemp for next time
-	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
-	{
-		//cout << w << endl;
-		if(GIAentityNodeArrayFilled[w])
-		{
-			GIAentityNodeArray[w]->wasReferenceTemp = false;
-		}
-	}
-	#endif
-*/
-
-
-/*
-void identifyEntityTypesLocal(GIArelation* currentRelationInList, int NLPdependencyRelationsType, GIAentityNode* governor, GIAentityNode* dependent)
-{
-	//possessive of substances [NB plural/singular indicates definite noun - eg a robin, the robin, the robins - which is therefore a substance (entity instance):
-
-	//possessive of substances:
-
-	bool passed = false;
-	for(int i=0; i<RELATION_TYPE_POSSESSIVE_NUMBER_OF_TYPES; i++)
-	{
-		if(currentRelationInList->relationType == relationTypePossessiveNameArray[i])
-		{
-			passed = true;
-		}
-	}
-	//if(currentRelationInList->relationType == RELATION_TYPE_POSSESSIVE)
-	#ifndef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_PROPERTIES_TAKE_DEPENDENT_AS_PROPERTY_INSTEAD_OF_GOVERNOR
-	for(int i=0; i<RELATION_TYPE_PRENOMINAL_MODIFIER_NUMBER_OF_TYPES; i++)
-	{
-		if(currentRelationInList->relationType == relationTypePrenominalModifierNameArray[i])
-		{
-			passed = true;
-		}
-	}
-	#endif
-	if(passed)
-	{
-		dependent->hasSubstanceTemp = true;
-		#ifdef GIA_ENABLE_REFERENCE_LINKING_BASED_UPON_PRONOUNS_RELEX_USE_ORIGINAL_KNOWN_WORKING_CODE
-		dependent->hasSubstanceTemp2 = true;	//only required for linkPronounReferencesRelex{}. Not necessary otherwise, as this is set in GIAtranslatorOperations.cpp
-		#endif
-	}
-
-	//possessive of substances:
-
-	passed = false;
-	for(int i=0; i<RELATION_TYPE_ADJECTIVE_NUMBER_OF_TYPES; i++)
-	{
-		if(currentRelationInList->relationType == relationTypeAdjectiveNameArray[i])
-		{
-			passed = true;
-		}
-	}
-	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_PROPERTIES_TAKE_DEPENDENT_AS_PROPERTY_INSTEAD_OF_GOVERNOR
-	for(int i=0; i<RELATION_TYPE_PRENOMINAL_MODIFIER_NUMBER_OF_TYPES; i++)
-	{
-		if(currentRelationInList->relationType == relationTypePrenominalModifierNameArray[i])
-		{
-			passed = true;
-		}
-	}
-	#endif
-	//if((currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_AMOD) || (currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_PREDADJ) || (currentRelationInList->relationType == RELATION_TYPE_ADJECTIVE_ADVMOD))
-	if(passed)
-	{
-		bool passed2 = true;
-		#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE_THAT_IS_PROBABLY_STANFORD_COMPATIBLE
-		if(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_RELEX)
-		{
-		#endif
-			passed2 = isAdjectiveNotConnectedToObjectOrSubject(currentSentenceInList, currentRelationInList, NLPdependencyRelationsType);
-		#ifdef GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE_THAT_IS_PROBABLY_STANFORD_COMPATIBLE
-		}
-		#endif
-
-		if(passed2)
-		{
-			governor->hasSubstanceTemp = true;
-			#ifdef GIA_ENABLE_REFERENCE_LINKING_BASED_UPON_PRONOUNS_RELEX_USE_ORIGINAL_KNOWN_WORKING_CODE
-			governor->hasSubstanceTemp2 = true;	//only required for linkPronounReferencesRelex{}. Not necessary otherwise, as this is set in GIAtranslatorOperations.cpp
-			#endif
-		}
-	}
-
-	//has subject:
-
-	passed = false;
-	for(int i=0; i<RELATION_TYPE_SUBJECT_NUMBER_OF_TYPES; i++)
-	{
-		if(currentRelationInList->relationType == relationTypeSubjectNameArray[i])
-		{
-			passed = true;
-		}
-	}
-	//if(currentRelationInList->relationType == RELATION_TYPE_SUBJECT)
-	if(passed)
-	{
-		dependent->isSubjectTemp = true;
-		#ifdef GIA_ENABLE_REFERENCE_LINKING_BASED_UPON_PRONOUNS_RELEX_USE_ORIGINAL_KNOWN_WORKING_CODE
-		dependent->isSubjectTemp2 = true;	//only required for linkPronounReferencesRelex{}. Not necessary otherwise, as this is set in GIAtranslatorOperations.cpp
-		#endif
-	}
-
-	//has object:
-
-	passed = false;
-	for(int i=0; i<RELATION_TYPE_OBJECT_NUMBER_OF_TYPES; i++)
-	{
-		if(currentRelationInList->relationType == relationTypeObjectNameArray[i])
-		{
-			passed = true;
-		}
-	}
-	//if((currentRelationInList->relationType == RELATION_TYPE_OBJECT) || (currentRelationInList->relationType == RELATION_TYPE_OBJECT_TO))
-	if(passed)
-	{
-		dependent->isObjectTemp = true;
-		#ifdef GIA_ENABLE_REFERENCE_LINKING_BASED_UPON_PRONOUNS_RELEX_USE_ORIGINAL_KNOWN_WORKING_CODE
-		dependent->isObjectTemp2 = true;	//only required for linkPronounReferencesRelex{}. Not necessary otherwise, as this is set in GIAtranslatorOperations.cpp
-		#endif
-	}
-
-}
-
-void GIAtranslatorDefineReferencingClass::identifyEntityTypes(const GIAsentence* currentSentenceInList, GIAentityNode* GIAentityNodeArray[], const int NLPdependencyRelationsType)
-{
-	GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
-	while(currentRelationInList->next != NULL)
-	{
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
-		if(!(currentRelationInList->disabled))
-		{
-		#endif
-			int relationGovernorIndex = currentRelationInList->relationGovernorIndex;
-			int relationDependentIndex = currentRelationInList->relationDependentIndex;
-			GIAentityNode* governorTemp = GIAentityNodeArray[relationGovernorIndex];
-			GIAentityNode* dependentTemp = GIAentityNodeArray[relationDependentIndex];
-			identifyEntityTypesLocal(currentRelationInList, NLPdependencyRelationsType, &governorTemp, &dependentTemp);
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
-		}
-		#endif
-		currentRelationInList = currentRelationInList->next;
-	}
-}
-*/

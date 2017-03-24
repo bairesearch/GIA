@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorApplyAdvancedFeatures.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p4d 17-January-2017
+ * Project Version: 3a1a 26-February-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -55,47 +55,32 @@ class GIAtranslatorApplyAdvancedFeaturesClass
 	private: GIAsemanticParserOperationsClass GIAsemanticParserOperations;
 	#endif
 	private: GIAtranslatorGenericClass GIAtranslatorGeneric;
-	public: void applyAdvancedFeatures(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, const int NLPdependencyRelationsType, const int NLPfeatureParser);
-		private: void extractDates(GIAsentence* currentSentenceInList, const bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], const int NLPfeatureParser);					//Stanford Compatible
+	public: void applyAdvancedFeatures(GIAtranslatorVariablesClass* translatorVariables);
+		private: void extractDates(GIAtranslatorVariablesClass* translatorVariables);					//Stanford Compatible
 		#ifdef GIA_RELEX
-			private: void extractDatesRelex(GIAsentence* currentSentenceInList, const bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[]);
+			private: void extractDatesRelex(GIAtranslatorVariablesClass* translatorVariables);
 		#endif
 		#ifdef GIA_STANFORD_CORENLP
-			private: void extractDatesStanfordCoreNLP(const GIAsentence* currentSentenceInList, const bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[]);					//Stanford Specific	[requires NERTemp info to be set, + need to know if timeConditionNodes have already been added; if not add them now]
+			private: void extractDatesStanfordCoreNLP(GIAtranslatorVariablesClass* translatorVariables);					//Stanford Specific	[requires NERTemp info to be set, + need to know if timeConditionNodes have already been added; if not add them now]
 		#endif
-			#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 				public: void addTimeToSubstance(GIAentityNode* timeConditionEntity);
-			#endif
-		private: void extractQuantities(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, const int NLPfeatureParser);	//Stanford Compatible
+		private: void extractQuantities(GIAtranslatorVariablesClass* translatorVariables);	//Stanford Compatible
 		#ifdef GIA_RELEX
-			private: void extractQuantitiesRelex(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes);
+			private: void extractQuantitiesRelex(GIAtranslatorVariablesClass* translatorVariables);
 		#endif
 		#ifdef GIA_STANFORD_CORENLP
-			private: void extractQuantitiesStanfordCoreNLP(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes);		//Stanford Specific	[requires NERTemp info to be set]
+			private: void extractQuantitiesStanfordCoreNLP(GIAtranslatorVariablesClass* translatorVariables);		//Stanford Specific	[requires NERTemp info to be set]
 		#endif
 
-	#ifndef GIA_TRANSLATOR_XML_INTERPRETATION
-		private: void extractMeasures(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes);			//Stanford Incompatible [measures not supported]
-		private: void defineToBeAndToDoConditions(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes);	//Stanford Compatible
-		private: void extractQualities(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], const unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, const int NLPdependencyRelationsType);			//Stanford Compatible
-		private: void linkPropertiesParataxis(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[]);										//Stanford Compatible
-	#ifdef GIA_STANFORD_DEPENDENCY_RELATIONS
-	#ifndef GIA_TRANSLATOR_INTERPRET_CLAUSAL_COMPLEMENT_AS_ACTION_OBJECT_INSTEAD_OF_ACTION_PROPERTY
-		private: void defineClausalComplementProperties(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[]);				//Stanford Specific
-	#endif
-	#endif
-	#endif
-		public: void defineTenseOnlyTimeConditions(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[]);	//#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER || #ifdef GIA_TRANSLATOR_XML_INTERPRETATION
+		public: void defineTenseOnlyTimeConditions(GIAtranslatorVariablesClass* translatorVariables);	//#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER || #ifdef GIA_TRANSLATOR_XML_INTERPRETATION
 
 	#ifdef GIA_SPECIFIC_ACTION_NETWORK_INDEXES
-	#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
-		private: void defineActionConcepts1(GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[]);
-	#endif
-		private: void defineActionConcepts2(const GIAsentence* currentSentenceInList, const bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[]);
+		private: void defineActionConcepts1(GIAtranslatorVariablesClass* translatorVariables);
+		private: void defineActionConcepts2(GIAtranslatorVariablesClass* translatorVariables);
 	#endif
 
 	#ifdef GIA_CREATE_NEW_CONCEPT_FOR_EVERY_REFERENCE_TO_A_CONCEPT
-		private: void updateConceptDesignationBasedPropertyOwnerContext(const GIAsentence* currentSentenceInList, const bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[]);
+		private: void updateConceptDesignationBasedPropertyOwnerContext(GIAtranslatorVariablesClass* translatorVariables);
 	#endif
 };
 	

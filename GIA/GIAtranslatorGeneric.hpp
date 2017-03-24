@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorGeneric.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p4d 17-January-2017
+ * Project Version: 3a1a 26-February-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -56,29 +56,22 @@
 #define GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_undefined -1
 #define GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addSubstanceToSubstanceDefinition 1
 #define GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addActionToActionDefinition 2
-#define GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectPropertyToEntityAddOnlyIfOwnerIsProperty 3
-#define GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectPropertyToEntity 4
-#define GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectActionToEntity 5
-#define GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectActionToSubject 6
-#define GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectActionToObject 7
-#define GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectConditionToEntity 8
-#define GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectBeingDefinitionConditionToEntity 9
-#define GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectHavingPropertyConditionToEntity 10
-#define GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addDefinitionToEntity 11
+#define GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_connectPropertyToEntity 4
+#define GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_connectActionToEntity 5
+#define GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_connectActionToSubject 6
+#define GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_connectActionToObject 7
+#define GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_connectConditionToEntity 8
+#define GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_connectBeingDefinitionToEntity 9
+#define GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_connectHavingPropertyToEntity 10
+#define GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_connectDefinitionToEntity 11
 #ifdef GIA_ALIASES
 #define GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_mergeEntityNodesAddAlias 12
 #endif
-//#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
-//#define GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectConditionToSubject 13
-//#define GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectConditionToObject 14
-#define GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addAuxiliaryToEntity 13
-//#endif
 //#ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
-	#define GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addDefinitionToEntityMarkConnectionAsAlias 14
+	#define GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_connectDefinitionToEntityMarkConnectionAsAlias 14
 //#endif
-#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC_RECORD_AUX_INFO
-	#define GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_addOrConnectPropertyToEntityBasedOnHaveAux 15	//added 2o6b
-#endif
+#define GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_connectDefinitionToEntityWithAuxiliary 15
+#define GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_connectPropertyToEntityWithAuxiliary 16
 
 #define GIA_GENERIC_ENTITY_INTERP_EXECUTE_FUNCTION_addSubstanceToSubstanceDefinition 1
 #define GIA_GENERIC_ENTITY_INTERP_EXECUTE_FUNCTION_addActionToActionDefinition 2
@@ -108,21 +101,17 @@
 class GIAgenericDepRelInterpretationParameters
 {
 public:
-	GIAgenericDepRelInterpretationParameters(GIAsentence* newcurrentSentenceInList, bool newGIAentityNodeArrayFilled[], GIAentityNode* newGIAentityNodeArray[], bool executeOrReassign);
+	GIAgenericDepRelInterpretationParameters(GIAtranslatorVariablesClass* translatorVariablesNew, bool executeOrReassign);
 	~GIAgenericDepRelInterpretationParameters(void);
 
 		//general parameters
-	GIAsentence* currentSentenceInList;
-	bool* GIAentityNodeArrayFilled;
-	GIAentityNode** GIAentityNodeArray;
-	unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes;
-	int NLPdependencyRelationsType;
+	GIAtranslatorVariablesClass translatorVariables;
 
 		//execute function based on relations content or redistribute entities within relations
 	bool executeOrReassign;
 
 	//for relation1, relation2, relation3, and relation4 [GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS]:
-		//for entity1 (eg substanceEntity), entity2 (eg conditionObjectEntity, propertyEntity), and entity3/intermediaryEntity (eg conditionEntity, actionEntity) [3]:
+		//for entity1 (eg substanceEntity), entity2 (eg relationshipObjectEntity, propertyRelationshipObjectEntity), and entity3/intermediaryEntity (eg conditionRelationshipEntity, actionRelationshipEntity) [3]:
 
 		//relations to parse
 	int numberOfRelations;
@@ -166,7 +155,7 @@ public:
 		//special cases
 	vector<GIAentityCharacteristic*> specialCaseCharacteristicsTestAndVector[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];
 	vector<GIAentityCharacteristic*> specialCaseCharacteristicsTestOrVector[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];
-	vector<GIAentityCharacteristic*> specialCaseCharacteristicsTestOr2Vector[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];	//if 2 separate OR statements are required, eg for cases such as ((thingEntity->isSubstance || thingEntity->isNameQuery) && (definitionEntity->isSubstance || definitionEntity->isNameQuery))
+	vector<GIAentityCharacteristic*> specialCaseCharacteristicsTestOr2Vector[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];	//if 2 separate OR statements are required, eg for cases such as ((thingEntity->isSubstance || thingEntity->isNameQuery) && (definitionRelationshipObjectEntity->isSubstance || definitionRelationshipObjectEntity->isNameQuery))
 	vector<GIAentityCharacteristic*> specialCaseCharacteristicsTestOr3Vector[GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS][GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_ENTITIES_PER_RELATION];	//if 3 separate OR statements are required, eg for cases such as (thingEntity->grammaticalProperNounTemp || thingEntity->isNameQuery)
 
 		//entity index match tests
@@ -251,13 +240,11 @@ public:
 class GIAgenericEntityInterpretationParameters
 {
 public:
-	GIAgenericEntityInterpretationParameters(GIAsentence* newcurrentSentenceInList, bool newGIAentityNodeArrayFilled[], GIAentityNode* newGIAentityNodeArray[], bool executeOrReassign);
+	GIAgenericEntityInterpretationParameters(GIAtranslatorVariablesClass* translatorVariablesNew, bool executeOrReassign);
 	~GIAgenericEntityInterpretationParameters(void);
 
 		//general parameters
-	GIAsentence* currentSentenceInList;
-	bool* GIAentityNodeArrayFilled;
-	GIAentityNode** GIAentityNodeArray;
+	GIAtranslatorVariablesClass translatorVariables;
 
 		//execute function based on relations content or redistribute entities within relations
 	bool executeOrReassign;
@@ -316,6 +303,8 @@ class GIAtranslatorGenericClass
 #endif
 
 	public: bool determineFeatureIndexOfPreposition(GIAsentence* currentSentenceInList, const GIArelation* prepositionRelation, int* indexOfPreposition);
+	
+	GIAentityNode* addRelationshipToEntityAndGenerateSemanticRelations(GIAentityNode* relationshipSubjectEntity, GIAentityNode* relationshipObjectEntity, bool sameReferenceSet, const int relationshipEntityType, const string relationshipEntityName, GIAtranslatorVariablesClass* translatorVariables, bool isArtificial, int relationshipSubjectEntityIndex, int relationshipObjectEntityIndex);
 };
 
 #endif

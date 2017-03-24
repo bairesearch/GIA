@@ -25,7 +25,7 @@
  * File Name: GIAxmlConversion.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p4d 17-January-2017
+ * Project Version: 3a1a 26-February-2017
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  *
  *******************************************************************************/
@@ -69,13 +69,11 @@
 static string entityTypeNodeContainerXMLtags[GIA_ENTITY_NUMBER_OF_TYPES] = {NET_XML_TAG_networkIndexEntityNodeContainer, NET_XML_TAG_substanceEntityNodeContainer, NET_XML_TAG_actionEntityNodeContainer, NET_XML_TAG_conditionEntityNodeContainer, NET_XML_TAG_conceptEntityNodeContainer, NET_XML_TAG_qualityEntityNodeContainer};
 
 #define NET_XML_TAG_actionNodeReference ((string)"actionNodeReference")
-#define NET_XML_ATTRIBUTE_actionNodeID ((string)"actionNodeID")
+#define NET_XML_TAG_conditionNodeReference ((string)"conditionNodeReference")
+#define NET_XML_TAG_propertyNodeReference ((string)"propertyNodeReference")
+#define NET_XML_TAG_definitionNodeReference ((string)"definitionNodeReference")
 #define NET_XML_TAG_entityNodeReference ((string)"entityNodeReference")
 #define NET_XML_ATTRIBUTE_entityNodeID ((string)"entityNodeID")
-#define NET_XML_TAG_conditionNodeReference ((string)"conditionNodeReference")
-#define NET_XML_ATTRIBUTE_conditionNodeID ((string)"conditionNodeID")
-#define NET_XML_TAG_conceptNodeReference ((string)"conceptNodeReference")
-#define NET_XML_ATTRIBUTE_conceptNodeID ((string)"conceptNodeID")
 
 /*CXL*/
 
@@ -120,27 +118,27 @@ static string entityTypeNodeContainerXMLtags[GIA_ENTITY_NUMBER_OF_TYPES] = {NET_
 #define NET_XML_ATTRIBUTE_isExpletive ((string)"isExpletive")
 
 //
-#define NET_XML_TAG_ActionNodeList ((string)"actionNodeList")
-#define NET_XML_TAG_IncomingActionNodeList ((string)"incomingActionNodeList")
-#define NET_XML_TAG_actionSubjectEntity ((string)"actionSubjectEntity")
-#define NET_XML_TAG_actionObjectEntity ((string)"actionObjectEntity")
+#define NET_XML_TAG_actionNodeList ((string)"actionNodeList")
+#define NET_XML_TAG_actionReverseNodeList ((string)"actionReverseNodeList")
+//
+#define NET_XML_TAG_conditionNodeList ((string)"conditionNodeList")
+#define NET_XML_TAG_conditionReverseNodeList ((string)"conditionReverseNodeList")
+//
+#define NET_XML_TAG_propertyNodeList ((string)"propertyNodeList")
+#define NET_XML_TAG_propertyReverseNodeList ((string)"propertyReverseNodeList")	//this was removed 25 Sept 2011 - assume using entityNodeContainingThisSubstance instead, and was restored on 8 Dec 2011
+//#define NET_XML_ATTRIBUTE_entityNodeContainingThisSubstance ((string)"entityNodeContainingThisSubstance")	//removed 8 Dec 2011
+//
+#define NET_XML_TAG_definitionNodeList ((string)"definitionNodeList")
+#define NET_XML_TAG_definitionReverseNodeList ((string)"definitionReverseNodeList")
+//
+#define NET_XML_TAG_relationshipSubjectEntity ((string)"relationshipSubjectEntity")
+#define NET_XML_TAG_relationshipObjectEntity ((string)"relationshipObjectEntity")
+//
+#define NET_XML_TAG_instanceNodeList ((string)"instanceNodeList")
+#define NET_XML_TAG_instanceReverseNodeList ((string)"instanceReverseNodeList")
 //
 #define NET_XML_ATTRIBUTE_conditionType ((string)"conditionType")	//time,location,action,substance
 #define NET_XML_TAG_timeConditionNode ((string)"timeConditionNode")
-//
-#define NET_XML_TAG_SubstanceNodeList ((string)"propertyNodeList")
-#define NET_XML_TAG_SubstanceNodeReverseList ((string)"propertyNodeReverseList")	//this was removed 25 Sept 2011 - assume using entityNodeContainingThisSubstance instead, and was restored on 8 Dec 2011
-//#define NET_XML_ATTRIBUTE_entityNodeContainingThisSubstance ((string)"entityNodeContainingThisSubstance")	//removed 8 Dec 2011
-#define NET_XML_TAG_entityNodeDefiningThisSubstance ((string)"entityNodeDefiningThisInstance")
-//
-#define NET_XML_TAG_EntityNodeDefinitionList ((string)"entityNodeDefinitionList")
-#define NET_XML_TAG_EntityNodeDefinitionReverseList ((string)"entityNodeDefinitionReverseList")
-#define NET_XML_TAG_AssociatedSubstanceNodeList ((string)"associatedInstanceNodeList")
-//
-#define NET_XML_TAG_ConditionNodeList ((string)"conditionNodeList")
-#define NET_XML_TAG_IncomingConditionNodeList ((string)"incomingConditionNodeList")
-#define NET_XML_TAG_conditionSubjectEntity ((string)"conditionSubjectEntity")
-#define NET_XML_TAG_conditionObjectEntity ((string)"conditionObjectEntity")
 //
 #define NET_XML_ATTRIBUTE_grammaticalNumber ((string)"grammaticalNumber")
 #define NET_XML_ATTRIBUTE_hasQuantity ((string)"hasQuantity")
@@ -185,21 +183,21 @@ static string entityTypeNodeContainerXMLtags[GIA_ENTITY_NUMBER_OF_TYPES] = {NET_
 #define NET_XML_ATTRIBUTE_grammaticalTenseTemp ((string)"grammaticalTenseTemp")	//this is only used for NLC
 #endif
 
-#ifdef GIA_LRP_NORMALISE_PREPOSITIONS
-#ifdef GIA_LRP_DETECT_PREPOSITION_TYPE
+#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_PREPOSITIONS
+#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DETECT_PREPOSITION_TYPE
 #define NET_XML_ATTRIBUTE_conditionType2 ((string)"conditionType2")
 #endif
-#ifdef GIA_LRP_NORMALISE_TWOWAY_PREPOSITIONS
+#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_TWOWAY_PREPOSITIONS
 #define NET_XML_ATTRIBUTE_conditionTwoWay ((string)"conditionTwoWay")
-#ifdef GIA_LRP_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED
+#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED
 #define NET_XML_ATTRIBUTE_inverseConditionTwoWay ((string)"inverseConditionTwoWay")
 #endif
 #endif
 #endif
 
 
-static string entityVectorConnectionXMLtagNameArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {NET_XML_TAG_ActionNodeList, NET_XML_TAG_IncomingActionNodeList, NET_XML_TAG_ConditionNodeList, NET_XML_TAG_IncomingConditionNodeList, NET_XML_TAG_SubstanceNodeList, NET_XML_TAG_SubstanceNodeReverseList, NET_XML_TAG_EntityNodeDefinitionList, NET_XML_TAG_EntityNodeDefinitionReverseList, NET_XML_TAG_AssociatedSubstanceNodeList, NET_XML_TAG_actionSubjectEntity, NET_XML_TAG_actionObjectEntity, NET_XML_TAG_conditionSubjectEntity, NET_XML_TAG_conditionObjectEntity, NET_XML_TAG_entityNodeDefiningThisSubstance};
-static string entityVectorConnectionXMLtagNameCrossReferenceNodeTypeArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {NET_XML_TAG_actionNodeReference, NET_XML_TAG_actionNodeReference, NET_XML_TAG_conditionNodeReference, NET_XML_TAG_conditionNodeReference, NET_XML_TAG_entityNodeReference, NET_XML_TAG_entityNodeReference, NET_XML_TAG_entityNodeReference, NET_XML_TAG_entityNodeReference, NET_XML_TAG_entityNodeReference, NET_XML_TAG_entityNodeReference, NET_XML_TAG_entityNodeReference, NET_XML_TAG_entityNodeReference, NET_XML_TAG_entityNodeReference, NET_XML_TAG_entityNodeReference};
+static string entityVectorConnectionXMLtagNameArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {NET_XML_TAG_actionNodeList, NET_XML_TAG_actionReverseNodeList, NET_XML_TAG_conditionNodeList, NET_XML_TAG_conditionReverseNodeList, NET_XML_TAG_propertyNodeList, NET_XML_TAG_propertyReverseNodeList, NET_XML_TAG_definitionNodeList, NET_XML_TAG_definitionReverseNodeList, NET_XML_TAG_relationshipSubjectEntity, NET_XML_TAG_relationshipObjectEntity, NET_XML_TAG_instanceNodeList, NET_XML_TAG_instanceReverseNodeList};
+static string entityVectorConnectionXMLtagNameCrossReferenceNodeTypeArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {NET_XML_TAG_actionNodeReference, NET_XML_TAG_actionNodeReference, NET_XML_TAG_conditionNodeReference, NET_XML_TAG_conditionNodeReference, NET_XML_TAG_propertyNodeReference, NET_XML_TAG_propertyNodeReference, NET_XML_TAG_definitionNodeReference, NET_XML_TAG_definitionNodeReference, NET_XML_TAG_entityNodeReference, NET_XML_TAG_entityNodeReference, NET_XML_TAG_entityNodeReference, NET_XML_TAG_entityNodeReference};
 
 
 

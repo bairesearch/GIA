@@ -25,7 +25,7 @@
  * File Name: GIAxmlConversion.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p4d 17-January-2017
+ * Project Version: 3a1a 26-February-2017
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  * NB this function creates entity idActiveListReorderdIDforXMLsave values upon write to speed up linking process (does not use original idActiveList values)
  * NB this function creates entity idActiveList values upon read (it could create idActiveListReorderdIDforXMLsave values instead - however currently it is assumed that when an XML file is loaded, this will populate the idActiveList in its entirety)
@@ -113,9 +113,7 @@ bool GIAxmlConversionClass::readSemanticNetXMLfileOptimised(const string xmlFile
 		entityNodesActiveListSentences->insert(pair<int, vector<GIAentityNode*>*>(sentenceIndex, entityNodesActiveListComplete));
 	}
 
-	#ifdef GIA_FREE_MEMORY1
 	delete entityNodesActiveListNetworkIndexes;
-	#endif
 
 	return result;
 }
@@ -141,9 +139,7 @@ bool GIAxmlConversionClass::readSemanticNetXMLfile(const string xmlFileName, vec
 		result = false;
 	}
 
-	#ifdef GIA_FREE_MEMORY1
 	delete firstTagInXMLFile;
-	#endif
 
 	return result;
 }
@@ -161,12 +157,12 @@ bool GIAxmlConversionClass::parseSemanticNetTag(XMLparserTag* firstTagInNetwork,
 	vector<GIAentityNode*> entityNodesActiveListConcepts;
 	vector<GIAentityNode*> entityNodesActiveListQualities;
 	vector<GIAentityNode*>* entityNodesActiveListArray[GIA_ENTITY_NUMBER_OF_TYPES];
-	entityNodesActiveListArray[GIA_ENTITY_TYPE_TYPE_NETWORK_INDEX] = entityNodesActiveListNetworkIndexes;
-	entityNodesActiveListArray[GIA_ENTITY_TYPE_TYPE_SUBSTANCE] = &entityNodesActiveListSubstances;
-	entityNodesActiveListArray[GIA_ENTITY_TYPE_TYPE_ACTION] = &entityNodesActiveListActions;
-	entityNodesActiveListArray[GIA_ENTITY_TYPE_TYPE_CONDITION] = &entityNodesActiveListConditions;
-	entityNodesActiveListArray[GIA_ENTITY_TYPE_TYPE_CONCEPT] = &entityNodesActiveListConcepts;
-	entityNodesActiveListArray[GIA_ENTITY_TYPE_TYPE_QUALITY] = &entityNodesActiveListQualities;
+	entityNodesActiveListArray[GIA_ENTITY_TYPE_NETWORK_INDEX] = entityNodesActiveListNetworkIndexes;
+	entityNodesActiveListArray[GIA_ENTITY_TYPE_SUBSTANCE] = &entityNodesActiveListSubstances;
+	entityNodesActiveListArray[GIA_ENTITY_TYPE_ACTION] = &entityNodesActiveListActions;
+	entityNodesActiveListArray[GIA_ENTITY_TYPE_CONDITION] = &entityNodesActiveListConditions;
+	entityNodesActiveListArray[GIA_ENTITY_TYPE_CONCEPT] = &entityNodesActiveListConcepts;
+	entityNodesActiveListArray[GIA_ENTITY_TYPE_QUALITY] = &entityNodesActiveListQualities;
 
 	if(currentTagUpdatedL1->name == NET_XML_TAG_semanticNetwork)
 	{
@@ -329,13 +325,13 @@ bool GIAxmlConversionClass::parseEntityNodeTag(XMLparserTag* firstTagInEntityNod
 	bool isExpletiveFound = false;
 	#endif
 	
-	#ifdef GIA_LRP_NORMALISE_PREPOSITIONS
-	#ifdef GIA_LRP_DETECT_PREPOSITION_TYPE
+	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_PREPOSITIONS
+	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DETECT_PREPOSITION_TYPE
 	bool conditionType2Found = false;
 	#endif
-	#ifdef GIA_LRP_NORMALISE_TWOWAY_PREPOSITIONS
+	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_TWOWAY_PREPOSITIONS
 	bool conditionTwoWayFound = false;
-	#ifdef GIA_LRP_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED
+	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED
 	bool inverseConditionTwoWayFound = false;
 	#endif
 	#endif
@@ -612,8 +608,8 @@ bool GIAxmlConversionClass::parseEntityNodeTag(XMLparserTag* firstTagInEntityNod
 			}
 			#endif
 
-			#ifdef GIA_LRP_NORMALISE_PREPOSITIONS
-			#ifdef GIA_LRP_DETECT_PREPOSITION_TYPE
+			#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_PREPOSITIONS
+			#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DETECT_PREPOSITION_TYPE
 			else if(currentAttribute->name == NET_XML_ATTRIBUTE_conditionType2)
 			{
 				string attributeValue = currentAttribute->value.c_str();
@@ -621,14 +617,14 @@ bool GIAxmlConversionClass::parseEntityNodeTag(XMLparserTag* firstTagInEntityNod
 				conditionType2Found = true;
 			}
 			#endif
-			#ifdef GIA_LRP_NORMALISE_TWOWAY_PREPOSITIONS
+			#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_TWOWAY_PREPOSITIONS
 			else if(currentAttribute->name == NET_XML_ATTRIBUTE_conditionTwoWay)
 			{
 				int attributeValue = SHAREDvars.convertStringToInt(currentAttribute->value);
 				entityNode->conditionTwoWay = attributeValue;
 				conditionTwoWayFound = true;
 			}
-			#ifdef GIA_LRP_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED
+			#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED
 			else if(currentAttribute->name == NET_XML_ATTRIBUTE_inverseConditionTwoWay)
 			{
 				int attributeValue = SHAREDvars.convertStringToInt(currentAttribute->value);
@@ -682,7 +678,7 @@ bool GIAxmlConversionClass::parseEntityNodeTag(XMLparserTag* firstTagInEntityNod
 			currentTagUpdatedL3=currentTagUpdatedL3->nextTag;
 		}
 
-		if(entityNode->entityType == GIA_ENTITY_TYPE_TYPE_SUBSTANCE)
+		if(entityNode->entityType == GIA_ENTITY_TYPE_SUBSTANCE)
 		{
 			/*
 			if(!entityNodeContainingThisSubstanceFound)
@@ -691,7 +687,7 @@ bool GIAxmlConversionClass::parseEntityNodeTag(XMLparserTag* firstTagInEntityNod
 			}
 			*/
 			#ifndef GIA_TEMPORARILY_DISABLE_GIA_XML_READ_CHECKS
-			if(!entityVectorConnectionNodeFoundArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_NODE_DEFINING_INSTANCE])
+			if(!entityVectorConnectionNodeFoundArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_INSTANCE_REVERSE])
 			{
 				cout << "parseEntityNodeTag error: isSubstanceFound && entityNode->isSubstance && !entityNodeDefiningThisSubstanceFound" << endl;
 				result = false;
@@ -746,11 +742,6 @@ bool GIAxmlConversionClass::parseEntityVectorConnectionNodeListTag(const XMLpars
 			#endif
 			#ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
 			bool isAliasFound = false;
-			#endif
-			#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC_RECORD_AUX_INFO
-			bool negativeFound = false;
-			bool grammaticalTenseModifierArrayTempFound = false;
-			bool grammaticalTenseTempFound = false;
 			#endif
 			#endif
 
@@ -812,26 +803,6 @@ bool GIAxmlConversionClass::parseEntityVectorConnectionNodeListTag(const XMLpars
 					#endif
 				}
 				#endif
-				#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC_RECORD_AUX_INFO
-				else if(currentAttribute->name == NET_XML_ATTRIBUTE_negative)
-				{
-					bool attributeValue = SHAREDvars.convertStringToInt(currentAttribute->value);
-					newConnection->negative = attributeValue;
-					negativeFound = true;
-				}
-				else if(currentAttribute->name == NET_XML_ATTRIBUTE_grammaticalTenseModifierArrayTemp)
-				{
-					string attributeValue = currentAttribute->value;
-					this->convertStringToBooleanArray(attributeValue, newConnection->grammaticalTenseModifierArrayTemp, GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES);
-					grammaticalTenseModifierArrayTempFound = true;
-				}
-				else if(currentAttribute->name == NET_XML_ATTRIBUTE_grammaticalTenseTemp)
-				{
-					string attributeValue = currentAttribute->value;
-					newConnection->grammaticalTenseTemp = SHAREDvars.convertStringToInt(currentAttribute->value);
-					grammaticalTenseTempFound = true;
-				}
-				#endif
 				#endif
 
 				currentAttribute = currentAttribute->nextAttribute;
@@ -840,6 +811,9 @@ bool GIAxmlConversionClass::parseEntityVectorConnectionNodeListTag(const XMLpars
 			{
 				GIAentityNode* targetEntity = GIAdatabase.findActiveEntityNodeByID(idActiveList, entityNodesActiveListComplete);
 				newConnection->entity = targetEntity;
+				#ifdef GIA_ENTITY_CONNECTION_RECORD_ENTITY_ORIGIN
+				newConnection->entityOrigin = entityNode;
+				#endif
 				#ifdef GIA_DATABASE
 				newConnection->referenceLoaded = true;
 				newConnection->entityName = targetEntity->entityName;
@@ -980,9 +954,7 @@ bool GIAxmlConversionClass::writeSemanticNetXMLFileOptimised(const string xmlFil
 	bool result;
 	result = this->writeSemanticNetXMLFile(xmlFileName, entityNodesActiveListComplete, entityNodesActiveListNetworkIndexes);
 
-	#ifdef GIA_FREE_MEMORY1
 	delete entityNodesActiveListNetworkIndexes;
-	#endif
 
 	return result;
 }
@@ -1037,9 +1009,7 @@ bool GIAxmlConversionClass::writeSemanticNetXMLFile(const string xmlFileName, ve
 		result = false;
 	}
 
-	#ifdef GIA_FREE_MEMORY1
 	delete firstTagInXMLFile;
-	#endif
 
 	return result;
 }
@@ -1325,17 +1295,17 @@ XMLparserTag* GIAxmlConversionClass::generateXMLentityNodeTag(XMLparserTag* curr
 	#endif
 			
 
-	#ifdef GIA_LRP_NORMALISE_PREPOSITIONS
-	#ifdef GIA_LRP_DETECT_PREPOSITION_TYPE
+	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_PREPOSITIONS
+	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DETECT_PREPOSITION_TYPE
 	currentAttribute->name = NET_XML_ATTRIBUTE_conditionType2;
 	currentAttribute->value = currentEntity->conditionType2;
 	currentAttribute = XMLparserClass.createNewAttribute(currentAttribute);
 	#endif
-	#ifdef GIA_LRP_NORMALISE_TWOWAY_PREPOSITIONS
+	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_TWOWAY_PREPOSITIONS
 	currentAttribute->name = NET_XML_ATTRIBUTE_conditionTwoWay;
 	currentAttribute->value = SHAREDvars.convertIntToString(int(currentEntity->conditionTwoWay));
 	currentAttribute = XMLparserClass.createNewAttribute(currentAttribute);
-	#ifdef GIA_LRP_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED
+	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED
 	currentAttribute->name = NET_XML_ATTRIBUTE_inverseConditionTwoWay;
 	currentAttribute->value = SHAREDvars.convertIntToString(int(currentEntity->inverseConditionTwoWay));
 	currentAttribute = XMLparserClass.createNewAttribute(currentAttribute);
@@ -1407,20 +1377,6 @@ XMLparserTag* GIAxmlConversionClass::generateXMLentityNodeTag(XMLparserTag* curr
 						#ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
 						currentAttribute->name = NET_XML_ATTRIBUTE_isAlias;
 						currentAttribute->value = SHAREDvars.convertIntToString(int(connection->isAlias));
-						currentAttribute = XMLparserClass.createNewAttribute(currentAttribute);
-						#endif
-						
-						#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC_RECORD_AUX_INFO
-						currentAttribute->name = NET_XML_ATTRIBUTE_grammaticalTenseModifierArrayTemp;
-						currentAttribute->value = this->convertBooleanArrayToString(currentEntity->grammaticalTenseModifierArrayTemp, GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES);
-						currentAttribute = XMLparserClass.createNewAttribute(currentAttribute);
-					
-						currentAttribute->name = NET_XML_ATTRIBUTE_grammaticalTenseTemp;
-						currentAttribute->value = SHAREDvars.convertIntToString(int(currentEntity->grammaticalTenseTemp));
-						currentAttribute = XMLparserClass.createNewAttribute(currentAttribute);
-						
-						currentAttribute->name = NET_XML_ATTRIBUTE_negative;
-						currentAttribute->value = SHAREDvars.convertIntToString(int(currentEntity->negative));
 						currentAttribute = XMLparserClass.createNewAttribute(currentAttribute);
 						#endif
 

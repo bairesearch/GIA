@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorRules.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 2p4d 17-January-2017
+ * Project Version: 3a1a 26-February-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -36,7 +36,7 @@
 
 #ifdef GIA_TRANSLATOR_XML_INTERPRETATION
 
-bool GIAtranslatorRulesClass::applyGIATranslatorGenericXMLfunctions(const string translatorFileName, GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, GIAfeature* featureArrayTemp[], const int NLPdependencyRelationsType, const int NLPfeatureParser, const bool linkPreestablishedReferencesGIA)
+bool GIAtranslatorRulesClass::applyGIATranslatorGenericXMLfunctions(const string translatorFileName, GIAtranslatorVariablesClass* translatorVariables, const bool linkPreestablishedReferencesGIA)
 {
 	//int tempindex = 1;
 
@@ -126,181 +126,16 @@ bool GIAtranslatorRulesClass::applyGIATranslatorGenericXMLfunctions(const string
 											if(functionName == "linkSubjectObjectRelationships")
 											{
 												cout << "" << endl;
-												GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
+												GIArelation* currentRelationInList = translatorVariables->currentSentenceInList->firstRelationInList;
 												while(currentRelationInList->next != NULL)
 												{
 													if(!(currentRelationInList->disabled))
 													{
 														string relationType = currentRelationInList->relationType;
-														GIAentityNode* relationGoverner = GIAentityNodeArray[currentRelationInList->relationGovernorIndex];
-														GIAentityNode* relationDependent = GIAentityNodeArray[currentRelationInList->relationDependentIndex];
+														GIAentityNode* relationGoverner = translatorVariables->GIAentityNodeArray[currentRelationInList->relationGovernorIndex];
+														GIAentityNode* relationDependent = translatorVariables->GIAentityNodeArray[currentRelationInList->relationDependentIndex];
 
 														cout << currentRelationInList->relationType << "(" << currentRelationInList->relationGovernor << ", " << currentRelationInList->relationDependent << ")" << endl;
-													}
-													currentRelationInList = currentRelationInList->next;
-												}
-											}
-											*/
-																						
-											/*
-											cout << "\t applyGIATranslatorGenericXMLparam: " << functionName << "{}:" << endl;
-											for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
-											{
-												if(GIAentityNodeArrayFilled[w])
-												{
-													if(GIAentityNodeArray[w]->entityName == "deliver")
-													{
-														cout << "GIAentityNodeArray[w]->stanfordPOStemp" << GIAentityNodeArray[w]->stanfordPOStemp << endl;
-													}
-												}
-											}
-											*/
-											
-											/*
-											cout << "\t applyGIATranslatorGenericXMLparam: " << functionName << "{}:" << endl;
-											for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
-											{
-												if(GIAentityNodeArrayFilled[w])
-												{
-													if(!(GIAentityNodeArray[w]->entityType == GIA_ENTITY_TYPE_TYPE_NETWORK_INDEX))
-													{
-														if(!(GIAentityNodeArray[w]->disabled))
-														{
-															cout << GIAentityNodeArray[w]->entityName << " !networkIndex && !disabled" << endl;
-														}
-													}
-												}
-											}
-											*/
-
-											/*
-											cout << "\t applyGIATranslatorGenericXMLparam: " << functionName << "{}:" << endl;
-											for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
-											{
-												if(GIAentityNodeArrayFilled[w])
-												{
-													if(!(GIAentityNodeArray[w]->disabled))
-													{
-														cout << "GIAentityNodeArray[" << w << "]->grammaticalPredeterminerTemp = " << GIAentityNodeArray[w]->grammaticalPredeterminerTemp << endl;
-													}
-												}
-											}
-											*/
-
-											/*
-											if(currentSentenceInList->sentenceIndex == 20)
-											{
-												cout << "\t applyGIATranslatorGenericXMLparam: " << functionName << "{}:" << endl;
-												for(unordered_map<string, GIAentityNode*>::iterator networkIndexEntityNodesListIter2 = entityNodesActiveListNetworkIndexes->begin(); networkIndexEntityNodesListIter2 != entityNodesActiveListNetworkIndexes->end(); networkIndexEntityNodesListIter2++)
-												{
-													GIAentityNode* entityNode = networkIndexEntityNodesListIter2->second;
-													cout << "entityNode->disabled = " << entityNode->entityName << ", " << int(entityNode->disabled) << endl;
-												}
-											}
-											*/
-
-											/*
-											GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
-											while(currentRelationInList->next != NULL)
-											{
-												if(!(currentRelationInList->disabled))
-												{
-													string relationType = currentRelationInList->relationType;
-													GIAentityNode* relationGoverner = GIAentityNodeArray[currentRelationInList->relationGovernorIndex];
-													GIAentityNode* relationDependent = GIAentityNodeArray[currentRelationInList->relationDependentIndex];
-
-													cout << currentRelationInList->relationType << "(" << currentRelationInList->relationGovernor << ", " << currentRelationInList->relationDependent << ")" << endl;
-												}
-												currentRelationInList = currentRelationInList->next;
-											}
-											
-											if(functionName == "redistributeStanfordRelationsExpletives")
-											{
-												cout << "" << endl;
-												GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
-												while(currentRelationInList->next != NULL)
-												{
-													if(!(currentRelationInList->disabled))
-													{
-														string relationType = currentRelationInList->relationType;
-														GIAentityNode* relationGoverner = GIAentityNodeArray[currentRelationInList->relationGovernorIndex];
-														GIAentityNode* relationDependent = GIAentityNodeArray[currentRelationInList->relationDependentIndex];
-
-														cout << currentRelationInList->relationType << "(" << currentRelationInList->relationGovernor << ", " << currentRelationInList->relationDependent << ")" << endl;
-													}
-													currentRelationInList = currentRelationInList->next;
-												}
-											}
-											*/
-
-											/*
-											if(functionName == "redistributeStanfordRelationsInterpretNamedAsDefinition2")
-											{
-												GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
-												while(currentRelationInList->next != NULL)
-												{
-													if(!(currentRelationInList->disabled))
-													{
-														string relationType = currentRelationInList->relationType;
-														GIAentityNode* relationGoverner = GIAentityNodeArray[currentRelationInList->relationGovernorIndex];
-														GIAentityNode* relationDependent = GIAentityNodeArray[currentRelationInList->relationDependentIndex];
-
-														cout << "relationType = " << currentRelationInList->relationType << endl;
-														cout << "relationGoverner = " << currentRelationInList->relationGovernor << endl;
-														cout << "relationDependent = " << currentRelationInList->relationDependent << endl;
-														cout << "relationGovernerIndex = " << currentRelationInList->relationGovernorIndex << endl;
-														cout << "relationDependentIndex = " << currentRelationInList->relationDependentIndex << endl;
-														cout << "GIAentityNodeArray relationGoverner->entityName = " << relationGoverner->entityName << endl;
-														cout << "GIAentityNodeArray relationDependent->entityName = " << relationDependent->entityName << endl;
-
-															//cout << currentRelationInList->relationType << "(" << currentRelationInList->relationGovernor << ", " << currentRelationInList->relationDependent << ")" << endl;
-
-															//cout << "relationGoverner->grammaticalWordTypeTemp = " << relationGoverner->grammaticalWordTypeTemp << endl;
-															//cout << "relationGoverner->wasReference = " << relationGoverner->wasReference << endl;
-															//cout << "relationGoverner->grammaticalPronounTemp = " << relationGoverner->grammaticalPronounTemp << endl;
-															//cout << "relationGoverner->grammaticalNumber = " << relationGoverner->grammaticalNumber << endl;
-															//cout << "relationGoverner->grammaticalDefiniteTemp = " << relationGoverner->grammaticalDefiniteTemp << endl;
-															//cout << "relationGoverner->grammaticalIndefinitePluralTemp = " << relationGoverner->grammaticalIndefinitePluralTemp << endl;
-															//cout << "relationGoverner->isConcept = " << relationGoverner->isConcept << endl;
-
-															//cout << "relationDependent->grammaticalWordTypeTemp = " << relationDependent->grammaticalWordTypeTemp << endl;
-															//cout << "relationDependent->wasReference = " << relationDependent->wasReference << endl;
-															//cout << "relationDependent->grammaticalPronounTemp = " << relationDependent->grammaticalPronounTemp << endl;
-															//cout << "relationDependent->grammaticalNumber = " << relationDependent->grammaticalNumber << endl;
-															//cout << "relationDependent->grammaticalDefiniteTemp = " << relationDependent->grammaticalDefiniteTemp << endl;
-															//cout << "relationDependent->grammaticalIndefinitePluralTemp = " << relationDependent->grammaticalIndefinitePluralTemp << endl;
-															//cout << "relationDependent->isConcept = " << relationDependent->isConcept << endl;
-
-															//cout << "relationGoverner->grammaticalNumber = " << relationGoverner->grammaticalNumber << endl;
-															//cout << "relationGoverner->grammaticalDefiniteTemp = " << relationGoverner->grammaticalDefiniteTemp << endl;
-															//cout << "relationGoverner->grammaticalIndefinitePluralTemp = " << relationGoverner->grammaticalIndefinitePluralTemp << endl;
-															//cout << "relationGoverner->grammaticalProperNounTemp = " << relationGoverner->grammaticalProperNounTemp << endl;
-															//cout << "relationGoverner->mustSetIsConceptBasedOnApposRelation = " << relationGoverner->mustSetIsConceptBasedOnApposRelation << endl;
-															//cout << "alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp = " << relationGoverner->alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp << endl;
-
-															//cout << "relationDependent->grammaticalNumber = " << relationDependent->grammaticalNumber << endl;
-															//cout << "relationDependent->grammaticalDefiniteTemp = " << relationDependent->grammaticalDefiniteTemp << endl;
-															//cout << "relationDependent->grammaticalIndefinitePluralTemp = " << relationDependent->grammaticalIndefinitePluralTemp << endl;
-															//cout << "relationDependent->grammaticalProperNounTemp = " << relationDependent->grammaticalProperNounTemp << endl;
-															//cout << "relationDependent->mustSetIsConceptBasedOnApposRelation = " << relationDependent->mustSetIsConceptBasedOnApposRelation << endl;
-															//cout << "alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp = " << relationDependent->alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp << endl;
-
-															//cout << "relationGoverner->isSubstance = " << relationGoverner->isSubstance << endl;
-															//cout << "relationGoverner->isNameQuery = " << relationGoverner->isNameQuery << endl;
-															//cout << "relationGoverner->isConcept = " << relationGoverner->isConcept << endl;
-															//cout << "relationGoverner->hasAssociatedTime = " << relationGoverner->hasAssociatedTime << endl;
-															//cout << "relationGoverner->grammaticalProperNounTemp = " << relationGoverner->grammaticalProperNounTemp << endl;
-															//cout << "relationGoverner->isNameQuery = " << relationGoverner->isNameQuery << endl;
-
-															//cout << "relationDependent->isSubstance = " << relationDependent->isSubstance << endl;
-															//cout << "relationDependent->isNameQuery = " << relationDependent->isNameQuery << endl;
-															//cout << "relationDependent->isConcept = " << relationDependent->isConcept << endl;
-															//cout << "relationDependent->hasAssociatedTime = " << relationDependent->hasAssociatedTime << endl;
-															//cout << "relationDependent->grammaticalProperNounTemp = " << relationDependent->grammaticalProperNounTemp << endl;
-															//cout << "relationDependent->isNameQuery = " << relationDependent->isNameQuery << endl;
-
-
-
 													}
 													currentRelationInList = currentRelationInList->next;
 												}
@@ -309,7 +144,7 @@ bool GIAtranslatorRulesClass::applyGIATranslatorGenericXMLfunctions(const string
 											#endif
 											
 											//load options and execute genericDependecyRelationInterpretation/genericEntityInterpretation
-											if(!this->applyGIATranslatorGenericXMLparam(currentParamTag, depRelOrEntity, executeOrReassign, currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, entityNodesActiveListNetworkIndexes, featureArrayTemp, NLPdependencyRelationsType, NLPfeatureParser, linkPreestablishedReferencesGIA, functionName))
+											if(!this->applyGIATranslatorGenericXMLparam(currentParamTag, depRelOrEntity, executeOrReassign, translatorVariables, linkPreestablishedReferencesGIA, functionName))
 											{
 											}
 											else
@@ -326,41 +161,20 @@ bool GIAtranslatorRulesClass::applyGIATranslatorGenericXMLfunctions(const string
 												cout << "\t applyGIATranslatorGenericXMLparam: " << functionName << "{}:" << endl;
 												for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
 												{
-													if(GIAentityNodeArrayFilled[w])
+													if(translatorVariables->GIAentityNodeArrayFilled[w])
 													{
-														if(GIAentityNodeArray[w]->entityName == "chess")
+														if(translatorVariables->GIAentityNodeArray[w]->entityName == "chess")
 														{
-															cout << "GIAentityNodeArray[w]->grammaticalWordTypeTemp" << GIAentityNodeArray[w]->grammaticalWordTypeTemp << endl;
-															//cout << "GIAentityNodeArray[w]->wasReference" << GIAentityNodeArray[w]->wasReference << endl;
-															cout << "GIAentityNodeArray[w]->grammaticalPronounTemp" << GIAentityNodeArray[w]->grammaticalPronounTemp << endl;
-															cout << "GIAentityNodeArray[w]->grammaticalNumber" << GIAentityNodeArray[w]->grammaticalNumber << endl;
-															cout << "GIAentityNodeArray[w]->grammaticalDefiniteTemp" << GIAentityNodeArray[w]->grammaticalDefiniteTemp << endl;
-															cout << "GIAentityNodeArray[w]->grammaticalIndefinitePluralTemp" << GIAentityNodeArray[w]->grammaticalIndefinitePluralTemp << endl;
-															cout << "GIAentityNodeArray[w]->grammaticalProperNounTemp" << GIAentityNodeArray[w]->grammaticalProperNounTemp << endl;
-															cout << "GIAentityNodeArray[w]->isConcept" << GIAentityNodeArray[w]->isConcept << endl;
+															cout << "GIAentityNodeArray[w]->grammaticalWordTypeTemp" << translatorVariables->GIAentityNodeArray[w]->grammaticalWordTypeTemp << endl;
+															//cout << "GIAentityNodeArray[w]->wasReference" << translatorVariables->GIAentityNodeArray[w]->wasReference << endl;
+															cout << "GIAentityNodeArray[w]->grammaticalPronounTemp" << translatorVariables->GIAentityNodeArray[w]->grammaticalPronounTemp << endl;
+															cout << "GIAentityNodeArray[w]->grammaticalNumber" << translatorVariables->GIAentityNodeArray[w]->grammaticalNumber << endl;
+															cout << "GIAentityNodeArray[w]->grammaticalDefiniteTemp" << translatorVariables->GIAentityNodeArray[w]->grammaticalDefiniteTemp << endl;
+															cout << "GIAentityNodeArray[w]->grammaticalIndefinitePluralTemp" << translatorVariables->GIAentityNodeArray[w]->grammaticalIndefinitePluralTemp << endl;
+															cout << "GIAentityNodeArray[w]->grammaticalProperNounTemp" << translatorVariables->GIAentityNodeArray[w]->grammaticalProperNounTemp << endl;
+															cout << "GIAentityNodeArray[w]->isConcept" << translatorVariables->GIAentityNodeArray[w]->isConcept << endl;
 														}
 													}
-												}
-											}
-											*/
-
-											/*
-											if(functionName == "redistributeRelexRelationsInterpretOfAsObjectForContinuousVerbs")
-											{
-												cout << "\t\t" << tempindex << ": dependency relations: " << endl;
-												tempindex++;
-												GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
-												while(currentRelationInList->next != NULL)
-												{
-													if(!(currentRelationInList->disabled))
-													{
-														string relationType = currentRelationInList->relationType;
-														GIAentityNode* relationGoverner = GIAentityNodeArray[currentRelationInList->relationGovernorIndex];
-														GIAentityNode* relationDependent = GIAentityNodeArray[currentRelationInList->relationDependentIndex];
-
-														cout << currentRelationInList->relationType << "(" << currentRelationInList->relationGovernor << ", " << currentRelationInList->relationDependent << ")" << endl;
-													}
-													currentRelationInList = currentRelationInList->next;
 												}
 											}
 											*/
@@ -382,7 +196,7 @@ bool GIAtranslatorRulesClass::applyGIATranslatorGenericXMLfunctions(const string
 	return result;
 }
 
-bool GIAtranslatorRulesClass::applyGIATranslatorGenericXMLparam(XMLparserTag* currentParamTag, const bool depRelOrEntity, bool executeOrReassign, GIAsentence* currentSentenceInList, bool GIAentityNodeArrayFilled[], GIAentityNode* GIAentityNodeArray[], unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, GIAfeature* featureArrayTemp[], const int NLPdependencyRelationsType, const int NLPfeatureParser, const bool linkPreestablishedReferencesGIA, const string functionName)
+bool GIAtranslatorRulesClass::applyGIATranslatorGenericXMLparam(XMLparserTag* currentParamTag, const bool depRelOrEntity, bool executeOrReassign, GIAtranslatorVariablesClass* translatorVariables, const bool linkPreestablishedReferencesGIA, const string functionName)
 {
 	bool result = false;
 	if(currentParamTag->firstLowerLevelTag != NULL)
@@ -391,12 +205,12 @@ bool GIAtranslatorRulesClass::applyGIATranslatorGenericXMLparam(XMLparserTag* cu
 		cout << "\tapplyGIATranslatorGenericXMLparam: " << currentParamTag->name << endl;
 		#endif
 
-		GIAgenericDepRelInterpretationParameters paramDepRel(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, executeOrReassign);
+		GIAgenericDepRelInterpretationParameters paramDepRel(translatorVariables, executeOrReassign);
 		paramDepRel.functionName = functionName;
-		paramDepRel.entityNodesActiveListNetworkIndexes = entityNodesActiveListNetworkIndexes;
-		paramDepRel.NLPdependencyRelationsType = NLPdependencyRelationsType;
+		paramDepRel.translatorVariables.entityNodesActiveListNetworkIndexes = translatorVariables->entityNodesActiveListNetworkIndexes;
+		paramDepRel.translatorVariables.NLPdependencyRelationsType = translatorVariables->NLPdependencyRelationsType;
 		paramDepRel.executeOrReassign = executeOrReassign;
-		GIAgenericEntityInterpretationParameters paramEntity(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, executeOrReassign);
+		GIAgenericEntityInterpretationParameters paramEntity(translatorVariables, executeOrReassign);
 		paramEntity.functionName = functionName;
 		paramEntity.executeOrReassign = executeOrReassign;
 		bool passedAssert = true;
@@ -487,7 +301,7 @@ bool GIAtranslatorRulesClass::applyGIATranslatorGenericXMLparam(XMLparserTag* cu
 				{
 					if(assertAttribute->value == "NLPfeatureParserStanfordCoreNLP")
 					{
-						if(!(NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP))
+						if(!(translatorVariables->NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP))
 						{
 							passedAssert = false;
 						}
@@ -496,15 +310,15 @@ bool GIAtranslatorRulesClass::applyGIATranslatorGenericXMLparam(XMLparserTag* cu
 					{
 						bool whichOrWhatQueryFound = false;
 						//if(GIAentityNodeArrayFilled[GIA_NLP_START_ENTITY_INDEX]	//"what" is not added to a relation and therefore GIAentityNodeArrayFilled will not be filled
-						if(featureArrayTemp[GIA_NLP_START_ENTITY_INDEX] != NULL)
+						if(translatorVariables->featureArrayTemp[GIA_NLP_START_ENTITY_INDEX] != NULL)
 						{
 							for(int i=0; i<FEATURE_QUERY_WORD_ACCEPTED_BY_ALTERNATE_METHOD_NUMBER_OF_TYPES; i++)
 							{
 								#ifdef GIA_DEBUG
 								//cout << "featureQueryWordAcceptedByAlternateMethodNameArray[i] = " << featureQueryWordAcceptedByAlternateMethodNameArray[i] << endl;
-								//cout << "featureArrayTemp[GIA_NLP_START_ENTITY_INDEX]->lemma = " << featureArrayTemp[GIA_NLP_START_ENTITY_INDEX]->lemma << endl;	crashes
+								//cout << "translatorVariables->featureArrayTemp[GIA_NLP_START_ENTITY_INDEX]->lemma = " << translatorVariables->featureArrayTemp[GIA_NLP_START_ENTITY_INDEX]->lemma << endl;	crashes
 								#endif
-								if(featureArrayTemp[GIA_NLP_START_ENTITY_INDEX]->lemma == featureQueryWordAcceptedByAlternateMethodNameArray[i])
+								if(translatorVariables->featureArrayTemp[GIA_NLP_START_ENTITY_INDEX]->lemma == featureQueryWordAcceptedByAlternateMethodNameArray[i])
 								{
 									#ifdef GIA_DEBUG
 									//cout << "whichOrWhatQueryFound" << endl;
@@ -523,9 +337,9 @@ bool GIAtranslatorRulesClass::applyGIATranslatorGenericXMLparam(XMLparserTag* cu
 						bool firstWordOfSentenceIsWho = false;
 						#ifdef GIA_WORKAROUND_RELEX_BUG_OCCASIONAL_QVAR_INDEX_SAME_AS_ANOTHER_RELATION_INDEX
 						//if(GIAentityNodeArrayFilled[GIA_NLP_START_ENTITY_INDEX])	//approximately the reason: "who" is not added to a relation and therefore GIAentityNodeArrayFilled will not be filled
-						if(featureArrayTemp[GIA_NLP_START_ENTITY_INDEX] != NULL)
+						if(translatorVariables->featureArrayTemp[GIA_NLP_START_ENTITY_INDEX] != NULL)
 						{
-							if(featureArrayTemp[GIA_NLP_START_ENTITY_INDEX]->lemma == REFERENCE_TYPE_QUESTION_QUERY_WHO)
+							if(translatorVariables->featureArrayTemp[GIA_NLP_START_ENTITY_INDEX]->lemma == REFERENCE_TYPE_QUESTION_QUERY_WHO)
 							{
 								#ifdef GIA_DEBUG
 								//cout << "found who" << endl;
@@ -534,9 +348,9 @@ bool GIAtranslatorRulesClass::applyGIATranslatorGenericXMLparam(XMLparserTag* cu
 							}
 						}
 						#else
-						if(GIAentityNodeArrayFilled[REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_RELATION_DEPENDENT_INDEX])
+						if(translatorVariables->GIAentityNodeArrayFilled[REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_RELATION_DEPENDENT_INDEX])
 						{
-							if(featureArrayTemp[REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_RELATION_DEPENDENT_INDEX]->lemma == REFERENCE_TYPE_QUESTION_QUERY_WHO)
+							if(translatorVariables->featureArrayTemp[REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_RELATION_DEPENDENT_INDEX]->lemma == REFERENCE_TYPE_QUESTION_QUERY_WHO)
 							{
 								firstWordOfSentenceIsWho = true;
 							}
@@ -549,7 +363,7 @@ bool GIAtranslatorRulesClass::applyGIATranslatorGenericXMLparam(XMLparserTag* cu
 					}
 					else if(assertAttribute->value == "isQuestion")
 					{
-						if(!(currentSentenceInList->isQuestion))
+						if(!(translatorVariables->currentSentenceInList->isQuestion))
 						{
 							passedAssert = false;
 						}
@@ -568,6 +382,7 @@ bool GIAtranslatorRulesClass::applyGIATranslatorGenericXMLparam(XMLparserTag* cu
 						asssertPostProcessingREL = REL;
 						asssertPostProcessingREL_ENT = REL_ENT;
 					}
+					#ifdef GIA_ADVANCED_REFERENCING
 					else if(assertAttribute->value == "linkPreestablishedReferencesGIA")
 					{
 						if(!linkPreestablishedReferencesGIA)
@@ -575,9 +390,10 @@ bool GIAtranslatorRulesClass::applyGIATranslatorGenericXMLparam(XMLparserTag* cu
 							passedAssert = false;
 						}
 					}
+					#endif
 					else if(assertAttribute->value == "NLPdependencyRelationsTypeStanford")
 					{
-						if(!(NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD))
+						if(!(translatorVariables->NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD))
 						{
 							passedAssert = false;
 						}
@@ -613,7 +429,7 @@ bool GIAtranslatorRulesClass::applyGIATranslatorGenericXMLparam(XMLparserTag* cu
 			{
 				cout << "applyGIATranslatorGenericXMLparam{}: error - illegal param tag:" << currentConfigurationTag->name  << endl;
 				result = false;
-				//exit(0);
+				//exit(EXIT_ERROR);
 			}
 
 			currentConfigurationTag = currentConfigurationTag->nextTag;
@@ -634,7 +450,7 @@ bool GIAtranslatorRulesClass::applyGIATranslatorGenericXMLparam(XMLparserTag* cu
 					#endif
 					if(asssertsetDefiniteAfterFinish)
 					{
-						featureArrayTemp[paramDepRel.relationEntityIndexFinalResult[asssertPostProcessingREL][asssertPostProcessingREL_ENT]]->grammaticalIsDefinite = true;
+						translatorVariables->featureArrayTemp[paramDepRel.relationEntityIndexFinalResult[asssertPostProcessingREL][asssertPostProcessingREL_ENT]]->grammaticalIsDefinite = true;
 					}
 					if(assertdisableRelationAfterFinish)
 					{
@@ -642,7 +458,7 @@ bool GIAtranslatorRulesClass::applyGIATranslatorGenericXMLparam(XMLparserTag* cu
 					}
 					if(assertassignPluralAfterFinish)
 					{
-						featureArrayTemp[paramDepRel.relationEntityIndexFinalResult[asssertPostProcessingREL][asssertPostProcessingREL_ENT]]->grammaticalNumber = GRAMMATICAL_NUMBER_PLURAL;
+						translatorVariables->featureArrayTemp[paramDepRel.relationEntityIndexFinalResult[asssertPostProcessingREL][asssertPostProcessingREL_ENT]]->grammaticalNumber = GRAMMATICAL_NUMBER_PLURAL;
 					}
 					#ifdef GIA_PREDETERMINERS
 					if(assertassignPredeterminerAfterFinish)
@@ -654,7 +470,7 @@ bool GIAtranslatorRulesClass::applyGIATranslatorGenericXMLparam(XMLparserTag* cu
 							//cout << "arrayIndexOfResultFound = " << arrayIndexOfResultFound << endl;
 							//cout << featureArrayTemp[paramDepRel.relationEntityIndexFinalResult[asssertPostProcessingREL][asssertPostProcessingREL_ENT]]->word << endl;
 							#endif
-							featureArrayTemp[paramDepRel.relationEntityIndexFinalResult[asssertPostProcessingREL][asssertPostProcessingREL_ENT]]->grammaticalPredeterminer = arrayIndexOfResultFound;
+							translatorVariables->featureArrayTemp[paramDepRel.relationEntityIndexFinalResult[asssertPostProcessingREL][asssertPostProcessingREL_ENT]]->grammaticalPredeterminer = arrayIndexOfResultFound;
 						}
 					}
 					#endif
