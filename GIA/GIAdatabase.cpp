@@ -25,7 +25,7 @@
  * File Name: GIAdatabase.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1k 26-February-2017
+ * Project Version: 3a1l 26-February-2017
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: performs simple GIA database functions (storing nodes in ordered arrays/vectors/maps)
  *
@@ -157,8 +157,8 @@ GIAentityNode* GIAdatabaseClass::DBfindOrAddNetworkIndexEntityNodeByName(vector<
 			{
 				entityNodesActiveListComplete->push_back(newEntityNode);						//?not used for database...
 				this->addEntityNodesActiveListCompleteFastIndexDBactive(newEntityNode);	//added 2 Nov 2012
+				(*currentEntityNodeIDinCompleteList) = (*currentEntityNodeIDinCompleteList) + 1;				//?used to indicate that this new node may need to be updated on the database
 			}
-			(*currentEntityNodeIDinCompleteList) = (*currentEntityNodeIDinCompleteList) + 1;				//?used to indicate that this new node may need to be updated on the database
 
 			entityNodesActiveListNetworkIndexes->insert(pair<string, GIAentityNode*>(*entityNodeName, newEntityNode));
 			(*currentEntityNodeIDinNetworkIndexEntityNodesList) = (*currentEntityNodeIDinNetworkIndexEntityNodesList) + 1;		//?not used for database...
@@ -226,8 +226,8 @@ GIAentityNode* GIAdatabaseClass::LocalFindOrAddNetworkIndexEntityNodeByName(vect
 			{
 				entityNodesActiveListComplete->push_back(newEntityNode);
 				//addEntityNodesActiveListCompleteFastIndexDBactive(newEntityNode);	//added 2 Nov 2012
+				(*currentEntityNodeIDinCompleteList) = (*currentEntityNodeIDinCompleteList) + 1;
 			}
-			(*currentEntityNodeIDinCompleteList) = (*currentEntityNodeIDinCompleteList) + 1;
 
 			//entityNodesActiveListNetworkIndexes[entityNodeName] = newEntityNode;
 			entityNodesActiveListNetworkIndexes->insert(pair<string, GIAentityNode*>(*entityNodeName, newEntityNode));

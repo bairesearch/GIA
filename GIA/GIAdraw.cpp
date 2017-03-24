@@ -25,7 +25,7 @@
  * File Name: GIAdraw.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1k 26-February-2017
+ * Project Version: 3a1l 26-February-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -388,7 +388,7 @@ bool GIAdrawClass::initialiseEntityNodeForPrinting(GIAentityNode* entityNode, in
 					{
 						if(entityVectorConnectionDrawConnectionArray[connectionType])
 						{
-							#ifdef GIA_ADVANCED_REFERENCING_DEBUG_HIGHLIGHT_REFERENCE_SET_CONNECTIONS_WITH_COLOURS
+							#ifdef GIA_DRAW_DEBUG_HIGHLIGHT_REFERENCE_SET_CONNECTIONS_WITH_COLOURS
 							if(connection->sameReferenceSet)
 							{
 								entityConnectionColour = DAT_FILE_COLOUR_GREEN;
@@ -402,10 +402,10 @@ bool GIAdrawClass::initialiseEntityNodeForPrinting(GIAentityNode* entityNode, in
 							#ifdef GIA_DRAW_PRINT_CONNECTION_SENTENCE_INDEX
 							//string connectionName = SHAREDvars.convertIntToString(connection->sentenceIndexTemp);
 							string connectionName = string("s") + SHAREDvars.convertIntToString(connection->sentenceIndexTemp) + entityVectorConnectionNameArray[connectionType];
-							this->initialiseEntityConnectionForPrinting(&pos1, connection, printType, connectionName, entityConnectionColour, currentReferenceInPrintList, currentTag);
 							#else
-							this->initialiseEntityConnectionForPrinting(&pos1, connection, printType, entityVectorConnectionDrawConnectionNameArray[connectionType], entityConnectionColour, currentReferenceInPrintList, currentTag);
+							string connectionName = entityVectorConnectionDrawConnectionNameArray[connectionType];
 							#endif
+							this->initialiseEntityConnectionForPrinting(&pos1, connection, printType, connectionName, entityConnectionColour, currentReferenceInPrintList, currentTag);
 						}
 					}
 

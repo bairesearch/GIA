@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1k 26-February-2017
+ * Project Version: 3a1l 26-February-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -983,25 +983,11 @@ void GIAtranslatorDefineReferencingClass::identifyReferenceSetNetworkIndexEntity
 				cout << "grammaticalDefiniteTemp Found" << endl;
 				#endif
 
-				/*OLD:
-				int minimumEntityIndexOfReferenceSet;
-				if(haveSentenceEntityIndexOfDeterminers)
-				{
-					minimumEntityIndexOfReferenceSet = currentInstance->grammaticalIndexOfDeterminerTemp;
-					cout << "\n1minimumEntityIndexOfReferenceSet = " << minimumEntityIndexOfReferenceSet << endl;
-				}
-				else
-				{
-					cout << "\n!haveSentenceEntityIndexOfDeterminers" << endl;
-					minimumEntityIndexOfReferenceSet = currentInstance->entityIndexTemp;
-				}
-				*/
 				int minimumEntityIndexOfReferenceSet = currentInstance->entityIndexTemp;
 
 				//currentInstance->minimumEntityIndexOfReferenceSet = minimumEntityIndexOfReferenceSet;	//added 28 Sept 2013
 
 				#ifdef GIA_ADVANCED_REFERENCING_DEBUG_TOO_LARGE_REFERENCE_SET
-				cout << "minimumSentenceIndexOfReferenceSet1 = " << currentInstance->grammaticalIndexOfDeterminerTemp << endl;
 				cout << "minimumSentenceIndexOfReferenceSet2 = " << currentInstance->entityIndexTemp << endl;
 				#endif
 
@@ -1826,7 +1812,6 @@ void GIAtranslatorDefineReferencingClass::identifyReferenceSetsSpecificConceptsA
 				int minimumEntityIndexOfReferenceSet = currentSpecificConcept->entityIndexTemp;
 
 				#ifdef GIA_DREAMMODE_REFERENCING_DEBUG
-				cout << "minimumSentenceIndexOfReferenceSet1 = " << currentSpecificConcept->grammaticalIndexOfDeterminerTemp << endl;
 				cout << "minimumSentenceIndexOfReferenceSet2 = " << currentSpecificConcept->entityIndexTemp << endl;
 				#endif
 
@@ -2057,14 +2042,14 @@ bool GIAtranslatorDefineReferencingClass::identifyReferenceSetDetermineNextCours
 
 void GIAtranslatorDefineReferencingClass::identifyReferenceSet(GIAentityNode* entityNode, int referenceSetID, int minimumEntityIndexOfReferenceSet)
 {
-	#ifdef GIA_ADVANCED_REFERENCING_DEBUG
+	//#ifdef GIA_ADVANCED_REFERENCING_DEBUG
 	cout << "identifyReferenceSet{}: entityNode being traced = " << entityNode->entityName << endl;
 	cout << "identifyReferenceSet{}: referenceSetID = " << referenceSetID << endl;
 	cout << "identifyReferenceSet{}: entityType = " << entityNode->entityType << endl;
-	#endif
-	#ifdef GIA_ADVANCED_REFERENCING_DEBUG_TOO_LARGE_REFERENCE_SET
+	//#endif
+	//#ifdef GIA_ADVANCED_REFERENCING_DEBUG_TOO_LARGE_REFERENCE_SET
 	cout << "identifyReferenceSet{}: " << entityNode->entityName << endl;
-	#endif
+	//#endif
 
 	entityNode->referenceSetID = referenceSetID;
 	entityNode->minimumEntityIndexOfReferenceSet = minimumEntityIndexOfReferenceSet;

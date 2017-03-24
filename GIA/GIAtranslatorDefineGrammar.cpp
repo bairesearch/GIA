@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorDefineGrammar.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1k 26-February-2017
+ * Project Version: 3a1l 26-February-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -691,7 +691,6 @@ void GIAtranslatorDefineGrammarClass::fillGrammaticalArraysStanford(GIAtranslato
 				if(definiteDeterminerFound)
 				{
 					translatorVariables->featureArrayTemp[entityIndexOfNoun]->grammaticalIsDefinite = true;
-					translatorVariables->featureArrayTemp[entityIndexOfNoun]->grammaticalIndexOfDeterminer = currentRelationInList->relationDependentIndex;
 
 					#ifdef GIA_TRANSLATOR_DEBUG
 					//cout << "(determiner == GRAMMATICAL_DETERMINER_DEFINITE)" << endl;
@@ -702,7 +701,6 @@ void GIAtranslatorDefineGrammarClass::fillGrammaticalArraysStanford(GIAtranslato
 				else if(determiner == GRAMMATICAL_DETERMINER_INDEFINITE_PLURAL)
 				{//added 2f11a 13-July-2014
 					translatorVariables->featureArrayTemp[entityIndexOfNoun]->grammaticalIsIndefinitePlural = true;
-					translatorVariables->featureArrayTemp[entityIndexOfNoun]->grammaticalIndexOfDeterminer = currentRelationInList->relationDependentIndex;
 				}
 				/*
 				else if(determiner == GRAMMATICAL_DETERMINER_INDEFINITE_SINGULAR)
@@ -1045,8 +1043,6 @@ void GIAtranslatorDefineGrammarClass::applyGrammaticalInfoToAllEntities(GIAtrans
 				entity->grammaticalIndefinitePluralTemp = currentFeatureInList->grammaticalIsIndefinitePlural;
 				entity->grammaticalProperNounTemp = currentFeatureInList->grammaticalIsProperNoun;
 				entity->grammaticalGenderTemp = currentFeatureInList->grammaticalGender;
-				entity->grammaticalIndexOfDeterminerTemp = currentFeatureInList->grammaticalIndexOfDeterminer;
-				//cout << "entity->grammaticalIndexOfDeterminerTemp = " << entity->grammaticalIndexOfDeterminerTemp << endl;
 				#ifdef GIA_PREDETERMINERS
 				entity->grammaticalPredeterminerTemp = currentFeatureInList->grammaticalPredeterminer;
 				#endif

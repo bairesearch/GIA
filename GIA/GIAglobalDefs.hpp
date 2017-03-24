@@ -25,7 +25,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1k 26-February-2017
+ * Project Version: 3a1l 26-February-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -1570,6 +1570,7 @@
 	//#define GIA_DRAW_PRINT_ENTITY_SENTENCE_INDEX
 	#define GIA_DRAW_PRINT_ENTITY_ENTITY_INDEX
 	#define GIA_DRAW_PRINT_CONNECTION_SENTENCE_INDEX
+	#define GIA_DRAW_DEBUG_HIGHLIGHT_REFERENCE_SET_CONNECTIONS_WITH_COLOURS
 //#endif
 #define GIA_SEMANTIC_NET_XML_REORDER_NETWORK_INDEX_IDS_UPON_XML_WRITE_INSTEAD_OF_XML_READ
 

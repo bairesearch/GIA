@@ -25,7 +25,7 @@
  * File Name: GIAtranslator.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1k 26-February-2017
+ * Project Version: 3a1l 26-February-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -358,7 +358,7 @@ bool GIAtranslatorClass::convertSentenceRelationsIntoGIAnetworkNodesWrapper(GIAt
 		//create temporary memory structures for !linkPreestablishedReferencesGIA run;
 		GIAtranslatorVariablesClass translatorVariablesPrelim = *translatorVariables;
 		translatorVariablesPrelim.entityNodesActiveListNetworkIndexes = &sentenceNetworkIndexEntityNodesList;	//NB exception: fill the sentenceNetworkIndexEntityNodesList during the prelim !linkPreestablishedReferencesGIA run (by filling the entityNodesActiveListNetworkIndexes variables)
-		vector<GIAentityNode*> entityNodesActiveListCompleteTemp;
+		vector<GIAentityNode*> entityNodesActiveListCompleteTemp;	//never even written to (as saveNetwork == false), let alone used
 		translatorVariablesPrelim.entityNodesActiveListComplete = &entityNodesActiveListCompleteTemp;
 		translatorVariablesPrelim.currentEntityNodeIDInNetworkIndexEntityNodesList = 0;
 		translatorVariablesPrelim.currentEntityNodeIDInCompleteList = 0;
@@ -404,7 +404,19 @@ bool GIAtranslatorClass::convertSentenceRelationsIntoGIAnetworkNodesWrapper(GIAt
 
 		vector<GIAentityNode*> referenceSetDefiniteEntityList;
 		int numberReferenceSets = GIAtranslatorDefineReferencing.identifyReferenceSets(&sentenceNetworkIndexEntityNodesList, translatorVariables->NLPdependencyRelationsType, &referenceSetDefiniteEntityList);	//NB NLPdependencyRelationsType is no longer used here
-
+		
+		//debug:
+		cout << "translatorVariablesPrelim->sentenceIndex = " << translatorVariablesPrelim.sentenceIndex << endl;
+		for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
+		{	
+			if(translatorVariablesPrelim.GIAentityNodeArrayFilled[w])
+			{
+				GIAentityNode* entity = translatorVariablesPrelim.GIAentityNodeArray[w];
+				cout << "entity->entityName = " << entity->entityName << endl;
+				cout << "entity->referenceSetID = " << entity->referenceSetID << endl;
+			}
+		}
+		
 		#ifdef GIA_DATABASE
 		GIAdatabase.setUseDatabase(useDatabaseOriginal);
 		#endif
