@@ -1373,10 +1373,6 @@ GIAentityNode* GIAtranslatorOperationsClass::addEntityNodeByNameSimpleWrapperRel
 
 	GIAentityNode* relationshipEntity = findOrAddEntityNodeByNameSimpleWrapperRelationship(relationshipEntityIndex, &relationshipEntityName, translatorVariables);
 	
-	//added 3a1g
-	relationshipEntity = addInstanceToInstanceDefinition(relationshipEntity, relationshipEntityType, translatorVariables);
-	translatorVariables->GIAentityNodeArray[relationshipEntityIndex] = relationshipEntity;
-	
 	relationshipEntity->isArtificialAuxiliary = true;
 	
 	return relationshipEntity;	

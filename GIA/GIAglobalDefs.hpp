@@ -1561,7 +1561,7 @@
 #ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
 	#define GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX_ADVANCED		//more robust implementation (should activate when using GIA_DATABASE to ensure all the semantic network connections are visible)
 	#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX_ADVANCED
-		#define GIA_DRAW_ONLY_PRINT_CONNECTIONS_IN_ONE_DIRECTION	//prevents duplication of connection printing
+		//#define GIA_DRAW_ONLY_PRINT_CONNECTIONS_IN_ONE_DIRECTION	//prevents duplication of connection printing
 	#endif
 #endif
 //#ifdef USE_NLC
