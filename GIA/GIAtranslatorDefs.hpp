@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a1a 26-February-2017
+ * Project Version: 3a1b 26-February-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -437,13 +437,8 @@ static string relationTypeAdjectiveWhichImplyDifferentReferenceSetNameArray[RELA
 static string relationTypePossessiveNameArray[RELATION_TYPE_POSSESSIVE_NUMBER_OF_TYPES] = {RELATION_TYPE_POSSESSIVE};
 static string relationTypePrenominalModifierNameArray[RELATION_TYPE_PRENOMINAL_MODIFIER_NUMBER_OF_TYPES] = {RELATION_TYPE_PRENOMIAL_MODIFIER};
 
-#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_QUALITIES
-#define RELATION_TYPE_QUALITY_NUMBER_OF_TYPES 4
-static string relationTypeQualityNameArray[RELATION_TYPE_QUALITY_NUMBER_OF_TYPES] = {RELATION_TYPE_ADJECTIVE_AMOD, RELATION_TYPE_ADJECTIVE_PREDADJ, RELATION_TYPE_ADJECTIVE_ADVMOD, RELATION_TYPE_PRENOMIAL_MODIFIER};
-#else
 #define RELATION_TYPE_QUALITY_NUMBER_OF_TYPES 3
 static string relationTypeQualityNameArray[RELATION_TYPE_QUALITY_NUMBER_OF_TYPES] = {RELATION_TYPE_ADJECTIVE_AMOD, RELATION_TYPE_ADJECTIVE_PREDADJ, RELATION_TYPE_ADJECTIVE_ADVMOD};
-#endif
 
 //properties:	[NB properties are attached to either another substance or a straight entity);]
 //substances (derived from obj/subj relationships);
