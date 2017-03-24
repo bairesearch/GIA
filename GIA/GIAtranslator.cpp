@@ -25,7 +25,7 @@
  * File Name: GIAtranslator.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a3b 22-March-2017
+ * Project Version: 3a3c 22-March-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -842,13 +842,15 @@ bool GIAtranslatorClass::convertSentenceSyntacticRelationsIntoGIAnetworkNodes(GI
 	}
 	#endif
 	
+	/*
 	#ifdef GIA_PREPROCESSOR_SENTENCE
 	#ifdef GIA_PREPROCESSOR_SENTENCE_RECONCILE_REFERENCES_AFTER_SEMANTIC_PARSING_EVERY_SENTENCE
 	#ifdef GIA_ADVANCED_REFERENCING
 	if(linkPreestablishedReferencesGIA)
 	{
 	#endif
-		if(!GIApreprocessor.connectPreprocessorSentenceReferenceSetEntitiesToLogicReferenceEntitiesWrapper(translatorVariables->firstGIApreprocessorSentenceInList, translatorVariables))	//check the position of this function's execution
+		cout << "translatorVariables->currentSentenceInList->sentenceIndex = " << translatorVariables->currentSentenceInList->sentenceIndex << endl;
+		if(!GIApreprocessor.connectPreprocessorSentenceReferenceSetEntitiesToLogicReferenceEntitiesSentenceWrapper(translatorVariables->firstGIApreprocessorSentenceInList, translatorVariables))	//check the position of this function's execution
 		{
 			result = false;
 		}
@@ -857,6 +859,7 @@ bool GIAtranslatorClass::convertSentenceSyntacticRelationsIntoGIAnetworkNodes(GI
 	#endif
 	#endif
 	#endif
+	*/
 	
 	return result;
 }
@@ -1107,6 +1110,8 @@ void GIAtranslatorClass::detectUserDeclaredSubclassEntities(GIAtranslatorVariabl
 
 bool GIAtranslatorClass::performGIApostProcessing(GIAtranslatorVariablesClass* translatorVariables)
 {
+	bool result = true;
+	
 	#ifdef GIA_TRANSLATOR_DREAM_MODE_LINK_SPECIFIC_CONCEPTS_AND_ACTIONS
 	this->dreamModeLinkSpecificConceptsAndActions(translatorVariables);
 	#endif
@@ -1119,6 +1124,8 @@ bool GIAtranslatorClass::performGIApostProcessing(GIAtranslatorVariablesClass* t
 	}
 	#endif
 	#endif
+	
+	return result;
 }
 
 #ifdef GIA_TRANSLATOR_DREAM_MODE_LINK_SPECIFIC_CONCEPTS_AND_ACTIONS

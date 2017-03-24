@@ -25,7 +25,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a3b 22-March-2017
+ * Project Version: 3a3c 22-March-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -769,14 +769,18 @@
 			#define GIA_PREPROCESSOR_SENTENCE	//3a1a (should disable with NLC)
 		#endif
 		#ifdef GIA_PREPROCESSOR_SENTENCE
-			#define GIA_PREPROCESSOR_SENTENCE_RECONCILE_REFERENCES_AFTER_SEMANTIC_PARSING_EVERY_SENTENCE
+			//#define GIA_PREPROCESSOR_SENTENCE_RECONCILE_REFERENCES_AFTER_SEMANTIC_PARSING_EVERY_SENTENCE	//this is unsupported as each GIApreprocessorSentence will contain multiple GIAsentences
 			//#define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
 			#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
-
+				//#assert defined GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
+				
 				//#define GIA_PREPROCESSOR_SENTENCE_TEMPORARY_SENTENCE_INDEX (-2)
 				#define GIA_PREPROCESSOR_REASSIGN_UNIQUE_SENTENCE_INDICES_FOR_SENTENCES
 				#ifdef GIA_PREPROCESSOR_REASSIGN_UNIQUE_SENTENCE_INDICES_FOR_SENTENCES
 					#define GIA_PREPROCESSOR_ASSIGN_UNIQUE_SENTENCE_INDICES_FOR_SENTENCES
+					#ifdef GIA_PREPROCESSOR_ASSIGN_UNIQUE_SENTENCE_INDICES_FOR_SENTENCES
+						#define GIA_PREPROCESSOR_ASSIGN_UNIQUE_SENTENCE_INDICES_FOR_SENTENCES_DUMMY_SENTENCE_CONTENTS "giadummysentence"
+					#endif
 				#endif
 
 				#define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_REMOVE_DOUBLE_WHITE_SPACE
@@ -797,17 +801,21 @@
 			#endif
 			#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET
 			#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET
+				//#assert defined GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
 				
 				#define GIA_PREPROCESSOR_REASSIGN_UNIQUE_SENTENCE_INDICES_FOR_LOGIC_REFERENCE_VARIABLES	//after parsing semantic relations for individual reference sets, GIA will assign every entity in the logic reference structure the same sentenceIndex, and each logic reference variable (with all its reference sets) the same sentence index
 				#ifdef GIA_PREPROCESSOR_REASSIGN_UNIQUE_SENTENCE_INDICES_FOR_LOGIC_REFERENCE_VARIABLES
 					//after parsing semantic relations for individual reference sets, GIA will assign every entity in the original pre-preprocessed sentence to the same sentenceIndex
 					#define GIA_PREPROCESSOR_ASSIGN_UNIQUE_SENTENCE_INDICES_FOR_LOGIC_REFERENCE_VARIABLES
+					#ifdef GIA_PREPROCESSOR_ASSIGN_UNIQUE_SENTENCE_INDICES_FOR_LOGIC_REFERENCE_VARIABLES
+						#define GIA_PREPROCESSOR_ASSIGN_UNIQUE_SENTENCE_INDICES_FOR_SENTENCES_DUMMY_LOGIC_REFERENCE_CONTENTS "giadummylogicreference"
+					#endif
 					//#define GIA_PREPROCESSOR_REASSIGN_UNIQUE_SENTENCE_INDICES_FOR_LOGIC_REFERENCE_VARIABLES_IGNORE_CONNECTIONS_TO_SENTENCE_LOGIC_REFERENCE_SET	//use this if the connection between the logicReference entity and the logicReferenceVariable should have the sentenceIndex of the currentGIApreprocessorSentenceInList rather than that of the logicReferenceVariable 
 				#endif
-					
-				#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_SUB_REFERENCE_SETS	//this improves NLP/GIA translator semantic parser (by reducing the size of the text chunks being processed)
+				
+				#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_RECORD_SAME_REFERENCE_SET_DELIMITERS	//this is currently required to process delimiter (eg being/having/verb/preposition) tense, adverbs (eg very near), and adjectives (eg rides fast) using NLP 	
+				//#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_SUB_REFERENCE_SETS	//this improves NLP/GIA translator semantic parser (by reducing the size of the text chunks being processed)
 				#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_SUB_REFERENCE_SETS
-					#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_SUB_REFERENCE_SETS_RECORD_SAME_REFERENCE_SET_DELIMITERS	//this is currently required to process delimiter (eg being/having/verb/preposition) tense, adverbs (eg very near), and adjectives (eg rides fast) using NLP 
 					#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_SUB_REFERENCE_SETS_DELIMITERS	//mandatory	//eg The car had a bike. -> GIAdummyactionsubject + "had " + GIAdummyactionobject
 					#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_SUB_REFERENCE_SETS_DELIMITERS
 						#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITERS_DISCARD_THAT_WHICH
@@ -816,12 +824,13 @@
 				#endif
 				#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT	//this is required a) for third party NLP (as opposed to GIA direct semantic relation parser) and b) to relink logic reference variable entities without a subject/delimiter back to the high level logic reference GIA network structure 
 				#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT
-					#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP "giadummyrelationship"	//verify no conflict with NLC_PREPROCESSOR_INTERPRET_SINGLE_WORD_SENTENCES_AS_ACTIONS_DUMMY_TEXT_ACTION	//"do"?
+					#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP "compartmentalises"		//giadummyrelationship	//verify no conflict with NLC_PREPROCESSOR_INTERPRET_SINGLE_WORD_SENTENCES_AS_ACTIONS_DUMMY_TEXT_ACTION	//"do"?
 					#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_SUBJECT "giadummyrelationshipsubject"	//verify no conflict with NLC_PREPROCESSOR_INTERPRET_SINGLE_WORD_SENTENCES_AS_ACTIONS_DUMMY_TEXT_ACTION_SUBJECT	//"they"?
 					#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_OBJECT "giadummyrelationshipobject"	//verify no conflict with NLC_PREPROCESSOR_INTERPRET_SINGLE_WORD_SENTENCES_AS_ACTIONS_DUMMY_TEXT_ACTION_OBJECT	//"this"?
 					#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_FULL (GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP)
-					#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_SUBJECT_FULL string("the " GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_SUBJECT)
+					#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_SUBJECT_FULL string("The " GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_SUBJECT)
 					#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_OBJECT_FULL string("the " GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_OBJECT)
+					#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_LEMMA "compartmentalise"
 					#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_SUBJECT_OR_OBJECT_AND_DELIMITER	//set reference set as subject/object before semantic relation parse
 					#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_SUBJECT_OR_OBJECT_AND_DELIMITER
 						#define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_SET_CONJUNCTION_AND_OR_TEXT_TO_REFERENCE_SET_OBJECT_BEFORE_SEMANTIC_RELATION_PARSE
@@ -836,6 +845,7 @@
 			#endif
 			//#define GIA_PREPROCESSOR_RECORD_PARSABLE_PHRASE_POSITION_APPROXIMATE	//unimplemented
 			//#define GIA_PREPROCESSOR_SUPPORT_MULTILINE_SENTENCES	//unimplemented
+			#define GIA_DEBUG_PREPROCESSOR_SENTENCE
 			#define GIA_DEBUG_PREPROCESSOR_SENTENCE_PREMATURE_QUIT	//temp debug		
 			#define GIA_PREPROCESSOR_SENTENCE_PRINT_OUTPUT	//temp debug
 			#define GIA_PREPROCESSOR_INTERMEDIARY_MULTIWORD_FILE_EXTENSION ".intermediary.multiword"
@@ -1528,14 +1538,14 @@
 #ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
 	#define GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX_ADVANCED		//more robust implementation (should activate when using GIA_DATABASE to ensure all the semantic network connections are visible)
 	#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX_ADVANCED
-		#define GIA_DRAW_ONLY_PRINT_CONNECTIONS_IN_ONE_DIRECTION	//prevents duplication of connection printing
+		//#define GIA_DRAW_ONLY_PRINT_CONNECTIONS_IN_ONE_DIRECTION	//prevents duplication of connection printing
 	#endif
 #endif
 //#ifdef USE_NLC
 	//#define GIA_DRAW_PRINT_ENTITY_INSTANCE_ID
 	//#define GIA_DRAW_PRINT_ENTITY_ACTIVELIST_ID
-	//#define GIA_DRAW_PRINT_ENTITY_SENTENCE_INDEX
-	#define GIA_DRAW_PRINT_ENTITY_ENTITY_INDEX
+	#define GIA_DRAW_PRINT_ENTITY_SENTENCE_INDEX
+	//#define GIA_DRAW_PRINT_ENTITY_ENTITY_INDEX
 	#define GIA_DRAW_PRINT_CONNECTION_SENTENCE_INDEX
 	#define GIA_DRAW_VERBOSE_HIGHLIGHT_REFERENCE_SET_CONNECTIONS_WITH_COLOURS
 //#endif

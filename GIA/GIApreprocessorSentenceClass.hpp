@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorSentenceClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3a3b 22-March-2017
+ * Project Version: 3a3c 22-March-2017
  * Requirements: requires plain text file
  * Description: Logical Condition and Reference Set preprocessor
  *
@@ -210,7 +210,7 @@ public:
 	
 	bool hasLogicReference;	//if false, then firstLogicReferenceInList will only have a single GIApreprocessorLogicReference
 	GIApreprocessorLogicReference* firstLogicReferenceInList;
-	int logicReferenceTotal;
+	//int logicReferenceTotal;
 
 	#ifdef GIA_PREPROCESSOR_ASSIGN_UNIQUE_SENTENCE_INDICES_FOR_SENTENCES
 	int sentenceIndex;

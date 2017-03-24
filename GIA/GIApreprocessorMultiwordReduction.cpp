@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorMultiwordReduction.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a3b 22-March-2017
+ * Project Version: 3a3c 22-March-2017
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  *
@@ -176,8 +176,16 @@ bool GIApreprocessorMultiwordReductionClass::initialiseLRP(const string newLRPDa
 	{
 		result = false;	
 	}
+	
+	if(!parseVerbDataGenerateAllTenseVariants())	//this is required to make verbList usable
+	{
+		result = false;
+	}
 	#endif
-		
+	
+
+
+	
 	return result;
 }
 bool GIApreprocessorMultiwordReductionClass::getUseLRP()
@@ -2191,8 +2199,7 @@ bool GIApreprocessorMultiwordReductionClass::identifyConditionType(GIAentityNode
 #endif
 
 
-
-#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET
+#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_LOAD_WORD_LISTS
 //warning: this function is only currently developed for infinitive and continuous case
 bool GIApreprocessorMultiwordReductionClass::parseVerbDataGenerateAllTenseVariants()
 {
@@ -2210,7 +2217,7 @@ bool GIApreprocessorMultiwordReductionClass::parseVerbDataGenerateAllTenseVarian
 		
 		GIApreprocessorMultiwordReductiontag* currentTagInVerbList = firstTagInVerbList;
 		while(currentTagInVerbList->nextSentence != NULL)
-		{
+		{			
 			string base = currentTagInVerbList->tagName;
 
 			this->generateTenseVariantsOfVerbBase(currentTagInVerbList, firstTagInIrregularVerbList);
@@ -2220,6 +2227,9 @@ bool GIApreprocessorMultiwordReductionClass::parseVerbDataGenerateAllTenseVarian
 	}
 	return result;
 }
+#endif
+
+#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET
 
 bool GIApreprocessorMultiwordReductionClass::determineVerbCaseStandard(const string word, int* grammaticalBaseTenseForm)
 {
@@ -2230,12 +2240,16 @@ bool GIApreprocessorMultiwordReductionClass::determineVerbCaseStandard(const str
 	GIApreprocessorMultiwordReductiontag* currentTagInVerbList = firstTagInVerbList;
 	while(currentTagInVerbList->nextSentence != NULL)
 	{
+		//cout << "currentTagInVerbList = " << currentTagInVerbList->tagName << endl;
+		
 		for(int i=0; i<GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_MAX_NUM_TENSE_FORMS; i++)
 		{
 			for(int j=0; j<GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_MAX_NUM_TENSE_FORM_VERSIONS; j++)
 			{
+				//cout << "\tcurrentTagInVerbList->grammaticalTenseFormsArray[i][j] = " << currentTagInVerbList->grammaticalTenseFormsArray[i][j] << endl;
+
 				if(currentTagInVerbList->grammaticalTenseFormsArray[i][j] == word)
-				{
+				{					
 					foundVerbCase = true;
 					*grammaticalBaseTenseForm = i;
 				}
