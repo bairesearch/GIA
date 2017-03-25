@@ -25,7 +25,7 @@
  * File Name: GIApreprocessor.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3a3d 22-March-2017
+ * Project Version: 3a3e 22-March-2017
  * Requirements: requires plain text file
  * Description: Logical Condition and Reference Set preprocessor
  *
@@ -1020,10 +1020,17 @@ GIAentityNode* GIApreprocessorClass::getEntity(GIApreprocessorLogicReference* cu
 
 bool GIApreprocessorClass::findPrimaryEntityAndReconcileSubReferenceSets(GIAentityNode** primaryEntity, GIApreprocessorSubReferenceSet* firstSubReferenceSetInList, GIAentityNode* primaryDelimiterEntity, GIAtranslatorVariablesClass* translatorVariables, const int referenceSetType)
 {
-	GIAentityNode* lastDelimiterEntity = primaryDelimiterEntity;
+	cout << "\n\nfindPrimaryEntityAndReconcileSubReferenceSets" << endl;
+	
+	GIAentityNode* lastDelimiterEntity = NULL;
+	//GIAentityNode* lastSubjectEntity = NULL;
+	
 	GIApreprocessorSubReferenceSet* currentSubReferenceSetInList = firstSubReferenceSetInList;
 	while(currentSubReferenceSetInList->next != NULL)
 	{
+		cout << "currentSubReferenceSetInList->sentenceIndex = " << currentSubReferenceSetInList->sentenceIndex << endl;
+		cout << "currentSubReferenceSetInList->subReferenceSetContents = " << currentSubReferenceSetInList->subReferenceSetContents << endl;
+		
 		#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_SUB_REFERENCE_SETS
 		#ifndef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_RECORD_SAME_REFERENCE_SET_DELIMITERS
 		if(!(currentSubReferenceSetInList->referenceSetDelimiter))
@@ -1033,11 +1040,14 @@ bool GIApreprocessorClass::findPrimaryEntityAndReconcileSubReferenceSets(GIAenti
 			GIAentityNode* intermediaryPrimaryEntity = NULL;
 			if(findPrimaryEntityBasedOnSentenceIndexAndTypeAndDeleteDummyVariableConnections(currentSubReferenceSetInList, translatorVariables, referenceSetType, &intermediaryPrimaryEntity, primaryDelimiterEntity))
 			{
+				cout << "intermediaryPrimaryEntity = " << intermediaryPrimaryEntity->entityName << endl;
 				#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_SUB_REFERENCE_SETS
 				if(currentSubReferenceSetInList == firstSubReferenceSetInList)
 				{
 				#endif
 					*primaryEntity = intermediaryPrimaryEntity;
+					//lastSubjectEntity = intermediaryPrimaryEntity;
+					cout << "*primaryEntity = intermediaryPrimaryEntity = " << intermediaryPrimaryEntity->entityName << endl;
 					#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
 					firstSubReferenceSetInList->primaryEntityTemp = *primaryEntity;
 					#endif
@@ -1048,14 +1058,17 @@ bool GIApreprocessorClass::findPrimaryEntityAndReconcileSubReferenceSets(GIAenti
 					#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_RECORD_SAME_REFERENCE_SET_DELIMITERS
 					if(currentSubReferenceSetInList->isReferenceSetDelimiter)
 					{
+						cout << "(currentSubReferenceSetInList->isReferenceSetDelimiter)" << endl;
 						//OLD: lastDelimiterEntity = createNewRelationshipAndConnectToSource(*primaryEntity, intermediaryPrimaryEntity);
 						
 						bool sameReferenceSet = true;	//"that"/"which" imply sameReferenceSet
 						if(currentSubReferenceSetInList->delimiterSpecialCase == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_SPECIAL_CASE_DELIMITER_AND_OBJECT_REFER_TO_PREVIOUS_DELIMITER_VERB)
 						{
-							if(lastDelimiterEntity != NULL)
+							cout << "currentSubReferenceSetInList->delimiterSpecialCase == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_SPECIAL_CASE_DELIMITER_AND_OBJECT_REFER_TO_PREVIOUS_DELIMITER_VERB" << endl;
+							
+							if(primaryDelimiterEntity != NULL)
 							{
-								connectRelationshipToSource(intermediaryPrimaryEntity, lastDelimiterEntity, sameReferenceSet, translatorVariables);	//eg tom rides the bike near the ball -> rides near
+								connectRelationshipToSource(intermediaryPrimaryEntity, primaryDelimiterEntity, sameReferenceSet, translatorVariables);	//eg tom rides the bike near the ball -> rides near
 							}
 							else
 							{
@@ -1066,13 +1079,24 @@ bool GIApreprocessorClass::findPrimaryEntityAndReconcileSubReferenceSets(GIAenti
 						else
 						{
 							connectRelationshipToSource(intermediaryPrimaryEntity, *primaryEntity, sameReferenceSet, translatorVariables);
+							cout << "connectRelationshipToSource" << endl;
 						}
 						lastDelimiterEntity = intermediaryPrimaryEntity;
 					}
 					else
 					{
 						//connect the last delimiter connection (set its target) to the current subreference set entity
-						lastDelimiterEntity = intermediaryPrimaryEntity;					
+						if(lastDelimiterEntity != NULL)
+						{
+							bool sameReferenceSet = true;
+							connectRelationshipToTarget(lastDelimiterEntity, intermediaryPrimaryEntity, sameReferenceSet, translatorVariables);
+							lastDelimiterEntity = NULL;
+						}
+						else
+						{
+							cout << "GIApreprocessor::findPrimaryEntityAndReconcileSubReferenceSets{} error: !(currentSubReferenceSetInList->isReferenceSetDelimiter) && (lastDelimiterEntity == NULL)" << endl;	
+							exit(EXIT_ERROR);
+						}
 					}					
 					#else
 					//connect the last delimiter connection (its target) to the current subreference set entity
