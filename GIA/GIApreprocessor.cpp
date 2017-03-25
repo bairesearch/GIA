@@ -25,7 +25,7 @@
  * File Name: GIApreprocessor.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3a3e 22-March-2017
+ * Project Version: 3a3f 22-March-2017
  * Requirements: requires plain text file
  * Description: Logical Condition and Reference Set preprocessor
  *
@@ -181,12 +181,10 @@ bool GIApreprocessorClass::preprocessSentencesForGIA(const string inputFileName,
 	cout << endl;
 	#endif
 
-	/*
-	//#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_PREMATURE_QUIT
+	#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_PREMATURE_QUIT
 	cout << "Premature quit for debug" << endl;
 	exit(EXIT_ERROR);
-	//#endif
-	*/
+	#endif
 	
 	return result;
 }
@@ -306,21 +304,27 @@ bool GIApreprocessorClass::generatePreprocessorSentenceNLPparsablePhrases(GIApre
 			#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_SUB_REFERENCE_SETS
 			*/
 			GIApreprocessorSubReferenceSet* currentSubReferenceSetInList = currentLogicReferenceInList->logicReferenceVariable->referenceSetSubject;
-			cout << "1 sentenceIndex = " << *sentenceIndex << endl;
+			#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
+			cout << "addSentenceToSentenceContentsPreprocessedLogicReferenceVariables GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_TYPE_SUBJECT, sentenceIndex = " << *sentenceIndex << endl;
+			#endif
 			while(currentSubReferenceSetInList->next != NULL)
 			{
 				addSentenceToSentenceContentsPreprocessedLogicReferenceVariables(&sentenceContentsPreprocessedLogicReferenceVariables, &sentenceContentsPreprocessedLogicReferenceVariablesForNLP, currentSubReferenceSetInList, sentenceIndex, GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_TYPE_SUBJECT);
 				currentSubReferenceSetInList = currentSubReferenceSetInList->next;	
 			}
 			currentSubReferenceSetInList = currentLogicReferenceInList->logicReferenceVariable->referenceSetObject;
-			cout << "2 sentenceIndex = " << *sentenceIndex << endl;
+			#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
+			cout << "addSentenceToSentenceContentsPreprocessedLogicReferenceVariables GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_TYPE_OBJECT, sentenceIndex = " << *sentenceIndex << endl;
+			#endif
 			while(currentSubReferenceSetInList->next != NULL)
 			{
 				addSentenceToSentenceContentsPreprocessedLogicReferenceVariables(&sentenceContentsPreprocessedLogicReferenceVariables, &sentenceContentsPreprocessedLogicReferenceVariablesForNLP, currentSubReferenceSetInList, sentenceIndex, GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_TYPE_OBJECT);
 				currentSubReferenceSetInList = currentSubReferenceSetInList->next;	
 			}
 			#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_RECORD_SAME_REFERENCE_SET_DELIMITERS
-			cout << "3 sentenceIndex = " << *sentenceIndex << endl;
+			#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
+			cout << "addSentenceToSentenceContentsPreprocessedLogicReferenceVariables GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_TYPE_DELIMITER, sentenceIndex = " << *sentenceIndex << endl;
+			#endif
 			addSentenceToSentenceContentsPreprocessedLogicReferenceVariables(&sentenceContentsPreprocessedLogicReferenceVariables, &sentenceContentsPreprocessedLogicReferenceVariablesForNLP, currentLogicReferenceInList->logicReferenceVariable->referenceSetDelimiter, sentenceIndex, GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_TYPE_DELIMITER);
 			#endif
 			#else
@@ -376,7 +380,9 @@ void GIApreprocessorClass::addSentenceToSentenceContentsPreprocessedLogicReferen
 		if(referenceSet->isReferenceSetDelimiter)
 		{
 			referenceSet->subReferenceSetContentsOutputForNLP = string(GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_SUBJECT_FULL) + STRING_SPACE + referenceSet->subReferenceSetContents + STRING_SPACE + GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_OBJECT_FULL + CHAR_FULLSTOP;
+			#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
 			cout << "referenceSet->subReferenceSetContentsOutputForNLP = " << referenceSet->subReferenceSetContentsOutputForNLP << endl;
+			#endif
 		} 
 		else
 		{
@@ -386,13 +392,17 @@ void GIApreprocessorClass::addSentenceToSentenceContentsPreprocessedLogicReferen
 			{
 			#endif
 				referenceSet->subReferenceSetContentsOutputForNLP = referenceSet->subReferenceSetContents + STRING_SPACE + GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_FULL + STRING_SPACE + GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_OBJECT_FULL + CHAR_FULLSTOP;
+				#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
 				cout << "referenceSet->subReferenceSetContentsOutputForNLP = " << referenceSet->subReferenceSetContentsOutputForNLP << endl;
+				#endif
 			#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_SUBJECT_OR_OBJECT_AND_DELIMITER
 			}
 			else if(referenceSetType == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_TYPE_OBJECT)
 			{
 				referenceSet->subReferenceSetContentsOutputForNLP = string(GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_SUBJECT_FULL) + STRING_SPACE + GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_FULL + STRING_SPACE + referenceSet->subReferenceSetContents + CHAR_FULLSTOP;
+				#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
 				cout << "referenceSet->subReferenceSetContentsOutputForNLP = " << referenceSet->subReferenceSetContentsOutputForNLP << endl;
+				#endif
 			} 
 			#endif
 		#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_RECORD_SAME_REFERENCE_SET_DELIMITERS
@@ -449,8 +459,10 @@ bool GIApreprocessorClass::updateGIApreprocessorMultiwordReductionTagTextCorresp
 				{
 					result = false;
 				}
+				#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
 				cout << "currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->sentenceIndex = " << currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->sentenceIndex << endl;
 				cout << "currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->entityIndex = " << currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->entityIndex << endl;
+				#endif
 			}
 			else
 			{
@@ -563,8 +575,10 @@ bool GIApreprocessorClass::replaceEntityTagWithNLPonlyTag(GIApreprocessorMultiwo
 				if(currentTagInPlainText->entityIndex == currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->entityIndex)
 				{
 					result = true;
+					#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
 					cout << "GIApreprocessorClass::replaceEntityTagWithNLPonlyTag; currentTagInPlainText->tagName  = " << currentTagInPlainText->tagName << endl;
 					cout << "GIApreprocessorClass::replaceEntityTagWithNLPonlyTag; currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->wordWithLRPforNLPonly  = " << currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->wordWithLRPforNLPonly << endl;
+					#endif
 					currentTagInPlainText->tagName = currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->wordWithLRPforNLPonly;
 				}
 				currentTagInPlainTextSentence = currentTagInPlainTextSentence->nextTag;
@@ -644,19 +658,25 @@ bool GIApreprocessorClass::connectPreprocessorSentenceReferenceSetEntitiesToLogi
 			if(GIApreprocessorReferenceSet.hasReferenceSet(currentLogicReferenceInList->logicReferenceVariable->referenceSetSubject))
 			{
 				subjectDefined = true;
+				#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
 				cout << "subjectDefined" << endl;
+				#endif
 			}
 			bool objectDefined = false;
 			if(GIApreprocessorReferenceSet.hasReferenceSet(currentLogicReferenceInList->logicReferenceVariable->referenceSetObject))
 			{
 				objectDefined = true;
+				#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
 				cout << "objectDefined" << endl;
+				#endif
 			}
 			bool delimiterDefined = false;
 			if(GIApreprocessorReferenceSet.hasReferenceSet(currentLogicReferenceInList->logicReferenceVariable->referenceSetDelimiter))
 			{
 				delimiterDefined = true;
+				#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
 				cout << "delimiterDefined" << endl;
+				#endif
 			}
 			
 			
@@ -1020,16 +1040,19 @@ GIAentityNode* GIApreprocessorClass::getEntity(GIApreprocessorLogicReference* cu
 
 bool GIApreprocessorClass::findPrimaryEntityAndReconcileSubReferenceSets(GIAentityNode** primaryEntity, GIApreprocessorSubReferenceSet* firstSubReferenceSetInList, GIAentityNode* primaryDelimiterEntity, GIAtranslatorVariablesClass* translatorVariables, const int referenceSetType)
 {
-	cout << "\n\nfindPrimaryEntityAndReconcileSubReferenceSets" << endl;
+	#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
+	cout << "\n\nGIApreprocessorClass::findPrimaryEntityAndReconcileSubReferenceSets" << endl;
+	#endif
 	
 	GIAentityNode* lastDelimiterEntity = NULL;
-	//GIAentityNode* lastSubjectEntity = NULL;
 	
 	GIApreprocessorSubReferenceSet* currentSubReferenceSetInList = firstSubReferenceSetInList;
 	while(currentSubReferenceSetInList->next != NULL)
 	{
+		#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
 		cout << "currentSubReferenceSetInList->sentenceIndex = " << currentSubReferenceSetInList->sentenceIndex << endl;
 		cout << "currentSubReferenceSetInList->subReferenceSetContents = " << currentSubReferenceSetInList->subReferenceSetContents << endl;
+		#endif
 		
 		#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_SUB_REFERENCE_SETS
 		#ifndef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_RECORD_SAME_REFERENCE_SET_DELIMITERS
@@ -1040,14 +1063,17 @@ bool GIApreprocessorClass::findPrimaryEntityAndReconcileSubReferenceSets(GIAenti
 			GIAentityNode* intermediaryPrimaryEntity = NULL;
 			if(findPrimaryEntityBasedOnSentenceIndexAndTypeAndDeleteDummyVariableConnections(currentSubReferenceSetInList, translatorVariables, referenceSetType, &intermediaryPrimaryEntity, primaryDelimiterEntity))
 			{
+				#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
 				cout << "intermediaryPrimaryEntity = " << intermediaryPrimaryEntity->entityName << endl;
+				#endif
 				#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_SUB_REFERENCE_SETS
 				if(currentSubReferenceSetInList == firstSubReferenceSetInList)
 				{
 				#endif
 					*primaryEntity = intermediaryPrimaryEntity;
-					//lastSubjectEntity = intermediaryPrimaryEntity;
+					#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
 					cout << "*primaryEntity = intermediaryPrimaryEntity = " << intermediaryPrimaryEntity->entityName << endl;
+					#endif
 					#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
 					firstSubReferenceSetInList->primaryEntityTemp = *primaryEntity;
 					#endif
@@ -1058,14 +1084,16 @@ bool GIApreprocessorClass::findPrimaryEntityAndReconcileSubReferenceSets(GIAenti
 					#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_RECORD_SAME_REFERENCE_SET_DELIMITERS
 					if(currentSubReferenceSetInList->isReferenceSetDelimiter)
 					{
+						#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
 						cout << "(currentSubReferenceSetInList->isReferenceSetDelimiter)" << endl;
-						//OLD: lastDelimiterEntity = createNewRelationshipAndConnectToSource(*primaryEntity, intermediaryPrimaryEntity);
+						#endif
 						
 						bool sameReferenceSet = true;	//"that"/"which" imply sameReferenceSet
 						if(currentSubReferenceSetInList->delimiterSpecialCase == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_SPECIAL_CASE_DELIMITER_AND_OBJECT_REFER_TO_PREVIOUS_DELIMITER_VERB)
 						{
+							#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
 							cout << "currentSubReferenceSetInList->delimiterSpecialCase == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_SPECIAL_CASE_DELIMITER_AND_OBJECT_REFER_TO_PREVIOUS_DELIMITER_VERB" << endl;
-							
+							#endif
 							if(primaryDelimiterEntity != NULL)
 							{
 								connectRelationshipToSource(intermediaryPrimaryEntity, primaryDelimiterEntity, sameReferenceSet, translatorVariables);	//eg tom rides the bike near the ball -> rides near
@@ -1079,7 +1107,9 @@ bool GIApreprocessorClass::findPrimaryEntityAndReconcileSubReferenceSets(GIAenti
 						else
 						{
 							connectRelationshipToSource(intermediaryPrimaryEntity, *primaryEntity, sameReferenceSet, translatorVariables);
+							#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
 							cout << "connectRelationshipToSource" << endl;
+							#endif
 						}
 						lastDelimiterEntity = intermediaryPrimaryEntity;
 					}
@@ -1173,14 +1203,12 @@ bool GIApreprocessorClass::findPrimaryEntityBasedOnSentenceIndexAndTypeAndDelete
 		if(!findParentEntityBasedOnSentenceIndex(currentSubReferenceSetInList, translatorVariables, GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_SUBJECT, &subjectParentEntity))
 		{
 			result = false;
-			cout << "9 GIApreprocessorClass::findPrimaryEntityBasedOnSentenceIndexAndTypeAndDeleteDummyVariableConnections{} error: !findParentEntityBasedOnSentenceIndex subjectParentEntity" << endl;
 			exit(EXIT_ERROR);
 		}
 		GIAentityConnection* parentEntityToPrimaryEntityConnection1 = NULL;
 		if(!findSameSentenceRelationshipEntityNodePointerInVector(subjectParentEntity, true, &parentEntityToPrimaryEntityConnection1, currentSubReferenceSetInList->sentenceIndex))
 		{
 			result = false;
-			cout << "10 GIApreprocessorClass::findPrimaryEntityBasedOnSentenceIndexAndTypeAndDeleteDummyVariableConnections{} error: !findSameSentenceRelationshipEntityNodePointerInVector" << endl;
 			exit(EXIT_ERROR);
 		}
 
@@ -1188,14 +1216,12 @@ bool GIApreprocessorClass::findPrimaryEntityBasedOnSentenceIndexAndTypeAndDelete
 		if(!findParentEntityBasedOnSentenceIndex(currentSubReferenceSetInList, translatorVariables, GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_OBJECT, &objectParentEntity))
 		{
 			result = false;
-			cout << "11 GIApreprocessorClass::findPrimaryEntityBasedOnSentenceIndexAndTypeAndDeleteDummyVariableConnections{} error: !findParentEntityBasedOnSentenceIndex objectParentEntity" << endl;
 			exit(EXIT_ERROR);
 		}
 		GIAentityConnection* parentEntityToPrimaryEntityConnection2 = NULL;
 		if(!findSameSentenceRelationshipEntityNodePointerInVector(objectParentEntity, false, &parentEntityToPrimaryEntityConnection2, currentSubReferenceSetInList->sentenceIndex))
 		{
 			result = false;
-			cout << "12 GIApreprocessorClass::findPrimaryEntityBasedOnSentenceIndexAndTypeAndDeleteDummyVariableConnections{} error: !findSameSentenceRelationshipEntityNodePointerInVector" << endl;
 			exit(EXIT_ERROR);
 		}
 		
@@ -1220,14 +1246,12 @@ bool GIApreprocessorClass::findPrimaryEntityBasedOnSentenceIndexAndTypeAndDelete
 			if(!findParentEntityBasedOnSentenceIndex(currentSubReferenceSetInList, translatorVariables, GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_LEMMA, &relationshipParentEntity))
 			{
 				result = false;
-				cout << "1 GIApreprocessorClass::findPrimaryEntityBasedOnSentenceIndexAndTypeAndDeleteDummyVariableConnections{} error: !findParentEntityBasedOnSentenceIndex relationshipParentEntity" << endl;
 				exit(EXIT_ERROR);
 			}
 			GIAentityConnection* parentEntityToPrimaryEntityConnection1 = NULL;
 			if(!findSameSentenceSubjectObjectEntityNodePointerInVector(relationshipParentEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_RELATIONSHIP_SUBJECT, &parentEntityToPrimaryEntityConnection1, currentSubReferenceSetInList->sentenceIndex))
 			{
 				result = false;
-				cout << "2 GIApreprocessorClass::findPrimaryEntityBasedOnSentenceIndexAndTypeAndDeleteDummyVariableConnections{} error: !findSameSentenceSubjectObjectEntityNodePointerInVector" << endl;
 				exit(EXIT_ERROR);
 			}
 			
@@ -1235,7 +1259,6 @@ bool GIApreprocessorClass::findPrimaryEntityBasedOnSentenceIndexAndTypeAndDelete
 			if(!findParentEntityBasedOnSentenceIndex(currentSubReferenceSetInList, translatorVariables, GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_OBJECT, &objectParentEntity))
 			{
 				result = false;
-				cout << "3 GIApreprocessorClass::findPrimaryEntityBasedOnSentenceIndexAndTypeAndDeleteDummyVariableConnections{} error: !findParentEntityBasedOnSentenceIndex objectParentEntity" << endl;
 				exit(EXIT_ERROR);
 			}
 			GIAentityConnection* parentEntityToPrimaryEntityConnection2 = NULL;
@@ -1243,14 +1266,13 @@ bool GIApreprocessorClass::findPrimaryEntityBasedOnSentenceIndexAndTypeAndDelete
 			//OR: if(!findSameSentenceRelationshipEntityNodePointerInVector(objectParentEntity, false, &parentEntityToPrimaryEntityConnection2, currentSubReferenceSetInList->sentenceIndex))
 			{
 				result = false;
-				cout << "4 GIApreprocessorClass::findPrimaryEntityBasedOnSentenceIndexAndTypeAndDeleteDummyVariableConnections{} error: !findSameSentenceEntityNodePointerInVector" << endl;
 				exit(EXIT_ERROR);
 			}
 			
 			deleteExternalConnectionsToConnection(parentEntityToPrimaryEntityConnection1);
 			deleteExternalConnectionsToConnection(parentEntityToPrimaryEntityConnection2);
 			GIAtranslatorOperations.disableInstanceAndNetworkIndexEntity(relationshipParentEntity);	//disable if not already disabled
-			GIAtranslatorOperations.disableInstanceAndNetworkIndexEntity(objectParentEntity);		//disable if not already disabled
+			GIAtranslatorOperations.disableInstanceAndNetworkIndexEntity(objectParentEntity);	//disable if not already disabled
 			
 			*primaryEntity = parentEntityToPrimaryEntityConnection1->entity;
 		#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_SUBJECT_OR_OBJECT_AND_DELIMITER
@@ -1263,7 +1285,6 @@ bool GIApreprocessorClass::findPrimaryEntityBasedOnSentenceIndexAndTypeAndDelete
 			if(!findParentEntityBasedOnSentenceIndex(currentSubReferenceSetInList, translatorVariables, GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_SUBJECT, &subjectParentEntity))
 			{
 				result = false;
-				cout << "5 GIApreprocessorClass::findPrimaryEntityBasedOnSentenceIndexAndTypeAndDeleteDummyVariableConnections{} error: !findParentEntityBasedOnSentenceIndex subjectParentEntity" << endl;
 				exit(EXIT_ERROR);
 			}
 			GIAentityConnection* parentEntityToPrimaryEntityConnection1 = NULL;
@@ -1271,7 +1292,6 @@ bool GIApreprocessorClass::findPrimaryEntityBasedOnSentenceIndexAndTypeAndDelete
 			//OR: if(!findSameSentenceRelationshipEntityNodePointerInVector(subjectParentEntity, true, &parentEntityToPrimaryEntityConnection1, currentSubReferenceSetInList->sentenceIndex))
 			{
 				result = false;
-				cout << "6 GIApreprocessorClass::findPrimaryEntityBasedOnSentenceIndexAndTypeAndDeleteDummyVariableConnections{} error: !findSameSentenceEntityNodePointerInVector" << endl;
 				exit(EXIT_ERROR);
 			}
 			
@@ -1279,14 +1299,12 @@ bool GIApreprocessorClass::findPrimaryEntityBasedOnSentenceIndexAndTypeAndDelete
 			if(!findParentEntityBasedOnSentenceIndex(currentSubReferenceSetInList, translatorVariables, GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_LEMMA, &relationshipParentEntity))
 			{
 				result = false;
-				cout << "7 GIApreprocessorClass::findPrimaryEntityBasedOnSentenceIndexAndTypeAndDeleteDummyVariableConnections{} error: !findParentEntityBasedOnSentenceIndex relationshipParentEntity" << endl;
 				exit(EXIT_ERROR);
 			}
 			GIAentityConnection* parentEntityToPrimaryEntityConnection2 = NULL;
 			if(!findSameSentenceSubjectObjectEntityNodePointerInVector(relationshipParentEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_RELATIONSHIP_OBJECT, &parentEntityToPrimaryEntityConnection2, currentSubReferenceSetInList->sentenceIndex))
 			{
 				result = false;
-				cout << "8 GIApreprocessorClass::findPrimaryEntityBasedOnSentenceIndexAndTypeAndDeleteDummyVariableConnections{} error: !findSameSentenceSubjectObjectEntityNodePointerInVector" << endl;
 				exit(EXIT_ERROR);
 			}
 			
@@ -1319,23 +1337,16 @@ bool GIApreprocessorClass::findParentEntityBasedOnSentenceIndex(GIApreprocessorS
 	bool result = false;
 	GIAentityNode* entityFound = NULL;
 	
-	//cout << "currentSubReferenceSetInList->sentenceIndex = " << currentSubReferenceSetInList->sentenceIndex << endl;
-
 	map<int, vector<GIAentityNode*>*>::iterator entityNodesActiveListSentenceIter = translatorVariables->entityNodesActiveListSentences->find(currentSubReferenceSetInList->sentenceIndex);	
 	if(entityNodesActiveListSentenceIter != translatorVariables->entityNodesActiveListSentences->end())
-	{
-		//cout << "found sentence" << endl;
-		
+	{		
 		vector<GIAentityNode*>* entityNodesActiveListSentence = entityNodesActiveListSentenceIter->second;
 
 		for(vector<GIAentityNode*>::iterator entityIter = entityNodesActiveListSentence->begin(); entityIter != entityNodesActiveListSentence->end(); entityIter++)
 		{		
 			GIAentityNode* entity = *entityIter;
-			//cout << "entity = " << entity->entityName << endl;
-
 			if(entity->entityName == parentEntityName)
 			{
-				//cout << "entity->entityType = " << entity->entityType << endl;
 				*parentEntity = entity;
 				result = true;
 			}
@@ -1381,7 +1392,6 @@ bool GIApreprocessorClass::findSameSentenceRelationshipEntityNodePointerInVector
 
 bool GIApreprocessorClass::transferPropertyAndConditionConnectionsBetweenDummyDelimiterAndRealDelimiter(GIAentityNode* dummyDelimiterEntity, GIAentityNode* primaryDelimiterEntity)
 {
-	cout << "at1" << endl;
 	bool result = true;
 	for(int connectionType = 0; connectionType<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; connectionType++)
 	{
@@ -1391,8 +1401,6 @@ bool GIApreprocessorClass::transferPropertyAndConditionConnectionsBetweenDummyDe
 			{
 				GIAentityConnection* connection = (*connectionIter);
 				GIAentityNode* relationshipEntity = connection->entity;
-				cout << "relationshipEntity->entityName = " << relationshipEntity->entityName << endl;
-				cout << "relationshipEntity->entityType = " << relationshipEntity->entityType << endl;
 				connection->entityOrigin = primaryDelimiterEntity;
 				if((relationshipEntity->relationshipSubjectEntity)->back() == NULL)
 				{
@@ -1404,7 +1412,6 @@ bool GIApreprocessorClass::transferPropertyAndConditionConnectionsBetweenDummyDe
 			}
 		}
 	}
-	cout << "at2" << endl;
 	return result;
 }
 
@@ -1412,11 +1419,8 @@ bool GIApreprocessorClass::transferPropertyAndConditionConnectionsBetweenDummyDe
 bool GIApreprocessorClass::findSameSentenceSubjectObjectEntityNodePointerInVector(GIAentityNode* entityNode, const int connectionType, GIAentityConnection** connectionFound, const int sentenceIndex)
 {	
 	bool foundNode = false;
-	//cout << "sentenceIndex = " << sentenceIndex << endl;
 	for(vector<GIAentityConnection*>::iterator connectionIter = entityNode->entityVectorConnectionsArray[connectionType].begin(); connectionIter != entityNode->entityVectorConnectionsArray[connectionType].end(); connectionIter++)
 	{
-		//cout << "(*connectionIter)->entity->entityName = " << (*connectionIter)->entity->entityName << endl;
-		//cout << "(*connectionIter)->sentenceIndexTemp = " << (*connectionIter)->sentenceIndexTemp << endl;
 		if((*connectionIter)->sentenceIndexTemp == sentenceIndex)
 		{
 			foundNode = true;
@@ -1508,7 +1512,9 @@ bool GIApreprocessorClass::getRelationshipNameAndType(GIApreprocessorSubReferenc
 	{
 		*relationshipName = delimiterContents;
 	}
+	#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
 	cout << "relationshipName = " << *relationshipName << endl;
+	#endif
 	
 	if(relationshipReference->delimiterType == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_AUXILIARY)	//GIApreprocessorReferenceSet.detectAuxiliary(*relationshipName)
 	{
@@ -1537,14 +1543,18 @@ bool GIApreprocessorClass::getRelationshipNameAndType(GIApreprocessorSubReferenc
 				if(referenceSetObjectContentsIndexOfFirstSpace != CPP_STRING_FIND_RESULT_FAIL_VALUE)
 				{
 					firstWordAfterAuxiliary = referenceSetObjectContents.substr(referenceSetObjectContentsIndexOfFirstSpace);
+					#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
 					cout << "firstWordAfterAuxiliary = " << firstWordAfterAuxiliary << endl;
+					#endif
 					hasFirstWordAfterAuxiliary = true;
 
 					int referenceSetObjectContentsIndexOfSecondSpace = referenceSetObjectContents.find(CHAR_SPACE, referenceSetObjectContentsIndexOfFirstSpace);	
 					if(referenceSetObjectContentsIndexOfSecondSpace != CPP_STRING_FIND_RESULT_FAIL_VALUE)
 					{
 						secondWordAfterAuxiliary = referenceSetObjectContents.substr(referenceSetObjectContentsIndexOfFirstSpace+1, referenceSetObjectContentsIndexOfSecondSpace-referenceSetObjectContentsIndexOfFirstSpace-1);
+						#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
 						cout << "secondWordAfterAuxiliary = " << secondWordAfterAuxiliary << endl;
+						#endif
 						hasSecondWordAfterAuxiliary = true;
 					}
 					else
@@ -1596,7 +1606,9 @@ bool GIApreprocessorClass::getRelationshipNameAndType(GIApreprocessorSubReferenc
 		}
 	}
 	
+	#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
 	cout << "relationshipEntityType = " << *relationshipEntityType << endl;
+	#endif
 	
 	if(delimiterContents == "")
 	{

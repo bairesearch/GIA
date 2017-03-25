@@ -25,7 +25,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a3e 22-March-2017
+ * Project Version: 3a3f 22-March-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -766,10 +766,9 @@
 		//#define GIA_PREPROCESSOR_SUPPORT_PUNCTUATION_MARKS_WITH_PRECEEDING_WHITE_SPACE	//not yet coded: do not currently support punctuation marks with preceeding white space. Currently skip (do not parse) multiple white space/punctuation characters (eg ". "/".."/"  "/" .")	
 		#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_REDUCE_ALL_WORD_TYPES	//don't just reduce multiword prepositions (reduce multiword verbs, nouns, adjectives and adverbs also)
 		#ifndef USE_NLC
-			#define GIA_PREPROCESSOR_SENTENCE	//3a1a (should disable with NLC)
+			//#define GIA_PREPROCESSOR_SENTENCE	//3a1a
 		#endif
 		#ifdef GIA_PREPROCESSOR_SENTENCE
-			//#define GIA_PREPROCESSOR_SENTENCE_RECONCILE_REFERENCES_AFTER_SEMANTIC_PARSING_EVERY_SENTENCE	//this is unsupported as each GIApreprocessorSentence will contain multiple GIAsentences
 			//#define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
 			#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
 				//#assert defined GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
@@ -836,17 +835,17 @@
 						#define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_SET_CONJUNCTION_AND_OR_TEXT_TO_REFERENCE_SET_OBJECT_BEFORE_SEMANTIC_RELATION_PARSE
 					#endif
 				#endif	
-				#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_LOAD_IRREGULAR_VERB_LIST
 				#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_LOAD_WORD_LISTS
 				#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_RCMOD_SAME_REFERENCE_SET_DELIMITER_NUMBER_OF_TYPES (3)
 				static string preprocessorRcmodSameReferenceSetDelimiter[GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_RCMOD_SAME_REFERENCE_SET_DELIMITER_NUMBER_OF_TYPES] = {"that", "which", "that's"};		//see preprocessorMathRcmodSameReferenceSetDelimiter
 			#else
 				#define GIA_PREPROCESSOR_ASSIGN_UNIQUE_SENTENCE_INDICES_FOR_LOGIC_REFERENCE_VARIABLES	//mandatory
 			#endif
+			//#define GIA_PREPROCESSOR_SENTENCE_RECONCILE_REFERENCES_AFTER_SEMANTIC_PARSING_EVERY_SENTENCE	//this is unsupported as each GIApreprocessorSentence will contain multiple GIAsentences
 			//#define GIA_PREPROCESSOR_RECORD_PARSABLE_PHRASE_POSITION_APPROXIMATE	//unimplemented
 			//#define GIA_PREPROCESSOR_SUPPORT_MULTILINE_SENTENCES	//unimplemented
-			#define GIA_DEBUG_PREPROCESSOR_SENTENCE
-			#define GIA_DEBUG_PREPROCESSOR_SENTENCE_PREMATURE_QUIT	//temp debug		
+			//#define GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
+			//#define GIA_DEBUG_PREPROCESSOR_SENTENCE_PREMATURE_QUIT	
 			#define GIA_PREPROCESSOR_SENTENCE_PRINT_OUTPUT	//temp debug
 			#define GIA_PREPROCESSOR_INTERMEDIARY_MULTIWORD_FILE_EXTENSION ".intermediary.multiword"
 			#define GIA_PREPROCESSOR_INTERMEDIARY_SENTENCE_FILE_EXTENSION ".intermediary.sentence"
@@ -1283,6 +1282,9 @@
 	#endif
 	#define GIA_WORD_ORIG	//NB wordOrig is now used by more than just NLG (it is also used by LRP)
 	//#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DISABLE_REDISTRIBUTE_RELATIONS_POST_NLP_MULTIWORD_PREPOSITION_REDUCTION
+#endif
+#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_LOAD_WORD_LISTS
+	#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_LOAD_IRREGULAR_VERB_LIST	//this is required for parseVerbDataGenerateAllTenseVariants
 #endif
 
 //variables currently being tested (1o1a+)
