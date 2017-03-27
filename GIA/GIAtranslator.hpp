@@ -25,7 +25,7 @@
  * File Name: GIAtranslator.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a3f 22-March-2017
+ * Project Version: 3a4a 26-March-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -59,8 +59,12 @@
 #include "GIAdatabase.hpp"
 #include "GIAnlp.hpp"	//required because parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyParsedSentences was shifted from GIAmain.cpp
 #include "GIAnlpParser.hpp"
+#ifdef GIA_BOT
 #include "GIAbot.hpp"
+#endif
+#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
 #include "GIApreprocessorMultiwordReduction.hpp"
+#endif
 #include "GIAsemanticParserOperations.hpp"
 #include "GIAsemanticParserTranslator.hpp"
 #include "GIAsemanticParserDatabase.hpp"
@@ -76,13 +80,15 @@ class GIAtranslatorClass
 {
 	private: GIAtranslatorOperationsClass GIAtranslatorOperations;
 	private: SHAREDvarsClass SHAREDvars;
+	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
 	private: GIApreprocessorMultiwordReductionClass GIApreprocessorMultiwordReduction;
+	#endif
 	private: GIAnlpClass GIAnlp;
 	private: GIAdatabaseClass GIAdatabase;
 	private: GIAsentenceClassClass GIAsentenceClass;
 	private: GIAentityNodeClassClass GIAentityNodeClass;
 	private: GIAtranslatorDefineReferencingClass GIAtranslatorDefineReferencing;
-	#ifdef USE_GIA2
+	#ifdef GIA_SEMANTIC_PARSER
 	private: GIAsemanticParserTranslatorClass GIAsemanticParserTranslator;
 	private: GIAsemanticParserOperationsClass GIAsemanticParserOperations;
 	private: GIAsemanticParserDatabaseClass GIAsemanticParserDatabase;
@@ -97,7 +103,9 @@ class GIAtranslatorClass
 	#endif
 	private: GIAtranslatorLinkEntitiesDynamicClass GIAtranslatorLinkEntitiesDynamic;
 	private: GIAtranslatorApplyAdvancedFeaturesClass GIAtranslatorApplyAdvancedFeatures;
+	#ifdef GIA_BOT
 	private: GIAbotClass GIAbot;
+	#endif
 	private: GIAtranslatorRulesClass GIAtranslatorRules;
 	#ifdef GIA_PREPROCESSOR_SENTENCE
 	private: GIApreprocessorClass GIApreprocessor;

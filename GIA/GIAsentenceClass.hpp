@@ -25,7 +25,7 @@
  * File Name: GIAsentenceClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a3f 22-March-2017
+ * Project Version: 3a4a 26-March-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -188,9 +188,9 @@ public:
 	bool isNameTemp;
 	#endif
 
-	#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
+	#ifdef GIA_SEMANTIC_PARSER
 	bool sameReferenceSet;
-	#ifdef GIA2_SUPPORT_QUERIES
+	#ifdef GIA_SEMANTIC_PARSER_SUPPORT_QUERIES
 	string corpusSpecialRelationGovernorIsQuery;
 	string corpusSpecialRelationDependentIsQuery;
 	#endif
@@ -269,7 +269,7 @@ public:
 
 	bool entityDisabled;	//added 14 July 2012b
 
-	#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
+	#ifdef GIA_SEMANTIC_PARSER
 	int GIAsemanticParserPOStype;
 	#endif
 

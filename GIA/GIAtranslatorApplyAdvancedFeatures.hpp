@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorApplyAdvancedFeatures.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a3f 22-March-2017
+ * Project Version: 3a4a 26-March-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -42,7 +42,9 @@
 #include "GIAconditionNodeClass.hpp"
 #include "GIAtranslatorOperations.hpp"
 #include "GIAdatabase.hpp"
+#ifdef GIA_SEMANTIC_PARSER_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
 #include "GIAsemanticParserOperations.hpp"
+#endif
 #include "GIAtranslatorGeneric.hpp"
 
 class GIAtranslatorApplyAdvancedFeaturesClass
@@ -51,7 +53,7 @@ class GIAtranslatorApplyAdvancedFeaturesClass
 	private: SHAREDvarsClass SHAREDvars;
 	private: GIAtranslatorOperationsClass GIAtranslatorOperations;
 	private: GIAentityNodeClassClass GIAentityNodeClass;
-	#ifdef USE_GIA2
+	#ifdef GIA_SEMANTIC_PARSER_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
 	private: GIAsemanticParserOperationsClass GIAsemanticParserOperations;
 	#endif
 	private: GIAtranslatorGenericClass GIAtranslatorGeneric;
@@ -72,7 +74,7 @@ class GIAtranslatorApplyAdvancedFeaturesClass
 			private: void extractQuantitiesStanfordCoreNLP(GIAtranslatorVariablesClass* translatorVariables);		//Stanford Specific	[requires NERTemp info to be set]
 			#endif
 
-		public: void defineTenseOnlyTimeConditions(GIAtranslatorVariablesClass* translatorVariables);	//#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER || #ifdef GIA_TRANSLATOR_XML_INTERPRETATION
+		public: void defineTenseOnlyTimeConditions(GIAtranslatorVariablesClass* translatorVariables);	//#ifdef GIA_SEMANTIC_PARSER_READ_SEMANTIC_RELATIONS || #ifdef GIA_TRANSLATOR_XML_INTERPRETATION
 
 		#ifdef GIA_SPECIFIC_ACTION_NETWORK_INDEXES
 		private: void defineActionConcepts1(GIAtranslatorVariablesClass* translatorVariables);

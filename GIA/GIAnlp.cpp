@@ -25,7 +25,7 @@
  * File Name: GIAnlp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a3f 22-March-2017
+ * Project Version: 3a4a 26-March-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -171,8 +171,8 @@ bool GIAnlpClass::parseNLPparserFeaturesFile(const string inputTextNLPfeatureXML
 	#ifdef GIA_RELEX
 	if(NLPfeatureParser == GIA_NLP_PARSER_RELEX)
 	{
-		#ifdef GIA2_SUPPORT_USE_RELEX_COMPATIBILITY_MODE_FOR_FEATURE_PARSER_TO_GENERATE_ADDITIONAL_RELATIONS_REQUIRED_BY_GIA2
-		bool NLPrelexCompatibilityMode = true;		//GIA2_SUPPORT_USE_RELEX_COMPATIBILITY_MODE_FOR_FEATURE_PARSER_TO_GENERATE_ADDITIONAL_RELATIONS_REQUIRED_BY_GIA2 - use stanford compatibilty mode only when parsing features, and only add special relations; RELATION_TYPE_MODAL_AUX, RELATION_TYPE_PASSIVE_AUX, RELATION_TYPE_COPULA, RELATION_TYPE_DETERMINER
+		#ifdef GIA_SEMANTIC_PARSER_SUPPORT_USE_RELEX_COMPATIBILITY_MODE_FOR_FEATURE_PARSER_TO_GENERATE_ADDITIONAL_RELATIONS_REQUIRED_BY_GIA2
+		bool NLPrelexCompatibilityMode = true;		//GIA_SEMANTIC_PARSER_SUPPORT_USE_RELEX_COMPATIBILITY_MODE_FOR_FEATURE_PARSER_TO_GENERATE_ADDITIONAL_RELATIONS_REQUIRED_BY_GIA2 - use stanford compatibilty mode only when parsing features, and only add special relations; RELATION_TYPE_MODAL_AUX, RELATION_TYPE_PASSIVE_AUX, RELATION_TYPE_COPULA, RELATION_TYPE_DETERMINER
 		#else
 		bool NLPrelexCompatibilityMode = false;		//irrelevant (not used) - only used when parsing syntatic dependency relations of a Relex file
 		#endif
@@ -358,7 +358,7 @@ bool GIAnlpClass::parseRelexFile(const string inputTextNLPrelationXMLfileName, c
 													currentSentence->maxNumberOfWordsInSentence = maxNumberOfWordsInSentence;
 													#endif
 												}
-												#ifdef GIA2_SUPPORT_USE_RELEX_COMPATIBILITY_MODE_FOR_FEATURE_PARSER_TO_GENERATE_ADDITIONAL_RELATIONS_REQUIRED_BY_GIA2
+												#ifdef GIA_SEMANTIC_PARSER_SUPPORT_USE_RELEX_COMPATIBILITY_MODE_FOR_FEATURE_PARSER_TO_GENERATE_ADDITIONAL_RELATIONS_REQUIRED_BY_GIA2
 												if(!parseRelations && NLPrelexCompatibilityMode)
 												{
 													int maxNumberOfWordsInSentence = 0;

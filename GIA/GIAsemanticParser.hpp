@@ -25,7 +25,7 @@
  * File Name: GIAsemanticParser.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a3f 22-March-2017
+ * Project Version: 3a4a 26-March-2017
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -42,7 +42,7 @@
 #include "GIAtranslator.hpp"
 #include "SHAREDvars.hpp"	//file io
 
-#ifdef USE_GIA2
+#ifdef GIA_SEMANTIC_PARSER_READ_SEMANTIC_RELATIONS
 class GIAsemanticParserClass
 {
 	private: SHAREDvarsClass SHAREDvars;
@@ -50,7 +50,7 @@ class GIAsemanticParserClass
 	private: GIAtranslatorClass GIAtranslator;
 	private: GIAsemanticParserOperationsClass GIAsemanticParserOperations;
 	private: GIAsemanticParserDatabaseClass GIAsemanticParserDatabase;
-	public: bool GIAsemanticParserClass::performSemanticParserLookupAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences(GIAtranslatorVariablesClass* translatorVariables, const string inputPlainTXTFileName, string inputTextNLPrelationXMLfileName, const string inputTextNLPfeatureXMLfileName, const string outputCFFfileName, const string NLPexeFolderArray[]);
+	public: bool performSemanticParserLookupAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences(GIAtranslatorVariablesClass* translatorVariables, const string inputPlainTXTFileName, string inputTextNLPrelationXMLfileName, const string inputTextNLPfeatureXMLfileName, const string outputCFFfileName, const string NLPexeFolderArray[]);
 		private: bool lookupSemanticParserFiles(GIAparagraph* firstParagraphInList, const int NLPfeatureParser);
 			private: bool lookupSemanticParserFiles(GIAsentence* firstSentenceInList, const int NLPfeatureParser);
 };

@@ -25,7 +25,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a3f 22-March-2017
+ * Project Version: 3a4a 26-March-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -726,7 +726,7 @@
 #ifdef USE_NLC
 	#define GIA_DISABLE_CROSS_SENTENCE_REFERENCING	//added 2g5a/05-September-2014 - required for NLC 1j2b+, optional for NLC 1k11a+
 #endif
-//#define GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
+//#define GIA_SEMANTIC_PARSER
 
 //#define GIA_DEBUG_DISABLE_3a_CODE
 #ifndef GIA_DEBUG_DISABLE_3a_CODE
@@ -928,33 +928,35 @@
 #endif
 
 #ifndef GIA_DEBUG_DISABLE_2k_CODE
-	//#ifdef GIA2_SEMANTIC_PARSER	//has not yet been defined
-		#define GIA2_SEMANTIC_PARSER_OPTIMISE_BASED_ON_CONJUNCTIONS	//2k1a [UNTESTED]		//NB training a connectionist network with this optimisation requires the NLP to directly connect the primary entity (object) in each subphrase to the subject, with the conjunction relations being auxiliary to these connections (not supported by Stanford Parser/CoreNLP at present; to implement a workaround see NLC removeRedundantConditionConjunctions/addConjunctionsConnectedToConditionConjunctionObject for related code)
-		#define GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE	//2k3a
-		#ifdef GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE
-			//#define GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER_UNOPTIMISED_TEXT_CORPUS	//for offline reimplementions of GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE only
-			#define GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE_EXTENSIVE	//added 2k3d; record semantic relation tuple files for all non-existant relations
-			#ifdef GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE_EXTENSIVE
-				//#ifdef GIA2_SUPPORT_BOTH_FAST_CORPUS_LOOKUP_PATH_AND_SLOW_SYNTACTIC_RULE_BASED_PATH	//has not yet been defined
-					#define GIA2_SEMANTIC_PARSER_EXPECT_TO_FIND_DATABASE_FILES_FOR_ALL_FEATURE_PERMUTATIONS	//added 2k3d
+	//#ifdef GIA_SEMANTIC_PARSER_SUBSETS	//has not yet been defined
+		#ifndef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE	//logic reference preprocessor already splits/processes conjunctions
+			//#define GIA_SEMANTIC_PARSER_SUBSETS_OPTIMISE_BASED_ON_CONJUNCTIONS	//2k1a [UNTESTED]		//NB training a connectionist network with this optimisation requires the NLP to directly connect the primary entity (object) in each subphrase to the subject, with the conjunction relations being auxiliary to these connections (not supported by Stanford Parser/CoreNLP at present; to implement a workaround see NLC removeRedundantConditionConjunctions/addConjunctionsConnectedToConditionConjunctionObject for related code)
+		#endif
+		//#define GIA_SEMANTIC_PARSER_SUBSETS_OPTIMISED_DATABASE	//2k3a	//optionally disabled 3a4a for user friendly output format
+		#ifdef GIA_SEMANTIC_PARSER_SUBSETS_OPTIMISED_DATABASE
+			//#define GIA_SEMANTIC_PARSER_WRITE_SEMANTIC_RELATIONS_UNOPTIMISED_TEXT_CORPUS	//for offline reimplementions of GIA_SEMANTIC_PARSER_SUBSETS_OPTIMISED_DATABASE only
+			#define GIA_SEMANTIC_PARSER_SUBSETS_OPTIMISED_DATABASE_EXTENSIVE	//added 2k3d; record semantic relation tuple files for all non-existant relations
+			#ifdef GIA_SEMANTIC_PARSER_SUBSETS_OPTIMISED_DATABASE_EXTENSIVE
+				//#ifdef GIA_SEMANTIC_PARSER_SUPPORT_BOTH_FAST_CORPUS_LOOKUP_PATH_AND_SLOW_SYNTACTIC_RULE_BASED_PATH	//has not yet been defined
+					#define GIA_SEMANTIC_PARSER_SUBSETS_EXPECT_TO_FIND_DATABASE_FILES_FOR_ALL_FEATURE_PERMUTATIONS	//added 2k3d
 				//#endif
 			#endif
 		#else
-			#define GIA2_SEMANTIC_PARSER_UNOPTIMISED_TEXT_CORPUS	//original GIA2 implementation: semantic relation designation based on text corpus lookup (indexed by POS permutation)
-			#ifdef GIA2_SEMANTIC_PARSER_UNOPTIMISED_TEXT_CORPUS
-				#define GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER_UNOPTIMISED_TEXT_CORPUS
-				//#ifdef GIA2_SUPPORT_BOTH_FAST_CORPUS_LOOKUP_PATH_AND_SLOW_SYNTACTIC_RULE_BASED_PATH	//has not yet been defined
-					#define GIA2_SEMANTIC_PARSER_EXPECT_TO_FIND_DATABASE_FILES_FOR_ALL_FEATURE_PERMUTATIONS	//added 2k3d
+			#define GIA_SEMANTIC_PARSER_SUBSETS_UNOPTIMISED_TEXT_CORPUS	//original GIA2 implementation: semantic relation designation based on text corpus lookup (indexed by POS permutation)
+			#ifdef GIA_SEMANTIC_PARSER_SUBSETS_UNOPTIMISED_TEXT_CORPUS
+				#define GIA_SEMANTIC_PARSER_WRITE_SEMANTIC_RELATIONS_UNOPTIMISED_TEXT_CORPUS
+				//#ifdef GIA_SEMANTIC_PARSER_SUPPORT_BOTH_FAST_CORPUS_LOOKUP_PATH_AND_SLOW_SYNTACTIC_RULE_BASED_PATH	//has not yet been defined
+					#define GIA_SEMANTIC_PARSER_SUBSETS_EXPECT_TO_FIND_DATABASE_FILES_FOR_ALL_FEATURE_PERMUTATIONS	//added 2k3d
 				//#endif
 			#endif
 		#endif
-		#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER_UNOPTIMISED_TEXT_CORPUS
-			//#define GIA2_CONNECTIONIST_NETWORK_USE_TEXT_CORPUS_FOR_TEMP_RELATION_DATA_STORAGE	//original GIA2 implementation	//disabled 2k3a
-			//#define GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER_UNOPTIMISED_TEXT_CORPUS_OLD	//disabled 2k3d
+		#ifdef GIA_SEMANTIC_PARSER_WRITE_SEMANTIC_RELATIONS_UNOPTIMISED_TEXT_CORPUS
+			//#define GIA_SEMANTIC_PARSER_CONNECTIONIST_NETWORK_USE_TEXT_CORPUS_FOR_TEMP_RELATION_DATA_STORAGE	//original GIA2 implementation	//disabled 2k3a
+			//#define GIA_SEMANTIC_PARSER_WRITE_SEMANTIC_RELATIONS_UNOPTIMISED_TEXT_CORPUS_OLD	//disabled 2k3d
 		#endif
 	//#endif
 	#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC_RECORD_AUX_INFO
-		#define GIA_RECORD_POSSESSION_AUXILIARY_HAS_INFORMATION	//added 2k3a	//supported by GIA2 including GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE (unlike GIA_RECORD_RCMOD_SET_INFORMATION)  //only required to identify subject (primary entity holding math value) in nlp parsable phrase?
+		#define GIA_RECORD_POSSESSION_AUXILIARY_HAS_INFORMATION	//added 2k3a	//supported by GIA2 including GIA_SEMANTIC_PARSER_SUBSETS_OPTIMISED_DATABASE (unlike GIA_RECORD_RCMOD_SET_INFORMATION)  //only required to identify subject (primary entity holding math value) in nlp parsable phrase?
 	#endif
 #endif
 
@@ -977,14 +979,14 @@
 		//#define GIA_DYNAMICALLY_LINK_FROM_CONDITIONS_ONLY_ACCEPT_AT_CONDITIONS	//not coded
 		#define GIA_STANFORD_PARSER_CONNECT_PREPOSITIONS_TO_ACTION_OBJECT_RATHER_THAN_ACTION	//2j7a	//eg "Move the bike near the car." - note this case is ambigious - note stanford connects the "near" preposition to the car object (instead of the move action)
 	#endif
-	#define GIA_DYNAMICALLY_LINK_ENTITIES_DISABLE_GIA2_SEMANTIC_RELATION_GENERATION	//2j5b
-	//#define GIA2_CREATE_FEATURES_FOR_ARTIFICIAL_ENTITIES	//considered for 2j5a but rejected
-	#ifndef GIA2_CREATE_FEATURES_FOR_ARTIFICIAL_ENTITIES
-		#define GIA2_CORRECT_POSTAGS_FIX1	//2j5a
-		#define GIA2_CORRECT_POSTAGS_FIX2	//2j5d
+	#define GIA_DYNAMICALLY_LINK_ENTITIES_DISABLE_GIA_SEMANTIC_PARSER_SEMANTIC_RELATION_GENERATION	//2j5b
+	//#define GIA_SEMANTIC_PARSER_CREATE_FEATURES_FOR_ARTIFICIAL_ENTITIES	//considered for 2j5a but rejected
+	#ifndef GIA_SEMANTIC_PARSER_CREATE_FEATURES_FOR_ARTIFICIAL_ENTITIES
+		#define GIA_SEMANTIC_PARSER_CORRECT_POSTAGS_FIX1	//2j5a
+		#define GIA_SEMANTIC_PARSER_CORRECT_POSTAGS_FIX2	//2j5d
 	#endif
 	#ifndef GIA_RECORD_POSSESSION_AUXILIARY_HAS_INFORMATION
-		//#define GIA_RECORD_RCMOD_SET_INFORMATION	//added 2j8a, disabled 2k3a (not supported by GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE), no longer supported 2l5b 	//was only required to identify subject (primary entity holding math value) in nlp parsable phrase, but possessionAuxiliaryHave is now used for this purpose	//originally implemented 2i16a but rejected
+		//#define GIA_RECORD_RCMOD_SET_INFORMATION	//added 2j8a, disabled 2k3a (not supported by GIA_SEMANTIC_PARSER_SUBSETS_OPTIMISED_DATABASE), no longer supported 2l5b 	//was only required to identify subject (primary entity holding math value) in nlp parsable phrase, but possessionAuxiliaryHave is now used for this purpose	//originally implemented 2i16a but rejected
 	#endif
 #endif
 
@@ -1096,7 +1098,7 @@
 //#define GIA_ENABLE_WARNINGS
 
 
-//#define GIA_TRANSLATOR_ONLY_MERGE_ENTITY_NODES_WHEN_LINK_PREESTABLISHED_REFERENCES_GIA //disabled GIA 2c3c [disabling required for GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN] - CHECKTHIS does not cause problems with alternative test scenarios
+//#define GIA_TRANSLATOR_ONLY_MERGE_ENTITY_NODES_WHEN_LINK_PREESTABLISHED_REFERENCES_GIA //disabled GIA 2c3c [disabling required for GIA_SEMANTIC_PARSER_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN] - CHECKTHIS does not cause problems with alternative test scenarios
 	//issue detected (yet to be patched) with the disabling of GIA_TRANSLATOR_ONLY_MERGE_ENTITY_NODES_WHEN_LINK_PREESTABLISHED_REFERENCES_GIA: advanced referencing of aliases failure
 
 #define GIA_NON_STANDARD_CONDITION_CONDITION_CONNECTIONS_CONNECT_CONJUNCTIONS_TO_THEIR_RELEVANT_PREPOSITIONS	//required for USE_NLC
@@ -1125,47 +1127,52 @@
 	#endif
 #endif
 
-#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
-	#define USE_GIA2		//GIA 2b1a - sets GIA into semantic parser (OLD: corpus) read mode
-	#ifdef USE_GIA2
-		#define GIA2_SUPPORT_BOTH_FAST_CORPUS_LOOKUP_PATH_AND_SLOW_SYNTACTIC_RULE_BASED_PATH
-		#ifdef GIA2_SUPPORT_BOTH_FAST_CORPUS_LOOKUP_PATH_AND_SLOW_SYNTACTIC_RULE_BASED_PATH
-			#define GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
+#ifdef GIA_SEMANTIC_PARSER
+	#define GIA_SEMANTIC_PARSER_WRITE_SEMANTIC_RELATIONS
+	#define GIA_SEMANTIC_PARSER_READ_SEMANTIC_RELATIONS		//GIA 2b1a - sets GIA into semantic parser (OLD: corpus) read mode
+	#ifdef GIA_SEMANTIC_PARSER_READ_SEMANTIC_RELATIONS
+		#define GIA_SEMANTIC_PARSER_SUPPORT_BOTH_FAST_CORPUS_LOOKUP_PATH_AND_SLOW_SYNTACTIC_RULE_BASED_PATH
+		#ifdef GIA_SEMANTIC_PARSER_SUPPORT_BOTH_FAST_CORPUS_LOOKUP_PATH_AND_SLOW_SYNTACTIC_RULE_BASED_PATH
+			#ifdef GIA_SEMANTIC_PARSER_WRITE_SEMANTIC_RELATIONS
+				#define GIA_SEMANTIC_PARSER_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
+			#endif
 		#else
-			#define GIA2_DO_NOT_PARSE_DEPENDENCY_RELATION_FILE
-			//#define GIA2_PARSE_PARTIALLY_FILLED_SEMANTIC_RELATIONS
+			#define GIA_SEMANTIC_PARSER_DO_NOT_PARSE_DEPENDENCY_RELATION_FILE
+			//#define GIA_SEMANTIC_PARSER_PARSE_PARTIALLY_FILLED_SEMANTIC_RELATIONS
 		#endif
 	#else
 		//this compilation is for development purposes only:
-		#define GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
-		#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
-			//#define GIA_RECORD_LINK_PREESTABLISHED_REFERENCES_GIA
+		#ifdef GIA_SEMANTIC_PARSER_WRITE_SEMANTIC_RELATIONS
+			#define GIA_SEMANTIC_PARSER_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
+			#ifdef GIA_SEMANTIC_PARSER_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
+				//#define GIA_RECORD_LINK_PREESTABLISHED_REFERENCES_GIA
+			#endif
+			#define GIA_ADVANCED_REFERENCING_DISABLE_LINKING	//do not link references when generating semantic relation text corpus
 		#endif
-		#define GIA_ADVANCED_REFERENCING_DISABLE_LINKING	//do not link references when generating semantic relation text corpus
 	#endif
-	#define GIA2_RECORD_DETERMINERS_AS_DEFINITE_INDEFINITE_SPECIFIC
-	#define GIA2_SUPPORT_QUERIES
-	#ifdef GIA2_SUPPORT_QUERIES
-		//new implementation of GIA2_SUPPORT_QUERIES
-		#define GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_QVAR_AND_IS_QUERY_TAG_TAG_NAME "_$qVarisQuery"
-		#define GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_QVAR_AND_IS_NAME_QUERY_TAG_TAG_NAME "_$qVarisNameQuery"
-		#define GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_QVAR_AND_IS_WHICH_OR_EQUIVALENT_WHAT_QUERY_TAG_TAG_NAME "_$qVarisWhichOrEquivalentWhatQuery"
-		#define GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_QUERY_TAG_TAG_NAME "isQuery"
-		#define GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_NAME_QUERY_TAG_TAG_NAME "isNameQuery"
-		#define GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_WHICH_OR_EQUIVALENT_WHAT_QUERY_TAG_TAG_NAME "isWhichOrEquivalentWhatQuery"
+	#define GIA_SEMANTIC_PARSER_RECORD_DETERMINERS_AS_DEFINITE_INDEFINITE_SPECIFIC
+	#define GIA_SEMANTIC_PARSER_SUPPORT_QUERIES
+	#ifdef GIA_SEMANTIC_PARSER_SUPPORT_QUERIES
+		//new implementation of GIA_SEMANTIC_PARSER_SUPPORT_QUERIES
+		#define GIA_SEMANTIC_PARSER_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_QVAR_AND_IS_QUERY_TAG_TAG_NAME "_$qVarisQuery"
+		#define GIA_SEMANTIC_PARSER_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_QVAR_AND_IS_NAME_QUERY_TAG_TAG_NAME "_$qVarisNameQuery"
+		#define GIA_SEMANTIC_PARSER_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_QVAR_AND_IS_WHICH_OR_EQUIVALENT_WHAT_QUERY_TAG_TAG_NAME "_$qVarisWhichOrEquivalentWhatQuery"
+		#define GIA_SEMANTIC_PARSER_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_QUERY_TAG_TAG_NAME "isQuery"
+		#define GIA_SEMANTIC_PARSER_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_NAME_QUERY_TAG_TAG_NAME "isNameQuery"
+		#define GIA_SEMANTIC_PARSER_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_WHICH_OR_EQUIVALENT_WHAT_QUERY_TAG_TAG_NAME "isWhichOrEquivalentWhatQuery"
 	#endif
-	#define GIA2_SEMANTIC_PARSER	//2d1a	//switches between just using the primary sentence files generated by GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER_UNOPTIMISED_TEXT_CORPUS and the subset sentence files generated by either
-	#ifdef GIA2_SEMANTIC_PARSER
+	#define GIA_SEMANTIC_PARSER_SUBSETS	//2d1a	//switches between just using the primary sentence files generated by GIA_SEMANTIC_PARSER_WRITE_SEMANTIC_RELATIONS_UNOPTIMISED_TEXT_CORPUS and the subset sentence files generated by either
+	#ifdef GIA_SEMANTIC_PARSER_SUBSETS
 		#define GIA_RECORD_MAXIMUM_NUMBER_OF_WORDS_IN_SENTENCE	//NB maxNumberOfWordsInSentence is only currently used by GIA2
 		#define GIA_SEMANTIC_PARSER_DATABASE_FILESYSTEM_USE_FLAT_FILE	//temporarily enabled for debugging
-		#define GIA2_CONNECTIONIST_NETWORK_MIN_SUBSET_SIZE (2)	//ie 2 words in subset is the minimimum	//CHECKTHIS
+		#define GIA_SEMANTIC_PARSER_CONNECTIONIST_NETWORK_MIN_SUBSET_SIZE (2)	//ie 2 words in subset is the minimimum	//CHECKTHIS
 	#else
 		#define GIA_SEMANTIC_PARSER_DATABASE_FILESYSTEM_USE_FLAT_FILE
 	#endif
-	#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
-		#define GIA2_SUPPORT_USE_RELEX_COMPATIBILITY_MODE_FOR_FEATURE_PARSER_TO_GENERATE_ADDITIONAL_RELATIONS_REQUIRED_BY_GIA2
-	#elif defined GIA2_SEMANTIC_PARSER
-		#define GIA2_SUPPORT_USE_RELEX_COMPATIBILITY_MODE_FOR_FEATURE_PARSER_TO_GENERATE_ADDITIONAL_RELATIONS_REQUIRED_BY_GIA2	//this is required as semantic relations from multiple corpus files may be required to properly parse a sentence [if a single corpus file does not exist for the entire sentence]
+	#ifdef GIA_SEMANTIC_PARSER_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
+		#define GIA_SEMANTIC_PARSER_SUPPORT_USE_RELEX_COMPATIBILITY_MODE_FOR_FEATURE_PARSER_TO_GENERATE_ADDITIONAL_RELATIONS_REQUIRED_BY_GIA2
+	#elif defined GIA_SEMANTIC_PARSER_SUBSETS
+		#define GIA_SEMANTIC_PARSER_SUPPORT_USE_RELEX_COMPATIBILITY_MODE_FOR_FEATURE_PARSER_TO_GENERATE_ADDITIONAL_RELATIONS_REQUIRED_BY_GIA2	//this is required as semantic relations from multiple corpus files may be required to properly parse a sentence [if a single corpus file does not exist for the entire sentence]
 	#endif
 #endif
 
@@ -1243,7 +1250,7 @@
 
 #define STANFORD_CORENLP_DISABLE_INDEPENDENT_POS_TAGGER_WHEN_PARSING_DEPENDENCY_RELATIONS	//added 22 Sept to enable Stanford CoreNLP to be used to parse dependency relations with comparable (NOT: same) accuracy as stanford parser (ie when stanford CoreNLP is set as both relation and feature parser)
 #ifndef GIA_DEBUG_DISABLE_2i_CODE
-	#ifndef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER		//NB GIA2 doesn't support STANFORD_PARSER_USE_POS_TAGS (because the semantic relations word types being written must match those being read [and read can only use feature parser])
+	#ifndef GIA_SEMANTIC_PARSER		//NB GIA2 doesn't support STANFORD_PARSER_USE_POS_TAGS (because the semantic relations word types being written must match those being read [and read can only use feature parser])
 		#define STANFORD_PARSER_USE_POS_TAGS	//added 23 July 2012 to support Stanford Parser POS tags instead of Stanford CoreNLP POS tags (Stanford Parser POS tags are sometimes more accurate than Stanford CoreNLP POS tags)
 	#endif
 	#ifndef STANFORD_PARSER_USE_POS_TAGS

@@ -25,7 +25,7 @@
  * File Name: GIAtranslator.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a3f 22-March-2017
+ * Project Version: 3a4a 26-March-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -34,12 +34,6 @@
 
 #include "GIAtranslator.hpp"
 
-#ifdef GIA_BOT
-#endif
-#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
-#endif
-#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
-#endif
 
 //required because parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyParsedSentences was shifted from GIAmain.cpp
 //Dependency Relationship Extractor
@@ -343,7 +337,7 @@ bool GIAtranslatorClass::convertSentenceRelationsIntoGIAnetworkNodesWrapper(GIAt
 		
 
 
-		#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
+		#ifdef GIA_SEMANTIC_PARSER_READ_SEMANTIC_RELATIONS
 		if(translatorVariables->parseGIA2file)
 		{
 			if(translatorVariables->currentSentenceInList->semanticParserSuccessful)
@@ -381,10 +375,10 @@ bool GIAtranslatorClass::convertSentenceRelationsIntoGIAnetworkNodesWrapper(GIAt
 		vector<GIAentityNode*> sentenceNetworkIndexEntityNodesListTemp2;
 		translatorVariables->sentenceNetworkIndexEntityNodesList = &sentenceNetworkIndexEntityNodesListTemp2;
 			
-		#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
+		#ifdef GIA_SEMANTIC_PARSER_READ_SEMANTIC_RELATIONS
 		if(translatorVariables->parseGIA2file)
 		{
-			if(currentSentenceInList->semanticParserSuccessful)
+			if(translatorVariables->currentSentenceInList->semanticParserSuccessful)
 			{
 				GIAsemanticParserTranslator.convertSentenceSemanticRelationsIntoGIAnetworkNodes(translatorVariables, true, firstGIAcoreferenceInList);
 			}
@@ -409,12 +403,12 @@ bool GIAtranslatorClass::convertSentenceRelationsIntoGIAnetworkNodesWrapper(GIAt
 	{
 	#endif
 		vector<GIAentityNode*> sentenceNetworkIndexEntityNodesListTemp2;
-		#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
+		#ifdef GIA_SEMANTIC_PARSER_READ_SEMANTIC_RELATIONS
 		if(translatorVariables->parseGIA2file)
 		{
-			if(currentSentenceInList->semanticParserSuccessful)
+			if(translatorVariables->currentSentenceInList->semanticParserSuccessful)
 			{
-				GIAsemanticParserTranslator.convertSentenceSemanticRelationsIntoGIAnetworkNodes(entityNodesActiveListNetworkIndexes, timeConditionNodesActiveList, firstSentenceInList, currentSentenceInList, &sentenceNetworkIndexEntityNodesListTemp2, entityNodesActiveListSentences, NLPfeatureParser, false, NULL);
+				GIAsemanticParserTranslator.convertSentenceSemanticRelationsIntoGIAnetworkNodes(translatorVariables, false, NULL);
 			}
 		}
 		#endif
@@ -436,7 +430,7 @@ bool GIAtranslatorClass::convertSentenceSyntacticRelationsIntoGIAnetworkNodes(GI
 	GIArelation* currentRelationInList;
 
 
-	#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
+	#ifdef GIA_SEMANTIC_PARSER_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
 	string corpusFileName = "";
 	if(!linkPreestablishedReferencesGIA)
 	{
@@ -798,10 +792,10 @@ bool GIAtranslatorClass::convertSentenceSyntacticRelationsIntoGIAnetworkNodes(GI
 	
 	translatorVariables->entityNodesActiveListSentences->insert(pair<int, vector<GIAentityNode*>*>(translatorVariables->currentSentenceInList->sentenceIndex, entityNodesActiveListSentence));
 
-	#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
+	#ifdef GIA_SEMANTIC_PARSER_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
 	if(!linkPreestablishedReferencesGIA)
 	{
-		GIAsemanticParserOperations.GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrainSpecial(GIAentityNodeArray, translatorVariables->currentSentenceInList, linkPreestablishedReferencesGIA, NLPdependencyRelationsType);
+		GIAsemanticParserOperations.GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrainSpecial(translatorVariables, linkPreestablishedReferencesGIA);
 	}
 	#endif
 
@@ -820,20 +814,20 @@ bool GIAtranslatorClass::convertSentenceSyntacticRelationsIntoGIAnetworkNodes(GI
 	}
 	#endif
 
-	#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
+	#ifdef GIA_SEMANTIC_PARSER_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
 	if(!linkPreestablishedReferencesGIA)
 	{
-		GIAsemanticParserOperations.determineGIAconnectionistNetworkPOStypeNames(translatorVariables->currentSentenceInList->firstFeatureInList, NLPfeatureParser);
-		#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER_UNOPTIMISED_TEXT_CORPUS
-		#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER_UNOPTIMISED_TEXT_CORPUS_OLD
+		GIAsemanticParserOperations.determineGIAconnectionistNetworkPOStypeNames(translatorVariables->currentSentenceInList->firstFeatureInList, translatorVariables->NLPfeatureParser);
+		#ifdef GIA_SEMANTIC_PARSER_WRITE_SEMANTIC_RELATIONS_UNOPTIMISED_TEXT_CORPUS
+		#ifdef GIA_SEMANTIC_PARSER_WRITE_SEMANTIC_RELATIONS_UNOPTIMISED_TEXT_CORPUS_OLD
 		GIAsemanticParserDatabase.writeSemanticParserCorpusFile(translatorVariables->currentSentenceInList->firstFeatureInList);
 		#else
-		string sentenceSemanticRelationsText = GIAsemanticParserDatabase.generateSemanticParserCorpusSemanticRelationsText(GIAsemanticParserDatabase.getFirstRelationInSemanticParserSentenceList());
+		string sentenceSemanticRelationsText = GIAsemanticParserOperations.generateSemanticParserCorpusSemanticRelationsText(GIAsemanticParserDatabase.getFirstRelationInSemanticParserSentenceList());
 		GIAsemanticParserDatabase.writeSemanticParserCorpusFile(translatorVariables->currentSentenceInList->firstFeatureInList, &sentenceSemanticRelationsText);
 		#endif
 		#endif
-		#ifdef GIA2_SEMANTIC_PARSER
-		if(!GIAsemanticParserTranslator.generateAllPermutationsFromSemanticRelationsFile(translatorVariables->currentSentenceInList->firstFeatureInList, NLPfeatureParser))
+		#ifdef GIA_SEMANTIC_PARSER_SUBSETS
+		if(!GIAsemanticParserTranslator.generateAllPermutationsFromSemanticRelationsFile(translatorVariables->currentSentenceInList->firstFeatureInList, translatorVariables->NLPfeatureParser))
 		{
 			cout << "GIAsemanticParserTranslator.generateAllPermutationsFromSemanticRelationsFile() failed" << endl;
 			exit(EXIT_ERROR);

@@ -25,21 +25,14 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a3f 22-March-2017
+ * Project Version: 3a4a 26-March-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
 
 
 #include "GIAmain.hpp"
-#ifdef USE_WORDNET
-#endif
-#ifdef GIA_NLG
-#endif
-#ifdef GIA_PREPROCESSOR
-#endif
-#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
-#endif
+
 #ifndef LINUX
 	#include <windows.h>
 #endif
@@ -91,7 +84,7 @@ static char errmessage[] = "Usage:  GIA.exe [options]\n\n\twhere options are any
 "\n\t-dbwrite           : write to database (GIA knowledge base) [saves knowledge]"
 "\n\t-dbfolder [string] : database base folder path (def: /home/systemusername/source/GIAKBdatabase)"
 #endif
-#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
+#ifdef GIA_SEMANTIC_PARSER
 "\n\t-dbsemanticparserfolder [string]   : direct semantic parser (corpus or optimised) database base folder path (def: /home/systemusername/source/GIAsemanticparserdatabase)"
 #endif
 #ifdef GIA_PREPROCESSOR
@@ -210,7 +203,7 @@ int main(const int argc, const char** argv)
 	bool useDatabase = false;
 	string databaseFolderName = GIA_DATABASE_FILESYSTEM_DEFAULT_SERVER_OR_MOUNT_NAME_BASE + GIA_DATABASE_FILESYSTEM_DEFAULT_DATABASE_NAME;
 	#endif
-	#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
+	#ifdef GIA_SEMANTIC_PARSER
 	string semanticParserDatabaseFolderName = GIA_DATABASE_FILESYSTEM_DEFAULT_SERVER_OR_MOUNT_NAME_BASE + GIA_SEMANTIC_PARSER_DATABASE_FILESYSTEM_DEFAULT_DATABASE_NAME;
 	#endif
 
@@ -504,7 +497,7 @@ int main(const int argc, const char** argv)
 			databaseFolderName = databaseFolderName + '/';
 		}
 		#endif
-		#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
+		#ifdef GIA_SEMANTIC_PARSER
 		if(SHAREDvarsClass().argumentExists(argc, argv, "-dbsemanticparserfolder"))
 		{
 			semanticParserDatabaseFolderName = SHAREDvarsClass().getStringArgument(argc, argv, "-dbsemanticparserfolder");
@@ -591,7 +584,7 @@ int main(const int argc, const char** argv)
 
 		if(SHAREDvarsClass().argumentExists(argc, argv, "-version"))
 		{
-			cout << "GIA.exe - Project Version: 3a3f 22-March-2017" << endl;
+			cout << "GIA.exe - Project Version: 3a4a 26-March-2017" << endl;
 			exit(EXIT_OK);
 		}
 
@@ -705,7 +698,7 @@ int main(const int argc, const char** argv)
 		databaseFolderName,
 		#endif
 
-		#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
+		#ifdef GIA_SEMANTIC_PARSER
 		semanticParserDatabaseFolderName,
 		#endif
 
@@ -811,7 +804,7 @@ bool GIAmainClass::executeGIA(
 	bool useDatabase,
 	string databaseFolderName,
 	#endif
-	#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
+	#ifdef GIA_SEMANTIC_PARSER
 	string semanticParserDatabaseFolderName,
 	#endif
 
@@ -953,7 +946,7 @@ bool GIAmainClass::executeGIA2()
 	SHAREDvars.setCurrentDirectory(inputFolder);
 	#endif
 
-	#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
+	#ifdef GIA_SEMANTIC_PARSER
 	GIAsemanticParserDatabase.initialiseSemanticParserDatabase(semanticParserDatabaseFolderName);
 	#endif
 
@@ -1269,17 +1262,17 @@ bool GIAmainClass::executeGIA2()
 			}
 			else
 			{
-				#ifndef GIA2_DO_NOT_PARSE_DEPENDENCY_RELATION_FILE
+				#ifndef GIA_SEMANTIC_PARSER_DO_NOT_PARSE_DEPENDENCY_RELATION_FILE
 				GIAnlp.executeNLPparser(inputTextPlainTXTfileName, inputTextNLPrelationXMLfileName, translatorVariables->NLPdependencyRelationsParser, NLPexeFolderArray, true, translatorVariables->NLPrelexCompatibilityMode);
 				if(inputTextNLPfeatureXMLfileName != inputTextNLPrelationXMLfileName)
 				{
 				#endif
-					#ifdef GIA2_SUPPORT_USE_RELEX_COMPATIBILITY_MODE_FOR_FEATURE_PARSER_TO_GENERATE_ADDITIONAL_RELATIONS_REQUIRED_BY_GIA2
+					#ifdef GIA_SEMANTIC_PARSER_SUPPORT_USE_RELEX_COMPATIBILITY_MODE_FOR_FEATURE_PARSER_TO_GENERATE_ADDITIONAL_RELATIONS_REQUIRED_BY_GIA2
 					GIAnlp.executeNLPparser(inputTextPlainTXTfileName, inputTextNLPfeatureXMLfileName, translatorVariables->NLPfeatureParser, NLPexeFolderArray, false, true);
 					#else
 					GIAnlp.executeNLPparser(inputTextPlainTXTfileName, inputTextNLPfeatureXMLfileName, translatorVariables->NLPfeatureParser, NLPexeFolderArray, false, translatorVariables->NLPrelexCompatibilityMode);
 					#endif
-				#ifndef GIA2_DO_NOT_PARSE_DEPENDENCY_RELATION_FILE
+				#ifndef GIA_SEMANTIC_PARSER_DO_NOT_PARSE_DEPENDENCY_RELATION_FILE
 				}
 				#endif
 				useInputTextNLPrelationXMLFile = true;	//now will parse the NLP Parsed file
@@ -1298,7 +1291,7 @@ bool GIAmainClass::executeGIA2()
 			else
 			{
 				translatorVariables->firstParagraphInList = new GIAparagraph();
-				#ifdef USE_GIA2
+				#ifdef GIA_SEMANTIC_PARSER_READ_SEMANTIC_RELATIONS
 				if(!GIAsemanticParser.performSemanticParserLookupAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences(translatorVariables, inputTextPlainTXTfileName, inputTextNLPrelationXMLfileName, inputTextNLPfeatureXMLfileName, outputTextCFFFileName, NLPexeFolderArray))
 				{
 					result = false;
@@ -1377,17 +1370,17 @@ bool GIAmainClass::executeGIA2()
 			}
 			else
 			{
-				#ifndef GIA2_DO_NOT_PARSE_DEPENDENCY_RELATION_FILE
+				#ifndef GIA_SEMANTIC_PARSER_DO_NOT_PARSE_DEPENDENCY_RELATION_FILE
 				GIAnlp.executeNLPparser(inputQueryPlainTXTFileName, inputQueryNLPrelationXMLFileName, translatorVariablesQuery->NLPdependencyRelationsParser, NLPexeFolderArray, true, translatorVariablesQuery->NLPrelexCompatibilityMode);
 				if(inputQueryNLPfeatureXMLFileName != inputQueryNLPrelationXMLFileName)
 				{
 				#endif
-					#ifdef GIA2_SUPPORT_USE_RELEX_COMPATIBILITY_MODE_FOR_FEATURE_PARSER_TO_GENERATE_ADDITIONAL_RELATIONS_REQUIRED_BY_GIA2
+					#ifdef GIA_SEMANTIC_PARSER_SUPPORT_USE_RELEX_COMPATIBILITY_MODE_FOR_FEATURE_PARSER_TO_GENERATE_ADDITIONAL_RELATIONS_REQUIRED_BY_GIA2
 					GIAnlp.executeNLPparser(inputQueryPlainTXTFileName, inputQueryNLPfeatureXMLFileName, translatorVariablesQuery->NLPfeatureParser, NLPexeFolderArray, false, true);
 					#else
 					GIAnlp.executeNLPparser(inputQueryPlainTXTFileName, inputQueryNLPfeatureXMLFileName, translatorVariablesQuery->NLPfeatureParser, NLPexeFolderArray, false, translatorVariablesQuery->NLPrelexCompatibilityMode);
 					#endif
-				#ifndef GIA2_DO_NOT_PARSE_DEPENDENCY_RELATION_FILE
+				#ifndef GIA_SEMANTIC_PARSER_DO_NOT_PARSE_DEPENDENCY_RELATION_FILE
 				}
 				#endif
 				useInputQueryNLPrelationXMLFile = true;	//now will parse the NLP Parsed file
@@ -1406,7 +1399,7 @@ bool GIAmainClass::executeGIA2()
 			else
 			{
 				translatorVariablesQuery->firstParagraphInList = new GIAparagraph();
-				#ifdef USE_GIA2
+				#ifdef GIA_SEMANTIC_PARSER_READ_SEMANTIC_RELATIONS
 				if(!GIAsemanticParser.performSemanticParserLookupAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences(translatorVariablesQuery, inputQueryPlainTXTFileName, inputQueryNLPrelationXMLFileName, inputQueryNLPfeatureXMLFileName, outputQueryCFFFileName, NLPexeFolderArray))
 				{
 					result = false;

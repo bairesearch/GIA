@@ -25,7 +25,7 @@
  * File Name: GIAsemanticParserTranslator.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a3f 22-March-2017
+ * Project Version: 3a4a 26-March-2017
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -49,7 +49,7 @@
 #include "GIAbot.hpp"
 #include "GIApreprocessorMultiwordReduction.hpp"
 
-#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
+#ifdef GIA_SEMANTIC_PARSER
 
 class GIAsemanticParserTranslatorClass
 {
@@ -68,23 +68,24 @@ class GIAsemanticParserTranslatorClass
 	private: GIAsemanticParserOperationsClass GIAsemanticParserOperations;
 	private: GIAsemanticParserDatabaseClass GIAsemanticParserDatabase;
 	private: GIAnlpClass GIAnlp;
-	public: void convertSentenceSemanticRelationsIntoGIAnetworkNodes(GIAtranslatorVariablesClass* translatorVariables, const bool linkPreestablishedReferencesGIA,  GIAcoreference* firstGIAcoreferenceInList);
+	public: void convertSentenceSemanticRelationsIntoGIAnetworkNodes(GIAtranslatorVariablesClass* translatorVariables, const bool linkPreestablishedReferencesGIA, GIAcoreference* firstGIAcoreferenceInList);
 		private: void locateAndAddAllNetworkIndexEntitiesBasedOnSemanticRelations(GIAtranslatorVariablesClass* translatorVariables);
 		private: void fillGrammaticalTenseArraysStanfordBasedOnSemanticRelations(GIAtranslatorVariablesClass* translatorVariables);
 			private: void updateGrammaticalValuesBasedOnModalAuxiliaryOrCopula(GIAentityNode* entity, const string modalAuxiliaryString);
 		private: void defineSubstancesBasedOnSemanticRelations(GIAtranslatorVariablesClass* translatorVariables);
-		#ifdef GIA2_SUPPORT_QUERIES
+		#ifdef GIA_SEMANTIC_PARSER_SUPPORT_QUERIES
 		private: void identifyComparisonVariableBasedOnSemanticRelations(GIAtranslatorVariablesClass* translatorVariables);
 		#endif
 		private: void defineConnectionsBasedOnSemanticRelations(GIAtranslatorVariablesClass* translatorVariables);
 			#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_PREPOSITIONS
 			private: void invertOrDuplicateConditionsIfRequiredSemantic(GIAtranslatorVariablesClass* translatorVariables, GIAentityNode* entity1, GIAentityNode* entity2, GIAentityNode* entity3condition, bool sameReferenceSet);
-			private: GIAentityNode* createNewInverseConditionEntitySemantic(GIAtranslatorVariablesClass* translatorVariables);
+			private: GIAentityNode* createNewInverseConditionEntitySemantic(GIAtranslatorVariablesClass* translatorVariables, string inverseConditionName);
 			#endif
+		private: GIAentityNode* createNewRelationshipEntitySemantic(const int relationshipEntityType, const string relationshipEntityName, GIAtranslatorVariablesClass* translatorVariables);
 		private: void applyAdvancedFeaturesBasedOnSemanticRelations(GIAtranslatorVariablesClass* translatorVariables);
 			private: void defineQuantitiesBasedOnSemanticRelations(GIAtranslatorVariablesClass* translatorVariables);
 			private: void defineQualitiesBasedOnSemanticRelations(GIAtranslatorVariablesClass* translatorVariables);
-	#ifdef GIA2_SEMANTIC_PARSER
+	#ifdef GIA_SEMANTIC_PARSER_SUBSETS
 	public: bool generateAllPermutationsFromSemanticRelationsFile(GIAfeature* firstFeatureInList, const int NLPfeatureParser);
 	#endif
 };

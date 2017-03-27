@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorGeneric.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a3f 22-March-2017
+ * Project Version: 3a4a 26-March-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -41,7 +41,9 @@
 #include "GIAentityConnectionClass.hpp"
 #include "GIAconditionNodeClass.hpp"
 #include "GIAtranslatorOperations.hpp"
+#ifdef GIA_SEMANTIC_PARSER_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
 #include "GIAsemanticParserOperations.hpp"
+#endif
 //#include "GIAtranslatorDefs.hpp"
 
 
@@ -264,7 +266,7 @@ class GIAtranslatorGenericClass
 	private: GIAentityNodeClassClass GIAentityNodeClass;
 	private: SHAREDvarsClass SHAREDvars;
 	private: GIAtranslatorOperationsClass GIAtranslatorOperations;
-	#ifdef USE_GIA2
+	#ifdef GIA_SEMANTIC_PARSER_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
 	private: GIAsemanticParserOperationsClass GIAsemanticParserOperations;
 	#endif
 	#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION	

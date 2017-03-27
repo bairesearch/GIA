@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorLinkEntitiesDynamic.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a3f 22-March-2017
+ * Project Version: 3a4a 26-March-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -33,8 +33,7 @@
 
 
 #include "GIAtranslatorLinkEntitiesDynamic.hpp"
-#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
-#endif
+
 
 
 void GIAtranslatorLinkEntitiesDynamicClass::linkEntitiesDynamic(GIAtranslatorVariablesClass* translatorVariables)
@@ -69,7 +68,7 @@ void GIAtranslatorLinkEntitiesDynamicClass::linkEntitiesDynamicPrenominalModifie
 		{
 		#endif
 			bool prenominalModifierFound = false;
-			#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
+			#ifdef GIA_SEMANTIC_PARSER_READ_SEMANTIC_RELATIONS
 			if(currentRelationInList->relationType == GIA2semanticDependencyRelationNameArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_PRENOMINAL_MODIFIER])
 			{
 				prenominalModifierFound = true;
@@ -468,8 +467,8 @@ void GIAtranslatorLinkEntitiesDynamicClass::connectDefinitionToEntityFull(GIAtra
 	int relationshipEntityIndex = relationshipEntity->entityIndexTemp;
 	translatorVariables->GIAentityNodeArray[relationshipEntityIndex] = GIAtranslatorOperations.connectDefinitionToEntity(entity1, entity2, relationshipEntity, sameReferenceSet);
 	*/
-	#ifndef GIA_DYNAMICALLY_LINK_ENTITIES_DISABLE_GIA2_SEMANTIC_RELATION_GENERATION
-	#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
+	#ifndef GIA_DYNAMICALLY_LINK_ENTITIES_DISABLE_GIA_SEMANTIC_PARSER_SEMANTIC_RELATION_GENERATION
+	#ifdef GIA_SEMANTIC_PARSER_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
 	GIAsemanticParserOperations.GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(translatorVariables->GIAentityNodeArray, translatorVariables->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITION_DIRECT, entity1Index, entity2Index, sameReferenceSet);
 	#endif
 	#endif
@@ -484,8 +483,8 @@ void GIAtranslatorLinkEntitiesDynamicClass::connectPropertyToEntityFull(GIAtrans
 	int relationshipEntityIndex = relationshipEntity->entityIndexTemp;
 	translatorVariables->GIAentityNodeArray[relationshipEntityIndex] = GIAtranslatorOperations.connectPropertyToEntity(entity1, entity2, relationshipEntity, sameReferenceSet);
 	*/
-	#ifndef GIA_DYNAMICALLY_LINK_ENTITIES_DISABLE_GIA2_SEMANTIC_RELATION_GENERATION
-	#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
+	#ifndef GIA_DYNAMICALLY_LINK_ENTITIES_DISABLE_GIA_SEMANTIC_PARSER_SEMANTIC_RELATION_GENERATION
+	#ifdef GIA_SEMANTIC_PARSER_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
 	GIAsemanticParserOperations.GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(translatorVariables->GIAentityNodeArray, translatorVariables->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTY_DIRECT, entity1Index, entity2Index, sameReferenceSet);
 	#endif
 	#endif
@@ -510,8 +509,8 @@ int GIAtranslatorLinkEntitiesDynamicClass::connectConditionToEntityFull(GIAtrans
 	GIAtranslatorOperations.connectConditionToEntity(entity1, entity2, conditionNetworkIndexEntity, sameReferenceSet, translatorVariables);
 	if(conditionIndex != INT_DEFAULT_VALUE)
 	{
-		#ifndef GIA_DYNAMICALLY_LINK_ENTITIES_DISABLE_GIA2_SEMANTIC_RELATION_GENERATION
-		#ifdef GIA2_NON_HEURISTIC_IMPLEMENTATION_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
+		#ifndef GIA_DYNAMICALLY_LINK_ENTITIES_DISABLE_GIA_SEMANTIC_PARSER_SEMANTIC_RELATION_GENERATION
+		#ifdef GIA_SEMANTIC_PARSER_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
 		GIAsemanticParserOperations.GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(translatorVariables->GIAentityNodeArray, translatorVariables->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION, entity1Index, featureIndexOfPreposition, sameReferenceSet);
 		GIAsemanticParserOperations.GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(translatorVariables->GIAentityNodeArray, translatorVariables->currentSentenceInList, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_REVERSE, entity2Index, featureIndexOfPreposition, sameReferenceSet);
 		#endif

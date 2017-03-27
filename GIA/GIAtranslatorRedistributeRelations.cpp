@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorRedistributeRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a3f 22-March-2017
+ * Project Version: 3a4a 26-March-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -58,7 +58,7 @@ void GIAtranslatorRedistributeRelationsClass::redistributeStanfordAndRelexRelati
 			GIAentityNode* governorEntity = translatorVariables->GIAentityNodeArray[governorIndex];
 			GIAentityNode* dependentEntity = translatorVariables->GIAentityNodeArray[dependentIndex];
 
-			#ifdef GIA2_CORRECT_POSTAGS_FIX2
+			#ifdef GIA_SEMANTIC_PARSER_CORRECT_POSTAGS_FIX2
 			if(translatorVariables->featureArrayTemp[governorIndex] != NULL)
 			{
 			#endif
@@ -66,7 +66,7 @@ void GIAtranslatorRedistributeRelationsClass::redistributeStanfordAndRelexRelati
 				{
 					currentRelationInList->relationGovernor = governorEntity->entityName;
 				}
-			#ifdef GIA2_CORRECT_POSTAGS_FIX2
+			#ifdef GIA_SEMANTIC_PARSER_CORRECT_POSTAGS_FIX2
 			}
 			if(translatorVariables->featureArrayTemp[dependentIndex] != NULL)
 			{
@@ -75,7 +75,7 @@ void GIAtranslatorRedistributeRelationsClass::redistributeStanfordAndRelexRelati
 				{
 					currentRelationInList->relationDependent = dependentEntity->entityName;
 				}
-			#ifdef GIA2_CORRECT_POSTAGS_FIX2
+			#ifdef GIA_SEMANTIC_PARSER_CORRECT_POSTAGS_FIX2
 			}
 			#endif
 
@@ -93,7 +93,7 @@ void GIAtranslatorRedistributeRelationsClass::redistributeStanfordAndRelexRelati
 bool GIAtranslatorRedistributeRelationsClass::correctVerbPOStagAndLemma(GIAentityNode* actionOrSubstanceEntity, GIAfeature* currentFeature)
 {
 	bool updatedLemma = false;
-	#ifdef GIA2_CORRECT_POSTAGS_FIX1
+	#ifdef GIA_SEMANTIC_PARSER_CORRECT_POSTAGS_FIX1
 	if(actionOrSubstanceEntity->wordOrig != "")		//required to ignore dynamically generated entities, e.g. "have"/"$qvar"/etc
 	{
 	#endif
@@ -292,7 +292,7 @@ bool GIAtranslatorRedistributeRelationsClass::correctVerbPOStagAndLemma(GIAentit
 			}
 		}
 		#endif
-	#ifdef GIA2_CORRECT_POSTAGS_FIX1
+	#ifdef GIA_SEMANTIC_PARSER_CORRECT_POSTAGS_FIX1
 	}
 	#endif
 

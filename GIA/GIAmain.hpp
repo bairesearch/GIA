@@ -25,7 +25,7 @@
  * File Name: GIAmain.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a3f 22-March-2017
+ * Project Version: 3a4a 26-March-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -34,12 +34,14 @@
 #ifndef HEADER_GIA_MAIN
 #define HEADER_GIA_MAIN
 
+
+
 #include "GIAglobalDefs.hpp"
 #include "GIAsentenceClass.hpp"
 #include "GIAentityNodeClass.hpp"
 #include "GIAentityConnectionClass.hpp"
 #ifdef USE_CE
-	#include "CECodeextensionClass.h"
+#include "CECodeextensionClass.h"
 #endif
 #include "GIAtranslator.hpp"
 #include "GIAtranslatorOperations.hpp"
@@ -52,12 +54,22 @@
 #include "XMLrulesClass.hpp"
 #include "LDsprite.hpp"
 #include "LDopengl.hpp"
+#ifdef USE_WORDNET
 #include "GIAwordnet.hpp"
+#endif
+#ifdef GIA_NLG
 #include "GIAnlg.hpp"
+#endif
+#ifdef GIA_PREPROCESSOR
 #include "GIApreprocessor.hpp"
 #include "GIApreprocessorMultiwordReduction.hpp"
+#endif
+#ifdef GIA_SEMANTIC_PARSER
+#ifdef GIA_SEMANTIC_PARSER_READ_SEMANTIC_RELATIONS
 #include "GIAsemanticParser.hpp"
+#endif
 #include "GIAsemanticParserDatabase.hpp"
+#endif
 
 #define GIA_MAXIMUM_NUMBER_OF_FILES_IN_INPUT_FILE_LIST (1000000)
 //#define GIA_XML_DEBUG_TEST_WRITE_READ_WRITE
@@ -74,20 +86,28 @@ class GIAmainClass
 	private: GIAtranslatorClass GIAtranslator;
 	private: GIAtranslatorOperationsClass GIAtranslatorOperations;
 	private: GIAdatabaseClass GIAdatabase;
+	#ifdef GIA_PREPROCESSOR
 	private: GIApreprocessorClass GIApreprocessor;
 	private: GIApreprocessorMultiwordReductionClass GIApreprocessorMultiwordReduction;
+	#endif
 	private: GIAnlpClass GIAnlp;
 	private: XMLrulesClassClass XMLrulesClass;
 	private: GIAqueryClass GIAquery;
+	#ifdef USE_WORDNET
 	private: GIAwordnetClass GIAwordnet;
+	#endif
 	private: GIAdrawClass GIAdraw;
 	private: LDopenglClass LDopengl;
 	private: LDspriteClass LDsprite;
 	private: GIAxmlConversionClass GIAxmlConversion;
 	private: GIAcxlConversionClass GIAcxlConversion;
+	#ifdef GIA_NLG
 	private: GIAnlgClass GIAnlg;
-	#ifdef USE_GIA2
+	#endif
+	#ifdef GIA_SEMANTIC_PARSER
+	#ifdef GIA_SEMANTIC_PARSER_READ_SEMANTIC_RELATIONS
 	private: GIAsemanticParserClass GIAsemanticParser;
+	#endif
 	private: GIAsemanticParserDatabaseClass GIAsemanticParserDatabase;
 	#endif
 
@@ -170,7 +190,7 @@ public: bool executeGIA(
 	string databaseFolderName,
 	#endif
 
-	#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
+	#ifdef GIA_SEMANTIC_PARSER
 	string semanticParserDatabaseFolderName,
 	#endif
 

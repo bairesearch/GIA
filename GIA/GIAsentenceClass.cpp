@@ -25,7 +25,7 @@
  * File Name: GIAsentenceClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a3f 22-March-2017
+ * Project Version: 3a4a 26-March-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -158,9 +158,9 @@ GIArelation::GIArelation(void)
 	auxiliaryIndicatesDifferentReferenceSet = false;
 	rcmodIndicatesSameReferenceSet = false;
 
-	#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
+	#ifdef GIA_SEMANTIC_PARSER
 	sameReferenceSet = false;
-	#ifdef GIA2_SUPPORT_QUERIES
+	#ifdef GIA_SEMANTIC_PARSER_SUPPORT_QUERIES
 	corpusSpecialRelationGovernorIsQuery = "";
 	corpusSpecialRelationDependentIsQuery = "";
 	#endif
@@ -244,7 +244,7 @@ GIAfeature::GIAfeature(void)
 
 	entityDisabled = false;
 
-	#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
+	#ifdef GIA_SEMANTIC_PARSER
 	GIAsemanticParserPOStype = 0;	//ie GIA_SEMANTIC_PARSER_POS_TYPE_UNDEFINED
 	#endif
 
@@ -388,8 +388,8 @@ void GIAsentenceClassClass::copyRelations(GIArelation* firstRelationInListToCopy
 		currentRelation->relationGovernorIndex = currentRelationToCopy->relationGovernorIndex;
 
 
-		#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
-		#ifdef GIA2_SUPPORT_QUERIES
+		#ifdef GIA_SEMANTIC_PARSER
+		#ifdef GIA_SEMANTIC_PARSER_SUPPORT_QUERIES
 		currentRelation->corpusSpecialRelationGovernorIsQuery = currentRelationToCopy->corpusSpecialRelationGovernorIsQuery;
 		currentRelation->corpusSpecialRelationDependentIsQuery = currentRelationToCopy->corpusSpecialRelationDependentIsQuery;
 		#endif

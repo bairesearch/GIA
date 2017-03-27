@@ -25,14 +25,14 @@
  * File Name: GIAsemanticParserTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a3f 22-March-2017
+ * Project Version: 3a4a 26-March-2017
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
 
 
 #include "GIAsemanticParserTranslator.hpp"
-#ifdef GIA2_SEMANTIC_PARSER
+#ifdef GIA_SEMANTIC_PARSER_SUBSETS
 #endif
 #ifdef GIA_BOT
 #endif
@@ -43,12 +43,11 @@
 	#include <windows.h>
 #endif
 
-#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER
+#ifdef GIA_SEMANTIC_PARSER
 
 //based on convertSentenceSyntacticRelationsIntoGIAnetworkNodes{}:
-void GIAsemanticParserTranslatorClass::convertSentenceSemanticRelationsIntoGIAnetworkNodes(GIAtranslatorVariablesClass* translatorVariables, const bool linkPreestablishedReferencesGIA,  GIAcoreference* firstGIAcoreferenceInList);
+void GIAsemanticParserTranslatorClass::convertSentenceSemanticRelationsIntoGIAnetworkNodes(GIAtranslatorVariablesClass* translatorVariables, const bool linkPreestablishedReferencesGIA, GIAcoreference* firstGIAcoreferenceInList)
 {
-
 	/*
 	cout << "TEST" << endl;
 	GIArelation* currentRelationInList = translatorVariables->currentSentenceInList->firstRelationInList;
@@ -70,10 +69,11 @@ void GIAsemanticParserTranslatorClass::convertSentenceSemanticRelationsIntoGIAne
 	GIAentityNode* GIAnetworkIndexNodeArray[MAX_NUMBER_OF_WORDS_PER_SENTENCE];
 	GIAentityNode* GIAentityNodeArray[MAX_NUMBER_OF_WORDS_PER_SENTENCE];
 	GIAfeature* featureArrayTemp[MAX_NUMBER_OF_WORDS_PER_SENTENCE];
-	translatorVariables->GIAentityNodeArrayFilled = &GIAentityNodeArrayFilled;
+	translatorVariables->GIAentityNodeArrayFilled = GIAentityNodeArrayFilled;
 	translatorVariables->GIAnetworkIndexNodeArray = GIAnetworkIndexNodeArray;	
-	translatorVariables->GIAentityNodeArray = &GIAentityNodeArray;
+	translatorVariables->GIAentityNodeArray = GIAentityNodeArray;
 	translatorVariables->featureArrayTemp = featureArrayTemp;
+	
 	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
 	{
 		GIAentityNodeArrayFilled[w] = false;
@@ -82,7 +82,7 @@ void GIAsemanticParserTranslatorClass::convertSentenceSemanticRelationsIntoGIAne
 	}
 
 	#ifdef GIA_BOT_SWITCH_FIRST_AND_SECOND_PERSON
-	GIAbot.botSwitchFirstAndSecondPersonSemantic(currentSentenceInList);
+	GIAbot.botSwitchFirstAndSecondPersonSemantic(translatorVariables->currentSentenceInList);
 	#endif
 
 
@@ -97,23 +97,23 @@ void GIAsemanticParserTranslatorClass::convertSentenceSemanticRelationsIntoGIAne
 
 
 	#ifdef GIA_RELEX
-	if(NLPfeatureParser == GIA_NLP_PARSER_RELEX) 				//OLD: (NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_RELEX)
+	if(translatorVariables->NLPfeatureParser == GIA_NLP_PARSER_RELEX) 				//OLD: (NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_RELEX)
 	{
 		GIAtranslatorDefineGrammar.fillGrammaticalArraysRelex(translatorVariables->currentSentenceInList);
 	}
 	#endif
 	#ifdef GIA_STANFORD_DEPENDENCY_RELATIONS
-	if((NLPfeatureParser == GIA_NLP_PARSER_STANFORD_PARSER) || (NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP))	//OLD: (NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD)
+	if((translatorVariables->NLPfeatureParser == GIA_NLP_PARSER_STANFORD_PARSER) || (translatorVariables->NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP))	//OLD: (NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD)
 	{
 		//fillGrammaticalArraysStanford(currentSentenceInList, GIAentityNodeArrayFilled, GIAentityNodeArray, NLPfeatureParser, featureArrayTemp);	//not possible as Stanford syntactical dependency relations are assumed not available
 
 		//past tense [preliminary only; aux/cop takes precedence], progressive tense, isDate, plurality, isProperNoun extraction
-		GIAtranslatorDefineGrammar.extractGrammaticalInformationStanford(translatorVariables->currentSentenceInList->firstFeatureInList, NLPfeatureParser);
+		GIAtranslatorDefineGrammar.extractGrammaticalInformationStanford(translatorVariables->currentSentenceInList->firstFeatureInList, translatorVariables->NLPfeatureParser);
 		this->fillGrammaticalTenseArraysStanfordBasedOnSemanticRelations(translatorVariables);
 	}
 	#endif
 
- 	GIAtranslatorDefineGrammar.applyGrammaticalInfoToAllEntities(translatorVariables, currentSentenceInList->firstFeatureInList);
+ 	GIAtranslatorDefineGrammar.applyGrammaticalInfoToAllEntities(translatorVariables, translatorVariables->currentSentenceInList->firstFeatureInList);
 
 
 	GIAtranslatorRedistributeRelations.redistributeStanfordAndRelexRelationsCorrectPOStagsAndLemmasOfAllVerbs(translatorVariables);
@@ -132,16 +132,16 @@ void GIAsemanticParserTranslatorClass::convertSentenceSemanticRelationsIntoGIAne
 
 		#ifdef GIA_ENABLE_TEXTUAL_CONTEXT_REFERENCING
 		#ifdef GIA_STANFORD_CORE_NLP_USE_CODEPENDENCIES
-		if(NLPfeatureParser == GIA_NLP_PARSER_RELEX)
+		if(translatorVariables->NLPfeatureParser == GIA_NLP_PARSER_RELEX)
 		{
 		#endif
 			GIAtranslatorDefineReferencing.linkPronounReferencesRelex(translatorVariables);	//NB third parameter used to be GIAfeatureTempEntityNodeArray
 		#ifdef GIA_STANFORD_CORE_NLP_USE_CODEPENDENCIES
 		}
 		#ifdef GIA_STANFORD_CORENLP
-		else if(NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP)
+		else if(translatorVariables->NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP)
 		{
-			GIAtranslatorDefineReferencing.linkPronounAndTextualContextReferencesStanfordCoreNLP(translatorVariables);	//NB third parameter used to be GIAfeatureTempEntityNodeArray
+			GIAtranslatorDefineReferencing.linkPronounAndTextualContextReferencesStanfordCoreNLP(translatorVariables, translatorVariables->firstSentenceInList->firstCoreferenceInList);	//NB third parameter used to be GIAfeatureTempEntityNodeArray
 		}
 		#endif
 		#endif
@@ -154,14 +154,14 @@ void GIAsemanticParserTranslatorClass::convertSentenceSemanticRelationsIntoGIAne
 
 	this->defineSubstancesBasedOnSemanticRelations(translatorVariables);
 
-	#ifdef GIA2_SUPPORT_QUERIES
+	#ifdef GIA_SEMANTIC_PARSER_SUPPORT_QUERIES
 	this->identifyComparisonVariableBasedOnSemanticRelations(translatorVariables);
 	#endif
 
 
 	this->defineConnectionsBasedOnSemanticRelations(translatorVariables);
 
-	#ifdef GIA_DYNAMICALLY_LINK_ENTITIES_DISABLE_GIA2_SEMANTIC_RELATION_GENERATION
+	#ifdef GIA_DYNAMICALLY_LINK_ENTITIES_DISABLE_GIA_SEMANTIC_PARSER_SEMANTIC_RELATION_GENERATION
 	GIAtranslatorLinkEntitiesDynamic.linkEntitiesDynamic(translatorVariables);
 	#endif
 
@@ -175,11 +175,11 @@ void GIAsemanticParserTranslatorClass::convertSentenceSemanticRelationsIntoGIAne
 		if(GIAentityNodeArrayFilled[w])
 		{
 			//#ifdef GIA_RECORD_WAS_REFERENCE_INFORMATION	//networkIndex sentenceIndex information is also required for GIAdraw.cpp
-			#ifdef GIA_DYNAMICALLY_LINK_ENTITIES_DISABLE_GIA2_SEMANTIC_RELATION_GENERATION
+			#ifdef GIA_DYNAMICALLY_LINK_ENTITIES_DISABLE_GIA_SEMANTIC_PARSER_SEMANTIC_RELATION_GENERATION
 			if(GIAentityNodeArray[w]->sentenceIndexTemp == GIA_SENTENCE_INDEX_UNDEFINED)	//added condition 2j5b [check this is required]
 			{
 				GIAentityNodeArray[w]->sentenceIndexTemp = translatorVariables->currentSentenceInList->sentenceIndex;
-				cout << "convertSentenceSemanticRelationsIntoGIAnetworkNodes{} error: GIAentityNodeArray[" << w << "]->sentenceIndexTemp undefined" << endl;
+				cout << "convertSentenceSemanticRelationsIntoGIAnetworkNodes{} warning: GIAentityNodeArray[" << w << "]->sentenceIndexTemp undefined" << endl;
 			}
 			//record sentenceIndex for networkIndex entity nodes also (NB cannot use GIAnetworkIndexNodeArray here as it won't necessarily include networkIndex entity nodes for prepositions [for dynamic linking])
 			if(!(GIAentityNodeArray[w]->instanceReverseNodeList->empty()))
@@ -195,13 +195,13 @@ void GIAsemanticParserTranslatorClass::convertSentenceSemanticRelationsIntoGIAne
 
 					if(networkIndexNode->entityIndexTemp == GIA_ENTITY_INDEX_UNDEFINED)	//added condition 2j5b [check this is required]
 					{
-						cout << "convertSentenceSemanticRelationsIntoGIAnetworkNodes{} error: GIAentityNodeArray[" << w << "]->networkIndexNode->entityIndexTemp undefined" << endl;
+						cout << "convertSentenceSemanticRelationsIntoGIAnetworkNodes{} warning: GIAentityNodeArray[" << w << "]->networkIndexNode->entityIndexTemp undefined" << endl;
 						networkIndexNode->entityIndexTemp = w;
 					}
 					if(networkIndexNode->sentenceIndexTemp == GIA_SENTENCE_INDEX_UNDEFINED)
 					{//do not overwrite sentenceIndex, as it needs to be drawn with first instance in network
 						networkIndexNode->sentenceIndexTemp = translatorVariables->currentSentenceInList->sentenceIndex;
-						cout << "convertSentenceSemanticRelationsIntoGIAnetworkNodes{} error: GIAentityNodeArray[" << w << "]->networkIndexNode->sentenceIndexTemp undefined" << endl;
+						cout << "convertSentenceSemanticRelationsIntoGIAnetworkNodes{} warning: GIAentityNodeArray[" << w << "]->networkIndexNode->sentenceIndexTemp undefined" << endl;
 					}
 
 				#ifdef GIA_MORE_THAN_ONE_NODE_DEFINING_AN_INSTANCE
@@ -215,7 +215,7 @@ void GIAsemanticParserTranslatorClass::convertSentenceSemanticRelationsIntoGIAne
 			if(GIAnetworkIndexNodeArray[w]->sentenceIndexTemp == GIA_SENTENCE_INDEX_UNDEFINED)
 			{//do not overwrite sentenceIndex, as it needs to be drawn with first instance in network
 				GIAnetworkIndexNodeArray[w]->sentenceIndexTemp = translatorVariables->currentSentenceInList->sentenceIndex;
-				cout << "convertSentenceSemanticRelationsIntoGIAnetworkNodes{} error: GIAnetworkIndexNodeArray[" << w << "]->sentenceIndexTemp undefined" << endl;
+				cout << "convertSentenceSemanticRelationsIntoGIAnetworkNodes{} warning: GIAnetworkIndexNodeArray[" << w << "]->sentenceIndexTemp undefined" << endl;
 			}
 			#endif
 			//#endif
@@ -224,7 +224,7 @@ void GIAsemanticParserTranslatorClass::convertSentenceSemanticRelationsIntoGIAne
 	}
 
 	//GIAtranslatorOperations.recordSentenceNetworkIndexNodesAsPermanentIfTheyAreStillEnabled(GIAentityNodeArrayFilled, GIAnetworkIndexNodeArray);		//this method is not sufficient, as some networkIndex entity nodes (eg prepositions/conditions) are not contained within GIAnetworkIndexNodeArray
-	GIAtranslatorOperations.recordSentenceNetworkIndexNodesAsPermanentIfTheyAreStillEnabled(entityNodesActiveListNetworkIndexes);
+	GIAtranslatorOperations.recordSentenceNetworkIndexNodesAsPermanentIfTheyAreStillEnabled(translatorVariables->entityNodesActiveListNetworkIndexes);
 
 
 	#ifdef GIA_ADVANCED_REFERENCING_PREVENT_DOUBLE_LINKS
@@ -265,8 +265,7 @@ void GIAsemanticParserTranslatorClass::convertSentenceSemanticRelationsIntoGIAne
 		}
 	}
 
-	entityNodesActiveListSentences->insert(pair<int, vector<GIAentityNode*>*>(translatorVariables->currentSentenceInList->sentenceIndex, translatorVariables->entityNodesActiveListSentence));
-
+	translatorVariables->entityNodesActiveListSentences->insert(pair<int, vector<GIAentityNode*>*>(translatorVariables->currentSentenceInList->sentenceIndex, entityNodesActiveListSentence));
 }
 
 
@@ -278,7 +277,7 @@ void GIAsemanticParserTranslatorClass::locateAndAddAllNetworkIndexEntitiesBasedO
  	while(currentRelationInList->next != NULL)
 	{
 		bool isDependencyRelationSecondary = false;
-		for(int i=0; i<GIA2_SEMANTIC_DEPENDENCY_RELATION_SECONDARY_NUMBER_OF_TYPES; i++)
+		for(int i=0; i<GIA_SEMANTIC_PARSER_SEMANTIC_DEPENDENCY_RELATION_SECONDARY_NUMBER_OF_TYPES; i++)
 		{
 			if(currentRelationInList->relationType == GIA2semanticDependencyRelationSecondaryNameArray[i])
 			{
@@ -320,7 +319,7 @@ void GIAsemanticParserTranslatorClass::locateAndAddAllNetworkIndexEntitiesBasedO
 
 				translatorVariables->sentenceNetworkIndexEntityNodesList->push_back(networkIndexEntity);
 
-				#ifdef GIA2_CREATE_FEATURES_FOR_ARTIFICIAL_ENTITIES
+				#ifdef GIA_SEMANTIC_PARSER_CREATE_FEATURES_FOR_ARTIFICIAL_ENTITIES
 				if(relationIndex[i] >= FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY)
 				{
 					networkIndexEntity->wordOrig = networkIndexEntity->entityName;
@@ -540,7 +539,7 @@ void GIAsemanticParserTranslatorClass::defineSubstancesBasedOnSemanticRelations(
 	}
 }
 
-#ifdef GIA2_SUPPORT_QUERIES
+#ifdef GIA_SEMANTIC_PARSER_SUPPORT_QUERIES
 void GIAsemanticParserTranslatorClass::identifyComparisonVariableBasedOnSemanticRelations(GIAtranslatorVariablesClass* translatorVariables)
 {
 	if(translatorVariables->currentSentenceInList->isQuestion)
@@ -575,24 +574,24 @@ void GIAsemanticParserTranslatorClass::identifyComparisonVariableBasedOnSemantic
 			for(int i=0; i<2; i++)
 			{
 				GIAentityNode* entityNode = entityNodes[i];
-				if(corpusSpecialRelationIsQuery[i] == GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_QUERY_TAG_TAG_NAME)
+				if(corpusSpecialRelationIsQuery[i] == GIA_SEMANTIC_PARSER_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_QUERY_TAG_TAG_NAME)
 				{
-					cout << GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_QUERY_TAG_TAG_NAME << endl;
+					cout << GIA_SEMANTIC_PARSER_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_QUERY_TAG_TAG_NAME << endl;
 					entityNode->isQuery = true;
 					GIAtranslatorOperations.setComparisonVariableNode(entityNode);
 					GIAtranslatorOperations.setFoundComparisonVariable(true);
 				}
-				else if(corpusSpecialRelationIsQuery[i] == GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_NAME_QUERY_TAG_TAG_NAME)
+				else if(corpusSpecialRelationIsQuery[i] == GIA_SEMANTIC_PARSER_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_NAME_QUERY_TAG_TAG_NAME)
 				{
-					cout << GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_NAME_QUERY_TAG_TAG_NAME << endl;
+					cout << GIA_SEMANTIC_PARSER_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_NAME_QUERY_TAG_TAG_NAME << endl;
 					entityNode->isQuery = true;
 					entityNode->isNameQuery = true;
 					GIAtranslatorOperations.setComparisonVariableNode(entityNode);
 					GIAtranslatorOperations.setFoundComparisonVariable(true);
 				}
-				else if(corpusSpecialRelationIsQuery[i] == GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_WHICH_OR_EQUIVALENT_WHAT_QUERY_TAG_TAG_NAME)
+				else if(corpusSpecialRelationIsQuery[i] == GIA_SEMANTIC_PARSER_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_WHICH_OR_EQUIVALENT_WHAT_QUERY_TAG_TAG_NAME)
 				{
-					cout << GIA2_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_WHICH_OR_EQUIVALENT_WHAT_QUERY_TAG_TAG_NAME << endl;
+					cout << GIA_SEMANTIC_PARSER_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_WHICH_OR_EQUIVALENT_WHAT_QUERY_TAG_TAG_NAME << endl;
 					entityNode->isQuery = true;
 					entityNode->isWhichOrEquivalentWhatQuery = true;
 					GIAtranslatorOperations.setComparisonVariableNode(entityNode);
@@ -605,7 +604,7 @@ void GIAsemanticParserTranslatorClass::identifyComparisonVariableBasedOnSemantic
 }
 #endif
 
-//note entityNodesActiveListNetworkIndexes is required for GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_PREPOSITIONS only / featureArrayTemp is required for GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_PREPOSITIONS:GIA2_CREATE_FEATURES_FOR_ARTIFICIAL_ENTITIES only
+//note entityNodesActiveListNetworkIndexes is required for GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_PREPOSITIONS only / featureArrayTemp is required for GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_PREPOSITIONS:GIA_SEMANTIC_PARSER_CREATE_FEATURES_FOR_ARTIFICIAL_ENTITIES only
 void GIAsemanticParserTranslatorClass::defineConnectionsBasedOnSemanticRelations(GIAtranslatorVariablesClass* translatorVariables)
 {
 	GIArelation* currentRelationInList = translatorVariables->currentSentenceInList->firstRelationInList;
@@ -621,11 +620,15 @@ void GIAsemanticParserTranslatorClass::defineConnectionsBasedOnSemanticRelations
 
 			if(currentRelationInList->relationType == GIA2semanticDependencyRelationNameArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTY_DIRECT])
 			{
+				#ifdef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
 				//see "create intermediary auxiliary 'have'/'be' (property/definition relationship entity)" of GIAtranslatorGeneric.cpp:genericDependecyRelationInterpretation
 				string relationshipEntityName = RELATION_ENTITY_SPECIAL_RELATIONSHIP_NAME_FOR_EFFECTIVE_PROPERTIES;
-				GIAentityNode* relationshipEntity = this->createNewRelationshipEntitySemantic(relationshipEntityName, translatorVariables);
-
-				GIAtranslatorOperations.connectPropertyToEntity(entity1, entity2, relationshipEntity, sameReferenceSet);
+				GIAentityNode* relationshipEntity = this->createNewRelationshipEntitySemantic(GIA_ENTITY_TYPE_PROPERTY, relationshipEntityName, translatorVariables);
+				GIAtranslatorOperations.connectPropertyToEntity(entity1, entity2, relationshipEntity, sameReferenceSet, translatorVariables);
+				#else
+				GIAtranslatorOperations.connectDirectPropertyToEntity(entity1, entity2, sameReferenceSet, translatorVariables);		
+				#endif
+				
 				currentRelationInList->disabled = true;
 			}
 			else if(currentRelationInList->relationType == GIA2semanticDependencyRelationNameArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTY])
@@ -638,13 +641,17 @@ void GIAsemanticParserTranslatorClass::defineConnectionsBasedOnSemanticRelations
 					if(currentRelationInList2->relationType == GIA2semanticDependencyRelationNameArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTY_REVERSE])
 					{
 						if(entity2Index == entity2Index2)
-						{//found matching conditionType pair
+						{//found matching pair
 							int entity3Index = currentRelationInList2->relationDependentIndex;
 							GIAentityNode* entity3 = translatorVariables->GIAentityNodeArray[entity3Index];
 							int entity2IndexRelation2 = currentRelationInList2->relationGovernorIndex;
 							GIAentityNode* entity2relation2 = translatorVariables->GIAentityNodeArray[entity2IndexRelation2];
 
-							GIAtranslatorOperations.connectPropertyToEntity(entity1, entity2relation2, entity3, sameReferenceSet);
+							#ifdef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
+							GIAtranslatorOperations.connectPropertyToEntity(entity1, entity2relation2, entity3, sameReferenceSet, translatorVariables);
+							#else
+							GIAtranslatorOperations.connectDirectPropertyToEntity(entity1, entity2relation2, entity3, sameReferenceSet, translatorVariables);
+							#endif
 							foundMatchingObject = true;
 							currentRelationInList2->disabled = true;
 						}
@@ -675,7 +682,7 @@ void GIAsemanticParserTranslatorClass::defineConnectionsBasedOnSemanticRelations
 							int entity2IndexRelation2 = currentRelationInList2->relationGovernorIndex;
 							GIAentityNode* entity2relation2 = translatorVariables->GIAentityNodeArray[entity2IndexRelation2];
 
-							GIAtranslatorOperations.connectActionToEntity(entity1, entity2relation2, entity3, sameReferenceSet);
+							GIAtranslatorOperations.connectActionToEntity(entity1, entity2relation2, entity3, sameReferenceSet, translatorVariables);
 							foundMatchingObject = true;
 							currentRelationInList2->disabled = true;
 						}
@@ -685,13 +692,13 @@ void GIAsemanticParserTranslatorClass::defineConnectionsBasedOnSemanticRelations
 
 				if(!foundMatchingObject)
 				{
-					GIAtranslatorOperations.connectActionToSubject(entity1, entity2, sameReferenceSet);
+					GIAtranslatorOperations.connectActionToSubject(entity1, entity2, sameReferenceSet, translatorVariables);
 				}
 				currentRelationInList->disabled = true;
 			}
 			else if(currentRelationInList->relationType == GIA2semanticDependencyRelationNameArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_REVERSE])
 			{
-				GIAtranslatorOperations.connectActionToObject(entity1, entity2, sameReferenceSet);
+				GIAtranslatorOperations.connectActionToObject(entity1, entity2, sameReferenceSet, translatorVariables);
 				currentRelationInList->disabled = true;
 			}
 			else if(currentRelationInList->relationType == GIA2semanticDependencyRelationNameArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION])
@@ -716,7 +723,7 @@ void GIAsemanticParserTranslatorClass::defineConnectionsBasedOnSemanticRelations
 							#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_PREPOSITIONS
 							this->invertOrDuplicateConditionsIfRequiredSemantic(translatorVariables, entity1, entity2relation2, entity3, sameReferenceSet);
 							#else
-							GIAtranslatorOperations.connectConditionToEntity(entity1, entity2relation2, entity3, sameReferenceSet);
+							GIAtranslatorOperations.connectConditionToEntity(entity1, entity2relation2, entity3, sameReferenceSet, translatorVariables);
 							#endif
 						}
 					}
@@ -724,7 +731,7 @@ void GIAsemanticParserTranslatorClass::defineConnectionsBasedOnSemanticRelations
 				}
 				if(!foundMatchingObject)
 				{
-					GIAtranslatorOperations.connectConditionToSubject(entity1, entity2, sameReferenceSet);
+					GIAtranslatorOperations.connectConditionToSubject(entity1, entity2, sameReferenceSet, translatorVariables);
 					cout << "defineConnectionsBasedOnSemanticRelations{} warning: (currentRelationInList->relationType == GIA2semanticDependencyRelationNameArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION]) && (!foundMatchingObject) [ie without matching GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_REVERSE]" << endl;
 				}
 				currentRelationInList->disabled = true;
@@ -733,15 +740,18 @@ void GIAsemanticParserTranslatorClass::defineConnectionsBasedOnSemanticRelations
 			{
 				//NB THIS SHOULDNT BE required as there is never an isolated condition-object connection declared according to current GIA specification [but due to bug, it is required for Relex with measure dependency cases eg 'He runs every hour.'];
 				cout << "defineConnectionsBasedOnSemanticRelations{} warning: (currentRelationInList->relationType == GIA2semanticDependencyRelationNameArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_REVERSE]) without matching GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION" << endl;
-				GIAtranslatorOperations.connectConditionToObject(entity1, entity2, sameReferenceSet);
+				GIAtranslatorOperations.connectConditionToObject(entity1, entity2, sameReferenceSet, translatorVariables);
 			}
 			else if(currentRelationInList->relationType == GIA2semanticDependencyRelationNameArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITION_DIRECT])
 			{
+				#ifdef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
 				//see "create intermediary auxiliary 'have'/'be' (property/definition relationship entity)" of GIAtranslatorGeneric.cpp:genericDependecyRelationInterpretation
 				string relationshipEntityName = RELATION_ENTITY_SPECIAL_RELATIONSHIP_NAME_FOR_EFFECTIVE_DEFINITIONS;
-				GIAentityNode* relationshipEntity = this->createNewRelationshipEntitySemantic(relationshipEntityName, translatorVariables);
-
-				GIAtranslatorOperations.connectDefinitionToEntity(entity1, entity2, relationshipEntity, relationshipEntity, sameReferenceSet);
+				GIAentityNode* relationshipEntity = this->createNewRelationshipEntitySemantic(GIA_ENTITY_TYPE_DEFINITION, relationshipEntityName, translatorVariables);
+				GIAtranslatorOperations.connectDefinitionToEntity(entity1, entity2, relationshipEntity, sameReferenceSet, translatorVariables);
+				#else
+				GIAtranslatorOperations.connectDirectDefinitionToEntity(entity1, entity2, sameReferenceSet, translatorVariables);				
+				#endif
 				currentRelationInList->disabled = true;
 			}
 			#ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
@@ -750,16 +760,16 @@ void GIAsemanticParserTranslatorClass::defineConnectionsBasedOnSemanticRelations
 			{
 				//see "create intermediary auxiliary 'have'/'be' (property/definition relationship entity)" of GIAtranslatorGeneric.cpp:genericDependecyRelationInterpretation
 				string relationshipEntityName = RELATION_ENTITY_SPECIAL_RELATIONSHIP_NAME_FOR_EFFECTIVE_DEFINITIONS;
-				GIAentityNode* relationshipEntity = this->createNewRelationshipEntitySemantic(relationshipEntityName, translatorVariables);
+				GIAentityNode* relationshipEntity = this->createNewRelationshipEntitySemantic(GIA_ENTITY_TYPE_DEFINITION, relationshipEntityName, translatorVariables);
 				
 				GIAtranslatorOperations.connectDefinitionToEntityMarkConnectionAsAlias(entity1, entity2, relationshipEntity, sameReferenceSet);
 				currentRelationInList->disabled = true;	//CHECKTHIS
 			}			
 			#else
-			#ifdef GIA2_RECORD_DETERMINERS_AS_DEFINITE_INDEFINITE_SPECIFIC
+			#ifdef GIA_SEMANTIC_PARSER_RECORD_DETERMINERS_AS_DEFINITE_INDEFINITE_SPECIFIC
 			else if(currentRelationInList->relationType == GIA2semanticDependencyRelationNameArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_MERGE_ENTITY_NODES_ADD_ALIAS])
 			{
-				bool notAlreadyMerged = GIAtranslatorOperations.mergeEntityNodesAddAlias(entity1, entity2);
+				bool notAlreadyMerged = GIAtranslatorOperations.mergeEntityNodesAddAlias(entity1, entity2, translatorVariables);
 				if(notAlreadyMerged)
 				{
 					translatorVariables->GIAentityNodeArray[entity2Index] = translatorVariables->GIAentityNodeArray[entity1Index];
@@ -784,7 +794,11 @@ void GIAsemanticParserTranslatorClass::defineConnectionsBasedOnSemanticRelations
 							int entity2IndexRelation2 = currentRelationInList2->relationGovernorIndex;
 							GIAentityNode* entity2relation2 = translatorVariables->GIAentityNodeArray[entity2IndexRelation2];
 
-							GIAtranslatorOperations.connectDefinitionToEntity(entity1, entity2relation2, entity3, sameReferenceSet);
+							#ifdef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
+							GIAtranslatorOperations.connectDefinitionToEntity(entity1, entity2relation2, entity3, sameReferenceSet, translatorVariables);
+							#else
+							GIAtranslatorOperations.connectDirectDefinitionToEntity(entity1, entity2relation2, entity3, sameReferenceSet, translatorVariables);
+							#endif
 							foundMatchingObject = true;
 							currentRelationInList2->disabled = true;
 						}
@@ -823,11 +837,11 @@ void GIAsemanticParserTranslatorClass::invertOrDuplicateConditionsIfRequiredSema
 	if(inverseConditionRequired)
 	{
 		GIAentityNode* inverseConditionEntity = this->createNewInverseConditionEntitySemantic(translatorVariables, inverseConditionName);
-		translatorVariables->GIAentityNodeArray[inverseConditionEntity->entityIndexTemp] = GIAtranslatorOperations.connectConditionToEntity(entity2, entity1, inverseConditionEntity, sameReferenceSet);
+		GIAtranslatorOperations.connectConditionToEntity(entity2, entity1, inverseConditionEntity, sameReferenceSet, translatorVariables);
 	}
 	else
 	{
-		translatorVariables->GIAentityNodeArray[entity3condition->entityIndexTemp] = GIAtranslatorOperations.connectConditionToEntity(entity1, entity2, entity3condition, sameReferenceSet);
+		GIAtranslatorOperations.connectConditionToEntity(entity1, entity2, entity3condition, sameReferenceSet, translatorVariables);
 	}
 	#endif
 	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_TWOWAY_PREPOSITIONS
@@ -835,7 +849,7 @@ void GIAsemanticParserTranslatorClass::invertOrDuplicateConditionsIfRequiredSema
 	{
 		#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED
 		GIAentityNode* inverseConditionEntity = this->createNewInverseConditionEntitySemantic(translatorVariables, entity3condition->entityName);
-		translatorVariables->GIAentityNodeArray[inverseConditionEntity->entityIndexTemp] = GIAtranslatorOperations.connectConditionToEntity(entity2, entity1, inverseConditionEntity, sameReferenceSet);
+		GIAtranslatorOperations.connectConditionToEntity(entity2, entity1, inverseConditionEntity, sameReferenceSet, translatorVariables);
 		inverseConditionEntity->inverseConditionTwoWay = true;
 		#endif
 		//inverseConditionEntity->conditionTwoWay = true;	//FUTURE FIXTHIS
@@ -849,19 +863,13 @@ GIAentityNode* GIAsemanticParserTranslatorClass::createNewInverseConditionEntity
 	int inverseConditionEntityIndex = translatorVariables->currentSentenceInList->relationshipEntityArtificialIndexCurrent;
 	translatorVariables->currentSentenceInList->relationshipEntityArtificialIndexCurrent = translatorVariables->currentSentenceInList->relationshipEntityArtificialIndexCurrent + 1;
 
-	//CHECKTHIS;
-	/*//not possible as networkIndex entities have already been defined (locateAndAddAllNetworkIndexEntitiesBasedOnSemanticRelations has already been executed) unlike createNewInverseConditionEntity{}
-	GIAentityNode* inverseConditionEntity = new GIAentityNode();
-	translatorVariables->GIAentityNodeArrayFilled[inverseConditionEntityIndex] = true;
-	translatorVariables->GIAentityNodeArray[inverseConditionEntityIndex] = inverseConditionEntity;
-	*/
 	bool entityAlreadyExistant = false;
 	GIAentityNode* inverseConditionEntity = GIAtranslatorOperations.findOrAddEntityNodeByNameSimpleWrapperRelationshipCondition(inverseConditionEntityIndex, &inverseConditionName, &entityAlreadyExistant, translatorVariables);
 	inverseConditionEntity->wordOrig = inverseConditionName;	//is this necessary?
 	inverseConditionEntity->entityIndexTemp = inverseConditionEntityIndex;
 	//why not set inverseConditionEntity->sentenceIndexTemp?
 
-	#ifdef GIA2_CREATE_FEATURES_FOR_ARTIFICIAL_ENTITIES
+	#ifdef GIA_SEMANTIC_PARSER_CREATE_FEATURES_FOR_ARTIFICIAL_ENTITIES
 	translatorVariables->featureArrayTemp[inverseConditionEntityIndex] = new GIAfeature();
 	translatorVariables->featureArrayTemp[inverseConditionEntityIndex]->word = inverseConditionName;
 	translatorVariables->featureArrayTemp[inverseConditionEntityIndex]->lemma = inverseConditionName;	//is this necessary?
@@ -873,19 +881,11 @@ GIAentityNode* GIAsemanticParserTranslatorClass::createNewInverseConditionEntity
 #endif
 
 //based on createNewInverseConditionEntitySemantic{}
-GIAentityNode* GIAsemanticParserTranslatorClass::createNewRelationshipEntitySemantic(const string relationshipEntityName, GIAtranslatorVariablesClass* translatorVariables)
+GIAentityNode* GIAsemanticParserTranslatorClass::createNewRelationshipEntitySemantic(const int relationshipEntityType, const string relationshipEntityName, GIAtranslatorVariablesClass* translatorVariables)
 {
-	/*//not possible as networkIndex entities have already been defined (locateAndAddAllNetworkIndexEntitiesBasedOnSemanticRelations has already been executed) unlike createNewInverseConditionEntity{}
-	GIAentityNode* relationshipEntity = new GIAentityNode();
-	translatorVariables->GIAentityNodeArrayFilled[relationshipEntityIndex] = true;
-	translatorVariables->GIAentityNodeArray[relationshipEntityIndex] = relationshipEntity;
-	*/
-	
-	GIAentityNode* relationshipEntity = GIAtranslatorOperations.findOrAddNetworkIndexEntityByNameSimpleWrapperRelationship(&relationshipEntityName, entityNodesActiveListNetworkIndexes, true);
+	GIAentityNode* relationshipEntity = GIAtranslatorOperations.addEntityNodeByNameSimpleWrapperRelationshipArtificial(relationshipEntityType, relationshipEntityName, translatorVariables);
 
-	//why not set relationshipEntity->sentenceIndexTemp?
-
-	#ifdef GIA2_CREATE_FEATURES_FOR_ARTIFICIAL_ENTITIES
+	#ifdef GIA_SEMANTIC_PARSER_CREATE_FEATURES_FOR_ARTIFICIAL_ENTITIES
 	translatorVariables->featureArrayTemp[relationshipEntityIndex] = new GIAfeature();
 	translatorVariables->featureArrayTemp[relationshipEntityIndex]->word = relationshipEntityName;
 	translatorVariables->featureArrayTemp[relationshipEntityIndex]->lemma = relationshipEntityName;	//is this necessary?
@@ -923,7 +923,7 @@ void GIAsemanticParserTranslatorClass::defineQuantitiesBasedOnSemanticRelations(
 
 				GIAentityNode* quantitySubstance = entity1;
 
-				if(NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP)
+				if(translatorVariables->NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP)
 				{
 					//code copied from extractQuantitiesStanfordCoreNLP{}:
 					//if(quantitySubstance->NERTemp != FEATURE_NER_DATE)		//do not assume quantity entities when dealing with Stanford Dates (as they have already been parsed).
@@ -953,7 +953,7 @@ void GIAsemanticParserTranslatorClass::defineQuantitiesBasedOnSemanticRelations(
 					*/
 					//}
 				}
-				else if(NLPfeatureParser == GIA_NLP_PARSER_RELEX)
+				else if(translatorVariables->NLPfeatureParser == GIA_NLP_PARSER_RELEX)
 				{
 					quantitySubstance->hasQuantity = true;
 					quantitySubstance->quantityNumberString = currentRelationInList->relationDependent;
@@ -1010,7 +1010,7 @@ void GIAsemanticParserTranslatorClass::defineQualitiesBasedOnSemanticRelations(G
 	}
 }
 
-#ifdef GIA2_SEMANTIC_PARSER
+#ifdef GIA_SEMANTIC_PARSER_SUBSETS
 bool GIAsemanticParserTranslatorClass::generateAllPermutationsFromSemanticRelationsFile(GIAfeature* firstFeatureInList, const int NLPfeatureParser)
 {
 	//code based on loadSemanticParserCorpusDatabaseFile{}:
@@ -1020,7 +1020,7 @@ bool GIAsemanticParserTranslatorClass::generateAllPermutationsFromSemanticRelati
 	bool isQuery = false;	//irrelevant
 
 	GIArelation* firstRelationInList = NULL;
-	#ifdef GIA_SAVE_SEMANTIC_RELATIONS_FOR_GIA2_SEMANTIC_PARSER_UNOPTIMISED_TEXT_CORPUS_OLD	//read in the relations just written to file by writeSemanticParserCorpusFile{}
+	#ifdef GIA_SEMANTIC_PARSER_WRITE_SEMANTIC_RELATIONS_UNOPTIMISED_TEXT_CORPUS_OLD	//read in the relations just written to file by writeSemanticParserCorpusFile{}
 	string corpusFileName = GIAsemanticParserDatabase.semanticParserCorpusDBgenerateFileName(firstFeatureInList);
 	GIAsentence* sentence = new GIAsentence();
 	if(!GIAnlp.parseStanfordParserFile(corpusFileName, isQuery, sentence, createNewSentences, parseGIA2file, false))		//CHECKTHIS; need to account for corpus XyXysemanticRelations.txt having multiple entries [eg different text but identical layout]
@@ -1041,7 +1041,7 @@ bool GIAsemanticParserTranslatorClass::generateAllPermutationsFromSemanticRelati
 		GIAfeature* dummyBlankFeature = new GIAfeature();
 		//now simulate GIA2 semantic relations for each subset of original sentence POS permutation
 		GIAfeature* secondWordInTupleFeature = firstFeatureInList;
-		int minIndexOfSecondWordInTuple = GIA2_CONNECTIONIST_NETWORK_MIN_SUBSET_SIZE;
+		int minIndexOfSecondWordInTuple = GIA_SEMANTIC_PARSER_CONNECTIONIST_NETWORK_MIN_SUBSET_SIZE;
 		for(int i=GIA_NLP_START_ENTITY_INDEX; i<minIndexOfSecondWordInTuple; i++)
 		{
 			secondWordInTupleFeature = secondWordInTupleFeature->next;
@@ -1058,30 +1058,30 @@ bool GIAsemanticParserTranslatorClass::generateAllPermutationsFromSemanticRelati
 				cout << "generateAllPermutationsFromSemanticRelationsFile{} implementation error*: (firstFeatureInList->entityIndex != GIA_NLP_START_ENTITY_INDEX)" << endl;
 				exit(EXIT_ERROR);
 			}
-			#ifdef GIA2_SEMANTIC_PARSER_OPTIMISE_BASED_ON_CONJUNCTIONS
-			if(!SHAREDvars.textInTextArray(secondWordInTupleFeature->word, semanticParserOptimiseBasedOnConjunctionsIllegalSecondWordInTupleArray, GIA2_SEMANTIC_PARSER_OPTIMISE_BASED_ON_CONJUNCTIONS_ILLEGAL_CENTRAL_WORD_NUMBER_OF_TYPES))
+			#ifdef GIA_SEMANTIC_PARSER_SUBSETS_OPTIMISE_BASED_ON_CONJUNCTIONS
+			if(!SHAREDvars.textInTextArray(secondWordInTupleFeature->word, semanticParserOptimiseBasedOnConjunctionsIllegalSecondWordInTupleArray, GIA_SEMANTIC_PARSER_SUBSETS_OPTIMISE_BASED_ON_CONJUNCTIONS_ILLEGAL_CENTRAL_WORD_NUMBER_OF_TYPES))
 			{
 				bool optimisedBasedOnContextualConjunctions = false;
 				GIAfeature* firstFeatureInSentenceSubsetInitial = GIAsemanticParserOperations.generateOptimisedFeatureSubsetBasedOnContextualConjunctions(firstFeatureInList, secondWordInTupleIndex, &optimisedBasedOnContextualConjunctions);
 			#else
 				GIAfeature* firstFeatureInSentenceSubsetInitial = firstFeatureInList;
 			#endif
-				int maxIndexOfFirstWordInTuple = (secondWordInTupleFeature->entityIndex - (GIA2_CONNECTIONIST_NETWORK_MIN_SUBSET_SIZE-1));
-				#ifdef GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE
+				int maxIndexOfFirstWordInTuple = (secondWordInTupleFeature->entityIndex - (GIA_SEMANTIC_PARSER_CONNECTIONIST_NETWORK_MIN_SUBSET_SIZE-1));
+				#ifdef GIA_SEMANTIC_PARSER_SUBSETS_OPTIMISED_DATABASE
 				for(int firstWordInTupleIndex = GIA_NLP_START_ENTITY_INDEX; firstWordInTupleIndex <= maxIndexOfFirstWordInTuple; firstWordInTupleIndex++)
 				{
 				#endif
 					GIAfeature* firstFeatureInSentenceSubset = firstFeatureInSentenceSubsetInitial;
-					while(firstFeatureInSentenceSubset->entityIndex <= maxIndexOfFirstWordInTuple)		//changed 2k1a for GIA2_SEMANTIC_PARSER_OPTIMISE_BASED_ON_CONJUNCTIONS compatibility: verify that feature entityIndices are not mutated by GIA referencing*	//OLD: for(int firstWordInSentenceSubsetIndex=1; firstWordInSentenceSubsetIndex<secondWordInTupleIndex; firstWordInSentenceSubsetIndex++)
+					while(firstFeatureInSentenceSubset->entityIndex <= maxIndexOfFirstWordInTuple)		//changed 2k1a for GIA_SEMANTIC_PARSER_SUBSETS_OPTIMISE_BASED_ON_CONJUNCTIONS compatibility: verify that feature entityIndices are not mutated by GIA referencing*	//OLD: for(int firstWordInSentenceSubsetIndex=1; firstWordInSentenceSubsetIndex<secondWordInTupleIndex; firstWordInSentenceSubsetIndex++)
 					{
 						int firstWordInSentenceSubsetIndex=firstFeatureInSentenceSubset->entityIndex;
-						#ifdef GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE
+						#ifdef GIA_SEMANTIC_PARSER_SUBSETS_OPTIMISED_DATABASE
 						if(firstWordInTupleIndex >= firstWordInSentenceSubsetIndex)
 						{
 						#endif
 							int subsetSize = secondWordInTupleIndex-firstWordInSentenceSubsetIndex+1;	//subsetSize aka maxSpread
 
-							#ifdef GIA2_SEMANTIC_PARSER_UNOPTIMISED_TEXT_CORPUS
+							#ifdef GIA_SEMANTIC_PARSER_SUBSETS_UNOPTIMISED_TEXT_CORPUS
 							//code from convertSentenceSyntacticRelationsIntoGIAnetworkNodes{}:
 							string sentenceText = "";
 							bool foundAtLeastOneRelation = false;
@@ -1109,7 +1109,7 @@ bool GIAsemanticParserTranslatorClass::generateAllPermutationsFromSemanticRelati
 							}
 							#endif
 
-							#ifdef GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE
+							#ifdef GIA_SEMANTIC_PARSER_SUBSETS_OPTIMISED_DATABASE
 							bool foundAtLeastOneRelation = false;
 							int firstWordInTupleIndexRelative = GIAsemanticParserOperations.calculateFirstWordInTupleIndexRelative(firstWordInTupleIndex, firstWordInSentenceSubsetIndex);
 							GIArelation* currentSemanticRelationInList = firstRelationInList;
@@ -1117,10 +1117,10 @@ bool GIAsemanticParserTranslatorClass::generateAllPermutationsFromSemanticRelati
 							{
 								int semanticDependencyRelationType = INT_DEFAULT_VALUE;
 								bool sameReferenceSet = currentSemanticRelationInList->sameReferenceSet;
-								if(SHAREDvars.textInTextArray(currentSemanticRelationInList->relationType, GIA2semanticDependencyRelationNameArray, GIA2_SEMANTIC_DEPENDENCY_RELATION_NUMBER_OF_TYPES, &semanticDependencyRelationType))
+								if(SHAREDvars.textInTextArray(currentSemanticRelationInList->relationType, GIA2semanticDependencyRelationNameArray, GIA_SEMANTIC_PARSER_SEMANTIC_DEPENDENCY_RELATION_NUMBER_OF_TYPES, &semanticDependencyRelationType))
 								{
 									//CHECKTHIS; how to handle these cases (currentSemanticRelationInList->relationGovernorIndex >= FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY) || (currentSemanticRelationInList->relationDependentIndex >= FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY))
-										//NB GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE can't handle queries at present (or where featureIndex >= FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY)
+										//NB GIA_SEMANTIC_PARSER_SUBSETS_OPTIMISED_DATABASE can't handle queries at present (or where featureIndex >= FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY)
 									if((currentSemanticRelationInList->relationGovernorIndex == firstWordInTupleIndex) && (currentSemanticRelationInList->relationDependentIndex == secondWordInTupleIndex))
 									{
 										//write semantic relation data
@@ -1156,22 +1156,22 @@ bool GIAsemanticParserTranslatorClass::generateAllPermutationsFromSemanticRelati
 								}
 								currentSemanticRelationInList = currentSemanticRelationInList->next;
 							}
-							#ifdef GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE_EXTENSIVE
+							#ifdef GIA_SEMANTIC_PARSER_SUBSETS_OPTIMISED_DATABASE_EXTENSIVE
 							if(!foundAtLeastOneRelation)
 							{
 								GIAsemanticParserDatabase.writeSemanticParserOptimisedDatabaseFile(firstFeatureInSentenceSubset, firstWordInTupleIndexRelative, SEMANTIC_RELATION_TYPE_NON_EXISTENT, BOOL_IRRELEVANT, BOOL_IRRELEVANT);
 							}
 							#endif
 							#endif
-						#ifdef GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE
+						#ifdef GIA_SEMANTIC_PARSER_SUBSETS_OPTIMISED_DATABASE
 						}
 						#endif
 						firstFeatureInSentenceSubset = firstFeatureInSentenceSubset->next;
 					}
-				#ifdef GIA2_SEMANTIC_PARSER_OPTIMISED_DATABASE
+				#ifdef GIA_SEMANTIC_PARSER_SUBSETS_OPTIMISED_DATABASE
 				}
 				#endif
-			#ifdef GIA2_SEMANTIC_PARSER_OPTIMISE_BASED_ON_CONJUNCTIONS
+			#ifdef GIA_SEMANTIC_PARSER_SUBSETS_OPTIMISE_BASED_ON_CONJUNCTIONS
 				if(optimisedBasedOnContextualConjunctions)
 				{
 					delete firstFeatureInSentenceSubsetInitial;	//delete artificially generated optimised sentence subset
@@ -1182,7 +1182,7 @@ bool GIAsemanticParserTranslatorClass::generateAllPermutationsFromSemanticRelati
 			secondWordInTupleFeature->next = recordOfFeatureAfterSecondWordInTupleFeature;	//restore temporarily disconnected node at end of sentence subset
 			secondWordInTupleFeature = secondWordInTupleFeature->next;
 		}
-	#ifdef GIA2_SEMANTIC_PARSER_UNOPTIMISED_TEXT_CORPUS
+	#ifdef GIA_SEMANTIC_PARSER_WRITE_SEMANTIC_RELATIONS_UNOPTIMISED_TEXT_CORPUS_OLD
 	}
 	#endif
 
