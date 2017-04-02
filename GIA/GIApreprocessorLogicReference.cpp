@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorLogicReference.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3a5h 28-March-2017
+ * Project Version: 3a5i 28-March-2017
  * Requirements: requires plain text file
  * Description: Logic Reference preprocessor
  *
@@ -205,7 +205,9 @@ bool GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor(const
 	for(int i=0; i<sentenceContents->length(); i++)
 	{
 		char currentChar = (*sentenceContents)[i];
+		#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
 		//cout << currentChar;
+		#endif
 		
 		bool whiteSpaceFound = false;
 		bool punctuationMarkFound = false;
@@ -214,34 +216,42 @@ bool GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor(const
 			whiteSpaceFound = true;
 			if(!whiteSpace)
 			{
+				#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
 				//cout << "[currentWord = " << currentWord << "]" << endl;
+				#endif
 				bool foundClassType = false;
 				string logicReferenceClassType = "";
 				int logicReferenceClass = GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_UNDEFINED;
 				if(isClassTag(currentWord, GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_conjunction, &logicReferenceClassType, firstLogicReferenceClassTag))
 				{
 					logicReferenceClass = GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_CONJUNCTION;
+					#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
 					cout << "logicReferenceClass = GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_CONJUNCTION " << endl;
+					#endif
 					foundClassType = true;
 				}
 				else if(isClassTag(currentWord, GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_verb, &logicReferenceClassType, firstLogicReferenceClassTag))
 				{
 					logicReferenceClass = GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_VERB;
+					#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
 					cout << "logicReferenceClass = GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_VERB " << endl;
+					#endif
 					foundClassType = true;
 				}
 				else if(isClassTag(currentWord, GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_preposition, &logicReferenceClassType, firstLogicReferenceClassTag))
 				{
 					logicReferenceClass = GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_PREPOSITION;
+					#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
 					cout << "logicReferenceClass = GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_PREPOSITION " << endl;
+					#endif
 					foundClassType = true;
 				}
 
 				if(foundClassType)
 				{
+					string logicReferenceContents = generateLogicReferenceContents(currentWord, logicReferenceClassType);
 					if(logicReferenceClass == GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_CONJUNCTION)
 					{
-						string logicReferenceContents = generateLogicReferenceContents(logicReferenceClassType);
 						if(currentContents == "")
 						{							
 							if((currentLogicReferenceInList->logicReferenceClass == GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_UNDEFINED) || (currentLogicReferenceInList->logicReferenceClass == GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_CONJUNCTION_COMPONENT_IMPLICIT_INFERRED))
@@ -276,14 +286,12 @@ bool GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor(const
 
 							bool copySubLogicReferences = false;
 							#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CONJUNCTION_LR_WITH_EMBEDDED_PREPOSITION_VERB_LR
-							if(currentLogicReferenceInList->isSubLogicReferenceDependent && !(currentLogicReferenceInList->hasSubLogicReference))
+							if(currentLogicReferenceInList->isSubLogicReferenceDependent && currentLogicReferenceInList->lastLogicReferenceInUpperLevel->previous != NULL)
 							{
-								//NB currentLogicReferenceInList->isSubLogicReferenceDependent implies currentLogicReferenceInList->previous == NULL
-								currentLogicReferenceInList = currentLogicReferenceInList->lastLogicReferenceInUpperLevel;		//The apple proposed A and B...	//The apple proposed A and proposed B...	//The apple proposed A and the chicken proposed B...	//not; considering that the house is red and the chicken is blue
-								copySubLogicReferences = true;
+								currentLogicReferenceInList = currentLogicReferenceInList->lastLogicReferenceInUpperLevel;		//The apple proposed A and proposed B...	//The apple proposed A and the chicken proposed B...	//Tom proposed that the apple is blue, and suggested that the house is purple.
 							}
 							#endif
-							
+														
 							if(currentLogicReferenceInList->previous == NULL)
 							{
 								initialiseNewSubLogicReferenceConjunction(&currentLogicReferenceInList, logicReferenceContents, logicReferenceClass, logicReferenceClassType, wordIndexSentence, copySubLogicReferences);
@@ -302,7 +310,6 @@ bool GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor(const
 					}
 					else if((logicReferenceClass == GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_VERB) || (logicReferenceClass == GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_PREPOSITION))
 					{	
-						//cout << "logicReferenceClass = " << logicReferenceClass << endl;
 						GIApreprocessorLogicReference* currentLogicReferenceInListActive = currentLogicReferenceInList;
 						#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_ERROR_CHECKING
 						GIApreprocessorLogicReference* currentLogicReferenceInListActiveOriginal = currentLogicReferenceInListActive;
@@ -310,12 +317,14 @@ bool GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor(const
 						#endif
 						
 						bool specialSwitch = false;
-						string logicReferenceContents = generateLogicReferenceContents(logicReferenceClassType);
 						if(logicReferenceClass == GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_PREPOSITION)
 						{
 							if((currentLogicReferenceInList->previous != NULL) && (currentLogicReferenceInList->previous->logicReferenceClass == GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_CONJUNCTION_COMPONENT_IMPLICIT_INFERRED))
 							{
+								#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
 								cout << "specialSwitch" << endl;
+								#endif
+								
 								currentLogicReferenceInListActive = currentLogicReferenceInList->previous->lastLogicReferenceInUpperLevel;
 								#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_ERROR_CHECKING
 								currentLogicReferenceInListActiveOriginal = currentLogicReferenceInListActive;
@@ -337,7 +346,64 @@ bool GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor(const
 						}
 						if(!specialSwitch)
 						{	
+							#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
 							//cout << "!specialSwitch" << endl;
+							#endif
+							
+							#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CONJUNCTION_LR_WITH_EMBEDDED_PREPOSITION_VERB_LR
+							if(currentLogicReferenceInList->previous != NULL)
+							{
+								GIApreprocessorLogicReference* firstLogicReferenceInList = currentLogicReferenceInListActive->previous;		//The apple proposed A, the chicken proposed B...	/	The apple proposed A, said B...	/ The apple proposed A, B...
+								firstLogicReferenceInList->next = NULL;	//delete the original logic reference as it will contain nothing
+								if(firstLogicReferenceInList->previous != NULL)
+								{
+									cout << "GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor{} error: (firstLogicReferenceInList->previous != NULL)" << endl;
+									exit(EXIT_ERROR);
+								}
+								if(firstLogicReferenceInList->lastLogicReferenceInUpperLevel == NULL)
+								{
+									cout << "GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor{} error: (firstLogicReferenceInList->lastLogicReferenceInUpperLevel == NULL)" << endl;
+									exit(EXIT_ERROR);
+								}
+								if(firstLogicReferenceInList->logicReferenceClass != GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_CONJUNCTION_COMPONENT_IMPLICIT_INFERRED)
+								{
+									cout << "GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor{} error: (firstLogicReferenceInList->logicReferenceClass != GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_CONJUNCTION_COMPONENT_IMPLICIT_INFERRED)" << endl;
+									exit(EXIT_ERROR);
+								}
+								
+								GIApreprocessorLogicReference* conjunctionLogicReferenceOld = firstLogicReferenceInList->lastLogicReferenceInUpperLevel;
+								if(conjunctionLogicReferenceOld->logicReferenceClass != GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_CONJUNCTION)
+								{
+									cout << "GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor{} error: (conjunctionLogicReferenceOld->logicReferenceClass != GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_CONJUNCTION)" << endl;
+									exit(EXIT_ERROR);
+								}
+								
+								GIApreprocessorLogicReference* verbLogicReference = conjunctionLogicReferenceOld->lastLogicReferenceInUpperLevel;
+								verbLogicReference->firstSubLogicReferenceInListDependent = conjunctionLogicReferenceOld->firstSubLogicReferenceInListArray;	//delete the old conjunctionLogicReferenceOld:
+								
+								if(verbLogicReference->logicReferenceClass != GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_VERB)
+								{
+									cout << "GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor{} error: (verbLogicReference->logicReferenceClass != GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_VERB)" << endl;
+									exit(EXIT_ERROR);
+								}
+								
+								bool copySubLogicReferences = true;
+								if(!initialiseNewSubLogicReferenceConjunctionInferred(&verbLogicReference, wordIndexSentence, copySubLogicReferences))
+								{
+									result = false;
+								}
+								GIApreprocessorLogicReference* conjunctionLogicReferenceNew = verbLogicReference->lastLogicReferenceInUpperLevel;
+								setLogicReferenceInfo(conjunctionLogicReferenceNew, conjunctionLogicReferenceOld->logicReferenceContents, conjunctionLogicReferenceOld->logicReferenceClass, conjunctionLogicReferenceOld->logicReferenceClassType);	  
+
+								if(!initialiseNextLogicReferenceConjunction(&verbLogicReference, wordIndexSentence))
+								{
+									result = false;
+								}
+								
+								currentLogicReferenceInListActive = verbLogicReference;
+							}
+							#endif
+				
 							if(!initialiseNewSubLogicReference(currentLogicReferenceInListActive, logicReferenceContents, logicReferenceClass, logicReferenceClassType, wordIndexSentence))
 							{
 								result = false;
@@ -502,11 +568,9 @@ bool GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor(const
 				
 				bool copySubLogicReferences = false;
 				#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CONJUNCTION_LR_WITH_EMBEDDED_PREPOSITION_VERB_LR
-				if(currentLogicReferenceInList->isSubLogicReferenceDependent && !(currentLogicReferenceInList->hasSubLogicReference))
+				if(currentLogicReferenceInList->isSubLogicReferenceDependent && currentLogicReferenceInList->lastLogicReferenceInUpperLevel->previous != NULL)
 				{
-					//NB currentLogicReferenceInList->isSubLogicReferenceDependent implies currentLogicReferenceInList->previous == NULL
-					currentLogicReferenceInList = currentLogicReferenceInList->lastLogicReferenceInUpperLevel;		//The apple proposed A, the chicken proposed B...	/	The apple proposed A, said B...	/ The apple proposed A, B...
-					copySubLogicReferences = true;
+					currentLogicReferenceInList = currentLogicReferenceInList->lastLogicReferenceInUpperLevel;		//The apple proposed A, the chicken proposed B...	/	The apple proposed A, said B...
 				}
 				#endif
 				
@@ -652,9 +716,7 @@ bool GIApreprocessorLogicReferenceClass::initialiseNewSubLogicReferenceConjuncti
 		(*currentLogicReferenceInList)->firstSubLogicReferenceInListDependent = NULL;
 	}
 	#endif
-	(*currentLogicReferenceInList)->logicReferenceClass = logicReferenceClass;
-	(*currentLogicReferenceInList)->logicReferenceClassType = logicReferenceClassType;      
-	(*currentLogicReferenceInList)->logicReferenceContents = logicReferenceContents;		     //similiar if not identical to GIApreprocessorLogicReferenceTypes[logicReferenceClassType];
+	setLogicReferenceInfo((*currentLogicReferenceInList), logicReferenceContents, logicReferenceClass, logicReferenceClassType);	  
 	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
 	(*currentLogicReferenceInList)->logicReferenceVariable->wordIndexSentence = wordIndexSentence+1;	//CHECKTHIS
 	#endif
@@ -668,9 +730,7 @@ bool GIApreprocessorLogicReferenceClass::initialiseNewSubLogicReferenceConjuncti
 
 bool GIApreprocessorLogicReferenceClass::initialiseNewSubLogicReference(GIApreprocessorLogicReference* currentLogicReferenceInList, const string logicReferenceContents, const int logicReferenceClass, const string logicReferenceClassType, const int wordIndexSentence)
 {
-	currentLogicReferenceInList->logicReferenceClass = logicReferenceClass;
-	currentLogicReferenceInList->logicReferenceClassType = logicReferenceClassType;      
-	currentLogicReferenceInList->logicReferenceContents = logicReferenceContents;		     //similiar if not identical to GIApreprocessorLogicReferenceTypes[logicReferenceClassType];
+	setLogicReferenceInfo(currentLogicReferenceInList, logicReferenceContents, logicReferenceClass, logicReferenceClassType);
 	currentLogicReferenceInList->hasSubLogicReference = true;
 	currentLogicReferenceInList->hasSubLogicReferenceArray = false;
 	currentLogicReferenceInList->firstSubLogicReferenceInListGovernor = new GIApreprocessorLogicReference();
@@ -687,10 +747,6 @@ bool GIApreprocessorLogicReferenceClass::initialiseNewSubLogicReference(GIAprepr
 bool GIApreprocessorLogicReferenceClass::fillLogicReferenceVariable(GIApreprocessorLogicReference* currentLogicReferenceInList, string* currentContents, vector<string>* logicReferenceVariableWordList, int* logicReferenceVariableNameIndex, const bool commaDetected, bool* expectToFindSubjectAuxObjectLogicReferenceVariable)
 {
 	//exit parsing of logical condition variable
-	/*
-	cout << "fillLogicReferenceVariable{}" << endl;
-	cout << "currentContents = " << *currentContents << endl;
-	*/
 	
 	bool result = true;
 	
@@ -714,8 +770,6 @@ bool GIApreprocessorLogicReferenceClass::fillLogicReferenceVariable(GIApreproces
 			{
 				//eg Tom is happy and fast 
 				//switch reference set subject/object
-				//cout << "currentLogicReferenceInList->logicReferenceVariable->referenceSetSubject->subReferenceSetContents = " << currentLogicReferenceInList->logicReferenceVariable->referenceSetSubject->subReferenceSetContents << endl;
-				//cout << "currentLogicReferenceInList->logicReferenceVariable->referenceSetObject->subReferenceSetContents = " << currentLogicReferenceInList->logicReferenceVariable->referenceSetObject->subReferenceSetContents << endl;
 				GIApreprocessorSubReferenceSet* tempSubReferenceSet = currentLogicReferenceInList->logicReferenceVariable->referenceSetObject;
 				currentLogicReferenceInList->logicReferenceVariable->referenceSetObject = currentLogicReferenceInList->logicReferenceVariable->referenceSetSubject;
 				currentLogicReferenceInList->logicReferenceVariable->referenceSetSubject = tempSubReferenceSet;
@@ -771,12 +825,16 @@ bool GIApreprocessorLogicReferenceClass::isClassTag(string word, string classNam
 			{				
 				XMLparserTag* firstTagInClass = XMLparserClass.parseTagDownALevel(currentTagInLogicReferencePreprocessor, GIA_PREPROCESSOR_XML_TAG_class, &result);
 				XMLparserTag* currentTagInClass = firstTagInClass;
+				#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
 				//cout << "classNameToFind = " << classNameToFind << endl;
+				#endif
 				while(currentTagInClass->nextTag != NULL)
 				{
 					if(currentTagInClass->name == GIA_PREPROCESSOR_XML_TAG_type)
 					{
+						#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
 						//cout << "\tGIApreprocessor::extractGIApreprocessorLogicReferenceClasses{} debug: GIA_PREPROCESSOR_XML_TAG_type" << endl;
+						#endif
 						string classTypeName = "";
 						if(currentTagInClass->firstAttribute->name == GIA_PREPROCESSOR_XML_ATTRIBUTE_name)
 						{
@@ -790,7 +848,9 @@ bool GIApreprocessorLogicReferenceClass::isClassTag(string word, string classNam
 						{
 							if(currentTagInType->name == GIA_PREPROCESSOR_XML_TAG_instance)
 							{
+								#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
 								//cout << "\t\tGIApreprocessor::extractGIApreprocessorLogicReferenceClasses{} debug: GIA_PREPROCESSOR_XML_TAG_instance" << endl;
+								#endif
 								if(currentTagInType->firstAttribute->name == GIA_PREPROCESSOR_XML_ATTRIBUTE_name)
 								{
 									string instanceName = currentTagInType->firstAttribute->value;
@@ -852,9 +912,7 @@ bool GIApreprocessorLogicReferenceClass::identifyImplicitLogicReferenceSets(GIAp
 	if(firstLogicReferenceInLayer->lastLogicReferenceInUpperLevel != NULL)
 	{
 		GIApreprocessorLogicReference* conjunctionLogicReference = firstLogicReferenceInLayer->lastLogicReferenceInUpperLevel;
-		conjunctionLogicReference->logicReferenceContents = logicReferenceContents;
-		conjunctionLogicReference->logicReferenceClass = logicReferenceClass;
-		conjunctionLogicReference->logicReferenceClassType = logicReferenceClassType;
+		setLogicReferenceInfo(conjunctionLogicReference, logicReferenceContents, logicReferenceClass, logicReferenceClassType);
 	}
 	else
 	{
@@ -864,12 +922,17 @@ bool GIApreprocessorLogicReferenceClass::identifyImplicitLogicReferenceSets(GIAp
 	
 	return result;	
 }
-		
-		
-
-string GIApreprocessorLogicReferenceClass::generateLogicReferenceContents(string logicReferenceClassType)
+	
+void GIApreprocessorLogicReferenceClass::setLogicReferenceInfo(GIApreprocessorLogicReference* logicReference, string logicReferenceContents, int logicReferenceClass, string logicReferenceClassType)
 {
-	string logicReferenceContents = logicReferenceClassType;	//this needs to be updated
+	logicReference->logicReferenceContents = logicReferenceContents;
+	logicReference->logicReferenceClass = logicReferenceClass;
+	logicReference->logicReferenceClassType = logicReferenceClassType;	
+}		
+
+string GIApreprocessorLogicReferenceClass::generateLogicReferenceContents(const string logicReferenceWord, const string logicReferenceClassType)
+{
+	string logicReferenceContents = logicReferenceWord;	//logicReferenceClassType;	//this needs to be updated
 	return logicReferenceContents;
 }
 
@@ -957,6 +1020,105 @@ bool GIApreprocessorLogicReferenceClass::islogicReferenceParentConjunctionCompon
 
 
 
+#endif
+
+#ifdef GIA_PREPROCESSOR_SENTENCE_PRINT_OUTPUT
+bool GIApreprocessorLogicReferenceClass::printLogicReferenceLayer(GIApreprocessorLogicReference* firstLogicReferenceInLayer)
+{
+	bool result = true;
+	GIApreprocessorLogicReference* currentLogicReferenceInList = firstLogicReferenceInLayer;
+	bool stillParsingLogicReferenceLayer = true;
+	while(stillParsingLogicReferenceLayer)
+	{
+		#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE	
+		//cout << "\tcurrentLogicReferenceInList->logicReferenceVariable->sentenceIndex = " << currentLogicReferenceInList->logicReferenceVariable->sentenceIndex << ", logicReferenceVariableContents: " << currentLogicReferenceInList->logicReferenceVariable->logicReferenceVariableContents << ", logicReferenceVariableName: " << currentLogicReferenceInList->logicReferenceVariable->logicReferenceVariableName << endl;
+		#endif
+		
+		#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
+		if(currentLogicReferenceInList->hasSubLogicReference)
+		{
+			#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
+			//cout << "\ttcurrentLogicReferenceInList->logicReferenceClassType = " << currentLogicReferenceInList->logicReferenceClassType << endl;
+			#endif
+			if(currentLogicReferenceInList->hasSubLogicReferenceArray)
+			{
+				cout << currentLogicReferenceInList->logicReferenceContents << "(";	//currentLogicReferenceInList->logicReferenceClassType 
+				if(!printLogicReferenceLayer(currentLogicReferenceInList->firstSubLogicReferenceInListArray))
+				{
+					result = false;
+				}
+				cout << ")";
+			}
+			else
+			{
+				cout << currentLogicReferenceInList->logicReferenceClassType << "(";
+				#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CONJUNCTION_LR_WITH_EMBEDDED_PREPOSITION_VERB_LR_DELETE_IMPLICIT_GOVERNOR
+				if(currentLogicReferenceInList->firstSubLogicReferenceInListGovernor != NULL)
+				{
+				#endif
+					if(!printLogicReferenceLayer(currentLogicReferenceInList->firstSubLogicReferenceInListGovernor))
+					{
+						result = false;
+					}
+				#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CONJUNCTION_LR_WITH_EMBEDDED_PREPOSITION_VERB_LR
+				}
+				#endif
+				cout << ",";
+				if(!printLogicReferenceLayer(currentLogicReferenceInList->firstSubLogicReferenceInListDependent))
+				{
+					result = false;
+				}
+				cout << ")";
+			}
+		}
+		else
+		{
+		#endif
+			//cout << "[RSsubj:";
+			cout << "[";
+			GIApreprocessorSubReferenceSet* currentSubReferenceSetInList = currentLogicReferenceInList->logicReferenceVariable->referenceSetSubject;
+			while(currentSubReferenceSetInList->next != NULL)
+			{
+				//cout << "\t\treferenceSetSubject: currentSubReferenceSetInList->sentenceIndex = " << currentSubReferenceSetInList->sentenceIndex << ", subReferenceSetContents: " << currentSubReferenceSetInList->subReferenceSetContents << endl;
+				cout << "|" << currentSubReferenceSetInList->sentenceIndex << ";" << currentSubReferenceSetInList->subReferenceSetContents;
+				currentSubReferenceSetInList = currentSubReferenceSetInList->next;
+			}
+			cout << "]";
+			cout << "[";
+			//cout << "RSobj:";
+			currentSubReferenceSetInList = currentLogicReferenceInList->logicReferenceVariable->referenceSetObject;
+			while(currentSubReferenceSetInList->next != NULL)
+			{
+				//cout << "\t\treferenceSetObject: currentSubReferenceSetInList->sentenceIndex = " << currentSubReferenceSetInList->sentenceIndex << ", subReferenceSetContents: " << currentSubReferenceSetInList->subReferenceSetContents << endl;
+				cout << "|" << currentSubReferenceSetInList->sentenceIndex << ";" << currentSubReferenceSetInList->subReferenceSetContents;
+				currentSubReferenceSetInList = currentSubReferenceSetInList->next;
+			}
+			cout << "]";
+			cout << "[";
+			//cout << "RSdel:";
+			currentSubReferenceSetInList = currentLogicReferenceInList->logicReferenceVariable->referenceSetDelimiter;
+			if(currentSubReferenceSetInList->subReferenceSetContents != "")
+			{
+				//cout << "\t\treferenceSetDelimiter: currentSubReferenceSetInList->sentenceIndex = " << currentSubReferenceSetInList->sentenceIndex << ", subReferenceSetContents: " << currentSubReferenceSetInList->subReferenceSetContents << endl;
+				cout << "|" << currentSubReferenceSetInList->sentenceIndex << ";" << currentSubReferenceSetInList->subReferenceSetContents;
+			}
+			cout << "]";
+		#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
+		}
+		#endif
+		
+		if(currentLogicReferenceInList->next != NULL)
+		{
+			currentLogicReferenceInList = currentLogicReferenceInList->next;
+			cout << " , ";
+		}
+		else
+		{
+			stillParsingLogicReferenceLayer = false;
+		}
+	}
+	return result;
+}
 #endif
 
 
