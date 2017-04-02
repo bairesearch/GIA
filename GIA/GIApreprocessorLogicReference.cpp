@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorLogicReference.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3a5j 28-March-2017
+ * Project Version: 3a5k 28-March-2017
  * Requirements: requires plain text file
  * Description: Logic Reference preprocessor
  *
@@ -249,8 +249,10 @@ bool GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor(const
 
 				if(foundClassType)
 				{
+					#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
 					cout << "currentWord = " << currentWord << endl;
 					cout << "logicReferenceClass = " << logicReferenceClass << endl;
+					#endif
 					
 					string logicReferenceContents = generateLogicReferenceContents(currentWord, logicReferenceClassType);
 					if(logicReferenceClass == GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_CONJUNCTION)
@@ -426,11 +428,14 @@ bool GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor(const
 									//FUTURE CONSIDER eg The house is blue, the apple proposed.
 									//Tom said A and Jim proposed [that] the house [is blue].
 									*/
+									/*
 									if(expectToFindSubjectAuxObjectLogicReferenceVariable != false)
 									{
 										cout << "GIApreprocessorLogicReferenceClass::extractGIApreprocessorLogicReferenceClasses{} error: expectToFindSubjectAuxObjectLogicReferenceVariable != false" << endl;
 										exit(EXIT_ERROR);
 									}
+									*/
+									expectToFindSubjectAuxObjectLogicReferenceVariable = false;
 									if(!fillLogicReferenceVariable(currentLogicReferenceInListActive->firstSubLogicReferenceInListGovernor, &currentContents, &logicReferenceVariableWordList, &logicReferenceVariableNameIndex, false, &expectToFindSubjectAuxObjectLogicReferenceVariable))
 									{
 										result = false;
