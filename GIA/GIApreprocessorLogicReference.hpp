@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorLogicReference.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3a5f 28-March-2017
+ * Project Version: 3a5g 28-March-2017
  * Requirements: requires plain text file
  * Description: Logic Reference preprocessor
  *
@@ -54,16 +54,16 @@ class GIApreprocessorLogicReferenceClass
 	public: bool executeLogicReferencePreprocessor(const string* sentenceContents, GIApreprocessorSentence* currentGIApreprocessorSentenceInList, XMLparserTag* firstLogicReferenceClassTag);
 		private: void addSentenceToText(string* sentenceContentsPreprocessed, GIApreprocessorSubReferenceSet* referenceSet, int* sentenceIndex);
 		private: bool logicReferenceClassIsPreposition(GIApreprocessorLogicReference* logicReference);
-		private: bool initialiseNewLogicReferenceConjunction(GIApreprocessorLogicReference** currentLogicReferenceInList, const int wordIndexSentence);
-		private: void setImplicitConjunctionInferred(GIApreprocessorLogicReference* currentLogicReferenceInList);
-		private: void setExplicitConjunction(GIApreprocessorLogicReference* currentLogicReferenceInList, string logicReferenceConjunctionClassType);
+		private: bool initialiseNextLogicReferenceConjunction(GIApreprocessorLogicReference** currentLogicReferenceInList, const int wordIndexSentence);
+		private: bool initialiseNewSubLogicReferenceConjunctionInferred(GIApreprocessorLogicReference** currentLogicReferenceInList, const int wordIndexSentence);
+		private: bool initialiseNewSubLogicReferenceConjunction(GIApreprocessorLogicReference** currentLogicReferenceInList, const string logicReferenceContents, const int logicReferenceClass, const string logicReferenceClassType, const int wordIndexSentence);
 		private: bool initialiseNewSubLogicReference(GIApreprocessorLogicReference* currentLogicReferenceInList, const string logicReferenceContents, const int logicReferenceClass, const string logicReferenceClassType, const int wordIndexSentence);
 		private: bool fillLogicReferenceVariable(GIApreprocessorLogicReference* currentLogicReferenceInList, string* currentContents, vector<string>* logicReferenceVariableWordList, int* logicReferenceVariableNameIndex, const bool commaDetected, bool* expectToFindSubjectAuxObjectLogicReferenceVariable);
 		private: bool isClassTag(string word, string classNameToFind, string* classTypeNameFound, XMLparserTag* firstLogicReferenceClassTag);
-		private: bool identifyImplicitLogicReferenceSets(GIApreprocessorLogicReference* explicitConjunctionLogicReferenceInList);
+		private: bool identifyImplicitLogicReferenceSets(GIApreprocessorLogicReference* explicitConjunctionLogicReferenceInList, const string logicReferenceContents, const int logicReferenceClass, const string logicReferenceClassType);
 	private: string generateLogicReferenceContents(string logicReferenceClassType);
-	public: bool islogicReferenceExplitOrImplicitConjunction(GIApreprocessorLogicReference* currentLogicReferenceInList);
-	public: bool islogicReferenceExplitConjunction(GIApreprocessorLogicReference* currentLogicReferenceInList);
+	public: bool islogicReferenceExplitOrImplicitConjunctionComponent(GIApreprocessorLogicReference* currentLogicReferenceInList);
+	public: bool islogicReferenceConjunctionComponentNotFirst(GIApreprocessorLogicReference* currentLogicReferenceInList, bool parentIsConjunctionLogicReference);
 
 	#endif	
 };

@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a5f 28-March-2017
+ * Project Version: 3a5g 28-March-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -155,6 +155,7 @@ int GIAtranslatorOperationsClass::generateConnectionType(int relationshipEntityT
 	if(connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_UNKNOWN)
 	{
 		cout << "generateConnectionType error{}: (connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_UNKNOWN)" << endl;
+		exit(EXIT_ERROR);
 	}
 	return connectionType;
 }
@@ -165,6 +166,7 @@ int GIAtranslatorOperationsClass::generateConnectionTypeReverse(int relationship
 	if(connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_UNKNOWN)
 	{
 		cout << "generateConnectionType error{}: (connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_UNKNOWN)" << endl;
+		exit(EXIT_ERROR);
 	}
 	return connectionType;
 }

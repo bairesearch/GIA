@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorSentenceClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3a5f 28-March-2017
+ * Project Version: 3a5g 28-March-2017
  * Requirements: requires plain text file
  * Description: Logical Condition and Reference Set preprocessor
  *
@@ -58,9 +58,9 @@
 #define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_NUM (4)
 static string GIApreprocessorLogicReferenceClasses[GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_NUM] = {GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_undefined, GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_conjunction, GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_verb, GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_preposition};
 
-#define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_CONJUNCTION_COMPLEMENT_INFERRED (11)	//stage 1 prediction
-#define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_CONJUNCTION_COMPLEMENT_IMPLICIT (12)	//stage 2 prediction (verfied inferred conjunction)
-#define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_CONJUNCTION_EXPLICIT (13)
+#define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_CONJUNCTION_COMPONENT_IMPLICIT_INFERRED (11)	//used to demarkate components of conjunction logic references 
+#define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_CONJUNCTION_COMPONENT_IMPLICIT_CONFIRMED (12)
+#define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_CONJUNCTION_COMPONENT_EXPLICIT (13)
 /*
 #define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_CONJUNCTION_COMPLEMENT (11)
 #define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_PREPOSITION_COMPLEMENT (13)
@@ -194,16 +194,17 @@ public:
 	GIApreprocessorLogicReferenceVariable* logicReferenceVariable;
 	
 	#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
-	GIApreprocessorLogicReference* firstSubLogicReferenceInListGovernor;	//for verbs/propositions, eg said(A, B)
-	GIApreprocessorLogicReference* firstSubLogicReferenceInListDependent;	//for verbs/propositions, eg considering(A, B)
+	GIApreprocessorLogicReference* firstSubLogicReferenceInListGovernor;	//for verbs/propositions, eg said/considering(A, B)
+	GIApreprocessorLogicReference* firstSubLogicReferenceInListDependent;	//for verbs/propositions, eg said/considering(A, B)
+	GIApreprocessorLogicReference* firstSubLogicReferenceInListArray;	//for conjunctions eg and(A, B, C)
 	GIApreprocessorLogicReference* lastLogicReferenceInUpperLevel;	//need to work out how to identify in when returning to an upper level logical condition layer (is this even done in English?); eg Tom said that Mary said A is B, but Jerry said otherwise.	but(said(Tom, said(Mary, A is B)), said(Jerry, otherwise))
-	GIApreprocessorLogicReference* next;		//for conjunctions (and, or, but), eg and(said(A, B), said(A, C), said(A, D))
-	GIApreprocessorLogicReference* previous;	//for conjunctions (and, or, but), eg and(said(A, B), said(A, C), said(A, D))
+	GIApreprocessorLogicReference* next;		//for isSubLogicReferenceArray only; conjunctions (and, or, but), eg and(said(A, B), said(A, C), said(A, D))
+	GIApreprocessorLogicReference* previous;	//for isSubLogicReferenceArray only; conjunctions (and, or, but), eg and(said(A, B), said(A, C), said(A, D))
 	bool hasSubLogicReference;
+	bool hasSubLogicReferenceArray;
 	bool isSubLogicReferenceGovernor;
 	bool isSubLogicReferenceDependent;
-	int logicReferenceConjunctionClass;
-	string logicReferenceConjunctionClassType;
+	bool isSubLogicReferenceArray;
 	#endif
 };
 

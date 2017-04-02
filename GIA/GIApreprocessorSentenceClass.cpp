@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorSentenceClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3a5f 28-March-2017
+ * Project Version: 3a5g 28-March-2017
  * Requirements: requires plain text file
  * Description: Logical Condition and Reference Set preprocessor
  *
@@ -97,14 +97,15 @@ GIApreprocessorLogicReference::GIApreprocessorLogicReference(void)
 	#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
 	firstSubLogicReferenceInListGovernor = NULL;
 	firstSubLogicReferenceInListDependent = NULL;
+	firstSubLogicReferenceInListArray = NULL;
 	lastLogicReferenceInUpperLevel = NULL;
 	next = NULL;
 	previous = NULL;
 	hasSubLogicReference = false;
+	hasSubLogicReferenceArray = false;
 	isSubLogicReferenceGovernor = false;
 	isSubLogicReferenceDependent = false;
-	logicReferenceConjunctionClass = GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_UNDEFINED;
-	logicReferenceConjunctionClassType = GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_UNDEFINED_TYPE_unknown;
+	isSubLogicReferenceArray = false;
 	#endif
 }
 GIApreprocessorLogicReference::~GIApreprocessorLogicReference(void)

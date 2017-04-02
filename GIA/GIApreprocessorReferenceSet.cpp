@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorReferenceSet.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3a5f 28-March-2017
+ * Project Version: 3a5g 28-March-2017
  * Requirements: requires plain text file
  * Description: Reference Set preprocessor
  *
@@ -208,8 +208,11 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const str
 	int lastIndexOfPreviousReferenceSet = INT_DEFAULT_VALUE;
 	#endif	
 	bool parsingReferenceSetDelimiter = false;
-
 	
+	bool referenceSetDelimiterIsLastWordInSentence = false;
+
+	int currentDelimiterType = GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_UNDEFINED;
+	int currentDelimiterSpecialCase = GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_SPECIAL_CASE_UNDEFINED;	
 		
 	//detect auxiliary or verb (present/past/future tense)
 	int wordIndex = 0;
@@ -221,23 +224,22 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const str
 					
 		bool currentWordIsReferenceSetDelimiter = false;
 		//auxiliary detection
-		int currentDelimiterType = GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_UNDEFINED;
-		int currentDelimiterSpecialCase = GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_SPECIAL_CASE_UNDEFINED;
 		int grammaticalBaseTenseForm = INT_DEFAULT_VALUE;
 		
 		#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
-		cout << "currentWord = " << currentWord << endl;
+		cout << "\t\tcurrentWord = " << currentWord << endl;
 		#endif
 		
 		if(detectAuxiliary(currentWord))
 		{			
 			currentWordIsReferenceSetDelimiter = true;
 			currentDelimiterType = GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_AUXILIARY;
+			//cout << "detectAuxiliary" << endl;
 		}
 		if(GIApreprocessorMultiwordReduction.determineVerbCaseStandardWithAdditional(currentWord, &grammaticalBaseTenseForm))	//OLD: determineVerbCaseStandard
 		{
 			if(grammaticalBaseTenseForm != GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_INFINITIVE)
-			{
+			{				
 				//infinitive/present/past tense verb detection (NB infinitive detection is required for a) future tense detection and b) imperatives where the action is defined as the first word in the sentence)
 				/*
 				#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_MAX_NUM_TENSE_FORMS (5)	//run (infinitive), runs (present), running (continuous), ran (past), run (past partiple)
@@ -329,10 +331,9 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const str
 		if(currentWordIsReferenceSetDelimiter)
 		{
 		
-			//#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
+			#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
 			cout << "currentWordIsReferenceSetDelimiter: currentWord = " << currentWord << endl;
-			cout << "\tcurrentDelimiterType = " << currentDelimiterType << endl;
-			//#endif
+			#endif
 			
 			bool previousWordIsModalAuxiliary = false;
 			
@@ -465,7 +466,14 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const str
 			}
 		}
 		
-		if(referenceSetDelimiterDetected && parsingReferenceSetDelimiter && !currentWordIsReferenceSetDelimiter)
+		bool currentWordIsReferenceSetDelimiterAndIsLastWordInSentence = (currentWordIsReferenceSetDelimiter && (wordIndex == logicReferenceVariableWordList->size()-1));
+		int referenceSetDelimiterWordIndex = wordIndex-1;
+		if(currentWordIsReferenceSetDelimiterAndIsLastWordInSentence)
+		{
+			referenceSetDelimiterWordIndex = wordIndex;
+			referenceSetDelimiterIsLastWordInSentence =  true;
+		}
+		if(referenceSetDelimiterDetected && parsingReferenceSetDelimiter && (!currentWordIsReferenceSetDelimiter || currentWordIsReferenceSetDelimiterAndIsLastWordInSentence))
 		{
 			#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
 			cout << "(referenceSetDelimiterDetected && parsingReferenceSetDelimiter && !currentWordIsReferenceSetDelimiter): currentWord = " << currentWord << endl;
@@ -490,7 +498,7 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const str
 
 				//add the sub referenceSetDelimiter to the subReferenceSet list:
 				subReferenceSetText = "";
-				if(formSubReferenceSetTextFromWordList(logicReferenceVariableWordList, &subReferenceSetText, firstIndexOfReferenceSetDelimiterText, wordIndex-1))
+				if(formSubReferenceSetTextFromWordList(logicReferenceVariableWordList, &subReferenceSetText, firstIndexOfReferenceSetDelimiterText, referenceSetDelimiterWordIndex))
 				{
 					if(referenceSetDelimiterIndicatesSameReferenceSet)
 					{
@@ -523,7 +531,7 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const str
 					
 					//add the sub referenceSetDelimiter to the subReferenceSet list:
 					subReferenceSetText = "";
-					if(formSubReferenceSetTextFromWordList(logicReferenceVariableWordList, &subReferenceSetText, firstIndexOfReferenceSetDelimiterText, wordIndex-1))
+					if(formSubReferenceSetTextFromWordList(logicReferenceVariableWordList, &subReferenceSetText, firstIndexOfReferenceSetDelimiterText, referenceSetDelimiterWordIndex))
 					{
 						#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
 						cout << "\t16 subReferenceSetText = " << subReferenceSetText << endl;
@@ -575,33 +583,36 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const str
 	
 	#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_SUB_REFERENCE_SETS
 	//add final subReferenceSet to list;
-	if(referenceSetDelimiterDetectedFull)
+	if(!referenceSetDelimiterIsLastWordInSentence)
 	{
-		#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
-		cout << "end referenceSetDelimiterDetectedFull" << endl;
-		#endif
-		string subReferenceSetText = "";
-		if(formSubReferenceSetTextFromWordList(logicReferenceVariableWordList, &subReferenceSetText, lastIndexOfReferenceSetDelimiterText, logicReferenceVariableWordList->size()-1))
+		if(referenceSetDelimiterDetectedFull)
 		{
 			#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
-			cout << "\t17 subReferenceSetText = " << subReferenceSetText << endl;
+			cout << "end referenceSetDelimiterDetectedFull" << endl;
 			#endif
-			addSubReferenceSetToReferenceSet(logicReferenceVariable->referenceSetObject, subReferenceSetText, false, lastIndexOfReferenceSetDelimiterText, wordIndexSentence, BOOL_NA, BOOL_NA);
-		}	
-	}
-	else
-	{
-		#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
-		cout << "end !referenceSetDelimiterDetectedFull" << endl;
-		#endif
-		string subReferenceSetText = "";
-		if(formSubReferenceSetTextFromWordList(logicReferenceVariableWordList, &subReferenceSetText, lastIndexOfReferenceSetDelimiterText, logicReferenceVariableWordList->size()-1))
+			string subReferenceSetText = "";
+			if(formSubReferenceSetTextFromWordList(logicReferenceVariableWordList, &subReferenceSetText, lastIndexOfReferenceSetDelimiterText, logicReferenceVariableWordList->size()-1))
+			{
+				#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
+				cout << "\t17 subReferenceSetText = " << subReferenceSetText << endl;
+				#endif
+				addSubReferenceSetToReferenceSet(logicReferenceVariable->referenceSetObject, subReferenceSetText, false, lastIndexOfReferenceSetDelimiterText, wordIndexSentence, BOOL_NA, BOOL_NA);
+			}	
+		}
+		else
 		{
 			#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
-			cout << "\t18 subReferenceSetText = " << subReferenceSetText << endl;
+			cout << "end !referenceSetDelimiterDetectedFull" << endl;
 			#endif
-			addSubReferenceSetToReferenceSet(logicReferenceVariable->referenceSetSubject, subReferenceSetText, false, lastIndexOfReferenceSetDelimiterText, wordIndexSentence, BOOL_NA, BOOL_NA);
-		}	
+			string subReferenceSetText = "";
+			if(formSubReferenceSetTextFromWordList(logicReferenceVariableWordList, &subReferenceSetText, lastIndexOfReferenceSetDelimiterText, logicReferenceVariableWordList->size()-1))
+			{
+				#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
+				cout << "\t18 subReferenceSetText = " << subReferenceSetText << endl;
+				#endif
+				addSubReferenceSetToReferenceSet(logicReferenceVariable->referenceSetSubject, subReferenceSetText, false, lastIndexOfReferenceSetDelimiterText, wordIndexSentence, BOOL_NA, BOOL_NA);
+			}	
+		}
 	}
 	#else
 	if(referenceSetDelimiterDetectedFull)
