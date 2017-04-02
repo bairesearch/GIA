@@ -25,7 +25,7 @@
  * File Name: GIAtranslator.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a5k 28-March-2017
+ * Project Version: 3a5l 28-March-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1106,10 +1106,6 @@ bool GIAtranslatorClass::performGIApostProcessing(GIAtranslatorVariablesClass* t
 {
 	bool result = true;
 	
-	#ifdef GIA_TRANSLATOR_DREAM_MODE_LINK_SPECIFIC_CONCEPTS_AND_ACTIONS
-	this->dreamModeLinkSpecificConceptsAndActions(translatorVariables);
-	#endif
-	
 	#ifdef GIA_PREPROCESSOR_SENTENCE
 	#ifndef GIA_PREPROCESSOR_SENTENCE_RECONCILE_REFERENCES_AFTER_SEMANTIC_PARSING_EVERY_SENTENCE
 	if(!GIApreprocessor.connectPreprocessorSentenceReferenceSetEntitiesToLogicReferenceEntitiesWrapper(translatorVariables->firstGIApreprocessorSentenceInList, translatorVariables))	//check the position of this function's execution
@@ -1118,7 +1114,11 @@ bool GIAtranslatorClass::performGIApostProcessing(GIAtranslatorVariablesClass* t
 	}
 	#endif
 	#endif
-	
+
+	#ifdef GIA_TRANSLATOR_DREAM_MODE_LINK_SPECIFIC_CONCEPTS_AND_ACTIONS
+	this->dreamModeLinkSpecificConceptsAndActions(translatorVariables);
+	#endif
+		
 	return result;
 }
 

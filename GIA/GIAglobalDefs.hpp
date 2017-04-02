@@ -25,7 +25,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a5k 28-March-2017
+ * Project Version: 3a5l 28-March-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -766,7 +766,7 @@
 		//#define GIA_PREPROCESSOR_SUPPORT_PUNCTUATION_MARKS_WITH_PRECEEDING_WHITE_SPACE	//not yet coded: do not currently support punctuation marks with preceeding white space. Currently skip (do not parse) multiple white space/punctuation characters (eg ". "/".."/"  "/" .")	
 		#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_REDUCE_ALL_WORD_TYPES	//don't just reduce multiword prepositions (reduce multiword verbs, nouns, adjectives and adverbs also)
 		#ifndef USE_NLC
-			#define GIA_PREPROCESSOR_SENTENCE	//3a1a
+			//#define GIA_PREPROCESSOR_SENTENCE	//3a1a
 		#endif
 		#ifdef GIA_PREPROCESSOR_SENTENCE
 		
