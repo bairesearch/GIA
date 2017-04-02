@@ -25,7 +25,7 @@
  * File Name: GIAdraw.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a5b 28-March-2017
+ * Project Version: 3a5c 28-March-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -170,7 +170,6 @@ bool GIAdrawClass::determineBasicPrintPositionsOfAllNodes(vector<GIAentityNode*>
 	{
 		for(vector<GIAentityNode*>::iterator entityIter = entityNodesActiveListComplete->begin(); entityIter != entityNodesActiveListComplete->end(); entityIter++)
 		{
-
 			//this->initiateMaxXAtParticularY();
 			xInitial = maxXAtAParticularY[yInitial];
 			//xInitial = sentenceIndex*100;	//compact
@@ -231,9 +230,6 @@ bool GIAdrawClass::initialiseEntityNodeForPrinting(GIAentityNode* entityNode, in
 		//if(!(entityNode->initialisedForPrinting) || (entityNode->printY < y))
 		if(!(entityNode->initialisedForPrinting) && !(entityNode->disabled))
 		{
-
-
-
 			entityNode->initialisedForPrinting = true;
 
 			maxXAtAParticularY[y] = maxXAtAParticularY[y] + GIA_DRAW_X_SPACE_BETWEEN_ENTITIES;	//only used, for indepdendent network visualisation (eg, when rendering next sentence)
