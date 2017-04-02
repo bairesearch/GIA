@@ -25,7 +25,7 @@
  * File Name: GIAentityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a5i 28-March-2017
+ * Project Version: 3a5j 28-March-2017
  *
  *******************************************************************************/
 
@@ -282,6 +282,8 @@ GIAentityNode::GIAentityNode(void)
 	#endif
 	#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
 	isLogicReferenceEntity = false;
+	logicReferenceClass = INT_DEFAULT_VALUE;	//GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_UNDEFINED;
+	logicReferenceClassType = "";	//GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_UNDEFINED_TYPE_unknown;
 	#endif
 }
 /*

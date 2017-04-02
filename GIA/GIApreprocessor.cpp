@@ -25,7 +25,7 @@
  * File Name: GIApreprocessor.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3a5i 28-March-2017
+ * Project Version: 3a5j 28-March-2017
  * Requirements: requires plain text file
  * Description: Logical Condition and Reference Set preprocessor
  *
@@ -734,6 +734,8 @@ bool GIApreprocessorClass::connectPreprocessorSentenceReferenceSetEntitiesToLogi
 			#endif
 			#endif
 			logicReferenceEntity->isLogicReferenceEntity = true;
+			logicReferenceEntity->logicReferenceClass = currentLogicReferenceInList->logicReferenceClass;
+			logicReferenceEntity->logicReferenceClassType = currentLogicReferenceInList->logicReferenceClassType; 
 			if(currentLogicReferenceInList->lastLogicReferenceInUpperLevel != NULL)
 			{
 				if(currentLogicReferenceInList->isSubLogicReferenceGovernor)
@@ -918,11 +920,13 @@ bool GIApreprocessorClass::connectPreprocessorSentenceReferenceSetEntitiesToLogi
 					{
 						if(firstLogicReferenceInListInUpper->hasSubLogicReference)
 						{
+							/*
 							if(!delimiterDefined)
 							{
 								cout << "GIApreprocessor::connectPreprocessorSentenceReferenceSetEntitiesToLogicReferenceEntities{} error: (firstLogicReferenceInListInUpper->hasSubLogicReference) && (!delimiterDefined)" << endl;	
 								exit(EXIT_ERROR);
 							}
+							*/
 							firstImplicitConjunctionSubject = firstImplicitConjunction->firstSubLogicReferenceInListGovernor->logicReferenceVariable->referenceSetSubject->primaryEntityTemp;
 						}
 						else
@@ -1160,13 +1164,13 @@ bool GIApreprocessorClass::connectPreprocessorSentenceReferenceSetEntitiesToLogi
 				{
 					connectRelationshipToTarget(parentLogicReferenceEntity, delimiterEntity, sameReferenceSetLogicReference, translatorVariables);
 				}
+				else if(subjectDefined)
+				{
+					connectRelationshipToTarget(parentLogicReferenceEntity, subjectEntity, sameReferenceSetLogicReference, translatorVariables);
+				}
 				else
 				{
-					cout << "GIApreprocessor::connectPreprocessorSentenceReferenceSetEntitiesToLogicReferenceEntities{} error: (currentGIApreprocessorSentenceInList->isSubLogicReferenceArray) && (!delimiterDefined)." << endl;
-					if(!conjunctionWithoutSubjectOrObjectFound)
-					{
-						cout << "\tThe reason for this error: conjunctionWithoutSubjectOrObjectFound = " << conjunctionWithoutSubjectOrObjectFound << endl;
-					}
+					cout << "GIApreprocessor::connectPreprocessorSentenceReferenceSetEntitiesToLogicReferenceEntities{} error: (currentGIApreprocessorSentenceInList->isSubLogicReferenceArray) && (!delimiterDefined) && (!subjectDefined)." << endl;
 					exit(EXIT_ERROR);
 				}
 			}

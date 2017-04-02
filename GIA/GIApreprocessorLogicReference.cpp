@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorLogicReference.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3a5i 28-March-2017
+ * Project Version: 3a5j 28-March-2017
  * Requirements: requires plain text file
  * Description: Logic Reference preprocessor
  *
@@ -249,6 +249,9 @@ bool GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor(const
 
 				if(foundClassType)
 				{
+					cout << "currentWord = " << currentWord << endl;
+					cout << "logicReferenceClass = " << logicReferenceClass << endl;
+					
 					string logicReferenceContents = generateLogicReferenceContents(currentWord, logicReferenceClassType);
 					if(logicReferenceClass == GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_CONJUNCTION)
 					{
@@ -415,7 +418,7 @@ bool GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor(const
 							if(currentContents != "")
 							{
 								#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_ERROR_CHECKING
-								if(currentLogicReferenceInListActiveOriginalClass == GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_UNDEFINED)
+								if((currentLogicReferenceInListActiveOriginalClass == GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_UNDEFINED) || (currentLogicReferenceInListActiveOriginalClass == GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_CONJUNCTION_COMPONENT_EXPLICIT))
 								{
 								#endif
 									/*
@@ -437,7 +440,7 @@ bool GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor(const
 								else
 								{
 									//eg Subsequent_to proposed that the house is blue.
-									cout << "GIApreprocessorLogicReferenceClass::extractGIApreprocessorLogicReferenceClasses{} error: (logicReferenceClass == GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_VERB) && (currentLogicReferenceInListActiveOriginalClass != GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_UNDEFINED)" << endl;	
+									cout << "GIApreprocessorLogicReferenceClass::extractGIApreprocessorLogicReferenceClasses{} error: (logicReferenceClass == GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_VERB) && (currentLogicReferenceInListActiveOriginalClass != GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_UNDEFINED||GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_CONJUNCTION_COMPONENT_EXPLICIT)" << endl;	
 									cout << "currentLogicReferenceInListActiveOriginal->logicReferenceClass = " << currentLogicReferenceInListActiveOriginal->logicReferenceClass << endl;
 									exit(EXIT_ERROR);
 								}
@@ -1051,7 +1054,7 @@ bool GIApreprocessorLogicReferenceClass::printLogicReferenceLayer(GIApreprocesso
 			}
 			else
 			{
-				cout << currentLogicReferenceInList->logicReferenceClassType << "(";
+				cout << currentLogicReferenceInList->logicReferenceContents << "(";
 				#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CONJUNCTION_LR_WITH_EMBEDDED_PREPOSITION_VERB_LR_DELETE_IMPLICIT_GOVERNOR
 				if(currentLogicReferenceInList->firstSubLogicReferenceInListGovernor != NULL)
 				{
