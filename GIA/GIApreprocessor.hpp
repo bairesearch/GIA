@@ -25,7 +25,7 @@
  * File Name: GIApreprocessor.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3a5c 28-March-2017
+ * Project Version: 3a5d 28-March-2017
  * Requirements: requires plain text file
  * Description: Logical Condition and Reference Set preprocessor
  *
@@ -41,6 +41,7 @@
 #include "GIApreprocessorLogicReference.hpp"
 #include "GIApreprocessorReferenceSet.hpp"
 #include "GIAtranslatorOperations.hpp"	//required for findSameSentenceEntityNodePointerInVector
+#include "GIAdatabase.hpp"	//required for findParentEntityBasedOnSentenceIndex
 #include "XMLparserClass.hpp"
 
 static bool entityVectorConnectionTransferFromDummyRelationshipToRealRelationshipArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {false, false, true, false, true, false, false, false, false, false, false, false};
@@ -55,9 +56,12 @@ class GIApreprocessorClass
 	private: GIApreprocessorLogicReferenceClass GIApreprocessorLogicReferenceObject;
 	private: GIApreprocessorReferenceSetClass GIApreprocessorReferenceSet;
 	private: GIAtranslatorOperationsClass GIAtranslatorOperations;
+	private: GIAdatabaseClass GIAdatabase;
 	#ifdef GIA_PREPROCESSOR
 	public: bool preprocessTextForGIA(string* inputTextPlainTXTfileName, const string outputLRPTextPlainTXTFileName, const bool isQuery, GIAtranslatorVariablesClass* translatorVariables);
-	
+		#ifdef GIA_PREPROCESSOR_SENTENCE_PRINT_OUTPUT
+		void printLogicReferenceLayer(GIApreprocessorLogicReference* firstLogicReferenceInLayer);
+		#endif
 		#ifdef GIA_PREPROCESSOR_SENTENCE
 		private: bool preprocessSentencesForGIA(const string inputFileName, GIApreprocessorSentence* firstGIApreprocessorSentenceInList, const string outputFileName, const string outputFileNameLRPforNLP);
 			bool generateGIApreprocessorSentence(const string* sentenceContentsOriginal, GIApreprocessorSentence* currentGIApreprocessorSentenceInList, int sentenceIndexOriginal, XMLparserTag* firstLogicReferenceClassTag);

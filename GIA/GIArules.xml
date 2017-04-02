@@ -26,7 +26,7 @@
  * File Name: GIArules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a5c 28-March-2017
+ * Project Version: 3a5d 28-March-2017
  *
  *******************************************************************************/
 -->
@@ -490,7 +490,25 @@
 	<translator>
 		<file name="GIAtranslatorRedistributeRelationsStanford">
 			
-			<!-- XML only function (not hard coded) --> 
+			<!-- #ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT -->
+			<function name="redistributeStanfordRelationsPreprocessorReferenceSetDummyNLPtext">
+				<example><!--
+				eg The apple becomes blue.	nsubj(compartmentalises-3, apple-2) + xcomp(compartmentalises-3, blue-4) -> nsubj(compartmentalises-3, apple-2) + obj(compartmentalises-3, blue-4)
+				--></example>
+				<paramDepRel mode="redistribute">
+				<option numberOfRelations="2" />
+				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_subj" />
+				<option useRelationTest="true" REL="2" REL_ENT="3" relationTest="_to-do" />
+				<option useRelationTest="true" REL="2" REL_ENT="1" relationTest="compartmentalise" />
+				<option useRelationIndexTest="true" REL="1" REL_ENT="1" relationIndexTestRelationID="2" relationIndexTestEntityID="1" />
+				<specialCase type="specialCaseCharacteristicsTestOrVector" variable="stanfordPOStemp" value="JJ" REL="2" REL_ENT="2" />
+				<!--<specialCase type="specialCaseCharacteristicsTestOrVector" variable="entityType" value="7" REL="2" REL_ENT="2" />-->
+				<option useRedistributeRelationEntityReassignment="true" REL="2" REL_ENT="3" redistributeRelationEntityReassignment="_obj" />
+				</paramDepRel>
+			</function>
+			<!-- #endif -->
+				
+				
 			<!-- #ifdef GIA_STANFORD_PARSER_AND_CORENLP_VERSION_2015_04_20_OR_GREATER -->
 			<function name="redistributeStanfordRelationsCase">
 				<example><!--
@@ -549,7 +567,6 @@
 			</function>
 			<!-- #endif -->
 			
-			<!-- XML only function (not hard coded) -->
 			<!-- #ifdef GIA_STANFORD_PARSER_AND_CORENLP_VERSION_2015_04_20_OR_GREATER -->
 			<!-- not generalisable (example "There is a new movie we can see." is not supported by GIA_STANFORD_PARSER_AND_CORENLP_VERSION_2015_04_20_OR_GREATER):
 			<function name="redistributeStanfordRelationsSwitchAclRelclRelations">
@@ -673,7 +690,6 @@
 				</paramDepRel>
 			</function>
 
-			<!-- XML only function (not hard coded) -->
 			<function name="redistributeStanfordRelationsPredeterminers">
 				
 				<example><!--
@@ -778,7 +794,6 @@
 				
 			</function>
 			
-			<!-- XML only function (not hard coded) -->
 			<!-- #ifdefGIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF -->
 			<function name="redistributeStanfordRelationsInterpretNamedAsDefinition">
 			
@@ -1030,7 +1045,6 @@
 				<!-- #endif -->
 			</function>
 
-			<!-- XML only function (not hard coded) -->
 			<!-- #ifdefGIA_NON_STANDARD_CONDITION_CONDITION_CONNECTIONS_CONNECT_CONJUNCTIONS_TO_THEIR_RELEVANT_PREPOSITIONS -->
 			<function name="redistributeStanfordRelationsConjunctionAndSubjectAndPreposition">
 				
@@ -1815,7 +1829,6 @@
 			</function>
 			<!-- #endif -->
 
-			<!-- XML only function (not hard coded) -->
 			<!-- added 2f18a 22-July-2014 -->
 			<function name="redistributeStanfordRelationsTheNumberOf">
 				<example><!--interpret
@@ -2312,7 +2325,6 @@
 				</paramDepRel>
 			</function>
 
-			<!-- XML only function (not hard coded) --> 
 			<!-- updates -->
 			<function name="redistributeStanfordRelationsGenerateUnparsedQuantityModifers">
 				<!-- #ifdef GIA_STANFORD_PARSER_AND_CORENLP_VERSION_2015_04_20_OR_GREATER -->
@@ -2816,7 +2828,6 @@
 				<!-- #endif -->
 				</paramDepRel>
 				
-				<!-- XML only function (not hard coded) -->
 				<example><!--
 				eg 'There is a new movie we can see.' expl(is-2, There-1) + nsubj(is-2, movie-5)[*] + nsubj(see-8, we-6) + acl:relcl(movie-5, see-8)  -> nsubj(see-8, we-6) + obj(see-8, movie-5)
 					There is a movie we saw.
@@ -2842,7 +2853,6 @@
 				<!-- #endif -->
 				</paramDepRel>
 				
-				<!-- XML only function (not hard coded) -->
 				<!-- #ifdefGIA_EXPLETIVES -->
 				<example><!--
 				eg 'There is a red ball.' expl(is-2, There-1) + nsubj(is-2, ball-4)  -> ball-4 [mark as expletive]
@@ -2941,7 +2951,6 @@
 			</function>
 			-->
 			
-			<!-- XML only function (not hard coded) -->
 			<!-- added 2f13b 14-July-2014 -->
 			<!-- #ifdefGIA_REMOVE_REDUNDANT_LOGICAL_CONDITION_ENTITIES, -->
 			<function name="redistributeStanfordRelationsDisableRedundantLogicalConditions">
@@ -2964,7 +2973,6 @@
 			</function>
 			<!-- #endif -->
 			
-			<!-- XML only function (not hard coded) -->
 			<!-- #ifdefGIA_FEATURE_POS_TAG_VERB_STATE -->
 			<function name="redistributeStanfordRelationsActionStateSubjectAndCop">
 				<example><!--
@@ -3096,7 +3104,6 @@
 			</function>
 			<!-- #endif -->
 			
-			<!-- XML only function (not hard coded) -->
 			<!-- Supports Stanford Parser/CoreNLP version 3+ e.g. 2014-01-04 --> 
 			<function name="redistributeStanfordRelationsInterpretXcompAndNsubjAsXcomp">
 				<example><!--
@@ -3116,7 +3123,6 @@
 			</function>
 			<!-- #endif -->
 
-			<!-- XML only function (not hard coded) -->
 			<!-- this function has been superceeded by redistributeStanfordRelationsPredeterminers
 			<function name="redistributeStanfordRelationsSetPluralBasedOnPredeterminers">
 				<paramDepRel mode="redistribute">
@@ -3131,7 +3137,6 @@
 			</function>
 			-->
 
-			<!-- XML only function (not hard coded) -->
 			<!-- #ifdefGIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF -->
 			<function name="redistributeStanfordRelationsInterpretNamedAsDefinition2">
 
@@ -3212,7 +3217,6 @@
 
 			</function>
 			
-			<!-- XML only function (not hard coded) --> 
 			<function name="redistributeStanfordRelationsConnectToAndFromConditions">
 				
 				<!-- #ifdefGIA_STANFORD_PARSER_CONNECT_TO_CONDITION_TO_FROM_CONDITION_BUG_GIA_WORKAROUND -->
@@ -3289,7 +3293,6 @@
 			</function>
 			<!-- #endif -->
 			
-			<!-- XML only function (not hard coded) --> 
 			<!-- note this function really should be NLP independent (ie moved from redistributeStanfordRelations to GIAtranslatorRedistributeRelations), but Relex doesn't support rcmods at present -->
 			<function name="redistributeStanfordRelationsConnectPrepositionsToActionRatherThanActionObject">
 				
@@ -3353,7 +3356,6 @@
 			</function>
 			<!-- #endif -->
 			
-			<!-- XML only function (not hard coded) --> 
 			<!-- #ifdef GIA_STANFORD_PARSER_AND_CORENLP_VERSION_2015_04_20_OR_GREATER?? -->	
 			<function name="redistributeStanfordRelationsDisableRedundantRefReferenceThatEntities">
 				<example><!--
@@ -4072,7 +4074,6 @@
 				</paramDepRel>
 			</function>
 			
-			<!-- XML only function (not hard coded) -->
 			<!-- #ifdefGIA_FEATURE_POS_TAG_VERB_DESCRIPTION -->
 			<function name="defineSubstancesActionDescriptions">
 				<example><!--
@@ -4268,7 +4269,6 @@
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" />
 				</paramDepRel>
 				
-				<!-- XML only function (not hard coded) -->
 				<paramDepRel mode="execute">
 				<!-- #ifdefGIA_TRANSLATOR_ONLY_MERGE_ENTITY_NODES_WHEN_LINK_PREESTABLISHED_REFERENCES_GIA -->
 				<!-- <assert variable="linkPreestablishedReferencesGIA" /> -->
@@ -4588,8 +4588,6 @@
 				</paramDepRel>
 			</function>
 
-			
-			<!-- XML only function (not hard coded) -->
 			<function name="interpretWithAsPropertyWhenConnectedToSubstanceOnly">
 				<example><!--
 				eg The city with a house is fast.

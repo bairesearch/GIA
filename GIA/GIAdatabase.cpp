@@ -25,7 +25,7 @@
  * File Name: GIAdatabase.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a5c 28-March-2017
+ * Project Version: 3a5d 28-March-2017
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: performs simple GIA database functions (storing nodes in ordered arrays/vectors/maps)
  *
@@ -1508,6 +1508,7 @@ int GIAdatabaseClass::getUseDatabase()
 	return useDatabase;
 }
 
+/*
 GIAentityNode* GIAdatabaseClass::findEntityInActiveNetworkIndexList(const string* entityName, const long idInstance, unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, bool* alreadyInRAM)
 {
 	*alreadyInRAM = false;
@@ -1544,6 +1545,18 @@ GIAentityNode* GIAdatabaseClass::findEntityInActiveNetworkIndexList(const string
 		}
 	}
 	return entityNodeFoundInRAM;
+}
+*/
+
+GIAentityNode* GIAdatabaseClass::findEntityInActiveNetworkIndexList(const string entityName, unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes)
+{
+	GIAentityNode* entityNodeFound = NULL;
+	unordered_map<string, GIAentityNode*>::iterator networkIndexEntityNodesListIterator = entityNodesActiveListNetworkIndexes->find(entityName);
+	if(networkIndexEntityNodesListIterator != entityNodesActiveListNetworkIndexes->end())
+	{//networkIndex entity found
+		entityNodeFound = networkIndexEntityNodesListIterator->second;
+	}
+	return entityNodeFound;
 }
 
 GIAentityNode* GIAdatabaseClass::findEntityNodesActiveListCompleteFastIndexDBcache(const string* entityName, const long idInstance, bool* foundNode)
