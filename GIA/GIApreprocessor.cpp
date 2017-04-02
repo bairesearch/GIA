@@ -25,7 +25,7 @@
  * File Name: GIApreprocessor.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3a4a 26-March-2017
+ * Project Version: 3a5a 28-March-2017
  * Requirements: requires plain text file
  * Description: Logical Condition and Reference Set preprocessor
  *
@@ -907,11 +907,14 @@ void GIApreprocessorClass::changeSentenceIndexOfEntityNodesAndConnections(const 
 			
 			for(int connectionType = 0; connectionType<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; connectionType++)
 			{	
-				for(vector<GIAentityConnection*>::iterator connectionIter = entity->entityVectorConnectionsArray[connectionType].begin(); connectionIter != entity->entityVectorConnectionsArray[connectionType].end(); connectionIter++)
+				if(entityVectorConnectionChangeSentenceIndexOfEntityNodesAndConnectionsArray[connectionType])
 				{
-					if((*connectionIter)->sentenceIndexTemp == sentenceIndexOriginal)
+					for(vector<GIAentityConnection*>::iterator connectionIter = entity->entityVectorConnectionsArray[connectionType].begin(); connectionIter != entity->entityVectorConnectionsArray[connectionType].end(); connectionIter++)
 					{
-						(*connectionIter)->sentenceIndexTemp = sentenceIndexNew;
+						if((*connectionIter)->sentenceIndexTemp == sentenceIndexOriginal)
+						{
+							(*connectionIter)->sentenceIndexTemp = sentenceIndexNew;
+						}
 					}
 				}
 			}
