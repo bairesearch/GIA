@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorSentenceClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3a5d 28-March-2017
+ * Project Version: 3a5e 28-March-2017
  * Requirements: requires plain text file
  * Description: Logical Condition and Reference Set preprocessor
  *
@@ -93,15 +93,19 @@ GIApreprocessorLogicReference::GIApreprocessorLogicReference(void)
 	logicReferenceClass = GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_UNDEFINED;		//if necessary (ie is set to GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_UNDEFINED_TYPE_UNKNOWN) this will be replaced with GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_CONJUNCTION_TYPE_and/GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_CONJUNCTION_TYPE_or upon the detection of a subsequent and/or
 	logicReferenceClassType = GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_UNDEFINED_TYPE_unknown;
 	logicReferenceVariable = new GIApreprocessorLogicReferenceVariable();
-	#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_RECURSION
-	firstSubLogicReferenceInList = NULL;
+	
+	#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
+	firstSubLogicReferenceInListGovernor = NULL;
+	firstSubLogicReferenceInListDependent = NULL;
 	lastLogicReferenceInUpperLevel = NULL;
-	hasSubLogicReference = false;
-	isSubLogicReference = false;
-	#endif
-		
 	next = NULL;
 	previous = NULL;
+	hasSubLogicReference = false;
+	isSubLogicReferenceGovernor = false;
+	isSubLogicReferenceDependent = false;
+	logicReferenceConjunctionClass = GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_UNDEFINED;
+	logicReferenceConjunctionClassType = GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_UNDEFINED_TYPE_unknown;
+	#endif
 }
 GIApreprocessorLogicReference::~GIApreprocessorLogicReference(void)
 {

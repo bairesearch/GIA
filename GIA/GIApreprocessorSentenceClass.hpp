@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorSentenceClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3a5d 28-March-2017
+ * Project Version: 3a5e 28-March-2017
  * Requirements: requires plain text file
  * Description: Logical Condition and Reference Set preprocessor
  *
@@ -57,8 +57,14 @@
 #define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_preposition "preposition"
 #define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_NUM (4)
 static string GIApreprocessorLogicReferenceClasses[GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_NUM] = {GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_undefined, GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_conjunction, GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_verb, GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_preposition};
+
+#define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_CONJUNCTION_COMPLEMENT_INFERRED (11)	//stage 1 prediction
+#define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_CONJUNCTION_COMPLEMENT_IMPLICIT (12)	//stage 2 prediction (verfied inferred conjunction)
+#define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_CONJUNCTION_EXPLICIT (13)
+/*
 #define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_CONJUNCTION_COMPLEMENT (11)
 #define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_PREPOSITION_COMPLEMENT (13)
+*/
 
 /*
 #define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_UNDEFINED_TYPE_UNKNOWN (0)
@@ -98,12 +104,10 @@ static string GIApreprocessorLogicReferenceClasses[GIA_PREPROCESSOR_SENTENCE_LOG
 #define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_CONJUNCTION_TYPE_NUM (4)
 #define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_VERB_TYPE_NUM (1)
 #define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_PREPOSITION_TYPE_NUM (8)
-#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_XML_ERROR_CHECKING
 static string GIApreprocessorLogicReferenceClassUndefinedTypes[GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_UNDEFINED_TYPE_NUM] = {GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_UNDEFINED_TYPE_unknown, GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_UNDEFINED_TYPE_imperative, GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_UNDEFINED_TYPE_statement};
 static string GIApreprocessorLogicReferenceClassConjunctionTypes[GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_CONJUNCTION_TYPE_NUM] = {GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_CONJUNCTION_TYPE_and, GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_CONJUNCTION_TYPE_or, GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_CONJUNCTION_TYPE_conclusion, GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_CONJUNCTION_TYPE_logicalCondition};
 static string GIApreprocessorLogicReferenceClassVerbTypes[GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_VERB_TYPE_NUM] = {GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_VERB_TYPE_proposition};
 static string GIApreprocessorLogicReferenceClassPrepositionTypes[GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_PREPOSITION_TYPE_NUM] = {GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_PREPOSITION_TYPE_regarding, GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_PREPOSITION_TYPE_stance, GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_PREPOSITION_TYPE_qualifier, GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_PREPOSITION_TYPE_time, GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_PREPOSITION_TYPE_meansOfAchievingAction, GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_PREPOSITION_TYPE_similar, GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_PREPOSITION_TYPE_purpose, GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_PREPOSITION_TYPE_with};
-#endif
 
 #define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_VARIABLE_NAMES_NUM (26)	//max 26 logical condition varibables per sentence; this is a magic number and could be increased
 static string GIApreprocessorLogicReferenceVariableNames[GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_VARIABLE_NAMES_NUM] = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
@@ -188,15 +192,19 @@ public:
 	int logicReferenceClass;
 	string logicReferenceClassType;
 	GIApreprocessorLogicReferenceVariable* logicReferenceVariable;
-	#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_RECURSION
-	GIApreprocessorLogicReference* firstSubLogicReferenceInList;
-	GIApreprocessorLogicReference* lastLogicReferenceInUpperLevel;	//need to work out how to identify in when returning to an upper level logical condition layer (is this even done in English?); eg Tom said that Mary said A is B, but Jerry said otherwise.
-	bool hasSubLogicReference;
-	bool isSubLogicReference;
-	#endif	
 	
-	GIApreprocessorLogicReference* next;
-	GIApreprocessorLogicReference* previous;
+	#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
+	GIApreprocessorLogicReference* firstSubLogicReferenceInListGovernor;	//for verbs/propositions, eg said(A, B)
+	GIApreprocessorLogicReference* firstSubLogicReferenceInListDependent;	//for verbs/propositions, eg considering(A, B)
+	GIApreprocessorLogicReference* lastLogicReferenceInUpperLevel;	//need to work out how to identify in when returning to an upper level logical condition layer (is this even done in English?); eg Tom said that Mary said A is B, but Jerry said otherwise.	but(said(Tom, said(Mary, A is B)), said(Jerry, otherwise))
+	GIApreprocessorLogicReference* next;		//for conjunctions (and, or, but), eg and(said(A, B), said(A, C), said(A, D))
+	GIApreprocessorLogicReference* previous;	//for conjunctions (and, or, but), eg and(said(A, B), said(A, C), said(A, D))
+	bool hasSubLogicReference;
+	bool isSubLogicReferenceGovernor;
+	bool isSubLogicReferenceDependent;
+	int logicReferenceConjunctionClass;
+	string logicReferenceConjunctionClassType;
+	#endif
 };
 
 class GIApreprocessorSentence

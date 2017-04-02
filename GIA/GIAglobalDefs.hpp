@@ -25,7 +25,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a5d 28-March-2017
+ * Project Version: 3a5e 28-March-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -783,7 +783,9 @@
 			#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
 				//#assert defined GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
 
-				#define GIA_PREPROCESSOR_REASSIGN_UNIQUE_SENTENCE_INDICES_FOR_LOGIC_REFERENCE_VARIABLES	//after parsing semantic relations for individual reference sets, GIA will assign every entity in the logic reference structure the same sentenceIndex, and each logic reference variable (with all its reference sets) the same sentence index
+				#define GIA_DEBUG_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
+				
+				//#define GIA_PREPROCESSOR_REASSIGN_UNIQUE_SENTENCE_INDICES_FOR_LOGIC_REFERENCE_VARIABLES	//after parsing semantic relations for individual reference sets, GIA will assign every entity in the logic reference structure the same sentenceIndex, and each logic reference variable (with all its reference sets) the same sentence index
 				#ifdef GIA_PREPROCESSOR_REASSIGN_UNIQUE_SENTENCE_INDICES_FOR_LOGIC_REFERENCE_VARIABLES
 					//after parsing semantic relations for individual reference sets, GIA will assign every entity in the original pre-preprocessed sentence to the same sentenceIndex
 					#define GIA_PREPROCESSOR_ASSIGN_UNIQUE_SENTENCE_INDICES_FOR_LOGIC_REFERENCE_VARIABLES
@@ -798,7 +800,7 @@
 				#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_OUTPUT_LOGIC_REFERENCE_SETS_FOR_HIGH_LEVEL_SEMANTIC_PARSE
 					#define GIA_PREPROCESSOR_ASSIGN_UNIQUE_SENTENCE_INDICES_FOR_SENTENCES	//mandatory
 				#endif
-				//#define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_RECURSION	//eg It is proposed that [X is Q] but [all [chickens are blue] except for [Tom]], Tom said that [Mary said [the car goes to the fair]], I think that [Tom thinks [I am happy]]
+				#define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_RECURSION	//mandatory 3a5e //eg It is proposed that [X is Q] but [all [chickens are blue] except for [Tom]], Tom said that [Mary said [the car goes to the fair]], I think that [Tom thinks [I am happy]]
 				//#define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_ABSTRACT_CONJUNCTIONS	//eg eg subsequent_to and before (FUTURE: and -> subsequent_to + before)
 				#define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_SKIP_APPENDED_THAT	//eg Tom said that... ['that' will not be recorded in the logical condition variable]
 				#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_SKIP_APPENDED_THAT
