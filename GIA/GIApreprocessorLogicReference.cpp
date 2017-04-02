@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorLogicReference.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3a5e 28-March-2017
+ * Project Version: 3a5f 28-March-2017
  * Requirements: requires plain text file
  * Description: Logic Reference preprocessor
  *
@@ -286,6 +286,7 @@ bool GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor(const
 					}
 					else if((logicReferenceClass == GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_VERB) || (logicReferenceClass == GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_PREPOSITION))
 					{	
+						cout << "AA logicReferenceClass = " << logicReferenceClass << endl;
 						GIApreprocessorLogicReference* currentLogicReferenceInListActive = currentLogicReferenceInList;
 						#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
 						GIApreprocessorLogicReference* currentLogicReferenceInListActiveOriginal = currentLogicReferenceInListActive;
@@ -480,6 +481,8 @@ bool GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor(const
 				}
 				setImplicitConjunctionInferred(currentLogicReferenceInList);
 			}
+			
+			punctuationMarkFound = true;	//expect a space after the comma
 		}
 		else if(SHAREDvars.charInCharArray(currentChar, nlpPunctionMarkCharacterEndOfSentenceArray, GIA_NLP_NUMBER_OF_PUNCTUATION_MARK_CHARACTERS_END_OF_SENTENCE))
 		{
@@ -669,7 +672,8 @@ bool GIApreprocessorLogicReferenceClass::isClassTag(string word, string classNam
 	bool result = false;
 	
 	XMLparserTag* currentTagInLogicReferencePreprocessor = firstLogicReferenceClassTag;
-
+	string wordLowerCase = SHAREDvars.convertStringToLowerCase(&word);
+	
 	while(currentTagInLogicReferencePreprocessor->nextTag != NULL)
 	{
 		if(currentTagInLogicReferencePreprocessor->name == GIA_PREPROCESSOR_XML_TAG_class)
@@ -713,7 +717,7 @@ bool GIApreprocessorLogicReferenceClass::isClassTag(string word, string classNam
 								{
 									string instanceName = currentTagInType->firstAttribute->value;
 									
-									if(instanceName == word)
+									if(instanceName == wordLowerCase)
 									{
 										classTagFound = true;
 										*classTypeNameFound = classTypeName;

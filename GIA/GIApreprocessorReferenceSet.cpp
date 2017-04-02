@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorReferenceSet.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3a5e 28-March-2017
+ * Project Version: 3a5f 28-March-2017
  * Requirements: requires plain text file
  * Description: Reference Set preprocessor
  *
@@ -329,10 +329,10 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const str
 		if(currentWordIsReferenceSetDelimiter)
 		{
 		
-			#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
+			//#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
 			cout << "currentWordIsReferenceSetDelimiter: currentWord = " << currentWord << endl;
 			cout << "\tcurrentDelimiterType = " << currentDelimiterType << endl;
-			#endif
+			//#endif
 			
 			bool previousWordIsModalAuxiliary = false;
 			
@@ -533,7 +533,7 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const str
 				}
 				else
 				{
-					cout << "GIApreprocessor::executeReferenceSetPreprocessor{} error: referenceSetDelimiterDetectedFull && referenceSetDelimiterDetectedFull already - a sentence can only contain 1 referenceSetDelimiterFull: currentWord = " << currentWord << endl;
+					cout << "GIApreprocessor::executeReferenceSetPreprocessor{} error: (referenceSetDelimiterDetected && parsingReferenceSetDelimiter && !currentWordIsReferenceSetDelimiter) && !referenceSetDelimiterIndicatesSameReferenceSet - a sentence can only contain 1 referenceSetDelimiterFull: currentWord = " << currentWord << endl;
 					exit(EXIT_ERROR);
 				}
 			}
@@ -543,7 +543,7 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const str
 			{
 				if(referenceSetDelimiterDetectedFull)
 				{
-					cout << "GIApreprocessor::executeReferenceSetPreprocessor{} error: referenceSetDelimiterDetectedFull && referenceSetDelimiterDetectedFull already - a sentence can only contain 1 referenceSetDelimiterFull: currentWord = " << currentWord << endl;
+					cout << "GIApreprocessor::executeReferenceSetPreprocessor{} error: (referenceSetDelimiterDetected && parsingReferenceSetDelimiter && !currentWordIsReferenceSetDelimiter) && (!referenceSetDelimiterIndicatesSameReferenceSet) && referenceSetDelimiterDetectedFull already - a sentence can only contain 1 referenceSetDelimiterFull: currentWord = " << currentWord << endl;
 					cout << "wordIndex = " << wordIndex << endl;
 					exit(EXIT_ERROR);
 				}
