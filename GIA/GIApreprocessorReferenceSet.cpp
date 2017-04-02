@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorReferenceSet.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3a5a 28-March-2017
+ * Project Version: 3a5b 28-March-2017
  * Requirements: requires plain text file
  * Description: Reference Set preprocessor
  *
@@ -74,81 +74,80 @@ bool GIApreprocessorReferenceSetClass::generateSentenceWordList(const string* se
 		
 		bool whiteSpaceFound = false;
 		bool punctuationMarkFound = false;
-		if(!whiteSpace)
+		if(SHAREDvars.charInCharArray(currentChar, nlpWhitespaceCharacterArray, GIA_NLP_NUMBER_OF_WHITESPACE_CHARACTERS))
 		{
-			if(SHAREDvars.charInCharArray(currentChar, nlpWhitespaceCharacterArray, GIA_NLP_NUMBER_OF_WHITESPACE_CHARACTERS))
+			whiteSpaceFound = true;
+			if(!whiteSpace)
 			{
-				whiteSpaceFound = true;
-				
 				logicReferenceVariableWordList->push_back(currentWord);
-				
 				currentWord = "";
 				wordIndexSentence++;
 			}
-			else if(SHAREDvars.charInCharArray(currentChar, nlpPunctionMarkCharacterEndOfSentenceArray, GIA_NLP_NUMBER_OF_PUNCTUATION_MARK_CHARACTERS_END_OF_SENTENCE))
-			{
-				#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_FILENAMES_WITH_FULLSTOPS_AND_FLOATS_AND_TIMES
-				if(GIApreprocessorMultiwordReduction.isIntrawordPunctuationMark(i, sentenceContents))
-				{
-					currentWord = currentWord + currentChar;
-				}
-				else
-				{
-				#endif	
-					#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
-					cout << "GIApreprocessorReferenceSetClass::generateSentenceWordList{}: currentWord = " << currentWord << endl;
-					#endif
-					if(currentContents == "")
-					{
-						cout << "GIApreprocessor::generateSentenceWordList{} error: GIApreprocessorMultiwordReduction.isIntrawordPunctuationMark(currentChar, &sentenceContents) && (currentContents == "")" << endl;
-						exit(EXIT_ERROR);	
-					}
-					else
-					{
-						logicReferenceVariableWordList->push_back(currentWord);
-					}
-
-					/* 
-					//not required because finished parsing sentence;
-					punctuationMarkFound = true;
-					currentWord = "";
-					wordIndexSentence++;
-					*/
-				#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_FILENAMES_WITH_FULLSTOPS_AND_FLOATS_AND_TIMES
-				}
-				#endif
-			}
-			else if(SHAREDvars.charInCharArray(currentChar, nlpPunctionMarkCharacterArray, GIA_NLP_NUMBER_OF_PUNCTUATION_MARK_CHARACTERS))
-			{
-				//CHAR_SEMICOLON / CHAR_COLON:
-
-				#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_FILENAMES_WITH_FULLSTOPS_AND_FLOATS_AND_TIMES
-				if(GIApreprocessorMultiwordReduction.isIntrawordPunctuationMark(i, sentenceContents))
-				{
-					currentWord = currentWord + currentChar;
-				}
-				else
-				{
-				#endif
-					currentWord = "";
-					wordIndexSentence++;
-					punctuationMarkFound = true;
-				#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_FILENAMES_WITH_FULLSTOPS_AND_FLOATS_AND_TIMES
-				}
-				#endif	
-			}
 			else
+			{
+				//ignore consecutive white space
+				//skip (do not parse) multiple white space/punctuation characters (eg ". "/".."/"  "/" .")
+				#ifndef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_REMOVE_DOUBLE_WHITE_SPACE
+				currentWord = currentWord + currentChar;
+				#endif
+			}
+		}
+		else if(SHAREDvars.charInCharArray(currentChar, nlpPunctionMarkCharacterEndOfSentenceArray, GIA_NLP_NUMBER_OF_PUNCTUATION_MARK_CHARACTERS_END_OF_SENTENCE))
+		{
+			#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_FILENAMES_WITH_FULLSTOPS_AND_FLOATS_AND_TIMES
+			if(GIApreprocessorMultiwordReduction.isIntrawordPunctuationMark(i, sentenceContents))
 			{
 				currentWord = currentWord + currentChar;
 			}
+			else
+			{
+			#endif	
+				#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
+				cout << "GIApreprocessorReferenceSetClass::generateSentenceWordList{}: currentWord = " << currentWord << endl;
+				#endif
+				if(currentContents == "")
+				{
+					cout << "GIApreprocessor::generateSentenceWordList{} error: GIApreprocessorMultiwordReduction.isIntrawordPunctuationMark(currentChar, &sentenceContents) && (currentContents == "")" << endl;
+					exit(EXIT_ERROR);	
+				}
+				else
+				{
+					logicReferenceVariableWordList->push_back(currentWord);
+				}
+
+				/* 
+				//not required because finished parsing sentence;
+				punctuationMarkFound = true;
+				currentWord = "";
+				wordIndexSentence++;
+				*/
+			#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_FILENAMES_WITH_FULLSTOPS_AND_FLOATS_AND_TIMES
+			}
+			#endif
+		}
+		else if(SHAREDvars.charInCharArray(currentChar, nlpPunctionMarkCharacterArray, GIA_NLP_NUMBER_OF_PUNCTUATION_MARK_CHARACTERS))
+		{
+			//CHAR_SEMICOLON / CHAR_COLON:
+
+			#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_FILENAMES_WITH_FULLSTOPS_AND_FLOATS_AND_TIMES
+			if(GIApreprocessorMultiwordReduction.isIntrawordPunctuationMark(i, sentenceContents))
+			{
+				currentWord = currentWord + currentChar;
+			}
+			else
+			{
+			#endif
+				logicReferenceVariableWordList->push_back(currentWord);
+				currentWord = "";
+				wordIndexSentence++;
+				punctuationMarkFound = true;
+			#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_FILENAMES_WITH_FULLSTOPS_AND_FLOATS_AND_TIMES
+			}
+			#endif	
 		}
 		else
 		{
-			//skip (do not parse) multiple white space/punctuation characters (eg ". "/".."/"  "/" .")
-			#ifndef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_REMOVE_DOUBLE_WHITE_SPACE
-			//removal of all double white space is required to simplify updateGIApreprocessorMultiwordReductionTagTextCorrespondenceInfo:
 			currentWord = currentWord + currentChar;
-			#endif
 		}
 		
 		if(whiteSpaceFound || punctuationMarkFound)
@@ -160,6 +159,8 @@ bool GIApreprocessorReferenceSetClass::generateSentenceWordList(const string* se
 			whiteSpace = false;
 		}
 	}
+		
+
 	
 	#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
 	cout << "GIApreprocessorReferenceSetClass::generateSentenceWordList{}: " << endl;

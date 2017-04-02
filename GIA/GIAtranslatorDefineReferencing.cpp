@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a5a 28-March-2017
+ * Project Version: 3a5b 28-March-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1440,7 +1440,6 @@ void GIAtranslatorDefineReferencingClass::identifyReferenceSetsSpecificConceptsA
 
 				int minimumEntityIndexOfReferenceSet = currentSpecificConcept->entityIndexTemp;	//assume that it is not an artificial property/condition entity (so it has a meaningful entity index with respect to the sentence contents)
 
-
 				if(this->identifyReferenceSetDetermineNextCourseOfAction(currentSpecificConcept, true, referenceSetID, minimumEntityIndexOfReferenceSet, NULL))
 				{
 					bool traceModeIsQuery = false;
@@ -1463,7 +1462,6 @@ void GIAtranslatorDefineReferencingClass::identifyReferenceSetsSpecificConceptsA
 						
 						GIAentityNode* entityNode = *entityNodesActiveListCompleteIter2;
 						
-
 						if(!(entityNode->disabled))
 						{
 							if(!(entityNode->entityType == GIA_ENTITY_TYPE_NETWORK_INDEX))
@@ -1514,7 +1512,6 @@ void GIAtranslatorDefineReferencingClass::identifyReferenceSetsSpecificConceptsA
 													entityNodesActiveListCompleteIter = find(translatorVariables->entityNodesActiveListComplete->begin(), translatorVariables->entityNodesActiveListComplete->end(), currentSpecificConcept);	//reset iterator - added 3a1a
 													entityNodesActiveListCompleteIter2 = find(translatorVariables->entityNodesActiveListComplete->begin(), translatorVariables->entityNodesActiveListComplete->end(), entityNode);   //reset iterator - added 3a1a
 													#endif
-													
 												}
 											}
 											else
