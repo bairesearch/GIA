@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorMultiwordReduction.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a5l 28-March-2017
+ * Project Version: 3a6a 05-April-2017
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  *
@@ -332,24 +332,24 @@ bool GIApreprocessorMultiwordReductionClass::parseTextFileAndReduceLanguage(cons
 		result = false;
 	}
 
-	if(!loadMultiwordWordListAndSearchAndReplace(GIA_PREPROCESSOR_MULTIWORD_REDUCTION_MULTIWORD_PREPOSITION_DATABASE_FILE_NAME, firstTagInPlainText, firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DUMMY_COLLAPSED_MULTIWORD_PREPOSITION_TYPE))
+	if(!loadMultiwordWordListAndSearchAndReplace(GIA_PREPROCESSOR_MULTIWORD_REDUCTION_MULTIWORD_PREPOSITION_DATABASE_FILE_NAME, &firstTagInPlainText, firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DUMMY_COLLAPSED_MULTIWORD_PREPOSITION_TYPE))
 	{
 		result = false;
 	}
 	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_REDUCE_ALL_WORD_TYPES
-	if(!loadMultiwordWordListAndSearchAndReplace(GIA_PREPROCESSOR_MULTIWORD_REDUCTION_MULTIWORD_ADVERB_DATABASE_FILE_NAME, firstTagInPlainText, firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DUMMY_COLLAPSED_MULTIWORD_ADVERB_TYPE))
+	if(!loadMultiwordWordListAndSearchAndReplace(GIA_PREPROCESSOR_MULTIWORD_REDUCTION_MULTIWORD_ADVERB_DATABASE_FILE_NAME, &firstTagInPlainText, firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DUMMY_COLLAPSED_MULTIWORD_ADVERB_TYPE))
 	{
 		result = false;
 	}
-	if(!loadMultiwordWordListAndSearchAndReplace(GIA_PREPROCESSOR_MULTIWORD_REDUCTION_MULTIWORD_ADJECTIVE_DATABASE_FILE_NAME, firstTagInPlainText, firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DUMMY_COLLAPSED_MULTIWORD_ADJECTIVE_TYPE))
+	if(!loadMultiwordWordListAndSearchAndReplace(GIA_PREPROCESSOR_MULTIWORD_REDUCTION_MULTIWORD_ADJECTIVE_DATABASE_FILE_NAME, &firstTagInPlainText, firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DUMMY_COLLAPSED_MULTIWORD_ADJECTIVE_TYPE))
 	{
 		result = false;
 	}
-	if(!loadMultiwordWordListAndSearchAndReplace(GIA_PREPROCESSOR_MULTIWORD_REDUCTION_MULTIWORD_NOUN_DATABASE_FILE_NAME, firstTagInPlainText, firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DUMMY_COLLAPSED_MULTIWORD_NOUN_TYPE))
+	if(!loadMultiwordWordListAndSearchAndReplace(GIA_PREPROCESSOR_MULTIWORD_REDUCTION_MULTIWORD_NOUN_DATABASE_FILE_NAME, &firstTagInPlainText, firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DUMMY_COLLAPSED_MULTIWORD_NOUN_TYPE))
 	{
 		result = false;
 	}
-	if(!loadMultiwordWordListAndSearchAndReplace(GIA_PREPROCESSOR_MULTIWORD_REDUCTION_MULTIWORD_VERB_DATABASE_FILE_NAME, firstTagInPlainText, firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DUMMY_COLLAPSED_MULTIWORD_VERB_TYPE))
+	if(!loadMultiwordWordListAndSearchAndReplace(GIA_PREPROCESSOR_MULTIWORD_REDUCTION_MULTIWORD_VERB_DATABASE_FILE_NAME, &firstTagInPlainText, firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DUMMY_COLLAPSED_MULTIWORD_VERB_TYPE))
 	{
 		result = false;
 	}			
@@ -1283,8 +1283,11 @@ bool GIApreprocessorMultiwordReductionClass::searchAndReplacePhrasalVerbs(GIApre
 								{
 									currentTagInCollapsedPhrasalVerb->nextTag = currentTagInPlainTextSentenceTemp;
 								}
-								previousTagInPlainTextSentence->nextTag = firstTagInCollapsedPhrasalVerb;
-
+								if(previousTagInPlainTextSentence != NULL)
+								{
+									previousTagInPlainTextSentence->nextTag = firstTagInCollapsedPhrasalVerb;
+								}
+								
 								foundAtLeastOnePhrasalVerbInSentenceAndCollapsed = true;
 							}
 						}
@@ -1348,7 +1351,7 @@ bool GIApreprocessorMultiwordReductionClass::searchAndReplacePhrasalVerbs(GIApre
 }
 
 
-bool GIApreprocessorMultiwordReductionClass::loadMultiwordWordListAndSearchAndReplace(const string multiwordWordListFileName, GIApreprocessorMultiwordReductiontag* firstTagInPlainText, GIApreprocessorMultiwordReductionTagTextCorrespondenceInfo* firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, const int wordListType)
+bool GIApreprocessorMultiwordReductionClass::loadMultiwordWordListAndSearchAndReplace(const string multiwordWordListFileName, GIApreprocessorMultiwordReductiontag** firstTagInPlainText, GIApreprocessorMultiwordReductionTagTextCorrespondenceInfo* firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, const int wordListType)
 {
 	bool result = true;
 	
@@ -1426,44 +1429,53 @@ bool GIApreprocessorMultiwordReductionClass::loadMultiwordWordList(const string 
 	return result;
 }
 
-bool GIApreprocessorMultiwordReductionClass::searchAndReplaceMultiwordWordList(GIApreprocessorMultiwordReductiontag* firstTagInPlainText, const GIApreprocessorMultiwordReductiontag* firstTagInMultiwordWordList, GIApreprocessorMultiwordReductionTagTextCorrespondenceInfo* firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, const int wordListType)
+bool GIApreprocessorMultiwordReductionClass::searchAndReplaceMultiwordWordList(GIApreprocessorMultiwordReductiontag** firstTagInPlainText, const GIApreprocessorMultiwordReductiontag* firstTagInMultiwordWordList, GIApreprocessorMultiwordReductionTagTextCorrespondenceInfo* firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, const int wordListType)
 {
 	bool result = true;
 
 	GIApreprocessorMultiwordReductionTagTextCorrespondenceInfo* currentCorrespondenceInfo = firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo;	//new correspondence info for each found multiword word
 
-	GIApreprocessorMultiwordReductiontag* currentTagInPlainText = firstTagInPlainText;
+	GIApreprocessorMultiwordReductiontag* currentTagInPlainText = *firstTagInPlainText;
+	GIApreprocessorMultiwordReductiontag* previousTagInPlainText = NULL;
 	while(currentTagInPlainText->nextSentence != NULL)
 	{
-
+		cout << "currentTagInPlainText->tagName = " << currentTagInPlainText->tagName << endl;
+		
 		GIApreprocessorMultiwordReductiontag* firstTagInPlainTextSentence = currentTagInPlainText;
 		GIApreprocessorMultiwordReductiontag* currentTagInPlainTextSentence = firstTagInPlainTextSentence;
 		GIApreprocessorMultiwordReductiontag* previousTagInPlainTextSentence = NULL;
 		while(currentTagInPlainTextSentence->nextTag != NULL)
 		{
+			cout << "currentTagInPlainTextSentence->tagName = " << currentTagInPlainTextSentence->tagName << endl;
+			
 			const GIApreprocessorMultiwordReductiontag* currentTagInMultiwordWordList = firstTagInMultiwordWordList;
 			bool foundAtLeastOneMultiwordWordInSentenceAndCollapsed = false;
 			while(currentTagInMultiwordWordList->nextSentence != NULL)
 			{
+				//cout << "currentTagInMultiwordWordList->tagName = " << currentTagInMultiwordWordList->tagName << endl;
+				
+				bool foundAtLeastOneMultiwordWordInSentenceAndCollapsedTemp = false;
 				bool stillFoundWordMatch = true;
 				bool foundAtLeastOneMatch = false;
 				GIApreprocessorMultiwordReductiontag* currentTagInPlainTextSentenceTemp = currentTagInPlainTextSentence;
 				GIApreprocessorMultiwordReductiontag* firstTagInCollapsedMultiwordWord = new GIApreprocessorMultiwordReductiontag();
-				GIApreprocessorMultiwordReductiontag* currentTagInCollapsedMultiwordWord = firstTagInCollapsedMultiwordWord;
 				const GIApreprocessorMultiwordReductiontag* firstTagInMultiwordWord = currentTagInMultiwordWordList;
 				const GIApreprocessorMultiwordReductiontag* currentTagInMultiwordWord = firstTagInMultiwordWord;
 				while((currentTagInMultiwordWord->nextTag != NULL) && (currentTagInPlainTextSentenceTemp->nextTag != NULL) && (stillFoundWordMatch))
 				{
+					//cout << "currentTagInMultiwordWord->tagName = " << currentTagInMultiwordWord->tagName << endl;
+					//cout << "currentTagInPlainTextSentenceTemp->tagName = " << currentTagInPlainTextSentenceTemp->tagName << endl;
+					
 					if(currentTagInMultiwordWord->tagName != currentTagInPlainTextSentenceTemp->tagName)
 					{
 						stillFoundWordMatch = false;
 					}
 					else
 					{
-						currentTagInCollapsedMultiwordWord->collapsedMultiwordWord = true;
-						currentTagInCollapsedMultiwordWord->collapsedMultiwordWordTemp = true;	//this is reset everytime searchAndReplaceMultiwordWordList is executed to prevent collapsedMultiwordWord from being redetected
-						currentTagInCollapsedMultiwordWord->collapsedMultiwordWordType = wordListType;
-						currentTagInCollapsedMultiwordWord->tagName = currentTagInCollapsedMultiwordWord->tagName + currentTagInPlainTextSentenceTemp->tagName + GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_MULTIWORD_WORD_DELIMITER;
+						firstTagInCollapsedMultiwordWord->collapsedMultiwordWord = true;
+						firstTagInCollapsedMultiwordWord->collapsedMultiwordWordTemp = true;	//this is reset everytime searchAndReplaceMultiwordWordList is executed to prevent collapsedMultiwordWord from being redetected
+						firstTagInCollapsedMultiwordWord->collapsedMultiwordWordType = wordListType;
+						firstTagInCollapsedMultiwordWord->tagName = firstTagInCollapsedMultiwordWord->tagName + currentTagInPlainTextSentenceTemp->tagName + GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_MULTIWORD_WORD_DELIMITER;
 						foundAtLeastOneMatch = true;
 					}
 					currentTagInMultiwordWord = currentTagInMultiwordWord->nextTag;
@@ -1475,11 +1487,39 @@ bool GIApreprocessorMultiwordReductionClass::searchAndReplaceMultiwordWordList(G
 					if(currentTagInMultiwordWord->nextTag == NULL)
 					{//make sure the entire multiword word is matched (in case currentTagInPlainTextSentenceTemp reaches end of sentence without matching the multiword word in its entirety)
 						//reduce all entities
-						currentTagInCollapsedMultiwordWord->nextTag = currentTagInPlainTextSentenceTemp;
-						previousTagInPlainTextSentence->nextTag = firstTagInCollapsedMultiwordWord;
-
+						firstTagInCollapsedMultiwordWord->nextTag = currentTagInPlainTextSentenceTemp;
+						if(previousTagInPlainTextSentence != NULL)
+						{
+							previousTagInPlainTextSentence->nextTag = firstTagInCollapsedMultiwordWord;
+						}
+						else
+						{
+							if(currentTagInPlainTextSentence == firstTagInPlainTextSentence)
+							{
+								if(previousTagInPlainText->nextTag == NULL)
+								{
+									*firstTagInPlainText = firstTagInCollapsedMultiwordWord;
+								}
+								else
+								{
+									previousTagInPlainText->nextTag = firstTagInCollapsedMultiwordWord;
+								}
+								firstTagInCollapsedMultiwordWord->nextSentence = currentTagInPlainText->nextSentence;
+								firstTagInPlainTextSentence = firstTagInCollapsedMultiwordWord;
+							}
+							else
+							{
+								cout << "GIApreprocessorMultiwordReductionClass::searchAndReplaceMultiwordWordList{} error: (previousTagInPlainTextSentence == NULL) && (currentTagInPlainTextSentence != firstTagInPlainTextSentence)" << endl;
+								exit(EXIT_ERROR);
+							}
+						}
 						foundAtLeastOneMultiwordWordInSentenceAndCollapsed = true;
+						foundAtLeastOneMultiwordWordInSentenceAndCollapsedTemp = true;
 					}
+				}
+				if(!foundAtLeastOneMultiwordWordInSentenceAndCollapsedTemp)
+				{
+					delete firstTagInCollapsedMultiwordWord;
 				}
 
 				currentTagInMultiwordWordList = currentTagInMultiwordWordList->nextSentence;
@@ -1514,9 +1554,14 @@ bool GIApreprocessorMultiwordReductionClass::searchAndReplaceMultiwordWordList(G
 					newEntityIndex++;
 				}
 			}
+			else
+			{
+				
+			}
 			previousTagInPlainTextSentence = currentTagInPlainTextSentence;
 			currentTagInPlainTextSentence = currentTagInPlainTextSentence->nextTag;
 		}
+		previousTagInPlainText = currentTagInPlainText;
 		currentTagInPlainText = currentTagInPlainText->nextSentence;
 	}
 

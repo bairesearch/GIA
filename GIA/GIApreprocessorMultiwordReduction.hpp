@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorMultiwordReduction.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a5l 28-March-2017
+ * Project Version: 3a6a 05-April-2017
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  *
@@ -274,9 +274,9 @@ class GIApreprocessorMultiwordReductionClass
 			public: bool isIntrawordPunctuationMark(const int indexOfCurrentToken, const string* lineContents);
 		#endif
 		private: bool searchAndReplacePhrasalVerbs(GIApreprocessorMultiwordReductiontag* firstTagInPlainText, GIApreprocessorMultiwordReductiontag* firstTagInPhrasalVerbList, GIApreprocessorMultiwordReductionTagTextCorrespondenceInfo* firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo);
-		private: bool loadMultiwordWordListAndSearchAndReplace(const string multiwordWordListFileName, GIApreprocessorMultiwordReductiontag* firstTagInPlainText, GIApreprocessorMultiwordReductionTagTextCorrespondenceInfo* firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, const int wordListType);
+		private: bool loadMultiwordWordListAndSearchAndReplace(const string multiwordWordListFileName, GIApreprocessorMultiwordReductiontag** firstTagInPlainText, GIApreprocessorMultiwordReductionTagTextCorrespondenceInfo* firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, const int wordListType);
 			private: bool loadMultiwordWordList(const string multiwordWordListFileName, GIApreprocessorMultiwordReductiontag* firstTagInMultiwordWordList);
-			private: bool searchAndReplaceMultiwordWordList(GIApreprocessorMultiwordReductiontag* firstTagInPlainText, const GIApreprocessorMultiwordReductiontag* firstTagInMultiwordWordList, GIApreprocessorMultiwordReductionTagTextCorrespondenceInfo* firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, const int wordListType);
+			private: bool searchAndReplaceMultiwordWordList(GIApreprocessorMultiwordReductiontag** firstTagInPlainText, const GIApreprocessorMultiwordReductiontag* firstTagInMultiwordWordList, GIApreprocessorMultiwordReductionTagTextCorrespondenceInfo* firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, const int wordListType);
 		public: bool writeTagListToFile(const GIApreprocessorMultiwordReductiontag* firstTagInPlainText, const string plainTextLRPoutputFileName, const string plainTextLRPforNLPoutputFileName, const bool performLRPforNLPoutput);
 			private: string generateWordWithLRPforNLPonly(const GIApreprocessorMultiwordReductiontag* currentTagInPlainTextSentence);
 	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_REPLACE_OUTPUT_FOR_NLP_TEMPORARILY
