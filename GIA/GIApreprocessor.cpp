@@ -25,7 +25,7 @@
  * File Name: GIApreprocessor.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3a6a 05-April-2017
+ * Project Version: 3a6b 05-April-2017
  * Requirements: requires plain text file
  * Description: Logical Condition and Reference Set preprocessor
  *
@@ -475,7 +475,7 @@ bool GIApreprocessorClass::updateGIApreprocessorMultiwordReductionTagTextCorresp
 	bool result = true;
 	
 	//read in existing file
-	GIApreprocessorMultiwordReductiontag* firstTagInPlainText = new GIApreprocessorMultiwordReductiontag();
+	GIApreprocessorMultiwordReductionWord* firstTagInPlainText = new GIApreprocessorMultiwordReductionWord();
 	if(!GIApreprocessorMultiwordReduction.loadPlainTextFile(inputFileName, firstTagInPlainText))
 	{
 		result = false;
@@ -629,15 +629,15 @@ bool GIApreprocessorClass::getGIApreprocessorReferenceSet(GIApreprocessorSubRefe
 	return result;
 }
 
-bool GIApreprocessorClass::replaceEntityTagWithNLPonlyTag(GIApreprocessorMultiwordReductionTagTextCorrespondenceInfo* currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo, GIApreprocessorMultiwordReductiontag* firstTagInPlainText)
+bool GIApreprocessorClass::replaceEntityTagWithNLPonlyTag(GIApreprocessorMultiwordReductionTagTextCorrespondenceInfo* currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo, GIApreprocessorMultiwordReductionWord* firstTagInPlainText)
 {
 	bool result = false;
-	GIApreprocessorMultiwordReductiontag* currentTagInPlainText = firstTagInPlainText;
+	GIApreprocessorMultiwordReductionWord* currentTagInPlainText = firstTagInPlainText;
 	while(currentTagInPlainText->nextSentence != NULL)
 	{
 		if(currentTagInPlainText->sentenceIndex == currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->sentenceIndex)
 		{
-			GIApreprocessorMultiwordReductiontag* currentTagInPlainTextSentence = currentTagInPlainText;
+			GIApreprocessorMultiwordReductionWord* currentTagInPlainTextSentence = currentTagInPlainText;
 			while(currentTagInPlainTextSentence->nextTag != NULL)
 			{
 				if(currentTagInPlainText->entityIndex == currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->entityIndex)
