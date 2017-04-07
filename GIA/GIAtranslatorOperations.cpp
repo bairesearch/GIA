@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a6c 05-April-2017
+ * Project Version: 3a6d 05-April-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1335,7 +1335,7 @@ GIAentityNode* GIAtranslatorOperationsClass::addEntityNodeByNameSimpleWrapperRel
 GIAentityNode* GIAtranslatorOperationsClass::findOrAddEntityNodeByNameSimpleWrapperRelationshipArtificial(GIAentityNode* relationshipSubjectEntity, GIAentityNode* relationshipObjectEntity, const int relationshipEntityType, const string relationshipEntityName, GIAtranslatorVariablesClass* translatorVariables)
 {
 	GIAentityNode* relationshipEntity = NULL;
-	if(!findExistingRelationshipInSentenceEntityArray(relationshipSubjectEntity, relationshipObjectEntity, relationshipEntityType, &relationshipEntity, translatorVariables))
+	if(!findExistingRelationshipInSentenceEntityArray(relationshipSubjectEntity, relationshipObjectEntity, relationshipEntityType, relationshipEntityName, &relationshipEntity, translatorVariables))
 	{
 		relationshipEntity = addEntityNodeByNameSimpleWrapperRelationshipArtificial(relationshipEntityType, relationshipEntityName, translatorVariables);
 	}
@@ -1343,7 +1343,7 @@ GIAentityNode* GIAtranslatorOperationsClass::findOrAddEntityNodeByNameSimpleWrap
 	return relationshipEntity;	
 }
 
-bool GIAtranslatorOperationsClass::findExistingRelationshipInSentenceEntityArray(GIAentityNode* relationshipSubjectEntity, GIAentityNode* relationshipObjectEntity, const int relationshipEntityType, GIAentityNode** relationshipEntity, GIAtranslatorVariablesClass* translatorVariables)
+bool GIAtranslatorOperationsClass::findExistingRelationshipInSentenceEntityArray(GIAentityNode* relationshipSubjectEntity, GIAentityNode* relationshipObjectEntity, const int relationshipEntityType, const string relationshipEntityName, GIAentityNode** relationshipEntity, GIAtranslatorVariablesClass* translatorVariables)
 {
 	//if !GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS; this function can only be used for relationshipEntityType == GIA_ENTITY_TYPE_CONDITION
 		
@@ -1354,10 +1354,23 @@ bool GIAtranslatorOperationsClass::findExistingRelationshipInSentenceEntityArray
 	int connectionTypeReverse = generateConnectionTypeReverse(relationshipEntityType);
 	for(vector<GIAentityConnection*>::iterator connectionIter = relationshipSubjectEntity->entityVectorConnectionsArray[connectionType].begin(); connectionIter != relationshipSubjectEntity->entityVectorConnectionsArray[connectionType].end(); connectionIter++)
 	{
+		GIAentityNode* relationshipEntityTemp = (*connectionIter)->entity; 
+		
 		if(getRelationshipObjectEntity((*connectionIter)) == relationshipObjectEntity)
 		{
-			*relationshipEntity = (*connectionIter)->entity;
-			foundExistingRelationship = true;
+			#ifdef GIA_PREPROCESSOR_FIND_EXISTING_RELATIONSHIP_IN_SENTENCE_ENFORCE_SAME_SENTENCE_CHECKS
+			if(relationshipEntityTemp->entityName == relationshipEntityName)	//probably redundant
+			{	
+				int featureIndexTemp = relationshipEntityTemp->entityIndexTemp;
+				if(translatorVariables->GIAentityNodeArrayFilled[featureIndexTemp])
+				{ 
+			#endif
+					*relationshipEntity = relationshipEntityTemp;
+					foundExistingRelationship = true;
+			#ifdef GIA_PREPROCESSOR_FIND_EXISTING_RELATIONSHIP_IN_SENTENCE_ENFORCE_SAME_SENTENCE_CHECKS
+				}
+			}
+			#endif
 		} 
 	}
 	/*
@@ -1516,10 +1529,14 @@ GIAentityNode* GIAtranslatorOperationsClass::addRelationshipArtificialToEntity2(
 GIAentityNode* GIAtranslatorOperationsClass::findOrAddEntityNodeByNameSimpleWrapperRelationshipArtificial2(GIAentityNode* relationshipSubjectEntity, GIAentityNode* relationshipObjectEntity, const int relationshipEntityType, const string relationshipEntityName, GIAtranslatorVariablesClass* translatorVariablesSentencesParsed)
 {
 	GIAentityNode* relationshipEntity = NULL;
-	if(!findExistingRelationshipInSentenceEntityArray(relationshipSubjectEntity, relationshipObjectEntity, relationshipEntityType, &relationshipEntity, translatorVariablesSentencesParsed))	//added 3a2b (see <=3a1j for equivalent change);
+	#ifndef GIA_PREPROCESSOR_FIND_EXISTING_RELATIONSHIP_IN_SENTENCE_ENFORCE_SAME_SENTENCE_CHECKS
+	if(!findExistingRelationshipInSentenceEntityArray(relationshipSubjectEntity, relationshipObjectEntity, relationshipEntityType, relationshipEntityName, &relationshipEntity, translatorVariablesSentencesParsed))	//added 3a2b (see <=3a1j for equivalent change);
 	{
+	#endif
 		relationshipEntity = addEntityNodeByNameSimpleWrapperRelationshipArtificial2(relationshipEntityType, relationshipEntityName, translatorVariablesSentencesParsed);
+	#ifndef GIA_PREPROCESSOR_FIND_EXISTING_RELATIONSHIP_IN_SENTENCE_ENFORCE_SAME_SENTENCE_CHECKS	
 	}
+	#endif
 	
 	return relationshipEntity;	
 }

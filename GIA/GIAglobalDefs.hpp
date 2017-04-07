@@ -25,7 +25,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a6c 05-April-2017
+ * Project Version: 3a6d 05-April-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -741,6 +741,7 @@
 	#else
 		//NB linkHavingPropertyConditionsAndBeingDefinitionConditions is no longer supported
 	#endif
+	#define GIA_PREPROCESSOR_FIND_EXISTING_RELATIONSHIP_IN_SENTENCE_ENFORCE_SAME_SENTENCE_CHECKS	//3a6d
 	
 	//#define GIA_NLG_MORPHOLOGY_GENERATOR
 	#define GIA_REFERENCING_UPDATE_ENTITY_INDEXES_OF_REFERENCE_SOURCE_TO_THOSE_OF_CURRENT_SENTENCE	//3a1f	//aka GIA_REFERENCING_UPDATE_ENTITY_INDEXES_CONTINUOUSLY (this is an extension of GIA_SET_ENTITY_ENTITY_AND_SENTENCE_INDICIES_NORMALLY)
@@ -769,7 +770,7 @@
 			//#define GIA_PREPROCESSOR_SENTENCE	//3a1a
 		#endif
 		#ifdef GIA_PREPROCESSOR_SENTENCE
-		
+					
 			//#define GIA_PREPROCESSOR_SENTENCE_TEMPORARY_SENTENCE_INDEX (-2)
 			#define GIA_PREPROCESSOR_REASSIGN_UNIQUE_SENTENCE_INDICES_FOR_SENTENCES
 			#ifdef GIA_PREPROCESSOR_REASSIGN_UNIQUE_SENTENCE_INDICES_FOR_SENTENCES
