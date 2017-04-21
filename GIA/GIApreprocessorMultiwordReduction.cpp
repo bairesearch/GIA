@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorMultiwordReduction.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a6d 05-April-2017
+ * Project Version: 3a7a 20-April-2017
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  *
@@ -2296,7 +2296,7 @@ bool GIApreprocessorMultiwordReductionClass::determineVerbCaseStandard(const str
 	GIApreprocessorMultiwordReductionWord* firstTagInVerbList = firstTagInVerbListGlobal;
 	
 	GIApreprocessorMultiwordReductionWord* currentTagInVerbList = firstTagInVerbList;
-	while(currentTagInVerbList->nextSentence != NULL)
+	while(currentTagInVerbList->nextTag != NULL)
 	{
 		//cout << "currentTagInVerbList = " << currentTagInVerbList->tagName << endl;
 		
@@ -2314,7 +2314,7 @@ bool GIApreprocessorMultiwordReductionClass::determineVerbCaseStandard(const str
 			}
 		}
 		
-		currentTagInVerbList = currentTagInVerbList->nextSentence;
+		currentTagInVerbList = currentTagInVerbList->nextTag;
 	}
 
 	return foundVerbCase;	
@@ -2381,7 +2381,7 @@ bool GIApreprocessorMultiwordReductionClass::determineIsInWordList(GIApreprocess
 		{
 			prepositionFound = true;
 		}
-		currentTagInWordList = currentTagInWordList->nextSentence;
+		currentTagInWordList = currentTagInWordList->nextTag;
 	}
 
 	return prepositionFound;

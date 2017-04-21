@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorReferenceSet.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3a6d 05-April-2017
+ * Project Version: 3a7a 20-April-2017
  * Requirements: requires plain text file
  * Description: Reference Set preprocessor
  *
@@ -234,7 +234,6 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const str
 		{			
 			currentWordIsReferenceSetDelimiter = true;
 			currentDelimiterType = GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_AUXILIARY;
-			//cout << "detectAuxiliary" << endl;
 		}
 		if(GIApreprocessorMultiwordReduction.determineVerbCaseStandardWithAdditional(currentWord, &grammaticalBaseTenseForm))	//OLD: determineVerbCaseStandard
 		{
@@ -333,6 +332,7 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const str
 		
 			#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
 			cout << "currentWordIsReferenceSetDelimiter: currentWord = " << currentWord << endl;
+			cout << "currentWordIsReferenceSetDelimiter: currentDelimiterType = " << currentDelimiterType << endl;
 			#endif
 			
 			bool previousWordIsModalAuxiliary = false;
@@ -350,7 +350,7 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const str
 				}
 			}
 			//verify that the auxiliary/verb is not preceeded by an auxiliary (e.g. for doing auxiliaries; is being/having/doing, or for verbs; is riding, or for prepositions; is near), in which case must test the word prior to the modal auxiliary for that/which
-			if((currentDelimiterType == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_AUXILIARY) || ((currentDelimiterType == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_VERB) && (grammaticalBaseTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_INFINITIVE)) || (currentDelimiterType == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_PREPOSITION))
+			if((currentDelimiterType == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_AUXILIARY) || ((currentDelimiterType == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_VERB) && (grammaticalBaseTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_INFINITIVE)) || (currentDelimiterType == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_PREPOSITION))	//CHECKTHIS;  && (grammaticalBaseTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_INFINITIVE)
 			{
 				if(wordIndex-1 >= 0)
 				{

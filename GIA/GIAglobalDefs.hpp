@@ -25,7 +25,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a6d 05-April-2017
+ * Project Version: 3a7a 20-April-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -804,9 +804,12 @@
 				#endif
 				
 				#define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_REMOVE_DOUBLE_WHITE_SPACE
-				//#define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_OUTPUT_LOGIC_REFERENCE_SETS_FOR_HIGH_LEVEL_SEMANTIC_PARSE	//this is not required as the information is contained within GIApreprocessorLogicReference structure and it can be manually derived (without NLP)
+				#define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_OUTPUT_LOGIC_REFERENCE_SETS_FOR_HIGH_LEVEL_SEMANTIC_PARSE	//3a7a	//OLD: this is not required as the information is contained within GIApreprocessorLogicReference structure and it can be manually derived (without NLP)
 				#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_OUTPUT_LOGIC_REFERENCE_SETS_FOR_HIGH_LEVEL_SEMANTIC_PARSE
 					#define GIA_PREPROCESSOR_ASSIGN_UNIQUE_SENTENCE_INDICES_FOR_SENTENCES	//mandatory
+					#define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_OUTPUT_LOGIC_REFERENCE_SETS_FOR_HIGH_LEVEL_SEMANTIC_PARSE_SUPPORT_VERB_TENSE
+					//#define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_OUTPUT_LOGIC_REFERENCE_SETS_FOR_HIGH_LEVEL_SEMANTIC_PARSE_VERBOSE
+					#define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_OUTPUT_LOGIC_REFERENCE_SETS_FOR_HIGH_LEVEL_SEMANTIC_PARSE_VERB_DELIMITERS_ONLY	//this is required because NLP doesn't parse "A giadummyrelationshipsubject [logic reference preposition eg considering] a giadummyrelationshipobject."
 				#endif
 				#define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_RECURSION	//mandatory 3a5e //eg It is proposed that [X is Q] but [all [chickens are blue] except for [Tom]], Tom said that [Mary said [the car goes to the fair]], I think that [Tom thinks [I am happy]]
 				//#define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_ABSTRACT_CONJUNCTIONS	//eg eg subsequent_to and before (FUTURE: and -> subsequent_to + before)

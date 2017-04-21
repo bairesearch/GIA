@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorLogicReference.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3a6d 05-April-2017
+ * Project Version: 3a7a 20-April-2017
  * Requirements: requires plain text file
  * Description: Logic Reference preprocessor
  *
@@ -192,11 +192,11 @@ bool GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor(const
 	
 	//OLD:  Separate out 1. ,/and/or (including doactionA and doactionB),
 
-	int wordIndexSentence = 0;
+	int wordIndexSentence = 0;	//this gets reset at next sentence
 	string currentWord = "";
 	string currentContents = "";
 	int logicReferenceVariableNameIndex = 0;
-	vector<string> logicReferenceVariableWordList;
+	vector<string> logicReferenceVariableWordList;	//this gets reset after each logic reference variable
 	bool expectToFindSubjectAuxObjectLogicReferenceVariable = false;
 	bool whiteSpace = false;
 	
@@ -217,7 +217,7 @@ bool GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor(const
 			if(!whiteSpace)
 			{
 				#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
-				//cout << "[currentWord = " << currentWord << "]" << endl;
+				cout << "[currentWord = " << currentWord << "]" << endl;
 				#endif
 				bool foundClassType = false;
 				string logicReferenceClassType = "";
@@ -254,7 +254,12 @@ bool GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor(const
 					cout << "logicReferenceClass = " << logicReferenceClass << endl;
 					#endif
 					
-					string logicReferenceContents = generateLogicReferenceContents(currentWord, logicReferenceClassType);
+					#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_OUTPUT_LOGIC_REFERENCE_SETS_FOR_HIGH_LEVEL_SEMANTIC_PARSE_SUPPORT_VERB_TENSE
+					string logicReferenceContents = generateLogicReferenceContents(currentWord, logicReferenceClassType, logicReferenceClass, &currentContents, &logicReferenceVariableWordList);
+					#else
+					string logicReferenceContents = generateLogicReferenceContentsBase(currentWord, logicReferenceClassType);
+					#endif
+					
 					if(logicReferenceClass == GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_CONJUNCTION)
 					{
 						if(currentContents == "")
@@ -938,7 +943,139 @@ void GIApreprocessorLogicReferenceClass::setLogicReferenceInfo(GIApreprocessorLo
 	logicReference->logicReferenceClassType = logicReferenceClassType;	
 }		
 
-string GIApreprocessorLogicReferenceClass::generateLogicReferenceContents(const string logicReferenceWord, const string logicReferenceClassType)
+#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_OUTPUT_LOGIC_REFERENCE_SETS_FOR_HIGH_LEVEL_SEMANTIC_PARSE_SUPPORT_VERB_TENSE
+string GIApreprocessorLogicReferenceClass::generateLogicReferenceContents(const string logicReferenceWord, const string logicReferenceClassType, int logicReferenceClass, string* currentContents, vector<string>* logicReferenceVariableWordList)
+{
+	bool referenceSetDelimiterIndicatesSameReferenceSet = false;
+	
+	string logicReferenceContents = generateLogicReferenceContentsBase(logicReferenceWord, logicReferenceClassType);
+	
+	if(logicReferenceClass == GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_VERB)
+	{
+		//eg had proposed / will have proposed, etc
+
+		int wordIndex = logicReferenceVariableWordList->size();
+		string currentWord = logicReferenceWord;
+
+
+		//extract from executeReferenceSetPreprocessor;
+		int wordIndexOfHypotheticalPreceedingThatWhich = wordIndex-1;
+
+		#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
+		cout << "currentWordIsReferenceSetDelimiter: currentWord = " << currentWord << endl;
+		#endif
+
+		bool previousWordIsModalAuxiliary = false;
+
+		//verify that the auxiliary/verb is not preceeded by a modal auxiliary (e.g. for future cases; will be/have/ride), in which case must test the word prior to the modal auxiliary for that/which
+		if(wordIndex-1 >= 0)
+		{
+			if(SHAREDvars.textInTextArray((*logicReferenceVariableWordList)[wordIndex-1], entityModalAuxiliaryArray, ENTITY_MODALAUXILIARY_NUMBER_OF_TYPES))
+			{	
+				previousWordIsModalAuxiliary = true;
+				wordIndexOfHypotheticalPreceedingThatWhich--;
+			}
+		}
+		//verify that the auxiliary/verb is not preceeded by an auxiliary (e.g. for doing auxiliaries; is being/having/doing, or for verbs; is riding, or for prepositions; is near), in which case must test the word prior to the modal auxiliary for that/which
+		if(wordIndex-1 >= 0)
+		{
+			if(GIApreprocessorReferenceSet.detectAuxiliary((*logicReferenceVariableWordList)[wordIndex-1]))
+			{	
+				//eg that is riding
+				previousWordIsModalAuxiliary = true;
+				wordIndexOfHypotheticalPreceedingThatWhich--;
+
+				#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
+				cout << "previousWordIsModalAuxiliary" << endl;
+				cout << "currentWord = " << currentWord << endl;
+				cout << "previousWord = " << (*logicReferenceVariableWordList)[wordIndex-1] << endl;
+				cout << "currentDelimiterType = " << currentDelimiterType << endl;
+				cout << "wordIndexOfHypotheticalPreceedingThatWhich = " << wordIndexOfHypotheticalPreceedingThatWhich << endl;
+				#endif
+
+				if(wordIndex-2 >= 0)
+				{
+					if(SHAREDvars.textInTextArray((*logicReferenceVariableWordList)[wordIndex-2], entityModalAuxiliaryArray, ENTITY_MODALAUXILIARY_NUMBER_OF_TYPES))
+					{
+						//eg that will be riding
+						wordIndexOfHypotheticalPreceedingThatWhich--;
+					}
+				}
+			}
+			/*
+			else
+			{
+				if((currentDelimiterType == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_PREPOSITION))
+				{
+					if(GIApreprocessorMultiwordReduction.determineIsAdverb((*logicReferenceVariableWordList)[wordIndex-1]))
+					{
+						if(wordIndex-2 >= 0)
+						{
+							if(detectAuxiliary((*logicReferenceVariableWordList)[wordIndex-2]))
+							{
+								//eg is very near / is not near
+								previousWordIsModalAuxiliary = true;
+								wordIndexOfHypotheticalPreceedingThatWhich = wordIndexOfHypotheticalPreceedingThatWhich-2;
+							}
+						}
+					}
+				}
+			}
+			*/
+		}
+
+		bool currentWordIsReferenceSetDelimiterPreceededByThatWhich = false;
+		if(wordIndexOfHypotheticalPreceedingThatWhich >= 0)
+		{
+			if(SHAREDvars.textInTextArray((*logicReferenceVariableWordList)[wordIndexOfHypotheticalPreceedingThatWhich], preprocessorRcmodSameReferenceSetDelimiter, GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_RCMOD_SAME_REFERENCE_SET_DELIMITER_NUMBER_OF_TYPES))
+			{
+				currentWordIsReferenceSetDelimiterPreceededByThatWhich = true;
+				#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
+				cout << "currentWordIsReferenceSetDelimiterPreceededByThatWhich" << endl;
+				#endif
+			}
+		}
+
+		int firstIndexOfReferenceSetDelimiterText = 0;
+		if(currentWordIsReferenceSetDelimiterPreceededByThatWhich)
+		{
+			referenceSetDelimiterIndicatesSameReferenceSet = true;
+			#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITERS_DISCARD_THAT_WHICH
+			firstIndexOfReferenceSetDelimiterText = wordIndexOfHypotheticalPreceedingThatWhich + 1;	//NB the "that/which" will be removed from the text
+			#else
+			firstIndexOfReferenceSetDelimiterText = wordIndexOfHypotheticalPreceedingThatWhich;
+			#endif
+			#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
+			cout << "referenceSetDelimiterIndicatesSameReferenceSet" << endl;
+			#endif
+		}
+		else
+		{
+			firstIndexOfReferenceSetDelimiterText = wordIndexOfHypotheticalPreceedingThatWhich + 1;
+		}
+		
+		#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
+		cout << "BEFORE: logicReferenceContents = " << logicReferenceContents << endl;
+		cout << "BEFORE: currentContents = " << *currentContents << endl;
+		#endif
+		int logicReferenceDelimiterPrependTextSize = wordIndex-firstIndexOfReferenceSetDelimiterText;
+		for(int i=0; i<logicReferenceDelimiterPrependTextSize; i++)
+		{
+			string prependWord = (*logicReferenceVariableWordList)[firstIndexOfReferenceSetDelimiterText+i];
+			logicReferenceContents = prependWord + STRING_SPACE + logicReferenceContents;
+			logicReferenceVariableWordList->pop_back();
+			*currentContents = currentContents->substr(0, currentContents->length() - (prependWord.length()+1));
+		} 
+		#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
+		cout << "AFTER: logicReferenceContents = " << logicReferenceContents << endl;
+		cout << "AFTER: currentContents = " << *currentContents << endl;
+		#endif
+	}
+	
+	return logicReferenceContents;
+}
+#endif
+string GIApreprocessorLogicReferenceClass::generateLogicReferenceContentsBase(const string logicReferenceWord, const string logicReferenceClassType)
 {
 	string logicReferenceContents = logicReferenceWord;	//logicReferenceClassType;	//this needs to be updated
 	return logicReferenceContents;

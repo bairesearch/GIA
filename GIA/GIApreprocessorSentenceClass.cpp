@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorSentenceClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3a6d 05-April-2017
+ * Project Version: 3a7a 20-April-2017
  * Requirements: requires plain text file
  * Description: Logical Condition and Reference Set preprocessor
  *
@@ -106,6 +106,10 @@ GIApreprocessorLogicReference::GIApreprocessorLogicReference(void)
 	isSubLogicReferenceGovernor = false;
 	isSubLogicReferenceDependent = false;
 	isSubLogicReferenceArray = false;
+	#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_OUTPUT_LOGIC_REFERENCE_SETS_FOR_HIGH_LEVEL_SEMANTIC_PARSE_VERBOSE
+	logicReferenceSetContentsWithVariableNames = "";
+	logicReferenceSetContentsWithVariableNamesSentenceIndex = INT_DEFAULT_VALUE;
+	#endif
 	#endif
 }
 GIApreprocessorLogicReference::~GIApreprocessorLogicReference(void)
@@ -123,10 +127,6 @@ GIApreprocessorSentence::GIApreprocessorSentence(void)
 	
 	#ifdef GIA_PREPROCESSOR_ASSIGN_UNIQUE_SENTENCE_INDICES_FOR_SENTENCES
 	sentenceIndex = INT_DEFAULT_VALUE;
-	#endif
-	#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_OUTPUT_LOGIC_REFERENCE_SETS_FOR_HIGH_LEVEL_SEMANTIC_PARSE
-	logicReferenceSetContentsWithVariableNames = "";
-	logicReferenceSetContentsWithVariableNamesEntityIndex = INT_DEFAULT_VALUE;
 	#endif
 	
 	next = NULL;

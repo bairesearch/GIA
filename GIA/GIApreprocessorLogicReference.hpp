@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorLogicReference.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3a6d 05-April-2017
+ * Project Version: 3a7a 20-April-2017
  * Requirements: requires plain text file
  * Description: Logic Reference preprocessor
  *
@@ -61,7 +61,10 @@ class GIApreprocessorLogicReferenceClass
 		private: bool fillLogicReferenceVariable(GIApreprocessorLogicReference* currentLogicReferenceInList, string* currentContents, vector<string>* logicReferenceVariableWordList, int* logicReferenceVariableNameIndex, const bool commaDetected, bool* expectToFindSubjectAuxObjectLogicReferenceVariable);
 		private: bool isClassTag(string word, string classNameToFind, string* classTypeNameFound, XMLparserTag* firstLogicReferenceClassTag);
 		private: bool identifyImplicitLogicReferenceSets(GIApreprocessorLogicReference* explicitConjunctionLogicReferenceInList, const string logicReferenceContents, const int logicReferenceClass, const string logicReferenceClassType);
-	private: string generateLogicReferenceContents(const string logicReferenceWord, const string logicReferenceClassType);
+	#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_OUTPUT_LOGIC_REFERENCE_SETS_FOR_HIGH_LEVEL_SEMANTIC_PARSE_SUPPORT_VERB_TENSE
+	private: string generateLogicReferenceContents(const string logicReferenceWord, const string logicReferenceClassType, int logicReferenceClass, string* currentContents, vector<string>* logicReferenceVariableWordList);
+	#endif
+	private: string generateLogicReferenceContentsBase(const string logicReferenceWord, const string logicReferenceClassType);
 	private: void setLogicReferenceInfo(GIApreprocessorLogicReference* logicReference, string logicReferenceContents, int logicReferenceClass, string logicReferenceClassType);
 	public: bool islogicReferenceExplitOrImplicitConjunctionComponent(GIApreprocessorLogicReference* currentLogicReferenceInList);
 	public: bool islogicReferenceConjunctionComponentNotFirst(GIApreprocessorLogicReference* currentLogicReferenceInList, GIApreprocessorLogicReference* firstLogicReferenceInList);

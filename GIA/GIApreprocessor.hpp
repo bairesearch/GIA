@@ -25,7 +25,7 @@
  * File Name: GIApreprocessor.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3a6d 05-April-2017
+ * Project Version: 3a7a 20-April-2017
  * Requirements: requires plain text file
  * Description: Logical Condition and Reference Set preprocessor
  *
@@ -43,6 +43,8 @@
 #include "GIAtranslatorOperations.hpp"	//required for findSameSentenceEntityNodePointerInVector
 #include "GIAdatabase.hpp"	//required for findParentEntityBasedOnSentenceIndex
 #include "XMLparserClass.hpp"
+
+#define GIA_ENTITY_TYPE_LOGIC_REFERENCE (GIA_ENTITY_TYPE_ACTION)
 
 static bool entityVectorConnectionTransferFromDummyRelationshipToRealRelationshipArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {false, false, true, false, true, false, false, false, false, false, false, false};
 static bool entityVectorConnectionChangeSentenceIndexOfEntityNodesAndConnectionsArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {true, true, true, true, true, true, true, true, true, true, false, false};
@@ -65,7 +67,8 @@ class GIApreprocessorClass
 			private: string removePrependingWhiteSpace(string sentenceContents);
 			private: bool generatePreprocessorSentenceNLPparsablePhrases(GIApreprocessorLogicReference* firstLogicReferenceInList, int* sentenceIndex, string* outputTextContentsSentence, string* outputTextContentsSentenceForNLP);
 				#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_OUTPUT_LOGIC_REFERENCE_SETS_FOR_HIGH_LEVEL_SEMANTIC_PARSE
-				private: void generateLogicReferenceSetContentsWithVariableNamesAndAddToSentenceContentsPreprocessedLogicReference(string* sentenceContentsPreprocessedLogicReference, GIApreprocessorLogicReference* firstLogicReferenceInList, int* sentenceIndex);
+				private: void generateLogicReferenceSetContentsWithVariableNamesAndAddToSentenceContentsPreprocessedLogicReference(string* sentenceContentsPreprocessedLogicReference, string* sentenceContentsPreprocessedLogicReferenceForNLP, GIApreprocessorLogicReference* firstLogicReferenceInList, int* sentenceIndex);
+					private: void generateLogicReferenceSetContentsWithVariableNamesConjunction(string* logicReferenceSetContentsWithVariableNames, GIApreprocessorLogicReference* conjunctionLogicReference, int* sentenceIndex);
 				#endif
 				private: void addSentenceToSentenceContentsPreprocessedLogicReferenceVariables(string* sentenceContentsPreprocessedLogicReferenceVariables, string* sentenceContentsPreprocessedLogicReferenceVariablesForNLP, GIApreprocessorSubReferenceSet* referenceSet, int* sentenceIndex, int referenceSetType);
 		#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
@@ -73,7 +76,7 @@ class GIApreprocessorClass
 			private: bool getGIApreprocessorSentence(GIApreprocessorSentence* firstGIApreprocessorSentenceInList, const int sentenceIndexOriginal, GIApreprocessorSentence** GIApreprocessorSentenceFound);
 			private: bool getGIApreprocessorReferenceSet(GIApreprocessorLogicReference* firstGIApreprocessorLogicReferenceInList, const int entityIndexOriginal, GIApreprocessorSubReferenceSet** GIApreprocessorSubReferenceSetFound);
 				private: bool getGIApreprocessorReferenceSet(GIApreprocessorSubReferenceSet* firstGIApreprocessorSubReferenceInList, const int entityIndexOriginal, GIApreprocessorSubReferenceSet** GIApreprocessorSubReferenceSetFound);
-			private: bool replaceEntityTagWithNLPonlyTag(GIApreprocessorMultiwordReductionTagTextCorrespondenceInfo* currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo, GIApreprocessorMultiwordReductionWord* firstTagInPlainText);	
+			private: bool replaceEntityTagWithNLPonlyTag(GIApreprocessorMultiwordReductionTagTextCorrespondenceInfo* currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo, GIApreprocessorMultiwordReductionSentence* firstTagInPlainText);	
 		#endif
 		#endif
 		
@@ -102,7 +105,7 @@ class GIApreprocessorClass
 
 			private: bool findFirstImplicitConjunctionLogicReferenceSetBefore(GIApreprocessorLogicReference* conjunctionLogicReferenceInList, GIApreprocessorLogicReference** firstImplicitConjunction);
 			#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_OUTPUT_LOGIC_REFERENCE_SETS_FOR_HIGH_LEVEL_SEMANTIC_PARSE
-			private: GIAentityNode* getEntity(GIApreprocessorLogicReference* currentLogicReferenceInList, map<int, vector<GIAentityNode*>*>* entityNodesActiveListSentences);
+			private: GIAentityNode* getEntity(GIApreprocessorLogicReference* currentLogicReferenceInList, GIAtranslatorVariablesClass* translatorVariable);
 			#endif
 			private: bool findPrimaryEntityAndReconcileSubReferenceSets(GIAentityNode** primaryEntityConnection, GIApreprocessorSubReferenceSet* firstSubReferenceSetInList, GIAentityNode* primaryDelimiterEntity, GIAtranslatorVariablesClass* translatorVariables, const int referenceSetType);
 			private: void deleteExternalConnectionsToConnection(GIAentityConnection* connection);
