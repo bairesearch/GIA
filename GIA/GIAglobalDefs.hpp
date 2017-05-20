@@ -25,7 +25,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3b1b 19-May-2017
+ * Project Version: 3b1c 19-May-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -383,7 +383,7 @@
  *		Install External Package 3b - Stanford Parser [OPTIONAL] {Linux/Windows}
  *		--------------------------------------
  *
- *		Download OpenGIANLPDependencies-25September2012.zip / OpenGIANLPDependencies-12October2013.zip / OpenGIANLPDependencies-19April2014 / OpenGIANLPDependencies-07July2015.zip
+ *		Download OpenGIANLPDependencies-25September2012.zip / OpenGIANLPDependencies-12October2013.zip / OpenGIANLPDependencies-19April2014 / OpenGIANLPDependencies-07July2015.zip / OpenGIANLPDependencies-19May2017.zip
  *		Copy execute-stanfordParser.sh (Linux) / execute-stanfordParser.bat (Windows) and place it in the Stanford Parser binary folder.
  *
  *		NB execute-stanfordParser.sh (#!/usr/bin/env bash) contains the following text;
@@ -400,7 +400,7 @@
  *			"C:\Program Files\Java\jre8\bin\java.exe" -d64 -mx2g -cp "*;" edu.stanford.nlp.parser.lexparser.LexicalizedParser -outputFormat "wordsAndTags,penn,typedDependencies" edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz %3/%1 > %4/%2
  *
  *		Stanford Parser may be downloaded via;
- *		(Linux and Windows) eg http://nlp.stanford.edu/software/stanford-parser-2012-03-09.tgz / http://nlp.stanford.edu/software/stanford-parser-2013-04-05.zip / http://nlp.stanford.edu/software/stanford-parser-full-2014-01-04.zip / / http://nlp.stanford.edu/software/stanford-parser-full-2015-04-20.zip
+ *		(Linux and Windows) eg http://nlp.stanford.edu/software/stanford-parser-2012-03-09.tgz / http://nlp.stanford.edu/software/stanford-parser-2013-04-05.zip / http://nlp.stanford.edu/software/stanford-parser-full-2014-01-04.zip / / http://nlp.stanford.edu/software/stanford-parser-full-2015-04-20.zip / http://nlp.stanford.edu/software/stanford-parser-full-2016-10-31.zip
  *
  *		Note Stanford Parser/CoreNLP requires Java Runtime Environment to be installed;
  *
@@ -452,7 +452,7 @@
  *		Install External Package 3c - Stanford CoreNLP [OPTIONAL] {Linux/Windows}
  *		--------------------------------------
  *
- *		Download OpenGIANLPDependencies-25September2012.zip / OpenGIANLPDependencies-12October2013.zip / OpenGIANLPDependencies-19April2014 / OpenGIANLPDependencies-07July2015.zip
+ *		Download OpenGIANLPDependencies-25September2012.zip / OpenGIANLPDependencies-12October2013.zip / OpenGIANLPDependencies-19April2014 / OpenGIANLPDependencies-07July2015.zip / OpenGIANLPDependencies-19May2017.zip
  *		Copy execute-stanfordCoreNLP.sh and execute-stanfordCoreNLPwithoutPT.sh (Linux) / execute-stanfordCoreNLP.bat and execute-stanfordCoreNLPwithoutPT.bat (Windows) and place them in the Stanford CoreNLP binary folder.
  *
  *		NB execute-stanfordCoreNLP.sh contains the following text (depending on the version of Stanford CoreNLP);
@@ -469,6 +469,9 @@
  *				/
  *			scriptdir=`dirname $0`
  *			java -cp $scriptdir/stanford-corenlp-3.5.2.jar:$scriptdir/stanford-corenlp-3.5.2-models.jar:$scriptdir/xom.jar:$scriptdir/joda-time.jar:$scriptdir/jollyday.jar:$scriptdir/ejml-0.23.jar -Xmx2g edu.stanford.nlp.pipeline.StanfordCoreNLP -annotators tokenize,ssplit,pos,lemma,ner,parse,dcoref -file $3/$1 -outputDirectory $4 -outputExtension $5
+ *				/
+ *			scriptdir=`dirname $0`
+ *			java -cp $scriptdir/stanford-corenlp-3.7.0.jar:$scriptdir/stanford-corenlp-3.7.0-models.jar:$scriptdir/xom.jar:$scriptdir/joda-time.jar:$scriptdir/jollyday.jar:$scriptdir/ejml-0.23.jar:$scriptdir/protobuf.jar -Xmx2g edu.stanford.nlp.pipeline.StanfordCoreNLP -annotators tokenize,ssplit,pos,lemma,ner,parse,dcoref -file $3/$1 -outputDirectory $4 -outputExtension $5
  *
  *		NB execute-stanfordCoreNLP.bat contains the following text (depending on the version of Stanford CoreNLP);
  *
@@ -480,6 +483,8 @@
  *			"C:\Program Files\Java\jre7\bin\java.exe" -d64 -cp stanford-corenlp-3.3.1.jar;stanford-corenlp-3.3.1-models.jar;xom.jar;joda-time.jar;jollyday.jar;ejml-0.23.jar -Xmx3g edu.stanford.nlp.pipeline.StanfordCoreNLP -annotators tokenize,ssplit,pos,lemma,ner,parse,dcoref -file %3/%1 -outputDirectory %4 -outputExtension %5
  *				/
  *			"C:\Program Files\Java\jre8\bin\java.exe" -d64 -cp stanford-corenlp-3.5.2.jar;stanford-corenlp-3.5.2-models.jar;xom.jar;joda-time.jar;jollyday.jar;ejml-0.23.jar -Xmx2g edu.stanford.nlp.pipeline.StanfordCoreNLP -annotators tokenize,ssplit,pos,lemma,ner,parse,dcoref -file %3/%1 -outputDirectory %4 -outputExtension %5
+ *				/
+ *			"C:\Program Files\Java\jre8\bin\java.exe" -d64 -cp stanford-corenlp-3.7.0.jar;stanford-corenlp-3.7.0-models.jar;xom.jar;joda-time.jar;jollyday.jar;ejml-0.23.jar;protobuf.jar -Xmx2g edu.stanford.nlp.pipeline.StanfordCoreNLP -annotators tokenize,ssplit,pos,lemma,ner,parse,dcoref -file %3/%1 -outputDirectory %4 -outputExtension %5
  *
  *		NB execute-stanfordCoreNLPwithoutPT.sh contains the following text (depending on the version of Stanford CoreNLP);
  *
@@ -495,6 +500,9 @@
  *			/
  *			scriptdir=`dirname $0`
  *			java -cp $scriptdir/stanford-corenlp-3.5.2.jar:$scriptdir/stanford-corenlp-3.5.2-models.jar:$scriptdir/xom.jar:$scriptdir/joda-time.jar:$scriptdir/jollyday.jar:$scriptdir/ejml-0.23.jar -Xmx2g edu.stanford.nlp.pipeline.StanfordCoreNLP -annotators tokenize,ssplit,parse -file $3/$1 -outputDirectory $4 -outputExtension $5
+ *			/
+ *			scriptdir=`dirname $0`
+ *			java -cp $scriptdir/stanford-corenlp-3.7.0.jar:$scriptdir/stanford-corenlp-3.7.0-models.jar:$scriptdir/xom.jar:$scriptdir/joda-time.jar:$scriptdir/jollyday.jar:$scriptdir/ejml-0.23.jar:$scriptdir/protobuf.jar -Xmx2g edu.stanford.nlp.pipeline.StanfordCoreNLP -annotators tokenize,ssplit,parse -file $3/$1 -outputDirectory $4 -outputExtension $5
  *
  *		NB execute-stanfordCoreNLPwithoutPT.bat contains the following text (depending on the version of Stanford CoreNLP);
  *
@@ -506,9 +514,11 @@
  *			"C:\Program Files\Java\jre7\bin\java.exe" -d64 -cp stanford-corenlp-3.3.1.jar;stanford-corenlp-3.3.1-models.jar;xom.jar;joda-time.jar;jollyday.jar;ejml-0.23.jar -Xmx3g edu.stanford.nlp.pipeline.StanfordCoreNLP -annotators tokenize,ssplit,parse -file %3/%1 -outputDirectory %4 -outputExtension %5
  *				/
  *			"C:\Program Files\Java\jre8\bin\java.exe" -d64 -cp stanford-corenlp-3.5.2.jar;stanford-corenlp-3.5.2-models.jar;xom.jar;joda-time.jar;jollyday.jar;ejml-0.23.jar -Xmx2g edu.stanford.nlp.pipeline.StanfordCoreNLP -annotators tokenize,ssplit,parse -file %3/%1 -outputDirectory %4 -outputExtension %5
+ *				/
+ *			"C:\Program Files\Java\jre8\bin\java.exe" -d64 -cp stanford-corenlp-3.7.0.jar;stanford-corenlp-3.7.0-models.jar;xom.jar;joda-time.jar;jollyday.jar;ejml-0.23.jar;protobuf.jar -Xmx2g edu.stanford.nlp.pipeline.StanfordCoreNLP -annotators tokenize,ssplit,parse -file %3/%1 -outputDirectory %4 -outputExtension %5
  *
  *		Stanford CoreNLP may be downloaded via;
- *		(Linux and Windows) eg http://nlp.stanford.edu/software/stanford-corenlp-2012-04-03.tgz / http://nlp.stanford.edu/software/stanford-corenlp-full-2013-04-04.zip / http://nlp.stanford.edu/software/stanford-corenlp-full-2014-01-04.zip / http://nlp.stanford.edu/software/stanford-corenlp-full-2015-04-20.zip
+ *		(Linux and Windows) eg http://nlp.stanford.edu/software/stanford-corenlp-2012-04-03.tgz / http://nlp.stanford.edu/software/stanford-corenlp-full-2013-04-04.zip / http://nlp.stanford.edu/software/stanford-corenlp-full-2014-01-04.zip / http://nlp.stanford.edu/software/stanford-corenlp-full-2015-04-20.zip / http://nlp.stanford.edu/software/stanford-corenlp-full-2016-10-31.zip
  *
  *		Note Stanford Parser/CoreNLP requires Java Runtime Environment to be installed (see above for instructions).
  *
