@@ -25,7 +25,7 @@
  * File Name: GIAnlp.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a7a 20-April-2017
+ * Project Version: 3b1a 19-May-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -41,6 +41,7 @@
 #include "GIAnlpParser.hpp"
 #include "GIAtranslatorDefs.hpp" //required for featureNERtypeArray only
 #include "GIApreprocessorMultiwordReduction.hpp"
+#include "GIAtranslatorOperations.hpp"
 #include "SHAREDvars.hpp"	//file io
 
 #define STANFORD_PARSER_SENTENCE_SKIP_SUPPORT
@@ -126,7 +127,7 @@ class GIAnlpClass
 	private: XMLparserClassClass XMLparserClass;
 	private: GIAnlpParserClass GIAnlpParser;
 	private: GIApreprocessorMultiwordReductionClass GIApreprocessorMultiwordReduction;
-	public: void executeNLPparser(const string inputTextPlainTXTfileName, const string inputTextNLPXMLfileName, const int NLPParser, const string NLPexeFolderArray[], const bool parseRelationsOrFeatures, const bool NLPrelexCompatibilityMode);
+	public: void executeNLPparser(const string inputTextPlainTXTfileName, const string inputTextNLPXMLfileName, const GIAtranslatorVariablesClass* translatorVariables, const string NLPexeFolderArray[], const bool parseRelationsOrFeatures);
 
 	public: bool parseNLPparserFile(const string inputTextNLPrelationXMLfileName, const string inputTextNLPfeatureXMLfileName, const bool isQuery, GIAparagraph* firstParagraphInList, const int NLPfeatureParser, const int NLPdependencyRelationsParser, const bool NLPrelexCompatibilityMode);
 		public: bool parseNLPparserFeaturesFile(const string inputTextNLPfeatureXMLfileName, const bool isQuery, GIAparagraph* firstParagraphInList, const int NLPfeatureParser, bool* createNewSentences);

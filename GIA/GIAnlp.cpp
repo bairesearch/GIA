@@ -25,7 +25,7 @@
  * File Name: GIAnlp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a7a 20-April-2017
+ * Project Version: 3b1a 19-May-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -40,8 +40,28 @@
 #endif
 
 
-void GIAnlpClass::executeNLPparser(const string inputTextPlainTXTfileName, const string inputTextNLPXMLfileName, const int NLPParser, const string NLPexeFolderArray[], const bool parseRelationsOrFeatures, const bool NLPrelexCompatibilityMode)
+void GIAnlpClass::executeNLPparser(const string inputTextPlainTXTfileName, const string inputTextNLPXMLfileName, const GIAtranslatorVariablesClass* translatorVariables, const string NLPexeFolderArray[], const bool parseRelationsOrFeatures)
 {
+	int NLPParser = false;
+	if(parseRelationsOrFeatures)
+	{
+		NLPParser = translatorVariables->NLPdependencyRelationsParser;
+	}
+	else
+	{
+		NLPParser = translatorVariables->NLPfeatureParser;
+	}
+	bool NLPrelexCompatibilityMode = translatorVariables->NLPrelexCompatibilityMode;
+	#ifdef GIA_SEMANTIC_PARSER_SUPPORT_USE_RELEX_COMPATIBILITY_MODE_FOR_FEATURE_PARSER_TO_GENERATE_ADDITIONAL_RELATIONS_REQUIRED_BY_GIA2
+	if(!parseRelationsOrFeatures)
+	{
+		NLPrelexCompatibilityMode = true;
+	}
+	#endif
+	#ifdef GIA_NLP_CLIENT_SERVER
+	bool NLPclient = translatorVariables->NLPclient;				
+	#endif
+	
 	/*
 	NB execute NLP on current folder not saved input folder (this is required for when a preprocessor eg LRP/CE has been executed on the input text):
 	so must assume current folder has been set to the folder where the [pre-processed] plain text file exists (if not the actual input folder)
@@ -66,11 +86,33 @@ void GIAnlpClass::executeNLPparser(const string inputTextPlainTXTfileName, const
 	{
 		if(NLPrelexCompatibilityMode)
 		{
-			NLPParserExecutableName = GIA_RELEX_WITH_STANFORD_COMPATIBILITY_MODE_EXECUTABLE_NAME;
+			#ifdef GIA_RELEX_CLIENT
+			if(NLPclient)
+			{
+				NLPParserExecutableName = GIA_RELEX_CLIENT_WITH_STANFORD_COMPATIBILITY_MODE_EXECUTABLE_NAME;
+			}
+			else
+			{
+			#endif
+				NLPParserExecutableName = GIA_RELEX_WITH_STANFORD_COMPATIBILITY_MODE_EXECUTABLE_NAME;
+			#ifdef GIA_RELEX_CLIENT
+			}
+			#endif
 		}
 		else
 		{
-			NLPParserExecutableName = GIA_RELEX_EXECUTABLE_NAME;
+			#ifdef GIA_RELEX_CLIENT
+			if(NLPclient)
+			{
+				NLPParserExecutableName = GIA_RELEX_CLIENT_EXECUTABLE_NAME;
+			}
+			else
+			{
+			#endif
+				NLPParserExecutableName = GIA_RELEX_EXECUTABLE_NAME;
+			#ifdef GIA_RELEX_CLIENT
+			}		
+			#endif
 		}
 		NLPexeFolder = NLPexeFolderArray[GIA_NLP_PARSER_RELEX];
 	}
@@ -81,12 +123,34 @@ void GIAnlpClass::executeNLPparser(const string inputTextPlainTXTfileName, const
 		#ifdef STANFORD_CORENLP_DISABLE_INDEPENDENT_POS_TAGGER_WHEN_PARSING_DEPENDENCY_RELATIONS
 		if(parseRelationsOrFeatures)
 		{
-			NLPParserExecutableName = GIA_STANFORD_NLP_EXECUTABLE_NAME_WITHOUT_INDEPENDENT_POS_TAGGER;
+			#ifdef GIA_STANFORD_NLP_CLIENT
+			if(NLPclient)
+			{
+				NLPParserExecutableName = GIA_STANFORD_NLP_CLIENT_EXECUTABLE_NAME_WITHOUT_INDEPENDENT_POS_TAGGER;
+			}
+			else
+			{
+			#endif
+				NLPParserExecutableName = GIA_STANFORD_NLP_EXECUTABLE_NAME_WITHOUT_INDEPENDENT_POS_TAGGER;
+			#ifdef GIA_STANFORD_NLP_CLIENT
+			}
+			#endif
 		}
 		else
 		{
 		#endif
-			NLPParserExecutableName = GIA_STANFORD_NLP_EXECUTABLE_NAME;
+			#ifdef GIA_STANFORD_NLP_CLIENT
+			if(NLPclient)
+			{
+				NLPParserExecutableName = GIA_STANFORD_NLP_CLIENT_EXECUTABLE_NAME;
+			}
+			else
+			{
+			#endif
+				NLPParserExecutableName = GIA_STANFORD_NLP_EXECUTABLE_NAME;
+			#ifdef GIA_STANFORD_NLP_CLIENT
+			}
+			#endif
 		#ifdef STANFORD_CORENLP_DISABLE_INDEPENDENT_POS_TAGGER_WHEN_PARSING_DEPENDENCY_RELATIONS
 		}
 		#endif
@@ -96,7 +160,18 @@ void GIAnlpClass::executeNLPparser(const string inputTextPlainTXTfileName, const
 	#ifdef GIA_STANFORD_PARSER
 	if(NLPParser == GIA_NLP_PARSER_STANFORD_PARSER)
 	{
-		NLPParserExecutableName = GIA_STANFORD_PARSER_EXECUTABLE_NAME;
+		#ifdef GIA_STANFORD_PARSER_CLIENT
+		if(NLPclient)
+		{
+			NLPParserExecutableName = GIA_STANFORD_PARSER_CLIENT_EXECUTABLE_NAME;
+		}
+		else
+		{
+		#endif
+			NLPParserExecutableName = GIA_STANFORD_PARSER_EXECUTABLE_NAME;
+		#ifdef GIA_STANFORD_PARSER_CLIENT
+		}
+		#endif
 		NLPexeFolder = NLPexeFolderArray[GIA_NLP_PARSER_STANFORD_PARSER];
 	}
 	#endif

@@ -26,7 +26,7 @@
  * File Name: GIArules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a7a 20-April-2017
+ * Project Version: 3b1a 19-May-2017
  *
  *******************************************************************************/
 -->
@@ -516,6 +516,7 @@
 				
 			<!-- #ifdef GIA_STANFORD_PARSER_AND_CORENLP_VERSION_2015_04_20_OR_GREATER -->
 			<function name="redistributeStanfordRelationsCase">
+				
 				<example><!--
 				eg1 The ball is in the park. nsubj(park-6, ball-2) + cop(park-6, is-3) + case(park-6, in-4) -> prep_in(ball-2, park-6)	[assign !sameReferenceSet]
 				eg2 The chicken that is near the river has an apple. nsubj(river-7, chicken-2) + cop(river-7, is-4) + case(river-7, near-5) + acl:relcl/rcmod(chicken-2, river-7) -> prep_near(chicken-2, river-7)	[assign sameReferenceSet]

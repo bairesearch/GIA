@@ -25,7 +25,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3a7a 20-April-2017
+ * Project Version: 3b1a 19-May-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -727,6 +727,14 @@
 	#define GIA_DISABLE_CROSS_SENTENCE_REFERENCING	//added 2g5a/05-September-2014 - required for NLC 1j2b+, optional for NLC 1k11a+
 #endif
 //#define GIA_SEMANTIC_PARSER
+
+//#define GIA_DEBUG_DISABLE_3b_CODE
+#ifndef GIA_DEBUG_DISABLE_3b_CODE
+	#define GIA_STANFORD_PARSER_AND_CORENLP_VERSION_2016_10_31_OR_GREATER
+	#ifdef GIA_STANFORD_PARSER_AND_CORENLP_VERSION_2016_10_31_OR_GREATER
+		#define GIA_NLP_CLIENT_SERVER	//3b1a
+	#endif
+#endif
 
 //#define GIA_DEBUG_DISABLE_3a_CODE
 #ifndef GIA_DEBUG_DISABLE_3a_CODE
@@ -1485,6 +1493,9 @@
 #define GIA_STANFORD_CORENLP
 #define GIA_STANFORD_PARSER
 #ifdef GIA_RELEX
+	#ifdef GIA_NLP_CLIENT_SERVER
+		//#define GIA_RELEX_CLIENT
+	#endif
 	//#define GIA_RELEX_IN_STANFORD_COMPATIBILITY_MODE	//untested - not implemented
 	#ifdef GIA_RELEX_IN_STANFORD_COMPATIBILITY_MODE
 		#define GIA_STANFORD_DEPENDENCY_RELATIONS
@@ -1492,9 +1503,17 @@
 	#ifdef LINUX
 		#define GIA_RELEX_EXECUTABLE_NAME "execute-relex.sh"
 		#define GIA_RELEX_WITH_STANFORD_COMPATIBILITY_MODE_EXECUTABLE_NAME "execute-relex-withStanfordCompatibilityMode.sh"
+		#ifdef GIA_RELEX_CLIENT
+			#define GIA_RELEX_CLIENT_EXECUTABLE_NAME "execute-relexClient.sh"
+			#define GIA_RELEX_CLIENT_WITH_STANFORD_COMPATIBILITY_MODE_EXECUTABLE_NAME "execute-relexClient-withStanfordCompatibilityMode.sh"
+		#endif
 	#else
 		#define GIA_RELEX_EXECUTABLE_NAME "execute-relex.bat"
 		#define GIA_RELEX_WITH_STANFORD_COMPATIBILITY_MODE_EXECUTABLE_NAME "execute-relex-withStanfordCompatibilityMode.bat"
+		#ifdef GIA_RELEX_CLIENT
+			#define GIA_RELEX_CLIENT_EXECUTABLE_NAME "execute-relexClient.bat"
+			#define GIA_RELEX_CLIENT_WITH_STANFORD_COMPATIBILITY_MODE_EXECUTABLE_NAME "execute-relexClient-withStanfordCompatibilityMode.bat"
+		#endif
 	#endif
 	#define GIA_RELEX_1_4_0	//default: enabled (otherwise use Relex 1.3.0)
 	#ifdef GIA_RELEX_1_4_0
@@ -1502,21 +1521,41 @@
 	#endif
 #endif
 #ifdef GIA_STANFORD_CORENLP		//a more advanced implementation of stanford parser (with lemma, entity name detection, etc: Stanford CoreNLP integrates all our NLP tools for the English language, including the part-of-speech (stanfordPOS) tagger, the named entity recognizer (NER), the parser, and the coreference resolution system)
+	#ifdef GIA_NLP_CLIENT_SERVER
+		#define GIA_STANFORD_NLP_CLIENT
+	#endif	
 	#define GIA_STANFORD_DEPENDENCY_RELATIONS
 	#ifdef LINUX
 		#define GIA_STANFORD_NLP_EXECUTABLE_NAME "execute-stanfordCoreNLP.sh"
 		#define GIA_STANFORD_NLP_EXECUTABLE_NAME_WITHOUT_INDEPENDENT_POS_TAGGER "execute-stanfordCoreNLPwithoutPT.sh"
+		#ifdef GIA_STANFORD_NLP_CLIENT
+			#define GIA_STANFORD_NLP_CLIENT_EXECUTABLE_NAME "execute-stanfordCoreNLPClient.sh"
+			#define GIA_STANFORD_NLP_CLIENT_EXECUTABLE_NAME_WITHOUT_INDEPENDENT_POS_TAGGER "execute-stanfordCoreNLPClientwithoutPT.sh"
+		#endif
 	#else
 		#define GIA_STANFORD_NLP_EXECUTABLE_NAME "execute-stanfordCoreNLP.bat"
 		#define GIA_STANFORD_NLP_EXECUTABLE_NAME_WITHOUT_INDEPENDENT_POS_TAGGER "execute-stanfordCoreNLPwithoutPT.bat"
+		#ifdef GIA_STANFORD_NLP_CLIENT
+			#define GIA_STANFORD_NLP_CLIENT_EXECUTABLE_NAME "execute-stanfordCoreNLPClient.bat"
+			#define GIA_STANFORD_NLP_CLIENT_EXECUTABLE_NAME_WITHOUT_INDEPENDENT_POS_TAGGER "execute-stanfordCoreNLPClientwithoutPT.bat"
+		#endif
 	#endif
 #endif
 #ifdef GIA_STANFORD_PARSER
+	#ifdef GIA_NLP_CLIENT_SERVER
+		//#define GIA_STANFORD_PARSER_CLIENT
+	#endif
 	#define GIA_STANFORD_DEPENDENCY_RELATIONS
 	#ifdef LINUX
 		#define GIA_STANFORD_PARSER_EXECUTABLE_NAME "execute-stanfordParser.sh"
+		#ifdef GIA_STANFORD_PARSER_CLIENT
+			#define GIA_STANFORD_PARSER_CLIENT_EXECUTABLE_NAME "execute-stanfordParserClient.sh"
+		#endif
 	#else
 		#define GIA_STANFORD_PARSER_EXECUTABLE_NAME "execute-stanfordParser.bat"
+		#ifdef GIA_STANFORD_PARSER_CLIENT
+			#define GIA_STANFORD_PARSER_CLIENT_EXECUTABLE_NAME "execute-stanfordParserClient.bat"
+		#endif
 	#endif
 #endif
 #define GIA_NLP_PARSER_RELEX (0)
