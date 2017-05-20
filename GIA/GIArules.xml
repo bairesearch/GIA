@@ -26,7 +26,7 @@
  * File Name: GIArules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3b1a 19-May-2017
+ * Project Version: 3b1b 19-May-2017
  *
  *******************************************************************************/
 -->
@@ -516,6 +516,23 @@
 				
 			<!-- #ifdef GIA_STANFORD_PARSER_AND_CORENLP_VERSION_2015_04_20_OR_GREATER -->
 			<function name="redistributeStanfordRelationsCase">
+			
+				<!-- #ifdefGIA_STANFORD_PARSER_AND_CORENLP_VERSION_2016_10_31_OR_GREATER -->
+				<example><!--
+				The pie is next to a bike.
+				mwe(next-4, to-5)
+				--></example>
+				<paramDepRel mode="redistribute">
+				<option numberOfRelations="1" />
+				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_mwe" />
+				<option disableRelation="true" REL="1" />
+				<option disableEntity="true" REL="1" REL_ENT="2" />
+				<option useRedistributeSpecialCaseRelationEntityReassignmentConcatonate="true" REL="1" REL_ENT="1" />
+					<option redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID="1" REL="1" REL_ENT="1" swapIndex="1" redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID="1" />
+					<option redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationID="1" REL="1" REL_ENT="1" swapIndex="2" redistributeSpecialCaseRelationEntityIndexReassignmentConcatonateRelationEntityID="2" />
+					<option redistributeSpecialCaseRelationEntityReassignmentConcatonateType="0" REL="1" REL_ENT="1" />
+				</paramDepRel>
+				<!-- #endif -->
 				
 				<example><!--
 				eg1 The ball is in the park. nsubj(park-6, ball-2) + cop(park-6, is-3) + case(park-6, in-4) -> prep_in(ball-2, park-6)	[assign !sameReferenceSet]

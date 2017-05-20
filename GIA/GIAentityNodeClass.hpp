@@ -25,7 +25,7 @@
  * File Name: GIAentityNodeClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3b1a 19-May-2017
+ * Project Version: 3b1b 19-May-2017
  * NB a substance is an instance of an entity, any given entity may contain/comprise/have multiple substances - and substances are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -531,7 +531,7 @@ public:
 
 	#ifdef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
 	#ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
-	bool isAlias = false;
+	bool isAlias;
 	#endif
 	#endif
 	
