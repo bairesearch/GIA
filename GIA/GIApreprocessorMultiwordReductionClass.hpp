@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorMultiwordReductionClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3b2b 21-May-2017
+ * Project Version: 3b2c 21-May-2017
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  *
@@ -36,7 +36,10 @@
 #define HEADER_GIA_PREPROCESSOR_MULTIWORD_REDUCTION_CLASS
 
 #include "GIAglobalDefs.hpp"
-
+#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
+#include "GIAentityNodeClass.hpp"
+#include "GIAsentenceClass.hpp"
+#endif
 
 #ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_FILENAMES_WITH_FULLSTOPS_AND_FLOATS_AND_TIMES
 #define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_CHARACTERS_NUMBER_OF_TYPES (65)	//must sync with NLC_PREPROCESSOR_MATH_NLP_PARSABLE_PHRASE_CHARACTERS_NUMBER_OF_TYPES
@@ -195,31 +198,79 @@ string lrpDummyCollapsedMultiwordPrepositionLemmaNameForNLPArray[GIA_PREPROCESSO
 
 
 
-class GIApreprocessorMultiwordReductionWord
+class GIApreprocessorWord
+{
+public:
+
+	GIApreprocessorWord(void);
+	GIApreprocessorWord(string tagNameNew);
+	~GIApreprocessorWord(void);
+
+	string tagName;
+	
+	#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
+	GIAentityNode* entityReference;
+	GIAfeature* featureReference;
+	#endif
+	
+	GIApreprocessorWord* nextTag;
+};
+
+class GIApreprocessorMultiwordReductionWord: public GIApreprocessorWord
 {
 public:
 
 	GIApreprocessorMultiwordReductionWord(void);
 	~GIApreprocessorMultiwordReductionWord(void);
 
-	string tagName;
 	string tagNameLemma;
 
-	//phrasal verbs only:
+	bool base;	//used to indicate if the current tag in the phrasal verb is the base verb of the phrasal verb (or lemma) - NB the first word in each phrasal verb defined in the database is assumed to be the lemma, but there may be additional instances
+	string grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_MAX_NUM_TENSE_FORMS][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_MAX_NUM_TENSE_FORM_VERSIONS];		//only for lemma	[2: for alternate versions]
+	int grammaticalTenseFormDetected;
+
+	GIApreprocessorMultiwordReductionWord* nextTag;
+};
+
+class GIApreprocessorMultiwordReductionPhrasalVerbWord: public GIApreprocessorMultiwordReductionWord
+{
+public:
+
+	GIApreprocessorMultiwordReductionPhrasalVerbWord(void);
+	~GIApreprocessorMultiwordReductionPhrasalVerbWord(void);
+
 	bool tagSpecialArbitraryName;	//used to indicate if the current tag is sth/swh/sb
 	bool tagSpecialArbitraryNameType;
 	bool optional;	//used to specify if a tag is optional designated by "(...)" in the phrasal verb database
 	//bool primary;	//is the first word in the phrasal verb (assumed to be lemma)?
 	//string primaryPhrasalVerbReplacementString;
 	//string primaryPhrasalVerbReplacementStringNLPonly;
-	GIApreprocessorMultiwordReductionWord* alternateTag;			//used to specify an alternate (but corresponding) tag name designated by "/" in the phrasal verb database
+	GIApreprocessorMultiwordReductionPhrasalVerbWord* alternateTag;			//used to specify an alternate (but corresponding) tag name designated by "/" in the phrasal verb database
+	
+	GIApreprocessorMultiwordReductionPhrasalVerbWord* nextTag;
+};
 
-	bool base;	//used to indicate if the current tag in the phrasal verb is the base verb of the phrasal verb (or lemma) - NB the first word in each phrasal verb defined in the database is assumed to be the lemma, but there may be additional instances
-	string grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_MAX_NUM_TENSE_FORMS][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_MAX_NUM_TENSE_FORM_VERSIONS];		//only for lemma	[2: for alternate versions]
-	int grammaticalTenseFormDetected;
+class GIApreprocessorMultiwordReductionIrregularVerbWord: public GIApreprocessorMultiwordReductionWord
+{
+public:
 
-	//plain text only:
+	GIApreprocessorMultiwordReductionIrregularVerbWord(void);
+	~GIApreprocessorMultiwordReductionIrregularVerbWord(void);
+
+	GIApreprocessorMultiwordReductionIrregularVerbWord* alternateTag;
+	
+	GIApreprocessorMultiwordReductionIrregularVerbWord* nextTag;
+};
+
+class GIApreprocessorMultiwordReductionPlainTextWord: public GIApreprocessorMultiwordReductionWord
+{
+public:
+
+	GIApreprocessorMultiwordReductionPlainTextWord(void);
+	~GIApreprocessorMultiwordReductionPlainTextWord(void);
+	
 	int entityIndex;
+	
 	bool collapsedPhrasalVerbExactDefinedSection;
 	bool collapsedMultiwordWord;
 	int collapsedMultiwordWordType;
@@ -227,20 +278,95 @@ public:
 	bool collapsedMultiwordWordTemp;	//this is reset everytime searchAndReplaceMultiwordWordList is executed to prevent collapsedMultiwordWord from being redetected
 
 	#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
-	GIApreprocessorMultiwordReductionWord* preprocessorUpperLevelWordReference;
+	GIApreprocessorWord* preprocessorUpperLevelWordReference;
 	int preprocessorUpperLevelWordReferenceSize;	//number of words in preprocessor upper level phrase corresponding to preprocessor word
 	#endif
 	
-	GIApreprocessorMultiwordReductionWord* nextTag;				//next tag in phrasal verb/phrasal verb/multiword
-
+	GIApreprocessorMultiwordReductionPlainTextWord* nextTag;
 };
+
+
+
+/*
+//NOT USED:
+class GIApreprocessorMultiwordReductionSentence
+{
+public:
+
+	GIApreprocessorMultiwordReductionSentence(void);
+	~GIApreprocessorMultiwordReductionSentence(void);
+
+	GIApreprocessorMultiwordReductionSentence* nextSentence;
+};
+*/
+
+class GIApreprocessorMultiwordReductionBasicSentence
+{
+public:
+
+	GIApreprocessorMultiwordReductionBasicSentence(void);
+	~GIApreprocessorMultiwordReductionBasicSentence(void);
+
+	GIApreprocessorMultiwordReductionWord* firstTagInSentence;
+	
+	GIApreprocessorMultiwordReductionBasicSentence* nextSentence;
+};
+
+class GIApreprocessorMultiwordReductionPhrasalVerbSentence
+{
+public:
+
+	GIApreprocessorMultiwordReductionPhrasalVerbSentence(void);
+	~GIApreprocessorMultiwordReductionPhrasalVerbSentence(void);
+
+	GIApreprocessorMultiwordReductionPhrasalVerbWord* firstTagInSentence;
+	GIApreprocessorMultiwordReductionPhrasalVerbSentence* alternateSentence;		//used to specifiy an alternate (but corresponding) phrasal verb designated by "or" in the phrasal verb database
+	
+	GIApreprocessorMultiwordReductionPhrasalVerbSentence* nextSentence;
+};
+
+class GIApreprocessorMultiwordReductionIrregularVerbSentence
+{
+public:
+
+	GIApreprocessorMultiwordReductionIrregularVerbSentence(void);
+	~GIApreprocessorMultiwordReductionIrregularVerbSentence(void);
+
+	GIApreprocessorMultiwordReductionIrregularVerbWord* firstTagInSentence;
+	
+	GIApreprocessorMultiwordReductionIrregularVerbSentence* nextSentence;
+};
+
+
+
+class GIApreprocessorMultiwordReductionTagTextCorrespondenceInfo
+{
+public:
+
+	GIApreprocessorMultiwordReductionTagTextCorrespondenceInfo(void);
+	~GIApreprocessorMultiwordReductionTagTextCorrespondenceInfo(void);
+
+	string wordWithLRP;		//LRP generated word name
+	string lemmaWithLRP;		//LRP generated lemma name
+	string wordWithLRPforNLPonly;	//temporary/dummy word name such that NLP can properly parse the text
+
+	int entityIndex;	//used to map the NLP dummy replacement lemma to the official LRP generated lemma (for entity name reversion after NLP)
+	int sentenceIndex;	//used to map the NLP dummy replacement lemma to the official LRP generated lemma (for entity name reversion after NLP)
+
+	GIApreprocessorMultiwordReductionTagTextCorrespondenceInfo* next;
+};
+
 
 class GIApreprocessorMultiwordReductionClassClass
 {
 	#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
-	public: string generateTextFromPreprocessorSentenceWordList(GIApreprocessorMultiwordReductionWord* firstWordInSentence);
+	public: string generateTextFromPreprocessorSentenceWordList(GIApreprocessorWord* firstWordInSentence);
+	public: string generateTextFromVectorWordList(vector<GIApreprocessorWord*>* logicReferenceVariableWordList);
+		public: int calculateLengthOfGeneratedVectorWordListText(vector<GIApreprocessorWord*>* logicReferenceVariableWordList);
 	#endif	
 };
+
+
 
 
 	

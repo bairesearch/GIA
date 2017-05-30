@@ -25,7 +25,7 @@
  * File Name: GIApreprocessor.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3b2b 21-May-2017
+ * Project Version: 3b2c 21-May-2017
  * Requirements: requires plain text file
  * Description: Logical Condition and Reference Set preprocessor
  *
@@ -37,6 +37,7 @@
 
 #include "GIAglobalDefs.hpp"
 #include "GIApreprocessorSentenceClass.hpp"
+#include "GIApreprocessorMultiwordReductionClass.hpp"
 #include "GIApreprocessorMultiwordReduction.hpp"
 #include "GIApreprocessorLogicReference.hpp"
 #include "GIApreprocessorReferenceSet.hpp"
@@ -53,6 +54,7 @@ class GIApreprocessorClass
 {
 	private: XMLparserClassClass XMLparserClass;
 	private: SHAREDvarsClass SHAREDvars;
+	private: GIApreprocessorMultiwordReductionClassClass GIApreprocessorMultiwordReductionClassObject;
 	private: GIApreprocessorMultiwordReductionClass GIApreprocessorMultiwordReduction;
 	private: GIApreprocessorSentenceClassClass GIApreprocessorSentenceClass;
 	private: GIApreprocessorLogicReferenceClass GIApreprocessorLogicReferenceObject;
@@ -62,10 +64,10 @@ class GIApreprocessorClass
 	#ifdef GIA_PREPROCESSOR
 	public: bool preprocessTextForGIA(string* inputTextPlainTXTfileName, const string outputLRPTextPlainTXTFileName, const bool isQuery, GIAtranslatorVariablesClass* translatorVariables);
 		private: bool createPreprocessSentencesForGIA(const string inputFileName, GIApreprocessorSentence* firstGIApreprocessorSentenceInList);
-			private: void preprocessorFillCurrentWord(GIApreprocessorMultiwordReductionWord** currentWordInSentence, const string currentWord, const int entityIndex);
-			private: void copySentenceContentsPreprocessor(GIApreprocessorMultiwordReductionWord* sentenceContents1FirstWord, GIApreprocessorMultiwordReductionWord* sentenceContents2firstWord);
+			private: void preprocessorFillCurrentWord(GIApreprocessorMultiwordReductionPlainTextWord** currentWordInSentence, const string currentWord, const int entityIndex);
+			private: void copySentenceContentsPreprocessor(GIApreprocessorMultiwordReductionPlainTextWord* sentenceContents1FirstWord, GIApreprocessorMultiwordReductionPlainTextWord* sentenceContents2firstWord);
 		#ifdef GIA_PREPROCESSOR_SENTENCE
-		private: bool preprocessSentencesForGIA(const string inputFileName, GIApreprocessorSentence* firstGIApreprocessorSentenceInList, const string outputFileName, const string outputFileNameLRPforNLP);
+		private: bool preprocessSentencesForGIA(GIApreprocessorSentence* firstGIApreprocessorSentenceInList, const string outputFileName, const string outputFileNameLRPforNLP);
 			private: bool generateGIApreprocessorSentence(GIApreprocessorSentence* currentGIApreprocessorSentenceInList, XMLparserTag* firstLogicReferenceClassTag);
 			private: string removePrependingWhiteSpace(string sentenceContents);
 			private: bool generatePreprocessorSentenceNLPparsablePhrases(GIApreprocessorLogicReference* firstLogicReferenceInList, int* sentenceIndex, string* outputTextContentsSentence, string* outputTextContentsSentenceForNLP);
@@ -75,11 +77,11 @@ class GIApreprocessorClass
 				#endif
 				private: void addSentenceToSentenceContentsPreprocessedLogicReferenceVariables(string* sentenceContentsPreprocessedLogicReferenceVariables, string* sentenceContentsPreprocessedLogicReferenceVariablesForNLP, GIApreprocessorSubReferenceSet* referenceSet, int* sentenceIndex, int referenceSetType);
 		#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
-		private: bool updateGIApreprocessorMultiwordReductionTagTextCorrespondenceInfo(const string inputFileName, GIApreprocessorSentence* firstGIApreprocessorSentenceInList, const bool isQuery, const string outputFileName);
+		private: bool updateGIApreprocessorMultiwordReductionTagTextCorrespondenceInfo(GIApreprocessorSentence* firstGIApreprocessorSentenceInList, const bool isQuery, const string outputFileName);
 			private: bool getGIApreprocessorSentence(GIApreprocessorSentence* firstGIApreprocessorSentenceInList, const int sentenceIndexOriginal, GIApreprocessorSentence** GIApreprocessorSentenceFound);
 			private: bool getGIApreprocessorReferenceSet(GIApreprocessorLogicReference* firstGIApreprocessorLogicReferenceInList, const int entityIndexOriginal, GIApreprocessorSubReferenceSet** GIApreprocessorSubReferenceSetFound);
 				private: bool getGIApreprocessorReferenceSet(GIApreprocessorSubReferenceSet* firstGIApreprocessorSubReferenceInList, const int entityIndexOriginal, GIApreprocessorSubReferenceSet** GIApreprocessorSubReferenceSetFound);
-			private: bool replaceEntityTagWithNLPonlyTag(GIApreprocessorMultiwordReductionTagTextCorrespondenceInfo* currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo, GIApreprocessorMultiwordReductionSentence* firstTagInPlainText);	
+			private: bool replaceEntityTagWithNLPonlyTag(GIApreprocessorMultiwordReductionTagTextCorrespondenceInfo* currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo, GIApreprocessorSentence* firstGIApreprocessorSentenceInList);	
 		#endif
 		#endif
 		
@@ -95,7 +97,8 @@ class GIApreprocessorClass
 
 			void connectRelationshipToTarget(GIAentityNode* relationship, GIAentityNode* targetEntity, const bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables);
 			void connectRelationshipToSource(GIAentityNode* relationship, GIAentityNode* sourceEntity, const bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables);
-			GIAentityNode* createNewRelationshipEntity(string relationshipEntityName, const int relationshipEntityType, GIAtranslatorVariablesClass* translatorVariables);
+			GIAentityNode* createNewRelationshipEntity(vector<GIApreprocessorWord*>* logicReferenceContents, const int relationshipEntityType, GIAtranslatorVariablesClass* translatorVariables);
+				GIAentityNode* createNewRelationshipEntity(string relationshipEntityName, const int relationshipEntityType, GIAtranslatorVariablesClass* translatorVariables);
 			GIAentityNode* createNewRelationshipAndConnectToSource(GIAentityNode* sourceEntity, GIApreprocessorLogicReferenceVariable* logicReferenceVariable, const bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables);
 				GIAentityNode* createNewRelationshipAndConnectToSource(GIAentityNode* sourceEntity, GIApreprocessorSubReferenceSet* relationshipReference, GIApreprocessorSubReferenceSet* relationshipObject, const bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables);
 				GIAentityNode* createNewRelationship(GIApreprocessorLogicReferenceVariable* logicReferenceVariable, GIAtranslatorVariablesClass* translatorVariables);

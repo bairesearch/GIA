@@ -25,7 +25,7 @@
  * File Name: GIApreprocessor.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3b2b 21-May-2017
+ * Project Version: 3b2c 21-May-2017
  * Requirements: requires plain text file
  * Description: Logical Condition and Reference Set preprocessor
  *
@@ -74,7 +74,7 @@ bool GIApreprocessorClass::preprocessTextForGIA(string* inputTextPlainTXTfileNam
 	#endif
 	
 	#ifdef GIA_PREPROCESSOR_SENTENCE
-	if(!preprocessSentencesForGIA(outputLRPTextPlainTXTFileNameIntermediaryMultiword, translatorVariables->firstGIApreprocessorSentenceInList, outputLRPTextPlainTXTFileNameIntermediarySentence, outputLRPTextForNLPonlyPlainTXTFileNameIntermediarySentence))
+	if(!preprocessSentencesForGIA(translatorVariables->firstGIApreprocessorSentenceInList, outputLRPTextPlainTXTFileNameIntermediarySentence, outputLRPTextForNLPonlyPlainTXTFileNameIntermediarySentence))
 	{
 		result = false;
 	}
@@ -88,6 +88,11 @@ bool GIApreprocessorClass::preprocessTextForGIA(string* inputTextPlainTXTfileNam
 	
 	*inputTextPlainTXTfileName = outputLRPTextForNLPonlyPlainTXTFileName;	//now perform NLP using NLP specific (dummy) version of LRP output
 
+	//#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_PREMATURE_QUIT
+	cout << "Premature quit for debug" << endl;
+	exit(EXIT_ERROR);
+	//#endif
+	
 	return result;
 }
 #endif
@@ -110,8 +115,8 @@ bool GIApreprocessorClass::createPreprocessSentencesForGIA(const string inputFil
 		currentToken = fileContents[charCount];
 		sentenceContentsOriginal = sentenceContentsOriginal + currentToken;
 	
-		GIApreprocessorMultiwordReductionWord* firstWordInSentence = currentGIApreprocessorSentenceInList->sentenceContentsOriginalFirstWord;
-		GIApreprocessorMultiwordReductionWord* currentWordInSentence = firstWordInSentence;
+		GIApreprocessorMultiwordReductionPlainTextWord* firstWordInSentence = currentGIApreprocessorSentenceInList->sentenceContentsOriginalFirstWord;
+		GIApreprocessorMultiwordReductionPlainTextWord* currentWordInSentence = firstWordInSentence;
 	
 		currentToken = fileContents[charCount];
 		bool punctuationMarkFound = false;
@@ -201,6 +206,7 @@ bool GIApreprocessorClass::createPreprocessSentencesForGIA(const string inputFil
 							{
 								currentGIApreprocessorSentenceInList->sentenceIndexOriginal = sentenceIndex;
 								currentGIApreprocessorSentenceInList->sentenceContentsOriginal = sentenceContentsOriginal;
+								currentGIApreprocessorSentenceInList->next = new GIApreprocessorSentence();
 								currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->next;
 								currentWordInSentence = currentGIApreprocessorSentenceInList->sentenceContentsOriginalFirstWord;
 								sentenceIndex++;
@@ -239,7 +245,6 @@ bool GIApreprocessorClass::createPreprocessSentencesForGIA(const string inputFil
 		copySentenceContentsPreprocessor(currentGIApreprocessorSentenceInList->sentenceContentsOriginalFirstWord, currentGIApreprocessorSentenceInList->sentenceContentsLRPfirstWord);
 		currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->next;
 	}
-		
 		
 	/*OLD SIMPLE;
 	string fileContents = SHAREDvars.getFileContents(inputFileName);	
@@ -285,25 +290,26 @@ bool GIApreprocessorClass::createPreprocessSentencesForGIA(const string inputFil
 	return result;
 }
 
-void GIApreprocessorClass::preprocessorFillCurrentWord(GIApreprocessorMultiwordReductionWord** currentWordInSentence, const string currentWord, const int entityIndex)
+void GIApreprocessorClass::preprocessorFillCurrentWord(GIApreprocessorMultiwordReductionPlainTextWord** currentWordInSentence, const string currentWord, const int entityIndex)
 {
 	(*currentWordInSentence)->tagName = currentWord;
 	(*currentWordInSentence)->entityIndex = entityIndex;
-	(*currentWordInSentence)->nextTag = new GIApreprocessorMultiwordReductionWord();
+	(*currentWordInSentence)->nextTag = new GIApreprocessorMultiwordReductionPlainTextWord();
 	(*currentWordInSentence) = (*currentWordInSentence)->nextTag;
 }
 			
-void GIApreprocessorClass::copySentenceContentsPreprocessor(GIApreprocessorMultiwordReductionWord* sentenceContents1FirstWord, GIApreprocessorMultiwordReductionWord* sentenceContents2firstWord)
+void GIApreprocessorClass::copySentenceContentsPreprocessor(GIApreprocessorMultiwordReductionPlainTextWord* sentenceContents1FirstWord, GIApreprocessorMultiwordReductionPlainTextWord* sentenceContents2firstWord)
 {
-	GIApreprocessorMultiwordReductionWord* sentenceContents1currentWord = sentenceContents1FirstWord;
-	GIApreprocessorMultiwordReductionWord* sentenceContents2currentWord = sentenceContents2firstWord;
+	GIApreprocessorMultiwordReductionPlainTextWord* sentenceContents1currentWord = sentenceContents1FirstWord;
+	GIApreprocessorMultiwordReductionPlainTextWord* sentenceContents2currentWord = sentenceContents2firstWord;
 		
 	while(sentenceContents1currentWord->nextTag != NULL)
 	{
 		sentenceContents2currentWord->tagName = sentenceContents1currentWord->tagName;
 		sentenceContents2currentWord->preprocessorUpperLevelWordReference = sentenceContents1currentWord->preprocessorUpperLevelWordReference;
 		sentenceContents2currentWord->preprocessorUpperLevelWordReferenceSize = sentenceContents1currentWord->preprocessorUpperLevelWordReferenceSize;
-		sentenceContents2currentWord->nextTag = new GIApreprocessorMultiwordReductionWord();
+		sentenceContents2currentWord->entityIndex = sentenceContents1currentWord->entityIndex;
+		sentenceContents2currentWord->nextTag = new GIApreprocessorMultiwordReductionPlainTextWord();
 		sentenceContents2currentWord = sentenceContents2currentWord->nextTag;
 
 		sentenceContents1currentWord = sentenceContents1currentWord->nextTag;
@@ -314,7 +320,7 @@ void GIApreprocessorClass::copySentenceContentsPreprocessor(GIApreprocessorMulti
 
 #ifdef GIA_PREPROCESSOR_SENTENCE
 					
-bool GIApreprocessorClass::preprocessSentencesForGIA(const string inputFileName, GIApreprocessorSentence* firstGIApreprocessorSentenceInList, const string outputFileName, const string outputFileNameLRPforNLP)
+bool GIApreprocessorClass::preprocessSentencesForGIA(GIApreprocessorSentence* firstGIApreprocessorSentenceInList, const string outputFileName, const string outputFileNameLRPforNLP)
 {
 	bool result = true;
 	
@@ -327,7 +333,6 @@ bool GIApreprocessorClass::preprocessSentencesForGIA(const string inputFileName,
 	}
 	#endif
 			
-	string fileContents = SHAREDvars.getFileContents(inputFileName);	
 	int charCount = 0;
 	char currentToken;
 	GIApreprocessorSentence* currentGIApreprocessorSentenceInList = firstGIApreprocessorSentenceInList;
@@ -382,11 +387,6 @@ bool GIApreprocessorClass::preprocessSentencesForGIA(const string inputFileName,
 	}
 	cout << endl;
 	#endif
-
-	#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_PREMATURE_QUIT
-	cout << "Premature quit for debug" << endl;
-	exit(EXIT_ERROR);
-	#endif
 	
 	return result;
 }
@@ -397,27 +397,27 @@ bool GIApreprocessorClass::generateGIApreprocessorSentence(GIApreprocessorSenten
 	bool result = true;
 	
 	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
-	const string* sentenceContentsOriginal = &(currentGIApreprocessorSentenceInList->sentenceContentsLRP);
+	GIApreprocessorWord* sentenceContentsFirstWord = currentGIApreprocessorSentenceInList->sentenceContentsLRPfirstWord;
 	#else
-	const string* sentenceContentsOriginal = &(currentGIApreprocessorSentenceInList->sentenceContentsOriginal);
+	GIApreprocessorWord* sentenceContentsFirstWord = currentGIApreprocessorSentenceInList->sentenceContentsOriginalFirstWord;
 	#endif
 	int sentenceIndexOriginal = currentGIApreprocessorSentenceInList->sentenceIndexOriginal;
 
 
 	#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
-	if(!GIApreprocessorLogicReferenceObject.executeLogicReferencePreprocessor(sentenceContentsOriginal, currentGIApreprocessorSentenceInList, firstLogicReferenceClassTag))
+	if(!GIApreprocessorLogicReferenceObject.executeLogicReferencePreprocessor(sentenceContentsFirstWord, currentGIApreprocessorSentenceInList, firstLogicReferenceClassTag))
 	{
 		result = false;
 	}
 	#else
 	#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET
-	vector<string> logicReferenceVariableWordList;
-	if(!GIApreprocessorReferenceSet.generateSentenceWordList(sentenceContentsOriginal, &logicReferenceVariableWordList))
+	vector<GIApreprocessorWord*> logicReferenceVariableWordList;
+	if(!GIApreprocessorReferenceSet.generateSentenceWordList(sentenceContentsFirstWord, &logicReferenceVariableWordList))
 	{
 		result = false;
 	}
 	GIApreprocessorLogicReference* firstLogicReferenceInList = currentGIApreprocessorSentenceInList->firstLogicReferenceInList;
-	if(!GIApreprocessorReferenceSet.executeReferenceSetPreprocessor(sentenceContentsOriginal, &logicReferenceVariableWordList, firstLogicReferenceInList->logicReferenceVariable, true, 0))
+	if(!GIApreprocessorReferenceSet.executeReferenceSetPreprocessor(sentenceContentsFirstWord, &logicReferenceVariableWordList, firstLogicReferenceInList->logicReferenceVariable, true, 0))
 	{
 		result = false;
 	}
@@ -555,7 +555,7 @@ bool GIApreprocessorClass::generatePreprocessorSentenceNLPparsablePhrases(GIApre
 			#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
 			cout << "addSentenceToSentenceContentsPreprocessedLogicReferenceVariables GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_TYPE_DELIMITER, sentenceIndex = " << *sentenceIndex << endl;
 			#endif
-			if(currentLogicReferenceInList->logicReferenceVariable->referenceSetDelimiter->subReferenceSetContents != "")
+			if(!(currentLogicReferenceInList->logicReferenceVariable->referenceSetDelimiter->subReferenceSetContents).empty())
 			{
 				addSentenceToSentenceContentsPreprocessedLogicReferenceVariables(&sentenceContentsPreprocessedLogicReferenceVariables, &sentenceContentsPreprocessedLogicReferenceVariablesForNLP, currentLogicReferenceInList->logicReferenceVariable->referenceSetDelimiter, sentenceIndex, GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_TYPE_DELIMITER);
 			}
@@ -669,7 +669,7 @@ void GIApreprocessorClass::addSentenceToSentenceContentsPreprocessedLogicReferen
 		#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_RECORD_SAME_REFERENCE_SET_DELIMITERS
 		if(referenceSet->isReferenceSetDelimiter)
 		{
-			referenceSet->subReferenceSetContentsOutputForNLP = string(GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_SUBJECT_FULL) + STRING_SPACE + referenceSet->subReferenceSetContents + STRING_SPACE + GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_OBJECT_FULL + CHAR_FULLSTOP;
+			referenceSet->subReferenceSetContentsOutputForNLP = string(GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_SUBJECT_FULL) + STRING_SPACE + GIApreprocessorMultiwordReductionClassObject.generateTextFromVectorWordList(&(referenceSet->subReferenceSetContents)) + STRING_SPACE + GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_OBJECT_FULL + CHAR_FULLSTOP;
 			#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
 			cout << "referenceSet->subReferenceSetContentsOutputForNLP = " << referenceSet->subReferenceSetContentsOutputForNLP << endl;
 			#endif
@@ -681,7 +681,7 @@ void GIApreprocessorClass::addSentenceToSentenceContentsPreprocessedLogicReferen
 			if(referenceSetType == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_TYPE_SUBJECT)
 			{
 			#endif
-				referenceSet->subReferenceSetContentsOutputForNLP = referenceSet->subReferenceSetContents + STRING_SPACE + GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_FULL + STRING_SPACE + GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_OBJECT_FULL + CHAR_FULLSTOP;
+				referenceSet->subReferenceSetContentsOutputForNLP = GIApreprocessorMultiwordReductionClassObject.generateTextFromVectorWordList(&(referenceSet->subReferenceSetContents)) + STRING_SPACE + GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_FULL + STRING_SPACE + GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_OBJECT_FULL + CHAR_FULLSTOP;
 				#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
 				cout << "referenceSet->subReferenceSetContentsOutputForNLP = " << referenceSet->subReferenceSetContentsOutputForNLP << endl;
 				#endif
@@ -689,7 +689,7 @@ void GIApreprocessorClass::addSentenceToSentenceContentsPreprocessedLogicReferen
 			}
 			else if(referenceSetType == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_TYPE_OBJECT)
 			{
-				referenceSet->subReferenceSetContentsOutputForNLP = string(GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_SUBJECT_FULL) + STRING_SPACE + GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_FULL + STRING_SPACE + referenceSet->subReferenceSetContents + CHAR_FULLSTOP;
+				referenceSet->subReferenceSetContentsOutputForNLP = string(GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_SUBJECT_FULL) + STRING_SPACE + GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_FULL + STRING_SPACE + GIApreprocessorMultiwordReductionClassObject.generateTextFromVectorWordList(&(referenceSet->subReferenceSetContents)) + CHAR_FULLSTOP;
 				#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
 				cout << "referenceSet->subReferenceSetContentsOutputForNLP = " << referenceSet->subReferenceSetContentsOutputForNLP << endl;
 				#endif
@@ -698,11 +698,11 @@ void GIApreprocessorClass::addSentenceToSentenceContentsPreprocessedLogicReferen
 		#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_RECORD_SAME_REFERENCE_SET_DELIMITERS
 		}
 		#endif
-		*sentenceContentsPreprocessedLogicReferenceVariables = *sentenceContentsPreprocessedLogicReferenceVariables + referenceSet->subReferenceSetContents + CHAR_NEWLINE;
+		*sentenceContentsPreprocessedLogicReferenceVariables = *sentenceContentsPreprocessedLogicReferenceVariables + GIApreprocessorMultiwordReductionClassObject.generateTextFromVectorWordList(&(referenceSet->subReferenceSetContents)) + CHAR_NEWLINE;
 		*sentenceContentsPreprocessedLogicReferenceVariablesForNLP = *sentenceContentsPreprocessedLogicReferenceVariablesForNLP + referenceSet->subReferenceSetContentsOutputForNLP + CHAR_NEWLINE;
 		#else
-		*sentenceContentsPreprocessedLogicReferenceVariables = *sentenceContentsPreprocessedLogicReferenceVariables + referenceSet->subReferenceSetContents + CHAR_NEWLINE;
-		*sentenceContentsPreprocessedLogicReferenceVariablesForNLP = *sentenceContentsPreprocessedLogicReferenceVariablesForNLP + referenceSet->subReferenceSetContents + CHAR_NEWLINE;
+		*sentenceContentsPreprocessedLogicReferenceVariables = *sentenceContentsPreprocessedLogicReferenceVariables + GIApreprocessorMultiwordReductionClassObject.generateTextFromVectorWordList(&(referenceSet->subReferenceSetContents)) + CHAR_NEWLINE;
+		*sentenceContentsPreprocessedLogicReferenceVariablesForNLP = *sentenceContentsPreprocessedLogicReferenceVariablesForNLP + GIApreprocessorMultiwordReductionClassObject.generateTextFromVectorWordList(&(referenceSet->subReferenceSetContents)) + CHAR_NEWLINE;
 		#endif
 		
 		referenceSet->sentenceIndex = *sentenceIndex;
@@ -724,7 +724,7 @@ bool GIApreprocessorClass::updateGIApreprocessorMultiwordReductionTagTextCorresp
 	GIApreprocessorSentence* currentGIApreprocessorSentenceInList = firstGIApreprocessorSentenceInList;
 	while(currentGIApreprocessorSentenceInList->next != NULL)
 	{
-		copySentenceContentsPreprocessor(currentGIApreprocessorSentenceInList->sentenceContentsLRPFirstWord, currentGIApreprocessorSentenceInList->sentenceContentsLRPforNLPfirstWord);
+		copySentenceContentsPreprocessor(currentGIApreprocessorSentenceInList->sentenceContentsLRPfirstWord, currentGIApreprocessorSentenceInList->sentenceContentsLRPforNLPfirstWord);
 		currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->next;
 	}
 		
@@ -769,19 +769,16 @@ bool GIApreprocessorClass::updateGIApreprocessorMultiwordReductionTagTextCorresp
 		currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo = currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->next;
 	}
 	
-	
-	//output new file
 	SHAREDvars.setCurrentDirectory(outputFolder);	//save output files to output folder
-	if(!GIApreprocessorMultiwordReduction.writeTagListToFile(firstTagInPlainText, firstGIApreprocessorSentenceInList, outputFileName, "NA", false))	
+	if(!GIApreprocessorMultiwordReduction.writeTagListToFile(firstGIApreprocessorSentenceInList, outputFileName, "NA", false, true))	
 	{
 		/*
-		NB performLRPforNLPoutput is false because wordWithLRPforNLPonly have already been copied to tagName 
+		NB performLRPforNLPoutputOnly is true because wordWithLRPforNLPonly has already been copied to tagName 
 		(and wordWithLRPforNLPonly info cannot be regenerated as currentTagInPlainText does not contain necessary collapsedPhrasalVerbExactDefinedSection/collapsedMultiwordWord info, given that they have been regenerated isolated from the parseTextFileAndReduceLanguage:searchAndReplacePhrasalVerbs/searchAndReplaceMultiwordPrepositions functions)
 		*/
 		result = false;
 	}
 	SHAREDvars.setCurrentDirectory(inputFolder);	//set current directory back to the original inputFolder (this is required for both NLC_RECONCILE_CLASS_DEFINITION_LIST_FUNCTION_DECLARATION_ARGUMENTS and GIA, even if the GIA's inputFolder is changed to outputFolder as it should be in the case of NLC preprocessed input)
-	
 	
 	return result;
 }	
@@ -886,7 +883,7 @@ bool GIApreprocessorClass::replaceEntityTagWithNLPonlyTag(GIApreprocessorMultiwo
 	{
 		if(currentGIApreprocessorSentenceInList->sentenceIndexOriginal == currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->sentenceIndex)
 		{
-			GIApreprocessorMultiwordReductionWord* currentTagInPlainTextSentence = currentGIApreprocessorSentenceInList->sentenceContentsLRPforNLPfirstWord;
+			GIApreprocessorMultiwordReductionPlainTextWord* currentTagInPlainTextSentence = currentGIApreprocessorSentenceInList->sentenceContentsLRPforNLPfirstWord;
 			while(currentTagInPlainTextSentence->nextTag != NULL)
 			{
 				if(currentTagInPlainTextSentence->entityIndex == currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->entityIndex)
@@ -901,7 +898,7 @@ bool GIApreprocessorClass::replaceEntityTagWithNLPonlyTag(GIApreprocessorMultiwo
 				currentTagInPlainTextSentence = currentTagInPlainTextSentence->nextTag;
 			}
 		}
-		currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->nextSentence;
+		currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->next;
 	}
 	
 	return result;	
@@ -974,7 +971,7 @@ bool GIApreprocessorClass::connectPreprocessorSentenceReferenceSetEntitiesToLogi
 			#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_OUTPUT_LOGIC_REFERENCE_SETS_FOR_HIGH_LEVEL_SEMANTIC_PARSE
 			if(currentLogicReferenceInList->hasSubLogicReferenceArray)
 			{
-				logicReferenceEntity = createNewRelationshipEntity(currentLogicReferenceInList->logicReferenceContents, GIA_ENTITY_TYPE_LOGIC_REFERENCE, translatorVariables);	//generate artificial conjunction entity
+				logicReferenceEntity = createNewRelationshipEntity(&(currentLogicReferenceInList->logicReferenceContents), GIA_ENTITY_TYPE_LOGIC_REFERENCE, translatorVariables);	//generate artificial conjunction entity
 			}
 			else
 			{
@@ -997,16 +994,16 @@ bool GIApreprocessorClass::connectPreprocessorSentenceReferenceSetEntitiesToLogi
 				}
 				else
 				{
-					logicReferenceEntity = createNewRelationshipEntity(currentLogicReferenceInList->logicReferenceContents, GIA_ENTITY_TYPE_LOGIC_REFERENCE, translatorVariables);
+					logicReferenceEntity = createNewRelationshipEntity(&(currentLogicReferenceInList->logicReferenceContents), GIA_ENTITY_TYPE_LOGIC_REFERENCE, translatorVariables);
 				}			
 				#endif
 			}
 			#else
-			logicReferenceEntity = createNewRelationshipEntity(currentLogicReferenceInList->logicReferenceContents, GIA_ENTITY_TYPE_LOGIC_REFERENCE, translatorVariables);	//OLD: currentLogicReferenceInList->logicReferenceVariable->logicReferenceVariableName
+			logicReferenceEntity = createNewRelationshipEntity(&(currentLogicReferenceInList->logicReferenceContents), GIA_ENTITY_TYPE_LOGIC_REFERENCE, translatorVariables);	//OLD: currentLogicReferenceInList->logicReferenceVariable->logicReferenceVariableName
 			#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
 			/*
 			cout << "logicReferenceEntity = " << logicReferenceEntity->entityName << endl;
-			cout << "currentLogicReferenceInList->logicReferenceContents = " << currentLogicReferenceInList->logicReferenceContents << endl;
+			cout << "currentLogicReferenceInList->logicReferenceContents = " << generateTextFromVectorWordList(currentLogicReferenceInList->logicReferenceContents) << endl;
 			cout << "logicReferenceEntity->sentenceIndexTemp = " << logicReferenceEntity->sentenceIndexTemp << endl;
 			*/
 			#endif
@@ -1553,6 +1550,22 @@ void GIApreprocessorClass::connectRelationshipToSource(GIAentityNode* relationsh
 	GIAtranslatorOperations.connectEntities(relationship, sourceEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_RELATIONSHIP_SUBJECT, connectionTypeSourceToRelationship, sameReferenceSet, translatorVariables);
 }
 
+GIAentityNode* GIApreprocessorClass::createNewRelationshipEntity(vector<GIApreprocessorWord*>* logicReferenceContents, const int relationshipEntityType, GIAtranslatorVariablesClass* translatorVariables)
+{
+	GIAentityNode* relationshipEntity = NULL;
+	if(logicReferenceContents->size() == 1)
+	{
+		relationshipEntity = createNewRelationshipEntity(GIApreprocessorMultiwordReductionClassObject.generateTextFromVectorWordList(logicReferenceContents), relationshipEntityType, translatorVariables);
+	}
+	else
+	{
+		cout << "GIApreprocessorClass::createNewRelationshipEntity{} error: (logicReferenceContents->size() != 1)" << endl;
+		exit(EXIT_ERROR);
+	}
+
+	return relationshipEntity;
+}
+
 GIAentityNode* GIApreprocessorClass::createNewRelationshipEntity(string relationshipEntityName, const int relationshipEntityType, GIAtranslatorVariablesClass* translatorVariables)
 {
 	/*
@@ -1691,7 +1704,7 @@ bool GIApreprocessorClass::findPrimaryEntityAndReconcileSubReferenceSets(GIAenti
 	{
 		#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
 		cout << "currentSubReferenceSetInList->sentenceIndex = " << currentSubReferenceSetInList->sentenceIndex << endl;
-		cout << "currentSubReferenceSetInList->subReferenceSetContents = " << currentSubReferenceSetInList->subReferenceSetContents << endl;
+		cout << "currentSubReferenceSetInList->subReferenceSetContents = " << generateTextFromVectorWordList(currentSubReferenceSetInList->subReferenceSetContents) << endl;
 		#endif
 		
 		#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_SUB_REFERENCE_SETS
@@ -2178,16 +2191,8 @@ bool GIApreprocessorClass::getRelationshipNameAndType(GIApreprocessorSubReferenc
 		NB cold/blue/red are adjectives
 	*/
 	
-	string delimiterContents = relationshipReference->subReferenceSetContents;	//referenceSetDelimiterName
-	int delimiterContentsIndexOfLastSpace = delimiterContents.rfind(CHAR_SPACE);	//getLastWord in delimiterContents
-	if(delimiterContentsIndexOfLastSpace != CPP_STRING_FIND_RESULT_FAIL_VALUE)
-	{
-		*relationshipName = delimiterContents.substr(delimiterContentsIndexOfLastSpace+1, delimiterContents.length()-delimiterContentsIndexOfLastSpace);
-	}
-	else
-	{
-		*relationshipName = delimiterContents;
-	}
+
+	*relationshipName = ((relationshipReference->subReferenceSetContents).back())->tagName;
 	#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
 	cout << "relationshipName = " << *relationshipName << endl;
 	cout << "relationshipReference->delimiterType = " << relationshipReference->delimiterType << endl;
@@ -2213,41 +2218,24 @@ bool GIApreprocessorClass::getRelationshipNameAndType(GIApreprocessorSubReferenc
 		bool hasSecondWordAfterAuxiliary = false;
 		if(relationshipObject != NULL)
 		{
-			if(relationshipObject->subReferenceSetContents != "")
+			if(!(relationshipObject->subReferenceSetContents).empty())
 			{
 				#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
-				//cout << "relationshipObject->subReferenceSetContents = " << relationshipObject->subReferenceSetContents << endl;
+				//cout << "relationshipObject->subReferenceSetContents = " << generateTextFromVectorWordList(relationshipObject->subReferenceSetContents) << endl;
 				#endif
 				
-				string referenceSetObjectContents = relationshipObject->subReferenceSetContents;
-				int referenceSetObjectContentsIndexOfFirstSpace = referenceSetObjectContents.find(CHAR_SPACE);	
-				if(referenceSetObjectContentsIndexOfFirstSpace != CPP_STRING_FIND_RESULT_FAIL_VALUE)
+				hasFirstWordAfterAuxiliary = true;
+				firstWordAfterAuxiliary = ((relationshipObject->subReferenceSetContents)[0])->tagName;
+				#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
+				cout << "firstWordAfterAuxiliary = " << firstWordAfterAuxiliary << endl;
+				#endif					
+				if((relationshipObject->subReferenceSetContents).size() >= 2)
 				{
-					firstWordAfterAuxiliary = referenceSetObjectContents.substr(referenceSetObjectContentsIndexOfFirstSpace);
+					hasSecondWordAfterAuxiliary = true;
+					secondWordAfterAuxiliary = ((relationshipObject->subReferenceSetContents)[1])->tagName;
 					#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
-					cout << "firstWordAfterAuxiliary = " << firstWordAfterAuxiliary << endl;
+					cout << "secondWordAfterAuxiliary = " << secondWordAfterAuxiliary << endl;
 					#endif
-					hasFirstWordAfterAuxiliary = true;
-
-					int referenceSetObjectContentsIndexOfSecondSpace = referenceSetObjectContents.find(CHAR_SPACE, referenceSetObjectContentsIndexOfFirstSpace);	
-					if(referenceSetObjectContentsIndexOfSecondSpace != CPP_STRING_FIND_RESULT_FAIL_VALUE)
-					{
-						secondWordAfterAuxiliary = referenceSetObjectContents.substr(referenceSetObjectContentsIndexOfFirstSpace+1, referenceSetObjectContentsIndexOfSecondSpace-referenceSetObjectContentsIndexOfFirstSpace-1);
-						#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
-						cout << "secondWordAfterAuxiliary = " << secondWordAfterAuxiliary << endl;
-						#endif
-						hasSecondWordAfterAuxiliary = true;
-					}
-					else
-					{
-						secondWordAfterAuxiliary = referenceSetObjectContents.substr(referenceSetObjectContentsIndexOfFirstSpace+1);
-						hasSecondWordAfterAuxiliary = true;
-					}
-				}
-				else
-				{
-					firstWordAfterAuxiliary = referenceSetObjectContents;
-					hasFirstWordAfterAuxiliary = true;
 				}
 			}
 		}
@@ -2294,7 +2282,7 @@ bool GIApreprocessorClass::getRelationshipNameAndType(GIApreprocessorSubReferenc
 	cout << "relationshipEntityType = " << *relationshipEntityType << endl;
 	#endif
 	
-	if(delimiterContents == "")
+	if((relationshipReference->subReferenceSetContents).empty())
 	{
 		result = false;
 	}

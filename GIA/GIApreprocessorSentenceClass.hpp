@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorSentenceClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3b2b 21-May-2017
+ * Project Version: 3b2c 21-May-2017
  * Requirements: requires plain text file
  * Description: Logical Condition and Reference Set preprocessor
  *
@@ -142,7 +142,7 @@ public:
 	~GIApreprocessorSubReferenceSet(void);
 
 	int sentenceIndex;		//if GIA_PREPROCESSOR_ASSIGN_UNIQUE_SENTENCE_INDICES_FOR_LOGIC_REFERENCE_VARIABLES this is a temporary sentence index
-	string subReferenceSetContents;
+	vector<GIApreprocessorWord*> subReferenceSetContents;
 	#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT
 	string subReferenceSetContentsOutputForNLP;
 	#endif
@@ -173,7 +173,7 @@ public:
 	int sentenceIndex;
 	#endif
 	
-	string logicReferenceVariableContents;
+	vector<GIApreprocessorWord*> logicReferenceVariableContents;
 	int logicReferenceVariableNameIndex;
 	string logicReferenceVariableName;	//replacement variable name for logical condition variable
 	
@@ -194,7 +194,7 @@ public:
 	GIApreprocessorLogicReference(void);
 	~GIApreprocessorLogicReference(void);
 
-	string logicReferenceContents;	   //similiar if not identical to GIApreprocessorLogicReferenceTypes[logicReferenceClassType];
+	vector<GIApreprocessorWord*> logicReferenceContents;	   //similiar if not identical to GIApreprocessorLogicReferenceTypes[logicReferenceClassType];
 	int logicReferenceClass;
 	string logicReferenceClassType;
 	GIApreprocessorLogicReferenceVariable* logicReferenceVariable;
@@ -227,9 +227,9 @@ public:
 	int sentenceIndexOriginal;
 	string sentenceContentsOriginal;
 	//#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
-	GIApreprocessorMultiwordReductionWord* sentenceContentsOriginalFirstWord;
-	GIApreprocessorMultiwordReductionWord* sentenceContentsLRPfirstWord;
-	GIApreprocessorMultiwordReductionWord* sentenceContentsLRPforNLPfirstWord;
+	GIApreprocessorMultiwordReductionPlainTextWord* sentenceContentsOriginalFirstWord;
+	GIApreprocessorMultiwordReductionPlainTextWord* sentenceContentsLRPfirstWord;
+	GIApreprocessorMultiwordReductionPlainTextWord* sentenceContentsLRPforNLPfirstWord;
 	//#endif
 	
 	bool hasLogicReference;	//if false, then firstLogicReferenceInList will only have a single GIApreprocessorLogicReference
@@ -242,7 +242,6 @@ public:
 	
 	GIApreprocessorSentence* next;
 };
-
 
 class GIApreprocessorSentenceClassClass
 {

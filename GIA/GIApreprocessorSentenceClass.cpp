@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorSentenceClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3b2b 21-May-2017
+ * Project Version: 3b2c 21-May-2017
  * Requirements: requires plain text file
  * Description: Logical Condition and Reference Set preprocessor
  *
@@ -40,7 +40,7 @@
 GIApreprocessorSubReferenceSet::GIApreprocessorSubReferenceSet(void)
 {
 	sentenceIndex = INT_DEFAULT_VALUE;
-	subReferenceSetContents = "";
+	//subReferenceSetContents = "";
 	#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT
 	subReferenceSetContentsOutputForNLP = "";
 	#endif
@@ -69,7 +69,7 @@ GIApreprocessorLogicReferenceVariable::GIApreprocessorLogicReferenceVariable(voi
 	sentenceIndex = INT_DEFAULT_VALUE;
 	#endif
 	
-	logicReferenceVariableContents = "";
+	//logicReferenceVariableContents = "";
 	logicReferenceVariableNameIndex = INT_DEFAULT_VALUE;
 	logicReferenceVariableName = "";
 	
@@ -89,7 +89,7 @@ GIApreprocessorLogicReferenceVariable::~GIApreprocessorLogicReferenceVariable(vo
 
 GIApreprocessorLogicReference::GIApreprocessorLogicReference(void)
 {
-	logicReferenceContents = "";
+	//logicReferenceContents = "";
 	logicReferenceClass = GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_UNDEFINED;		//if necessary (ie is set to GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_UNDEFINED_TYPE_UNKNOWN) this will be replaced with GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_CONJUNCTION_TYPE_and/GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_CONJUNCTION_TYPE_or upon the detection of a subsequent and/or
 	logicReferenceClassType = GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_UNDEFINED_TYPE_unknown;
 	logicReferenceVariable = new GIApreprocessorLogicReferenceVariable();
@@ -121,9 +121,9 @@ GIApreprocessorSentence::GIApreprocessorSentence(void)
 	sentenceIndexOriginal = 0;	
 	sentenceContentsOriginal = "";
 	//#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
-	sentenceContentsOriginalFirstWord = new GIApreprocessorMultiwordReductionWord();
-	sentenceContentsLRPfirstWord = new GIApreprocessorMultiwordReductionWord();
-	sentenceContentsLRPforNLPfirstWord = new GIApreprocessorMultiwordReductionWord();
+	sentenceContentsOriginalFirstWord = new GIApreprocessorMultiwordReductionPlainTextWord();
+	sentenceContentsLRPfirstWord = new GIApreprocessorMultiwordReductionPlainTextWord();
+	sentenceContentsLRPforNLPfirstWord = new GIApreprocessorMultiwordReductionPlainTextWord();
 	//#endif
 	
 	hasLogicReference = false;

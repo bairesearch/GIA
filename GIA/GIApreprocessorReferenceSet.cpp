@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorReferenceSet.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3b2b 21-May-2017
+ * Project Version: 3b2c 21-May-2017
  * Requirements: requires plain text file
  * Description: Reference Set preprocessor
  *
@@ -56,117 +56,23 @@ Past participles can often be found in participle phrases. A participle phrase a
 NB there is no easy rcmod detection in these cases
 */
 
-//preconditions: must conform to wordIndex identification in GIApreprocessorMultiwordReductionClass::loadPlainTextFile (which is the same as that used in NLP). See also GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor
-bool GIApreprocessorReferenceSetClass::generateSentenceWordList(const string* sentenceContents, vector<string>* logicReferenceVariableWordList)
+bool GIApreprocessorReferenceSetClass::generateSentenceWordList(GIApreprocessorMultiwordReductionWord* sentenceContentsFirstWord, vector<GIApreprocessorWord*>* logicReferenceVariableWordList)
 {
 	bool result = true;
 	
-	int wordIndexSentence = 0;
-	string currentWord = "";
-	string currentContents = "";
-	bool whiteSpace = false;
-		
-	for(int i=0; i<sentenceContents->length(); i++)
+	GIApreprocessorMultiwordReductionWord* currentWordInSentence = sentenceContentsFirstWord;
+	while(currentWordInSentence->nextTag != NULL)
 	{
-		char currentChar = (*sentenceContents)[i];
-		currentContents = currentContents + currentChar;
-		cout << currentChar;
-		
-		bool whiteSpaceFound = false;
-		bool punctuationMarkFound = false;
-		if(SHAREDvars.charInCharArray(currentChar, nlpWhitespaceCharacterArray, GIA_NLP_NUMBER_OF_WHITESPACE_CHARACTERS))
-		{
-			whiteSpaceFound = true;
-			if(!whiteSpace)
-			{
-				logicReferenceVariableWordList->push_back(currentWord);
-				currentWord = "";
-				wordIndexSentence++;
-			}
-			else
-			{
-				//ignore consecutive white space
-				//skip (do not parse) multiple white space/punctuation characters (eg ". "/".."/"  "/" .")
-				#ifndef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_REMOVE_DOUBLE_WHITE_SPACE
-				currentWord = currentWord + currentChar;
-				#endif
-			}
-		}
-		else if(SHAREDvars.charInCharArray(currentChar, nlpPunctionMarkCharacterEndOfSentenceArray, GIA_NLP_NUMBER_OF_PUNCTUATION_MARK_CHARACTERS_END_OF_SENTENCE))
-		{
-			#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_FILENAMES_WITH_FULLSTOPS_AND_FLOATS_AND_TIMES
-			if(GIApreprocessorMultiwordReduction.isIntrawordPunctuationMark(i, sentenceContents))
-			{
-				currentWord = currentWord + currentChar;
-			}
-			else
-			{
-			#endif	
-				#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
-				cout << "GIApreprocessorReferenceSetClass::generateSentenceWordList{}: currentWord = " << currentWord << endl;
-				#endif
-				if(currentContents == "")
-				{
-					cout << "GIApreprocessor::generateSentenceWordList{} error: GIApreprocessorMultiwordReduction.isIntrawordPunctuationMark(currentChar, &sentenceContents) && (currentContents == "")" << endl;
-					exit(EXIT_ERROR);	
-				}
-				else
-				{
-					logicReferenceVariableWordList->push_back(currentWord);
-				}
+		logicReferenceVariableWordList->push_back(currentWordInSentence);
 
-				/* 
-				//not required because finished parsing sentence;
-				punctuationMarkFound = true;
-				currentWord = "";
-				wordIndexSentence++;
-				*/
-			#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_FILENAMES_WITH_FULLSTOPS_AND_FLOATS_AND_TIMES
-			}
-			#endif
-		}
-		else if(SHAREDvars.charInCharArray(currentChar, nlpPunctionMarkCharacterArray, GIA_NLP_NUMBER_OF_PUNCTUATION_MARK_CHARACTERS))
-		{
-			//CHAR_SEMICOLON / CHAR_COLON:
-
-			#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_FILENAMES_WITH_FULLSTOPS_AND_FLOATS_AND_TIMES
-			if(GIApreprocessorMultiwordReduction.isIntrawordPunctuationMark(i, sentenceContents))
-			{
-				currentWord = currentWord + currentChar;
-			}
-			else
-			{
-			#endif
-				logicReferenceVariableWordList->push_back(currentWord);
-				currentWord = "";
-				wordIndexSentence++;
-				punctuationMarkFound = true;
-			#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_FILENAMES_WITH_FULLSTOPS_AND_FLOATS_AND_TIMES
-			}
-			#endif	
-		}
-		else
-		{
-			currentWord = currentWord + currentChar;
-		}
-		
-		if(whiteSpaceFound || punctuationMarkFound)
-		{
-			whiteSpace = true;
-		}
-		else
-		{
-			whiteSpace = false;
-		}
+		currentWordInSentence = currentWordInSentence->nextTag;
 	}
-		
-
 	
 	#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
 	cout << "GIApreprocessorReferenceSetClass::generateSentenceWordList{}: " << endl;
 	for(int i=0; i<logicReferenceVariableWordList->size(); i++)
 	{
-		cout << (*logicReferenceVariableWordList)[i] << STRING_SPACE;
+		cout << ((*logicReferenceVariableWordList)[i])->tagName << STRING_SPACE;
 	}
 	cout << endl;
 	#endif
@@ -176,7 +82,7 @@ bool GIApreprocessorReferenceSetClass::generateSentenceWordList(const string* se
 
 
 
-bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const string* logicReferenceVariableContents, vector<string>* logicReferenceVariableWordList, GIApreprocessorLogicReferenceVariable* logicReferenceVariable, const bool expectToFindSubjectAuxObjectLogicReferenceVariable, const int wordIndexSentence)
+bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(vector<GIApreprocessorWord*>* logicReferenceVariableWordList, GIApreprocessorLogicReferenceVariable* logicReferenceVariable, const bool expectToFindSubjectAuxObjectLogicReferenceVariable, const int wordIndexSentence)
 {
 	bool result = true;
 
@@ -218,7 +124,7 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const str
 	int wordIndex = 0;
 	for(int wordIndex = 0; wordIndex<logicReferenceVariableWordList->size(); wordIndex++)
 	{
-		string currentWord = (*logicReferenceVariableWordList)[wordIndex];
+		string currentWord = ((*logicReferenceVariableWordList)[wordIndex])->tagName;
 		currentWord = SHAREDvars.convertStringToLowerCase(&currentWord);	//required for imperatives where the action is defined as the first word in the sentence 
 		int wordIndexOfHypotheticalPreceedingThatWhich = wordIndex-1;
 					
@@ -253,8 +159,8 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const str
 				if(wordIndex-1 >= 0)
 				{
 					//eg the [det] walk [verb]
-					if(SHAREDvars.textInTextArray((*logicReferenceVariableWordList)[wordIndex-1], relationDeterminerArray, GRAMMATICAL_DETERMINER_ARRAY_NUMBER_OF_TYPES) || 
-					SHAREDvars.textInTextArray((*logicReferenceVariableWordList)[wordIndex-1], entityPronounPossessiveArray, ENTITY_PRONOUN_POSSESSIVE_ARRAY_NUMBER_OF_TYPES))
+					if(SHAREDvars.textInTextArray(((*logicReferenceVariableWordList)[wordIndex-1])->tagName, relationDeterminerArray, GRAMMATICAL_DETERMINER_ARRAY_NUMBER_OF_TYPES) || 
+					SHAREDvars.textInTextArray(((*logicReferenceVariableWordList)[wordIndex-1])->tagName, entityPronounPossessiveArray, ENTITY_PRONOUN_POSSESSIVE_ARRAY_NUMBER_OF_TYPES))
 					{
 						referenceSetDelimiterVerbPreceededByDeterminerOrPossessivePronoun = true;
 					}
@@ -262,10 +168,10 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const str
 				if(wordIndex-2 >= 0)
 				{
 					//eg the [det] wonderful [adj] walk [verb]
-					if(SHAREDvars.textInTextArray((*logicReferenceVariableWordList)[wordIndex-2], relationDeterminerArray, GRAMMATICAL_DETERMINER_ARRAY_NUMBER_OF_TYPES) || 
-					SHAREDvars.textInTextArray((*logicReferenceVariableWordList)[wordIndex-2], entityPronounPossessiveArray, ENTITY_PRONOUN_POSSESSIVE_ARRAY_NUMBER_OF_TYPES))
+					if(SHAREDvars.textInTextArray(((*logicReferenceVariableWordList)[wordIndex-2])->tagName, relationDeterminerArray, GRAMMATICAL_DETERMINER_ARRAY_NUMBER_OF_TYPES) || 
+					SHAREDvars.textInTextArray(((*logicReferenceVariableWordList)[wordIndex-2])->tagName, entityPronounPossessiveArray, ENTITY_PRONOUN_POSSESSIVE_ARRAY_NUMBER_OF_TYPES))
 					{
-						if(GIApreprocessorMultiwordReduction.determineIsAdjective((*logicReferenceVariableWordList)[wordIndex-1]))
+						if(GIApreprocessorMultiwordReduction.determineIsAdjective(((*logicReferenceVariableWordList)[wordIndex-1])->tagName))
 						{
 							referenceSetDelimiterVerbPreceededByDeterminerOrPossessivePronoun = true;
 						}
@@ -274,12 +180,12 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const str
 				if(wordIndex-3 >= 0)
 				{
 					//eg the [det] very [adv] wonderful [adj] walk [verb]
-					if(SHAREDvars.textInTextArray((*logicReferenceVariableWordList)[wordIndex-3], relationDeterminerArray, GRAMMATICAL_DETERMINER_ARRAY_NUMBER_OF_TYPES) || 
-					SHAREDvars.textInTextArray((*logicReferenceVariableWordList)[wordIndex-3], entityPronounPossessiveArray, ENTITY_PRONOUN_POSSESSIVE_ARRAY_NUMBER_OF_TYPES))
+					if(SHAREDvars.textInTextArray(((*logicReferenceVariableWordList)[wordIndex-3])->tagName, relationDeterminerArray, GRAMMATICAL_DETERMINER_ARRAY_NUMBER_OF_TYPES) || 
+					SHAREDvars.textInTextArray(((*logicReferenceVariableWordList)[wordIndex-3])->tagName, entityPronounPossessiveArray, ENTITY_PRONOUN_POSSESSIVE_ARRAY_NUMBER_OF_TYPES))
 					{
-						if(GIApreprocessorMultiwordReduction.determineIsAdverb((*logicReferenceVariableWordList)[wordIndex-2]))
+						if(GIApreprocessorMultiwordReduction.determineIsAdverb(((*logicReferenceVariableWordList)[wordIndex-2])->tagName))
 						{
-							if(GIApreprocessorMultiwordReduction.determineIsAdjective((*logicReferenceVariableWordList)[wordIndex-1]))
+							if(GIApreprocessorMultiwordReduction.determineIsAdjective(((*logicReferenceVariableWordList)[wordIndex-1])->tagName))
 							{
 								referenceSetDelimiterVerbPreceededByDeterminerOrPossessivePronoun = true;
 							}
@@ -295,7 +201,7 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const str
 
 					if(wordIndex+1 < logicReferenceVariableWordList->size())
 					{
-						if(GIApreprocessorMultiwordReduction.determineIsAdjective((*logicReferenceVariableWordList)[wordIndex+1]))
+						if(GIApreprocessorMultiwordReduction.determineIsAdjective(((*logicReferenceVariableWordList)[wordIndex+1])->tagName))
 						{
 							//eg Tom rides fast
 							currentDelimiterSpecialCase = GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_SPECIAL_CASE_OBJECT_REFERS_TO_PREVIOUS_DELIMITER_VERB;
@@ -306,9 +212,9 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const str
 					}
 					if(wordIndex+2 < logicReferenceVariableWordList->size())
 					{
-						if(GIApreprocessorMultiwordReduction.determineIsAdverb((*logicReferenceVariableWordList)[wordIndex+1]))
+						if(GIApreprocessorMultiwordReduction.determineIsAdverb(((*logicReferenceVariableWordList)[wordIndex+1])->tagName))
 						{
-							if(GIApreprocessorMultiwordReduction.determineIsAdjective((*logicReferenceVariableWordList)[wordIndex+2]))
+							if(GIApreprocessorMultiwordReduction.determineIsAdjective(((*logicReferenceVariableWordList)[wordIndex+2])->tagName))
 							{
 								//eg Tom rides very fast
 								currentDelimiterSpecialCase = GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_SPECIAL_CASE_OBJECT_REFERS_TO_PREVIOUS_DELIMITER_VERB;
@@ -342,7 +248,7 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const str
 			{
 				if(wordIndex-1 >= 0)
 				{
-					if(SHAREDvars.textInTextArray((*logicReferenceVariableWordList)[wordIndex-1], entityModalAuxiliaryArray, ENTITY_MODALAUXILIARY_NUMBER_OF_TYPES))
+					if(SHAREDvars.textInTextArray(((*logicReferenceVariableWordList)[wordIndex-1])->tagName, entityModalAuxiliaryArray, ENTITY_MODALAUXILIARY_NUMBER_OF_TYPES))
 					{	
 						previousWordIsModalAuxiliary = true;
 						wordIndexOfHypotheticalPreceedingThatWhich--;
@@ -354,7 +260,7 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const str
 			{
 				if(wordIndex-1 >= 0)
 				{
-					if(detectAuxiliary((*logicReferenceVariableWordList)[wordIndex-1]))
+					if(detectAuxiliary(((*logicReferenceVariableWordList)[wordIndex-1])->tagName))
 					{	
 						//eg that is riding
 						previousWordIsModalAuxiliary = true;
@@ -363,14 +269,14 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const str
 						#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
 						cout << "previousWordIsModalAuxiliary" << endl;
 						cout << "currentWord = " << currentWord << endl;
-						cout << "previousWord = " << (*logicReferenceVariableWordList)[wordIndex-1] << endl;
+						cout << "previousWord = " << ((*logicReferenceVariableWordList)[wordIndex-1])->tagName << endl;
 						cout << "currentDelimiterType = " << currentDelimiterType << endl;
 						cout << "wordIndexOfHypotheticalPreceedingThatWhich = " << wordIndexOfHypotheticalPreceedingThatWhich << endl;
 						#endif
 						
 						if(wordIndex-2 >= 0)
 						{
-							if(SHAREDvars.textInTextArray((*logicReferenceVariableWordList)[wordIndex-2], entityModalAuxiliaryArray, ENTITY_MODALAUXILIARY_NUMBER_OF_TYPES))
+							if(SHAREDvars.textInTextArray(((*logicReferenceVariableWordList)[wordIndex-2])->tagName, entityModalAuxiliaryArray, ENTITY_MODALAUXILIARY_NUMBER_OF_TYPES))
 							{
 								//eg that will be riding
 								wordIndexOfHypotheticalPreceedingThatWhich--;
@@ -381,11 +287,11 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const str
 					{
 						if((currentDelimiterType == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_PREPOSITION))
 						{
-							if(GIApreprocessorMultiwordReduction.determineIsAdverb((*logicReferenceVariableWordList)[wordIndex-1]))
+							if(GIApreprocessorMultiwordReduction.determineIsAdverb(((*logicReferenceVariableWordList)[wordIndex-1])->tagName))
 							{
 								if(wordIndex-2 >= 0)
 								{
-									if(detectAuxiliary((*logicReferenceVariableWordList)[wordIndex-2]))
+									if(detectAuxiliary(((*logicReferenceVariableWordList)[wordIndex-2])->tagName))
 									{
 										//eg is very near / is not near
 										previousWordIsModalAuxiliary = true;
@@ -401,7 +307,7 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const str
 			bool currentWordIsReferenceSetDelimiterPreceededByThatWhich = false;
 			if(wordIndexOfHypotheticalPreceedingThatWhich >= 0)
 			{
-				if(SHAREDvars.textInTextArray((*logicReferenceVariableWordList)[wordIndexOfHypotheticalPreceedingThatWhich], preprocessorRcmodSameReferenceSetDelimiter, GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_RCMOD_SAME_REFERENCE_SET_DELIMITER_NUMBER_OF_TYPES))
+				if(SHAREDvars.textInTextArray(((*logicReferenceVariableWordList)[wordIndexOfHypotheticalPreceedingThatWhich])->tagName, preprocessorRcmodSameReferenceSetDelimiter, GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_RCMOD_SAME_REFERENCE_SET_DELIMITER_NUMBER_OF_TYPES))
 				{
 					currentWordIsReferenceSetDelimiterPreceededByThatWhich = true;
 					#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
@@ -424,7 +330,6 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const str
 				if(!parsingReferenceSetDelimiter)
 				{
 					cout << "GIApreprocessor::executeReferenceSetPreprocessor{} error: 2 valid referenceSetDelimiters are found in the current logicReference: currentWordIsReferenceSetDelimiter && !currentWordIsReferenceSetDelimiterPreceededByThatWhich && referenceSetDelimiterDetected [ie already/previously detected] && !parsingReferenceSetDelimiter" << endl;
-					cout << "logicReferenceVariableContents = " << *logicReferenceVariableContents << endl;
 					exit(EXIT_ERROR);
 				}
 			}
@@ -483,7 +388,7 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const str
 			//add a subreference set to the subject/object
 			if(!referenceSetDelimiterDetectedFull)
 			{
-				string subReferenceSetText = "";
+				vector<GIApreprocessorWord*> subReferenceSetText;
 				#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
 				cout << "lastIndexOfReferenceSetDelimiterText = " << lastIndexOfReferenceSetDelimiterText << endl;
 				cout << "lastIndexOfPreviousReferenceSet = " << lastIndexOfPreviousReferenceSet << endl;
@@ -491,28 +396,28 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const str
 				if(formSubReferenceSetTextFromWordList(logicReferenceVariableWordList, &subReferenceSetText, lastIndexOfReferenceSetDelimiterText, lastIndexOfPreviousReferenceSet))
 				{
 					#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
-					cout << "\t12 subReferenceSetText = " << subReferenceSetText << endl;
+					cout << "\t12 subReferenceSetText = " << GIApreprocessorMultiwordReductionClassObject.generateTextFromVectorWordList(&subReferenceSetText) << endl;
 					#endif
-					addSubReferenceSetToReferenceSet(logicReferenceVariable->referenceSetSubject, subReferenceSetText, false, lastIndexOfReferenceSetDelimiterText, wordIndexSentence, BOOL_NA, BOOL_NA);
+					addSubReferenceSetToReferenceSet(logicReferenceVariable->referenceSetSubject, &subReferenceSetText, false, lastIndexOfReferenceSetDelimiterText, wordIndexSentence, BOOL_NA, BOOL_NA);
 				}
 
 				//add the sub referenceSetDelimiter to the subReferenceSet list:
-				subReferenceSetText = "";
+				subReferenceSetText.clear();
 				if(formSubReferenceSetTextFromWordList(logicReferenceVariableWordList, &subReferenceSetText, firstIndexOfReferenceSetDelimiterText, referenceSetDelimiterWordIndex))
 				{
 					if(referenceSetDelimiterIndicatesSameReferenceSet)
 					{
 						#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
-						cout << "\t13 subReferenceSetText = " << subReferenceSetText << endl;
+						cout << "\t13 subReferenceSetText = " << GIApreprocessorMultiwordReductionClassObject.generateTextFromVectorWordList(&subReferenceSetText) << endl;
 						#endif
-						addSubReferenceSetToReferenceSet(logicReferenceVariable->referenceSetSubject, subReferenceSetText, true, firstIndexOfReferenceSetDelimiterText, wordIndexSentence, currentDelimiterType, currentDelimiterSpecialCase);
+						addSubReferenceSetToReferenceSet(logicReferenceVariable->referenceSetSubject, &subReferenceSetText, true, firstIndexOfReferenceSetDelimiterText, wordIndexSentence, currentDelimiterType, currentDelimiterSpecialCase);
 					}
 					else
 					{
 						#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
-						cout << "\t14 subReferenceSetText = " << subReferenceSetText << endl;
+						cout << "\t14 subReferenceSetText = " << GIApreprocessorMultiwordReductionClassObject.generateTextFromVectorWordList(&subReferenceSetText) << endl;
 						#endif
-						addReferenceSetToReferenceSet(logicReferenceVariable->referenceSetDelimiter, subReferenceSetText, true, firstIndexOfReferenceSetDelimiterText, wordIndexSentence, currentDelimiterType, currentDelimiterSpecialCase);
+						addReferenceSetToReferenceSet(logicReferenceVariable->referenceSetDelimiter, &subReferenceSetText, true, firstIndexOfReferenceSetDelimiterText, wordIndexSentence, currentDelimiterType, currentDelimiterSpecialCase);
 					}
 				}
 			}
@@ -520,23 +425,23 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const str
 			{
 				if(referenceSetDelimiterIndicatesSameReferenceSet)
 				{
-					string subReferenceSetText = "";
+					vector<GIApreprocessorWord*> subReferenceSetText;
 					if(formSubReferenceSetTextFromWordList(logicReferenceVariableWordList, &subReferenceSetText, lastIndexOfReferenceSetDelimiterText, lastIndexOfPreviousReferenceSet))
 					{
 						#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
-						cout << "\t15 subReferenceSetText = " << subReferenceSetText << endl;
+						cout << "\t15 subReferenceSetText = " << GIApreprocessorMultiwordReductionClassObject.generateTextFromVectorWordList(&subReferenceSetText) << endl;
 						#endif
-						addSubReferenceSetToReferenceSet(logicReferenceVariable->referenceSetObject, subReferenceSetText, false, lastIndexOfReferenceSetDelimiterText, wordIndexSentence, BOOL_NA, BOOL_NA);
+						addSubReferenceSetToReferenceSet(logicReferenceVariable->referenceSetObject, &subReferenceSetText, false, lastIndexOfReferenceSetDelimiterText, wordIndexSentence, BOOL_NA, BOOL_NA);
 					}
 					
 					//add the sub referenceSetDelimiter to the subReferenceSet list:
-					subReferenceSetText = "";
+					subReferenceSetText.clear();
 					if(formSubReferenceSetTextFromWordList(logicReferenceVariableWordList, &subReferenceSetText, firstIndexOfReferenceSetDelimiterText, referenceSetDelimiterWordIndex))
 					{
 						#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
-						cout << "\t16 subReferenceSetText = " << subReferenceSetText << endl;
+						cout << "\t16 subReferenceSetText = " << GIApreprocessorMultiwordReductionClassObject.generateTextFromVectorWordList(&subReferenceSetText) << endl;
 						#endif
-						addSubReferenceSetToReferenceSet(logicReferenceVariable->referenceSetObject, subReferenceSetText, true, firstIndexOfReferenceSetDelimiterText, wordIndexSentence, currentDelimiterType, currentDelimiterSpecialCase);
+						addSubReferenceSetToReferenceSet(logicReferenceVariable->referenceSetObject, &subReferenceSetText, true, firstIndexOfReferenceSetDelimiterText, wordIndexSentence, currentDelimiterType, currentDelimiterSpecialCase);
 					}
 				}
 				else
@@ -590,13 +495,13 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const str
 			#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
 			cout << "end referenceSetDelimiterDetectedFull" << endl;
 			#endif
-			string subReferenceSetText = "";
+			vector<GIApreprocessorWord*> subReferenceSetText;
 			if(formSubReferenceSetTextFromWordList(logicReferenceVariableWordList, &subReferenceSetText, lastIndexOfReferenceSetDelimiterText, logicReferenceVariableWordList->size()-1))
 			{
 				#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
 				cout << "\t17 subReferenceSetText = " << subReferenceSetText << endl;
 				#endif
-				addSubReferenceSetToReferenceSet(logicReferenceVariable->referenceSetObject, subReferenceSetText, false, lastIndexOfReferenceSetDelimiterText, wordIndexSentence, BOOL_NA, BOOL_NA);
+				addSubReferenceSetToReferenceSet(logicReferenceVariable->referenceSetObject, &subReferenceSetText, false, lastIndexOfReferenceSetDelimiterText, wordIndexSentence, BOOL_NA, BOOL_NA);
 			}	
 		}
 		else
@@ -604,13 +509,13 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const str
 			#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
 			cout << "end !referenceSetDelimiterDetectedFull" << endl;
 			#endif
-			string subReferenceSetText = "";
+			vector<GIApreprocessorWord*> subReferenceSetText;
 			if(formSubReferenceSetTextFromWordList(logicReferenceVariableWordList, &subReferenceSetText, lastIndexOfReferenceSetDelimiterText, logicReferenceVariableWordList->size()-1))
 			{
 				#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
 				cout << "\t18 subReferenceSetText = " << subReferenceSetText << endl;
 				#endif
-				addSubReferenceSetToReferenceSet(logicReferenceVariable->referenceSetSubject, subReferenceSetText, false, lastIndexOfReferenceSetDelimiterText, wordIndexSentence, BOOL_NA, BOOL_NA);
+				addSubReferenceSetToReferenceSet(logicReferenceVariable->referenceSetSubject, &subReferenceSetText, false, lastIndexOfReferenceSetDelimiterText, wordIndexSentence, BOOL_NA, BOOL_NA);
 			}	
 		}
 	}
@@ -620,32 +525,32 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const str
 		int wordIndex = 0;
 		string referenceSetText = "";
 		
-		string referenceSetSubjectText = "";
-		string referenceSetObjectText = "";
-		string referenceSetDelimiterText = "";
+		vector<GIApreprocessorWord*> referenceSetSubjectText;
+		vector<GIApreprocessorWord*> referenceSetObjectText;
+		vector<GIApreprocessorWord*> referenceSetDelimiterText;
 		#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
 		cout << "firstIndexOfReferenceSetDelimiterTextFull = " << firstIndexOfReferenceSetDelimiterTextFull << endl;
-		cout << "logicReferenceVariableWordList[firstIndexOfReferenceSetDelimiterTextFull] = " << (*logicReferenceVariableWordList)[firstIndexOfReferenceSetDelimiterTextFull] << endl;
+		cout << "logicReferenceVariableWordList[firstIndexOfReferenceSetDelimiterTextFull] = " << (*logicReferenceVariableWordList)[firstIndexOfReferenceSetDelimiterTextFull]->tagName << endl;
 		cout << "lastIndexOfReferenceSetDelimiterTextFull = " << lastIndexOfReferenceSetDelimiterTextFull << endl;
-		cout << "logicReferenceVariableWordList[lastIndexOfReferenceSetDelimiterTextFull] = " << (*logicReferenceVariableWordList)[lastIndexOfReferenceSetDelimiterTextFull] << endl;
+		cout << "logicReferenceVariableWordList[lastIndexOfReferenceSetDelimiterTextFull] = " << (*logicReferenceVariableWordList)[lastIndexOfReferenceSetDelimiterTextFull]->tagName << endl;
 		#endif
 		if(formSubReferenceSetTextFromWordList(logicReferenceVariableWordList, &referenceSetSubjectText, 0, firstIndexOfReferenceSetDelimiterTextFull-1))
 		{
-			addReferenceSetToReferenceSet(logicReferenceVariable->referenceSetSubject, referenceSetSubjectText, false, 0, wordIndexSentence, BOOL_NA, BOOL_NA);
+			addReferenceSetToReferenceSet(logicReferenceVariable->referenceSetSubject, &referenceSetSubjectText, false, 0, wordIndexSentence, BOOL_NA, BOOL_NA);
 		}
 		if(formSubReferenceSetTextFromWordList(logicReferenceVariableWordList, &referenceSetDelimiterText, firstIndexOfReferenceSetDelimiterTextFull, lastIndexOfReferenceSetDelimiterTextFull-1))
 		{
-			addReferenceSetToReferenceSet(logicReferenceVariable->referenceSetDelimiter, referenceSetDelimiterText, true, firstIndexOfReferenceSetDelimiterTextFull, wordIndexSentence, delimiterTypeFull, delimiterSpecialCaseFull);
+			addReferenceSetToReferenceSet(logicReferenceVariable->referenceSetDelimiter, &referenceSetDelimiterText, true, firstIndexOfReferenceSetDelimiterTextFull, wordIndexSentence, delimiterTypeFull, delimiterSpecialCaseFull);
 		}
 		if(formSubReferenceSetTextFromWordList(logicReferenceVariableWordList, &referenceSetObjectText, lastIndexOfReferenceSetDelimiterTextFull, logicReferenceVariableWordList->size()-1))
 		{
-			addReferenceSetToReferenceSet(logicReferenceVariable->referenceSetObject, referenceSetObjectText, false, lastIndexOfReferenceSetDelimiterTextFull, wordIndexSentence, BOOL_NA, BOOL_NA);
+			addReferenceSetToReferenceSet(logicReferenceVariable->referenceSetObject, &referenceSetObjectText, false, lastIndexOfReferenceSetDelimiterTextFull, wordIndexSentence, BOOL_NA, BOOL_NA);
 		}		
 		
 		#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
-		cout << "logicReferenceVariable->referenceSetSubject->subReferenceSetContents = " << logicReferenceVariable->referenceSetSubject->subReferenceSetContents << endl;
-		cout << "logicReferenceVariable->referenceSetDelimiter->subReferenceSetContents = " << logicReferenceVariable->referenceSetDelimiter->subReferenceSetContents << endl;
-		cout << "logicReferenceVariable->referenceSetObject->subReferenceSetContents = " << logicReferenceVariable->referenceSetObject->subReferenceSetContents << endl;
+		cout << "logicReferenceVariable->referenceSetSubject->subReferenceSetContents = " << GIApreprocessorMultiwordReductionClassObject.generateTextFromVectorWordList(&logicReferenceVariable->referenceSetSubject->subReferenceSetContents) << endl;
+		cout << "logicReferenceVariable->referenceSetDelimiter->subReferenceSetContents = " << GIApreprocessorMultiwordReductionClassObject.generateTextFromVectorWordList(&logicReferenceVariable->referenceSetDelimiter->subReferenceSetContents) << endl;
+		cout << "logicReferenceVariable->referenceSetObject->subReferenceSetContents = " << GIApreprocessorMultiwordReductionClassObject.generateTextFromVectorWordList(&logicReferenceVariable->referenceSetObject->subReferenceSetContents) << endl;
 		#endif
 	}
 	else
@@ -673,33 +578,34 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const str
 	
 }
 
-bool GIApreprocessorReferenceSetClass::formSubReferenceSetTextFromWordList(vector<string>* logicReferenceVariableWordList, string* subReferenceSetText, int firstIndexOfSubReferenceSet, int lastIndexOfSubReferenceSet)
+bool GIApreprocessorReferenceSetClass::formSubReferenceSetTextFromWordList(vector<GIApreprocessorWord*>* logicReferenceVariableWordList, vector<GIApreprocessorWord*>* subReferenceSetText, int firstIndexOfSubReferenceSet, int lastIndexOfSubReferenceSet)
 {
 	bool result = true;
 	
 	int wordIndex = 0;
-	for(vector<string>::iterator iter = logicReferenceVariableWordList->begin(); iter < logicReferenceVariableWordList->end(); iter++)
+	for(vector<GIApreprocessorWord*>::iterator iter = logicReferenceVariableWordList->begin(); iter < logicReferenceVariableWordList->end(); iter++)
 	{
-		string currentWord = *iter;
+		GIApreprocessorWord* currentWord = (*iter);
 		if((wordIndex >= firstIndexOfSubReferenceSet) && (wordIndex <= lastIndexOfSubReferenceSet))
 		{
-			*subReferenceSetText = *subReferenceSetText + currentWord;
-		}
-		if((wordIndex >= firstIndexOfSubReferenceSet) && (wordIndex < lastIndexOfSubReferenceSet))
-		{
-			*subReferenceSetText = *subReferenceSetText + STRING_SPACE;			
+			subReferenceSetText->push_back(currentWord);
 		}
 		wordIndex++;
 	}
 	
 	#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
-	cout << "GIApreprocessorReferenceSetClass::formSubReferenceSetTextFromWordList{} debug: subReferenceSetText = " << *subReferenceSetText << endl;
+	cout << "GIApreprocessorReferenceSetClass::formSubReferenceSetTextFromWordList{} debug: subReferenceSetText = " << GIApreprocessorMultiwordReductionClassObject.generateTextFromVectorWordList(subReferenceSetText) << endl;
 	#endif
 	
 	return result;
 }
 
-bool GIApreprocessorReferenceSetClass::addSubReferenceSetToReferenceSet(GIApreprocessorSubReferenceSet* firstSubReferenceSetInList, string subReferenceSetText, const bool referenceSetDelimiter, const int wordIndexLogicReference, const int wordIndexSentence, const int delimiterType, const int delimiterSpecialCase)
+bool GIApreprocessorReferenceSetClass::addReferenceSetToReferenceSet(GIApreprocessorSubReferenceSet* firstSubReferenceSetInList, vector<GIApreprocessorWord*>* subReferenceSetText, const bool referenceSetDelimiter, const int wordIndexLogicReference, const int wordIndexSentence, const int delimiterType, const int delimiterSpecialCase)
+{
+	return addSubReferenceSetToReferenceSet(firstSubReferenceSetInList, subReferenceSetText, referenceSetDelimiter, wordIndexLogicReference, wordIndexSentence, delimiterType, delimiterSpecialCase);
+}
+
+bool GIApreprocessorReferenceSetClass::addSubReferenceSetToReferenceSet(GIApreprocessorSubReferenceSet* firstSubReferenceSetInList, vector<GIApreprocessorWord*>* subReferenceSetText, const bool referenceSetDelimiter, const int wordIndexLogicReference, const int wordIndexSentence, const int delimiterType, const int delimiterSpecialCase)
 {
 	bool result = true;
 	
@@ -712,7 +618,7 @@ bool GIApreprocessorReferenceSetClass::addSubReferenceSetToReferenceSet(GIAprepr
 	currentSubReferenceSetInList->isReferenceSetDelimiter = referenceSetDelimiter;
 	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
 	currentSubReferenceSetInList->firstIndexOfReferenceSetText = wordIndexLogicReference + wordIndexSentence;
-	currentSubReferenceSetInList->lastIndexOfReferenceSetText = currentSubReferenceSetInList->firstIndexOfReferenceSetText + subReferenceSetText.length();
+	currentSubReferenceSetInList->lastIndexOfReferenceSetText = currentSubReferenceSetInList->firstIndexOfReferenceSetText + GIApreprocessorMultiwordReductionClassObject.calculateLengthOfGeneratedVectorWordListText(subReferenceSetText);
 	#endif
 	if(referenceSetDelimiter)
 	{
@@ -724,10 +630,6 @@ bool GIApreprocessorReferenceSetClass::addSubReferenceSetToReferenceSet(GIAprepr
 	return result;
 }
 
-bool GIApreprocessorReferenceSetClass::addReferenceSetToReferenceSet(GIApreprocessorSubReferenceSet* firstSubReferenceSetInList, string subReferenceSetText, const bool referenceSetDelimiter, const int wordIndexLogicReference, const int wordIndexSentence, const int delimiterType, const int delimiterSpecialCase)
-{
-	return addSubReferenceSetToReferenceSet(firstSubReferenceSetInList, subReferenceSetText, referenceSetDelimiter, wordIndexLogicReference, wordIndexSentence, delimiterType, delimiterSpecialCase);
-}
 
 
 bool GIApreprocessorReferenceSetClass::detectAuxiliary(const string currentWord)
@@ -751,19 +653,19 @@ bool GIApreprocessorReferenceSetClass::detectAuxiliary(const string currentWord)
 bool GIApreprocessorReferenceSetClass::hasReferenceSet(GIApreprocessorSubReferenceSet* referenceSet)
 {
 	bool referenceSetEnabled = false; 
-	if(referenceSet->subReferenceSetContents != "")
+	if(!(referenceSet->subReferenceSetContents).empty())
 	{
 		referenceSetEnabled = true;
 	}
 	return referenceSetEnabled;
 }
 
-void GIApreprocessorReferenceSetClass::setReferenceSetText(GIApreprocessorSubReferenceSet* referenceSet, string text)
+void GIApreprocessorReferenceSetClass::setReferenceSetText(GIApreprocessorSubReferenceSet* referenceSet, vector<GIApreprocessorWord*>* text)
 {
-	referenceSet->subReferenceSetContents = text;
+	referenceSet->subReferenceSetContents = *text;
 }
 
-string GIApreprocessorReferenceSetClass::getReferenceSetText(GIApreprocessorSubReferenceSet* referenceSet)
+vector<GIApreprocessorWord*> GIApreprocessorReferenceSetClass::getReferenceSetText(GIApreprocessorSubReferenceSet* referenceSet)
 {
 	return referenceSet->subReferenceSetContents;
 }
