@@ -25,7 +25,7 @@
  * File Name: GIApreprocessor.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3b2f 21-May-2017
+ * Project Version: 3b2g 21-May-2017
  * Requirements: requires plain text file
  * Description: Logical Condition and Reference Set preprocessor
  *
@@ -63,7 +63,7 @@ class GIApreprocessorClass
 	private: GIAdatabaseClass GIAdatabase;
 	#ifdef GIA_PREPROCESSOR
 	public: bool preprocessTextForGIA(string* inputTextPlainTXTfileName, const string outputLRPTextPlainTXTFileName, const bool isQuery, GIAtranslatorVariablesClass* translatorVariables);
-		private: bool createPreprocessSentencesForGIA(const string inputFileName, GIApreprocessorSentence* firstGIApreprocessorSentenceInList);
+		public: bool createPreprocessSentencesForGIA(const string inputFileName, GIAtranslatorVariablesClass* translatorVariables);
 			private: void preprocessorFillCurrentWord(GIApreprocessorMultiwordReductionPlainTextWord** currentWordInSentence, const string currentWord, const int entityIndex);
 			private: void copySentenceContentsPreprocessor(GIApreprocessorMultiwordReductionPlainTextWord* sentenceContents1FirstWord, GIApreprocessorMultiwordReductionPlainTextWord* sentenceContents2firstWord);
 		#ifdef GIA_PREPROCESSOR_SENTENCE

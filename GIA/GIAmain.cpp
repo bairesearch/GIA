@@ -25,7 +25,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3b2f 21-May-2017
+ * Project Version: 3b2g 21-May-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -596,7 +596,7 @@ int main(const int argc, const char** argv)
 
 		if(SHAREDvarsClass().argumentExists(argc, argv, "-version"))
 		{
-			cout << "GIA.exe - Project Version: 3b2f 21-May-2017" << endl;
+			cout << "GIA.exe - Project Version: 3b2g 21-May-2017" << endl;
 			exit(EXIT_OK);
 		}
 
@@ -1109,6 +1109,15 @@ bool GIAmainClass::executeGIA2()
 				result = false;
 			}
 		}
+		#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
+		else
+		{
+			if(!GIApreprocessor.createPreprocessSentencesForGIA(inputTextPlainTXTfileName, translatorVariables))
+			{
+				result = false;
+			}				
+		}
+		#endif
 		#endif
 
 		#ifdef USE_CE
