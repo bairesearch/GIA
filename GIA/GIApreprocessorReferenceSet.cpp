@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorReferenceSet.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3b3f 25-May-2017
+ * Project Version: 3b3i 25-May-2017
  * Requirements: requires plain text file
  * Description: Reference Set preprocessor
  *
@@ -58,7 +58,7 @@ NB there is no easy rcmod detection in these cases
 
 
 
-bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(vector<GIApreprocessorWord*>* logicReferenceVariableWordList, GIApreprocessorLogicReferenceVariable* logicReferenceVariable, const bool expectToFindSubjectAuxObjectLogicReferenceVariable, const int wordIndexSentence)
+bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vector<GIApreprocessorWord*>* logicReferenceVariableWordList, GIApreprocessorLogicReferenceVariable* logicReferenceVariable, const bool expectToFindSubjectAuxObjectLogicReferenceVariable, const int wordIndexSentence)
 {
 	bool result = true;
 
@@ -554,7 +554,7 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(vector<GI
 	
 }
 
-bool GIApreprocessorReferenceSetClass::formSubReferenceSetTextFromWordList(vector<GIApreprocessorWord*>* logicReferenceVariableWordList, vector<GIApreprocessorWord*>* subReferenceSetText, int firstIndexOfSubReferenceSet, int lastIndexOfSubReferenceSet)
+bool GIApreprocessorReferenceSetClass::formSubReferenceSetTextFromWordList(const vector<GIApreprocessorWord*>* logicReferenceVariableWordList, vector<GIApreprocessorWord*>* subReferenceSetText, int firstIndexOfSubReferenceSet, int lastIndexOfSubReferenceSet)
 {
 	bool result = true;
 	

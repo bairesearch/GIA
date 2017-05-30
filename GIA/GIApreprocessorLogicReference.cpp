@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorLogicReference.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3b3f 25-May-2017
+ * Project Version: 3b3i 25-May-2017
  * Requirements: requires plain text file
  * Description: Logic Reference preprocessor
  *
@@ -185,7 +185,7 @@ bool GIApreprocessorLogicReferenceClass::extractGIApreprocessorLogicReferenceCla
 }
 
 //Limitation: doesn't support conjunctions with embedded preposition logic references, eg; "The chicken is green, considering the teapot, red, considering the apple, or blue, considering the pie."
-bool GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor(GIApreprocessorWord* sentenceContentsFirstWord, GIApreprocessorSentence* currentGIApreprocessorSentenceInList, XMLparserTag* firstLogicReferenceClassTag)
+bool GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor(const vector<GIApreprocessorWord*>* sentenceContentsWordList, GIApreprocessorSentence* currentGIApreprocessorSentenceInList, XMLparserTag* firstLogicReferenceClassTag)
 {
 	bool result = true;
 	
@@ -198,10 +198,9 @@ bool GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor(GIApr
 	bool whiteSpace = false;
 	
 	GIApreprocessorLogicReference* currentLogicReferenceInList = currentGIApreprocessorSentenceInList->firstLogicReferenceInList;
-	GIApreprocessorWord* sentenceContentsCurrentWord = sentenceContentsFirstWord;
-	while(sentenceContentsCurrentWord->nextTag != NULL)
+	for(int w=0; w<sentenceContentsWordList->size(); w++)
 	{
-		GIApreprocessorWord* currentWord = sentenceContentsCurrentWord;
+		GIApreprocessorWord* currentWord = (*sentenceContentsWordList)[w];
 		
 		#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
 		cout << "[currentWord = " << currentWord->tagName << "]" << endl;
@@ -511,9 +510,9 @@ bool GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor(GIApr
 					currentLogicReferenceInList = currentLogicReferenceInListActive->firstSubLogicReferenceInListGovernor;
 				}
 
-				if(sentenceContentsCurrentWord->nextTag->tagName == GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_SKIP_APPENDED_THAT_NAME)
+				if((w+1 < sentenceContentsWordList->size()) && ((*sentenceContentsWordList)[w+1]->tagName == GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_SKIP_APPENDED_THAT_NAME))
 				{
-					sentenceContentsCurrentWord = sentenceContentsCurrentWord->nextTag;	//skip to end of that
+					w++;	//skip to end of that
 					expectToFindSubjectAuxObjectLogicReferenceVariable = true;
 				}
 				else
@@ -582,7 +581,6 @@ bool GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor(GIApr
 		}
 
 		wordIndexSentence++;
-		sentenceContentsCurrentWord = sentenceContentsCurrentWord->nextTag;
 	}
 	
 	return result;

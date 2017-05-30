@@ -25,7 +25,7 @@
  * File Name: GIApreprocessor.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3b3f 25-May-2017
+ * Project Version: 3b3i 25-May-2017
  * Requirements: requires plain text file
  * Description: Logical Condition and Reference Set preprocessor
  *
@@ -117,7 +117,7 @@ bool GIApreprocessorClass::preprocessTextForGIA(string* inputTextPlainTXTfileNam
 	GIApreprocessorSentence* currentGIApreprocessorSentenceInList = translatorVariables->firstGIApreprocessorSentenceInList;
 	while(currentGIApreprocessorSentenceInList->next != NULL)
 	{
-		cout << "currentGIApreprocessorSentenceInList->sentenceContentsLRPfirstWord = " << GIApreprocessorMultiwordReductionClassObject.generateTextFromPreprocessorSentenceWordList(currentGIApreprocessorSentenceInList->sentenceContentsLRPfirstWord, false) << endl;
+		cout << "currentGIApreprocessorSentenceInList->sentenceContentsLRPfirstWord = " << GIApreprocessorMultiwordReductionClassObject.generateTextFromVectorWordList(&(currentGIApreprocessorSentenceInList->sentenceContentsLRP), false) << endl;
 		currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->next;
 	}
 	#endif
@@ -156,7 +156,7 @@ bool GIApreprocessorClass::regenerateFileFromPreprocessedTextWithoutLRP(string* 
 	GIApreprocessorSentence* currentGIApreprocessorSentenceInList = translatorVariables->firstGIApreprocessorSentenceInList;
 	while(currentGIApreprocessorSentenceInList->next != NULL)
 	{
-		outputLRPTextForNLPonlyPlainTXTFileContents = outputLRPTextForNLPonlyPlainTXTFileContents + GIApreprocessorMultiwordReductionClassObject.generateTextFromPreprocessorSentenceWordList(currentGIApreprocessorSentenceInList->sentenceContentsOriginalFirstWord) + CHAR_NEWLINE;
+		outputLRPTextForNLPonlyPlainTXTFileContents = outputLRPTextForNLPonlyPlainTXTFileContents + GIApreprocessorMultiwordReductionClassObject.generateTextFromVectorWordList(&(currentGIApreprocessorSentenceInList->sentenceContentsOriginal)) + CHAR_NEWLINE;
 		currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->next;
 	}
 
@@ -191,18 +191,7 @@ bool GIApreprocessorClass::createPreprocessSentencesForGIA(const string inputFil
 	GIApreprocessorSentence* currentGIApreprocessorSentenceInList = translatorVariables->firstGIApreprocessorSentenceInList;
 	while(currentGIApreprocessorSentenceInList->next != NULL)
 	{
-		copySentenceContentsPreprocessor(currentGIApreprocessorSentenceInList->sentenceContentsOriginalFirstWord, currentGIApreprocessorSentenceInList->sentenceContentsLRPfirstWord);	
-
-		#ifdef GIA_PREPROCESSOR_DEBUG
-		GIApreprocessorMultiwordReductionPlainTextWord* currentWordInSentence = currentGIApreprocessorSentenceInList->sentenceContentsOriginalFirstWord;
-		while(currentWordInSentence->nextTag != NULL)
-		{
-			cout << currentWordInSentence->entityIndex << currentWordInSentence->tagName << " ";
-			currentWordInSentence = static_cast<GIApreprocessorMultiwordReductionPlainTextWord*>(currentWordInSentence->nextTag);
-		}
-		cout << endl;
-		#endif
-
+		currentGIApreprocessorSentenceInList->sentenceContentsLRP = currentGIApreprocessorSentenceInList->sentenceContentsOriginal;
 		currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->next;
 	}
 		
@@ -218,9 +207,9 @@ bool GIApreprocessorClass::createPreprocessSentences(const string fileContents, 
 	bool readingQuotation = false;
 	string currentWord = "";
 	GIApreprocessorSentence* currentGIApreprocessorSentenceInList = firstGIApreprocessorSentenceInList;
-	GIApreprocessorMultiwordReductionPlainTextWord* firstWordInSentence = currentGIApreprocessorSentenceInList->sentenceContentsOriginalFirstWord;
+	GIApreprocessorMultiwordReductionPlainTextWord* firstWordInSentence = new GIApreprocessorMultiwordReductionPlainTextWord();
 	GIApreprocessorMultiwordReductionPlainTextWord* currentWordInSentence = firstWordInSentence;
-	string sentenceContentsOriginal = "";
+	string sentenceContentsOriginalText = "";
 	int entityIndex = GIA_NLP_START_ENTITY_INDEX;	//only assigned after collapse?
 	int sentenceIndex = GIA_NLP_START_SENTENCE_INDEX;
 	bool whiteSpace = true;
@@ -228,7 +217,7 @@ bool GIApreprocessorClass::createPreprocessSentences(const string fileContents, 
 	while(charCount < fileContents.length())
 	{		
 		currentToken = fileContents[charCount];
-		sentenceContentsOriginal = sentenceContentsOriginal + currentToken;
+		sentenceContentsOriginalText = sentenceContentsOriginalText + currentToken;
 		
 		bool punctuationMarkFound = false;
 		if(SHAREDvars.charInCharArray(currentToken, nlpPunctionMarkCharacterArray, GIA_NLP_NUMBER_OF_PUNCTUATION_MARK_CHARACTERS))
@@ -394,12 +383,14 @@ bool GIApreprocessorClass::createPreprocessSentences(const string fileContents, 
 					}
 					if(endOfSentencePunctuationMarkFound)
 					{
+						GIApreprocessorMultiwordReductionClassObject.generateSentenceWordList(firstWordInSentence, &(currentGIApreprocessorSentenceInList->sentenceContentsOriginal));
 						currentGIApreprocessorSentenceInList->sentenceIndexOriginal = sentenceIndex;
-						currentGIApreprocessorSentenceInList->sentenceContentsOriginal = sentenceContentsOriginal;
+						currentGIApreprocessorSentenceInList->sentenceContentsOriginalText = sentenceContentsOriginalText;
 						currentGIApreprocessorSentenceInList->next = new GIApreprocessorSentence();
 						currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->next;
-						currentWordInSentence = currentGIApreprocessorSentenceInList->sentenceContentsOriginalFirstWord;
-						sentenceContentsOriginal = "";
+						firstWordInSentence = new GIApreprocessorMultiwordReductionPlainTextWord();
+						currentWordInSentence = firstWordInSentence;
+						sentenceContentsOriginalText = "";
 						entityIndex = 0;
 						sentenceIndex++;
 						whiteSpace = true;
@@ -409,12 +400,14 @@ bool GIApreprocessorClass::createPreprocessSentences(const string fileContents, 
 				{
 					if(!whiteSpace)
 					{//reject blank lines or lines ending in white space
+						GIApreprocessorMultiwordReductionClassObject.generateSentenceWordList(firstWordInSentence, &(currentGIApreprocessorSentenceInList->sentenceContentsOriginal));
 						currentGIApreprocessorSentenceInList->sentenceIndexOriginal = sentenceIndex;
-						currentGIApreprocessorSentenceInList->sentenceContentsOriginal = sentenceContentsOriginal;
+						currentGIApreprocessorSentenceInList->sentenceContentsOriginalText = sentenceContentsOriginalText;
 						currentGIApreprocessorSentenceInList->next = new GIApreprocessorSentence();
 						currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->next;
-						currentWordInSentence = currentGIApreprocessorSentenceInList->sentenceContentsOriginalFirstWord;
-						sentenceContentsOriginal = "";
+						firstWordInSentence = new GIApreprocessorMultiwordReductionPlainTextWord();
+						currentWordInSentence = firstWordInSentence;
+						sentenceContentsOriginalText = "";
 						entityIndex = 0;
 						sentenceIndex++;
 					}
@@ -425,7 +418,7 @@ bool GIApreprocessorClass::createPreprocessSentences(const string fileContents, 
 					int currentIndentation = 0;
 					extractIndentationFromCurrentLine(&fileContents, &charCount, &(currentGIApreprocessorSentenceInList->indentation), &indentationContents);
 					//cout << "GIA_PREPROCESSOR_MULTIWORD_REDUCTION_EXTRACT_INDENTATION: indentationContents = " << indentationContents << endl;
-					sentenceContentsOriginal = sentenceContentsOriginal + indentationContents;
+					sentenceContentsOriginalText = sentenceContentsOriginalText + indentationContents;
 					#endif
 				}
 				#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_DOLLARS
@@ -556,7 +549,7 @@ bool GIApreprocessorClass::preprocessSentencesForGIA(GIApreprocessorSentence* fi
 	string outputTextContentsForNLP = "";
 	while(currentGIApreprocessorSentenceInList->next != NULL)
 	{
-		//string sentenceContentsOriginal = this->removePrependingWhiteSpace(sentenceContents);	//only for NLC?
+		//string sentenceContentsOriginalText = this->removePrependingWhiteSpace(sentenceContents);	//only for NLC?
 		if(!generateGIApreprocessorSentence(currentGIApreprocessorSentenceInList, firstLogicReferenceClassTag))
 		{
 			result = false;
@@ -612,27 +605,21 @@ bool GIApreprocessorClass::generateGIApreprocessorSentence(GIApreprocessorSenten
 	bool result = true;
 	
 	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
-	GIApreprocessorWord* sentenceContentsFirstWord = currentGIApreprocessorSentenceInList->sentenceContentsLRPfirstWord;
+	vector<GIApreprocessorWord*>* sentenceContentsWordList = &(currentGIApreprocessorSentenceInList->sentenceContentsLRP);
 	#else
-	GIApreprocessorWord* sentenceContentsFirstWord = currentGIApreprocessorSentenceInList->sentenceContentsOriginalFirstWord;
+	vector<GIApreprocessorWord*>* sentenceContentsWordList = &(currentGIApreprocessorSentenceInList->sentenceContentsOriginal);
 	#endif
 	int sentenceIndexOriginal = currentGIApreprocessorSentenceInList->sentenceIndexOriginal;
 
-
 	#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
-	if(!GIApreprocessorLogicReferenceObject.executeLogicReferencePreprocessor(sentenceContentsFirstWord, currentGIApreprocessorSentenceInList, firstLogicReferenceClassTag))
+	if(!GIApreprocessorLogicReferenceObject.executeLogicReferencePreprocessor(sentenceContentsWordList, currentGIApreprocessorSentenceInList, firstLogicReferenceClassTag))
 	{
 		result = false;
 	}
 	#else
 	#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET
-	vector<GIApreprocessorWord*> logicReferenceVariableWordList;
-	if(!GIApreprocessorMultiwordReductionClassObject.generateSentenceWordList(sentenceContentsFirstWord, &logicReferenceVariableWordList))
-	{
-		result = false;
-	}
 	GIApreprocessorLogicReference* firstLogicReferenceInList = currentGIApreprocessorSentenceInList->firstLogicReferenceInList;
-	if(!GIApreprocessorReferenceSet.executeReferenceSetPreprocessor(sentenceContentsFirstWord, &logicReferenceVariableWordList, firstLogicReferenceInList->logicReferenceVariable, true, 0))
+	if(!GIApreprocessorReferenceSet.executeReferenceSetPreprocessor(sentenceContentsFirstWord, &sentenceContentsWordList, firstLogicReferenceInList->logicReferenceVariable, true, 0))
 	{
 		result = false;
 	}
@@ -2492,11 +2479,7 @@ bool GIApreprocessorClass::addSentenceToPreprocessorSentence(GIAtranslatorVariab
 	if(getPreprocessorSentence(translatorVariables->firstGIApreprocessorSentenceInList, currentSentenceInList->sentenceIndex, &preprocessorSentenceFound))
 	{
 		preprocessorSentenceFound->sentenceReference = currentSentenceInList;
-		vector<GIApreprocessorWord*> preprocessorSentenceWordList;
-		if(!GIApreprocessorMultiwordReductionClassObject.generateSentenceWordList(preprocessorSentenceFound->sentenceContentsLRPfirstWord, &preprocessorSentenceWordList))
-		{
-			result = false;
-		}
+		vector<GIApreprocessorWord*> preprocessorSentenceWordList = preprocessorSentenceFound->sentenceContentsLRP;
 	#endif
 		//translatorVariables->preprocessorSentenceWordListTemp = preprocessorSentenceWordList;
 		

@@ -229,10 +229,10 @@ public:
 	~GIApreprocessorSentence(void);
 
 	int sentenceIndexOriginal;
-	string sentenceContentsOriginal;
+	string sentenceContentsOriginalText;
 	//#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
-	GIApreprocessorMultiwordReductionPlainTextWord* sentenceContentsOriginalFirstWord;
-	GIApreprocessorMultiwordReductionPlainTextWord* sentenceContentsLRPfirstWord;
+	vector<GIApreprocessorWord*> sentenceContentsOriginal;
+	vector<GIApreprocessorWord*> sentenceContentsLRP;
 	//#endif
 	
 	#ifdef GIA_PREPROCESSOR_SENTENCE

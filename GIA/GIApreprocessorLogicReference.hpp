@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorLogicReference.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3b3f 25-May-2017
+ * Project Version: 3b3i 25-May-2017
  * Requirements: requires plain text file
  * Description: Logic Reference preprocessor
  *
@@ -52,7 +52,7 @@ class GIApreprocessorLogicReferenceClass
 
 	#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
 	public: bool extractGIApreprocessorLogicReferenceClasses(XMLparserTag** firstLogicReferenceClassTag, vector<string>* logicReferenceInstanceList);
-	public: bool executeLogicReferencePreprocessor(GIApreprocessorWord* sentenceContentsFirstWord, GIApreprocessorSentence* currentGIApreprocessorSentenceInList, XMLparserTag* firstLogicReferenceClassTag);
+	public: bool executeLogicReferencePreprocessor(const vector<GIApreprocessorWord*>* sentenceContentsWordList, GIApreprocessorSentence* currentGIApreprocessorSentenceInList, XMLparserTag* firstLogicReferenceClassTag);
 		private: void addSentenceToText(string* sentenceContentsPreprocessed, GIApreprocessorSubReferenceSet* referenceSet, int* sentenceIndex);
 		private: bool logicReferenceClassIsPreposition(GIApreprocessorLogicReference* logicReference);
 		private: bool initialiseNextLogicReferenceConjunction(GIApreprocessorLogicReference** currentLogicReferenceInList, const int wordIndexSentence);

@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorMultiwordReduction.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3b3f 25-May-2017
+ * Project Version: 3b3i 25-May-2017
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  *
@@ -884,7 +884,8 @@ bool GIApreprocessorMultiwordReductionClass::searchAndReplacePhrasalVerbs(GIApre
 	GIApreprocessorSentence* currentGIApreprocessorSentenceInList = firstGIApreprocessorSentenceInList;
 	while(currentGIApreprocessorSentenceInList->next != NULL)
 	{
-		GIApreprocessorMultiwordReductionPlainTextWord* firstTagInPlainTextSentence = currentGIApreprocessorSentenceInList->sentenceContentsLRPfirstWord;
+		GIApreprocessorMultiwordReductionPlainTextWord* firstTagInPlainTextSentence = NULL;
+		GIApreprocessorMultiwordReductionClassObject.generateFlatSentenceWordList(&(currentGIApreprocessorSentenceInList->sentenceContentsLRP), &firstTagInPlainTextSentence);
 		GIApreprocessorMultiwordReductionPlainTextWord* currentTagInPlainTextSentence = firstTagInPlainTextSentence;
 		GIApreprocessorMultiwordReductionPlainTextWord* previousTagInPlainTextSentence = NULL;
 		while(currentTagInPlainTextSentence->nextTag != NULL)
@@ -1100,7 +1101,6 @@ bool GIApreprocessorMultiwordReductionClass::searchAndReplacePhrasalVerbs(GIApre
 								}
 								else
 								{
-									currentGIApreprocessorSentenceInList->sentenceContentsLRPfirstWord = firstTagInCollapsedPhrasalVerb;
 									firstTagInPlainTextSentence = firstTagInCollapsedPhrasalVerb;								
 								}
 								
@@ -1181,6 +1181,8 @@ bool GIApreprocessorMultiwordReductionClass::searchAndReplacePhrasalVerbs(GIApre
 		}
 		cout << endl;
 		#endif
+		
+		GIApreprocessorMultiwordReductionClassObject.generateSentenceWordList(firstTagInPlainTextSentence, &(currentGIApreprocessorSentenceInList->sentenceContentsLRP));
 
 		currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->next;
 	}
@@ -1278,7 +1280,8 @@ bool GIApreprocessorMultiwordReductionClass::searchAndReplaceMultiwordWordList(G
 	GIApreprocessorSentence* currentGIApreprocessorSentenceInList = firstGIApreprocessorSentenceInList;
 	while(currentGIApreprocessorSentenceInList->next != NULL)
 	{		
-		GIApreprocessorMultiwordReductionPlainTextWord* firstTagInPlainTextSentence = currentGIApreprocessorSentenceInList->sentenceContentsLRPfirstWord;
+		GIApreprocessorMultiwordReductionPlainTextWord* firstTagInPlainTextSentence = NULL;
+		GIApreprocessorMultiwordReductionClassObject.generateFlatSentenceWordList(&(currentGIApreprocessorSentenceInList->sentenceContentsLRP), &firstTagInPlainTextSentence);
 		GIApreprocessorMultiwordReductionPlainTextWord* currentTagInPlainTextSentence = firstTagInPlainTextSentence;
 		GIApreprocessorMultiwordReductionPlainTextWord* previousTagInPlainTextSentence = NULL;
 
@@ -1331,7 +1334,6 @@ bool GIApreprocessorMultiwordReductionClass::searchAndReplaceMultiwordWordList(G
 						}
 						else
 						{
-							currentGIApreprocessorSentenceInList->sentenceContentsLRPfirstWord = firstTagInCollapsedMultiwordWord;
 							firstTagInPlainTextSentence = firstTagInCollapsedMultiwordWord;
 						}
 						foundAtLeastOneMultiwordWordInSentenceAndCollapsed = true;
@@ -1403,6 +1405,8 @@ bool GIApreprocessorMultiwordReductionClass::searchAndReplaceMultiwordWordList(G
 			currentTagInPlainTextSentence = static_cast<GIApreprocessorMultiwordReductionPlainTextWord*>(currentTagInPlainTextSentence->nextTag);
 		}
 		
+		GIApreprocessorMultiwordReductionClassObject.generateSentenceWordList(firstTagInPlainTextSentence, &(currentGIApreprocessorSentenceInList->sentenceContentsLRP));
+
 		currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->next;
 	}
 
@@ -1448,8 +1452,8 @@ bool GIApreprocessorMultiwordReductionClass::writeTagListToFile(const GIApreproc
 		string sentenceContentsLRP = "";
 		string sentenceContentsLRPforNLP = "";
 		bool firstCharacterInSentence = true;
-		GIApreprocessorMultiwordReductionPlainTextWord* firstTagInPlainTextSentence;
-		firstTagInPlainTextSentence = currentGIApreprocessorSentenceInList->sentenceContentsLRPfirstWord;
+		GIApreprocessorMultiwordReductionPlainTextWord* firstTagInPlainTextSentence = NULL;
+		GIApreprocessorMultiwordReductionClassObject.generateFlatSentenceWordList(&(currentGIApreprocessorSentenceInList->sentenceContentsLRP), &firstTagInPlainTextSentence);
 
 		GIApreprocessorMultiwordReductionPlainTextWord* currentTagInPlainTextSentence = firstTagInPlainTextSentence;
 		while(currentTagInPlainTextSentence->nextTag != NULL)
@@ -1534,7 +1538,7 @@ bool GIApreprocessorMultiwordReductionClass::writeTagListToFile(const GIApreproc
 			#endif
 			plainTextLRPforNLPOutput->write(sentenceContentsLRPforNLP.c_str(), sentenceContentsLRPforNLP.length());
 		}
-		
+				
 		currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->next;
 	}
 

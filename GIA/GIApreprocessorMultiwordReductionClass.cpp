@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorMultiwordReductionClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3b3f 25-May-2017
+ * Project Version: 3b3i 25-May-2017
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  *
@@ -301,6 +301,8 @@ bool GIApreprocessorMultiwordReductionClassClass::generateSentenceWordList(GIApr
 {
 	bool result = true;
 	
+	logicReferenceVariableWordList->clear();	//added 3b3i
+	
 	GIApreprocessorWord* currentWordInSentence = sentenceContentsFirstWord;
 	while(currentWordInSentence->nextTag != NULL)
 	{
@@ -321,7 +323,7 @@ bool GIApreprocessorMultiwordReductionClassClass::generateSentenceWordList(GIApr
 }
 
 //precondition: words in logicReferenceVariableWordList are unique across all logicReferenceVariableWordLists in memory
-bool GIApreprocessorMultiwordReductionClassClass::generateFlatSentenceWordList(vector<GIApreprocessorWord*>* logicReferenceVariableWordList, GIApreprocessorMultiwordReductionPlainTextWord** sentenceContentsFirstWord)
+bool GIApreprocessorMultiwordReductionClassClass::generateFlatSentenceWordList(const vector<GIApreprocessorWord*>* logicReferenceVariableWordList, GIApreprocessorMultiwordReductionPlainTextWord** sentenceContentsFirstWord)
 {
 	bool result = true;
 	
@@ -762,7 +764,7 @@ bool GIApreprocessorMultiwordReductionClassClass::insertWordListIntoWordList(vec
 {
 	bool result = false;
 		
-	if(indexToInsert+wordListToInsert->size() <= wordList->size()+1)
+	if(indexToInsert <= wordList->size())
 	{
 		result = true;
 		for(int i=0; i<wordListToInsert->size(); i++)
@@ -773,7 +775,7 @@ bool GIApreprocessorMultiwordReductionClassClass::insertWordListIntoWordList(vec
 	}
 	else
 	{
-		cout << "GIApreprocessorMultiwordReductionClassClass::insertWordIntoWordList error{}: !(indexToInsert+wordListToInsert->size() <= wordList->size()+1)" << endl;
+		cout << "GIApreprocessorMultiwordReductionClassClass::insertWordIntoWordList error{}: !(indexToInsert <= wordList->size())" << endl;
 		exit(EXIT_ERROR);
 	}
 		
