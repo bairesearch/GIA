@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorMultiwordReductionClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3b3b 25-May-2017
+ * Project Version: 3b3c 25-May-2017
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  *
@@ -396,26 +396,38 @@ class GIApreprocessorMultiwordReductionClassClass
 	public: bool isApostrophePossessionOrOmission(const int indexOfCurrentToken, const string* lineContents);
 	#endif	
 	#endif	
-	public: bool wordListFindAndReplaceAllOccurancesSimpleSubstringInWordListWithSimpleSubstring(vector<GIApreprocessorWord*>* wordList, const string stringSimpleToFind,  const string stringSimpleReplacement);
-		public: bool wordListFindAndReplaceAllOccurancesSimpleSubstringInWordListWithSimpleSubstring(vector<GIApreprocessorWord*>* wordList, const string* stringSimpleToFind,  const string* stringSimpleReplacement);
-			public: bool wordListFindAndReplaceSimpleSubstringInWordListWithSimpleSubstring(vector<GIApreprocessorWord*>* wordList, const string stringSimpleToFind, const int startIndexToPerformFind, const string stringSimpleReplacement);
-				public: bool wordListFindAndReplaceWordListInWordListWithWordList(vector<GIApreprocessorWord*>* wordList, vector<GIApreprocessorWord*>* wordListToFind, const int startIndexToPerformFind, vector<GIApreprocessorWord*>* wordListReplacement);
-					public: bool wordListFindSubWordListInWordList(const vector<GIApreprocessorWord*>* wordList, const vector<GIApreprocessorWord*>* wordListToFind, int startIndexToPerformFind);
-						public: bool generateSentenceWordListFromStringSimple(vector<GIApreprocessorWord*>* wordList, const string* stringSimple);
-	public: bool wordListFindAndRemoveAllOccurancesSimpleSubstringInWordList(vector<GIApreprocessorWord*>* wordList, const string stringSimpleToFind);
 	
+	public: bool findAndReplaceAllOccurancesSimpleSubstringInWordListWithSimpleSubstring(vector<GIApreprocessorWord*>* wordList, const string stringSimpleToFind,  const string stringSimpleReplacement);
+		public: bool findAndReplaceAllOccurancesSimpleSubstringInWordListWithSimpleSubstring(vector<GIApreprocessorWord*>* wordList, const string* stringSimpleToFind,  const string* stringSimpleReplacement);
+			public: bool findAndReplaceSimpleSubstringInWordListAtIndexWithSimpleSubstring(vector<GIApreprocessorWord*>* wordList, const string stringSimpleToFind, const int indexToPerformFind, const string stringSimpleReplacement);
+				public: bool findAndReplaceWordListInWordListAtIndexWithWordList(vector<GIApreprocessorWord*>* wordList, vector<GIApreprocessorWord*>* wordListToFind, const int indexToPerformFind, vector<GIApreprocessorWord*>* wordListReplacement);
+	public: bool findSimpleSubstringInWordList(vector<GIApreprocessorWord*>* wordList, const string stringSimpleToFind);
+		public: bool findSimpleSubstringInWordList(vector<GIApreprocessorWord*>* wordList, const string stringSimpleToFind, const int startIndexToPerformFind);
+			public: bool findSubWordListInWordList(vector<GIApreprocessorWord*>* wordList, const vector<GIApreprocessorWord*>* wordListToFind, const int startIndexToPerformFind);	
+	public: bool findSimpleSubstringInWordListAtIndex(const vector<GIApreprocessorWord*>* wordList, const string stringSimpleToFind, const int indexToPerformFind, const bool caseInsensitive);
+		public: bool findSubWordListInWordListAtIndex(const vector<GIApreprocessorWord*>* wordList, const vector<GIApreprocessorWord*>* wordListToFind, const int indexToPerformFind, const bool caseInsensitive);
+	public: bool generateSentenceWordListFromStringSimple(vector<GIApreprocessorWord*>* wordList, const string* stringSimple);
+		
 	//these are similiar to C++ string library functions;
 	public: int findStringInWordList(const vector<GIApreprocessorWord*>* wordList, const string stringToFind);
 		public: int findStringInWordList(const vector<GIApreprocessorWord*>* wordList, const string stringToFind, const int startIndexToPerformFind);
-	public: bool findSubstringInWordList(const vector<GIApreprocessorWord*>* wordList, const string substringToFind);
-		public: bool findSubstringInWordList(const vector<GIApreprocessorWord*>* wordList, const string substringToFind, const int startIndexToPerformFind);
+	
+	public: bool findSubstringAtStartOfWordInWordList(const vector<GIApreprocessorWord*>* wordList, const string substringToFind);
+		public: bool findSubstringAtStartOfWordInWordList(const vector<GIApreprocessorWord*>* wordList, const string substringToFind, const int startIndexToPerformFind);
+	
 	public: vector<GIApreprocessorWord*> extractSubWordListInWordList(const vector<GIApreprocessorWord*>* wordList, const int startIndexToExtract);
 		public: vector<GIApreprocessorWord*> extractSubWordListInWordList(const vector<GIApreprocessorWord*>* wordList, const int startIndexToExtract, const int numberOfWordsToExtract);
+	
 	public: bool insertWordListIntoWordList(vector<GIApreprocessorWord*>* wordList, const vector<GIApreprocessorWord*>* wordListToInsert, const int indexToInsert);
 	public: bool insertStringIntoWordList(vector<GIApreprocessorWord*>* wordList, const string stringToInsert, const int indexToInsert);
 		public: bool insertWordIntoWordList(vector<GIApreprocessorWord*>* wordList, GIApreprocessorWord* wordToInsert, const int indexToInsert);
-	public: bool removeWordFromWordList(vector<GIApreprocessorWord*>* wordList, const int indexToRemove);
-		public: bool removeWordsFromWordList(vector<GIApreprocessorWord*>* wordList, const int indexToRemove, const int numberElementsToRemove);
+	
+	public: bool wordListFindAndRemoveAllOccurancesSimpleSubstringInWordList(vector<GIApreprocessorWord*>* wordList, const string stringSimpleToFind);
+		public: bool removeWordFromWordList(vector<GIApreprocessorWord*>* wordList, const int indexToRemove);
+			public: bool removeWordsFromWordList(vector<GIApreprocessorWord*>* wordList, const int indexToRemove, const int numberElementsToRemove);
+			
+	public: bool replaceWordListAtIndexWithSimpleSubstring(vector<GIApreprocessorWord*>* wordList, const int indexToPerformReplacement, const string stringSimpleReplacement);
+		public: bool replaceWordListAtIndexWithSimpleSubstring(vector<GIApreprocessorWord*>* wordList, const int indexToPerformReplacement, vector<GIApreprocessorWord*>* wordListReplacement);
 
 };
 

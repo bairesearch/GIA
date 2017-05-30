@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorMultiwordReductionClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3b3b 25-May-2017
+ * Project Version: 3b3c 25-May-2017
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  *
@@ -407,15 +407,15 @@ bool GIApreprocessorMultiwordReductionClassClass::isApostrophePossessionOrOmissi
 #endif
 
 
-bool GIApreprocessorMultiwordReductionClassClass::wordListFindAndReplaceAllOccurancesSimpleSubstringInWordListWithSimpleSubstring(vector<GIApreprocessorWord*>* wordList, const string stringSimpleToFind,  const string stringSimpleReplacement)
+bool GIApreprocessorMultiwordReductionClassClass::findAndReplaceAllOccurancesSimpleSubstringInWordListWithSimpleSubstring(vector<GIApreprocessorWord*>* wordList, const string stringSimpleToFind,  const string stringSimpleReplacement)
 {
-	return wordListFindAndReplaceAllOccurancesSimpleSubstringInWordListWithSimpleSubstring(wordList, &stringSimpleToFind, &stringSimpleReplacement);
+	return findAndReplaceAllOccurancesSimpleSubstringInWordListWithSimpleSubstring(wordList, &stringSimpleToFind, &stringSimpleReplacement);
 }
-bool GIApreprocessorMultiwordReductionClassClass::wordListFindAndReplaceAllOccurancesSimpleSubstringInWordListWithSimpleSubstring(vector<GIApreprocessorWord*>* wordList, const string* stringSimpleToFind,  const string* stringSimpleReplacement)
+bool GIApreprocessorMultiwordReductionClassClass::findAndReplaceAllOccurancesSimpleSubstringInWordListWithSimpleSubstring(vector<GIApreprocessorWord*>* wordList, const string* stringSimpleToFind,  const string* stringSimpleReplacement)
 {
 	bool result = false;
 	
-	//cout << "wordListFindAndReplaceAllOccurancesSimpleSubstringInWordListWithSimpleSubstring{}: wordList before: " << generateTextFromVectorWordList(wordList) << ", stringSimpleToFind = " << *stringSimpleToFind << ", stringSimpleReplacement = " << *stringSimpleReplacement  << endl;
+	//cout << "findAndReplaceAllOccurancesSimpleSubstringInWordListWithSimpleSubstring{}: wordList before: " << generateTextFromVectorWordList(wordList) << ", stringSimpleToFind = " << *stringSimpleToFind << ", stringSimpleReplacement = " << *stringSimpleReplacement  << endl;
 
 	vector<GIApreprocessorWord*> wordListToFind;
 	generateSentenceWordListFromStringSimple(&wordListToFind, stringSimpleToFind);
@@ -424,7 +424,7 @@ bool GIApreprocessorMultiwordReductionClassClass::wordListFindAndReplaceAllOccur
 	
 	for(int w = 0; w < wordList->size(); w++)
 	{
-		if(wordListFindAndReplaceWordListInWordListWithWordList(wordList, &wordListToFind, w, &wordListReplacement))
+		if(findAndReplaceWordListInWordListAtIndexWithWordList(wordList, &wordListToFind, w, &wordListReplacement))
 		{
 			w = w + wordListReplacement.size()-1;
 			result = true;
@@ -433,9 +433,7 @@ bool GIApreprocessorMultiwordReductionClassClass::wordListFindAndReplaceAllOccur
 		
 	return result;
 }
-
-
-bool GIApreprocessorMultiwordReductionClassClass::wordListFindAndReplaceSimpleSubstringInWordListWithSimpleSubstring(vector<GIApreprocessorWord*>* wordList, const string stringSimpleToFind, const int startIndexToPerformFind, const string stringSimpleReplacement)
+bool GIApreprocessorMultiwordReductionClassClass::findAndReplaceSimpleSubstringInWordListAtIndexWithSimpleSubstring(vector<GIApreprocessorWord*>* wordList, const string stringSimpleToFind, const int indexToPerformFind, const string stringSimpleReplacement)
 {
 	bool result = false;
 	
@@ -444,45 +442,99 @@ bool GIApreprocessorMultiwordReductionClassClass::wordListFindAndReplaceSimpleSu
 	vector<GIApreprocessorWord*> wordListReplacement;
 	generateSentenceWordListFromStringSimple(&wordListReplacement, &stringSimpleReplacement);
 	
-	if(wordListFindAndReplaceWordListInWordListWithWordList(wordList, &wordListToFind, startIndexToPerformFind, &wordListReplacement))
+	if(findAndReplaceWordListInWordListAtIndexWithWordList(wordList, &wordListToFind, indexToPerformFind, &wordListReplacement))
 	{
 		result = true;
 	}
 		
 	return result;
 }
-
-//limiations: sequence must be found at startIndexToPerformFind (not after it)
-bool GIApreprocessorMultiwordReductionClassClass::wordListFindAndReplaceWordListInWordListWithWordList(vector<GIApreprocessorWord*>* wordList, vector<GIApreprocessorWord*>* wordListToFind, const int startIndexToPerformFind, vector<GIApreprocessorWord*>* wordListReplacement)
+bool GIApreprocessorMultiwordReductionClassClass::findAndReplaceWordListInWordListAtIndexWithWordList(vector<GIApreprocessorWord*>* wordList, vector<GIApreprocessorWord*>* wordListToFind, const int indexToPerformFind, vector<GIApreprocessorWord*>* wordListReplacement)
 {
 	bool result = false;
 	
-	//cout << "wordListFindAndReplaceWordListInWordListWithWordList{}: wordList before: " << generateTextFromVectorWordList(wordList) << ", wordListToFind = " << generateTextFromVectorWordList(wordListToFind) << ", wordListReplacement = " << generateTextFromVectorWordList(wordListReplacement)  << endl;
+	//cout << "findAndReplaceWordListInWordListAtIndexWithWordList{}: wordList before: " << generateTextFromVectorWordList(wordList) << ", wordListToFind = " << generateTextFromVectorWordList(wordListToFind) << ", wordListReplacement = " << generateTextFromVectorWordList(wordListReplacement)  << endl;
 	
-	if(wordListFindSubWordListInWordList(wordList, wordListToFind, startIndexToPerformFind))
+	bool caseInsensitive = false;
+	if(findSubWordListInWordListAtIndex(wordList, wordListToFind, indexToPerformFind, caseInsensitive))
 	{
-		removeWordsFromWordList(wordList, startIndexToPerformFind, wordListToFind->size());
-		insertWordListIntoWordList(wordList, wordListReplacement, startIndexToPerformFind);
+		removeWordsFromWordList(wordList, indexToPerformFind, wordListToFind->size());
+		insertWordListIntoWordList(wordList, wordListReplacement, indexToPerformFind);
 		result = true;
 	}
 	
-	//cout << "wordListFindAndReplaceWordListInWordListWithWordList{}: wordList after: " << generateTextFromVectorWordList(wordList) << endl;
+	//cout << "findAndReplaceWordListInWordListAtIndexWithWordList{}: wordList after: " << generateTextFromVectorWordList(wordList) << endl;
 	
 	return result;
 }
 
-//limiations: sequence must be found at startIndexToPerformFind (not after it)
-bool GIApreprocessorMultiwordReductionClassClass::wordListFindSubWordListInWordList(const vector<GIApreprocessorWord*>* wordList, const vector<GIApreprocessorWord*>* wordListToFind, int startIndexToPerformFind)
+
+bool GIApreprocessorMultiwordReductionClassClass::findSimpleSubstringInWordList(vector<GIApreprocessorWord*>* wordList, const string stringSimpleToFind)
+{
+	const int startIndexToPerformFind = 0;
+	return findSimpleSubstringInWordList(wordList, stringSimpleToFind, startIndexToPerformFind);
+}
+bool GIApreprocessorMultiwordReductionClassClass::findSimpleSubstringInWordList(vector<GIApreprocessorWord*>* wordList, const string stringSimpleToFind, const int startIndexToPerformFind)
 {
 	bool result = false;
 	
-	if(startIndexToPerformFind+wordListToFind->size() <= wordList->size())
+	vector<GIApreprocessorWord*> wordListToFind;
+	generateSentenceWordListFromStringSimple(&wordListToFind, &stringSimpleToFind);
+	
+	if(findSubWordListInWordList(wordList, &wordListToFind, startIndexToPerformFind))
+	{
+		result = true;
+	}
+		
+	return result;
+}
+bool GIApreprocessorMultiwordReductionClassClass::findSubWordListInWordList(vector<GIApreprocessorWord*>* wordList, const vector<GIApreprocessorWord*>* wordListToFind, const int startIndexToPerformFind)
+{
+	bool result = false;
+	
+	for(int i=startIndexToPerformFind; i<wordList->size(); i++)
+	{
+		bool caseInsensitive = false;
+		if(findSubWordListInWordListAtIndex(wordList, wordListToFind, i, caseInsensitive))
+		{
+			result = true;
+		}
+	}
+		
+	return result;
+}
+bool GIApreprocessorMultiwordReductionClassClass::findSimpleSubstringInWordListAtIndex(const vector<GIApreprocessorWord*>* wordList, const string stringSimpleToFind, const int indexToPerformFind, const bool caseInsensitive)
+{
+	bool result = false;
+	
+	vector<GIApreprocessorWord*> wordListToFind;
+	generateSentenceWordListFromStringSimple(&wordListToFind, &stringSimpleToFind);
+	
+	if(findSubWordListInWordListAtIndex(wordList, &wordListToFind, indexToPerformFind, caseInsensitive))
+	{
+		result = true;
+	}
+		
+	return result;
+}
+bool GIApreprocessorMultiwordReductionClassClass::findSubWordListInWordListAtIndex(const vector<GIApreprocessorWord*>* wordList, const vector<GIApreprocessorWord*>* wordListToFind, const int indexToPerformFind, const bool caseInsensitive)
+{
+	bool result = false;
+	
+	if(indexToPerformFind+wordListToFind->size() <= wordList->size())
 	{
 		bool stillFindingWordMatches = true;
 		int i = 0;
 		while((i < wordListToFind->size()) && stillFindingWordMatches)
 		{
-			if((*wordList)[i+startIndexToPerformFind]->tagName != (*wordListToFind)[i]->tagName)
+			string string1 = (*wordList)[i+indexToPerformFind]->tagName;
+			string string2 = (*wordListToFind)[i]->tagName;
+			if(caseInsensitive)
+			{
+				string1 = SHAREDvars.convertStringToLowerCase(&string1);
+				string2 = SHAREDvars.convertStringToLowerCase(&string2);
+			}
+			if(string1 != string2)
 			{
 				stillFindingWordMatches = false;
 			}
@@ -496,7 +548,7 @@ bool GIApreprocessorMultiwordReductionClassClass::wordListFindSubWordListInWordL
 	/*
 	else
 	{
-		cout << "GIApreprocessorMultiwordReductionClassClass::wordListFindSubWordListInWordList error{}: !(startIndexToPerformFind+wordListToFind->size() <= wordList->size())" << endl;
+		cout << "GIApreprocessorMultiwordReductionClassClass::findSubWordListInWordListAtIndex error{}: !(indexToPerformFind+wordListToFind->size() <= wordList->size())" << endl;
 		exit(EXIT_ERROR);
 	}
 	*/
@@ -530,24 +582,6 @@ bool GIApreprocessorMultiwordReductionClassClass::generateSentenceWordListFromSt
 	
 	return result;
 }
-
-bool GIApreprocessorMultiwordReductionClassClass::wordListFindAndRemoveAllOccurancesSimpleSubstringInWordList(vector<GIApreprocessorWord*>* wordList, const string stringToFind)
-{
-	bool result = false;
-	
-	bool stillFinding = true;
-	for(int i=0; i<wordList->size(); i++)
-	{
-		string currentWord = (*wordList)[i]->tagName;
-		if(currentWord == stringToFind)
-		{
-			removeWordFromWordList(wordList, i);
-			i = i - 1;
-		}
-	}
-	return result;
-}
-
 
 
 int GIApreprocessorMultiwordReductionClassClass::findStringInWordList(const vector<GIApreprocessorWord*>* wordList, const string stringToFind)
@@ -586,12 +620,12 @@ int GIApreprocessorMultiwordReductionClassClass::findStringInWordList(const vect
 	return indexOfWordFound;
 }
 
-bool GIApreprocessorMultiwordReductionClassClass::findSubstringInWordList(const vector<GIApreprocessorWord*>* wordList, const string substringToFind)
+bool GIApreprocessorMultiwordReductionClassClass::findSubstringAtStartOfWordInWordList(const vector<GIApreprocessorWord*>* wordList, const string substringToFind)
 {
 	const int startIndexToPerformFind = 0;
-	return findSubstringInWordList(wordList, substringToFind, startIndexToPerformFind);
+	return findSubstringAtStartOfWordInWordList(wordList, substringToFind, startIndexToPerformFind);
 }
-bool GIApreprocessorMultiwordReductionClassClass::findSubstringInWordList(const vector<GIApreprocessorWord*>* wordList, const string substringToFind, const int startIndexToPerformFind)
+bool GIApreprocessorMultiwordReductionClassClass::findSubstringAtStartOfWordInWordList(const vector<GIApreprocessorWord*>* wordList, const string substringToFind, const int startIndexToPerformFind)
 {
 	bool result  = false;
 	//int indexOfWordFound = CPP_STRING_FIND_RESULT_FAIL_VALUE;
@@ -603,7 +637,7 @@ bool GIApreprocessorMultiwordReductionClassClass::findSubstringInWordList(const 
 			if(!result)
 			{//return first instance
 				string currentWord = (*wordList)[i]->tagName;
-				if(currentWord.find(substringToFind) != CPP_STRING_FIND_RESULT_FAIL_VALUE)
+				if(currentWord.find(substringToFind) == 0)
 				{
 					result = true;
 					//indexOfWordFound = i;
@@ -614,7 +648,7 @@ bool GIApreprocessorMultiwordReductionClassClass::findSubstringInWordList(const 
 	/*
 	else
 	{
-		cout << "GIApreprocessorMultiwordReductionClassClass::findSubstringInWordList error{}: !(startIndexToPerformFind < wordList->size())" << endl;
+		cout << "GIApreprocessorMultiwordReductionClassClass::findSubstringAtStartOfWordInWordList error{}: !(startIndexToPerformFind < wordList->size())" << endl;
 		exit(EXIT_ERROR);
 	}
 	*/
@@ -629,7 +663,6 @@ vector<GIApreprocessorWord*> GIApreprocessorMultiwordReductionClassClass::extrac
 	int numberOfWordsToExtract = wordList->size() - startIndexToExtract;
 	return extractSubWordListInWordList(wordList, startIndexToExtract, numberOfWordsToExtract);
 }
-
 vector<GIApreprocessorWord*> GIApreprocessorMultiwordReductionClassClass::extractSubWordListInWordList(const vector<GIApreprocessorWord*>* wordList, const int startIndexToExtract, const int numberOfWordsToExtract)
 {
 	bool result = false;
@@ -675,7 +708,6 @@ bool GIApreprocessorMultiwordReductionClassClass::insertWordListIntoWordList(vec
 		
 	return result;
 }
-
 bool GIApreprocessorMultiwordReductionClassClass::insertStringIntoWordList(vector<GIApreprocessorWord*>* wordList, const string stringToInsert, const int indexToInsert)
 {
 	bool result = true;
@@ -709,6 +741,22 @@ bool GIApreprocessorMultiwordReductionClassClass::insertWordIntoWordList(vector<
 	return result;
 }
 
+bool GIApreprocessorMultiwordReductionClassClass::wordListFindAndRemoveAllOccurancesSimpleSubstringInWordList(vector<GIApreprocessorWord*>* wordList, const string stringToFind)
+{
+	bool result = false;
+	
+	bool stillFinding = true;
+	for(int i=0; i<wordList->size(); i++)
+	{
+		string currentWord = (*wordList)[i]->tagName;
+		if(currentWord == stringToFind)
+		{
+			removeWordFromWordList(wordList, i);
+			i = i - 1;
+		}
+	}
+	return result;
+}
 bool GIApreprocessorMultiwordReductionClassClass::removeWordFromWordList(vector<GIApreprocessorWord*>* wordList, const int indexToRemove)
 {
 	return removeWordsFromWordList(wordList, indexToRemove, 1);
@@ -734,7 +782,43 @@ bool GIApreprocessorMultiwordReductionClassClass::removeWordsFromWordList(vector
 }
 
 
+bool GIApreprocessorMultiwordReductionClassClass::replaceWordListAtIndexWithSimpleSubstring(vector<GIApreprocessorWord*>* wordList, const int indexToPerformReplacement, const string stringSimpleReplacement)
+{
+	bool result = true;
+	
+	vector<GIApreprocessorWord*> wordListReplacement;
+	generateSentenceWordListFromStringSimple(&wordListReplacement, &stringSimpleReplacement);
+	
+	if(!replaceWordListAtIndexWithSimpleSubstring(wordList, indexToPerformReplacement, &wordListReplacement))
+	{
+		result = false;
+	}
+	
+	return result;
+}
 
+bool GIApreprocessorMultiwordReductionClassClass::replaceWordListAtIndexWithSimpleSubstring(vector<GIApreprocessorWord*>* wordList, const int indexToPerformReplacement, vector<GIApreprocessorWord*>* wordListReplacement)
+{
+	bool result = false;
+	
+	if(indexToPerformReplacement+wordListReplacement->size() <= wordList->size())
+	{
+		result = true;
+		for(int i=0; i<wordListReplacement->size(); i++)
+		{
+			(*wordList)[indexToPerformReplacement+i]->tagName = (*wordListReplacement)[i]->tagName;
+		}
+	}
+	/*
+	else
+	{
+		cout << "GIApreprocessorMultiwordReductionClassClass::replaceWordListAtIndexWithSimpleSubstring error{}: !(indexToPerformReplacement+wordListReplacement.size() <= wordList.size())" << endl;
+		exit(EXIT_ERROR);
+	}
+	*/
+		
+	return result;
+}
 
 
 				
