@@ -25,7 +25,7 @@
  * File Name: GIApreprocessor.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3b3d 25-May-2017
+ * Project Version: 3b3e 25-May-2017
  * Requirements: requires plain text file
  * Description: Logical Condition and Reference Set preprocessor
  *
@@ -161,6 +161,7 @@ bool GIApreprocessorClass::createPreprocessSentences(const string fileContents, 
 	int entityIndex = GIA_NLP_START_ENTITY_INDEX;	//only assigned after collapse?
 	int sentenceIndex = GIA_NLP_START_SENTENCE_INDEX;
 	bool whiteSpace = true;
+	bool previousCharacterIsMathGrouped = false;
 	while(charCount < fileContents.length())
 	{		
 		currentToken = fileContents[charCount];
@@ -233,6 +234,10 @@ bool GIApreprocessorClass::createPreprocessSentences(const string fileContents, 
 				{
 					mathFound = true;
 				}
+				else
+				{
+					previousCharacterIsMathGrouped = true;
+				}
 			}
 			else
 			{
@@ -277,6 +282,14 @@ bool GIApreprocessorClass::createPreprocessSentences(const string fileContents, 
 			if((whiteSpaceFound || newlineFound || punctuationMarkFound || apostrophePossessionOrOmissionFound || dollarFound || quotationMarkFound || mathFound) && !readingQuotation)
 			{
 				bool lastWordBlank = true;
+				
+				#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_MATH_GROUPING
+				if(mathFound && previousCharacterIsMathGrouped)
+				{
+					currentWord = currentWord + currentToken;
+				}
+				#endif
+				 
 				if(currentWord != "")
 				{//do not add empty tag after closing quotation marks	//e.g. GIA_PREPROCESSOR_MULTIWORD_REDUCTION_REDUCE_QUOTES_TO_SINGLE_WORDS or (newlineFound && interpretNewLinesAsNewSentences && previousCharacter==whitespace)
 					lastWordBlank = false;
@@ -284,7 +297,21 @@ bool GIApreprocessorClass::createPreprocessSentences(const string fileContents, 
 					whiteSpace = false;
 				}
 
-				if(punctuationMarkFound || quotationMarkFound || mathFound)
+				if(quotationMarkFound)
+				{
+					string quotationMark = ""; 
+					quotationMark = quotationMark + currentToken;
+					preprocessorFillCurrentWord(&currentWordInSentence, &quotationMark, &entityIndex);
+				}
+				#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_MATH_GROUPING
+				else if(mathFound && !previousCharacterIsMathGrouped)
+				{
+					string mathMark = ""; 
+					mathMark = mathMark + currentToken;
+					preprocessorFillCurrentWord(&currentWordInSentence, &mathMark, &entityIndex);
+				}
+				#endif
+				else if(punctuationMarkFound)
 				{
 					string punctuationMark = ""; 
 					punctuationMark = punctuationMark + currentToken;
@@ -343,9 +370,9 @@ bool GIApreprocessorClass::createPreprocessSentences(const string fileContents, 
 				{
 					if(lastWordBlank)
 					{
-						string punctuationMark = ""; 
-						punctuationMark = punctuationMark + currentToken;
-						preprocessorFillCurrentWord(&currentWordInSentence, &punctuationMark, &entityIndex);
+						string dollarMark = ""; 
+						dollarMark = dollarMark + currentToken;
+						preprocessorFillCurrentWord(&currentWordInSentence, &dollarMark, &entityIndex);
 					}
 					else
 					{
@@ -358,6 +385,13 @@ bool GIApreprocessorClass::createPreprocessSentences(const string fileContents, 
 				else if(apostrophePossessionOrOmissionFound)
 				{
 					currentWord = currentWord + currentToken;
+				}
+				#endif
+				
+				#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_MATH_GROUPING
+				if(mathFound && previousCharacterIsMathGrouped)
+				{
+					previousCharacterIsMathGrouped = false;
 				}
 				#endif
 			}
