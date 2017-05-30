@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorLinkEntitiesDynamic.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3b3i 25-May-2017
+ * Project Version: 3b4a 28-May-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -86,8 +86,8 @@ void GIAtranslatorLinkEntitiesDynamicClass::linkEntitiesDynamicPrenominalModifie
 				string entity2Name = currentRelationInList->relationDependent;
 				int entity1Index = currentRelationInList->relationGovernorIndex;
 				int entity2Index = currentRelationInList->relationDependentIndex;
-				GIAentityNode* entity1 = translatorVariables->GIAentityNodeArray[entity1Index];
-				GIAentityNode* entity2 = translatorVariables->GIAentityNodeArray[entity2Index];
+				GIAentityNode* entity1 = (*translatorVariables->GIAentityNodeArray)[entity1Index];
+				GIAentityNode* entity2 = (*translatorVariables->GIAentityNodeArray)[entity2Index];
 
 				int relationTypeIndex = currentRelationInList->relationTypeIndex;
 
@@ -128,7 +128,7 @@ void GIAtranslatorLinkEntitiesDynamicClass::linkEntitiesDynamicPrenominalModifie
 					bool sameReferenceSet = true;
 
 					this->connectPropertyToEntityFull(translatorVariables, entity1, entity2, entity1Index, entity2Index, sameReferenceSet, true);
-					//OLD: translatorVariables->GIAentityNodeArray[entity2Index] = connectPropertyToEntity(entity1, entity2, sameReferenceSet);
+					//OLD: (*translatorVariables->GIAentityNodeArray)[entity2Index] = connectPropertyToEntity(entity1, entity2, sameReferenceSet);
 				}
 			}
 		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
@@ -213,12 +213,12 @@ bool GIAtranslatorLinkEntitiesDynamicClass::linkEntitiesDynamicPrenominalModifie
 								#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_TWOWAY_PREPOSITIONS
 								if(currentRelationInList->relationTwoWay)	//limitation only works when GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_conditionToEntity is called based on a single GIArelation
 								{
-									translatorVariables->GIAentityNodeArray[featureIndexOfPreposition]->conditionTwoWay = true;	//sets conditionTwoWay for condition substance not networkIndex
+									(*translatorVariables->GIAentityNodeArray)[featureIndexOfPreposition]->conditionTwoWay = true;	//sets conditionTwoWay for condition substance not networkIndex
 								}
 								#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED
 								if(currentRelationInList->inverseRelationTwoWay)	//limitation only works when GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_conditionToEntity is called based on a single GIArelation
 								{
-									translatorVariables->GIAentityNodeArray[featureIndexOfPreposition]->inverseConditionTwoWay = true;	//sets inverseConditionTwoWay for condition substance not networkIndex
+									(*translatorVariables->GIAentityNodeArray)[featureIndexOfPreposition]->inverseConditionTwoWay = true;	//sets inverseConditionTwoWay for condition substance not networkIndex
 								}
 								#endif
 								#endif
@@ -246,13 +246,13 @@ void GIAtranslatorLinkEntitiesDynamicClass::linkEntitiesDynamicFromConditions(GI
 	bool sameReferenceSet = true;
 
 	GIArelation* currentRelationInList = translatorVariables->currentSentenceInList->firstRelationInList;
-	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
+	for(int w=0; w<GIAsentenceClass.getMaxIndexOfDynamicallyGeneratedEntity(translatorVariables->currentSentenceInList); w++)
 	{
-		if(translatorVariables->GIAentityNodeArrayFilled[w])
+		if((*translatorVariables->GIAentityNodeArrayFilled)[w])
 		{
-			if(SHAREDvars.textInTextArray(translatorVariables->GIAentityNodeArray[w]->entityName, relationTypePrepositionFromNameArray, RELATION_TYPE_PREPOSITION_FROM_NUMBER_OF_TYPES))
+			if(SHAREDvars.textInTextArray((*translatorVariables->GIAentityNodeArray)[w]->entityName, relationTypePrepositionFromNameArray, RELATION_TYPE_PREPOSITION_FROM_NUMBER_OF_TYPES))
 			{
-				GIAentityNode* fromCondition = translatorVariables->GIAentityNodeArray[w];
+				GIAentityNode* fromCondition = (*translatorVariables->GIAentityNodeArray)[w];
 
 				if(!(fromCondition->relationshipObjectEntity->empty()))
 				{
@@ -465,7 +465,7 @@ void GIAtranslatorLinkEntitiesDynamicClass::connectDefinitionToEntityFull(GIAtra
 	/*OLD:
 	GIAentityNode* relationshipEntity = GIAtranslatorOperations.findOrAddEntityNodeByNameSimpleWrapperRelationshipArtificialDefinition(translatorVariables);
 	int relationshipEntityIndex = relationshipEntity->entityIndexTemp;
-	translatorVariables->GIAentityNodeArray[relationshipEntityIndex] = GIAtranslatorOperations.connectDefinitionToEntity(entity1, entity2, relationshipEntity, sameReferenceSet);
+	(*translatorVariables->GIAentityNodeArray)[relationshipEntityIndex] = GIAtranslatorOperations.connectDefinitionToEntity(entity1, entity2, relationshipEntity, sameReferenceSet);
 	*/
 	#ifndef GIA_DYNAMICALLY_LINK_ENTITIES_DISABLE_GIA_SEMANTIC_PARSER_SEMANTIC_RELATION_GENERATION
 	#ifdef GIA_SEMANTIC_PARSER_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
@@ -481,7 +481,7 @@ void GIAtranslatorLinkEntitiesDynamicClass::connectPropertyToEntityFull(GIAtrans
 	/*OLD:
 	GIAentityNode* relationshipEntity = GIAtranslatorOperations.findOrAddEntityNodeByNameSimpleWrapperRelationshipArtificialProperty(translatorVariables);
 	int relationshipEntityIndex = relationshipEntity->entityIndexTemp;
-	translatorVariables->GIAentityNodeArray[relationshipEntityIndex] = GIAtranslatorOperations.connectPropertyToEntity(entity1, entity2, relationshipEntity, sameReferenceSet);
+	(*translatorVariables->GIAentityNodeArray)[relationshipEntityIndex] = GIAtranslatorOperations.connectPropertyToEntity(entity1, entity2, relationshipEntity, sameReferenceSet);
 	*/
 	#ifndef GIA_DYNAMICALLY_LINK_ENTITIES_DISABLE_GIA_SEMANTIC_PARSER_SEMANTIC_RELATION_GENERATION
 	#ifdef GIA_SEMANTIC_PARSER_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
@@ -524,11 +524,11 @@ int GIAtranslatorLinkEntitiesDynamicClass::getEntityIndex(GIAtranslatorVariables
 	bool foundEntityIndex = false;
 	int instanceEntityIndex = 0;
 
-	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
+	for(int w=0; w<GIAsentenceClass.getMaxIndexOfDynamicallyGeneratedEntity(translatorVariables->currentSentenceInList); w++)
 	{
-		if(translatorVariables->GIAentityNodeArrayFilled[w])
+		if((*translatorVariables->GIAentityNodeArrayFilled)[w])
 		{
-			if(translatorVariables->GIAentityNodeArray[w] == instanceEntity)
+			if((*translatorVariables->GIAentityNodeArray)[w] == instanceEntity)
 			{
 				foundEntityIndex = true;
 				instanceEntityIndex = w;

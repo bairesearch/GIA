@@ -25,7 +25,7 @@
  * File Name: GIApreprocessor.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3b3i 25-May-2017
+ * Project Version: 3b4a 28-May-2017
  * Requirements: requires plain text file
  * Description: Logical Condition and Reference Set preprocessor
  *
@@ -2665,7 +2665,7 @@ bool GIApreprocessorClass::addSentenceFeatureOutputToPreprocessorSentenceWordLis
 		}
 		else
 		{
-			if(translatorVariables->GIAentityNodeArrayFilled[w])
+			if((*translatorVariables->GIAentityNodeArrayFilled)[w])
 			{
 				preprocessorSentenceWord->featureReference = currentFeatureInList;
 			}
@@ -2691,9 +2691,9 @@ bool GIApreprocessorClass::addSentenceEntityOutputToPreprocessorSentenceWordList
 	for(int w=0; w<preprocessorSentenceWordList->size(); w++)	//ignore artificial entities with entityIndex > preprocessorSentenceWordList.size() [feature list size]
 	{
 		GIApreprocessorWord* preprocessorSentenceWord = *preprocessorSentenceWordListIter;
-		if(translatorVariables->GIAentityNodeArrayFilled[w])
+		if((*translatorVariables->GIAentityNodeArrayFilled)[w])
 		{
-			preprocessorSentenceWord->entityReference = translatorVariables->GIAentityNodeArray[w];
+			preprocessorSentenceWord->entityReference = (*translatorVariables->GIAentityNodeArray)[w];
 		}
 		preprocessorSentenceWordListIter++;
 	}

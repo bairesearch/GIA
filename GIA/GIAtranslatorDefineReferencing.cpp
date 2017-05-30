@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3b3i 25-May-2017
+ * Project Version: 3b4a 28-May-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -45,11 +45,11 @@ void GIAtranslatorDefineReferencingClass::identifyComparisonVariableAlternateMet
 
 	if(expectToFindComparisonVariable)
 	{
-		for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
+		for(int i=0; i<GIAsentenceClass.getMaxIndexOfDynamicallyGeneratedEntity(translatorVariables->currentSentenceInList); i++)
 		{
-			if(translatorVariables->GIAentityNodeArrayFilled[i])
+			if((*translatorVariables->GIAentityNodeArrayFilled)[i])
 			{
-				GIAentityNode* entityNode = translatorVariables->GIAentityNodeArray[i];
+				GIAentityNode* entityNode = (*translatorVariables->GIAentityNodeArray)[i];
 				if(entityNode->entityName == REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
 				{
 					entityNode->isQuery = true;
@@ -148,9 +148,9 @@ void GIAtranslatorDefineReferencingClass::identifyComparisonVariableAlternateMet
 						GIAentityNode* queryComparisonVariableEntityNode = findOrAddNetworkIndexEntityNodeByNameSimpleWrapper(&queryComparisonVariableName, &entityAlreadyExistant);
 						//CHECK THIS; !applyNetworkIndexEntityAlreadyExistsFunction
 						*/
-						if(translatorVariables->GIAentityNodeArrayFilled[currentFeatureInList->entityIndex])
+						if((*translatorVariables->GIAentityNodeArrayFilled)[currentFeatureInList->entityIndex])
 						{
-							GIAentityNode* queryComparisonVariableEntityNode = translatorVariables->GIAentityNodeArray[currentFeatureInList->entityIndex];
+							GIAentityNode* queryComparisonVariableEntityNode = (*translatorVariables->GIAentityNodeArray)[currentFeatureInList->entityIndex];
 							queryComparisonVariableEntityNode->isQuery = true;
 							queryComparisonVariableEntityNode->isWhichOrEquivalentWhatQuery = true;
 							#ifdef GIA_WHICH_QUERY_ALIAS_ANSWERS
@@ -192,11 +192,11 @@ void GIAtranslatorDefineReferencingClass::linkPronounReferencesRelex(GIAtranslat
 	cout << "warning: linkPronounReferencesRelex{} is not robust - it requires further development" << endl;
 	#endif
 
-	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
+	for(int w=0; w<GIAsentenceClass.getMaxIndexOfDynamicallyGeneratedEntity(translatorVariables->currentSentenceInList); w++)
 	{
-		if(translatorVariables->GIAentityNodeArrayFilled[w])
+		if((*translatorVariables->GIAentityNodeArrayFilled)[w])
 		{
-			GIAentityNode* currentGIAEntityNode = translatorVariables->GIAfeatureTempEntityNodeArray[w];
+			GIAentityNode* currentGIAEntityNode = (*translatorVariables->GIAfeatureTempEntityNodeArray)[w];
 			for(int i=0; i< REFERENCE_TYPE_PERSON_NUMBER_OF_TYPES; i++)
 			{
 				if(((currentGIAEntityNode->entityName == referenceTypePossessiveNameArray[i]) || (currentGIAEntityNode->entityName == referenceTypePersonNameArray[i])) && (currentGIAEntityNode->grammaticalPronounTemp))
@@ -336,14 +336,14 @@ void GIAtranslatorDefineReferencingClass::linkPronounReferencesRelex(GIAtranslat
 					if(referenceSourceHasBeenFound)
 					{//remap entity; eg He to John
 
-						GIAtranslatorOperations.disableEntity(translatorVariables->GIAfeatureTempEntityNodeArray[w]);
+						GIAtranslatorOperations.disableEntity((*translatorVariables->GIAfeatureTempEntityNodeArray)[w]);
 
 					#ifdef GIA_ORIGINAL_PRONOMINAL_COREFERENCE_RESOLUTION_IGNORE_SUBSTANCES_TAKE_NETWORK_INDEXES_ONLY
-						translatorVariables->GIAnetworkIndexNodeArray[w] = referenceSource;
+						(*translatorVariables->GIAnetworkIndexNodeArray)[w] = referenceSource;
 						#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES
 						referenceSource->isPronounReference = true;
 						#else
-						translatorVariables->featureArrayTemp[w]->isPronounReference = true;
+						(*translatorVariables->featureArrayTemp)[w]->isPronounReference = true;
 						#endif
 						GIAtranslatorOperations.applyNetworkIndexEntityAlreadyExistsFunction(referenceSource, true, true);
 					#else
@@ -364,9 +364,9 @@ void GIAtranslatorDefineReferencingClass::linkPronounReferencesRelex(GIAtranslat
 								substance->isPronounReference = true;
 								referenceSource->isPronounReference = true;
 								#else
-								translatorVariables->featureArrayTemp[w]->isPronounReference = true;
+								(*translatorVariables->featureArrayTemp)[w]->isPronounReference = true;
 								#endif
-								translatorVariables->GIAentityNodeArray[w] = substance;
+								(*translatorVariables->GIAentityNodeArray)[w] = substance;
 								#ifdef GIA_RECORD_WAS_REFERENCE_INFORMATION
 								if(referenceSource->sentenceIndexTemp != translatorVariables->currentSentenceInList->sentenceIndex)
 								{//Added condition GIA 2f7a - 06 July 2014 (wasReference is only used for intersentence references)
@@ -384,9 +384,9 @@ void GIAtranslatorDefineReferencingClass::linkPronounReferencesRelex(GIAtranslat
 							#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES
 							referenceSource->isPronounReference = true;
 							#else
-							translatorVariables->featureArrayTemp[w]->isPronounReference = true;
+							(*translatorVariables->featureArrayTemp)[w]->isPronounReference = true;
 							#endif
-							translatorVariables->GIAentityNodeArray[w] = referenceSource;
+							(*translatorVariables->GIAentityNodeArray)[w] = referenceSource;
 							#ifdef GIA_RECORD_WAS_REFERENCE_INFORMATION
 							if(referenceSource->sentenceIndexTemp != translatorVariables->currentSentenceInList->sentenceIndex)
 							{//Added condition GIA 2f7a - 06 July 2014 (wasReference is only used for intersentence references)
@@ -486,9 +486,9 @@ void GIAtranslatorDefineReferencingClass::linkPronounAndTextualContextReferences
 					if(currentMentionInList->sentence == translatorVariables->currentSentenceInList->sentenceIndex)
 					{
 						int currentSentenceEntityNodeIndex = currentMentionInList->head;
-						if(translatorVariables->GIAentityNodeArrayFilled[currentSentenceEntityNodeIndex])
+						if((*translatorVariables->GIAentityNodeArrayFilled)[currentSentenceEntityNodeIndex])
 						{
-							GIAfeature* referenceFeature = translatorVariables->featureArrayTemp[currentSentenceEntityNodeIndex];
+							GIAfeature* referenceFeature = (*translatorVariables->featureArrayTemp)[currentSentenceEntityNodeIndex];
 
 							bool coreferenceIsPronoun = false;
 							//use stanfordPOS information to ensure that the reference is a pronoun - NB alternatively, could use referenceTypePersonNameArray and referenceTypePossessiveNameArray (as there is only a limited set of pronouns in english)
@@ -518,7 +518,7 @@ void GIAtranslatorDefineReferencingClass::linkPronounAndTextualContextReferences
 										if(referenceFeature->grammaticalDefinite || referenceFeature->grammaticalRelexPersonOrStanfordProperNoun)
 										{
 										#endif
-											translatorVariables->GIAentityNodeArray[currentSentenceEntityNodeIndex] = substance;
+											(*translatorVariables->GIAentityNodeArray)[currentSentenceEntityNodeIndex] = substance;
 											#ifdef GIA_REFERENCING_UPDATE_ENTITY_INDEXES_OF_REFERENCE_SOURCE_TO_THOSE_OF_CURRENT_SENTENCE
 											#ifdef GIA_REFERENCING_UPDATE_ENTITY_INDEXES_OF_REFERENCE_SOURCE_TO_THOSE_OF_CURRENT_SENTENCE_NETWORK_INDICES
 											referenceSource->entityIndexTemp = currentSentenceEntityNodeIndex;
@@ -545,7 +545,7 @@ void GIAtranslatorDefineReferencingClass::linkPronounAndTextualContextReferences
 												substance->isPronounReference = true;
 												referenceSource->isPronounReference = true;
 												#else
-												translatorVariables->featureArrayTemp[currentSentenceEntityNodeIndex]->isPronounReference = true;
+												(*translatorVariables->featureArrayTemp)[currentSentenceEntityNodeIndex]->isPronounReference = true;
 												#endif
 											}
 										#ifdef GIA_STANFORD_CORE_NLP_CODEPENDENCIES_DO_NOT_USE_IF_REFERENCE_IS_NOT_DEFINITE_OR_PROPER_NOUN
@@ -562,15 +562,15 @@ void GIAtranslatorDefineReferencingClass::linkPronounAndTextualContextReferences
 
 									if(coreferenceIsPronoun)
 									{
-										GIAtranslatorOperations.disableEntity(translatorVariables->GIAfeatureTempEntityNodeArray[currentSentenceEntityNodeIndex]);
+										GIAtranslatorOperations.disableEntity((*translatorVariables->GIAfeatureTempEntityNodeArray)[currentSentenceEntityNodeIndex]);
 										#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES
 										referenceSource->isPronounReference = true;
 										#else
-										translatorVariables->featureArrayTemp[currentSentenceEntityNodeIndex]->isPronounReference = true;
+										(*translatorVariables->featureArrayTemp)[currentSentenceEntityNodeIndex]->isPronounReference = true;
 										#endif
 									}
 
-									translatorVariables->GIAentityNodeArray[currentSentenceEntityNodeIndex] = referenceSource;		//GIAnetworkIndexNodeArray[currentSentenceEntityNodeIndex] = referenceSource;
+									(*translatorVariables->GIAentityNodeArray)[currentSentenceEntityNodeIndex] = referenceSource;		//GIAnetworkIndexNodeArray[currentSentenceEntityNodeIndex] = referenceSource;
 									#ifdef GIA_REFERENCING_UPDATE_ENTITY_INDEXES_OF_REFERENCE_SOURCE_TO_THOSE_OF_CURRENT_SENTENCE
 									#ifdef GIA_REFERENCING_UPDATE_ENTITY_INDEXES_OF_REFERENCE_SOURCE_TO_THOSE_OF_CURRENT_SENTENCE_NETWORK_INDICES
 									referenceSource->entityIndexTemp = currentSentenceEntityNodeIndex;
@@ -1208,7 +1208,7 @@ void GIAtranslatorDefineReferencingClass::linkAdvancedReferencesGIA(GIAtranslato
 						if(currentMentionInList->intrasentenceReference)
 						{
 							int referenceSourceEntityIndex = currentMentionInList->entityIndex;
-							//referenceSource = translatorVariables->GIAentityNodeArray[referenceSourceEntityIndex];
+							//referenceSource = (*translatorVariables->GIAentityNodeArray)[referenceSourceEntityIndex];
 							intrasentenceReferenceSourceIndex = referenceSourceEntityIndex;
 							foundReferenceSource = true;
 						}
@@ -1283,23 +1283,23 @@ void GIAtranslatorDefineReferencingClass::linkAdvancedReferencesGIA(GIAtranslato
 							//create a new substance and share it between the reference and the reference source
 							/*Removed 1 October 2013
 							#ifdef GIA_RECORD_WAS_REFERENCE_INFORMATION
-							translatorVariables->GIAentityNodeArray[referenceEntityIndex]->wasReference = true;	//assign to networkIndex
+							(*translatorVariables->GIAentityNodeArray)[referenceEntityIndex]->wasReference = true;	//assign to networkIndex
 							#endif
 							#ifdef GIA_ADVANCED_REFERENCING_PREVENT_DOUBLE_LINKS
-							translatorVariables->GIAentityNodeArray[referenceEntityIndex]->wasReferenceTemp = true;
+							(*translatorVariables->GIAentityNodeArray)[referenceEntityIndex]->wasReferenceTemp = true;
 							#endif
 							*/
-							translatorVariables->GIAentityNodeArray[referenceEntityIndex] = GIAtranslatorOperations.addInstanceToInstanceDefinition(translatorVariables->GIAentityNodeArray[referenceEntityIndex], GIA_ENTITY_TYPE_SUBSTANCE, translatorVariables);
-							translatorVariables->GIAentityNodeArray[intrasentenceReferenceSourceIndex] = translatorVariables->GIAentityNodeArray[referenceEntityIndex];
+							(*translatorVariables->GIAentityNodeArray)[referenceEntityIndex] = GIAtranslatorOperations.addInstanceToInstanceDefinition((*translatorVariables->GIAentityNodeArray)[referenceEntityIndex], GIA_ENTITY_TYPE_SUBSTANCE, translatorVariables);
+							(*translatorVariables->GIAentityNodeArray)[intrasentenceReferenceSourceIndex] = (*translatorVariables->GIAentityNodeArray)[referenceEntityIndex];
 
 							/*Removed GIA 2f7a - 06 July 2014 (wasReference is only used for intersentence references)
 							#ifdef GIA_RECORD_WAS_REFERENCE_INFORMATION
-							translatorVariables->GIAentityNodeArray[intrasentenceReferenceSourceIndex]->wasReference = true;	//added 1 October 2013
+							(*translatorVariables->GIAentityNodeArray)[intrasentenceReferenceSourceIndex]->wasReference = true;	//added 1 October 2013
 							#endif
 							*/
 							/*Removed 1 October 2013
 							#ifdef GIA_ADVANCED_REFERENCING_PREVENT_DOUBLE_LINKS
-							translatorVariables->GIAentityNodeArray[intrasentenceReferenceSourceIndex]->wasReferenceTemp = true;	//added 1 October 2013
+							(*translatorVariables->GIAentityNodeArray)[intrasentenceReferenceSourceIndex]->wasReferenceTemp = true;	//added 1 October 2013
 							#endif
 							*/
 
@@ -1350,22 +1350,22 @@ void GIAtranslatorDefineReferencingClass::linkAdvancedReferencesGIA(GIAtranslato
 							*/
 
 							#ifdef GIA_ADVANCED_REFERENCING_PREPOSITIONS
-							if(translatorVariables->GIAentityNodeArrayFilled[referenceEntityIndex])
+							if((*translatorVariables->GIAentityNodeArrayFilled)[referenceEntityIndex])
 							{
 							#endif
 							#ifdef GIA_ADVANCED_REFERENCING_PREPOSITIONS
 							}
 							else
 							{
-								translatorVariables->GIAentityNodeArrayFilled[referenceEntityIndex] = true;	//preposition reference
-								translatorVariables->GIAfeatureTempEntityNodeArray[referenceEntityIndex] = referenceSource;		//added for GIA 1n7c 31-July-2012 to correct bug as resultant of advanced referencing - fill in array
-								translatorVariables->featureArrayTemp[referenceEntityIndex] = new GIAfeature();				//added for GIA 1n7c 31-July-2012 to correct bug as resultant of advanced referencing - fill in array
-								translatorVariables->GIAnetworkIndexNodeArray[referenceEntityIndex] = referenceSource;			//added for GIA 1n7c 31-July-2012 to correct bug as resultant of advanced referencing - fill in array
+								(*translatorVariables->GIAentityNodeArrayFilled)[referenceEntityIndex] = true;	//preposition reference
+								(*translatorVariables->GIAfeatureTempEntityNodeArray)[referenceEntityIndex] = referenceSource;		//added for GIA 1n7c 31-July-2012 to correct bug as resultant of advanced referencing - fill in array
+								(*translatorVariables->featureArrayTemp)[referenceEntityIndex] = new GIAfeature();				//added for GIA 1n7c 31-July-2012 to correct bug as resultant of advanced referencing - fill in array
+								(*translatorVariables->GIAnetworkIndexNodeArray)[referenceEntityIndex] = referenceSource;			//added for GIA 1n7c 31-July-2012 to correct bug as resultant of advanced referencing - fill in array
 							}
 							#endif
 
 
-							translatorVariables->GIAentityNodeArray[referenceEntityIndex] = referenceSource;
+							(*translatorVariables->GIAentityNodeArray)[referenceEntityIndex] = referenceSource;
 							#ifdef GIA_ADVANCED_REFERENCING_PREVENT_DOUBLE_LINKS
 							referenceSource->wasReferenceTemp = true;
 							#endif
@@ -1378,10 +1378,10 @@ void GIAtranslatorDefineReferencingClass::linkAdvancedReferencesGIA(GIAtranslato
 							#ifdef GIA_PREDETERMINERS
 							if(referenceSource->grammaticalPredeterminerTemp == GRAMMATICAL_PREDETERMINER_UNDEFINED)
 							{
-								referenceSource->grammaticalPredeterminerTemp = translatorVariables->featureArrayTemp[referenceEntityIndex]->grammaticalPredeterminer;	//only update the default (sentence independent) predeterminer of reference if no predeterminer found previously - NB the default (sentence independent) predeterminer is used by GIAxmlConversion only at present and shouldnt be used at all by !GIA_DISABLE_CROSS_SENTENCE_REFERENCING
+								referenceSource->grammaticalPredeterminerTemp = (*translatorVariables->featureArrayTemp)[referenceEntityIndex]->grammaticalPredeterminer;	//only update the default (sentence independent) predeterminer of reference if no predeterminer found previously - NB the default (sentence independent) predeterminer is used by GIAxmlConversion only at present and shouldnt be used at all by !GIA_DISABLE_CROSS_SENTENCE_REFERENCING
 							}
 							#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_REFERENCING_OF_ENTITIES_WITH_PREDETERMINERS
-							referenceSource->grammaticalPredeterminerTempSentenceArray.insert(make_pair(currentSentenceInList->sentenceIndex, translatorVariables->featureArrayTemp[referenceEntityIndex]->grammaticalPredeterminer));	//added 2i34a
+							referenceSource->grammaticalPredeterminerTempSentenceArray.insert(make_pair(currentSentenceInList->sentenceIndex, (*translatorVariables->featureArrayTemp)[referenceEntityIndex]->grammaticalPredeterminer));	//added 2i34a
 							#endif
 							#endif
 

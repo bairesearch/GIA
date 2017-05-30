@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3b3i 25-May-2017
+ * Project Version: 3b4a 28-May-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -95,15 +95,15 @@ public:
 	//temporary sentence parsing variables (!parsedSentences only):
 	bool saveNetwork;
 	GIAsentence* currentSentenceInList;
-	bool* GIAentityNodeArrayFilled;
-	GIAentityNode** GIAnetworkIndexNodeArray;
-	GIAentityNode** GIAfeatureTempEntityNodeArray;
-	GIAentityNode** GIAentityNodeArray;
+	vector<bool>* GIAentityNodeArrayFilled;
+	vector<GIAentityNode*>* GIAnetworkIndexNodeArray;
+	vector<GIAentityNode*>* GIAfeatureTempEntityNodeArray;
+	vector<GIAentityNode*>* GIAentityNodeArray;
 	
 	vector<GIAentityNode*>* sentenceNetworkIndexEntityNodesList;
 	unordered_map<long, GIAtimeConditionNode*>* sentenceTimeConditionNodesList;
 	
-	GIAfeature** featureArrayTemp;	//only used at start of translator
+	vector<GIAfeature*>* featureArrayTemp;	//only used at start of translator
 
 	int sentenceIndex;	//if parsedSentences only
 	
@@ -130,6 +130,7 @@ adjective = happy
 
 class GIAtranslatorOperationsClass
 {
+	private: GIAsentenceClassClass GIAsentenceClass;
 	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_PREPOSITIONS
 	private: GIApreprocessorMultiwordReductionClass GIApreprocessorMultiwordReduction;
 	#endif
@@ -234,7 +235,7 @@ class GIAtranslatorOperationsClass
 	public: void convertRelexPOStypeToWordnetWordType(const string* relexPOStype, int* grammaticalWordTypeTemp);
 	public: void convertStanfordPOStagToRelexPOStypeAndWordnetWordType(const string* POStag, string* relexPOStype, int* grammaticalWordTypeTemp);
 
-	public: void generateTempFeatureArray(GIAfeature* firstFeatureInList, GIAfeature* featureArrayTemp[]);	//used for intrafunction memory allocation purposes only
+	public: void generateTempFeatureArray(GIAtranslatorVariablesClass* translatorVariables, vector<GIAfeature*>* featureArrayTemp);	//used for intrafunction memory allocation purposes only
 
 	public: bool determineSameReferenceSetValue(bool defaultSameSetValueForRelation, const GIArelation* relation);
 
@@ -306,7 +307,6 @@ class GIAtranslatorOperationsClass
 	#endif
 	
 	public: void printEntity(GIAentityNode* entity);
-
 };
 
 

@@ -25,7 +25,7 @@
  * File Name: GIAsemanticParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3b3i 25-May-2017
+ * Project Version: 3b4a 28-May-2017
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -157,14 +157,14 @@ bool GIAsemanticParserClass::lookupSemanticParserFiles(GIAsentence* firstSentenc
 					secondWordInTupleFeature = secondWordInTupleFeature->next;
 				}
 			}
-			int subsetStillNotFoundMaxFeatureIndex = currentSentenceInList->maxNumberOfWordsInSentence;
+			int subsetStillNotFoundMaxFeatureIndex = currentSentenceInList->numberOfWordsInSentence;
 			#ifdef GIA_SEMANTIC_PARSER_SUBSETS_EXPECT_TO_FIND_DATABASE_FILES_FOR_ALL_FEATURE_PERMUTATIONS
 			bool notFoundASubsetForAtLeastTwoWords = false;		//note this is only applicable for !GIA_SEMANTIC_PARSER_SUBSETS_OPTIMISED_DATABASE and GIA_SEMANTIC_PARSER_SUBSETS_OPTIMISED_DATABASE:GIA_SEMANTIC_PARSER_SUBSETS_OPTIMISED_DATABASE_EXTENSIVE (as with !GIA_SEMANTIC_PARSER_SUBSETS_OPTIMISED_DATABASE_EXTENSIVE; if a subset file is not found for a set of words, it doesn't mean such a feature set has not been parsed, it just means that no semantic relations exist between them)
 			#endif
 			bool stillNotFoundASubset = true;
 
 			int minIndexOfSecondWordInTuple = GIA_SEMANTIC_PARSER_CONNECTIONIST_NETWORK_MIN_SUBSET_SIZE;
-			for(int secondWordInTupleIndex=currentSentenceInList->maxNumberOfWordsInSentence; secondWordInTupleIndex>=minIndexOfSecondWordInTuple; secondWordInTupleIndex--)	//secondWordInTupleIndex in subset [NB secondWordInTupleIndex>=2 as a subset of 1 is not a subset]
+			for(int secondWordInTupleIndex=currentSentenceInList->numberOfWordsInSentence; secondWordInTupleIndex>=minIndexOfSecondWordInTuple; secondWordInTupleIndex--)	//secondWordInTupleIndex in subset [NB secondWordInTupleIndex>=2 as a subset of 1 is not a subset]
 			{
 				//NB "secondWordInTupleIndex" aka centralWordIndex
 				if(stillNotFoundASubset)

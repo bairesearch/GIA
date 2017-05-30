@@ -25,7 +25,7 @@
  * File Name: GIAnlpParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3b3i 25-May-2017
+ * Project Version: 3b4a 28-May-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Parses tabular subsections (Eg <relations>) of RelEx CFF/Stanford Parser File
  *
@@ -37,7 +37,7 @@
 #endif
 
 //NB NLPrelexCompatibilityMode mode is only supported when !parseGIA2file; it is a special mode used when parsing Relex relations output with Stanford Compatibility Mode enabled
-void GIAnlpParserClass::GIATHparseStanfordParserRelationsText(const string* relationsText, GIAsentence* currentSentenceInList, int* maxNumberOfWordsInSentence, const bool featuresNotPreviouslyFilled, const bool parseGIA2file, const bool NLPrelexCompatibilityMode)
+void GIAnlpParserClass::GIATHparseStanfordParserRelationsText(const string* relationsText, GIAsentence* currentSentenceInList, int* numberOfWordsInSentence, const bool featuresNotPreviouslyFilled, const bool parseGIA2file, const bool NLPrelexCompatibilityMode)
 {
 	GIArelation* firstRelationInList = currentSentenceInList->firstRelationInList;
 	GIAfeature* firstFeatureInList = currentSentenceInList->firstFeatureInList;
@@ -50,7 +50,7 @@ void GIAnlpParserClass::GIATHparseStanfordParserRelationsText(const string* rela
 	int relationDependentIndex;
 
 	#ifndef GIA_RECORD_MAXIMUM_NUMBER_OF_WORDS_IN_SENTENCE_OR_MAX_FEATURE_INDEX
-	*maxNumberOfWordsInSentence = 0;
+	*numberOfWordsInSentence = 0;
 	#endif
 
 	int numberOfCharactersInRelationsText = relationsText->length();
@@ -132,7 +132,7 @@ void GIAnlpParserClass::GIATHparseStanfordParserRelationsText(const string* rela
 					}
 					else
 					{//parseGIA2file
-						if(currentRelation->relationDependentIndex < FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY)
+						if(GIAsentenceClass.relationIndexIsNormal(currentRelation->relationDependentIndex))
 						{
 							#ifdef GIA_SEMANTIC_PARSER_SUPPORT_QUERIES
 							if(!(this->findString(relationDependent, REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)))	//redundant !parseGIA2file condition added GIA1d1a, removed GIA2j6b
@@ -146,7 +146,7 @@ void GIAnlpParserClass::GIATHparseStanfordParserRelationsText(const string* rela
 					}
 
 					GIAfeature* currentFeatureInList = firstFeatureInList;
-					if(currentRelation->relationDependentIndex < FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY)
+					if(GIAsentenceClass.relationIndexIsNormal(currentRelation->relationDependentIndex))
 					{
 						for(int f=0; currentFeatureInList->entityIndex != currentRelation->relationDependentIndex; f++)
 						{
@@ -168,7 +168,7 @@ void GIAnlpParserClass::GIATHparseStanfordParserRelationsText(const string* rela
 						{
 							//ie !useLemmaFromFeatureSet
 							currentRelation->relationDependent = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;
-							if(currentRelation->relationDependentIndex < FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY)
+							if(GIAsentenceClass.relationIndexIsNormal(currentRelation->relationDependentIndex))
 							{
 								currentFeatureInList->lemma = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;
 							}
@@ -205,7 +205,7 @@ void GIAnlpParserClass::GIATHparseStanfordParserRelationsText(const string* rela
 					}
 					else
 					{//parseGIA2file
-						if(currentRelation->relationGovernorIndex < FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY)
+						if(GIAsentenceClass.relationIndexIsNormal(currentRelation->relationGovernorIndex))
 						{
 							#ifdef GIA_SEMANTIC_PARSER_SUPPORT_QUERIES
 							if(!(this->findString(relationGovernor, REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)))	//redundant !parseGIA2file condition added GIA1d1a, removed GIA2j6b
@@ -219,7 +219,7 @@ void GIAnlpParserClass::GIATHparseStanfordParserRelationsText(const string* rela
 					}
 
 					GIAfeature* currentFeatureInList = firstFeatureInList;
-					if(currentRelation->relationGovernorIndex < FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY)
+					if(GIAsentenceClass.relationIndexIsNormal(currentRelation->relationGovernorIndex))
 					{
 						for(int f=0; currentFeatureInList->entityIndex != currentRelation->relationGovernorIndex; f++)
 						{
@@ -241,7 +241,7 @@ void GIAnlpParserClass::GIATHparseStanfordParserRelationsText(const string* rela
 						{
 							//ie !useLemmaFromFeatureSet
 							currentRelation->relationGovernor = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;
-							if(currentRelation->relationGovernorIndex < FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY)
+							if(GIAsentenceClass.relationIndexIsNormal(currentRelation->relationGovernorIndex))
 							{
 								currentFeatureInList->lemma = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;
 							}
@@ -375,13 +375,13 @@ void GIAnlpParserClass::GIATHparseStanfordParserRelationsText(const string* rela
 					relationDependentIndex = int(SHAREDvars.convertStringToDouble(currentItemString));
 				}
 
-				if(currentRelation->relationGovernorIndex >* maxNumberOfWordsInSentence)
+				if(currentRelation->relationGovernorIndex >* numberOfWordsInSentence)
 				{
-					*maxNumberOfWordsInSentence = currentRelation->relationGovernorIndex;	//added GIA 2d1a
+					*numberOfWordsInSentence = currentRelation->relationGovernorIndex;	//added GIA 2d1a
 				}
-				if(currentRelation->relationDependentIndex >* maxNumberOfWordsInSentence)
+				if(currentRelation->relationDependentIndex >* numberOfWordsInSentence)
 				{
-					*maxNumberOfWordsInSentence = currentRelation->relationDependentIndex;
+					*numberOfWordsInSentence = currentRelation->relationDependentIndex;
 				}
 
 				currentItemString = "";
@@ -450,12 +450,12 @@ string GIAnlpParserClass::createSameReferenceSetRecord2(const bool sameReference
 }
 #endif
 
-void GIAnlpParserClass::GIATHparseStanfordParseWordsAndPOStagsText(const string* POStagsText, GIAsentence* currentSentenceInList, int* maxNumberOfWordsInSentence, const bool createFeaturesGIA2only)
+void GIAnlpParserClass::GIATHparseStanfordParseWordsAndPOStagsText(const string* POStagsText, GIAsentence* currentSentenceInList, int* numberOfWordsInSentence, const bool createFeaturesGIA2only)
 {
 	GIAfeature* firstFeatureInList = currentSentenceInList->firstFeatureInList;
 	GIAfeature* currentFeatureInList = firstFeatureInList;
 
-	*maxNumberOfWordsInSentence = 0;
+	*numberOfWordsInSentence = 0;
 
 	int numberOfCharactersInWordsAndPOSTagsText = POStagsText->length();
 
@@ -521,7 +521,7 @@ void GIAnlpParserClass::GIATHparseStanfordParseWordsAndPOStagsText(const string*
 				#endif
 
 
-				*maxNumberOfWordsInSentence = *maxNumberOfWordsInSentence + 1;
+				*numberOfWordsInSentence = *numberOfWordsInSentence + 1;
 
 				currentFeatureInList = currentFeatureInList->next;
 				readingWord = true;
@@ -678,7 +678,7 @@ void convertGIAsemanticRelationLRPreversion(GIArelation* currentRelationInList, 
 	if(getUseLRP())
 	{
 		//if necessary revert temporary/dummy NLP multiword preposition to official LRP form
-		if(currentRelationInList->relationGovernorIndex < FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY)
+		if(GIAsentenceClass.relationIndexIsNormal(currentRelation->relationGovernorIndex))
 		{
 			GIAfeature* currentFeatureInList = currentSentenceInList->firstFeatureInList;
 			for(int f=0; currentFeatureInList->entityIndex != currentRelationInList->relationGovernorIndex; f++)
@@ -702,7 +702,7 @@ void convertGIAsemanticRelationLRPreversion(GIArelation* currentRelationInList, 
 				#endif
 			}
 		}
-		if(currentRelationInList->relationDependentIndex < FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY)
+		if(GIAsentenceClass.relationIndexIsNormal(currentRelation->relationDependentIndex))
 		{
 			GIAfeature* currentFeatureInList = currentSentenceInList->firstFeatureInList;
 			for(int f=0; currentFeatureInList->entityIndex != currentRelationInList->relationDependentIndex; f++)
@@ -754,10 +754,10 @@ string GIAnlpParserClass::convertPrepositionToRelex2(const string* preposition, 
 	return relexPreposition;
 }
 
-void GIAnlpParserClass::GIATHparseRelexFeaturesText(const string* featuresText, GIAsentence* currentSentenceInList, int* maxNumberOfWordsInSentence)
+void GIAnlpParserClass::GIATHparseRelexFeaturesText(const string* featuresText, GIAsentence* currentSentenceInList, int* numberOfWordsInSentence)
 {
 	GIAfeature* firstFeatureInList = currentSentenceInList->firstFeatureInList;
-	*maxNumberOfWordsInSentence = 0;
+	*numberOfWordsInSentence = 0;
 
 	int numberOfCharactersInRelationsText = featuresText->length();
 
@@ -825,7 +825,7 @@ void GIAnlpParserClass::GIATHparseRelexFeaturesText(const string* featuresText, 
 				newFeature->previous = currentFeature;
 				currentFeature->next = newFeature;
 				currentFeature = currentFeature->next;
-				*maxNumberOfWordsInSentence = *maxNumberOfWordsInSentence + 1;
+				*numberOfWordsInSentence = *numberOfWordsInSentence + 1;
 
 				currentFeaturePart = 0;
 				currentItemString = "";
@@ -885,13 +885,13 @@ void GIAnlpParserClass::GIATHparseRelexFeaturesText(const string* featuresText, 
 
 }
 
-void GIAnlpParserClass::GIATHparseRelexRelationsText(const string* relationsText, GIAsentence* currentSentenceInList, int* maxNumberOfWordsInSentence, const bool NLPrelexCompatibilityMode)
+void GIAnlpParserClass::GIATHparseRelexRelationsText(const string* relationsText, GIAsentence* currentSentenceInList, int* numberOfWordsInSentence, const bool NLPrelexCompatibilityMode)
 {
 	GIArelation* firstRelationInList = currentSentenceInList->firstRelationInList;
 	int currentSentence = currentSentenceInList->sentenceIndex;
 
 	#ifndef GIA_RECORD_MAXIMUM_NUMBER_OF_WORDS_IN_SENTENCE_OR_MAX_FEATURE_INDEX
-	*maxNumberOfWordsInSentence = 0;
+	*numberOfWordsInSentence = 0;
 	#endif
 
 	int numberOfCharactersInRelationsText = relationsText->length();
@@ -1001,13 +1001,13 @@ void GIAnlpParserClass::GIATHparseRelexRelationsText(const string* relationsText
 					currentRelation->relationDependentIndex = int(SHAREDvars.convertStringToDouble(currentItemString));
 				}
 
-				if(currentRelation->relationGovernorIndex >* maxNumberOfWordsInSentence)
+				if(currentRelation->relationGovernorIndex > *numberOfWordsInSentence)
 				{
-					*maxNumberOfWordsInSentence = currentRelation->relationGovernorIndex;	//added GIA 2d1a
+					*numberOfWordsInSentence = currentRelation->relationGovernorIndex;	//added GIA 2d1a
 				}
-				if(currentRelation->relationDependentIndex >* maxNumberOfWordsInSentence)
+				if(currentRelation->relationDependentIndex > *numberOfWordsInSentence)
 				{
-					*maxNumberOfWordsInSentence = currentRelation->relationDependentIndex;
+					*numberOfWordsInSentence = currentRelation->relationDependentIndex;
 				}
 
 				currentItemString = "";

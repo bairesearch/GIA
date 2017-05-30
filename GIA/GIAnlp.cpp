@@ -25,7 +25,7 @@
  * File Name: GIAnlp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3b3i 25-May-2017
+ * Project Version: 3b4a 28-May-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -402,10 +402,10 @@ bool GIAnlpClass::parseRelexFile(const string inputTextNLPrelationXMLfileName, c
 											{
 												if(parseFeatures)
 												{
-													int maxNumberOfWordsInSentence = 0;
-													GIAnlpParser.GIATHparseRelexFeaturesText(&(currentTagInParse->value), currentSentence, &maxNumberOfWordsInSentence);
+													int numberOfWordsInSentence = 0;
+													GIAnlpParser.GIATHparseRelexFeaturesText(&(currentTagInParse->value), currentSentence, &numberOfWordsInSentence);
 													#ifdef GIA_RECORD_MAXIMUM_NUMBER_OF_WORDS_IN_SENTENCE
-													currentSentence->maxNumberOfWordsInSentence = maxNumberOfWordsInSentence;
+													currentSentence->numberOfWordsInSentence = numberOfWordsInSentence;
 													#endif
 													if(isQuery)
 													{
@@ -424,19 +424,19 @@ bool GIAnlpClass::parseRelexFile(const string inputTextNLPrelationXMLfileName, c
 												if(parseRelations)
 												{
 													#ifdef GIA_RECORD_MAXIMUM_NUMBER_OF_WORDS_IN_SENTENCE_OR_MAX_FEATURE_INDEX
-													int maxNumberOfWordsInSentence = currentSentence->maxNumberOfWordsInSentence;
+													int numberOfWordsInSentence = currentSentence->numberOfWordsInSentence;
 													#else
-													int maxNumberOfWordsInSentence = 0;
+													int numberOfWordsInSentence = 0;
 													#endif
-													GIAnlpParser.GIATHparseRelexRelationsText(&(currentTagInParse->value), currentSentence, &maxNumberOfWordsInSentence, NLPrelexCompatibilityMode);
+													GIAnlpParser.GIATHparseRelexRelationsText(&(currentTagInParse->value), currentSentence, &numberOfWordsInSentence, NLPrelexCompatibilityMode);
 													#ifdef GIA_RECORD_MAX_FEATURE_INDEX
-													currentSentence->maxNumberOfWordsInSentence = maxNumberOfWordsInSentence;
+													currentSentence->numberOfWordsInSentence = numberOfWordsInSentence;
 													#endif
 												}
 												#ifdef GIA_SEMANTIC_PARSER_SUPPORT_USE_RELEX_COMPATIBILITY_MODE_FOR_FEATURE_PARSER_TO_GENERATE_ADDITIONAL_RELATIONS_REQUIRED_BY_GIA2
 												if(!parseRelations && NLPrelexCompatibilityMode)
 												{
-													int maxNumberOfWordsInSentence = 0;
+													int numberOfWordsInSentence = 0;
 													bool featuresNotPreviouslyFilled = false;	//NB featuresNotPreviouslyFilled could be set to true as secondary relations are only used to create GIA2 semantic relations, and as such lemma information is disgarded [only feature indicies are important]
 													string relationsText = currentTagInParse->value;
 													if(relationsText[0] == '\n')
@@ -444,7 +444,7 @@ bool GIAnlpClass::parseRelexFile(const string inputTextNLPrelationXMLfileName, c
 														relationsText = relationsText.substr(1, (relationsText.length() -1));
 													}
 
-													GIAnlpParser.GIATHparseStanfordParserRelationsText(&relationsText, currentSentence, &maxNumberOfWordsInSentence, featuresNotPreviouslyFilled, false, NLPrelexCompatibilityMode);
+													GIAnlpParser.GIATHparseStanfordParserRelationsText(&relationsText, currentSentence, &numberOfWordsInSentence, featuresNotPreviouslyFilled, false, NLPrelexCompatibilityMode);
 												}
 												#endif
 											}
@@ -543,7 +543,7 @@ bool GIAnlpClass::parseStanfordCoreNLPfile(const string inputTextNLPrelationXMLf
 					XMLparserTag* currentTagInTokens = firstTagInTokens;
 					bool isQuestion = false;
 
-					int maxNumberOfWordsInSentence = 0;
+					int numberOfWordsInSentence = 0;
 
 					while(currentTagInTokens->nextTag != NULL)
 					{
@@ -703,14 +703,14 @@ bool GIAnlpClass::parseStanfordCoreNLPfile(const string inputTextNLPrelationXMLf
 						{
 							currentFeatureInList = currentFeatureInList->next;
 						}
-						maxNumberOfWordsInSentence = maxNumberOfWordsInSentence + 1;
+						numberOfWordsInSentence = numberOfWordsInSentence + 1;
 						currentTagInTokens = currentTagInTokens->nextTag;
 					}
 
 					if(parseFeatures)
 					{//calculate question only if parsing features
 						#ifdef GIA_RECORD_MAXIMUM_NUMBER_OF_WORDS_IN_SENTENCE
-						currentSentence->maxNumberOfWordsInSentence = maxNumberOfWordsInSentence;	//added GIA 2d1a
+						currentSentence->numberOfWordsInSentence = numberOfWordsInSentence;	//added GIA 2d1a
 						#endif
 
 						#ifndef GIA_REDISTRIBUTE_STANFORD_RELATIONS_QUERY_VARIABLE_DEBUG_DO_NOT_MAKE_FINAL_CHANGES_YET
@@ -739,9 +739,9 @@ bool GIAnlpClass::parseStanfordCoreNLPfile(const string inputTextNLPrelationXMLf
 					if(parseRelations)
 					{
 						#ifdef GIA_RECORD_MAXIMUM_NUMBER_OF_WORDS_IN_SENTENCE_OR_MAX_FEATURE_INDEX
-						maxNumberOfWordsInSentence = currentSentence->maxNumberOfWordsInSentence;
+						numberOfWordsInSentence = currentSentence->numberOfWordsInSentence;
 						#else
-						int maxNumberOfWordsInSentence = 0;
+						int numberOfWordsInSentence = 0;
 						#endif
 						for(int dependenciesSetIndex=0; dependenciesSetIndex< StanfordCoreNLP_numberOfDependencySetsPerSentence; dependenciesSetIndex++)
 						{
@@ -802,13 +802,13 @@ bool GIAnlpClass::parseStanfordCoreNLPfile(const string inputTextNLPrelationXMLf
 
 
 										//added GIA 2d1a
-										if(currentRelationInList->relationGovernorIndex > maxNumberOfWordsInSentence)
+										if(currentRelationInList->relationGovernorIndex > numberOfWordsInSentence)
 										{
-											maxNumberOfWordsInSentence = currentRelationInList->relationGovernorIndex;
+											numberOfWordsInSentence = currentRelationInList->relationGovernorIndex;
 										}
-										if(currentRelationInList->relationDependentIndex > maxNumberOfWordsInSentence)
+										if(currentRelationInList->relationDependentIndex > numberOfWordsInSentence)
 										{
-											maxNumberOfWordsInSentence = currentRelationInList->relationDependentIndex;
+											numberOfWordsInSentence = currentRelationInList->relationDependentIndex;
 										}
 
 										#ifdef GIA_STANFORD_CORE_NLP_VERSION_2013_04_04_OR_GREATER
@@ -832,7 +832,7 @@ bool GIAnlpClass::parseStanfordCoreNLPfile(const string inputTextNLPrelationXMLf
 							}
 						}
 						#ifdef GIA_RECORD_MAX_FEATURE_INDEX
-						currentSentence->maxNumberOfWordsInSentence = maxNumberOfWordsInSentence;
+						currentSentence->numberOfWordsInSentence = numberOfWordsInSentence;
 						#endif
 
 					}
@@ -1046,17 +1046,17 @@ bool GIAnlpClass::parseStanfordParserFile(const string inputTextNLPrelationXMLfi
 
 						if((!parseGIA2file && (!onlyParseIfCorpusLookupFailed || !(currentSentence->semanticParserSuccessful))) || (parseGIA2file && createNewSentences))	//added createNewSentences condition GIA 2d1a [for generateAllPermutationsFromSemanticRelationsFile()]
 						{
-							int maxNumberOfWordsInSentence = 0;
+							int numberOfWordsInSentence = 0;
 							if(!parseGIA2file && createNewSentences)
 							{
 								cout << "parseStanfordParserFile{} error: (!parseGIA2file && createNewSentences); Stanford Parser output cannot be used to create new sentences as it contains no lemmas" << endl;
 							}
 							bool createFeaturesGIA2only = createNewSentences;	//NB words and POS tags cannot be ordinarily used to create features as they contain word orig not lemmas (this option is only supported for GIA2)
-							GIAnlpParser.GIATHparseStanfordParseWordsAndPOStagsText(&currentStanfordParserOutputParagraphString, currentSentence, &maxNumberOfWordsInSentence, createFeaturesGIA2only);
+							GIAnlpParser.GIATHparseStanfordParseWordsAndPOStagsText(&currentStanfordParserOutputParagraphString, currentSentence, &numberOfWordsInSentence, createFeaturesGIA2only);
 							if(createNewSentences)
 							{
 								#ifdef GIA_RECORD_MAXIMUM_NUMBER_OF_WORDS_IN_SENTENCE
-								currentSentence->maxNumberOfWordsInSentence = maxNumberOfWordsInSentence;
+								currentSentence->numberOfWordsInSentence = numberOfWordsInSentence;
 								#endif
 							}
 						}
@@ -1086,19 +1086,19 @@ bool GIAnlpClass::parseStanfordParserFile(const string inputTextNLPrelationXMLfi
 						if(!onlyParseIfCorpusLookupFailed || !(currentSentence->semanticParserSuccessful))
 						{
 							#ifdef GIA_RECORD_MAXIMUM_NUMBER_OF_WORDS_IN_SENTENCE_OR_MAX_FEATURE_INDEX
-							int maxNumberOfWordsInSentence = currentSentence->maxNumberOfWordsInSentence;
+							int numberOfWordsInSentence = currentSentence->numberOfWordsInSentence;
 							#else
-							int maxNumberOfWordsInSentence = 0;
+							int numberOfWordsInSentence = 0;
 							#endif
 							bool featuresNotPreviouslyFilled = createNewSentences;
-							GIAnlpParser.GIATHparseStanfordParserRelationsText(&currentStanfordParserOutputParagraphString, currentSentence, &maxNumberOfWordsInSentence, featuresNotPreviouslyFilled, parseGIA2file, false);
+							GIAnlpParser.GIATHparseStanfordParserRelationsText(&currentStanfordParserOutputParagraphString, currentSentence, &numberOfWordsInSentence, featuresNotPreviouslyFilled, parseGIA2file, false);
 							if(createNewSentences)
 							{
 								GIAsentence* newSentence = new GIAsentence();
 								newSentence->previous = currentSentence;
 								currentSentence->next = newSentence;
 								#ifdef GIA_RECORD_MAX_FEATURE_INDEX
-								currentSentence->maxNumberOfWordsInSentence = maxNumberOfWordsInSentence;
+								currentSentence->numberOfWordsInSentence = numberOfWordsInSentence;
 								#endif
 							}
 						}

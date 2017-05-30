@@ -25,7 +25,7 @@
  * File Name: GIAbot.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3b3i 25-May-2017
+ * Project Version: 3b4a 28-May-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -50,14 +50,14 @@ void GIAbotClass::botSwitchFirstAndSecondPerson(GIAtranslatorVariablesClass* tra
 			{
 				if(currentRelationInList->relationGovernor == featureFirstPersonNameArray[i])
 				{
-					GIAentityNode* firstPersonEntity = translatorVariables->GIAfeatureTempEntityNodeArray[currentRelationInList->relationGovernorIndex];
+					GIAentityNode* firstPersonEntity = (*translatorVariables->GIAfeatureTempEntityNodeArray)[currentRelationInList->relationGovernorIndex];
 					currentRelationInList->relationGovernor = featureSecondPersonNameArray[i];
 					firstPersonEntity->entityName = featureSecondPersonNameArray[i];
 					passedFirstPersonGovernor = true;
 				}
 				if(currentRelationInList->relationDependent == featureFirstPersonNameArray[i])
 				{
-					GIAentityNode* firstPersonEntity = translatorVariables->GIAfeatureTempEntityNodeArray[currentRelationInList->relationDependentIndex];
+					GIAentityNode* firstPersonEntity = (*translatorVariables->GIAfeatureTempEntityNodeArray)[currentRelationInList->relationDependentIndex];
 					currentRelationInList->relationDependent = featureSecondPersonNameArray[i];
 					firstPersonEntity->entityName = featureSecondPersonNameArray[i];
 					passedFirstPersonDependent = true;
@@ -69,7 +69,7 @@ void GIAbotClass::botSwitchFirstAndSecondPerson(GIAtranslatorVariablesClass* tra
 				{
 					if(currentRelationInList->relationGovernor == featureSecondPersonNameArray[i])
 					{
-						GIAentityNode* secondPersonEntity = translatorVariables->GIAfeatureTempEntityNodeArray[currentRelationInList->relationGovernorIndex];
+						GIAentityNode* secondPersonEntity = (*translatorVariables->GIAfeatureTempEntityNodeArray)[currentRelationInList->relationGovernorIndex];
 						currentRelationInList->relationGovernor = featureFirstPersonNameArray[i];
 						secondPersonEntity->entityName = featureFirstPersonNameArray[i];
 					}
@@ -78,7 +78,7 @@ void GIAbotClass::botSwitchFirstAndSecondPerson(GIAtranslatorVariablesClass* tra
 				{
 					if(currentRelationInList->relationDependent == featureSecondPersonNameArray[i])
 					{
-						GIAentityNode* secondPersonEntity = translatorVariables->GIAfeatureTempEntityNodeArray[currentRelationInList->relationDependentIndex];
+						GIAentityNode* secondPersonEntity = (*translatorVariables->GIAfeatureTempEntityNodeArray)[currentRelationInList->relationDependentIndex];
 						currentRelationInList->relationDependent = featureFirstPersonNameArray[i];
 						secondPersonEntity->entityName = featureFirstPersonNameArray[i];
 					}

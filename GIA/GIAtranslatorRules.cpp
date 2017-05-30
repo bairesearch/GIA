@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorRules.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3b3i 25-May-2017
+ * Project Version: 3b4a 28-May-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -239,11 +239,11 @@ bool GIAtranslatorRulesClass::applyGIATranslatorGenericXMLparam(XMLparserTag* cu
 					{
 						bool whichOrWhatQueryFound = false;
 						//if(GIAentityNodeArrayFilled[GIA_NLP_START_ENTITY_INDEX]	//"what" is not added to a relation and therefore GIAentityNodeArrayFilled will not be filled
-						if(translatorVariables->featureArrayTemp[GIA_NLP_START_ENTITY_INDEX] != NULL)
+						if((*translatorVariables->featureArrayTemp)[GIA_NLP_START_ENTITY_INDEX] != NULL)
 						{
 							for(int i=0; i<FEATURE_QUERY_WORD_ACCEPTED_BY_ALTERNATE_METHOD_NUMBER_OF_TYPES; i++)
 							{
-								if(translatorVariables->featureArrayTemp[GIA_NLP_START_ENTITY_INDEX]->lemma == featureQueryWordAcceptedByAlternateMethodNameArray[i])
+								if((*translatorVariables->featureArrayTemp)[GIA_NLP_START_ENTITY_INDEX]->lemma == featureQueryWordAcceptedByAlternateMethodNameArray[i])
 								{
 									whichOrWhatQueryFound = true;
 								}
@@ -259,17 +259,17 @@ bool GIAtranslatorRulesClass::applyGIATranslatorGenericXMLparam(XMLparserTag* cu
 						bool firstWordOfSentenceIsWho = false;
 						#ifdef GIA_WORKAROUND_RELEX_BUG_OCCASIONAL_QVAR_INDEX_SAME_AS_ANOTHER_RELATION_INDEX
 						//if(GIAentityNodeArrayFilled[GIA_NLP_START_ENTITY_INDEX])	//approximately the reason: "who" is not added to a relation and therefore GIAentityNodeArrayFilled will not be filled
-						if(translatorVariables->featureArrayTemp[GIA_NLP_START_ENTITY_INDEX] != NULL)
+						if((*translatorVariables->featureArrayTemp)[GIA_NLP_START_ENTITY_INDEX] != NULL)
 						{
-							if(translatorVariables->featureArrayTemp[GIA_NLP_START_ENTITY_INDEX]->lemma == REFERENCE_TYPE_QUESTION_QUERY_WHO)
+							if((*translatorVariables->featureArrayTemp)[GIA_NLP_START_ENTITY_INDEX]->lemma == REFERENCE_TYPE_QUESTION_QUERY_WHO)
 							{
 								firstWordOfSentenceIsWho = true;
 							}
 						}
 						#else
-						if(translatorVariables->GIAentityNodeArrayFilled[REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_RELATION_DEPENDENT_INDEX])
+						if((*translatorVariables->GIAentityNodeArrayFilled)[REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_RELATION_DEPENDENT_INDEX])
 						{
-							if(translatorVariables->featureArrayTemp[REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_RELATION_DEPENDENT_INDEX]->lemma == REFERENCE_TYPE_QUESTION_QUERY_WHO)
+							if((*translatorVariables->featureArrayTemp)[REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_RELATION_DEPENDENT_INDEX]->lemma == REFERENCE_TYPE_QUESTION_QUERY_WHO)
 							{
 								firstWordOfSentenceIsWho = true;
 							}
@@ -361,7 +361,7 @@ bool GIAtranslatorRulesClass::applyGIATranslatorGenericXMLparam(XMLparserTag* cu
 					result = true;
 					if(asssertsetDefiniteAfterFinish)
 					{
-						translatorVariables->featureArrayTemp[paramDepRel.relationEntityIndexFinalResult[asssertPostProcessingREL][asssertPostProcessingREL_ENT]]->grammaticalIsDefinite = true;
+						(*translatorVariables->featureArrayTemp)[paramDepRel.relationEntityIndexFinalResult[asssertPostProcessingREL][asssertPostProcessingREL_ENT]]->grammaticalIsDefinite = true;
 					}
 					if(assertdisableRelationAfterFinish)
 					{
@@ -369,7 +369,7 @@ bool GIAtranslatorRulesClass::applyGIATranslatorGenericXMLparam(XMLparserTag* cu
 					}
 					if(assertassignPluralAfterFinish)
 					{
-						translatorVariables->featureArrayTemp[paramDepRel.relationEntityIndexFinalResult[asssertPostProcessingREL][asssertPostProcessingREL_ENT]]->grammaticalNumber = GRAMMATICAL_NUMBER_PLURAL;
+						(*translatorVariables->featureArrayTemp)[paramDepRel.relationEntityIndexFinalResult[asssertPostProcessingREL][asssertPostProcessingREL_ENT]]->grammaticalNumber = GRAMMATICAL_NUMBER_PLURAL;
 					}
 					#ifdef GIA_PREDETERMINERS
 					if(assertassignPredeterminerAfterFinish)
@@ -377,7 +377,7 @@ bool GIAtranslatorRulesClass::applyGIATranslatorGenericXMLparam(XMLparserTag* cu
 						int arrayIndexOfResultFound = GRAMMATICAL_PREDETERMINER_UNDEFINED;
 						if(SHAREDvars.textInTextArray(assertPostProcessingValue, entityPredeterminerSmallNameArray, GRAMMATICAL_PREDETERMINER_SMALL_ARRAY_NUMBER_OF_TYPES, &arrayIndexOfResultFound))
 						{
-							translatorVariables->featureArrayTemp[paramDepRel.relationEntityIndexFinalResult[asssertPostProcessingREL][asssertPostProcessingREL_ENT]]->grammaticalPredeterminer = arrayIndexOfResultFound;
+							(*translatorVariables->featureArrayTemp)[paramDepRel.relationEntityIndexFinalResult[asssertPostProcessingREL][asssertPostProcessingREL_ENT]]->grammaticalPredeterminer = arrayIndexOfResultFound;
 						}
 					}
 					#endif

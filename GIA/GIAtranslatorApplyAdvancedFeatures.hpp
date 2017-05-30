@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorApplyAdvancedFeatures.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3b3i 25-May-2017
+ * Project Version: 3b4a 28-May-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -52,6 +52,7 @@ class GIAtranslatorApplyAdvancedFeaturesClass
 	private: GIAconditionNodeClassClass GIAconditionNodeClass;
 	private: SHAREDvarsClass SHAREDvars;
 	private: GIAtranslatorOperationsClass GIAtranslatorOperations;
+	private: GIAsentenceClassClass GIAsentenceClass;
 	private: GIAentityNodeClassClass GIAentityNodeClass;
 	#ifdef GIA_SEMANTIC_PARSER_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
 	private: GIAsemanticParserOperationsClass GIAsemanticParserOperations;

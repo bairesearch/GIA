@@ -25,7 +25,7 @@
  * File Name: GIAsentenceClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3b3i 25-May-2017
+ * Project Version: 3b4a 28-May-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -281,7 +281,7 @@ GIAsentence::GIAsentence(void)
 	firstCoreferenceInList = new GIAstanfordCoreNLPcoreference();
 	#endif
 
-	maxNumberOfWordsInSentence = 0;
+	numberOfWordsInSentence = 0;
 
 	firstRelationInList = new GIArelation();	//auto constructor execution added 23 Feb 2012
 	firstFeatureInList = new GIAfeature();	//auto constructor execution added 23 Feb 2012
@@ -297,7 +297,7 @@ GIAsentence::GIAsentence(void)
 
 	semanticParserSuccessful = false;
 
-	relationshipEntityArtificialIndexCurrent = SENTENCE_FIRST_ARTIFICIAL_INDEX;
+	relationshipEntityArtificialIndexCurrent = 0;
 }
 
 GIAsentence::~GIAsentence(void)
@@ -472,17 +472,40 @@ void GIAsentenceClassClass::copyStanfordMention(GIAstanfordCoreNLPmention* first
 
 int GIAsentenceClassClass::calculateNumberOfWordsInSentence(const GIAfeature* firstFeatureInList)
 {
-	int maxNumberOfWordsInSentence = 0;
+	int numberOfWordsInSentence = 0;
 	const GIAfeature* currentFeatureInList = firstFeatureInList;
 	while(currentFeatureInList->next != NULL)
 	{
-		maxNumberOfWordsInSentence++;
+		numberOfWordsInSentence++;
 		currentFeatureInList = currentFeatureInList->next;
 	}
-	return maxNumberOfWordsInSentence;
+	return numberOfWordsInSentence;
 }
 
 #endif
+
+
+
+int GIAsentenceClassClass::getMinIndexOfDynamicallyGeneratedEntity(GIAsentence* currentSentenceInList) 
+{
+	return currentSentenceInList->numberOfWordsInSentence;	//OLD: FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY
+}
+
+int GIAsentenceClassClass::getMaxIndexOfDynamicallyGeneratedEntity(GIAsentence* currentSentenceInList) 
+{
+	return (currentSentenceInList->numberOfWordsInSentence + MAX_NUMBER_OF_SPECIAL_WORDS_PER_SENTENCE);	//OLD: MAX_NUMBER_OF_WORDS_PER_SENTENCE
+}
+
+bool GIAsentenceClassClass::relationIndexIsNormal(int relationIndex) 
+{
+	//this function is designed to support the creation of semantic dependency relations with special governor/dependent feature indices (<GIA_NLP_START_ENTITY_INDEX, e.g. -2, -1, 0)
+	bool relationIndexIsNormal = false;
+	if(relationIndex >= GIA_NLP_START_ENTITY_INDEX)	//OLD: (currentRelation->relationDependentIndex > FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY)
+	{
+		relationIndexIsNormal = true;
+	}
+	return relationIndexIsNormal;
+}
 
 
 

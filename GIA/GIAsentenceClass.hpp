@@ -25,7 +25,7 @@
  * File Name: GIAsentenceClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3b3i 25-May-2017
+ * Project Version: 3b4a 28-May-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -42,8 +42,8 @@
 #define FEATURE_WORD_QUESTIONMARK "?"
 
 #define MAX_NUMBER_OF_RELATIONS_PER_SENTENCE (1000)
-#define MAX_NUMBER_OF_WORDS_PER_SENTENCE (1000)
-#define SENTENCE_FIRST_ARTIFICIAL_INDEX (900)	//update REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_RELATION_DEPENDENT_INDEX
+#define MAX_NUMBER_OF_SPECIAL_WORDS_PER_SENTENCE (100)
+#define SENTENCE_FIRST_ARTIFICIAL_INDEX (0)	//after numberOfWordsInSentence (the size of the sentence) - OLD:10
 
 //from http://wiki.opencog.org/w/Word_substances (intermediary - used for translation purposes into WordNet int grammaticalWordTypeTemp only)
 #define FEATURE_RELEX_POS_TYPE_ADJECTIVE (1)
@@ -304,7 +304,7 @@ public:
 	GIAstanfordCoreNLPcoreference* firstCoreferenceInList;
 	#endif
 
-	int maxNumberOfWordsInSentence;
+	int numberOfWordsInSentence;
 
 	GIArelation* firstRelationInList;
 	GIAfeature* firstFeatureInList;
@@ -349,6 +349,10 @@ class GIAsentenceClassClass
 			#endif
 
 	public: int calculateNumberOfWordsInSentence(const GIAfeature* firstFeatureInList);
+	
+	int getMinIndexOfDynamicallyGeneratedEntity(GIAsentence* currentSentenceInList);
+	int getMaxIndexOfDynamicallyGeneratedEntity(GIAsentence* currentSentenceInList);
+	bool relationIndexIsNormal(int relationIndex);
 };
 
 #endif

@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorApplyAdvancedFeatures.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3b3i 25-May-2017
+ * Project Version: 3b4a 28-May-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -75,11 +75,11 @@ void GIAtranslatorApplyAdvancedFeaturesClass::extractDates(GIAtranslatorVariable
 #ifdef GIA_STANFORD_CORENLP
 void GIAtranslatorApplyAdvancedFeaturesClass::extractDatesStanfordCoreNLP(GIAtranslatorVariablesClass* translatorVariables)
 {
-	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
+	for(int i=0; i<GIAsentenceClass.getMaxIndexOfDynamicallyGeneratedEntity(translatorVariables->currentSentenceInList); i++)
 	{
-		if(translatorVariables->GIAentityNodeArrayFilled[i])
+		if((*translatorVariables->GIAentityNodeArrayFilled)[i])
 		{
-			GIAentityNode* currentEntity = translatorVariables->GIAentityNodeArray[i];
+			GIAentityNode* currentEntity = (*translatorVariables->GIAentityNodeArray)[i];
 			if(!(currentEntity->disabled))
 			{
 				#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
@@ -143,11 +143,11 @@ void GIAtranslatorApplyAdvancedFeaturesClass::extractDatesStanfordCoreNLP(GIAtra
 #ifdef GIA_RELEX
 void GIAtranslatorApplyAdvancedFeaturesClass::extractDatesRelex(GIAtranslatorVariablesClass* translatorVariables)
 {
-	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
+	for(int i=0; i<GIAsentenceClass.getMaxIndexOfDynamicallyGeneratedEntity(translatorVariables->currentSentenceInList); i++)
 	{
-		if(translatorVariables->GIAentityNodeArrayFilled[i])
+		if((*translatorVariables->GIAentityNodeArrayFilled)[i])
 		{
-			GIAentityNode* currentEntity = translatorVariables->GIAentityNodeArray[i];
+			GIAentityNode* currentEntity = (*translatorVariables->GIAentityNodeArray)[i];
 			#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 			if(currentEntity->hasAssociatedTime)
 			{
@@ -197,11 +197,11 @@ void GIAtranslatorApplyAdvancedFeaturesClass::extractDatesRelex(GIAtranslatorVar
 			if((currentRelationInList->relationType == RELATION_TYPE_DATE_DAY) || (currentRelationInList->relationType == RELATION_TYPE_DATE_YEAR))
 			{
 				//now locate and fill corresponding time condition node;
-				for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
+				for(int i=0; i<GIAsentenceClass.getMaxIndexOfDynamicallyGeneratedEntity(translatorVariables->currentSentenceInList); i++)
 				{
-					if(translatorVariables->GIAentityNodeArrayFilled[i])
+					if((*translatorVariables->GIAentityNodeArrayFilled)[i])
 					{
-						GIAentityNode* currentEntity = translatorVariables->GIAentityNodeArray[i];
+						GIAentityNode* currentEntity = (*translatorVariables->GIAentityNodeArray)[i];
 						if(currentEntity->conditionType == CONDITION_NODE_TYPE_TIME)
 						{
 							GIAentityNode* timeEntity = currentEntity;
@@ -215,7 +215,7 @@ void GIAtranslatorApplyAdvancedFeaturesClass::extractDatesRelex(GIAtranslatorVar
 									{
 										if(currentRelationInList->relationType == RELATION_TYPE_DATE_DAY)
 										{
-											GIAtranslatorOperations.disableInstanceAndNetworkIndexEntityBasedUponFirstSentenceToAppearInNetwork(translatorVariables->GIAentityNodeArray[currentRelationInList->relationDependentIndex]);
+											GIAtranslatorOperations.disableInstanceAndNetworkIndexEntityBasedUponFirstSentenceToAppearInNetwork((*translatorVariables->GIAentityNodeArray)[currentRelationInList->relationDependentIndex]);
 
 											//http://www.cplusplus.com/reference/clibrary/cstdlib/atoi/
 												//The string can contain additional characters after those that form the integral number, which are ignored and have no effect on the behavior of this function.	[eg "3rd" -> 3]
@@ -230,7 +230,7 @@ void GIAtranslatorApplyAdvancedFeaturesClass::extractDatesRelex(GIAtranslatorVar
 										}
 										if(currentRelationInList->relationType == RELATION_TYPE_DATE_YEAR)
 										{
-											GIAtranslatorOperations.disableInstanceAndNetworkIndexEntityBasedUponFirstSentenceToAppearInNetwork(translatorVariables->GIAentityNodeArray[currentRelationInList->relationDependentIndex]);
+											GIAtranslatorOperations.disableInstanceAndNetworkIndexEntityBasedUponFirstSentenceToAppearInNetwork((*translatorVariables->GIAentityNodeArray)[currentRelationInList->relationDependentIndex]);
 
 											string yearString = currentRelationInList->relationDependent;
 											int yearInt = SHAREDvars.convertStringToInt(yearString);
@@ -259,11 +259,11 @@ void GIAtranslatorApplyAdvancedFeaturesClass::extractDatesRelex(GIAtranslatorVar
 		currentRelationInList = currentRelationInList->next;
 	}
 	#ifdef GIA_TIME_NODE_INDEXING
-	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
+	for(int i=0; i<GIAsentenceClass.getMaxIndexOfDynamicallyGeneratedEntity(translatorVariables->currentSentenceInList); i++)
 	{
-		if(translatorVariables->GIAentityNodeArrayFilled[i])
+		if((*translatorVariables->GIAentityNodeArrayFilled)[i])
 		{
-			GIAentityNode* currentEntity = translatorVariables->GIAentityNodeArray[i];
+			GIAentityNode* currentEntity = (*translatorVariables->GIAentityNodeArray)[i];
 			if(currentEntity->conditionType == CONDITION_NODE_TYPE_TIME)
 			{
 				if(timeEntity->timeConditionNode != NULL)
@@ -362,7 +362,7 @@ void GIAtranslatorApplyAdvancedFeaturesClass::extractQuantitiesStanfordCoreNLP(G
 			if(currentRelationInList->relationType == RELATION_TYPE_QUANTITY)
 			{
 
-				GIAentityNode* quantityEntity = translatorVariables->GIAentityNodeArray[currentRelationInList->relationGovernorIndex];
+				GIAentityNode* quantityEntity = (*translatorVariables->GIAentityNodeArray)[currentRelationInList->relationGovernorIndex];
 
 				if(quantityEntity->NERTemp != FEATURE_NER_DATE)		//do not assume quantity entities when dealing with Stanford Dates (as they have already been parsed).
 				{
@@ -385,12 +385,12 @@ void GIAtranslatorApplyAdvancedFeaturesClass::extractQuantitiesStanfordCoreNLP(G
 					quantitySubstance->quantityNumber = quantityNumberInt;
 					quantitySubstance->entityType = GIA_ENTITY_TYPE_SUBSTANCE;	//added 2a11a [because defineConcepts() does not have access to quantity data]
 
-					GIAtranslatorOperations.disableInstanceAndNetworkIndexEntityBasedUponFirstSentenceToAppearInNetwork(translatorVariables->GIAentityNodeArray[currentRelationInList->relationDependentIndex]);
+					GIAtranslatorOperations.disableInstanceAndNetworkIndexEntityBasedUponFirstSentenceToAppearInNetwork((*translatorVariables->GIAentityNodeArray)[currentRelationInList->relationDependentIndex]);
 
 					if(currentRelationInList->relationDependent == REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
 					{//update comparison variable (set it to the quantity)
 						quantitySubstance->isQuery = true;
-						translatorVariables->GIAentityNodeArray[currentRelationInList->relationDependentIndex]->isQuery = false;
+						(*translatorVariables->GIAentityNodeArray)[currentRelationInList->relationDependentIndex]->isQuery = false;
 						GIAtranslatorOperations.setComparisonVariableNode(quantitySubstance);
 					}
 
@@ -414,7 +414,7 @@ void GIAtranslatorApplyAdvancedFeaturesClass::extractQuantitiesStanfordCoreNLP(G
 
 									//added 12 Oct 11; add quantity modifiers as conditions (eg "almost" lost)
 									GIAentityNode* entityNode = quantitySubstance;
-									GIAentityNode* relationshipObjectEntity = translatorVariables->GIAentityNodeArray[currentRelationInList2->relationDependentIndex];
+									GIAentityNode* relationshipObjectEntity = (*translatorVariables->GIAentityNodeArray)[currentRelationInList2->relationDependentIndex];
 									//GIAentityNode* conditionRelationshipEntity = quantitySubstance->quantityModifierString;
 
 									string conditionName = "quantityModifier";	//quantitySubstance->quantityModifierString //CHECKTHIS;
@@ -458,14 +458,14 @@ void GIAtranslatorApplyAdvancedFeaturesClass::extractQuantitiesRelex(GIAtranslat
 				#endif
 
 
-				GIAentityNode* quantityEntity = translatorVariables->GIAentityNodeArray[currentRelationInList->relationGovernorIndex];
+				GIAentityNode* quantityEntity = (*translatorVariables->GIAentityNodeArray)[currentRelationInList->relationGovernorIndex];
 
 
 				GIAentityNode* quantitySubstance = quantityEntity;
 				quantitySubstance->hasQuantity = true;
 				quantitySubstance->quantityNumberString = currentRelationInList->relationDependent;
 
-				GIAtranslatorOperations.disableInstanceAndNetworkIndexEntityBasedUponFirstSentenceToAppearInNetwork(translatorVariables->GIAentityNodeArray[currentRelationInList->relationDependentIndex]);
+				GIAtranslatorOperations.disableInstanceAndNetworkIndexEntityBasedUponFirstSentenceToAppearInNetwork((*translatorVariables->GIAentityNodeArray)[currentRelationInList->relationDependentIndex]);
 
 				int quantityNumberInt = GIAentityNodeClass.calculateQuantityNumberInt(quantitySubstance->quantityNumberString);
 				quantitySubstance->quantityNumber = quantityNumberInt;
@@ -474,7 +474,7 @@ void GIAtranslatorApplyAdvancedFeaturesClass::extractQuantitiesRelex(GIAtranslat
 				if(currentRelationInList->relationDependent == REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
 				{//update comparison variable (set it to the quantity)
 					quantitySubstance->isQuery = true;
-					translatorVariables->GIAentityNodeArray[currentRelationInList->relationDependentIndex]->isQuery = false;
+					(*translatorVariables->GIAentityNodeArray)[currentRelationInList->relationDependentIndex]->isQuery = false;
 					GIAtranslatorOperations.setComparisonVariableNode(quantitySubstance);
 				}
 
@@ -498,7 +498,7 @@ void GIAtranslatorApplyAdvancedFeaturesClass::extractQuantitiesRelex(GIAtranslat
 
 								//added 12 Oct 11; add quantity modifiers as conditions (eg "almost" lost)
 								GIAentityNode* entityNode = quantitySubstance;
-								GIAentityNode* relationshipObjectEntity = translatorVariables->GIAentityNodeArray[currentRelationInList2->relationDependentIndex];
+								GIAentityNode* relationshipObjectEntity = (*translatorVariables->GIAentityNodeArray)[currentRelationInList2->relationDependentIndex];
 								//GIAentityNode* conditionRelationshipEntity = quantitySubstance->quantityModifierString;
 								bool sameReferenceSet = DEFAULT_SAME_REFERENCE_SET_VALUE;	//CHECK; sameReferenceSet value...
 
@@ -515,7 +515,7 @@ void GIAtranslatorApplyAdvancedFeaturesClass::extractQuantitiesRelex(GIAtranslat
 								#ifdef GIA_SEMANTIC_PARSER_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
 								//quantity multipliers not currently supported by GIA2 [NB Stanford CoreNLP use them, only Relex]
 								#endif
-								GIAtranslatorOperations.disableInstanceAndNetworkIndexEntityBasedUponFirstSentenceToAppearInNetwork(translatorVariables->GIAentityNodeArray[currentRelationInList2->relationDependentIndex]);
+								GIAtranslatorOperations.disableInstanceAndNetworkIndexEntityBasedUponFirstSentenceToAppearInNetwork((*translatorVariables->GIAentityNodeArray)[currentRelationInList2->relationDependentIndex]);
 
 								int quantityMultiplierInt = GIAentityNodeClass.calculateQuantityMultiplierInt(currentRelationInList2->relationDependent);
 								quantitySubstance->quantityNumber = quantitySubstance->quantityNumber* quantityMultiplierInt;
@@ -552,7 +552,7 @@ void GIAtranslatorApplyAdvancedFeaturesClass::extractQuantitiesRelex(GIAtranslat
 						#endif
 							if(currentRelationInList2->relationDependent == currentRelationInList->relationGovernor)
 							{
-								entityToConnectMeasurePerEntity = translatorVariables->GIAentityNodeArray[currentRelationInList2->relationGovernorIndex];	//eg row
+								entityToConnectMeasurePerEntity = (*translatorVariables->GIAentityNodeArray)[currentRelationInList2->relationGovernorIndex];	//eg row
 								foundQuantityOwner = true;
 							}
 						#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
@@ -643,11 +643,11 @@ void GIAtranslatorApplyAdvancedFeaturesClass::defineActionConcepts2(GIAtranslato
 	eg Writing is good exercise. / To eat a pie requires strength.
 	*/
 
-	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
+	for(int i=0; i<GIAsentenceClass.getMaxIndexOfDynamicallyGeneratedEntity(translatorVariables->currentSentenceInList); i++)
 	{
-		if(translatorVariables->GIAentityNodeArrayFilled[i])
+		if((*translatorVariables->GIAentityNodeArrayFilled)[i])
 		{
-			GIAentityNode* entity = translatorVariables->GIAentityNodeArray[i];
+			GIAentityNode* entity = (*translatorVariables->GIAentityNodeArray)[i];
 
 			//if(entity->entityType == GIA_ENTITY_TYPE_ACTION)	//do not check for isAction; because action concepts are assigned for nodes which have not been defined as actions by GIA; eg "eating is fun" [CHECKTHIS; this is not the same as the XML implementation]
 			//Condition A.
@@ -674,8 +674,8 @@ void GIAtranslatorApplyAdvancedFeaturesClass::defineActionConcepts2(GIAtranslato
 						if(foundActionNetworkIndex)
 						{
 							//GIAentityNodeArray[i] = addInstanceToInstanceDefinition(entity, GIA_ENTITY_TYPE_ACTION);	//is this required?
-							translatorVariables->GIAentityNodeArray[i]->entityType = GIA_ENTITY_TYPE_ACTION;
-							translatorVariables->GIAentityNodeArray[i]->isActionConcept = true;
+							(*translatorVariables->GIAentityNodeArray)[i]->entityType = GIA_ENTITY_TYPE_ACTION;
+							(*translatorVariables->GIAentityNodeArray)[i]->isActionConcept = true;
 						}
 					}
 				}
@@ -697,11 +697,11 @@ void GIAtranslatorApplyAdvancedFeaturesClass::updateConceptDesignationBasedPrope
 		knights concept: Knights are tall.
 	*/
 
-	for(int i=0; i<MAX_NUMBER_OF_WORDS_PER_SENTENCE; i++)
+	for(int i=0; i<GIAsentenceClass.getMaxIndexOfDynamicallyGeneratedEntity(translatorVariables->currentSentenceInList); i++)
 	{
-		if(translatorVariables->GIAentityNodeArrayFilled[i])
+		if((*translatorVariables->GIAentityNodeArrayFilled)[i])
 		{
-			GIAentityNode* entity = translatorVariables->GIAentityNodeArray[i];
+			GIAentityNode* entity = (*translatorVariables->GIAentityNodeArray)[i];
 			if(entity->entityType == GIA_ENTITY_TYPE_CONCEPT)
 			{
 				if(!(entity->propertyReverseNodeList->empty()))

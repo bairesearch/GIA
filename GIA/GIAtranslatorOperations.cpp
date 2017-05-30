@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3b3i 25-May-2017
+ * Project Version: 3b4a 28-May-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1207,31 +1207,22 @@ void GIAtranslatorOperationsClass::convertStanfordPOStagToRelexPOStypeAndWordnet
 
 }
 
-void GIAtranslatorOperationsClass::generateTempFeatureArray(GIAfeature* firstFeatureInList, GIAfeature* featureArrayTemp[])
+void GIAtranslatorOperationsClass::generateTempFeatureArray(GIAtranslatorVariablesClass* translatorVariables, vector<GIAfeature*>* featureArrayTemp)
 {
-	for(int w=0; w<MAX_NUMBER_OF_WORDS_PER_SENTENCE; w++)
+	#ifndef GIA_WORKAROUND_RELEX_BUG_OCCASIONAL_QVAR_INDEX_SAME_AS_ANOTHER_RELATION_INDEX
+	//required for locateAndAddAllFeatureTempEntities:generateTempFeatureArray
+	for(int w=0; w<GIAsentenceClass.getMaxIndexOfDynamicallyGeneratedEntity(translatorVariables->currentSentenceInList); w++)
 	{
-		featureArrayTemp[w] = NULL;	//initialise as NULL (required to prevent crashes during array access) - added 14 July 2013
+		(*featureArrayTemp)[w] = NULL;	//initialise as NULL (required to prevent crashes during array access) - added 14 July 2013
 	}
+	#endif
 
-	GIAfeature* currentFeatureInList = firstFeatureInList;
+	GIAfeature* currentFeatureInList = translatorVariables->currentSentenceInList->firstFeatureInList;
 	while(currentFeatureInList->next != NULL)
 	{
-		featureArrayTemp[currentFeatureInList->entityIndex] = currentFeatureInList;
+		(*featureArrayTemp)[currentFeatureInList->entityIndex] = currentFeatureInList;
 		currentFeatureInList = currentFeatureInList->next;
 	}
-
-	/*OLD: is not compatible with Relex query nodes (set to new entity index eg "199")
-	//generateFeatureArray;
-	int featureIndex = 1;
-	GIAfeature* currentFeatureInList = firstFeatureInList;
-	while(currentFeatureInList->next != NULL)
-	{
-		featureArrayTemp[featureIndex] = currentFeatureInList;
-		currentFeatureInList = currentFeatureInList->next;
-		featureIndex++;
-	}
-	*/
 }
 
 bool GIAtranslatorOperationsClass::determineSameReferenceSetValue(bool defaultSameSetValueForRelation, const GIArelation* relation)
@@ -1252,10 +1243,6 @@ bool GIAtranslatorOperationsClass::determineSameReferenceSetValue(bool defaultSa
 
 	return sameReferenceSet;
 }
-
-
-
-
 
 
 GIAentityNode* GIAtranslatorOperationsClass::addPropertyRelationshipToEntity(GIAentityNode* relationshipSubjectEntity, GIAentityNode* relationshipObjectEntity, bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables)
@@ -1368,7 +1355,7 @@ bool GIAtranslatorOperationsClass::findExistingRelationshipInSentenceEntityArray
 			if(relationshipEntityTemp->entityName == relationshipEntityName)	//probably redundant
 			{	
 				int featureIndexTemp = relationshipEntityTemp->entityIndexTemp;
-				if(translatorVariables->GIAentityNodeArrayFilled[featureIndexTemp])
+				if((*translatorVariables->GIAentityNodeArrayFilled)[featureIndexTemp])
 				{ 
 			#endif
 					*relationshipEntity = relationshipEntityTemp;
@@ -1403,7 +1390,7 @@ GIAentityNode* GIAtranslatorOperationsClass::addEntityNodeByNameSimpleWrapperRel
 	
 	//added 3a1j;
 	relationshipEntity = addInstanceToInstanceDefinition(relationshipEntity, relationshipEntityType, translatorVariables);
-	translatorVariables->GIAentityNodeArray[relationshipEntityIndex] = relationshipEntity;
+	(*translatorVariables->GIAentityNodeArray)[relationshipEntityIndex] = relationshipEntity;
 	
 	#ifdef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
 	relationshipEntity->isArtificialAuxiliary = true;
@@ -1418,9 +1405,9 @@ GIAentityNode* GIAtranslatorOperationsClass::findOrAddEntityNodeByNameSimpleWrap
 {
 	GIAentityNode* conditionRelationshipEntity;
 	#ifdef GIA_ADVANCED_REFERENCING_CONDITIONS
-	if(translatorVariables->GIAentityNodeArrayFilled[featureIndex])
+	if((*translatorVariables->GIAentityNodeArrayFilled)[featureIndex])
 	{
-		conditionRelationshipEntity = translatorVariables->GIAentityNodeArray[featureIndex];
+		conditionRelationshipEntity = (*translatorVariables->GIAentityNodeArray)[featureIndex];
 	}
 	else
 	{
@@ -1432,11 +1419,11 @@ GIAentityNode* GIAtranslatorOperationsClass::findOrAddEntityNodeByNameSimpleWrap
 	
 	//added 3a1j;
 	#ifdef GIA_REFERENCING_UPDATE_ENTITY_INDEXES_OF_REFERENCE_SOURCE_TO_THOSE_OF_CURRENT_SENTENCE
-	conditionRelationshipEntity->entityIndexTemp = featureIndex;	//added 3a1n (for (translatorVariables->GIAentityNodeArrayFilled[featureIndex]) and/or !GIA_ADVANCED_REFERENCING_CONDITIONS cases) 
+	conditionRelationshipEntity->entityIndexTemp = featureIndex;	//added 3a1n (for ((*translatorVariables->GIAentityNodeArrayFilled)[featureIndex]) and/or !GIA_ADVANCED_REFERENCING_CONDITIONS cases) 
 	conditionRelationshipEntity->sentenceIndexTemp = translatorVariables->sentenceIndex;
 	#endif
 	conditionRelationshipEntity = addInstanceToInstanceDefinition(conditionRelationshipEntity, GIA_ENTITY_TYPE_CONDITION, translatorVariables);
-	translatorVariables->GIAentityNodeArray[featureIndex] = conditionRelationshipEntity;
+	(*translatorVariables->GIAentityNodeArray)[featureIndex] = conditionRelationshipEntity;
 	
 	return conditionRelationshipEntity;
 }
@@ -1445,8 +1432,8 @@ GIAentityNode* GIAtranslatorOperationsClass::findOrAddNetworkIndexEntityByNameSi
 {
 	bool entityAlreadyExistant = false;
 	GIAentityNode* relationshipEntity = this->findOrAddNetworkIndexEntityNodeByNameSimpleWrapper(entityNodeName, &entityAlreadyExistant, translatorVariables);
-	translatorVariables->GIAentityNodeArrayFilled[featureIndex] = true;
-	translatorVariables->GIAentityNodeArray[featureIndex] = relationshipEntity;
+	(*translatorVariables->GIAentityNodeArrayFilled)[featureIndex] = true;
+	(*translatorVariables->GIAentityNodeArray)[featureIndex] = relationshipEntity;
 	relationshipEntity->entityIndexTemp = featureIndex;
 	relationshipEntity->sentenceIndexTemp = translatorVariables->sentenceIndex;
 	
@@ -2218,5 +2205,11 @@ void GIAtranslatorOperationsClass::printEntity(GIAentityNode* entity)
 		}
 	}
 }
-	
+
+
+
+
+
+
+
 	
