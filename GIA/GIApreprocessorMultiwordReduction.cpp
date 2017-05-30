@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorMultiwordReduction.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3b2g 21-May-2017
+ * Project Version: 3b3a 25-May-2017
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  *
@@ -577,7 +577,7 @@ bool GIApreprocessorMultiwordReductionClass::loadPhrasalVerbDataAndGenerateAllTe
 			{//moved 1p1aTEMP5b
 				currentWordOptional = false;
 			}
-			#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_APOSTROPHES
+			#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_APOSTROPHES_POSSESSION_AND_OMISSION
 			else if(currentToken == CHAR_APOSTROPHE)
 			{
 				currentTagInPhrasalVerb->tagName = currentWord;
@@ -872,66 +872,7 @@ void GIApreprocessorMultiwordReductionClass::copyDefaultVerbTenseFormsToAlternat
 
 
 
-#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_INTRAWORD_PUNCTUATION_MARK
-bool GIApreprocessorMultiwordReductionClass::isIntrawordPunctuationMark(const int indexOfCurrentToken, const string* lineContents)
-{
-	bool intrawordPunctuationMark = false;
-	char currentToken = (*lineContents)[indexOfCurrentToken];
-	if((currentToken == CHAR_FULLSTOP) || (currentToken == CHAR_COLON))	//updated 2j6e (added CHAR_COLON for times, eg 06:45)
-	{
-		if(indexOfCurrentToken < lineContents->length()-1)	//ensure fullstop is not immediately succeded by an alphabetical character, which indicates that the fullstop is part of a filename, eg "people.xml"
-		{
-			char characterImmediatelySucceedingPunctuationMark = (*lineContents)[indexOfCurrentToken+1];
-			#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_FILENAMES_WITH_FULLSTOPS_AND_FLOATS_AND_TIMES
-			bool isPunctuationMarkImmediatelySucceededByAlphanumericCharacter = SHAREDvars.charInCharArray(characterImmediatelySucceedingPunctuationMark, GIApreprocessorMultiwordReductionNLPparsableCharacters, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_CHARACTERS_NUMBER_OF_TYPES);
-			if(isPunctuationMarkImmediatelySucceededByAlphanumericCharacter)
-			{
-				//e.g. "thefile.exe ..."
-				intrawordPunctuationMark = true;
-			}
-			#endif
-			
-			#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_ABBREVIATIONS
-			
-			if(indexOfCurrentToken < lineContents->length()-2)
-			{
-				if(characterImmediatelySucceedingPunctuationMark == CHAR_SPACE)
-				{
-					bool characterPreceededByTitlePrefixAbbreviation = false;
-					for(int i=0; i<GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_ABBREVIATIONS_TITLE_PREFIXES_NUMBER_OF_TYPES; i++)
-					{
-						int lengthOfPrefix = preprocessorSupportAbbreviationsTitlePrefixesArray[i].length();
-						if(indexOfCurrentToken >= lengthOfPrefix-1)	//-1 to take into account fact that prefixes are defined with a succeeding full stop character
-						{
-							if(lineContents->substr(indexOfCurrentToken-lengthOfPrefix+1, lengthOfPrefix) == preprocessorSupportAbbreviationsTitlePrefixesArray[i])	//+1 to take into account fact that prefixes are defined with a succeeding full stop character
-							{
-								characterPreceededByTitlePrefixAbbreviation = true;
-								//cout << "characterPreceededByTitlePrefixAbbreviation: preprocessorSupportAbbreviationsTitlePrefixesArray[i] = " << preprocessorSupportAbbreviationsTitlePrefixesArray[i] << endl;
-							}
-						}
-					}
-					if(characterPreceededByTitlePrefixAbbreviation)
-					{
-						//e.g. "Ms. House ..."
-						intrawordPunctuationMark = true;
-					}
-			
-					char characterImmediatelySucceedingSpace = (*lineContents)[indexOfCurrentToken+2];
-					bool isPunctuationMarkSucceededBySpaceAndUncapitalisedCharacter = SHAREDvars.charInCharArray(characterImmediatelySucceedingSpace, preprocessorSupportAbbreviationsLowerCaseLettersArray, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_ABBREVIATIONS_LOWER_CASE_LETTERS_NUMBER_OF_TYPES);
-					if(isPunctuationMarkSucceededBySpaceAndUncapitalisedCharacter)
-					{
-						//e.g. "e.g. the house ..."
-						intrawordPunctuationMark = true;
-					}
-				}
-			}
-			#endif
-		}
-	}
-	return intrawordPunctuationMark;
-}
-#endif
-
+	
 
 //NB the collapsed phrasal verb contains precisely 2 entities: phrasalVerbCollapsed, entity2: thing/place/body (eg belong_to + sb/Tom) - thing/place/bodies are not currently being differentiated by the LRP as this information is only first generated at NLP/GIA parse stage
 bool GIApreprocessorMultiwordReductionClass::searchAndReplacePhrasalVerbs(GIApreprocessorSentence* firstGIApreprocessorSentenceInList, GIApreprocessorMultiwordReductionPhrasalVerbSentence* firstTagInPhrasalVerbList, GIApreprocessorMultiwordReductionTagTextCorrespondenceInfo* firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo)

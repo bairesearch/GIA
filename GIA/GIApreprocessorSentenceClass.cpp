@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorSentenceClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3b2g 21-May-2017
+ * Project Version: 3b3a 25-May-2017
  * Requirements: requires plain text file
  * Description: Logical Condition and Reference Set preprocessor
  *
@@ -146,7 +146,10 @@ GIApreprocessorSentence::GIApreprocessorSentence(void)
 	sentenceReference = NULL;
 	#endif	
 	#endif
-		
+	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_EXTRACT_INDENTATION
+	indentation = 0;
+	#endif		
+	
 	next = NULL;
 }
 GIApreprocessorSentence::~GIApreprocessorSentence(void)

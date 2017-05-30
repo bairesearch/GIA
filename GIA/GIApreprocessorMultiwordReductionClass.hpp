@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorMultiwordReductionClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3b2g 21-May-2017
+ * Project Version: 3b3a 25-May-2017
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  *
@@ -40,6 +40,7 @@
 #include "GIAentityNodeClass.hpp"
 #include "GIAsentenceClass.hpp"
 #endif
+#include "SHAREDvars.hpp"
 
 #ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_INTRAWORD_PUNCTUATION_MARK
 #define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_CHARACTERS_NUMBER_OF_TYPES (65)	//must sync with NLC_PREPROCESSOR_MATH_NLP_PARSABLE_PHRASE_CHARACTERS_NUMBER_OF_TYPES
@@ -152,14 +153,31 @@ static char englishConsonantArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NUMBER_OF
 static char lrpVerbDoubleConsonantRuleOneLastLetterExceptions[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DOUBLE_CONSONANT_RULE1_LAST_LETTER_EXCEPTIONS_NUMBER_OF_TYPES] = {'w', 'x', 'y', 'z'};
 */
 
-#define GIA_NLP_NUMBER_OF_PUNCTUATION_MARK_CHARACTERS (5)		//CHECKTHIS; need to location RelEx/Stanford dependency relation specification and match the exact same punction marks detected
-static char nlpPunctionMarkCharacterArray[GIA_NLP_NUMBER_OF_PUNCTUATION_MARK_CHARACTERS] = {CHAR_FULLSTOP, CHAR_COMMA, CHAR_SEMICOLON, CHAR_COLON, CHAR_QUESTIONMARK};
+#define GIA_NLP_NUMBER_OF_PUNCTUATION_MARK_CHARACTERS (6)		//CHECKTHIS; need to location RelEx/Stanford dependency relation specification and match the exact same punction marks detected
+static char nlpPunctionMarkCharacterArray[GIA_NLP_NUMBER_OF_PUNCTUATION_MARK_CHARACTERS] = {CHAR_FULLSTOP, CHAR_COMMA, CHAR_SEMICOLON, CHAR_COLON, CHAR_QUESTIONMARK};	//CHAR_EXCLAMATION_MARK - currently interpreted as math [CHECKTHIS]
+#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_MATH_GROUPING
+	#define GIA_NLP_NUMBER_OF_MATH_CHARACTERS_GROUPED (8)
+	static char nlpMathCharacterGroupedArray[GIA_NLP_NUMBER_OF_MATH_CHARACTERS_GROUPED] = {CHAR_EQUALS, CHAR_PLUS, CHAR_GREATER_THAN, CHAR_LESS_THAN, CHAR_AMPERSAND, CHAR_TILDA, CHAR_EXCLAMATION_MARK, CHAR_STAR};
+	#define GIA_NLP_NUMBER_OF_MATH_CHARACTERS_UNGROUPED (2)
+	static char nlpMathCharacterUngroupedArray[GIA_NLP_NUMBER_OF_MATH_CHARACTERS_UNGROUPED] = {CHAR_OPEN_BRACKET, CHAR_CLOSE_BRACKET};
+#else
+	#define GIA_NLP_NUMBER_OF_MATH_CHARACTERS (10)		//CHECKTHIS; need to location RelEx/Stanford dependency relation specification and match the exact same punction marks detected. Also must be matched to NLC_PREPROCESSOR_MATH_OPERATOR...
+	static char nlpMathCharacterArray[GIA_NLP_NUMBER_OF_MATH_CHARACTERS] = {CHAR_OPEN_BRACKET, CHAR_CLOSE_BRACKET, CHAR_EQUALS, CHAR_PLUS, CHAR_GREATER_THAN, CHAR_LESS_THAN, CHAR_AMPERSAND, CHAR_TILDA, CHAR_EXCLAMATION_MARK, CHAR_STAR};	//CHAR_DASH? what about 3-5 [currently interpreted as 1 word]
+#endif
 #define GIA_NLP_NUMBER_OF_PUNCTUATION_MARK_CHARACTERS_END_OF_SENTENCE (2)
 static char nlpPunctionMarkCharacterEndOfSentenceArray[GIA_NLP_NUMBER_OF_PUNCTUATION_MARK_CHARACTERS_END_OF_SENTENCE] = {CHAR_FULLSTOP, CHAR_QUESTIONMARK};
 #define GIA_NLP_NUMBER_OF_WHITESPACE_CHARACTERS (3)		//CHECKTHIS; need to location RelEx/Stanford dependency relation specification and match the exact same punction marks detected
 static char nlpWhitespaceCharacterArray[GIA_NLP_NUMBER_OF_WHITESPACE_CHARACTERS] = {CHAR_NEWLINE, CHAR_TAB, CHAR_SPACE};
 #define GIA_NLP_NUMBER_OF_QUOTATIONMARK_CHARACTERS (2)
 static char nlpQuotationMarkCharacterArray[GIA_NLP_NUMBER_OF_QUOTATIONMARK_CHARACTERS] = {CHAR_INVERTED_COMMAS, CHAR_APOSTROPHE};
+
+
+#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_LOWER_CASE_LETTERS_NUMBER_OF_TYPES (26)
+static char preprocessorLowerCaseLettersArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_LOWER_CASE_LETTERS_NUMBER_OF_TYPES] = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
+#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_UPPER_CASE_LETTERS_NUMBER_OF_TYPES (26)
+static char preprocessorUpperCaseLettersArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_UPPER_CASE_LETTERS_NUMBER_OF_TYPES] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
+#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_LOWER_OR_UPPER_CASE_LETTERS_NUMBER_OF_TYPES (52)
+static char preprocessorLowerOrUpperCaseLettersArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_LOWER_OR_UPPER_CASE_LETTERS_NUMBER_OF_TYPES] = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
 
 
 #define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DUMMY_COLLAPSED_PHRASAL_VERB_LEMMA_NAME_FOR_NLP "fight"
@@ -358,18 +376,47 @@ public:
 
 class GIApreprocessorMultiwordReductionClassClass
 {
+	private: SHAREDvarsClass SHAREDvars;
+
 	#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
 	public: string generateTextFromPreprocessorSentenceWordList(const GIApreprocessorWord* firstWordInSentence);
 		public: string generateTextFromPreprocessorSentenceWordList(const GIApreprocessorWord* firstWordInSentence, const bool LRPforNLP);
-	public: string generateTextFromVectorWordList(vector<GIApreprocessorWord*>* logicReferenceVariableWordList);
-		public: string generateTextFromVectorWordList(vector<GIApreprocessorWord*>* logicReferenceVariableWordList, const bool LRPforNLP);
+	public: string generateTextFromVectorWordList(const vector<GIApreprocessorWord*>* logicReferenceVariableWordList);
+		public: string generateTextFromVectorWordList(const vector<GIApreprocessorWord*>* logicReferenceVariableWordList, const bool LRPforNLP);
 			public: string generateTextFromPreprocessorSentenceWord(const GIApreprocessorWord* word, const bool LRPforNLP, const bool isFirstWordInSentence);
 	public: int calculateLengthOfGeneratedVectorWordListText(vector<GIApreprocessorWord*>* logicReferenceVariableWordList);
 	public: bool generateSentenceWordList(GIApreprocessorMultiwordReductionWord* sentenceContentsFirstWord, vector<GIApreprocessorWord*>* logicReferenceVariableWordList);
 	public: bool addWordListToWordList(vector<GIApreprocessorWord*>* wordList, vector<GIApreprocessorWord*>* wordListToAdd);
 	public: bool addStringArrayToWordList(vector<GIApreprocessorWord*>* wordList, const string* stringArrayToAdd, const int arraySize);
 	public: bool addStringToWordList(vector<GIApreprocessorWord*>* wordList, const string stringToAdd);
+	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_INTRAWORD_PUNCTUATION_MARK
+	public: bool isIntrawordPunctuationMark(const int indexOfCurrentToken, const string* lineContents);
+	#endif
+	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_APOSTROPHES_POSSESSION_AND_OMISSION
+	public: bool isApostrophePossessionOrOmission(const int indexOfCurrentToken, const string* lineContents);
 	#endif	
+	#endif	
+	public: bool wordListFindAndReplaceAllOccurancesSimpleSubstringInWordListWithSimpleSubstring(vector<GIApreprocessorWord*>* wordList, const string stringSimpleToFind,  const string stringSimpleReplacement);
+		public: bool wordListFindAndReplaceAllOccurancesSimpleSubstringInWordListWithSimpleSubstring(vector<GIApreprocessorWord*>* wordList, const string* stringSimpleToFind,  const string* stringSimpleReplacement);
+			public: bool wordListFindAndReplaceSimpleSubstringInWordListWithSimpleSubstring(vector<GIApreprocessorWord*>* wordList, const string stringSimpleToFind, const int startIndexToPerformFind, const string stringSimpleReplacement);
+				public: bool wordListFindAndReplaceWordListInWordListWithWordList(vector<GIApreprocessorWord*>* wordList, vector<GIApreprocessorWord*>* wordListToFind, const int startIndexToPerformFind, vector<GIApreprocessorWord*>* wordListReplacement);
+					public: bool wordListFindSubWordListInWordList(const vector<GIApreprocessorWord*>* wordList, const vector<GIApreprocessorWord*>* wordListToFind, int startIndexToPerformFind);
+						public: bool generateSentenceWordListFromStringSimple(vector<GIApreprocessorWord*>* wordList, const string* stringSimple);
+	public: bool wordListFindAndRemoveAllOccurancesSimpleSubstringInWordList(vector<GIApreprocessorWord*>* wordList, const string stringSimpleToFind);
+	
+	//these are similiar to C++ string library functions;
+	public: int findStringInWordList(const vector<GIApreprocessorWord*>* wordList, const string stringToFind);
+		public: int findStringInWordList(const vector<GIApreprocessorWord*>* wordList, const string stringToFind, const int startIndexToPerformFind);
+	public: bool findSubstringInWordList(const vector<GIApreprocessorWord*>* wordList, const string substringToFind);
+		public: bool findSubstringInWordList(const vector<GIApreprocessorWord*>* wordList, const string substringToFind, const int startIndexToPerformFind);
+	public: vector<GIApreprocessorWord*> extractSubWordListInWordList(const vector<GIApreprocessorWord*>* wordList, const int startIndexToExtract);
+		public: vector<GIApreprocessorWord*> extractSubWordListInWordList(const vector<GIApreprocessorWord*>* wordList, const int startIndexToExtract, const int numberOfWordsToExtract);
+	public: bool insertWordListIntoWordList(vector<GIApreprocessorWord*>* wordList, const vector<GIApreprocessorWord*>* wordListToInsert, const int indexToInsert);
+	public: bool insertStringIntoWordList(vector<GIApreprocessorWord*>* wordList, const string stringToInsert, const int indexToInsert);
+		public: bool insertWordIntoWordList(vector<GIApreprocessorWord*>* wordList, GIApreprocessorWord* wordListToInsert, const int indexToInsert);
+	public: bool removeWordFromWordList(vector<GIApreprocessorWord*>* wordList, const int indexToRemove);
+		public: bool removeWordsFromWordList(vector<GIApreprocessorWord*>* wordList, const int indexToRemove, const int numberElementsToRemove);
+
 };
 
 
