@@ -25,7 +25,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3b4c 28-May-2017
+ * Project Version: 3b5a 29-May-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -810,6 +810,7 @@
 		#ifndef USE_NLC
 			//#define GIA_PREPROCESSOR_SENTENCE	//3a1a
 		#endif
+		#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_LOAD_WORD_LISTS
 		#ifdef GIA_PREPROCESSOR_SENTENCE
 					
 			//#define GIA_PREPROCESSOR_SENTENCE_TEMPORARY_SENTENCE_INDEX (-2)
@@ -904,7 +905,6 @@
 						#define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_SET_CONJUNCTION_AND_OR_TEXT_TO_REFERENCE_SET_OBJECT_BEFORE_SEMANTIC_RELATION_PARSE
 					#endif
 				#endif	
-				#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_LOAD_WORD_LISTS
 				#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_RCMOD_SAME_REFERENCE_SET_DELIMITER_NUMBER_OF_TYPES (3)
 				static string preprocessorRcmodSameReferenceSetDelimiter[GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_RCMOD_SAME_REFERENCE_SET_DELIMITER_NUMBER_OF_TYPES] = {"that", "which", "that's"};		//see preprocessorMathRcmodSameReferenceSetDelimiter
 			#else
@@ -1131,6 +1131,7 @@
 	#ifdef GIA_SPATIOTEMPORAL_NETWORK
 		#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_PREPOSITIONS	//added 2h1a/14-November-2014 - required for NLC 1m1a+
 		#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_PREPOSITIONS
+			#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_PREPOSITIONS_INVERSE_TAG_NAME_NULL "NULL"
 			#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_LOAD_INVERSE_PREPOSITIONS_LIST
 			#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_INVERSE_PREPOSITIONS
 			#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_TWOWAY_PREPOSITIONS
@@ -1328,7 +1329,7 @@
 	#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS
 		//#define GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_CONSERVATIVE	//added 28 October 2012b - requires GIA_PREPROCESSOR_MULTIWORD_REDUCTION for reading of WikipediaIrregularVerbs.txt - this is used to normalise the tagging of continuous verbs (eg in the making of): it is not 100% successful as corrections are limited to irregular continous verbs (WikipediaIrregularVerbs.txt)
 		#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_CONSERVATIVE
-			#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_LOAD_IRREGULAR_VERB_LIST
+			#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_LOAD_WORD_LISTS	//requires irregular verb list
 		#endif
 		#define GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_LIBERAL		//alternate implementation added 5 July 2013 - requires GIA_PREPROCESSOR_MULTIWORD_REDUCTION for reading of WordnetVerbs.txt - this is used to normalise the tagging of continuous verbs (eg in the making of)
 		#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_LIBERAL
@@ -1342,9 +1343,6 @@
 	#endif
 	#define GIA_WORD_ORIG	//NB wordOrig is now used by more than just NLG (it is also used by LRP)
 	//#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DISABLE_REDISTRIBUTE_RELATIONS_POST_NLP_MULTIWORD_PREPOSITION_REDUCTION
-#endif
-#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_LOAD_WORD_LISTS
-	#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_LOAD_IRREGULAR_VERB_LIST	//this is required for parseVerbDataGenerateAllTenseVariants
 #endif
 
 //variables currently being tested (1o1a+)

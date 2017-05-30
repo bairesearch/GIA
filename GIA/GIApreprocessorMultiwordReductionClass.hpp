@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorMultiwordReductionClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3b4c 28-May-2017
+ * Project Version: 3b5a 29-May-2017
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  *
@@ -248,7 +248,11 @@ public:
 
 	bool base;	//used to indicate if the current tag in the phrasal verb is the base verb of the phrasal verb (or lemma) - NB the first word in each phrasal verb defined in the database is assumed to be the lemma, but there may be additional instances
 	string grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_MAX_NUM_TENSE_FORMS][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_MAX_NUM_TENSE_FORM_VERSIONS];		//only for lemma	[2: for alternate versions]
-	int grammaticalTenseFormDetected;
+	int grammaticalTenseForm;	//for wordLists
+	
+	//verb case additional only:
+	int grammaticalTenseModifier;
+	string baseName;	
 };
 
 class GIApreprocessorMultiwordReductionPhrasalVerbWord: public GIApreprocessorMultiwordReductionWord
@@ -292,6 +296,7 @@ public:
 	int collapsedMultiwordWordType;
 	//bool collapsedPhrasalVerbExactDefinedSectionTemp;	//not required as searchAndReplacePhrasalVerbs is only ever executed once
 	bool collapsedMultiwordWordTemp;	//this is reset everytime searchAndReplaceMultiwordWordList is executed to prevent collapsedMultiwordWord from being redetected
+	int grammaticalTenseFormDetected;
 
 	#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
 	GIApreprocessorMultiwordReductionPlainTextWord* preprocessorUpperLevelWordReference;
