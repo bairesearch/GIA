@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorMultiwordReductionClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3b2c 21-May-2017
+ * Project Version: 3b2d 21-May-2017
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  *
@@ -209,10 +209,13 @@ public:
 	string tagName;
 	
 	#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
-	GIAentityNode* entityReference;
+	GIAfeature* featureReferenceOriginal;
 	GIAfeature* featureReference;
+	GIAentityNode* entityReference;
 	#endif
 	
+	bool plainTextWord;
+		
 	GIApreprocessorWord* nextTag;
 };
 
@@ -228,8 +231,6 @@ public:
 	bool base;	//used to indicate if the current tag in the phrasal verb is the base verb of the phrasal verb (or lemma) - NB the first word in each phrasal verb defined in the database is assumed to be the lemma, but there may be additional instances
 	string grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_MAX_NUM_TENSE_FORMS][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_MAX_NUM_TENSE_FORM_VERSIONS];		//only for lemma	[2: for alternate versions]
 	int grammaticalTenseFormDetected;
-
-	GIApreprocessorMultiwordReductionWord* nextTag;
 };
 
 class GIApreprocessorMultiwordReductionPhrasalVerbWord: public GIApreprocessorMultiwordReductionWord
@@ -246,8 +247,6 @@ public:
 	//string primaryPhrasalVerbReplacementString;
 	//string primaryPhrasalVerbReplacementStringNLPonly;
 	GIApreprocessorMultiwordReductionPhrasalVerbWord* alternateTag;			//used to specify an alternate (but corresponding) tag name designated by "/" in the phrasal verb database
-	
-	GIApreprocessorMultiwordReductionPhrasalVerbWord* nextTag;
 };
 
 class GIApreprocessorMultiwordReductionIrregularVerbWord: public GIApreprocessorMultiwordReductionWord
@@ -258,8 +257,6 @@ public:
 	~GIApreprocessorMultiwordReductionIrregularVerbWord(void);
 
 	GIApreprocessorMultiwordReductionIrregularVerbWord* alternateTag;
-	
-	GIApreprocessorMultiwordReductionIrregularVerbWord* nextTag;
 };
 
 class GIApreprocessorMultiwordReductionPlainTextWord: public GIApreprocessorMultiwordReductionWord
@@ -269,7 +266,7 @@ public:
 	GIApreprocessorMultiwordReductionPlainTextWord(void);
 	~GIApreprocessorMultiwordReductionPlainTextWord(void);
 	
-	int entityIndex;
+	int entityIndex;	//this should be depreciated
 	
 	bool collapsedPhrasalVerbExactDefinedSection;
 	bool collapsedMultiwordWord;
@@ -282,7 +279,9 @@ public:
 	int preprocessorUpperLevelWordReferenceSize;	//number of words in preprocessor upper level phrase corresponding to preprocessor word
 	#endif
 	
-	GIApreprocessorMultiwordReductionPlainTextWord* nextTag;
+	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
+	string tagNameLRPforNLP;
+	#endif
 };
 
 
@@ -361,8 +360,15 @@ class GIApreprocessorMultiwordReductionClassClass
 {
 	#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
 	public: string generateTextFromPreprocessorSentenceWordList(GIApreprocessorWord* firstWordInSentence);
+		public: string generateTextFromPreprocessorSentenceWordList(GIApreprocessorWord* firstWordInSentence, bool LRPforNLP);
 	public: string generateTextFromVectorWordList(vector<GIApreprocessorWord*>* logicReferenceVariableWordList);
-		public: int calculateLengthOfGeneratedVectorWordListText(vector<GIApreprocessorWord*>* logicReferenceVariableWordList);
+		public: string generateTextFromVectorWordList(vector<GIApreprocessorWord*>* logicReferenceVariableWordList, bool LRPforNLP);
+			public: string generateTextFromPreprocessorSentenceWord(GIApreprocessorWord* word, bool LRPforNLP, bool isFirstWordInSentence);
+	public: int calculateLengthOfGeneratedVectorWordListText(vector<GIApreprocessorWord*>* logicReferenceVariableWordList);
+	public: bool generateSentenceWordList(GIApreprocessorMultiwordReductionWord* sentenceContentsFirstWord, vector<GIApreprocessorWord*>* logicReferenceVariableWordList);
+	public: bool addWordListToWordList(vector<GIApreprocessorWord*>* wordList, vector<GIApreprocessorWord*>* wordListToAdd);
+	public: bool addStringArrayToWordList(vector<GIApreprocessorWord*>* wordList, string* stringArrayToAdd, int arraySize);
+	public: bool addStringToWordList(vector<GIApreprocessorWord*>* wordList, string stringToAdd);
 	#endif	
 };
 

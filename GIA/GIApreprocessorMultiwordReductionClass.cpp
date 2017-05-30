@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorMultiwordReductionClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3b2c 21-May-2017
+ * Project Version: 3b2d 21-May-2017
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  *
@@ -39,15 +39,26 @@ GIApreprocessorWord::GIApreprocessorWord(void)
 	tagName = "";
 
 	#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
-	entityReference = NULL;
+	featureReferenceOriginal = NULL;
 	featureReference = NULL;
+	entityReference = NULL;
 	#endif
-		
+			
 	nextTag = NULL;
+	
+	plainTextWord = false;
 }
 GIApreprocessorWord::GIApreprocessorWord(string tagNameNew)
 {
 	tagName = tagNameNew;
+
+	#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
+	featureReferenceOriginal = NULL;
+	featureReference = NULL;
+	entityReference = NULL;
+	#endif
+	
+	plainTextWord = false;
 		
 	nextTag = NULL;
 }
@@ -99,7 +110,7 @@ GIApreprocessorMultiwordReductionIrregularVerbWord::~GIApreprocessorMultiwordRed
 }
 
 GIApreprocessorMultiwordReductionPlainTextWord::GIApreprocessorMultiwordReductionPlainTextWord(void)
-{
+{	
 	entityIndex = false;
 	collapsedPhrasalVerbExactDefinedSection = false;
 	collapsedMultiwordWord = false;
@@ -110,6 +121,12 @@ GIApreprocessorMultiwordReductionPlainTextWord::GIApreprocessorMultiwordReductio
 	preprocessorUpperLevelWordReference = NULL;
 	preprocessorUpperLevelWordReferenceSize = INT_DEFAULT_VALUE;
 	#endif
+	
+	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
+	tagNameLRPforNLP = "";
+	#endif
+	
+	plainTextWord = true;
 }
 GIApreprocessorMultiwordReductionPlainTextWord::~GIApreprocessorMultiwordReductionPlainTextWord(void)
 {
@@ -177,31 +194,22 @@ GIApreprocessorMultiwordReductionTagTextCorrespondenceInfo::~GIApreprocessorMult
 
 
 #ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
+
 string GIApreprocessorMultiwordReductionClassClass::generateTextFromPreprocessorSentenceWordList(GIApreprocessorWord* firstWordInSentence)
+{
+	return generateTextFromPreprocessorSentenceWordList(firstWordInSentence, false);
+}
+string GIApreprocessorMultiwordReductionClassClass::generateTextFromPreprocessorSentenceWordList(GIApreprocessorWord* firstWordInSentence, bool LRPforNLP)
 {
 	string sentenceText = "";
 	GIApreprocessorWord* currentWordInSentence = firstWordInSentence;
-	bool firstCharacterInSentence = true;
+	bool isFirstWordInSentence = true;
 	while(currentWordInSentence->nextTag != NULL)
 	{
-		string wordText = currentWordInSentence->tagName;
+		GIApreprocessorWord* word = currentWordInSentence;
+		sentenceText = sentenceText + generateTextFromPreprocessorSentenceWord(word, LRPforNLP, isFirstWordInSentence);
+		isFirstWordInSentence = false;
 		
-		bool punctuationMarkFound = false;
-		for(int i=0; i<GIA_NLP_NUMBER_OF_PUNCTUATION_MARK_CHARACTERS; i++)
-		{
-			string nlpPunctionMarkCharacterString = "";
-			nlpPunctionMarkCharacterString = nlpPunctionMarkCharacterString + nlpPunctionMarkCharacterArray[i];
-			if(currentWordInSentence->tagName == nlpPunctionMarkCharacterString)
-			{
-				punctuationMarkFound = true;
-			}
-		}
-		if(!punctuationMarkFound && !firstCharacterInSentence)
-		{
-			wordText = string(STRING_SPACE) + wordText;
-		}
-		sentenceText = sentenceText + wordText;
-			
 		currentWordInSentence = currentWordInSentence->nextTag;
 	}
 	return sentenceText;
@@ -209,29 +217,52 @@ string GIApreprocessorMultiwordReductionClassClass::generateTextFromPreprocessor
 
 string GIApreprocessorMultiwordReductionClassClass::generateTextFromVectorWordList(vector<GIApreprocessorWord*>* logicReferenceVariableWordList)
 {
+	return generateTextFromVectorWordList(logicReferenceVariableWordList, false);
+}
+string GIApreprocessorMultiwordReductionClassClass::generateTextFromVectorWordList(vector<GIApreprocessorWord*>* logicReferenceVariableWordList, bool LRPforNLP)
+{
 	string sentenceText = "";
-	bool firstCharacterInSentence = true;
+	bool isFirstWordInSentence = true;
 	for(int wordIndex = 0; wordIndex<logicReferenceVariableWordList->size(); wordIndex++)
 	{
-		string wordText = ((*logicReferenceVariableWordList)[wordIndex])->tagName;
-		
-		bool punctuationMarkFound = false;
-		for(int i=0; i<GIA_NLP_NUMBER_OF_PUNCTUATION_MARK_CHARACTERS; i++)
-		{
-			string nlpPunctionMarkCharacterString = "";
-			nlpPunctionMarkCharacterString = nlpPunctionMarkCharacterString + nlpPunctionMarkCharacterArray[i];
-			if(wordText == nlpPunctionMarkCharacterString)
-			{
-				punctuationMarkFound = true;
-			}
-		}
-		if(!punctuationMarkFound && !firstCharacterInSentence)
-		{
-			wordText = string(STRING_SPACE) + wordText;
-		}
-		sentenceText = sentenceText + wordText;
+		GIApreprocessorWord* word = (*logicReferenceVariableWordList)[wordIndex];
+		sentenceText = sentenceText + generateTextFromPreprocessorSentenceWord(word, LRPforNLP, isFirstWordInSentence);
+		isFirstWordInSentence = false;
 	}
 	return sentenceText;
+}
+
+string GIApreprocessorMultiwordReductionClassClass::generateTextFromPreprocessorSentenceWord(GIApreprocessorWord* word, bool LRPforNLP, bool isFirstWordInSentence)
+{
+	string wordText = word->tagName;
+	if(LRPforNLP)
+	{
+		if(word->plainTextWord)
+		{	
+			//cout << "word->plainTextWord: " << word->tagName << endl;
+			GIApreprocessorMultiwordReductionPlainTextWord* plaintextWord = static_cast<GIApreprocessorMultiwordReductionPlainTextWord*>(word);
+			if(plaintextWord->tagNameLRPforNLP != "")
+			{
+				wordText = plaintextWord->tagNameLRPforNLP;
+			}
+		}
+	}
+
+	bool punctuationMarkFound = false;
+	for(int i=0; i<GIA_NLP_NUMBER_OF_PUNCTUATION_MARK_CHARACTERS; i++)
+	{
+		string nlpPunctionMarkCharacterString = "";
+		nlpPunctionMarkCharacterString = nlpPunctionMarkCharacterString + nlpPunctionMarkCharacterArray[i];
+		if(wordText == nlpPunctionMarkCharacterString)
+		{
+			punctuationMarkFound = true;
+		}
+	}
+	if(!punctuationMarkFound && !isFirstWordInSentence)
+	{
+		wordText = string(STRING_SPACE) + wordText;
+	}
+	return wordText;
 }
 
 int GIApreprocessorMultiwordReductionClassClass::calculateLengthOfGeneratedVectorWordListText(vector<GIApreprocessorWord*>* logicReferenceVariableWordList)
@@ -240,6 +271,50 @@ int GIApreprocessorMultiwordReductionClassClass::calculateLengthOfGeneratedVecto
 	return sentenceText.length();
 }
 
+bool GIApreprocessorMultiwordReductionClassClass::generateSentenceWordList(GIApreprocessorMultiwordReductionWord* sentenceContentsFirstWord, vector<GIApreprocessorWord*>* logicReferenceVariableWordList)
+{
+	bool result = true;
+	
+	GIApreprocessorMultiwordReductionWord* currentWordInSentence = sentenceContentsFirstWord;
+	while(currentWordInSentence->nextTag != NULL)
+	{
+		logicReferenceVariableWordList->push_back(currentWordInSentence);
+
+		currentWordInSentence = static_cast<GIApreprocessorMultiwordReductionWord*>(currentWordInSentence->nextTag);
+	}
+	
+	#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
+	cout << "GIApreprocessorReferenceSetClass::generateSentenceWordList{}: " << endl;
+	for(int i=0; i<logicReferenceVariableWordList->size(); i++)
+	{
+		cout << ((*logicReferenceVariableWordList)[i])->tagName << STRING_SPACE;
+	}
+	cout << endl;
+	#endif
+	
+	return result;
+}
+
+bool GIApreprocessorMultiwordReductionClassClass::addWordListToWordList(vector<GIApreprocessorWord*>* wordList, vector<GIApreprocessorWord*>* wordListToAdd)
+{
+	for(int i=0; i<wordListToAdd->size(); i++)
+	{
+		wordList->push_back((*wordListToAdd)[i]);
+	}
+}
+bool GIApreprocessorMultiwordReductionClassClass::addStringArrayToWordList(vector<GIApreprocessorWord*>* wordList, string* stringArrayToAdd, int arraySize)
+{
+	for(int i=0; i<arraySize; i++)
+	{
+		GIApreprocessorWord* newWord = new GIApreprocessorWord(stringArrayToAdd[i]); 
+		wordList->push_back(newWord);
+	}
+}
+bool GIApreprocessorMultiwordReductionClassClass::addStringToWordList(vector<GIApreprocessorWord*>* wordList, string stringToAdd)
+{
+	GIApreprocessorWord* newWord = new GIApreprocessorWord(stringToAdd); 
+	wordList->push_back(newWord);
+}
 
 #endif
 

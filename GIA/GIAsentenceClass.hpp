@@ -25,7 +25,7 @@
  * File Name: GIAsentenceClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3b2c 21-May-2017
+ * Project Version: 3b2d 21-May-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -308,7 +308,11 @@ public:
 
 	GIArelation* firstRelationInList;
 	GIAfeature* firstFeatureInList;
-
+	#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
+	GIArelation* firstRelationInListOriginal;
+	GIAfeature* firstFeatureInListOriginal;
+	#endif
+	
 	GIAsentence* next;
 	GIAsentence* previous;	//used for reference lookup
 
@@ -334,13 +338,15 @@ public:
 
 class GIAsentenceClassClass
 {
-	public: void copySentences(GIAsentence* sentenceToCopy, GIAsentence* newSentence);
-	private: void copyRelations(GIArelation* firstRelationInListToCopy, GIArelation* firstRelationInList);
-	private: void copyFeatures(GIAfeature* firstFeatureInListToCopy, GIAfeature* firstFeatureInList);
-	#ifdef GIA_STANFORD_CORENLP
-	private: void copyStanfordCoreferences(GIAstanfordCoreNLPcoreference* firstCoreferenceInListToCopy, GIAstanfordCoreNLPcoreference* firstCoreferenceInList);
-	private: void copyStanfordMention(GIAstanfordCoreNLPmention* firstMentionInListToCopy, GIAstanfordCoreNLPmention* firstMentionInList);
-	#endif
+	public: void backupOriginalNLPsentenceContent(GIAsentence* firstSentenceInList);
+	public: void copySentences(GIAsentence* firstSentenceInListToCopy, GIAsentence* firstSentenceInList);
+		public: void copySentence(GIAsentence* sentenceToCopy, GIAsentence* newSentence);
+			private: void copyRelations(GIArelation* firstRelationInListToCopy, GIArelation* firstRelationInList);
+			private: void copyFeatures(GIAfeature* firstFeatureInListToCopy, GIAfeature* firstFeatureInList);
+			#ifdef GIA_STANFORD_CORENLP
+			private: void copyStanfordCoreferences(GIAstanfordCoreNLPcoreference* firstCoreferenceInListToCopy, GIAstanfordCoreNLPcoreference* firstCoreferenceInList);
+				private: void copyStanfordMention(GIAstanfordCoreNLPmention* firstMentionInListToCopy, GIAstanfordCoreNLPmention* firstMentionInList);
+			#endif
 
 	public: int calculateNumberOfWordsInSentence(const GIAfeature* firstFeatureInList);
 };

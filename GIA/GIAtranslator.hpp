@@ -25,7 +25,7 @@
  * File Name: GIAtranslator.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3b2c 21-May-2017
+ * Project Version: 3b2d 21-May-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -70,7 +70,7 @@
 #include "GIAsemanticParserDatabase.hpp"
 #include "GIAtranslatorRules.hpp"
 #include "GIAtranslatorGeneric.hpp"
-#ifdef GIA_PREPROCESSOR_SENTENCE
+#ifdef GIA_PREPROCESSOR
 #include "GIApreprocessor.hpp"
 #endif
 #include "SHAREDvars.hpp"	//file io
@@ -107,7 +107,7 @@ class GIAtranslatorClass
 	private: GIAbotClass GIAbot;
 	#endif
 	private: GIAtranslatorRulesClass GIAtranslatorRules;
-	#ifdef GIA_PREPROCESSOR_SENTENCE
+	#ifdef GIA_PREPROCESSOR
 	private: GIApreprocessorClass GIApreprocessor;
 	#endif
 	public: bool parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyParsedSentences(GIAtranslatorVariablesClass* translatorVariables, const string inputTextNLPrelationXMLfileName, const string inputTextNLPfeatureXMLfileName, const string outputCFFfileName, const string NLPexeFolderArray[]);

@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorSentenceClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3b2c 21-May-2017
+ * Project Version: 3b2d 21-May-2017
  * Requirements: requires plain text file
  * Description: Logical Condition and Reference Set preprocessor
  *
@@ -37,18 +37,20 @@
 #include "GIAentityConnectionClass.hpp"
 
 
+#ifdef GIA_PREPROCESSOR_SENTENCE
+
 GIApreprocessorSubReferenceSet::GIApreprocessorSubReferenceSet(void)
 {
 	sentenceIndex = INT_DEFAULT_VALUE;
 	//subReferenceSetContents = "";
 	#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT
-	subReferenceSetContentsOutputForNLP = "";
+	//subReferenceSetContentsOutputForNLP = "";
 	#endif
 	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
 	firstIndexOfReferenceSetText = INT_DEFAULT_VALUE;
 	lastIndexOfReferenceSetText = INT_DEFAULT_VALUE;
 	#endif
-
+	
 	#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
 	primaryEntityTemp = NULL;
 	#endif
@@ -58,6 +60,11 @@ GIApreprocessorSubReferenceSet::GIApreprocessorSubReferenceSet(void)
 	
 	delimiterType = GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_UNDEFINED;
 	delimiterSpecialCase = GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_SPECIAL_CASE_UNDEFINED;
+	
+	#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
+	sentenceReference = NULL;
+	#endif
+	
 }
 GIApreprocessorSubReferenceSet::~GIApreprocessorSubReferenceSet(void)
 {
@@ -74,7 +81,7 @@ GIApreprocessorLogicReferenceVariable::GIApreprocessorLogicReferenceVariable(voi
 	logicReferenceVariableName = "";
 	
 	#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET
-	referenceSetSubject = new GIApreprocessorSubReferenceSet();;
+	referenceSetSubject = new GIApreprocessorSubReferenceSet();
 	referenceSetObject = new GIApreprocessorSubReferenceSet();
 	referenceSetDelimiter = new GIApreprocessorSubReferenceSet();
 	#endif
@@ -107,7 +114,7 @@ GIApreprocessorLogicReference::GIApreprocessorLogicReference(void)
 	isSubLogicReferenceDependent = false;
 	isSubLogicReferenceArray = false;
 	#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_OUTPUT_LOGIC_REFERENCE_SETS_FOR_HIGH_LEVEL_SEMANTIC_PARSE_VERBOSE
-	logicReferenceSetContentsWithVariableNames = "";
+	//logicReferenceSetContentsWithVariableNames = "";
 	logicReferenceSetContentsWithVariableNamesSentenceIndex = INT_DEFAULT_VALUE;
 	#endif
 	#endif
@@ -116,6 +123,8 @@ GIApreprocessorLogicReference::~GIApreprocessorLogicReference(void)
 {
 }
 
+#endif
+
 GIApreprocessorSentence::GIApreprocessorSentence(void)
 {
 	sentenceIndexOriginal = 0;	
@@ -123,17 +132,21 @@ GIApreprocessorSentence::GIApreprocessorSentence(void)
 	//#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
 	sentenceContentsOriginalFirstWord = new GIApreprocessorMultiwordReductionPlainTextWord();
 	sentenceContentsLRPfirstWord = new GIApreprocessorMultiwordReductionPlainTextWord();
-	sentenceContentsLRPforNLPfirstWord = new GIApreprocessorMultiwordReductionPlainTextWord();
 	//#endif
 	
+	#ifdef GIA_PREPROCESSOR_SENTENCE
 	hasLogicReference = false;
 	firstLogicReferenceInList = new GIApreprocessorLogicReference();
 	//logicReferenceTotal = 0;
-	
 	#ifdef GIA_PREPROCESSOR_ASSIGN_UNIQUE_SENTENCE_INDICES_FOR_SENTENCES
 	sentenceIndex = INT_DEFAULT_VALUE;
 	#endif
-	
+	#else
+	#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
+	sentenceReference = NULL;
+	#endif	
+	#endif
+		
 	next = NULL;
 }
 GIApreprocessorSentence::~GIApreprocessorSentence(void)

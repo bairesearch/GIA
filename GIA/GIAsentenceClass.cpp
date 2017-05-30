@@ -25,7 +25,7 @@
  * File Name: GIAsentenceClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3b2c 21-May-2017
+ * Project Version: 3b2d 21-May-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -285,7 +285,11 @@ GIAsentence::GIAsentence(void)
 
 	firstRelationInList = new GIArelation();	//auto constructor execution added 23 Feb 2012
 	firstFeatureInList = new GIAfeature();	//auto constructor execution added 23 Feb 2012
-
+	#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
+	firstRelationInListOriginal = new GIArelation();
+	firstFeatureInListOriginal = new GIAfeature();
+	#endif
+	
 	next = NULL;
 	previous = NULL;
 
@@ -344,34 +348,59 @@ GIAparagraph::~GIAparagraph(void)
 	}
 }
 
-void GIAsentenceClassClass::copySentences(GIAsentence* sentenceToCopy, GIAsentence* newSentence)
-{
-	newSentence->sentenceIndex = sentenceToCopy->sentenceIndex;
 
-	#ifdef GIA_RELEX
-	newSentence->sentenceText = sentenceToCopy->sentenceText;
-	newSentence->constituentsText = sentenceToCopy->constituentsText;
-	newSentence->featuresText = sentenceToCopy->featuresText;
-	newSentence->relationsText = sentenceToCopy->relationsText;
-	newSentence->linksText = sentenceToCopy->linksText;
-	#endif
-
-	#ifdef GIA_STANFORD_CORENLP
-	this->copyStanfordCoreferences(sentenceToCopy->firstCoreferenceInList, newSentence->firstCoreferenceInList);	//changed 21 Sept 2012
-	//newSentence->firstCoreferenceInList = sentenceToCopy->firstCoreferenceInList;
-	#endif
-
-	newSentence->maxNumberOfWordsInSentence = sentenceToCopy->maxNumberOfWordsInSentence;
-
-	this->copyRelations(sentenceToCopy->firstRelationInList, newSentence->firstRelationInList);
-	this->copyFeatures(sentenceToCopy->firstFeatureInList, newSentence->firstFeatureInList);
-
-	newSentence->next = NULL;
-	newSentence->previous = NULL;
-
-	newSentence->isQuestion = sentenceToCopy->isQuestion;
+void GIAsentenceClassClass::backupOriginalNLPsentenceContent(GIAsentence* firstSentenceInList)
+{	
+	GIAsentence* currentSentenceInList = firstSentenceInList;
+	while(currentSentenceInList->next != NULL)
+	{
+		copyRelations(currentSentenceInList->firstRelationInList, currentSentenceInList->firstRelationInListOriginal);
+		copyFeatures(currentSentenceInList->firstFeatureInList, currentSentenceInList->firstFeatureInListOriginal);
+		
+		currentSentenceInList = currentSentenceInList->next;
+	}
 }
 
+void GIAsentenceClassClass::copySentences(GIAsentence* firstSentenceInListToCopy, GIAsentence* firstSentenceInList)
+{
+	GIAsentence* currentSentenceToCopy = firstSentenceInListToCopy;
+	GIAsentence* currentSentence = firstSentenceInList;
+	while(currentSentenceToCopy->next != NULL)
+	{
+		this->copySentence(currentSentenceToCopy, currentSentence);
+		
+		GIAsentence* newSentence = new GIAsentence();
+		currentSentence->next = newSentence;
+
+		currentSentenceToCopy = currentSentenceToCopy->next;
+		currentSentence = currentSentence->next;
+	}
+}
+
+void GIAsentenceClassClass::copySentence(GIAsentence* sentenceToCopy, GIAsentence* newSentence)
+{
+	*newSentence = *sentenceToCopy;
+	
+	#ifdef GIA_STANFORD_CORENLP
+	newSentence->firstCoreferenceInList = new GIAstanfordCoreNLPcoreference();
+	this->copyStanfordCoreferences(sentenceToCopy->firstCoreferenceInList, newSentence->firstCoreferenceInList);	//changed 21 Sept 2012
+	#endif
+
+	newSentence->firstRelationInList = new GIArelation();
+	this->copyRelations(sentenceToCopy->firstRelationInList, newSentence->firstRelationInList);
+	newSentence->firstFeatureInList = new GIAfeature();
+	this->copyFeatures(sentenceToCopy->firstFeatureInList, newSentence->firstFeatureInList);
+	
+	#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
+	newSentence->firstRelationInListOriginal = new GIArelation();
+	this->copyRelations(sentenceToCopy->firstRelationInListOriginal, newSentence->firstRelationInListOriginal);
+	newSentence->firstFeatureInListOriginal = new GIAfeature();
+	this->copyFeatures(sentenceToCopy->firstFeatureInListOriginal, newSentence->firstFeatureInListOriginal);
+	#endif
+	
+	newSentence->next = NULL;
+	newSentence->previous = NULL;
+}
 
 void GIAsentenceClassClass::copyRelations(GIArelation* firstRelationInListToCopy, GIArelation* firstRelationInList)
 {
@@ -379,24 +408,9 @@ void GIAsentenceClassClass::copyRelations(GIArelation* firstRelationInListToCopy
 	GIArelation* currentRelation = firstRelationInList;
 	while(currentRelationToCopy->next != NULL)
 	{
-
-		currentRelation->relationType = currentRelationToCopy->relationType;
-		currentRelation->relationTypeIndex = currentRelationToCopy->relationTypeIndex;
-		currentRelation->relationDependent = currentRelationToCopy->relationDependent;
-		currentRelation->relationDependentIndex = currentRelationToCopy->relationDependentIndex;
-		currentRelation->relationGovernor = currentRelationToCopy->relationGovernor;
-		currentRelation->relationGovernorIndex = currentRelationToCopy->relationGovernorIndex;
-
-
-		#ifdef GIA_SEMANTIC_PARSER
-		#ifdef GIA_SEMANTIC_PARSER_SUPPORT_QUERIES
-		currentRelation->corpusSpecialRelationGovernorIsQuery = currentRelationToCopy->corpusSpecialRelationGovernorIsQuery;
-		currentRelation->corpusSpecialRelationDependentIsQuery = currentRelationToCopy->corpusSpecialRelationDependentIsQuery;
-		#endif
-		#endif
+		*currentRelation = *currentRelationToCopy;
 
 		GIArelation* newRelation = new GIArelation();
-		//newRelation->previous = currentRelation;
 		currentRelation->next = newRelation;
 
 		currentRelationToCopy = currentRelationToCopy->next;
@@ -410,26 +424,8 @@ void GIAsentenceClassClass::copyFeatures(GIAfeature* firstFeatureInListToCopy, G
 	GIAfeature* currentFeature = firstFeatureInList;
 	while(currentFeatureToCopy->next != NULL)
 	{
-
-		currentFeature->entityIndex = currentFeatureToCopy->entityIndex;
-		currentFeature->word = currentFeatureToCopy->word;
-		currentFeature->lemma = currentFeatureToCopy->lemma;
-
-		#ifdef GIA_RELEX
-		currentFeature->type = currentFeatureToCopy->type;
-		currentFeature->grammar = currentFeatureToCopy->grammar;
-		#endif
-
-		currentFeature->NER = currentFeatureToCopy->NER;
-		#ifdef GIA_STANFORD_CORENLP
-		currentFeature->CharacterOffsetBegin = currentFeatureToCopy->CharacterOffsetBegin;
-		currentFeature->CharacterOffsetEnd = currentFeatureToCopy->CharacterOffsetEnd;
-		currentFeature->stanfordPOS = currentFeatureToCopy->stanfordPOS;
-		currentFeature->NormalizedNER = currentFeatureToCopy->NormalizedNER;
-		currentFeature->Timex = currentFeatureToCopy->Timex;
-		#endif
-
-
+		*currentFeature = *currentFeatureToCopy;
+		
 		GIAfeature* newFeature = new GIAfeature();
 		newFeature->previous = currentFeature;
 		currentFeature->next = newFeature;
@@ -450,7 +446,6 @@ void GIAsentenceClassClass::copyStanfordCoreferences(GIAstanfordCoreNLPcoreferen
 		currentCoreferenceInList->firstMentionInList = new GIAstanfordCoreNLPmention();
 		this->copyStanfordMention(currentCoreferenceInListToCopy->firstMentionInList, currentCoreferenceInList->firstMentionInList);
 
-
 		GIAstanfordCoreNLPcoreference* newCoreference = new GIAstanfordCoreNLPcoreference();
 		currentCoreferenceInList->next = newCoreference;
 
@@ -465,12 +460,7 @@ void GIAsentenceClassClass::copyStanfordMention(GIAstanfordCoreNLPmention* first
 	GIAstanfordCoreNLPmention* currentMentionInList = firstMentionInList;
 	while(currentMentionInListToCopy->next != NULL)
 	{
-		currentMentionInList->representative = currentMentionInListToCopy->representative;
-		currentMentionInList->sentence = currentMentionInListToCopy->sentence;
-		currentMentionInList->start = currentMentionInListToCopy->start;
-		currentMentionInList->end = currentMentionInListToCopy->end;
-		currentMentionInList->head = currentMentionInListToCopy->head;
-
+		*currentMentionInList = *currentMentionInListToCopy;
 
 		GIAstanfordCoreNLPmention* newMention = new GIAstanfordCoreNLPmention();
 		currentMentionInList->next = newMention;

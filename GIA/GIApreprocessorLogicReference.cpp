@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorLogicReference.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3b2c 21-May-2017
+ * Project Version: 3b2d 21-May-2017
  * Requirements: requires plain text file
  * Description: Logic Reference preprocessor
  *
@@ -202,7 +202,7 @@ bool GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor(GIApr
 	while(sentenceContentsCurrentWord->nextTag != NULL)
 	{
 		GIApreprocessorWord* currentWord = sentenceContentsCurrentWord;
-	
+		
 		#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
 		cout << "[currentWord = " << currentWord->tagName << "]" << endl;
 		#endif
@@ -524,8 +524,6 @@ bool GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor(GIApr
 		}
 		else if(currentWord->tagName == SHAREDvars.convertCharToString(GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_NEW_LOGIC_REFERENCE_CHAR))
 		{	
-			logicReferenceVariableWordList.push_back(currentWord);
-			
 			if(!fillLogicReferenceVariable(currentLogicReferenceInList, &logicReferenceVariableWordList, &logicReferenceVariableNameIndex, true, &expectToFindSubjectAuxObjectLogicReferenceVariable))
 			{
 				result = false;
@@ -568,8 +566,6 @@ bool GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor(GIApr
 		}
 		else if(((currentWord->tagName).length() == 1) && SHAREDvars.charInCharArray((currentWord->tagName)[0], nlpPunctionMarkCharacterEndOfSentenceArray, GIA_NLP_NUMBER_OF_PUNCTUATION_MARK_CHARACTERS_END_OF_SENTENCE))
 		{
-			logicReferenceVariableWordList.push_back(currentWord);
-
 			if(!fillLogicReferenceVariable(currentLogicReferenceInList, &logicReferenceVariableWordList, &logicReferenceVariableNameIndex, false, &expectToFindSubjectAuxObjectLogicReferenceVariable))
 			{
 				result = false;
@@ -579,6 +575,10 @@ bool GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor(GIApr
 		{
 			//CHAR_SEMICOLON / CHAR_COLON:
 			logicReferenceVariableWordList.push_back(currentWord);	//CHECKTHIS: assume that logic reference variable will not occur before a punctuation mark (CHAR_SEMICOLON / CHAR_COLON)
+		}
+		else
+		{
+			logicReferenceVariableWordList.push_back(currentWord);
 		}
 
 		wordIndexSentence++;

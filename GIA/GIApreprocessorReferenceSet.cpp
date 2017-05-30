@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorReferenceSet.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3b2c 21-May-2017
+ * Project Version: 3b2d 21-May-2017
  * Requirements: requires plain text file
  * Description: Reference Set preprocessor
  *
@@ -55,30 +55,6 @@ Past participles can often be found in participle phrases. A participle phrase a
     
 NB there is no easy rcmod detection in these cases
 */
-
-bool GIApreprocessorReferenceSetClass::generateSentenceWordList(GIApreprocessorMultiwordReductionWord* sentenceContentsFirstWord, vector<GIApreprocessorWord*>* logicReferenceVariableWordList)
-{
-	bool result = true;
-	
-	GIApreprocessorMultiwordReductionWord* currentWordInSentence = sentenceContentsFirstWord;
-	while(currentWordInSentence->nextTag != NULL)
-	{
-		logicReferenceVariableWordList->push_back(currentWordInSentence);
-
-		currentWordInSentence = currentWordInSentence->nextTag;
-	}
-	
-	#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
-	cout << "GIApreprocessorReferenceSetClass::generateSentenceWordList{}: " << endl;
-	for(int i=0; i<logicReferenceVariableWordList->size(); i++)
-	{
-		cout << ((*logicReferenceVariableWordList)[i])->tagName << STRING_SPACE;
-	}
-	cout << endl;
-	#endif
-	
-	return result;
-}
 
 
 

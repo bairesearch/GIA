@@ -25,7 +25,7 @@
  * File Name: GIApreprocessor.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3b2c 21-May-2017
+ * Project Version: 3b2d 21-May-2017
  * Requirements: requires plain text file
  * Description: Logical Condition and Reference Set preprocessor
  *
@@ -77,11 +77,10 @@ class GIApreprocessorClass
 				#endif
 				private: void addSentenceToSentenceContentsPreprocessedLogicReferenceVariables(string* sentenceContentsPreprocessedLogicReferenceVariables, string* sentenceContentsPreprocessedLogicReferenceVariablesForNLP, GIApreprocessorSubReferenceSet* referenceSet, int* sentenceIndex, int referenceSetType);
 		#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
-		private: bool updateGIApreprocessorMultiwordReductionTagTextCorrespondenceInfo(GIApreprocessorSentence* firstGIApreprocessorSentenceInList, const bool isQuery, const string outputFileName);
+		private: bool updateGIApreprocessorMultiwordReductionTagTextCorrespondenceInfo(GIApreprocessorSentence* firstGIApreprocessorSentenceInList, const bool isQuery);
 			private: bool getGIApreprocessorSentence(GIApreprocessorSentence* firstGIApreprocessorSentenceInList, const int sentenceIndexOriginal, GIApreprocessorSentence** GIApreprocessorSentenceFound);
 			private: bool getGIApreprocessorReferenceSet(GIApreprocessorLogicReference* firstGIApreprocessorLogicReferenceInList, const int entityIndexOriginal, GIApreprocessorSubReferenceSet** GIApreprocessorSubReferenceSetFound);
 				private: bool getGIApreprocessorReferenceSet(GIApreprocessorSubReferenceSet* firstGIApreprocessorSubReferenceInList, const int entityIndexOriginal, GIApreprocessorSubReferenceSet** GIApreprocessorSubReferenceSetFound);
-			private: bool replaceEntityTagWithNLPonlyTag(GIApreprocessorMultiwordReductionTagTextCorrespondenceInfo* currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo, GIApreprocessorSentence* firstGIApreprocessorSentenceInList);	
 		#endif
 		#endif
 		
@@ -125,12 +124,19 @@ class GIApreprocessorClass
 	private: int generateConnectionTypeSourceToRelationship(GIAentityNode* relationship);
 	private: bool getRelationshipNameAndType(GIApreprocessorSubReferenceSet* relationshipReference, GIApreprocessorSubReferenceSet* relationshipObject, int* relationshipEntityType, string* relationshipName);
 	#endif
+	#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
+	public: bool addSentenceToPreprocessorSentence(GIAtranslatorVariablesClass* translatorVariables);
+		#ifdef GIA_PREPROCESSOR_SENTENCE
+		public: bool getPreprocessorSentenceSubReferenceSet(GIApreprocessorSentence* firstGIApreprocessorSentenceInList, int sentenceIndex, GIApreprocessorSubReferenceSet** subReferenceSetFound);
+			public: bool getPreprocessorSentenceSubReferenceSet(GIApreprocessorLogicReference* firstLogicReferenceInList, int sentenceIndex, GIApreprocessorSubReferenceSet** subReferenceSetFound);
+		#else
+		public: bool getPreprocessorSentence(GIApreprocessorSentence* firstGIApreprocessorSentenceInList, int sentenceIndex, GIApreprocessorSentence** sentenceFound);
+		#endif
+	public: bool addSentenceFeatureOutputToPreprocessorSentenceWordList(vector<GIApreprocessorWord*>* preprocessorSentenceWordList, GIAtranslatorVariablesClass* translatorVariables, bool originalNLPfeatures);
+	public: bool addSentenceEntityOutputToPreprocessorSentenceWordList(vector<GIApreprocessorWord*>* preprocessorSentenceWordList, GIAtranslatorVariablesClass* translatorVariables);
+	#endif
 	
 	#endif
-
-	
-
-
 
 };
 

@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorSentenceClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3b2c 21-May-2017
+ * Project Version: 3b2d 21-May-2017
  * Requirements: requires plain text file
  * Description: Logical Condition and Reference Set preprocessor
  *
@@ -37,7 +37,8 @@
 
 #include "GIAglobalDefs.hpp"
 #include "SHAREDvars.hpp"
-#include "GIAentityNodeClass.hpp"	//required for primaryEntityTemp
+#include "GIAentityNodeClass.hpp"	//required for primaryEntityTemp, GIA_PREPROCESSOR_RECORD_REFERENCES
+#include "GIAsentenceClass.hpp"	//required for GIA_PREPROCESSOR_RECORD_REFERENCES
 #include "GIApreprocessorMultiwordReductionClass.hpp" 
 
 #define GIA_PREPROCESSOR_XML_TAG_preprocessor ((string)"preprocessor")
@@ -130,10 +131,7 @@ static string GIApreprocessorLogicReferenceVariableNames[GIA_PREPROCESSOR_SENTEN
 
 
 
-
-
-
-
+#ifdef GIA_PREPROCESSOR_SENTENCE
 
 class GIApreprocessorSubReferenceSet
 {
@@ -144,13 +142,13 @@ public:
 	int sentenceIndex;		//if GIA_PREPROCESSOR_ASSIGN_UNIQUE_SENTENCE_INDICES_FOR_LOGIC_REFERENCE_VARIABLES this is a temporary sentence index
 	vector<GIApreprocessorWord*> subReferenceSetContents;
 	#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT
-	string subReferenceSetContentsOutputForNLP;
+	vector<GIApreprocessorWord*> subReferenceSetContentsOutputForNLP;
 	#endif
 	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
 	int firstIndexOfReferenceSetText;
 	int lastIndexOfReferenceSetText;
 	#endif
-	
+		
 	#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
 	GIAentityNode* primaryEntityTemp;	//required for conjunction post processing
 	#endif
@@ -161,6 +159,10 @@ public:
 	//for optimisation purposes;
 	int delimiterType;
 	int delimiterSpecialCase;
+	
+	#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
+	GIAsentence* sentenceReference;
+	#endif
 };
 
 class GIApreprocessorLogicReferenceVariable
@@ -212,11 +214,13 @@ public:
 	bool isSubLogicReferenceDependent;
 	bool isSubLogicReferenceArray;
 	#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_OUTPUT_LOGIC_REFERENCE_SETS_FOR_HIGH_LEVEL_SEMANTIC_PARSE_VERBOSE
-	string logicReferenceSetContentsWithVariableNames;
+	vector<GIApreprocessorWord*> logicReferenceSetContentsWithVariableNames;
 	int logicReferenceSetContentsWithVariableNamesSentenceIndex;
 	#endif
 	#endif
 };
+
+#endif
 
 class GIApreprocessorSentence
 {
@@ -229,15 +233,19 @@ public:
 	//#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
 	GIApreprocessorMultiwordReductionPlainTextWord* sentenceContentsOriginalFirstWord;
 	GIApreprocessorMultiwordReductionPlainTextWord* sentenceContentsLRPfirstWord;
-	GIApreprocessorMultiwordReductionPlainTextWord* sentenceContentsLRPforNLPfirstWord;
 	//#endif
 	
+	#ifdef GIA_PREPROCESSOR_SENTENCE
 	bool hasLogicReference;	//if false, then firstLogicReferenceInList will only have a single GIApreprocessorLogicReference
 	GIApreprocessorLogicReference* firstLogicReferenceInList;
 	//int logicReferenceTotal;
-
 	#ifdef GIA_PREPROCESSOR_ASSIGN_UNIQUE_SENTENCE_INDICES_FOR_SENTENCES
 	int sentenceIndex;
+	#endif
+	#else
+	#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
+	GIAsentence* sentenceReference;
+	#endif	
 	#endif
 	
 	GIApreprocessorSentence* next;
