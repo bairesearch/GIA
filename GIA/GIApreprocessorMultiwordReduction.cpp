@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorMultiwordReduction.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3b2d 21-May-2017
+ * Project Version: 3b2e 21-May-2017
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  *
@@ -440,9 +440,7 @@ bool GIApreprocessorMultiwordReductionClass::loadPhrasalVerbDataAndGenerateAllTe
 					currentPhrasalVerbAlternate = true;
 				}
 				else
-				{//(currentToken == CHAR_NEWLINE) || (currentToken == CHAR_SPACE)
-
-
+				{
 					//COPY1
 					//add LRP tag to LRP string (LRP tag list)
 					currentTagInPhrasalVerb->tagName = currentWord;
@@ -579,6 +577,16 @@ bool GIApreprocessorMultiwordReductionClass::loadPhrasalVerbDataAndGenerateAllTe
 			{//moved 1p1aTEMP5b
 				currentWordOptional = false;
 			}
+			#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_APOSTROPHES
+			else if(currentToken == CHAR_APOSTROPHE)
+			{
+				currentTagInPhrasalVerb->tagName = currentWord;
+				currentTagInPhrasalVerb->nextTag = new GIApreprocessorMultiwordReductionPhrasalVerbWord();
+				currentTagInPhrasalVerb = static_cast<GIApreprocessorMultiwordReductionPhrasalVerbWord*>(currentTagInPhrasalVerb->nextTag);
+				currentWord = "";
+				currentWord = currentWord + currentToken;
+			}
+			#endif
 			else
 			{
 				currentWord = currentWord + currentToken;
@@ -864,7 +872,7 @@ void GIApreprocessorMultiwordReductionClass::copyDefaultVerbTenseFormsToAlternat
 
 
 
-#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_FILENAMES_WITH_FULLSTOPS_AND_FLOATS_AND_TIMES
+#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_INTRAWORD_PUNCTUATION_MARK
 bool GIApreprocessorMultiwordReductionClass::isIntrawordPunctuationMark(const int indexOfCurrentToken, const string* lineContents)
 {
 	bool intrawordPunctuationMark = false;
@@ -874,11 +882,50 @@ bool GIApreprocessorMultiwordReductionClass::isIntrawordPunctuationMark(const in
 		if(indexOfCurrentToken < lineContents->length()-1)	//ensure fullstop is not immediately succeded by an alphabetical character, which indicates that the fullstop is part of a filename, eg "people.xml"
 		{
 			char characterImmediatelySucceedingPunctuationMark = (*lineContents)[indexOfCurrentToken+1];
+			#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_FILENAMES_WITH_FULLSTOPS_AND_FLOATS_AND_TIMES
 			bool isPunctuationMarkImmediatelySucceededByAlphanumericCharacter = SHAREDvars.charInCharArray(characterImmediatelySucceedingPunctuationMark, GIApreprocessorMultiwordReductionNLPparsableCharacters, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_CHARACTERS_NUMBER_OF_TYPES);
 			if(isPunctuationMarkImmediatelySucceededByAlphanumericCharacter)
 			{
+				//e.g. "thefile.exe ..."
 				intrawordPunctuationMark = true;
 			}
+			#endif
+			
+			#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_ABBREVIATIONS
+			
+			if(indexOfCurrentToken < lineContents->length()-2)
+			{
+				if(characterImmediatelySucceedingPunctuationMark == CHAR_SPACE)
+				{
+					bool characterPreceededByTitlePrefixAbbreviation = false;
+					for(int i=0; i<GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_ABBREVIATIONS_TITLE_PREFIXES_NUMBER_OF_TYPES; i++)
+					{
+						int lengthOfPrefix = preprocessorSupportAbbreviationsTitlePrefixesArray[i].length();
+						if(indexOfCurrentToken >= lengthOfPrefix-1)	//-1 to take into account fact that prefixes are defined with a succeeding full stop character
+						{
+							if(lineContents->substr(indexOfCurrentToken-lengthOfPrefix+1, lengthOfPrefix) == preprocessorSupportAbbreviationsTitlePrefixesArray[i])	//+1 to take into account fact that prefixes are defined with a succeeding full stop character
+							{
+								characterPreceededByTitlePrefixAbbreviation = true;
+								//cout << "characterPreceededByTitlePrefixAbbreviation: preprocessorSupportAbbreviationsTitlePrefixesArray[i] = " << preprocessorSupportAbbreviationsTitlePrefixesArray[i] << endl;
+							}
+						}
+					}
+					if(characterPreceededByTitlePrefixAbbreviation)
+					{
+						//e.g. "Ms. House ..."
+						intrawordPunctuationMark = true;
+					}
+			
+					char characterImmediatelySucceedingSpace = (*lineContents)[indexOfCurrentToken+2];
+					bool isPunctuationMarkSucceededBySpaceAndUncapitalisedCharacter = SHAREDvars.charInCharArray(characterImmediatelySucceedingSpace, preprocessorSupportAbbreviationsLowerCaseLettersArray, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_ABBREVIATIONS_LOWER_CASE_LETTERS_NUMBER_OF_TYPES);
+					if(isPunctuationMarkSucceededBySpaceAndUncapitalisedCharacter)
+					{
+						//e.g. "e.g. the house ..."
+						intrawordPunctuationMark = true;
+					}
+				}
+			}
+			#endif
 		}
 	}
 	return intrawordPunctuationMark;
@@ -939,13 +986,15 @@ bool GIApreprocessorMultiwordReductionClass::searchAndReplacePhrasalVerbs(GIApre
 
 							//NB the collapsed phrasal verb contains precisely 2 entities: phrasalVerbCollapsed, entity2: thing/place/body (eg belong_to + sb/Tom) - thing/place/bodies are not currently being differentiated by the LRP as this information is only first generated at NLP/GIA parse stage
 							currentTagInCollapsedPhrasalVerb->nextTag = new GIApreprocessorMultiwordReductionPlainTextWord();
-							currentTagInCollapsedPhrasalVerb->nextTag->tagName = currentTagInPlainTextSentenceTemp->tagName + " ";		//arbitrary thing/place/body name
-							static_cast<GIApreprocessorMultiwordReductionPlainTextWord*>(currentTagInCollapsedPhrasalVerb->nextTag)->collapsedPhrasalVerbExactDefinedSection = false;
-							//currentTagInCollapsedPhrasalVerb->nextTag->collapsedPhrasalVerbExactDefinedSectionTemp = false;
+							GIApreprocessorMultiwordReductionPlainTextWord* currentTagInCollapsedPhrasalVerbSpecialArbitrarySection = static_cast<GIApreprocessorMultiwordReductionPlainTextWord*>(currentTagInCollapsedPhrasalVerb->nextTag);
+							currentTagInCollapsedPhrasalVerbSpecialArbitrarySection->tagName = currentTagInPlainTextSentenceTemp->tagName;		//arbitrary thing/place/body name
+							currentTagInCollapsedPhrasalVerbSpecialArbitrarySection->collapsedPhrasalVerbExactDefinedSection = false;
+							//currentTagInCollapsedPhrasalVerbSpecialArbitrarySection->collapsedPhrasalVerbExactDefinedSectionTemp = false;
 							/*
 							//removed 7 Sept 2012b - now interpret: ask sb over/round -> ask_over sb
 							currentTagInCollapsedPhrasalVerb = currentTagInCollapsedPhrasalVerb->nextTag;
 							*/
+				
 							currentlyParsingTagSpecial = true;
 							numberTagSpecialTagsFound++;
 						}
@@ -993,28 +1042,7 @@ bool GIApreprocessorMultiwordReductionClass::searchAndReplacePhrasalVerbs(GIApre
 							}
 
 
-							if(!foundVerbMatchOfArbitraryTenseTemp)
-							{
-								if(currentTagInPhrasalVerb->optional)
-								{
-									currentTagInPhrasalVerbOptionalAndNotFound = true;
-								}
-								else if(currentlyParsingTagSpecial && (tagInPhrasalVerbSpecialAndNotFoundCount <= GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_ARBITRARYNAME_MAX_NUMBER_WORDS))
-								{
-									currentTagInCollapsedPhrasalVerb->nextTag->tagName = currentTagInCollapsedPhrasalVerb->nextTag->tagName + currentTagInPlainTextSentenceTemp->tagName + " ";
-									/*
-									//removed 7 Sept 2012b - now interpret: ask sb over/round -> ask_over sb
-									currentTagInCollapsedPhrasalVerb->tagName = currentTagInCollapsedPhrasalVerb->tagName + currentTagInPlainTextSentenceTemp->tagName;
-									*/
-									currentTagInPhrasalVerbSpecialAndNotFound = true;
-									tagInPhrasalVerbSpecialAndNotFoundCount++;
-								}
-								else
-								{
-									stillFoundVerbMatchOfArbitraryTense = false;
-								}
-							}
-							else
+							if(foundVerbMatchOfArbitraryTenseTemp)
 							{
 								if(currentlyParsingTagSpecial)
 								{
@@ -1026,6 +1054,13 @@ bool GIApreprocessorMultiwordReductionClass::searchAndReplacePhrasalVerbs(GIApre
 									currentlyParsingTagSpecial = false;
 								}
 
+								#ifdef GIA_DEBUG_PREPROCESSOR
+								cout << "numberWordsInMultiword++" << endl;
+								cout << "currentTagInPhrasalVerb = " << currentTagInPhrasalVerb->tagName << endl;
+								cout << "currentTagInPlainTextSentenceTemp = " << currentTagInPlainTextSentenceTemp->tagName << endl;
+								cout << "generateTextFromPreprocessorSentenceWordList(firstTagInPhrasalVerb) = " << GIApreprocessorMultiwordReductionClassObject.generateTextFromPreprocessorSentenceWordList(firstTagInPhrasalVerb) << endl;
+								#endif
+								
 								foundAtLeastOneMatch = true;
 								numberWordsInMultiword++;
 								currentTagInCollapsedPhrasalVerb->collapsedPhrasalVerbExactDefinedSection = true;
@@ -1039,6 +1074,37 @@ bool GIApreprocessorMultiwordReductionClass::searchAndReplacePhrasalVerbs(GIApre
 								{
 									currentTagInCollapsedPhrasalVerb->tagNameLemma = currentTagInCollapsedPhrasalVerb->tagNameLemma + currentTagInPlainTextSentenceTemp->tagName + GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_MULTIWORD_WORD_DELIMITER;
 								}
+							}
+							else
+							{
+								if(currentTagInPhrasalVerb->optional)
+								{
+									currentTagInPhrasalVerbOptionalAndNotFound = true;
+								}
+								else if(currentlyParsingTagSpecial && (tagInPhrasalVerbSpecialAndNotFoundCount <= GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_ARBITRARYNAME_MAX_NUMBER_WORDS))
+								{
+									//changed 2b2e - 24 May 2017
+									GIApreprocessorMultiwordReductionPlainTextWord* currentTagInCollapsedPhrasalVerbSpecialArbitrarySection = static_cast<GIApreprocessorMultiwordReductionPlainTextWord*>(currentTagInCollapsedPhrasalVerb->nextTag);
+									while(currentTagInCollapsedPhrasalVerbSpecialArbitrarySection->nextTag != NULL)
+									{
+										currentTagInCollapsedPhrasalVerbSpecialArbitrarySection = static_cast<GIApreprocessorMultiwordReductionPlainTextWord*>(currentTagInCollapsedPhrasalVerbSpecialArbitrarySection->nextTag);
+									}
+									currentTagInCollapsedPhrasalVerbSpecialArbitrarySection->nextTag = new GIApreprocessorMultiwordReductionPlainTextWord();
+									currentTagInCollapsedPhrasalVerbSpecialArbitrarySection = static_cast<GIApreprocessorMultiwordReductionPlainTextWord*>(currentTagInCollapsedPhrasalVerbSpecialArbitrarySection->nextTag);
+									currentTagInCollapsedPhrasalVerbSpecialArbitrarySection->tagName = currentTagInPlainTextSentenceTemp->tagName;		//arbitrary thing/place/body name
+									currentTagInCollapsedPhrasalVerbSpecialArbitrarySection->collapsedPhrasalVerbExactDefinedSection = false;
+									//currentTagInCollapsedPhrasalVerbSpecialArbitrarySection->collapsedPhrasalVerbExactDefinedSectionTemp = false;
+									/*
+									//removed 7 Sept 2012b - now interpret: ask sb over/round -> ask_over sb
+									currentTagInCollapsedPhrasalVerb->tagName = currentTagInCollapsedPhrasalVerb->tagName + currentTagInPlainTextSentenceTemp->tagName;
+									*/
+									currentTagInPhrasalVerbSpecialAndNotFound = true;
+									tagInPhrasalVerbSpecialAndNotFoundCount++;
+								}
+								else
+								{
+									stillFoundVerbMatchOfArbitraryTense = false;
+								}						
 							}
 						}
 
@@ -1126,6 +1192,10 @@ bool GIApreprocessorMultiwordReductionClass::searchAndReplacePhrasalVerbs(GIApre
 			}
 			if(foundAtLeastOnePhrasalVerbInSentenceAndCollapsed)
 			{
+				#ifdef GIA_DEBUG_PREPROCESSOR
+				cout << "foundAtLeastOnePhrasalVerbInSentenceAndCollapsed; currentTagInPlainTextSentence = " << currentTagInPlainTextSentence->tagName << endl;
+				#endif
+				
 				//renumberEntityIndiciesInCorrespondenceInfo(firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, currentGIApreprocessorSentenceInList->sentenceIndexOriginal, numberWordsInMultiwordMatched); - this is not required because searchAndReplaceMultiwordWordList is executed after searchAndReplacePhrasalVerbs
 				GIApreprocessorMultiwordReductionPlainTextWord* currentTagInPlainTextSentenceTemp2 = firstTagInPlainTextSentence;
 				int newEntityIndex = GIA_NLP_START_ENTITY_INDEX;
@@ -1134,6 +1204,7 @@ bool GIApreprocessorMultiwordReductionClass::searchAndReplacePhrasalVerbs(GIApre
 					//if(currentTagInPlainTextSentenceTemp2->collapsedPhrasalVerbExactDefinedSectionTemp)
 					if(currentTagInPlainTextSentenceTemp2->collapsedPhrasalVerbExactDefinedSection)
 					{//create a new correspondenceInfo
+											
 						//currentTagInPlainTextSentenceTemp2->collapsedPhrasalVerbExactDefinedSectionTemp = false;
 						string tagNameLemma = currentTagInPlainTextSentenceTemp2->tagNameLemma;
 						string tagName = currentTagInPlainTextSentenceTemp2->tagName;
@@ -1158,6 +1229,17 @@ bool GIApreprocessorMultiwordReductionClass::searchAndReplacePhrasalVerbs(GIApre
 			currentTagInPlainTextSentence = static_cast<GIApreprocessorMultiwordReductionPlainTextWord*>(currentTagInPlainTextSentence->nextTag);
 		}
 
+		currentTagInPlainTextSentence = firstTagInPlainTextSentence;
+		
+		#ifdef GIA_PREPROCESSOR_DEBUG
+		cout << "\t";
+		while(currentTagInPlainTextSentence->nextTag != NULL)
+		{
+			cout << currentTagInPlainTextSentence->tagName << " ";
+			currentTagInPlainTextSentence = static_cast<GIApreprocessorMultiwordReductionPlainTextWord*>(currentTagInPlainTextSentence->nextTag);
+		}
+		cout << endl;
+		#endif
 
 		currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->next;
 	}

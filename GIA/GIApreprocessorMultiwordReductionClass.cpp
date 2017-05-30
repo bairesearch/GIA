@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorMultiwordReductionClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3b2d 21-May-2017
+ * Project Version: 3b2e 21-May-2017
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  *
@@ -247,7 +247,6 @@ string GIApreprocessorMultiwordReductionClassClass::generateTextFromPreprocessor
 			}
 		}
 	}
-
 	bool punctuationMarkFound = false;
 	for(int i=0; i<GIA_NLP_NUMBER_OF_PUNCTUATION_MARK_CHARACTERS; i++)
 	{

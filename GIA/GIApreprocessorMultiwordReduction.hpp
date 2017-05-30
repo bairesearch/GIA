@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorMultiwordReduction.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3b2d 21-May-2017
+ * Project Version: 3b2e 21-May-2017
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  *
@@ -48,6 +48,8 @@
 class GIApreprocessorMultiwordReductionClass
 {
 	private: SHAREDvarsClass SHAREDvars;
+	private: GIApreprocessorMultiwordReductionClassClass GIApreprocessorMultiwordReductionClassObject;
+
 	public: bool initialiseLRP(const string newLRPDataFolderName, const bool newUseLRP);
 		private: bool loadWordListWrapper(const string lrpDataFolderName, bool* wordListLoaded, const string wordListFileName, GIApreprocessorMultiwordReductionWord** firstTagInWordListGlobal);
 			private: bool loadWordList(const string wordListFileName, GIApreprocessorMultiwordReductionWord* firstTagInWordList);
@@ -64,7 +66,7 @@ class GIApreprocessorMultiwordReductionClass
 			private: bool generateTenseVariantsOfVerbBase(GIApreprocessorMultiwordReductionWord* baseTag, GIApreprocessorMultiwordReductionIrregularVerbSentence* firstTagInIrregularVerbList);
 				private: void copyDefaultVerbTenseFormsToAlternateTenseForms(GIApreprocessorMultiwordReductionWord* baseTag, const bool irregularVerbFound);
 		//public: bool loadPlainTextFile(const string plainTextInputFileName, GIApreprocessorMultiwordReductionSentence* firstTagInPlainText);
-		#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_FILENAMES_WITH_FULLSTOPS_AND_FLOATS_AND_TIMES
+		#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_INTRAWORD_PUNCTUATION_MARK
 			public: bool isIntrawordPunctuationMark(const int indexOfCurrentToken, const string* lineContents);
 		#endif
 		private: bool searchAndReplacePhrasalVerbs(GIApreprocessorSentence* firstGIApreprocessorSentenceInList, GIApreprocessorMultiwordReductionPhrasalVerbSentence* firstTagInPhrasalVerbList, GIApreprocessorMultiwordReductionTagTextCorrespondenceInfo* firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo);

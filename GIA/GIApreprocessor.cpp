@@ -25,7 +25,7 @@
  * File Name: GIApreprocessor.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3b2d 21-May-2017
+ * Project Version: 3b2e 21-May-2017
  * Requirements: requires plain text file
  * Description: Logical Condition and Reference Set preprocessor
  *
@@ -79,6 +79,15 @@ bool GIApreprocessorClass::preprocessTextForGIA(string* inputTextPlainTXTfileNam
 	}
 	#endif
 	
+	#ifdef GIA_PREPROCESSOR_DEBUG
+	GIApreprocessorSentence* currentGIApreprocessorSentenceInList = translatorVariables->firstGIApreprocessorSentenceInList;
+	while(currentGIApreprocessorSentenceInList->next != NULL)
+	{
+		cout << "currentGIApreprocessorSentenceInList->sentenceContentsLRPfirstWord = " << GIApreprocessorMultiwordReductionClassObject.generateTextFromPreprocessorSentenceWordList(currentGIApreprocessorSentenceInList->sentenceContentsLRPfirstWord, false) << endl;
+		currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->next;
+	}
+	#endif
+	
 	#ifdef GIA_PREPROCESSOR_SENTENCE
 	if(!preprocessSentencesForGIA(translatorVariables->firstGIApreprocessorSentenceInList, outputLRPTextPlainTXTFileNameIntermediarySentence, outputLRPTextForNLPonlyPlainTXTFileNameIntermediarySentence))
 	{
@@ -127,12 +136,12 @@ bool GIApreprocessorClass::createPreprocessSentencesForGIA(const string inputFil
 		bool punctuationMarkFound = false;
 		if(SHAREDvars.charInCharArray(currentToken, nlpPunctionMarkCharacterArray, GIA_NLP_NUMBER_OF_PUNCTUATION_MARK_CHARACTERS))
 		{
-			#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_FILENAMES_WITH_FULLSTOPS_AND_FLOATS_AND_TIMES
+			#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_INTRAWORD_PUNCTUATION_MARK
 			if(!GIApreprocessorMultiwordReduction.isIntrawordPunctuationMark(charCount, &fileContents))
 			{
 			#endif
 				punctuationMarkFound = true;
-			#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_FILENAMES_WITH_FULLSTOPS_AND_FLOATS_AND_TIMES
+			#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_INTRAWORD_PUNCTUATION_MARK
 			}
 			#endif
 		}
@@ -141,6 +150,20 @@ bool GIApreprocessorClass::createPreprocessSentencesForGIA(const string inputFil
 		{
 			whiteSpaceFound = true;
 		}
+		bool apostropheFound = false;
+		#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_APOSTROPHES
+		if(currentToken == CHAR_APOSTROPHE)
+		{
+			apostropheFound = true;
+		}
+		#endif
+		#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_DOLLARS
+		bool dollarFound = false;
+		if(currentToken == CHAR_DOLLAR)
+		{
+			dollarFound = true;
+		}
+		#endif
 		#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_REDUCE_QUOTES_TO_SINGLE_WORDS
 		bool quotationMarkFound = false;
 		if(SHAREDvars.charInCharArray(currentToken, nlpQuotationMarkCharacterArray, GIA_NLP_NUMBER_OF_QUOTATIONMARK_CHARACTERS))
@@ -167,7 +190,7 @@ bool GIApreprocessorClass::createPreprocessSentencesForGIA(const string inputFil
 		else
 		{
 		#endif
-			if(whiteSpaceFound || punctuationMarkFound)
+			if(whiteSpaceFound || punctuationMarkFound || apostropheFound || dollarFound)
 			{
 				#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_REDUCE_QUOTES_TO_SINGLE_WORDS
 				if(readingQuotation)
@@ -198,12 +221,12 @@ bool GIApreprocessorClass::createPreprocessSentencesForGIA(const string inputFil
 							bool endOfSentencePunctuationMarkFound = false;
 							if(SHAREDvars.charInCharArray(currentToken, nlpPunctionMarkCharacterEndOfSentenceArray, GIA_NLP_NUMBER_OF_PUNCTUATION_MARK_CHARACTERS_END_OF_SENTENCE))
 							{
-								#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_FILENAMES_WITH_FULLSTOPS_AND_FLOATS_AND_TIMES
+								#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_INTRAWORD_PUNCTUATION_MARK
 								if(!GIApreprocessorMultiwordReduction.isIntrawordPunctuationMark(charCount, &fileContents))
 								{
 								#endif
 									endOfSentencePunctuationMarkFound = true;
-								#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_FILENAMES_WITH_FULLSTOPS_AND_FLOATS_AND_TIMES
+								#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_INTRAWORD_PUNCTUATION_MARK
 								}
 								#endif
 							}
@@ -222,10 +245,36 @@ bool GIApreprocessorClass::createPreprocessSentencesForGIA(const string inputFil
 							{
 								entityIndex++;
 							}
+							
+							currentWord = "";
+							whiteSpace = true;	//CHECKTHIS
 						}
+						else if(whiteSpaceFound)
+						{
+							currentWord = "";
+							whiteSpace = true;
+						}
+						#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_APOSTROPHES
+						else if(apostropheFound)
+						{
+							currentWord = "";
+							currentWord = currentWord + currentToken;
+							entityIndex++;
+							whiteSpace = false;
+						}
+						#endif
+					}	
+					#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_DOLLARS
+					else if(dollarFound)
+					{
+						string punctuationMark = ""; 
+						punctuationMark = punctuationMark + currentToken;
+						preprocessorFillCurrentWord(&currentWordInSentence, punctuationMark, entityIndex);
 						currentWord = "";
-						whiteSpace = true;
+						entityIndex++;
+						whiteSpace = false;
 					}
+					#endif
 					else
 					{//skip (do not parse) multiple white space/punctuation characters (eg ". "/".."/"  "/" .")
 					}
@@ -248,10 +297,18 @@ bool GIApreprocessorClass::createPreprocessSentencesForGIA(const string inputFil
 	currentGIApreprocessorSentenceInList = firstGIApreprocessorSentenceInList;
 	while(currentGIApreprocessorSentenceInList->next != NULL)
 	{
-		copySentenceContentsPreprocessor(currentGIApreprocessorSentenceInList->sentenceContentsOriginalFirstWord, currentGIApreprocessorSentenceInList->sentenceContentsLRPfirstWord);
-
-		cout << "1 sentenceContentsLRPfirstWord = " << GIApreprocessorMultiwordReductionClassObject.generateTextFromPreprocessorSentenceWordList(currentGIApreprocessorSentenceInList->sentenceContentsLRPfirstWord) << endl;
-	
+		copySentenceContentsPreprocessor(currentGIApreprocessorSentenceInList->sentenceContentsOriginalFirstWord, currentGIApreprocessorSentenceInList->sentenceContentsLRPfirstWord);	
+		
+		#ifdef GIA_PREPROCESSOR_DEBUG
+		GIApreprocessorMultiwordReductionPlainTextWord* currentWordInSentence = currentGIApreprocessorSentenceInList->sentenceContentsOriginalFirstWord;
+		while(currentWordInSentence->nextTag != NULL)
+		{
+			cout << currentWordInSentence->tagName << " ";
+			currentWordInSentence = static_cast<GIApreprocessorMultiwordReductionPlainTextWord*>(currentWordInSentence->nextTag);
+		}
+		cout << endl;
+		#endif
+		
 		currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->next;
 	}
 			
@@ -271,12 +328,12 @@ bool GIApreprocessorClass::createPreprocessSentencesForGIA(const string inputFil
 		bool endOfSentencePunctuationMarkFound = false;
 		if(SHAREDvars.charInCharArray(currentToken, nlpPunctionMarkCharacterEndOfSentenceArray, GIA_NLP_NUMBER_OF_PUNCTUATION_MARK_CHARACTERS_END_OF_SENTENCE))
 		{
-			#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_FILENAMES_WITH_FULLSTOPS_AND_FLOATS_AND_TIMES
+			#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_INTRAWORD_PUNCTUATION_MARK
 			if(!GIApreprocessorMultiwordReduction.isIntrawordPunctuationMark(charCount, &fileContents))
 			{
 			#endif
 				endOfSentencePunctuationMarkFound = true;
-			#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_FILENAMES_WITH_FULLSTOPS_AND_FLOATS_AND_TIMES
+			#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_INTRAWORD_PUNCTUATION_MARK
 			}
 			#endif
 		}
@@ -2460,7 +2517,6 @@ bool GIApreprocessorClass::addSentenceFeatureOutputToPreprocessorSentenceWordLis
 	while(currentFeatureInList->next != NULL)
 	{
 		GIApreprocessorWord* preprocessorSentenceWord = *preprocessorSentenceWordListIter;
-		cout << "preprocessorSentenceWord = " << preprocessorSentenceWord->tagName << endl;
 		if(originalNLPfeatures)
 		{
 			if(currentFeatureInList->word != preprocessorSentenceWord->tagName)
