@@ -25,7 +25,7 @@
  * File Name: GIApreprocessor.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3b3e 25-May-2017
+ * Project Version: 3b3f 25-May-2017
  * Requirements: requires plain text file
  * Description: Logical Condition and Reference Set preprocessor
  *
@@ -37,12 +37,47 @@
 #include "XMLrulesClass.hpp"
 
 #ifdef GIA_PREPROCESSOR
+bool GIApreprocessorClass::preprocessTextForGIAwrapper(const bool useLRP, string* inputTextPlainTXTfileName, const string outputLRPTextPlainTXTFileName, const bool isQuery, GIAtranslatorVariablesClass* translatorVariables)
+{
+	bool result = true;
+	
+	if(useLRP)
+	{
+		if(!preprocessTextForGIA(inputTextPlainTXTfileName, outputLRPTextPlainTXTFileName, isQuery, translatorVariables))
+		{
+			result = false;
+		}	
+	}
+	else
+	{
+		if(!isQuery)
+		{
+			if(translatorVariables->firstGIApreprocessorSentenceInList != NULL)
+			{
+				if(!regenerateFileFromPreprocessedTextWithoutLRP(inputTextPlainTXTfileName, outputLRPTextPlainTXTFileName, translatorVariables))
+				{
+					result = false;
+				}
+			}
+			
+			#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
+			if(!createPreprocessSentencesForGIA(*inputTextPlainTXTfileName, translatorVariables))
+			{
+				result = false;
+			}
+			#endif	
+		}
+	}
+	
+	return result;
+}
+
 bool GIApreprocessorClass::preprocessTextForGIA(string* inputTextPlainTXTfileName, const string outputLRPTextPlainTXTFileName, const bool isQuery, GIAtranslatorVariablesClass* translatorVariables)
 {
 	bool result = true;
 	
 	
-	string outputLRPTextForNLPonlyPlainTXTFileNameBase = outputLRPTextPlainTXTFileName + ".forNLPonly";	
+	string outputLRPTextForNLPonlyPlainTXTFileNameBase = outputLRPTextPlainTXTFileName + GIA_PREPROCESSOR_OUTPUT_FILE_EXTENSION;	
 	
 	#ifdef GIA_PREPROCESSOR_SENTENCE
 	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
@@ -106,6 +141,34 @@ bool GIApreprocessorClass::preprocessTextForGIA(string* inputTextPlainTXTfileNam
 	cout << "Premature quit for debug" << endl;
 	exit(EXIT_ERROR);
 	#endif
+	
+	return result;
+}
+
+			
+bool GIApreprocessorClass::regenerateFileFromPreprocessedTextWithoutLRP(string* inputTextPlainTXTfileName, const string outputLRPTextPlainTXTFileName, GIAtranslatorVariablesClass* translatorVariables)
+{
+	bool result = true;
+	
+	//write text file for nlp input based on firstGIApreprocessorSentenceInList data
+
+	string outputLRPTextForNLPonlyPlainTXTFileContents = "";
+	GIApreprocessorSentence* currentGIApreprocessorSentenceInList = translatorVariables->firstGIApreprocessorSentenceInList;
+	while(currentGIApreprocessorSentenceInList->next != NULL)
+	{
+		outputLRPTextForNLPonlyPlainTXTFileContents = outputLRPTextForNLPonlyPlainTXTFileContents + GIApreprocessorMultiwordReductionClassObject.generateTextFromPreprocessorSentenceWordList(currentGIApreprocessorSentenceInList->sentenceContentsOriginalFirstWord) + CHAR_NEWLINE;
+		currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->next;
+	}
+
+	//sync generated filename with preprocessTextForGIA;
+	string outputLRPTextForNLPonlyPlainTXTFileNameBase = outputLRPTextPlainTXTFileName + GIA_PREPROCESSOR_OUTPUT_FILE_EXTENSION;
+	string outputLRPTextForNLPonlyPlainTXTFileName = outputLRPTextForNLPonlyPlainTXTFileNameBase;
+	
+	SHAREDvars.setCurrentDirectory(outputFolder);
+	SHAREDvars.writeStringToFile(outputLRPTextForNLPonlyPlainTXTFileName, &outputLRPTextForNLPonlyPlainTXTFileContents);
+	SHAREDvars.setCurrentDirectory(inputFolder);
+	
+	*inputTextPlainTXTfileName = outputLRPTextForNLPonlyPlainTXTFileName;	
 	
 	return result;
 }
@@ -427,6 +490,16 @@ bool GIApreprocessorClass::extractIndentationFromCurrentLine(const string* lineC
 		}
 	}
 	return result;
+}
+
+string GIApreprocessorClass::generateIndentationContents(int currentIndentation)
+{
+	string indentationContents = "";
+	for(int i=0; i<currentIndentation; i++)
+	{
+		indentationContents = indentationContents + GIA_PREPROCESSOR_INDENTATION_CHAR;
+	}
+	return indentationContents;
 }
 
 

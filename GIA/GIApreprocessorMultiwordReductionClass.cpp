@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorMultiwordReductionClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3b3e 25-May-2017
+ * Project Version: 3b3f 25-May-2017
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  *
@@ -111,6 +111,27 @@ GIApreprocessorMultiwordReductionIrregularVerbWord::~GIApreprocessorMultiwordRed
 
 GIApreprocessorMultiwordReductionPlainTextWord::GIApreprocessorMultiwordReductionPlainTextWord(void)
 {	
+	entityIndex = false;
+	collapsedPhrasalVerbExactDefinedSection = false;
+	collapsedMultiwordWord = false;
+	collapsedMultiwordWordType = GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DUMMY_COLLAPSED_MULTIWORD_UNDEFINED_TYPE;
+	collapsedMultiwordWordTemp = false;
+	
+	#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
+	preprocessorUpperLevelWordReference = NULL;
+	preprocessorUpperLevelWordReferenceSize = INT_DEFAULT_VALUE;
+	#endif
+	
+	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
+	tagNameLRPforNLP = "";
+	#endif
+	
+	plainTextWord = true;
+}
+GIApreprocessorMultiwordReductionPlainTextWord::GIApreprocessorMultiwordReductionPlainTextWord(string tagNameNew)
+{	
+	tagName = tagNameNew;
+	
 	entityIndex = false;
 	collapsedPhrasalVerbExactDefinedSection = false;
 	collapsedMultiwordWord = false;
@@ -226,6 +247,12 @@ string GIApreprocessorMultiwordReductionClassClass::generateTextFromVectorWordLi
 	for(int wordIndex = 0; wordIndex<logicReferenceVariableWordList->size(); wordIndex++)
 	{
 		GIApreprocessorWord* word = (*logicReferenceVariableWordList)[wordIndex];
+		#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_APOSTROPHES_POSSESSION_AND_OMISSION	
+		if(isApostrophePossessionOrOmission(word))
+		{
+			isFirstWordInSentence = true;	//do not prepend a space
+		}
+		#endif
 		sentenceText = sentenceText + generateTextFromPreprocessorSentenceWord(word, LRPforNLP, isFirstWordInSentence);
 		isFirstWordInSentence = false;
 	}
@@ -270,16 +297,15 @@ int GIApreprocessorMultiwordReductionClassClass::calculateLengthOfGeneratedVecto
 	return sentenceText.length();
 }
 
-bool GIApreprocessorMultiwordReductionClassClass::generateSentenceWordList(GIApreprocessorMultiwordReductionWord* sentenceContentsFirstWord, vector<GIApreprocessorWord*>* logicReferenceVariableWordList)
+bool GIApreprocessorMultiwordReductionClassClass::generateSentenceWordList(GIApreprocessorWord* sentenceContentsFirstWord, vector<GIApreprocessorWord*>* logicReferenceVariableWordList)
 {
 	bool result = true;
 	
-	GIApreprocessorMultiwordReductionWord* currentWordInSentence = sentenceContentsFirstWord;
+	GIApreprocessorWord* currentWordInSentence = sentenceContentsFirstWord;
 	while(currentWordInSentence->nextTag != NULL)
 	{
 		logicReferenceVariableWordList->push_back(currentWordInSentence);
-
-		currentWordInSentence = static_cast<GIApreprocessorMultiwordReductionWord*>(currentWordInSentence->nextTag);
+		currentWordInSentence = currentWordInSentence->nextTag;
 	}
 	
 	#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
@@ -294,6 +320,38 @@ bool GIApreprocessorMultiwordReductionClassClass::generateSentenceWordList(GIApr
 	return result;
 }
 
+//precondition: words in logicReferenceVariableWordList are unique across all logicReferenceVariableWordLists in memory
+bool GIApreprocessorMultiwordReductionClassClass::generateFlatSentenceWordList(vector<GIApreprocessorWord*>* logicReferenceVariableWordList, GIApreprocessorMultiwordReductionPlainTextWord** sentenceContentsFirstWord)
+{
+	bool result = true;
+	
+	if(logicReferenceVariableWordList->size() > 0)
+	{
+		*sentenceContentsFirstWord = static_cast<GIApreprocessorMultiwordReductionPlainTextWord*>((*logicReferenceVariableWordList)[0]);
+		GIApreprocessorWord* currentWordInSentence = *sentenceContentsFirstWord;
+		for(int i=1; i<logicReferenceVariableWordList->size(); i++)
+		{
+			GIApreprocessorWord* word = (*logicReferenceVariableWordList)[i];
+			if(!(word->plainTextWord))
+			{
+				cout << "GIApreprocessorMultiwordReductionClassClass::generateFlatSentenceWordList{} warning: (!(word->plainTextWord))" << endl;
+			}
+			currentWordInSentence->nextTag = word;
+			currentWordInSentence = currentWordInSentence->nextTag;
+		}
+		if(currentWordInSentence->nextTag == NULL)
+		{
+			//cout << "GIApreprocessorMultiwordReductionClassClass::generateFlatSentenceWordList{}: final (currentWordInSentence->nextTag == NULL)" << endl;
+			//cout << "currentWordInSentence->tagName = " << currentWordInSentence->tagName << endl;
+			currentWordInSentence->nextTag = new GIApreprocessorMultiwordReductionPlainTextWord();	//add a blank word to end of list (as per standard object list specification)
+		}
+		
+	}
+	
+	return result;
+}
+
+
 bool GIApreprocessorMultiwordReductionClassClass::addWordListToWordList(vector<GIApreprocessorWord*>* wordList, vector<GIApreprocessorWord*>* wordListToAdd)
 {
 	for(int i=0; i<wordListToAdd->size(); i++)
@@ -305,13 +363,13 @@ bool GIApreprocessorMultiwordReductionClassClass::addStringArrayToWordList(vecto
 {
 	for(int i=0; i<arraySize; i++)
 	{
-		GIApreprocessorWord* newWord = new GIApreprocessorWord(stringArrayToAdd[i]); 
+		GIApreprocessorWord* newWord = new GIApreprocessorMultiwordReductionPlainTextWord(stringArrayToAdd[i]);
 		wordList->push_back(newWord);
 	}
 }
 bool GIApreprocessorMultiwordReductionClassClass::addStringToWordList(vector<GIApreprocessorWord*>* wordList, const string stringToAdd)
 {
-	GIApreprocessorWord* newWord = new GIApreprocessorWord(stringToAdd); 
+	GIApreprocessorWord* newWord = new GIApreprocessorMultiwordReductionPlainTextWord(stringToAdd);
 	wordList->push_back(newWord);
 }
 
@@ -401,11 +459,24 @@ bool GIApreprocessorMultiwordReductionClassClass::isApostrophePossessionOrOmissi
 	
 	return apostrophePossessionOrOmissionFound;	
 }
+bool GIApreprocessorMultiwordReductionClassClass::isApostrophePossessionOrOmission(const GIApreprocessorWord* word)
+{
+	bool apostrophePossessionOrOmissionFound = false;
+	
+	const string wordText = word->tagName;
+	if(wordText.length() > 0)
+	{
+		if((wordText[0] == CHAR_APOSTROPHE) && (wordText[wordText.length()-1] != CHAR_APOSTROPHE))
+		{
+			apostrophePossessionOrOmissionFound = true;
+		}
+	}
+	
+	return apostrophePossessionOrOmissionFound;	
+}
 #endif			
 		
 		
-#endif
-
 
 bool GIApreprocessorMultiwordReductionClassClass::findAndReplaceAllOccurancesSimpleSubstringInWordListWithSimpleSubstring(vector<GIApreprocessorWord*>* wordList, const string stringSimpleToFind,  const string stringSimpleReplacement)
 {
@@ -711,7 +782,7 @@ bool GIApreprocessorMultiwordReductionClassClass::insertWordListIntoWordList(vec
 bool GIApreprocessorMultiwordReductionClassClass::insertStringIntoWordList(vector<GIApreprocessorWord*>* wordList, const string stringToInsert, const int indexToInsert)
 {
 	bool result = true;
-	GIApreprocessorWord* wordToInsert = new GIApreprocessorWord(stringToInsert);
+	GIApreprocessorWord* wordToInsert = new GIApreprocessorMultiwordReductionPlainTextWord(stringToInsert);
 	if(!insertWordIntoWordList(wordList, wordToInsert, indexToInsert))
 	{
 		result = false;
@@ -821,7 +892,7 @@ bool GIApreprocessorMultiwordReductionClassClass::replaceWordListAtIndexWithSimp
 }
 
 
-				
+#endif			
 
 
 

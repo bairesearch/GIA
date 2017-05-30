@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorMultiwordReductionClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3b3e 25-May-2017
+ * Project Version: 3b3f 25-May-2017
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  *
@@ -282,6 +282,7 @@ class GIApreprocessorMultiwordReductionPlainTextWord: public GIApreprocessorMult
 public:
 
 	GIApreprocessorMultiwordReductionPlainTextWord(void);
+	GIApreprocessorMultiwordReductionPlainTextWord(string tagNameNew);
 	~GIApreprocessorMultiwordReductionPlainTextWord(void);
 	
 	int entityIndex;	//this should be depreciated
@@ -385,7 +386,8 @@ class GIApreprocessorMultiwordReductionClassClass
 		public: string generateTextFromVectorWordList(const vector<GIApreprocessorWord*>* logicReferenceVariableWordList, const bool LRPforNLP);
 			public: string generateTextFromPreprocessorSentenceWord(const GIApreprocessorWord* word, const bool LRPforNLP, const bool isFirstWordInSentence);
 	public: int calculateLengthOfGeneratedVectorWordListText(vector<GIApreprocessorWord*>* logicReferenceVariableWordList);
-	public: bool generateSentenceWordList(GIApreprocessorMultiwordReductionWord* sentenceContentsFirstWord, vector<GIApreprocessorWord*>* logicReferenceVariableWordList);
+	public: bool generateSentenceWordList(GIApreprocessorWord* sentenceContentsFirstWord, vector<GIApreprocessorWord*>* logicReferenceVariableWordList);
+	public: bool generateFlatSentenceWordList(vector<GIApreprocessorWord*>* logicReferenceVariableWordList, GIApreprocessorMultiwordReductionPlainTextWord** sentenceContentsFirstWord);
 	public: bool addWordListToWordList(vector<GIApreprocessorWord*>* wordList, vector<GIApreprocessorWord*>* wordListToAdd);
 	public: bool addStringArrayToWordList(vector<GIApreprocessorWord*>* wordList, const string* stringArrayToAdd, const int arraySize);
 	public: bool addStringToWordList(vector<GIApreprocessorWord*>* wordList, const string stringToAdd);
@@ -394,7 +396,7 @@ class GIApreprocessorMultiwordReductionClassClass
 	#endif
 	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_APOSTROPHES_POSSESSION_AND_OMISSION
 	public: bool isApostrophePossessionOrOmission(const int indexOfCurrentToken, const string* lineContents);
-	#endif	
+	public: bool isApostrophePossessionOrOmission(const GIApreprocessorWord* word);
 	#endif	
 	
 	public: bool findAndReplaceAllOccurancesSimpleSubstringInWordListWithSimpleSubstring(vector<GIApreprocessorWord*>* wordList, const string stringSimpleToFind,  const string stringSimpleReplacement);
@@ -428,6 +430,7 @@ class GIApreprocessorMultiwordReductionClassClass
 			
 	public: bool replaceWordListAtIndexWithSimpleSubstring(vector<GIApreprocessorWord*>* wordList, const int indexToPerformReplacement, const string stringSimpleReplacement);
 		public: bool replaceWordListAtIndexWithSimpleSubstring(vector<GIApreprocessorWord*>* wordList, const int indexToPerformReplacement, vector<GIApreprocessorWord*>* wordListReplacement);
+	#endif	
 
 };
 

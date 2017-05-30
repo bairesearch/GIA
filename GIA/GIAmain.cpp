@@ -25,7 +25,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3b3e 25-May-2017
+ * Project Version: 3b3f 25-May-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -596,7 +596,7 @@ int main(const int argc, const char** argv)
 
 		if(SHAREDvarsClass().argumentExists(argc, argv, "-version"))
 		{
-			cout << "GIA.exe - Project Version: 3b3e 25-May-2017" << endl;
+			cout << "GIA.exe - Project Version: 3b3f 25-May-2017" << endl;
 			exit(EXIT_OK);
 		}
 
@@ -1102,22 +1102,10 @@ bool GIAmainClass::executeGIA2()
 	#endif
 		
 		#ifdef GIA_PREPROCESSOR
-		if(useLRP)
+		if(!GIApreprocessor.preprocessTextForGIAwrapper(useLRP, &inputTextPlainTXTfileName, outputLRPTextPlainTXTFileName, false, translatorVariables))
 		{
-			if(!GIApreprocessor.preprocessTextForGIA(&inputTextPlainTXTfileName, outputLRPTextPlainTXTFileName, false, translatorVariables))
-			{
-				result = false;
-			}
+			result = false;
 		}
-		#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
-		else
-		{
-			if(!GIApreprocessor.createPreprocessSentencesForGIA(inputTextPlainTXTfileName, translatorVariables))
-			{
-				result = false;
-			}				
-		}
-		#endif
 		#endif
 
 		#ifdef USE_CE
@@ -1264,12 +1252,9 @@ bool GIAmainClass::executeGIA2()
 	if(useInputQuery)
 	{
 		#ifdef GIA_PREPROCESSOR
-		if(useLRP)
+		if(!GIApreprocessor.preprocessTextForGIAwrapper(useLRP, &inputQueryPlainTXTFileName, outputQueryLRPTextPlainTXTFileName, true, translatorVariablesQuery))
 		{
-			if(!GIApreprocessor.preprocessTextForGIA(&inputQueryPlainTXTFileName, outputQueryLRPTextPlainTXTFileName, true, translatorVariablesQuery))
-			{
-				result = false;
-			}
+			result = false;
 		}
 		#endif
 
