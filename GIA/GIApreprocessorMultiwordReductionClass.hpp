@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorMultiwordReductionClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3b4a 28-May-2017
+ * Project Version: 3b4b 28-May-2017
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  *
@@ -294,8 +294,9 @@ public:
 	bool collapsedMultiwordWordTemp;	//this is reset everytime searchAndReplaceMultiwordWordList is executed to prevent collapsedMultiwordWord from being redetected
 
 	#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
-	GIApreprocessorWord* preprocessorUpperLevelWordReference;
+	GIApreprocessorMultiwordReductionPlainTextWord* preprocessorUpperLevelWordReference;
 	int preprocessorUpperLevelWordReferenceSize;	//number of words in preprocessor upper level phrase corresponding to preprocessor word
+	GIApreprocessorMultiwordReductionPlainTextWord* preprocessorLowerLevelWordReference;
 	#endif
 	
 	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION

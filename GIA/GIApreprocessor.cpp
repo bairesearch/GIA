@@ -25,7 +25,7 @@
  * File Name: GIApreprocessor.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3b4a 28-May-2017
+ * Project Version: 3b4b 28-May-2017
  * Requirements: requires plain text file
  * Description: Logical Condition and Reference Set preprocessor
  *
@@ -192,6 +192,18 @@ bool GIApreprocessorClass::createPreprocessSentencesForGIA(const string inputFil
 	while(currentGIApreprocessorSentenceInList->next != NULL)
 	{
 		currentGIApreprocessorSentenceInList->sentenceContentsLRP = currentGIApreprocessorSentenceInList->sentenceContentsOriginal;
+		
+		#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
+		//added 3b4b
+		for(int w=0; w<currentGIApreprocessorSentenceInList->sentenceContentsLRP.size(); w++)
+		{		
+			GIApreprocessorMultiwordReductionPlainTextWord* sentenceContentsLRPcurrentWord = static_cast<GIApreprocessorMultiwordReductionPlainTextWord*>((currentGIApreprocessorSentenceInList->sentenceContentsLRP)[w]);
+			GIApreprocessorMultiwordReductionPlainTextWord* sentenceContentsOriginalcurrentWord = static_cast<GIApreprocessorMultiwordReductionPlainTextWord*>((currentGIApreprocessorSentenceInList->sentenceContentsLRP)[w]);
+			sentenceContentsLRPcurrentWord->preprocessorUpperLevelWordReference = sentenceContentsOriginalcurrentWord;
+			sentenceContentsLRPcurrentWord->preprocessorUpperLevelWordReferenceSize = 1;
+		}
+		#endif
+	
 		currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->next;
 	}
 		

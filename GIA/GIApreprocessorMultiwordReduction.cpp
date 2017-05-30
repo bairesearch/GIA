@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorMultiwordReduction.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3b4a 28-May-2017
+ * Project Version: 3b4b 28-May-2017
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  *
@@ -1086,7 +1086,24 @@ bool GIApreprocessorMultiwordReductionClass::searchAndReplacePhrasalVerbs(GIApre
 						{//make sure the entire multiword phrasal verb is matched (in case currentTagInPlainTextSentenceTemp reaches end of sentence without matching the multiword phrasal verb in its entirety)
 							if(numberTagSpecialTagsFound <= 1)
 							{//do not preprocess phrasal verbs with more than one special tag (ie sth/sb/swh) - as this generally involves more than a verb [verb sth preposition sth1] - added 1p1aTEMP5
+								
 								//reduce all entities
+								
+								numberWordsInMultiwordMatched = numberWordsInMultiword;
+								
+								#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
+								//updated 3b4b
+								//assume firstTagInCollapsedMultiwordWord->preprocessorUpperLevelWordReference already set
+								GIApreprocessorMultiwordReductionPlainTextWord* currentTagInPlainTextSentenceTemp2 = currentTagInPlainTextSentence;
+								for(int i=0; i<numberWordsInMultiwordMatched; i++)
+								{
+									currentTagInPlainTextSentenceTemp2->preprocessorUpperLevelWordReference->preprocessorLowerLevelWordReference = firstTagInCollapsedPhrasalVerb;
+									currentTagInPlainTextSentenceTemp2 = static_cast<GIApreprocessorMultiwordReductionPlainTextWord*>(currentTagInPlainTextSentenceTemp2->nextTag);	
+								}
+								firstTagInCollapsedPhrasalVerb->preprocessorUpperLevelWordReference = currentTagInPlainTextSentence->preprocessorUpperLevelWordReference;
+								firstTagInCollapsedPhrasalVerb->preprocessorUpperLevelWordReferenceSize = numberWordsInMultiwordMatched;
+								#endif							
+								
 								if(phrasalVerbHasTagSpecial)
 								{
 									currentTagInCollapsedPhrasalVerb->nextTag->nextTag = currentTagInPlainTextSentenceTemp;		//NB currentTagInCollapsedPhrasalVerb->nextTag is the collapsed phrasal verb thing/place/body entity
@@ -1103,12 +1120,6 @@ bool GIApreprocessorMultiwordReductionClass::searchAndReplacePhrasalVerbs(GIApre
 								{
 									firstTagInPlainTextSentence = firstTagInCollapsedPhrasalVerb;								
 								}
-								
-								numberWordsInMultiwordMatched = numberWordsInMultiword;
-								#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
-								firstTagInCollapsedPhrasalVerb->preprocessorUpperLevelWordReference = currentTagInPlainTextSentenceTemp->preprocessorUpperLevelWordReference;
-								firstTagInCollapsedPhrasalVerb->preprocessorUpperLevelWordReferenceSize = numberWordsInMultiwordMatched;
-								#endif
 								
 								foundAtLeastOnePhrasalVerbInSentenceAndCollapsed = true;
 							}
@@ -1326,7 +1337,23 @@ bool GIApreprocessorMultiwordReductionClass::searchAndReplaceMultiwordWordList(G
 				{
 					if(currentTagInMultiwordWord->nextTag == NULL)
 					{//make sure the entire multiword word is matched (in case currentTagInPlainTextSentenceTemp reaches end of sentence without matching the multiword word in its entirety)
+						
 						//reduce all entities
+						
+						numberWordsInMultiwordMatched = numberWordsInMultiword;
+						#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
+						//updated 3b4b
+						//assume firstTagInCollapsedMultiwordWord->preprocessorUpperLevelWordReference already set
+						GIApreprocessorMultiwordReductionPlainTextWord* currentTagInPlainTextSentenceTemp2 = currentTagInPlainTextSentence;
+						for(int i=0; i<numberWordsInMultiwordMatched; i++)
+						{
+							currentTagInPlainTextSentenceTemp2->preprocessorUpperLevelWordReference->preprocessorLowerLevelWordReference = firstTagInCollapsedMultiwordWord;
+							currentTagInPlainTextSentenceTemp2 = static_cast<GIApreprocessorMultiwordReductionPlainTextWord*>(currentTagInPlainTextSentenceTemp2->nextTag);	
+						}
+						firstTagInCollapsedMultiwordWord->preprocessorUpperLevelWordReference = currentTagInPlainTextSentence->preprocessorUpperLevelWordReference;
+						firstTagInCollapsedMultiwordWord->preprocessorUpperLevelWordReferenceSize = numberWordsInMultiwordMatched;
+						#endif
+						
 						firstTagInCollapsedMultiwordWord->nextTag = currentTagInPlainTextSentenceTemp;
 						if(previousTagInPlainTextSentence != NULL)
 						{
@@ -1338,11 +1365,7 @@ bool GIApreprocessorMultiwordReductionClass::searchAndReplaceMultiwordWordList(G
 						}
 						foundAtLeastOneMultiwordWordInSentenceAndCollapsed = true;
 						foundAtLeastOneMultiwordWordInSentenceAndCollapsedTemp = true;
-						numberWordsInMultiwordMatched = numberWordsInMultiword;
-						#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
-						firstTagInCollapsedMultiwordWord->preprocessorUpperLevelWordReference = currentTagInPlainTextSentenceTemp->preprocessorUpperLevelWordReference;
-						firstTagInCollapsedMultiwordWord->preprocessorUpperLevelWordReferenceSize = numberWordsInMultiwordMatched;
-						#endif
+						
 					}
 				}
 				if(!foundAtLeastOneMultiwordWordInSentenceAndCollapsedTemp)
