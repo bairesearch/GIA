@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorMultiwordReduction.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3b1c 19-May-2017
+ * Project Version: 3b2a 21-May-2017
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  *
@@ -320,7 +320,7 @@ void GIApreprocessorMultiwordReductionClass::deinitialiseActiveGIApreprocessorMu
 }
 
 
-bool GIApreprocessorMultiwordReductionClass::parseTextFileAndReduceLanguage(const string plainTextInputFileName, const string plainTextLRPoutputFileName, const string plainTextLRPforNLPoutputFileName)
+bool GIApreprocessorMultiwordReductionClass::parseTextFileAndReduceLanguage(const string plainTextInputFileName, GIApreprocessorSentence* firstGIApreprocessorSentenceInList, const string plainTextLRPoutputFileName, const string plainTextLRPforNLPoutputFileName)
 {
 	bool result = true;
 
@@ -375,11 +375,11 @@ bool GIApreprocessorMultiwordReductionClass::parseTextFileAndReduceLanguage(cons
 	#endif
 
 	SHAREDvars.setCurrentDirectory(outputFolder);
-	if(!this->writeTagListToFile(firstTagInPlainText, plainTextLRPoutputFileName, plainTextLRPforNLPoutputFileName, true))
+	if(!this->writeTagListToFile(firstTagInPlainText, firstGIApreprocessorSentenceInList, plainTextLRPoutputFileName, plainTextLRPforNLPoutputFileName, true))
 	{
 		result = false;
 	}
-
+	
 	return result;
 }
 
@@ -1591,10 +1591,10 @@ void GIApreprocessorMultiwordReductionClass::renumberEntityIndiciesInCorresponde
 	}
 }
 
-bool GIApreprocessorMultiwordReductionClass::writeTagListToFile(const GIApreprocessorMultiwordReductionSentence* firstTagInPlainText, const string plainTextLRPoutputFileName, const string plainTextLRPforNLPoutputFileName, const bool performLRPforNLPoutput)
+bool GIApreprocessorMultiwordReductionClass::writeTagListToFile(const GIApreprocessorMultiwordReductionSentence* firstTagInPlainText, GIApreprocessorSentence* firstGIApreprocessorSentenceInList, const string plainTextLRPoutputFileName, const string plainTextLRPforNLPoutputFileName, const bool performLRPforNLPoutput)
 {
 	bool result = true;
-
+	
 	ofstream plainTextLRPOutput(plainTextLRPoutputFileName.c_str());
 	ofstream* plainTextLRPforNLPOutput;
 	if(performLRPforNLPoutput)
@@ -1602,12 +1602,16 @@ bool GIApreprocessorMultiwordReductionClass::writeTagListToFile(const GIApreproc
 		plainTextLRPforNLPOutput = new ofstream(plainTextLRPforNLPoutputFileName.c_str());
 	}
 	
-	
 	bool firstCharacterInFile = true;
 
+	#ifdef GIA_PREPROCESSOR_RECORD
+	GIApreprocessorSentence* currentGIApreprocessorSentenceInList = firstGIApreprocessorSentenceInList;
+	#endif
 	const GIApreprocessorMultiwordReductionSentence* currentTagInPlainText = firstTagInPlainText;
 	while(currentTagInPlainText->nextSentence != NULL)
 	{
+		string sentenceContentsLRP = "";
+		string sentenceContentsLRPforNLP = "";
 		bool firstCharacterInSentence = true;
 		const GIApreprocessorMultiwordReductionWord* firstTagInPlainTextSentence = currentTagInPlainText->firstTagInSentence;
 		const GIApreprocessorMultiwordReductionWord* currentTagInPlainTextSentence = firstTagInPlainTextSentence;
@@ -1642,11 +1646,10 @@ bool GIApreprocessorMultiwordReductionClass::writeTagListToFile(const GIApreproc
 					plainTextLRPforNLPOutputTag = string(STRING_SPACE) + plainTextLRPforNLPOutputTag;
 				}
 			}
-
-			plainTextLRPOutput.write(plainTextLRPOutputTag.c_str(), plainTextLRPOutputTag.length());
+			sentenceContentsLRP = sentenceContentsLRP + plainTextLRPOutputTag;
 			if(performLRPforNLPoutput)
 			{
-				plainTextLRPforNLPOutput->write(plainTextLRPforNLPOutputTag.c_str(), plainTextLRPforNLPOutputTag.length());
+				sentenceContentsLRPforNLP = sentenceContentsLRPforNLP + plainTextLRPforNLPOutputTag;
 			}
 			
 			firstCharacterInFile = false;
@@ -1656,14 +1659,23 @@ bool GIApreprocessorMultiwordReductionClass::writeTagListToFile(const GIApreproc
 		}
 		
 		#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_REINSERT_NEWLINE_CHARACTERS_AFTER_EVERY_SENTENCE
-		//added 3a1a;
-		plainTextLRPOutput.put(CHAR_NEWLINE);
+		sentenceContentsLRP = sentenceContentsLRP + CHAR_NEWLINE;
+		#endif
+		plainTextLRPOutput.write(sentenceContentsLRP.c_str(), sentenceContentsLRP.length());
 		if(performLRPforNLPoutput)
 		{
-			plainTextLRPforNLPOutput->put(CHAR_NEWLINE);
+			#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_REINSERT_NEWLINE_CHARACTERS_AFTER_EVERY_SENTENCE
+			sentenceContentsLRPforNLP = sentenceContentsLRPforNLP + CHAR_NEWLINE;
+			#endif
+			plainTextLRPforNLPOutput->write(sentenceContentsLRPforNLP.c_str(), sentenceContentsLRPforNLP.length());
+		
+			#ifdef GIA_PREPROCESSOR_RECORD
+			currentGIApreprocessorSentenceInList->sentenceContentsLRP = sentenceContentsLRP;
+			currentGIApreprocessorSentenceInList->sentenceContentsLRPforNLP = sentenceContentsLRPforNLP;
+			currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->next;
+			#endif
 		}
-		#endif
-
+		
 		currentTagInPlainText = currentTagInPlainText->nextSentence;
 	}
 

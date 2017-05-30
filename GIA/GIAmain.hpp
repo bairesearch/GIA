@@ -25,7 +25,7 @@
  * File Name: GIAmain.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3b1c 19-May-2017
+ * Project Version: 3b2a 21-May-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -111,103 +111,103 @@ class GIAmainClass
 	private: GIAsemanticParserDatabaseClass GIAsemanticParserDatabase;
 	#endif
 
-public: bool executeGIA(
+	public: bool executeGIA(
 
-	GIAtranslatorVariablesClass* translatorVariables,
-	GIAtranslatorVariablesClass* translatorVariablesQuery,
+		GIAtranslatorVariablesClass* translatorVariables,
+		GIAtranslatorVariablesClass* translatorVariablesQuery,
 
-	string NLPexeFolderArray[],
+		string NLPexeFolderArray[],
 
-	bool useInputTextPlainTXTFile,
-	string inputTextPlainTXTfileName,
+		bool useInputTextPlainTXTFile,
+		string inputTextPlainTXTfileName,
 
-	#ifdef USE_CE
-	bool useInputTextCodeextensionsTXTFileName,
-	string inputTextCodeextensionsTXTFileName,
-	#endif
+		#ifdef USE_CE
+		bool useInputTextCodeextensionsTXTFileName,
+		string inputTextCodeextensionsTXTFileName,
+		#endif
 
-	bool useInputTextNLPrelationXMLFile,
-	string inputTextNLPrelationXMLfileName,
-	bool useInputTextNLPfeatureXMLFile,
-	string inputTextNLPfeatureXMLfileName,
-	bool useOutputTextCFFFile,
-	string outputTextCFFFileName,
-	bool useInputTextXMLFile,
-	string inputTextXMLFileName,
-	bool useOutputTextXMLFile,
-	string outputTextXMLFileName,
-	bool useOutputTextCXLFile,
-	string outputTextCXLFileName,
-	bool useOutputTextLDRFile,
-	string outputTextLDRFileName,
-	bool useOutputTextPPMFile,
-	string outputTextPPMFileName,
-	bool useOutputTextSVGFile,
-	string outputTextSVGFileName,
-	bool useInputQueryPlainTXTFile,
-	string inputQueryPlainTXTFileName,
-	bool useInputQueryNLPrelationXMLFile,
-	string inputQueryNLPrelationXMLFileName,
-	bool useInputQueryNLPfeatureXMLFile,
-	string inputQueryNLPfeatureXMLFileName,
-	bool useOutputQueryCFFFile,
-	string outputQueryCFFFileName,
-	bool useInputQueryXMLFile,
-	string inputQueryXMLFileName,
-	bool useOutputQueryXMLFile,
-	string outputQueryXMLFileName,
-	bool useOutputQueryCXLFile,
-	string outputQueryCXLFileName,
-	bool useOutputQueryLDRFile,
-	string outputQueryLDRFileName,
-	bool useOutputQueryPPMFile,
-	string outputQueryPPMFileName,
-	bool useOutputQuerySVGFile,
-	string outputQuerySVGFileName,
-	bool useOutputTextAllFile,
-	string outputTextAllFileName,
-	#ifdef GIA_QUERY_WRITE_ANSWER_TO_FILE
-	bool useOutputTextAnswerPlainTXTFile,
-	string outputTextAnswerPlainTXTFileName,
-	#endif
+		bool useInputTextNLPrelationXMLFile,
+		string inputTextNLPrelationXMLfileName,
+		bool useInputTextNLPfeatureXMLFile,
+		string inputTextNLPfeatureXMLfileName,
+		bool useOutputTextCFFFile,
+		string outputTextCFFFileName,
+		bool useInputTextXMLFile,
+		string inputTextXMLFileName,
+		bool useOutputTextXMLFile,
+		string outputTextXMLFileName,
+		bool useOutputTextCXLFile,
+		string outputTextCXLFileName,
+		bool useOutputTextLDRFile,
+		string outputTextLDRFileName,
+		bool useOutputTextPPMFile,
+		string outputTextPPMFileName,
+		bool useOutputTextSVGFile,
+		string outputTextSVGFileName,
+		bool useInputQueryPlainTXTFile,
+		string inputQueryPlainTXTFileName,
+		bool useInputQueryNLPrelationXMLFile,
+		string inputQueryNLPrelationXMLFileName,
+		bool useInputQueryNLPfeatureXMLFile,
+		string inputQueryNLPfeatureXMLFileName,
+		bool useOutputQueryCFFFile,
+		string outputQueryCFFFileName,
+		bool useInputQueryXMLFile,
+		string inputQueryXMLFileName,
+		bool useOutputQueryXMLFile,
+		string outputQueryXMLFileName,
+		bool useOutputQueryCXLFile,
+		string outputQueryCXLFileName,
+		bool useOutputQueryLDRFile,
+		string outputQueryLDRFileName,
+		bool useOutputQueryPPMFile,
+		string outputQueryPPMFileName,
+		bool useOutputQuerySVGFile,
+		string outputQuerySVGFileName,
+		bool useOutputTextAllFile,
+		string outputTextAllFileName,
+		#ifdef GIA_QUERY_WRITE_ANSWER_TO_FILE
+		bool useOutputTextAnswerPlainTXTFile,
+		string outputTextAnswerPlainTXTFileName,
+		#endif
 
-	#ifdef GIA_INPUT_FILE_LISTS
-	bool inputFileList,
-	#endif
-	bool printOutput,
-	bool printOutputQuery,
-	bool displayInOpenGLAndOutputScreenshot,
+		#ifdef GIA_INPUT_FILE_LISTS
+		bool inputFileList,
+		#endif
+		bool printOutput,
+		bool printOutputQuery,
+		bool displayInOpenGLAndOutputScreenshot,
 
-	int rasterImageWidth,
-	int rasterImageHeight,
+		int rasterImageWidth,
+		int rasterImageHeight,
 
-	bool useInputQuery,
+		bool useInputQuery,
 
-	#ifdef GIA_DATABASE
-	bool readFromDatabase,
-	bool writeToDatabase,
-	bool useDatabase,
-	string databaseFolderName,
-	#endif
+		#ifdef GIA_DATABASE
+		bool readFromDatabase,
+		bool writeToDatabase,
+		bool useDatabase,
+		string databaseFolderName,
+		#endif
 
-	#ifdef GIA_SEMANTIC_PARSER
-	string semanticParserDatabaseFolderName,
-	#endif
+		#ifdef GIA_SEMANTIC_PARSER
+		string semanticParserDatabaseFolderName,
+		#endif
 
-	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
-	bool useLRP,
-	bool useOutputLRPTextPlainTXTFile,
-	string outputLRPTextPlainTXTFileName,
-	bool useOutputQueryLRPTextPlainTXTFile,
-	string outputQueryLRPTextPlainTXTFileName,
-	string lrpDataFolderName,
-	#endif
+		#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
+		bool useLRP,
+		bool useOutputLRPTextPlainTXTFile,
+		string outputLRPTextPlainTXTFileName,
+		bool useOutputQueryLRPTextPlainTXTFile,
+		string outputQueryLRPTextPlainTXTFileName,
+		string lrpDataFolderName,
+		#endif
 
-	#ifdef USE_WORDNET
-	int synonymnDetectionStatus
-	#endif
+		#ifdef USE_WORDNET
+		int synonymnDetectionStatus
+		#endif
 
-	);
+		);
 
 	#ifdef USE_CS_WORKAROUND
 	public: bool executeGIA2();

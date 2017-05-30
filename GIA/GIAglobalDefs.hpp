@@ -25,7 +25,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3b1c 19-May-2017
+ * Project Version: 3b2a 21-May-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -744,6 +744,7 @@
 	#ifdef GIA_STANFORD_PARSER_AND_CORENLP_VERSION_2016_10_31_OR_GREATER
 		#define GIA_NLP_CLIENT_SERVER	//3b1a
 	#endif
+	#define GIA_PREPROCESSOR_RECORD	//3b2a	//required by GIA_PREPROCESSOR_SENTENCE and GIAI
 #endif
 
 //#define GIA_DEBUG_DISABLE_3a_CODE
@@ -767,7 +768,7 @@
 		//#define GIA_REFERENCING_UPDATE_ENTITY_INDEXES_OF_REFERENCE_SOURCE_TO_THOSE_OF_CURRENT_SENTENCE_NETWORK_INDICES
 	#endif
 	#define GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DISABLE_SUBCLASSES
-	#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_REINSERT_NEWLINE_CHARACTERS_AFTER_EVERY_SENTENCE
+	#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_REINSERT_NEWLINE_CHARACTERS_AFTER_EVERY_SENTENCE	//added 3a1a
 	#define GIA_ENTITY_CONNECTION_RECORD_ENTITY_ORIGIN
 	#ifdef GIA_ENTITY_CONNECTION_RECORD_ENTITY_ORIGIN
 		#define GIA_ENTITY_CONNECTION_RECORD_RELATIONSHIP_TYPE	//this is required for !GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS generalised code
@@ -784,8 +785,10 @@
 	#ifdef GIA_PREPROCESSOR
 		//#define GIA_PREPROCESSOR_SUPPORT_PUNCTUATION_MARKS_WITH_PRECEEDING_WHITE_SPACE	//not yet coded: do not currently support punctuation marks with preceeding white space. Currently skip (do not parse) multiple white space/punctuation characters (eg ". "/".."/"  "/" .")	
 		#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_REDUCE_ALL_WORD_TYPES	//don't just reduce multiword prepositions (reduce multiword verbs, nouns, adjectives and adverbs also)
-		#ifndef USE_NLC
-			//#define GIA_PREPROCESSOR_SENTENCE	//3a1a
+		#ifdef GIA_PREPROCESSOR_RECORD
+			#ifndef USE_NLC
+				#define GIA_PREPROCESSOR_SENTENCE	//3a1a
+			#endif
 		#endif
 		#ifdef GIA_PREPROCESSOR_SENTENCE
 					

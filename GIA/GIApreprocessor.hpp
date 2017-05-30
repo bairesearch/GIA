@@ -25,7 +25,7 @@
  * File Name: GIApreprocessor.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3b1c 19-May-2017
+ * Project Version: 3b2a 21-May-2017
  * Requirements: requires plain text file
  * Description: Logical Condition and Reference Set preprocessor
  *
@@ -61,9 +61,13 @@ class GIApreprocessorClass
 	private: GIAdatabaseClass GIAdatabase;
 	#ifdef GIA_PREPROCESSOR
 	public: bool preprocessTextForGIA(string* inputTextPlainTXTfileName, const string outputLRPTextPlainTXTFileName, const bool isQuery, GIAtranslatorVariablesClass* translatorVariables);
+		#ifdef GIA_PREPROCESSOR_RECORD
+		private: bool createPreprocessSentencesForGIA(const string inputFileName, GIApreprocessorSentence* firstGIApreprocessorSentenceInList);
+			private: bool createGIApreprocessorSentence(GIApreprocessorSentence* currentGIApreprocessorSentenceInList, const string* sentenceContentsOriginal, int sentenceIndexOriginal);
+		#endif
 		#ifdef GIA_PREPROCESSOR_SENTENCE
 		private: bool preprocessSentencesForGIA(const string inputFileName, GIApreprocessorSentence* firstGIApreprocessorSentenceInList, const string outputFileName, const string outputFileNameLRPforNLP);
-			bool generateGIApreprocessorSentence(const string* sentenceContentsOriginal, GIApreprocessorSentence* currentGIApreprocessorSentenceInList, int sentenceIndexOriginal, XMLparserTag* firstLogicReferenceClassTag);
+			private: bool generateGIApreprocessorSentence(GIApreprocessorSentence* currentGIApreprocessorSentenceInList, XMLparserTag* firstLogicReferenceClassTag);
 			private: string removePrependingWhiteSpace(string sentenceContents);
 			private: bool generatePreprocessorSentenceNLPparsablePhrases(GIApreprocessorLogicReference* firstLogicReferenceInList, int* sentenceIndex, string* outputTextContentsSentence, string* outputTextContentsSentenceForNLP);
 				#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_OUTPUT_LOGIC_REFERENCE_SETS_FOR_HIGH_LEVEL_SEMANTIC_PARSE
