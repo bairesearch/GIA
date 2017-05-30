@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorMultiwordReduction.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3b5a 29-May-2017
+ * Project Version: 3b5b 29-May-2017
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  *
@@ -2119,19 +2119,27 @@ void GIApreprocessorMultiwordReductionClass::detectIfInverseOrTwoWayConditionReq
 		GIApreprocessorMultiwordReductionWord* firstTagInPrepositionsInverseListSentence = sentenceFound->firstTagInSentence;
 		GIApreprocessorMultiwordReductionWord* currentTagInPrepositionsInverseListSentence = firstTagInPrepositionsInverseListSentence;
 		bool foundConditionToInvert = false;
-		string conditionNameNew = "";	//= currentTagInPrepositionsInverseList->tagName;
+		string conditionNameInverted = "";	//= currentTagInPrepositionsInverseList->tagName;
 		for(int i=1; i<=GIA_PREPROCESSOR_MULTIWORD_REDUCTION_INVERSEPREPOSITIONS_DATABASE_NUMBER_OF_TAGS; i++)
 		{
 			if(i == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_INVERSEPREPOSITIONS_DATABASE_TAG_CONDITION)
 			{
+				if(currentTagInPrepositionsInverseListSentence->tagName != conditionName)
+				{
+					cout << "GIApreprocessorMultiwordReductionClass::detectIfInverseOrTwoWayConditionRequired error{}: (currentTagInPrepositionsInverseListSentence->tagName != conditionName)" << endl;
+					exit(EXIT_ERROR);
+				}
 			}
 			else if(i == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_INVERSEPREPOSITIONS_DATABASE_TAG_REVERSE_CONDITION)
 			{
-				if(currentTagInPrepositionsInverseListSentence->tagName != GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_PREPOSITIONS_INVERSE_TAG_NAME_NULL)
+				conditionNameInverted = currentTagInPrepositionsInverseListSentence->tagName;
+				if(currentTagInPrepositionsInverseListSentence->tagName == conditionName)
 				{
 					*twoWayConditionRequired = true;
+				}
+				else
+				{
 					foundConditionToInvert = true;
-					conditionNameNew = currentTagInPrepositionsInverseListSentence->tagName;	//same as currentTagInPrepositionsInverseList->tagName
 				}
 			}
 			else if(i == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_INVERSEPREPOSITIONS_DATABASE_TAG_INVERT_REVERSE_CONDITION_VALID)
@@ -2141,7 +2149,7 @@ void GIApreprocessorMultiwordReductionClass::detectIfInverseOrTwoWayConditionReq
 					if(currentTagInPrepositionsInverseListSentence->tagName == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_INVERSEPREPOSITIONS_DATABASE_TAG_INVERT_REVERSE_CONDITION_VALID_VALUE_TRUE)
 					{
 						*inverseConditionRequired = true;
-						*inverseConditionName = conditionNameNew;
+						*inverseConditionName = conditionNameInverted;
 					}
 				}
 			}

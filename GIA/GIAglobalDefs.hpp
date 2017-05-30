@@ -25,7 +25,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3b5a 29-May-2017
+ * Project Version: 3b5b 29-May-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -744,8 +744,9 @@
 	#ifdef GIA_STANFORD_PARSER_AND_CORENLP_VERSION_2016_10_31_OR_GREATER
 		#define GIA_NLP_CLIENT_SERVER	//3b1a
 	#endif
-	#define GIA_PREPROCESSOR_RECORD_REFERENCES	//3b2a	//required by GIAI
-	//#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION	//has not yet been defined
+	
+	//#ifdef GIA_PREPROCESSOR	//has not yet been defined
+		#define GIA_PREPROCESSOR_RECORD_REFERENCES	//3b2a	//required by GIAI
 		//#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_INTRAWORD_PUNCTUATION_MARK	//has not yet been defined
 			#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_ABBREVIATIONS	//3b2e
 			#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_ABBREVIATIONS
@@ -755,17 +756,32 @@
 		//#endif
 		#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_APOSTROPHES_POSSESSION_AND_OMISSION	//3b2e
 		#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_DOLLARS //3b2e
-		//#ifdef USE_NLC	//precondition temporarily disabled for testing
+		#ifdef USE_NLC
 			#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_EXTRACT_INDENTATION	//3b3a upgraded for NLC
 			#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_EXTRACT_INDENTATION
 				#define GIA_PREPROCESSOR_INDENTATION_CHAR CHAR_TAB
 			#endif
 			#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_REDUCE_QUOTES_TO_SINGLE_WORDS	//GIA 2b4a	//disabled 2i36a	//3b3a restored and upgraded for NLC
-			#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_MATH	//3b3a	//required for NLC
-			#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_MATH
-				#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_MATH_GROUPING	//3b3a - required for current NLC implementation; e.g. see how preprocessorMathOperatorsEquivalentConjunctions are defined [need to detect individual opening/closing brackets]
-			#endif
-		//#endif
+		#endif	
+		#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_MATH	//3b3a	//required for NLC
+		#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_MATH
+			#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_MATH_GROUPING	//3b3a - required for current NLC implementation; e.g. see how preprocessorMathOperatorsEquivalentConjunctions are defined [need to detect individual opening/closing brackets]
+		#endif
+		#define GIA_STANFORD_PARSER_AND_CORENLP_FEATURE_PARSER_ANOMALY_WORD_CHANGES	//3b5b
+		#ifdef GIA_STANFORD_PARSER_AND_CORENLP_FEATURE_PARSER_ANOMALY_WORD_CHANGES
+			#define GIA_STANFORD_PARSER_AND_CORENLP_FEATURE_PARSER_LEFT_BRACKET_WORD "-LRB-"
+			#define GIA_STANFORD_PARSER_AND_CORENLP_FEATURE_PARSER_LEFT_BRACKET_LEMMA "-lrb-"
+			#define GIA_STANFORD_PARSER_AND_CORENLP_FEATURE_PARSER_RIGHT_BRACKET_WORD "-RRB-"
+			#define GIA_STANFORD_PARSER_AND_CORENLP_FEATURE_PARSER_RIGHT_BRACKET_LEMMA "-rrb-"
+			#define GIA_STANFORD_PARSER_AND_CORENLP_FEATURE_PARSER_INVERTED_COMMAS_WORD "''"
+			#define GIA_STANFORD_PARSER_AND_CORENLP_FEATURE_PARSER_INVERTED_COMMAS_LEMMA "''"
+		#endif
+		#define GIA_STANFORD_PARSER_AND_CORENLP_FEATURE_PARSER_ANOMALY_INTERPRET_CANNOT_AS_CAN_NOT	//3b5b	//note this will break characterIndexInSentenceContentsOriginalText (required implementation: need to preprepreprocess words like "cannot" that require splitting by NLP - ie preprocess the text before executing the GIA prepreprocessor createPreprocessSentences)
+		#ifdef GIA_STANFORD_PARSER_AND_CORENLP_FEATURE_PARSER_ANOMALY_INTERPRET_CANNOT_AS_CAN_NOT
+			#define GIA_STANFORD_PARSER_AND_CORENLP_FEATURE_PARSER_ANOMALY_INTERPRET_CANNOT_AS_CAN_NOT_ORIGINAL_WORD "cannot"
+			#define GIA_STANFORD_PARSER_AND_CORENLP_FEATURE_PARSER_ANOMALY_INTERPRET_CANNOT_AS_CAN_NOT_NEW_WORD_1 "can"
+			#define GIA_STANFORD_PARSER_AND_CORENLP_FEATURE_PARSER_ANOMALY_INTERPRET_CANNOT_AS_CAN_NOT_NEW_WORD_2 "not"
+		#endif
 	//#endif
 #endif
 

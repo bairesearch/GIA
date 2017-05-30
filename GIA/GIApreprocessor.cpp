@@ -25,7 +25,7 @@
  * File Name: GIApreprocessor.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3b5a 29-May-2017
+ * Project Version: 3b5b 29-May-2017
  * Requirements: requires plain text file
  * Description: Logical Condition and Reference Set preprocessor
  *
@@ -348,6 +348,18 @@ bool GIApreprocessorClass::createPreprocessSentences(const string fileContents, 
 				bool lastWordBlank = true;
 				
 				int lastCharacterIndexOfLastWordBeingFilled = charCount-1; 
+				
+				#ifdef GIA_STANFORD_PARSER_AND_CORENLP_FEATURE_PARSER_ANOMALY_INTERPRET_CANNOT_AS_CAN_NOT
+				if(currentWord == GIA_STANFORD_PARSER_AND_CORENLP_FEATURE_PARSER_ANOMALY_INTERPRET_CANNOT_AS_CAN_NOT_ORIGINAL_WORD)
+				{
+					//note this will break characterIndexInSentenceContentsOriginalText (required implementation: need to preprepreprocess words like "cannot" that require splitting by NLP - ie preprocess the text before executing the GIA prepreprocessor createPreprocessSentences)
+					int lastCharacterIndexOfWord1BeingFilled = lastCharacterIndexOfLastWordBeingFilled - (string(GIA_STANFORD_PARSER_AND_CORENLP_FEATURE_PARSER_ANOMALY_INTERPRET_CANNOT_AS_CAN_NOT_NEW_WORD_2)).length();
+					currentWord = GIA_STANFORD_PARSER_AND_CORENLP_FEATURE_PARSER_ANOMALY_INTERPRET_CANNOT_AS_CAN_NOT_NEW_WORD_1;
+					preprocessorFillCurrentWord(&currentWordInSentence, &currentWord, &entityIndex, lastCharacterIndexOfLastWordBeingFilled);
+					currentWord = GIA_STANFORD_PARSER_AND_CORENLP_FEATURE_PARSER_ANOMALY_INTERPRET_CANNOT_AS_CAN_NOT_NEW_WORD_2;
+				}
+				#endif
+
 				#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_MATH_GROUPING
 				if(mathFound && previousCharacterIsMathGrouped)
 				{
@@ -464,6 +476,7 @@ bool GIApreprocessorClass::createPreprocessSentences(const string fileContents, 
 					previousCharacterIsMathGrouped = false;
 				}
 				#endif
+				
 			}
 			else
 			{
@@ -478,6 +491,7 @@ bool GIApreprocessorClass::createPreprocessSentences(const string fileContents, 
 	return result;
 }
 
+#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_EXTRACT_INDENTATION
 bool GIApreprocessorClass::extractIndentationFromCurrentLine(const string* lineContents, int* indexOfCurrentToken, int* currentIndentation, string* indentationContents)
 {
 	bool result = false;
@@ -508,6 +522,7 @@ string GIApreprocessorClass::generateIndentationContents(int currentIndentation)
 	}
 	return indentationContents;
 }
+#endif
 
 
 void GIApreprocessorClass::preprocessorFillCurrentWord(GIApreprocessorMultiwordReductionPlainTextWord** currentWordInSentence, string* currentWord, int* entityIndex, int lastCharacterIndexOfWordInSentence)
@@ -2668,7 +2683,25 @@ bool GIApreprocessorClass::addSentenceFeatureOutputToPreprocessorSentenceWordLis
 		GIApreprocessorWord* preprocessorSentenceWord = *preprocessorSentenceWordListIter;
 		if(originalNLPfeatures)
 		{
-			if(currentFeatureInList->word != preprocessorSentenceWord->tagName)
+			string NLPparsedWordOriginal = currentFeatureInList->word;
+			#ifdef GIA_STANFORD_PARSER_AND_CORENLP_FEATURE_PARSER_ANOMALY_WORD_CHANGES
+			if((translatorVariables->NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP) || (translatorVariables->NLPfeatureParser == GIA_NLP_PARSER_STANFORD_PARSER))
+			{
+				if(NLPparsedWordOriginal == GIA_STANFORD_PARSER_AND_CORENLP_FEATURE_PARSER_LEFT_BRACKET_WORD)
+				{
+					NLPparsedWordOriginal = SHAREDvars.convertCharToString(CHAR_OPEN_BRACKET);
+				}
+				if(NLPparsedWordOriginal == GIA_STANFORD_PARSER_AND_CORENLP_FEATURE_PARSER_RIGHT_BRACKET_WORD)
+				{
+					NLPparsedWordOriginal = SHAREDvars.convertCharToString(CHAR_CLOSE_BRACKET);
+				}
+				if(NLPparsedWordOriginal == GIA_STANFORD_PARSER_AND_CORENLP_FEATURE_PARSER_INVERTED_COMMAS_WORD)
+				{
+					NLPparsedWordOriginal = SHAREDvars.convertCharToString(CHAR_INVERTED_COMMAS);
+				}
+			}
+			#endif
+			if(NLPparsedWordOriginal != preprocessorSentenceWord->tagName)
 			{
 				cout << "GIApreprocessorClass::addSentenceNLPoutputToPreprocessorSentenceWordList{} error: (currentFeatureInList->word != preprocessorSentenceWord->tagName)" << endl;
 				cout << "currentFeatureInList->word = " << currentFeatureInList->word << endl;
