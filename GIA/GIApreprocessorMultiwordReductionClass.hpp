@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorMultiwordReductionClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3b2e 21-May-2017
+ * Project Version: 3b2f 21-May-2017
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  *
@@ -359,16 +359,16 @@ public:
 class GIApreprocessorMultiwordReductionClassClass
 {
 	#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
-	public: string generateTextFromPreprocessorSentenceWordList(GIApreprocessorWord* firstWordInSentence);
-		public: string generateTextFromPreprocessorSentenceWordList(GIApreprocessorWord* firstWordInSentence, bool LRPforNLP);
+	public: string generateTextFromPreprocessorSentenceWordList(const GIApreprocessorWord* firstWordInSentence);
+		public: string generateTextFromPreprocessorSentenceWordList(const GIApreprocessorWord* firstWordInSentence, const bool LRPforNLP);
 	public: string generateTextFromVectorWordList(vector<GIApreprocessorWord*>* logicReferenceVariableWordList);
-		public: string generateTextFromVectorWordList(vector<GIApreprocessorWord*>* logicReferenceVariableWordList, bool LRPforNLP);
-			public: string generateTextFromPreprocessorSentenceWord(GIApreprocessorWord* word, bool LRPforNLP, bool isFirstWordInSentence);
+		public: string generateTextFromVectorWordList(vector<GIApreprocessorWord*>* logicReferenceVariableWordList, const bool LRPforNLP);
+			public: string generateTextFromPreprocessorSentenceWord(const GIApreprocessorWord* word, const bool LRPforNLP, const bool isFirstWordInSentence);
 	public: int calculateLengthOfGeneratedVectorWordListText(vector<GIApreprocessorWord*>* logicReferenceVariableWordList);
 	public: bool generateSentenceWordList(GIApreprocessorMultiwordReductionWord* sentenceContentsFirstWord, vector<GIApreprocessorWord*>* logicReferenceVariableWordList);
 	public: bool addWordListToWordList(vector<GIApreprocessorWord*>* wordList, vector<GIApreprocessorWord*>* wordListToAdd);
-	public: bool addStringArrayToWordList(vector<GIApreprocessorWord*>* wordList, string* stringArrayToAdd, int arraySize);
-	public: bool addStringToWordList(vector<GIApreprocessorWord*>* wordList, string stringToAdd);
+	public: bool addStringArrayToWordList(vector<GIApreprocessorWord*>* wordList, const string* stringArrayToAdd, const int arraySize);
+	public: bool addStringToWordList(vector<GIApreprocessorWord*>* wordList, const string stringToAdd);
 	#endif	
 };
 

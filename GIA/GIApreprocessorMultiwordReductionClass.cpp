@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorMultiwordReductionClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3b2e 21-May-2017
+ * Project Version: 3b2f 21-May-2017
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  *
@@ -195,18 +195,18 @@ GIApreprocessorMultiwordReductionTagTextCorrespondenceInfo::~GIApreprocessorMult
 
 #ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
 
-string GIApreprocessorMultiwordReductionClassClass::generateTextFromPreprocessorSentenceWordList(GIApreprocessorWord* firstWordInSentence)
+string GIApreprocessorMultiwordReductionClassClass::generateTextFromPreprocessorSentenceWordList(const GIApreprocessorWord* firstWordInSentence)
 {
 	return generateTextFromPreprocessorSentenceWordList(firstWordInSentence, false);
 }
-string GIApreprocessorMultiwordReductionClassClass::generateTextFromPreprocessorSentenceWordList(GIApreprocessorWord* firstWordInSentence, bool LRPforNLP)
+string GIApreprocessorMultiwordReductionClassClass::generateTextFromPreprocessorSentenceWordList(const GIApreprocessorWord* firstWordInSentence, const bool LRPforNLP)
 {
 	string sentenceText = "";
-	GIApreprocessorWord* currentWordInSentence = firstWordInSentence;
+	const GIApreprocessorWord* currentWordInSentence = firstWordInSentence;
 	bool isFirstWordInSentence = true;
 	while(currentWordInSentence->nextTag != NULL)
 	{
-		GIApreprocessorWord* word = currentWordInSentence;
+		const GIApreprocessorWord* word = currentWordInSentence;
 		sentenceText = sentenceText + generateTextFromPreprocessorSentenceWord(word, LRPforNLP, isFirstWordInSentence);
 		isFirstWordInSentence = false;
 		
@@ -219,7 +219,7 @@ string GIApreprocessorMultiwordReductionClassClass::generateTextFromVectorWordLi
 {
 	return generateTextFromVectorWordList(logicReferenceVariableWordList, false);
 }
-string GIApreprocessorMultiwordReductionClassClass::generateTextFromVectorWordList(vector<GIApreprocessorWord*>* logicReferenceVariableWordList, bool LRPforNLP)
+string GIApreprocessorMultiwordReductionClassClass::generateTextFromVectorWordList(vector<GIApreprocessorWord*>* logicReferenceVariableWordList, const bool LRPforNLP)
 {
 	string sentenceText = "";
 	bool isFirstWordInSentence = true;
@@ -232,7 +232,7 @@ string GIApreprocessorMultiwordReductionClassClass::generateTextFromVectorWordLi
 	return sentenceText;
 }
 
-string GIApreprocessorMultiwordReductionClassClass::generateTextFromPreprocessorSentenceWord(GIApreprocessorWord* word, bool LRPforNLP, bool isFirstWordInSentence)
+string GIApreprocessorMultiwordReductionClassClass::generateTextFromPreprocessorSentenceWord(const GIApreprocessorWord* word, const bool LRPforNLP, const bool isFirstWordInSentence)
 {
 	string wordText = word->tagName;
 	if(LRPforNLP)
@@ -240,7 +240,7 @@ string GIApreprocessorMultiwordReductionClassClass::generateTextFromPreprocessor
 		if(word->plainTextWord)
 		{	
 			//cout << "word->plainTextWord: " << word->tagName << endl;
-			GIApreprocessorMultiwordReductionPlainTextWord* plaintextWord = static_cast<GIApreprocessorMultiwordReductionPlainTextWord*>(word);
+			const GIApreprocessorMultiwordReductionPlainTextWord* plaintextWord = static_cast<const GIApreprocessorMultiwordReductionPlainTextWord*>(word);
 			if(plaintextWord->tagNameLRPforNLP != "")
 			{
 				wordText = plaintextWord->tagNameLRPforNLP;
@@ -301,7 +301,7 @@ bool GIApreprocessorMultiwordReductionClassClass::addWordListToWordList(vector<G
 		wordList->push_back((*wordListToAdd)[i]);
 	}
 }
-bool GIApreprocessorMultiwordReductionClassClass::addStringArrayToWordList(vector<GIApreprocessorWord*>* wordList, string* stringArrayToAdd, int arraySize)
+bool GIApreprocessorMultiwordReductionClassClass::addStringArrayToWordList(vector<GIApreprocessorWord*>* wordList, const string* stringArrayToAdd, const int arraySize)
 {
 	for(int i=0; i<arraySize; i++)
 	{
@@ -309,7 +309,7 @@ bool GIApreprocessorMultiwordReductionClassClass::addStringArrayToWordList(vecto
 		wordList->push_back(newWord);
 	}
 }
-bool GIApreprocessorMultiwordReductionClassClass::addStringToWordList(vector<GIApreprocessorWord*>* wordList, string stringToAdd)
+bool GIApreprocessorMultiwordReductionClassClass::addStringToWordList(vector<GIApreprocessorWord*>* wordList, const string stringToAdd)
 {
 	GIApreprocessorWord* newWord = new GIApreprocessorWord(stringToAdd); 
 	wordList->push_back(newWord);

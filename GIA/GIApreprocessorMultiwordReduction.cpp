@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorMultiwordReduction.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3b2e 21-May-2017
+ * Project Version: 3b2f 21-May-2017
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  *
@@ -1415,13 +1415,19 @@ bool GIApreprocessorMultiwordReductionClass::searchAndReplaceMultiwordWordList(G
 				GIApreprocessorMultiwordReductionPlainTextWord* currentTagInPlainTextSentenceTemp2 = firstTagInPlainTextSentence;
 				int newEntityIndex = GIA_NLP_START_ENTITY_INDEX;
 				//int collapsedMultiwordWordIndex = 0;
+				
 				while(currentTagInPlainTextSentenceTemp2->nextTag != NULL)
 				{
 					if(currentTagInPlainTextSentenceTemp2->collapsedMultiwordWordTemp)
 					{//create a new correspondenceInfo
 						if(newEntityIndex != entityIndex)
 						{
+							cout << "newEntityIndex = " << newEntityIndex << endl;
+							cout << "entityIndex = " << entityIndex << endl;
+							cout << "currentTagInPlainTextSentenceTemp2->tagName = " << currentTagInPlainTextSentenceTemp2->tagName << endl;
 							cout << "GIApreprocessorMultiwordReductionClass::searchAndReplaceMultiwordWordList error: (newEntityIndex != entityIndex)" << endl;
+							cout << "generateTextFromPreprocessorSentenceWordList(firstTagInMultiwordWordList) = " << GIApreprocessorMultiwordReductionClassObject.generateTextFromPreprocessorSentenceWordList(currentTagInMultiwordWordList->firstTagInSentence) << endl;
+							cout << "generateTextFromPreprocessorSentenceWordList(firstTagInPlainTextSentence) = " << GIApreprocessorMultiwordReductionClassObject.generateTextFromPreprocessorSentenceWordList(firstTagInPlainTextSentence) << endl;
 							exit(EXIT_ERROR);
 						}
 						currentTagInPlainTextSentenceTemp2->collapsedMultiwordWordTemp = false;
@@ -1444,6 +1450,8 @@ bool GIApreprocessorMultiwordReductionClass::searchAndReplaceMultiwordWordList(G
 					currentTagInPlainTextSentenceTemp2 = static_cast<GIApreprocessorMultiwordReductionPlainTextWord*>(currentTagInPlainTextSentenceTemp2->nextTag);
 					newEntityIndex++;
 				}
+				
+				entityIndex = entityIndex - (numberWordsInMultiwordMatched-1);	//added 3b2f
 			}
 			else
 			{
