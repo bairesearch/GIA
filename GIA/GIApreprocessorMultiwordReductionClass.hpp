@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorMultiwordReductionClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3b3a 25-May-2017
+ * Project Version: 3b3b 25-May-2017
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  *
@@ -413,7 +413,7 @@ class GIApreprocessorMultiwordReductionClassClass
 		public: vector<GIApreprocessorWord*> extractSubWordListInWordList(const vector<GIApreprocessorWord*>* wordList, const int startIndexToExtract, const int numberOfWordsToExtract);
 	public: bool insertWordListIntoWordList(vector<GIApreprocessorWord*>* wordList, const vector<GIApreprocessorWord*>* wordListToInsert, const int indexToInsert);
 	public: bool insertStringIntoWordList(vector<GIApreprocessorWord*>* wordList, const string stringToInsert, const int indexToInsert);
-		public: bool insertWordIntoWordList(vector<GIApreprocessorWord*>* wordList, GIApreprocessorWord* wordListToInsert, const int indexToInsert);
+		public: bool insertWordIntoWordList(vector<GIApreprocessorWord*>* wordList, GIApreprocessorWord* wordToInsert, const int indexToInsert);
 	public: bool removeWordFromWordList(vector<GIApreprocessorWord*>* wordList, const int indexToRemove);
 		public: bool removeWordsFromWordList(vector<GIApreprocessorWord*>* wordList, const int indexToRemove, const int numberElementsToRemove);
 

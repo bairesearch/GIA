@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorMultiwordReductionClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3b3a 25-May-2017
+ * Project Version: 3b3b 25-May-2017
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  *
@@ -493,7 +493,14 @@ bool GIApreprocessorMultiwordReductionClassClass::wordListFindSubWordListInWordL
 			result = true;
 		}
 	}
-		
+	/*
+	else
+	{
+		cout << "GIApreprocessorMultiwordReductionClassClass::wordListFindSubWordListInWordList error{}: !(startIndexToPerformFind+wordListToFind->size() <= wordList->size())" << endl;
+		exit(EXIT_ERROR);
+	}
+	*/
+			
 	return result;
 }
 
@@ -568,7 +575,14 @@ int GIApreprocessorMultiwordReductionClassClass::findStringInWordList(const vect
 			}
 		}
 	}
-		
+	/*
+	else
+	{
+		cout << "GIApreprocessorMultiwordReductionClassClass::findStringInWordList error{}: !(startIndexToPerformFind < wordList->size())" << endl;
+		exit(EXIT_ERROR);
+	}
+	*/
+			
 	return indexOfWordFound;
 }
 
@@ -597,7 +611,14 @@ bool GIApreprocessorMultiwordReductionClassClass::findSubstringInWordList(const 
 			}
 		}
 	}
-		
+	/*
+	else
+	{
+		cout << "GIApreprocessorMultiwordReductionClassClass::findSubstringInWordList error{}: !(startIndexToPerformFind < wordList->size())" << endl;
+		exit(EXIT_ERROR);
+	}
+	*/
+			
 	return result;
 }
 
@@ -622,7 +643,14 @@ vector<GIApreprocessorWord*> GIApreprocessorMultiwordReductionClassClass::extrac
 			wordListSub.push_back((*wordList)[i]);
 		}
 	}
-		
+	/*
+	else
+	{
+		cout << "GIApreprocessorMultiwordReductionClassClass::extractSubWordListInWordList error{}: !(startIndexToExtract+numberOfWordsToExtract <= wordList->size())" << endl;
+		exit(EXIT_ERROR);
+	}
+	*/
+			
 	return wordListSub;
 }
 
@@ -630,7 +658,7 @@ bool GIApreprocessorMultiwordReductionClassClass::insertWordListIntoWordList(vec
 {
 	bool result = false;
 		
-	if(indexToInsert+wordListToInsert->size() <= wordList->size())
+	if(indexToInsert+wordListToInsert->size() <= wordList->size()+1)
 	{
 		result = true;
 		for(int i=0; i<wordListToInsert->size(); i++)
@@ -639,6 +667,11 @@ bool GIApreprocessorMultiwordReductionClassClass::insertWordListIntoWordList(vec
 			wordList->insert(iter, (*wordListToInsert)[i]);				
 		}
 	}
+	else
+	{
+		cout << "GIApreprocessorMultiwordReductionClassClass::insertWordIntoWordList error{}: !(indexToInsert+wordListToInsert->size() <= wordList->size()+1)" << endl;
+		exit(EXIT_ERROR);
+	}
 		
 	return result;
 }
@@ -646,25 +679,32 @@ bool GIApreprocessorMultiwordReductionClassClass::insertWordListIntoWordList(vec
 bool GIApreprocessorMultiwordReductionClassClass::insertStringIntoWordList(vector<GIApreprocessorWord*>* wordList, const string stringToInsert, const int indexToInsert)
 {
 	bool result = true;
-	GIApreprocessorWord* wordListToInsert = new GIApreprocessorWord(stringToInsert);
-	if(!insertWordIntoWordList(wordList, wordListToInsert, indexToInsert))
+	GIApreprocessorWord* wordToInsert = new GIApreprocessorWord(stringToInsert);
+	if(!insertWordIntoWordList(wordList, wordToInsert, indexToInsert))
 	{
 		result = false;
 	}
 		
 	return result;
 }
-//why can't this be declared const?; GIApreprocessorWord* wordListToInsert
-bool GIApreprocessorMultiwordReductionClassClass::insertWordIntoWordList(vector<GIApreprocessorWord*>* wordList, GIApreprocessorWord* wordListToInsert, const int indexToInsert)
+//why can't this be declared const?; GIApreprocessorWord* wordToInsert
+bool GIApreprocessorMultiwordReductionClassClass::insertWordIntoWordList(vector<GIApreprocessorWord*>* wordList, GIApreprocessorWord* wordToInsert, const int indexToInsert)
 {
 	bool result = false;
 	
-	if(indexToInsert < wordList->size())
+	if(indexToInsert <= wordList->size())
 	{
 		result = true;
 		vector<GIApreprocessorWord*>::iterator iter = wordList->begin() + indexToInsert;
-		wordList->insert(iter, wordListToInsert);	
+		wordList->insert(iter, wordToInsert);	
 	}
+	/*
+	else
+	{
+		cout << "GIApreprocessorMultiwordReductionClassClass::insertWordIntoWordList error{}: !(indexToInsert <= wordList->size())" << endl;
+		exit(EXIT_ERROR);
+	}
+	*/
 		
 	return result;
 }
@@ -682,6 +722,13 @@ bool GIApreprocessorMultiwordReductionClassClass::removeWordsFromWordList(vector
 		result = true;
 		wordList->erase((wordList->begin() + indexToRemove), (wordList->begin() + indexToRemove+numberElementsToRemove));
 	}
+	/*
+	else
+	{
+		cout << "GIApreprocessorMultiwordReductionClassClass::removeWordsFromWordList error{}: !(indexToRemove+numberElementsToRemove <= wordList->size())" << endl;
+		exit(EXIT_ERROR);
+	}
+	*/
 		
 	return result;
 }
