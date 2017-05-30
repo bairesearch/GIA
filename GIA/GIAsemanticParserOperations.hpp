@@ -25,7 +25,7 @@
  * File Name: GIAsemanticParserOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3b4b 28-May-2017
+ * Project Version: 3b4c 28-May-2017
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/

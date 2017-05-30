@@ -25,7 +25,7 @@
  * File Name: GIApreprocessor.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3b4b 28-May-2017
+ * Project Version: 3b4c 28-May-2017
  * Requirements: requires plain text file
  * Description: Logical Condition and Reference Set preprocessor
  *
@@ -71,7 +71,7 @@ class GIApreprocessorClass
 				public: bool createPreprocessSentences(const string fileContents, GIApreprocessorSentence* firstGIApreprocessorSentenceInList, bool interpretNewLinesAsNewSentences);
 					private: bool extractIndentationFromCurrentLine(const string* lineContents, int* indexOfCurrentToken, int* currentIndentation, string* indentationContents);
 					public: string generateIndentationContents(int currentIndentation);
-					private: void preprocessorFillCurrentWord(GIApreprocessorMultiwordReductionPlainTextWord** currentWordInSentence, string* currentWord, int* entityIndex);
+					private: void preprocessorFillCurrentWord(GIApreprocessorMultiwordReductionPlainTextWord** currentWordInSentence, string* currentWord, int* entityIndex, int lastCharacterIndexOfWordInSentence);
 				private: void copySentenceContentsPreprocessor(GIApreprocessorMultiwordReductionPlainTextWord* sentenceContents1FirstWord, GIApreprocessorMultiwordReductionPlainTextWord* sentenceContents2firstWord);
 			#ifdef GIA_PREPROCESSOR_SENTENCE
 			private: bool preprocessSentencesForGIA(GIApreprocessorSentence* firstGIApreprocessorSentenceInList, const string outputFileName, const string outputFileNameLRPforNLP);

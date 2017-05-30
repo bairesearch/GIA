@@ -25,7 +25,7 @@
  * File Name: GIApreprocessor.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3b4b 28-May-2017
+ * Project Version: 3b4c 28-May-2017
  * Requirements: requires plain text file
  * Description: Logical Condition and Reference Set preprocessor
  *
@@ -327,7 +327,7 @@ bool GIApreprocessorClass::createPreprocessSentences(const string fileContents, 
 			{
 				readingQuotation = false;
 				currentWord = currentWord + currentToken;	//add quotation mark to word
-				preprocessorFillCurrentWord(&currentWordInSentence, &currentWord, &entityIndex);
+				preprocessorFillCurrentWord(&currentWordInSentence, &currentWord, &entityIndex, charCount);
 			}
 			else
 			{
@@ -347,17 +347,19 @@ bool GIApreprocessorClass::createPreprocessSentences(const string fileContents, 
 			{
 				bool lastWordBlank = true;
 				
+				int lastCharacterIndexOfLastWordBeingFilled = charCount-1; 
 				#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_MATH_GROUPING
 				if(mathFound && previousCharacterIsMathGrouped)
 				{
 					currentWord = currentWord + currentToken;
+					lastCharacterIndexOfLastWordBeingFilled = charCount;
 				}
 				#endif
 				 
 				if(currentWord != "")
 				{//do not add empty tag after closing quotation marks	//e.g. GIA_PREPROCESSOR_MULTIWORD_REDUCTION_REDUCE_QUOTES_TO_SINGLE_WORDS or (newlineFound && interpretNewLinesAsNewSentences && previousCharacter==whitespace)
 					lastWordBlank = false;
-					preprocessorFillCurrentWord(&currentWordInSentence, &currentWord, &entityIndex);
+					preprocessorFillCurrentWord(&currentWordInSentence, &currentWord, &entityIndex, lastCharacterIndexOfLastWordBeingFilled);
 					whiteSpace = false;
 				}
 
@@ -365,21 +367,21 @@ bool GIApreprocessorClass::createPreprocessSentences(const string fileContents, 
 				{
 					string quotationMark = ""; 
 					quotationMark = quotationMark + currentToken;
-					preprocessorFillCurrentWord(&currentWordInSentence, &quotationMark, &entityIndex);
+					preprocessorFillCurrentWord(&currentWordInSentence, &quotationMark, &entityIndex, charCount);
 				}
 				#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_MATH_GROUPING
 				else if(mathFound && !previousCharacterIsMathGrouped)
 				{
 					string mathMark = ""; 
 					mathMark = mathMark + currentToken;
-					preprocessorFillCurrentWord(&currentWordInSentence, &mathMark, &entityIndex);
+					preprocessorFillCurrentWord(&currentWordInSentence, &mathMark, &entityIndex, charCount);
 				}
 				#endif
 				else if(punctuationMarkFound)
 				{
 					string punctuationMark = ""; 
 					punctuationMark = punctuationMark + currentToken;
-					preprocessorFillCurrentWord(&currentWordInSentence, &punctuationMark, &entityIndex);
+					preprocessorFillCurrentWord(&currentWordInSentence, &punctuationMark, &entityIndex, charCount);
 
 					bool endOfSentencePunctuationMarkFound = false;
 					if(SHAREDvars.charInCharArray(currentToken, nlpPunctionMarkCharacterEndOfSentenceArray, GIA_NLP_NUMBER_OF_PUNCTUATION_MARK_CHARACTERS_END_OF_SENTENCE))
@@ -440,7 +442,7 @@ bool GIApreprocessorClass::createPreprocessSentences(const string fileContents, 
 					{
 						string dollarMark = ""; 
 						dollarMark = dollarMark + currentToken;
-						preprocessorFillCurrentWord(&currentWordInSentence, &dollarMark, &entityIndex);
+						preprocessorFillCurrentWord(&currentWordInSentence, &dollarMark, &entityIndex, charCount);
 					}
 					else
 					{
@@ -508,10 +510,13 @@ string GIApreprocessorClass::generateIndentationContents(int currentIndentation)
 }
 
 
-void GIApreprocessorClass::preprocessorFillCurrentWord(GIApreprocessorMultiwordReductionPlainTextWord** currentWordInSentence, string* currentWord, int* entityIndex)
+void GIApreprocessorClass::preprocessorFillCurrentWord(GIApreprocessorMultiwordReductionPlainTextWord** currentWordInSentence, string* currentWord, int* entityIndex, int lastCharacterIndexOfWordInSentence)
 {
 	(*currentWordInSentence)->tagName = *currentWord;
 	(*currentWordInSentence)->entityIndex = *entityIndex;
+	#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
+	(*currentWordInSentence)->characterIndexInSentenceContentsOriginalText = lastCharacterIndexOfWordInSentence - currentWord->size() - 1;
+	#endif
 	(*currentWordInSentence)->nextTag = new GIApreprocessorMultiwordReductionPlainTextWord();
 	(*currentWordInSentence) = static_cast<GIApreprocessorMultiwordReductionPlainTextWord*>((*currentWordInSentence)->nextTag);
 	(*entityIndex) = (*entityIndex) + 1;
