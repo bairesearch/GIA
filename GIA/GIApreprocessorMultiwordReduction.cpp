@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorMultiwordReduction.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3b2a 21-May-2017
+ * Project Version: 3b2b 21-May-2017
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  *
@@ -61,41 +61,6 @@ GIApreprocessorMultiwordReductionTagTextCorrespondenceInfo* textGIApreprocessorM
 GIApreprocessorMultiwordReductionTagTextCorrespondenceInfo* queryGIApreprocessorMultiwordReductionTagTextCorrespondenceInfo;
 GIApreprocessorMultiwordReductionTagTextCorrespondenceInfo* activeGIApreprocessorMultiwordReductionTagTextCorrespondenceInfo;
 
-
-GIApreprocessorMultiwordReductionWord::GIApreprocessorMultiwordReductionWord(void)
-{
-	tagName = "";
-	tagNameLemma = "";
-
-	tagSpecialArbitraryName = false;
-	tagSpecialArbitraryNameType = GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_ARBITRARYNAME_UNDEFINED;
-	optional = false;
-	/*
-	primary = false;
-	primaryPhrasalVerbReplacementString = "";
-	primaryPhrasalVerbReplacementStringNLPonly = "";
-	*/
-
-	base = false;
-	for(int i=0; i<GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_MAX_NUM_TENSE_FORMS; i++)
-	{
-		grammaticalTenseFormsArray[i][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = "";
-		grammaticalTenseFormsArray[i][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_ALTERNATE] = "";
-	}
-	grammaticalTenseFormDetected = GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_INFINITIVE;
-
-	entityIndex = false;
-	collapsedPhrasalVerbExactDefinedSection = false;
-	collapsedMultiwordWord = false;
-	collapsedMultiwordWordType = GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DUMMY_COLLAPSED_MULTIWORD_UNDEFINED_TYPE;
-	collapsedMultiwordWordTemp = false;
-	
-	alternateTag = NULL;
-	nextTag = NULL;
-}
-GIApreprocessorMultiwordReductionWord::~GIApreprocessorMultiwordReductionWord(void)
-{
-}
 
 GIApreprocessorMultiwordReductionSentence::GIApreprocessorMultiwordReductionSentence(void)
 {
@@ -320,7 +285,7 @@ void GIApreprocessorMultiwordReductionClass::deinitialiseActiveGIApreprocessorMu
 }
 
 
-bool GIApreprocessorMultiwordReductionClass::parseTextFileAndReduceLanguage(const string plainTextInputFileName, GIApreprocessorSentence* firstGIApreprocessorSentenceInList, const string plainTextLRPoutputFileName, const string plainTextLRPforNLPoutputFileName)
+bool GIApreprocessorMultiwordReductionClass::parseTextFileAndReduceLanguage(GIApreprocessorSentence* firstGIApreprocessorSentenceInList, const string plainTextLRPoutputFileName, const string plainTextLRPforNLPoutputFileName)
 {
 	bool result = true;
 
@@ -339,43 +304,37 @@ bool GIApreprocessorMultiwordReductionClass::parseTextFileAndReduceLanguage(cons
 		result = false;
 	}
 
-	GIApreprocessorMultiwordReductionSentence* firstTagInPlainText = new GIApreprocessorMultiwordReductionSentence();
-	if(!this->loadPlainTextFile(plainTextInputFileName, firstTagInPlainText))
-	{
-		result = false;
-	}
-
 	GIApreprocessorMultiwordReductionTagTextCorrespondenceInfo* firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo = this->getActiveGIApreprocessorMultiwordReductionTagTextCorrespondenceInfo();
-	if(!this->searchAndReplacePhrasalVerbs(firstTagInPlainText, firstTagInPhrasalVerbList, firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo))
+	if(!this->searchAndReplacePhrasalVerbs(firstGIApreprocessorSentenceInList, firstTagInPhrasalVerbList, firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo))
 	{
 		result = false;
 	}
 
-	if(!loadMultiwordWordListAndSearchAndReplace(GIA_PREPROCESSOR_MULTIWORD_REDUCTION_MULTIWORD_PREPOSITION_DATABASE_FILE_NAME, firstTagInPlainText, firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DUMMY_COLLAPSED_MULTIWORD_PREPOSITION_TYPE))
+	if(!loadMultiwordWordListAndSearchAndReplace(GIA_PREPROCESSOR_MULTIWORD_REDUCTION_MULTIWORD_PREPOSITION_DATABASE_FILE_NAME, firstGIApreprocessorSentenceInList, firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DUMMY_COLLAPSED_MULTIWORD_PREPOSITION_TYPE))
 	{
 		result = false;
 	}
 	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_REDUCE_ALL_WORD_TYPES
-	if(!loadMultiwordWordListAndSearchAndReplace(GIA_PREPROCESSOR_MULTIWORD_REDUCTION_MULTIWORD_ADVERB_DATABASE_FILE_NAME, firstTagInPlainText, firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DUMMY_COLLAPSED_MULTIWORD_ADVERB_TYPE))
+	if(!loadMultiwordWordListAndSearchAndReplace(GIA_PREPROCESSOR_MULTIWORD_REDUCTION_MULTIWORD_ADVERB_DATABASE_FILE_NAME, firstGIApreprocessorSentenceInList, firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DUMMY_COLLAPSED_MULTIWORD_ADVERB_TYPE))
 	{
 		result = false;
 	}
-	if(!loadMultiwordWordListAndSearchAndReplace(GIA_PREPROCESSOR_MULTIWORD_REDUCTION_MULTIWORD_ADJECTIVE_DATABASE_FILE_NAME, firstTagInPlainText, firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DUMMY_COLLAPSED_MULTIWORD_ADJECTIVE_TYPE))
+	if(!loadMultiwordWordListAndSearchAndReplace(GIA_PREPROCESSOR_MULTIWORD_REDUCTION_MULTIWORD_ADJECTIVE_DATABASE_FILE_NAME, firstGIApreprocessorSentenceInList, firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DUMMY_COLLAPSED_MULTIWORD_ADJECTIVE_TYPE))
 	{
 		result = false;
 	}
-	if(!loadMultiwordWordListAndSearchAndReplace(GIA_PREPROCESSOR_MULTIWORD_REDUCTION_MULTIWORD_NOUN_DATABASE_FILE_NAME, firstTagInPlainText, firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DUMMY_COLLAPSED_MULTIWORD_NOUN_TYPE))
+	if(!loadMultiwordWordListAndSearchAndReplace(GIA_PREPROCESSOR_MULTIWORD_REDUCTION_MULTIWORD_NOUN_DATABASE_FILE_NAME, firstGIApreprocessorSentenceInList, firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DUMMY_COLLAPSED_MULTIWORD_NOUN_TYPE))
 	{
 		result = false;
 	}
-	if(!loadMultiwordWordListAndSearchAndReplace(GIA_PREPROCESSOR_MULTIWORD_REDUCTION_MULTIWORD_VERB_DATABASE_FILE_NAME, firstTagInPlainText, firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DUMMY_COLLAPSED_MULTIWORD_VERB_TYPE))
+	if(!loadMultiwordWordListAndSearchAndReplace(GIA_PREPROCESSOR_MULTIWORD_REDUCTION_MULTIWORD_VERB_DATABASE_FILE_NAME, firstGIApreprocessorSentenceInList, firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DUMMY_COLLAPSED_MULTIWORD_VERB_TYPE))
 	{
 		result = false;
 	}			
 	#endif
 
 	SHAREDvars.setCurrentDirectory(outputFolder);
-	if(!this->writeTagListToFile(firstTagInPlainText, firstGIApreprocessorSentenceInList, plainTextLRPoutputFileName, plainTextLRPforNLPoutputFileName, true))
+	if(!this->writeTagListToFile(firstGIApreprocessorSentenceInList, plainTextLRPoutputFileName, plainTextLRPforNLPoutputFileName, true))
 	{
 		result = false;
 	}
@@ -931,157 +890,40 @@ void GIApreprocessorMultiwordReductionClass::copyDefaultVerbTenseFormsToAlternat
 
 }
 
-bool GIApreprocessorMultiwordReductionClass::loadPlainTextFile(const string plainTextInputFileName, GIApreprocessorMultiwordReductionSentence* firstTagInPlainText)
+/*
+bool GIApreprocessorMultiwordReductionClass::loadPlainTextFile(const string plainTextInputFileName, GIApreprocessorMultiwordReductionSentence* firstTagInPlainText, GIApreprocessorSentence* firstGIApreprocessorSentenceInList, bool performLRPforNLPoutput)
 {
 	bool result = true;
 
 	GIApreprocessorMultiwordReductionSentence* currentTagInPlainText = firstTagInPlainText;
-	GIApreprocessorMultiwordReductionWord* firstTagInPlainTextSentence = currentTagInPlainText->firstTagInSentence;
-	GIApreprocessorMultiwordReductionWord* currentTagInPlainTextSentence = firstTagInPlainTextSentence;
-
-	string fileContents = SHAREDvars.getFileContents(plainTextInputFileName);
-
-	int charCount = 0;
-	char currentToken;
-	bool whiteSpace = false;
-	string currentWord = "";
-	int entityIndex = GIA_NLP_START_ENTITY_INDEX;	//only assigned after collapse?
-	int sentenceIndex = GIA_NLP_START_SENTENCE_INDEX;	//only assigned after collapse?
-	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_REDUCE_QUOTES_TO_SINGLE_WORDS
-	bool readingQuotation = false;
-	#endif
-	while(charCount < fileContents.length())
+		
+	GIApreprocessorSentence* currentGIApreprocessorSentenceInList = firstGIApreprocessorSentenceInList;
+	while(currentGIApreprocessorSentenceInList->next != NULL)
 	{
-		currentToken = fileContents[charCount];
-		bool punctuationMarkFound = false;
-		if(SHAREDvars.charInCharArray(currentToken, nlpPunctionMarkCharacterArray, GIA_NLP_NUMBER_OF_PUNCTUATION_MARK_CHARACTERS))
+		GIApreprocessorMultiwordReductionWord* firstTagInPlainTextSentence = currentTagInPlainText->firstTagInSentence;
+		GIApreprocessorMultiwordReductionWord* currentTagInPlainTextSentence = firstTagInPlainTextSentence;
+	
+		GIApreprocessorWord* sentenceContentsOriginalCurrentWord = currentGIApreprocessorSentenceInList->sentenceContentsOriginalFirstWord;
+		int entityIndex = GIA_NLP_START_ENTITY_INDEX;
+		while(sentenceContentsOriginalCurrentWord->next != NULL)
 		{
-			#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_FILENAMES_WITH_FULLSTOPS_AND_FLOATS_AND_TIMES
-			if(!this->isIntrawordPunctuationMark(charCount, &fileContents))
-			{
-			#endif
-				punctuationMarkFound = true;
-			#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_FILENAMES_WITH_FULLSTOPS_AND_FLOATS_AND_TIMES
-			}
-			#endif
+			currentTagInPlainTextSentence->tagName = sentenceContentsOriginalCurrentWord->word;
+			currentTagInPlainTextSentence->entityIndex = entityIndex;
+			currentTagInPlainTextSentence->sentenceIndex = currentGIApreprocessorSentenceInList->sentenceIndexOriginal;
+			currentTagInPlainTextSentence->nextTag = new GIApreprocessorMultiwordReductionWord();
+			currentTagInPlainTextSentence = currentTagInPlainTextSentence->nextTag;
+				
+			entityIndex++;
+			sentenceContentsOriginalCurrentWord = sentenceContentsOriginalCurrentWord->next;
+			currentTagInPlainTextSentence = currentTagInPlainTextSentence->next;
 		}
-		bool whiteSpaceFound = false;
-		if(SHAREDvars.charInCharArray(currentToken, nlpWhitespaceCharacterArray, GIA_NLP_NUMBER_OF_WHITESPACE_CHARACTERS))
-		{
-			whiteSpaceFound = true;
-		}
-		#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_REDUCE_QUOTES_TO_SINGLE_WORDS
-		bool quotationMarkFound = false;
-		if(SHAREDvars.charInCharArray(currentToken, nlpQuotationMarkCharacterArray, GIA_NLP_NUMBER_OF_QUOTATIONMARK_CHARACTERS))
-		{
-			quotationMarkFound = true;
-		}
-		if(quotationMarkFound)
-		{//NB imbedded/recursive quotation marks not currently supported eg "'hello'"
-			if(!readingQuotation)
-			{
-				readingQuotation = true;
-			}
-			else
-			{
-				readingQuotation = false;
-			}
-			if(!whiteSpace)
-			{
-				currentTagInPlainTextSentence->tagName = currentWord;
-				currentTagInPlainTextSentence->entityIndex = entityIndex;
-				currentTagInPlainTextSentence->sentenceIndex = sentenceIndex;
-				currentTagInPlainTextSentence->nextTag = new GIApreprocessorMultiwordReductionWord();
-				currentTagInPlainTextSentence = currentTagInPlainTextSentence->nextTag;
-				entityIndex++;
-				currentWord = "";
-			}
-		}
-		else
-		{
-		#endif
-			if(whiteSpaceFound || punctuationMarkFound)
-			{
-				#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_REDUCE_QUOTES_TO_SINGLE_WORDS
-				if(readingQuotation)
-				{
-					currentWord = currentWord + GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_QUOTES_DELIMITER;
-				}
-				else
-				{
-				#endif
-					if(!whiteSpace)
-					{//do not currently support punctuation marks with preceeding white space " ," " ." 
-					
-						#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_REDUCE_QUOTES_TO_SINGLE_WORDS
-						if(currentWord != "")
-						{//do not add empty tag after closing quotation marks
-						#endif
-							currentTagInPlainTextSentence->tagName = currentWord;
-							currentTagInPlainTextSentence->entityIndex = entityIndex;
-							currentTagInPlainTextSentence->nextTag = new GIApreprocessorMultiwordReductionWord();
-							currentTagInPlainTextSentence = currentTagInPlainTextSentence->nextTag;
-							entityIndex++;
-						#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_REDUCE_QUOTES_TO_SINGLE_WORDS
-						}
-						#endif
-						if(punctuationMarkFound)
-						{
-							currentTagInPlainTextSentence->tagName = currentToken;
-							currentTagInPlainTextSentence->entityIndex = entityIndex;
-							currentTagInPlainTextSentence->nextTag = new GIApreprocessorMultiwordReductionWord();
-							currentTagInPlainTextSentence = currentTagInPlainTextSentence->nextTag;
-
-							bool endOfSentencePunctuationMarkFound = false;
-							if(SHAREDvars.charInCharArray(currentToken, nlpPunctionMarkCharacterEndOfSentenceArray, GIA_NLP_NUMBER_OF_PUNCTUATION_MARK_CHARACTERS_END_OF_SENTENCE))
-							{
-								#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_FILENAMES_WITH_FULLSTOPS_AND_FLOATS_AND_TIMES
-								if(!this->isIntrawordPunctuationMark(charCount, &fileContents))
-								{
-								#endif
-									endOfSentencePunctuationMarkFound = true;
-								#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_FILENAMES_WITH_FULLSTOPS_AND_FLOATS_AND_TIMES
-								}
-								#endif
-							}
-							if(endOfSentencePunctuationMarkFound)
-							{
-								currentTagInPlainText->sentenceIndex = sentenceIndex;	//added 3a1a
-								currentTagInPlainText->nextSentence = new GIApreprocessorMultiwordReductionSentence();
-								currentTagInPlainText = currentTagInPlainText->nextSentence;
-								currentTagInPlainTextSentence = currentTagInPlainText->firstTagInSentence;
-								sentenceIndex++;
-								entityIndex = 0;
-							}
-							else
-							{
-								entityIndex++;
-							}
-						}
-						currentWord = "";
-					}
-					else
-					{//skip (do not parse) multiple white space/punctuation characters (eg ". "/".."/"  "/" .")
-					}
-					whiteSpace = true;
-				#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_REDUCE_QUOTES_TO_SINGLE_WORDS
-				}
-				#endif
-			}
-			else
-			{
-				whiteSpace = false;
-				currentWord = currentWord + currentToken;
-			}
-		#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_REDUCE_QUOTES_TO_SINGLE_WORDS
-		}
-		#endif
-		charCount++;
+		currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->next;
+		currentTagInPlainText = currentTagInPlainText->next;
 	}
-
 
 	return result;
 }
+*/
 
 #ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_FILENAMES_WITH_FULLSTOPS_AND_FLOATS_AND_TIMES
 bool GIApreprocessorMultiwordReductionClass::isIntrawordPunctuationMark(const int indexOfCurrentToken, const string* lineContents)
@@ -1106,17 +948,16 @@ bool GIApreprocessorMultiwordReductionClass::isIntrawordPunctuationMark(const in
 
 
 //NB the collapsed phrasal verb contains precisely 2 entities: phrasalVerbCollapsed, entity2: thing/place/body (eg belong_to + sb/Tom) - thing/place/bodies are not currently being differentiated by the LRP as this information is only first generated at NLP/GIA parse stage
-bool GIApreprocessorMultiwordReductionClass::searchAndReplacePhrasalVerbs(GIApreprocessorMultiwordReductionSentence* firstTagInPlainText, GIApreprocessorMultiwordReductionSentence* firstTagInPhrasalVerbList, GIApreprocessorMultiwordReductionTagTextCorrespondenceInfo* firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo)
+bool GIApreprocessorMultiwordReductionClass::searchAndReplacePhrasalVerbs(GIApreprocessorSentence* firstGIApreprocessorSentenceInList, GIApreprocessorMultiwordReductionSentence* firstTagInPhrasalVerbList, GIApreprocessorMultiwordReductionTagTextCorrespondenceInfo* firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo)
 {
 	bool result = true;
 
 	GIApreprocessorMultiwordReductionTagTextCorrespondenceInfo* currentCorrespondenceInfo = firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo;	//new correspondence info for each found phrasal verb
 
-	GIApreprocessorMultiwordReductionSentence* currentTagInPlainText = firstTagInPlainText;
-	while(currentTagInPlainText->nextSentence != NULL)
+	GIApreprocessorSentence* currentGIApreprocessorSentenceInList = firstGIApreprocessorSentenceInList;
+	while(currentGIApreprocessorSentenceInList->next != NULL)
 	{
-
-		GIApreprocessorMultiwordReductionWord* firstTagInPlainTextSentence = currentTagInPlainText->firstTagInSentence;
+		GIApreprocessorMultiwordReductionWord* firstTagInPlainTextSentence = currentGIApreprocessorSentenceInList->sentenceContentsLRPfirstWord;
 		GIApreprocessorMultiwordReductionWord* currentTagInPlainTextSentence = firstTagInPlainTextSentence;
 		GIApreprocessorMultiwordReductionWord* previousTagInPlainTextSentence = NULL;
 		while(currentTagInPlainTextSentence->nextTag != NULL)
@@ -1124,9 +965,9 @@ bool GIApreprocessorMultiwordReductionClass::searchAndReplacePhrasalVerbs(GIApre
 
 			bool foundAtLeastOnePhrasalVerbInSentenceAndCollapsed = false;
 			GIApreprocessorMultiwordReductionSentence* currentTagInPhrasalVerbList = firstTagInPhrasalVerbList;
+			int numberWordsInMultiwordMatched = 0;
 			while(currentTagInPhrasalVerbList->nextSentence != NULL)
 			{
-
 				GIApreprocessorMultiwordReductionSentence* currentTagInPhrasalVerbListNormOrAlternate = currentTagInPhrasalVerbList;
 				bool alternatePhrasalVerb = false;
 				while(!alternatePhrasalVerb || (currentTagInPhrasalVerbListNormOrAlternate->alternateSentence != NULL))
@@ -1138,6 +979,7 @@ bool GIApreprocessorMultiwordReductionClass::searchAndReplacePhrasalVerbs(GIApre
 					GIApreprocessorMultiwordReductionWord* firstTagInPhrasalVerb = currentTagInPhrasalVerbListNormOrAlternate->firstTagInSentence;
 					GIApreprocessorMultiwordReductionWord* currentTagInPhrasalVerb = firstTagInPhrasalVerb;
 					bool stillFoundVerbMatchOfArbitraryTense = true;
+					int numberWordsInMultiword = 0;
 					bool foundAtLeastOneMatch = false;
 					GIApreprocessorMultiwordReductionWord* currentTagInPlainTextSentenceTemp = currentTagInPlainTextSentence;
 					GIApreprocessorMultiwordReductionWord* lastTagInPlainTextSentenceTemp = NULL;	//pointer used to change original plain text to collapsed phrasal verb text
@@ -1241,6 +1083,7 @@ bool GIApreprocessorMultiwordReductionClass::searchAndReplacePhrasalVerbs(GIApre
 								}
 
 								foundAtLeastOneMatch = true;
+								numberWordsInMultiword++;
 								currentTagInCollapsedPhrasalVerb->collapsedPhrasalVerbExactDefinedSection = true;
 								//currentTagInCollapsedPhrasalVerb->collapsedPhrasalVerbExactDefinedSectionTemp = true;
 								currentTagInCollapsedPhrasalVerb->tagName = currentTagInCollapsedPhrasalVerb->tagName + currentTagInPlainTextSentenceTemp->tagName + GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_MULTIWORD_WORD_DELIMITER;		//this is part of the defined/main section of the phrasal verb
@@ -1306,9 +1149,15 @@ bool GIApreprocessorMultiwordReductionClass::searchAndReplacePhrasalVerbs(GIApre
 								}
 								else
 								{
-									currentTagInPlainText->firstTagInSentence = firstTagInCollapsedPhrasalVerb;
+									currentGIApreprocessorSentenceInList->sentenceContentsLRPfirstWord = firstTagInCollapsedPhrasalVerb;
 									firstTagInPlainTextSentence = firstTagInCollapsedPhrasalVerb;								
 								}
+								
+								numberWordsInMultiwordMatched = numberWordsInMultiword;
+								#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
+								firstTagInCollapsedPhrasalVerb->preprocessorUpperLevelWordReference = currentTagInPlainTextSentenceTemp->preprocessorUpperLevelWordReference;
+								firstTagInCollapsedPhrasalVerb->preprocessorUpperLevelWordReferenceSize = numberWordsInMultiwordMatched;
+								#endif
 								
 								foundAtLeastOnePhrasalVerbInSentenceAndCollapsed = true;
 							}
@@ -1333,7 +1182,7 @@ bool GIApreprocessorMultiwordReductionClass::searchAndReplacePhrasalVerbs(GIApre
 			}
 			if(foundAtLeastOnePhrasalVerbInSentenceAndCollapsed)
 			{
-				//renumberEntityIndiciesInCorrespondenceInfo(firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, currentTagInPlainText->sentenceIndex, numberWordsInMultiwordMatched); - this is not required because searchAndReplaceMultiwordWordList is executed after searchAndReplacePhrasalVerbs
+				//renumberEntityIndiciesInCorrespondenceInfo(firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, currentGIApreprocessorSentenceInList->sentenceIndexOriginal, numberWordsInMultiwordMatched); - this is not required because searchAndReplaceMultiwordWordList is executed after searchAndReplacePhrasalVerbs
 				GIApreprocessorMultiwordReductionWord* currentTagInPlainTextSentenceTemp2 = firstTagInPlainTextSentence;
 				int newEntityIndex = GIA_NLP_START_ENTITY_INDEX;
 				while(currentTagInPlainTextSentenceTemp2->nextTag != NULL)
@@ -1348,7 +1197,7 @@ bool GIApreprocessorMultiwordReductionClass::searchAndReplacePhrasalVerbs(GIApre
 						string tagNameWithLastLetterDropped = tagName.substr(0, tagName.length()-1);
 						currentTagInPlainTextSentenceTemp2->tagNameLemma = tagNameLemmaWithLastLetterDropped;
 						currentTagInPlainTextSentenceTemp2->tagName = tagNameWithLastLetterDropped;
-						currentCorrespondenceInfo->sentenceIndex = currentTagInPlainText->sentenceIndex;
+						currentCorrespondenceInfo->sentenceIndex = currentGIApreprocessorSentenceInList->sentenceIndexOriginal;
 						currentCorrespondenceInfo->entityIndex = newEntityIndex;
 						currentCorrespondenceInfo->lemmaWithLRP = currentTagInPlainTextSentenceTemp2->tagNameLemma;
 						currentCorrespondenceInfo->wordWithLRP = currentTagInPlainTextSentenceTemp2->tagName;
@@ -1366,14 +1215,14 @@ bool GIApreprocessorMultiwordReductionClass::searchAndReplacePhrasalVerbs(GIApre
 		}
 
 
-		currentTagInPlainText = currentTagInPlainText->nextSentence;
+		currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->next;
 	}
 
 	return result;
 }
 
 
-bool GIApreprocessorMultiwordReductionClass::loadMultiwordWordListAndSearchAndReplace(const string multiwordWordListFileName, GIApreprocessorMultiwordReductionSentence* firstTagInPlainText, GIApreprocessorMultiwordReductionTagTextCorrespondenceInfo* firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, const int wordListType)
+bool GIApreprocessorMultiwordReductionClass::loadMultiwordWordListAndSearchAndReplace(const string multiwordWordListFileName, GIApreprocessorSentence* firstGIApreprocessorSentenceInList, GIApreprocessorMultiwordReductionTagTextCorrespondenceInfo* firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, const int wordListType)
 {
 	bool result = true;
 	
@@ -1388,7 +1237,7 @@ bool GIApreprocessorMultiwordReductionClass::loadMultiwordWordListAndSearchAndRe
 	{
 		currentGIApreprocessorMultiwordReductiontagCorrespondenceInfo = currentGIApreprocessorMultiwordReductiontagCorrespondenceInfo->next;	//added 2j6d (add to end of list)
 	}
-	if(!this->searchAndReplaceMultiwordWordList(firstTagInPlainText, firstTagInMultiwordWordList, currentGIApreprocessorMultiwordReductiontagCorrespondenceInfo, firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, wordListType))
+	if(!this->searchAndReplaceMultiwordWordList(firstGIApreprocessorSentenceInList, firstTagInMultiwordWordList, currentGIApreprocessorMultiwordReductiontagCorrespondenceInfo, firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, wordListType))
 	{
 		result = false;
 	}
@@ -1451,18 +1300,19 @@ bool GIApreprocessorMultiwordReductionClass::loadMultiwordWordList(const string 
 	return result;
 }
 
-bool GIApreprocessorMultiwordReductionClass::searchAndReplaceMultiwordWordList(GIApreprocessorMultiwordReductionSentence* firstTagInPlainText, const GIApreprocessorMultiwordReductionSentence* firstTagInMultiwordWordList, GIApreprocessorMultiwordReductionTagTextCorrespondenceInfo* currentGIApreprocessorMultiwordReductiontagCorrespondenceInfo, GIApreprocessorMultiwordReductionTagTextCorrespondenceInfo* firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, const int wordListType)
+bool GIApreprocessorMultiwordReductionClass::searchAndReplaceMultiwordWordList(GIApreprocessorSentence* firstGIApreprocessorSentenceInList, const GIApreprocessorMultiwordReductionSentence* firstTagInMultiwordWordList, GIApreprocessorMultiwordReductionTagTextCorrespondenceInfo* currentGIApreprocessorMultiwordReductiontagCorrespondenceInfo, GIApreprocessorMultiwordReductionTagTextCorrespondenceInfo* firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, const int wordListType)
 {
 	bool result = true;
 
 	GIApreprocessorMultiwordReductionTagTextCorrespondenceInfo* currentCorrespondenceInfo = currentGIApreprocessorMultiwordReductiontagCorrespondenceInfo;	//new correspondence info for each found multiword word
 
-	GIApreprocessorMultiwordReductionSentence* currentTagInPlainText = firstTagInPlainText;
-	while(currentTagInPlainText->nextSentence != NULL)
+	GIApreprocessorSentence* currentGIApreprocessorSentenceInList = firstGIApreprocessorSentenceInList;
+	while(currentGIApreprocessorSentenceInList->next != NULL)
 	{		
-		GIApreprocessorMultiwordReductionWord* firstTagInPlainTextSentence = currentTagInPlainText->firstTagInSentence;
+		GIApreprocessorMultiwordReductionWord* firstTagInPlainTextSentence = currentGIApreprocessorSentenceInList->sentenceContentsLRPfirstWord;
 		GIApreprocessorMultiwordReductionWord* currentTagInPlainTextSentence = firstTagInPlainTextSentence;
 		GIApreprocessorMultiwordReductionWord* previousTagInPlainTextSentence = NULL;
+
 		int entityIndex = GIA_NLP_START_ENTITY_INDEX;
 		while(currentTagInPlainTextSentence->nextTag != NULL)
 		{			
@@ -1471,9 +1321,9 @@ bool GIApreprocessorMultiwordReductionClass::searchAndReplaceMultiwordWordList(G
 			int numberWordsInMultiwordMatched = 0;
 			while(currentTagInMultiwordWordList->nextSentence != NULL)
 			{				
-				int numberWordsInMultiword = 0;
 				bool foundAtLeastOneMultiwordWordInSentenceAndCollapsedTemp = false;
 				bool stillFoundWordMatch = true;
+				int numberWordsInMultiword = 0;
 				bool foundAtLeastOneMatch = false;
 				GIApreprocessorMultiwordReductionWord* currentTagInPlainTextSentenceTemp = currentTagInPlainTextSentence;
 				GIApreprocessorMultiwordReductionWord* firstTagInCollapsedMultiwordWord = new GIApreprocessorMultiwordReductionWord();
@@ -1510,12 +1360,16 @@ bool GIApreprocessorMultiwordReductionClass::searchAndReplaceMultiwordWordList(G
 						}
 						else
 						{
-							currentTagInPlainText->firstTagInSentence = firstTagInCollapsedMultiwordWord;
+							currentGIApreprocessorSentenceInList->sentenceContentsLRPfirstWord = firstTagInCollapsedMultiwordWord;
 							firstTagInPlainTextSentence = firstTagInCollapsedMultiwordWord;
 						}
 						foundAtLeastOneMultiwordWordInSentenceAndCollapsed = true;
 						foundAtLeastOneMultiwordWordInSentenceAndCollapsedTemp = true;
 						numberWordsInMultiwordMatched = numberWordsInMultiword;
+						#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
+						firstTagInCollapsedMultiwordWord->preprocessorUpperLevelWordReference = currentTagInPlainTextSentenceTemp->preprocessorUpperLevelWordReference;
+						firstTagInCollapsedMultiwordWord->preprocessorUpperLevelWordReferenceSize = numberWordsInMultiwordMatched;
+						#endif
 					}
 				}
 				if(!foundAtLeastOneMultiwordWordInSentenceAndCollapsedTemp)
@@ -1527,7 +1381,7 @@ bool GIApreprocessorMultiwordReductionClass::searchAndReplaceMultiwordWordList(G
 			}
 			if(foundAtLeastOneMultiwordWordInSentenceAndCollapsed)
 			{
-				renumberEntityIndiciesInCorrespondenceInfo(firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, currentTagInPlainText->sentenceIndex, entityIndex, numberWordsInMultiwordMatched);	//this is required for revertNLPtagNameToOfficialLRPtagName	//this is required because searchAndReplaceMultiwordWordList (zero or more times)/searchAndReplacePhrasalVerbs is executed before searchAndReplaceMultiwordWordList 
+				renumberEntityIndiciesInCorrespondenceInfo(firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, currentGIApreprocessorSentenceInList->sentenceIndexOriginal, entityIndex, numberWordsInMultiwordMatched);	//this is required for revertNLPtagNameToOfficialLRPtagName	//this is required because searchAndReplaceMultiwordWordList (zero or more times)/searchAndReplacePhrasalVerbs is executed before searchAndReplaceMultiwordWordList 
 				GIApreprocessorMultiwordReductionWord* currentTagInPlainTextSentenceTemp2 = firstTagInPlainTextSentence;
 				int newEntityIndex = GIA_NLP_START_ENTITY_INDEX;
 				//int collapsedMultiwordWordIndex = 0;
@@ -1544,7 +1398,7 @@ bool GIApreprocessorMultiwordReductionClass::searchAndReplaceMultiwordWordList(G
 						string tagName = currentTagInPlainTextSentenceTemp2->tagName;
 						string tagNameWithLastLetterDropped = tagName.substr(0, tagName.length()-1);
 						currentTagInPlainTextSentenceTemp2->tagName = tagNameWithLastLetterDropped;	//remove last GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_MULTIWORD_WORD_DELIMITER
-						currentCorrespondenceInfo->sentenceIndex = currentTagInPlainText->sentenceIndex;
+						currentCorrespondenceInfo->sentenceIndex = currentGIApreprocessorSentenceInList->sentenceIndexOriginal;
 						currentCorrespondenceInfo->entityIndex = newEntityIndex;	//this is not currently used for LRP collapsed multiword word
 						//#ifdef GIA_SEMANTIC_PARSER
 						currentCorrespondenceInfo->lemmaWithLRP = currentTagInPlainTextSentenceTemp2->tagName;	//added 2j6c	//required for GIA2 only?
@@ -1569,7 +1423,8 @@ bool GIApreprocessorMultiwordReductionClass::searchAndReplaceMultiwordWordList(G
 			previousTagInPlainTextSentence = currentTagInPlainTextSentence;
 			currentTagInPlainTextSentence = currentTagInPlainTextSentence->nextTag;
 		}
-		currentTagInPlainText = currentTagInPlainText->nextSentence;
+		
+		currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->next;
 	}
 
 	return result;
@@ -1591,7 +1446,7 @@ void GIApreprocessorMultiwordReductionClass::renumberEntityIndiciesInCorresponde
 	}
 }
 
-bool GIApreprocessorMultiwordReductionClass::writeTagListToFile(const GIApreprocessorMultiwordReductionSentence* firstTagInPlainText, GIApreprocessorSentence* firstGIApreprocessorSentenceInList, const string plainTextLRPoutputFileName, const string plainTextLRPforNLPoutputFileName, const bool performLRPforNLPoutput)
+bool GIApreprocessorMultiwordReductionClass::writeTagListToFile(const GIApreprocessorSentence* firstGIApreprocessorSentenceInList, const string plainTextLRPoutputFileName, const string plainTextLRPforNLPoutputFileName, const bool performLRPforNLPoutput)
 {
 	bool result = true;
 	
@@ -1604,16 +1459,21 @@ bool GIApreprocessorMultiwordReductionClass::writeTagListToFile(const GIApreproc
 	
 	bool firstCharacterInFile = true;
 
-	#ifdef GIA_PREPROCESSOR_RECORD
-	GIApreprocessorSentence* currentGIApreprocessorSentenceInList = firstGIApreprocessorSentenceInList;
-	#endif
-	const GIApreprocessorMultiwordReductionSentence* currentTagInPlainText = firstTagInPlainText;
-	while(currentTagInPlainText->nextSentence != NULL)
+	const GIApreprocessorSentence* currentGIApreprocessorSentenceInList = firstGIApreprocessorSentenceInList;
+	while(currentGIApreprocessorSentenceInList->next != NULL)
 	{
 		string sentenceContentsLRP = "";
 		string sentenceContentsLRPforNLP = "";
 		bool firstCharacterInSentence = true;
-		const GIApreprocessorMultiwordReductionWord* firstTagInPlainTextSentence = currentTagInPlainText->firstTagInSentence;
+		GIApreprocessorMultiwordReductionWord* firstTagInPlainTextSentence;
+		if(performLRPforNLPoutput)
+		{
+			currentGIApreprocessorSentenceInList->sentenceContentsLRPfirstWord;
+		}
+		else
+		{
+			currentGIApreprocessorSentenceInList->sentenceContentsLRPfirstWord;	//CHECKTHIS
+		}
 		const GIApreprocessorMultiwordReductionWord* currentTagInPlainTextSentence = firstTagInPlainTextSentence;
 		while(currentTagInPlainTextSentence->nextTag != NULL)
 		{
@@ -1668,15 +1528,9 @@ bool GIApreprocessorMultiwordReductionClass::writeTagListToFile(const GIApreproc
 			sentenceContentsLRPforNLP = sentenceContentsLRPforNLP + CHAR_NEWLINE;
 			#endif
 			plainTextLRPforNLPOutput->write(sentenceContentsLRPforNLP.c_str(), sentenceContentsLRPforNLP.length());
-		
-			#ifdef GIA_PREPROCESSOR_RECORD
-			currentGIApreprocessorSentenceInList->sentenceContentsLRP = sentenceContentsLRP;
-			currentGIApreprocessorSentenceInList->sentenceContentsLRPforNLP = sentenceContentsLRPforNLP;
-			currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->next;
-			#endif
 		}
 		
-		currentTagInPlainText = currentTagInPlainText->nextSentence;
+		currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->next;
 	}
 
 	plainTextLRPOutput.close();
@@ -2428,3 +2282,5 @@ bool GIApreprocessorMultiwordReductionClass::generateVerbCase(const string baseN
 #endif
 #endif
 */
+
+

@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorSentenceClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3b2a 21-May-2017
+ * Project Version: 3b2b 21-May-2017
  * Requirements: requires plain text file
  * Description: Logical Condition and Reference Set preprocessor
  *
@@ -38,6 +38,7 @@
 #include "GIAglobalDefs.hpp"
 #include "SHAREDvars.hpp"
 #include "GIAentityNodeClass.hpp"	//required for primaryEntityTemp
+#include "GIApreprocessorMultiwordReductionClass.hpp" 
 
 #define GIA_PREPROCESSOR_XML_TAG_preprocessor ((string)"preprocessor")
 	#define GIA_PREPROCESSOR_XML_TAG_logicReference ((string)"logicReference")
@@ -126,6 +127,13 @@ static string GIApreprocessorLogicReferenceVariableNames[GIA_PREPROCESSOR_SENTEN
 #define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_SPECIAL_CASE_OBJECT_REFERS_TO_PREVIOUS_DELIMITER_VERB (2) 	//eg Tom rides fast
 
 #define BOOL_NA (false)
+
+
+
+
+
+
+
 
 class GIApreprocessorSubReferenceSet
 {
@@ -218,8 +226,11 @@ public:
 
 	int sentenceIndexOriginal;
 	string sentenceContentsOriginal;
-	string sentenceContentsLRP;
-	string sentenceContentsLRPforNLP;
+	//#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
+	GIApreprocessorMultiwordReductionWord* sentenceContentsOriginalFirstWord;
+	GIApreprocessorMultiwordReductionWord* sentenceContentsLRPfirstWord;
+	GIApreprocessorMultiwordReductionWord* sentenceContentsLRPforNLPfirstWord;
+	//#endif
 	
 	bool hasLogicReference;	//if false, then firstLogicReferenceInList will only have a single GIApreprocessorLogicReference
 	GIApreprocessorLogicReference* firstLogicReferenceInList;
