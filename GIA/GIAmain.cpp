@@ -25,7 +25,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3c1e 01-June-2017
+ * Project Version: 3c1f 01-June-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -588,7 +588,7 @@ int main(const int argc, const char** argv)
 
 		if(SHAREDvarsClass().argumentExists(argc, argv, "-version"))
 		{
-			cout << "GIA.exe - Project Version: 3c1e 01-June-2017" << endl;
+			cout << "GIA.exe - Project Version: 3c1f 01-June-2017" << endl;
 			exit(EXIT_OK);
 		}
 
@@ -852,7 +852,6 @@ bool GIAmainClass::executeGIA2()
 	#endif
 	
 	inputFolder = inputFolderLocal;
-	cout << "inputFolder = " << inputFolder << endl;
 	outputFolder = outputFolderLocal;
 	SHAREDvarsClass().setCurrentDirectory(inputFolder);
 	
@@ -1110,13 +1109,9 @@ bool GIAmainClass::executeGIA2()
 	#endif
 		
 		#ifdef GIA_PREPROCESSOR
-		if(!GIApreprocessor.preprocessTextForGIAwrapper(useLRP, &inputTextPlainTXTfileName, outputLRPTextPlainTXTFileName, false, translatorVariables))
+		if(!GIApreprocessor.preprocessTextForGIAwrapper(useLRP, &inputTextPlainTXTfileName, outputLRPTextPlainTXTFileName, false, translatorVariables, &useInputTextPlainTXTFile))
 		{
 			result = false;
-		}
-		else
-		{
-			useInputTextPlainTXTFile = true;	//in case inputText was transferred to NLC via translatorVariables
 		}	
 		#endif
 
@@ -1264,13 +1259,9 @@ bool GIAmainClass::executeGIA2()
 	if(useInputQuery)
 	{
 		#ifdef GIA_PREPROCESSOR
-		if(!GIApreprocessor.preprocessTextForGIAwrapper(useLRP, &inputQueryPlainTXTFileName, outputQueryLRPTextPlainTXTFileName, true, translatorVariablesQuery))
+		if(!GIApreprocessor.preprocessTextForGIAwrapper(useLRP, &inputQueryPlainTXTFileName, outputQueryLRPTextPlainTXTFileName, true, translatorVariablesQuery, &useInputQueryPlainTXTFile))
 		{
 			result = false;
-		}
-		else
-		{
-			useInputQueryPlainTXTFile = true;	//in case inputTextQuery was transferred to NLC via translatorVariables
 		}
 		#endif
 
