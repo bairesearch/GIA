@@ -25,7 +25,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3c1d 01-June-2017
+ * Project Version: 3c1e 01-June-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -740,6 +740,7 @@
 
 //#define GIA_DEBUG_DISABLE_3c_CODE
 #ifndef GIA_DEBUG_DISABLE_3c_CODE
+	#define GIA_EXPECT_NEWLINE_AT_END_OF_INPUT_TEXT_FILE	//3c1e
 	#define GIA_DRAW_IGNORE_INITIALISED_ENTITY_CONNECTION_FOR_PRINTING_BOOL	//3c1d
 #endif
 

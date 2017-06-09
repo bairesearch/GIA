@@ -25,7 +25,7 @@
  * File Name: GIAdraw.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3c1d 01-June-2017
+ * Project Version: 3c1e 01-June-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -214,6 +214,8 @@
 
 #define GIA_DRAW_SVG_VIEWBOX_MIN_X_OFFSET (100)
 #define GIA_DRAW_SVG_VIEWBOX_MIN_Y_OFFSET (100)
+#define GIA_DRAW_SVG_VIEWBOX_MIN_X_OFFSET_SINGLE_SENTENCE (100)
+#define GIA_DRAW_SVG_VIEWBOX_MIN_Y_OFFSET_SINGLE_SENTENCE (0)
 #define GIA_DRAW_SVG_VIEWBOX_MIN_X (-GIA_DRAW_SVG_VIEWBOX_MIN_X_OFFSET)
 #define GIA_DRAW_SVG_VIEWBOX_MAX_X (1920)
 #define GIA_DRAW_SVG_VIEWBOX_MIN_Y (-GIA_DRAW_SVG_VIEWBOX_MIN_Y_OFFSET)

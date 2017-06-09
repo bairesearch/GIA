@@ -25,7 +25,7 @@
  * File Name: GIAdraw.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3c1d 01-June-2017
+ * Project Version: 3c1e 01-June-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -73,10 +73,10 @@ bool GIAdrawClass::printGIAnetworkNodesToSVGstring(GIAtranslatorVariablesClass* 
 	this->determineBasicPrintPositionsOfAllNodes(translatorVariables->entityNodesActiveListComplete, &drawVariables, firstReferenceInPrintList, firstTagInSVGFile);
 	cout << "firstTagInSVGFile = " << firstTagInSVGFile->name << endl;
 	
-	const int viewBoxMinX = -GIA_DRAW_SVG_VIEWBOX_MIN_X_OFFSET;
-	const int viewBoxMaxX = width-GIA_DRAW_SVG_VIEWBOX_MIN_X_OFFSET;
-	const int viewBoxMinY = -GIA_DRAW_SVG_VIEWBOX_MIN_Y_OFFSET;
-	const int viewBoxMaxY = height-GIA_DRAW_SVG_VIEWBOX_MIN_Y_OFFSET;
+	const int viewBoxMinX = -GIA_DRAW_SVG_VIEWBOX_MIN_X_OFFSET_SINGLE_SENTENCE;
+	const int viewBoxMaxX = width-GIA_DRAW_SVG_VIEWBOX_MIN_X_OFFSET_SINGLE_SENTENCE;
+	const int viewBoxMinY = -GIA_DRAW_SVG_VIEWBOX_MIN_Y_OFFSET_SINGLE_SENTENCE;
+	const int viewBoxMaxY = height-GIA_DRAW_SVG_VIEWBOX_MIN_Y_OFFSET_SINGLE_SENTENCE;
 	if(!LDsvg.writeSVGfile(writeFileStringSVG, firstTagInSVGFile, viewBoxMinX, viewBoxMaxX, viewBoxMinY, viewBoxMaxY))
 	{
 		result = false;

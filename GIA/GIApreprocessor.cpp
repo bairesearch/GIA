@@ -25,7 +25,7 @@
  * File Name: GIApreprocessor.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3c1d 01-June-2017
+ * Project Version: 3c1e 01-June-2017
  * Requirements: requires plain text file
  * Description: Logical Condition and Reference Set preprocessor
  *
@@ -404,7 +404,15 @@ bool GIApreprocessorClass::createPreprocessSentences(const string fileContents, 
 						}
 						#endif
 					}
-					if(endOfSentencePunctuationMarkFound && !interpretNewLinesAsNewSentences)
+					
+					bool lastCharacterInFile = false;
+					#ifndef GIA_EXPECT_NEWLINE_AT_END_OF_INPUT_TEXT_FILE
+					if(charCount == fileContents.length()-1)
+					{
+						lastCharacterInFile = true;
+					}
+					#endif
+					if(endOfSentencePunctuationMarkFound && (!interpretNewLinesAsNewSentences || lastCharacterInFile))
 					{
 						GIApreprocessorMultiwordReductionClassObject.generateSentenceWordList(firstWordInSentence, &(currentGIApreprocessorSentenceInList->sentenceContentsOriginal));
 						currentGIApreprocessorSentenceInList->sentenceIndexOriginal = sentenceIndex;
@@ -425,8 +433,6 @@ bool GIApreprocessorClass::createPreprocessSentences(const string fileContents, 
 					GIApreprocessorMultiwordReductionClassObject.generateSentenceWordList(firstWordInSentence, &(currentGIApreprocessorSentenceInList->sentenceContentsOriginal));
 					currentGIApreprocessorSentenceInList->sentenceIndexOriginal = sentenceIndex;
 					currentGIApreprocessorSentenceInList->sentenceContentsOriginalText = sentenceContentsOriginalText;
-					//cout << "1 currentGIApreprocessorSentenceInList->sentenceIndexOriginal = " << currentGIApreprocessorSentenceInList->sentenceIndexOriginal << endl;
-					//cout << "1 currentGIApreprocessorSentenceInList->sentenceContentsOriginalText = " << currentGIApreprocessorSentenceInList->sentenceContentsOriginalText << endl;
 					currentGIApreprocessorSentenceInList->next = new GIApreprocessorSentence();
 					currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->next;
 					firstWordInSentence = new GIApreprocessorMultiwordReductionPlainTextWord();
