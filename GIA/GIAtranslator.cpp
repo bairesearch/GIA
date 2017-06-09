@@ -25,7 +25,7 @@
  * File Name: GIAtranslator.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3c1c 01-June-2017
+ * Project Version: 3c1d 01-June-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -275,16 +275,6 @@ bool GIAtranslatorClass::convertSentenceListRelationsIntoGIAnetworkNodes(GIAtran
 		translatorVariables->sentenceIndex = currentSentenceInList->sentenceIndex;
 		this->convertSentenceRelationsIntoGIAnetworkNodesWrapper(translatorVariables);
 
-		#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
-		if(translatorVariables->firstGIApreprocessorSentenceInList != NULL)
-		{
-			if(!GIApreprocessor.addSentenceToPreprocessorSentence(translatorVariables))
-			{
-				result = false;
-			}
-		}
-		#endif
-	
 		currentSentenceInList = currentSentenceInList->next;
 	}
 
@@ -870,7 +860,24 @@ bool GIAtranslatorClass::convertSentenceSyntacticRelationsIntoGIAnetworkNodes(GI
 	#endif
 	#endif
 	*/
-	
+
+	#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
+	#ifdef GIA_ADVANCED_REFERENCING
+	if(linkPreestablishedReferencesGIA)
+	{
+	#endif
+		if(translatorVariables->firstGIApreprocessorSentenceInList != NULL)
+		{
+			if(!GIApreprocessor.addSentenceToPreprocessorSentence(translatorVariables))
+			{
+				result = false;
+			}
+		}
+	#ifdef GIA_ADVANCED_REFERENCING
+	}
+	#endif
+	#endif
+					
 	return result;
 }
 

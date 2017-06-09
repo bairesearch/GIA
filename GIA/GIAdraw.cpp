@@ -25,7 +25,7 @@
  * File Name: GIAdraw.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3c1c 01-June-2017
+ * Project Version: 3c1d 01-June-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -41,6 +41,7 @@ int maxXAtAParticularY[MAX_GIA_TREE_DEPTH];
 
 GIAdrawVariables::GIAdrawVariables(void)
 {
+	svgTinySpec = false;
 	//printType = 
 	maxNumberSentences = 0;
 	sentenceToPrint = GIA_DRAW_SENTENCE_INDEX_PRINT_ALL_SENTENCES;
@@ -57,6 +58,7 @@ bool GIAdrawClass::printGIAnetworkNodesToSVGstring(GIAtranslatorVariablesClass* 
 	XMLparserTag* firstTagInSVGFile = new XMLparserTag();
 	
 	GIAdrawVariables drawVariables;
+	drawVariables.svgTinySpec = true;
 	drawVariables.sentenceToPrint = sentenceIndex;
 	drawVariables.maxNumberSentences = translatorVariables->maxNumberSentences;
 	drawVariables.printType[GIA_DRAW_CREATE_LDR_REFERENCES] = false;
@@ -69,6 +71,7 @@ bool GIAdrawClass::printGIAnetworkNodesToSVGstring(GIAtranslatorVariablesClass* 
 	
 	LDreference* firstReferenceInPrintList = NULL;
 	this->determineBasicPrintPositionsOfAllNodes(translatorVariables->entityNodesActiveListComplete, &drawVariables, firstReferenceInPrintList, firstTagInSVGFile);
+	cout << "firstTagInSVGFile = " << firstTagInSVGFile->name << endl;
 	
 	const int viewBoxMinX = -GIA_DRAW_SVG_VIEWBOX_MIN_X_OFFSET;
 	const int viewBoxMaxX = width-GIA_DRAW_SVG_VIEWBOX_MIN_X_OFFSET;
@@ -109,7 +112,7 @@ bool GIAdrawClass::printGIAnetworkNodes(GIAtranslatorVariablesClass* translatorV
 
 	LDreference* firstReferenceInPrintList = new LDreference();
 	this->determineBasicPrintPositionsOfAllNodes(translatorVariables->entityNodesActiveListComplete, &drawVariables, firstReferenceInPrintList, firstTagInSVGFile);
-
+	
 	if(useOutputSVGfile)
 	{
 		const int viewBoxMinX = GIA_DRAW_SVG_VIEWBOX_MIN_X;
@@ -250,6 +253,13 @@ bool GIAdrawClass::determineBasicPrintPositionsOfAllNodes(vector<GIAentityNode*>
 		}		
 	}
 
+	//reset initialisedForPrinting
+	for(vector<GIAentityNode*>::iterator entityIter = entityNodesActiveListComplete->begin(); entityIter != entityNodesActiveListComplete->end(); entityIter++)
+	{
+		GIAentityNode* entityNode = (*entityIter);
+		entityNode->initialisedForPrinting = false;
+	}
+		
 	return result;
 }
 
@@ -260,16 +270,22 @@ bool GIAdrawClass::initialiseEntityConnectionForPrinting(vec* pos1, GIAentityCon
 
 
 	#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX_ADVANCED
-	if((entityNodeToConnect->initialisedForPrinting) && !(entityConnection->initialisedForPrinting) && !(entityNodeToConnect->disabled))
+	#ifdef GIA_DRAW_IGNORE_INITIALISED_ENTITY_CONNECTION_FOR_PRINTING_BOOL
+	if((entityNodeToConnect->initialisedForPrinting) && !(entityNodeToConnect->disabled))
+	#else
+	if((entityNodeToConnect->initialisedForPrinting) && !(entityConnection->initialisedForPrinting) && !(entityNodeToConnect->disabled))	
+	#endif	
 	//added condition 31 August 2013: only print connection if node has been printed
 	#else
 	if(!(entityNodeToConnect->disabled))
 	#endif
 	{
+		#ifndef GIA_DRAW_IGNORE_INITIALISED_ENTITY_CONNECTION_FOR_PRINTING_BOOL
 		#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX_ADVANCED
 		entityConnection->initialisedForPrinting = true;
 		#endif
-
+		#endif
+		
 		//may accidentially overwrite adjacent nodes that have already been printed here; be careful...
 		vec pos2;
 		pos2.x = entityNodeToConnect->printX;
@@ -651,7 +667,7 @@ bool GIAdrawClass::createReferenceConnectionWithText(vec* pos1, vec* pos2, int c
 			positionSVG.x = vect.x - GIA_DRAW_BASICENTITY_NODE_WIDTH/3;
 			positionSVG.y = vect.y - GIA_DRAW_BASICENTITY_NODE_HEIGHT/4;
 			positionSVG.z = GIA_OUTPUT_Z_POSITION_CONNECTIONS;
-			LDsvg.writeSVGtext(currentTag, connectionTypeName, &positionSVG, GIA_SVG_SCALE_FACTOR*GIA_SVG_TEXT_SCALE_FACTOR, DAT_FILE_COLOUR_BLACK);
+			LDsvg.writeSVGtext(currentTag, connectionTypeName, &positionSVG, GIA_SVG_SCALE_FACTOR*GIA_SVG_TEXT_SCALE_FACTOR, DAT_FILE_COLOUR_BLACK, drawVariables->svgTinySpec);
 		}
 	}
 
@@ -809,7 +825,8 @@ bool GIAdrawClass::createBox(vec* vect, const double width, const double height,
 		positionSVG.x = vect->x - GIA_DRAW_BASICENTITY_NODE_WIDTH/3;
 		positionSVG.y = vect->y - GIA_DRAW_BASICENTITY_NODE_HEIGHT/4;
 		positionSVG.z = GIA_OUTPUT_Z_POSITION_TEXT;
-		LDsvg.writeSVGtext(currentTag,* text, &positionSVG, GIA_SVG_SCALE_FACTOR*GIA_SVG_TEXT_SCALE_FACTOR, DAT_FILE_COLOUR_BLACK);
+		
+		LDsvg.writeSVGtext(currentTag,* text, &positionSVG, GIA_SVG_SCALE_FACTOR*GIA_SVG_TEXT_SCALE_FACTOR, DAT_FILE_COLOUR_BLACK, drawVariables->svgTinySpec);
 	}
 
 	return result;

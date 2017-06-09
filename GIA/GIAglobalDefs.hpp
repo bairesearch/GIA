@@ -25,7 +25,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3c1c 01-June-2017
+ * Project Version: 3c1d 01-June-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -737,6 +737,11 @@
 	#define GIA_DISABLE_CROSS_SENTENCE_REFERENCING	//added 2g5a/05-September-2014 - required for NLC 1j2b+, optional for NLC 1k11a+
 #endif
 //#define GIA_SEMANTIC_PARSER
+
+//#define GIA_DEBUG_DISABLE_3c_CODE
+#ifndef GIA_DEBUG_DISABLE_3c_CODE
+	#define GIA_DRAW_IGNORE_INITIALISED_ENTITY_CONNECTION_FOR_PRINTING_BOOL	//3c1d
+#endif
 
 //#define GIA_DEBUG_DISABLE_3b_CODE
 #ifndef GIA_DEBUG_DISABLE_3b_CODE
