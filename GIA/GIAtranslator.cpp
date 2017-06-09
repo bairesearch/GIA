@@ -25,7 +25,7 @@
  * File Name: GIAtranslator.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3c1b 01-June-2017
+ * Project Version: 3c1c 01-June-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -124,7 +124,7 @@ bool GIAtranslatorClass::createSemanticNetworkBasedUponDependencyParsedSentences
 		#ifdef GIA_RELEX_UPDATE_ADD_PARAGRAPH_TAGS
 		if(firstParagraphInList->next->next != NULL)
 		{
-			cout << "convertParagraphSentenceRelationsIntoGIAnetworkNodesBasedUponCodeextensionHeirachy{}: error - CE only supports a single paragraph of text, one codeextension per line" << endl;
+			cerr << "convertParagraphSentenceRelationsIntoGIAnetworkNodesBasedUponCodeextensionHeirachy{}: error - CE only supports a single paragraph of text, one codeextension per line" << endl;
 			exit(EXIT_ERROR);
 		}
 		#endif
@@ -691,7 +691,7 @@ bool GIAtranslatorClass::convertSentenceSyntacticRelationsIntoGIAnetworkNodes(GI
 					//do not overwrite sentence index of source
 					entity->entityIndexTemp = w;
 					#ifdef GIA_REFERENCING_UPDATE_ENTITY_INDEXES_OF_REFERENCE_SOURCE_TO_THOSE_OF_CURRENT_SENTENCE
-					cout << "convertSentenceSyntacticRelationsIntoGIAnetworkNodes{} error: GIAentityNodeArray[" << w << "]->entityIndexTemp undefined, this is an artificial entity" << endl;
+					cerr << "convertSentenceSyntacticRelationsIntoGIAnetworkNodes{} error: GIAentityNodeArray[" << w << "]->entityIndexTemp undefined, this is an artificial entity" << endl;
 					exit(EXIT_ERROR);
 					#endif
 				}
@@ -700,7 +700,7 @@ bool GIAtranslatorClass::convertSentenceSyntacticRelationsIntoGIAnetworkNodes(GI
 					//do not overwrite sentence index of source
 					entity->sentenceIndexTemp = translatorVariables->currentSentenceInList->sentenceIndex;
 					#ifdef GIA_REFERENCING_UPDATE_ENTITY_INDEXES_OF_REFERENCE_SOURCE_TO_THOSE_OF_CURRENT_SENTENCE
-					cout << "convertSentenceSyntacticRelationsIntoGIAnetworkNodes{} error: GIAentityNodeArray[" << w << "]->sentenceIndexTemp undefined, this is an artificial entity" << endl;
+					cerr << "convertSentenceSyntacticRelationsIntoGIAnetworkNodes{} error: GIAentityNodeArray[" << w << "]->sentenceIndexTemp undefined, this is an artificial entity" << endl;
 					exit(EXIT_ERROR);
 					#endif
 					
@@ -783,7 +783,7 @@ bool GIAtranslatorClass::convertSentenceSyntacticRelationsIntoGIAnetworkNodes(GI
 					if(networkIndexNode->sentenceIndexTemp == GIA_SENTENCE_INDEX_UNDEFINED)
 					{//do not overwrite sentenceIndex, as it needs to be drawn with first instance in network
 						networkIndexNode->sentenceIndexTemp = translatorVariables->currentSentenceInList->sentenceIndex;
-						cout << "convertSentenceSyntacticRelationsIntoGIAnetworkNodes{} warning: GIAentityNodeArray[" << w << "]->networkIndexNode->sentenceIndexTemp undefined" << endl;
+						cerr << "convertSentenceSyntacticRelationsIntoGIAnetworkNodes{} warning: GIAentityNodeArray[" << w << "]->networkIndexNode->sentenceIndexTemp undefined" << endl;
 						//exit(EXIT_ERROR);
 					}
 					/*No problem detected here:
@@ -845,7 +845,7 @@ bool GIAtranslatorClass::convertSentenceSyntacticRelationsIntoGIAnetworkNodes(GI
 		#ifdef GIA_SEMANTIC_PARSER_SUBSETS
 		if(!GIAsemanticParserTranslator.generateAllPermutationsFromSemanticRelationsFile(translatorVariables))
 		{
-			cout << "GIAsemanticParserTranslator.generateAllPermutationsFromSemanticRelationsFile() failed" << endl;
+			cerr << "GIAsemanticParserTranslator.generateAllPermutationsFromSemanticRelationsFile() failed" << endl;
 			exit(EXIT_ERROR);
 		}
 		#endif

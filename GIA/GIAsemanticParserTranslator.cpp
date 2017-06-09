@@ -25,7 +25,7 @@
  * File Name: GIAsemanticParserTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3c1b 01-June-2017
+ * Project Version: 3c1c 01-June-2017
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -663,7 +663,7 @@ void GIAsemanticParserTranslatorClass::defineConnectionsBasedOnSemanticRelations
 
 				if(!foundMatchingObject)
 				{
-					cout << "defineConnectionsBasedOnSemanticRelations{} error: (currentRelationInList->relationType == GIA2semanticDependencyRelationNameArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTY]) && (!foundMatchingObject)" << endl;
+					cerr << "defineConnectionsBasedOnSemanticRelations{} error: (currentRelationInList->relationType == GIA2semanticDependencyRelationNameArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTY]) && (!foundMatchingObject)" << endl;
 					exit(EXIT_ERROR);
 				}
 				currentRelationInList->disabled = true;
@@ -810,7 +810,7 @@ void GIAsemanticParserTranslatorClass::defineConnectionsBasedOnSemanticRelations
 
 				if(!foundMatchingObject)
 				{
-					cout << "defineConnectionsBasedOnSemanticRelations{} error: (currentRelationInList->relationType == GIA2semanticDependencyRelationNameArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITION]) && (!foundMatchingObject)" << endl;
+					cerr << "defineConnectionsBasedOnSemanticRelations{} error: (currentRelationInList->relationType == GIA2semanticDependencyRelationNameArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITION]) && (!foundMatchingObject)" << endl;
 					exit(EXIT_ERROR);
 				}
 				currentRelationInList->disabled = true;
@@ -1060,7 +1060,7 @@ bool GIAsemanticParserTranslatorClass::generateAllPermutationsFromSemanticRelati
 
 			if(firstFeatureInList->entityIndex != GIA_NLP_START_ENTITY_INDEX)
 			{
-				cout << "generateAllPermutationsFromSemanticRelationsFile{} implementation error*: (firstFeatureInList->entityIndex != GIA_NLP_START_ENTITY_INDEX)" << endl;
+				cerr << "generateAllPermutationsFromSemanticRelationsFile{} implementation error*: (firstFeatureInList->entityIndex != GIA_NLP_START_ENTITY_INDEX)" << endl;
 				exit(EXIT_ERROR);
 			}
 			#ifdef GIA_SEMANTIC_PARSER_SUBSETS_OPTIMISE_BASED_ON_CONJUNCTIONS
@@ -1156,7 +1156,7 @@ bool GIAsemanticParserTranslatorClass::generateAllPermutationsFromSemanticRelati
 								}
 								else
 								{
-									cout << "generateAllPermutationsFromSemanticRelationsFile{} error: illegal semantic relation type; currentSemanticRelationInList->relationType = " << currentSemanticRelationInList->relationType << endl;
+									cerr << "generateAllPermutationsFromSemanticRelationsFile{} error: illegal semantic relation type; currentSemanticRelationInList->relationType = " << currentSemanticRelationInList->relationType << endl;
 									exit(EXIT_ERROR);
 								}
 								currentSemanticRelationInList = currentSemanticRelationInList->next;

@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorReferenceSet.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3c1b 01-June-2017
+ * Project Version: 3c1c 01-June-2017
  * Requirements: requires plain text file
  * Description: Reference Set preprocessor
  *
@@ -305,7 +305,7 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 			{
 				if(!parsingReferenceSetDelimiter)
 				{
-					cout << "GIApreprocessor::executeReferenceSetPreprocessor{} error: 2 valid referenceSetDelimiters are found in the current logicReference: currentWordIsReferenceSetDelimiter && !currentWordIsReferenceSetDelimiterPreceededByThatWhich && referenceSetDelimiterDetected [ie already/previously detected] && !parsingReferenceSetDelimiter" << endl;
+					cerr << "GIApreprocessor::executeReferenceSetPreprocessor{} error: 2 valid referenceSetDelimiters are found in the current logicReference: currentWordIsReferenceSetDelimiter && !currentWordIsReferenceSetDelimiterPreceededByThatWhich && referenceSetDelimiterDetected [ie already/previously detected] && !parsingReferenceSetDelimiter" << endl;
 					exit(EXIT_ERROR);
 				}
 			}
@@ -422,7 +422,7 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 				}
 				else
 				{
-					cout << "GIApreprocessor::executeReferenceSetPreprocessor{} error: (referenceSetDelimiterDetected && parsingReferenceSetDelimiter && !currentWordIsReferenceSetDelimiter) && !referenceSetDelimiterIndicatesSameReferenceSet - a sentence can only contain 1 referenceSetDelimiterFull: currentWord = " << currentWord << endl;
+					cerr << "GIApreprocessor::executeReferenceSetPreprocessor{} error: (referenceSetDelimiterDetected && parsingReferenceSetDelimiter && !currentWordIsReferenceSetDelimiter) && !referenceSetDelimiterIndicatesSameReferenceSet - a sentence can only contain 1 referenceSetDelimiterFull: currentWord = " << currentWord << endl;
 					exit(EXIT_ERROR);
 				}
 			}
@@ -432,8 +432,8 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 			{
 				if(referenceSetDelimiterDetectedFull)
 				{
-					cout << "GIApreprocessor::executeReferenceSetPreprocessor{} error: (referenceSetDelimiterDetected && parsingReferenceSetDelimiter && !currentWordIsReferenceSetDelimiter) && (!referenceSetDelimiterIndicatesSameReferenceSet) && referenceSetDelimiterDetectedFull already - a sentence can only contain 1 referenceSetDelimiterFull: currentWord = " << currentWord << endl;
-					cout << "wordIndex = " << wordIndex << endl;
+					cerr << "GIApreprocessor::executeReferenceSetPreprocessor{} error: (referenceSetDelimiterDetected && parsingReferenceSetDelimiter && !currentWordIsReferenceSetDelimiter) && (!referenceSetDelimiterIndicatesSameReferenceSet) && referenceSetDelimiterDetectedFull already - a sentence can only contain 1 referenceSetDelimiterFull: currentWord = " << currentWord << endl;
+					cerr << "wordIndex = " << wordIndex << endl;
 					exit(EXIT_ERROR);
 				}
 				else
@@ -545,7 +545,7 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 	{
 		if(!referenceSetDelimiterDetectedFull)
 		{
-			cout << "GIApreprocessorClass::executeReferenceSetPreprocessor{} error: expectToFindSubjectAuxObjectLogicReferenceVariable && !referenceSetDelimiterDetectedFull" << endl;
+			cerr << "GIApreprocessorClass::executeReferenceSetPreprocessor{} error: expectToFindSubjectAuxObjectLogicReferenceVariable && !referenceSetDelimiterDetectedFull" << endl;
 			exit(EXIT_ERROR);
 		}
 	}

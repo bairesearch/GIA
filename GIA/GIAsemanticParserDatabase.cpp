@@ -25,7 +25,7 @@
  * File Name: GIAsemanticParserDatabase.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3c1b 01-June-2017
+ * Project Version: 3c1c 01-June-2017
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -250,9 +250,9 @@ bool GIAsemanticParserDatabaseClass::loadSemanticParserOptimisedDatabaseFile(con
 		{
 			if(lineIndex >= GIA_SEMANTIC_PARSER_SUBSETS_OPTIMISED_DATABASE_SEMANTIC_RELATION_NUMBER_OF_TYPES)
 			{
-				cout << "loadSemanticParserOptimisedDatabaseFile{} error: (lineIndex >= GIA_SEMANTIC_PARSER_SUBSETS_OPTIMISED_DATABASE_SEMANTIC_RELATION_NUMBER_OF_TYPES)" << endl;
-				cout << "semanticRelationDatabaseFileName = " << semanticRelationDatabaseFileName << endl;
-				cout << "currentLine = " << currentLine << endl;
+				cerr << "loadSemanticParserOptimisedDatabaseFile{} error: (lineIndex >= GIA_SEMANTIC_PARSER_SUBSETS_OPTIMISED_DATABASE_SEMANTIC_RELATION_NUMBER_OF_TYPES)" << endl;
+				cerr << "semanticRelationDatabaseFileName = " << semanticRelationDatabaseFileName << endl;
+				cerr << "currentLine = " << currentLine << endl;
 				exit(EXIT_ERROR);
 			}
 
@@ -273,9 +273,9 @@ bool GIAsemanticParserDatabaseClass::loadSemanticParserOptimisedDatabaseFile(con
 					}
 					else
 					{
-						cout << "loadSemanticParserOptimisedDatabaseFile{} error: !parsingNumberOfSemanticRelationsAssignedForTuple && (currentLine[i] == GIA_SEMANTIC_PARSER_OPTIMISED_DATABASE_SEMANTIC_RELATION_COUNT_DELIMITER)" << endl;
-						cout << "semanticRelationDatabaseFileName = " << semanticRelationDatabaseFileName << endl;
-						cout << "currentLine = " << currentLine << endl;
+						cerr << "loadSemanticParserOptimisedDatabaseFile{} error: !parsingNumberOfSemanticRelationsAssignedForTuple && (currentLine[i] == GIA_SEMANTIC_PARSER_OPTIMISED_DATABASE_SEMANTIC_RELATION_COUNT_DELIMITER)" << endl;
+						cerr << "semanticRelationDatabaseFileName = " << semanticRelationDatabaseFileName << endl;
+						cerr << "currentLine = " << currentLine << endl;
 						exit(EXIT_ERROR);
 					}
 				}

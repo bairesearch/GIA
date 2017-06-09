@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3c1b 01-June-2017
+ * Project Version: 3c1c 01-June-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -163,7 +163,7 @@ int GIAtranslatorOperationsClass::generateConnectionType(int relationshipEntityT
 	int connectionType = entityTypesCrossReferenceEntityVectorConnectionArray[relationshipEntityType];
 	if(connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_UNKNOWN)
 	{
-		cout << "generateConnectionType error{}: (connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_UNKNOWN)" << endl;
+		cerr << "generateConnectionType error{}: (connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_UNKNOWN)" << endl;
 		exit(EXIT_ERROR);
 	}
 	return connectionType;
@@ -174,7 +174,7 @@ int GIAtranslatorOperationsClass::generateConnectionTypeReverse(int relationship
 	int connectionType = entityTypesCrossReferenceEntityVectorConnectionReverseArray[relationshipEntityType];
 	if(connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_UNKNOWN)
 	{
-		cout << "generateConnectionType error{}: (connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_UNKNOWN)" << endl;
+		cerr << "generateConnectionType error{}: (connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_UNKNOWN)" << endl;
 		exit(EXIT_ERROR);
 	}
 	return connectionType;
@@ -198,7 +198,7 @@ int GIAtranslatorOperationsClass::generateInvertedConnectionType(GIAentityNode* 
 		}
 		else
 		{
-			cout << "GIAtranslatorOperationsClass::generateInvertedConnectionType{} error: (connectionTypeInverted == GIA_ENTITY_VECTOR_CONNECTION_TYPE_UNKNOWN) && !(entityTypesIsRelationshipArray[entity->entityType])" << endl;
+			cerr << "GIAtranslatorOperationsClass::generateInvertedConnectionType{} error: (connectionTypeInverted == GIA_ENTITY_VECTOR_CONNECTION_TYPE_UNKNOWN) && !(entityTypesIsRelationshipArray[entity->entityType])" << endl;
 			exit(EXIT_ERROR);
 		}
 	}
@@ -279,7 +279,7 @@ GIAentityNode* GIAtranslatorOperationsClass::getRelationshipObjectEntity(GIAenti
 	#ifndef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
 	if(entityTypesIsPropertyOrDefinitionRelationshipArray[relationshipEntity->entityType])
 	{
-		cout << "!GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS: GIAtranslatorOperationsClass::getRelationshipObjectEntity error{}: entityTypesIsPropertyOrDefinitionRelationshipArray[relationshipEntity->entityType]" << endl;
+		cerr << "!GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS: GIAtranslatorOperationsClass::getRelationshipObjectEntity error{}: entityTypesIsPropertyOrDefinitionRelationshipArray[relationshipEntity->entityType]" << endl;
 		exit(EXIT_ERROR);		
 	}
 	#endif
@@ -287,7 +287,7 @@ GIAentityNode* GIAtranslatorOperationsClass::getRelationshipObjectEntity(GIAenti
 	if(relationshipEntity->relationshipObjectEntity->empty())
 	{
 		//DEBUG only; note this should never be the case (if a property/definition relationship source is defined, then its target should be defined)
-		cout << "GIAtranslatorOperationsClass::getRelationshipObjectEntity error{}: relationshipEntity->relationshipObjectEntity->empty()" << endl;
+		cerr << "GIAtranslatorOperationsClass::getRelationshipObjectEntity error{}: relationshipEntity->relationshipObjectEntity->empty()" << endl;
 		exit(EXIT_ERROR);
 	}
 	GIAentityNode* objectEntity = ((relationshipEntity->relationshipObjectEntity)->back())->entity;
@@ -323,7 +323,7 @@ GIAentityNode* GIAtranslatorOperationsClass::getRelationshipSubjectEntity(GIAent
 	#ifndef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
 	if(entityTypesIsPropertyOrDefinitionRelationshipArray[relationshipEntity->entityType])
 	{
-		cout << "!GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS: GIAtranslatorOperationsClass::getRelationshipSubjectEntity error{}: entityTypesIsPropertyOrDefinitionRelationshipArray[relationshipEntity->entityType]" << endl;
+		cerr << "!GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS: GIAtranslatorOperationsClass::getRelationshipSubjectEntity error{}: entityTypesIsPropertyOrDefinitionRelationshipArray[relationshipEntity->entityType]" << endl;
 		exit(EXIT_ERROR);		
 	}
 	#endif
@@ -331,7 +331,7 @@ GIAentityNode* GIAtranslatorOperationsClass::getRelationshipSubjectEntity(GIAent
 	if(relationshipEntity->relationshipSubjectEntity->empty())
 	{
 		//DEBUG only; note this should never be the case (if a property/definition relationship source is defined, then its target should be defined)
-		cout << "GIAtranslatorOperationsClass::getRelationshipSubjectEntity error{}: relationshipEntity->relationshipSubjectEntity->empty()" << endl;
+		cerr << "GIAtranslatorOperationsClass::getRelationshipSubjectEntity error{}: relationshipEntity->relationshipSubjectEntity->empty()" << endl;
 		exit(EXIT_ERROR);
 	}
 	GIAentityNode* subjectEntity = ((relationshipEntity->relationshipSubjectEntity)->back())->entity;
@@ -453,7 +453,7 @@ bool GIAtranslatorOperationsClass::connectDirectRelationshipToEntity(GIAentityNo
 		}
 		else
 		{
-			cout << "GIAtranslatorOperationsClass::connectDirectRelationshipToEntity{} error: illegal relationshipEntityType; relationshipEntityType = " << relationshipEntityType << endl;
+			cerr << "GIAtranslatorOperationsClass::connectDirectRelationshipToEntity{} error: illegal relationshipEntityType; relationshipEntityType = " << relationshipEntityType << endl;
 			exit(EXIT_ERROR);
 		}
 		
@@ -1299,7 +1299,7 @@ GIAentityNode* GIAtranslatorOperationsClass::addRelationshipArtificialToEntity(G
 	}
 	else
 	{
-		cout << "GIAtranslatorOperationsClass::addRelationshipArtificialToEntity{} error: unsupported relationshipEntityType; relationshipEntityType = " << relationshipEntityType << endl;
+		cerr << "GIAtranslatorOperationsClass::addRelationshipArtificialToEntity{} error: unsupported relationshipEntityType; relationshipEntityType = " << relationshipEntityType << endl;
 		exit(EXIT_ERROR);
 	}
 	
@@ -1499,7 +1499,7 @@ GIAentityNode* GIAtranslatorOperationsClass::addRelationshipArtificialToEntity2(
 	*/
 	else
 	{
-		cout << "GIAtranslatorOperationsClass::addRelationshipToEntity2{} error: unsupported relationshipEntityType; relationshipEntityType = " << relationshipEntityType << endl;
+		cerr << "GIAtranslatorOperationsClass::addRelationshipToEntity2{} error: unsupported relationshipEntityType; relationshipEntityType = " << relationshipEntityType << endl;
 		exit(EXIT_ERROR);
 	}
 	
@@ -1641,8 +1641,8 @@ GIAentityConnection* GIAtranslatorOperationsClass::writeVectorConnection(GIAenti
 				//required for database syncronisation with RAM
 				if(!(entityNode->entityVectorConnectionsReferenceListLoadedArray[connectionType]))
 				{
-					cout << "error: writeVectorConnection called, but entityVectorConnectionsReferenceListLoadedArray set to false" << endl;
-					cout << "entityNode = " << entityNode->entityName << ", entityNodeToAdd = " << entityNodeToAdd->entityName << ", connectionType = " << connectionType << endl;
+					cerr << "error: writeVectorConnection called, but entityVectorConnectionsReferenceListLoadedArray set to false" << endl;
+					cerr << "entityNode = " << entityNode->entityName << ", entityNodeToAdd = " << entityNodeToAdd->entityName << ", connectionType = " << connectionType << endl;
 					exit(EXIT_ERROR);
 				}
 				//#endif

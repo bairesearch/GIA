@@ -25,7 +25,7 @@
  * File Name: GIAnlg.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3c1b 01-June-2017
+ * Project Version: 3c1c 01-June-2017
  * Requirements: requires GIA translated data, and NLG2 to be installed
  * Description: GIA natural language generation (using NLG2)
  *
@@ -79,27 +79,27 @@ string GIAnlgClass::generateLanguageFromNonWhichQuery(GIAentityNode* comparisonV
 	{
 		if(!generateLanguageFromTextIteration(relationshipEntitySubject, &currentNLGentityInQuestionContext, true, true, 0, false))
 		{
-			cout << "GIAnlgClass::generateLanguageFromNonWhichQuery error: !generateLanguageFromTextIteration" << endl;
+			cerr << "GIAnlgClass::generateLanguageFromNonWhichQuery error: !generateLanguageFromTextIteration" << endl;
 			exit(EXIT_ERROR);		
 		}
 
 		/*
 		if(!generateLanguageFromSameSentenceReferenceSet(relationshipEntitySubject, firstNLGentityInQuestionContext, true))
 		{
-			cout << "GIAnlgClass::generateLanguageFromNonWhichQuery error: !generateLanguageFromSameSentenceReferenceSet(relationshipEntitySubject, firstNLGentityInQuestionContext)" << endl;
+			cerr << "GIAnlgClass::generateLanguageFromNonWhichQuery error: !generateLanguageFromSameSentenceReferenceSet(relationshipEntitySubject, firstNLGentityInQuestionContext)" << endl;
 			exit(EXIT_ERROR);			
 		}
 		*/
 	}
 	else
 	{
-		cout << "GIAnlgClass::generateLanguageFromNonWhichQuery error: !lastNodeInQuestionContextReferenceSetFound" << endl;
+		cerr << "GIAnlgClass::generateLanguageFromNonWhichQuery error: !lastNodeInQuestionContextReferenceSetFound" << endl;
 		exit(EXIT_ERROR);
 	}
 	
 	if(!generateRelationshipEntityLanguage(relationshipConnection, &currentNLGentityInRelationshipNode, false))
 	{
-		cout << "GIAnlgClass::generateLanguageFromNonWhichQuery error: !generateRelationshipEntityLanguage(relationshipConnection, currentNLGentityInRelationshipNode, false))" << endl;
+		cerr << "GIAnlgClass::generateLanguageFromNonWhichQuery error: !generateRelationshipEntityLanguage(relationshipConnection, currentNLGentityInRelationshipNode, false))" << endl;
 		exit(EXIT_ERROR);	
 	}
 
@@ -147,7 +147,7 @@ string GIAnlgClass::generateLanguageFromWhichQuery(GIAentityNode* comparisonVari
 		
 	if(!generateLanguageFromTextIteration(queryAnswerNode, &currentNLGentityInAnswerContext, false, true, 0, false))
 	{
-		cout << "GIAnlgClass::generateLanguageFromWhichQuery error: !generateLanguageFromTextIteration(queryAnswerNode, firstNLGentityInAnswerContext, false..." << endl;
+		cerr << "GIAnlgClass::generateLanguageFromWhichQuery error: !generateLanguageFromTextIteration(queryAnswerNode, firstNLGentityInAnswerContext, false..." << endl;
 		exit(EXIT_ERROR);			
 	}
 	
@@ -155,13 +155,13 @@ string GIAnlgClass::generateLanguageFromWhichQuery(GIAentityNode* comparisonVari
 	relationshipConnection->connectionType = GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITION;
 	if(!generateRelationshipEntityLanguage(relationshipConnection, &currentNLGentityInRelationshipNode, false))
 	{
-		cout << "GIAnlgClass::generateLanguageFromNonWhichQuery error: !generateRelationshipEntityLanguage(relationshipConnection, currentNLGentityInRelationshipNode, false))" << endl;
+		cerr << "GIAnlgClass::generateLanguageFromNonWhichQuery error: !generateRelationshipEntityLanguage(relationshipConnection, currentNLGentityInRelationshipNode, false))" << endl;
 		exit(EXIT_ERROR);	
 	}
 
 	if(!generateLanguageFromTextIteration(comparisonVariableNode, &currentNLGentityInQuestionContext, true, true, 0, false))
 	{
-		cout << "GIAnlgClass::generateLanguageFromWhichQuery error: !generateLanguageFromTextIteration(comparisonVariableNode, firstNLGentityInQuestionContext, true..." << endl;
+		cerr << "GIAnlgClass::generateLanguageFromWhichQuery error: !generateLanguageFromTextIteration(comparisonVariableNode, firstNLGentityInQuestionContext, true..." << endl;
 		exit(EXIT_ERROR);			
 	}
 	

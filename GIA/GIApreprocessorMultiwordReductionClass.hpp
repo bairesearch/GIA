@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorMultiwordReductionClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3c1b 01-June-2017
+ * Project Version: 3c1c 01-June-2017
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  *
@@ -160,6 +160,8 @@ static char nlpPunctionMarkCharacterArray[GIA_NLP_NUMBER_OF_PUNCTUATION_MARK_CHA
 	static char nlpMathCharacterGroupedArray[GIA_NLP_NUMBER_OF_MATH_CHARACTERS_GROUPED] = {CHAR_EQUALS, CHAR_PLUS, CHAR_GREATER_THAN, CHAR_LESS_THAN, CHAR_AMPERSAND, CHAR_TILDA, CHAR_EXCLAMATION_MARK, CHAR_STAR};
 	#define GIA_NLP_NUMBER_OF_MATH_CHARACTERS_UNGROUPED (2)
 	static char nlpMathCharacterUngroupedArray[GIA_NLP_NUMBER_OF_MATH_CHARACTERS_UNGROUPED] = {CHAR_OPEN_BRACKET, CHAR_CLOSE_BRACKET};
+	#define GIA_NLP_NUMBER_OF_MATH_CHARACTERS (10)
+	static char nlpMathCharacterArray[GIA_NLP_NUMBER_OF_MATH_CHARACTERS] = {CHAR_EQUALS, CHAR_PLUS, CHAR_GREATER_THAN, CHAR_LESS_THAN, CHAR_AMPERSAND, CHAR_TILDA, CHAR_EXCLAMATION_MARK, CHAR_STAR, CHAR_OPEN_BRACKET, CHAR_CLOSE_BRACKET};
 #else
 	#define GIA_NLP_NUMBER_OF_MATH_CHARACTERS (10)		//CHECKTHIS; need to location RelEx/Stanford dependency relation specification and match the exact same punction marks detected. Also must be matched to NLC_PREPROCESSOR_MATH_OPERATOR...
 	static char nlpMathCharacterArray[GIA_NLP_NUMBER_OF_MATH_CHARACTERS] = {CHAR_OPEN_BRACKET, CHAR_CLOSE_BRACKET, CHAR_EQUALS, CHAR_PLUS, CHAR_GREATER_THAN, CHAR_LESS_THAN, CHAR_AMPERSAND, CHAR_TILDA, CHAR_EXCLAMATION_MARK, CHAR_STAR};	//CHAR_DASH? what about 3-5 [currently interpreted as 1 word]

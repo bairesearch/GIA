@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3c1b 01-June-2017
+ * Project Version: 3c1c 01-June-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -176,7 +176,7 @@ void GIAtranslatorDefineReferencingClass::identifyComparisonVariableAlternateMet
 	{
 		if(foundComparisonVariableTemp)
 		{
-			cout << "error: expectToFindComparisonVariable && foundComparisonVariable" << endl;
+			cerr << "error: expectToFindComparisonVariable && foundComparisonVariable" << endl;
 			exit(EXIT_ERROR);
 		}
 	}
@@ -820,7 +820,7 @@ void GIAtranslatorDefineReferencingClass::identifyReferenceSetNetworkIndexEntity
 				#ifdef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
 				if(entityTypesIsPropertyOrDefinitionRelationshipArray[currentInstance->entityType])
 				{
-					cout << "GIAtranslatorDefineReferencingClass::identifyReferenceSetNetworkIndexEntityEntrance{} error: entityTypesIsPropertyOrDefinitionRelationshipArray[currentInstance->entityType]" << endl;
+					cerr << "GIAtranslatorDefineReferencingClass::identifyReferenceSetNetworkIndexEntityEntrance{} error: entityTypesIsPropertyOrDefinitionRelationshipArray[currentInstance->entityType]" << endl;
 					exit(EXIT_ERROR);
 				}
 				#endif

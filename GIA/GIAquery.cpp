@@ -25,7 +25,7 @@
  * File Name: GIAquery.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3c1b 01-June-2017
+ * Project Version: 3c1c 01-June-2017
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  * ?Limitations: will only locate a exact answer (based upon a comparison node) if it provides the maximum number of matched nodes
@@ -1490,7 +1490,7 @@ bool GIAqueryClass::compareEntitySynonyms(GIAentityNode* queryEntityNode, GIAent
 	bool entityNamesAreSynonymous = false;
 
 	#ifndef USE_WORDNET
-	cout << "compareEntitySynonyms{} error: requires USE_WORDNET" << endl;
+	cerr << "compareEntitySynonyms{} error: requires USE_WORDNET" << endl;
 	exit(EXIT_ERROR);
 	#endif
 
@@ -1799,7 +1799,7 @@ void GIAqueryClass::traceEntityNodeDetermineNextCourseOfAction(string* printEnti
 	}
 	else
 	{
-		cout << "error: illegal trace entity nodes function" << endl;
+		cerr << "error: illegal trace entity nodes function" << endl;
 		exit(EXIT_ERROR);
 	}
 

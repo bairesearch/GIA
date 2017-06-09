@@ -25,7 +25,7 @@
  * File Name: GIAnlp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3c1b 01-June-2017
+ * Project Version: 3c1c 01-June-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -280,7 +280,7 @@ bool GIAnlpClass::parseNLPparserFeaturesFile(const string inputTextNLPfeatureXML
 
 		}
 		*/
-		cout << "error: parseNLPparserFeaturesFile{} does not parse features when (NLPfeatureParser == GIA_NLP_PARSER_STANFORD_PARSER). GIAfeature extraction is not supported with GIA_NLP_PARSER_STANFORD_PARSER because Stanford Parser does not identify lemmas. Set feature parser to RelEx or Stanford Core NLP to extract features" << endl;
+		cerr << "error: parseNLPparserFeaturesFile{} does not parse features when (NLPfeatureParser == GIA_NLP_PARSER_STANFORD_PARSER). GIAfeature extraction is not supported with GIA_NLP_PARSER_STANFORD_PARSER because Stanford Parser does not identify lemmas. Set feature parser to RelEx or Stanford Core NLP to extract features" << endl;
 		exit(EXIT_ERROR);
 	}
 	#endif
@@ -383,7 +383,7 @@ bool GIAnlpClass::parseRelexFile(const string inputTextNLPrelationXMLfileName, c
 									}
 									if(!foundSentenceIndexAttribute)
 									{
-										cout << "error: sentence index attribute expected" << endl;
+										cerr << "error: sentence index attribute expected" << endl;
 										exit(EXIT_ERROR);
 									}
 
@@ -412,7 +412,7 @@ bool GIAnlpClass::parseRelexFile(const string inputTextNLPrelationXMLfileName, c
 														#ifdef GIA_QUERIES_MUST_BE_QUESTIONS
 														if(!(currentSentence->isQuestion))
 														{
-															cout << "error: GIA query is not a question" << endl;
+															cerr << "error: GIA query is not a question" << endl;
 															exit(EXIT_ERROR);
 														}
 														#endif
@@ -724,7 +724,7 @@ bool GIAnlpClass::parseStanfordCoreNLPfile(const string inputTextNLPrelationXMLf
 							else
 							{
 								#ifdef GIA_QUERIES_MUST_BE_QUESTIONS
-								cout << "error: GIA query is not a question" << endl;
+								cerr << "error: GIA query is not a question" << endl;
 								exit(EXIT_ERROR);
 								#endif
 							}

@@ -25,7 +25,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3c1b 01-June-2017
+ * Project Version: 3c1c 01-June-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -452,7 +452,7 @@ int main(const int argc, const char** argv)
 			}
 			else
 			{
-				cout << "error: nlpcompmode set but (NLPdependencyRelationsParser != GIA_NLP_PARSER_RELEX)" << endl;
+				cerr << "error: nlpcompmode set but (NLPdependencyRelationsParser != GIA_NLP_PARSER_RELEX)" << endl;
 				exit(EXIT_ERROR);
 			}
 		}
@@ -486,7 +486,7 @@ int main(const int argc, const char** argv)
 			}
 			else
 			{
-				cout << "error: nlpcompmodeq set but (queryNLPdependencyRelationsParser != GIA_NLP_PARSER_RELEX)" << endl;
+				cerr << "error: nlpcompmodeq set but (queryNLPdependencyRelationsParser != GIA_NLP_PARSER_RELEX)" << endl;
 				exit(EXIT_ERROR);
 			}
 		}
@@ -588,7 +588,7 @@ int main(const int argc, const char** argv)
 
 		if(SHAREDvarsClass().argumentExists(argc, argv, "-version"))
 		{
-			cout << "GIA.exe - Project Version: 3c1b 01-June-2017" << endl;
+			cout << "GIA.exe - Project Version: 3c1c 01-June-2017" << endl;
 			exit(EXIT_OK);
 		}
 
@@ -596,7 +596,7 @@ int main(const int argc, const char** argv)
 	}
 	else
 	{
-		cout << "error: GIA requires either a plain text inputText file (.txt), an NPL parsed inputText file (.xml) or GIA semantic network (.xml) to be defined" << endl;
+		cerr << "error: GIA requires either a plain text inputText file (.txt), an NPL parsed inputText file (.xml) or GIA semantic network (.xml) to be defined" << endl;
 		printf(errmessage);
 		exit(EXIT_ERROR);
 	}
@@ -858,7 +858,7 @@ bool GIAmainClass::executeGIA2()
 	
 	if(!XMLrulesClass.parseGIArulesXMLfile())
 	{
-		cout << "error: GIArules.xml file not detected" << endl;
+		cerr << "error: GIArules.xml file not detected" << endl;
 		exit(EXIT_ERROR);
 	}
 	LDsprite.fillInLDspriteExternVariables();
@@ -941,7 +941,6 @@ bool GIAmainClass::executeGIA2()
 		{
 			LDopengl.initiateOpenGL(rasterImageWidth, rasterImageHeight, 0, 0, false);
 		}
-		//exit(EXIT_ERROR);
 
 		if(useInputQuery)
 		{
@@ -1175,14 +1174,14 @@ bool GIAmainClass::executeGIA2()
 			/*
 			if(useInputTextNLPrelationXMLFile)
 			{
-				cout << "error: useInputTextPlainTXTFile && useInputTextNLPrelationXMLFile" << endl;
+				cerr << "error: useInputTextPlainTXTFile && useInputTextNLPrelationXMLFile" << endl;
 				exit(EXIT_ERROR);
 			}
 			else
 			*/
 			if(useInputTextXMLFile)
 			{
-				cout << "error: useInputTextPlainTXTFile && useInputTextXMLFile" << endl;
+				cerr << "error: useInputTextPlainTXTFile && useInputTextXMLFile" << endl;
 				exit(EXIT_ERROR);
 			}
 			else
@@ -1206,7 +1205,7 @@ bool GIAmainClass::executeGIA2()
 		{
 			if(useInputTextXMLFile)
 			{
-				cout << "error: useInputTextXMLFile && useInputTextNLPrelationXMLFile" << endl;
+				cerr << "error: useInputTextXMLFile && useInputTextNLPrelationXMLFile" << endl;
 				exit(EXIT_ERROR);
 			}
 			else
@@ -1231,12 +1230,12 @@ bool GIAmainClass::executeGIA2()
 		{
 			if(useInputTextPlainTXTFile)
 			{
-				cout << "error: useInputTextXMLFile && useInputTextPlainTXTFile" << endl;
+				cerr << "error: useInputTextXMLFile && useInputTextPlainTXTFile" << endl;
 				exit(EXIT_ERROR);
 			}
 			if(useInputTextNLPrelationXMLFile)
 			{
-				cout << "error: useInputTextXMLFile && useInputTextNLPrelationXMLFile" << endl;
+				cerr << "error: useInputTextXMLFile && useInputTextNLPrelationXMLFile" << endl;
 				exit(EXIT_ERROR);
 			}
 			else
@@ -1280,14 +1279,14 @@ bool GIAmainClass::executeGIA2()
 			/*
 			if(useInputQueryNLPrelationXMLFile)
 			{
-				cout << "error: useInputQueryPlainTXTFile && useInputQueryNLPrelationXMLFile" << endl;
+				cerr << "error: useInputQueryPlainTXTFile && useInputQueryNLPrelationXMLFile" << endl;
 				exit(EXIT_ERROR);
 			}
 			else
 			*/
 			if(useInputQueryXMLFile)
 			{
-				cout << "error: useInputQueryPlainTXTFile && useInputQueryXMLFile" << endl;
+				cerr << "error: useInputQueryPlainTXTFile && useInputQueryXMLFile" << endl;
 				exit(EXIT_ERROR);
 			}
 			else
@@ -1311,7 +1310,7 @@ bool GIAmainClass::executeGIA2()
 		{
 			if(useInputQueryXMLFile)
 			{
-				cout << "error: useInputQueryXMLFile && useInputQueryNLPrelationXMLFile" << endl;
+				cerr << "error: useInputQueryXMLFile && useInputQueryNLPrelationXMLFile" << endl;
 				exit(EXIT_ERROR);
 			}
 			else
@@ -1344,12 +1343,12 @@ bool GIAmainClass::executeGIA2()
 		{
 			if(useInputQueryPlainTXTFile)
 			{
-				cout << "error: useInputQueryXMLFile && useInputQueryPlainTXTFile" << endl;
+				cerr << "error: useInputQueryXMLFile && useInputQueryPlainTXTFile" << endl;
 				exit(EXIT_ERROR);
 			}
 			if(useInputQueryNLPrelationXMLFile)
 			{
-				cout << "error: useInputQueryXMLFile && useInputQueryNLPrelationXMLFile" << endl;
+				cerr << "error: useInputQueryXMLFile && useInputQueryNLPrelationXMLFile" << endl;
 				exit(EXIT_ERROR);
 			}
 			else

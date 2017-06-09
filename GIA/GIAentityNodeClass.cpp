@@ -25,7 +25,7 @@
  * File Name: GIAentityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3c1b 01-June-2017
+ * Project Version: 3c1c 01-June-2017
  *
  *******************************************************************************/
 
@@ -1169,7 +1169,7 @@ bool GIAentityNodeClassClass::entityIsRelationship(const GIAentityNode* entity)
 	#ifndef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
 	if(entityTypesIsPropertyOrDefinitionRelationshipArray[entity->entityType])
 	{
-		cout << "!GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS: GIAentityNodeClassClass::entityIsRelationship error{}: entityTypesIsPropertyOrDefinitionRelationshipArray[entity->entityType]" << endl;
+		cerr << "!GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS: GIAentityNodeClassClass::entityIsRelationship error{}: entityTypesIsPropertyOrDefinitionRelationshipArray[entity->entityType]" << endl;
 		exit(EXIT_ERROR);
 	}
 	#endif

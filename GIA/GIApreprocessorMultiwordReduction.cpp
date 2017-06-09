@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorMultiwordReduction.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3c1b 01-June-2017
+ * Project Version: 3c1c 01-June-2017
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  *
@@ -34,6 +34,7 @@
 
 #include "GIApreprocessorMultiwordReduction.hpp"
 
+bool lrpInitialised = false;
 static string lrpDataFolderName;
 static bool useLRP;
 #ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_LOAD_INVERSE_PREPOSITIONS_LIST
@@ -67,70 +68,74 @@ GIApreprocessorMultiwordReductionTagTextCorrespondenceInfo* activeGIApreprocesso
 bool GIApreprocessorMultiwordReductionClass::initialiseLRP(const string newLRPDataFolderName, const bool newUseLRP)
 {
 	bool result = true;
-
+	
 	useLRP = newUseLRP;
 	lrpDataFolderName = newLRPDataFolderName;
-
 	
-	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_LOAD_INVERSE_PREPOSITIONS_LIST
-	string prepositionsInverseListFileName = lrpDataFolderName + GIA_PREPROCESSOR_MULTIWORD_REDUCTION_INVERSEPREPOSITIONS_DATABASE_FILE_NAME;
-	prepositionInverseListLoaded = false;
-	if(!this->loadPrepositionsInverseList(prepositionsInverseListFileName, &prepositionInverseListGlobal))
+	if(!lrpInitialised)
 	{
-		cout << "!loadPrepositionsInverseList (GIA with GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_PREPOSITIONS requires -lrpfolder to be set): prepositionsInverseListFileName = " << prepositionsInverseListFileName << endl;
-		result = false;
-	}
-	else
-	{
-		prepositionInverseListLoaded = true;
-	}
-	#endif
+		#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_LOAD_INVERSE_PREPOSITIONS_LIST
+		string prepositionsInverseListFileName = lrpDataFolderName + GIA_PREPROCESSOR_MULTIWORD_REDUCTION_INVERSEPREPOSITIONS_DATABASE_FILE_NAME;
+		prepositionInverseListLoaded = false;
+		if(!this->loadPrepositionsInverseList(prepositionsInverseListFileName, &prepositionInverseListGlobal))
+		{
+			cout << "!loadPrepositionsInverseList (GIA with GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_PREPOSITIONS requires -lrpfolder to be set): prepositionsInverseListFileName = " << prepositionsInverseListFileName << endl;
+			result = false;
+		}
+		else
+		{
+			prepositionInverseListLoaded = true;
+		}
+		#endif
 
-	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_LOAD_WORD_LISTS
-	string irregularVerbListFileName = lrpDataFolderName + GIA_PREPROCESSOR_MULTIWORD_REDUCTION_IRREGULARVERB_DATABASE_FILE_NAME;
-	irregularVerbListLoaded = false;
-	if(!this->loadIrregularVerbList(irregularVerbListFileName, &irregularVerbListGlobal))
-	{
-		cout << "!loadIrregularVerbList (GIA with GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_CONSERVATIVE requires -lrpfolder to be set): irregularVerbListFileName = " << irregularVerbListFileName << endl;
-		result = false;
-	}
-	else
-	{
-		irregularVerbListLoaded = true;
+		#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_LOAD_WORD_LISTS
+		string irregularVerbListFileName = lrpDataFolderName + GIA_PREPROCESSOR_MULTIWORD_REDUCTION_IRREGULARVERB_DATABASE_FILE_NAME;
+		irregularVerbListLoaded = false;
+		if(!this->loadIrregularVerbList(irregularVerbListFileName, &irregularVerbListGlobal))
+		{
+			cout << "!loadIrregularVerbList (GIA with GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_CONSERVATIVE requires -lrpfolder to be set): irregularVerbListFileName = " << irregularVerbListFileName << endl;
+			result = false;
+		}
+		else
+		{
+			irregularVerbListLoaded = true;
+		}
+
+		if(!this->loadWordListWrapper(lrpDataFolderName, &verbListLoaded, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_FILE_NAME, &verbListGlobal))
+		{
+			result = false;	
+		}	
+		if(!this->loadWordListWrapper(lrpDataFolderName, &adverbListLoaded, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PREPOSITION_DATABASE_FILE_NAME, &prepositionListGlobal))
+		{
+			result = false;	
+		}
+		if(!this->loadWordListWrapper(lrpDataFolderName, &adverbListLoaded, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_ADVERB_DATABASE_FILE_NAME, &adverbListGlobal))
+		{
+			result = false;	
+		}
+		if(!this->loadWordListWrapper(lrpDataFolderName, &adjectiveListLoaded, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_ADJECTIVE_DATABASE_FILE_NAME, &adjectiveListGlobal))
+		{
+			result = false;	
+		}
+		if(!this->loadWordListWrapper(lrpDataFolderName, &nounListLoaded, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NOUN_DATABASE_FILE_NAME, &nounListGlobal))
+		{
+			result = false;	
+		}
+
+		if(!generateVerbCaseStandardList())	//this is required to make verbList usable
+		{
+			result = false;
+		}
+
+		if(!generateVerbCaseAdditionalList(&verbListGlobal, &verbCaseAdditionalListGlobal))	//this is required to make verbList usable
+		{
+			result = false;
+		}
+		#endif
+
+		lrpInitialised = true;
 	}
 	
-	if(!this->loadWordListWrapper(lrpDataFolderName, &verbListLoaded, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_FILE_NAME, &verbListGlobal))
-	{
-		result = false;	
-	}	
-	if(!this->loadWordListWrapper(lrpDataFolderName, &adverbListLoaded, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PREPOSITION_DATABASE_FILE_NAME, &prepositionListGlobal))
-	{
-		result = false;	
-	}
-	if(!this->loadWordListWrapper(lrpDataFolderName, &adverbListLoaded, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_ADVERB_DATABASE_FILE_NAME, &adverbListGlobal))
-	{
-		result = false;	
-	}
-	if(!this->loadWordListWrapper(lrpDataFolderName, &adjectiveListLoaded, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_ADJECTIVE_DATABASE_FILE_NAME, &adjectiveListGlobal))
-	{
-		result = false;	
-	}
-	if(!this->loadWordListWrapper(lrpDataFolderName, &nounListLoaded, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NOUN_DATABASE_FILE_NAME, &nounListGlobal))
-	{
-		result = false;	
-	}
-	
-	if(!generateVerbCaseStandardList())	//this is required to make verbList usable
-	{
-		result = false;
-	}
-
-	if(!generateVerbCaseAdditionalList(&verbListGlobal, &verbCaseAdditionalListGlobal))	//this is required to make verbList usable
-	{
-		result = false;
-	}
-	#endif
-		
 	return result;
 }
 bool GIApreprocessorMultiwordReductionClass::getUseLRP()
@@ -1389,11 +1394,11 @@ bool GIApreprocessorMultiwordReductionClass::searchAndReplaceMultiwordWordList(G
 					{//create a new correspondenceInfo
 						if(newEntityIndex != entityIndex)
 						{
-							cout << "newEntityIndex = " << newEntityIndex << endl;
-							cout << "entityIndex = " << entityIndex << endl;
-							cout << "currentTagInPlainTextSentenceTemp2->tagName = " << currentTagInPlainTextSentenceTemp2->tagName << endl;
-							cout << "GIApreprocessorMultiwordReductionClass::searchAndReplaceMultiwordWordList error: (newEntityIndex != entityIndex)" << endl;
-							cout << "generateTextFromPreprocessorSentenceWordList(firstTagInPlainTextSentence) = " << GIApreprocessorMultiwordReductionClassObject.generateTextFromPreprocessorSentenceWordList(firstTagInPlainTextSentence) << endl;
+							cerr << "newEntityIndex = " << newEntityIndex << endl;
+							cerr << "entityIndex = " << entityIndex << endl;
+							cerr << "currentTagInPlainTextSentenceTemp2->tagName = " << currentTagInPlainTextSentenceTemp2->tagName << endl;
+							cerr << "GIApreprocessorMultiwordReductionClass::searchAndReplaceMultiwordWordList error: (newEntityIndex != entityIndex)" << endl;
+							cerr << "generateTextFromPreprocessorSentenceWordList(firstTagInPlainTextSentence) = " << GIApreprocessorMultiwordReductionClassObject.generateTextFromPreprocessorSentenceWordList(firstTagInPlainTextSentence) << endl;
 							exit(EXIT_ERROR);
 						}
 						currentTagInPlainTextSentenceTemp2->collapsedMultiwordWordTemp = false;
@@ -1692,8 +1697,8 @@ void GIApreprocessorMultiwordReductionClass::revertNLPtagNameToOfficialLRPtagNam
 					}
 					else
 					{
-						cout << "error: !foundPrepositionGovernorAndDependentInFeatureList;" << endl;
-						cout << word << "(" << relationGovernor << ", " << relationDependent << ")" << endl;
+						cerr << "error: !foundPrepositionGovernorAndDependentInFeatureList;" << endl;
+						cerr << word << "(" << relationGovernor << ", " << relationDependent << ")" << endl;
 						exit(EXIT_ERROR);
 					}
 				}
@@ -1736,7 +1741,7 @@ bool GIApreprocessorMultiwordReductionClass::generateVerbCaseStandardList()
 		result = false;
 	}
 	else
-	{
+	{		
 		//get global variables
 		unordered_map<string, GIApreprocessorMultiwordReductionWord*>* verbList = &verbListGlobal;
 		unordered_map<string, GIApreprocessorMultiwordReductionWord*>* verbCaseStandardList = &verbCaseStandardListGlobal;
@@ -1746,25 +1751,18 @@ bool GIApreprocessorMultiwordReductionClass::generateVerbCaseStandardList()
 		for(unordered_map<string, GIApreprocessorMultiwordReductionWord*>::iterator currentTagInVerbListIterator = verbList->begin(); currentTagInVerbListIterator != verbList->end(); ++currentTagInVerbListIterator)
 		{	
 			GIApreprocessorMultiwordReductionWord* currentTagInVerbList = currentTagInVerbListIterator->second;	
+
+			verbCaseStandardList->insert(pair<string, GIApreprocessorMultiwordReductionWord*>(currentTagInVerbList->tagName, currentTagInVerbList));
 			
-			string base = currentTagInVerbList->tagName;
+			//for each variant of the firstTagInPhrasalVerb, insert the sentence into the list keyed by the variant name
 			this->generateStandardTenseVariantsOfVerbBase(currentTagInVerbList, irregularVerbList);
-				
-			if(currentTagInVerbList->base)
-			{	
-				//for each variant of the firstTagInPhrasalVerb, insert the sentence into the list keyed by the variant name
-				for(int i=0; i<GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_MAX_NUM_TENSE_FORMS; i++)
-				{
-					for(int j=0; j<GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_MAX_NUM_TENSE_FORM_VERSIONS; j++)
-					{
-						string generatedTagNameLemma = currentTagInVerbList->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_INFINITIVE][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD];
-						verbCaseStandardList->insert(pair<string, GIApreprocessorMultiwordReductionWord*>(generatedTagNameLemma, currentTagInVerbList));
-					}
-				}
-			}
-			else
+			for(int i=0; i<GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_MAX_NUM_TENSE_FORMS; i++)
 			{
-				verbCaseStandardList->insert(pair<string, GIApreprocessorMultiwordReductionWord*>(currentTagInVerbList->tagName, currentTagInVerbList));
+				for(int j=0; j<GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_MAX_NUM_TENSE_FORM_VERSIONS; j++)
+				{
+					string generatedTagNameLemma = currentTagInVerbList->grammaticalTenseFormsArray[i][j];
+					verbCaseStandardList->insert(pair<string, GIApreprocessorMultiwordReductionWord*>(generatedTagNameLemma, currentTagInVerbList));
+				}
 			}
 		}
 	}
@@ -2126,7 +2124,7 @@ void GIApreprocessorMultiwordReductionClass::detectIfInverseOrTwoWayConditionReq
 			{
 				if(currentTagInPrepositionsInverseListSentence->tagName != conditionName)
 				{
-					cout << "GIApreprocessorMultiwordReductionClass::detectIfInverseOrTwoWayConditionRequired error{}: (currentTagInPrepositionsInverseListSentence->tagName != conditionName)" << endl;
+					cerr << "GIApreprocessorMultiwordReductionClass::detectIfInverseOrTwoWayConditionRequired error{}: (currentTagInPrepositionsInverseListSentence->tagName != conditionName)" << endl;
 					exit(EXIT_ERROR);
 				}
 			}
@@ -2294,7 +2292,7 @@ bool GIApreprocessorMultiwordReductionClass::findWordInWordList(unordered_map<st
 bool GIApreprocessorMultiwordReductionClass::findWordInWordList(unordered_map<string, GIApreprocessorMultiwordReductionWord*>* wordList, const string word, GIApreprocessorMultiwordReductionWord** wordFound)
 {	
 	bool result = false;
-	
+		
 	unordered_map<string, GIApreprocessorMultiwordReductionWord*>::iterator it;
 	it = wordList->find(word);
 	if(it != wordList->end())

@@ -25,7 +25,7 @@
  * File Name: GIAsemanticParserOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3c1b 01-June-2017
+ * Project Version: 3c1c 01-June-2017
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -595,10 +595,10 @@ GIAfeature* GIAsemanticParserOperationsClass::generateOptimisedFeatureSubsetBase
 			if(currentFeatureInSentenceSubset->entityIndex != featureIndex)
 			{
 				//CHECKTHIS: check this test is valid for cases of intra/intersentence referencing
-				cout << "generateOptimisedFeatureSubsetBasedOnContextualConjunctions{} error: (currentFeatureInSentenceSubset->entityIndex != featureIndex)" << endl;
-				cout << "currentFeatureInSentenceSubset->entityIndex = " << currentFeatureInSentenceSubset->entityIndex << endl;
-				cout << "featureIndex = " << featureIndex << endl;
-				cout << "currentFeatureInSentenceSubset->lemma = " << currentFeatureInSentenceSubset->lemma << endl;
+				cerr << "generateOptimisedFeatureSubsetBasedOnContextualConjunctions{} error: (currentFeatureInSentenceSubset->entityIndex != featureIndex)" << endl;
+				cerr << "currentFeatureInSentenceSubset->entityIndex = " << currentFeatureInSentenceSubset->entityIndex << endl;
+				cerr << "featureIndex = " << featureIndex << endl;
+				cerr << "currentFeatureInSentenceSubset->lemma = " << currentFeatureInSentenceSubset->lemma << endl;
 				exit(EXIT_ERROR);
 			}
 

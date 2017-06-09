@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorMultiwordReductionClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3c1b 01-June-2017
+ * Project Version: 3c1c 01-June-2017
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  *
@@ -628,7 +628,7 @@ bool GIApreprocessorMultiwordReductionClassClass::findSubWordListInWordListAtInd
 	/*
 	else
 	{
-		cout << "GIApreprocessorMultiwordReductionClassClass::findSubWordListInWordListAtIndex error{}: !(indexToPerformFind+wordListToFind->size() <= wordList->size())" << endl;
+		cerr << "GIApreprocessorMultiwordReductionClassClass::findSubWordListInWordListAtIndex error{}: !(indexToPerformFind+wordListToFind->size() <= wordList->size())" << endl;
 		exit(EXIT_ERROR);
 	}
 	*/
@@ -692,7 +692,7 @@ int GIApreprocessorMultiwordReductionClassClass::findStringInWordList(const vect
 	/*
 	else
 	{
-		cout << "GIApreprocessorMultiwordReductionClassClass::findStringInWordList error{}: !(startIndexToPerformFind < wordList->size())" << endl;
+		cerr << "GIApreprocessorMultiwordReductionClassClass::findStringInWordList error{}: !(startIndexToPerformFind < wordList->size())" << endl;
 		exit(EXIT_ERROR);
 	}
 	*/
@@ -728,7 +728,7 @@ bool GIApreprocessorMultiwordReductionClassClass::findSubstringAtStartOfWordInWo
 	/*
 	else
 	{
-		cout << "GIApreprocessorMultiwordReductionClassClass::findSubstringAtStartOfWordInWordList error{}: !(startIndexToPerformFind < wordList->size())" << endl;
+		cerr << "GIApreprocessorMultiwordReductionClassClass::findSubstringAtStartOfWordInWordList error{}: !(startIndexToPerformFind < wordList->size())" << endl;
 		exit(EXIT_ERROR);
 	}
 	*/
@@ -759,7 +759,7 @@ vector<GIApreprocessorWord*> GIApreprocessorMultiwordReductionClassClass::extrac
 	/*
 	else
 	{
-		cout << "GIApreprocessorMultiwordReductionClassClass::extractSubWordListInWordList error{}: !(startIndexToExtract+numberOfWordsToExtract <= wordList->size())" << endl;
+		cerr << "GIApreprocessorMultiwordReductionClassClass::extractSubWordListInWordList error{}: !(startIndexToExtract+numberOfWordsToExtract <= wordList->size())" << endl;
 		exit(EXIT_ERROR);
 	}
 	*/
@@ -782,7 +782,7 @@ bool GIApreprocessorMultiwordReductionClassClass::insertWordListIntoWordList(vec
 	}
 	else
 	{
-		cout << "GIApreprocessorMultiwordReductionClassClass::insertWordIntoWordList error{}: !(indexToInsert <= wordList->size())" << endl;
+		cerr << "GIApreprocessorMultiwordReductionClassClass::insertWordIntoWordList error{}: !(indexToInsert <= wordList->size())" << endl;
 		exit(EXIT_ERROR);
 	}
 		
@@ -813,7 +813,7 @@ bool GIApreprocessorMultiwordReductionClassClass::insertWordIntoWordList(vector<
 	/*
 	else
 	{
-		cout << "GIApreprocessorMultiwordReductionClassClass::insertWordIntoWordList error{}: !(indexToInsert <= wordList->size())" << endl;
+		cerr << "GIApreprocessorMultiwordReductionClassClass::insertWordIntoWordList error{}: !(indexToInsert <= wordList->size())" << endl;
 		exit(EXIT_ERROR);
 	}
 	*/
@@ -853,7 +853,7 @@ bool GIApreprocessorMultiwordReductionClassClass::removeWordsFromWordList(vector
 	/*
 	else
 	{
-		cout << "GIApreprocessorMultiwordReductionClassClass::removeWordsFromWordList error{}: !(indexToRemove+numberElementsToRemove <= wordList->size())" << endl;
+		cerr << "GIApreprocessorMultiwordReductionClassClass::removeWordsFromWordList error{}: !(indexToRemove+numberElementsToRemove <= wordList->size())" << endl;
 		exit(EXIT_ERROR);
 	}
 	*/
@@ -892,7 +892,7 @@ bool GIApreprocessorMultiwordReductionClassClass::replaceWordListAtIndexWithSimp
 	/*
 	else
 	{
-		cout << "GIApreprocessorMultiwordReductionClassClass::replaceWordListAtIndexWithSimpleSubstring error{}: !(indexToPerformReplacement+wordListReplacement.size() <= wordList.size())" << endl;
+		cerr << "GIApreprocessorMultiwordReductionClassClass::replaceWordListAtIndexWithSimpleSubstring error{}: !(indexToPerformReplacement+wordListReplacement.size() <= wordList.size())" << endl;
 		exit(EXIT_ERROR);
 	}
 	*/

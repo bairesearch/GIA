@@ -25,7 +25,7 @@
  * File Name: GIAdatabase.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3c1b 01-June-2017
+ * Project Version: 3c1c 01-June-2017
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: performs simple GIA database functions (storing nodes in ordered arrays/vectors/maps)
  *
@@ -340,8 +340,8 @@ string GIAdatabaseClass::DBgenerateServerDatabaseName(const string* entityName, 
 		char entityFirstCharacter = entityName->at(0);
 		if((entityFirstCharacter < ASCII_TABLE_INDEX_OF_a) || (entityFirstCharacter > ASCII_TABLE_INDEX_OF_z))
 		{
-			cout << "determineServerName error: (entityFirstCharacter < ASCII_TABLE_INDEX_OF_a) || (entityFirstCharacter > ASCII_TABLE_INDEX_OF_z)" << endl;
-			cout << "entityName = " <<* entityName << endl;
+			cerr << "determineServerName error: (entityFirstCharacter < ASCII_TABLE_INDEX_OF_a) || (entityFirstCharacter > ASCII_TABLE_INDEX_OF_z)" << endl;
+			cerr << "entityName = " <<* entityName << endl;
 			exit(EXIT_ERROR);
 		}
 
@@ -431,7 +431,7 @@ string GIAdatabaseClass::DBgenerateFileName(const string* entityName, const long
 		}
 		else
 		{
-			cout << "error: illegal fileType" << endl;
+			cerr << "error: illegal fileType" << endl;
 			exit(EXIT_ERROR);
 		}
 
@@ -626,7 +626,7 @@ void GIAdatabaseClass::DBreadNetworkIndexEntityNodesLoadedList()	//unordered_map
 	if(!parseFileObject.rdbuf()->is_open())
 	{
 		//file does not exist in current directory.
-		cout << "DBreadNetworkIndexEntityNodesLoadedList{} error: GIA NetworkIndex Entity Nodes List File does not exist in current directory: " << networkIndexEntityNodesListFileName << endl;
+		cerr << "DBreadNetworkIndexEntityNodesLoadedList{} error: GIA NetworkIndex Entity Nodes List File does not exist in current directory: " << networkIndexEntityNodesListFileName << endl;
 		exit(EXIT_ERROR);
 	}
 	else
@@ -1371,7 +1371,7 @@ void GIAdatabaseClass::DBwriteNetworkIndexEntityNodesLoadedList()	//unordered_ma
 #ifdef GIA_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS
 
 	#ifdef GIA_DATABASE_DO_NOT_WRITE_DISABLED_ENTITY_NODES
-	cout << "error: GIA_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS cannot be used with GIA_DATABASE_DO_NOT_WRITE_DISABLED_ENTITY_NODES" << endl;
+	cerr << "error: GIA_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS cannot be used with GIA_DATABASE_DO_NOT_WRITE_DISABLED_ENTITY_NODES" << endl;
 	exit(EXIT_ERROR);
 	#endif
 

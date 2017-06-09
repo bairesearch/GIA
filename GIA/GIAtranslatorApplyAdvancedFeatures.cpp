@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorApplyAdvancedFeatures.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3c1b 01-June-2017
+ * Project Version: 3c1c 01-June-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -112,10 +112,10 @@ void GIAtranslatorApplyAdvancedFeaturesClass::extractDatesStanfordCoreNLP(GIAtra
 								//this case appears to be required for queries... (_%qvar/_%atTime), noting that qVar is not assigned a substance (but remains a networkIndex node)
 								/*
 								#ifdef GIA_TRANSLATOR_DEBUG
-								cout << "timeEntity->NormalizedNERtemp = " << timeEntity->NormalizedNERtemp << endl;
-								cout << "error: getPrimaryNetworkIndexNodeDefiningInstance(timeEntity) != NULL [1b]" << endl;
+								cerr << "timeEntity->NormalizedNERtemp = " << timeEntity->NormalizedNERtemp << endl;
+								cerr << "error: getPrimaryNetworkIndexNodeDefiningInstance(timeEntity) != NULL [1b]" << endl;
 								#else
-								cout << "error: [confidential 1b]" << endl;
+								cerr << "error: [confidential 1b]" << endl;
 								#endif
 								exit(EXIT_ERROR);
 								*/
@@ -127,7 +127,7 @@ void GIAtranslatorApplyAdvancedFeaturesClass::extractDatesStanfordCoreNLP(GIAtra
 					else
 					{
 						#ifndef GIA_TRANSLATOR_DEBUG
-						cout << "error: [confidential 1]" << endl;
+						cerr << "error: [confidential 1]" << endl;
 						#endif
 						exit(EXIT_ERROR);	//remove this later
 					}
@@ -180,7 +180,7 @@ void GIAtranslatorApplyAdvancedFeaturesClass::extractDatesRelex(GIAtranslatorVar
 				else
 				{
 					#ifndef GIA_TRANSLATOR_DEBUG
-					cout << "error: [confidential 1]" << endl;
+					cerr << "error: [confidential 1]" << endl;
 					#endif
 					exit(EXIT_ERROR);	//remove this later
 				}
@@ -245,7 +245,7 @@ void GIAtranslatorApplyAdvancedFeaturesClass::extractDatesRelex(GIAtranslatorVar
 								}
 								else
 								{
-									cout << "error: isolated date node found (not declared as a time condition)" << endl;
+									cerr << "error: isolated date node found (not declared as a time condition)" << endl;
 									exit(EXIT_ERROR);	//remove this later
 								}
 							}
@@ -281,7 +281,7 @@ void GIAtranslatorApplyAdvancedFeaturesClass::extractDatesRelex(GIAtranslatorVar
 				else
 				{
 					#ifndef GIA_TRANSLATOR_DEBUG
-					cout << "error: [confidential 4]" << endl;
+					cerr << "error: [confidential 4]" << endl;
 					#endif
 					exit(EXIT_ERROR);	//remove this later
 				}

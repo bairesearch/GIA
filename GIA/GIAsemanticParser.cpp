@@ -25,7 +25,7 @@
  * File Name: GIAsemanticParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3c1b 01-June-2017
+ * Project Version: 3c1c 01-June-2017
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -181,7 +181,7 @@ bool GIAsemanticParserClass::lookupSemanticParserFiles(GIAsentence* firstSentenc
 
 						if(currentSentenceInList->firstFeatureInList->entityIndex != GIA_NLP_START_ENTITY_INDEX)
 						{
-							cout << "lookupSemanticParserFiles{} implementation error*: (sentence->firstFeatureInList->entityIndex != GIA_NLP_START_ENTITY_INDEX)" << endl;
+							cerr << "lookupSemanticParserFiles{} implementation error*: (sentence->firstFeatureInList->entityIndex != GIA_NLP_START_ENTITY_INDEX)" << endl;
 							exit(EXIT_ERROR);
 						}
 						#ifdef GIA_SEMANTIC_PARSER_SUBSETS_OPTIMISE_BASED_ON_CONJUNCTIONS

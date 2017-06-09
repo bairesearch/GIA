@@ -25,7 +25,7 @@
  * File Name: GIAwordnet.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3c1b 01-June-2017
+ * Project Version: 3c1c 01-June-2017
  * Requirements: requires wordnet libraries to be installed
  * Description: searches wordnet database and parses wordnet output
  *
@@ -52,7 +52,7 @@ void GIAwordnetClass::initialiseWordNet(const int newSynonymnDetectionStatus)
   	string wordExample = "go";
 	char* wordExampleCharStar = const_cast<char*>(wordExample.c_str());
 	char* output = findtheinfo(wordExampleCharStar,1,5,0);
-	cout << "wordnet output = " << output << endl;
+	cerr << "wordnet output = " << output << endl;
 	//exit(EXIT_ERROR);
 	string wordExample = "pretty";
 	string wordExample2 = "beautiful";	//boring
@@ -60,9 +60,9 @@ void GIAwordnetClass::initialiseWordNet(const int newSynonymnDetectionStatus)
 	string listOfSynonyms[WORDNET_FINDTHEINFO_OUTPUT_MAX_NUMBER_SYNONYMS];
 	int wordNetPOS = ADJ;	//NOUN	VERB
 	bool synFound = this->checkIfWordIsContainedWithinAnotherWordsSynsets(&wordExample, &wordExample2, wordNetPOS);
-	cout << "wordExample = " << wordExample << endl;
-	cout << "wordExample2 = " << wordExample2 << endl;
-	cout << "synFound = " << synFound << endl;
+	cerr << "wordExample = " << wordExample << endl;
+	cerr << "wordExample2 = " << wordExample2 << endl;
+	cerr << "synFound = " << synFound << endl;
 	//findSynonymsOLD(wordExample, &wordIsFound, listOfSynonyms, wordNetPOS);
 	exit(EXIT_ERROR);
 	#endif
@@ -395,9 +395,9 @@ void GIAwordnetClass::findSynonymsOLD(const string word, bool* wordIsFound, stri
 
 	if(!this->recordUntilCharacterOrEscapeCharacterOLD(charIndex, output, &charIndex, &numberOfSensesString, CHAR_SPACE, CHAR_END_OF_STRING))	//wait till end of header
 	{
-		cout << "findSynonyms error: number of senses string not found" << endl;
-		cout << "charIndex = " << charIndex << endl;
-		cout << "lineIndex = " << lineIndex << endl;
+		cerr << "findSynonyms error: number of senses string not found" << endl;
+		cerr << "charIndex = " << charIndex << endl;
+		cerr << "lineIndex = " << lineIndex << endl;
 		exit(EXIT_ERROR);
 	}
 
@@ -406,9 +406,9 @@ void GIAwordnetClass::findSynonymsOLD(const string word, bool* wordIsFound, stri
 
 	if(!this->recordUntilCharacterOrEscapeCharacterOLD(charIndex, output, &charIndex, &lineString, CHAR_NEWLINE, CHAR_END_OF_STRING))	//wait till end of header
 	{
-		cout << "findSynonyms error: new line not found" << endl;
-		cout << "charIndex = " << charIndex << endl;
-		cout << "lineIndex = " << lineIndex << endl;
+		cerr << "findSynonyms error: new line not found" << endl;
+		cerr << "charIndex = " << charIndex << endl;
+		cerr << "lineIndex = " << lineIndex << endl;
 		exit(EXIT_ERROR);
 	}
 	lineIndex++;
@@ -420,9 +420,9 @@ void GIAwordnetClass::findSynonymsOLD(const string word, bool* wordIsFound, stri
 		char c = output[charIndex];
 		if(c != CHAR_NEWLINE)
 		{
-			cout << "findSynonyms error: deformation (double new line not found)" << endl;
-			cout << "charIndex = " << charIndex << endl;
-			cout << "lineIndex = " << lineIndex << endl;
+			cerr << "findSynonyms error: deformation (double new line not found)" << endl;
+			cerr << "charIndex = " << charIndex << endl;
+			cerr << "lineIndex = " << lineIndex << endl;
 			exit(EXIT_ERROR);
 		}
 		charIndex++;
@@ -430,9 +430,9 @@ void GIAwordnetClass::findSynonymsOLD(const string word, bool* wordIsFound, stri
 
 		if(!this->recordUntilCharacterOrEscapeCharacterOLD(charIndex, output, &charIndex, &lineString, CHAR_NEWLINE, CHAR_END_OF_STRING))	//wait till end of header
 		{
-			cout << "findSynonyms error: new line not found" << endl;
-			cout << "charIndex = " << charIndex << endl;
-			cout << "lineIndex = " << lineIndex << endl;
+			cerr << "findSynonyms error: new line not found" << endl;
+			cerr << "charIndex = " << charIndex << endl;
+			cerr << "lineIndex = " << lineIndex << endl;
 			exit(EXIT_ERROR);
 		}
 		lineIndex++;
@@ -443,11 +443,11 @@ void GIAwordnetClass::findSynonymsOLD(const string word, bool* wordIsFound, stri
 
 		if(senseEntryTitleStringExpected != lineString)
 		{
-			cout << "findSynonyms error: (senseEntryTitleStringExpected != lineString)" << endl;
-			cout << "charIndex = " << charIndex << endl;
-			cout << "lineIndex = " << lineIndex << endl;
-			cout << "senseEntryTitleStringExpected = " << senseEntryTitleStringExpected << endl;
-			cout << "lineString = " << lineString << endl;
+			cerr << "findSynonyms error: (senseEntryTitleStringExpected != lineString)" << endl;
+			cerr << "charIndex = " << charIndex << endl;
+			cerr << "lineIndex = " << lineIndex << endl;
+			cerr << "senseEntryTitleStringExpected = " << senseEntryTitleStringExpected << endl;
+			cerr << "lineString = " << lineString << endl;
 			exit(EXIT_ERROR);
 		}
 
@@ -463,9 +463,9 @@ void GIAwordnetClass::findSynonymsOLD(const string word, bool* wordIsFound, stri
 				c = output[charIndex];
 				if(c != CHAR_SPACE)
 				{//deal with additional space
-					cout << "findSynonyms error: space not found after synonymn" << endl;
-					cout << "charIndex = " << charIndex << endl;
-					cout << "lineIndex = " << lineIndex << endl;
+					cerr << "findSynonyms error: space not found after synonymn" << endl;
+					cerr << "charIndex = " << charIndex << endl;
+					cerr << "lineIndex = " << lineIndex << endl;
 					exit(EXIT_ERROR);
 					result = false;
 				}
@@ -479,9 +479,9 @@ void GIAwordnetClass::findSynonymsOLD(const string word, bool* wordIsFound, stri
 
 		if(!this->recordUntilCharacterOrEscapeCharacterOLD(charIndex, output, &charIndex, &lineString, CHAR_NEWLINE, CHAR_END_OF_STRING))	//wait till end of line
 		{
-			cout << "findSynonyms error: new line not found" << endl;
-			cout << "charIndex = " << charIndex << endl;
-			cout << "lineIndex = " << lineIndex << endl;
+			cerr << "findSynonyms error: new line not found" << endl;
+			cerr << "charIndex = " << charIndex << endl;
+			cerr << "lineIndex = " << lineIndex << endl;
 			exit(EXIT_ERROR);
 		}
 

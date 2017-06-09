@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorLogicReference.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3c1b 01-June-2017
+ * Project Version: 3c1c 01-June-2017
  * Requirements: requires plain text file
  * Description: Logic Reference preprocessor
  *
@@ -107,13 +107,13 @@ bool GIApreprocessorLogicReferenceClass::extractGIApreprocessorLogicReferenceCla
 							}
 							else
 							{
-								cout << "GIApreprocessor::extractGIApreprocessorLogicReferenceClasses{} error: illegal class name = currentTagInLogicReferencePreprocessor->firstAttribute->value = " << currentTagInLogicReferencePreprocessor->firstAttribute->value << endl;
+								cerr << "GIApreprocessor::extractGIApreprocessorLogicReferenceClasses{} error: illegal class name = currentTagInLogicReferencePreprocessor->firstAttribute->value = " << currentTagInLogicReferencePreprocessor->firstAttribute->value << endl;
 								exit(EXIT_ERROR);
 							}
 						}
 						else
 						{
-							cout << "GIApreprocessor::extractGIApreprocessorLogicReferenceClasses{} error: illegal class name = currentTagInLogicReferencePreprocessor->firstAttribute->name = " << currentTagInLogicReferencePreprocessor->firstAttribute->name << ", expected: GIA_PREPROCESSOR_XML_ATTRIBUTE_name" << endl;
+							cerr << "GIApreprocessor::extractGIApreprocessorLogicReferenceClasses{} error: illegal class name = currentTagInLogicReferencePreprocessor->firstAttribute->name = " << currentTagInLogicReferencePreprocessor->firstAttribute->name << ", expected: GIA_PREPROCESSOR_XML_ATTRIBUTE_name" << endl;
 							exit(EXIT_ERROR);
 						}
 						
@@ -132,7 +132,7 @@ bool GIApreprocessorLogicReferenceClass::extractGIApreprocessorLogicReferenceCla
 									}
 									else
 									{
-										cout << "GIApreprocessor::extractGIApreprocessorLogicReferenceClasses{} error: illegal type name = currentTagInClass->firstAttribute->name = " << currentTagInClass->firstAttribute->name << ", expected: GIA_PREPROCESSOR_XML_ATTRIBUTE_name" << endl;
+										cerr << "GIApreprocessor::extractGIApreprocessorLogicReferenceClasses{} error: illegal type name = currentTagInClass->firstAttribute->name = " << currentTagInClass->firstAttribute->name << ", expected: GIA_PREPROCESSOR_XML_ATTRIBUTE_name" << endl;
 										exit(EXIT_ERROR);
 									}
 
@@ -150,13 +150,13 @@ bool GIApreprocessorLogicReferenceClass::extractGIApreprocessorLogicReferenceCla
 											}
 											else
 											{
-												cout << "GIApreprocessor::extractGIApreprocessorLogicReferenceClasses{} error: illegal instance name = currentTagInType->firstAttribute->name = " << currentTagInType->firstAttribute->name << ", expected: GIA_PREPROCESSOR_XML_ATTRIBUTE_name" << endl;
+												cerr << "GIApreprocessor::extractGIApreprocessorLogicReferenceClasses{} error: illegal instance name = currentTagInType->firstAttribute->name = " << currentTagInType->firstAttribute->name << ", expected: GIA_PREPROCESSOR_XML_ATTRIBUTE_name" << endl;
 												exit(EXIT_ERROR);
 											}
 										}
 										else
 										{
-											cout << "GIApreprocessor::extractGIApreprocessorLogicReferenceClasses{} error: illegal currentTagInType->name = " << currentTagInType->name << ", expected: GIA_PREPROCESSOR_XML_TAG_instance" << endl;
+											cerr << "GIApreprocessor::extractGIApreprocessorLogicReferenceClasses{} error: illegal currentTagInType->name = " << currentTagInType->name << ", expected: GIA_PREPROCESSOR_XML_TAG_instance" << endl;
 											exit(EXIT_ERROR);
 										}
 										currentTagInType = currentTagInType->nextTag;
@@ -164,7 +164,7 @@ bool GIApreprocessorLogicReferenceClass::extractGIApreprocessorLogicReferenceCla
 								}
 								else
 								{
-									cout << "GIApreprocessor::extractGIApreprocessorLogicReferenceClasses{} error: illegal currentTagInClass->name = " << currentTagInClass->name << ", expected: GIA_PREPROCESSOR_XML_TAG_type" << endl;
+									cerr << "GIApreprocessor::extractGIApreprocessorLogicReferenceClasses{} error: illegal currentTagInClass->name = " << currentTagInClass->name << ", expected: GIA_PREPROCESSOR_XML_TAG_type" << endl;
 									exit(EXIT_ERROR);
 								}
 								currentTagInClass = currentTagInClass->nextTag;
@@ -173,7 +173,7 @@ bool GIApreprocessorLogicReferenceClass::extractGIApreprocessorLogicReferenceCla
 					}
 					else
 					{
-						cout << "GIApreprocessor::extractGIApreprocessorLogicReferenceClasses{} error: illegal currentTagInLogicReferencePreprocessor->name = " << currentTagInLogicReferencePreprocessor->name << ", expected: GIA_PREPROCESSOR_XML_TAG_class" << endl;
+						cerr << "GIApreprocessor::extractGIApreprocessorLogicReferenceClasses{} error: illegal currentTagInLogicReferencePreprocessor->name = " << currentTagInLogicReferencePreprocessor->name << ", expected: GIA_PREPROCESSOR_XML_TAG_class" << endl;
 						exit(EXIT_ERROR);
 					}
 					currentTagInLogicReferencePreprocessor = currentTagInLogicReferencePreprocessor->nextTag;
@@ -265,7 +265,7 @@ bool GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor(const
 							result = false;
 						}
 						#else
-						cout << "GIApreprocessor::executeLogicReferencePreprocessor{} error: GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_ABSTRACT_CONJUNCTIONS not supported; eg subsequent_to and before" << endl;	
+						cerr << "GIApreprocessor::executeLogicReferencePreprocessor{} error: GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_ABSTRACT_CONJUNCTIONS not supported; eg subsequent_to and before" << endl;
 						exit(EXIT_ERROR);
 						#endif
 					}
@@ -353,24 +353,24 @@ bool GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor(const
 						firstLogicReferenceInList->next = NULL;	//delete the original logic reference as it will contain nothing
 						if(firstLogicReferenceInList->previous != NULL)
 						{
-							cout << "GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor{} error: (firstLogicReferenceInList->previous != NULL)" << endl;
+							cerr << "GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor{} error: (firstLogicReferenceInList->previous != NULL)" << endl;
 							exit(EXIT_ERROR);
 						}
 						if(firstLogicReferenceInList->lastLogicReferenceInUpperLevel == NULL)
 						{
-							cout << "GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor{} error: (firstLogicReferenceInList->lastLogicReferenceInUpperLevel == NULL)" << endl;
+							cerr << "GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor{} error: (firstLogicReferenceInList->lastLogicReferenceInUpperLevel == NULL)" << endl;
 							exit(EXIT_ERROR);
 						}
 						if(firstLogicReferenceInList->logicReferenceClass != GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_CONJUNCTION_COMPONENT_IMPLICIT_INFERRED)
 						{
-							cout << "GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor{} error: (firstLogicReferenceInList->logicReferenceClass != GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_CONJUNCTION_COMPONENT_IMPLICIT_INFERRED)" << endl;
+							cerr << "GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor{} error: (firstLogicReferenceInList->logicReferenceClass != GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_CONJUNCTION_COMPONENT_IMPLICIT_INFERRED)" << endl;
 							exit(EXIT_ERROR);
 						}
 
 						GIApreprocessorLogicReference* conjunctionLogicReferenceOld = firstLogicReferenceInList->lastLogicReferenceInUpperLevel;
 						if(conjunctionLogicReferenceOld->logicReferenceClass != GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_CONJUNCTION)
 						{
-							cout << "GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor{} error: (conjunctionLogicReferenceOld->logicReferenceClass != GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_CONJUNCTION)" << endl;
+							cerr << "GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor{} error: (conjunctionLogicReferenceOld->logicReferenceClass != GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_CONJUNCTION)" << endl;
 							exit(EXIT_ERROR);
 						}
 
@@ -379,7 +379,7 @@ bool GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor(const
 
 						if(verbLogicReference->logicReferenceClass != GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_VERB)
 						{
-							cout << "GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor{} error: (verbLogicReference->logicReferenceClass != GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_VERB)" << endl;
+							cerr << "GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor{} error: (verbLogicReference->logicReferenceClass != GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_VERB)" << endl;
 							exit(EXIT_ERROR);
 						}
 
@@ -422,7 +422,7 @@ bool GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor(const
 							/*
 							if(expectToFindSubjectAuxObjectLogicReferenceVariable != false)
 							{
-								cout << "GIApreprocessorLogicReferenceClass::extractGIApreprocessorLogicReferenceClasses{} error: expectToFindSubjectAuxObjectLogicReferenceVariable != false" << endl;
+								cerr << "GIApreprocessorLogicReferenceClass::extractGIApreprocessorLogicReferenceClasses{} error: expectToFindSubjectAuxObjectLogicReferenceVariable != false" << endl;
 								exit(EXIT_ERROR);
 							}
 							*/
@@ -436,8 +436,8 @@ bool GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor(const
 						else
 						{
 							//eg Subsequent_to proposed that the house is blue.
-							cout << "GIApreprocessorLogicReferenceClass::extractGIApreprocessorLogicReferenceClasses{} error: (logicReferenceClass == GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_VERB) && (currentLogicReferenceInListActiveOriginalClass != GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_UNDEFINED||GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_CONJUNCTION_COMPONENT_EXPLICIT)" << endl;	
-							cout << "currentLogicReferenceInListActiveOriginal->logicReferenceClass = " << currentLogicReferenceInListActiveOriginal->logicReferenceClass << endl;
+							cerr << "GIApreprocessorLogicReferenceClass::extractGIApreprocessorLogicReferenceClasses{} error: (logicReferenceClass == GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_VERB) && (currentLogicReferenceInListActiveOriginalClass != GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_UNDEFINED||GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_CONJUNCTION_COMPONENT_EXPLICIT)" << endl;
+							cerr << "currentLogicReferenceInListActiveOriginal->logicReferenceClass = " << currentLogicReferenceInListActiveOriginal->logicReferenceClass << endl;
 							exit(EXIT_ERROR);
 						}
 						#endif
@@ -463,7 +463,7 @@ bool GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor(const
 						else
 						{	
 							//eg The house is blue suggested the apple.
-							cout << "GIApreprocessorLogicReferenceClass::extractGIApreprocessorLogicReferenceClasses{} error: (logicReferenceClass == GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_VERB) && (logicReferenceVariableWordList->size() == 0) && !(currentLogicReferenceInListActiveOriginal->logicReferenceConjunctionClass == GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_CONJUNCTION_COMPONENT_EXPLICIT || GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_CONJUNCTION_COMPONENT_IMPLICIT_INFERRED)" << endl;	
+							cerr << "GIApreprocessorLogicReferenceClass::extractGIApreprocessorLogicReferenceClasses{} error: (logicReferenceClass == GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_VERB) && (logicReferenceVariableWordList->size() == 0) && !(currentLogicReferenceInListActiveOriginal->logicReferenceConjunctionClass == GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_CONJUNCTION_COMPONENT_EXPLICIT || GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_CONJUNCTION_COMPONENT_IMPLICIT_INFERRED)" << endl;
 							exit(EXIT_ERROR);
 						}
 						#endif
@@ -493,7 +493,7 @@ bool GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor(const
 						else
 						{
 							//eg The house is blue considering the pie.
-							cout << "GIApreprocessorLogicReferenceClass::extractGIApreprocessorLogicReferenceClasses{} error: (logicReferenceClass == GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_PREPOSITION) && (logicReferenceVariableWordList->size() != 0)" << endl;	
+							cerr << "GIApreprocessorLogicReferenceClass::extractGIApreprocessorLogicReferenceClasses{} error: (logicReferenceClass == GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_PREPOSITION) && (logicReferenceVariableWordList->size() != 0)" << endl;
 							exit(EXIT_ERROR);
 						}
 					#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_ERROR_CHECKING
@@ -501,8 +501,8 @@ bool GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor(const
 					else
 					{
 						//eg the house is blue considering the pie.
-						cout << "GIApreprocessorLogicReferenceClass::extractGIApreprocessorLogicReferenceClasses{} error: (logicReferenceClass == GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_PREPOSITION) && !((currentLogicReferenceInListActiveOriginalClass == GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_UNDEFINED) || (currentLogicReferenceInListActiveOriginalClass == GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_CONJUNCTION))" << endl;	
-						cout << "currentLogicReferenceInListActiveOriginalClass = " << currentLogicReferenceInListActiveOriginalClass << endl;
+						cerr << "GIApreprocessorLogicReferenceClass::extractGIApreprocessorLogicReferenceClasses{} error: (logicReferenceClass == GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_PREPOSITION) && !((currentLogicReferenceInListActiveOriginalClass == GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_UNDEFINED) || (currentLogicReferenceInListActiveOriginalClass == GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_CONJUNCTION))" << endl;
+						cerr << "currentLogicReferenceInListActiveOriginalClass = " << currentLogicReferenceInListActiveOriginalClass << endl;
 						exit(EXIT_ERROR);
 					}
 					#endif
@@ -705,7 +705,7 @@ bool GIApreprocessorLogicReferenceClass::fillLogicReferenceVariable(GIApreproces
 		}
 		else
 		{
-			cout << "GIApreprocessor::fillLogicReferenceVariable{} error: islogicReferenceConjunctionAndOr && isReferenceSetEmpty(referenceSetSubject)" << endl;
+			cerr << "GIApreprocessor::fillLogicReferenceVariable{} error: islogicReferenceConjunctionAndOr && isReferenceSetEmpty(referenceSetSubject)" << endl;
 			exit(EXIT_ERROR);
 		}
 	}
@@ -825,7 +825,7 @@ bool GIApreprocessorLogicReferenceClass::identifyImplicitLogicReferenceSets(GIAp
 		}
 		else
 		{
-			cout << "GIApreprocessorLogicReferenceClass::identifyImplicitLogicReferenceSets{} error; (currentLogicReferenceInList->logicReferenceConjunctionClass != GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_CONJUNCTION_COMPONENT_IMPLICIT_INFERRED)" << endl;
+			cerr << "GIApreprocessorLogicReferenceClass::identifyImplicitLogicReferenceSets{} error; (currentLogicReferenceInList->logicReferenceConjunctionClass != GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_CONJUNCTION_COMPONENT_IMPLICIT_INFERRED)" << endl;
 			exit(EXIT_ERROR);
 		}
 	}
@@ -838,7 +838,7 @@ bool GIApreprocessorLogicReferenceClass::identifyImplicitLogicReferenceSets(GIAp
 	}
 	else
 	{
-		cout << "GIApreprocessorLogicReferenceClass::identifyImplicitLogicReferenceSets{} error; (firstLogicReferenceInLayer->lastLogicReferenceInUpperLevel === NULL)" << endl;
+		cerr << "GIApreprocessorLogicReferenceClass::identifyImplicitLogicReferenceSets{} error; (firstLogicReferenceInLayer->lastLogicReferenceInUpperLevel === NULL)" << endl;
 		exit(EXIT_ERROR);	
 	}
 	

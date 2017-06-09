@@ -25,7 +25,7 @@
  * File Name: GIAdraw.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3c1b 01-June-2017
+ * Project Version: 3c1c 01-June-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -139,7 +139,7 @@ bool GIAdrawClass::printGIAnetworkNodes(GIAtranslatorVariablesClass* translatorV
 		LDreference* topLevelReferenceInSceneFile = new LDreference(topLevelSceneFileName, 1, true);	//The information in this object is not required or meaningful, but needs to be passed into the parseFile/parseReferenceList recursive function
 		if(!LDparser.parseFile(topLevelSceneFileName, initialReferenceInSceneFile, topLevelReferenceInSceneFile, true))
 		{//file does not exist
-			cout << "The file: " << topLevelSceneFileName << " does not exist in the directory" << endl;
+			cerr << "The file: " << topLevelSceneFileName << " does not exist in the directory" << endl;
 			exit(EXIT_ERROR);
 		}
 		LDreferenceManipulation.write2DreferenceListCollapsedTo1DtoFile(topLevelSceneFileNameCollapsed, initialReferenceInSceneFile);
@@ -161,7 +161,7 @@ bool GIAdrawClass::printGIAnetworkNodes(GIAtranslatorVariablesClass* translatorV
 		LDreference* topLevelReferenceInCollapsedSceneFile = new LDreference(topLevelSceneFileNameCollapsed, 1, true);	//The information in this object is not required or meaningful, but needs to be passed into the parseFile/parseReferenceList recursive function
 		if(!LDparser.parseFile(topLevelSceneFileNameCollapsed, initialReferenceInCollapsedSceneFile, topLevelReferenceInCollapsedSceneFile, true))
 		{//file does not exist
-			cout << "The file: " << topLevelSceneFileNameCollapsed << " does not exist in the directory" << endl;
+			cerr << "The file: " << topLevelSceneFileNameCollapsed << " does not exist in the directory" << endl;
 			exit(EXIT_ERROR);
 		}
 
