@@ -25,7 +25,7 @@
  * File Name: GIAdraw.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3b5b 29-May-2017
+ * Project Version: 3c1a 01-June-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -160,6 +160,8 @@
 #define GIA_DRAW_QUERY_ANSWER_NODE_COLOUR (DAT_FILE_COLOUR_YELLOW)
 #define GIA_DRAW_QUERY_ANSWER_CONTEXT_NODE_COLOUR (DAT_FILE_COLOUR_DARKGREY)
 
+#define GIA_DRAW_ENTITY_REFERENCE_NODE_COLOUR (DAT_FILE_COLOUR_YELLOW)
+
 #define GIA_DRAW_CONDITION_NODE_HEIGHT (5)
 #define GIA_DRAW_CONDITION_NODE_WIDTH (20)
 #define GIA_DRAW_ACTION_NODE_HEIGHT (5)
@@ -210,6 +212,14 @@
 #define GIA_SVG_SCALE_FACTOR (1)
 #define GIA_SVG_TEXT_SCALE_FACTOR (5)
 
+#define GIA_DRAW_SVG_VIEWBOX_MIN_X_OFFSET (100)
+#define GIA_DRAW_SVG_VIEWBOX_MIN_Y_OFFSET (100)
+#define GIA_DRAW_SVG_VIEWBOX_MIN_X (-GIA_DRAW_SVG_VIEWBOX_MIN_X_OFFSET)
+#define GIA_DRAW_SVG_VIEWBOX_MAX_X (1920)
+#define GIA_DRAW_SVG_VIEWBOX_MIN_Y (-GIA_DRAW_SVG_VIEWBOX_MIN_Y_OFFSET)
+#define GIA_DRAW_SVG_VIEWBOX_MAX_Y (1400)
+
+
 #define GIA_DRAW_CONNECTION_Z (0.0)
 #define GIA_FILE_TEXT_BOX_OUTLINE_WIDTH_SVG (1.0)
 
@@ -225,12 +235,14 @@
 #define GIA_OUTPUT_Z_POSITION_NODES (0.4)
 #define GIA_OUTPUT_Z_POSITION_TEXT (0.2)
 
-
 #define GIA_DRAW_UNDEFINED_CONNECTION_COLOUR (INT_DEFAULT_VALUE)
 
 #ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
 	#define GIA_DRAW_LOGIC_REFERENCE_ENTITY_COLOUR (DAT_FILE_COLOUR_DARKGREEN)
 #endif
+
+#define GIA_DRAW_SENTENCE_INDEX_PRINT_ALL_SENTENCES (0)
+
 
 static int entityNodeTypeColourArray[GIA_ENTITY_NUMBER_OF_TYPES] = {GIA_DRAW_NETWORK_INDEX_NODE_COLOUR, GIA_DRAW_SUBSTANCE_NODE_COLOUR, GIA_DRAW_CONCEPT_NODE_COLOUR, GIA_DRAW_ACTION_NODE_COLOUR, GIA_DRAW_CONDITION_NODE_COLOUR, GIA_DRAW_PROPERTY_NODE_COLOUR, GIA_DRAW_DEFINITION_NODE_COLOUR, GIA_DRAW_SUBSTANCE_QUALITY_NODE_COLOUR};
 
@@ -253,6 +265,17 @@ static int relationshipEntityVectorConnectionDrawPosYinitialArray[GIA_RELATIONSH
 static int relationshipEntityVectorConnectionDrawPosXinitialArray[GIA_RELATIONSHIP_ENTITY_NUMBER_OF_TYPES] = {GIA_DRAW_X_SPACE_BETWEEN_ACTION_NODES, GIA_DRAW_X_SPACE_BETWEEN_CONDITION_NODES, GIA_DRAW_X_SPACE_BETWEEN_PROPERTY_NODES, GIA_DRAW_X_SPACE_BETWEEN_DEFINITION_NODES};
 static int relationshipEntityVectorConnectionDrawPosYspacingArray[GIA_RELATIONSHIP_ENTITY_NUMBER_OF_TYPES] = {GIA_DRAW_Y_SPACE_BETWEEN_ACTIONS_OF_SAME_NODE, GIA_DRAW_Y_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE, GIA_DRAW_Y_SPACE_BETWEEN_PROPERTIES_OF_SAME_NODE, GIA_DRAW_Y_SPACE_BETWEEN_DEFINITIONS_OF_SAME_NODE};
 
+class GIAdrawVariables
+{
+	public:
+		GIAdrawVariables(void);
+		~GIAdrawVariables(void);
+
+		bool printType[3];
+		int maxNumberSentences;
+		int sentenceToPrint;
+		GIAentityNode* entityReference;
+};
 
 class GIAdrawClass
 {
@@ -266,18 +289,19 @@ class GIAdrawClass
 	private: LDspriteClass LDsprite;
 	private: GIAtranslatorOperationsClass GIAtranslatorOperations;
 	
-	public: void printGIAnetworkNodes(vector<GIAentityNode*>* entityNodesActiveListComplete, int width, const int height, const string outputFileNameLDR, const string outputFileNameSVG, const string outputFileNamePPM, const bool display, const bool useOutputLDRfile, const bool useOutputPPMfile, const bool useOutputSVGfile, int maxNumberSentences);
+	public: bool printGIAnetworkNodesToSVGstring(GIAtranslatorVariablesClass* translatorVariables, const int width, const int height, int sentenceIndex, string* writeFileStringSVG, GIAentityNode* entityReference);
+	public: bool printGIAnetworkNodes(GIAtranslatorVariablesClass* translatorVariables, const int width, const int height, const string outputFileNameLDR, const string outputFileNameSVG, const string outputFileNamePPM, const bool display, const bool useOutputLDRfile, const bool useOutputPPMfile, const bool useOutputSVGfile);
 
-	public: bool determineBasicPrintPositionsOfAllNodes(vector<GIAentityNode*>* entityNodesActiveListComplete, bool printType[], LDreference* firstReferenceInPrintList, XMLparserTag* firstTagInSVGFile, int maxNumberSentences);
+	public: bool determineBasicPrintPositionsOfAllNodes(vector<GIAentityNode*>* entityNodesActiveListComplete, GIAdrawVariables* drawVariables, LDreference* firstReferenceInPrintList, XMLparserTag* firstTagInSVGFile);
 
 	private: void initiateMaxXAtParticularY();
-	private: bool initialiseEntityConnectionForPrinting(vec* pos1, GIAentityConnection* entityConnection, bool printType[], string connectionName, int entityConnectionColour, LDreference** currentReferenceInPrintList, XMLparserTag** currentTag);
-		private: bool initialiseEntityNodeForPrinting(GIAentityNode* entityNode, int y, int x, bool printType[], LDreference** currentReferenceInPrintList, XMLparserTag** currentTag, int sentenceIndex, bool thisIsDefinitionAndPreviousNodeWasInstance);
-		private: bool initialiseTimeConditionNodeForPrinting(GIAtimeConditionNode* timeConditionNode, const int y, const int x, bool printType[], LDreference** currentReferenceInPrintList, XMLparserTag** currentTag);
+	private: bool initialiseEntityConnectionForPrinting(vec* pos1, GIAentityConnection* entityConnection, GIAdrawVariables* drawVariables, string connectionName, int entityConnectionColour, LDreference** currentReferenceInPrintList, XMLparserTag** currentTag);
+		private: bool initialiseEntityNodeForPrinting(GIAentityNode* entityNode, int y, int x, GIAdrawVariables* drawVariables, LDreference** currentReferenceInPrintList, XMLparserTag** currentTag, int sentenceIndex, bool thisIsDefinitionAndPreviousNodeWasInstance);
+		private: bool initialiseTimeConditionNodeForPrinting(GIAtimeConditionNode* timeConditionNode, const int y, const int x, GIAdrawVariables* drawVariables, LDreference** currentReferenceInPrintList, XMLparserTag** currentTag);
 
-	private: bool createReferenceConnectionWithText(vec* pos1, vec* pos2, int colour, LDreference** currentReferenceInPrintList, XMLparserTag** currentTag, string connectionTypeName, bool printType[]);
-		private: bool createReferenceConnection(vec* pos1, vec* pos2, int colour, LDreference** currentReferenceInPrintList, XMLparserTag** currentTag, const bool printType[]);
-	private: bool createBox(vec* vect, const double width, const double height, int colour, string* text, LDreference** currentReferenceInPrintList, XMLparserTag** currentTag, const int thickness, const bool printType[]);
+	private: bool createReferenceConnectionWithText(vec* pos1, vec* pos2, int colour, LDreference** currentReferenceInPrintList, XMLparserTag** currentTag, string connectionTypeName, GIAdrawVariables* drawVariables);
+		private: bool createReferenceConnection(vec* pos1, vec* pos2, int colour, LDreference** currentReferenceInPrintList, XMLparserTag** currentTag, const GIAdrawVariables* drawVariables);
+	private: bool createBox(vec* vect, const double width, const double height, int colour, string* text, LDreference** currentReferenceInPrintList, XMLparserTag** currentTag, const int thickness, const GIAdrawVariables* drawVariables);
 
 };
 

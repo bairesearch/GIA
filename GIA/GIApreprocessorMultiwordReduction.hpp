@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorMultiwordReduction.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3b5b 29-May-2017
+ * Project Version: 3c1a 01-June-2017
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  *
@@ -109,6 +109,7 @@ class GIApreprocessorMultiwordReductionClass
 	public: bool determineIsPreposition(const string word);
 	public: bool determineIsAdverb(const string word);
 	public: bool determineIsAdjective(const string word);
+	public: bool determineIsNoun(const string word);
 	
 	public: bool findWordInWordList(unordered_map<string, GIApreprocessorMultiwordReductionWord*>* wordList, const string word);
 		public: bool findWordInWordList(unordered_map<string, GIApreprocessorMultiwordReductionWord*>* wordList, const string word, GIApreprocessorMultiwordReductionWord** wordFound);

@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorMultiwordReduction.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3b5b 29-May-2017
+ * Project Version: 3c1a 01-June-2017
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  *
@@ -51,7 +51,7 @@ unordered_map<string, GIApreprocessorMultiwordReductionWord*> adverbListGlobal;
 bool adverbListLoaded;
 unordered_map<string, GIApreprocessorMultiwordReductionWord*> adjectiveListGlobal;
 bool adjectiveListLoaded;
-unordered_map<string, GIApreprocessorMultiwordReductionWord*> firstTagInNounListGlobal;
+unordered_map<string, GIApreprocessorMultiwordReductionWord*> nounListGlobal;
 bool nounListLoaded;
 unordered_map<string, GIApreprocessorMultiwordReductionIrregularVerbSentence*> irregularVerbListGlobal;
 bool irregularVerbListLoaded;
@@ -115,7 +115,7 @@ bool GIApreprocessorMultiwordReductionClass::initialiseLRP(const string newLRPDa
 	{
 		result = false;	
 	}
-	if(!this->loadWordListWrapper(lrpDataFolderName, &nounListLoaded, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NOUN_DATABASE_FILE_NAME, &firstTagInNounListGlobal))
+	if(!this->loadWordListWrapper(lrpDataFolderName, &nounListLoaded, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NOUN_DATABASE_FILE_NAME, &nounListGlobal))
 	{
 		result = false;	
 	}
@@ -2271,6 +2271,12 @@ bool GIApreprocessorMultiwordReductionClass::determineIsAdjective(const string w
 {
 	unordered_map<string, GIApreprocessorMultiwordReductionWord*>* adjectiveList = &adjectiveListGlobal;
 	return findWordInWordList(adjectiveList, word);
+}
+
+bool GIApreprocessorMultiwordReductionClass::determineIsNoun(const string word)
+{
+	unordered_map<string, GIApreprocessorMultiwordReductionWord*>* nounList = &nounListGlobal;
+	return findWordInWordList(nounList, word);
 }
 
 bool GIApreprocessorMultiwordReductionClass::findWordInWordList(unordered_map<string, GIApreprocessorMultiwordReductionWord*>* wordList, const string word)

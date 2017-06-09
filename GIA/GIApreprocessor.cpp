@@ -25,7 +25,7 @@
  * File Name: GIApreprocessor.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3b5b 29-May-2017
+ * Project Version: 3c1a 01-June-2017
  * Requirements: requires plain text file
  * Description: Logical Condition and Reference Set preprocessor
  *
@@ -50,23 +50,20 @@ bool GIApreprocessorClass::preprocessTextForGIAwrapper(const bool useLRP, string
 	}
 	else
 	{
-		if(!isQuery)
+		if(translatorVariables->firstGIApreprocessorSentenceInList != NULL)
 		{
-			if(translatorVariables->firstGIApreprocessorSentenceInList != NULL)
-			{
-				if(!regenerateFileFromPreprocessedTextWithoutLRP(inputTextPlainTXTfileName, outputLRPTextPlainTXTFileName, translatorVariables))
-				{
-					result = false;
-				}
-			}
-			
-			#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
-			if(!createPreprocessSentencesForGIA(*inputTextPlainTXTfileName, translatorVariables))
+			if(!regenerateFileFromPreprocessedTextWithoutLRP(inputTextPlainTXTfileName, outputLRPTextPlainTXTFileName, translatorVariables))
 			{
 				result = false;
 			}
-			#endif	
 		}
+
+		#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
+		if(!createPreprocessSentencesForGIA(*inputTextPlainTXTfileName, translatorVariables))
+		{
+			result = false;
+		}
+		#endif	
 	}
 	
 	return result;
