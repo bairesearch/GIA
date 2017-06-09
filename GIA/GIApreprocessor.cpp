@@ -25,7 +25,7 @@
  * File Name: GIApreprocessor.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3c1a 01-June-2017
+ * Project Version: 3c1b 01-June-2017
  * Requirements: requires plain text file
  * Description: Logical Condition and Reference Set preprocessor
  *
@@ -404,7 +404,7 @@ bool GIApreprocessorClass::createPreprocessSentences(const string fileContents, 
 						}
 						#endif
 					}
-					if(endOfSentencePunctuationMarkFound)
+					if(endOfSentencePunctuationMarkFound && !interpretNewLinesAsNewSentences)
 					{
 						GIApreprocessorMultiwordReductionClassObject.generateSentenceWordList(firstWordInSentence, &(currentGIApreprocessorSentenceInList->sentenceContentsOriginal));
 						currentGIApreprocessorSentenceInList->sentenceIndexOriginal = sentenceIndex;
@@ -416,24 +416,23 @@ bool GIApreprocessorClass::createPreprocessSentences(const string fileContents, 
 						sentenceContentsOriginalText = "";
 						entityIndex = 0;
 						sentenceIndex++;
+						
 						whiteSpace = true;
 					}
 				}
 				else if(newlineFound && interpretNewLinesAsNewSentences)
 				{
-					if(!whiteSpace)
-					{//reject blank lines or lines ending in white space
-						GIApreprocessorMultiwordReductionClassObject.generateSentenceWordList(firstWordInSentence, &(currentGIApreprocessorSentenceInList->sentenceContentsOriginal));
-						currentGIApreprocessorSentenceInList->sentenceIndexOriginal = sentenceIndex;
-						currentGIApreprocessorSentenceInList->sentenceContentsOriginalText = sentenceContentsOriginalText;
-						currentGIApreprocessorSentenceInList->next = new GIApreprocessorSentence();
-						currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->next;
-						firstWordInSentence = new GIApreprocessorMultiwordReductionPlainTextWord();
-						currentWordInSentence = firstWordInSentence;
-						sentenceContentsOriginalText = "";
-						entityIndex = 0;
-						sentenceIndex++;
-					}
+					GIApreprocessorMultiwordReductionClassObject.generateSentenceWordList(firstWordInSentence, &(currentGIApreprocessorSentenceInList->sentenceContentsOriginal));
+					currentGIApreprocessorSentenceInList->sentenceIndexOriginal = sentenceIndex;
+					currentGIApreprocessorSentenceInList->sentenceContentsOriginalText = sentenceContentsOriginalText;
+					currentGIApreprocessorSentenceInList->next = new GIApreprocessorSentence();
+					currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->next;
+					firstWordInSentence = new GIApreprocessorMultiwordReductionPlainTextWord();
+					currentWordInSentence = firstWordInSentence;
+					sentenceContentsOriginalText = "";
+					entityIndex = 0;
+					sentenceIndex++;
+
 					whiteSpace = true;
 
 					#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_EXTRACT_INDENTATION

@@ -25,7 +25,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3c1a 01-June-2017
+ * Project Version: 3c1b 01-June-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -99,8 +99,8 @@ static char errmessage[] = "Usage:  GIA.exe [options]\n\n\twhere options are any
 "\n"
 "\n\t-inputfolder [string]              : input directory name for input files (def: same as exe)"
 "\n\t-nlprelexfolder [string]           : directory name for Relex (def: same as exe)"
-"\n\t-nlpstanfordcorenlpfolder [string] : directory name for Stanford Parser (def: same as nlprelexefolder)"
-"\n\t-nlpstanfordparserfolder [string]  : directory name for Stanford CoreNLP (def: same as nlprelexefolder)"
+"\n\t-nlpstanfordcorenlpfolder [string] : directory name for Stanford Parser (def: same as exe)"
+"\n\t-nlpstanfordparserfolder [string]  : directory name for Stanford CoreNLP (def: same as exe)"
 #ifdef GIA_NLP_CLIENT_SERVER
 "\n\t-nlpclient                         : execute NLP as client (requires server to be already started)"
 #endif
@@ -505,14 +505,12 @@ int main(const int argc, const char** argv)
 		if(SHAREDvarsClass().argumentExists(argc, argv, "-dbfolder"))
 		{
 			databaseFolderName = SHAREDvarsClass().getStringArgument(argc, argv, "-dbfolder");
-			databaseFolderName = databaseFolderName + '/';
 		}
 		#endif
 		#ifdef GIA_SEMANTIC_PARSER
 		if(SHAREDvarsClass().argumentExists(argc, argv, "-dbsemanticparserfolder"))
 		{
 			semanticParserDatabaseFolderName = SHAREDvarsClass().getStringArgument(argc, argv, "-dbsemanticparserfolder");
-			semanticParserDatabaseFolderName = semanticParserDatabaseFolderName + '/';
 		}
 		#endif
 
@@ -534,7 +532,6 @@ int main(const int argc, const char** argv)
 		if(SHAREDvarsClass().argumentExists(argc, argv, "-lrpfolder"))
 		{
 			lrpDataFolderName = SHAREDvarsClass().getStringArgument(argc, argv, "-lrpfolder");
-			lrpDataFolderName = lrpDataFolderName + '/';
 		}
 		else
 		{
@@ -591,7 +588,7 @@ int main(const int argc, const char** argv)
 
 		if(SHAREDvarsClass().argumentExists(argc, argv, "-version"))
 		{
-			cout << "GIA.exe - Project Version: 3c1a 01-June-2017" << endl;
+			cout << "GIA.exe - Project Version: 3c1b 01-June-2017" << endl;
 			exit(EXIT_OK);
 		}
 
@@ -643,20 +640,19 @@ int main(const int argc, const char** argv)
 
 		useInputTextPlainTXTFile,
 		inputTextPlainTXTfileName,
-
 		#ifdef USE_CE
 		useInputTextCodeextensionsTXTFileName,
 		inputTextCodeextensionsTXTFileName,
 		#endif
-
 		useInputTextNLPrelationXMLFile,
 		inputTextNLPrelationXMLfileName,
 		useInputTextNLPfeatureXMLFile,
 		inputTextNLPfeatureXMLfileName,
-		useOutputTextCFFFile,
-		outputTextCFFFileName,
 		useInputTextXMLFile,
 		inputTextXMLFileName,
+				
+		useOutputTextCFFFile,
+		outputTextCFFFileName,
 		useOutputTextXMLFile,
 		outputTextXMLFileName,
 		useOutputTextCXLFile,
@@ -752,20 +748,19 @@ bool GIAmainClass::executeGIA(
 
 	bool useInputTextPlainTXTFile,
 	string inputTextPlainTXTfileName,
-
 	#ifdef USE_CE
 	bool useInputTextCodeextensionsTXTFileName,
 	string inputTextCodeextensionsTXTFileName,
 	#endif
-
 	bool useInputTextNLPrelationXMLFile,
 	string inputTextNLPrelationXMLfileName,
 	bool useInputTextNLPfeatureXMLFile,
 	string inputTextNLPfeatureXMLfileName,
+	bool useInputTextXMLFile,
+	string inputTextXMLFileName,	
+	
 	bool useOutputTextCFFFile,
 	string outputTextCFFFileName,
-	bool useInputTextXMLFile,
-	string inputTextXMLFileName,
 	bool useOutputTextXMLFile,
 	string outputTextXMLFileName,
 	bool useOutputTextCXLFile,
@@ -845,8 +840,19 @@ bool GIAmainClass::executeGIA2()
 {
 #endif
 	bool result = true;
-
+	
+	#ifdef GIA_DATABASE
+	databaseFolderName = databaseFolderName + CHAR_FOLDER_DELIMITER;
+	#endif
+	#ifdef GIA_SEMANTIC_PARSER
+	semanticParserDatabaseFolderName = semanticParserDatabaseFolderName + CHAR_FOLDER_DELIMITER;
+	#endif
+	#ifdef GIA_PREPROCESSOR
+	lrpDataFolderName = lrpDataFolderName + CHAR_FOLDER_DELIMITER;	
+	#endif
+	
 	inputFolder = inputFolderLocal;
+	cout << "inputFolder = " << inputFolder << endl;
 	outputFolder = outputFolderLocal;
 	SHAREDvarsClass().setCurrentDirectory(inputFolder);
 	
@@ -1030,40 +1036,40 @@ bool GIAmainClass::executeGIA2()
 	{
 		if(useInputTextPlainTXTFile)
 		{
-			if(!SHAREDvars.getFilesFromFileList(inputTextPlainTXTfileName, inputTextPlainTXTFileNameArray, &numberOfInputFilesInList))
+			if(!SHAREDvars.getLinesFromFile(inputTextPlainTXTfileName, inputTextPlainTXTFileNameArray, &numberOfInputFilesInList))
 			{
-				cout << "main{} error: !getFilesFromFileList: " << inputTextPlainTXTfileName << endl;
+				cout << "main{} error: !getLinesFromFile: " << inputTextPlainTXTfileName << endl;
 			}
 		}
 		#ifdef USE_CE
 		if(useInputTextCodeextensionsTXTFileName)
 		{
-			if(!SHAREDvars.getFilesFromFileList(inputTextCodeextensionsTXTFileName, inputTextCodeextensionsTXTFileNameArray, &numberOfInputFilesInList))
+			if(!SHAREDvars.getLinesFromFile(inputTextCodeextensionsTXTFileName, inputTextCodeextensionsTXTFileNameArray, &numberOfInputFilesInList))
 			{
-				cout << "main{} error: !getFilesFromFileList: " << inputTextCodeextensionsTXTFileName << endl;
+				cout << "main{} error: !getLinesFromFile: " << inputTextCodeextensionsTXTFileName << endl;
 			}
 		}
 		#endif
 		if(useInputTextNLPrelationXMLFile)
 		{
-			if(!SHAREDvars.getFilesFromFileList(inputTextNLPrelationXMLfileName, inputTextNLPrelationXMLFileNameArray, &numberOfInputFilesInList))
+			if(!SHAREDvars.getLinesFromFile(inputTextNLPrelationXMLfileName, inputTextNLPrelationXMLFileNameArray, &numberOfInputFilesInList))
 			{
-				cout << "main{} error: !getFilesFromFileList: " << inputTextNLPrelationXMLfileName << endl;
+				cout << "main{} error: !getLinesFromFile: " << inputTextNLPrelationXMLfileName << endl;
 			}
 		}
 		if(useInputTextNLPfeatureXMLFile)
 		{
-			if(!SHAREDvars.getFilesFromFileList(inputTextNLPfeatureXMLfileName, inputTextNLPfeatureXMLFileNameArray, &numberOfInputFilesInList))
+			if(!SHAREDvars.getLinesFromFile(inputTextNLPfeatureXMLfileName, inputTextNLPfeatureXMLFileNameArray, &numberOfInputFilesInList))
 			{
-				cout << "main{} error: !getFilesFromFileList: " << inputTextNLPfeatureXMLfileName << endl;
+				cout << "main{} error: !getLinesFromFile: " << inputTextNLPfeatureXMLfileName << endl;
 			}
 		}
 
 		if(useInputTextXMLFile)
 		{
-			if(!SHAREDvars.getFilesFromFileList(inputTextXMLFileName, inputTextXMLFileNameArray, &numberOfInputFilesInList))
+			if(!SHAREDvars.getLinesFromFile(inputTextXMLFileName, inputTextXMLFileNameArray, &numberOfInputFilesInList))
 			{
-				cout << "main{} error: !getFilesFromFileList: " << inputTextXMLFileName << endl;
+				cout << "main{} error: !getLinesFromFile: " << inputTextXMLFileName << endl;
 			}
 		}
 	}
