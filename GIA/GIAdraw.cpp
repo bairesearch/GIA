@@ -25,7 +25,7 @@
  * File Name: GIAdraw.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3c1f 01-June-2017
+ * Project Version: 3c1g 01-June-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -71,7 +71,7 @@ bool GIAdrawClass::printGIAnetworkNodesToSVGstring(GIAtranslatorVariablesClass* 
 	
 	LDreference* firstReferenceInPrintList = NULL;
 	this->determineBasicPrintPositionsOfAllNodes(translatorVariables->entityNodesActiveListComplete, &drawVariables, firstReferenceInPrintList, firstTagInSVGFile);
-	cout << "firstTagInSVGFile = " << firstTagInSVGFile->name << endl;
+	//cout << "firstTagInSVGFile = " << firstTagInSVGFile->name << endl;
 	
 	const int viewBoxMinX = -GIA_DRAW_SVG_VIEWBOX_MIN_X_OFFSET_SINGLE_SENTENCE;
 	const int viewBoxMaxX = width-GIA_DRAW_SVG_VIEWBOX_MIN_X_OFFSET_SINGLE_SENTENCE;
