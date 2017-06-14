@@ -25,7 +25,7 @@
  * File Name: GIAsemanticParserDatabase.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3c1g 01-June-2017
+ * Project Version: 3c2a 12-June-2017
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -123,7 +123,7 @@ void GIAsemanticParserDatabaseClass::prepareSemanticParserCorpusDatabaseFileText
 void GIAsemanticParserDatabaseClass::saveTextLineToCorpusFileString(const string sentenceText)
 {
 	semanticParserCorpusDatabaseSentenceWriteFileString = semanticParserCorpusDatabaseSentenceWriteFileString + sentenceText;
-	semanticParserCorpusDatabaseSentenceWriteFileString = semanticParserCorpusDatabaseSentenceWriteFileString + STRING_NEW_LINE;
+	semanticParserCorpusDatabaseSentenceWriteFileString = semanticParserCorpusDatabaseSentenceWriteFileString + STRING_NEWLINE;
 }
 
 void GIAsemanticParserDatabaseClass::saveTextToCorpusFileString(const string sentenceText)
@@ -139,7 +139,7 @@ void removeTextFromCorpusFileString(string sentenceText)
 
 void removeTextLineFromCorpusFileString(string sentenceText)
 {
-	semanticParserCorpusDatabaseSentenceWriteFileString = replaceAllOccurancesOfString(&semanticParserCorpusDatabaseSentenceWriteFileString, (sentenceText+STRING_NEW_LINE), "");	//not currently used
+	semanticParserCorpusDatabaseSentenceWriteFileString = replaceAllOccurancesOfString(&semanticParserCorpusDatabaseSentenceWriteFileString, (sentenceText+STRING_NEWLINE), "");	//not currently used
 }
 */
 
@@ -151,9 +151,9 @@ void GIAsemanticParserDatabaseClass::writeSemanticParserCorpusFile(const GIAfeat
 
 void GIAsemanticParserDatabaseClass::writeSemanticParserCorpusFile(const GIAfeature* firstFeatureInSentence, const string* sentenceSemanticRelationsText)
 {
-	string semanticParserCorpusDatabaseSentenceHeaderString = generateCorpusFileHeaderText(firstFeatureInSentence, true) + STRING_NEW_LINE + STRING_NEW_LINE;	 //required to add new line at end of parsingWordsAndTags as per Stanford Parser specification (see parseStanfordParserFile)
+	string semanticParserCorpusDatabaseSentenceHeaderString = generateCorpusFileHeaderText(firstFeatureInSentence, true) + STRING_NEWLINE + STRING_NEWLINE;	 //required to add new line at end of parsingWordsAndTags as per Stanford Parser specification (see parseStanfordParserFile)
 	string semanticParserCorpusDatabaseSentenceText = semanticParserCorpusDatabaseSentenceHeaderString + *sentenceSemanticRelationsText;
-	semanticParserCorpusDatabaseSentenceText = semanticParserCorpusDatabaseSentenceText + STRING_NEW_LINE; //required to add new line at end of parsingTypedDependencies as per Stanford Parser specification (see parseStanfordParserFile)
+	semanticParserCorpusDatabaseSentenceText = semanticParserCorpusDatabaseSentenceText + STRING_NEWLINE; //required to add new line at end of parsingTypedDependencies as per Stanford Parser specification (see parseStanfordParserFile)
 	string corpusFileName = semanticParserCorpusDBgenerateFileName(firstFeatureInSentence);
 	SHAREDvars.writeStringToFile(corpusFileName, &semanticParserCorpusDatabaseSentenceText);
 }

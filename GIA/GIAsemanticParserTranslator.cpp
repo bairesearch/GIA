@@ -25,7 +25,7 @@
  * File Name: GIAsemanticParserTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3c1g 01-June-2017
+ * Project Version: 3c2a 12-June-2017
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -1098,14 +1098,14 @@ bool GIAsemanticParserTranslatorClass::generateAllPermutationsFromSemanticRelati
 								{
 									//regenerate semantic relation based on parsed GIArelation object
 									string GIA2semanticDependencyRelation = GIAsemanticParserOperations.generateGIA2semanticDependencyRelationText(currentSemanticRelationInList->relationGovernor, currentSemanticRelationInList->relationDependent, currentSemanticRelationInList->relationType, currentSemanticRelationInList->relationGovernorIndex, currentSemanticRelationInList->relationDependentIndex, currentSemanticRelationInList->sameReferenceSet);
-									GIA2semanticDependencyRelation = GIA2semanticDependencyRelation + STRING_NEW_LINE;
+									GIA2semanticDependencyRelation = GIA2semanticDependencyRelation + STRING_NEWLINE;
 									sentenceText = sentenceText + GIA2semanticDependencyRelation;
 
 									foundAtLeastOneRelation = true;
 								}
 								currentSemanticRelationInList = currentSemanticRelationInList->next;
 							}
-							sentenceText = sentenceText + STRING_NEW_LINE;	//required to add new line at end of parsingTypedDependencies as per Stanford Parser specification (see parseStanfordParserFile)
+							sentenceText = sentenceText + STRING_NEWLINE;	//required to add new line at end of parsingTypedDependencies as per Stanford Parser specification (see parseStanfordParserFile)
 							if(foundAtLeastOneRelation)
 							{
 								GIAsemanticParserDatabase.prepareSemanticParserCorpusDatabaseFileTextForWriting();
