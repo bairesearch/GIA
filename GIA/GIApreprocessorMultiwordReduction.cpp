@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorMultiwordReduction.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3c2a 12-June-2017
+ * Project Version: 3c2b 12-June-2017
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  *
@@ -1706,6 +1706,14 @@ void GIApreprocessorMultiwordReductionClass::revertNLPtagNameToOfficialLRPtagNam
 				{
 					if(currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->entityIndex == entityIndexForNonPrepositionsOnly)
 					{
+						/*
+						cout << "currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->wordWithLRPforNLPonly = " << currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->wordWithLRPforNLPonly << endl;
+						cout << "currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->entityIndex = " << currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->entityIndex << endl;
+						cout << "sentenceIndex = " << sentenceIndex << endl;
+						cout << "entityIndexForNonPrepositionsOnly = " << entityIndexForNonPrepositionsOnly << endl;
+						cout << "currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->wordWithLRP = " << currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->wordWithLRP << endl;						
+						*/
+
 						feature->word = currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->wordWithLRP;
 						feature->lemma = currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->lemmaWithLRP;
 						feature->featureRevertedToOfficialLRPTemp = true;
@@ -1717,10 +1725,8 @@ void GIApreprocessorMultiwordReductionClass::revertNLPtagNameToOfficialLRPtagNam
 		}
 		currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo = currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->next;
 	}
-	if(!foundCorrespondingLRPtag)
-	{
-	}
-	else
+	
+	if(foundCorrespondingLRPtag)
 	{
 		*foundOfficialLRPreplacementString = true;
 	}
@@ -2190,6 +2196,29 @@ bool GIApreprocessorMultiwordReductionClass::identifyConditionType(GIAentityNode
 
 
 
+bool GIApreprocessorMultiwordReductionClass::determineIsVerb(GIApreprocessorWord* wordTag, int* grammaticalBaseTenseForm)
+{
+	bool verbDetected = false;
+	if(determineVerbCaseStandardWithAdditional(wordTag->tagName, grammaticalBaseTenseForm))
+	{
+		verbDetected = true;
+	}
+	
+	GIApreprocessorMultiwordReductionPlainTextWord* wordTagPlaintext = static_cast<GIApreprocessorMultiwordReductionPlainTextWord*>(wordTag);
+	if(wordTagPlaintext->collapsedPhrasalVerbExactDefinedSection)
+	{
+		*grammaticalBaseTenseForm = wordTagPlaintext->grammaticalTenseFormDetected;	//already determined by GIApreprocessorMultiwordReductionClass::searchAndReplacePhrasalVerbs
+		verbDetected = true;
+	}
+	if(wordTagPlaintext->collapsedMultiwordWord && (wordTagPlaintext->collapsedMultiwordWordType == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DUMMY_COLLAPSED_MULTIWORD_VERB_TYPE))
+	{
+		cout << "GIApreprocessorMultiwordReductionClass::determineIsVerb warning: !(wordTagPlaintext->collapsedPhrasalVerbExactDefinedSection) && (wordTagPlaintext->collapsedMultiwordWord && (wordTagPlaintext->collapsedMultiwordWordType == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DUMMY_COLLAPSED_MULTIWORD_VERB_TYPE))" << endl;
+		*grammaticalBaseTenseForm = GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT;
+		verbDetected = true;
+	}
+	
+	return verbDetected;	
+}
 
 bool GIApreprocessorMultiwordReductionClass::determineVerbCaseStandardWithAdditional(const string word, int* grammaticalBaseTenseForm)
 {
@@ -2253,24 +2282,80 @@ bool GIApreprocessorMultiwordReductionClass::determineVerbCaseAdditional(const s
 	return foundVerbCase;	
 }
 
+bool GIApreprocessorMultiwordReductionClass::determineIsPreposition(GIApreprocessorWord* wordTag)
+{
+	bool prepositionDetected = false;
+	if(determineIsPreposition(wordTag->tagName))
+	{
+		prepositionDetected = true;
+	}
+	GIApreprocessorMultiwordReductionPlainTextWord* wordTagPlaintext = static_cast<GIApreprocessorMultiwordReductionPlainTextWord*>(wordTag);
+	if(wordTagPlaintext->collapsedMultiwordWord && (wordTagPlaintext->collapsedMultiwordWordType == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DUMMY_COLLAPSED_MULTIWORD_PREPOSITION_TYPE))
+	{
+		prepositionDetected = true;
+	}
+	return prepositionDetected;
+}
 bool GIApreprocessorMultiwordReductionClass::determineIsPreposition(const string word)
 {
 	unordered_map<string, GIApreprocessorMultiwordReductionWord*>* prepositionsList = &prepositionListGlobal;
 	return findWordInWordList(prepositionsList, word);
 }
 
+bool GIApreprocessorMultiwordReductionClass::determineIsAdverb(GIApreprocessorWord* wordTag)
+{
+	bool adverbDetected = false;
+	if(determineIsAdverb(wordTag->tagName))
+	{
+		adverbDetected = true;
+	}
+	GIApreprocessorMultiwordReductionPlainTextWord* wordTagPlaintext = static_cast<GIApreprocessorMultiwordReductionPlainTextWord*>(wordTag);
+	if(wordTagPlaintext->collapsedMultiwordWord && (wordTagPlaintext->collapsedMultiwordWordType == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DUMMY_COLLAPSED_MULTIWORD_ADVERB_TYPE))
+	{
+		adverbDetected = true;
+	}
+	return adverbDetected;
+}
 bool GIApreprocessorMultiwordReductionClass::determineIsAdverb(const string word)
 {
 	unordered_map<string, GIApreprocessorMultiwordReductionWord*>* adverbList = &adverbListGlobal;
 	return findWordInWordList(adverbList, word);
 }
 
+bool GIApreprocessorMultiwordReductionClass::determineIsAdjective(GIApreprocessorWord* wordTag)
+{
+	bool adjectiveDetected = false;
+	if(determineIsAdjective(wordTag->tagName))
+	{
+		adjectiveDetected = true;
+	}
+	GIApreprocessorMultiwordReductionPlainTextWord* wordTagPlaintext = static_cast<GIApreprocessorMultiwordReductionPlainTextWord*>(wordTag);
+	if(wordTagPlaintext->collapsedMultiwordWord && (wordTagPlaintext->collapsedMultiwordWordType == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DUMMY_COLLAPSED_MULTIWORD_ADJECTIVE_TYPE))
+	{
+		adjectiveDetected = true;
+	}
+	return adjectiveDetected;
+}
 bool GIApreprocessorMultiwordReductionClass::determineIsAdjective(const string word)
 {
 	unordered_map<string, GIApreprocessorMultiwordReductionWord*>* adjectiveList = &adjectiveListGlobal;
 	return findWordInWordList(adjectiveList, word);
 }
 
+bool GIApreprocessorMultiwordReductionClass::determineIsNoun(GIApreprocessorWord* wordTag)
+{
+	bool nounDetected = false;
+	if(determineIsNoun(wordTag->tagName))
+	{
+		nounDetected = true;
+	}
+	GIApreprocessorMultiwordReductionPlainTextWord* wordTagPlaintext = static_cast<GIApreprocessorMultiwordReductionPlainTextWord*>(wordTag);
+	if(wordTagPlaintext->collapsedMultiwordWord && (wordTagPlaintext->collapsedMultiwordWordType == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DUMMY_COLLAPSED_MULTIWORD_NOUN_TYPE))
+	{
+		nounDetected = true;
+	}
+	return nounDetected;
+}
 bool GIApreprocessorMultiwordReductionClass::determineIsNoun(const string word)
 {
 	unordered_map<string, GIApreprocessorMultiwordReductionWord*>* nounList = &nounListGlobal;

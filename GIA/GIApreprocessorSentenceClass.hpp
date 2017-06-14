@@ -147,6 +147,7 @@ public:
 	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
 	int firstIndexOfReferenceSetText;
 	int lastIndexOfReferenceSetText;
+	int dummyNLPtestOffset;
 	#endif
 		
 	#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE

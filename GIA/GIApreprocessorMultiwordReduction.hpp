@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorMultiwordReduction.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3c2a 12-June-2017
+ * Project Version: 3c2b 12-June-2017
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  *
@@ -103,13 +103,18 @@ class GIApreprocessorMultiwordReductionClass
 	#endif
 	#endif
 	
-	public: bool determineVerbCaseStandardWithAdditional(const string word, int* grammaticalBaseTenseForm);
-		public: bool determineVerbCaseStandard(const string word, int* grammaticalBaseTenseForm);
-		public: bool determineVerbCaseAdditional(const string word, string* baseNameFound, int* grammaticalTenseModifier);
-	public: bool determineIsPreposition(const string word);
-	public: bool determineIsAdverb(const string word);
-	public: bool determineIsAdjective(const string word);
-	public: bool determineIsNoun(const string word);
+	public: bool determineIsVerb(GIApreprocessorWord* wordTag, int* grammaticalBaseTenseForm);
+		public: bool determineVerbCaseStandardWithAdditional(const string word, int* grammaticalBaseTenseForm);
+			public: bool determineVerbCaseStandard(const string word, int* grammaticalBaseTenseForm);
+			public: bool determineVerbCaseAdditional(const string word, string* baseNameFound, int* grammaticalTenseModifier);
+	public: bool determineIsPreposition(GIApreprocessorWord* wordTag);
+		public: bool determineIsPreposition(const string word);
+	public: bool determineIsAdverb(GIApreprocessorWord* wordTag);
+		public: bool determineIsAdverb(const string word);
+	public: bool determineIsAdjective(GIApreprocessorWord* wordTag);
+		public: bool determineIsAdjective(const string word);
+	public: bool determineIsNoun(GIApreprocessorWord* wordTag);
+		public: bool determineIsNoun(const string word);
 	
 	public: bool findWordInWordList(unordered_map<string, GIApreprocessorMultiwordReductionWord*>* wordList, const string word);
 		public: bool findWordInWordList(unordered_map<string, GIApreprocessorMultiwordReductionWord*>* wordList, const string word, GIApreprocessorMultiwordReductionWord** wordFound);

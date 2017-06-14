@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorReferenceSet.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3c2a 12-June-2017
+ * Project Version: 3c2b 12-June-2017
  * Requirements: requires plain text file
  * Description: Reference Set preprocessor
  *
@@ -100,7 +100,8 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 	int wordIndex = 0;
 	for(int wordIndex = 0; wordIndex<logicReferenceVariableWordList->size(); wordIndex++)
 	{
-		string currentWord = ((*logicReferenceVariableWordList)[wordIndex])->tagName;
+		GIApreprocessorWord* currentWordTag = (*logicReferenceVariableWordList)[wordIndex];
+		string currentWord = currentWordTag->tagName;
 		currentWord = SHAREDvars.convertStringToLowerCase(&currentWord);	//required for imperatives where the action is defined as the first word in the sentence 
 		int wordIndexOfHypotheticalPreceedingThatWhich = wordIndex-1;
 					
@@ -117,93 +118,100 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 			currentWordIsReferenceSetDelimiter = true;
 			currentDelimiterType = GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_AUXILIARY;
 		}
-		if(GIApreprocessorMultiwordReduction.determineVerbCaseStandardWithAdditional(currentWord, &grammaticalBaseTenseForm))	//OLD: determineVerbCaseStandard
+		
+		bool verbDetected = false;
+		if(GIApreprocessorMultiwordReduction.determineIsVerb(currentWordTag, &grammaticalBaseTenseForm))	//OLD: determineVerbCaseStandard
 		{
 			if(grammaticalBaseTenseForm != GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_INFINITIVE)
-			{				
-				//infinitive/present/past tense verb detection (NB infinitive detection is required for a) future tense detection and b) imperatives where the action is defined as the first word in the sentence)
-				/*
-				#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_MAX_NUM_TENSE_FORMS (5)	//run (infinitive), runs (present), running (continuous), ran (past), run (past partiple)
-				#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_INFINITIVE (0)
-				#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT (1)
-				#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS (2)
-				#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PAST (3)
-				#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PASTPARTICIPLE (4)
-				*/
+			{
+				verbDetected = true;
+			}
+		}
+		if(verbDetected)
+		{				
+			//infinitive/present/past tense verb detection (NB infinitive detection is required for a) future tense detection and b) imperatives where the action is defined as the first word in the sentence)
+			/*
+			#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_MAX_NUM_TENSE_FORMS (5)	//run (infinitive), runs (present), running (continuous), ran (past), run (past partiple)
+			#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_INFINITIVE (0)
+			#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT (1)
+			#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS (2)
+			#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PAST (3)
+			#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_PASTPARTICIPLE (4)
+			*/
 
-				bool referenceSetDelimiterVerbPreceededByDeterminerOrPossessivePronoun = false;
-				if(wordIndex-1 >= 0)
+			bool referenceSetDelimiterVerbPreceededByDeterminerOrPossessivePronoun = false;
+			if(wordIndex-1 >= 0)
+			{
+				//eg the [det] walk [verb]
+				if(SHAREDvars.textInTextArray(((*logicReferenceVariableWordList)[wordIndex-1])->tagName, relationDeterminerArray, GRAMMATICAL_DETERMINER_ARRAY_NUMBER_OF_TYPES) || 
+				SHAREDvars.textInTextArray(((*logicReferenceVariableWordList)[wordIndex-1])->tagName, entityPronounPossessiveArray, ENTITY_PRONOUN_POSSESSIVE_ARRAY_NUMBER_OF_TYPES))
 				{
-					//eg the [det] walk [verb]
-					if(SHAREDvars.textInTextArray(((*logicReferenceVariableWordList)[wordIndex-1])->tagName, relationDeterminerArray, GRAMMATICAL_DETERMINER_ARRAY_NUMBER_OF_TYPES) || 
-					SHAREDvars.textInTextArray(((*logicReferenceVariableWordList)[wordIndex-1])->tagName, entityPronounPossessiveArray, ENTITY_PRONOUN_POSSESSIVE_ARRAY_NUMBER_OF_TYPES))
+					referenceSetDelimiterVerbPreceededByDeterminerOrPossessivePronoun = true;
+				}
+			}
+			if(wordIndex-2 >= 0)
+			{
+				//eg the [det] wonderful [adj] walk [verb]
+				if(SHAREDvars.textInTextArray(((*logicReferenceVariableWordList)[wordIndex-2])->tagName, relationDeterminerArray, GRAMMATICAL_DETERMINER_ARRAY_NUMBER_OF_TYPES) || 
+				SHAREDvars.textInTextArray(((*logicReferenceVariableWordList)[wordIndex-2])->tagName, entityPronounPossessiveArray, ENTITY_PRONOUN_POSSESSIVE_ARRAY_NUMBER_OF_TYPES))
+				{
+					if(GIApreprocessorMultiwordReduction.determineIsAdjective(((*logicReferenceVariableWordList)[wordIndex-1])))
 					{
 						referenceSetDelimiterVerbPreceededByDeterminerOrPossessivePronoun = true;
 					}
 				}
-				if(wordIndex-2 >= 0)
+			}
+			if(wordIndex-3 >= 0)
+			{
+				//eg the [det] very [adv] wonderful [adj] walk [verb]
+				if(SHAREDvars.textInTextArray(((*logicReferenceVariableWordList)[wordIndex-3])->tagName, relationDeterminerArray, GRAMMATICAL_DETERMINER_ARRAY_NUMBER_OF_TYPES) || 
+				SHAREDvars.textInTextArray(((*logicReferenceVariableWordList)[wordIndex-3])->tagName, entityPronounPossessiveArray, ENTITY_PRONOUN_POSSESSIVE_ARRAY_NUMBER_OF_TYPES))
 				{
-					//eg the [det] wonderful [adj] walk [verb]
-					if(SHAREDvars.textInTextArray(((*logicReferenceVariableWordList)[wordIndex-2])->tagName, relationDeterminerArray, GRAMMATICAL_DETERMINER_ARRAY_NUMBER_OF_TYPES) || 
-					SHAREDvars.textInTextArray(((*logicReferenceVariableWordList)[wordIndex-2])->tagName, entityPronounPossessiveArray, ENTITY_PRONOUN_POSSESSIVE_ARRAY_NUMBER_OF_TYPES))
+					if(GIApreprocessorMultiwordReduction.determineIsAdverb(((*logicReferenceVariableWordList)[wordIndex-2])))
 					{
-						if(GIApreprocessorMultiwordReduction.determineIsAdjective(((*logicReferenceVariableWordList)[wordIndex-1])->tagName))
+						if(GIApreprocessorMultiwordReduction.determineIsAdjective(((*logicReferenceVariableWordList)[wordIndex-1])))
 						{
 							referenceSetDelimiterVerbPreceededByDeterminerOrPossessivePronoun = true;
 						}
 					}
 				}
-				if(wordIndex-3 >= 0)
+			}
+			if(!referenceSetDelimiterVerbPreceededByDeterminerOrPossessivePronoun)
+			{
+				currentWordIsReferenceSetDelimiter = true;
+				currentDelimiterType = GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_VERB;
+				//not required: verify that the verb is not preceeded by one or more auxiliaries (because it will have already been detected by (currentDelimiterType == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_AUXILIARY) when testing the previously parsed auxiliary)
+
+
+				if(wordIndex+1 < logicReferenceVariableWordList->size())
 				{
-					//eg the [det] very [adv] wonderful [adj] walk [verb]
-					if(SHAREDvars.textInTextArray(((*logicReferenceVariableWordList)[wordIndex-3])->tagName, relationDeterminerArray, GRAMMATICAL_DETERMINER_ARRAY_NUMBER_OF_TYPES) || 
-					SHAREDvars.textInTextArray(((*logicReferenceVariableWordList)[wordIndex-3])->tagName, entityPronounPossessiveArray, ENTITY_PRONOUN_POSSESSIVE_ARRAY_NUMBER_OF_TYPES))
+					if(GIApreprocessorMultiwordReduction.determineIsAdjective(((*logicReferenceVariableWordList)[wordIndex+1])))
 					{
-						if(GIApreprocessorMultiwordReduction.determineIsAdverb(((*logicReferenceVariableWordList)[wordIndex-2])->tagName))
-						{
-							if(GIApreprocessorMultiwordReduction.determineIsAdjective(((*logicReferenceVariableWordList)[wordIndex-1])->tagName))
-							{
-								referenceSetDelimiterVerbPreceededByDeterminerOrPossessivePronoun = true;
-							}
-						}
+						//eg Tom rides fast
+						currentDelimiterSpecialCase = GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_SPECIAL_CASE_OBJECT_REFERS_TO_PREVIOUS_DELIMITER_VERB;
+						#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITERS_CONTAIN_VERB_ADJECTIVES
+						wordIndex = wordIndex + 1;
+						#endif
 					}
 				}
-				if(!referenceSetDelimiterVerbPreceededByDeterminerOrPossessivePronoun)
+				if(wordIndex+2 < logicReferenceVariableWordList->size())
 				{
-					currentWordIsReferenceSetDelimiter = true;
-					currentDelimiterType = GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_VERB;
-					//not required: verify that the verb is not preceeded by one or more auxiliaries (because it will have already been detected by (currentDelimiterType == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_AUXILIARY) when testing the previously parsed auxiliary)
-
-
-					if(wordIndex+1 < logicReferenceVariableWordList->size())
+					if(GIApreprocessorMultiwordReduction.determineIsAdverb(((*logicReferenceVariableWordList)[wordIndex+1])))
 					{
-						if(GIApreprocessorMultiwordReduction.determineIsAdjective(((*logicReferenceVariableWordList)[wordIndex+1])->tagName))
+						if(GIApreprocessorMultiwordReduction.determineIsAdjective(((*logicReferenceVariableWordList)[wordIndex+2])))
 						{
-							//eg Tom rides fast
+							//eg Tom rides very fast
 							currentDelimiterSpecialCase = GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_SPECIAL_CASE_OBJECT_REFERS_TO_PREVIOUS_DELIMITER_VERB;
 							#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITERS_CONTAIN_VERB_ADJECTIVES
-							wordIndex = wordIndex + 1;
+							wordIndex = wordIndex + 2;
 							#endif
-						}
-					}
-					if(wordIndex+2 < logicReferenceVariableWordList->size())
-					{
-						if(GIApreprocessorMultiwordReduction.determineIsAdverb(((*logicReferenceVariableWordList)[wordIndex+1])->tagName))
-						{
-							if(GIApreprocessorMultiwordReduction.determineIsAdjective(((*logicReferenceVariableWordList)[wordIndex+2])->tagName))
-							{
-								//eg Tom rides very fast
-								currentDelimiterSpecialCase = GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_SPECIAL_CASE_OBJECT_REFERS_TO_PREVIOUS_DELIMITER_VERB;
-								#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITERS_CONTAIN_VERB_ADJECTIVES
-								wordIndex = wordIndex + 2;
-								#endif
-							}
 						}
 					}
 				}
 			}
 		}
-		if(GIApreprocessorMultiwordReduction.determineIsPreposition(currentWord))
+		
+		if(GIApreprocessorMultiwordReduction.determineIsPreposition(currentWordTag))
 		{
 			currentWordIsReferenceSetDelimiter = true;
 			currentDelimiterType = GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_PREPOSITION;
@@ -263,7 +271,7 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 					{
 						if((currentDelimiterType == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_PREPOSITION))
 						{
-							if(GIApreprocessorMultiwordReduction.determineIsAdverb(((*logicReferenceVariableWordList)[wordIndex-1])->tagName))
+							if(GIApreprocessorMultiwordReduction.determineIsAdverb(((*logicReferenceVariableWordList)[wordIndex-1])))
 							{
 								if(wordIndex-2 >= 0)
 								{
@@ -559,7 +567,7 @@ bool GIApreprocessorReferenceSetClass::formSubReferenceSetTextFromWordList(const
 	bool result = true;
 	
 	int wordIndex = 0;
-	for(vector<GIApreprocessorWord*>::iterator iter = logicReferenceVariableWordList->begin(); iter < logicReferenceVariableWordList->end(); iter++)
+	for(vector<GIApreprocessorWord*>::const_iterator iter = logicReferenceVariableWordList->begin(); iter != logicReferenceVariableWordList->end(); iter++)
 	{
 		GIApreprocessorWord* currentWord = (*iter);
 		if((wordIndex >= firstIndexOfSubReferenceSet) && (wordIndex <= lastIndexOfSubReferenceSet))
@@ -593,6 +601,9 @@ bool GIApreprocessorReferenceSetClass::addSubReferenceSetToReferenceSet(GIAprepr
 	setReferenceSetText(currentSubReferenceSetInList, subReferenceSetText);	//currentSubReferenceSetInList->subReferenceSetContents = subReferenceSetText;
 	currentSubReferenceSetInList->isReferenceSetDelimiter = referenceSetDelimiter;
 	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
+	//cout << "* addSubReferenceSetToReferenceSet: " << endl;
+	//cout << "* wordIndexSentence: " << wordIndexSentence << endl;
+	//cout << "* wordIndexLogicReference: " << wordIndexLogicReference << endl;
 	currentSubReferenceSetInList->firstIndexOfReferenceSetText = wordIndexLogicReference + wordIndexSentence;
 	currentSubReferenceSetInList->lastIndexOfReferenceSetText = currentSubReferenceSetInList->firstIndexOfReferenceSetText + GIApreprocessorMultiwordReductionClassObject.calculateLengthOfGeneratedVectorWordListText(subReferenceSetText);
 	#endif

@@ -25,7 +25,7 @@
  * File Name: GIAdraw.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3c2a 12-June-2017
+ * Project Version: 3c2b 12-June-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -229,13 +229,15 @@ bool GIAdrawClass::determineBasicPrintPositionsOfAllNodes(vector<GIAentityNode*>
 		{
 			for(vector<GIAentityNode*>::iterator entityIter = entityNodesActiveListComplete->begin(); entityIter != entityNodesActiveListComplete->end(); entityIter++)
 			{
+				GIAentityNode* entityNode = *entityIter;
+
 				//this->initiateMaxXAtParticularY();
 				xInitial = maxXAtAParticularY[yInitial];
 				//xInitial = sentenceIndex*100;	//compact
 
 				bool thisIsDefinitionAndPreviousNodeWasInstance = false;
 
-				this->initialiseEntityNodeForPrinting((*entityIter), yInitial, xInitial, drawVariables, &firstReferenceInPrintList, &firstTagInSVGFile, sentenceIndex, thisIsDefinitionAndPreviousNodeWasInstance);
+				this->initialiseEntityNodeForPrinting(entityNode, yInitial, xInitial, drawVariables, &firstReferenceInPrintList, &firstTagInSVGFile, sentenceIndex, thisIsDefinitionAndPreviousNodeWasInstance);
 			}
 		}
 	}
@@ -243,13 +245,27 @@ bool GIAdrawClass::determineBasicPrintPositionsOfAllNodes(vector<GIAentityNode*>
 	{
 		for(vector<GIAentityNode*>::iterator entityIter = entityNodesActiveListComplete->begin(); entityIter != entityNodesActiveListComplete->end(); entityIter++)
 		{
-			//this->initiateMaxXAtParticularY();
-			xInitial = maxXAtAParticularY[yInitial];
-			//xInitial = sentenceIndex*100;	//compact
+			GIAentityNode* entityNode = *entityIter;
 
-			bool thisIsDefinitionAndPreviousNodeWasInstance = false;
-
-			this->initialiseEntityNodeForPrinting((*entityIter), yInitial, xInitial, drawVariables, &firstReferenceInPrintList, &firstTagInSVGFile, drawVariables->sentenceToPrint, thisIsDefinitionAndPreviousNodeWasInstance);
+			#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
+			#ifdef GIA_RECORD_WAS_REFERENCE_INFORMATION
+			if(!(entityNode->wasReference))
+			{
+			#endif
+			#endif
+				//this->initiateMaxXAtParticularY();
+				xInitial = maxXAtAParticularY[yInitial];
+				//xInitial = sentenceIndex*100;	//compact
+				
+				bool thisIsDefinitionAndPreviousNodeWasInstance = false;
+	
+				this->initialiseEntityNodeForPrinting(entityNode, yInitial, xInitial, drawVariables, &firstReferenceInPrintList, &firstTagInSVGFile, drawVariables->sentenceToPrint, thisIsDefinitionAndPreviousNodeWasInstance);
+			
+			#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
+			#ifdef GIA_RECORD_WAS_REFERENCE_INFORMATION
+			}
+			#endif
+			#endif
 		}		
 	}
 
