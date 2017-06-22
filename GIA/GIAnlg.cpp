@@ -25,7 +25,7 @@
  * File Name: GIAnlg.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3c5a 21-June-2017
+ * Project Version: 3c5b 21-June-2017
  * Requirements: requires GIA translated data, and NLG2 to be installed
  * Description: GIA natural language generation (using NLG2)
  *
@@ -290,13 +290,13 @@ bool GIAnlgClass::generateLanguageFromTextIteration(GIAentityConnection* current
 		
 		#ifndef GIA_NLG_ADD_AUXILIARIES_TO_SAME_REFERENCE_SET_QUALITIES
 		bool passQualityPrelimChecks = true;
-		if(isSameReferenceSetIteration)
-		{
+		//if(isSameReferenceSetIteration)
+		//{
 			if(currentEntity->entityType == GIA_ENTITY_TYPE_QUALITY)
 			{
 				passQualityPrelimChecks = false;
 			}
-		}
+		//}
 		if(passQualityPrelimChecks)	
 		{
 		#endif
@@ -322,11 +322,14 @@ bool GIAnlgClass::generateLanguageFromTextIteration(GIAentityConnection* current
 							{
 							#endif
 								GIAentityNode* entity = connection->entity;
-								if(!generateLanguageFromTextIteration(connection, currentNLGentity, parseSameReferenceSetOnly, true, interationIndex+1, false))
+								if(generateLanguageFromTextIterationPerformChecks(connection))
 								{
-									result = false;
+									if(!generateLanguageFromTextIteration(connection, currentNLGentity, parseSameReferenceSetOnly, true, interationIndex+1, false))
+									{
+										result = false;
+									}
+									sameReferenceSet = connection->sameReferenceSet;
 								}
-								sameReferenceSet = connection->sameReferenceSet;
 							#ifdef GIA_NLG_EXPECT_TRANSLATOR_QUERY_ACTION_AND_CONDITION_SAME_REFERENCE_SET_ASSIGNMENT_BUG_FIXED	
 							}
 							#endif
@@ -339,7 +342,7 @@ bool GIAnlgClass::generateLanguageFromTextIteration(GIAentityConnection* current
 			else
 			{		
 				bool definite = true;	//CHECKTHIS
-				if(!generateNounEntityLanguage(currentEntity, currentNLGentity, definite))
+				if(!generateNounEntityLanguage(currentEntity, currentNLGentity, definite, parseSameReferenceSetOnly))
 				{
 					result = false;
 				}
@@ -365,10 +368,13 @@ bool GIAnlgClass::generateLanguageFromTextIteration(GIAentityConnection* current
 				}
 				else
 				{
+					int subphraseCount = 0;
+					vector<GIANLGentity*> NLGentitiesInSection;
+						
 					//special exception; parse reverse actions
 					for(vector<GIAentityConnection*>::iterator connectionIter = currentEntity->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_REVERSE].begin(); connectionIter != currentEntity->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION_REVERSE].end(); connectionIter++)
 					{
-						int qualityCount = 0;
+						int subphraseCount = 0;
 						vector<GIANLGentity*> NLGentitiesInSection;
 						GIAentityConnection* connection = *connectionIter;
 						if(connection->sameReferenceSet || !parseSameReferenceSetOnly)
@@ -376,24 +382,19 @@ bool GIAnlgClass::generateLanguageFromTextIteration(GIAentityConnection* current
 							GIAentityNode* actionRelationshipEntity = connection->entity;
 							if(generateLanguageFromTextIterationPerformChecks(connection))
 							{
-								qualityCount++;
+								subphraseCount++;
 								NLGentitiesInSection.push_back(*currentNLGentity);
+								
 								if(!generateLanguageFromTextIteration(connection, currentNLGentity, parseSameReferenceSetOnly, true, interationIndex+1, true))
 								{
 									result = false;
 								}
 							}
 						}
-						if(!generateConjunctionOfNLGentitiesInSection(qualityCount, &NLGentitiesInSection))
-						{
-							result = false;
-						}
 					}
 
 					for(int connectionType=0; connectionType<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; connectionType++)
 					{
-						int qualityCount = 0;
-						vector<GIANLGentity*> NLGentitiesInSection;
 						if(entityVectorConnectionGoToChildArray[connectionType])
 						{
 							for(vector<GIAentityConnection*>::iterator connectionIter = currentEntity->entityVectorConnectionsArray[connectionType].begin(); connectionIter != currentEntity->entityVectorConnectionsArray[connectionType].end(); connectionIter++)
@@ -404,8 +405,14 @@ bool GIAnlgClass::generateLanguageFromTextIteration(GIAentityConnection* current
 									GIAentityNode* entity = connection->entity;
 									if(generateLanguageFromTextIterationPerformChecks(connection))
 									{
-										qualityCount++;
-										NLGentitiesInSection.push_back(*currentNLGentity);
+										if(!entityVectorConnectionIsRelationshipSubjectObjectArray[connectionType])
+										{
+											subphraseCount++;
+											NLGentitiesInSection.push_back(*currentNLGentity);
+											//cout << "entity = " << entity->entityName << endl;
+											//cout << "\tsubphraseCount = " << subphraseCount << endl;
+										}
+
 										if(!generateLanguageFromTextIteration(connection, currentNLGentity, parseSameReferenceSetOnly, true, interationIndex+1, false))
 										{
 											result = false;
@@ -414,13 +421,11 @@ bool GIAnlgClass::generateLanguageFromTextIteration(GIAentityConnection* current
 								}
 							}
 						}
-						if(!entityVectorConnectionIsRelationshipSubjectObjectArray[connectionType])
-						{
-							if(!generateConjunctionOfNLGentitiesInSection(qualityCount, &NLGentitiesInSection))
-							{
-								result = false;
-							}
-						}
+					}
+
+					if(!generateConjunctionOfNLGentitiesInSection(subphraseCount, &NLGentitiesInSection))
+					{
+						result = false;
 					}
 				}
 			}
@@ -460,15 +465,33 @@ bool GIAnlgClass::generateLanguageFromTextIterationPerformChecks(GIAentityConnec
 	#endif
 	#endif
 	
+	#ifndef GIA_NLG_ADD_AUXILIARIES_TO_SAME_REFERENCE_SET_QUALITIES
+	//if(isSameReferenceSetIteration)
+	//{
+		if(entity->entityType == GIA_ENTITY_TYPE_QUALITY)
+		{
+			result = false;	
+		}
+		if(compareRelationshipConnectionType(connection, GIA_ENTITY_TYPE_PROPERTY))
+		{
+			GIAentityNode* relationshipEntityObject = GIAtranslatorOperations.getPropertyRelationshipObjectEntity(connection);
+			if(relationshipEntityObject->entityType == GIA_ENTITY_TYPE_QUALITY)
+			{
+				result = false;
+			}
+		}
+	//}
+	#endif
+			
 	return result;
 }
 
-bool GIAnlgClass::generateQualityPrependText(GIAentityNode* currentEntity, GIANLGentity** currentNLGentity, const bool testSameReferenceSet)	//specific to english
+bool GIAnlgClass::generateQualityPrependText(GIAentityNode* currentEntity, GIANLGentity** currentNLGentity, const bool testSameReferenceSet, const bool generateNewNLGentities)	//specific to english
 {
 	bool result = true;
 	
 	string qualityText = "";	//eg the blue apple / the blue and happy apple / the blue, happy and bright apple
-	int qualityCount = 0;
+	int subphraseCount = 0;
 	//GIANLGentity* firstNLGentityInSection = *currentNLGentity;
 	vector<GIANLGentity*> NLGentitiesInSection;
 	for(vector<GIAentityConnection*>::iterator connectionIter = currentEntity->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTY].begin(); connectionIter != currentEntity->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTY].end(); connectionIter++)
@@ -481,27 +504,29 @@ bool GIAnlgClass::generateQualityPrependText(GIAentityNode* currentEntity, GIANL
 			if(relationshipEntityObject->entityType == GIA_ENTITY_TYPE_QUALITY)
 			{				
 				//sub qualities (eg the very big...)
-				if(!generateQualityPrependText(relationshipEntityObject, currentNLGentity, true))
+				if(!generateQualityPrependText(relationshipEntityObject, currentNLGentity, true, false))
 				{
 					result = false;
 				}
 				
-				NLGentitiesInSection.push_back((*currentNLGentity));
 				#ifdef GIA_NLG_MORPHOLOGY_GENERATOR
-				(*currentNLGentity)->entityGrammatisedText = generateMorphology(relationshipEntityObject) + GIA_NLG_TEXT_SPACE;
+				(*currentNLGentity)->entityGrammatisedText = (*currentNLGentity)->entityGrammatisedText + generateMorphology(relationshipEntityObject) + GIA_NLG_TEXT_SPACE;
 				#else
-				(*currentNLGentity)->entityGrammatisedText = relationshipEntityObject->entityName + GIA_NLG_TEXT_SPACE;	//qualities/adjectives don't have lemmas and so don't require morphological generation
+				(*currentNLGentity)->entityGrammatisedText = (*currentNLGentity)->entityGrammatisedText + relationshipEntityObject->entityName + GIA_NLG_TEXT_SPACE;	//qualities/adjectives don't have lemmas and so don't require morphological generation
 				#endif
-				(*currentNLGentity)->next = new GIANLGentity();
-				(*currentNLGentity) = (*currentNLGentity)->next;
-				qualityCount++;
-				
-
+				if(generateNewNLGentities)
+				{
+					NLGentitiesInSection.push_back((*currentNLGentity));
+					(*currentNLGentity)->next = new GIANLGentity();
+					(*currentNLGentity) = (*currentNLGentity)->next;
+					subphraseCount++;
+					//cout << "subphraseCount++ relationshipEntityObject = " << relationshipEntityObject->entityName << endl;
+				}
 			}		
 		}
 	}
 	
-	if(!generateConjunctionOfNLGentitiesInSection(qualityCount, &NLGentitiesInSection))
+	if(!generateConjunctionOfNLGentitiesInSection(subphraseCount, &NLGentitiesInSection))
 	{
 		result = false;
 	}
@@ -509,54 +534,54 @@ bool GIAnlgClass::generateQualityPrependText(GIAentityNode* currentEntity, GIANL
 	return result;
 }
 
-bool GIAnlgClass::generateConjunctionOfNLGentitiesInSection(int qualityCountMax, vector<GIANLGentity*>* NLGentitiesInSection)
+bool GIAnlgClass::generateConjunctionOfNLGentitiesInSection(int subphraseCountMax, vector<GIANLGentity*>* NLGentitiesInSection)
 {
 	bool result = true;
 	
-	int qualityCount = 1;
+	int subphraseCount = 1;
 	for(vector<GIANLGentity*>::iterator iter = NLGentitiesInSection->begin(); iter != NLGentitiesInSection->end(); iter++)
 	{
 		GIANLGentity* currentNLGentityInSection = *iter;
-		if(qualityCount < qualityCountMax-1)
+		if(subphraseCount == 1)
 		{
-			currentNLGentityInSection->entityGrammatisedText = currentNLGentityInSection->entityGrammatisedText + GIA_NLG_RELATIONSHIP_ENTITY_CONJUNCTION_AND_IMPLICIT;		
+			//do not add conjunction text for first subphrase
 		}
-		else if(qualityCount < qualityCountMax)
+		else if(subphraseCount < subphraseCountMax)
 		{
-			currentNLGentityInSection->entityGrammatisedText = currentNLGentityInSection->entityGrammatisedText + GIA_NLG_RELATIONSHIP_ENTITY_CONJUNCTION_AND;
+			currentNLGentityInSection->entityGrammatisedText = string(GIA_NLG_RELATIONSHIP_ENTITY_CONJUNCTION_AND_IMPLICIT) + currentNLGentityInSection->entityGrammatisedText;		
 		}
-		else if(qualityCount == qualityCountMax)
+		else if(subphraseCount == subphraseCountMax)
 		{
-
+			currentNLGentityInSection->entityGrammatisedText = string(GIA_NLG_RELATIONSHIP_ENTITY_CONJUNCTION_AND) + currentNLGentityInSection->entityGrammatisedText;
 		}
-		qualityCount++;
+		subphraseCount++;
 	}	
 	
 	return result;	
 }
 
 /*
-bool GIAnlgClass::generateConjunctionOfNLGentitiesInSection(int qualityCountMax, GIANLGentity* firstNLGentityInSection)
+bool GIAnlgClass::generateConjunctionOfNLGentitiesInSection(int subphraseCountMax, GIANLGentity* firstNLGentityInSection)
 {
 	bool result = true;
 	
 	GIANLGentity* currentNLGentityInSection = firstNLGentityInSection;
-	qualityCount = 1;
+	subphraseCount = 1;
 	while(currentNLGentityInSection->next != NULL)
 	{
-		if(qualityCount < qualityCountMax-1)
+		if(subphraseCount < subphraseCountMax-1)
 		{
 			currentNLGentityInSection->entityGrammatisedText = currentNLGentityInSection->entityGrammatisedText + GIA_NLG_RELATIONSHIP_ENTITY_CONJUNCTION_AND_IMPLICIT;		
 		}
-		else if(qualityCount < qualityCountMax)
+		else if(subphraseCount < subphraseCountMax)
 		{
 			currentNLGentityInSection->entityGrammatisedText = currentNLGentityInSection->entityGrammatisedText + GIA_NLG_RELATIONSHIP_ENTITY_CONJUNCTION_AND;
 		}
-		else if(qualityCount == qualityCountMax)
+		else if(subphraseCount == subphraseCountMax)
 		{
 
 		}
-		qualityCount++;
+		subphraseCount++;
 		currentNLGentityInSection = currentNLGentityInSection->next;
 	}	
 	
@@ -806,7 +831,7 @@ string GIAnlgClass::generateMorphologyRelationshipAuxiliaryHave(GIAentityConnect
 
 
 
-bool GIAnlgClass::generateNounEntityLanguage(GIAentityNode* nounEntity, GIANLGentity** currentNLGentity, const bool definite)
+bool GIAnlgClass::generateNounEntityLanguage(GIAentityNode* nounEntity, GIANLGentity** currentNLGentity, const bool definite, const bool parseSameReferenceSetOnly)
 {
 	bool result = true;
 	
@@ -816,7 +841,7 @@ bool GIAnlgClass::generateNounEntityLanguage(GIAentityNode* nounEntity, GIANLGen
 	(*currentNLGentity)->next = new GIANLGentity();
 	(*currentNLGentity) = (*currentNLGentity)->next;	
 	
-	if(!generateQualityPrependText(nounEntity, currentNLGentity, true))
+	if(!generateQualityPrependText(nounEntity, currentNLGentity, parseSameReferenceSetOnly, true))
 	{
 		result = false;
 	}
