@@ -25,7 +25,7 @@
  * File Name: GIAnlg.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3c5b 21-June-2017
+ * Project Version: 3c5c 21-June-2017
  * Requirements: requires GIA translated data, and NLG2 to be installed
  * Description: GIA natural language generation (using NLG2)
  *
@@ -67,7 +67,7 @@ string GIAnlgClass::generateLanguageFromQuery(GIAentityNode* comparisonVariableN
 	for(int connectionType=0; connectionType<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; connectionType++)
 	{
 		//if(connectionType != GIA_ENTITY_VECTOR_CONNECTION_TYPE_INSTANCE_REVERSE)
-		if(entityVectorConnectionIsRelationshipReverseArray[connectionType])
+		if(entityVectorConnectionGoToParentArray[connectionType])
 		{
 			GIAentityNode* relationshipEntityQuery = NULL;
 			
@@ -147,14 +147,14 @@ string GIAnlgClass::generateLanguageFromQuery(GIAentityNode* comparisonVariableN
 	
 	}
 	else
-	{
+	{		
 		//assume who query; e.g. That is Jim. Who is that?
 		
 		GIAentityConnection* comparisonVariableNodeConnectionArtificial = new GIAentityConnection();
 		comparisonVariableNodeConnectionArtificial->entity = comparisonVariableNode;
 		comparisonVariableNodeConnectionArtificial->connectionType = GIA_ENTITY_VECTOR_CONNECTION_TYPE_ACTION;	//artificially set to ensure that connection is not interpreted as relationship
 		
-		if(!generateLanguageFromTextIteration(comparisonVariableNodeConnectionArtificial, &currentNLGentityInQuestionContext, true, true, 0, false))
+		if(!generateLanguageFromTextIteration(comparisonVariableNodeConnectionArtificial, &currentNLGentityInQuestionContext, false, true, 0, false))
 		{
 			cerr << "GIAnlgClass::generateLanguageFromNonWhichQuery error: !generateLanguageFromTextIteration(comparisonVariableNode, currentNLGentityInQuestionContext, true..." << endl;
 			exit(EXIT_ERROR);		
@@ -179,29 +179,12 @@ string GIAnlgClass::generateLanguageFromQuery(GIAentityNode* comparisonVariableN
 	}
 	
 	
-	
-	#ifdef GIA_ALIASES
-	if(comparisonVariableNode->isNameQuery)	//who query
+	//where, why, how many, how, who, etc query
+	if(!generateLanguageFromTextIteration(queryAnswerNodeConnectionArtificial, &currentNLGentityInAnswerNode, false, true, 0, false))
 	{
-		for(vector<string>::iterator aliasIter = queryAnswerNode->aliasList.begin(); aliasIter != queryAnswerNode->aliasList.end(); aliasIter++)
-		{
-			currentNLGentityInAnswerNode->entityGrammatisedText = currentNLGentityInAnswerNode->entityGrammatisedText + *aliasIter;	//CHECKTHIS; this is not working yet?
-			currentNLGentityInAnswerNode->next = new GIANLGentity();
-			currentNLGentityInAnswerNode = currentNLGentityInAnswerNode->next;
-		}
+		cerr << "GIAnlgClass::generateLanguageFromNonWhichQuery error: !generateLanguageFromTextIteration(queryAnswerNodeConnectionArtificial, firstNLGentityInAnswerNode, true..." << endl;
+		exit(EXIT_ERROR);		
 	}
-	else
-	{
-	#endif	
-		//where, why, how many, how, etc query
-		if(!generateLanguageFromTextIteration(queryAnswerNodeConnectionArtificial, &currentNLGentityInAnswerNode, false, true, 0, false))
-		{
-			cerr << "GIAnlgClass::generateLanguageFromNonWhichQuery error: !generateLanguageFromTextIteration(queryAnswerNodeConnectionArtificial, firstNLGentityInAnswerNode, true..." << endl;
-			exit(EXIT_ERROR);		
-		}
-	#ifdef GIA_ALIASES
-	}
-	#endif
 				
 	answerString = answerString + generateLanguageFromNLGentityList(firstNLGentityInQuestionContext);
 	answerString = answerString + generateLanguageFromNLGentityList(firstNLGentityInRelationshipNode);
@@ -498,31 +481,33 @@ bool GIAnlgClass::generateQualityPrependText(GIAentityNode* currentEntity, GIANL
 	{
 		GIAentityConnection* connection = *connectionIter;
 		GIAentityNode* relationshipEntityObject = GIAtranslatorOperations.getRelationshipObjectEntity(connection);
-
-		if(connection->sameReferenceSet || !testSameReferenceSet)
+		if(!(relationshipEntityObject->queryAnswerContext))
 		{
-			if(relationshipEntityObject->entityType == GIA_ENTITY_TYPE_QUALITY)
-			{				
-				//sub qualities (eg the very big...)
-				if(!generateQualityPrependText(relationshipEntityObject, currentNLGentity, true, false))
-				{
-					result = false;
-				}
-				
-				#ifdef GIA_NLG_MORPHOLOGY_GENERATOR
-				(*currentNLGentity)->entityGrammatisedText = (*currentNLGentity)->entityGrammatisedText + generateMorphology(relationshipEntityObject) + GIA_NLG_TEXT_SPACE;
-				#else
-				(*currentNLGentity)->entityGrammatisedText = (*currentNLGentity)->entityGrammatisedText + relationshipEntityObject->entityName + GIA_NLG_TEXT_SPACE;	//qualities/adjectives don't have lemmas and so don't require morphological generation
-				#endif
-				if(generateNewNLGentities)
-				{
-					NLGentitiesInSection.push_back((*currentNLGentity));
-					(*currentNLGentity)->next = new GIANLGentity();
-					(*currentNLGentity) = (*currentNLGentity)->next;
-					subphraseCount++;
-					//cout << "subphraseCount++ relationshipEntityObject = " << relationshipEntityObject->entityName << endl;
-				}
-			}		
+			if(connection->sameReferenceSet || !testSameReferenceSet)
+			{
+				if(relationshipEntityObject->entityType == GIA_ENTITY_TYPE_QUALITY)
+				{				
+					//sub qualities (eg the very big...)
+					if(!generateQualityPrependText(relationshipEntityObject, currentNLGentity, true, false))
+					{
+						result = false;
+					}
+
+					#ifdef GIA_NLG_MORPHOLOGY_GENERATOR
+					(*currentNLGentity)->entityGrammatisedText = (*currentNLGentity)->entityGrammatisedText + generateMorphology(relationshipEntityObject) + GIA_NLG_TEXT_SPACE;
+					#else
+					(*currentNLGentity)->entityGrammatisedText = (*currentNLGentity)->entityGrammatisedText + relationshipEntityObject->entityName + GIA_NLG_TEXT_SPACE;	//qualities/adjectives don't have lemmas and so don't require morphological generation
+					#endif
+					if(generateNewNLGentities)
+					{
+						NLGentitiesInSection.push_back((*currentNLGentity));
+						(*currentNLGentity)->next = new GIANLGentity();
+						(*currentNLGentity) = (*currentNLGentity)->next;
+						subphraseCount++;
+						//cout << "subphraseCount++ relationshipEntityObject = " << relationshipEntityObject->entityName << endl;
+					}
+				}		
+			}
 		}
 	}
 	
@@ -855,7 +840,7 @@ bool GIAnlgClass::generateNounEntityLanguage(GIAentityNode* nounEntity, GIANLGen
 	return result;
 }
 
-string GIAnlgClass::calcDeterminate(const GIAentityNode* entityNode, const bool definite)
+string GIAnlgClass::calcDeterminate(GIAentityNode* entityNode, const bool definite)
 {
 	//first letter is vowel		//added 03 August 2012
 	bool firstLetterIsVowel = false;
@@ -960,6 +945,17 @@ string GIAnlgClass::calcDeterminate(const GIAentityNode* entityNode, const bool 
 		addDeterminate = false;
 	}
 	
+	//has alias (so proper noun)
+	if(!(entityNode->aliasList.empty()))
+	{
+		for(vector<string>::iterator aliasIter = entityNode->aliasList.begin(); aliasIter != entityNode->aliasList.end(); aliasIter++)
+		{
+			if(*aliasIter != REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
+			{
+				addDeterminate = false;
+			}
+		}
+	}
 	
 	//time
 	#ifdef GIA_NLG_SUPPORT_TIME_CONDITIONS
@@ -1003,7 +999,7 @@ string GIAnlgClass::calcDeterminate(const GIAentityNode* entityNode, const bool 
 }
 
 
-string GIAnlgClass::calcNounWord(const GIAentityNode* entityNode)
+string GIAnlgClass::calcNounWord(GIAentityNode* entityNode)
 {
 	string nounWord = "";
 	
@@ -1053,6 +1049,20 @@ string GIAnlgClass::calcNounWord(const GIAentityNode* entityNode)
 	}
 	#endif
 	*/
+	#ifdef GIA_ALIASES
+	//if(comparisonVariableNode->isNameQuery)	//who query
+	else if(!(entityNode->aliasList.empty()))
+	{
+		for(vector<string>::iterator aliasIter = entityNode->aliasList.begin(); aliasIter != entityNode->aliasList.end(); aliasIter++)
+		{
+			if(*aliasIter != REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
+			{
+				nounWord = *aliasIter;
+			}		
+		}
+	}
+	//}
+	#endif
 	else
 	{
 
