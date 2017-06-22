@@ -25,7 +25,7 @@
  * File Name: GIAquery.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3c4c 20-June-2017
+ * Project Version: 3c4d 20-June-2017
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  * ?Limitations: will only locate a exact answer (based upon a comparison node) if it provides the maximum number of matched nodes
@@ -502,7 +502,6 @@ bool GIAqueryClass::testReferencedEntityNodeForExactNameMatch2(GIAentityNode* qu
 							eg1 a dog eats the mud. dogs are animals. / which animal eats the mud?	[answer: 'dog' - which is an instance of 'dog' networkIndex node, where the 'dog' networkIndex node is defined by 'animal'
 								NB answer context text = "eat mud is done by dog" ['eat' is the first node traced, and 'dog' is the answer found'. NB the reason 'mud' is added to the answer context text, is because it is the actionRelationshipObjectEntity, which is parsed after actionRelationshipSubjectEntity in testEntityNodeForQuery {ie, after answer 'dog' has already been found}]
 									for this example, need to then verify that the answer 'dog' is defined in the primary semantic network as an animal
-
 							*/
 							if(!this->verifyThatAnswerEntityIsDefinedByComparisonVariableNode(entityNode, queryTraceParameters->comparisonVariableNode->entityName))
 							{
@@ -1472,7 +1471,8 @@ bool GIAqueryClass::verifyThatAnswerEntityIsDefinedByComparisonVariableNode(GIAe
 		{
 			for(vector<GIAentityConnection*>::iterator connectionIter = entityNode->definitionNodeList->begin(); connectionIter < entityNode->definitionNodeList->end(); connectionIter++)
 			{
-				if(this->verifyThatAnswerEntityIsDefinedByComparisonVariableNode((*connectionIter)->entity, comparisonVariableNodeName))
+				GIAentityNode* relationshipObjectEntity = GIAtranslatorOperations.getDefinitionRelationshipTargetEntity((*connectionIter)->entity);
+				if(this->verifyThatAnswerEntityIsDefinedByComparisonVariableNode(relationshipObjectEntity, comparisonVariableNodeName))
 				{
 					definitionFound = true;
 				}
