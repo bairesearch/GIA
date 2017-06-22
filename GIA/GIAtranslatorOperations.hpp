@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3c4a 20-June-2017
+ * Project Version: 3c4b 20-June-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -70,7 +70,7 @@ public:
 	bool isQuery;
 	bool NLPrelexCompatibilityMode;
 	int maxNumberSentences;
-
+	
 	//nlp/sentence variables;
 	int NLPfeatureParser;
 	int NLPdependencyRelationsParser;
@@ -80,7 +80,8 @@ public:
 	bool NLPclient;
 	#endif
 	bool parseGIA2file;
-
+	bool linkPreestablishedReferencesGIA;
+	
 	//network variables;
 	unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes;
 	vector<GIAentityNode*>* entityNodesActiveListComplete;
@@ -173,8 +174,10 @@ class GIAtranslatorOperationsClass
 	#ifdef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS	
 	public: bool connectPropertyToEntity(GIAentityNode* propertyRelationshipSubjectEntity, GIAentityNode* propertyRelationshipObjectEntity, GIAentityNode* propertyRelationshipEntity, bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables);
 	public: bool connectDefinitionToEntity(GIAentityNode* definitionRelationshipSubjectEntity, GIAentityNode* definitionRelationshipObjectEntity, GIAentityNode* definitionRelationshipEntity, bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables);
+	#ifdef GIA_ALIASES
 	#ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
 	public: bool connectDefinitionToEntityMarkConnectionAsAlias(GIAentityNode* definitionRelationshipSubjectEntity, GIAentityNode* definitionRelationshipObjectEntity, GIAentityNode* definitionRelationshipEntity, bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables);
+	#endif
 	#endif
 	public: bool connectBeingDefinitionToEntity(GIAentityNode* definitionRelationshipObjectEntity, GIAentityNode* definitionRelationshipEntity, bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables);
 	public: bool connectHavingPropertyToEntity(GIAentityNode* propertyRelationshipObjectEntity, GIAentityNode* propertyRelationshipEntity, bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables);
@@ -290,7 +293,9 @@ class GIAtranslatorOperationsClass
 	#endif
 
 	#ifdef GIA_ALIASES
+	#ifndef GIA_DISABLE_ALIAS_ENTITY_MERGING
 	public: bool mergeEntityNodesAddAlias(GIAentityNode* entityNode, GIAentityNode* entityNodeToMerge, GIAtranslatorVariablesClass* translatorVariables);
+	#endif
 	#endif
 
 	public: GIAentityNode* getPrimaryNetworkIndexNodeDefiningInstance(GIAentityNode* instanceEntity);

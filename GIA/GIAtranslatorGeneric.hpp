@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorGeneric.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3c4a 20-June-2017
+ * Project Version: 3c4b 20-June-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -103,7 +103,7 @@
 class GIAgenericDepRelInterpretationParameters
 {
 public:
-	GIAgenericDepRelInterpretationParameters(GIAtranslatorVariablesClass* translatorVariablesNew, bool executeOrReassign);
+	GIAgenericDepRelInterpretationParameters(GIAtranslatorVariablesClass* translatorVariablesNew, bool executeOrReassignNew, bool linkPreestablishedReferencesGIAnew);
 	~GIAgenericDepRelInterpretationParameters(void);
 
 		//general parameters
@@ -111,6 +111,8 @@ public:
 
 		//execute function based on relations content or redistribute entities within relations
 	bool executeOrReassign;
+
+	bool linkPreestablishedReferencesGIA;
 
 	//for relation1, relation2, relation3, and relation4 [GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS]:
 		//for entity1 (eg substanceEntity), entity2 (eg relationshipObjectEntity, propertyRelationshipObjectEntity), and entity3/intermediaryEntity (eg conditionRelationshipEntity, actionRelationshipEntity) [3]:
@@ -222,7 +224,7 @@ public:
 class GIAgenericEntityInterpretationParameters
 {
 public:
-	GIAgenericEntityInterpretationParameters(GIAtranslatorVariablesClass* translatorVariablesNew, bool executeOrReassign);
+	GIAgenericEntityInterpretationParameters(GIAtranslatorVariablesClass* translatorVariablesNew, bool executeOrReassignNew, bool linkPreestablishedReferencesGIAnew);
 	~GIAgenericEntityInterpretationParameters(void);
 
 		//general parameters
@@ -230,6 +232,8 @@ public:
 
 		//execute function based on relations content or redistribute entities within relations
 	bool executeOrReassign;
+
+	bool linkPreestablishedReferencesGIA;
 
 		//relations to parse
 	bool parseDisabledEntity;

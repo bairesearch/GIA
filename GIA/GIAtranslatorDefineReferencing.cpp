@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3c4a 20-June-2017
+ * Project Version: 3c4b 20-June-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -821,6 +821,11 @@ void GIAtranslatorDefineReferencingClass::identifyReferenceSetNetworkIndexEntity
 				if(entityTypesIsPropertyOrDefinitionRelationshipArray[currentInstance->entityType])
 				{
 					cerr << "GIAtranslatorDefineReferencingClass::identifyReferenceSetNetworkIndexEntityEntrance{} error: entityTypesIsPropertyOrDefinitionRelationshipArray[currentInstance->entityType]" << endl;
+					cout << "currentInstance->entityName = " << currentInstance->entityName << endl;
+					cout << "currentInstance->entityType = " << currentInstance->entityType << endl;
+					cout << "currentInstance->grammaticalDefiniteTemp = " << currentInstance->grammaticalDefiniteTemp << endl;
+					cout << "currentInstance->grammaticalProperNounTemp = " << currentInstance->grammaticalProperNounTemp << endl;
+					cout << "currentInstance->entityType == GIA_ENTITY_TYPE_CONCEPT = " << bool(currentInstance->entityType == GIA_ENTITY_TYPE_CONCEPT) << endl;
 					exit(EXIT_ERROR);
 				}
 				#endif
@@ -835,7 +840,7 @@ void GIAtranslatorDefineReferencingClass::identifyReferenceSetNetworkIndexEntity
 				}
 
 			#ifdef GIA_ADVANCED_REFERENCING_IDENTIFY_DEFINITE_SETS_ONLY
-				}
+			}
 			#endif
 
 		}
@@ -1181,7 +1186,6 @@ void GIAtranslatorDefineReferencingClass::linkAdvancedReferencesGIA(GIAtranslato
 	GIAcoreference* currentCoreferenceInList = firstCoreferenceInList;
 	while(currentCoreferenceInList->next != NULL)
 	{
-
 		if(currentCoreferenceInList->firstMentionInList != NULL)
 		{
 			GIAMention* firstMentionInList = currentCoreferenceInList->firstMentionInList;
@@ -1197,10 +1201,8 @@ void GIAtranslatorDefineReferencingClass::linkAdvancedReferencesGIA(GIAtranslato
 			int intrasentenceReferenceSourceIndex = -1;
 			while(currentMentionInList->next != NULL)
 			{
-
 				if(!foundReferenceSource)
 				{
-
 					if(currentMentionInList->representative)
 					{
 

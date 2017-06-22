@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorApplyAdvancedFeatures.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3c4a 20-June-2017
+ * Project Version: 3c4b 20-June-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -607,7 +607,7 @@ void GIAtranslatorApplyAdvancedFeaturesClass::extractQuantitiesRelex(GIAtranslat
 
 void GIAtranslatorApplyAdvancedFeaturesClass::defineTenseOnlyTimeConditions(GIAtranslatorVariablesClass* translatorVariables)
 {
-	GIAgenericEntityInterpretationParameters param(translatorVariables, true);
+	GIAgenericEntityInterpretationParameters param(translatorVariables, true, translatorVariables->linkPreestablishedReferencesGIA);
 	GIAentityCharacteristic entityCharacteristicsTest1("conditionType", CONDITION_NODE_TYPE_TIME_STRING, true);
 	GIAentityCharacteristic entityCharacteristicsTest2("grammaticalTenseTemp", GRAMMATICAL_TENSE_PAST_STRING);
 	GIAentityCharacteristic entityCharacteristicsTest3("grammaticalTenseTemp", GRAMMATICAL_TENSE_FUTURE_STRING);
@@ -624,7 +624,7 @@ void GIAtranslatorApplyAdvancedFeaturesClass::defineTenseOnlyTimeConditions(GIAt
 
 void GIAtranslatorApplyAdvancedFeaturesClass::defineActionConcepts1(GIAtranslatorVariablesClass* translatorVariables)
 {
-	GIAgenericDepRelInterpretationParameters param(translatorVariables, false);
+	GIAgenericDepRelInterpretationParameters param(translatorVariables, false, translatorVariables->linkPreestablishedReferencesGIA);
 	param.numberOfRelations = 1;
 	param.parseDisabledRelation[REL1] = true;
 	param.useRelationTest[REL1][REL_ENT3] = true; param.relationTest[REL1][REL_ENT3] = RELATION_TYPE_MODAL_AUX;

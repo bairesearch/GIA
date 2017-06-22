@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorGeneric.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3c4a 20-June-2017
+ * Project Version: 3c4b 20-June-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -41,11 +41,13 @@
 
 #ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
 
-GIAgenericDepRelInterpretationParameters::GIAgenericDepRelInterpretationParameters(GIAtranslatorVariablesClass* translatorVariablesNew, bool newexecuteOrReassign)
+GIAgenericDepRelInterpretationParameters::GIAgenericDepRelInterpretationParameters(GIAtranslatorVariablesClass* translatorVariablesNew, bool executeOrReassignNew, bool linkPreestablishedReferencesGIAnew)
 {
 	translatorVariables = *translatorVariablesNew;
 
-	executeOrReassign = newexecuteOrReassign;
+	executeOrReassign = executeOrReassignNew;
+
+	linkPreestablishedReferencesGIA = linkPreestablishedReferencesGIAnew;
 
 	//for relation1, relation2, relation3, and relation4 [GIA_GENERIC_DEP_REL_INTERP_MAX_NUM_RELATIONS]:
 		//for entity1 (eg substanceEntity), entity2 (eg relationshipObjectEntity, propertyRelationshipObjectEntity), and entity3/intermediaryEntity (eg conditionRelationshipEntity, actionRelationshipEntity) [3]:
@@ -734,6 +736,7 @@ bool GIAtranslatorGenericClass::genericDependecyRelationInterpretation(GIAgeneri
 									#endif
 								}
 								#ifdef GIA_ALIASES
+								#ifndef GIA_DISABLE_ALIAS_ENTITY_MERGING
 								else if(param->functionToExecuteUponFind == GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_mergeEntityNodesAddAlias)
 								{
 									#ifdef GIA_SEMANTIC_PARSER_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
@@ -743,14 +746,32 @@ bool GIAtranslatorGenericClass::genericDependecyRelationInterpretation(GIAgeneri
 									GIAsemanticParserOperations.GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(&(param->translatorVariables), GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITION_DIRECT, functionEntityIndex1, functionEntityIndex2, sameReferenceSet);
 									#endif
 									#endif
-									bool notAlreadyMerged = GIAtranslatorOperations.mergeEntityNodesAddAlias((*param->translatorVariables.GIAentityNodeArray)[functionEntityIndex1], (*param->translatorVariables.GIAentityNodeArray)[functionEntityIndex2], &(param->translatorVariables));
-									if(notAlreadyMerged)
+									
+									#ifdef GIA_TRANSLATOR_ONLY_MERGE_ENTITY_NODES_WHEN_LINK_PREESTABLISHED_REFERENCES_GIA
+									if(!(param->linkPreestablishedReferencesGIA))
 									{
-										(*param->translatorVariables.GIAentityNodeArray)[functionEntityIndex2] = (*param->translatorVariables.GIAentityNodeArray)[functionEntityIndex1];
+										//disgard definition link, as 1. artificial definition entity will not be created, and 2. the definition link is redundant for aliases (names/queryName/propernoun appos) with !linkPreestablishedReferencesGIA
+										/*
+										#ifdef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
+										GIAtranslatorOperations.connectDefinitionToEntity((*param->translatorVariables.GIAentityNodeArray)[functionEntityIndex1], (*param->translatorVariables.GIAentityNodeArray)[functionEntityIndex2], (*param->translatorVariables.GIAentityNodeArray)[functionEntityIndex3], sameReferenceSet, &(param->translatorVariables));
+										#else
+										GIAtranslatorOperations.connectDirectDefinitionToEntity((*param->translatorVariables.GIAentityNodeArray)[functionEntityIndex1], (*param->translatorVariables.GIAentityNodeArray)[functionEntityIndex2], sameReferenceSet, &(param->translatorVariables));									
+										#endif
+										*/
 									}
+									else
+									{
+									#endif
+										bool notAlreadyMerged = GIAtranslatorOperations.mergeEntityNodesAddAlias((*param->translatorVariables.GIAentityNodeArray)[functionEntityIndex1], (*param->translatorVariables.GIAentityNodeArray)[functionEntityIndex2], &(param->translatorVariables));
+										if(notAlreadyMerged)
+										{
+											(*param->translatorVariables.GIAentityNodeArray)[functionEntityIndex2] = (*param->translatorVariables.GIAentityNodeArray)[functionEntityIndex1];
+										}
+									#ifdef GIA_TRANSLATOR_ONLY_MERGE_ENTITY_NODES_WHEN_LINK_PREESTABLISHED_REFERENCES_GIA
+									}
+									#endif
 								}
-								#endif
-								#ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
+								#else
 								else if(param->functionToExecuteUponFind == GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_connectDefinitionToEntityMarkConnectionAsAlias)
 								{
 									#ifdef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
@@ -762,6 +783,7 @@ bool GIAtranslatorGenericClass::genericDependecyRelationInterpretation(GIAgeneri
 									GIAsemanticParserOperations.GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(&(param->translatorVariables), GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITION_MARK_CONNECTION_AS_ALIAS, functionEntityIndex1, functionEntityIndex2, sameReferenceSet);
 									#endif
 								}
+								#endif
 								#endif
 								else
 								{	
@@ -1021,11 +1043,13 @@ bool GIAtranslatorGenericClass::genericDependecyRelationInterpretation(GIAgeneri
 
 #ifdef GIA_GENERIC_ENTITY_INTERPRETATION
 
-GIAgenericEntityInterpretationParameters::GIAgenericEntityInterpretationParameters(GIAtranslatorVariablesClass* translatorVariablesNew, bool newexecuteOrReassign)
+GIAgenericEntityInterpretationParameters::GIAgenericEntityInterpretationParameters(GIAtranslatorVariablesClass* translatorVariablesNew, bool executeOrReassignNew, bool linkPreestablishedReferencesGIAnew)
 {
 	translatorVariables = *translatorVariablesNew;
 
-	executeOrReassign = newexecuteOrReassign;
+	executeOrReassign = executeOrReassignNew;
+	
+	linkPreestablishedReferencesGIA = linkPreestablishedReferencesGIAnew;
 
 		//relations to parse
 	parseDisabledEntity = false;

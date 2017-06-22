@@ -25,7 +25,7 @@
  * File Name: GIAtranslator.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3c4a 20-June-2017
+ * Project Version: 3c4b 20-June-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -352,7 +352,8 @@ bool GIAtranslatorClass::convertSentenceRelationsIntoGIAnetworkNodesWrapper(GIAt
 		#endif
 		if(!translatorVariables->parseGIA2file || (translatorVariables->parseGIA2file && !(translatorVariables->currentSentenceInList->semanticParserSuccessful)))
 		{
-			this->convertSentenceSyntacticRelationsIntoGIAnetworkNodes(&translatorVariablesPrelim, false, NULL);
+			translatorVariablesPrelim.linkPreestablishedReferencesGIA = false;
+			this->convertSentenceSyntacticRelationsIntoGIAnetworkNodes(&translatorVariablesPrelim, NULL);
 		}
 
 
@@ -390,7 +391,8 @@ bool GIAtranslatorClass::convertSentenceRelationsIntoGIAnetworkNodesWrapper(GIAt
 		#endif
 		if(!translatorVariables->parseGIA2file || (translatorVariables->parseGIA2file && !(translatorVariables->currentSentenceInList->semanticParserSuccessful)))
 		{
-			this->convertSentenceSyntacticRelationsIntoGIAnetworkNodes(translatorVariables, true, firstGIAcoreferenceInList);
+			translatorVariables->linkPreestablishedReferencesGIA = true;
+			this->convertSentenceSyntacticRelationsIntoGIAnetworkNodes(translatorVariables, firstGIAcoreferenceInList);
 		}
 
 		//clear temporary variables;
@@ -418,7 +420,8 @@ bool GIAtranslatorClass::convertSentenceRelationsIntoGIAnetworkNodesWrapper(GIAt
 		#endif
 		if(!translatorVariables->parseGIA2file || (translatorVariables->parseGIA2file && !(translatorVariables->currentSentenceInList->semanticParserSuccessful)))
 		{
-			this->convertSentenceSyntacticRelationsIntoGIAnetworkNodes(translatorVariables, false, NULL);
+			translatorVariables->linkPreestablishedReferencesGIA = false;
+			this->convertSentenceSyntacticRelationsIntoGIAnetworkNodes(translatorVariables, NULL);
 		}
 	#ifdef GIA_ADVANCED_REFERENCING
 	}
@@ -427,7 +430,7 @@ bool GIAtranslatorClass::convertSentenceRelationsIntoGIAnetworkNodesWrapper(GIAt
 	return result;
 }
 
-bool GIAtranslatorClass::convertSentenceSyntacticRelationsIntoGIAnetworkNodes(GIAtranslatorVariablesClass* translatorVariables, const bool linkPreestablishedReferencesGIA, GIAcoreference* firstGIAcoreferenceInList)
+bool GIAtranslatorClass::convertSentenceSyntacticRelationsIntoGIAnetworkNodes(GIAtranslatorVariablesClass* translatorVariables, GIAcoreference* firstGIAcoreferenceInList)
 {
 	bool result = true;
 
@@ -437,7 +440,7 @@ bool GIAtranslatorClass::convertSentenceSyntacticRelationsIntoGIAnetworkNodes(GI
 
 	#ifdef GIA_SEMANTIC_PARSER_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
 	string corpusFileName = "";
-	if(!linkPreestablishedReferencesGIA)
+	if(!translatorVariables->linkPreestablishedReferencesGIA)
 	{
 		//GIAsemanticParserOperations.determineGIAconnectionistNetworkPOStypeNames(currentSentenceInList->firstFeatureInList, NLPfeatureParser);
 		GIAsemanticParserDatabase.prepareSemanticParserDatabaseForWriting();
@@ -510,7 +513,7 @@ bool GIAtranslatorClass::convertSentenceSyntacticRelationsIntoGIAnetworkNodes(GI
 	if(translatorVariables->NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD)
 	{
 		#ifdef GIA_TRANSLATOR_XML_INTERPRETATION
-		GIAtranslatorRules.applyGIATranslatorGenericXMLfunctions("GIAtranslatorRedistributeRelationsStanford", translatorVariables, linkPreestablishedReferencesGIA);
+		GIAtranslatorRules.applyGIATranslatorGenericXMLfunctions("GIAtranslatorRedistributeRelationsStanford", translatorVariables);
 		#endif
 	}
 	#endif
@@ -518,7 +521,7 @@ bool GIAtranslatorClass::convertSentenceSyntacticRelationsIntoGIAnetworkNodes(GI
 	if(translatorVariables->NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_RELEX)
 	{
 		#ifdef GIA_TRANSLATOR_XML_INTERPRETATION
-		GIAtranslatorRules.applyGIATranslatorGenericXMLfunctions("GIAtranslatorRedistributeRelationsRelex", translatorVariables, linkPreestablishedReferencesGIA);
+		GIAtranslatorRules.applyGIATranslatorGenericXMLfunctions("GIAtranslatorRedistributeRelationsRelex", translatorVariables);
 		#endif
 	}
 	#endif
@@ -551,7 +554,7 @@ bool GIAtranslatorClass::convertSentenceSyntacticRelationsIntoGIAnetworkNodes(GI
 	}
 
 #ifndef GIA_ADVANCED_REFERENCING_DISABLE_LINKING
-	//if(!linkPreestablishedReferencesGIA)	//criteria not used as same reference set tags may be required for dream mode or post processing (not just advanced referencing)
+	//if(!translatorVariables->linkPreestablishedReferencesGIA)	//criteria not used as same reference set tags may be required for dream mode or post processing (not just advanced referencing)
 	//{
 		//identify explicit same set linkages
 		//eg "the guy that robbed the bank" in "the guy that robbed the bank is tall"
@@ -566,7 +569,7 @@ bool GIAtranslatorClass::convertSentenceSyntacticRelationsIntoGIAnetworkNodes(GI
 
 #ifndef GIA_ADVANCED_REFERENCING_DISABLE_LINKING
 	#ifdef GIA_ADVANCED_REFERENCING
-	if(linkPreestablishedReferencesGIA)
+	if(translatorVariables->linkPreestablishedReferencesGIA)
 	{
 		GIAtranslatorDefineReferencing.linkAdvancedReferencesGIA(translatorVariables, firstGIAcoreferenceInList);
 	}
@@ -605,7 +608,7 @@ bool GIAtranslatorClass::convertSentenceSyntacticRelationsIntoGIAnetworkNodes(GI
 
 
 	#ifdef GIA_TRANSLATOR_XML_INTERPRETATION
-	GIAtranslatorRules.applyGIATranslatorGenericXMLfunctions("GIAtranslatorDefineSubstances", translatorVariables, linkPreestablishedReferencesGIA);
+	GIAtranslatorRules.applyGIATranslatorGenericXMLfunctions("GIAtranslatorDefineSubstances", translatorVariables);
 	#endif
 
 
@@ -621,7 +624,7 @@ bool GIAtranslatorClass::convertSentenceSyntacticRelationsIntoGIAnetworkNodes(GI
 
 	
 	#ifdef GIA_TRANSLATOR_XML_INTERPRETATION
-	GIAtranslatorRules.applyGIATranslatorGenericXMLfunctions("GIAtranslatorLinkEntities", translatorVariables, linkPreestablishedReferencesGIA);
+	GIAtranslatorRules.applyGIATranslatorGenericXMLfunctions("GIAtranslatorLinkEntities", translatorVariables);
 	#endif
 	
 	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES
@@ -637,7 +640,7 @@ bool GIAtranslatorClass::convertSentenceSyntacticRelationsIntoGIAnetworkNodes(GI
 
 
 	#ifdef GIA_TRANSLATOR_XML_INTERPRETATION
-	GIAtranslatorRules.applyGIATranslatorGenericXMLfunctions("GIAtranslatorApplyAdvancedFeatures", translatorVariables, linkPreestablishedReferencesGIA);
+	GIAtranslatorRules.applyGIATranslatorGenericXMLfunctions("GIAtranslatorApplyAdvancedFeatures", translatorVariables);
 	#endif
 	GIAtranslatorApplyAdvancedFeatures.applyAdvancedFeatures(translatorVariables);
 
@@ -799,9 +802,9 @@ bool GIAtranslatorClass::convertSentenceSyntacticRelationsIntoGIAnetworkNodes(GI
 	translatorVariables->entityNodesActiveListSentences->insert(pair<int, vector<GIAentityNode*>*>(translatorVariables->currentSentenceInList->sentenceIndex, entityNodesActiveListSentence));
 
 	#ifdef GIA_SEMANTIC_PARSER_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
-	if(!linkPreestablishedReferencesGIA)
+	if(!translatorVariables->linkPreestablishedReferencesGIA)
 	{
-		GIAsemanticParserOperations.GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrainSpecial(translatorVariables, linkPreestablishedReferencesGIA);
+		GIAsemanticParserOperations.GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrainSpecial(translatorVariables);
 	}
 	#endif
 
@@ -821,7 +824,7 @@ bool GIAtranslatorClass::convertSentenceSyntacticRelationsIntoGIAnetworkNodes(GI
 	#endif
 
 	#ifdef GIA_SEMANTIC_PARSER_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
-	if(!linkPreestablishedReferencesGIA)
+	if(!translatorVariables->linkPreestablishedReferencesGIA)
 	{
 		GIAsemanticParserOperations.determineGIAconnectionistNetworkPOStypeNames(translatorVariables->currentSentenceInList->firstFeatureInList, translatorVariables->NLPfeatureParser);
 		#ifdef GIA_SEMANTIC_PARSER_WRITE_SEMANTIC_RELATIONS_UNOPTIMISED_TEXT_CORPUS
@@ -846,7 +849,7 @@ bool GIAtranslatorClass::convertSentenceSyntacticRelationsIntoGIAnetworkNodes(GI
 	#ifdef GIA_PREPROCESSOR_SENTENCE
 	#ifdef GIA_PREPROCESSOR_SENTENCE_RECONCILE_REFERENCES_AFTER_SEMANTIC_PARSING_EVERY_SENTENCE
 	#ifdef GIA_ADVANCED_REFERENCING
-	if(linkPreestablishedReferencesGIA)
+	if(translatorVariables->linkPreestablishedReferencesGIA)
 	{
 	#endif
 		cout << "translatorVariables->currentSentenceInList->sentenceIndex = " << translatorVariables->currentSentenceInList->sentenceIndex << endl;
@@ -863,7 +866,7 @@ bool GIAtranslatorClass::convertSentenceSyntacticRelationsIntoGIAnetworkNodes(GI
 
 	#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
 	#ifdef GIA_ADVANCED_REFERENCING
-	if(linkPreestablishedReferencesGIA)
+	if(translatorVariables->linkPreestablishedReferencesGIA)
 	{
 	#endif
 		if(translatorVariables->firstGIApreprocessorSentenceInList != NULL)

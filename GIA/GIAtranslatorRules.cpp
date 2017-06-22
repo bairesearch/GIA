@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorRules.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3c4a 20-June-2017
+ * Project Version: 3c4b 20-June-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -36,7 +36,7 @@
 
 #ifdef GIA_TRANSLATOR_XML_INTERPRETATION
 
-bool GIAtranslatorRulesClass::applyGIATranslatorGenericXMLfunctions(const string translatorFileName, GIAtranslatorVariablesClass* translatorVariables, const bool linkPreestablishedReferencesGIA)
+bool GIAtranslatorRulesClass::applyGIATranslatorGenericXMLfunctions(const string translatorFileName, GIAtranslatorVariablesClass* translatorVariables)
 {
 	//int tempindex = 1;
 
@@ -118,7 +118,7 @@ bool GIAtranslatorRulesClass::applyGIATranslatorGenericXMLfunctions(const string
 											//cout << "functionName = " << functionName << endl;
 											
 											//load options and execute genericDependecyRelationInterpretation/genericEntityInterpretation
-											if(!this->applyGIATranslatorGenericXMLparam(currentParamTag, depRelOrEntity, executeOrReassign, translatorVariables, linkPreestablishedReferencesGIA, functionName))
+											if(!this->applyGIATranslatorGenericXMLparam(currentParamTag, depRelOrEntity, executeOrReassign, translatorVariables, functionName))
 											{
 											}
 											else
@@ -142,18 +142,18 @@ bool GIAtranslatorRulesClass::applyGIATranslatorGenericXMLfunctions(const string
 	return result;
 }
 
-bool GIAtranslatorRulesClass::applyGIATranslatorGenericXMLparam(XMLparserTag* currentParamTag, const bool depRelOrEntity, bool executeOrReassign, GIAtranslatorVariablesClass* translatorVariables, const bool linkPreestablishedReferencesGIA, const string functionName)
+bool GIAtranslatorRulesClass::applyGIATranslatorGenericXMLparam(XMLparserTag* currentParamTag, const bool depRelOrEntity, bool executeOrReassign, GIAtranslatorVariablesClass* translatorVariables, const string functionName)
 {
 	bool result = false;
 	if(currentParamTag->firstLowerLevelTag != NULL)
 	{
 
-		GIAgenericDepRelInterpretationParameters paramDepRel(translatorVariables, executeOrReassign);
+		GIAgenericDepRelInterpretationParameters paramDepRel(translatorVariables, executeOrReassign, translatorVariables->linkPreestablishedReferencesGIA);
 		paramDepRel.functionName = functionName;
 		paramDepRel.translatorVariables.entityNodesActiveListNetworkIndexes = translatorVariables->entityNodesActiveListNetworkIndexes;
 		paramDepRel.translatorVariables.NLPdependencyRelationsType = translatorVariables->NLPdependencyRelationsType;
 		paramDepRel.executeOrReassign = executeOrReassign;
-		GIAgenericEntityInterpretationParameters paramEntity(translatorVariables, executeOrReassign);
+		GIAgenericEntityInterpretationParameters paramEntity(translatorVariables, executeOrReassign, translatorVariables->linkPreestablishedReferencesGIA);
 		paramEntity.functionName = functionName;
 		paramEntity.executeOrReassign = executeOrReassign;
 		bool passedAssert = true;
@@ -302,7 +302,7 @@ bool GIAtranslatorRulesClass::applyGIATranslatorGenericXMLparam(XMLparserTag* cu
 					#ifdef GIA_ADVANCED_REFERENCING
 					else if(assertAttribute->value == "linkPreestablishedReferencesGIA")
 					{
-						if(!linkPreestablishedReferencesGIA)
+						if(!translatorVariables->linkPreestablishedReferencesGIA)
 						{
 							passedAssert = false;
 						}

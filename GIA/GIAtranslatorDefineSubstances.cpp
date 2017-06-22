@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorDefineSubstances.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3c4a 20-June-2017
+ * Project Version: 3c4b 20-June-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -40,7 +40,7 @@
 
 void GIAtranslatorDefineSubstancesClass::defineSubstancesAllNodes(GIAtranslatorVariablesClass* translatorVariables)
 {
-	GIAgenericEntityInterpretationParameters param(translatorVariables, true);
+	GIAgenericEntityInterpretationParameters param(translatorVariables, true, translatorVariables->linkPreestablishedReferencesGIA);
 	param.useEntityTest = true; param.entityTest = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE; param.entityTestIsNegative = true;
 	GIAentityCharacteristic entityCharacteristicsTest1("entityType", GIA_ENTITY_TYPE_NETWORK_INDEX_STRING);
 	param.specialCaseCharacteristicsTestAndVector.push_back(&entityCharacteristicsTest1);
@@ -54,7 +54,7 @@ void GIAtranslatorDefineSubstancesClass::defineSubstancesActionNetworkIndexes(GI
 	/*
 	eg 'swim' in 'To swim to the beach requires strength.'
 	*/
-	GIAgenericEntityInterpretationParameters param(translatorVariables, true);
+	GIAgenericEntityInterpretationParameters param(translatorVariables, true, translatorVariables->linkPreestablishedReferencesGIA);
 	GIAentityCharacteristic entityCharacteristicsTest1("grammaticalWordTypeTemp", GRAMMATICAL_WORD_TYPE_VERB_STRING);
 	GIAentityCharacteristic entityCharacteristicsTest2("grammaticalTenseModifierArrayTemp", "true", GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE);
 	GIAentityCharacteristic entityCharacteristicsTest3("grammaticalTenseModifierArrayTemp", "true", GRAMMATICAL_TENSE_MODIFIER_INFINITIVE);

@@ -26,7 +26,7 @@
  * File Name: GIArules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3c4a 20-June-2017
+ * Project Version: 3c4b 20-June-2017
  *
  *******************************************************************************/
 -->
@@ -4115,7 +4115,11 @@
 				<paramDepRel mode="execute">
 				<option numberOfRelations="1" />
 				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="_nn" relationArrayTestSize="1" />
+				<!-- #ifdefGIA_DISABLE_ALIAS_ENTITY_MERGING -->
 				<option functionToExecuteUponFind="14" />
+				<!-- #else -->
+				<!-- <option functionToExecuteUponFind="12" /> -->
+				<!-- #endif -->
 				<!-- #ifdefGIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES -->
 				<!--
 				{!-- dependent and governor of have previously been switched --}
@@ -4229,9 +4233,6 @@
 				eg Max is the/a brown dog
 				--></example>
 				<paramDepRel mode="execute">
-				<!-- #ifdefGIA_TRANSLATOR_ONLY_MERGE_ENTITY_NODES_WHEN_LINK_PREESTABLISHED_REFERENCES_GIA -->
-				<!-- <assert variable="linkPreestablishedReferencesGIA" /> -->
-				<!-- #endif -->
 				<option numberOfRelations="1" />
 				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_appo" />
 				<specialCase type="specialCaseCharacteristicsTestOrVector" variable="entityType" value="1" REL="1" REL_ENT="1" />
@@ -4261,9 +4262,6 @@
 				//eg the/a brown dog is Max
 				--></example>
 				<paramDepRel mode="execute">
-				<!-- #ifdefGIA_TRANSLATOR_ONLY_MERGE_ENTITY_NODES_WHEN_LINK_PREESTABLISHED_REFERENCES_GIA -->
-				<!-- <assert variable="linkPreestablishedReferencesGIA" /> -->
-				<!-- #endif -->
 				<option numberOfRelations="1" />
 				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_appo" />
 				<specialCase type="specialCaseCharacteristicsTestOrVector" variable="entityType" value="1" REL="1" REL_ENT="1" />
@@ -4293,9 +4291,6 @@
 				if no proper noun (or query) detected, each node is equal, eg the brown dog == the happy wolf]
 				--></example>
 				<paramDepRel mode="execute">
-				<!-- #ifdefGIA_TRANSLATOR_ONLY_MERGE_ENTITY_NODES_WHEN_LINK_PREESTABLISHED_REFERENCES_GIA -->
-				<!-- <assert variable="linkPreestablishedReferencesGIA" /> -->
-				<!-- #endif -->
 				<option numberOfRelations="1" />
 				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_appo" />
 				<specialCase type="specialCaseCharacteristicsTestOrVector" variable="entityType" value="1" REL="1" REL_ENT="1" />
@@ -4317,9 +4312,6 @@
 				</paramDepRel>
 				
 				<paramDepRel mode="execute">
-				<!-- #ifdefGIA_TRANSLATOR_ONLY_MERGE_ENTITY_NODES_WHEN_LINK_PREESTABLISHED_REFERENCES_GIA -->
-				<!-- <assert variable="linkPreestablishedReferencesGIA" /> -->
-				<!-- #endif -->
 				<option numberOfRelations="1" />
 				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_appo" />
 				<specialCase type="specialCaseCharacteristicsTestOrVector" variable="isName" value="true" REL="1" REL_ENT="2" />

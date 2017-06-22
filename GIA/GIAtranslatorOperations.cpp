@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3c4a 20-June-2017
+ * Project Version: 3c4b 20-June-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -65,6 +65,7 @@ GIAtranslatorVariablesClass::GIAtranslatorVariablesClass(void)
 	NLPclient = false;
 	#endif
 	parseGIA2file = false;
+	linkPreestablishedReferencesGIA = false;
 	
 	//network variables;
 	//entityNodesActiveListNetworkIndexes = NULL;
@@ -369,6 +370,7 @@ bool GIAtranslatorOperationsClass::connectDefinitionToEntity(GIAentityNode* defi
 	return connectRelationshipToEntity(definitionRelationshipSubjectEntity, definitionRelationshipObjectEntity, definitionRelationshipEntity, sameReferenceSet, GIA_ENTITY_TYPE_DEFINITION, translatorVariables);
 }
 
+#ifdef GIA_ALIASES
 #ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
 bool GIAtranslatorOperationsClass::connectDefinitionToEntityMarkConnectionAsAlias(GIAentityNode* definitionRelationshipSubjectEntity, GIAentityNode* definitionRelationshipObjectEntity, GIAentityNode* definitionRelationshipEntity, bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables)
 {
@@ -376,6 +378,7 @@ bool GIAtranslatorOperationsClass::connectDefinitionToEntityMarkConnectionAsAlia
 	definitionRelationshipEntity->isAlias = true;
 	return result;
 }
+#endif
 #endif
 
 
@@ -1818,6 +1821,7 @@ void GIAtranslatorOperationsClass::addInstanceEntityNodeToActiveLists(GIAentityN
 #endif
 
 #ifdef GIA_ALIASES
+#ifndef GIA_DISABLE_ALIAS_ENTITY_MERGING
 bool GIAtranslatorOperationsClass::mergeEntityNodesAddAlias(GIAentityNode* entityNode, GIAentityNode* entityNodeToMerge, GIAtranslatorVariablesClass* translatorVariables)
 {
 	bool result = true;
@@ -1989,6 +1993,7 @@ bool GIAtranslatorOperationsClass::mergeEntityNodesAddAlias(GIAentityNode* entit
 	}
 	return result;
 }
+#endif
 #endif
 
 
