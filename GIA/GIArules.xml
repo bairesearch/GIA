@@ -26,7 +26,7 @@
  * File Name: GIArules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3c4b 20-June-2017
+ * Project Version: 3c4c 20-June-2017
  *
  *******************************************************************************/
 -->
@@ -4115,11 +4115,7 @@
 				<paramDepRel mode="execute">
 				<option numberOfRelations="1" />
 				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="_nn" relationArrayTestSize="1" />
-				<!-- #ifdefGIA_DISABLE_ALIAS_ENTITY_MERGING -->
-				<option functionToExecuteUponFind="14" />
-				<!-- #else -->
-				<!-- <option functionToExecuteUponFind="12" /> -->
-				<!-- #endif -->
+				<option functionToExecuteUponFind="12" />
 				<!-- #ifdefGIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES -->
 				<!--
 				{!-- dependent and governor of have previously been switched --}
@@ -4249,11 +4245,7 @@
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="hasAssociatedTime" value="false" REL="1" REL_ENT="2" />
 				<option disableRelationDuringLink="true" REL="1" />
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="false" />
-				<!-- #ifdefGIA_DISABLE_ALIAS_ENTITY_MERGING -->
-				<option functionToExecuteUponFind="14" />
-				<!-- #else -->
-				<!-- <option functionToExecuteUponFind="12" /> -->
-				<!-- #endif -->
+				<option functionToExecuteUponFind="12" />
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="2" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="1" />
 				</paramDepRel>
@@ -4278,11 +4270,7 @@
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="hasAssociatedTime" value="false" REL="1" REL_ENT="2" />
 				<option disableRelationDuringLink="true" REL="1" />
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="false" />
-				<!-- #ifdefGIA_DISABLE_ALIAS_ENTITY_MERGING -->
-				<option functionToExecuteUponFind="14" />
-				<!-- #else -->
-				<!-- <option functionToExecuteUponFind="12" /> -->
-				<!-- #endif -->
+				<option functionToExecuteUponFind="12" />
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="1" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" />
 				</paramDepRel>
@@ -4302,11 +4290,7 @@
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="hasAssociatedTime" value="false" REL="1" REL_ENT="2" />
 				<option disableRelationDuringLink="true" REL="1" />
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="false" />
-				<!-- #ifdefGIA_DISABLE_ALIAS_ENTITY_MERGING -->
-				<option functionToExecuteUponFind="14" />
-				<!-- #else -->
-				<!-- <option functionToExecuteUponFind="12" /> -->
-				<!-- #endif -->
+				<option functionToExecuteUponFind="12" />
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="1" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" />
 				</paramDepRel>
@@ -4317,11 +4301,7 @@
 				<specialCase type="specialCaseCharacteristicsTestOrVector" variable="isName" value="true" REL="1" REL_ENT="2" />
 				<option disableRelationDuringLink="true" REL="1" />
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="false" />
-				<!-- #ifdefGIA_DISABLE_ALIAS_ENTITY_MERGING -->
-				<option functionToExecuteUponFind="14" />
-				<!-- #else -->
-				<!-- <option functionToExecuteUponFind="12" /> -->
-				<!-- #endif -->
+				<option functionToExecuteUponFind="12" />
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="1" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" />
 				</paramDepRel>
@@ -4732,11 +4712,7 @@
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="entityType" value="3" negative="true" REL="1" REL_ENT="1" /> <!-- Stanford Condition -->
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="isToBeComplimentOfActionTemp" value="false" REL="1" REL_ENT="1" /> <!-- Relex Condition -->
 				<option disableRelationDuringLink="true" REL="1" /> <!-- required to prevent re-interpretation of prepositions in main preposition interpretation function linkConditions -->
-				<!-- #ifdefGIA_DISABLE_ALIAS_ENTITY_MERGING -->
-				<option functionToExecuteUponFind="14" />
-				<!-- #else -->
-				<!-- <option functionToExecuteUponFind="12" /> -->
-				<!-- #endif -->
+				<option functionToExecuteUponFind="12" />
 				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="1" />
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" />
 				<option disableEntity="true" REL="1" REL_ENT="3" />
