@@ -25,7 +25,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3c4e 20-June-2017
+ * Project Version: 3c5a 21-June-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -588,7 +588,7 @@ int main(const int argc, const char** argv)
 
 		if(SHAREDvarsClass().argumentExists(argc, argv, "-version"))
 		{
-			cout << "GIA.exe - Project Version: 3c4e 20-June-2017" << endl;
+			cout << "GIA.exe - Project Version: 3c5a 21-June-2017" << endl;
 			exit(EXIT_OK);
 		}
 
@@ -1383,6 +1383,7 @@ bool GIAmainClass::executeGIA2()
 
 		bool foundComparisonVariable = GIAtranslatorOperations.getFoundComparisonVariable();
 		GIAentityNode* comparisonVariableNode = GIAtranslatorOperations.getComparisonVariableNode();
+
 		bool foundAnswer = false;
 		double confidence = 0.0;
 
@@ -1465,15 +1466,18 @@ bool GIAmainClass::executeGIA2()
 			answerString = answerString + "\nAnswer Context: " + queryAnswerContext;
 
 			#ifdef GIA_NLG
-			//look for action links
+			answerString = answerString + "\nAnswer Context (NLG): ";
+			answerString = answerString + GIAnlg.generateLanguageFromQuery(comparisonVariableNode, queryAnswerNode);				
+			/*
 			if(comparisonVariableNode->isWhichOrEquivalentWhatQuery)
 			{
 				answerString = answerString + GIAnlg.generateLanguageFromWhichQuery(comparisonVariableNode, queryAnswerNode);
 			}
 			else
 			{
-				answerString = answerString + GIAnlg.generateLanguageFromNonWhichQuery(comparisonVariableNode, queryAnswerNode);				
+				answerString = answerString + GIAnlg.generateLanguageFromQuery(comparisonVariableNode, queryAnswerNode);				
 			}
+			*/
 			#endif
 		}
 

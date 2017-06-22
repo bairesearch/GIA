@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3c4e 20-June-2017
+ * Project Version: 3c5a 21-June-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -277,13 +277,17 @@ GIAentityNode* GIAtranslatorOperationsClass::getRelationshipObjectEntity(GIAenti
 	#endif
 	return relationshipObjectEntity;
 }
-
 GIAentityNode* GIAtranslatorOperationsClass::getRelationshipObjectEntity(GIAentityNode* relationshipEntity)
+{
+	GIAentityNode* objectEntity = getRelationshipObjectEntityConnection(relationshipEntity)->entity;
+	return objectEntity;
+}
+GIAentityConnection* GIAtranslatorOperationsClass::getRelationshipObjectEntityConnection(GIAentityNode* relationshipEntity)
 {
 	#ifndef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
 	if(entityTypesIsPropertyOrDefinitionRelationshipArray[relationshipEntity->entityType])
 	{
-		cerr << "!GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS: GIAtranslatorOperationsClass::getRelationshipObjectEntity error{}: entityTypesIsPropertyOrDefinitionRelationshipArray[relationshipEntity->entityType]" << endl;
+		cerr << "!GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS: GIAtranslatorOperationsClass::getRelationshipObjectEntityConnection error{}: entityTypesIsPropertyOrDefinitionRelationshipArray[relationshipEntity->entityType]" << endl;
 		exit(EXIT_ERROR);		
 	}
 	#endif
@@ -291,11 +295,11 @@ GIAentityNode* GIAtranslatorOperationsClass::getRelationshipObjectEntity(GIAenti
 	if(relationshipEntity->relationshipObjectEntity->empty())
 	{
 		//DEBUG only; note this should never be the case (if a property/definition relationship source is defined, then its target should be defined)
-		cerr << "GIAtranslatorOperationsClass::getRelationshipObjectEntity error{}: relationshipEntity->relationshipObjectEntity->empty()" << endl;
+		cerr << "GIAtranslatorOperationsClass::getRelationshipObjectEntityConnection error{}: relationshipEntity->relationshipObjectEntity->empty()" << endl;
 		exit(EXIT_ERROR);
 	}
-	GIAentityNode* objectEntity = ((relationshipEntity->relationshipObjectEntity)->back())->entity;
-	return objectEntity;
+	GIAentityConnection* objectEntityConnection = ((relationshipEntity->relationshipObjectEntity)->back());
+	return objectEntityConnection;
 }
 
 //NB if !GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS: GIAentityConnection* relationshipConnectionReverse needn't be reverse
@@ -324,10 +328,15 @@ GIAentityNode* GIAtranslatorOperationsClass::getRelationshipSubjectEntity(GIAent
 }
 GIAentityNode* GIAtranslatorOperationsClass::getRelationshipSubjectEntity(GIAentityNode* relationshipEntity)
 {
+	GIAentityNode* subjectEntity = getRelationshipSubjectEntityConnection(relationshipEntity)->entity;
+	return subjectEntity;
+}
+GIAentityConnection* GIAtranslatorOperationsClass::getRelationshipSubjectEntityConnection(GIAentityNode* relationshipEntity)
+{
 	#ifndef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
 	if(entityTypesIsPropertyOrDefinitionRelationshipArray[relationshipEntity->entityType])
 	{
-		cerr << "!GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS: GIAtranslatorOperationsClass::getRelationshipSubjectEntity error{}: entityTypesIsPropertyOrDefinitionRelationshipArray[relationshipEntity->entityType]" << endl;
+		cerr << "!GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS: GIAtranslatorOperationsClass::getRelationshipSubjectEntityConnection error{}: entityTypesIsPropertyOrDefinitionRelationshipArray[relationshipEntity->entityType]" << endl;
 		exit(EXIT_ERROR);		
 	}
 	#endif
@@ -335,11 +344,11 @@ GIAentityNode* GIAtranslatorOperationsClass::getRelationshipSubjectEntity(GIAent
 	if(relationshipEntity->relationshipSubjectEntity->empty())
 	{
 		//DEBUG only; note this should never be the case (if a property/definition relationship source is defined, then its target should be defined)
-		cerr << "GIAtranslatorOperationsClass::getRelationshipSubjectEntity error{}: relationshipEntity->relationshipSubjectEntity->empty()" << endl;
+		cerr << "GIAtranslatorOperationsClass::getRelationshipSubjectEntityConnection error{}: relationshipEntity->relationshipSubjectEntity->empty()" << endl;
 		exit(EXIT_ERROR);
 	}
-	GIAentityNode* subjectEntity = ((relationshipEntity->relationshipSubjectEntity)->back())->entity;
-	return subjectEntity;
+	GIAentityConnection* subjectEntityConnection = ((relationshipEntity->relationshipSubjectEntity)->back());
+	return subjectEntityConnection;
 }
 
 
@@ -1976,6 +1985,7 @@ bool GIAtranslatorOperationsClass::mergeEntityNodesAddAlias(GIAentityNode* entit
 			#ifdef GIA_ALIASES
 			entityNode->isNameQuery = entityNodeToMerge->isNameQuery;
 			#endif
+			setComparisonVariableNode(entityNode);
 		}
 		#ifdef GIA_ALIASES
 		entityNode->isName = entityNodeToMerge->isName;
@@ -1985,8 +1995,10 @@ bool GIAtranslatorOperationsClass::mergeEntityNodesAddAlias(GIAentityNode* entit
 		{
 			entityNode->isToBeComplimentOfActionTemp = true;	//should not be required
 		}
-
+		
 		this->disableEntity(entityNodeToMerge);
+		
+
 
 		//entityNode->entityIndexTemp = entityNodeToMerge->entityIndexTemp;	//added 3a1o
 

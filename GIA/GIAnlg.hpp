@@ -25,7 +25,7 @@
  * File Name: GIAnlg.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3c4e 20-June-2017
+ * Project Version: 3c5a 21-June-2017
  * Requirements: requires GIA translated data, and NLG2 to be installed
  * Description: GIA natural language generation (using NLG2)
  *
@@ -52,6 +52,9 @@ public:
 	GIANLGentity* next;
 };
 
+//#define GIA_NLG_EXPECT_TRANSLATOR_QUERY_ACTION_AND_CONDITION_SAME_REFERENCE_SET_ASSIGNMENT_BUG_FIXED
+//#define GIA_NLG_DISPLAY_QUERY_CONDITIONS
+
 #define GIA_NLG_GENERATE_LANGUAGE_MAX_NUM_ITERATIONS (4)	//takes into account connections (/2)
 
 #define GIA_NLG_RELATIONSHIP_ENTITY_CONJUNCTION_AND_IMPLICIT ", "
@@ -77,18 +80,23 @@ public:
 #define GIA_NLG_RELATIONSHIP_ENTITY_AUXILIARY_HAVE_PLURAL_PAST "had "
 #define GIA_NLG_RELATIONSHIP_ENTITY_AUXILIARY_HAVE_PLURAL_FUTURE "will have "
 
-static string entityRelationshipTenseNumerosityCrossReferenceBeAuxiliaryArray[GRAMMATICAL_TENSE_NUMBER_OF_TYPES][GRAMMATICAL_NUMBER_NUMBER_OF_TYPES] = {{"", "", "", ""}, {"", "", GIA_NLG_RELATIONSHIP_ENTITY_AUXILIARY_BE_SINGULAR_PRESENT, GIA_NLG_RELATIONSHIP_ENTITY_AUXILIARY_BE_PLURAL_PRESENT}, {"", "", GIA_NLG_RELATIONSHIP_ENTITY_AUXILIARY_BE_SINGULAR_PAST, GIA_NLG_RELATIONSHIP_ENTITY_AUXILIARY_BE_PLURAL_PAST}, {"", "", GIA_NLG_RELATIONSHIP_ENTITY_AUXILIARY_BE_SINGULAR_FUTURE, GIA_NLG_RELATIONSHIP_ENTITY_AUXILIARY_BE_PLURAL_FUTURE}};
-static string entityRelationshipTenseNumerosityCrossReferenceHaveAuxiliaryArray[GRAMMATICAL_TENSE_NUMBER_OF_TYPES][GRAMMATICAL_NUMBER_NUMBER_OF_TYPES] = {{"", "", "", ""}, {"", "", GIA_NLG_RELATIONSHIP_ENTITY_AUXILIARY_HAVE_SINGULAR_PRESENT, GIA_NLG_RELATIONSHIP_ENTITY_AUXILIARY_HAVE_PLURAL_PRESENT}, {"", "", GIA_NLG_RELATIONSHIP_ENTITY_AUXILIARY_HAVE_SINGULAR_PAST, GIA_NLG_RELATIONSHIP_ENTITY_AUXILIARY_HAVE_PLURAL_PAST}, {"", "", GIA_NLG_RELATIONSHIP_ENTITY_AUXILIARY_HAVE_SINGULAR_FUTURE, GIA_NLG_RELATIONSHIP_ENTITY_AUXILIARY_HAVE_PLURAL_FUTURE}};
+static string entityRelationshipTenseNumerosityCrossReferenceBeAuxiliaryArray[GRAMMATICAL_TENSE_NUMBER_OF_TYPES][GRAMMATICAL_NUMBER_NUMBER_OF_TYPES] = {{"", "", GIA_NLG_RELATIONSHIP_ENTITY_AUXILIARY_BE_SINGULAR_PRESENT, GIA_NLG_RELATIONSHIP_ENTITY_AUXILIARY_BE_PLURAL_PRESENT}, {"", "", GIA_NLG_RELATIONSHIP_ENTITY_AUXILIARY_BE_SINGULAR_PRESENT, GIA_NLG_RELATIONSHIP_ENTITY_AUXILIARY_BE_PLURAL_PRESENT}, {"", "", GIA_NLG_RELATIONSHIP_ENTITY_AUXILIARY_BE_SINGULAR_PAST, GIA_NLG_RELATIONSHIP_ENTITY_AUXILIARY_BE_PLURAL_PAST}, {"", "", GIA_NLG_RELATIONSHIP_ENTITY_AUXILIARY_BE_SINGULAR_FUTURE, GIA_NLG_RELATIONSHIP_ENTITY_AUXILIARY_BE_PLURAL_FUTURE}};
+static string entityRelationshipTenseNumerosityCrossReferenceHaveAuxiliaryArray[GRAMMATICAL_TENSE_NUMBER_OF_TYPES][GRAMMATICAL_NUMBER_NUMBER_OF_TYPES] = {{"", "", GIA_NLG_RELATIONSHIP_ENTITY_AUXILIARY_HAVE_SINGULAR_PRESENT, GIA_NLG_RELATIONSHIP_ENTITY_AUXILIARY_HAVE_PLURAL_PRESENT}, {"", "", GIA_NLG_RELATIONSHIP_ENTITY_AUXILIARY_HAVE_SINGULAR_PRESENT, GIA_NLG_RELATIONSHIP_ENTITY_AUXILIARY_HAVE_PLURAL_PRESENT}, {"", "", GIA_NLG_RELATIONSHIP_ENTITY_AUXILIARY_HAVE_SINGULAR_PAST, GIA_NLG_RELATIONSHIP_ENTITY_AUXILIARY_HAVE_PLURAL_PAST}, {"", "", GIA_NLG_RELATIONSHIP_ENTITY_AUXILIARY_HAVE_SINGULAR_FUTURE, GIA_NLG_RELATIONSHIP_ENTITY_AUXILIARY_HAVE_PLURAL_FUTURE}};
 
-static bool entityVectorConnectionGoToParentArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {false, true, false, true, false, true, false, true, true, false, false, false};
-static bool entityVectorConnectionGoToChildArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {true, false, true, false, true, false, true, false, false, true, false, false};
+static bool entityVectorConnectionGoToParentArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {false, true, false, true, false, true, false, false, true, false, false, false};
+static bool entityVectorConnectionGoToChildArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {true, false, true, false, true, false, false, false, false, true, false, false};
 
 
+#define GIA_ENTITY_RELATIONSHIP_CONDITION_QUERY_NUMBER_OF_TYPES (4)
+static string entityRelationshipConditionQueryArray[GIA_ENTITY_RELATIONSHIP_CONDITION_QUERY_NUMBER_OF_TYPES] = {"_%how", "_%attime", "_%atlocation", "_%because"};	//this needs to map to condition names in redistributeStanfordRelationsCreateQueryVarsHowWhenWhereWhy (note they are lowercase as NLP will convert uppercase words to lowercase in lemma)
+static string entityRelationshipConditionQueryCrossReferenceConditionArray[GIA_ENTITY_RELATIONSHIP_CONDITION_QUERY_NUMBER_OF_TYPES] = {"how", "at", "at", "because"};
+
+								
 #define GIA_NLG_RELATIONSHIP_ENTITY_AUXILIARY_ACTION_PRESENT_APPEND "s"
 //#define GIA_NLG_RELATIONSHIP_ENTITY_AUXILIARY_ACTION_PAST "did"
 
 #define GIA_NLG_MORPH_PLURALITY_APPEND "s"
-#define GIA_NLG_REFERENCE_SET_RCMOD_SAME_REFERENCE_SET "which "
+#define GIA_NLG_REFERENCE_SET_RCMOD_SAME_REFERENCE_SET "that "	//"which "
 #define GIA_NLG_RELATIONSHIP_ENTITY_ACTION_REVERSE "by "
 
 #define GIA_NLG_SUPPORT_PERSON_AND_GENDER
@@ -105,26 +113,27 @@ class GIAnlgClass
 	private: GIAtranslatorOperationsClass GIAtranslatorOperations;
 	
 	#ifdef GIA_NLG
-	public: string generateLanguageFromNonWhichQuery(GIAentityNode* comparisonVariableNode, GIAentityNode* queryAnswerNode);
-	public: string generateLanguageFromWhichQuery(GIAentityNode* comparisonVariableNode, GIAentityNode* queryAnswerNode);
+	public: string generateLanguageFromQuery(GIAentityNode* comparisonVariableNode, GIAentityNode* queryAnswerNode);
+	//public: string generateLanguageFromWhichQuery(GIAentityNode* comparisonVariableNode, GIAentityNode* queryAnswerNode);
 		private: string generateLanguageFromNLGentityList(GIANLGentity* firstNLGentityInContext);		
-		private: bool generateLanguageFromTextIteration(GIAentityConnection* currentConnection, GIANLGentity** currentNLGentity, bool parseSameReferenceSetOnly, bool isSameReferenceSetIteration, int interationIndex, bool isRelationshipReverseIteration);
-			private: bool generateQualityPrependText(GIAentityNode* currentEntity, GIANLGentity** currentNLGentityInSection, bool testSameReferenceSet);
-				private: bool generateConjunctionOfNLGentitiesInSection(int qualityCountMax, vector<GIANLGentity*>* NLGentitiesInSection);
+		private: bool generateLanguageFromTextIteration(GIAentityConnection* currentConnection, GIANLGentity** currentNLGentity, const bool parseSameReferenceSetOnly, const bool isSameReferenceSetIteration, const int interationIndex, const bool isRelationshipReverseIteration);
+			private: bool generateLanguageFromTextIterationPerformChecks(GIAentityConnection* connection);
+			private: bool generateQualityPrependText(GIAentityNode* currentEntity, GIANLGentity** currentNLGentityInSection, const bool testSameReferenceSet);
+				private: bool generateConjunctionOfNLGentitiesInSection(const int qualityCountMax, vector<GIANLGentity*>* NLGentitiesInSection);
 				//private: bool generateConjunctionOfNLGentitiesInSection(int qualityCountMax, GIANLGentity* firstNLGentityInSection);
-			private: bool generateRelationshipEntityLanguage(GIAentityConnection* relationshipConnection, GIANLGentity** currentNLGentity, bool sameReferenceSet);
-			private: bool generateRelationshipEntityLanguageActionReverse(GIAentityConnection* relationshipConnection,  GIANLGentity** currentNLGentity, bool sameReferenceSet);
-				private: bool compareRelationshipConnectionType(GIAentityConnection* relationshipConnection, int entityType);
+			private: bool generateRelationshipEntityLanguage(GIAentityConnection* relationshipConnection, GIANLGentity** currentNLGentity, const bool sameReferenceSet);
+			private: bool generateRelationshipEntityLanguageActionReverse(GIAentityConnection* relationshipConnection, GIANLGentity** currentNLGentity, const bool sameReferenceSet);
+				private: bool compareRelationshipConnectionType(GIAentityConnection* relationshipConnection, const int entityType);
 				private: string generateMorphologyAction(GIAentityConnection* relationshipConnection);
 				private: string generateMorphologyActionReverse(GIAentityConnection* relationshipConnection);
 				private: string generateMorphologyCondition(GIAentityConnection* relationshipConnection);
 				private: string generateMorphologyRelationshipAuxiliaryBe(GIAentityConnection* relationshipConnection);
 				private: string generateMorphologyRelationshipAuxiliaryHave(GIAentityConnection* relationshipConnection);
-			private: bool generateNounEntityLanguage(GIAentityNode* nounEntity, GIANLGentity** currentNLGentity, bool definite);
+			private: bool generateNounEntityLanguage(GIAentityNode* nounEntity, GIANLGentity** currentNLGentity, const bool definite);
 				private: string calcDeterminate(const GIAentityNode* entityNode, const bool definite);
 				private: string calcNounWord(const GIAentityNode* entityNode);
 
-	private: string generatePlurality(string entityName, int grammaticalNumber);
+	private: string generatePlurality(const string entityName, int grammaticalNumber);
 
 	#endif
 

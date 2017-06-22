@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3c4e 20-June-2017
+ * Project Version: 3c5a 21-June-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -153,9 +153,6 @@ void GIAtranslatorDefineReferencingClass::identifyComparisonVariableAlternateMet
 							GIAentityNode* queryComparisonVariableEntityNode = (*translatorVariables->GIAentityNodeArray)[currentFeatureInList->entityIndex];
 							queryComparisonVariableEntityNode->isQuery = true;
 							queryComparisonVariableEntityNode->isWhichOrEquivalentWhatQuery = true;
-							#ifdef GIA_WHICH_QUERY_ALIAS_ANSWERS
-							queryComparisonVariableEntityNode->isNameQuery = true;
-							#endif
 							GIAtranslatorOperations.setFoundComparisonVariable(true);
 							GIAtranslatorOperations.setComparisonVariableNode(queryComparisonVariableEntityNode);
 						}

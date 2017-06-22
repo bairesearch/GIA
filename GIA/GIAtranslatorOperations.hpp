@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3c4e 20-June-2017
+ * Project Version: 3c5a 21-June-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -166,9 +166,11 @@ class GIAtranslatorOperationsClass
 	public: GIAentityNode* getDefinitionRelationshipObjectEntity(GIAentityConnection* connection);
 	public: GIAentityNode* getDefinitionRelationshipSubjectEntity(GIAentityConnection* relationshipConnectionReverse);
 		public: GIAentityNode* getRelationshipObjectEntity(GIAentityConnection* connection);
-		GIAentityNode* getRelationshipObjectEntity(GIAentityNode* relationshipEntity);
+			public: GIAentityNode* getRelationshipObjectEntity(GIAentityNode* relationshipEntity);
+				public: GIAentityConnection* getRelationshipObjectEntityConnection(GIAentityNode* relationshipEntity);
 		public: GIAentityNode* getRelationshipSubjectEntity(GIAentityConnection* relationshipConnectionReverse);
-		GIAentityNode* getRelationshipSubjectEntity(GIAentityNode* relationshipEntity);
+			public: GIAentityNode* getRelationshipSubjectEntity(GIAentityNode* relationshipEntity);
+				public: GIAentityConnection* getRelationshipSubjectEntityConnection(GIAentityNode* relationshipEntity);
 
 		
 	#ifdef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS	

@@ -25,7 +25,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3c4e 20-June-2017
+ * Project Version: 3c5a 21-June-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -818,9 +818,9 @@
 		#define GIA_ENTITY_CONNECTION_RECORD_RELATIONSHIP_TYPE	//this is required for !GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS generalised code
 	#endif
 	#define GIA_CREATE_SHORTCUTS_TO_CONCEPT_ENTITIES
-	//#define GIA_NLG		//NLG codebase has been upgraded so is now defined in GIA_DEBUG_DISABLE_3a_CODE
-	#ifdef GIA_NLG	//not yet defined
-		#define GIA_NLG_ADD_AUXILIARIES_TO_SAME_REFERENCE_SET_QUALITIES	//eg "the dog that is blue" (vs "the blue dog")
+	#define GIA_NLG		//NLG codebase has been upgraded so is now defined in GIA_DEBUG_DISABLE_3a_CODE
+	#ifdef GIA_NLG
+		//#define GIA_NLG_ADD_AUXILIARIES_TO_SAME_REFERENCE_SET_QUALITIES	//eg "the dog that is blue" (vs "the blue dog")
 		#define GIA_NLG_ADD_AUXILIARIES_TO_SAME_REFERENCE_SET_CONDITIONS	//eg "the dog that is near" (vs "the dog near the house")
 	#endif
 
@@ -1388,10 +1388,8 @@
 #endif
 #define GIA_TEMPORARILY_DISABLE_GIA_XML_READ_CHECKS
 
-//#define GIA_NLG
 #ifdef GIA_NLG
 	#define GIA_NLG_OUTPUT_TO_COMMAND_LINE
-	#define GIA_NLG_NO_MORPHOLOGY_GENERATOR	//NB even NLG2 requires origWord not lemma, so a morphology generator is required in both
 	#define GIA_WORD_ORIG	//NB wordOrig is now used by more than just NLG (it is also used by LRP)
 #endif
 
