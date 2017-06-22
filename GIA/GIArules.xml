@@ -26,7 +26,7 @@
  * File Name: GIArules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3c3a 16-June-2017
+ * Project Version: 3c4a 20-June-2017
  *
  *******************************************************************************/
 -->
@@ -3916,32 +3916,6 @@
 				That is Jim. (double definition connection, that = substance, Jim = networkIndex or substance [if ]) GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES_CASE_7_GOVERNOR_INDEFINITE_DEPENDENT_NAME
 				Max is Jim. (double definition connection, Max = networkIndex or substance [if ], Jim = networkIndex or substance [if ]) GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES_CASE_8_GOVERNOR_NAME_DEPENDENT_NAME {!--  case added 14 October 2012 --}
 				--></example>
-				<paramDepRel mode="redistribute">
-				<option numberOfRelations="1" />
-				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_appo" />
-				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp" value="true" REL="1" REL_ENT="1" />
-				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp" value="true" REL="1" REL_ENT="2" />
-				</paramDepRel>
-
-				<paramDepRel mode="redistribute">
-				<option numberOfRelations="1" />
-				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_appo" />
-				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalNumber" value="2" REL="1" REL_ENT="1" />
-				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalDefiniteTemp" value="false" REL="1" REL_ENT="1" />
-				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalIndefinitePluralTemp" value="false" REL="1" REL_ENT="1" />
-				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalProperNounTemp" value="true" REL="1" REL_ENT="1" />
-				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp" value="false" REL="1" REL_ENT="1" />
-				</paramDepRel>
-
-				<paramDepRel mode="redistribute">
-				<option numberOfRelations="1" />
-				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_appo" />
-				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalNumber" value="2" REL="1" REL_ENT="2" />
-				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalDefiniteTemp" value="false" REL="1" REL_ENT="2" />
-				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalIndefinitePluralTemp" value="false" REL="1" REL_ENT="2" />
-				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalProperNounTemp" value="true" REL="1" REL_ENT="2" />
-				<specialCase type="specialCaseCharacteristicsAssignmentVector" variable="alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp" value="false" REL="1" REL_ENT="2" />
-				</paramDepRel>
 
 				<paramDepRel mode="redistribute">
 				<option numberOfRelations="1" />
@@ -4245,6 +4219,14 @@
 			<function name="linkEntityDefinitionsAppositiveOfNouns">
 				<example><!--
 				The fish, a carp, swam deeply. _appo(fish[2], carp[5])
+				Tom is the red dog.
+				The red dog is Tom.
+				Tom is a red dog.
+				A red dog is Tom.
+				--></example>
+				
+				<example><!--
+				eg Max is the/a brown dog
 				--></example>
 				<paramDepRel mode="execute">
 				<!-- #ifdefGIA_TRANSLATOR_ONLY_MERGE_ENTITY_NODES_WHEN_LINK_PREESTABLISHED_REFERENCES_GIA -->
@@ -4254,11 +4236,16 @@
 				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_appo" />
 				<specialCase type="specialCaseCharacteristicsTestOrVector" variable="entityType" value="1" REL="1" REL_ENT="1" />
 				<specialCase type="specialCaseCharacteristicsTestOrVector" variable="isNameQuery" value="true" REL="1" REL_ENT="1" />
-				<specialCase type="specialCaseCharacteristicsTestOr2Vector" variable="entityType" value="1" REL="1" REL_ENT="2" />
-				<specialCase type="specialCaseCharacteristicsTestOr2Vector" variable="isNameQuery" value="true" REL="1" REL_ENT="2" />
-				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="hasAssociatedTime" value="false" REL="1" REL_ENT="2" />
 				<specialCase type="specialCaseCharacteristicsTestOr3Vector" variable="grammaticalProperNounTemp" value="true" REL="1" REL_ENT="1" />
 				<specialCase type="specialCaseCharacteristicsTestOr3Vector" variable="isNameQuery" value="true" REL="1" REL_ENT="1" />
+				
+				<specialCase type="specialCaseCharacteristicsTestOr2Vector" variable="entityType" value="1" REL="1" REL_ENT="2" />
+				<!-- #ifndefGIA_DISABLE_ALIAS_ENTITY_MERGING -->
+				<specialCase type="specialCaseCharacteristicsTestOr2Vector" variable="entityType" value="2" REL="1" REL_ENT="2" />	<!-- added 3c4a -->
+				<!-- #endif -->
+				<specialCase type="specialCaseCharacteristicsTestOr2Vector" variable="isNameQuery" value="true" REL="1" REL_ENT="2" />
+				
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="hasAssociatedTime" value="false" REL="1" REL_ENT="2" />
 				<option disableRelationDuringLink="true" REL="1" />
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="false" />
 				<!-- #ifdefGIA_DISABLE_ALIAS_ENTITY_MERGING -->
@@ -4270,6 +4257,41 @@
 				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="1" />
 				</paramDepRel>
 
+				<example><!--
+				//eg the/a brown dog is Max
+				--></example>
+				<paramDepRel mode="execute">
+				<!-- #ifdefGIA_TRANSLATOR_ONLY_MERGE_ENTITY_NODES_WHEN_LINK_PREESTABLISHED_REFERENCES_GIA -->
+				<!-- <assert variable="linkPreestablishedReferencesGIA" /> -->
+				<!-- #endif -->
+				<option numberOfRelations="1" />
+				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_appo" />
+				<specialCase type="specialCaseCharacteristicsTestOrVector" variable="entityType" value="1" REL="1" REL_ENT="1" />
+				<!-- #ifndefGIA_DISABLE_ALIAS_ENTITY_MERGING -->
+				<specialCase type="specialCaseCharacteristicsTestOrVector" variable="entityType" value="2" REL="1" REL_ENT="1" />	<!-- added 3c4a -->
+				<!-- #endif -->
+				<specialCase type="specialCaseCharacteristicsTestOrVector" variable="isNameQuery" value="true" REL="1" REL_ENT="1" />
+				
+				<specialCase type="specialCaseCharacteristicsTestOr2Vector" variable="entityType" value="1" REL="1" REL_ENT="2" />
+				<specialCase type="specialCaseCharacteristicsTestOr2Vector" variable="isNameQuery" value="true" REL="1" REL_ENT="2" />
+				<specialCase type="specialCaseCharacteristicsTestOr3Vector" variable="grammaticalProperNounTemp" value="true" REL="1" REL_ENT="2" />
+				<specialCase type="specialCaseCharacteristicsTestOr3Vector" variable="isNameQuery" value="true" REL="1" REL_ENT="2" />
+				
+				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="hasAssociatedTime" value="false" REL="1" REL_ENT="2" />
+				<option disableRelationDuringLink="true" REL="1" />
+				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="false" />
+				<!-- #ifdefGIA_DISABLE_ALIAS_ENTITY_MERGING -->
+				<option functionToExecuteUponFind="14" />
+				<!-- #else -->
+				<!-- <option functionToExecuteUponFind="12" /> -->
+				<!-- #endif -->
+				<option functionEntityRelationID="1" FUNC_ENT="1" functionEntityRelationEntityID="1" />
+				<option functionEntityRelationID="1" FUNC_ENT="2" functionEntityRelationEntityID="2" />
+				</paramDepRel>
+				
+				<example><!--
+				if no proper noun (or query) detected, each node is equal, eg the brown dog == the happy wolf]
+				--></example>
 				<paramDepRel mode="execute">
 				<!-- #ifdefGIA_TRANSLATOR_ONLY_MERGE_ENTITY_NODES_WHEN_LINK_PREESTABLISHED_REFERENCES_GIA -->
 				<!-- <assert variable="linkPreestablishedReferencesGIA" /> -->
@@ -4278,8 +4300,10 @@
 				<option useRelationTest="true" REL="1" REL_ENT="3" relationTest="_appo" />
 				<specialCase type="specialCaseCharacteristicsTestOrVector" variable="entityType" value="1" REL="1" REL_ENT="1" />
 				<specialCase type="specialCaseCharacteristicsTestOrVector" variable="isNameQuery" value="true" REL="1" REL_ENT="1" />
+				
 				<specialCase type="specialCaseCharacteristicsTestOr2Vector" variable="entityType" value="1" REL="1" REL_ENT="2" />
 				<specialCase type="specialCaseCharacteristicsTestOr2Vector" variable="isNameQuery" value="true" REL="1" REL_ENT="2" />
+				
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="hasAssociatedTime" value="false" REL="1" REL_ENT="2" />
 				<option disableRelationDuringLink="true" REL="1" />
 				<option defaultSameSetRelationID="1" defaultSameSetReferenceValue="false" />

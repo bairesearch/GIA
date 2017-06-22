@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorRules.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3c3a 16-June-2017
+ * Project Version: 3c4a 20-June-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -115,6 +115,7 @@ bool GIAtranslatorRulesClass::applyGIATranslatorGenericXMLfunctions(const string
 												}
 											}
 											
+											//cout << "functionName = " << functionName << endl;
 											
 											//load options and execute genericDependecyRelationInterpretation/genericEntityInterpretation
 											if(!this->applyGIATranslatorGenericXMLparam(currentParamTag, depRelOrEntity, executeOrReassign, translatorVariables, linkPreestablishedReferencesGIA, functionName))

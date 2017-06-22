@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3c3a 16-June-2017
+ * Project Version: 3c4a 20-June-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1827,8 +1827,12 @@ bool GIAtranslatorOperationsClass::mergeEntityNodesAddAlias(GIAentityNode* entit
 	}
 	else
 	{
+		if(entityNode->entityType == GIA_ENTITY_TYPE_CONCEPT)
+		{
+			entityNode->entityType = GIA_ENTITY_TYPE_SUBSTANCE;	//added 3c4a
+		}
+		
 		entityNode->aliasList.push_back(entityNodeToMerge->entityName);
-
 
 		for(int connectionType=0; connectionType<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; connectionType++)
 		{

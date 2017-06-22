@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorLogicReference.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3c3a 16-June-2017
+ * Project Version: 3c4a 20-June-2017
  * Requirements: requires plain text file
  * Description: Logic Reference preprocessor
  *
