@@ -25,7 +25,7 @@
  * File Name: GIAnlg.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3c5d 21-June-2017
+ * Project Version: 3c6a 24-June-2017
  * Requirements: requires GIA translated data, and NLG2 to be installed
  * Description: GIA natural language generation (using NLG2)
  *
@@ -53,6 +53,12 @@ public:
 };
 
 //#define GIA_NLG_EXPECT_TRANSLATOR_QUERY_ACTION_AND_CONDITION_SAME_REFERENCE_SET_ASSIGNMENT_BUG_FIXED
+
+#define GIA_NLG_POSSESSIVE_ADVANCED
+#ifdef GIA_NLG_POSSESSIVE_ADVANCED
+	#define GIA_NLG_POSSESSIVE_ADVANCED_ENTITY_POSSESSIVEENDING_TYPE_DEPENDENT_ON_PROPERNOUNS
+	#define GIA_NLG_POSSESSIVE_ADVANCED_ENTITY_POSSESSIVEENDING_TYPE_DETERMINER_CHARACTER 's'
+#endif
 
 #define GIA_NLG_REPRESENT_WHO_WHAT_QUERIES_ADVANCED
 
@@ -117,9 +123,9 @@ class GIAnlgClass
 	public: string generateLanguageFromQuery(GIAentityNode* comparisonVariableNode, GIAentityNode* queryAnswerNode);
 	//public: string generateLanguageFromWhichQuery(GIAentityNode* comparisonVariableNode, GIAentityNode* queryAnswerNode);
 		private: string generateLanguageFromNLGentityList(GIANLGentity* firstNLGentityInContext);		
-		private: bool generateLanguageFromTextIteration(GIAentityConnection* currentConnection, GIANLGentity** currentNLGentity, const bool parseSameReferenceSetOnly, const bool isSameReferenceSetIteration, const int interationIndex, const bool isRelationshipReverseIteration);
-			private: bool generateLanguageFromTextIterationPerformChecks(GIAentityConnection* connection);
-			private: bool generateRelationshipEntityLanguage(GIAentityConnection* relationshipConnection, GIANLGentity** currentNLGentity, const bool sameReferenceSet);
+		private: bool generateLanguageFromTextIteration(GIAentityConnection* currentConnection, GIANLGentity** currentNLGentity, const bool parseSameReferenceSetOnly, const int interationIndex, const bool isRelationshipReverseIterationAction=false, const bool isRelationshipReverseIterationProperty=false, const bool isRelationshipReverseIterationPropertyPossessive=false);
+			private: bool generateLanguageFromTextIterationPerformChecks(GIAentityConnection* connection, const bool parseQualities=false);
+			private: bool generateRelationshipEntityLanguage(GIAentityConnection* relationshipConnection, GIANLGentity** currentNLGentity, const bool sameReferenceSet, bool addAuxiliaryToQualities=false, bool addRCmodToProperties=true);
 			private: bool generateRelationshipEntityLanguageActionReverse(GIAentityConnection* relationshipConnection, GIANLGentity** currentNLGentity, const bool sameReferenceSet);
 				private: bool compareRelationshipConnectionType(GIAentityConnection* relationshipConnection, const int entityType);
 				private: string generateMorphologyAction(GIAentityConnection* relationshipConnection);
@@ -127,12 +133,12 @@ class GIAnlgClass
 				private: string generateMorphologyCondition(GIAentityConnection* relationshipConnection);
 				private: string generateMorphologyRelationshipAuxiliaryBe(GIAentityConnection* relationshipConnection);
 				private: string generateMorphologyRelationshipAuxiliaryHave(GIAentityConnection* relationshipConnection);
-			private: bool generateNounEntityLanguage(GIAentityNode* nounEntity, GIANLGentity** currentNLGentity, const bool definite, const bool parseSameReferenceSetOnly);
+			private: bool generateNounEntityLanguage(GIAentityNode* nounEntity, GIANLGentity** currentNLGentity, const bool definite, const bool parseSameReferenceSetOnly, const bool possessive=false, const bool determiner=true);
 				private: string calcDeterminate(GIAentityNode* entityNode, const bool definite);
 				private: bool generateQualityPrependText(GIAentityNode* currentEntity, GIANLGentity** currentNLGentityInSection, const bool testSameReferenceSet, const bool generateNewNLGentities);
 					private: bool generateConjunctionOfNLGentitiesInSection(const int qualityCountMax, vector<GIANLGentity*>* NLGentitiesInSection);
 					//private: bool generateConjunctionOfNLGentitiesInSection(int qualityCountMax, GIANLGentity* firstNLGentityInSection);
-				private: string calcNounWord(GIAentityNode* entityNode);
+				private: string calcNounWord(GIAentityNode* entityNode, const bool possessive);
 
 	private: string generatePlurality(const string entityName, int grammaticalNumber);
 

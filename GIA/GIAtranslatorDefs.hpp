@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3c5d 21-June-2017
+ * Project Version: 3c6a 24-June-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1115,8 +1115,10 @@ static string entityAuxiliaryDoingArray[ENTITY_AUXILIARY_DOING_ARRAY_NUMBER_OF_T
 #define ENTITY_WH_ARRAY_NUMBER_OF_TYPES (9)
 static string entityWhArray[ENTITY_WH_ARRAY_NUMBER_OF_TYPES] = {"which", "what", "who", "whom", "whose", "where", "when", "how", "why"};	//http://courses.washington.edu/hypertxt/csar-v02/penntable.html + http://www.computing.dcu.ie/~acahill/tagset.html
 
+#define ENTITY_POSSESSIVEENDING_APOSTROPHE_S "'s"
+#define ENTITY_POSSESSIVEENDING_APOSTROPHE "'"
 #define ENTITY_POSSESSIVEENDING_NUMBER_OF_TYPES (2)
-static string entityPossessiveEndingArray[ENTITY_POSSESSIVEENDING_NUMBER_OF_TYPES] = {"'s", "'"};
+static string entityPossessiveEndingArray[ENTITY_POSSESSIVEENDING_NUMBER_OF_TYPES] = {ENTITY_POSSESSIVEENDING_APOSTROPHE_S, ENTITY_POSSESSIVEENDING_APOSTROPHE};
 #define ENTITY_MODALAUXILIARY_NUMBER_OF_TYPES (9)
 static string entityModalAuxiliaryArray[ENTITY_MODALAUXILIARY_NUMBER_OF_TYPES] = {"can", "could", "may", "might", "must", "shall", "should", "will", "would"};	//en.wikipedia.org/wiki/Modal_verb
 #define ENTITY_CARDINALNUMBER_ARRAY_NUMBER_OF_TYPES (43)
