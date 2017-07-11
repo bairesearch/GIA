@@ -25,7 +25,7 @@
  * File Name: GIAquery.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3c6a 24-June-2017
+ * Project Version: 3d1a 10-July-2017
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  * ?Limitations: will only locate a exact answer (based upon a comparison node) if it provides the maximum number of matched nodes
@@ -568,14 +568,16 @@ bool GIAqueryClass::testReferencedEntityNodeForExactNameMatch2(GIAentityNode* qu
 #endif
 
 
-GIAentityNode* GIAqueryClass::answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork(unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexesQuery, const bool detectComparisonVariable, GIAentityNode* comparisonVariableNode, bool* foundAnswer, GIAentityNode* queryAnswerNode, double* numberOfMatchedNodes, string* queryAnswerContext)
+GIAentityNode* GIAqueryClass::answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork(GIAtranslatorVariablesClass* translatorVariables, GIAtranslatorVariablesClass* translatorVariablesQuery, const bool detectComparisonVariable, GIAentityNode* comparisonVariableNode, bool* foundAnswer, GIAentityNode* queryAnswerNode, double* numberOfMatchedNodes, string* queryAnswerContext)
 {
+	unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes = translatorVariables->entityNodesActiveListNetworkIndexes;
+	unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexesQuery = translatorVariablesQuery->entityNodesActiveListNetworkIndexes;
+	
 	bool traceModeIsQuery = TRACE_MODE_IS_QUERY_TRUE;
 
 	int numberOfMatchedNodesTempMax = 0;
 	int numberOfMatchedNodesRequiredSynonymnDetectionTempAtMax = 0;
 	bool foundAnAnswer = false;	//this is not really used, and is more of an artefact...
-
 
 	GIAentityNode* networkEntityWithMaxNumberNodesMatched = NULL;
 	GIAentityNode* queryEntityWithMaxNumberNodesMatched = NULL;
@@ -591,7 +593,6 @@ GIAentityNode* GIAqueryClass::answerQueryOrFindAndTagForHighlightingMatchingStru
 		if(!(currentQueryEntityNode->disabled))
 		{
 		#endif
-
 			if(currentQueryEntityNode->entityName != REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)	//added 22 August 2012
 			{
 				bool foundQueryEntityNodeName = false;
@@ -601,7 +602,6 @@ GIAentityNode* GIAqueryClass::answerQueryOrFindAndTagForHighlightingMatchingStru
 
 				if(foundQueryEntityNodeName)
 				{
-
 					//now start matching structure search for all substances of the identical networkIndex node (to current query entity name) in Semantic Network
 
 					int numberOfMatchedNodesTemp = 0;
@@ -652,10 +652,8 @@ GIAentityNode* GIAqueryClass::answerQueryOrFindAndTagForHighlightingMatchingStru
 		#endif
 	}
 
-
 	if(foundAtLeastOneMatch)
 	{
-
 		int numberOfMatchedNodesTemp = 0;
 		int numberOfMatchedNodesRequiredSynonymnDetectionTemp = 0;
 

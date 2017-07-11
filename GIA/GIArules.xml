@@ -26,7 +26,7 @@
  * File Name: GIArules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3c6a 24-June-2017
+ * Project Version: 3d1a 10-July-2017
  *
  *******************************************************************************/
 -->
@@ -34,6 +34,7 @@
 	<sprite>		
 		<miscellaneousItem name="SPRITE_SUBMODEL_RANGE_SCALE_FACTOR" stringValue="" fractionalValue="1.0" />
 		
+		<miscellaneousItem name="SPRITE_LINE_SPACING_RATIO_BASE" stringValue="" fractionalValue="1.5" />
 		<miscellaneousItem name="SPRITE_TEXT_SCALE_FACTOR" stringValue="" fractionalValue="0.5" />
 		<miscellaneousItem name="SPRITE_WIDTH_OF_CHARS_IN_LDRAW_UNITS" stringValue="" fractionalValue="10" />
 		<miscellaneousItem name="SPRITE_HEIGHT_OF_CHARS_IN_LDRAW_UNITS" stringValue="" fractionalValue="15" />
@@ -47,6 +48,26 @@
 		<miscellaneousItem name="SPRITE_EXTENSION" stringValue=".ldr" fractionalValue="" />
 		<miscellaneousItem name="SPRITE_CHARACTER_START" stringValue="spritetext" fractionalValue="" />
 		<miscellaneousItem name="SPRITE_CHARACTER_EXTENSION" stringValue=".dat" fractionalValue="" />
+		
+		<miscellaneousItem name="SPRITE_SUBMODEL_NEURON_FILE_NAME" stringValue="4-4SPHE.DAT" fractionalValue="" />
+		<miscellaneousItem name="SPRITE_TEXTUAL_INCLUDE_NEURON_ID_COLOUR" stringValue="" fractionalValue="15" />
+		<miscellaneousItem name="SPRITE_TEXTUAL_INCLUDE_NEURON_ORDERID_COLOUR" stringValue="" fractionalValue="15" />
+		<miscellaneousItem name="SPRITE_TEXTUAL_INCLUDE_NEURON_LAYERID_COLOUR" stringValue="" fractionalValue="15" />
+		<miscellaneousItem name="SPRITE_TEXTUAL_INCLUDE_NEURON_SUBNETID_COLOUR" stringValue="" fractionalValue="15" />
+		<miscellaneousItem name="SPRITE_TEXTUAL_INCLUDE_NEURON_BIAS_COLOUR" stringValue="" fractionalValue="15" />
+		<miscellaneousItem name="SPRITE_TEXTUAL_INCLUDE_NEURON_OUTPUT_COLOUR" stringValue="" fractionalValue="15" />
+		<miscellaneousItem name="SPRITE_TEXTUAL_INCLUDE_NEURON_ERROR_COLOUR" stringValue="" fractionalValue="15" />
+		<miscellaneousItem name="SPRITE_TEXTUAL_INCLUDE_NEURONCONNECTION_WEIGHT_COLOUR" stringValue="" fractionalValue="15" />
+		
+		<miscellaneousItem name="SPRITE_TEXTUAL_INCLUDE_NEURON_ID_INFO" stringValue="" fractionalValue="1" />
+		<miscellaneousItem name="SPRITE_TEXTUAL_INCLUDE_NEURON_ORDERID_INFO" stringValue="" fractionalValue="0" />
+		<miscellaneousItem name="SPRITE_TEXTUAL_INCLUDE_NEURON_LAYERID_INFO" stringValue="" fractionalValue="0" />
+		<miscellaneousItem name="SPRITE_TEXTUAL_INCLUDE_NEURON_SUBNETID_INFO" stringValue="" fractionalValue="0" />
+		<miscellaneousItem name="SPRITE_TEXTUAL_INCLUDE_NEURON_BIAS_INFO" stringValue="" fractionalValue="1" />
+		<miscellaneousItem name="SPRITE_TEXTUAL_INCLUDE_NEURON_OUTPUT_INFO" stringValue="" fractionalValue="0" />
+		<miscellaneousItem name="SPRITE_TEXTUAL_INCLUDE_NEURON_CLASSTARGET_INFO" stringValue="" fractionalValue="0" />
+		<miscellaneousItem name="SPRITE_TEXTUAL_INCLUDE_NEURON_ERROR_INFO" stringValue="" fractionalValue="0" />
+		<miscellaneousItem name="SPRITE_TEXTUAL_INCLUDE_NEURONCONNECTION_WEIGHT_INFO" stringValue="" fractionalValue="1" />
 				
 	</sprite>
 	<draw>

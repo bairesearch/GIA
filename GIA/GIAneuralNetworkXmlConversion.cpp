@@ -22,16 +22,40 @@
 
 /*******************************************************************************
  *
- * File Name: GIAtranslatorRedistributeRelationsStanford.cpp
+ * File Name: GIAneuralNetworkXmlConversion.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
  * Project Version: 3d1a 10-July-2017
- * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
- * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
+ * Description: 
  *
  *******************************************************************************/
 
 
-#include "GIAtranslatorRedistributeRelationsStanford.hpp"
+#include "GIAneuralNetworkXmlConversion.hpp"
 
-//see XML for dynamic translation code
+bool GIAneuralNetworkXmlConversionClass::readNeuralNetXMLfile(const string xmlFileName, ANNneuron* firstInputNeuronInNetwork)
+{
+	bool result = false;
+
+	long numberOfInputNeuronsLoaded;
+	long numberOfOutputNeuronsLoaded;
+
+	ANNneuron* firstOutputNeuronInNetwork = ANNxmlConversion.readNetXMLfileAndRecordFormationVariables(xmlFileName, firstInputNeuronInNetwork, &numberOfInputNeuronsLoaded, &numberOfOutputNeuronsLoaded);
+
+	return result;
+}
+
+bool GIAneuralNetworkXmlConversionClass::writeNeuralNetXMLfile(const string xmlFileName, ANNneuron* firstInputNeuronInNetwork)
+{
+	bool result = true;
+
+	if(!ANNxmlConversion.writeNetXMLfile(xmlFileName, firstInputNeuronInNetwork))
+	{
+		result = false;
+	}
+		
+	return result;
+}
+
+
+

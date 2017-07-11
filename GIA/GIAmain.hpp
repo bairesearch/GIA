@@ -25,7 +25,7 @@
  * File Name: GIAmain.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3c6a 24-June-2017
+ * Project Version: 3d1a 10-July-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -70,10 +70,16 @@
 #endif
 #include "GIAsemanticParserDatabase.hpp"
 #endif
+#ifdef GIA_NEURAL_NETWORK
+#include "ANNneuronClass.hpp"
+#include "ANNdisplay.hpp"
+#include "ANNdraw.hpp"
+#include "ANNxmlConversion.hpp"
+#include "GIAneuralNetwork.hpp"
+#include "GIAneuralNetworkXmlConversion.hpp"
+#endif
 
 #define GIA_MAXIMUM_NUMBER_OF_FILES_IN_INPUT_FILE_LIST (1000000)
-//#define GIA_XML_DEBUG_TEST_WRITE_READ_WRITE
-
 
 
 #ifdef COMPILE_GIA
@@ -109,6 +115,13 @@ class GIAmainClass
 	private: GIAsemanticParserClass GIAsemanticParser;
 	#endif
 	private: GIAsemanticParserDatabaseClass GIAsemanticParserDatabase;
+	#endif
+	#ifdef GIA_NEURAL_NETWORK
+	private: ANNneuronClassClass ANNneuronClassClassObject;
+	private: ANNdisplayClass ANNdisplay;
+	private: ANNdrawClass ANNdraw;
+	private: GIAneuralNetworkClass GIAneuralNetwork;
+	private: GIAneuralNetworkXmlConversionClass GIAneuralNetworkXmlConversion;
 	#endif
 
 	public: bool executeGIA(
@@ -167,6 +180,25 @@ class GIAmainClass
 		string outputQuerySVGFileName,
 		bool useOutputTextAllFile,
 		string outputTextAllFileName,
+	
+		#ifdef GIA_NEURAL_NETWORK
+		bool ANNuseInputXMLFile,
+		string ANNinputXMLFileName,
+		bool ANNuseOutputXMLFile,
+		string ANNoutputXMLFileName,
+		bool ANNuseOutputLDRFile,
+		string ANNoutputLDRFileName,
+		bool ANNuseOutputSVGFile,
+		string ANNoutputSVGFileName,
+		bool ANNuseOutputPPMFile,
+		string ANNoutputPPMFileName,
+		bool ANNuseOutputPPMFileRaytraced,
+		string ANNoutputPPMFileNameRaytraced,		
+		bool ANNuseOutputAllFile,
+		string ANNoutputAllFileName,
+		bool ANNuseSprites,
+		#endif
+		
 		#ifdef GIA_QUERY_WRITE_ANSWER_TO_FILE
 		bool useOutputTextAnswerPlainTXTFile,
 		string outputTextAnswerPlainTXTFileName,

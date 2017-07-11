@@ -25,7 +25,7 @@
  * File Name: GIAentityNodeClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3c6a 24-June-2017
+ * Project Version: 3d1a 10-July-2017
  * NB a substance is an instance of an entity, any given entity may contain/comprise/have multiple substances - and substances are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -39,6 +39,9 @@
 #include "GIAconditionNodeClass.hpp"
 #include "GIAglobalDefs.hpp"
 #include "SHAREDvars.hpp"
+#ifdef GIA_NEURAL_NETWORK
+#include "ANNneuronClass.hpp"
+#endif
 
 #include <iostream>
 #include <fstream>
@@ -301,8 +304,9 @@ static bool entityVectorConnectionIsRelationshipPropertyOrDefinitionForwardArray
 static bool entityVectorConnectionIsRelationshipPropertyOrDefinitionReverseArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {false, false, false, false, false, true, false, true, false, false, false, false};
 static bool entityVectorConnectionIsPropertyOrDefinitionArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {false, false, false, false, true, true, true, true, false, false, false, false};
 
-
-
+#ifdef GIA_NEURAL_NETWORK
+static bool entityVectorConnectionDirectionArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES] = {true, false, true, false, true, false, true, false, true, false, false, false};
+#endif
 
 #define GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES_EQUALITIES (2)
 static int entityVectorConnectionEqualitiesArray[GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES_EQUALITIES] = {GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITION, GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITION_REVERSE};
@@ -571,13 +575,22 @@ public:
 	#endif
 	
 	#ifdef GIA_CREATE_SHORTCUTS_TO_CONCEPT_ENTITIES
-	GIAentityNode* shortcutToNonspecificConceptEntity;	//defined for network index entities only
-	vector<GIAentityNode*> shortcutsToSpecificConceptEntities;	//defined for network index entities only
+	//defined for network index entities only;
+	GIAentityNode* shortcutToNonspecificConceptEntity;
+	vector<GIAentityNode*> shortcutsToSpecificConceptEntities;
+	#ifdef GIA_NEURAL_NETWORK
+	ANNneuron* shortcutToConceptNeuron;
 	#endif
+	#endif
+	
 	#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
 	bool isLogicReferenceEntity;
 	int logicReferenceClass;
 	string logicReferenceClassType;
+	#endif
+	
+	#ifdef GIA_NEURAL_NETWORK
+	bool parsedForANNgeneration;
 	#endif
 };
 

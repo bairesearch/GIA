@@ -25,7 +25,7 @@
  * File Name: GIAxmlConversion.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3c6a 24-June-2017
+ * Project Version: 3d1a 10-July-2017
  * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
  *
  *******************************************************************************/
@@ -43,8 +43,6 @@
 #define GIA_SEMANTIC_NET_DO_NOT_ADD_EMPTY_TAGS
 #define GIA_SEMANTIC_NET_DO_NOT_ADD_EMPTY_ATTRIBUTES
 
-#define GIA_SEMANTIC_NET_XML_FILE_NAME "semanticNet.xml"
-#define GIA_SEMANTIC_NET_XML_FILE_NAME1 "semanticNet1.xml"
 
 #define GIA_SEMANTIC_NET_XML_NULL_NODE_ID "-1"
 
@@ -218,7 +216,6 @@ static string entityVectorConnectionXMLtagNameCrossReferenceNodeTypeArray[GIA_EN
 
 #define GIA_XML_DEBUG
 
-#define GIA_SEMANTIC_NET_XML_FILE_NAME1 "tempsemanticNet1.xml"
 class GIAxmlConversionClass
 {
 	private: XMLparserClassClass XMLparserClass;

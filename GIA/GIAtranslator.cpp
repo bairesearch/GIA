@@ -25,7 +25,7 @@
  * File Name: GIAtranslator.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3c6a 24-June-2017
+ * Project Version: 3d1a 10-July-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1319,46 +1319,41 @@ void GIAtranslatorClass::createShortcutsToConceptEntities(GIAtranslatorVariables
 			if((*translatorVariables->GIAentityNodeArray)[w]->entityType == GIA_ENTITY_TYPE_CONCEPT)
 			{
 				GIAentityNode* conceptNode = (*translatorVariables->GIAentityNodeArray)[w];
-				bool specificConcept = true;
+				bool specificConcept = false;
 				if(hasSameReferenceSetConnections(conceptNode, translatorVariables))
 				{
-					specificConcept = false;
+					specificConcept = true;
+					//cout << "specificConcept: conceptNode = " << conceptNode->entityName << endl;
 				}
 				
 				GIAentityNode* networkIndexNode = GIAtranslatorOperations.getPrimaryNetworkIndexNodeDefiningInstance((*translatorVariables->GIAentityNodeArray)[w]);
-				for(vector<GIAentityConnection*>::iterator connectionIter = networkIndexNode->instanceNodeList->begin(); connectionIter != networkIndexNode->instanceNodeList->end(); connectionIter++)
+				if(specificConcept)
 				{
-					GIAentityNode* instanceNode = (*connectionIter)->entity;
-					if(instanceNode->entityType != GIA_ENTITY_TYPE_CONCEPT)
+					bool alreadyAddedToSpecificConceptList = false;
+					for(vector<GIAentityNode*>::iterator iter2 = networkIndexNode->shortcutsToSpecificConceptEntities.begin(); iter2 != networkIndexNode->shortcutsToSpecificConceptEntities.end(); iter2++)
 					{
-						if(specificConcept)
+						GIAentityNode* specificConcept2 = (*iter2);
+						if(specificConcept2 == conceptNode)
 						{
-							bool alreadyAddedToSpecificConceptList = false;
-							for(vector<GIAentityNode*>::iterator iter2 = instanceNode->shortcutsToSpecificConceptEntities.begin(); iter2 != instanceNode->shortcutsToSpecificConceptEntities.end(); iter2++)
-							{
-								GIAentityNode* specificConcept2 = (*iter2);
-								if(specificConcept2 == conceptNode)
-								{
-									alreadyAddedToSpecificConceptList = true;
-								}
-							}
-							if(!alreadyAddedToSpecificConceptList)
-							{
-								instanceNode->shortcutsToSpecificConceptEntities.push_back(conceptNode);
-							}
+							alreadyAddedToSpecificConceptList = true;
 						}
-						else
-						{
-							bool alreadyAddedToNonspecificConceptList = false;
-							if(instanceNode->shortcutToNonspecificConceptEntity == conceptNode)
-							{
-								alreadyAddedToNonspecificConceptList = true;
-							}
-							if(!alreadyAddedToNonspecificConceptList)
-							{
-								instanceNode->shortcutToNonspecificConceptEntity = conceptNode;
-							}
-						}
+					}
+					if(!alreadyAddedToSpecificConceptList)
+					{
+						//cout << "!alreadyAddedToSpecificConceptList" << endl;
+						networkIndexNode->shortcutsToSpecificConceptEntities.push_back(conceptNode);
+					}
+				}
+				else
+				{
+					bool alreadyAddedToNonspecificConceptList = false;
+					if(networkIndexNode->shortcutToNonspecificConceptEntity == conceptNode)
+					{
+						alreadyAddedToNonspecificConceptList = true;
+					}
+					if(!alreadyAddedToNonspecificConceptList)
+					{
+						networkIndexNode->shortcutToNonspecificConceptEntity = conceptNode;
 					}
 				}
 			}
@@ -1369,16 +1364,24 @@ void GIAtranslatorClass::createShortcutsToConceptEntities(GIAtranslatorVariables
 bool GIAtranslatorClass::hasSameReferenceSetConnections(GIAentityNode* entity, GIAtranslatorVariablesClass* translatorVariables)
 {
 	bool sameReferenceSetConnection = false;
-	for(int connectionType = 0; connectionType<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; connectionType++)
+	for(int connectionType = 0; connectionType < GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; connectionType++)
 	{
-		for(vector<GIAentityConnection*>::iterator connectionIter = entity->entityVectorConnectionsArray[connectionType].begin(); connectionIter != entity->entityVectorConnectionsArray[connectionType].end(); connectionIter++)
+		bool pass = true;
+		if(connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_INSTANCE_REVERSE)
 		{
-			GIAentityConnection* connection = (*connectionIter);
-			if(connection->sentenceIndexTemp == entity->sentenceIndexTemp)	//REDUNDANT
-			{		
-				if(connection->sameReferenceSet)
-				{
-					sameReferenceSetConnection = true;
+			pass = false;
+		}
+		if(pass)
+		{
+			for(vector<GIAentityConnection*>::iterator connectionIter = entity->entityVectorConnectionsArray[connectionType].begin(); connectionIter != entity->entityVectorConnectionsArray[connectionType].end(); connectionIter++)
+			{
+				GIAentityConnection* connection = (*connectionIter);
+				if(connection->sentenceIndexTemp == entity->sentenceIndexTemp)	//REDUNDANT
+				{		
+					if(connection->sameReferenceSet)
+					{
+						sameReferenceSetConnection = true;
+					}
 				}
 			}
 		}

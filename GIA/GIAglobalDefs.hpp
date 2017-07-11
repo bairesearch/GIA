@@ -25,7 +25,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3c6a 24-June-2017
+ * Project Version: 3d1a 10-July-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -738,12 +738,34 @@
 #endif
 //#define GIA_SEMANTIC_PARSER
 
+//#define GIA_DEBUG_DISABLE_3d_CODE
+#ifndef GIA_DEBUG_DISABLE_3d_CODE
+	#ifdef USE_ANN
+		#define GIA_NEURAL_NETWORK
+		#ifdef GIA_NEURAL_NETWORK
+			//#ifdef GIA_CREATE_SHORTCUTS_TO_CONCEPT_ENTITIES	//not yet defined
+				//#define GIA_NEURAL_NETWORK_ACTIVE	//not yet coded (must replace GIA referencing and queries with neural net processing)
+				#define GIA_NEURAL_NETWORK_GENERATE_SPECIFIC_CONCEPT_NETWORKS
+				#ifdef GIA_NEURAL_NETWORK_GENERATE_SPECIFIC_CONCEPT_NETWORKS
+					#define GIA_NEURAL_NETWORK_GENERATE_SEPARATE_CONCEPT_NETWORKS_RECURSE	//this is required in the case where there are multiple layers of specific concepts
+				#endif
+			//#endif
+			//#define GIA_DEBUG_NEURAL_NETWORK
+			#define GIA_NEURAL_NETWORK_OFFSET_SYNAPSE_ARTIFICIAL_INSTANCE_NEURONS
+			#ifdef GIA_NEURAL_NETWORK_OFFSET_SYNAPSE_ARTIFICIAL_INSTANCE_NEURONS
+				#define GIA_NEURAL_NETWORK_OFFSET_SYNAPSE_ARTIFICIAL_INSTANCE_NEURONS_LAYERS (5)	//this should equal max number of specific concepts in hierachy	//NB this should be padded (ie increased) slightly (eg +2) to take into account the fact subnets may be parsed such that they result in lower (negative) layers relative to the entry point neuron
+			#else
+				#define GIA_NEURAL_NETWORK_OFFSET_SYNAPSE_ARTIFICIAL_INSTANCE_NEURONS_LAYERS (1)
+			#endif
+		#endif
+	#endif
+#endif
+
 //#define GIA_DEBUG_DISABLE_3c_CODE
 #ifndef GIA_DEBUG_DISABLE_3c_CODE
 	#define GIA_EXPECT_NEWLINE_AT_END_OF_INPUT_TEXT_FILE	//3c1e
 	#define GIA_DRAW_IGNORE_INITIALISED_ENTITY_CONNECTION_FOR_PRINTING_BOOL	//3c1d
 #endif
-
 //#define GIA_DEBUG_DISABLE_3b_CODE
 #ifndef GIA_DEBUG_DISABLE_3b_CODE
 	#define GIA_STANFORD_PARSER_AND_CORENLP_VERSION_2016_10_31_OR_GREATER
@@ -1661,6 +1683,27 @@
 //#endif
 #define GIA_SEMANTIC_NET_XML_REORDER_NETWORK_INDEX_IDS_UPON_XML_WRITE_INSTEAD_OF_XML_READ
 
+#define GIA_QUERY_FILE_PREPEND "Query"
+
+#define GIA_TEXT_BASE_FILE_NAME "inputText"
+#define GIA_TEXT_FILE_EXTENSION ".txt"
+#define GIA_TEXT_FILE_WITH_LRP_PREPEND "WithLRP"
+
+#define GIA_NLP_BASE_FILE_NAME "inputNLP"
+#define GIA_NLP_XML_FILE_EXTENSION ".xml"
+#define GIA_NLP_RELATION_BASE_FILE_NAME GIA_NLP_BASE_FILE_NAME "relation"
+#define GIA_NLP_FEATURE_BASE_FILE_NAME GIA_NLP_BASE_FILE_NAME "feature"
+
+#define GIA_SEMANTIC_NET_BASE_FILE_NAME "semanticNet"
+#define GIA_SEMANTIC_NET_BASE_QUERY_FILE_NAME GIA_SEMANTIC_NET_BASE_FILE_NAME GIA_QUERY_FILE_PREPEND
+#define GIA_SEMANTIC_NET_XML_FILE_EXTENSION ".xml"
+#define GIA_SEMANTIC_NET_CXL_FILE_EXTENSION ".cxl"
+#define GIA_SEMANTIC_NET_SVG_FILE_EXTENSION ".svg"
+#define GIA_SEMANTIC_NET_LDR_FILE_EXTENSION ".ldr"
+#define GIA_SEMANTIC_NET_PPM_FILE_EXTENSION ".ppm"
+#define GIA_SEMANTIC_NET_CFF_FILE_EXTENSION ".cff"
+
+#define GIA_ANSWER_FILE_NAME "answer.txt"
 
 
 #endif
