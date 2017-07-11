@@ -1,3 +1,6 @@
 [submodule "RT"]
 	path = RT
 	url = https://github.com/baxterai/openRT.git
+[submodule "ANN"]
+	path = ANN
+	url = https://github.com/baxterai/openANN.git
