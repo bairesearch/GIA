@@ -25,7 +25,7 @@
  * File Name: GIAneuralNetwork.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3d2c 14-July-2017
+ * Project Version: 3d2d 14-July-2017
  * Description: 
  *
  *******************************************************************************/
@@ -318,8 +318,10 @@ bool GIAneuralNetworkClass::getSpecificConceptNeuronAndLink(ANNneuron** currentS
 		}
 		else
 		{
-			cout << "GIAneuralNetworkClass::getSpecificConceptNeuronAndLink{} error: (conceptEntity->entityType != GIA_ENTITY_TYPE_CONCEPT)" << endl;
-			exit(EXIT_ERROR);
+			/*
+			cout << "GIAneuralNetworkClass::getSpecificConceptNeuronAndLink{} warning: (conceptEntity->entityType != GIA_ENTITY_TYPE_CONCEPT)" << endl;
+			cout << "conceptEntity->entityType = " << conceptEntity->entityType << endl;
+			*/
 		}
 	}
 	

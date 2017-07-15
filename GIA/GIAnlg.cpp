@@ -25,7 +25,7 @@
  * File Name: GIAnlg.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3d2c 14-July-2017
+ * Project Version: 3d2d 14-July-2017
  * Requirements: requires GIA translated data, and NLG2 to be installed
  * Description: GIA natural language generation (using NLG2)
  *
@@ -950,9 +950,9 @@ string GIAnlgClass::generateMorphologyRelationshipAuxiliaryBe(GIAentityConnectio
 	relationshipEntityText = generateMorphologyConnection(relationshipConnection);
 	#endif	
 	#else
+	int grammaticalNumberIndex = GRAMMATICAL_NUMBER_SINGULAR;
 	#ifdef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
 	GIAentityNode* relationshipEntity = relationshipConnection->entity;
-	int grammaticalNumberIndex = GRAMMATICAL_NUMBER_SINGULAR;
 	if(!(relationshipEntity->relationshipSubjectEntity->empty()))
 	{
 		GIAentityNode* relationshipEntitySubject = GIAtranslatorOperations.getDefinitionRelationshipSubjectEntity(relationshipConnection);
@@ -960,8 +960,11 @@ string GIAnlgClass::generateMorphologyRelationshipAuxiliaryBe(GIAentityConnectio
 	}
 	relationshipEntityText = relationshipEntityText + entityRelationshipTenseNumerosityCrossReferenceBeAuxiliaryArray[relationshipEntity->grammaticalTenseTemp][grammaticalNumberIndex];
 	#else
-	GIAentityNode* relationshipEntitySubject = relationshipConnection->entityOrigin;	//CHECKTHIS
-	int grammaticalNumberIndex = relationshipEntitySubject->grammaticalNumber;
+	if(relationshipConnection->entityOrigin != NULL)
+	{
+		GIAentityNode* relationshipEntitySubject = relationshipConnection->entityOrigin;
+		grammaticalNumberIndex = relationshipEntitySubject->grammaticalNumber;
+	}
 	relationshipEntityText = relationshipEntityText + entityRelationshipTenseNumerosityCrossReferenceBeAuxiliaryArray[relationshipConnection->grammaticalTenseTemp][grammaticalNumberIndex];	
 	#endif
 	#endif
@@ -979,9 +982,9 @@ string GIAnlgClass::generateMorphologyRelationshipAuxiliaryHave(GIAentityConnect
 	relationshipEntityText = generateMorphologyConnection(relationshipConnection);
 	#endif
 	#else
+	int grammaticalNumberIndex = GRAMMATICAL_NUMBER_SINGULAR;
 	#ifdef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
 	GIAentityNode* relationshipEntity = relationshipConnection->entity;
-	int grammaticalNumberIndex = GRAMMATICAL_NUMBER_SINGULAR;
 	if(!(relationshipEntity->relationshipSubjectEntity->empty()))
 	{
 		GIAentityNode* relationshipEntitySubject = GIAtranslatorOperations.getPropertyRelationshipSubjectEntity(relationshipConnection);
@@ -989,8 +992,11 @@ string GIAnlgClass::generateMorphologyRelationshipAuxiliaryHave(GIAentityConnect
 	}
 	relationshipEntityText = relationshipEntityText + entityRelationshipTenseNumerosityCrossReferenceHaveAuxiliaryArray[relationshipEntity->grammaticalTenseTemp][grammaticalNumberIndex];
 	#else
-	GIAentityNode* relationshipEntitySubject = relationshipConnection->entityOrigin;	//CHECKTHIS
-	int grammaticalNumberIndex = relationshipEntitySubject->grammaticalNumber;
+	if(relationshipConnection->entityOrigin != NULL)
+	{
+		GIAentityNode* relationshipEntitySubject = relationshipConnection->entityOrigin;
+		grammaticalNumberIndex = relationshipEntitySubject->grammaticalNumber;
+	}
 	relationshipEntityText = relationshipEntityText + entityRelationshipTenseNumerosityCrossReferenceHaveAuxiliaryArray[relationshipConnection->grammaticalTenseTemp][grammaticalNumberIndex];	
 	#endif
 	#endif
