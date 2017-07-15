@@ -25,7 +25,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3d2e 14-July-2017
+ * Project Version: 3d2f 14-July-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -654,7 +654,7 @@ int main(const int argc, const char** argv)
 
 		if(SHAREDvarsClass().argumentExists(argc, argv, "-version"))
 		{
-			cout << "GIA.exe - Project Version: 3d2e 14-July-2017" << endl;
+			cout << "GIA.exe - Project Version: 3d2f 14-July-2017" << endl;
 			exit(EXIT_OK);
 		}
 
@@ -1619,15 +1619,7 @@ bool GIAmainClass::executeGIA2()
 			}
 			else
 			{
-				#ifdef GIA_QUERY_TRACE_INSTANTIATIONS_DO_NOT_INCREMENT_NUMBER_OF_MATCHED_NODES
-				#ifdef GIA_QUERY_RELAX_CONFIDENCE_REQUIREMENTS_FOR_YES
-				if(((maxConfidence <= (3.0+GIA_QUERY_DOUBLE_ERROR)) && (confidence >= (maxConfidence-(0.0+GIA_QUERY_DOUBLE_ERROR)))) || ((maxConfidence >= (4.0-GIA_QUERY_DOUBLE_ERROR)) && (confidence >= (maxConfidence-(1.0+GIA_QUERY_DOUBLE_ERROR)))))
-				#else
-				if(confidence >= (maxConfidence-GIA_QUERY_DOUBLE_ERROR))
-				#endif
-				#else
 				if(confidence >= (maxConfidence-1-GIA_QUERY_DOUBLE_ERROR))
-				#endif
 				{
 					answerString = answerString + "\nAnswer: Yes.";
 				}

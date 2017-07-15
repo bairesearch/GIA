@@ -25,7 +25,7 @@
  * File Name: GIAquery.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3d2e 14-July-2017
+ * Project Version: 3d2f 14-July-2017
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  * ?Limitations: will only locate a exact answer (based upon a comparison node) if it provides the maximum number of matched nodes
@@ -209,8 +209,8 @@ GIAentityNode* GIAqueryClass::answerQueryOrFindAndTagForHighlightingMatchingStru
 					int irrelevant;
 					string printEntityNodeString = "";
 					bool traceInstantiations = GIA_QUERY_TRACE_NETWORK_INDEX_NODES_DEFINING_INSTANTIATIONS_VALUE;
-					this->traceEntityNode(currentQueryEntityNode, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISONTEMP, &irrelevant, &printEntityNodeString, false, NULL, traceInstantiations);
-					this->traceEntityNode(networkIndexEntityMatchingCurrentQueryEntity, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISONTEMP, &irrelevant, &printEntityNodeString, false, NULL, traceInstantiations);
+					this->traceEntityNode(currentQueryEntityNode, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISONTEMP, &irrelevant, &printEntityNodeString, NULL, traceInstantiations);
+					this->traceEntityNode(networkIndexEntityMatchingCurrentQueryEntity, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISONTEMP, &irrelevant, &printEntityNodeString, NULL, traceInstantiations);
 				}
 			}
 		#ifdef GIA_QUERY_DO_NOT_SEARCH_DISABLED_NODES
@@ -356,10 +356,10 @@ bool GIAqueryClass::testEntityNodeForQueryOrReferenceSet2(GIAentityNode* queryEn
 									int irrelevantInt;
 									string irrelevantString = "";
 									bool traceInstantiations = GIA_QUERY_TRACE_NETWORK_INDEX_NODES_DEFINING_INSTANTIATIONS_VALUE;
-									traceEntityNode(queryEntityNodeTarget, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_DETERMINE_MAX_NUMBER_MATCHED_NODES_SAME_SET_ONLY, &maxNumberOfMatchedNodesPossibleQuery, NULL, false, queryEntityNodeTarget->referenceSetID, traceInstantiations);
-									traceEntityNode(queryEntityNodeTarget, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_DETERMINE_MAX_NUMBER_MATCHED_NODES_SAME_SET_ONLY_RESET, &irrelevantInt, &irrelevantString, false, NULL, traceInstantiations);
-									traceEntityNode(entityNodeTarget, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_DETERMINE_MAX_NUMBER_MATCHED_NODES_SAME_SET_ONLY_INDEPENDENT, &maxNumberOfMatchedNodesPossible, NULL, false, entityNodeTarget->referenceSetID, traceInstantiations);
-									traceEntityNode(entityNodeTarget, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_DETERMINE_MAX_NUMBER_MATCHED_NODES_SAME_SET_ONLY_RESET, &irrelevantInt, &irrelevantString, false, NULL, traceInstantiations);
+									traceEntityNode(queryEntityNodeTarget, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_DETERMINE_MAX_NUMBER_MATCHED_NODES_SAME_SET_ONLY, &maxNumberOfMatchedNodesPossibleQuery, NULL, queryEntityNodeTarget->referenceSetID, traceInstantiations);
+									traceEntityNode(queryEntityNodeTarget, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_DETERMINE_MAX_NUMBER_MATCHED_NODES_SAME_SET_ONLY_RESET, &irrelevantInt, &irrelevantString, NULL, traceInstantiations);
+									traceEntityNode(entityNodeTarget, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_DETERMINE_MAX_NUMBER_MATCHED_NODES_SAME_SET_ONLY_INDEPENDENT, &maxNumberOfMatchedNodesPossible, NULL, entityNodeTarget->referenceSetID, traceInstantiations);
+									traceEntityNode(entityNodeTarget, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_DETERMINE_MAX_NUMBER_MATCHED_NODES_SAME_SET_ONLY_RESET, &irrelevantInt, &irrelevantString, NULL, traceInstantiations);
 									#ifdef GIA_DEBUG_QUERY2
 									if(entityNodeTarget->entityName == queryEntityNodeTarget->entityName)
 									{
@@ -402,8 +402,8 @@ bool GIAqueryClass::testEntityNodeForQueryOrReferenceSet2(GIAentityNode* queryEn
 								int irrelevantInt;
 								string irrelevantString = "";
 								bool traceInstantiations = GIA_QUERY_TRACE_NETWORK_INDEX_NODES_DEFINING_INSTANTIATIONS_VALUE;		//clear all (why is this still required if GIA_QUERY_TRACE_NETWORK_INDEX_NODES_DEFINING_INSTANTIATIONS is off? - it is based on testing, but unknown as to why)
-								this->traceEntityNode(entityNodeTarget, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISONTEMP, &irrelevantInt, &irrelevantString, false, NULL, traceInstantiations);
-								this->traceEntityNode(queryEntityNodeTarget, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISONTEMP, &irrelevantInt, &irrelevantString, false, NULL, traceInstantiations);
+								this->traceEntityNode(entityNodeTarget, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISONTEMP, &irrelevantInt, &irrelevantString, NULL, traceInstantiations);
+								this->traceEntityNode(queryEntityNodeTarget, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISONTEMP, &irrelevantInt, &irrelevantString, NULL, traceInstantiations);
 
 							#ifdef GIA_REFERENCING_QUERY_SUPPORT_SAME_REFERENCE_SET_TESTS
 							}
@@ -671,8 +671,8 @@ GIAentityNode* GIAqueryClass::answerQueryOrFindAndTagForHighlightingMatchingStru
 					int irrelevant;
 					string printEntityNodeString = "";
 					bool traceInstantiations = GIA_QUERY_TRACE_NETWORK_INDEX_NODES_DEFINING_INSTANTIATIONS_VALUE;
-					this->traceEntityNode(currentQueryEntityNode, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISONTEMP, &irrelevant, &printEntityNodeString, false, NULL, traceInstantiations);
-					this->traceEntityNode(networkIndexEntityMatchingCurrentQueryEntity, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISONTEMP, &irrelevant, &printEntityNodeString, false, NULL, traceInstantiations);
+					this->traceEntityNode(currentQueryEntityNode, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISONTEMP, &irrelevant, &printEntityNodeString, NULL, traceInstantiations);
+					this->traceEntityNode(networkIndexEntityMatchingCurrentQueryEntity, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISONTEMP, &irrelevant, &printEntityNodeString, NULL, traceInstantiations);
 				}
 			}
 		#ifdef GIA_QUERY_DO_NOT_SEARCH_DISABLED_NODES
@@ -701,8 +701,8 @@ GIAentityNode* GIAqueryClass::answerQueryOrFindAndTagForHighlightingMatchingStru
 		int irrelevant;
 		string printEntityNodeString = "";
 		bool traceInstantiations = GIA_QUERY_TRACE_NETWORK_INDEX_NODES_DEFINING_INSTANTIATIONS_VALUE;
-		this->traceEntityNode(queryEntityWithMaxNumberNodesMatched, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISONTEMP, &irrelevant, &printEntityNodeString, false, NULL, traceInstantiations);		//is this required?	//added 13 July 2012
-		this->traceEntityNode(networkEntityWithMaxNumberNodesMatched, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISONTEMP, &irrelevant, &printEntityNodeString, false, NULL, traceInstantiations);				//added 13 July 2012
+		this->traceEntityNode(queryEntityWithMaxNumberNodesMatched, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISONTEMP, &irrelevant, &printEntityNodeString, NULL, traceInstantiations);		//is this required?	//added 13 July 2012
+		this->traceEntityNode(networkEntityWithMaxNumberNodesMatched, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISONTEMP, &irrelevant, &printEntityNodeString, NULL, traceInstantiations);				//added 13 July 2012
 		#endif
 		*/
 
@@ -1026,21 +1026,7 @@ bool GIAqueryClass::testEntityNodeForQueryOrReferenceSet(GIAentityNode* queryEnt
 				if(!(queryTraceParameters->nonMatchingSourceConditions))
 				{
 				#endif
-					#ifdef GIA_QUERY_TRACE_INSTANTIATIONS_DO_NOT_INCREMENT_NUMBER_OF_MATCHED_NODES
-					if(GIA_QUERY_TRACE_NETWORK_INDEX_NODES_DEFINING_INSTANTIATIONS_VALUE)
-					{
-					#endif
-						*numberOfMatchedNodes = *numberOfMatchedNodes + 1;
-					#ifdef GIA_QUERY_TRACE_INSTANTIATIONS_DO_NOT_INCREMENT_NUMBER_OF_MATCHED_NODES
-					}
-					else
-					{
-						if(!(queryTraceParameters->thisIsInstanceAndPreviousNodeWasDefinition))
-						{
-							*numberOfMatchedNodes = *numberOfMatchedNodes + 1;
-						}
-					}
-					#endif
+					*numberOfMatchedNodes = *numberOfMatchedNodes + 1;
 				#ifdef GIA_QUERY_DO_NOT_ASSIGN_MATCH_POINTS_FOR_NON_IDENTICAL_CONDITION_TYPES
 				}
 				#endif
@@ -1209,10 +1195,10 @@ bool GIAqueryClass::testEntityNodeForQueryOrReferenceSet(GIAentityNode* queryEnt
 								int irrelevantInt;
 								string irrelevantString = "";
 								bool traceInstantiations = GIA_QUERY_TRACE_NETWORK_INDEX_NODES_DEFINING_INSTANTIATIONS_VALUE;
-								traceEntityNode(queryEntityNodeTarget, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_DETERMINE_MAX_NUMBER_MATCHED_NODES_SAME_SET_ONLY, &maxNumberOfMatchedNodesPossibleQuery, NULL, false, queryEntityNodeTarget->referenceSetID, traceInstantiations);
-								traceEntityNode(queryEntityNodeTarget, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_DETERMINE_MAX_NUMBER_MATCHED_NODES_SAME_SET_ONLY_RESET, &irrelevantInt, &irrelevantString, false, NULL, traceInstantiations);
-								traceEntityNode(entityNodeTarget, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_DETERMINE_MAX_NUMBER_MATCHED_NODES_SAME_SET_ONLY_INDEPENDENT, &maxNumberOfMatchedNodesPossible, NULL, false, entityNodeTarget->referenceSetID, traceInstantiations);
-								traceEntityNode(entityNodeTarget, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_DETERMINE_MAX_NUMBER_MATCHED_NODES_SAME_SET_ONLY_RESET, &irrelevantInt, &irrelevantString, false, NULL, traceInstantiations);
+								traceEntityNode(queryEntityNodeTarget, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_DETERMINE_MAX_NUMBER_MATCHED_NODES_SAME_SET_ONLY, &maxNumberOfMatchedNodesPossibleQuery, NULL, queryEntityNodeTarget->referenceSetID, traceInstantiations);
+								traceEntityNode(queryEntityNodeTarget, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_DETERMINE_MAX_NUMBER_MATCHED_NODES_SAME_SET_ONLY_RESET, &irrelevantInt, &irrelevantString, NULL, traceInstantiations);
+								traceEntityNode(entityNodeTarget, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_DETERMINE_MAX_NUMBER_MATCHED_NODES_SAME_SET_ONLY_INDEPENDENT, &maxNumberOfMatchedNodesPossible, NULL, entityNodeTarget->referenceSetID, traceInstantiations);
+								traceEntityNode(entityNodeTarget, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_DETERMINE_MAX_NUMBER_MATCHED_NODES_SAME_SET_ONLY_RESET, &irrelevantInt, &irrelevantString, NULL, traceInstantiations);
 							}
 							#endif
 								
@@ -1343,8 +1329,8 @@ bool GIAqueryClass::testEntityNodeForQueryOrReferenceSet(GIAentityNode* queryEnt
 							int irrelevantInt;
 							string irrelevantString = "";
 							bool traceInstantiations = GIA_QUERY_TRACE_NETWORK_INDEX_NODES_DEFINING_INSTANTIATIONS_VALUE;		//clear all (why is this still required if GIA_QUERY_TRACE_NETWORK_INDEX_NODES_DEFINING_INSTANTIATIONS is off? - it is based on testing, but unknown as to why)
-							this->traceEntityNode(entityNodeTarget, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISONTEMP, &irrelevantInt, &irrelevantString, false, NULL, traceInstantiations);
-							this->traceEntityNode(queryEntityNodeTarget, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISONTEMP, &irrelevantInt, &irrelevantString, false, NULL, traceInstantiations);
+							this->traceEntityNode(entityNodeTarget, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISONTEMP, &irrelevantInt, &irrelevantString, NULL, traceInstantiations);
+							this->traceEntityNode(queryEntityNodeTarget, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISONTEMP, &irrelevantInt, &irrelevantString, NULL, traceInstantiations);
 
 						}
 
@@ -1752,7 +1738,7 @@ double GIAqueryClass::determineMaxConfidenceOfQuerySemanticNetwork(unordered_map
 		int numberOfMatchedNodes = 0;
 		string queryAnswerContextTemp = "";
 		bool traceInstantiations = GIA_QUERY_TRACE_NETWORK_INDEX_NODES_DEFINING_INSTANTIATIONS_VALUE;
-		this->traceEntityNode(currentQueryEntityNode, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_DETERMINE_MAX_NUMBER_MATCHED_NODES, &numberOfMatchedNodes, &queryAnswerContextTemp, false, NULL, traceInstantiations);
+		this->traceEntityNode(currentQueryEntityNode, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_DETERMINE_MAX_NUMBER_MATCHED_NODES, &numberOfMatchedNodes, &queryAnswerContextTemp, NULL, traceInstantiations);
 
 		if((double)numberOfMatchedNodes > maxNumberOfMatchedNodes)
 		{
@@ -1814,7 +1800,7 @@ void GIAqueryClass::printEntityTimeConditionNodeOnly(GIAentityNode* entityNode, 
 }
 
 
-void GIAqueryClass::traceEntityNodeDetermineNextCourseOfAction(string* printEntityNodeString, GIAentityNode* entityNode, string context, const int function, int* numberOfMatchedNodes, const bool thisIsInstanceAndPreviousNodeWasDefinition, const int referenceSetID, const bool traceInstantiations)
+void GIAqueryClass::traceEntityNodeDetermineNextCourseOfAction(string* printEntityNodeString, GIAentityNode* entityNode, string context, const int function, int* numberOfMatchedNodes, const int referenceSetID, const bool traceInstantiations)
 {
 	if(function == GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_PRINT)
 	{
@@ -1822,34 +1808,34 @@ void GIAqueryClass::traceEntityNodeDetermineNextCourseOfAction(string* printEnti
 	}
 	else if(function == GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_DETERMINE_MAX_NUMBER_MATCHED_NODES)
 	{
-		this->traceEntityNode(entityNode, function, numberOfMatchedNodes, printEntityNodeString, thisIsInstanceAndPreviousNodeWasDefinition, referenceSetID, traceInstantiations);
+		this->traceEntityNode(entityNode, function, numberOfMatchedNodes, printEntityNodeString, referenceSetID, traceInstantiations);
 	}
 	else if(function == GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISON)
 	{
-		this->traceEntityNode(entityNode, function, numberOfMatchedNodes, printEntityNodeString, thisIsInstanceAndPreviousNodeWasDefinition, referenceSetID, traceInstantiations);
+		this->traceEntityNode(entityNode, function, numberOfMatchedNodes, printEntityNodeString, referenceSetID, traceInstantiations);
 	}
 	else if(function == GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISONTEMP)
 	{
-		this->traceEntityNode(entityNode, function, numberOfMatchedNodes, printEntityNodeString, thisIsInstanceAndPreviousNodeWasDefinition, referenceSetID, traceInstantiations);
+		this->traceEntityNode(entityNode, function, numberOfMatchedNodes, printEntityNodeString, referenceSetID, traceInstantiations);
 	}
 	else if(function == GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_PARSEDFORLANGUAGEGENERATION)
 	{
-		this->traceEntityNode(entityNode, function, numberOfMatchedNodes, printEntityNodeString, thisIsInstanceAndPreviousNodeWasDefinition, referenceSetID, traceInstantiations);
+		this->traceEntityNode(entityNode, function, numberOfMatchedNodes, printEntityNodeString, referenceSetID, traceInstantiations);
 	}
 	else if(function == GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_DETERMINE_MAX_NUMBER_MATCHED_NODES_SAME_SET_ONLY)
 	{
 		if(entityNode->referenceSetID == referenceSetID)
 		{
-			this->traceEntityNode(entityNode, function, numberOfMatchedNodes, printEntityNodeString, thisIsInstanceAndPreviousNodeWasDefinition, referenceSetID, traceInstantiations);
+			this->traceEntityNode(entityNode, function, numberOfMatchedNodes, printEntityNodeString, referenceSetID, traceInstantiations);
 		}
 	}
 	else if(function == GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_DETERMINE_MAX_NUMBER_MATCHED_NODES_SAME_SET_ONLY_INDEPENDENT)
 	{
-		this->traceEntityNode(entityNode, function, numberOfMatchedNodes, printEntityNodeString, thisIsInstanceAndPreviousNodeWasDefinition, referenceSetID, traceInstantiations);
+		this->traceEntityNode(entityNode, function, numberOfMatchedNodes, printEntityNodeString, referenceSetID, traceInstantiations);
 	}
 	else if(function == GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_DETERMINE_MAX_NUMBER_MATCHED_NODES_SAME_SET_ONLY_RESET)
 	{
-		this->traceEntityNode(entityNode, function, numberOfMatchedNodes, printEntityNodeString, thisIsInstanceAndPreviousNodeWasDefinition, referenceSetID, traceInstantiations);
+		this->traceEntityNode(entityNode, function, numberOfMatchedNodes, printEntityNodeString, referenceSetID, traceInstantiations);
 	}
 	else
 	{
@@ -1858,7 +1844,7 @@ void GIAqueryClass::traceEntityNodeDetermineNextCourseOfAction(string* printEnti
 	}
 
 }
-void GIAqueryClass::traceEntityNode(GIAentityNode* entityNode, const int function, int* numberOfMatchedNodes, string* printEntityNodeString, const bool thisIsInstanceAndPreviousNodeWasDefinition, const int referenceSetID, const bool traceInstantiations)
+void GIAqueryClass::traceEntityNode(GIAentityNode* entityNode, const int function, int* numberOfMatchedNodes, string* printEntityNodeString, const int referenceSetID, const bool traceInstantiations)
 {
 	bool pass = false;
 	if(function == GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISON)
@@ -1883,6 +1869,10 @@ void GIAqueryClass::traceEntityNode(GIAentityNode* entityNode, const int functio
 		{
 			pass = true;
 			entityNode->testedForQueryComparisonTemp2 = true;
+		}
+		else
+		{
+			cout << "fail" << endl;
 		}
 	}
 	else if(function == GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_DETERMINE_MAX_NUMBER_MATCHED_NODES_SAME_SET_ONLY_RESET)
@@ -1914,22 +1904,7 @@ void GIAqueryClass::traceEntityNode(GIAentityNode* entityNode, const int functio
 
 	if(pass)
 	{
-		#ifdef GIA_QUERY_TRACE_INSTANTIATIONS_DO_NOT_INCREMENT_NUMBER_OF_MATCHED_NODES
-		bool passMatchNodesIncrement = false;
-		if(traceInstantiations)
-		{
-			passMatchNodesIncrement = true;
-		}
-		else
-		{
-			if(!thisIsInstanceAndPreviousNodeWasDefinition)
-			{
-				passMatchNodesIncrement = true;
-			}
-		}
-		#else
 		bool passMatchNodesIncrement = true;
-		#endif
 		
 		#ifdef GIA_QUERY_SKIP_OVER_PROPERTY_AND_DEFINITION_RELATIONSHIP_ENTITIES_QUERIES
 		if(entityTypesIsPropertyOrDefinitionRelationshipArray[entityNode->entityType])
@@ -1973,7 +1948,7 @@ void GIAqueryClass::traceEntityNode(GIAentityNode* entityNode, const int functio
 					}
 					if(pass3)
 					{
-						this->traceEntityNodeDetermineNextCourseOfAction(printEntityNodeString, (*connectionIter)->entity, entityVectorConnectionContextArray[connectionType], function, numberOfMatchedNodes, entityVectorConnectionThisIsInstanceAndPreviousNodeWasDefinitionArray[connectionType], referenceSetID, traceInstantiations);
+						this->traceEntityNodeDetermineNextCourseOfAction(printEntityNodeString, (*connectionIter)->entity, entityVectorConnectionContextArray[connectionType], function, numberOfMatchedNodes, referenceSetID, traceInstantiations);
 					}
 				}
 			}
