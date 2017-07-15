@@ -25,7 +25,7 @@
  * File Name: GIAentityNodeClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3d2b 14-July-2017
+ * Project Version: 3d2c 14-July-2017
  * NB a substance is an instance of an entity, any given entity may contain/comprise/have multiple substances - and substances are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -473,6 +473,7 @@ public:
 	bool isAnswerToQuery;
 	bool testedForQueryComparison;
 	bool testedForQueryComparisonTemp; //added 17 May 2012 - support better trace routine
+	bool testedForQueryComparisonTemp2;	//for GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_DETERMINE_MAX_NUMBER_MATCHED_NODES_SAME_SET_ONLY
 	bool queryAnswerContext;
 	bool queryEntityTraced;	//temporary for determining max confidence
 	GIAentityNode* entityCorrespondingBestMatch;	 //best match entity node corresponding to this assumed query entity node	//does not take into account multiple diversions/answers [assumes single matches only]

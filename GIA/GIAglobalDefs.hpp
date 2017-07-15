@@ -25,7 +25,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3d2b 14-July-2017
+ * Project Version: 3d2c 14-July-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -742,7 +742,7 @@
 #ifndef GIA_DEBUG_DISABLE_3d_CODE
 	#define GIA_QUERY_SIMPLIFIED_SEARCH_ENFORCE_EXACT_MATCH_CONCEPTS	//3d2a
 	#ifdef GIA_QUERY_SIMPLIFIED_SEARCH_ENFORCE_EXACT_MATCH_CONCEPTS
-		#define GIA_DEBUG_QUERY2
+		//#define GIA_DEBUG_QUERY2
 	#endif
 	#ifdef USE_ANN
 		#define GIA_NEURAL_NETWORK
@@ -821,7 +821,7 @@
 #ifndef GIA_DEBUG_DISABLE_3a_CODE
 	
 	//this provides a major architectural change:
-	#define GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS	//creates an artificial have/be entity node for every property/definition connection [required to store time information consistently and reference the connection]	//this is required for GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
+	//#define GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS	//creates an artificial have/be entity node for every property/definition connection [required to store time information consistently and reference the connection]	//this is required for GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
 	#ifdef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
 		//#define GIA_QUERY_SKIP_OVER_PROPERTY_AND_DEFINITION_RELATIONSHIP_ENTITIES	//this is designed for GIA3 but is not operative (not used for advanced referencing; only used for post processing reference set matching GIA_ENABLE_CONCEPT_ADVANCED_REFERENCING; ie specific concepts)
 		#ifdef GIA_QUERY_SKIP_OVER_PROPERTY_AND_DEFINITION_RELATIONSHIP_ENTITIES
@@ -1477,7 +1477,10 @@
 	#define GIA_ADVANCED_REFERENCING_SEARCH_CODE
 	#ifdef GIA_ADVANCED_REFERENCING_SEARCH_CODE
 		#define GIA_ADVANCED_REFERENCING_ORIGINAL
-		//#define GIA_ADVANCED_REFERENCING_UPDATE_NOT_NECESSARY_OR_TESTED
+		#define GIA_ADVANCED_REFERENCING_UPDATE	//activated 3d2c
+		#ifdef GIA_ADVANCED_REFERENCING_UPDATE
+			#define GIA_ADVANCED_REFERENCING_UPDATE_HYBRID	//this provides a more relaxed implementation of GIA_ADVANCED_REFERENCING_UPDATE (used for testing)
+		#endif
 		#define GIA_ADVANCED_REFERENCING_ENSURE_PLURALITY_MATCHES	//added 29 June 2013
 	#endif
 	#define GIA_ADVANCED_REFERENCING_PREPOSITIONS
