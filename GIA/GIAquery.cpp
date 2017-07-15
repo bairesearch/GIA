@@ -25,7 +25,7 @@
  * File Name: GIAquery.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3d1a 10-July-2017
+ * Project Version: 3d2a 14-July-2017
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  * ?Limitations: will only locate a exact answer (based upon a comparison node) if it provides the maximum number of matched nodes
@@ -126,9 +126,9 @@ GIAreferenceTraceParameters::GIAreferenceTraceParameters(void)
 	doNotParseQuerySubnetsWithConcepts = false;
 	#endif
 
+	referenceSetDefiniteEntity = NULL;
 	#ifdef GIA_NLC_INTEGRATION_DEFINE_REFERENCE_CONTEXT_BY_TEXT_INDENTATION
 	testReferenceSetContext = false;
-	referenceSetDefiniteEntity = NULL;
 	//firstSentenceInList = NULL;
 	#endif
 	ensureSameReferenceSetQueryConnections = false;
@@ -1850,7 +1850,6 @@ void GIAqueryClass::traceEntityNode(GIAentityNode* entityNode, const int functio
 
 	if(pass)
 	{
-		
 		#ifdef GIA_QUERY_TRACE_INSTANTIATIONS_DO_NOT_INCREMENT_NUMBER_OF_MATCHED_NODES
 		bool passMatchNodesIncrement = false;
 		if(traceInstantiations)
@@ -1877,7 +1876,10 @@ void GIAqueryClass::traceEntityNode(GIAentityNode* entityNode, const int functio
 	
 		if(passMatchNodesIncrement)
 		{
-			*numberOfMatchedNodes = *numberOfMatchedNodes + 1;
+			//if(!((entityNode->entityType == GIA_ENTITY_TYPE_NETWORK_INDEX) && (function == GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_DETERMINE_MAX_NUMBER_MATCHED_NODES_SAME_SET_ONLY)))
+			//{
+				*numberOfMatchedNodes = *numberOfMatchedNodes + 1;
+			//}
 		}
 
 		for(int connectionType=0; connectionType<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; connectionType++)
