@@ -25,7 +25,7 @@
  * File Name: GIAquery.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3d2a 14-July-2017
+ * Project Version: 3d2b 14-July-2017
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  * ?Limitations: will only locate a exact answer (based upon a comparison node) if it provides the maximum number of matched nodes
@@ -235,19 +235,17 @@ bool GIAqueryClass::testEntityNodeForQueryOrReferenceSet2(GIAentityNode* queryEn
 {
 	bool exactMatch = true;
 
-
 	if(!(entityNode->testedForQueryComparison) && !(entityNode->testedForQueryComparisonTemp) && !(queryEntityNode->testedForQueryComparison) && !(queryEntityNode->testedForQueryComparisonTemp))
 	{
-
 		entityNode->testedForQueryComparison = true;
 		queryEntityNode->testedForQueryComparison = true;
 		entityNode->testedForQueryComparisonTemp = false;
 		queryEntityNode->testedForQueryComparisonTemp = false;
 
-		*numberOfMatchedNodes = *numberOfMatchedNodes + 1;
-
-
-
+		if(entityNode->entityType != GIA_ENTITY_TYPE_NETWORK_INDEX)
+		{
+			*numberOfMatchedNodes = *numberOfMatchedNodes + 1;
+		}
 
 		for(int connectionType=0; connectionType<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; connectionType++)
 		{
@@ -265,7 +263,6 @@ bool GIAqueryClass::testEntityNodeForQueryOrReferenceSet2(GIAentityNode* queryEn
 					GIAentityNode* queryEntityNodeTarget = (*connectionIterQuery)->entity;
 					if(traceModeIsQuery || !(referenceTraceParameters->ensureSameReferenceSetQueryConnections) || (*connectionIterQuery)->sameReferenceSet)
 					{
-
 						#ifdef GIA_DATABASE
 						#ifndef GIA_DATABASE_TEST_MODE_LOAD_ALL_ENTITIES_AND_CONNECTIONS_TO_ACTIVE_LIST_UPON_READ
 						if(GIAdatabase.getUseDatabase() == GIA_DATABASE_TRUE_READ_ACTIVE)
@@ -298,7 +295,6 @@ bool GIAqueryClass::testEntityNodeForQueryOrReferenceSet2(GIAentityNode* queryEn
 							if(sameReferenceSetTest)
 							{
 							#endif
-							
 								#ifdef GIA_QUERY_SKIP_OVER_PROPERTY_AND_DEFINITION_RELATIONSHIP_ENTITIES
 								if((!traceModeIsQuery && referenceTraceParameters->skipOverPropertyAndDefinitionRelationshipEntities) || (traceModeIsQuery && queryTraceParameters->skipOverPropertyAndDefinitionRelationshipEntities))
 								{
@@ -343,11 +339,8 @@ bool GIAqueryClass::testEntityNodeForQueryOrReferenceSet2(GIAentityNode* queryEn
 								}
 								#endif							
 						
-						
-
 								int numberOfMatchedNodesTemp = 0;
 								int numberOfMatchedNodesRequiredSynonymnDetectionTemp = 0;
-
 
 								bool exactMatchTemp = this->testReferencedEntityNodeForExactNameMatch2(queryEntityNodeTarget, entityNodeTarget, &numberOfMatchedNodesTemp, false, &numberOfMatchedNodesRequiredSynonymnDetectionTemp, traceModeIsQuery, queryTraceParameters, referenceTraceParameters);
 
@@ -355,6 +348,7 @@ bool GIAqueryClass::testEntityNodeForQueryOrReferenceSet2(GIAentityNode* queryEn
 								{
 									if(traceModeIsQuery || exactMatchTemp)
 									{
+										//cout << "numberOfMatchedNodesTemp = " << numberOfMatchedNodesTemp << endl;
 										maxNumberMatchedNodes = numberOfMatchedNodesTemp;
 										foundBestAnswerCandidate = true;
 										networkEntityWithMaxNumberNodesMatched = entityNodeTarget;
@@ -427,7 +421,6 @@ bool GIAqueryClass::testEntityNodeForQueryOrReferenceSet2(GIAentityNode* queryEn
 		queryEntityNode->testedForQueryComparison = false;
 		entityNode->testedForQueryComparisonTemp = true;
 		queryEntityNode->testedForQueryComparisonTemp = true;
-
 	}
 
 	return exactMatch;
@@ -708,7 +701,6 @@ GIAentityNode* GIAqueryClass::answerQueryOrFindAndTagForHighlightingMatchingStru
 	}
 
 	return queryAnswerNode;
-
 }
 
 
@@ -837,7 +829,10 @@ int GIAqueryClass::testReferencedEntityNodeForExactNameMatch(GIAentityNode* quer
 
 					#ifndef GIA_QUERY_TRACE_PAST_ANSWER	//changed to Temp 21 May 2012
 					entityNode->testedForQueryComparisonTemp = true;
-					*numberOfMatchedNodes = *numberOfMatchedNodes + 1;
+					if(entityNode->entityType != GIA_ENTITY_TYPE_NETWORK_INDEX)
+					{
+						*numberOfMatchedNodes = *numberOfMatchedNodes + 1;
+					}
 					#endif
 
 					#ifdef GIA_QUERY_SUPPORT_MULTIPLE_ANSWERS
@@ -908,7 +903,10 @@ int GIAqueryClass::testReferencedEntityNodeForExactNameMatch(GIAentityNode* quer
 					if(foundMatch)
 					{
 						entityNode->testedForQueryComparisonTemp = true;
-						*numberOfMatchedNodes = *numberOfMatchedNodes + 1;
+						if(entityNode->entityType != GIA_ENTITY_TYPE_NETWORK_INDEX)
+						{
+							*numberOfMatchedNodes = *numberOfMatchedNodes + 1;
+						}
 					}
 				}
 				#endif
@@ -985,36 +983,38 @@ bool GIAqueryClass::testEntityNodeForQueryOrReferenceSet(GIAentityNode* queryEnt
 
 
 
-		if(traceModeIsQuery)
+		if(entityNode->entityType != GIA_ENTITY_TYPE_NETWORK_INDEX)
 		{
-			#ifdef GIA_QUERY_DO_NOT_ASSIGN_MATCH_POINTS_FOR_NON_IDENTICAL_CONDITION_TYPES
-			if(!(queryTraceParameters->nonMatchingSourceConditions))
+			if(traceModeIsQuery)
 			{
-			#endif
-				#ifdef GIA_QUERY_TRACE_INSTANTIATIONS_DO_NOT_INCREMENT_NUMBER_OF_MATCHED_NODES
-				if(GIA_QUERY_TRACE_NETWORK_INDEX_NODES_DEFINING_INSTANTIATIONS_VALUE)
+				#ifdef GIA_QUERY_DO_NOT_ASSIGN_MATCH_POINTS_FOR_NON_IDENTICAL_CONDITION_TYPES
+				if(!(queryTraceParameters->nonMatchingSourceConditions))
 				{
 				#endif
-					*numberOfMatchedNodes = *numberOfMatchedNodes + 1;
-				#ifdef GIA_QUERY_TRACE_INSTANTIATIONS_DO_NOT_INCREMENT_NUMBER_OF_MATCHED_NODES
-				}
-				else
-				{
-					if(!(queryTraceParameters->thisIsInstanceAndPreviousNodeWasDefinition))
+					#ifdef GIA_QUERY_TRACE_INSTANTIATIONS_DO_NOT_INCREMENT_NUMBER_OF_MATCHED_NODES
+					if(GIA_QUERY_TRACE_NETWORK_INDEX_NODES_DEFINING_INSTANTIATIONS_VALUE)
 					{
+					#endif
 						*numberOfMatchedNodes = *numberOfMatchedNodes + 1;
+					#ifdef GIA_QUERY_TRACE_INSTANTIATIONS_DO_NOT_INCREMENT_NUMBER_OF_MATCHED_NODES
 					}
+					else
+					{
+						if(!(queryTraceParameters->thisIsInstanceAndPreviousNodeWasDefinition))
+						{
+							*numberOfMatchedNodes = *numberOfMatchedNodes + 1;
+						}
+					}
+					#endif
+				#ifdef GIA_QUERY_DO_NOT_ASSIGN_MATCH_POINTS_FOR_NON_IDENTICAL_CONDITION_TYPES
 				}
 				#endif
-			#ifdef GIA_QUERY_DO_NOT_ASSIGN_MATCH_POINTS_FOR_NON_IDENTICAL_CONDITION_TYPES
 			}
-			#endif
+			else
+			{
+				*numberOfMatchedNodes = *numberOfMatchedNodes + 1;
+			}
 		}
-		else
-		{
-			*numberOfMatchedNodes = *numberOfMatchedNodes + 1;
-		}
-
 
 
 
@@ -1116,7 +1116,6 @@ bool GIAqueryClass::testEntityNodeForQueryOrReferenceSet(GIAentityNode* queryEnt
 						{
 							GIAentityNode* entityNodeTarget = (*connectionIter)->entity;
 							
-							
 							#ifdef GIA_QUERY_SKIP_OVER_PROPERTY_AND_DEFINITION_RELATIONSHIP_ENTITIES
 							if((!traceModeIsQuery && referenceTraceParameters->skipOverPropertyAndDefinitionRelationshipEntities) || (traceModeIsQuery && queryTraceParameters->skipOverPropertyAndDefinitionRelationshipEntities))
 							{
@@ -1159,7 +1158,6 @@ bool GIAqueryClass::testEntityNodeForQueryOrReferenceSet(GIAentityNode* queryEnt
 							}
 							#endif
 									
-
 
 							GIAqueryTraceParameters queryTraceParametersTemp(queryTraceParameters);
 
@@ -1331,25 +1329,18 @@ bool GIAqueryClass::testEntityNodeForQueryOrReferenceSet(GIAentityNode* queryEnt
 						else
 						{
 						}
-
-
 					}
 				}
 			}
 		}
 
-
 		entityNode->testedForQueryComparison = false;
 		queryEntityNode->testedForQueryComparison = false;
 		entityNode->testedForQueryComparisonTemp = true;
 		queryEntityNode->testedForQueryComparisonTemp = true;
-
-
 	}
 
 	return exactMatch;
-
-
 }
 
 bool GIAqueryClass::determineIfBestAnswerCandidate(const bool traceModeIsQuery, const bool queryTraceParametersTempFoundAnswer, const bool alreadyFoundAnAnswer, const int numberOfMatchedNodesTemp, const int numberOfMatchedNodesTempMax, const int numberOfMatchedNodesRequiredSynonymnDetectionTemp, const int numberOfMatchedNodesRequiredSynonymnDetectionTempAtMax, const int referenceTraceParametersTraceMode, const int exactMatchTemp)
@@ -1360,7 +1351,6 @@ bool GIAqueryClass::determineIfBestAnswerCandidate(const bool traceModeIsQuery, 
 	{
 		if(traceModeIsQuery)
 		{
-
 			if(numberOfMatchedNodesTemp > numberOfMatchedNodesTempMax)
 			{//first traces (ie traces of newest instances/substances) take priority
 				bestAnswerCandidate = true;
@@ -1876,10 +1866,10 @@ void GIAqueryClass::traceEntityNode(GIAentityNode* entityNode, const int functio
 	
 		if(passMatchNodesIncrement)
 		{
-			//if(!((entityNode->entityType == GIA_ENTITY_TYPE_NETWORK_INDEX) && (function == GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_DETERMINE_MAX_NUMBER_MATCHED_NODES_SAME_SET_ONLY)))
-			//{
+			if(!(entityNode->entityType == GIA_ENTITY_TYPE_NETWORK_INDEX))
+			{
 				*numberOfMatchedNodes = *numberOfMatchedNodes + 1;
-			//}
+			}
 		}
 
 		for(int connectionType=0; connectionType<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; connectionType++)
@@ -1967,7 +1957,10 @@ bool GIAqueryClass::compareEntityStandard(GIAentityNode* queryEntityNode, GIAent
 					if(this->compareEntitySynonyms(queryEntityNode, entityNode))
 					{
 						compareEntityNamesResult = true;
-						*numberOfMatchedNodesRequiredSynonymnDetection = *numberOfMatchedNodesRequiredSynonymnDetection + 1;
+						if(entityNode->entityType != GIA_ENTITY_TYPE_NETWORK_INDEX)
+						{
+							*numberOfMatchedNodesRequiredSynonymnDetection = *numberOfMatchedNodesRequiredSynonymnDetection + 1;
+						}
 					}
 				#ifdef GIA_SYNONYMN_DETECTION_DISABLE_DURING_SPECIFIC_CONCEPT_ACTION_LINKING
 				}
