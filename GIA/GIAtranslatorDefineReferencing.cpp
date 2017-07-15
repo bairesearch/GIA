@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3d2d 14-July-2017
+ * Project Version: 3d2e 14-July-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1024,25 +1024,6 @@ void GIAtranslatorDefineReferencingClass::createGIAcoreferenceInListBasedUponIde
 				referenceTraceParameters->exactReferenceSetSearch = true;
 			}
 			#endif
-			#ifdef GIA_QUERY_SIMPLIFIED_SEARCH_ENFORCE_EXACT_MATCH_CONCEPTS_OLD
-			bool enforceExactMatch = false;
-			int maxNumberOfMatchedNodesPossible = 0;
-			if((referenceTraceParameters->referenceSetDefiniteEntity)->entityType == GIA_ENTITY_TYPE_CONCEPT)
-			{
-				enforceExactMatch = true;
-				int irrelevantInt;
-				string irrelevantString = "";
-				bool traceInstantiations = GIA_QUERY_TRACE_NETWORK_INDEX_NODES_DEFINING_INSTANTIATIONS_VALUE;
-				GIAquery.traceEntityNode(currentQueryEntityNode, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_DETERMINE_MAX_NUMBER_MATCHED_NODES_SAME_SET_ONLY, &maxNumberOfMatchedNodesPossible, NULL, false, referenceSetID, traceInstantiations);
-				#ifdef GIA_DEBUG_QUERY2
-				cout << "GIAquery.traceEntityNode" << endl;
-				cout << "currentQueryEntityNode->entityName = " << currentQueryEntityNode->entityName << endl;
-				cout << "currentQueryEntityNode->entityType = " << currentQueryEntityNode->entityType << endl;
-				cout << "\tmaxNumberOfMatchedNodesPossible = " << maxNumberOfMatchedNodesPossible << endl;
-				#endif
-				GIAquery.traceEntityNode(currentQueryEntityNode, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_DETERMINE_MAX_NUMBER_MATCHED_NODES_SAME_SET_ONLY_RESET, &irrelevantInt, &irrelevantString, false, NULL, traceInstantiations);
-			}
-			#endif
 
 			/*
 			//removed 15 July 2012 - networkIndex entities do not have assigned referenceSetIDs [as there may be more than one instance of a networkIndex entity, each having a different reference set id (all within a given sentence)]
@@ -1094,18 +1075,12 @@ void GIAtranslatorDefineReferencingClass::createGIAcoreferenceInListBasedUponIde
 							#ifdef GIA_DEBUG_QUERY2
 							cout << "\t\tnumberOfMatchedNodesTemp = " << numberOfMatchedNodesTemp << endl;
 							#endif
-							#ifdef GIA_QUERY_SIMPLIFIED_SEARCH_ENFORCE_EXACT_MATCH_CONCEPTS_OLD
-							if(!enforceExactMatch || (numberOfMatchedNodesTemp == maxNumberOfMatchedNodesPossible))
-							{
-							#endif
-								*foundAtLeastOneMatch = true;
 
-								*maxNumberOfMatchedNodes = numberOfMatchedNodesTemp;
-								*queryEntityWithMaxNumberNodesMatched = currentQueryEntityNode;
-								*networkEntityWithMaxNumberNodesMatched = networkIndexEntityMatchingCurrentQueryEntity;
-							#ifdef GIA_QUERY_SIMPLIFIED_SEARCH_ENFORCE_EXACT_MATCH_CONCEPTS_OLD
-							}
-							#endif
+							*foundAtLeastOneMatch = true;
+
+							*maxNumberOfMatchedNodes = numberOfMatchedNodesTemp;
+							*queryEntityWithMaxNumberNodesMatched = currentQueryEntityNode;
+							*networkEntityWithMaxNumberNodesMatched = networkIndexEntityMatchingCurrentQueryEntity;
 						}
 					}
 
@@ -1474,9 +1449,6 @@ void GIAtranslatorDefineReferencingClass::identifyReferenceSetsSpecificConceptsA
 					referenceTraceParameters.linkSpecificConceptsAndActions = true;
 
 					#ifdef GIA_QUERY_SIMPLIFIED_SEARCH_ENFORCE_EXACT_MATCH_CONCEPTS
-					referenceTraceParameters.exactReferenceSetSearch = true;
-					#endif
-					#ifdef GIA_QUERY_SIMPLIFIED_SEARCH_ENFORCE_EXACT_MATCH_CONCEPTS_OLD
 					int irrelevantInt;
 					string irrelevantString = "";
 					int maxNumberOfMatchedNodesPossible = 0;
@@ -1509,10 +1481,10 @@ void GIAtranslatorDefineReferencingClass::identifyReferenceSetsSpecificConceptsA
 								{
 									if(numberOfMatchedNodesTemp > 0)
 									{
-										#ifdef GIA_QUERY_SIMPLIFIED_SEARCH_ENFORCE_EXACT_MATCH_CONCEPTS_OLD
+										#ifdef GIA_QUERY_SIMPLIFIED_SEARCH_ENFORCE_EXACT_MATCH_CONCEPTS
 										if(numberOfMatchedNodesTemp == maxNumberOfMatchedNodesPossible)
 										{
-											//cout << "maxNumberOfMatchedNodesPossible = " << maxNumberOfMatchedNodesPossible << endl;
+											cout << "maxNumberOfMatchedNodesPossible = " << maxNumberOfMatchedNodesPossible << endl;
 										#endif
 											bool sameReferenceSet = false;
 
@@ -1565,7 +1537,7 @@ void GIAtranslatorDefineReferencingClass::identifyReferenceSetsSpecificConceptsA
 											#ifdef GIA_TRANSLATOR_DREAM_MODE_LINK_SPECIFIC_CONCEPTS_AND_ACTIONS_ADVANCED
 											}
 											#endif
-										#ifdef GIA_QUERY_SIMPLIFIED_SEARCH_ENFORCE_EXACT_MATCH_CONCEPTS_OLD
+										#ifdef GIA_QUERY_SIMPLIFIED_SEARCH_ENFORCE_EXACT_MATCH_CONCEPTS
 										}
 										#endif
 									}
