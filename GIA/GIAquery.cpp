@@ -25,7 +25,7 @@
  * File Name: GIAquery.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3d3b 17-July-2017
+ * Project Version: 3d3c 17-July-2017
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  * ?Limitations: will only locate a exact answer (based upon a comparison node) if it provides the maximum number of matched nodes
@@ -1734,7 +1734,6 @@ double GIAqueryClass::determineMaxConfidenceOfQuerySemanticNetwork(unordered_map
 
 		GIAentityNode* currentQueryEntityNode = connectionIterQuery->second;
 
-
 		int numberOfMatchedNodes = 0;
 		string queryAnswerContextTemp = "";
 		bool traceInstantiations = GIA_QUERY_TRACE_NETWORK_INDEX_NODES_DEFINING_INSTANTIATIONS_VALUE;
@@ -1759,7 +1758,7 @@ void GIAqueryClass::printEntityNodeQualitiesOnly(GIAentityNode* entityNode, stri
 	int numberQualities = 0;
 	for(vector<GIAentityConnection*>::iterator connectionIter = entityNode->propertyNodeList->begin(); connectionIter < entityNode->propertyNodeList->end(); connectionIter++)
 	{
-		GIAentityNode* substanceNode = (*connectionIter)->entity;
+		GIAentityNode* substanceNode = GIAtranslatorOperations.getPropertyRelationshipObjectEntity(*connectionIter);
 		if(substanceNode->entityType == GIA_ENTITY_TYPE_QUALITY)
 		{
 			if(numberQualities > 0)
@@ -1768,7 +1767,7 @@ void GIAqueryClass::printEntityNodeQualitiesOnly(GIAentityNode* entityNode, stri
 			}
 			else
 			{
-				*printEntityNodeString = *printEntityNodeString + "(";
+				*printEntityNodeString = *printEntityNodeString + " (";
 			}
 			numberQualities++;
 
