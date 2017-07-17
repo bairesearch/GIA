@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3d3a 17-July-2017
+ * Project Version: 3d3b 17-July-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -455,11 +455,11 @@ static string relationGovernorDefinitionNameArray[RELATION_GOVERNOR_DEFINITION_N
 
 //dependent on questions;
 #ifdef GIA_RELEX
-	#define REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_RELATION_DEPENDENT_INDEX (SENTENCE_FIRST_ARTIFICIAL_INDEX+MAX_NUMBER_OF_SPECIAL_WORDS_PER_SENTENCE-10)	//eg numWordsInSentence + 0 + 100 - 10
+	#define REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_RELATION_DEPENDENT_INDEX (SENTENCE_FIRST_ARTIFICIAL_INDEX+MAX_NUMBER_OF_SPECIAL_WORDS_PER_SENTENCE-10)	//eg numWordsInSentence+1 + 0 + 100 - 10
 	#ifdef GIA_RELEX_1_4_0
 		#define GIA_WORKAROUND_RELEX_BUG_OCCASIONAL_RELATION_DEPENDENT_INDEX_PLUS_1
 		#ifdef GIA_WORKAROUND_RELEX_BUG_OCCASIONAL_RELATION_DEPENDENT_INDEX_PLUS_1
-			#define GIA_WORKAROUND_RELEX_BUG_OCCASIONAL_RELATION_DEPENDENT_INDEX_PLUS_1_REPLACEMENT_INDEX (REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_RELATION_DEPENDENT_INDEX+1)	//eg numWordsInSentence + 0 + 100 - 9
+			#define GIA_WORKAROUND_RELEX_BUG_OCCASIONAL_RELATION_DEPENDENT_INDEX_PLUS_1_REPLACEMENT_INDEX (REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_RELATION_DEPENDENT_INDEX+1)	//eg numWordsInSentence+1 + 0 + 100 - 9
 		#endif
 	#endif
 #endif

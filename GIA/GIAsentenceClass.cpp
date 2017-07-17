@@ -25,7 +25,7 @@
  * File Name: GIAsentenceClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3d3a 17-July-2017
+ * Project Version: 3d3b 17-July-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -488,12 +488,14 @@ int GIAsentenceClassClass::calculateNumberOfWordsInSentence(const GIAfeature* fi
 
 int GIAsentenceClassClass::getMinIndexOfDynamicallyGeneratedEntity(GIAsentence* currentSentenceInList) 
 {
-	return currentSentenceInList->numberOfWordsInSentence;	//OLD: FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY
+	int minIndexOfDynamicallyGeneratedEntity = currentSentenceInList->numberOfWordsInSentence + GIA_NLP_START_ENTITY_INDEX;		//OLD: FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY
+	return minIndexOfDynamicallyGeneratedEntity;	
 }
 
 int GIAsentenceClassClass::getMaxIndexOfDynamicallyGeneratedEntity(GIAsentence* currentSentenceInList) 
 {
-	return (currentSentenceInList->numberOfWordsInSentence + MAX_NUMBER_OF_SPECIAL_WORDS_PER_SENTENCE);	//OLD: MAX_NUMBER_OF_WORDS_PER_SENTENCE
+	int maxIndexOfDynamicallyGeneratedEntity = getMinIndexOfDynamicallyGeneratedEntity(currentSentenceInList) + MAX_NUMBER_OF_SPECIAL_WORDS_PER_SENTENCE;
+	return maxIndexOfDynamicallyGeneratedEntity;
 }
 
 bool GIAsentenceClassClass::relationIndexIsNormal(int relationIndex) 
