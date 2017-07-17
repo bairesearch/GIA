@@ -25,7 +25,7 @@
  * File Name: GIAnlg.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3d2g 14-July-2017
+ * Project Version: 3d3a 17-July-2017
  * Requirements: requires GIA translated data, and NLG2 to be installed
  * Description: GIA natural language generation (using NLG2)
  *
@@ -65,7 +65,6 @@ string GIAnlgClass::generateLanguageFromQuery(GIAentityNode* comparisonVariableN
 	}
 	
 	//find the !sameReferencceSet connection of the entityNode (comparisonVariableNode) - there should only be 1 !sameReferencceSet connection and this should correspond to the previous word in the question
-	GIAentityNode* relationshipEntity = NULL;
 	GIAentityConnection* relationshipConnection = NULL;
 	GIAentityNode* relationshipEntitySubjectOrObject = NULL;	//lastNodeInQuestionContextReferenceSet
 	GIAentityConnection* relationshipEntitySubjectOrObjectConnection = NULL;
@@ -114,6 +113,7 @@ string GIAnlgClass::generateLanguageFromQuery(GIAentityNode* comparisonVariableN
 						}
 						#endif
 						relationshipEntitySubjectOrObject = GIAtranslatorOperations.getRelationshipSubjectEntity(connection);
+						//cout << "relationshipEntitySubjectOrObject = " << relationshipEntitySubjectOrObject->entityName << endl;
 					}
 					#ifdef GIA_NLG_REPRESENT_WHO_WHAT_QUERIES_ADVANCED
 					else if(relationshipEntityObjectFoundTemp)
@@ -131,6 +131,7 @@ string GIAnlgClass::generateLanguageFromQuery(GIAentityNode* comparisonVariableN
 						}
 						#endif
 						relationshipEntitySubjectOrObject = GIAtranslatorOperations.getRelationshipObjectEntity(connection);
+						//cout << "relationshipEntitySubjectOrObject = " << relationshipEntitySubjectOrObject->entityName << endl;
 					}
 					#endif
 			
@@ -155,7 +156,6 @@ string GIAnlgClass::generateLanguageFromQuery(GIAentityNode* comparisonVariableN
 					if(connection->entity->queryAnswerContext)
 					{
 						relationshipConnection = connection;
-						relationshipEntity = connection->entity;
 					}
 				}
 			}
@@ -220,7 +220,7 @@ string GIAnlgClass::generateLanguageFromQuery(GIAentityNode* comparisonVariableN
 			exit(EXIT_ERROR);		
 		}
 	
-		relationshipEntity = new GIAentityNode();
+		GIAentityNode* relationshipEntity = new GIAentityNode();
 		relationshipConnection = new GIAentityConnection();
 		relationshipConnection->entity = relationshipEntity;
 		relationshipEntity->entityType = GIA_ENTITY_TYPE_DEFINITION;
@@ -352,7 +352,7 @@ bool GIAnlgClass::generateLanguageFromTextIteration(GIAentityConnection* current
 					isRelationshipReverseIterationPropertyChild = true;
 					
 					if(prependRcmod)
-					{
+					{						
 						//prepend "that" to answer; e.g. Tom proposed that the apple is happy
 						string relationshipEntityText = "";
 						relationshipEntityText = relationshipEntityText + GIA_NLG_REFERENCE_SET_RCMOD_SAME_REFERENCE_SET;
@@ -429,8 +429,7 @@ bool GIAnlgClass::generateLanguageFromTextIteration(GIAentityConnection* current
 		{
 			
 		#endif
-
-			if(GIAtranslatorOperations.connectionIsRelationship(currentConnection))
+			if(GIAtranslatorOperations.connectionTargetIsRelationship(currentConnection))
 			{
 				bool isSameReferenceSetIteration = true;
 				if(parseSameReferenceSetOnly)
@@ -443,7 +442,7 @@ bool GIAnlgClass::generateLanguageFromTextIteration(GIAentityConnection* current
 					generateRelationshipEntityLanguageActionReverse(currentConnection, currentNLGentity, isSameReferenceSetIteration);
 				}
 				else
-				{					
+				{	
 					if(currentEntity->entityType == GIA_ENTITY_TYPE_ACTION)
 					{
 						//special exception; parse action subject
@@ -488,7 +487,7 @@ bool GIAnlgClass::generateLanguageFromTextIteration(GIAentityConnection* current
 				}
 			}
 			else
-			{		
+			{	
 				bool definite = true;	//CHECKTHIS
 				if(!generateNounEntityLanguage(currentEntity, currentNLGentity, definite, parseSameReferenceSetOnly, isRelationshipReverseIterationPropertyPossessive, !isRelationshipReverseIterationPropertyChildPossessive))
 				{
@@ -550,7 +549,7 @@ bool GIAnlgClass::generateLanguageFromTextIteration(GIAentityConnection* current
 								{
 									GIAentityNode* entity = connection->entity;
 									if(generateLanguageFromTextIterationPerformChecks(connection, isRelationshipReverseIterationProperty))
-									{
+									{										
 										if(!entityVectorConnectionIsRelationshipSubjectObjectArray[connectionType])
 										{
 											subphraseCount++;

@@ -25,7 +25,7 @@
  * File Name: GIAtranslator.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3d2g 14-July-2017
+ * Project Version: 3d3a 17-July-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -602,7 +602,6 @@ bool GIAtranslatorClass::convertSentenceSyntacticRelationsIntoGIAnetworkNodes(GI
 
 	//transfer disabled substances across execution#1 [this is required since GIAtranslatorRedistributeRelationsStanford operations are now done on temporary entity nodes GIAfeatureTempEntityNodeArray instead of networkIndex entity nodes {whose values would have been automatically transferred to their instances upon creation}...]
 	this->disableNetworkIndexEntitiesBasedOnFeatureTempEntityNodeArray(translatorVariables);
-			
 
 	#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES	// or GIA_GENERIC_ENTITY_INTERPRETATION
  	//this is required as GIAtranslatorDefineSubstances.cpp now relies on entity grammar values rather than featureArrayTemp
@@ -625,11 +624,19 @@ bool GIAtranslatorClass::convertSentenceSyntacticRelationsIntoGIAnetworkNodes(GI
 	//transfer disabled substances across execution#2 [this is required since GIAtranslatorRedistributeRelationsStanford operations are now done on temporary entity nodes GIAfeatureTempEntityNodeArray instead of networkIndex entity nodes {whose values would have been automatically transferred to their instances upon creation}...]
 	this->disableEntitiesBasedOnFeatureTempEntityNodeArray(translatorVariables);
 
-	
 	#ifdef GIA_TRANSLATOR_XML_INTERPRETATION
 	GIAtranslatorRules.applyGIATranslatorGenericXMLfunctions("GIAtranslatorLinkEntities", translatorVariables);
 	#endif
-	
+
+	for(int w=0; w<GIAsentenceClass.getMaxIndexOfDynamicallyGeneratedEntity(translatorVariables->currentSentenceInList); w++)
+	{
+		if(GIAentityNodeArrayFilled[w])
+		{
+			GIAentityNode* entity = GIAentityNodeArray[w];
+			cout << "entity = " << entity->entityName << endl;
+		}
+	}
+		
 	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES
 	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES_ENABLE_INCONSISTENT_REFERENCING
 	this->createAdditionalSubclassEntities(translatorVariables);

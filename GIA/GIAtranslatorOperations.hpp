@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3d2g 14-July-2017
+ * Project Version: 3d3a 17-July-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -160,7 +160,8 @@ class GIAtranslatorOperationsClass
 	#ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
 	public: bool connectionIsAlias(const GIAentityConnection* connection);
 	#endif
-	public: bool connectionIsRelationship(GIAentityConnection* connection);
+	public: bool connectionTargetIsRelationship(GIAentityConnection* connection);
+	//public: bool connectionIsRelationship(GIAentityConnection* connection);
 	public: int generateConnectionType(int relationshipEntityType);
 	public: int generateConnectionTypeReverse(int relationshipEntityType);	
 	public: int generateInvertedConnectionType(GIAentityNode* entity, const int connectionType);	
