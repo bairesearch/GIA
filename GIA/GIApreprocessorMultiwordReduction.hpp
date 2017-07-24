@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorMultiwordReduction.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3d3c 17-July-2017
+ * Project Version: 3d4a 18-July-2017
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  *
@@ -77,12 +77,17 @@ class GIApreprocessorMultiwordReductionClass
 	public: void revertNLPtagNameToOfficialLRPtagName(GIAfeature* feature, const GIAsentence* currentSentenceInList, const GIArelation* currentRelationInListForPrepositionsOnly, const bool isPreposition, bool* foundOfficialLRPreplacementString);
 	#endif
 
-	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_LOAD_WORD_LISTS
-	public: bool generateVerbCaseStandardList();
-	private: bool generateVerbCaseAdditionalList(unordered_map<string, GIApreprocessorMultiwordReductionWord*>* verbList, unordered_map<string, GIApreprocessorMultiwordReductionWord*>* verbCaseAdditionalList);
-		private: void addVerbCaseAdditional(GIApreprocessorMultiwordReductionWord* currentTagInVerbList, unordered_map<string, GIApreprocessorMultiwordReductionWord*>* verbCaseAdditionalList, const string baseTenseFormStart, string baseTenseFormAppend, int grammaticalTenseModifierNew);
+	#ifdef GIA_PREPROCESSOR_DERIVE_NOUN_VARIANTS
+	private: bool generateNounPluralVariantsList();
+		private: bool generateNounPluralVariants(GIApreprocessorMultiwordReductionWord* wordTag, unordered_map<string, GIApreprocessorMultiwordReductionWord*>* nounPluralVariantsList);
 	#endif
 	
+	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_LOAD_WORD_LISTS
+	public: bool generateVerbCaseStandardList();
+	private: bool generateVerbCaseAdditionalList();
+		private: void addVerbCaseAdditional(GIApreprocessorMultiwordReductionWord* currentTagInVerbList, unordered_map<string, GIApreprocessorMultiwordReductionWord*>* verbCaseAdditionalList, const string baseTenseFormStart, string baseTenseFormAppend, int grammaticalTenseModifierNew);
+	#endif
+		
 	#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS
 	#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_LIBERAL
 	public: bool determineVerbCaseAdditionalWrapper(const string word, string* baseNameFound, int* grammaticalTenseModifier);
@@ -102,11 +107,12 @@ class GIApreprocessorMultiwordReductionClass
 	public: bool identifyConditionType(GIAentityNode* conditionRelationshipEntity);
 	#endif
 	#endif
-	
-	public: bool determineIsVerb(GIApreprocessorWord* wordTag, int* grammaticalBaseTenseForm);
-		public: bool determineVerbCaseStandardWithAdditional(const string word, int* grammaticalBaseTenseForm);
-			public: bool determineVerbCaseStandard(const string word, int* grammaticalBaseTenseForm);
-			public: bool determineVerbCaseAdditional(const string word, string* baseNameFound, int* grammaticalTenseModifier);
+
+	public: bool determineIsVerb(GIApreprocessorWord* wordTag);	
+		public: bool determineIsVerb(GIApreprocessorWord* wordTag, string* baseNameFound, int* grammaticalBaseTenseForm);
+			public: bool determineVerbCaseStandardWithAdditional(const string word, string* baseNameFound, int* grammaticalBaseTenseForm);
+				public: bool determineVerbCaseStandard(const string word, string* baseNameFound, int* grammaticalBaseTenseForm);
+				public: bool determineVerbCaseAdditional(const string word, string* baseNameFound, int* grammaticalTenseModifier);
 	public: bool determineIsPreposition(GIApreprocessorWord* wordTag);
 		public: bool determineIsPreposition(const string word);
 	public: bool determineIsAdverb(GIApreprocessorWord* wordTag);
@@ -114,7 +120,9 @@ class GIApreprocessorMultiwordReductionClass
 	public: bool determineIsAdjective(GIApreprocessorWord* wordTag);
 		public: bool determineIsAdjective(const string word);
 	public: bool determineIsNoun(GIApreprocessorWord* wordTag);
-		public: bool determineIsNoun(const string word);
+		public: bool determineIsNoun(GIApreprocessorWord* wordTag, string* baseNameFound, int* grammaticalBaseForm);
+			public: bool determineIsNoun(const string word);
+			public: bool determineNounPluralVariant(const string word, GIApreprocessorMultiwordReductionWord** nounBaseFormFound);
 	
 	public: bool findWordInWordList(unordered_map<string, GIApreprocessorMultiwordReductionWord*>* wordList, const string word);
 		public: bool findWordInWordList(unordered_map<string, GIApreprocessorMultiwordReductionWord*>* wordList, const string word, GIApreprocessorMultiwordReductionWord** wordFound);

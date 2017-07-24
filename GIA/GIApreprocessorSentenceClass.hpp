@@ -164,6 +164,10 @@ public:
 	#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
 	GIAsentence* sentenceReference;
 	#endif
+	
+	#ifdef GIA_NEURAL_NETWORK
+	int definite;
+	#endif
 };
 
 class GIApreprocessorLogicReferenceVariable

@@ -25,7 +25,7 @@
  * File Name: GIAneuralNetwork.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3d3c 17-July-2017
+ * Project Version: 3d4a 18-July-2017
  * Description: 
  *
  *******************************************************************************/
@@ -37,30 +37,82 @@
 #include "ANNneuronClass.hpp"
 #include "ANNneuronConnectionClass.hpp"
 #include "GIAtranslatorOperations.hpp"
+#include "GIAneuralNetworkOperations.hpp"
+#include "SHAREDvars.hpp"
+#include "GIApreprocessorMultiwordReduction.hpp"
 
-#define GIA_NEURAL_NETWORK_LAYER_CONCEPT_NEURONS (1)
-#define GIA_NEURAL_NETWORK_LAYER_SPECIFIC_CONCEPT_NEURONS (2)
-#define GIA_NEURAL_NETWORK_LAYER_SYNAPSE_ARTIFICIAL_INSTANCE_NEURONS (3)
-#define GIA_NEURAL_NETWORK_SUBNET_COUNTER (0)
+#define GIA_TRANSLATOR_ENGLISH_INDEFINITE_CONCEPT_DEFINITION_DELIMITER "is"	//e.g. a dog is an animal
+#define GIA_TRANSLATOR_ENGLISH_PLURAL_CONCEPT_DEFINITION_DELIMITER "are"	//e.g. dogs are animals
+
+#define GIA_TRANSLATOR_ENGLISH_ARTICLES_NUMBER_OF_TYPES (3)
+static string translatorEnglishArticlesArray[GIA_TRANSLATOR_ENGLISH_ARTICLES_NUMBER_OF_TYPES] = {"a", "an", "the"};
+
+#define GIA_TRANSLATOR_ENGLISH_POSSESSIVE_DETERMINERS_NUMBER_OF_TYPES (8)
+static string translatorEnglishPossessiveDeterminersArray[GIA_TRANSLATOR_ENGLISH_POSSESSIVE_DETERMINERS_NUMBER_OF_TYPES] = {"my", "your", "his", "her", "its", "our", "their", "'s"};	//one's
+
+#define GIA_TRANSLATOR_ENGLISH_NUMBERS_NUMBER_OF_TYPES (28)
+static string translatorEnglishNumbersArray[GIA_TRANSLATOR_ENGLISH_NUMBERS_NUMBER_OF_TYPES] = {"zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"};
+
+#define GIA_TRANSLATOR_ENGLISH_NUMBERS_NUMERICAL_NUMBER_OF_TYPES (10)
+static char translatorEnglishNumbersNumericalArray[GIA_TRANSLATOR_ENGLISH_NUMBERS_NUMERICAL_NUMBER_OF_TYPES] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
+
+#define GIA_TRANSLATOR_ENGLISH_INDEFINITE_PRONOUNS_PLURAL_NUMBER_OF_TYPES (5)
+static string translatorEnglishIndefinitePronounsPluralArray[GIA_TRANSLATOR_ENGLISH_INDEFINITE_PRONOUNS_PLURAL_NUMBER_OF_TYPES] = {"both", "few", "fewer", "many", "several"};
+
+#define GIA_TRANSLATOR_ENGLISH_INDEFINITE_PRONOUNS_PLURAL_OR_SINGULAR_NUMBER_OF_TYPES (6)
+static string translatorEnglishIndefinitePronounsPluralOrSingularArray[GIA_TRANSLATOR_ENGLISH_INDEFINITE_PRONOUNS_PLURAL_OR_SINGULAR_NUMBER_OF_TYPES] = {"all", "any", "more", "most", "some", "such"};
+//#define GIA_TRANSLATOR_ENGLISH_INDEFINITE_PRONOUNS_SINGULAR_NUMBER_OF_TYPES (4)
+//static string translatorEnglishIndefinitePronounsSingular[GIA_TRANSLATOR_ENGLISH_INDEFINITE_PRONOUNS_SINGULAR_NUMBER_OF_TYPES] = {"another", "each", "either", "every"};
+
+#define GIA_TRANSLATOR_ENGLISH_DEMONSTRATIVE_PRONOUNS_PLURAL_NUMBER_OF_TYPES (2)
+static string translatorEnglishDemonstrativePronounsPluralArray[GIA_TRANSLATOR_ENGLISH_DEMONSTRATIVE_PRONOUNS_PLURAL_NUMBER_OF_TYPES] = {"these", "those"};	//such?
+//#define GIA_TRANSLATOR_ENGLISH_DEMONSTRATIVE_PRONOUNS_SINGULAR_NUMBER_OF_TYPES (2)
+//static string translatorEnglishDemonstrativePronounsSingular[GIA_TRANSLATOR_ENGLISH_DEMONSTRATIVE_PRONOUNS_SINGULAR_NUMBER_OF_TYPES] = {"this", "that"};
+
+#define GIA_TRANSLATOR_ENGLISH_DETERMINER_DEFINITE_NUMBER_OF_TYPES (3)
+static string translatorEnglishDeterminerDefiniteArray[GIA_TRANSLATOR_ENGLISH_DETERMINER_DEFINITE_NUMBER_OF_TYPES] = {GRAMMATICAL_DETERMINER_DEFINITE, GRAMMATICAL_DETERMINER_DEFINITE_EACH, GRAMMATICAL_DETERMINER_DEFINITE_EVERY};
+#define GIA_TRANSLATOR_ENGLISH_DETERMINER_INDEFINITE_NUMBER_OF_TYPES (2)
+static string translatorEnglishDeterminerIndefiniteArray[GIA_TRANSLATOR_ENGLISH_DETERMINER_INDEFINITE_NUMBER_OF_TYPES] = {GRAMMATICAL_DETERMINER_INDEFINITE_PLURAL, GRAMMATICAL_DETERMINER_INDEFINITE_SINGULAR};
+
+
+
+
 
 class GIAneuralNetworkClass
 {
 	private: GIAtranslatorOperationsClass GIAtranslatorOperations;
 	private: ANNneuronClassClass ANNneuronClass;
+	private: SHAREDvarsClass SHAREDvars;
+	private: GIAneuralNetworkOperationsClass GIAneuralNetworkOperations;
+	private: GIApreprocessorMultiwordReductionClass GIApreprocessorMultiwordReduction;
 	
-	#ifndef GIA_NEURAL_NETWORK_ACTIVE
-	public: bool generateNeuralNetFromSemanticNet(GIAtranslatorVariablesClass* translatorVariables);
-		#ifdef GIA_NEURAL_NETWORK_GENERATE_SPECIFIC_CONCEPT_NETWORKS
-		private: bool calculateLayerOfSpecificConceptNeuron(GIAentityNode* entity, int layer, int* maxLayer);
-		private: bool getSpecificConceptNeuronAndLink(ANNneuron** currentSynapseArtificialInstanceNeuron, GIAentityNode* entity, ANNneuron** specificConceptNeuronFound, long* neuronIDcounter, long* orderIDcounter);
-		#endif
-		private: bool getConceptNeuron(GIAentityNode* entity, ANNneuron** conceptNeuronFound);
-		private: bool generateSubnetFromConnectedInstances(ANNneuron** currentSynapseArtificialInstanceNeuron, ANNneuron* conceptNeuron, GIAentityNode* instanceEntity, bool direction, int artificialLayer, long* neuronIDcounter, long* orderIDcounter);
+	#ifdef GIA_NEURAL_NETWORK_ACTIVE
+	public: bool addTextToNetwork(GIAtranslatorVariablesClass* translatorVariables);
+		private: bool addTextToNetworkLogicReference(GIAneuralNetworkVariablesClass* neuralNetworkVariables, GIApreprocessorLogicReference* firstLogicReferenceInList, ANNneuron* higherLogicReferenceArtificialSynapseNeuron, bool higherLogicReferenceArtificialSynapseNeuronDirection);
+			#ifdef GIA_NEURAL_NETWORK_REPLACE_WORDS_WITH_LEMMAS
+			private: bool replaceWordsWithLemmas(GIApreprocessorSubReferenceSet* referenceSet);
+			#endif
+			private: bool detectIndefiniteConceptDefinition(GIApreprocessorSubReferenceSet* referenceSetSubject, GIApreprocessorSubReferenceSet* referenceSetObject, GIApreprocessorSubReferenceSet* referenceSetDelimiter);
+			private: bool identifyAndDemarcateConceptsInReferenceSet(GIAneuralNetworkVariablesClass* neuralNetworkVariables, GIApreprocessorSubReferenceSet* currentSubReferenceSetInList, int referenceSetType, bool conceptDefinitionDetectedInSentence, bool* foundConcept, ANNneuron** conceptNeuronFound);				
+			private: bool detectIfWordIsConcept(const vector<GIApreprocessorWord*>* subReferenceSetContents, int wordIndex, bool* specificConceptDetected, int* indexOfStartOfSpecificConcept, bool indefiniteConceptDefinitionFound);	
+				private: bool detectIfWordIsDeterminer(const string word);
+				private: bool findIndexOfStartOfSpecificConcept(const vector<GIApreprocessorWord*>* subReferenceSetContents, const int startIndexToSearch, int* indexOfStartOfSpecificConcept);
+				private: bool detectIfWordIsPluralNoun(const GIApreprocessorWord* word);
+			private: bool findOrAddReferenceSetInNetwork(GIAneuralNetworkVariablesClass* neuralNetworkVariables, GIApreprocessorSubReferenceSet* firstSubReferenceSetInList, ANNneuron** referenceSetSubnetEntry, ANNneuron* referenceSetDelimiterSubnetEntry, int referenceSetType);
+				private: void calculateNumberActiveConceptNeuronsInSubnet(ANNneuronConnection* currentNeuronConnectionInInstanceSubnet, int* numberOfActiveConceptNeuronsInSubnet, long* activationAgeOfSubnetSynapsesTotal);
+				private: void calculateNumberActiveConceptNeuronsInSubnetReset(ANNneuronConnection* currentNeuronConnectionInInstanceSubnet);
+				private: void calculateNumberActiveConceptNeuronsInSubnetUpdateActivationAge(ANNneuronConnection* currentNeuronConnectionInInstanceSubnet);
+					private: void calculateNumberActiveConceptNeuronsInSubnet(ANNneuronConnection* currentNeuronConnectionInInstanceSubnet, bool direction, int* numberOfActiveConceptNeuronsInSubnet, long* activationAgeOfSubnetSynapsesTotal, bool reset, bool updateActivationAge);
+				private: bool addReferenceSetInNetwork(GIAneuralNetworkVariablesClass* neuralNetworkVariables, GIApreprocessorSubReferenceSet* firstSubReferenceSetInList, ANNneuron** referenceSetSubnetEntry, ANNneuron* referenceSetDelimiterSubnetEntry, int referenceSetType);
+			private: bool createDelimiterArtificialSynapseNeuron(GIAneuralNetworkVariablesClass* neuralNetworkVariables, ANNneuron** referenceSetDelimiterSubnetEntry, GIApreprocessorSubReferenceSet* referenceSetDelimiter);
+			private: bool connectReferenceSetsInNetwork(GIAneuralNetworkVariablesClass* neuralNetworkVariables, ANNneuron* referenceSetSubjectSubnetEntry, ANNneuron* referenceSetObjectSubnetEntry, ANNneuron** referenceSetDelimiterSubnetEntry, GIApreprocessorSubReferenceSet* referenceSetDelimiter);
+				private: ANNneuron* findOrAddConceptAndConnectNewSynapseArtificialInstanceNeuron(GIAneuralNetworkVariablesClass* neuralNetworkVariables, GIApreprocessorWord* wordTag);
+	public: bool performQuery(GIAtranslatorVariablesClass* translatorVariables, GIAtranslatorVariablesClass* translatorVariablesQuery);
+	public: bool determineReferenceSetDefinite(GIApreprocessorSubReferenceSet* firstSubReferenceSetInList);
+	private: GIApreprocessorWord* getDelimiterWord(GIApreprocessorSubReferenceSet* referenceSetDelimiter);
+	private: GIApreprocessorWord* getLogicReferenceWord(GIApreprocessorLogicReference* logicReference);
+	private: int generateArtificialLayer(GIAneuralNetworkVariablesClass* neuralNetworkVariables);
 	#endif
-	private: ANNneuron* generateNeuralNetFromSemanticNet(ANNneuron* firstInputNeuronInNetwork, const string conceptEntityName);
-	private: ANNneuron* getLastNeuronInNeuralNet(ANNneuron* firstInputNeuronInNetwork);
-	private: bool createANNconnection(ANNneuron* neuron1, ANNneuron* neuron2);
-
 
 };
 

@@ -25,7 +25,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3d3c 17-July-2017
+ * Project Version: 3d4a 18-July-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -747,8 +747,16 @@
 	#ifdef USE_ANN
 		#define GIA_NEURAL_NETWORK
 		#ifdef GIA_NEURAL_NETWORK
+			//#define GIA_NEURAL_NETWORK_CREATE_DIRECT_CONNECTION_BETWEEN_DELIMITER_AND_OBJECT	//not coded or used
+			#define GIA_NEURAL_NETWORK_BYPASS_AUXILIARIES
+			#define GIA_NEURAL_NETWORK_REPLACE_WORDS_WITH_LEMMAS
+			//#define GIA_NEURAL_NETWORK_ACTIVE	//3d4a	//not yet coded (must replace GIA referencing and queries with neural net processing)
+			#ifdef GIA_NEURAL_NETWORK_ACTIVE
+				#define GIA_NEURAL_NETWORK_REFERENCE_SET_IDENTIFICATION_MAX_ERROR (1)	//should be dynamic depending on size of reference set (currently set to 1 to take into account mismatch between indefinite/definite determiners for a uniquely identifiable/referenced referenceSet; a/the)	//assume that there are no stray words (e.g. "that")	//FUTURE: need to take into account lemma differences - eg The dog rides the bike. The dog that rode the bike... (rides/rode)
+				#define GIA_DEBUG_NEURAL_NETWORK_ACTIVE
+				//NB GIA_NEURAL_NETWORK_ACTIVE requires GIA_PREPROCESSOR_SENTENCE and GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET
+			#endif
 			//#ifdef GIA_CREATE_SHORTCUTS_TO_CONCEPT_ENTITIES	//not yet defined
-				//#define GIA_NEURAL_NETWORK_ACTIVE	//not yet coded (must replace GIA referencing and queries with neural net processing)
 				#define GIA_NEURAL_NETWORK_GENERATE_SPECIFIC_CONCEPT_NETWORKS
 				#ifdef GIA_NEURAL_NETWORK_GENERATE_SPECIFIC_CONCEPT_NETWORKS
 					#define GIA_NEURAL_NETWORK_GENERATE_SEPARATE_CONCEPT_NETWORKS_RECURSE	//this is required in the case where there are multiple layers of specific concepts
@@ -763,6 +771,7 @@
 			#endif
 		#endif
 	#endif
+	#define GIA_PREPROCESSOR_DERIVE_NOUN_VARIANTS
 #endif
 
 //#define GIA_DEBUG_DISABLE_3c_CODE
@@ -830,6 +839,7 @@
 	#else
 		//NB linkHavingPropertyConditionsAndBeingDefinitionConditions is no longer supported
 	#endif
+	
 	#define GIA_PREPROCESSOR_FIND_EXISTING_RELATIONSHIP_IN_SENTENCE_ENFORCE_SAME_SENTENCE_CHECKS	//3a6d
 	
 	//#define GIA_NLG_MORPHOLOGY_GENERATOR
@@ -856,7 +866,11 @@
 		//#define GIA_PREPROCESSOR_SUPPORT_PUNCTUATION_MARKS_WITH_PRECEEDING_WHITE_SPACE	//not yet coded: do not currently support punctuation marks with preceeding white space. Currently skip (do not parse) multiple white space/punctuation characters (eg ". "/".."/"  "/" .")	
 		#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_REDUCE_ALL_WORD_TYPES	//don't just reduce multiword prepositions (reduce multiword verbs, nouns, adjectives and adverbs also)
 		#ifndef USE_NLC
-			//#define GIA_PREPROCESSOR_SENTENCE	//3a1a
+			#ifdef GIA_NEURAL_NETWORK_ACTIVE
+				#define GIA_PREPROCESSOR_SENTENCE
+			#else
+				//#define GIA_PREPROCESSOR_SENTENCE	//3a1a	//optional
+			#endif
 		#endif
 		#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_LOAD_WORD_LISTS
 		#ifdef GIA_PREPROCESSOR_SENTENCE
@@ -916,7 +930,6 @@
 			#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET
 			#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET
 				//#assert defined GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
-				
 				
 				#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_RECORD_SAME_REFERENCE_SET_DELIMITERS	//this is currently required to process delimiter (eg being/having/verb/preposition) tense, adverbs (eg very near), and adjectives (eg rides fast) using NLP 	
 				#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_RECORD_SAME_REFERENCE_SET_DELIMITERS

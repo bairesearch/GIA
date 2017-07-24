@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorMultiwordReductionClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3d3c 17-July-2017
+ * Project Version: 3d4a 18-July-2017
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  *
@@ -45,7 +45,13 @@ GIApreprocessorWord::GIApreprocessorWord(void)
 	#endif
 			
 	nextTag = NULL;
-	
+
+	#ifdef GIA_NEURAL_NETWORK
+	neuralNetworkPreprocessorWordType = GIA_NEURAL_NETWORK_PREPROCESSOR_WORD_TYPE_UNDEFINED;
+	wordShortcutToConceptNeuron = NULL;
+	tagNameOriginalNonLemma = "";
+	#endif
+		
 	plainTextWord = false;
 }
 GIApreprocessorWord::GIApreprocessorWord(string tagNameNew)
@@ -74,12 +80,12 @@ GIApreprocessorMultiwordReductionWord::GIApreprocessorMultiwordReductionWord(voi
 	tagNameLemma = "";
 
 	base = false;
-	for(int i=0; i<GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_MAX_NUM_TENSE_FORMS; i++)
+	for(int i=0; i<GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_MAX_NUM_TENSE_FORMS; i++)
 	{
-		grammaticalTenseFormsArray[i][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = "";
-		grammaticalTenseFormsArray[i][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_ALTERNATE] = "";
+		grammaticalTenseFormsArray[i][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = "";
+		grammaticalTenseFormsArray[i][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_ALTERNATE] = "";
 	}
-	grammaticalTenseForm = GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_INFINITIVE;
+	grammaticalTenseForm = GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_INFINITIVE;
 	
 	grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_INFINITIVE_OR_IMPERATIVE_OR_PRESENT_NOT_THIRD_PERSON_SINGULAR_OR_STATE_TEMP;
 	baseName = "";
@@ -120,7 +126,7 @@ GIApreprocessorMultiwordReductionPlainTextWord::GIApreprocessorMultiwordReductio
 	collapsedMultiwordWord = false;
 	collapsedMultiwordWordType = GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DUMMY_COLLAPSED_MULTIWORD_UNDEFINED_TYPE;
 	collapsedMultiwordWordTemp = false;
-	grammaticalTenseFormDetected = GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_BASE_TENSE_FORM_INFINITIVE;
+	grammaticalTenseFormDetected = GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_INFINITIVE;
 	
 	#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
 	preprocessorUpperLevelWordReference = NULL;

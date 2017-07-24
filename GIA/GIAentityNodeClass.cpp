@@ -25,7 +25,7 @@
  * File Name: GIAentityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3d3c 17-July-2017
+ * Project Version: 3d4a 18-July-2017
  *
  *******************************************************************************/
 
@@ -281,7 +281,7 @@ GIAentityNode::GIAentityNode(void)
 	shortcutToNonspecificConceptEntity = NULL;
 	//shortcutsToSpecificConceptEntities = NULL;
 	#ifdef GIA_NEURAL_NETWORK
-	shortcutToConceptNeuron = NULL;
+	entityShortcutToConceptNeuron = NULL;
 	#endif
 	#endif
 	#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE

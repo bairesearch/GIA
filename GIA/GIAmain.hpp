@@ -25,7 +25,7 @@
  * File Name: GIAmain.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3d3c 17-July-2017
+ * Project Version: 3d4a 18-July-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -76,7 +76,7 @@
 #include "ANNdraw.hpp"
 #include "ANNxmlConversion.hpp"
 #include "GIAneuralNetwork.hpp"
-#include "GIAneuralNetworkXmlConversion.hpp"
+#include "GIAneuralNetworkOperations.hpp"
 #endif
 
 #define GIA_MAXIMUM_NUMBER_OF_FILES_IN_INPUT_FILE_LIST (1000000)
@@ -121,7 +121,7 @@ class GIAmainClass
 	private: ANNdisplayClass ANNdisplay;
 	private: ANNdrawClass ANNdraw;
 	private: GIAneuralNetworkClass GIAneuralNetwork;
-	private: GIAneuralNetworkXmlConversionClass GIAneuralNetworkXmlConversion;
+	private: GIAneuralNetworkOperationsClass GIAneuralNetworkOperations;
 	#endif
 
 	public: bool executeGIA(
