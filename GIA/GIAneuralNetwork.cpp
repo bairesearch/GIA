@@ -25,7 +25,7 @@
  * File Name: GIAneuralNetwork.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3d4a 18-July-2017
+ * Project Version: 3d4b 18-July-2017
  * Description: 
  *
  *******************************************************************************/
@@ -481,7 +481,14 @@ bool GIAneuralNetworkClass::findOrAddReferenceSetInNetwork(GIAneuralNetworkVaria
 				{
 					ANNneuron* conceptNeuron = word->wordShortcutToConceptNeuron;		//ANNneuron* conceptNeuron = findConceptInNetwork(wordTag);
 					conceptNeuron->GIAactiveForSubnetIdentification = true;
-					idealNumberOfActiveConceptNeuronsInSubnet++;
+					#ifdef GIA_NEURAL_NETWORK_BYPASS_AUXILIARIES
+					if(!(currentSubReferenceSetInList->isReferenceSetDelimiter) || (currentSubReferenceSetInList->delimiterType != GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_AUXILIARY))
+					{
+					#endif
+						idealNumberOfActiveConceptNeuronsInSubnet++;
+					#ifdef GIA_NEURAL_NETWORK_BYPASS_AUXILIARIES
+					}
+					#endif
 				}
 			}
 			currentSubReferenceSetInList = currentSubReferenceSetInList->next;
@@ -523,7 +530,7 @@ bool GIAneuralNetworkClass::findOrAddReferenceSetInNetwork(GIAneuralNetworkVaria
 
 		if(foundExistingSubnet && (idealNumberOfActiveConceptNeuronsInSubnet-maxNumberOfActiveConceptNeuronsInSubnet <= GIA_NEURAL_NETWORK_REFERENCE_SET_IDENTIFICATION_MAX_ERROR))
 		{
-			if(idealNumberOfActiveConceptNeuronsInSubnet == maxNumberOfActiveConceptNeuronsInSubnet)
+			if(maxNumberOfActiveConceptNeuronsInSubnet >= idealNumberOfActiveConceptNeuronsInSubnet)
 			{
 				//use existing subnet
 				cout << "use existing subnet" << endl;
@@ -541,7 +548,9 @@ bool GIAneuralNetworkClass::findOrAddReferenceSetInNetwork(GIAneuralNetworkVaria
 				ANNneuron* conceptNeuronPrevious = NULL;
 				ANNneuron* previousConceptNeuronOrConnectedSynapse = NULL;
 				GIApreprocessorWord* previousWord = NULL; 
-
+				
+				bool firstValidWordInReferenceSet = true;
+				
 				GIApreprocessorSubReferenceSet* currentSubReferenceSetInList = firstSubReferenceSetInList;
 				while(currentSubReferenceSetInList->next != NULL)
 				{
@@ -566,32 +575,44 @@ bool GIAneuralNetworkClass::findOrAddReferenceSetInNetwork(GIAneuralNetworkVaria
 								for(int i=0; i<conceptNeuron->frontANNneuronConnectionList.size(); i++)
 								{
 									ANNneuronConnection* conceptConnection = (conceptNeuron->frontANNneuronConnectionList)[i];
-									if(conceptConnection->GIAalreadyParsed)
+									if(conceptConnection->GIAconnectionType == GIA_ANN_CONNECTION_TYPE_ARTIFICIAL_INSTANCE) //|| GIA_ANN_CONNECTION_TYPE_CONCEPT_DEFINITION_ARTIFICIAL_INSTANCE?	//CHECKTHIS (currently do not reference existing specific concept definitions; eg "red dogs that eat pies..."
 									{
-										ANNneuron* artificialInstanceNeuron = conceptConnection->frontNeuron;
-										for(int i=0; i<artificialInstanceNeuron->backANNneuronConnectionList.size(); i++)
-										{	
-											ANNneuronConnection* artificialInstanceNeuronConnectionReverse = (artificialInstanceNeuron->backANNneuronConnectionList)[i];
-											if(artificialInstanceNeuronConnectionReverse != conceptConnection)
-											{
-												if(artificialInstanceNeuronConnectionReverse->GIAalreadyParsed)	//redundant
+										if(conceptConnection->GIAalreadyParsed)
+										{
+											ANNneuron* artificialInstanceNeuron = conceptConnection->frontNeuron;
+											for(int i=0; i<artificialInstanceNeuron->backANNneuronConnectionList.size(); i++)
+											{	
+												ANNneuronConnection* artificialInstanceNeuronConnectionReverse = (artificialInstanceNeuron->backANNneuronConnectionList)[i];
+												if(artificialInstanceNeuronConnectionReverse != conceptConnection)
 												{
-													ANNneuron* artificialInstanceNeuronPrevious = artificialInstanceNeuronConnectionReverse->backNeuron;
-													for(int i=0; i<artificialInstanceNeuronPrevious->backANNneuronConnectionList.size(); i++)
-													{	
-														ANNneuronConnection* artificialInstanceNeuronPreviousConnectionReverse = (artificialInstanceNeuronPrevious->backANNneuronConnectionList)[i];
-														if(artificialInstanceNeuronPreviousConnectionReverse->GIAalreadyParsed)	//redundant
+													if(artificialInstanceNeuronConnectionReverse->GIAalreadyParsed)	//redundant
+													{
+														ANNneuron* artificialInstanceNeuronPrevious = artificialInstanceNeuronConnectionReverse->backNeuron;
+														if(artificialInstanceNeuronPrevious->GIAisConceptEntity)
 														{
-															ANNneuron* conceptNeuronPreviousTemp = artificialInstanceNeuronPreviousConnectionReverse->backNeuron;
-															if(conceptNeuronPreviousTemp == conceptNeuronPrevious)
+															if(artificialInstanceNeuronPrevious == conceptNeuronPrevious)	//CHECKTHIS what if conceptNeuronPrevious not yet defined?
 															{
 																directConnectionAlreadyMade = true;	
 																artificialInstanceNeuronWithDirectConnection = artificialInstanceNeuron;
 															}
 														}
+														
+														for(int i=0; i<artificialInstanceNeuronPrevious->backANNneuronConnectionList.size(); i++)
+														{	
+															ANNneuronConnection* artificialInstanceNeuronPreviousConnectionReverse = (artificialInstanceNeuronPrevious->backANNneuronConnectionList)[i];
+															if(artificialInstanceNeuronPreviousConnectionReverse->GIAalreadyParsed)	//redundant
+															{
+																ANNneuron* conceptNeuronPreviousTemp2 = artificialInstanceNeuronPreviousConnectionReverse->backNeuron;
+																if(conceptNeuronPreviousTemp2 == conceptNeuronPrevious)	//CHECKTHIS what if conceptNeuronPrevious not yet defined?
+																{
+																	directConnectionAlreadyMade = true;	
+																	artificialInstanceNeuronWithDirectConnection = artificialInstanceNeuron;
+																}
+															}
+														}
 													}
 												}
-											}	
+											}
 										}
 									}
 								}
@@ -600,13 +621,15 @@ bool GIAneuralNetworkClass::findOrAddReferenceSetInNetwork(GIAneuralNetworkVaria
 							if(directConnectionAlreadyMade)	//subnet already contains a direct connection between current word and previous word
 							{
 								previousConceptNeuronOrConnectedSynapse = artificialInstanceNeuronWithDirectConnection;
+								firstValidWordInReferenceSet = false;
 							}
 							else
 							{
 								//connect previousConceptNeuronOrConnectedSynapse to new concept/synapse	//CHECKTHIS
-								if(i == 0)
+								if(firstValidWordInReferenceSet)
 								{
 									previousConceptNeuronOrConnectedSynapse = conceptNeuron;
+									firstValidWordInReferenceSet = false;
 								}
 								else
 								{

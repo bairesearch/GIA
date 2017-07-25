@@ -25,7 +25,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3d4a 18-July-2017
+ * Project Version: 3d4b 18-July-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -747,11 +747,11 @@
 	#ifdef USE_ANN
 		#define GIA_NEURAL_NETWORK
 		#ifdef GIA_NEURAL_NETWORK
-			//#define GIA_NEURAL_NETWORK_CREATE_DIRECT_CONNECTION_BETWEEN_DELIMITER_AND_OBJECT	//not coded or used
-			#define GIA_NEURAL_NETWORK_BYPASS_AUXILIARIES
-			#define GIA_NEURAL_NETWORK_REPLACE_WORDS_WITH_LEMMAS
 			//#define GIA_NEURAL_NETWORK_ACTIVE	//3d4a	//not yet coded (must replace GIA referencing and queries with neural net processing)
 			#ifdef GIA_NEURAL_NETWORK_ACTIVE
+				//#define GIA_NEURAL_NETWORK_CREATE_DIRECT_CONNECTION_BETWEEN_DELIMITER_AND_OBJECT	//not coded or used
+				#define GIA_NEURAL_NETWORK_BYPASS_AUXILIARIES
+				#define GIA_NEURAL_NETWORK_REPLACE_WORDS_WITH_LEMMAS
 				#define GIA_NEURAL_NETWORK_REFERENCE_SET_IDENTIFICATION_MAX_ERROR (1)	//should be dynamic depending on size of reference set (currently set to 1 to take into account mismatch between indefinite/definite determiners for a uniquely identifiable/referenced referenceSet; a/the)	//assume that there are no stray words (e.g. "that")	//FUTURE: need to take into account lemma differences - eg The dog rides the bike. The dog that rode the bike... (rides/rode)
 				#define GIA_DEBUG_NEURAL_NETWORK_ACTIVE
 				//NB GIA_NEURAL_NETWORK_ACTIVE requires GIA_PREPROCESSOR_SENTENCE and GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET
