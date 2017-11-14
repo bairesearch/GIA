@@ -25,7 +25,7 @@
  * File Name: GIApreprocessor.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3d5c 11-August-2017
+ * Project Version: 3d5d 11-August-2017
  * Requirements: requires plain text file
  * Description: Logical Condition and Reference Set preprocessor
  *
@@ -709,10 +709,13 @@ bool GIApreprocessorClass::generatePreprocessorSentenceNLPparsablePhrases(GIApre
 	#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET
 	#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_SUB_REFERENCE_SETS
 	I 
+	[like]
 	custard tarts
+	[that are]
 	yellow	
 	#else
 	I 
+	[like]
 	custard tarts that are yellow
 	#endif
 	#else
@@ -2100,6 +2103,11 @@ bool GIApreprocessorClass::findPrimaryEntityBasedOnSentenceIndexAndTypeAndDelete
 		if(!findSameSentenceRelationshipEntityNodePointerInVector(subjectParentEntity, true, &parentEntityToPrimaryEntityConnection1, currentSubReferenceSetInList->sentenceIndex))
 		{
 			result = false;
+			
+			cerr << "currentSubReferenceSetInList->sentenceIndex = " << currentSubReferenceSetInList->sentenceIndex << endl;
+			cerr << "subjectParentEntity = " << subjectParentEntity->entityName << endl;
+			GIApreprocessorReferenceSet.printSubReferenceSet(currentSubReferenceSetInList);
+			
 			cerr << "GIApreprocessorClass::findPrimaryEntityBasedOnSentenceIndexAndTypeAndDeleteDummyVariableConnections{} isReferenceSetDelimiter: !findSameSentenceRelationshipEntityNodePointerInVector GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_SUBJECT" << endl;
 			exit(EXIT_ERROR);
 		}
@@ -2147,6 +2155,11 @@ bool GIApreprocessorClass::findPrimaryEntityBasedOnSentenceIndexAndTypeAndDelete
 			if(!findSameSentenceSubjectObjectEntityNodePointerInVector(relationshipParentEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_RELATIONSHIP_SUBJECT, &parentEntityToPrimaryEntityConnection1, currentSubReferenceSetInList->sentenceIndex))
 			{
 				result = false;
+				
+				cerr << "currentSubReferenceSetInList->sentenceIndex = " << currentSubReferenceSetInList->sentenceIndex << endl;
+				cerr << "relationshipParentEntity = " << relationshipParentEntity->entityName << endl;
+				GIApreprocessorReferenceSet.printSubReferenceSet(currentSubReferenceSetInList);
+
 				cerr << "GIApreprocessorClass::findPrimaryEntityBasedOnSentenceIndexAndTypeAndDeleteDummyVariableConnections{} GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_TYPE_SUBJECT: !findSameSentenceEntityNodePointerInVector GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_LEMMA" << endl;
 				exit(EXIT_ERROR);
 			}

@@ -25,7 +25,7 @@
  * File Name: GIAtranslator.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3d5c 11-August-2017
+ * Project Version: 3d5d 11-August-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1135,10 +1135,12 @@ bool GIAtranslatorClass::performGIApostProcessing(GIAtranslatorVariablesClass* t
 	
 	#ifdef GIA_PREPROCESSOR_SENTENCE
 	#ifndef GIA_PREPROCESSOR_SENTENCE_RECONCILE_REFERENCES_AFTER_SEMANTIC_PARSING_EVERY_SENTENCE
+	#ifndef GIA_DEBUG_PREPROCESSOR_SENTENCE_RECONCILE_REFERENCES_DISABLE
 	if(!GIApreprocessor.connectPreprocessorSentenceReferenceSetEntitiesToLogicReferenceEntitiesWrapper(translatorVariables->firstGIApreprocessorSentenceInList, translatorVariables))	//check the position of this function's execution
 	{
 		result = false;
 	}
+	#endif
 	#endif
 	#endif
 

@@ -25,7 +25,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3d5c 11-August-2017
+ * Project Version: 3d5d 11-August-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -775,6 +775,8 @@
 		//#define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_PREPOSITIONS_MUST_SUCCEED_COMMA	//removed 3d5b
 	//#endif
 	#define GIA_PREPROCESSOR_DERIVE_NOUN_VARIANTS
+	#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_SUPPORT_CONSECUTIVE_VERBS	//3d5d
+	//#define GIA_DEBUG_PREPROCESSOR_SENTENCE_RECONCILE_REFERENCES_DISABLE	//temp debug
 #endif
 
 //#define GIA_DEBUG_DISABLE_3c_CODE

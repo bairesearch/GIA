@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorReferenceSet.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3d5c 11-August-2017
+ * Project Version: 3d5d 11-August-2017
  * Requirements: requires plain text file
  * Description: Reference Set preprocessor
  *
@@ -55,6 +55,7 @@ class GIApreprocessorReferenceSetClass
 	public: bool hasReferenceSet(GIApreprocessorSubReferenceSet* referenceSet);
 	public: void setReferenceSetText(GIApreprocessorSubReferenceSet* referenceSet, vector<GIApreprocessorWord*>* text);
 	public: vector<GIApreprocessorWord*> getReferenceSetText(GIApreprocessorSubReferenceSet* referenceSet);
+	public: void printSubReferenceSet(GIApreprocessorSubReferenceSet* currentSubReferenceSetInList);
 	#endif
 };
 
