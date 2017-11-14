@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorMultiwordReduction.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3d5e 11-August-2017
+ * Project Version: 3d5f 11-August-2017
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  *
@@ -2364,6 +2364,23 @@ bool GIApreprocessorMultiwordReductionClass::determineVerbCaseStandardWithAdditi
 			*grammaticalBaseTenseForm = GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST;
 			foundVerbCaseStandardOrAdditional = true;
 		}
+		#ifdef GIA_PREPROCESSOR_DETERMINE_VERB_CASE_ADDITIONAL_EXTENDED
+		else if(determineVerbCaseAdditionalTenseModifier == GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION_TEMP)
+		{
+			*grammaticalBaseTenseForm = GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION;
+			foundVerbCaseStandardOrAdditional = true;
+		}
+		else if(determineVerbCaseAdditionalTenseModifier == GRAMMATICAL_TENSE_MODIFIER_POTENTIAL_TEMP)
+		{
+			*grammaticalBaseTenseForm = GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL;
+			foundVerbCaseStandardOrAdditional = true;
+		}
+		else if(determineVerbCaseAdditionalTenseModifier == GRAMMATICAL_TENSE_MODIFIER_POTENTIAL_INVERSE_TEMP)
+		{
+			*grammaticalBaseTenseForm = GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE;
+			foundVerbCaseStandardOrAdditional = true;
+		}
+		#endif
 	}
 	
 	return foundVerbCaseStandardOrAdditional;
