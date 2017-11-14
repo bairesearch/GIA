@@ -25,7 +25,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3d5a 11-August-2017
+ * Project Version: 3d5b 11-August-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -771,6 +771,9 @@
 			#endif
 		#endif
 	#endif
+	//#ifdef GIA_PREPROCESSOR_SENTENCE	//not yet defined
+		//#define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_PREPOSITIONS_MUST_SUCCEED_COMMA	//removed 3d5b
+	//#endif
 	#define GIA_PREPROCESSOR_DERIVE_NOUN_VARIANTS
 #endif
 
@@ -874,7 +877,7 @@
 			#ifdef GIA_NEURAL_NETWORK_ACTIVE
 				#define GIA_PREPROCESSOR_SENTENCE
 			#else
-				//#define GIA_PREPROCESSOR_SENTENCE	//3a1a	//optional
+				#define GIA_PREPROCESSOR_SENTENCE	//3a1a	//optional
 			#endif
 		#endif
 		#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_LOAD_WORD_LISTS

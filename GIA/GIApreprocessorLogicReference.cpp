@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorLogicReference.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3d5a 11-August-2017
+ * Project Version: 3d5b 11-August-2017
  * Requirements: requires plain text file
  * Description: Logic Reference preprocessor
  *
@@ -61,7 +61,6 @@ bool GIApreprocessorLogicReferenceClass::extractGIApreprocessorLogicReferenceCla
 		}
 		if(foundPreprocessorTag)
 		{
-			
 			XMLparserTag* currentTagInPreprocessor = firstTagInPreprocessorTag;
 			bool foundLogicReferencePreprocessorTag = false;
 			XMLparserTag* firstTagInLogicReferencePreprocessorTag = NULL;
@@ -260,7 +259,7 @@ bool GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor(const
 					{
 						#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_ABSTRACT_CONJUNCTIONS
 						//eg subsequent_to and before (FUTURE: and -> subsequent_to + before)
-						if(!fillLogicReferenceVariable(currentLogicReferenceInList, &logicReferenceVariableWordList, &logicReferenceVariableNameIndex, false, &expectToFindSubjectAuxObjectLogicReferenceVariable, wordIndexSentence))
+						if(!fillLogicReferenceVariable(currentLogicReferenceInList, &logicReferenceVariableWordList, &logicReferenceVariableNameIndex, &expectToFindSubjectAuxObjectLogicReferenceVariable, wordIndexSentence))
 						{
 							result = false;
 						}
@@ -275,7 +274,7 @@ bool GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor(const
 					//x and
 					//eg [The house is blue] and the chicken is happy.
 					//?eg [The house is blue, red] and green.
-					if(!fillLogicReferenceVariable(currentLogicReferenceInList, &logicReferenceVariableWordList, &logicReferenceVariableNameIndex, false, &expectToFindSubjectAuxObjectLogicReferenceVariable, wordIndexSentence))
+					if(!fillLogicReferenceVariable(currentLogicReferenceInList, &logicReferenceVariableWordList, &logicReferenceVariableNameIndex, &expectToFindSubjectAuxObjectLogicReferenceVariable, wordIndexSentence))
 					{
 						result = false;
 					}
@@ -320,12 +319,12 @@ bool GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor(const
 						#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
 						cout << "specialSwitch" << endl;
 						#endif
-
+	
 						currentLogicReferenceInListActive = currentLogicReferenceInList->previous->lastLogicReferenceInUpperLevel;
 						#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_ERROR_CHECKING
 						currentLogicReferenceInListActiveOriginal = currentLogicReferenceInListActive;
 						currentLogicReferenceInListActiveOriginalClass = currentLogicReferenceInListActive->logicReferenceClass;
-						cout << "1 currentLogicReferenceInListActiveOriginalClass = " << currentLogicReferenceInListActiveOriginalClass << endl;
+						//cout << "1 currentLogicReferenceInListActiveOriginalClass = " << currentLogicReferenceInListActiveOriginalClass << endl;
 						#endif
 
 						//eg The house is blue, considering the pie.	[make A (The house is blue) a sub logic reference dependent of logic reference]
@@ -339,6 +338,26 @@ bool GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor(const
 						currentLogicReferenceInListActive->firstSubLogicReferenceInListDependent->logicReferenceVariable = currentLogicReferenceInListActive->firstSubLogicReferenceInListArray->logicReferenceVariable;
 						currentLogicReferenceInListActive->firstSubLogicReferenceInListArray = NULL;
 					}
+					#ifndef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_PREPOSITIONS_MUST_SUCCEED_COMMA
+					else
+					{
+						if(logicReferenceVariableWordList.size() != 0)
+						{								
+							//eg The house is blue considering the apple.	(add 'The house is blue' to the currentLogicReferenceInList)
+							
+							specialSwitch = true;
+							if(!initialiseNewSubLogicReference(currentLogicReferenceInListActive, logicReferenceContents, logicReferenceClass, logicReferenceClassType, wordIndexSentence))	//NB logicReferenceContents is not used here as logicReferenceClass != GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_VERB
+							{
+								result = false;
+							}
+						
+							if(!fillLogicReferenceVariable(currentLogicReferenceInListActive->firstSubLogicReferenceInListDependent, &logicReferenceVariableWordList, &logicReferenceVariableNameIndex, &expectToFindSubjectAuxObjectLogicReferenceVariable, wordIndexSentence))
+							{
+								result = false;
+							}
+						}
+					}
+					#endif
 				}
 				if(!specialSwitch)
 				{	
@@ -427,7 +446,7 @@ bool GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor(const
 							}
 							*/
 							expectToFindSubjectAuxObjectLogicReferenceVariable = false;
-							if(!fillLogicReferenceVariable(currentLogicReferenceInListActive->firstSubLogicReferenceInListGovernor, &logicReferenceVariableWordList, &logicReferenceVariableNameIndex, false, &expectToFindSubjectAuxObjectLogicReferenceVariable, wordIndexSentence))
+							if(!fillLogicReferenceVariable(currentLogicReferenceInListActive->firstSubLogicReferenceInListGovernor, &logicReferenceVariableWordList, &logicReferenceVariableNameIndex, &expectToFindSubjectAuxObjectLogicReferenceVariable, wordIndexSentence))
 							{
 								result = false;
 							}
@@ -473,9 +492,11 @@ bool GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor(const
 				}
 				else if(logicReferenceClass == GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_PREPOSITION)
 				{
+					#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_PREPOSITIONS_MUST_SUCCEED_COMMA
 					#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_ERROR_CHECKING
 					if((currentLogicReferenceInListActiveOriginalClass == GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_UNDEFINED) || (currentLogicReferenceInListActiveOriginalClass == GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_CONJUNCTION))
 					{
+					#endif
 					#endif
 						if(logicReferenceVariableWordList.size() == 0)
 						{
@@ -493,9 +514,14 @@ bool GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor(const
 						else
 						{
 							//eg The house is blue considering the pie.
+							#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_PREPOSITIONS_MUST_SUCCEED_COMMA
 							cerr << "GIApreprocessorLogicReferenceClass::extractGIApreprocessorLogicReferenceClasses{} error: (logicReferenceClass == GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_PREPOSITION) && (logicReferenceVariableWordList->size() != 0)" << endl;
+							cerr << "currentWord->tagName = " << currentWord->tagName << endl;
+							GIApreprocessorMultiwordReductionClassObject.printWordList(&logicReferenceVariableWordList);
 							exit(EXIT_ERROR);
+							#endif
 						}
+					#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_PREPOSITIONS_MUST_SUCCEED_COMMA
 					#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_ERROR_CHECKING
 					}
 					else
@@ -505,6 +531,7 @@ bool GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor(const
 						cerr << "currentLogicReferenceInListActiveOriginalClass = " << currentLogicReferenceInListActiveOriginalClass << endl;
 						exit(EXIT_ERROR);
 					}
+					#endif
 					#endif
 
 					currentLogicReferenceInList = currentLogicReferenceInListActive->firstSubLogicReferenceInListGovernor;
@@ -523,7 +550,7 @@ bool GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor(const
 		}
 		else if(currentWord->tagName == SHAREDvars.convertCharToString(GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_NEW_LOGIC_REFERENCE_CHAR))
 		{	
-			if(!fillLogicReferenceVariable(currentLogicReferenceInList, &logicReferenceVariableWordList, &logicReferenceVariableNameIndex, true, &expectToFindSubjectAuxObjectLogicReferenceVariable, wordIndexSentence))
+			if(!fillLogicReferenceVariable(currentLogicReferenceInList, &logicReferenceVariableWordList, &logicReferenceVariableNameIndex, &expectToFindSubjectAuxObjectLogicReferenceVariable, wordIndexSentence))
 			{
 				result = false;
 			}
@@ -565,7 +592,7 @@ bool GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor(const
 		}
 		else if(((currentWord->tagName).length() == 1) && SHAREDvars.charInCharArray((currentWord->tagName)[0], nlpPunctionMarkCharacterEndOfSentenceArray, GIA_NLP_NUMBER_OF_PUNCTUATION_MARK_CHARACTERS_END_OF_SENTENCE))
 		{
-			if(!fillLogicReferenceVariable(currentLogicReferenceInList, &logicReferenceVariableWordList, &logicReferenceVariableNameIndex, false, &expectToFindSubjectAuxObjectLogicReferenceVariable, wordIndexSentence))
+			if(!fillLogicReferenceVariable(currentLogicReferenceInList, &logicReferenceVariableWordList, &logicReferenceVariableNameIndex, &expectToFindSubjectAuxObjectLogicReferenceVariable, wordIndexSentence))
 			{
 				result = false;
 			}
@@ -671,7 +698,7 @@ bool GIApreprocessorLogicReferenceClass::initialiseNewSubLogicReference(GIAprepr
 	*/
 }
 
-bool GIApreprocessorLogicReferenceClass::fillLogicReferenceVariable(GIApreprocessorLogicReference* currentLogicReferenceInList, vector<GIApreprocessorWord*>* logicReferenceVariableWordList, int* logicReferenceVariableNameIndex, const bool commaDetected, bool* expectToFindSubjectAuxObjectLogicReferenceVariable, const int wordIndexSentence)
+bool GIApreprocessorLogicReferenceClass::fillLogicReferenceVariable(GIApreprocessorLogicReference* currentLogicReferenceInList, vector<GIApreprocessorWord*>* logicReferenceVariableWordList, int* logicReferenceVariableNameIndex, bool* expectToFindSubjectAuxObjectLogicReferenceVariable, const int wordIndexSentence)
 {
 	//exit parsing of logical condition variable
 	

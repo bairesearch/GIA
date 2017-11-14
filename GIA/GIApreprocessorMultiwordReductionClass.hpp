@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorMultiwordReductionClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3d5a 11-August-2017
+ * Project Version: 3d5b 11-August-2017
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  *
@@ -481,6 +481,8 @@ class GIApreprocessorMultiwordReductionClassClass
 			
 	public: bool replaceWordListAtIndexWithSimpleSubstring(vector<GIApreprocessorWord*>* wordList, const int indexToPerformReplacement, const string stringSimpleReplacement);
 		public: bool replaceWordListAtIndexWithSimpleSubstring(vector<GIApreprocessorWord*>* wordList, const int indexToPerformReplacement, vector<GIApreprocessorWord*>* wordListReplacement);
+	
+	public: bool printWordList(const vector<GIApreprocessorWord*>* wordList);
 	#endif	
 
 };
