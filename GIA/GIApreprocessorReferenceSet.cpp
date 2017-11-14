@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorReferenceSet.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3d5d 11-August-2017
+ * Project Version: 3d5e 11-August-2017
  * Requirements: requires plain text file
  * Description: Reference Set preprocessor
  *
@@ -383,7 +383,7 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 				cout << "lastIndexOfReferenceSetDelimiterText = " << lastIndexOfReferenceSetDelimiterText << endl;
 				cout << "lastIndexOfPreviousReferenceSet = " << lastIndexOfPreviousReferenceSet << endl;
 				#endif
-				if(lastIndexOfReferenceSetDelimiterText < lastIndexOfPreviousReferenceSet)	//added 3d5d
+				if(lastIndexOfReferenceSetDelimiterText <= lastIndexOfPreviousReferenceSet)	//added 3d5d
 				{
 					if(formSubReferenceSetTextFromWordList(logicReferenceVariableWordList, &subReferenceSetText, lastIndexOfReferenceSetDelimiterText, lastIndexOfPreviousReferenceSet))
 					{
@@ -423,7 +423,7 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 				if(referenceSetDelimiterIndicatesSameReferenceSet)
 				{
 					vector<GIApreprocessorWord*> subReferenceSetText;
-					if(lastIndexOfReferenceSetDelimiterText < lastIndexOfPreviousReferenceSet)	//added 3d5d
+					if(lastIndexOfReferenceSetDelimiterText <= lastIndexOfPreviousReferenceSet)	//added 3d5d
 					{
 						if(formSubReferenceSetTextFromWordList(logicReferenceVariableWordList, &subReferenceSetText, lastIndexOfReferenceSetDelimiterText, lastIndexOfPreviousReferenceSet))
 						{
@@ -679,10 +679,12 @@ bool GIApreprocessorReferenceSetClass::addSubReferenceSetToReferenceSet(GIAprepr
 {
 	bool result = true;
 	
+	bool firstSubreferenceSetInList = true;
 	GIApreprocessorSubReferenceSet* currentSubReferenceSetInList = firstSubReferenceSetInList;
 	while(currentSubReferenceSetInList->next != NULL)
 	{
 		currentSubReferenceSetInList = currentSubReferenceSetInList->next;	
+		firstSubreferenceSetInList = false;
 	}
 	setReferenceSetText(currentSubReferenceSetInList, subReferenceSetText);	//currentSubReferenceSetInList->subReferenceSetContents = subReferenceSetText;
 	currentSubReferenceSetInList->isReferenceSetDelimiter = referenceSetDelimiter;
@@ -698,6 +700,8 @@ bool GIApreprocessorReferenceSetClass::addSubReferenceSetToReferenceSet(GIAprepr
 		currentSubReferenceSetInList->delimiterType = delimiterType;
 		currentSubReferenceSetInList->delimiterSpecialCase = delimiterSpecialCase;
 	}
+	currentSubReferenceSetInList->firstSubreferenceSetInList = firstSubreferenceSetInList;
+	
 	currentSubReferenceSetInList->next = new GIApreprocessorSubReferenceSet();
 	
 	return result;

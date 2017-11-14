@@ -169,6 +169,8 @@ public:
 	#ifdef GIA_NEURAL_NETWORK
 	int definite;
 	#endif
+	
+	bool firstSubreferenceSetInList;
 };
 
 class GIApreprocessorLogicReferenceVariable
