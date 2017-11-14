@@ -25,7 +25,7 @@
  * File Name: GIApreprocessor.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3d4b 18-July-2017
+ * Project Version: 3d5a 11-August-2017
  * Requirements: requires plain text file
  * Description: Logical Condition and Reference Set preprocessor
  *
@@ -2736,7 +2736,7 @@ bool GIApreprocessorClass::addSentenceFeatureOutputToPreprocessorSentenceWordLis
 				{
 					NLPparsedWordOriginal = SHAREDvars.convertCharToString(CHAR_CLOSE_BRACKET);
 				}
-				if(NLPparsedWordOriginal == GIA_STANFORD_PARSER_AND_CORENLP_FEATURE_PARSER_INVERTED_COMMAS_WORD)
+				if(SHAREDvars.textInTextArray(NLPparsedWordOriginal, stanfordParserAndCoreNLPinvertedCommasWordArray, GIA_STANFORD_PARSER_AND_CORENLP_FEATURE_PARSER_INVERTED_COMMAS_WORD_ARRAY_SIZE))
 				{
 					NLPparsedWordOriginal = SHAREDvars.convertCharToString(CHAR_INVERTED_COMMAS);
 				}

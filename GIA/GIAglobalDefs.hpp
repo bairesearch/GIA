@@ -25,7 +25,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3d4b 18-July-2017
+ * Project Version: 3d5a 11-August-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -747,7 +747,7 @@
 	#ifdef USE_ANN
 		#define GIA_NEURAL_NETWORK
 		#ifdef GIA_NEURAL_NETWORK
-			//#define GIA_NEURAL_NETWORK_ACTIVE	//3d4a	//not yet coded (must replace GIA referencing and queries with neural net processing)
+			#define GIA_NEURAL_NETWORK_ACTIVE	//3d4a	//not yet coded (must replace GIA referencing and queries with neural net processing)
 			#ifdef GIA_NEURAL_NETWORK_ACTIVE
 				//#define GIA_NEURAL_NETWORK_CREATE_DIRECT_CONNECTION_BETWEEN_DELIMITER_AND_OBJECT	//not coded or used
 				#define GIA_NEURAL_NETWORK_BYPASS_AUXILIARIES
@@ -814,8 +814,13 @@
 			#define GIA_STANFORD_PARSER_AND_CORENLP_FEATURE_PARSER_LEFT_BRACKET_LEMMA "-lrb-"
 			#define GIA_STANFORD_PARSER_AND_CORENLP_FEATURE_PARSER_RIGHT_BRACKET_WORD "-RRB-"
 			#define GIA_STANFORD_PARSER_AND_CORENLP_FEATURE_PARSER_RIGHT_BRACKET_LEMMA "-rrb-"
-			#define GIA_STANFORD_PARSER_AND_CORENLP_FEATURE_PARSER_INVERTED_COMMAS_WORD "''"
-			#define GIA_STANFORD_PARSER_AND_CORENLP_FEATURE_PARSER_INVERTED_COMMAS_LEMMA "''"
+			#define GIA_STANFORD_PARSER_AND_CORENLP_FEATURE_PARSER_INVERTED_COMMAS_WORD1 "``"	//3d5a
+			#define GIA_STANFORD_PARSER_AND_CORENLP_FEATURE_PARSER_INVERTED_COMMAS_WORD2 "''"
+			#define GIA_STANFORD_PARSER_AND_CORENLP_FEATURE_PARSER_INVERTED_COMMAS_LEMMA1 "``"	//3d5a
+			#define GIA_STANFORD_PARSER_AND_CORENLP_FEATURE_PARSER_INVERTED_COMMAS_LEMMA2 "''"
+			#define GIA_STANFORD_PARSER_AND_CORENLP_FEATURE_PARSER_INVERTED_COMMAS_WORD_ARRAY_SIZE (2)
+			static string stanfordParserAndCoreNLPinvertedCommasWordArray[GIA_STANFORD_PARSER_AND_CORENLP_FEATURE_PARSER_INVERTED_COMMAS_WORD_ARRAY_SIZE] = {GIA_STANFORD_PARSER_AND_CORENLP_FEATURE_PARSER_INVERTED_COMMAS_WORD1, GIA_STANFORD_PARSER_AND_CORENLP_FEATURE_PARSER_INVERTED_COMMAS_WORD2};
+
 		#endif
 		#define GIA_STANFORD_PARSER_AND_CORENLP_FEATURE_PARSER_ANOMALY_INTERPRET_CANNOT_AS_CAN_NOT	//3b5b	//note this will break characterIndexInSentenceContentsOriginalText (required implementation: need to preprepreprocess words like "cannot" that require splitting by NLP - ie preprocess the text before executing the GIA prepreprocessor createPreprocessSentences)
 		#ifdef GIA_STANFORD_PARSER_AND_CORENLP_FEATURE_PARSER_ANOMALY_INTERPRET_CANNOT_AS_CAN_NOT
