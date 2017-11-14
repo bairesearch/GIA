@@ -25,7 +25,7 @@
  * File Name: GIAneuralNetworkOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3d5f 11-August-2017
+ * Project Version: 3d6a 12-November-2017
  * Description: 
  *
  *******************************************************************************/
@@ -34,13 +34,22 @@
 #include "GIAneuralNetworkOperations.hpp"
 
 
+		
+
+
 GIAneuralNetworkVariablesClass::GIAneuralNetworkVariablesClass(void)
 {
 	firstInputNeuronInNetwork = NULL;
+	
 	neuronIDcounter = 0;
 	conceptNeuronOrderIDcounter = 0;
 	specificConceptNeuronOrderIDcounter = 0;
-	synapseArtificialInstanceOrderIDcounter = 0;
+	instanceNeuronOrderIDcounter = 0;
+	
+	#ifdef GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS
+	substanceConceptIDcounter = 0;
+	referenceSetDelimiterConceptIDcounter = 0;
+	#endif
 	
 	sentenceIndex = 0;
 }
@@ -50,7 +59,6 @@ GIAneuralNetworkVariablesClass::~GIAneuralNetworkVariablesClass(void)
 }
 
 
-		
 bool GIAneuralNetworkOperationsClass::readNeuralNetXMLfile(const string xmlFileName, ANNneuron* firstInputNeuronInNetwork)
 {
 	bool result = false;
@@ -75,19 +83,24 @@ bool GIAneuralNetworkOperationsClass::writeNeuralNetXMLfile(const string xmlFile
 	return result;
 }
 
-
 void GIAneuralNetworkOperationsClass::initiateGIAneuralNetwork(GIAneuralNetworkVariablesClass* neuralNetworkVariables)
 {
 	/*
 	Neural Net Format (for display only; not for back propogation)
 	artificial layer 1:  networkIndex/non-specific concept neurons
 	artificial layer 2:  specific concept neurons
-	artificial layer 3:  (non-concept) instance neurons
+	artificial layer 3:  instance neurons
+	#ifdef GIA_NEURAL_NETWORK_SYMBOLIC_CORE
+	artificial layer 2bi: substance concept index bit neurons
+	artificial layer 2bii: reference set delimiter (e.g. action/condition) concept index bit neurons
+	#endif
 	*/
 	
 	ANNneuron* firstConceptNeuron = neuralNetworkVariables->firstInputNeuronInNetwork;
 	ANNneuron* firstSpecificConceptNeuron = new ANNneuron();
-	ANNneuron* firstSynapseArtificialInstanceNeuron = new ANNneuron();
+	ANNneuron* firstInstanceNeuron = new ANNneuron();
+	ANNneuron* firstSubstanceConceptIndexBitNeuron = new ANNneuron();
+	ANNneuron* firstReferenceSetDelimiterConceptIndexBitNeuron = new ANNneuron();
 	
 	firstConceptNeuron->hasFrontLayer = true;
 	firstConceptNeuron->hasBackLayer = false;
@@ -95,14 +108,61 @@ void GIAneuralNetworkOperationsClass::initiateGIAneuralNetwork(GIAneuralNetworkV
 	firstConceptNeuron->firstNeuronInBackLayer = NULL;
 	firstSpecificConceptNeuron->hasFrontLayer = true;
 	firstSpecificConceptNeuron->hasBackLayer = true;
-	firstSpecificConceptNeuron->firstNeuronInFrontLayer = firstSynapseArtificialInstanceNeuron;
+	firstSpecificConceptNeuron->firstNeuronInFrontLayer = firstInstanceNeuron;
 	firstSpecificConceptNeuron->firstNeuronInBackLayer = firstConceptNeuron;
-	firstSynapseArtificialInstanceNeuron->hasFrontLayer = false;
-	firstSynapseArtificialInstanceNeuron->hasBackLayer = true;
-	firstSynapseArtificialInstanceNeuron->firstNeuronInFrontLayer = NULL;
-	firstSynapseArtificialInstanceNeuron->firstNeuronInBackLayer = firstSpecificConceptNeuron;
+	firstInstanceNeuron->hasBackLayer = true;
+	firstInstanceNeuron->firstNeuronInBackLayer = firstSpecificConceptNeuron;
+	#ifdef GIA_NEURAL_NETWORK_SYMBOLIC_CORE
+	firstInstanceNeuron->hasFrontLayer = true;
+	firstInstanceNeuron->firstNeuronInFrontLayer = firstSubstanceConceptIndexBitNeuron;
+	firstSubstanceConceptIndexBitNeuron->hasFrontLayer = true;
+	firstSubstanceConceptIndexBitNeuron->hasBackLayer = true;
+	firstSubstanceConceptIndexBitNeuron->firstNeuronInFrontLayer = firstReferenceSetDelimiterConceptIndexBitNeuron;
+	firstSubstanceConceptIndexBitNeuron->firstNeuronInBackLayer = firstInstanceNeuron;
+	firstReferenceSetDelimiterConceptIndexBitNeuron->hasFrontLayer = false;
+	firstReferenceSetDelimiterConceptIndexBitNeuron->hasBackLayer = true;
+	firstReferenceSetDelimiterConceptIndexBitNeuron->firstNeuronInFrontLayer = NULL;
+	firstReferenceSetDelimiterConceptIndexBitNeuron->firstNeuronInBackLayer = firstSubstanceConceptIndexBitNeuron;
+	#else
+	firstInstanceNeuron->hasFrontLayer = false;
+	firstInstanceNeuron->firstNeuronInFrontLayer = NULL;
+	#endif
 }
 
+#ifdef GIA_NEURAL_NETWORK_SYMBOLIC_CORE
+/*
+Assume neural net algorithm for language processing is dedicated (ie different to standard backpropogation with given inputs and outputs)
+a new neuron is assigned for every new concept, and concepts are binary coded (connected to concept index bit neurons)
+a new neuron assigned for each new instance, which is preconnected to the concept index bit neurons, and their synapses are tuned to detect the relevant concept (exhitatory and inhibitory)
+reference set delimiter instance neurons are connected to substance instance neurons with bidirectional synapses (electrical synapses).
+The subject and object synapses may be weighted differently to identify the direction of the reference set delimiter (e.g. action/condition); e.g. X sees Y instead of Y sees X.
+
+		hair [concept property / feature]
+	      \  |  /
+                dog [concept neurons]
+                 |   (e.g. 01111)
+               alsation                ride  [reference set delimiter concept neuron]
+              // | \\ (e.g. 01011)   // | \\ (e.g. 01011)
+             b b b b b               b b b b b  [concept index bit neurons]
+	     | | | | |	             | | | | |
+	     | | | | |	             | | | | |
+	     | | | | |	             | | | | |	
+	     | | | | |	             | | | | |		       
+	     | | | | |	             | | | | |
+	     \ \ |/ /	             | | | | |
+	       dog	  \          | | | | |
+	     | | | | |	     \       \ \ |/ / 
+	     | | | | |		       ride        - - - - - - -> (spatio-temporal index)
+	     | | | | |               | | | | |
+	     | | | | |	             | | | | |           	
+	     | | | | |	       /     | | | | |           
+	       bike         /        | | | | |
+	     | | | | |	             | | | | |	
+	     | | | | |	             | | | | |
+	     v v v v v	             v v v v v	     	     	              
+*/
+#endif
+#ifdef GIA_NEURAL_NETWORK_NON_SEMANTIC
 /*
 Assume neural net algorithm for language processing is dedicated (ie different to standard backpropogation with given inputs and outputs)
 method A [less realistic biological implementation]: a new neuron assigned for each new instance, and a new connection assigned for each new non-reference set [ie direct GIA semantic network mapping into neural network]
@@ -110,15 +170,16 @@ method B* [more realistic biological implementation]: a new neuron is assigned f
 	connections out of a neuron refer to a new instance
 		e.g. The red dog that rides the bike
 			  dog
-			     \	
+			     \ 		
 			       . [unique interneuron connection for given instance]
-			     /   \
-			    /      \	
-			   /	     . [unique interneuron connection for given instance]
-			  /        /    \
+			     /   \		
+			    /      \			[GIA_ANN_CONNECTION_TYPE_INSTANCE_TO_INSTANCE]
+			   /	     . [unique interneuron connection for given instance]	
+			  /        /    \		
 			red      rides   bike
 		references are identified by activating each of the concepts (ie words) of the sentence	and identifing the subnet that lights up (is activated); this is the subnet which will have the new relation assigned [or is the subnet which is being queried]
 */
+#endif
 
 #ifndef GIA_NEURAL_NETWORK_ACTIVE
 //NB neural connections are defined in same direction as GIA connections. Define front [direction=true] neural connections from concept to instance (synapse artificial neuron) and vice versa. Define front [direction=true] neural connections from concept to specific concept, to more specific concept etc.
@@ -128,7 +189,7 @@ bool GIAneuralNetworkOperationsClass::generateNeuralNetFromSemanticNet(GIAtransl
 	
 	//generate neurons
 	int xPosRel = 0;
-	
+		
 	//NB if the neural net is already populated then must search for existing references in neural net when adding instances/semantic relations (ie GIA_NEURAL_NETWORK_ACTIVE): cannot use generateNeuralNetFromSemanticNet. 
 		//NOT POSSIBLE: ANNneuron* currentConceptNeuron = getLastNeuronInNeuralNet(neuralNetworkVariables->firstInputNeuronInNetwork);	//in case the neural net is already populated
 
@@ -138,10 +199,17 @@ bool GIAneuralNetworkOperationsClass::generateNeuralNetFromSemanticNet(GIAtransl
 		
 	ANNneuron* firstConceptNeuron = getFirstConceptNeuron(neuralNetworkVariables.firstInputNeuronInNetwork);
 	ANNneuron* firstSpecificConceptNeuron = getFirstSpecificConceptNeuron(neuralNetworkVariables.firstInputNeuronInNetwork);
-	ANNneuron* firstSynapseArtificialInstanceNeuron = getFirstSynapseArtificialInstanceNeuron(neuralNetworkVariables.firstInputNeuronInNetwork);
+	ANNneuron* firstInstanceNeuron = getFirstInstanceNeuron(neuralNetworkVariables.firstInputNeuronInNetwork);
 	ANNneuron* currentConceptNeuron = firstConceptNeuron;	
 	ANNneuron* currentSpecificConceptNeuron = firstSpecificConceptNeuron;
-	ANNneuron* currentSynapseArtificialInstanceNeuron = firstSynapseArtificialInstanceNeuron;
+	ANNneuron* currentInstanceNeuron = firstInstanceNeuron;
+	
+	#ifdef GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS
+	ANNneuron* firstSubstanceConceptIndexBitNeuron = getFirstSubstanceConceptIndexBitNeuron(neuralNetworkVariables.firstInputNeuronInNetwork);
+	ANNneuron* firstReferenceSetDelimiterConceptIndexBitNeuron = getFirstReferenceSetDelimiterConceptIndexBitNeuron(neuralNetworkVariables.firstInputNeuronInNetwork);
+	generateConceptIndexBitNeurons(&neuralNetworkVariables, firstSubstanceConceptIndexBitNeuron, GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS_MAX, GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS_TYPE_SUBSTANCE);
+	generateConceptIndexBitNeurons(&neuralNetworkVariables, firstReferenceSetDelimiterConceptIndexBitNeuron, GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS_MAX, GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS_TYPE_REFERENCE_SET_DELIMITER);
+	#endif
 			
 	for(unordered_map<string, GIAentityNode*>::iterator networkIndexEntityIter = translatorVariables->entityNodesActiveListNetworkIndexes->begin(); networkIndexEntityIter != translatorVariables->entityNodesActiveListNetworkIndexes->end(); networkIndexEntityIter++)	
 	{
@@ -155,7 +223,20 @@ bool GIAneuralNetworkOperationsClass::generateNeuralNetFromSemanticNet(GIAtransl
 		//if(!findConceptNeuronInNeuralNet(firstInputNeuronInNetwork, networkIndexEntity->entityName, &foundNeuron))	
 		{
 		#endif
-			ANNneuron* conceptNeuron = createNewConceptNeuron(&neuralNetworkVariables, &currentConceptNeuron, networkIndexEntity->entityName, xPosRel);
+
+			#ifdef GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS
+			int conceptIndexType = GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS_TYPE_SUBSTANCE;
+			GIAentityNode* firstInstance = NULL;
+			if(!networkIndexEntity->instanceNodeList->empty())
+			{
+				firstInstance = (networkIndexEntity->instanceNodeList->back())->entity;
+				conceptIndexType = getConceptIndexType(firstInstance);
+			}
+			#else
+			int conceptIndexType = INT_DEFAULT_VALUE;
+			#endif
+			
+			ANNneuron* conceptNeuron = createNewConceptNeuron(&neuralNetworkVariables, &currentConceptNeuron, networkIndexEntity->entityName, xPosRel, conceptIndexType);
 			networkIndexEntity->entityShortcutToConceptNeuron = conceptNeuron;
 							
 			#ifdef GIA_NEURAL_NETWORK_GENERATE_SPECIFIC_CONCEPT_NETWORKS
@@ -169,11 +250,11 @@ bool GIAneuralNetworkOperationsClass::generateNeuralNetFromSemanticNet(GIAtransl
 					if(networkIndexEntity->shortcutToNonspecificConceptEntity != conceptEntity)
 					{
 						GIAentityNode* specificConceptEntity = conceptEntity;
-						int maxLayer = 1;
-						calculateLayerOfSpecificConceptNeuron(conceptEntity, 1, &maxLayer);
+						int layer = 1;
+						calculateLayerOfSpecificConceptNeuron(conceptEntity, 1, &layer);
 						
 						//required to generate the specific concept now such that the connection algortihm works
-						ANNneuron* specificConceptNeuron = createNewSpecificConceptNeuron(&neuralNetworkVariables, &currentSpecificConceptNeuron, specificConceptEntity->entityName, xPosRel, maxLayer);
+						ANNneuron* specificConceptNeuron = createNewSpecificConceptNeuron(&neuralNetworkVariables, &currentSpecificConceptNeuron, specificConceptEntity->entityName, xPosRel, layer, conceptIndexType);
 						specificConceptEntity->entityShortcutToConceptNeuron = specificConceptNeuron;
 					}
 					else
@@ -206,7 +287,7 @@ bool GIAneuralNetworkOperationsClass::generateNeuralNetFromSemanticNet(GIAtransl
 			ANNneuron* specificConceptNeuron = conceptNeuron;
 			#ifdef GIA_NEURAL_NETWORK_GENERATE_SPECIFIC_CONCEPT_NETWORKS
 			//generate concept entity connections
-			if(getSpecificConceptNeuronAndLink(&neuralNetworkVariables, &currentSynapseArtificialInstanceNeuron, instanceEntity, &specificConceptNeuron))
+			if(getSpecificConceptNeuronAndLink(&neuralNetworkVariables, &currentInstanceNeuron, instanceEntity, &specificConceptNeuron))
 			{	
 				//cout << "getSpecificConceptNeuronAndLink passed" << endl;
 			}
@@ -216,9 +297,29 @@ bool GIAneuralNetworkOperationsClass::generateNeuralNetFromSemanticNet(GIAtransl
 			#endif
 				//generate non-concept entity connections
 				GIAentityNode specificConceptEntityArtificial;
-				specificConceptEntityArtificial.entityType = GIA_ENTITY_TYPE_SUBSTANCE;	//CHECKTHIS
+				specificConceptEntityArtificial.entityType = GIA_ENTITY_TYPE_CONCEPT;	//CHECKTHIS
 	
-				if(!generateSubnetFromConnectedInstances(&neuralNetworkVariables, &currentSynapseArtificialInstanceNeuron, &specificConceptEntityArtificial, specificConceptNeuron, instanceEntity, true, GIA_NEURAL_NETWORK_OFFSET_SYNAPSE_ARTIFICIAL_INSTANCE_NEURONS_LAYERS))
+				bool previousEntityIsConcept = false;
+				ANNneuron* previousNeuron = NULL;
+				int artificialLayer = GIA_NEURAL_NETWORK_OFFSET_INSTANCE_NEURONS_LAYERS;
+				#ifndef GIA_NEURAL_NETWORK_USE_ARTIFICIAL_INSTANCE_NEURON_SYNAPSES
+				if(!(instanceEntity->parsedForANNgeneration))
+				{	
+					//create a new instance neuron, and create a connection between the concept and the instance neuron
+					ANNneuron* instanceNeuron = createNewInstanceNeuron(&neuralNetworkVariables, &currentInstanceNeuron, instanceEntity->entityName, instanceEntity->idInstance, specificConceptNeuron, artificialLayer, GIA_ANN_CONNECTION_TYPE_CONCEPT_TO_INSTANCE);
+					previousEntityIsConcept = false;	//this ensure that GIA_ANN_CONNECTION_TYPE_INSTANCE_TO_INSTANCE connections are now created
+					previousNeuron = instanceNeuron;
+				}
+				#else
+				previousEntityIsConcept = true;
+				previousNeuron = specificConceptNeuron;			 
+				#endif
+			
+				#ifdef GIA_DEBUG_NEURAL_NETWORK
+				cout << "instanceEntity = " << instanceEntity->entityName << endl;
+				#endif
+				
+				if(!generateSubnetFromConnectedInstances(&neuralNetworkVariables, &currentInstanceNeuron, previousEntityIsConcept, previousNeuron, instanceEntity, artificialLayer, false, false))
 				{
 					result = false;
 				}
@@ -234,6 +335,168 @@ bool GIAneuralNetworkOperationsClass::generateNeuralNetFromSemanticNet(GIAtransl
 	
 	return result;
 }
+
+#ifdef GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS
+bool GIAneuralNetworkOperationsClass::generateConceptIndexBitNeurons(GIAneuralNetworkVariablesClass* neuralNetworkVariables, ANNneuron* firstConceptIndexBitNeuronInLayer, int conceptIndexMaxSizeBits, int conceptIndexType)
+{
+	bool result = true;
+	
+	ANNneuron* currentConceptIndexBitNeuronInLayer = firstConceptIndexBitNeuronInLayer;
+	for(int i=0; i<conceptIndexMaxSizeBits; i++)
+	{
+		int xPosRel = i*GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS_OFFSET + (conceptIndexType-1)*GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS_TYPE_OFFSET;
+		createNewConceptIndexBitNeuron(neuralNetworkVariables, &currentConceptIndexBitNeuronInLayer, i, conceptIndexType, xPosRel);
+	}
+	
+	return result;
+}
+
+int GIAneuralNetworkOperationsClass::getConceptIndexType(const GIAentityNode* entity)
+{
+	int conceptIndexType = GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS_TYPE_UNKNOWN;
+	if(GIAentityNodeClass.entityIsRelationship(entity))
+	{
+		conceptIndexType = GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS_TYPE_REFERENCE_SET_DELIMITER;
+	}
+	else
+	{
+		conceptIndexType = GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS_TYPE_SUBSTANCE; 
+	}	
+	return conceptIndexType;
+}	
+#endif
+
+bool GIAneuralNetworkOperationsClass::generateSubnetFromConnectedInstances(GIAneuralNetworkVariablesClass* neuralNetworkVariables, ANNneuron** currentInstanceNeuron, bool previousEntityIsConcept, ANNneuron* previousNeuron, GIAentityNode* entity, int artificialLayer, bool parsingConcept, bool parsingSpecificConcept)
+{
+	bool result = true;
+	
+	#ifndef GIA_NEURAL_NETWORK_USE_ARTIFICIAL_INSTANCE_NEURON_SYNAPSES
+	//entity == previousEntity
+	#endif
+	
+	if(!(entity->parsedForANNgeneration))
+	{
+		entity->parsedForANNgeneration = true;
+		
+		for(int connectionType=0; connectionType<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; connectionType++)
+		{
+			bool pass = true;
+			if(connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_INSTANCE_REVERSE)
+			{
+				pass = false;
+			}
+			if(pass)
+			{
+				bool direction = entityVectorConnectionDirectionArray[connectionType];
+				int artificialLayerNew = 0;
+				if(direction)
+				{
+					artificialLayerNew = artificialLayer + 1;
+				}
+				else
+				{
+					artificialLayerNew = artificialLayer - 1;
+				}
+
+			
+				for(vector<GIAentityConnection*>::iterator connectionIter = entity->entityVectorConnectionsArray[connectionType].begin(); connectionIter != entity->entityVectorConnectionsArray[connectionType].end(); connectionIter++)
+				{
+					GIAentityNode* entity2 = (*connectionIter)->entity;
+					#ifdef GIA_NEURAL_NETWORK_SYMBOLIC_CORE
+					bool createDirectConceptPropertyFeature = false;
+					if(entity2->entityType == GIA_ENTITY_TYPE_PROPERTY)
+					{
+						GIAentityNode* propertyObjectEntity = GIAtranslatorOperations.getRelationshipObjectEntity(*connectionIter);
+						if(propertyObjectEntity->entityType == GIA_ENTITY_TYPE_QUALITY)
+						{
+							bool createDirectConceptProperty = false;
+							if(parsingSpecificConcept && ((*connectionIter)->sameReferenceSet))
+							{
+								createDirectConceptPropertyFeature = true;
+								//detected a specific concept name attribute (eg 'red' in 'red dogs are happy'), and this should be added to the concept hierachy 
+							}
+							else if(parsingConcept && !((*connectionIter)->sameReferenceSet))
+							{
+								createDirectConceptPropertyFeature = true;
+								//detected a specific concept name attribute (eg 'happy' in 'dogs are happy'), and this should be added to the concept hierachy 
+							}
+							
+							if(createDirectConceptPropertyFeature)
+							{
+								ANNneuron* propertyObjectNeuron = propertyObjectEntity->entityShortcutToConceptNeuron;
+								createANNconnection(propertyObjectNeuron, previousNeuron, GIA_ANN_CONNECTION_TYPE_CONCEPT_TO_CONCEPT_PROPERTIES);	//CHECKTHIS
+							}
+						}
+					}
+					if(!createDirectConceptPropertyFeature)
+					{
+					#endif
+						if(!(entity2->parsedForANNgeneration) || (entity2->entityType == GIA_ENTITY_TYPE_CONCEPT))	//CHECKTHIS: || (entity2->entityType == GIA_ENTITY_TYPE_CONCEPT)
+						{	
+							#ifdef GIA_DEBUG_NEURAL_NETWORK
+							cout << "entity2 = " << entity2->entityName << endl;
+							#endif
+
+							ANNneuron* conceptNeuron2 = NULL;
+							int ANNconnectionType2 = GIA_ANN_CONNECTION_TYPE_UNDEFINED;
+							if(entity2->entityType == GIA_ENTITY_TYPE_CONCEPT)
+							{
+								conceptNeuron2 = entity2->entityShortcutToConceptNeuron;	//create a direct connection between concept neurons
+								ANNconnectionType2 = GIA_ANN_CONNECTION_TYPE_CONCEPT_TO_INSTANCE;
+							}
+							else
+							{
+								ANNconnectionType2 = GIA_ANN_CONNECTION_TYPE_CONCEPT_TO_INSTANCE;	//CHECKTHIS
+								if(getConceptNeuron(entity2, &conceptNeuron2))
+								{
+
+								}
+							}
+
+							ANNneuron* newNeuron = createNewInstanceNeuron(neuralNetworkVariables, currentInstanceNeuron, entity2->entityName, entity->idInstance, conceptNeuron2, artificialLayerNew, ANNconnectionType2);
+
+							//add a connection between the previous neuron and the newNeuron
+							int ANNconnectionType = GIA_ANN_CONNECTION_TYPE_UNDEFINED;
+							if(previousEntityIsConcept)	//OLD: if(previousNeuron->GIAisConceptEntity)
+							{
+								ANNconnectionType = GIA_ANN_CONNECTION_TYPE_CONCEPT_TO_INSTANCE;	//CHECKTHIS
+							}
+							else
+							{
+								ANNconnectionType = GIA_ANN_CONNECTION_TYPE_INSTANCE_TO_INSTANCE;
+							}
+
+							if(direction)
+							{
+								createANNconnection(previousNeuron, newNeuron, ANNconnectionType);
+							}
+							else
+							{
+								createANNconnection(newNeuron, previousNeuron, ANNconnectionType);	
+							}
+
+							//recurse
+							if(!generateSubnetFromConnectedInstances(neuralNetworkVariables, currentInstanceNeuron, false, newNeuron, entity2, artificialLayerNew, false, false))	//OLD: if(!generateSubnetFromConnectedInstances(firstInputNeuronInNetwork, conceptNeuron2, entity2, directionNew, artificialLayerNew)
+							{
+								result = false;
+							}
+							//NB if (entity2->entityType == GIA_ENTITY_TYPE_CONCEPT) then  entity2->parsedForANNgeneration will be true so generateSubnetFromConnectedInstances will not execute any code
+
+							#ifndef GIA_NEURAL_NETWORK_SYMBOLIC_CORE
+							previousNeuron = newNeuron;
+							#endif
+						}
+					#ifdef GIA_NEURAL_NETWORK_SYMBOLIC_CORE
+					}
+					#endif					
+				}
+			}
+		}
+	}
+	return result;
+}
+
+
 
 #ifdef GIA_NEURAL_NETWORK_GENERATE_SPECIFIC_CONCEPT_NETWORKS
 
@@ -257,7 +520,7 @@ bool GIAneuralNetworkOperationsClass::calculateLayerOfSpecificConceptNeuron(GIAe
 		}
 		else
 		{
-			cout << "GIAneuralNetworkClass::calculateLayerOfSpecificConceptNeuron{} error: (specificConceptEntity->entityType != GIA_ENTITY_TYPE_CONCEPT)" << endl;
+			cout << "GIAneuralNetworkOperationsClass::calculateLayerOfSpecificConceptNeuron{} error: (specificConceptEntity->entityType != GIA_ENTITY_TYPE_CONCEPT)" << endl;
 			cout << "specificConceptEntity->entityType = " << specificConceptEntity->entityType << endl;
 			exit(EXIT_ERROR);
 		}
@@ -265,7 +528,7 @@ bool GIAneuralNetworkOperationsClass::calculateLayerOfSpecificConceptNeuron(GIAe
 	return result;
 }
 
-bool GIAneuralNetworkOperationsClass::getSpecificConceptNeuronAndLink(GIAneuralNetworkVariablesClass* neuralNetworkVariables, ANNneuron** currentSynapseArtificialInstanceNeuron, GIAentityNode* entity, ANNneuron** specificConceptNeuronFound)
+bool GIAneuralNetworkOperationsClass::getSpecificConceptNeuronAndLink(GIAneuralNetworkVariablesClass* neuralNetworkVariables, ANNneuron** currentInstanceNeuron, GIAentityNode* entity, ANNneuron** specificConceptNeuronFound)
 {
 	bool result = false;
 	
@@ -279,7 +542,7 @@ bool GIAneuralNetworkOperationsClass::getSpecificConceptNeuronAndLink(GIAneuralN
 		{
 			if(conceptEntity->entityShortcutToConceptNeuron == NULL)
 			{
-				cout << "GIAneuralNetworkClass::getSpecificConceptNeuronAndLink{} error: (conceptEntity->entityShortcutToConceptNeuron == NULL)" << endl;
+				cout << "GIAneuralNetworkOperationsClass::getSpecificConceptNeuronAndLink{} error: (conceptEntity->entityShortcutToConceptNeuron == NULL)" << endl;
 				exit(EXIT_ERROR);
 			}	
 			ANNneuron* conceptNeuron = conceptEntity->entityShortcutToConceptNeuron;
@@ -290,12 +553,13 @@ bool GIAneuralNetworkOperationsClass::getSpecificConceptNeuronAndLink(GIAneuralN
 				//cout << "conceptEntity->entityName = " << conceptEntity->entityName << endl;
 				//cout << "entity->entityName = " << entity->entityName << endl;
 				ANNneuron* previousSpecificConceptNeuron = entity->entityShortcutToConceptNeuron;
-				createANNconnection(conceptNeuron, previousSpecificConceptNeuron, GIA_ANN_CONNECTION_TYPE_CONCEPT_DEFINITION);
+				createANNconnection(conceptNeuron, previousSpecificConceptNeuron, GIA_ANN_CONNECTION_TYPE_CONCEPT_TO_CONCEPT);	//CHECKTHIS
 			}
 			
+			bool specificConceptDetected = false;
 			if(networkIndexEntity->shortcutToNonspecificConceptEntity != conceptEntity)	//ie networkIndexEntity->entityShortcutToConceptNeuron != conceptEntity->entityShortcutToConceptNeuron [ie conceptNeuron]
 			{
-				//for specific concepts only;
+				specificConceptDetected = true;
 				
 				GIAentityNode* specificConceptEntity = conceptEntity;
 				ANNneuron* specificConceptNeuron = conceptNeuron;
@@ -305,37 +569,34 @@ bool GIAneuralNetworkOperationsClass::getSpecificConceptNeuronAndLink(GIAneuralN
 					*specificConceptNeuronFound = specificConceptNeuron;
 					result = true;
 				}
-			
-				if(!(specificConceptEntity->parsedForANNgeneration))
-				{	
-					//create specific concept neural subnet if not already created (e.g. it may already be created if there exists a diamond shaped connection structure)
-					specificConceptEntity->parsedForANNgeneration = true;
-					if(!generateSubnetFromConnectedInstances(neuralNetworkVariables, currentSynapseArtificialInstanceNeuron, specificConceptEntity, specificConceptNeuron, specificConceptEntity, true, GIA_NEURAL_NETWORK_OFFSET_SYNAPSE_ARTIFICIAL_INSTANCE_NEURONS_LAYERS))
-					{
-						
-					}
+			}
+
+			if(!(conceptEntity->parsedForANNgeneration))
+			{	
+				//create specific concept neural subnet if not already created (e.g. it may already be created if there exists a diamond shaped connection structure)
+				conceptEntity->parsedForANNgeneration = true;
+				int artificialLayer = GIA_NEURAL_NETWORK_OFFSET_INSTANCE_NEURONS_LAYERS;
+				if(!generateSubnetFromConnectedInstances(neuralNetworkVariables, currentInstanceNeuron, true, conceptNeuron, conceptEntity, artificialLayer, true, specificConceptDetected))
+				{
+
 				}
-				
-				#ifdef GIA_NEURAL_NETWORK_GENERATE_SEPARATE_CONCEPT_NETWORKS_RECURSE
+			}
+			
+			#ifdef GIA_NEURAL_NETWORK_GENERATE_SEPARATE_CONCEPT_NETWORKS_RECURSE
+			if(specificConceptDetected)
+			{	
 				ANNneuron* specificConceptNeuronFoundTemp = NULL;	//disgard higher level specific concepts
-				if(!getSpecificConceptNeuronAndLink(neuralNetworkVariables, currentSynapseArtificialInstanceNeuron, specificConceptEntity, &specificConceptNeuronFoundTemp))
+				if(!getSpecificConceptNeuronAndLink(neuralNetworkVariables, currentInstanceNeuron, conceptEntity, &specificConceptNeuronFoundTemp))
 				{
 					
 				}
-				#endif
 			}
-			else
-			{
-				if(!(conceptEntity->parsedForANNgeneration))
-				{
-					conceptEntity->parsedForANNgeneration = true;
-				}
-			}
+			#endif
 		}
 		else
 		{
 			/*
-			cout << "GIAneuralNetworkClass::getSpecificConceptNeuronAndLink{} warning: (conceptEntity->entityType != GIA_ENTITY_TYPE_CONCEPT)" << endl;
+			cout << "GIAneuralNetworkOperationsClass::getSpecificConceptNeuronAndLink{} warning: (conceptEntity->entityType != GIA_ENTITY_TYPE_CONCEPT)" << endl;
 			cout << "conceptEntity->entityType = " << conceptEntity->entityType << endl;
 			*/
 		}
@@ -360,7 +621,7 @@ bool GIAneuralNetworkOperationsClass::getConceptNeuron(GIAentityNode* entity, AN
 		{
 			if(conceptEntity->entityShortcutToConceptNeuron == NULL)
 			{
-				cout << "GIAneuralNetworkClass::getSpecificConceptNeuronAndLink{} error: (conceptEntity->entityShortcutToConceptNeuron == NULL)" << endl;
+				cout << "GIAneuralNetworkOperationsClass::getSpecificConceptNeuronAndLink{} error: (conceptEntity->entityShortcutToConceptNeuron == NULL)" << endl;
 				exit(EXIT_ERROR);
 			}	
 			ANNneuron* conceptNeuron = conceptEntity->entityShortcutToConceptNeuron;
@@ -390,97 +651,6 @@ bool GIAneuralNetworkOperationsClass::getConceptNeuron(GIAentityNode* entity, AN
 }
 						
 				
-bool GIAneuralNetworkOperationsClass::generateSubnetFromConnectedInstances(GIAneuralNetworkVariablesClass* neuralNetworkVariables, ANNneuron** currentSynapseArtificialInstanceNeuron, GIAentityNode* previousEntity, ANNneuron* previousNeuron, GIAentityNode* instanceEntity, bool direction, int artificialLayer)
-{
-	bool result = true;
-	
-	if(!(instanceEntity->parsedForANNgeneration))
-	{
-		instanceEntity->parsedForANNgeneration = true;
-		
-		for(int connectionType=0; connectionType<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; connectionType++)
-		{
-			bool pass = true;
-			if(connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_INSTANCE_REVERSE)
-			{
-				pass = false;
-			}
-			if(pass)
-			{
-				for(vector<GIAentityConnection*>::iterator connectionIter = instanceEntity->entityVectorConnectionsArray[connectionType].begin(); connectionIter != instanceEntity->entityVectorConnectionsArray[connectionType].end(); connectionIter++)
-				{
-					GIAentityNode* entity2 = (*connectionIter)->entity;
-					if(!(entity2->parsedForANNgeneration) || (entity2->entityType == GIA_ENTITY_TYPE_CONCEPT))	//CHECKTHIS: || (entity2->entityType == GIA_ENTITY_TYPE_CONCEPT)
-					{	
-						#ifdef GIA_DEBUG_NEURAL_NETWORK
-						cout << "entity2 = " << entity2->entityName << endl;
-						#endif
-					
-						ANNneuron* conceptNeuron2 = NULL;
-						int ANNconnectionType2 = GIA_ANN_CONNECTION_TYPE_UNDEFINED;
-						if(entity2->entityType == GIA_ENTITY_TYPE_CONCEPT)
-						{
-							conceptNeuron2 = entity2->entityShortcutToConceptNeuron;	//create a direct connection between concept neurons
-							ANNconnectionType2 = GIA_ANN_CONNECTION_TYPE_CONCEPT_DEFINITION_ARTIFICIAL_INSTANCE;
-						}
-						else
-						{
-							ANNconnectionType2 = GIA_ANN_CONNECTION_TYPE_ARTIFICIAL_INSTANCE;
-							if(getConceptNeuron(entity2, &conceptNeuron2))
-							{
-
-							}
-						}
-						
-						//create a new synapseArtificialInstanceNeuron
-						ANNneuron* newNeuron = createNewSynapseArtificialInstanceNeuron(neuralNetworkVariables, currentSynapseArtificialInstanceNeuron, entity2->entityName, instanceEntity->idInstance, conceptNeuron2, artificialLayer, ANNconnectionType2);
-
-
-						//add a connection between the previous neuron and the newNeuron
-						int ANNconnectionType = GIA_ANN_CONNECTION_TYPE_UNDEFINED;
-						if(previousEntity->entityType == GIA_ENTITY_TYPE_CONCEPT)	//OLD: if(previousNeuron->GIAisConceptEntity)
-						{
-							ANNconnectionType = GIA_ANN_CONNECTION_TYPE_CONCEPT_DEFINITION_ARTIFICIAL_INSTANCE;	//CHECKTHIS
-						}
-						else
-						{
-							ANNconnectionType = GIA_ANN_CONNECTION_TYPE_ARTIFICIAL_INSTANCE;
-						}
-						
-						if(direction)
-						{
-							createANNconnection(previousNeuron, newNeuron, ANNconnectionType);
-						}
-						else
-						{
-							createANNconnection(newNeuron, previousNeuron, ANNconnectionType);	
-						}
-
-						//recurse
-						bool directionNew = entityVectorConnectionDirectionArray[connectionType];
-						int artificialLayerNew = 0;
-						if(directionNew)
-						{
-							artificialLayerNew = artificialLayer + 1;
-						}
-						else
-						{
-							artificialLayerNew = artificialLayer - 1;
-						}
-						if(!generateSubnetFromConnectedInstances(neuralNetworkVariables, currentSynapseArtificialInstanceNeuron, instanceEntity, newNeuron, entity2, directionNew, artificialLayerNew))	//OLD: if(!generateSubnetFromConnectedInstances(firstInputNeuronInNetwork, conceptNeuron2, entity2, directionNew, artificialLayerNew)
-						{
-							result = false;
-						}
-						
-						previousNeuron = newNeuron;
-					}
-				}
-			}
-		}
-	}
-	
-	return result;
-}
 #endif
 
 /*
@@ -540,12 +710,49 @@ ANNneuron* GIAneuralNetworkOperationsClass::getFirstSpecificConceptNeuron(ANNneu
 	ANNneuron* firstSpecificConceptNeuron = firstInputNeuronInNetwork->firstNeuronInFrontLayer;	
 	return firstSpecificConceptNeuron;
 }
-
-ANNneuron* GIAneuralNetworkOperationsClass::getFirstSynapseArtificialInstanceNeuron(ANNneuron* firstInputNeuronInNetwork)
+ANNneuron* GIAneuralNetworkOperationsClass::getFirstInstanceNeuron(ANNneuron* firstInputNeuronInNetwork)
 {
-	ANNneuron* firstSynapseArtificialInstanceNeuron = firstInputNeuronInNetwork->firstNeuronInFrontLayer->firstNeuronInFrontLayer;
-	return firstSynapseArtificialInstanceNeuron;	
+	ANNneuron* firstInstanceNeuron = firstInputNeuronInNetwork->firstNeuronInFrontLayer->firstNeuronInFrontLayer;
+	return firstInstanceNeuron;	
 }
+
+#ifdef GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS_MAX
+ANNneuron* GIAneuralNetworkOperationsClass::getFirstConceptIndexBitNeuron(ANNneuron* firstInputNeuronInNetwork, const int conceptIndexType)
+{
+	ANNneuron* firstSpecificConceptNeuron = NULL;
+	if(conceptIndexType == GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS_TYPE_SUBSTANCE)
+	{
+		firstSpecificConceptNeuron = getFirstSubstanceConceptIndexBitNeuron(firstInputNeuronInNetwork);
+	}
+	else if(conceptIndexType == GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS_TYPE_REFERENCE_SET_DELIMITER)
+	{
+		firstSpecificConceptNeuron = getFirstReferenceSetDelimiterConceptIndexBitNeuron(firstInputNeuronInNetwork);
+	}
+	else
+	{
+		cerr << "GIAneuralNetworkOperationsClass::getFirstConceptIndexBitNeuron{} error: illegal conceptIndexType, conceptIndexType = " << conceptIndexType << endl;
+		exit(EXIT_ERROR);
+	}
+	return firstSpecificConceptNeuron;
+}
+ANNneuron* GIAneuralNetworkOperationsClass::getFirstConceptIndexBitNeuron(ANNneuron* firstInputNeuronInNetwork, const GIAentityNode* entity)
+{	
+	int conceptIndexType = getConceptIndexType(entity);
+	ANNneuron* firstSpecificConceptNeuron = getFirstConceptIndexBitNeuron(firstInputNeuronInNetwork, conceptIndexType);
+	return firstSpecificConceptNeuron;
+}
+ANNneuron* GIAneuralNetworkOperationsClass::getFirstSubstanceConceptIndexBitNeuron(ANNneuron* firstInputNeuronInNetwork)
+{
+	ANNneuron* firstSubstanceConceptIndexBitNeuron = firstInputNeuronInNetwork->firstNeuronInFrontLayer->firstNeuronInFrontLayer->firstNeuronInFrontLayer;	
+	return firstSubstanceConceptIndexBitNeuron;
+}
+ANNneuron* GIAneuralNetworkOperationsClass::getFirstReferenceSetDelimiterConceptIndexBitNeuron(ANNneuron* firstInputNeuronInNetwork)
+{
+	ANNneuron* firstReferenceSetDelimiterConceptIndexBitNeuron = firstInputNeuronInNetwork->firstNeuronInFrontLayer->firstNeuronInFrontLayer->firstNeuronInFrontLayer->firstNeuronInFrontLayer;	
+	return firstReferenceSetDelimiterConceptIndexBitNeuron;
+}
+#endif
+
 
 ANNneuron* GIAneuralNetworkOperationsClass::getLastNeuronInLayer(ANNneuron* firstNeuronInLayer, int* xPosRel)
 {
@@ -565,8 +772,39 @@ int GIAneuralNetworkOperationsClass::calculateNumberOfInstancesOfConceptNeuron(A
 	return (conceptNeuron->frontANNneuronConnectionList).size();	//CHECKTHIS
 }
 
+#ifdef GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS
+ANNneuron* GIAneuralNetworkOperationsClass::createNewConceptIndexBitNeuron(GIAneuralNetworkVariablesClass* neuralNetworkVariables, ANNneuron** currentConceptIndexBitNeuron, const int conceptIndexBitID, const int conceptIndexType, const int xPosRel)
+{
+	(*currentConceptIndexBitNeuron)->GIAconceptIndexBitID = conceptIndexBitID;
+	(*currentConceptIndexBitNeuron)->GIAisConceptEntity = false;	//CHECKTHIS
+	(*currentConceptIndexBitNeuron)->spatialCoordinatesSet3D = true;
+	(*currentConceptIndexBitNeuron)->xPosRel = xPosRel;
+	(*currentConceptIndexBitNeuron)->yPosRel = GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS_LAYER;	//ie networkIndexEntity->idInstance;
+	(*currentConceptIndexBitNeuron)->zPosRel = 0;
 
-ANNneuron* GIAneuralNetworkOperationsClass::createNewConceptNeuron(GIAneuralNetworkVariablesClass* neuralNetworkVariables, ANNneuron** currentConceptNeuron, const string entityName, int xPosRel)
+	int layer = GIAANNsymbolicCoreConceptIndexBitsTypeCrossReferenceLayerIndex[conceptIndexType];
+	ANNneuronClass.fillInNeuronIDProperties((*currentConceptIndexBitNeuron), neuralNetworkVariables->neuronIDcounter, conceptIndexBitID, layer, GIA_NEURAL_NETWORK_SUBNET_COUNTER);
+	neuralNetworkVariables->neuronIDcounter = neuralNetworkVariables->neuronIDcounter + 1;
+	(*currentConceptIndexBitNeuron)->hasBackLayer = true;	//required for ANNdraw	
+	if(conceptIndexType == GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS_NUMBER_OF_TYPES)
+	{
+		(*currentConceptIndexBitNeuron)->hasFrontLayer = false;	//required for ANNdraw
+	}
+	else
+	{
+		(*currentConceptIndexBitNeuron)->hasFrontLayer = true;	//required for ANNdraw
+	}
+	
+	ANNneuron* newNeuron = (*currentConceptIndexBitNeuron);
+
+	(*currentConceptIndexBitNeuron)->nextNeuron = new ANNneuron();
+	(*currentConceptIndexBitNeuron) = (*currentConceptIndexBitNeuron)->nextNeuron;
+			
+	return newNeuron;
+}
+#endif
+
+ANNneuron* GIAneuralNetworkOperationsClass::createNewConceptNeuron(GIAneuralNetworkVariablesClass* neuralNetworkVariables, ANNneuron** currentConceptNeuron, const string entityName, const int xPosRel, const int conceptIndexType)
 {
 	(*currentConceptNeuron)->GIAentityName = entityName;
 	(*currentConceptNeuron)->GIAisConceptEntity = true;
@@ -581,6 +819,10 @@ ANNneuron* GIAneuralNetworkOperationsClass::createNewConceptNeuron(GIAneuralNetw
 	(*currentConceptNeuron)->hasFrontLayer = true;	//required for ANNdraw
 	(*currentConceptNeuron)->hasBackLayer = false;	//required for ANNdraw
 	
+	#ifdef GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS
+	connectConceptNeuronToConceptIndexBitNeurons(neuralNetworkVariables, (*currentConceptNeuron), conceptIndexType);
+	#endif
+	
 	ANNneuron* newNeuron = (*currentConceptNeuron);
 
 	(*currentConceptNeuron)->nextNeuron = new ANNneuron();
@@ -590,7 +832,7 @@ ANNneuron* GIAneuralNetworkOperationsClass::createNewConceptNeuron(GIAneuralNetw
 }
 
 
-ANNneuron* GIAneuralNetworkOperationsClass::createNewSpecificConceptNeuron(GIAneuralNetworkVariablesClass* neuralNetworkVariables, ANNneuron** currentSpecificConceptNeuron, const string entityName, int xPosRel, const int maxLayer)
+ANNneuron* GIAneuralNetworkOperationsClass::createNewSpecificConceptNeuron(GIAneuralNetworkVariablesClass* neuralNetworkVariables, ANNneuron** currentSpecificConceptNeuron, const string entityName, const int xPosRel, const int layer, const int conceptIndexType)
 {
 	//cout << "createNewSpecificConceptNeuron entityName = " << entityName << endl;
 
@@ -598,12 +840,12 @@ ANNneuron* GIAneuralNetworkOperationsClass::createNewSpecificConceptNeuron(GIAne
 	(*currentSpecificConceptNeuron)->GIAisConceptEntity = true;
 	(*currentSpecificConceptNeuron)->spatialCoordinatesSet3D = true;
 	(*currentSpecificConceptNeuron)->xPosRel = xPosRel;	//currentConceptNeuron->xPosRel
-	#ifdef GIA_NEURAL_NETWORK_OFFSET_SYNAPSE_ARTIFICIAL_INSTANCE_NEURONS
-	(*currentSpecificConceptNeuron)->yPosRel = maxLayer;
+	#ifdef GIA_NEURAL_NETWORK_OFFSET_INSTANCE_NEURONS
+	(*currentSpecificConceptNeuron)->yPosRel = layer;
 	(*currentSpecificConceptNeuron)->zPosRel = 0;				
 	#else
 	(*currentSpecificConceptNeuron)->yPosRel = 0;
-	(*currentSpecificConceptNeuron)->zPosRel = maxLayer;	
+	(*currentSpecificConceptNeuron)->zPosRel = layer;	
 	#endif
 
 	ANNneuronClass.fillInNeuronIDProperties((*currentSpecificConceptNeuron), neuralNetworkVariables->neuronIDcounter, neuralNetworkVariables->specificConceptNeuronOrderIDcounter, GIA_NEURAL_NETWORK_LAYER_SPECIFIC_CONCEPT_NEURONS, GIA_NEURAL_NETWORK_SUBNET_COUNTER);
@@ -611,6 +853,10 @@ ANNneuron* GIAneuralNetworkOperationsClass::createNewSpecificConceptNeuron(GIAne
 	neuralNetworkVariables->specificConceptNeuronOrderIDcounter = neuralNetworkVariables->specificConceptNeuronOrderIDcounter + 1;
 	(*currentSpecificConceptNeuron)->hasFrontLayer = true;	//required for ANNdraw
 	(*currentSpecificConceptNeuron)->hasBackLayer = true;	//required for ANNdraw
+
+	#ifdef GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS
+	connectConceptNeuronToConceptIndexBitNeurons(neuralNetworkVariables, (*currentSpecificConceptNeuron), conceptIndexType);
+	#endif
 	
 	ANNneuron* newNeuron = (*currentSpecificConceptNeuron);
 	
@@ -620,38 +866,169 @@ ANNneuron* GIAneuralNetworkOperationsClass::createNewSpecificConceptNeuron(GIAne
 	return newNeuron;
 }
 
-ANNneuron* GIAneuralNetworkOperationsClass::createNewSynapseArtificialInstanceNeuron(GIAneuralNetworkVariablesClass* neuralNetworkVariables, ANNneuron** currentSynapseArtificialInstanceNeuron, const string entityName, const int instanceID, ANNneuron* conceptNeuron2, int artificialLayer, int ANNconnectionType)
+ANNneuron* GIAneuralNetworkOperationsClass::createNewInstanceNeuron(GIAneuralNetworkVariablesClass* neuralNetworkVariables, ANNneuron** currentInstanceNeuron, const string entityName, const int instanceID, ANNneuron* conceptNeuron, const int artificialLayer, const int ANNconnectionType)
 {
 	#ifdef GIA_DEBUG_NEURAL_NETWORK
-	cout << "synapseArtificialInstanceNeuron: conceptNeuron2->GIAentityName = " << conceptNeuron2->GIAentityName << endl;
+	cout << "InstanceNeuron: conceptNeuron->GIAentityName = " << conceptNeuron->GIAentityName << endl;
 	#endif
 
-	(*currentSynapseArtificialInstanceNeuron)->GIAentityName = entityName;
-	(*currentSynapseArtificialInstanceNeuron)->GIAisConceptEntity = false;
-	(*currentSynapseArtificialInstanceNeuron)->spatialCoordinatesSet3D = true;
-	(*currentSynapseArtificialInstanceNeuron)->xPosRel = conceptNeuron2->xPosRel;
-	(*currentSynapseArtificialInstanceNeuron)->yPosRel = artificialLayer;
-	(*currentSynapseArtificialInstanceNeuron)->zPosRel = instanceID;
-	(*currentSynapseArtificialInstanceNeuron)->GIAactivationAge = getCurrentTime();
+	(*currentInstanceNeuron)->GIAentityName = entityName;
+	(*currentInstanceNeuron)->GIAisConceptEntity = false;
+	(*currentInstanceNeuron)->spatialCoordinatesSet3D = true;
+	#ifdef GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS
+	(*currentInstanceNeuron)->xPosRel = generateInstanceNeuronXposRel(neuralNetworkVariables, conceptNeuron);
+	#else
+	(*currentInstanceNeuron)->xPosRel = conceptNeuron->xPosRel;
+	#endif
+	(*currentInstanceNeuron)->yPosRel = artificialLayer;
+	(*currentInstanceNeuron)->zPosRel = instanceID;
+	(*currentInstanceNeuron)->GIAactivationAge = getCurrentTime();
 
-	ANNneuronClass.fillInNeuronIDProperties((*currentSynapseArtificialInstanceNeuron), neuralNetworkVariables->neuronIDcounter, neuralNetworkVariables->synapseArtificialInstanceOrderIDcounter, GIA_NEURAL_NETWORK_LAYER_SYNAPSE_ARTIFICIAL_INSTANCE_NEURONS, GIA_NEURAL_NETWORK_SUBNET_COUNTER);
+	ANNneuronClass.fillInNeuronIDProperties((*currentInstanceNeuron), neuralNetworkVariables->neuronIDcounter, neuralNetworkVariables->instanceNeuronOrderIDcounter, GIA_NEURAL_NETWORK_LAYER_SYNAPSE_ARTIFICIAL_INSTANCE_NEURONS, GIA_NEURAL_NETWORK_SUBNET_COUNTER);
 	neuralNetworkVariables->neuronIDcounter = neuralNetworkVariables->neuronIDcounter + 1;
-	neuralNetworkVariables->synapseArtificialInstanceOrderIDcounter = neuralNetworkVariables->synapseArtificialInstanceOrderIDcounter + 1;
-	(*currentSynapseArtificialInstanceNeuron)->hasFrontLayer = false;	//required for ANNdraw
-	(*currentSynapseArtificialInstanceNeuron)->hasBackLayer = true;		//required for ANNdraw
+	neuralNetworkVariables->instanceNeuronOrderIDcounter = neuralNetworkVariables->instanceNeuronOrderIDcounter + 1;
+	#ifdef GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS
+	(*currentInstanceNeuron)->hasFrontLayer = true;	//required for ANNdraw	
+	#else
+	(*currentInstanceNeuron)->hasFrontLayer = false;	//required for ANNdraw
+	#endif
+	(*currentInstanceNeuron)->hasBackLayer = true;		//required for ANNdraw
 
-	//add a connection between the concept entity and the synapseArtificialInstanceNeuron
-	createANNconnection(conceptNeuron2, *currentSynapseArtificialInstanceNeuron, ANNconnectionType);
+	//add a connection between the concept entity and the InstanceNeuron
+	#ifdef GIA_NEURAL_NETWORK_NON_SEMANTIC
+	createANNconnection(conceptNeuron, *currentInstanceNeuron, ANNconnectionType);
+	#endif
+	#ifdef GIA_NEURAL_NETWORK_SYMBOLIC_CORE
+	//createANNconnection(conceptNeuron, instanceNeuron, ANNconnectionType);		//temp backward compatibility check only
+	createANNconnectionBetweenConceptNeuronAndInstanceNeuron(neuralNetworkVariables, conceptNeuron, *currentInstanceNeuron);
+	#endif
+	
+	ANNneuron* newNeuron = (*currentInstanceNeuron);
 
-	ANNneuron* newNeuron = (*currentSynapseArtificialInstanceNeuron);
-
-	ANNneuron* synapseArtificialInstanceNeuronNew = new ANNneuron();
-	(*currentSynapseArtificialInstanceNeuron)->nextNeuron = synapseArtificialInstanceNeuronNew;	//redundant
-	(*currentSynapseArtificialInstanceNeuron) = (*currentSynapseArtificialInstanceNeuron)->nextNeuron;
+	ANNneuron* instanceNeuronNew = new ANNneuron();
+	(*currentInstanceNeuron)->nextNeuron = instanceNeuronNew;	//redundant
+	(*currentInstanceNeuron) = (*currentInstanceNeuron)->nextNeuron;
 	
 	return newNeuron;
-}					
+}	
+
+#ifdef GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS
+
+int GIAneuralNetworkOperationsClass::generateInstanceNeuronXposRel(GIAneuralNetworkVariablesClass* neuralNetworkVariables, ANNneuron* conceptNeuron)
+{
+	int xPosRel = 0;
+	int conceptIndexType = conceptNeuron->GIAconceptIndexType;
 	
+	xPosRel = (conceptIndexType-1)*GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS_TYPE_OFFSET;		//conceptNeuron->xPosRel
+	
+	return xPosRel;
+}
+
+bool GIAneuralNetworkOperationsClass::connectConceptNeuronToConceptIndexBitNeurons(GIAneuralNetworkVariablesClass* neuralNetworkVariables, ANNneuron* conceptNeuron, int conceptIndexType)
+{
+	bool result = true;
+
+	int conceptIndex = getConceptIndexIDcounter(neuralNetworkVariables, conceptIndexType); 
+	conceptNeuron->GIAconceptIndexType = conceptIndexType;
+	conceptNeuron->GIAconceptIndex = conceptIndex;
+	
+	int i = 0;
+	ANNneuron* currentConceptIndexBitNeuronInLayer = getFirstConceptIndexBitNeuron(neuralNetworkVariables->firstInputNeuronInNetwork, conceptIndexType);
+	while(currentConceptIndexBitNeuronInLayer->nextNeuron != NULL)
+	{
+		int GIAconceptIndexBitID = currentConceptIndexBitNeuronInLayer->GIAconceptIndexBitID;	//i
+		ANNneuronConnection* connection = createANNconnection(conceptNeuron, currentConceptIndexBitNeuronInLayer, GIA_ANN_CONNECTION_TYPE_CONCEPT_TO_CONCEPT_INDEX_BIT);
+		connection->weight = calculateConceptIndexBitConnectionWeight(neuralNetworkVariables, conceptIndex, i);	//GIAconceptIndexBitID
+		i++;
+		currentConceptIndexBitNeuronInLayer = currentConceptIndexBitNeuronInLayer->nextNeuron;
+	}
+	
+	incrementConceptIndexIDcounter(neuralNetworkVariables, conceptIndexType);
+	
+	return result;
+}
+
+bool GIAneuralNetworkOperationsClass::getBitValue(int number, int x) 
+{
+	int value = (number >> x) & 1U;
+	bool result = value;
+	return result;
+}
+
+void GIAneuralNetworkOperationsClass::incrementConceptIndexIDcounter(GIAneuralNetworkVariablesClass* neuralNetworkVariables, const int conceptIndexType)
+{
+	if(conceptIndexType == GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS_TYPE_SUBSTANCE)
+	{
+		neuralNetworkVariables->substanceConceptIDcounter = neuralNetworkVariables->substanceConceptIDcounter + 1;
+	}
+	else if(conceptIndexType == GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS_TYPE_REFERENCE_SET_DELIMITER)
+	{
+		neuralNetworkVariables->referenceSetDelimiterConceptIDcounter = neuralNetworkVariables->referenceSetDelimiterConceptIDcounter + 1;
+	}
+}	
+
+int GIAneuralNetworkOperationsClass::getConceptIndexIDcounter(GIAneuralNetworkVariablesClass* neuralNetworkVariables, const int conceptIndexType)
+{
+	int conceptIndexIDcounter = INT_DEFAULT_VALUE;
+	if(conceptIndexType == GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS_TYPE_SUBSTANCE)
+	{
+		conceptIndexIDcounter = neuralNetworkVariables->substanceConceptIDcounter;
+	}
+	else if(conceptIndexType == GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS_TYPE_REFERENCE_SET_DELIMITER)
+	{
+		conceptIndexIDcounter = neuralNetworkVariables->referenceSetDelimiterConceptIDcounter;
+	}
+	return conceptIndexIDcounter;
+}	
+#endif				
+
+#ifdef GIA_NEURAL_NETWORK_SYMBOLIC_CORE
+#ifdef GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS
+bool GIAneuralNetworkOperationsClass::createANNconnectionBetweenConceptNeuronAndInstanceNeuron(GIAneuralNetworkVariablesClass* neuralNetworkVariables, ANNneuron* conceptNeuron, ANNneuron* instanceNeuron)
+{
+
+	int conceptIndex = conceptNeuron->GIAconceptIndex;  
+	int conceptIndexType = conceptNeuron->GIAconceptIndexType;
+	
+	ANNneuron* currentConceptIndexBitNeuronInLayer = getFirstConceptIndexBitNeuron(neuralNetworkVariables->firstInputNeuronInNetwork, conceptIndexType);
+	int i = 0;
+	while(currentConceptIndexBitNeuronInLayer->nextNeuron != NULL)
+	{
+		int GIAconceptIndexBitID = currentConceptIndexBitNeuronInLayer->GIAconceptIndexBitID;	//i
+		ANNneuronConnection* connection = createANNconnection(currentConceptIndexBitNeuronInLayer, instanceNeuron, GIA_ANN_CONNECTION_TYPE_CONCEPT_INDEX_BIT_TO_INSTANCE);
+		connection->weight = calculateConceptIndexBitConnectionWeight(neuralNetworkVariables, conceptIndex, i);
+		i++;
+		currentConceptIndexBitNeuronInLayer = currentConceptIndexBitNeuronInLayer->nextNeuron;
+	}	
+}
+double GIAneuralNetworkOperationsClass::calculateConceptIndexBitConnectionWeight(GIAneuralNetworkVariablesClass* neuralNetworkVariables, int conceptIndex, int bitID)
+{
+	bool bit = getBitValue(conceptIndex, bitID);	//GIAconceptIndexBitID
+	#ifdef GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS_NEGATIVE_WEIGHTS
+	int weight = 0;
+	if(bit)
+	{
+		weight = 1;
+	}
+	else
+	{
+		weight = -1;
+	}
+	#else
+	int weight = int(bit);
+	#endif
+	return double(weight);
+}
+#else
+bool GIAneuralNetworkOperationsClass::createANNconnectionBetweenConceptNeuronAndInstanceNeuron(GIAneuralNetworkVariablesClass* neuralNetworkVariables, ANNneuron* conceptNeuron, ANNneuron* instanceNeuron)
+{
+	ANNneuronConnection* connection = createANNconnection(conceptNeuron, instanceNeuron, GIA_ANN_CONNECTION_TYPE_CONCEPT_TO_INSTANCE);
+
+}
+#endif
+#endif
+
+#ifdef GIA_NEURAL_NETWORK_ACTIVE
 ANNneuron* GIAneuralNetworkOperationsClass::addConceptToNetwork(GIAneuralNetworkVariablesClass* neuralNetworkVariables, GIApreprocessorWord* wordTag, const bool specificConcept, const vector<GIApreprocessorWord*>* subReferenceSetContents, const int indexOfStartOfSpecificConcept, const int indexOfSpecificConcept)
 {	
 	bool result = true;
@@ -684,17 +1061,17 @@ ANNneuron* GIAneuralNetworkOperationsClass::addSpecificConceptToNetwork(GIAneura
 		conceptNeuron = addConceptToNetwork(neuralNetworkVariables, wordTag);
 	}
 
-	int maxLayer = 1;
-	//calculateLayerOfSpecificConceptNeuron(conceptEntity, 1, &maxLayer);	//TODO
+	int layer = 1;
+	//calculateLayerOfSpecificConceptNeuron(conceptEntity, 1, &layer);	//TODO
 
 	int xPosRel = 0;	
 	ANNneuron* firstSpecificConceptNeuron = getFirstSpecificConceptNeuron(neuralNetworkVariables->firstInputNeuronInNetwork);
 	ANNneuron* currentSpecificConceptNeuron = getLastNeuronInLayer(firstSpecificConceptNeuron, &xPosRel);
-	newNeuron = createNewSpecificConceptNeuron(neuralNetworkVariables, &currentSpecificConceptNeuron, word, xPosRel, maxLayer);
+	newNeuron = createNewSpecificConceptNeuron(neuralNetworkVariables, &currentSpecificConceptNeuron, word, xPosRel, layer, GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS_TYPE_UNKNOWN);
 	wordTag->wordShortcutToConceptNeuron = newNeuron;
 
 	//connect specific concept to concept 
-	createANNconnection(conceptNeuron, newNeuron, GIA_ANN_CONNECTION_TYPE_CONCEPT_DEFINITION);
+	createANNconnection(conceptNeuron, newNeuron, GIA_ANN_CONNECTION_TYPE_CONCEPT_TO_CONCEPT);
 	
 	if(!addSpecificConceptPropertiesToNetwork(neuralNetworkVariables, currentSpecificConceptNeuron, subReferenceSetContents, indexOfStartOfSpecificConcept, indexOfSpecificConcept))
 	{
@@ -709,7 +1086,7 @@ ANNneuron* GIAneuralNetworkOperationsClass::addConceptToNetwork(GIAneuralNetwork
 	int xPosRel = 0;
 	ANNneuron* firstConceptNeuron = getFirstConceptNeuron(neuralNetworkVariables->firstInputNeuronInNetwork);
 	ANNneuron* currentConceptNeuron = getLastNeuronInLayer(firstConceptNeuron, &xPosRel);	
-	ANNneuron* newNeuron = createNewConceptNeuron(neuralNetworkVariables, &currentConceptNeuron, wordTag->tagName, xPosRel);
+	ANNneuron* newNeuron = createNewConceptNeuron(neuralNetworkVariables, &currentConceptNeuron, wordTag->tagName, xPosRel, GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS_TYPE_UNKNOWN);
 	wordTag->wordShortcutToConceptNeuron = newNeuron;
 	
 	return newNeuron;
@@ -720,7 +1097,9 @@ bool GIAneuralNetworkOperationsClass::addSpecificConceptPropertiesToNetwork(GIAn
 	for(int i=indexOfStartOfSpecificConcept; i<indexOfSpecificConcept; i++)
 	{
 		GIApreprocessorWord* wordTag = (*subReferenceSetContents)[i];
-		wordTag->neuralNetworkPreprocessorWordType = GIA_NEURAL_NETWORK_PREPROCESSOR_WORD_TYPE_IGNORE;
+		#ifdef GIA_NEURAL_NETWORK_NON_SEMANTIC
+		wordTag->neuralNetworkPreprocessorWordType = GIA_NEURAL_NETWORK_NON_SEMANTIC_PREPROCESSOR_WORD_TYPE_IGNORE;
+		#endif
 		
 		ANNneuron* conceptNeuron = NULL;
 		if(!findConceptInNetwork(neuralNetworkVariables, wordTag, &conceptNeuron))
@@ -729,9 +1108,10 @@ bool GIAneuralNetworkOperationsClass::addSpecificConceptPropertiesToNetwork(GIAn
 			exit(EXIT_ERROR);
 		}
 	
-		createANNconnection(currentSpecificConceptNeuron, conceptNeuron, GIA_ANN_CONNECTION_TYPE_CONCEPT_PROPERTIES);
+		createANNconnection(currentSpecificConceptNeuron, conceptNeuron, GIA_ANN_CONNECTION_TYPE_CONCEPT_TO_CONCEPT_PROPERTIES);
 	}		
 }
+
 		
 bool GIAneuralNetworkOperationsClass::findConceptInNetwork(GIAneuralNetworkVariablesClass* neuralNetworkVariables, GIApreprocessorWord* wordTag, ANNneuron** conceptNeuronFound, const bool specificConcept, const vector<GIApreprocessorWord*>* subReferenceSetContents, const int indexOfStartOfSpecificConcept, const int indexOfSpecificConcept)
 {
@@ -813,7 +1193,7 @@ bool GIAneuralNetworkOperationsClass::verifySpecificConceptProperties(GIAneuralN
 		{
 			ANNneuronConnection* connection = (specificConcept->frontANNneuronConnectionList)[i];
 			bool foundMatch = false;
-			if(connection->GIAconnectionType == GIA_ANN_CONNECTION_TYPE_CONCEPT_PROPERTIES)
+			if(connection->GIAconnectionType == GIA_ANN_CONNECTION_TYPE_CONCEPT_TO_CONCEPT_PROPERTIES)
 			{
 				ANNneuron* neuron = connection->frontNeuron;
 				if(neuron->GIAentityName == word->tagName)
@@ -831,7 +1211,7 @@ bool GIAneuralNetworkOperationsClass::verifySpecificConceptProperties(GIAneuralN
 	for(int i=0; i<specificConcept->frontANNneuronConnectionList.size(); i++)
 	{
 		ANNneuronConnection* connection = (specificConcept->frontANNneuronConnectionList)[i];
-		if(connection->GIAconnectionType == GIA_ANN_CONNECTION_TYPE_CONCEPT_PROPERTIES)
+		if(connection->GIAconnectionType == GIA_ANN_CONNECTION_TYPE_CONCEPT_TO_CONCEPT_PROPERTIES)
 		{
 			ANNneuron* neuron = connection->frontNeuron;
 			bool foundMatch = false;
@@ -858,7 +1238,11 @@ bool GIAneuralNetworkOperationsClass::verifySpecificConceptProperties(GIAneuralN
 	return result;
 }
 
+#endif
+
 long GIAneuralNetworkOperationsClass::getCurrentTime()
 {
 	return static_cast<long int>(time(NULL));
 }
+
+

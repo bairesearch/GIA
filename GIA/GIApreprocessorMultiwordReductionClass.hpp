@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorMultiwordReductionClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3d5f 11-August-2017
+ * Project Version: 3d6a 12-November-2017
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  *
@@ -241,13 +241,13 @@ static string translatorEnglishNounPluralModifierReplacementSucceedingConsonantA
 static string translatorEnglishNounPluralModifierReplacementArray[GIA_TRANSLATOR_ENGLISH_NOUN_PLURAL_MODIFIER_REPLACEMENT_NUMBER_OF_TYPES][2] = {{"f", "fe"}, {"fe", "ves"}, {"ix", "ices"}, {"us", "i"}, {"lum", "la"}, {"ium", "ia"}, {"ex", "ices"}, {"um", "a"}, {"a", "ae"}, {"mnus", "mnui"}, {"is", "es"}, {"eau", "eaus"}, {"eau", "eaux"}, {"o", "i"}};
 #endif
 
-#ifdef GIA_NEURAL_NETWORK
-#define GIA_NEURAL_NETWORK_PREPROCESSOR_WORD_TYPE_UNDEFINED (0)
-#define GIA_NEURAL_NETWORK_PREPROCESSOR_WORD_TYPE_CONCEPT (1)
-#define GIA_NEURAL_NETWORK_PREPROCESSOR_WORD_TYPE_SPECIFIC_CONCEPT (2)
-#define GIA_NEURAL_NETWORK_PREPROCESSOR_WORD_TYPE_IGNORE (3)
+#ifdef GIA_NEURAL_NETWORK_NON_SEMANTIC
+#define GIA_NEURAL_NETWORK_NON_SEMANTIC_PREPROCESSOR_WORD_TYPE_UNDEFINED (0)
+#define GIA_NEURAL_NETWORK_NON_SEMANTIC_PREPROCESSOR_WORD_TYPE_CONCEPT (1)
+#define GIA_NEURAL_NETWORK_NON_SEMANTIC_PREPROCESSOR_WORD_TYPE_SPECIFIC_CONCEPT (2)
+#define GIA_NEURAL_NETWORK_NON_SEMANTIC_PREPROCESSOR_WORD_TYPE_IGNORE (3)
 #ifndef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET
-#define GIA_NEURAL_NETWORK_PREPROCESSOR_WORD_TYPE_CONCEPT_DEFINITION (4)
+#define GIA_NEURAL_NETWORK_NON_SEMANTIC_PREPROCESSOR_WORD_TYPE_CONCEPT_DEFINITION (4)
 #endif
 #endif
 
@@ -272,9 +272,11 @@ public:
 	bool plainTextWord;
 	
 	#ifdef GIA_NEURAL_NETWORK
-	int neuralNetworkPreprocessorWordType;
 	ANNneuron* wordShortcutToConceptNeuron;
+	#ifdef GIA_NEURAL_NETWORK_NON_SEMANTIC
+	int neuralNetworkPreprocessorWordType;
 	string tagNameOriginalNonLemma;
+	#endif
 	#endif
 	
 	GIApreprocessorWord* nextTag;

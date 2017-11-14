@@ -25,7 +25,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3d5f 11-August-2017
+ * Project Version: 3d6a 12-November-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -691,23 +691,23 @@
  *		Linux EL5/EL6/UB14/UB16:
  *
  *		Examples using NLP input from Relex;
- *		./GIA.exe -lrpfolder "/home/systemusername/source/LRPdata" -itxt inputText.txt -oall semanticNet -nlprelation 0 -nlpfeature 0 -nlprelationq 0 -nlpfeatureq 0 -nlprelexfolder "/home/systemusername/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "/home/systemusername/stanford/coreNLP/stanford-corenlp-full-2016-10-31" -nlpstanfordparserfolder "/home/systemusername/stanford/parser/stanford-parser-full-2016-10-31" -notshow
- *		./GIA.exe -lrpfolder "/home/systemusername/source/LRPdata" -itxt inputText.txt -itxtq inputTextQuery.txt -oall semanticNet -nlprelation 0 -nlpfeature 0 -nlprelationq 0 -nlpfeatureq 0 -nlprelexfolder "/home/systemusername/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "/home/systemusername/stanford/coreNLP/stanford-corenlp-full-2016-10-31" -nlpstanfordparserfolder "/home/systemusername/stanford/parser/stanford-parser-full-2016-10-31" -notshow
+ *		./GIA.exe -lrpfolder "/home/systemusername/source/LRPdata" -itxt inputText.txt -oall semanticNet -nlprelation 0 -nlpfeature 0 -nlprelationq 0 -nlpfeatureq 0 -nlprelexfolder "/home/systemusername/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "/home/systemusername/stanford/coreNLP/stanford-corenlp-full-2016-10-31" -nlpstanfordparserfolder "/home/systemusername/stanford/parser/stanford-parser-full-2016-10-31"
+ *		./GIA.exe -lrpfolder "/home/systemusername/source/LRPdata" -itxt inputText.txt -itxtq inputTextQuery.txt -oall semanticNet -nlprelation 0 -nlpfeature 0 -nlprelationq 0 -nlpfeatureq 0 -nlprelexfolder "/home/systemusername/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "/home/systemusername/stanford/coreNLP/stanford-corenlp-full-2016-10-31" -nlpstanfordparserfolder "/home/systemusername/stanford/parser/stanford-parser-full-2016-10-31"
  *		Example using NLP input from Stanford Core NLP;
- *		./GIA.exe -lrpfolder "/home/systemusername/source/LRPdata" -itxt inputText.txt -oall semanticNet -nlprelation 1 -nlpfeature 1 -nlprelexfolder "/home/systemusername/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "/home/systemusername/stanford/coreNLP/stanford-corenlp-full-2016-10-31" -nlpstanfordparserfolder "/home/systemusername/stanford/parser/stanford-parser-full-2016-10-31" -notshow
- *		./GIA.exe -lrpfolder "/home/systemusername/source/LRPdata" -itxt inputText.txt -itxtq inputTextQuery.txt -oall semanticNet -nlprelation 1 -nlpfeature 1 -nlprelationq 1 -nlpfeatureq 1 -nlprelexfolder "/home/systemusername/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "/home/systemusername/stanford/coreNLP/stanford-corenlp-full-2016-10-31" -nlpstanfordparserfolder "/home/systemusername/stanford/parser/stanford-parser-full-2016-10-31" -notshow
+ *		./GIA.exe -lrpfolder "/home/systemusername/source/LRPdata" -itxt inputText.txt -oall semanticNet -nlprelation 1 -nlpfeature 1 -nlprelexfolder "/home/systemusername/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "/home/systemusername/stanford/coreNLP/stanford-corenlp-full-2016-10-31" -nlpstanfordparserfolder "/home/systemusername/stanford/parser/stanford-parser-full-2016-10-31"
+ *		./GIA.exe -lrpfolder "/home/systemusername/source/LRPdata" -itxt inputText.txt -itxtq inputTextQuery.txt -oall semanticNet -nlprelation 1 -nlpfeature 1 -nlprelationq 1 -nlpfeatureq 1 -nlprelexfolder "/home/systemusername/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "/home/systemusername/stanford/coreNLP/stanford-corenlp-full-2016-10-31" -nlpstanfordparserfolder "/home/systemusername/stanford/parser/stanford-parser-full-2016-10-31"
  *		Example using NLP input from Stanford Parser + Stanford Core NLP;
- *		./GIA.exe -lrpfolder "/home/systemusername/source/LRPdata" -itxt inputText.txt -oall semanticNet -nlprelation 2 -nlpfeature 1 -nlprelationq 2 -nlpfeatureq 1 -nlprelexfolder "/home/systemusername/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "/home/systemusername/stanford/coreNLP/stanford-corenlp-full-2016-10-31" -nlpstanfordparserfolder "/home/systemusername/stanford/parser/stanford-parser-full-2016-10-31" -notshow
- *		./GIA.exe -lrpfolder "/home/systemusername/source/LRPdata" -itxt inputText.txt -itxtq inputTextQuery.txt -oall semanticNet -nlprelation 2 -nlpfeature 1 -nlprelationq 2 -nlpfeatureq 1 -nlprelexfolder "/home/systemusername/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "/home/systemusername/stanford/coreNLP/stanford-corenlp-full-2016-10-31" -nlpstanfordparserfolder "/home/systemusername/stanford/parser/stanford-parser-full-2016-10-31" -notshow > answer.txt
- *		./GIA.exe -lrpfolder "/home/systemusername/source/LRPdata" -syndet 1 -itxt inputText.txt -oall semanticNet -nlprelation 2 -nlpfeature 1 -nlprelationq 2 -nlpfeatureq 1 -nlprelexfolder "/home/systemusername/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "/home/systemusername/stanford/coreNLP/stanford-corenlp-full-2016-10-31" -nlpstanfordparserfolder "/home/systemusername/stanford/parser/stanford-parser-full-2016-10-31" -notshow
+ *		./GIA.exe -lrpfolder "/home/systemusername/source/LRPdata" -itxt inputText.txt -oall semanticNet -nlprelation 2 -nlpfeature 1 -nlprelationq 2 -nlpfeatureq 1 -nlprelexfolder "/home/systemusername/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "/home/systemusername/stanford/coreNLP/stanford-corenlp-full-2016-10-31" -nlpstanfordparserfolder "/home/systemusername/stanford/parser/stanford-parser-full-2016-10-31"
+ *		./GIA.exe -lrpfolder "/home/systemusername/source/LRPdata" -itxt inputText.txt -itxtq inputTextQuery.txt -oall semanticNet -nlprelation 2 -nlpfeature 1 -nlprelationq 2 -nlpfeatureq 1 -nlprelexfolder "/home/systemusername/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "/home/systemusername/stanford/coreNLP/stanford-corenlp-full-2016-10-31" -nlpstanfordparserfolder "/home/systemusername/stanford/parser/stanford-parser-full-2016-10-31" > answer.txt
+ *		./GIA.exe -lrpfolder "/home/systemusername/source/LRPdata" -syndet 1 -itxt inputText.txt -oall semanticNet -nlprelation 2 -nlpfeature 1 -nlprelationq 2 -nlpfeatureq 1 -nlprelexfolder "/home/systemusername/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "/home/systemusername/stanford/coreNLP/stanford-corenlp-full-2016-10-31" -nlpstanfordparserfolder "/home/systemusername/stanford/parser/stanford-parser-full-2016-10-31"
  *
  *		Windows XP/7/8/10:
  *		Example using NLP input from Stanford Core NLP;
- *		GIA.exe -lrpfolder "C:/Files/source/LRPdata" -itxt inputText.txt -oall semanticNet -nlprelation 1 -nlpfeature 1 -nlprelationq 1 -nlpfeatureq 1 -nlprelexfolder "C:/Files/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "C:/Files/stanford/coreNLP/stanford-corenlp-full-2016-10-31" -nlpstanfordparserfolder "C:/Files/stanford/parser/stanford-parser-full-2016-10-31" -notshow
- *		GIA.exe -lrpfolder "C:/Files/source/LRPdata" -itxt inputText.txt -itxtq inputTextQuery.txt -oall semanticNet -nlprelation 1 -nlpfeature 1 -nlprelationq 1 -nlpfeatureq 1 -nlprelexfolder "C:/Files/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "C:/Files/stanford/coreNLP/stanford-corenlp-full-2016-10-31" -nlpstanfordparserfolder "C:/Files/stanford/parser/stanford-parser-full-2016-10-31" -notshow
+ *		GIA.exe -lrpfolder "C:/Files/source/LRPdata" -itxt inputText.txt -oall semanticNet -nlprelation 1 -nlpfeature 1 -nlprelationq 1 -nlpfeatureq 1 -nlprelexfolder "C:/Files/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "C:/Files/stanford/coreNLP/stanford-corenlp-full-2016-10-31" -nlpstanfordparserfolder "C:/Files/stanford/parser/stanford-parser-full-2016-10-31"
+ *		GIA.exe -lrpfolder "C:/Files/source/LRPdata" -itxt inputText.txt -itxtq inputTextQuery.txt -oall semanticNet -nlprelation 1 -nlpfeature 1 -nlprelationq 1 -nlpfeatureq 1 -nlprelexfolder "C:/Files/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "C:/Files/stanford/coreNLP/stanford-corenlp-full-2016-10-31" -nlpstanfordparserfolder "C:/Files/stanford/parser/stanford-parser-full-2016-10-31"
  *		Example using NLP input from Stanford Parser + Stanford Core NLP;
- *		GIA.exe -lrpfolder "C:/Files/source/LRPdata" -itxt inputText.txt -oall semanticNet -nlprelation 2 -nlpfeature 1 -nlprelationq 2 -nlpfeatureq 1 -nlprelexfolder "C:/Files/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "C:/Files/stanford/coreNLP/stanford-corenlp-full-2016-10-31" -nlpstanfordparserfolder "C:/Files/stanford/parser/stanford-parser-full-2016-10-31" -notshow
- *		GIA.exe -lrpfolder "C:/Files/source/LRPdata" -itxt inputText.txt -itxtq inputTextQuery.txt -oall semanticNet -nlprelation 2 -nlpfeature 1 -nlprelationq 2 -nlpfeatureq 1 -nlprelexfolder "C:/Files/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "C:/Files/stanford/coreNLP/stanford-corenlp-full-2016-10-31" -nlpstanfordparserfolder "C:/Files/stanford/parser/stanford-parser-full-2016-10-31" -notshow
+ *		GIA.exe -lrpfolder "C:/Files/source/LRPdata" -itxt inputText.txt -oall semanticNet -nlprelation 2 -nlpfeature 1 -nlprelationq 2 -nlpfeatureq 1 -nlprelexfolder "C:/Files/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "C:/Files/stanford/coreNLP/stanford-corenlp-full-2016-10-31" -nlpstanfordparserfolder "C:/Files/stanford/parser/stanford-parser-full-2016-10-31"
+ *		GIA.exe -lrpfolder "C:/Files/source/LRPdata" -itxt inputText.txt -itxtq inputTextQuery.txt -oall semanticNet -nlprelation 2 -nlpfeature 1 -nlprelationq 2 -nlpfeatureq 1 -nlprelexfolder "C:/Files/relex/relex-1.4.0" -nlpstanfordcorenlpfolder "C:/Files/stanford/coreNLP/stanford-corenlp-full-2016-10-31" -nlpstanfordparserfolder "C:/Files/stanford/parser/stanford-parser-full-2016-10-31"
  *
  *		Filesystem Database Configuration;
  *		---------------------------------
@@ -745,29 +745,64 @@
 		//#define GIA_DEBUG_QUERY2
 	#endif
 	#ifdef USE_ANN
-		#define GIA_NEURAL_NETWORK
+		//#define GIA_NEURAL_NETWORK	//experimental only
 		#ifdef GIA_NEURAL_NETWORK
-			#define GIA_NEURAL_NETWORK_ACTIVE	//3d4a	//not yet coded (must replace GIA referencing and queries with neural net processing)
-			#ifdef GIA_NEURAL_NETWORK_ACTIVE
-				//#define GIA_NEURAL_NETWORK_CREATE_DIRECT_CONNECTION_BETWEEN_DELIMITER_AND_OBJECT	//not coded or used
-				#define GIA_NEURAL_NETWORK_BYPASS_AUXILIARIES
-				#define GIA_NEURAL_NETWORK_REPLACE_WORDS_WITH_LEMMAS
-				#define GIA_NEURAL_NETWORK_REFERENCE_SET_IDENTIFICATION_MAX_ERROR (1)	//should be dynamic depending on size of reference set (currently set to 1 to take into account mismatch between indefinite/definite determiners for a uniquely identifiable/referenced referenceSet; a/the)	//assume that there are no stray words (e.g. "that")	//FUTURE: need to take into account lemma differences - eg The dog rides the bike. The dog that rode the bike... (rides/rode)
-				#define GIA_DEBUG_NEURAL_NETWORK_ACTIVE
-				//NB GIA_NEURAL_NETWORK_ACTIVE requires GIA_PREPROCESSOR_SENTENCE and GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET
+			#define GIA_NEURAL_NETWORK_MAX_SPECIFIC_CONCEPT_DEPTH (5)
+			#define GIA_NEURAL_NETWORK_MAX_INSTANCE_DEPTH (5)
+			#define GIA_NEURAL_NETWORK_SYMBOLIC_CORE	//3d7a
+			#ifdef GIA_NEURAL_NETWORK_SYMBOLIC_CORE
+				//#define GIA_NEURAL_NETWORK_SYMBOLIC_CORE_3D			//not yet coded
+				#define GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS	//not yet coded (connect each concept to concept index bits, and store binary index code in each neuron [which is used to tune synapse weights between instances and concept index bits]. Connect instances to concept index bits)
+				#ifdef GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS
+					#define GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS_NEGATIVE_WEIGHTS
+					#define GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS_TYPE_UNKNOWN (0)
+					#define GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS_TYPE_SUBSTANCE (1)
+					#define GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS_TYPE_REFERENCE_SET_DELIMITER (2)
+					#define GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS_NUMBER_OF_TYPES (2)
+					#define GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS_MAX (8)	//32 bits = supports 4 billion concepts, 20 bits = supports 1 million concepts
+					#define GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS_LAYER (GIA_NEURAL_NETWORK_MAX_SPECIFIC_CONCEPT_DEPTH)
+					#define GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS_OFFSET (1)
+					#define GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS_TYPE_OFFSET (GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS_MAX * GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS_OFFSET * 1)
+				#endif
+				//#define GIA_NEURAL_NETWORK_SYMBOLIC_CORE_ACTIVE	//not yet coded (must replace GIA referencing and queries with neural net processing)	
+				#ifdef GIA_NEURAL_NETWORK_SYMBOLIC_CORE_ACTIVE
+					#define GIA_NEURAL_NETWORK_ACTIVE
+				#endif
+			#else
+				//#define GIA_NEURAL_NETWORK_NON_SEMANTIC	//not used
+				#ifdef GIA_NEURAL_NETWORK_NON_SEMANTIC
+					//#define GIA_NEURAL_NETWORK_USE_ARTIFICIAL_INSTANCE_NEURON_SYNAPSES
+					//#define GIA_NEURAL_NETWORK_NON_SEMANTIC_ACTIVE	//3d4a	//not yet finished (must replace GIA referencing and queries with neural net processing)
+					#ifdef GIA_NEURAL_NETWORK_NON_SEMANTIC_ACTIVE
+						//#assert GIA_NEURAL_NETWORK_USE_ARTIFICIAL_INSTANCE_NEURON_SYNAPSES - NB GIA_NEURAL_NETWORK_NON_SEMANTIC_ACTIVE currently requires GIA_NEURAL_NETWORK_USE_ARTIFICIAL_INSTANCE_NEURON_SYNAPSES (this is not an architectural limitation; the alternative just hasn't been coded)
+						#define GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS_TYPE_UNKNOWN (0)
+						#define GIA_NEURAL_NETWORK_DISABLE_SEMANTIC_TRANSLATOR
+						#define GIA_NEURAL_NETWORK_ACTIVE
+						//#define GIA_NEURAL_NETWORK_NON_SEMANTIC_CREATE_DIRECT_CONNECTION_BETWEEN_DELIMITER_AND_OBJECT	//not coded or used
+						#define GIA_NEURAL_NETWORK_NON_SEMANTIC_BYPASS_AUXILIARIES
+						#define GIA_NEURAL_NETWORK_NON_SEMANTIC_REPLACE_WORDS_WITH_LEMMAS
+						#define GIA_NEURAL_NETWORK_NON_SEMANTIC_REFERENCE_SET_IDENTIFICATION_MAX_ERROR (1)	//should be dynamic depending on size of reference set (currently set to 1 to take into account mismatch between indefinite/definite determiners for a uniquely identifiable/referenced referenceSet; a/the)	//assume that there are no stray words (e.g. "that")	//FUTURE: need to take into account lemma differences - eg The dog rides the bike. The dog that rode the bike... (rides/rode)
+						#define GIA_DEBUG_NEURAL_NETWORK_ACTIVE
+						//NB GIA_NEURAL_NETWORK_NON_SEMANTIC_ACTIVE requires GIA_PREPROCESSOR_SENTENCE and GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET
+					#endif
+				#endif
 			#endif
 			//#ifdef GIA_CREATE_SHORTCUTS_TO_CONCEPT_ENTITIES	//not yet defined
 				#define GIA_NEURAL_NETWORK_GENERATE_SPECIFIC_CONCEPT_NETWORKS
 				#ifdef GIA_NEURAL_NETWORK_GENERATE_SPECIFIC_CONCEPT_NETWORKS
 					#define GIA_NEURAL_NETWORK_GENERATE_SEPARATE_CONCEPT_NETWORKS_RECURSE	//this is required in the case where there are multiple layers of specific concepts
 				#endif
-			//#endif
+			//#endif		
 			//#define GIA_DEBUG_NEURAL_NETWORK
-			#define GIA_NEURAL_NETWORK_OFFSET_SYNAPSE_ARTIFICIAL_INSTANCE_NEURONS
-			#ifdef GIA_NEURAL_NETWORK_OFFSET_SYNAPSE_ARTIFICIAL_INSTANCE_NEURONS
-				#define GIA_NEURAL_NETWORK_OFFSET_SYNAPSE_ARTIFICIAL_INSTANCE_NEURONS_LAYERS (5)	//this should equal max number of specific concepts in hierachy	//NB this should be padded (ie increased) slightly (eg +2) to take into account the fact subnets may be parsed such that they result in lower (negative) layers relative to the entry point neuron
+			#define GIA_NEURAL_NETWORK_OFFSET_INSTANCE_NEURONS
+			#ifdef GIA_NEURAL_NETWORK_OFFSET_INSTANCE_NEURONS
+				#ifdef GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS
+					#define GIA_NEURAL_NETWORK_OFFSET_INSTANCE_NEURONS_LAYERS (GIA_NEURAL_NETWORK_MAX_SPECIFIC_CONCEPT_DEPTH+1+GIA_NEURAL_NETWORK_MAX_INSTANCE_DEPTH)
+				#else
+					#define GIA_NEURAL_NETWORK_OFFSET_INSTANCE_NEURONS_LAYERS (GIA_NEURAL_NETWORK_MAX_SPECIFIC_CONCEPT_DEPTH+GIA_NEURAL_NETWORK_MAX_INSTANCE_DEPTH)	//this should equal max number of specific concepts in hierachy	//NB this should be padded (ie increased) slightly (eg +2) to take into account the fact subnets may be parsed such that they result in lower (negative) layers relative to the entry point neuron				
+				#endif
 			#else
-				#define GIA_NEURAL_NETWORK_OFFSET_SYNAPSE_ARTIFICIAL_INSTANCE_NEURONS_LAYERS (1)
+				#define GIA_NEURAL_NETWORK_OFFSET_INSTANCE_NEURONS_LAYERS (1)
 			#endif
 		#endif
 	#endif
@@ -881,10 +916,10 @@
 		//#define GIA_PREPROCESSOR_SUPPORT_PUNCTUATION_MARKS_WITH_PRECEEDING_WHITE_SPACE	//not yet coded: do not currently support punctuation marks with preceeding white space. Currently skip (do not parse) multiple white space/punctuation characters (eg ". "/".."/"  "/" .")	
 		#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_REDUCE_ALL_WORD_TYPES	//don't just reduce multiword prepositions (reduce multiword verbs, nouns, adjectives and adverbs also)
 		#ifndef USE_NLC
-			#ifdef GIA_NEURAL_NETWORK_ACTIVE
-				#define GIA_PREPROCESSOR_SENTENCE
+			#ifdef GIA_NEURAL_NETWORK_NON_SEMANTIC_ACTIVE
+				#define GIA_PREPROCESSOR_SENTENCE	//mandatory
 			#else
-				#define GIA_PREPROCESSOR_SENTENCE	//3a1a	//optional
+				//#define GIA_PREPROCESSOR_SENTENCE	//3a1a	//optional (not reliable due to POS tag ambiguity)
 			#endif
 		#endif
 		#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_LOAD_WORD_LISTS

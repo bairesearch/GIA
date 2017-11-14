@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorReferenceSet.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3d5f 11-August-2017
+ * Project Version: 3d6a 12-November-2017
  * Requirements: requires plain text file
  * Description: Reference Set preprocessor
  *
@@ -330,6 +330,7 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 				{
 					if(!previousWordIsAuxiliary)
 					{
+						//NB this doesn't yet work (not all past tense are necessarily same reference set); e.g. the dog ran_to the house
 						if((grammaticalBaseTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST) || 	//eg the moved bike was sad
 						(grammaticalBaseTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS) || 	//eg the moving bike was sad
 						(grammaticalBaseTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION) || 	//eg the movement bike was sad
@@ -340,6 +341,9 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 							#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_SPECIAL_CASE_DELIMITER_VERB_NOT_PRECEEDED_BY_THAT_WHICH_AND_NOT_PRECEEDED_BY_AUXILIARY_IGNORE
 							currentWordIsReferenceSetDelimiter = false;
 							#endif
+							cout << "\t\tcurrentWord = " << currentWord << endl;
+							cout << "GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_SPECIAL_CASE_DELIMITER_VERB_NOT_PRECEEDED_BY_THAT_WHICH_AND_NOT_PRECEEDED_BY_AUXILIARY" << endl;
+							cout << "grammaticalBaseTenseForm = " << grammaticalBaseTenseForm << endl;
 						}
 					}
 				}

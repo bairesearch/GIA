@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorMultiwordReductionClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3d5f 11-August-2017
+ * Project Version: 3d6a 12-November-2017
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  *
@@ -47,9 +47,11 @@ GIApreprocessorWord::GIApreprocessorWord(void)
 	nextTag = NULL;
 
 	#ifdef GIA_NEURAL_NETWORK
-	neuralNetworkPreprocessorWordType = GIA_NEURAL_NETWORK_PREPROCESSOR_WORD_TYPE_UNDEFINED;
 	wordShortcutToConceptNeuron = NULL;
+	#ifdef GIA_NEURAL_NETWORK_NON_SEMANTIC
+	neuralNetworkPreprocessorWordType = GIA_NEURAL_NETWORK_NON_SEMANTIC_PREPROCESSOR_WORD_TYPE_UNDEFINED;
 	tagNameOriginalNonLemma = "";
+	#endif
 	#endif
 		
 	plainTextWord = false;

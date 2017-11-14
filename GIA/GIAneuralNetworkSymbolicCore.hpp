@@ -22,38 +22,29 @@
 
 /*******************************************************************************
  *
- * File Name: GIAsemanticParser.hpp
+ * File Name: GIAneuralNetworkSymbolicCore.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
  * Project Version: 3d6a 12-November-2017
- * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
+ * Description: 
  *
  *******************************************************************************/
 
 
-#ifndef HEADER_GIA_SEMANTIC_PARSER
-#define HEADER_GIA_SEMANTIC_PARSER
+#ifndef HEADER_GIA_NEURAL_NETWORK_SYMBOLIC_CORE
+#define HEADER_GIA_NEURAL_NETWORK_SYMBOLIC_CORE
 
-#include "GIAglobalDefs.hpp"
-#include "GIAsentenceClass.hpp"
-#include "GIAsemanticParserOperations.hpp"
-#include "GIAsemanticParserDatabase.hpp"
-#include "GIAnlp.hpp"
-#include "GIAtranslator.hpp"
-#include "SHAREDvars.hpp"	//file io
+#include "ANNneuronClass.hpp"
+#include "ANNneuronConnectionClass.hpp"
 
-#ifdef GIA_SEMANTIC_PARSER_READ_SEMANTIC_RELATIONS
-class GIAsemanticParserClass
+class GIAneuralNetworkSymbolicCoreClass
 {
-	private: SHAREDvarsClass SHAREDvars;
-	private: GIAnlpClass GIAnlp;
-	private: GIAtranslatorClass GIAtranslator;
-	private: GIAsemanticParserOperationsClass GIAsemanticParserOperations;
-	private: GIAsemanticParserDatabaseClass GIAsemanticParserDatabase;
-	public: bool performSemanticParserLookupAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences(GIAtranslatorVariablesClass* translatorVariables, const string inputPlainTXTFileName, string inputTextNLPrelationXMLfileName, const string inputTextNLPfeatureXMLfileName, const string outputCFFfileName, const string NLPexeFolderArray[]);
-		private: bool lookupSemanticParserFiles(GIAparagraph* firstParagraphInList, const int NLPfeatureParser);
-			private: bool lookupSemanticParserFiles(GIAsentence* firstSentenceInList, const int NLPfeatureParser);
+	private: ANNneuronClassClass ANNneuronClass;
+	
+	#ifdef GIA_NEURAL_NETWORK_SYMBOLIC_CORE_ACTIVE
+
+	#endif
+
 };
-#endif
 
 #endif

@@ -25,7 +25,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3d5f 11-August-2017
+ * Project Version: 3d6a 12-November-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -46,7 +46,8 @@ static char errmessage[] = "Usage:  GIA.exe [options]\n\n\twhere options are any
 "\n\t-itxtq [string]      : query plain text .txt input filename to be parsed by the NLP processor (def: inputTextQuery.txt)"
 #ifdef GIA_NEURAL_NETWORK_ACTIVE
 "\n\t-iannxml [string]    : neural network definition .xml input filename (def: neuralNet.xml)"
-#else
+#endif
+#ifndef GIA_NEURAL_NETWORK_DISABLE_SEMANTIC_TRANSLATOR
 "\n\t-ionlprel [string]   : NLP dependency relation parser .xml intermediary input/output filename (def: inputNLPrelation.xml)"
 "\n\t-ionlptag [string]   : NLP feature tag parser .xml intermediary input/output filename (def: inputNLPfeature.xml)"
 "\n\t-ixml [string]       : semantic network definition .xml input filename (def: semanticNet.xml)"
@@ -277,7 +278,7 @@ int main(const int argc, const char** argv)
 	#ifdef USE_CE
 	if(SHAREDvarsClass().argumentExists(argc, argv, "-icodeextensions"))
 	#else
-	#ifdef GIA_NEURAL_NETWORK_ACTIVE
+	#ifdef GIA_NEURAL_NETWORK_DISABLE_SEMANTIC_TRANSLATOR
 	if(SHAREDvarsClass().argumentExists(argc, argv, "-itxt"))
 	#else
 	if(SHAREDvarsClass().argumentExists(argc, argv, "-itxt") || SHAREDvarsClass().argumentExists(argc, argv, "-ionlprel") || SHAREDvarsClass().argumentExists(argc, argv, "-ixml"))
@@ -303,7 +304,8 @@ int main(const int argc, const char** argv)
 			//train = true;
 			ANNuseInputXMLFile = true;
 		}
-	#else
+	#endif
+	#ifndef GIA_NEURAL_NETWORK_DISABLE_SEMANTIC_TRANSLATOR
 		if(SHAREDvarsClass().argumentExists(argc, argv, "-ionlprel"))
 		{
 			inputTextNLPrelationXMLfileName = SHAREDvarsClass().getStringArgument(argc, argv, "-ionlprel");
@@ -659,7 +661,7 @@ int main(const int argc, const char** argv)
 
 		if(SHAREDvarsClass().argumentExists(argc, argv, "-version"))
 		{
-			cout << "GIA.exe - Project Version: 3d5f 11-August-2017" << endl;
+			cout << "GIA.exe - Project Version: 3d6a 12-November-2017" << endl;
 			exit(EXIT_OK);
 		}
 
@@ -1308,26 +1310,28 @@ bool GIAmainClass::executeGIA2()
 	#ifdef GIA_NEURAL_NETWORK_ACTIVE
 		if(ANNuseInputXMLFile)
 		{
-			if(!GIAneuralNetworkOperations.readNeuralNetXMLfile(ANNinputXMLFileName, translatorVariables->firstInputNeuronInNetwork))
+			if(!GIAneuralNetworkNonSemanticOperations.readNeuralNetXMLfile(ANNinputXMLFileName, translatorVariables->firstInputNeuronInNetwork))
 			{
 				result = false;
 			}
 		}
+	#endif
+	#ifdef GIA_NEURAL_NETWORK_NON_SEMANTIC_ACTIVE
 		if(useInputTextPlainTXTFile)
 		{
 			//add text to network
-			if(!GIAneuralNetwork.addTextToNetwork(translatorVariables))
+			if(!GIAneuralNetworkNonSemantic.addTextToNetwork(translatorVariables))
 			{
 				result = false;
 			}
 		}
 		else
 		{
-			cout << "GIA_NEURAL_NETWORK_ACTIVE: GIAmain error{}: !useInputTextPlainTXTFile" << endl;
+			cout << "GIA_NEURAL_NETWORK_NON_SEMANTIC_ACTIVE: GIAmain error{}: !useInputTextPlainTXTFile" << endl;
 			exit(EXIT_ERROR);
 		}
-	#else
-
+	#endif
+	#ifndef GIA_NEURAL_NETWORK_DISABLE_SEMANTIC_TRANSLATOR
 		#ifdef USE_CE
 		if(useInputTextCodeextensionsTXTFileName)
 		{
@@ -1478,21 +1482,22 @@ bool GIAmainClass::executeGIA2()
 		}
 		#endif
 
-	#ifdef GIA_NEURAL_NETWORK_ACTIVE
+	#ifdef GIA_NEURAL_NETWORK_NON_SEMANTIC_ACTIVE
 		if(useInputQueryPlainTXTFile)
 		{
 			//perform query
-			if(!GIAneuralNetwork.performQuery(translatorVariables, translatorVariablesQuery))
+			if(!GIAneuralNetworkNonSemantic.performQuery(translatorVariables, translatorVariablesQuery))
 			{
 				result = false;
 			}
 		}
 		else
 		{
-			cout << "GIA_NEURAL_NETWORK_ACTIVE: GIAmain error{}: !useInputQueryPlainTXTFile" << endl;
+			cout << "GIA_NEURAL_NETWORK_NON_SEMANTIC_ACTIVE: GIAmain error{}: !useInputQueryPlainTXTFile" << endl;
 			exit(EXIT_ERROR);
 		}
-	#else
+	#endif
+	#ifndef GIA_NEURAL_NETWORK_DISABLE_SEMANTIC_TRANSLATOR
 		if(useInputQueryPlainTXTFile)
 		{
 			/*
@@ -1594,6 +1599,9 @@ bool GIAmainClass::executeGIA2()
 			}
 		}
 
+		#ifdef GIA_NEURAL_NETWORK_SYMBOLIC_CORE_ACTIVE
+		//TODO
+		#else
 		/*
 		implement comparison of question semantic net to semanic net - locate the question semantic net as a subset of the semantic net, and;
 			1. highlight it
@@ -1711,6 +1719,8 @@ bool GIAmainClass::executeGIA2()
 		#ifdef USE_GIAI
 		translatorVariables->giaQueryAnswer = answerString;
 		#endif
+		
+		#endif
 	#endif
 	
 		#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
@@ -1731,9 +1741,11 @@ bool GIAmainClass::executeGIA2()
 	SHAREDvars.setCurrentDirectory(outputFolder);
 
 	#ifdef GIA_NEURAL_NETWORK
+	
 	#ifndef GIA_NEURAL_NETWORK_ACTIVE
 	GIAneuralNetworkOperations.generateNeuralNetFromSemanticNet(translatorVariables);	//generate neural network
 	#endif
+	
 	if(ANNdrawOutput)
 	{
 		string ANNoutputTALFileName = string(NEURAL_NETWORK_VISUALISATION_BASE_FILE_NAME) + NEURAL_NETWORK_VISUALISATION_TAL_FILE_EXTENSION;
@@ -1748,7 +1760,7 @@ bool GIAmainClass::executeGIA2()
 	}		
 	#endif	
 	
-#ifndef GIA_NEURAL_NETWORK_ACTIVE
+#ifndef GIA_NEURAL_NETWORK_DISABLE_SEMANTIC_TRANSLATOR
 
 	if(printOutput)
 	{

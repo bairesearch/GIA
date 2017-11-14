@@ -25,7 +25,7 @@
  * File Name: GIAentityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3d5f 11-August-2017
+ * Project Version: 3d6a 12-November-2017
  *
  *******************************************************************************/
 
@@ -292,6 +292,12 @@ GIAentityNode::GIAentityNode(void)
 	
 	#ifdef GIA_NEURAL_NETWORK
 	parsedForANNgeneration = false;
+	/*
+	#ifdef GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS
+	conceptIndexType = GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS_TYPE_UNKNOWN;
+	conceptIndex = INT_DEFAULT_VALUE;
+	#endif
+	*/
 	#endif
 }
 /*

@@ -25,7 +25,7 @@
  * File Name: GIAentityNodeClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3d5f 11-August-2017
+ * Project Version: 3d6a 12-November-2017
  * NB a substance is an instance of an entity, any given entity may contain/comprise/have multiple substances - and substances are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -361,7 +361,7 @@ public:
 	/*GIA Entity Name*/
 	string entityName;
 	#ifdef GIA_WORD_ORIG
-	string wordOrig;		//this needs to be added to XML i/o + file system database i/o [used for NLG2 bug]
+	string wordOrig;		//this needs to be added to XML i/o + file system database i/o
 	#endif
 	double confidence;		//not currently used
 	#ifdef GIA_ALIASES
@@ -371,7 +371,7 @@ public:
 
 	/*GIA Entity Type*/
 	int entityType;
-	bool isActionConcept;			//added 1t5a to take into account specific actions eg 'eating pies', 'to eat a pie'
+	bool isActionConcept;	//is applied to entityType->GIA_ENTITY_TYPE_ACTION	//added 1t5a to take into account specific actions eg 'eating pies', 'to eat a pie'	
 	bool hasAssociatedInstance;	//this boolean appears to only represent whether this entity defines a child substance node [and not whether it contains one]
 	bool hasAssociatedTime;
 	bool negative;	//if !GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS: for prepositional entities which will be collapsed into conditions only //NB relex does not appear to output this information for properties and actions
@@ -593,6 +593,12 @@ public:
 	
 	#ifdef GIA_NEURAL_NETWORK
 	bool parsedForANNgeneration;
+	/*
+	#ifdef GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS
+	int conceptIndexType;
+	int conceptIndex;
+	#endif
+	*/
 	#endif
 };
 

@@ -22,17 +22,17 @@
 
 /*******************************************************************************
  *
- * File Name: GIAneuralNetwork.hpp
+ * File Name: GIAneuralNetworkNonSemantic.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3d5f 11-August-2017
+ * Project Version: 3d6a 12-November-2017
  * Description: 
  *
  *******************************************************************************/
 
 
-#ifndef HEADER_GIA_NEURAL_NETWORK
-#define HEADER_GIA_NEURAL_NETWORK
+#ifndef HEADER_GIA_NEURAL_NETWORK_NON_SEMANTIC
+#define HEADER_GIA_NEURAL_NETWORK_NON_SEMANTIC
 
 #include "ANNneuronClass.hpp"
 #include "ANNneuronConnectionClass.hpp"
@@ -78,7 +78,7 @@ static string translatorEnglishDeterminerIndefiniteArray[GIA_TRANSLATOR_ENGLISH_
 
 
 
-class GIAneuralNetworkClass
+class GIAneuralNetworkNonSemanticClass
 {
 	private: GIAtranslatorOperationsClass GIAtranslatorOperations;
 	private: ANNneuronClassClass ANNneuronClass;
@@ -86,10 +86,10 @@ class GIAneuralNetworkClass
 	private: GIAneuralNetworkOperationsClass GIAneuralNetworkOperations;
 	private: GIApreprocessorMultiwordReductionClass GIApreprocessorMultiwordReduction;
 	
-	#ifdef GIA_NEURAL_NETWORK_ACTIVE
+	#ifdef GIA_NEURAL_NETWORK_NON_SEMANTIC_ACTIVE
 	public: bool addTextToNetwork(GIAtranslatorVariablesClass* translatorVariables);
 		private: bool addTextToNetworkLogicReference(GIAneuralNetworkVariablesClass* neuralNetworkVariables, GIApreprocessorLogicReference* firstLogicReferenceInList, ANNneuron* higherLogicReferenceArtificialSynapseNeuron, bool higherLogicReferenceArtificialSynapseNeuronDirection);
-			#ifdef GIA_NEURAL_NETWORK_REPLACE_WORDS_WITH_LEMMAS
+			#ifdef GIA_NEURAL_NETWORK_NON_SEMANTIC_REPLACE_WORDS_WITH_LEMMAS
 			private: bool replaceWordsWithLemmas(GIApreprocessorSubReferenceSet* referenceSet);
 			#endif
 			private: bool detectIndefiniteConceptDefinition(GIApreprocessorSubReferenceSet* referenceSetSubject, GIApreprocessorSubReferenceSet* referenceSetObject, GIApreprocessorSubReferenceSet* referenceSetDelimiter);

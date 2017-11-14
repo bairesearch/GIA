@@ -166,7 +166,7 @@ public:
 	GIAsentence* sentenceReference;
 	#endif
 	
-	#ifdef GIA_NEURAL_NETWORK
+	#ifdef GIA_NEURAL_NETWORK_NON_SEMANTIC
 	int definite;
 	#endif
 	
