@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorReferenceSet.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3d5b 11-August-2017
+ * Project Version: 3d5c 11-August-2017
  * Requirements: requires plain text file
  * Description: Reference Set preprocessor
  *
@@ -229,7 +229,7 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 			cout << "currentWordIsReferenceSetDelimiter: currentDelimiterType = " << currentDelimiterType << endl;
 			#endif
 			
-			bool previousWordIsModalAuxiliary = false;
+			bool previousWordIsAuxiliary = false;
 			
 			//verify that the auxiliary/verb is not preceeded by a modal auxiliary (e.g. for future cases; will be/have/ride), in which case must test the word prior to the modal auxiliary for that/which
 			if((currentDelimiterType == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_AUXILIARY) || ((currentDelimiterType == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_VERB) && (grammaticalBaseTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_INFINITIVE)))
@@ -238,7 +238,7 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 				{
 					if(SHAREDvars.textInTextArray(((*logicReferenceVariableWordList)[wordIndex-1])->tagName, entityModalAuxiliaryArray, ENTITY_MODALAUXILIARY_NUMBER_OF_TYPES))
 					{	
-						previousWordIsModalAuxiliary = true;
+						previousWordIsAuxiliary = true;
 						wordIndexOfHypotheticalPreceedingThatWhich--;
 					}
 				}
@@ -251,11 +251,11 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 					if(detectAuxiliary(((*logicReferenceVariableWordList)[wordIndex-1])->tagName))
 					{	
 						//eg that is riding
-						previousWordIsModalAuxiliary = true;
+						previousWordIsAuxiliary = true;
 						wordIndexOfHypotheticalPreceedingThatWhich--;
 						
 						#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
-						cout << "previousWordIsModalAuxiliary" << endl;
+						cout << "previousWordIsAuxiliary" << endl;
 						cout << "currentWord = " << currentWord << endl;
 						cout << "previousWord = " << ((*logicReferenceVariableWordList)[wordIndex-1])->tagName << endl;
 						cout << "currentDelimiterType = " << currentDelimiterType << endl;
@@ -266,8 +266,22 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 						{
 							if(SHAREDvars.textInTextArray(((*logicReferenceVariableWordList)[wordIndex-2])->tagName, entityModalAuxiliaryArray, ENTITY_MODALAUXILIARY_NUMBER_OF_TYPES))
 							{
-								//eg that will be riding
+								//eg (that) will be riding
 								wordIndexOfHypotheticalPreceedingThatWhich--;
+							}
+							else if(detectAuxiliary(((*logicReferenceVariableWordList)[wordIndex-2])->tagName))
+							{
+								wordIndexOfHypotheticalPreceedingThatWhich--;
+								//eg (that) have been riding
+								if(wordIndex-3 >= 0)
+								{
+									if(SHAREDvars.textInTextArray(((*logicReferenceVariableWordList)[wordIndex-3])->tagName, entityModalAuxiliaryArray, ENTITY_MODALAUXILIARY_NUMBER_OF_TYPES))
+									{
+										//eg (that) will have been riding
+										wordIndexOfHypotheticalPreceedingThatWhich--;
+									}
+								}
+								
 							}
 						}
 					}
@@ -282,7 +296,7 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 									if(detectAuxiliary(((*logicReferenceVariableWordList)[wordIndex-2])->tagName))
 									{
 										//eg is very near / is not near
-										previousWordIsModalAuxiliary = true;
+										previousWordIsAuxiliary = true;
 										wordIndexOfHypotheticalPreceedingThatWhich = wordIndexOfHypotheticalPreceedingThatWhich-2;
 									}
 								}
@@ -307,7 +321,7 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 
 			//NB if((currentDelimiterType == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_PREPOSITION)): "that near" is not legal english (only "that is near"), but will be accepted here anyway
 			//NB near to should have previously been compressed to near_to by GIA_PREPROCESSOR_MULTIWORD_REDUCTION
-			if((currentDelimiterType == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_PREPOSITION) && !previousWordIsModalAuxiliary && !currentWordIsReferenceSetDelimiterPreceededByThatWhich)
+			if((currentDelimiterType == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_PREPOSITION) && !previousWordIsAuxiliary && !currentWordIsReferenceSetDelimiterPreceededByThatWhich)
 			{
 				//eg the dog eats the apple near the bike.	[preposition near refers to verb eat]	[as compared to the dog eats the apple that is near the bike].
 				currentDelimiterSpecialCase = GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_SPECIAL_CASE_DELIMITER_AND_OBJECT_REFER_TO_PREVIOUS_DELIMITER_VERB;

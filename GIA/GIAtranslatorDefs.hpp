@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3d5b 11-August-2017
+ * Project Version: 3d5c 11-August-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA network nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1104,12 +1104,12 @@ static string entityCoordinatingConjunctionArray[ENTITY_COORDINATINGCONJUNCTION_
 
 
 //http://en.wikipedia.org/wiki/English_auxiliaries_and_contractions
-#define ENTITY_AUXILIARY_BEING_ARRAY_NUMBER_OF_TYPES (7)
-#define ENTITY_AUXILIARY_HAVING_ARRAY_NUMBER_OF_TYPES (3)
-#define ENTITY_AUXILIARY_DOING_ARRAY_NUMBER_OF_TYPES (3)
-static string entityAuxiliaryBeingArray[ENTITY_AUXILIARY_BEING_ARRAY_NUMBER_OF_TYPES] = {"am", "is", "are", "was", "were", "be", "being"};	//RBB added "be"/"being"
-static string entityAuxiliaryHavingArray[ENTITY_AUXILIARY_HAVING_ARRAY_NUMBER_OF_TYPES] = {"have", "has", "had"};
-static string entityAuxiliaryDoingArray[ENTITY_AUXILIARY_DOING_ARRAY_NUMBER_OF_TYPES] = {"do", "does", "did"};
+#define ENTITY_AUXILIARY_BEING_ARRAY_NUMBER_OF_TYPES (8)
+#define ENTITY_AUXILIARY_HAVING_ARRAY_NUMBER_OF_TYPES (4)
+#define ENTITY_AUXILIARY_DOING_ARRAY_NUMBER_OF_TYPES (4)
+static string entityAuxiliaryBeingArray[ENTITY_AUXILIARY_BEING_ARRAY_NUMBER_OF_TYPES] = {"am", "is", "are", "was", "were", "be", "being", "been"};
+static string entityAuxiliaryHavingArray[ENTITY_AUXILIARY_HAVING_ARRAY_NUMBER_OF_TYPES] = {"have", "has", "had", "having"};
+static string entityAuxiliaryDoingArray[ENTITY_AUXILIARY_DOING_ARRAY_NUMBER_OF_TYPES] = {"do", "does", "did", "doing"};
 
 //additional cases not identified by [/mapped to existing] Relex Word Type:
 #define ENTITY_WH_ARRAY_NUMBER_OF_TYPES (9)
