@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorMultiwordReduction.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e2d 10-December-2017
+ * Project Version: 3e3a 13-December-2017
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  *
@@ -82,17 +82,17 @@ unordered_map<string, GIApreprocessorMultiwordReductionWord*> nounListWithVarian
 
 #ifdef GIA_PREPROCESSOR_POS_TAGGER_INITIALISE_WORD_INDEX_LIST_FROM_LRP_FILES
 bool wordListAllTypesWithPOSambiguityInfoLoaded;
-unordered_map<string, pair<GIApreprocessorMultiwordReductionWord*, int>> wordListAllTypesWithPOSambiguityInfo;		//NB the int corresponds to the POS type ambiguity of the word (binary 11000000 implies that the word may either be a verb or a preposition)	
-unordered_map<string, pair<GIApreprocessorMultiwordReductionWord*, int>>* GIApreprocessorMultiwordReductionClass::getWordListAllTypesWithPOSambiguityInfo()
+unordered_map<string, pair<GIApreprocessorMultiwordReductionWord*, unsigned char>> wordListAllTypesWithPOSambiguityInfo;		//NB the int corresponds to the POS type ambiguity of the word (binary 11000000 implies that the word may either be a verb or a preposition)	
+unordered_map<string, pair<GIApreprocessorMultiwordReductionWord*, unsigned char>>* GIApreprocessorMultiwordReductionClass::getWordListAllTypesWithPOSambiguityInfo()
 {
 	return &wordListAllTypesWithPOSambiguityInfo;
 }
 /*
-bool GIApreprocessorMultiwordReductionClass::findInstanceInMapWordListAllTypesWithPOSambiguityInfo(unordered_map<string, pair<GIApreprocessorMultiwordReductionWord*, int>>* mapWordListAllTypesWithPOSambiguityInfo, const string wordIndex, GIApreprocessorMultiwordReductionWord* word, int* POSambiguityInfo)
+bool GIApreprocessorMultiwordReductionClass::findInstanceInMapWordListAllTypesWithPOSambiguityInfo(unordered_map<string, pair<GIApreprocessorMultiwordReductionWord*, unsigned char>>* mapWordListAllTypesWithPOSambiguityInfo, const string wordIndex, GIApreprocessorMultiwordReductionWord* word, unsigned char* POSambiguityInfo)
 {
 	bool result = false;
 	
-	unordered_map<string, pair<GIApreprocessorMultiwordReductionWord*, int>>::iterator it;
+	unordered_map<string, pair<GIApreprocessorMultiwordReductionWord*, unsigned char>>::iterator it;
 	it = mapWordListAllTypesWithPOSambiguityInfo->find(wordIndex);
 	if(it != mapWordListAllTypesWithPOSambiguityInfo->end())
 	{
@@ -104,10 +104,10 @@ bool GIApreprocessorMultiwordReductionClass::findInstanceInMapWordListAllTypesWi
 	return result;
 }
 */
-void GIApreprocessorMultiwordReductionClass::insertInstanceInMapWordListAllTypesWithPOSambiguityInfo(unordered_map<string, pair<GIApreprocessorMultiwordReductionWord*, int>>* mapWordListAllTypesWithPOSambiguityInfo, const string wordIndex, GIApreprocessorMultiwordReductionWord* word, const int POSambiguityInfo)
+void GIApreprocessorMultiwordReductionClass::insertInstanceInMapWordListAllTypesWithPOSambiguityInfo(unordered_map<string, pair<GIApreprocessorMultiwordReductionWord*, unsigned char>>* mapWordListAllTypesWithPOSambiguityInfo, const string wordIndex, GIApreprocessorMultiwordReductionWord* word, const unsigned char POSambiguityInfo)
 {
-	pair<GIApreprocessorMultiwordReductionWord*, int> value = make_pair(word, POSambiguityInfo);
-	mapWordListAllTypesWithPOSambiguityInfo->insert(pair<string, pair<GIApreprocessorMultiwordReductionWord*, int>>(wordIndex, value));
+	pair<GIApreprocessorMultiwordReductionWord*, unsigned char> value = make_pair(word, POSambiguityInfo);
+	mapWordListAllTypesWithPOSambiguityInfo->insert(pair<string, pair<GIApreprocessorMultiwordReductionWord*, unsigned char>>(wordIndex, value));
 }
 #endif
 
@@ -3004,7 +3004,7 @@ bool GIApreprocessorMultiwordReductionClass::createWordIndexListFromLRPfiles()
 		{
 			string wordIndex = iter->first;
 			GIApreprocessorMultiwordReductionWord* word = iter->second;
-			int POStypeAmbiguity = 0;
+			unsigned char POStypeAmbiguity = 0;
 			for(int i=0; i<GIA_PREPROCESSOR_WORD_LIST_ARRAY_SIZE; i++)
 			{		
 				unordered_map<string, GIApreprocessorMultiwordReductionWord*>::iterator it;

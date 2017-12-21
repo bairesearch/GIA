@@ -25,7 +25,7 @@
  * File Name: GIAsemanticParserDatabase.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e2d 10-December-2017
+ * Project Version: 3e3a 13-December-2017
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -299,7 +299,6 @@ bool GIAsemanticParserDatabaseClass::loadSemanticParserOptimisedDatabaseFile(con
 			GIA2semanticDependencyRelationProbabilityArray[lineIndex] = probabilityMetric;
 			GIA2semanticDependencyRelationAssignedArray[lineIndex] = numberOfSemanticRelationsAssignedForTuple;
 			GIA2semanticDependencyRelationRejectedArray[lineIndex] = numberOfSemanticRelationsRejectedForTuple;
-
 
 			lineIndex++;
 		}

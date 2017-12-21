@@ -25,7 +25,7 @@
  * File Name: GIAdatabase.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e2d 10-December-2017
+ * Project Version: 3e3a 13-December-2017
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: performs simple GIA database functions (storing nodes in ordered arrays/vectors/maps)
  *
@@ -41,7 +41,7 @@
 #ifdef GIA_DATABASE
 
 static int useDatabase;
-static string databaseFolderName;
+static string KBdatabaseFolderName;
 
 #ifdef GIA_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS
 unordered_map<string, bool>* DBnetworkIndexEntityNodesLoadedList;		//load all references (ids/entity names) whenever a networkIndex node is used
@@ -272,27 +272,13 @@ long GIAdatabaseClass::maximumLong(long a, const long b)
 bool GIAdatabaseClass::DBdirectoryExists(const string* folderName)
 {
 	bool folderExists = SHAREDvars.directoryExists(folderName);
-	if(folderExists)
-	{
-	}
-
 	return folderExists;
 }
 
 bool GIAdatabaseClass::DBcreateDirectory(const string* folderName)
 {
 	bool result = true;
-
 	SHAREDvars.createDirectory(folderName);
-	/*removed debug support for Windows;
-	#ifndef LINUX
-	if(CreateDirectory(folderName->c_str(), 0) == 0)	//if( _mkdir(folderName->c_str()) != 0)	//
-	{
-		result = false;
-	}
-	#endif
-	*/
-
 	return result;
 }
 
@@ -300,14 +286,6 @@ bool GIAdatabaseClass::DBsetCurrentDirectory(const string* folderName)
 {
 	bool result = true;
 	SHAREDvars.setCurrentDirectory(folderName);
-	/*removed debug support for Windows;
-	#ifndef LINUX
-	if(SetCurrentDirectory(folderName->c_str()) == 0)
-	{
-		result = false;
-	}
-	#endif
-	*/
 	return result;
 }
 
@@ -329,12 +307,11 @@ string GIAdatabaseClass::DBgenerateServerDatabaseName(const string* entityName, 
 	string databaseName;
 	if(fileType == GIA_DATABASE_GENERATE_FILENAME_FILE_NETWORK_INDEX_ENTITY_NODES_LIST)
 	{
-		databaseName = databaseFolderName;
+		databaseName = KBdatabaseFolderName;
 	}
 	else
 	{
 		string serverName;
-
 
 		#ifdef GIA_DATABASE_FILESYSTEM_USE_MULTIPLE_SERVERS
 		char entityFirstCharacter = entityName->at(0);
@@ -347,7 +324,7 @@ string GIAdatabaseClass::DBgenerateServerDatabaseName(const string* entityName, 
 
 		int entityFirstCharacterIndex = entityFirstCharacter - ASCII_TABLE_INDEX_OF_a;
 		string serverName = serverNameArray[entityFirstCharacterIndex]; 	//this could be a more complex algorithm; eg serverName = (string)"/mnt/" + serverNameArray[entityFirstCharacterIndex]
-		databaseName = serverName + defaultDatabaseName;
+		databaseName = serverName + defaultDatabaseName + CHAR_FOLDER_DELIMITER;
 		#else
 		databaseName = databaseFolderNameUserChoice;
 		#endif
@@ -362,7 +339,7 @@ string GIAdatabaseClass::DBgenerateFileName(const string* entityName, const long
 {
 
 	//eg network/server/GIAdatabase/e/x/a/example/1/2/3/instance123000000/{vectorConnectionsReferencesConnectionTypeX}.txt	//OLD: //eg network/server/GIAdatabase/e/x/a/example/1/2/3/{vectorConnectionsReferencesConnectionTypeX}/instance123000000.txt
-	string serverName = this->DBgenerateServerDatabaseName(entityName, fileType, GIA_DATABASE_FILESYSTEM_DEFAULT_DATABASE_NAME, databaseFolderName);
+	string serverName = this->DBgenerateServerDatabaseName(entityName, fileType, GIA_DATABASE_FILESYSTEM_DEFAULT_DATABASE_NAME, KBdatabaseFolderName);
 	string fileName = serverName;
 
 	this->DBsetCurrentDirectory(&fileName);
@@ -390,7 +367,7 @@ string GIAdatabaseClass::DBgenerateFileName(const string* entityName, const long
 			fileName = fileName + folderName + "/";
 			this->checkIfFolderExistsAndIfNotMakeAndSetAsCurrent(&folderName);
 		}
-		fileName = fileName +* entityName + "/";
+		fileName = fileName + *entityName + "/";
 		this->checkIfFolderExistsAndIfNotMakeAndSetAsCurrent(entityName);
 
 
@@ -582,7 +559,7 @@ void GIAdatabaseClass::initialiseDatabase(const bool readFromDatabase, const str
 {
 	if(useDatabase)
 	{
-		databaseFolderName = newDatabaseFolderName;
+		KBdatabaseFolderName = newDatabaseFolderName;
 
 		this->initialiseDBnetworkIndexEntityNodesLoadedList();
 

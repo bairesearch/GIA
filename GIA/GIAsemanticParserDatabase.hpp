@@ -25,7 +25,7 @@
  * File Name: GIAsemanticParserDatabase.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e2d 10-December-2017
+ * Project Version: 3e3a 13-December-2017
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -47,7 +47,7 @@
 #define GIA_SEMANTIC_PARSER_OPTIMISED_DATABASE_SEMANTIC_RELATION_COUNT_DELIMITER (CHAR_SPACE)
 #endif
 
-#define GIA_SEMANTIC_PARSER_DATABASE_FILESYSTEM_DEFAULT_DATABASE_NAME ((string)"GIAsemanticparserdatabase/")
+#define GIA_SEMANTIC_PARSER_DATABASE_FILESYSTEM_DEFAULT_DATABASE_NAME ((string)"GIAsemanticparserdatabase")
 #define GIA_SEMANTIC_PARSER_DATABASE_FILESYSTEM_DEFAULT_FILE_NAME ((string)"SemanticRelations")
 #define GIA_SEMANTIC_PARSER_DATABASE_FILESYSTEM_DEFAULT_FILE_EXTENSION_NAME ((string)".gsr")
 
@@ -57,8 +57,8 @@ static string GIAconnectionistNetworkPOStypeNameAbbreviationArray[GIA_SEMANTIC_P
 
 class GIAsemanticParserDatabaseClass
 {
-	private: GIAdatabaseClass GIAdatabase;
 	private: SHAREDvarsClass SHAREDvars;
+	private: GIAdatabaseClass GIAdatabase;
 	private: GIAnlpClass GIAnlp;
 	public: void initialiseSemanticParserDatabase(const string newSemanticParserDatabaseFolderName);
 	public: void prepareSemanticParserDatabaseForWriting();

@@ -25,7 +25,7 @@
  * File Name: GIAmain.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e2d 10-December-2017
+ * Project Version: 3e3a 13-December-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -69,6 +69,9 @@
 #include "GIAsemanticParser.hpp"
 #endif
 #include "GIAsemanticParserDatabase.hpp"
+#endif
+#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE
+#include "GIApreprocessorPOStagger.hpp"
 #endif
 #ifdef GIA_NEURAL_NETWORK
 #include "ANNneuronClass.hpp"
@@ -117,6 +120,9 @@ class GIAmainClass
 	private: GIAsemanticParserClass GIAsemanticParser;
 	#endif
 	private: GIAsemanticParserDatabaseClass GIAsemanticParserDatabase;
+	#endif
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE
+	private: GIApreprocessorPOStaggerDatabaseClass GIApreprocessorPOStaggerDatabase;	
 	#endif
 	#ifdef GIA_NEURAL_NETWORK
 	private: ANNneuronClassClass ANNneuronClassClassObject;
@@ -223,13 +229,15 @@ class GIAmainClass
 		bool readFromDatabase,
 		bool writeToDatabase,
 		bool useDatabase,
-		string databaseFolderName,
+		string KBdatabaseFolderName,
 		#endif
-
 		#ifdef GIA_SEMANTIC_PARSER
 		string semanticParserDatabaseFolderName,
 		#endif
-
+		#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE
+		string POStaggerDatabaseFolderName,
+		#endif
+		
 		#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
 		bool useLRP,
 		bool useOutputLRPTextPlainTXTFile,
