@@ -25,7 +25,7 @@
  * File Name: GIAneuralNetworkNonSemantic.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e3a 13-December-2017
+ * Project Version: 3e4a 13-December-2017
  * Description: 
  *
  *******************************************************************************/
@@ -33,6 +33,8 @@
 
 #ifndef HEADER_GIA_NEURAL_NETWORK_NON_SEMANTIC
 #define HEADER_GIA_NEURAL_NETWORK_NON_SEMANTIC
+
+#ifdef GIA_NEURAL_NETWORK
 
 #include "ANNneuronClass.hpp"
 #include "ANNneuronConnectionClass.hpp"
@@ -115,5 +117,7 @@ class GIAneuralNetworkNonSemanticClass
 	#endif
 
 };
+
+#endif
 
 #endif

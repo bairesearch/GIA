@@ -25,7 +25,7 @@
  * File Name: GIAsemanticParserDatabase.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e3a 13-December-2017
+ * Project Version: 3e4a 13-December-2017
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -43,6 +43,11 @@ static string semanticParserDatabaseFolderName;
 void GIAsemanticParserDatabaseClass::initialiseSemanticParserDatabase(const string newSemanticParserDatabaseFolderName)
 {
 	semanticParserDatabaseFolderName = newSemanticParserDatabaseFolderName;
+	if(!SHAREDvars.directoryExists(&semanticParserDatabaseFolderName))
+	{
+		cerr << "GIAsemanticParserDatabaseClass::initialiseSemanticParserDatabase{} error: semanticParserDatabaseFolderName does not exist: " << semanticParserDatabaseFolderName << endl;
+		exit(EXIT_ERROR);	
+	}
 }
 
 void GIAsemanticParserDatabaseClass::prepareSemanticParserDatabaseForWriting()

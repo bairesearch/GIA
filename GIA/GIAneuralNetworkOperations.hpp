@@ -25,7 +25,7 @@
  * File Name: GIAneuralNetworkOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e3a 13-December-2017
+ * Project Version: 3e4a 13-December-2017
  * Description: 
  *
  *******************************************************************************/
@@ -35,6 +35,8 @@
 #define HEADER_GIA_NEURAL_NETWORK_OPERATIONS
 
 
+
+#ifdef GIA_NEURAL_NETWORK
 
 #include "ANNneuronClass.hpp"
 #include "ANNneuronConnectionClass.hpp"
@@ -50,8 +52,9 @@
 #endif
 #define GIA_NEURAL_NETWORK_SUBNET_COUNTER (0)
 
+#ifdef GIA_NEURAL_NETWORK_SYMBOLIC_CORE
 static int GIAANNsymbolicCoreConceptIndexBitsTypeCrossReferenceLayerIndex[GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS_NUMBER_OF_TYPES] = {GIA_NEURAL_NETWORK_LAYER_CONCEPT_INDEX_BIT_SUBSTANCE_NEURONS, GIA_NEURAL_NETWORK_LAYER_CONCEPT_INDEX_BIT_REFRENCE_SET_DELIMITER_NEURONS};
-
+#endif
 
 class GIAneuralNetworkVariablesClass
 {
@@ -122,7 +125,6 @@ class GIAneuralNetworkOperationsClass
 	#ifdef GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS
 	private: int generateInstanceNeuronXposRel(GIAneuralNetworkVariablesClass* neuralNetworkVariables, ANNneuron* conceptNeuron);
 	private: bool connectConceptNeuronToConceptIndexBitNeurons(GIAneuralNetworkVariablesClass* neuralNetworkVariables, ANNneuron* conceptNeuron, int conceptIndexType);
-		private: bool getBitValue(int value, int x);
 		private: int getConceptIndexIDcounter(GIAneuralNetworkVariablesClass* neuralNetworkVariables, const int conceptIndexType);
 		private: void incrementConceptIndexIDcounter(GIAneuralNetworkVariablesClass* neuralNetworkVariables, const int conceptIndexType);
 	#endif
@@ -148,6 +150,8 @@ class GIAneuralNetworkOperationsClass
 
 	long getCurrentTime();
 };
+
+#endif
 
 #endif
 

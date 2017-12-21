@@ -25,7 +25,7 @@
  * File Name: GIAneuralNetworkNonSemantic.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e3a 13-December-2017
+ * Project Version: 3e4a 13-December-2017
  * Description: 
  *
  *******************************************************************************/
@@ -33,6 +33,8 @@
 
 #include "GIAneuralNetworkNonSemantic.hpp"
 #include "GIAtranslatorDefs.hpp"
+
+#ifdef GIA_NEURAL_NETWORK
 
 #ifdef GIA_NEURAL_NETWORK_NON_SEMANTIC_ACTIVE
 
@@ -1185,5 +1187,7 @@ int GIAneuralNetworkNonSemanticClass::generateArtificialLayer(GIAneuralNetworkVa
 	int artificialLayer = GIA_NEURAL_NETWORK_OFFSET_INSTANCE_NEURONS_LAYERS + neuralNetworkVariables->sentenceIndex;	//CHECKTHIS; this needs to be set dynamically
 	return artificialLayer;
 }
+
+#endif
 
 #endif

@@ -24,8 +24,8 @@
  *
  * File Name: GIApreprocessorPOStagger.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
- * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3e3a 13-December-2017
+ * Project: General Intelligence Algorithm
+ * Project Version: 3e4a 13-December-2017
  * Requirements: requires plain text file
  * Description: preprocessor POS tagger
  *
@@ -37,36 +37,54 @@
 
 #include "GIAglobalDefs.hpp"
 #include "GIAdatabase.hpp"	//required for checkIfFolderExistsAndIfNotMakeAndSetAsCurrent
-
+#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK
+#include "ANNformation.hpp"
+#include "ANNalgorithmBackpropagationTraining.hpp"
+#include "ANNxmlConversion.hpp"
+#endif
 
 #ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE
 	#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_DEFAULT_DATABASE_NAME ((string)"GIAPOStaggerDatabase")
-	#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_DEFAULT_SERVER_OR_MOUNT_NAME "/home/systemusername/source/"	 //this could be "/mnt/serverNameX/" once configuring appropriate NFS Linux File Sharing in /etc/fstab
-	#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_SUBDIRECTORY_INDEX_NUMBER_OF_LEVELS (5) 	//eg hex (eg ffff/ffff/ffff/ffff/ffff/ffffffffffffffffffff.txt
-	#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_SUBDIRECTORY_INDEX_NUMBER_OF_WORDS_PER_LEVEL (2) 	//hex (eg ffff)
-	
-	#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_POS_PERMUTATION_ENTRY_CENTRE_WORD_POS_AMBIGUITY_BYTE_HEX_START_POS (0)
-	#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_POS_PERMUTATION_ENTRY_CENTRE_WORD_POS_AMBIGUITY_BYTE_HEX_LENGTH (2)
-	#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_POS_PERMUTATION_ENTRY_CENTRE_WORD_POS_AMBIGUITY_NUMBER_OF_INSTANCES_INT_START_POS (3)
-	#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_POS_PERMUTATION_ENTRY_CENTRE_WORD_POS_AMBIGUITY_NUMBER_OF_INSTANCES_INT_LENGTH (10)
-	
-	#define ASCII_TABLE_INDEX_OF_a (97)
-	#define ASCII_TABLE_NUMBER_OF_LETTERS_IN_ALPHABET (26)
-	#define ASCII_TABLE_INDEX_OF_z (ASCII_TABLE_INDEX_OF_a + ASCII_TABLE_NUMBER_OF_LETTERS_IN_ALPHABET)
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK
+		#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_DEFAULT_XML_FILE_NAME ((string)"GIAPOStaggerNeuralNetwork.xml")
+	#endif
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM
+		#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_SUBDIRECTORY_INDEX_NUMBER_OF_LEVELS (5) 	//eg hex (eg ffff/ffff/ffff/ffff/ffff/ffffffffffffffffffff.txt
+		#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_SUBDIRECTORY_INDEX_NUMBER_OF_WORDS_PER_LEVEL (2) 	//hex (eg ffff)
 
-	#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_POS_PERMUTATION_ENTRY_FILE_NAME_PARTA "POSpermutation"
-	#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_POS_PERMUTATION_ENTRY_FILE_NAME_EXTENSION ".pos"
+		#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_POS_PERMUTATION_ENTRY_CENTRE_WORD_POS_AMBIGUITY_BYTE_HEX_START_POS (0)
+		#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_POS_PERMUTATION_ENTRY_CENTRE_WORD_POS_AMBIGUITY_BYTE_HEX_LENGTH (2)
+		#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_POS_PERMUTATION_ENTRY_CENTRE_WORD_POS_AMBIGUITY_NUMBER_OF_INSTANCES_INT_START_POS (3)
+		#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_POS_PERMUTATION_ENTRY_CENTRE_WORD_POS_AMBIGUITY_NUMBER_OF_INSTANCES_INT_LENGTH (10)
+
+		#define ASCII_TABLE_INDEX_OF_a (97)
+		#define ASCII_TABLE_NUMBER_OF_LETTERS_IN_ALPHABET (26)
+		#define ASCII_TABLE_INDEX_OF_z (ASCII_TABLE_INDEX_OF_a + ASCII_TABLE_NUMBER_OF_LETTERS_IN_ALPHABET)
+
+		#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_POS_PERMUTATION_ENTRY_FILE_NAME_PARTA "POSpermutation"
+		#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_POS_PERMUTATION_ENTRY_FILE_NAME_EXTENSION ".pos"
+	#endif
 #endif
-
 
 class GIApreprocessorPOStaggerDatabaseClass
 {
 	private: SHAREDvarsClass SHAREDvars;
 	private: GIAdatabaseClass GIAdatabase;
-
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK
+	private: ANNformationClass ANNformation;
+	private: ANNalgorithmBackpropagationTrainingClass ANNalgorithmBackpropagationTraining;	
+	private: ANNxmlConversionClass ANNxmlConversion;	
+	#endif
+	
 	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE
 	public: void initialisePOStaggerDatabase(const string newGIAposTaggerDatabaseFolderName);
+	#endif
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK
+	public: void feedNeuralNetworkWithExperienceBackpropagation(ANNexperience* currentExperience);
+	public: bool writeDatabaseNeuralNetwork();
+	#endif
 
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM
 	private: string DBgenerateFileName(const string POSambiguityInfoPermutation);
 		private: string DBgenerateSubFolderName(const string POSambiguityInfoPermutation, const int level, const int numberOfWordsPerLevel);
 			private: string DBconvertByteToHex(const unsigned char byte);

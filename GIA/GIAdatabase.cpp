@@ -25,7 +25,7 @@
  * File Name: GIAdatabase.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e3a 13-December-2017
+ * Project Version: 3e4a 13-December-2017
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: performs simple GIA database functions (storing nodes in ordered arrays/vectors/maps)
  *
@@ -558,8 +558,14 @@ void GIAdatabaseClass::DBreadDatabase(vector<GIAentityNode*>* entityNodesActiveL
 void GIAdatabaseClass::initialiseDatabase(const bool readFromDatabase, const string newDatabaseFolderName, const bool useDatabase, vector<GIAentityNode*>* entityNodesActiveListComplete, unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes)
 {
 	if(useDatabase)
-	{
+	{	
 		KBdatabaseFolderName = newDatabaseFolderName;
+
+		if(!SHAREDvars.directoryExists(&KBdatabaseFolderName))
+		{
+			cerr << "GIAdatabaseClass::initialiseDatabase{} error: KBdatabaseFolderName does not exist: " << KBdatabaseFolderName << endl;
+			exit(EXIT_ERROR);	
+		}
 
 		this->initialiseDBnetworkIndexEntityNodesLoadedList();
 
@@ -595,7 +601,6 @@ void GIAdatabaseClass::initialiseDatabase(const bool readFromDatabase, const str
 
 void GIAdatabaseClass::DBreadNetworkIndexEntityNodesLoadedList()	//unordered_map<string, bool>* DBnetworkIndexEntityNodesLoadedListLocal
 {
-
 	string networkIndexEntityNodesListFileName = this->DBgenerateFileName(NULL, NULL, NULL, GIA_DATABASE_GENERATE_FILENAME_FILE_NETWORK_INDEX_ENTITY_NODES_LIST);
 
 #ifdef GIA_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS

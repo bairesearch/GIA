@@ -25,7 +25,7 @@
  * File Name: GIAneuralNetworkOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e3a 13-December-2017
+ * Project Version: 3e4a 13-December-2017
  * Description: 
  *
  *******************************************************************************/
@@ -36,6 +36,7 @@
 
 		
 
+#ifdef GIA_NEURAL_NETWORK
 
 GIAneuralNetworkVariablesClass::GIAneuralNetworkVariablesClass(void)
 {
@@ -949,13 +950,6 @@ bool GIAneuralNetworkOperationsClass::connectConceptNeuronToConceptIndexBitNeuro
 	return result;
 }
 
-bool GIAneuralNetworkOperationsClass::getBitValue(int number, int x) 
-{
-	int value = (number >> x) & 1U;
-	bool result = value;
-	return result;
-}
-
 void GIAneuralNetworkOperationsClass::incrementConceptIndexIDcounter(GIAneuralNetworkVariablesClass* neuralNetworkVariables, const int conceptIndexType)
 {
 	if(conceptIndexType == GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS_TYPE_SUBSTANCE)
@@ -1004,7 +998,7 @@ bool GIAneuralNetworkOperationsClass::createANNconnectionBetweenConceptNeuronAnd
 }
 double GIAneuralNetworkOperationsClass::calculateConceptIndexBitConnectionWeight(GIAneuralNetworkVariablesClass* neuralNetworkVariables, int conceptIndex, int bitID)
 {
-	bool bit = getBitValue(conceptIndex, bitID);	//GIAconceptIndexBitID
+	bool bit = SHAREDvars.getBitValue(conceptIndex, bitID);	//GIAconceptIndexBitID
 	#ifdef GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS_NEGATIVE_WEIGHTS
 	int weight = 0;
 	if(bit)
@@ -1246,4 +1240,5 @@ long GIAneuralNetworkOperationsClass::getCurrentTime()
 	return static_cast<long int>(time(NULL));
 }
 
+#endif
 

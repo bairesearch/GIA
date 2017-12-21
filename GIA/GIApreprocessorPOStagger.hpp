@@ -24,8 +24,8 @@
  *
  * File Name: GIApreprocessorPOStagger.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
- * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3e3a 13-December-2017
+ * Project: General Intelligence Algorithm
+ * Project Version: 3e4a 13-December-2017
  * Requirements: requires plain text file
  * Description: preprocessor POS tagger
  *
@@ -54,12 +54,16 @@ class GIApreprocessorPOStaggerClass
 	private: GIApreprocessorPOStaggerDatabaseClass GIApreprocessorPOStaggerDatabase;
 
 	#ifdef GIA_PREPROCESSOR_POS_TAGGER
-	private: bool findInstanceInMapPOStaggerDatabase(multimap<string, pair<unsigned char, int>>* mapPOStaggerDatabase, const string POSambiguityInfoPermutation, unsigned char* centreWordPOSambiguityInfo, int* numberOfInstances, const bool incrementIfFound);
-	private: void insertInstanceInMapPOStaggerDatabase(multimap<string, pair<unsigned char, int>>* mapPOStaggerDatabase, const string POSambiguityInfoPermutation, const unsigned char centreWordPOSambiguityInfo, const int numberOfInstances);
+	private: bool findInstancePOStaggerMap(multimap<string, pair<unsigned char, int>>* POStaggerMap, const string POSambiguityInfoPermutation, unsigned char* centreWordPOSambiguityInfo, int* numberOfInstances, const bool incrementIfFound);
+	private: void insertInstanceInPOStaggerMap(multimap<string, pair<unsigned char, int>>* POStaggerMap, const string POSambiguityInfoPermutation, const unsigned char centreWordPOSambiguityInfo, const int numberOfInstances);
 
 	#ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE
 	public: bool generatePOStaggerDatabaseFromWikiDumpText();
+		private: bool determinePOSambiguityInfoIsAmbiguous(const unsigned char POSambiguityInfo, int* unambiguousPOSvalue);
 		private: bool determinePOSambiguityInfoForSpecialCharacters(const GIApreprocessorWord* word, unsigned char* contextWordPOSambiguityInfo);
+		#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK
+		private: bool determinePOSambiguityInfoNeuralNetworkInputNeuronForSpecialCharacters(const unsigned char POSambiguityInfo, int* POSambiguityInfoNeuralNetworkInputNeuron);
+		#endif
 	#endif
 		#ifdef GIA_PREPROCESSOR_POS_TAGGER_INITIALISE_WORD_INDEX_LIST_FROM_WIKI_DUMP_TEXT
 		private: bool createWordIndexListFromWikiDumpText();
