@@ -25,7 +25,7 @@
  * File Name: GIAneuralNetworkOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3d6a 12-November-2017
+ * Project Version: 3d6c 12-November-2017
  * Description: 
  *
  *******************************************************************************/
@@ -137,29 +137,29 @@ a new neuron assigned for each new instance, which is preconnected to the concep
 reference set delimiter instance neurons are connected to substance instance neurons with bidirectional synapses (electrical synapses).
 The subject and object synapses may be weighted differently to identify the direction of the reference set delimiter (e.g. action/condition); e.g. X sees Y instead of Y sees X.
 
-		hair [concept property / feature]
-	      \  |  /
+                hair [concept property / feature]
+              \  |  /
                 dog [concept neurons]
                  |   (e.g. 01111)
                alsation                ride  [reference set delimiter concept neuron]
               // | \\ (e.g. 01011)   // | \\ (e.g. 01011)
              b b b b b               b b b b b  [concept index bit neurons]
-	     | | | | |	             | | | | |
-	     | | | | |	             | | | | |
-	     | | | | |	             | | | | |	
-	     | | | | |	             | | | | |		       
-	     | | | | |	             | | | | |
-	     \ \ |/ /	             | | | | |
-	       dog	  \          | | | | |
-	     | | | | |	     \       \ \ |/ / 
-	     | | | | |		       ride        - - - - - - -> (spatio-temporal index)
-	     | | | | |               | | | | |
-	     | | | | |	             | | | | |           	
-	     | | | | |	       /     | | | | |           
-	       bike         /        | | | | |
-	     | | | | |	             | | | | |	
-	     | | | | |	             | | | | |
-	     v v v v v	             v v v v v	     	     	              
+             | | | | |               | | | | |
+             | | | | |               | | | |
+             | | | | |               | | | | |        
+             | | | | |               | | | | |                       
+             | | | | |               | | | | |
+             \ \ |/ /                | | | | |
+               dog        \          | | | | |
+             | | | | |       \       \ \ |/ / 
+             | | | | |                 ride        - - - - - - -> (spatio-temporal index)
+             | | | | |               | | | | |
+             | | | | |               | | | | |                   
+             | | | | |       /       | | | | |           
+               bike       /          | | | | |
+             | | | | |               | | | | |        
+             | | | | |               | | | | |
+             v v v v v               v v v v v                          	              
 */
 #endif
 #ifdef GIA_NEURAL_NETWORK_NON_SEMANTIC
@@ -169,14 +169,14 @@ method A [less realistic biological implementation]: a new neuron assigned for e
 method B* [more realistic biological implementation]: a new neuron is assigned for every new concept, instances are stored as a connection subnet between concepts (ie a new artificial neuron is created for every connection, not for every instance)
 	connections out of a neuron refer to a new instance
 		e.g. The red dog that rides the bike
-			  dog
-			     \ 		
-			       . [unique interneuron connection for given instance]
-			     /   \		
-			    /      \			[GIA_ANN_CONNECTION_TYPE_INSTANCE_TO_INSTANCE]
-			   /	     . [unique interneuron connection for given instance]	
-			  /        /    \		
-			red      rides   bike
+                          dog
+                             \                 
+                               . [unique interneuron connection for given instance]
+                             /   \                
+                            /      \                        [GIA_ANN_CONNECTION_TYPE_INSTANCE_TO_INSTANCE]
+                           /         . [unique interneuron connection for given instance]        
+                          /        /    \                
+                        red      rides   bike
 		references are identified by activating each of the concepts (ie words) of the sentence	and identifing the subnet that lights up (is activated); this is the subnet which will have the new relation assigned [or is the subnet which is being queried]
 */
 #endif
@@ -423,6 +423,7 @@ bool GIAneuralNetworkOperationsClass::generateSubnetFromConnectedInstances(GIAne
 							
 							if(createDirectConceptPropertyFeature)
 							{
+								propertyObjectEntity->parsedForANNgeneration = true;
 								ANNneuron* propertyObjectNeuron = propertyObjectEntity->entityShortcutToConceptNeuron;
 								createANNconnection(propertyObjectNeuron, previousNeuron, GIA_ANN_CONNECTION_TYPE_CONCEPT_TO_CONCEPT_PROPERTIES);	//CHECKTHIS
 							}
