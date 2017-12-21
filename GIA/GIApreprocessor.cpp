@@ -25,7 +25,7 @@
  * File Name: GIApreprocessor.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e7a 16-December-2017
+ * Project Version: 3e7b 16-December-2017
  * Requirements: requires plain text file
  * Description: Logical Condition and Reference Set preprocessor
  *
@@ -37,18 +37,12 @@
 #include "XMLrulesClass.hpp"
 
 #ifdef GIA_PREPROCESSOR
+
+	
+	
 bool GIApreprocessorClass::preprocessTextForGIAwrapper(const bool useLRP, string* inputTextPlainTXTfileName, const string outputLRPTextPlainTXTFileName, const bool isQuery, GIAtranslatorVariablesClass* translatorVariables, bool* useInputTextPlainTXTFile, const string inputTextNLPfeatureXMLfileName)
 {
 	bool result = true;
-
-	#ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE
-	if(!GIApreprocessorPOStagger.generatePOStaggerDatabaseFromWikiDumpText())
-	{
-		result = false;
-	}
-	cerr << "GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE: planned premature exit (finished executing generatePOStaggerDatabaseFromWikiDumpText)" << endl;
-	exit(EXIT_ERROR);
-	#endif
 	
 	if(translatorVariables->firstGIApreprocessorSentenceInList != NULL)
 	{
@@ -586,6 +580,13 @@ bool GIApreprocessorClass::executePrelimFeatureProcessingOnSentences(const strin
 {
 	bool result = true;
 
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_INITIALISE_WORD_INDEX_LIST_FROM_LRP_FILES
+	if(!GIApreprocessorMultiwordReduction.createWordIndexListFromLRPfiles())
+	{
+		result = false;
+	}
+	#endif
+	
 	#ifdef GIA_PREPROCESSOR_POS_TAGGER
 	GIApreprocessorSentence* currentGIApreprocessorSentenceInList = translatorVariables->firstGIApreprocessorSentenceInList;
 	while(currentGIApreprocessorSentenceInList->next != NULL)
@@ -635,7 +636,6 @@ bool GIApreprocessorClass::executePrelimFeatureProcessingOnSentences(const strin
 						int centreWordPOSvaluePrediction = INT_DEFAULT_VALUE;
 						bool centreWordPOSisAmbiguous = false;
 						
-						#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE
 						#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK
 						ANNexperience* currentExperience = new ANNexperience();
 						GIApreprocessorPOStagger.generateANNexperienceFromPOSambiguityInfoPermutation(POSambiguityInfoPermutation, centreWordUnambiguousPOSvalue, currentExperience);
@@ -682,9 +682,7 @@ bool GIApreprocessorClass::executePrelimFeatureProcessingOnSentences(const strin
 							cout << "GIA_PREPROCESSOR_POS_TAGGER GIApreprocessorClass::executePrelimFeatureProcessingOnSentences{} warning: word POS cannot be determined (!POSpermutationEntryExistent): " << centreWord->tagName << endl;
 						}
 						centreWordPOSisAmbiguous = GIApreprocessorPOStagger.determinePOSambiguityInfoIsAmbiguous(entryIndexWithMaximumNumberOfInstances, &centreWordPOSvaluePrediction);
-						#endif	
-						#else
-						#ifdef GIA_PREPROCESSOR_POS_TAGGER_MAP
+						#elif defined GIA_PREPROCESSOR_POS_TAGGER_DATABASE_MAP
 						unsigned char entryIndexWithMaximumNumberOfInstances = GIA_PREPROCESSOR_POS_TAGGER_POS_AMBIGUITY_INFO_UNKNOWN;
 						int maximumNumberOfInstances = 0;
 						multimap<string, pair<unsigned char, int>>* POStaggerMap = getPOStaggerMap();
@@ -701,7 +699,6 @@ bool GIApreprocessorClass::executePrelimFeatureProcessingOnSentences(const strin
 							}
 						}
 						centreWordPOSisAmbiguous = GIApreprocessorPOStagger.determinePOSambiguityInfoIsAmbiguous(entryIndexWithMaximumNumberOfInstances, &centreWordPOSvaluePrediction);
-						#endif
 						#endif
 						
 						if(foundMatchingCentreWordPOSambiguityInfo)

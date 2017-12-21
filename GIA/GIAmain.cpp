@@ -25,7 +25,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e7a 16-December-2017
+ * Project Version: 3e7b 16-December-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -40,6 +40,12 @@
 #ifdef GIA_NEURAL_NETWORK
 #include "ANNdraw.hpp"
 #endif
+
+	
+
+	
+
+#ifdef COMPILE_GIA
 
 static char errmessage[] = "Usage:  GIA.exe [options]\n\n\twhere options are any of the following\n"
 "\n\t-itxt [string]       : plain text .txt input filename to be parsed by the NLP parser (def: inputText.txt)"
@@ -87,7 +93,7 @@ static char errmessage[] = "Usage:  GIA.exe [options]\n\n\twhere options are any
 "\n\t-dbwrite             : write to KB database (GIA knowledge base) [saves knowledge]"
 "\n\t-dbfolder [string]   : KB database base folder path (def: /home/systemusername/source/GIAKBdatabase)"
 #endif
-#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE
+#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_PERSISTENT
 "\n\t-dbpostaggerfolder [string]   : pos tagger database base folder path (def: /home/systemusername/source/GIAPOStaggerDatabase)"
 #endif
 #ifdef GIA_SEMANTIC_PARSER
@@ -126,7 +132,6 @@ static char errmessage[] = "Usage:  GIA.exe [options]\n\n\twhere options are any
 "\n\n\t-version         : print version"
 "\n\n\tThis program performs GIA (General Intelligence Algorithm) operations - creates semantic network based upon NLP dependencies file (.xml) or GIA semantic network file (.xml); outputs semantic network to GIA semantic network file (.xml); displays semantic network (using opengl); prints semantic network to raster image (.ppm), 3D vector graphics (.ldr), or 2D vector graphics (.svg).\n\n";
 
-#ifdef COMPILE_GIA
 int main(const int argc, const char** argv)
 {
 	//print execution time
@@ -255,7 +260,7 @@ int main(const int argc, const char** argv)
 	#ifdef GIA_SEMANTIC_PARSER
 	string semanticParserDatabaseFolderName = GIA_DATABASE_FILESYSTEM_DEFAULT_SERVER_OR_MOUNT_NAME_BASE + GIA_SEMANTIC_PARSER_DATABASE_FILESYSTEM_DEFAULT_DATABASE_NAME;
 	#endif
-	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_PERSISTENT
 	string POStaggerDatabaseFolderName = GIA_DATABASE_FILESYSTEM_DEFAULT_SERVER_OR_MOUNT_NAME_BASE + GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_DEFAULT_DATABASE_NAME;
 	#endif
 	
@@ -281,409 +286,408 @@ int main(const int argc, const char** argv)
 
 	//basic execution flow outline; if no dataset or xml inputText file is specified, just form network - do not train network
 
+	#ifndef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE
 	#ifdef USE_CE
-	if(SHAREDvarsClass().argumentExists(argc, argv, "-icodeextensions"))
+	if(!SHAREDvarsClass().argumentExists(argc, argv, "-icodeextensions"))
 	#else
 	#ifdef GIA_NEURAL_NETWORK_DISABLE_SEMANTIC_TRANSLATOR
-	if(SHAREDvarsClass().argumentExists(argc, argv, "-itxt"))
+	if(!SHAREDvarsClass().argumentExists(argc, argv, "-itxt"))
 	#else
-	if(SHAREDvarsClass().argumentExists(argc, argv, "-itxt") || SHAREDvarsClass().argumentExists(argc, argv, "-ionlprel") || SHAREDvarsClass().argumentExists(argc, argv, "-ixml"))
+	if(!(SHAREDvarsClass().argumentExists(argc, argv, "-itxt") || SHAREDvarsClass().argumentExists(argc, argv, "-ionlprel") || SHAREDvarsClass().argumentExists(argc, argv, "-ixml")))
 	#endif
 	#endif
-	{
-		if(SHAREDvarsClass().argumentExists(argc, argv, "-itxt"))
-		{
-			inputTextPlainTXTfileName = SHAREDvarsClass().getStringArgument(argc, argv, "-itxt");
-			useInputTextPlainTXTFile = true;
-		}
-		if(SHAREDvarsClass().argumentExists(argc, argv, "-itxtq"))
-		{
-			inputQueryPlainTXTFileName = SHAREDvarsClass().getStringArgument(argc, argv, "-itxtq");
-			useInputQueryPlainTXTFile = true;
-			useInputQuery = true;
-		}
-		
-	#ifdef GIA_NEURAL_NETWORK_ACTIVE
-		if(SHAREDvarsClass().argumentExists(argc, argv, "-iannxml"))
-		{
-			ANNinputXMLFileName = SHAREDvarsClass().getStringArgument(argc, argv, "-iannxml");
-			//train = true;
-			ANNuseInputXMLFile = true;
-		}
-	#endif
-	#ifndef GIA_NEURAL_NETWORK_DISABLE_SEMANTIC_TRANSLATOR
-		if(SHAREDvarsClass().argumentExists(argc, argv, "-ionlprel"))
-		{
-			inputTextNLPrelationXMLfileName = SHAREDvarsClass().getStringArgument(argc, argv, "-ionlprel");
-			useInputTextNLPrelationXMLFile = true;
-		}
-		if(SHAREDvarsClass().argumentExists(argc, argv, "-ionlptag"))
-		{
-			inputTextNLPfeatureXMLfileName = SHAREDvarsClass().getStringArgument(argc, argv, "-ionlptag");
-			useInputTextNLPfeatureXMLFile = true;
-		}
-		if(SHAREDvarsClass().argumentExists(argc, argv, "-ixml"))
-		{
-			inputTextXMLFileName = SHAREDvarsClass().getStringArgument(argc, argv, "-ixml");
-			//train = true;
-			useInputTextXMLFile = true;
-		}
-
-		if(SHAREDvarsClass().argumentExists(argc, argv, "-ionlprelq"))
-		{
-			inputQueryNLPrelationXMLFileName = SHAREDvarsClass().getStringArgument(argc, argv, "-ionlprelq");
-			useInputQueryNLPrelationXMLFile = true;
-			useInputQuery = true;
-		}
-		if(SHAREDvarsClass().argumentExists(argc, argv, "-ionlptagq"))
-		{
-			inputQueryNLPfeatureXMLFileName = SHAREDvarsClass().getStringArgument(argc, argv, "-ionlptagq");
-			useInputQueryNLPfeatureXMLFile = true;
-			useInputQuery = true;
-		}
-		if(SHAREDvarsClass().argumentExists(argc, argv, "-ixmlq"))
-		{
-			inputQueryXMLFileName = SHAREDvarsClass().getStringArgument(argc, argv, "-ixmlq");
-			useInputQueryXMLFile = true;
-			useInputQuery = true;
-		}
-
-		#ifdef GIA_INPUT_FILE_LISTS
-		if(SHAREDvarsClass().argumentExists(argc, argv, "-ilist"))
-		{
-			inputFileList = true;
-		}
-		#endif
-		
-		#ifdef USE_CE
-		if(SHAREDvarsClass().argumentExists(argc, argv, "-icodeextensions"))
-		{
-			inputTextCodeextensionsTXTFileName = SHAREDvarsClass().getStringArgument(argc, argv, "-icodeextensions");
-			useInputTextCodeextensionsTXTFileName = true;
-			cout << "inputTextCodeextensionsTXTFileName = " << inputTextCodeextensionsTXTFileName << endl;	//print input file name required for diagnosis
-		}
-		#endif
-
-		if(SHAREDvarsClass().argumentExists(argc, argv, "-ocff"))
-		{
-			outputTextCFFFileName = SHAREDvarsClass().getStringArgument(argc, argv, "-ocff");
-			useOutputTextCFFFile = true;
-		}
-		if(SHAREDvarsClass().argumentExists(argc, argv, "-oxml"))
-		{
-			outputTextXMLFileName = SHAREDvarsClass().getStringArgument(argc, argv, "-oxml");
-			useOutputTextXMLFile = true;
-		}
-		if(SHAREDvarsClass().argumentExists(argc, argv, "-ocxl"))
-		{
-			outputTextCXLFileName = SHAREDvarsClass().getStringArgument(argc, argv, "-ocxl");
-			useOutputTextCXLFile = true;
-		}
-		if(SHAREDvarsClass().argumentExists(argc, argv, "-oldr"))
-		{
-			outputTextLDRFileName = SHAREDvarsClass().getStringArgument(argc, argv, "-oldr");
-			useOutputTextLDRFile = true;
-			printOutput = true;
-		}
-		if(SHAREDvarsClass().argumentExists(argc, argv, "-oppm"))
-		{
-			outputTextPPMFileName = SHAREDvarsClass().getStringArgument(argc, argv, "-oppm");
-			useOutputTextPPMFile = true;
-			printOutput = true;
-		}
-		if(SHAREDvarsClass().argumentExists(argc, argv, "-osvg"))
-		{
-			outputTextSVGFileName = SHAREDvarsClass().getStringArgument(argc, argv, "-osvg");
-			useOutputTextSVGFile = true;
-			printOutput = true;
-		}
-		if(SHAREDvarsClass().argumentExists(argc, argv, "-ocffq"))
-		{
-			outputQueryCFFFileName = SHAREDvarsClass().getStringArgument(argc, argv, "-ocffq");
-			useOutputQueryCFFFile = true;
-		}
-		if(SHAREDvarsClass().argumentExists(argc, argv, "-oxmlq"))
-		{
-			outputQueryXMLFileName = SHAREDvarsClass().getStringArgument(argc, argv, "-oxmlq");
-			useOutputQueryXMLFile = true;
-		}
-		if(SHAREDvarsClass().argumentExists(argc, argv, "-ocxlq"))
-		{
-			outputQueryCXLFileName = SHAREDvarsClass().getStringArgument(argc, argv, "-ocxlq");
-			useOutputQueryCXLFile = true;
-		}
-		if(SHAREDvarsClass().argumentExists(argc, argv, "-oldrq"))
-		{
-			outputQueryLDRFileName = SHAREDvarsClass().getStringArgument(argc, argv, "-oldrq");
-			useOutputQueryLDRFile = true;
-			printOutputQuery = true;
-		}
-		if(SHAREDvarsClass().argumentExists(argc, argv, "-oppmq"))
-		{
-			outputQueryPPMFileName = SHAREDvarsClass().getStringArgument(argc, argv, "-oppmq");
-			useOutputQueryPPMFile = true;
-			printOutputQuery = true;
-		}
-		if(SHAREDvarsClass().argumentExists(argc, argv, "-osvgq"))
-		{
-			outputQuerySVGFileName = SHAREDvarsClass().getStringArgument(argc, argv, "-osvgq");
-			useOutputQuerySVGFile = true;
-			printOutputQuery = true;
-		}
-		if(SHAREDvarsClass().argumentExists(argc, argv, "-oall"))
-		{
-			outputTextAllFileName = SHAREDvarsClass().getStringArgument(argc, argv, "-oall");
-			useOutputTextAllFile = true;
-			printOutput = true;
-		}
-	
-		#ifdef GIA_QUERY_WRITE_ANSWER_TO_FILE
-		if(SHAREDvarsClass().argumentExists(argc, argv, "-oanswer"))
-		{
-			outputTextAnswerPlainTXTFileName = SHAREDvarsClass().getStringArgument(argc, argv, "-oanswer");
-			useOutputTextAnswerPlainTXTFile = true;
-		}
-		#endif
-
-		if(SHAREDvarsClass().argumentExists(argc, argv, "-nlprelation"))
-		{
-			NLPdependencyRelationsParser = int(SHAREDvarsClass().getFloatArgument(argc, argv, "-nlprelation"));
-		}
-
-		if(SHAREDvarsClass().argumentExists(argc, argv, "-nlpfeature"))
-		{
-			NLPfeatureParser = int(SHAREDvarsClass().getFloatArgument(argc, argv, "-nlpfeature"));
-		}
-		else
-		{
-			NLPfeatureParser = NLPdependencyRelationsParser;
-		}
-		if(SHAREDvarsClass().argumentExists(argc, argv, "-nlpcompmode"))
-		{
-			if(queryNLPdependencyRelationsParser == GIA_NLP_PARSER_RELEX)
-			{
-				int nlpcompmode = int(SHAREDvarsClass().getFloatArgument(argc, argv, "-nlpcompmode"));
-				if(nlpcompmode == 1)
-				{
-					NLPrelexCompatibilityMode = true;
-				}
-				else if(nlpcompmode == 2)
-				{
-					NLPassumePreCollapsedStanfordRelations = true;
-				}
-			}
-			else
-			{
-				cerr << "error: nlpcompmode set but (NLPdependencyRelationsParser != GIA_NLP_PARSER_RELEX)" << endl;
-				exit(EXIT_ERROR);
-			}
-		}
-
-		if(SHAREDvarsClass().argumentExists(argc, argv, "-nlprelationq"))
-		{
-			queryNLPdependencyRelationsParser = int(SHAREDvarsClass().getFloatArgument(argc, argv, "-nlprelationq"));
-		}
-
-		if(SHAREDvarsClass().argumentExists(argc, argv, "-nlpfeatureq"))
-		{
-			queryNLPfeatureParser = int(SHAREDvarsClass().getFloatArgument(argc, argv, "-nlpfeatureq"));
-		}
-		else
-		{
-			queryNLPfeatureParser = queryNLPdependencyRelationsParser;
-		}
-		if(SHAREDvarsClass().argumentExists(argc, argv, "-nlpcompmodeq"))
-		{
-			if(queryNLPdependencyRelationsParser == GIA_NLP_PARSER_RELEX)
-			{
-				int nlpcompmodeq = int(SHAREDvarsClass().getFloatArgument(argc, argv, "-nlpcompmodeq"));
-				if(nlpcompmodeq == 1)
-				{
-					queryNLPrelexCompatibilityMode = true;
-				}
-				else if(nlpcompmodeq == 2)
-				{
-					queryNLPassumePreCollapsedStanfordRelations = true;
-				}
-			}
-			else
-			{
-				cerr << "error: nlpcompmodeq set but (queryNLPdependencyRelationsParser != GIA_NLP_PARSER_RELEX)" << endl;
-				exit(EXIT_ERROR);
-			}
-		}
-
-		#ifdef GIA_DATABASE
-		if(SHAREDvarsClass().argumentExists(argc, argv, "-dbread"))
-		{
-			readFromDatabase = true;
-			useDatabase = true;
-		}
-		if(SHAREDvarsClass().argumentExists(argc, argv, "-dbwrite"))
-		{
-			writeToDatabase = true;
-			useDatabase = true;
-		}
-		if(SHAREDvarsClass().argumentExists(argc, argv, "-dbfolder"))
-		{
-			KBdatabaseFolderName = SHAREDvarsClass().getStringArgument(argc, argv, "-dbfolder");
-		}
-		#endif
-		#ifdef GIA_SEMANTIC_PARSER
-		if(SHAREDvarsClass().argumentExists(argc, argv, "-dbsemanticparserfolder"))
-		{
-			semanticParserDatabaseFolderName = SHAREDvarsClass().getStringArgument(argc, argv, "-dbsemanticparserfolder");
-		}
-		#endif
-		#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE
-		if(SHAREDvarsClass().argumentExists(argc, argv, "-dbpostaggerfolder"))
-		{
-			POStaggerDatabaseFolderName = SHAREDvarsClass().getStringArgument(argc, argv, "-dbpostaggerfolder");
-		}
-		#endif
-
-		if(SHAREDvarsClass().argumentExists(argc, argv, "-nlprelexfolder"))
-		{
-			NLPexeFolderArray[GIA_NLP_PARSER_RELEX] = SHAREDvarsClass().getStringArgument(argc, argv, "-nlprelexfolder");
-		}
-		else
-		{
-			NLPexeFolderArray[GIA_NLP_PARSER_RELEX] = currentFolder;
-		}
-		if(SHAREDvarsClass().argumentExists(argc, argv, "-nlpstanfordcorenlpfolder"))
-		{
-			NLPexeFolderArray[GIA_NLP_PARSER_STANFORD_CORENLP] = SHAREDvarsClass().getStringArgument(argc, argv, "-nlpstanfordcorenlpfolder");
-		}
-		else
-		{
-			NLPexeFolderArray[GIA_NLP_PARSER_STANFORD_CORENLP] = currentFolder;
-		}
-		if(SHAREDvarsClass().argumentExists(argc, argv, "-nlpstanfordparserfolder"))
-		{
-			NLPexeFolderArray[GIA_NLP_PARSER_STANFORD_PARSER] = SHAREDvarsClass().getStringArgument(argc, argv, "-nlpstanfordparserfolder");
-		}
-		else
-		{
-			NLPexeFolderArray[GIA_NLP_PARSER_STANFORD_PARSER] = currentFolder;
-		}
-		#ifdef GIA_NLP_CLIENT_SERVER
-		if(SHAREDvarsClass().argumentExists(argc, argv, "-nlpclient"))
-		{
-			NLPclient = true;
-		}	
-		#endif	
-		
-	#endif
-
-
-		#ifdef GIA_NEURAL_NETWORK
-		if(SHAREDvarsClass().argumentExists(argc, argv, "-oannxml"))
-		{
-			ANNoutputXMLFileName = SHAREDvarsClass().getStringArgument(argc, argv, "-oannxml");
-			ANNuseOutputXMLFile = true;
-		}
-		if(SHAREDvarsClass().argumentExists(argc, argv, "-oannldr"))
-		{
-			ANNoutputLDRFileName = SHAREDvarsClass().getStringArgument(argc, argv, "-oannldr");
-			ANNuseOutputLDRFile = true;
-		}
-		if(SHAREDvarsClass().argumentExists(argc, argv, "-oannsvg"))
-		{
-			ANNoutputSVGFileName = SHAREDvarsClass().getStringArgument(argc, argv, "-oannsvg");
-			ANNuseOutputSVGFile = true;
-		}
-		if(SHAREDvarsClass().argumentExists(argc, argv, "-oannppm"))
-		{
-			ANNoutputPPMFileName = SHAREDvarsClass().getStringArgument(argc, argv, "-oannppm");
-			ANNuseOutputPPMFile = true;
-			ANNuseOutputLDRFile = true;	//required for OpenGL image generation
-		}
-		if(SHAREDvarsClass().argumentExists(argc, argv, "-oannppm2"))
-		{
-			ANNoutputPPMFileNameRaytraced = SHAREDvarsClass().getStringArgument(argc, argv, "-oannppm2");
-			ANNuseOutputPPMFileRaytraced = true;
-			ANNuseOutputLDRFile = true;	//required for raytrace image generation
-		}
-		if(SHAREDvarsClass().argumentExists(argc, argv, "-oannall"))
-		{
-			ANNoutputAllFileName = SHAREDvarsClass().getStringArgument(argc, argv, "-oannall");
-			ANNuseOutputAllFile = true;
-		}
-		#ifndef ANN_DISPLAY_DISABLE_SPRITES
-		if(SHAREDvarsClass().argumentExists(argc, argv, "-annsprites"))
-		{
-			ANNuseSprites = true;
-		}
-		#endif
-		#endif
-	
-		#ifdef GIA_PREPROCESSOR
-		if(SHAREDvarsClass().argumentExists(argc, argv, "-lrp"))
-		{
-			useLRP = true;
-		}
-		if(SHAREDvarsClass().argumentExists(argc, argv, "-olrptxt"))
-		{
-			outputLRPTextPlainTXTFileName = SHAREDvarsClass().getStringArgument(argc, argv, "-olrptxt");
-			useOutputLRPTextPlainTXTFile = true;
-		}
-		if(SHAREDvarsClass().argumentExists(argc, argv, "-olrptxtq"))
-		{
-			outputQueryLRPTextPlainTXTFileName = SHAREDvarsClass().getStringArgument(argc, argv, "-olrptxtq");
-			useOutputQueryLRPTextPlainTXTFile = true;
-		}
-		if(SHAREDvarsClass().argumentExists(argc, argv, "-lrpfolder"))
-		{
-			lrpDataFolderName = SHAREDvarsClass().getStringArgument(argc, argv, "-lrpfolder");
-		}
-		else
-		{
-			lrpDataFolderName = currentFolder;
-		}
-		#endif
-		
-		#ifdef USE_WORDNET
-		if(SHAREDvarsClass().argumentExists(argc, argv, "-syndet"))
-		{
-			synonymnDetectionStatus = int(SHAREDvarsClass().getFloatArgument(argc, argv, "-syndet"));
-		}
-		#endif
-		
-		if(SHAREDvarsClass().argumentExists(argc, argv, "-show"))
-		{
-			displayInOpenGLAndOutputScreenshot = true;
-		}
-		if(SHAREDvarsClass().argumentExists(argc, argv, "-width"))
-		{
-			rasterImageWidth = SHAREDvarsClass().getFloatArgument(argc, argv, "-width");
-		}
-		if(SHAREDvarsClass().argumentExists(argc, argv, "-height"))
-		{
-			rasterImageHeight = SHAREDvarsClass().getFloatArgument(argc, argv, "-height");
-		}
-		if(SHAREDvarsClass().argumentExists(argc, argv, "-inputfolder"))
-		{
-			inputFolderLocal = SHAREDvarsClass().getStringArgument(argc, argv, "-inputfolder");
-		}
-		if(SHAREDvarsClass().argumentExists(argc, argv, "-outputfolder"))
-		{
-			outputFolderLocal = SHAREDvarsClass().getStringArgument(argc, argv, "-outputfolder");
-		}
-
-		if(SHAREDvarsClass().argumentExists(argc, argv, "-version"))
-		{
-			cout << "GIA.exe - Project Version: 3e7a 16-December-2017" << endl;
-			exit(EXIT_OK);
-		}
-
-
-	}
-	else
 	{
 		cerr << "error: GIA requires either a plain text inputText file (.txt), an NPL parsed inputText file (.xml) or GIA semantic network (.xml) to be defined" << endl;
 		printf(errmessage);
 		exit(EXIT_ERROR);
 	}
+	#endif
+	
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-itxt"))
+	{
+		inputTextPlainTXTfileName = SHAREDvarsClass().getStringArgument(argc, argv, "-itxt");
+		useInputTextPlainTXTFile = true;
+	}
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-itxtq"))
+	{
+		inputQueryPlainTXTFileName = SHAREDvarsClass().getStringArgument(argc, argv, "-itxtq");
+		useInputQueryPlainTXTFile = true;
+		useInputQuery = true;
+	}
+	
+#ifdef GIA_NEURAL_NETWORK_ACTIVE
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-iannxml"))
+	{
+		ANNinputXMLFileName = SHAREDvarsClass().getStringArgument(argc, argv, "-iannxml");
+		//train = true;
+		ANNuseInputXMLFile = true;
+	}
+#endif
+#ifndef GIA_NEURAL_NETWORK_DISABLE_SEMANTIC_TRANSLATOR
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-ionlprel"))
+	{
+		inputTextNLPrelationXMLfileName = SHAREDvarsClass().getStringArgument(argc, argv, "-ionlprel");
+		useInputTextNLPrelationXMLFile = true;
+	}
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-ionlptag"))
+	{
+		inputTextNLPfeatureXMLfileName = SHAREDvarsClass().getStringArgument(argc, argv, "-ionlptag");
+		useInputTextNLPfeatureXMLFile = true;
+	}
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-ixml"))
+	{
+		inputTextXMLFileName = SHAREDvarsClass().getStringArgument(argc, argv, "-ixml");
+		//train = true;
+		useInputTextXMLFile = true;
+	}
+
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-ionlprelq"))
+	{
+		inputQueryNLPrelationXMLFileName = SHAREDvarsClass().getStringArgument(argc, argv, "-ionlprelq");
+		useInputQueryNLPrelationXMLFile = true;
+		useInputQuery = true;
+	}
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-ionlptagq"))
+	{
+		inputQueryNLPfeatureXMLFileName = SHAREDvarsClass().getStringArgument(argc, argv, "-ionlptagq");
+		useInputQueryNLPfeatureXMLFile = true;
+		useInputQuery = true;
+	}
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-ixmlq"))
+	{
+		inputQueryXMLFileName = SHAREDvarsClass().getStringArgument(argc, argv, "-ixmlq");
+		useInputQueryXMLFile = true;
+		useInputQuery = true;
+	}
+
+	#ifdef GIA_INPUT_FILE_LISTS
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-ilist"))
+	{
+		inputFileList = true;
+	}
+	#endif
+	
+	#ifdef USE_CE
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-icodeextensions"))
+	{
+		inputTextCodeextensionsTXTFileName = SHAREDvarsClass().getStringArgument(argc, argv, "-icodeextensions");
+		useInputTextCodeextensionsTXTFileName = true;
+		cout << "inputTextCodeextensionsTXTFileName = " << inputTextCodeextensionsTXTFileName << endl;	//print input file name required for diagnosis
+	}
+	#endif
+
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-ocff"))
+	{
+		outputTextCFFFileName = SHAREDvarsClass().getStringArgument(argc, argv, "-ocff");
+		useOutputTextCFFFile = true;
+	}
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-oxml"))
+	{
+		outputTextXMLFileName = SHAREDvarsClass().getStringArgument(argc, argv, "-oxml");
+		useOutputTextXMLFile = true;
+	}
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-ocxl"))
+	{
+		outputTextCXLFileName = SHAREDvarsClass().getStringArgument(argc, argv, "-ocxl");
+		useOutputTextCXLFile = true;
+	}
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-oldr"))
+	{
+		outputTextLDRFileName = SHAREDvarsClass().getStringArgument(argc, argv, "-oldr");
+		useOutputTextLDRFile = true;
+		printOutput = true;
+	}
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-oppm"))
+	{
+		outputTextPPMFileName = SHAREDvarsClass().getStringArgument(argc, argv, "-oppm");
+		useOutputTextPPMFile = true;
+		printOutput = true;
+	}
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-osvg"))
+	{
+		outputTextSVGFileName = SHAREDvarsClass().getStringArgument(argc, argv, "-osvg");
+		useOutputTextSVGFile = true;
+		printOutput = true;
+	}
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-ocffq"))
+	{
+		outputQueryCFFFileName = SHAREDvarsClass().getStringArgument(argc, argv, "-ocffq");
+		useOutputQueryCFFFile = true;
+	}
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-oxmlq"))
+	{
+		outputQueryXMLFileName = SHAREDvarsClass().getStringArgument(argc, argv, "-oxmlq");
+		useOutputQueryXMLFile = true;
+	}
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-ocxlq"))
+	{
+		outputQueryCXLFileName = SHAREDvarsClass().getStringArgument(argc, argv, "-ocxlq");
+		useOutputQueryCXLFile = true;
+	}
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-oldrq"))
+	{
+		outputQueryLDRFileName = SHAREDvarsClass().getStringArgument(argc, argv, "-oldrq");
+		useOutputQueryLDRFile = true;
+		printOutputQuery = true;
+	}
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-oppmq"))
+	{
+		outputQueryPPMFileName = SHAREDvarsClass().getStringArgument(argc, argv, "-oppmq");
+		useOutputQueryPPMFile = true;
+		printOutputQuery = true;
+	}
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-osvgq"))
+	{
+		outputQuerySVGFileName = SHAREDvarsClass().getStringArgument(argc, argv, "-osvgq");
+		useOutputQuerySVGFile = true;
+		printOutputQuery = true;
+	}
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-oall"))
+	{
+		outputTextAllFileName = SHAREDvarsClass().getStringArgument(argc, argv, "-oall");
+		useOutputTextAllFile = true;
+		printOutput = true;
+	}
+
+	#ifdef GIA_QUERY_WRITE_ANSWER_TO_FILE
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-oanswer"))
+	{
+		outputTextAnswerPlainTXTFileName = SHAREDvarsClass().getStringArgument(argc, argv, "-oanswer");
+		useOutputTextAnswerPlainTXTFile = true;
+	}
+	#endif
+
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-nlprelation"))
+	{
+		NLPdependencyRelationsParser = int(SHAREDvarsClass().getFloatArgument(argc, argv, "-nlprelation"));
+	}
+
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-nlpfeature"))
+	{
+		NLPfeatureParser = int(SHAREDvarsClass().getFloatArgument(argc, argv, "-nlpfeature"));
+	}
+	else
+	{
+		NLPfeatureParser = NLPdependencyRelationsParser;
+	}
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-nlpcompmode"))
+	{
+		if(queryNLPdependencyRelationsParser == GIA_NLP_PARSER_RELEX)
+		{
+			int nlpcompmode = int(SHAREDvarsClass().getFloatArgument(argc, argv, "-nlpcompmode"));
+			if(nlpcompmode == 1)
+			{
+				NLPrelexCompatibilityMode = true;
+			}
+			else if(nlpcompmode == 2)
+			{
+				NLPassumePreCollapsedStanfordRelations = true;
+			}
+		}
+		else
+		{
+			cerr << "error: nlpcompmode set but (NLPdependencyRelationsParser != GIA_NLP_PARSER_RELEX)" << endl;
+			exit(EXIT_ERROR);
+		}
+	}
+
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-nlprelationq"))
+	{
+		queryNLPdependencyRelationsParser = int(SHAREDvarsClass().getFloatArgument(argc, argv, "-nlprelationq"));
+	}
+
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-nlpfeatureq"))
+	{
+		queryNLPfeatureParser = int(SHAREDvarsClass().getFloatArgument(argc, argv, "-nlpfeatureq"));
+	}
+	else
+	{
+		queryNLPfeatureParser = queryNLPdependencyRelationsParser;
+	}
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-nlpcompmodeq"))
+	{
+		if(queryNLPdependencyRelationsParser == GIA_NLP_PARSER_RELEX)
+		{
+			int nlpcompmodeq = int(SHAREDvarsClass().getFloatArgument(argc, argv, "-nlpcompmodeq"));
+			if(nlpcompmodeq == 1)
+			{
+				queryNLPrelexCompatibilityMode = true;
+			}
+			else if(nlpcompmodeq == 2)
+			{
+				queryNLPassumePreCollapsedStanfordRelations = true;
+			}
+		}
+		else
+		{
+			cerr << "error: nlpcompmodeq set but (queryNLPdependencyRelationsParser != GIA_NLP_PARSER_RELEX)" << endl;
+			exit(EXIT_ERROR);
+		}
+	}
+
+	#ifdef GIA_DATABASE
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-dbread"))
+	{
+		readFromDatabase = true;
+		useDatabase = true;
+	}
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-dbwrite"))
+	{
+		writeToDatabase = true;
+		useDatabase = true;
+	}
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-dbfolder"))
+	{
+		KBdatabaseFolderName = SHAREDvarsClass().getStringArgument(argc, argv, "-dbfolder");
+	}
+	#endif
+	#ifdef GIA_SEMANTIC_PARSER
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-dbsemanticparserfolder"))
+	{
+		semanticParserDatabaseFolderName = SHAREDvarsClass().getStringArgument(argc, argv, "-dbsemanticparserfolder");
+	}
+	#endif
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_PERSISTENT
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-dbpostaggerfolder"))
+	{
+		POStaggerDatabaseFolderName = SHAREDvarsClass().getStringArgument(argc, argv, "-dbpostaggerfolder");
+	}
+	#endif
+
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-nlprelexfolder"))
+	{
+		NLPexeFolderArray[GIA_NLP_PARSER_RELEX] = SHAREDvarsClass().getStringArgument(argc, argv, "-nlprelexfolder");
+	}
+	else
+	{
+		NLPexeFolderArray[GIA_NLP_PARSER_RELEX] = currentFolder;
+	}
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-nlpstanfordcorenlpfolder"))
+	{
+		NLPexeFolderArray[GIA_NLP_PARSER_STANFORD_CORENLP] = SHAREDvarsClass().getStringArgument(argc, argv, "-nlpstanfordcorenlpfolder");
+	}
+	else
+	{
+		NLPexeFolderArray[GIA_NLP_PARSER_STANFORD_CORENLP] = currentFolder;
+	}
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-nlpstanfordparserfolder"))
+	{
+		NLPexeFolderArray[GIA_NLP_PARSER_STANFORD_PARSER] = SHAREDvarsClass().getStringArgument(argc, argv, "-nlpstanfordparserfolder");
+	}
+	else
+	{
+		NLPexeFolderArray[GIA_NLP_PARSER_STANFORD_PARSER] = currentFolder;
+	}
+	#ifdef GIA_NLP_CLIENT_SERVER
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-nlpclient"))
+	{
+		NLPclient = true;
+	}	
+	#endif	
+	
+#endif
+
+
+	#ifdef GIA_NEURAL_NETWORK
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-oannxml"))
+	{
+		ANNoutputXMLFileName = SHAREDvarsClass().getStringArgument(argc, argv, "-oannxml");
+		ANNuseOutputXMLFile = true;
+	}
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-oannldr"))
+	{
+		ANNoutputLDRFileName = SHAREDvarsClass().getStringArgument(argc, argv, "-oannldr");
+		ANNuseOutputLDRFile = true;
+	}
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-oannsvg"))
+	{
+		ANNoutputSVGFileName = SHAREDvarsClass().getStringArgument(argc, argv, "-oannsvg");
+		ANNuseOutputSVGFile = true;
+	}
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-oannppm"))
+	{
+		ANNoutputPPMFileName = SHAREDvarsClass().getStringArgument(argc, argv, "-oannppm");
+		ANNuseOutputPPMFile = true;
+		ANNuseOutputLDRFile = true;	//required for OpenGL image generation
+	}
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-oannppm2"))
+	{
+		ANNoutputPPMFileNameRaytraced = SHAREDvarsClass().getStringArgument(argc, argv, "-oannppm2");
+		ANNuseOutputPPMFileRaytraced = true;
+		ANNuseOutputLDRFile = true;	//required for raytrace image generation
+	}
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-oannall"))
+	{
+		ANNoutputAllFileName = SHAREDvarsClass().getStringArgument(argc, argv, "-oannall");
+		ANNuseOutputAllFile = true;
+	}
+	#ifndef ANN_DISPLAY_DISABLE_SPRITES
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-annsprites"))
+	{
+		ANNuseSprites = true;
+	}
+	#endif
+	#endif
+
+	#ifdef GIA_PREPROCESSOR
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-lrp"))
+	{
+		useLRP = true;
+	}
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-olrptxt"))
+	{
+		outputLRPTextPlainTXTFileName = SHAREDvarsClass().getStringArgument(argc, argv, "-olrptxt");
+		useOutputLRPTextPlainTXTFile = true;
+	}
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-olrptxtq"))
+	{
+		outputQueryLRPTextPlainTXTFileName = SHAREDvarsClass().getStringArgument(argc, argv, "-olrptxtq");
+		useOutputQueryLRPTextPlainTXTFile = true;
+	}
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-lrpfolder"))
+	{
+		lrpDataFolderName = SHAREDvarsClass().getStringArgument(argc, argv, "-lrpfolder");
+	}
+	else
+	{
+		lrpDataFolderName = currentFolder;
+	}
+	#endif
+	
+	#ifdef USE_WORDNET
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-syndet"))
+	{
+		synonymnDetectionStatus = int(SHAREDvarsClass().getFloatArgument(argc, argv, "-syndet"));
+	}
+	#endif
+	
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-show"))
+	{
+		displayInOpenGLAndOutputScreenshot = true;
+	}
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-width"))
+	{
+		rasterImageWidth = SHAREDvarsClass().getFloatArgument(argc, argv, "-width");
+	}
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-height"))
+	{
+		rasterImageHeight = SHAREDvarsClass().getFloatArgument(argc, argv, "-height");
+	}
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-inputfolder"))
+	{
+		inputFolderLocal = SHAREDvarsClass().getStringArgument(argc, argv, "-inputfolder");
+	}
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-outputfolder"))
+	{
+		outputFolderLocal = SHAREDvarsClass().getStringArgument(argc, argv, "-outputfolder");
+	}
+
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-version"))
+	{
+		cout << "GIA.exe - Project Version: 3e7b 16-December-2017" << endl;
+		exit(EXIT_OK);
+	}
+
 
 	GIAtranslatorVariablesClass* translatorVariables = new GIAtranslatorVariablesClass();
 	translatorVariables->isQuery = false;
@@ -820,7 +824,7 @@ int main(const int argc, const char** argv)
 		#ifdef GIA_SEMANTIC_PARSER
 		semanticParserDatabaseFolderName,
 		#endif
-		#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE
+		#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_PERSISTENT
 		POStaggerDatabaseFolderName,
 		#endif
 
@@ -843,6 +847,84 @@ int main(const int argc, const char** argv)
 	current = localtime(&now);
 	sprintf(timeAndDateString, "%i:%i:%i %.2i/%.2i/%i", current->tm_hour, current->tm_min, current->tm_sec, current->tm_mday, (current->tm_mon+1), (current->tm_year + TM_STRUCT_YEAR_OFFSET));
 	cout << "GIA execution time: " << timeAndDateString << " (finish)" << endl;
+}
+#endif
+
+
+#ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE
+static char errmessage[] = "Usage:  GIAposTaggerGenerateDatabase.exe [options]\n\n\twhere options are any of the following\n"
+"\n\t-dbpostaggerfolder [string]   : pos tagger database base folder path (def: /home/systemusername/source/GIAPOStaggerDatabase)"
+"\n\t-lrp                          : language reduction preprocessor"
+"\n\t-lrpfolder [string]           : folder of LRP data files (list of multiword verbs, multiword prepositions etc) (def: same as exe)"
+"\n\t-wikiDumpFolder               : wiki dump folder (def: /home/systemusername/soft/wiki/output)"
+"\n\t-wikiDumpFileBatchIndex       : batch index"
+"\n\n\tThis program generates the POS tagger database for a wiki dump batch.\n\n";
+
+int main(const int argc, const char** argv)
+{
+	bool result = true;
+	
+	string currentFolder = SHAREDvarsClass().getCurrentDirectory();
+	string inputFolderLocal = currentFolder;
+	string outputFolderLocal = currentFolder;
+
+	bool useLRP = false;
+	string lrpDataFolderName = "";
+	string POStaggerDatabaseFolderName = GIA_DATABASE_FILESYSTEM_DEFAULT_SERVER_OR_MOUNT_NAME_BASE + GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_DEFAULT_DATABASE_NAME;
+	string wikiDumpFolderName = GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE_DOC_XML_OUTPUT_FOLDER;
+	int wikiDumpFileBatchIndex = 0;
+		
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-lrpfolder"))
+	{
+		lrpDataFolderName = SHAREDvarsClass().getStringArgument(argc, argv, "-lrpfolder");
+	}
+	else
+	{
+		lrpDataFolderName = currentFolder;
+	}	
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-lrp"))
+	{
+		useLRP = true;
+	}
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-dbpostaggerfolder"))
+	{
+		POStaggerDatabaseFolderName = SHAREDvarsClass().getStringArgument(argc, argv, "-dbpostaggerfolder");
+	}
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-wikiDumpFolder"))
+	{
+		wikiDumpFolderName = SHAREDvarsClass().getStringArgument(argc, argv, "-wikiDumpFolder");
+	}
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-wikiDumpFileBatchIndex"))
+	{
+		wikiDumpFileBatchIndex = int(SHAREDvarsClass().getFloatArgument(argc, argv, "-wikiDumpFileBatchIndex"));
+	}
+		
+	POStaggerDatabaseFolderName = POStaggerDatabaseFolderName + CHAR_FOLDER_DELIMITER;
+	lrpDataFolderName = lrpDataFolderName + CHAR_FOLDER_DELIMITER;	
+	wikiDumpFolderName = wikiDumpFolderName + CHAR_FOLDER_DELIMITER;	
+	
+	inputFolder = inputFolderLocal;
+	outputFolder = outputFolderLocal;
+	SHAREDvarsClass().setCurrentDirectory(inputFolder);
+
+	cout << "executing GIAposTaggerGenerateDatabase.exe with the following parameters;" << endl;
+	cout << "lrpDataFolderName = " << lrpDataFolderName << endl;
+	cout << "useLRP = " << useLRP << endl;
+	cout << "POStaggerDatabaseFolderName = " << POStaggerDatabaseFolderName << endl;
+	cout << "wikiDumpFolderName = " << wikiDumpFolderName << endl;
+	cout << "wikiDumpFileBatchIndex = " << wikiDumpFileBatchIndex << endl;
+
+	GIApreprocessorPOStaggerDatabaseClass().initialisePOStaggerDatabase(POStaggerDatabaseFolderName);
+	
+	if(!GIApreprocessorMultiwordReductionClass().initialiseLRP(lrpDataFolderName, useLRP))
+	{
+		result = false;
+	}
+	
+	if(!GIApreprocessorPOStaggerClass().generatePOStaggerDatabaseFromWikiDumpText(wikiDumpFolderName, wikiDumpFileBatchIndex, useLRP))
+	{
+		result = false;
+	}	
 }
 #endif
 
@@ -947,7 +1029,7 @@ bool GIAmainClass::executeGIA(
 	#ifdef GIA_SEMANTIC_PARSER
 	string semanticParserDatabaseFolderName,
 	#endif
-	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_PERSISTENT
 	string POStaggerDatabaseFolderName,
 	#endif
 		
@@ -1048,7 +1130,7 @@ bool GIAmainClass::executeGIA2()
 	#ifdef GIA_SEMANTIC_PARSER
 	semanticParserDatabaseFolderName = semanticParserDatabaseFolderName + CHAR_FOLDER_DELIMITER;
 	#endif
-	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_PERSISTENT
 	POStaggerDatabaseFolderName = POStaggerDatabaseFolderName + CHAR_FOLDER_DELIMITER;
 	#endif	
 	#ifdef GIA_PREPROCESSOR
@@ -1084,11 +1166,11 @@ bool GIAmainClass::executeGIA2()
 	#ifdef GIA_SEMANTIC_PARSER
 	GIAsemanticParserDatabase.initialiseSemanticParserDatabase(semanticParserDatabaseFolderName);
 	#endif
-
-	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK
+	
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_PERSISTENT
 	GIApreprocessorPOStaggerDatabase.initialisePOStaggerDatabase(POStaggerDatabaseFolderName);
 	#endif
-
+	
 	#ifdef USE_WORDNET
 	GIAwordnet.initialiseWordNet(synonymnDetectionStatus);
 	#endif

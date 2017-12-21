@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorPOStagger.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e7a 16-December-2017
+ * Project Version: 3e7b 16-December-2017
  * Requirements: requires plain text file
  * Description: preprocessor POS tagger
  *
@@ -59,7 +59,7 @@ OLD planned method: then for every triplet, find each word in index (ie get ID);
 */
 
 
-#ifdef GIA_PREPROCESSOR_POS_TAGGER_MAP
+#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_MAP
 multimap<string, pair<unsigned char, int>> POStaggerMap;		//each key is 10 bytes long: word context POS (ambiguity info) permutation, and the value is 1 byte long: POS (ambiguity info) for central word
 	//as it currently stands POStaggerMap will be roughly the same size as the original wiki dump text (ie 12GB; too large)
 bool GIApreprocessorPOStaggerClass::findInstancePOStaggerMap(const string POSambiguityInfoPermutation, unsigned char centreWordPOSambiguityInfo, int* numberOfInstances, const bool incrementIfFound)
@@ -98,14 +98,83 @@ multimap<string, pair<unsigned char, int>>* GIApreprocessorPOStaggerClass::getPO
 #ifdef GIA_PREPROCESSOR_POS_TAGGER_INITIALISE_WORD_INDEX_LIST_FROM_WIKI_DUMP_TEXT
 bool wikiDumpWordIndexListLoaded;
 unordered_map<string, GIApreprocessorMultiwordReductionWord*> wikiDumpWordIndexListGlobal;
-#endif
 
-
-#ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE
-bool GIApreprocessorPOStaggerClass::generatePOStaggerDatabaseFromWikiDumpText()
+bool GIApreprocessorPOStaggerClass::createWordIndexListFromWikiDumpText(bool useLRP)
 {
 	bool result = true;
 	
+	for(int wikiDumpFileBatchIndex=0; wikiDumpFileBatchIndex<GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE_DOC_XML_OUTPUT_NUMBER_OF_FILES; wikiDumpFileBatchIndex++)
+	{
+		string inputFileName = generateWikiDumpTextInputFileName(wikiDumpFileBatchIndex);
+		GIApreprocessorSentence* firstGIApreprocessorSentenceInWikiDumpText = new GIApreprocessorSentence();
+		if(!generatePreprocessorSentenceObjectsFromText(inputFileName, firstGIApreprocessorSentenceInWikiDumpText, useLRP))
+		{
+			result = false;
+		}
+
+		//add words to wikiDumpWordIndexListGlobal
+		GIApreprocessorSentence* currentGIApreprocessorSentenceInList = firstGIApreprocessorSentenceInWikiDumpText;
+		while(currentGIApreprocessorSentenceInList->next != NULL)
+		{	
+			for(int w=0; w<currentGIApreprocessorSentenceInList->sentenceContentsLRP.size(); w++)
+			{		
+				GIApreprocessorWord* currentWord = (currentGIApreprocessorSentenceInList->sentenceContentsLRP)[w];
+				string wordLowerCase = SHAREDvars.convertStringToLowerCase(&(currentWord->tagName));	//CHECKTHIS: verify that currentWord->tagName is case sensitive
+				wikiDumpWordIndexListGlobal->insert(pair<string, GIApreprocessorMultiwordReductionWord*>(wordLowerCase, currentWord));
+			}
+			currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->next;
+		}		
+
+		delete firstGIApreprocessorSentenceInWikiDumpText;
+	}
+	
+	wikiDumpWordIndexListLoaded = true;
+	
+	return result;	
+}
+#endif
+
+#ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE
+
+#ifndef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_TRAIN_SINGLE_BATCH_ONLY
+bool GIApreprocessorPOStaggerClass::generatePOStaggerDatabaseFromWikiDumpText(const string wikiDumpFolderName, bool useLRP)
+{
+	bool result = true;
+
+	string currentFolder = SHAREDvarsClass().getCurrentDirectory();
+			
+	for(int wikiDumpFileBatchIndex=0; wikiDumpFileBatchIndex<GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE_DOC_XML_OUTPUT_NUMBER_OF_FILES; wikiDumpFileBatchIndex++)
+	{
+		it(!generatePOStaggerDatabaseFromWikiDumpText(wikiDumpFileBatchIndex))
+		{
+			result = false;
+		}
+	}
+
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_INTERNAL
+	GIApreprocessorPOStaggerDatabase.writeDatabaseNeuralNetwork();
+	#elif defined GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_TRAIN_EXECUTE_FEED
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_TRAIN_EXECUTE_FEED_SINGLE_EPOCH_ONLY
+	GIApreprocessorPOStaggerDatabase.externalANNtrainEpoch();
+	#else
+	GIApreprocessorPOStaggerDatabase.externalANNtrain();
+	#endif
+	#endif
+	#endif
+	#endif
+	
+	SHAREDvarsClass().setCurrentDirectory(currentFolder);
+
+	return result;
+}
+#endif
+
+bool GIApreprocessorPOStaggerClass::generatePOStaggerDatabaseFromWikiDumpText(const string wikiDumpFolderName, const int wikiDumpFileBatchIndex, bool useLRP)
+{
+	bool result = true;
+
 	#ifdef GIA_PREPROCESSOR_POS_TAGGER_INITIALISE_WORD_INDEX_LIST_FROM_LRP_FILES
 	if(!GIApreprocessorMultiwordReduction.createWordIndexListFromLRPfiles())
 	{
@@ -114,194 +183,384 @@ bool GIApreprocessorPOStaggerClass::generatePOStaggerDatabaseFromWikiDumpText()
 	#else
 	cerr << "GIApreprocessorPOStaggerClass::generatePOStaggerDatabaseFromWikiDumpText{} error: !GIA_PREPROCESSOR_POS_TAGGER_INITIALISE_WORD_INDEX_LIST_FROM_LRP_FILES; word index list currently needs to be regenerated everytime POS tagger database generation occurs" << endl;
 	#endif
-
-	string currentFolder = SHAREDvarsClass().getCurrentDirectory();
-			
-	for(int wikiDumpFileIndex=0; wikiDumpFileIndex<GIA_PREPROCESSOR_POS_TAGGER_DOC_XML_OUTPUT_NUMBER_OF_FILES; wikiDumpFileIndex++)
+	
+	string inputFileName = generateWikiDumpTextInputFileName(wikiDumpFileBatchIndex);
+	cout << "wikiDumpFileName = " << inputFileName << endl;
+	SHAREDvarsClass().setCurrentDirectory(wikiDumpFolderName);
+	GIApreprocessorSentence* firstGIApreprocessorSentenceInWikiDumpText = new GIApreprocessorSentence();
+	if(!generatePreprocessorSentenceObjectsFromText(inputFileName, firstGIApreprocessorSentenceInWikiDumpText, useLRP))
 	{
-		string inputFileName = generateWikiDumpTextInputFileName(wikiDumpFileIndex);
-		cout << "wikiDumpFileName = " << inputFileName << endl;
-		SHAREDvarsClass().setCurrentDirectory(GIA_PREPROCESSOR_POS_TAGGER_DOC_XML_OUTPUT_FOLDER);
-		GIApreprocessorSentence* firstGIApreprocessorSentenceInWikiDumpText = new GIApreprocessorSentence();
-		if(!generatePreprocessorSentenceObjectsFromText(inputFileName, firstGIApreprocessorSentenceInWikiDumpText))
+		result = false;
+	}
+	
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_INTERNAL_ANN_DEBUG_WRITE_NN_FREQUENTLY
+	long numberOfNeuralNetworkFeeds = 0;
+	#endif
+	
+	//generate POS tagger database entries
+	cout << "finished generatePreprocessorSentenceObjectsFromText" << endl;
+	
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_MEMORY_FREE_WRITE_EXPERIENCES_DIRECTLY_TO_FILE
+	string XtrainBatchFileName = GIApreprocessorPOStaggerDatabase.externalANNgenerateBatchFileName(GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_X_TRAIN_BATCH_FILE_NAME_PARTA, wikiDumpFileBatchIndex);
+	string YtrainBatchFileName = GIApreprocessorPOStaggerDatabase.externalANNgenerateBatchFileName(GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_Y_TRAIN_BATCH_FILE_NAME_PARTA, wikiDumpFileBatchIndex);
+	ofstream XtrainBatchFileObject(XtrainBatchFileName.c_str());
+	ofstream YtrainBatchFileObject(YtrainBatchFileName.c_str());
+	#else
+	ANNexperience* firstExperienceInList = new ANNexperience();
+	ANNexperience* currentExperienceInList = firstExperienceInList;
+	#endif
+	#endif
+	
+	GIApreprocessorSentence* currentGIApreprocessorSentenceInList = firstGIApreprocessorSentenceInWikiDumpText;
+	while(currentGIApreprocessorSentenceInList->next != NULL)
+	{	
+		for(int wCentre=0; wCentre<currentGIApreprocessorSentenceInList->sentenceContentsLRP.size(); wCentre++)
+		{
+			//centre word calculations
+			GIApreprocessorWord* centreWord = (currentGIApreprocessorSentenceInList->sentenceContentsLRP)[wCentre];
+			#ifdef GIA_PREPROCESSOR_POS_TAGGER_POS_DEBUG
+			cout << "centreWord = " << centreWord->tagName << endl;
+			#endif
+			
+			unsigned char centreWordPOSambiguityInfoSpecialCharacterTemp = GIA_PREPROCESSOR_POS_TAGGER_POS_AMBIGUITY_INFO_UNKNOWN;
+			if(!determinePOSambiguityInfoForSpecialCharacters(centreWord, &centreWordPOSambiguityInfoSpecialCharacterTemp))
+			{//ignore centre words that are special characters
+			
+				//cout << "centreWord = " << centreWord->tagName << endl;
+				
+				bool identifiedEveryWordInDatabasePOSpermutation = true;
+				
+				string centreWordLowerCase = SHAREDvars.convertStringToLowerCase(&(centreWord->tagName));	//CHECKTHIS: verify that currentWord->tagName is case sensitive
+				GIApreprocessorMultiwordReductionWord* centreWordFound = NULL;
+				//bool identifiedCentreWordInDatabasePOSpermutation = true;
+				unsigned char centreWordPOSambiguityInfo = GIA_PREPROCESSOR_POS_TAGGER_POS_AMBIGUITY_INFO_UNKNOWN;	//default value
+				if(!findWordInWordListAllTypesWithPOSambiguityInfo(centreWordLowerCase, &centreWordFound, &centreWordPOSambiguityInfo))
+				{
+					//identifiedCentreWordInDatabasePOSpermutation = false;
+					identifiedEveryWordInDatabasePOSpermutation = false;
+				}
+
+				string POSambiguityInfoPermutation = "";
+				if(!generatePOSambiguityInfoPermutation(&(currentGIApreprocessorSentenceInList->sentenceContentsLRP), wCentre, &identifiedEveryWordInDatabasePOSpermutation, &POSambiguityInfoPermutation))
+				{
+					result = false;
+				}
+
+				#ifdef GIA_PREPROCESSOR_POS_TAGGER_ONLY_ADD_DATABASE_ENTRY_IF_POS_AMBIGUITY_INFO_FOUND_FOR_EVERY_CONTEXT_WORD
+				if(identifiedEveryWordInDatabasePOSpermutation)
+				{
+				#endif
+					int centreWordUnambiguousPOSvalue = INT_DEFAULT_VALUE;
+					if(!determinePOSambiguityInfoIsAmbiguous(centreWordPOSambiguityInfo, &centreWordUnambiguousPOSvalue))	//CHECKTHIS
+					{
+						#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK
+						#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_INTERNAL
+						ANNexperience* currentExperienceInList = new ANNexperience();
+						generateANNexperienceFromPOSambiguityInfoPermutation(POSambiguityInfoPermutation, centreWordUnambiguousPOSvalue, currentExperience);
+						GIApreprocessorPOStaggerDatabase.feedNeuralNetworkWithExperienceBackpropagation(currentExperienceInList);
+						delete currentExperienceInList;
+						#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_INTERNAL_ANN_DEBUG_WRITE_NN_FREQUENTLY
+						numberOfNeuralNetworkFeeds++;
+						if(numberOfNeuralNetworkFeeds%100000 == 0)
+						{
+							GIApreprocessorPOStaggerDatabase.writeDatabaseNeuralNetwork();
+							cout << "A numberOfNeuralNetworkFeeds = " << numberOfNeuralNetworkFeeds << endl;
+						}
+						#endif
+						#elif defined GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL
+						#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_MEMORY_FREE_WRITE_EXPERIENCES_DIRECTLY_TO_FILE
+						ANNexperience* currentExperienceInList = new ANNexperience();
+						#endif
+						generateANNexperienceFromPOSambiguityInfoPermutation(POSambiguityInfoPermutation, centreWordUnambiguousPOSvalue, currentExperienceInList);
+						#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_MEMORY_FREE_WRITE_EXPERIENCES_DIRECTLY_TO_FILE
+						string experienceInputString = GIApreprocessorPOStaggerDatabase.externalANNgenerateBatchDataExperienceInput(currentExperienceInList);
+						string experienceOutputString = GIApreprocessorPOStaggerDatabase.externalANNgenerateBatchDataExperienceOutput(currentExperienceInList);
+						XtrainBatchFileObject << experienceInputString << endl;
+						YtrainBatchFileObject << experienceOutputString << endl;
+						delete currentExperienceInList;
+						#else
+						currentExperienceInList->next = new ANNexperience();
+						currentExperienceInList = currentExperienceInList->next;
+						#endif
+						#endif
+						#elif defined GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM
+						//only add the reference if the centre word is unambiguous - CHECKTHIS
+						if(!GIApreprocessorPOStaggerDatabase.DBwritePOSpermutationEstimate(POSambiguityInfoPermutation, centreWordPOSambiguityInfo))
+						{
+							result = false;
+						}
+						#elif defined GIA_PREPROCESSOR_POS_TAGGER_DATABASE_MAP
+						unsigned char centreWordPOSambiguityInfoFound;
+						int numberOfInstances = 0;
+						bool incrementIfFound = true;
+						if(!findInstancePOStaggerMap(POSambiguityInfoPermutation, centreWordPOSambiguityInfo, &numberOfInstances, incrementIfFound))
+						{
+							numberOfInstances = 1;
+							insertInstanceInPOStaggerMap(POSambiguityInfoPermutation, centreWordPOSambiguityInfo, numberOfInstances);
+						}	
+						#endif	
+					}
+					
+					#ifdef GIA_PREPROCESSOR_POS_TAGGER_POS_DEBUG
+					cout << "insertInstanceInPOStaggerMap: POSambiguityInfoPermutation = " << POSambiguityInfoPermutation << ", centreWordPOSambiguityInfo = " << centreWordPOSambiguityInfo << endl;
+					#endif
+				#ifdef GIA_PREPROCESSOR_POS_TAGGER_ONLY_ADD_DATABASE_ENTRY_IF_POS_AMBIGUITY_INFO_FOUND_FOR_EVERY_CONTEXT_WORD
+				}
+				#endif
+			}
+		}
+
+		#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_MEMORY_FREE_DELETE_PREPROCESSOR_SENTENCES_ONCE_PROCESSED
+		GIApreprocessorSentence* previousGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList;
+		#endif		
+		currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->next;
+		#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_MEMORY_FREE_DELETE_PREPROCESSOR_SENTENCES_ONCE_PROCESSED
+		previousGIApreprocessorSentenceInList->next = NULL;	//prevents future sentences from being deleted
+		delete previousGIApreprocessorSentenceInList;
+		#endif
+	}		
+
+	#ifndef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_MEMORY_FREE_DELETE_PREPROCESSOR_SENTENCES_ONCE_PROCESSED
+	delete firstGIApreprocessorSentenceInWikiDumpText;
+	#endif
+	
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_INTERNAL
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_INTERNAL_ANN_DEBUG_WRITE_NN_FREQUENTLY
+	GIApreprocessorPOStaggerDatabase.writeDatabaseNeuralNetwork();
+	string neuralNetworkXmlFileName = GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_DEFAULT_XML_FILE_NAME;
+	string neuralNetworkXmlFileNameBackup = neuralNetworkXmlFileName + STRING_FULLSTOP + SHAREDvars.convertIntToString(wikiDumpFileBatchIndex);
+	SHAREDvars.copyFiles(neuralNetworkXmlFileName, neuralNetworkXmlFileNameBackup);
+	cout << "B numberOfNeuralNetworkFeeds = " << numberOfNeuralNetworkFeeds << endl;
+	//exit(EXIT_ERROR);
+	#endif
+	#elif defined GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_MEMORY_FREE_WRITE_EXPERIENCES_DIRECTLY_TO_FILE
+	XtrainBatchFileObject.close();
+	YtrainBatchFileObject.close();
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_TRAIN_EXECUTE_FEED_SINGLE_BATCH_ONLY
+	GIApreprocessorPOStaggerDatabase.externalANNgenerateBatchTrainDataExecuteFeed();
+	#endif
+	#else
+	GIApreprocessorPOStaggerDatabase.externalANNgenerateBatchTrainData(firstExperienceInList, wikiDumpFileBatchIndex);
+	delete firstExperienceInList;
+	#endif
+	#endif
+	#endif
+	
+	return result;
+}
+
+string GIApreprocessorPOStaggerClass::generateWikiDumpTextInputFileName(int wikiDumpFileBatchIndex)
+{
+	string formatString = GIApreprocessorPOStaggerDatabase.generateIntFormatString(GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE_DOC_XML_OUTPUT_NAME_PART_B_INDEX_NUMBER_OF_CHARACTERS);
+	string inputFileName = string(GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE_DOC_XML_OUTPUT_NAME_PART_A) + SHAREDvars.convertIntToString(wikiDumpFileBatchIndex, formatString) + GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE_DOC_XML_OUTPUT_NAME_PART_C;
+	return inputFileName;
+}
+
+
+bool GIApreprocessorPOStaggerClass::generatePreprocessorSentenceObjectsFromText(const string inputFileName, GIApreprocessorSentence* firstGIApreprocessorSentenceInText, bool useLRP)
+{
+	bool result = true;
+	
+	//generate preprocessor sentence objects from text
+	string fileContents = SHAREDvars.getFileContents(inputFileName);
+	bool interpretNewLinesAsNewSentences = true;	//CHECKTHIS
+	//cout << "fileContents = " << fileContents << endl;
+	if(!createPreprocessSentencesBasic(fileContents, firstGIApreprocessorSentenceInText, interpretNewLinesAsNewSentences))
+	{
+		result = false;
+	}	
+
+	//code replicated from createPreprocessSentencesForGIA
+	GIApreprocessorSentence* currentGIApreprocessorSentenceInList = firstGIApreprocessorSentenceInText;
+	while(currentGIApreprocessorSentenceInList->next != NULL)
+	{	
+		currentGIApreprocessorSentenceInList->sentenceContentsLRP = currentGIApreprocessorSentenceInList->sentenceContentsOriginal;
+		
+		#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
+		for(int w=0; w<currentGIApreprocessorSentenceInList->sentenceContentsLRP.size(); w++)
+		{		
+			GIApreprocessorMultiwordReductionPlainTextWord* sentenceContentsLRPcurrentWord = static_cast<GIApreprocessorMultiwordReductionPlainTextWord*>((currentGIApreprocessorSentenceInList->sentenceContentsLRP)[w]);
+			GIApreprocessorMultiwordReductionPlainTextWord* sentenceContentsOriginalcurrentWord = static_cast<GIApreprocessorMultiwordReductionPlainTextWord*>((currentGIApreprocessorSentenceInList->sentenceContentsLRP)[w]);
+			sentenceContentsLRPcurrentWord->preprocessorUpperLevelWordReference = sentenceContentsOriginalcurrentWord;
+			sentenceContentsLRPcurrentWord->preprocessorUpperLevelWordReferenceSize = 1;
+		}
+		#endif
+		
+		currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->next;
+	}
+	
+	if(useLRP)
+	{
+		//perform multiword reduction
+		#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
+		bool isQuery = false;
+
+		string outputLRPTextPlainTXTFileName = GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE_WIKIDUMP_MULTIWORD_FILE_NAME;
+		string outputLRPTextForNLPonlyPlainTXTFileNameBase = outputLRPTextPlainTXTFileName + GIA_PREPROCESSOR_OUTPUT_FOR_NLP_ONLY_FILE_EXTENSION;
+
+		string outputLRPTextPlainTXTFileNameWikiDumpMultiword = string(outputLRPTextPlainTXTFileName) + GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE_WIKIDUMP_MULTIWORD_FILE_EXTENSION;
+		string outputLRPTextForNLPonlyPlainTXTFileNameWikiDumpMultiword = string(outputLRPTextForNLPonlyPlainTXTFileNameBase) + GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE_WIKIDUMP_MULTIWORD_FILE_EXTENSION;
+		GIApreprocessorMultiwordReduction.initialiseActiveGIApreprocessorMultiwordReductionTagTextCorrespondenceInfo(isQuery);
+		GIApreprocessorMultiwordReduction.setActiveGIApreprocessorMultiwordReductionTagTextCorrespondenceInfo(isQuery);	//required for local variable access
+		if(!GIApreprocessorMultiwordReduction.parseTextFileAndReduceLanguage(firstGIApreprocessorSentenceInText, outputLRPTextPlainTXTFileNameWikiDumpMultiword, outputLRPTextForNLPonlyPlainTXTFileNameWikiDumpMultiword))
 		{
 			result = false;
 		}
-		
-		#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_INTERNAL_ANN_DEBUG_WRITE_NN_FREQUENTLY
-		long numberOfNeuralNetworkFeeds = 0;
+		GIApreprocessorMultiwordReduction.deinitialiseActiveGIApreprocessorMultiwordReductionTagTextCorrespondenceInfo(isQuery);	//required so as not to intefere with GIA preprocessor
 		#endif
-		
-		//generate POS tagger database entries
-		cout << "finished generatePreprocessorSentenceObjectsFromText" << endl;
-		
-		#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL
-		#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_MEMORY_FREE_WRITE_EXPERIENCES_DIRECTLY_TO_FILE
-		string XtrainBatchFileName = GIApreprocessorPOStaggerDatabase.externalANNgenerateBatchTrainDataEntry(wikiDumpFileIndex);
-		ofstream XtrainBatchFileObject(XtrainBatchFileName.c_str());
-		#else
-		ANNexperience* firstExperienceInList = new ANNexperience();
-		ANNexperience* currentExperienceInList = firstExperienceInList;
-		#endif
-		#endif
-		
-		GIApreprocessorSentence* currentGIApreprocessorSentenceInList = firstGIApreprocessorSentenceInWikiDumpText;
-		while(currentGIApreprocessorSentenceInList->next != NULL)
-		{	
-			for(int wCentre=0; wCentre<currentGIApreprocessorSentenceInList->sentenceContentsLRP.size(); wCentre++)
-			{
-				//centre word calculations
-				GIApreprocessorWord* centreWord = (currentGIApreprocessorSentenceInList->sentenceContentsLRP)[wCentre];
-				#ifdef GIA_PREPROCESSOR_POS_TAGGER_POS_DEBUG
-				cout << "centreWord = " << centreWord->tagName << endl;
-				#endif
-				
-				unsigned char centreWordPOSambiguityInfoSpecialCharacterTemp = GIA_PREPROCESSOR_POS_TAGGER_POS_AMBIGUITY_INFO_UNKNOWN;
-				if(!determinePOSambiguityInfoForSpecialCharacters(centreWord, &centreWordPOSambiguityInfoSpecialCharacterTemp))
-				{//ignore centre words that are special characters
-				
-					//cout << "centreWord = " << centreWord->tagName << endl;
-					
-					bool identifiedEveryWordInDatabasePOSpermutation = true;
-					
-					string centreWordLowerCase = SHAREDvars.convertStringToLowerCase(&(centreWord->tagName));	//CHECKTHIS: verify that currentWord->tagName is case sensitive
-					GIApreprocessorMultiwordReductionWord* centreWordFound = NULL;
-					//bool identifiedCentreWordInDatabasePOSpermutation = true;
-					unsigned char centreWordPOSambiguityInfo = GIA_PREPROCESSOR_POS_TAGGER_POS_AMBIGUITY_INFO_UNKNOWN;	//default value
-					if(!findWordInWordListAllTypesWithPOSambiguityInfo(centreWordLowerCase, &centreWordFound, &centreWordPOSambiguityInfo))
-					{
-						//identifiedCentreWordInDatabasePOSpermutation = false;
-						identifiedEveryWordInDatabasePOSpermutation = false;
-					}
+	}
 	
-					string POSambiguityInfoPermutation = "";
-					if(!generatePOSambiguityInfoPermutation(&(currentGIApreprocessorSentenceInList->sentenceContentsLRP), wCentre, &identifiedEveryWordInDatabasePOSpermutation, &POSambiguityInfoPermutation))
-					{
-						result = false;
-					}
+	return result;
+}	
 
-					#ifdef GIA_PREPROCESSOR_POS_TAGGER_ONLY_ADD_DATABASE_ENTRY_IF_POS_AMBIGUITY_INFO_FOUND_FOR_EVERY_CONTEXT_WORD
-					if(identifiedEveryWordInDatabasePOSpermutation)
+bool GIApreprocessorPOStaggerClass::createPreprocessSentencesBasic(const string fileContents, GIApreprocessorSentence* firstGIApreprocessorSentenceInList, bool interpretNewLinesAsNewSentences)
+{	
+	bool result = true;
+	
+	int charCount = 0;
+	char currentToken;
+	string currentWord = "";
+	GIApreprocessorSentence* currentGIApreprocessorSentenceInList = firstGIApreprocessorSentenceInList;
+	GIApreprocessorMultiwordReductionPlainTextWord* firstWordInSentence = new GIApreprocessorMultiwordReductionPlainTextWord();
+	GIApreprocessorMultiwordReductionPlainTextWord* currentWordInSentence = firstWordInSentence;
+	string sentenceContentsOriginalText = "";
+	int entityIndex = GIA_NLP_START_ENTITY_INDEX;	//only assigned after collapse?
+	int sentenceIndex = GIA_NLP_START_SENTENCE_INDEX;
+	
+	while(charCount < fileContents.length())
+	{		
+		currentToken = fileContents[charCount];
+		sentenceContentsOriginalText = sentenceContentsOriginalText + currentToken;
+		
+		bool punctuationMarkFound = false;
+		if(SHAREDvars.charInCharArray(currentToken, nlpPunctionMarkCharacterArray, GIA_NLP_NUMBER_OF_PUNCTUATION_MARK_CHARACTERS))
+		{
+			#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_INTRAWORD_PUNCTUATION_MARK
+			if(!GIApreprocessorMultiwordReductionClassObject.isIntrawordPunctuationMark(charCount, &fileContents))
+			{
+			#endif
+				punctuationMarkFound = true;
+			#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_INTRAWORD_PUNCTUATION_MARK
+			}
+			#endif
+		}
+		
+		bool whiteSpaceFound = false;
+		if(SHAREDvars.charInCharArray(currentToken, nlpWhitespaceCharacterArray, GIA_NLP_NUMBER_OF_WHITESPACE_CHARACTERS))	//NB this includes CHAR_NEWLINE
+		{
+			whiteSpaceFound = true;
+		}
+		
+		bool newlineFound = false;
+		if(currentToken == CHAR_NEWLINE)
+		{
+			newlineFound = true;
+		}
+		
+		bool specialCharFound = false;
+		if(!SHAREDvars.charInCharArray(currentToken, preprocessorLowerOrUpperCaseLettersArray, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_LOWER_OR_UPPER_CASE_LETTERS_NUMBER_OF_TYPES))
+		{
+			specialCharFound = true;
+		}
+		
+		/*
+		//not required because it will be interpreted as specialCharFound
+		bool quotationCharFound = false;
+		if(!SHAREDvars.charInCharArray(currentToken, nlpQuotationMarkCharacterArray, GIA_NLP_NUMBER_OF_QUOTATIONMARK_CHARACTERS))
+		{
+			quotationCharFound = true;
+		}
+		*/
+		
+		bool endOfSentencePunctuationMarkFound = false;
+
+		if(whiteSpaceFound || newlineFound || punctuationMarkFound || specialCharFound)
+		{
+			bool lastWordBlank = true;
+			
+			int lastCharacterIndexOfLastWordBeingFilled = charCount-1; 
+			//cout << "currentWord = " << currentWord << ", currentToken = " << currentToken << endl;
+			
+			if(currentWord != "")
+			{//do not add empty tag after closing quotation marks	//e.g. GIA_PREPROCESSOR_MULTIWORD_REDUCTION_REDUCE_QUOTES_TO_SINGLE_WORDS or (newlineFound && interpretNewLinesAsNewSentences && previousCharacter==whitespace)
+				lastWordBlank = false;
+				GIApreprocessorMultiwordReductionClassObject.preprocessorFillCurrentWord(&currentWordInSentence, &currentWord, &entityIndex, lastCharacterIndexOfLastWordBeingFilled);
+			}
+			
+			if(punctuationMarkFound)
+			{
+				string punctuationMark = ""; 
+				punctuationMark = punctuationMark + currentToken;
+				GIApreprocessorMultiwordReductionClassObject.preprocessorFillCurrentWord(&currentWordInSentence, &punctuationMark, &entityIndex, charCount);
+
+				if(SHAREDvars.charInCharArray(currentToken, nlpPunctionMarkCharacterEndOfSentenceArray, GIA_NLP_NUMBER_OF_PUNCTUATION_MARK_CHARACTERS_END_OF_SENTENCE))
+				{
+					#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_INTRAWORD_PUNCTUATION_MARK
+					if(!GIApreprocessorMultiwordReductionClassObject.isIntrawordPunctuationMark(charCount, &fileContents))
 					{
 					#endif
-						int centreWordUnambiguousPOSvalue = INT_DEFAULT_VALUE;
-						if(!determinePOSambiguityInfoIsAmbiguous(centreWordPOSambiguityInfo, &centreWordUnambiguousPOSvalue))	//CHECKTHIS
-						{
-							#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE
-							#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM
-							//only add the reference if the centre word is unambiguous - CHECKTHIS
-							if(!GIApreprocessorPOStaggerDatabase.DBwritePOSpermutationEstimate(POSambiguityInfoPermutation, centreWordPOSambiguityInfo))
-							{
-								result = false;
-							}
-							#elif defined GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK
-							#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_INTERNAL
-							ANNexperience* currentExperienceInList = new ANNexperience();
-							generateANNexperienceFromPOSambiguityInfoPermutation(POSambiguityInfoPermutation, centreWordUnambiguousPOSvalue, currentExperience);
-							GIApreprocessorPOStaggerDatabase.feedNeuralNetworkWithExperienceBackpropagation(currentExperienceInList);
-							delete currentExperienceInList;
-							#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_INTERNAL_ANN_DEBUG_WRITE_NN_FREQUENTLY
-							numberOfNeuralNetworkFeeds++;
-							if(numberOfNeuralNetworkFeeds%100000 == 0)
-							{
-								GIApreprocessorPOStaggerDatabase.writeDatabaseNeuralNetwork();
-								cout << "A numberOfNeuralNetworkFeeds = " << numberOfNeuralNetworkFeeds << endl;
-							}
-							#endif
-							#elif defined GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL
-							#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_MEMORY_FREE_WRITE_EXPERIENCES_DIRECTLY_TO_FILE
-							ANNexperience* currentExperienceInList = new ANNexperience();
-							#endif
-							generateANNexperienceFromPOSambiguityInfoPermutation(POSambiguityInfoPermutation, centreWordUnambiguousPOSvalue, currentExperienceInList);
-							#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_MEMORY_FREE_WRITE_EXPERIENCES_DIRECTLY_TO_FILE
-							string experienceInputString = GIApreprocessorPOStaggerDatabase.externalANNgenerateBatchDataExperience(currentExperienceInList);
-							XtrainBatchFileObject << experienceInputString << endl;
-							delete currentExperienceInList;
-							#else
-							currentExperienceInList->next = new ANNexperience();
-							currentExperienceInList = currentExperienceInList->next;
-							#endif
-							#endif
-							#endif
-							#else
-							#ifdef GIA_PREPROCESSOR_POS_TAGGER_MAP
-							unsigned char centreWordPOSambiguityInfoFound;
-							int numberOfInstances = 0;
-							bool incrementIfFound = true;
-							if(!findInstancePOStaggerMap(POSambiguityInfoPermutation, centreWordPOSambiguityInfo, &numberOfInstances, incrementIfFound))
-							{
-								numberOfInstances = 1;
-								insertInstanceInPOStaggerMap(POSambiguityInfoPermutation, centreWordPOSambiguityInfo, numberOfInstances);
-							}	
-							#endif
-							#endif	
-						}
-						
-						#ifdef GIA_PREPROCESSOR_POS_TAGGER_POS_DEBUG
-						cout << "insertInstanceInPOStaggerMap: POSambiguityInfoPermutation = " << POSambiguityInfoPermutation << ", centreWordPOSambiguityInfo = " << centreWordPOSambiguityInfo << endl;
-						#endif
-					#ifdef GIA_PREPROCESSOR_POS_TAGGER_ONLY_ADD_DATABASE_ENTRY_IF_POS_AMBIGUITY_INFO_FOUND_FOR_EVERY_CONTEXT_WORD
+						endOfSentencePunctuationMarkFound = true;
+					#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_INTRAWORD_PUNCTUATION_MARK
 					}
 					#endif
 				}
+				
+				bool lastCharacterInFile = false;
+				#ifndef GIA_EXPECT_NEWLINE_AT_END_OF_INPUT_TEXT_FILE
+				if(charCount == fileContents.length()-1)
+				{
+					lastCharacterInFile = true;
+				}
+				#endif
+				if(endOfSentencePunctuationMarkFound)
+				{
+					GIApreprocessorMultiwordReductionClassObject.generateSentenceWordList(firstWordInSentence, &(currentGIApreprocessorSentenceInList->sentenceContentsOriginal));
+					currentGIApreprocessorSentenceInList->sentenceIndexOriginal = sentenceIndex;
+					currentGIApreprocessorSentenceInList->sentenceContentsOriginalText = sentenceContentsOriginalText;
+					currentGIApreprocessorSentenceInList->next = new GIApreprocessorSentence();
+					currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->next;
+					firstWordInSentence = new GIApreprocessorMultiwordReductionPlainTextWord();
+					currentWordInSentence = firstWordInSentence;
+					sentenceContentsOriginalText = "";
+					entityIndex = 0;
+					sentenceIndex++;
+				}
 			}
-
-			#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_MEMORY_FREE_DELETE_PREPROCESSOR_SENTENCES_ONCE_PROCESSED
-			GIApreprocessorSentence* previousGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList;
-			#endif		
-			currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->next;
-			#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_MEMORY_FREE_DELETE_PREPROCESSOR_SENTENCES_ONCE_PROCESSED
-			previousGIApreprocessorSentenceInList->next = NULL;	//prevents future sentences from being deleted
-			delete previousGIApreprocessorSentenceInList;
-			#endif
-		}		
-
-		#ifndef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_MEMORY_FREE_DELETE_PREPROCESSOR_SENTENCES_ONCE_PROCESSED
-		delete firstGIApreprocessorSentenceInWikiDumpText;
-		#endif
+			else if(newlineFound && interpretNewLinesAsNewSentences)
+			{
+				#ifdef GIA_PREPROCESSOR_DISALLOW_EMPTY_SENTENCE_OBJECTS
+				if(firstWordInSentence->nextTag != NULL)
+				{
+				#endif
+					GIApreprocessorMultiwordReductionClassObject.generateSentenceWordList(firstWordInSentence, &(currentGIApreprocessorSentenceInList->sentenceContentsOriginal));
+					currentGIApreprocessorSentenceInList->sentenceIndexOriginal = sentenceIndex;
+					currentGIApreprocessorSentenceInList->sentenceContentsOriginalText = sentenceContentsOriginalText;
+					currentGIApreprocessorSentenceInList->next = new GIApreprocessorSentence();
+					currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->next;
+					firstWordInSentence = new GIApreprocessorMultiwordReductionPlainTextWord();
+					currentWordInSentence = firstWordInSentence;
+					sentenceContentsOriginalText = "";
+					entityIndex = 0;
+					sentenceIndex++;
+				#ifdef GIA_PREPROCESSOR_DISALLOW_EMPTY_SENTENCE_OBJECTS
+				}
+				#endif
+			}
+			
+		}
+		else
+		{
+			currentWord = currentWord + currentToken;
+		}
 		
-		#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK
-		#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_INTERNAL
-		#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_INTERNAL_ANN_DEBUG_WRITE_NN_FREQUENTLY
-		GIApreprocessorPOStaggerDatabase.writeDatabaseNeuralNetwork();
-		string neuralNetworkXmlFileName = GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_DEFAULT_XML_FILE_NAME;
-		string neuralNetworkXmlFileNameBackup = neuralNetworkXmlFileName + STRING_FULLSTOP + SHAREDvars.convertIntToString(wikiDumpFileIndex);
-		SHAREDvars.copyFiles(neuralNetworkXmlFileName, neuralNetworkXmlFileNameBackup);
-		cout << "B numberOfNeuralNetworkFeeds = " << numberOfNeuralNetworkFeeds << endl;
-		//exit(EXIT_ERROR);
-		#endif
-		#elif defined GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL
-		#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_MEMORY_FREE_WRITE_EXPERIENCES_DIRECTLY_TO_FILE
-		GIApreprocessorPOStaggerDatabase.externalANNgenerateBatchTrainDataExit();
-		XtrainBatchFileObject.close();
-		#else
-		GIApreprocessorPOStaggerDatabase.externalANNgenerateBatchTrainData(firstExperienceInList, wikiDumpFileIndex);
-		delete firstExperienceInList;
-		#endif
-		#endif
-		#endif
+		charCount++;
 	}
-
-	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK
-	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_INTERNAL
-	GIApreprocessorPOStaggerDatabase.writeDatabaseNeuralNetwork();
-	#elif defined GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL
-	#ifndef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_DEBUG_TRAIN_SINGLE_BATCH_ONLY
-	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_DEBUG_TRAIN_SINGLE_EPOCH_ONLY
-	GIApreprocessorPOStaggerDatabase.externalANNtrainEpoch();
-	#else
-	GIApreprocessorPOStaggerDatabase.externalANNtrain();
-	#endif
-	#endif
-	#endif	
-	#endif
-	
-	SHAREDvarsClass().setCurrentDirectory(currentFolder);
-
+		
 	return result;
 }
-				
-	
 #endif
 
 #ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK
@@ -508,249 +767,6 @@ bool GIApreprocessorPOStaggerClass::determinePOSambiguityInfoForSpecialCharacter
 }
 
 
-
-#ifdef GIA_PREPROCESSOR_POS_TAGGER_INITIALISE_WORD_INDEX_LIST_FROM_WIKI_DUMP_TEXT
-bool GIApreprocessorPOStaggerClass::createWordIndexListFromWikiDumpText()
-{
-	bool result = true;
-	
-	for(int wikiDumpFileIndex=0; wikiDumpFileIndex<GIA_PREPROCESSOR_POS_TAGGER_DOC_XML_OUTPUT_NUMBER_OF_FILES; wikiDumpFileIndex++)
-	{
-		string inputFileName = generateWikiDumpTextInputFileName(wikiDumpFileIndex);
-		GIApreprocessorSentence* firstGIApreprocessorSentenceInWikiDumpText = new GIApreprocessorSentence();
-		if(!generatePreprocessorSentenceObjectsFromText(inputFileName, firstGIApreprocessorSentenceInWikiDumpText))
-		{
-			result = false;
-		}
-
-		//add words to wikiDumpWordIndexListGlobal
-		GIApreprocessorSentence* currentGIApreprocessorSentenceInList = firstGIApreprocessorSentenceInWikiDumpText;
-		while(currentGIApreprocessorSentenceInList->next != NULL)
-		{	
-			for(int w=0; w<currentGIApreprocessorSentenceInList->sentenceContentsLRP.size(); w++)
-			{		
-				GIApreprocessorWord* currentWord = (currentGIApreprocessorSentenceInList->sentenceContentsLRP)[w];
-				string wordLowerCase = SHAREDvars.convertStringToLowerCase(&(currentWord->tagName));	//CHECKTHIS: verify that currentWord->tagName is case sensitive
-				wikiDumpWordIndexListGlobal->insert(pair<string, GIApreprocessorMultiwordReductionWord*>(wordLowerCase, currentWord));
-			}
-			currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->next;
-		}		
-
-		delete firstGIApreprocessorSentenceInWikiDumpText;
-	}
-	
-	wikiDumpWordIndexListLoaded = true;
-	
-	return result;	
-}
-#endif
-
-string GIApreprocessorPOStaggerClass::generateWikiDumpTextInputFileName(int wikiDumpFileIndex)
-{
-	string formatString = GIApreprocessorPOStaggerDatabase.generateIntFormatString(GIA_PREPROCESSOR_POS_TAGGER_DOC_XML_OUTPUT_NAME_PART_B_INDEX_NUMBER_OF_CHARACTERS);
-	string inputFileName = string(GIA_PREPROCESSOR_POS_TAGGER_DOC_XML_OUTPUT_NAME_PART_A) + SHAREDvars.convertIntToString(wikiDumpFileIndex, formatString) + GIA_PREPROCESSOR_POS_TAGGER_DOC_XML_OUTPUT_NAME_PART_C;
-	return inputFileName;
-}
-
-bool GIApreprocessorPOStaggerClass::generatePreprocessorSentenceObjectsFromText(const string inputFileName, GIApreprocessorSentence* firstGIApreprocessorSentenceInText)
-{
-	bool result = true;
-	
-	//generate preprocessor sentence objects from text
-	string fileContents = SHAREDvars.getFileContents(inputFileName);
-	bool interpretNewLinesAsNewSentences = true;	//CHECKTHIS
-	//cout << "fileContents = " << fileContents << endl;
-	if(!createPreprocessSentencesBasic(fileContents, firstGIApreprocessorSentenceInText, interpretNewLinesAsNewSentences))
-	{
-		result = false;
-	}	
-
-	//code replicated from createPreprocessSentencesForGIA
-	GIApreprocessorSentence* currentGIApreprocessorSentenceInList = firstGIApreprocessorSentenceInText;
-	while(currentGIApreprocessorSentenceInList->next != NULL)
-	{	
-		currentGIApreprocessorSentenceInList->sentenceContentsLRP = currentGIApreprocessorSentenceInList->sentenceContentsOriginal;
-		
-		#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
-		for(int w=0; w<currentGIApreprocessorSentenceInList->sentenceContentsLRP.size(); w++)
-		{		
-			GIApreprocessorMultiwordReductionPlainTextWord* sentenceContentsLRPcurrentWord = static_cast<GIApreprocessorMultiwordReductionPlainTextWord*>((currentGIApreprocessorSentenceInList->sentenceContentsLRP)[w]);
-			GIApreprocessorMultiwordReductionPlainTextWord* sentenceContentsOriginalcurrentWord = static_cast<GIApreprocessorMultiwordReductionPlainTextWord*>((currentGIApreprocessorSentenceInList->sentenceContentsLRP)[w]);
-			sentenceContentsLRPcurrentWord->preprocessorUpperLevelWordReference = sentenceContentsOriginalcurrentWord;
-			sentenceContentsLRPcurrentWord->preprocessorUpperLevelWordReferenceSize = 1;
-		}
-		#endif
-		
-		currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->next;
-	}
-	
-	//perform multiword reduction
-	//TODO: CONSIDER REMOVING MULTIWORD REDUCTION;
-	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
-	bool isQuery = false;
-	
-	string outputLRPTextPlainTXTFileName = GIA_PREPROCESSOR_WIKIDUMP_MULTIWORD_FILE_NAME;
-	string outputLRPTextForNLPonlyPlainTXTFileNameBase = outputLRPTextPlainTXTFileName + GIA_PREPROCESSOR_OUTPUT_FOR_NLP_ONLY_FILE_EXTENSION;
-	
-	string outputLRPTextPlainTXTFileNameWikiDumpMultiword = string(outputLRPTextPlainTXTFileName) + GIA_PREPROCESSOR_WIKIDUMP_MULTIWORD_FILE_EXTENSION;
-	string outputLRPTextForNLPonlyPlainTXTFileNameWikiDumpMultiword = string(outputLRPTextForNLPonlyPlainTXTFileNameBase) + GIA_PREPROCESSOR_WIKIDUMP_MULTIWORD_FILE_EXTENSION;
-	GIApreprocessorMultiwordReduction.initialiseActiveGIApreprocessorMultiwordReductionTagTextCorrespondenceInfo(isQuery);
-	GIApreprocessorMultiwordReduction.setActiveGIApreprocessorMultiwordReductionTagTextCorrespondenceInfo(isQuery);	//required for local variable access
-	if(!GIApreprocessorMultiwordReduction.parseTextFileAndReduceLanguage(firstGIApreprocessorSentenceInText, outputLRPTextPlainTXTFileNameWikiDumpMultiword, outputLRPTextForNLPonlyPlainTXTFileNameWikiDumpMultiword))
-	{
-		result = false;
-	}
-	GIApreprocessorMultiwordReduction.deinitialiseActiveGIApreprocessorMultiwordReductionTagTextCorrespondenceInfo(isQuery);	//required so as not to intefere with GIA preprocessor
-	#endif
-	
-	return result;
-}	
-	
-bool GIApreprocessorPOStaggerClass::createPreprocessSentencesBasic(const string fileContents, GIApreprocessorSentence* firstGIApreprocessorSentenceInList, bool interpretNewLinesAsNewSentences)
-{	
-	bool result = true;
-	
-	int charCount = 0;
-	char currentToken;
-	string currentWord = "";
-	GIApreprocessorSentence* currentGIApreprocessorSentenceInList = firstGIApreprocessorSentenceInList;
-	GIApreprocessorMultiwordReductionPlainTextWord* firstWordInSentence = new GIApreprocessorMultiwordReductionPlainTextWord();
-	GIApreprocessorMultiwordReductionPlainTextWord* currentWordInSentence = firstWordInSentence;
-	string sentenceContentsOriginalText = "";
-	int entityIndex = GIA_NLP_START_ENTITY_INDEX;	//only assigned after collapse?
-	int sentenceIndex = GIA_NLP_START_SENTENCE_INDEX;
-	
-	while(charCount < fileContents.length())
-	{		
-		currentToken = fileContents[charCount];
-		sentenceContentsOriginalText = sentenceContentsOriginalText + currentToken;
-		
-		bool punctuationMarkFound = false;
-		if(SHAREDvars.charInCharArray(currentToken, nlpPunctionMarkCharacterArray, GIA_NLP_NUMBER_OF_PUNCTUATION_MARK_CHARACTERS))
-		{
-			#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_INTRAWORD_PUNCTUATION_MARK
-			if(!GIApreprocessorMultiwordReductionClassObject.isIntrawordPunctuationMark(charCount, &fileContents))
-			{
-			#endif
-				punctuationMarkFound = true;
-			#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_INTRAWORD_PUNCTUATION_MARK
-			}
-			#endif
-		}
-		
-		bool whiteSpaceFound = false;
-		if(SHAREDvars.charInCharArray(currentToken, nlpWhitespaceCharacterArray, GIA_NLP_NUMBER_OF_WHITESPACE_CHARACTERS))	//NB this includes CHAR_NEWLINE
-		{
-			whiteSpaceFound = true;
-		}
-		
-		bool newlineFound = false;
-		if(currentToken == CHAR_NEWLINE)
-		{
-			newlineFound = true;
-		}
-		
-		bool specialCharFound = false;
-		if(!SHAREDvars.charInCharArray(currentToken, preprocessorLowerOrUpperCaseLettersArray, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_LOWER_OR_UPPER_CASE_LETTERS_NUMBER_OF_TYPES))
-		{
-			specialCharFound = true;
-		}
-		
-		/*
-		//not required because it will be interpreted as specialCharFound
-		bool quotationCharFound = false;
-		if(!SHAREDvars.charInCharArray(currentToken, nlpQuotationMarkCharacterArray, GIA_NLP_NUMBER_OF_QUOTATIONMARK_CHARACTERS))
-		{
-			quotationCharFound = true;
-		}
-		*/
-		
-		bool endOfSentencePunctuationMarkFound = false;
-
-		if(whiteSpaceFound || newlineFound || punctuationMarkFound || specialCharFound)
-		{
-			bool lastWordBlank = true;
-			
-			int lastCharacterIndexOfLastWordBeingFilled = charCount-1; 
-			//cout << "currentWord = " << currentWord << ", currentToken = " << currentToken << endl;
-			
-			if(currentWord != "")
-			{//do not add empty tag after closing quotation marks	//e.g. GIA_PREPROCESSOR_MULTIWORD_REDUCTION_REDUCE_QUOTES_TO_SINGLE_WORDS or (newlineFound && interpretNewLinesAsNewSentences && previousCharacter==whitespace)
-				lastWordBlank = false;
-				GIApreprocessorMultiwordReductionClassObject.preprocessorFillCurrentWord(&currentWordInSentence, &currentWord, &entityIndex, lastCharacterIndexOfLastWordBeingFilled);
-			}
-			
-			if(punctuationMarkFound)
-			{
-				string punctuationMark = ""; 
-				punctuationMark = punctuationMark + currentToken;
-				GIApreprocessorMultiwordReductionClassObject.preprocessorFillCurrentWord(&currentWordInSentence, &punctuationMark, &entityIndex, charCount);
-
-				if(SHAREDvars.charInCharArray(currentToken, nlpPunctionMarkCharacterEndOfSentenceArray, GIA_NLP_NUMBER_OF_PUNCTUATION_MARK_CHARACTERS_END_OF_SENTENCE))
-				{
-					#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_INTRAWORD_PUNCTUATION_MARK
-					if(!GIApreprocessorMultiwordReductionClassObject.isIntrawordPunctuationMark(charCount, &fileContents))
-					{
-					#endif
-						endOfSentencePunctuationMarkFound = true;
-					#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_INTRAWORD_PUNCTUATION_MARK
-					}
-					#endif
-				}
-				
-				bool lastCharacterInFile = false;
-				#ifndef GIA_EXPECT_NEWLINE_AT_END_OF_INPUT_TEXT_FILE
-				if(charCount == fileContents.length()-1)
-				{
-					lastCharacterInFile = true;
-				}
-				#endif
-				if(endOfSentencePunctuationMarkFound)
-				{
-					GIApreprocessorMultiwordReductionClassObject.generateSentenceWordList(firstWordInSentence, &(currentGIApreprocessorSentenceInList->sentenceContentsOriginal));
-					currentGIApreprocessorSentenceInList->sentenceIndexOriginal = sentenceIndex;
-					currentGIApreprocessorSentenceInList->sentenceContentsOriginalText = sentenceContentsOriginalText;
-					currentGIApreprocessorSentenceInList->next = new GIApreprocessorSentence();
-					currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->next;
-					firstWordInSentence = new GIApreprocessorMultiwordReductionPlainTextWord();
-					currentWordInSentence = firstWordInSentence;
-					sentenceContentsOriginalText = "";
-					entityIndex = 0;
-					sentenceIndex++;
-				}
-			}
-			else if(newlineFound && interpretNewLinesAsNewSentences)
-			{
-				#ifdef GIA_PREPROCESSOR_DISALLOW_EMPTY_SENTENCE_OBJECTS
-				if(firstWordInSentence->nextTag != NULL)
-				{
-				#endif
-					GIApreprocessorMultiwordReductionClassObject.generateSentenceWordList(firstWordInSentence, &(currentGIApreprocessorSentenceInList->sentenceContentsOriginal));
-					currentGIApreprocessorSentenceInList->sentenceIndexOriginal = sentenceIndex;
-					currentGIApreprocessorSentenceInList->sentenceContentsOriginalText = sentenceContentsOriginalText;
-					currentGIApreprocessorSentenceInList->next = new GIApreprocessorSentence();
-					currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->next;
-					firstWordInSentence = new GIApreprocessorMultiwordReductionPlainTextWord();
-					currentWordInSentence = firstWordInSentence;
-					sentenceContentsOriginalText = "";
-					entityIndex = 0;
-					sentenceIndex++;
-				#ifdef GIA_PREPROCESSOR_DISALLOW_EMPTY_SENTENCE_OBJECTS
-				}
-				#endif
-			}
-			
-		}
-		else
-		{
-			currentWord = currentWord + currentToken;
-		}
-		
-		charCount++;
-	}
-		
-	return result;
-}
 
 bool GIApreprocessorPOStaggerClass::findWordInWordListAllTypesWithPOSambiguityInfo(const string word, GIApreprocessorMultiwordReductionWord** wordFound, unsigned char* POSambiguityInfoFound)
 {	

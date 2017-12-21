@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorPOStagger.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e7a 16-December-2017
+ * Project Version: 3e7b 16-December-2017
  * Requirements: requires plain text file
  * Description: preprocessor POS tagger
  *
@@ -46,7 +46,7 @@
 #include "ANNexperienceClass.hpp"
 #endif
 
-#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE
+#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_PERSISTENT
 	#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_DEFAULT_DATABASE_NAME ((string)"GIAPOStaggerDatabase")
 	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK
 		#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_DEFAULT_XML_FILE_NAME ((string)"GIAPOStaggerNeuralNetwork.xml")
@@ -79,29 +79,36 @@ class GIApreprocessorPOStaggerDatabaseClass
 	private: ANNxmlConversionClass ANNxmlConversion;	
 	#endif
 	
-	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_PERSISTENT
 	public: void initialisePOStaggerDatabase(const string newGIAposTaggerDatabaseFolderName);
 	#endif
 	
 	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK
 	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_INTERNAL
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE
 	public: void feedNeuralNetworkWithExperienceBackpropagation(ANNexperience* currentExperience);
-	public: bool calculateIdealClassTargetOfInputExperience(ANNexperience* experience, int* idealClassTarget, double* experienceBackPropagationPassError);
 	public: bool writeDatabaseNeuralNetwork();
 	#endif
+	public: bool calculateIdealClassTargetOfInputExperience(ANNexperience* experience, int* idealClassTarget, double* experienceBackPropagationPassError);
+	#endif
 	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE
 	public: bool externalANNgenerateBatchTrainData(ANNexperience* firstExperienceInList, const int batchIndex);
-		public: string externalANNgenerateBatchTrainDataEntry(const int batchIndex);
-		public: bool externalANNgenerateBatchTrainDataExit();
+		public: string externalANNgenerateBatchFileName(const string fileNamePrepend, const int batchIndex);
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_TRAIN_EXECUTE_FEED
+		public: bool externalANNgenerateBatchTrainDataExecuteFeed();
 	public: bool externalANNform();
 	public: bool externalANNtrain();
 	public: bool externalANNtrainEpoch();
 	public: bool externalANNtrainEpochBatch();
 	public: bool externalANNtest();
+	#endif
+	#endif
 	public: bool externalANNpredict(ANNexperience* firstExperienceInList);
-		private: bool externalANNgenerateBatchDataExperiences(ANNexperience* firstExperienceInList, vector<string>* batchDataInput);
-			public: string externalANNgenerateBatchDataExperience(ANNexperience* currentExperienceInList);
-		private: bool externalANNexecuteScript(const string scriptName);
+		private: bool externalANNgenerateBatchDataExperiences(ANNexperience* firstExperienceInList, vector<string>* batchDataInput, vector<string>* batchDataOutput);
+			public: string externalANNgenerateBatchDataExperienceInput(ANNexperience* currentExperienceInList);
+			public: string externalANNgenerateBatchDataExperienceOutput(ANNexperience* currentExperienceInList);
+		private: bool externalANNexecuteScript(string scriptName);
 	#endif
 	#endif
 
@@ -111,7 +118,9 @@ class GIApreprocessorPOStaggerDatabaseClass
 			private: string DBconvertByteToHex(const unsigned char byte);
 			private: unsigned char DBconvertHexToByte(string hexString);
 	public: bool DBreadPOSpermutationEstimates(const string POSambiguityInfoPermutation, vector<string>* centreWordPOSambiguityInfoList);
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE
 	public: bool DBwritePOSpermutationEstimate(const string POSambiguityInfoPermutation, const unsigned char centreWordPOSambiguityInfo);
+	#endif
 	#endif
 	
 	public: string generateIntFormatString(int numberOfCharacters);

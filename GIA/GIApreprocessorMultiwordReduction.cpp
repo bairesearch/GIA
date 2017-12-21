@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorMultiwordReduction.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e7a 16-December-2017
+ * Project Version: 3e7b 16-December-2017
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  *
@@ -2940,104 +2940,106 @@ bool GIApreprocessorMultiwordReductionClass::generateVerbCase(const string baseN
 bool GIApreprocessorMultiwordReductionClass::createWordIndexListFromLRPfiles()
 {
 	bool result = true;
-	cout << "createWordIndexListFromLRPfiles" << endl;
 	
-	//GIA_PREPROCESSOR_MULTIWORD_REDUCTION_LOAD_WORD_LISTS: assume that all word lists have been loaded by GIApreprocessorMultiwordReductionClass::initialiseLRP
-	if(verbListLoaded && prepositionListLoaded && adverbListLoaded && adjectiveListLoaded && nounListLoaded && conjunctionListLoaded && interjectionListLoaded && pronounListLoaded)
-	{		
-		if(verbListWithVariantsGlobal.size() == 0)
-		{
-			cout << "(verbListWithVariantsGlobal.size() == 0)" << endl;
-			
-			//generate verbListWithVariantsGlobal and nounListWithVariantsGlobal;
-			verbListWithVariantsGlobal.insert(verbListGlobal.begin(), verbListGlobal.end());
-			#ifdef GIA_PREPROCESSOR_USE_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY
-			verbListWithVariantsGlobal.insert(verbCaseStandardListGlobal.begin(), verbCaseStandardListGlobal.end());
-			verbListWithVariantsGlobal.insert(verbCaseAdditionalListGlobal.begin(), verbCaseAdditionalListGlobal.end());
-			#else
-			//GIA_PREPROCESSOR_POS_TAGGER requires grammatically strict verb variants (regardless of whether grammatically strict verb variants are used by GIA preprocessor for higher level semantic processing of actions; by default they are not)
-			
-			for(unordered_map<string, GIApreprocessorMultiwordReductionWord*>::iterator iter = verbCaseStandardListGlobal.begin(); iter != verbCaseStandardListGlobal.end(); iter++)
-			{
-				string index = iter->first;
-				GIApreprocessorMultiwordReductionWord* word = iter->second;
-				if(verbCaseDetectGrammaticallyStrictVariant(word))	//ensure that the word is a grammatically strict verb
-				{
-					verbListWithVariantsGlobal.insert(pair<string, GIApreprocessorMultiwordReductionWord*>(index, word));
-				}
-			}
-			for(unordered_map<string, GIApreprocessorMultiwordReductionWord*>::iterator iter = verbCaseAdditionalListGlobal.begin(); iter != verbCaseAdditionalListGlobal.end(); iter++)
-			{
-				string index = iter->first;
-				GIApreprocessorMultiwordReductionWord* word = iter->second;
-				if(verbCaseDetectGrammaticallyStrictVariant(word))	//ensure that the word is a grammatically strict verb
-				{
-					verbListWithVariantsGlobal.insert(pair<string, GIApreprocessorMultiwordReductionWord*>(index, word));
-				}
-			}
-			#endif
-			nounListWithVariantsGlobal.insert(nounListGlobal.begin(), nounListGlobal.end());
-			nounListWithVariantsGlobal.insert(nounPluralVariantsListGlobal.begin(), nounPluralVariantsListGlobal.end());
-			#ifdef GIA_PREPROCESSOR_WORD_LIST_INTERPRET_PRONOUN_POS_AS_NOUN_POS
-			nounListWithVariantsAndPronounsGlobal.insert(nounListWithVariantsGlobal.begin(), nounListWithVariantsGlobal.end());
-			nounListWithVariantsAndPronounsGlobal.insert(pronounListGlobal.begin(), pronounListGlobal.end());
-			#endif
-		}
-
-		unordered_map<string, GIApreprocessorMultiwordReductionWord*>* wordListArray[GIA_PREPROCESSOR_WORD_LIST_ARRAY_SIZE];	
-		wordListArray[GIA_PREPROCESSOR_WORD_LIST_ARRAY_INDEX_VERB] = &verbListWithVariantsGlobal;
-		wordListArray[GIA_PREPROCESSOR_WORD_LIST_ARRAY_INDEX_PREPOSITION] = &prepositionListGlobal;
-		wordListArray[GIA_PREPROCESSOR_WORD_LIST_ARRAY_INDEX_ADVERB] = &adverbListGlobal;
-		wordListArray[GIA_PREPROCESSOR_WORD_LIST_ARRAY_INDEX_ADJECTIVE] = &adjectiveListGlobal;
-		#ifdef GIA_PREPROCESSOR_WORD_LIST_INTERPRET_PRONOUN_POS_AS_NOUN_POS
-		wordListArray[GIA_PREPROCESSOR_WORD_LIST_ARRAY_INDEX_NOUN] = &nounListWithVariantsAndPronounsGlobal;
-		#else
-		wordListArray[GIA_PREPROCESSOR_WORD_LIST_ARRAY_INDEX_NOUN] = &nounListWithVariantsGlobal;
-		#endif
-		wordListArray[GIA_PREPROCESSOR_WORD_LIST_ARRAY_INDEX_CONJUNCTION] = &conjunctionListGlobal;
-		wordListArray[GIA_PREPROCESSOR_WORD_LIST_ARRAY_INDEX_DETERMINER] = &determinerListGlobal;
-		#ifdef GIA_PREPROCESSOR_WORD_LIST_INTERPRET_PRONOUN_POS_AS_NOUN_POS
-		wordListArray[GIA_PREPROCESSOR_WORD_LIST_ARRAY_INDEX_INTERJECTION] = &interjectionListGlobal;
-		#else
-		wordListArray[GIA_PREPROCESSOR_WORD_LIST_ARRAY_INDEX_PRONOUN] = &pronounListGlobal;
-		#endif
-
-		//see GIA_PREPROCESSOR_MULTIWORD_REDUCTION:loadWordList - expect multiwords within the word lists to be concatenated with delimiter _ (because all tags in input text with multiwords have had their space delimiters replaced with _ delimiters)
-		unordered_map<string, GIApreprocessorMultiwordReductionWord*> wordListAllTypes;
-		for(int i=0; i<GIA_PREPROCESSOR_WORD_LIST_ARRAY_SIZE; i++)
-		{
-			wordListAllTypes.insert(wordListArray[i]->begin(), wordListArray[i]->end());
-		}
-	
-		for(unordered_map<string, GIApreprocessorMultiwordReductionWord*>::iterator iter = wordListAllTypes.begin(); iter != wordListAllTypes.end(); iter++)
-		{
-			string wordIndex = iter->first;
-			GIApreprocessorMultiwordReductionWord* word = iter->second;
-			unsigned char POStypeAmbiguity = 0;
-			for(int i=0; i<GIA_PREPROCESSOR_WORD_LIST_ARRAY_SIZE; i++)
-			{		
-				unordered_map<string, GIApreprocessorMultiwordReductionWord*>::iterator it;
-				it = wordListArray[i]->find(wordIndex);
-				if(it != wordListArray[i]->end())
-				{
-					POStypeAmbiguity = POStypeAmbiguity | (1 << i);	//CHECKTHIS
-					//cout << "POStypeAmbiguity = " << POStypeAmbiguity << endl;
-					//cout << "(1 << i) = " << (1 << i) << endl;
-				}
-			}
-			
-			insertInstanceInMapWordListAllTypesWithPOSambiguityInfo(&wordListAllTypesWithPOSambiguityInfo, wordIndex, word, POStypeAmbiguity);
-			//cout << "insertInstanceInMapWordListAllTypesWithPOSambiguityInfo: wordIndex = " << wordIndex << ", word->tagName = " << word->tagName << ", POStypeAmbiguity = " << POStypeAmbiguity << endl;
-		}
-		
-		wordListAllTypesWithPOSambiguityInfoLoaded = true;
-	}
-	else
+	if(!wordListAllTypesWithPOSambiguityInfoLoaded)
 	{
-		cerr << "GIApreprocessorPOStaggerClass::createWordIndexListFromLRPfiles{} error: !(verbListLoaded && prepositionListLoaded && adverbListLoaded && adjectiveListLoaded && nounListLoaded && conjunctionListLoaded && interjectionListLoaded && pronounListLoaded)" << endl;
-		exit(EXIT_ERROR);
-	}
+		//GIA_PREPROCESSOR_MULTIWORD_REDUCTION_LOAD_WORD_LISTS: assume that all word lists have been loaded by GIApreprocessorMultiwordReductionClass::initialiseLRP
+		if(verbListLoaded && prepositionListLoaded && adverbListLoaded && adjectiveListLoaded && nounListLoaded && conjunctionListLoaded && interjectionListLoaded && pronounListLoaded)
+		{		
+			if(verbListWithVariantsGlobal.size() == 0)
+			{	
+				//cout << "createWordIndexListFromLRPfiles" << endl;
+							
+				//generate verbListWithVariantsGlobal and nounListWithVariantsGlobal;
+				verbListWithVariantsGlobal.insert(verbListGlobal.begin(), verbListGlobal.end());
+				#ifdef GIA_PREPROCESSOR_USE_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY
+				verbListWithVariantsGlobal.insert(verbCaseStandardListGlobal.begin(), verbCaseStandardListGlobal.end());
+				verbListWithVariantsGlobal.insert(verbCaseAdditionalListGlobal.begin(), verbCaseAdditionalListGlobal.end());
+				#else
+				//GIA_PREPROCESSOR_POS_TAGGER requires grammatically strict verb variants (regardless of whether grammatically strict verb variants are used by GIA preprocessor for higher level semantic processing of actions; by default they are not)
+				
+				for(unordered_map<string, GIApreprocessorMultiwordReductionWord*>::iterator iter = verbCaseStandardListGlobal.begin(); iter != verbCaseStandardListGlobal.end(); iter++)
+				{
+					string index = iter->first;
+					GIApreprocessorMultiwordReductionWord* word = iter->second;
+					if(verbCaseDetectGrammaticallyStrictVariant(word))	//ensure that the word is a grammatically strict verb
+					{
+						verbListWithVariantsGlobal.insert(pair<string, GIApreprocessorMultiwordReductionWord*>(index, word));
+					}
+				}
+				for(unordered_map<string, GIApreprocessorMultiwordReductionWord*>::iterator iter = verbCaseAdditionalListGlobal.begin(); iter != verbCaseAdditionalListGlobal.end(); iter++)
+				{
+					string index = iter->first;
+					GIApreprocessorMultiwordReductionWord* word = iter->second;
+					if(verbCaseDetectGrammaticallyStrictVariant(word))	//ensure that the word is a grammatically strict verb
+					{
+						verbListWithVariantsGlobal.insert(pair<string, GIApreprocessorMultiwordReductionWord*>(index, word));
+					}
+				}
+				#endif
+				nounListWithVariantsGlobal.insert(nounListGlobal.begin(), nounListGlobal.end());
+				nounListWithVariantsGlobal.insert(nounPluralVariantsListGlobal.begin(), nounPluralVariantsListGlobal.end());
+				#ifdef GIA_PREPROCESSOR_WORD_LIST_INTERPRET_PRONOUN_POS_AS_NOUN_POS
+				nounListWithVariantsAndPronounsGlobal.insert(nounListWithVariantsGlobal.begin(), nounListWithVariantsGlobal.end());
+				nounListWithVariantsAndPronounsGlobal.insert(pronounListGlobal.begin(), pronounListGlobal.end());
+				#endif
+			}
 	
+			unordered_map<string, GIApreprocessorMultiwordReductionWord*>* wordListArray[GIA_PREPROCESSOR_WORD_LIST_ARRAY_SIZE];	
+			wordListArray[GIA_PREPROCESSOR_WORD_LIST_ARRAY_INDEX_VERB] = &verbListWithVariantsGlobal;
+			wordListArray[GIA_PREPROCESSOR_WORD_LIST_ARRAY_INDEX_PREPOSITION] = &prepositionListGlobal;
+			wordListArray[GIA_PREPROCESSOR_WORD_LIST_ARRAY_INDEX_ADVERB] = &adverbListGlobal;
+			wordListArray[GIA_PREPROCESSOR_WORD_LIST_ARRAY_INDEX_ADJECTIVE] = &adjectiveListGlobal;
+			#ifdef GIA_PREPROCESSOR_WORD_LIST_INTERPRET_PRONOUN_POS_AS_NOUN_POS
+			wordListArray[GIA_PREPROCESSOR_WORD_LIST_ARRAY_INDEX_NOUN] = &nounListWithVariantsAndPronounsGlobal;
+			#else
+			wordListArray[GIA_PREPROCESSOR_WORD_LIST_ARRAY_INDEX_NOUN] = &nounListWithVariantsGlobal;
+			#endif
+			wordListArray[GIA_PREPROCESSOR_WORD_LIST_ARRAY_INDEX_CONJUNCTION] = &conjunctionListGlobal;
+			wordListArray[GIA_PREPROCESSOR_WORD_LIST_ARRAY_INDEX_DETERMINER] = &determinerListGlobal;
+			#ifdef GIA_PREPROCESSOR_WORD_LIST_INTERPRET_PRONOUN_POS_AS_NOUN_POS
+			wordListArray[GIA_PREPROCESSOR_WORD_LIST_ARRAY_INDEX_INTERJECTION] = &interjectionListGlobal;
+			#else
+			wordListArray[GIA_PREPROCESSOR_WORD_LIST_ARRAY_INDEX_PRONOUN] = &pronounListGlobal;
+			#endif
+	
+			//see GIA_PREPROCESSOR_MULTIWORD_REDUCTION:loadWordList - expect multiwords within the word lists to be concatenated with delimiter _ (because all tags in input text with multiwords have had their space delimiters replaced with _ delimiters)
+			unordered_map<string, GIApreprocessorMultiwordReductionWord*> wordListAllTypes;
+			for(int i=0; i<GIA_PREPROCESSOR_WORD_LIST_ARRAY_SIZE; i++)
+			{
+				wordListAllTypes.insert(wordListArray[i]->begin(), wordListArray[i]->end());
+			}
+		
+			for(unordered_map<string, GIApreprocessorMultiwordReductionWord*>::iterator iter = wordListAllTypes.begin(); iter != wordListAllTypes.end(); iter++)
+			{
+				string wordIndex = iter->first;
+				GIApreprocessorMultiwordReductionWord* word = iter->second;
+				unsigned char POStypeAmbiguity = 0;
+				for(int i=0; i<GIA_PREPROCESSOR_WORD_LIST_ARRAY_SIZE; i++)
+				{		
+					unordered_map<string, GIApreprocessorMultiwordReductionWord*>::iterator it;
+					it = wordListArray[i]->find(wordIndex);
+					if(it != wordListArray[i]->end())
+					{
+						POStypeAmbiguity = POStypeAmbiguity | (1 << i);	//CHECKTHIS
+						//cout << "POStypeAmbiguity = " << POStypeAmbiguity << endl;
+						//cout << "(1 << i) = " << (1 << i) << endl;
+					}
+				}
+				
+				insertInstanceInMapWordListAllTypesWithPOSambiguityInfo(&wordListAllTypesWithPOSambiguityInfo, wordIndex, word, POStypeAmbiguity);
+				//cout << "insertInstanceInMapWordListAllTypesWithPOSambiguityInfo: wordIndex = " << wordIndex << ", word->tagName = " << word->tagName << ", POStypeAmbiguity = " << POStypeAmbiguity << endl;
+			}
+			
+			wordListAllTypesWithPOSambiguityInfoLoaded = true;
+		}
+		else
+		{
+			cerr << "GIApreprocessorPOStaggerClass::createWordIndexListFromLRPfiles{} error: !(verbListLoaded && prepositionListLoaded && adverbListLoaded && adjectiveListLoaded && nounListLoaded && conjunctionListLoaded && interjectionListLoaded && pronounListLoaded)" << endl;
+			exit(EXIT_ERROR);
+		}
+	}
+		
 	return result;
 }
 #endif

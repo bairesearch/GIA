@@ -25,7 +25,7 @@
  * File Name: GIAmain.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e7a 16-December-2017
+ * Project Version: 3e7b 16-December-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -70,7 +70,7 @@
 #endif
 #include "GIAsemanticParserDatabase.hpp"
 #endif
-#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE
+#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_PERSISTENT
 #include "GIApreprocessorPOStaggerDatabase.hpp"
 #endif
 #ifdef GIA_NEURAL_NETWORK
@@ -88,6 +88,9 @@
 
 
 #ifdef COMPILE_GIA
+int main(const int argc, const char** argv);
+#endif
+#ifdef COMPILE_GIA_WITH_ANN_GENERATE_POS_TAGGER_DATABASE
 int main(const int argc, const char** argv);
 #endif
 
@@ -121,7 +124,7 @@ class GIAmainClass
 	#endif
 	private: GIAsemanticParserDatabaseClass GIAsemanticParserDatabase;
 	#endif
-	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_PERSISTENT
 	private: GIApreprocessorPOStaggerDatabaseClass GIApreprocessorPOStaggerDatabase;	
 	#endif
 	#ifdef GIA_NEURAL_NETWORK
@@ -234,7 +237,7 @@ class GIAmainClass
 		#ifdef GIA_SEMANTIC_PARSER
 		string semanticParserDatabaseFolderName,
 		#endif
-		#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE
+		#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_PERSISTENT
 		string POStaggerDatabaseFolderName,
 		#endif
 		
