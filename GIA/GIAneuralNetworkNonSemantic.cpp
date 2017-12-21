@@ -25,7 +25,7 @@
  * File Name: GIAneuralNetworkNonSemantic.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e1a 07-December-2017
+ * Project Version: 3e2a 10-December-2017
  * Description: 
  *
  *******************************************************************************/

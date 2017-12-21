@@ -25,7 +25,7 @@
  * File Name: GIApreprocessor.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3e1a 07-December-2017
+ * Project Version: 3e2a 10-December-2017
  * Requirements: requires plain text file
  * Description: Logical Condition and Reference Set preprocessor
  *
@@ -40,6 +40,15 @@
 bool GIApreprocessorClass::preprocessTextForGIAwrapper(const bool useLRP, string* inputTextPlainTXTfileName, const string outputLRPTextPlainTXTFileName, const bool isQuery, GIAtranslatorVariablesClass* translatorVariables, bool* useInputTextPlainTXTFile, const string inputTextNLPfeatureXMLfileName)
 {
 	bool result = true;
+
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE
+	if(!GIApreprocessorPOStagger.generatePOStaggerDatabaseFromWikiDumpText())
+	{
+		result = false;
+	}
+	cerr << "GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE: planned premature exit (finished executing generatePOStaggerDatabaseFromWikiDumpText)" << endl;
+	exit(EXIT_ERROR);
+	#endif
 	
 	if(translatorVariables->firstGIApreprocessorSentenceInList != NULL)
 	{
@@ -79,7 +88,7 @@ bool GIApreprocessorClass::preprocessTextForGIA(string* inputTextPlainTXTfileNam
 	bool result = true;
 	
 	
-	string outputLRPTextForNLPonlyPlainTXTFileNameBase = outputLRPTextPlainTXTFileName + GIA_PREPROCESSOR_OUTPUT_FILE_EXTENSION;	
+	string outputLRPTextForNLPonlyPlainTXTFileNameBase = outputLRPTextPlainTXTFileName + GIA_PREPROCESSOR_OUTPUT_FOR_NLP_ONLY_FILE_EXTENSION;	
 	
 	#ifdef GIA_PREPROCESSOR_SENTENCE
 	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
@@ -171,7 +180,7 @@ bool GIApreprocessorClass::regenerateFileFromPreprocessedTextWithoutLRP(string* 
 	}
 
 	//sync generated filename with preprocessTextForGIA;
-	string outputLRPTextForNLPonlyPlainTXTFileNameBase = outputLRPTextPlainTXTFileName + GIA_PREPROCESSOR_OUTPUT_FILE_EXTENSION;
+	string outputLRPTextForNLPonlyPlainTXTFileNameBase = outputLRPTextPlainTXTFileName + GIA_PREPROCESSOR_OUTPUT_FOR_NLP_ONLY_FILE_EXTENSION;
 	string outputLRPTextForNLPonlyPlainTXTFileName = outputLRPTextForNLPonlyPlainTXTFileNameBase;
 	
 	SHAREDvars.setCurrentDirectory(outputFolder);
@@ -341,7 +350,7 @@ bool GIApreprocessorClass::createPreprocessSentences(const string fileContents, 
 			{
 				readingQuotation = false;
 				currentWord = currentWord + currentToken;	//add quotation mark to word
-				preprocessorFillCurrentWord(&currentWordInSentence, &currentWord, &entityIndex, charCount);
+				GIApreprocessorMultiwordReductionClassObject.preprocessorFillCurrentWord(&currentWordInSentence, &currentWord, &entityIndex, charCount);
 			}
 			else
 			{
@@ -371,7 +380,7 @@ bool GIApreprocessorClass::createPreprocessSentences(const string fileContents, 
 					//note this will break characterIndexInSentenceContentsOriginalText (required implementation: need to preprepreprocess words like "cannot" that require splitting by NLP - ie preprocess the text before executing the GIA prepreprocessor createPreprocessSentences)
 					int lastCharacterIndexOfWord1BeingFilled = lastCharacterIndexOfLastWordBeingFilled - (string(GIA_STANFORD_PARSER_AND_CORENLP_FEATURE_PARSER_ANOMALY_INTERPRET_CANNOT_AS_CAN_NOT_NEW_WORD_2)).length();
 					currentWord = GIA_STANFORD_PARSER_AND_CORENLP_FEATURE_PARSER_ANOMALY_INTERPRET_CANNOT_AS_CAN_NOT_NEW_WORD_1;
-					preprocessorFillCurrentWord(&currentWordInSentence, &currentWord, &entityIndex, lastCharacterIndexOfLastWordBeingFilled);
+					GIApreprocessorMultiwordReductionClassObject.preprocessorFillCurrentWord(&currentWordInSentence, &currentWord, &entityIndex, lastCharacterIndexOfLastWordBeingFilled);
 					currentWord = GIA_STANFORD_PARSER_AND_CORENLP_FEATURE_PARSER_ANOMALY_INTERPRET_CANNOT_AS_CAN_NOT_NEW_WORD_2;
 				}
 				#endif
@@ -387,28 +396,28 @@ bool GIApreprocessorClass::createPreprocessSentences(const string fileContents, 
 				if(currentWord != "")
 				{//do not add empty tag after closing quotation marks	//e.g. GIA_PREPROCESSOR_MULTIWORD_REDUCTION_REDUCE_QUOTES_TO_SINGLE_WORDS or (newlineFound && interpretNewLinesAsNewSentences && previousCharacter==whitespace)
 					lastWordBlank = false;
-					preprocessorFillCurrentWord(&currentWordInSentence, &currentWord, &entityIndex, lastCharacterIndexOfLastWordBeingFilled);
+					GIApreprocessorMultiwordReductionClassObject.preprocessorFillCurrentWord(&currentWordInSentence, &currentWord, &entityIndex, lastCharacterIndexOfLastWordBeingFilled);
 				}
 
 				if(quotationMarkFound)
 				{
 					string quotationMark = ""; 
 					quotationMark = quotationMark + currentToken;
-					preprocessorFillCurrentWord(&currentWordInSentence, &quotationMark, &entityIndex, charCount);
+					GIApreprocessorMultiwordReductionClassObject.preprocessorFillCurrentWord(&currentWordInSentence, &quotationMark, &entityIndex, charCount);
 				}
 				#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_MATH_GROUPING
 				else if(mathFound && !previousCharacterIsMathGrouped)
 				{
 					string mathMark = ""; 
 					mathMark = mathMark + currentToken;
-					preprocessorFillCurrentWord(&currentWordInSentence, &mathMark, &entityIndex, charCount);
+					GIApreprocessorMultiwordReductionClassObject.preprocessorFillCurrentWord(&currentWordInSentence, &mathMark, &entityIndex, charCount);
 				}
 				#endif
 				else if(punctuationMarkFound)
 				{
 					string punctuationMark = ""; 
 					punctuationMark = punctuationMark + currentToken;
-					preprocessorFillCurrentWord(&currentWordInSentence, &punctuationMark, &entityIndex, charCount);
+					GIApreprocessorMultiwordReductionClassObject.preprocessorFillCurrentWord(&currentWordInSentence, &punctuationMark, &entityIndex, charCount);
 
 					if(SHAREDvars.charInCharArray(currentToken, nlpPunctionMarkCharacterEndOfSentenceArray, GIA_NLP_NUMBER_OF_PUNCTUATION_MARK_CHARACTERS_END_OF_SENTENCE))
 					{
@@ -474,7 +483,7 @@ bool GIApreprocessorClass::createPreprocessSentences(const string fileContents, 
 					{
 						string dollarMark = ""; 
 						dollarMark = dollarMark + currentToken;
-						preprocessorFillCurrentWord(&currentWordInSentence, &dollarMark, &entityIndex, charCount);
+						GIApreprocessorMultiwordReductionClassObject.preprocessorFillCurrentWord(&currentWordInSentence, &dollarMark, &entityIndex, charCount);
 					}
 					else
 					{
@@ -548,18 +557,7 @@ string GIApreprocessorClass::generateIndentationContents(int currentIndentation)
 #endif
 
 
-void GIApreprocessorClass::preprocessorFillCurrentWord(GIApreprocessorMultiwordReductionPlainTextWord** currentWordInSentence, string* currentWord, int* entityIndex, int lastCharacterIndexOfWordInSentence)
-{
-	(*currentWordInSentence)->tagName = *currentWord;
-	(*currentWordInSentence)->entityIndex = *entityIndex;
-	#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
-	(*currentWordInSentence)->characterIndexInSentenceContentsOriginalText = lastCharacterIndexOfWordInSentence - currentWord->size() - 1;
-	#endif
-	(*currentWordInSentence)->nextTag = new GIApreprocessorMultiwordReductionPlainTextWord();
-	(*currentWordInSentence) = static_cast<GIApreprocessorMultiwordReductionPlainTextWord*>((*currentWordInSentence)->nextTag);
-	(*entityIndex) = (*entityIndex) + 1;
-	*currentWord = "";
-}
+
 			
 void GIApreprocessorClass::copySentenceContentsPreprocessor(GIApreprocessorMultiwordReductionPlainTextWord* sentenceContents1FirstWord, GIApreprocessorMultiwordReductionPlainTextWord* sentenceContents2firstWord)
 {

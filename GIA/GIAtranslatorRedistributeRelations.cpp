@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorRedistributeRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e1a 07-December-2017
+ * Project Version: 3e2a 10-December-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -97,12 +97,13 @@ bool GIAtranslatorRedistributeRelationsClass::correctVerbPOStagAndLemma(GIAentit
 	if(actionOrSubstanceEntity->wordOrig != "")		//required to ignore dynamically generated entities, e.g. "have"/"$qvar"/etc
 	{
 	#endif
-
 		string baseNameFound = "";
+		
 		int grammaticalTenseModifier = INT_DEFAULT_VALUE;
-
-		bool foundContinuousOrInfinitiveOrImperativeOrPotentialVerb = GIApreprocessorMultiwordReduction.determineVerbCaseAdditionalWrapper(actionOrSubstanceEntity->wordOrig, &baseNameFound, &grammaticalTenseModifier);
-
+		int grammaticalBaseTenseForm = INT_DEFAULT_VALUE;
+		bool foundContinuousOrInfinitiveOrImperativeOrPotentialVerb = GIApreprocessorMultiwordReduction.determineVerbCaseAdditionalWrapper(actionOrSubstanceEntity->wordOrig, &baseNameFound, &grammaticalBaseTenseForm);
+		GIApreprocessorMultiwordReduction.convertVerbCaseGrammaticalTenseFormToTenseModifier(grammaticalBaseTenseForm, &grammaticalTenseModifier);
+		
 		//This section of code cannot be used as originally intended as some verb infinitives are also nouns (eg "yarn") - therefore must formally rely on correct infinitive tagging of verbs...
 		if((actionOrSubstanceEntity->grammaticalWordTypeTemp == GRAMMATICAL_WORD_TYPE_VERB) && ((actionOrSubstanceEntity->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_INFINITIVE] == true) || (actionOrSubstanceEntity->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_IMPERATIVE] == true)))
 		{
@@ -146,7 +147,6 @@ bool GIAtranslatorRedistributeRelationsClass::correctVerbPOStagAndLemma(GIAentit
 			if(foundContinuousOrInfinitiveOrImperativeOrPotentialVerb && (grammaticalTenseModifier == GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE_TEMP))
 			#endif
 			{
-
 				string stanfordPOS = FEATURE_POS_TAG_VERB_VBG;
 				/*
 				Wood is used for making milk.

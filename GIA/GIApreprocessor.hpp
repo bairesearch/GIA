@@ -25,7 +25,7 @@
  * File Name: GIApreprocessor.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3e1a 07-December-2017
+ * Project Version: 3e2a 10-December-2017
  * Requirements: requires plain text file
  * Description: Logical Condition and Reference Set preprocessor
  *
@@ -48,8 +48,10 @@
 #include "GIAtranslatorDefineGrammar.hpp"
 #endif
 #include "XMLparserClass.hpp"
+#ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE
+#include "GIApreprocessorPOStagger.hpp"
+#endif
 
-#define GIA_PREPROCESSOR_OUTPUT_FILE_EXTENSION ".forNLPonly"
 
 #define GIA_ENTITY_TYPE_LOGIC_REFERENCE (GIA_ENTITY_TYPE_ACTION)
 
@@ -71,6 +73,9 @@ class GIApreprocessorClass
 	private: GIAtranslatorDefineGrammarClass GIAtranslatorDefineGrammar;
 	#endif
 	private: GIAdatabaseClass GIAdatabase;
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE
+	private: GIApreprocessorPOStaggerClass GIApreprocessorPOStagger;
+	#endif
 	#ifdef GIA_PREPROCESSOR
 	public: bool preprocessTextForGIAwrapper(const bool useLRP, string* inputTextPlainTXTfileName, const string outputLRPTextPlainTXTFileName, const bool isQuery, GIAtranslatorVariablesClass* translatorVariables, bool* useInputTextPlainTXTFile, const string inputTextNLPfeatureXMLfileName);
 		public: bool preprocessTextForGIA(string* inputTextPlainTXTfileName, const string outputLRPTextPlainTXTFileName, const bool isQuery, GIAtranslatorVariablesClass* translatorVariables, const string inputTextNLPfeatureXMLfileName);
@@ -81,7 +86,6 @@ class GIApreprocessorClass
 					private: bool extractIndentationFromCurrentLine(const string* lineContents, int* indexOfCurrentToken, int* currentIndentation, string* indentationContents);
 					public: string generateIndentationContents(int currentIndentation);
 					#endif
-					private: void preprocessorFillCurrentWord(GIApreprocessorMultiwordReductionPlainTextWord** currentWordInSentence, string* currentWord, int* entityIndex, int lastCharacterIndexOfWordInSentence);
 				private: void copySentenceContentsPreprocessor(GIApreprocessorMultiwordReductionPlainTextWord* sentenceContents1FirstWord, GIApreprocessorMultiwordReductionPlainTextWord* sentenceContents2firstWord);
 			#ifdef GIA_PREPROCESSOR_SENTENCE
 			#ifdef GIA_PREPROCESSOR_SENTENCE_EXECUTE_PRELIM_POS_TAGGER

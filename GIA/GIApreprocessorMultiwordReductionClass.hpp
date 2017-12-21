@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorMultiwordReductionClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3e1a 07-December-2017
+ * Project Version: 3e2a 10-December-2017
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  *
@@ -56,6 +56,11 @@ static char GIApreprocessorMultiwordReductionNLPparsableCharacters[GIA_PREPROCES
 #define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_ADVERB_DATABASE_FILE_NAME "WordnetAdverbs.txt"
 #define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_ADJECTIVE_DATABASE_FILE_NAME "WordnetAdjectives.txt"
 #define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NOUN_DATABASE_FILE_NAME "WordnetNouns.txt"
+#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_LOAD_WORD_LISTS_ADDITIONAL
+#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_CONJUNCTION_DATABASE_FILE_NAME "GrammarRevolutionConjunctions.txt"
+#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_INTERJECTION_DATABASE_FILE_NAME "GrammarRevolutionInterjections.txt"
+#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PRONOUN_DATABASE_FILE_NAME "GrammarRevolutionPronouns.txt"
+#endif
 
 #define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_MULTIWORD_PREPOSITION_DATABASE_FILE_NAME "WikipediaEnglishClubMultiwordPrepositions.txt"
 #ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_REDUCE_ALL_WORD_TYPES
@@ -63,6 +68,10 @@ static char GIApreprocessorMultiwordReductionNLPparsableCharacters[GIA_PREPROCES
 #define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_MULTIWORD_ADVERB_DATABASE_FILE_NAME "WordnetMultiwordAdverbs.txt"
 #define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_MULTIWORD_ADJECTIVE_DATABASE_FILE_NAME "WordnetMultiwordAdjectives.txt"
 #define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_MULTIWORD_NOUN_DATABASE_FILE_NAME "WordnetMultiwordNouns.txt"
+#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_REDUCE_ALL_WORD_TYPES_ADDITIONAL
+#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_MULTIWORD_CONJUNCTION_DATABASE_FILE_NAME "GrammarRevolutionMultiwordConjunctions.txt"
+#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_MULTIWORD_INTERJECTION_DATABASE_FILE_NAME "GrammarRevolutionMultiwordInterjections.txt"
+#endif
 #endif
 
 #define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NOUN_DATABASE_TAG_BASE_FORM_SINGULAR (0)
@@ -92,6 +101,9 @@ static char GIApreprocessorMultiwordReductionNLPparsableCharacters[GIA_PREPROCES
 #define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL (6)
 #define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE (7)
 #endif
+#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_NUMBER_OF_TYPES (8)
+static bool GIApreprocessorMultiwordReductionVerbDatabaseTagBaseTenseFormGrammaticallyStrictArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_NUMBER_OF_TYPES] = {true, true, true, true, true, false, false, false};
+
 #define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_MAX_NUM_TENSE_FORM_VERSIONS (2)	//standard/alternate (ie double constanant form OR irregular verb alternate case)
 #define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD (0)
 #define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_ALTERNATE (1)
@@ -182,6 +194,12 @@ static char nlpWhitespaceCharacterArray[GIA_NLP_NUMBER_OF_WHITESPACE_CHARACTERS]
 #define GIA_NLP_NUMBER_OF_QUOTATIONMARK_CHARACTERS (2)
 static char nlpQuotationMarkCharacterArray[GIA_NLP_NUMBER_OF_QUOTATIONMARK_CHARACTERS] = {CHAR_INVERTED_COMMAS, CHAR_APOSTROPHE};
 
+/*
+#ifdef GIA_PREPROCESSOR_POS_TAGGER
+#define GIA_NLP_NUMBER_OF_NORMAL_WORD_CHARACTERS (53)
+static char nlpNormalWordCharacterArray[GIA_NLP_NUMBER_OF_NORMAL_WORD_CHARACTERS] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '_'};
+#endif
+*/
 
 #define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_LOWER_CASE_LETTERS_NUMBER_OF_TYPES (26)
 static char preprocessorLowerCaseLettersArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_LOWER_CASE_LETTERS_NUMBER_OF_TYPES] = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
@@ -221,6 +239,8 @@ string lrpDummyCollapsedMultiwordPrepositionLemmaNameForNLPArray[GIA_PREPROCESSO
 #define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DUMMY_COLLAPSED_MULTIWORD_ADJECTIVE_TYPE 3
 #define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DUMMY_COLLAPSED_MULTIWORD_NOUN_TYPE 4
 #define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DUMMY_COLLAPSED_MULTIWORD_VERB_TYPE 5
+#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DUMMY_COLLAPSED_MULTIWORD_CONJUNCTION_TYPE 6
+#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DUMMY_COLLAPSED_MULTIWORD_INTERJECTION_TYPE 7
 
 
 #define MAXIMUM_NUMBER_WORDS_PER_SENTENCE 1000	//same value from GIAtranslatorOperations.h
@@ -443,12 +463,12 @@ class GIApreprocessorMultiwordReductionClassClass
 	#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
 	public: string generateTextFromPreprocessorSentenceWordList(const GIApreprocessorWord* firstWordInSentence);
 		public: string generateTextFromPreprocessorSentenceWordList(const GIApreprocessorWord* firstWordInSentence, const bool LRPforNLP);
-	public: string generateTextFromVectorWordList(const vector<GIApreprocessorWord*>* logicReferenceVariableWordList);
-		public: string generateTextFromVectorWordList(const vector<GIApreprocessorWord*>* logicReferenceVariableWordList, const bool LRPforNLP);
+	public: string generateTextFromVectorWordList(const vector<GIApreprocessorWord*>* wordList);
+		public: string generateTextFromVectorWordList(const vector<GIApreprocessorWord*>* wordList, const bool LRPforNLP);
 			public: string generateTextFromPreprocessorSentenceWord(const GIApreprocessorWord* word, const bool LRPforNLP, const bool isFirstWordInSentence);
-	public: int calculateLengthOfGeneratedVectorWordListText(vector<GIApreprocessorWord*>* logicReferenceVariableWordList);
-	public: bool generateSentenceWordList(GIApreprocessorWord* sentenceContentsFirstWord, vector<GIApreprocessorWord*>* logicReferenceVariableWordList);
-	public: bool generateFlatSentenceWordList(const vector<GIApreprocessorWord*>* logicReferenceVariableWordList, GIApreprocessorMultiwordReductionPlainTextWord** sentenceContentsFirstWord);
+	public: int calculateLengthOfGeneratedVectorWordListText(vector<GIApreprocessorWord*>* wordList);
+	public: bool generateSentenceWordList(GIApreprocessorWord* sentenceContentsFirstWord, vector<GIApreprocessorWord*>* wordList);
+	public: bool generateFlatSentenceWordList(const vector<GIApreprocessorWord*>* wordList, GIApreprocessorMultiwordReductionPlainTextWord** sentenceContentsFirstWord);
 	public: bool addWordListToWordList(vector<GIApreprocessorWord*>* wordList, vector<GIApreprocessorWord*>* wordListToAdd);
 	public: bool addStringArrayToWordList(vector<GIApreprocessorWord*>* wordList, const string* stringArrayToAdd, const int arraySize);
 	public: bool addStringToWordList(vector<GIApreprocessorWord*>* wordList, const string stringToAdd);
@@ -494,6 +514,8 @@ class GIApreprocessorMultiwordReductionClassClass
 	
 	public: bool printWordList(const vector<GIApreprocessorWord*>* wordList);
 	#endif	
+	public: void preprocessorFillCurrentWord(GIApreprocessorMultiwordReductionPlainTextWord** currentWordInSentence, string* currentWord, int* entityIndex, int lastCharacterIndexOfWordInSentence);
+
 
 };
 
