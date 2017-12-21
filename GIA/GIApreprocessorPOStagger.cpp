@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorPOStagger.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3e2b 10-December-2017
+ * Project Version: 3e2c 10-December-2017
  * Requirements: requires plain text file
  * Description: preprocessor POS tagger
  *
@@ -107,14 +107,13 @@ bool GIApreprocessorPOStaggerClass::generatePOStaggerDatabaseFromWikiDumpText()
 	cerr << "GIApreprocessorPOStaggerClass::generatePOStaggerDatabaseFromWikiDumpText{} error: !GIA_PREPROCESSOR_POS_TAGGER_INITIALISE_WORD_INDEX_LIST_FROM_LRP_FILES; word index list currently needs to be regenerated everytime POS tagger database generation occurs" << endl;
 	#endif
 
-	string backupFolder = SHAREDvarsClass().getCurrentDirectory();
+	string currentFolder = SHAREDvarsClass().getCurrentDirectory();
 	SHAREDvarsClass().setCurrentDirectory(GIA_PREPROCESSOR_POS_TAGGER_DOC_XML_OUTPUT_FOLDER);
 			
 	for(int wikiDumpFileIndex=0; wikiDumpFileIndex<GIA_PREPROCESSOR_POS_TAGGER_DOC_XML_OUTPUT_NUMBER_OF_FILES; wikiDumpFileIndex++)
 	{
-		cout << "wikiDumpFileIndex = " << wikiDumpFileIndex << endl;
-		
 		string inputFileName = generateWikiDumpTextInputFileName(wikiDumpFileIndex);
+		cout << "wikiDumpFileName = " << inputFileName << endl;
 		GIApreprocessorSentence* firstGIApreprocessorSentenceInWikiDumpText = new GIApreprocessorSentence();
 		if(!generatePreprocessorSentenceObjectsFromText(inputFileName, firstGIApreprocessorSentenceInWikiDumpText))
 		{
@@ -220,7 +219,7 @@ bool GIApreprocessorPOStaggerClass::generatePOStaggerDatabaseFromWikiDumpText()
 		delete firstGIApreprocessorSentenceInWikiDumpText;
 	}
 
-	SHAREDvarsClass().setCurrentDirectory(backupFolder);
+	SHAREDvarsClass().setCurrentDirectory(currentFolder);
 
 	return result;
 }
@@ -265,8 +264,8 @@ bool GIApreprocessorPOStaggerClass::createWordIndexListFromWikiDumpText()
 	for(int wikiDumpFileIndex=0; wikiDumpFileIndex<GIA_PREPROCESSOR_POS_TAGGER_DOC_XML_OUTPUT_NUMBER_OF_FILES; wikiDumpFileIndex++)
 	{
 		string inputFileName = generateWikiDumpTextInputFileName(wikiDumpFileIndex);
-		GIApreprocessorSentence* firstGIApreprocessorSentenceInText = new GIApreprocessorSentence();
-		if(!generatePreprocessorSentenceObjectsFromText(inputFileName, firstGIApreprocessorSentenceInText))
+		GIApreprocessorSentence* firstGIApreprocessorSentenceInWikiDumpText = new GIApreprocessorSentence();
+		if(!generatePreprocessorSentenceObjectsFromText(inputFileName, firstGIApreprocessorSentenceInWikiDumpText))
 		{
 			result = false;
 		}
@@ -307,6 +306,7 @@ bool GIApreprocessorPOStaggerClass::generatePreprocessorSentenceObjectsFromText(
 	//generate preprocessor sentence objects from text
 	string fileContents = SHAREDvars.getFileContents(inputFileName);
 	bool interpretNewLinesAsNewSentences = true;	//CHECKTHIS
+	//cout << "fileContents = " << fileContents << endl;
 	if(!createPreprocessSentencesBasic(fileContents, firstGIApreprocessorSentenceInText, interpretNewLinesAsNewSentences))
 	{
 		result = false;
@@ -330,7 +330,7 @@ bool GIApreprocessorPOStaggerClass::generatePreprocessorSentenceObjectsFromText(
 		
 		currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->next;
 	}
-
+	
 	//perform multiword reduction
 	//TODO: CONSIDER REMOVING MULTIWORD REDUCTION;
 	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION

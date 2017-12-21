@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorMultiwordReduction.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e2b 10-December-2017
+ * Project Version: 3e2c 10-December-2017
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  *
@@ -338,6 +338,8 @@ bool GIApreprocessorMultiwordReductionClass::parseTextFileAndReduceLanguage(GIAp
 {
 	bool result = true;
 
+	string currentFolder = SHAREDvars.getCurrentDirectory();
+	
 	string phrasalVerbListFileName = lrpDataFolderName + GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_FILE_NAME;
 	multimap<string, GIApreprocessorMultiwordReductionPhrasalVerbSentence*> phrasalVerbList;
 	if(!this->loadPhrasalVerbDataAndGenerateAllTenseVariants(phrasalVerbListFileName, &phrasalVerbList, &irregularVerbListGlobal))
@@ -390,6 +392,7 @@ bool GIApreprocessorMultiwordReductionClass::parseTextFileAndReduceLanguage(GIAp
 	{
 		result = false;
 	}
+	SHAREDvars.setCurrentDirectory(currentFolder);
 	
 	return result;
 }

@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorSentenceClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3e2b 10-December-2017
+ * Project Version: 3e2c 10-December-2017
  * Requirements: requires plain text file
  * Description: Logical Condition and Reference Set preprocessor
  *
@@ -98,6 +98,11 @@ GIApreprocessorLogicReferenceVariable::GIApreprocessorLogicReferenceVariable(voi
 }
 GIApreprocessorLogicReferenceVariable::~GIApreprocessorLogicReferenceVariable(void)
 {
+	#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET
+	delete referenceSetSubject;
+	delete referenceSetObject;
+	delete referenceSetDelimiter;
+	#endif
 }
 
 GIApreprocessorLogicReference::GIApreprocessorLogicReference(void)
@@ -127,6 +132,11 @@ GIApreprocessorLogicReference::GIApreprocessorLogicReference(void)
 }
 GIApreprocessorLogicReference::~GIApreprocessorLogicReference(void)
 {
+	delete logicReferenceVariable;
+	if(next != NULL)
+	{
+		delete next;
+	}
 }
 
 #endif
@@ -163,6 +173,27 @@ GIApreprocessorSentence::GIApreprocessorSentence(void)
 }
 GIApreprocessorSentence::~GIApreprocessorSentence(void)
 {
+	//CHECKTHIS;
+	if(sentenceContentsOriginal.size() > 0)
+	{
+		delete sentenceContentsOriginal[0];
+	}
+	/*
+	DOESNT WORK because ~GIApreprocessorWord has already deleted word tags
+	for(vector<GIApreprocessorWord*>::iterator it = sentenceContentsOriginal.begin(); it != sentenceContentsOriginal.end(); it++)
+	{
+		if(*it != NULL)
+		{
+			delete (*it);
+		}
+	}
+   	*/
+	sentenceContentsOriginal.clear();
+	
+	if(next != NULL)
+	{
+		delete next;
+	}
 }
 
 
