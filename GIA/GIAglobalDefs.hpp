@@ -25,7 +25,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e2a 10-December-2017
+ * Project Version: 3e2b 10-December-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -771,9 +771,9 @@
 
 		#define GIA_PREPROCESSOR_POS_TAGGER_MAX_CONTEXT_WORDS_IN_DATABASE_POS_PERMUTATION (10)	//5 each side	//so max size of POS permutation = 8*10 = 80 bit integer
 		#define GIA_PREPROCESSOR_POS_TAGGER_MAX_WORDS_IN_DATABASE_POS_PERMUTATION (GIA_PREPROCESSOR_POS_TAGGER_MAX_CONTEXT_WORDS_IN_DATABASE_POS_PERMUTATION+1)
-		#define GIA_PREPROCESSOR_POS_TAGGER_DOC_XML_OUTPUT_NUMBER_OF_FILES (121)
+		#define GIA_PREPROCESSOR_POS_TAGGER_DOC_XML_OUTPUT_NUMBER_OF_FILES (1203)	//121
 		#define GIA_PREPROCESSOR_POS_TAGGER_DOC_XML_OUTPUT_NAME_PART_A "wiki_"
-		#define GIA_PREPROCESSOR_POS_TAGGER_DOC_XML_OUTPUT_NAME_PART_B_INDEX_NUMBER_OF_CHARACTERS (3)
+		#define GIA_PREPROCESSOR_POS_TAGGER_DOC_XML_OUTPUT_NAME_PART_B_INDEX_NUMBER_OF_CHARACTERS (4)
 		#define GIA_PREPROCESSOR_POS_TAGGER_DOC_XML_OUTPUT_NAME_PART_C ".xml"
 		#define GIA_PREPROCESSOR_POS_TAGGER_DOC_XML_OUTPUT_FOLDER "/home/systemusername/soft/wiki/output"
 		#define GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE

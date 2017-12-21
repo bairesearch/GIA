@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorMultiwordReductionClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3e2a 10-December-2017
+ * Project Version: 3e2b 10-December-2017
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  *
@@ -365,7 +365,6 @@ bool GIApreprocessorMultiwordReductionClassClass::generateFlatSentenceWordList(c
 			//cout << "currentWordInSentence->tagName = " << currentWordInSentence->tagName << endl;
 			currentWordInSentence->nextTag = new GIApreprocessorMultiwordReductionPlainTextWord();	//add a blank word to end of list (as per standard object list specification)
 		}
-		
 	}
 	
 	return result;
