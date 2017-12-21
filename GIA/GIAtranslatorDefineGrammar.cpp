@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorDefineGrammar.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e6c 16-December-2017
+ * Project Version: 3e7a 16-December-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -443,7 +443,7 @@ void GIAtranslatorDefineGrammarClass::fillGrammaticalArraysStanford(GIAtranslato
 	#endif
 
 	//past tense [preliminary only; aux/cop takes precedence], progressive tense, isDate, plurality, isProperNoun extraction
-	this->extractGrammaticalInformationStanford(translatorVariables->currentSentenceInList->firstFeatureInList, translatorVariables->NLPfeatureParser);
+	extractGrammaticalInformationStanford(translatorVariables->currentSentenceInList->firstFeatureInList, translatorVariables->NLPfeatureParser);
 
 	currentRelationInList = translatorVariables->currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)
@@ -467,12 +467,12 @@ void GIAtranslatorDefineGrammarClass::fillGrammaticalArraysStanford(GIAtranslato
 
 				/*//this shouldnt be required, as verbs are automatically assumed not to be part of same reference set [see DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_ACTIONS]
 				#ifdef GIA_ADVANCED_REFERENCING_FIND_SUBJ_OBJ_RELATION_MATCHING_AUXILIARY_AND_SET_NOT_SAME_REFERENCE_SET
-				this->findSubjObjRelationMatchingAuxiliaryAndSetNotSameReferenceSet(translatorVariables->currentSentenceInList, (*translatorVariables->GIAfeatureTempEntityNodeArray)[entityIndexOfVerb]);
+				findSubjObjRelationMatchingAuxiliaryAndSetNotSameReferenceSet(translatorVariables->currentSentenceInList, (*translatorVariables->GIAfeatureTempEntityNodeArray)[entityIndexOfVerb]);
 				#endif
 				*/
 
 				#ifdef GIA_STANFORD_CORE_NLP_PARSER_USE_AUXILIARY_TO_SET_TENSE_OF_VERB
-				this->extractPastTense(featureArrayTemp[entityIndexOfVerb], entityIndexOfAuxiliary, translatorVariables->currentSentenceInList->firstFeatureInList, NLPfeatureParser);
+				extractPastTense(featureArrayTemp[entityIndexOfVerb], entityIndexOfAuxiliary, translatorVariables->currentSentenceInList->firstFeatureInList, NLPfeatureParser);
 				#endif
 
 			}
@@ -492,12 +492,12 @@ void GIAtranslatorDefineGrammarClass::fillGrammaticalArraysStanford(GIAtranslato
 
 				/*//this shouldnt be required, as verbs are automatically assumed not to be part of same reference set [see DEFAULT_SAME_REFERENCE_SET_VALUE_FOR_ACTIONS]
 				#ifdef GIA_ADVANCED_REFERENCING_FIND_SUBJ_OBJ_RELATION_MATCHING_AUXILIARY_AND_SET_NOT_SAME_REFERENCE_SET
-				this->findSubjObjRelationMatchingAuxiliaryAndSetNotSameReferenceSet(translatorVariables->currentSentenceInList, GIAfeatureTempEntityNodeArray[entityIndexOfVerb]);
+				findSubjObjRelationMatchingAuxiliaryAndSetNotSameReferenceSet(translatorVariables->currentSentenceInList, GIAfeatureTempEntityNodeArray[entityIndexOfVerb]);
 				#endif
 				*/
 
 				#ifdef GIA_STANFORD_CORE_NLP_PARSER_USE_AUXILIARY_TO_SET_TENSE_OF_VERB
-				this->extractPastTense(featureArrayTemp[entityIndexOfVerb], entityIndexOfAuxiliary, translatorVariables->currentSentenceInList->firstFeatureInList, GIAEntityNodeGrammaticalTenseArray, NLPfeatureParser);
+				extractPastTense(featureArrayTemp[entityIndexOfVerb], entityIndexOfAuxiliary, translatorVariables->currentSentenceInList->firstFeatureInList, GIAEntityNodeGrammaticalTenseArray, NLPfeatureParser);
 				#endif
 
 			}
@@ -520,10 +520,10 @@ void GIAtranslatorDefineGrammarClass::fillGrammaticalArraysStanford(GIAtranslato
 				(*translatorVariables->GIAfeatureTempEntityNodeArray)[entityIndexOfCopula]->disabled = true;
 
 				#ifdef GIA_ADVANCED_REFERENCING_FIND_SUBJ_OBJ_RELATION_MATCHING_AUXILIARY_AND_SET_NOT_SAME_REFERENCE_SET
-				this->findSubjObjRelationMatchingAuxiliaryAndSetNotSameReferenceSet(translatorVariables->currentSentenceInList, entityIndexOfNoun, &entityNameOfNoun);
+				findSubjObjRelationMatchingAuxiliaryAndSetNotSameReferenceSet(translatorVariables->currentSentenceInList, entityIndexOfNoun, &entityNameOfNoun);
 				#endif
 
-				this->extractPastTense((*translatorVariables->featureArrayTemp)[entityIndexOfNoun], entityIndexOfCopula, translatorVariables->currentSentenceInList->firstFeatureInList, translatorVariables->NLPfeatureParser);
+				extractPastTense((*translatorVariables->featureArrayTemp)[entityIndexOfNoun], entityIndexOfCopula, translatorVariables->currentSentenceInList->firstFeatureInList, translatorVariables->NLPfeatureParser);
 
 			}
 
@@ -574,7 +574,7 @@ void GIAtranslatorDefineGrammarClass::fillGrammaticalArraysStanford(GIAtranslato
 					#ifdef STANFORD_CORENLP_POS_TAGS_BUG_GIA_WORKAROUND_SET_DETERMINER_DEPENDENT_TO_NOUN
 					string stanfordPOS = FEATURE_POS_TAG_NOUN_NN;
 					(*translatorVariables->featureArrayTemp)[entityIndexOfNoun]->stanfordPOS = stanfordPOS;
-					this->extractPOSrelatedGrammaticalInformationStanford((*translatorVariables->featureArrayTemp)[entityIndexOfNoun], GIA_PREPROCESSOR_USE_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE);			//regenerate grammatical information for feature - it should identify the verb as an infinitive/imperative based on previousWordInSentenceIsTo
+					extractPOSrelatedGrammaticalInformationStanford((*translatorVariables->featureArrayTemp)[entityIndexOfNoun], GIA_PREPROCESSOR_USE_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE);			//regenerate grammatical information for feature - it should identify the verb as an infinitive/imperative based on previousWordInSentenceIsTo
 					//applyPOSrelatedGrammaticalInfoToEntity((*translatorVariables->GIAfeatureTempEntityNodeArray)[entityIndexOfNoun], (*translatorVariables->featureArrayTemp)[entityIndexOfNoun]);	//regenerate grammatical information for entity - not required
 					#endif
 				}
@@ -613,7 +613,7 @@ void GIAtranslatorDefineGrammarClass::extractPastTense(GIAfeature* featureWithEn
 	{
 		if(currentFeatureInList->entityIndex == entityIndexContainingTenseIndication)
 		{
-			this->extractPastTenseFromPOStag(&(currentFeatureInList->stanfordPOS), featureWithEntityIndex);
+			extractPastTenseFromPOStag(&(currentFeatureInList->stanfordPOS), featureWithEntityIndex);
 		}
 		currentFeatureInList = currentFeatureInList->next;
 	}
@@ -658,7 +658,7 @@ void GIAtranslatorDefineGrammarClass::extractGrammaticalInformationStanford(GIAf
 
 		int currentFeatureIndex = currentFeatureInList->entityIndex;
 
-		this->extractPOSrelatedGrammaticalInformationStanford(currentFeatureInList, GIA_PREPROCESSOR_USE_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE);
+		extractPOSrelatedGrammaticalInformationStanford(currentFeatureInList, GIA_PREPROCESSOR_USE_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE);
 
 		if(NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP)
 		{
@@ -699,7 +699,7 @@ void GIAtranslatorDefineGrammarClass::extractGrammaticalInformationStanford(GIAf
 
 void GIAtranslatorDefineGrammarClass::extractPOSrelatedGrammaticalInformationStanford(GIAfeature* currentFeature, const bool grammaticallyStrict)
 {
-	this->extractGrammaticalInformationFromStanfordPOStag(&(currentFeature->stanfordPOS), currentFeature);
+	extractGrammaticalInformationFromStanfordPOStag(&(currentFeature->stanfordPOS), currentFeature);
 	GIAtranslatorOperations.convertStanfordPOStagToRelexPOStypeAndWordnetWordType(&(currentFeature->stanfordPOS), &(currentFeature->type), &(currentFeature->grammaticalWordType), grammaticallyStrict);
 }
 
@@ -708,7 +708,7 @@ void GIAtranslatorDefineGrammarClass::extractGrammaticalInformationFromStanfordP
 {
 	//past tense extraction;
 	//this is required for past tense verbs without auxillaries; eg He ran fast.     nsubj ( ran-2 , He-1 ), advmod ( ran-2 , fast-3 ) .
-	this->extractPastTenseFromPOStag(POStag, feature);
+	extractPastTenseFromPOStag(POStag, feature);
 
 
 	//progressives tense extraction;
@@ -905,7 +905,7 @@ void GIAtranslatorDefineGrammarClass::applyGrammaticalInfoToAllEntities(GIAtrans
 
 				entity->hasAssociatedTime = currentFeatureInList->grammaticalIsDateOrTime;
 
-				this->applyPOSrelatedGrammaticalInfoToEntity(entity, currentFeatureInList);
+				applyPOSrelatedGrammaticalInfoToEntity(entity, currentFeatureInList);
 
 				entity->grammaticalDefiniteTemp = currentFeatureInList->grammaticalIsDefinite;
 				entity->grammaticalIndefinitePluralTemp = currentFeatureInList->grammaticalIsIndefinitePlural;

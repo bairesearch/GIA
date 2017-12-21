@@ -25,7 +25,7 @@
  * File Name: GIAdraw.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e6c 16-December-2017
+ * Project Version: 3e7a 16-December-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Draws GIA nodes in GIA network/tree
  *
@@ -70,7 +70,7 @@ bool GIAdrawClass::printGIAnetworkNodesToSVGstring(GIAtranslatorVariablesClass* 
 	}
 	
 	LDreference* firstReferenceInPrintList = NULL;
-	this->determineBasicPrintPositionsOfAllNodes(translatorVariables->entityNodesActiveListComplete, &drawVariables, firstReferenceInPrintList, firstTagInSVGFile);
+	determineBasicPrintPositionsOfAllNodes(translatorVariables->entityNodesActiveListComplete, &drawVariables, firstReferenceInPrintList, firstTagInSVGFile);
 	//cout << "firstTagInSVGFile = " << firstTagInSVGFile->name << endl;
 	
 	const int viewBoxMinX = -GIA_DRAW_SVG_VIEWBOX_MIN_X_OFFSET_SINGLE_SENTENCE;
@@ -111,7 +111,7 @@ bool GIAdrawClass::printGIAnetworkNodes(GIAtranslatorVariablesClass* translatorV
 	}
 
 	LDreference* firstReferenceInPrintList = new LDreference();
-	this->determineBasicPrintPositionsOfAllNodes(translatorVariables->entityNodesActiveListComplete, &drawVariables, firstReferenceInPrintList, firstTagInSVGFile);
+	determineBasicPrintPositionsOfAllNodes(translatorVariables->entityNodesActiveListComplete, &drawVariables, firstReferenceInPrintList, firstTagInSVGFile);
 	
 	if(useOutputSVGfile)
 	{
@@ -207,7 +207,7 @@ bool GIAdrawClass::determineBasicPrintPositionsOfAllNodes(vector<GIAentityNode*>
 {
 	bool result = true;
 	
-	this->initiateMaxXAtParticularY();
+	initiateMaxXAtParticularY();
 	int xInitial = DRAW_X_INITIAL_OFFSET;
 	int yInitial = DRAW_Y_INITIAL_OFFSET;
 	maxXAtAParticularY[yInitial] = xInitial;
@@ -231,13 +231,13 @@ bool GIAdrawClass::determineBasicPrintPositionsOfAllNodes(vector<GIAentityNode*>
 			{
 				GIAentityNode* entityNode = *entityIter;
 
-				//this->initiateMaxXAtParticularY();
+				//initiateMaxXAtParticularY();
 				xInitial = maxXAtAParticularY[yInitial];
 				//xInitial = sentenceIndex*100;	//compact
 
 				bool thisIsDefinitionAndPreviousNodeWasInstance = false;
 
-				this->initialiseEntityNodeForPrinting(entityNode, yInitial, xInitial, drawVariables, &firstReferenceInPrintList, &firstTagInSVGFile, sentenceIndex, thisIsDefinitionAndPreviousNodeWasInstance);
+				initialiseEntityNodeForPrinting(entityNode, yInitial, xInitial, drawVariables, &firstReferenceInPrintList, &firstTagInSVGFile, sentenceIndex, thisIsDefinitionAndPreviousNodeWasInstance);
 			}
 		}
 	}
@@ -253,13 +253,13 @@ bool GIAdrawClass::determineBasicPrintPositionsOfAllNodes(vector<GIAentityNode*>
 			{
 			#endif
 			#endif
-				//this->initiateMaxXAtParticularY();
+				//initiateMaxXAtParticularY();
 				xInitial = maxXAtAParticularY[yInitial];
 				//xInitial = sentenceIndex*100;	//compact
 				
 				bool thisIsDefinitionAndPreviousNodeWasInstance = false;
 	
-				this->initialiseEntityNodeForPrinting(entityNode, yInitial, xInitial, drawVariables, &firstReferenceInPrintList, &firstTagInSVGFile, drawVariables->sentenceToPrint, thisIsDefinitionAndPreviousNodeWasInstance);
+				initialiseEntityNodeForPrinting(entityNode, yInitial, xInitial, drawVariables, &firstReferenceInPrintList, &firstTagInSVGFile, drawVariables->sentenceToPrint, thisIsDefinitionAndPreviousNodeWasInstance);
 			
 			#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX
 			#ifdef GIA_RECORD_WAS_REFERENCE_INFORMATION
@@ -310,7 +310,7 @@ bool GIAdrawClass::initialiseEntityConnectionForPrinting(vec* pos1, GIAentityCon
 
 		//connectionName = connectionName + convertIntToString(entityConnection->sentenceIndexTemp);
 
-		this->createReferenceConnectionWithText(pos1, &pos2, entityConnectionColour, currentReferenceInPrintList, currentTag, connectionName, drawVariables);
+		createReferenceConnectionWithText(pos1, &pos2, entityConnectionColour, currentReferenceInPrintList, currentTag, connectionName, drawVariables);
 	}
 
 	return result;
@@ -391,7 +391,7 @@ bool GIAdrawClass::initialiseEntityNodeForPrinting(GIAentityNode* entityNode, in
 						thisIsDefinitionAndPreviousNodeWasInstance = true;
 					}
 					#endif
-					this->initialiseEntityNodeForPrinting(connection->entity, y+q, x+r, drawVariables, currentReferenceInPrintList, currentTag, sentenceIndex, thisIsDefinitionAndPreviousNodeWasInstance);
+					initialiseEntityNodeForPrinting(connection->entity, y+q, x+r, drawVariables, currentReferenceInPrintList, currentTag, sentenceIndex, thisIsDefinitionAndPreviousNodeWasInstance);
 
 					bool pass = true;
 					int entityConnectionColour = entityVectorConnectionDrawColourNameArray[connectionType];
@@ -458,7 +458,7 @@ bool GIAdrawClass::initialiseEntityNodeForPrinting(GIAentityNode* entityNode, in
 							}
 							#endif
 							
-							this->initialiseEntityConnectionForPrinting(&pos1, connection, drawVariables, connectionName, entityConnectionColour, currentReferenceInPrintList, currentTag);
+							initialiseEntityConnectionForPrinting(&pos1, connection, drawVariables, connectionName, entityConnectionColour, currentReferenceInPrintList, currentTag);
 						}
 					}
 
@@ -472,7 +472,7 @@ bool GIAdrawClass::initialiseEntityNodeForPrinting(GIAentityNode* entityNode, in
 			{
 				int timeConditionNodePrintX = x+r;
 				int timeConditionNodePrintY = y+q;
-				this->initialiseTimeConditionNodeForPrinting(entityNode->timeConditionNode, timeConditionNodePrintY, timeConditionNodePrintX, drawVariables, currentReferenceInPrintList, currentTag);
+				initialiseTimeConditionNodeForPrinting(entityNode->timeConditionNode, timeConditionNodePrintY, timeConditionNodePrintX, drawVariables, currentReferenceInPrintList, currentTag);
 
 				q = q+GIA_DRAW_Y_SPACE_BETWEEN_CONDITIONS_OF_SAME_NODE;
 
@@ -481,7 +481,7 @@ bool GIAdrawClass::initialiseEntityNodeForPrinting(GIAentityNode* entityNode, in
 				pos2.x = timeConditionNodePrintX;
 				pos2.y = timeConditionNodePrintY;
 				pos2.z = GIA_DRAW_CONNECTION_Z;
-				this->createReferenceConnectionWithText(&pos1, &pos2, GIA_DRAW_CONDITION_TIME_CONNECTION_COLOUR, currentReferenceInPrintList, currentTag, "time", drawVariables);
+				createReferenceConnectionWithText(&pos1, &pos2, GIA_DRAW_CONDITION_TIME_CONNECTION_COLOUR, currentReferenceInPrintList, currentTag, "time", drawVariables);
 
 			}
 
@@ -596,7 +596,7 @@ bool GIAdrawClass::initialiseEntityNodeForPrinting(GIAentityNode* entityNode, in
 
 				//nameOfBox = nameOfBox + SHAREDvars.convertIntToString(entityNode->grammaticalDefiniteTemp);
 
-				this->createBox(&pos1, GIA_DRAW_ACTION_NODE_WIDTH, GIA_DRAW_ACTION_NODE_HEIGHT, entityColour, &nameOfBox, currentReferenceInPrintList, currentTag, boxThickness, drawVariables);
+				createBox(&pos1, GIA_DRAW_ACTION_NODE_WIDTH, GIA_DRAW_ACTION_NODE_HEIGHT, entityColour, &nameOfBox, currentReferenceInPrintList, currentTag, boxThickness, drawVariables);
 			}
 
 
@@ -639,7 +639,7 @@ bool GIAdrawClass::initialiseTimeConditionNodeForPrinting(GIAtimeConditionNode* 
 	{
 		boxThickness = GIA_DRAW_THICKNESS_THICK;
 	}
-	this->createBox(&pos1, GIA_DRAW_CONDITION_NODE_WIDTH, GIA_DRAW_CONDITION_NODE_HEIGHT, GIA_DRAW_CONDITION_TIME_NODE_COLOUR, &(timeConditionNode->conditionName), currentReferenceInPrintList, currentTag, boxThickness, drawVariables);
+	createBox(&pos1, GIA_DRAW_CONDITION_NODE_WIDTH, GIA_DRAW_CONDITION_NODE_HEIGHT, GIA_DRAW_CONDITION_TIME_NODE_COLOUR, &(timeConditionNode->conditionName), currentReferenceInPrintList, currentTag, boxThickness, drawVariables);
 
 	/*
 	int timeConditionNodeColour = GIA_DRAW_CONDITION_TIME_NODE_COLOUR;
@@ -647,7 +647,7 @@ bool GIAdrawClass::initialiseTimeConditionNodeForPrinting(GIAtimeConditionNode* 
 	{
 		timeConditionNodeColour = GIA_DRAW_CONDITION_TIME_STATE_NODE_COLOUR;
 	}
-	this->createBox(currentReferenceInPrintList, &pos1, GIA_DRAW_CONDITION_NODE_WIDTH, GIA_DRAW_CONDITION_NODE_HEIGHT, timeConditionNodeColour, &(timeConditionNode->conditionName), currentReferenceInPrintList, currentTag, GIA_DRAW_THICKNESS_NORMAL, drawVariables);
+	createBox(currentReferenceInPrintList, &pos1, GIA_DRAW_CONDITION_NODE_WIDTH, GIA_DRAW_CONDITION_NODE_HEIGHT, timeConditionNodeColour, &(timeConditionNode->conditionName), currentReferenceInPrintList, currentTag, GIA_DRAW_THICKNESS_NORMAL, drawVariables);
 	*/
 
 
@@ -659,7 +659,7 @@ bool GIAdrawClass::createReferenceConnectionWithText(vec* pos1, vec* pos2, int c
 {
 	bool result = true;
 	
-	this->createReferenceConnection(pos1, pos2, colour, currentReferenceInPrintList, currentTag, drawVariables);
+	createReferenceConnection(pos1, pos2, colour, currentReferenceInPrintList, currentTag, drawVariables);
 
 	if(GIA_DRAW_USE_CONNECTION_TYPE_NAME_TEXT)
 	{

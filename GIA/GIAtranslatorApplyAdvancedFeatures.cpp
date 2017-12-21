@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorApplyAdvancedFeatures.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e6c 16-December-2017
+ * Project Version: 3e7a 16-December-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -40,16 +40,16 @@
 
 void GIAtranslatorApplyAdvancedFeaturesClass::applyAdvancedFeatures(GIAtranslatorVariablesClass* translatorVariables)
 {
-	this->extractDates(translatorVariables);
+	extractDates(translatorVariables);
 
-	this->extractQuantities(translatorVariables);
+	extractQuantities(translatorVariables);
 
 	#ifdef GIA_SPECIFIC_ACTION_NETWORK_INDEXES
-	this->defineActionConcepts2(translatorVariables);
+	defineActionConcepts2(translatorVariables);
 	#endif
 
 	#ifdef GIA_CREATE_NEW_CONCEPT_FOR_EVERY_REFERENCE_TO_A_CONCEPT
-	this->updateConceptDesignationBasedPropertyOwnerContext(translatorVariables);
+	updateConceptDesignationBasedPropertyOwnerContext(translatorVariables);
 	#endif
 }
 
@@ -61,13 +61,13 @@ void GIAtranslatorApplyAdvancedFeaturesClass::extractDates(GIAtranslatorVariable
 		/*
 		eg The battle happened on March 11th, 1973.  _date_day(December, 3rd) /_date_year(December, 1990)
 		*/
-		this->extractDatesRelex(translatorVariables);
+		extractDatesRelex(translatorVariables);
 	}
 	#endif
 	#ifdef GIA_STANFORD_CORENLP
 	if(translatorVariables->NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP)
 	{
-		this->extractDatesStanfordCoreNLP(translatorVariables);
+		extractDatesStanfordCoreNLP(translatorVariables);
 	}
 	#endif
 }
@@ -85,7 +85,7 @@ void GIAtranslatorApplyAdvancedFeaturesClass::extractDatesStanfordCoreNLP(GIAtra
 				#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 				if(currentEntity->hasAssociatedTime)
 				{
-					this->addTimeToSubstance(currentEntity);	//note will overwrite any previous time condition nodes (eg tenseOnlyTimeCondition) - but these should not exist in the case of hasAssociatedTime
+					addTimeToSubstance(currentEntity);	//note will overwrite any previous time condition nodes (eg tenseOnlyTimeCondition) - but these should not exist in the case of hasAssociatedTime
 				#else
 				if(currentEntity->conditionType == CONDITION_NODE_TYPE_TIME)
 				{
@@ -151,7 +151,7 @@ void GIAtranslatorApplyAdvancedFeaturesClass::extractDatesRelex(GIAtranslatorVar
 			#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK
 			if(currentEntity->hasAssociatedTime)
 			{
-				this->addTimeToSubstance(currentEntity);	//note will overwrite any previous time condition nodes (eg tenseOnlyTimeCondition) - but these should not exist in the case of hasAssociatedTime
+				addTimeToSubstance(currentEntity);	//note will overwrite any previous time condition nodes (eg tenseOnlyTimeCondition) - but these should not exist in the case of hasAssociatedTime
 			#else
 			if(currentEntity->conditionType == CONDITION_NODE_TYPE_TIME)
 			{
@@ -310,14 +310,14 @@ void GIAtranslatorApplyAdvancedFeaturesClass::extractQuantities(GIAtranslatorVar
 	#ifdef GIA_RELEX
 	if(translatorVariables->NLPfeatureParser == GIA_NLP_PARSER_RELEX)
 	{
-		this->extractQuantitiesRelex(translatorVariables);
+		extractQuantitiesRelex(translatorVariables);
 	}
 	#endif
 	#ifdef GIA_STANFORD_CORENLP
 	//NB GIA could support quantity extraction with Stanford Parser only (ie without Stanford CoreNLP as the NLPfeatureParser) but this has not been implemented
 	if(translatorVariables->NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP)
 	{
-		this->extractQuantitiesStanfordCoreNLP(translatorVariables);
+		extractQuantitiesStanfordCoreNLP(translatorVariables);
 	}
 	#endif
 }

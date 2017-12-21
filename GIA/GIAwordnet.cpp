@@ -25,7 +25,7 @@
  * File Name: GIAwordnet.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e6c 16-December-2017
+ * Project Version: 3e7a 16-December-2017
  * Requirements: requires wordnet libraries to be installed
  * Description: searches wordnet database and parses wordnet output
  *
@@ -59,7 +59,7 @@ void GIAwordnetClass::initialiseWordNet(const int newSynonymnDetectionStatus)
 	bool wordIsFound = false;
 	string listOfSynonyms[WORDNET_FINDTHEINFO_OUTPUT_MAX_NUMBER_SYNONYMS];
 	int wordNetPOS = ADJ;	//NOUN	VERB
-	bool synFound = this->checkIfWordIsContainedWithinAnotherWordsSynsets(&wordExample, &wordExample2, wordNetPOS);
+	bool synFound = checkIfWordIsContainedWithinAnotherWordsSynsets(&wordExample, &wordExample2, wordNetPOS);
 	cerr << "wordExample = " << wordExample << endl;
 	cerr << "wordExample2 = " << wordExample2 << endl;
 	cerr << "synFound = " << synFound << endl;
@@ -131,13 +131,13 @@ bool GIAwordnetClass::checkIfWordIsContainedWithinOtherWordsSynsetsOrViceVersa(s
 
 
 
-	if(this->checkIfWordIsContainedWithinAnotherWordsSynsets(word, otherWord, wordNetPOS))
+	if(checkIfWordIsContainedWithinAnotherWordsSynsets(word, otherWord, wordNetPOS))
 	{
 		entityNamesAreSynonymous = true;
 	}
 
 
-	if(this->checkIfWordIsContainedWithinAnotherWordsSynsets(otherWord, word, wordNetPOS))
+	if(checkIfWordIsContainedWithinAnotherWordsSynsets(otherWord, word, wordNetPOS))
 	{
 		entityNamesAreSynonymous = true;
 	}
@@ -157,13 +157,13 @@ bool GIAwordnetClass::checkIfWordIsContainedWithinAnotherWordsSynsets(const stri
 		bool wordIsFound = false;
 
 
-		SynsetPtr firstSenseInList = this->findSynsets(word, &wordIsFound, wordNetPOS, similarityType);
+		SynsetPtr firstSenseInList = findSynsets(word, &wordIsFound, wordNetPOS, similarityType);
 
 		if(wordIsFound)
 		{
 			int irrelevantNotUsed = 0;
 			bool senseOutputWithHighestTagsPassedNewSynsetMustFree = false;
-			SynsetPtr senseOutputWithHighestTags = this->checkIfSynsetListContainsSynonymousEntityNamesAndRecordMostPopularSynset(firstSenseInList, wordNetPOS, &irrelevantNotUsed, &entityNamesAreSynonymous, word, otherWord, true, &senseOutputWithHighestTagsPassedNewSynsetMustFree);
+			SynsetPtr senseOutputWithHighestTags = checkIfSynsetListContainsSynonymousEntityNamesAndRecordMostPopularSynset(firstSenseInList, wordNetPOS, &irrelevantNotUsed, &entityNamesAreSynonymous, word, otherWord, true, &senseOutputWithHighestTagsPassedNewSynsetMustFree);
 			if(senseOutputWithHighestTagsPassedNewSynsetMustFree)
 			{
 				free_synset(senseOutputWithHighestTags);	//Free a synset	//CHECK THIS; senseOutputWithHighestTags may not have been allocated as yet (do not assume free_synset safe to dealloc a NULL SynsetPtr)
@@ -186,7 +186,7 @@ SynsetPtr GIAwordnetClass::findMostPopularSynsets(const string* word, bool* word
 	for(int similarityTypeIndex = 0; similarityTypeIndex<WORDNET_DATA_ENTRY_POINTERS_INDICATING_SIMILAR_SYNSETS_NUMBER_OF_TYPES; similarityTypeIndex++)
 	{
 		int similarityType = wordnetDataEntryPointersIndicatingSimilarSynsetsArray[similarityTypeIndex];
-		SynsetPtr firstSenseInList = this->findSynsets(word, wordIsFound, wordNetPOS, similarityType);
+		SynsetPtr firstSenseInList = findSynsets(word, wordIsFound, wordNetPOS, similarityType);
 
 		if(*wordIsFound)
 		{
@@ -194,7 +194,7 @@ SynsetPtr GIAwordnetClass::findMostPopularSynsets(const string* word, bool* word
 			bool entityNamesAreSynonymousIrrelevantNotUsed = false;
 			string otherWordIrrelevantNotUsed = "";
 			bool senseOutputWithHighestTagsPassedNewSynsetMustFree = false;
-			SynsetPtr senseOutputWithHighestTags = this->checkIfSynsetListContainsSynonymousEntityNamesAndRecordMostPopularSynset(firstSenseInList, wordNetPOS, &maximumNumberOfTags, &entityNamesAreSynonymousIrrelevantNotUsed, word, &otherWordIrrelevantNotUsed, false, &senseOutputWithHighestTagsPassedNewSynsetMustFree);
+			SynsetPtr senseOutputWithHighestTags = checkIfSynsetListContainsSynonymousEntityNamesAndRecordMostPopularSynset(firstSenseInList, wordNetPOS, &maximumNumberOfTags, &entityNamesAreSynonymousIrrelevantNotUsed, word, &otherWordIrrelevantNotUsed, false, &senseOutputWithHighestTagsPassedNewSynsetMustFree);
 
 			if(maximumNumberOfTags > maximumNumberOfTagsAcrossSimilarityTypes)
 			{
@@ -393,7 +393,7 @@ void GIAwordnetClass::findSynonymsOLD(const string word, bool* wordIsFound, stri
 	int charIndex = 0;
 	int lineIndex = 0;
 
-	if(!this->recordUntilCharacterOrEscapeCharacterOLD(charIndex, output, &charIndex, &numberOfSensesString, CHAR_SPACE, CHAR_END_OF_STRING))	//wait till end of header
+	if(!recordUntilCharacterOrEscapeCharacterOLD(charIndex, output, &charIndex, &numberOfSensesString, CHAR_SPACE, CHAR_END_OF_STRING))	//wait till end of header
 	{
 		cerr << "findSynonyms error: number of senses string not found" << endl;
 		cerr << "charIndex = " << charIndex << endl;
@@ -404,7 +404,7 @@ void GIAwordnetClass::findSynonymsOLD(const string word, bool* wordIsFound, stri
 	//now convert numberOfSensesString to number (this becomes the number of 'senses')
 	int numberSenses = SHAREDvars.convertStringToInt(numberOfSensesString);
 
-	if(!this->recordUntilCharacterOrEscapeCharacterOLD(charIndex, output, &charIndex, &lineString, CHAR_NEWLINE, CHAR_END_OF_STRING))	//wait till end of header
+	if(!recordUntilCharacterOrEscapeCharacterOLD(charIndex, output, &charIndex, &lineString, CHAR_NEWLINE, CHAR_END_OF_STRING))	//wait till end of header
 	{
 		cerr << "findSynonyms error: new line not found" << endl;
 		cerr << "charIndex = " << charIndex << endl;
@@ -428,7 +428,7 @@ void GIAwordnetClass::findSynonymsOLD(const string word, bool* wordIsFound, stri
 		charIndex++;
 		lineIndex++;
 
-		if(!this->recordUntilCharacterOrEscapeCharacterOLD(charIndex, output, &charIndex, &lineString, CHAR_NEWLINE, CHAR_END_OF_STRING))	//wait till end of header
+		if(!recordUntilCharacterOrEscapeCharacterOLD(charIndex, output, &charIndex, &lineString, CHAR_NEWLINE, CHAR_END_OF_STRING))	//wait till end of header
 		{
 			cerr << "findSynonyms error: new line not found" << endl;
 			cerr << "charIndex = " << charIndex << endl;
@@ -455,7 +455,7 @@ void GIAwordnetClass::findSynonymsOLD(const string word, bool* wordIsFound, stri
 		{//CHECK THIS; only take the meaning/sense from the most popular/likely sense [Future: need to search context for most relevant sense]
 
 			int synonymnIndex = 0;
-			while(this->recordUntilCharacterOrEscapeCharacterOLD(charIndex, output, &charIndex, &synonymString, CHAR_COMMA, CHAR_SPACE))
+			while(recordUntilCharacterOrEscapeCharacterOLD(charIndex, output, &charIndex, &synonymString, CHAR_COMMA, CHAR_SPACE))
 			{
 				listOfSynonyms[synonymnIndex] = synonymString;
 				synonymnIndex++;
@@ -477,7 +477,7 @@ void GIAwordnetClass::findSynonymsOLD(const string word, bool* wordIsFound, stri
 			numberOfSynonyms = synonymnIndex;
 		}
 
-		if(!this->recordUntilCharacterOrEscapeCharacterOLD(charIndex, output, &charIndex, &lineString, CHAR_NEWLINE, CHAR_END_OF_STRING))	//wait till end of line
+		if(!recordUntilCharacterOrEscapeCharacterOLD(charIndex, output, &charIndex, &lineString, CHAR_NEWLINE, CHAR_END_OF_STRING))	//wait till end of line
 		{
 			cerr << "findSynonyms error: new line not found" << endl;
 			cerr << "charIndex = " << charIndex << endl;

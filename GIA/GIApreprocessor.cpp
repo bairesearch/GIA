@@ -25,7 +25,7 @@
  * File Name: GIApreprocessor.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e6c 16-December-2017
+ * Project Version: 3e7a 16-December-2017
  * Requirements: requires plain text file
  * Description: Logical Condition and Reference Set preprocessor
  *
@@ -885,7 +885,7 @@ bool GIApreprocessorClass::preprocessSentencesForGIA(GIApreprocessorSentence* fi
 	string outputTextContentsForNLP = "";
 	while(currentGIApreprocessorSentenceInList->next != NULL)
 	{
-		//string sentenceContentsOriginalText = this->removePrependingWhiteSpace(sentenceContents);	//only for NLC?
+		//string sentenceContentsOriginalText = removePrependingWhiteSpace(sentenceContents);	//only for NLC?
 		if(!generateGIApreprocessorSentence(currentGIApreprocessorSentenceInList, firstLogicReferenceClassTag))
 		{
 			result = false;

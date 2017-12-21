@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorPOStagger.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e6c 16-December-2017
+ * Project Version: 3e7a 16-December-2017
  * Requirements: requires plain text file
  * Description: preprocessor POS tagger
  *
@@ -341,7 +341,7 @@ bool GIApreprocessorPOStaggerDatabaseClass::DBreadPOSpermutationEstimates(const 
 	...
 	*/
 
-	string referencesFileName = this->DBgenerateFileName(POSambiguityInfoPermutation);
+	string referencesFileName = DBgenerateFileName(POSambiguityInfoPermutation);
 	//now read file
 
 	int numberOfLinesInFile = 0;
@@ -424,13 +424,13 @@ bool GIApreprocessorPOStaggerDatabaseClass::DBwritePOSpermutationEstimate(const 
 		#endif
 		
 		#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_EFFICIENT_OVERWRITE_EXISTENT_REFERENCES_WITH_NEW_NUMBER_OF_INSTANCES
-		string referencesFileName = this->DBgenerateFileName(POSambiguityInfoPermutation);
+		string referencesFileName = DBgenerateFileName(POSambiguityInfoPermutation);
 		SHAREDvars.writeStringListToFile(referencesFileName, &centreWordPOSambiguityInfoList);
 		#endif
 	}
 	
 	#ifndef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_EFFICIENT_OVERWRITE_EXISTENT_REFERENCES_WITH_NEW_NUMBER_OF_INSTANCES
-	string referencesFileName = this->DBgenerateFileName(POSambiguityInfoPermutation);
+	string referencesFileName = DBgenerateFileName(POSambiguityInfoPermutation);
 	SHAREDvars.writeStringListToFile(referencesFileName, &centreWordPOSambiguityInfoList);		//rewrite entire file
 	#endif
 	

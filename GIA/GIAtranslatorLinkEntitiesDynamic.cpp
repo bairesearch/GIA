@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorLinkEntitiesDynamic.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e6c 16-December-2017
+ * Project Version: 3e7a 16-December-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -39,11 +39,11 @@
 void GIAtranslatorLinkEntitiesDynamicClass::linkEntitiesDynamic(GIAtranslatorVariablesClass* translatorVariables)
 {
 	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_PROPERTIES_OR_DEFINITIONS_DYNAMICALLY_LINK_PRENOMINAL_MODIFIERS_OF_NOUNS
-	this->linkEntitiesDynamicPrenominalModifierOfNoun(translatorVariables);
+	linkEntitiesDynamicPrenominalModifierOfNoun(translatorVariables);
 	#endif
 
 	#ifdef GIA_DYNAMICALLY_LINK_FROM_CONDITIONS
-	this->linkEntitiesDynamicFromConditions(translatorVariables);
+	linkEntitiesDynamicFromConditions(translatorVariables);
 	#endif
 }
 
@@ -95,10 +95,10 @@ void GIAtranslatorLinkEntitiesDynamicClass::linkEntitiesDynamicPrenominalModifie
 				//check if chess (dependent) [primary] is a game (governor), or if goal (dependent) has a line (governor) [primary], or if shop (governor) has toy (dependent), or if line (dependent) is in the goal (dependent)
 				bool direction1Found = false;
 				bool direction2Found = false;
-				direction1Found = this->linkEntitiesDynamicPrenominalModifierOfNounDirection(currentRelationInList, translatorVariables, entity1, entity2, entity1Index, entity2Index, relationTypeIndex, true);
+				direction1Found = linkEntitiesDynamicPrenominalModifierOfNounDirection(currentRelationInList, translatorVariables, entity1, entity2, entity1Index, entity2Index, relationTypeIndex, true);
 				if(!direction1Found)
 				{
-					direction2Found = this->linkEntitiesDynamicPrenominalModifierOfNounDirection(currentRelationInList, translatorVariables, entity2, entity1, entity2Index, entity1Index, relationTypeIndex, false);
+					direction2Found = linkEntitiesDynamicPrenominalModifierOfNounDirection(currentRelationInList, translatorVariables, entity2, entity1, entity2Index, entity1Index, relationTypeIndex, false);
 				}
 
 				if(!direction1Found && !direction2Found)
@@ -127,7 +127,7 @@ void GIAtranslatorLinkEntitiesDynamicClass::linkEntitiesDynamicPrenominalModifie
 					//use default linking (property link)
 					bool sameReferenceSet = true;
 
-					this->connectPropertyToEntityFull(translatorVariables, entity1, entity2, entity1Index, entity2Index, sameReferenceSet, true);
+					connectPropertyToEntityFull(translatorVariables, entity1, entity2, entity1Index, entity2Index, sameReferenceSet, true);
 					//OLD: (*translatorVariables->GIAentityNodeArray)[entity2Index] = connectPropertyToEntity(entity1, entity2, sameReferenceSet);
 				}
 			}
@@ -164,7 +164,7 @@ bool GIAtranslatorLinkEntitiesDynamicClass::linkEntitiesDynamicPrenominalModifie
 					if(instanceEntity->entityName == entity1->entityName)
 					{
 						GIAentityNode* targetEntityFound = NULL;
-						if(this->findPreviousRelationship(instanceEntity, entity2, &targetEntityFound, &previousDefinitionRelationshipFound, &previousPropertyRelationshipFound, &previousConditionRelationshipFound))
+						if(findPreviousRelationship(instanceEntity, entity2, &targetEntityFound, &previousDefinitionRelationshipFound, &previousPropertyRelationshipFound, &previousConditionRelationshipFound))
 						{
 							previousRelationshipFound = true;
 							if(previousDefinitionRelationshipFound)
@@ -173,12 +173,12 @@ bool GIAtranslatorLinkEntitiesDynamicClass::linkEntitiesDynamicPrenominalModifie
 								if(((targetEntityFound->entityType == GIA_ENTITY_TYPE_CONCEPT) && (entity2->entityType == GIA_ENTITY_TYPE_CONCEPT)) || (!(targetEntityFound->entityType == GIA_ENTITY_TYPE_CONCEPT) && !(entity2->entityType == GIA_ENTITY_TYPE_CONCEPT)))
 								{
 								#endif
-									this->connectDefinitionToEntityFull(translatorVariables, entity1, entity2, entity1Index, entity2Index, sameReferenceSet);
+									connectDefinitionToEntityFull(translatorVariables, entity1, entity2, entity1Index, entity2Index, sameReferenceSet);
 								#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_PROPERTIES_OR_DEFINITIONS_DYNAMICALLY_LINK_PRENOMINAL_MODIFIERS_OF_NOUNS_SWITCH_DEFINITION_LINKS_IF_NON_MATCHING_CONCEPTS
 								}
 								else
 								{
-									this->connectDefinitionToEntityFull(translatorVariables, entity2, entity1, entity2Index, entity1Index, sameReferenceSet);
+									connectDefinitionToEntityFull(translatorVariables, entity2, entity1, entity2Index, entity1Index, sameReferenceSet);
 								}
 								#endif
 							}
@@ -203,12 +203,12 @@ bool GIAtranslatorLinkEntitiesDynamicClass::linkEntitiesDynamicPrenominalModifie
 								}
 								#endif
 
-								this->connectPropertyToEntityFull(translatorVariables, entity1, entity2, entity1Index, entity2Index, sameReferenceSet, direction);
+								connectPropertyToEntityFull(translatorVariables, entity1, entity2, entity1Index, entity2Index, sameReferenceSet, direction);
 
 							}
 							else if(previousConditionRelationshipFound)
 							{
-								int featureIndexOfPreposition = this->connectConditionToEntityFull(translatorVariables, entity1, entity2, entity1Index, entity2Index, targetEntityFound->entityName, relationTypeIndex, sameReferenceSet);
+								int featureIndexOfPreposition = connectConditionToEntityFull(translatorVariables, entity1, entity2, entity1Index, entity2Index, targetEntityFound->entityName, relationTypeIndex, sameReferenceSet);
 
 								#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_TWOWAY_PREPOSITIONS
 								if(currentRelationInList->relationTwoWay)	//limitation only works when GIA_GENERIC_DEP_REL_INTERP_EXECUTE_FUNCTION_conditionToEntity is called based on a single GIArelation
@@ -335,7 +335,7 @@ void GIAtranslatorLinkEntitiesDynamicClass::linkEntitiesDynamicFromConditions(GI
 											bool previousConditionRelationshipFoundTemp = false;
 											if(instanceEntity->entityName == sourceLocationEntity->entityName)
 											{
-												if(this->findPreviousRelationship(instanceEntity, sourceEntity, &targetEntityFound, &previousDefinitionRelationshipFoundTemp, &previousPropertyRelationshipFoundTemp, &previousConditionRelationshipFoundTemp))
+												if(findPreviousRelationship(instanceEntity, sourceEntity, &targetEntityFound, &previousDefinitionRelationshipFoundTemp, &previousPropertyRelationshipFoundTemp, &previousConditionRelationshipFoundTemp))
 												{
 													if(previousPropertyRelationshipFoundTemp)
 													{
@@ -346,7 +346,7 @@ void GIAtranslatorLinkEntitiesDynamicClass::linkEntitiesDynamicFromConditions(GI
 											}
 											else if(instanceEntity->entityName == sourceEntity->entityName)
 											{
-												if(this->findPreviousRelationship(instanceEntity, sourceLocationEntity, &targetEntityFound, &previousDefinitionRelationshipFoundTemp, &previousPropertyRelationshipFoundTemp, &previousConditionRelationshipFoundTemp))
+												if(findPreviousRelationship(instanceEntity, sourceLocationEntity, &targetEntityFound, &previousDefinitionRelationshipFoundTemp, &previousPropertyRelationshipFoundTemp, &previousConditionRelationshipFoundTemp))
 												{
 													if(previousConditionRelationshipFoundTemp)
 													{
@@ -370,16 +370,16 @@ void GIAtranslatorLinkEntitiesDynamicClass::linkEntitiesDynamicFromConditions(GI
 							{
 
 								bool direction = false;	//always define from condition artificial property parent relationship as a poss relationship (this is done for NLC compatibility; such that NLC will parse the same reference set child entity)
-								int sourceLocationEntityIndex = this->getEntityIndex(translatorVariables, sourceLocationEntity);
-								int sourceEntityIndex = this->getEntityIndex(translatorVariables, sourceEntity);
-								this->connectPropertyToEntityFull(translatorVariables, sourceLocationEntity, sourceEntity, sourceLocationEntityIndex, sourceEntityIndex, sameReferenceSet);
+								int sourceLocationEntityIndex = getEntityIndex(translatorVariables, sourceLocationEntity);
+								int sourceEntityIndex = getEntityIndex(translatorVariables, sourceEntity);
+								connectPropertyToEntityFull(translatorVariables, sourceLocationEntity, sourceEntity, sourceLocationEntityIndex, sourceEntityIndex, sameReferenceSet);
 							}
 							else if(previousConditionRelationshipFound)
 							{
 
-								int sourceLocationEntityIndex = this->getEntityIndex(translatorVariables, sourceLocationEntity);
-								int sourceEntityIndex = this->getEntityIndex(translatorVariables, sourceEntity);
-								this->connectConditionToEntityFull(translatorVariables, sourceEntity, sourceLocationEntity, sourceEntityIndex, sourceLocationEntityIndex, targetEntityFound->entityName, INT_DEFAULT_VALUE, sameReferenceSet);
+								int sourceLocationEntityIndex = getEntityIndex(translatorVariables, sourceLocationEntity);
+								int sourceEntityIndex = getEntityIndex(translatorVariables, sourceEntity);
+								connectConditionToEntityFull(translatorVariables, sourceEntity, sourceLocationEntity, sourceEntityIndex, sourceLocationEntityIndex, targetEntityFound->entityName, INT_DEFAULT_VALUE, sameReferenceSet);
 							}
 						}
 					}

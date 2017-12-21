@@ -25,7 +25,7 @@
  * File Name: GIAnlp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e6c 16-December-2017
+ * Project Version: 3e7a 16-December-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -221,7 +221,7 @@ bool GIAnlpClass::parseNLPparserFile(const string inputTextNLPrelationXMLfileNam
 
 
 	//Parse Features
-	if(!this->parseNLPparserFeaturesFile(inputTextNLPfeatureXMLfileName, isQuery, firstParagraphInList, NLPfeatureParser, &createNewSentences))
+	if(!parseNLPparserFeaturesFile(inputTextNLPfeatureXMLfileName, isQuery, firstParagraphInList, NLPfeatureParser, &createNewSentences))
 	{
 		result = false;
 	}
@@ -230,7 +230,7 @@ bool GIAnlpClass::parseNLPparserFile(const string inputTextNLPrelationXMLfileNam
 	//Parse Relations
 	if(result)
 	{
-		if(!this->parseNLPparserRelationsFile(inputTextNLPrelationXMLfileName, isQuery, firstParagraphInList, NLPdependencyRelationsParser, NLPrelexCompatibilityMode, createNewSentences, false))
+		if(!parseNLPparserRelationsFile(inputTextNLPrelationXMLfileName, isQuery, firstParagraphInList, NLPdependencyRelationsParser, NLPrelexCompatibilityMode, createNewSentences, false))
 		{
 			result = false;
 		}
@@ -251,7 +251,7 @@ bool GIAnlpClass::parseNLPparserFeaturesFile(const string inputTextNLPfeatureXML
 		#else
 		bool NLPrelexCompatibilityMode = false;		//irrelevant (not used) - only used when parsing syntatic dependency relations of a Relex file
 		#endif
-		if(!this->parseRelexFile(inputTextNLPfeatureXMLfileName, isQuery, firstParagraphInList, false, true, NLPrelexCompatibilityMode,* createNewSentences, false))
+		if(!parseRelexFile(inputTextNLPfeatureXMLfileName, isQuery, firstParagraphInList, false, true, NLPrelexCompatibilityMode,* createNewSentences, false))
 		{
 			result = false;
 		}
@@ -261,7 +261,7 @@ bool GIAnlpClass::parseNLPparserFeaturesFile(const string inputTextNLPfeatureXML
 	#ifdef GIA_STANFORD_CORENLP
 	if(NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP)
 	{
-		if(!this->parseStanfordCoreNLPfile(inputTextNLPfeatureXMLfileName, isQuery, firstParagraphInList, false, true,* createNewSentences, false))
+		if(!parseStanfordCoreNLPfile(inputTextNLPfeatureXMLfileName, isQuery, firstParagraphInList, false, true,* createNewSentences, false))
 		{
 			result = false;
 		}
@@ -296,7 +296,7 @@ bool GIAnlpClass::parseNLPparserRelationsFile(const string inputTextNLPrelationX
 	#ifdef GIA_RELEX
 	if(NLPdependencyRelationsParser == GIA_NLP_PARSER_RELEX)
 	{
-		if(!this->parseRelexFile(inputTextNLPrelationXMLfileName, isQuery, firstParagraphInList, true, false, NLPrelexCompatibilityMode, createNewSentences, onlyParseIfCorpusLookupFailed))
+		if(!parseRelexFile(inputTextNLPrelationXMLfileName, isQuery, firstParagraphInList, true, false, NLPrelexCompatibilityMode, createNewSentences, onlyParseIfCorpusLookupFailed))
 		{
 			result = false;
 		}
@@ -305,7 +305,7 @@ bool GIAnlpClass::parseNLPparserRelationsFile(const string inputTextNLPrelationX
 	#ifdef GIA_STANFORD_CORENLP
 	if(NLPdependencyRelationsParser == GIA_NLP_PARSER_STANFORD_CORENLP)
 	{
-		if(!this->parseStanfordCoreNLPfile(inputTextNLPrelationXMLfileName, isQuery, firstParagraphInList, true, false, createNewSentences, onlyParseIfCorpusLookupFailed))
+		if(!parseStanfordCoreNLPfile(inputTextNLPrelationXMLfileName, isQuery, firstParagraphInList, true, false, createNewSentences, onlyParseIfCorpusLookupFailed))
 		{
 			result = false;
 		}
@@ -314,7 +314,7 @@ bool GIAnlpClass::parseNLPparserRelationsFile(const string inputTextNLPrelationX
 	#ifdef GIA_STANFORD_PARSER
 	if(NLPdependencyRelationsParser == GIA_NLP_PARSER_STANFORD_PARSER)
 	{
-		if(!this->parseStanfordParserFile(inputTextNLPrelationXMLfileName, isQuery, firstParagraphInList, createNewSentences, onlyParseIfCorpusLookupFailed))
+		if(!parseStanfordParserFile(inputTextNLPrelationXMLfileName, isQuery, firstParagraphInList, createNewSentences, onlyParseIfCorpusLookupFailed))
 		{
 			result = false;
 		}
@@ -977,7 +977,7 @@ bool GIAnlpClass::parseStanfordParserFile(const string inputTextNLPrelationXMLfi
 
 	GIAsentence* firstSentenceInList = firstParagraphInList->firstSentenceInList;
 	bool parseGIA2file = false;
-	if(!this->parseStanfordParserFile(inputTextNLPrelationXMLfileName, isQuery, firstSentenceInList, createNewSentences, parseGIA2file, onlyParseIfCorpusLookupFailed))
+	if(!parseStanfordParserFile(inputTextNLPrelationXMLfileName, isQuery, firstSentenceInList, createNewSentences, parseGIA2file, onlyParseIfCorpusLookupFailed))
 	{
 		result = false;
 	}
@@ -1031,7 +1031,7 @@ bool GIAnlpClass::parseStanfordParserFile(const string inputTextNLPrelationXMLfi
 						if(!parseGIA2file)
 						{
 							//take into account sentences skipped by Stanford Parser - added 30 June 2012 to disregard (eg large) sentences that have been skipped
-							int numberOfSentencesSkipped = this->countSubstring(currentStanfordParserOutputParagraphString, STANFORD_PARSER_SENTENCE_SKIPPED_TEXT);
+							int numberOfSentencesSkipped = countSubstring(currentStanfordParserOutputParagraphString, STANFORD_PARSER_SENTENCE_SKIPPED_TEXT);
 							for(int i=0; i<numberOfSentencesSkipped; i++)
 							{
 								if(createNewSentences)

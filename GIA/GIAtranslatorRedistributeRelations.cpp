@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorRedistributeRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e6c 16-December-2017
+ * Project Version: 3e7a 16-December-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -62,7 +62,7 @@ void GIAtranslatorRedistributeRelationsClass::redistributeStanfordAndRelexRelati
 			if((*translatorVariables->featureArrayTemp)[governorIndex] != NULL)
 			{
 			#endif
-				if(this->correctVerbPOStagAndLemma(governorEntity, (*translatorVariables->featureArrayTemp)[governorIndex]))
+				if(correctVerbPOStagAndLemma(governorEntity, (*translatorVariables->featureArrayTemp)[governorIndex]))
 				{
 					currentRelationInList->relationGovernor = governorEntity->entityName;
 				}
@@ -71,7 +71,7 @@ void GIAtranslatorRedistributeRelationsClass::redistributeStanfordAndRelexRelati
 			if((*translatorVariables->featureArrayTemp)[dependentIndex] != NULL)
 			{
 			#endif
-				if(this->correctVerbPOStagAndLemma(dependentEntity, (*translatorVariables->featureArrayTemp)[dependentIndex]))
+				if(correctVerbPOStagAndLemma(dependentEntity, (*translatorVariables->featureArrayTemp)[dependentIndex]))
 				{
 					currentRelationInList->relationDependent = dependentEntity->entityName;
 				}

@@ -25,7 +25,7 @@
  * File Name: GIAtranslator.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e6c 16-December-2017
+ * Project Version: 3e7a 16-December-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -67,7 +67,7 @@ bool GIAtranslatorClass::parseNLPparserFileAndCreateSemanticNetworkBasedUponDepe
 		}
 	}
 
-	if(!this->createSemanticNetworkBasedUponDependencyParsedSentences(translatorVariables))
+	if(!createSemanticNetworkBasedUponDependencyParsedSentences(translatorVariables))
 	{
 		result = false;
 	}
@@ -128,7 +128,7 @@ bool GIAtranslatorClass::createSemanticNetworkBasedUponDependencyParsedSentences
 			exit(EXIT_ERROR);
 		}
 		#endif
-		this->convertSentenceListRelationsIntoGIAnetworkNodesBasedUponCodeextensionHeirachy(translatorVariables, firstCodeextensionInHeirachy, codeextensionsList, parseGIA2file);
+		convertSentenceListRelationsIntoGIAnetworkNodesBasedUponCodeextensionHeirachy(translatorVariables, firstCodeextensionInHeirachy, codeextensionsList, parseGIA2file);
 	}
 	else
 	{
@@ -136,12 +136,12 @@ bool GIAtranslatorClass::createSemanticNetworkBasedUponDependencyParsedSentences
 		#ifdef GIA_RELEX_UPDATE_ADD_PARAGRAPH_TAGS
 		if(NLPfeatureParser == GIA_NLP_PARSER_RELEX)
 		{
-			this->convertParagraphSentenceRelationsIntoGIAnetworkNodes(translatorVariables);
+			convertParagraphSentenceRelationsIntoGIAnetworkNodes(translatorVariables);
 		}
 		else
 		{
 		#endif
-			this->convertSentenceListRelationsIntoGIAnetworkNodes(translatorVariables);
+			convertSentenceListRelationsIntoGIAnetworkNodes(translatorVariables);
 		#ifdef GIA_RELEX_UPDATE_ADD_PARAGRAPH_TAGS
 		}
 		#endif
@@ -173,12 +173,12 @@ bool GIAtranslatorClass::convertParagraphSentenceRelationsIntoGIAnetworkNodes(GI
 		GIAsentence* firstSentenceInList = currentParagraphInList->firstSentenceInList;
 		translatorVariables->firstSentenceInList = firstSentenceInList;
 		
-		this->convertSentenceListRelationsIntoGIAnetworkNodes(translatorVariables);
+		convertSentenceListRelationsIntoGIAnetworkNodes(translatorVariables);
 
 		currentParagraphInList = currentParagraphInList->next;
 	}
 
-	this->performGIApostProcessing(translatorVariables);
+	performGIApostProcessing(translatorVariables);
 	
 	return result;
 }
@@ -237,7 +237,7 @@ bool GIAtranslatorClass::convertSentenceListRelationsIntoGIAnetworkNodesBasedUpo
 		while(currentSentenceInArtificialList != NULL);
 
 		//convertSentenceRelationsIntoGIAnetworkNodesWrapper(translatorVariables);		//used to be firstSentenceInList, not firstSentenceInArtificialList
-		this->convertCEsentenceListRelationsIntoGIAnetworkNodes(translatorVariables);
+		convertCEsentenceListRelationsIntoGIAnetworkNodes(translatorVariables);
 	#ifdef GIA_WITH_CE_USE_ALL_CODEEXTENSION_COMBINATIONS
 	}
 	#endif
@@ -254,7 +254,7 @@ bool GIAtranslatorClass::convertCEsentenceListRelationsIntoGIAnetworkNodes(GIAtr
 	{
 		translatorVariables->currentSentence = currentSentenceInList;
 		translatorVariables->sentenceIndex = currentSentenceInList->sentenceIndex;
-		this->convertSentenceRelationsIntoGIAnetworkNodesWrapper(translatorVariables, false);
+		convertSentenceRelationsIntoGIAnetworkNodesWrapper(translatorVariables, false);
 
 		currentSentenceInList = currentSentenceInList->next;
 	}
@@ -273,12 +273,12 @@ bool GIAtranslatorClass::convertSentenceListRelationsIntoGIAnetworkNodes(GIAtran
 	{
 		translatorVariables->currentSentenceInList = currentSentenceInList;
 		translatorVariables->sentenceIndex = currentSentenceInList->sentenceIndex;
-		this->convertSentenceRelationsIntoGIAnetworkNodesWrapper(translatorVariables);
+		convertSentenceRelationsIntoGIAnetworkNodesWrapper(translatorVariables);
 
 		currentSentenceInList = currentSentenceInList->next;
 	}
 
-	this->performGIApostProcessing(translatorVariables);
+	performGIApostProcessing(translatorVariables);
 	
 	return result;
 }
@@ -353,7 +353,7 @@ bool GIAtranslatorClass::convertSentenceRelationsIntoGIAnetworkNodesWrapper(GIAt
 		if(!translatorVariables->parseGIA2file || (translatorVariables->parseGIA2file && !(translatorVariables->currentSentenceInList->semanticParserSuccessful)))
 		{
 			translatorVariablesPrelim.linkPreestablishedReferencesGIA = false;
-			this->convertSentenceSyntacticRelationsIntoGIAnetworkNodes(&translatorVariablesPrelim, NULL);
+			convertSentenceSyntacticRelationsIntoGIAnetworkNodes(&translatorVariablesPrelim, NULL);
 		}
 
 
@@ -395,7 +395,7 @@ bool GIAtranslatorClass::convertSentenceRelationsIntoGIAnetworkNodesWrapper(GIAt
 		if(!translatorVariables->parseGIA2file || (translatorVariables->parseGIA2file && !(translatorVariables->currentSentenceInList->semanticParserSuccessful)))
 		{
 			translatorVariables->linkPreestablishedReferencesGIA = true;
-			this->convertSentenceSyntacticRelationsIntoGIAnetworkNodes(translatorVariables, firstGIAcoreferenceInList);
+			convertSentenceSyntacticRelationsIntoGIAnetworkNodes(translatorVariables, firstGIAcoreferenceInList);
 		}
 
 		//clear temporary variables;
@@ -424,7 +424,7 @@ bool GIAtranslatorClass::convertSentenceRelationsIntoGIAnetworkNodesWrapper(GIAt
 		if(!translatorVariables->parseGIA2file || (translatorVariables->parseGIA2file && !(translatorVariables->currentSentenceInList->semanticParserSuccessful)))
 		{
 			translatorVariables->linkPreestablishedReferencesGIA = false;
-			this->convertSentenceSyntacticRelationsIntoGIAnetworkNodes(translatorVariables, NULL);
+			convertSentenceSyntacticRelationsIntoGIAnetworkNodes(translatorVariables, NULL);
 		}
 	#ifdef GIA_ADVANCED_REFERENCING
 	}
@@ -531,7 +531,7 @@ bool GIAtranslatorClass::convertSentenceSyntacticRelationsIntoGIAnetworkNodes(GI
 	translatorVariables->GIAentityNodeArray = &GIAentityNodeArray;
 
 	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_PREPOSITIONS
-	this->invertOrDuplicateConditionsIfRequired(translatorVariables);
+	invertOrDuplicateConditionsIfRequired(translatorVariables);
 	#endif
 
 	#ifdef GIA_BOT_SWITCH_FIRST_AND_SECOND_PERSON
@@ -543,7 +543,7 @@ bool GIAtranslatorClass::convertSentenceSyntacticRelationsIntoGIAnetworkNodes(GI
 
 	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES
 	translatorVariables->GIAentityNodeArray = &GIAnetworkIndexNodeArray;	//required by createParentsOfSubclassEntities 
-	this->createParentsOfSubclassEntities(translatorVariables);
+	createParentsOfSubclassEntities(translatorVariables);
 	translatorVariables->GIAentityNodeArray = &GIAentityNodeArray;
 	#endif
 
@@ -601,7 +601,7 @@ bool GIAtranslatorClass::convertSentenceSyntacticRelationsIntoGIAnetworkNodes(GI
 #endif
 
 	//transfer disabled substances across execution#1 [this is required since GIAtranslatorRedistributeRelationsStanford operations are now done on temporary entity nodes GIAfeatureTempEntityNodeArray instead of networkIndex entity nodes {whose values would have been automatically transferred to their instances upon creation}...]
-	this->disableNetworkIndexEntitiesBasedOnFeatureTempEntityNodeArray(translatorVariables);
+	disableNetworkIndexEntitiesBasedOnFeatureTempEntityNodeArray(translatorVariables);
 
 	#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES	// or GIA_GENERIC_ENTITY_INTERPRETATION
  	//this is required as GIAtranslatorDefineSubstances.cpp now relies on entity grammar values rather than featureArrayTemp
@@ -622,7 +622,7 @@ bool GIAtranslatorClass::convertSentenceSyntacticRelationsIntoGIAnetworkNodes(GI
 	GIAtranslatorDefineReferencing.identifyComparisonVariableAlternateMethod(translatorVariables);
 
 	//transfer disabled substances across execution#2 [this is required since GIAtranslatorRedistributeRelationsStanford operations are now done on temporary entity nodes GIAfeatureTempEntityNodeArray instead of networkIndex entity nodes {whose values would have been automatically transferred to their instances upon creation}...]
-	this->disableEntitiesBasedOnFeatureTempEntityNodeArray(translatorVariables);
+	disableEntitiesBasedOnFeatureTempEntityNodeArray(translatorVariables);
 
 	#ifdef GIA_TRANSLATOR_XML_INTERPRETATION
 	GIAtranslatorRules.applyGIATranslatorGenericXMLfunctions("GIAtranslatorLinkEntities", translatorVariables);
@@ -630,10 +630,10 @@ bool GIAtranslatorClass::convertSentenceSyntacticRelationsIntoGIAnetworkNodes(GI
 		
 	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES
 	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES_ENABLE_INCONSISTENT_REFERENCING
-	this->createAdditionalSubclassEntities(translatorVariables);
+	createAdditionalSubclassEntities(translatorVariables);
 	#endif
 	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES_DETECT_USER_DECLARED_SUBCLASS_ENTITIES
-	this->detectUserDeclaredSubclassEntities(translatorVariables);
+	detectUserDeclaredSubclassEntities(translatorVariables);
 	#endif
 	#endif
 
@@ -943,11 +943,11 @@ void GIAtranslatorClass::createParentsOfSubclassEntities(GIAtranslatorVariablesC
 					parentClassNetworkIndexEntity->entityIndexTemp = GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES_ARTIFICAL_ENTITY_INDEX;	//there is no entity index associated with the artifically added subclass parent networkIndex
 					parentClassNetworkIndexEntity->sentenceIndexTemp = subclassNetworkIndexEntity->sentenceIndexTemp;
 
-					this->linkSubclassEntitiesWithParentClassEntities(subclassNetworkIndexEntity, parentClassNetworkIndexEntity, false, false, translatorVariables);
+					linkSubclassEntitiesWithParentClassEntities(subclassNetworkIndexEntity, parentClassNetworkIndexEntity, false, false, translatorVariables);
 				}
 				else
 				{
-					this->linkSubclassEntitiesWithParentClassEntities(subclassNetworkIndexEntity, parentClassNetworkIndexEntity, false, true, translatorVariables);
+					linkSubclassEntitiesWithParentClassEntities(subclassNetworkIndexEntity, parentClassNetworkIndexEntity, false, true, translatorVariables);
 				}
 			}
 		}
@@ -1009,7 +1009,7 @@ void GIAtranslatorClass::createAdditionalSubclassEntities(GIAtranslatorVariables
 							subClassNetworkIndexEntity->sentenceIndexTemp = entity->sentenceIndexTemp;
 
 							GIAentityNode* definitionNetworkIndexEntity = GIAtranslatorOperations.getPrimaryNetworkIndexNodeDefiningInstance(definitionRelationshipObjectEntity);
-							this->linkSubclassEntitiesWithParentClassEntities(definitionNetworkIndexEntity, subClassNetworkIndexEntity, false, false, translatorVariables);	//links xenomorph concept with xenomorph_bat concept
+							linkSubclassEntitiesWithParentClassEntities(definitionNetworkIndexEntity, subClassNetworkIndexEntity, false, false, translatorVariables);	//links xenomorph concept with xenomorph_bat concept
 
 							/* //changed 2m7a
 							bool sameReferenceSet = false;	//this is required for dreamModeLinkSpecificConceptsAndActions
@@ -1145,7 +1145,7 @@ bool GIAtranslatorClass::performGIApostProcessing(GIAtranslatorVariablesClass* t
 	#endif
 
 	#ifdef GIA_TRANSLATOR_DREAM_MODE_LINK_SPECIFIC_CONCEPTS_AND_ACTIONS
-	this->dreamModeLinkSpecificConceptsAndActions(translatorVariables);
+	dreamModeLinkSpecificConceptsAndActions(translatorVariables);
 	#endif
 		
 	return result;
@@ -1157,7 +1157,7 @@ void GIAtranslatorClass::dreamModeLinkSpecificConceptsAndActions(GIAtranslatorVa
 	GIAtranslatorDefineReferencing.identifyReferenceSetsSpecificConceptsAndLinkWithConcepts(translatorVariables);
 
 	#ifdef GIA_TRANSLATOR_DREAM_MODE_CREATE_AND_LINK_NON_SPECIFIC_CONCEPTS_FOR_ALL_ENTITIES
-	this->createAndLinkNonSpecificConceptsForAllEntities(translatorVariables);
+	createAndLinkNonSpecificConceptsForAllEntities(translatorVariables);
 	#endif
 }
 
@@ -1237,7 +1237,7 @@ void GIAtranslatorClass::invertOrDuplicateConditionsIfRequired(GIAtranslatorVari
 						#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_INVERSE_PREPOSITIONS
 						if(inverseConditionRequired)
 						{
-							this->createNewInverseConditionEntity(currentRelationInList, translatorVariables, inverseConditionName);
+							createNewInverseConditionEntity(currentRelationInList, translatorVariables, inverseConditionName);
 
 							//added 2j5g (fix bug);
 							currentRelationInList->inverseRelationSingle = true;
@@ -1260,7 +1260,7 @@ void GIAtranslatorClass::invertOrDuplicateConditionsIfRequired(GIAtranslatorVari
 							{
 								lastRelationInList = lastRelationInList->next;
 							}
-							this->createNewInverseConditionEntity(lastRelationInList, translatorVariables, conditionName);
+							createNewInverseConditionEntity(lastRelationInList, translatorVariables, conditionName);
 							lastRelationInList->relationGovernor = currentRelationInList->relationDependent;
 							lastRelationInList->relationDependent = currentRelationInList->relationGovernor;
 							lastRelationInList->relationGovernorIndex = currentRelationInList->relationDependentIndex;

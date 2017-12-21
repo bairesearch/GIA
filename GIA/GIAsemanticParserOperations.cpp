@@ -25,7 +25,7 @@
  * File Name: GIAsemanticParserOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e6c 16-December-2017
+ * Project Version: 3e7a 16-December-2017
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -44,7 +44,7 @@ void GIAsemanticParserOperationsClass::GIA2nonHeuristicImplementationGenerateExp
 {
 	string GIA2semanticDependencyRelationText = "";
 	GIArelation* GIA2semanticDependencyRelation = GIAsemanticParserDatabase.getCurrentRelationInSemanticParserSentenceList();
-	this->generateGIA2semanticDependencyRelation(translatorVariables->GIAentityNodeArray, connectionType, entityIndex1, entityIndex2, sameReferenceSet, &GIA2semanticDependencyRelationText, GIA2semanticDependencyRelation);
+	generateGIA2semanticDependencyRelation(translatorVariables->GIAentityNodeArray, connectionType, entityIndex1, entityIndex2, sameReferenceSet, &GIA2semanticDependencyRelationText, GIA2semanticDependencyRelation);
 	#ifdef GIA_SEMANTIC_PARSER_WRITE_SEMANTIC_RELATIONS_UNOPTIMISED_TEXT_CORPUS_OLD
 	GIAsemanticParserDatabase.saveTextLineToCorpusFileString(GIA2semanticDependencyRelation);
 	cout << GIA2semanticDependencyRelationText << endl;
@@ -91,28 +91,28 @@ void GIAsemanticParserOperationsClass::GIA2nonHeuristicImplementationGenerateExp
 
 				if(currentRelationInList->relationType == RELATION_TYPE_MODAL_AUX)	//same as auxiliary
 				{
-					this->GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(translatorVariables, GIA_ENTITY_VECTOR_CONNECTION_TYPE_MODAL_AUXILIARY_OR_COPULA, entityIndex1, entityIndex2, sameReferenceSet);
+					GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(translatorVariables, GIA_ENTITY_VECTOR_CONNECTION_TYPE_MODAL_AUXILIARY_OR_COPULA, entityIndex1, entityIndex2, sameReferenceSet);
 				}
 
 				if(currentRelationInList->relationType == RELATION_TYPE_PASSIVE_AUX)
 				{
-					this->GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(translatorVariables, GIA_ENTITY_VECTOR_CONNECTION_TYPE_MODAL_AUXILIARY_OR_COPULA, entityIndex1, entityIndex2, sameReferenceSet);
+					GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(translatorVariables, GIA_ENTITY_VECTOR_CONNECTION_TYPE_MODAL_AUXILIARY_OR_COPULA, entityIndex1, entityIndex2, sameReferenceSet);
 				}
 
 				if(currentRelationInList->relationType == RELATION_TYPE_COPULA)
 				{
-					this->GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(translatorVariables, GIA_ENTITY_VECTOR_CONNECTION_TYPE_MODAL_AUXILIARY_OR_COPULA, entityIndex1, entityIndex2, sameReferenceSet);
+					GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(translatorVariables, GIA_ENTITY_VECTOR_CONNECTION_TYPE_MODAL_AUXILIARY_OR_COPULA, entityIndex1, entityIndex2, sameReferenceSet);
 				}
 
 				if(currentRelationInList->relationType == RELATION_TYPE_DETERMINER)
 				{
-					this->GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(translatorVariables, GIA_ENTITY_VECTOR_CONNECTION_TYPE_DETERMINER, entityIndex1, entityIndex2, sameReferenceSet);
+					GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(translatorVariables, GIA_ENTITY_VECTOR_CONNECTION_TYPE_DETERMINER, entityIndex1, entityIndex2, sameReferenceSet);
 				}
 
 				#ifdef GIA_DYNAMICALLY_LINK_ENTITIES_DISABLE_GIA_SEMANTIC_PARSER_SEMANTIC_RELATION_GENERATION
 				if(currentRelationInList->relationType == RELATION_TYPE_PRENOMIAL_MODIFIER)	//must correspond to RELATION_TYPE_PRENOMINAL_MODIFIER_NUMBER_OF_TYPES/relationTypePrenominalModifierNameArray
 				{
-					this->GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(translatorVariables, GIA_ENTITY_VECTOR_CONNECTION_TYPE_PRENOMINAL_MODIFIER, entityIndex1, entityIndex2, sameReferenceSet);
+					GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(translatorVariables, GIA_ENTITY_VECTOR_CONNECTION_TYPE_PRENOMINAL_MODIFIER, entityIndex1, entityIndex2, sameReferenceSet);
 				}
 				#endif
 				/*
@@ -195,7 +195,7 @@ void GIAsemanticParserOperationsClass::generateGIA2semanticDependencyRelation(co
 	#endif
 
 	#ifdef GIA_SEMANTIC_PARSER_WRITE_SEMANTIC_RELATIONS_UNOPTIMISED_TEXT_CORPUS_OLD
-	*GIA2semanticDependencyRelation = this->generateGIA2semanticDependencyRelationText(entityWord1, entityWord2, GIA2semanticDependencyRelationNameArray[connectionType], entityIndex1, entityIndex2, sameReferenceSet);
+	*GIA2semanticDependencyRelation = generateGIA2semanticDependencyRelationText(entityWord1, entityWord2, GIA2semanticDependencyRelationNameArray[connectionType], entityIndex1, entityIndex2, sameReferenceSet);
 	#else
 	GIAsemanticParserDatabase.generateGIA2semanticDependencyRelationObject(GIA2semanticDependencyRelation, entityWord1, entityWord2, GIA2semanticDependencyRelationNameArray[connectionType], entityIndex1, entityIndex2, sameReferenceSet);
 	#endif
@@ -205,7 +205,7 @@ void GIAsemanticParserOperationsClass::generateGIA2semanticDependencyRelation(co
 string GIAsemanticParserOperationsClass::generateGIA2semanticDependencyRelationText(const string entityName1, const string entityName2, const string semanticRelation, const int entityIndex1, const int entityIndex2, const bool sameReferenceSet)
 {
 	string GIA2semanticDependencyRelation = "";
-	GIA2semanticDependencyRelation = GIA2semanticDependencyRelation + semanticRelation + "(" + entityName1 + "-" + SHAREDvars.convertIntToString(entityIndex1) + ", " + entityName2 + "-" + SHAREDvars.convertIntToString(entityIndex2) + ") " + this->createSameReferenceSetRecord(sameReferenceSet);
+	GIA2semanticDependencyRelation = GIA2semanticDependencyRelation + semanticRelation + "(" + entityName1 + "-" + SHAREDvars.convertIntToString(entityIndex1) + ", " + entityName2 + "-" + SHAREDvars.convertIntToString(entityIndex2) + ") " + createSameReferenceSetRecord(sameReferenceSet);
 	return GIA2semanticDependencyRelation;
 }
 
@@ -246,14 +246,14 @@ void GIAsemanticParserOperationsClass::determineGIAconnectionistNetworkPOStypeNa
 	{
 		if((NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP) || (NLPfeatureParser == GIA_NLP_PARSER_STANFORD_PARSER))
 		{
-			this->determineGIAconnectionistNetworkPOStypeNameStanford(currentFeatureInSentence);
+			determineGIAconnectionistNetworkPOStypeNameStanford(currentFeatureInSentence);
 		}
 		else if(NLPfeatureParser == GIA_NLP_PARSER_RELEX)
 		{
 			#ifndef GIA_SEMANTIC_PARSER_SUPPORT_USE_RELEX_COMPATIBILITY_MODE_FOR_FEATURE_PARSER_TO_GENERATE_ADDITIONAL_RELATIONS_REQUIRED_BY_GIA2
 			cout << "warning: determineGIAconnectionistNetworkPOStypeNames{} is supported, but Relex cannot generate det and aux syntactic relations (required to be stored by GIA connectionist network as 'GIA semantic relations' to reextract instances/substances and tense)" << endl;
 			#endif
-			this->determineGIAconnectionistNetworkPOStypeNameRelex(currentFeatureInSentence);
+			determineGIAconnectionistNetworkPOStypeNameRelex(currentFeatureInSentence);
 		}
 
 		currentFeatureInSentence = currentFeatureInSentence->next;

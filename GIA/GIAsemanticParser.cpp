@@ -25,7 +25,7 @@
  * File Name: GIAsemanticParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e6c 16-December-2017
+ * Project Version: 3e7a 16-December-2017
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -53,7 +53,7 @@ bool GIAsemanticParserClass::performSemanticParserLookupAndCreateSemanticNetwork
 	#ifdef GIA_RELEX_UPDATE_ADD_PARAGRAPH_TAGS
 	if(NLPfeatureParser == GIA_NLP_PARSER_RELEX)
 	{
-		if(!this->lookupSemanticParserFiles(translatorVariables->firstParagraphInList, translatorVariables->NLPfeatureParser))	//finds all corresponding GIA2 semantic dependency files and parses them
+		if(!lookupSemanticParserFiles(translatorVariables->firstParagraphInList, translatorVariables->NLPfeatureParser))	//finds all corresponding GIA2 semantic dependency files and parses them
 		{
 			#ifdef GIA_SEMANTIC_PARSER_SUPPORT_BOTH_FAST_CORPUS_LOOKUP_PATH_AND_SLOW_SYNTACTIC_RULE_BASED_PATH
 			cout << "warning: GIA2 corpus entry not found (will generate corpus entry)" << endl;
@@ -70,7 +70,7 @@ bool GIAsemanticParserClass::performSemanticParserLookupAndCreateSemanticNetwork
 	else
 	{
 	#endif
-		if(!this->lookupSemanticParserFiles(translatorVariables->firstParagraphInList->firstSentenceInList, translatorVariables->NLPfeatureParser))	//finds all corresponding GIA2 semantic dependency files and parses them
+		if(!lookupSemanticParserFiles(translatorVariables->firstParagraphInList->firstSentenceInList, translatorVariables->NLPfeatureParser))	//finds all corresponding GIA2 semantic dependency files and parses them
 		{
 			#ifdef GIA_SEMANTIC_PARSER_SUPPORT_BOTH_FAST_CORPUS_LOOKUP_PATH_AND_SLOW_SYNTACTIC_RULE_BASED_PATH
 			cout << "warning: GIA2 corpus entry not found (will generate corpus entry)" << endl;
@@ -114,7 +114,7 @@ bool GIAsemanticParserClass::lookupSemanticParserFiles(GIAparagraph* firstParagr
 	while(currentParagraphInList->next != NULL)
 	{
 		GIAsentence* firstSentenceInList = currentParagraphInList->firstSentenceInList;
-		if(!this->lookupSemanticParserFiles(firstSentenceInList, NLPfeatureParser))
+		if(!lookupSemanticParserFiles(firstSentenceInList, NLPfeatureParser))
 		{
 			result = false;
 		}

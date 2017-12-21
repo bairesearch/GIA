@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorSentenceClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e6c 16-December-2017
+ * Project Version: 3e7a 16-December-2017
  * Requirements: requires plain text file
  * Description: Logical Condition and Reference Set preprocessor
  *
@@ -187,10 +187,12 @@ GIApreprocessorSentence::~GIApreprocessorSentence(void)
 		currentWord->nextTag = NULL;	//prevents future words from being deleted
 		delete plaintextWord;
 	}
-   	
 	sentenceContentsOriginal.clear();
 	sentenceContentsLRP.clear();
+	
+	#ifdef GIA_PREPROCESSOR_SENTENCE
 	delete firstLogicReferenceInList;
+	#endif
 	
 	if(next != NULL)
 	{

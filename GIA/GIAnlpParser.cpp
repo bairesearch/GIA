@@ -25,7 +25,7 @@
  * File Name: GIAnlpParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e6c 16-December-2017
+ * Project Version: 3e7a 16-December-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Parses tabular subsections (Eg <relations>) of RelEx CFF/Stanford Parser File
  *
@@ -88,7 +88,7 @@ void GIAnlpParserClass::GIATHparseStanfordParserRelationsText(const string* rela
 			{
 				//eg actionRelationshipObjectEntity(6-cake, 4-eaten) [sameReferenceSet=false]
 				string sameReferenceSetString = currentItemString;
-				if(sameReferenceSetString.find(this->createSameReferenceSetRecord2(true)) != CPP_STRING_FIND_RESULT_FAIL_VALUE)
+				if(sameReferenceSetString.find(createSameReferenceSetRecord2(true)) != CPP_STRING_FIND_RESULT_FAIL_VALUE)
 				{
 					currentRelation->sameReferenceSet = true;
 				}
@@ -110,7 +110,7 @@ void GIAnlpParserClass::GIATHparseStanfordParserRelationsText(const string* rela
 			currentRelation->relationDependent = relationDependent;	//this will be overwritten if !featuresNotPreviouslyFilled
 			if(!parseGIA2file)
 			{
-				this->convertStanfordRelationToRelex(currentRelation, currentSentenceInList);
+				convertStanfordRelationToRelex(currentRelation, currentSentenceInList);
 			}
 
 			if(!featuresNotPreviouslyFilled)
@@ -135,7 +135,7 @@ void GIAnlpParserClass::GIATHparseStanfordParserRelationsText(const string* rela
 						if(GIAsentenceClass.relationIndexIsNormal(currentRelation->relationDependentIndex))
 						{
 							#ifdef GIA_SEMANTIC_PARSER_SUPPORT_QUERIES
-							if(!(this->findString(relationDependent, REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)))	//redundant !parseGIA2file condition added GIA1d1a, removed GIA2j6b
+							if(!(findString(relationDependent, REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)))	//redundant !parseGIA2file condition added GIA1d1a, removed GIA2j6b
 							{
 							#endif
 								useLemmaFromFeatureSet = true;
@@ -164,7 +164,7 @@ void GIAnlpParserClass::GIATHparseStanfordParserRelationsText(const string* rela
 					#ifdef GIA_SEMANTIC_PARSER_SUPPORT_QUERIES
 					if(parseGIA2file)	//condition added 1d1a
 					{
-						if(this->findString(relationDependent, REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE))
+						if(findString(relationDependent, REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE))
 						{
 							//ie !useLemmaFromFeatureSet
 							currentRelation->relationDependent = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;
@@ -172,14 +172,14 @@ void GIAnlpParserClass::GIATHparseStanfordParserRelationsText(const string* rela
 							{
 								currentFeatureInList->lemma = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;
 							}
-							if(this->findString(relationDependent, GIA_SEMANTIC_PARSER_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_QUERY_TAG_TAG_NAME) || this->findString(relationDependent, GIA_SEMANTIC_PARSER_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_NAME_QUERY_TAG_TAG_NAME) || this->findString(relationDependent, GIA_SEMANTIC_PARSER_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_WHICH_OR_EQUIVALENT_WHAT_QUERY_TAG_TAG_NAME))
+							if(findString(relationDependent, GIA_SEMANTIC_PARSER_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_QUERY_TAG_TAG_NAME) || findString(relationDependent, GIA_SEMANTIC_PARSER_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_NAME_QUERY_TAG_TAG_NAME) || findString(relationDependent, GIA_SEMANTIC_PARSER_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_WHICH_OR_EQUIVALENT_WHAT_QUERY_TAG_TAG_NAME))
 							{
 								currentRelation->corpusSpecialRelationDependentIsQuery = relationDependent.substr(REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_LENGTH, relationDependent.length()-REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_LENGTH);
 							}
 						}
 						else
 						{	//ie useLemmaFromFeatureSet
-							if(this->findString(relationDependent, GIA_SEMANTIC_PARSER_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_QUERY_TAG_TAG_NAME) || this->findString(relationDependent, GIA_SEMANTIC_PARSER_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_NAME_QUERY_TAG_TAG_NAME) || this->findString(relationDependent, GIA_SEMANTIC_PARSER_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_WHICH_OR_EQUIVALENT_WHAT_QUERY_TAG_TAG_NAME))
+							if(findString(relationDependent, GIA_SEMANTIC_PARSER_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_QUERY_TAG_TAG_NAME) || findString(relationDependent, GIA_SEMANTIC_PARSER_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_NAME_QUERY_TAG_TAG_NAME) || findString(relationDependent, GIA_SEMANTIC_PARSER_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_WHICH_OR_EQUIVALENT_WHAT_QUERY_TAG_TAG_NAME))
 							{
 								currentRelation->corpusSpecialRelationDependentIsQuery = relationDependent;
 							}
@@ -208,7 +208,7 @@ void GIAnlpParserClass::GIATHparseStanfordParserRelationsText(const string* rela
 						if(GIAsentenceClass.relationIndexIsNormal(currentRelation->relationGovernorIndex))
 						{
 							#ifdef GIA_SEMANTIC_PARSER_SUPPORT_QUERIES
-							if(!(this->findString(relationGovernor, REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)))	//redundant !parseGIA2file condition added GIA1d1a, removed GIA2j6b
+							if(!(findString(relationGovernor, REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)))	//redundant !parseGIA2file condition added GIA1d1a, removed GIA2j6b
 							{
 							#endif
 								useLemmaFromFeatureSet = true;
@@ -237,7 +237,7 @@ void GIAnlpParserClass::GIATHparseStanfordParserRelationsText(const string* rela
 					#ifdef GIA_SEMANTIC_PARSER_SUPPORT_QUERIES
 					if(parseGIA2file)	//condition added 1d1a
 					{
-						if(this->findString(relationGovernor, REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE))
+						if(findString(relationGovernor, REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE))
 						{
 							//ie !useLemmaFromFeatureSet
 							currentRelation->relationGovernor = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;
@@ -245,14 +245,14 @@ void GIAnlpParserClass::GIATHparseStanfordParserRelationsText(const string* rela
 							{
 								currentFeatureInList->lemma = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;
 							}
-							if(this->findString(relationGovernor, GIA_SEMANTIC_PARSER_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_QUERY_TAG_TAG_NAME) || this->findString(relationGovernor, GIA_SEMANTIC_PARSER_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_NAME_QUERY_TAG_TAG_NAME) || this->findString(relationGovernor, GIA_SEMANTIC_PARSER_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_WHICH_OR_EQUIVALENT_WHAT_QUERY_TAG_TAG_NAME))
+							if(findString(relationGovernor, GIA_SEMANTIC_PARSER_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_QUERY_TAG_TAG_NAME) || findString(relationGovernor, GIA_SEMANTIC_PARSER_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_NAME_QUERY_TAG_TAG_NAME) || findString(relationGovernor, GIA_SEMANTIC_PARSER_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_WHICH_OR_EQUIVALENT_WHAT_QUERY_TAG_TAG_NAME))
 							{
 								currentRelation->corpusSpecialRelationGovernorIsQuery = relationGovernor.substr(REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_LENGTH, relationGovernor.length()-REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_LENGTH);
 							}
 						}
 						else
 						{	//ie useLemmaFromFeatureSet
-							if(this->findString(relationGovernor, GIA_SEMANTIC_PARSER_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_QUERY_TAG_TAG_NAME) || this->findString(relationGovernor, GIA_SEMANTIC_PARSER_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_NAME_QUERY_TAG_TAG_NAME) || this->findString(relationGovernor, GIA_SEMANTIC_PARSER_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_WHICH_OR_EQUIVALENT_WHAT_QUERY_TAG_TAG_NAME))
+							if(findString(relationGovernor, GIA_SEMANTIC_PARSER_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_QUERY_TAG_TAG_NAME) || findString(relationGovernor, GIA_SEMANTIC_PARSER_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_NAME_QUERY_TAG_TAG_NAME) || findString(relationGovernor, GIA_SEMANTIC_PARSER_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_WHICH_OR_EQUIVALENT_WHAT_QUERY_TAG_TAG_NAME))
 							{
 								currentRelation->corpusSpecialRelationGovernorIsQuery = relationGovernor;
 							}
@@ -290,7 +290,7 @@ void GIAnlpParserClass::GIATHparseStanfordParserRelationsText(const string* rela
 				bool foundReplicateRelation = false;
 				if(parseGIA2file)
 				{
-					if(this->findReplicateRelation(currentSentenceInList, currentRelation))
+					if(findReplicateRelation(currentSentenceInList, currentRelation))
 					{
 						foundReplicateRelation = true;
 					}
@@ -406,7 +406,7 @@ bool GIAnlpParserClass::findReplicateRelation(const GIAsentence* currentSentence
 	{
 		if(currentRelation != relation)
 		{//do not compare relation to itself
-			if(this->compareRelations(currentRelation, relation))
+			if(compareRelations(currentRelation, relation))
 			{
 				foundReplicateRelation = true;
 			}
@@ -565,7 +565,7 @@ void GIAnlpParserClass::convertStanfordRelationToRelex(GIArelation* currentRelat
 	}
 
 	bool stanfordPrepositionFound = false;
-	string tempRelexPrepositionString = this->convertPrepositionToRelex2(&stanfordRelation, &stanfordPrepositionFound);
+	string tempRelexPrepositionString = convertPrepositionToRelex2(&stanfordRelation, &stanfordPrepositionFound);
 	if(stanfordPrepositionFound)
 	{
 		relationTypeRelexStandard = stanfordRelation;	//do not modify stanford preposition relations "prep_...." to "_prep_..."
@@ -583,7 +583,7 @@ void GIAnlpParserClass::convertStanfordRelationToRelex(GIArelation* currentRelat
 	#endif
 
 	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_REPLACE_OUTPUT_FOR_NLP_TEMPORARILY
-	this->convertStanfordRelationToRelexLRPreversion(currentRelationInList, currentSentenceInList, stanfordPrepositionFound, tempRelexPrepositionString, &relationTypeRelexStandard);
+	convertStanfordRelationToRelexLRPreversion(currentRelationInList, currentSentenceInList, stanfordPrepositionFound, tempRelexPrepositionString, &relationTypeRelexStandard);
 	#endif
 
 	currentRelationInList->relationType = relationTypeRelexStandard;
@@ -929,7 +929,7 @@ void GIAnlpParserClass::GIATHparseRelexRelationsText(const string* relationsText
 			{
 				if(NLPrelexCompatibilityMode)
 				{
-					this->convertStanfordRelationToRelex(currentRelation, currentSentenceInList);
+					convertStanfordRelationToRelex(currentRelation, currentSentenceInList);
 				}
 
 

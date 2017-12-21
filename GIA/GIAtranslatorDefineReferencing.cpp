@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorDefineReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e6c 16-December-2017
+ * Project Version: 3e7a 16-December-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -736,14 +736,14 @@ int GIAtranslatorDefineReferencingClass::identifyReferenceSets(unordered_map<str
 		haveSentenceEntityIndexOfDeterminers = true;
 	}
 
-	this->resetReferenceSets(sentenceNetworkIndexEntityNodesList);
+	resetReferenceSets(sentenceNetworkIndexEntityNodesList);
 
 	int referenceSetID = 0;
 
 	for(unordered_map<string, GIAentityNode*>::iterator networkIndexEntityNodesListIter = sentenceNetworkIndexEntityNodesList->begin(); networkIndexEntityNodesListIter != sentenceNetworkIndexEntityNodesList->end(); networkIndexEntityNodesListIter++)
 	{
 		GIAentityNode* entityNode = networkIndexEntityNodesListIter->second;
-		this->identifyReferenceSetNetworkIndexEntityEntrance(entityNode, &referenceSetID, haveSentenceEntityIndexOfDeterminers, referenceSetDefiniteEntityList);
+		identifyReferenceSetNetworkIndexEntityEntrance(entityNode, &referenceSetID, haveSentenceEntityIndexOfDeterminers, referenceSetDefiniteEntityList);
 	}
 
 	int numberReferenceSets = referenceSetID;
@@ -830,7 +830,7 @@ void GIAtranslatorDefineReferencingClass::identifyReferenceSetNetworkIndexEntity
 				//currentInstance->minimumEntityIndexOfReferenceSet = minimumEntityIndexOfReferenceSet;	//added 28 Sept 2013
 
 
-				if(this->identifyReferenceSetDetermineNextCourseOfAction(currentInstance, true,* referenceSetID, minimumEntityIndexOfReferenceSet, NULL))
+				if(identifyReferenceSetDetermineNextCourseOfAction(currentInstance, true,* referenceSetID, minimumEntityIndexOfReferenceSet, NULL))
 				{
 					*referenceSetID	= *referenceSetID + 1;
 					referenceSetDefiniteEntityList->push_back(currentInstance);
@@ -910,7 +910,7 @@ void GIAtranslatorDefineReferencingClass::createGIAcoreferenceInListBasedUponIde
 		#ifdef GIA_CREATE_NEW_CONCEPT_FOR_EVERY_REFERENCE_TO_A_CONCEPT
 		referenceTraceParameters.doNotParseQuerySubnetsWithConcepts = true;
 		#endif
-		this->createGIAcoreferenceInListBasedUponIdentifiedReferenceSet(sentenceNetworkIndexEntityNodesList, entityNodesActiveListNetworkIndexes, &referenceTraceParameters, &maxNumberOfMatchedNodes, &queryEntityWithMaxNumberNodesMatched, &networkEntityWithMaxNumberNodesMatched, &foundAtLeastOneMatch);
+		createGIAcoreferenceInListBasedUponIdentifiedReferenceSet(sentenceNetworkIndexEntityNodesList, entityNodesActiveListNetworkIndexes, &referenceTraceParameters, &maxNumberOfMatchedNodes, &queryEntityWithMaxNumberNodesMatched, &networkEntityWithMaxNumberNodesMatched, &foundAtLeastOneMatch);
 		#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
 		#ifdef GIA_DATABASE
 		GIAdatabase.setUseDatabase(GIA_DATABASE_FALSE);
@@ -923,7 +923,7 @@ void GIAtranslatorDefineReferencingClass::createGIAcoreferenceInListBasedUponIde
 		referenceTraceParameters.doNotParseQuerySubnetsWithConcepts = false;	//unnecessary as sentences with concepts will never contain intrasentence referencing... (eg "black birds are really fast, and black birds are really tall" does not require intrasentence referencing; where as "a black bird lives is really fast, and the black bird is tall" requires intrasentence referencing)
 		#endif
 		bool foundAtLeastOneMatchIntraSentence = false;
-		this->createGIAcoreferenceInListBasedUponIdentifiedReferenceSet(sentenceNetworkIndexEntityNodesList, sentenceNetworkIndexEntityNodesList, &referenceTraceParameters, &maxNumberOfMatchedNodes, &queryEntityWithMaxNumberNodesMatched, &networkEntityWithMaxNumberNodesMatched, &foundAtLeastOneMatchIntraSentence);	//always perform intrasentence reference detection last (as this takes priority)
+		createGIAcoreferenceInListBasedUponIdentifiedReferenceSet(sentenceNetworkIndexEntityNodesList, sentenceNetworkIndexEntityNodesList, &referenceTraceParameters, &maxNumberOfMatchedNodes, &queryEntityWithMaxNumberNodesMatched, &networkEntityWithMaxNumberNodesMatched, &foundAtLeastOneMatchIntraSentence);	//always perform intrasentence reference detection last (as this takes priority)
 		if(foundAtLeastOneMatchIntraSentence)
 		{
 			foundAtLeastOneMatch = true;
@@ -977,9 +977,9 @@ void GIAtranslatorDefineReferencingClass::createGIAcoreferenceInListBasedUponIde
 			//this routine should now record, for each query node, a corresponding (vector of) best match entity node [this 1-x mapping should be used in the final generation of GIAcoreference* firstGIAcoreferenceInList
 
 			#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
-			currentGIAcoreferenceInList = this->generateCoreferenceListBasedUponPreviouslyMatchedEntityNode(queryEntityWithMaxNumberNodesMatched, currentGIAcoreferenceInList, foundAtLeastOneMatchIntraSentence);
+			currentGIAcoreferenceInList = generateCoreferenceListBasedUponPreviouslyMatchedEntityNode(queryEntityWithMaxNumberNodesMatched, currentGIAcoreferenceInList, foundAtLeastOneMatchIntraSentence);
 			#else
-			currentGIAcoreferenceInList = this->generateCoreferenceListBasedUponPreviouslyMatchedEntityNode(queryEntityWithMaxNumberNodesMatched, currentGIAcoreferenceInList, BOOL_IRRELEVANT);
+			currentGIAcoreferenceInList = generateCoreferenceListBasedUponPreviouslyMatchedEntityNode(queryEntityWithMaxNumberNodesMatched, currentGIAcoreferenceInList, BOOL_IRRELEVANT);
 			#endif
 			GIAquery.traceEntityNode(queryEntityWithMaxNumberNodesMatched, GIA_QUERY_TRACE_ENTITY_NODES_FUNCTION_RESET_TESTEDFORQUERYCOMPARISON, &irrelevantInt, &irrelevantString, NULL, true);					//added 15 July 2012	//changed traceInstantiations to true 13 October 2012
 		}
@@ -1153,9 +1153,9 @@ GIAcoreference* GIAtranslatorDefineReferencingClass::generateCoreferenceListBase
 			for(vector<GIAentityConnection*>::iterator connectionIter = entityNode->entityVectorConnectionsArray[i].begin(); connectionIter != entityNode->entityVectorConnectionsArray[i].end(); connectionIter++)
 			{
 				#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_INTRASENTENCE_REFERENCING
-				currentGIAcoreferenceInList = this->generateCoreferenceListBasedUponPreviouslyMatchedEntityNode((*connectionIter)->entity, currentGIAcoreferenceInList, intrasentenceReference);
+				currentGIAcoreferenceInList = generateCoreferenceListBasedUponPreviouslyMatchedEntityNode((*connectionIter)->entity, currentGIAcoreferenceInList, intrasentenceReference);
 				#else
-				currentGIAcoreferenceInList = this->generateCoreferenceListBasedUponPreviouslyMatchedEntityNode((*connectionIter)->entity, currentGIAcoreferenceInList, BOOL_IRRELEVANT);
+				currentGIAcoreferenceInList = generateCoreferenceListBasedUponPreviouslyMatchedEntityNode((*connectionIter)->entity, currentGIAcoreferenceInList, BOOL_IRRELEVANT);
 				#endif
 			}
 		}
@@ -1440,7 +1440,7 @@ void GIAtranslatorDefineReferencingClass::identifyReferenceSetsSpecificConceptsA
 				Although redundant, this/new function could be upgraded to detect all permutations of the specific concept (ie same reference set core + additional descriptive non-same reference set properties/conditions; e.g "red dogs are fat".
 					"red dogs are fat" -> dog + red [samereferenceset core] + fat [nonsamereference set]). Note this is redundant because the reference "a fat red dog rides the bike" could be changed to "a red dog" and GIA would still capture the required specific concept.
 				*/
-				if(this->identifyReferenceSetDetermineNextCourseOfAction(currentSpecificConcept, true, referenceSetID, minimumEntityIndexOfReferenceSet, NULL))	
+				if(identifyReferenceSetDetermineNextCourseOfAction(currentSpecificConcept, true, referenceSetID, minimumEntityIndexOfReferenceSet, NULL))	
 				{
 					bool traceModeIsQuery = false;
 
@@ -1644,7 +1644,7 @@ bool GIAtranslatorDefineReferencingClass::identifyReferenceSetDetermineNextCours
 		if(pass)
 		{
 			result =  true;
-			this->identifyReferenceSet(entityNode, referenceSetID, minimumEntityIndexOfReferenceSet);
+			identifyReferenceSet(entityNode, referenceSetID, minimumEntityIndexOfReferenceSet);
 		}
 	}
 
@@ -1665,7 +1665,7 @@ void GIAtranslatorDefineReferencingClass::identifyReferenceSet(GIAentityNode* en
 		{
 			for(vector<GIAentityConnection*>::iterator connectionIter = entityNode->entityVectorConnectionsArray[connectionType].begin(); connectionIter < entityNode->entityVectorConnectionsArray[connectionType].end(); connectionIter++)
 			{
-				this->identifyReferenceSetDetermineNextCourseOfAction((*connectionIter)->entity, ((*connectionIter)->sameReferenceSet), referenceSetID, minimumEntityIndexOfReferenceSet, (*connectionIter));
+				identifyReferenceSetDetermineNextCourseOfAction((*connectionIter)->entity, ((*connectionIter)->sameReferenceSet), referenceSetID, minimumEntityIndexOfReferenceSet, (*connectionIter));
 			}
 		}
 	#ifdef GIA_ADVANCED_REFERENCING_IDENTIFY_DEFINITE_SETS_ACCEPT_PROPERNOUNS_ISOLATE
