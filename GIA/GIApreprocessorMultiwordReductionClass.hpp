@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorMultiwordReductionClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3e2c 10-December-2017
+ * Project Version: 3e2d 10-December-2017
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  *
@@ -59,7 +59,8 @@ static char GIApreprocessorMultiwordReductionNLPparsableCharacters[GIA_PREPROCES
 #ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_LOAD_WORD_LISTS_ADDITIONAL
 #define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_CONJUNCTION_DATABASE_FILE_NAME "GrammarRevolutionConjunctions.txt"
 #define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_INTERJECTION_DATABASE_FILE_NAME "GrammarRevolutionInterjections.txt"
-#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PRONOUN_DATABASE_FILE_NAME "GrammarRevolutionPronouns.txt"
+#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PRONOUN_DATABASE_FILE_NAME "GrammarRevolutionEnglishClubPronouns.txt"
+#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DETERMINER_DATABASE_FILE_NAME "WiktionaryDeterminers.txt"
 #endif
 
 #define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_MULTIWORD_PREPOSITION_DATABASE_FILE_NAME "WikipediaEnglishClubMultiwordPrepositions.txt"
@@ -71,6 +72,7 @@ static char GIApreprocessorMultiwordReductionNLPparsableCharacters[GIA_PREPROCES
 #ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_REDUCE_ALL_WORD_TYPES_ADDITIONAL
 #define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_MULTIWORD_CONJUNCTION_DATABASE_FILE_NAME "GrammarRevolutionMultiwordConjunctions.txt"
 #define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_MULTIWORD_INTERJECTION_DATABASE_FILE_NAME "GrammarRevolutionMultiwordInterjections.txt"
+#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_MULTIWORD_DETERMINER_DATABASE_FILE_NAME "WiktionaryMultiwordDeterminers.txt"
 #endif
 #endif
 
@@ -241,6 +243,7 @@ string lrpDummyCollapsedMultiwordPrepositionLemmaNameForNLPArray[GIA_PREPROCESSO
 #define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DUMMY_COLLAPSED_MULTIWORD_VERB_TYPE 5
 #define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DUMMY_COLLAPSED_MULTIWORD_CONJUNCTION_TYPE 6
 #define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DUMMY_COLLAPSED_MULTIWORD_INTERJECTION_TYPE 7
+#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DUMMY_COLLAPSED_MULTIWORD_DETERMINER_TYPE 8
 
 
 #define MAXIMUM_NUMBER_WORDS_PER_SENTENCE 1000	//same value from GIAtranslatorOperations.h

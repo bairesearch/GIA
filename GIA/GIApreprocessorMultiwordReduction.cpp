@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorMultiwordReduction.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e2c 10-December-2017
+ * Project Version: 3e2d 10-December-2017
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  *
@@ -70,11 +70,14 @@ unordered_map<string, GIApreprocessorMultiwordReductionWord*> interjectionListGl
 bool interjectionListLoaded;
 unordered_map<string, GIApreprocessorMultiwordReductionWord*> pronounListGlobal;
 bool pronounListLoaded;
+unordered_map<string, GIApreprocessorMultiwordReductionWord*> determinerListGlobal;
+bool determinerListLoaded;
 #endif
 #endif
 #ifdef GIA_PREPROCESSOR_POS_TAGGER_INITIALISE_WORD_INDEX_LIST_FROM_LRP_FILES
 unordered_map<string, GIApreprocessorMultiwordReductionWord*> verbListWithVariantsGlobal;
 unordered_map<string, GIApreprocessorMultiwordReductionWord*> nounListWithVariantsGlobal;
+unordered_map<string, GIApreprocessorMultiwordReductionWord*> nounListWithVariantsAndPronounsGlobal;
 #endif
 
 #ifdef GIA_PREPROCESSOR_POS_TAGGER_INITIALISE_WORD_INDEX_LIST_FROM_LRP_FILES
@@ -189,6 +192,10 @@ bool GIApreprocessorMultiwordReductionClass::initialiseLRP(const string newLRPDa
 		{
 			result = false;	
 		}
+		if(!this->loadWordListWrapper(lrpDataFolderName, &determinerListLoaded, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DETERMINER_DATABASE_FILE_NAME, &determinerListGlobal))
+		{
+			result = false;	
+		}		
 		#endif
 		
 		
@@ -381,6 +388,10 @@ bool GIApreprocessorMultiwordReductionClass::parseTextFileAndReduceLanguage(GIAp
 		result = false;
 	}
 	if(!loadMultiwordWordListAndSearchAndReplace(GIA_PREPROCESSOR_MULTIWORD_REDUCTION_MULTIWORD_INTERJECTION_DATABASE_FILE_NAME, firstGIApreprocessorSentenceInList, firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DUMMY_COLLAPSED_MULTIWORD_INTERJECTION_TYPE))
+	{
+		result = false;
+	}
+	if(!loadMultiwordWordListAndSearchAndReplace(GIA_PREPROCESSOR_MULTIWORD_REDUCTION_MULTIWORD_DETERMINER_DATABASE_FILE_NAME, firstGIApreprocessorSentenceInList, firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DUMMY_COLLAPSED_MULTIWORD_DETERMINER_TYPE))
 	{
 		result = false;
 	}	
@@ -2958,6 +2969,10 @@ bool GIApreprocessorMultiwordReductionClass::createWordIndexListFromLRPfiles()
 			#endif
 			nounListWithVariantsGlobal.insert(nounListGlobal.begin(), nounListGlobal.end());
 			nounListWithVariantsGlobal.insert(nounPluralVariantsListGlobal.begin(), nounPluralVariantsListGlobal.end());
+			#ifdef GIA_PREPROCESSOR_WORD_LIST_INTERPRET_PRONOUN_POS_AS_NOUN_POS
+			nounListWithVariantsAndPronounsGlobal.insert(nounListWithVariantsGlobal.begin(), nounListWithVariantsGlobal.end());
+			nounListWithVariantsAndPronounsGlobal.insert(pronounListGlobal.begin(), pronounListGlobal.end());
+			#endif
 		}
 
 		unordered_map<string, GIApreprocessorMultiwordReductionWord*>* wordListArray[GIA_PREPROCESSOR_WORD_LIST_ARRAY_SIZE];	
@@ -2965,11 +2980,18 @@ bool GIApreprocessorMultiwordReductionClass::createWordIndexListFromLRPfiles()
 		wordListArray[GIA_PREPROCESSOR_WORD_LIST_ARRAY_INDEX_PREPOSITION] = &prepositionListGlobal;
 		wordListArray[GIA_PREPROCESSOR_WORD_LIST_ARRAY_INDEX_ADVERB] = &adverbListGlobal;
 		wordListArray[GIA_PREPROCESSOR_WORD_LIST_ARRAY_INDEX_ADJECTIVE] = &adjectiveListGlobal;
+		#ifdef GIA_PREPROCESSOR_WORD_LIST_INTERPRET_PRONOUN_POS_AS_NOUN_POS
+		wordListArray[GIA_PREPROCESSOR_WORD_LIST_ARRAY_INDEX_NOUN] = &nounListWithVariantsAndPronounsGlobal;
+		#else
 		wordListArray[GIA_PREPROCESSOR_WORD_LIST_ARRAY_INDEX_NOUN] = &nounListWithVariantsGlobal;
+		#endif
 		wordListArray[GIA_PREPROCESSOR_WORD_LIST_ARRAY_INDEX_CONJUNCTION] = &conjunctionListGlobal;
+		wordListArray[GIA_PREPROCESSOR_WORD_LIST_ARRAY_INDEX_DETERMINER] = &determinerListGlobal;
+		#ifdef GIA_PREPROCESSOR_WORD_LIST_INTERPRET_PRONOUN_POS_AS_NOUN_POS
 		wordListArray[GIA_PREPROCESSOR_WORD_LIST_ARRAY_INDEX_INTERJECTION] = &interjectionListGlobal;
+		#else
 		wordListArray[GIA_PREPROCESSOR_WORD_LIST_ARRAY_INDEX_PRONOUN] = &pronounListGlobal;
-		
+		#endif
 
 		//see GIA_PREPROCESSOR_MULTIWORD_REDUCTION:loadWordList - expect multiwords within the word lists to be concatenated with delimiter _ (because all tags in input text with multiwords have had their space delimiters replaced with _ delimiters)
 		unordered_map<string, GIApreprocessorMultiwordReductionWord*> wordListAllTypes;
