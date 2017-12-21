@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorLogicReference.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e8a 18-December-2017
+ * Project Version: 3e8b 18-December-2017
  * Requirements: requires plain text file
  * Description: Logic Reference preprocessor
  *
@@ -201,7 +201,12 @@ bool GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor(const
 	#else
 	bool usePOSprelim = false;
 	#endif
-	
+	#ifdef GIA_PREPROCESSOR_SENTENCE_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY
+	bool grammaticallyStrict = true;	//this is irrelevant and could be set to GIA_PREPROCESSOR_SENTENCE_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT as determineIsWordType(usePOSprelim=true, ...) assumes grammaticallyStrict
+	#else
+	bool grammaticallyStrict = false;
+	#endif
+		
 	GIApreprocessorLogicReference* currentLogicReferenceInList = currentGIApreprocessorSentenceInList->firstLogicReferenceInList;
 	for(int w=0; w<sentenceContentsWordList->size(); w++)
 	{
@@ -231,7 +236,7 @@ bool GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor(const
 		else if(isClassTag(currentWord->tagName, GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_verb, &logicReferenceClassType, firstLogicReferenceClassTag))
 		{
 			#ifdef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
-			if(GIApreprocessorMultiwordReduction.determineIsVerb(currentWord, usePOSprelim))
+			if(GIApreprocessorMultiwordReduction.determineIsVerb(currentWord, usePOSprelim, grammaticallyStrict))
 			{
 			#endif
 				logicReferenceClass = GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_VERB;

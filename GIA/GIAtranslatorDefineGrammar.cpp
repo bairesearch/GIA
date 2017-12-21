@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorDefineGrammar.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e8a 18-December-2017
+ * Project Version: 3e8b 18-December-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -376,7 +376,7 @@ void GIAtranslatorDefineGrammarClass::fillGrammaticalArraysRelex(GIAsentence* cu
 
 		//fill grammaticalWordTypeTemp array for wordnet - added 26 April 2012
 		int grammaticalWordTypeTemp = GRAMMATICAL_WORD_TYPE_UNDEFINED;
-		GIAtranslatorOperations.convertRelexPOStypeToWordnetWordType(&(currentFeatureInList->type), &grammaticalWordTypeTemp, GIA_PREPROCESSOR_USE_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE);
+		GIAtranslatorOperations.convertRelexPOStypeToWordnetWordType(&(currentFeatureInList->type), &grammaticalWordTypeTemp, GIA_PREPROCESSOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE);
 		currentFeatureInList->grammaticalWordType = grammaticalWordTypeTemp;
 
 		#ifdef FILL_NER_ARRAY_AFTER_RELEX_PARSE_FOR_STANFORD_EQUIVALENT_PROPER_NOUN_DETECTION
@@ -574,7 +574,7 @@ void GIAtranslatorDefineGrammarClass::fillGrammaticalArraysStanford(GIAtranslato
 					#ifdef STANFORD_CORENLP_POS_TAGS_BUG_GIA_WORKAROUND_SET_DETERMINER_DEPENDENT_TO_NOUN
 					string stanfordPOS = FEATURE_POS_TAG_NOUN_NN;
 					(*translatorVariables->featureArrayTemp)[entityIndexOfNoun]->stanfordPOS = stanfordPOS;
-					extractPOSrelatedGrammaticalInformationStanford((*translatorVariables->featureArrayTemp)[entityIndexOfNoun], GIA_PREPROCESSOR_USE_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE);			//regenerate grammatical information for feature - it should identify the verb as an infinitive/imperative based on previousWordInSentenceIsTo
+					extractPOSrelatedGrammaticalInformationStanford((*translatorVariables->featureArrayTemp)[entityIndexOfNoun], GIA_PREPROCESSOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE);			//regenerate grammatical information for feature - it should identify the verb as an infinitive/imperative based on previousWordInSentenceIsTo
 					//applyPOSrelatedGrammaticalInfoToEntity((*translatorVariables->GIAfeatureTempEntityNodeArray)[entityIndexOfNoun], (*translatorVariables->featureArrayTemp)[entityIndexOfNoun]);	//regenerate grammatical information for entity - not required
 					#endif
 				}
@@ -658,7 +658,7 @@ void GIAtranslatorDefineGrammarClass::extractGrammaticalInformationStanford(GIAf
 
 		int currentFeatureIndex = currentFeatureInList->entityIndex;
 
-		extractPOSrelatedGrammaticalInformationStanford(currentFeatureInList, GIA_PREPROCESSOR_USE_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE);
+		extractPOSrelatedGrammaticalInformationStanford(currentFeatureInList, GIA_PREPROCESSOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE);
 
 		if(NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP)
 		{

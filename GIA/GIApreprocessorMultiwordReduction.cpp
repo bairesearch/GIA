@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorMultiwordReduction.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e8a 18-December-2017
+ * Project Version: 3e8b 18-December-2017
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  *
@@ -218,11 +218,11 @@ bool GIApreprocessorMultiwordReductionClass::initialiseLRP(const string newLRPDa
 		#endif
 		
 		
-		if(!generateVerbCaseStandardList(GIA_PREPROCESSOR_USE_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE))	//this is required to make verbList usable
+		if(!generateVerbCaseStandardList(GIA_PREPROCESSOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE))	//this is required to make verbList usable
 		{
 			result = false;
 		}
-		if(!generateVerbCaseAdditionalList(GIA_PREPROCESSOR_USE_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE))	//this is required to make verbList usable
+		if(!generateVerbCaseAdditionalList(GIA_PREPROCESSOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE))	//this is required to make verbList usable
 		{
 			result = false;
 		}
@@ -626,7 +626,7 @@ bool GIApreprocessorMultiwordReductionClass::loadPhrasalVerbDataAndGenerateAllTe
 					}
 					if(currentTagInPhrasalVerb->base)
 					{
-						generateStandardTenseVariantsOfVerbBase(currentTagInPhrasalVerb, irregularVerbList, GIA_PREPROCESSOR_USE_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE);
+						generateStandardTenseVariantsOfVerbBase(currentTagInPhrasalVerb, irregularVerbList, GIA_PREPROCESSOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE);
 					}
 
 
@@ -723,7 +723,7 @@ bool GIApreprocessorMultiwordReductionClass::loadPhrasalVerbDataAndGenerateAllTe
 				}
 				if(currentTagInPhrasalVerb->base)
 				{
-					generateStandardTenseVariantsOfVerbBase(currentTagInPhrasalVerb, irregularVerbList, GIA_PREPROCESSOR_USE_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE);								
+					generateStandardTenseVariantsOfVerbBase(currentTagInPhrasalVerb, irregularVerbList, GIA_PREPROCESSOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE);								
 				}
 				if(!currentWordAlternate)
 				{//added 1p1aTEMP6d
@@ -2517,13 +2517,14 @@ bool GIApreprocessorMultiwordReductionClass::checkGrammaticalWordTypeFeaturePrel
 }
 #endif
 
-bool GIApreprocessorMultiwordReductionClass::determineIsWordType(GIApreprocessorWord* wordTag, bool usePOSprelim, int grammaticalWordType)
+bool GIApreprocessorMultiwordReductionClass::determineIsWordType(GIApreprocessorWord* wordTag, bool usePOSprelim, bool grammaticallyStrict, int grammaticalWordType)
 {
 	string baseNameFound = "";
 	int grammaticalBaseTenseForm = INT_DEFAULT_VALUE;
-	return determineIsWordType(wordTag, usePOSprelim, grammaticalWordType, &baseNameFound, &grammaticalBaseTenseForm);
+	return determineIsWordType(wordTag, usePOSprelim, grammaticallyStrict, grammaticalWordType, &baseNameFound, &grammaticalBaseTenseForm);
 }
-bool GIApreprocessorMultiwordReductionClass::determineIsWordType(GIApreprocessorWord* wordTag, bool usePOSprelim, int grammaticalWordType, string* baseNameFound, int* grammaticalBaseTenseForm)
+//preconditions: if usePOSprelim, then grammaticallyStrict is assumed true
+bool GIApreprocessorMultiwordReductionClass::determineIsWordType(GIApreprocessorWord* wordTag, bool usePOSprelim, bool grammaticallyStrict, int grammaticalWordType, string* baseNameFound, int* grammaticalBaseTenseForm)
 {
 	bool wordTypeDetected = false;
 	
@@ -2573,13 +2574,21 @@ bool GIApreprocessorMultiwordReductionClass::determineIsWordType(GIApreprocessor
 		cerr << "GIApreprocessorMultiwordReductionClass::determineIsWordType{} error: grammaticalWordType unknown, grammaticalWordType = " << grammaticalWordType << endl;
 		exit(EXIT_ERROR);
 	}
-			
+				
 	#ifdef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
 	if(usePOSprelim)
 	{
-		if(checkGrammaticalWordTypeFeaturePrelim(wordTag, grammaticalWordType))
+		if(checkGrammaticalWordTypeFeaturePrelim(wordTag, grammaticalWordType))		
 		{
-			wordTypeDetected = true;
+			wordTypeDetected = true;		//usePOSprelim assumes grammaticallyStrict so no check is required
+			if(grammaticalWordType == GRAMMATICAL_WORD_TYPE_VERB)
+			{
+				if(!determineVerbCaseStandardWithAdditional(wordLowerCase, baseNameFound, grammaticalBaseTenseForm))	//added 3e8a
+				{
+					cout << "GIApreprocessorMultiwordReductionClass::determineIsWordType{} warning: GIA_PREPROCESSOR_SENTENCE_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS: usePOSprelim && checkGrammaticalWordTypeFeaturePrelim && (grammaticalWordType == GRAMMATICAL_WORD_TYPE_VERB) && !determineVerbCaseStandardWithAdditional" << endl;		
+					*grammaticalBaseTenseForm = GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_INFINITIVE;
+				}
+			}
 		}
 	}
 	else 
@@ -2589,7 +2598,10 @@ bool GIApreprocessorMultiwordReductionClass::determineIsWordType(GIApreprocessor
 		{
 			if(determineVerbCaseStandardWithAdditional(wordLowerCase, baseNameFound, grammaticalBaseTenseForm))
 			{
-				wordTypeDetected = true;
+				if(!grammaticallyStrict || verbCaseDetectGrammaticallyStrictVariant(*grammaticalBaseTenseForm))
+				{
+					wordTypeDetected = true;
+				}
 			}
 		}
 		else
@@ -2626,7 +2638,7 @@ bool GIApreprocessorMultiwordReductionClass::determineIsWordType(GIApreprocessor
 		if(wordTagPlaintext->collapsedPhrasalVerbExactDefinedSection)
 		{
 			*grammaticalBaseTenseForm = wordTagPlaintext->grammaticalTenseFormDetected;	//already determined by GIApreprocessorMultiwordReductionClass::searchAndReplacePhrasalVerbs
-			cout << "*grammaticalBaseTenseForm = " << *grammaticalBaseTenseForm << endl;
+			//cout << "*grammaticalBaseTenseForm = " << *grammaticalBaseTenseForm << endl;
 			wordTypeDetected = true;
 		}	
 	}
@@ -2649,45 +2661,16 @@ bool GIApreprocessorMultiwordReductionClass::determineIsWordType(const string wo
 }
 
 
-/*
-bool GIApreprocessorMultiwordReductionClass::determineIsVerbInfinitive(GIApreprocessorWord* wordTag, bool usePOSprelim)
-{
-	bool wordTypeDetected = false;
-	string wordLowerCase = SHAREDvars.convertStringToLowerCase(&(wordLowerCase));
-	if(usePOSprelim)
-	{	
-		unordered_map<string, GIApreprocessorMultiwordReductionWord*>* wordTypeList;
-		wordTypeList = &verbListGlobal;
-		if(determineIsWordType(wordLowerCase, wordTypeList))
-		{
-			wordTypeDetected = true;
-		}
-	}
-	else
-	{
-		string baseNameFound = "";
-		int grammaticalBaseTenseForm = INT_DEFAULT_VALUE;
-		bool foundVerbCaseStandard = determineVerbCaseStandard(wordLowerCase, &baseNameFound, &grammaticalBaseTenseForm);
-		if(foundVerbCaseStandard)
-		{
-			if(grammaticalBaseTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_INFINITIVE)
-			{
-				wordTypeDetected = true;
-			}
-		}		
-	}
-	return wordTypeDetected;
-}
-*/
-bool GIApreprocessorMultiwordReductionClass::determineIsVerb(GIApreprocessorWord* wordTag, bool usePOSprelim)
+
+bool GIApreprocessorMultiwordReductionClass::determineIsVerb(GIApreprocessorWord* wordTag, bool usePOSprelim, bool grammaticallyStrict)
 {
 	string baseNameFound = "";
 	int grammaticalBaseTenseForm = INT_DEFAULT_VALUE;
-	return determineIsVerb(wordTag, usePOSprelim, &baseNameFound, &grammaticalBaseTenseForm);
+	return determineIsVerb(wordTag, usePOSprelim, grammaticallyStrict, &baseNameFound, &grammaticalBaseTenseForm);
 }
-bool GIApreprocessorMultiwordReductionClass::determineIsVerb(GIApreprocessorWord* wordTag, bool usePOSprelim, string* baseNameFound, int* grammaticalBaseTenseForm)
+bool GIApreprocessorMultiwordReductionClass::determineIsVerb(GIApreprocessorWord* wordTag, bool usePOSprelim, bool grammaticallyStrict, string* baseNameFound, int* grammaticalBaseTenseForm)
 {
-	bool wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GRAMMATICAL_WORD_TYPE_VERB, baseNameFound, grammaticalBaseTenseForm);
+	bool wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, grammaticallyStrict, GRAMMATICAL_WORD_TYPE_VERB, baseNameFound, grammaticalBaseTenseForm);
 	return wordTypeDetected;	
 }
 bool GIApreprocessorMultiwordReductionClass::determineVerbCaseStandardWithAdditional(const string word, string* baseNameFound, int* grammaticalBaseTenseForm)
@@ -2744,10 +2727,10 @@ bool GIApreprocessorMultiwordReductionClass::convertVerbCaseGrammaticalTenseForm
 	
 	return result;
 }
-bool GIApreprocessorMultiwordReductionClass::verbCaseDetectGrammaticallyStrictVariant(GIApreprocessorMultiwordReductionWord* word)
+bool GIApreprocessorMultiwordReductionClass::verbCaseDetectGrammaticallyStrictVariant(const int grammaticalTenseForm)
 {
 	bool result = false;
-	if(GIApreprocessorMultiwordReductionVerbDatabaseTagBaseTenseFormGrammaticallyStrictArray[word->grammaticalTenseForm])
+	if(GIApreprocessorMultiwordReductionVerbDatabaseTagBaseTenseFormGrammaticallyStrictArray[grammaticalTenseForm])
 	{
 		result = true;
 	}
@@ -2787,7 +2770,7 @@ bool GIApreprocessorMultiwordReductionClass::determineVerbCaseAdditional(const s
 
 bool GIApreprocessorMultiwordReductionClass::determineIsPreposition(GIApreprocessorWord* wordTag, bool usePOSprelim)
 {
-	bool wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GRAMMATICAL_WORD_TYPE_PREP);
+	bool wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_PREPROCESSOR_SENTENCE_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GRAMMATICAL_WORD_TYPE_PREP);
 	return wordTypeDetected;
 }
 bool GIApreprocessorMultiwordReductionClass::determineIsPreposition(const string word)
@@ -2799,7 +2782,7 @@ bool GIApreprocessorMultiwordReductionClass::determineIsPreposition(const string
 
 bool GIApreprocessorMultiwordReductionClass::determineIsAdverb(GIApreprocessorWord* wordTag, bool usePOSprelim)
 {
-	bool wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GRAMMATICAL_WORD_TYPE_ADV);
+	bool wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_PREPROCESSOR_SENTENCE_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GRAMMATICAL_WORD_TYPE_ADV);
 	return wordTypeDetected;
 }
 bool GIApreprocessorMultiwordReductionClass::determineIsAdverb(const string word)
@@ -2811,7 +2794,7 @@ bool GIApreprocessorMultiwordReductionClass::determineIsAdverb(const string word
 
 bool GIApreprocessorMultiwordReductionClass::determineIsAdjective(GIApreprocessorWord* wordTag, bool usePOSprelim)
 {
-	bool wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GRAMMATICAL_WORD_TYPE_ADJ);
+	bool wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_PREPROCESSOR_SENTENCE_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GRAMMATICAL_WORD_TYPE_ADJ);
 	return wordTypeDetected;
 }
 bool GIApreprocessorMultiwordReductionClass::determineIsAdjective(const string word)
@@ -2829,7 +2812,7 @@ bool GIApreprocessorMultiwordReductionClass::determineIsNoun(GIApreprocessorWord
 }
 bool GIApreprocessorMultiwordReductionClass::determineIsNoun(GIApreprocessorWord* wordTag, bool usePOSprelim, string* baseNameFound, int* grammaticalBaseForm)
 {
-	bool wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GRAMMATICAL_WORD_TYPE_NOUN, baseNameFound, grammaticalBaseForm);
+	bool wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_PREPROCESSOR_SENTENCE_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GRAMMATICAL_WORD_TYPE_NOUN, baseNameFound, grammaticalBaseForm);
 	return wordTypeDetected;
 }
 bool GIApreprocessorMultiwordReductionClass::determineIsNoun(const string word)
@@ -2855,7 +2838,7 @@ bool GIApreprocessorMultiwordReductionClass::determineNounPluralVariant(const st
 #ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_LOAD_WORD_LISTS_ADDITIONAL
 bool GIApreprocessorMultiwordReductionClass::determineIsConjunction(GIApreprocessorWord* wordTag, bool usePOSprelim)
 {
-	bool wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GRAMMATICAL_WORD_TYPE_CONJUNCTION);
+	bool wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_PREPROCESSOR_SENTENCE_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GRAMMATICAL_WORD_TYPE_CONJUNCTION);
 	return wordTypeDetected;
 }
 bool GIApreprocessorMultiwordReductionClass::determineIsConjunction(const string word)
@@ -2867,7 +2850,7 @@ bool GIApreprocessorMultiwordReductionClass::determineIsConjunction(const string
 
 bool GIApreprocessorMultiwordReductionClass::determineIsDeterminer(GIApreprocessorWord* wordTag, bool usePOSprelim)
 {
-	bool wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GRAMMATICAL_WORD_TYPE_DETERMINER);
+	bool wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_PREPROCESSOR_SENTENCE_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GRAMMATICAL_WORD_TYPE_DETERMINER);
 	return wordTypeDetected;
 }
 bool GIApreprocessorMultiwordReductionClass::determineIsDeterminer(const string word)
@@ -2983,7 +2966,7 @@ bool GIApreprocessorMultiwordReductionClass::createWordIndexListFromLRPfiles()
 							
 				//generate verbListWithVariantsGlobal and nounListWithVariantsGlobal;
 				verbListWithVariantsGlobal.insert(verbListGlobal.begin(), verbListGlobal.end());
-				#ifdef GIA_PREPROCESSOR_USE_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY
+				#ifdef GIA_PREPROCESSOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY
 				verbListWithVariantsGlobal.insert(verbCaseStandardListGlobal.begin(), verbCaseStandardListGlobal.end());
 				verbListWithVariantsGlobal.insert(verbCaseAdditionalListGlobal.begin(), verbCaseAdditionalListGlobal.end());
 				#else
@@ -2993,19 +2976,27 @@ bool GIApreprocessorMultiwordReductionClass::createWordIndexListFromLRPfiles()
 				{
 					string index = iter->first;
 					GIApreprocessorMultiwordReductionWord* word = iter->second;
-					if(verbCaseDetectGrammaticallyStrictVariant(word))	//ensure that the word is a grammatically strict verb
+					#ifdef GIA_PREPROCESSOR_SENTENCE_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY
+					if(verbCaseDetectGrammaticallyStrictVariant(word->grammaticalTenseForm))	//ensure that the word is a grammatically strict verb
 					{
+					#endif
 						verbListWithVariantsGlobal.insert(pair<string, GIApreprocessorMultiwordReductionWord*>(index, word));
+					#ifdef GIA_PREPROCESSOR_SENTENCE_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY
 					}
+					#endif
 				}
 				for(unordered_map<string, GIApreprocessorMultiwordReductionWord*>::iterator iter = verbCaseAdditionalListGlobal.begin(); iter != verbCaseAdditionalListGlobal.end(); iter++)
 				{
 					string index = iter->first;
 					GIApreprocessorMultiwordReductionWord* word = iter->second;
-					if(verbCaseDetectGrammaticallyStrictVariant(word))	//ensure that the word is a grammatically strict verb
+					#ifdef GIA_PREPROCESSOR_SENTENCE_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY
+					if(verbCaseDetectGrammaticallyStrictVariant(word->grammaticalTenseForm))	//ensure that the word is a grammatically strict verb
 					{
+					#endif
 						verbListWithVariantsGlobal.insert(pair<string, GIApreprocessorMultiwordReductionWord*>(index, word));
+					#ifdef GIA_PREPROCESSOR_SENTENCE_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY
 					}
+					#endif
 				}
 				#endif
 				nounListWithVariantsGlobal.insert(nounListGlobal.begin(), nounListGlobal.end());
@@ -3074,5 +3065,3 @@ bool GIApreprocessorMultiwordReductionClass::createWordIndexListFromLRPfiles()
 	return result;
 }
 #endif
-
-
