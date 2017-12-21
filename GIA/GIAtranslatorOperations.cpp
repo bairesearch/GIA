@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3d6c 12-November-2017
+ * Project Version: 3e1a 07-December-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -57,6 +57,7 @@ GIAtranslatorVariablesClass::GIAtranslatorVariablesClass(void)
 	maxNumberSentences = 0;
 
 	//nlp/sentence variables;
+	//NLPexeFolderArray = NULL;
 	NLPfeatureParser = GIA_NLP_FEATURE_PARSER_FOR_INPUT_TEXT_DEFAULT;
 	NLPdependencyRelationsParser = GIA_NLP_RELATIONS_PARSER_FOR_INPUT_TEXT_DEFAULT;
 	NLPdependencyRelationsType = dependencyRelationsTypes[NLPdependencyRelationsParser];

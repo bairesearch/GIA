@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorMultiwordReductionClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3d6c 12-November-2017
+ * Project Version: 3e1a 07-December-2017
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  *
@@ -38,6 +38,9 @@ GIApreprocessorWord::GIApreprocessorWord(void)
 {
 	tagName = "";
 
+	#ifdef GIA_PREPROCESSOR_SENTENCE_EXECUTE_PRELIM_POS_TAGGER
+	featureReferencePrelim = NULL;
+	#endif
 	#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
 	featureReferenceOriginal = NULL;
 	featureReference = NULL;

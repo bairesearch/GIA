@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorMultiwordReduction.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3d6c 12-November-2017
+ * Project Version: 3e1a 07-December-2017
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  *
@@ -33,6 +33,10 @@
 
 
 #include "GIApreprocessorMultiwordReduction.hpp"
+#ifdef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
+#include "GIAtranslatorDefs.hpp"
+#endif
+
 
 bool lrpInitialised = false;
 static string lrpDataFolderName;
@@ -2307,22 +2311,103 @@ bool GIApreprocessorMultiwordReductionClass::identifyConditionType(GIAentityNode
 
 #endif
 
+#ifdef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
+bool GIApreprocessorMultiwordReductionClass::checkGrammaticalWordType(GIApreprocessorWord* wordTag, int grammaticalWordType)
+{
+	bool result = false;
+	
+	//use feature POS type (instead of GIApreprocessor word type/wordNet lists) if available
+	if(wordTag->featureReferencePrelim != NULL)
+	{
+		if(wordTag->featureReferencePrelim->grammaticalWordType == grammaticalWordType)
+		{
+			result = true;
+		}
+	}
+	
+	return result;
+}
+#endif
+
+//FUTURE: need to create conjunction LRP text file lists
+//FUTURE: need to add conj to grammaticalWordTypes
+bool GIApreprocessorMultiwordReductionClass::determineIsConjunction(GIApreprocessorWord* wordTag, bool usePOSprelim)
+{
+	bool conjuctionDetected = false;
+
+	#ifdef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
+	if(usePOSprelim)
+	{
+		//if(checkGrammaticalWordType(wordTag, GRAMMATICAL_WORD_TYPE_CONJ);
+		if(wordTag->featureReferencePrelim->stanfordPOS == FEATURE_POS_TAG_COORDINATING_CONJUNCTION_CC)
+		{
+			conjuctionDetected = true;
+		}
+	}
+	else 
+	{
+	#endif
+		cerr << "!GIA_PREPROCESSOR_SENTENCE_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS determineIsConjunction has not been coded" << endl;
+		/*
+		if(determineIsConjunction(wordTag->tagName))
+		{
+			conjuctionDetected = true;
+		}
+		*/
+	
+	#ifdef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
+	}
+	#endif
+	
+	/*
+	GIApreprocessorMultiwordReductionPlainTextWord* wordTagPlaintext = static_cast<GIApreprocessorMultiwordReductionPlainTextWord*>(wordTag);
+	if(wordTagPlaintext->collapsedMultiwordWord && (wordTagPlaintext->collapsedMultiwordWordType == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DUMMY_COLLAPSED_MULTIWORD_CONJUNCTION_TYPE))
+	{
+		conjuctionDetected = true;
+	}
+	*/
+	
+	return conjuctionDetected;
+}
+/*
+bool GIApreprocessorMultiwordReductionClass::determineIsConjunction(const string word)
+{
+	unordered_map<string, GIApreprocessorMultiwordReductionWord*>* conjuctionsList = &conjuctionListGlobal;
+	return findWordInWordList(conjuctionsList, word);
+}
+*/
 
 
-bool GIApreprocessorMultiwordReductionClass::determineIsVerb(GIApreprocessorWord* wordTag)
+bool GIApreprocessorMultiwordReductionClass::determineIsVerb(GIApreprocessorWord* wordTag, bool usePOSprelim)
 {
 	string baseNameFound = "";
 	int grammaticalBaseTenseForm = INT_DEFAULT_VALUE;
-	return determineIsVerb(wordTag, &baseNameFound, &grammaticalBaseTenseForm);
+	return determineIsVerb(wordTag, usePOSprelim, &baseNameFound, &grammaticalBaseTenseForm);
 }
 
-bool GIApreprocessorMultiwordReductionClass::determineIsVerb(GIApreprocessorWord* wordTag, string* baseNameFound, int* grammaticalBaseTenseForm)
+bool GIApreprocessorMultiwordReductionClass::determineIsVerb(GIApreprocessorWord* wordTag, bool usePOSprelim, string* baseNameFound, int* grammaticalBaseTenseForm)
 {
 	bool verbDetected = false;
-	if(determineVerbCaseStandardWithAdditional(wordTag->tagName, baseNameFound, grammaticalBaseTenseForm))
+	
+	
+	#ifdef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
+	if(usePOSprelim)
 	{
-		verbDetected = true;
+		if(checkGrammaticalWordType(wordTag, GRAMMATICAL_WORD_TYPE_VERB))
+		{
+			verbDetected = true;
+		}
 	}
+	else 
+	{
+	#endif
+		if(determineVerbCaseStandardWithAdditional(wordTag->tagName, baseNameFound, grammaticalBaseTenseForm))
+		{
+			verbDetected = true;
+		}
+	#ifdef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
+	}
+	#endif
 	
 	GIApreprocessorMultiwordReductionPlainTextWord* wordTagPlaintext = static_cast<GIApreprocessorMultiwordReductionPlainTextWord*>(wordTag);
 	if(wordTagPlaintext->collapsedPhrasalVerbExactDefinedSection)
@@ -2336,7 +2421,7 @@ bool GIApreprocessorMultiwordReductionClass::determineIsVerb(GIApreprocessorWord
 		*grammaticalBaseTenseForm = GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT;
 		verbDetected = true;
 	}
-	
+		
 	return verbDetected;	
 }
 
@@ -2419,18 +2504,35 @@ bool GIApreprocessorMultiwordReductionClass::determineVerbCaseAdditional(const s
 	return foundVerbCase;	
 }
 
-bool GIApreprocessorMultiwordReductionClass::determineIsPreposition(GIApreprocessorWord* wordTag)
+bool GIApreprocessorMultiwordReductionClass::determineIsPreposition(GIApreprocessorWord* wordTag, bool usePOSprelim)
 {
 	bool prepositionDetected = false;
-	if(determineIsPreposition(wordTag->tagName))
+	
+	#ifdef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
+	if(usePOSprelim)
 	{
-		prepositionDetected = true;
+		if(checkGrammaticalWordType(wordTag, GRAMMATICAL_WORD_TYPE_PREP))
+		{
+			prepositionDetected = true;
+		}
 	}
+	else 
+	{
+	#endif
+		if(determineIsPreposition(wordTag->tagName))
+		{
+			prepositionDetected = true;
+		}
+	#ifdef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
+	}
+	#endif
+
 	GIApreprocessorMultiwordReductionPlainTextWord* wordTagPlaintext = static_cast<GIApreprocessorMultiwordReductionPlainTextWord*>(wordTag);
 	if(wordTagPlaintext->collapsedMultiwordWord && (wordTagPlaintext->collapsedMultiwordWordType == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DUMMY_COLLAPSED_MULTIWORD_PREPOSITION_TYPE))
 	{
 		prepositionDetected = true;
 	}
+
 	return prepositionDetected;
 }
 bool GIApreprocessorMultiwordReductionClass::determineIsPreposition(const string word)
@@ -2439,18 +2541,35 @@ bool GIApreprocessorMultiwordReductionClass::determineIsPreposition(const string
 	return findWordInWordList(prepositionsList, word);
 }
 
-bool GIApreprocessorMultiwordReductionClass::determineIsAdverb(GIApreprocessorWord* wordTag)
+bool GIApreprocessorMultiwordReductionClass::determineIsAdverb(GIApreprocessorWord* wordTag, bool usePOSprelim)
 {
 	bool adverbDetected = false;
-	if(determineIsAdverb(wordTag->tagName))
+	
+	#ifdef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
+	if(usePOSprelim)
 	{
-		adverbDetected = true;
+		if(checkGrammaticalWordType(wordTag, GRAMMATICAL_WORD_TYPE_ADV))
+		{
+			adverbDetected = true;
+		}
 	}
+	else 
+	{
+	#endif
+		if(determineIsAdverb(wordTag->tagName))
+		{
+			adverbDetected = true;
+		}
+	#ifdef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
+	}
+	#endif
+	
 	GIApreprocessorMultiwordReductionPlainTextWord* wordTagPlaintext = static_cast<GIApreprocessorMultiwordReductionPlainTextWord*>(wordTag);
 	if(wordTagPlaintext->collapsedMultiwordWord && (wordTagPlaintext->collapsedMultiwordWordType == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DUMMY_COLLAPSED_MULTIWORD_ADVERB_TYPE))
 	{
 		adverbDetected = true;
 	}
+
 	return adverbDetected;
 }
 bool GIApreprocessorMultiwordReductionClass::determineIsAdverb(const string word)
@@ -2459,18 +2578,35 @@ bool GIApreprocessorMultiwordReductionClass::determineIsAdverb(const string word
 	return findWordInWordList(adverbList, word);
 }
 
-bool GIApreprocessorMultiwordReductionClass::determineIsAdjective(GIApreprocessorWord* wordTag)
+bool GIApreprocessorMultiwordReductionClass::determineIsAdjective(GIApreprocessorWord* wordTag, bool usePOSprelim)
 {
 	bool adjectiveDetected = false;
-	if(determineIsAdjective(wordTag->tagName))
+	
+	#ifdef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
+	if(usePOSprelim)
 	{
-		adjectiveDetected = true;
+		if(checkGrammaticalWordType(wordTag, GRAMMATICAL_WORD_TYPE_ADJ))
+		{
+			adjectiveDetected = true;
+		}
 	}
+	else 
+	{
+	#endif
+		if(determineIsAdjective(wordTag->tagName))
+		{
+			adjectiveDetected = true;
+		}
+	#ifdef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
+	}
+	#endif
+	
 	GIApreprocessorMultiwordReductionPlainTextWord* wordTagPlaintext = static_cast<GIApreprocessorMultiwordReductionPlainTextWord*>(wordTag);
 	if(wordTagPlaintext->collapsedMultiwordWord && (wordTagPlaintext->collapsedMultiwordWordType == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DUMMY_COLLAPSED_MULTIWORD_ADJECTIVE_TYPE))
 	{
 		adjectiveDetected = true;
 	}
+
 	return adjectiveDetected;
 }
 bool GIApreprocessorMultiwordReductionClass::determineIsAdjective(const string word)
@@ -2479,22 +2615,37 @@ bool GIApreprocessorMultiwordReductionClass::determineIsAdjective(const string w
 	return findWordInWordList(adjectiveList, word);
 }
 
-bool GIApreprocessorMultiwordReductionClass::determineIsNoun(GIApreprocessorWord* wordTag)
+bool GIApreprocessorMultiwordReductionClass::determineIsNoun(GIApreprocessorWord* wordTag, bool usePOSprelim)
 {
 	string baseNameFound = "";
 	int grammaticalBaseForm = INT_DEFAULT_VALUE;
-	return determineIsNoun(wordTag, &baseNameFound, &grammaticalBaseForm);
+	return determineIsNoun(wordTag, usePOSprelim, &baseNameFound, &grammaticalBaseForm);
 }
 
-bool GIApreprocessorMultiwordReductionClass::determineIsNoun(GIApreprocessorWord* wordTag, string* baseNameFound, int* grammaticalBaseForm)
+bool GIApreprocessorMultiwordReductionClass::determineIsNoun(GIApreprocessorWord* wordTag, bool usePOSprelim, string* baseNameFound, int* grammaticalBaseForm)
 {
 	bool nounDetected = false;
-	if(determineIsNoun(wordTag->tagName))
+
+	#ifdef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
+	if(usePOSprelim)
 	{
-		nounDetected = true;
-		*baseNameFound = wordTag->tagName;
-		*grammaticalBaseForm = GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NOUN_DATABASE_TAG_BASE_FORM_SINGULAR;
+		if(checkGrammaticalWordType(wordTag, GRAMMATICAL_WORD_TYPE_NOUN))
+		{
+			nounDetected = true;
+		}
 	}
+	else 
+	{
+	#endif
+		if(determineIsNoun(wordTag->tagName))
+		{
+			nounDetected = true;
+			*baseNameFound = wordTag->tagName;
+			*grammaticalBaseForm = GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NOUN_DATABASE_TAG_BASE_FORM_SINGULAR;
+		}
+	#ifdef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
+	}
+	#endif
 	
 	GIApreprocessorMultiwordReductionWord* nounBaseFormFound = NULL;	
 	if(determineNounPluralVariant(wordTag->tagName, &nounBaseFormFound))
@@ -2509,6 +2660,7 @@ bool GIApreprocessorMultiwordReductionClass::determineIsNoun(GIApreprocessorWord
 	{
 		nounDetected = true;
 	}
+	
 	return nounDetected;
 }
 

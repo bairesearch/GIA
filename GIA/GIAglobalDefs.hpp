@@ -25,7 +25,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3d6c 12-November-2017
+ * Project Version: 3e1a 07-December-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -744,12 +744,18 @@
 	#ifdef GIA_QUERY_SIMPLIFIED_SEARCH_ENFORCE_EXACT_MATCH_CONCEPTS
 		//#define GIA_DEBUG_QUERY2
 	#endif
+	//#ifdef GIA_PREPROCESSOR_SENTENCE	//has not yet been defined
+		#define GIA_PREPROCESSOR_SENTENCE_EXECUTE_PRELIM_POS_TAGGER	//3d7a
+		#ifdef GIA_PREPROCESSOR_SENTENCE_EXECUTE_PRELIM_POS_TAGGER
+			#define GIA_PREPROCESSOR_SENTENCE_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
+		#endif
+	//#endif
 	#ifdef USE_ANN
 		//#define GIA_NEURAL_NETWORK	//experimental only
 		#ifdef GIA_NEURAL_NETWORK
 			#define GIA_NEURAL_NETWORK_MAX_SPECIFIC_CONCEPT_DEPTH (5)
 			#define GIA_NEURAL_NETWORK_MAX_INSTANCE_DEPTH (5)
-			#define GIA_NEURAL_NETWORK_SYMBOLIC_CORE	//3d7a
+			#define GIA_NEURAL_NETWORK_SYMBOLIC_CORE	//3d6a
 			#ifdef GIA_NEURAL_NETWORK_SYMBOLIC_CORE
 				//#define GIA_NEURAL_NETWORK_SYMBOLIC_CORE_3D			//not yet coded
 				#define GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS	//not yet coded (connect each concept to concept index bits, and store binary index code in each neuron [which is used to tune synapse weights between instances and concept index bits]. Connect instances to concept index bits)
@@ -1034,6 +1040,9 @@
 		#endif
 		#define GIA_PREPROCESSOR_INTERMEDIARY_MULTIWORD_FILE_EXTENSION ".intermediary.multiword"
 		#define GIA_PREPROCESSOR_INTERMEDIARY_SENTENCE_FILE_EXTENSION ".intermediary.sentence"
+		#ifdef GIA_PREPROCESSOR_SENTENCE_EXECUTE_PRELIM_POS_TAGGER
+			#define GIA_PREPROCESSOR_INTERMEDIARY_PRELIM_FILE_EXTENSION ".intermediary.prelim"
+		#endif
 	#endif
 #endif
 

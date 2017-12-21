@@ -25,7 +25,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3d6c 12-November-2017
+ * Project Version: 3e1a 07-December-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -661,7 +661,7 @@ int main(const int argc, const char** argv)
 
 		if(SHAREDvarsClass().argumentExists(argc, argv, "-version"))
 		{
-			cout << "GIA.exe - Project Version: 3d6c 12-November-2017" << endl;
+			cout << "GIA.exe - Project Version: 3e1a 07-December-2017" << endl;
 			exit(EXIT_OK);
 		}
 
@@ -690,6 +690,8 @@ int main(const int argc, const char** argv)
 	#ifdef GIA_NLP_CLIENT_SERVER
 	translatorVariables->NLPclient = NLPclient;
 	#endif
+	SHAREDvarsClass().copyStringArray(NLPexeFolderArray, translatorVariables->NLPexeFolderArray, GIA_NLP_PARSER_NUMBER_OF_TYPES);
+	
 
 	GIAtranslatorVariablesClass* translatorVariablesQuery = new GIAtranslatorVariablesClass();
 	translatorVariablesQuery->isQuery = true;
@@ -704,6 +706,8 @@ int main(const int argc, const char** argv)
 	#ifdef GIA_NLP_CLIENT_SERVER
 	translatorVariablesQuery->NLPclient = NLPclient;
 	#endif
+	SHAREDvarsClass().copyStringArray(NLPexeFolderArray, translatorVariablesQuery->NLPexeFolderArray, GIA_NLP_PARSER_NUMBER_OF_TYPES);
+
 	
 	GIAmainClass().executeGIA(
 
@@ -712,7 +716,6 @@ int main(const int argc, const char** argv)
 
 		inputFolderLocal,
 		outputFolderLocal,
-		NLPexeFolderArray,
 
 		useInputTextPlainTXTFile,
 		inputTextPlainTXTfileName,
@@ -839,7 +842,6 @@ bool GIAmainClass::executeGIA(
 
 	string inputFolderLocal, 
 	string outputFolderLocal,
-	string NLPexeFolderArray[],
 
 	bool useInputTextPlainTXTFile,
 	string inputTextPlainTXTfileName,
@@ -1301,7 +1303,7 @@ bool GIAmainClass::executeGIA2()
 	#endif
 		
 		#ifdef GIA_PREPROCESSOR
-		if(!GIApreprocessor.preprocessTextForGIAwrapper(useLRP, &inputTextPlainTXTfileName, outputLRPTextPlainTXTFileName, false, translatorVariables, &useInputTextPlainTXTFile))
+		if(!GIApreprocessor.preprocessTextForGIAwrapper(useLRP, &inputTextPlainTXTfileName, outputLRPTextPlainTXTFileName, false, translatorVariables, &useInputTextPlainTXTFile, inputTextNLPfeatureXMLfileName))
 		{
 			result = false;
 		}
@@ -1398,11 +1400,11 @@ bool GIAmainClass::executeGIA2()
 			else
 			{
 				#ifndef GIA_SEMANTIC_PARSER_DO_NOT_PARSE_DEPENDENCY_RELATION_FILE
-				GIAnlp.executeNLPparser(inputTextPlainTXTfileName, inputTextNLPrelationXMLfileName, translatorVariables, NLPexeFolderArray, true);
+				GIAnlp.executeNLPparser(inputTextPlainTXTfileName, inputTextNLPrelationXMLfileName, translatorVariables, true);
 				if(inputTextNLPfeatureXMLfileName != inputTextNLPrelationXMLfileName)
 				{
 				#endif
-					GIAnlp.executeNLPparser(inputTextPlainTXTfileName, inputTextNLPfeatureXMLfileName, translatorVariables, NLPexeFolderArray, false);
+					GIAnlp.executeNLPparser(inputTextPlainTXTfileName, inputTextNLPfeatureXMLfileName, translatorVariables, false);
 				#ifndef GIA_SEMANTIC_PARSER_DO_NOT_PARSE_DEPENDENCY_RELATION_FILE
 				}
 				#endif
@@ -1423,12 +1425,12 @@ bool GIAmainClass::executeGIA2()
 			{
 				translatorVariables->firstParagraphInList = new GIAparagraph();
 				#ifdef GIA_SEMANTIC_PARSER_READ_SEMANTIC_RELATIONS
-				if(!GIAsemanticParser.performSemanticParserLookupAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences(translatorVariables, inputTextPlainTXTfileName, inputTextNLPrelationXMLfileName, inputTextNLPfeatureXMLfileName, outputTextCFFFileName, NLPexeFolderArray))
+				if(!GIAsemanticParser.performSemanticParserLookupAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences(translatorVariables, inputTextPlainTXTfileName, inputTextNLPrelationXMLfileName, inputTextNLPfeatureXMLfileName, outputTextCFFFileName))
 				{
 					result = false;
 				}
 				#else
-				if(!GIAtranslator.parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyParsedSentences(translatorVariables, inputTextNLPrelationXMLfileName, inputTextNLPfeatureXMLfileName, outputTextCFFFileName, NLPexeFolderArray))
+				if(!GIAtranslator.parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyParsedSentences(translatorVariables, inputTextNLPrelationXMLfileName, inputTextNLPfeatureXMLfileName, outputTextCFFFileName))
 				{
 					result = false;
 				}
@@ -1476,7 +1478,7 @@ bool GIAmainClass::executeGIA2()
 	if(useInputQuery)
 	{
 		#ifdef GIA_PREPROCESSOR
-		if(!GIApreprocessor.preprocessTextForGIAwrapper(useLRP, &inputQueryPlainTXTFileName, outputQueryLRPTextPlainTXTFileName, true, translatorVariablesQuery, &useInputQueryPlainTXTFile))
+		if(!GIApreprocessor.preprocessTextForGIAwrapper(useLRP, &inputQueryPlainTXTFileName, outputQueryLRPTextPlainTXTFileName, true, translatorVariablesQuery, &useInputQueryPlainTXTFile, inputQueryNLPfeatureXMLFileName))
 		{
 			result = false;
 		}
@@ -1516,11 +1518,11 @@ bool GIAmainClass::executeGIA2()
 			else
 			{
 				#ifndef GIA_SEMANTIC_PARSER_DO_NOT_PARSE_DEPENDENCY_RELATION_FILE
-				GIAnlp.executeNLPparser(inputQueryPlainTXTFileName, inputQueryNLPrelationXMLFileName, translatorVariablesQuery, NLPexeFolderArray, true);
+				GIAnlp.executeNLPparser(inputQueryPlainTXTFileName, inputQueryNLPrelationXMLFileName, translatorVariablesQuery, true);
 				if(inputQueryNLPfeatureXMLFileName != inputQueryNLPrelationXMLFileName)
 				{
 				#endif
-					GIAnlp.executeNLPparser(inputQueryPlainTXTFileName, inputQueryNLPfeatureXMLFileName, translatorVariablesQuery, NLPexeFolderArray, false);
+					GIAnlp.executeNLPparser(inputQueryPlainTXTFileName, inputQueryNLPfeatureXMLFileName, translatorVariablesQuery, false);
 				#ifndef GIA_SEMANTIC_PARSER_DO_NOT_PARSE_DEPENDENCY_RELATION_FILE
 				}
 				#endif
@@ -1541,12 +1543,12 @@ bool GIAmainClass::executeGIA2()
 			{
 				translatorVariablesQuery->firstParagraphInList = new GIAparagraph();
 				#ifdef GIA_SEMANTIC_PARSER_READ_SEMANTIC_RELATIONS
-				if(!GIAsemanticParser.performSemanticParserLookupAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences(translatorVariablesQuery, inputQueryPlainTXTFileName, inputQueryNLPrelationXMLFileName, inputQueryNLPfeatureXMLFileName, outputQueryCFFFileName, NLPexeFolderArray))
+				if(!GIAsemanticParser.performSemanticParserLookupAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences(translatorVariablesQuery, inputQueryPlainTXTFileName, inputQueryNLPrelationXMLFileName, inputQueryNLPfeatureXMLFileName, outputQueryCFFFileName))
 				{
 					result = false;
 				}
 				#else
-				if(!GIAtranslator.parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyParsedSentences(translatorVariablesQuery, inputQueryNLPrelationXMLFileName, inputQueryNLPfeatureXMLFileName, outputQueryCFFFileName, NLPexeFolderArray))
+				if(!GIAtranslator.parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyParsedSentences(translatorVariablesQuery, inputQueryNLPrelationXMLFileName, inputQueryNLPfeatureXMLFileName, outputQueryCFFFileName))
 				{
 					result = false;
 				}

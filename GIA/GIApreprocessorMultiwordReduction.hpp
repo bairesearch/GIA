@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorMultiwordReduction.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3d6c 12-November-2017
+ * Project Version: 3e1a 07-December-2017
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  *
@@ -108,19 +108,21 @@ class GIApreprocessorMultiwordReductionClass
 	#endif
 	#endif
 
-	public: bool determineIsVerb(GIApreprocessorWord* wordTag);	
-		public: bool determineIsVerb(GIApreprocessorWord* wordTag, string* baseNameFound, int* grammaticalBaseTenseForm);
+	public: bool checkGrammaticalWordType(GIApreprocessorWord* wordTag, int grammaticalWordType);
+	public: bool determineIsConjunction(GIApreprocessorWord* wordTag, bool usePOSprelim);
+	public: bool determineIsVerb(GIApreprocessorWord* wordTag, bool usePOSprelim);	
+		public: bool determineIsVerb(GIApreprocessorWord* wordTag, bool usePOSprelim, string* baseNameFound, int* grammaticalBaseTenseForm);
 			public: bool determineVerbCaseStandardWithAdditional(const string word, string* baseNameFound, int* grammaticalBaseTenseForm);
 				public: bool determineVerbCaseStandard(const string word, string* baseNameFound, int* grammaticalBaseTenseForm);
 				public: bool determineVerbCaseAdditional(const string word, string* baseNameFound, int* grammaticalTenseModifier);
-	public: bool determineIsPreposition(GIApreprocessorWord* wordTag);
+	public: bool determineIsPreposition(GIApreprocessorWord* wordTag, bool usePOSprelim);
 		public: bool determineIsPreposition(const string word);
-	public: bool determineIsAdverb(GIApreprocessorWord* wordTag);
+	public: bool determineIsAdverb(GIApreprocessorWord* wordTag, bool usePOSprelim);
 		public: bool determineIsAdverb(const string word);
-	public: bool determineIsAdjective(GIApreprocessorWord* wordTag);
+	public: bool determineIsAdjective(GIApreprocessorWord* wordTag, bool usePOSprelim);
 		public: bool determineIsAdjective(const string word);
-	public: bool determineIsNoun(GIApreprocessorWord* wordTag);
-		public: bool determineIsNoun(GIApreprocessorWord* wordTag, string* baseNameFound, int* grammaticalBaseForm);
+	public: bool determineIsNoun(GIApreprocessorWord* wordTag, bool usePOSprelim);
+		public: bool determineIsNoun(GIApreprocessorWord* wordTag, bool usePOSprelim, string* baseNameFound, int* grammaticalBaseForm);
 			public: bool determineIsNoun(const string word);
 			public: bool determineNounPluralVariant(const string word, GIApreprocessorMultiwordReductionWord** nounBaseFormFound);
 	

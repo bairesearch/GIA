@@ -25,7 +25,7 @@
  * File Name: GIApreprocessor.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3d6c 12-November-2017
+ * Project Version: 3e1a 07-December-2017
  * Requirements: requires plain text file
  * Description: Logical Condition and Reference Set preprocessor
  *
@@ -37,7 +37,7 @@
 #include "XMLrulesClass.hpp"
 
 #ifdef GIA_PREPROCESSOR
-bool GIApreprocessorClass::preprocessTextForGIAwrapper(const bool useLRP, string* inputTextPlainTXTfileName, const string outputLRPTextPlainTXTFileName, const bool isQuery, GIAtranslatorVariablesClass* translatorVariables, bool* useInputTextPlainTXTFile)
+bool GIApreprocessorClass::preprocessTextForGIAwrapper(const bool useLRP, string* inputTextPlainTXTfileName, const string outputLRPTextPlainTXTFileName, const bool isQuery, GIAtranslatorVariablesClass* translatorVariables, bool* useInputTextPlainTXTFile, const string inputTextNLPfeatureXMLfileName)
 {
 	bool result = true;
 	
@@ -48,7 +48,7 @@ bool GIApreprocessorClass::preprocessTextForGIAwrapper(const bool useLRP, string
 	
 	if(useLRP)
 	{
-		if(!preprocessTextForGIA(inputTextPlainTXTfileName, outputLRPTextPlainTXTFileName, isQuery, translatorVariables))
+		if(!preprocessTextForGIA(inputTextPlainTXTfileName, outputLRPTextPlainTXTFileName, isQuery, translatorVariables, inputTextNLPfeatureXMLfileName))
 		{
 			result = false;
 		}
@@ -74,7 +74,7 @@ bool GIApreprocessorClass::preprocessTextForGIAwrapper(const bool useLRP, string
 	return result;
 }
 
-bool GIApreprocessorClass::preprocessTextForGIA(string* inputTextPlainTXTfileName, const string outputLRPTextPlainTXTFileName, const bool isQuery, GIAtranslatorVariablesClass* translatorVariables)
+bool GIApreprocessorClass::preprocessTextForGIA(string* inputTextPlainTXTfileName, const string outputLRPTextPlainTXTFileName, const bool isQuery, GIAtranslatorVariablesClass* translatorVariables, const string inputTextNLPfeatureXMLfileName)
 {
 	bool result = true;
 	
@@ -86,7 +86,7 @@ bool GIApreprocessorClass::preprocessTextForGIA(string* inputTextPlainTXTfileNam
 	string outputLRPTextPlainTXTFileNameIntermediaryMultiword = outputLRPTextPlainTXTFileName + GIA_PREPROCESSOR_INTERMEDIARY_MULTIWORD_FILE_EXTENSION;
 	string outputLRPTextForNLPonlyPlainTXTFileNameIntermediaryMultiword = outputLRPTextForNLPonlyPlainTXTFileNameBase + GIA_PREPROCESSOR_INTERMEDIARY_MULTIWORD_FILE_EXTENSION;
 	#else
-	string outputLRPTextPlainTXTFileNameIntermediaryMultiword = inputTextPlainTXTfileName;
+	string outputLRPTextPlainTXTFileNameIntermediaryMultiword = *inputTextPlainTXTfileName;
 	#endif
 	string outputLRPTextPlainTXTFileNameIntermediarySentence = outputLRPTextPlainTXTFileName + GIA_PREPROCESSOR_INTERMEDIARY_SENTENCE_FILE_EXTENSION;
 	string outputLRPTextForNLPonlyPlainTXTFileNameIntermediarySentence = outputLRPTextForNLPonlyPlainTXTFileNameBase + GIA_PREPROCESSOR_INTERMEDIARY_SENTENCE_FILE_EXTENSION;
@@ -125,6 +125,12 @@ bool GIApreprocessorClass::preprocessTextForGIA(string* inputTextPlainTXTfileNam
 	#endif
 	
 	#ifdef GIA_PREPROCESSOR_SENTENCE
+	#ifdef GIA_PREPROCESSOR_SENTENCE_EXECUTE_PRELIM_POS_TAGGER
+	if(!executePrelimFeatureProcessingOnSentences(outputLRPTextPlainTXTFileName, inputTextNLPfeatureXMLfileName, translatorVariables))
+	{
+		result = true;
+	}	
+	#endif
 	if(!preprocessSentencesForGIA(translatorVariables->firstGIApreprocessorSentenceInList, outputLRPTextPlainTXTFileNameIntermediarySentence, outputLRPTextForNLPonlyPlainTXTFileNameIntermediarySentence))
 	{
 		result = false;
@@ -215,6 +221,8 @@ bool GIApreprocessorClass::createPreprocessSentencesForGIA(const string inputFil
 		
 	return result;
 }
+
+
 
 bool GIApreprocessorClass::createPreprocessSentences(const string fileContents, GIApreprocessorSentence* firstGIApreprocessorSentenceInList, bool interpretNewLinesAsNewSentences, bool splitMultisentenceLines)
 {
@@ -574,7 +582,81 @@ void GIApreprocessorClass::copySentenceContentsPreprocessor(GIApreprocessorMulti
 
 
 #ifdef GIA_PREPROCESSOR_SENTENCE
-					
+
+#ifdef GIA_PREPROCESSOR_SENTENCE_EXECUTE_PRELIM_POS_TAGGER
+bool GIApreprocessorClass::executePrelimFeatureProcessingOnSentences(const string outputLRPTextPlainTXTFileName, const string inputTextNLPfeatureXMLfileName, GIAtranslatorVariablesClass* translatorVariables)
+{
+	bool result = true;
+
+	string currentDirectoryTemp = SHAREDvars.getCurrentDirectory();
+
+	string outputLRPTextPlainTXTFileNamePrelim = outputLRPTextPlainTXTFileName + GIA_PREPROCESSOR_INTERMEDIARY_PRELIM_FILE_EXTENSION;
+	string inputTextNLPfeatureXMLfileNamePrelim = string("prelim") + inputTextNLPfeatureXMLfileName;
+	//cout << "outputLRPTextPlainTXTFileNamePrelim = " << outputLRPTextPlainTXTFileNamePrelim << endl;
+	//cout << "inputTextNLPfeatureXMLfileNamePrelim = " << inputTextNLPfeatureXMLfileNamePrelim << endl;
+	
+	//print sentences to temporary file
+	SHAREDvars.setCurrentDirectory(outputFolder);
+	if(!GIApreprocessorMultiwordReduction.writeTagListToFile(translatorVariables->firstGIApreprocessorSentenceInList, outputLRPTextPlainTXTFileNamePrelim, "", true, false))
+	{
+		result = false;
+	}	
+
+	//execute prelim NLP parser (to extract POS features)
+	GIAnlp.executeNLPparser(outputLRPTextPlainTXTFileNamePrelim, inputTextNLPfeatureXMLfileNamePrelim, translatorVariables, false);
+	
+	//now parse the NLP extracted sentence (ie feature POS) data
+	GIAparagraph firstParagraphInList;
+	bool createNewSentences = true;
+	if(!GIAnlp.parseNLPparserFeaturesFile(inputTextNLPfeatureXMLfileNamePrelim, translatorVariables->isQuery, &firstParagraphInList, translatorVariables->NLPfeatureParser, &createNewSentences))
+	{	
+		result = false;
+	}	
+	
+	//copy NLP extracted sentence (ie feature POS) data to the GIA preprocessor structure (as a temporary preliminary sentence record)
+	GIAsentence* firstSentenceInList = firstParagraphInList.firstSentenceInList;
+	GIAsentence* currentSentenceInList = firstSentenceInList;
+	GIApreprocessorSentence* currentGIApreprocessorSentenceInList = translatorVariables->firstGIApreprocessorSentenceInList;
+	while(currentSentenceInList->next != NULL)
+	{
+		currentGIApreprocessorSentenceInList->sentenceReferencePrelim = currentSentenceInList;
+		
+		if(currentGIApreprocessorSentenceInList->sentenceContentsLRP.size() != currentSentenceInList->numberOfWordsInSentence)
+		{
+			cerr << "GIApreprocessorClass::executePrelimFeatureProcessingOnSentences{} error: (currentGIApreprocessorSentenceInList->sentenceContentsLRP->size() != currentSentenceInList->numberOfWordsInSentence)" << endl;
+			exit(EXIT_ERROR);
+		}
+				
+		GIAfeature* currentFeatureInList = currentSentenceInList->firstFeatureInList;		
+		for(int w = 0; w < currentSentenceInList->numberOfWordsInSentence; w++)
+		{
+			GIAtranslatorDefineGrammar.extractPOSrelatedGrammaticalInformationStanford(currentFeatureInList);	//this is required to derive grammaticalWordType from NLP POS tags for GIA_PREPROCESSOR_SENTENCE_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
+			currentGIApreprocessorSentenceInList->sentenceContentsLRP[w]->featureReferencePrelim = currentFeatureInList;
+			currentFeatureInList = currentFeatureInList->next;
+		}
+		
+		//debug:
+		/*
+		GIAfeature* currentFeatureInList = currentSentenceInList->firstFeatureInList;
+		while(currentFeatureInList->next != NULL)
+		{
+			cout << "currentFeatureInList->lemma = " << currentFeatureInList->lemma << endl;
+			currentFeatureInList = currentFeatureInList->next;
+		}
+		*/
+		/*
+		cout << "currentSentenceInList->firstFeatureInList->word = " << currentSentenceInList->firstFeatureInList->word << endl;	
+		cout << "currentGIApreprocessorSentenceInList->sentenceContentsOriginal[0]->tagName = " << currentGIApreprocessorSentenceInList->sentenceContentsOriginal[0]->tagName << endl;
+		*/
+		
+		currentSentenceInList = currentSentenceInList->next;
+		currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->next;
+	}
+	
+	SHAREDvars.setCurrentDirectory(currentDirectoryTemp);
+}
+#endif
+			
 bool GIApreprocessorClass::preprocessSentencesForGIA(GIApreprocessorSentence* firstGIApreprocessorSentenceInList, const string outputFileName, const string outputFileNameLRPforNLP)
 {
 	bool result = true;
@@ -586,8 +668,8 @@ bool GIApreprocessorClass::preprocessSentencesForGIA(GIApreprocessorSentence* fi
 	{
 		result = true;
 	}
-	#endif
-			
+	#endif	
+	
 	int charCount = 0;
 	char currentToken;
 	GIApreprocessorSentence* currentGIApreprocessorSentenceInList = firstGIApreprocessorSentenceInList;
@@ -2460,7 +2542,12 @@ bool GIApreprocessorClass::getRelationshipNameAndType(GIApreprocessorSubReferenc
 		NB cold/blue/red are adjectives
 	*/
 	
-
+	#ifdef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
+	bool usePOSprelim = true;	//CHECKTHIS - can still use POSprelim during post processing (perhaps better to use POS)?
+	#else
+	bool usePOSprelim = false;
+	#endif
+	
 	*relationshipName = ((relationshipReference->subReferenceSetContents).back())->tagName;
 	#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
 	cout << "relationshipName = " << *relationshipName << endl;
@@ -2521,7 +2608,7 @@ bool GIApreprocessorClass::getRelationshipNameAndType(GIApreprocessorSubReferenc
 			#endif
 			if(SHAREDvars.textInTextArray(*relationshipName, entityAuxiliaryBeingArray, ENTITY_AUXILIARY_BEING_ARRAY_NUMBER_OF_TYPES))
 			{
-				if(GIApreprocessorMultiwordReduction.determineIsAdjective(firstWordAfterAuxiliary) || (hasSecondWordAfterAuxiliary && GIApreprocessorMultiwordReduction.determineIsAdverb(firstWordAfterAuxiliary) && GIApreprocessorMultiwordReduction.determineIsAdjective(secondWordAfterAuxiliary)))
+				if(GIApreprocessorMultiwordReduction.determineIsAdjective(firstWordAfterAuxiliary, usePOSprelim) || (hasSecondWordAfterAuxiliary && GIApreprocessorMultiwordReduction.determineIsAdverb(firstWordAfterAuxiliary, usePOSprelim) && GIApreprocessorMultiwordReduction.determineIsAdjective(secondWordAfterAuxiliary, usePOSprelim)))
 				{
 					*relationshipEntityType = GIA_ENTITY_TYPE_PROPERTY;
 					//FUTURE GIA: if GIA_ENTITY_TYPE_PROPERTY detected via determineIsAdjective(firstWordAfterAuxiliary)||determineIsAdjective(secondWordAfterAuxiliary), then need to set the relationshipEntityObject to GIA_ENTITY_TYPE_QUALITY also

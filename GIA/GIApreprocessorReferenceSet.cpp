@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorReferenceSet.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3d6c 12-November-2017
+ * Project Version: 3e1a 07-December-2017
  * Requirements: requires plain text file
  * Description: Reference Set preprocessor
  *
@@ -98,6 +98,12 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 	
 	bool previousWordWasVerb = false;
 	
+	#ifdef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
+	bool usePOSprelim = true;
+	#else
+	bool usePOSprelim = false;
+	#endif
+	
 	//detect auxiliary or verb (present/past/future tense)
 	int wordIndex = 0;
 	for(int wordIndex = 0; wordIndex<logicReferenceVariableWordList->size(); wordIndex++)
@@ -109,7 +115,6 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 					
 		bool currentWordIsReferenceSetDelimiter = false;
 		//auxiliary detection
-		int grammaticalBaseTenseForm = INT_DEFAULT_VALUE;
 		
 		#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
 		cout << "\t\tcurrentWord = " << currentWord << endl;
@@ -124,8 +129,18 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 		}
 		
 		bool verbDetected = false;
+		
+		#ifdef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
+		if(GIApreprocessorMultiwordReduction.determineIsVerb(currentWordTag, usePOSprelim))
+		{
+			verbDetected = true;
+		}
+		if(verbDetected)
+		{
+		#else
+		int grammaticalBaseTenseForm = INT_DEFAULT_VALUE;
 		string verbBaseNameTemp = "";
-		if(GIApreprocessorMultiwordReduction.determineIsVerb(currentWordTag, &verbBaseNameTemp, &grammaticalBaseTenseForm))	//OLD: determineVerbCaseStandard
+		if(GIApreprocessorMultiwordReduction.determineIsVerb(currentWordTag, usePOSprelim, &verbBaseNameTemp, &grammaticalBaseTenseForm))	//OLD: determineVerbCaseStandard
 		{
 			if(grammaticalBaseTenseForm != GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_INFINITIVE)
 			{
@@ -146,6 +161,8 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 			#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PASTPARTICIPLE (4)
 			*/
 
+					
+			//why are these checks required if(grammaticalBaseTenseForm != GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_INFINITIVE)?
 			bool referenceSetDelimiterVerbPreceededByDeterminerOrPossessivePronoun = false;
 			if(wordIndex-1 >= 0)
 			{
@@ -162,7 +179,7 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 				if(SHAREDvars.textInTextArray(((*logicReferenceVariableWordList)[wordIndex-2])->tagName, relationDeterminerArray, GRAMMATICAL_DETERMINER_ARRAY_NUMBER_OF_TYPES) || 
 				SHAREDvars.textInTextArray(((*logicReferenceVariableWordList)[wordIndex-2])->tagName, entityPronounPossessiveArray, ENTITY_PRONOUN_POSSESSIVE_ARRAY_NUMBER_OF_TYPES))
 				{
-					if(GIApreprocessorMultiwordReduction.determineIsAdjective(((*logicReferenceVariableWordList)[wordIndex-1])))
+					if(GIApreprocessorMultiwordReduction.determineIsAdjective(((*logicReferenceVariableWordList)[wordIndex-1]), usePOSprelim))
 					{
 						referenceSetDelimiterVerbPreceededByDeterminerOrPossessivePronoun = true;
 					}
@@ -174,9 +191,9 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 				if(SHAREDvars.textInTextArray(((*logicReferenceVariableWordList)[wordIndex-3])->tagName, relationDeterminerArray, GRAMMATICAL_DETERMINER_ARRAY_NUMBER_OF_TYPES) || 
 				SHAREDvars.textInTextArray(((*logicReferenceVariableWordList)[wordIndex-3])->tagName, entityPronounPossessiveArray, ENTITY_PRONOUN_POSSESSIVE_ARRAY_NUMBER_OF_TYPES))
 				{
-					if(GIApreprocessorMultiwordReduction.determineIsAdverb(((*logicReferenceVariableWordList)[wordIndex-2])))
+					if(GIApreprocessorMultiwordReduction.determineIsAdverb(((*logicReferenceVariableWordList)[wordIndex-2]), usePOSprelim))
 					{
-						if(GIApreprocessorMultiwordReduction.determineIsAdjective(((*logicReferenceVariableWordList)[wordIndex-1])))
+						if(GIApreprocessorMultiwordReduction.determineIsAdjective(((*logicReferenceVariableWordList)[wordIndex-1]), usePOSprelim))
 						{
 							referenceSetDelimiterVerbPreceededByDeterminerOrPossessivePronoun = true;
 						}
@@ -185,15 +202,18 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 			}
 			if(!referenceSetDelimiterVerbPreceededByDeterminerOrPossessivePronoun)
 			{
+		#endif
 				currentWordIsReferenceSetDelimiter = true;
 				currentDelimiterType = GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_VERB;
 				//not required: verify that the verb is not preceeded by one or more auxiliaries (because it will have already been detected by (currentDelimiterType == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_AUXILIARY) when testing the previously parsed auxiliary)
 
 				if(wordIndex+1 < logicReferenceVariableWordList->size())
 				{
-					if(!GIApreprocessorMultiwordReduction.determineIsNoun(((*logicReferenceVariableWordList)[wordIndex+1])))	//compensate for ambiguity in grammatical classification of words (e.g. "chicken" is classified as both a noun and an adjective by wordnet; eg A controlled chicken was moved to the car.
+					#ifndef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
+					if(!GIApreprocessorMultiwordReduction.determineIsNoun(((*logicReferenceVariableWordList)[wordIndex+1]), usePOSprelim))	//compensate for ambiguity in grammatical classification of words (e.g. "chicken" is classified as both a noun and an adjective by wordnet; eg A controlled chicken was moved to the car.
 					{
-						if(GIApreprocessorMultiwordReduction.determineIsAdjective(((*logicReferenceVariableWordList)[wordIndex+1])))
+					#endif
+						if(GIApreprocessorMultiwordReduction.determineIsAdjective(((*logicReferenceVariableWordList)[wordIndex+1]), usePOSprelim))
 						{
 							//eg Tom rides fast
 							currentDelimiterSpecialCase = GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_SPECIAL_CASE_OBJECT_REFERS_TO_PREVIOUS_DELIMITER_VERB;
@@ -203,9 +223,9 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 						}
 						if(wordIndex+2 < logicReferenceVariableWordList->size())
 						{
-							if(GIApreprocessorMultiwordReduction.determineIsAdverb(((*logicReferenceVariableWordList)[wordIndex+1])))
+							if(GIApreprocessorMultiwordReduction.determineIsAdverb(((*logicReferenceVariableWordList)[wordIndex+1]), usePOSprelim))
 							{
-								if(GIApreprocessorMultiwordReduction.determineIsAdjective(((*logicReferenceVariableWordList)[wordIndex+2])))
+								if(GIApreprocessorMultiwordReduction.determineIsAdjective(((*logicReferenceVariableWordList)[wordIndex+2]), usePOSprelim))
 								{
 									//eg Tom rides very fast
 									currentDelimiterSpecialCase = GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_SPECIAL_CASE_OBJECT_REFERS_TO_PREVIOUS_DELIMITER_VERB;
@@ -215,12 +235,18 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 								}
 							}
 						}
+					#ifndef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
 					}
+					#endif
 				}
+		#ifdef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
+		}
+		#else
 			}
 		}
+		#endif
 		
-		if(GIApreprocessorMultiwordReduction.determineIsPreposition(currentWordTag))
+		if(GIApreprocessorMultiwordReduction.determineIsPreposition(currentWordTag, usePOSprelim))
 		{
 			currentWordIsReferenceSetDelimiter = true;
 			currentDelimiterType = GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_PREPOSITION;
@@ -237,7 +263,12 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 			bool previousWordIsAuxiliary = false;
 			
 			//verify that the auxiliary/verb is not preceeded by a modal auxiliary (e.g. for future cases; will be/have/ride), in which case must test the word prior to the modal auxiliary for that/which
+						
+			#ifdef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
+			if((currentDelimiterType == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_AUXILIARY) || ((currentDelimiterType == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_VERB)))
+			#else
 			if((currentDelimiterType == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_AUXILIARY) || ((currentDelimiterType == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_VERB) && (grammaticalBaseTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_INFINITIVE)))
+			#endif
 			{
 				if(wordIndex-1 >= 0)
 				{
@@ -294,7 +325,7 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 					{
 						if((currentDelimiterType == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_PREPOSITION))
 						{
-							if(GIApreprocessorMultiwordReduction.determineIsAdverb(((*logicReferenceVariableWordList)[wordIndex-1])))
+							if(GIApreprocessorMultiwordReduction.determineIsAdverb(((*logicReferenceVariableWordList)[wordIndex-1]), usePOSprelim))
 							{
 								if(wordIndex-2 >= 0)
 								{
@@ -322,6 +353,7 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 				}
 			}
 			
+			#ifndef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
 			#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_SPECIAL_CASE_DELIMITER_VERB_NOT_PRECEEDED_BY_THAT_WHICH_AND_NOT_PRECEEDED_BY_AUXILIARY_DETECT
 			//added 3d5d;
 			if(currentDelimiterType == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_VERB) 
@@ -349,7 +381,8 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 				}
 			}
 			#endif
-
+			#endif
+			
 			//NB if((currentDelimiterType == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_PREPOSITION)): "that near" is not legal english (only "that is near"), but will be accepted here anyway
 			//NB near to should have previously been compressed to near_to by GIA_PREPROCESSOR_MULTIWORD_REDUCTION
 			if((currentDelimiterType == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_PREPOSITION) && !previousWordIsAuxiliary && !currentWordIsReferenceSetDelimiterPreceededByThatWhich)

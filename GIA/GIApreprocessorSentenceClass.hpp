@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorSentenceClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3b3f 25-May-2017
+ * Project Version: 3e1a 07-December-2017
  * Requirements: requires plain text file
  * Description: Logical Condition and Reference Set preprocessor
  *
@@ -40,6 +40,9 @@
 #include "GIAentityNodeClass.hpp"	//required for primaryEntityTemp, GIA_PREPROCESSOR_RECORD_REFERENCES
 #include "GIAsentenceClass.hpp"	//required for GIA_PREPROCESSOR_RECORD_REFERENCES
 #include "GIApreprocessorMultiwordReductionClass.hpp" 
+#ifdef GIA_PREPROCESSOR_SENTENCE_EXECUTE_PRELIM_POS_TAGGER
+
+#endif
 
 #define GIA_PREPROCESSOR_XML_TAG_preprocessor ((string)"preprocessor")
 	#define GIA_PREPROCESSOR_XML_TAG_logicReference ((string)"logicReference")
@@ -250,6 +253,9 @@ public:
 	#ifdef GIA_PREPROCESSOR_ASSIGN_UNIQUE_SENTENCE_INDICES_FOR_SENTENCES
 	int sentenceIndex;
 	#endif
+	#ifdef GIA_PREPROCESSOR_SENTENCE_EXECUTE_PRELIM_POS_TAGGER
+	GIAsentence* sentenceReferencePrelim;		//temporary GIA sentence data (POS tags) required for execution of GIA preprocessor
+	#endif	
 	#else
 	#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
 	GIAsentence* sentenceReference;

@@ -25,7 +25,7 @@
  * File Name: GIAnlp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3d6c 12-November-2017
+ * Project Version: 3e1a 07-December-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -40,8 +40,8 @@
 #endif
 
 
-void GIAnlpClass::executeNLPparser(const string inputTextPlainTXTfileName, const string inputTextNLPXMLfileName, const GIAtranslatorVariablesClass* translatorVariables, const string NLPexeFolderArray[], const bool parseRelationsOrFeatures)
-{
+void GIAnlpClass::executeNLPparser(const string inputTextPlainTXTfileName, const string inputTextNLPXMLfileName, const GIAtranslatorVariablesClass* translatorVariables, const bool parseRelationsOrFeatures)
+{	
 	int NLPParser = false;
 	if(parseRelationsOrFeatures)
 	{
@@ -114,7 +114,7 @@ void GIAnlpClass::executeNLPparser(const string inputTextPlainTXTfileName, const
 			}		
 			#endif
 		}
-		NLPexeFolder = NLPexeFolderArray[GIA_NLP_PARSER_RELEX];
+		NLPexeFolder = translatorVariables->NLPexeFolderArray[GIA_NLP_PARSER_RELEX];
 	}
 	#endif
 	#ifdef GIA_STANFORD_CORENLP
@@ -154,7 +154,7 @@ void GIAnlpClass::executeNLPparser(const string inputTextPlainTXTfileName, const
 		#ifdef STANFORD_CORENLP_DISABLE_INDEPENDENT_POS_TAGGER_WHEN_PARSING_DEPENDENCY_RELATIONS
 		}
 		#endif
-		NLPexeFolder = NLPexeFolderArray[GIA_NLP_PARSER_STANFORD_CORENLP];
+		NLPexeFolder = translatorVariables->NLPexeFolderArray[GIA_NLP_PARSER_STANFORD_CORENLP];
 	}
 	#endif
 	#ifdef GIA_STANFORD_PARSER
@@ -172,7 +172,7 @@ void GIAnlpClass::executeNLPparser(const string inputTextPlainTXTfileName, const
 		#ifdef GIA_STANFORD_PARSER_CLIENT
 		}
 		#endif
-		NLPexeFolder = NLPexeFolderArray[GIA_NLP_PARSER_STANFORD_PARSER];
+		NLPexeFolder = translatorVariables->NLPexeFolderArray[GIA_NLP_PARSER_STANFORD_PARSER];
 	}
 	#endif
 
@@ -503,7 +503,7 @@ bool GIAnlpClass::parseStanfordCoreNLPfile(const string inputTextNLPrelationXMLf
 
 	GIAsentence* firstSentenceInList = firstParagraphInList->firstSentenceInList;
 	GIAsentence* currentSentence = firstSentenceInList;
-
+	
 	XMLparserTag* firstTagInXMLFile = new XMLparserTag();
 	if(!XMLparserClass.readXMLfile(inputTextNLPrelationXMLfileName, firstTagInXMLFile))
 	{
@@ -594,6 +594,7 @@ bool GIAnlpClass::parseStanfordCoreNLPfile(const string inputTextNLPrelationXMLf
 								{
 									string TagValue = currentTagInToken->value;
 									currentFeatureInList->lemma = TagValue;
+									//cout << "currentFeatureInList->lemma = " << currentFeatureInList->lemma << endl;
 								}
 								else if(currentTagInToken->name == StanfordCoreNLP_XML_TAG_CharacterOffsetBegin)
 								{

@@ -26,7 +26,7 @@
  * File Name: GIArules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3d6c 12-November-2017
+ * Project Version: 3e1a 07-December-2017
  *
  *******************************************************************************/
 -->
@@ -1341,9 +1341,10 @@
 			</function>
 			<!-- #endif -->
 
-			<function name="redistributeStanfordRelationsMultiwordPreposition">	<!-- CHECKTHIS: is this still required with -lrp enabled? -->
-				<example><!--
-				<!-- stanford parser prepositition reduction check (based upon http:
+			<!--
+			<function name="redistributeStanfordRelationsMultiwordPreposition">	{{!-- CHECKTHIS: is this still required with -lrp enabled? --}}
+				<example>{{!--
+				{{!-- stanford parser prepositition reduction check (based upon http:
 				Y	The woman is white according to John.
 				Y	The job was complete apart from the axel.
 				Y	As for Tim, he knew no other way.
@@ -1585,30 +1586,30 @@
 					prep_of(that-2, Tom-4)
 
 
-				--></example>
+				--}}</example>
 
-				<!-- optMultA -->
-				<example><!--
+				{{!-- optMultA --}}
+				<example>{{!--
 				[CaseA]
 				He is close to the house.
 				prep_to(close-3, house-6)
 				cop(close-3, is-2)
 				nsubj(close-3, He-1)
 				det(house-6, the-5)
-				--></example>
+				--}}</example>
 				<paramDepRel mode="redistribute">
 				<option expectToFindPrepositionTest="true" REL="1" />
-				<!-- NB this assumes "cop/aux" etc relations cannot be disabled in fillGrammaticalArraysStanford [must disable these later, at the end of redistribution] -->
+				{{!-- NB this assumes "cop/aux" etc relations cannot be disabled in fillGrammaticalArraysStanford [must disable these later, at the end of redistribution] --}}
 				<option useRelationArrayTest="true" REL="3" REL_ENT="3" relationArrayTest="_subj|_obj" relationArrayTestSize="2" />
-				<!-- note the following test should not be required as disabled relations eg cop are not being parsed: "if(!(currentRelationInList->prepositionCombinationAlreadyCreatedTemp))" -->
+				{{!-- note the following test should not be required as disabled relations eg cop are not being parsed: "if(!(currentRelationInList->prepositionCombinationAlreadyCreatedTemp))" --}}
 				<option numberOfRelations="3" />
 				<option useRelationArrayTest="true" REL="1" REL_ENT="3" relationArrayTest="to|of" relationArrayTestSize="2" />
 				<option useRelationArrayTest="true" REL="2" REL_ENT="3" relationArrayTest="_cop" relationArrayTestSize="1" />
 				<option useRelationTest="true" REL="2" REL_ENT="2" relationTest="be" />
 				<option useRelationIndexTest="true" REL="2" REL_ENT="1" relationIndexTestRelationID="1" relationIndexTestEntityID="1" />
 				<option useRelationIndexTest="true" REL="3" REL_ENT="1" relationIndexTestRelationID="1" relationIndexTestEntityID="1" />
-				<!-- #ifdefGIA_REDISTRIBUTE_STANFORD_RELATIONS_IGNORE_NSUBJ_AND_PREPOSITION_AND_COP_AND_DET -->
-				<!--
+				{{!-- #ifdefGIA_REDISTRIBUTE_STANFORD_RELATIONS_IGNORE_NSUBJ_AND_PREPOSITION_AND_COP_AND_DET --}}
+				{{!--
 				prevents multiword prepositional collapse of "name of" in; "Max is the name of the red dog" [/ "3 is the number of the red dogs."], based on 'det(name-4, the-3)'
 				nsubj(name-4, Max-1)
 				cop(name-4, is-2) {!-- rel2 --}
@@ -1617,22 +1618,22 @@
 				det(dog-8, the-6) {!-- rel4 --}
 				amod(dog-8, red-7)
 				prep_of(name-4, dog-8)
-				-->
-				<!-- <option relationTestSpecialCaseNotDefinite="true" REL="3" REL_ENT="1" /> -->
+				--}}
+				{{!-- <option relationTestSpecialCaseNotDefinite="true" REL="3" REL_ENT="1" /> --}}
 				<specialCase type="specialCaseCharacteristicsTestAndVector" variable="grammaticalDefiniteTemp" value="false" REL="3" REL_ENT="1" />
-				<!-- #endif -->
+				{{!-- #endif --}}
 				<option useRedistributeRelationEntityIndexReassignment="true" REL="1" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="3" redistributeRelationEntityIndexReassignmentRelationEntityID="2" />
 				<option disableRelation="true" REL="2" />
 				<option disableRelation="true" REL="3" />
 				<option disableEntity="true" REL="2" REL_ENT="1" />
-				<!--
+				{{!--
 				[case added 15 May 2012 for ]
 				<He rode the carriage that is near to the horse.
 				<nsubj(near-7, carriage-4)
 				<cop(near-7, is-6)
 				<rcmod(carriage-4, near-7)
 				<prep_to(near-7, horse-10)
-				-->
+				--}}
 				<option useRedistributeSpecialCaseAuxiliaryIndicatesDifferentReferenceSetCheck="true" REL="1" />
 					<option useRelationTest="true" REL="4" REL_ENT="3" relationTest="_rcmod" />
 					<option useRelationIndexTest="true" REL="4" REL_ENT="2" relationIndexTestRelationID="3" relationIndexTestEntityID="1" />
@@ -1643,19 +1644,19 @@
 					<option redistributeSpecialCaseRelationEntityReassignmentConcatonateType="0" REL="1" REL_ENT="3" />
 				</paramDepRel>
 
-				<!-- optMultB -->
-				<example><!--
+				{{!-- optMultB --}}
+				<example>{{!--
 				[CaseB]
 				The chicken goes on to the plank.
 				nsubj(goes-3, chicken-2)
 				prt(goes-3, on-4)
 				prep_to(goes-3, plank-7)
-				--></example>
+				--}}</example>
 				<paramDepRel mode="redistribute">
 				<option expectToFindPrepositionTest="true" REL="1" />
-				<!-- NB this assumes "cop/aux" etc relations cannot be disabled in fillGrammaticalArraysStanford [must disable these later, at the end of redistribution] -->
+				{{!-- NB this assumes "cop/aux" etc relations cannot be disabled in fillGrammaticalArraysStanford [must disable these later, at the end of redistribution] --}}
 				<option useRelationArrayTest="true" REL="3" REL_ENT="3" relationArrayTest="_subj|_obj" relationArrayTestSize="2" />
-				<!-- note the following test should not be required as disabled relations eg cop are not being parsed: "if(!(currentRelationInList->prepositionCombinationAlreadyCreatedTemp))" -->
+				{{!-- note the following test should not be required as disabled relations eg cop are not being parsed: "if(!(currentRelationInList->prepositionCombinationAlreadyCreatedTemp))" --}}
 				<option numberOfRelations="3" />
 				<option useRelationArrayTest="true" REL="2" REL_ENT="3" relationArrayTest="_prt" relationArrayTestSize="1" />
 				<option useRelationIndexTest="true" REL="2" REL_ENT="1" relationIndexTestRelationID="1" relationIndexTestEntityID="1" />
@@ -1668,32 +1669,32 @@
 					<option redistributeSpecialCaseRelationEntityReassignmentConcatonateType="0" REL="1" REL_ENT="3" />
 				</paramDepRel>
 
-				<!-- optMultD -->
-				<example><!--
+				{{!-- optMultD --}}
+				<example>{{!--
 				[CaseD]
 				Subsequent to the holidays, it will be done.
 				nsubjpass(done-9, it-6)
 				partmod(done-9, Subsequent-1)
 				prep_to(Subsequent-1, holidays-4)
-				--></example>
+				--}}</example>
 				<paramDepRel mode="redistribute">
 				<option expectToFindPrepositionTest="true" REL="1" />
-				<!-- NB this assumes "cop/aux" etc relations cannot be disabled in fillGrammaticalArraysStanford [must disable these later, at the end of redistribution] -->
+				{{!-- NB this assumes "cop/aux" etc relations cannot be disabled in fillGrammaticalArraysStanford [must disable these later, at the end of redistribution] --}}
 				<option useRelationArrayTest="true" REL="3" REL_ENT="3" relationArrayTest="_subj|_obj" relationArrayTestSize="2" />
-				<!-- note the following test should not be required as disabled relations eg cop are not being parsed: "if(!(currentRelationInList->prepositionCombinationAlreadyCreatedTemp))" -->
+				{{!-- note the following test should not be required as disabled relations eg cop are not being parsed: "if(!(currentRelationInList->prepositionCombinationAlreadyCreatedTemp))" --}}
 				<option numberOfRelations="3" />
-				<!-- Supports Stanford Parser/CoreNLP version 2+ e.g. 2013-04-04 --> 
-				<!-- <option useRelationArrayTest="true" REL="2" REL_ENT="3" relationArrayTest="_to-be|_partmod" relationArrayTestSize="2" /> -->
-				<!-- #ifdefGIA_STANFORD_PARSER_AND_CORENLP_VERSION_2015_04_20_OR_GREATER -->
-				<!-- Supports Stanford Parser/CoreNLP version 3.5+ e.g. 2015-04-20 --> 
+				{{!-- Supports Stanford Parser/CoreNLP version 2+ e.g. 2013-04-04 --}} 
+				{{!-- <option useRelationArrayTest="true" REL="2" REL_ENT="3" relationArrayTest="_to-be|_partmod" relationArrayTestSize="2" /> --}}
+				{{!-- #ifdefGIA_STANFORD_PARSER_AND_CORENLP_VERSION_2015_04_20_OR_GREATER --}}
+				{{!-- Supports Stanford Parser/CoreNLP version 3.5+ e.g. 2015-04-20 --}} 
 				<option useRelationArrayTest="true" REL="2" REL_ENT="3" relationArrayTest="_to-be|_vmod|_advcl" relationArrayTestSize="3" />
-				<!-- #else -->
-				<!-- Supports Stanford Parser/CoreNLP version 3+ e.g. 2014-01-04 --> 
-				<!-- <option useRelationArrayTest="true" REL="2" REL_ENT="3" relationArrayTest="_to-be|_vmod" relationArrayTestSize="2" /> -->
-				<!-- #endif -->
+				{{!-- #else --}}
+				{{!-- Supports Stanford Parser/CoreNLP version 3+ e.g. 2014-01-04 --}} 
+				{{!-- <option useRelationArrayTest="true" REL="2" REL_ENT="3" relationArrayTest="_to-be|_vmod" relationArrayTestSize="2" /> --}}
+				{{!-- #endif --}}
 				<option useRelationIndexTest="true" REL="2" REL_ENT="2" relationIndexTestRelationID="1" relationIndexTestEntityID="1" />
 				<option useRelationIndexTest="true" REL="3" REL_ENT="1" relationIndexTestRelationID="2" relationIndexTestEntityID="1" />
-				<!-- <option disableRelation="true" REL="2" /> {!-- removed 15 July 2013 to allow double use of partmod eg "The Co-cart is a high quality, ultra compact, lightweight cart, also known as a trolley or buggie.: partmod(quality-6, known-15) + prep_as(known-15, trolley-18) + prep_as(known-15, buggie-20) -> prep_know_as(quality[6], trolley[18]) + prep_know_as(quality[6], buggie[20]) --} -->
+				{{!-- <option disableRelation="true" REL="2" /> {!-- removed 15 July 2013 to allow double use of partmod eg "The Co-cart is a high quality, ultra compact, lightweight cart, also known as a trolley or buggie.: partmod(quality-6, known-15) + prep_as(known-15, trolley-18) + prep_as(known-15, buggie-20) -> prep_know_as(quality[6], trolley[18]) + prep_know_as(quality[6], buggie[20]) --} --}}
 				<option disableEntity="true" REL="2" REL_ENT="2" />
 				<option useRedistributeRelationEntityIndexReassignment="true" REL="1" REL_ENT="1" redistributeRelationEntityIndexReassignmentRelationID="3" redistributeRelationEntityIndexReassignmentRelationEntityID="1" />
 				<option useRedistributeSpecialCaseRelationEntityReassignmentConcatonate="true" REL="1" REL_ENT="3" />
@@ -1703,7 +1704,8 @@
 				<assert variable="disableRelationAfterFinish" REL="2" />
 				</paramDepRel>
 			</function>
-
+			-->
+			
 			<!-- #ifdefGIA_REDISTRIBUTE_RELATIONS_INTERPRET_OF_AS_POSSESSIVE_FOR_SUBSTANCES -->
 			<!--
 			<function name="redistributeStanfordRelationsInterpretOfAsPossessive">

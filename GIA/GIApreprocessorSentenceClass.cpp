@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorSentenceClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: Natural Language Compiler (Programming Interface)
- * Project Version: 3d6c 12-November-2017
+ * Project Version: 3e1a 07-December-2017
  * Requirements: requires plain text file
  * Description: Logical Condition and Reference Set preprocessor
  *
@@ -147,6 +147,9 @@ GIApreprocessorSentence::GIApreprocessorSentence(void)
 	#ifdef GIA_PREPROCESSOR_ASSIGN_UNIQUE_SENTENCE_INDICES_FOR_SENTENCES
 	sentenceIndex = INT_DEFAULT_VALUE;
 	#endif
+	#ifdef GIA_PREPROCESSOR_SENTENCE_EXECUTE_PRELIM_POS_TAGGER
+	sentenceReferencePrelim = NULL;
+	#endif	
 	#else
 	#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
 	sentenceReference = NULL;
