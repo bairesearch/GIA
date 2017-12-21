@@ -25,7 +25,7 @@
  * File Name: GIApreprocessor.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e4a 13-December-2017
+ * Project Version: 3e5a 14-December-2017
  * Requirements: requires plain text file
  * Description: Logical Condition and Reference Set preprocessor
  *
@@ -48,8 +48,9 @@
 #include "GIAtranslatorDefineGrammar.hpp"
 #endif
 #include "XMLparserClass.hpp"
-#ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE
+#ifdef GIA_PREPROCESSOR_POS_TAGGER
 #include "GIApreprocessorPOStagger.hpp"
+#include "GIApreprocessorPOStaggerDatabase.hpp"
 #endif
 
 
@@ -73,8 +74,9 @@ class GIApreprocessorClass
 	private: GIAtranslatorDefineGrammarClass GIAtranslatorDefineGrammar;
 	#endif
 	private: GIAdatabaseClass GIAdatabase;
-	#ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER
 	private: GIApreprocessorPOStaggerClass GIApreprocessorPOStagger;
+	private: GIApreprocessorPOStaggerDatabaseClass GIApreprocessorPOStaggerDatabase;
 	#endif
 	#ifdef GIA_PREPROCESSOR
 	public: bool preprocessTextForGIAwrapper(const bool useLRP, string* inputTextPlainTXTfileName, const string outputLRPTextPlainTXTFileName, const bool isQuery, GIAtranslatorVariablesClass* translatorVariables, bool* useInputTextPlainTXTFile, const string inputTextNLPfeatureXMLfileName);

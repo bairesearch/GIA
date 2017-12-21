@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e4a 13-December-2017
+ * Project Version: 3e5a 14-December-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1212,7 +1212,7 @@ void GIAtranslatorOperationsClass::recordNetworkIndexNodesAsNonPermanentIfTheyAr
 	}
 }
 
-void GIAtranslatorOperationsClass::convertRelexPOStypeToWordnetWordType(const string* relexPOStype, int* grammaticalWordTypeTemp)
+void GIAtranslatorOperationsClass::convertRelexPOStypeToWordnetWordType(const string* relexPOStype, int* grammaticalWordTypeTemp, const bool grammaticallyStrict)
 {
 	*grammaticalWordTypeTemp = GRAMMATICAL_WORD_TYPE_UNDEFINED;
 	for(int i=0; i<FEATURE_RELEX_POS_NUMBER_OF_TYPES; i++)
@@ -1222,21 +1222,36 @@ void GIAtranslatorOperationsClass::convertRelexPOStypeToWordnetWordType(const st
 			*grammaticalWordTypeTemp = featureRelexPOStypeCrossReferenceWordnetWordTypeArray[i];
 		}
 	}
-
 }
 
-void GIAtranslatorOperationsClass::convertStanfordPOStagToRelexPOStypeAndWordnetWordType(const string* POStag, string* relexPOStype, int* grammaticalWordTypeTemp)
+void GIAtranslatorOperationsClass::convertStanfordPOStagToRelexPOStypeAndWordnetWordType(const string* POStag, string* relexPOStype, int* grammaticalWordTypeTemp, const bool grammaticallyStrict)
 {
 	*relexPOStype = FEATURE_RELEX_POS_TYPE_WORD;
-	for(int i=0; i<FEATURE_POS_TAG_NUMBER_OF_TYPES_MINIMAL; i++)
+	
+	string* featurePOStagMinimalArrayRef; 
+	string* featurePOStagCrossReferenceRelexPOStypeArrayRef; 
+	int featurePOStagMinimalArrayRefSize;
+	if(grammaticallyStrict)
 	{
-		if(featurePOStagMinimalArray[i] == *POStag)
+		featurePOStagMinimalArrayRef = featurePOStagMinimalArrayGrammaticallyStrict;
+		featurePOStagMinimalArrayRefSize = FEATURE_POS_TAG_NUMBER_OF_TYPES_MINIMAL_GRAMMATICALLY_STRICT;
+		featurePOStagCrossReferenceRelexPOStypeArrayRef = featurePOStagCrossReferenceRelexPOStypeArrayGrammaticallyStrict;
+	}
+	else
+	{
+		featurePOStagMinimalArrayRef = featurePOStagMinimalArray;
+		featurePOStagMinimalArrayRefSize = FEATURE_POS_TAG_NUMBER_OF_TYPES_MINIMAL;
+		featurePOStagCrossReferenceRelexPOStypeArrayRef = featurePOStagCrossReferenceRelexPOStypeArray;
+	}
+	for(int i=0; i<featurePOStagMinimalArrayRefSize; i++)
+	{
+		if(featurePOStagMinimalArrayRef[i] == *POStag)
 		{
-			*relexPOStype = featurePOStagCrossReferenceRelexPOStypeArray[i];
+			*relexPOStype = featurePOStagCrossReferenceRelexPOStypeArrayRef[i];
 		}
 	}
 
-	this->convertRelexPOStypeToWordnetWordType(relexPOStype, grammaticalWordTypeTemp);
+	this->convertRelexPOStypeToWordnetWordType(relexPOStype, grammaticalWordTypeTemp, grammaticallyStrict);
 
 
 }

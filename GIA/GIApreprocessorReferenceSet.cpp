@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorReferenceSet.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e4a 13-December-2017
+ * Project Version: 3e5a 14-December-2017
  * Requirements: requires plain text file
  * Description: Reference Set preprocessor
  *
@@ -160,15 +160,18 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 			#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST (3)
 			#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PASTPARTICIPLE (4)
 			*/
-
 					
 			//why are these checks required if(grammaticalBaseTenseForm != GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_INFINITIVE)?
 			bool referenceSetDelimiterVerbPreceededByDeterminerOrPossessivePronoun = false;
 			if(wordIndex-1 >= 0)
 			{
 				//eg the [det] walk [verb]
+				#ifdef GIA_GRAMMATICAL_WORD_TYPES_EXTENDED
+				if(GIApreprocessorMultiwordReduction.determineIsDeterminer(((*logicReferenceVariableWordList)[wordIndex-1]), usePOSprelim))
+				#else
 				if(SHAREDvars.textInTextArray(((*logicReferenceVariableWordList)[wordIndex-1])->tagName, relationDeterminerArray, GRAMMATICAL_DETERMINER_ARRAY_NUMBER_OF_TYPES) || 
 				SHAREDvars.textInTextArray(((*logicReferenceVariableWordList)[wordIndex-1])->tagName, entityPronounPossessiveArray, ENTITY_PRONOUN_POSSESSIVE_ARRAY_NUMBER_OF_TYPES))
+				#endif
 				{
 					referenceSetDelimiterVerbPreceededByDeterminerOrPossessivePronoun = true;
 				}
@@ -176,8 +179,12 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 			if(wordIndex-2 >= 0)
 			{
 				//eg the [det] wonderful [adj] walk [verb]
+				#ifdef GIA_GRAMMATICAL_WORD_TYPES_EXTENDED
+				if(GIApreprocessorMultiwordReduction.determineIsDeterminer(((*logicReferenceVariableWordList)[wordIndex-2]), usePOSprelim))
+				#else
 				if(SHAREDvars.textInTextArray(((*logicReferenceVariableWordList)[wordIndex-2])->tagName, relationDeterminerArray, GRAMMATICAL_DETERMINER_ARRAY_NUMBER_OF_TYPES) || 
 				SHAREDvars.textInTextArray(((*logicReferenceVariableWordList)[wordIndex-2])->tagName, entityPronounPossessiveArray, ENTITY_PRONOUN_POSSESSIVE_ARRAY_NUMBER_OF_TYPES))
+				#endif
 				{
 					if(GIApreprocessorMultiwordReduction.determineIsAdjective(((*logicReferenceVariableWordList)[wordIndex-1]), usePOSprelim))
 					{
@@ -188,8 +195,12 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 			if(wordIndex-3 >= 0)
 			{
 				//eg the [det] very [adv] wonderful [adj] walk [verb]
+				#ifdef GIA_GRAMMATICAL_WORD_TYPES_EXTENDED
+				if(GIApreprocessorMultiwordReduction.determineIsDeterminer(((*logicReferenceVariableWordList)[wordIndex-3]), usePOSprelim))
+				#else
 				if(SHAREDvars.textInTextArray(((*logicReferenceVariableWordList)[wordIndex-3])->tagName, relationDeterminerArray, GRAMMATICAL_DETERMINER_ARRAY_NUMBER_OF_TYPES) || 
 				SHAREDvars.textInTextArray(((*logicReferenceVariableWordList)[wordIndex-3])->tagName, entityPronounPossessiveArray, ENTITY_PRONOUN_POSSESSIVE_ARRAY_NUMBER_OF_TYPES))
+				#endif
 				{
 					if(GIApreprocessorMultiwordReduction.determineIsAdverb(((*logicReferenceVariableWordList)[wordIndex-2]), usePOSprelim))
 					{

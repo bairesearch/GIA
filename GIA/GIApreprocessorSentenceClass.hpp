@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorSentenceClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e4a 13-December-2017
+ * Project Version: 3e5a 14-December-2017
  * Requirements: requires plain text file
  * Description: Logical Condition and Reference Set preprocessor
  *
@@ -40,9 +40,7 @@
 #include "GIAentityNodeClass.hpp"	//required for primaryEntityTemp, GIA_PREPROCESSOR_RECORD_REFERENCES
 #include "GIAsentenceClass.hpp"	//required for GIA_PREPROCESSOR_RECORD_REFERENCES
 #include "GIApreprocessorMultiwordReductionClass.hpp" 
-#ifdef GIA_PREPROCESSOR_SENTENCE_EXECUTE_PRELIM_POS_TAGGER
 
-#endif
 
 #define GIA_PREPROCESSOR_XML_TAG_preprocessor ((string)"preprocessor")
 	#define GIA_PREPROCESSOR_XML_TAG_logicReference ((string)"logicReference")

@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorPOStagger.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e4a 13-December-2017
+ * Project Version: 3e5a 14-December-2017
  * Requirements: requires plain text file
  * Description: preprocessor POS tagger
  *
@@ -79,8 +79,10 @@ class GIApreprocessorPOStaggerDatabaseClass
 	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE
 	public: void initialisePOStaggerDatabase(const string newGIAposTaggerDatabaseFolderName);
 	#endif
+	
 	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK
 	public: void feedNeuralNetworkWithExperienceBackpropagation(ANNexperience* currentExperience);
+	public: bool calculateIdealClassTargetOfInputExperience(ANNexperience* experience, int* idealClassTarget, double* experienceBackPropagationPassError);
 	public: bool writeDatabaseNeuralNetwork();
 	#endif
 
@@ -89,7 +91,6 @@ class GIApreprocessorPOStaggerDatabaseClass
 		private: string DBgenerateSubFolderName(const string POSambiguityInfoPermutation, const int level, const int numberOfWordsPerLevel);
 			private: string DBconvertByteToHex(const unsigned char byte);
 			private: unsigned char DBconvertHexToByte(string hexString);
-	
 	public: bool DBreadPOSpermutationEstimates(const string POSambiguityInfoPermutation, vector<string>* centreWordPOSambiguityInfoList);
 	public: bool DBwritePOSpermutationEstimate(const string POSambiguityInfoPermutation, const unsigned char centreWordPOSambiguityInfo);
 	#endif

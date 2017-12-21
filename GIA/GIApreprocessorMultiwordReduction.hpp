@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorMultiwordReduction.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e4a 13-December-2017
+ * Project Version: 3e5a 14-December-2017
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  *
@@ -114,8 +114,11 @@ class GIApreprocessorMultiwordReductionClass
 	#endif
 	#endif
 
-	public: bool checkGrammaticalWordType(GIApreprocessorWord* wordTag, int grammaticalWordType);
-	public: bool determineIsConjunction(GIApreprocessorWord* wordTag, bool usePOSprelim);
+	public: bool checkGrammaticalWordTypeFeaturePrelim(GIApreprocessorWord* wordTag, int grammaticalWordType);
+
+	public: bool determineIsWordType(GIApreprocessorWord* wordTag, bool usePOSprelim, int grammaticalWordType);
+		public: bool determineIsWordType(GIApreprocessorWord* wordTag, bool usePOSprelim, int grammaticalWordType, string* baseNameFound, int* grammaticalBaseTenseForm);
+			public: bool determineIsWordType(const string word, unordered_map<string, GIApreprocessorMultiwordReductionWord*>* wordTypeList);
 	public: bool determineIsVerb(GIApreprocessorWord* wordTag, bool usePOSprelim);	
 		public: bool determineIsVerb(GIApreprocessorWord* wordTag, bool usePOSprelim, string* baseNameFound, int* grammaticalBaseTenseForm);
 			public: bool determineVerbCaseStandardWithAdditional(const string word, string* baseNameFound, int* grammaticalBaseTenseForm);
@@ -133,6 +136,12 @@ class GIApreprocessorMultiwordReductionClass
 		public: bool determineIsNoun(GIApreprocessorWord* wordTag, bool usePOSprelim, string* baseNameFound, int* grammaticalBaseForm);
 			public: bool determineIsNoun(const string word);
 			public: bool determineNounPluralVariant(const string word, GIApreprocessorMultiwordReductionWord** nounBaseFormFound);
+	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_LOAD_WORD_LISTS_ADDITIONAL
+	public: bool determineIsConjunction(GIApreprocessorWord* wordTag, bool usePOSprelim);
+		public: bool determineIsConjunction(const string word);
+	public: bool determineIsDeterminer(GIApreprocessorWord* wordTag, bool usePOSprelim);
+		public: bool determineIsDeterminer(const string word);
+	#endif
 	
 	public: bool findWordInWordList(unordered_map<string, GIApreprocessorMultiwordReductionWord*>* wordList, const string word);
 		public: bool findWordInWordList(unordered_map<string, GIApreprocessorMultiwordReductionWord*>* wordList, const string word, GIApreprocessorMultiwordReductionWord** wordFound);

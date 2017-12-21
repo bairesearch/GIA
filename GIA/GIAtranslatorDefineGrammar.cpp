@@ -25,7 +25,7 @@
  * File Name: GIAtranslatorDefineGrammar.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e4a 13-December-2017
+ * Project Version: 3e5a 14-December-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -376,7 +376,7 @@ void GIAtranslatorDefineGrammarClass::fillGrammaticalArraysRelex(GIAsentence* cu
 
 		//fill grammaticalWordTypeTemp array for wordnet - added 26 April 2012
 		int grammaticalWordTypeTemp = GRAMMATICAL_WORD_TYPE_UNDEFINED;
-		GIAtranslatorOperations.convertRelexPOStypeToWordnetWordType(&(currentFeatureInList->type), &grammaticalWordTypeTemp);
+		GIAtranslatorOperations.convertRelexPOStypeToWordnetWordType(&(currentFeatureInList->type), &grammaticalWordTypeTemp, GIA_PREPROCESSOR_USE_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE);
 		currentFeatureInList->grammaticalWordType = grammaticalWordTypeTemp;
 
 		#ifdef FILL_NER_ARRAY_AFTER_RELEX_PARSE_FOR_STANFORD_EQUIVALENT_PROPER_NOUN_DETECTION
@@ -574,7 +574,7 @@ void GIAtranslatorDefineGrammarClass::fillGrammaticalArraysStanford(GIAtranslato
 					#ifdef STANFORD_CORENLP_POS_TAGS_BUG_GIA_WORKAROUND_SET_DETERMINER_DEPENDENT_TO_NOUN
 					string stanfordPOS = FEATURE_POS_TAG_NOUN_NN;
 					(*translatorVariables->featureArrayTemp)[entityIndexOfNoun]->stanfordPOS = stanfordPOS;
-					this->extractPOSrelatedGrammaticalInformationStanford((*translatorVariables->featureArrayTemp)[entityIndexOfNoun]);			//regenerate grammatical information for feature - it should identify the verb as an infinitive/imperative based on previousWordInSentenceIsTo
+					this->extractPOSrelatedGrammaticalInformationStanford((*translatorVariables->featureArrayTemp)[entityIndexOfNoun], GIA_PREPROCESSOR_USE_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE);			//regenerate grammatical information for feature - it should identify the verb as an infinitive/imperative based on previousWordInSentenceIsTo
 					//applyPOSrelatedGrammaticalInfoToEntity((*translatorVariables->GIAfeatureTempEntityNodeArray)[entityIndexOfNoun], (*translatorVariables->featureArrayTemp)[entityIndexOfNoun]);	//regenerate grammatical information for entity - not required
 					#endif
 				}
@@ -658,7 +658,7 @@ void GIAtranslatorDefineGrammarClass::extractGrammaticalInformationStanford(GIAf
 
 		int currentFeatureIndex = currentFeatureInList->entityIndex;
 
-		this->extractPOSrelatedGrammaticalInformationStanford(currentFeatureInList);
+		this->extractPOSrelatedGrammaticalInformationStanford(currentFeatureInList, GIA_PREPROCESSOR_USE_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE);
 
 		if(NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP)
 		{
@@ -697,14 +697,14 @@ void GIAtranslatorDefineGrammarClass::extractGrammaticalInformationStanford(GIAf
 	}
 }
 
-void GIAtranslatorDefineGrammarClass::extractPOSrelatedGrammaticalInformationStanford(GIAfeature* currentFeature)
+void GIAtranslatorDefineGrammarClass::extractPOSrelatedGrammaticalInformationStanford(GIAfeature* currentFeature, const bool grammaticallyStrict)
 {
-	this->extractGrammaticalInformationFromPOStag(&(currentFeature->stanfordPOS), currentFeature);
-	GIAtranslatorOperations.convertStanfordPOStagToRelexPOStypeAndWordnetWordType(&(currentFeature->stanfordPOS), &(currentFeature->type), &(currentFeature->grammaticalWordType));
+	this->extractGrammaticalInformationFromStanfordPOStag(&(currentFeature->stanfordPOS), currentFeature);
+	GIAtranslatorOperations.convertStanfordPOStagToRelexPOStypeAndWordnetWordType(&(currentFeature->stanfordPOS), &(currentFeature->type), &(currentFeature->grammaticalWordType), grammaticallyStrict);
 }
 
-//Preconditions: extractGrammaticalInformationStanford()/extractGrammaticalInformationFromPOStag() must be executed before relations (eg aux/cop) are processed, as they may [possibly] overwrite the tenses here established
-void GIAtranslatorDefineGrammarClass::extractGrammaticalInformationFromPOStag(const string* POStag, GIAfeature* feature)
+//Preconditions: extractGrammaticalInformationStanford()/extractGrammaticalInformationFromStanfordPOStag() must be executed before relations (eg aux/cop) are processed, as they may [possibly] overwrite the tenses here established
+void GIAtranslatorDefineGrammarClass::extractGrammaticalInformationFromStanfordPOStag(const string* POStag, GIAfeature* feature)
 {
 	//past tense extraction;
 	//this is required for past tense verbs without auxillaries; eg He ran fast.     nsubj ( ran-2 , He-1 ), advmod ( ran-2 , fast-3 ) .

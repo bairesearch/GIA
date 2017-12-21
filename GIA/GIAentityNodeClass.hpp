@@ -25,7 +25,7 @@
  * File Name: GIAentityNodeClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e4a 13-December-2017
+ * Project Version: 3e5a 14-December-2017
  * NB a substance is an instance of an entity, any given entity may contain/comprise/have multiple substances - and substances are unrelated to definitions between entities [they just define what comprises any given entity]
  *
  *******************************************************************************/
@@ -141,7 +141,16 @@ static int relationshipEntityTypesArray[GIA_RELATIONSHIP_ENTITY_NUMBER_OF_TYPES]
 #define GRAMMATICAL_WORD_TYPE_PREP (5)
 #define GRAMMATICAL_WORD_TYPE_SATELLITE (6)	/* not really a part of speech*/
 #define GRAMMATICAL_WORD_TYPE_ADJSAT (SATELLITE)
-#define GRAMMATICAL_WORD_TYPE_NUMBER_OF_TYPES 7
+#ifdef GIA_GRAMMATICAL_WORD_TYPES_EXTENDED
+#define GRAMMATICAL_WORD_TYPE_CONJUNCTION (7)
+#define GRAMMATICAL_WORD_TYPE_DETERMINER (8)
+#define GRAMMATICAL_WORD_TYPE_INTERJECTION (9)
+#define GRAMMATICAL_WORD_TYPE_PRONOUN (10)
+#define GRAMMATICAL_WORD_TYPE_NUMBER_OF_TYPES (11)
+#else
+#define GRAMMATICAL_WORD_TYPE_NUMBER_OF_TYPES (7)
+#endif
+
 	//for xml interface:
 #define GRAMMATICAL_WORD_TYPE_UNDEFINED_STRING "0"
 #define GRAMMATICAL_WORD_TYPE_NOUN_STRING "1"
@@ -256,7 +265,14 @@ static string grammaticalTenseModifierNameArray[GRAMMATICAL_TENSE_MODIFIER_NUMBE
 static string grammaticalNumberNameArray[GRAMMATICAL_NUMBER_NUMBER_OF_TYPES] = {"undefined", "uncountable", "singular", "plural"};
 static string grammaticalGenderNameArray[GRAMMATICAL_GENDER_NUMBER_OF_TYPES] = {"undefined", "person", "masculine", "feminine"};
 
-static string grammaticalWordTypeNameArray[GRAMMATICAL_WORD_TYPE_NUMBER_OF_TYPES] = {"undefined", "noun", "verb", "adj", "adv", "prep", "satellite"};	//must be same as FEATURE_RELEX_POS_TYPE_NOUN_NAME, FEATURE_RELEX_POS_TYPE_VERB_NAME, FEATURE_RELEX_POS_TYPE_ADJECTIVE_NAME, FEATURE_RELEX_POS_TYPE_ADVERB_NAME
+//must be same as FEATURE_RELEX_POS_TYPE_NOUN_NAME, FEATURE_RELEX_POS_TYPE_VERB_NAME, FEATURE_RELEX_POS_TYPE_ADJECTIVE_NAME, FEATURE_RELEX_POS_TYPE_ADVERB_NAME etc (otherwise use //http://public.oed.com/how-to-use-the-oed/abbreviations)
+#ifdef GIA_GRAMMATICAL_WORD_TYPES_EXTENDED
+static string grammaticalWordTypeNameArray[GRAMMATICAL_WORD_TYPE_NUMBER_OF_TYPES] = {"undefined", "noun", "verb", "adj", "adv", "prep", "satellite", "conjunction", "det", "interj", "pron"};
+#else
+static string grammaticalWordTypeNameArray[GRAMMATICAL_WORD_TYPE_NUMBER_OF_TYPES] = {"undefined", "noun", "verb", "adj", "adv", "prep", "satellite"};
+#endif
+
+
 
 
 #define GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES (12)
