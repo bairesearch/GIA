@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorReferenceSet.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e7b 16-December-2017
+ * Project Version: 3e7c 16-December-2017
  * Requirements: requires plain text file
  * Description: Reference Set preprocessor
  *

@@ -25,7 +25,7 @@
  * File Name: GIApreprocessor.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e7b 16-December-2017
+ * Project Version: 3e7c 16-December-2017
  * Requirements: requires plain text file
  * Description: Logical Condition and Reference Set preprocessor
  *
@@ -108,6 +108,15 @@ bool GIApreprocessorClass::preprocessTextForGIA(string* inputTextPlainTXTfileNam
 	{
 		result = false;
 	}
+
+	#ifdef GIA_PREPROCESSOR_SENTENCE_EXECUTE_PRELIM_POS_TAGGER	
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_EXECUTE_BEFORE_LRP
+	if(!executePrelimFeatureProcessingOnSentences(outputLRPTextPlainTXTFileName, inputTextNLPfeatureXMLfileName, translatorVariables))
+	{
+		result = true;
+	}	
+	#endif	
+	#endif
 	
 	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
 	GIApreprocessorMultiwordReduction.initialiseActiveGIApreprocessorMultiwordReductionTagTextCorrespondenceInfo(isQuery);
@@ -129,10 +138,12 @@ bool GIApreprocessorClass::preprocessTextForGIA(string* inputTextPlainTXTfileNam
 	
 	#ifdef GIA_PREPROCESSOR_SENTENCE
 	#ifdef GIA_PREPROCESSOR_SENTENCE_EXECUTE_PRELIM_POS_TAGGER
+	#ifndef GIA_PREPROCESSOR_POS_TAGGER_EXECUTE_BEFORE_LRP
 	if(!executePrelimFeatureProcessingOnSentences(outputLRPTextPlainTXTFileName, inputTextNLPfeatureXMLfileName, translatorVariables))
 	{
 		result = true;
 	}	
+	#endif
 	#endif
 	if(!preprocessSentencesForGIA(translatorVariables->firstGIApreprocessorSentenceInList, outputLRPTextPlainTXTFileNameIntermediarySentence, outputLRPTextForNLPonlyPlainTXTFileNameIntermediarySentence))
 	{

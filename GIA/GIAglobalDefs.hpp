@@ -25,7 +25,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e7b 16-December-2017
+ * Project Version: 3e7c 16-December-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -757,12 +757,14 @@
 	//#ifdef GIA_PREPROCESSOR_SENTENCE	//has not yet been defined
 		#define GIA_PREPROCESSOR_SENTENCE_EXECUTE_PRELIM_POS_TAGGER	//3e1a	//either uses third party NLP POS tagger or GIA_PREPROCESSOR_POS_TAGGER 
 		#ifdef GIA_PREPROCESSOR_SENTENCE_EXECUTE_PRELIM_POS_TAGGER
+			//#define GIA_PREPROCESSOR_POS_TAGGER_EXECUTE_BEFORE_LRP	//3e7c	//must set executeGIAgeneratePOStaggerDatabase.sh to execute GIAgeneratePOStaggerDatabase.exe without -lrp
 			#define GIA_PREPROCESSOR_SENTENCE_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
 		#endif
 	//#endif
 		
 	#define GIA_PREPROCESSOR_POS_TAGGER	//3e2a
 	#ifdef GIA_PREPROCESSOR_POS_TAGGER
+			
 		#ifdef COMPILE_GIA_WITH_ANN_GENERATE_POS_TAGGER_DATABASE
 			#define GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE		//this only has to be executed once on a large wiki dataset
 		#endif
