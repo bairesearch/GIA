@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorPOStagger.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e8d 18-December-2017
+ * Project Version: 3e8e 18-December-2017
  * Requirements: requires plain text file
  * Description: preprocessor POS tagger
  *
@@ -491,6 +491,15 @@ string GIApreprocessorPOStaggerDatabaseClass::generateIntFormatString(int number
 }
 
 
-
+string GIApreprocessorPOStaggerDatabaseClass::DBconvertByteToBinaryString(unsigned char byte)
+{
+	string binaryString = ""; 
+	for(int i=0; i<8; i++)
+	{
+		int val = SHAREDvars.getBitValue(byte, i);
+		binaryString = binaryString + SHAREDvars.convertIntToString(val);
+	}
+	return binaryString;
+}
 
 

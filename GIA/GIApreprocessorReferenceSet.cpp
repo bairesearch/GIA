@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorReferenceSet.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e8d 18-December-2017
+ * Project Version: 3e8e 18-December-2017
  * Requirements: requires plain text file
  * Description: Reference Set preprocessor
  *
@@ -128,7 +128,7 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 		
 		if(detectAuxiliary(currentWord))
 		{	
-			//cout << "detectAuxiliary: currentWord = " << currentWord << endl;
+			cout << "detectAuxiliary: currentWord = " << currentWord << endl;
 			currentWordIsReferenceSetDelimiter = true;
 			currentDelimiterType = GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_AUXILIARY;
 		}
@@ -139,13 +139,13 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 		string verbBaseNameTemp = "";
 		if(GIApreprocessorMultiwordReduction.determineIsVerb(currentWordTag, usePOSprelim, grammaticallyStrict, &verbBaseNameTemp, &grammaticalBaseTenseForm))
 		{
-			#ifndef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
-			if(!GIApreprocessorMultiwordReduction.determineIsAdjective(currentWordTag, usePOSprelim))
+			#ifdef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_VERB_OR_NOUN_OVER_ADJECTIVE_POS_AMBIGUITY
+			if(!determineIsVerbAndAdjective(currentWordTag, usePOSprelim, grammaticallyStrict))
 			{
 			#endif
 				//cout << "verbDetected: currentWord = " << currentWord << endl;	
 				verbDetected = true;
-			#ifndef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
+			#ifdef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_VERB_OR_NOUN_OVER_ADJECTIVE_POS_AMBIGUITY
 			}
 			#endif
 		}
@@ -217,6 +217,25 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 						}
 					}
 				}
+				#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_SPECIAL_CASE_DELIMITER_VERB_STATE_SUCCEEDED_BY_NOUN
+				if(wordIndex-2 >= 0)
+				{
+					//eg the [det] newly [adv] controlled [verb]
+					#ifdef GIA_GRAMMATICAL_WORD_TYPES_EXTENDED
+					if(GIApreprocessorMultiwordReduction.determineIsDeterminer(((*logicReferenceVariableWordList)[wordIndex-2]), usePOSprelim))
+					#else
+					//may fail because determiner may be capitalised
+					if(SHAREDvars.textInTextArray(((*logicReferenceVariableWordList)[wordIndex-2])->tagName, relationDeterminerArray, GRAMMATICAL_DETERMINER_ARRAY_NUMBER_OF_TYPES) || 
+					SHAREDvars.textInTextArray(((*logicReferenceVariableWordList)[wordIndex-2])->tagName, entityPronounPossessiveArray, ENTITY_PRONOUN_POSSESSIVE_ARRAY_NUMBER_OF_TYPES))
+					#endif
+					{
+						if(GIApreprocessorMultiwordReduction.determineIsAdverb(((*logicReferenceVariableWordList)[wordIndex-1]), usePOSprelim))
+						{
+							referenceSetDelimiterVerbPreceededByDeterminerOrPossessivePronoun = true;
+						}
+					}
+				}
+				#endif
 			#ifndef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_SPECIAL_CASE_DELIMITER_VERB_STATE_SUCCEEDED_BY_NOUN
 			}
 			#endif
@@ -235,11 +254,22 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 					#endif
 						if(GIApreprocessorMultiwordReduction.determineIsAdjective(((*logicReferenceVariableWordList)[wordIndex+1]), usePOSprelim))
 						{
-							//eg Tom rides fast
-							currentDelimiterSpecialCase = GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_SPECIAL_CASE_OBJECT_REFERS_TO_PREVIOUS_DELIMITER_VERB;
-							#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITERS_CONTAIN_VERB_ADJECTIVES
-							wordIndex = wordIndex + 1;
+							/*
+							#ifdef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_VERB_OR_NOUN_OVER_ADJECTIVE_POS_AMBIGUITY
+							if(!determineIsVerbAndAdjective(((*logicReferenceVariableWordList)[wordIndex+1]), usePOSprelim, grammaticallyStrict))
+							{
 							#endif
+							*/
+								//eg Tom rides fast
+								currentDelimiterSpecialCase = GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_SPECIAL_CASE_OBJECT_REFERS_TO_PREVIOUS_DELIMITER_VERB;
+								#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITERS_CONTAIN_VERB_ADJECTIVES
+								wordIndex = wordIndex + 1;
+								#endif
+							/*
+							#ifdef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_VERB_OR_NOUN_OVER_ADJECTIVE_POS_AMBIGUITY
+							}
+							#endif
+							*/
 						}
 						if(wordIndex+2 < logicReferenceVariableWordList->size())
 						{
@@ -247,11 +277,22 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 							{
 								if(GIApreprocessorMultiwordReduction.determineIsAdjective(((*logicReferenceVariableWordList)[wordIndex+2]), usePOSprelim))
 								{
-									//eg Tom rides very fast
-									currentDelimiterSpecialCase = GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_SPECIAL_CASE_OBJECT_REFERS_TO_PREVIOUS_DELIMITER_VERB;
-									#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITERS_CONTAIN_VERB_ADJECTIVES
-									wordIndex = wordIndex + 2;
+									/*
+									#ifdef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_VERB_OR_NOUN_OVER_ADJECTIVE_POS_AMBIGUITY
+									if(!determineIsVerbAndAdjective(((*logicReferenceVariableWordList)[wordIndex+2]), usePOSprelim, grammaticallyStrict))
+									{
 									#endif
+									*/
+										//eg Tom rides very fast
+										currentDelimiterSpecialCase = GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_SPECIAL_CASE_OBJECT_REFERS_TO_PREVIOUS_DELIMITER_VERB;
+										#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITERS_CONTAIN_VERB_ADJECTIVES
+										wordIndex = wordIndex + 2;
+										#endif
+									/*
+									#ifdef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_VERB_OR_NOUN_OVER_ADJECTIVE_POS_AMBIGUITY
+									}
+									#endif
+									*/
 								}
 							}
 						}
@@ -689,7 +730,21 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 	
 }
 
-
+#ifdef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_VERB_OR_NOUN_OVER_ADJECTIVE_POS_AMBIGUITY
+bool GIApreprocessorReferenceSetClass::determineIsVerbAndAdjective(GIApreprocessorWord* currentWordTag, bool usePOSprelim, bool grammaticallyStrict)
+{
+	bool verbAndAdjective = false;
+	if(GIApreprocessorMultiwordReduction.determineIsVerb(currentWordTag, usePOSprelim, grammaticallyStrict))
+	{
+		if(GIApreprocessorMultiwordReduction.determineIsAdjective(currentWordTag, usePOSprelim))
+		{	
+			verbAndAdjective = true;
+		}
+	}
+	return verbAndAdjective;
+}	
+#endif	
+				
 void GIApreprocessorReferenceSetClass::updateIndices(const bool currentWordIsReferenceSetDelimiter, bool* referenceSetDelimiterDetected, bool* parsingReferenceSetDelimiter, const int currentDelimiterSpecialCase, const int wordIndexOfHypotheticalPreceedingThatWhich, const bool currentWordIsReferenceSetDelimiterPreceededByThatWhich, bool* referenceSetDelimiterIndicatesSameReferenceSet, int* firstIndexOfReferenceSetDelimiterText, int* lastIndexOfPreviousReferenceSet) 
 {
 	if(currentWordIsReferenceSetDelimiter)
@@ -728,6 +783,15 @@ void GIApreprocessorReferenceSetClass::updateIndices(const bool currentWordIsRef
 				*firstIndexOfReferenceSetDelimiterText = wordIndexOfHypotheticalPreceedingThatWhich + 1;
 				*lastIndexOfPreviousReferenceSet = wordIndexOfHypotheticalPreceedingThatWhich;
 			}
+			/*
+			else if(currentDelimiterSpecialCase == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_SPECIAL_CASE_OBJECT_REFERS_TO_PREVIOUS_DELIMITER_VERB)
+			{
+				SPECIFIC NOT REQUIRED;
+				#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
+				cout << "GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_SPECIAL_CASE_OBJECT_REFERS_TO_PREVIOUS_DELIMITER_VERB" << endl;
+				#endif
+			}
+			*/
 			else if(currentWordIsReferenceSetDelimiterPreceededByThatWhich)
 			{
 				*referenceSetDelimiterIndicatesSameReferenceSet = true;
@@ -787,12 +851,12 @@ bool GIApreprocessorReferenceSetClass::addSubReferenceSetToReferenceSet(GIAprepr
 {
 	bool result = true;
 	
-	bool firstSubreferenceSetInList = true;
+	bool isFirstSubreferenceSetInList = true;
 	GIApreprocessorSubReferenceSet* currentSubReferenceSetInList = firstSubReferenceSetInList;
 	while(currentSubReferenceSetInList->next != NULL)
 	{
 		currentSubReferenceSetInList = currentSubReferenceSetInList->next;	
-		firstSubreferenceSetInList = false;
+		isFirstSubreferenceSetInList = false;
 	}
 	setReferenceSetText(currentSubReferenceSetInList, subReferenceSetText);	//currentSubReferenceSetInList->subReferenceSetContents = subReferenceSetText;
 	currentSubReferenceSetInList->isReferenceSetDelimiter = referenceSetDelimiter;
@@ -808,7 +872,7 @@ bool GIApreprocessorReferenceSetClass::addSubReferenceSetToReferenceSet(GIAprepr
 		currentSubReferenceSetInList->delimiterType = delimiterType;
 		currentSubReferenceSetInList->delimiterSpecialCase = delimiterSpecialCase;
 	}
-	currentSubReferenceSetInList->firstSubreferenceSetInList = firstSubreferenceSetInList;
+	currentSubReferenceSetInList->isFirstSubreferenceSetInList = isFirstSubreferenceSetInList;
 	
 	currentSubReferenceSetInList->next = new GIApreprocessorSubReferenceSet();
 	

@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorPOStagger.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e8d 18-December-2017
+ * Project Version: 3e8e 18-December-2017
  * Requirements: requires plain text file
  * Description: preprocessor POS tagger
  *
@@ -752,12 +752,12 @@ bool GIApreprocessorPOStaggerClass::determinePOSambiguityInfoForSpecialCharacter
 			specialCharFound = true;
 			*POSambiguityInfo = GIA_PREPROCESSOR_POS_TAGGER_POS_AMBIGUITY_INFO_PUNCTUATION_MARK_CHARACTER_END_OF_SENTENCE;
 		}
-		if(!SHAREDvars.charInCharArray(wordChar, nlpPunctionMarkCharacterArray, GIA_NLP_NUMBER_OF_PUNCTUATION_MARK_CHARACTERS))
+		if(SHAREDvars.charInCharArray(wordChar, nlpPunctionMarkCharacterArray, GIA_NLP_NUMBER_OF_PUNCTUATION_MARK_CHARACTERS))
 		{
 			specialCharFound = true;
 			*POSambiguityInfo = GIA_PREPROCESSOR_POS_TAGGER_POS_AMBIGUITY_INFO_PUNCTUATION_MARK_CHARACTER_OTHER;
 		}
-		if(!SHAREDvars.charInCharArray(wordChar, nlpQuotationMarkCharacterArray, GIA_NLP_NUMBER_OF_QUOTATIONMARK_CHARACTERS))
+		if(SHAREDvars.charInCharArray(wordChar, nlpQuotationMarkCharacterArray, GIA_NLP_NUMBER_OF_QUOTATIONMARK_CHARACTERS))
 		{
 			specialCharFound = true;
 			*POSambiguityInfo = GIA_PREPROCESSOR_POS_TAGGER_POS_AMBIGUITY_INFO_QUOTATION_CHARACTER;

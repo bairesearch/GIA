@@ -25,7 +25,7 @@
  * File Name: GIApreprocessor.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e8d 18-December-2017
+ * Project Version: 3e8e 18-December-2017
  * Requirements: requires plain text file
  * Description: Logical Condition and Reference Set preprocessor
  *
@@ -631,7 +631,10 @@ bool GIApreprocessorClass::executePrelimFeatureProcessingOnSentences(const strin
 				int centreWordUnambiguousPOSvalue = INT_DEFAULT_VALUE;
 				bool centreWordPOSisAmbiguous = GIApreprocessorPOStagger.determinePOSambiguityInfoIsAmbiguous(centreWordPOSambiguityInfo, &centreWordUnambiguousPOSvalue);
 				if(centreWordPOSisAmbiguous)
-				{					
+				{		
+					//cout << "centreWordPOSisAmbiguous" << endl;
+					//cout << "DBconvertByteToHex(centreWordPOSambiguityInfo) = " << GIApreprocessorPOStaggerDatabase.DBconvertByteToBinaryString(centreWordPOSambiguityInfo) << endl;
+								
 					string POSambiguityInfoPermutation = "";
 					if(!GIApreprocessorPOStagger.generatePOSambiguityInfoPermutation(&(currentGIApreprocessorSentenceInList->sentenceContentsLRP), wCentre, &identifiedEveryWordInDatabasePOSpermutation, &POSambiguityInfoPermutation))
 					{
@@ -743,6 +746,7 @@ bool GIApreprocessorClass::executePrelimFeatureProcessingOnSentences(const strin
 				else
 				{
 					currentFeatureInList->grammaticalWordType = GIApreprocessorPOStagger.convertGIAPOStaggerValueToGrammaticalWordType(centreWordUnambiguousPOSvalue);
+					//cout << "currentFeatureInList->grammaticalWordType = " << currentFeatureInList->grammaticalWordType << endl;
 				}
 			}
 			else
@@ -1263,7 +1267,7 @@ void GIApreprocessorClass::addSentenceToSentenceContentsPreprocessedLogicReferen
 		#endif
 			#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_SUBJECT_AND_DUMMY_DELIMITER_AND_OBJECT
 			#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_SUBJECT_AND_DUMMY_DELIMITER_AND_OBJECT_FIRST_SUBREFERENCE_ONLY
-			if(referenceSetType == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_TYPE_OBJECT && referenceSet->firstSubreferenceSetInList)
+			if(referenceSetType == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_TYPE_OBJECT && referenceSet->isFirstSubreferenceSetInList)
 			#else
 			if(referenceSetType == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_TYPE_OBJECT)	
 			#endif
@@ -2468,7 +2472,7 @@ bool GIApreprocessorClass::findPrimaryEntityBasedOnSentenceIndexAndTypeAndDelete
 	#endif
 		#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_SUBJECT_AND_DUMMY_DELIMITER_AND_OBJECT
 		#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_SUBJECT_AND_DUMMY_DELIMITER_AND_OBJECT_FIRST_SUBREFERENCE_ONLY
-		if(referenceSetType == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_TYPE_OBJECT && currentSubReferenceSetInList->firstSubreferenceSetInList)
+		if(referenceSetType == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_TYPE_OBJECT && currentSubReferenceSetInList->isFirstSubreferenceSetInList)
 		#else
 		if(referenceSetType == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_TYPE_OBJECT)	
 		#endif
