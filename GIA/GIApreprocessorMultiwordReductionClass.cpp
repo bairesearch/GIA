@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorMultiwordReductionClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e5a 14-December-2017
+ * Project Version: 3e6a 16-December-2017
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  *
@@ -35,6 +35,22 @@
 #include "GIApreprocessorMultiwordReductionClass.hpp"
 
 GIApreprocessorWord::GIApreprocessorWord(void)
+{
+	initialiseGIApreprocessorWord();
+}
+GIApreprocessorWord::GIApreprocessorWord(string tagNameNew)
+{
+	initialiseGIApreprocessorWord();
+	tagName = tagNameNew;
+}
+GIApreprocessorWord::~GIApreprocessorWord(void)
+{	
+	if(nextTag != NULL)
+	{
+		delete nextTag;
+	}
+}
+void GIApreprocessorWord::initialiseGIApreprocessorWord()
 {
 	tagName = "";
 
@@ -46,8 +62,8 @@ GIApreprocessorWord::GIApreprocessorWord(void)
 	featureReference = NULL;
 	entityReference = NULL;
 	#endif
-			
-	nextTag = NULL;
+
+	plainTextWord = false;	
 
 	#ifdef GIA_NEURAL_NETWORK
 	wordShortcutToConceptNeuron = NULL;
@@ -56,32 +72,13 @@ GIApreprocessorWord::GIApreprocessorWord(void)
 	tagNameOriginalNonLemma = "";
 	#endif
 	#endif
-		
-	plainTextWord = false;
-}
-GIApreprocessorWord::GIApreprocessorWord(string tagNameNew)
-{
-	tagName = tagNameNew;
 
-	#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
-	featureReferenceOriginal = NULL;
-	featureReference = NULL;
-	entityReference = NULL;
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL
+	POStaggerExperience = NULL;
 	#endif
-	
-	plainTextWord = false;
 		
 	nextTag = NULL;
 }
-GIApreprocessorWord::~GIApreprocessorWord(void)
-{	
-	if(nextTag != NULL)
-	{
-		delete nextTag;
-	}
-}
-
-
 
 
 GIApreprocessorMultiwordReductionWord::GIApreprocessorMultiwordReductionWord(void)

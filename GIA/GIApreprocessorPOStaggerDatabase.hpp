@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorPOStagger.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e5a 14-December-2017
+ * Project Version: 3e6a 16-December-2017
  * Requirements: requires plain text file
  * Description: preprocessor POS tagger
  *
@@ -37,10 +37,13 @@
 
 #include "GIAglobalDefs.hpp"
 #include "GIAdatabase.hpp"	//required for checkIfFolderExistsAndIfNotMakeAndSetAsCurrent
-#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK
+#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_INTERNAL
 #include "ANNformation.hpp"
 #include "ANNalgorithmBackpropagationTraining.hpp"
 #include "ANNxmlConversion.hpp"
+#endif
+#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL
+#include "ANNexperienceClass.hpp"
 #endif
 
 #ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE
@@ -70,7 +73,7 @@ class GIApreprocessorPOStaggerDatabaseClass
 {
 	private: SHAREDvarsClass SHAREDvars;
 	private: GIAdatabaseClass GIAdatabase;
-	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_INTERNAL
 	private: ANNformationClass ANNformation;
 	private: ANNalgorithmBackpropagationTrainingClass ANNalgorithmBackpropagationTraining;	
 	private: ANNxmlConversionClass ANNxmlConversion;	
@@ -81,9 +84,22 @@ class GIApreprocessorPOStaggerDatabaseClass
 	#endif
 	
 	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_INTERNAL
 	public: void feedNeuralNetworkWithExperienceBackpropagation(ANNexperience* currentExperience);
 	public: bool calculateIdealClassTargetOfInputExperience(ANNexperience* experience, int* idealClassTarget, double* experienceBackPropagationPassError);
 	public: bool writeDatabaseNeuralNetwork();
+	#endif
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL
+	public: bool externalANNgenerateBatchTrainData(ANNexperience* firstExperienceInList, int batchIndex);
+	public: bool externalANNform();
+	public: bool externalANNtrain();
+	public: bool externalANNtrainEpoch();
+	public: bool externalANNtrainEpochBatch();
+	public: bool externalANNtest();
+	public: bool externalANNpredict(ANNexperience* firstExperienceInList);
+		private: bool externalANNgenerateBatchDataInput(ANNexperience* firstExperienceInList, vector<string>* batchDataInput);
+		private: bool externalANNexecuteScript(const string scriptName);	
+	#endif
 	#endif
 
 	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM

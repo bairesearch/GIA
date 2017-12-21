@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorMultiwordReductionClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e5a 14-December-2017
+ * Project Version: 3e6a 16-December-2017
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  *
@@ -39,6 +39,9 @@
 #ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
 #include "GIAentityNodeClass.hpp"
 #include "GIAsentenceClass.hpp"
+#endif
+#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL
+#include "ANNexperienceClass.hpp"
 #endif
 #include "SHAREDvars.hpp"
 
@@ -285,6 +288,7 @@ public:
 	GIApreprocessorWord(void);
 	GIApreprocessorWord(string tagNameNew);
 	~GIApreprocessorWord(void);
+	void initialiseGIApreprocessorWord();
 
 	string tagName;
 	
@@ -306,7 +310,11 @@ public:
 	string tagNameOriginalNonLemma;
 	#endif
 	#endif
-	
+
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL
+	ANNexperience* POStaggerExperience;
+	#endif
+		
 	GIApreprocessorWord* nextTag;
 };
 

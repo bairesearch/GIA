@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorSentenceClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e5a 14-December-2017
+ * Project Version: 3e6a 16-December-2017
  * Requirements: requires plain text file
  * Description: Logical Condition and Reference Set preprocessor
  *
@@ -69,7 +69,7 @@ GIApreprocessorSubReferenceSet::GIApreprocessorSubReferenceSet(void)
 	#ifdef GIA_NEURAL_NETWORK_NON_SEMANTIC
 	definite = false;
 	#endif
-	
+
 	firstSubreferenceSetInList = false;
 }
 GIApreprocessorSubReferenceSet::~GIApreprocessorSubReferenceSet(void)
