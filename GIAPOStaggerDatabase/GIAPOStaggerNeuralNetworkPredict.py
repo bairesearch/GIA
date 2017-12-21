@@ -15,5 +15,10 @@ model = loadModel()
 XpredictBatchFileName = XpredictBatchFileNamePrepend + XtrainBatchFileExtension
 YpredictBatchFileName = YpredictBatchFileNamePrepend + YtrainBatchFileExtension
 XpredictBatch = numpy.genfromtxt(XpredictBatchFileName, delimiter=experienceDataFileDelimiter)
+if (XpredictBatch.ndim == 1):
+	XpredictBatch = numpy.array([XpredictBatch])	#required in case XpredictBatchFileName only contains a single line, then XpredictBatch will be a 1 dimensional array
+	#print(XpredictBatch)
 classes = model.predict_classes(XpredictBatch) 
-numpy.savetxt(YpredictBatchFileName, classes, experienceDataFileDelimiter)
+#classes = model.predict(XpredictBatch, batch_size = 1, verbose = 1)
+#print(classes)
+numpy.savetxt(YpredictBatchFileName, classes, delimiter=experienceDataFileDelimiter)

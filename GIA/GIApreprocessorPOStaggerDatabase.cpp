@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorPOStagger.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e8c 18-December-2017
+ * Project Version: 3e8d 18-December-2017
  * Requirements: requires plain text file
  * Description: preprocessor POS tagger
  *
@@ -185,7 +185,7 @@ bool GIApreprocessorPOStaggerDatabaseClass::externalANNpredict(ANNexperience* fi
 	SHAREDvars.setCurrentDirectory(GIAposTaggerDatabaseFolderName);	//save output files to output folder
 
 	string XpredictBatchFileName = string(GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_X_PREDICT_BATCH_FILE_NAME_PREPEND) + (GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_BATCH_FILE_EXTENSION);
-	string YpredictBatchFileName = string(GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_X_PREDICT_BATCH_FILE_NAME_PREPEND) + (GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_BATCH_FILE_EXTENSION);
+	string YpredictBatchFileName = string(GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_Y_PREDICT_BATCH_FILE_NAME_PREPEND) + (GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_BATCH_FILE_EXTENSION);
 
 	//generate predictions batch file
 	vector<string> batchPredictionsDataInput;
@@ -210,8 +210,13 @@ bool GIApreprocessorPOStaggerDatabaseClass::externalANNpredict(ANNexperience* fi
 	ANNexperience* currentExperienceInList = firstExperienceInList;
 	for(int i=0; i<YpredictBatchFileContents.size(); i++)
 	{
-		long classTargetValue = SHAREDvars.convertStringToLong(YpredictBatchFileContents[i]);	//CHECKTHIS: assume that YpredictBatchFileContents is not hot encoded
-		cout << "GIApreprocessorPOStaggerDatabaseClass::externalANNgeneratePredictions{}: classTargetValue = " << classTargetValue << endl;
+		#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_Y_PREDICT_HOT_ENCODED
+		cerr << "GIApreprocessorPOStaggerDatabaseClass::externalANNpredict{} error: GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_Y_PREDICT_HOT_ENCODED not coded" << endl;
+		exit(EXIT_ERROR);
+		#else
+		long classTargetValue = long(SHAREDvars.convertStringToDouble(YpredictBatchFileContents[i]));	//CHECKTHIS: assume that YpredictBatchFileContents is not hot encoded
+		#endif
+		//cout << "GIApreprocessorPOStaggerDatabaseClass::externalANNgeneratePredictions{}: classTargetValue = " << classTargetValue << endl;
 		currentExperienceInList->classTargetValue = classTargetValue;
 		currentExperienceInList = currentExperienceInList->next;
 	}
@@ -251,7 +256,7 @@ string GIApreprocessorPOStaggerDatabaseClass::externalANNgenerateBatchDataExperi
 string GIApreprocessorPOStaggerDatabaseClass::externalANNgenerateBatchDataExperienceOutput(ANNexperience* currentExperienceInList)
 {	
 	string experienceOutputString = "";
-	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_Y_HOT_ENCODED
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_Y_TRAIN_HOT_ENCODED
 	int numberOfOutputNeurons = GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_NUMBER_OF_OUTPUT_NEURONS;
 	for(long i = 0; i < numberOfOutputNeurons; i++)
 	{		
@@ -275,7 +280,9 @@ string GIApreprocessorPOStaggerDatabaseClass::externalANNgenerateBatchDataExperi
 bool GIApreprocessorPOStaggerDatabaseClass::externalANNexecuteScript(string scriptName)
 {
 	SHAREDvars.setCurrentDirectory(GIAposTaggerDatabaseFolderName);
-	scriptName = string("python ") + scriptName;
+	scriptName = string("python ") + scriptName + string(GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_SCRIPT_EXTENSION);
+	//scriptName = string("./") + scriptName + string(GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_SCRIPT_EXTENSION);	//requires "#!/usr/bin/env python" to be added to top of each py file
+	cout << "scriptName = " << scriptName << endl;
 	system(scriptName.c_str());
 }
 #endif

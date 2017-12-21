@@ -25,7 +25,7 @@
  * File Name: GIAentityConnectionClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e8c 18-December-2017
+ * Project Version: 3e8d 18-December-2017
  *
  *******************************************************************************/
 

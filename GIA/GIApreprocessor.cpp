@@ -25,7 +25,7 @@
  * File Name: GIApreprocessor.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e8c 18-December-2017
+ * Project Version: 3e8d 18-December-2017
  * Requirements: requires plain text file
  * Description: Logical Condition and Reference Set preprocessor
  *
@@ -602,9 +602,10 @@ bool GIApreprocessorClass::executePrelimFeatureProcessingOnSentences(const strin
 	GIApreprocessorSentence* currentGIApreprocessorSentenceInList = translatorVariables->firstGIApreprocessorSentenceInList;
 	while(currentGIApreprocessorSentenceInList->next != NULL)
 	{			
-		GIAfeature* currentFeatureInList = new GIAfeature();	//prelim feature
 		for(int wCentre=0; wCentre<currentGIApreprocessorSentenceInList->sentenceContentsLRP.size(); wCentre++)
 		{
+			GIAfeature* currentFeatureInList = new GIAfeature();	//prelim feature
+
 			//centre word calculations
 			GIApreprocessorWord* centreWord = (currentGIApreprocessorSentenceInList->sentenceContentsLRP)[wCentre];
 			#ifdef GIA_PREPROCESSOR_POS_TAGGER_POS_DEBUG
@@ -712,6 +713,9 @@ bool GIApreprocessorClass::executePrelimFeatureProcessingOnSentences(const strin
 						centreWordPOSisAmbiguous = GIApreprocessorPOStagger.determinePOSambiguityInfoIsAmbiguous(entryIndexWithMaximumNumberOfInstances, &centreWordPOSvaluePrediction);
 						#endif
 						
+						#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL
+						currentFeatureInList->grammaticalWordType = GRAMMATICAL_WORD_TYPE_UNDEFINED;
+						#else
 						if(foundMatchingCentreWordPOSambiguityInfo)
 						{
 							if(!centreWordPOSisAmbiguous)
@@ -730,6 +734,7 @@ bool GIApreprocessorClass::executePrelimFeatureProcessingOnSentences(const strin
 							currentFeatureInList->grammaticalWordType = GRAMMATICAL_WORD_TYPE_UNDEFINED;
 							cout << "GIA_PREPROCESSOR_POS_TAGGER GIApreprocessorClass::executePrelimFeatureProcessingOnSentences{} warning: word POS cannot be determined (!foundMatchingCentreWordPOSambiguityInfo): " << centreWord->tagName << endl;
 						}
+						#endif
 						
 					#ifdef GIA_PREPROCESSOR_POS_TAGGER_ONLY_ADD_DATABASE_ENTRY_IF_POS_AMBIGUITY_INFO_FOUND_FOR_EVERY_CONTEXT_WORD
 					}
@@ -758,7 +763,7 @@ bool GIApreprocessorClass::executePrelimFeatureProcessingOnSentences(const strin
 	bool foundFirstExperience = false;
 	currentGIApreprocessorSentenceInList = translatorVariables->firstGIApreprocessorSentenceInList;
 	while(currentGIApreprocessorSentenceInList->next != NULL)
-	{			
+	{	
 		for(int wCentre=0; wCentre<currentGIApreprocessorSentenceInList->sentenceContentsLRP.size(); wCentre++)
 		{
 			GIApreprocessorWord* centreWord = (currentGIApreprocessorSentenceInList->sentenceContentsLRP)[wCentre];
@@ -770,14 +775,21 @@ bool GIApreprocessorClass::executePrelimFeatureProcessingOnSentences(const strin
 					firstExperienceInList = centreWord->POStaggerExperience;
 					currentExperienceInList = centreWord->POStaggerExperience;
 				}
-				
-				currentExperienceInList->next = centreWord->POStaggerExperience;
-				currentExperienceInList = currentExperienceInList->next;
+				else
+				{
+					currentExperienceInList->next = centreWord->POStaggerExperience;
+					currentExperienceInList = currentExperienceInList->next;
+				}
 			}
 		}
 		currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->next;
 	}	
-	
+	if(foundFirstExperience)
+	{
+		//add blank experience at end of list (required)
+		currentExperienceInList->next = new ANNexperience();
+	}
+		
 	//generate predictions	
 	GIApreprocessorPOStaggerDatabase.externalANNpredict(firstExperienceInList);
 	
@@ -793,6 +805,16 @@ bool GIApreprocessorClass::executePrelimFeatureProcessingOnSentences(const strin
 			{
 				int centreWordPOSvaluePrediction = centreWord->POStaggerExperience->classTargetValue;
 				currentFeatureInList->grammaticalWordType = GIApreprocessorPOStagger.convertGIAPOStaggerValueToGrammaticalWordType(centreWordPOSvaluePrediction);
+				
+				#ifdef GIA_DEBUG_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_PRINT_PREDICTIONS
+				cout << "**********************************************************" << endl;
+				cout << "GIA POS Tagger neural network prediction:" << endl;
+				cout << "centreWord = " << centreWord->tagName << endl;
+				cout << "centreWordPOSvaluePrediction = " << centreWordPOSvaluePrediction << endl;
+				cout << "currentFeatureInList->grammaticalWordType = " << currentFeatureInList->grammaticalWordType << endl;
+				cout << "grammaticalWordTypeNameArray[currentFeatureInList->grammaticalWordType] = " << grammaticalWordTypeNameArray[currentFeatureInList->grammaticalWordType] << endl;
+				cout << "**********************************************************" << endl;
+				#endif
 			}
 		}
 		currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->next;
