@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorLogicReference.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e7c 16-December-2017
+ * Project Version: 3e8a 18-December-2017
  * Requirements: requires plain text file
  * Description: Logic Reference preprocessor
  *
@@ -394,8 +394,10 @@ bool GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor(const
 
 					#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CONJUNCTION_LR_WITH_EMBEDDED_PREPOSITION_VERB_LR
 					if(currentLogicReferenceInList->previous != NULL)
-					{
-						GIApreprocessorLogicReference* firstLogicReferenceInList = currentLogicReferenceInListActive->previous;		//The apple proposed A, the chicken proposed B...	/	The apple proposed A, said B...	/ The apple proposed A, B...
+					{		
+						//The apple proposed A, the chicken proposed B...	/	The apple proposed A, said/proposed B...	/ The apple proposed A, B...
+										
+						GIApreprocessorLogicReference* firstLogicReferenceInList = currentLogicReferenceInListActive->previous;		//proposed
 						firstLogicReferenceInList->next = NULL;	//delete the original logic reference as it will contain nothing
 						if(firstLogicReferenceInList->previous != NULL)
 						{
@@ -413,15 +415,15 @@ bool GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor(const
 							exit(EXIT_ERROR);
 						}
 
-						GIApreprocessorLogicReference* conjunctionLogicReferenceOld = firstLogicReferenceInList->lastLogicReferenceInUpperLevel;
+						GIApreprocessorLogicReference* conjunctionLogicReferenceOld = firstLogicReferenceInList->lastLogicReferenceInUpperLevel;	//GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_CONJUNCTION_COMPONENT_IMPLICIT_INFERRED
 						if(conjunctionLogicReferenceOld->logicReferenceClass != GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_CONJUNCTION)
 						{
 							cerr << "GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor{} error: (conjunctionLogicReferenceOld->logicReferenceClass != GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_CONJUNCTION)" << endl;
 							exit(EXIT_ERROR);
 						}
 
-						GIApreprocessorLogicReference* verbLogicReference = conjunctionLogicReferenceOld->lastLogicReferenceInUpperLevel;
-						verbLogicReference->firstSubLogicReferenceInListDependent = conjunctionLogicReferenceOld->firstSubLogicReferenceInListArray;	//delete the old conjunctionLogicReferenceOld:
+						GIApreprocessorLogicReference* verbLogicReference = conjunctionLogicReferenceOld->lastLogicReferenceInUpperLevel;	//GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_CONJUNCTION
+						verbLogicReference->firstSubLogicReferenceInListDependent = conjunctionLogicReferenceOld->firstSubLogicReferenceInListArray;	//proposed	//delete the old conjunctionLogicReferenceOld	
 
 						if(verbLogicReference->logicReferenceClass != GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_VERB)
 						{
@@ -601,7 +603,7 @@ bool GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor(const
 				#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CONJUNCTION_LR_WITH_EMBEDDED_PREPOSITION_VERB_LR
 				if(currentLogicReferenceInList->isSubLogicReferenceDependent && currentLogicReferenceInList->lastLogicReferenceInUpperLevel->previous != NULL)
 				{
-					currentLogicReferenceInList = currentLogicReferenceInList->lastLogicReferenceInUpperLevel;		//The apple proposed A, the chicken proposed B...	/	The apple proposed A, said B...
+					currentLogicReferenceInList = currentLogicReferenceInList->lastLogicReferenceInUpperLevel;		//The apple proposed A, the chicken proposed B...	/	The apple proposed A, said/proposed B...
 				}
 				#endif
 				
@@ -940,7 +942,7 @@ vector<GIApreprocessorWord*> GIApreprocessorLogicReferenceClass::generateLogicRe
 		//verify that the auxiliary/verb is not preceeded by a modal auxiliary (e.g. for future cases; will be/have/ride), in which case must test the word prior to the modal auxiliary for that/which
 		if(wordIndex-1 >= 0)
 		{
-			if(SHAREDvars.textInTextArray((*logicReferenceVariableWordList)[wordIndex-1]->tagName, entityModalAuxiliaryArray, ENTITY_MODALAUXILIARY_NUMBER_OF_TYPES))
+			if(GIApreprocessorReferenceSet.detectModalAuxiliary((*logicReferenceVariableWordList)[wordIndex-1]->tagName))
 			{	
 				previousWordIsModalAuxiliary = true;
 				wordIndexOfHypotheticalPreceedingThatWhich--;
@@ -965,7 +967,7 @@ vector<GIApreprocessorWord*> GIApreprocessorLogicReferenceClass::generateLogicRe
 
 				if(wordIndex-2 >= 0)
 				{
-					if(SHAREDvars.textInTextArray((*logicReferenceVariableWordList)[wordIndex-2]->tagName, entityModalAuxiliaryArray, ENTITY_MODALAUXILIARY_NUMBER_OF_TYPES))
+					if(GIApreprocessorReferenceSet.detectModalAuxiliary((*logicReferenceVariableWordList)[wordIndex-2]->tagName))
 					{
 						//eg that will be riding
 						wordIndexOfHypotheticalPreceedingThatWhich--;

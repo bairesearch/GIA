@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorMultiwordReduction.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e7c 16-December-2017
+ * Project Version: 3e8a 18-December-2017
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  *
@@ -2527,6 +2527,8 @@ bool GIApreprocessorMultiwordReductionClass::determineIsWordType(GIApreprocessor
 {
 	bool wordTypeDetected = false;
 	
+	string wordLowerCase = SHAREDvars.convertStringToLowerCase(&(wordTag->tagName));
+
 	unordered_map<string, GIApreprocessorMultiwordReductionWord*>* wordTypeList;
 	if(grammaticalWordType == GRAMMATICAL_WORD_TYPE_NOUN)
 	{
@@ -2571,7 +2573,7 @@ bool GIApreprocessorMultiwordReductionClass::determineIsWordType(GIApreprocessor
 		cerr << "GIApreprocessorMultiwordReductionClass::determineIsWordType{} error: grammaticalWordType unknown, grammaticalWordType = " << grammaticalWordType << endl;
 		exit(EXIT_ERROR);
 	}
-		
+			
 	#ifdef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
 	if(usePOSprelim)
 	{
@@ -2585,14 +2587,14 @@ bool GIApreprocessorMultiwordReductionClass::determineIsWordType(GIApreprocessor
 	#endif
 		if(grammaticalWordType == GRAMMATICAL_WORD_TYPE_VERB)
 		{
-			if(determineVerbCaseStandardWithAdditional(wordTag->tagName, baseNameFound, grammaticalBaseTenseForm))
+			if(determineVerbCaseStandardWithAdditional(wordLowerCase, baseNameFound, grammaticalBaseTenseForm))
 			{
 				wordTypeDetected = true;
 			}
 		}
 		else
 		{
-			if(determineIsWordType(wordTag->tagName, wordTypeList))
+			if(determineIsWordType(wordLowerCase, wordTypeList))
 			{
 				wordTypeDetected = true;
 			}
@@ -2605,12 +2607,12 @@ bool GIApreprocessorMultiwordReductionClass::determineIsWordType(GIApreprocessor
 	{
 		if(wordTypeDetected)
 		{
-			*baseNameFound = wordTag->tagName;
+			*baseNameFound = wordLowerCase;
 			*grammaticalBaseTenseForm = GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NOUN_DATABASE_TAG_BASE_FORM_SINGULAR;	
 		}
 
 		GIApreprocessorMultiwordReductionWord* nounBaseFormFound = NULL;	
-		if(determineNounPluralVariant(wordTag->tagName, &nounBaseFormFound))
+		if(determineNounPluralVariant(wordLowerCase, &nounBaseFormFound))
 		{
 			wordTypeDetected = true;
 			*baseNameFound = nounBaseFormFound->tagName;
@@ -2624,6 +2626,7 @@ bool GIApreprocessorMultiwordReductionClass::determineIsWordType(GIApreprocessor
 		if(wordTagPlaintext->collapsedPhrasalVerbExactDefinedSection)
 		{
 			*grammaticalBaseTenseForm = wordTagPlaintext->grammaticalTenseFormDetected;	//already determined by GIApreprocessorMultiwordReductionClass::searchAndReplacePhrasalVerbs
+			cout << "*grammaticalBaseTenseForm = " << *grammaticalBaseTenseForm << endl;
 			wordTypeDetected = true;
 		}	
 	}
@@ -2646,8 +2649,36 @@ bool GIApreprocessorMultiwordReductionClass::determineIsWordType(const string wo
 }
 
 
-
-
+/*
+bool GIApreprocessorMultiwordReductionClass::determineIsVerbInfinitive(GIApreprocessorWord* wordTag, bool usePOSprelim)
+{
+	bool wordTypeDetected = false;
+	string wordLowerCase = SHAREDvars.convertStringToLowerCase(&(wordLowerCase));
+	if(usePOSprelim)
+	{	
+		unordered_map<string, GIApreprocessorMultiwordReductionWord*>* wordTypeList;
+		wordTypeList = &verbListGlobal;
+		if(determineIsWordType(wordLowerCase, wordTypeList))
+		{
+			wordTypeDetected = true;
+		}
+	}
+	else
+	{
+		string baseNameFound = "";
+		int grammaticalBaseTenseForm = INT_DEFAULT_VALUE;
+		bool foundVerbCaseStandard = determineVerbCaseStandard(wordLowerCase, &baseNameFound, &grammaticalBaseTenseForm);
+		if(foundVerbCaseStandard)
+		{
+			if(grammaticalBaseTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_INFINITIVE)
+			{
+				wordTypeDetected = true;
+			}
+		}		
+	}
+	return wordTypeDetected;
+}
+*/
 bool GIApreprocessorMultiwordReductionClass::determineIsVerb(GIApreprocessorWord* wordTag, bool usePOSprelim)
 {
 	string baseNameFound = "";

@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorPOStagger.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e7c 16-December-2017
+ * Project Version: 3e8a 18-December-2017
  * Requirements: requires plain text file
  * Description: preprocessor POS tagger
  *
@@ -43,6 +43,8 @@
 #include "GIApreprocessorPOStaggerDatabase.hpp"
 
 
+#ifdef GIA_PREPROCESSOR_POS_TAGGER
+
 #ifdef GIA_PREPROCESSOR_WORD_LIST_INTERPRET_PRONOUN_POS_AS_NOUN_POS
 static int GIAPOStaggerValueCrossReferenceGrammaticalWordTypeArray[GIA_PREPROCESSOR_WORD_LIST_ARRAY_SIZE] = {GRAMMATICAL_WORD_TYPE_VERB, GRAMMATICAL_WORD_TYPE_PREP, GRAMMATICAL_WORD_TYPE_ADV, GRAMMATICAL_WORD_TYPE_ADJ, GRAMMATICAL_WORD_TYPE_NOUN, GRAMMATICAL_WORD_TYPE_CONJUNCTION, GRAMMATICAL_WORD_TYPE_DETERMINER, GRAMMATICAL_WORD_TYPE_INTERJECTION};
 #else
@@ -59,7 +61,6 @@ class GIApreprocessorPOStaggerClass
 	private: GIAtranslatorDefineGrammarClass GIAtranslatorDefineGrammar;
 	private: GIApreprocessorPOStaggerDatabaseClass GIApreprocessorPOStaggerDatabase;
 
-	#ifdef GIA_PREPROCESSOR_POS_TAGGER
 	private: bool findInstancePOStaggerMap(const string POSambiguityInfoPermutation, unsigned char centreWordPOSambiguityInfo, int* numberOfInstances, const bool incrementIfFound);
 	private: void insertInstanceInPOStaggerMap(const string POSambiguityInfoPermutation, const unsigned char centreWordPOSambiguityInfo, const int numberOfInstances);
 	private: multimap<string, pair<unsigned char, int>>* getPOStaggerMap();
@@ -84,9 +85,11 @@ class GIApreprocessorPOStaggerClass
 		public: bool determinePOSambiguityInfoForSpecialCharacters(const GIApreprocessorWord* word, unsigned char* contextWordPOSambiguityInfo);
 
 		public: bool findWordInWordListAllTypesWithPOSambiguityInfo(const string word, GIApreprocessorMultiwordReductionWord** wordFound, unsigned char* POSambiguityInfoFound);
-	#endif
+
 	private: string convertBoolVectorToString(vector<bool>* inputNeuronExperienceValuesContextWord);
 };
+
+#endif
 
 #endif
 

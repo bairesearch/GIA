@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorMultiwordReduction.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e7c 16-December-2017
+ * Project Version: 3e8a 18-December-2017
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  *
@@ -119,6 +119,7 @@ class GIApreprocessorMultiwordReductionClass
 	public: bool determineIsWordType(GIApreprocessorWord* wordTag, bool usePOSprelim, int grammaticalWordType);
 		public: bool determineIsWordType(GIApreprocessorWord* wordTag, bool usePOSprelim, int grammaticalWordType, string* baseNameFound, int* grammaticalBaseTenseForm);
 			public: bool determineIsWordType(const string word, unordered_map<string, GIApreprocessorMultiwordReductionWord*>* wordTypeList);
+	//public: bool determineIsVerbInfinitive(GIApreprocessorWord* wordTag, bool usePOSprelim);
 	public: bool determineIsVerb(GIApreprocessorWord* wordTag, bool usePOSprelim);	
 		public: bool determineIsVerb(GIApreprocessorWord* wordTag, bool usePOSprelim, string* baseNameFound, int* grammaticalBaseTenseForm);
 			public: bool determineVerbCaseStandardWithAdditional(const string word, string* baseNameFound, int* grammaticalBaseTenseForm);

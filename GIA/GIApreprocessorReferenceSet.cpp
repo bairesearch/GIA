@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorReferenceSet.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e7c 16-December-2017
+ * Project Version: 3e8a 18-December-2017
  * Requirements: requires plain text file
  * Description: Reference Set preprocessor
  *
@@ -116,9 +116,10 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 		bool currentWordIsReferenceSetDelimiter = false;
 		//auxiliary detection
 		
-		#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
+		//#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
 		cout << "\t\tcurrentWord = " << currentWord << endl;
-		#endif
+		cout << "\t\twordIndex = " << wordIndex << endl;
+		//#endif
 		
 		if(detectAuxiliary(currentWord))
 		{	
@@ -135,8 +136,6 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 		{
 			verbDetected = true;
 		}
-		if(verbDetected)
-		{
 		#else
 		int grammaticalBaseTenseForm = INT_DEFAULT_VALUE;
 		string verbBaseNameTemp = "";
@@ -147,10 +146,9 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 				verbDetected = true;
 			}
 		}
+		#endif
 		if(verbDetected)
-		{
-			//cout << "verbDetected: 	currentWord = " << currentWord << endl;
-						
+		{						
 			//infinitive/present/past tense verb detection (NB infinitive detection is required for a) future tense detection and b) imperatives where the action is defined as the first word in the sentence)
 			/*
 			#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_MAX_NUM_TENSE_FORMS (5)	//run (infinitive), runs (present), running (continuous), ran (past), run (past partiple)
@@ -161,7 +159,6 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 			#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PASTPARTICIPLE (4)
 			*/
 					
-			//why are these checks required if(grammaticalBaseTenseForm != GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_INFINITIVE)?
 			bool referenceSetDelimiterVerbPreceededByDeterminerOrPossessivePronoun = false;
 			if(wordIndex-1 >= 0)
 			{
@@ -169,6 +166,7 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 				#ifdef GIA_GRAMMATICAL_WORD_TYPES_EXTENDED
 				if(GIApreprocessorMultiwordReduction.determineIsDeterminer(((*logicReferenceVariableWordList)[wordIndex-1]), usePOSprelim))
 				#else
+				//may fail because determiner may be capitalised
 				if(SHAREDvars.textInTextArray(((*logicReferenceVariableWordList)[wordIndex-1])->tagName, relationDeterminerArray, GRAMMATICAL_DETERMINER_ARRAY_NUMBER_OF_TYPES) || 
 				SHAREDvars.textInTextArray(((*logicReferenceVariableWordList)[wordIndex-1])->tagName, entityPronounPossessiveArray, ENTITY_PRONOUN_POSSESSIVE_ARRAY_NUMBER_OF_TYPES))
 				#endif
@@ -182,6 +180,7 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 				#ifdef GIA_GRAMMATICAL_WORD_TYPES_EXTENDED
 				if(GIApreprocessorMultiwordReduction.determineIsDeterminer(((*logicReferenceVariableWordList)[wordIndex-2]), usePOSprelim))
 				#else
+				//may fail because determiner may be capitalised
 				if(SHAREDvars.textInTextArray(((*logicReferenceVariableWordList)[wordIndex-2])->tagName, relationDeterminerArray, GRAMMATICAL_DETERMINER_ARRAY_NUMBER_OF_TYPES) || 
 				SHAREDvars.textInTextArray(((*logicReferenceVariableWordList)[wordIndex-2])->tagName, entityPronounPossessiveArray, ENTITY_PRONOUN_POSSESSIVE_ARRAY_NUMBER_OF_TYPES))
 				#endif
@@ -198,6 +197,7 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 				#ifdef GIA_GRAMMATICAL_WORD_TYPES_EXTENDED
 				if(GIApreprocessorMultiwordReduction.determineIsDeterminer(((*logicReferenceVariableWordList)[wordIndex-3]), usePOSprelim))
 				#else
+				//may fail because determiner may be capitalised
 				if(SHAREDvars.textInTextArray(((*logicReferenceVariableWordList)[wordIndex-3])->tagName, relationDeterminerArray, GRAMMATICAL_DETERMINER_ARRAY_NUMBER_OF_TYPES) || 
 				SHAREDvars.textInTextArray(((*logicReferenceVariableWordList)[wordIndex-3])->tagName, entityPronounPossessiveArray, ENTITY_PRONOUN_POSSESSIVE_ARRAY_NUMBER_OF_TYPES))
 				#endif
@@ -213,10 +213,10 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 			}
 			if(!referenceSetDelimiterVerbPreceededByDeterminerOrPossessivePronoun)
 			{
-		#endif
 				currentWordIsReferenceSetDelimiter = true;
 				currentDelimiterType = GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_VERB;
 				//not required: verify that the verb is not preceeded by one or more auxiliaries (because it will have already been detected by (currentDelimiterType == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_AUXILIARY) when testing the previously parsed auxiliary)
+				cout << "verbDetected: 	currentWord = " << currentWord << endl;
 
 				if(wordIndex+1 < logicReferenceVariableWordList->size())
 				{
@@ -250,12 +250,8 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 					}
 					#endif
 				}
-		#ifdef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
-		}
-		#else
 			}
 		}
-		#endif
 		
 		if(GIApreprocessorMultiwordReduction.determineIsPreposition(currentWordTag, usePOSprelim))
 		{
@@ -283,7 +279,7 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 			{
 				if(wordIndex-1 >= 0)
 				{
-					if(SHAREDvars.textInTextArray(((*logicReferenceVariableWordList)[wordIndex-1])->tagName, entityModalAuxiliaryArray, ENTITY_MODALAUXILIARY_NUMBER_OF_TYPES))
+					if(detectModalAuxiliary(((*logicReferenceVariableWordList)[wordIndex-1])->tagName))
 					{	
 						previousWordIsAuxiliary = true;
 						wordIndexOfHypotheticalPreceedingThatWhich--;
@@ -311,7 +307,7 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 						
 						if(wordIndex-2 >= 0)
 						{
-							if(SHAREDvars.textInTextArray(((*logicReferenceVariableWordList)[wordIndex-2])->tagName, entityModalAuxiliaryArray, ENTITY_MODALAUXILIARY_NUMBER_OF_TYPES))
+							if(detectModalAuxiliary(((*logicReferenceVariableWordList)[wordIndex-2])->tagName))
 							{
 								//eg (that) will be riding
 								wordIndexOfHypotheticalPreceedingThatWhich--;
@@ -322,7 +318,7 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 								//eg (that) have been riding
 								if(wordIndex-3 >= 0)
 								{
-									if(SHAREDvars.textInTextArray(((*logicReferenceVariableWordList)[wordIndex-3])->tagName, entityModalAuxiliaryArray, ENTITY_MODALAUXILIARY_NUMBER_OF_TYPES))
+									if(detectModalAuxiliary(((*logicReferenceVariableWordList)[wordIndex-3])->tagName))
 									{
 										//eg (that) will have been riding
 										wordIndexOfHypotheticalPreceedingThatWhich--;
@@ -364,7 +360,6 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 				}
 			}
 			
-			#ifndef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
 			#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_SPECIAL_CASE_DELIMITER_VERB_NOT_PRECEEDED_BY_THAT_WHICH_AND_NOT_PRECEEDED_BY_AUXILIARY_DETECT
 			//added 3d5d;
 			if(currentDelimiterType == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_VERB) 
@@ -373,25 +368,36 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 				{
 					if(!previousWordIsAuxiliary)
 					{
-						//NB this doesn't yet work (not all past tense are necessarily same reference set); e.g. the dog ran_to the house
+						//NB this doesn't yet work (not all past tense are necessarily same reference set); e.g. the dog ran_to the house /  the dog rode the bike.
+						#ifdef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
+						int grammaticalBaseTenseForm = INT_DEFAULT_VALUE;
+						string verbBaseNameTemp = "";
+						GIApreprocessorMultiwordReduction.determineIsVerb(currentWordTag, false, &verbBaseNameTemp, &grammaticalBaseTenseForm);
+						#endif
+						if(!((grammaticalBaseTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_INFINITIVE) || (grammaticalBaseTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT)))	//the move/moves bike was sad
+						/*
 						if((grammaticalBaseTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST) || 	//eg the moved bike was sad
+						(grammaticalBaseTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PASTPARTICIPLE) || 	//eg the moved bike was sad (probably redundant)
 						(grammaticalBaseTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS) || 	//eg the moving bike was sad
 						(grammaticalBaseTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION) || 	//eg the movement bike was sad
 						(grammaticalBaseTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL) || 	//eg the moveable bike was sad
-						(grammaticalBaseTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE))	//eg the movive bike was sad
+						(grammaticalBaseTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE)	//eg the movive bike was sad
+						)
+						*/
 						{
 							currentDelimiterSpecialCase = GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_SPECIAL_CASE_DELIMITER_VERB_NOT_PRECEEDED_BY_THAT_WHICH_AND_NOT_PRECEEDED_BY_AUXILIARY;	//eg "controlled" in "a controlled chicken was moved to"
 							#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_SPECIAL_CASE_DELIMITER_VERB_NOT_PRECEEDED_BY_THAT_WHICH_AND_NOT_PRECEEDED_BY_AUXILIARY_IGNORE
 							currentWordIsReferenceSetDelimiter = false;
 							#endif
+							/*
 							cout << "\t\tcurrentWord = " << currentWord << endl;
 							cout << "GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_SPECIAL_CASE_DELIMITER_VERB_NOT_PRECEEDED_BY_THAT_WHICH_AND_NOT_PRECEEDED_BY_AUXILIARY" << endl;
-							cout << "grammaticalBaseTenseForm = " << grammaticalBaseTenseForm << endl;
+							cout << "grammaticalBaseTenseForm = " << grammaticalBaseTenseForm << endl;	
+							*/
 						}
 					}
 				}
 			}
-			#endif
 			#endif
 			
 			//NB if((currentDelimiterType == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_PREPOSITION)): "that near" is not legal english (only "that is near"), but will be accepted here anyway
@@ -409,6 +415,11 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 		{
 			referenceSetDelimiterWordIndex = wordIndex;
 			referenceSetDelimiterIsLastWordInSentence = true;
+			/*
+			cout << "referenceSetDelimiterDetected = " << referenceSetDelimiterDetected << endl;
+			cout << "parsingReferenceSetDelimiter = " << parsingReferenceSetDelimiter << endl;
+			cout << "currentWordIsReferenceSetDelimiterAndIsLastWordInSentence = " << currentWordIsReferenceSetDelimiterAndIsLastWordInSentence << endl;
+			*/
 		}
 		bool currentWordIsReferenceSetDelimiterAndPreviousWordWasVerb = false;
 		#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_SUPPORT_CONSECUTIVE_VERBS
@@ -428,6 +439,71 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 		}
 		#endif
 					
+
+		//moved 3d5d
+		if(currentWordIsReferenceSetDelimiter)
+		{
+			if(referenceSetDelimiterDetected)
+			{
+				if(!parsingReferenceSetDelimiter)
+				{
+					cerr << "GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor{} error: 2 valid referenceSetDelimiters are found in the current logicReference: currentWordIsReferenceSetDelimiter && !currentWordIsReferenceSetDelimiterPreceededByThatWhich && referenceSetDelimiterDetected [ie already/previously detected] && !parsingReferenceSetDelimiter" << endl;
+					exit(EXIT_ERROR);
+				}
+			}
+			else
+			{	
+				#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_SPECIAL_CASE_DELIMITER_VERB_NOT_PRECEEDED_BY_THAT_WHICH_AND_NOT_PRECEEDED_BY_AUXILIARY_DETECT
+				#ifndef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_SPECIAL_CASE_DELIMITER_VERB_NOT_PRECEEDED_BY_THAT_WHICH_AND_NOT_PRECEEDED_BY_AUXILIARY_IGNORE
+				if(currentDelimiterSpecialCase == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_SPECIAL_CASE_DELIMITER_VERB_NOT_PRECEEDED_BY_THAT_WHICH_AND_NOT_PRECEEDED_BY_AUXILIARY)
+				{
+					//case added 3d5d;
+					#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
+					cout << "GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_SPECIAL_CASE_DELIMITER_VERB_NOT_PRECEEDED_BY_THAT_WHICH_AND_NOT_PRECEEDED_BY_AUXILIARY" << endl;
+					#endif
+					referenceSetDelimiterIndicatesSameReferenceSet = true;
+					firstIndexOfReferenceSetDelimiterText = wordIndexOfHypotheticalPreceedingThatWhich + 1;
+					lastIndexOfPreviousReferenceSet = wordIndexOfHypotheticalPreceedingThatWhich;
+				}	
+				else 
+				#endif
+				#endif	
+				if(currentDelimiterSpecialCase == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_SPECIAL_CASE_DELIMITER_AND_OBJECT_REFER_TO_PREVIOUS_DELIMITER_VERB)	//ie && !currentWordIsReferenceSetDelimiterPreceededByThatWhich
+				{
+					#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
+					cout << "GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_SPECIAL_CASE_DELIMITER_AND_OBJECT_REFER_TO_PREVIOUS_DELIMITER_VERB" << endl;
+					#endif
+					referenceSetDelimiterIndicatesSameReferenceSet = true;
+					firstIndexOfReferenceSetDelimiterText = wordIndexOfHypotheticalPreceedingThatWhich + 1;
+					lastIndexOfPreviousReferenceSet = wordIndexOfHypotheticalPreceedingThatWhich;
+				}
+				else if(currentWordIsReferenceSetDelimiterPreceededByThatWhich)
+				{
+					referenceSetDelimiterIndicatesSameReferenceSet = true;
+					#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITERS_DISCARD_THAT_WHICH
+					firstIndexOfReferenceSetDelimiterText = wordIndexOfHypotheticalPreceedingThatWhich + 1;	//NB the "that/which" will be removed from the text
+					#else
+					firstIndexOfReferenceSetDelimiterText = wordIndexOfHypotheticalPreceedingThatWhich;
+					#endif
+					lastIndexOfPreviousReferenceSet = wordIndexOfHypotheticalPreceedingThatWhich - 1;
+					#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
+					cout << "referenceSetDelimiterIndicatesSameReferenceSet" << endl;
+					#endif
+				}
+				else
+				{
+					firstIndexOfReferenceSetDelimiterText = wordIndexOfHypotheticalPreceedingThatWhich + 1;
+					lastIndexOfPreviousReferenceSet = wordIndexOfHypotheticalPreceedingThatWhich;
+				}
+				#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
+				cout << "\tlastIndexOfPreviousReferenceSet = " << lastIndexOfPreviousReferenceSet << endl;
+				#endif
+				referenceSetDelimiterDetected = true;
+				parsingReferenceSetDelimiter = true;
+			}
+		}
+		
+		
 		if(referenceSetDelimiterDetected && parsingReferenceSetDelimiter && (!currentWordIsReferenceSetDelimiter || currentWordIsReferenceSetDelimiterAndIsLastWordInSentence || currentWordIsReferenceSetDelimiterAndPreviousWordWasVerb))
 		{
 			#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
@@ -546,68 +622,6 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 			#endif
 		}
 	
-		//moved 3d5d
-		if(currentWordIsReferenceSetDelimiter)
-		{
-			if(referenceSetDelimiterDetected)
-			{
-				if(!parsingReferenceSetDelimiter)
-				{
-					cerr << "GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor{} error: 2 valid referenceSetDelimiters are found in the current logicReference: currentWordIsReferenceSetDelimiter && !currentWordIsReferenceSetDelimiterPreceededByThatWhich && referenceSetDelimiterDetected [ie already/previously detected] && !parsingReferenceSetDelimiter" << endl;
-					exit(EXIT_ERROR);
-				}
-			}
-			else
-			{	
-				#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_SPECIAL_CASE_DELIMITER_VERB_NOT_PRECEEDED_BY_THAT_WHICH_AND_NOT_PRECEEDED_BY_AUXILIARY_DETECT
-				#ifndef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_SPECIAL_CASE_DELIMITER_VERB_NOT_PRECEEDED_BY_THAT_WHICH_AND_NOT_PRECEEDED_BY_AUXILIARY_IGNORE
-				if(currentDelimiterSpecialCase == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_SPECIAL_CASE_DELIMITER_VERB_NOT_PRECEEDED_BY_THAT_WHICH_AND_NOT_PRECEEDED_BY_AUXILIARY)
-				{
-					//case added 3d5d;
-					#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
-					cout << "GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_SPECIAL_CASE_DELIMITER_VERB_NOT_PRECEEDED_BY_THAT_WHICH_AND_NOT_PRECEEDED_BY_AUXILIARY" << endl;
-					#endif
-					referenceSetDelimiterIndicatesSameReferenceSet = true;
-					firstIndexOfReferenceSetDelimiterText = wordIndexOfHypotheticalPreceedingThatWhich + 1;
-					lastIndexOfPreviousReferenceSet = wordIndexOfHypotheticalPreceedingThatWhich;
-				}	
-				else 
-				#endif
-				#endif	
-				if(currentDelimiterSpecialCase == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_SPECIAL_CASE_DELIMITER_AND_OBJECT_REFER_TO_PREVIOUS_DELIMITER_VERB)	//ie && !currentWordIsReferenceSetDelimiterPreceededByThatWhich
-				{
-					#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
-					cout << "GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_SPECIAL_CASE_DELIMITER_AND_OBJECT_REFER_TO_PREVIOUS_DELIMITER_VERB" << endl;
-					#endif
-					referenceSetDelimiterIndicatesSameReferenceSet = true;
-					firstIndexOfReferenceSetDelimiterText = wordIndexOfHypotheticalPreceedingThatWhich + 1;
-					lastIndexOfPreviousReferenceSet = wordIndexOfHypotheticalPreceedingThatWhich;
-				}
-				else if(currentWordIsReferenceSetDelimiterPreceededByThatWhich)
-				{
-					referenceSetDelimiterIndicatesSameReferenceSet = true;
-					#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITERS_DISCARD_THAT_WHICH
-					firstIndexOfReferenceSetDelimiterText = wordIndexOfHypotheticalPreceedingThatWhich + 1;	//NB the "that/which" will be removed from the text
-					#else
-					firstIndexOfReferenceSetDelimiterText = wordIndexOfHypotheticalPreceedingThatWhich;
-					#endif
-					lastIndexOfPreviousReferenceSet = wordIndexOfHypotheticalPreceedingThatWhich - 1;
-					#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
-					cout << "referenceSetDelimiterIndicatesSameReferenceSet" << endl;
-					#endif
-				}
-				else
-				{
-					firstIndexOfReferenceSetDelimiterText = wordIndexOfHypotheticalPreceedingThatWhich + 1;
-					lastIndexOfPreviousReferenceSet = wordIndexOfHypotheticalPreceedingThatWhich;
-				}
-				#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
-				cout << "\tlastIndexOfPreviousReferenceSet = " << lastIndexOfPreviousReferenceSet << endl;
-				#endif
-				referenceSetDelimiterDetected = true;
-				parsingReferenceSetDelimiter = true;
-			}
-		}
 		
 		#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_SUPPORT_CONSECUTIVE_VERBS
 		if(currentDelimiterType == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_VERB) 
@@ -790,6 +804,16 @@ bool GIApreprocessorReferenceSetClass::detectAuxiliary(const string currentWord)
 		auxiliaryFound = true;
 	}
 	return auxiliaryFound;
+}
+
+bool GIApreprocessorReferenceSetClass::detectModalAuxiliary(const string currentWord)
+{
+	bool modalAuxiliaryFound = false;
+	if(SHAREDvars.textInTextArray(currentWord, entityModalAuxiliaryArray, ENTITY_MODALAUXILIARY_NUMBER_OF_TYPES))
+	{
+		modalAuxiliaryFound = true;
+	}
+	return modalAuxiliaryFound;
 }
 
 bool GIApreprocessorReferenceSetClass::hasReferenceSet(GIApreprocessorSubReferenceSet* referenceSet)
