@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorPOStagger.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e6a 16-December-2017
+ * Project Version: 3e6b 16-December-2017
  * Requirements: requires plain text file
  * Description: preprocessor POS tagger
  *
@@ -90,15 +90,18 @@ class GIApreprocessorPOStaggerDatabaseClass
 	public: bool writeDatabaseNeuralNetwork();
 	#endif
 	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL
-	public: bool externalANNgenerateBatchTrainData(ANNexperience* firstExperienceInList, int batchIndex);
+	public: bool externalANNgenerateBatchTrainData(ANNexperience* firstExperienceInList, const int batchIndex);
+		public: string externalANNgenerateBatchTrainDataEntry(const int batchIndex);
+		public: bool externalANNgenerateBatchTrainDataExit();
 	public: bool externalANNform();
 	public: bool externalANNtrain();
 	public: bool externalANNtrainEpoch();
 	public: bool externalANNtrainEpochBatch();
 	public: bool externalANNtest();
 	public: bool externalANNpredict(ANNexperience* firstExperienceInList);
-		private: bool externalANNgenerateBatchDataInput(ANNexperience* firstExperienceInList, vector<string>* batchDataInput);
-		private: bool externalANNexecuteScript(const string scriptName);	
+		private: bool externalANNgenerateBatchDataExperiences(ANNexperience* firstExperienceInList, vector<string>* batchDataInput);
+			public: string externalANNgenerateBatchDataExperience(ANNexperience* currentExperienceInList);
+		private: bool externalANNexecuteScript(const string scriptName);
 	#endif
 	#endif
 

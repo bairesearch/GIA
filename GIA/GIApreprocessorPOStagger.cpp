@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorPOStagger.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e6a 16-December-2017
+ * Project Version: 3e6b 16-December-2017
  * Requirements: requires plain text file
  * Description: preprocessor POS tagger
  *
@@ -136,8 +136,13 @@ bool GIApreprocessorPOStaggerClass::generatePOStaggerDatabaseFromWikiDumpText()
 		cout << "finished generatePreprocessorSentenceObjectsFromText" << endl;
 		
 		#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL
+		#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_MEMORY_FREE_WRITE_EXPERIENCES_DIRECTLY_TO_FILE
+		string XtrainBatchFileName = GIApreprocessorPOStaggerDatabase.externalANNgenerateBatchTrainDataEntry(wikiDumpFileIndex);
+		ofstream XtrainBatchFileObject(XtrainBatchFileName.c_str());
+		#else
 		ANNexperience* firstExperienceInList = new ANNexperience();
 		ANNexperience* currentExperienceInList = firstExperienceInList;
+		#endif
 		#endif
 		
 		GIApreprocessorSentence* currentGIApreprocessorSentenceInList = firstGIApreprocessorSentenceInWikiDumpText;
@@ -191,7 +196,7 @@ bool GIApreprocessorPOStaggerClass::generatePOStaggerDatabaseFromWikiDumpText()
 							}
 							#elif defined GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK
 							#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_INTERNAL
-							currentExperienceInList = new ANNexperience();
+							ANNexperience* currentExperienceInList = new ANNexperience();
 							generateANNexperienceFromPOSambiguityInfoPermutation(POSambiguityInfoPermutation, centreWordUnambiguousPOSvalue, currentExperience);
 							GIApreprocessorPOStaggerDatabase.feedNeuralNetworkWithExperienceBackpropagation(currentExperienceInList);
 							delete currentExperienceInList;
@@ -204,9 +209,18 @@ bool GIApreprocessorPOStaggerClass::generatePOStaggerDatabaseFromWikiDumpText()
 							}
 							#endif
 							#elif defined GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL
+							#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_MEMORY_FREE_WRITE_EXPERIENCES_DIRECTLY_TO_FILE
+							ANNexperience* currentExperienceInList = new ANNexperience();
+							#endif
 							generateANNexperienceFromPOSambiguityInfoPermutation(POSambiguityInfoPermutation, centreWordUnambiguousPOSvalue, currentExperienceInList);
+							#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_MEMORY_FREE_WRITE_EXPERIENCES_DIRECTLY_TO_FILE
+							string experienceInputString = GIApreprocessorPOStaggerDatabase.externalANNgenerateBatchDataExperience(currentExperienceInList);
+							XtrainBatchFileObject << experienceInputString << endl;
+							delete currentExperienceInList;
+							#else
 							currentExperienceInList->next = new ANNexperience();
 							currentExperienceInList = currentExperienceInList->next;
+							#endif
 							#endif
 							#endif
 							#else
@@ -231,11 +245,20 @@ bool GIApreprocessorPOStaggerClass::generatePOStaggerDatabaseFromWikiDumpText()
 					#endif
 				}
 			}
-			
+
+			#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_MEMORY_FREE_DELETE_PREPROCESSOR_SENTENCES_ONCE_PROCESSED
+			GIApreprocessorSentence* previousGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList;
+			#endif		
 			currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->next;
+			#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_MEMORY_FREE_DELETE_PREPROCESSOR_SENTENCES_ONCE_PROCESSED
+			previousGIApreprocessorSentenceInList->next = NULL;	//prevents future sentences from being deleted
+			delete previousGIApreprocessorSentenceInList;
+			#endif
 		}		
 
+		#ifndef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_MEMORY_FREE_DELETE_PREPROCESSOR_SENTENCES_ONCE_PROCESSED
 		delete firstGIApreprocessorSentenceInWikiDumpText;
+		#endif
 		
 		#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK
 		#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_INTERNAL
@@ -248,8 +271,13 @@ bool GIApreprocessorPOStaggerClass::generatePOStaggerDatabaseFromWikiDumpText()
 		//exit(EXIT_ERROR);
 		#endif
 		#elif defined GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL
+		#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_MEMORY_FREE_WRITE_EXPERIENCES_DIRECTLY_TO_FILE
+		GIApreprocessorPOStaggerDatabase.externalANNgenerateBatchTrainDataExit();
+		XtrainBatchFileObject.close();
+		#else
 		GIApreprocessorPOStaggerDatabase.externalANNgenerateBatchTrainData(firstExperienceInList, wikiDumpFileIndex);
 		delete firstExperienceInList;
+		#endif
 		#endif
 		#endif
 	}

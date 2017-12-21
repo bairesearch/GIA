@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorPOStagger.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e6a 16-December-2017
+ * Project Version: 3e6b 16-December-2017
  * Requirements: requires plain text file
  * Description: preprocessor POS tagger
  *
@@ -111,9 +111,21 @@ bool GIApreprocessorPOStaggerDatabaseClass::writeDatabaseNeuralNetwork()
 }
 #endif
 #ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL
-bool GIApreprocessorPOStaggerDatabaseClass::externalANNgenerateBatchTrainData(ANNexperience* firstExperienceInList, int batchIndex)
+
+bool GIApreprocessorPOStaggerDatabaseClass::externalANNgenerateBatchTrainData(ANNexperience* firstExperienceInList, const int batchIndex)
 {
-	cout << "asf" << endl;
+	string XtrainBatchFileName = externalANNgenerateBatchTrainDataEntry(batchIndex);
+	
+	//generate train batch file
+	vector<string> batchTrainDataInput;
+	externalANNgenerateBatchDataExperiences(firstExperienceInList, &batchTrainDataInput);
+	SHAREDvars.writeStringListToFile(XtrainBatchFileName, &batchTrainDataInput);
+	
+	externalANNgenerateBatchTrainDataExit();
+}
+
+string GIApreprocessorPOStaggerDatabaseClass::externalANNgenerateBatchTrainDataEntry(const int batchIndex)
+{
 	SHAREDvars.setCurrentDirectory(GIAposTaggerDatabaseFolderName);	//save output files to output folder
 
 	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_DEBUG_TRAIN_SINGLE_BATCH_ONLY
@@ -123,16 +135,18 @@ bool GIApreprocessorPOStaggerDatabaseClass::externalANNgenerateBatchTrainData(AN
 	string XtrainBatchFileName = string(GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_X_TRAIN_BATCH_FILE_NAME_PARTA) + SHAREDvars.convertIntToString(batchIndex, formatString) + GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_BATCH_FILE_EXTENSION;
 	#endif
 	
-	//generate train batch file
-	vector<string> batchTrainDataInput;
-	externalANNgenerateBatchDataInput(firstExperienceInList, &batchTrainDataInput);
-	SHAREDvars.writeStringListToFile(XtrainBatchFileName, &batchTrainDataInput);
-	
+	return XtrainBatchFileName;
+}
+
+bool GIApreprocessorPOStaggerDatabaseClass::externalANNgenerateBatchTrainDataExit()
+{
 	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_DEBUG_TRAIN_SINGLE_BATCH_ONLY
 	//immediately train the batch
 	externalANNtrainEpochBatch();
 	#endif
 }
+
+
 
 bool GIApreprocessorPOStaggerDatabaseClass::externalANNform()
 {
@@ -167,7 +181,7 @@ bool GIApreprocessorPOStaggerDatabaseClass::externalANNpredict(ANNexperience* fi
 
 	//generate predictions batch file
 	vector<string> batchPredictionsDataInput;
-	externalANNgenerateBatchDataInput(firstExperienceInList, &batchPredictionsDataInput);
+	externalANNgenerateBatchDataExperiences(firstExperienceInList, &batchPredictionsDataInput);
 	SHAREDvars.writeStringListToFile(XpredictBatchFileName, &batchPredictionsDataInput);
 	
 	//generate predictions
@@ -195,7 +209,7 @@ bool GIApreprocessorPOStaggerDatabaseClass::externalANNpredict(ANNexperience* fi
 
 	return result;
 }
-bool GIApreprocessorPOStaggerDatabaseClass::externalANNgenerateBatchDataInput(ANNexperience* firstExperienceInList, vector<string>* batchDataInput)
+bool GIApreprocessorPOStaggerDatabaseClass::externalANNgenerateBatchDataExperiences(ANNexperience* firstExperienceInList, vector<string>* batchDataInput)
 {
 	bool result = true;
 	
@@ -203,19 +217,26 @@ bool GIApreprocessorPOStaggerDatabaseClass::externalANNgenerateBatchDataInput(AN
 	ANNexperience* currentExperienceInList = firstExperienceInList;
 	while(currentExperienceInList->next != NULL)
 	{
-		string experienceInputString = "";
-		ANNexperienceInput* currentExperienceInput = currentExperienceInList->firstExperienceInput;
-		while(currentExperienceInput->next != NULL)
-		{
-			string format = "%0.6f";
-			experienceInputString = experienceInputString + SHAREDvars.convertDoubleToString(currentExperienceInput->inputValue, format) + GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_BATCH_FILE_DELIMITER;
-			currentExperienceInput = currentExperienceInput->next;
-		}
+		string experienceInputString = externalANNgenerateBatchDataExperience(currentExperienceInList);
 		
 		batchDataInput->push_back(experienceInputString);
 		currentExperienceInList = currentExperienceInList->next;
 	}
 }
+
+string GIApreprocessorPOStaggerDatabaseClass::externalANNgenerateBatchDataExperience(ANNexperience* currentExperienceInList)
+{	
+	string experienceInputString = "";
+	ANNexperienceInput* currentExperienceInput = currentExperienceInList->firstExperienceInput;
+	while(currentExperienceInput->next != NULL)
+	{
+		string format = "%0.6f";
+		experienceInputString = experienceInputString + SHAREDvars.convertDoubleToString(currentExperienceInput->inputValue, format) + GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_BATCH_FILE_DELIMITER;
+		currentExperienceInput = currentExperienceInput->next;
+	}
+	return experienceInputString;
+}
+
 bool GIApreprocessorPOStaggerDatabaseClass::externalANNexecuteScript(const string scriptName)
 {
 	SHAREDvars.setCurrentDirectory(string("python ") + GIAposTaggerDatabaseFolderName);
