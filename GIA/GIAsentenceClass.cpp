@@ -25,7 +25,7 @@
  * File Name: GIAsentenceClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e6b 16-December-2017
+ * Project Version: 3e6c 16-December-2017
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -306,11 +306,21 @@ GIAsentence::~GIAsentence(void)
 	{
 		delete firstRelationInList;
 	}
-
 	if(firstFeatureInList != NULL)	//added 23 Feb 2012
 	{
 		delete firstFeatureInList;
 	}
+	
+	#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
+	if(firstRelationInListOriginal != NULL)
+	{
+		delete firstRelationInListOriginal;
+	}
+	if(firstFeatureInListOriginal != NULL)
+	{
+		delete firstFeatureInListOriginal;
+	}
+	#endif
 
 	#ifdef GIA_STANFORD_CORENLP
 	if(firstCoreferenceInList != NULL)	//added 21 Sept 2012

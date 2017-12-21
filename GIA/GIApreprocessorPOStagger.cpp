@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorPOStagger.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e6b 16-December-2017
+ * Project Version: 3e6c 16-December-2017
  * Requirements: requires plain text file
  * Description: preprocessor POS tagger
  *
@@ -215,7 +215,7 @@ bool GIApreprocessorPOStaggerClass::generatePOStaggerDatabaseFromWikiDumpText()
 							generateANNexperienceFromPOSambiguityInfoPermutation(POSambiguityInfoPermutation, centreWordUnambiguousPOSvalue, currentExperienceInList);
 							#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_MEMORY_FREE_WRITE_EXPERIENCES_DIRECTLY_TO_FILE
 							string experienceInputString = GIApreprocessorPOStaggerDatabase.externalANNgenerateBatchDataExperience(currentExperienceInList);
-							XtrainBatchFileObject << experienceInputString << endl;
+							//XtrainBatchFileObject << experienceInputString << endl;
 							delete currentExperienceInList;
 							#else
 							currentExperienceInList->next = new ANNexperience();

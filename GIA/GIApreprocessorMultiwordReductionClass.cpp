@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorMultiwordReductionClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e6b 16-December-2017
+ * Project Version: 3e6c 16-December-2017
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  *
@@ -44,7 +44,18 @@ GIApreprocessorWord::GIApreprocessorWord(string tagNameNew)
 	tagName = tagNameNew;
 }
 GIApreprocessorWord::~GIApreprocessorWord(void)
-{	
+{
+	#ifdef GIA_PREPROCESSOR_SENTENCE_EXECUTE_PRELIM_POS_TAGGER
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER
+	if(featureReferencePrelim != NULL)
+	{
+		delete featureReferencePrelim;
+	}
+	#else
+	//featureReferencePrelim will be deleted when deleting prelim sentence objects created by parsing of prelim extenal nlp pos tagger output
+	#endif
+	#endif
+		
 	if(nextTag != NULL)
 	{
 		delete nextTag;
@@ -123,6 +134,10 @@ GIApreprocessorMultiwordReductionIrregularVerbWord::GIApreprocessorMultiwordRedu
 }
 GIApreprocessorMultiwordReductionIrregularVerbWord::~GIApreprocessorMultiwordReductionIrregularVerbWord(void)
 {
+	if(alternateTag != NULL)
+	{
+		delete alternateTag;	//CHECKTHIS
+	}	
 }
 
 GIApreprocessorMultiwordReductionPlainTextWord::GIApreprocessorMultiwordReductionPlainTextWord(void)

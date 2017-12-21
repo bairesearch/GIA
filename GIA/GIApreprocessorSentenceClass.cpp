@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorSentenceClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e6b 16-December-2017
+ * Project Version: 3e6c 16-December-2017
  * Requirements: requires plain text file
  * Description: Logical Condition and Reference Set preprocessor
  *
@@ -173,22 +173,24 @@ GIApreprocessorSentence::GIApreprocessorSentence(void)
 }
 GIApreprocessorSentence::~GIApreprocessorSentence(void)
 {
-	//CHECKTHIS;
+	/*
+	//doesn't work because word->next pointers in words will have changed based on lrp
 	if(sentenceContentsOriginal.size() > 0)
 	{
 		delete sentenceContentsOriginal[0];
 	}
-	/*
-	DOESNT WORK because ~GIApreprocessorWord has already deleted word tags
+	*/
 	for(vector<GIApreprocessorWord*>::iterator it = sentenceContentsOriginal.begin(); it != sentenceContentsOriginal.end(); it++)
 	{
-		if(*it != NULL)
-		{
-			delete (*it);
-		}
+		GIApreprocessorWord* currentWord = *it;
+		GIApreprocessorMultiwordReductionPlainTextWord* plaintextWord = static_cast<GIApreprocessorMultiwordReductionPlainTextWord*>(currentWord);	//require to cast back to plaintextword to ensure that all memory is deleted	//CHECKTHIS
+		currentWord->nextTag = NULL;	//prevents future words from being deleted
+		delete plaintextWord;
 	}
-   	*/
+   	
 	sentenceContentsOriginal.clear();
+	sentenceContentsLRP.clear();
+	delete firstLogicReferenceInList;
 	
 	if(next != NULL)
 	{

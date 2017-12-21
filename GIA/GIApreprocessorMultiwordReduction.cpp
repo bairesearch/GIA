@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorMultiwordReduction.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e6b 16-December-2017
+ * Project Version: 3e6c 16-December-2017
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  *
@@ -41,6 +41,7 @@
 bool lrpInitialised = false;
 static string lrpDataFolderName;
 static bool useLRP;
+
 #ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_LOAD_INVERSE_PREPOSITIONS_LIST
 unordered_map<string, GIApreprocessorMultiwordReductionBasicSentence*> prepositionInverseListGlobal;
 bool prepositionInverseListLoaded;
@@ -79,6 +80,23 @@ unordered_map<string, GIApreprocessorMultiwordReductionWord*> verbListWithVarian
 unordered_map<string, GIApreprocessorMultiwordReductionWord*> nounListWithVariantsGlobal;
 unordered_map<string, GIApreprocessorMultiwordReductionWord*> nounListWithVariantsAndPronounsGlobal;
 #endif
+
+#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
+multimap<string, GIApreprocessorMultiwordReductionPhrasalVerbSentence*> phrasalVerbListGlobal;
+multimap<string, GIApreprocessorMultiwordReductionBasicSentence*> prepositionMultiwordListGlobal;
+#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_REDUCE_ALL_WORD_TYPES
+multimap<string, GIApreprocessorMultiwordReductionBasicSentence*> adverbMultiwordListGlobal;
+multimap<string, GIApreprocessorMultiwordReductionBasicSentence*> adjectiveMultiwordListGlobal;
+multimap<string, GIApreprocessorMultiwordReductionBasicSentence*> nounMultiwordListGlobal;
+multimap<string, GIApreprocessorMultiwordReductionBasicSentence*> verbMultiwordListGlobal;
+#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_REDUCE_ALL_WORD_TYPES_ADDITIONAL
+multimap<string, GIApreprocessorMultiwordReductionBasicSentence*> conjunctionMultiwordListGlobal;
+multimap<string, GIApreprocessorMultiwordReductionBasicSentence*> interjectionMultiwordListGlobal;
+multimap<string, GIApreprocessorMultiwordReductionBasicSentence*> determinerMultiwordListGlobal;
+#endif
+#endif
+#endif
+
 
 #ifdef GIA_PREPROCESSOR_POS_TAGGER_INITIALISE_WORD_INDEX_LIST_FROM_LRP_FILES
 bool wordListAllTypesWithPOSambiguityInfoLoaded;
@@ -132,12 +150,14 @@ bool GIApreprocessorMultiwordReductionClass::initialiseLRP(const string newLRPDa
 	
 	if(!lrpInitialised)
 	{
+		string currentFolder = SHAREDvarsClass().getCurrentDirectory(); 
+		SHAREDvarsClass().setCurrentDirectory(lrpDataFolderName); 
+		
 		#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_LOAD_INVERSE_PREPOSITIONS_LIST
-		string prepositionsInverseListFileName = lrpDataFolderName + GIA_PREPROCESSOR_MULTIWORD_REDUCTION_INVERSEPREPOSITIONS_DATABASE_FILE_NAME;
 		prepositionInverseListLoaded = false;
-		if(!this->loadPrepositionsInverseList(prepositionsInverseListFileName, &prepositionInverseListGlobal))
+		if(!loadPrepositionsInverseList(GIA_PREPROCESSOR_MULTIWORD_REDUCTION_INVERSEPREPOSITIONS_DATABASE_FILE_NAME, &prepositionInverseListGlobal))
 		{
-			cout << "!loadPrepositionsInverseList (GIA with GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_PREPOSITIONS requires -lrpfolder to be set): prepositionsInverseListFileName = " << prepositionsInverseListFileName << endl;
+			cout << "!loadPrepositionsInverseList (GIA with GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_PREPOSITIONS requires -lrpfolder to be set): prepositionsInverseListFileName = " << GIA_PREPROCESSOR_MULTIWORD_REDUCTION_INVERSEPREPOSITIONS_DATABASE_FILE_NAME << endl;
 			result = false;
 		}
 		else
@@ -147,11 +167,10 @@ bool GIApreprocessorMultiwordReductionClass::initialiseLRP(const string newLRPDa
 		#endif
 
 		#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_LOAD_WORD_LISTS
-		string irregularVerbListFileName = lrpDataFolderName + GIA_PREPROCESSOR_MULTIWORD_REDUCTION_IRREGULARVERB_DATABASE_FILE_NAME;
 		irregularVerbListLoaded = false;
-		if(!this->loadIrregularVerbList(irregularVerbListFileName, &irregularVerbListGlobal))
+		if(!loadIrregularVerbList(GIA_PREPROCESSOR_MULTIWORD_REDUCTION_IRREGULARVERB_DATABASE_FILE_NAME, &irregularVerbListGlobal))
 		{
-			cout << "!loadIrregularVerbList (GIA with GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_CONSERVATIVE requires -lrpfolder to be set): irregularVerbListFileName = " << irregularVerbListFileName << endl;
+			cout << "!loadIrregularVerbList (GIA with GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_CONSERVATIVE requires -lrpfolder to be set): irregularVerbListFileName = " << GIA_PREPROCESSOR_MULTIWORD_REDUCTION_IRREGULARVERB_DATABASE_FILE_NAME << endl;
 			result = false;
 		}
 		else
@@ -159,40 +178,40 @@ bool GIApreprocessorMultiwordReductionClass::initialiseLRP(const string newLRPDa
 			irregularVerbListLoaded = true;
 		}
 
-		if(!this->loadWordListWrapper(lrpDataFolderName, &verbListLoaded, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_FILE_NAME, &verbListGlobal))
+		if(!this->loadWordListWrapper(&verbListLoaded, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_FILE_NAME, &verbListGlobal))
 		{
-			result = false;	
+			result = false;
 		}	
-		if(!this->loadWordListWrapper(lrpDataFolderName, &prepositionListLoaded, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PREPOSITION_DATABASE_FILE_NAME, &prepositionListGlobal))
+		if(!this->loadWordListWrapper(&prepositionListLoaded, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PREPOSITION_DATABASE_FILE_NAME, &prepositionListGlobal))
 		{
 			result = false;	
 		}
-		if(!this->loadWordListWrapper(lrpDataFolderName, &adverbListLoaded, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_ADVERB_DATABASE_FILE_NAME, &adverbListGlobal))
+		if(!this->loadWordListWrapper(&adverbListLoaded, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_ADVERB_DATABASE_FILE_NAME, &adverbListGlobal))
 		{
 			result = false;	
 		}
-		if(!this->loadWordListWrapper(lrpDataFolderName, &adjectiveListLoaded, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_ADJECTIVE_DATABASE_FILE_NAME, &adjectiveListGlobal))
+		if(!this->loadWordListWrapper(&adjectiveListLoaded, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_ADJECTIVE_DATABASE_FILE_NAME, &adjectiveListGlobal))
 		{
 			result = false;	
 		}
-		if(!this->loadWordListWrapper(lrpDataFolderName, &nounListLoaded, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NOUN_DATABASE_FILE_NAME, &nounListGlobal))
+		if(!this->loadWordListWrapper(&nounListLoaded, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NOUN_DATABASE_FILE_NAME, &nounListGlobal))
 		{
 			result = false;	
 		}
 		#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_LOAD_WORD_LISTS_ADDITIONAL
-		if(!this->loadWordListWrapper(lrpDataFolderName, &conjunctionListLoaded, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_CONJUNCTION_DATABASE_FILE_NAME, &conjunctionListGlobal))
+		if(!this->loadWordListWrapper(&conjunctionListLoaded, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_CONJUNCTION_DATABASE_FILE_NAME, &conjunctionListGlobal))
 		{
 			result = false;	
 		}
-		if(!this->loadWordListWrapper(lrpDataFolderName, &interjectionListLoaded, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_INTERJECTION_DATABASE_FILE_NAME, &interjectionListGlobal))
+		if(!this->loadWordListWrapper(&interjectionListLoaded, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_INTERJECTION_DATABASE_FILE_NAME, &interjectionListGlobal))
 		{
 			result = false;	
 		}
-		if(!this->loadWordListWrapper(lrpDataFolderName, &pronounListLoaded, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PRONOUN_DATABASE_FILE_NAME, &pronounListGlobal))
+		if(!this->loadWordListWrapper(&pronounListLoaded, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PRONOUN_DATABASE_FILE_NAME, &pronounListGlobal))
 		{
 			result = false;	
 		}
-		if(!this->loadWordListWrapper(lrpDataFolderName, &determinerListLoaded, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DETERMINER_DATABASE_FILE_NAME, &determinerListGlobal))
+		if(!this->loadWordListWrapper(&determinerListLoaded, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DETERMINER_DATABASE_FILE_NAME, &determinerListGlobal))
 		{
 			result = false;	
 		}		
@@ -207,7 +226,6 @@ bool GIApreprocessorMultiwordReductionClass::initialiseLRP(const string newLRPDa
 		{
 			result = false;
 		}
-		
 		#ifdef GIA_PREPROCESSOR_DERIVE_NOUN_VARIANTS
 		if(!generateNounPluralVariantsList())
 		{
@@ -215,8 +233,59 @@ bool GIApreprocessorMultiwordReductionClass::initialiseLRP(const string newLRPDa
 		}
 		#endif
 		#endif
+		
+		#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
+		if(!loadPhrasalVerbDataAndGenerateAllTenseVariants(GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_FILE_NAME, &phrasalVerbListGlobal, &irregularVerbListGlobal))
+		{
+			result = false;
+		}	
+		
+		if(!loadMultiwordWordList(GIA_PREPROCESSOR_MULTIWORD_REDUCTION_MULTIWORD_PREPOSITION_DATABASE_FILE_NAME, &prepositionMultiwordListGlobal))
+		{
+			result = false;
+		}
+		#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_REDUCE_ALL_WORD_TYPES
+		if(!loadMultiwordWordList(GIA_PREPROCESSOR_MULTIWORD_REDUCTION_MULTIWORD_ADVERB_DATABASE_FILE_NAME, &adverbMultiwordListGlobal))
+		{
+			result = false;
+		}
+		if(!loadMultiwordWordList(GIA_PREPROCESSOR_MULTIWORD_REDUCTION_MULTIWORD_ADJECTIVE_DATABASE_FILE_NAME, &adjectiveMultiwordListGlobal))
+		{
+			result = false;
+		}
+		if(!loadMultiwordWordList(GIA_PREPROCESSOR_MULTIWORD_REDUCTION_MULTIWORD_NOUN_DATABASE_FILE_NAME, &nounMultiwordListGlobal))
+		{
+			result = false;
+		}
+		if(!loadMultiwordWordList(GIA_PREPROCESSOR_MULTIWORD_REDUCTION_MULTIWORD_VERB_DATABASE_FILE_NAME, &verbMultiwordListGlobal))
+		{
+			result = false;
+		}	
+		#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_REDUCE_ALL_WORD_TYPES_ADDITIONAL
+		if(!loadMultiwordWordList(GIA_PREPROCESSOR_MULTIWORD_REDUCTION_MULTIWORD_CONJUNCTION_DATABASE_FILE_NAME, &conjunctionMultiwordListGlobal))
+		{
+			result = false;
+		}
+		if(!loadMultiwordWordList(GIA_PREPROCESSOR_MULTIWORD_REDUCTION_MULTIWORD_INTERJECTION_DATABASE_FILE_NAME, &interjectionMultiwordListGlobal))
+		{
+			result = false;
+		}
+		if(!loadMultiwordWordList(GIA_PREPROCESSOR_MULTIWORD_REDUCTION_MULTIWORD_DETERMINER_DATABASE_FILE_NAME, &determinerMultiwordListGlobal))
+		{
+			result = false;
+		}	
+		#endif	
+		#endif
+		#endif
 
+		if(!result)
+		{
+			cout << "lrpDataFolderName = " << lrpDataFolderName << endl;
+		}
+		
 		lrpInitialised = true;
+		
+		SHAREDvarsClass().setCurrentDirectory(currentFolder); 
 	}
 	
 	return result;
@@ -226,15 +295,14 @@ bool GIApreprocessorMultiwordReductionClass::getUseLRP()
 	return useLRP;
 }
 
-bool GIApreprocessorMultiwordReductionClass::loadWordListWrapper(const string lrpDataFolderName, bool* wordListLoaded, const string wordListFileName, unordered_map<string, GIApreprocessorMultiwordReductionWord*>* wordList)
+bool GIApreprocessorMultiwordReductionClass::loadWordListWrapper(bool* wordListLoaded, const string wordListFileName, unordered_map<string, GIApreprocessorMultiwordReductionWord*>* wordList)
 {
 	bool result = true;
 	
-	string wordListFileNameFull = lrpDataFolderName + wordListFileName;
 	*wordListLoaded = false;
-	if(!this->loadWordList(wordListFileNameFull, wordList))
+	if(!this->loadWordList(wordListFileName, wordList))
 	{
-		cout << "!loadWordList (GIA with wordListFileName requires -lrpfolder to be set): wordListFileNameFull = " << wordListFileNameFull << endl;
+		cout << "!loadWordList (GIA with wordListFileName requires -lrpfolder to be set): wordListFileName = " << wordListFileName << endl;
 		result = false;
 	}
 	else
@@ -346,52 +414,45 @@ bool GIApreprocessorMultiwordReductionClass::parseTextFileAndReduceLanguage(GIAp
 	bool result = true;
 
 	string currentFolder = SHAREDvars.getCurrentDirectory();
-	
-	string phrasalVerbListFileName = lrpDataFolderName + GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_FILE_NAME;
-	multimap<string, GIApreprocessorMultiwordReductionPhrasalVerbSentence*> phrasalVerbList;
-	if(!this->loadPhrasalVerbDataAndGenerateAllTenseVariants(phrasalVerbListFileName, &phrasalVerbList, &irregularVerbListGlobal))
-	{
-		result = false;
-	}
 
 	//cout << "searchAndReplacePhrasalVerbs" << endl;
 	GIApreprocessorMultiwordReductionTagTextCorrespondenceInfo* firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo = this->getActiveGIApreprocessorMultiwordReductionTagTextCorrespondenceInfo();
-	if(!this->searchAndReplacePhrasalVerbs(firstGIApreprocessorSentenceInList, &phrasalVerbList, firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo))
+	if(!this->searchAndReplacePhrasalVerbs(firstGIApreprocessorSentenceInList, &phrasalVerbListGlobal, firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo))
 	{
 		result = false;
 	}
 
-	if(!loadMultiwordWordListAndSearchAndReplace(GIA_PREPROCESSOR_MULTIWORD_REDUCTION_MULTIWORD_PREPOSITION_DATABASE_FILE_NAME, firstGIApreprocessorSentenceInList, firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DUMMY_COLLAPSED_MULTIWORD_PREPOSITION_TYPE))
+	if(!searchAndReplaceMultiwordWordList(&prepositionMultiwordListGlobal, firstGIApreprocessorSentenceInList, firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DUMMY_COLLAPSED_MULTIWORD_PREPOSITION_TYPE))
 	{
 		result = false;
 	}
 	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_REDUCE_ALL_WORD_TYPES
-	if(!loadMultiwordWordListAndSearchAndReplace(GIA_PREPROCESSOR_MULTIWORD_REDUCTION_MULTIWORD_ADVERB_DATABASE_FILE_NAME, firstGIApreprocessorSentenceInList, firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DUMMY_COLLAPSED_MULTIWORD_ADVERB_TYPE))
+	if(!searchAndReplaceMultiwordWordList(&adverbMultiwordListGlobal, firstGIApreprocessorSentenceInList, firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DUMMY_COLLAPSED_MULTIWORD_ADVERB_TYPE))
 	{
 		result = false;
 	}
-	if(!loadMultiwordWordListAndSearchAndReplace(GIA_PREPROCESSOR_MULTIWORD_REDUCTION_MULTIWORD_ADJECTIVE_DATABASE_FILE_NAME, firstGIApreprocessorSentenceInList, firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DUMMY_COLLAPSED_MULTIWORD_ADJECTIVE_TYPE))
+	if(!searchAndReplaceMultiwordWordList(&adjectiveMultiwordListGlobal, firstGIApreprocessorSentenceInList, firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DUMMY_COLLAPSED_MULTIWORD_ADJECTIVE_TYPE))
 	{
 		result = false;
 	}
-	if(!loadMultiwordWordListAndSearchAndReplace(GIA_PREPROCESSOR_MULTIWORD_REDUCTION_MULTIWORD_NOUN_DATABASE_FILE_NAME, firstGIApreprocessorSentenceInList, firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DUMMY_COLLAPSED_MULTIWORD_NOUN_TYPE))
+	if(!searchAndReplaceMultiwordWordList(&nounMultiwordListGlobal, firstGIApreprocessorSentenceInList, firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DUMMY_COLLAPSED_MULTIWORD_NOUN_TYPE))
 	{
 		result = false;
 	}
-	if(!loadMultiwordWordListAndSearchAndReplace(GIA_PREPROCESSOR_MULTIWORD_REDUCTION_MULTIWORD_VERB_DATABASE_FILE_NAME, firstGIApreprocessorSentenceInList, firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DUMMY_COLLAPSED_MULTIWORD_VERB_TYPE))
+	if(!searchAndReplaceMultiwordWordList(&verbMultiwordListGlobal, firstGIApreprocessorSentenceInList, firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DUMMY_COLLAPSED_MULTIWORD_VERB_TYPE))
 	{
 		result = false;
 	}	
 	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_REDUCE_ALL_WORD_TYPES_ADDITIONAL
-	if(!loadMultiwordWordListAndSearchAndReplace(GIA_PREPROCESSOR_MULTIWORD_REDUCTION_MULTIWORD_CONJUNCTION_DATABASE_FILE_NAME, firstGIApreprocessorSentenceInList, firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DUMMY_COLLAPSED_MULTIWORD_CONJUNCTION_TYPE))
+	if(!searchAndReplaceMultiwordWordList(&conjunctionMultiwordListGlobal, firstGIApreprocessorSentenceInList, firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DUMMY_COLLAPSED_MULTIWORD_CONJUNCTION_TYPE))
 	{
 		result = false;
 	}
-	if(!loadMultiwordWordListAndSearchAndReplace(GIA_PREPROCESSOR_MULTIWORD_REDUCTION_MULTIWORD_INTERJECTION_DATABASE_FILE_NAME, firstGIApreprocessorSentenceInList, firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DUMMY_COLLAPSED_MULTIWORD_INTERJECTION_TYPE))
+	if(!searchAndReplaceMultiwordWordList(&interjectionMultiwordListGlobal, firstGIApreprocessorSentenceInList, firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DUMMY_COLLAPSED_MULTIWORD_INTERJECTION_TYPE))
 	{
 		result = false;
 	}
-	if(!loadMultiwordWordListAndSearchAndReplace(GIA_PREPROCESSOR_MULTIWORD_REDUCTION_MULTIWORD_DETERMINER_DATABASE_FILE_NAME, firstGIApreprocessorSentenceInList, firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DUMMY_COLLAPSED_MULTIWORD_DETERMINER_TYPE))
+	if(!searchAndReplaceMultiwordWordList(&determinerMultiwordListGlobal, firstGIApreprocessorSentenceInList, firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DUMMY_COLLAPSED_MULTIWORD_DETERMINER_TYPE))
 	{
 		result = false;
 	}	
@@ -1334,22 +1395,16 @@ bool GIApreprocessorMultiwordReductionClass::searchAndReplacePhrasalVerbs(GIApre
 }
 
 
-bool GIApreprocessorMultiwordReductionClass::loadMultiwordWordListAndSearchAndReplace(const string multiwordWordListFileName, GIApreprocessorSentence* firstGIApreprocessorSentenceInList, GIApreprocessorMultiwordReductionTagTextCorrespondenceInfo* firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, const int wordListType)
+bool GIApreprocessorMultiwordReductionClass::searchAndReplaceMultiwordWordList(multimap<string, GIApreprocessorMultiwordReductionBasicSentence*>* multiwordWordList, GIApreprocessorSentence* firstGIApreprocessorSentenceInList, GIApreprocessorMultiwordReductionTagTextCorrespondenceInfo* firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, const int wordListType)
 {
 	bool result = true;
 
-	string multiwordWordListFileNameFullPath = lrpDataFolderName + multiwordWordListFileName;
-	multimap<string, GIApreprocessorMultiwordReductionBasicSentence*> multiwordWordList;
-	if(!this->loadMultiwordWordList(multiwordWordListFileNameFullPath, &multiwordWordList))
-	{
-		result = false;
-	}
 	GIApreprocessorMultiwordReductionTagTextCorrespondenceInfo* currentGIApreprocessorMultiwordReductiontagCorrespondenceInfo = firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo;
 	while(currentGIApreprocessorMultiwordReductiontagCorrespondenceInfo->next != NULL)
 	{
 		currentGIApreprocessorMultiwordReductiontagCorrespondenceInfo = currentGIApreprocessorMultiwordReductiontagCorrespondenceInfo->next;	//added 2j6d (add to end of list)
 	}
-	if(!this->searchAndReplaceMultiwordWordList(firstGIApreprocessorSentenceInList, &multiwordWordList, currentGIApreprocessorMultiwordReductiontagCorrespondenceInfo, firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, wordListType))
+	if(!searchAndReplaceMultiwordWordList(firstGIApreprocessorSentenceInList, multiwordWordList, currentGIApreprocessorMultiwordReductiontagCorrespondenceInfo, firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, wordListType))
 	{
 		result = false;
 	}
