@@ -23,9 +23,9 @@
 /*******************************************************************************
  *
  * File Name: GIApreprocessorPOStagger.cpp
- * Author: Richard Bruce Baxter - Copyright (c) 2005-2017 Baxter AI (baxterai.com)
+ * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e8e 18-December-2017
+ * Project Version: 3e9a 10-January-2018
  * Requirements: requires plain text file
  * Description: preprocessor POS tagger
  *
@@ -76,17 +76,21 @@ class GIApreprocessorPOStaggerClass
 			private: bool createPreprocessSentencesBasic(const string fileContents, GIApreprocessorSentence* firstGIApreprocessorSentenceInList, bool interpretNewLinesAsNewSentences);
 	#endif
 		#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK
-		public: bool generateANNexperienceFromPOSambiguityInfoPermutation(const string POSambiguityInfoPermutation, const int centreWordUnambiguousPOSvalue, ANNexperience* currentExperience);
-			private: bool determinePOSambiguityInfoNeuralNetworkInputNeuronForSpecialCharacters(const unsigned char POSambiguityInfo, int* POSambiguityInfoNeuralNetworkInputNeuron);
+		public: bool generateANNexperienceFromPOSambiguityInfoPermutation(vector<unsigned int>* POSambiguityInfoPermutation, const int centreWordUnambiguousPOSvalue, ANNexperience* currentExperience);
+			#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_RESTRICT_POS_TYPES_TO_8BIT	
+			private: bool determinePOSambiguityInfoNeuralNetworkInputNeuronForSpecialCharacters(const unsigned int POSambiguityInfo, int* POSambiguityInfoNeuralNetworkInputNeuron);
+			#endif
 		#endif
 		public: int convertGIAPOStaggerValueToGrammaticalWordType(const int POSvalue);
-		public: bool generatePOSambiguityInfoPermutation(vector<GIApreprocessorWord*>* sentenceContentsLRP, int wCentre, bool* identifiedEveryWordInDatabasePOSpermutation, string* POSambiguityInfoPermutationRecord);
-		public: bool determinePOSambiguityInfoIsAmbiguous(const unsigned char POSambiguityInfo, int* unambiguousPOSvalue);
-		public: bool determinePOSambiguityInfoForSpecialCharacters(const GIApreprocessorWord* word, unsigned char* contextWordPOSambiguityInfo);
+		public: bool generatePOSambiguityInfoPermutation(vector<GIApreprocessorWord*>* sentenceContentsLRP, int wCentre, bool* identifiedEveryWordInDatabasePOSpermutation, vector<unsigned int>* POSambiguityInfoPermutation);
+		public: bool determinePOSambiguityInfoIsAmbiguous(const unsigned int POSambiguityInfo, unsigned int* unambiguousPOSvalue);
+		public: bool determinePOSambiguityInfoForSpecialCharacters(const GIApreprocessorWord* word, unsigned int* contextWordPOSambiguityInfo);
 
-		public: bool findWordInWordListAllTypesWithPOSambiguityInfo(const string word, GIApreprocessorMultiwordReductionWord** wordFound, unsigned char* POSambiguityInfoFound);
+		public: bool findWordInWordListAllTypesWithPOSambiguityInfo(const string word, GIApreprocessorMultiwordReductionWord** wordFound, unsigned int* POSambiguityInfoFound);
 
 	private: string convertBoolVectorToString(vector<bool>* inputNeuronExperienceValuesContextWord);
+	public: string convertUnsignedIntVectorToString(vector<unsigned int>* unsignedIntVector);
+
 };
 
 #endif
