@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorPOStagger.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e9a 10-January-2018
+ * Project Version: 3e9b 10-January-2018
  * Requirements: requires plain text file
  * Description: preprocessor POS tagger
  *
@@ -82,9 +82,13 @@ void GIApreprocessorPOStaggerDatabaseClass::initialisePOStaggerDatabase(const st
 #ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK
 #ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_INTERNAL
 #ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE
-void GIApreprocessorPOStaggerDatabaseClass::feedNeuralNetworkWithExperienceBackpropagation(ANNexperience* currentExperience)
+void GIApreprocessorPOStaggerDatabaseClass::feedNeuralNetworkWithExperience(ANNexperience* currentExperience)
 {
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_INTERNAL_CLASSIFICATION_NET
+	ANNalgorithmClassificationNetworkTraining.feedNeuralNetworkWithExperienceClassification(firstInputNeuronInNetworkGIAposTagger, numberOfInputNeuronsGIAposTagger, currentExperience);	
+	#else
 	ANNalgorithmBackpropagationTraining.feedNeuralNetworkWithExperienceBackpropagation(firstInputNeuronInNetworkGIAposTagger, firstOutputNeuronInNetworkGIAposTagger, numberOfInputNeuronsGIAposTagger, numberOfOutputNeuronsGIAposTagger, currentExperience);
+	#endif
 }
 bool GIApreprocessorPOStaggerDatabaseClass::writeDatabaseNeuralNetwork()
 {
@@ -104,10 +108,23 @@ bool GIApreprocessorPOStaggerDatabaseClass::calculateIdealClassTargetOfInputExpe
 {
 	bool result = false;
 	
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_INTERNAL_CLASSIFICATION_NET
+	if(ANNalgorithmClassificationNetworkTraining.calculateIdealClassTargetOfInputExperience(firstInputNeuronInNetworkGIAposTagger, firstOutputNeuronInNetworkGIAposTagger, numberOfInputNeuronsGIAposTagger, numberOfOutputNeuronsGIAposTagger, experience, idealClassTarget, experienceBackPropagationPassError))
+	{
+		result = true;
+	}	
+	if(*idealClassTarget >= GIA_PREPROCESSOR_WORD_LIST_ARRAY_SIZE)
+	{
+		cerr << "GIApreprocessorPOStaggerDatabaseClass::calculateIdealClassTargetOfInputExperience{} error: (*idealClassTarget >= GIA_PREPROCESSOR_WORD_LIST_ARRAY_SIZE)" << endl;
+		cerr << "classification network has identified the ambiguous word as a punctuation character" << endl;
+		result = false;
+	}
+	#else
 	if(ANNalgorithmBackpropagationTraining.calculateIdealClassTargetOfInputExperience(firstInputNeuronInNetworkGIAposTagger, firstOutputNeuronInNetworkGIAposTagger, numberOfInputNeuronsGIAposTagger, numberOfOutputNeuronsGIAposTagger, experience, idealClassTarget, experienceBackPropagationPassError))
 	{
 		result = true;
 	}
+	#endif
 	
 	return result;
 }
@@ -194,7 +211,11 @@ bool GIApreprocessorPOStaggerDatabaseClass::externalANNpredict(ANNexperience* fi
 	SHAREDvars.writeStringListToFile(XpredictBatchFileName, &batchPredictionsDataInput);
 	
 	//generate predictions
-	string externalANNscriptName = GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_SCRIPT_NAME_PREDICT;
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_PREDICT_RETURN_ERRORS
+	string externalANNscriptName = GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_SCRIPT_NAME_PREDICT_RETURN_ERRORS;	//will become mandatory in the future
+	#else
+	string externalANNscriptName = GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_SCRIPT_NAME_PREDICT;	//to be depreciated
+	#endif
 	if(!externalANNexecuteScript(externalANNscriptName))
 	{
 		result = false;
@@ -210,14 +231,40 @@ bool GIApreprocessorPOStaggerDatabaseClass::externalANNpredict(ANNexperience* fi
 	ANNexperience* currentExperienceInList = firstExperienceInList;
 	for(int i=0; i<YpredictBatchFileContents.size(); i++)
 	{
+		#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_PREDICT_RETURN_ERRORS
+		int positionOfDelimiter = YpredictBatchFileContents[i].find(GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_BATCH_FILE_DELIMITER);
+		string classTargetValueString = "";
+		string predictionErrorString = "";
+		if(positionOfDelimiter != CPP_STRING_FIND_RESULT_FAIL_VALUE)
+		{
+			classTargetValueString = YpredictBatchFileContents[i].substr(0, positionOfDelimiter);
+			predictionErrorString = YpredictBatchFileContents[i].substr(positionOfDelimiter+1);
+		}
+		else
+		{
+			cerr << "GIApreprocessorPOStaggerDatabaseClass::externalANNpredict{} error: (positionOfDelimiter == CPP_STRING_FIND_RESULT_FAIL_VALUE)" << endl;
+			exit(EXIT_ERROR);		
+		}
+		#else
+		string classTargetValueString = YpredictBatchFileContents[i];
+		#endif
+		
 		#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_Y_PREDICT_HOT_ENCODED
 		cerr << "GIApreprocessorPOStaggerDatabaseClass::externalANNpredict{} error: GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_Y_PREDICT_HOT_ENCODED not coded" << endl;
 		exit(EXIT_ERROR);
 		#else
-		long classTargetValue = long(SHAREDvars.convertStringToDouble(YpredictBatchFileContents[i]));	//CHECKTHIS: assume that YpredictBatchFileContents is not hot encoded
+		long classTargetValue = long(SHAREDvars.convertStringToDouble(classTargetValueString));	//assume that YpredictBatchFileContents is not hot encoded
+		cout << "GIApreprocessorPOStaggerDatabaseClass::externalANNgeneratePredictions{}: classTargetValue = " << classTargetValue << endl;
+		#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_PREDICT_RETURN_ERRORS
+		double predictionError = SHAREDvars.convertStringToDouble(predictionErrorString);
+		cout << "GIApreprocessorPOStaggerDatabaseClass::externalANNgeneratePredictions{}: predictionError = " << predictionError << endl;
 		#endif
-		//cout << "GIApreprocessorPOStaggerDatabaseClass::externalANNgeneratePredictions{}: classTargetValue = " << classTargetValue << endl;
+		#endif
+		
 		currentExperienceInList->classTargetValue = classTargetValue;
+		#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_PREDICT_RETURN_ERRORS
+		currentExperienceInList->predictionError = predictionError;
+		#endif
 		currentExperienceInList = currentExperienceInList->next;
 	}
 
@@ -501,5 +548,25 @@ string GIApreprocessorPOStaggerDatabaseClass::DBconvertByteToBinaryString(unsign
 	}
 	return binaryString;
 }
+
+#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_PREDICTION_VERIFICATION
+bool GIApreprocessorPOStaggerDatabaseClass::verifyPOStaggerDatabasePredictionAgainstPOSambiguityInfo(const unsigned int centreWordPOSvaluePrediction, const unsigned int centreWordPOSambiguityInfo, int* centreWordPOSvalueFirstAmbiguousPrediction)
+{
+	bool predictionMatchesPOSambiguityInfo = false;
+	for(int i=0; i<GIA_PREPROCESSOR_WORD_LIST_ARRAY_SIZE; i++)
+	{
+		if(SHAREDvars.getBitValue(centreWordPOSambiguityInfo, i))
+		{
+			*centreWordPOSvalueFirstAmbiguousPrediction = i;
+			
+			if(centreWordPOSvaluePrediction == i)
+			{
+				predictionMatchesPOSambiguityInfo = true;
+			}
+		}
+	}
+	return predictionMatchesPOSambiguityInfo;
+}
+#endif
 
 

@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorPOStagger.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e9a 10-January-2018
+ * Project Version: 3e9b 10-January-2018
  * Requirements: requires plain text file
  * Description: preprocessor POS tagger
  *
@@ -86,7 +86,7 @@ class GIApreprocessorPOStaggerDatabaseClass
 	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK
 	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_INTERNAL
 	#ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE
-	public: void feedNeuralNetworkWithExperienceBackpropagation(ANNexperience* currentExperience);
+	public: void feedNeuralNetworkWithExperience(ANNexperience* currentExperience);
 	public: bool writeDatabaseNeuralNetwork();
 	#endif
 	public: bool calculateIdealClassTargetOfInputExperience(ANNexperience* experience, int* idealClassTarget, double* experienceBackPropagationPassError);
@@ -125,6 +125,10 @@ class GIApreprocessorPOStaggerDatabaseClass
 	
 	public: string generateIntFormatString(int numberOfCharacters);
 	public: string DBconvertByteToBinaryString(unsigned char byte);
+	
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_PREDICTION_VERIFICATION
+	public: bool verifyPOStaggerDatabasePredictionAgainstPOSambiguityInfo(const unsigned int centreWordPOSvaluePrediction, const unsigned int centreWordPOSambiguityInfo, int* centreWordPOSvalueFirstAmbiguousPrediction);
+	#endif
 
 };
 

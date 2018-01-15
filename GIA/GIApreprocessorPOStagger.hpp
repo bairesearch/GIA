@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorPOStagger.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e9a 10-January-2018
+ * Project Version: 3e9b 10-January-2018
  * Requirements: requires plain text file
  * Description: preprocessor POS tagger
  *
@@ -69,12 +69,26 @@ class GIApreprocessorPOStaggerClass
 	#ifdef GIA_PREPROCESSOR_POS_TAGGER_INITIALISE_WORD_INDEX_LIST_FROM_WIKI_DUMP_TEXT
 	public: bool createWordIndexListFromWikiDumpText(bool useLRP);
 	#endif	
-	//public: bool generatePOStaggerDatabaseFromWikiDumpText(const string wikiDumpFolderName, bool useLRP);
+	#ifndef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_TRAIN_SINGLE_BATCH_ONLY
+	public: bool generatePOStaggerDatabaseFromWikiDumpText(const string wikiDumpFolderName, bool useLRP);
+	#endif
 	public: bool generatePOStaggerDatabaseFromWikiDumpText(const string wikiDumpFolderName, const int wikiDumpFileBatchIndex, bool useLRP);
+		#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL
+		#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_MEMORY_FREE_WRITE_EXPERIENCES_DIRECTLY_TO_FILE
+		private: bool addPOStaggerDatabaseEntry(const unsigned int centreWordPOSambiguityInfo, vector<unsigned int>* POSambiguityInfoPermutation, const unsigned int centreWordUnambiguousPOSvalue, ofstream* XtrainBatchFileObject, ofstream* YtrainBatchFileObject);
+		#else
+		private: bool addPOStaggerDatabaseEntry(const unsigned int centreWordPOSambiguityInfo, vector<unsigned int>* POSambiguityInfoPermutation, const unsigned int centreWordUnambiguousPOSvalue, ANNexperience* currentExperienceInList);
+		#endif
+		#else
+		private: bool addPOStaggerDatabaseEntry(const unsigned int centreWordPOSambiguityInfo, vector<unsigned int>* POSambiguityInfoPermutation, const unsigned int centreWordUnambiguousPOSvalue, long* numberOfNeuralNetworkFeeds);
+		#endif
 		private: string generateWikiDumpTextInputFileName(int wikiDumpFileBatchIndex);
 		private: bool generatePreprocessorSentenceObjectsFromText(const string inputFileName, GIApreprocessorSentence* firstGIApreprocessorSentenceInText, bool useLRP);
 			private: bool createPreprocessSentencesBasic(const string fileContents, GIApreprocessorSentence* firstGIApreprocessorSentenceInList, bool interpretNewLinesAsNewSentences);
 	#endif
+		#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY
+		public: void generatePOSambiguityInfoUnambiguousPermutationArray(vector<vector<unsigned int>*>* POSambiguityInfoUnambiguousPermutationArray, vector<unsigned int>* POSambiguityInfoPermutation, vector<unsigned int>* POSambiguityInfoUnambiguousPermutationLocal, int wordIndex);
+		#endif
 		#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK
 		public: bool generateANNexperienceFromPOSambiguityInfoPermutation(vector<unsigned int>* POSambiguityInfoPermutation, const int centreWordUnambiguousPOSvalue, ANNexperience* currentExperience);
 			#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_RESTRICT_POS_TYPES_TO_8BIT	
@@ -82,7 +96,7 @@ class GIApreprocessorPOStaggerClass
 			#endif
 		#endif
 		public: int convertGIAPOStaggerValueToGrammaticalWordType(const int POSvalue);
-		public: bool generatePOSambiguityInfoPermutation(vector<GIApreprocessorWord*>* sentenceContentsLRP, int wCentre, bool* identifiedEveryWordInDatabasePOSpermutation, vector<unsigned int>* POSambiguityInfoPermutation);
+		public: bool generatePOSambiguityInfoPermutation(vector<GIApreprocessorWord*>* sentenceContentsLRP, int wCentre, bool* identifiedEveryWordInDatabasePOSpermutation, bool* identifiedEveryWordInDatabasePOSpermutationIsUnambiguous, vector<unsigned int>* POSambiguityInfoPermutation);
 		public: bool determinePOSambiguityInfoIsAmbiguous(const unsigned int POSambiguityInfo, unsigned int* unambiguousPOSvalue);
 		public: bool determinePOSambiguityInfoForSpecialCharacters(const GIApreprocessorWord* word, unsigned int* contextWordPOSambiguityInfo);
 

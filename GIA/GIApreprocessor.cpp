@@ -25,7 +25,7 @@
  * File Name: GIApreprocessor.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e9a 10-January-2018
+ * Project Version: 3e9b 10-January-2018
  * Requirements: requires plain text file
  * Description: Logical Condition and Reference Set preprocessor
  *
@@ -617,6 +617,7 @@ bool GIApreprocessorClass::executePrelimFeatureProcessingOnSentences(const strin
 			{//ignore centre words that are special characters
 
 				bool identifiedEveryWordInDatabasePOSpermutation = true;
+				bool identifiedEveryWordInDatabasePOSpermutationIsUnambiguous = true;
 				
 				string centreWordLowerCase = SHAREDvars.convertStringToLowerCase(&(centreWord->tagName));	//CHECKTHIS: verify that currentWord->tagName is case sensitive
 				GIApreprocessorMultiwordReductionWord* centreWordFound = NULL;
@@ -636,7 +637,7 @@ bool GIApreprocessorClass::executePrelimFeatureProcessingOnSentences(const strin
 					//cout << "DBconvertByteToHex(centreWordPOSambiguityInfo) = " << GIApreprocessorPOStaggerDatabase.DBconvertByteToBinaryString(centreWordPOSambiguityInfo) << endl;
 								
 					vector<unsigned int> POSambiguityInfoPermutation;
-					if(!GIApreprocessorPOStagger.generatePOSambiguityInfoPermutation(&(currentGIApreprocessorSentenceInList->sentenceContentsLRP), wCentre, &identifiedEveryWordInDatabasePOSpermutation, &POSambiguityInfoPermutation))
+					if(!GIApreprocessorPOStagger.generatePOSambiguityInfoPermutation(&(currentGIApreprocessorSentenceInList->sentenceContentsLRP), wCentre, &identifiedEveryWordInDatabasePOSpermutation, &identifiedEveryWordInDatabasePOSpermutationIsUnambiguous, &POSambiguityInfoPermutation))
 					{
 						result = false;
 					}
@@ -645,78 +646,52 @@ bool GIApreprocessorClass::executePrelimFeatureProcessingOnSentences(const strin
 					if(identifiedEveryWordInDatabasePOSpermutation)
 					{
 					#endif
-						//NB centreWordUnambiguousPOSvalue is not set or used (as it is currently ambiguous; it has not yet been predicted)
-							
-						bool foundMatchingCentreWordPOSambiguityInfo = false;
-						int centreWordPOSvaluePrediction = INT_DEFAULT_VALUE;
-						bool centreWordPOSisAmbiguous = false;
-						
-						#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK
-						ANNexperience* currentExperience = new ANNexperience();
-						GIApreprocessorPOStagger.generateANNexperienceFromPOSambiguityInfoPermutation(&POSambiguityInfoPermutation, centreWordUnambiguousPOSvalue, currentExperience);
-						double experienceBackPropagationPassError = 0.0;
-						int idealClassTarget = INT_DEFAULT_VALUE;
-						#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_INTERNAL
-						if(GIApreprocessorPOStaggerDatabase.calculateIdealClassTargetOfInputExperience(currentExperience, &idealClassTarget, &experienceBackPropagationPassError))
-						{
-							foundMatchingCentreWordPOSambiguityInfo = true;
-							centreWordPOSvaluePrediction = idealClassTarget;
-							centreWordPOSisAmbiguous = false;
-							cout << "centreWord = " << centreWord->tagName << ", idealClassTarget = " << idealClassTarget << ", experienceBackPropagationPassError = " << experienceBackPropagationPassError << endl;
-						}
-						#elif defined GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL
-						centreWord->POStaggerExperience = currentExperience;
-						foundMatchingCentreWordPOSambiguityInfo = false;	//currentFeatureInList->grammaticalWordType will be temporarily set to GRAMMATICAL_WORD_TYPE_UNDEFINED (until its predicted value has been generated in the batch external ANN operation)
-						#endif
-						#elif defined GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM
-						string POSambiguityInfoPermutationString = convertUnsignedIntVectorToString(&POSambiguityInfoPermutation);
-						unsigned int entryIndexWithMaximumNumberOfInstances = GIA_PREPROCESSOR_POS_TAGGER_POS_AMBIGUITY_INFO_UNKNOWN;
-						vector<string> centreWordPOSambiguityInfoList;
-						bool POSpermutationEntryExistent = GIApreprocessorPOStaggerDatabase.DBreadPOSpermutationEstimates(POSambiguityInfoPermutationString, &centreWordPOSambiguityInfoList);
-						if(POSpermutationEntryExistent)
-						{
-							int maximumNumberOfInstances = 0;
-							for(int i=0; i<centreWordPOSambiguityInfoList.size(); i++)
-							{
-								string centreWordPOSambiguityReferenceString = centreWordPOSambiguityInfoList[i];
-								string centreWordPOSambiguityInfoCurrentByteHexString = centreWordPOSambiguityReferenceString.substr(GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_POS_PERMUTATION_ENTRY_CENTRE_WORD_POS_AMBIGUITY_BYTE_HEX_START_POS, GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_POS_PERMUTATION_ENTRY_CENTRE_WORD_POS_AMBIGUITY_BYTE_HEX_LENGTH);
-								unsigned char centreWordPOSambiguityInfoCurrentByte = GIApreprocessorPOStaggerDatabase.DBconvertHexToByte(centreWordPOSambiguityInfoCurrentByteHexString);
-								string centreWordPOSambiguityInfoNumberInstancesCurrentIntString = centreWordPOSambiguityReferenceString.substr(GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_POS_PERMUTATION_ENTRY_CENTRE_WORD_POS_AMBIGUITY_NUMBER_OF_INSTANCES_INT_START_POS, GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_POS_PERMUTATION_ENTRY_CENTRE_WORD_POS_AMBIGUITY_NUMBER_OF_INSTANCES_INT_LENGTH);
-								int centreWordPOSambiguityInfoNumberInstancesCurrentInt = SHAREDvars.convertStringToInt(centreWordPOSambiguityInfoNumberInstancesCurrentIntString);
 
-								if(centreWordPOSambiguityInfoNumberInstancesCurrentInt > maximumNumberOfInstances)
+						bool foundMatchingCentreWordPOSambiguityInfo = false;
+						unsigned int centreWordPOSvaluePrediction = INT_DEFAULT_VALUE;
+						bool centreWordPOSisAmbiguous = false;
+						double experienceBackPropagationPassError = REALLY_LARGE_DOUBLE; 
+						int maximumNumberOfInstances = 0;
+
+						#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY
+						vector<vector<unsigned int>*> POSambiguityInfoUnambiguousPermutationArray;
+						vector<unsigned int>* POSambiguityInfoUnambiguousPermutationNew = new vector<unsigned int>(POSambiguityInfoPermutation.size());
+						POSambiguityInfoUnambiguousPermutationArray.push_back(POSambiguityInfoUnambiguousPermutationNew);
+						GIApreprocessorPOStagger.generatePOSambiguityInfoUnambiguousPermutationArray(&POSambiguityInfoUnambiguousPermutationArray, &POSambiguityInfoPermutation, POSambiguityInfoUnambiguousPermutationNew, 0);
+						for(int i=0; i<POSambiguityInfoUnambiguousPermutationArray.size(); i++)
+						{
+							vector<unsigned int>* POSambiguityInfoPermutationTemp = POSambiguityInfoUnambiguousPermutationArray[i];
+						#else
+							vector<unsigned int>* POSambiguityInfoPermutationTemp = &POSambiguityInfoPermutation;
+						#endif
+						
+							bool foundMatchingCentreWordPOSambiguityInfoTemp = false;
+							unsigned int centreWordPOSvaluePredictionTemp = INT_DEFAULT_VALUE;
+							bool centreWordPOSisAmbiguousTemp = false;
+							double experienceBackPropagationPassErrorTemp = 0.0; 
+							int maximumNumberOfInstancesTemp = 0;
+							
+							predictPOStaggerDatabaseEntry(centreWordPOSambiguityInfo, POSambiguityInfoPermutationTemp, centreWordUnambiguousPOSvalue, centreWord, &foundMatchingCentreWordPOSambiguityInfoTemp, &centreWordPOSvaluePredictionTemp, &centreWordPOSisAmbiguousTemp, &experienceBackPropagationPassErrorTemp, &maximumNumberOfInstancesTemp);
+							if(foundMatchingCentreWordPOSambiguityInfoTemp)
+							{
+								#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK
+								if(experienceBackPropagationPassErrorTemp < experienceBackPropagationPassError)
+								#else
+								if(maximumNumberOfInstancesTemp > maximumNumberOfInstances)
+								#endif
 								{
-									foundMatchingCentreWordPOSambiguityInfo = true;
-									maximumNumberOfInstances = centreWordPOSambiguityInfoNumberInstancesCurrentInt;
-									entryIndexWithMaximumNumberOfInstances = (unsigned int)(centreWordPOSambiguityInfoCurrentByte);
+									foundMatchingCentreWordPOSambiguityInfo = foundMatchingCentreWordPOSambiguityInfoTemp;
+									centreWordPOSvaluePrediction = centreWordPOSvaluePredictionTemp;
+									centreWordPOSisAmbiguous = centreWordPOSisAmbiguousTemp;
+									experienceBackPropagationPassError = experienceBackPropagationPassErrorTemp;
+									maximumNumberOfInstances = maximumNumberOfInstancesTemp;
 								}
 							}
+							
+						#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY
 						}
-						else
-						{	
-							currentFeatureInList->grammaticalWordType = GRAMMATICAL_WORD_TYPE_UNDEFINED;	
-							cout << "GIA_PREPROCESSOR_POS_TAGGER GIApreprocessorClass::executePrelimFeatureProcessingOnSentences{} warning: word POS cannot be determined (!POSpermutationEntryExistent): " << centreWord->tagName << endl;
-						}
-						centreWordPOSisAmbiguous = GIApreprocessorPOStagger.determinePOSambiguityInfoIsAmbiguous(entryIndexWithMaximumNumberOfInstances, &centreWordPOSvaluePrediction);
-						#elif defined GIA_PREPROCESSOR_POS_TAGGER_DATABASE_MAP
-						string POSambiguityInfoPermutationString = convertUnsignedIntVectorToString(&POSambiguityInfoPermutation);
-						unsigned int entryIndexWithMaximumNumberOfInstances = GIA_PREPROCESSOR_POS_TAGGER_POS_AMBIGUITY_INFO_UNKNOWN;
-						int maximumNumberOfInstances = 0;
-						multimap<string, pair<unsigned char, int>>* POStaggerMap = getPOStaggerMap();
-						pair<multimap<string, pair<unsigned char, int>>::iterator, multimap<string, pair<unsigned char, int>>::iterator> rangeFound = POStaggerMap->equal_range(POSambiguityInfoPermutationString);
-						for(multimap<string, pair<unsigned char, int>>::iterator it = rangeFound.first; it != rangeFound.second; it++)
-						{
-							unsigned char centreWordPOSambiguityInfoCurrent = (it->second).first;
-							int numberOfInstances = (it->second).second;
-							if(numberOfInstances > maximumNumberOfInstances)
-							{
-								foundMatchingCentreWordPOSambiguityInfo = true;
-								maximumNumberOfInstances = numberOfInstances;
-								entryIndexWithMaximumNumberOfInstances = (unsigned int)(centreWordPOSambiguityInfoCurrent);
-							}
-						}
-						centreWordPOSisAmbiguous = GIApreprocessorPOStagger.determinePOSambiguityInfoIsAmbiguous(entryIndexWithMaximumNumberOfInstances, &centreWordPOSvaluePrediction);
 						#endif
+						
 						
 						#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL
 						currentFeatureInList->grammaticalWordType = GRAMMATICAL_WORD_TYPE_UNDEFINED;
@@ -725,10 +700,29 @@ bool GIApreprocessorClass::executePrelimFeatureProcessingOnSentences(const strin
 						{
 							if(!centreWordPOSisAmbiguous)
 							{
-								currentFeatureInList->grammaticalWordType = GIApreprocessorPOStagger.convertGIAPOStaggerValueToGrammaticalWordType(centreWordPOSvaluePrediction);
+								#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_PREDICTION_VERIFICATION
+								int centreWordPOSvalueFirstAmbiguousPrediction = 0;
+								if(GIApreprocessorPOStaggerDatabase.verifyPOStaggerDatabasePredictionAgainstPOSambiguityInfo(centreWordPOSvaluePrediction, centreWordPOSambiguityInfo, &centreWordPOSvalueFirstAmbiguousPrediction))
+								{
+								#endif
+									currentFeatureInList->grammaticalWordType = GIApreprocessorPOStagger.convertGIAPOStaggerValueToGrammaticalWordType(centreWordPOSvaluePrediction);
+								#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_PREDICTION_VERIFICATION
+								}
+								else
+								{
+									currentFeatureInList->grammaticalWordType = GIApreprocessorPOStagger.convertGIAPOStaggerValueToGrammaticalWordType(centreWordPOSvalueFirstAmbiguousPrediction);
+
+									cerr << "verifyPOStaggerDatabasePredictionAgainstPOSambiguityInfo failed" << endl;
+									cerr << "centreWord = " << centreWord->tagName << endl;
+									cerr << "wCentre = " << wCentre << " = " << (centreWord->tagName)[wCentre] << endl; 
+									cerr << "centreWordPOSvaluePrediction =" << centreWordPOSvaluePrediction << endl;
+									cerr << "centreWord->centreWordPOSambiguityInfo = " << GIApreprocessorPOStaggerDatabase.DBconvertByteToBinaryString((unsigned char)centreWordPOSambiguityInfo) << endl;
+								}
+								#endif
+
 							}
 							else
-							{
+							{							
 								currentFeatureInList->grammaticalWordType = GRAMMATICAL_WORD_TYPE_UNDEFINED;
 								cerr << "GIA_PREPROCESSOR_POS_TAGGER GIApreprocessorClass::executePrelimFeatureProcessingOnSentences{} error: word POS cannot be determined (centreWordPOSisAmbiguous): " << centreWord->tagName << endl;
 								exit(EXIT_ERROR);
@@ -740,6 +734,7 @@ bool GIApreprocessorClass::executePrelimFeatureProcessingOnSentences(const strin
 							cout << "GIA_PREPROCESSOR_POS_TAGGER GIApreprocessorClass::executePrelimFeatureProcessingOnSentences{} warning: word POS cannot be determined (!foundMatchingCentreWordPOSambiguityInfo): " << centreWord->tagName << endl;
 						}
 						#endif
+	
 						
 					#ifdef GIA_PREPROCESSOR_POS_TAGGER_ONLY_ADD_DATABASE_ENTRY_IF_POS_AMBIGUITY_INFO_FOUND_FOR_EVERY_CONTEXT_WORD
 					}
@@ -762,7 +757,7 @@ bool GIApreprocessorClass::executePrelimFeatureProcessingOnSentences(const strin
 		currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->next;
 	}	
 	
-	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_PERFORM_BATCH_PREDICTIONS
 	//generate experience list
 	ANNexperience* firstExperienceInList = NULL;
 	ANNexperience* currentExperienceInList = NULL;
@@ -773,17 +768,25 @@ bool GIApreprocessorClass::executePrelimFeatureProcessingOnSentences(const strin
 		for(int wCentre=0; wCentre<currentGIApreprocessorSentenceInList->sentenceContentsLRP.size(); wCentre++)
 		{
 			GIApreprocessorWord* centreWord = (currentGIApreprocessorSentenceInList->sentenceContentsLRP)[wCentre];
+			
+			#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY
+			for(int i=0; i<centreWord->POStaggerExperiencePermutations.size(); i++)
+			{
+				ANNexperience* centreWordPOStaggerExperienceTemp = centreWord->POStaggerExperiencePermutations[i];
+			#else
 			if(centreWord->POStaggerExperience != NULL)
 			{
+				ANNexperience* centreWordPOStaggerExperienceTemp = centreWord->POStaggerExperience;
+			#endif
 				if(!foundFirstExperience)
 				{
 					foundFirstExperience = true;
-					firstExperienceInList = centreWord->POStaggerExperience;
-					currentExperienceInList = centreWord->POStaggerExperience;
+					firstExperienceInList = centreWordPOStaggerExperienceTemp;
+					currentExperienceInList = centreWordPOStaggerExperienceTemp;
 				}
 				else
 				{
-					currentExperienceInList->next = centreWord->POStaggerExperience;
+					currentExperienceInList->next = centreWordPOStaggerExperienceTemp;
 					currentExperienceInList = currentExperienceInList->next;
 				}
 			}
@@ -807,19 +810,54 @@ bool GIApreprocessorClass::executePrelimFeatureProcessingOnSentences(const strin
 		{
 			GIApreprocessorWord* centreWord = (currentGIApreprocessorSentenceInList->sentenceContentsLRP)[wCentre];
 			GIAfeature* currentFeatureInList = (currentGIApreprocessorSentenceInList->sentenceContentsLRP)[wCentre]->featureReferencePrelim;
+			#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY
+			if(centreWord->POStaggerExperiencePermutations.size() > 0)
+			{
+				double experienceBackPropagationPassError = REALLY_LARGE_DOUBLE;
+				ANNexperience* centreWordPOStaggerExperience = NULL;
+				for(int i=0; i<centreWord->POStaggerExperiencePermutations.size(); i++)
+				{
+					ANNexperience* centreWordPOStaggerExperienceTemp2 = centreWord->POStaggerExperiencePermutations[i];
+					if(centreWordPOStaggerExperienceTemp2->predictionError < experienceBackPropagationPassError)
+					{
+						experienceBackPropagationPassError = centreWordPOStaggerExperienceTemp2->predictionError;
+						centreWordPOStaggerExperience = centreWordPOStaggerExperienceTemp2;
+					}
+				}
+			#else
 			if(centreWord->POStaggerExperience != NULL)
 			{
-				int centreWordPOSvaluePrediction = centreWord->POStaggerExperience->classTargetValue;
-				currentFeatureInList->grammaticalWordType = GIApreprocessorPOStagger.convertGIAPOStaggerValueToGrammaticalWordType(centreWordPOSvaluePrediction);
-				
-				#ifdef GIA_DEBUG_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_PRINT_PREDICTIONS
-				cout << "**********************************************************" << endl;
-				cout << "GIA POS Tagger neural network prediction:" << endl;
-				cout << "centreWord = " << centreWord->tagName << endl;
-				cout << "centreWordPOSvaluePrediction = " << centreWordPOSvaluePrediction << endl;
-				cout << "currentFeatureInList->grammaticalWordType = " << currentFeatureInList->grammaticalWordType << endl;
-				cout << "grammaticalWordTypeNameArray[currentFeatureInList->grammaticalWordType] = " << grammaticalWordTypeNameArray[currentFeatureInList->grammaticalWordType] << endl;
-				cout << "**********************************************************" << endl;
+				ANNexperience* centreWordPOStaggerExperience = centreWord->POStaggerExperience;
+			#endif
+				int centreWordPOSvaluePrediction = centreWordPOStaggerExperience->classTargetValue;
+				int centreWordPOSvalueFirstAmbiguousPrediction = 0;
+				#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_PREDICTION_VERIFICATION
+				if(GIApreprocessorPOStaggerDatabase.verifyPOStaggerDatabasePredictionAgainstPOSambiguityInfo(centreWordPOSvaluePrediction, centreWord->centreWordPOSambiguityInfo, &centreWordPOSvalueFirstAmbiguousPrediction))
+				{
+				#endif
+					currentFeatureInList->grammaticalWordType = GIApreprocessorPOStagger.convertGIAPOStaggerValueToGrammaticalWordType(centreWordPOSvaluePrediction);
+
+					#ifdef GIA_DEBUG_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_PRINT_PREDICTIONS
+					cout << "**********************************************************" << endl;
+					cout << "GIA POS Tagger neural network prediction:" << endl;
+					cout << "centreWord = " << centreWord->tagName << endl;
+					cout << "centreWordPOSvaluePrediction = " << centreWordPOSvaluePrediction << endl;
+					cout << "currentFeatureInList->grammaticalWordType = " << currentFeatureInList->grammaticalWordType << endl;
+					cout << "grammaticalWordTypeNameArray[currentFeatureInList->grammaticalWordType] = " << grammaticalWordTypeNameArray[currentFeatureInList->grammaticalWordType] << endl;
+					cout << "**********************************************************" << endl;
+					#endif
+				#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_PREDICTION_VERIFICATION
+				}
+				else
+				{
+					currentFeatureInList->grammaticalWordType = GIApreprocessorPOStagger.convertGIAPOStaggerValueToGrammaticalWordType(centreWordPOSvalueFirstAmbiguousPrediction);
+					
+					cerr << "verifyPOStaggerDatabasePredictionAgainstPOSambiguityInfo failed" << endl;
+					cerr << "centreWord = " << centreWord->tagName << endl;
+					cerr << "wCentre = " << wCentre << " = " << (centreWord->tagName)[wCentre] << endl; 
+					cerr << "centreWordPOSvaluePrediction =" << centreWordPOSvaluePrediction << endl;
+					cerr << "centreWord->centreWordPOSambiguityInfo = " << GIApreprocessorPOStaggerDatabase.DBconvertByteToBinaryString((unsigned char)(centreWord->centreWordPOSambiguityInfo)) << endl;
+				}
 				#endif
 			}
 		}
@@ -898,8 +936,107 @@ bool GIApreprocessorClass::executePrelimFeatureProcessingOnSentences(const strin
 	
 	#endif
 }
+
+bool GIApreprocessorClass::predictPOStaggerDatabaseEntry(const unsigned int centreWordPOSambiguityInfo, vector<unsigned int>* POSambiguityInfoPermutation, const unsigned int centreWordUnambiguousPOSvalue, GIApreprocessorWord* centreWord, bool* foundMatchingCentreWordPOSambiguityInfo, unsigned int* centreWordPOSvaluePrediction, bool* centreWordPOSisAmbiguous, double* experienceBackPropagationPassError, int* maximumNumberOfInstances)
+{
+	bool result = true;
+	
+	//NB centreWordUnambiguousPOSvalue is not set or used (as it is currently ambiguous; it has not yet been predicted)
+
+	*foundMatchingCentreWordPOSambiguityInfo = false;
+
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK
+	ANNexperience* currentExperience = new ANNexperience();
+	GIApreprocessorPOStagger.generateANNexperienceFromPOSambiguityInfoPermutation(POSambiguityInfoPermutation, centreWordUnambiguousPOSvalue, currentExperience);
+	*experienceBackPropagationPassError = 0.0;
+	int idealClassTarget = INT_DEFAULT_VALUE;
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_INTERNAL
+	if(GIApreprocessorPOStaggerDatabase.calculateIdealClassTargetOfInputExperience(currentExperience, &idealClassTarget, &experienceBackPropagationPassError))
+	{
+		*foundMatchingCentreWordPOSambiguityInfo = true;
+		*centreWordPOSvaluePrediction = idealClassTarget;
+		*centreWordPOSisAmbiguous = false;
+		cout << "centreWord = " << centreWord->tagName << ", idealClassTarget = " << idealClassTarget << ", experienceBackPropagationPassError = " << experienceBackPropagationPassError << endl;
+	}
+	#elif defined GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_PERFORM_BATCH_PREDICTIONS
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY
+	centreWord->POStaggerExperiencePermutations.push_back(currentExperience);
+	#else
+	centreWord->POStaggerExperience = currentExperience;
+	#endif
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_PREDICTION_VERIFICATION
+	centreWord->centreWordPOSambiguityInfo = centreWordPOSambiguityInfo;
+	#endif
+	*foundMatchingCentreWordPOSambiguityInfo = false;	//currentFeatureInList->grammaticalWordType will be temporarily set to GRAMMATICAL_WORD_TYPE_UNDEFINED (until its predicted value has been generated in the batch external ANN operation)
+	#else
+	currentExperience->next = new ANNexperience();	//required for externalANNpredict:externalANNgenerateBatchDataExperiences
+	if(GIApreprocessorPOStaggerDatabase.externalANNpredict(currentExperience))
+	{
+		*foundMatchingCentreWordPOSambiguityInfo = true;
+		*centreWordPOSvaluePrediction = currentExperience->classTargetValue;
+		*centreWordPOSisAmbiguous = false;
+	}
+	#endif
+	#endif
+	#elif defined GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM
+	string POSambiguityInfoPermutationString = GIApreprocessorPOStagger.convertUnsignedIntVectorToString(&POSambiguityInfoPermutation);
+	unsigned int entryIndexWithMaximumNumberOfInstances = GIA_PREPROCESSOR_POS_TAGGER_POS_AMBIGUITY_INFO_UNKNOWN;
+	vector<string> centreWordPOSambiguityInfoList;
+	bool POSpermutationEntryExistent = GIApreprocessorPOStaggerDatabase.DBreadPOSpermutationEstimates(POSambiguityInfoPermutationString, &centreWordPOSambiguityInfoList);
+	if(POSpermutationEntryExistent)
+	{
+		*maximumNumberOfInstances = 0;
+		for(int i=0; i<centreWordPOSambiguityInfoList.size(); i++)
+		{
+			string centreWordPOSambiguityReferenceString = centreWordPOSambiguityInfoList[i];
+			string centreWordPOSambiguityInfoCurrentByteHexString = centreWordPOSambiguityReferenceString.substr(GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_POS_PERMUTATION_ENTRY_CENTRE_WORD_POS_AMBIGUITY_BYTE_HEX_START_POS, GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_POS_PERMUTATION_ENTRY_CENTRE_WORD_POS_AMBIGUITY_BYTE_HEX_LENGTH);
+			unsigned char centreWordPOSambiguityInfoCurrentByte = GIApreprocessorPOStaggerDatabase.DBconvertHexToByte(centreWordPOSambiguityInfoCurrentByteHexString);
+			string centreWordPOSambiguityInfoNumberInstancesCurrentIntString = centreWordPOSambiguityReferenceString.substr(GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_POS_PERMUTATION_ENTRY_CENTRE_WORD_POS_AMBIGUITY_NUMBER_OF_INSTANCES_INT_START_POS, GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_POS_PERMUTATION_ENTRY_CENTRE_WORD_POS_AMBIGUITY_NUMBER_OF_INSTANCES_INT_LENGTH);
+			int centreWordPOSambiguityInfoNumberInstancesCurrentInt = SHAREDvars.convertStringToInt(centreWordPOSambiguityInfoNumberInstancesCurrentIntString);
+
+			if(centreWordPOSambiguityInfoNumberInstancesCurrentInt > *maximumNumberOfInstances)
+			{						
+				*foundMatchingCentreWordPOSambiguityInfo = true;
+				*maximumNumberOfInstances = centreWordPOSambiguityInfoNumberInstancesCurrentInt;
+				entryIndexWithMaximumNumberOfInstances = (unsigned int)(centreWordPOSambiguityInfoCurrentByte);
+			}
+		}
+	}
+	else
+	{	
+		currentFeatureInList->grammaticalWordType = GRAMMATICAL_WORD_TYPE_UNDEFINED;	
+		cout << "GIA_PREPROCESSOR_POS_TAGGER GIApreprocessorClass::executePrelimFeatureProcessingOnSentences{} warning: word POS cannot be determined (!POSpermutationEntryExistent): " << centreWord->tagName << endl;
+	}
+	*centreWordPOSisAmbiguous = GIApreprocessorPOStagger.determinePOSambiguityInfoIsAmbiguous(entryIndexWithMaximumNumberOfInstances, centreWordPOSvaluePrediction);
+
+	#elif defined GIA_PREPROCESSOR_POS_TAGGER_DATABASE_MAP
+	string POSambiguityInfoPermutationString = convertUnsignedIntVectorToString(&POSambiguityInfoPermutation);
+	unsigned int entryIndexWithMaximumNumberOfInstances = GIA_PREPROCESSOR_POS_TAGGER_POS_AMBIGUITY_INFO_UNKNOWN;
+	*maximumNumberOfInstances = 0;
+	multimap<string, pair<unsigned char, int>>* POStaggerMap = getPOStaggerMap();
+	pair<multimap<string, pair<unsigned char, int>>::iterator, multimap<string, pair<unsigned char, int>>::iterator> rangeFound = POStaggerMap->equal_range(POSambiguityInfoPermutationString);
+	for(multimap<string, pair<unsigned char, int>>::iterator it = rangeFound.first; it != rangeFound.second; it++)
+	{
+		unsigned char centreWordPOSambiguityInfoCurrent = (it->second).first;
+		int numberOfInstances = (it->second).second;
+		if(numberOfInstances > *maximumNumberOfInstances)
+		{
+			*foundMatchingCentreWordPOSambiguityInfo = true;
+			*maximumNumberOfInstances = numberOfInstances;
+			entryIndexWithMaximumNumberOfInstances = (unsigned int)(centreWordPOSambiguityInfoCurrent);
+		}
+	}
+	*centreWordPOSisAmbiguous = GIApreprocessorPOStagger.determinePOSambiguityInfoIsAmbiguous(entryIndexWithMaximumNumberOfInstances, centreWordPOSvaluePrediction);
+	#endif
+	
+	return result;	
+}
+
 #endif
-			
+	
+
+						
 bool GIApreprocessorClass::preprocessSentencesForGIA(GIApreprocessorSentence* firstGIApreprocessorSentenceInList, const string outputFileName, const string outputFileNameLRPforNLP)
 {
 	bool result = true;

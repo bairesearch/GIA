@@ -25,7 +25,7 @@
  * File Name: GIApreprocessorMultiwordReductionClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e9a 10-January-2018
+ * Project Version: 3e9b 10-January-2018
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  *
@@ -84,8 +84,15 @@ void GIApreprocessorWord::initialiseGIApreprocessorWord()
 	#endif
 	#endif
 
-	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_PERFORM_BATCH_PREDICTIONS
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY
+	//POStaggerExperiencePermutations = NULL;
+	#else
 	POStaggerExperience = NULL;
+	#endif
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_PREDICTION_VERIFICATION
+	centreWordPOSambiguityInfo = 0;
+	#endif
 	#endif
 		
 	nextTag = NULL;
