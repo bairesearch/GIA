@@ -1,0 +1,10 @@
+wordlistAdjectives.txt
+wordlistAdverbs.txt
+wordlistConjunctions.txt
+wordlistDeterminers.txt
+wordlistInterjections.txt
+wordlistNouns.txt
+wordlistPrepositions.txt
+wordlistPronouns.txt
+wordLists.txt
+wordlistVerbs.txt

@@ -1,0 +1,9 @@
+multiwordlistAdjectives.txt
+multiwordlistAdverbs.txt
+multiwordlistConjunctions.txt
+multiwordlistDeterminers.txt
+multiwordlistInterjections.txt
+multiwordlistNouns.txt
+multiwordlistPrepositions.txt
+multiwordLists.txt
+multiwordlistVerbs.txt

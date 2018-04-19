@@ -1,22 +1,23 @@
 /*******************************************************************************
  *
- * This file is part of BAIPROJECT.
+ * No License
+ * 
+ * This work is under exclusive copyright (c) Baxter AI (baxterai.com). 
+ * Nobody else can use, copy, distribute, or modify this work without being 
+ * at risk of take-downs, shake-downs, or litigation. 
+ * 
+ * By publishing this source code in a public repository on GitHub, Terms of 
+ * Service have been accepted by which Baxter AI have allowed others to view 
+ * and fork their repository.
+ * 
+ * If you find software that doesn't have a license, that generally means you 
+ * have no permission from the creators of the software to use, modify, or 
+ * share the software. Although a code host such as GitHub may allow you to 
+ * view and fork the code, this does not imply that you are permitted to use, 
+ * modify, or share the software for any purpose.
  *
- * BAIPROJECT is licensed under the GNU Affero General Public License
- * version 3, as published by the Free Software Foundation. The use of
- * intermediary programs or interfaces including file i/o is considered
- * remote network interaction. This does not imply such arrangements
- * do not constitute derivative works.
- *
- * BAIPROJECT is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License version 3 for more details
- * (a copy is included in the LICENSE file that accompanied this code).
- *
- * You should have received a copy of the GNU Affero General Public License
- * version 3 along with BAIPROJECT.  If not, see <http://www.gnu.org/licenses/>
- * for a copy of the AGPLv3 License.
+ * This notice has been derived from https://choosealicense.com/no-permission 
+ * (https://web.archive.org/web/20180312144938/https://choosealicense.com/no-permission)
  *
  *******************************************************************************/
 
@@ -25,7 +26,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e9b 10-January-2018
+ * Project Version: 3e10a 15-January-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -743,7 +744,7 @@
 	
 	#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_SUBJECT_AND_DUMMY_DELIMITER_DISABLE_CHANGES	//used until changes have been debugged	//3e8d
 	#ifndef COMPILE_GIA_GENERATE_POS_TAGGER_DATABASE
-		#define GIA_PREPROCESSOR_POS_TAGGER_DISABLE	//disable prelim pos tagger until GIA/thirdparty pos tagger performance is acceptable
+		//#define GIA_PREPROCESSOR_POS_TAGGER_DISABLE	//disable prelim pos tagger until GIA/thirdparty pos tagger performance is acceptable
 	#endif
 	
 	#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_SPECIAL_CASE_DELIMITER_VERB_STATE_SUCCEEDED_BY_NOUN
@@ -785,7 +786,7 @@
 	#endif
 	#ifdef GIA_PREPROCESSOR_POS_TAGGER
 		
-		//#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY	//3e9b
+		#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY	//3e9b
 		#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_PREDICTION_VERIFICATION	//3e9b
 	
 		#ifdef COMPILE_GIA_GENERATE_POS_TAGGER_DATABASE
@@ -872,14 +873,10 @@
 				#endif
 			#endif
 			#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_INPUT_WORD_LIST_ARRAY_START (0)
-			#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_INPUT_PUNCTUATION_MARK_CHARACTER_END_OF_SENTENCE (8)
-			#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_INPUT_PUNCTUATION_MARK_CHARACTER_OTHER (9)
-			#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_INPUT_QUOTATION_CHARACTER (10)
-			#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_INPUT_OUT_OF_SENTENCE_BOUNDS (11)
 			#ifdef GIA_PREPROCESSOR_POS_TAGGER_INCLUDE_CENTRE_WORD_IN_POS_PERMUTATION_OLD
-				#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_INPUT_CENTRE_WORD_NOTUSED (GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_INPUT_OUT_OF_SENTENCE_BOUNDS)
+				#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_INPUT_CENTRE_WORD_NOTUSED (GIA_PREPROCESSOR_POS_TAGGER_DATABASE_POS_INDEX_OUT_OF_SENTENCE_BOUNDS)
 			#endif
-			#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_NUMBER_OF_INPUT_NEURONS_PER_CONTEXT_WORD (12) 
+			#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_NUMBER_OF_INPUT_NEURONS_PER_CONTEXT_WORD (12) 	//GIA_PREPROCESSOR_POS_TAGGER_DATABASE_POS_NUMBER_OF_TYPES
 			#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_NUMBER_OF_INPUT_NEURONS (GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_NUMBER_OF_INPUT_NEURONS_PER_CONTEXT_WORD*GIA_PREPROCESSOR_POS_TAGGER_MAX_CONTEXT_WORDS_IN_DATABASE_POS_PERMUTATION)
 			#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_NUMBER_OF_OUTPUT_NEURONS (GIA_PREPROCESSOR_WORD_LIST_ARRAY_SIZE)
 			#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_NUMBER_OF_LAYERS (4)	//try 3->5; this should provide sufficient non-linearity of underlying representation of data
@@ -889,7 +886,7 @@
 			//#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_EFFICIENT_OVERWRITE_EXISTENT_REFERENCES_WITH_NEW_NUMBER_OF_INSTANCES
 			//#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_TEST_MODE_LOAD_ALL_ENTRIES_UPON_READ
 		#endif
-		#define GIA_PREPROCESSOR_POS_TAGGER_INCLUDE_CENTRE_WORD_IN_POS_PERMUTATION
+		//#define GIA_PREPROCESSOR_POS_TAGGER_INCLUDE_CENTRE_WORD_IN_POS_PERMUTATION	//artificially improves neural net performance by training using the output as an input feature (simulation paradigm)
 		#ifdef GIA_PREPROCESSOR_POS_TAGGER_INCLUDE_CENTRE_WORD_IN_POS_PERMUTATION
 			#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_INTERNAL_CLASSIFICATION_NET
 				#define GIA_PREPROCESSOR_POS_TAGGER_INCLUDE_CENTRE_WORD_IN_POS_PERMUTATION_EVEN_IF_AMBIGUOUS
@@ -898,18 +895,16 @@
 
 		#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY
 			#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK
-				#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY_ONLY_TRAIN_UNAMBIGUOUS_PERMUTATIONS	//With a classification net or file system DB can risk feeding it with bad hypothetical pos permutations (because will take the permutation predicted with the highest hits), but cannot with a neural net  (as this would degrade neural net performance; there would be more than 1 bad permutation for every good permutation fed on average).
+				#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY_ONLY_TRAIN_UNAMBIGUOUS_PERMUTATIONS	//this is required	//With a classification net or file system DB can risk feeding it with bad hypothetical pos permutations (because will take the permutation predicted with the highest hits), but cannot with a neural net  (as this would degrade neural net performance; there would be more than 1 bad permutation for every good permutation fed on average).
 				#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_PREDICT_RETURN_ERRORS	//will become mandatory in the future
+			#else
+				#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY_ONLY_TRAIN_UNAMBIGUOUS_PERMUTATIONS	//this is optional (required for databasing performance only)
 			#endif
 		#endif
 		
 		#define GIA_PREPROCESSOR_POS_TAGGER_POS_AMBIGUITY_INFO_UNKNOWN (0)	//NB if POS info unknown (input/wiki text word not found in LRP word lists), then POSambiguityInfoFound = 0
 
-		#ifndef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK
-			#ifndef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY
-				#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_RESTRICT_POS_TYPES_TO_8BIT	//TODO: verify that !GIA_PREPROCESSOR_POS_TAGGER_DATABASE_RESTRICT_POS_TYPES_TO_8BIT is compatible with GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM (not only GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK)
-			#endif
-		#endif
+		//#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_RESTRICT_POS_TYPES_TO_8BIT	//TODO: verify that !GIA_PREPROCESSOR_POS_TAGGER_DATABASE_RESTRICT_POS_TYPES_TO_8BIT is compatible with GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM (not only GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK)
 		#ifdef GIA_PREPROCESSOR_POS_TAGGER_INCLUDE_CENTRE_WORD_IN_POS_PERMUTATION
 			#define GIA_PREPROCESSOR_POS_TAGGER_MAX_WORDS_IN_DATABASE_POS_PERMUTATION (GIA_PREPROCESSOR_POS_TAGGER_MAX_CONTEXT_WORDS_IN_DATABASE_POS_PERMUTATION+1)
 		#else
@@ -923,6 +918,24 @@
 				#define GIA_PREPROCESSOR_POS_TAGGER_POS_AMBIGUITY_INFO_CENTRE_WORD (15)	//ie dummy value: GIA_PREPROCESSOR_WORD_LIST_ARRAY_INDEX_VERB & GIA_PREPROCESSOR_WORD_LIST_ARRAY_INDEX_PREPOSITION & GIA_PREPROCESSOR_WORD_LIST_ARRAY_INDEX_ADVERB or equivalent
 			#endif
 			#define GIA_PREPROCESSOR_POS_TAGGER_POS_AMBIGUITY_INFO_OUT_OF_SENTENCE_BOUNDS (255)	//ie dummy value: GIA_PREPROCESSOR_WORD_LIST_ARRAY_INDEX_VERB & GIA_PREPROCESSOR_WORD_LIST_ARRAY_INDEX_PREPOSITION & GIA_PREPROCESSOR_WORD_LIST_ARRAY_INDEX_ADVERB & GIA_PREPROCESSOR_WORD_LIST_ARRAY_INDEX_NOUN & GIA_PREPROCESSOR_WORD_LIST_ARRAY_INDEX_CONJUNCTION & GIA_PREPROCESSOR_WORD_LIST_ARRAY_INDEX_INTERJECTION & GIA_PREPROCESSOR_WORD_LIST_ARRAY_INDEX_PRONOUN
+			#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_POS_MAX_SIZE (255)	//8 bits
+			#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_POS_MAX_BITS (8)
+		#else
+			#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_POS_MAX_BITS_INTERMEDIATE (32)	//size(unsigned int), i.e. 32 == GIA_PREPROCESSOR_POS_TAGGER_DATABASE_POS_MAX_NUMBER_OF_TYPES_THEORETICAL
+			#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_POS_INDEX_PUNCTUATION_MARK_CHARACTER_END_OF_SENTENCE (8)
+			#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_POS_INDEX_PUNCTUATION_MARK_CHARACTER_OTHER (9)
+			#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_POS_INDEX_QUOTATION_CHARACTER (10)
+			#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_POS_INDEX_OUT_OF_SENTENCE_BOUNDS (11)
+			#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_POS_NUMBER_OF_TYPES (12)
+			#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM
+				#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY_ONLY_TRAIN_UNAMBIGUOUS_PERMUTATIONS
+					#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_USE_4BIT_INDICES	//3e9d
+					#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_USE_4BIT_INDICES
+						#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_POS_MAX_SIZE (16)	//4 bits
+						#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_POS_MAX_BITS (4)
+					#endif
+				#endif	
+			#endif	
 		#endif
 		#ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE
 			#define GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE_DOC_XML_OUTPUT_NUMBER_OF_FILES (1203)	//wiki dump files are generated with WikiExtractor (https://github.com/attardi/wikiextractor)	//121	

@@ -1,22 +1,23 @@
 /*******************************************************************************
  *
- * This file is part of BAIPROJECT.
+ * No License
+ * 
+ * This work is under exclusive copyright (c) Baxter AI (baxterai.com). 
+ * Nobody else can use, copy, distribute, or modify this work without being 
+ * at risk of take-downs, shake-downs, or litigation. 
+ * 
+ * By publishing this source code in a public repository on GitHub, Terms of 
+ * Service have been accepted by which Baxter AI have allowed others to view 
+ * and fork their repository.
+ * 
+ * If you find software that doesn't have a license, that generally means you 
+ * have no permission from the creators of the software to use, modify, or 
+ * share the software. Although a code host such as GitHub may allow you to 
+ * view and fork the code, this does not imply that you are permitted to use, 
+ * modify, or share the software for any purpose.
  *
- * BAIPROJECT is licensed under the GNU Affero General Public License
- * version 3, as published by the Free Software Foundation. The use of
- * intermediary programs or interfaces including file i/o is considered
- * remote network interaction. This does not imply such arrangements
- * do not constitute derivative works.
- *
- * BAIPROJECT is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License version 3 for more details
- * (a copy is included in the LICENSE file that accompanied this code).
- *
- * You should have received a copy of the GNU Affero General Public License
- * version 3 along with BAIPROJECT.  If not, see <http://www.gnu.org/licenses/>
- * for a copy of the AGPLv3 License.
+ * This notice has been derived from https://choosealicense.com/no-permission 
+ * (https://web.archive.org/web/20180312144938/https://choosealicense.com/no-permission)
  *
  *******************************************************************************/
 
@@ -25,7 +26,7 @@
  * File Name: GIApreprocessor.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e9b 10-January-2018
+ * Project Version: 3e10a 15-January-2018
  * Requirements: requires plain text file
  * Description: Logical Condition and Reference Set preprocessor
  *
@@ -630,11 +631,12 @@ bool GIApreprocessorClass::executePrelimFeatureProcessingOnSentences(const strin
 				}
 				
 				unsigned int centreWordUnambiguousPOSvalue = INT_DEFAULT_VALUE;
-				bool centreWordPOSisAmbiguous = GIApreprocessorPOStagger.determinePOSambiguityInfoIsAmbiguous(centreWordPOSambiguityInfo, &centreWordUnambiguousPOSvalue);
+				bool centreWordPOSisAmbiguous = GIApreprocessorPOStagger.determinePOSambiguityInfoIsAmbiguous(centreWordPOSambiguityInfo, &centreWordUnambiguousPOSvalue, true);
 				if(centreWordPOSisAmbiguous)
 				{		
-					//cout << "centreWordPOSisAmbiguous" << endl;
-					//cout << "DBconvertByteToHex(centreWordPOSambiguityInfo) = " << GIApreprocessorPOStaggerDatabase.DBconvertByteToBinaryString(centreWordPOSambiguityInfo) << endl;
+					cout << "\ncentreWordPOSisAmbiguous" << endl;
+					cout << "centreWord = " << centreWord->tagName << endl;
+					cout << "DBconvertByteToHex(centreWordPOSambiguityInfo) = " << GIApreprocessorPOStaggerDatabase.DBconvertByteToBinaryString(centreWordPOSambiguityInfo) << endl;
 								
 					vector<unsigned int> POSambiguityInfoPermutation;
 					if(!GIApreprocessorPOStagger.generatePOSambiguityInfoPermutation(&(currentGIApreprocessorSentenceInList->sentenceContentsLRP), wCentre, &identifiedEveryWordInDatabasePOSpermutation, &identifiedEveryWordInDatabasePOSpermutationIsUnambiguous, &POSambiguityInfoPermutation))
@@ -686,6 +688,11 @@ bool GIApreprocessorClass::executePrelimFeatureProcessingOnSentences(const strin
 									experienceBackPropagationPassError = experienceBackPropagationPassErrorTemp;
 									maximumNumberOfInstances = maximumNumberOfInstancesTemp;
 								}
+								//cout << "predictPOStaggerDatabaseEntry" << endl;
+							}
+							else
+							{
+								//cout << "!predictPOStaggerDatabaseEntry" << endl;
 							}
 							
 						#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY
@@ -702,6 +709,8 @@ bool GIApreprocessorClass::executePrelimFeatureProcessingOnSentences(const strin
 							{
 								#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_PREDICTION_VERIFICATION
 								int centreWordPOSvalueFirstAmbiguousPrediction = 0;
+								cout << "centreWordPOSvaluePrediction = " << centreWordPOSvaluePrediction << endl;
+								//cout << "DBconvertByteToBinaryString(centreWordPOSambiguityInfo) = " << GIApreprocessorPOStaggerDatabase.DBconvertByteToBinaryString(centreWordPOSambiguityInfo) << endl;
 								if(GIApreprocessorPOStaggerDatabase.verifyPOStaggerDatabasePredictionAgainstPOSambiguityInfo(centreWordPOSvaluePrediction, centreWordPOSambiguityInfo, &centreWordPOSvalueFirstAmbiguousPrediction))
 								{
 								#endif
@@ -714,7 +723,7 @@ bool GIApreprocessorClass::executePrelimFeatureProcessingOnSentences(const strin
 
 									cerr << "verifyPOStaggerDatabasePredictionAgainstPOSambiguityInfo failed" << endl;
 									cerr << "centreWord = " << centreWord->tagName << endl;
-									cerr << "wCentre = " << wCentre << " = " << (centreWord->tagName)[wCentre] << endl; 
+									cerr << "wCentre = " << wCentre << endl; 
 									cerr << "centreWordPOSvaluePrediction =" << centreWordPOSvaluePrediction << endl;
 									cerr << "centreWord->centreWordPOSambiguityInfo = " << GIApreprocessorPOStaggerDatabase.DBconvertByteToBinaryString((unsigned char)centreWordPOSambiguityInfo) << endl;
 								}
@@ -854,7 +863,7 @@ bool GIApreprocessorClass::executePrelimFeatureProcessingOnSentences(const strin
 					
 					cerr << "verifyPOStaggerDatabasePredictionAgainstPOSambiguityInfo failed" << endl;
 					cerr << "centreWord = " << centreWord->tagName << endl;
-					cerr << "wCentre = " << wCentre << " = " << (centreWord->tagName)[wCentre] << endl; 
+					cerr << "wCentre = " << wCentre << endl; 
 					cerr << "centreWordPOSvaluePrediction =" << centreWordPOSvaluePrediction << endl;
 					cerr << "centreWord->centreWordPOSambiguityInfo = " << GIApreprocessorPOStaggerDatabase.DBconvertByteToBinaryString((unsigned char)(centreWord->centreWordPOSambiguityInfo)) << endl;
 				}
@@ -980,7 +989,7 @@ bool GIApreprocessorClass::predictPOStaggerDatabaseEntry(const unsigned int cent
 	#endif
 	#endif
 	#elif defined GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM
-	string POSambiguityInfoPermutationString = GIApreprocessorPOStagger.convertUnsignedIntVectorToString(&POSambiguityInfoPermutation);
+	string POSambiguityInfoPermutationString = GIApreprocessorPOStagger.convertPOSambiguityInfoPermutationToString(POSambiguityInfoPermutation);
 	unsigned int entryIndexWithMaximumNumberOfInstances = GIA_PREPROCESSOR_POS_TAGGER_POS_AMBIGUITY_INFO_UNKNOWN;
 	vector<string> centreWordPOSambiguityInfoList;
 	bool POSpermutationEntryExistent = GIApreprocessorPOStaggerDatabase.DBreadPOSpermutationEstimates(POSambiguityInfoPermutationString, &centreWordPOSambiguityInfoList);
@@ -1005,13 +1014,19 @@ bool GIApreprocessorClass::predictPOStaggerDatabaseEntry(const unsigned int cent
 	}
 	else
 	{	
-		currentFeatureInList->grammaticalWordType = GRAMMATICAL_WORD_TYPE_UNDEFINED;	
-		cout << "GIA_PREPROCESSOR_POS_TAGGER GIApreprocessorClass::executePrelimFeatureProcessingOnSentences{} warning: word POS cannot be determined (!POSpermutationEntryExistent): " << centreWord->tagName << endl;
+		//currentFeatureInList->grammaticalWordType = GRAMMATICAL_WORD_TYPE_UNDEFINED;	
+		//cout << "GIA_PREPROCESSOR_POS_TAGGER GIApreprocessorClass::predictPOStaggerDatabaseEntry{} warning: word POS cannot be determined (!POSpermutationEntryExistent): " << centreWord->tagName << endl;
 	}
-	*centreWordPOSisAmbiguous = GIApreprocessorPOStagger.determinePOSambiguityInfoIsAmbiguous(entryIndexWithMaximumNumberOfInstances, centreWordPOSvaluePrediction);
-
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY_ONLY_TRAIN_UNAMBIGUOUS_PERMUTATIONS
+	*centreWordPOSisAmbiguous = false;
+	*centreWordPOSvaluePrediction = entryIndexWithMaximumNumberOfInstances;
+	#else
+	*centreWordPOSisAmbiguous = GIApreprocessorPOStagger.determinePOSambiguityInfoIsAmbiguous(entryIndexWithMaximumNumberOfInstances, centreWordPOSvaluePrediction, true);
+	//NB centreWordPOSisAmbiguous should always be false
+	#endif
+	
 	#elif defined GIA_PREPROCESSOR_POS_TAGGER_DATABASE_MAP
-	string POSambiguityInfoPermutationString = convertUnsignedIntVectorToString(&POSambiguityInfoPermutation);
+	string POSambiguityInfoPermutationString = GIApreprocessorPOStagger.convertPOSambiguityInfoPermutationToString(POSambiguityInfoPermutation);
 	unsigned int entryIndexWithMaximumNumberOfInstances = GIA_PREPROCESSOR_POS_TAGGER_POS_AMBIGUITY_INFO_UNKNOWN;
 	*maximumNumberOfInstances = 0;
 	multimap<string, pair<unsigned char, int>>* POStaggerMap = getPOStaggerMap();
@@ -1027,7 +1042,13 @@ bool GIApreprocessorClass::predictPOStaggerDatabaseEntry(const unsigned int cent
 			entryIndexWithMaximumNumberOfInstances = (unsigned int)(centreWordPOSambiguityInfoCurrent);
 		}
 	}
-	*centreWordPOSisAmbiguous = GIApreprocessorPOStagger.determinePOSambiguityInfoIsAmbiguous(entryIndexWithMaximumNumberOfInstances, centreWordPOSvaluePrediction);
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY_ONLY_TRAIN_UNAMBIGUOUS_PERMUTATIONS
+	*centreWordPOSisAmbiguous = false;
+	*centreWordPOSvaluePrediction = entryIndexWithMaximumNumberOfInstances;
+	#else
+	*centreWordPOSisAmbiguous = GIApreprocessorPOStagger.determinePOSambiguityInfoIsAmbiguous(entryIndexWithMaximumNumberOfInstances, centreWordPOSvaluePrediction, true);
+	//NB centreWordPOSisAmbiguous should always be false
+	#endif
 	#endif
 	
 	return result;	

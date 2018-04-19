@@ -1,22 +1,23 @@
 /*******************************************************************************
  *
- * This file is part of BAIPROJECT.
+ * No License
+ * 
+ * This work is under exclusive copyright (c) Baxter AI (baxterai.com). 
+ * Nobody else can use, copy, distribute, or modify this work without being 
+ * at risk of take-downs, shake-downs, or litigation. 
+ * 
+ * By publishing this source code in a public repository on GitHub, Terms of 
+ * Service have been accepted by which Baxter AI have allowed others to view 
+ * and fork their repository.
+ * 
+ * If you find software that doesn't have a license, that generally means you 
+ * have no permission from the creators of the software to use, modify, or 
+ * share the software. Although a code host such as GitHub may allow you to 
+ * view and fork the code, this does not imply that you are permitted to use, 
+ * modify, or share the software for any purpose.
  *
- * BAIPROJECT is licensed under the GNU Affero General Public License
- * version 3, as published by the Free Software Foundation. The use of
- * intermediary programs or interfaces including file i/o is considered
- * remote network interaction. This does not imply such arrangements
- * do not constitute derivative works.
- *
- * BAIPROJECT is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License version 3 for more details
- * (a copy is included in the LICENSE file that accompanied this code).
- *
- * You should have received a copy of the GNU Affero General Public License
- * version 3 along with BAIPROJECT.  If not, see <http://www.gnu.org/licenses/>
- * for a copy of the AGPLv3 License.
+ * This notice has been derived from https://choosealicense.com/no-permission 
+ * (https://web.archive.org/web/20180312144938/https://choosealicense.com/no-permission)
  *
  *******************************************************************************/
 
@@ -25,7 +26,7 @@
  * File Name: GIApreprocessorPOStagger.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e9b 10-January-2018
+ * Project Version: 3e10a 15-January-2018
  * Requirements: requires plain text file
  * Description: preprocessor POS tagger
  *
@@ -255,13 +256,9 @@ bool GIApreprocessorPOStaggerClass::generatePOStaggerDatabaseFromWikiDumpText(co
 				{
 				#endif
 					unsigned int centreWordUnambiguousPOSvalue = INT_DEFAULT_VALUE;
-					bool centreWordAmbiguous = determinePOSambiguityInfoIsAmbiguous(centreWordPOSambiguityInfo, &centreWordUnambiguousPOSvalue);
+					bool centreWordAmbiguous = determinePOSambiguityInfoIsAmbiguous(centreWordPOSambiguityInfo, &centreWordUnambiguousPOSvalue, true);
 					#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY_ONLY_TRAIN_UNAMBIGUOUS_PERMUTATIONS
-					if(centreWordAmbiguous)
-					{
-						identifiedEveryWordInDatabasePOSpermutationIsUnambiguous = false;
-					}
-					if(identifiedEveryWordInDatabasePOSpermutationIsUnambiguous)
+					if(identifiedEveryWordInDatabasePOSpermutationIsUnambiguous && !centreWordAmbiguous)
 					{
 					#endif
 						#ifndef GIA_PREPROCESSOR_POS_TAGGER_INCLUDE_CENTRE_WORD_IN_POS_PERMUTATION_EVEN_IF_AMBIGUOUS
@@ -402,9 +399,16 @@ bool GIApreprocessorPOStaggerClass::addPOStaggerDatabaseEntry(const unsigned int
 	#endif
 	#endif
 	#elif defined GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM
-	//only add the reference if the centre word is unambiguous - CHECKTHIS
-	string POSambiguityInfoPermutationString = convertUnsignedIntVectorToString(POSambiguityInfoPermutation);
-	if(!GIApreprocessorPOStaggerDatabase.DBwritePOSpermutationEstimate(POSambiguityInfoPermutationString, (unsigned char)(centreWordPOSambiguityInfo)))
+	for(int i=0; i<POSambiguityInfoPermutation->size(); i++)
+	{
+		unsigned int val = (*POSambiguityInfoPermutation)[i]; 
+		//cout << "val = " << val << endl;
+	}
+	string POSambiguityInfoPermutationString = convertPOSambiguityInfoPermutationToString(POSambiguityInfoPermutation);
+	unsigned char centreWordPOSambiguityInfoChar = convertPOSambiguityInfoToChar(centreWordPOSambiguityInfo);
+	//cout << "POSambiguityInfoPermutationString = " << POSambiguityInfoPermutationString << endl;
+	//cout << "centreWordPOSambiguityInfoString = " << centreWordPOSambiguityInfoString << endl;
+	if(!GIApreprocessorPOStaggerDatabase.DBwritePOSpermutationEstimate(POSambiguityInfoPermutationString, centreWordPOSambiguityInfoChar))
 	{
 		result = false;
 	}
@@ -412,11 +416,12 @@ bool GIApreprocessorPOStaggerClass::addPOStaggerDatabaseEntry(const unsigned int
 	unsigned int centreWordPOSambiguityInfoFound;
 	int numberOfInstances = 0;
 	bool incrementIfFound = true;
-	string POSambiguityInfoPermutationString = convertUnsignedIntVectorToString(&POSambiguityInfoPermutation);
-	if(!findInstancePOStaggerMap(POSambiguityInfoPermutationString, (unsigned char)(centreWordPOSambiguityInfo), &numberOfInstances, incrementIfFound))
+	string POSambiguityInfoPermutationString = convertPOSambiguityInfoPermutationToString(&POSambiguityInfoPermutation);
+	unsigned char centreWordPOSambiguityInfoChar = convertPOSambiguityInfoToChar(centreWordPOSambiguityInfo);
+	if(!findInstancePOStaggerMap(POSambiguityInfoPermutationString, centreWordPOSambiguityInfoChar, &numberOfInstances, incrementIfFound))
 	{
 		numberOfInstances = 1;
-		insertInstanceInPOStaggerMap(POSambiguityInfoPermutationString, (unsigned char)(centreWordPOSambiguityInfo), numberOfInstances);
+		insertInstanceInPOStaggerMap(POSambiguityInfoPermutationString, centreWordPOSambiguityInfoChar, numberOfInstances);
 	}	
 	#endif
 	
@@ -750,22 +755,22 @@ bool GIApreprocessorPOStaggerClass::determinePOSambiguityInfoNeuralNetworkInputN
 	if(POSambiguityInfo == GIA_PREPROCESSOR_POS_TAGGER_POS_AMBIGUITY_INFO_PUNCTUATION_MARK_CHARACTER_END_OF_SENTENCE)
 	{
 		specialCharFound = true;
-		*POSambiguityInfoNeuralNetworkInputNeuron = GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_INPUT_PUNCTUATION_MARK_CHARACTER_END_OF_SENTENCE;
+		*POSambiguityInfoNeuralNetworkInputNeuron = GIA_PREPROCESSOR_POS_TAGGER_DATABASE_POS_INDEX_PUNCTUATION_MARK_CHARACTER_END_OF_SENTENCE;
 	}
 	if(POSambiguityInfo == GIA_PREPROCESSOR_POS_TAGGER_POS_AMBIGUITY_INFO_PUNCTUATION_MARK_CHARACTER_OTHER)
 	{
 		specialCharFound = true;
-		*POSambiguityInfoNeuralNetworkInputNeuron = GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_INPUT_PUNCTUATION_MARK_CHARACTER_OTHER;
+		*POSambiguityInfoNeuralNetworkInputNeuron = GIA_PREPROCESSOR_POS_TAGGER_DATABASE_POS_INDEX_PUNCTUATION_MARK_CHARACTER_OTHER;
 	}
 	if(POSambiguityInfo == GIA_PREPROCESSOR_POS_TAGGER_POS_AMBIGUITY_INFO_QUOTATION_CHARACTER)
 	{
 		specialCharFound = true;
-		*POSambiguityInfoNeuralNetworkInputNeuron = GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_INPUT_QUOTATION_CHARACTER;
+		*POSambiguityInfoNeuralNetworkInputNeuron = GIA_PREPROCESSOR_POS_TAGGER_DATABASE_POS_INDEX_QUOTATION_CHARACTER;
 	}
 	if(POSambiguityInfo == GIA_PREPROCESSOR_POS_TAGGER_POS_AMBIGUITY_INFO_OUT_OF_SENTENCE_BOUNDS)
 	{
 		specialCharFound = true;
-		*POSambiguityInfoNeuralNetworkInputNeuron = GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_INPUT_OUT_OF_SENTENCE_BOUNDS;
+		*POSambiguityInfoNeuralNetworkInputNeuron = GIA_PREPROCESSOR_POS_TAGGER_DATABASE_POS_INDEX_OUT_OF_SENTENCE_BOUNDS;
 	}
 		
 	return specialCharFound;
@@ -823,7 +828,7 @@ bool GIApreprocessorPOStaggerClass::generatePOSambiguityInfoPermutation(vector<G
 			#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_RESTRICT_POS_TYPES_TO_8BIT
 			(*POSambiguityInfoPermutation)[POSambiguityInfoPermutationIndex] = GIA_PREPROCESSOR_POS_TAGGER_POS_AMBIGUITY_INFO_OUT_OF_SENTENCE_BOUNDS;	
 			#else
-			(*POSambiguityInfoPermutation)[POSambiguityInfoPermutationIndex] = SHAREDvars.setBitValue(GIA_PREPROCESSOR_POS_TAGGER_POS_AMBIGUITY_INFO_UNKNOWN, GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_INPUT_OUT_OF_SENTENCE_BOUNDS, true);	
+			(*POSambiguityInfoPermutation)[POSambiguityInfoPermutationIndex] = SHAREDvars.setBitValue(GIA_PREPROCESSOR_POS_TAGGER_POS_AMBIGUITY_INFO_UNKNOWN, GIA_PREPROCESSOR_POS_TAGGER_DATABASE_POS_INDEX_OUT_OF_SENTENCE_BOUNDS, true);	
 			#endif
 			POSambiguityInfoPermutationIndex++;					
 		}
@@ -848,7 +853,7 @@ bool GIApreprocessorPOStaggerClass::generatePOSambiguityInfoPermutation(vector<G
 			else
 			{
 				unsigned int wordUnambiguousPOSvalueNOTUSED = INT_DEFAULT_VALUE;
-				bool wordAmbiguous = determinePOSambiguityInfoIsAmbiguous(contextWordPOSambiguityInfo, &wordUnambiguousPOSvalueNOTUSED);
+				bool wordAmbiguous = determinePOSambiguityInfoIsAmbiguous(contextWordPOSambiguityInfo, &wordUnambiguousPOSvalueNOTUSED, false);
 				if(wordAmbiguous)
 				{
 					*identifiedEveryWordInDatabasePOSpermutationIsUnambiguous = false;
@@ -857,9 +862,9 @@ bool GIApreprocessorPOStaggerClass::generatePOSambiguityInfoPermutation(vector<G
 			#endif
 
 			#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_RESTRICT_POS_TYPES_TO_8BIT
-			if(contextWordPOSambiguityInfo > 255)	//error checking
+			if(contextWordPOSambiguityInfo > GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_POS_MAX_SIZE)	//error checking
 			{
-				cerr << "GIApreprocessorPOStaggerClass::generatePOStaggerDatabaseFromWikiDumpText{} error: (contextWordPOSambiguityInfo > 255)" << endl;
+				cerr << "GIApreprocessorPOStaggerClass::generatePOStaggerDatabaseFromWikiDumpText{} error: (contextWordPOSambiguityInfo > GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_POS_MAX_SIZE{255})" << endl;
 				exit(EXIT_ERROR);
 			}
 			#endif
@@ -873,7 +878,7 @@ bool GIApreprocessorPOStaggerClass::generatePOSambiguityInfoPermutation(vector<G
 	return result;
 }	
 
-bool GIApreprocessorPOStaggerClass::determinePOSambiguityInfoIsAmbiguous(const unsigned int POSambiguityInfo, unsigned int* unambiguousPOSvalue)
+bool GIApreprocessorPOStaggerClass::determinePOSambiguityInfoIsAmbiguous(const unsigned int POSambiguityInfo, unsigned int* unambiguousPOSvalue, const bool treatWordAsAmbiguousIfNullPOSvalue)
 {
 	bool ambiguous = false;
 	
@@ -887,11 +892,37 @@ bool GIApreprocessorPOStaggerClass::determinePOSambiguityInfoIsAmbiguous(const u
 			numberOfPOStypesRecorded++;
 		}
 	}
-	if((numberOfPOStypesRecorded == 0) || (numberOfPOStypesRecorded > 1))
+	if(numberOfPOStypesRecorded > 1)
 	{
 		ambiguous = true;
 	}
-	
+	if(POSambiguityInfo == 0)
+	{
+		if(treatWordAsAmbiguousIfNullPOSvalue)
+		{
+			ambiguous = true;
+		}
+		else
+		{
+			*unambiguousPOSvalue = 0;
+		}
+	}
+
+	#ifndef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_RESTRICT_POS_TYPES_TO_8BIT
+	if(!ambiguous)
+	{
+		//this is required when determinePOSambiguityInfoIsAmbiguous is being used to calculate unambiguousPOSvalue for special characters also
+		for(int POStype = 0; POStype<GIA_PREPROCESSOR_POS_TAGGER_DATABASE_POS_MAX_BITS_INTERMEDIATE; POStype++)
+		{
+			bool bitValue = SHAREDvars.getBitValue(POSambiguityInfo, POStype);
+			if(bitValue)
+			{
+				*unambiguousPOSvalue = POStype;
+			}
+		}
+	}
+	#endif
+				
 	return ambiguous;
 }	
 
@@ -907,7 +938,7 @@ bool GIApreprocessorPOStaggerClass::determinePOSambiguityInfoForSpecialCharacter
 			#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_RESTRICT_POS_TYPES_TO_8BIT
 			*POSambiguityInfo = GIA_PREPROCESSOR_POS_TAGGER_POS_AMBIGUITY_INFO_PUNCTUATION_MARK_CHARACTER_END_OF_SENTENCE;
 			#else
-			*POSambiguityInfo = SHAREDvars.setBitValue(GIA_PREPROCESSOR_POS_TAGGER_POS_AMBIGUITY_INFO_UNKNOWN, GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_INPUT_PUNCTUATION_MARK_CHARACTER_END_OF_SENTENCE, true);
+			*POSambiguityInfo = SHAREDvars.setBitValue(GIA_PREPROCESSOR_POS_TAGGER_POS_AMBIGUITY_INFO_UNKNOWN, GIA_PREPROCESSOR_POS_TAGGER_DATABASE_POS_INDEX_PUNCTUATION_MARK_CHARACTER_END_OF_SENTENCE, true);
 			#endif
 		}
 		if(SHAREDvars.charInCharArray(wordChar, nlpPunctionMarkCharacterArray, GIA_NLP_NUMBER_OF_PUNCTUATION_MARK_CHARACTERS))
@@ -916,7 +947,7 @@ bool GIApreprocessorPOStaggerClass::determinePOSambiguityInfoForSpecialCharacter
 			#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_RESTRICT_POS_TYPES_TO_8BIT
 			*POSambiguityInfo = GIA_PREPROCESSOR_POS_TAGGER_POS_AMBIGUITY_INFO_PUNCTUATION_MARK_CHARACTER_OTHER;
 			#else
-			*POSambiguityInfo = SHAREDvars.setBitValue(GIA_PREPROCESSOR_POS_TAGGER_POS_AMBIGUITY_INFO_UNKNOWN, GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_INPUT_PUNCTUATION_MARK_CHARACTER_OTHER, true);
+			*POSambiguityInfo = SHAREDvars.setBitValue(GIA_PREPROCESSOR_POS_TAGGER_POS_AMBIGUITY_INFO_UNKNOWN, GIA_PREPROCESSOR_POS_TAGGER_DATABASE_POS_INDEX_PUNCTUATION_MARK_CHARACTER_OTHER, true);
 			#endif
 		}
 		if(SHAREDvars.charInCharArray(wordChar, nlpQuotationMarkCharacterArray, GIA_NLP_NUMBER_OF_QUOTATIONMARK_CHARACTERS))
@@ -925,7 +956,7 @@ bool GIApreprocessorPOStaggerClass::determinePOSambiguityInfoForSpecialCharacter
 			#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_RESTRICT_POS_TYPES_TO_8BIT
 			*POSambiguityInfo = GIA_PREPROCESSOR_POS_TAGGER_POS_AMBIGUITY_INFO_QUOTATION_CHARACTER;
 			#else
-			*POSambiguityInfo = SHAREDvars.setBitValue(GIA_PREPROCESSOR_POS_TAGGER_POS_AMBIGUITY_INFO_UNKNOWN, GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_INPUT_QUOTATION_CHARACTER, true);
+			*POSambiguityInfo = SHAREDvars.setBitValue(GIA_PREPROCESSOR_POS_TAGGER_POS_AMBIGUITY_INFO_UNKNOWN, GIA_PREPROCESSOR_POS_TAGGER_DATABASE_POS_INDEX_QUOTATION_CHARACTER, true);
 			#endif
 		}
 	}
@@ -962,16 +993,36 @@ string GIApreprocessorPOStaggerClass::convertBoolVectorToString(vector<bool>* in
 	return boolVectorString;
 }
 
-string GIApreprocessorPOStaggerClass::convertUnsignedIntVectorToString(vector<unsigned int>* unsignedIntVector)
+string GIApreprocessorPOStaggerClass::convertPOSambiguityInfoPermutationToString(vector<unsigned int>* POSambiguityInfoPermutation)
 {
-	string intVectorString = "";
-	for(int i=0; i<unsignedIntVector->size(); i++)
+	string POSambiguityInfoPermutationString = "";
+	for(int i=0; i<POSambiguityInfoPermutation->size(); i++)
 	{
-		intVectorString = intVectorString + SHAREDvars.convertIntToString(unsignedIntVector->at(i));
+		POSambiguityInfoPermutationString = POSambiguityInfoPermutationString + (char)convertPOSambiguityInfoToChar((*POSambiguityInfoPermutation)[i]);
 	}
-	return intVectorString;
+	return POSambiguityInfoPermutationString;
 }
 
+unsigned char GIApreprocessorPOStaggerClass::convertPOSambiguityInfoToChar(unsigned int POSambiguityInfo)
+{
+	unsigned char POSambiguityInfoChar = (unsigned char)(0);
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_RESTRICT_POS_TYPES_TO_8BIT
+	POSambiguityInfoChar = (unsigned char)(POSambiguityInfo);	//(char)(POSambiguityInfoPermutation->at(i));	//OLD: SHAREDvars.convertIntToString(unsignedIntVector->at(i));	
+	#else
+	unsigned int unambiguousPOSvalue = INT_DEFAULT_VALUE;
+	if(!determinePOSambiguityInfoIsAmbiguous(POSambiguityInfo, &unambiguousPOSvalue, false))
+	{
+		//cout << "unambiguousPOSvalue = " << int(unambiguousPOSvalue) << endl;
+		//cout << "unambiguousPOSvalue = " << int((unsigned char)(char(int(unambiguousPOSvalue)))) << endl;
+		POSambiguityInfoChar = (unsigned char)(unambiguousPOSvalue);
+	}
+	else
+	{
+		cerr << "GIApreprocessorPOStaggerClass::convertPOSambiguityInfoPermutationToString error: !GIA_PREPROCESSOR_POS_TAGGER_DATABASE_RESTRICT_POS_TYPES_TO_8BIT && determinePOSambiguityInfoIsAmbiguous; verify that GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY_ONLY_TRAIN_UNAMBIGUOUS_PERMUTATIONS is true" << endl;
+	}
+	#endif
+	return POSambiguityInfoChar;
+}
 
 
 #endif

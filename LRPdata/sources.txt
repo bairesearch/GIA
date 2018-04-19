@@ -1,0 +1,15 @@
+Word lists/multiword lists;
+Nouns - Wordnet
+Pronouns - Grammar Revolution, English Club
+Determiners - Wiktionary 
+Interjections - Grammar Revolution
+Conjunctions - Grammar Revolution
+Prepositions - Wikipedia, English Club
+Adverbs - Wordnet
+Adjectives - Wordnet
+Verbs - Wordnet
+
+Special word lists;
+Phrasal Verbs - Cambridge
+Irregular Verbs - Wikipedia
+Not Fully Grammatized - Wikipedia
