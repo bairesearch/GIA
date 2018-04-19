@@ -27,7 +27,7 @@
  * File Name: GIAtxtRelTranslatorRules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f2j 04-April-2018
+ * Project Version: 3f2k 04-April-2018
  * /
  *******************************************************************************/
  
@@ -943,14 +943,16 @@
 					<example><!-- The house is blue, considering the apple. --></example>
 					<component referenceSetTypeHybrid="logicReferenceSet" componentType="group" groupTypeName="logicReferenceSetsOptional" groupName="referenceSetsOrLogicReferenceSets" semanticRelationIndexType="object" />
 					<component referenceSetTypeHybrid="NULL" componentType="string" stringType="explicit" word="," optional="true" />
-					<component referenceSetTypeHybrid="logicReferenceSetDelimiter" componentType="string" stringType="tokens" tokenLayer="logicReference" tokenClass="preposition" semanticRelationIndexType="delimiter" semanticRelationReturnEntity="true" />
+					<!--<component referenceSetTypeHybrid="logicReferenceSetDelimiter" componentType="string" stringType="tokens" tokenLayer="logicReference" tokenClass="preposition" semanticRelationIndexType="delimiter" semanticRelationReturnEntity="true" />-->
+					<component referenceSetTypeHybrid="logicReferenceSetDelimiter" componentType="string" stringType="LRPexternalWordLists" wordPOStype="preposition" semanticRelationIndexType="delimiter" semanticRelationReturnEntity="true" />
 					<component referenceSetTypeHybrid="NULL" componentType="string" stringType="explicit" word="that" optional="true" />
 					<component referenceSetTypeHybrid="logicReferenceSet" componentType="group" groupTypeName="logicReferenceSetsOptional" groupName="referenceSetsOrLogicReferenceSets" semanticRelationIndexType="subject" />
 				</group>
 				<group groupName="preposition2" semanticRelationFunctionName="logicCondition">
 					<!-- prep {that} [], [] -->
 					<example><!-- Considering that the house is blue, the cat is green. --></example>
-					<component referenceSetTypeHybrid="logicReferenceSetDelimiter" componentType="string" stringType="tokens" tokenLayer="logicReference" tokenClass="preposition" semanticRelationIndexType="delimiter" semanticRelationReturnEntity="true" />
+					<!--<component referenceSetTypeHybrid="logicReferenceSetDelimiter" componentType="string" stringType="tokens" tokenLayer="logicReference" tokenClass="preposition" semanticRelationIndexType="delimiter" semanticRelationReturnEntity="true" />-->
+					<component referenceSetTypeHybrid="logicReferenceSetDelimiter" componentType="string" stringType="LRPexternalWordLists" wordPOStype="preposition" semanticRelationIndexType="delimiter" semanticRelationReturnEntity="true" />
 					<component referenceSetTypeHybrid="NULL" componentType="string" stringType="explicit" word="that" optional="true" />
 					<component referenceSetTypeHybrid="logicReferenceSet" componentType="group" groupTypeName="logicReferenceSetsOptional" groupName="referenceSetsOrLogicReferenceSets" semanticRelationIndexType="subject" />
 					<component referenceSetTypeHybrid="NULL" componentType="string" stringType="explicit" word="," />
@@ -1031,6 +1033,7 @@
 					<!-- [] conjunctionSubcoordinating [] -->
 					<example><!-- I will ride the bike after Tom eats the apple. --></example>
 					<component referenceSetTypeHybrid="logicReferenceSet" componentType="group" groupTypeName="logicReferenceSetsOptional" groupName="referenceSetsOrLogicReferenceSets" semanticRelationIndexType="subject" semanticRelationReturnEntity="true" />
+					<component referenceSetTypeHybrid="NULL" componentType="string" stringType="explicit" word="," optional="true" />
 					<component referenceSetTypeHybrid="logicReferenceSetDelimiter" componentType="string" stringType="LRPexternalWordLists" wordPOStype="conjunctionSubcoordinating" semanticRelationIndexType="delimiter" />	<!-- semanticRelationReturnEntity="true" ? -->
 					<component referenceSetTypeHybrid="logicReferenceSet" componentType="group" groupTypeName="logicReferenceSetsOptional" groupName="referenceSetsOrLogicReferenceSets" semanticRelationIndexType="object" />
 				</group>
