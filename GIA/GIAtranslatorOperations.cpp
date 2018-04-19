@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f1l 22-February-2018
+ * Project Version: 3f1m 22-February-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
@@ -3142,5 +3142,29 @@ int GIAtranslatorOperationsClass::getEntityArrayMaxIndex(GIAtranslatorVariablesC
 	return GIAsentenceClass.getMaxIndexOfDynamicallyGeneratedEntity(translatorVariables->currentSentenceInList);	
 }
 #endif
+
+GIAentityConnection* GIAtranslatorOperationsClass::getConnection(GIAentityNode* entity, GIAentityNode* relationshipEntity)
+{
+	GIAentityConnection* connectionFound = NULL;
+	for(int connectionType=0; connectionType<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; connectionType++)
+	{
+		for(vector<GIAentityConnection*>::iterator connectionIter = entity->entityVectorConnectionsArray[connectionType].begin(); connectionIter != entity->entityVectorConnectionsArray[connectionType].end(); connectionIter++)
+		{
+			GIAentityConnection* relationship = *connectionIter;
+			if(relationship->entity == relationshipEntity)
+			{
+				//reverse connection found
+				connectionFound = relationship;
+			}
+		}
+	}
+	if(!connectionFound)
+	{
+		cerr << "GIAtranslatorOperationsClass::getConnection; !connectionFound " << endl;
+		exit(EXIT_ERROR);
+	}
+	return connectionFound;
+}
+
 
 	

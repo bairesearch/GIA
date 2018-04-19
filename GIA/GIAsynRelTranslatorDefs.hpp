@@ -26,7 +26,7 @@
  * File Name: GIAsynRelTranslatorDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f1l 22-February-2018
+ * Project Version: 3f1m 22-February-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -1062,13 +1062,16 @@ static string featurePOSindicatesNounTypeArray[FEATURE_POS_TAG_INDICATES_NOUN_NU
 #define GRAMMATICAL_DETERMINER_INDEFINITE_PLURAL "some"
 #define GRAMMATICAL_DETERMINER_INDEFINITE_SINGULAR_FIRST_LETTER_VOWEL "an"	//required for nlg only (a an is lemma of an)
 
-//not required for Stanford CoreNLP as "an" lemma is "a" (but is required for Relex)
-#define GRAMMATICAL_DETERMINER_LIMITED_INDEFINITE_NUMBER_OF_TYPES (2)
-static string grammaticalDeterminerIndefiniteArray[GRAMMATICAL_DETERMINER_LIMITED_INDEFINITE_NUMBER_OF_TYPES] = {GRAMMATICAL_DETERMINER_INDEFINITE_SINGULAR, GRAMMATICAL_DETERMINER_INDEFINITE_SINGULAR_FIRST_LETTER_VOWEL};	//NB this intentionally discludes GRAMMATICAL_DETERMINER_INDEFINITE_PLURAL "some" as this is handled the same as a definite determinier by GIA2 POS tag system
-
 #define GRAMMATICAL_DETERMINER_DEFINITE_EACH "each"
 #define GRAMMATICAL_DETERMINER_DEFINITE_EVERY "every"
 #define GRAMMATICAL_DETERMINER_INDEFINITE_ALL "all"
+
+//not required for Stanford CoreNLP as "an" lemma is "a" (but is required for Relex)
+#define GRAMMATICAL_DETERMINER_INDEFINITE_NUMBER_OF_TYPES (2)
+static string grammaticalDeterminerIndefiniteArray[GRAMMATICAL_DETERMINER_INDEFINITE_NUMBER_OF_TYPES] = {GRAMMATICAL_DETERMINER_INDEFINITE_SINGULAR, GRAMMATICAL_DETERMINER_INDEFINITE_SINGULAR_FIRST_LETTER_VOWEL};	//NB this intentionally discludes GRAMMATICAL_DETERMINER_INDEFINITE_PLURAL "some" as this is handled the same as a definite determinier by GIA2 POS tag system
+#define GRAMMATICAL_DETERMINER_DEFINITE_NUMBER_OF_TYPES (3)
+static string grammaticalDeterminerDefiniteArray[GRAMMATICAL_DETERMINER_DEFINITE_NUMBER_OF_TYPES] = {GRAMMATICAL_DETERMINER_DEFINITE, GRAMMATICAL_DETERMINER_DEFINITE_EACH, GRAMMATICAL_DETERMINER_DEFINITE_EVERY};	//NB this intentionally discludes GRAMMATICAL_DETERMINER_INDEFINITE_PLURAL "some" as this is handled the same as a definite determinier by GIA2 POS tag system
+
 #ifdef GIA_EXTRA_DETERMINERS
 #define GRAMMATICAL_DETERMINER_GOVERNOR_DEFINITE_ARRAY_NUMBER_OF_TYPES (3)
 static string relationDeterminerGovernorDefiniteArray[GRAMMATICAL_DETERMINER_GOVERNOR_DEFINITE_ARRAY_NUMBER_OF_TYPES] = {GRAMMATICAL_DETERMINER_DEFINITE, GRAMMATICAL_DETERMINER_DEFINITE_EACH, GRAMMATICAL_DETERMINER_DEFINITE_EVERY};

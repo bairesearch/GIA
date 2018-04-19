@@ -26,7 +26,7 @@
  * File Name: GIAneuralNetworkNonSemantic.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f1l 22-February-2018
+ * Project Version: 3f1m 22-February-2018
  * Description: Neural Network - visual representation of GIA contents in prototype biological neural network
  * /
  *******************************************************************************/
@@ -265,7 +265,7 @@ bool GIAneuralNetworkNonSemanticClass::detectIndefiniteConceptDefinition(GIAprep
 		indefiniteConceptDefinitionFound = true;	//eg "a dog is an animal"
 		
 		string firstWordInSubject = ((referenceSetSubject->subReferenceSetContents)[0])->tagName;
-		if(!SHAREDvars.textInTextArray(firstWordInSubject, grammaticalDeterminerIndefiniteArray, GRAMMATICAL_DETERMINER_LIMITED_INDEFINITE_NUMBER_OF_TYPES))
+		if(!SHAREDvars.textInTextArray(firstWordInSubject, grammaticalDeterminerIndefiniteArray, GRAMMATICAL_DETERMINER_INDEFINITE_NUMBER_OF_TYPES))
 		{
 			indefiniteConceptDefinitionFound = false;
 		}
@@ -277,7 +277,7 @@ bool GIAneuralNetworkNonSemanticClass::detectIndefiniteConceptDefinition(GIAprep
 		}
 
 		string firstWordInObject = ((referenceSetObject->subReferenceSetContents)[0])->tagName;
-		if(!SHAREDvars.textInTextArray(firstWordInObject, grammaticalDeterminerIndefiniteArray, GRAMMATICAL_DETERMINER_LIMITED_INDEFINITE_NUMBER_OF_TYPES))
+		if(!SHAREDvars.textInTextArray(firstWordInObject, grammaticalDeterminerIndefiniteArray, GRAMMATICAL_DETERMINER_INDEFINITE_NUMBER_OF_TYPES))
 		{
 			indefiniteConceptDefinitionFound = false;
 		}
@@ -337,7 +337,7 @@ bool GIAneuralNetworkNonSemanticClass::detectIfWordIsConcept(const vector<GIApre
 	if((wordIndex > 0) && (wordIndex < subReferenceSetContents->size()-2))
 	{		
 		string preceedingWord = ((*subReferenceSetContents)[wordIndex-1])->tagName;
-		if(SHAREDvars.textInTextArray(preceedingWord, grammaticalDeterminerIndefiniteArray, GRAMMATICAL_DETERMINER_LIMITED_INDEFINITE_NUMBER_OF_TYPES))
+		if(SHAREDvars.textInTextArray(preceedingWord, grammaticalDeterminerIndefiniteArray, GRAMMATICAL_DETERMINER_INDEFINITE_NUMBER_OF_TYPES))
 		{
 			if(indefiniteConceptDefinitionFound)
 			{

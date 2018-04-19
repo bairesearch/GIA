@@ -26,7 +26,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f1l 22-February-2018
+ * Project Version: 3f1m 22-February-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Main
  * /
@@ -135,16 +135,9 @@ static char errmessage[] = "Usage:  GIA.exe [options]\n\n\twhere options are any
 
 int main(const int argc, const char** argv)
 {
-	//print execution time
-	struct tm* current;
-	time_t now;
-	time(&now);
-	current = localtime(&now);
-	char timeAndDateString[100];
-	sprintf(timeAndDateString, "%i:%i:%i %.2i/%.2i/%i", current->tm_hour, current->tm_min, current->tm_sec, current->tm_mday, (current->tm_mon+1), (current->tm_year + TM_STRUCT_YEAR_OFFSET));
-	cout << "GIA execution time: " << timeAndDateString << " (start)" << endl;
-
 	bool result = true;
+
+	SHAREDvarsClass().printTime("GIA execution time: ", " (start)");
 
 	string currentFolder = SHAREDvarsClass().getCurrentDirectory();
 	string inputFolderLocal = currentFolder;
@@ -672,7 +665,7 @@ int main(const int argc, const char** argv)
 
 	if(SHAREDvarsClass().argumentExists(argc, argv, "-version"))
 	{
-		cout << "GIA.exe - Project Version: 3f1l 22-February-2018" << endl;
+		cout << "GIA.exe - Project Version: 3f1m 22-February-2018" << endl;
 		exit(EXIT_OK);
 	}
 
@@ -826,11 +819,7 @@ int main(const int argc, const char** argv)
 		#endif
 	);
 
-	//print execution time (end)
-	time(&now);
-	current = localtime(&now);
-	sprintf(timeAndDateString, "%i:%i:%i %.2i/%.2i/%i", current->tm_hour, current->tm_min, current->tm_sec, current->tm_mday, (current->tm_mon+1), (current->tm_year + TM_STRUCT_YEAR_OFFSET));
-	cout << "GIA execution time: " << timeAndDateString << " (finish)" << endl;
+	SHAREDvarsClass().printTime("GIA execution time: ", " (finish)");
 }
 #endif
 

@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorParser.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f1l 22-February-2018
+ * Project Version: 3f1m 22-February-2018
  * Requirements: 
  * Description: Textual Relation Translator Parser
  * /
@@ -64,6 +64,7 @@
 
 class GIAtxtRelTranslatorParserClass
 {
+	private: GIAentityNodeClassClass GIAentityNodeClassObject;
 	private: GIAsentenceClassClass GIAsentenceClass;
 	//#ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3_USE_SEM_REL_TRANSLATOR_PARSER
 	private: GIAsemRelTranslatorOperationsClass GIAsemRelTranslatorOperations;
@@ -93,6 +94,9 @@ class GIAtxtRelTranslatorParserClass
 		public: bool generateSemanticRelationsFromTxtRelationsWrapperSentences(GIAtranslatorVariablesClass* translatorVariables);
 		#endif
 		private: bool generateSemanticRelationsFromTxtRelationsWrapper(GIAtranslatorVariablesClass* translatorVariables);
+			#ifdef GIA_TXT_REL_TRANSLATOR_RULES_ASSUME_HIGH_LEVEL_REFERENCE_SETS_DO_NOT_CONTAIN_EXPLICIT_SEMANTIC_RELATION_FUNCTION
+			private: bool reconcileSameReferenceSetConnectionsForAllRelationshipEntities(GIAtranslatorVariablesClass* translatorVariables);
+			#endif
 			private: void setPreprocessorSentenceTranslatorEntityReferences(GIApreprocessorSentence* currentPreprocessorSentenceInList, constEffective vector<GIAentityNode*>* GIAentityNodeArray);
 			private: bool generateSemanticRelationsFromTxtRelations(GIAtranslatorVariablesClass* translatorVariables, GIAtxtRelTranslatorRulesGroup* currentParseTreeGroup, GIAentityNode** semanticRelationReturnEntity, GIAentityNode** semanticRelationReturnEntitySubject, GIAentityNode** semanticRelationReturnEntityDelimiter, string* semanticRelationReturnFunctionNameRecord, vector<GIAentityNode*>* semanticRelationReturnFunctionEntityArray, int layer);
 				private: bool createSemanticRelationOrdered(GIAtranslatorVariablesClass* translatorVariables, const string semanticRelationFunctionName, const string semanticRelationFunctionConditionNewName, vector<GIAentityNode*>* entitySemanticRelationFunctionListArray, GIAentityNode* entitySemanticRelationFunctionSubject, GIAentityNode* entitySemanticRelationFunctionObject, GIAentityNode* entitySemanticRelationFunctionDelimiter, const bool sameReferenceSet);

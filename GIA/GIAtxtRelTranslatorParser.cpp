@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f1l 22-February-2018
+ * Project Version: 3f1m 22-February-2018
  * Requirements: 
  * Description: Textual Relation Translator Parser
  * /
@@ -340,10 +340,81 @@ bool GIAtxtRelTranslatorParserClass::generateSemanticRelationsFromTxtRelationsWr
 	{
 		result = false;
 	}
-	
+
+	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_ASSUME_HIGH_LEVEL_REFERENCE_SETS_DO_NOT_CONTAIN_EXPLICIT_SEMANTIC_RELATION_FUNCTION
+	if(!reconcileSameReferenceSetConnectionsForAllRelationshipEntities(translatorVariables))
+	{
+		result = false;
+	}
+	#endif
+		
 	return result;
 }
 
+#ifdef GIA_TXT_REL_TRANSLATOR_RULES_ASSUME_HIGH_LEVEL_REFERENCE_SETS_DO_NOT_CONTAIN_EXPLICIT_SEMANTIC_RELATION_FUNCTION
+bool GIAtxtRelTranslatorParserClass::reconcileSameReferenceSetConnectionsForAllRelationshipEntities(GIAtranslatorVariablesClass* translatorVariables)
+{
+	bool result = true;
+	
+	//correct reconcile !sameReferenceSet connections for all relationship nodes (where only a single side; incoming/outgoing has been defined correctly as !sameReferenceSet)
+	for(int w=0; w<GIAtranslatorOperations.getEntityArrayMaxIndex(translatorVariables); w++)
+	{
+		if((*translatorVariables->GIAentityNodeArrayFilled)[w])
+		{
+			GIAentityNode* relationshipEntity = (*translatorVariables->GIAentityNodeArray)[w];
+			if(GIAentityNodeClassObject.entityIsRelationship(relationshipEntity))
+			{
+				GIAentityConnection* relationshipSubject = NULL;
+				GIAentityNode* relationshipSubjectEntity = NULL;
+				GIAentityConnection* relationshipObject = NULL;
+				GIAentityNode* relationshipObjectEntity = NULL;
+				bool sameReferenceSetRelationshipFound = true;
+				if(!(relationshipEntity->relationshipSubjectEntity->empty()))
+				{
+					relationshipSubject = (relationshipEntity->relationshipSubjectEntity->back());
+					if(!(relationshipSubject->sameReferenceSet))
+					{
+						sameReferenceSetRelationshipFound = false;
+					}
+					relationshipSubjectEntity = relationshipSubject->entity;
+				}
+				else
+				{
+					cerr << "GIAtxtRelTranslatorParserClass::reconcileSameReferenceSetConnectionsForAllRelationshipEntities error; relationshipEntity->relationshipSubjectEntity->empty()" << endl;
+					exit(EXIT_ERROR);
+				}
+				if(!(relationshipEntity->relationshipObjectEntity->empty()))
+				{
+					relationshipObject = (relationshipEntity->relationshipObjectEntity->back());
+					if(!(relationshipObject->sameReferenceSet))
+					{
+						sameReferenceSetRelationshipFound = false;
+					}
+					relationshipObjectEntity = relationshipObject->entity;
+				}
+				else
+				{
+					cerr << "GIAtxtRelTranslatorParserClass::reconcileSameReferenceSetConnectionsForAllRelationshipEntities error; relationshipEntity->relationshipObjectEntity->empty()" << endl;
+					exit(EXIT_ERROR);
+				}
+				
+				if(!sameReferenceSetRelationshipFound)
+				{
+					relationshipSubject->sameReferenceSet = false;
+					relationshipObject->sameReferenceSet = false;
+					GIAentityConnection* subjectRelationshipReverse = GIAtranslatorOperations.getConnection(relationshipSubjectEntity, relationshipEntity);
+					GIAentityConnection* objectRelationshipReverse = GIAtranslatorOperations.getConnection(relationshipObjectEntity, relationshipEntity);
+					subjectRelationshipReverse->sameReferenceSet = false;
+					objectRelationshipReverse->sameReferenceSet = false;
+				}
+			}
+		}
+	}
+	
+	return result;
+}
+#endif
+	
 void GIAtxtRelTranslatorParserClass::setPreprocessorSentenceTranslatorEntityReferences(GIApreprocessorSentence* currentPreprocessorSentenceInList, constEffective vector<GIAentityNode*>* GIAentityNodeArray)
 {
 	int numberOfWordsInSentence = (currentPreprocessorSentenceInList->sentenceContentsLRP).size();	//+1?
@@ -628,6 +699,23 @@ bool GIAtxtRelTranslatorParserClass::generateSemanticRelationsFromTxtRelations(G
 			}
 			*/
 
+			//cout << "\n\n currentParseTreeGroup->groupTypeNameBackup = " << currentParseTreeGroup->groupTypeNameBackup << endl;
+			//cout << "currentParseTreeGroup->groupName = " << currentParseTreeGroup->groupName << endl;
+			#ifdef GIA_TXT_REL_TRANSLATOR_RULES_ASSUME_HIGH_LEVEL_REFERENCE_SETS_DO_NOT_CONTAIN_EXPLICIT_SEMANTIC_RELATION_FUNCTION
+			bool sameReferenceSet = false;
+			if((currentParseTreeGroup->groupTypeNameBackup == GIAtxtRelTranslatorRulesGroupsTypes[GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_TYPE_LOGICREFERENCESETS]) ||
+			(currentParseTreeGroup->groupTypeNameBackup == GIAtxtRelTranslatorRulesGroupsTypes[GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_TYPE_REFERENCESETS]))
+			{
+				sameReferenceSet = false;
+			}
+			else
+			{
+				sameReferenceSet = true;
+			}
+			#else
+			bool sameReferenceSet = true;
+			#endif
+			
 			if(tempEntity->semanticRelationReturnFunctionNameIndexType == GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_SEMANTIC_RELATION_INDEX_TYPE_LIST)
 			{
 				cerr << "GIAtxtRelTranslatorParserClass::generateSemanticRelationsFromTxtRelations{} error: Illegal semanticRelationReturnFunctionNameIndexType; (tempEntity->semanticRelationReturnFunctionNameIndexType == GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_SEMANTIC_RELATION_INDEX_TYPE_LIST)" << endl;
@@ -638,7 +726,6 @@ bool GIAtxtRelTranslatorParserClass::generateSemanticRelationsFromTxtRelations(G
 				if(entitySemanticRelationFunctionSubject[GIA_TXT_REL_TRANSLATOR_SEMANTIC_RELATION_RETURN_FUNCTION_NAME_INDEX_TYPE_SEMANTIC_FUNCTION_EXECUTION_INDEX] != NULL)
 				{
 					//bool sameReferenceSet = tempEntity->semanticRelationReturnFunctionNameSameReferenceSet;
-					bool sameReferenceSet = true;
 					createSemanticRelationPair(translatorVariables, tempEntity->semanticRelationReturnFunctionName, entitySemanticRelationFunctionSubject[GIA_TXT_REL_TRANSLATOR_SEMANTIC_RELATION_RETURN_FUNCTION_NAME_INDEX_TYPE_SEMANTIC_FUNCTION_EXECUTION_INDEX], tempEntity, sameReferenceSet);
 					iter1 = semanticRelationReturnFunctionEntityArray->erase(iter1);
 					erasedElement = true;
@@ -654,7 +741,6 @@ bool GIAtxtRelTranslatorParserClass::generateSemanticRelationsFromTxtRelations(G
 				if(entitySemanticRelationFunctionDelimiter[GIA_TXT_REL_TRANSLATOR_SEMANTIC_RELATION_RETURN_FUNCTION_NAME_INDEX_TYPE_SEMANTIC_FUNCTION_EXECUTION_INDEX] != NULL)
 				{
 					//bool sameReferenceSet = tempEntity->semanticRelationReturnFunctionNameSameReferenceSet;
-					bool sameReferenceSet = true;
 					createSemanticRelationPair(translatorVariables, tempEntity->semanticRelationReturnFunctionName, entitySemanticRelationFunctionDelimiter[GIA_TXT_REL_TRANSLATOR_SEMANTIC_RELATION_RETURN_FUNCTION_NAME_INDEX_TYPE_SEMANTIC_FUNCTION_EXECUTION_INDEX], tempEntity, sameReferenceSet);
 					iter1 = semanticRelationReturnFunctionEntityArray->erase(iter1);
 					erasedElement = true;
@@ -690,6 +776,8 @@ bool GIAtxtRelTranslatorParserClass::generateSemanticRelationsFromTxtRelations(G
 			#endif
 
 			bool sameReferenceSet = false;
+			//cout << "\n\n currentParseTreeGroup->groupTypeNameBackup = " << currentParseTreeGroup->groupTypeNameBackup << endl;
+			//cout << "currentParseTreeGroup->groupName = " << currentParseTreeGroup->groupName << endl;
 			if((currentParseTreeGroup->groupTypeNameBackup == GIAtxtRelTranslatorRulesGroupsTypes[GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_TYPE_LOGICREFERENCESETS]) ||
 			(currentParseTreeGroup->groupTypeNameBackup == GIAtxtRelTranslatorRulesGroupsTypes[GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_TYPE_REFERENCESETS]))
 			{
@@ -1495,15 +1583,19 @@ void GIAtxtRelTranslatorParserClass::defineSubstancesBasedOnNetworkAndDeterminer
 			
 			bool isConcept = false;
 			if(entity->grammaticalWordTypeTemp == GRAMMATICAL_WORD_TYPE_NOUN)
-			{
+			{				
 				bool hasDeterminer = false;
 				bool indefiniteDeterminer = false;
 				if(entity->semanticRelationWordDeterminer != "")
 				{
 					hasDeterminer = true;
-					if(SHAREDvars.textInTextArray(entity->semanticRelationWordDeterminer, grammaticalDeterminerIndefiniteArray, GRAMMATICAL_DETERMINER_LIMITED_INDEFINITE_NUMBER_OF_TYPES))
+					if(SHAREDvars.textInTextArray(entity->semanticRelationWordDeterminer, grammaticalDeterminerIndefiniteArray, GRAMMATICAL_DETERMINER_INDEFINITE_NUMBER_OF_TYPES))
 					{
 						indefiniteDeterminer = true;
+					}
+					if(SHAREDvars.textInTextArray(entity->semanticRelationWordDeterminer, grammaticalDeterminerDefiniteArray, GRAMMATICAL_DETERMINER_DEFINITE_NUMBER_OF_TYPES))
+					{
+						entity->grammaticalDefiniteTemp = true;
 					}
 				}
 				

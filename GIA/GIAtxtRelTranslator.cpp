@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f1l 22-February-2018
+ * Project Version: 3f1m 22-February-2018
  * Requirements: requires plain text file
  * Description: Textual relation translator
  * /
@@ -332,7 +332,7 @@ bool GIAtxtRelTranslatorClass::generateParseTreeIntro(vector<GIAtxtRelTranslator
 			#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS
 			cout << "groupType->referenceSetType = " << groupType->referenceSetType << endl;
 			#endif
-			
+
 			GIAtxtRelTranslatorRulesGroup* firstParseTreeGroupTemp = new GIAtxtRelTranslatorRulesGroup();
 			int performanceTemp = 0;
 			bool passedTemp = false;
@@ -346,9 +346,10 @@ bool GIAtxtRelTranslatorClass::generateParseTreeIntro(vector<GIAtxtRelTranslator
 				//cout << "passedTemp" << endl;
 			}
 			updatePerformance(performanceTemp, &performanceMax, performance, firstParseTreeGroup, firstParseTreeGroupTemp, passedTemp, &minIndexOfMatchesFoundBackupOptimum, sentenceContents, minIndexOfMatchesFoundBackup2, NULL);
-		
-			//cout << "passedTemp" << endl;
 			
+			//cout << "firstParseTreeGroup->groupTypeNameBackup = " << firstParseTreeGroup->groupTypeNameBackup << endl;
+			
+			//cout << "passedTemp" << endl;
 		}
 	}
 	
@@ -422,7 +423,6 @@ bool GIAtxtRelTranslatorClass::generateParseTreeGroupType(GIAtxtRelTranslatorRul
 			#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS
 			GIAtxtRelTranslatorRules.printParseTreeDebugIndentation(layer);
 			cout << "group->groupName = " << group->groupName << endl;
-
 			#endif
 
 			GIAtxtRelTranslatorRulesGroup* currentParseTreeGroupTemp = new GIAtxtRelTranslatorRulesGroup(*group);
@@ -1016,7 +1016,7 @@ bool GIAtxtRelTranslatorClass::updatePerformance(const int performanceTemp, int*
 			*performance = performanceTemp;
 			GIAtxtRelTranslatorRulesGroupClassObject.copyParseGroupInfo(currentParseTreeGroupTemp, currentParseTreeGroup);
 			
-			#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_RECORD_COMPONENT_PARSED_GROUP_REF_NAME_FOR_PRINT
+			#ifdef GIA_TXT_REL_TRANSLATOR_RULES_RECORD_COMPONENT_PARSED_GROUP_REF_NAME_FOR_PRINT
 			if(previousParseTreeComponent != NULL)
 			{
 				previousParseTreeComponent->groupRefName = currentParseTreeGroupTemp->groupName;

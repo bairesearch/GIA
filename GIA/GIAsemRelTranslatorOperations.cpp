@@ -26,7 +26,7 @@
  * File Name: GIAsemRelTranslatorOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f1l 22-February-2018
+ * Project Version: 3f1m 22-February-2018
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  * Description: Semantic Relation Translator
  * /
@@ -535,7 +535,7 @@ void GIAsemRelTranslatorOperationsClass::determineGIAconnectionistNetworkPOStype
 	}
 
 	#ifdef GIA_SEM_REL_TRANSLATOR_RECORD_DETERMINERS_AS_DEFINITE_INDEFINITE_SPECIFIC
-	for(int i=0; i<GRAMMATICAL_DETERMINER_LIMITED_INDEFINITE_NUMBER_OF_TYPES; i++)
+	for(int i=0; i<GRAMMATICAL_DETERMINER_INDEFINITE_NUMBER_OF_TYPES; i++)
 	{
 		if(currentFeatureInSentence->lemma == grammaticalDeterminerIndefiniteArray[i])
 		{

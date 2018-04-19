@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f1l 22-February-2018
+ * Project Version: 3f1m 22-February-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
@@ -1012,6 +1012,7 @@ void GIAtranslatorReferencingClass::identifyReferenceSetNetworkIndexEntityEntran
 			if(currentInstance->grammaticalDefiniteTemp)
 			{
 				passDefiniteSetChecks = true;
+				//cout << "passDefiniteSetChecks" << endl;
 			}
 			#ifdef GIA_ADVANCED_REFERENCING_IDENTIFY_DEFINITE_SETS_ACCEPT_PROPERNOUNS
 			if(currentInstance->grammaticalProperNounTemp)
@@ -1048,7 +1049,7 @@ void GIAtranslatorReferencingClass::identifyReferenceSetNetworkIndexEntityEntran
 			if(passDefiniteSetChecks)
 			{
 			#endif
-
+				//cout << "passDefiniteSetChecks" << endl;
 
 				int minimumEntityIndexOfReferenceSet = currentInstance->entityIndexTemp;	//assume that it is not an artificial property/condition entity (so it has a meaningful entity index with respect to the sentence contents)
 				#ifdef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
@@ -1533,7 +1534,7 @@ void GIAtranslatorReferencingClass::linkAdvancedReferencesGIA(GIAtranslatorVaria
 							#endif
 							
 							#ifdef GIA_TRANSLATOR_WITHOUT_SYN_REL_TRANSLATOR_FEATURES
-							GIAentityNode* entityBackup = (*translatorVariables->GIAentityNodeArray)[referenceEntityIndex];
+							//GIAentityNode* entityBackup = (*translatorVariables->GIAentityNodeArray)[referenceEntityIndex];
 							#endif
 							
 							(*translatorVariables->GIAentityNodeArray)[referenceEntityIndex] = referenceSource;
@@ -1552,14 +1553,14 @@ void GIAtranslatorReferencingClass::linkAdvancedReferencesGIA(GIAtranslatorVaria
 							if(referenceSource->grammaticalPredeterminerTemp == GRAMMATICAL_PREDETERMINER_UNDEFINED)
 							{
 								#ifdef GIA_TRANSLATOR_WITHOUT_SYN_REL_TRANSLATOR_FEATURES
-								referenceSource->grammaticalPredeterminerTemp = entityBackup->grammaticalPredeterminerTemp;
+								//referenceSource->grammaticalPredeterminerTemp = entityBackup->grammaticalPredeterminerTemp;
 								#else
 								referenceSource->grammaticalPredeterminerTemp = (*translatorVariables->featureArrayTemp)[referenceEntityIndex]->grammaticalPredeterminer;	//only update the default (sentence independent) predeterminer of reference if no predeterminer found previously - NB the default (sentence independent) predeterminer is used by GIAxmlConversion only at present and shouldnt be used at all by !GIA_DISABLE_CROSS_SENTENCE_REFERENCING
 								#endif
 							}
 							#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_REFERENCING_OF_ENTITIES_WITH_PREDETERMINERS
 							#ifdef GIA_TRANSLATOR_WITHOUT_SYN_REL_TRANSLATOR_FEATURES
-							referenceSource->grammaticalPredeterminerTempSentenceArray.insert(make_pair(currentSentenceInList->sentenceIndex, entityBackup->grammaticalPredeterminer));
+							//referenceSource->grammaticalPredeterminerTempSentenceArray.insert(make_pair(currentSentenceInList->sentenceIndex, entityBackup->grammaticalPredeterminer));
 							#else
 							referenceSource->grammaticalPredeterminerTempSentenceArray.insert(make_pair(currentSentenceInList->sentenceIndex, (*translatorVariables->featureArrayTemp)[referenceEntityIndex]->grammaticalPredeterminer));	//added 2i34a
 							#endif
