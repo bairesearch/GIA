@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorRules.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f1h 22-February-2018
+ * Project Version: 3f1i 22-February-2018
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Rules
  * /
@@ -110,7 +110,7 @@ bool GIAtxtRelTranslatorRulesClass::extractGIAtxtRelTranslatorRulesGroups(vector
 						groupType->groupTypeName = groupTypeName;
 						groupType->referenceSetType = referenceSetTypeInt;
 						GIAtxtRelTranslatorRulesGroupTypes->push_back(groupType);
-						cout << "groupType->groupTypeName = " << groupType->groupTypeName << endl;
+						//cout << "groupType->groupTypeName = " << groupType->groupTypeName << endl;
 						
 						XMLparserTag* firstTagInTxtRelTranslatorGroupTypeTag = XMLparserClass.parseTagDownALevel(currentTagInGroupsTag, GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_TAG_groupType, &result);
 

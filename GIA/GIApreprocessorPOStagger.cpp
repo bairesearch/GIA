@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorPOStagger.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f1h 22-February-2018
+ * Project Version: 3f1i 22-February-2018
  * Requirements: requires plain text file
  * Description: Preprocessor POS tagger
  * /
@@ -1202,7 +1202,7 @@ bool GIApreprocessorPOStaggerClass::determinePOSambiguityInfo(GIApreprocessorWor
 	GIApreprocessorMultiwordReductionWord* contextWordFound = NULL;
 	#ifdef GIA_PREPROCESSOR_INITIALISE_WORD_INDEX_LIST_FROM_LRP_FILES_SUPPORT_UPPERCASE_PROPERNOUN_WORD_LISTS
 	//CHECKTHIS: verify that currentWord->tagName is case sensitive
-	cout << "contextWord->tagName = " << contextWord->tagName << endl;
+	//cout << "contextWord->tagName = " << contextWord->tagName << endl;
 	if(findWordInWordListAllTypesWithPOSambiguityInfo(contextWord->tagName, &contextWordFound, contextWordPOSambiguityInfo))
 	{
 		foundWordInLists = true;
@@ -1210,7 +1210,7 @@ bool GIApreprocessorPOStaggerClass::determinePOSambiguityInfo(GIApreprocessorWor
 	else
 	{
 		string contextWordLowerCase = SHAREDvars.convertStringToLowerCase(&(contextWord->tagName));
-		cout << "contextWordLowerCase = " << contextWordLowerCase << endl;
+		//cout << "contextWordLowerCase = " << contextWordLowerCase << endl;
 		if(findWordInWordListAllTypesWithPOSambiguityInfo(contextWordLowerCase, &contextWordFound, contextWordPOSambiguityInfo))
 		{
 			foundWordInLists = true;

@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f1h 22-February-2018
+ * Project Version: 3f1i 22-February-2018
  * Requirements: requires plain text file
  * Description: Textual relation translator
  * /
@@ -322,7 +322,9 @@ bool GIAtxtRelTranslatorClass::generateParseTreeIntro(vector<GIAtxtRelTranslator
 	int performanceMax = 0;
 	for(int i=0; i<GIAtxtRelTranslatorRulesGroupTypes->size(); i++)
 	{
+		#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS
 		cout << "i = " << i << endl;
+		#endif
 		
 		GIAtxtRelTranslatorRulesGroupType* groupType = GIAtxtRelTranslatorRulesGroupTypes->at(i);
 		
@@ -332,7 +334,9 @@ bool GIAtxtRelTranslatorClass::generateParseTreeIntro(vector<GIAtxtRelTranslator
 		(groupType->referenceSetType == GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_REFERENCE_SET_TYPE_REFERENCESET))
 		//if(groupType->groupTypeName == GIAtxtRelTranslatorRulesGroupsTypes[GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_TYPE_LOGICREFERENCESETSOPTIONAL])
 		{
+			#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS
 			cout << "groupType->referenceSetType = " << groupType->referenceSetType << endl;
+			#endif
 			
 			GIAtxtRelTranslatorRulesGroup* firstParseTreeGroupTemp = new GIAtxtRelTranslatorRulesGroup();
 			int performanceTemp = 0;
@@ -355,7 +359,7 @@ bool GIAtxtRelTranslatorClass::generateParseTreeIntro(vector<GIAtxtRelTranslator
 	
 	if(result)
 	{
-		cout << "performance = " << performance << endl;
+		//cout << "performance = " << performance << endl;
 		restoreAllWordsAlreadyFoundMatchInComponent(sentenceContents, *performance);
 	}
 	else
