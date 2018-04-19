@@ -26,7 +26,7 @@
  * File Name: GIAsemRelTranslatorDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f1j 22-February-2018
+ * Project Version: 3f1k 22-February-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -369,13 +369,13 @@ static string GIA2semanticDependencyRelationSecondaryNameArray[GIA_SEM_REL_TRANS
 #define GIA_ENTITY_VECTOR_CONNECTION_TYPE_LOGIC_CONCLUSION (33)	//direct
 #define GIA_ENTITY_VECTOR_CONNECTION_TYPE_LOGIC_CONJUNCTION (34)	//direct
 //#endif
-#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_TO (35)
+#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_NEW (35)
 #define GIA_ENTITY_VECTOR_CONNECTION_TYPE_MEASURE (36)
 #define GIA_ENTITY_VECTOR_CONNECTION_TYPE_MEASURE_PER (37)
 #endif
 #ifdef GIA_TXT_REL_TRANSLATOR_RULES
 #define GIA_SEM_REL_TRANSLATOR_SEMANTIC_DEPENDENCY_RELATION_NUMBER_OF_TYPES (GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES + 12 + 15)	//extends GIAentityNodeClass.h GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES
-static string GIA2semanticDependencyRelationNameArray[GIA_SEM_REL_TRANSLATOR_SEMANTIC_DEPENDENCY_RELATION_NUMBER_OF_TYPES] = {"action", "actionReverse", "condition", "conditionReverse", "property", "propertyReverse", "definition", "definitionReverse", "relationshipSubject", "relationshipObject", "instance", "instanceReverse", "propertyDirect", "definitionDirect", "determiner", "modalAuxiliaryOrCopula", "quantity", "compositionAuxiliaryNOTUSED", "definitionDirectAlias", "definitionAlias", "definitionReverseAlias", "prenominalModifier", "none", "multiwordPreposition", "multiwordAlias", "multiwordDate", "numerosityPredeterminer", "logicDefinition", "logicDefinitionReverse", "logicAction", "logicActionReverse", "logicCondition", "logicConditionReverse", "logicConclusion", "logicConjunction", "conditionTo", "measure", "measurePer"};
+static string GIA2semanticDependencyRelationNameArray[GIA_SEM_REL_TRANSLATOR_SEMANTIC_DEPENDENCY_RELATION_NUMBER_OF_TYPES] = {"action", "actionReverse", "condition", "conditionReverse", "property", "propertyReverse", "definition", "definitionReverse", "relationshipSubject", "relationshipObject", "instance", "instanceReverse", "propertyDirect", "definitionDirect", "determiner", "modalAuxiliaryOrCopula", "quantity", "compositionAuxiliaryNOTUSED", "definitionDirectAlias", "definitionAlias", "definitionReverseAlias", "prenominalModifier", "none", "multiwordPreposition", "multiwordAlias", "multiwordDate", "numerosityPredeterminer", "logicDefinition", "logicDefinitionReverse", "logicAction", "logicActionReverse", "logicCondition", "logicConditionReverse", "logicConclusion", "logicConjunction", "conditionNew", "measure", "measurePer"};
 #else
 #define GIA_SEM_REL_TRANSLATOR_SEMANTIC_DEPENDENCY_RELATION_NUMBER_OF_TYPES (GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES + 12)	//extends GIAentityNodeClass.h GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES
 static string GIA2semanticDependencyRelationNameArray[GIA_SEM_REL_TRANSLATOR_SEMANTIC_DEPENDENCY_RELATION_NUMBER_OF_TYPES] = {"action", "actionReverse", "condition", "conditionReverse", "property", "propertyReverse", "definition", "definitionReverse", "relationshipSubject", "relationshipObject", "instance", "instanceReverse", "propertyDirect", "definitionDirect", "determiner", "modalAuxiliaryOrCopula", "quantity", "compositionAuxiliaryNOTUSED", "definitionDirectAlias", "definitionAlias", "definitionReverseAlias", "prenominalModifier", "none"};

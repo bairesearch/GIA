@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorRulesGroupClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f1j 22-February-2018
+ * Project Version: 3f1k 22-February-2018
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Rules
  * /
@@ -44,6 +44,9 @@ GIAtxtRelTranslatorRulesGroup::GIAtxtRelTranslatorRulesGroup(void)
 	{
 		semanticRelationFunctionName[i] = "";
 	}
+	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_NEW_CONDITIONS
+	semanticRelationFunctionConditionNewName = "";
+	#endif
 	groupName = "";
 	previousWordPOStype = "";
 	
@@ -74,6 +77,9 @@ void GIAtxtRelTranslatorRulesGroupClass::copyParseGroupInfo(GIAtxtRelTranslatorR
 	//NOT ALLOWED as will overwrite previous tree linking to currentParseTreeGroup:  *currentParseTreeGroup = currentParseTreeGroupTemp;
 	
 	currentParseTreeGroup->semanticRelationFunctionName = currentParseTreeGroupTemp->semanticRelationFunctionName;
+	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_NEW_CONDITIONS
+	currentParseTreeGroup->semanticRelationFunctionConditionNewName = currentParseTreeGroupTemp->semanticRelationFunctionConditionNewName;
+	#endif
 	currentParseTreeGroup->groupName = currentParseTreeGroupTemp->groupName;
 	currentParseTreeGroup->previousWordPOStype = currentParseTreeGroupTemp->previousWordPOStype;
 	

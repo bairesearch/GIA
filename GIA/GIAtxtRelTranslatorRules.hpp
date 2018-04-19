@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorRules.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f1j 22-February-2018
+ * Project Version: 3f1k 22-February-2018
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Rules
  * /
@@ -86,11 +86,11 @@
 #define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_logicCondition 35
 #define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_logicConclusion 36
 #define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_logicConjunction 37
-#define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_conditionTo 38
+#define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_conditionNew 38
 #define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_attributeMeasure 39
 #define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_attributeMeasurePer 40
 #define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_NUMBER_OF_TYPES (41)
-static string GIAtxtRelSemanticDependencyRelationNameArray[GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_NUMBER_OF_TYPES] = {"unknown", "createSubstanceInstance", "createActionInstance", "NA", "property", "action", "actionSubject", "actionObject", "condition", "NA", "NA", "definition", "definitionAlias", "definitionAliasWithAuxiliary", "attributeQuantity", "definitionWithAuxiliary", "propertyWithAuxiliary", "definitionSubject", "definitionObject", "propertySubject", "propertyObject", "conditionSubject", "conditionObject", "tenseAttributeModalAuxiliaryOrCopula", "multiwordPreposition", "multiwordNoun", "multiwordAlias", "multiwordDate", "numerosityPredeterminer", "numerosityDeterminer", "propertyReverse", "actionSubjectReverse", "actionObjectReverse", "logicDefinition", "logicAction", "logicCondition", "logicConclusion", "logicConjunction", "conditionTo", "attributeMeasure", "attributeMeasurePer"};
+static string GIAtxtRelSemanticDependencyRelationNameArray[GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_NUMBER_OF_TYPES] = {"unknown", "createSubstanceInstance", "createActionInstance", "NA", "property", "action", "actionSubject", "actionObject", "condition", "NA", "NA", "definition", "definitionAlias", "definitionAliasWithAuxiliary", "attributeQuantity", "definitionWithAuxiliary", "propertyWithAuxiliary", "definitionSubject", "definitionObject", "propertySubject", "propertyObject", "conditionSubject", "conditionObject", "tenseAttributeModalAuxiliaryOrCopula", "multiwordPreposition", "multiwordNoun", "multiwordAlias", "multiwordDate", "numerosityPredeterminer", "numerosityDeterminer", "propertyReverse", "actionSubjectReverse", "actionObjectReverse", "logicDefinition", "logicAction", "logicCondition", "logicConclusion", "logicConjunction", "conditionNew", "attributeMeasure", "attributeMeasurePer"};
 
 #define GIA_TXT_REL_TRANSLATOR_SEMANTIC_RELATION_RETURN_FUNCTION_NAME_INDEX_TYPE_SEMANTIC_FUNCTION_EXECUTION_INDEX (0)	//semanticRelationReturnFunctionNameIndexType "subject"/"delimiter" refers to "subject"/"delimiter" of semantic relation function 0
 
@@ -103,6 +103,7 @@ static string GIAtxtRelSemanticDependencyRelationNameArray[GIA_TXT_REL_TRANSLATO
 				#define GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_GROUP_ATTRIBUTE_groupName ((string)"groupName")	//enables referencing of specific groups by other groups (not just its group type)
 				#define GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_GROUP_ATTRIBUTE_semanticRelationFunctionName ((string)"semanticRelationFunctionName")	//the semantic relation to be applied to the current component (requires a subject or delimiter and an object)
 				#define GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_GROUP_ATTRIBUTE_semanticRelationFunctionName2 ((string)"semanticRelationFunctionName2")	//the semantic relation to be applied to the current component (requires a subject or delimiter and an object) #2
+					#define GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_GROUP_ATTRIBUTE_semanticRelationFunctionConditionNewName ((string)"semanticRelationFunctionConditionNewName")	
 				#define GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_GROUP_ATTRIBUTE_previousWordPOStype ((string)"previousWordPOStype")	//ensures that the previous referenceSet delimiter was preposition/verb before executing this group
 				//REDUNDANT (see special case 1 for solution): #define GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_GROUP_ATTRIBUTE_semanticRelationReturnEntityAndConnectToSubject ((string)"semanticRelationReturnEntityAndConnectToSubject")	//requires the following attributes to be specified for one of its components: semanticRelationReturnFunctionName="conditionSubject" semanticRelationReturnEntity="true"
 				#define GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_GROUP_TAG_component ((string)"component")

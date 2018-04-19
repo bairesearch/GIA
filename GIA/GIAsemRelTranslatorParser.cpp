@@ -26,7 +26,7 @@
  * File Name: GIAsemRelTranslatorParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f1j 22-February-2018
+ * Project Version: 3f1k 22-February-2018
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  * Description: Semantic Relation Translator Parser
  * /
@@ -852,9 +852,10 @@ void GIAsemRelTranslatorParserClass::defineConnectionsBasedOnSemanticRelations(G
 				}
 				currentRelationInList->disabled = true;
 			}
-			else if(currentRelationInList->relationType == GIA2semanticDependencyRelationNameArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_TO])
+			#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_NEW_CONDITIONS
+			else if(currentRelationInList->relationType == GIA2semanticDependencyRelationNameArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_NEW])
 			{
-				GIAentityNode* relationshipEntity = GIAtranslatorOperations.findOrAddEntityNodeByNameSimpleWrapperRelationshipArtificialCondition(entity1, entity2, GIA_SYN_REL_TRANSLATOR_RELATION_TYPE_PREPOSITION_TO, translatorVariables);
+				GIAentityNode* relationshipEntity = GIAtranslatorOperations.findOrAddEntityNodeByNameSimpleWrapperRelationshipArtificialCondition(entity1, entity2, currentRelationInList->semanticRelationFunctionConditionNewName, translatorVariables);
 				currentRelationInList->disabled = true;
 				#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_PREPOSITIONS
 				invertOrDuplicateConditionsIfRequiredSemantic(translatorVariables, entity1, entity2, entity3, sameReferenceSet);
@@ -862,12 +863,12 @@ void GIAsemRelTranslatorParserClass::defineConnectionsBasedOnSemanticRelations(G
 				GIAtranslatorOperations.connectConditionToEntity(entity1, entity2, entity3, sameReferenceSet, translatorVariables);
 				#endif
 			}
+			#endif
 			else if(currentRelationInList->relationType == GIA2semanticDependencyRelationNameArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_QUANTITY])
 			{
 				currentRelationInList->disabled = true;
 				GIAtranslatorOperations.connectQuantityToEntity(entity1, entity2, sameReferenceSet, translatorVariables);
 			}
-			#endif
 			#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_MEASURE
 			else if(currentRelationInList->relationType == GIA2semanticDependencyRelationNameArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_MEASURE])
 			{
@@ -879,6 +880,7 @@ void GIAsemRelTranslatorParserClass::defineConnectionsBasedOnSemanticRelations(G
 				GIAtranslatorOperations.connectMeasurePerToEntity(translatorVariables, entitySemanticRelationFunction1, entitySemanticRelationFunction2, sameReferenceSet);
 				currentRelationInList->disabled = true;
 			}
+			#endif
 			#endif
 			else
 			{
