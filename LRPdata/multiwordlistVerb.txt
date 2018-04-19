@@ -2827,3 +2827,4 @@ zip up
 zonk out
 zoom along
 zoom in
+costed
