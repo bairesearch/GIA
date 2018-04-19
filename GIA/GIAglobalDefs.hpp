@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f6a 16-April-2018
+ * Project Version: 3f6b 16-April-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  * /
@@ -976,6 +976,7 @@
 		#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_EXECUTE_PRELIM_POS_TAGGER
 			//#define GIA_TXT_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE_SET_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
 			#define GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
+			#define GIA_TXT_REL_TRANSLATOR_HYBRID_NLC_PREPROCESSOR_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
 		#endif
 		#ifndef GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
 			#define GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_PREFERENCE_VERB_OR_NOUN_OVER_ADJECTIVE_POS_AMBIGUITY	//doesnt work as it is unsure whether to select adjective over verb/noun or verb/noun over adjective. Therefore GIA_TXT_REL_TRANSLATOR_HYBRID must rely on a functioning GIA_PREPROCESSOR_POS_TAGGER

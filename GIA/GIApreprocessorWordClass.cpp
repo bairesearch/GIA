@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorWordClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f6a 16-April-2018
+ * Project Version: 3f6b 16-April-2018
  * Requirements: requires plain text file
  * Description: Preprocessor Word Class
  * /
@@ -763,6 +763,30 @@ int GIApreprocessorWordClassClass::findStringInWordList(const vector<GIApreproce
 			
 	return indexOfWordFound;
 }
+int GIApreprocessorWordClassClass::findStringInWordListReverse(const vector<GIApreprocessorPlainTextWord*>* wordList, const string stringToFind, const int startIndexToPerformFind)
+{
+	bool result  = false;
+	int indexOfWordFound = CPP_STRING_FIND_RESULT_FAIL_VALUE;
+	
+	if(startIndexToPerformFind < wordList->size())
+	{
+		for(int i=startIndexToPerformFind; i>=0; i--)
+		{
+			if(!result)
+			{//return first instance
+				string currentWord = (*wordList)[i]->tagName;
+				if(currentWord == stringToFind)
+				{
+					result = true;
+					indexOfWordFound = i;
+				}
+			}
+		}
+	}
+			
+	return indexOfWordFound;
+}
+
 
 bool GIApreprocessorWordClassClass::findSubstringAtStartOfWordInWordList(const vector<GIApreprocessorPlainTextWord*>* wordList, const string substringToFind)
 {
