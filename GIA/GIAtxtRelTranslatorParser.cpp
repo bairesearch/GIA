@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f6c 16-April-2018
+ * Project Version: 3f7a 17-April-2018
  * Requirements: 
  * Description: Textual Relation Translator Parser
  * /
@@ -589,6 +589,13 @@ bool GIAtxtRelTranslatorParserClass::generateSemanticRelationsFromTxtRelations(G
 		if(parseTreeComponent->isNumberOf)
 		{
 			parseTreeComponentSemanticRelationEntity->isNumberOf = true;
+		}
+		#endif
+		#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_NUMBER_EXPLETIVES
+		if(parseTreeComponent->isExpletive)
+		{
+			parseTreeComponentSemanticRelationEntity->isExpletive = true;
+			//cout << "parseTreeComponentSemanticRelationEntity->isExpletive" << endl;
 		}
 		#endif
 		

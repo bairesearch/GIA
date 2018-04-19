@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorRules.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f6c 16-April-2018
+ * Project Version: 3f7a 17-April-2018
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Rules
  * /
@@ -303,6 +303,9 @@ bool GIAtxtRelTranslatorRulesClass::parseComponents(XMLparserTag* firstTxtRelTra
 			string wordNounVariantType = GIApreprocessorMultiwordReductionNounDatabaseTagBaseTenseFormArray[GIA_PREPROCESSOR_WORD_NOUN_DATABASE_TAG_BASE_TENSE_FORM_UNKNOWN];
 			int wordNounVariantTypeInt = GIA_PREPROCESSOR_WORD_NOUN_DATABASE_TAG_BASE_TENSE_FORM_UNKNOWN;
 			#endif
+			#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_NUMBER_EXPLETIVES
+			string isExpletive = GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_VALUE_false;
+			#endif
 
 			#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID
 			int referenceSetTypeHybridInt = GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_REFERENCE_SET_TYPE_HYBRID_UNKNOWN;
@@ -514,7 +517,12 @@ bool GIAtxtRelTranslatorRulesClass::parseComponents(XMLparserTag* firstTxtRelTra
 				}		
 			}						
 			#endif			
-
+			#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_NUMBER_EXPLETIVES
+			if(!XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_isExpletive, &isExpletive))
+			{
+				//cerr << "GIAtxtRelTranslatorRules::extractGIAtxtRelTranslatorRulesGroups{} error: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_isExpletive, &isExpletive)" << endl;
+			}
+			#endif
 			
 			GIAtxtRelTranslatorRulesComponent* component = new GIAtxtRelTranslatorRulesComponent();
 			#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID
@@ -556,6 +564,9 @@ bool GIAtxtRelTranslatorRulesClass::parseComponents(XMLparserTag* firstTxtRelTra
 			component->wordNounVariantType = wordNounVariantTypeInt;
 			//cout << "wordNounVariantTypeInt = " << wordNounVariantTypeInt << endl;
 			#endif				
+			#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_NUMBER_EXPLETIVES
+			component->isExpletive = SHAREDvars.convertStringToBool(isExpletive);
+			#endif
 			
 			componentsList->push_back(component);
 

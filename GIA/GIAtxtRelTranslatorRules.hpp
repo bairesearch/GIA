@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorRules.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f6c 16-April-2018
+ * Project Version: 3f7a 17-April-2018
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Rules
  * /
@@ -165,6 +165,9 @@ static string GIAtxtRelSemanticDependencyRelationNameArray[GIA_TXT_REL_TRANSLATO
 					#endif
 					#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_NUMBER_OF
 					#define GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_isNumberOf ((string)"isNumberOf")
+					#endif
+					#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_NUMBER_EXPLETIVES
+					#define GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_isExpletive ((string)"isExpletive")
 					#endif
 				#define GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_GROUP_TAG_or ((string)"or")
 				#define GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_GROUP_TAG_repeat ((string)"repeat")
