@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f1k 22-February-2018
+ * Project Version: 3f1l 22-February-2018
  * Requirements: requires plain text file
  * Description: Textual relation translator
  * /
@@ -231,6 +231,8 @@ bool GIAtxtRelTranslatorClass::executeTxtRelTranslator(GIAtranslatorVariablesCla
 			#endif
 			
 			GIAtxtRelTranslatorRulesGroup* firstParseTreeGroupTemp = new GIAtxtRelTranslatorRulesGroup();
+			
+			int minIndexOfMatchesFoundBackup2 = calculateMinIndexOfMatchesFound(sentenceContents);
 		#else
 			for(int w=0; w<sentenceContents->size(); w++)
 			{
@@ -238,10 +240,6 @@ bool GIAtxtRelTranslatorClass::executeTxtRelTranslator(GIAtranslatorVariablesCla
 			}
 			GIAtxtRelTranslatorRulesGroup* firstParseTreeGroupTemp = firstParseTreeGroup;
 		#endif
-
-			#ifdef GIA_TXT_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START
-			int minIndexOfMatchesFoundBackup2 = calculateMinIndexOfMatchesFound(sentenceContents);
-			#endif
 
 			int performanceTemp = 0;
 			bool passedTemp = false;
@@ -259,15 +257,12 @@ bool GIAtxtRelTranslatorClass::executeTxtRelTranslator(GIAtranslatorVariablesCla
 			}
 			#endif
 
-			#ifdef GIA_TXT_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START
+
+		#ifdef GIA_TXT_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START	
 			if(updatePerformance(performanceTemp, &performanceMax, &performance, firstParseTreeGroup, firstParseTreeGroupTemp, passedTemp, &minIndexOfMatchesFoundBackupOptimum, sentenceContents, minIndexOfMatchesFoundBackup2, NULL))
 			{
 				iOptimum = i;	
 			}
-			#endif
-
-
-		#ifdef GIA_TXT_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START	
 		}
 		if(result)
 		{
@@ -420,7 +415,8 @@ bool GIAtxtRelTranslatorClass::generateParseTreeGroupType(GIAtxtRelTranslatorRul
 		//FUTURE: should pass previousWordPOStype from higher level function rather than relying on copied version of currentParseTreeGroup->previousWordPOStype (from group->previousWordPOStype)
 		if((group->previousWordPOStype == "") || 
 		(minIndexOfMatchesFoundBackup2 >= 0 && 
-		verifyPOStype(sentenceContentsSubset->at(minIndexOfMatchesFoundBackup2), GIApreprocessorMultiwordReductionClassObject.getPOStypeFromName(group->previousWordPOStype))))
+		(sentenceContentsSubset->at(minIndexOfMatchesFoundBackup2)->wordPOStypeInferred == GIApreprocessorMultiwordReductionClassObject.getPOStypeFromName(group->previousWordPOStype))))
+		//OLD: verifyPOStype(sentenceContentsSubset->at(minIndexOfMatchesFoundBackup2), GIApreprocessorMultiwordReductionClassObject.getPOStypeFromName(group->previousWordPOStype))))
 		{
 		#endif
 			#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS
@@ -434,7 +430,7 @@ bool GIAtxtRelTranslatorClass::generateParseTreeGroupType(GIAtxtRelTranslatorRul
 			currentParseTreeGroupTemp->components.clear();	//CHECKTHIS; added 5 Mar 2018
 			int performanceTemp = performanceOriginal;
 			bool passedTemp = false;
-			if(generateParseTreeGroup(group, sentenceContentsSubset, currentParseTreeGroupTemp, &performanceTemp, layer, previousGroupType, numberOfConsecutiveTimesPreviousGroupType))
+			if(generateParseTreeGroup(group, sentenceContentsSubset, currentParseTreeGroupTemp, &performanceTemp, layer+1, previousGroupType, numberOfConsecutiveTimesPreviousGroupType))
 			{
 				result = true;	//at least one group has been successfully parsed
 				passedTemp = true;
@@ -1088,9 +1084,17 @@ bool GIAtxtRelTranslatorClass::printParseTreeDebug(GIAtranslatorVariablesClass* 
 	bool result = true;
 	
 	cout << "printParseTreeDebug: " << endl;
+			
 	GIApreprocessorSentence* currentGIApreprocessorSentenceInList = translatorVariables->firstGIApreprocessorSentenceInList;
 	while(currentGIApreprocessorSentenceInList->next != NULL)
 	{
+		vector<GIApreprocessorWord*>* sentenceContents = &(currentGIApreprocessorSentenceInList->sentenceContentsLRP);
+		for(int w=0; w<sentenceContents->size(); w++)
+		{
+			GIApreprocessorWord* contextWord = sentenceContents->at(w);
+			cout << "GIApreprocessorPOStypeNameArray[contextWord->wordPOStypeInferred] = " << GIApreprocessorPOStypeNameArray[contextWord->wordPOStypeInferred] << endl;
+		}
+
 		GIAtxtRelTranslatorRulesGroup* firstParseTreeGroup = currentGIApreprocessorSentenceInList->firstParseTreeGroup;
 		int layer = GIA_TXT_REL_TRANSLATOR_RULES_LAYER_START;
 		cout << "firstParseTreeGroup: groupTypeName = " << firstParseTreeGroup->groupTypeNameBackup << ", groupName = " << firstParseTreeGroup->groupName << endl;

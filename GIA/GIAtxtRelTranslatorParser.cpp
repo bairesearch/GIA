@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f1k 22-February-2018
+ * Project Version: 3f1l 22-February-2018
  * Requirements: 
  * Description: Textual Relation Translator Parser
  * /
@@ -247,6 +247,7 @@ bool GIAtxtRelTranslatorParserClass::locateAndAddAllNetworkIndexEntitiesBasedOnT
 		entity->semanticRelationPreprocessorEntityIndex = currentWord->translatorSentenceEntityIndex;
 		entity->semanticRelationWordPOStypeInferred = currentWord->wordPOStypeInferred;
 		entity->sentenceIndexTemp = translatorVariables->sentenceIndex;
+		entity->entityIndexTemp = w;
 		
 		
 		#ifndef GIA_TXT_REL_TRANSLATOR_RULES_GIA3_USE_SYN_REL_TRANSLATOR_FEATURES
@@ -538,8 +539,8 @@ bool GIAtxtRelTranslatorParserClass::generateSemanticRelationsFromTxtRelations(G
 				exit(EXIT_ERROR);
 			}
 	
-			GIAtxtRelTranslatorRules.printParseTreeDebugIndentation(layer);
 			#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS2
+			GIAtxtRelTranslatorRules.printParseTreeDebugIndentation(layer);
 			cout << "*semanticRelationReturnEntity = " << (*semanticRelationReturnEntity)->entityName << endl;
 			#endif
 		}

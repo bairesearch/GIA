@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f1k 22-February-2018
+ * Project Version: 3f1l 22-February-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
@@ -2826,7 +2826,7 @@ bool GIAtranslatorOperationsClass::connectMultiwordDate(GIAtranslatorVariablesCl
 	if(!(entitySemanticRelationFunction1->wasReference))
 	{
 	#endif
-		cout << "GIAtranslatorOperationsClass::connectMultiwordDate: " << endl;
+		//cout << "GIAtranslatorOperationsClass::connectMultiwordDate: " << endl;
 		
 		if(entitySemanticRelationFunction1->timeConditionNode == NULL)
 		{
@@ -2859,7 +2859,7 @@ bool GIAtranslatorOperationsClass::addTimeConditionProperty(GIAtimeConditionNode
 		if(year < 10000)
 		{
 			timeConditionNode->year = year;
-			cout << "GIAtranslatorOperationsClass::addTimeConditionProperty{} pass: year = " << year << endl;	
+			//cout << "GIAtranslatorOperationsClass::addTimeConditionProperty{} pass: year = " << year << endl;	
 			result = true;
 		}
 		else
@@ -2876,14 +2876,14 @@ bool GIAtranslatorOperationsClass::addTimeConditionProperty(GIAtimeConditionNode
 		{
 			int month = index;
 			timeConditionNode->month = month;
-			cout << "GIAtranslatorOperationsClass::addTimeConditionProperty{} pass: month = " << month << endl;
+			//cout << "GIAtranslatorOperationsClass::addTimeConditionProperty{} pass: month = " << month << endl;
 			result = true;
 		}
 		else if(SHAREDvars.textInTextArray(entityName, GIAtimeConditionDayOfWeekNameArray, TIME_DAY_OF_WEEK_NUMBER_OF_TYPES, &index))
 		{
 			int dayOfWeek = index;
 			timeConditionNode->dayOfWeek = dayOfWeek;
-			cout << "GIAtranslatorOperationsClass::addTimeConditionProperty{} pass: dayOfWeek = " << dayOfWeek << endl;
+			//cout << "GIAtranslatorOperationsClass::addTimeConditionProperty{} pass: dayOfWeek = " << dayOfWeek << endl;
 			result = true;
 		}
 		else if(SHAREDvars.textInTextArray(lastTwoCharactersOfEntityName, GIAtimeConditionDayOfMonthAppendNameArray, TIME_DAY_OF_MONTH_APPEND_NUMBER_OF_TYPES, &index))
@@ -2891,7 +2891,7 @@ bool GIAtranslatorOperationsClass::addTimeConditionProperty(GIAtimeConditionNode
 			string dayOfMonthString = entityName.substr(0, entityName.length()-TIME_DAY_OF_MONTH_APPEND_LENGTH);
 			int dayOfMonth = SHAREDvars.convertStringToInt(dayOfMonthString);	//CHECKTHIS; perform error checking (exploit)
 			timeConditionNode->dayOfMonth = dayOfMonth;
-			cout << "GIAtranslatorOperationsClass::addTimeConditionProperty{} pass: dayOfMonth = " << dayOfMonth << endl;
+			//cout << "GIAtranslatorOperationsClass::addTimeConditionProperty{} pass: dayOfMonth = " << dayOfMonth << endl;
 			result = true;
 		}	
 		else
@@ -2903,7 +2903,7 @@ bool GIAtranslatorOperationsClass::addTimeConditionProperty(GIAtimeConditionNode
 	else
 	{
 		cerr << "GIAtranslatorOperationsClass::addTimeConditionProperty{} error: entity->semanticRelationWordPOStypeInferred unknown: " << entity->semanticRelationWordPOStypeInferred << endl;
-		cout << "GIApreprocessorPOStypeNameArray[entity->semanticRelationWordPOStypeInferred] = " << GIApreprocessorPOStypeNameArray[entity->semanticRelationWordPOStypeInferred] << endl;
+		cerr << "GIApreprocessorPOStypeNameArray[entity->semanticRelationWordPOStypeInferred] = " << GIApreprocessorPOStypeNameArray[entity->semanticRelationWordPOStypeInferred] << endl;
 		exit(EXIT_ERROR);
 	}
 	
