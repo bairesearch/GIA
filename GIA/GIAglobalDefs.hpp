@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f2l 04-April-2018
+ * Project Version: 3f2m 04-April-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  * /
@@ -797,6 +797,9 @@
 			#define GIA_PREPROCESSOR_REPLACE_VERB_AND_NOUN_LISTS_WITH_VERB_AND_NOUN_LISTS_WITH_VARIANTS
 			#ifdef GIA_PREPROCESSOR_REPLACE_VERB_AND_NOUN_LISTS_WITH_VERB_AND_NOUN_LISTS_WITH_VARIANTS
 				//#define GIA_PREPROCESSOR_REMOVE_VERB_VARIANT_CONTINUOUS_FROM_NOUN_LISTS	//not possible because some words are both continous verbs and nouns (e.g. running/riding)
+				#ifndef GIA_PREPROCESSOR_REMOVE_VERB_VARIANT_CONTINUOUS_FROM_NOUN_LISTS
+					//#define GIA_TXT_REL_TRANSLATOR_RULES_REINTERPRET_NOUNS_AS_CONTINUOUS_VERBS	//not yet implemented
+				#endif
 			#endif
 
 			#define GIA_TXT_REL_TRANSLATOR_RULES_GIA3	//GIA3
