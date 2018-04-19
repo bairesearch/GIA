@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorHybridLogicReference.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f2p 04-April-2018
+ * Project Version: 3f3a 10-April-2018
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Hybrid Logic Reference
  * /
@@ -60,20 +60,20 @@ class GIAtxtRelTranslatorHybridLogicReferenceClass
 
 	#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE
 	#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_DEPRECIATED
-	public: bool executeLogicReferencePreprocessor(const vector<GIApreprocessorWord*>* sentenceContentsWordList, GIApreprocessorSentence* currentGIApreprocessorSentenceInList, vector<XMLparserTag*>* GIAtxtRelTranslatorRulesTokenLayers);
+	public: bool executeLogicReferencePreprocessor(const vector<GIApreprocessorPlainTextWord*>* sentenceContentsWordList, GIApreprocessorSentence* currentGIApreprocessorSentenceInList, vector<XMLparserTag*>* GIAtxtRelTranslatorRulesTokenLayers);
 		private: void addSentenceToText(string* sentenceContentsPreprocessed, GIApreprocessorSubReferenceSet* referenceSet, int* sentenceIndex);
 		private: bool logicReferenceClassIsPreposition(GIAtxtRelTranslatorHybridLogicReference* logicReference);
 		private: bool initialiseNextLogicReferenceConjunction(GIAtxtRelTranslatorHybridLogicReference** currentLogicReferenceInList, const int wordIndexSentence);
 		private: bool initialiseNewSubLogicReferenceConjunctionInferred(GIAtxtRelTranslatorHybridLogicReference** currentLogicReferenceInList, const int wordIndexSentence, const bool copySubLogicReferences);
-		private: bool initialiseNewSubLogicReferenceConjunction(GIAtxtRelTranslatorHybridLogicReference** currentLogicReferenceInList, const vector<GIApreprocessorWord*> logicReferenceContents, const int logicReferenceClass, const string logicReferenceClassType, const int wordIndexSentence, const bool copySubLogicReferences);
-		private: bool initialiseNewSubLogicReference(GIAtxtRelTranslatorHybridLogicReference* currentLogicReferenceInList, const vector<GIApreprocessorWord*> logicReferenceContents, const int logicReferenceClass, const string logicReferenceClassType, const int wordIndexSentence);
-		private: bool fillLogicReferenceVariable(GIAtxtRelTranslatorHybridLogicReference* currentLogicReferenceInList, vector<GIApreprocessorWord*>* logicReferenceVariableWordList, int* logicReferenceVariableNameIndex, bool* expectToFindSubjectAuxObjectLogicReferenceVariable, const int wordIndexSentence);
-		private: bool identifyImplicitLogicReferenceSets(GIAtxtRelTranslatorHybridLogicReference* explicitConjunctionLogicReferenceInList, const vector<GIApreprocessorWord*> logicReferenceContents, const int logicReferenceClass, const string logicReferenceClassType);
+		private: bool initialiseNewSubLogicReferenceConjunction(GIAtxtRelTranslatorHybridLogicReference** currentLogicReferenceInList, const vector<GIApreprocessorPlainTextWord*> logicReferenceContents, const int logicReferenceClass, const string logicReferenceClassType, const int wordIndexSentence, const bool copySubLogicReferences);
+		private: bool initialiseNewSubLogicReference(GIAtxtRelTranslatorHybridLogicReference* currentLogicReferenceInList, const vector<GIApreprocessorPlainTextWord*> logicReferenceContents, const int logicReferenceClass, const string logicReferenceClassType, const int wordIndexSentence);
+		private: bool fillLogicReferenceVariable(GIAtxtRelTranslatorHybridLogicReference* currentLogicReferenceInList, vector<GIApreprocessorPlainTextWord*>* logicReferenceVariableWordList, int* logicReferenceVariableNameIndex, bool* expectToFindSubjectAuxObjectLogicReferenceVariable, const int wordIndexSentence);
+		private: bool identifyImplicitLogicReferenceSets(GIAtxtRelTranslatorHybridLogicReference* explicitConjunctionLogicReferenceInList, const vector<GIApreprocessorPlainTextWord*> logicReferenceContents, const int logicReferenceClass, const string logicReferenceClassType);
 	#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE_OUTPUT_LOGIC_REFERENCE_SETS_FOR_HIGH_LEVEL_SEMANTIC_PARSE_SUPPORT_VERB_TENSE
-	private: vector<GIApreprocessorWord*> generateLogicReferenceContents(GIApreprocessorWord* logicReferenceWord, const string logicReferenceClassType, int logicReferenceClass, vector<GIApreprocessorWord*>* logicReferenceVariableWordList);
+	private: vector<GIApreprocessorPlainTextWord*> generateLogicReferenceContents(GIApreprocessorPlainTextWord* logicReferenceWord, const string logicReferenceClassType, int logicReferenceClass, vector<GIApreprocessorPlainTextWord*>* logicReferenceVariableWordList);
 	#endif
-	private: vector<GIApreprocessorWord*> generateLogicReferenceContentsBase(GIApreprocessorWord* logicReferenceWord, const string logicReferenceClassType);
-	private: void setLogicReferenceInfo(GIAtxtRelTranslatorHybridLogicReference* logicReference, const vector<GIApreprocessorWord*> logicReferenceContents, int logicReferenceClass, string logicReferenceClassType);
+	private: vector<GIApreprocessorPlainTextWord*> generateLogicReferenceContentsBase(GIApreprocessorPlainTextWord* logicReferenceWord, const string logicReferenceClassType);
+	private: void setLogicReferenceInfo(GIAtxtRelTranslatorHybridLogicReference* logicReference, const vector<GIApreprocessorPlainTextWord*> logicReferenceContents, int logicReferenceClass, string logicReferenceClassType);
 	#endif
 	public: bool islogicReferenceExplitOrImplicitConjunctionComponent(GIAtxtRelTranslatorHybridLogicReference* currentLogicReferenceInList);
 	public: bool islogicReferenceConjunctionComponentNotFirst(GIAtxtRelTranslatorHybridLogicReference* currentLogicReferenceInList, GIAtxtRelTranslatorHybridLogicReference* firstLogicReferenceInList);

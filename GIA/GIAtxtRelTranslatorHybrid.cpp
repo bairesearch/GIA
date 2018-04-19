@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorHybrid.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f2p 04-April-2018
+ * Project Version: 3f3a 10-April-2018
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Hybrid
  * /
@@ -208,9 +208,9 @@ bool GIAtxtRelTranslatorHybridClass::executeTxtRelTranslatorDepreciatedSentence(
 	bool result = true;
 	
 	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
-	vector<GIApreprocessorWord*>* sentenceContentsWordList = &(currentGIApreprocessorSentenceInList->sentenceContentsLRP);
+	vector<GIApreprocessorPlainTextWord*>* sentenceContentsWordList = &(currentGIApreprocessorSentenceInList->sentenceContentsLRP);
 	#else
-	vector<GIApreprocessorWord*>* sentenceContentsWordList = &(currentGIApreprocessorSentenceInList->sentenceContentsOriginal);
+	vector<GIApreprocessorPlainTextWord*>* sentenceContentsWordList = &(currentGIApreprocessorSentenceInList->sentenceContentsOriginal);
 	#endif
 	int sentenceIndexOriginal = currentGIApreprocessorSentenceInList->sentenceIndexOriginal;
 
@@ -422,8 +422,8 @@ void GIAtxtRelTranslatorHybridClass::generateLogicReferenceSetContentsWithVariab
 			}
 			#endif
 			#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE_OUTPUT_LOGIC_REFERENCE_SETS_FOR_HIGH_LEVEL_SEMANTIC_PARSE_VERBOSE
-			GIApreprocessorWord* firstSubLogicReferenceInListGovernorLogicReferenceVariableName = new GIApreprocessorWord(currentLogicReferenceInList->firstSubLogicReferenceInListGovernor->logicReferenceVariable->logicReferenceVariableName);
-			GIApreprocessorWord* firstSubLogicReferenceInListDependentLogicReferenceVariableName = new GIApreprocessorWord(currentLogicReferenceInList->firstSubLogicReferenceInListDependent->logicReferenceVariable->logicReferenceVariableName);
+			GIApreprocessorPlainTextWord* firstSubLogicReferenceInListGovernorLogicReferenceVariableName = new GIApreprocessorPlainTextWord(currentLogicReferenceInList->firstSubLogicReferenceInListGovernor->logicReferenceVariable->logicReferenceVariableName);
+			GIApreprocessorPlainTextWord* firstSubLogicReferenceInListDependentLogicReferenceVariableName = new GIApreprocessorPlainTextWord(currentLogicReferenceInList->firstSubLogicReferenceInListDependent->logicReferenceVariable->logicReferenceVariableName);
 			(currentLogicReferenceInList->logicReferenceVariable->referenceSetSubject->subReferenceSetContents).push_back(firstSubLogicReferenceInListGovernorLogicReferenceVariableName);
 			(currentLogicReferenceInList->logicReferenceVariable->referenceSetObject->subReferenceSetContents).push_back(firstSubLogicReferenceInListDependentLogicReferenceVariableName);
 			//for debug only:
@@ -1935,7 +1935,7 @@ bool GIAtxtRelTranslatorHybridClass::getRelationshipNameAndType(GIApreprocessorS
 	bool usePOSprelim = false;
 	#endif
 	
-	GIApreprocessorWord* relationshipWord = (relationshipReference->subReferenceSetContents).back();
+	GIApreprocessorPlainTextWord* relationshipWord = (relationshipReference->subReferenceSetContents).back();
 	*relationshipName = relationshipWord->tagName;
 	#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
 	cout << "relationshipName = " << *relationshipName << endl;
@@ -1956,8 +1956,8 @@ bool GIAtxtRelTranslatorHybridClass::getRelationshipNameAndType(GIApreprocessorS
 	
 	if(relationshipReference->delimiterType == GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_DELIMITER_TYPE_AUXILIARY)
 	{	
-		GIApreprocessorWord* firstWordAfterAuxiliary = NULL;
-		GIApreprocessorWord* secondWordAfterAuxiliary = NULL;
+		GIApreprocessorPlainTextWord* firstWordAfterAuxiliary = NULL;
+		GIApreprocessorPlainTextWord* secondWordAfterAuxiliary = NULL;
 		bool hasFirstWordAfterAuxiliary = false;
 		bool hasSecondWordAfterAuxiliary = false;
 		if(relationshipObject != NULL)
@@ -2172,7 +2172,7 @@ GIAentityNode* GIAtxtRelTranslatorHybridClass::createNewRelationship(GIApreproce
 
 
 
-GIAentityNode* GIAtxtRelTranslatorHybridClass::createNewRelationshipEntity(vector<GIApreprocessorWord*>* logicReferenceContents, const int relationshipEntityType, GIAtranslatorVariablesClass* translatorVariables)
+GIAentityNode* GIAtxtRelTranslatorHybridClass::createNewRelationshipEntity(vector<GIApreprocessorPlainTextWord*>* logicReferenceContents, const int relationshipEntityType, GIAtranslatorVariablesClass* translatorVariables)
 {
 	GIAentityNode* relationshipEntity = NULL;
 	if(logicReferenceContents->size() == 1)

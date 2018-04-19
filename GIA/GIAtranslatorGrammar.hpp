@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorGrammar.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f2p 04-April-2018
+ * Project Version: 3f3a 10-April-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
@@ -63,7 +63,7 @@ class GIAtranslatorGrammarClass
 	
 
 	#ifdef GIA_TRANSLATOR_WITHOUT_SYN_REL_TRANSLATOR_FEATURES
-	public: bool calculateGrammarUsingInferredPosTypes(GIApreprocessorWord* currentWord, GIAfeature* currentFeature);
+	public: bool calculateGrammarUsingInferredPosTypes(GIApreprocessorPlainTextWord* currentWord, GIAfeature* currentFeature);
 	#endif
 
 	public: void locateAndAddAllFeatureTempEntities(GIAtranslatorVariablesClass* translatorVariables);

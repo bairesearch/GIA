@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorSentenceClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f2p 04-April-2018
+ * Project Version: 3f3a 10-April-2018
  * Requirements: requires plain text file
  * Description: Preprocessor Sentence Class
  * /
@@ -60,8 +60,8 @@ public:
 	int sentenceIndexOriginal;
 	string sentenceContentsOriginalText;
 	//#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
-	vector<GIApreprocessorWord*> sentenceContentsOriginal;
-	vector<GIApreprocessorWord*> sentenceContentsLRP;
+	vector<GIApreprocessorPlainTextWord*> sentenceContentsOriginal;
+	vector<GIApreprocessorPlainTextWord*> sentenceContentsLRP;
 	//#endif
 	
 	#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID

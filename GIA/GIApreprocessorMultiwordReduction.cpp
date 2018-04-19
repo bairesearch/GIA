@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorMultiwordReduction.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f2p 04-April-2018
+ * Project Version: 3f3a 10-April-2018
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  * /
@@ -2718,7 +2718,7 @@ bool GIApreprocessorMultiwordReductionClass::identifyConditionType(GIAentityNode
 #endif
 
 #ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
-bool GIApreprocessorMultiwordReductionClass::checkGrammaticalWordTypeFeaturePrelim(GIApreprocessorWord* wordTag, const int GIAposType)
+bool GIApreprocessorMultiwordReductionClass::checkGrammaticalWordTypeFeaturePrelim(GIApreprocessorPlainTextWord* wordTag, const int GIAposType)
 {
 	bool result = false;
 	
@@ -2740,14 +2740,14 @@ bool GIApreprocessorMultiwordReductionClass::checkGrammaticalWordTypeFeaturePrel
 }
 #endif
 
-bool GIApreprocessorMultiwordReductionClass::determineIsWordType(GIApreprocessorWord* wordTag, const bool usePOSprelim, const bool grammaticallyStrict, const int GIAposType)
+bool GIApreprocessorMultiwordReductionClass::determineIsWordType(GIApreprocessorPlainTextWord* wordTag, const bool usePOSprelim, const bool grammaticallyStrict, const int GIAposType)
 {
 	string baseNameFound = "";
 	int grammaticalBaseTenseForm = INT_DEFAULT_VALUE;
 	return determineIsWordType(wordTag, usePOSprelim, grammaticallyStrict, GIAposType, &baseNameFound, &grammaticalBaseTenseForm);
 }
 //preconditions: if usePOSprelim, then grammaticallyStrict is assumed true
-bool GIApreprocessorMultiwordReductionClass::determineIsWordType(GIApreprocessorWord* wordTag, const bool usePOSprelim, const bool grammaticallyStrict, const int GIAposType, string* baseNameFound, int* grammaticalBaseTenseForm)
+bool GIApreprocessorMultiwordReductionClass::determineIsWordType(GIApreprocessorPlainTextWord* wordTag, const bool usePOSprelim, const bool grammaticallyStrict, const int GIAposType, string* baseNameFound, int* grammaticalBaseTenseForm)
 {
 	bool wordTypeDetected = false;
 	
@@ -2846,13 +2846,13 @@ bool GIApreprocessorMultiwordReductionClass::determineIsWordType(const string wo
 
 
 
-bool GIApreprocessorMultiwordReductionClass::determineIsVerb(GIApreprocessorWord* wordTag, const bool usePOSprelim, const bool grammaticallyStrict)
+bool GIApreprocessorMultiwordReductionClass::determineIsVerb(GIApreprocessorPlainTextWord* wordTag, const bool usePOSprelim, const bool grammaticallyStrict)
 {
 	string baseNameFound = "";
 	int grammaticalBaseTenseForm = INT_DEFAULT_VALUE;
 	return determineIsVerb(wordTag, usePOSprelim, grammaticallyStrict, &baseNameFound, &grammaticalBaseTenseForm);
 }
-bool GIApreprocessorMultiwordReductionClass::determineIsVerb(GIApreprocessorWord* wordTag, const bool usePOSprelim, const bool grammaticallyStrict, string* baseNameFound, int* grammaticalBaseTenseForm)
+bool GIApreprocessorMultiwordReductionClass::determineIsVerb(GIApreprocessorPlainTextWord* wordTag, const bool usePOSprelim, const bool grammaticallyStrict, string* baseNameFound, int* grammaticalBaseTenseForm)
 {
 	bool wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, grammaticallyStrict, GIA_PREPROCESSOR_POS_TYPE_VERB, baseNameFound, grammaticalBaseTenseForm);
 	return wordTypeDetected;	
@@ -2958,7 +2958,7 @@ bool GIApreprocessorMultiwordReductionClass::determineVerbCaseAdditional(const s
 }
 
 
-bool GIApreprocessorMultiwordReductionClass::determineIsPreposition(GIApreprocessorWord* wordTag, const bool usePOSprelim)
+bool GIApreprocessorMultiwordReductionClass::determineIsPreposition(GIApreprocessorPlainTextWord* wordTag, const bool usePOSprelim)
 {
 	bool wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_TXT_REL_TRANSLATOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_PREPOSITION);
 	return wordTypeDetected;
@@ -2972,7 +2972,7 @@ bool GIApreprocessorMultiwordReductionClass::determineIsPreposition(const string
 */
 
 
-bool GIApreprocessorMultiwordReductionClass::determineIsAdverb(GIApreprocessorWord* wordTag, const bool usePOSprelim)
+bool GIApreprocessorMultiwordReductionClass::determineIsAdverb(GIApreprocessorPlainTextWord* wordTag, const bool usePOSprelim)
 {
 	bool wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_TXT_REL_TRANSLATOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_ADVERB);
 	return wordTypeDetected;
@@ -2986,7 +2986,7 @@ bool GIApreprocessorMultiwordReductionClass::determineIsAdverb(const string word
 */
 
 
-bool GIApreprocessorMultiwordReductionClass::determineIsAdjective(GIApreprocessorWord* wordTag, const bool usePOSprelim)
+bool GIApreprocessorMultiwordReductionClass::determineIsAdjective(GIApreprocessorPlainTextWord* wordTag, const bool usePOSprelim)
 {
 	bool wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_TXT_REL_TRANSLATOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_ADJECTIVE);
 	return wordTypeDetected;
@@ -3000,13 +3000,13 @@ bool GIApreprocessorMultiwordReductionClass::determineIsAdjective(const string w
 */
 
 
-bool GIApreprocessorMultiwordReductionClass::determineIsNoun(GIApreprocessorWord* wordTag, const bool usePOSprelim)
+bool GIApreprocessorMultiwordReductionClass::determineIsNoun(GIApreprocessorPlainTextWord* wordTag, const bool usePOSprelim)
 {
 	string baseNameFound = "";
 	int grammaticalBaseForm = INT_DEFAULT_VALUE;
 	return determineIsNoun(wordTag, usePOSprelim, &baseNameFound, &grammaticalBaseForm);
 }
-bool GIApreprocessorMultiwordReductionClass::determineIsNoun(GIApreprocessorWord* wordTag, const bool usePOSprelim, string* baseNameFound, int* grammaticalBaseForm)
+bool GIApreprocessorMultiwordReductionClass::determineIsNoun(GIApreprocessorPlainTextWord* wordTag, const bool usePOSprelim, string* baseNameFound, int* grammaticalBaseForm)
 {
 	bool wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_TXT_REL_TRANSLATOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_NOUN, baseNameFound, grammaticalBaseForm);
 	return wordTypeDetected;
@@ -3033,7 +3033,7 @@ bool GIApreprocessorMultiwordReductionClass::determineNounPluralVariant(const st
 	return foundNounPluralVariant;	
 }
 
-bool GIApreprocessorMultiwordReductionClass::determineIsConjunction(GIApreprocessorWord* wordTag, const bool usePOSprelim)
+bool GIApreprocessorMultiwordReductionClass::determineIsConjunction(GIApreprocessorPlainTextWord* wordTag, const bool usePOSprelim)
 {
 	bool wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_TXT_REL_TRANSLATOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_CONJUNCTION_COORDINATING);	//OLD: GIA_PREPROCESSOR_POS_TYPE_CONJUNCTION
 	return wordTypeDetected;
@@ -3047,7 +3047,7 @@ bool GIApreprocessorMultiwordReductionClass::determineIsConjunction(const string
 */
 
 
-bool GIApreprocessorMultiwordReductionClass::determineIsDeterminer(GIApreprocessorWord* wordTag, const bool usePOSprelim)
+bool GIApreprocessorMultiwordReductionClass::determineIsDeterminer(GIApreprocessorPlainTextWord* wordTag, const bool usePOSprelim)
 {
 	bool wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_TXT_REL_TRANSLATOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_DETERMINER);
 	return wordTypeDetected;
@@ -3061,7 +3061,7 @@ bool GIApreprocessorMultiwordReductionClass::determineIsDeterminer(const string 
 */
 
 
-bool GIApreprocessorMultiwordReductionClass::determineIsAuxiliaryBeing(GIApreprocessorWord* wordTag, const bool usePOSprelim)
+bool GIApreprocessorMultiwordReductionClass::determineIsAuxiliaryBeing(GIApreprocessorPlainTextWord* wordTag, const bool usePOSprelim)
 {
 	bool wordTypeDetected = false;
 	#ifndef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_COLLAPSE_AUXILIARY_LISTS_TO_VERB_LISTS
@@ -3077,7 +3077,7 @@ bool GIApreprocessorMultiwordReductionClass::determineIsAuxiliaryBeing(GIAprepro
 	#endif
 	return wordTypeDetected;
 }
-bool GIApreprocessorMultiwordReductionClass::determineIsAuxiliaryHaving(GIApreprocessorWord* wordTag, const bool usePOSprelim)
+bool GIApreprocessorMultiwordReductionClass::determineIsAuxiliaryHaving(GIApreprocessorPlainTextWord* wordTag, const bool usePOSprelim)
 {
 	bool wordTypeDetected = false;
 	#ifndef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_COLLAPSE_AUXILIARY_LISTS_TO_VERB_LISTS
@@ -3093,7 +3093,7 @@ bool GIApreprocessorMultiwordReductionClass::determineIsAuxiliaryHaving(GIAprepr
 	#endif
 	return wordTypeDetected;
 }
-bool GIApreprocessorMultiwordReductionClass::determineIsAuxiliaryDoing(GIApreprocessorWord* wordTag, const bool usePOSprelim)
+bool GIApreprocessorMultiwordReductionClass::determineIsAuxiliaryDoing(GIApreprocessorPlainTextWord* wordTag, const bool usePOSprelim)
 {
 	bool wordTypeDetected = false;
 	#ifndef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_COLLAPSE_AUXILIARY_LISTS_TO_VERB_LISTS
@@ -3110,7 +3110,7 @@ bool GIApreprocessorMultiwordReductionClass::determineIsAuxiliaryDoing(GIAprepro
 	return wordTypeDetected;
 }
 
-bool GIApreprocessorMultiwordReductionClass::detectAuxiliary(GIApreprocessorWord* wordTag, const bool usePOSprelim)
+bool GIApreprocessorMultiwordReductionClass::detectAuxiliary(GIApreprocessorPlainTextWord* wordTag, const bool usePOSprelim)
 {
 	bool wordTypeDetected = false;
 	#ifndef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_COLLAPSE_AUXILIARY_LISTS_TO_VERB_LISTS
@@ -3146,7 +3146,7 @@ bool GIApreprocessorMultiwordReductionClass::detectAuxiliary(GIApreprocessorWord
 	return wordTypeDetected;
 }
 
-bool GIApreprocessorMultiwordReductionClass::detectModalAuxiliary(GIApreprocessorWord* wordTag, const bool usePOSprelim)
+bool GIApreprocessorMultiwordReductionClass::detectModalAuxiliary(GIApreprocessorPlainTextWord* wordTag, const bool usePOSprelim)
 {
 	bool wordTypeDetected = false;
 	wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_TXT_REL_TRANSLATOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_MODALAUXILIARY);
@@ -3159,7 +3159,7 @@ bool GIApreprocessorMultiwordReductionClass::detectModalAuxiliary(GIApreprocesso
 	return wordTypeDetected;
 }
 
-bool GIApreprocessorMultiwordReductionClass::detectRcmodSameReferenceSetDelimiter(GIApreprocessorWord* wordTag, const bool usePOSprelim)
+bool GIApreprocessorMultiwordReductionClass::detectRcmodSameReferenceSetDelimiter(GIApreprocessorPlainTextWord* wordTag, const bool usePOSprelim)
 {
 	bool wordTypeDetected = false;
 	wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_TXT_REL_TRANSLATOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_RCMOD);
@@ -3437,9 +3437,9 @@ bool GIApreprocessorMultiwordReductionClass::replaceAllNumericalWordsWithNumbers
 	{	
 		GIApreprocessorMultiwordReductionPlainTextWord* firstTagInPlainTextSentence = NULL;
 		GIApreprocessorMultiwordReductionClassObject.generateFlatSentenceWordList(&(currentGIApreprocessorSentenceInList->sentenceContentsLRP), &firstTagInPlainTextSentence);
-		GIApreprocessorWord* currentTag = firstTagInPlainTextSentence;
-		GIApreprocessorWord* firstTagInNumericalWord = NULL;
-		GIApreprocessorWord* previousTag = NULL;
+		GIApreprocessorPlainTextWord* currentTag = firstTagInPlainTextSentence;
+		GIApreprocessorPlainTextWord* firstTagInNumericalWord = NULL;
+		GIApreprocessorPlainTextWord* previousTag = NULL;
 		bool parsingNumericalWord = false;
 		while(currentTag->nextTag != NULL)
 		{
@@ -3471,10 +3471,10 @@ bool GIApreprocessorMultiwordReductionClass::replaceAllNumericalWordsWithNumbers
 					else
 					{
 						parsingNumericalWord = false;
-						GIApreprocessorWord* tagSucceedingNumericalWordTagList = NULL;
+						GIApreprocessorPlainTextWord* tagSucceedingNumericalWordTagList = NULL;
 						if(previousTag->nextTag->tagName == GIA_TRANSLATOR_ENGLISH_NUMBERS_DELIMITER)
 						{
-							tagSucceedingNumericalWordTagList = previousTag->nextTag;
+							tagSucceedingNumericalWordTagList = static_cast<GIApreprocessorPlainTextWord*>(previousTag->nextTag);
 						}
 						else
 						{
@@ -3482,12 +3482,12 @@ bool GIApreprocessorMultiwordReductionClass::replaceAllNumericalWordsWithNumbers
 						} 
 						//cout << "tagSucceedingNumericalWordTagList = " << tagSucceedingNumericalWordTagList->tagName << endl;
 						//cout << "previousTag = " << previousTag->tagName << endl;
-						previousTag->nextTag = new GIApreprocessorWord();	//isolate the numerical word tag list
-						vector<GIApreprocessorWord*> text;
+						previousTag->nextTag = new GIApreprocessorPlainTextWord();	//isolate the numerical word tag list
+						vector<GIApreprocessorPlainTextWord*> text;
 						GIApreprocessorMultiwordReductionClassObject.generateSentenceWordList(firstTagInNumericalWord, &text);
 						
 						//convert numerical word list to lower case and remove all references to 'and':
-						for(vector<GIApreprocessorWord*>::iterator iter = text.begin(); iter != text.end(); )
+						for(vector<GIApreprocessorPlainTextWord*>::iterator iter = text.begin(); iter != text.end(); )
 						{
 							string wordText = (*iter)->tagName;
 							//cout << "wordText = " << wordText << endl;
@@ -3516,7 +3516,7 @@ bool GIApreprocessorMultiwordReductionClass::replaceAllNumericalWordsWithNumbers
 				previousTag = currentTag;	//don't include any final "and" words within the numerical word list (e.g "the number of dogs was three and the number of chickens was five")
 			}
 			
-			currentTag = currentTag->nextTag;
+			currentTag = static_cast<GIApreprocessorPlainTextWord*>(currentTag->nextTag);
 		}
 			
 		GIApreprocessorMultiwordReductionClassObject.generateSentenceWordList(firstTagInPlainTextSentence, &(currentGIApreprocessorSentenceInList->sentenceContentsLRP));
@@ -3529,7 +3529,7 @@ bool GIApreprocessorMultiwordReductionClass::replaceAllNumericalWordsWithNumbers
 
 //based on https://www.roseindia.net/answers/viewqa/Java-Interview-Questions/13787-Java-program---convert-words-into-numbers.html
 
-long GIApreprocessorMultiwordReductionClass::convertWordToNumber(vector<GIApreprocessorWord*>* numericalWordList)
+long GIApreprocessorMultiwordReductionClass::convertWordToNumber(vector<GIApreprocessorPlainTextWord*>* numericalWordList)
 {
 		
 	long totalValue = 0;
@@ -3539,13 +3539,13 @@ long GIApreprocessorMultiwordReductionClass::convertWordToNumber(vector<GIAprepr
 		int index = GIApreprocessorMultiwordReductionClassObject.findStringInWordList(numericalWordList, translatorEnglishNumbersMagnitudesTextArray[n]);
 		if(index != CPP_STRING_FIND_RESULT_FAIL_VALUE)
 		{
-			vector<GIApreprocessorWord*>::const_iterator first1 = numericalWordList->begin();
-			vector<GIApreprocessorWord*>::const_iterator last1 = numericalWordList->begin() + index;
-			vector<GIApreprocessorWord*> text1(first1, last1);
+			vector<GIApreprocessorPlainTextWord*>::const_iterator first1 = numericalWordList->begin();
+			vector<GIApreprocessorPlainTextWord*>::const_iterator last1 = numericalWordList->begin() + index;
+			vector<GIApreprocessorPlainTextWord*> text1(first1, last1);
 
-			vector<GIApreprocessorWord*>::const_iterator first2 = numericalWordList->begin() + index + translatorEnglishNumbersMagnitudesTextArray[n].length();
-			vector<GIApreprocessorWord*>::const_iterator last2 = numericalWordList->end();
-			vector<GIApreprocessorWord*> text2(first2, last2);
+			vector<GIApreprocessorPlainTextWord*>::const_iterator first2 = numericalWordList->begin() + index + translatorEnglishNumbersMagnitudesTextArray[n].length();
+			vector<GIApreprocessorPlainTextWord*>::const_iterator last2 = numericalWordList->end();
+			vector<GIApreprocessorPlainTextWord*> text2(first2, last2);
 
 			if(text1.empty())
 			{	
@@ -3576,7 +3576,7 @@ long GIApreprocessorMultiwordReductionClass::convertWordToNumber(vector<GIAprepr
 	}
 }
 
-long GIApreprocessorMultiwordReductionClass::parseNumerals(vector<GIApreprocessorWord*>* numericalWordListSubset)
+long GIApreprocessorMultiwordReductionClass::parseNumerals(vector<GIApreprocessorPlainTextWord*>* numericalWordListSubset)
 {
 	long value = 0;
 		

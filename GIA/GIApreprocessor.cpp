@@ -26,7 +26,7 @@
  * File Name: GIApreprocessor.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f2p 04-April-2018
+ * Project Version: 3f3a 10-April-2018
  * Requirements: requires plain text file
  * Description: Preprocessor
  * /
@@ -618,16 +618,16 @@ bool GIApreprocessorClass::addSentenceToPreprocessorSentence(GIAtranslatorVariab
 	{
 		subReferenceSetFound->sentenceReference = currentSentenceInList;
 		#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_NLP_TEXT
-		vector<GIApreprocessorWord*> preprocessorSentenceWordList = subReferenceSetFound->subReferenceSetContentsOutputForNLP;		
+		vector<GIApreprocessorPlainTextWord*> preprocessorSentenceWordList = subReferenceSetFound->subReferenceSetContentsOutputForNLP;		
 		#else
-		vector<GIApreprocessorWord*> preprocessorSentenceWordList = subReferenceSetFound->subReferenceSetContents;		
+		vector<GIApreprocessorPlainTextWord*> preprocessorSentenceWordList = subReferenceSetFound->subReferenceSetContents;		
 		#endif
 	#else
 	GIApreprocessorSentence* preprocessorSentenceFound = NULL;
 	if(getPreprocessorSentence(translatorVariables->firstGIApreprocessorSentenceInList, currentSentenceInList->sentenceIndex, &preprocessorSentenceFound))
 	{
 		preprocessorSentenceFound->sentenceReference = currentSentenceInList;
-		vector<GIApreprocessorWord*> preprocessorSentenceWordList = preprocessorSentenceFound->sentenceContentsLRP;
+		vector<GIApreprocessorPlainTextWord*> preprocessorSentenceWordList = preprocessorSentenceFound->sentenceContentsLRP;
 	#endif
 		//translatorVariables->preprocessorSentenceWordListTemp = preprocessorSentenceWordList;
 		
@@ -671,12 +671,12 @@ bool GIApreprocessorClass::getPreprocessorSentence(GIApreprocessorSentence* firs
 }
 #endif
 	
-bool GIApreprocessorClass::addSentenceFeatureOutputToPreprocessorSentenceWordList(vector<GIApreprocessorWord*>* preprocessorSentenceWordList, GIAtranslatorVariablesClass* translatorVariables, bool originalNLPfeatures)
+bool GIApreprocessorClass::addSentenceFeatureOutputToPreprocessorSentenceWordList(vector<GIApreprocessorPlainTextWord*>* preprocessorSentenceWordList, GIAtranslatorVariablesClass* translatorVariables, bool originalNLPfeatures)
 {	
 	bool result = true;
 	
 	GIAsentence* currentSentenceInList = translatorVariables->currentSentenceInList;
-	//vector<GIApreprocessorWord*>* preprocessorSentenceWordList = translatorVariables->preprocessorSentenceWordListTemp;
+	//vector<GIApreprocessorPlainTextWord*>* preprocessorSentenceWordList = translatorVariables->preprocessorSentenceWordListTemp;
 	
 	int entityIndex = GIA_NLP_START_ENTITY_INDEX;
 	int w = 0;
@@ -689,10 +689,10 @@ bool GIApreprocessorClass::addSentenceFeatureOutputToPreprocessorSentenceWordLis
 	{
 		currentFeatureInList = currentSentenceInList->firstFeatureInList;
 	}
-	vector<GIApreprocessorWord*>::iterator preprocessorSentenceWordListIter = preprocessorSentenceWordList->begin();
+	vector<GIApreprocessorPlainTextWord*>::iterator preprocessorSentenceWordListIter = preprocessorSentenceWordList->begin();
 	while(currentFeatureInList->next != NULL)
 	{
-		GIApreprocessorWord* preprocessorSentenceWord = *preprocessorSentenceWordListIter;
+		GIApreprocessorPlainTextWord* preprocessorSentenceWord = *preprocessorSentenceWordListIter;
 		if(originalNLPfeatures)
 		{
 			string NLPparsedWordOriginal = currentFeatureInList->word;
@@ -743,17 +743,17 @@ bool GIApreprocessorClass::addSentenceFeatureOutputToPreprocessorSentenceWordLis
 	return result;
 }
 
-bool GIApreprocessorClass::addSentenceEntityOutputToPreprocessorSentenceWordList(vector<GIApreprocessorWord*>* preprocessorSentenceWordList, GIAtranslatorVariablesClass* translatorVariables)
+bool GIApreprocessorClass::addSentenceEntityOutputToPreprocessorSentenceWordList(vector<GIApreprocessorPlainTextWord*>* preprocessorSentenceWordList, GIAtranslatorVariablesClass* translatorVariables)
 {	
 	bool result = true;
 	
 	GIAsentence* currentSentenceInList = translatorVariables->currentSentenceInList;
-	//vector<GIApreprocessorWord*>* preprocessorSentenceWordList = translatorVariables->preprocessorSentenceWordListTemp;
+	//vector<GIApreprocessorPlainTextWord*>* preprocessorSentenceWordList = translatorVariables->preprocessorSentenceWordListTemp;
 	
-	vector<GIApreprocessorWord*>::iterator preprocessorSentenceWordListIter = preprocessorSentenceWordList->begin();
+	vector<GIApreprocessorPlainTextWord*>::iterator preprocessorSentenceWordListIter = preprocessorSentenceWordList->begin();
 	for(int i=0; i<preprocessorSentenceWordList->size()-1; i++)	//ignore artificial entities with entityIndex > preprocessorSentenceWordList.size() [feature list size]	//-1 to ignore the fullstop
 	{
-		GIApreprocessorWord* preprocessorSentenceWord = *preprocessorSentenceWordListIter;
+		GIApreprocessorPlainTextWord* preprocessorSentenceWord = *preprocessorSentenceWordListIter;
 
 		//cout << "preprocessorSentenceWord = " << preprocessorSentenceWord->tagName << endl;
 		int w = i + GIA_NLP_START_ENTITY_INDEX;

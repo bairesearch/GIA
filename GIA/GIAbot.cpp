@@ -26,7 +26,7 @@
  * File Name: GIAbot.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f2p 04-April-2018
+ * Project Version: 3f3a 10-April-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Bot
  * /
@@ -147,10 +147,10 @@ void GIAbotClass::botSwitchFirstAndSecondPersonSemantic(GIAtranslatorVariablesCl
 void GIAbotClass::botSwitchFirstAndSecondPersonTxt(GIAtranslatorVariablesClass* translatorVariables)
 {
 	int numberOfWordsInSentence = translatorVariables->currentPreprocessorSentenceInList->sentenceContentsLRP.size();
-	vector<GIApreprocessorWord*>* sentenceContents = &(translatorVariables->firstGIApreprocessorSentenceInList->sentenceContentsLRP);
+	vector<GIApreprocessorPlainTextWord*>* sentenceContents = &(translatorVariables->firstGIApreprocessorSentenceInList->sentenceContentsLRP);
 	for(int w=0; w<sentenceContents->size(); w++)
 	{
-		GIApreprocessorWord* currentWord = (*sentenceContents)[w];
+		GIApreprocessorPlainTextWord* currentWord = (*sentenceContents)[w];
 		for(int i=0; i<FEATURE_FIRST_PERSON_NUMBER_OF_TYPES; i++)
 		{
 			if(currentWord->translatorEntity->entityName == featureFirstPersonNameArray[i])

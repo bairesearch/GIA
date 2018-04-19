@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorHybridReferenceSet.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f2p 04-April-2018
+ * Project Version: 3f3a 10-April-2018
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Hybrid Reference Set
  * /
@@ -59,7 +59,7 @@ NB there is no easy rcmod detection in these cases
 
 #ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_DEPRECIATED
 
-bool GIAtxtRelTranslatorHybridReferenceSetClass::executeReferenceSetPreprocessor(const vector<GIApreprocessorWord*>* logicReferenceVariableWordList, GIAtxtRelTranslatorHybridLogicReferenceVariable* logicReferenceVariable, const bool expectToFindSubjectAuxObjectLogicReferenceVariable, const int wordIndexSentence)
+bool GIAtxtRelTranslatorHybridReferenceSetClass::executeReferenceSetPreprocessor(const vector<GIApreprocessorPlainTextWord*>* logicReferenceVariableWordList, GIAtxtRelTranslatorHybridLogicReferenceVariable* logicReferenceVariable, const bool expectToFindSubjectAuxObjectLogicReferenceVariable, const int wordIndexSentence)
 {
 	bool result = true;
 
@@ -114,7 +114,7 @@ bool GIAtxtRelTranslatorHybridReferenceSetClass::executeReferenceSetPreprocessor
 	int wordIndex = 0;
 	for(int wordIndex = 0; wordIndex<logicReferenceVariableWordList->size(); wordIndex++)
 	{
-		GIApreprocessorWord* currentWordTag = (*logicReferenceVariableWordList)[wordIndex];
+		GIApreprocessorPlainTextWord* currentWordTag = (*logicReferenceVariableWordList)[wordIndex];
 		string currentWord = currentWordTag->tagName;
 		currentWord = SHAREDvars.convertStringToLowerCase(&currentWord);	//required for imperatives where the action is defined as the first word in the sentence 
 		int wordIndexOfHypotheticalPreceedingThatWhich = wordIndex-1;
@@ -493,7 +493,7 @@ bool GIAtxtRelTranslatorHybridReferenceSetClass::executeReferenceSetPreprocessor
 			//add a subreference set to the subject/object
 			if(!referenceSetDelimiterDetectedFull)
 			{
-				vector<GIApreprocessorWord*> subReferenceSetText;
+				vector<GIApreprocessorPlainTextWord*> subReferenceSetText;
 				#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
 				cout << "lastIndexOfReferenceSetDelimiterText = " << lastIndexOfReferenceSetDelimiterText << endl;
 				cout << "lastIndexOfPreviousReferenceSet = " << lastIndexOfPreviousReferenceSet << endl;
@@ -537,7 +537,7 @@ bool GIAtxtRelTranslatorHybridReferenceSetClass::executeReferenceSetPreprocessor
 			{
 				if(referenceSetDelimiterIndicatesSameReferenceSet)
 				{
-					vector<GIApreprocessorWord*> subReferenceSetText;
+					vector<GIApreprocessorPlainTextWord*> subReferenceSetText;
 					if(lastIndexOfReferenceSetDelimiterText <= lastIndexOfPreviousReferenceSet)	//added 3d5d
 					{
 						if(formSubReferenceSetTextFromWordList(logicReferenceVariableWordList, &subReferenceSetText, lastIndexOfReferenceSetDelimiterText, lastIndexOfPreviousReferenceSet))
@@ -633,7 +633,7 @@ bool GIAtxtRelTranslatorHybridReferenceSetClass::executeReferenceSetPreprocessor
 			#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
 			cout << "end referenceSetDelimiterDetectedFull" << endl;
 			#endif
-			vector<GIApreprocessorWord*> subReferenceSetText;
+			vector<GIApreprocessorPlainTextWord*> subReferenceSetText;
 			if(formSubReferenceSetTextFromWordList(logicReferenceVariableWordList, &subReferenceSetText, lastIndexOfReferenceSetDelimiterText, logicReferenceVariableWordList->size()-1))
 			{
 				#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
@@ -647,7 +647,7 @@ bool GIAtxtRelTranslatorHybridReferenceSetClass::executeReferenceSetPreprocessor
 			#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
 			cout << "end !referenceSetDelimiterDetectedFull" << endl;
 			#endif
-			vector<GIApreprocessorWord*> subReferenceSetText;
+			vector<GIApreprocessorPlainTextWord*> subReferenceSetText;
 			if(formSubReferenceSetTextFromWordList(logicReferenceVariableWordList, &subReferenceSetText, lastIndexOfReferenceSetDelimiterText, logicReferenceVariableWordList->size()-1))
 			{
 				#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
@@ -663,9 +663,9 @@ bool GIAtxtRelTranslatorHybridReferenceSetClass::executeReferenceSetPreprocessor
 		int wordIndex = 0;
 		string referenceSetText = "";
 		
-		vector<GIApreprocessorWord*> referenceSetSubjectText;
-		vector<GIApreprocessorWord*> referenceSetObjectText;
-		vector<GIApreprocessorWord*> referenceSetDelimiterText;
+		vector<GIApreprocessorPlainTextWord*> referenceSetSubjectText;
+		vector<GIApreprocessorPlainTextWord*> referenceSetObjectText;
+		vector<GIApreprocessorPlainTextWord*> referenceSetDelimiterText;
 		#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
 		cout << "firstIndexOfReferenceSetDelimiterTextFull = " << firstIndexOfReferenceSetDelimiterTextFull << endl;
 		cout << "logicReferenceVariableWordList[firstIndexOfReferenceSetDelimiterTextFull] = " << (*logicReferenceVariableWordList)[firstIndexOfReferenceSetDelimiterTextFull]->tagName << endl;
@@ -717,7 +717,7 @@ bool GIAtxtRelTranslatorHybridReferenceSetClass::executeReferenceSetPreprocessor
 }
 
 #ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_PREFERENCE_VERB_OR_NOUN_OVER_ADJECTIVE_POS_AMBIGUITY
-bool GIAtxtRelTranslatorHybridReferenceSetClass::determineIsVerbAndAdjective(GIApreprocessorWord* currentWordTag, bool usePOSprelim, bool grammaticallyStrict)
+bool GIAtxtRelTranslatorHybridReferenceSetClass::determineIsVerbAndAdjective(GIApreprocessorPlainTextWord* currentWordTag, bool usePOSprelim, bool grammaticallyStrict)
 {
 	bool verbAndAdjective = false;
 	if(GIApreprocessorMultiwordReduction.determineIsVerb(currentWordTag, usePOSprelim, grammaticallyStrict))
@@ -806,14 +806,14 @@ void GIAtxtRelTranslatorHybridReferenceSetClass::updateIndices(const bool curren
 }
 
 		
-bool GIAtxtRelTranslatorHybridReferenceSetClass::formSubReferenceSetTextFromWordList(const vector<GIApreprocessorWord*>* logicReferenceVariableWordList, vector<GIApreprocessorWord*>* subReferenceSetText, int firstIndexOfSubReferenceSet, int lastIndexOfSubReferenceSet)
+bool GIAtxtRelTranslatorHybridReferenceSetClass::formSubReferenceSetTextFromWordList(const vector<GIApreprocessorPlainTextWord*>* logicReferenceVariableWordList, vector<GIApreprocessorPlainTextWord*>* subReferenceSetText, int firstIndexOfSubReferenceSet, int lastIndexOfSubReferenceSet)
 {
 	bool result = true;
 	
 	int wordIndex = 0;
-	for(vector<GIApreprocessorWord*>::const_iterator iter = logicReferenceVariableWordList->begin(); iter != logicReferenceVariableWordList->end(); iter++)
+	for(vector<GIApreprocessorPlainTextWord*>::const_iterator iter = logicReferenceVariableWordList->begin(); iter != logicReferenceVariableWordList->end(); iter++)
 	{
-		GIApreprocessorWord* currentWord = (*iter);
+		GIApreprocessorPlainTextWord* currentWord = (*iter);
 		if((wordIndex >= firstIndexOfSubReferenceSet) && (wordIndex <= lastIndexOfSubReferenceSet))
 		{
 			subReferenceSetText->push_back(currentWord);
@@ -828,12 +828,12 @@ bool GIAtxtRelTranslatorHybridReferenceSetClass::formSubReferenceSetTextFromWord
 	return result;
 }
 
-bool GIAtxtRelTranslatorHybridReferenceSetClass::addReferenceSetToReferenceSet(GIApreprocessorSubReferenceSet* firstSubReferenceSetInList, vector<GIApreprocessorWord*>* subReferenceSetText, const bool referenceSetDelimiter, const int wordIndexLogicReference, const int wordIndexSentence, const int delimiterType, const int delimiterSpecialCase)
+bool GIAtxtRelTranslatorHybridReferenceSetClass::addReferenceSetToReferenceSet(GIApreprocessorSubReferenceSet* firstSubReferenceSetInList, vector<GIApreprocessorPlainTextWord*>* subReferenceSetText, const bool referenceSetDelimiter, const int wordIndexLogicReference, const int wordIndexSentence, const int delimiterType, const int delimiterSpecialCase)
 {
 	return addSubReferenceSetToReferenceSet(firstSubReferenceSetInList, subReferenceSetText, referenceSetDelimiter, wordIndexLogicReference, wordIndexSentence, delimiterType, delimiterSpecialCase);
 }
 
-bool GIAtxtRelTranslatorHybridReferenceSetClass::addSubReferenceSetToReferenceSet(GIApreprocessorSubReferenceSet* firstSubReferenceSetInList, vector<GIApreprocessorWord*>* subReferenceSetText, const bool referenceSetDelimiter, const int wordIndexLogicReference, const int wordIndexSentence, const int delimiterType, const int delimiterSpecialCase)
+bool GIAtxtRelTranslatorHybridReferenceSetClass::addSubReferenceSetToReferenceSet(GIApreprocessorSubReferenceSet* firstSubReferenceSetInList, vector<GIApreprocessorPlainTextWord*>* subReferenceSetText, const bool referenceSetDelimiter, const int wordIndexLogicReference, const int wordIndexSentence, const int delimiterType, const int delimiterSpecialCase)
 {
 	bool result = true;
 	
@@ -877,12 +877,12 @@ bool GIAtxtRelTranslatorHybridReferenceSetClass::hasReferenceSet(GIApreprocessor
 	return referenceSetEnabled;
 }
 
-void GIAtxtRelTranslatorHybridReferenceSetClass::setReferenceSetText(GIApreprocessorSubReferenceSet* referenceSet, vector<GIApreprocessorWord*>* text)
+void GIAtxtRelTranslatorHybridReferenceSetClass::setReferenceSetText(GIApreprocessorSubReferenceSet* referenceSet, vector<GIApreprocessorPlainTextWord*>* text)
 {
 	referenceSet->subReferenceSetContents = *text;
 }
 
-vector<GIApreprocessorWord*> GIAtxtRelTranslatorHybridReferenceSetClass::getReferenceSetText(GIApreprocessorSubReferenceSet* referenceSet)
+vector<GIApreprocessorPlainTextWord*> GIAtxtRelTranslatorHybridReferenceSetClass::getReferenceSetText(GIApreprocessorSubReferenceSet* referenceSet)
 {
 	return referenceSet->subReferenceSetContents;
 }
@@ -899,7 +899,7 @@ void GIAtxtRelTranslatorHybridReferenceSetClass::printSubReferenceSet(GIApreproc
 
 
 #ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_DETERMINE_AMBIGUOUS_PREPOSITION_POS_TYPES_BASED_ON_CONTEXT
-bool GIAtxtRelTranslatorHybridReferenceSetClass::verifyIsPrepositionNotProgressiveVerbBasedOnContext(const vector<GIApreprocessorWord*>* sentenceContentsWordList, const int prepositionWordIndex, const bool usePOSprelim)
+bool GIAtxtRelTranslatorHybridReferenceSetClass::verifyIsPrepositionNotProgressiveVerbBasedOnContext(const vector<GIApreprocessorPlainTextWord*>* sentenceContentsWordList, const int prepositionWordIndex, const bool usePOSprelim)
 {
 	bool result = true;
 
@@ -919,10 +919,10 @@ bool GIAtxtRelTranslatorHybridReferenceSetClass::verifyIsPrepositionNotProgressi
 			doesn't support verb case conjunctions e.g.; "the cat was contemplating, considering, and examining the apple", so must integrate with method i)
 	*/
 		
-	//GIApreprocessorWord* wordTagPreposition = sentenceContentsWordList->at(prepositionWordIndex);
+	//GIApreprocessorPlainTextWord* wordTagPreposition = sentenceContentsWordList->at(prepositionWordIndex);
 	if(prepositionWordIndex > 0)
 	{
-		GIApreprocessorWord* wordTagPrepositionPrior = sentenceContentsWordList->at(prepositionWordIndex-1);
+		GIApreprocessorPlainTextWord* wordTagPrepositionPrior = sentenceContentsWordList->at(prepositionWordIndex-1);
 		#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_DETERMINE_AMBIGUOUS_PREPOSITION_POS_TYPES_BASED_ON_CONTEXT_METHOD1
 		if(wordTagPrepositionPrior->tagName == SHAREDvars.convertCharToString(GIA_TXT_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE_NEW_LOGIC_REFERENCE_CHAR))
 		{

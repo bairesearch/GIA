@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f2p 04-April-2018
+ * Project Version: 3f3a 10-April-2018
  * Requirements: 
  * Description: Textual Relation Translator Parser
  * /
@@ -224,7 +224,7 @@ bool GIAtxtRelTranslatorParserClass::locateAndAddAllNetworkIndexEntitiesBasedOnT
 	#endif
 	for(int w=0; w<numberOfWordsInSentence; w++)
 	{
-		GIApreprocessorWord* currentWord = (translatorVariables->currentPreprocessorSentenceInList)->sentenceContentsLRP[w];
+		GIApreprocessorPlainTextWord* currentWord = (translatorVariables->currentPreprocessorSentenceInList)->sentenceContentsLRP[w];
 		
 		#ifndef GIA_TXT_REL_TRANSLATOR_RULES_GIA3_USE_SYN_REL_TRANSLATOR_FEATURES
 		GIAfeature currentFeatureTemp;
@@ -536,7 +536,7 @@ bool GIAtxtRelTranslatorParserClass::generateSemanticRelationsFromTxtRelations(G
 		}
 		else if(parseTreeComponent->componentType == GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_STRING)
 		{
-			GIApreprocessorWord* parseTreeComponentWord = parseTreeComponent->candidateStringMatch;
+			GIApreprocessorPlainTextWord* parseTreeComponentWord = parseTreeComponent->candidateStringMatch;
 			parseTreeComponentSemanticRelationEntity = parseTreeComponentWord->translatorEntity;
 		}
 		else
@@ -697,7 +697,7 @@ bool GIAtxtRelTranslatorParserClass::generateSemanticRelationsFromTxtRelations(G
 				int nearestPreceedingSubjectIndex = INT_DEFAULT_VALUE;
 				for(int w = parseTreeComponentSemanticRelationEntity->entityIndexTemp; w>=0; w--)
 				{	
-					GIApreprocessorWord* currentWord = (translatorVariables->currentPreprocessorSentenceInList)->sentenceContentsLRP[w];
+					GIApreprocessorPlainTextWord* currentWord = (translatorVariables->currentPreprocessorSentenceInList)->sentenceContentsLRP[w];
 					if(nearestPreceedingDelimiterIndex == INT_DEFAULT_VALUE)
 					{
 						if(currentWord->wordPOStypeInferred == GIA_PREPROCESSOR_POS_TYPE_VERB)

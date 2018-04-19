@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorMultiwordReductionClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f2p 04-April-2018
+ * Project Version: 3f3a 10-April-2018
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction Class
  * /
@@ -478,6 +478,7 @@ static string translatorEnglishNounPluralModifierReplacementArray[GIA_TRANSLATOR
 
 
 
+
 class GIApreprocessorWord
 {
 public:
@@ -488,52 +489,8 @@ public:
 	void initialiseGIApreprocessorWord();
 
 	string tagName;
-	
-	#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_EXECUTE_PRELIM_POS_TAGGER
-	GIAfeature* featureReferencePrelim;
-	#endif
-	#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
-	GIAfeature* featureReferenceOriginal;
-	GIAfeature* featureReference;
-	GIAentityNode* entityReference;
-	#endif
-	
+
 	bool plainTextWord;
-	
-	#ifdef GIA_NEURAL_NETWORK
-	ANNneuron* wordShortcutToConceptNeuron;
-	#ifdef GIA_NEURAL_NETWORK_NON_SEMANTIC
-	int neuralNetworkPreprocessorWordType;
-	string tagNameOriginalNonLemma;
-	#endif
-	#endif
-
-	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_PERFORM_BATCH_PREDICTIONS
-	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY
-	vector<ANNexperience*> POStaggerExperiencePermutations;
-	#else
-	ANNexperience* POStaggerExperience;
-	#endif
-	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_PREDICTION_VERIFICATION
-	unsigned int centreWordPOSambiguityInfo;
-	#endif
-	#endif
-
-	#ifdef GIA_TXT_REL_TRANSLATOR_RULES
-	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START
-	unsigned char unambiguousPOSindex;
-	#else
-	unsigned long POSambiguityInfo;
-	#endif
-	int wordPOStypeInferred;
-	bool alreadyFoundMatch;
-	int translatorSentenceEntityIndex;
-	GIAentityNode* translatorEntity;
-	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_WORD_NOUN_VERB_VARIANT
-	int wordVerbVariantGrammaticalTenseForm;
-	int wordNounVariantGrammaticalTenseForm;
-	#endif
-	#endif
 		
 	GIApreprocessorWord* nextTag;
 };
@@ -544,8 +501,6 @@ public:
 
 	GIApreprocessorMultiwordReductionWord(void);
 	~GIApreprocessorMultiwordReductionWord(void);
-
-	string tagNameLemma;
 
 	bool base;	//used to indicate if the current tag in the phrasal verb is the base verb of the phrasal verb (or lemma) - NB the first word in each phrasal verb defined in the database is assumed to be the lemma, but there may be additional instances
 	
@@ -590,14 +545,70 @@ public:
 	GIApreprocessorMultiwordReductionIrregularVerbWord* alternateTag;
 };
 
-class GIApreprocessorMultiwordReductionPlainTextWord: public GIApreprocessorMultiwordReductionWord
+
+class GIApreprocessorPlainTextWord: public GIApreprocessorWord
+{
+public:
+	GIApreprocessorPlainTextWord(void);
+	~GIApreprocessorPlainTextWord(void);
+	void initialiseGIApreprocessorPlainTextWord();
+	
+	#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_EXECUTE_PRELIM_POS_TAGGER
+	GIAfeature* featureReferencePrelim;
+	#endif
+	#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
+	GIAfeature* featureReferenceOriginal;
+	GIAfeature* featureReference;
+	GIAentityNode* entityReference;
+	#endif
+	
+	#ifdef GIA_NEURAL_NETWORK
+	ANNneuron* wordShortcutToConceptNeuron;
+	#ifdef GIA_NEURAL_NETWORK_NON_SEMANTIC
+	int neuralNetworkPreprocessorWordType;
+	string tagNameOriginalNonLemma;
+	#endif
+	#endif
+
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_PERFORM_BATCH_PREDICTIONS
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY
+	vector<ANNexperience*> POStaggerExperiencePermutations;
+	#else
+	ANNexperience* POStaggerExperience;
+	#endif
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_PREDICTION_VERIFICATION
+	unsigned int centreWordPOSambiguityInfo;
+	#endif
+	#endif
+
+	#ifdef GIA_TXT_REL_TRANSLATOR_RULES
+	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START
+	unsigned char unambiguousPOSindex;
+	#else
+	unsigned long POSambiguityInfo;
+	#endif
+	int wordPOStypeInferred;
+	bool alreadyFoundMatch;
+	int translatorSentenceEntityIndex;
+	GIAentityNode* translatorEntity;
+	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_WORD_NOUN_VERB_VARIANT
+	int wordVerbVariantGrammaticalTenseForm;
+	int wordNounVariantGrammaticalTenseForm;
+	#endif
+	#endif
+};
+
+class GIApreprocessorMultiwordReductionPlainTextWord: public GIApreprocessorPlainTextWord
 {
 public:
 
 	GIApreprocessorMultiwordReductionPlainTextWord(void);
 	GIApreprocessorMultiwordReductionPlainTextWord(string tagNameNew);
 	~GIApreprocessorMultiwordReductionPlainTextWord(void);
+	void initialiseGIApreprocessorMultiwordReductionPlainTextWord();
 	
+	string tagNameLemma;
+
 	int entityIndex;	//this should be depreciated
 	
 	bool collapsedPhrasalVerbExactDefinedSection;
@@ -696,60 +707,60 @@ class GIApreprocessorMultiwordReductionClassClass
 	private: SHAREDvarsClass SHAREDvars;
 
 	#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
-	public: string generateTextFromPreprocessorSentenceWordList(const GIApreprocessorWord* firstWordInSentence);
-		public: string generateTextFromPreprocessorSentenceWordList(const GIApreprocessorWord* firstWordInSentence, const bool LRPforNLP);
-	public: string generateTextFromVectorWordList(const vector<GIApreprocessorWord*>* wordList);
-		public: string generateTextFromVectorWordList(const vector<GIApreprocessorWord*>* wordList, const bool LRPforNLP);
-			public: string generateTextFromPreprocessorSentenceWord(const GIApreprocessorWord* word, const bool LRPforNLP, const bool isFirstWordInSentence);
-	public: int calculateLengthOfGeneratedVectorWordListText(vector<GIApreprocessorWord*>* wordList);
-	public: bool generateSentenceWordList(GIApreprocessorWord* sentenceContentsFirstWord, vector<GIApreprocessorWord*>* wordList);
-	public: bool generateSentenceWordList(GIApreprocessorWord* sentenceContentsFirstWord, vector<GIApreprocessorWord*>* wordList, int startIndex, int endIndex);
-	public: bool generateFlatSentenceWordList(const vector<GIApreprocessorWord*>* wordList, GIApreprocessorMultiwordReductionPlainTextWord** sentenceContentsFirstWord);
-	public: bool addWordListToWordList(vector<GIApreprocessorWord*>* wordList, vector<GIApreprocessorWord*>* wordListToAdd);
-	public: bool addStringArrayToWordList(vector<GIApreprocessorWord*>* wordList, const string* stringArrayToAdd, const int arraySize);
-	public: bool addStringToWordList(vector<GIApreprocessorWord*>* wordList, const string stringToAdd);
+	public: string generateTextFromPreprocessorSentenceWordList(const GIApreprocessorPlainTextWord* firstWordInSentence);
+		public: string generateTextFromPreprocessorSentenceWordList(const GIApreprocessorPlainTextWord* firstWordInSentence, const bool LRPforNLP);
+	public: string generateTextFromVectorWordList(const vector<GIApreprocessorPlainTextWord*>* wordList);
+		public: string generateTextFromVectorWordList(const vector<GIApreprocessorPlainTextWord*>* wordList, const bool LRPforNLP);
+			public: string generateTextFromPreprocessorSentenceWord(const GIApreprocessorPlainTextWord* word, const bool LRPforNLP, const bool isFirstWordInSentence);
+	public: int calculateLengthOfGeneratedVectorWordListText(vector<GIApreprocessorPlainTextWord*>* wordList);
+	public: bool generateSentenceWordList(GIApreprocessorPlainTextWord* sentenceContentsFirstWord, vector<GIApreprocessorPlainTextWord*>* wordList);
+	public: bool generateSentenceWordList(GIApreprocessorPlainTextWord* sentenceContentsFirstWord, vector<GIApreprocessorPlainTextWord*>* wordList, int startIndex, int endIndex);
+	public: bool generateFlatSentenceWordList(const vector<GIApreprocessorPlainTextWord*>* wordList, GIApreprocessorMultiwordReductionPlainTextWord** sentenceContentsFirstWord);
+	public: bool addWordListToWordList(vector<GIApreprocessorPlainTextWord*>* wordList, vector<GIApreprocessorPlainTextWord*>* wordListToAdd);
+	public: bool addStringArrayToWordList(vector<GIApreprocessorPlainTextWord*>* wordList, const string* stringArrayToAdd, const int arraySize);
+	public: bool addStringToWordList(vector<GIApreprocessorPlainTextWord*>* wordList, const string stringToAdd);
 	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_INTRAWORD_PUNCTUATION_MARK
 	public: bool isIntrawordPunctuationMark(const int indexOfCurrentToken, const string* lineContents);
 	#endif
 	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_APOSTROPHES_POSSESSION_AND_OMISSION
 	public: bool isApostrophePossessionOrOmission(const int indexOfCurrentToken, const string* lineContents);
-	public: bool isApostrophePossessionOrOmission(const GIApreprocessorWord* word);
+	public: bool isApostrophePossessionOrOmission(const GIApreprocessorPlainTextWord* word);
 	#endif	
 	
-	public: bool findAndReplaceAllOccurancesSimpleSubstringInWordListWithSimpleSubstring(vector<GIApreprocessorWord*>* wordList, const string stringSimpleToFind,  const string stringSimpleReplacement);
-		public: bool findAndReplaceAllOccurancesSimpleSubstringInWordListWithSimpleSubstring(vector<GIApreprocessorWord*>* wordList, const string* stringSimpleToFind,  const string* stringSimpleReplacement);
-			public: bool findAndReplaceSimpleSubstringInWordListAtIndexWithSimpleSubstring(vector<GIApreprocessorWord*>* wordList, const string stringSimpleToFind, const int indexToPerformFind, const string stringSimpleReplacement);
-				public: bool findAndReplaceWordListInWordListAtIndexWithWordList(vector<GIApreprocessorWord*>* wordList, vector<GIApreprocessorWord*>* wordListToFind, const int indexToPerformFind, vector<GIApreprocessorWord*>* wordListReplacement);
-	public: bool findSimpleSubstringInWordList(vector<GIApreprocessorWord*>* wordList, const string stringSimpleToFind);
-		public: bool findSimpleSubstringInWordList(vector<GIApreprocessorWord*>* wordList, const string stringSimpleToFind, const int startIndexToPerformFind);
-			public: bool findSubWordListInWordList(vector<GIApreprocessorWord*>* wordList, const vector<GIApreprocessorWord*>* wordListToFind, const int startIndexToPerformFind);	
-	public: bool findSimpleSubstringInWordListAtIndex(const vector<GIApreprocessorWord*>* wordList, const string stringSimpleToFind, const int indexToPerformFind, const bool caseInsensitive);
-		public: bool findSubWordListInWordListAtIndex(const vector<GIApreprocessorWord*>* wordList, const vector<GIApreprocessorWord*>* wordListToFind, const int indexToPerformFind, const bool caseInsensitive);
-	public: bool generateSentenceWordListFromStringSimple(vector<GIApreprocessorWord*>* wordList, const string* stringSimple);
+	public: bool findAndReplaceAllOccurancesSimpleSubstringInWordListWithSimpleSubstring(vector<GIApreprocessorPlainTextWord*>* wordList, const string stringSimpleToFind,  const string stringSimpleReplacement);
+		public: bool findAndReplaceAllOccurancesSimpleSubstringInWordListWithSimpleSubstring(vector<GIApreprocessorPlainTextWord*>* wordList, const string* stringSimpleToFind,  const string* stringSimpleReplacement);
+			public: bool findAndReplaceSimpleSubstringInWordListAtIndexWithSimpleSubstring(vector<GIApreprocessorPlainTextWord*>* wordList, const string stringSimpleToFind, const int indexToPerformFind, const string stringSimpleReplacement);
+				public: bool findAndReplaceWordListInWordListAtIndexWithWordList(vector<GIApreprocessorPlainTextWord*>* wordList, vector<GIApreprocessorPlainTextWord*>* wordListToFind, const int indexToPerformFind, vector<GIApreprocessorPlainTextWord*>* wordListReplacement);
+	public: bool findSimpleSubstringInWordList(vector<GIApreprocessorPlainTextWord*>* wordList, const string stringSimpleToFind);
+		public: bool findSimpleSubstringInWordList(vector<GIApreprocessorPlainTextWord*>* wordList, const string stringSimpleToFind, const int startIndexToPerformFind);
+			public: bool findSubWordListInWordList(vector<GIApreprocessorPlainTextWord*>* wordList, const vector<GIApreprocessorPlainTextWord*>* wordListToFind, const int startIndexToPerformFind);	
+	public: bool findSimpleSubstringInWordListAtIndex(const vector<GIApreprocessorPlainTextWord*>* wordList, const string stringSimpleToFind, const int indexToPerformFind, const bool caseInsensitive);
+		public: bool findSubWordListInWordListAtIndex(const vector<GIApreprocessorPlainTextWord*>* wordList, const vector<GIApreprocessorPlainTextWord*>* wordListToFind, const int indexToPerformFind, const bool caseInsensitive);
+	public: bool generateSentenceWordListFromStringSimple(vector<GIApreprocessorPlainTextWord*>* wordList, const string* stringSimple);
 		
 	//these are similiar to C++ string library functions;
-	public: int findStringInWordList(const vector<GIApreprocessorWord*>* wordList, const string stringToFind);
-		public: int findStringInWordList(const vector<GIApreprocessorWord*>* wordList, const string stringToFind, const int startIndexToPerformFind);
+	public: int findStringInWordList(const vector<GIApreprocessorPlainTextWord*>* wordList, const string stringToFind);
+		public: int findStringInWordList(const vector<GIApreprocessorPlainTextWord*>* wordList, const string stringToFind, const int startIndexToPerformFind);
 	
-	public: bool findSubstringAtStartOfWordInWordList(const vector<GIApreprocessorWord*>* wordList, const string substringToFind);
-		public: bool findSubstringAtStartOfWordInWordList(const vector<GIApreprocessorWord*>* wordList, const string substringToFind, const int startIndexToPerformFind);
+	public: bool findSubstringAtStartOfWordInWordList(const vector<GIApreprocessorPlainTextWord*>* wordList, const string substringToFind);
+		public: bool findSubstringAtStartOfWordInWordList(const vector<GIApreprocessorPlainTextWord*>* wordList, const string substringToFind, const int startIndexToPerformFind);
 	
-	public: vector<GIApreprocessorWord*> extractSubWordListInWordList(const vector<GIApreprocessorWord*>* wordList, const int startIndexToExtract);
-		public: vector<GIApreprocessorWord*> extractSubWordListInWordList(const vector<GIApreprocessorWord*>* wordList, const int startIndexToExtract, const int numberOfWordsToExtract);
+	public: vector<GIApreprocessorPlainTextWord*> extractSubWordListInWordList(const vector<GIApreprocessorPlainTextWord*>* wordList, const int startIndexToExtract);
+		public: vector<GIApreprocessorPlainTextWord*> extractSubWordListInWordList(const vector<GIApreprocessorPlainTextWord*>* wordList, const int startIndexToExtract, const int numberOfWordsToExtract);
 	
-	public: bool insertWordListIntoWordList(vector<GIApreprocessorWord*>* wordList, const vector<GIApreprocessorWord*>* wordListToInsert, const int indexToInsert);
-	public: bool insertStringIntoWordList(vector<GIApreprocessorWord*>* wordList, const string stringToInsert, const int indexToInsert);
-		public: bool insertWordIntoWordList(vector<GIApreprocessorWord*>* wordList, GIApreprocessorWord* wordToInsert, const int indexToInsert);
+	public: bool insertWordListIntoWordList(vector<GIApreprocessorPlainTextWord*>* wordList, const vector<GIApreprocessorPlainTextWord*>* wordListToInsert, const int indexToInsert);
+	public: bool insertStringIntoWordList(vector<GIApreprocessorPlainTextWord*>* wordList, const string stringToInsert, const int indexToInsert);
+		public: bool insertWordIntoWordList(vector<GIApreprocessorPlainTextWord*>* wordList, GIApreprocessorPlainTextWord* wordToInsert, const int indexToInsert);
 	
-	public: bool wordListFindAndRemoveAllOccurancesSimpleSubstringInWordList(vector<GIApreprocessorWord*>* wordList, const string stringSimpleToFind);
-		public: bool removeWordFromWordList(vector<GIApreprocessorWord*>* wordList, const int indexToRemove);
-			public: bool removeWordsFromWordList(vector<GIApreprocessorWord*>* wordList, const int indexToRemove, const int numberElementsToRemove);
+	public: bool wordListFindAndRemoveAllOccurancesSimpleSubstringInWordList(vector<GIApreprocessorPlainTextWord*>* wordList, const string stringSimpleToFind);
+		public: bool removeWordFromWordList(vector<GIApreprocessorPlainTextWord*>* wordList, const int indexToRemove);
+			public: bool removeWordsFromWordList(vector<GIApreprocessorPlainTextWord*>* wordList, const int indexToRemove, const int numberElementsToRemove);
 			
-	public: bool replaceWordListAtIndexWithSimpleSubstring(vector<GIApreprocessorWord*>* wordList, const int indexToPerformReplacement, const string stringSimpleReplacement);
-		public: bool replaceWordListAtIndexWithSimpleSubstring(vector<GIApreprocessorWord*>* wordList, const int indexToPerformReplacement, vector<GIApreprocessorWord*>* wordListReplacement);
+	public: bool replaceWordListAtIndexWithSimpleSubstring(vector<GIApreprocessorPlainTextWord*>* wordList, const int indexToPerformReplacement, const string stringSimpleReplacement);
+		public: bool replaceWordListAtIndexWithSimpleSubstring(vector<GIApreprocessorPlainTextWord*>* wordList, const int indexToPerformReplacement, vector<GIApreprocessorPlainTextWord*>* wordListReplacement);
 	
-	public: bool printWordList(const vector<GIApreprocessorWord*>* wordList);
-	public: string printWordListString(const vector<GIApreprocessorWord*>* wordList);
+	public: bool printWordList(const vector<GIApreprocessorPlainTextWord*>* wordList);
+	public: string printWordListString(const vector<GIApreprocessorPlainTextWord*>* wordList);
 	#endif	
 	public: void preprocessorFillCurrentWord(GIApreprocessorMultiwordReductionPlainTextWord** currentWordInSentence, string* currentWord, int* entityIndex, int lastCharacterIndexOfWordInSentence);
 	public: int getPOStypeFromName(const string wordPOStypeName);

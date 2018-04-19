@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorPOStagger.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f2p 04-April-2018
+ * Project Version: 3f3a 10-April-2018
  * Requirements: requires plain text file
  * Description: Preprocessor POS tagger
  * /
@@ -75,7 +75,7 @@ bool GIApreprocessorPOStaggerClass::executePrelimFeatureProcessingOnSentences(co
 			GIAfeature* currentFeatureInList = new GIAfeature();	//prelim feature
 
 			//centre word calculations
-			GIApreprocessorWord* centreWord = (currentGIApreprocessorSentenceInList->sentenceContentsLRP)[wCentre];
+			GIApreprocessorPlainTextWord* centreWord = (currentGIApreprocessorSentenceInList->sentenceContentsLRP)[wCentre];
 			#ifdef GIA_PREPROCESSOR_POS_TAGGER_POS_DEBUG
 			cout << "centreWord = " << centreWord->tagName << endl;
 			#endif
@@ -257,7 +257,7 @@ bool GIApreprocessorPOStaggerClass::executePrelimFeatureProcessingOnSentences(co
 	{	
 		for(int wCentre=0; wCentre<currentGIApreprocessorSentenceInList->sentenceContentsLRP.size(); wCentre++)
 		{
-			GIApreprocessorWord* centreWord = (currentGIApreprocessorSentenceInList->sentenceContentsLRP)[wCentre];
+			GIApreprocessorPlainTextWord* centreWord = (currentGIApreprocessorSentenceInList->sentenceContentsLRP)[wCentre];
 			
 			#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY
 			for(int i=0; i<centreWord->POStaggerExperiencePermutations.size(); i++)
@@ -298,7 +298,7 @@ bool GIApreprocessorPOStaggerClass::executePrelimFeatureProcessingOnSentences(co
 	{			
 		for(int wCentre=0; wCentre<currentGIApreprocessorSentenceInList->sentenceContentsLRP.size(); wCentre++)
 		{
-			GIApreprocessorWord* centreWord = (currentGIApreprocessorSentenceInList->sentenceContentsLRP)[wCentre];
+			GIApreprocessorPlainTextWord* centreWord = (currentGIApreprocessorSentenceInList->sentenceContentsLRP)[wCentre];
 			GIAfeature* currentFeatureInList = (currentGIApreprocessorSentenceInList->sentenceContentsLRP)[wCentre]->featureReferencePrelim;
 			#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY
 			if(centreWord->POStaggerExperiencePermutations.size() > 0)
@@ -356,7 +356,7 @@ bool GIApreprocessorPOStaggerClass::executePrelimFeatureProcessingOnSentences(co
 	#endif
 }
 
-bool GIApreprocessorPOStaggerClass::predictPOStaggerDatabaseEntry(const unsigned long centreWordPOSambiguityInfo, vector<unsigned long>* POSambiguityInfoPermutation, const unsigned char centreWordUnambiguousPOSindex, GIApreprocessorWord* centreWord, bool* foundMatchingCentreWordPOSambiguityInfo, unsigned char* centreWordPOSindexPrediction, bool* centreWordPOSisAmbiguous, double* experienceBackPropagationPassError, int* maximumNumberOfInstances)
+bool GIApreprocessorPOStaggerClass::predictPOStaggerDatabaseEntry(const unsigned long centreWordPOSambiguityInfo, vector<unsigned long>* POSambiguityInfoPermutation, const unsigned char centreWordUnambiguousPOSindex, GIApreprocessorPlainTextWord* centreWord, bool* foundMatchingCentreWordPOSambiguityInfo, unsigned char* centreWordPOSindexPrediction, bool* centreWordPOSisAmbiguous, double* experienceBackPropagationPassError, int* maximumNumberOfInstances)
 {
 	bool result = true;
 	
@@ -493,7 +493,7 @@ bool GIApreprocessorPOStaggerClass::createWordIndexListFromWikiDumpText(bool use
 		{	
 			for(int w=0; w<currentGIApreprocessorSentenceInList->sentenceContentsLRP.size(); w++)
 			{		
-				GIApreprocessorWord* currentWord = (currentGIApreprocessorSentenceInList->sentenceContentsLRP)[w];
+				GIApreprocessorPlainTextWord* currentWord = (currentGIApreprocessorSentenceInList->sentenceContentsLRP)[w];
 				string wordLowerCase = SHAREDvars.convertStringToLowerCase(&(currentWord->tagName));	//CHECKTHIS: verify that currentWord->tagName is case sensitive
 				wikiDumpWordIndexListGlobal->insert(pair<string, GIApreprocessorMultiwordReductionWord*>(wordLowerCase, currentWord));
 			}
@@ -594,7 +594,7 @@ bool GIApreprocessorPOStaggerClass::generatePOStaggerDatabaseFromWikiDumpText(co
 		for(int wCentre=0; wCentre<currentGIApreprocessorSentenceInList->sentenceContentsLRP.size(); wCentre++)
 		{
 			//centre word calculations
-			GIApreprocessorWord* centreWord = (currentGIApreprocessorSentenceInList->sentenceContentsLRP)[wCentre];
+			GIApreprocessorPlainTextWord* centreWord = (currentGIApreprocessorSentenceInList->sentenceContentsLRP)[wCentre];
 			#ifdef GIA_PREPROCESSOR_POS_TAGGER_POS_DEBUG
 			cout << "centreWord = " << centreWord->tagName << endl;
 			#endif
@@ -1059,11 +1059,11 @@ int GIApreprocessorPOStaggerClass::convertGIAPOStaggerValueToGrammaticalWordType
 }
 */
 	
-bool GIApreprocessorPOStaggerClass::generatePOSambiguityInfoPermutation(vector<GIApreprocessorWord*>* sentenceContentsLRP, int wCentre, bool* identifiedEveryWordInDatabasePOSpermutation, bool* identifiedEveryWordInDatabasePOSpermutationIsUnambiguous, vector<unsigned long>* POSambiguityInfoPermutation)
+bool GIApreprocessorPOStaggerClass::generatePOSambiguityInfoPermutation(vector<GIApreprocessorPlainTextWord*>* sentenceContentsLRP, int wCentre, bool* identifiedEveryWordInDatabasePOSpermutation, bool* identifiedEveryWordInDatabasePOSpermutationIsUnambiguous, vector<unsigned long>* POSambiguityInfoPermutation)
 {
 	bool result = true;
 	
-	GIApreprocessorWord* centreWord = (*sentenceContentsLRP)[wCentre];
+	GIApreprocessorPlainTextWord* centreWord = (*sentenceContentsLRP)[wCentre];
 
 	//context word calculations	
 	int wMin = wCentre - (GIA_PREPROCESSOR_POS_TAGGER_MAX_CONTEXT_WORDS_IN_DATABASE_POS_PERMUTATION/2);
@@ -1100,7 +1100,7 @@ bool GIApreprocessorPOStaggerClass::generatePOSambiguityInfoPermutation(vector<G
 		}
 		else
 		{
-			GIApreprocessorWord* contextWord = sentenceContentsLRP->at(w);
+			GIApreprocessorPlainTextWord* contextWord = sentenceContentsLRP->at(w);
 
 			bool contextWordPOSisAmbiguous = false;
 			unsigned long contextWordPOSambiguityInfo = GIA_PREPROCESSOR_POS_TAGGER_POS_AMBIGUITY_INFO_UNKNOWN;	//default value
@@ -1194,7 +1194,7 @@ void GIApreprocessorPOStaggerClass::generatePOSambiguityInfoUnambiguousPermutati
 	}
 }
 
-bool GIApreprocessorPOStaggerClass::determinePOSambiguityInfo(GIApreprocessorWord* contextWord, unsigned long* contextWordPOSambiguityInfo, bool* contextWordPOSisAmbiguous, unsigned char* contextWordUnambiguousPOSindex, bool* identifiedEveryWordInDatabasePOSpermutation)
+bool GIApreprocessorPOStaggerClass::determinePOSambiguityInfo(GIApreprocessorPlainTextWord* contextWord, unsigned long* contextWordPOSambiguityInfo, bool* contextWordPOSisAmbiguous, unsigned char* contextWordUnambiguousPOSindex, bool* identifiedEveryWordInDatabasePOSpermutation)
 {
 	bool result = true;
 	

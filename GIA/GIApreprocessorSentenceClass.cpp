@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorSentenceClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f2p 04-April-2018
+ * Project Version: 3f3a 10-April-2018
  * Requirements: requires plain text file
  * Description: Preprocessor Sentence Class
  * /
@@ -80,9 +80,9 @@ GIApreprocessorSentence::~GIApreprocessorSentence(void)
 		delete sentenceContentsOriginal[0];
 	}
 	*/
-	for(vector<GIApreprocessorWord*>::iterator it = sentenceContentsOriginal.begin(); it != sentenceContentsOriginal.end(); it++)
+	for(vector<GIApreprocessorPlainTextWord*>::iterator it = sentenceContentsOriginal.begin(); it != sentenceContentsOriginal.end(); it++)
 	{
-		GIApreprocessorWord* currentWord = *it;
+		GIApreprocessorPlainTextWord* currentWord = *it;
 		GIApreprocessorMultiwordReductionPlainTextWord* plaintextWord = static_cast<GIApreprocessorMultiwordReductionPlainTextWord*>(currentWord);	//require to cast back to plaintextword to ensure that all memory is deleted	//CHECKTHIS
 		currentWord->nextTag = NULL;	//prevents future words from being deleted
 		delete plaintextWord;

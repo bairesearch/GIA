@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorMultiwordReductionClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f2p 04-April-2018
+ * Project Version: 3f3a 10-April-2018
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction Class
  * /
@@ -34,6 +34,7 @@
 
 
 #include "GIApreprocessorMultiwordReductionClass.hpp"
+
 
 GIApreprocessorWord::GIApreprocessorWord(void)
 {
@@ -66,60 +67,14 @@ void GIApreprocessorWord::initialiseGIApreprocessorWord()
 {
 	tagName = "";
 
-	#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_EXECUTE_PRELIM_POS_TAGGER
-	featureReferencePrelim = NULL;
-	#endif
-	#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
-	featureReferenceOriginal = NULL;
-	featureReference = NULL;
-	entityReference = NULL;
-	#endif
-
 	plainTextWord = false;	
 
-	#ifdef GIA_NEURAL_NETWORK
-	wordShortcutToConceptNeuron = NULL;
-	#ifdef GIA_NEURAL_NETWORK_NON_SEMANTIC
-	neuralNetworkPreprocessorWordType = GIA_NEURAL_NETWORK_NON_SEMANTIC_PREPROCESSOR_WORD_TYPE_UNDEFINED;
-	tagNameOriginalNonLemma = "";
-	#endif
-	#endif
-
-	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_PERFORM_BATCH_PREDICTIONS
-	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY
-	//POStaggerExperiencePermutations = NULL;
-	#else
-	POStaggerExperience = NULL;
-	#endif
-	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_PREDICTION_VERIFICATION
-	centreWordPOSambiguityInfo = 0;
-	#endif
-	#endif
-	
-	#ifdef GIA_TXT_REL_TRANSLATOR_RULES
-	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START
-	unambiguousPOSindex = GIA_SHARED_POS_TYPE_UNDEFINED;	//GIA_PREPROCESSOR_POS_TYPE_UNDEFINED is out of scope
-	#else
-	POSambiguityInfo = 0;
-	#endif
-	wordPOStypeInferred = GIA_SHARED_POS_TYPE_UNDEFINED;
-	alreadyFoundMatch = false;
-	translatorSentenceEntityIndex = GIA_ENTITY_INDEX_UNDEFINED;
-	translatorEntity = NULL;
-	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_WORD_NOUN_VERB_VARIANT
-	wordVerbVariantGrammaticalTenseForm = GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_UNKNOWN;
-	wordNounVariantGrammaticalTenseForm = GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NOUN_DATABASE_TAG_BASE_TENSE_FORM_SINGULAR;
-	#endif
-	#endif
-		
 	nextTag = NULL;
 }
 
 
 GIApreprocessorMultiwordReductionWord::GIApreprocessorMultiwordReductionWord(void)
 {
-	tagNameLemma = "";
-
 	base = false;
 	
 	grammaticalTenseForm = GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_INFINITIVE;
@@ -160,35 +115,83 @@ GIApreprocessorMultiwordReductionIrregularVerbWord::~GIApreprocessorMultiwordRed
 	}	
 }
 
+GIApreprocessorPlainTextWord::GIApreprocessorPlainTextWord(void)
+{	
+	initialiseGIApreprocessorPlainTextWord();	
+}
+GIApreprocessorPlainTextWord::~GIApreprocessorPlainTextWord(void)
+{
+}
+void GIApreprocessorPlainTextWord::initialiseGIApreprocessorPlainTextWord()
+{
+	#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_EXECUTE_PRELIM_POS_TAGGER
+	featureReferencePrelim = NULL;
+	#endif
+	#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
+	featureReferenceOriginal = NULL;
+	featureReference = NULL;
+	entityReference = NULL;
+	#endif
+
+	#ifdef GIA_NEURAL_NETWORK
+	wordShortcutToConceptNeuron = NULL;
+	#ifdef GIA_NEURAL_NETWORK_NON_SEMANTIC
+	neuralNetworkPreprocessorWordType = GIA_NEURAL_NETWORK_NON_SEMANTIC_PREPROCESSOR_WORD_TYPE_UNDEFINED;
+	tagNameOriginalNonLemma = "";
+	#endif
+	#endif
+
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_PERFORM_BATCH_PREDICTIONS
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY
+	//POStaggerExperiencePermutations = NULL;
+	#else
+	POStaggerExperience = NULL;
+	#endif
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_PREDICTION_VERIFICATION
+	centreWordPOSambiguityInfo = 0;
+	#endif
+	#endif
+	
+	#ifdef GIA_TXT_REL_TRANSLATOR_RULES
+	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START
+	unambiguousPOSindex = GIA_SHARED_POS_TYPE_UNDEFINED;	//GIA_PREPROCESSOR_POS_TYPE_UNDEFINED is out of scope
+	#else
+	POSambiguityInfo = 0;
+	#endif
+	wordPOStypeInferred = GIA_SHARED_POS_TYPE_UNDEFINED;
+	alreadyFoundMatch = false;
+	translatorSentenceEntityIndex = GIA_ENTITY_INDEX_UNDEFINED;
+	translatorEntity = NULL;
+	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_WORD_NOUN_VERB_VARIANT
+	wordVerbVariantGrammaticalTenseForm = GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_UNKNOWN;
+	wordNounVariantGrammaticalTenseForm = GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NOUN_DATABASE_TAG_BASE_TENSE_FORM_SINGULAR;
+	#endif
+	#endif	
+}
+
 GIApreprocessorMultiwordReductionPlainTextWord::GIApreprocessorMultiwordReductionPlainTextWord(void)
 {	
+	initialiseGIApreprocessorMultiwordReductionPlainTextWord();	
+}
+GIApreprocessorMultiwordReductionPlainTextWord::GIApreprocessorMultiwordReductionPlainTextWord(string tagNameNew)
+{	
+	initialiseGIApreprocessorMultiwordReductionPlainTextWord();
+	
+	tagName = tagNameNew;
+}
+GIApreprocessorMultiwordReductionPlainTextWord::~GIApreprocessorMultiwordReductionPlainTextWord(void)
+{
+}
+void GIApreprocessorMultiwordReductionPlainTextWord::initialiseGIApreprocessorMultiwordReductionPlainTextWord()
+{
+	tagNameLemma = "";
+
 	entityIndex = false;
 	collapsedPhrasalVerbExactDefinedSection = false;
 	collapsedMultiwordWord = false;
 	collapsedMultiwordWordType = GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DUMMY_COLLAPSED_MULTIWORD_UNDEFINED_TYPE;
 	collapsedMultiwordWordTemp = false;
 	grammaticalTenseFormDetected = GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_INFINITIVE;
-	
-	#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
-	preprocessorUpperLevelWordReference = NULL;
-	preprocessorUpperLevelWordReferenceSize = INT_DEFAULT_VALUE;
-	#endif
-	
-	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
-	tagNameLRPforNLP = "";
-	#endif
-	
-	plainTextWord = true;
-}
-GIApreprocessorMultiwordReductionPlainTextWord::GIApreprocessorMultiwordReductionPlainTextWord(string tagNameNew)
-{	
-	tagName = tagNameNew;
-	
-	entityIndex = false;
-	collapsedPhrasalVerbExactDefinedSection = false;
-	collapsedMultiwordWord = false;
-	collapsedMultiwordWordType = GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DUMMY_COLLAPSED_MULTIWORD_UNDEFINED_TYPE;
-	collapsedMultiwordWordTemp = false;
 	
 	#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
 	preprocessorUpperLevelWordReference = NULL;
@@ -203,9 +206,7 @@ GIApreprocessorMultiwordReductionPlainTextWord::GIApreprocessorMultiwordReductio
 	
 	plainTextWord = true;
 }
-GIApreprocessorMultiwordReductionPlainTextWord::~GIApreprocessorMultiwordReductionPlainTextWord(void)
-{
-}
+
 
 
 /*
@@ -270,37 +271,37 @@ GIApreprocessorMultiwordReductionTagTextCorrespondenceInfo::~GIApreprocessorMult
 
 #ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
 
-string GIApreprocessorMultiwordReductionClassClass::generateTextFromPreprocessorSentenceWordList(const GIApreprocessorWord* firstWordInSentence)
+string GIApreprocessorMultiwordReductionClassClass::generateTextFromPreprocessorSentenceWordList(const GIApreprocessorPlainTextWord* firstWordInSentence)
 {
 	return generateTextFromPreprocessorSentenceWordList(firstWordInSentence, false);
 }
-string GIApreprocessorMultiwordReductionClassClass::generateTextFromPreprocessorSentenceWordList(const GIApreprocessorWord* firstWordInSentence, const bool LRPforNLP)
+string GIApreprocessorMultiwordReductionClassClass::generateTextFromPreprocessorSentenceWordList(const GIApreprocessorPlainTextWord* firstWordInSentence, const bool LRPforNLP)
 {
 	string sentenceText = "";
-	const GIApreprocessorWord* currentWordInSentence = firstWordInSentence;
+	const GIApreprocessorPlainTextWord* currentWordInSentence = firstWordInSentence;
 	bool isFirstWordInSentence = true;
 	while(currentWordInSentence->nextTag != NULL)
 	{
-		const GIApreprocessorWord* word = currentWordInSentence;
+		const GIApreprocessorPlainTextWord* word = currentWordInSentence;
 		sentenceText = sentenceText + generateTextFromPreprocessorSentenceWord(word, LRPforNLP, isFirstWordInSentence);
 		isFirstWordInSentence = false;
 		
-		currentWordInSentence = currentWordInSentence->nextTag;
+		currentWordInSentence = static_cast<GIApreprocessorPlainTextWord*>(currentWordInSentence->nextTag);
 	}
 	return sentenceText;
 }
 
-string GIApreprocessorMultiwordReductionClassClass::generateTextFromVectorWordList(const vector<GIApreprocessorWord*>* wordList)
+string GIApreprocessorMultiwordReductionClassClass::generateTextFromVectorWordList(const vector<GIApreprocessorPlainTextWord*>* wordList)
 {
 	return generateTextFromVectorWordList(wordList, false);
 }
-string GIApreprocessorMultiwordReductionClassClass::generateTextFromVectorWordList(const vector<GIApreprocessorWord*>* wordList, const bool LRPforNLP)
+string GIApreprocessorMultiwordReductionClassClass::generateTextFromVectorWordList(const vector<GIApreprocessorPlainTextWord*>* wordList, const bool LRPforNLP)
 {
 	string sentenceText = "";
 	bool isFirstWordInSentence = true;
 	for(int wordIndex = 0; wordIndex<wordList->size(); wordIndex++)
 	{
-		GIApreprocessorWord* word = (*wordList)[wordIndex];
+		GIApreprocessorPlainTextWord* word = (*wordList)[wordIndex];
 		#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_APOSTROPHES_POSSESSION_AND_OMISSION	
 		if(isApostrophePossessionOrOmission(word))
 		{
@@ -313,7 +314,7 @@ string GIApreprocessorMultiwordReductionClassClass::generateTextFromVectorWordLi
 	return sentenceText;
 }
 
-string GIApreprocessorMultiwordReductionClassClass::generateTextFromPreprocessorSentenceWord(const GIApreprocessorWord* word, const bool LRPforNLP, const bool isFirstWordInSentence)
+string GIApreprocessorMultiwordReductionClassClass::generateTextFromPreprocessorSentenceWord(const GIApreprocessorPlainTextWord* word, const bool LRPforNLP, const bool isFirstWordInSentence)
 {
 	string wordText = word->tagName;
 	if(LRPforNLP)
@@ -347,24 +348,24 @@ string GIApreprocessorMultiwordReductionClassClass::generateTextFromPreprocessor
 	return wordText;
 }
 
-int GIApreprocessorMultiwordReductionClassClass::calculateLengthOfGeneratedVectorWordListText(vector<GIApreprocessorWord*>* wordList)
+int GIApreprocessorMultiwordReductionClassClass::calculateLengthOfGeneratedVectorWordListText(vector<GIApreprocessorPlainTextWord*>* wordList)
 {
 	string sentenceText = generateTextFromVectorWordList(wordList);
 	return sentenceText.length();
 }
 
-bool GIApreprocessorMultiwordReductionClassClass::generateSentenceWordList(GIApreprocessorWord* sentenceContentsFirstWord, vector<GIApreprocessorWord*>* wordList)
+bool GIApreprocessorMultiwordReductionClassClass::generateSentenceWordList(GIApreprocessorPlainTextWord* sentenceContentsFirstWord, vector<GIApreprocessorPlainTextWord*>* wordList)
 {
 	return generateSentenceWordList(sentenceContentsFirstWord, wordList, GIA_PREPROCESSOR_WORD_LIST_INDEX_NO_REQUIREMENT, GIA_PREPROCESSOR_WORD_LIST_INDEX_NO_REQUIREMENT);
 }
-bool GIApreprocessorMultiwordReductionClassClass::generateSentenceWordList(GIApreprocessorWord* sentenceContentsFirstWord, vector<GIApreprocessorWord*>* wordList, int startIndex, int endIndex)
+bool GIApreprocessorMultiwordReductionClassClass::generateSentenceWordList(GIApreprocessorPlainTextWord* sentenceContentsFirstWord, vector<GIApreprocessorPlainTextWord*>* wordList, int startIndex, int endIndex)
 {
 	bool result = true;
 	
 	wordList->clear();	//added 3b3i
 	
 	int index = 0;
-	GIApreprocessorWord* currentWordInSentence = sentenceContentsFirstWord;
+	GIApreprocessorPlainTextWord* currentWordInSentence = sentenceContentsFirstWord;
 	while(currentWordInSentence->nextTag != NULL)
 	{
 		if((startIndex == GIA_PREPROCESSOR_WORD_LIST_INDEX_NO_REQUIREMENT) || (index >= startIndex))
@@ -375,7 +376,7 @@ bool GIApreprocessorMultiwordReductionClassClass::generateSentenceWordList(GIApr
 			}
 		}
 		
-		currentWordInSentence = currentWordInSentence->nextTag;
+		currentWordInSentence = static_cast<GIApreprocessorPlainTextWord*>(currentWordInSentence->nextTag);
 		index++;
 	}
 	
@@ -392,23 +393,23 @@ bool GIApreprocessorMultiwordReductionClassClass::generateSentenceWordList(GIApr
 }
 
 //precondition: words in wordList are unique across all logicReferenceVariableWordLists in memory
-bool GIApreprocessorMultiwordReductionClassClass::generateFlatSentenceWordList(const vector<GIApreprocessorWord*>* wordList, GIApreprocessorMultiwordReductionPlainTextWord** sentenceContentsFirstWord)
+bool GIApreprocessorMultiwordReductionClassClass::generateFlatSentenceWordList(const vector<GIApreprocessorPlainTextWord*>* wordList, GIApreprocessorMultiwordReductionPlainTextWord** sentenceContentsFirstWord)
 {
 	bool result = true;
 	
 	if(wordList->size() > 0)
 	{
 		*sentenceContentsFirstWord = static_cast<GIApreprocessorMultiwordReductionPlainTextWord*>((*wordList)[0]);
-		GIApreprocessorWord* currentWordInSentence = *sentenceContentsFirstWord;
+		GIApreprocessorPlainTextWord* currentWordInSentence = *sentenceContentsFirstWord;
 		for(int i=1; i<wordList->size(); i++)
 		{
-			GIApreprocessorWord* word = (*wordList)[i];
+			GIApreprocessorPlainTextWord* word = (*wordList)[i];
 			if(!(word->plainTextWord))
 			{
 				cout << "GIApreprocessorMultiwordReductionClassClass::generateFlatSentenceWordList{} warning: (!(word->plainTextWord))" << endl;
 			}
 			currentWordInSentence->nextTag = word;
-			currentWordInSentence = currentWordInSentence->nextTag;
+			currentWordInSentence = static_cast<GIApreprocessorPlainTextWord*>(currentWordInSentence->nextTag);
 		}
 		if(currentWordInSentence->nextTag == NULL)
 		{
@@ -422,24 +423,24 @@ bool GIApreprocessorMultiwordReductionClassClass::generateFlatSentenceWordList(c
 }
 
 
-bool GIApreprocessorMultiwordReductionClassClass::addWordListToWordList(vector<GIApreprocessorWord*>* wordList, vector<GIApreprocessorWord*>* wordListToAdd)
+bool GIApreprocessorMultiwordReductionClassClass::addWordListToWordList(vector<GIApreprocessorPlainTextWord*>* wordList, vector<GIApreprocessorPlainTextWord*>* wordListToAdd)
 {
 	for(int i=0; i<wordListToAdd->size(); i++)
 	{
 		wordList->push_back((*wordListToAdd)[i]);
 	}
 }
-bool GIApreprocessorMultiwordReductionClassClass::addStringArrayToWordList(vector<GIApreprocessorWord*>* wordList, const string* stringArrayToAdd, const int arraySize)
+bool GIApreprocessorMultiwordReductionClassClass::addStringArrayToWordList(vector<GIApreprocessorPlainTextWord*>* wordList, const string* stringArrayToAdd, const int arraySize)
 {
 	for(int i=0; i<arraySize; i++)
 	{
-		GIApreprocessorWord* newWord = new GIApreprocessorMultiwordReductionPlainTextWord(stringArrayToAdd[i]);
+		GIApreprocessorPlainTextWord* newWord = new GIApreprocessorMultiwordReductionPlainTextWord(stringArrayToAdd[i]);
 		wordList->push_back(newWord);
 	}
 }
-bool GIApreprocessorMultiwordReductionClassClass::addStringToWordList(vector<GIApreprocessorWord*>* wordList, const string stringToAdd)
+bool GIApreprocessorMultiwordReductionClassClass::addStringToWordList(vector<GIApreprocessorPlainTextWord*>* wordList, const string stringToAdd)
 {
-	GIApreprocessorWord* newWord = new GIApreprocessorMultiwordReductionPlainTextWord(stringToAdd);
+	GIApreprocessorPlainTextWord* newWord = new GIApreprocessorMultiwordReductionPlainTextWord(stringToAdd);
 	wordList->push_back(newWord);
 }
 
@@ -529,7 +530,7 @@ bool GIApreprocessorMultiwordReductionClassClass::isApostrophePossessionOrOmissi
 	
 	return apostrophePossessionOrOmissionFound;	
 }
-bool GIApreprocessorMultiwordReductionClassClass::isApostrophePossessionOrOmission(const GIApreprocessorWord* word)
+bool GIApreprocessorMultiwordReductionClassClass::isApostrophePossessionOrOmission(const GIApreprocessorPlainTextWord* word)
 {
 	bool apostrophePossessionOrOmissionFound = false;
 	
@@ -548,19 +549,19 @@ bool GIApreprocessorMultiwordReductionClassClass::isApostrophePossessionOrOmissi
 		
 		
 
-bool GIApreprocessorMultiwordReductionClassClass::findAndReplaceAllOccurancesSimpleSubstringInWordListWithSimpleSubstring(vector<GIApreprocessorWord*>* wordList, const string stringSimpleToFind,  const string stringSimpleReplacement)
+bool GIApreprocessorMultiwordReductionClassClass::findAndReplaceAllOccurancesSimpleSubstringInWordListWithSimpleSubstring(vector<GIApreprocessorPlainTextWord*>* wordList, const string stringSimpleToFind,  const string stringSimpleReplacement)
 {
 	return findAndReplaceAllOccurancesSimpleSubstringInWordListWithSimpleSubstring(wordList, &stringSimpleToFind, &stringSimpleReplacement);
 }
-bool GIApreprocessorMultiwordReductionClassClass::findAndReplaceAllOccurancesSimpleSubstringInWordListWithSimpleSubstring(vector<GIApreprocessorWord*>* wordList, const string* stringSimpleToFind,  const string* stringSimpleReplacement)
+bool GIApreprocessorMultiwordReductionClassClass::findAndReplaceAllOccurancesSimpleSubstringInWordListWithSimpleSubstring(vector<GIApreprocessorPlainTextWord*>* wordList, const string* stringSimpleToFind,  const string* stringSimpleReplacement)
 {
 	bool result = false;
 	
 	//cout << "findAndReplaceAllOccurancesSimpleSubstringInWordListWithSimpleSubstring{}: wordList before: " << generateTextFromVectorWordList(wordList) << ", stringSimpleToFind = " << *stringSimpleToFind << ", stringSimpleReplacement = " << *stringSimpleReplacement  << endl;
 
-	vector<GIApreprocessorWord*> wordListToFind;
+	vector<GIApreprocessorPlainTextWord*> wordListToFind;
 	generateSentenceWordListFromStringSimple(&wordListToFind, stringSimpleToFind);
-	vector<GIApreprocessorWord*> wordListReplacement;
+	vector<GIApreprocessorPlainTextWord*> wordListReplacement;
 	generateSentenceWordListFromStringSimple(&wordListReplacement, stringSimpleReplacement);
 	
 	for(int w = 0; w < wordList->size(); w++)
@@ -574,13 +575,13 @@ bool GIApreprocessorMultiwordReductionClassClass::findAndReplaceAllOccurancesSim
 		
 	return result;
 }
-bool GIApreprocessorMultiwordReductionClassClass::findAndReplaceSimpleSubstringInWordListAtIndexWithSimpleSubstring(vector<GIApreprocessorWord*>* wordList, const string stringSimpleToFind, const int indexToPerformFind, const string stringSimpleReplacement)
+bool GIApreprocessorMultiwordReductionClassClass::findAndReplaceSimpleSubstringInWordListAtIndexWithSimpleSubstring(vector<GIApreprocessorPlainTextWord*>* wordList, const string stringSimpleToFind, const int indexToPerformFind, const string stringSimpleReplacement)
 {
 	bool result = false;
 	
-	vector<GIApreprocessorWord*> wordListToFind;
+	vector<GIApreprocessorPlainTextWord*> wordListToFind;
 	generateSentenceWordListFromStringSimple(&wordListToFind, &stringSimpleToFind);
-	vector<GIApreprocessorWord*> wordListReplacement;
+	vector<GIApreprocessorPlainTextWord*> wordListReplacement;
 	generateSentenceWordListFromStringSimple(&wordListReplacement, &stringSimpleReplacement);
 	
 	if(findAndReplaceWordListInWordListAtIndexWithWordList(wordList, &wordListToFind, indexToPerformFind, &wordListReplacement))
@@ -590,7 +591,7 @@ bool GIApreprocessorMultiwordReductionClassClass::findAndReplaceSimpleSubstringI
 		
 	return result;
 }
-bool GIApreprocessorMultiwordReductionClassClass::findAndReplaceWordListInWordListAtIndexWithWordList(vector<GIApreprocessorWord*>* wordList, vector<GIApreprocessorWord*>* wordListToFind, const int indexToPerformFind, vector<GIApreprocessorWord*>* wordListReplacement)
+bool GIApreprocessorMultiwordReductionClassClass::findAndReplaceWordListInWordListAtIndexWithWordList(vector<GIApreprocessorPlainTextWord*>* wordList, vector<GIApreprocessorPlainTextWord*>* wordListToFind, const int indexToPerformFind, vector<GIApreprocessorPlainTextWord*>* wordListReplacement)
 {
 	bool result = false;
 	
@@ -610,16 +611,16 @@ bool GIApreprocessorMultiwordReductionClassClass::findAndReplaceWordListInWordLi
 }
 
 
-bool GIApreprocessorMultiwordReductionClassClass::findSimpleSubstringInWordList(vector<GIApreprocessorWord*>* wordList, const string stringSimpleToFind)
+bool GIApreprocessorMultiwordReductionClassClass::findSimpleSubstringInWordList(vector<GIApreprocessorPlainTextWord*>* wordList, const string stringSimpleToFind)
 {
 	const int startIndexToPerformFind = 0;
 	return findSimpleSubstringInWordList(wordList, stringSimpleToFind, startIndexToPerformFind);
 }
-bool GIApreprocessorMultiwordReductionClassClass::findSimpleSubstringInWordList(vector<GIApreprocessorWord*>* wordList, const string stringSimpleToFind, const int startIndexToPerformFind)
+bool GIApreprocessorMultiwordReductionClassClass::findSimpleSubstringInWordList(vector<GIApreprocessorPlainTextWord*>* wordList, const string stringSimpleToFind, const int startIndexToPerformFind)
 {
 	bool result = false;
 	
-	vector<GIApreprocessorWord*> wordListToFind;
+	vector<GIApreprocessorPlainTextWord*> wordListToFind;
 	generateSentenceWordListFromStringSimple(&wordListToFind, &stringSimpleToFind);
 	
 	if(findSubWordListInWordList(wordList, &wordListToFind, startIndexToPerformFind))
@@ -629,7 +630,7 @@ bool GIApreprocessorMultiwordReductionClassClass::findSimpleSubstringInWordList(
 		
 	return result;
 }
-bool GIApreprocessorMultiwordReductionClassClass::findSubWordListInWordList(vector<GIApreprocessorWord*>* wordList, const vector<GIApreprocessorWord*>* wordListToFind, const int startIndexToPerformFind)
+bool GIApreprocessorMultiwordReductionClassClass::findSubWordListInWordList(vector<GIApreprocessorPlainTextWord*>* wordList, const vector<GIApreprocessorPlainTextWord*>* wordListToFind, const int startIndexToPerformFind)
 {
 	bool result = false;
 	
@@ -644,11 +645,11 @@ bool GIApreprocessorMultiwordReductionClassClass::findSubWordListInWordList(vect
 		
 	return result;
 }
-bool GIApreprocessorMultiwordReductionClassClass::findSimpleSubstringInWordListAtIndex(const vector<GIApreprocessorWord*>* wordList, const string stringSimpleToFind, const int indexToPerformFind, const bool caseInsensitive)
+bool GIApreprocessorMultiwordReductionClassClass::findSimpleSubstringInWordListAtIndex(const vector<GIApreprocessorPlainTextWord*>* wordList, const string stringSimpleToFind, const int indexToPerformFind, const bool caseInsensitive)
 {
 	bool result = false;
 	
-	vector<GIApreprocessorWord*> wordListToFind;
+	vector<GIApreprocessorPlainTextWord*> wordListToFind;
 	generateSentenceWordListFromStringSimple(&wordListToFind, &stringSimpleToFind);
 	
 	if(findSubWordListInWordListAtIndex(wordList, &wordListToFind, indexToPerformFind, caseInsensitive))
@@ -658,7 +659,7 @@ bool GIApreprocessorMultiwordReductionClassClass::findSimpleSubstringInWordListA
 		
 	return result;
 }
-bool GIApreprocessorMultiwordReductionClassClass::findSubWordListInWordListAtIndex(const vector<GIApreprocessorWord*>* wordList, const vector<GIApreprocessorWord*>* wordListToFind, const int indexToPerformFind, const bool caseInsensitive)
+bool GIApreprocessorMultiwordReductionClassClass::findSubWordListInWordListAtIndex(const vector<GIApreprocessorPlainTextWord*>* wordList, const vector<GIApreprocessorPlainTextWord*>* wordListToFind, const int indexToPerformFind, const bool caseInsensitive)
 {
 	bool result = false;
 	
@@ -697,7 +698,7 @@ bool GIApreprocessorMultiwordReductionClassClass::findSubWordListInWordListAtInd
 	return result;
 }
 
-bool GIApreprocessorMultiwordReductionClassClass::generateSentenceWordListFromStringSimple(vector<GIApreprocessorWord*>* wordList, const string* stringSimple)
+bool GIApreprocessorMultiwordReductionClassClass::generateSentenceWordListFromStringSimple(vector<GIApreprocessorPlainTextWord*>* wordList, const string* stringSimple)
 {
 	bool result = true;
 	
@@ -725,12 +726,12 @@ bool GIApreprocessorMultiwordReductionClassClass::generateSentenceWordListFromSt
 }
 
 
-int GIApreprocessorMultiwordReductionClassClass::findStringInWordList(const vector<GIApreprocessorWord*>* wordList, const string stringToFind)
+int GIApreprocessorMultiwordReductionClassClass::findStringInWordList(const vector<GIApreprocessorPlainTextWord*>* wordList, const string stringToFind)
 {
 	const int startIndexToPerformFind = 0;
 	return findStringInWordList(wordList, stringToFind, startIndexToPerformFind);
 }
-int GIApreprocessorMultiwordReductionClassClass::findStringInWordList(const vector<GIApreprocessorWord*>* wordList, const string stringToFind, const int startIndexToPerformFind)
+int GIApreprocessorMultiwordReductionClassClass::findStringInWordList(const vector<GIApreprocessorPlainTextWord*>* wordList, const string stringToFind, const int startIndexToPerformFind)
 {
 	bool result  = false;
 	int indexOfWordFound = CPP_STRING_FIND_RESULT_FAIL_VALUE;
@@ -761,12 +762,12 @@ int GIApreprocessorMultiwordReductionClassClass::findStringInWordList(const vect
 	return indexOfWordFound;
 }
 
-bool GIApreprocessorMultiwordReductionClassClass::findSubstringAtStartOfWordInWordList(const vector<GIApreprocessorWord*>* wordList, const string substringToFind)
+bool GIApreprocessorMultiwordReductionClassClass::findSubstringAtStartOfWordInWordList(const vector<GIApreprocessorPlainTextWord*>* wordList, const string substringToFind)
 {
 	const int startIndexToPerformFind = 0;
 	return findSubstringAtStartOfWordInWordList(wordList, substringToFind, startIndexToPerformFind);
 }
-bool GIApreprocessorMultiwordReductionClassClass::findSubstringAtStartOfWordInWordList(const vector<GIApreprocessorWord*>* wordList, const string substringToFind, const int startIndexToPerformFind)
+bool GIApreprocessorMultiwordReductionClassClass::findSubstringAtStartOfWordInWordList(const vector<GIApreprocessorPlainTextWord*>* wordList, const string substringToFind, const int startIndexToPerformFind)
 {
 	bool result  = false;
 	//int indexOfWordFound = CPP_STRING_FIND_RESULT_FAIL_VALUE;
@@ -799,15 +800,15 @@ bool GIApreprocessorMultiwordReductionClassClass::findSubstringAtStartOfWordInWo
 
 
 
-vector<GIApreprocessorWord*> GIApreprocessorMultiwordReductionClassClass::extractSubWordListInWordList(const vector<GIApreprocessorWord*>* wordList, const int startIndexToExtract)
+vector<GIApreprocessorPlainTextWord*> GIApreprocessorMultiwordReductionClassClass::extractSubWordListInWordList(const vector<GIApreprocessorPlainTextWord*>* wordList, const int startIndexToExtract)
 {
 	int numberOfWordsToExtract = wordList->size() - startIndexToExtract;
 	return extractSubWordListInWordList(wordList, startIndexToExtract, numberOfWordsToExtract);
 }
-vector<GIApreprocessorWord*> GIApreprocessorMultiwordReductionClassClass::extractSubWordListInWordList(const vector<GIApreprocessorWord*>* wordList, const int startIndexToExtract, const int numberOfWordsToExtract)
+vector<GIApreprocessorPlainTextWord*> GIApreprocessorMultiwordReductionClassClass::extractSubWordListInWordList(const vector<GIApreprocessorPlainTextWord*>* wordList, const int startIndexToExtract, const int numberOfWordsToExtract)
 {
 	bool result = false;
-	vector<GIApreprocessorWord*> wordListSub;
+	vector<GIApreprocessorPlainTextWord*> wordListSub;
 	
 	if(startIndexToExtract+numberOfWordsToExtract <= wordList->size())
 	{
@@ -828,7 +829,7 @@ vector<GIApreprocessorWord*> GIApreprocessorMultiwordReductionClassClass::extrac
 	return wordListSub;
 }
 
-bool GIApreprocessorMultiwordReductionClassClass::insertWordListIntoWordList(vector<GIApreprocessorWord*>* wordList, const vector<GIApreprocessorWord*>* wordListToInsert, const int indexToInsert)
+bool GIApreprocessorMultiwordReductionClassClass::insertWordListIntoWordList(vector<GIApreprocessorPlainTextWord*>* wordList, const vector<GIApreprocessorPlainTextWord*>* wordListToInsert, const int indexToInsert)
 {
 	bool result = false;
 		
@@ -837,7 +838,7 @@ bool GIApreprocessorMultiwordReductionClassClass::insertWordListIntoWordList(vec
 		result = true;
 		for(int i=0; i<wordListToInsert->size(); i++)
 		{
-			vector<GIApreprocessorWord*>::iterator iter = wordList->begin() + indexToInsert + i;
+			vector<GIApreprocessorPlainTextWord*>::iterator iter = wordList->begin() + indexToInsert + i;
 			wordList->insert(iter, (*wordListToInsert)[i]);				
 		}
 	}
@@ -849,10 +850,10 @@ bool GIApreprocessorMultiwordReductionClassClass::insertWordListIntoWordList(vec
 		
 	return result;
 }
-bool GIApreprocessorMultiwordReductionClassClass::insertStringIntoWordList(vector<GIApreprocessorWord*>* wordList, const string stringToInsert, const int indexToInsert)
+bool GIApreprocessorMultiwordReductionClassClass::insertStringIntoWordList(vector<GIApreprocessorPlainTextWord*>* wordList, const string stringToInsert, const int indexToInsert)
 {
 	bool result = true;
-	GIApreprocessorWord* wordToInsert = new GIApreprocessorMultiwordReductionPlainTextWord(stringToInsert);
+	GIApreprocessorPlainTextWord* wordToInsert = new GIApreprocessorMultiwordReductionPlainTextWord(stringToInsert);
 	if(!insertWordIntoWordList(wordList, wordToInsert, indexToInsert))
 	{
 		result = false;
@@ -860,15 +861,15 @@ bool GIApreprocessorMultiwordReductionClassClass::insertStringIntoWordList(vecto
 		
 	return result;
 }
-//why can't this be declared const?; GIApreprocessorWord* wordToInsert
-bool GIApreprocessorMultiwordReductionClassClass::insertWordIntoWordList(vector<GIApreprocessorWord*>* wordList, GIApreprocessorWord* wordToInsert, const int indexToInsert)
+//why can't this be declared const?; GIApreprocessorPlainTextWord* wordToInsert
+bool GIApreprocessorMultiwordReductionClassClass::insertWordIntoWordList(vector<GIApreprocessorPlainTextWord*>* wordList, GIApreprocessorPlainTextWord* wordToInsert, const int indexToInsert)
 {
 	bool result = false;
 	
 	if(indexToInsert <= wordList->size())
 	{
 		result = true;
-		vector<GIApreprocessorWord*>::iterator iter = wordList->begin() + indexToInsert;
+		vector<GIApreprocessorPlainTextWord*>::iterator iter = wordList->begin() + indexToInsert;
 		wordList->insert(iter, wordToInsert);	
 	}
 	/*
@@ -882,7 +883,7 @@ bool GIApreprocessorMultiwordReductionClassClass::insertWordIntoWordList(vector<
 	return result;
 }
 
-bool GIApreprocessorMultiwordReductionClassClass::wordListFindAndRemoveAllOccurancesSimpleSubstringInWordList(vector<GIApreprocessorWord*>* wordList, const string stringToFind)
+bool GIApreprocessorMultiwordReductionClassClass::wordListFindAndRemoveAllOccurancesSimpleSubstringInWordList(vector<GIApreprocessorPlainTextWord*>* wordList, const string stringToFind)
 {
 	bool result = false;
 	
@@ -898,11 +899,11 @@ bool GIApreprocessorMultiwordReductionClassClass::wordListFindAndRemoveAllOccura
 	}
 	return result;
 }
-bool GIApreprocessorMultiwordReductionClassClass::removeWordFromWordList(vector<GIApreprocessorWord*>* wordList, const int indexToRemove)
+bool GIApreprocessorMultiwordReductionClassClass::removeWordFromWordList(vector<GIApreprocessorPlainTextWord*>* wordList, const int indexToRemove)
 {
 	return removeWordsFromWordList(wordList, indexToRemove, 1);
 }
-bool GIApreprocessorMultiwordReductionClassClass::removeWordsFromWordList(vector<GIApreprocessorWord*>* wordList, const int indexToRemove, const int numberElementsToRemove)
+bool GIApreprocessorMultiwordReductionClassClass::removeWordsFromWordList(vector<GIApreprocessorPlainTextWord*>* wordList, const int indexToRemove, const int numberElementsToRemove)
 {
 	bool result = false;
 
@@ -923,11 +924,11 @@ bool GIApreprocessorMultiwordReductionClassClass::removeWordsFromWordList(vector
 }
 
 
-bool GIApreprocessorMultiwordReductionClassClass::replaceWordListAtIndexWithSimpleSubstring(vector<GIApreprocessorWord*>* wordList, const int indexToPerformReplacement, const string stringSimpleReplacement)
+bool GIApreprocessorMultiwordReductionClassClass::replaceWordListAtIndexWithSimpleSubstring(vector<GIApreprocessorPlainTextWord*>* wordList, const int indexToPerformReplacement, const string stringSimpleReplacement)
 {
 	bool result = true;
 	
-	vector<GIApreprocessorWord*> wordListReplacement;
+	vector<GIApreprocessorPlainTextWord*> wordListReplacement;
 	generateSentenceWordListFromStringSimple(&wordListReplacement, &stringSimpleReplacement);
 	
 	if(!replaceWordListAtIndexWithSimpleSubstring(wordList, indexToPerformReplacement, &wordListReplacement))
@@ -938,7 +939,7 @@ bool GIApreprocessorMultiwordReductionClassClass::replaceWordListAtIndexWithSimp
 	return result;
 }
 
-bool GIApreprocessorMultiwordReductionClassClass::replaceWordListAtIndexWithSimpleSubstring(vector<GIApreprocessorWord*>* wordList, const int indexToPerformReplacement, vector<GIApreprocessorWord*>* wordListReplacement)
+bool GIApreprocessorMultiwordReductionClassClass::replaceWordListAtIndexWithSimpleSubstring(vector<GIApreprocessorPlainTextWord*>* wordList, const int indexToPerformReplacement, vector<GIApreprocessorPlainTextWord*>* wordListReplacement)
 {
 	bool result = false;
 	
@@ -962,11 +963,11 @@ bool GIApreprocessorMultiwordReductionClassClass::replaceWordListAtIndexWithSimp
 }
 
 
-bool GIApreprocessorMultiwordReductionClassClass::printWordList(const vector<GIApreprocessorWord*>* wordList)
+bool GIApreprocessorMultiwordReductionClassClass::printWordList(const vector<GIApreprocessorPlainTextWord*>* wordList)
 {
 	cerr << printWordListString(wordList) << endl;
 }
-string GIApreprocessorMultiwordReductionClassClass::printWordListString(const vector<GIApreprocessorWord*>* wordList)
+string GIApreprocessorMultiwordReductionClassClass::printWordListString(const vector<GIApreprocessorPlainTextWord*>* wordList)
 {
 	string output = "";
 	for(int i=0; i<wordList->size(); i++)
