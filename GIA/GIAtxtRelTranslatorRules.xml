@@ -27,7 +27,7 @@
  * File Name: GIAtxtRelTranslatorRules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f10e 19-April-2018
+ * Project Version: 3f10f 19-April-2018
  * /
  *******************************************************************************/
  
@@ -1161,6 +1161,13 @@
 					<component componentType="group" groupTypeName="subReferenceSetsSubject" groupName="thingSpecificWithoutDeterminer" wordNounVariantType="plural" semanticRelationIndexType="subject" />
 					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="auxiliarySequenceBeingSimple" semanticRelationIndexType="delimiter" semanticRelationReturnEntity="true" />
 					<component componentType="group" groupTypeName="subReferenceSetsSubject" groupName="thingSpecificWithoutDeterminer" wordNounVariantType="plural" semanticRelationIndexType="object" />
+				</group>
+				<group groupName="definition3" semanticRelationFunctionName="definitionWithAuxiliary">
+					<!-- the [] aux [] -->
+					<example><!-- the game is chess  --></example>
+					<component componentType="group" groupTypeName="subReferenceSetsSubject" semanticRelationIndexType="subject" />
+					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="auxiliarySequenceBeingSimple" semanticRelationIndexType="delimiter" semanticRelationReturnEntity="true" />
+					<component componentType="group" groupTypeName="subReferenceSetsSubject" groupName="thingSpecificWithoutDeterminer" wordNounVariantType="singular" semanticRelationIndexType="object" />
 				</group>
 				<group groupName="expletive">
 					<!-- there auxBeing [] [append] -->
