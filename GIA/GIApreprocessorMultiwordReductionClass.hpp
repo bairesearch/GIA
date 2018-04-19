@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorMultiwordReductionClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f3d 10-April-2018
+ * Project Version: 3f3e 10-April-2018
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction Class
  * /
@@ -47,6 +47,8 @@
 #include "SHAREDvars.hpp"
 #include "GIAsynRelTranslatorDefs.hpp"	
 #include "GIAsemRelTranslatorDefs.hpp"	//required for GIA_PREPROCESSOR_POS_TYPE and GIA_TXT_REL_TRANSLATOR_HYBRID_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS	
+
+
 
 
 

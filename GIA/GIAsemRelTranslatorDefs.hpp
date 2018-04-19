@@ -26,7 +26,7 @@
  * File Name: GIAsemRelTranslatorDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f3d 10-April-2018
+ * Project Version: 3f3e 10-April-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -79,6 +79,19 @@ static string entityPredeterminerArray[ENTITY_PREDETERMINER_ARRAY_NUMBER_OF_TYPE
 static string entityRcmodSameReferenceSetDelimiter[ENTITY_REFERENCE_SET_RCMOD_SAME_REFERENCE_SET_DELIMITER_NUMBER_OF_TYPES] = {"that", "which"};		//see preprocessorMathRcmodSameReferenceSetDelimiter
 */
 
+//the following definitions must map to relationGovernorCompositionNameArray[]:
+#define GIA_SEM_REL_TRANSLATOR_RELATION_GOVERNOR_COMPOSITION_PAST_TENSE_NAME_ARRAY_NUMBER_OF_TYPES (3)
+static string relationGovernorCompositionPastTenseNameArray[GIA_SEM_REL_TRANSLATOR_RELATION_GOVERNOR_COMPOSITION_PAST_TENSE_NAME_ARRAY_NUMBER_OF_TYPES] = {"contained", "comprised", "had"};
+#define GIA_SEM_REL_TRANSLATOR_RELATION_GOVERNOR_COMPOSITION_CONTINUOUS_TENSE_NAME_ARRAY_NUMBER_OF_TYPES (3)
+static string relationGovernorCompositionContinuousTenseNameArray[GIA_SEM_REL_TRANSLATOR_RELATION_GOVERNOR_COMPOSITION_CONTINUOUS_TENSE_NAME_ARRAY_NUMBER_OF_TYPES] = {"containing", "comprised" "having"};
+#define GIA_SEM_REL_TRANSLATOR_RELATION_AUXILIARY_PAST_TENSE_NAME_ARRAY_NUMBER_OF_TYPES (4)
+static string relationAuxiliaryPastTenseNameArray[GIA_SEM_REL_TRANSLATOR_RELATION_AUXILIARY_PAST_TENSE_NAME_ARRAY_NUMBER_OF_TYPES] = {"was", "were", "had", "did"};
+#define GIA_SEM_REL_TRANSLATOR_RELATION_AUXILIARY_FUTURE_TENSE_NAME_ARRAY_NUMBER_OF_TYPES (1)
+static string relationAuxiliaryFutureTenseNameArray[GIA_SEM_REL_TRANSLATOR_RELATION_AUXILIARY_FUTURE_TENSE_NAME_ARRAY_NUMBER_OF_TYPES] = {"will"};	//FUTURE: take into account all principal modal verbs; can, could, may, might, must, shall, should, will, would
+//must use LRP to determine continuous tense..
+
+#define GIA_TRANSLATOR_ENTITY_AUXILIARY_NOT_NUMBER_OF_TYPES (1)
+static string GIAtranslatorEntityAuxiliaryNotArray[GIA_TRANSLATOR_ENTITY_AUXILIARY_NOT_NUMBER_OF_TYPES] = {"not"};	
 
 
 
@@ -218,16 +231,6 @@ static string entityRcmodSameReferenceSetDelimiter[ENTITY_REFERENCE_SET_RCMOD_SA
 #define GIA_SEM_REL_TRANSLATOR_POS_TYPE_AUXILIARY_DOING (GIA_SHARED_POS_TYPE_AUXILIARY_DOING)		//additional case required for GIA semantics extraction
 
 
-//the following definitions must map to relationGovernorCompositionNameArray[]:
-#define GIA_SEM_REL_TRANSLATOR_RELATION_GOVERNOR_COMPOSITION_PAST_TENSE_NAME_ARRAY_NUMBER_OF_TYPES (3)
-static string relationGovernorCompositionPastTenseNameArray[GIA_SEM_REL_TRANSLATOR_RELATION_GOVERNOR_COMPOSITION_PAST_TENSE_NAME_ARRAY_NUMBER_OF_TYPES] = {"contained", "comprised", "had"};
-#define GIA_SEM_REL_TRANSLATOR_RELATION_GOVERNOR_COMPOSITION_CONTINUOUS_TENSE_NAME_ARRAY_NUMBER_OF_TYPES (3)
-static string relationGovernorCompositionContinuousTenseNameArray[GIA_SEM_REL_TRANSLATOR_RELATION_GOVERNOR_COMPOSITION_CONTINUOUS_TENSE_NAME_ARRAY_NUMBER_OF_TYPES] = {"containing", "comprised" "having"};
-#define GIA_SEM_REL_TRANSLATOR_RELATION_AUXILIARY_PAST_TENSE_NAME_ARRAY_NUMBER_OF_TYPES (4)
-static string relationAuxiliaryPastTenseNameArray[GIA_SEM_REL_TRANSLATOR_RELATION_AUXILIARY_PAST_TENSE_NAME_ARRAY_NUMBER_OF_TYPES] = {"was", "were", "had", "did"};
-#define GIA_SEM_REL_TRANSLATOR_RELATION_AUXILIARY_FUTURE_TENSE_NAME_ARRAY_NUMBER_OF_TYPES (1)
-static string relationAuxiliaryFutureTenseNameArray[GIA_SEM_REL_TRANSLATOR_RELATION_AUXILIARY_FUTURE_TENSE_NAME_ARRAY_NUMBER_OF_TYPES] = {"will"};	//FUTURE: take into account all principal modal verbs; can, could, may, might, must, shall, should, will, would
-//must use LRP to determine continuous tense..
 
 
 
@@ -352,30 +355,31 @@ static string GIA2semanticDependencyRelationSecondaryNameArray[GIA_SEM_REL_TRANS
 #endif
 #ifdef GIA_TXT_REL_TRANSLATOR_RULES
 //#ifdef GIA_TXT_REL_TRANSLATOR_RULES_ENTITY_GRAMMAR
+#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_MULTIWORD_AUXILIARY (23)
 //#ifndef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
-#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_MULTIWORD_PREPOSITION (23)	//assumes that GIA_PREPROCESSOR_MULTIWORD_REDUCTION multiword preposition reduction is disabled
+#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_MULTIWORD_PREPOSITION (24)	//assumes that GIA_PREPROCESSOR_MULTIWORD_REDUCTION multiword preposition reduction is disabled
 //#endif
-#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_MULTIWORD_ALIAS (24)	//assumes that GIA_PREPROCESSOR_MULTIWORD_REDUCTION multiword preposition reduction is disabled
-#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_MULTIWORD_DATE (25)
-#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_PREDETERMINER (26)
+#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_MULTIWORD_ALIAS (25)	//assumes that GIA_PREPROCESSOR_MULTIWORD_REDUCTION multiword preposition reduction is disabled
+#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_MULTIWORD_DATE (26)
+#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_PREDETERMINER (27)
 //#endif
 //#ifdef GIA_TXT_REL_TRANSLATOR_RULES_LOGIC_REFERENCES
-#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_LOGIC_DEFINITION (27)
-#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_LOGIC_DEFINITION_REVERSE (28)
-#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_LOGIC_ACTION (29)
-#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_LOGIC_ACTION_REVERSE (30)
-#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_LOGIC_CONDITION (31)
-#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_LOGIC_CONDITION_REVERSE (32)
-#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_LOGIC_CONCLUSION (33)	//direct
-#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_LOGIC_CONJUNCTION (34)	//direct
+#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_LOGIC_DEFINITION (28)
+#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_LOGIC_DEFINITION_REVERSE (29)
+#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_LOGIC_ACTION (30)
+#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_LOGIC_ACTION_REVERSE (31)
+#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_LOGIC_CONDITION (32)
+#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_LOGIC_CONDITION_REVERSE (33)
+#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_LOGIC_CONCLUSION (34)	//direct
+#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_LOGIC_CONJUNCTION (35)	//direct
 //#endif
-#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_NEW (35)
-#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_MEASURE (36)
-#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_MEASURE_PER (37)
+#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_NEW (36)
+#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_MEASURE (37)
+#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_MEASURE_PER (38)
 #endif
 #ifdef GIA_TXT_REL_TRANSLATOR_RULES
-#define GIA_SEM_REL_TRANSLATOR_SEMANTIC_DEPENDENCY_RELATION_NUMBER_OF_TYPES (GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES + 12 + 15)	//extends GIAentityNodeClass.h GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES
-static string GIA2semanticDependencyRelationNameArray[GIA_SEM_REL_TRANSLATOR_SEMANTIC_DEPENDENCY_RELATION_NUMBER_OF_TYPES] = {"action", "actionReverse", "condition", "conditionReverse", "property", "propertyReverse", "definition", "definitionReverse", "relationshipSubject", "relationshipObject", "instance", "instanceReverse", "propertyDirect", "definitionDirect", "determiner", "modalAuxiliaryOrCopula", "quantity", "compositionAuxiliaryNOTUSED", "definitionDirectAlias", "definitionAlias", "definitionReverseAlias", "prenominalModifier", "none", "multiwordPreposition", "multiwordAlias", "multiwordDate", "numerosityPredeterminer", "logicDefinition", "logicDefinitionReverse", "logicAction", "logicActionReverse", "logicCondition", "logicConditionReverse", "logicConclusion", "logicConjunction", "conditionNew", "measure", "measurePer"};
+#define GIA_SEM_REL_TRANSLATOR_SEMANTIC_DEPENDENCY_RELATION_NUMBER_OF_TYPES (GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES + 12 + 16)	//extends GIAentityNodeClass.h GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES
+static string GIA2semanticDependencyRelationNameArray[GIA_SEM_REL_TRANSLATOR_SEMANTIC_DEPENDENCY_RELATION_NUMBER_OF_TYPES] = {"action", "actionReverse", "condition", "conditionReverse", "property", "propertyReverse", "definition", "definitionReverse", "relationshipSubject", "relationshipObject", "instance", "instanceReverse", "propertyDirect", "definitionDirect", "determiner", "modalAuxiliaryOrCopula", "quantity", "compositionAuxiliaryNOTUSED", "definitionDirectAlias", "definitionAlias", "definitionReverseAlias", "prenominalModifier", "none", "multiwordAuxiliary", "multiwordPreposition", "multiwordAlias", "multiwordDate", "numerosityPredeterminer", "logicDefinition", "logicDefinitionReverse", "logicAction", "logicActionReverse", "logicCondition", "logicConditionReverse", "logicConclusion", "logicConjunction", "conditionNew", "measure", "measurePer"};
 #else
 #define GIA_SEM_REL_TRANSLATOR_SEMANTIC_DEPENDENCY_RELATION_NUMBER_OF_TYPES (GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES + 12)	//extends GIAentityNodeClass.h GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES
 static string GIA2semanticDependencyRelationNameArray[GIA_SEM_REL_TRANSLATOR_SEMANTIC_DEPENDENCY_RELATION_NUMBER_OF_TYPES] = {"action", "actionReverse", "condition", "conditionReverse", "property", "propertyReverse", "definition", "definitionReverse", "relationshipSubject", "relationshipObject", "instance", "instanceReverse", "propertyDirect", "definitionDirect", "determiner", "modalAuxiliaryOrCopula", "quantity", "compositionAuxiliaryNOTUSED", "definitionDirectAlias", "definitionAlias", "definitionReverseAlias", "prenominalModifier", "none"};

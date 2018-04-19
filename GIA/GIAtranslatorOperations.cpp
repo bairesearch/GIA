@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f3d 10-April-2018
+ * Project Version: 3f3e 10-April-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
@@ -2742,6 +2742,11 @@ bool GIAtranslatorOperationsClass::connectPrenominalModifierWrapper(GIAtranslato
 	return result;
 }
 
+bool GIAtranslatorOperationsClass::connectMultiwordAuxiliaryWrapper(GIAtranslatorVariablesClass* translatorVariables, GIAentityNode* entitySemanticRelationFunction1, GIAentityNode* entitySemanticRelationFunction2, const bool sameReferenceSet)
+{
+	entitySemanticRelationFunction1->multiwordAuxiliaryList.push_back(entitySemanticRelationFunction2->entityName);
+}
+
 bool GIAtranslatorOperationsClass::connectMultiwordPrepositionWrapper(GIAtranslatorVariablesClass* translatorVariables, GIAentityNode* entitySemanticRelationFunction1, GIAentityNode* entitySemanticRelationFunction2, const bool sameReferenceSet)
 {
 	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
@@ -3198,3 +3203,28 @@ int GIAtranslatorOperationsClass::getCurrentSentenceIndex(GIAtranslatorVariables
 	
 	return sentenceIndex;
 }
+
+void GIAtranslatorOperationsClass::updateGrammaticalValuesBasedOnModalAuxiliaryOrCopula(GIAentityNode* entity, const string auxiliaryOrCopulaString)
+{
+	if(SHAREDvars.textInTextArray(auxiliaryOrCopulaString, GIAtranslatorEntityAuxiliaryNotArray, GIA_TRANSLATOR_ENTITY_AUXILIARY_NOT_NUMBER_OF_TYPES))
+	{
+		entity->negative = true;	//assume GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS (ie !GIA_ENTITY_CONNECTION_NEGATIVE_DEFINED)
+	}
+	
+	for(int i=0; i<GIA_SEM_REL_TRANSLATOR_RELATION_AUXILIARY_PAST_TENSE_NAME_ARRAY_NUMBER_OF_TYPES; i++)
+	{
+		if(auxiliaryOrCopulaString == relationAuxiliaryPastTenseNameArray[i])
+		{
+			entity->grammaticalTenseTemp = GRAMMATICAL_TENSE_PAST;
+		}
+	}
+	for(int i=0; i<GIA_SEM_REL_TRANSLATOR_RELATION_AUXILIARY_FUTURE_TENSE_NAME_ARRAY_NUMBER_OF_TYPES; i++)
+	{
+		if(auxiliaryOrCopulaString == relationAuxiliaryFutureTenseNameArray[i])
+		{
+			entity->grammaticalTenseTemp = GRAMMATICAL_TENSE_FUTURE;
+		}
+	}
+}
+
+

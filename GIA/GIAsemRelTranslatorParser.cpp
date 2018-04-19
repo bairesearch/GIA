@@ -26,7 +26,7 @@
  * File Name: GIAsemRelTranslatorParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f3d 10-April-2018
+ * Project Version: 3f3e 10-April-2018
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  * Description: Semantic Relation Translator Parser
  * /
@@ -339,9 +339,7 @@ void GIAsemRelTranslatorParserClass::locateAndAddAllNetworkIndexEntitiesBasedOnS
 
 void GIAsemRelTranslatorParserClass::fillGrammaticalTenseArraysStanfordBasedOnSemanticRelations(GIAtranslatorVariablesClass* translatorVariables)
 {
-	GIArelation* currentRelationInList;
-
-	currentRelationInList = translatorVariables->currentSentenceInList->firstRelationInList;
+	GIArelation* = currentRelationInList = translatorVariables->currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{
 		if(!(currentRelationInList->disabled))
@@ -353,9 +351,36 @@ void GIAsemRelTranslatorParserClass::fillGrammaticalTenseArraysStanfordBasedOnSe
 				int modalAuxiliaryIndex = currentRelationInList->relationDependentIndex;
 				GIAentityNode* entity = (*translatorVariables->GIAentityNodeArray)[thingIndex];
 				string auxiliaryOrCopulaString = (*translatorVariables->GIAentityNodeArray)[modalAuxiliaryIndex]->wordOrig;	//featureArrayTemp[modalAuxiliaryIndex]->word;
-
+				
 				updateGrammaticalValuesBasedOnModalAuxiliaryOrCopula(entity, auxiliaryOrCopulaString);
 				currentRelationInList->disabled = true;
+				
+				#ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3
+				//CHECKTHIS
+				GIArelation* currentRelationInList2 = translatorVariables->currentSentenceInList->firstRelationInList;
+ 				while(currentRelationInList2->next != NULL)
+				{
+					if(!(currentRelationInList2->disabled))
+					{
+						if(currentRelationInList2->relationType == GIA2semanticDependencyRelationNameArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_MULTIWORD_AUXILIARY])
+						{
+							//will have ridden; eg multiwordAuxiliary(will, have), modalAuxiliary(had, ridden)
+
+							int thingIndex2 = currentRelationInList2->relationGovernorIndex;
+							int modalAuxiliaryIndex2 = currentRelationInList2->relationDependentIndex;
+							GIAentityNode* entity2 = (*translatorVariables->GIAentityNodeArray)[thingIndex2];
+							string auxiliaryOrCopulaString2 = (*translatorVariables->GIAentityNodeArray)[modalAuxiliaryIndex2]->wordOrig;	//featureArrayTemp[modalAuxiliaryIndex2]->word;
+							
+							if(thingIndex2 == modalAuxiliaryIndex)
+							{
+								updateGrammaticalValuesBasedOnModalAuxiliaryOrCopula(entity, auxiliaryOrCopulaString2);
+								currentRelationInList2->disabled = true;
+							}
+						}
+					}
+					currentRelationInList2 = currentRelationInList2->next;
+				}
+				#endif
 			}
 		}
 		currentRelationInList = currentRelationInList->next;
@@ -865,6 +890,14 @@ void GIAsemRelTranslatorParserClass::defineConnectionsBasedOnSemanticRelations(G
 				#endif
 				currentRelationInList->disabled = true;
 			}
+			else if(currentRelationInList->relationType == GIA2semanticDependencyRelationNameArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_MULTIWORD_AUXILIARY])
+			{
+				if(!GIAtranslatorOperations.connectMultiwordAuxiliaryWrapper(translatorVariables, entity1, entity2, sameReferenceSet))
+				{
+					result = false;
+				}
+				currentRelationInList->disabled = true;
+			}
 			else if(currentRelationInList->relationType == GIA2semanticDependencyRelationNameArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_MULTIWORD_PREPOSITION])
 			{
 				if(!GIAtranslatorOperations.connectMultiwordPrepositionWrapper(translatorVariables, entity1, entity2, sameReferenceSet))
@@ -1307,10 +1340,17 @@ void GIAsemRelTranslatorParserClass::defineQualitiesBasedOnSemanticRelations(GIA
 			GIAentityNode* entity = (*translatorVariables->GIAentityNodeArray)[w];
 			if(!(entity->disabled))
 			{
-				if((entity->grammaticalWordTypeTemp == GRAMMATICAL_WORD_TYPE_ADJ) || (entity->grammaticalWordTypeTemp == GRAMMATICAL_WORD_TYPE_ADV))
+				#ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3
+				if(entity->entityType == GIA_ENTITY_TYPE_SUBSTANCE)	//this check is required in case an adverb (e.g. not) has been used as a property relation entity
 				{
-					entity->entityType = GIA_ENTITY_TYPE_QUALITY;
+				#endif
+					if((entity->grammaticalWordTypeTemp == GRAMMATICAL_WORD_TYPE_ADJ) || (entity->grammaticalWordTypeTemp == GRAMMATICAL_WORD_TYPE_ADV))
+					{
+						entity->entityType = GIA_ENTITY_TYPE_QUALITY;
+					}
+				#ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3	
 				}
+				#endif
 			}
 		}
 	}
@@ -1402,24 +1442,6 @@ bool GIAsemRelTranslatorParserClass::convertSentenceSemanticRelationsIntoGIAnetw
 	}
 	
 	return result;
-}
-
-void GIAsemRelTranslatorParserClass::updateGrammaticalValuesBasedOnModalAuxiliaryOrCopula(GIAentityNode* entity, const string auxiliaryOrCopulaString)
-{
-	for(int i=0; i<GIA_SEM_REL_TRANSLATOR_RELATION_AUXILIARY_PAST_TENSE_NAME_ARRAY_NUMBER_OF_TYPES; i++)
-	{
-		if(auxiliaryOrCopulaString == relationAuxiliaryPastTenseNameArray[i])
-		{
-			entity->grammaticalTenseTemp = GRAMMATICAL_TENSE_PAST;
-		}
-	}
-	for(int i=0; i<GIA_SEM_REL_TRANSLATOR_RELATION_AUXILIARY_FUTURE_TENSE_NAME_ARRAY_NUMBER_OF_TYPES; i++)
-	{
-		if(auxiliaryOrCopulaString == relationAuxiliaryFutureTenseNameArray[i])
-		{
-			entity->grammaticalTenseTemp = GRAMMATICAL_TENSE_FUTURE;
-		}
-	}
 }
 
 

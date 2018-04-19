@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorRules.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f3d 10-April-2018
+ * Project Version: 3f3e 10-April-2018
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Rules
  * /
@@ -72,27 +72,28 @@
 #define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_conditionSubject 21
 #define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_conditionObject 22
 #define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_tenseAttributeModalAuxiliaryOrCopula 23
-#define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_multiwordPreposition 24
-#define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_multiwordNoun 25
-#define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_multiwordAlias 26
-#define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_multiwordDate 27
-#define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_numerosityPredeterminer 28
-#define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_numerosityDeterminer 29
-#define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_propertyReverse 30
-#define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_actionSubjectReverse 31
-#define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_actionObjectReverse 32
-#define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_conditionSubjectReverse 33
-#define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_conditionObjectReverse 34
-#define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_logicDefinition 35
-#define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_logicAction 36
-#define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_logicCondition 37
-#define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_logicConclusion 38
-#define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_logicConjunction 39
-#define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_conditionNew 40
-#define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_attributeMeasure 41
-#define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_attributeMeasurePer 42
-#define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_NUMBER_OF_TYPES (43)
-static string GIAtxtRelSemanticDependencyRelationNameArray[GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_NUMBER_OF_TYPES] = {"unknown", "createSubstanceInstance", "createActionInstance", "NA", "property", "action", "actionSubject", "actionObject", "condition", "NA", "NA", "definition", "definitionAlias", "definitionAliasWithAuxiliary", "attributeQuantity", "definitionWithAuxiliary", "propertyWithAuxiliary", "definitionSubject", "definitionObject", "propertySubject", "propertyObject", "conditionSubject", "conditionObject", "tenseAttributeModalAuxiliaryOrCopula", "multiwordPreposition", "multiwordNoun", "multiwordAlias", "multiwordDate", "numerosityPredeterminer", "numerosityDeterminer", "propertyReverse", "actionSubjectReverse", "actionObjectReverse", "conditionSubjectReverse", "conditionObjectReverse", "logicDefinition", "logicAction", "logicCondition", "logicConclusion", "logicConjunction", "conditionNew", "attributeMeasure", "attributeMeasurePer"};
+#define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_multiwordAuxiliary 24
+#define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_multiwordPreposition 25
+#define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_multiwordNoun 26
+#define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_multiwordAlias 27
+#define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_multiwordDate 28
+#define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_numerosityPredeterminer 29
+#define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_numerosityDeterminer 30
+#define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_propertyReverse 31
+#define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_actionSubjectReverse 32
+#define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_actionObjectReverse 33
+#define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_conditionSubjectReverse 34
+#define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_conditionObjectReverse 35
+#define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_logicDefinition 36
+#define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_logicAction 37
+#define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_logicCondition 38
+#define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_logicConclusion 39
+#define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_logicConjunction 40
+#define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_conditionNew 41
+#define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_attributeMeasure 42
+#define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_attributeMeasurePer 43
+#define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_NUMBER_OF_TYPES (44)
+static string GIAtxtRelSemanticDependencyRelationNameArray[GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_NUMBER_OF_TYPES] = {"unknown", "createSubstanceInstance", "createActionInstance", "NA", "property", "action", "actionSubject", "actionObject", "condition", "NA", "NA", "definition", "definitionAlias", "definitionAliasWithAuxiliary", "attributeQuantity", "definitionWithAuxiliary", "propertyWithAuxiliary", "definitionSubject", "definitionObject", "propertySubject", "propertyObject", "conditionSubject", "conditionObject", "tenseAttributeModalAuxiliaryOrCopula", "multiwordAuxiliary", "multiwordPreposition", "multiwordNoun", "multiwordAlias", "multiwordDate", "numerosityPredeterminer", "numerosityDeterminer", "propertyReverse", "actionSubjectReverse", "actionObjectReverse", "conditionSubjectReverse", "conditionObjectReverse", "logicDefinition", "logicAction", "logicCondition", "logicConclusion", "logicConjunction", "conditionNew", "attributeMeasure", "attributeMeasurePer"};
 
 #define GIA_TXT_REL_TRANSLATOR_SEMANTIC_RELATION_RETURN_FUNCTION_NAME_INDEX_TYPE_SEMANTIC_FUNCTION_EXECUTION_INDEX (0)	//semanticRelationReturnFunctionNameIndexType "subject"/"delimiter" refers to "subject"/"delimiter" of semantic relation function 0
 
