@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f7a 17-April-2018
+ * Project Version: 3f7b 17-April-2018
  * Requirements: 
  * Description: Textual Relation Translator Parser
  * /
@@ -170,6 +170,12 @@ bool GIAtxtRelTranslatorParserClass::convertSentenceTxtRelationsIntoGIAnetworkNo
 		{
 			disableEntity = false;
 		}
+		#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_NUMBER_EXPLETIVES
+		if(entity->isExpletive)
+		{
+			disableEntity = false;
+		}
+		#endif
 		if(disableEntity)
 		{
 			#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS2
