@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f2k 04-April-2018
+ * Project Version: 3f2l 04-April-2018
  * Requirements: 
  * Description: Textual Relation Translator Parser
  * /
@@ -689,6 +689,42 @@ bool GIAtxtRelTranslatorParserClass::generateSemanticRelationsFromTxtRelations(G
 			parseTreeComponentSemanticRelationEntity->semanticRelationReturnFunctionName = parseTreeComponent->semanticRelationReturnFunctionName;
 			parseTreeComponentSemanticRelationEntity->semanticRelationReturnFunctionNameIndexType = parseTreeComponent->semanticRelationReturnFunctionNameIndexType;
 
+			#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_SEMANTIC_RELATION_RETURN_FUNCTION_NAME_DYNAMIC_INDEX_TESTS
+			if(parseTreeComponent->semanticRelationReturnFunctionNameIndexType == GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_SEMANTIC_RELATION_INDEX_TYPE_DELIMITER_OR_SUBJECT)
+			{
+				int semanticRelationReturnFunctionNameIndexTypeDynamic = GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_SEMANTIC_RELATION_INDEX_TYPE_DELIMITER;
+				int nearestPreceedingDelimiterIndex = INT_DEFAULT_VALUE; 
+				int nearestPreceedingSubjectIndex = INT_DEFAULT_VALUE;
+				for(int w = parseTreeComponentSemanticRelationEntity->entityIndexTemp; w>=0; w--)
+				{	
+					GIApreprocessorWord* currentWord = (translatorVariables->currentPreprocessorSentenceInList)->sentenceContentsLRP[w];
+					if(nearestPreceedingDelimiterIndex == INT_DEFAULT_VALUE)
+					{
+						if(currentWord->wordPOStypeInferred == GIA_PREPROCESSOR_POS_TYPE_VERB)
+						{
+							nearestPreceedingDelimiterIndex = w;
+						}
+					}
+					if(nearestPreceedingDelimiterIndex == INT_DEFAULT_VALUE)
+					{					
+						if(currentWord->wordPOStypeInferred == GIA_PREPROCESSOR_POS_TYPE_NOUN)
+						{
+							nearestPreceedingSubjectIndex = w;
+						}
+					}
+				}
+				if(nearestPreceedingSubjectIndex != INT_DEFAULT_VALUE)
+				{
+					if(nearestPreceedingDelimiterIndex == INT_DEFAULT_VALUE)
+					{
+						semanticRelationReturnFunctionNameIndexTypeDynamic = GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_SEMANTIC_RELATION_INDEX_TYPE_SUBJECT;
+					}
+				}
+				//cout << "semanticRelationReturnFunctionNameIndexTypeDynamic = " << semanticRelationReturnFunctionNameIndexTypeDynamic << endl;
+				parseTreeComponentSemanticRelationEntity->semanticRelationReturnFunctionNameIndexType = semanticRelationReturnFunctionNameIndexTypeDynamic;
+			}
+			#endif
+			
 			#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS2
 			GIAtxtRelTranslatorRules.printParseTreeDebugIndentation(layer);
 			cout << "\e[32m foundExplicitReturnFunctionName \e[0m" << endl;

@@ -27,7 +27,7 @@
  * File Name: GIAtxtRelTranslatorRules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f2k 04-April-2018
+ * Project Version: 3f2l 04-April-2018
  * /
  *******************************************************************************/
  
@@ -548,10 +548,10 @@
 					<component referenceSetTypeHybrid="subReferenceSetDelimiter" componentType="group" groupTypeName="subReferenceSetsPart" groupName="adverbAndVerb" semanticRelationIndexType="delimiter" semanticRelationIndexType2="object" />
 					<component referenceSetTypeHybrid="subReferenceSet" componentType="group" groupTypeName="subReferenceSetsObject" optional="true" />
 				</group>
-				<group groupName="prep" semanticRelationFunctionName="conditionObject" existsPreceedingWordPOStype="verb">	<!-- semanticRelationReturnEntityAndConnectToSubject="true" -->
+				<group groupName="prep" semanticRelationFunctionName="conditionObject">	<!-- semanticRelationReturnEntityAndConnectToSubject="true" -->
 					<!-- prep [] -->
 					<example><!-- in the house --></example>
-					<component referenceSetTypeHybrid="subReferenceSetDelimiter" componentType="group" groupTypeName="subReferenceSetsPart" groupName="prepositionMultiword" semanticRelationIndexType="delimiter" semanticRelationReturnFunctionName="conditionSubject" semanticRelationReturnFunctionNameIndexType="delimiter" semanticRelationReturnEntity="true" />
+					<component referenceSetTypeHybrid="subReferenceSetDelimiter" componentType="group" groupTypeName="subReferenceSetsPart" groupName="prepositionMultiword" semanticRelationIndexType="delimiter" semanticRelationReturnFunctionName="conditionSubject" semanticRelationReturnFunctionNameIndexType="delimiterOrSubject" semanticRelationReturnEntity="true" />
 					<component referenceSetTypeHybrid="subReferenceSet" componentType="group" groupTypeName="subReferenceSetsSubject" semanticRelationIndexType="object" />
 				</group>
 				<group groupName="propertyConnectToDelimiter" previousWordPOStype="verb">	<!-- OLD: "auxiliary" -->	<!-- OLD: this needs to be combined with referenceSet contents?? -->
