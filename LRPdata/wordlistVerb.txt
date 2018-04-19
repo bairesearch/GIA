@@ -639,7 +639,6 @@ bawl
 bawl out
 bay
 bayonet
-be
 be active
 be adrift
 be after
@@ -3282,7 +3281,6 @@ divvy up
 dizen
 dizzy
 dj
-do
 do a job on
 do away with
 do by
@@ -5010,7 +5008,6 @@ haul away
 haul off
 haul up
 haunt
-have
 have-to doe with
 have a ball
 have a bun in the oven

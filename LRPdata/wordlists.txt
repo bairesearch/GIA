@@ -1,10 +1,39 @@
-wordlistAdjectives.txt
-wordlistAdverbs.txt
-wordlistConjunctions.txt
-wordlistDeterminers.txt
-wordlistInterjections.txt
-wordlistNouns.txt
-wordlistPrepositions.txt
-wordlistPronouns.txt
-wordLists.txt
-wordlistVerbs.txt
+
+
+number wordlistNumber.txt
+determiner wordlistDeterminer.txt
+
+predeterminer wordlistPredeterminer.txt
+possessiveEnding wordlistPossessiveEnding.txt
+modalAuxiliary wordlistModalAuxiliary.txt
+preposition wordlistPreposition.txt
+
+adjective wordlistAdjective.txt
+noun wordlistNoun.txt
+adverb wordlistAdverb.txt
+
+
+
+interjection wordlistInterjection.txt
+verb wordlistVerb.txt
+wh wordlistNumberWH.txt
+punctuationDivision wordlistPunctuationDivision.txt
+punctuationQuote wordlistPunctuationQuote.txt
+auxiliaryBeing wordlistAuxiliaryBeing.txt
+auxiliaryHaving wordlistAuxiliaryHaving.txt
+auxiliaryDoing wordlistAuxiliaryDoing.txt
+
+punctuationEndOfSentence wordlistPunctuationEndOfSentence.txt
+pronounDemonstrative wordlistPronounDemonstrative.txt
+pronounIndefinite wordlistPronounIndefinite.txt
+pronounInterrogative wordlistPronounInterrogative.txt
+pronounPersonalObject wordlistPronounPersonalObject.txt
+pronounPersonalSubject wordlistPronounPersonalSubject.txt
+pronounPossessiveAdjective wordlistPronounPossessiveAdjective.txt
+pronounPossessiveAlone wordlistPronounPossessiveAlone.txt
+pronounReflexive wordlistPronounReflexive.txt
+pronounRelative wordlistPronounRelative.txt
+conjunctionCoordinating wordlistConjunctionCoordinating.txt
+conjunctionSubcoordinating wordlistConjunctionSubcoordinating.txt
+conjunctionCorrelativeFirst wordlistConjunctionCorrelativeFirst.txt
+conjunctionCorrelativeSecond wordlistConjunctionCorrelativeSecond.txt

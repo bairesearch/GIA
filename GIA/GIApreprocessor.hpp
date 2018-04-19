@@ -26,7 +26,7 @@
  * File Name: GIApreprocessor.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e10a 15-January-2018
+ * Project Version: 3e11a 21-January-2018
  * Requirements: requires plain text file
  * Description: Logical Condition and Reference Set preprocessor
  *
@@ -93,7 +93,7 @@ class GIApreprocessorClass
 			#ifdef GIA_PREPROCESSOR_SENTENCE
 			#ifdef GIA_PREPROCESSOR_SENTENCE_EXECUTE_PRELIM_POS_TAGGER
 			private: bool executePrelimFeatureProcessingOnSentences(const string outputLRPTextPlainTXTFileName, const string inputTextNLPfeatureXMLfileName, GIAtranslatorVariablesClass* translatorVariables);
-				private: bool predictPOStaggerDatabaseEntry(const unsigned int centreWordPOSambiguityInfo, vector<unsigned int>* POSambiguityInfoPermutation, const unsigned int centreWordUnambiguousPOSvalue, GIApreprocessorWord* centreWord, bool* foundMatchingCentreWordPOSambiguityInfo, unsigned int* centreWordPOSvaluePrediction, bool* centreWordPOSisAmbiguous, double* experienceBackPropagationPassError, int* maximumNumberOfInstances);
+				private: bool predictPOStaggerDatabaseEntry(const unsigned long centreWordPOSambiguityInfo, vector<unsigned long>* POSambiguityInfoPermutation, const unsigned char centreWordUnambiguousPOSindex, GIApreprocessorWord* centreWord, bool* foundMatchingCentreWordPOSambiguityInfo, unsigned char* centreWordPOSindexPrediction, bool* centreWordPOSisAmbiguous, double* experienceBackPropagationPassError, int* maximumNumberOfInstances);
 			#endif
 			private: bool preprocessSentencesForGIA(GIApreprocessorSentence* firstGIApreprocessorSentenceInList, const string outputFileName, const string outputFileNameLRPforNLP);
 				private: bool generateGIApreprocessorSentence(GIApreprocessorSentence* currentGIApreprocessorSentenceInList, XMLparserTag* firstLogicReferenceClassTag);

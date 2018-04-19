@@ -26,7 +26,7 @@
  * File Name: GIAsemanticParserOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e10a 15-January-2018
+ * Project Version: 3e11a 21-January-2018
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -59,6 +59,7 @@ class GIAsemanticParserOperationsClass
 	public: void determineGIAconnectionistNetworkPOStypeNames(GIAfeature* firstFeatureInList, const int NLPfeatureParser);
 		private: void determineGIAconnectionistNetworkPOStypeNameStanford(GIAfeature* currentFeatureInSentence);
 		private: void determineGIAconnectionistNetworkPOStypeNameRelex(GIAfeature* currentFeatureInSentence);
+		private: void determineGIAconnectionistNetworkPOStypeNameShared(GIAfeature* currentFeatureInSentence, int* GIAsemanticParserPOStype);
 	#ifdef GIA_SEMANTIC_PARSER_SUBSETS
 	#ifdef GIA_SEMANTIC_PARSER_SUBSETS_OPTIMISE_BASED_ON_CONJUNCTIONS
 	public: GIAfeature* generateOptimisedFeatureSubsetBasedOnContextualConjunctions(GIAfeature* firstFeatureInSentenceSubset, const int centralWord, bool* optimisedBasedOnContextualConjunctions);

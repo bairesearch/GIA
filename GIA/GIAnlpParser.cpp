@@ -26,7 +26,7 @@
  * File Name: GIAnlpParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e10a 15-January-2018
+ * Project Version: 3e11a 21-January-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Parses tabular subsections (Eg <relations>) of RelEx CFF/Stanford Parser File
  *
@@ -497,7 +497,7 @@ void GIAnlpParserClass::GIATHparseStanfordParseWordsAndPOStagsText(const string*
 				{
 					string GIAconnectionistNetworkPOStypeName = stanfordPOS;
 					int GIAsemanticParserPOStype = 0;	//ie GIA_SEMANTIC_PARSER_POS_TYPE_UNDEFINED;
-					for(int i=0; i<GIA_SEMANTIC_PARSER_POS_TYPE_NAME_ARRAY_NUMBER_OF_TYPES; i++)
+					for(int i=0; i<GIA_SEMANTIC_PARSER_POS_TYPE_ARRAY_NUMBER_OF_TYPES; i++)
 					{
 						if(GIAconnectionistNetworkPOStypeName == GIAconnectionistNetworkPOStypeNameArray[i])
 						{

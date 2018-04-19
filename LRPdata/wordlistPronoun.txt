@@ -4,7 +4,6 @@ we
 us
 you
 she
-her
 he
 him
 it
@@ -58,6 +57,7 @@ what
 my
 your
 his
+her
 its
 our
 their

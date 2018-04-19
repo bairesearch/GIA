@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorPOStagger.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e10a 15-January-2018
+ * Project Version: 3e11a 21-January-2018
  * Requirements: requires plain text file
  * Description: preprocessor POS tagger
  *
@@ -47,28 +47,43 @@
 #include "ANNexperienceClass.hpp"
 #endif
 
+#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_POS_NUMBER_OF_TYPES (GIA_PREPROCESSOR_POS_TYPE_ARRAY_NUMBER_OF_TYPES+1)
+#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_POS_INDEX_OUT_OF_SENTENCE_BOUNDS (GIA_PREPROCESSOR_POS_TAGGER_DATABASE_POS_NUMBER_OF_TYPES-1)
+	
 #ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_PERSISTENT
+	
 	#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_DEFAULT_DATABASE_NAME ((string)"GIAPOStaggerDatabase")
 	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK
 		#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_DEFAULT_XML_FILE_NAME ((string)"GIAPOStaggerNeuralNetwork.xml")
 	#endif
 	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM
 		//key: l = left word POS, r = right word POS, c = centre word POS
-		#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_USE_4BIT_INDICES
+		#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_AND_MAP_USE_6BIT_INDICES
 			#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_SUBDIRECTORY_INDEX_NUMBER_OF_LEVELS (2) 	//eg hex (eg lllll/rrrrr/lllllrrrrr.txt
 			#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_SUBDIRECTORY_INDEX_NUMBER_OF_WORDS_PER_LEVEL (5) 	//hex (eg fffff)
-			#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_POS_PERMUTATION_ENTRY_CENTRE_WORD_POS_AMBIGUITY_BYTE_HEX_START_POS (0)
-			#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_POS_PERMUTATION_ENTRY_CENTRE_WORD_POS_AMBIGUITY_BYTE_HEX_LENGTH (1)
+			#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_POS_PERMUTATION_ENTRY_CENTRE_WORD_POS_AMBIGUITY_BYTE_CODED_START_POS (0)
+			#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_POS_PERMUTATION_ENTRY_CENTRE_WORD_POS_AMBIGUITY_BYTE_CODED_LENGTH (1)
 			#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_POS_PERMUTATION_ENTRY_CENTRE_WORD_POS_AMBIGUITY_NUMBER_OF_INSTANCES_INT_START_POS (2)
 			#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_POS_PERMUTATION_ENTRY_CENTRE_WORD_POS_AMBIGUITY_NUMBER_OF_INSTANCES_INT_LENGTH (10)
-			//e.g. cc 0000000001
+			#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_POS_PERMUTATION_ENTRY_CENTRE_WORD_POS_AMBIGUITY_BYTE_CODED_BASE (64)
+			static char GIApreprocessorDatabaseBase64encodingCharacters[64] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '_', '-'};	//GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM: these have to be supported as valid characters for OS file system directory names
+			//e.g. Z 0000000001
+			#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_POS_PERMUTATION_ENTRY_CENTRE_WORD_POS_AMBIGUITY_BYTE_CODED_BASE_INDEX_0 0
+			#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_POS_PERMUTATION_ENTRY_CENTRE_WORD_POS_AMBIGUITY_BYTE_CODED_BASE_INDEX_9 9
+			#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_POS_PERMUTATION_ENTRY_CENTRE_WORD_POS_AMBIGUITY_BYTE_CODED_BASE_INDEX_A 10
+			#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_POS_PERMUTATION_ENTRY_CENTRE_WORD_POS_AMBIGUITY_BYTE_CODED_BASE_INDEX_Z 35
+			#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_POS_PERMUTATION_ENTRY_CENTRE_WORD_POS_AMBIGUITY_BYTE_CODED_BASE_INDEX_a 36
+			#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_POS_PERMUTATION_ENTRY_CENTRE_WORD_POS_AMBIGUITY_BYTE_CODED_BASE_INDEX_z 61
+			#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_POS_PERMUTATION_ENTRY_CENTRE_WORD_POS_AMBIGUITY_BYTE_CODED_BASE_INDEX_DASH 62
+			#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_POS_PERMUTATION_ENTRY_CENTRE_WORD_POS_AMBIGUITY_BYTE_CODED_BASE_INDEX_UNDERSCORE 63
 		#else
 			#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_SUBDIRECTORY_INDEX_NUMBER_OF_LEVELS (5) 	//eg hex (eg llll/llll/llrr/rrrr/rrrr/llllllllllrrrrrrrrrr.txt
 			#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_SUBDIRECTORY_INDEX_NUMBER_OF_WORDS_PER_LEVEL (2) 	//hex (eg ffff)	
-			#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_POS_PERMUTATION_ENTRY_CENTRE_WORD_POS_AMBIGUITY_BYTE_HEX_START_POS (0)
-			#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_POS_PERMUTATION_ENTRY_CENTRE_WORD_POS_AMBIGUITY_BYTE_HEX_LENGTH (2)
+			#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_POS_PERMUTATION_ENTRY_CENTRE_WORD_POS_AMBIGUITY_BYTE_CODED_START_POS (0)
+			#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_POS_PERMUTATION_ENTRY_CENTRE_WORD_POS_AMBIGUITY_BYTE_CODED_LENGTH (2)
 			#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_POS_PERMUTATION_ENTRY_CENTRE_WORD_POS_AMBIGUITY_NUMBER_OF_INSTANCES_INT_START_POS (3)
 			#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_POS_PERMUTATION_ENTRY_CENTRE_WORD_POS_AMBIGUITY_NUMBER_OF_INSTANCES_INT_LENGTH (10)
+			#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_POS_PERMUTATION_ENTRY_CENTRE_WORD_POS_AMBIGUITY_BYTE_CODED_BASE (16)
 			//e.g. cc 0000000001
 		#endif
 
@@ -94,6 +109,13 @@ class GIApreprocessorPOStaggerDatabaseClass
 	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_PERSISTENT
 	public: void initialisePOStaggerDatabase(const string newGIAposTaggerDatabaseFolderName);
 	#endif
+
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_MAP
+	private: bool findInstancePOStaggerMap(const string POSambiguityInfoPermutation, unsigned char centreWordPOSambiguityInfo, int* numberOfInstances, const bool incrementIfFound);
+	private: void insertInstanceInPOStaggerMap(const string POSambiguityInfoPermutation, const unsigned char centreWordPOSambiguityInfo, const int numberOfInstances);
+	private: multimap<string, pair<unsigned char, int>>* getPOStaggerMap();
+	#endif
+	public: string convertPOSambiguityInfoPermutationToPOSambiguityInfoPermutationIndexString(vector<unsigned long>* POSambiguityInfoPermutation);
 	
 	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK
 	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_INTERNAL
@@ -125,23 +147,32 @@ class GIApreprocessorPOStaggerDatabaseClass
 	#endif
 
 	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM
-	private: string DBgenerateFileName(const string POSambiguityInfoPermutation);
-		private: string DBgenerateSubFolderName(const string POSambiguityInfoPermutation, const int level, const int numberOfWordsPerLevel);
-			private: string DBconvertByteToHex(const unsigned char byte);
-			public: unsigned char DBconvertHexToByte(string hexString);
-	public: bool DBreadPOSpermutationEstimates(const string POSambiguityInfoPermutation, vector<string>* centreWordPOSambiguityInfoList);
+	private: string DBgenerateFileName(vector<unsigned long>* POSambiguityInfoPermutation);
+		private: string DBgenerateSubFolderName(vector<unsigned long>* POSambiguityInfoPermutation, const int level, const int numberOfWordsPerLevel);
+	public: bool DBreadPOSpermutationEstimates(vector<unsigned long>* POSambiguityInfoPermutation, vector<string>* centreWordPOSambiguityInfoList);
 	#ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE
-	public: bool DBwritePOSpermutationEstimate(const string POSambiguityInfoPermutation, const unsigned char centreWordPOSambiguityInfo);
+	public: bool DBwritePOSpermutationEstimate(vector<unsigned long>* POSambiguityInfoPermutation, const unsigned long centreWordPOSambiguityInfo);
 	#endif
 	#endif
 	
 	public: string generateIntFormatString(int numberOfCharacters);
-	public: string DBconvertByteToBinaryString(unsigned char byte);
+	public: string DBconvertByteToBinaryString(unsigned long byte);
 	
 	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_PREDICTION_VERIFICATION
-	public: bool verifyPOStaggerDatabasePredictionAgainstPOSambiguityInfo(const unsigned int centreWordPOSvaluePrediction, const unsigned int centreWordPOSambiguityInfo, int* centreWordPOSvalueFirstAmbiguousPrediction);
+	public: bool verifyPOStaggerDatabasePredictionAgainstPOSambiguityInfo(const unsigned char centreWordPOSindexPrediction, const unsigned int centreWordPOSambiguityInfo, unsigned char* centreWordPOSvalueFirstAmbiguousPrediction);
 	#endif
 
+	public: unsigned char convertPOSambiguityInfoToIndex(unsigned long POSambiguityInfo);
+		public: bool determinePOSambiguityInfoIsAmbiguous(const unsigned long POSambiguityInfo, unsigned char* unambiguousPOSinfoIndex, const bool treatWordAsAmbiguousIfNullPOSvalue);
+
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_AND_MAP_USE_6BIT_INDICES
+	private: char DBconvertByteToBase64(unsigned char byte);
+	public: unsigned char DBconvertBase64ToByte(char base64char);
+	#else
+	private: string DBconvertByteToHex(const unsigned char byte);
+	public: unsigned char DBconvertHexToByte(string hexString);
+	#endif
+			
 };
 
 #endif

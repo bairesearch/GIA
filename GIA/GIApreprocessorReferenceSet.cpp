@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorReferenceSet.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e10a 15-January-2018
+ * Project Version: 3e11a 21-January-2018
  * Requirements: requires plain text file
  * Description: Reference Set preprocessor
  *
@@ -127,9 +127,9 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 		cout << "\t\t\twordIndex = " << wordIndex << endl;
 		#endif
 		
-		if(detectAuxiliary(currentWord))
+		if(GIApreprocessorMultiwordReduction.detectAuxiliary(currentWordTag, usePOSprelim))
 		{	
-			cout << "detectAuxiliary: currentWord = " << currentWord << endl;
+			//cout << "detectAuxiliary: currentWord = " << currentWord << endl;
 			currentWordIsReferenceSetDelimiter = true;
 			currentDelimiterType = GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_AUXILIARY;
 		}
@@ -170,13 +170,7 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 				if(wordIndex-1 >= 0)
 				{
 					//eg the [det] walk [verb]
-					#ifdef GIA_GRAMMATICAL_WORD_TYPES_EXTENDED
 					if(GIApreprocessorMultiwordReduction.determineIsDeterminer(((*logicReferenceVariableWordList)[wordIndex-1]), usePOSprelim))
-					#else
-					//may fail because determiner may be capitalised
-					if(SHAREDvars.textInTextArray(((*logicReferenceVariableWordList)[wordIndex-1])->tagName, relationDeterminerArray, GRAMMATICAL_DETERMINER_ARRAY_NUMBER_OF_TYPES) || 
-					SHAREDvars.textInTextArray(((*logicReferenceVariableWordList)[wordIndex-1])->tagName, entityPronounPossessiveArray, ENTITY_PRONOUN_POSSESSIVE_ARRAY_NUMBER_OF_TYPES))
-					#endif
 					{
 						referenceSetDelimiterVerbPreceededByDeterminerOrPossessivePronoun = true;
 					}
@@ -184,13 +178,7 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 				if(wordIndex-2 >= 0)
 				{
 					//eg the [det] wonderful [adj] walk [verb]
-					#ifdef GIA_GRAMMATICAL_WORD_TYPES_EXTENDED
 					if(GIApreprocessorMultiwordReduction.determineIsDeterminer(((*logicReferenceVariableWordList)[wordIndex-2]), usePOSprelim))
-					#else
-					//may fail because determiner may be capitalised
-					if(SHAREDvars.textInTextArray(((*logicReferenceVariableWordList)[wordIndex-2])->tagName, relationDeterminerArray, GRAMMATICAL_DETERMINER_ARRAY_NUMBER_OF_TYPES) || 
-					SHAREDvars.textInTextArray(((*logicReferenceVariableWordList)[wordIndex-2])->tagName, entityPronounPossessiveArray, ENTITY_PRONOUN_POSSESSIVE_ARRAY_NUMBER_OF_TYPES))
-					#endif
 					{
 						if(GIApreprocessorMultiwordReduction.determineIsAdjective(((*logicReferenceVariableWordList)[wordIndex-1]), usePOSprelim))
 						{
@@ -201,13 +189,7 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 				if(wordIndex-3 >= 0)
 				{
 					//eg the [det] very [adv] wonderful [adj] walk [verb]
-					#ifdef GIA_GRAMMATICAL_WORD_TYPES_EXTENDED
 					if(GIApreprocessorMultiwordReduction.determineIsDeterminer(((*logicReferenceVariableWordList)[wordIndex-3]), usePOSprelim))
-					#else
-					//may fail because determiner may be capitalised
-					if(SHAREDvars.textInTextArray(((*logicReferenceVariableWordList)[wordIndex-3])->tagName, relationDeterminerArray, GRAMMATICAL_DETERMINER_ARRAY_NUMBER_OF_TYPES) || 
-					SHAREDvars.textInTextArray(((*logicReferenceVariableWordList)[wordIndex-3])->tagName, entityPronounPossessiveArray, ENTITY_PRONOUN_POSSESSIVE_ARRAY_NUMBER_OF_TYPES))
-					#endif
 					{
 						if(GIApreprocessorMultiwordReduction.determineIsAdverb(((*logicReferenceVariableWordList)[wordIndex-2]), usePOSprelim))
 						{
@@ -222,13 +204,7 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 				if(wordIndex-2 >= 0)
 				{
 					//eg the [det] newly [adv] controlled [verb]
-					#ifdef GIA_GRAMMATICAL_WORD_TYPES_EXTENDED
 					if(GIApreprocessorMultiwordReduction.determineIsDeterminer(((*logicReferenceVariableWordList)[wordIndex-2]), usePOSprelim))
-					#else
-					//may fail because determiner may be capitalised
-					if(SHAREDvars.textInTextArray(((*logicReferenceVariableWordList)[wordIndex-2])->tagName, relationDeterminerArray, GRAMMATICAL_DETERMINER_ARRAY_NUMBER_OF_TYPES) || 
-					SHAREDvars.textInTextArray(((*logicReferenceVariableWordList)[wordIndex-2])->tagName, entityPronounPossessiveArray, ENTITY_PRONOUN_POSSESSIVE_ARRAY_NUMBER_OF_TYPES))
-					#endif
 					{
 						if(GIApreprocessorMultiwordReduction.determineIsAdverb(((*logicReferenceVariableWordList)[wordIndex-1]), usePOSprelim))
 						{
@@ -330,7 +306,7 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 			{
 				if(wordIndex-1 >= 0)
 				{
-					if(detectModalAuxiliary(((*logicReferenceVariableWordList)[wordIndex-1])->tagName))
+					if(GIApreprocessorMultiwordReduction.detectModalAuxiliary(((*logicReferenceVariableWordList)[wordIndex-1]), usePOSprelim))
 					{	
 						previousWordIsAuxiliary = true;
 						wordIndexOfHypotheticalPreceedingThatWhich--;
@@ -342,7 +318,7 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 			{
 				if(wordIndex-1 >= 0)
 				{
-					if(detectAuxiliary(((*logicReferenceVariableWordList)[wordIndex-1])->tagName))
+					if(GIApreprocessorMultiwordReduction.detectAuxiliary(((*logicReferenceVariableWordList)[wordIndex-1]), usePOSprelim))
 					{	
 						//eg that is riding
 						previousWordIsAuxiliary = true;
@@ -358,18 +334,18 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 						
 						if(wordIndex-2 >= 0)
 						{
-							if(detectModalAuxiliary(((*logicReferenceVariableWordList)[wordIndex-2])->tagName))
+							if(GIApreprocessorMultiwordReduction.detectModalAuxiliary(((*logicReferenceVariableWordList)[wordIndex-2]), usePOSprelim))
 							{
 								//eg (that) will be riding
 								wordIndexOfHypotheticalPreceedingThatWhich--;
 							}
-							else if(detectAuxiliary(((*logicReferenceVariableWordList)[wordIndex-2])->tagName))
+							else if(GIApreprocessorMultiwordReduction.detectAuxiliary(((*logicReferenceVariableWordList)[wordIndex-2]), usePOSprelim))
 							{
 								wordIndexOfHypotheticalPreceedingThatWhich--;
 								//eg (that) have been riding
 								if(wordIndex-3 >= 0)
 								{
-									if(detectModalAuxiliary(((*logicReferenceVariableWordList)[wordIndex-3])->tagName))
+									if(GIApreprocessorMultiwordReduction.detectModalAuxiliary(((*logicReferenceVariableWordList)[wordIndex-3]), usePOSprelim))
 									{
 										//eg (that) will have been riding
 										wordIndexOfHypotheticalPreceedingThatWhich--;
@@ -387,7 +363,7 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 							{
 								if(wordIndex-2 >= 0)
 								{
-									if(detectAuxiliary(((*logicReferenceVariableWordList)[wordIndex-2])->tagName))
+									if(GIApreprocessorMultiwordReduction.detectAuxiliary(((*logicReferenceVariableWordList)[wordIndex-2]), usePOSprelim))
 									{
 										//eg is very near / is not near
 										previousWordIsAuxiliary = true;
@@ -402,7 +378,7 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 		
 			if(wordIndexOfHypotheticalPreceedingThatWhich >= 0)
 			{
-				if(SHAREDvars.textInTextArray(((*logicReferenceVariableWordList)[wordIndexOfHypotheticalPreceedingThatWhich])->tagName, preprocessorRcmodSameReferenceSetDelimiter, GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_RCMOD_SAME_REFERENCE_SET_DELIMITER_NUMBER_OF_TYPES))
+				if(GIApreprocessorMultiwordReduction.detectRcmodSameReferenceSetDelimiter(((*logicReferenceVariableWordList)[wordIndexOfHypotheticalPreceedingThatWhich]), usePOSprelim))
 				{
 					currentWordIsReferenceSetDelimiterPreceededByThatWhich = true;
 					#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
@@ -878,36 +854,6 @@ bool GIApreprocessorReferenceSetClass::addSubReferenceSetToReferenceSet(GIAprepr
 	currentSubReferenceSetInList->next = new GIApreprocessorSubReferenceSet();
 	
 	return result;
-}
-
-
-
-bool GIApreprocessorReferenceSetClass::detectAuxiliary(const string currentWord)
-{
-	bool auxiliaryFound = false;
-	if(SHAREDvars.textInTextArray(currentWord, entityAuxiliaryBeingArray, ENTITY_AUXILIARY_BEING_ARRAY_NUMBER_OF_TYPES))
-	{
-		auxiliaryFound = true;
-	}
-	if(SHAREDvars.textInTextArray(currentWord, entityAuxiliaryHavingArray, ENTITY_AUXILIARY_HAVING_ARRAY_NUMBER_OF_TYPES))
-	{
-		auxiliaryFound = true;
-	}
-	if(SHAREDvars.textInTextArray(currentWord, entityAuxiliaryDoingArray, ENTITY_AUXILIARY_DOING_ARRAY_NUMBER_OF_TYPES))
-	{
-		auxiliaryFound = true;
-	}
-	return auxiliaryFound;
-}
-
-bool GIApreprocessorReferenceSetClass::detectModalAuxiliary(const string currentWord)
-{
-	bool modalAuxiliaryFound = false;
-	if(SHAREDvars.textInTextArray(currentWord, entityModalAuxiliaryArray, ENTITY_MODALAUXILIARY_NUMBER_OF_TYPES))
-	{
-		modalAuxiliaryFound = true;
-	}
-	return modalAuxiliaryFound;
 }
 
 bool GIApreprocessorReferenceSetClass::hasReferenceSet(GIApreprocessorSubReferenceSet* referenceSet)

@@ -1,9 +1,9 @@
-multiwordlistAdjectives.txt
-multiwordlistAdverbs.txt
-multiwordlistConjunctions.txt
-multiwordlistDeterminers.txt
-multiwordlistInterjections.txt
-multiwordlistNouns.txt
-multiwordlistPrepositions.txt
-multiwordLists.txt
-multiwordlistVerbs.txt
+adjective multiwordlistAdjective.txt
+adverb multiwordlistAdverb.txt
+conjunction multiwordlistConjunction.txt
+determiner multiwordlistDeterminer.txt
+interjection multiwordlistInterjection.txt
+noun multiwordlistNoun.txt
+preposition multiwordlistPreposition.txt
+verb multiwordlistVerb.txt
+pronounPersonal multiwordlistPronoun.txt

@@ -26,7 +26,7 @@
  * File Name: GIAsemanticParserOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e10a 15-January-2018
+ * Project Version: 3e11a 21-January-2018
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  *
  *******************************************************************************/
@@ -269,7 +269,7 @@ void GIAsemanticParserOperationsClass::determineGIAconnectionistNetworkPOStypeNa
 	{
 		if(currentFeatureInSentence->stanfordPOS == featurePOStagCoordinatingConjunctionArray[i])
 		{
-			GIAsemanticParserPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_COORDINATINGCONJUNCTION;
+			GIAsemanticParserPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_CONJUNCTION;
 		}
 	}
 	for(int i=0; i<FEATURE_POS_TAG_NUMBER_ARRAY_NUMBER_OF_TYPES; i++)
@@ -398,37 +398,8 @@ void GIAsemanticParserOperationsClass::determineGIAconnectionistNetworkPOStypeNa
 			GIAsemanticParserPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_PUNCTUATION_QUOTE;
 		}
 	}
-	//additional cases required for GIA semantics extraction;
-	for(int i=0; i<ENTITY_AUXILIARY_BEING_ARRAY_NUMBER_OF_TYPES; i++)
-	{
-		if(currentFeatureInSentence->lemma == entityAuxiliaryBeingArray[i])
-		{
-			GIAsemanticParserPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_AUXILIARY_BEING;
-		}
-	}
-	for(int i=0; i<ENTITY_AUXILIARY_HAVING_ARRAY_NUMBER_OF_TYPES; i++)
-	{
-		if(currentFeatureInSentence->lemma == entityAuxiliaryHavingArray[i])
-		{
-			GIAsemanticParserPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_AUXILIARY_HAVING;
-		}
-	}
-	for(int i=0; i<ENTITY_AUXILIARY_DOING_ARRAY_NUMBER_OF_TYPES; i++)
-	{
-		if(currentFeatureInSentence->lemma == entityAuxiliaryDoingArray[i])
-		{
-			GIAsemanticParserPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_AUXILIARY_DOING;
-		}
-	}
-	#ifdef GIA_SEMANTIC_PARSER_RECORD_DETERMINERS_AS_DEFINITE_INDEFINITE_SPECIFIC
-	for(int i=0; i<GRAMMATICAL_DETERMINER_LIMITED_INDEFINITE_NUMBER_OF_TYPES; i++)
-	{
-		if(currentFeatureInSentence->lemma == grammaticalDeterminerIndefiniteArray[i])
-		{
-			GIAsemanticParserPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_DETERMINER_LIMITED_INDEFINITE;
-		}
-	}
-	#endif
+	
+	determineGIAconnectionistNetworkPOStypeNameShared(currentFeatureInSentence, &GIAsemanticParserPOStype);
 
 	/*
 	//requires updating (add more cases from PENN tree above)
@@ -480,9 +451,9 @@ void GIAsemanticParserOperationsClass::determineGIAconnectionistNetworkPOStypeNa
 	}
 	for(int i=0; i<ENTITY_COORDINATINGCONJUNCTION_ARRAY_NUMBER_OF_TYPES; i++)
 	{
-		if(currentFeatureInSentence->lemma == entityCoordinatingConjunctionArray[i])
+		if(currentFeatureInSentence->lemma == entityCoordinatingConjunctionArray[i])	//FUTURE: this will be effectively changed to entityConjunctionArray when GIA semantic parser is upgraded to use GIA preprocessor POS tagger
 		{
-			GIAsemanticParserPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_COORDINATINGCONJUNCTION;
+			GIAsemanticParserPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_CONJUNCTION;
 		}
 	}
 	for(int i=0; i<ENTITY_POSSESSIVEENDING_NUMBER_OF_TYPES; i++)
@@ -527,29 +498,36 @@ void GIAsemanticParserOperationsClass::determineGIAconnectionistNetworkPOStypeNa
 			GIAsemanticParserPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_PREDETERMINER;
 		}
 	}
+	
+	determineGIAconnectionistNetworkPOStypeNameShared(currentFeatureInSentence, &GIAsemanticParserPOStype);
 
 	//GIA_SEMANTIC_PARSER_POS_TYPE_INTERJECTION not currently supported by Relex
 
+	currentFeatureInSentence->GIAsemanticParserPOStype = GIAsemanticParserPOStype;
+}
+
+void GIAsemanticParserOperationsClass::determineGIAconnectionistNetworkPOStypeNameShared(GIAfeature* currentFeatureInSentence, int* GIAsemanticParserPOStype)
+{
 	//additional cases required for GIA semantics extraction;
 	for(int i=0; i<ENTITY_AUXILIARY_BEING_ARRAY_NUMBER_OF_TYPES; i++)
 	{
 		if(currentFeatureInSentence->lemma == entityAuxiliaryBeingArray[i])
 		{
-			GIAsemanticParserPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_AUXILIARY_BEING;
+			*GIAsemanticParserPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_AUXILIARY_BEING;
 		}
 	}
 	for(int i=0; i<ENTITY_AUXILIARY_HAVING_ARRAY_NUMBER_OF_TYPES; i++)
 	{
 		if(currentFeatureInSentence->lemma == entityAuxiliaryHavingArray[i])
 		{
-			GIAsemanticParserPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_AUXILIARY_HAVING;
+			*GIAsemanticParserPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_AUXILIARY_HAVING;
 		}
 	}
 	for(int i=0; i<ENTITY_AUXILIARY_DOING_ARRAY_NUMBER_OF_TYPES; i++)
 	{
 		if(currentFeatureInSentence->lemma == entityAuxiliaryDoingArray[i])
 		{
-			GIAsemanticParserPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_AUXILIARY_DOING;
+			*GIAsemanticParserPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_AUXILIARY_DOING;
 		}
 	}
 
@@ -558,12 +536,11 @@ void GIAsemanticParserOperationsClass::determineGIAconnectionistNetworkPOStypeNa
 	{
 		if(currentFeatureInSentence->lemma == grammaticalDeterminerIndefiniteArray[i])
 		{
-			GIAsemanticParserPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_DETERMINER_LIMITED_INDEFINITE;
+			*GIAsemanticParserPOStype = GIA_SEMANTIC_PARSER_POS_TYPE_DETERMINER_LIMITED_INDEFINITE;
 		}
 	}
 	#endif
 
-	currentFeatureInSentence->GIAsemanticParserPOStype = GIAsemanticParserPOStype;
 }
 
 #ifdef GIA_SEMANTIC_PARSER_SUBSETS

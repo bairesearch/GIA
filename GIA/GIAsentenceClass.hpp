@@ -26,7 +26,7 @@
  * File Name: GIAsentenceClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e10a 15-January-2018
+ * Project Version: 3e11a 21-January-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  *
  *******************************************************************************/
@@ -256,6 +256,9 @@ public:
 	int grammaticalGender;
 	bool grammaticalIsPronoun;
 	int grammaticalWordType;	//grammaticalWordTypeTemp
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER
+	int GIAposType;
+	#endif
 	int grammaticalIndexOfDeterminer;
 	bool previousWordInSentenceIsTo;
 	#ifdef GIA_PREDETERMINERS

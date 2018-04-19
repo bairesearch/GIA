@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorLogicReference.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e10a 15-January-2018
+ * Project Version: 3e11a 21-January-2018
  * Requirements: requires plain text file
  * Description: Logic Reference preprocessor
  *
@@ -928,6 +928,12 @@ vector<GIApreprocessorWord*> GIApreprocessorLogicReferenceClass::generateLogicRe
 	
 	vector<GIApreprocessorWord*> logicReferenceContents = generateLogicReferenceContentsBase(logicReferenceWord, logicReferenceClassType);
 	
+	#ifdef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
+	bool usePOSprelim = true;
+	#else
+	bool usePOSprelim = false;
+	#endif
+	
 	if(logicReferenceClass == GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_VERB)
 	{
 		//eg had proposed / will have proposed, etc
@@ -948,7 +954,7 @@ vector<GIApreprocessorWord*> GIApreprocessorLogicReferenceClass::generateLogicRe
 		//verify that the auxiliary/verb is not preceeded by a modal auxiliary (e.g. for future cases; will be/have/ride), in which case must test the word prior to the modal auxiliary for that/which
 		if(wordIndex-1 >= 0)
 		{
-			if(GIApreprocessorReferenceSet.detectModalAuxiliary((*logicReferenceVariableWordList)[wordIndex-1]->tagName))
+			if(GIApreprocessorMultiwordReduction.detectModalAuxiliary((*logicReferenceVariableWordList)[wordIndex-1], usePOSprelim))
 			{	
 				previousWordIsModalAuxiliary = true;
 				wordIndexOfHypotheticalPreceedingThatWhich--;
@@ -957,7 +963,7 @@ vector<GIApreprocessorWord*> GIApreprocessorLogicReferenceClass::generateLogicRe
 		//verify that the auxiliary/verb is not preceeded by an auxiliary (e.g. for doing auxiliaries; is being/having/doing, or for verbs; is riding, or for prepositions; is near), in which case must test the word prior to the modal auxiliary for that/which
 		if(wordIndex-1 >= 0)
 		{
-			if(GIApreprocessorReferenceSet.detectAuxiliary(((*logicReferenceVariableWordList)[wordIndex-1])->tagName))
+			if(GIApreprocessorMultiwordReduction.detectAuxiliary(((*logicReferenceVariableWordList)[wordIndex-1]), usePOSprelim))
 			{	
 				//eg that is riding
 				previousWordIsModalAuxiliary = true;
@@ -973,7 +979,7 @@ vector<GIApreprocessorWord*> GIApreprocessorLogicReferenceClass::generateLogicRe
 
 				if(wordIndex-2 >= 0)
 				{
-					if(GIApreprocessorReferenceSet.detectModalAuxiliary((*logicReferenceVariableWordList)[wordIndex-2]->tagName))
+					if(GIApreprocessorMultiwordReduction.detectModalAuxiliary((*logicReferenceVariableWordList)[wordIndex-2], usePOSprelim))
 					{
 						//eg that will be riding
 						wordIndexOfHypotheticalPreceedingThatWhich--;
@@ -1005,7 +1011,7 @@ vector<GIApreprocessorWord*> GIApreprocessorLogicReferenceClass::generateLogicRe
 		bool currentWordIsReferenceSetDelimiterPreceededByThatWhich = false;
 		if(wordIndexOfHypotheticalPreceedingThatWhich >= 0)
 		{
-			if(SHAREDvars.textInTextArray((*logicReferenceVariableWordList)[wordIndexOfHypotheticalPreceedingThatWhich]->tagName, preprocessorRcmodSameReferenceSetDelimiter, GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_RCMOD_SAME_REFERENCE_SET_DELIMITER_NUMBER_OF_TYPES))
+			if(GIApreprocessorMultiwordReduction.detectRcmodSameReferenceSetDelimiter((*logicReferenceVariableWordList)[wordIndexOfHypotheticalPreceedingThatWhich], usePOSprelim))
 			{
 				currentWordIsReferenceSetDelimiterPreceededByThatWhich = true;
 				#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET

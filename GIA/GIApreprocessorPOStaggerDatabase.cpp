@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorPOStagger.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e10a 15-January-2018
+ * Project Version: 3e11a 21-January-2018
  * Requirements: requires plain text file
  * Description: preprocessor POS tagger
  *
@@ -80,6 +80,61 @@ void GIApreprocessorPOStaggerDatabaseClass::initialisePOStaggerDatabase(const st
 }
 #endif
 
+
+#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_MAP
+multimap<string, pair<unsigned long, int>> POStaggerMap;		//each key is ~10 64bit ints long: word context POS (ambiguity info) permutation, and the value is 1 64 bit int long: POS (ambiguity info) for central word
+	//as it currently stands POStaggerMap will be roughly the same size as the original wiki dump text (ie 12GB; too large)
+bool GIApreprocessorPOStaggerClass::findInstancePOStaggerMap(vector<unsigned long>* POSambiguityInfoPermutation, unsigned long centreWordPOSambiguityInfo, int* numberOfInstances, const bool incrementIfFound)
+{
+	bool result = false;
+
+	string POSambiguityInfoPermutationIndexString = convertPOSambiguityInfoPermutationToPOSambiguityInfoPermutationIndexString(POSambiguityInfoPermutation);	
+	pair<multimap<string, pair<unsigned long, int>>::iterator, multimap<string, pair<unsigned long, int>>::iterator> rangeFound = POStaggerMap.equal_range(POSambiguityInfoPermutationIndexString);
+	for(multimap<string, pair<unsigned long, int>>::iterator it = rangeFound.first; it != rangeFound.second; it++)
+	{
+		unsigned long centreWordPOSambiguityInfoCurrent = (it->second).first;
+		if(centreWordPOSambiguityInfoCurrent == centreWordPOSambiguityInfo)
+		{
+			result = true;
+			*numberOfInstances = (it->second).second;
+			if(incrementIfFound)
+			{
+				(it->second).second = (it->second).second + 1;
+			}
+		}
+	}
+	
+	return result;
+}	
+void GIApreprocessorPOStaggerClass::insertInstanceInPOStaggerMap(vector<unsigned long>* POSambiguityInfoPermutation, const unsigned long centreWordPOSambiguityInfo, const int numberOfInstances)
+{
+	string POSambiguityInfoPermutationIndexString = convertPOSambiguityInfoPermutationToPOSambiguityInfoPermutationIndexString(POSambiguityInfoPermutation);
+	pair<unsigned long, int> value = make_pair(centreWordPOSambiguityInfo, numberOfInstances);
+	POStaggerMap.insert(pair<string, pair<unsigned long, int>>(POSambiguityInfoPermutationIndexString, value));
+}	
+multimap<string, pair<unsigned long, int>>* GIApreprocessorPOStaggerClass::getPOStaggerMap()
+{
+	return &POStaggerMap;
+}
+#endif
+string GIApreprocessorPOStaggerDatabaseClass::convertPOSambiguityInfoPermutationToPOSambiguityInfoPermutationIndexString(vector<unsigned long>* POSambiguityInfoPermutation)
+{
+	string POSambiguityInfoPermutationIndexString = "";
+	for(int i=0; i<POSambiguityInfoPermutation->size(); i++)
+	{
+		unsigned char POSpermutationIndexByte = convertPOSambiguityInfoToIndex(POSambiguityInfoPermutation->at(i));
+		#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_AND_MAP_USE_6BIT_INDICES
+		char character = DBconvertByteToBase64(POSpermutationIndexByte);		
+		string str = "";
+		str = str + character;	
+		#else
+		string str = DBconvertByteToHex(POSpermutationIndexByte);
+		#endif		
+		POSambiguityInfoPermutationIndexString = POSambiguityInfoPermutationIndexString + str;
+	}
+	return POSambiguityInfoPermutationIndexString;
+}
+
 #ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK
 #ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_INTERNAL
 #ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE
@@ -114,9 +169,9 @@ bool GIApreprocessorPOStaggerDatabaseClass::calculateIdealClassTargetOfInputExpe
 	{
 		result = true;
 	}	
-	if(*idealClassTarget >= GIA_PREPROCESSOR_WORD_LIST_ARRAY_SIZE)
+	if(*idealClassTarget >= GIA_PREPROCESSOR_POS_TYPE_ARRAY_NUMBER_OF_TYPES)
 	{
-		cerr << "GIApreprocessorPOStaggerDatabaseClass::calculateIdealClassTargetOfInputExperience{} error: (*idealClassTarget >= GIA_PREPROCESSOR_WORD_LIST_ARRAY_SIZE)" << endl;
+		cerr << "GIApreprocessorPOStaggerDatabaseClass::calculateIdealClassTargetOfInputExperience{} error: (*idealClassTarget >= GIA_PREPROCESSOR_POS_TYPE_ARRAY_NUMBER_OF_TYPES)" << endl;
 		cerr << "classification network has identified the ambiguous word as a punctuation character" << endl;
 		result = false;
 	}
@@ -338,7 +393,7 @@ bool GIApreprocessorPOStaggerDatabaseClass::externalANNexecuteScript(string scri
 
 
 #ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM
-string GIApreprocessorPOStaggerDatabaseClass::DBgenerateFileName(const string POSambiguityInfoPermutation)
+string GIApreprocessorPOStaggerDatabaseClass::DBgenerateFileName(vector<unsigned long>* POSambiguityInfoPermutation)
 {
 	//eg network/server/GIAPOStaggerDatabase/ffff/ffff/ffff/ffff/ffff/POSpermutationffffffffffffffffffffff.pos
 	//string serverName = GIAdatabase.DBgenerateServerDatabaseName(&(GIAconnectionistNetworkPOStypeNameAbbreviationArray[firstFeatureInList->GIAsemanticParserPOStype]), fileType, GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_DEFAULT_DATABASE_NAME, GIAposTaggerDatabaseFolderName);
@@ -359,7 +414,7 @@ string GIApreprocessorPOStaggerDatabaseClass::DBgenerateFileName(const string PO
 		GIAdatabase.checkIfFolderExistsAndIfNotMakeAndSetAsCurrent(&folderName);
 	}
 	
-	int numberOfRemainingWordsInPOSpermutation = (POSambiguityInfoPermutation.length()-GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_SUBDIRECTORY_INDEX_NUMBER_OF_LEVELS*GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_SUBDIRECTORY_INDEX_NUMBER_OF_WORDS_PER_LEVEL);
+	int numberOfRemainingWordsInPOSpermutation = (POSambiguityInfoPermutation->size()-GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_SUBDIRECTORY_INDEX_NUMBER_OF_LEVELS*GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_SUBDIRECTORY_INDEX_NUMBER_OF_WORDS_PER_LEVEL);
 	if(numberOfRemainingWordsInPOSpermutation > 0)
 	{
 		POSpermutationFileName = POSpermutationFileName + DBgenerateSubFolderName(POSambiguityInfoPermutation, GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_SUBDIRECTORY_INDEX_NUMBER_OF_LEVELS, numberOfRemainingWordsInPOSpermutation);
@@ -372,62 +427,21 @@ string GIApreprocessorPOStaggerDatabaseClass::DBgenerateFileName(const string PO
 	return fileName;
 }
 
-string GIApreprocessorPOStaggerDatabaseClass::DBgenerateSubFolderName(const string POSambiguityInfoPermutation, const int level, const int numberOfWordsPerLevel)
+string GIApreprocessorPOStaggerDatabaseClass::DBgenerateSubFolderName(vector<unsigned long>* POSambiguityInfoPermutation, const int level, const int numberOfWordsPerLevel)
 {
 	string folderName = "";
 	for(int i=level*numberOfWordsPerLevel; i<(level*numberOfWordsPerLevel)+numberOfWordsPerLevel; i++)
 	{
-		unsigned char POSpermutationIndexByte = (unsigned char)(POSambiguityInfoPermutation[i]);
+		unsigned char POSpermutationIndexByte = convertPOSambiguityInfoToIndex(POSambiguityInfoPermutation->at(i));
+		#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_AND_MAP_USE_6BIT_INDICES
+		folderName = folderName + DBconvertByteToBase64(POSpermutationIndexByte);
+		#else
 		folderName = folderName + DBconvertByteToHex(POSpermutationIndexByte);
+		#endif
 	}
 	return folderName;
 }
 
-string GIApreprocessorPOStaggerDatabaseClass::DBconvertByteToHex(unsigned char byte)
-{
-	/*
-	stringstream ss;
-    	ss << hex << (int)byte;
-	string hexString = ss.str();
-	*/
-	//cerr << "int(byte) = " << int(byte) << endl;
-	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_USE_4BIT_INDICES
-	if(byte >= GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_POS_MAX_SIZE)
-	{
-		cerr << "GIApreprocessorPOStaggerDatabaseClass::DBconvertByteToHex: error, (byte >= GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_POS_MAX_SIZE{16})" << endl;
-		cerr << "int(byte) = " << int(byte) << endl;
-		exit(EXIT_ERROR);
-	}
-	string formatString = "%01x";
-	#else
-	string formatString = "%02x";
-	#endif
-	string hexString = SHAREDvars.convertIntToString(int(byte), formatString);
-	/*
-	cout << "GIApreprocessorPOStaggerDatabaseClass::DBconvertByteToHex:" << endl;
-	cout << "byte = " << int(byte) << endl;
-	cout << "hexString = " << hexString << endl;
-	*/
-	return hexString;
-}
-
-unsigned char GIApreprocessorPOStaggerDatabaseClass::DBconvertHexToByte(string hexString)
-{
-	unsigned char byte = (unsigned char)strtol(hexString.c_str(), NULL, 16);
-	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_USE_4BIT_INDICES
-	if(byte >= GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_POS_MAX_SIZE)
-	{
-		cerr << "GIApreprocessorPOStaggerDatabaseClass::DBconvertHexToByte: error, (byte >= GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_POS_MAX_SIZE{16})" << endl;
-		exit(EXIT_ERROR);
-	}
-	#endif
-	/*
-	cout << "GIApreprocessorPOStaggerDatabaseClass::DBconvertHexToByte:" << endl;
-	cout << "byte = " << int(byte) << endl;
-	cout << "hexString = " << hexString << endl;
-	*/
-	return byte;
-}
 
 
 
@@ -438,16 +452,19 @@ unsigned char GIApreprocessorPOStaggerDatabaseClass::DBconvertHexToByte(string h
 
 
 
-bool GIApreprocessorPOStaggerDatabaseClass::DBreadPOSpermutationEstimates(const string POSambiguityInfoPermutation, vector<string>* centreWordPOSambiguityInfoList)
+
+
+
+bool GIApreprocessorPOStaggerDatabaseClass::DBreadPOSpermutationEstimates(vector<unsigned long>* POSambiguityInfoPermutation, vector<string>* centreWordPOSambiguityInfoList)
 {
 	bool POSpermutationEntryExistent = false;
 	
 	/*
 	Format:
-	ff 0000000000 [1 8 bit char (central POStag), space, then 1 32 bit numReferences]
-	ff 0000000000
-	ff 0000000000
-	ff 0000000000
+	Z 0000000000 [1 6 bit char (central POStag), space, then 1 32 bit numReferences]
+	Z 0000000000
+	Z 0000000000
+	Z 0000000000
 	...
 	*/
 
@@ -475,9 +492,13 @@ bool GIApreprocessorPOStaggerDatabaseClass::DBreadPOSpermutationEstimates(const 
 }
 
 #ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE
-bool GIApreprocessorPOStaggerDatabaseClass::DBwritePOSpermutationEstimate(const string POSambiguityInfoPermutation, const unsigned char centreWordPOSambiguityInfo)
+bool GIApreprocessorPOStaggerDatabaseClass::DBwritePOSpermutationEstimate(vector<unsigned long>* POSambiguityInfoPermutation, const unsigned long centreWordPOSambiguityInfo)
 {
 	bool result = true;
+	
+	//cout << "DBwritePOSpermutationEstimate: convertPOSambiguityInfoPermutationToPOSambiguityInfoPermutationIndexString: " << convertPOSambiguityInfoPermutationToPOSambiguityInfoPermutationIndexString(POSambiguityInfoPermutation) << endl;
+	
+	unsigned char centreWordPOSpermutationIndexByte = convertPOSambiguityInfoToIndex(centreWordPOSambiguityInfo);
 	
 	vector<string> centreWordPOSambiguityInfoList;
 	bool POSpermutationEntryExistent = DBreadPOSpermutationEstimates(POSambiguityInfoPermutation, &centreWordPOSambiguityInfoList);
@@ -488,17 +509,22 @@ bool GIApreprocessorPOStaggerDatabaseClass::DBwritePOSpermutationEstimate(const 
 		for(int i=0; i<centreWordPOSambiguityInfoList.size(); i++)
 		{
 			string centreWordPOSambiguityReferenceString = centreWordPOSambiguityInfoList[i];
-			string centreWordPOSambiguityInfoCurrentByteHexString = centreWordPOSambiguityReferenceString.substr(GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_POS_PERMUTATION_ENTRY_CENTRE_WORD_POS_AMBIGUITY_BYTE_HEX_START_POS, GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_POS_PERMUTATION_ENTRY_CENTRE_WORD_POS_AMBIGUITY_BYTE_HEX_LENGTH);
-			unsigned char centreWordPOSambiguityInfoCurrentByte = DBconvertHexToByte(centreWordPOSambiguityInfoCurrentByteHexString);
-			if(centreWordPOSambiguityInfoCurrentByte == centreWordPOSambiguityInfo)
+			string centreWordPOSambiguityInfoCurrentByteBaseXstring = centreWordPOSambiguityReferenceString.substr(GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_POS_PERMUTATION_ENTRY_CENTRE_WORD_POS_AMBIGUITY_BYTE_CODED_START_POS, GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_POS_PERMUTATION_ENTRY_CENTRE_WORD_POS_AMBIGUITY_BYTE_CODED_LENGTH);
+			#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_AND_MAP_USE_6BIT_INDICES
+			char centreWordPOSambiguityInfoCurrentByteBaseXchar = centreWordPOSambiguityInfoCurrentByteBaseXstring[0];
+			unsigned char centreWordPOSambiguityInfoCurrentByte = DBconvertBase64ToByte(centreWordPOSambiguityInfoCurrentByteBaseXchar);
+			#else
+			unsigned char centreWordPOSambiguityInfoCurrentByte = DBconvertHexToByte(centreWordPOSambiguityInfoCurrentByteBaseXstring);			
+			#endif
+			if(centreWordPOSambiguityInfoCurrentByte == centreWordPOSpermutationIndexByte)
 			{				
 				foundMatchingCentreWordPOSambiguityInfo = true;
 				string centreWordPOSambiguityInfoNumberInstancesCurrentIntString = centreWordPOSambiguityReferenceString.substr(GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_POS_PERMUTATION_ENTRY_CENTRE_WORD_POS_AMBIGUITY_NUMBER_OF_INSTANCES_INT_START_POS, GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_POS_PERMUTATION_ENTRY_CENTRE_WORD_POS_AMBIGUITY_NUMBER_OF_INSTANCES_INT_LENGTH);
 				int centreWordPOSambiguityInfoNumberInstancesCurrentInt = SHAREDvars.convertStringToInt(centreWordPOSambiguityInfoNumberInstancesCurrentIntString);
-
+				
 				#ifdef GIA_PREPROCESSOR_POS_TAGGER_POS_DEBUG
 				cout << "foundMatchingCentreWordPOSambiguityInfo (incrementing)" << endl;
-				cout << "centreWordPOSambiguityInfoCurrentByte = " << centreWordPOSambiguityInfoCurrentByte << endl;
+				cout << "int(centreWordPOSambiguityInfoCurrentByte) = " << int(centreWordPOSambiguityInfoCurrentByte) << endl;
 				cout << "centreWordPOSambiguityInfoNumberInstancesCurrentInt = " << centreWordPOSambiguityInfoNumberInstancesCurrentInt << endl;
 				#endif
 				
@@ -522,11 +548,17 @@ bool GIApreprocessorPOStaggerDatabaseClass::DBwritePOSpermutationEstimate(const 
 		//create a new entry in reference file
 		int numberOfInstances = 1;
 		//cout << "create a new entry in reference file" << endl;
-		string centreWordPOSambiguityInfoCurrentHexString = DBconvertByteToHex(centreWordPOSambiguityInfo);
+		#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_AND_MAP_USE_6BIT_INDICES
+		char centreWordPOSambiguityInfoCurrentBaseXchar = DBconvertByteToBase64(centreWordPOSpermutationIndexByte);
+		string centreWordPOSambiguityInfoCurrentBaseXstring = "";
+		centreWordPOSambiguityInfoCurrentBaseXstring = centreWordPOSambiguityInfoCurrentBaseXstring + centreWordPOSambiguityInfoCurrentBaseXchar;
+		#else
+		string centreWordPOSambiguityInfoCurrentBaseXstring = DBconvertByteToHex(centreWordPOSpermutationIndexByte);
+		#endif
 		string formatString = generateIntFormatString(GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_POS_PERMUTATION_ENTRY_CENTRE_WORD_POS_AMBIGUITY_NUMBER_OF_INSTANCES_INT_LENGTH);
 		string centreWordPOSambiguityInfoNumberInstancesCurrentIntString = SHAREDvars.convertIntToString(numberOfInstances, formatString);
 
-		string centreWordPOSambiguityReferenceString = centreWordPOSambiguityInfoCurrentHexString + CHAR_SPACE + centreWordPOSambiguityInfoNumberInstancesCurrentIntString;
+		string centreWordPOSambiguityReferenceString = centreWordPOSambiguityInfoCurrentBaseXstring + CHAR_SPACE + centreWordPOSambiguityInfoNumberInstancesCurrentIntString;
 		centreWordPOSambiguityInfoList.push_back(centreWordPOSambiguityReferenceString);
 		
 		#ifdef GIA_PREPROCESSOR_POS_TAGGER_POS_DEBUG
@@ -559,19 +591,19 @@ string GIApreprocessorPOStaggerDatabaseClass::generateIntFormatString(int number
 }
 
 
-string GIApreprocessorPOStaggerDatabaseClass::DBconvertByteToBinaryString(unsigned char byte)
+string GIApreprocessorPOStaggerDatabaseClass::DBconvertByteToBinaryString(unsigned long integer)
 {
 	string binaryString = ""; 
-	for(int i=0; i<8; i++)
+	for(int i=0; i<64; i++)
 	{
-		int val = SHAREDvars.getBitValue(byte, i);
-		binaryString = binaryString + SHAREDvars.convertIntToString(val);
+		bool val = SHAREDvars.getBitValue(integer, i);
+		binaryString = binaryString + SHAREDvars.convertIntToString(int(val));
 	}
 	return binaryString;
 }
 
 #ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_PREDICTION_VERIFICATION
-bool GIApreprocessorPOStaggerDatabaseClass::verifyPOStaggerDatabasePredictionAgainstPOSambiguityInfo(const unsigned int centreWordPOSvaluePrediction, const unsigned int centreWordPOSambiguityInfo, int* centreWordPOSvalueFirstAmbiguousPrediction)
+bool GIApreprocessorPOStaggerDatabaseClass::verifyPOStaggerDatabasePredictionAgainstPOSambiguityInfo(const unsigned char centreWordPOSindexPrediction, const unsigned int centreWordPOSambiguityInfo, unsigned char* centreWordPOSvalueFirstAmbiguousPrediction)
 {
 	bool predictionMatchesPOSambiguityInfo = false;
 	if(centreWordPOSambiguityInfo == 0)
@@ -580,13 +612,13 @@ bool GIApreprocessorPOStaggerDatabaseClass::verifyPOStaggerDatabasePredictionAga
 	}
 	else
 	{
-		for(int i=0; i<GIA_PREPROCESSOR_WORD_LIST_ARRAY_SIZE; i++)
+		for(int i=0; i<GIA_PREPROCESSOR_POS_TYPE_ARRAY_NUMBER_OF_TYPES; i++)
 		{
 			if(SHAREDvars.getBitValue(centreWordPOSambiguityInfo, i))
 			{
 				*centreWordPOSvalueFirstAmbiguousPrediction = i;
 
-				if(centreWordPOSvaluePrediction == i)
+				if(centreWordPOSindexPrediction == i)
 				{
 					predictionMatchesPOSambiguityInfo = true;
 				}
@@ -598,3 +630,166 @@ bool GIApreprocessorPOStaggerDatabaseClass::verifyPOStaggerDatabasePredictionAga
 #endif
 
 
+
+unsigned char GIApreprocessorPOStaggerDatabaseClass::convertPOSambiguityInfoToIndex(unsigned long POSambiguityInfo)
+{
+	unsigned char POSambiguityInfoIndex = GIA_PREPROCESSOR_POS_TYPE_UNDEFINED;
+	if(!determinePOSambiguityInfoIsAmbiguous(POSambiguityInfo, &POSambiguityInfoIndex, true))
+	{
+		//cout << "unambiguousPOSvalue = " << int(unambiguousPOSvalue) << endl;
+		//cout << "unambiguousPOSvalue = " << int((unsigned char)(char(int(unambiguousPOSvalue)))) << endl;
+	}
+	else
+	{
+		cerr << "GIApreprocessorPOStaggerDatabaseClass::convertPOSambiguityInfoToIndex error: determinePOSambiguityInfoIsAmbiguous; verify that GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY_ONLY_TRAIN_UNAMBIGUOUS_PERMUTATIONS is true" << endl;
+		exit(EXIT_ERROR);
+	}
+	
+	return POSambiguityInfoIndex;
+}
+
+bool GIApreprocessorPOStaggerDatabaseClass::determinePOSambiguityInfoIsAmbiguous(const unsigned long POSambiguityInfo, unsigned char* unambiguousPOSinfoIndex, const bool treatWordAsAmbiguousIfNullPOSvalue)
+{
+	bool ambiguous = false;
+	
+	//cout << "POSambiguityInfo = " << POSambiguityInfo << endl;
+	//cout << "GIA_PREPROCESSOR_POS_TAGGER_DATABASE_POS_NUMBER_OF_TYPES = " << GIA_PREPROCESSOR_POS_TAGGER_DATABASE_POS_NUMBER_OF_TYPES << endl;
+	
+	int numberOfPOStypesRecorded = 0;
+	for(int POStype = 0; POStype<GIA_PREPROCESSOR_POS_TAGGER_DATABASE_POS_NUMBER_OF_TYPES; POStype++)	//GIA_PREPROCESSOR_POS_TYPE_ARRAY_NUMBER_OF_TYPES
+	{
+		bool bitValue = SHAREDvars.getBitValue(POSambiguityInfo, POStype);
+		if(bitValue)
+		{
+			*unambiguousPOSinfoIndex = POStype;
+			numberOfPOStypesRecorded++;
+		}
+	}
+	if(numberOfPOStypesRecorded > 1)
+	{
+		ambiguous = true;
+	}
+	if(POSambiguityInfo == 0)
+	{
+		if(treatWordAsAmbiguousIfNullPOSvalue)
+		{
+			ambiguous = true;
+		}
+		else
+		{
+			*unambiguousPOSinfoIndex = GIA_PREPROCESSOR_POS_TYPE_UNDEFINED;
+		}
+	}
+
+	/*
+	if(!ambiguous)
+	{
+		//this is required when determinePOSambiguityInfoIsAmbiguous is being used to calculate unambiguousPOSvalue for special characters also
+		for(int POStype = 0; POStype<GIA_PREPROCESSOR_POS_TAGGER_DATABASE_POS_NUMBER_OF_TYPES; POStype++)
+		{
+			bool bitValue = SHAREDvars.getBitValue(POSambiguityInfo, POStype);
+			if(bitValue)
+			{
+				*unambiguousPOSinfoIndex = POStype;
+			}
+		}
+	}
+	*/
+	
+	//cout << "POSambiguityInfoIndex = " << int(*unambiguousPOSinfoIndex) << endl;
+				
+	return ambiguous;
+}	
+
+
+
+#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_AND_MAP_USE_6BIT_INDICES
+char GIApreprocessorPOStaggerDatabaseClass::DBconvertByteToBase64(unsigned char byte)
+{
+	char base64char;
+	if((int(byte) >= GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_POS_PERMUTATION_ENTRY_CENTRE_WORD_POS_AMBIGUITY_BYTE_CODED_BASE_INDEX_0) && (int(byte) <= GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_POS_PERMUTATION_ENTRY_CENTRE_WORD_POS_AMBIGUITY_BYTE_CODED_BASE_INDEX_9))
+	{
+		base64char = int(byte) + int('0') - GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_POS_PERMUTATION_ENTRY_CENTRE_WORD_POS_AMBIGUITY_BYTE_CODED_BASE_INDEX_0;
+	}
+	else if((int(byte) >= GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_POS_PERMUTATION_ENTRY_CENTRE_WORD_POS_AMBIGUITY_BYTE_CODED_BASE_INDEX_A) && (int(byte) <= GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_POS_PERMUTATION_ENTRY_CENTRE_WORD_POS_AMBIGUITY_BYTE_CODED_BASE_INDEX_Z))
+	{
+		base64char = int(byte) + int('A') - GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_POS_PERMUTATION_ENTRY_CENTRE_WORD_POS_AMBIGUITY_BYTE_CODED_BASE_INDEX_A;
+	}
+	else if((int(byte) >= GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_POS_PERMUTATION_ENTRY_CENTRE_WORD_POS_AMBIGUITY_BYTE_CODED_BASE_INDEX_a) && (int(byte) <= GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_POS_PERMUTATION_ENTRY_CENTRE_WORD_POS_AMBIGUITY_BYTE_CODED_BASE_INDEX_z))
+	{
+		base64char = int(byte) + int('a') - GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_POS_PERMUTATION_ENTRY_CENTRE_WORD_POS_AMBIGUITY_BYTE_CODED_BASE_INDEX_a;
+	}	
+	else if(int(byte) == GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_POS_PERMUTATION_ENTRY_CENTRE_WORD_POS_AMBIGUITY_BYTE_CODED_BASE_INDEX_DASH)
+	{
+		base64char = int('-');
+	}
+	else if(int(byte) == GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_POS_PERMUTATION_ENTRY_CENTRE_WORD_POS_AMBIGUITY_BYTE_CODED_BASE_INDEX_UNDERSCORE)
+	{
+		base64char = int('_');
+	}	
+	else
+	{
+		cerr << "GIApreprocessorPOStaggerDatabaseClass::DBconvertByteToBase64{} error - illegal base64char detected" << base64char << endl;
+		exit(EXIT_ERROR);
+	}
+	return base64char;
+}
+unsigned char GIApreprocessorPOStaggerDatabaseClass::DBconvertBase64ToByte(char base64char)
+{
+	unsigned char byte;
+	if((int(base64char) >= int('0')) && (int(base64char) <= int('9')))
+	{
+		byte = base64char - int('0') + GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_POS_PERMUTATION_ENTRY_CENTRE_WORD_POS_AMBIGUITY_BYTE_CODED_BASE_INDEX_0;
+	}
+	else if((int(base64char) >= int('A')) && (int(base64char) <= int('Z')))
+	{
+		byte = base64char - int('A') + GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_POS_PERMUTATION_ENTRY_CENTRE_WORD_POS_AMBIGUITY_BYTE_CODED_BASE_INDEX_A;
+	}
+	else if((int(base64char) >= int('a')) && (int(base64char) <= int('z')))
+	{
+		byte = base64char - int('a') + GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_POS_PERMUTATION_ENTRY_CENTRE_WORD_POS_AMBIGUITY_BYTE_CODED_BASE_INDEX_a;
+	}
+	else if(int(base64char) == '-')
+	{
+		byte = 62;
+	}
+	else if(int(base64char) == '_')
+	{
+		byte = 63;
+	}	
+	else
+	{
+		cerr << "GIApreprocessorPOStaggerDatabaseClass::DBconvertBase64ToByte{} error - illegal base64char detected " << base64char << ", int(base64char) = " << int(base64char) << endl;
+		exit(EXIT_ERROR);
+	}
+	return byte;
+}
+#else
+string GIApreprocessorPOStaggerDatabaseClass::DBconvertByteToHex(unsigned char byte)
+{
+	/*
+	stringstream ss;
+    	ss << hex << (int)byte;
+	string hexString = ss.str();
+	*/
+	//cerr << "int(byte) = " << int(byte) << endl;
+	string formatString = "%02x";
+	string hexString = SHAREDvars.convertIntToString(int(byte), formatString);
+	/*
+	cout << "GIApreprocessorPOStaggerDatabaseClass::DBconvertByteToHex:" << endl;
+	cout << "byte = " << int(byte) << endl;
+	cout << "hexString = " << hexString << endl;
+	*/
+	return hexString;
+}
+unsigned char GIApreprocessorPOStaggerDatabaseClass::DBconvertHexToByte(string hexString)
+{
+	unsigned char byte = (unsigned char)strtol(hexString.c_str(), NULL, 16);
+	/*
+	cout << "GIApreprocessorPOStaggerDatabaseClass::DBconvertHexToByte:" << endl;
+	cout << "byte = " << int(byte) << endl;
+	cout << "hexString = " << hexString << endl;
+	*/
+	return byte;
+}
+#endif

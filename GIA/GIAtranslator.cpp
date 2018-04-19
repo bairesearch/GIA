@@ -26,7 +26,7 @@
  * File Name: GIAtranslator.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e10a 15-January-2018
+ * Project Version: 3e11a 21-January-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -45,7 +45,9 @@ bool GIAtranslatorClass::parseNLPparserFileAndCreateSemanticNetworkBasedUponDepe
 {
 	bool result = true;
 
+	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
 	GIApreprocessorMultiwordReduction.setActiveGIApreprocessorMultiwordReductionTagTextCorrespondenceInfo(translatorVariables->isQuery);	//required for local variable access
+	#endif
 	if(!translatorVariables->parseGIA2file)
 	{
 		if(!GIAnlp.parseNLPparserFile(inputTextNLPrelationXMLfileName, inputTextNLPfeatureXMLfileName, translatorVariables->isQuery, translatorVariables->firstParagraphInList, translatorVariables->NLPfeatureParser, translatorVariables->NLPdependencyRelationsParser, translatorVariables->NLPrelexCompatibilityMode))
@@ -531,8 +533,10 @@ bool GIAtranslatorClass::convertSentenceSyntacticRelationsIntoGIAnetworkNodes(GI
 	#endif
 	translatorVariables->GIAentityNodeArray = &GIAentityNodeArray;
 
+	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
 	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_PREPOSITIONS
 	invertOrDuplicateConditionsIfRequired(translatorVariables);
+	#endif
 	#endif
 
 	#ifdef GIA_BOT_SWITCH_FIRST_AND_SECOND_PERSON
@@ -1213,6 +1217,7 @@ void GIAtranslatorClass::createAndLinkNonSpecificConceptsForAllEntities(GIAtrans
 
 #endif
 
+#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
 #ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_PREPOSITIONS
 void GIAtranslatorClass::invertOrDuplicateConditionsIfRequired(GIAtranslatorVariablesClass* translatorVariables)
 {
@@ -1233,6 +1238,7 @@ void GIAtranslatorClass::invertOrDuplicateConditionsIfRequired(GIAtranslatorVari
 						bool inverseConditionRequired = false;
 						bool twoWayConditionRequired = false;
 						string inverseConditionName = "";
+						
 						GIApreprocessorMultiwordReduction.detectIfInverseOrTwoWayConditionRequired(conditionName, &inverseConditionRequired, &twoWayConditionRequired, &inverseConditionName);
 
 						#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_INVERSE_PREPOSITIONS
@@ -1309,6 +1315,7 @@ void GIAtranslatorClass::createNewInverseConditionEntity(GIArelation* currentRel
 }
 
 
+#endif
 #endif
 
 
