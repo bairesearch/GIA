@@ -23,7 +23,7 @@ auxiliaryBeing wordlistAuxiliaryBeing.txt
 auxiliaryHaving wordlistAuxiliaryHaving.txt
 auxiliaryDoing wordlistAuxiliaryDoing.txt
 auxiliary wordlistAuxiliary.txt
-
+pronounDemonstrative wordlistPronounDemonstrative.txt
 pronounIndefinite wordlistPronounIndefinite.txt
 pronounInterrogative wordlistPronounInterrogative.txt
 pronounPersonalObject wordlistPronounPersonalObject.txt

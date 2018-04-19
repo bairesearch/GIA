@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f1p 22-February-2018
+ * Project Version: 3f1q 22-February-2018
  * Requirements: requires plain text file
  * Description: Textual relation translator
  * /
@@ -646,13 +646,7 @@ bool GIAtxtRelTranslatorClass::generateRulesGroupTreeComponents(vector<GIAtxtRel
 								{
 								#endif
 									#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_OPTIONAL
-									if(!(component->optional))
-									{
-									#endif
-										foundWordMatch = false;
-									#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_OPTIONAL
-									}
-									else
+									if(component->optional || subcomponentsOptional)
 									{
 										/*
 										GIAtxtRelTranslatorRules.printParseTreeDebugIndentation(layer);
@@ -660,6 +654,12 @@ bool GIAtxtRelTranslatorClass::generateRulesGroupTreeComponents(vector<GIAtxtRel
 										GIAtxtRelTranslatorRules.printParseTreeDebugIndentation(layer);
 										cout << "minIndexOfMatchesFoundBackup2 = " << minIndexOfMatchesFoundBackup2 << endl;
 										*/
+									}
+									else
+									{
+									#endif
+										foundWordMatch = false;
+									#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_OPTIONAL
 									}
 									#endif
 								#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_REPEAT

@@ -27,7 +27,7 @@
  * File Name: GIAtxtRelTranslatorRules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f1p 22-February-2018
+ * Project Version: 3f1q 22-February-2018
  * /
  *******************************************************************************/
  
@@ -249,6 +249,20 @@
 						<component referenceSetTypeHybrid="unknown" componentType="string" stringType="LRPexternalWordLists" wordPOStype="auxiliary" />
 					</repeat>
 				</group>
+				<group groupName="auxiliarySequenceBeingOrHaving">
+					<or>
+						<component referenceSetTypeHybrid="unknown" componentType="string" stringType="LRPexternalWordLists" wordPOStype="modalAuxiliary" semanticRelationReturnEntity="true" />
+						<component referenceSetTypeHybrid="unknown" componentType="string" stringType="LRPexternalWordLists" wordPOStype="auxiliaryBeing" semanticRelationReturnEntity="true" />
+						<component referenceSetTypeHybrid="unknown" componentType="string" stringType="LRPexternalWordLists" wordPOStype="auxiliaryHaving" semanticRelationReturnEntity="true" />
+					</or>
+					<component referenceSetTypeHybrid="unknown" componentType="group" groupTypeName="subReferenceSetsPart" groupName="auxiliarySequenceBeingOrHaving2" optional="true" />
+				</group>
+				<group groupName="auxiliarySequenceBeingOrHaving2">
+					<or>
+						<component referenceSetTypeHybrid="unknown" componentType="string" stringType="LRPexternalWordLists" wordPOStype="auxiliaryBeing" semanticRelationReturnEntity="true" />
+						<component referenceSetTypeHybrid="unknown" componentType="string" stringType="LRPexternalWordLists" wordPOStype="auxiliaryHaving" semanticRelationReturnEntity="true" />
+					</or>
+				</group>
 				<group groupName="determiner">
 					<!-- {predet} det -->
 					<example><!-- all these --></example>
@@ -419,6 +433,11 @@
 			</groupType>
 			<groupType groupTypeName="subReferenceSetsSubject" referenceSetType="subReferenceSet">
 				<!-- not necessary (could rely on dedicated nlp instead) -->
+				<group groupName="pronounDemonstrative">
+					<!-- pronounDemonstrative -->
+					<example><!-- that --></example>
+					<component referenceSetTypeHybrid="referenceSet" componentType="string" stringType="LRPexternalWordLists" wordPOStype="pronounDemonstrative" semanticRelationReturnEntity="true" />
+				</group>
 				<group groupName="possessive" semanticRelationFunctionName="propertyReverse">
 					<!-- []'s [] -->
 					<example><!-- Tom's car --></example>
@@ -602,17 +621,17 @@
 			</groupType>
 			<groupType groupTypeName="subReferenceSetsAuxiliaryDelimiterAndObject" referenceSetType="subReferenceSet">
 				<!-- reference set emulation sequences (with rcmod); -->
+				<group groupName="actionReverse" semanticRelationFunctionName2="tenseAttributeModalAuxiliaryOrCopula">
+					<!-- aux verb by []  -->
+					<example><!-- was ridden by the dog --></example>
+					<component referenceSetTypeHybrid="unknown" componentType="group" groupTypeName="subReferenceSetsPart" groupName="auxiliarySequenceBeingOrHaving" semanticRelationIndexType2="object" />
+					<component referenceSetTypeHybrid="unknown" componentType="group" groupTypeName="subReferenceSetsDelimiterAndObject" groupName="actionReverse" semanticRelationIndexType2="subject" semanticRelationReturnEntity="true" />
+				</group>
 				<group groupName="action" semanticRelationFunctionName2="tenseAttributeModalAuxiliaryOrCopula">
 					<!-- {aux} verb []  -->
 					<example><!-- {does} ride the bike --></example>
 					<component referenceSetTypeHybrid="unknown" componentType="group" groupTypeName="subReferenceSetsPart" groupName="auxiliarySequence" semanticRelationIndexType2="object" optional="true" />
 					<component referenceSetTypeHybrid="unknown" componentType="group" groupTypeName="subReferenceSetsDelimiterAndObject" groupName="action" semanticRelationIndexType2="subject" semanticRelationReturnEntity="true" />
-				</group>
-				<group groupName="actionReverse" semanticRelationFunctionName2="tenseAttributeModalAuxiliaryOrCopula">
-					<!-- aux verb by []  -->
-					<example><!-- was ridden by the dog --></example>
-					<component referenceSetTypeHybrid="unknown" componentType="group" groupTypeName="subReferenceSetsPart" groupName="auxiliarySequence" semanticRelationIndexType2="object" />
-					<component referenceSetTypeHybrid="unknown" componentType="group" groupTypeName="subReferenceSetsDelimiterAndObject" groupName="actionReverse" semanticRelationIndexType2="subject" semanticRelationReturnEntity="true" />
 				</group>
 				<group groupName="condition" semanticRelationFunctionName2="tenseAttributeModalAuxiliaryOrCopula">
 					<!-- aux prep [] -->
