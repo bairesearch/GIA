@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f2c 04-April-2018
+ * Project Version: 3f2d 04-April-2018
  * Requirements: requires plain text file
  * Description: Textual relation translator
  * /
@@ -1084,8 +1084,10 @@ bool GIAtxtRelTranslatorClass::deleteAllSubgroupsRecurse(GIAtxtRelTranslatorRule
 		GIAtxtRelTranslatorRulesComponent* currentParseTreeComponent = (currentParseTreeGroup->components)[i];
 		if(currentParseTreeComponent->parseTreeGroupRef != NULL)
 		{
+			#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS
 			GIAtxtRelTranslatorRules.printParseTreeDebugIndentation(layer);
-			//cout << "deleteAllSubgroupsRecurse" << endl;
+			cout << "deleteAllSubgroupsRecurse" << endl;
+			#endif
 			
 			if(!deleteAllSubgroupsRecurse(currentParseTreeComponent->parseTreeGroupRef, layer+1))
 			{

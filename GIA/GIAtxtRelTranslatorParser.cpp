@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f2c 04-April-2018
+ * Project Version: 3f2d 04-April-2018
  * Requirements: 
  * Description: Textual Relation Translator Parser
  * /
@@ -1706,6 +1706,33 @@ void GIAtxtRelTranslatorParserClass::defineSubstancesBasedOnNetworkAndDeterminer
 			{
 				//cout << "isConcept: entity = " << entity->entityName << endl;
 				entity->entityType = GIA_ENTITY_TYPE_CONCEPT;
+			}
+		}
+	}
+	
+	//ensure that all properties of substances are substances not concepts;
+	for(int i=0; i<GIAtranslatorOperations.getEntityArrayMaxIndex(translatorVariables); i++)
+	{
+		if((*translatorVariables->GIAentityNodeArrayFilled)[i])
+		{
+			GIAentityNode* entity = (*translatorVariables->GIAentityNodeArray)[i];
+			if(entity->entityType == GIA_ENTITY_TYPE_CONCEPT)
+			{
+				bool entityHasSubstanceParent = false;
+				for(vector<GIAentityConnection*>::iterator connectionIter = entity->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTY_REVERSE].begin(); connectionIter != entity->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTY_REVERSE].end(); connectionIter++)
+				{
+					GIAentityNode* entity2 = GIAtranslatorOperations.getRelationshipSubjectEntity(*connectionIter);
+					if(entity2->entityType == GIA_ENTITY_TYPE_SUBSTANCE)
+					{
+						entityHasSubstanceParent = true;
+					}
+				}
+				
+				if(entityHasSubstanceParent)
+				{
+					entity->entityType = GIA_ENTITY_TYPE_SUBSTANCE;
+					//cout << "entityHasSubstanceParent: entity = " << entity->entityName << endl;
+				}
 			}
 		}
 	}

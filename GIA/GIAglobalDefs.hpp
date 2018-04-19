@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f2c 04-April-2018
+ * Project Version: 3f2d 04-April-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  * /
@@ -739,7 +739,7 @@
 	#define GIA_DISABLE_CROSS_SENTENCE_REFERENCING	//added 2g5a/05-September-2014 - required for NLC 1j2b+, optional for NLC 1k11a+
 #endif
 //#define GIA_SEM_REL_TRANSLATOR	//GIA2
-#define GIA_TXT_REL_TRANSLATOR	//GIA3	//NB GIA_TXT_REL_TRANSLATOR is temporarily enabled for executeGIAonStandardTestScenarios16-GIA3e8c+.sh testing
+#define GIA_TXT_REL_TRANSLATOR	//GIA3
 	//requires GIA_PREPROCESSOR
 	
 //#define GIA_DEBUG_DISABLE_3f_CODE
@@ -748,9 +748,9 @@
 		#define GIA_TXT_REL_TRANSLATOR_RULES		
 		#ifdef GIA_TXT_REL_TRANSLATOR_RULES
 		
-			#define GIA_DEBUG_TXT_REL_TRANSLATOR_RULES    
-			#define GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS2 	      
-			#define GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS
+			//#define GIA_DEBUG_TXT_REL_TRANSLATOR_RULES    
+			//#define GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS2 		
+			//#define GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS
 			
 			#define GIA_TXT_REL_TRANSLATOR_RULES_ASSUME_HIGH_LEVEL_REFERENCE_SETS_DO_NOT_CONTAIN_EXPLICIT_SEMANTIC_RELATION_FUNCTION
 			

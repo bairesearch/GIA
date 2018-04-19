@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f2c 04-April-2018
+ * Project Version: 3f2d 04-April-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
@@ -235,6 +235,16 @@ GIAentityNode* GIAtranslatorOperationsClass::getPropertyRelationshipTargetEntity
 	#endif
 	return relationshipObjectEntity;
 }
+GIAentityNode* GIAtranslatorOperationsClass::getPropertyRelationshipSourceEntity(GIAentityNode* relationshipEntity)
+{
+	GIAentityNode* relationshipSubjectEntity = NULL;
+	#ifdef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
+	relationshipSubjectEntity = getRelationshipSubjectEntity(relationshipEntity);
+	#else
+	relationshipSubjectEntity = relationshipEntity;
+	#endif
+	return relationshipSubjectEntity;
+}
 GIAentityNode* GIAtranslatorOperationsClass::getDefinitionRelationshipTargetEntity(GIAentityNode* relationshipEntity)
 {
 	GIAentityNode* relationshipObjectEntity = NULL;
@@ -245,6 +255,17 @@ GIAentityNode* GIAtranslatorOperationsClass::getDefinitionRelationshipTargetEnti
 	#endif
 	return relationshipObjectEntity;
 }
+GIAentityNode* GIAtranslatorOperationsClass::getDefinitionRelationshipSourceEntity(GIAentityNode* relationshipEntity)
+{
+	GIAentityNode* relationshipSubjectEntity = NULL;
+	#ifdef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
+	relationshipSubjectEntity = getRelationshipSubjectEntity(relationshipEntity);
+	#else
+	relationshipSubjectEntity = relationshipEntity;
+	#endif
+	return relationshipSubjectEntity;
+}
+
 
 
 GIAentityNode* GIAtranslatorOperationsClass::getDefinitionRelationshipObjectEntity(GIAentityConnection* relationshipConnection)
