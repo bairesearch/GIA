@@ -26,7 +26,7 @@
  * File Name: GIAsemRelTranslatorParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f3m 10-April-2018
+ * Project Version: 3f3n 10-April-2018
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  * Description: Semantic Relation Translator Parser
  * /
@@ -346,7 +346,7 @@ void GIAsemRelTranslatorParserClass::fillGrammaticalTenseArraysStanfordBasedOnSe
 		{
 			if(currentRelationInList->relationType == GIA2semanticDependencyRelationNameArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_MODAL_AUXILIARY_OR_COPULA])
 			{
-				//modal auxiliary [/copula] found; eg modalAuxiliary(sad-3, was-2) / eg modalAuxiliary(had-5, must-3) / modalAuxiliary(had-5, have-4) The dog must have had it.
+				//modal auxiliary [/copula] found; eg modalAuxiliary(sad-3, was-2) The dog was sad. / eg modalAuxiliary(had-5, must-3), modalAuxiliary(had-5, have-4) The dog must have had it.
 				int thingIndex = currentRelationInList->relationGovernorIndex;
 				int modalAuxiliaryIndex = currentRelationInList->relationDependentIndex;
 				GIAentityNode* entity = (*translatorVariables->GIAentityNodeArray)[thingIndex];
@@ -356,39 +356,58 @@ void GIAsemRelTranslatorParserClass::fillGrammaticalTenseArraysStanfordBasedOnSe
 				currentRelationInList->disabled = true;
 				
 				#ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3
-				//CHECKTHIS
-				GIArelation* currentRelationInList2 = translatorVariables->currentSentenceInList->firstRelationInList;
- 				while(currentRelationInList2->next != NULL)
-				{
-					if(!(currentRelationInList2->disabled))
-					{
-						if(currentRelationInList2->relationType == GIA2semanticDependencyRelationNameArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_MULTIWORD_AUXILIARY])
-						{
-							//will have ridden; eg multiwordAuxiliary(will, have), modalAuxiliary(had, ridden)
-
-							int thingIndex2 = currentRelationInList2->relationGovernorIndex;
-							int modalAuxiliaryIndex2 = currentRelationInList2->relationDependentIndex;
-							GIAentityNode* entity2 = (*translatorVariables->GIAentityNodeArray)[thingIndex2];
-							string auxiliaryOrCopulaString2 = (*translatorVariables->GIAentityNodeArray)[modalAuxiliaryIndex2]->wordOrig;	//featureArrayTemp[modalAuxiliaryIndex2]->word;
-							
-							if(thingIndex2 == modalAuxiliaryIndex)
-							{
-								updateGrammaticalValuesBasedOnModalAuxiliaryOrCopula(entity, auxiliaryOrCopulaString2);
-								currentRelationInList2->disabled = true;
-							}
-						}
-					}
-					currentRelationInList2 = currentRelationInList2->next;
-				}
+				fillGrammaticalTenseArraysStanfordBasedOnSemanticRelationsMultiwordAuxiliary(translatorVariables, modalAuxiliaryIndex, entity);
+				#endif
+			}
+			if(currentRelationInList->relationType == GIA2semanticDependencyRelationNameArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_MODAL_AUXILIARY_OR_COPULA_SINGLE])
+			{
+				//modal auxiliary [/copula] found; eg auxiliary(was-2) The dog was sad. / eg modalAuxiliary(had-5) The dog must have had it.
+				int modalAuxiliaryIndex = currentRelationInList->relationGovernorIndex;
+				GIAentityNode* entity = (*translatorVariables->GIAentityNodeArray)[modalAuxiliaryIndex];
+				string auxiliaryOrCopulaString = (*translatorVariables->GIAentityNodeArray)[modalAuxiliaryIndex]->wordOrig;	//featureArrayTemp[modalAuxiliaryIndex]->word;
+				
+				updateGrammaticalValuesBasedOnModalAuxiliaryOrCopula(entity, auxiliaryOrCopulaString);
+				currentRelationInList->disabled = true;
+				
+				#ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3
+				fillGrammaticalTenseArraysStanfordBasedOnSemanticRelationsMultiwordAuxiliary(translatorVariables, modalAuxiliaryIndex, entity);
 				#endif
 			}
 		}
 		currentRelationInList = currentRelationInList->next;
 	}
-
-
 }
 
+#ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3
+void GIAsemRelTranslatorParserClass::fillGrammaticalTenseArraysStanfordBasedOnSemanticRelationsMultiwordAuxiliary(GIAtranslatorVariablesClass* translatorVariables, int modalAuxiliaryIndex, GIAentityNode* entity)
+{
+	//CHECKTHIS
+	GIArelation* currentRelationInList2 = translatorVariables->currentSentenceInList->firstRelationInList;
+ 	while(currentRelationInList2->next != NULL)
+	{
+		if(!(currentRelationInList2->disabled))
+		{
+			if(currentRelationInList2->relationType == GIA2semanticDependencyRelationNameArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_MULTIWORD_AUXILIARY])
+			{
+				//will have ridden; eg multiwordAuxiliary(will, have), modalAuxiliary(had, ridden)
+
+				int thingIndex2 = currentRelationInList2->relationGovernorIndex;
+				int modalAuxiliaryIndex2 = currentRelationInList2->relationDependentIndex;
+				GIAentityNode* entity2 = (*translatorVariables->GIAentityNodeArray)[thingIndex2];
+				string auxiliaryOrCopulaString2 = (*translatorVariables->GIAentityNodeArray)[modalAuxiliaryIndex2]->wordOrig;	//featureArrayTemp[modalAuxiliaryIndex2]->word;
+
+				if(thingIndex2 == modalAuxiliaryIndex)
+				{
+					updateGrammaticalValuesBasedOnModalAuxiliaryOrCopula(entity, auxiliaryOrCopulaString2);
+					currentRelationInList2->disabled = true;
+				}
+			}
+		}
+		currentRelationInList2 = currentRelationInList2->next;
+	}
+}
+#endif
+			
 void GIAsemRelTranslatorParserClass::defineSubstancesBasedOnSemanticRelations(GIAtranslatorVariablesClass* translatorVariables)
 {
 	GIAsynRelTranslatorDefineSubstances.defineSubstancesAllNodes(translatorVariables);

@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f3m 10-April-2018
+ * Project Version: 3f3n 10-April-2018
  * Requirements: 
  * Description: Textual Relation Translator Parser
  * /
@@ -1201,6 +1201,11 @@ bool GIAtxtRelTranslatorParserClass::createSemanticRelationInMemory(GIAtranslato
 		GIAsemRelTranslatorOperations.GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(translatorVariables, GIA_ENTITY_VECTOR_CONNECTION_TYPE_MODAL_AUXILIARY_OR_COPULA, functionEntityIndex1, functionEntityIndex2, sameReferenceSet);
 		//entitySemanticRelationFunction2->semanticRelationEntityIsReferenced = false;
 	}
+	else if(semanticRelationFunctionName == GIAtxtRelSemanticDependencyRelationNameArray[GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_tenseAttributeModalAuxiliaryOrCopulaSingle])
+	{
+		GIAsemRelTranslatorOperations.GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(translatorVariables, GIA_ENTITY_VECTOR_CONNECTION_TYPE_MODAL_AUXILIARY_OR_COPULA_SINGLE, functionEntityIndex1, "", sameReferenceSet);
+		//entitySemanticRelationFunction2->semanticRelationEntityIsReferenced = false;
+	}
 	else if(semanticRelationFunctionName == GIAtxtRelSemanticDependencyRelationNameArray[GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_multiwordAuxiliary])
 	{
 		if(!createSemanticRelationMultiwordAuxiliary(translatorVariables, entitySemanticRelationFunctionListArray, sameReferenceSet))
@@ -1497,9 +1502,13 @@ bool GIAtxtRelTranslatorParserClass::createSemanticRelationInNetwork(GIAtranslat
 	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_ENTITY_GRAMMAR
 	else if(semanticRelationFunctionName == GIAtxtRelSemanticDependencyRelationNameArray[GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_tenseAttributeModalAuxiliaryOrCopula])
 	{
-		//cout << "GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_tenseAttributeModalAuxiliaryOrCopula" << endl;
+		/*
+		cout << "GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_tenseAttributeModalAuxiliaryOrCopula" << endl;
+		cout << "entitySemanticRelationFunction1 = " << entitySemanticRelationFunction1->entityName << endl;
+		cout << "entitySemanticRelationFunction2 = " << entitySemanticRelationFunction2->entityName << endl;
+		*/
 		string auxiliaryString = entitySemanticRelationFunction2->entityName;
-		GIAtranslatorOperations.updateGrammaticalValuesBasedOnModalAuxiliaryOrCopula(entitySemanticRelationFunction1, auxiliaryString);
+		GIAtranslatorOperations.updateGrammaticalValuesBasedOnModalAuxiliaryOrCopula(entitySemanticRelationFunction1, auxiliaryString);	//this is required if entitySemanticRelationFunction2->multiwordAuxiliaryList.size() == 0
 		for(int i=0; i<entitySemanticRelationFunction2->multiwordAuxiliaryList.size(); i++)
 		{
 			string auxiliaryString2 = (entitySemanticRelationFunction2->multiwordAuxiliaryList)[i];
@@ -1507,6 +1516,17 @@ bool GIAtxtRelTranslatorParserClass::createSemanticRelationInNetwork(GIAtranslat
 			GIAtranslatorOperations.updateGrammaticalValuesBasedOnModalAuxiliaryOrCopula(entitySemanticRelationFunction1, auxiliaryString2);	//in the future this needs to be updated to take into account the grammatical implications of exact auxiliary sequence permutations (not just combinations); e.g. "will have had" / "is being"
 		}
 		entitySemanticRelationFunction2->semanticRelationEntityIsReferenced = false;
+	}
+	else if(semanticRelationFunctionName == GIAtxtRelSemanticDependencyRelationNameArray[GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_tenseAttributeModalAuxiliaryOrCopulaSingle])
+	{
+		string auxiliaryString = entitySemanticRelationFunction1->entityName;
+		GIAtranslatorOperations.updateGrammaticalValuesBasedOnModalAuxiliaryOrCopula(entitySemanticRelationFunction1, auxiliaryString);	//this is required if entitySemanticRelationFunction1->multiwordAuxiliaryList.size() == 0
+		for(int i=0; i<entitySemanticRelationFunction1->multiwordAuxiliaryList.size(); i++)
+		{
+			string auxiliaryString2 = (entitySemanticRelationFunction1->multiwordAuxiliaryList)[i];
+			//cout << "auxiliaryString2 = " << auxiliaryString2 << endl;
+			GIAtranslatorOperations.updateGrammaticalValuesBasedOnModalAuxiliaryOrCopula(entitySemanticRelationFunction1, auxiliaryString2);	//in the future this needs to be updated to take into account the grammatical implications of exact auxiliary sequence permutations (not just combinations); e.g. "will have had" / "is being"
+		}
 	}
 	else if(semanticRelationFunctionName == GIAtxtRelSemanticDependencyRelationNameArray[GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_multiwordAuxiliary])
 	{
