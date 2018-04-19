@@ -43,4 +43,5 @@ title wordlistTitle.txt
 propernounFirstMale wordlistPropernounFirstMale.txt
 propernounFirstFemale wordlistPropernounFirstFemale.txt
 propernounFamily wordlistPropernounFamily.txt
+propernounPlace wordlistPropernounPlace.txt
 

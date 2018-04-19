@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f3i 10-April-2018
+ * Project Version: 3f3j 10-April-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
@@ -2742,10 +2742,12 @@ bool GIAtranslatorOperationsClass::connectPrenominalModifierWrapper(GIAtranslato
 	return result;
 }
 
+#ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3
 bool GIAtranslatorOperationsClass::connectMultiwordAuxiliaryWrapper(GIAtranslatorVariablesClass* translatorVariables, GIAentityNode* entitySemanticRelationFunction1, GIAentityNode* entitySemanticRelationFunction2, const bool sameReferenceSet)
 {
 	entitySemanticRelationFunction1->multiwordAuxiliaryList.push_back(entitySemanticRelationFunction2->entityName);
 }
+#endif
 
 bool GIAtranslatorOperationsClass::connectMultiwordPrepositionWrapper(GIAtranslatorVariablesClass* translatorVariables, GIAentityNode* entitySemanticRelationFunction1, GIAentityNode* entitySemanticRelationFunction2, const bool sameReferenceSet)
 {

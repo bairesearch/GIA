@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorMultiwordReduction.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f3i 10-April-2018
+ * Project Version: 3f3j 10-April-2018
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  * /
@@ -396,6 +396,9 @@ bool GIApreprocessorMultiwordReductionClass::loadWordList(const string wordListF
 			{
 				GIApreprocessorMultiwordReductionWord* currentTagInWordList = new GIApreprocessorMultiwordReductionWord();
 				//cout << "currentWord = " << currentWord << endl;
+				#ifndef GIA_PREPROCESSOR_INITIALISE_WORD_INDEX_LIST_FROM_LRP_FILES_SUPPORT_UPPERCASE_PROPERNOUN_WORD_LISTS
+				currentWord = SHAREDvars.convertStringToLowerCase(&(currentWord));
+				#endif
 				currentTagInWordList->tagName = currentWord;
 				wordList->insert(pair<string, GIApreprocessorMultiwordReductionWord*>(currentWord, currentTagInWordList));
 				//*dummyWordForWordListPosType = currentWord;	//OLD: set dummyWordForWordListPosType to last word in list (e.g. z..)
