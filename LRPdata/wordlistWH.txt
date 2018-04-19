@@ -7,3 +7,7 @@ where
 when
 how
 why
+whatever
+whoever
+whichever
+whomever

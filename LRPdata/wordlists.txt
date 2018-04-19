@@ -15,7 +15,7 @@ adverb wordlistAdverb.txt
 
 interjection wordlistInterjection.txt
 verb wordlistVerb.txt
-wh wordlistNumberWH.txt
+wh wordlistWH.txt
 punctuationQuote wordlistPunctuationQuote.txt
 punctuationDivision wordlistPunctuationDivision.txt
 punctuationEndOfSentence wordlistPunctuationEndOfSentence.txt
