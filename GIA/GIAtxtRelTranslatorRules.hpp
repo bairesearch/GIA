@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorRules.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f1m 22-February-2018
+ * Project Version: 3f1n 22-February-2018
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Rules
  * /
@@ -81,16 +81,18 @@
 #define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_propertyReverse 30
 #define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_actionSubjectReverse 31
 #define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_actionObjectReverse 32
-#define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_logicDefinition 33
-#define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_logicAction 34
-#define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_logicCondition 35
-#define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_logicConclusion 36
-#define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_logicConjunction 37
-#define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_conditionNew 38
-#define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_attributeMeasure 39
-#define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_attributeMeasurePer 40
-#define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_NUMBER_OF_TYPES (41)
-static string GIAtxtRelSemanticDependencyRelationNameArray[GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_NUMBER_OF_TYPES] = {"unknown", "createSubstanceInstance", "createActionInstance", "NA", "property", "action", "actionSubject", "actionObject", "condition", "NA", "NA", "definition", "definitionAlias", "definitionAliasWithAuxiliary", "attributeQuantity", "definitionWithAuxiliary", "propertyWithAuxiliary", "definitionSubject", "definitionObject", "propertySubject", "propertyObject", "conditionSubject", "conditionObject", "tenseAttributeModalAuxiliaryOrCopula", "multiwordPreposition", "multiwordNoun", "multiwordAlias", "multiwordDate", "numerosityPredeterminer", "numerosityDeterminer", "propertyReverse", "actionSubjectReverse", "actionObjectReverse", "logicDefinition", "logicAction", "logicCondition", "logicConclusion", "logicConjunction", "conditionNew", "attributeMeasure", "attributeMeasurePer"};
+#define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_conditionSubjectReverse 33
+#define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_conditionObjectReverse 34
+#define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_logicDefinition 35
+#define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_logicAction 36
+#define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_logicCondition 37
+#define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_logicConclusion 38
+#define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_logicConjunction 39
+#define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_conditionNew 40
+#define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_attributeMeasure 41
+#define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_attributeMeasurePer 42
+#define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_NUMBER_OF_TYPES (43)
+static string GIAtxtRelSemanticDependencyRelationNameArray[GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_NUMBER_OF_TYPES] = {"unknown", "createSubstanceInstance", "createActionInstance", "NA", "property", "action", "actionSubject", "actionObject", "condition", "NA", "NA", "definition", "definitionAlias", "definitionAliasWithAuxiliary", "attributeQuantity", "definitionWithAuxiliary", "propertyWithAuxiliary", "definitionSubject", "definitionObject", "propertySubject", "propertyObject", "conditionSubject", "conditionObject", "tenseAttributeModalAuxiliaryOrCopula", "multiwordPreposition", "multiwordNoun", "multiwordAlias", "multiwordDate", "numerosityPredeterminer", "numerosityDeterminer", "propertyReverse", "actionSubjectReverse", "actionObjectReverse", "conditionSubjectReverse", "conditionObjectReverse", "logicDefinition", "logicAction", "logicCondition", "logicConclusion", "logicConjunction", "conditionNew", "attributeMeasure", "attributeMeasurePer"};
 
 #define GIA_TXT_REL_TRANSLATOR_SEMANTIC_RELATION_RETURN_FUNCTION_NAME_INDEX_TYPE_SEMANTIC_FUNCTION_EXECUTION_INDEX (0)	//semanticRelationReturnFunctionNameIndexType "subject"/"delimiter" refers to "subject"/"delimiter" of semantic relation function 0
 
