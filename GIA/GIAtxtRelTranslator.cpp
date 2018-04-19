@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f1s 22-February-2018
+ * Project Version: 3f1t 22-February-2018
  * Requirements: requires plain text file
  * Description: Textual relation translator
  * /
@@ -310,7 +310,15 @@ bool GIAtxtRelTranslatorClass::executeTxtRelTranslator(GIAtranslatorVariablesCla
 bool GIAtxtRelTranslatorClass::generateParseTreeIntro(vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, vector<GIApreprocessorWord*>* sentenceContents, GIAtxtRelTranslatorRulesGroup* firstParseTreeGroup, int* performance)
 {
 	bool result = false;
-	
+
+	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_QUERIES_OPTIMISE
+	bool isQuery = false;
+	if((*sentenceContents)[sentenceContents->size()-1]->tagName == GIA_NLP_NUMBER_OF_PUNCTUATION_MARK_CHARACTERS_END_OF_SENTENCE_QUESTIONMARK)
+	{
+		isQuery = true;
+	}
+	#endif
+
 	//generate firstParseTreeGroup (firstTxtRelTranslatorRulesGroupInSentence) tree
 	int minIndexOfMatchesFoundBackupOptimum = calculateMinIndexOfMatchesFound(sentenceContents);
 	
@@ -325,9 +333,34 @@ bool GIAtxtRelTranslatorClass::generateParseTreeIntro(vector<GIAtxtRelTranslator
 		
 		int minIndexOfMatchesFoundBackup2 = calculateMinIndexOfMatchesFound(sentenceContents);
 
-		if((groupType->referenceSetType == GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_REFERENCE_SET_TYPE_LOGICREFERENCESET) ||
-		(groupType->referenceSetType == GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_REFERENCE_SET_TYPE_REFERENCESET))
-		//if(groupType->groupTypeName == GIAtxtRelTranslatorRulesGroupsTypes[GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_TYPE_LOGICREFERENCESETSOPTIONAL])
+		bool passGroupTests = false;
+		#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_QUERIES_OPTIMISE
+		if(isQuery)
+		{
+			if(groupType->groupTypeName == "queries")
+			{
+				passGroupTests = true;
+				//cout << "isQuery && 'queries' group found" << endl;
+			}
+		}
+		else
+		{
+		#endif
+			if((groupType->referenceSetType == GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_REFERENCE_SET_TYPE_LOGICREFERENCESET) ||
+			(groupType->referenceSetType == GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_REFERENCE_SET_TYPE_REFERENCESET))
+			//if(groupType->groupTypeName == GIAtxtRelTranslatorRulesGroupsTypes[GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_TYPE_LOGICREFERENCESETSOPTIONAL])
+			{
+				passGroupTests = true;
+			}
+		#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_QUERIES_OPTIMISE
+			if(groupType->groupTypeName == "queries")
+			{
+				passGroupTests = false;
+				//cout << "isQuery && 'queries' group found" << endl;
+			}
+		}
+		#endif
+		if(passGroupTests)
 		{
 			#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS
 			cout << "groupType->referenceSetType = " << groupType->referenceSetType << endl;
@@ -370,7 +403,7 @@ bool GIAtxtRelTranslatorClass::generateParseTreeIntro(vector<GIAtxtRelTranslator
 	//cout << "numberOfTokensInSentence = " << numberOfTokensInSentence << endl;
 	if(minIndexOfMatchesFound == numberOfTokensInSentence-2)
 	{
-		if(!(sentenceContents->at(numberOfTokensInSentence-1)->tagName == STRING_FULLSTOP))
+		if(!(sentenceContents->at(numberOfTokensInSentence-1)->tagName == GIA_NLP_NUMBER_OF_PUNCTUATION_MARK_CHARACTERS_END_OF_SENTENCE_FULLSTOP))
 		{
 			result = false;
 		}

@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorGrammar.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f1s 22-February-2018
+ * Project Version: 3f1t 22-February-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
@@ -70,80 +70,6 @@ bool GIAtranslatorGrammarClass::calculateGrammarUsingInferredPosTypes(GIApreproc
 		}
 	}
 
-	//calculate the PENN pos type of verbs;
-	string baseNameFound = "";
-	int grammaticalBaseTenseForm = INT_DEFAULT_VALUE;
-	bool foundVerbCaseStandardOrAdditional = GIApreprocessorMultiwordReduction.determineVerbCaseStandardWithAdditional(wordTextLowerCase, &baseNameFound, &grammaticalBaseTenseForm);
-	if(foundVerbCaseStandardOrAdditional)
-	{
-		currentFeature->lemma = baseNameFound;
-
-		if(currentWord->wordPOStypeInferred == GIA_SEM_REL_TRANSLATOR_POS_TYPE_VERB)	//NB is equivalent to GIA_PREPROCESSOR_POS_TYPE_VERB
-		{
-			//calculate the grammar of the 
-			currentFeature->stanfordPOS = FEATURE_POS_TAG_VERB_VB;
-			if(grammaticalBaseTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_INFINITIVE)
-			{
-				currentFeature->stanfordPOS = FEATURE_POS_TAG_VERB_VB;
-			}
-			else if(grammaticalBaseTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT)
-			{
-				currentFeature->stanfordPOS = FEATURE_POS_TAG_VERB_VB;	//FEATURE_POS_TAG_VERB_VBP/FEATURE_POS_TAG_VERB_VBZ
-			}
-			else if(grammaticalBaseTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS)
-			{
-				currentFeature->stanfordPOS = FEATURE_POS_TAG_VERB_VBG;
-			}
-			else if(grammaticalBaseTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST)
-			{
-				currentFeature->stanfordPOS = FEATURE_POS_TAG_VERB_VBD;
-			}
-			else if(grammaticalBaseTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PASTPARTICIPLE)
-			{
-				currentFeature->stanfordPOS = FEATURE_POS_TAG_VERB_VBN;
-			}
-			//what about irregular verb cases?
-		}
-		#ifndef GIA_PREPROCESSOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY
-		#ifdef GIA_FEATURE_POS_TAG_VERB_POTENTIAL
-		if(grammaticalBaseTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL)
-		{
-			if(currentWord->wordPOStypeInferred == GIA_SEM_REL_TRANSLATOR_POS_TYPE_ADJECTIVE)	//NB "able" words will be marked as JJ/adjective or NN/noun by POS tagger
-			{
-				currentFeature->stanfordPOS = FEATURE_POS_TAG_VERB_VBPOTENTIAL;
-			}
-		}
-		#endif
-		#ifdef GIA_FEATURE_POS_TAG_VERB_POTENTIAL_INVERSE
-		else if(grammaticalBaseTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE)
-		{
-			if((currentWord->wordPOStypeInferred == GIA_SEM_REL_TRANSLATOR_POS_TYPE_ADJECTIVE))	//NB "ive" words will be marked as JJ/adjective or NN/noun by POS tagger )
-			{
-				currentFeature->stanfordPOS = FEATURE_POS_TAG_VERB_VBPOTENTIALINVERSE;
-			}
-		}
-		#endif
-		#ifdef GIA_FEATURE_POS_TAG_VERB_STATE
-		else if(grammaticalBaseTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST)	//removed 2h2h: || (grammaticalBaseTenseForm == INT_DEFAULT_VALUE)
-		{
-			if(currentWord->wordPOStypeInferred == GIA_SEM_REL_TRANSLATOR_POS_TYPE_ADJECTIVE)	//NB "is ..." and "is ..ed" (not Stanford CoreNLP/Relex) verbs may be marked as JJ/adjective by POS tagger eg "It is open"/"He is tired."
-			{
-				currentFeature->stanfordPOS = FEATURE_POS_TAG_VERB_VBSTATE;
-			}
-		}
-		#endif
-		#ifdef GIA_FEATURE_POS_TAG_VERB_DESCRIPTION
-		else if(grammaticalBaseTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION)
-		{
-			if(currentWord->wordPOStypeInferred == GIA_SEM_REL_TRANSLATOR_POS_TYPE_NOUN)	//NB "ion"/"ment" words will be marked as NN/noun by POS tagger
-			{
-				currentFeature->stanfordPOS = FEATURE_POS_TAG_VERB_VBDESCRIPTION;
-			}
-		}
-		#endif
-		#endif	
-	}
-
 	if(currentWord->wordPOStypeInferred == GIA_PREPROCESSOR_POS_TYPE_PROPERNOUN_FIRST_MALE)
 	{
 		currentFeature->grammaticalGender = GRAMMATICAL_GENDER_MASCULINE;
@@ -172,6 +98,84 @@ bool GIAtranslatorGrammarClass::calculateGrammarUsingInferredPosTypes(GIApreproc
 		currentFeature->grammaticalIsProperNoun = true;
 	}
 	//#endif
+	
+	if(!(currentFeature->grammaticalIsProperNoun))
+	{
+		//calculate the PENN pos type of verbs;
+		string baseNameFound = "";
+		int grammaticalBaseTenseForm = INT_DEFAULT_VALUE;
+		bool foundVerbCaseStandardOrAdditional = GIApreprocessorMultiwordReduction.determineVerbCaseStandardWithAdditional(wordTextLowerCase, &baseNameFound, &grammaticalBaseTenseForm);
+		if(foundVerbCaseStandardOrAdditional)
+		{
+			currentFeature->lemma = baseNameFound;
+
+			if(currentWord->wordPOStypeInferred == GIA_SEM_REL_TRANSLATOR_POS_TYPE_VERB)	//NB is equivalent to GIA_PREPROCESSOR_POS_TYPE_VERB
+			{
+				//calculate the grammar of the 
+				currentFeature->stanfordPOS = FEATURE_POS_TAG_VERB_VB;
+				if(grammaticalBaseTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_INFINITIVE)
+				{
+					currentFeature->stanfordPOS = FEATURE_POS_TAG_VERB_VB;
+				}
+				else if(grammaticalBaseTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT)
+				{
+					currentFeature->stanfordPOS = FEATURE_POS_TAG_VERB_VB;	//FEATURE_POS_TAG_VERB_VBP/FEATURE_POS_TAG_VERB_VBZ
+				}
+				else if(grammaticalBaseTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS)
+				{
+					currentFeature->stanfordPOS = FEATURE_POS_TAG_VERB_VBG;
+				}
+				else if(grammaticalBaseTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST)
+				{
+					currentFeature->stanfordPOS = FEATURE_POS_TAG_VERB_VBD;
+				}
+				else if(grammaticalBaseTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PASTPARTICIPLE)
+				{
+					currentFeature->stanfordPOS = FEATURE_POS_TAG_VERB_VBN;
+				}
+				//what about irregular verb cases?
+			}
+			#ifndef GIA_PREPROCESSOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY
+			#ifdef GIA_FEATURE_POS_TAG_VERB_POTENTIAL
+			if(grammaticalBaseTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL)
+			{
+				if(currentWord->wordPOStypeInferred == GIA_SEM_REL_TRANSLATOR_POS_TYPE_ADJECTIVE)	//NB "able" words will be marked as JJ/adjective or NN/noun by POS tagger
+				{
+					currentFeature->stanfordPOS = FEATURE_POS_TAG_VERB_VBPOTENTIAL;
+				}
+			}
+			#endif
+			#ifdef GIA_FEATURE_POS_TAG_VERB_POTENTIAL_INVERSE
+			else if(grammaticalBaseTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE)
+			{
+				if((currentWord->wordPOStypeInferred == GIA_SEM_REL_TRANSLATOR_POS_TYPE_ADJECTIVE))	//NB "ive" words will be marked as JJ/adjective or NN/noun by POS tagger )
+				{
+					currentFeature->stanfordPOS = FEATURE_POS_TAG_VERB_VBPOTENTIALINVERSE;
+				}
+			}
+			#endif
+			#ifdef GIA_FEATURE_POS_TAG_VERB_STATE
+			else if(grammaticalBaseTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST)	//removed 2h2h: || (grammaticalBaseTenseForm == INT_DEFAULT_VALUE)
+			{
+				if(currentWord->wordPOStypeInferred == GIA_SEM_REL_TRANSLATOR_POS_TYPE_ADJECTIVE)	//NB "is ..." and "is ..ed" (not Stanford CoreNLP/Relex) verbs may be marked as JJ/adjective by POS tagger eg "It is open"/"He is tired."
+				{
+					currentFeature->stanfordPOS = FEATURE_POS_TAG_VERB_VBSTATE;
+				}
+			}
+			#endif
+			#ifdef GIA_FEATURE_POS_TAG_VERB_DESCRIPTION
+			else if(grammaticalBaseTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION)
+			{
+				if(currentWord->wordPOStypeInferred == GIA_SEM_REL_TRANSLATOR_POS_TYPE_NOUN)	//NB "ion"/"ment" words will be marked as NN/noun by POS tagger
+				{
+					currentFeature->stanfordPOS = FEATURE_POS_TAG_VERB_VBDESCRIPTION;
+				}
+			}
+			#endif
+			#endif	
+		}
+	}
+
 	
 	/*
 	cout << "currentWord->tagName = " << currentWord->tagName << endl;

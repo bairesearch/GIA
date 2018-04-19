@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f1s 22-February-2018
+ * Project Version: 3f1t 22-February-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  * /
@@ -831,9 +831,14 @@
 			#define GIA_TXT_REL_TRANSLATOR_MAX_NUMBER_OF_SEMANTIC_FUNCTIONS_EXECUTED_PER_GROUP (2)
 
 			//debug (make mandatory):
+			#define GIA_TXT_REL_TRANSLATOR_RULES_CODE_QUERIES_OPTIMISE	//3f1t
+			
 			#define GIA_TXT_REL_TRANSLATOR_RULES_CODE_NEW_CONDITIONS
 			#define GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_QUERY
 			#define GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_SEMANTIC_RELATION_RETURN_FUNCTION_NAME
+			#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_SEMANTIC_RELATION_RETURN_FUNCTION_NAME
+				#define GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_SEMANTIC_RELATION_RETURN_FUNCTION_NAME_SPECIAL_FUNCTION_TESTS	//3f1t
+			#endif 
 			#define GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_SEMANTIC_RELATION_RECORD_AND_CONNECT
 			#define GIA_TXT_REL_TRANSLATOR_RULES_CODE_OPTIONAL
 			//#define GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_MISSING	//not currently used (is it compatible or necessary with the current implementation?)

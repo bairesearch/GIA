@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorMultiwordReductionClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f1s 22-February-2018
+ * Project Version: 3f1t 22-February-2018
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction Class
  * /
@@ -47,6 +47,7 @@
 #include "SHAREDvars.hpp"
 #include "GIAsynRelTranslatorDefs.hpp"	
 #include "GIAsemRelTranslatorDefs.hpp"	//required for GIA_PREPROCESSOR_POS_TYPE and GIA_TXT_REL_TRANSLATOR_HYBRID_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS	
+
 
 
 
@@ -393,6 +394,9 @@ static char nlpPunctionMarkCharacterEndOfSentenceArray[GIA_NLP_NUMBER_OF_PUNCTUA
 static char nlpWhitespaceCharacterArray[GIA_NLP_NUMBER_OF_WHITESPACE_CHARACTERS] = {CHAR_NEWLINE, CHAR_TAB, CHAR_SPACE};
 #define GIA_NLP_NUMBER_OF_QUOTATIONMARK_CHARACTERS (2)
 static char nlpQuotationMarkCharacterArray[GIA_NLP_NUMBER_OF_QUOTATIONMARK_CHARACTERS] = {CHAR_INVERTED_COMMAS, CHAR_APOSTROPHE};
+
+#define GIA_NLP_NUMBER_OF_PUNCTUATION_MARK_CHARACTERS_END_OF_SENTENCE_FULLSTOP (STRING_FULLSTOP)
+#define GIA_NLP_NUMBER_OF_PUNCTUATION_MARK_CHARACTERS_END_OF_SENTENCE_QUESTIONMARK (STRING_QUESTIONMARK)
 
 /*
 #ifdef GIA_PREPROCESSOR_POS_TAGGER
