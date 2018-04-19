@@ -27,7 +27,7 @@
  * File Name: GIAtxtRelTranslatorRules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f9c 18-April-2018
+ * Project Version: 3f10a 19-April-2018
  * /
  *******************************************************************************/
  
@@ -999,6 +999,13 @@
 			</groupType>
 			<groupType groupTypeName="subReferenceSetsAppend" referenceSetType="subReferenceSet">
 				<!-- reference set emulation sequences (with rcmod); -->
+				<group groupName="complementDefinitionAlias" previousWordPOStype="noun">	
+					<!-- verb noun -->
+					<example><!-- {{the file}} called {x.txt} --></example>
+					<component componentType="string" stringType="tokens" tokenLayer="POSsubsets" tokenClass="verb" tokenType="complementDefinitionAuxiliary" />
+					<component componentType="string" stringType="LRPexternalWordLists" wordPOStype="noun" isName="true" semanticRelationReturnFunctionName="definitionAlias" semanticRelationReturnFunctionNameIndexType="subject" semanticRelationReturnEntity="true" />
+					<component componentType="group" groupTypeName="subReferenceSetsAppend" groupName="general" optional="true" />
+				</group>
 				<group groupName="general">
 					<!-- rcmod aux/verb []  -->
 					<example><!-- that rides the bike --></example>
@@ -1126,11 +1133,19 @@
 					<component componentType="group" groupTypeName="subReferenceSetsSpecialPossessiveOrDeterminerDefiniteThingEnforced" semanticRelationIndexType="subject" />
 				</group>
 				<group groupName="definitionAlias5" semanticRelationFunctionName="definitionAliasWithAuxiliary">
-					<!-- aux propernoun  -->
+					<!-- the [] aux the []  -->
 					<example><!-- the brown dog is the happy wolf --></example>
 					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="descriptiveNounWithDeterminerBasicDefiniteEnforced" semanticRelationIndexType="subject" />
 					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="auxiliarySequenceBeingSimple" semanticRelationIndexType="delimiter" semanticRelationReturnEntity="true" />
 					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="descriptiveNounWithDeterminerBasicDefiniteEnforced" semanticRelationIndexType="object" />
+				</group>
+				<group groupName="definitionAlias6" semanticRelationFunctionName="definitionAliasWithAuxiliary">
+					<!-- [] aux called noun  -->
+					<example><!-- the file is called x.txt --></example>
+					<component componentType="group" groupTypeName="subReferenceSetsSpecialPossessiveOrDeterminerDefiniteThingEnforced" semanticRelationIndexType="subject" />
+					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="auxiliarySequenceBeingSimple" semanticRelationIndexType="delimiter" semanticRelationReturnEntity="true" />
+					<component componentType="string" stringType="tokens" tokenLayer="POSsubsets" tokenClass="verb" tokenType="complementDefinitionAuxiliary" />
+					<component componentType="string" stringType="LRPexternalWordLists" wordPOStype="noun" semanticRelationIndexType="object" isName="true" />
 				</group>
 				<group groupName="general">
 					<!-- [] aux/verb [] -->
@@ -1516,6 +1531,13 @@
 				</class>
 			</layer>
 			<layer name="POSsubsets">
+				<class name="verb">
+					<type name="complementDefinitionAuxiliary">
+						<instance name="called" />
+						<instance name="named" />
+						<instance name="denoted" />
+					</type>	
+				</class>
 				<class name="determiner">
 					<type name="determinerBasic">
 						<instance name="the" />
