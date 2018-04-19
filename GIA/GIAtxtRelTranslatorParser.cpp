@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f3f 10-April-2018
+ * Project Version: 3f3g 10-April-2018
  * Requirements: 
  * Description: Textual Relation Translator Parser
  * /
@@ -188,7 +188,7 @@ bool GIAtxtRelTranslatorParserClass::convertSentenceTxtRelationsIntoGIAnetworkNo
 	
 	defineSubstancesBasedOnNetworkAndDeterminerInfo(translatorVariables);
 	
-	//GIAsynRelTranslatorApplyAdvancedFeatures.defineTenseOnlyTimeConditions(translatorVariables);
+	GIAsynRelTranslatorApplyAdvancedFeatures.defineTenseOnlyTimeConditions(translatorVariables);
 	
 	#ifdef GIA_SEM_REL_TRANSLATOR_SUPPORT_QUERIES
 	//identifyComparisonVariableBasedOnSemanticRelations(translatorVariables);
