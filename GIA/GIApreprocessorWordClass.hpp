@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorWordClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f8b 18-April-2018
+ * Project Version: 3f8c 18-April-2018
  * Requirements: requires plain text file
  * Description: Preprocessor Word Class
  * /
@@ -770,10 +770,15 @@ class GIApreprocessorWordClassClass
 	
 	public: bool printWordList(const vector<GIApreprocessorPlainTextWord*>* wordList);
 	public: string printWordListString(const vector<GIApreprocessorPlainTextWord*>* wordList);
+	
+	public: bool copyWordListAndReplicateWordObjects(vector<GIApreprocessorPlainTextWord*>* wordList1, vector<GIApreprocessorPlainTextWord*>* wordList2);
+	public: bool clearWordListAndDeleteWordObjects(vector<GIApreprocessorPlainTextWord*>* wordList);
+
 	#endif	
 	public: void preprocessorFillCurrentWord(GIApreprocessorMultiwordReductionPlainTextWord** currentWordInSentence, string* currentWord, int* entityIndex, int lastCharacterIndexOfWordInSentence);
 	public: int getPOStypeFromName(const string wordPOStypeName);
 	public: bool isStringNumber(const string phrase);
+	
 
 };
 

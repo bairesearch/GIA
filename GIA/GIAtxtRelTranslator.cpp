@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f8b 18-April-2018
+ * Project Version: 3f8c 18-April-2018
  * Requirements: requires plain text file
  * Description: Textual relation translator
  * /
@@ -228,7 +228,7 @@ bool GIAtxtRelTranslatorClass::executeTxtRelTranslator(GIAtranslatorVariablesCla
 			
 		#ifdef GIA_TXT_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START
 		int minIndexOfMatchesFoundBackupOptimum = calculateMinIndexOfMatchesFound(sentenceContents);
-		vector<GIApreprocessorPlainTextWord*> sentenceContentsBackupOptimum; 
+		vector<GIApreprocessorPlainTextWord*> sentenceContentsBackupOptimum;
 		vector<vector<unsigned long>*> POSambiguityInfoUnambiguousPermutationArray;
 		vector<unsigned long>* POSambiguityInfoUnambiguousPermutationNew = new vector<unsigned long>(POSambiguityInfoPermutation.size());
 		POSambiguityInfoUnambiguousPermutationArray.push_back(POSambiguityInfoUnambiguousPermutationNew);
@@ -299,6 +299,7 @@ bool GIAtxtRelTranslatorClass::executeTxtRelTranslator(GIAtranslatorVariablesCla
 			cerr << "GIAtxtRelTranslatorClass::executeTxtRelTranslator{}: Failed to parse sentence " << currentGIApreprocessorSentenceInList->sentenceIndexOriginal << ", sentenceContentsLRP = " << GIApreprocessorWordClassObject.printWordListString(&(currentGIApreprocessorSentenceInList->sentenceContentsLRP)) << endl;
 			//exit(EXIT_ERROR);
 		}
+		GIApreprocessorWordClassObject.clearWordListAndDeleteWordObjects(&sentenceContentsBackupOptimum);
 		#endif
 	
 		currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->next;
@@ -380,8 +381,14 @@ bool GIAtxtRelTranslatorClass::generateParseTreeIntroWrapper(vector<GIAtxtRelTra
 			*iOptimum = i;	
 		}
 	}
-	#endif
 	
+	if(result)
+	{
+		//cout << "performance = " << performance << endl;
+		restoreAllWordsAlreadyFoundMatchInComponent(sentenceContents, *performance, sentenceContentsBackupOptimum);
+	}
+	#endif
+
 	return result;
 }	
 		
@@ -500,6 +507,7 @@ bool GIAtxtRelTranslatorClass::generateParseTreeIntro(vector<GIAtxtRelTranslator
 	{
 		clearAllWordsAlreadyFoundMatchInComponent(sentenceContents, minIndexOfMatchesFoundBackupOptimum);	//redundant?
 	}
+	GIApreprocessorWordClassObject.clearWordListAndDeleteWordObjects(&sentenceContentsBackupOptimum);
 
 	//check parser has reached end of sentence
 	int minIndexOfMatchesFound = calculateMinIndexOfMatchesFound(sentenceContents);
@@ -579,6 +587,7 @@ bool GIAtxtRelTranslatorClass::generateParseTreeGroupType(GIAtxtRelTranslatorRul
 	{
 		clearAllWordsAlreadyFoundMatchInComponent(sentenceContentsSubset, minIndexOfMatchesFoundBackupOptimum);	//redundant?
 	}
+	GIApreprocessorWordClassObject.clearWordListAndDeleteWordObjects(&sentenceContentsBackupOptimum);
 	
 	return result;
 }
@@ -921,6 +930,7 @@ bool GIAtxtRelTranslatorClass::generateRulesGroupTreeComponents(vector<GIAtxtRel
 			{
 				foundWordMatch = false;	
 			}
+			GIApreprocessorWordClassObject.clearWordListAndDeleteWordObjects(&sentenceContentsBackupOptimum);
 		}
 		#endif
 		#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_REPEAT
@@ -1352,10 +1362,13 @@ bool GIAtxtRelTranslatorClass::updatePerformance(const int performanceTemp, int*
 				//exit(EXIT_ERROR);
 			}
 			#endif
+			
+			//
+			//
 		}
-		
-		*minIndexOfMatchesFoundBackupOptimum = calculateMinIndexOfMatchesFound(sentenceContentsSubset);
-		*sentenceContentsBackupOptimum = *sentenceContentsSubset;
+		*minIndexOfMatchesFoundBackupOptimum = calculateMinIndexOfMatchesFound(sentenceContentsSubset);	//TODO: move to higher level nesting in 3f8d
+		GIApreprocessorWordClassObject.copyWordListAndReplicateWordObjects(sentenceContentsSubset, sentenceContentsBackupOptimum);	//*sentenceContentsBackupOptimum = *sentenceContentsSubset;	//TODO: move to higher level nesting in 3f8d
+
 	}
 	clearAllWordsAlreadyFoundMatchInComponent(sentenceContentsSubset, minIndexOfMatchesFoundBackup);
 	

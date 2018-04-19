@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorWordClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f8b 18-April-2018
+ * Project Version: 3f8c 18-April-2018
  * Requirements: requires plain text file
  * Description: Preprocessor Word Class
  * /
@@ -1001,6 +1001,28 @@ string GIApreprocessorWordClassClass::printWordListString(const vector<GIAprepro
 		output = output + ((*wordList)[i])->tagName + STRING_SPACE;
 	}
 	return output;
+}
+
+bool GIApreprocessorWordClassClass::copyWordListAndReplicateWordObjects(vector<GIApreprocessorPlainTextWord*>* wordList1, vector<GIApreprocessorPlainTextWord*>* wordList2)
+{
+	clearWordListAndDeleteWordObjects(wordList2);
+	
+	for(int w=0; w<wordList1->size(); w++)
+	{
+		GIApreprocessorMultiwordReductionPlainTextWord* currentWord = static_cast<GIApreprocessorMultiwordReductionPlainTextWord*>(wordList1->at(w));
+		GIApreprocessorMultiwordReductionPlainTextWord* replicaWord = new GIApreprocessorMultiwordReductionPlainTextWord(*currentWord);
+		wordList2->push_back(replicaWord);
+	}
+}
+
+bool GIApreprocessorWordClassClass::clearWordListAndDeleteWordObjects(vector<GIApreprocessorPlainTextWord*>* wordList)
+{
+	for(int w=0; w<wordList->size(); w++)
+	{	
+		GIApreprocessorMultiwordReductionPlainTextWord* currentWord = static_cast<GIApreprocessorMultiwordReductionPlainTextWord*>(wordList->at(w));
+		delete currentWord;
+	}
+	wordList->clear();
 }
 
 #endif			
