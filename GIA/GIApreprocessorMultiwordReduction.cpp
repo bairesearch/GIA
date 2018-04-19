@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorMultiwordReduction.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f2h 04-April-2018
+ * Project Version: 3f2i 04-April-2018
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  * /
@@ -282,11 +282,7 @@ bool GIApreprocessorMultiwordReductionClass::initialiseLRP(const string newLRPDa
 		}
 
 
-		if(!generateVerbCaseStandardList(GIA_PREPROCESSOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE))	//this is required to make verbList usable
-		{
-			result = false;
-		}
-		if(!generateVerbCaseAdditionalList(GIA_PREPROCESSOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE))	//this is required to make verbList usable
+		if(!generateVerbCaseStandardAndAdditionalList(GIA_PREPROCESSOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE))	//this is required to make verbList usable
 		{
 			result = false;
 		}
@@ -432,9 +428,12 @@ bool GIApreprocessorMultiwordReductionClass::loadIrregularVerbList(const string 
 {
 	bool result = true;
 
+	//irregular verb list row format: infinitive past[/alt/alt/..] pastParticiple[/alt/alt/..] continuous
+	
 	GIApreprocessorMultiwordReductionIrregularVerbWord* firstTagInIrregularVerb = new GIApreprocessorMultiwordReductionIrregularVerbWord();
 	GIApreprocessorMultiwordReductionIrregularVerbWord* currentTagInIrregularVerb = firstTagInIrregularVerb;
-
+	GIApreprocessorMultiwordReductionIrregularVerbWord* currentTagInAlternateList = currentTagInIrregularVerb;
+				
 	ifstream parseFileObject(irregularVerbListFileName.c_str());
 	if(!parseFileObject.rdbuf()->is_open())
 	{
@@ -447,25 +446,20 @@ bool GIApreprocessorMultiwordReductionClass::loadIrregularVerbList(const string 
 		int charCount = 0;
 		char currentToken;
 		int wordIndex = 0;
+		int alternateWordIndex = 0;
 		string currentWord = "";
-		bool currentWordAlternate = false;
 		while(parseFileObject.get(currentToken))
 		{
 			if((currentToken == CHAR_NEWLINE) || (currentToken == CHAR_SPACE))
 			{
 				//create "LRP tag" to store phrasal verb base or past/past participle tense variant
-				if(currentWordAlternate)
-				{
-					currentTagInIrregularVerb->alternateTag = new GIApreprocessorMultiwordReductionIrregularVerbWord();
-					currentTagInIrregularVerb->alternateTag->tagName = currentWord;
-				}
-				else
-				{
-					currentTagInIrregularVerb->tagName = currentWord;
-				}
-
+				currentTagInAlternateList->tagName = currentWord;
+				currentTagInAlternateList->alternateTag = new GIApreprocessorMultiwordReductionIrregularVerbWord();
+				//cout << "currentWord = " << currentWord << endl;
+					
 				currentTagInIrregularVerb->nextTag = new GIApreprocessorMultiwordReductionIrregularVerbWord();
 				currentTagInIrregularVerb = static_cast<GIApreprocessorMultiwordReductionIrregularVerbWord*>(currentTagInIrregularVerb->nextTag);
+				currentTagInAlternateList = currentTagInIrregularVerb;
 
 				if(currentToken == CHAR_NEWLINE)
 				{
@@ -474,23 +468,29 @@ bool GIApreprocessorMultiwordReductionClass::loadIrregularVerbList(const string 
 					irregularVerbList->insert(pair<string, GIApreprocessorMultiwordReductionIrregularVerbSentence*>(firstTagInIrregularVerb->tagName, sentence));
 					firstTagInIrregularVerb = new GIApreprocessorMultiwordReductionIrregularVerbWord();
 					currentTagInIrregularVerb = firstTagInIrregularVerb;
+					currentTagInAlternateList = currentTagInIrregularVerb;
+					wordIndex = 0;
 				}
-
-				wordIndex = 0;
+				else
+				{
+					wordIndex++;
+				}
+				
+				alternateWordIndex = 0;
 				currentWord = "";
-				currentWordAlternate = false;
 
 				//start parsing new line
-
-				//UP TO HERE
 			}
 			else if(currentToken == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_ALTERNATE)
 			{
-				currentTagInIrregularVerb->tagName = currentWord;
-
+				currentTagInAlternateList->tagName = currentWord;
+				currentTagInAlternateList->alternateTag = new GIApreprocessorMultiwordReductionIrregularVerbWord();
+				currentTagInAlternateList = currentTagInAlternateList->alternateTag;
+				//cout << "currentWord = " << currentWord << endl;
+				
 				//wordIndex does not change...
-				currentWordAlternate = true;
 				currentWord = "";
+				alternateWordIndex++;
 			}
 			else
 			{
@@ -584,7 +584,8 @@ bool GIApreprocessorMultiwordReductionClass::loadPhrasalVerbDataAndGenerateAllTe
 					}
 					if(currentTagInPhrasalVerb->base)
 					{
-						generateStandardTenseVariantsOfVerbBase(currentTagInPhrasalVerb, irregularVerbList, GIA_PREPROCESSOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE);
+						bool irregularVerbFound = generateIrregularTenseVariantsOfVerbBase(currentTagInPhrasalVerb, irregularVerbList, GIA_PREPROCESSOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE);
+						generateStandardTenseVariantsOfVerbBase(currentTagInPhrasalVerb, irregularVerbFound, GIA_PREPROCESSOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE);
 					}
 
 
@@ -613,9 +614,9 @@ bool GIApreprocessorMultiwordReductionClass::loadPhrasalVerbDataAndGenerateAllTe
 							//for each variant of the firstTagInPhrasalVerb, insert the sentence into the list keyed by the variant name
 							for(int i=0; i<GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_MAX_NUM_TENSE_FORMS; i++)
 							{
-								for(int j=0; j<GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_MAX_NUM_TENSE_FORM_VERSIONS; j++)
+								for(int j=0; j<firstTagInPhrasalVerb->grammaticalTenseFormsArray[i].size(); j++)
 								{
-									string verbVariant = firstTagInPhrasalVerb->grammaticalTenseFormsArray[i][j];
+									string verbVariant = (firstTagInPhrasalVerb->grammaticalTenseFormsArray[i])[j];
 									phrasalVerbList->insert(pair<string, GIApreprocessorMultiwordReductionPhrasalVerbSentence*>(verbVariant, currentTagInPhrasalVerbList));
 								}
 							}
@@ -681,7 +682,8 @@ bool GIApreprocessorMultiwordReductionClass::loadPhrasalVerbDataAndGenerateAllTe
 				}
 				if(currentTagInPhrasalVerb->base)
 				{
-					generateStandardTenseVariantsOfVerbBase(currentTagInPhrasalVerb, irregularVerbList, GIA_PREPROCESSOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE);								
+					bool irregularVerbFound = generateIrregularTenseVariantsOfVerbBase(currentTagInPhrasalVerb, irregularVerbList, GIA_PREPROCESSOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE);
+					generateStandardTenseVariantsOfVerbBase(currentTagInPhrasalVerb, irregularVerbFound, GIA_PREPROCESSOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE);								
 				}
 				if(!currentWordAlternate)
 				{//added 1p1aTEMP6d
@@ -732,293 +734,8 @@ bool GIApreprocessorMultiwordReductionClass::loadPhrasalVerbDataAndGenerateAllTe
 }
 
 
-bool GIApreprocessorMultiwordReductionClass::generateStandardTenseVariantsOfVerbBase(GIApreprocessorMultiwordReductionWord* baseTag, unordered_map<string, GIApreprocessorMultiwordReductionIrregularVerbSentence*>* irregularVerbList, bool grammaticallyStrict)
-{
-	bool result = true;
 
-	//NB grammaticallyStrict: do not interpret special cases (e.g. continuous) as verbs; as these are stricly nouns 
-	
-	string base = SHAREDvars.convertStringToLowerCase(&(baseTag->tagName));
 
-	//1. check if irregular past / past participle case
-	bool irregularVerbFound = false;
-	GIApreprocessorMultiwordReductionIrregularVerbSentence* sentenceFound = NULL;
-	if(findSentenceInSentenceListIrregularVerb(irregularVerbList, base, &sentenceFound))
-	{
-		irregularVerbFound = true;
-		GIApreprocessorMultiwordReductionIrregularVerbWord* firstTagInIrregularVerb = sentenceFound->firstTagInSentence;
-		GIApreprocessorMultiwordReductionIrregularVerbWord* currentTagInIrregularVerb = static_cast<GIApreprocessorMultiwordReductionIrregularVerbWord*>(firstTagInIrregularVerb->nextTag);
-		int irregularVerbTagIndex = GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST;
-		while(currentTagInIrregularVerb->nextTag != NULL)
-		{
-			//first index is past, second is past participle
-			if(irregularVerbTagIndex == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST)
-			{
-				baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = currentTagInIrregularVerb->tagName;
-				if(currentTagInIrregularVerb->alternateTag != NULL)
-				{
-					baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_ALTERNATE] = currentTagInIrregularVerb->alternateTag->tagName;
-				}
-				else
-				{
-					baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_ALTERNATE] = currentTagInIrregularVerb->tagName;	//just use the same version (standard)
-				}
-			}
-			else if(irregularVerbTagIndex == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PASTPARTICIPLE)
-			{
-				baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PASTPARTICIPLE][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = currentTagInIrregularVerb->tagName;
-				if(currentTagInIrregularVerb->alternateTag != NULL)
-				{
-					baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PASTPARTICIPLE][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_ALTERNATE] = currentTagInIrregularVerb->alternateTag->tagName;
-				}
-				else
-				{
-					baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PASTPARTICIPLE][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_ALTERNATE] = currentTagInIrregularVerb->tagName;	//just use the same version (standard)
-				}
-			}
-
-			irregularVerbTagIndex++;
-			currentTagInIrregularVerb = static_cast<GIApreprocessorMultiwordReductionIrregularVerbWord*>(currentTagInIrregularVerb->nextTag);
-		}
-	}
-
-	//2. generate verb tenses based upon rules (now wouldn't it be simpler if universities just published their data?) - http://a4esl.org/q/h/9807/km-doubles.html
-	int baseStringLength = base.length();
-	int indexOfLastCharacterInBase = baseStringLength-1;
-	int indexOfSecondLastCharacterInBase = baseStringLength-2;
-	int indexOfThirdLastCharacterInBase = baseStringLength-3;
-	char lastCharacterInBase = base[indexOfLastCharacterInBase];
-	char secondLastCharacterInBase = base[indexOfSecondLastCharacterInBase];
-	char thirdLastCharacterInBase = base[indexOfThirdLastCharacterInBase];
-	bool lastCharacterIsVowel = false;
-	bool secondLastCharacterIsVowel = false;
-	bool thirdLastCharacterIsVowel = false;
-	//bool verbDoubleConsonantRule1LastLetterException = false;
-	if(SHAREDvars.charInCharArray(lastCharacterInBase, englishVowelArray, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NUMBER_OF_VOWELS))
-	{
-		lastCharacterIsVowel = true;
-	}
-	if(SHAREDvars.charInCharArray(secondLastCharacterInBase, englishVowelArray, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NUMBER_OF_VOWELS))
-	{
-		secondLastCharacterIsVowel = true;
-	}
-	if(SHAREDvars.charInCharArray(thirdLastCharacterInBase, englishVowelArray, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NUMBER_OF_VOWELS))
-	{
-		thirdLastCharacterIsVowel = true;
-	}
-	/*
-	for(int i = 0; i<GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DOUBLE_CONSONANT_RULE1_LAST_LETTER_EXCEPTIONS_NUMBER_OF_TYPES; i++)
-	{
-		if(base[indexOfLastCharacterInBase] == lrpVerbDoubleConsonantRuleOneLastLetterExceptions[i])
-		{
-			verbDoubleConsonantRule1LastLetterException = true;
-		}
-	}
-	*/
-
-	bool rule1 = false;
-	bool rule1b = false;
-	bool rule2 = false;
-	bool rule3a = false;
-	bool rule3b = false;
-	bool rule4 = false;
-
-	if(!lastCharacterIsVowel && secondLastCharacterIsVowel && !thirdLastCharacterIsVowel)
-	{
-		// && !verbDoubleConsonantRule1LastLetterException - this requirement cannot be asserted as it is apparently only enforced for one syllable words
-		rule1 = true;
-		rule1b = true; //unknown [therefore have to assume both cases: alternate+ non-alternate)	//Two-syllable words: ED = If the stress is on the first syllable, the word only gets one consonant
-	}
-
-	if(lastCharacterInBase == 'e')
-	{
-		rule2 = true;
-	}
-
-	if(lastCharacterInBase == 'y')
-	{
-		if(secondLastCharacterIsVowel)
-		{
-			rule3b = true;
-		}
-		else
-		{
-			rule3a = true;
-		}
-	}
-
-	if((!lastCharacterIsVowel && secondLastCharacterIsVowel && thirdLastCharacterIsVowel) || (!lastCharacterIsVowel && !secondLastCharacterIsVowel))
-	{
-		rule4 = true;
-	}
-
-	string baseWithLastLetterDropped = base.substr(0, baseStringLength-1);
-
-	//generate (ie record) infinitive tense form [for consistency; even though this is the same as tagName...]
-	baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_INFINITIVE][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = base;
-	baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_INFINITIVE][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_ALTERNATE] = base;
-
-	//Rule 1: Words ending with a Consonant-Vowel-Consonant Pattern
-	if(rule1)
-	{
-
-		//a. generate present tense form
-		baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = base + GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT_APPEND;
-		if(rule1b)
-		{
-			baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_ALTERNATE] = base + GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT_APPEND;
-		}
-
-		#ifndef GIA_PREPROCESSOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_BUT_TREAT_CONTINUOUS_AS_VERB
-		if(!grammaticallyStrict)
-		{
-		#endif
-			//b. generate continuous tense form
-			//happening/entering
-			baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = base + GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND;
-			if(rule1b)
-			{
-				//hopping/sitting
-				//beginning/permitting
-				baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_ALTERNATE] = base + lastCharacterInBase + GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND;	//double consonant
-			}
-		#ifndef GIA_PREPROCESSOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_BUT_TREAT_CONTINUOUS_AS_VERB
-		}
-		#endif
-		
-		if(!irregularVerbFound)
-		{
-			//c. generate past tense form
-			//visited/opened
-			baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = base + GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND;
-			if(rule1b)
-			{
-				//rubbed/stopped
-				//referred/admitted
-				baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_ALTERNATE] = base + lastCharacterInBase + GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND;	//double consonant
-			}
-
-			//d. generate past participle form (assume same as past form)
-			baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PASTPARTICIPLE][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = base + GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND;
-			if(rule1b)
-			{
-				baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PASTPARTICIPLE][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_ALTERNATE] = base + lastCharacterInBase + GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND;	//double consonant
-			}
-		}
-
-		if(!rule1b)
-		{
-			copyDefaultVerbTenseFormsToAlternateTenseForms(baseTag, irregularVerbFound);
-		}
-	}
-	//Rule 2: Words ending in E
-	else if(rule2)
-	{
-
-		//a. generate present tense form
-		baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = base + GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT_APPEND;
-
-		#ifndef GIA_PREPROCESSOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_BUT_TREAT_CONTINUOUS_AS_VERB
-		if(!grammaticallyStrict)
-		{
-		#endif
-			//b. generate continuous tense form
-			//dancing/skating
-			baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = baseWithLastLetterDropped + GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND;
-		#ifndef GIA_PREPROCESSOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_BUT_TREAT_CONTINUOUS_AS_VERB
-		}
-		#endif
-		
-		if(!irregularVerbFound)
-		{
-			//c. generate past tense form
-			//smiled/fined
-			baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = baseWithLastLetterDropped + GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND;
-
-			//d. generate past participle form (assume same as past form)
-			baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PASTPARTICIPLE][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = baseWithLastLetterDropped + GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND;
-		}
-
-		copyDefaultVerbTenseFormsToAlternateTenseForms(baseTag, irregularVerbFound);
-	}
-	//Rule 3: Words ending in Y
-	else if(rule3a)
-	{
-
-		//a. generate present tense form
-		baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = baseWithLastLetterDropped + GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT_APPEND_CASE3;
-
-		#ifndef GIA_PREPROCESSOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_BUT_TREAT_CONTINUOUS_AS_VERB
-		if(!grammaticallyStrict)
-		{
-		#endif
-			//b. generate continuous tense form
-			//carrying/replying
-			baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = base + GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND;
-		#ifndef GIA_PREPROCESSOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_BUT_TREAT_CONTINUOUS_AS_VERB
-		}
-		#endif
-		
-		if(!irregularVerbFound)
-		{
-			//c. generate past tense form
-			//studied/married
-			baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = baseWithLastLetterDropped + GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND_CASE3;
-
-			//d. generate past participle form (assume same as past form)
-			baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PASTPARTICIPLE][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = baseWithLastLetterDropped + GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND_CASE3;
-		}
-
-		copyDefaultVerbTenseFormsToAlternateTenseForms(baseTag, irregularVerbFound);
-	}
-	//Rule 4: Other words...
-	else if(rule3b || rule4)
-	{
-
-		//a. generate present tense form
-		baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = base + GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT_APPEND;
-
-		#ifndef GIA_PREPROCESSOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_BUT_TREAT_CONTINUOUS_AS_VERB
-		if(!grammaticallyStrict)
-		{
-		#endif
-			//b. generate continuous tense form
-			//enjoying/straying
-			//needing/beeping
-			//needing/laughing
-			baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = base + GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND;
-		#ifndef GIA_PREPROCESSOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_BUT_TREAT_CONTINUOUS_AS_VERB
-		}
-		#endif
-		
-		if(!irregularVerbFound)
-		{
-			//c. generate past tense form
-			//played/stayed
-			//dreamed/rained
-			//parked/earned
-			baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = base + GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND;
-
-			//d. generate past participle form (assume same as past form)
-			baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PASTPARTICIPLE][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = base + GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND;
-		}
-
-		copyDefaultVerbTenseFormsToAlternateTenseForms(baseTag, irregularVerbFound);
-	}
-
-	return result;
-}
-
-void GIApreprocessorMultiwordReductionClass::copyDefaultVerbTenseFormsToAlternateTenseForms(GIApreprocessorMultiwordReductionWord* baseTag, const bool irregularVerbFound)
-{
-	baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_ALTERNATE] = baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD];
-	baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_ALTERNATE] = baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD];
-	if(!irregularVerbFound)
-	{
-		baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_ALTERNATE] = baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD];
-		baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PASTPARTICIPLE][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_ALTERNATE] = baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PASTPARTICIPLE][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD];
-	}
-}
 
 
 
@@ -1214,12 +931,12 @@ bool GIApreprocessorMultiwordReductionClass::searchAndReplacePhrasalVerbs(GIApre
 								{
 									for(int i=0; i<GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_MAX_NUM_TENSE_FORMS; i++)
 									{
-										for(int j=0; j<GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_MAX_NUM_TENSE_FORM_VERSIONS; j++)
+										for(int j=0; j<currentTagInPhrasalVerbNormOrAlternate->grammaticalTenseFormsArray[i].size(); j++)
 										{
-											if(currentTagInPhrasalVerbNormOrAlternate->grammaticalTenseFormsArray[i][j] == currentTagInPlainTextSentenceTemp->tagName)		//USED TO BE currentTagInCollapsedPhrasalVerb before 6 Sept 2012
+											if((currentTagInPhrasalVerbNormOrAlternate->grammaticalTenseFormsArray[i])[j] == currentTagInPlainTextSentenceTemp->tagName)		//USED TO BE currentTagInCollapsedPhrasalVerb before 6 Sept 2012
 											{
 												currentTagInCollapsedPhrasalVerb->grammaticalTenseFormDetected = i;								//USED TO BE AND STILL IS currentTagInCollapsedPhrasalVerb before 6 Sept 2012
-												generatedTagNameLemma = currentTagInPhrasalVerbNormOrAlternate->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_INFINITIVE][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD];
+												generatedTagNameLemma = currentTagInPhrasalVerbNormOrAlternate->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_INFINITIVE][0];
 												foundVerbMatchOfArbitraryTenseTemp = true;
 											}
 										}
@@ -2164,14 +1881,14 @@ bool GIApreprocessorMultiwordReductionClass::generateNounPluralVariants(GIAprepr
 
 #ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_LOAD_WORD_LISTS
 //grammaticallyStrict is by default set to false: this function was developed for special verb cases e.g. continuous (these verb cases are formally nouns; but are interpreted semantically as actions)
-bool GIApreprocessorMultiwordReductionClass::generateVerbCaseStandardList(bool grammaticallyStrict)
+bool GIApreprocessorMultiwordReductionClass::generateVerbCaseStandardAndAdditionalList(bool grammaticallyStrict)
 {
 	//aka parseVerbDataGenerateAllTenseVariants
 	
 	bool result = true;
 	if(!wordListsLoaded || !irregularVerbListLoaded)
 	{
-		cout << "GIApreprocessorMultiwordReductionClass::generateVerbCaseStandardList: (!wordListsLoaded || !irregularVerbListLoaded)" << endl;
+		cout << "GIApreprocessorMultiwordReductionClass::generateVerbCaseStandardAndAdditionalList: (!wordListsLoaded || !irregularVerbListLoaded)" << endl;
 		exit(EXIT_ERROR);
 	}
 	else
@@ -2186,203 +1903,550 @@ bool GIApreprocessorMultiwordReductionClass::generateVerbCaseStandardList(bool g
 		{	
 			GIApreprocessorMultiwordReductionWord* currentTagInVerbList = currentTagInVerbListIterator->second;	
 
+			/*
 			currentTagInVerbList->grammaticalTenseForm = GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_INFINITIVE;	//added 3d8a
 			verbCaseStandardList->insert(pair<string, GIApreprocessorMultiwordReductionWord*>(currentTagInVerbList->tagName, currentTagInVerbList));
+			*/
 			
+			bool irregularVerbFound = generateIrregularTenseVariantsOfVerbBase(currentTagInVerbList, irregularVerbList, grammaticallyStrict);
+
 			//for each variant of the firstTagInPhrasalVerb, insert the sentence into the list keyed by the variant name
-			generateStandardTenseVariantsOfVerbBase(currentTagInVerbList, irregularVerbList, grammaticallyStrict);
+			generateStandardTenseVariantsOfVerbBase(currentTagInVerbList, irregularVerbFound, grammaticallyStrict);
+
 			for(int i=0; i<GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_MAX_NUM_TENSE_FORMS; i++)
 			{
-				for(int j=0; j<GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_MAX_NUM_TENSE_FORM_VERSIONS; j++)
+				for(int j=0; j<currentTagInVerbList->grammaticalTenseFormsArray[i].size(); j++)
 				{
+
 					//added 3d8a;
 					GIApreprocessorMultiwordReductionWord* newWord = new GIApreprocessorMultiwordReductionWord();
 					newWord->grammaticalTenseForm = i;
 					newWord->baseName = currentTagInVerbList->tagName;
 	
-					string generatedTagNameLemma = currentTagInVerbList->grammaticalTenseFormsArray[i][j];
+					string generatedTagNameLemma = (currentTagInVerbList->grammaticalTenseFormsArray[i])[j];
+					
 					verbCaseStandardList->insert(pair<string, GIApreprocessorMultiwordReductionWord*>(generatedTagNameLemma, newWord));
 				}
 			}
+			
+			generateAdditionalTenseVariantsOfVerbBase(verbCaseAdditionalList, currentTagInVerbList, irregularVerbFound, grammaticallyStrict);
 		}
 	}
 	return result;
 }
 
+#endif	
 
-//grammaticallyStrict is by default set to false: this function was developed for special verb cases e.g. continuous (these verb cases are formally nouns; but are interpreted semantically as actions)
-bool GIApreprocessorMultiwordReductionClass::generateVerbCaseAdditionalList(bool grammaticallyStrict)
+bool GIApreprocessorMultiwordReductionClass::generateIrregularTenseVariantsOfVerbBase(GIApreprocessorMultiwordReductionWord* baseTag, unordered_map<string, GIApreprocessorMultiwordReductionIrregularVerbSentence*>* irregularVerbList, bool grammaticallyStrict)
+{
+	bool irregularVerbFound = false;
+	
+	string base = SHAREDvars.convertStringToLowerCase(&(baseTag->tagName));
+
+	GIApreprocessorMultiwordReductionIrregularVerbSentence* sentenceFound = NULL;
+	if(findSentenceInSentenceListIrregularVerb(irregularVerbList, base, &sentenceFound))
+	{
+		irregularVerbFound = true;
+		
+		//cout << "irregularVerbFound" << endl;
+		//cout << "base = " << base << endl;
+					
+		GIApreprocessorMultiwordReductionIrregularVerbWord* firstTagInIrregularVerb = sentenceFound->firstTagInSentence;
+		GIApreprocessorMultiwordReductionIrregularVerbWord* currentTagInIrregularVerb = static_cast<GIApreprocessorMultiwordReductionIrregularVerbWord*>(firstTagInIrregularVerb);
+		int irregularVerbTagIndex = 0;
+		while(currentTagInIrregularVerb->nextTag != NULL)
+		{
+			//second index is past, third is past participle
+			int verbTenseForm = GIApreprocessorMultiwordReductionIrregularVerbColumnCrossReferenceVerbDatabaseBaseTenseForm[irregularVerbTagIndex];
+
+			#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_VARIANTS_PRORITISE_IRREGULAR_VERB_INFO
+			if(verbTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_INFINITIVE)
+			{
+				GIApreprocessorMultiwordReductionIrregularVerbWord* currentTagInAlternateList = currentTagInIrregularVerb;
+				while(currentTagInAlternateList->alternateTag != NULL)
+				{
+					//cout << "1 currentTagInIrregularVerb->tagName = " << currentTagInIrregularVerb->tagName << endl;
+					baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_INFINITIVE].push_back(currentTagInIrregularVerb->tagName);
+					currentTagInAlternateList = currentTagInAlternateList->alternateTag;
+				}	
+			}
+			else if(verbTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS)
+			{
+				GIApreprocessorMultiwordReductionIrregularVerbWord* currentTagInAlternateList = currentTagInIrregularVerb;
+				while(currentTagInAlternateList->alternateTag != NULL)
+				{
+					//cout << "2 currentTagInIrregularVerb->tagName = " << currentTagInIrregularVerb->tagName << endl;
+					baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS].push_back(currentTagInIrregularVerb->tagName);
+					currentTagInAlternateList = currentTagInAlternateList->alternateTag;
+				}	
+			} else
+			#endif
+			if(verbTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST)
+			{
+				GIApreprocessorMultiwordReductionIrregularVerbWord* currentTagInAlternateList = currentTagInIrregularVerb;
+				while(currentTagInAlternateList->alternateTag != NULL)
+				{
+					//cout << "3 currentTagInIrregularVerb->tagName = " << currentTagInIrregularVerb->tagName << endl;
+					baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST].push_back(currentTagInIrregularVerb->tagName);
+					currentTagInAlternateList = currentTagInAlternateList->alternateTag;
+				}	
+			}
+			else if(verbTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PASTPARTICIPLE)
+			{
+				GIApreprocessorMultiwordReductionIrregularVerbWord* currentTagInAlternateList = currentTagInIrregularVerb;
+				while(currentTagInAlternateList->alternateTag != NULL)
+				{
+					//cout << "4 currentTagInIrregularVerb->tagName = " << currentTagInIrregularVerb->tagName << endl;
+					baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PASTPARTICIPLE].push_back(currentTagInIrregularVerb->tagName);
+					currentTagInAlternateList = currentTagInAlternateList->alternateTag;
+				}
+			}
+
+			irregularVerbTagIndex++;
+			currentTagInIrregularVerb = static_cast<GIApreprocessorMultiwordReductionIrregularVerbWord*>(currentTagInIrregularVerb->nextTag);
+		}
+	}
+	
+	return irregularVerbFound;
+}
+
+bool GIApreprocessorMultiwordReductionClass::generateStandardTenseVariantsOfVerbBase(GIApreprocessorMultiwordReductionWord* baseTag, bool irregularVerbFound, bool grammaticallyStrict)
 {
 	bool result = true;
 
-	if(!wordListsLoaded)
+	//NB grammaticallyStrict: do not interpret special cases (e.g. continuous) as verbs; as these are stricly nouns 
+	
+	string base = SHAREDvars.convertStringToLowerCase(&(baseTag->tagName));
+
+	//2. generate verb tenses based upon rules (now wouldn't it be simpler if universities just published their data?) - http://a4esl.org/q/h/9807/km-doubles.html
+	int baseStringLength = base.length();
+	int indexOfLastCharacterInBase = baseStringLength-1;
+	int indexOfSecondLastCharacterInBase = baseStringLength-2;
+	int indexOfThirdLastCharacterInBase = baseStringLength-3;
+	char lastCharacterInBase = base[indexOfLastCharacterInBase];
+	char secondLastCharacterInBase = base[indexOfSecondLastCharacterInBase];
+	char thirdLastCharacterInBase = base[indexOfThirdLastCharacterInBase];
+	bool lastCharacterIsVowel = false;
+	bool secondLastCharacterIsVowel = false;
+	bool thirdLastCharacterIsVowel = false;
+	//bool verbDoubleConsonantRule1LastLetterException = false;
+	if(SHAREDvars.charInCharArray(lastCharacterInBase, englishVowelArray, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NUMBER_OF_VOWELS))
 	{
-		cout << "GIApreprocessorMultiwordReductionClass::generateVerbCaseAdditionalList: (!wordListsLoaded)" << endl;
-		exit(EXIT_ERROR);
+		lastCharacterIsVowel = true;
 	}
-	else
+	if(SHAREDvars.charInCharArray(secondLastCharacterInBase, englishVowelArray, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NUMBER_OF_VOWELS))
 	{
-		unordered_map<string, GIApreprocessorMultiwordReductionWord*>* verbList = getWordList(GIA_PREPROCESSOR_POS_TYPE_VERB);
-		unordered_map<string, GIApreprocessorMultiwordReductionWord*>* verbCaseAdditionalList = &verbCaseAdditionalListGlobal;
+		secondLastCharacterIsVowel = true;
+	}
+	if(SHAREDvars.charInCharArray(thirdLastCharacterInBase, englishVowelArray, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NUMBER_OF_VOWELS))
+	{
+		thirdLastCharacterIsVowel = true;
+	}
+	/*
+	for(int i = 0; i<GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DOUBLE_CONSONANT_RULE1_LAST_LETTER_EXCEPTIONS_NUMBER_OF_TYPES; i++)
+	{
+		if(base[indexOfLastCharacterInBase] == lrpVerbDoubleConsonantRuleOneLastLetterExceptions[i])
+		{
+			verbDoubleConsonantRule1LastLetterException = true;
+		}
+	}
+	*/
 
-		/*
-		detectContinuousVerbBasic Algorithm:
+	bool rule1 = false;
+	bool rule1b = false;
+	bool rule2 = false;
+	bool rule3a = false;
+	bool rule3b = false;
+	bool rule4 = false;
 
-		Note a simple check for "ing" is not posssible as;
-			some nouns end in ing also eg "thing"
-		Note a simple "ing" appendition check against a verb infinitive list is not possible because there are some grammatical variants;
-			Case 1: thinking
-			Case 2: running - "run" + "n" [run n] + "ing"
-			Case 3: changing - "chang" [change e] + "ing"
+	if(!lastCharacterIsVowel && secondLastCharacterIsVowel && !thirdLastCharacterIsVowel)
+	{
+		// && !verbDoubleConsonantRule1LastLetterException - this requirement cannot be asserted as it is apparently only enforced for one syllable words
+		rule1 = true;
+		rule1b = true; //unknown [therefore have to assume both cases: alternate+ non-alternate)	//Two-syllable words: ED = If the stress is on the first syllable, the word only gets one consonant
+	}
 
-			ongoing?
-			outstanding?
-			being?
-			becoming?
+	if(lastCharacterInBase == 'e')
+	{
+		rule2 = true;
+	}
 
-		This code uses a subset of code from generateStandardTenseVariantsOfVerbBase (note generateStandardTenseVariantsOfVerbBase is not used itself as this code is designed to be liberal/robust and detect all possible verbs without being subject to theoretical grammar rules)
-		*/
+	if(lastCharacterInBase == 'y')
+	{
+		if(secondLastCharacterIsVowel)
+		{
+			rule3b = true;
+		}
+		else
+		{
+			rule3a = true;
+		}
+	}
 
-		for(unordered_map<string, GIApreprocessorMultiwordReductionWord*>::iterator currentTagInVerbListIterator = verbList->begin(); currentTagInVerbListIterator != verbList->end(); ++currentTagInVerbListIterator)
-		{	
-			GIApreprocessorMultiwordReductionWord* currentTagInVerbList = currentTagInVerbListIterator->second;
+	if((!lastCharacterIsVowel && secondLastCharacterIsVowel && thirdLastCharacterIsVowel) || (!lastCharacterIsVowel && !secondLastCharacterIsVowel))
+	{
+		rule4 = true;
+	}
 
-			string base = currentTagInVerbList->tagName;
+	string baseWithLastLetterDropped = base.substr(0, baseStringLength-1);
 
-			addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, base, "", GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_INFINITIVE);
+	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_VARIANTS_PRORITISE_IRREGULAR_VERB_INFO
+	if(!irregularVerbFound)
+	{
+	#endif
+		//generate (ie record) infinitive tense form [for consistency; even though this is the same as tagName...]
+		baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_INFINITIVE].push_back(base);
+	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_VARIANTS_PRORITISE_IRREGULAR_VERB_INFO
+	}
+	#endif
+		
+	//Rule 1: Words ending with a Consonant-Vowel-Consonant Pattern
+	if(rule1)
+	{
 
-			if(base.length() >= 3)	//match to baseWithLast3LettersDropped
+		//a. generate present tense form
+		baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT].push_back(base + GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT_APPEND);
+		if(rule1b)
+		{
+			baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT].push_back(base + GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT_APPEND);
+		}
+
+		#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_VARIANTS_PRORITISE_IRREGULAR_VERB_INFO
+		if(!irregularVerbFound)
+		{
+		#endif
+			#ifndef GIA_PREPROCESSOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_BUT_TREAT_CONTINUOUS_AS_VERB
+			if(!grammaticallyStrict)
 			{
-				int baseStringLength = base.length();
-				int indexOfLastCharacterInBase = baseStringLength-1;
-				char lastCharacterInBase = base[indexOfLastCharacterInBase];
-				string baseWithLast1LettersDropped = base.substr(0, baseStringLength-1);
-				string baseWithLast2LettersDropped = base.substr(0, baseStringLength-2);
-				string baseWithLast3LettersDropped = base.substr(0, baseStringLength-3);
-				
-				#ifndef GIA_PREPROCESSOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_BUT_TREAT_CONTINUOUS_AS_VERB
-				if(!grammaticallyStrict)
+			#endif
+				//b. generate continuous tense form
+				//happening/entering
+				baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS].push_back(base + GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND);
+				if(rule1b)
 				{
-				#endif
-					//GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND/GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS _ing:
-					//continuous rule 1a/3b/4: thinking/happening/entering
-					addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, base, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS);
-					//continuous rule 1b: running - "run" + "n" [run n] + "ing"
-					addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, base+lastCharacterInBase, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS);
-					//continuous rule 2: changing - "chang" [change e] + "ing"
-					addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, baseWithLast1LettersDropped, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS);
-					/*
-					//continuous rule 3a: N/A !marriing (use marrying)
-					addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, baseWithLast1LettersDropped, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS);
-					*/
-				#ifndef GIA_PREPROCESSOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_BUT_TREAT_CONTINUOUS_AS_VERB
+					//hopping/sitting
+					//beginning/permitting
+					baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS].push_back(base + lastCharacterInBase + GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND);	//double consonant
 				}
-				#endif
-				if(!grammaticallyStrict)
-				{
-					#ifdef GIA_FEATURE_POS_TAG_VERB_POTENTIAL
-					//added 2h2a
-					//GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_APPEND/GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL _able:
-					//potential rule 1a/3b/4: thinkable/changeable
-					addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, base, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_APPEND, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL);
-					//potential rule 1b: running - "run" + "n" [run n] + "able"
-					addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, base+lastCharacterInBase, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_APPEND, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL);
-					/*
-					//potential rule 2: N/A !changable (use changeable)
-					addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, baseWithLast1LettersDropped, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_APPEND, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL);
-					*/
-					//potential rule 3a: running - "marr" + "i" + "able"
-					addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, base+baseWithLast1LettersDropped, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_APPEND_CASE3, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL);
-					#ifdef GIA_FEATURE_POS_TAG_VERB_POTENTIAL_INVERSE
-					//added 2h2c
-					//GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE_APPEND/GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE _ive:
-					//potential rule 1ai: -> ive eg resistive/adaptive
-					addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, base, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE_APPEND, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE);
-					//potential rule 1aii: -> itive eg additive
-					addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, base, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE_APPEND_CASE1II, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE);
-					//potential rule 1aiii: -> ative eg affirmative
-					addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, base, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE_APPEND_CASE1III, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE);
-					/*
-					//potential rule 1b: running - "run" + "n" [run n] + "itive"
-					addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, base+lastCharacterInBase, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE_APPEND, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE);
-					*/
-					//potential rule 2i: e -> itive eg competitive/definitive/accomodative
-					addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, baseWithLast1LettersDropped, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE_APPEND_CASE2, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE);
-					//potential rule 2ii: e -> ment + ive eg judgementive
-					addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, baseWithLast1LettersDropped, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE_APPEND_CASE2II, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE);
-					//potential rule 3a: y -> iment + ive eg supplimentive
-					addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, baseWithLast1LettersDropped, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE_APPEND_CASE3, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE);
-					#endif
-					#endif
-				}
-
-				#ifdef GIA_FEATURE_POS_TAG_VERB_STATE
-				//added 2h2a
-				//GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND/GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST _ed:
-				//possible state rule 1a/3b/4: visited/opened
-				addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, base, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST);
-				//possible state rule 1b: rubbed/stopped/referred/admitted - "rub" + "b" + "ed"
-				addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, base+lastCharacterInBase, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST);
-				//possible state rule 2: smiled/fined - "smil" [change e] + "ed"
-				addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, baseWithLast1LettersDropped, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST);
-				//possible state rule 3a: studied/married - "marr" + "i" + "ed"
-				addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, baseWithLast1LettersDropped, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND_CASE3, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST);
-				#endif
-
-				if(!grammaticallyStrict)
-				{
-					#ifdef GIA_FEATURE_POS_TAG_VERB_DESCRIPTION
-					//added 2h2d
-					//GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION_APPEND/GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION _ment:
-					//potential rule 1ai: -> ment eg movement/government/derailment/detainment/enjoyment
-					addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, base, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION_APPEND, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION);
-					//potential rule 1aii: -> ament eg disarmament
-					addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, base, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION_APPEND_CASE1II, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION);
-					//potential rule 1aiii: -> lment eg enrollment/installment/fulfillment
-					addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, base, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION_APPEND_CASE1III, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION);
-					/*
-					//potential rule 1b: running - "run" + "n" [run n] + "itive"
-					addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, base+lastCharacterInBase, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION_INVERSE_APPEND, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION);
-					*/
-					//potential rule 2i: e -> ment eg judgement/dislodgment
-					addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, baseWithLast1LettersDropped, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION_APPEND_CASE2, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION);
-					/*
-					//potential rule 2ii: e -> ment + ive eg judgementive
-					addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, baseWithLast1LettersDropped, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE_APPEND_CASE2II, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION);
-					*/
-					//potential rule 3a: y -> iment eg worriment/suppliment/embodiment
-					addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, baseWithLast1LettersDropped, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION_APPEND_CASE3, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION);
-					//potential rule 5: pt -> pment eg entrapment/equipment
-					addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, baseWithLast2LettersDropped, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION_APPEND_CASE5, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION);
-
-					//GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION_APPEND/GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION _ion:
-					//potential rule 1ai: -> ion eg absorption/abstraction/adaptation
-					addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, base, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION2_APPEND, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION);
-					//potential rule 1aii: -> ition eg addition
-					addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, base, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION2_APPEND_CASE1II, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION);
-					//potential rule 1aiii: -> ation eg acceptation/affirmation
-					addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, base, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION2_APPEND_CASE1III, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION);
-					/*
-					//potential rule 1b: running - "run" + "n" [run n] + "itive"
-					addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, base+lastCharacterInBase, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION2_INVERSE_APPEND, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION);
-					*/
-					//potential rule 2i: e -> ion eg relation/acclimatisation/accommodation/activation/accretion
-					addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, baseWithLast1LettersDropped, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION2_APPEND_CASE2, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION);
-					//potential rule 2ii: e -> ition + ive eg competition/composition/definition
-					addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, baseWithLast1LettersDropped, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION2_APPEND_CASE2II, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION);
-					//potential rule 2iii: e -> ation + ive eg admiration/organisation
-					addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, baseWithLast1LettersDropped, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION2_APPEND_CASE2III, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION);
-					//potential rule 3a: ify -> ification eg subjectification/amplification/ammonification/identification/beautification
-					addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, baseWithLast1LettersDropped, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION2_APPEND_CASE3, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION);
-					//potential rule 6i: aim -> amation eg acclamation {acclimation?}
-					addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, baseWithLast3LettersDropped, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION2_APPEND_CASE6I, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION);
-					//potential rule 6i: ide -> ision eg division
-					addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, baseWithLast3LettersDropped, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION2_APPEND_CASE6II, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION);
-					//potential rule 6iii: ish -> ition eg abolition/demolition
-					addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, baseWithLast3LettersDropped, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION2_APPEND_CASE6III, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION);
-					#endif
-				}
+			#ifndef GIA_PREPROCESSOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_BUT_TREAT_CONTINUOUS_AS_VERB
 			}
+			#endif
+		#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_VARIANTS_PRORITISE_IRREGULAR_VERB_INFO
+		}
+		#endif
+		if(!irregularVerbFound)
+		{
+			//c. generate past tense form
+			//visited/opened
+			baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST].push_back(base + GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND);
+			if(rule1b)
+			{
+				//rubbed/stopped
+				//referred/admitted
+				baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST].push_back(base + lastCharacterInBase + GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND);	//double consonant
+			}
+
+			//d. generate past participle form (assume same as past form)
+			baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PASTPARTICIPLE].push_back(base + GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND);
+			if(rule1b)
+			{
+				baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PASTPARTICIPLE].push_back(base + lastCharacterInBase + GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND);	//double consonant
+			}
+		}
+	}
+	//Rule 2: Words ending in E
+	else if(rule2)
+	{
+
+		//a. generate present tense form
+		baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT].push_back(base + GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT_APPEND);
+
+		#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_VARIANTS_PRORITISE_IRREGULAR_VERB_INFO
+		if(!irregularVerbFound)
+		{
+		#endif
+			#ifndef GIA_PREPROCESSOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_BUT_TREAT_CONTINUOUS_AS_VERB
+			if(!grammaticallyStrict)
+			{
+			#endif
+				//b. generate continuous tense form
+				//dancing/skating
+				baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS].push_back(baseWithLastLetterDropped + GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND);
+			#ifndef GIA_PREPROCESSOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_BUT_TREAT_CONTINUOUS_AS_VERB
+			}
+			#endif
+		#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_VARIANTS_PRORITISE_IRREGULAR_VERB_INFO
+		}
+		#endif
+		if(!irregularVerbFound)
+		{
+			//c. generate past tense form
+			//smiled/fined
+			baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST].push_back(baseWithLastLetterDropped + GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND);
+
+			//d. generate past participle form (assume same as past form)
+			baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PASTPARTICIPLE].push_back(baseWithLastLetterDropped + GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND);
+		}
+	}
+	//Rule 3: Words ending in Y
+	else if(rule3a)
+	{
+
+		//a. generate present tense form
+		baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT].push_back(baseWithLastLetterDropped + GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT_APPEND_CASE3);
+
+		#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_VARIANTS_PRORITISE_IRREGULAR_VERB_INFO
+		if(!irregularVerbFound)
+		{
+		#endif
+			#ifndef GIA_PREPROCESSOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_BUT_TREAT_CONTINUOUS_AS_VERB
+			if(!grammaticallyStrict)
+			{
+			#endif
+				//b. generate continuous tense form
+				//carrying/replying
+				baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS].push_back(base + GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND);
+			#ifndef GIA_PREPROCESSOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_BUT_TREAT_CONTINUOUS_AS_VERB
+			}
+			#endif
+		#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_VARIANTS_PRORITISE_IRREGULAR_VERB_INFO
+		}
+		#endif
+		if(!irregularVerbFound)
+		{
+			//c. generate past tense form
+			//studied/married
+			baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST].push_back(baseWithLastLetterDropped + GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND_CASE3);
+
+			//d. generate past participle form (assume same as past form)
+			baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PASTPARTICIPLE].push_back(baseWithLastLetterDropped + GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND_CASE3);
+		}
+	}
+	//Rule 4: Other words...
+	else if(rule3b || rule4)
+	{
+
+		//a. generate present tense form
+		baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT].push_back(base + GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT_APPEND);
+
+		#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_VARIANTS_PRORITISE_IRREGULAR_VERB_INFO
+		if(!irregularVerbFound)
+		{
+		#endif
+			#ifndef GIA_PREPROCESSOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_BUT_TREAT_CONTINUOUS_AS_VERB
+			if(!grammaticallyStrict)
+			{
+			#endif
+				//b. generate continuous tense form
+				//enjoying/straying
+				//needing/beeping
+				//needing/laughing
+				baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS].push_back(base + GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND);
+			#ifndef GIA_PREPROCESSOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_BUT_TREAT_CONTINUOUS_AS_VERB
+			}
+			#endif
+		#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_VARIANTS_PRORITISE_IRREGULAR_VERB_INFO
+		}
+		#endif
+		if(!irregularVerbFound)
+		{
+			//c. generate past tense form
+			//played/stayed
+			//dreamed/rained
+			//parked/earned
+			baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST].push_back(base + GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND);
+
+			//d. generate past participle form (assume same as past form)
+			baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PASTPARTICIPLE].push_back(base + GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND);
+		}
+	}
+
+	return result;
+}
+
+#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_LOAD_WORD_LISTS
+
+//grammaticallyStrict is by default set to false: this function was developed for special verb cases e.g. continuous (these verb cases are formally nouns; but are interpreted semantically as actions)
+bool GIApreprocessorMultiwordReductionClass::generateAdditionalTenseVariantsOfVerbBase(unordered_map<string, GIApreprocessorMultiwordReductionWord*>* verbCaseAdditionalList, GIApreprocessorMultiwordReductionWord* baseTag, bool irregularVerbFound, bool grammaticallyStrict)
+{
+	bool result = true;
+		
+	/*
+	detectContinuousVerbBasic Algorithm:
+
+	Note a simple check for "ing" is not posssible as;
+		some nouns end in ing also eg "thing"
+	Note a simple "ing" appendition check against a verb infinitive list is not possible because there are some grammatical variants;
+		Case 1: thinking
+		Case 2: running - "run" + "n" [run n] + "ing"
+		Case 3: changing - "chang" [change e] + "ing"
+
+		ongoing?
+		outstanding?
+		being?
+		becoming?
+
+	This code uses a subset of code from generateStandardTenseVariantsOfVerbBase (note generateStandardTenseVariantsOfVerbBase is not used itself as this code is designed to be liberal/robust and detect all possible verbs without being subject to theoretical grammar rules)
+	*/
+
+	GIApreprocessorMultiwordReductionWord* currentTagInVerbList = baseTag;
+
+	string base = SHAREDvars.convertStringToLowerCase(&(currentTagInVerbList->tagName));	//OLD: currentTagInVerbList->tagName
+
+	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_VARIANTS_PRORITISE_IRREGULAR_VERB_INFO
+	if(!irregularVerbFound)
+	{
+	#endif
+		addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, base, "", GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_INFINITIVE);
+	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_VARIANTS_PRORITISE_IRREGULAR_VERB_INFO
+	}
+	#endif
+
+	if(base.length() >= 3)	//match to baseWithLast3LettersDropped
+	{
+		int baseStringLength = base.length();
+		int indexOfLastCharacterInBase = baseStringLength-1;
+		char lastCharacterInBase = base[indexOfLastCharacterInBase];
+		string baseWithLast1LettersDropped = base.substr(0, baseStringLength-1);
+		string baseWithLast2LettersDropped = base.substr(0, baseStringLength-2);
+		string baseWithLast3LettersDropped = base.substr(0, baseStringLength-3);
+
+
+		#ifndef GIA_PREPROCESSOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_BUT_TREAT_CONTINUOUS_AS_VERB
+		if(!grammaticallyStrict)
+		{
+		#endif
+			#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_VARIANTS_PRORITISE_IRREGULAR_VERB_INFO
+			if(!irregularVerbFound)
+			{
+			#endif
+				//GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND/GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS _ing:
+				//continuous rule 1a/3b/4: thinking/happening/entering
+				addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, base, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS);
+				//continuous rule 1b: running - "run" + "n" [run n] + "ing"
+				addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, base+lastCharacterInBase, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS);
+				//continuous rule 2: changing - "chang" [change e] + "ing"
+				addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, baseWithLast1LettersDropped, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS);
+				/*
+				//continuous rule 3a: N/A !marriing (use marrying)
+				addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, baseWithLast1LettersDropped, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS);
+				*/
+			#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_VARIANTS_PRORITISE_IRREGULAR_VERB_INFO
+			}
+			#endif
+		#ifndef GIA_PREPROCESSOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_BUT_TREAT_CONTINUOUS_AS_VERB
+		}
+		#endif
+		if(!grammaticallyStrict)
+		{
+			#ifdef GIA_FEATURE_POS_TAG_VERB_POTENTIAL
+			//added 2h2a
+			//GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_APPEND/GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL _able:
+			//potential rule 1a/3b/4: thinkable/changeable
+			addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, base, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_APPEND, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL);
+			//potential rule 1b: running - "run" + "n" [run n] + "able"
+			addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, base+lastCharacterInBase, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_APPEND, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL);
+			/*
+			//potential rule 2: N/A !changable (use changeable)
+			addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, baseWithLast1LettersDropped, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_APPEND, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL);
+			*/
+			//potential rule 3a: running - "marr" + "i" + "able"
+			addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, base+baseWithLast1LettersDropped, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_APPEND_CASE3, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL);
+			#ifdef GIA_FEATURE_POS_TAG_VERB_POTENTIAL_INVERSE
+			//added 2h2c
+			//GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE_APPEND/GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE _ive:
+			//potential rule 1ai: -> ive eg resistive/adaptive
+			addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, base, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE_APPEND, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE);
+			//potential rule 1aii: -> itive eg additive
+			addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, base, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE_APPEND_CASE1II, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE);
+			//potential rule 1aiii: -> ative eg affirmative
+			addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, base, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE_APPEND_CASE1III, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE);
+			/*
+			//potential rule 1b: running - "run" + "n" [run n] + "itive"
+			addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, base+lastCharacterInBase, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE_APPEND, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE);
+			*/
+			//potential rule 2i: e -> itive eg competitive/definitive/accomodative
+			addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, baseWithLast1LettersDropped, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE_APPEND_CASE2, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE);
+			//potential rule 2ii: e -> ment + ive eg judgementive
+			addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, baseWithLast1LettersDropped, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE_APPEND_CASE2II, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE);
+			//potential rule 3a: y -> iment + ive eg supplimentive
+			addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, baseWithLast1LettersDropped, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE_APPEND_CASE3, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE);
+			#endif
+			#endif
+		}
+
+		#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_VARIANTS_PRORITISE_IRREGULAR_VERB_INFO
+		if(!irregularVerbFound)
+		{
+		#endif
+			#ifdef GIA_FEATURE_POS_TAG_VERB_STATE
+			//added 2h2a
+			//GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND/GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST _ed:
+			//possible state rule 1a/3b/4: visited/opened
+			addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, base, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST);
+			//possible state rule 1b: rubbed/stopped/referred/admitted - "rub" + "b" + "ed"
+			addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, base+lastCharacterInBase, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST);
+			//possible state rule 2: smiled/fined - "smil" [change e] + "ed"
+			addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, baseWithLast1LettersDropped, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST);
+			//possible state rule 3a: studied/married - "marr" + "i" + "ed"
+			addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, baseWithLast1LettersDropped, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST_APPEND_CASE3, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST);
+			#endif
+		#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_VARIANTS_PRORITISE_IRREGULAR_VERB_INFO
+		}
+		#endif
+
+		if(!grammaticallyStrict)
+		{
+			#ifdef GIA_FEATURE_POS_TAG_VERB_DESCRIPTION
+			//added 2h2d
+			//GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION_APPEND/GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION _ment:
+			//potential rule 1ai: -> ment eg movement/government/derailment/detainment/enjoyment
+			addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, base, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION_APPEND, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION);
+			//potential rule 1aii: -> ament eg disarmament
+			addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, base, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION_APPEND_CASE1II, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION);
+			//potential rule 1aiii: -> lment eg enrollment/installment/fulfillment
+			addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, base, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION_APPEND_CASE1III, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION);
+			/*
+			//potential rule 1b: running - "run" + "n" [run n] + "itive"
+			addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, base+lastCharacterInBase, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION_INVERSE_APPEND, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION);
+			*/
+			//potential rule 2i: e -> ment eg judgement/dislodgment
+			addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, baseWithLast1LettersDropped, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION_APPEND_CASE2, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION);
+			/*
+			//potential rule 2ii: e -> ment + ive eg judgementive
+			addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, baseWithLast1LettersDropped, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE_APPEND_CASE2II, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION);
+			*/
+			//potential rule 3a: y -> iment eg worriment/suppliment/embodiment
+			addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, baseWithLast1LettersDropped, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION_APPEND_CASE3, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION);
+			//potential rule 5: pt -> pment eg entrapment/equipment
+			addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, baseWithLast2LettersDropped, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION_APPEND_CASE5, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION);
+
+			//GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION_APPEND/GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION _ion:
+			//potential rule 1ai: -> ion eg absorption/abstraction/adaptation
+			addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, base, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION2_APPEND, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION);
+			//potential rule 1aii: -> ition eg addition
+			addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, base, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION2_APPEND_CASE1II, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION);
+			//potential rule 1aiii: -> ation eg acceptation/affirmation
+			addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, base, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION2_APPEND_CASE1III, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION);
+			/*
+			//potential rule 1b: running - "run" + "n" [run n] + "itive"
+			addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, base+lastCharacterInBase, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION2_INVERSE_APPEND, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION);
+			*/
+			//potential rule 2i: e -> ion eg relation/acclimatisation/accommodation/activation/accretion
+			addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, baseWithLast1LettersDropped, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION2_APPEND_CASE2, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION);
+			//potential rule 2ii: e -> ition + ive eg competition/composition/definition
+			addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, baseWithLast1LettersDropped, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION2_APPEND_CASE2II, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION);
+			//potential rule 2iii: e -> ation + ive eg admiration/organisation
+			addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, baseWithLast1LettersDropped, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION2_APPEND_CASE2III, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION);
+			//potential rule 3a: ify -> ification eg subjectification/amplification/ammonification/identification/beautification
+			addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, baseWithLast1LettersDropped, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION2_APPEND_CASE3, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION);
+			//potential rule 6i: aim -> amation eg acclamation {acclimation?}
+			addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, baseWithLast3LettersDropped, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION2_APPEND_CASE6I, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION);
+			//potential rule 6i: ide -> ision eg division
+			addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, baseWithLast3LettersDropped, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION2_APPEND_CASE6II, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION);
+			//potential rule 6iii: ish -> ition eg abolition/demolition
+			addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, baseWithLast3LettersDropped, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION2_APPEND_CASE6III, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION);
+			#endif
 		}
 	}
 	
@@ -2800,12 +2864,16 @@ bool GIApreprocessorMultiwordReductionClass::determineVerbCaseStandardWithAdditi
 	bool foundVerbCaseStandard = determineVerbCaseStandard(word, baseNameFound, grammaticalBaseTenseForm);
 	if(foundVerbCaseStandard)
 	{
+		//cout << "determineVerbCaseStandard, word = " << word << endl;
+		//cout << "determineVerbCaseStandard, baseNameFound = " << *baseNameFound << endl;
 		foundVerbCaseStandardOrAdditional = true;
 	}
 	
 	bool foundVerbCaseAdditional = determineVerbCaseAdditional(word, baseNameFound, grammaticalBaseTenseForm);
 	if(foundVerbCaseAdditional)
 	{
+		//cout << "determineVerbCaseAdditional, word = " << word << endl;
+		//cout << "determineVerbCaseAdditional, baseNameFound = " << *baseNameFound << endl;
 		foundVerbCaseStandardOrAdditional = true;
 	}
 	
