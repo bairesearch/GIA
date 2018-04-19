@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorPOStagger.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f4c 14-April-2018
+ * Project Version: 3f4d 14-April-2018
  * Requirements: requires plain text file
  * Description: Preprocessor POS tagger
  * /
@@ -962,7 +962,7 @@ bool GIApreprocessorPOStaggerClass::createPreprocessSentencesBasic(const string 
 					firstWordInSentence = new GIApreprocessorMultiwordReductionPlainTextWord();
 					currentWordInSentence = firstWordInSentence;
 					sentenceContentsOriginalText = "";
-					entityIndex = 0;
+					entityIndex = GIA_NLP_START_ENTITY_INDEX;
 					sentenceIndex++;
 				}
 			}
@@ -980,7 +980,7 @@ bool GIApreprocessorPOStaggerClass::createPreprocessSentencesBasic(const string 
 					firstWordInSentence = new GIApreprocessorMultiwordReductionPlainTextWord();
 					currentWordInSentence = firstWordInSentence;
 					sentenceContentsOriginalText = "";
-					entityIndex = 0;
+					entityIndex = GIA_NLP_START_ENTITY_INDEX;
 					sentenceIndex++;
 				#ifdef GIA_PREPROCESSOR_DISALLOW_EMPTY_SENTENCE_OBJECTS
 				}
@@ -1198,6 +1198,9 @@ bool GIApreprocessorPOStaggerClass::determinePOSambiguityInfo(GIApreprocessorPla
 {
 	bool result = true;
 	
+	int entityIndex = (static_cast<GIApreprocessorMultiwordReductionPlainTextWord*>(contextWord))->entityIndex;
+	//cout << "entityIndex = " << entityIndex << endl;
+	
 	bool foundWordInLists = false;
 	GIApreprocessorMultiwordReductionWord* contextWordFound = NULL;
 	#ifdef GIA_PREPROCESSOR_INITIALISE_WORD_INDEX_LIST_FROM_LRP_FILES_SUPPORT_UPPERCASE_PROPERNOUN_WORD_LISTS
@@ -1205,9 +1208,36 @@ bool GIApreprocessorPOStaggerClass::determinePOSambiguityInfo(GIApreprocessorPla
 	//cout << "contextWord->tagName = " << contextWord->tagName << endl;
 	if(findWordInWordListAllTypesWithPOSambiguityInfo(contextWord->tagName, &contextWordFound, contextWordPOSambiguityInfo))
 	{
-		//cout << "contextWord->tagName = " << contextWord->tagName << endl;
+		//cout << "1 contextWord->tagName = " << contextWord->tagName << endl;
 		foundWordInLists = true;
 	}
+	#ifdef GIA_PREPROCESSOR_INITIALISE_WORD_INDEX_LIST_FROM_LRP_FILES_SUPPORT_UPPERCASE_PROPERNOUN_WORD_LISTS_IF_FIRST_WORD_OF_SENTENCE_IS_IN_PROPERNOUN_LIST_THEN_CHECK_OTHER_LISTS_ALSO
+	if((entityIndex == GIA_NLP_START_ENTITY_INDEX) || (!foundWordInLists))
+	{
+		char firstCharacterOfFirstWordInSentence = (contextWord->tagName)[0];
+		if(isupper(firstCharacterOfFirstWordInSentence))
+		{
+			string contextWordLowerCase = SHAREDvars.convertStringToLowerCase(&(contextWord->tagName));
+			unsigned long contextWordLowerCasePOSambiguityInfo = 0;
+			//cout << "contextWordLowerCase = " << contextWordLowerCase << endl;
+			if(findWordInWordListAllTypesWithPOSambiguityInfo(contextWordLowerCase, &contextWordFound, &contextWordLowerCasePOSambiguityInfo))
+			{
+				if((entityIndex == GIA_NLP_START_ENTITY_INDEX) && foundWordInLists)
+				{
+					//cout << "2 contextWord->tagName = " << contextWord->tagName << endl;
+					//cout << "*contextWordPOSambiguityInfo = " << *contextWordPOSambiguityInfo << endl;
+					//cout << "contextWordLowerCasePOSambiguityInfo = " << contextWordLowerCasePOSambiguityInfo << endl;
+					*contextWordPOSambiguityInfo = (*contextWordPOSambiguityInfo | contextWordLowerCasePOSambiguityInfo);	//combine the potential pos types for upper case version and lower case version of word
+				}
+				else
+				{
+					*contextWordPOSambiguityInfo = contextWordLowerCasePOSambiguityInfo;
+				}
+				foundWordInLists = true;
+			}
+		}
+	}
+	#else
 	else
 	{
 		string contextWordLowerCase = SHAREDvars.convertStringToLowerCase(&(contextWord->tagName));
@@ -1217,6 +1247,7 @@ bool GIApreprocessorPOStaggerClass::determinePOSambiguityInfo(GIApreprocessorPla
 			foundWordInLists = true;
 		}
 	}
+	#endif
 	#else
 	string contextWordLowerCase = SHAREDvars.convertStringToLowerCase(&(contextWord->tagName));
 	if(findWordInWordListAllTypesWithPOSambiguityInfo(contextWordLowerCase, &contextWordFound, contextWordPOSambiguityInfo))
