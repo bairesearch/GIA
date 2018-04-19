@@ -23,7 +23,7 @@ auxiliaryBeing wordlistAuxiliaryBeing.txt
 auxiliaryHaving wordlistAuxiliaryHaving.txt
 auxiliaryDoing wordlistAuxiliaryDoing.txt
 auxiliary wordlistAuxiliary.txt
-pronounDemonstrative wordlistPronounDemonstrative.txt
+
 pronounIndefinite wordlistPronounIndefinite.txt
 pronounInterrogative wordlistPronounInterrogative.txt
 pronounPersonalObject wordlistPronounPersonalObject.txt
@@ -31,7 +31,7 @@ pronounPersonalSubject wordlistPronounPersonalSubject.txt
 pronounPossessiveAdjective wordlistPronounPossessiveAdjective.txt
 pronounPossessiveAlone wordlistPronounPossessiveAlone.txt
 pronounReflexive wordlistPronounReflexive.txt
-pronounRelative wordlistPronounRelative.txt
+
 conjunctionCoordinating wordlistConjunctionCoordinating.txt
 conjunctionSubcoordinating wordlistConjunctionSubcoordinating.txt
 conjunctionCorrelativeFirst wordlistConjunctionCorrelativeFirst.txt

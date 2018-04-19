@@ -27,7 +27,7 @@
  * File Name: GIAtxtRelTranslatorRules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f1o 22-February-2018
+ * Project Version: 3f1p 22-February-2018
  * /
  *******************************************************************************/
  
@@ -165,13 +165,13 @@
 					<!-- pronoun -->
 					<example><!-- we  --></example>
 					<or>
-						<component referenceSetTypeHybrid="referenceSet" componentType="string" stringType="LRPexternalWordLists" wordPOStype="pronounDemonstrative" semanticRelationReturnEntity="true" />
+						<!--<component referenceSetTypeHybrid="referenceSet" componentType="string" stringType="LRPexternalWordLists" wordPOStype="pronounDemonstrative" semanticRelationReturnEntity="true" />-->
 						<component referenceSetTypeHybrid="referenceSet" componentType="string" stringType="LRPexternalWordLists" wordPOStype="pronounIndefinite" semanticRelationReturnEntity="true" />
 						<component referenceSetTypeHybrid="referenceSet" componentType="string" stringType="LRPexternalWordLists" wordPOStype="pronounInterrogative" semanticRelationReturnEntity="true" />
 						<component referenceSetTypeHybrid="referenceSet" componentType="string" stringType="LRPexternalWordLists" wordPOStype="pronounPersonalObject" semanticRelationReturnEntity="true" />
 						<component referenceSetTypeHybrid="referenceSet" componentType="string" stringType="LRPexternalWordLists" wordPOStype="pronounPersonalSubject" semanticRelationReturnEntity="true" />
 						<component referenceSetTypeHybrid="referenceSet" componentType="string" stringType="LRPexternalWordLists" wordPOStype="pronounReflexive" semanticRelationReturnEntity="true" />
-						<component referenceSetTypeHybrid="referenceSet" componentType="string" stringType="LRPexternalWordLists" wordPOStype="pronounRelative" semanticRelationReturnEntity="true" />
+						<!--<component referenceSetTypeHybrid="referenceSet" componentType="string" stringType="LRPexternalWordLists" wordPOStype="pronounRelative" semanticRelationReturnEntity="true" />-->
 					</or>
 				</group>
 				<group groupName="prepositionMultiword" semanticRelationFunctionName="multiwordPreposition">
@@ -1043,8 +1043,8 @@
 						<instance name="which" />
 						<instance name="who" />
 						<instance name="whom" />
-						<instance name="whose" />
 						<!--
+						<instance name="whose" />
 						<instance name="whichever" />
 						<instance name="whoever" />
 						<instance name="whomever" />

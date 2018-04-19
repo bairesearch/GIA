@@ -52,7 +52,8 @@ each
 either
 every
 these
-those this
+those 
+this
 that
 a few
 a good few
@@ -107,7 +108,7 @@ this
 that
 and the other
 this
-that
+
 or the other
 thousandsome
 thy
