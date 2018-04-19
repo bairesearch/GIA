@@ -27,7 +27,7 @@
  * File Name: GIAtxtRelTranslatorRules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f10f 19-April-2018
+ * Project Version: 3f10g 19-April-2018
  * /
  *******************************************************************************/
  
@@ -432,6 +432,8 @@
 					<!-- {det} noun -->
 					<example><!-- {the} house --></example>
 					<or>
+						<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="descriptiveNounWithDeterminerOf" semanticRelationReturnEntity="true" />
+
 						<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="descriptiveNounWithDeterminerNumberOf" semanticRelationReturnEntity="true" />
 						<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="descriptiveNounWithDeterminerStandard" semanticRelationReturnEntity="true" />
 						<!-- #ifdefGIA_TXT_REL_TRANSLATOR_RULES_CODE_QUANTITY -->
@@ -444,6 +446,71 @@
 					</or>
 					<!--</repeat>-->
 				</group>
+				<group groupName="descriptiveNounWithDeterminerOf" semanticRelationFunctionName="numerosityDeterminer">
+					<!-- {det} noun -->
+					<example><!-- {the} house of/called ... --></example>
+					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="determiner" semanticRelationIndexType="object" />
+					<or>
+						<!-- ##ifdefGIA_SYN_REL_TRANSLATOR_INTERPRET_OF_AS_POSSESSIVE_FOR_SUBSTANCES_PLURAL_GOVERNOR -->
+						<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="nounOfPropernoun" semanticRelationIndexType="subject" semanticRelationReturnEntity="true" />
+						<!-- #endif -->
+						<!-- ##ifdefGIA_TRANSLATOR_INTERPRET_OF_AS_DEFINITION_FOR_SUBSTANCES_PROPERNOUN_DEPENDENT -->
+						<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="nounPluralOfPropernoun" semanticRelationIndexType="subject" semanticRelationReturnEntity="true" />
+						<!-- #endif -->
+						<!-- ##ifdefGIA_SYN_REL_TRANSLATOR_INTERPRET_OF_AS_POSSESSIVE_FOR_SUBSTANCES_PLURAL_DEPENDENT -->
+						<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="nounOfPluralNoun" semanticRelationIndexType="subject" semanticRelationReturnEntity="true" />
+						<!-- #endif -->
+						<!-- #ifndefGIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES -->
+						<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="nounOfNoun" semanticRelationIndexType="subject" semanticRelationReturnEntity="true" />
+						<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="nounOfDeterminerNoun" semanticRelationIndexType="subject" semanticRelationReturnEntity="true" />
+						<!-- #endif -->
+						<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="complementDefinitionAlias" semanticRelationIndexType="subject" semanticRelationReturnEntity="true" />
+					</or>
+					<!--</repeat>-->
+				</group>
+				<group groupName="nounOfPropernoun" semanticRelationFunctionName="propertyReverse">	
+					<!-- verb noun -->
+					<example><!-- {{the}} gardens of Kriton {{are old.}} --></example>
+					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="nounSequence" wordNounVariantType="plural" semanticRelationIndexType="subject" semanticRelationReturnEntity="true" />
+					<component componentType="string" stringType="explicit" word="of" />
+					<component componentType="string" stringType="LRPexternalWordLists" wordPOStype="propernounPlace" semanticRelationIndexType="object" />
+				</group>
+				<group groupName="nounPluralOfPropernoun" semanticRelationFunctionName="definitionAlias">	
+					<!-- verb noun -->
+					<example><!-- {{the}} house of Kriton {{is blue.}} --></example>
+					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="nounSequence" wordNounVariantType="singular" semanticRelationIndexType="subject" semanticRelationReturnEntity="true" />
+					<component componentType="string" stringType="explicit" word="of" />
+					<component componentType="string" stringType="LRPexternalWordLists" wordPOStype="propernounPlace" semanticRelationIndexType="object" />
+				</group>
+				<group groupName="nounOfPluralNoun" semanticRelationFunctionName="property">	
+					<!-- verb noun -->
+					<example><!-- {{the}} box of berries {{is old.}} --></example>
+					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="nounSequence" semanticRelationIndexType="subject" semanticRelationReturnEntity="true" />
+					<component componentType="string" stringType="explicit" word="of" />
+					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="descriptiveNoun" wordNounVariantType="plural" semanticRelationIndexType="object" />
+				</group>
+				<group groupName="nounOfNoun" semanticRelationFunctionName="property">	<!-- OLD: definition -->	
+					<!-- verb noun -->
+					<example><!-- {{the}} game of chess {{is good.}} --></example>
+					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="nounSequence" semanticRelationIndexType="subject" semanticRelationReturnEntity="true" />
+					<component componentType="string" stringType="explicit" word="of" />
+					<component componentType="string" stringType="LRPexternalWordLists" wordPOStype="noun" semanticRelationIndexType="object" />
+				</group>
+				<group groupName="nounOfDeterminerNoun" semanticRelationFunctionName="propertyReverse">	
+					<!-- verb noun -->
+					<example><!-- {{the}} march of the sun {{was tiresome.}} --></example>
+					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="nounSequence" semanticRelationIndexType="subject" semanticRelationReturnEntity="true" />
+					<component componentType="string" stringType="explicit" word="of" />
+					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="descriptiveNounWithDeterminerBasicDefiniteEnforced" semanticRelationIndexType="object" />
+				</group>
+				<group groupName="complementDefinitionAlias" semanticRelationFunctionName="definitionAlias">	
+					<!-- verb noun -->
+					<example><!-- {{the}} file called x.txt --></example>
+					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="nounSequence" semanticRelationIndexType="subject" semanticRelationReturnEntity="true" />
+					<component componentType="string" stringType="tokens" tokenLayer="POSsubsets" tokenClass="verb" tokenType="complementDefinitionAuxiliary" />
+					<component componentType="string" stringType="LRPexternalWordLists" wordPOStype="noun" isName="true" semanticRelationIndexType="object" />
+				</group> 
+						
 				<group groupName="descriptiveNounWithDeterminerStandard" semanticRelationFunctionName="numerosityDeterminer">
 					<!-- {det} noun -->
 					<example><!-- {the} house --></example>
@@ -1001,13 +1068,6 @@
 			</groupType>
 			<groupType groupTypeName="subReferenceSetsAppend" referenceSetType="subReferenceSet">
 				<!-- reference set emulation sequences (with rcmod); -->
-				<group groupName="complementDefinitionAlias" previousWordPOStype="noun">	
-					<!-- verb noun -->
-					<example><!-- {{the file}} called {x.txt} --></example>
-					<component componentType="string" stringType="tokens" tokenLayer="POSsubsets" tokenClass="verb" tokenType="complementDefinitionAuxiliary" />
-					<component componentType="string" stringType="LRPexternalWordLists" wordPOStype="noun" isName="true" semanticRelationReturnFunctionName="definitionAlias" semanticRelationReturnFunctionNameIndexType="subject" semanticRelationReturnEntity="true" />
-					<component componentType="group" groupTypeName="subReferenceSetsAppend" groupName="general" optional="true" />
-				</group>
 				<group groupName="general">
 					<!-- rcmod aux/verb []  -->
 					<example><!-- that rides the bike --></example>
