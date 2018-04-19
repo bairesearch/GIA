@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f1e 22-February-2018
+ * Project Version: 3f1f 22-February-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
@@ -2896,14 +2896,14 @@ bool GIAtranslatorOperationsClass::addTimeConditionProperty(GIAtimeConditionNode
 		}	
 		else
 		{
-			cerr << "GIAtranslatorOperationsClass::addTimeConditionProperty{} error: entity->semanticRelationWordPOStypeInferred unknown: " << entity->semanticRelationWordPOStypeInferred << endl;
+			cerr << "GIAtranslatorOperationsClass::addTimeConditionProperty{} error: (entity->semanticRelationWordPOStypeInferred == GIA_PREPROCESSOR_POS_TYPE_DATE) && entity name contains unknown time data: " << entityName << endl;
 			exit(EXIT_ERROR);
 		}
 	}
 	else
 	{
-		cerr << "GIAtranslatorOperationsClass::addTimeConditionProperty{} error: (entity->semanticRelationWordPOStypeInferred == GIA_PREPROCESSOR_POS_TYPE_DATE) && entity name contains unknown time data: " << entityName << endl;
-		cerr << "entity->semanticRelationWordPOStypeInferred = " << entity->semanticRelationWordPOStypeInferred << endl;
+		cerr << "GIAtranslatorOperationsClass::addTimeConditionProperty{} error: entity->semanticRelationWordPOStypeInferred unknown: " << entity->semanticRelationWordPOStypeInferred << endl;
+		cout << "GIApreprocessorPOStypeNameArray[entity->semanticRelationWordPOStypeInferred] = " << GIApreprocessorPOStypeNameArray[entity->semanticRelationWordPOStypeInferred] << endl;
 		exit(EXIT_ERROR);
 	}
 	
