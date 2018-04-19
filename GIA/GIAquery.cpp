@@ -26,7 +26,7 @@
  * File Name: GIAquery.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f1c 22-February-2018
+ * Project Version: 3f1d 22-February-2018
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: Query - locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  * ?Limitations: will only locate a exact answer (based upon a comparison node) if it provides the maximum number of matched nodes
@@ -167,7 +167,7 @@ GIAentityNode* GIAqueryClass::answerQueryOrFindAndTagForHighlightingMatchingStru
 	GIAentityNode* queryEntityWithMaxNumberNodesMatched = NULL;
 	bool foundBestAnswerCandidate = false;
 	int maxNumberMatchedNodes = 0;
-
+	
 	for(unordered_map<string, GIAentityNode*>::iterator entityIterQuery = entityNodesActiveListNetworkIndexesQuery->begin(); entityIterQuery != entityNodesActiveListNetworkIndexesQuery->end(); entityIterQuery++)
 	{//for each node in query semantic net;
 
@@ -239,7 +239,7 @@ GIAentityNode* GIAqueryClass::answerQueryOrFindAndTagForHighlightingMatchingStru
 bool GIAqueryClass::testEntityNodeForQueryOrReferenceSet2(GIAentityNode* queryEntityNode, GIAentityNode* entityNode, int* numberOfMatchedNodes, const bool knownBestMatch, int* numberOfMatchedNodesRequiredSynonymnDetection, const bool traceModeIsQuery, GIAqueryTraceParameters* queryTraceParameters, const GIAreferenceTraceParameters* referenceTraceParameters)
 {
 	bool exactMatch = true;
-
+						
 	if(!(entityNode->testedForQueryComparison) && !(entityNode->testedForQueryComparisonTemp) && !(queryEntityNode->testedForQueryComparison) && !(queryEntityNode->testedForQueryComparisonTemp))
 	{
 		entityNode->testedForQueryComparison = true;
@@ -601,7 +601,7 @@ GIAentityNode* GIAqueryClass::answerQueryOrFindAndTagForHighlightingMatchingStru
 {
 	unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes = translatorVariables->entityNodesActiveListNetworkIndexes;
 	unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexesQuery = translatorVariablesQuery->entityNodesActiveListNetworkIndexes;
-	
+							
 	bool traceModeIsQuery = TRACE_MODE_IS_QUERY_TRUE;
 
 	int numberOfMatchedNodesTempMax = 0;
@@ -621,16 +621,18 @@ GIAentityNode* GIAqueryClass::answerQueryOrFindAndTagForHighlightingMatchingStru
 		#ifdef GIA_QUERY_DO_NOT_SEARCH_DISABLED_NODES
 		if(!(currentQueryEntityNode->disabled))
 		{
-		#endif
+		#endif		
+						
 			if(currentQueryEntityNode->entityName != GIA_SYN_REL_TRANSLATOR_REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)	//added 22 August 2012
 			{
 				bool foundQueryEntityNodeName = false;
 				string queryEntityNodeName = currentQueryEntityNode->entityName;
-
+				
 				GIAentityNode* networkIndexEntityMatchingCurrentQueryEntity = GIAdatabase.findOrAddNetworkIndexEntityNodeByName(NULL, entityNodesActiveListNetworkIndexes, &queryEntityNodeName, &foundQueryEntityNodeName, false, NULL, NULL, false);
 
 				if(foundQueryEntityNodeName)
 				{
+				
 					//now start matching structure search for all substances of the identical networkIndex node (to current query entity name) in Semantic Network
 
 					int numberOfMatchedNodesTemp = 0;

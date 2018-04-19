@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorPOStagger.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f1c 22-February-2018
+ * Project Version: 3f1d 22-February-2018
  * Requirements: requires plain text file
  * Description: Preprocessor POS tagger
  * /
@@ -1198,10 +1198,40 @@ bool GIApreprocessorPOStaggerClass::determinePOSambiguityInfo(GIApreprocessorWor
 {
 	bool result = true;
 	
+	bool foundWordInLists = false;
 	GIApreprocessorMultiwordReductionWord* contextWordFound = NULL;
-	string contextWordLowerCase = SHAREDvars.convertStringToLowerCase(&(contextWord->tagName));	//CHECKTHIS: verify that currentWord->tagName is case sensitive
-	if(!findWordInWordListAllTypesWithPOSambiguityInfo(contextWordLowerCase, &contextWordFound, contextWordPOSambiguityInfo))
+	#ifdef GIA_PREPROCESSOR_INITIALISE_WORD_INDEX_LIST_FROM_LRP_FILES_SUPPORT_UPPERCASE_PROPERNOUN_WORD_LISTS
+	//CHECKTHIS: verify that currentWord->tagName is case sensitive
+	cout << "contextWord->tagName = " << contextWord->tagName << endl;
+	if(findWordInWordListAllTypesWithPOSambiguityInfo(contextWord->tagName, &contextWordFound, contextWordPOSambiguityInfo))
 	{
+		foundWordInLists = true;
+	}
+	else
+	{
+		string contextWordLowerCase = SHAREDvars.convertStringToLowerCase(&(contextWord->tagName));
+		cout << "contextWordLowerCase = " << contextWordLowerCase << endl;
+		if(findWordInWordListAllTypesWithPOSambiguityInfo(contextWordLowerCase, &contextWordFound, contextWordPOSambiguityInfo))
+		{
+			foundWordInLists = true;
+		}
+	}
+	#else
+	string contextWordLowerCase = SHAREDvars.convertStringToLowerCase(&(contextWord->tagName));
+	if(findWordInWordListAllTypesWithPOSambiguityInfo(contextWordLowerCase, &contextWordFound, contextWordPOSambiguityInfo))
+	{	
+		foundWordInLists = true;
+	}
+	#endif
+	
+	if(!foundWordInLists)
+	{
+		/*
+		cout << "!foundWordInLists" << endl;
+		cout << "contextWord->tagName = " << contextWord->tagName << endl;
+		exit(0);
+		*/
+		
 		#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
 		GIApreprocessorMultiwordReductionPlainTextWord* contextWordMultiwordReductionPlainTextWord = static_cast<GIApreprocessorMultiwordReductionPlainTextWord*>(contextWord);
 		if(contextWordMultiwordReductionPlainTextWord->collapsedMultiwordWord || contextWordMultiwordReductionPlainTextWord->collapsedPhrasalVerbExactDefinedSection)

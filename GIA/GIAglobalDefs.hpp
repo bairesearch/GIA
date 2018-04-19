@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f1c 22-February-2018
+ * Project Version: 3f1d 22-February-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  * /
@@ -773,6 +773,9 @@
 			#define GIA_TXT_REL_TRANSLATOR_RULES_LOGIC_REFERENCES_QUERIES
 			
 			#define GIA_PREPROCESSOR_INITIALISE_WORD_INDEX_LIST_FROM_LRP_FILES	//this is required to detect all possible pos types for wordList words
+			#ifdef GIA_PREPROCESSOR_INITIALISE_WORD_INDEX_LIST_FROM_LRP_FILES
+				#define GIA_PREPROCESSOR_INITIALISE_WORD_INDEX_LIST_FROM_LRP_FILES_SUPPORT_UPPERCASE_PROPERNOUN_WORD_LISTS
+			#endif
 			#define GIA_PREPROCESSOR_REPLACE_VERB_AND_NOUN_LISTS_WITH_VERB_AND_NOUN_LISTS_WITH_VARIANTS
 			#define GIA_TXT_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START		//TESTINGTHIS; optional (ideally should be able to disable this)
 			#define GIA_TXT_REL_TRANSLATOR_RULES_TREAT_UNKNOWN_POSTYPES	//precondition: all optional strings must have a known pos type to be processed (unknown not supported)
@@ -830,7 +833,9 @@
 			#define GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_REPEAT
 			#define GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_OR
 			#define GIA_TXT_REL_TRANSLATOR_RULES_TREAT_CONJUNCTION_ITEMS_AS_SAME_REFERENCE_SET
-			#define GIA_TXT_REL_TRANSLATOR_RULES_CODE_CASE_INSENSITIVE
+			#ifndef GIA_PREPROCESSOR_INITIALISE_WORD_INDEX_LIST_FROM_LRP_FILES_SUPPORT_UPPERCASE_PROPERNOUN_WORD_LISTS
+				#define GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_STRING_EXPLICIT_CASE_INSENSITIVE
+			#endif
 			#define GIA_TXT_REL_TRANSLATOR_RULES_CODE_NUMBERS
 			#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_NUMBERS
 				#define GIA_TXT_REL_TRANSLATOR_RULES_CODE_DATE

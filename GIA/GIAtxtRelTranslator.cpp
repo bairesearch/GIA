@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f1c 22-February-2018
+ * Project Version: 3f1d 22-February-2018
  * Requirements: requires plain text file
  * Description: Textual relation translator
  * /
@@ -930,11 +930,24 @@ bool GIAtxtRelTranslatorClass::findStringMatch(GIAtxtRelTranslatorRulesComponent
 	}
 	else if(component->stringType == GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_STRINGTYPE_EXPLICIT)
 	{
-		#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_CASE_INSENSITIVE
+		bool foundExplicitWord = false;
+		#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_STRING_EXPLICIT_CASE_INSENSITIVE
 		if(SHAREDvars.convertStringToLowerCase(&(currentWord->tagName)) == SHAREDvars.convertStringToLowerCase(&(component->word)))	//convertStringToLowerCase required to compensate for case insensitivity
+		{
+			foundExplicitWord = true;
+		}
 		#else
+		if(SHAREDvars.convertStringToLowerCase(&(currentWord->tagName)) == component->word)	//convertStringToLowerCase required to compensate for case insensitivity
+		{
+			foundExplicitWord = true;
+		}
 		if(currentWord->tagName == component->word)
+		{
+			foundExplicitWord = true;
+		}
 		#endif
+		
+		if(foundExplicitWord)
 		{
 			foundWordMatchTemp = true;
 			currentWord->wordPOStypeInferred = GIA_PREPROCESSOR_POS_TYPE_UNDEFINED;	//component->wordPOStype;  -need to add wordPOStype attribute to <component>? Not required at present as all stringType explicit tagged words are currently disgarded by semantic network

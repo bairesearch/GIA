@@ -27,7 +27,7 @@
  * File Name: GIAtxtRelTranslatorRules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f1c 22-February-2018
+ * Project Version: 3f1d 22-February-2018
  * /
  *******************************************************************************/
  
@@ -93,7 +93,7 @@
 						<component referenceSetTypeHybrid="unknown" componentType="group" groupTypeName="subReferenceSetsPart" groupName="nounMultiwordTitle" semanticRelationReturnEntity="true" />
 						<!-- #endif -->
 						<!-- #ifdefGIA_TXT_REL_TRANSLATOR_RULES_CODE_PROPERNOUNS -->
-						<component referenceSetTypeHybrid="unknown" componentType="group" groupTypeName="subReferenceSetsPart" groupName="nounMultiwordName" semanticRelationReturnEntity="true" />
+						<component referenceSetTypeHybrid="unknown" componentType="group" groupTypeName="subReferenceSetsPart" groupName="nounMultiwordPropernoun" semanticRelationReturnEntity="true" />
 						<!-- #endif -->
 						<component referenceSetTypeHybrid="unknown" componentType="group" groupTypeName="subReferenceSetsPart" groupName="descriptiveMoney" semanticRelationReturnEntity="true" />
 						<component referenceSetTypeHybrid="unknown" componentType="group" groupTypeName="subReferenceSetsPart" groupName="nounMultiword" semanticRelationReturnEntity="true" />
@@ -114,16 +114,44 @@
 				</group>
 				<!-- #endif -->
 				<!-- #ifdefGIA_TXT_REL_TRANSLATOR_RULES_CODE_PROPERNOUNS -->
-				<group groupName="nounMultiwordName" semanticRelationFunctionName="multiwordAlias">
-					<!-- {noun} noun -->
-					<example><!-- {goal} line --></example>
+				<group groupName="nounMultiwordPropernoun">
+					<!-- propernoun and/or propernoun -->
+					<example><!-- Tom and/or Matthews --></example>
+					<or>
+						<component referenceSetTypeHybrid="unknown" componentType="group" groupTypeName="subReferenceSetsPart" groupName="nounMultiwordName" semanticRelationReturnEntity="true" />
+					</or>
+				</group>
+				<group groupName="nounMultiwordName">
+					<!-- {propernounFirst+}propernounLast or propernounFirst -->
+					<example><!-- Tom and/or Matthews --></example>
+					<or>
+						<component referenceSetTypeHybrid="unknown" componentType="group" groupTypeName="subReferenceSetsPart" groupName="nounMultiwordNameFull" semanticRelationReturnEntity="true" />
+						<component referenceSetTypeHybrid="unknown" componentType="group" groupTypeName="subReferenceSetsPart" groupName="nounMultiwordNameFirstMale" semanticRelationReturnEntity="true" />
+						<component referenceSetTypeHybrid="unknown" componentType="group" groupTypeName="subReferenceSetsPart" groupName="nounMultiwordNameFirstFemale" semanticRelationReturnEntity="true" />
+					</or>
+				</group>
+				<group groupName="nounMultiwordNameFull" semanticRelationFunctionName="multiwordAlias">
+					<!-- {propernounFirstMale} propernounFamily -->
+					<example><!-- {Tom} Matthews --></example>
+					<component referenceSetTypeHybrid="unknown" componentType="group" groupTypeName="subReferenceSetsPart" groupName="nounMultiwordNameFirstMale" semanticRelationIndexType="list" optional="true" />
+					<component referenceSetTypeHybrid="unknown" componentType="group" groupTypeName="subReferenceSetsPart" groupName="nounMultiwordNameFirstFemale" semanticRelationIndexType="list" optional="true" />				
+					<component referenceSetTypeHybrid="referenceSet" componentType="string" stringType="LRPexternalWordLists" wordPOStype="propernounFamily" semanticRelationIndexType="list" semanticRelationReturnEntity="true" />
+				</group>
+				<group groupName="nounMultiwordNameFirstMale" semanticRelationFunctionName="multiwordAlias">
+					<!-- propernounFirstMale {propernounFirstMale} -->
+					<example><!-- Tom {Alex} --></example>
+					<component referenceSetTypeHybrid="unknown" componentType="string" stringType="LRPexternalWordLists" wordPOStype="propernounFirstMale" semanticRelationIndexType="list" semanticRelationReturnEntity="true" />
 					<repeat optional="true">
 						<component referenceSetTypeHybrid="unknown" componentType="string" stringType="LRPexternalWordLists" wordPOStype="propernounFirstMale" semanticRelationIndexType="list" />
 					</repeat>
+				</group>
+				<group groupName="nounMultiwordNameFirstFemale" semanticRelationFunctionName="multiwordAlias">
+					<!-- propernounFirstFemale {propernounFirstFemale} -->
+					<example><!-- Mary {Louise} --></example>
+					<component referenceSetTypeHybrid="unknown" componentType="string" stringType="LRPexternalWordLists" wordPOStype="propernounFirstFemale" semanticRelationIndexType="list" semanticRelationReturnEntity="true" />
 					<repeat optional="true">
 						<component referenceSetTypeHybrid="unknown" componentType="string" stringType="LRPexternalWordLists" wordPOStype="propernounFirstFemale" semanticRelationIndexType="list" />
 					</repeat>
-					<component referenceSetTypeHybrid="referenceSet" componentType="string" stringType="LRPexternalWordLists" wordPOStype="propernounFamily" semanticRelationIndexType="list" semanticRelationReturnEntity="true" />
 				</group>
 				<!-- #endif -->
 				<group groupName="nounMultiword" semanticRelationFunctionName="multiwordNoun">
@@ -605,6 +633,13 @@
 				</group>
 			</groupType>
 			<groupType groupTypeName="referenceSets" referenceSetType="referenceSet">
+				<group groupName="definitionAlias" semanticRelationFunctionName="definitionAliasWithAuxiliary">
+					<!-- aux propernoun  -->
+					<example><!-- is Jim --></example>
+					<component referenceSetTypeHybrid="referenceSet" componentType="group" groupTypeName="subReferenceSetsSubject" semanticRelationIndexType="subject" />
+					<component referenceSetTypeHybrid="referenceSetDelimiter" componentType="string" stringType="LRPexternalWordLists" wordPOStype="auxiliaryBeing" semanticRelationIndexType="delimiter" semanticRelationReturnEntity="true" />
+					<component referenceSetTypeHybrid="referenceSet" componentType="group" groupTypeName="subReferenceSetsPart" groupName="nounMultiwordPropernoun" semanticRelationIndexType="object" />
+				</group>
 				<group groupName="general">
 					<!-- [] aux/verb [] -->
 					<example><!-- The dog rides the bike --></example>
@@ -800,12 +835,23 @@
 					<example><!-- Who[1] is[2] the man[3]/that? 
 					man[3]-definitionSubj-is[2]-definitionObj->qVar[1]
 					--></example>
-					<component referenceSetTypeHybrid="referenceSet" componentType="string" stringType="tokens" tokenLayer="POSsubsets" tokenClass="wh" tokenType="who" semanticRelationIndexType="object" queryComparisonVariable="true" semanticRelationReturnEntity="true" />
+					<component referenceSetTypeHybrid="referenceSet" componentType="string" stringType="tokens" tokenLayer="POSsubsets" tokenClass="wh" tokenType="who" semanticRelationIndexType="object" queryComparisonVariable="true" isNameQuery="true" semanticRelationReturnEntity="true" />
 					<component referenceSetTypeHybrid="unknown" componentType="group" groupTypeName="subReferenceSetsPart" groupName="auxiliarySequence" semanticRelationIndexType="delimiter" />
 					<component referenceSetTypeHybrid="referenceSet" componentType="group" groupTypeName="subReferenceSetsSubject" semanticRelationIndexType="subject" />
 					<component referenceSetTypeHybrid="unknown" componentType="string" stringType="explicit" word="?" />
 				</group>
-				
+				<!--
+				<group groupName="queryWho" semanticRelationFunctionName="tenseAttributeModalAuxiliaryOrCopula">
+					{!-- wh {aux} [] ? --}
+					<example>{!-- Who[1] is[2] the man[3]/that? 
+					man[3]-definitionSubj-is[2]-definitionObj->qVar[1]
+					--}</example>
+					<component referenceSetTypeHybrid="referenceSet" componentType="string" stringType="tokens" tokenLayer="POSsubsets" tokenClass="wh" tokenType="who" />
+					<component referenceSetTypeHybrid="unknown" componentType="group" groupTypeName="subReferenceSetsPart" groupName="auxiliarySequence" semanticRelationIndexType="object" />
+					<component referenceSetTypeHybrid="referenceSet" componentType="group" groupTypeName="subReferenceSetsSubject" semanticRelationIndexType="subject" isNameQuery="true" />
+					<component referenceSetTypeHybrid="unknown" componentType="string" stringType="explicit" word="?" />
+				</group>
+				-->
 				<!-- reference set queries extended -->
 				<group groupName="queryHow" semanticRelationFunctionName="condition">
 					<!-- wh {aux} [] ? -->

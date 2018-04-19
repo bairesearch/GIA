@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f1c 22-February-2018
+ * Project Version: 3f1d 22-February-2018
  * Requirements: 
  * Description: Textual Relation Translator Parser
  * /
@@ -138,7 +138,6 @@ bool GIAtxtRelTranslatorParserClass::convertSentenceTxtRelationsIntoGIAnetworkNo
 	}
 	#endif
 #endif
-
 
 	GIAsynRelTranslatorDefineSubstances.defineSubstancesAllNodes(translatorVariables);
 
@@ -280,9 +279,9 @@ void GIAtxtRelTranslatorParserClass::identifyComparisonVariable(GIAtranslatorVar
 				GIAentityNode* entityNode = (*translatorVariables->GIAentityNodeArray)[i];
 				if(entityNode->isQuery)
 				{
-					if((entityNode->entityName == GIA_SYN_REL_TRANSLATOR_REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE) || (entityNode->isWhichOrEquivalentWhatQuery))
+					if((entityNode->entityName == GIA_SYN_REL_TRANSLATOR_REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE) || (entityNode->isWhichOrEquivalentWhatQuery) || (entityNode->isNameQuery))
 					{
-						cout << "isQuery" << endl;
+						cout << "isQuery (entityNode->isNameQuery) = " << (entityNode->isNameQuery) << endl;
 						GIAtranslatorOperations.setComparisonVariableNode(entityNode);
 						GIAtranslatorOperations.setFoundComparisonVariable(true);
 					}
@@ -437,7 +436,6 @@ bool GIAtxtRelTranslatorParserClass::generateSemanticRelationsFromTxtRelations(G
 		if(parseTreeComponent->queryComparisonVariable)
 		{
 			translatorVariables->currentSentenceInList->isQuestion = true;
-			//parseTreeComponentSemanticRelationEntity->queryComparisonVariable = true;	//CHECKTHIS
 			parseTreeComponentSemanticRelationEntity->isQuery = true;	//CHECKTHIS
 			//#ifdef GIA_SEM_REL_TRANSLATOR_SUPPORT_QUERIES
 			parseTreeComponentSemanticRelationEntity->entityName = GIA_SYN_REL_TRANSLATOR_REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;
@@ -445,15 +443,14 @@ bool GIAtxtRelTranslatorParserClass::generateSemanticRelationsFromTxtRelations(G
 		}
 		if(parseTreeComponent->isAuxiliaryQuery)	//NB parseTreeComponent->isQuery refers to an explicit "is" query, where as entitynode->isQuery refers to any kind of query
 		{
-			cout << "isAuxiliaryQuery" << endl;
+			//cout << "isAuxiliaryQuery" << endl;
 			translatorVariables->currentSentenceInList->isQuestion = true;
-			//parseTreeComponentSemanticRelationEntity->isQuery = true;	//CHECKTHIS
 		}
 		else if(parseTreeComponent->isWhichOrEquivalentWhatQuery)
 		{
 			//cout << "isWhichOrEquivalentWhatQuery" << endl;
 			translatorVariables->currentSentenceInList->isQuestion = true;
-			parseTreeComponentSemanticRelationEntity->isQuery = true;	//CHECKTHIS
+			parseTreeComponentSemanticRelationEntity->isQuery = true;
 			parseTreeComponentSemanticRelationEntity->isWhichOrEquivalentWhatQuery = true;
 		}
 		#endif
@@ -1175,12 +1172,22 @@ bool GIAtxtRelTranslatorParserClass::createSemanticRelationInNetwork(GIAtranslat
 	}
 	
 	#ifdef GIA_ALIASES
-	else if((semanticRelationFunctionName == GIAtxtRelSemanticDependencyRelationNameArray[GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_definitionAlias]) || (semanticRelationFunctionName == GIAtxtRelSemanticDependencyRelationNameArray[GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_definitionAliasWithAuxiliary]))
+	else if(semanticRelationFunctionName == GIAtxtRelSemanticDependencyRelationNameArray[GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_definitionAlias])
 	{
 		if(!GIAtranslatorOperations.connectDefinitionAliasWrapper(translatorVariables, entitySemanticRelationFunction1, &entitySemanticRelationFunction2, entitySemanticRelationFunction3, sameReferenceSet))
 		{
 			result = false;
 		}
+	}
+	else if(semanticRelationFunctionName == GIAtxtRelSemanticDependencyRelationNameArray[GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_definitionAliasWithAuxiliary])
+	{
+		if(!GIAtranslatorOperations.connectDefinitionAliasWrapper(translatorVariables, entitySemanticRelationFunction1, &entitySemanticRelationFunction2, entitySemanticRelationFunction3, sameReferenceSet))
+		{
+			result = false;
+		}
+		#ifndef GIA_DISABLE_ALIAS_ENTITY_MERGING
+		entitySemanticRelationFunction3->semanticRelationEntityIsReferenced = false;
+		#endif
 	}
 	#endif
 

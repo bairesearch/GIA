@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorMultiwordReductionClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f1c 22-February-2018
+ * Project Version: 3f1d 22-February-2018
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction Class
  * /
@@ -508,7 +508,7 @@ public:
 	#else
 	unsigned long POSambiguityInfo;
 	#endif
-	unsigned char wordPOStypeInferred;
+	int wordPOStypeInferred;
 	bool alreadyFoundMatch;
 	int translatorSentenceEntityIndex;
 	GIAentityNode* translatorEntity;
