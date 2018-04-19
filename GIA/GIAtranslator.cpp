@@ -26,7 +26,7 @@
  * File Name: GIAtranslator.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f1x 22-February-2018
+ * Project Version: 3f2a 04-April-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Translator
  * /
@@ -166,13 +166,8 @@ bool GIAtranslatorClass::convertSentenceListRelationsIntoGIAnetworkNodes(GIAtran
 	#endif
 	while(translatorVariables->currentSentenceInList->next != NULL)
 	{
-		#ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3
-		translatorVariables->sentenceIndex = translatorVariables->currentPreprocessorSentenceInList->sentenceIndexOriginal;
-		//cout << "translatorVariables->currentPreprocessorSentenceInList->sentenceIndexOriginal = " << translatorVariables->currentPreprocessorSentenceInList->sentenceIndexOriginal << endl;
-		//cout << "translatorVariables->sentenceIndex = " << translatorVariables->sentenceIndex << endl;
-		#else
-		translatorVariables->sentenceIndex = translatorVariables->currentSentenceInList->sentenceIndex;
-		#endif
+		int sentenceIndex = GIAtranslatorOperations.getCurrentSentenceIndex(translatorVariables);
+		translatorVariables->sentenceIndex = sentenceIndex;
 		
 		convertSentenceRelationsIntoGIAnetworkNodesWrapper(translatorVariables);
 
