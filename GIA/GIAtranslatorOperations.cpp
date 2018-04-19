@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f1a 22-February-2018
+ * Project Version: 3f1b 22-February-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
@@ -1124,13 +1124,16 @@ void GIAtranslatorOperationsClass::applyNetworkIndexEntityAlreadyExistsFunction(
 	{
 		if(tempEntityEnabled)
 		{
+			if(!(entity->disabled))
+			{
+				entity->firstSentenceToAppearInNetwork = false;
+			}
 			entity->disabled = false;
-			entity->firstSentenceToAppearInNetwork = false;
 		}
 	}
 	else
 	{
-		entity->firstSentenceToAppearInNetwork	= true;
+		entity->firstSentenceToAppearInNetwork = true;
 	}
 }
 
@@ -2951,16 +2954,21 @@ bool GIAtranslatorOperationsClass::connectMeasureToEntity(GIAtranslatorVariables
 		if(entitySemanticRelationFunction2->hasQuantity)
 		{	
 		*/	
+			entitySemanticRelationFunction2->hasMeasure = true;
+			entitySemanticRelationFunction2->measureType = MEASURE_TYPE_UNKNOWN;	//FUTURE infer MEASURE_TYPE_DISTANCE/MEASURE_TYPE_SIZE/MEASURE_TYPE_TIME/MEASURE_TYPE_PER from wordlistUnitDistance/wordlistUnitSize/wordlistUnitTime or from entitySemanticRelationFunction1->entityName (e.g. "tall", "away", etc)
+			
+			#ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3_CONNECT_MEAURES_AS_CONDITIONS_BACKWARDS_COMPATIBILITY
+			string conditionName = relationTypeMeasureNameArray[entitySemanticRelationFunction2->measureType];
+			GIAentityNode* relationshipEntity = findOrAddEntityNodeByNameSimpleWrapperRelationshipArtificialCondition(entitySemanticRelationFunction1, entitySemanticRelationFunction2, conditionName, translatorVariables);
+			connectConditionToEntity(entitySemanticRelationFunction1, entitySemanticRelationFunction2, relationshipEntity, sameReferenceSet, translatorVariables);	
+			#else
 			#ifdef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
 			GIAentityNode* relationshipEntity = findOrAddEntityNodeByNameSimpleWrapperRelationshipArtificialProperty(entitySemanticRelationFunction1, entitySemanticRelationFunction2, translatorVariables);
 			connectPropertyToEntity(entitySemanticRelationFunction1, entitySemanticRelationFunction2, relationshipEntity, sameReferenceSet, translatorVariables);
 			#else
 			connectDirectPropertyToEntity(entitySemanticRelationFunction1, entitySemanticRelationFunction2, sameReferenceSet, translatorVariables);		
 			#endif
-			
-			entitySemanticRelationFunction2->hasMeasure = true;
-			entitySemanticRelationFunction2->measureType = MEASURE_TYPE_UNKNOWN;	//FUTURE infer MEASURE_TYPE_DISTANCE/MEASURE_TYPE_SIZE/MEASURE_TYPE_TIME/MEASURE_TYPE_PER from wordlistUnitDistance/wordlistUnitSize/wordlistUnitTime or from entitySemanticRelationFunction1->entityName (e.g. "tall", "away", etc)
-		
+			#endif
 		/*
 		}
 		else
@@ -2992,15 +3000,21 @@ bool GIAtranslatorOperationsClass::connectMeasurePerToEntity(GIAtranslatorVariab
 		if(entitySemanticRelationFunction2->hasQuantity)
 		{	
 		*/
+			entitySemanticRelationFunction2->hasMeasure = true;
+			entitySemanticRelationFunction2->measureType = MEASURE_TYPE_PER;
+			
+			#ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3_CONNECT_MEAURES_AS_CONDITIONS_BACKWARDS_COMPATIBILITY
+			string conditionName = relationTypeMeasureNameArray[entitySemanticRelationFunction2->measureType];
+			GIAentityNode* relationshipEntity = findOrAddEntityNodeByNameSimpleWrapperRelationshipArtificialCondition(entitySemanticRelationFunction1, entitySemanticRelationFunction2, conditionName, translatorVariables);
+			connectConditionToEntity(entitySemanticRelationFunction1, entitySemanticRelationFunction2, relationshipEntity, sameReferenceSet, translatorVariables);			
+			#else
 			#ifdef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
 			GIAentityNode* relationshipEntity = findOrAddEntityNodeByNameSimpleWrapperRelationshipArtificialProperty(entitySemanticRelationFunction1, entitySemanticRelationFunction2, translatorVariables);
 			connectPropertyToEntity(entitySemanticRelationFunction1, entitySemanticRelationFunction2, relationshipEntity, sameReferenceSet, translatorVariables);
 			#else
 			connectDirectPropertyToEntity(entitySemanticRelationFunction1, entitySemanticRelationFunction2, sameReferenceSet, translatorVariables);		
 			#endif
-			
-			entitySemanticRelationFunction2->hasMeasure = true;
-			entitySemanticRelationFunction2->measureType = MEASURE_TYPE_PER;
+			#endif
 		/*
 		}
 		else

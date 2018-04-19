@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f1a 22-February-2018
+ * Project Version: 3f1b 22-February-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  * /
@@ -777,6 +777,8 @@
 			#define GIA_TXT_REL_TRANSLATOR_RULES_GIA3	//GIA3
 			#ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3
 				//parse GIAtxtRelTranslatorRules.xml file for all semantic relations
+				
+				#define GIA_TXT_REL_TRANSLATOR_RULES_GIA3_CONNECT_MEAURES_AS_CONDITIONS_BACKWARDS_COMPATIBILITY
 				
 				#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_COLLAPSE_NUMERICAL_WORDS_TO_NUMBERS
 
