@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f1r 22-February-2018
+ * Project Version: 3f1s 22-February-2018
  * Requirements: 
  * Description: Textual Relation Translator Parser
  * /
@@ -1653,7 +1653,7 @@ void GIAtxtRelTranslatorParserClass::defineSubstancesBasedOnNetworkAndDeterminer
 						entity->grammaticalDefiniteTemp = true;
 					}
 				}
-				
+								
 				if(!hasDeterminer)
 				{
 					if(entity->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL)
@@ -1689,7 +1689,8 @@ void GIAtxtRelTranslatorParserClass::defineSubstancesBasedOnNetworkAndDeterminer
 
 			if(isConcept)
 			{
-				(*translatorVariables->GIAentityNodeArray)[i]->entityType = GIA_ENTITY_TYPE_CONCEPT;
+				//cout << "isConcept: entity = " << entity->entityName << endl;
+				entity->entityType = GIA_ENTITY_TYPE_CONCEPT;
 			}
 		}
 	}

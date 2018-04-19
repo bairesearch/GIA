@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorGrammar.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f1r 22-February-2018
+ * Project Version: 3f1s 22-February-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
@@ -45,6 +45,8 @@ bool GIAtranslatorGrammarClass::calculateGrammarUsingInferredPosTypes(GIApreproc
 	//calculate grammar information independent of external NLP (part 1; without using det/aux semantic relations):
 	
 	string wordText = currentWord->tagName;	//OLD: if GIA_SEM_REL_TRANSLATOR (ie !GIA_TXT_REL_TRANSLATOR_RULES_GIA3) then semantic parser corpus header must store wordOrig values not lemma values (such that word grammar/morphology can be derived)
+	string wordTextLowerCase = SHAREDvars.convertStringToLowerCase(&wordText);
+	
 	currentFeature->lemma = wordText;
 
 	//calculate the PENN pos type of all GIA pos types (no specific cases);
@@ -54,11 +56,12 @@ bool GIAtranslatorGrammarClass::calculateGrammarUsingInferredPosTypes(GIApreproc
 	if(currentWord->wordPOStypeInferred == GIA_SEM_REL_TRANSLATOR_POS_TYPE_NOUN)	//NB is equivalent to GIA_PREPROCESSOR_POS_TYPE_NOUN
 	{
 		GIApreprocessorMultiwordReductionWord* nounBaseFormFound = NULL;
-		if(GIApreprocessorMultiwordReduction.determineNounPluralVariant(wordText, &nounBaseFormFound))
+		if(GIApreprocessorMultiwordReduction.determineNounPluralVariant(wordTextLowerCase, &nounBaseFormFound))
 		{
 			currentFeature->lemma = nounBaseFormFound->tagName;
 			currentFeature->grammaticalNumber = GRAMMATICAL_NUMBER_PLURAL;	//what about words that dont have explicit plural modification e.g. "sheep"? (this is why an external dedicated POS tagger can be useful; because it should use context to derive morphology)
 			currentFeature->stanfordPOS = FEATURE_POS_TAG_NOUN_NNS;
+			//cout << "determineNounPluralVariant: currentFeature->lemma = " << currentFeature->lemma << endl;
 		}
 		else
 		{
@@ -70,7 +73,7 @@ bool GIAtranslatorGrammarClass::calculateGrammarUsingInferredPosTypes(GIApreproc
 	//calculate the PENN pos type of verbs;
 	string baseNameFound = "";
 	int grammaticalBaseTenseForm = INT_DEFAULT_VALUE;
-	bool foundVerbCaseStandardOrAdditional = GIApreprocessorMultiwordReduction.determineVerbCaseStandardWithAdditional(wordText, &baseNameFound, &grammaticalBaseTenseForm);
+	bool foundVerbCaseStandardOrAdditional = GIApreprocessorMultiwordReduction.determineVerbCaseStandardWithAdditional(wordTextLowerCase, &baseNameFound, &grammaticalBaseTenseForm);
 	if(foundVerbCaseStandardOrAdditional)
 	{
 		currentFeature->lemma = baseNameFound;
