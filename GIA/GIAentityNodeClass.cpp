@@ -26,7 +26,7 @@
  * File Name: GIAentityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f2e 04-April-2018
+ * Project Version: 3f2f 04-April-2018
  * /
  *******************************************************************************/
 
@@ -132,12 +132,12 @@ void GIAentityNode::initialiseEntity()
 	#ifdef GIA_PREDETERMINERS
 	grammaticalPredeterminerTemp = GRAMMATICAL_PREDETERMINER_UNDEFINED;
 	#endif
+	stanfordPOStemp = "";
 	#ifdef GIA_STANFORD_CORENLP
 	/*
 	CharacterOffsetBeginTemp = INT_DEFAULT_VALUE;
 	CharacterOffsetEndTemp = INT_DEFAULT_VALUE;
 	*/
-	stanfordPOStemp = "";
 	NERTemp = FEATURE_NER_UNDEFINED;
 	NormalizedNERtemp = "";
 	TimexTemp = "";
@@ -719,8 +719,8 @@ bool GIAentityNodeClassClass::testEntityCharacteristic(const GIAentityNode* enti
 	testEntityCharacteristicIterationbool(entity->grammaticalProperNounTemp, entityCharacteristic, "grammaticalProperNounTemp", &foundMatch);
 	testEntityCharacteristicIterationint(entity->grammaticalGenderTemp, entityCharacteristic, "grammaticalGenderTemp", &foundMatch);
 	testEntityCharacteristicIterationbool(entity->grammaticalPronounTemp, entityCharacteristic, "grammaticalPronounTemp", &foundMatch);
-	#ifdef GIA_STANFORD_CORENLP
 	testEntityCharacteristicIterationstring(entity->stanfordPOStemp, entityCharacteristic, "stanfordPOStemp", &foundMatch);
+	#ifdef GIA_STANFORD_CORENLP
 	testEntityCharacteristicIterationstring(entity->NormalizedNERtemp, entityCharacteristic, "NormalizedNERtemp", &foundMatch);
 	testEntityCharacteristicIterationstring(entity->TimexTemp, entityCharacteristic, "TimexTemp", &foundMatch);
 	#endif
@@ -881,8 +881,8 @@ bool GIAentityNodeClassClass::setEntityCharacteristic(GIAentityNode* entity, GIA
 	setEntityCharacteristicIterationbool(&(entity->grammaticalProperNounTemp), entityCharacteristic, "grammaticalProperNounTemp", &foundMatch);
 	setEntityCharacteristicIterationint(&(entity->grammaticalGenderTemp), entityCharacteristic, "grammaticalGenderTemp", &foundMatch);
 	setEntityCharacteristicIterationbool(&(entity->grammaticalPronounTemp), entityCharacteristic, "grammaticalPronounTemp", &foundMatch);
-	#ifdef GIA_STANFORD_CORENLP
 	setEntityCharacteristicIterationstring(&(entity->stanfordPOStemp), entityCharacteristic, "stanfordPOStemp", &foundMatch);
+	#ifdef GIA_STANFORD_CORENLP
 	setEntityCharacteristicIterationstring(&(entity->NormalizedNERtemp), entityCharacteristic, "NormalizedNERtemp", &foundMatch);
 	setEntityCharacteristicIterationstring(&(entity->TimexTemp), entityCharacteristic, "TimexTemp", &foundMatch);
 	#endif
@@ -1008,8 +1008,8 @@ bool GIAentityNodeClassClass::getEntityCharacteristic(const GIAentityNode* entit
 	getEntityCharacteristicIterationbool(entity->grammaticalProperNounTemp, entityCharacteristic, "grammaticalProperNounTemp", &foundMatch);
 	getEntityCharacteristicIterationint(entity->grammaticalGenderTemp, entityCharacteristic, "grammaticalGenderTemp", &foundMatch);
 	getEntityCharacteristicIterationbool(entity->grammaticalPronounTemp, entityCharacteristic, "grammaticalPronounTemp", &foundMatch);
-	#ifdef GIA_STANFORD_CORENLP
 	getEntityCharacteristicIterationstring(entity->stanfordPOStemp, entityCharacteristic, "stanfordPOStemp", &foundMatch);
+	#ifdef GIA_STANFORD_CORENLP
 	getEntityCharacteristicIterationstring(entity->NormalizedNERtemp, entityCharacteristic, "NormalizedNERtemp", &foundMatch);
 	getEntityCharacteristicIterationstring(entity->TimexTemp, entityCharacteristic, "TimexTemp", &foundMatch);
 	#endif

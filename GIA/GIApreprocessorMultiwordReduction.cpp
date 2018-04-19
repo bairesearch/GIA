@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorMultiwordReduction.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f2e 04-April-2018
+ * Project Version: 3f2f 04-April-2018
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  * /
@@ -869,8 +869,10 @@ bool GIApreprocessorMultiwordReductionClass::generateStandardTenseVariantsOfVerb
 			baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_ALTERNATE] = base + GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT_APPEND;
 		}
 
+		#ifndef GIA_PREPROCESSOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_BUT_TREAT_CONTINUOUS_AS_VERB
 		if(!grammaticallyStrict)
 		{
+		#endif
 			//b. generate continuous tense form
 			//happening/entering
 			baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = base + GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND;
@@ -880,7 +882,9 @@ bool GIApreprocessorMultiwordReductionClass::generateStandardTenseVariantsOfVerb
 				//beginning/permitting
 				baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_ALTERNATE] = base + lastCharacterInBase + GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND;	//double consonant
 			}
+		#ifndef GIA_PREPROCESSOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_BUT_TREAT_CONTINUOUS_AS_VERB
 		}
+		#endif
 		
 		if(!irregularVerbFound)
 		{
@@ -914,12 +918,16 @@ bool GIApreprocessorMultiwordReductionClass::generateStandardTenseVariantsOfVerb
 		//a. generate present tense form
 		baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = base + GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT_APPEND;
 
+		#ifndef GIA_PREPROCESSOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_BUT_TREAT_CONTINUOUS_AS_VERB
 		if(!grammaticallyStrict)
 		{
+		#endif
 			//b. generate continuous tense form
 			//dancing/skating
 			baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = baseWithLastLetterDropped + GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND;
+		#ifndef GIA_PREPROCESSOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_BUT_TREAT_CONTINUOUS_AS_VERB
 		}
+		#endif
 		
 		if(!irregularVerbFound)
 		{
@@ -940,12 +948,16 @@ bool GIApreprocessorMultiwordReductionClass::generateStandardTenseVariantsOfVerb
 		//a. generate present tense form
 		baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = baseWithLastLetterDropped + GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT_APPEND_CASE3;
 
+		#ifndef GIA_PREPROCESSOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_BUT_TREAT_CONTINUOUS_AS_VERB
 		if(!grammaticallyStrict)
 		{
+		#endif
 			//b. generate continuous tense form
 			//carrying/replying
 			baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = base + GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND;
+		#ifndef GIA_PREPROCESSOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_BUT_TREAT_CONTINUOUS_AS_VERB
 		}
+		#endif
 		
 		if(!irregularVerbFound)
 		{
@@ -966,14 +978,18 @@ bool GIApreprocessorMultiwordReductionClass::generateStandardTenseVariantsOfVerb
 		//a. generate present tense form
 		baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = base + GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT_APPEND;
 
+		#ifndef GIA_PREPROCESSOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_BUT_TREAT_CONTINUOUS_AS_VERB
 		if(!grammaticallyStrict)
 		{
+		#endif
 			//b. generate continuous tense form
 			//enjoying/straying
 			//needing/beeping
 			//needing/laughing
 			baseTag->grammaticalTenseFormsArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS][GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_VERSION_STANDARD] = base + GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND;
+		#ifndef GIA_PREPROCESSOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_BUT_TREAT_CONTINUOUS_AS_VERB
 		}
+		#endif
 		
 		if(!irregularVerbFound)
 		{
@@ -2244,8 +2260,10 @@ bool GIApreprocessorMultiwordReductionClass::generateVerbCaseAdditionalList(bool
 				string baseWithLast2LettersDropped = base.substr(0, baseStringLength-2);
 				string baseWithLast3LettersDropped = base.substr(0, baseStringLength-3);
 				
+				#ifndef GIA_PREPROCESSOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_BUT_TREAT_CONTINUOUS_AS_VERB
 				if(!grammaticallyStrict)
 				{
+				#endif
 					//GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND/GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS _ing:
 					//continuous rule 1a/3b/4: thinking/happening/entering
 					addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, base, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS);
@@ -2257,7 +2275,11 @@ bool GIApreprocessorMultiwordReductionClass::generateVerbCaseAdditionalList(bool
 					//continuous rule 3a: N/A !marriing (use marrying)
 					addVerbCaseAdditional(currentTagInVerbList, verbCaseAdditionalList, baseWithLast1LettersDropped, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS_APPEND, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS);
 					*/
-
+				#ifndef GIA_PREPROCESSOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_BUT_TREAT_CONTINUOUS_AS_VERB
+				}
+				#endif
+				if(!grammaticallyStrict)
+				{
 					#ifdef GIA_FEATURE_POS_TAG_VERB_POTENTIAL
 					//added 2h2a
 					//GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_APPEND/GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL _able:
@@ -2870,7 +2892,7 @@ bool GIApreprocessorMultiwordReductionClass::determineVerbCaseAdditional(const s
 
 bool GIApreprocessorMultiwordReductionClass::determineIsPreposition(GIApreprocessorWord* wordTag, const bool usePOSprelim)
 {
-	bool wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_TXT_REL_TRANSLATOR_HYBRID_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_PREPOSITION);
+	bool wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_TXT_REL_TRANSLATOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_PREPOSITION);
 	return wordTypeDetected;
 }
 /*
@@ -2884,7 +2906,7 @@ bool GIApreprocessorMultiwordReductionClass::determineIsPreposition(const string
 
 bool GIApreprocessorMultiwordReductionClass::determineIsAdverb(GIApreprocessorWord* wordTag, const bool usePOSprelim)
 {
-	bool wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_TXT_REL_TRANSLATOR_HYBRID_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_ADVERB);
+	bool wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_TXT_REL_TRANSLATOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_ADVERB);
 	return wordTypeDetected;
 }
 /*
@@ -2898,7 +2920,7 @@ bool GIApreprocessorMultiwordReductionClass::determineIsAdverb(const string word
 
 bool GIApreprocessorMultiwordReductionClass::determineIsAdjective(GIApreprocessorWord* wordTag, const bool usePOSprelim)
 {
-	bool wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_TXT_REL_TRANSLATOR_HYBRID_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_ADJECTIVE);
+	bool wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_TXT_REL_TRANSLATOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_ADJECTIVE);
 	return wordTypeDetected;
 }
 /*
@@ -2918,7 +2940,7 @@ bool GIApreprocessorMultiwordReductionClass::determineIsNoun(GIApreprocessorWord
 }
 bool GIApreprocessorMultiwordReductionClass::determineIsNoun(GIApreprocessorWord* wordTag, const bool usePOSprelim, string* baseNameFound, int* grammaticalBaseForm)
 {
-	bool wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_TXT_REL_TRANSLATOR_HYBRID_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_NOUN, baseNameFound, grammaticalBaseForm);
+	bool wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_TXT_REL_TRANSLATOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_NOUN, baseNameFound, grammaticalBaseForm);
 	return wordTypeDetected;
 }
 /*
@@ -2945,7 +2967,7 @@ bool GIApreprocessorMultiwordReductionClass::determineNounPluralVariant(const st
 
 bool GIApreprocessorMultiwordReductionClass::determineIsConjunction(GIApreprocessorWord* wordTag, const bool usePOSprelim)
 {
-	bool wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_TXT_REL_TRANSLATOR_HYBRID_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_CONJUNCTION_COORDINATING);	//OLD: GIA_PREPROCESSOR_POS_TYPE_CONJUNCTION
+	bool wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_TXT_REL_TRANSLATOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_CONJUNCTION_COORDINATING);	//OLD: GIA_PREPROCESSOR_POS_TYPE_CONJUNCTION
 	return wordTypeDetected;
 }
 /*
@@ -2959,7 +2981,7 @@ bool GIApreprocessorMultiwordReductionClass::determineIsConjunction(const string
 
 bool GIApreprocessorMultiwordReductionClass::determineIsDeterminer(GIApreprocessorWord* wordTag, const bool usePOSprelim)
 {
-	bool wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_TXT_REL_TRANSLATOR_HYBRID_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_DETERMINER);
+	bool wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_TXT_REL_TRANSLATOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_DETERMINER);
 	return wordTypeDetected;
 }
 /*
@@ -2975,7 +2997,7 @@ bool GIApreprocessorMultiwordReductionClass::determineIsAuxiliaryBeing(GIAprepro
 {
 	bool wordTypeDetected = false;
 	#ifndef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_COLLAPSE_AUXILIARY_LISTS_TO_VERB_LISTS
-	wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_TXT_REL_TRANSLATOR_HYBRID_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_AUXILIARY_BEING);
+	wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_TXT_REL_TRANSLATOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_AUXILIARY_BEING);
 	#else
 	wordTypeDetected = determineIsWordType(wordTag->tagName, wordListRecordAuxiliaryBeing);
 	/*
@@ -2991,7 +3013,7 @@ bool GIApreprocessorMultiwordReductionClass::determineIsAuxiliaryHaving(GIAprepr
 {
 	bool wordTypeDetected = false;
 	#ifndef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_COLLAPSE_AUXILIARY_LISTS_TO_VERB_LISTS
-	wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_TXT_REL_TRANSLATOR_HYBRID_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_AUXILIARY_HAVING);
+	wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_TXT_REL_TRANSLATOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_AUXILIARY_HAVING);
 	#else
 	wordTypeDetected = determineIsWordType(wordTag->tagName, wordListRecordAuxiliaryHaving);
 	/*
@@ -3007,7 +3029,7 @@ bool GIApreprocessorMultiwordReductionClass::determineIsAuxiliaryDoing(GIAprepro
 {
 	bool wordTypeDetected = false;
 	#ifndef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_COLLAPSE_AUXILIARY_LISTS_TO_VERB_LISTS
-	wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_TXT_REL_TRANSLATOR_HYBRID_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_AUXILIARY_DOING);
+	wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_TXT_REL_TRANSLATOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_AUXILIARY_DOING);
 	#else
 	wordTypeDetected = determineIsWordType(wordTag->tagName, wordListRecordAuxiliaryDoing);
 	/*
@@ -3024,7 +3046,7 @@ bool GIApreprocessorMultiwordReductionClass::detectAuxiliary(GIApreprocessorWord
 {
 	bool wordTypeDetected = false;
 	#ifndef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_COLLAPSE_AUXILIARY_LISTS_TO_VERB_LISTS
-	wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_TXT_REL_TRANSLATOR_HYBRID_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_AUXILIARY);
+	wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_TXT_REL_TRANSLATOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_AUXILIARY);
 	#else
 	if(determineIsWordType(wordTag->tagName, wordListRecordAuxiliaryBeing))
 	{
@@ -3059,7 +3081,7 @@ bool GIApreprocessorMultiwordReductionClass::detectAuxiliary(GIApreprocessorWord
 bool GIApreprocessorMultiwordReductionClass::detectModalAuxiliary(GIApreprocessorWord* wordTag, const bool usePOSprelim)
 {
 	bool wordTypeDetected = false;
-	wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_TXT_REL_TRANSLATOR_HYBRID_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_MODALAUXILIARY);
+	wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_TXT_REL_TRANSLATOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_MODALAUXILIARY);
 	/*
 	if(SHAREDvars.textInTextArray(currentWord, entityModalAuxiliaryArray, ENTITY_MODALAUXILIARY_NUMBER_OF_TYPES))
 	{
@@ -3072,7 +3094,7 @@ bool GIApreprocessorMultiwordReductionClass::detectModalAuxiliary(GIApreprocesso
 bool GIApreprocessorMultiwordReductionClass::detectRcmodSameReferenceSetDelimiter(GIApreprocessorWord* wordTag, const bool usePOSprelim)
 {
 	bool wordTypeDetected = false;
-	wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_TXT_REL_TRANSLATOR_HYBRID_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_RCMOD);
+	wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_TXT_REL_TRANSLATOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_RCMOD);
 	/*
 	if(SHAREDvars.textInTextArray(currentWord, entityRcmodSameReferenceSetDelimiter, ENTITY_REFERENCE_SET_RCMOD_SAME_REFERENCE_SET_DELIMITER_NUMBER_OF_TYPES))
 	{
@@ -3205,12 +3227,12 @@ bool GIApreprocessorMultiwordReductionClass::createWordIndexListFromLRPfiles()
 				{
 					string index = iter->first;
 					GIApreprocessorMultiwordReductionWord* word = iter->second;
-					#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY
+					#ifdef GIA_TXT_REL_TRANSLATOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY
 					if(verbCaseDetectGrammaticallyStrictVariant(word->grammaticalTenseForm))	//ensure that the word is a grammatically strict verb
 					{
 					#endif
 						verbListWithVariantsGlobal.insert(pair<string, GIApreprocessorMultiwordReductionWord*>(index, word));
-					#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY
+					#ifdef GIA_TXT_REL_TRANSLATOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY
 					}
 					#endif
 				}
@@ -3218,12 +3240,12 @@ bool GIApreprocessorMultiwordReductionClass::createWordIndexListFromLRPfiles()
 				{
 					string index = iter->first;
 					GIApreprocessorMultiwordReductionWord* word = iter->second;
-					#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY
+					#ifdef GIA_TXT_REL_TRANSLATOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY
 					if(verbCaseDetectGrammaticallyStrictVariant(word->grammaticalTenseForm))	//ensure that the word is a grammatically strict verb
 					{
 					#endif
 						verbListWithVariantsGlobal.insert(pair<string, GIApreprocessorMultiwordReductionWord*>(index, word));
-					#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY
+					#ifdef GIA_TXT_REL_TRANSLATOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY
 					}
 					#endif
 				}

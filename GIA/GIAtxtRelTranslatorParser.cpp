@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f2e 04-April-2018
+ * Project Version: 3f2f 04-April-2018
  * Requirements: 
  * Description: Textual Relation Translator Parser
  * /
@@ -213,6 +213,9 @@ bool GIAtxtRelTranslatorParserClass::locateAndAddAllNetworkIndexEntitiesBasedOnT
 
 	int numberOfWordsInSentence = translatorVariables->currentPreprocessorSentenceInList->sentenceContentsLRP.size();
 
+	#ifdef GIA_GRAMMAR_IMPERATIVE_DETECTION
+	bool toDetected = false;
+	#endif
 	GIAfeature* currentFeatureInList = NULL;
 	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3_USE_SYN_REL_TRANSLATOR_FEATURES
 	currentFeatureInList = firstFeatureInSentence;
@@ -252,7 +255,22 @@ bool GIAtxtRelTranslatorParserClass::locateAndAddAllNetworkIndexEntitiesBasedOnT
 		
 		#ifndef GIA_TXT_REL_TRANSLATOR_RULES_GIA3_USE_SYN_REL_TRANSLATOR_FEATURES
 		if(currentFeatureInList->stanfordPOS != FEATURE_POS_TAG_UNKNOWN_SYMBOL_SYM)
-		{
+		{	
+			#ifdef GIA_GRAMMAR_IMPERATIVE_DETECTION
+			//extract from GIAtranslatorGrammarClass::extractGrammaticalInformationStanford
+			if(toDetected)
+			{
+				currentFeatureInList->previousWordInSentenceIsTo = true;
+			}
+			if(currentFeatureInList->lemma == GIA_SYN_REL_TRANSLATOR_RELATION_TYPE_PREPOSITION_TO)
+			{
+				toDetected = true;
+			}
+			else
+			{
+				toDetected = false;
+			}
+			#endif
 			GIAtranslatorGrammar.extractPOSrelatedGrammaticalInformationStanford(currentFeatureInList, GIA_PREPROCESSOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE);			//regenerate grammatical information for feature - it should identify the verb as an infinitive/imperative based on previousWordInSentenceIsTo
 			GIAtranslatorGrammar.applyPOSrelatedGrammaticalInfoToEntity(entity, currentFeatureInList);	//regenerate grammatical information for entity
 		}
@@ -754,10 +772,13 @@ bool GIAtxtRelTranslatorParserClass::generateSemanticRelationsFromTxtRelations(G
 				{
 					if(entitySemanticRelationFunctionSubject[GIA_TXT_REL_TRANSLATOR_SEMANTIC_RELATION_RETURN_FUNCTION_NAME_INDEX_TYPE_SEMANTIC_FUNCTION_EXECUTION_INDEX] != NULL)
 					{
-						//bool sameReferenceSet = tempEntity->semanticRelationReturnFunctionNameSameReferenceSet;
-						createSemanticRelationPair(translatorVariables, tempEntity->semanticRelationReturnFunctionName, entitySemanticRelationFunctionSubject[GIA_TXT_REL_TRANSLATOR_SEMANTIC_RELATION_RETURN_FUNCTION_NAME_INDEX_TYPE_SEMANTIC_FUNCTION_EXECUTION_INDEX], tempEntity, sameReferenceSet, layer);
-						iter1 = semanticRelationReturnFunctionEntityArray->erase(iter1);
-						erasedElement = true;
+						if(entitySemanticRelationFunctionSubject[GIA_TXT_REL_TRANSLATOR_SEMANTIC_RELATION_RETURN_FUNCTION_NAME_INDEX_TYPE_SEMANTIC_FUNCTION_EXECUTION_INDEX]->entityIndexTemp < tempEntity->entityIndexTemp)
+						{
+							//bool sameReferenceSet = tempEntity->semanticRelationReturnFunctionNameSameReferenceSet;
+							createSemanticRelationPair(translatorVariables, tempEntity->semanticRelationReturnFunctionName, entitySemanticRelationFunctionSubject[GIA_TXT_REL_TRANSLATOR_SEMANTIC_RELATION_RETURN_FUNCTION_NAME_INDEX_TYPE_SEMANTIC_FUNCTION_EXECUTION_INDEX], tempEntity, sameReferenceSet, layer);
+							iter1 = semanticRelationReturnFunctionEntityArray->erase(iter1);
+							erasedElement = true;
+						}
 					}
 				}
 				else if(tempEntity->semanticRelationReturnFunctionNameIndexType == GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_SEMANTIC_RELATION_INDEX_TYPE_OBJECT)
@@ -775,10 +796,13 @@ bool GIAtxtRelTranslatorParserClass::generateSemanticRelationsFromTxtRelations(G
 					#endif
 					if(entitySemanticRelationFunctionDelimiter[GIA_TXT_REL_TRANSLATOR_SEMANTIC_RELATION_RETURN_FUNCTION_NAME_INDEX_TYPE_SEMANTIC_FUNCTION_EXECUTION_INDEX] != NULL)
 					{
-						//bool sameReferenceSet = tempEntity->semanticRelationReturnFunctionNameSameReferenceSet;
-						createSemanticRelationPair(translatorVariables, tempEntity->semanticRelationReturnFunctionName, entitySemanticRelationFunctionDelimiter[GIA_TXT_REL_TRANSLATOR_SEMANTIC_RELATION_RETURN_FUNCTION_NAME_INDEX_TYPE_SEMANTIC_FUNCTION_EXECUTION_INDEX], tempEntity, sameReferenceSet, layer);
-						iter1 = semanticRelationReturnFunctionEntityArray->erase(iter1);
-						erasedElement = true;
+						if(entitySemanticRelationFunctionDelimiter[GIA_TXT_REL_TRANSLATOR_SEMANTIC_RELATION_RETURN_FUNCTION_NAME_INDEX_TYPE_SEMANTIC_FUNCTION_EXECUTION_INDEX]->entityIndexTemp < tempEntity->entityIndexTemp)
+						{
+							//bool sameReferenceSet = tempEntity->semanticRelationReturnFunctionNameSameReferenceSet;
+							createSemanticRelationPair(translatorVariables, tempEntity->semanticRelationReturnFunctionName, entitySemanticRelationFunctionDelimiter[GIA_TXT_REL_TRANSLATOR_SEMANTIC_RELATION_RETURN_FUNCTION_NAME_INDEX_TYPE_SEMANTIC_FUNCTION_EXECUTION_INDEX], tempEntity, sameReferenceSet, layer);
+							iter1 = semanticRelationReturnFunctionEntityArray->erase(iter1);
+							erasedElement = true;
+						}
 					}	
 				}
 				else
@@ -1659,6 +1683,21 @@ void GIAtxtRelTranslatorParserClass::defineSubstancesBasedOnNetworkAndDeterminer
 				if(entity->semanticRelationWordDeterminer != "")
 				{
 					hasDeterminer = true;
+					#ifdef GIA_FEATURE_POS_TAG_NN_ONLY_MARK_AS_SINGULAR_WITH_DETERMINER
+					//code from GIAtranslatorGrammarClass::fillGrammaticalArraysStanford;
+					bool determinerPotentiallySingularDetected = false;
+					if(SHAREDvars.textInTextArray(entity->semanticRelationWordDeterminer, relationDeterminerPotentiallySingularArray, GRAMMATICAL_DETERMINER_POTENTIALLY_SINGULAR_ARRAY_NUMBER_OF_TYPES))
+					{
+						determinerPotentiallySingularDetected = true;
+						//code from GIAtranslatorGrammarClass::extractGrammaticalInformationFromStanfordPOStag;
+						bool singularDetected = false;
+						if(entity->stanfordPOStemp == FEATURE_POS_TAG_NOUN_NN)
+						{
+							singularDetected = true;
+							entity->grammaticalNumber = GRAMMATICAL_NUMBER_SINGULAR;
+						}
+					}
+					#endif
 					if(SHAREDvars.textInTextArray(entity->semanticRelationWordDeterminer, grammaticalDeterminerIndefiniteArray, GRAMMATICAL_DETERMINER_INDEFINITE_NUMBER_OF_TYPES))
 					{
 						indefiniteDeterminer = true;
@@ -1736,6 +1775,52 @@ void GIAtxtRelTranslatorParserClass::defineSubstancesBasedOnNetworkAndDeterminer
 			}
 		}
 	}
+	
+	//define actionConcepts
+	//code from GIAsynRelTranslatorApplyAdvancedFeaturesClass::defineActionConcepts2
+	//FUTURE: note this must be reimplemented by GIAsynRelTranslatorParserClass also
+	for(int i=0; i<GIAtranslatorOperations.getEntityArrayMaxIndex(translatorVariables); i++)
+	{
+		if((*translatorVariables->GIAentityNodeArrayFilled)[i])
+		{
+			GIAentityNode* entity = (*translatorVariables->GIAentityNodeArray)[i];
+			if((entity->grammaticalWordTypeTemp == GRAMMATICAL_WORD_TYPE_VERB) && ((entity->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE] == true) || (entity->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_INFINITIVE] == true)))
+			{
+				//e.g. "riding"/"to ride"
+				
+				//Condition B1. no subject (cannot have subject)
+				if(entity->relationshipSubjectEntity->empty())
+				{
+					//Condition B2 action can have condition/property, but cannot be used as input condition/property in sentence
+					if(entity->conditionReverseNodeList->empty() && entity->propertyReverseNodeList->empty())
+					{
+						bool foundActionNetworkIndex = true;
+						//Condition 3. object can have condition/property, but it cannot be used as an input condition/property in sentence
+						if(!(entity->relationshipObjectEntity->empty()))
+						{
+							foundActionNetworkIndex = false;
+							GIAentityNode* actionObjectentity = entity->relationshipObjectEntity->back()->entity;
+							if(actionObjectentity->conditionReverseNodeList->empty() && actionObjectentity->propertyReverseNodeList->empty())
+							{
+								foundActionNetworkIndex = true;
+							}
+						}
+
+						if(foundActionNetworkIndex)
+						{
+							if(entity->entityType != GIA_ENTITY_TYPE_ACTION)
+							{
+								cerr << "GIAtxtRelTranslatorParserClass::defineSubstancesBasedOnNetworkAndDeterminerInfo{} error: foundActionNetworkIndex && (entity->entityType != GIA_ENTITY_TYPE_ACTION)" << endl;
+							}
+							cout << "isActionConcept" << endl;
+							entity->entityType = GIA_ENTITY_TYPE_ACTION;	//this should already be the case (considering entity->grammaticalWordTypeTemp == GRAMMATICAL_WORD_TYPE_VERB)
+							entity->isActionConcept = true;
+						}
+					}
+				}
+			}
+		}
+	}	
 }
 
 

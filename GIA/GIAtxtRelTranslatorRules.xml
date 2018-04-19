@@ -27,7 +27,7 @@
  * File Name: GIAtxtRelTranslatorRules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f2e 04-April-2018
+ * Project Version: 3f2f 04-April-2018
  * /
  *******************************************************************************/
  
@@ -802,6 +802,33 @@
 				</group>
 			</groupType>
 			<groupType groupTypeName="referenceSets" referenceSetType="referenceSet">
+				<group groupName="actionImperativeSingleWord">
+					<!-- verb -->
+					<example><!-- Ride --></example>
+					<component referenceSetTypeHybrid="unknown" componentType="string" stringType="LRPexternalWordLists" wordPOStype="verb" semanticRelationReturnEntity="true" />
+				</group>
+				<group groupName="actionImperative" semanticRelationFunctionName="actionObject">
+					<!-- verb [] -->
+					<example><!-- Ride the bike --></example>
+					<component referenceSetTypeHybrid="unknown" componentType="string" stringType="LRPexternalWordLists" wordPOStype="verb" semanticRelationIndexType="delimiter" semanticRelationReturnEntity="true" />
+					<component referenceSetTypeHybrid="referenceSet" componentType="group" groupTypeName="subReferenceSetsSubject" semanticRelationIndexType="object"  />
+				</group>
+				<group groupName="actionInfinitiveAndObject" semanticRelationFunctionName2="actionObject">
+					<!-- verb [] -->
+					<example><!-- To ride/Riding the bike is good --></example>
+					<component referenceSetTypeHybrid="NULL" componentType="string" stringType="explicit" word="to" optional="true" />
+					<component referenceSetTypeHybrid="unknown" componentType="string" stringType="LRPexternalWordLists" wordPOStype="verb" semanticRelationIndexType2="delimiter" semanticRelationReturnEntity="true" />
+					<component referenceSetTypeHybrid="referenceSet" componentType="group" groupTypeName="subReferenceSetsSubject" semanticRelationIndexType="subject" semanticRelationIndexType2="object" />
+					<component referenceSetTypeHybrid="referenceSet" componentType="group" groupTypeName="subReferenceSetsAuxiliaryDelimiterAndObject" groupName="quality" />
+				</group>
+				<group groupName="actionInfinitiveAndPreposition">
+					<!-- verb [] -->
+					<example><!-- To ride/Riding in the park is good --></example>
+					<component referenceSetTypeHybrid="NULL" componentType="string" stringType="explicit" word="to" optional="true" />
+					<component referenceSetTypeHybrid="unknown" componentType="string" stringType="LRPexternalWordLists" wordPOStype="verb" semanticRelationIndexType2="delimiter" semanticRelationReturnEntity="true" />
+					<component referenceSetTypeHybrid="referenceSet" componentType="group" groupTypeName="subReferenceSetsObject" groupName="prep" semanticRelationIndexType2="object" />
+					<component referenceSetTypeHybrid="referenceSet" componentType="group" groupTypeName="subReferenceSetsAuxiliaryDelimiterAndObject" groupName="quality" />
+				</group>
 				<group groupName="definitionAlias3" semanticRelationFunctionName="definitionAliasWithAuxiliary">
 					<!-- The name of [] is [] -->
 					<example><!-- The name of the red dog is Tom. --></example>

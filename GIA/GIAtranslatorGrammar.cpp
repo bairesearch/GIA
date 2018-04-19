@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorGrammar.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f2e 04-April-2018
+ * Project Version: 3f2f 04-April-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
@@ -107,10 +107,16 @@ bool GIAtranslatorGrammarClass::calculateGrammarUsingInferredPosTypes(GIApreproc
 		bool foundVerbCaseStandardOrAdditional = GIApreprocessorMultiwordReduction.determineVerbCaseStandardWithAdditional(wordTextLowerCase, &baseNameFound, &grammaticalBaseTenseForm);
 		if(foundVerbCaseStandardOrAdditional)
 		{
-			currentFeature->lemma = baseNameFound;
-
+			/*
+			cout << "wordTextLowerCase = " << wordTextLowerCase << endl;
+			cout << "currentWord->wordPOStypeInferred = " << currentWord->wordPOStypeInferred << endl;
+			cout << "baseNameFound = " << baseNameFound << endl;
+			*/
+					
 			if(currentWord->wordPOStypeInferred == GIA_SEM_REL_TRANSLATOR_POS_TYPE_VERB)	//NB is equivalent to GIA_PREPROCESSOR_POS_TYPE_VERB
 			{
+				currentFeature->lemma = baseNameFound;
+
 				//calculate the grammar of the 
 				currentFeature->stanfordPOS = FEATURE_POS_TAG_VERB_VB;
 				if(grammaticalBaseTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_INFINITIVE)
@@ -141,6 +147,7 @@ bool GIAtranslatorGrammarClass::calculateGrammarUsingInferredPosTypes(GIApreproc
 			{
 				if(currentWord->wordPOStypeInferred == GIA_SEM_REL_TRANSLATOR_POS_TYPE_ADJECTIVE)	//NB "able" words will be marked as JJ/adjective or NN/noun by POS tagger
 				{
+					currentFeature->lemma = baseNameFound;
 					currentFeature->stanfordPOS = FEATURE_POS_TAG_VERB_VBPOTENTIAL;
 				}
 			}
@@ -150,6 +157,7 @@ bool GIAtranslatorGrammarClass::calculateGrammarUsingInferredPosTypes(GIApreproc
 			{
 				if((currentWord->wordPOStypeInferred == GIA_SEM_REL_TRANSLATOR_POS_TYPE_ADJECTIVE))	//NB "ive" words will be marked as JJ/adjective or NN/noun by POS tagger )
 				{
+					currentFeature->lemma = baseNameFound;
 					currentFeature->stanfordPOS = FEATURE_POS_TAG_VERB_VBPOTENTIALINVERSE;
 				}
 			}
@@ -159,6 +167,7 @@ bool GIAtranslatorGrammarClass::calculateGrammarUsingInferredPosTypes(GIApreproc
 			{
 				if(currentWord->wordPOStypeInferred == GIA_SEM_REL_TRANSLATOR_POS_TYPE_ADJECTIVE)	//NB "is ..." and "is ..ed" (not Stanford CoreNLP/Relex) verbs may be marked as JJ/adjective by POS tagger eg "It is open"/"He is tired."
 				{
+					currentFeature->lemma = baseNameFound;
 					currentFeature->stanfordPOS = FEATURE_POS_TAG_VERB_VBSTATE;
 				}
 			}
@@ -168,6 +177,7 @@ bool GIAtranslatorGrammarClass::calculateGrammarUsingInferredPosTypes(GIApreproc
 			{
 				if(currentWord->wordPOStypeInferred == GIA_SEM_REL_TRANSLATOR_POS_TYPE_NOUN)	//NB "ion"/"ment" words will be marked as NN/noun by POS tagger
 				{
+					currentFeature->lemma = baseNameFound;
 					currentFeature->stanfordPOS = FEATURE_POS_TAG_VERB_VBDESCRIPTION;
 				}
 			}
@@ -803,10 +813,13 @@ void GIAtranslatorGrammarClass::extractPastTenseFromPOStag(const string* POStag,
 
 void GIAtranslatorGrammarClass::extractGrammaticalInformationStanford(GIAfeature* firstFeatureInList, const int NLPfeatureParser)
 {
+	#ifdef GIA_GRAMMAR_IMPERATIVE_DETECTION
 	bool toDetected = false;
+	#endif
 	GIAfeature* currentFeatureInList = firstFeatureInList;
 	while(currentFeatureInList->next != NULL)
 	{
+		#ifdef GIA_GRAMMAR_IMPERATIVE_DETECTION
 		//added 10 April 2014 - GIA 2e1a
 		if(toDetected)
 		{
@@ -820,6 +833,7 @@ void GIAtranslatorGrammarClass::extractGrammaticalInformationStanford(GIAfeature
 		{
 			toDetected = false;
 		}
+		#endif
 
 		int currentFeatureIndex = currentFeatureInList->entityIndex;
 
@@ -889,14 +903,18 @@ void GIAtranslatorGrammarClass::extractGrammaticalInformationFromStanfordPOStag(
 	if(SHAREDvars.textInTextArray(*POStag, posTagVerbInfinitiveOrImperativeArray, FEATURE_POS_TAG_VERB_INFINITIVE_NUMBER_OF_TYPES))
 	{
 		infinitiveOrImperativeDetected = true;
+		#ifdef GIA_GRAMMAR_IMPERATIVE_DETECTION
 		if(feature->previousWordInSentenceIsTo)
 		{
+		#endif
 			feature->grammaticalTenseModifierArray[GRAMMATICAL_TENSE_MODIFIER_INFINITIVE] = true;
+		#ifdef GIA_GRAMMAR_IMPERATIVE_DETECTION
 		}
 		else
 		{
 			feature->grammaticalTenseModifierArray[GRAMMATICAL_TENSE_MODIFIER_IMPERATIVE] = true;
 		}
+		#endif
 	}
 
 	//singular/plural detection;
@@ -910,6 +928,7 @@ void GIAtranslatorGrammarClass::extractGrammaticalInformationFromStanfordPOStag(
 	if(SHAREDvars.textInTextArray(*POStag, posTagSingularNounArray, FEATURE_POS_TAG_SINGULAR_NOUN_NUMBER_OF_TYPES))
 	{
 		#ifdef GIA_FEATURE_POS_TAG_NN_ONLY_MARK_AS_SINGULAR_WITH_DETERMINER
+		//NB GIA_FEATURE_POS_TAG_NN_ONLY_MARK_AS_SINGULAR_WITH_DETERMINER: not supported by GIA_TXT_REL_TRANSLATOR as determinerPotentiallySingularDetected has not been defined
 		if((*POStag) == FEATURE_POS_TAG_NOUN_NN)
 		{
 			if(feature->determinerPotentiallySingularDetected)
@@ -1114,9 +1133,7 @@ void GIAtranslatorGrammarClass::applyPOSrelatedGrammaticalInfoToEntity(GIAentity
 	entity->grammaticalPronounTemp = currentFeatureInList->grammaticalIsPronoun;
 	entity->grammaticalWordTypeTemp = currentFeatureInList->grammaticalWordType;
 
-	#ifdef GIA_STANFORD_CORENLP
 	entity->stanfordPOStemp = currentFeatureInList->stanfordPOS;
-	#endif
 }
 
 

@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorHybridLogicReference.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f2e 04-April-2018
+ * Project Version: 3f2f 04-April-2018
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Hybrid Logic Reference
  * /
@@ -62,8 +62,8 @@ bool GIAtxtRelTranslatorHybridLogicReferenceClass::executeLogicReferencePreproce
 	#else
 	bool usePOSprelim = false;
 	#endif
-	#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY
-	bool grammaticallyStrict = true;	//this is irrelevant and could be set to GIA_TXT_REL_TRANSLATOR_HYBRID_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT as determineIsWordType(usePOSprelim=true, ...) assumes grammaticallyStrict
+	#ifdef GIA_TXT_REL_TRANSLATOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY
+	bool grammaticallyStrict = true;	//this is irrelevant and could be set to GIA_TXT_REL_TRANSLATOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT as determineIsWordType(usePOSprelim=true, ...) assumes grammaticallyStrict
 	#else
 	bool grammaticallyStrict = false;
 	#endif

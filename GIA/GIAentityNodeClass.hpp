@@ -26,7 +26,7 @@
  * File Name: GIAentityNodeClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f2e 04-April-2018
+ * Project Version: 3f2f 04-April-2018
  * NB a substance is an instance of an entity, any given entity may contain/comprise/have multiple substances - and substances are unrelated to definitions between entities [they just define what comprises any given entity]
  * /
  *******************************************************************************/
@@ -461,8 +461,8 @@ public:
 	unordered_map<int, int> grammaticalPredeterminerTempSentenceArray;	//only for instances (not for networkIndexes)	- required for GIA advanced referencing as different references to an entity may well have different predeterminers (eg each)
 	#endif
 	#endif
-	#ifdef GIA_STANFORD_CORENLP
 	string stanfordPOStemp;
+	#ifdef GIA_STANFORD_CORENLP
 	string NormalizedNERtemp;
 	string TimexTemp;
 	#endif

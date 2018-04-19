@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f2e 04-April-2018
+ * Project Version: 3f2f 04-April-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  * /
@@ -743,13 +743,15 @@
 	//requires GIA_PREPROCESSOR
 	
 //#define GIA_DEBUG_DISABLE_3f_CODE
-#ifndef GIA_DEBUG_DISABLE_3f_CODE	
+#ifndef GIA_DEBUG_DISABLE_3f_CODE
+	
 	#ifdef GIA_TXT_REL_TRANSLATOR
+		
 		#define GIA_TXT_REL_TRANSLATOR_RULES		
 		#ifdef GIA_TXT_REL_TRANSLATOR_RULES
 		
 			#define GIA_DEBUG_TXT_REL_TRANSLATOR_RULES    
-			#define GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS2 	      
+			#define GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS2 	    
 			#define GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS
 			
 			#define GIA_TXT_REL_TRANSLATOR_RULES_ASSUME_HIGH_LEVEL_REFERENCE_SETS_DO_NOT_CONTAIN_EXPLICIT_SEMANTIC_RELATION_FUNCTION
@@ -899,12 +901,12 @@
 	
 	//#define GIA_GRAMMATICAL_WORD_TYPES_EXTENDED	//3e5a	//removed 3e11a - no longer required by GIA pos tagger - use GIAposTag arrays instead	//GIA only; not in wordnet
 	
-	#define GIA_TXT_REL_TRANSLATOR_HYBRID_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY	//3e8b
-	#define GIA_TXT_REL_TRANSLATOR_HYBRID_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT (false)
-
+	#define GIA_TXT_REL_TRANSLATOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY	//3e8b
+	#define GIA_TXT_REL_TRANSLATOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT (false)
 	//#define GIA_PREPROCESSOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY	//disabled as higher level semantic processing of actions interprets all verb variants (regardless of whether they are grammatically strict verbs) as verbs
 	#ifdef GIA_PREPROCESSOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY
 		#define GIA_PREPROCESSOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE (true)
+		//#define GIA_PREPROCESSOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_BUT_TREAT_CONTINUOUS_AS_VERB
 	#else
 		#define GIA_PREPROCESSOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE (false)
 	#endif
@@ -1625,6 +1627,8 @@
 	#endif
 	#define GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR_NEW	//mandatory 3a1a	//added 2h1c/14-November-2014 - required for NLC 1m1a+
 #endif
+
+#define GIA_GRAMMAR_IMPERATIVE_DETECTION	//2e1a	//required to distinguish action concepts from infinitive cases
 
 //#define GIA_ENABLE_WARNINGS
 
