@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorMultiwordReductionClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f2m 04-April-2018
+ * Project Version: 3f2n 04-April-2018
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction Class
  * /
@@ -106,6 +106,9 @@ void GIApreprocessorWord::initialiseGIApreprocessorWord()
 	alreadyFoundMatch = false;
 	translatorSentenceEntityIndex = GIA_ENTITY_INDEX_UNDEFINED;
 	translatorEntity = NULL;
+	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_REPEAT_IGNORE_CONSECUTIVE_PLURAL_NOUNS
+	isNounPluralVariant = false;
+	#endif
 	#endif
 		
 	nextTag = NULL;
@@ -119,6 +122,7 @@ GIApreprocessorMultiwordReductionWord::GIApreprocessorMultiwordReductionWord(voi
 	base = false;
 	
 	grammaticalTenseForm = GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_INFINITIVE;
+	
 	grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_INFINITIVE_OR_IMPERATIVE_OR_PRESENT_NOT_THIRD_PERSON_SINGULAR_OR_STATE_TEMP;
 	baseName = "";
 

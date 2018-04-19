@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorMultiwordReductionClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f2m 04-April-2018
+ * Project Version: 3f2n 04-April-2018
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction Class
  * /
@@ -517,6 +517,9 @@ public:
 	bool alreadyFoundMatch;
 	int translatorSentenceEntityIndex;
 	GIAentityNode* translatorEntity;
+	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_REPEAT_IGNORE_CONSECUTIVE_PLURAL_NOUNS
+	bool isNounPluralVariant;
+	#endif
 	#endif
 		
 	GIApreprocessorWord* nextTag;
@@ -541,10 +544,11 @@ public:
 	vector<string> nounPluralVariants;
 	#endif
 	*/
-	
+
 	//verb case additional only:
 	int grammaticalTenseModifier;
 	string baseName;	
+	
 };
 
 class GIApreprocessorMultiwordReductionPhrasalVerbWord: public GIApreprocessorMultiwordReductionWord
