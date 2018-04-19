@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorReferenceSet.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e12a 12-February-2018
+ * Project Version: 3e12b 12-February-2018
  * Requirements: requires plain text file
  * Description: Reference Set preprocessor
  *
@@ -52,7 +52,7 @@ class GIApreprocessorReferenceSetClass
 			public: bool detectAuxiliary(const string currentWord);
 			public: bool detectModalAuxiliary(const string currentWord);
 			public: bool detectRcmodSameReferenceSetDelimiter(const string currentWord);
-			#ifdef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_VERB_OR_NOUN_OVER_ADJECTIVE_POS_AMBIGUITY
+			#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_PREFERENCE_VERB_OR_NOUN_OVER_ADJECTIVE_POS_AMBIGUITY
 			private: bool determineIsVerbAndAdjective(GIApreprocessorWord* currentWordTag, bool usePOSprelim, bool grammaticallyStrict);
 			#endif
 			private: void updateIndices(const bool currentWordIsReferenceSetDelimiter, bool* referenceSetDelimiterDetected, bool* parsingReferenceSetDelimiter, const int currentDelimiterSpecialCase, const int wordIndexOfHypotheticalPreceedingThatWhich, const bool currentWordIsReferenceSetDelimiterPreceededByThatWhich, bool* referenceSetDelimiterIndicatesSameReferenceSet, int* firstIndexOfReferenceSetDelimiterText, int* lastIndexOfPreviousReferenceSet);

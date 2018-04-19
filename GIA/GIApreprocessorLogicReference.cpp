@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorLogicReference.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e12a 12-February-2018
+ * Project Version: 3e12b 12-February-2018
  * Requirements: requires plain text file
  * Description: Logic Reference preprocessor
  *
@@ -197,7 +197,7 @@ bool GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor(const
 	bool expectToFindSubjectAuxObjectLogicReferenceVariable = false;
 	bool whiteSpace = false;
 	
-	#ifdef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
+	#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_SET_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
 	bool usePOSprelim = true;
 	#else
 	bool usePOSprelim = false;
@@ -221,7 +221,7 @@ bool GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor(const
 		int logicReferenceClass = GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_UNDEFINED;
 		if(isClassTag(currentWord->tagName, GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_conjunction, &logicReferenceClassType, firstLogicReferenceClassTag))
 		{
-			#ifdef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
+			#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_SET_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
 			if(GIApreprocessorMultiwordReduction.determineIsConjunction(currentWord, usePOSprelim))
 			{
 			#endif
@@ -230,13 +230,13 @@ bool GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor(const
 				cout << "logicReferenceClass = GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_CONJUNCTION " << endl;
 				#endif
 				foundClassType = true;
-			#ifdef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
+			#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_SET_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
 			}
 			#endif
 		}
 		else if(isClassTag(currentWord->tagName, GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_preposition, &logicReferenceClassType, firstLogicReferenceClassTag))
 		{
-			#ifdef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
+			#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_SET_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
 			if(GIApreprocessorMultiwordReduction.determineIsPreposition(currentWord, usePOSprelim))
 			{
 			#endif
@@ -252,13 +252,13 @@ bool GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor(const
 				#ifdef GIA_PREPROCESSOR_SENTENCE_DETERMINE_AMBIGUOUS_PREPOSITION_POS_TYPES_BASED_ON_CONTEXT
 				}
 				#endif
-			#ifdef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
+			#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_SET_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
 			}
 			#endif
 		}
 		else if(isClassTag(currentWord->tagName, GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_verb, &logicReferenceClassType, firstLogicReferenceClassTag))
 		{
-			#ifdef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
+			#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_SET_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
 			if(GIApreprocessorMultiwordReduction.determineIsVerb(currentWord, usePOSprelim, grammaticallyStrict))
 			{
 			#endif
@@ -267,7 +267,7 @@ bool GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor(const
 				cout << "logicReferenceClass = GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_VERB " << endl;
 				#endif
 				foundClassType = true;
-			#ifdef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
+			#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_SET_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
 			}
 			#endif
 		}
@@ -935,7 +935,7 @@ vector<GIApreprocessorWord*> GIApreprocessorLogicReferenceClass::generateLogicRe
 	
 	vector<GIApreprocessorWord*> logicReferenceContents = generateLogicReferenceContentsBase(logicReferenceWord, logicReferenceClassType);
 	
-	#ifdef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
+	#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_SET_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
 	bool usePOSprelim = true;
 	#else
 	bool usePOSprelim = false;

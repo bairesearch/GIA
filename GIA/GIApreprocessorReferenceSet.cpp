@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorReferenceSet.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e12a 12-February-2018
+ * Project Version: 3e12b 12-February-2018
  * Requirements: requires plain text file
  * Description: Reference Set preprocessor
  *
@@ -99,7 +99,7 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 	
 	bool previousWordWasVerb = false;
 	
-	#ifdef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
+	#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
 	bool usePOSprelim = true;
 	#else
 	bool usePOSprelim = false;
@@ -140,13 +140,13 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 		string verbBaseNameTemp = "";
 		if(GIApreprocessorMultiwordReduction.determineIsVerb(currentWordTag, usePOSprelim, grammaticallyStrict, &verbBaseNameTemp, &grammaticalBaseTenseForm))
 		{
-			#ifdef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_VERB_OR_NOUN_OVER_ADJECTIVE_POS_AMBIGUITY
+			#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_PREFERENCE_VERB_OR_NOUN_OVER_ADJECTIVE_POS_AMBIGUITY
 			if(!determineIsVerbAndAdjective(currentWordTag, usePOSprelim, grammaticallyStrict))
 			{
 			#endif
 				//cout << "verbDetected: currentWord = " << currentWord << endl;	
 				verbDetected = true;
-			#ifdef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_VERB_OR_NOUN_OVER_ADJECTIVE_POS_AMBIGUITY
+			#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_PREFERENCE_VERB_OR_NOUN_OVER_ADJECTIVE_POS_AMBIGUITY
 			}
 			#endif
 		}
@@ -167,6 +167,7 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 			if(grammaticalBaseTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_INFINITIVE)
 			{
 			#endif
+				#ifndef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
 				if(wordIndex-1 >= 0)
 				{
 					//eg the [det] walk [verb]
@@ -200,6 +201,7 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 						}
 					}
 				}
+				#endif
 				#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_SPECIAL_CASE_DELIMITER_VERB_STATE_SUCCEEDED_BY_NOUN
 				if(wordIndex-2 >= 0)
 				{
@@ -225,14 +227,14 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 
 				if(wordIndex+1 < logicReferenceVariableWordList->size())
 				{
-					#ifndef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
+					#ifndef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
 					if(!GIApreprocessorMultiwordReduction.determineIsNoun(((*logicReferenceVariableWordList)[wordIndex+1]), usePOSprelim))	//compensate for ambiguity in grammatical classification of words (e.g. "chicken" is classified as both a noun and an adjective by wordnet; eg A controlled chicken was moved to the car.
 					{
 					#endif
 						if(GIApreprocessorMultiwordReduction.determineIsAdjective(((*logicReferenceVariableWordList)[wordIndex+1]), usePOSprelim))
 						{
 							/*
-							#ifdef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_VERB_OR_NOUN_OVER_ADJECTIVE_POS_AMBIGUITY
+							#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_PREFERENCE_VERB_OR_NOUN_OVER_ADJECTIVE_POS_AMBIGUITY
 							if(!determineIsVerbAndAdjective(((*logicReferenceVariableWordList)[wordIndex+1]), usePOSprelim, grammaticallyStrict))
 							{
 							#endif
@@ -243,7 +245,7 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 								wordIndex = wordIndex + 1;
 								#endif
 							/*
-							#ifdef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_VERB_OR_NOUN_OVER_ADJECTIVE_POS_AMBIGUITY
+							#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_PREFERENCE_VERB_OR_NOUN_OVER_ADJECTIVE_POS_AMBIGUITY
 							}
 							#endif
 							*/
@@ -255,7 +257,7 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 								if(GIApreprocessorMultiwordReduction.determineIsAdjective(((*logicReferenceVariableWordList)[wordIndex+2]), usePOSprelim))
 								{
 									/*
-									#ifdef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_VERB_OR_NOUN_OVER_ADJECTIVE_POS_AMBIGUITY
+									#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_PREFERENCE_VERB_OR_NOUN_OVER_ADJECTIVE_POS_AMBIGUITY
 									if(!determineIsVerbAndAdjective(((*logicReferenceVariableWordList)[wordIndex+2]), usePOSprelim, grammaticallyStrict))
 									{
 									#endif
@@ -266,14 +268,14 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 										wordIndex = wordIndex + 2;
 										#endif
 									/*
-									#ifdef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_VERB_OR_NOUN_OVER_ADJECTIVE_POS_AMBIGUITY
+									#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_PREFERENCE_VERB_OR_NOUN_OVER_ADJECTIVE_POS_AMBIGUITY
 									}
 									#endif
 									*/
 								}
 							}
 						}
-					#ifndef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
+					#ifndef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
 					}
 					#endif
 				}
@@ -305,7 +307,7 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 			
 			//verify that the auxiliary/verb is not preceeded by a modal auxiliary (e.g. for future cases; will be/have/ride), in which case must test the word prior to the modal auxiliary for that/which
 						
-			#ifdef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
+			#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
 			if((currentDelimiterType == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_AUXILIARY) || ((currentDelimiterType == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_VERB)))
 			#else
 			if((currentDelimiterType == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_AUXILIARY) || ((currentDelimiterType == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_VERB) && (grammaticalBaseTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_INFINITIVE)))
@@ -714,7 +716,7 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 	
 }
 
-#ifdef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_VERB_OR_NOUN_OVER_ADJECTIVE_POS_AMBIGUITY
+#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_PREFERENCE_VERB_OR_NOUN_OVER_ADJECTIVE_POS_AMBIGUITY
 bool GIApreprocessorReferenceSetClass::determineIsVerbAndAdjective(GIApreprocessorWord* currentWordTag, bool usePOSprelim, bool grammaticallyStrict)
 {
 	bool verbAndAdjective = false;

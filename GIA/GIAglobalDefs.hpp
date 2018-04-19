@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e12a 12-February-2018
+ * Project Version: 3e12b 12-February-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -791,10 +791,11 @@
 		#endif
 		#ifdef GIA_PREPROCESSOR_SENTENCE_EXECUTE_PRELIM_POS_TAGGER
 			//#define GIA_PREPROCESSOR_POS_TAGGER_EXECUTE_BEFORE_LRP	//3e7c	//must set executeGIAgeneratePOStaggerDatabase.sh to execute GIAgeneratePOStaggerDatabase.exe without -lrp
-			#define GIA_PREPROCESSOR_SENTENCE_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
+			//#define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_SET_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
+			#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
 		#endif
-		#ifndef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
-			#define GIA_PREPROCESSOR_SENTENCE_PREFERENCE_VERB_OR_NOUN_OVER_ADJECTIVE_POS_AMBIGUITY	//doesnt work as it is unsure whether to select adjective over verb/noun or verb/noun over adjective. Therefore GIA_PREPROCESSOR_SENTENCE must rely on a functioning GIA_PREPROCESSOR_POS_TAGGER
+		#ifndef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
+			#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_PREFERENCE_VERB_OR_NOUN_OVER_ADJECTIVE_POS_AMBIGUITY	//doesnt work as it is unsure whether to select adjective over verb/noun or verb/noun over adjective. Therefore GIA_PREPROCESSOR_SENTENCE must rely on a functioning GIA_PREPROCESSOR_POS_TAGGER
 		#endif
 	//#endif
 	
