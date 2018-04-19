@@ -27,7 +27,7 @@
  * File Name: GIAtxtRelTranslatorRules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f4d 14-April-2018
+ * Project Version: 3f4e 14-April-2018
  * /
  *******************************************************************************/
  
@@ -409,10 +409,22 @@
 				</group>
 				
 
-				<group groupName="descriptiveNounWithDeterminerDefinite" semanticRelationFunctionName="numerosityDeterminer">
+				<group groupName="descriptiveNounWithDeterminerBasicDefiniteEnforced" semanticRelationFunctionName="numerosityDeterminer">
 					<!-- definiteDeterminer noun -->
 					<example><!-- the house --></example>
 					<component componentType="string" stringType="tokens" tokenLayer="POSsubsets" tokenClass="determiner" tokenType="determinerBasicDefinite" semanticRelationIndexType="object" />
+					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="descriptiveNoun" semanticRelationIndexType="subject" semanticRelationReturnEntity="true" />
+				</group>
+				<group groupName="descriptiveNounWithDeterminerBasicEnforced" semanticRelationFunctionName="numerosityDeterminer">
+					<!-- det noun -->
+					<example><!-- the house --></example>
+					<component componentType="string" stringType="tokens" tokenLayer="POSsubsets" tokenClass="determiner" tokenType="determinerBasic" semanticRelationIndexType="object" />
+					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="descriptiveNoun" semanticRelationIndexType="subject" semanticRelationReturnEntity="true" />
+				</group>
+				<group groupName="descriptiveNounWithDeterminerBasic" semanticRelationFunctionName="numerosityDeterminer">
+					<!-- {det} noun -->
+					<example><!-- {the} house --></example>
+					<component componentType="string" stringType="tokens" tokenLayer="POSsubsets" tokenClass="determiner" tokenType="determinerBasic" semanticRelationIndexType="object" optional="true" />
 					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="descriptiveNoun" semanticRelationIndexType="subject" semanticRelationReturnEntity="true" />
 				</group>
 				
@@ -598,11 +610,10 @@
 				<group groupName="possessive">
 					<component componentType="group" groupTypeName="possessiveEndingOrPronounPossessiveAdjective" semanticRelationReturnEntity="true" />
 				</group>
-				<group groupName="determinerBasicAndThingEnforced" semanticRelationFunctionName="numerosityDeterminer">	<!-- copy of "thing" group from subReferenceSets -->
+				<group groupName="determinerBasicAndThingEnforced">	<!-- copy of "thing" group from subReferenceSets -->
 					<!-- detDefinite {adv} {adj} noun -->
 					<example><!-- the {very} {big} house {that is in the house} --></example>
-					<component componentType="string" stringType="tokens" tokenLayer="POSsubsets" tokenClass="determiner" tokenType="determinerBasicDefinite" semanticRelationIndexType="object" />
-					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="descriptiveNoun" semanticRelationIndexType="subject" semanticRelationReturnEntity="true" />
+					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="descriptiveNounWithDeterminerBasicDefiniteEnforced" semanticRelationReturnEntity="true" />
 					<component componentType="group" groupTypeName="subReferenceSetsAppend" optional="true" />
 					<!--</repeat>-->
 				</group>
@@ -615,25 +626,28 @@
 				<group groupName="possessive">
 					<component componentType="group" groupTypeName="possessiveEndingOrPronounPossessiveAdjective" semanticRelationReturnEntity="true" />
 				</group>
-				<group groupName="determinerBasicAndThingEnforced" semanticRelationFunctionName="numerosityDeterminer">	<!-- copy of "thing" group from subReferenceSets -->
+				<group groupName="determinerBasicAndThingEnforced">	<!-- copy of "thing" group from subReferenceSets -->
 					<!-- det {adv} {adj} noun -->
 					<example><!-- the {very} {big} house {that is in the house} --></example>
-					<component componentType="string" stringType="tokens" tokenLayer="POSsubsets" tokenClass="determiner" tokenType="determinerBasic" semanticRelationIndexType="object" />
-					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="descriptiveNoun" semanticRelationIndexType="subject" semanticRelationReturnEntity="true" />
+					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="descriptiveNounWithDeterminerBasicEnforced" semanticRelationReturnEntity="true" />
 					<component componentType="group" groupTypeName="subReferenceSetsAppend" optional="true" />
 					<!--</repeat>-->
 				</group>
+				<!-- #ifdefGIA_TXT_REL_TRANSLATOR_RULES_INTERPRET_NUMBERS_AS_NOUNS -->
+				<group groupName="number">
+					<component componentType="string" stringType="LRPexternalWordLists" wordPOStype="number" semanticRelationReturnEntity="true" />
+				</group>
+				<!-- #endif -->	
 			</groupType>
 			<groupType groupTypeName="subReferenceSetsSpecialPossessiveOrDeterminerThing" referenceSetType="subReferenceSet">
 				<group groupName="possessive">
 					<component componentType="group" groupTypeName="possessiveEndingOrPronounPossessiveAdjective" semanticRelationReturnEntity="true" />
 				</group>
-				<group groupName="determinerBasicAndThing" semanticRelationFunctionName="numerosityDeterminer">	<!-- copy of "thing" group from subReferenceSets -->
+				<group groupName="determinerBasicAndThing">	<!-- copy of "thing" group from subReferenceSets -->
 					<!-- det {adv} {adj} noun -->
 					<example><!-- the {very} {big} house {that is in the house} --></example>
 					<!-- <component componentType="group" groupTypeName="subReferenceSetsPart" groupName="determiner" semanticRelationIndexType="object"> -->
-					<component componentType="string" stringType="tokens" tokenLayer="POSsubsets" tokenClass="determiner" tokenType="determinerBasic" semanticRelationIndexType="object" optional="true" />	<!-- CHECKTHIS; currently only accept basic determiners for definitions -->
-					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="descriptiveNoun" semanticRelationIndexType="subject" semanticRelationReturnEntity="true" />
+					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="descriptiveNounWithDeterminerBasic" semanticRelationReturnEntity="true" />
 					<component componentType="group" groupTypeName="subReferenceSetsAppend" optional="true" />
 					<!--</repeat>-->
 				</group>
@@ -1097,9 +1111,9 @@
 				<group groupName="definitionAlias5" semanticRelationFunctionName="definitionAliasWithAuxiliary">
 					<!-- aux propernoun  -->
 					<example><!-- the brown dog is the happy wolf --></example>
-					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="descriptiveNounWithDeterminerDefinite" semanticRelationIndexType="subject" />
+					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="descriptiveNounWithDeterminerBasicDefiniteEnforced" semanticRelationIndexType="subject" />
 					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="auxiliarySequenceBeingSimple" semanticRelationIndexType="delimiter" semanticRelationReturnEntity="true" />
-					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="descriptiveNounWithDeterminerDefinite" semanticRelationIndexType="object" />
+					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="descriptiveNounWithDeterminerBasicDefiniteEnforced" semanticRelationIndexType="object" />
 				</group>
 				<group groupName="general">
 					<!-- [] aux/verb [] -->
