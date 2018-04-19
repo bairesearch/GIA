@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f1v 22-February-2018
+ * Project Version: 3f1w 22-February-2018
  * Requirements: requires plain text file
  * Description: Textual relation translator
  * /
@@ -1063,10 +1063,39 @@ bool GIAtxtRelTranslatorClass::updatePerformance(const int performanceTemp, int*
 	}
 	clearAllWordsAlreadyFoundMatchInComponent(sentenceContentsSubset, minIndexOfMatchesFoundBackup);
 	
+	if(!result)
+	{
+		//delete all subgroups/components recursively in currentParseTreeGroupTemp
+		deleteAllSubgroupsRecurse(currentParseTreeGroupTemp, 1);
+	}
 	delete currentParseTreeGroupTemp;
 	
 	return result;
 }
+
+bool GIAtxtRelTranslatorClass::deleteAllSubgroupsRecurse(GIAtxtRelTranslatorRulesGroup* currentParseTreeGroup, int layer)
+{
+	bool result = true;
+	
+	for(int i=0; i<currentParseTreeGroup->components.size(); i++)
+	{
+		GIAtxtRelTranslatorRulesComponent* currentParseTreeComponent = (currentParseTreeGroup->components)[i];
+		if(currentParseTreeComponent->parseTreeGroupRef != NULL)
+		{
+			GIAtxtRelTranslatorRules.printParseTreeDebugIndentation(layer);
+			//cout << "deleteAllSubgroupsRecurse" << endl;
+			
+			if(!deleteAllSubgroupsRecurse(currentParseTreeComponent->parseTreeGroupRef, layer+1))
+			{
+				result = false;
+			}
+			delete (currentParseTreeComponent->parseTreeGroupRef);
+		}
+		
+		delete currentParseTreeComponent;
+	}
+}
+
 
 int GIAtxtRelTranslatorClass::calculateMinIndexOfMatchesFound(vector<GIApreprocessorWord*>* sentenceContentsSubset)
 {	
