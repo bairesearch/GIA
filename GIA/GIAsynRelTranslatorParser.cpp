@@ -26,7 +26,7 @@
  * File Name: GIAsynRelTranslatorParser.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f5c 15-April-2018
+ * Project Version: 3f6a 16-April-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
@@ -137,10 +137,8 @@ bool GIAsynRelTranslatorParserClass::convertSentenceSyntacticRelationsIntoGIAnet
 	#endif
 	translatorVariables->GIAentityNodeArray = &GIAentityNodeArray;
 
-	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
-	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_PREPOSITIONS
+	#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_PREPOSITIONS
 	invertOrDuplicateConditionsIfRequired(translatorVariables);
-	#endif
 	#endif
 
 	#ifdef GIA_BOT_SWITCH_FIRST_AND_SECOND_PERSON
@@ -544,8 +542,7 @@ void GIAsynRelTranslatorParserClass::disableEntitiesBasedOnFeatureTempEntityNode
 
 
 
-#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
-#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_PREPOSITIONS
+#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_PREPOSITIONS
 void GIAsynRelTranslatorParserClass::invertOrDuplicateConditionsIfRequired(GIAtranslatorVariablesClass* translatorVariables)
 {
 	GIArelation* currentRelationInList = translatorVariables->currentSentenceInList->firstRelationInList;
@@ -566,9 +563,9 @@ void GIAsynRelTranslatorParserClass::invertOrDuplicateConditionsIfRequired(GIAtr
 						bool twoWayConditionRequired = false;
 						string inverseConditionName = "";
 						
-						GIApreprocessorMultiwordReduction.detectIfInverseOrTwoWayConditionRequired(conditionName, &inverseConditionRequired, &twoWayConditionRequired, &inverseConditionName);
+						GIApreprocessorWordIdentification.detectIfInverseOrTwoWayConditionRequired(conditionName, &inverseConditionRequired, &twoWayConditionRequired, &inverseConditionName);
 
-						#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_INVERSE_PREPOSITIONS
+						#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_INVERSE_PREPOSITIONS
 						if(inverseConditionRequired)
 						{
 							createNewInverseConditionEntity(currentRelationInList, translatorVariables, inverseConditionName);
@@ -585,10 +582,10 @@ void GIAsynRelTranslatorParserClass::invertOrDuplicateConditionsIfRequired(GIAtr
 							currentRelationInList->relationDependentIndex = relationGovernorIndexTemp;
 						}
 						#endif
-						#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_TWOWAY_PREPOSITIONS
+						#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_TWOWAY_PREPOSITIONS
 						if(twoWayConditionRequired)
 						{
-							#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED
+							#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED
 							GIArelation* lastRelationInList = translatorVariables->currentSentenceInList->firstRelationInList;
 							while(lastRelationInList->next != NULL)
 							{
@@ -626,7 +623,7 @@ void GIAsynRelTranslatorParserClass::createNewInverseConditionEntity(GIArelation
 	inverseConditionEntity->entityName = inverseConditionName;
 	inverseConditionEntity->wordOrig = inverseConditionName;	//is this necessary?
 	//why not set inverseConditionEntity->entityIndexTemp and inverseConditionEntity->sentenceIndexTemp?
-	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_INVERSE_PREPOSITIONS
+	#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_INVERSE_PREPOSITIONS
 	currentRelationInList->relationTypeNonInversed = currentRelationInList->relationType;
 	currentRelationInList->relationTypeIndexNonInversed = currentRelationInList->relationTypeIndex;
 	#endif
@@ -642,7 +639,6 @@ void GIAsynRelTranslatorParserClass::createNewInverseConditionEntity(GIArelation
 }
 
 
-#endif
 #endif
 
 

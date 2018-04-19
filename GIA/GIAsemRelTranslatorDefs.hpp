@@ -26,7 +26,7 @@
  * File Name: GIAsemRelTranslatorDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f5c 15-April-2018
+ * Project Version: 3f6a 16-April-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -357,10 +357,10 @@ static string GIA2semanticDependencyRelationSecondaryNameArray[GIA_SEM_REL_TRANS
 #ifdef GIA_TXT_REL_TRANSLATOR_RULES
 //#ifdef GIA_TXT_REL_TRANSLATOR_RULES_ENTITY_GRAMMAR
 #define GIA_ENTITY_VECTOR_CONNECTION_TYPE_MULTIWORD_AUXILIARY (24)
-//#ifndef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
-#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_MULTIWORD_PREPOSITION (25)	//assumes that GIA_PREPROCESSOR_MULTIWORD_REDUCTION multiword preposition reduction is disabled
+//#ifndef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
+#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_MULTIWORD_PREPOSITION (25)	//assumes that GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION multiword preposition reduction is disabled
 //#endif
-#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_MULTIWORD_ALIAS (26)	//assumes that GIA_PREPROCESSOR_MULTIWORD_REDUCTION multiword preposition reduction is disabled
+#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_MULTIWORD_ALIAS (26)
 #define GIA_ENTITY_VECTOR_CONNECTION_TYPE_MULTIWORD_DATE (27)
 #define GIA_ENTITY_VECTOR_CONNECTION_TYPE_PREDETERMINER (28)
 //#endif

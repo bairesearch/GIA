@@ -23,33 +23,39 @@
 
 /*******************************************************************************
  *
- * File Name: GIApreprocessorMultiwordReduction.hpp
+ * File Name: GIApreprocessorWordIdentification.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f5c 15-April-2018
+ * Project Version: 3f6a 16-April-2018
  * Requirements: requires plain text file
- * Description: Preprocessor Multiword Reduction
+ * Description: Preprocessor Word Identification
  * /
  *******************************************************************************/
 
 
-#ifndef HEADER_GIA_PREPROCESSOR_MULTIWORD_REDUCTION
-#define HEADER_GIA_PREPROCESSOR_MULTIWORD_REDUCTION
+#ifndef HEADER_GIA_PREPROCESSOR_WORD_IDENTIFICATION
+#define HEADER_GIA_PREPROCESSOR_WORD_IDENTIFICATION
 
 #include "GIAglobalDefs.hpp"
 #include "GIAsentenceClass.hpp"
 #include "GIApreprocessorSentenceClass.hpp"
-#include "GIApreprocessorMultiwordReductionClass.hpp" 
+#include "GIApreprocessorWordClass.hpp" 
+#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
+#include "GIApreprocessorWordReduction.hpp" 
+#endif
 #include "SHAREDvars.hpp"	//file io
 
 
 
 
 
-class GIApreprocessorMultiwordReductionClass
+class GIApreprocessorWordIdentificationClass
 {
 	private: SHAREDvarsClass SHAREDvars;
-	private: GIApreprocessorMultiwordReductionClassClass GIApreprocessorMultiwordReductionClassObject;
+	private: GIApreprocessorWordClassClass GIApreprocessorWordClassObject;
+	#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
+	private: GIApreprocessorWordReductionClass GIApreprocessorWordReduction;
+	#endif
 
 	private: unordered_map<string, GIApreprocessorMultiwordReductionWord*>* getWordList(const int GIAposType);
 		private: unordered_map<string, GIApreprocessorMultiwordReductionWord*>* getWordListIfExistent(const int GIAposType, bool* result);
@@ -70,42 +76,16 @@ class GIApreprocessorMultiwordReductionClass
 		private: bool loadWordListWrapper(bool* wordListLoaded, const string wordListFileName, unordered_map<string, GIApreprocessorMultiwordReductionWord*>* wordList);
 			private: bool loadWordList(const string wordListFileName, unordered_map<string, GIApreprocessorMultiwordReductionWord*>* wordList);
 		private: bool loadStructuredDataListIrregularVerb(const string irregularVerbListFileName, unordered_map<string, GIApreprocessorMultiwordReductionIrregularVerbSentence*>* irregularVerbList);
-		private: bool loadPhrasalVerbDataAndGenerateAllTenseVariants(const string phrasalVerbDatabaseFileName, multimap<string, GIApreprocessorMultiwordReductionPhrasalVerbSentence*>* phrasalVerbList, unordered_map<string, GIApreprocessorMultiwordReductionIrregularVerbSentence*>* irregularVerbList);
-	
-	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
-	public: GIApreprocessorMultiwordReductionTagTextCorrespondenceInfo* getActiveGIApreprocessorMultiwordReductionTagTextCorrespondenceInfo();
-	public: void setActiveGIApreprocessorMultiwordReductionTagTextCorrespondenceInfo(const bool isQuery);
-	public: void initialiseActiveGIApreprocessorMultiwordReductionTagTextCorrespondenceInfo(const bool isQuery);
-	public: void deinitialiseActiveGIApreprocessorMultiwordReductionTagTextCorrespondenceInfo(const bool isQuery);
-	
-	public: bool parseTextFileAndReduceLanguage(GIApreprocessorSentence* firstGIApreprocessorSentenceInList, const string plainTextLRPoutputFileName, const string plainTextLRPforNLPoutputFileName);
-		//public: bool loadPlainTextFile(const string plainTextInputFileName, GIApreprocessorMultiwordReductionSentence* firstTagInPlainText);
-		private: bool searchAndReplacePhrasalVerbs(GIApreprocessorSentence* firstGIApreprocessorSentenceInList, multimap<string, GIApreprocessorMultiwordReductionPhrasalVerbSentence*>* phrasalVerbList, GIApreprocessorMultiwordReductionTagTextCorrespondenceInfo* firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo);
-		private: bool loadMultiwordWordList(const string multiwordWordListFileName, multimap<string, GIApreprocessorMultiwordReductionBasicSentence*>* multiwordWordList);
-		private: bool searchAndReplaceMultiwordWordList(GIApreprocessorSentence* firstGIApreprocessorSentenceInList, multimap<string, GIApreprocessorMultiwordReductionBasicSentence*>* multiwordWordList, GIApreprocessorMultiwordReductionTagTextCorrespondenceInfo* firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, const int wordListType);
-		#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DYNAMIC
-		private: bool searchAndReplaceMultiwordWordListDynamic(GIApreprocessorSentence* firstGIApreprocessorSentenceInList, unordered_map<string, GIApreprocessorMultiwordReductionWord*>* wordList, GIApreprocessorMultiwordReductionTagTextCorrespondenceInfo* firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, const int wordListType);
-		#endif		
-			private: void createNewCorrespondenceInfo(GIApreprocessorMultiwordReductionTagTextCorrespondenceInfo* firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, GIApreprocessorMultiwordReductionTagTextCorrespondenceInfo** currentCorrespondenceInfo, GIApreprocessorSentence* currentGIApreprocessorSentenceInList, GIApreprocessorMultiwordReductionPlainTextWord* firstTagInPlainTextSentence, GIApreprocessorMultiwordReductionPlainTextWord** currentTagInPlainTextSentence, int entityIndex, int numberWordsInMultiwordMatched);
-			private: void renumberEntityIndiciesInCorrespondenceInfo(GIApreprocessorMultiwordReductionTagTextCorrespondenceInfo* firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, int sentenceIndex, int entityIndex, int numberWordsInMultiwordMatched);
-		public: bool writeTagListToFile(const GIApreprocessorSentence* firstGIApreprocessorSentenceInList, const string plainTextLRPoutputFileName, const string plainTextLRPforNLPoutputFileName, const bool performLRPoutput, const bool performLRPforNLPoutput);
-			private: string generateWordWithLRPforNLPonly(const GIApreprocessorMultiwordReductionPlainTextWord* currentTagInPlainTextSentence);
-	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_REPLACE_OUTPUT_FOR_NLP_TEMPORARILY
-	public: void revertNLPtagNameToOfficialLRPtagName(GIAfeature* feature, const GIAsentence* currentSentenceInList, const GIArelation* currentRelationInListForPrepositionsOnly, const bool isPreposition, bool* foundOfficialLRPreplacementString);
-	#endif
-	#endif
 
 	#ifdef GIA_PREPROCESSOR_DERIVE_NOUN_VARIANTS
 	private: bool generateNounPluralVariantsList(unordered_map<string, GIApreprocessorMultiwordReductionBasicSentence*>* irregularNounList);
 		private: bool generateNounPluralVariants(GIApreprocessorMultiwordReductionWord* wordTag, unordered_map<string, GIApreprocessorMultiwordReductionWord*>* nounPluralVariantsList, unordered_map<string, GIApreprocessorMultiwordReductionBasicSentence*>* irregularNounList);
 	#endif
 	
-	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_LOAD_WORD_LISTS
+	#ifdef GIA_PREPROCESSOR_WORD_LOAD_WORD_LISTS
 	public: bool generateVerbCaseStandardAndAdditionalList(bool grammaticallyStrict);
 	#endif	
-		private: bool generateIrregularTenseVariantsOfVerbBase(GIApreprocessorMultiwordReductionWord* baseTag, unordered_map<string, GIApreprocessorMultiwordReductionIrregularVerbSentence*>* irregularVerbList, bool grammaticallyStrict);	
-		private: bool generateStandardTenseVariantsOfVerbBase(GIApreprocessorMultiwordReductionWord* baseTag, bool irregularVerbFound, bool grammaticallyStrict);
-		#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_LOAD_WORD_LISTS
+		#ifdef GIA_PREPROCESSOR_WORD_LOAD_WORD_LISTS
 		private: bool generateAdditionalTenseVariantsOfVerbBase(unordered_map<string, GIApreprocessorMultiwordReductionWord*>* verbCaseAdditionalList, GIApreprocessorMultiwordReductionWord* baseTag, bool irregularVerbFound, bool grammaticallyStrict);
 			private: void addVerbCaseAdditional(GIApreprocessorMultiwordReductionWord* currentTagInVerbList, unordered_map<string, GIApreprocessorMultiwordReductionWord*>* verbCaseAdditionalList, const string baseTenseFormStart, string baseTenseFormAppend, int grammaticalTenseFormNew);
 		#endif
@@ -120,12 +100,12 @@ class GIApreprocessorMultiwordReductionClass
 	#endif
 	#endif
 
-	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_LOAD_INVERSE_PREPOSITIONS_LIST
+	#ifdef GIA_PREPROCESSOR_WORD_LOAD_INVERSE_PREPOSITIONS_LIST
 	private: bool loadStructuredDataList(const string prepositionsInverseListFileName, unordered_map<string, GIApreprocessorMultiwordReductionBasicSentence*>* prepositionInverseList);
 	#endif
-	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_PREPOSITIONS
+	#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_PREPOSITIONS
 	public: void detectIfInverseOrTwoWayConditionRequired(const string conditionName, bool* inverseConditionRequired, bool* twoWayConditionRequired, string* inverseConditionName);
-	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DETECT_PREPOSITION_TYPE
+	#ifdef GIA_PREPROCESSOR_WORD_DETECT_PREPOSITION_TYPE
 	public: bool identifyConditionType(GIAentityNode* conditionRelationshipEntity);
 	#endif
 	#endif
@@ -137,25 +117,26 @@ class GIApreprocessorMultiwordReductionClass
 			public: bool determineIsWordType(const string word, unordered_map<string, GIApreprocessorMultiwordReductionWord*>* wordTypeList);
 	public: bool determineIsVerb(GIApreprocessorPlainTextWord* wordTag, const bool usePOSprelim, const bool grammaticallyStrict);	
 		public: bool determineIsVerb(GIApreprocessorPlainTextWord* wordTag, const bool usePOSprelim, const bool grammaticallyStrict, string* baseNameFound, int* grammaticalBaseTenseForm);
+		public: bool determineIsVerbString(const string word);
 			public: bool determineVerbCaseStandardWithAdditional(const string word, string* baseNameFound, int* grammaticalBaseTenseForm);
 				public: bool determineVerbCaseStandard(const string word, string* baseNameFound, int* grammaticalBaseTenseForm);
 				public: bool determineVerbCaseAdditional(const string word, string* baseNameFound, int* grammaticalBaseTenseForm);
 				//public: bool convertVerbCaseGrammaticalTenseFormToTenseModifier(const int grammaticalTenseForm, int* grammaticalTenseModifier);
 				public: bool verbCaseDetectGrammaticallyStrictVariant(const int grammaticalTenseForm);
 	public: bool determineIsPreposition(GIApreprocessorPlainTextWord* wordTag, const bool usePOSprelim);
-		//public: bool determineIsPreposition(const string word);
+		public: bool determineIsPrepositionString(const string word);
 	public: bool determineIsAdverb(GIApreprocessorPlainTextWord* wordTag, const bool usePOSprelim);
-		//public: bool determineIsAdverb(const string word);
+		public: bool determineIsAdverbString(const string word);
 	public: bool determineIsAdjective(GIApreprocessorPlainTextWord* wordTag, const bool usePOSprelim);
-		//public: bool determineIsAdjective(const string word);
+		public: bool determineIsAdjectiveString(const string word);
 	public: bool determineIsNoun(GIApreprocessorPlainTextWord* wordTag, const bool usePOSprelim);
 		public: bool determineIsNoun(GIApreprocessorPlainTextWord* wordTag, const bool usePOSprelim, string* baseNameFound, int* grammaticalBaseForm);
-			//public: bool determineIsNoun(const string word);
+			public: bool determineIsNounString(const string word);
 			public: bool determineNounPluralVariant(const string word, GIApreprocessorMultiwordReductionWord** nounBaseFound, int* grammaticalBaseTenseForm);
 	public: bool determineIsConjunction(GIApreprocessorPlainTextWord* wordTag, const bool usePOSprelim);
-		//public: bool determineIsConjunction(const string word);
+		//public: bool determineIsConjunctionString(const string word);
 	public: bool determineIsDeterminer(GIApreprocessorPlainTextWord* wordTag, const bool usePOSprelim);
-		//public: bool determineIsDeterminer(const string word);
+		//public: bool determineIsDeterminerString(const string word);
 	public: bool determineIsAuxiliaryBeing(GIApreprocessorPlainTextWord* wordTag, const bool usePOSprelim);
 	public: bool determineIsAuxiliaryHaving(GIApreprocessorPlainTextWord* wordTag, const bool usePOSprelim);
 	public: bool determineIsAuxiliaryDoing(GIApreprocessorPlainTextWord* wordTag, const bool usePOSprelim);
@@ -166,16 +147,8 @@ class GIApreprocessorMultiwordReductionClass
 	public: bool findWordInWordList(unordered_map<string, GIApreprocessorMultiwordReductionWord*>* wordList, const string word);
 		public: bool findWordInWordList(unordered_map<string, GIApreprocessorMultiwordReductionWord*>* wordList, const string word, GIApreprocessorMultiwordReductionWord** wordFound);
 	public: bool findSentenceInSentenceListBasic(unordered_map<string, GIApreprocessorMultiwordReductionBasicSentence*>* sentenceList, const string word, GIApreprocessorMultiwordReductionBasicSentence** sentenceFound);
-	public: bool findSentenceInSentenceListIrregularVerb(unordered_map<string, GIApreprocessorMultiwordReductionIrregularVerbSentence*>* sentenceList, const string word, GIApreprocessorMultiwordReductionIrregularVerbSentence** sentenceFound);
 	#ifdef GIA_PREPROCESSOR_INITIALISE_WORD_INDEX_LIST_FROM_LRP_FILES
 	public: bool createWordIndexListFromLRPfiles();
-	#endif
-	
-	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_COLLAPSE_NUMERICAL_WORDS_TO_NUMBERS
-	private: bool replaceAllNumericalWordsWithNumbers(GIApreprocessorSentence* firstGIApreprocessorSentenceInList);
-		private: long convertWordToNumber(vector<GIApreprocessorPlainTextWord*>* numericalWordList);
-			private: long parseNumerals(vector<GIApreprocessorPlainTextWord*>* numericalWordListSubset);
-				private: long getValueOf(const string wordText);
 	#endif
 			
 };

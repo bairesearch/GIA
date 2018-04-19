@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorHybrid.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f5c 15-April-2018
+ * Project Version: 3f6a 16-April-2018
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Hybrid
  * /
@@ -37,8 +37,11 @@
 #define HEADER_GIA_TXT_REL_TRANSLATOR_HYBRID
 
 #include "GIAglobalDefs.hpp"
-#include "GIApreprocessorMultiwordReductionClass.hpp"
-#include "GIApreprocessorMultiwordReduction.hpp"
+#include "GIApreprocessorWordClass.hpp"
+#include "GIApreprocessorWordIdentification.hpp"
+#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
+#include "GIApreprocessorWordReduction.hpp" 
+#endif
 #include "GIAtranslatorOperations.hpp"
 #include "GIAtxtRelTranslatorHybridSentenceClass.hpp"
 #ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_DEPRECIATED
@@ -64,8 +67,11 @@ class GIAtxtRelTranslatorHybridClass
 {
 	//private: XMLparserClassClass XMLparserClass;
 	private: SHAREDvarsClass SHAREDvars;
-	private: GIApreprocessorMultiwordReductionClassClass GIApreprocessorMultiwordReductionClassObject;
-	private: GIApreprocessorMultiwordReductionClass GIApreprocessorMultiwordReduction;
+	private: GIApreprocessorWordClassClass GIApreprocessorWordClassObject;
+	private: GIApreprocessorWordIdentificationClass GIApreprocessorWordIdentification;
+	#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
+	private: GIApreprocessorWordReductionClass GIApreprocessorWordReduction;
+	#endif
 	private: GIAtranslatorOperationsClass GIAtranslatorOperations;
 	private: GIAtxtRelTranslatorHybridSentenceClassClass GIAtxtRelTranslatorHybridSentenceClass;
 	#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_DEPRECIATED
@@ -94,7 +100,7 @@ class GIAtxtRelTranslatorHybridClass
 				private: void generateLogicReferenceSetContentsWithVariableNamesConjunction(string* logicReferenceSetContentsWithVariableNames, GIAtxtRelTranslatorHybridLogicReference* conjunctionLogicReference, int* sentenceIndex);
 			#endif
 			private: void addSentenceToSentenceContentsPreprocessedLogicReferenceVariables(string* sentenceContentsPreprocessedLogicReferenceVariables, string* sentenceContentsPreprocessedLogicReferenceVariablesForNLP, GIApreprocessorSubReferenceSet* referenceSet, int* sentenceIndex, int referenceSetType);
-	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
+	#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
 	public: bool updateGIApreprocessorMultiwordReductionTagTextCorrespondenceInfo(GIApreprocessorSentence* firstGIApreprocessorSentenceInList, const bool isQuery);
 		private: bool getGIApreprocessorSentence(GIApreprocessorSentence* firstGIApreprocessorSentenceInList, const int sentenceIndexOriginal, GIApreprocessorSentence** GIApreprocessorSentenceFound);
 		private: bool getGIAtxtRelTranslatorHybridReferenceSet(GIAtxtRelTranslatorHybridLogicReference* firstGIAtxtRelTranslatorHybridLogicReferenceInList, const int entityIndexOriginal, GIApreprocessorSubReferenceSet** GIApreprocessorSubReferenceSetFound);

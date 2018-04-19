@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f5c 15-April-2018
+ * Project Version: 3f6a 16-April-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  * /
@@ -749,9 +749,9 @@
 //#define GIA_DEBUG_DISABLE_3f_CODE
 #ifndef GIA_DEBUG_DISABLE_3f_CODE
 	
-	#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_VARIANTS_PRORITISE_IRREGULAR_VERB_INFO	//3f2i
+	#define GIA_PREPROCESSOR_WORD_VERB_VARIANTS_PRORITISE_IRREGULAR_VERB_INFO	//3f2i
 	
-	#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NOUN_VARIANTS_PRIORITISE_IRREGULAR_PLURAL_FORM	//3f5a 
+	#define GIA_PREPROCESSOR_WORD_NOUN_VARIANTS_PRIORITISE_IRREGULAR_PLURAL_FORM	//3f5a 
 	
 	#ifdef GIA_TXT_REL_TRANSLATOR
 		
@@ -828,11 +828,11 @@
 				
 				#define GIA_TXT_REL_TRANSLATOR_RULES_GIA3_CONNECT_MEAURES_AS_CONDITIONS_BACKWARDS_COMPATIBILITY
 				
-				#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_COLLAPSE_NUMERICAL_WORDS_TO_NUMBERS
+				#define GIA_PREPROCESSOR_WORD_COLLAPSE_NUMERICAL_WORDS_TO_NUMBERS
 
 				#define GIA_TXT_REL_TRANSLATOR_RULES_GIA3_COLLAPSE_ALIASES_ONLY	//this is required for GIA3 as there is no independent relation distribution stage (to collapse entity names) before which networkIndex nodes are defined
 				
-				#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_STORE_REDUNDANT_SUPERSET_WORD_LISTS	//e.g. record pronoun list, not just specific pronoun lists (not supported by GIA pos tagger; only supported by GIA_TXT_REL_TRANSLATOR_RULES)
+				#define GIA_PREPROCESSOR_WORD_STORE_REDUNDANT_SUPERSET_WORD_LISTS	//e.g. record pronoun list, not just specific pronoun lists (not supported by GIA pos tagger; only supported by GIA_TXT_REL_TRANSLATOR_RULES)
 				
 				#define GIA_TXT_REL_TRANSLATOR_RULES_PARSE_SUBREFERENCE_SETS	//mandatory (equivalent to GIA_TXT_REL_TRANSLATOR_RULES_GIA3)
 				//#define GIA_TXT_REL_TRANSLATOR_HYBRID_RECONCILE_REFERENCES_AFTER_SEMANTIC_PARSING_EVERY_SENTENCE	//???
@@ -941,11 +941,11 @@
 		#define GIA_TXT_REL_TRANSLATOR_HYBRID_DETERMINE_AMBIGUOUS_PREPOSITION_POS_TYPES_BASED_ON_CONTEXT_METHOD2
 	#endif
 	
-	//#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DYNAMIC //3e11a	//collapses any two consective words found in same wordlist (ie predicted to be of same pos type); even if this is not 100% accuracy (due to ambiguous POS types) it should be sufficient for GIA pos tagger database training
-	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DYNAMIC
-		//#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_COLLAPSE_AUXILIARY_LISTS_TO_VERB_LISTS	//assumes GIA LRP wordlists.txt index file includes auxiliary lists (they are not treated as verbs)
-		//#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_COLLAPSE_AUXILIARY_LISTS_TO_AUXILIARY_LIST	//not yet supported	//assumes GIA LRP wordlists.txt index file includes auxiliary lists (they are not treated as verbs)
-		//#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_COLLAPSE_PREDETERMINER_LIST_TO_DETERMINER_LIST
+	//#define GIA_PREPROCESSOR_WORD_DYNAMIC //3e11a	//collapses any two consective words found in same wordlist (ie predicted to be of same pos type); even if this is not 100% accuracy (due to ambiguous POS types) it should be sufficient for GIA pos tagger database training
+	#ifdef GIA_PREPROCESSOR_WORD_DYNAMIC
+		//#define GIA_PREPROCESSOR_WORD_COLLAPSE_AUXILIARY_LISTS_TO_VERB_LISTS	//assumes GIA LRP wordlists.txt index file includes auxiliary lists (they are not treated as verbs)
+		//#define GIA_PREPROCESSOR_WORD_COLLAPSE_AUXILIARY_LISTS_TO_AUXILIARY_LIST	//not yet supported	//assumes GIA LRP wordlists.txt index file includes auxiliary lists (they are not treated as verbs)
+		//#define GIA_PREPROCESSOR_WORD_COLLAPSE_PREDETERMINER_LIST_TO_DETERMINER_LIST
 	#endif
 	
 	#define GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_DELIMITER_SPECIAL_CASE_DELIMITER_VERB_STATE_SUCCEEDED_BY_NOUN
@@ -1237,25 +1237,25 @@
 	
 	//#ifdef GIA_PREPROCESSOR	//has not yet been defined
 		#define GIA_PREPROCESSOR_RECORD_REFERENCES	//3b2a	//required by GIAI
-		//#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_INTRAWORD_PUNCTUATION_MARK	//has not yet been defined
-			#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_ABBREVIATIONS	//3b2e
-			#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_ABBREVIATIONS
-				#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_ABBREVIATIONS_TITLE_PREFIXES_NUMBER_OF_TYPES (26)
-				static string preprocessorSupportAbbreviationsTitlePrefixesArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_ABBREVIATIONS_TITLE_PREFIXES_NUMBER_OF_TYPES] = {"1Lt.", "1stLt.", "2Lt.", "2ndLt.", "Amb.", "BGen.", "BrigGen.", "Capt.", "Col.", "Dr.", "Drs.", "Gen.", "Gov.", "Hon.", "LtCol.", "LtGen.", "MSgt.", "Maj.", "MajGen.", "Mdme.", "Mr.", "Mrs.", "Ms.", "Msgr.", "Prof.", "Rev."};
+		//#ifdef GIA_PREPROCESSOR_WORD_NLP_PARSABLE_PHRASE_SUPPORT_INTRAWORD_PUNCTUATION_MARK	//has not yet been defined
+			#define GIA_PREPROCESSOR_WORD_NLP_PARSABLE_PHRASE_SUPPORT_ABBREVIATIONS	//3b2e
+			#ifdef GIA_PREPROCESSOR_WORD_NLP_PARSABLE_PHRASE_SUPPORT_ABBREVIATIONS
+				#define GIA_PREPROCESSOR_WORD_NLP_PARSABLE_PHRASE_SUPPORT_ABBREVIATIONS_TITLE_PREFIXES_NUMBER_OF_TYPES (26)
+				static string preprocessorSupportAbbreviationsTitlePrefixesArray[GIA_PREPROCESSOR_WORD_NLP_PARSABLE_PHRASE_SUPPORT_ABBREVIATIONS_TITLE_PREFIXES_NUMBER_OF_TYPES] = {"1Lt.", "1stLt.", "2Lt.", "2ndLt.", "Amb.", "BGen.", "BrigGen.", "Capt.", "Col.", "Dr.", "Drs.", "Gen.", "Gov.", "Hon.", "LtCol.", "LtGen.", "MSgt.", "Maj.", "MajGen.", "Mdme.", "Mr.", "Mrs.", "Ms.", "Msgr.", "Prof.", "Rev."};
 			#endif
 		//#endif
-		#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_APOSTROPHES_POSSESSION_AND_OMISSION	//3b2e
-		#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_DOLLARS //3b2e
+		#define GIA_PREPROCESSOR_WORD_NLP_PARSABLE_PHRASE_SUPPORT_APOSTROPHES_POSSESSION_AND_OMISSION	//3b2e
+		#define GIA_PREPROCESSOR_WORD_NLP_PARSABLE_PHRASE_SUPPORT_DOLLARS //3b2e
 		#ifdef USE_NLC
-			#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_EXTRACT_INDENTATION	//3b3a upgraded for NLC
-			#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_EXTRACT_INDENTATION
+			#define GIA_PREPROCESSOR_WORD_EXTRACT_INDENTATION	//3b3a upgraded for NLC
+			#ifdef GIA_PREPROCESSOR_WORD_EXTRACT_INDENTATION
 				#define GIA_PREPROCESSOR_INDENTATION_CHAR CHAR_TAB
 			#endif
-			#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_REDUCE_QUOTES_TO_SINGLE_WORDS	//GIA 2b4a	//disabled 2i36a	//3b3a restored and upgraded for NLC
+			#define GIA_PREPROCESSOR_WORD_REDUCE_QUOTES_TO_SINGLE_WORDS	//GIA 2b4a	//disabled 2i36a	//3b3a restored and upgraded for NLC
 		#endif	
-		#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_MATH	//3b3a	//required for NLC
-		#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_MATH
-			#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_MATH_GROUPING	//3b3a - required for current NLC implementation; e.g. see how preprocessorMathOperatorsEquivalentConjunctions are defined [need to detect individual opening/closing brackets]
+		#define GIA_PREPROCESSOR_WORD_NLP_PARSABLE_PHRASE_SUPPORT_MATH	//3b3a	//required for NLC
+		#ifdef GIA_PREPROCESSOR_WORD_NLP_PARSABLE_PHRASE_SUPPORT_MATH
+			#define GIA_PREPROCESSOR_WORD_NLP_PARSABLE_PHRASE_SUPPORT_MATH_GROUPING	//3b3a - required for current NLC implementation; e.g. see how preprocessorMathOperatorsEquivalentConjunctions are defined [need to detect individual opening/closing brackets]
 		#endif
 		#define GIA_STANFORD_PARSER_AND_CORENLP_FEATURE_PARSER_ANOMALY_WORD_CHANGES	//3b5b
 		#ifdef GIA_STANFORD_PARSER_AND_CORENLP_FEATURE_PARSER_ANOMALY_WORD_CHANGES
@@ -1302,7 +1302,7 @@
 		//#define GIA_REFERENCING_UPDATE_ENTITY_INDEXES_OF_REFERENCE_SOURCE_TO_THOSE_OF_CURRENT_SENTENCE_NETWORK_INDICES
 	#endif
 	#define GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DISABLE_SUBCLASSES
-	#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_REINSERT_NEWLINE_CHARACTERS_AFTER_EVERY_SENTENCE	//added 3a1a
+	#define GIA_PREPROCESSOR_WORD_REINSERT_NEWLINE_CHARACTERS_AFTER_EVERY_SENTENCE	//added 3a1a
 	#define GIA_ENTITY_CONNECTION_RECORD_ENTITY_ORIGIN
 	#ifdef GIA_ENTITY_CONNECTION_RECORD_ENTITY_ORIGIN
 		#define GIA_ENTITY_CONNECTION_RECORD_RELATIONSHIP_TYPE	//this is required for !GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS generalised code
@@ -1319,7 +1319,7 @@
 	#ifdef GIA_PREPROCESSOR
 		//#define GIA_PREPROCESSOR_SUPPORT_PUNCTUATION_MARKS_WITH_PRECEEDING_WHITE_SPACE	//not yet coded: do not currently support punctuation marks with preceeding white space. Currently skip (do not parse) multiple white space/punctuation characters (eg ". "/".."/"  "/" .")	
 
-		#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_LOAD_WORD_LISTS
+		#define GIA_PREPROCESSOR_WORD_LOAD_WORD_LISTS
 		#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID
 					
 			//#define GIA_TXT_REL_TRANSLATOR_HYBRID_TEMPORARY_SENTENCE_INDEX (-2)
@@ -1617,9 +1617,9 @@
 	#ifndef GIA_ENABLE_CONCEPT_ADVANCED_REFERENCING
 		#define GIA_TRANSLATOR_DREAM_MODE_LINK_SPECIFIC_CONCEPTS_AND_ACTIONS_ADVANCED //2i19a, disabled 2i27a
 	#endif
-	#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_INTRAWORD_PUNCTUATION_MARK
-	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_INTRAWORD_PUNCTUATION_MARK
-		#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_FILENAMES_WITH_FULLSTOPS_AND_FLOATS_AND_TIMES	//2i18a
+	#define GIA_PREPROCESSOR_WORD_NLP_PARSABLE_PHRASE_SUPPORT_INTRAWORD_PUNCTUATION_MARK
+	#ifdef GIA_PREPROCESSOR_WORD_NLP_PARSABLE_PHRASE_SUPPORT_INTRAWORD_PUNCTUATION_MARK
+		#define GIA_PREPROCESSOR_WORD_NLP_PARSABLE_PHRASE_SUPPORT_FILENAMES_WITH_FULLSTOPS_AND_FLOATS_AND_TIMES	//2i18a
 	#endif
 	#define GIA_SYN_REL_TRANSLATOR_CONVERT_AMOD_WITH_NUMBERS_TO_QUANTITY_RELATION	//2i12a
 	#define GIA_TRANSLATOR_DO_NOT_CREATE_CONCEPT_PROPERTIES_FOR_NON_CONCEPT_PARENTS	//2i10a
@@ -1644,21 +1644,21 @@
 #ifndef GIA_DEBUG_DISABLE_2h_CODE
 	#define GIA_SPATIOTEMPORAL_NETWORK		//yet to implement ~2h2a/17-November-2014+
 	#ifdef GIA_SPATIOTEMPORAL_NETWORK
-		//#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION	//not yet defined
-			#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_PREPOSITIONS	//added 2h1a/14-November-2014 - required for NLC 1m1a+
-			#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_PREPOSITIONS
-				#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_PREPOSITIONS_INVERSE_TAG_NAME_NULL "NULL"
-				#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_LOAD_INVERSE_PREPOSITIONS_LIST
-				#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_INVERSE_PREPOSITIONS
-				#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_TWOWAY_PREPOSITIONS
-				#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_TWOWAY_PREPOSITIONS
+		//#ifdef GIA_PREPROCESSOR_WORD	//not yet defined
+			#define GIA_PREPROCESSOR_WORD_NORMALISE_PREPOSITIONS	//added 2h1a/14-November-2014 - required for NLC 1m1a+
+			#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_PREPOSITIONS
+				#define GIA_PREPROCESSOR_WORD_NORMALISE_PREPOSITIONS_INVERSE_TAG_NAME_NULL "NULL"
+				#define GIA_PREPROCESSOR_WORD_LOAD_INVERSE_PREPOSITIONS_LIST
+				#define GIA_PREPROCESSOR_WORD_NORMALISE_INVERSE_PREPOSITIONS
+				#define GIA_PREPROCESSOR_WORD_NORMALISE_TWOWAY_PREPOSITIONS
+				#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_TWOWAY_PREPOSITIONS
 					#ifdef GIA_DISABLE_CROSS_SENTENCE_REFERENCING
-						#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_DISABLED	//only create twoway condition links in derivatives (eg NLC)
+						#define GIA_PREPROCESSOR_WORD_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_DISABLED	//only create twoway condition links in derivatives (eg NLC)
 					#else
-						#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED	//required for GIA advanced referencing
+						#define GIA_PREPROCESSOR_WORD_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED	//required for GIA advanced referencing
 					#endif
 				#endif
-				#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DETECT_PREPOSITION_TYPE		//added 2h1a/14-November-2014 - required for NLC 1m1a+
+				#define GIA_PREPROCESSOR_WORD_DETECT_PREPOSITION_TYPE		//added 2h1a/14-November-2014 - required for NLC 1m1a+
 			#endif
 		//#endif
 		#define GIA_ACTIONS_OF_ACTIONS
@@ -1698,7 +1698,7 @@
 	#define GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_BEING_EG_BEING_INTO_A_DEFINITION_BASIC	//removed 3a1a
 #endif
 
-#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_REDUCE_QUOTES_TO_SINGLE_WORDS
+#ifdef GIA_PREPROCESSOR_WORD_REDUCE_QUOTES_TO_SINGLE_WORDS
 	#define GIA_ASSUME_QUOTES_HAVE_BEEN_REDUCED_TO_SINGLE_WORDS	//added 2i36a
 #endif
 	
@@ -1774,7 +1774,7 @@
 
 //variables currently being tested (1t1a+)
 #define GIA_TRANSLATOR_XML_INTERPRETATION
-//#define GIA_TEMPORARY_COMPILATION_GCC_FLAG_E_PREPROCESS_TRANSLATOR_XML_FILES	//for use with compileGIAstopAfterPreprocessingXML.bat only: g++ -E GIAmain.cpp GIAparser.cpp GIAtranslator.cpp GIAtranslatorGrammar.cpp GIAtranslatorReferencing.cpp GIAsynRelTranslatorRedistributeRelationsStanford.xml GIAsynRelTranslatorRedistributeRelationsRelex.xml GIAsynRelTranslatorDefineSubstances.xml GIAsynRelTranslatorLinkEntities.xml GIAsynRelTranslatorApplyAdvancedFeatures.xml GIAtranslatorOperations.cpp GIAentityNodeClass.cpp GIAentityConnectionClass.cpp GIAconditionNodeClass.cpp GIAsentenceClass.cpp GIAdraw.cpp GIAxmlConversion.cpp GIAcxlConversion.cpp GIAquery.cpp GIAdatabase.cpp GIAnlp.cpp GIAwordnet.cpp GIAnlg.cpp GIApreprocessorMultiwordReduction.cpp GIAbot.cpp XMLparserClass.cpp XMLrulesClass.cpp LDsvg.cpp LDopengl.cpp LDparser.cpp LDsprite.cpp LDreferenceManipulation.cpp LDreferenceClass.cpp RToperations.cpp  RTparser.cpp  RTpixelMaps.cpp  RTppm.cpp  RTraytracer.cpp  RTreferenceManipulation.cpp  RTscene.cpp  RTviewinfo.cpp SHAREDglobalDefs.cpp SHAREDvector.cpp SHAREDvars.cpp
+//#define GIA_TEMPORARY_COMPILATION_GCC_FLAG_E_PREPROCESS_TRANSLATOR_XML_FILES	//for use with compileGIAstopAfterPreprocessingXML.bat only: g++ -E GIAmain.cpp GIAparser.cpp GIAtranslator.cpp GIAtranslatorGrammar.cpp GIAtranslatorReferencing.cpp GIAsynRelTranslatorRedistributeRelationsStanford.xml GIAsynRelTranslatorRedistributeRelationsRelex.xml GIAsynRelTranslatorDefineSubstances.xml GIAsynRelTranslatorLinkEntities.xml GIAsynRelTranslatorApplyAdvancedFeatures.xml GIAtranslatorOperations.cpp GIAentityNodeClass.cpp GIAentityConnectionClass.cpp GIAconditionNodeClass.cpp GIAsentenceClass.cpp GIAdraw.cpp GIAxmlConversion.cpp GIAcxlConversion.cpp GIAquery.cpp GIAdatabase.cpp GIAnlp.cpp GIAwordnet.cpp GIAnlg.cpp GIApreprocessorWordIdentification.cpp GIAbot.cpp XMLparserClass.cpp XMLrulesClass.cpp LDsvg.cpp LDopengl.cpp LDparser.cpp LDsprite.cpp LDreferenceManipulation.cpp LDreferenceClass.cpp RToperations.cpp  RTparser.cpp  RTpixelMaps.cpp  RTppm.cpp  RTraytracer.cpp  RTreferenceManipulation.cpp  RTscene.cpp  RTviewinfo.cpp SHAREDglobalDefs.cpp SHAREDvector.cpp SHAREDvars.cpp
 //#define GIA_DO_NOT_USE_UNTESTED_BUGFIX_REGARDING_grammaticalDefiniteIndexOfDeterminerTemp	//1t6b
 #define GIA_SPECIFIC_ACTION_NETWORK_INDEXES
 #define GIA_SYN_REL_TRANSLATOR_WORKAROUND_RELEX_BUG_OCCASIONAL_QVAR_INDEX_SAME_AS_ANOTHER_RELATION_INDEX
@@ -1843,20 +1843,23 @@
 //#define GIA_QUERIES_MUST_BE_QUESTIONS	//disabled 30 June 2012
 
 
-#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION
-#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
-	#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_ORIGINAL	//includes multiword preposition reduction
-	#define GIA_PREPROCESSOR	//required for legacy support of GIA_PREPROCESSOR_MULTIWORD_REDUCTION
-	#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_REPLACE_OUTPUT_FOR_NLP_TEMPORARILY
+#define GIA_PREPROCESSOR_WORD
+#ifdef GIA_PREPROCESSOR_WORD
+	#define GIA_PREPROCESSOR_WORD_ORIGINAL	//includes multiword preposition reduction
+	#define GIA_PREPROCESSOR	//required for legacy support of GIA_PREPROCESSOR_WORD
+	#define GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
+	#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
+		#define GIA_PREPROCESSOR_WORD_REPLACE_OUTPUT_FOR_NLP_TEMPORARILY
+	#endif
 	#define GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS
 	#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS
-		//#define GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_CONSERVATIVE	//added 28 October 2012b - requires GIA_PREPROCESSOR_MULTIWORD_REDUCTION for reading of WikipediaIrregularVerbs.txt - this is used to normalise the tagging of continuous verbs (eg in the making of): it is not 100% successful as corrections are limited to irregular continous verbs (WikipediaIrregularVerbs.txt)
+		//#define GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_CONSERVATIVE	//added 28 October 2012b - requires GIA_PREPROCESSOR_WORD for reading of WikipediaIrregularVerbs.txt - this is used to normalise the tagging of continuous verbs (eg in the making of): it is not 100% successful as corrections are limited to irregular continous verbs (WikipediaIrregularVerbs.txt)
 		#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_CONSERVATIVE
-			#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_LOAD_WORD_LISTS	//requires irregular verb list
+			#define GIA_PREPROCESSOR_WORD_LOAD_WORD_LISTS	//requires irregular verb list
 		#endif
-		#define GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_LIBERAL		//alternate implementation added 5 July 2013 - requires GIA_PREPROCESSOR_MULTIWORD_REDUCTION for reading of WordnetVerbs.txt - this is used to normalise the tagging of continuous verbs (eg in the making of)
+		#define GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_LIBERAL		//alternate implementation added 5 July 2013 - requires GIA_PREPROCESSOR_WORD for reading of WordnetVerbs.txt - this is used to normalise the tagging of continuous verbs (eg in the making of)
 		#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_LIBERAL
-			#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_LOAD_WORD_LISTS
+			#define GIA_PREPROCESSOR_WORD_LOAD_WORD_LISTS
 			//#define GIA_TRANSLATOR_BACKUP_OF_OLD_GRAMMAR_EXECUTION_WITHOUT_BUG_CORRECTION
 		#endif
 		//#define GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_OLD_IMPLEMENTATION
@@ -1866,7 +1869,7 @@
 		#endif
 	#endif
 	#define GIA_WORD_ORIG	//NB wordOrig is now used by more than just NLG (it is also used by LRP)
-	//#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DISABLE_REDISTRIBUTE_RELATIONS_POST_NLP_MULTIWORD_PREPOSITION_REDUCTION
+	//#define GIA_PREPROCESSOR_WORD_DISABLE_REDISTRIBUTE_RELATIONS_POST_NLP_MULTIWORD_PREPOSITION_REDUCTION
 #endif
 
 //variables currently being tested (1o1a+)

@@ -26,7 +26,7 @@
  * File Name: GIAentityNodeClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f5c 15-April-2018
+ * Project Version: 3f6a 16-April-2018
  * NB a substance is an instance of an entity, any given entity may contain/comprise/have multiple substances - and substances are unrelated to definitions between entities [they just define what comprises any given entity]
  * /
  *******************************************************************************/
@@ -581,13 +581,13 @@ public:
 	bool NLCfirstInstanceOfProperNounInContext;
 	#endif
 
-	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_PREPOSITIONS
-	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DETECT_PREPOSITION_TYPE
+	#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_PREPOSITIONS
+	#ifdef GIA_PREPROCESSOR_WORD_DETECT_PREPOSITION_TYPE
 	string conditionType2;	//added 2h1a/14-November-2014 - required for NLC 1m1a+
 	#endif
-	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_TWOWAY_PREPOSITIONS
+	#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_TWOWAY_PREPOSITIONS
 	bool conditionTwoWay;		//added 2h1e/14-November-2014 - required for NLC 1m1e+
-	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED
+	#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED
 	bool inverseConditionTwoWay;	//added 2h1e/14-November-2014 - required for NLC 1m1e+
 	#endif
 	#endif

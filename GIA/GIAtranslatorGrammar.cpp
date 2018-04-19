@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorGrammar.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f5c 15-April-2018
+ * Project Version: 3f6a 16-April-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
@@ -56,14 +56,14 @@ bool GIAtranslatorGrammarClass::calculateGrammarUsingInferredPosTypes(GIApreproc
 	if(currentWord->wordPOStypeInferred == GIA_SEM_REL_TRANSLATOR_POS_TYPE_NOUN)	//NB is equivalent to GIA_PREPROCESSOR_POS_TYPE_NOUN
 	{
 		GIApreprocessorMultiwordReductionWord* nounBaseFound = NULL;
-		int nounGrammaticalBaseTenseForm = GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NOUN_DATABASE_TAG_BASE_TENSE_FORM_UNKNOWN;
-		if(GIApreprocessorMultiwordReduction.determineNounPluralVariant(wordTextLowerCase, &nounBaseFound, &nounGrammaticalBaseTenseForm))
+		int nounGrammaticalBaseTenseForm = GIA_PREPROCESSOR_WORD_NOUN_DATABASE_TAG_BASE_TENSE_FORM_UNKNOWN;
+		if(GIApreprocessorWordIdentification.determineNounPluralVariant(wordTextLowerCase, &nounBaseFound, &nounGrammaticalBaseTenseForm))
 		{
 			currentFeature->lemma = nounBaseFound->tagName;
-			#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NOUN_VARIANTS_PRIORITISE_IRREGULAR_PLURAL_FORM
+			#ifdef GIA_PREPROCESSOR_WORD_NOUN_VARIANTS_PRIORITISE_IRREGULAR_PLURAL_FORM
 			currentFeature->grammaticalNumber = GRAMMATICAL_NUMBER_PLURAL;	//what about words that dont have explicit plural modification e.g. "sheep"? (this is why an external dedicated POS tagger can be useful; because it should use context to derive morphology)
 			#else
-			currentFeature->grammaticalNumber = nounGrammaticalBaseTenseForm;	//could be GRAMMATICAL_NUMBER_PLURAL or GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NOUN_DATABASE_TAG_BASE_TENSE_FORM_SINGULAR_OR_PLURAL
+			currentFeature->grammaticalNumber = nounGrammaticalBaseTenseForm;	//could be GRAMMATICAL_NUMBER_PLURAL or GIA_PREPROCESSOR_WORD_NOUN_DATABASE_TAG_BASE_TENSE_FORM_SINGULAR_OR_PLURAL
 			#endif
 			currentFeature->stanfordPOS = FEATURE_POS_TAG_NOUN_NNS;
 			//cout << "determineNounPluralVariant: currentFeature->lemma = " << currentFeature->lemma << endl;
@@ -115,7 +115,7 @@ bool GIAtranslatorGrammarClass::calculateGrammarUsingInferredPosTypes(GIApreproc
 		//calculate the PENN pos type of verbs;
 		string baseNameFound = "";
 		int grammaticalBaseTenseForm = INT_DEFAULT_VALUE;
-		bool foundVerbCaseStandardOrAdditional = GIApreprocessorMultiwordReduction.determineVerbCaseStandardWithAdditional(wordTextLowerCase, &baseNameFound, &grammaticalBaseTenseForm);
+		bool foundVerbCaseStandardOrAdditional = GIApreprocessorWordIdentification.determineVerbCaseStandardWithAdditional(wordTextLowerCase, &baseNameFound, &grammaticalBaseTenseForm);
 		if(foundVerbCaseStandardOrAdditional)
 		{
 			/*
@@ -130,23 +130,23 @@ bool GIAtranslatorGrammarClass::calculateGrammarUsingInferredPosTypes(GIApreproc
 
 				//calculate the grammar of the 
 				currentFeature->stanfordPOS = FEATURE_POS_TAG_VERB_VB;
-				if(grammaticalBaseTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_INFINITIVE)
+				if(grammaticalBaseTenseForm == GIA_PREPROCESSOR_WORD_VERB_DATABASE_TAG_BASE_TENSE_FORM_INFINITIVE)
 				{
 					currentFeature->stanfordPOS = FEATURE_POS_TAG_VERB_VB;
 				}
-				else if(grammaticalBaseTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT)
+				else if(grammaticalBaseTenseForm == GIA_PREPROCESSOR_WORD_VERB_DATABASE_TAG_BASE_TENSE_FORM_PRESENT)
 				{
 					currentFeature->stanfordPOS = FEATURE_POS_TAG_VERB_VB;	//FEATURE_POS_TAG_VERB_VBP/FEATURE_POS_TAG_VERB_VBZ
 				}
-				else if(grammaticalBaseTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS)
+				else if(grammaticalBaseTenseForm == GIA_PREPROCESSOR_WORD_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS)
 				{
 					currentFeature->stanfordPOS = FEATURE_POS_TAG_VERB_VBG;
 				}
-				else if(grammaticalBaseTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST)
+				else if(grammaticalBaseTenseForm == GIA_PREPROCESSOR_WORD_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST)
 				{
 					currentFeature->stanfordPOS = FEATURE_POS_TAG_VERB_VBD;
 				}
-				else if(grammaticalBaseTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PASTPARTICIPLE)
+				else if(grammaticalBaseTenseForm == GIA_PREPROCESSOR_WORD_VERB_DATABASE_TAG_BASE_TENSE_FORM_PASTPARTICIPLE)
 				{
 					currentFeature->stanfordPOS = FEATURE_POS_TAG_VERB_VBN;
 				}
@@ -154,7 +154,7 @@ bool GIAtranslatorGrammarClass::calculateGrammarUsingInferredPosTypes(GIApreproc
 			}
 			#ifndef GIA_PREPROCESSOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY
 			#ifdef GIA_FEATURE_POS_TAG_VERB_POTENTIAL
-			if(grammaticalBaseTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL)
+			if(grammaticalBaseTenseForm == GIA_PREPROCESSOR_WORD_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL)
 			{
 				if(currentWord->wordPOStypeInferred == GIA_SEM_REL_TRANSLATOR_POS_TYPE_ADJECTIVE)	//NB "able" words will be marked as JJ/adjective or NN/noun by POS tagger
 				{
@@ -164,7 +164,7 @@ bool GIAtranslatorGrammarClass::calculateGrammarUsingInferredPosTypes(GIApreproc
 			}
 			#endif
 			#ifdef GIA_FEATURE_POS_TAG_VERB_POTENTIAL_INVERSE
-			else if(grammaticalBaseTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE)
+			else if(grammaticalBaseTenseForm == GIA_PREPROCESSOR_WORD_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE)
 			{
 				if((currentWord->wordPOStypeInferred == GIA_SEM_REL_TRANSLATOR_POS_TYPE_ADJECTIVE))	//NB "ive" words will be marked as JJ/adjective or NN/noun by POS tagger )
 				{
@@ -174,7 +174,7 @@ bool GIAtranslatorGrammarClass::calculateGrammarUsingInferredPosTypes(GIApreproc
 			}
 			#endif
 			#ifdef GIA_FEATURE_POS_TAG_VERB_STATE
-			else if(grammaticalBaseTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST)	//removed 2h2h: || (grammaticalBaseTenseForm == INT_DEFAULT_VALUE)
+			else if(grammaticalBaseTenseForm == GIA_PREPROCESSOR_WORD_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST)	//removed 2h2h: || (grammaticalBaseTenseForm == INT_DEFAULT_VALUE)
 			{
 				if(currentWord->wordPOStypeInferred == GIA_SEM_REL_TRANSLATOR_POS_TYPE_ADJECTIVE)	//NB "is ..." and "is ..ed" (not Stanford CoreNLP/Relex) verbs may be marked as JJ/adjective by POS tagger eg "It is open"/"He is tired."
 				{
@@ -184,7 +184,7 @@ bool GIAtranslatorGrammarClass::calculateGrammarUsingInferredPosTypes(GIApreproc
 			}
 			#endif
 			#ifdef GIA_FEATURE_POS_TAG_VERB_DESCRIPTION
-			else if(grammaticalBaseTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION)
+			else if(grammaticalBaseTenseForm == GIA_PREPROCESSOR_WORD_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION)
 			{
 				if(currentWord->wordPOStypeInferred == GIA_SEM_REL_TRANSLATOR_POS_TYPE_NOUN)	//NB "ion"/"ment" words will be marked as NN/noun by POS tagger
 				{

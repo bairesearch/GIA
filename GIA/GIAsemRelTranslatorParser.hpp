@@ -26,7 +26,7 @@
  * File Name: GIAsemRelTranslatorParser.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f5c 15-April-2018
+ * Project Version: 3f6a 16-April-2018
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  * Description: Semantic Relation Translator Parser
  * /
@@ -51,8 +51,8 @@
 #ifdef GIA_BOT_SWITCH_FIRST_AND_SECOND_PERSON
 #include "GIAbot.hpp"
 #endif
-#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_PREPOSITIONS
-#include "GIApreprocessorMultiwordReduction.hpp"
+#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_PREPOSITIONS
+#include "GIApreprocessorWordIdentification.hpp"
 #endif
 
 
@@ -67,8 +67,8 @@ class GIAsemRelTranslatorParserClass
 	#ifdef GIA_BOT_SWITCH_FIRST_AND_SECOND_PERSON
 	private: GIAbotClass GIAbot;
 	#endif
-	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_PREPOSITIONS
-	private: GIApreprocessorMultiwordReductionClass GIApreprocessorMultiwordReduction;
+	#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_PREPOSITIONS
+	private: GIApreprocessorWordIdentificationClass GIApreprocessorWordIdentification;
 	#endif
 	private: GIAsynRelTranslatorDefineSubstancesClass GIAsynRelTranslatorDefineSubstances;
 	private: GIAsynRelTranslatorApplyAdvancedFeaturesClass GIAsynRelTranslatorApplyAdvancedFeatures;
@@ -91,7 +91,7 @@ class GIAsemRelTranslatorParserClass
 		#endif
 		private: void defineConnectionsBasedOnSemanticRelations(GIAtranslatorVariablesClass* translatorVariables);
 			private: bool findMatchingObject(GIAtranslatorVariablesClass* translatorVariables, const string semanticRelationName, const int entity2Index, GIArelation** currentRelationInList2, int* entity2Index2);
-			#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_PREPOSITIONS
+			#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_PREPOSITIONS
 			private: void invertOrDuplicateConditionsIfRequiredSemantic(GIAtranslatorVariablesClass* translatorVariables, GIAentityNode* entity1, GIAentityNode* entity2, GIAentityNode* entity3condition, bool sameReferenceSet);
 			private: GIAentityNode* createNewInverseConditionEntitySemantic(GIAtranslatorVariablesClass* translatorVariables, string inverseConditionName);
 			#endif

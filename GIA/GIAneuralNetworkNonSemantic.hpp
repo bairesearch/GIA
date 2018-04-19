@@ -26,7 +26,7 @@
  * File Name: GIAneuralNetworkNonSemantic.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f5c 15-April-2018
+ * Project Version: 3f6a 16-April-2018
  * Description: Neural Network - visual representation of GIA contents in prototype biological neural network
  * /
  *******************************************************************************/
@@ -42,9 +42,9 @@
 #include "GIAtranslatorOperations.hpp"
 #include "GIAneuralNetworkOperations.hpp"
 #include "SHAREDvars.hpp"
-#include "GIApreprocessorMultiwordReduction.hpp"
+#include "GIApreprocessorWordIdentification.hpp"
 
-//move to GIApreprocessorMultiwordReductionClass.hpp:
+//move to GIApreprocessorWordClass.hpp:
  
 #define GIA_TRANSLATOR_ENGLISH_INDEFINITE_CONCEPT_DEFINITION_DELIMITER "is"	//e.g. a dog is an animal
 #define GIA_TRANSLATOR_ENGLISH_PLURAL_CONCEPT_DEFINITION_DELIMITER "are"	//e.g. dogs are animals
@@ -83,7 +83,7 @@ class GIAneuralNetworkNonSemanticClass
 	private: ANNneuronClassClass ANNneuronClass;
 	private: SHAREDvarsClass SHAREDvars;
 	private: GIAneuralNetworkOperationsClass GIAneuralNetworkOperations;
-	private: GIApreprocessorMultiwordReductionClass GIApreprocessorMultiwordReduction;
+	private: GIApreprocessorWordClass GIApreprocessorWordIdentification;
 	
 	#ifdef GIA_NEURAL_NETWORK_NON_SEMANTIC_ACTIVE
 	public: bool addTextToNetwork(GIAtranslatorVariablesClass* translatorVariables);

@@ -26,7 +26,7 @@
  * File Name: GIAsynRelTranslatorRedistributeRelations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f5c 15-April-2018
+ * Project Version: 3f6a 16-April-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
@@ -101,7 +101,7 @@ bool GIAsynRelTranslatorRedistributeRelationsClass::correctVerbPOStagAndLemma(GI
 		string baseNameFound = "";
 		
 		int grammaticalBaseTenseForm = INT_DEFAULT_VALUE;
-		bool foundContinuousOrInfinitiveOrImperativeOrPotentialVerb = GIApreprocessorMultiwordReduction.determineVerbCaseAdditionalWrapper(actionOrSubstanceEntity->wordOrig, &baseNameFound, &grammaticalBaseTenseForm);
+		bool foundContinuousOrInfinitiveOrImperativeOrPotentialVerb = GIApreprocessorWordIdentification.determineVerbCaseAdditionalWrapper(actionOrSubstanceEntity->wordOrig, &baseNameFound, &grammaticalBaseTenseForm);
 		
 		//This section of code cannot be used as originally intended as some verb infinitives are also nouns (eg "yarn") - therefore must formally rely on correct infinitive tagging of verbs...
 		if((actionOrSubstanceEntity->grammaticalWordTypeTemp == GRAMMATICAL_WORD_TYPE_VERB) && ((actionOrSubstanceEntity->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_INFINITIVE] == true) || (actionOrSubstanceEntity->grammaticalTenseModifierArrayTemp[GRAMMATICAL_TENSE_MODIFIER_IMPERATIVE] == true)))
@@ -141,12 +141,12 @@ bool GIAsynRelTranslatorRedistributeRelationsClass::correctVerbPOStagAndLemma(GI
 		{
 			//FUTURE GIA - consider updating correctVerbPOStagAndLemma{}; currently detecting all instances of "ing"/VBG. This is required such that appropriate instances can be marked as action networkIndexes eg "swimming involves/requires...". Alternatively consider marking these words directly here as GRAMMATICAL_TENSE_MODIFIER_INFINITIVE (ie GRAMMATICAL_TENSE_MODIFIER_ACTIONNETWORK_INDEX) such that they can be assigned action networkIndex by defineActionConcepts2{}
 			#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_CONSERVATIVE
-			if(GIApreprocessorMultiwordReduction.determineIfWordIsIrregularVerbContinuousCaseWrapper(actionOrSubstanceEntity->wordOrig, &baseNameFound))
+			if(GIApreprocessorWordIdentification.determineIfWordIsIrregularVerbContinuousCaseWrapper(actionOrSubstanceEntity->wordOrig, &baseNameFound))
 			#elif defined GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_LIBERAL
 			#ifdef GIA_TRANSLATOR_BACKUP_OF_OLD_GRAMMAR_EXECUTION_WITHOUT_BUG_CORRECTION
-			if(false)	//corrected @GIA3f1a - used to be (grammaticalTenseModifier == GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE_TEMP) (meaning it was never true due to a bug in GIApreprocessorMultiwordReductionClass::convertVerbCaseGrammaticalTenseFormToTenseModifier that set GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE instead of GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE_TEMP)
+			if(false)	//corrected @GIA3f1a - used to be (grammaticalTenseModifier == GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE_TEMP) (meaning it was never true due to a bug in GIApreprocessorWordClass::convertVerbCaseGrammaticalTenseFormToTenseModifier that set GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE instead of GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE_TEMP)
 			#else
-			if(foundContinuousOrInfinitiveOrImperativeOrPotentialVerb && (grammaticalBaseTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS))
+			if(foundContinuousOrInfinitiveOrImperativeOrPotentialVerb && (grammaticalBaseTenseForm == GIA_PREPROCESSOR_WORD_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS))
 			#endif
 			#endif
 			{
@@ -199,7 +199,7 @@ bool GIAsynRelTranslatorRedistributeRelationsClass::correctVerbPOStagAndLemma(GI
 		}
 
 		#ifdef GIA_FEATURE_POS_TAG_VERB_POTENTIAL
-		if(foundContinuousOrInfinitiveOrImperativeOrPotentialVerb && (grammaticalBaseTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL))
+		if(foundContinuousOrInfinitiveOrImperativeOrPotentialVerb && (grammaticalBaseTenseForm == GIA_PREPROCESSOR_WORD_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL))
 		{
 			if(actionOrSubstanceEntity->grammaticalWordTypeTemp == GRAMMATICAL_WORD_TYPE_ADJ)	//NB "able" words will be marked as JJ/adjective or NN/noun by Stanford/Relex POS tagger (but ignore nouns)
 			{
@@ -226,7 +226,7 @@ bool GIAsynRelTranslatorRedistributeRelationsClass::correctVerbPOStagAndLemma(GI
 			}
 		}
 		#ifdef GIA_FEATURE_POS_TAG_VERB_POTENTIAL_INVERSE
-		if(foundContinuousOrInfinitiveOrImperativeOrPotentialVerb && (grammaticalBaseTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE))
+		if(foundContinuousOrInfinitiveOrImperativeOrPotentialVerb && (grammaticalBaseTenseForm == GIA_PREPROCESSOR_WORD_VERB_DATABASE_TAG_BASE_TENSE_FORM_POTENTIAL_INVERSE))
 		{
 			if((actionOrSubstanceEntity->grammaticalWordTypeTemp == GRAMMATICAL_WORD_TYPE_ADJ))	//NB "ive" words will be marked as JJ/adjective or NN/noun by Stanford/Relex POS tagger (but ignore nouns)
 			{
@@ -255,7 +255,7 @@ bool GIAsynRelTranslatorRedistributeRelationsClass::correctVerbPOStagAndLemma(GI
 		#endif
 		#endif
 		#ifdef GIA_FEATURE_POS_TAG_VERB_STATE
-		if(foundContinuousOrInfinitiveOrImperativeOrPotentialVerb && (grammaticalBaseTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST))	//removed 2h2h: || (grammaticalBaseTenseForm == INT_DEFAULT_VALUE)
+		if(foundContinuousOrInfinitiveOrImperativeOrPotentialVerb && (grammaticalBaseTenseForm == GIA_PREPROCESSOR_WORD_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST))	//removed 2h2h: || (grammaticalBaseTenseForm == INT_DEFAULT_VALUE)
 		{
 			if(actionOrSubstanceEntity->grammaticalWordTypeTemp == GRAMMATICAL_WORD_TYPE_ADJ)	//NB "is ..." and "is ..ed" (not Stanford CoreNLP/Relex) verbs may be marked as JJ/adjective by Stanford/Relex POS tagger eg "It is open"/"He is tired."
 			{
@@ -268,7 +268,7 @@ bool GIAsynRelTranslatorRedistributeRelationsClass::correctVerbPOStagAndLemma(GI
 		}
 		#endif
 		#ifdef GIA_FEATURE_POS_TAG_VERB_DESCRIPTION
-		if(foundContinuousOrInfinitiveOrImperativeOrPotentialVerb && (grammaticalBaseTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION))
+		if(foundContinuousOrInfinitiveOrImperativeOrPotentialVerb && (grammaticalBaseTenseForm == GIA_PREPROCESSOR_WORD_VERB_DATABASE_TAG_BASE_TENSE_FORM_DESCRIPTION))
 		{
 			if(actionOrSubstanceEntity->grammaticalWordTypeTemp == GRAMMATICAL_WORD_TYPE_NOUN)	//NB "ion"/"ment" words will be marked as NN/noun by Stanford/Relex POS tagger
 			{

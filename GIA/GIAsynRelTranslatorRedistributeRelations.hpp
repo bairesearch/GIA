@@ -26,7 +26,7 @@
  * File Name: GIAsynRelTranslatorRedistributeRelations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f5c 15-April-2018
+ * Project Version: 3f6a 16-April-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
@@ -42,7 +42,7 @@
 #include "GIAentityConnectionClass.hpp"
 #include "GIAconditionNodeClass.hpp"
 #include "GIAtranslatorOperations.hpp"
-	#include "GIApreprocessorMultiwordReduction.hpp"
+	#include "GIApreprocessorWordIdentification.hpp"
 #include "GIAtranslatorGrammar.hpp"
 #include "SHAREDvars.hpp"	//required for convertStringToLowerCase
 
@@ -50,7 +50,7 @@
 class GIAsynRelTranslatorRedistributeRelationsClass
 {
 	private: SHAREDvarsClass SHAREDvars;
-	private: GIApreprocessorMultiwordReductionClass GIApreprocessorMultiwordReduction;
+	private: GIApreprocessorWordIdentificationClass GIApreprocessorWordIdentification;
 	private: GIAtranslatorGrammarClass GIAtranslatorGrammar;
 	#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS
 	public: void redistributeStanfordAndRelexRelationsCorrectPOStagsAndLemmasOfAllVerbs(GIAtranslatorVariablesClass* translatorVariables);

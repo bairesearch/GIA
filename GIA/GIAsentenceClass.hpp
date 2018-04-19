@@ -26,7 +26,7 @@
  * File Name: GIAsentenceClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f5c 15-April-2018
+ * Project Version: 3f6a 16-April-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * /
  *******************************************************************************/
@@ -159,12 +159,12 @@ public:
 	int relationGovernorIndex;
 	string relationDependent;
 	int relationDependentIndex;
-	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
+	#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
 	bool relationGovernorRevertedToOfficialLRPTemp;
 	bool relationDependentRevertedToOfficialLRPTemp;
 	#endif
 
-	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_INVERSE_PREPOSITIONS
+	#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_INVERSE_PREPOSITIONS
 	string relationTypeNonInversed;
 	int relationTypeIndexNonInversed;
 	#endif
@@ -197,14 +197,14 @@ public:
 	#endif
 	#endif
 
-	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_PREPOSITIONS
+	#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_PREPOSITIONS
 	bool inverseRelation;
-	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_INVERSE_PREPOSITIONS
+	#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_INVERSE_PREPOSITIONS
 	bool inverseRelationSingle;
 	#endif
-	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_TWOWAY_PREPOSITIONS
+	#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_TWOWAY_PREPOSITIONS
 	bool relationTwoWay;
-	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED
+	#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED
 	bool inverseRelationTwoWay;
 	#endif
 	#endif
@@ -228,10 +228,10 @@ public:
 	int entityIndex;
 	string word;
 	string lemma;
-	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
+	#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
 	string wordWithLRPforNLPonly;
 	#endif
-	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
+	#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
 	bool featureRevertedToOfficialLRPTemp;	//not currently used
 	#endif
 

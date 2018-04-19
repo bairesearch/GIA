@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorGrammar.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f5c 15-April-2018
+ * Project Version: 3f6a 16-April-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
@@ -47,7 +47,7 @@
 #include "GIAsemRelTranslatorDefs.hpp"
 #endif
 #include "GIAdatabase.hpp"
-#include "GIApreprocessorMultiwordReduction.hpp"
+#include "GIApreprocessorWordIdentification.hpp"
 
 
 //#define GIA_STANFORD_CORE_NLP_PARSER_USE_AUXILIARY_TO_SET_TENSE_OF_VERB	//this seems theoretically possible pased upon the examples given (ie because the tense stanfordPOS information is replicated in both the auxiliary and the verb)
@@ -58,7 +58,7 @@ class GIAtranslatorGrammarClass
 	private: GIAtranslatorOperationsClass GIAtranslatorOperations;
 	private: GIAsentenceClassClass GIAsentenceClass;
 	private: GIAsynRelTranslatorGenericClass GIAsynRelTranslatorGeneric;
-	private: GIApreprocessorMultiwordReductionClass GIApreprocessorMultiwordReduction;
+	private: GIApreprocessorWordIdentificationClass GIApreprocessorWordIdentification;
 	private: SHAREDvarsClass SHAREDvars;
 	
 

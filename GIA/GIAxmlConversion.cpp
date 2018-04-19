@@ -26,7 +26,7 @@
  * File Name: GIAxmlConversion.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f5c 15-April-2018
+ * Project Version: 3f6a 16-April-2018
  * Description: XML Conversion - Converts GIA network nodes into an XML file, or converts an XML file into GIA network nodes
  * NB this function creates entity idActiveListReorderdIDforXMLsave values upon write to speed up linking process (does not use original idActiveList values)
  * NB this function creates entity idActiveList values upon read (it could create idActiveListReorderdIDforXMLsave values instead - however currently it is assumed that when an XML file is loaded, this will populate the idActiveList in its entirety)
@@ -271,13 +271,13 @@ bool GIAxmlConversionClass::parseEntityNodeTag(XMLparserTag* firstTagInEntityNod
 	bool isExpletiveFound = false;
 	#endif
 	
-	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_PREPOSITIONS
-	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DETECT_PREPOSITION_TYPE
+	#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_PREPOSITIONS
+	#ifdef GIA_PREPROCESSOR_WORD_DETECT_PREPOSITION_TYPE
 	bool conditionType2Found = false;
 	#endif
-	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_TWOWAY_PREPOSITIONS
+	#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_TWOWAY_PREPOSITIONS
 	bool conditionTwoWayFound = false;
-	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED
+	#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED
 	bool inverseConditionTwoWayFound = false;
 	#endif
 	#endif
@@ -551,8 +551,8 @@ bool GIAxmlConversionClass::parseEntityNodeTag(XMLparserTag* firstTagInEntityNod
 			}
 			#endif
 
-			#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_PREPOSITIONS
-			#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DETECT_PREPOSITION_TYPE
+			#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_PREPOSITIONS
+			#ifdef GIA_PREPROCESSOR_WORD_DETECT_PREPOSITION_TYPE
 			else if(currentAttribute->name == NET_XML_ATTRIBUTE_conditionType2)
 			{
 				string attributeValue = currentAttribute->value.c_str();
@@ -560,14 +560,14 @@ bool GIAxmlConversionClass::parseEntityNodeTag(XMLparserTag* firstTagInEntityNod
 				conditionType2Found = true;
 			}
 			#endif
-			#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_TWOWAY_PREPOSITIONS
+			#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_TWOWAY_PREPOSITIONS
 			else if(currentAttribute->name == NET_XML_ATTRIBUTE_conditionTwoWay)
 			{
 				int attributeValue = SHAREDvars.convertStringToInt(currentAttribute->value);
 				entityNode->conditionTwoWay = attributeValue;
 				conditionTwoWayFound = true;
 			}
-			#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED
+			#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED
 			else if(currentAttribute->name == NET_XML_ATTRIBUTE_inverseConditionTwoWay)
 			{
 				int attributeValue = SHAREDvars.convertStringToInt(currentAttribute->value);
@@ -1237,17 +1237,17 @@ XMLparserTag* GIAxmlConversionClass::generateXMLentityNodeTag(XMLparserTag* curr
 	#endif
 			
 
-	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_PREPOSITIONS
-	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DETECT_PREPOSITION_TYPE
+	#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_PREPOSITIONS
+	#ifdef GIA_PREPROCESSOR_WORD_DETECT_PREPOSITION_TYPE
 	currentAttribute->name = NET_XML_ATTRIBUTE_conditionType2;
 	currentAttribute->value = currentEntity->conditionType2;
 	currentAttribute = XMLparserClass.createNewAttribute(currentAttribute);
 	#endif
-	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_TWOWAY_PREPOSITIONS
+	#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_TWOWAY_PREPOSITIONS
 	currentAttribute->name = NET_XML_ATTRIBUTE_conditionTwoWay;
 	currentAttribute->value = SHAREDvars.convertIntToString(int(currentEntity->conditionTwoWay));
 	currentAttribute = XMLparserClass.createNewAttribute(currentAttribute);
-	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED
+	#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED
 	currentAttribute->name = NET_XML_ATTRIBUTE_inverseConditionTwoWay;
 	currentAttribute->value = SHAREDvars.convertIntToString(int(currentEntity->inverseConditionTwoWay));
 	currentAttribute = XMLparserClass.createNewAttribute(currentAttribute);

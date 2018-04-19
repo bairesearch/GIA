@@ -26,7 +26,7 @@
  * File Name: GIAneuralNetworkNonSemantic.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f5c 15-April-2018
+ * Project Version: 3f6a 16-April-2018
  * Description: Neural Network - visual representation of GIA contents in prototype biological neural network
  * /
  *******************************************************************************/
@@ -240,11 +240,11 @@ bool GIAneuralNetworkNonSemanticClass::replaceWordsWithLemmas(GIApreprocessorSub
 			word->tagNameOriginalNonLemma = word->tagName;
 			
 			word->tagName = SHAREDvars.convertStringToLowerCase(&word->tagName);	//convert to lower case
-			if(GIApreprocessorMultiwordReduction.determineIsVerb(word, &baseName, &grammaticalBaseForm))
+			if(GIApreprocessorWordIdentification.determineIsVerb(word, &baseName, &grammaticalBaseForm))
 			{
 				word->tagName = baseName;
 			}
-			else if(GIApreprocessorMultiwordReduction.determineIsNoun(word, &baseName, &grammaticalBaseForm))
+			else if(GIApreprocessorWordIdentification.determineIsNoun(word, &baseName, &grammaticalBaseForm))
 			{
 				word->tagName = baseName;
 			}
@@ -358,7 +358,7 @@ bool GIAneuralNetworkNonSemanticClass::detectIfWordIsConcept(const vector<GIApre
 		}
 
 		GIApreprocessorMultiwordReductionWord* nounBaseFormFoundTemp;
-		if(!GIApreprocessorMultiwordReduction.determineNounPluralVariant(wordTag->tagName, &nounBaseFormFoundTemp))
+		if(!GIApreprocessorWordIdentification.determineNounPluralVariant(wordTag->tagName, &nounBaseFormFoundTemp))
 		{
 			pluralConceptFound = false;
 		}
@@ -426,12 +426,12 @@ bool GIAneuralNetworkNonSemanticClass::findIndexOfStartOfSpecificConcept(const v
 	{
 		GIApreprocessorPlainTextWord* currentWordTag = (*subReferenceSetContents)[indexOfSearch];
 		GIApreprocessorMultiwordReductionWord* nounBaseFormFound = NULL;
-		if(GIApreprocessorMultiwordReduction.determineIsAdjective(currentWordTag))
+		if(GIApreprocessorWordIdentification.determineIsAdjective(currentWordTag))
 		{
 			//stillSearching = true;	//e.g. blue dog(s)
 			foundPreceedingAdjectiveOrNoun = true;
 		}
-		else if(GIApreprocessorMultiwordReduction.determineIsNoun(currentWordTag))
+		else if(GIApreprocessorWordIdentification.determineIsNoun(currentWordTag))
 		{
 			//stillSearching = true;	//e.g. house dog(s)
 			foundPreceedingAdjectiveOrNoun = true;

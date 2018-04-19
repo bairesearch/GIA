@@ -26,7 +26,7 @@
  * File Name: GIAmain.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f5c 15-April-2018
+ * Project Version: 3f6a 16-April-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Main
  * /
@@ -61,7 +61,10 @@
 #endif
 #ifdef GIA_PREPROCESSOR
 #include "GIApreprocessor.hpp"
-#include "GIApreprocessorMultiwordReduction.hpp"
+#include "GIApreprocessorWordIdentification.hpp"
+#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
+#include "GIApreprocessorWordReduction.hpp" 
+#endif
 #endif
 #ifdef GIA_SEM_REL_TRANSLATOR
 #ifdef GIA_SEM_REL_TRANSLATOR_READ_SEMANTIC_RELATIONS
@@ -104,7 +107,10 @@ class GIAmainClass
 	private: GIAdatabaseClass GIAdatabase;
 	#ifdef GIA_PREPROCESSOR
 	private: GIApreprocessorClass GIApreprocessor;
-	private: GIApreprocessorMultiwordReductionClass GIApreprocessorMultiwordReduction;
+	private: GIApreprocessorWordIdentificationClass GIApreprocessorWordIdentification;
+	#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
+	private: GIApreprocessorWordReductionClass GIApreprocessorWordReduction;
+	#endif
 	#endif
 	private: GIAnlpClass GIAnlp;
 	private: XMLrulesClassClass XMLrulesClass;

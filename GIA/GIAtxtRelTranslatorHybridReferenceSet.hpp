@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorHybridReferenceSet.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f5c 15-April-2018
+ * Project Version: 3f6a 16-April-2018
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Hybrid Reference Set
  * /
@@ -38,7 +38,7 @@
 
 #include "GIAglobalDefs.hpp"
 #include "GIAtxtRelTranslatorHybridSentenceClass.hpp"
-#include "GIApreprocessorMultiwordReduction.hpp"
+#include "GIApreprocessorWordIdentification.hpp"
 
 #define GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_TYPE_UNKNOWN (0)
 #define GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_TYPE_SUBJECT (1)
@@ -60,8 +60,8 @@ class GIAtxtRelTranslatorHybridReferenceSetClass
 {
 	private: SHAREDvarsClass SHAREDvars;
 	private: GIAtxtRelTranslatorHybridSentenceClassClass GIAtxtRelTranslatorHybridSentenceClass;
-	private: GIApreprocessorMultiwordReductionClassClass GIApreprocessorMultiwordReductionClassObject;
-	private: GIApreprocessorMultiwordReductionClass GIApreprocessorMultiwordReduction;
+	private: GIApreprocessorWordClassClass GIApreprocessorWordClassObject;
+	private: GIApreprocessorWordIdentificationClass GIApreprocessorWordIdentification;
 	#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET
 	public: bool generateSentenceWordList(GIApreprocessorMultiwordReductionWord* sentenceContentsFirstWord, vector<GIApreprocessorPlainTextWord*>* logicReferenceVariableWordList);
 	#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_DEPRECIATED

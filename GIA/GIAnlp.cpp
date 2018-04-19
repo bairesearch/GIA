@@ -26,7 +26,7 @@
  * File Name: GIAnlp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f5c 15-April-2018
+ * Project Version: 3f6a 16-April-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: NLP - external natural language processing
  * /
@@ -34,8 +34,6 @@
 
 
 #include "GIAnlp.hpp"
-#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
-#endif
 
 #ifndef LINUX
 	#include <windows.h>
@@ -623,12 +621,12 @@ bool GIAnlpClass::parseStanfordCoreNLPfile(const string inputTextNLPrelationXMLf
 
 						if(parseFeatures)
 						{//process lemma only if parsing features
-							#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_REPLACE_OUTPUT_FOR_NLP_TEMPORARILY
-							if(GIApreprocessorMultiwordReduction.getUseLRP())
+							#ifdef GIA_PREPROCESSOR_WORD_REPLACE_OUTPUT_FOR_NLP_TEMPORARILY
+							if(GIApreprocessorWordIdentification.getUseLRP())
 							{
 								bool foundOfficialLRPreplacementString = false;
 								GIArelation* currentRelationInListForPrepositionsOnlyIrrelevant = NULL;
-								GIApreprocessorMultiwordReduction.revertNLPtagNameToOfficialLRPtagName(currentFeatureInList, currentSentence, currentRelationInListForPrepositionsOnlyIrrelevant, false, &foundOfficialLRPreplacementString);
+								GIApreprocessorWordReduction.revertNLPtagNameToOfficialLRPtagName(currentFeatureInList, currentSentence, currentRelationInListForPrepositionsOnlyIrrelevant, false, &foundOfficialLRPreplacementString);
 							}
 							#endif
 
@@ -743,7 +741,7 @@ bool GIAnlpClass::parseStanfordCoreNLPfile(const string inputTextNLPrelationXMLf
 										GIAnlpParser.convertStanfordRelationToRelex(currentRelationInList, currentSentence);
 
 
-										#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
+										#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
 										if(!(currentRelationInList->relationGovernorRevertedToOfficialLRPTemp))
 										{
 										#endif
@@ -753,7 +751,7 @@ bool GIAnlpClass::parseStanfordCoreNLPfile(const string inputTextNLPrelationXMLf
 												currentFeatureInList = currentFeatureInList->next;
 											}
 											currentRelationInList->relationGovernor = currentFeatureInList->lemma;
-										#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
+										#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
 										}
 										if(!(currentRelationInList->relationDependentRevertedToOfficialLRPTemp))
 										{
@@ -764,7 +762,7 @@ bool GIAnlpClass::parseStanfordCoreNLPfile(const string inputTextNLPrelationXMLf
 												currentFeatureInList = currentFeatureInList->next;
 											}
 											currentRelationInList->relationDependent = currentFeatureInList->lemma;
-										#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
+										#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
 										}
 										#endif
 

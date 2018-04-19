@@ -26,7 +26,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f5c 15-April-2018
+ * Project Version: 3f6a 16-April-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Main
  * /
@@ -667,7 +667,7 @@ int main(const int argc, const char** argv)
 
 	if(SHAREDvarsClass().argumentExists(argc, argv, "-version"))
 	{
-		cout << "GIA.exe - Project Version: 3f5c 15-April-2018" << endl;
+		cout << "GIA.exe - Project Version: 3f6a 16-April-2018" << endl;
 		exit(EXIT_OK);
 	}
 
@@ -893,7 +893,7 @@ int main(const int argc, const char** argv)
 
 	GIApreprocessorPOStaggerDatabaseClass().initialisePOStaggerDatabase(POStaggerDatabaseFolderName);
 	
-	if(!GIApreprocessorMultiwordReductionClass().initialiseLRP(lrpDataFolderName, useLRP))
+	if(!GIApreprocessorWordClass().initialiseLRP(lrpDataFolderName, useLRP))
 	{
 		result = false;
 	}
@@ -1117,6 +1117,7 @@ bool GIAmainClass::executeGIA2()
 	if(!XMLrulesClass.parseGIArulesXMLfile())
 	{
 		cerr << "error: GIArules.xml file not detected" << endl;
+		cout << "currentDirectory = " << SHAREDvarsClass().getCurrentDirectory() << endl;
 		exit(EXIT_ERROR);
 	}
 	LDsprite.fillInLDspriteExternVariables();
@@ -1149,7 +1150,7 @@ bool GIAmainClass::executeGIA2()
 	#endif
 
 	#ifdef GIA_PREPROCESSOR
-	if(!GIApreprocessorMultiwordReduction.initialiseLRP(lrpDataFolderName, useLRP))
+	if(!GIApreprocessorWordIdentification.initialiseLRP(lrpDataFolderName, useLRP))
 	{
 		result = false;
 	}
@@ -1362,7 +1363,7 @@ bool GIAmainClass::executeGIA2()
 	#endif
 		
 		#ifdef GIA_PREPROCESSOR
-		if(useInputTextPlainTXTFile)
+		if(!(!useInputTextPlainTXTFile && useInputTextXMLFile))
 		{
 			if(!GIApreprocessor.preprocessTextForGIAwrapper(useLRP, &inputTextPlainTXTfileName, outputLRPTextPlainTXTFileName, false, translatorVariables, &useInputTextPlainTXTFile, inputTextNLPfeatureXMLfileName))
 			{
@@ -1508,10 +1509,10 @@ bool GIAmainClass::executeGIA2()
 		}	
 	#endif
 
-		#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
+		#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
 		if(useLRP)
 		{
-			GIApreprocessorMultiwordReduction.deinitialiseActiveGIApreprocessorMultiwordReductionTagTextCorrespondenceInfo(false);	//required for local variable access
+			GIApreprocessorWordReduction.deinitialiseActiveGIApreprocessorMultiwordReductionTagTextCorrespondenceInfo(false);	//required for local variable access
 		}
 		#endif
 #ifdef GIA_INPUT_FILE_LISTS
@@ -1523,7 +1524,7 @@ bool GIAmainClass::executeGIA2()
 	if(useInputQuery)
 	{
 		#ifdef GIA_PREPROCESSOR
-		if(useInputQueryPlainTXTFile)
+		if(!(!useInputQueryPlainTXTFile && useInputQueryXMLFile))
 		{
 			if(!GIApreprocessor.preprocessTextForGIAwrapper(useLRP, &inputQueryPlainTXTFileName, outputQueryLRPTextPlainTXTFileName, true, translatorVariablesQuery, &useInputQueryPlainTXTFile, inputQueryNLPfeatureXMLFileName))
 			{
@@ -1799,10 +1800,10 @@ bool GIAmainClass::executeGIA2()
 		#endif
 	#endif
 	
-		#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
+		#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
 		if(useLRP)
 		{
-			GIApreprocessorMultiwordReduction.deinitialiseActiveGIApreprocessorMultiwordReductionTagTextCorrespondenceInfo(true);	//required for local variable access
+			GIApreprocessorWordReduction.deinitialiseActiveGIApreprocessorMultiwordReductionTagTextCorrespondenceInfo(true);	//required for local variable access
 		}
 		#endif
 			

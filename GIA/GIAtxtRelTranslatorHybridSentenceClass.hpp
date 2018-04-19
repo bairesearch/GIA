@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorHybridSentenceClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f5c 15-April-2018
+ * Project Version: 3f6a 16-April-2018
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Hybrid Sentence Class
  * /
@@ -40,7 +40,7 @@
 #include "SHAREDvars.hpp"
 #include "GIAentityNodeClass.hpp"	//required for primaryEntityTemp, GIA_PREPROCESSOR_RECORD_REFERENCES
 #include "GIAsentenceClass.hpp"	//required for GIA_PREPROCESSOR_RECORD_REFERENCES
-#include "GIApreprocessorMultiwordReductionClass.hpp" 
+#include "GIApreprocessorWordClass.hpp" 
 
 
 
@@ -58,7 +58,7 @@ public:
 	#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_NLP_TEXT
 	vector<GIApreprocessorPlainTextWord*> subReferenceSetContentsOutputForNLP;
 	#endif
-	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
+	#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
 	int firstIndexOfReferenceSetText;
 	int lastIndexOfReferenceSetText;
 	int dummyNLPtestOffset;
@@ -106,7 +106,7 @@ public:
 	GIApreprocessorSubReferenceSet* referenceSetDelimiter;	//NB if !GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_DELIMITERS, only the referenceSetContents string is used of the referenceSetDelimiter
 	#endif
 	
-	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
+	#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
 	int wordIndexSentence;
 	#endif
 };

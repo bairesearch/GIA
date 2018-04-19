@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f5c 15-April-2018
+ * Project Version: 3f6a 16-April-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
@@ -46,8 +46,8 @@
 #include "NLCpreprocessorSentenceClass.hpp"
 #endif
 #include "GIAdatabase.hpp"
-#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_PREPOSITIONS
-#include "GIApreprocessorMultiwordReduction.hpp"
+#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_PREPOSITIONS
+#include "GIApreprocessorWordIdentification.hpp"
 #endif
 #ifdef GIA_TXT_REL_TRANSLATOR_HYBRID
 #include "GIApreprocessorSentenceClass.hpp"
@@ -148,8 +148,8 @@ adjective = happy
 class GIAtranslatorOperationsClass
 {
 	private: GIAsentenceClassClass GIAsentenceClass;
-	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_PREPOSITIONS
-	private: GIApreprocessorMultiwordReductionClass GIApreprocessorMultiwordReduction;
+	#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_PREPOSITIONS
+	private: GIApreprocessorWordIdentificationClass GIApreprocessorWordIdentification;
 	#endif
 	private: GIAdatabaseClass GIAdatabase;
 	#ifdef GIA_NLC_INTEGRATION

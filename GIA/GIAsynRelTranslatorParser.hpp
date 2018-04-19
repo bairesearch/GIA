@@ -26,7 +26,7 @@
  * File Name: GIAsynRelTranslatorParser.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f5c 15-April-2018
+ * Project Version: 3f6a 16-April-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
@@ -60,9 +60,10 @@
 #ifdef GIA_BOT_SWITCH_FIRST_AND_SECOND_PERSON
 #include "GIAbot.hpp"
 #endif
-#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
-#include "GIApreprocessorMultiwordReduction.hpp"
-#endif
+#include "GIApreprocessorWordIdentification.hpp"
+//#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
+//#include "GIApreprocessorWordReduction.hpp"
+//#endif
 #include "GIAsemRelTranslatorOperations.hpp"
 #include "GIAsemRelTranslatorParser.hpp"
 #include "GIAsemRelTranslatorDatabase.hpp"
@@ -81,9 +82,10 @@ class GIAsynRelTranslatorParserClass
 {
 	private: GIAtranslatorOperationsClass GIAtranslatorOperations;
 	private: SHAREDvarsClass SHAREDvars;
-	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
-	private: GIApreprocessorMultiwordReductionClass GIApreprocessorMultiwordReduction;
-	#endif
+	private: GIApreprocessorWordIdentificationClass GIApreprocessorWordIdentification;
+	//#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
+	//private: GIApreprocessorWordReductionClass GIApreprocessorWordReduction;
+	//#endif
 	private: GIAnlpClass GIAnlp;
 	private: GIAdatabaseClass GIAdatabase;
 	private: GIAsentenceClassClass GIAsentenceClass;
@@ -123,11 +125,9 @@ class GIAsynRelTranslatorParserClass
 
 	//?substance to substance relationship - these they in actual fact represent different levels of detail in information to substance to action / action to action nodes - direct substance to substance relationships are missing the action/connectivity information
 
-	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
-	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_PREPOSITIONS
+	#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_PREPOSITIONS
 	private: void invertOrDuplicateConditionsIfRequired(GIAtranslatorVariablesClass* translatorVariables);
 		private: void createNewInverseConditionEntity(GIArelation* currentRelationInList, GIAtranslatorVariablesClass* translatorVariables, string inverseConditionName);
-	#endif
 	#endif
 	
 	public: int getEntityArrayMaxIndex(GIAtranslatorVariablesClass* translatorVariables);

@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorHybridSentenceClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f5c 15-April-2018
+ * Project Version: 3f6a 16-April-2018
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Hybrid Sentence Class
  * /
@@ -47,7 +47,7 @@ GIApreprocessorSubReferenceSet::GIApreprocessorSubReferenceSet(void)
 	#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_NLP_TEXT
 	//subReferenceSetContentsOutputForNLP = "";
 	#endif
-	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
+	#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
 	firstIndexOfReferenceSetText = INT_DEFAULT_VALUE;
 	lastIndexOfReferenceSetText = INT_DEFAULT_VALUE;
 	dummyNLPtestOffset = 0;
@@ -93,7 +93,7 @@ GIAtxtRelTranslatorHybridLogicReferenceVariable::GIAtxtRelTranslatorHybridLogicR
 	referenceSetDelimiter = new GIApreprocessorSubReferenceSet();
 	#endif
 	
-	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
+	#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
 	wordIndexSentence = INT_DEFAULT_VALUE;
 	#endif
 }

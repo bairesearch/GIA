@@ -26,7 +26,7 @@
  * File Name: GIAsentenceClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f5c 15-April-2018
+ * Project Version: 3f6a 16-April-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * /
  *******************************************************************************/
@@ -133,12 +133,12 @@ GIArelation::GIArelation(void)
 	relationDependentIndex = INT_DEFAULT_VALUE;
 	relationGovernor = "";
 	relationGovernorIndex = INT_DEFAULT_VALUE;
-	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
+	#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
 	relationGovernorRevertedToOfficialLRPTemp = false;
 	relationDependentRevertedToOfficialLRPTemp = false;
 	#endif
 
-	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_INVERSE_PREPOSITIONS
+	#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_INVERSE_PREPOSITIONS
 	relationTypeNonInversed = "";
 	relationTypeIndexNonInversed = INT_DEFAULT_VALUE;
 	#endif
@@ -167,14 +167,14 @@ GIArelation::GIArelation(void)
 	#endif
 	#endif
 
-	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_PREPOSITIONS
+	#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_PREPOSITIONS
 	inverseRelation = false;
-	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_INVERSE_PREPOSITIONS
+	#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_INVERSE_PREPOSITIONS
 	inverseRelationSingle = false;
 	#endif
-	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_TWOWAY_PREPOSITIONS
+	#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_TWOWAY_PREPOSITIONS
 	relationTwoWay = false;
-	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED
+	#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED
 	inverseRelationTwoWay = false;
 	#endif
 	#endif
@@ -201,10 +201,10 @@ GIAfeature::GIAfeature(void)
 	entityIndex = 0;
 	word = "";
 	lemma = "";
-	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
+	#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
 	wordWithLRPforNLPonly = "";
 	#endif
-	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
+	#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
 	featureRevertedToOfficialLRPTemp = "";
 	#endif
 

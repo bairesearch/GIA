@@ -26,7 +26,7 @@
  * File Name: GIAnlpParser.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f5c 15-April-2018
+ * Project Version: 3f6a 16-April-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: NLP Parser - Parses tabular subsections (Eg <relations>) of RelEx CFF/Stanford Parser File
  * /
@@ -40,7 +40,10 @@
 #include "GIAglobalDefs.hpp"
 #include "GIAsynRelTranslatorDefs.hpp"	//required for convertStanfordRelationToRelex
 #include "GIAsemRelTranslatorDefs.hpp"	//required for GIA_SEM_REL_TRANSLATOR_SUBSETS:GIA_SEM_REL_TRANSLATOR_POS_TYPE_ARRAY_NUMBER_OF_TYPES
-#include "GIApreprocessorMultiwordReduction.hpp"
+#include "GIApreprocessorWordIdentification.hpp"
+#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
+#include "GIApreprocessorWordReduction.hpp" 
+#endif
 
 #define RELEX_DEPENDENCY_RELATION_PREPENDITION "_"
 
@@ -48,7 +51,10 @@ class GIAnlpParserClass
 {
 	private: SHAREDvarsClass SHAREDvars;
 	private: GIAsentenceClassClass GIAsentenceClass;
-	private: GIApreprocessorMultiwordReductionClass GIApreprocessorMultiwordReduction;
+	private: GIApreprocessorWordIdentificationClass GIApreprocessorWordIdentification;
+	#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
+	private: GIApreprocessorWordReductionClass GIApreprocessorWordReduction;
+	#endif
 	public: void GIATHparseStanfordParseWordsAndPOStagsText(const string* POStagsText, GIAsentence* currentSentenceInList, int* numberOfWordsInSentence, const bool createFeaturesGIA2only);
 		private: bool findReplicateRelation(const GIAsentence* currentSentenceInList, const GIArelation* relation);
 			private: bool compareRelations(const GIArelation* relation1, const GIArelation* relation2);
@@ -61,13 +67,13 @@ class GIAnlpParserClass
 	public: void GIATHparseStanfordParserRelationsText(const string* relationsText, GIAsentence* currentSentenceInList, int* numberOfWordsInSentence, const bool featuresNotPreviouslyFilled, const bool parseGIA2file, const bool NLPrelexCompatibilityMode);
 		public: void convertStanfordRelationToRelex(GIArelation* currentRelationInList, const GIAsentence* currentSentenceInList);
 			private: string convertPrepositionToRelex2(const string* preposition, bool* prepositionFound);
-			#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_REPLACE_OUTPUT_FOR_NLP_TEMPORARILY
+			#ifdef GIA_PREPROCESSOR_WORD_REPLACE_OUTPUT_FOR_NLP_TEMPORARILY
 			private: void convertStanfordRelationToRelexLRPreversion(GIArelation* currentRelationInList, const GIAsentence* currentSentenceInList, const bool stanfordPrepositionFound, const string tempRelexPrepositionString, string* relationTypeRelexStandard);
 			#endif
 	/*
 	#ifdef GIA_SEM_REL_TRANSLATOR
 	void convertGIAsemanticRelation(GIArelation* currentRelationInList, GIAsentence* currentSentenceInList);
-		#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_REPLACE_OUTPUT_FOR_NLP_TEMPORARILY
+		#ifdef GIA_PREPROCESSOR_WORD_REPLACE_OUTPUT_FOR_NLP_TEMPORARILY
 		void convertGIAsemanticRelationLRPreversion(GIArelation* currentRelationInList, GIAsentence* currentSentenceInList);
 		#endif
 	#endif

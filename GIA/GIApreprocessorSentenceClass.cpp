@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorSentenceClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f5c 15-April-2018
+ * Project Version: 3f6a 16-April-2018
  * Requirements: requires plain text file
  * Description: Preprocessor Sentence Class
  * /
@@ -64,7 +64,7 @@ GIApreprocessorSentence::GIApreprocessorSentence(void)
 	#ifdef GIA_TXT_REL_TRANSLATOR_RULES
 	firstParseTreeGroup = NULL;
 	#endif
-	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_EXTRACT_INDENTATION
+	#ifdef GIA_PREPROCESSOR_WORD_EXTRACT_INDENTATION
 	indentation = 0;
 	#endif		
 

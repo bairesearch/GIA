@@ -26,7 +26,7 @@
  * File Name: GIAnlp.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f5c 15-April-2018
+ * Project Version: 3f6a 16-April-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: NLP - external natural language processing
  * /
@@ -42,7 +42,10 @@
 #include "XMLrulesClass.hpp"
 #include "GIAnlpParser.hpp"
 #include "GIAsynRelTranslatorDefs.hpp" //required for featureNERtypeArray only
-#include "GIApreprocessorMultiwordReduction.hpp"
+#include "GIApreprocessorWordIdentification.hpp"
+#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
+#include "GIApreprocessorWordReduction.hpp" 
+#endif
 #include "GIAtranslatorOperations.hpp"
 #include "SHAREDvars.hpp"	//file io
 
@@ -128,7 +131,10 @@ class GIAnlpClass
 	private: SHAREDvarsClass SHAREDvars;
 	private: XMLparserClassClass XMLparserClass;
 	private: GIAnlpParserClass GIAnlpParser;
-	private: GIApreprocessorMultiwordReductionClass GIApreprocessorMultiwordReduction;
+	private: GIApreprocessorWordIdentificationClass GIApreprocessorWordIdentification;
+	#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
+	private: GIApreprocessorWordReductionClass GIApreprocessorWordReduction;
+	#endif
 	public: void executeNLPparser(const string inputTextPlainTXTfileName, const string inputTextNLPXMLfileName, const GIAtranslatorVariablesClass* translatorVariables, const bool parseRelationsOrFeatures);
 
 	public: bool parseNLPparserFile(const string inputTextNLPrelationXMLfileName, const string inputTextNLPfeatureXMLfileName, const bool isQuery, GIAsentence* firstSentenceInList, const int NLPfeatureParser, const int NLPdependencyRelationsParser, const bool NLPrelexCompatibilityMode);

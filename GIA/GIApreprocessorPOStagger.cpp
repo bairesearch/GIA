@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorPOStagger.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f5c 15-April-2018
+ * Project Version: 3f6a 16-April-2018
  * Requirements: requires plain text file
  * Description: Preprocessor POS tagger
  * /
@@ -552,7 +552,7 @@ bool GIApreprocessorPOStaggerClass::generatePOStaggerDatabaseFromWikiDumpText(co
 	bool result = true;
 	
 	#ifdef GIA_PREPROCESSOR_INITIALISE_WORD_INDEX_LIST_FROM_LRP_FILES
-	if(!GIApreprocessorMultiwordReduction.createWordIndexListFromLRPfiles())
+	if(!GIApreprocessorWordIdentification.createWordIndexListFromLRPfiles())
 	{
 		result = false;
 	}
@@ -832,7 +832,7 @@ bool GIApreprocessorPOStaggerClass::generatePreprocessorSentenceObjectsFromText(
 	if(useLRP)
 	{
 		//perform multiword reduction
-		#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
+		#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
 		bool isQuery = false;
 
 		string outputLRPTextPlainTXTFileName = GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE_WIKIDUMP_MULTIWORD_FILE_NAME;
@@ -840,13 +840,13 @@ bool GIApreprocessorPOStaggerClass::generatePreprocessorSentenceObjectsFromText(
 
 		string outputLRPTextPlainTXTFileNameWikiDumpMultiword = string(outputLRPTextPlainTXTFileName) + GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE_WIKIDUMP_MULTIWORD_FILE_EXTENSION;
 		string outputLRPTextForNLPonlyPlainTXTFileNameWikiDumpMultiword = string(outputLRPTextForNLPonlyPlainTXTFileNameBase) + GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE_WIKIDUMP_MULTIWORD_FILE_EXTENSION;
-		GIApreprocessorMultiwordReduction.initialiseActiveGIApreprocessorMultiwordReductionTagTextCorrespondenceInfo(isQuery);
-		GIApreprocessorMultiwordReduction.setActiveGIApreprocessorMultiwordReductionTagTextCorrespondenceInfo(isQuery);	//required for local variable access
-		if(!GIApreprocessorMultiwordReduction.parseTextFileAndReduceLanguage(firstGIApreprocessorSentenceInText, outputLRPTextPlainTXTFileNameWikiDumpMultiword, outputLRPTextForNLPonlyPlainTXTFileNameWikiDumpMultiword))
+		GIApreprocessorWordReduction.initialiseActiveGIApreprocessorMultiwordReductionTagTextCorrespondenceInfo(isQuery);
+		GIApreprocessorWordReduction.setActiveGIApreprocessorMultiwordReductionTagTextCorrespondenceInfo(isQuery);	//required for local variable access
+		if(!GIApreprocessorWordReduction.parseTextFileAndReduceLanguage(firstGIApreprocessorSentenceInText, outputLRPTextPlainTXTFileNameWikiDumpMultiword, outputLRPTextForNLPonlyPlainTXTFileNameWikiDumpMultiword))
 		{
 			result = false;
 		}
-		GIApreprocessorMultiwordReduction.deinitialiseActiveGIApreprocessorMultiwordReductionTagTextCorrespondenceInfo(isQuery);	//required so as not to intefere with GIA preprocessor
+		GIApreprocessorWordReduction.deinitialiseActiveGIApreprocessorMultiwordReductionTagTextCorrespondenceInfo(isQuery);	//required so as not to intefere with GIA preprocessor
 		#endif
 	}
 	
@@ -875,12 +875,12 @@ bool GIApreprocessorPOStaggerClass::createPreprocessSentencesBasic(const string 
 		bool punctuationMarkFound = false;
 		if(SHAREDvars.charInCharArray(currentToken, nlpPunctionMarkCharacterArray, GIA_NLP_NUMBER_OF_PUNCTUATION_MARK_CHARACTERS))
 		{
-			#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_INTRAWORD_PUNCTUATION_MARK
-			if(!GIApreprocessorMultiwordReductionClassObject.isIntrawordPunctuationMark(charCount, &fileContents))
+			#ifdef GIA_PREPROCESSOR_WORD_NLP_PARSABLE_PHRASE_SUPPORT_INTRAWORD_PUNCTUATION_MARK
+			if(!GIApreprocessorWordClassObject.isIntrawordPunctuationMark(charCount, &fileContents))
 			{
 			#endif
 				punctuationMarkFound = true;
-			#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_INTRAWORD_PUNCTUATION_MARK
+			#ifdef GIA_PREPROCESSOR_WORD_NLP_PARSABLE_PHRASE_SUPPORT_INTRAWORD_PUNCTUATION_MARK
 			}
 			#endif
 		}
@@ -898,7 +898,7 @@ bool GIApreprocessorPOStaggerClass::createPreprocessSentencesBasic(const string 
 		}
 		
 		bool specialCharFound = false;
-		if(!SHAREDvars.charInCharArray(currentToken, preprocessorLowerOrUpperCaseLettersArray, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_LOWER_OR_UPPER_CASE_LETTERS_NUMBER_OF_TYPES))
+		if(!SHAREDvars.charInCharArray(currentToken, preprocessorLowerOrUpperCaseLettersArray, GIA_PREPROCESSOR_WORD_LOWER_OR_UPPER_CASE_LETTERS_NUMBER_OF_TYPES))
 		{
 			specialCharFound = true;
 		}
@@ -922,25 +922,25 @@ bool GIApreprocessorPOStaggerClass::createPreprocessSentencesBasic(const string 
 			//cout << "currentWord = " << currentWord << ", currentToken = " << currentToken << endl;
 			
 			if(currentWord != "")
-			{//do not add empty tag after closing quotation marks	//e.g. GIA_PREPROCESSOR_MULTIWORD_REDUCTION_REDUCE_QUOTES_TO_SINGLE_WORDS or (newlineFound && interpretNewLinesAsNewSentences && previousCharacter==whitespace)
+			{//do not add empty tag after closing quotation marks	//e.g. GIA_PREPROCESSOR_WORD_REDUCE_QUOTES_TO_SINGLE_WORDS or (newlineFound && interpretNewLinesAsNewSentences && previousCharacter==whitespace)
 				lastWordBlank = false;
-				GIApreprocessorMultiwordReductionClassObject.preprocessorFillCurrentWord(&currentWordInSentence, &currentWord, &entityIndex, lastCharacterIndexOfLastWordBeingFilled);
+				GIApreprocessorWordClassObject.preprocessorFillCurrentWord(&currentWordInSentence, &currentWord, &entityIndex, lastCharacterIndexOfLastWordBeingFilled);
 			}
 			
 			if(punctuationMarkFound)
 			{
 				string punctuationMark = ""; 
 				punctuationMark = punctuationMark + currentToken;
-				GIApreprocessorMultiwordReductionClassObject.preprocessorFillCurrentWord(&currentWordInSentence, &punctuationMark, &entityIndex, charCount);
+				GIApreprocessorWordClassObject.preprocessorFillCurrentWord(&currentWordInSentence, &punctuationMark, &entityIndex, charCount);
 
 				if(SHAREDvars.charInCharArray(currentToken, nlpPunctionMarkCharacterEndOfSentenceArray, GIA_NLP_NUMBER_OF_PUNCTUATION_MARK_CHARACTERS_END_OF_SENTENCE))
 				{
-					#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_INTRAWORD_PUNCTUATION_MARK
-					if(!GIApreprocessorMultiwordReductionClassObject.isIntrawordPunctuationMark(charCount, &fileContents))
+					#ifdef GIA_PREPROCESSOR_WORD_NLP_PARSABLE_PHRASE_SUPPORT_INTRAWORD_PUNCTUATION_MARK
+					if(!GIApreprocessorWordClassObject.isIntrawordPunctuationMark(charCount, &fileContents))
 					{
 					#endif
 						endOfSentencePunctuationMarkFound = true;
-					#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_INTRAWORD_PUNCTUATION_MARK
+					#ifdef GIA_PREPROCESSOR_WORD_NLP_PARSABLE_PHRASE_SUPPORT_INTRAWORD_PUNCTUATION_MARK
 					}
 					#endif
 				}
@@ -954,7 +954,7 @@ bool GIApreprocessorPOStaggerClass::createPreprocessSentencesBasic(const string 
 				#endif
 				if(endOfSentencePunctuationMarkFound)
 				{
-					GIApreprocessorMultiwordReductionClassObject.generateSentenceWordList(firstWordInSentence, &(currentGIApreprocessorSentenceInList->sentenceContentsOriginal));
+					GIApreprocessorWordClassObject.generateSentenceWordList(firstWordInSentence, &(currentGIApreprocessorSentenceInList->sentenceContentsOriginal));
 					currentGIApreprocessorSentenceInList->sentenceIndexOriginal = sentenceIndex;
 					currentGIApreprocessorSentenceInList->sentenceContentsOriginalText = sentenceContentsOriginalText;
 					currentGIApreprocessorSentenceInList->next = new GIApreprocessorSentence();
@@ -972,7 +972,7 @@ bool GIApreprocessorPOStaggerClass::createPreprocessSentencesBasic(const string 
 				if(firstWordInSentence->nextTag != NULL)
 				{
 				#endif
-					GIApreprocessorMultiwordReductionClassObject.generateSentenceWordList(firstWordInSentence, &(currentGIApreprocessorSentenceInList->sentenceContentsOriginal));
+					GIApreprocessorWordClassObject.generateSentenceWordList(firstWordInSentence, &(currentGIApreprocessorSentenceInList->sentenceContentsOriginal));
 					currentGIApreprocessorSentenceInList->sentenceIndexOriginal = sentenceIndex;
 					currentGIApreprocessorSentenceInList->sentenceContentsOriginalText = sentenceContentsOriginalText;
 					currentGIApreprocessorSentenceInList->next = new GIApreprocessorSentence();
@@ -1264,7 +1264,7 @@ bool GIApreprocessorPOStaggerClass::determinePOSambiguityInfo(GIApreprocessorPla
 		exit(0);
 		*/
 		
-		#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
+		#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
 		GIApreprocessorMultiwordReductionPlainTextWord* contextWordMultiwordReductionPlainTextWord = static_cast<GIApreprocessorMultiwordReductionPlainTextWord*>(contextWord);
 		if(contextWordMultiwordReductionPlainTextWord->collapsedMultiwordWord || contextWordMultiwordReductionPlainTextWord->collapsedPhrasalVerbExactDefinedSection)
 		{
@@ -1277,12 +1277,12 @@ bool GIApreprocessorPOStaggerClass::determinePOSambiguityInfo(GIApreprocessorPla
 		#endif
 			*identifiedEveryWordInDatabasePOSpermutation = false;
 			*contextWordPOSisAmbiguous = true;
-		#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
+		#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
 		}
 		#endif
 		
 		#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_NUMBERS
-		if(GIApreprocessorMultiwordReductionClassObject.isStringNumber(contextWordMultiwordReductionPlainTextWord->tagName))
+		if(GIApreprocessorWordClassObject.isStringNumber(contextWordMultiwordReductionPlainTextWord->tagName))
 		{
 			//cout << "isStringNumber" << endl;
 			*contextWordUnambiguousPOSindex = GIA_PREPROCESSOR_POS_TYPE_NUMBER;
@@ -1303,7 +1303,7 @@ bool GIApreprocessorPOStaggerClass::findWordInWordListAllTypesWithPOSambiguityIn
 {	
 	bool result = false;
 		
-	unordered_map<string, pair<GIApreprocessorMultiwordReductionWord*, unsigned long>>* wordListAllTypesWithPOSambiguityInfo = GIApreprocessorMultiwordReduction.getWordListAllTypesWithPOSambiguityInfo();
+	unordered_map<string, pair<GIApreprocessorMultiwordReductionWord*, unsigned long>>* wordListAllTypesWithPOSambiguityInfo = GIApreprocessorWordIdentification.getWordListAllTypesWithPOSambiguityInfo();
 
 	unordered_map<string, pair<GIApreprocessorMultiwordReductionWord*, unsigned long>>::iterator it;
 	it = wordListAllTypesWithPOSambiguityInfo->find(word);

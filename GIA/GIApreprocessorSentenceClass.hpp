@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorSentenceClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f5c 15-April-2018
+ * Project Version: 3f6a 16-April-2018
  * Requirements: requires plain text file
  * Description: Preprocessor Sentence Class
  * /
@@ -40,7 +40,7 @@
 #include "SHAREDvars.hpp"
 #include "GIAentityNodeClass.hpp"	//required for primaryEntityTemp, GIA_PREPROCESSOR_RECORD_REFERENCES
 #include "GIAsentenceClass.hpp"	//required for GIA_PREPROCESSOR_RECORD_REFERENCES
-#include "GIApreprocessorMultiwordReductionClass.hpp"
+#include "GIApreprocessorWordClass.hpp"
 #ifdef GIA_TXT_REL_TRANSLATOR_HYBRID
 #include "GIAtxtRelTranslatorHybridSentenceClass.hpp"
 #endif
@@ -82,7 +82,7 @@ public:
 	#ifdef GIA_TXT_REL_TRANSLATOR_RULES
 	GIAtxtRelTranslatorRulesGroup* firstParseTreeGroup;
 	#endif
-	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_EXTRACT_INDENTATION
+	#ifdef GIA_PREPROCESSOR_WORD_EXTRACT_INDENTATION
 	int indentation;
 	#endif
 	

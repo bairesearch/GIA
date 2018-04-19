@@ -26,7 +26,7 @@
  * File Name: GIApreprocessor.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f5c 15-April-2018
+ * Project Version: 3f6a 16-April-2018
  * Requirements: requires plain text file
  * Description: Preprocessor
  * /
@@ -38,8 +38,12 @@
 
 #include "GIAglobalDefs.hpp"
 #include "GIApreprocessorSentenceClass.hpp"
-#include "GIApreprocessorMultiwordReductionClass.hpp"
-#include "GIApreprocessorMultiwordReduction.hpp"
+#include "GIApreprocessorWordClass.hpp"
+#include "GIApreprocessorWordIdentification.hpp"
+#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
+#include "GIApreprocessorWordReduction.hpp" 
+#endif
+
 #include "GIAtranslatorOperations.hpp"
 #include "XMLparserClass.hpp"
 #ifdef GIA_PREPROCESSOR_POS_TAGGER
@@ -57,12 +61,15 @@ class GIApreprocessorClass
 {
 	private: XMLparserClassClass XMLparserClass;
 	private: SHAREDvarsClass SHAREDvars;
-	private: GIApreprocessorMultiwordReductionClassClass GIApreprocessorMultiwordReductionClassObject;
-	private: GIApreprocessorMultiwordReductionClass GIApreprocessorMultiwordReduction;
+	private: GIApreprocessorWordClassClass GIApreprocessorWordClassObject;
+	private: GIApreprocessorWordIdentificationClass GIApreprocessorWordIdentification;
+	#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
+	private: GIApreprocessorWordReductionClass GIApreprocessorWordReduction;
+	#endif
 	#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID
 	private: GIAtxtRelTranslatorHybridClass GIAtxtRelTranslatorHybrid;
 	#endif
-	//private: GIAtranslatorOperationsClass GIAtranslatorOperations;
+	private: GIAtranslatorOperationsClass GIAtranslatorOperations;
 	#ifdef GIA_PREPROCESSOR_POS_TAGGER
 	private: GIApreprocessorPOStaggerClass GIApreprocessorPOStagger;
 	private: GIApreprocessorPOStaggerDatabaseClass GIApreprocessorPOStaggerDatabase;
@@ -76,7 +83,7 @@ class GIApreprocessorClass
 		public: bool regenerateFileFromPreprocessedTextWithoutLRP(string* inputTextPlainTXTfileName, const string outputLRPTextPlainTXTFileName, GIAtranslatorVariablesClass* translatorVariables);
 			public: bool createPreprocessSentencesForGIA(const string inputFileName, GIAtranslatorVariablesClass* translatorVariables);
 				public: bool createPreprocessSentences(const string fileContents, GIApreprocessorSentence* firstGIApreprocessorSentenceInList, bool interpretNewLinesAsNewSentences, bool splitMultisentenceLines);
-					#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_EXTRACT_INDENTATION
+					#ifdef GIA_PREPROCESSOR_WORD_EXTRACT_INDENTATION
 					private: bool extractIndentationFromCurrentLine(const string* lineContents, int* indexOfCurrentToken, int* currentIndentation, string* indentationContents);
 					public: string generateIndentationContents(int currentIndentation);
 					#endif

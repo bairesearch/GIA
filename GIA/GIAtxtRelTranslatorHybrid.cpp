@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorHybrid.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f5c 15-April-2018
+ * Project Version: 3f6a 16-April-2018
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Hybrid
  * /
@@ -47,7 +47,7 @@
 bool GIAtxtRelTranslatorHybridClass::executePrelimFeatureProcessingOnSentences(const string outputLRPTextPlainTXTFileName, const string inputTextNLPfeatureXMLfileName, GIAtranslatorVariablesClass* translatorVariables)
 {
 	#ifdef GIA_PREPROCESSOR_INITIALISE_WORD_INDEX_LIST_FROM_LRP_FILES
-	if(!GIApreprocessorMultiwordReduction.createWordIndexListFromLRPfiles())
+	if(!GIApreprocessorWordIdentification.createWordIndexListFromLRPfiles())
 	{
 		result = false;
 	}
@@ -68,7 +68,7 @@ bool GIAtxtRelTranslatorHybridClass::executePrelimFeatureProcessingOnSentences(c
 	
 	//print sentences to temporary file
 	SHAREDvars.setCurrentDirectory(outputFolder);
-	if(!GIApreprocessorMultiwordReduction.writeTagListToFile(translatorVariables->firstGIApreprocessorSentenceInList, outputLRPTextPlainTXTFileNamePrelim, "", true, false))
+	if(!GIApreprocessorWordIdentification.writeTagListToFile(translatorVariables->firstGIApreprocessorSentenceInList, outputLRPTextPlainTXTFileNamePrelim, "", true, false))
 	{
 		result = false;
 	}	
@@ -207,7 +207,7 @@ bool GIAtxtRelTranslatorHybridClass::executeTxtRelTranslatorDepreciatedSentence(
 {
 	bool result = true;
 	
-	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
+	#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
 	vector<GIApreprocessorPlainTextWord*>* sentenceContentsWordList = &(currentGIApreprocessorSentenceInList->sentenceContentsLRP);
 	#else
 	vector<GIApreprocessorPlainTextWord*>* sentenceContentsWordList = &(currentGIApreprocessorSentenceInList->sentenceContentsOriginal);
@@ -477,21 +477,21 @@ void GIAtxtRelTranslatorHybridClass::addSentenceToSentenceContentsPreprocessedLo
 	if(!(referenceSet->isReferenceSetDelimiter))
 	{
 	#endif
-		//cout << "add = " << GIApreprocessorMultiwordReductionClassObject.generateTextFromVectorWordList(&(referenceSet->subReferenceSetContents)) << endl;
+		//cout << "add = " << GIApreprocessorWordClassObject.generateTextFromVectorWordList(&(referenceSet->subReferenceSetContents)) << endl;
 		
 		#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_NLP_TEXT
 		(referenceSet->subReferenceSetContentsOutputForNLP).clear();	//probably not required
 		#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_RECORD_SAME_REFERENCE_SET_DELIMITERS
 		if(referenceSet->isReferenceSetDelimiter)
 		{
-			GIApreprocessorMultiwordReductionClassObject.addStringArrayToWordList(&(referenceSet->subReferenceSetContentsOutputForNLP), giaPreprocessorSentenceReferenceSetAddDummyNLPtextRelationshipSubjectFullArray, GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_SUBJECT_FULL_SIZE);
-			GIApreprocessorMultiwordReductionClassObject.addWordListToWordList(&(referenceSet->subReferenceSetContentsOutputForNLP), &(referenceSet->subReferenceSetContents));
+			GIApreprocessorWordClassObject.addStringArrayToWordList(&(referenceSet->subReferenceSetContentsOutputForNLP), giaPreprocessorSentenceReferenceSetAddDummyNLPtextRelationshipSubjectFullArray, GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_SUBJECT_FULL_SIZE);
+			GIApreprocessorWordClassObject.addWordListToWordList(&(referenceSet->subReferenceSetContentsOutputForNLP), &(referenceSet->subReferenceSetContents));
 			#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_SUBJECT_AND_DUMMY_DELIMITER_AND_DUMMY_OBJECT
-			GIApreprocessorMultiwordReductionClassObject.addStringArrayToWordList(&(referenceSet->subReferenceSetContentsOutputForNLP), giaPreprocessorSentenceReferenceSetAddDummyNLPtextRelationshipObjectFullArray, GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_OBJECT_FULL_SIZE);
+			GIApreprocessorWordClassObject.addStringArrayToWordList(&(referenceSet->subReferenceSetContentsOutputForNLP), giaPreprocessorSentenceReferenceSetAddDummyNLPtextRelationshipObjectFullArray, GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_OBJECT_FULL_SIZE);
 			#endif
-			GIApreprocessorMultiwordReductionClassObject.addStringToWordList(&(referenceSet->subReferenceSetContentsOutputForNLP), SHAREDvars.convertCharToString(CHAR_FULLSTOP));
+			GIApreprocessorWordClassObject.addStringToWordList(&(referenceSet->subReferenceSetContentsOutputForNLP), SHAREDvars.convertCharToString(CHAR_FULLSTOP));
 			#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
-			cout << "referenceSet->subReferenceSetContentsOutputForNLP = " << GIApreprocessorMultiwordReductionClassObject.generateTextFromVectorWordList(&(referenceSet->subReferenceSetContentsOutputForNLP), true) << endl;
+			cout << "referenceSet->subReferenceSetContentsOutputForNLP = " << GIApreprocessorWordClassObject.generateTextFromVectorWordList(&(referenceSet->subReferenceSetContentsOutputForNLP), true) << endl;
 			#endif
 			referenceSet->dummyNLPtestOffset = GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_SUBJECT_FULL_SIZE;
 		} 
@@ -505,26 +505,26 @@ void GIAtxtRelTranslatorHybridClass::addSentenceToSentenceContentsPreprocessedLo
 			if(referenceSetType == GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_TYPE_OBJECT)	
 			#endif
 			{
-				GIApreprocessorMultiwordReductionClassObject.addStringArrayToWordList(&(referenceSet->subReferenceSetContentsOutputForNLP), giaPreprocessorSentenceReferenceSetAddDummyNLPtextRelationshipSubjectFullArray, GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_SUBJECT_FULL_SIZE);
-				GIApreprocessorMultiwordReductionClassObject.addStringArrayToWordList(&(referenceSet->subReferenceSetContentsOutputForNLP), giaPreprocessorSentenceReferenceSetAddDummyNLPtextRelationshipFullArray, GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_FULL_SIZE);
-				GIApreprocessorMultiwordReductionClassObject.addWordListToWordList(&(referenceSet->subReferenceSetContentsOutputForNLP), &(referenceSet->subReferenceSetContents));
-				GIApreprocessorMultiwordReductionClassObject.addStringToWordList(&(referenceSet->subReferenceSetContentsOutputForNLP), SHAREDvars.convertCharToString(CHAR_FULLSTOP));
+				GIApreprocessorWordClassObject.addStringArrayToWordList(&(referenceSet->subReferenceSetContentsOutputForNLP), giaPreprocessorSentenceReferenceSetAddDummyNLPtextRelationshipSubjectFullArray, GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_SUBJECT_FULL_SIZE);
+				GIApreprocessorWordClassObject.addStringArrayToWordList(&(referenceSet->subReferenceSetContentsOutputForNLP), giaPreprocessorSentenceReferenceSetAddDummyNLPtextRelationshipFullArray, GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_FULL_SIZE);
+				GIApreprocessorWordClassObject.addWordListToWordList(&(referenceSet->subReferenceSetContentsOutputForNLP), &(referenceSet->subReferenceSetContents));
+				GIApreprocessorWordClassObject.addStringToWordList(&(referenceSet->subReferenceSetContentsOutputForNLP), SHAREDvars.convertCharToString(CHAR_FULLSTOP));
 				#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
-				cout << "referenceSet->subReferenceSetContentsOutputForNLP = " << GIApreprocessorMultiwordReductionClassObject.generateTextFromVectorWordList(&(referenceSet->subReferenceSetContentsOutputForNLP), true) << endl;
+				cout << "referenceSet->subReferenceSetContentsOutputForNLP = " << GIApreprocessorWordClassObject.generateTextFromVectorWordList(&(referenceSet->subReferenceSetContentsOutputForNLP), true) << endl;
 				#endif
 				referenceSet->dummyNLPtestOffset = GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_SUBJECT_FULL_SIZE - GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_FULL_SIZE;
 			} 
 			else if(referenceSetType == GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_TYPE_SUBJECT)
 			{
 			#endif
-				GIApreprocessorMultiwordReductionClassObject.addWordListToWordList(&(referenceSet->subReferenceSetContentsOutputForNLP), &(referenceSet->subReferenceSetContents));
-				GIApreprocessorMultiwordReductionClassObject.addStringArrayToWordList(&(referenceSet->subReferenceSetContentsOutputForNLP), giaPreprocessorSentenceReferenceSetAddDummyNLPtextRelationshipFullArray, GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_FULL_SIZE);
+				GIApreprocessorWordClassObject.addWordListToWordList(&(referenceSet->subReferenceSetContentsOutputForNLP), &(referenceSet->subReferenceSetContents));
+				GIApreprocessorWordClassObject.addStringArrayToWordList(&(referenceSet->subReferenceSetContentsOutputForNLP), giaPreprocessorSentenceReferenceSetAddDummyNLPtextRelationshipFullArray, GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_FULL_SIZE);
 				#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_SUBJECT_AND_DUMMY_DELIMITER_AND_DUMMY_OBJECT
-				GIApreprocessorMultiwordReductionClassObject.addStringArrayToWordList(&(referenceSet->subReferenceSetContentsOutputForNLP), giaPreprocessorSentenceReferenceSetAddDummyNLPtextRelationshipObjectFullArray, GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_OBJECT_FULL_SIZE);
+				GIApreprocessorWordClassObject.addStringArrayToWordList(&(referenceSet->subReferenceSetContentsOutputForNLP), giaPreprocessorSentenceReferenceSetAddDummyNLPtextRelationshipObjectFullArray, GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_OBJECT_FULL_SIZE);
 				#endif
-				GIApreprocessorMultiwordReductionClassObject.addStringToWordList(&(referenceSet->subReferenceSetContentsOutputForNLP), SHAREDvars.convertCharToString(CHAR_FULLSTOP));
+				GIApreprocessorWordClassObject.addStringToWordList(&(referenceSet->subReferenceSetContentsOutputForNLP), SHAREDvars.convertCharToString(CHAR_FULLSTOP));
 				#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
-				cout << "referenceSet->subReferenceSetContentsOutputForNLP = " << GIApreprocessorMultiwordReductionClassObject.generateTextFromVectorWordList(&(referenceSet->subReferenceSetContentsOutputForNLP), true) << endl;
+				cout << "referenceSet->subReferenceSetContentsOutputForNLP = " << GIApreprocessorWordClassObject.generateTextFromVectorWordList(&(referenceSet->subReferenceSetContentsOutputForNLP), true) << endl;
 				#endif
 				referenceSet->dummyNLPtestOffset = 0;
 			#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_SUBJECT_AND_DUMMY_DELIMITER_AND_OBJECT
@@ -534,11 +534,11 @@ void GIAtxtRelTranslatorHybridClass::addSentenceToSentenceContentsPreprocessedLo
 		#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_RECORD_SAME_REFERENCE_SET_DELIMITERS
 		}
 		#endif
-		*sentenceContentsPreprocessedLogicReferenceVariables = *sentenceContentsPreprocessedLogicReferenceVariables + GIApreprocessorMultiwordReductionClassObject.generateTextFromVectorWordList(&(referenceSet->subReferenceSetContents)) + CHAR_NEWLINE;
-		*sentenceContentsPreprocessedLogicReferenceVariablesForNLP = *sentenceContentsPreprocessedLogicReferenceVariablesForNLP + GIApreprocessorMultiwordReductionClassObject.generateTextFromVectorWordList(&(referenceSet->subReferenceSetContentsOutputForNLP), true) + CHAR_NEWLINE;
+		*sentenceContentsPreprocessedLogicReferenceVariables = *sentenceContentsPreprocessedLogicReferenceVariables + GIApreprocessorWordClassObject.generateTextFromVectorWordList(&(referenceSet->subReferenceSetContents)) + CHAR_NEWLINE;
+		*sentenceContentsPreprocessedLogicReferenceVariablesForNLP = *sentenceContentsPreprocessedLogicReferenceVariablesForNLP + GIApreprocessorWordClassObject.generateTextFromVectorWordList(&(referenceSet->subReferenceSetContentsOutputForNLP), true) + CHAR_NEWLINE;
 		#else
-		*sentenceContentsPreprocessedLogicReferenceVariables = *sentenceContentsPreprocessedLogicReferenceVariables + GIApreprocessorMultiwordReductionClassObject.generateTextFromVectorWordList(&(referenceSet->subReferenceSetContents)) + CHAR_NEWLINE;
-		*sentenceContentsPreprocessedLogicReferenceVariablesForNLP = *sentenceContentsPreprocessedLogicReferenceVariablesForNLP + GIApreprocessorMultiwordReductionClassObject.generateTextFromVectorWordList(&(referenceSet->subReferenceSetContents), true) + CHAR_NEWLINE;
+		*sentenceContentsPreprocessedLogicReferenceVariables = *sentenceContentsPreprocessedLogicReferenceVariables + GIApreprocessorWordClassObject.generateTextFromVectorWordList(&(referenceSet->subReferenceSetContents)) + CHAR_NEWLINE;
+		*sentenceContentsPreprocessedLogicReferenceVariablesForNLP = *sentenceContentsPreprocessedLogicReferenceVariablesForNLP + GIApreprocessorWordClassObject.generateTextFromVectorWordList(&(referenceSet->subReferenceSetContents), true) + CHAR_NEWLINE;
 		#endif
 		
 		referenceSet->sentenceIndex = *sentenceIndex;
@@ -553,13 +553,13 @@ void GIAtxtRelTranslatorHybridClass::addSentenceToSentenceContentsPreprocessedLo
 
 
 //preconditions: all multiwords in GIArules.xml <preprocessor><logicReference><class name="preposition"> must be in LRPdata WikipediaEnglishClubMultiwordPrepositions.txt
-#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
+#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
 bool GIAtxtRelTranslatorHybridClass::updateGIApreprocessorMultiwordReductionTagTextCorrespondenceInfo(GIApreprocessorSentence* firstGIApreprocessorSentenceInList, const bool isQuery)
 {
 	bool result = true;
 
-	GIApreprocessorMultiwordReduction.setActiveGIApreprocessorMultiwordReductionTagTextCorrespondenceInfo(isQuery);	
-	GIApreprocessorMultiwordReductionTagTextCorrespondenceInfo* firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo = GIApreprocessorMultiwordReduction.getActiveGIApreprocessorMultiwordReductionTagTextCorrespondenceInfo();
+	GIApreprocessorWordReduction.setActiveGIApreprocessorMultiwordReductionTagTextCorrespondenceInfo(isQuery);	
+	GIApreprocessorMultiwordReductionTagTextCorrespondenceInfo* firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo = GIApreprocessorWordReduction.getActiveGIApreprocessorMultiwordReductionTagTextCorrespondenceInfo();
 	GIApreprocessorMultiwordReductionTagTextCorrespondenceInfo* currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo = firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo;
 	while(currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->next != NULL)
 	{
@@ -1994,9 +1994,9 @@ bool GIAtxtRelTranslatorHybridClass::getRelationshipNameAndType(GIApreprocessorS
 			#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
 			//cout << "firstWordAfterAuxiliary = " << firstWordAfterAuxiliary << endl;
 			#endif
-			if(GIApreprocessorMultiwordReduction.determineIsAuxiliaryBeing(relationshipWord, usePOSprelim))
+			if(GIApreprocessorWordIdentification.determineIsAuxiliaryBeing(relationshipWord, usePOSprelim))
 			{
-				if(GIApreprocessorMultiwordReduction.determineIsAdjective(firstWordAfterAuxiliary, usePOSprelim) || (hasSecondWordAfterAuxiliary && GIApreprocessorMultiwordReduction.determineIsAdverb(firstWordAfterAuxiliary, usePOSprelim) && GIApreprocessorMultiwordReduction.determineIsAdjective(secondWordAfterAuxiliary, usePOSprelim)))
+				if(GIApreprocessorWordIdentification.determineIsAdjective(firstWordAfterAuxiliary, usePOSprelim) || (hasSecondWordAfterAuxiliary && GIApreprocessorWordIdentification.determineIsAdverb(firstWordAfterAuxiliary, usePOSprelim) && GIApreprocessorWordIdentification.determineIsAdjective(secondWordAfterAuxiliary, usePOSprelim)))
 				{
 					*relationshipEntityType = GIA_ENTITY_TYPE_PROPERTY;
 					//FUTURE GIA: if GIA_ENTITY_TYPE_PROPERTY detected via determineIsAdjective(firstWordAfterAuxiliary)||determineIsAdjective(secondWordAfterAuxiliary), then need to set the relationshipEntityObject to GIA_ENTITY_TYPE_QUALITY also
@@ -2006,11 +2006,11 @@ bool GIAtxtRelTranslatorHybridClass::getRelationshipNameAndType(GIApreprocessorS
 					*relationshipEntityType = GIA_ENTITY_TYPE_DEFINITION;	
 				}
 			}
-			if(GIApreprocessorMultiwordReduction.determineIsAuxiliaryHaving(relationshipWord, usePOSprelim))
+			if(GIApreprocessorWordIdentification.determineIsAuxiliaryHaving(relationshipWord, usePOSprelim))
 			{
 				*relationshipEntityType = GIA_ENTITY_TYPE_PROPERTY;		
 			}
-			if(GIApreprocessorMultiwordReduction.determineIsAuxiliaryDoing(relationshipWord, usePOSprelim))
+			if(GIApreprocessorWordIdentification.determineIsAuxiliaryDoing(relationshipWord, usePOSprelim))
 			{
 				*relationshipEntityType = GIA_ENTITY_TYPE_ACTION;
 			}
@@ -2177,7 +2177,7 @@ GIAentityNode* GIAtxtRelTranslatorHybridClass::createNewRelationshipEntity(vecto
 	GIAentityNode* relationshipEntity = NULL;
 	if(logicReferenceContents->size() == 1)
 	{
-		relationshipEntity = createNewRelationshipEntity(GIApreprocessorMultiwordReductionClassObject.generateTextFromVectorWordList(logicReferenceContents), relationshipEntityType, translatorVariables);
+		relationshipEntity = createNewRelationshipEntity(GIApreprocessorWordClassObject.generateTextFromVectorWordList(logicReferenceContents), relationshipEntityType, translatorVariables);
 	}
 	else
 	{
