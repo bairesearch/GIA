@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorGrammar.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f1d 22-February-2018
+ * Project Version: 3f1e 22-February-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
@@ -164,12 +164,12 @@ bool GIAtranslatorGrammarClass::calculateGrammarUsingInferredPosTypes(GIApreproc
 		currentFeature->grammaticalIsProperNoun = true;
 	}
 	
-	/*	
+	
 	cout << "currentWord->tagName = " << currentWord->tagName << endl;
 	cout << "currentFeature->lemma = " << currentFeature->lemma << endl;
 	cout << "currentWord->wordPOStypeInferred = " << currentWord->wordPOStypeInferred << endl;	
 	cout << "currentWord->wordPOStypeInferred = " << GIApreprocessorPOStypeNameArray[currentWord->wordPOStypeInferred] << endl;	
-	*/
+	
 	
 	#ifdef GIA_PREPROCESSOR_INITIALISE_WORD_INDEX_LIST_FROM_LRP_FILES_SUPPORT_UPPERCASE_PROPERNOUN_WORD_LISTS
 	if(currentFeature->grammaticalIsProperNoun)

@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f1d 22-February-2018
+ * Project Version: 3f1e 22-February-2018
  * Requirements: 
  * Description: Textual Relation Translator Parser
  * /
@@ -214,15 +214,14 @@ bool GIAtxtRelTranslatorParserClass::locateAndAddAllNetworkIndexEntitiesBasedOnT
 	GIAfeature* currentFeatureInList = NULL;
 	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3_USE_SYN_REL_TRANSLATOR_FEATURES
 	currentFeatureInList = firstFeatureInSentence;
-	#else
-	GIAfeature currentFeatureTemp;
-	currentFeatureInList = &currentFeatureTemp;
 	#endif
 	for(int w=0; w<numberOfWordsInSentence; w++)
 	{
 		GIApreprocessorWord* currentWord = (translatorVariables->currentPreprocessorSentenceInList)->sentenceContentsLRP[w];
-
+		
 		#ifndef GIA_TXT_REL_TRANSLATOR_RULES_GIA3_USE_SYN_REL_TRANSLATOR_FEATURES
+		GIAfeature currentFeatureTemp;
+		currentFeatureInList = &currentFeatureTemp;
 		if(!GIAtranslatorGrammar.calculateGrammarUsingInferredPosTypes(currentWord, currentFeatureInList))
 		{
 			result = false;
