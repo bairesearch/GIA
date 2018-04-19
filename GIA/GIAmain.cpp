@@ -26,7 +26,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f3g 10-April-2018
+ * Project Version: 3f3h 10-April-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Main
  * /
@@ -667,7 +667,7 @@ int main(const int argc, const char** argv)
 
 	if(SHAREDvarsClass().argumentExists(argc, argv, "-version"))
 	{
-		cout << "GIA.exe - Project Version: 3f3g 10-April-2018" << endl;
+		cout << "GIA.exe - Project Version: 3f3h 10-April-2018" << endl;
 		exit(EXIT_OK);
 	}
 
@@ -1362,9 +1362,12 @@ bool GIAmainClass::executeGIA2()
 	#endif
 		
 		#ifdef GIA_PREPROCESSOR
-		if(!GIApreprocessor.preprocessTextForGIAwrapper(useLRP, &inputTextPlainTXTfileName, outputLRPTextPlainTXTFileName, false, translatorVariables, &useInputTextPlainTXTFile, inputTextNLPfeatureXMLfileName))
+		if(useInputTextPlainTXTFile)
 		{
-			result = false;
+			if(!GIApreprocessor.preprocessTextForGIAwrapper(useLRP, &inputTextPlainTXTfileName, outputLRPTextPlainTXTFileName, false, translatorVariables, &useInputTextPlainTXTFile, inputTextNLPfeatureXMLfileName))
+			{
+				result = false;
+			}
 		}
 		#endif
 
@@ -1394,16 +1397,19 @@ bool GIAmainClass::executeGIA2()
 	#endif
 	#ifndef GIA_DISABLE_SEMANTIC_TRANSLATOR
 	#ifdef GIA_DISABLE_SYNTACTIC_TRANSLATOR
-		#ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3
-		#ifndef GIA_TXT_REL_TRANSLATOR_RULES_GIA3_USE_SYN_REL_TRANSLATOR_FEATURES
-		translatorVariables->firstSentenceInList = new GIAsentence();
-		if(!GIAtxtRelTranslator.parseTxtfileAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences(translatorVariables, inputTextPlainTXTfileName, "", "", outputTextCFFFileName))
+		if(useInputTextPlainTXTFile)
 		{
-			result = false;
+			#ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3
+			#ifndef GIA_TXT_REL_TRANSLATOR_RULES_GIA3_USE_SYN_REL_TRANSLATOR_FEATURES
+			translatorVariables->firstSentenceInList = new GIAsentence();
+			if(!GIAtxtRelTranslator.parseTxtfileAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences(translatorVariables, inputTextPlainTXTfileName, "", "", outputTextCFFFileName))
+			{
+				result = false;
+			}
+			delete translatorVariables->firstSentenceInList;
+			#endif	
+			#endif
 		}
-		delete translatorVariables->firstSentenceInList;
-		#endif	
-		#endif
 	#else
 		
 		if(inputFileList)
@@ -1517,9 +1523,12 @@ bool GIAmainClass::executeGIA2()
 	if(useInputQuery)
 	{
 		#ifdef GIA_PREPROCESSOR
-		if(!GIApreprocessor.preprocessTextForGIAwrapper(useLRP, &inputQueryPlainTXTFileName, outputQueryLRPTextPlainTXTFileName, true, translatorVariablesQuery, &useInputQueryPlainTXTFile, inputQueryNLPfeatureXMLFileName))
+		if(useInputQueryPlainTXTFile)
 		{
-			result = false;
+			if(!GIApreprocessor.preprocessTextForGIAwrapper(useLRP, &inputQueryPlainTXTFileName, outputQueryLRPTextPlainTXTFileName, true, translatorVariablesQuery, &useInputQueryPlainTXTFile, inputQueryNLPfeatureXMLFileName))
+			{
+				result = false;
+			}
 		}
 		#endif
 
@@ -1541,16 +1550,19 @@ bool GIAmainClass::executeGIA2()
 
 	#ifndef GIA_DISABLE_SEMANTIC_TRANSLATOR
 	#ifdef GIA_DISABLE_SYNTACTIC_TRANSLATOR
-		#ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3
-		#ifndef GIA_TXT_REL_TRANSLATOR_RULES_GIA3_USE_SYN_REL_TRANSLATOR_FEATURES
-		translatorVariablesQuery->firstSentenceInList = new GIAsentence();
-		if(!GIAtxtRelTranslator.parseTxtfileAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences(translatorVariablesQuery, inputQueryPlainTXTFileName, "", "", outputQueryCFFFileName))
+		if(useInputQueryPlainTXTFile)
 		{
-			result = false;
+			#ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3
+			#ifndef GIA_TXT_REL_TRANSLATOR_RULES_GIA3_USE_SYN_REL_TRANSLATOR_FEATURES
+			translatorVariablesQuery->firstSentenceInList = new GIAsentence();
+			if(!GIAtxtRelTranslator.parseTxtfileAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences(translatorVariablesQuery, inputQueryPlainTXTFileName, "", "", outputQueryCFFFileName))
+			{
+				result = false;
+			}
+			delete translatorVariablesQuery->firstSentenceInList;
+			#endif	
+			#endif
 		}
-		delete translatorVariablesQuery->firstSentenceInList;
-		#endif	
-		#endif
 	#else
 		if(useInputQueryPlainTXTFile)
 		{
