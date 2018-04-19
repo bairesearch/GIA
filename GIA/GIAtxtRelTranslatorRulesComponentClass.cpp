@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorRulesComponentClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f1b 22-February-2018
+ * Project Version: 3f1c 22-February-2018
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Rules
  * /
@@ -76,7 +76,7 @@ GIAtxtRelTranslatorRulesComponent::GIAtxtRelTranslatorRulesComponent(void)
 	
 	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_QUERY
 	queryComparisonVariable = false;
-	isQuery = false;
+	isAuxiliaryQuery = false;
 	isWhichOrEquivalentWhatQuery = false;
 	#endif
 	#ifdef GIA_ALIASES

@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f1b 22-February-2018
+ * Project Version: 3f1c 22-February-2018
  * Requirements: 
  * Description: Textual Relation Translator Parser
  * /
@@ -141,7 +141,6 @@ bool GIAtxtRelTranslatorParserClass::convertSentenceTxtRelationsIntoGIAnetworkNo
 
 
 	GIAsynRelTranslatorDefineSubstances.defineSubstancesAllNodes(translatorVariables);
-	
 
 	for(int w=0; w<GIAtranslatorOperations.getEntityArrayMaxIndex(translatorVariables); w++)
 	{
@@ -157,6 +156,9 @@ bool GIAtxtRelTranslatorParserClass::convertSentenceTxtRelationsIntoGIAnetworkNo
 		result = false;
 	}
 
+	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_QUERY
+	identifyComparisonVariable(translatorVariables);
+	#endif
 	
 	for(int w=0; w<GIAtranslatorOperations.getEntityArrayMaxIndex(translatorVariables); w++)
 	{
@@ -265,6 +267,31 @@ bool GIAtxtRelTranslatorParserClass::locateAndAddAllNetworkIndexEntitiesBasedOnT
 	return result;
 }
 
+
+#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_QUERY
+void GIAtxtRelTranslatorParserClass::identifyComparisonVariable(GIAtranslatorVariablesClass* translatorVariables)
+{
+	if(translatorVariables->currentSentenceInList->isQuestion)
+	{
+		for(int i=0; i<GIAtranslatorOperations.getEntityArrayMaxIndex(translatorVariables); i++)
+		{
+			if((*translatorVariables->GIAentityNodeArrayFilled)[i])
+			{
+				GIAentityNode* entityNode = (*translatorVariables->GIAentityNodeArray)[i];
+				if(entityNode->isQuery)
+				{
+					if((entityNode->entityName == GIA_SYN_REL_TRANSLATOR_REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE) || (entityNode->isWhichOrEquivalentWhatQuery))
+					{
+						cout << "isQuery" << endl;
+						GIAtranslatorOperations.setComparisonVariableNode(entityNode);
+						GIAtranslatorOperations.setFoundComparisonVariable(true);
+					}
+				}
+			}
+		}
+	}
+}
+#endif
 
 
 #ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3_USE_SEM_REL_TRANSLATOR_PARSER
@@ -409,24 +436,32 @@ bool GIAtxtRelTranslatorParserClass::generateSemanticRelationsFromTxtRelations(G
 		#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_QUERY
 		if(parseTreeComponent->queryComparisonVariable)
 		{
+			translatorVariables->currentSentenceInList->isQuestion = true;
 			//parseTreeComponentSemanticRelationEntity->queryComparisonVariable = true;	//CHECKTHIS
 			parseTreeComponentSemanticRelationEntity->isQuery = true;	//CHECKTHIS
 			//#ifdef GIA_SEM_REL_TRANSLATOR_SUPPORT_QUERIES
 			parseTreeComponentSemanticRelationEntity->entityName = GIA_SYN_REL_TRANSLATOR_REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;
 			//#endif
 		}
-		if(parseTreeComponent->isQuery)
+		if(parseTreeComponent->isAuxiliaryQuery)	//NB parseTreeComponent->isQuery refers to an explicit "is" query, where as entitynode->isQuery refers to any kind of query
 		{
-			parseTreeComponentSemanticRelationEntity->isQuery = true;
+			cout << "isAuxiliaryQuery" << endl;
+			translatorVariables->currentSentenceInList->isQuestion = true;
+			//parseTreeComponentSemanticRelationEntity->isQuery = true;	//CHECKTHIS
 		}
 		else if(parseTreeComponent->isWhichOrEquivalentWhatQuery)
 		{
+			//cout << "isWhichOrEquivalentWhatQuery" << endl;
+			translatorVariables->currentSentenceInList->isQuestion = true;
+			parseTreeComponentSemanticRelationEntity->isQuery = true;	//CHECKTHIS
 			parseTreeComponentSemanticRelationEntity->isWhichOrEquivalentWhatQuery = true;
 		}
 		#endif
 		#ifdef GIA_ALIASES
 		else if(parseTreeComponent->isNameQuery)
 		{
+			translatorVariables->currentSentenceInList->isQuestion = true;
+			parseTreeComponentSemanticRelationEntity->isQuery = true;
 			parseTreeComponentSemanticRelationEntity->isNameQuery = true;
 		}
 		if(parseTreeComponent->isName)
@@ -700,7 +735,7 @@ bool GIAtxtRelTranslatorParserClass::generateSemanticRelationsFromTxtRelations(G
 			#endif
 		}
 	}
-
+	
 	return result;
 }
 
@@ -1245,25 +1280,25 @@ bool GIAtxtRelTranslatorParserClass::createSemanticRelationInNetwork(GIAtranslat
 	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_LOGIC_REFERENCES
 	else if(semanticRelationFunctionName == GIAtxtRelSemanticDependencyRelationNameArray[GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_logicDefinition])
 	{
-		GIAtxtRelTranslatorHybrid.connectLogicReference(translatorVariables, GIA_TXT_REL_TRANSLATOR_LOGIC_REFERENCE_CLASS_DEFINITION, GIA_TXT_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_CLASS_UNDEFINED_TYPE_unknown, entitySemanticRelationFunction1, entitySemanticRelationFunction2, entitySemanticRelationFunction3, sameReferenceSet);
+		GIAtranslatorOperations.connectLogicReference(translatorVariables, GIA_TXT_REL_TRANSLATOR_LOGIC_REFERENCE_CLASS_DEFINITION, GIA_TXT_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_CLASS_UNDEFINED_TYPE_unknown, entitySemanticRelationFunction1, entitySemanticRelationFunction2, entitySemanticRelationFunction3, sameReferenceSet);
 	}
 	else if(semanticRelationFunctionName == GIAtxtRelSemanticDependencyRelationNameArray[GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_logicAction])
 	{
-		GIAtxtRelTranslatorHybrid.connectLogicReference(translatorVariables, GIA_TXT_REL_TRANSLATOR_LOGIC_REFERENCE_CLASS_VERB, GIA_TXT_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_CLASS_UNDEFINED_TYPE_unknown, entitySemanticRelationFunction1, entitySemanticRelationFunction2, entitySemanticRelationFunction3, sameReferenceSet);
+		GIAtranslatorOperations.connectLogicReference(translatorVariables, GIA_TXT_REL_TRANSLATOR_LOGIC_REFERENCE_CLASS_VERB, GIA_TXT_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_CLASS_UNDEFINED_TYPE_unknown, entitySemanticRelationFunction1, entitySemanticRelationFunction2, entitySemanticRelationFunction3, sameReferenceSet);
 	}
 	else if(semanticRelationFunctionName == GIAtxtRelSemanticDependencyRelationNameArray[GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_logicCondition])
 	{
-		GIAtxtRelTranslatorHybrid.connectLogicReference(translatorVariables, GIA_TXT_REL_TRANSLATOR_LOGIC_REFERENCE_CLASS_PREPOSITION, GIA_TXT_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_CLASS_UNDEFINED_TYPE_unknown, entitySemanticRelationFunction1, entitySemanticRelationFunction2, entitySemanticRelationFunction3, sameReferenceSet);
+		GIAtranslatorOperations.connectLogicReference(translatorVariables, GIA_TXT_REL_TRANSLATOR_LOGIC_REFERENCE_CLASS_PREPOSITION, GIA_TXT_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_CLASS_UNDEFINED_TYPE_unknown, entitySemanticRelationFunction1, entitySemanticRelationFunction2, entitySemanticRelationFunction3, sameReferenceSet);
 	}
 	else if(semanticRelationFunctionName == GIAtxtRelSemanticDependencyRelationNameArray[GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_logicConclusion])
 	{
-		GIAtxtRelTranslatorHybrid.connectLogicReferenceConclusion(translatorVariables, GIA_TXT_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_CLASS_UNDEFINED_TYPE_unknown, entitySemanticRelationFunction1, entitySemanticRelationFunction2, sameReferenceSet);
+		GIAtranslatorOperations.connectLogicReferenceConclusion(translatorVariables, GIA_TXT_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_CLASS_UNDEFINED_TYPE_unknown, entitySemanticRelationFunction1, entitySemanticRelationFunction2, sameReferenceSet);
 	}
 	else if(semanticRelationFunctionName == GIAtxtRelSemanticDependencyRelationNameArray[GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_logicConjunction])
 	{
 		for(int i=0; i<entitySemanticRelationFunctionListArray->size(); i++)
 		{
-			GIAtxtRelTranslatorHybrid.connectLogicReferenceConjunction(translatorVariables, GIA_TXT_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_CLASS_UNDEFINED_TYPE_unknown, entitySemanticRelationFunction1, entitySemanticRelationFunction2, sameReferenceSet);
+			GIAtranslatorOperations.connectLogicReferenceConjunction(translatorVariables, GIA_TXT_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_CLASS_UNDEFINED_TYPE_unknown, entitySemanticRelationFunction1, entitySemanticRelationFunction2, sameReferenceSet);
 		}
 	}
 	#endif

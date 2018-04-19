@@ -27,7 +27,7 @@
  * File Name: GIAtxtRelTranslatorRules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f1b 22-February-2018
+ * Project Version: 3f1c 22-February-2018
  * /
  *******************************************************************************/
  
@@ -428,7 +428,7 @@
 					<!-- {adv} adj -->
 					<example><!-- {{Tom rides}} {very} fast/sad {in the house}/{today} --></example>
 					<component referenceSetTypeHybrid="subReferenceSet" componentType="group" groupTypeName="subReferenceSetsPart" groupName="descriptiveAdjectiveOrAdverb" semanticRelationReturnFunctionName="property" semanticRelationReturnFunctionNameIndexType="delimiter" semanticRelationReturnEntity="true" />	<!-- OLD: semanticRelationFunctionName="property" semanticRelationIndexType="object" -->
-					<component referenceSetTypeHybrid="subReferenceSet" componentType="group" groupTypeName="subReferenceSetsAppend" optional="true" semanticRelationReturnEntity="true" />
+					<component referenceSetTypeHybrid="subReferenceSet" componentType="group" groupTypeName="subReferenceSetsAppend" optional="true" />
 				</group>	
 				<!-- #ifdefGIA_TXT_REL_TRANSLATOR_RULES_CODE_MEASURE -->
 				<group groupName="measureRepeat" previousWordPOStype="verb">
@@ -501,13 +501,13 @@
 				<group groupName="action">
 					<!-- verb []  -->
 					<example><!-- ride the bike --></example>
-					<component referenceSetTypeHybrid="subReferenceSetDelimiter" componentType="group" groupTypeName="subReferenceSetsPart" groupName="adverbAndVerb" semanticRelationReturnFunctionName="actionSubject" semanticRelationReturnFunctionNameIndexType="subject" semanticRelationReturnEntity="true" semanticRelationIndexType="delimiter" isQuery="true" />
+					<component referenceSetTypeHybrid="subReferenceSetDelimiter" componentType="group" groupTypeName="subReferenceSetsPart" groupName="adverbAndVerb" semanticRelationReturnFunctionName="actionSubject" semanticRelationReturnFunctionNameIndexType="subject" semanticRelationReturnEntity="true" semanticRelationIndexType="delimiter" isAuxiliaryQuery="true" />
 					<component referenceSetTypeHybrid="subReferenceSet" componentType="group" groupTypeName="subReferenceSetsObject" semanticRelationIndexType="object" optional="true" />
 				</group>
 				<group groupName="actionReverse" semanticRelationFunctionName="actionSubject">
 					<!-- verb by []  -->
 					<example><!-- ridden by the dog --></example>
-					<component referenceSetTypeHybrid="subReferenceSetDelimiter" componentType="group" groupTypeName="subReferenceSetsPart" groupName="adverbAndVerb" semanticRelationReturnFunctionName="actionObject" semanticRelationReturnFunctionNameIndexType="subject" semanticRelationReturnEntity="true" semanticRelationIndexType="delimiter" isQuery="true" />
+					<component referenceSetTypeHybrid="subReferenceSetDelimiter" componentType="group" groupTypeName="subReferenceSetsPart" groupName="adverbAndVerb" semanticRelationReturnFunctionName="actionObject" semanticRelationReturnFunctionNameIndexType="subject" semanticRelationReturnEntity="true" semanticRelationIndexType="delimiter" isAuxiliaryQuery="true" />
 					<repeat optional="true">
 						<component referenceSetTypeHybrid="unknown" componentType="string" stringType="explicit" word="by" />
 						<component referenceSetTypeHybrid="subReferenceSet" componentType="group" groupTypeName="subReferenceSetsSubject" semanticRelationIndexType="subject" />
@@ -516,23 +516,23 @@
 				<group groupName="condition">
 					<!-- prep [] -->
 					<example><!-- near the boat --></example>
-					<component referenceSetTypeHybrid="unknown" componentType="group" groupTypeName="subReferenceSetsObject" groupName="prep" semanticRelationReturnEntity="true" semanticRelationIndexType="delimiter" isQuery="true" />
+					<component referenceSetTypeHybrid="unknown" componentType="group" groupTypeName="subReferenceSetsObject" groupName="prep" semanticRelationReturnEntity="true" semanticRelationIndexType="delimiter" isAuxiliaryQuery="true" />
 				</group>
 				<group groupName="property" previousWordPOStype="noun">		<!-- why is this required; previousWordPOStype="noun"? shouldnt it be the case for all subReferenceSetsDelimiterAndObjectIsQuery groups? -->
 					<!-- {adv} adj -->
 					<example><!-- {be} {very} happy {near the roof} --></example>
-					<component referenceSetTypeHybrid="unknown" componentType="group" groupTypeName="subReferenceSetsPart" groupName="auxiliaryAndDescriptiveAdjective" semanticRelationReturnFunctionName="property" semanticRelationReturnFunctionNameIndexType="subject" semanticRelationReturnEntity="true" isQuery="true" />
-					<component referenceSetTypeHybrid="unknown" componentType="group" groupTypeName="subReferenceSetsAppend" optional="true" semanticRelationReturnFunctionName="property" semanticRelationReturnFunctionNameIndexType="subject" semanticRelationReturnEntity="true" />
+					<component referenceSetTypeHybrid="unknown" componentType="group" groupTypeName="subReferenceSetsPart" groupName="auxiliaryAndDescriptiveAdjective" semanticRelationReturnFunctionName="property" semanticRelationReturnFunctionNameIndexType="subject" semanticRelationReturnEntity="true" isAuxiliaryQuery="true" />
+					<component referenceSetTypeHybrid="unknown" componentType="group" groupTypeName="subReferenceSetsAppend" optional="true" />
 				</group>
 				<group groupName="definition" previousWordPOStype="noun">	<!-- why is this required; previousWordPOStype="noun"? shouldnt it be the case for all subReferenceSetsDelimiterAndObjectIsQuery groups? -->
 					<!-- det_basic [] -->
 					<example><!-- a house --></example>
-					<component referenceSetTypeHybrid="unknown" componentType="group" groupTypeName="subReferenceSetsSpecialPossessiveOrDeterminerThingEnforced" semanticRelationReturnFunctionName="definition" semanticRelationReturnFunctionNameIndexType="subject" semanticRelationReturnEntity="true" isQuery="true" />	<!-- CHECKTHIS; isQuery applies to substance not delimiter -->
+					<component referenceSetTypeHybrid="unknown" componentType="group" groupTypeName="subReferenceSetsSpecialPossessiveOrDeterminerThingEnforced" semanticRelationReturnFunctionName="definition" semanticRelationReturnFunctionNameIndexType="subject" semanticRelationReturnEntity="true" isAuxiliaryQuery="true" />	<!-- CHECKTHIS; isAuxiliaryQuery applies to substance not delimiter -->
 				</group>
 				<group groupName="possessive">
 					<!-- []'s/pronounPossessiveAlone  -->
 					<example><!-- Tom's/his --></example>
-					<component referenceSetTypeHybrid="subReferenceSetDelimiter" componentType="group" groupTypeName="possessiveEndingOrPronounPossessiveAlone" semanticRelationReturnFunctionName="propertySubject" semanticRelationReturnFunctionNameIndexType="subject" semanticRelationReturnEntity="true" isQuery="true" />
+					<component referenceSetTypeHybrid="subReferenceSetDelimiter" componentType="group" groupTypeName="possessiveEndingOrPronounPossessiveAlone" semanticRelationReturnFunctionName="propertySubject" semanticRelationReturnFunctionNameIndexType="subject" semanticRelationReturnEntity="true" isAuxiliaryQuery="true" />
 				</group>
 			</groupType>
 			<groupType groupTypeName="subReferenceSetsAuxiliaryDelimiterAndObject" referenceSetType="subReferenceSet">
@@ -588,8 +588,8 @@
 					<!-- {adv} adv -->
 					<example><!-- {{Tom rides the bike}} {very} fast/sad {in the house} --></example>
 					<!-- added 06 March 2018; eg Tom rides the bike very fast {through the park} -->
-					<component referenceSetTypeHybrid="unknown" componentType="group" groupTypeName="subReferenceSetsPart" groupName="descriptiveAdjectiveOrAdverb" semanticRelationReturnFunctionName="property" semanticRelationReturnFunctionNameIndexType="delimiter" semanticRelationReturnEntity="true" />
-					<component referenceSetTypeHybrid="unknown" componentType="group" groupTypeName="subReferenceSetsAppend" groupName="prep" optional="true" semanticRelationReturnEntity="true" />
+					<component referenceSetTypeHybrid="unknown" componentType="group" groupTypeName="subReferenceSetsPart" groupName="descriptiveAdverb" semanticRelationReturnFunctionName="property" semanticRelationReturnFunctionNameIndexType="delimiter" semanticRelationReturnEntity="true" />
+					<component referenceSetTypeHybrid="unknown" componentType="group" groupTypeName="subReferenceSetsAppend" groupName="prep" optional="true" />
 				</group>
 				<group groupName="prep">
 					<!-- prep [] -->
@@ -837,14 +837,14 @@
 					<component referenceSetTypeHybrid="referenceSet" componentType="group" groupTypeName="referenceSets" semanticRelationIndexType="subject" />
 					<component referenceSetTypeHybrid="unknown" componentType="string" stringType="explicit" word="?" />
 				</group>
-				<group groupName="queryIs" semanticRelationFunctionName="tenseAttributeModalAuxiliaryOrCopula">
+				<group groupName="queryIs" semanticRelationFunctionName2="tenseAttributeModalAuxiliaryOrCopula">
 					<!-- is [] [] ? -->
 					<example><!-- Is[3] the ball[1] happy[2]?/Is[3] the ball[1] near[2] the roof?/Is[3] the ball[1] a man[2]?/Does[3] the ball[1] ride[2] the bike? 
 					Will[3] the ball[1] be happy[2]?/Will[3] the ball[1] be near[2] the roof?//Will[3] the ball[1] be a man[2]?//Will[3] the ball[1] ride[2] the bike?
 					--></example>
-					<component referenceSetTypeHybrid="unknown" componentType="group" groupTypeName="subReferenceSetsPart" groupName="auxiliarySequence" semanticRelationIndexType2="object" />
-					<component referenceSetTypeHybrid="referenceSet" componentType="group" groupTypeName="subReferenceSetsSubject" />
-					<component referenceSetTypeHybrid="referenceSet" componentType="group" groupTypeName="subReferenceSetsDelimiterAndObjectIsQuery" semanticRelationIndexType2="subject" semanticRelationReturnEntity="true" />
+					<component referenceSetTypeHybrid="unknown" componentType="group" groupTypeName="subReferenceSetsPart" groupName="auxiliarySequence" semanticRelationIndexType2="object" semanticRelationReturnEntity="true" />
+					<component referenceSetTypeHybrid="referenceSet" componentType="group" groupTypeName="subReferenceSetsSubject" semanticRelationIndexType="subject" />
+					<component referenceSetTypeHybrid="referenceSet" componentType="group" groupTypeName="subReferenceSetsDelimiterAndObjectIsQuery" semanticRelationIndexType2="subject" />
 					<component referenceSetTypeHybrid="unknown" componentType="string" stringType="explicit" word="?" />
 				</group>
 				

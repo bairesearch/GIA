@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f1b 22-February-2018
+ * Project Version: 3f1c 22-February-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  * /
@@ -756,6 +756,12 @@
 			
 			#define GIA_TXT_REL_TRANSLATOR_RULES_LAYER_START (1)
 			#define GIA_TXT_REL_TRANSLATOR_RULES_LOGIC_REFERENCES
+			#ifdef GIA_TXT_REL_TRANSLATOR_RULES_LOGIC_REFERENCES
+				#define GIA_TXT_REL_TRANSLATOR_LOGIC_REFERENCE
+				#ifdef GIA_TXT_REL_TRANSLATOR_LOGIC_REFERENCE
+					#define GIA_TXT_REL_TRANSLATOR_LOGIC_REFERENCE_DYNAMIC_RELATIONSHIP_ENTITY_TYPES
+				#endif
+			#endif
 			#define GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_RESTRICT_RECURSION	//mandatory
 			#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_RESTRICT_RECURSION
 				#define GIA_TXT_REL_TRANSLATOR_GROUP_TYPE_MAX_NUMBER_CONSECUTIVE_LAYERS (2)	//prevents infinite loop of groupType referenceSetType="logicReferenceSet/subReferenceSet/etc" (ie groupTypeName="logicReferenceSets/subReferenceSets/etc") parsing	//figure must take into account any intermediary groupType layers, eg logicReferenceSetsOptional:logicReferenceSet
@@ -1257,7 +1263,9 @@
 			#define GIA_TXT_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE
 			#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE
 				//#assert defined GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
-
+				
+				#define GIA_TXT_REL_TRANSLATOR_LOGIC_REFERENCE
+				
 				#define GIA_TXT_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE_ERROR_CHECKING
 				#define GIA_TXT_REL_TRANSLATOR_HYBRID_LOGIC_CONJUNCTIONS_ALLOW_INTERMEDIARY_PREPOSITION_AND_VERB_LOGIC_REFERENCES
 				#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_LOGIC_CONJUNCTIONS_ALLOW_INTERMEDIARY_PREPOSITION_AND_VERB_LOGIC_REFERENCES

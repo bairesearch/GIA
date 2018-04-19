@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorHybrid.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f1b 22-February-2018
+ * Project Version: 3f1c 22-February-2018
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Hybrid
  * /
@@ -818,15 +818,15 @@ bool GIAtxtRelTranslatorHybridClass::connectPreprocessorSentenceReferenceSetEnti
 			{
 				if(currentLogicReferenceInList->isSubLogicReferenceGovernor)
 				{
-					connectRelationshipToSource(parentLogicReferenceEntity, logicReferenceEntity, sameReferenceSetLogicReference, translatorVariables);	//eg Tom said that A said B	[where currentLogicReferenceInList is A]
+					GIAtranslatorOperations.connectLogicReferenceRelationshipToSource(parentLogicReferenceEntity, logicReferenceEntity, sameReferenceSetLogicReference, translatorVariables);	//eg Tom said that A said B	[where currentLogicReferenceInList is A]
 				}
 				else if(currentLogicReferenceInList->isSubLogicReferenceDependent)
 				{
-					connectRelationshipToTarget(parentLogicReferenceEntity, logicReferenceEntity, sameReferenceSetLogicReference, translatorVariables);	//eg Tom said that B said A	[where currentLogicReferenceInList is A]
+					GIAtranslatorOperations.connectLogicReferenceRelationshipToTarget(parentLogicReferenceEntity, logicReferenceEntity, sameReferenceSetLogicReference, translatorVariables);	//eg Tom said that B said A	[where currentLogicReferenceInList is A]
 				}
 				else if(currentLogicReferenceInList->isSubLogicReferenceArray)
 				{
-					connectRelationshipToTarget(parentLogicReferenceEntity, logicReferenceEntity, sameReferenceSetLogicReference, translatorVariables);	//eg Tom said A and B 	[where currentLogicReferenceInList is A]
+					GIAtranslatorOperations.connectLogicReferenceRelationshipToTarget(parentLogicReferenceEntity, logicReferenceEntity, sameReferenceSetLogicReference, translatorVariables);	//eg Tom said A and B 	[where currentLogicReferenceInList is A]
 					//CHECKTHIS; need to ensure that action relationship can have multiple objects connected
 				}
 				else
@@ -837,7 +837,7 @@ bool GIAtxtRelTranslatorHybridClass::connectPreprocessorSentenceReferenceSetEnti
 			}
 			else if(currentLogicReferenceInList->previous != NULL)
 			{
-				connectRelationshipToTarget(parentLogicReferenceEntity, logicReferenceEntity, sameReferenceSetLogicReference, translatorVariables);	//eg Tom said A and B 	[where currentLogicReferenceInList is B]	
+				GIAtranslatorOperations.connectLogicReferenceRelationshipToTarget(parentLogicReferenceEntity, logicReferenceEntity, sameReferenceSetLogicReference, translatorVariables);	//eg Tom said A and B 	[where currentLogicReferenceInList is B]	
 			}
 
 
@@ -1055,7 +1055,7 @@ bool GIAtxtRelTranslatorHybridClass::connectPreprocessorSentenceReferenceSetEnti
 									delimiterDefined = true;
 
 									//connect the delimiter to object 
-									connectRelationshipToTarget(delimiterEntity, objectEntity, sameReferenceSetLogicReference, translatorVariables);
+									GIAtranslatorOperations.connectLogicReferenceRelationshipToTarget(delimiterEntity, objectEntity, sameReferenceSetLogicReference, translatorVariables);
 									#else
 									cerr << "GIApreprocessor::connectPreprocessorSentenceReferenceSetEntitiesToLogicReferenceEntities{} error: islogicReferenceConjunctionAndOr(currentLogicReferenceInList) && (!subjectDefined && objectDefined) && !delimiterDefined" << endl;
 									exit(EXIT_ERROR);
@@ -1068,10 +1068,10 @@ bool GIAtxtRelTranslatorHybridClass::connectPreprocessorSentenceReferenceSetEnti
 									#endif
 
 									//connect the delimiter to object 
-									connectRelationshipToTarget(delimiterEntity, objectEntity, sameReferenceSetLogicReference, translatorVariables);
+									GIAtranslatorOperations.connectLogicReferenceRelationshipToTarget(delimiterEntity, objectEntity, sameReferenceSetLogicReference, translatorVariables);
 
 									//translatorVariables->sentenceIndex = currentLogicReferenceInList->logicReferenceVariable->referenceSetObject->sentenceIndex;
-									connectRelationshipToSource(delimiterEntity, firstImplicitConjunctionSubject, sameReferenceSetLogicReferenceConjunction, translatorVariables);
+									GIAtranslatorOperations.connectLogicReferenceRelationshipToSource(delimiterEntity, firstImplicitConjunctionSubject, sameReferenceSetLogicReferenceConjunction, translatorVariables);
 								}
 							}
 							#ifndef GIA_TXT_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE_SET_CONJUNCTION_AND_OR_TEXT_TO_REFERENCE_SET_OBJECT_BEFORE_SEMANTIC_RELATION_PARSE
@@ -1096,7 +1096,7 @@ bool GIAtxtRelTranslatorHybridClass::connectPreprocessorSentenceReferenceSetEnti
 									#endif
 									delimiterDefined = true;
 
-									connectRelationshipToTarget(delimiterEntity, subjectEntity, sameReferenceSetLogicReferenceConjunction, translatorVariables);
+									GIAtranslatorOperations.connectLogicReferenceRelationshipToTarget(delimiterEntity, subjectEntity, sameReferenceSetLogicReferenceConjunction, translatorVariables);
 								}
 							}
 							#endif
@@ -1106,7 +1106,7 @@ bool GIAtxtRelTranslatorHybridClass::connectPreprocessorSentenceReferenceSetEnti
 							//conjunction logic reference already connected (connected to a unique subject)
 							if(conjunctionFoundEmbedded)
 							{
-								connectRelationshipToSource(parentLogicReferenceEntity, firstImplicitConjunctionSubject, sameReferenceSetLogicReference, translatorVariables);
+								GIAtranslatorOperations.connectLogicReferenceRelationshipToSource(parentLogicReferenceEntity, firstImplicitConjunctionSubject, sameReferenceSetLogicReference, translatorVariables);
 							}
 						}
 					}
@@ -1135,13 +1135,13 @@ bool GIAtxtRelTranslatorHybridClass::connectPreprocessorSentenceReferenceSetEnti
 						if(objectDefined)
 						{
 							//eg regarding (logicReference) Tom's (subject) moving (delimiter) the pie (object)
-							connectRelationshipToTarget(delimiterEntity, objectEntity, sameReferenceSetLogicReferenceVariable, translatorVariables);
-							connectRelationshipToSource(delimiterEntity, subjectEntity, sameReferenceSetLogicReferenceVariable, translatorVariables);
+							GIAtranslatorOperations.connectLogicReferenceRelationshipToTarget(delimiterEntity, objectEntity, sameReferenceSetLogicReferenceVariable, translatorVariables);
+							GIAtranslatorOperations.connectLogicReferenceRelationshipToSource(delimiterEntity, subjectEntity, sameReferenceSetLogicReferenceVariable, translatorVariables);
 						}	
 						else
 						{
 							//eg regarding (logicReference) Tom's (subject) moving (delimiter)
-							connectRelationshipToSource(delimiterEntity, subjectEntity, sameReferenceSetLogicReferenceVariable, translatorVariables);
+							GIAtranslatorOperations.connectLogicReferenceRelationshipToSource(delimiterEntity, subjectEntity, sameReferenceSetLogicReferenceVariable, translatorVariables);
 						}
 					}
 					else
@@ -1164,7 +1164,7 @@ bool GIAtxtRelTranslatorHybridClass::connectPreprocessorSentenceReferenceSetEnti
 						if(objectDefined)
 						{
 							//eg regarding (logicReference) moving (delimiter) the pie (object)
-							connectRelationshipToTarget(delimiterEntity, objectEntity, sameReferenceSetLogicReferenceVariable, translatorVariables);
+							GIAtranslatorOperations.connectLogicReferenceRelationshipToTarget(delimiterEntity, objectEntity, sameReferenceSetLogicReferenceVariable, translatorVariables);
 						}	
 						else
 						{
@@ -1197,7 +1197,7 @@ bool GIAtxtRelTranslatorHybridClass::connectPreprocessorSentenceReferenceSetEnti
 				{
 					if(currentLogicReferenceInList->lastLogicReferenceInUpperLevel->logicReferenceClass == GIA_TXT_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_CLASS_PREPOSITION)
 					{
-						connectRelationshipToSource(parentLogicReferenceEntity, delimiterEntity, sameReferenceSetLogicReference, translatorVariables);	//, considering (action) that the pie is (connection) blue.	//eg Considering (action) that the pie is (connection) blue.
+						GIAtranslatorOperations.connectLogicReferenceRelationshipToSource(parentLogicReferenceEntity, delimiterEntity, sameReferenceSetLogicReference, translatorVariables);	//, considering (action) that the pie is (connection) blue.	//eg Considering (action) that the pie is (connection) blue.
 					}
 					else
 					{
@@ -1208,20 +1208,20 @@ bool GIAtxtRelTranslatorHybridClass::connectPreprocessorSentenceReferenceSetEnti
 				}
 				else
 				{
-					connectRelationshipToSource(parentLogicReferenceEntity, subjectEntity, sameReferenceSetLogicReference, translatorVariables);		//eg , considering (action) the pie (subject).	//eg Considering (action) the pie (subject).	/ , considering (action) the pie (subject).	/	Tom (subject) proposed (action)...
+					GIAtranslatorOperations.connectLogicReferenceRelationshipToSource(parentLogicReferenceEntity, subjectEntity, sameReferenceSetLogicReference, translatorVariables);		//eg , considering (action) the pie (subject).	//eg Considering (action) the pie (subject).	/ , considering (action) the pie (subject).	/	Tom (subject) proposed (action)...
 				}
 			}
 			else if(currentLogicReferenceInList->isSubLogicReferenceDependent)
 			{
 				if(delimiterDefined)
 				{	
-					connectRelationshipToTarget(parentLogicReferenceEntity, delimiterEntity, sameReferenceSetLogicReference, translatorVariables);		//eg The apple is (connection) large, considering (action). / Considering (action)...,  the apple is (connction) large	/ ...proposed (action) that the berries are (connection) tasty 
+					GIAtranslatorOperations.connectLogicReferenceRelationshipToTarget(parentLogicReferenceEntity, delimiterEntity, sameReferenceSetLogicReference, translatorVariables);		//eg The apple is (connection) large, considering (action). / Considering (action)...,  the apple is (connction) large	/ ...proposed (action) that the berries are (connection) tasty 
 				}
 				else
 				{
 					if(currentLogicReferenceInList->lastLogicReferenceInUpperLevel->logicReferenceClass == GIA_TXT_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_CLASS_VERB)
 					{
-						connectRelationshipToTarget(parentLogicReferenceEntity, subjectEntity, sameReferenceSetLogicReference, translatorVariables);		//eg ...proposed (action) the plan (object)
+						GIAtranslatorOperations.connectLogicReferenceRelationshipToTarget(parentLogicReferenceEntity, subjectEntity, sameReferenceSetLogicReference, translatorVariables);		//eg ...proposed (action) the plan (object)
 					}
 					else
 					{
@@ -1236,11 +1236,11 @@ bool GIAtxtRelTranslatorHybridClass::connectPreprocessorSentenceReferenceSetEnti
 			{
 				if(delimiterDefined)
 				{
-					connectRelationshipToTarget(parentLogicReferenceEntity, delimiterEntity, sameReferenceSetLogicReference, translatorVariables);
+					GIAtranslatorOperations.connectLogicReferenceRelationshipToTarget(parentLogicReferenceEntity, delimiterEntity, sameReferenceSetLogicReference, translatorVariables);
 				}
 				else if(subjectDefined)
 				{
-					connectRelationshipToTarget(parentLogicReferenceEntity, subjectEntity, sameReferenceSetLogicReference, translatorVariables);
+					GIAtranslatorOperations.connectLogicReferenceRelationshipToTarget(parentLogicReferenceEntity, subjectEntity, sameReferenceSetLogicReference, translatorVariables);
 				}
 				else
 				{
@@ -1475,7 +1475,7 @@ bool GIAtxtRelTranslatorHybridClass::findPrimaryEntityAndReconcileSubReferenceSe
 							#endif
 							if(primaryDelimiterEntity != NULL)
 							{
-								connectRelationshipToSource(intermediaryPrimaryEntity, primaryDelimiterEntity, sameReferenceSet, translatorVariables);	//eg tom rides the bike near the ball -> rides near
+								GIAtranslatorOperations.connectLogicReferenceRelationshipToSource(intermediaryPrimaryEntity, primaryDelimiterEntity, sameReferenceSet, translatorVariables);	//eg tom rides the bike near the ball -> rides near
 							}
 							else
 							{
@@ -1485,9 +1485,9 @@ bool GIAtxtRelTranslatorHybridClass::findPrimaryEntityAndReconcileSubReferenceSe
 						}
 						else
 						{
-							connectRelationshipToSource(intermediaryPrimaryEntity, *primaryEntity, sameReferenceSet, translatorVariables);
+							GIAtranslatorOperations.connectLogicReferenceRelationshipToSource(intermediaryPrimaryEntity, *primaryEntity, sameReferenceSet, translatorVariables);
 							#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
-							cout << "connectRelationshipToSource" << endl;
+							cout << "connectLogicReferenceRelationshipToSource" << endl;
 							#endif
 						}
 						lastDelimiterEntity = intermediaryPrimaryEntity;
@@ -1498,7 +1498,7 @@ bool GIAtxtRelTranslatorHybridClass::findPrimaryEntityAndReconcileSubReferenceSe
 						if(lastDelimiterEntity != NULL)
 						{
 							bool sameReferenceSet = true;
-							connectRelationshipToTarget(lastDelimiterEntity, intermediaryPrimaryEntity, sameReferenceSet, translatorVariables);
+							GIAtranslatorOperations.connectLogicReferenceRelationshipToTarget(lastDelimiterEntity, intermediaryPrimaryEntity, sameReferenceSet, translatorVariables);
 							lastDelimiterEntity = NULL;
 						}
 						else
@@ -2148,7 +2148,7 @@ GIAentityNode* GIAtxtRelTranslatorHybridClass::createNewRelationshipAndConnectTo
 GIAentityNode* GIAtxtRelTranslatorHybridClass::createNewRelationshipAndConnectToSource(GIAentityNode* sourceEntity, GIApreprocessorSubReferenceSet* relationshipReference, GIApreprocessorSubReferenceSet* relationshipObject, const bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables)	//OLD: this will create an intermediary action/possession("have") node if necessary
 {
 	GIAentityNode* relationshipEntity = createNewRelationship(relationshipReference, relationshipObject, translatorVariables);
-	connectRelationshipToSource(relationshipEntity, sourceEntity, sameReferenceSet, translatorVariables);
+	GIAtranslatorOperations.connectLogicReferenceRelationshipToSource(relationshipEntity, sourceEntity, sameReferenceSet, translatorVariables);
 	return relationshipEntity;
 }
 
@@ -2171,66 +2171,6 @@ GIAentityNode* GIAtxtRelTranslatorHybridClass::createNewRelationship(GIApreproce
 #endif
 
 
-bool GIAtxtRelTranslatorHybridClass::connectLogicReferenceConjunction(GIAtranslatorVariablesClass* translatorVariables, const string logicReferenceClassType, GIAentityNode* targetEntity, GIAentityNode* logicReferenceEntity, const bool sameReferenceSet)
-{
-	return connectLogicReference(translatorVariables, GIA_TXT_REL_TRANSLATOR_LOGIC_REFERENCE_CLASS_CONJUNCTION, logicReferenceClassType, NULL, targetEntity, logicReferenceEntity, sameReferenceSet);
-}
-bool GIAtxtRelTranslatorHybridClass::connectLogicReferenceConclusion(GIAtranslatorVariablesClass* translatorVariables, const string logicReferenceClassType, GIAentityNode* targetEntity, GIAentityNode* logicReferenceEntity, const bool sameReferenceSet)
-{
-	return connectLogicReference(translatorVariables, GIA_TXT_REL_TRANSLATOR_LOGIC_REFERENCE_CLASS_CONCLUSION, logicReferenceClassType,  NULL, targetEntity, logicReferenceEntity, sameReferenceSet);
-}
-bool GIAtxtRelTranslatorHybridClass::connectLogicReference(GIAtranslatorVariablesClass* translatorVariables, const int logicReferenceClass, const string logicReferenceClassType, GIAentityNode* sourceEntity, GIAentityNode* targetEntity, GIAentityNode* logicReferenceEntity, const bool sameReferenceSet)
-{
-	bool result = false;
-	
-	//#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
-	cout << "GIAtxtRelTranslatorHybridClass::createLogicReference:" << endl;
-	cout << "logicReferenceEntity = " << logicReferenceEntity->entityName << endl;
-	//#endif
-	logicReferenceEntity->entityType = GIA_ENTITY_TYPE_LOGIC_REFERENCE;
-	logicReferenceEntity->isLogicReferenceEntity = true;
-	logicReferenceEntity->logicReferenceClass = logicReferenceClass;
-	logicReferenceEntity->logicReferenceClassType = logicReferenceClassType; 
-	
-	if(sourceEntity != NULL)
-	{
-		connectRelationshipToSource(logicReferenceEntity, sourceEntity, sameReferenceSet, translatorVariables);
-	}
-	else if(targetEntity != NULL)
-	{
-		connectRelationshipToTarget(logicReferenceEntity, targetEntity, sameReferenceSet, translatorVariables);
-	}
-	else
-	{
-		cerr << "GIAtxtRelTranslatorHybridClass::connectLogicReference{} error: (sourceEntity == NULL) && (targetEntity == NULL)" << endl;
-		exit(EXIT_ERROR);
-	}
-
-	return result;
-}
-			
-void GIAtxtRelTranslatorHybridClass::connectRelationshipToTarget(GIAentityNode* relationship, GIAentityNode* targetEntity, const bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables)
-{
-	int connectionTypeTargetToRelationship = generateConnectionTypeTargetToRelationship(relationship);
-	GIAtranslatorOperations.connectEntities(relationship, targetEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_RELATIONSHIP_OBJECT, connectionTypeTargetToRelationship, sameReferenceSet, translatorVariables);
-}
-void GIAtxtRelTranslatorHybridClass::connectRelationshipToSource(GIAentityNode* relationship, GIAentityNode* sourceEntity, const bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables)
-{
-	int connectionTypeSourceToRelationship = generateConnectionTypeSourceToRelationship(relationship);
-	GIAtranslatorOperations.connectEntities(relationship, sourceEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_RELATIONSHIP_SUBJECT, connectionTypeSourceToRelationship, sameReferenceSet, translatorVariables);
-}
-
-int GIAtxtRelTranslatorHybridClass::generateConnectionTypeTargetToRelationship(GIAentityNode* relationship)
-{
-	int connectionTypeTargetToRelationship = GIAtranslatorOperations.generateConnectionTypeReverse(relationship->entityType);
-	return connectionTypeTargetToRelationship;
-}
-
-int GIAtxtRelTranslatorHybridClass::generateConnectionTypeSourceToRelationship(GIAentityNode* relationship)
-{
-	int connectionTypeTargetToRelationship = GIAtranslatorOperations.generateConnectionType(relationship->entityType);
-	return connectionTypeTargetToRelationship;
-}
 
 GIAentityNode* GIAtxtRelTranslatorHybridClass::createNewRelationshipEntity(vector<GIApreprocessorWord*>* logicReferenceContents, const int relationshipEntityType, GIAtranslatorVariablesClass* translatorVariables)
 {

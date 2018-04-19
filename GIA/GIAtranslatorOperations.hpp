@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f1b 22-February-2018
+ * Project Version: 3f1c 22-February-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
@@ -52,14 +52,18 @@
 #ifdef GIA_TXT_REL_TRANSLATOR_HYBRID
 #include "GIApreprocessorSentenceClass.hpp"
 #endif
+#ifdef GIA_TXT_REL_TRANSLATOR_LOGIC_REFERENCE
+#include "GIAtxtRelTranslatorRules.hpp"
+#endif
 #ifdef GIA_NEURAL_NETWORK
 #include "ANNneuronClass.hpp"
 #endif
 #include "SHAREDvars.hpp"
 
 
-
-
+#ifdef GIA_TXT_REL_TRANSLATOR_LOGIC_REFERENCE
+	#define GIA_ENTITY_TYPE_LOGIC_REFERENCE (GIA_ENTITY_TYPE_ACTION)
+#endif
 
 
 class GIAtranslatorVariablesClass
@@ -367,7 +371,17 @@ class GIAtranslatorOperationsClass
 	public: bool connectQuantityToEntity(GIAtranslatorVariablesClass* translatorVariables, GIAentityNode* entitySemanticRelationFunction1, GIAentityNode* entitySemanticRelationFunction2, const bool sameReferenceSet);
 	public: bool connectMeasureToEntity(GIAtranslatorVariablesClass* translatorVariables, GIAentityNode* entitySemanticRelationFunction1, GIAentityNode* entitySemanticRelationFunction2, const bool sameReferenceSet);
 	public: bool connectMeasurePerToEntity(GIAtranslatorVariablesClass* translatorVariables, GIAentityNode* entitySemanticRelationFunction1, GIAentityNode* entitySemanticRelationFunction2, const bool sameReferenceSet);
-		
+
+	#ifdef GIA_TXT_REL_TRANSLATOR_LOGIC_REFERENCE
+	public: bool connectLogicReferenceConjunction(GIAtranslatorVariablesClass* translatorVariables, const string logicReferenceClassType, GIAentityNode* targetEntity, GIAentityNode* logicReferenceEntity, const bool sameReferenceSet);
+	public: bool connectLogicReferenceConclusion(GIAtranslatorVariablesClass* translatorVariables, const string logicReferenceClassType, GIAentityNode* targetEntity, GIAentityNode* logicReferenceEntity, const bool sameReferenceSet);
+	public: bool connectLogicReference(GIAtranslatorVariablesClass* translatorVariables, const int logicReferenceClass, const string logicReferenceClassType, GIAentityNode* sourceEntity, GIAentityNode* targetEntity, GIAentityNode* logicReferenceEntity, const bool sameReferenceSet);
+		public: void connectLogicReferenceRelationshipToTarget(GIAentityNode* relationship, GIAentityNode* targetEntity, const bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables);
+		public: void connectLogicReferenceRelationshipToSource(GIAentityNode* relationship, GIAentityNode* sourceEntity, const bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables);
+			private: int generateConnectionTypeTargetToLogicReferenceRelationship(GIAentityNode* relationship);
+			private: int generateConnectionTypeSourceToLogicReferenceRelationship(GIAentityNode* relationship);
+	#endif
+	
 	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3
 	public: int getEntityArrayMaxIndex(GIAtranslatorVariablesClass* translatorVariables);
 	#else

@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorRules.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f1b 22-February-2018
+ * Project Version: 3f1c 22-February-2018
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Rules
  * /
@@ -142,7 +142,7 @@ static string GIAtxtRelSemanticDependencyRelationNameArray[GIA_TXT_REL_TRANSLATO
 					
 					#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_QUERY
 					#define GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_queryComparisonVariable ((string)"queryComparisonVariable")
-					#define GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_isQuery ((string)"isQuery")
+					#define GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_isAuxiliaryQuery ((string)"isAuxiliaryQuery")
 					#define GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_isWhichOrEquivalentWhatQuery ((string)"isWhichOrEquivalentWhatQuery")
 					#endif
 					#ifdef GIA_ALIASES
@@ -189,7 +189,9 @@ static string GIAtxtRelTranslatorHybridLogicReferenceClasses[GIA_TXT_REL_TRANSLA
 #define GIA_TXT_REL_TRANSLATOR_LOGIC_REFERENCE_CLASS_conclusion "conclusion"
 #define GIA_TXT_REL_TRANSLATOR_LOGIC_REFERENCE_CLASS_NUM (GIA_TXT_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_CLASS_NUM + 2)
 static string GIAtxtRelTranslatorLogicReferenceClasses[GIA_TXT_REL_TRANSLATOR_LOGIC_REFERENCE_CLASS_NUM] = {GIA_TXT_REL_TRANSLATOR_LOGIC_REFERENCE_CLASS_undefined, GIA_TXT_REL_TRANSLATOR_LOGIC_REFERENCE_CLASS_conjunction, GIA_TXT_REL_TRANSLATOR_LOGIC_REFERENCE_CLASS_verb, GIA_TXT_REL_TRANSLATOR_LOGIC_REFERENCE_CLASS_preposition, GIA_TXT_REL_TRANSLATOR_LOGIC_REFERENCE_CLASS_definition, GIA_TXT_REL_TRANSLATOR_LOGIC_REFERENCE_CLASS_conclusion};
-
+#ifdef GIA_TXT_REL_TRANSLATOR_LOGIC_REFERENCE_DYNAMIC_RELATIONSHIP_ENTITY_TYPES
+static int GIAtxtRelTranslatorLogicReferenceClassesCrossReferenceEntityType[GIA_TXT_REL_TRANSLATOR_LOGIC_REFERENCE_CLASS_NUM] = {GIA_ENTITY_TYPE_UNDEFINED, GIA_ENTITY_TYPE_UNDEFINED, GIA_ENTITY_TYPE_ACTION, GIA_ENTITY_TYPE_CONDITION, GIA_ENTITY_TYPE_DEFINITION, GIA_ENTITY_TYPE_CONDITION};
+#endif
 
 #define GIA_TXT_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_CLASS_CONJUNCTION_COMPONENT_IMPLICIT_INFERRED (11)	//used to demarkate components of conjunction logic references 
 #define GIA_TXT_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_CLASS_CONJUNCTION_COMPONENT_IMPLICIT_CONFIRMED (12)

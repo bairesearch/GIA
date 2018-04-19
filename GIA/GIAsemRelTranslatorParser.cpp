@@ -26,7 +26,7 @@
  * File Name: GIAsemRelTranslatorParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f1b 22-February-2018
+ * Project Version: 3f1c 22-February-2018
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  * Description: Semantic Relation Translator Parser
  * /
@@ -753,7 +753,7 @@ void GIAsemRelTranslatorParserClass::defineConnectionsBasedOnSemanticRelations(G
 					int entity2IndexRelation2 = currentRelationInList2->relationGovernorIndex;
 					GIAentityNode* entity2relation2 = (*translatorVariables->GIAentityNodeArray)[entity2IndexRelation2];
 
-					GIAtxtRelTranslatorHybrid.connectLogicReference(translatorVariables, GIA_TXT_REL_TRANSLATOR_LOGIC_REFERENCE_CLASS_DEFINITION, GIA_TXT_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_CLASS_UNDEFINED_TYPE_unknown, entity1, entity2relation2, entity3, sameReferenceSet);
+					GIAtranslatorOperations.connectLogicReference(translatorVariables, GIA_TXT_REL_TRANSLATOR_LOGIC_REFERENCE_CLASS_DEFINITION, GIA_TXT_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_CLASS_UNDEFINED_TYPE_unknown, entity1, entity2relation2, entity3, sameReferenceSet);
 					currentRelationInList2->disabled = true;
 				}
 				else
@@ -774,7 +774,7 @@ void GIAsemRelTranslatorParserClass::defineConnectionsBasedOnSemanticRelations(G
 					int entity2IndexRelation2 = currentRelationInList2->relationGovernorIndex;
 					GIAentityNode* entity2relation2 = (*translatorVariables->GIAentityNodeArray)[entity2IndexRelation2];
 
-					GIAtxtRelTranslatorHybrid.connectLogicReference(translatorVariables, GIA_TXT_REL_TRANSLATOR_LOGIC_REFERENCE_CLASS_VERB, GIA_TXT_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_CLASS_UNDEFINED_TYPE_unknown, entity1, entity2relation2, entity3, sameReferenceSet);
+					GIAtranslatorOperations.connectLogicReference(translatorVariables, GIA_TXT_REL_TRANSLATOR_LOGIC_REFERENCE_CLASS_VERB, GIA_TXT_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_CLASS_UNDEFINED_TYPE_unknown, entity1, entity2relation2, entity3, sameReferenceSet);
 					currentRelationInList2->disabled = true;
 				}
 				else
@@ -795,7 +795,7 @@ void GIAsemRelTranslatorParserClass::defineConnectionsBasedOnSemanticRelations(G
 					int entity2IndexRelation2 = currentRelationInList2->relationGovernorIndex;
 					GIAentityNode* entity2relation2 = (*translatorVariables->GIAentityNodeArray)[entity2IndexRelation2];
 
-					GIAtxtRelTranslatorHybrid.connectLogicReference(translatorVariables, GIA_TXT_REL_TRANSLATOR_LOGIC_REFERENCE_CLASS_PREPOSITION, GIA_TXT_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_CLASS_UNDEFINED_TYPE_unknown, entity1, entity2relation2, entity3, sameReferenceSet);
+					GIAtranslatorOperations.connectLogicReference(translatorVariables, GIA_TXT_REL_TRANSLATOR_LOGIC_REFERENCE_CLASS_PREPOSITION, GIA_TXT_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_CLASS_UNDEFINED_TYPE_unknown, entity1, entity2relation2, entity3, sameReferenceSet);
 					currentRelationInList2->disabled = true;
 				}
 				else
@@ -807,12 +807,12 @@ void GIAsemRelTranslatorParserClass::defineConnectionsBasedOnSemanticRelations(G
 			}
 			else if(currentRelationInList->relationType == GIA2semanticDependencyRelationNameArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_LOGIC_CONCLUSION])
 			{
-				GIAtxtRelTranslatorHybrid.connectLogicReferenceConclusion(translatorVariables, GIA_TXT_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_CLASS_UNDEFINED_TYPE_unknown, entity1, entity2, sameReferenceSet);
+				GIAtranslatorOperations.connectLogicReferenceConclusion(translatorVariables, GIA_TXT_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_CLASS_UNDEFINED_TYPE_unknown, entity1, entity2, sameReferenceSet);
 				currentRelationInList->disabled = true;
 			}	
 			else if(currentRelationInList->relationType == GIA2semanticDependencyRelationNameArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_LOGIC_CONJUNCTION])
 			{
-				GIAtxtRelTranslatorHybrid.connectLogicReferenceConjunction(translatorVariables, GIA_TXT_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_CLASS_UNDEFINED_TYPE_unknown, entity1, entity2, sameReferenceSet);
+				GIAtranslatorOperations.connectLogicReferenceConjunction(translatorVariables, GIA_TXT_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_CLASS_UNDEFINED_TYPE_unknown, entity1, entity2, sameReferenceSet);
 				currentRelationInList->disabled = true;
 			}		
 			#endif

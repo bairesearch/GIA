@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f1b 22-February-2018
+ * Project Version: 3f1c 22-February-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
@@ -2084,7 +2084,10 @@ bool GIAtranslatorOperationsClass::mergeEntityNodesAddAlias(GIAentityNode* entit
 			#ifdef GIA_ALIASES
 			entityNode->isNameQuery = entityNodeToMerge->isNameQuery;
 			#endif
-			setComparisonVariableNode(entityNode);
+			if(getComparisonVariableNode() == entityNodeToMerge)
+			{
+				setComparisonVariableNode(entityNode);
+			}
 		}
 		#ifdef GIA_ALIASES
 		entityNode->isName = entityNodeToMerge->isName;
@@ -3037,6 +3040,75 @@ bool GIAtranslatorOperationsClass::connectMeasurePerToEntity(GIAtranslatorVariab
 
 
 
+#ifdef GIA_TXT_REL_TRANSLATOR_LOGIC_REFERENCE
+bool GIAtranslatorOperationsClass::connectLogicReferenceConjunction(GIAtranslatorVariablesClass* translatorVariables, const string logicReferenceClassType, GIAentityNode* targetEntity, GIAentityNode* logicReferenceEntity, const bool sameReferenceSet)
+{
+	return connectLogicReference(translatorVariables, GIA_TXT_REL_TRANSLATOR_LOGIC_REFERENCE_CLASS_CONJUNCTION, logicReferenceClassType, NULL, targetEntity, logicReferenceEntity, sameReferenceSet);
+}
+bool GIAtranslatorOperationsClass::connectLogicReferenceConclusion(GIAtranslatorVariablesClass* translatorVariables, const string logicReferenceClassType, GIAentityNode* targetEntity, GIAentityNode* logicReferenceEntity, const bool sameReferenceSet)
+{
+	return connectLogicReference(translatorVariables, GIA_TXT_REL_TRANSLATOR_LOGIC_REFERENCE_CLASS_CONCLUSION, logicReferenceClassType,  NULL, targetEntity, logicReferenceEntity, sameReferenceSet);
+}
+bool GIAtranslatorOperationsClass::connectLogicReference(GIAtranslatorVariablesClass* translatorVariables, const int logicReferenceClass, const string logicReferenceClassType, GIAentityNode* sourceEntity, GIAentityNode* targetEntity, GIAentityNode* logicReferenceEntity, const bool sameReferenceSet)
+{
+	bool result = false;
+	
+	#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
+	cout << "GIAtxtRelTranslatorHybridClass::createLogicReference:" << endl;
+	cout << "logicReferenceEntity = " << logicReferenceEntity->entityName << endl;
+	#endif
+	#ifdef GIA_TXT_REL_TRANSLATOR_LOGIC_REFERENCE_DYNAMIC_RELATIONSHIP_ENTITY_TYPES
+	logicReferenceEntity->entityType = GIAtxtRelTranslatorLogicReferenceClassesCrossReferenceEntityType[logicReferenceClass];	
+	#else
+	logicReferenceEntity->entityType = GIA_ENTITY_TYPE_LOGIC_REFERENCE;
+	#endif
+	logicReferenceEntity->isLogicReferenceEntity = true;
+	logicReferenceEntity->logicReferenceClass = logicReferenceClass;
+	logicReferenceEntity->logicReferenceClassType = logicReferenceClassType; 
+	
+	if(sourceEntity != NULL)
+	{
+		connectLogicReferenceRelationshipToSource(logicReferenceEntity, sourceEntity, sameReferenceSet, translatorVariables);
+	}
+	if(targetEntity != NULL)
+	{
+		connectLogicReferenceRelationshipToTarget(logicReferenceEntity, targetEntity, sameReferenceSet, translatorVariables);
+	}
+	if((sourceEntity == NULL) && (targetEntity == NULL))
+	{
+		cerr << "GIAtxtRelTranslatorHybridClass::connectLogicReference{} error: (sourceEntity == NULL) && (targetEntity == NULL)" << endl;
+		exit(EXIT_ERROR);
+	}
+
+	return result;
+}
+			
+void GIAtranslatorOperationsClass::connectLogicReferenceRelationshipToTarget(GIAentityNode* relationship, GIAentityNode* targetEntity, const bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables)
+{
+	//cout << "connectLogicReferenceRelationshipToTarget: relationship = " << relationship->entityName << ", targetEntity = " << targetEntity->entityName << endl; 
+	int connectionTypeTargetToRelationship = generateConnectionTypeTargetToLogicReferenceRelationship(relationship);
+	connectEntities(relationship, targetEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_RELATIONSHIP_OBJECT, connectionTypeTargetToRelationship, sameReferenceSet, translatorVariables);
+}
+void GIAtranslatorOperationsClass::connectLogicReferenceRelationshipToSource(GIAentityNode* relationship, GIAentityNode* sourceEntity, const bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables)
+{
+	//cout << "connectLogicReferenceRelationshipToSource: relationship = " << relationship->entityName << ", sourceEntity = " << sourceEntity->entityName << endl;
+	int connectionTypeSourceToRelationship = generateConnectionTypeSourceToLogicReferenceRelationship(relationship);
+	connectEntities(relationship, sourceEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_RELATIONSHIP_SUBJECT, connectionTypeSourceToRelationship, sameReferenceSet, translatorVariables);
+}
+
+int GIAtranslatorOperationsClass::generateConnectionTypeTargetToLogicReferenceRelationship(GIAentityNode* relationship)
+{
+	int connectionTypeTargetToRelationship = generateConnectionTypeReverse(relationship->entityType);
+	return connectionTypeTargetToRelationship;
+}
+
+int GIAtranslatorOperationsClass::generateConnectionTypeSourceToLogicReferenceRelationship(GIAentityNode* relationship)
+{
+	int connectionTypeTargetToRelationship = generateConnectionType(relationship->entityType);
+	return connectionTypeTargetToRelationship;
+}
+
+#endif
 
 
 		
