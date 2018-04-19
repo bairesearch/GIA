@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorRules.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f3n 10-April-2018
+ * Project Version: 3f3o 10-April-2018
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Rules
  * /
@@ -161,28 +161,53 @@ bool GIAtxtRelTranslatorRulesClass::extractGIAtxtRelTranslatorRulesGroups(vector
 									//cerr << "GIAtxtRelTranslatorRules::extractGIAtxtRelTranslatorRulesGroups{} warning: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTypeTag, GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_GROUP_ATTRIBUTE_existsPreceedingWordPOStype, &existsPreceedingWordPOStype)" << endl;
 								}
 								#endif
-
-								GIAtxtRelTranslatorRulesGroup* group = new GIAtxtRelTranslatorRulesGroup();
-								group->semanticRelationFunctionName = semanticRelationFunctionName;
-								#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_NEW_CONDITIONS
-								group->semanticRelationFunctionConditionNewName = semanticRelationFunctionConditionNewName;
-								//cout << "semanticRelationFunctionConditionNewName = " << semanticRelationFunctionConditionNewName << endl;
-								#endif
-								group->groupName = groupName;
-								#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_GROUP_PREVIOUS_WORD_POS_TYPE
-								group->previousWordPOStype = previousWordPOStype;
-								#endif
-								#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_GROUP_EXISTS_PRECEEDING_WORD_POS_TYPE
-								group->existsPreceedingWordPOStype = existsPreceedingWordPOStype;
-								#endif
-								groupType->groups.push_back(group);
-						
-								XMLparserTag* firstTagInTxtRelTranslatorGroupTag = XMLparserClass.parseTagDownALevel(currentTagInTxtRelTranslatorGroupTypeTag, GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_GROUPTYPE_TAG_group, &result);
-
-								if(!parseComponents(firstTagInTxtRelTranslatorGroupTag, &(group->components), false))
+								
+								bool passGroupNameRequirements = true;
+								bool GIAwithNoExternalProcessingFunctionFound = false;
+								bool GIAwithExternalProcessingFunctionFound = false;
+								if(SHAREDvars.textInTextArray(groupName, GIAtxtRelWithNoExternalProcessingGroupNameArray, GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_WITH_NO_EXTERNAL_PROCESSING_NUMBER_OF_TYPES))
 								{
-									cerr << "GIAtxtRelTranslatorRules::extractGIAtxtRelTranslatorRulesGroups{} error: !parseComponents(firstTagInTxtRelTranslatorGroupTag, &(group->components), false))" << endl;
-									exit(EXIT_ERROR);			
+									GIAwithNoExternalProcessingFunctionFound = true;
+								}	
+								if(SHAREDvars.textInTextArray(groupName, GIAtxtRelWithExternalProcessingGroupNameArray, GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_WITH_EXTERNAL_PROCESSING_NUMBER_OF_TYPES))
+								{
+									GIAwithExternalProcessingFunctionFound = true;
+								}
+								#ifdef GIA_EXTERNAL_PROCESSING
+								if(GIAwithNoExternalProcessingFunctionFound)
+								{
+									passGroupNameRequirements = false;
+								}
+								#else
+								if(GIAwithExternalProcessingFunctionFound)
+								{
+									passGroupNameRequirements = false;
+								}
+								#endif
+								if(passGroupNameRequirements)
+								{
+									GIAtxtRelTranslatorRulesGroup* group = new GIAtxtRelTranslatorRulesGroup();
+									group->semanticRelationFunctionName = semanticRelationFunctionName;
+									#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_NEW_CONDITIONS
+									group->semanticRelationFunctionConditionNewName = semanticRelationFunctionConditionNewName;
+									//cout << "semanticRelationFunctionConditionNewName = " << semanticRelationFunctionConditionNewName << endl;
+									#endif
+									group->groupName = groupName;
+									#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_GROUP_PREVIOUS_WORD_POS_TYPE
+									group->previousWordPOStype = previousWordPOStype;
+									#endif
+									#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_GROUP_EXISTS_PRECEEDING_WORD_POS_TYPE
+									group->existsPreceedingWordPOStype = existsPreceedingWordPOStype;
+									#endif
+									groupType->groups.push_back(group);
+
+									XMLparserTag* firstTagInTxtRelTranslatorGroupTag = XMLparserClass.parseTagDownALevel(currentTagInTxtRelTranslatorGroupTypeTag, GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_GROUPTYPE_TAG_group, &result);
+
+									if(!parseComponents(firstTagInTxtRelTranslatorGroupTag, &(group->components), false))
+									{
+										cerr << "GIAtxtRelTranslatorRules::extractGIAtxtRelTranslatorRulesGroups{} error: !parseComponents(firstTagInTxtRelTranslatorGroupTag, &(group->components), false))" << endl;
+										exit(EXIT_ERROR);			
+									}
 								}
 							}
 							else

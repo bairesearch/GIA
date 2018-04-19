@@ -26,7 +26,7 @@
  * File Name: GIAsynRelTranslatorRules.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f3n 10-April-2018
+ * Project Version: 3f3o 10-April-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
@@ -473,7 +473,7 @@ bool GIAsynRelTranslatorRulesClass::genericDepRelInterpretationApplySpecialCase(
 	else if(type == "specialCaseCharacteristicsTestOrVectorNoExternal")
 	{
 		//#ifndef GIA_DISABLE_ALIAS_ENTITY_MERGING
-		#ifndef USE_NLC
+		#ifndef GIA_EXTERNAL_PROCESSING
 		paramDepRel->specialCaseCharacteristicsTestOrVector[REL][REL_ENT].push_back(entityCharacteristics);
 		#endif
 		//#endif

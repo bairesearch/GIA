@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorRules.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f3n 10-April-2018
+ * Project Version: 3f3o 10-April-2018
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Rules
  * /
@@ -44,6 +44,10 @@
 
 
 
+#define GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_WITH_NO_EXTERNAL_PROCESSING_NUMBER_OF_TYPES (2)
+static string GIAtxtRelWithNoExternalProcessingGroupNameArray[GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_WITH_NO_EXTERNAL_PROCESSING_NUMBER_OF_TYPES] = {"definitionAlias1-withNoExternalProcessing", "definitionAlias2-withNoExternalProcessing"};
+#define GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_WITH_EXTERNAL_PROCESSING_NUMBER_OF_TYPES (2)
+static string GIAtxtRelWithExternalProcessingGroupNameArray[GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_WITH_EXTERNAL_PROCESSING_NUMBER_OF_TYPES] = {"definitionAlias1-withExternalProcessing", "definitionAlias2-withExternalProcessing"};
 
 //extension of GIAsynRelTranslatorGeneric.hpp;
 	//should be roughly synced also with GIAsemRelTranslatorDefs.hpp:GIA_SEM_REL_TRANSLATOR_COMMON:GIA_ENTITY_VECTOR_CONNECTION_TYPE_*
