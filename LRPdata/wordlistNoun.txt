@@ -1,18 +1,37 @@
 'hood
 's gravenhage
 0.22
+
+
 1-dodecanol
 1-hitter
+
+
+
+
+
+
+
+
+
 11-plus
 11 november
+
 12-tone music
 12-tone system
+
+
+
+
 14 july
+
 1530s
 15 august 1945
 15 may organization
 15 minutes
+
 16 pf
+
 1728
 1750s
 1760s
@@ -20,6 +39,7 @@
 1780s
 1790s
 17 november
+
 18-karat gold
 1820s
 1830s
@@ -29,6 +49,7 @@
 1870s
 1880s
 1890s
+
 1900s
 1920s
 1930s
@@ -52,22 +73,35 @@
 1st earl of balfour
 1st lieutenant
 1st viscount montgomery of alamein
+
 2-hitter
 2-hydroxybenzoic acid
 2-methylpropenoic acid
+
 20/20
+
+
 22-karat gold
+
+
 24-hour interval
 24-karat gold
 24/7
+
+
+
+
+
 2 chronicles
 2 esdras
 2 kings
 2 maccabees
 2 samuel
 2nd lieutenant
+
 3-d
 3-hitter
+
 30 minutes
 365 days
 366 days
@@ -75,22 +109,37 @@
 3d radar
 3rd october organization
 3tc
+
 4-hitter
+
 401-k
 401-k plan
 440 yards
 4to
 4wd
+
 5-hitter
 5-hydroxy-3-methylglutaryl-coenzyme a reductase
 5-hydroxytryptamine
+
+
+
+
 60 minutes
 6 june 1944
+
+
+
+
+
 880 yards
 8 may 1945
 8vo
+
 9-11
 9/11
+
+
 a'man
 a-bomb
 a-horizon
@@ -3780,6 +3829,7 @@ amyotrophic lateral sclerosis
 amyotrophy
 amytal
 amyxia
+
 an nafud
 an nefud
 ana
@@ -5716,7 +5766,7 @@ ardor
 ardour
 ards
 arduousness
-are
+
 area
 area 17 of brodmann
 area bombing
@@ -30695,6 +30745,7 @@ dph
 dphil
 dprk
 dpt vaccine
+
 dr. j
 dr. johnson
 dr. seuss
@@ -54169,6 +54220,7 @@ hystricidae
 hystricomorpha
 hytrin
 hz
+
 i-beam
 i. a. richards
 i. f. stone
@@ -70676,16 +70728,22 @@ mp
 mpeg
 mph
 mps
+
+
 mr. moto
 mrd
 mri
 mrna
+
+
 mrs. gandhi
 mrs. henry wood
 mrs. humphrey ward
 mrs. simpson
 mrta
+
 ms-dos
+
 msasa
 msb
 msc
@@ -84936,6 +84994,7 @@ production order
 productiveness
 productivity
 proenzyme
+
 profanation
 profaneness
 profanity
@@ -89617,6 +89676,7 @@ reunion
 reuptake
 reusable program
 reusable routine
+
 revaluation
 revealed religion
 revealing
