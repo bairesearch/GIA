@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f3b 10-April-2018
+ * Project Version: 3f3c 10-April-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  * /
@@ -755,7 +755,7 @@
 		#ifdef GIA_TXT_REL_TRANSLATOR_RULES
 		
 			//#define GIA_DEBUG_TXT_REL_TRANSLATOR_RULES    
-			//#define GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS2       
+			//#define GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS2
 			//#define GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS
 			
 			#define GIA_TXT_REL_TRANSLATOR_RULES_ASSUME_HIGH_LEVEL_REFERENCE_SETS_DO_NOT_CONTAIN_EXPLICIT_SEMANTIC_RELATION_FUNCTION
@@ -896,6 +896,8 @@
 		#endif
 	#endif
 #endif
+
+//#define GIA_ADVANCED_REFERENCING_SUPPORT_REFERENCING_OF_ENTITIES_WITH_PREDETERMINERS	//when was this disabled?
 
 //#define GIA_DEBUG_DISABLE_3e_CODE
 #ifndef GIA_DEBUG_DISABLE_3e_CODE

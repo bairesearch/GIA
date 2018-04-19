@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f3b 10-April-2018
+ * Project Version: 3f3c 10-April-2018
  * Requirements: 
  * Description: Textual Relation Translator Parser
  * /
@@ -205,7 +205,8 @@ bool GIAtxtRelTranslatorParserClass::convertSentenceTxtRelationsIntoGIAnetworkNo
 	{
 		result = false;
 	}	
-		
+	
+	
 	return result;
 }
 
@@ -1718,6 +1719,7 @@ void GIAtxtRelTranslatorParserClass::defineSubstancesBasedOnNetworkAndDeterminer
 			if(entity->grammaticalWordTypeTemp == GRAMMATICAL_WORD_TYPE_NOUN)
 			{				
 				bool hasDeterminer = false;
+				bool hasPredeterminer = false;
 				bool indefiniteDeterminer = false;
 				if(entity->semanticRelationWordDeterminer != "")
 				{
@@ -1745,7 +1747,44 @@ void GIAtxtRelTranslatorParserClass::defineSubstancesBasedOnNetworkAndDeterminer
 					{
 						entity->grammaticalDefiniteTemp = true;
 					}
+					#ifdef GIA_PREDETERMINERS
+					int arrayIndexOfResultFound = GRAMMATICAL_PREDETERMINER_UNDEFINED;
+					if(SHAREDvars.textInTextArray(entity->semanticRelationWordDeterminer, entityPredeterminerSmallNameArray, GRAMMATICAL_PREDETERMINER_SMALL_ARRAY_NUMBER_OF_TYPES, &arrayIndexOfResultFound))
+					{
+						//cout << "entity->entityName = " << entity->entityName << endl;
+						//cout << "entity->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL" << endl;
+						
+						//based on redistributeStanfordRelationsPredeterminers;
+						hasPredeterminer = true;
+						entity->grammaticalPredeterminerTemp = arrayIndexOfResultFound;
+						#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_REFERENCING_OF_ENTITIES_WITH_PREDETERMINERS
+						entity->grammaticalPredeterminerTempSentenceArray.insert(make_pair(entity->sentenceIndexTemp, entity->grammaticalPredeterminerTemp));
+						#endif
+						entity->grammaticalNumber = GRAMMATICAL_NUMBER_PLURAL;
+					}
+					#endif
 				}
+				#ifdef GIA_PREDETERMINERS
+				if(entity->semanticRelationWordPredeterminer != "")
+				{
+					hasPredeterminer = true;
+					int arrayIndexOfResultFound = GRAMMATICAL_PREDETERMINER_UNDEFINED;
+					if(SHAREDvars.textInTextArray(entity->semanticRelationWordPredeterminer, entityPredeterminerSmallNameArray, GRAMMATICAL_PREDETERMINER_SMALL_ARRAY_NUMBER_OF_TYPES, &arrayIndexOfResultFound))
+					{
+						//cout << "entity->entityName = " << entity->entityName << endl;
+						//cout << "entity->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL" << endl;
+						
+						//based on redistributeStanfordRelationsPredeterminers;
+						entity->grammaticalPredeterminerTemp = arrayIndexOfResultFound;
+						#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_REFERENCING_OF_ENTITIES_WITH_PREDETERMINERS
+						entity->grammaticalPredeterminerTempSentenceArray.insert(make_pair(entity->sentenceIndexTemp, entity->grammaticalPredeterminerTemp));
+						#endif
+						//cout << "arrayIndexOfResultFound = " << arrayIndexOfResultFound << endl;
+						entity->grammaticalNumber = GRAMMATICAL_NUMBER_PLURAL;
+					}
+
+				}
+				#endif
 								
 				if(!hasDeterminer)
 				{

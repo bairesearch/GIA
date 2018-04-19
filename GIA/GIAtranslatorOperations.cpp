@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f3b 10-April-2018
+ * Project Version: 3f3c 10-April-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
@@ -935,7 +935,7 @@ void GIAtranslatorOperationsClass::forwardInfoToNewSubstance(GIAentityNode* enti
 	#ifdef GIA_PREDETERMINERS
 	newSubstance->grammaticalPredeterminerTemp = entity->grammaticalPredeterminerTemp;
 	#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_REFERENCING_OF_ENTITIES_WITH_PREDETERMINERS
-	newSubstance->grammaticalPredeterminerTempSentenceArray.insert(make_pair(entity->sentenceIndexTemp, entity->grammaticalPredeterminerTemp));
+	newSubstance->grammaticalPredeterminerTempSentenceArray.insert(make_pair(entity->sentenceIndexTemp, entity->grammaticalPredeterminerTemp));	//FUTURE GIA: this should copy entity->grammaticalPredeterminerTempSentenceArray to newSubstance->grammaticalPredeterminerTempSentenceArray
 	#endif
 	#endif
 	#ifdef GIA_STANFORD_CORENLP

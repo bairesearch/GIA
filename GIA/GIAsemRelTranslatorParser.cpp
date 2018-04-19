@@ -26,7 +26,7 @@
  * File Name: GIAsemRelTranslatorParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f3b 10-April-2018
+ * Project Version: 3f3c 10-April-2018
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  * Description: Semantic Relation Translator Parser
  * /
@@ -401,8 +401,45 @@ void GIAsemRelTranslatorParserClass::defineSubstancesBasedOnSemanticRelations(GI
 								{
 									indefiniteDeterminer = true;
 								}
+								#ifdef GIA_PREDETERMINERS
+								int arrayIndexOfResultFound = GRAMMATICAL_PREDETERMINER_UNDEFINED;
+								if(SHAREDvars.textInTextArray(determinerString, entityPredeterminerSmallNameArray, GRAMMATICAL_PREDETERMINER_SMALL_ARRAY_NUMBER_OF_TYPES, &arrayIndexOfResultFound))
+								{
+									//based on redistributeStanfordRelationsPredeterminers;
+									entity->grammaticalPredeterminerTemp = arrayIndexOfResultFound;
+									#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_REFERENCING_OF_ENTITIES_WITH_PREDETERMINERS
+									entity->grammaticalPredeterminerTempSentenceArray.insert(make_pair(entity->sentenceIndexTemp, entity->grammaticalPredeterminerTemp));
+									#endif
+									entity->grammaticalNumber = GRAMMATICAL_NUMBER_PLURAL;
+								}
+								#endif
 							}
 						}
+						#ifdef GIA_PREDETERMINERS
+						//CHECKTHIS
+						if(currentRelationInList->relationType == GIA2semanticDependencyRelationNameArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_PREDETERMINER])
+						{
+							int thingIndex = currentRelationInList->relationGovernorIndex;
+							int determinerIndex = currentRelationInList->relationDependentIndex;
+							if(thingIndex == i)
+							{
+								hasDeterminer = true;
+								determinerString = (*translatorVariables->GIAentityNodeArray)[determinerIndex]->entityName;
+								currentRelationInList->disabled = true;
+								
+								int arrayIndexOfResultFound = GRAMMATICAL_PREDETERMINER_UNDEFINED;
+								if(SHAREDvars.textInTextArray(determinerString, entityPredeterminerSmallNameArray, GRAMMATICAL_PREDETERMINER_SMALL_ARRAY_NUMBER_OF_TYPES, &arrayIndexOfResultFound))
+								{
+									//based on redistributeStanfordRelationsPredeterminers;
+									entity->grammaticalPredeterminerTemp = arrayIndexOfResultFound;
+									#ifdef GIA_ADVANCED_REFERENCING_SUPPORT_REFERENCING_OF_ENTITIES_WITH_PREDETERMINERS
+									entity->grammaticalPredeterminerTempSentenceArray.insert(make_pair(entity->sentenceIndexTemp, entity->grammaticalPredeterminerTemp));
+									#endif
+									entity->grammaticalNumber = GRAMMATICAL_NUMBER_PLURAL;
+								}
+							}
+						}
+						#endif
 					}
 					currentRelationInList = currentRelationInList->next;
 				}
