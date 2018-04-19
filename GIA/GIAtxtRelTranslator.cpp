@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f7f 17-April-2018
+ * Project Version: 3f8a 18-April-2018
  * Requirements: requires plain text file
  * Description: Textual relation translator
  * /
@@ -228,6 +228,7 @@ bool GIAtxtRelTranslatorClass::executeTxtRelTranslator(GIAtranslatorVariablesCla
 			
 		#ifdef GIA_TXT_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START
 		int minIndexOfMatchesFoundBackupOptimum = calculateMinIndexOfMatchesFound(sentenceContents);
+		vector<GIApreprocessorPlainTextWord*> sentenceContentsBackupOptimum; 
 		vector<vector<unsigned long>*> POSambiguityInfoUnambiguousPermutationArray;
 		vector<unsigned long>* POSambiguityInfoUnambiguousPermutationNew = new vector<unsigned long>(POSambiguityInfoPermutation.size());
 		POSambiguityInfoUnambiguousPermutationArray.push_back(POSambiguityInfoUnambiguousPermutationNew);
@@ -246,7 +247,7 @@ bool GIAtxtRelTranslatorClass::executeTxtRelTranslator(GIAtranslatorVariablesCla
 		#endif
 		
 		#ifdef GIA_TXT_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START
-		if(generateParseTreeIntroWrapper(&GIAtxtRelTranslatorRulesGroupTypes, sentenceContents, firstParseTreeGroup, &performance, parseIsolatedSubreferenceSets, &POSambiguityInfoUnambiguousPermutationArray, &performanceMax, &iOptimum, &minIndexOfMatchesFoundBackupOptimum))	
+		if(generateParseTreeIntroWrapper(&GIAtxtRelTranslatorRulesGroupTypes, sentenceContents, firstParseTreeGroup, &performance, parseIsolatedSubreferenceSets, &POSambiguityInfoUnambiguousPermutationArray, &performanceMax, &iOptimum, &minIndexOfMatchesFoundBackupOptimum, &sentenceContentsBackupOptimum))	
 		#else
 		if(generateParseTreeIntroWrapper(&GIAtxtRelTranslatorRulesGroupTypes, sentenceContents, firstParseTreeGroup, &performance, parseIsolatedSubreferenceSets))
 		#endif
@@ -269,7 +270,7 @@ bool GIAtxtRelTranslatorClass::executeTxtRelTranslator(GIAtranslatorVariablesCla
 			#endif
 
 					#ifdef GIA_TXT_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START
-					if(generateParseTreeIntroWrapper(&GIAtxtRelTranslatorRulesGroupTypes, sentenceContents, firstParseTreeGroup, &performance, parseIsolatedSubreferenceSets2, &POSambiguityInfoUnambiguousPermutationArray, &performanceMax, &iOptimum, &minIndexOfMatchesFoundBackupOptimum))	
+					if(generateParseTreeIntroWrapper(&GIAtxtRelTranslatorRulesGroupTypes, sentenceContents, firstParseTreeGroup, &performance, parseIsolatedSubreferenceSets2, &POSambiguityInfoUnambiguousPermutationArray, &performanceMax, &iOptimum, &minIndexOfMatchesFoundBackupOptimum, &sentenceContentsBackupOptimum))	
 					#else
 					if(generateParseTreeIntroWrapper(&GIAtxtRelTranslatorRulesGroupTypes, sentenceContents, firstParseTreeGroup, &performance, parseIsolatedSubreferenceSets2))
 					#endif
@@ -290,27 +291,11 @@ bool GIAtxtRelTranslatorClass::executeTxtRelTranslator(GIAtranslatorVariablesCla
 		#ifdef GIA_TXT_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START
 		if(foundParse)
 		{
-			restoreAllWordsAlreadyFoundMatchInComponent(sentenceContents, performance);
-			
-			//restore unambiguousPOSinfoIndex (not current required because unambiguousPOSindex is only used by executeTxtRelTranslator):
-			vector<unsigned long>* POSambiguityInfoPermutationTemp = POSambiguityInfoUnambiguousPermutationArray[iOptimum];
-			for(int w=0; w<sentenceContents->size(); w++)
-			{
-				GIApreprocessorPlainTextWord* contextWord = sentenceContents->at(w);
-				unsigned char unambiguousPOSinfoIndex = GIA_PREPROCESSOR_POS_TYPE_UNDEFINED;
-				bool wordAmbiguous = GIApreprocessorPOStaggerDatabase.determinePOSambiguityInfoIsAmbiguous(POSambiguityInfoPermutationTemp->at(w), &unambiguousPOSinfoIndex, false);
-				contextWord->unambiguousPOSindex = unambiguousPOSinfoIndex;
-				contextWord->wordPOStypeInferred = unambiguousPOSinfoIndex;
-				
-				#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS
-				//cout << "unambiguousPOSinfoIndex = " << int(unambiguousPOSinfoIndex) << endl;
-				cout << "GIApreprocessorPOStypeNameArray[unambiguousPOSinfoIndex] = " << GIApreprocessorPOStypeNameArray[unambiguousPOSinfoIndex] << endl;
-				#endif
-			}
+
 		}
 		else
 		{
-			clearAllWordsAlreadyFoundMatchInComponent(sentenceContents, minIndexOfMatchesFoundBackupOptimum);	
+			clearAllWordsAlreadyFoundMatchInComponent(sentenceContents, minIndexOfMatchesFoundBackupOptimum);	//redundant?	
 			cerr << "GIAtxtRelTranslatorClass::executeTxtRelTranslator{}: Failed to parse sentence " << currentGIApreprocessorSentenceInList->sentenceIndexOriginal << ", sentenceContentsLRP = " << GIApreprocessorWordClassObject.printWordListString(&(currentGIApreprocessorSentenceInList->sentenceContentsLRP)) << endl;
 			//exit(EXIT_ERROR);
 		}
@@ -330,7 +315,7 @@ bool GIAtxtRelTranslatorClass::executeTxtRelTranslator(GIAtranslatorVariablesCla
 }
 
 #ifdef GIA_TXT_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START
-bool GIAtxtRelTranslatorClass::generateParseTreeIntroWrapper(vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, vector<GIApreprocessorPlainTextWord*>* sentenceContents, GIAtxtRelTranslatorRulesGroup* firstParseTreeGroup, int* performance, const bool parseIsolatedSubreferenceSets, vector<vector<unsigned long>*>* POSambiguityInfoUnambiguousPermutationArray, int* performanceMax, int* iOptimum, int* minIndexOfMatchesFoundBackupOptimum)
+bool GIAtxtRelTranslatorClass::generateParseTreeIntroWrapper(vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, vector<GIApreprocessorPlainTextWord*>* sentenceContents, GIAtxtRelTranslatorRulesGroup* firstParseTreeGroup, int* performance, const bool parseIsolatedSubreferenceSets, vector<vector<unsigned long>*>* POSambiguityInfoUnambiguousPermutationArray, int* performanceMax, int* iOptimum, int* minIndexOfMatchesFoundBackupOptimum, vector<GIApreprocessorPlainTextWord*>* sentenceContentsBackupOptimum)
 #else
 bool GIAtxtRelTranslatorClass::generateParseTreeIntroWrapper(vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, vector<GIApreprocessorPlainTextWord*>* sentenceContents, GIAtxtRelTranslatorRulesGroup* firstParseTreeGroup, int* performance, const bool parseIsolatedSubreferenceSets)
 #endif
@@ -390,7 +375,7 @@ bool GIAtxtRelTranslatorClass::generateParseTreeIntroWrapper(vector<GIAtxtRelTra
 		}
 
 	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START	
-		if(updatePerformance(performanceTemp, performanceMax, performance, firstParseTreeGroup, firstParseTreeGroupTemp, passedTemp, minIndexOfMatchesFoundBackupOptimum, sentenceContents, minIndexOfMatchesFoundBackup2, NULL))
+		if(updatePerformance(performanceTemp, performanceMax, performance, firstParseTreeGroup, firstParseTreeGroupTemp, passedTemp, minIndexOfMatchesFoundBackupOptimum, sentenceContentsBackupOptimum, sentenceContents, minIndexOfMatchesFoundBackup2, NULL))
 		{
 			*iOptimum = i;	
 		}
@@ -414,6 +399,7 @@ bool GIAtxtRelTranslatorClass::generateParseTreeIntro(vector<GIAtxtRelTranslator
 
 	//generate firstParseTreeGroup (firstTxtRelTranslatorRulesGroupInSentence) tree
 	int minIndexOfMatchesFoundBackupOptimum = calculateMinIndexOfMatchesFound(sentenceContents);
+	vector<GIApreprocessorPlainTextWord*> sentenceContentsBackupOptimum; 
 	
 	int performanceMax = 0;
 	for(int i=0; i<GIAtxtRelTranslatorRulesGroupTypes->size(); i++)
@@ -497,7 +483,7 @@ bool GIAtxtRelTranslatorClass::generateParseTreeIntro(vector<GIAtxtRelTranslator
 				passedTemp = true;
 				//cout << "passedTemp" << endl;
 			}
-			updatePerformance(performanceTemp, &performanceMax, performance, firstParseTreeGroup, firstParseTreeGroupTemp, passedTemp, &minIndexOfMatchesFoundBackupOptimum, sentenceContents, minIndexOfMatchesFoundBackup2, NULL);
+			updatePerformance(performanceTemp, &performanceMax, performance, firstParseTreeGroup, firstParseTreeGroupTemp, passedTemp, &minIndexOfMatchesFoundBackupOptimum, &sentenceContentsBackupOptimum, sentenceContents, minIndexOfMatchesFoundBackup2, NULL);
 			
 			//cout << "firstParseTreeGroup->groupTypeNameBackup = " << firstParseTreeGroup->groupTypeNameBackup << endl;
 			
@@ -508,7 +494,7 @@ bool GIAtxtRelTranslatorClass::generateParseTreeIntro(vector<GIAtxtRelTranslator
 	if(result)
 	{
 		//cout << "performance = " << performance << endl;
-		restoreAllWordsAlreadyFoundMatchInComponent(sentenceContents, *performance);
+		restoreAllWordsAlreadyFoundMatchInComponent(sentenceContents, *performance, &sentenceContentsBackupOptimum);
 	}
 	else
 	{
@@ -548,6 +534,7 @@ bool GIAtxtRelTranslatorClass::generateParseTreeGroupType(GIAtxtRelTranslatorRul
 	bool result = false;
 	
 	int minIndexOfMatchesFoundBackupOptimum = calculateMinIndexOfMatchesFound(sentenceContentsSubset);
+	vector<GIApreprocessorPlainTextWord*> sentenceContentsBackupOptimum; 
 
 	#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS
 	GIAtxtRelTranslatorRules.printParseTreeDebugIndentation(layer);
@@ -581,12 +568,12 @@ bool GIAtxtRelTranslatorClass::generateParseTreeGroupType(GIAtxtRelTranslatorRul
 			//cout << "passedTemp2" << endl;
 			//exit(EXIT_ERROR);	//DEBUG
 		}
-		updatePerformance(performanceTemp, &performanceMax, performance, currentParseTreeGroup, currentParseTreeGroupTemp, passedTemp, &minIndexOfMatchesFoundBackupOptimum, sentenceContentsSubset, minIndexOfMatchesFoundBackup2, previousParseTreeComponent);
+		updatePerformance(performanceTemp, &performanceMax, performance, currentParseTreeGroup, currentParseTreeGroupTemp, passedTemp, &minIndexOfMatchesFoundBackupOptimum, &sentenceContentsBackupOptimum, sentenceContentsSubset, minIndexOfMatchesFoundBackup2, previousParseTreeComponent);
 	}
 	
 	if(result)
 	{
-		restoreAllWordsAlreadyFoundMatchInComponent(sentenceContentsSubset, *performance);
+		restoreAllWordsAlreadyFoundMatchInComponent(sentenceContentsSubset, *performance, &sentenceContentsBackupOptimum);
 	}
 	else
 	{
@@ -601,7 +588,7 @@ bool GIAtxtRelTranslatorClass::generateParseTreeGroup(GIAtxtRelTranslatorRulesGr
 	bool foundWordMatch = true;
 
 	int minIndexOfMatchesFoundBackup2 = calculateMinIndexOfMatchesFound(sentenceContentsSubset);
-
+	
 	bool pass = true;
 	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_GROUP_PREVIOUS_WORD_POS_TYPE
 	//FUTURE: should pass previousWordPOStype from higher level function rather than relying on copied version of currentParseTreeGroup->previousWordPOStype (from group->previousWordPOStype)
@@ -655,6 +642,7 @@ bool GIAtxtRelTranslatorClass::generateRulesGroupTreeComponents(vector<GIAtxtRel
 	
 	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_OR
 	int minIndexOfMatchesFoundBackupOptimum = calculateMinIndexOfMatchesFound(sentenceContentsSubset);
+	vector<GIApreprocessorPlainTextWord*> sentenceContentsBackupOptimum; 
 	bool subcomponentsOr = false;
 	bool subcomponentsOrFoundMatch = false;	
 	if(subcomponents && (subcomponentsType == GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_OR))
@@ -688,6 +676,8 @@ bool GIAtxtRelTranslatorClass::generateRulesGroupTreeComponents(vector<GIAtxtRel
 			{//only continue while foundWordMatch:
 			
 				int minIndexOfMatchesFoundBackup2 = calculateMinIndexOfMatchesFound(sentenceContentsSubset);
+				vector<GIApreprocessorPlainTextWord*> sentenceContentsBackup2;
+				
 				if(minIndexOfMatchesFoundBackup2 < int(sentenceContentsSubset->size()))
 				{
 					
@@ -812,7 +802,7 @@ bool GIAtxtRelTranslatorClass::generateRulesGroupTreeComponents(vector<GIAtxtRel
 									{
 										bool passedTemp = true;
 										GIAtxtRelTranslatorRulesGroup* tempGroup = new GIAtxtRelTranslatorRulesGroup();
-										if(updatePerformance(performanceTemp, &performanceMax, performance, tempGroup, tempGroup, passedTemp, &minIndexOfMatchesFoundBackupOptimum, sentenceContentsSubset, minIndexOfMatchesFoundBackup2, NULL))
+										if(updatePerformance(performanceTemp, &performanceMax, performance, tempGroup, tempGroup, passedTemp, &minIndexOfMatchesFoundBackupOptimum, &sentenceContentsBackupOptimum, sentenceContentsSubset, minIndexOfMatchesFoundBackup2, NULL))
 										{
 											subcomponentsOrFoundMatch = true;
 											/*
@@ -845,7 +835,7 @@ bool GIAtxtRelTranslatorClass::generateRulesGroupTreeComponents(vector<GIAtxtRel
 										Redundant:
 										bool passedTemp = false;
 										GIAtxtRelTranslatorRulesGroup* tempGroup = new GIAtxtRelTranslatorRulesGroup();
-										updatePerformance(performanceTemp, &performanceMax, performance, &tempGroup, &tempGroup, passedTemp, &minIndexOfMatchesFoundBackupOptimum, sentenceContentsSubset, minIndexOfMatchesFoundBackup2, NULL);
+										updatePerformance(performanceTemp, &performanceMax, performance, &tempGroup, &tempGroup, passedTemp, &minIndexOfMatchesFoundBackupOptimum, &sentenceContentsBackupOptimum, sentenceContentsSubset, minIndexOfMatchesFoundBackup2, NULL);
 										*/
 									}
 									else 
@@ -924,7 +914,7 @@ bool GIAtxtRelTranslatorClass::generateRulesGroupTreeComponents(vector<GIAtxtRel
 		{
 			if(subcomponentsOrFoundMatch)
 			{
-				restoreAllWordsAlreadyFoundMatchInComponent(sentenceContentsSubset, *performance);
+				restoreAllWordsAlreadyFoundMatchInComponent(sentenceContentsSubset, *performance, &sentenceContentsBackupOptimum);
 				//clearAllWordsAlreadyFoundMatchInComponent(sentenceContentsSubset, minIndexOfMatchesFoundBackupOptimum);
 			}
 			else
@@ -1186,6 +1176,7 @@ bool GIAtxtRelTranslatorClass::findStringMatch(GIAtxtRelTranslatorRulesComponent
 			{
 				foundWordMatchTemp = true;
 				currentWord->wordPOStypeInferred = wordPOStype;
+				//cout << "(wordPOStype == GIA_PREPROCESSOR_POS_TYPE_NOUN): currentWord = " << currentWord->tagName << endl;
 			}
 			#endif
 		}
@@ -1340,7 +1331,7 @@ bool GIAtxtRelTranslatorClass::verifyPOStype(GIApreprocessorPlainTextWord* curre
 
 
 							
-bool GIAtxtRelTranslatorClass::updatePerformance(const int performanceTemp, int* performanceMax, int* performance, GIAtxtRelTranslatorRulesGroup* currentParseTreeGroup, GIAtxtRelTranslatorRulesGroup* currentParseTreeGroupTemp, const bool passedTemp, int* minIndexOfMatchesFoundBackupOptimum, vector<GIApreprocessorPlainTextWord*>* sentenceContentsSubset, const int minIndexOfMatchesFoundBackup, GIAtxtRelTranslatorRulesComponent* previousParseTreeComponent)
+bool GIAtxtRelTranslatorClass::updatePerformance(const int performanceTemp, int* performanceMax, int* performance, GIAtxtRelTranslatorRulesGroup* currentParseTreeGroup, GIAtxtRelTranslatorRulesGroup* currentParseTreeGroupTemp, const bool passedTemp, int* minIndexOfMatchesFoundBackupOptimum, vector<GIApreprocessorPlainTextWord*>* sentenceContentsBackupOptimum, vector<GIApreprocessorPlainTextWord*>* sentenceContentsSubset, const int minIndexOfMatchesFoundBackup, GIAtxtRelTranslatorRulesComponent* previousParseTreeComponent)
 {
 	bool result = false;
 	
@@ -1364,6 +1355,7 @@ bool GIAtxtRelTranslatorClass::updatePerformance(const int performanceTemp, int*
 		}
 		
 		*minIndexOfMatchesFoundBackupOptimum = calculateMinIndexOfMatchesFound(sentenceContentsSubset);
+		*sentenceContentsBackupOptimum = *sentenceContentsSubset;
 	}
 	clearAllWordsAlreadyFoundMatchInComponent(sentenceContentsSubset, minIndexOfMatchesFoundBackup);
 	
@@ -1449,7 +1441,7 @@ void GIAtxtRelTranslatorClass::clearAllWordsAlreadyFoundMatchInComponent(vector<
 	}
 }
 
-void GIAtxtRelTranslatorClass::restoreAllWordsAlreadyFoundMatchInComponent(vector<GIApreprocessorPlainTextWord*>* sentenceContentsSubset, const int minIndexOfMatchesFoundNew)
+void GIAtxtRelTranslatorClass::restoreAllWordsAlreadyFoundMatchInComponent(vector<GIApreprocessorPlainTextWord*>* sentenceContentsSubset, const int minIndexOfMatchesFoundNew, vector<GIApreprocessorPlainTextWord*>* sentenceContentsBackupOptimum)
 {	
 	//cout << "restoreAllWordsAlreadyFoundMatchInComponent: minIndexOfMatchesFoundNew = " << minIndexOfMatchesFoundNew << endl;
 	//exit(EXIT_ERROR);
@@ -1460,6 +1452,7 @@ void GIAtxtRelTranslatorClass::restoreAllWordsAlreadyFoundMatchInComponent(vecto
 		if(w < minIndexOfMatchesFoundNew)
 		{
 			currentWord->alreadyFoundMatch = true;
+			currentWord->wordPOStypeInferred = (sentenceContentsBackupOptimum->at(w))->wordPOStypeInferred;
 		}
 	}
 }

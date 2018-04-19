@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorGrammar.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f7f 17-April-2018
+ * Project Version: 3f8a 18-April-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
@@ -51,6 +51,9 @@ bool GIAtranslatorGrammarClass::calculateGrammarUsingInferredPosTypes(GIApreproc
 
 	//calculate the PENN pos type of all GIA pos types (no specific cases);
 	currentFeature->stanfordPOS = GIApreprocessorPOStypeCrossReferenceStanfordPos[currentWord->wordPOStypeInferred];
+
+	//cout << "currentWord->tagName = " << currentWord->tagName << endl;
+	//cout << "currentWord->wordPOStypeInferred = " << currentWord->wordPOStypeInferred << endl;
 	
 	//calculate the  PENN pos type/grammatical number of nouns;
 	if(currentWord->wordPOStypeInferred == GIA_SEM_REL_TRANSLATOR_POS_TYPE_NOUN)	//NB is equivalent to GIA_PREPROCESSOR_POS_TYPE_NOUN
