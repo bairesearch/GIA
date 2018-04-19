@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorReferenceSet.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e11a 21-January-2018
+ * Project Version: 3e12a 12-February-2018
  * Requirements: requires plain text file
  * Description: Reference Set preprocessor
  *
@@ -63,6 +63,9 @@ class GIApreprocessorReferenceSetClass
 	public: void setReferenceSetText(GIApreprocessorSubReferenceSet* referenceSet, vector<GIApreprocessorWord*>* text);
 	public: vector<GIApreprocessorWord*> getReferenceSetText(GIApreprocessorSubReferenceSet* referenceSet);
 	public: void printSubReferenceSet(GIApreprocessorSubReferenceSet* currentSubReferenceSetInList);
+	#endif
+	#ifdef GIA_PREPROCESSOR_SENTENCE_DETERMINE_AMBIGUOUS_PREPOSITION_POS_TYPES_BASED_ON_CONTEXT
+	public: bool verifyIsPrepositionNotProgressiveVerbBasedOnContext(const vector<GIApreprocessorWord*>* sentenceContentsWordList, const int prepositionWordIndex, const bool usePOSprelim);
 	#endif
 };
 

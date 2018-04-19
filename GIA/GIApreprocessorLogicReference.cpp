@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorLogicReference.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e11a 21-January-2018
+ * Project Version: 3e12a 12-February-2018
  * Requirements: requires plain text file
  * Description: Logic Reference preprocessor
  *
@@ -234,6 +234,28 @@ bool GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor(const
 			}
 			#endif
 		}
+		else if(isClassTag(currentWord->tagName, GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_preposition, &logicReferenceClassType, firstLogicReferenceClassTag))
+		{
+			#ifdef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
+			if(GIApreprocessorMultiwordReduction.determineIsPreposition(currentWord, usePOSprelim))
+			{
+			#endif
+				#ifdef GIA_PREPROCESSOR_SENTENCE_DETERMINE_AMBIGUOUS_PREPOSITION_POS_TYPES_BASED_ON_CONTEXT
+				if(GIApreprocessorReferenceSet.verifyIsPrepositionNotProgressiveVerbBasedOnContext(sentenceContentsWordList, w, usePOSprelim))
+				{
+				#endif
+					logicReferenceClass = GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_PREPOSITION;
+					#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
+					cout << "logicReferenceClass = GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_PREPOSITION " << endl;
+					#endif
+					foundClassType = true;
+				#ifdef GIA_PREPROCESSOR_SENTENCE_DETERMINE_AMBIGUOUS_PREPOSITION_POS_TYPES_BASED_ON_CONTEXT
+				}
+				#endif
+			#ifdef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
+			}
+			#endif
+		}
 		else if(isClassTag(currentWord->tagName, GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_verb, &logicReferenceClassType, firstLogicReferenceClassTag))
 		{
 			#ifdef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
@@ -243,21 +265,6 @@ bool GIApreprocessorLogicReferenceClass::executeLogicReferencePreprocessor(const
 				logicReferenceClass = GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_VERB;
 				#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
 				cout << "logicReferenceClass = GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_VERB " << endl;
-				#endif
-				foundClassType = true;
-			#ifdef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
-			}
-			#endif
-		}
-		else if(isClassTag(currentWord->tagName, GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_preposition, &logicReferenceClassType, firstLogicReferenceClassTag))
-		{
-			#ifdef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
-			if(GIApreprocessorMultiwordReduction.determineIsPreposition(currentWord, usePOSprelim))
-			{
-			#endif
-				logicReferenceClass = GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_PREPOSITION;
-				#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
-				cout << "logicReferenceClass = GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_PREPOSITION " << endl;
 				#endif
 				foundClassType = true;
 			#ifdef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS

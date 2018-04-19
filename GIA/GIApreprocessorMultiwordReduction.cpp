@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorMultiwordReduction.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e11a 21-January-2018
+ * Project Version: 3e12a 12-February-2018
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  *
@@ -2948,13 +2948,13 @@ bool GIApreprocessorMultiwordReductionClass::determineNounPluralVariant(const st
 
 bool GIApreprocessorMultiwordReductionClass::determineIsConjunction(GIApreprocessorWord* wordTag, const bool usePOSprelim)
 {
-	bool wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_PREPROCESSOR_SENTENCE_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_CONJUNCTION);
+	bool wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_PREPROCESSOR_SENTENCE_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_CONJUNCTION_COORDINATING);	//OLD: GIA_PREPROCESSOR_POS_TYPE_CONJUNCTION
 	return wordTypeDetected;
 }
 /*
 bool GIApreprocessorMultiwordReductionClass::determineIsConjunction(const string word)
 {
-	unordered_map<string, GIApreprocessorMultiwordReductionWord*>* conjunctionsList = getWordList(GIA_PREPROCESSOR_POS_TYPE_CONJUNCTION);
+	unordered_map<string, GIApreprocessorMultiwordReductionWord*>* conjunctionsList = getWordList(GIA_PREPROCESSOR_POS_TYPE_CONJUNCTION_COORDINATING);	//OLD: GIA_PREPROCESSOR_POS_TYPE_CONJUNCTION
 	return findWordInWordList(conjunctionsList, word);
 }
 */

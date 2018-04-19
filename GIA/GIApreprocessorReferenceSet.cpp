@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorReferenceSet.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e11a 21-January-2018
+ * Project Version: 3e12a 12-February-2018
  * Requirements: requires plain text file
  * Description: Reference Set preprocessor
  *
@@ -282,8 +282,15 @@ bool GIApreprocessorReferenceSetClass::executeReferenceSetPreprocessor(const vec
 		
 		if(GIApreprocessorMultiwordReduction.determineIsPreposition(currentWordTag, usePOSprelim))
 		{
-			currentWordIsReferenceSetDelimiter = true;
-			currentDelimiterType = GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_PREPOSITION;
+			#ifdef GIA_PREPROCESSOR_SENTENCE_DETERMINE_AMBIGUOUS_PREPOSITION_POS_TYPES_BASED_ON_CONTEXT
+			if(verifyIsPrepositionNotProgressiveVerbBasedOnContext(logicReferenceVariableWordList, wordIndex, usePOSprelim))
+			{
+			#endif
+				currentWordIsReferenceSetDelimiter = true;
+				currentDelimiterType = GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_PREPOSITION;
+			#ifdef GIA_PREPROCESSOR_SENTENCE_DETERMINE_AMBIGUOUS_PREPOSITION_POS_TYPES_BASED_ON_CONTEXT
+			}
+			#endif
 		}
 
 		bool currentWordIsReferenceSetDelimiterPreceededByThatWhich = false;
@@ -886,6 +893,108 @@ void GIApreprocessorReferenceSetClass::printSubReferenceSet(GIApreprocessorSubRe
 
 #endif
 
+
+#ifdef GIA_PREPROCESSOR_SENTENCE_DETERMINE_AMBIGUOUS_PREPOSITION_POS_TYPES_BASED_ON_CONTEXT
+bool GIApreprocessorReferenceSetClass::verifyIsPrepositionNotProgressiveVerbBasedOnContext(const vector<GIApreprocessorWord*>* sentenceContentsWordList, const int prepositionWordIndex, const bool usePOSprelim)
+{
+	bool result = true;
+
+	#ifdef GIA_PREPROCESSOR_SENTENCE_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY
+	bool grammaticallyStrict = true;
+	#else
+	bool grammaticallyStrict = false;
+	#endif
+		
+	/*
+	Determine pos type of ambiguous prepositions (eg "considering") as preposition rather than verb (VBG/progressive) based on context;
+		method i) if the potential preposition a) is preceeded by a "," and b) not followed by an explicit conjunction "and", or;
+			if followed by explicit and then it might be this verb case; "the cat was contemplating, considering, and examining the apple"
+				what about scenarios where the and conjunction does not pertain to the current ", , , and" context?
+				need to accomodate this preposition case; "the cat was happy, considering the house, and rode the bike"
+		method ii) if the potential preposition is not preceeded by a being auxiliary (eg "was considering"/"is considering").
+			doesn't support verb case conjunctions e.g.; "the cat was contemplating, considering, and examining the apple", so must integrate with method i)
+	*/
+		
+	//GIApreprocessorWord* wordTagPreposition = sentenceContentsWordList->at(prepositionWordIndex);
+	if(prepositionWordIndex > 0)
+	{
+		GIApreprocessorWord* wordTagPrepositionPrior = sentenceContentsWordList->at(prepositionWordIndex-1);
+		#ifdef GIA_PREPROCESSOR_SENTENCE_DETERMINE_AMBIGUOUS_PREPOSITION_POS_TYPES_BASED_ON_CONTEXT_METHOD1
+		if(wordTagPrepositionPrior->tagName == SHAREDvars.convertCharToString(GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_NEW_LOGIC_REFERENCE_CHAR))
+		{
+			bool foundConjunctionAndAfterPreposition = false;
+			bool stillFindingValidVerbConjunctionSequence = true;
+			bool foundConjunction = false;
+			bool expectVerb = true; //else expect comma or and 
+			for(int i=prepositionWordIndex; i<sentenceContentsWordList->size(); i++)
+			{
+				if(stillFindingValidVerbConjunctionSequence)
+				{
+					if(GIApreprocessorMultiwordReduction.determineIsConjunction(sentenceContentsWordList->at(i), usePOSprelim))
+					{
+						expectVerb = true;
+						foundConjunction = true;
+					}
+					else
+					{
+						if(expectVerb)
+						{
+							if(GIApreprocessorMultiwordReduction.determineIsVerb(sentenceContentsWordList->at(i), usePOSprelim, grammaticallyStrict))
+							{
+								if(foundConjunction)
+								{
+									foundConjunctionAndAfterPreposition = true;
+								}
+								expectVerb = false;
+							}
+							else
+							{
+								stillFindingValidVerbConjunctionSequence = false;
+							}
+						}
+						else
+						{
+							if(sentenceContentsWordList->at(i)->tagName == SHAREDvars.convertCharToString(GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_NEW_LOGIC_REFERENCE_CHAR))
+							{
+								expectVerb = true;
+							}
+							else
+							{
+								stillFindingValidVerbConjunctionSequence = false;
+							}
+						}
+					}
+				}
+			}
+			if(foundConjunctionAndAfterPreposition)
+			{
+				result = false;
+			}
+		}
+		else
+		{
+		#endif
+			#ifdef GIA_PREPROCESSOR_SENTENCE_DETERMINE_AMBIGUOUS_PREPOSITION_POS_TYPES_BASED_ON_CONTEXT_METHOD2
+			if(GIApreprocessorMultiwordReduction.determineIsAuxiliaryBeing(wordTagPrepositionPrior, usePOSprelim))
+			{
+				result = false;
+			}
+			#else
+			result = false;
+			#endif
+		#ifdef GIA_PREPROCESSOR_SENTENCE_DETERMINE_AMBIGUOUS_PREPOSITION_POS_TYPES_BASED_ON_CONTEXT_METHOD1
+		}
+		#endif
+
+	}
+	else
+	{
+		result = true;	//first word in sentence
+	}
+	
+	return result;
+}
+#endif
 
 
 

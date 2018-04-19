@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e11a 21-January-2018
+ * Project Version: 3e12a 12-February-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  *
@@ -738,11 +738,17 @@
 	#define GIA_DISABLE_CROSS_SENTENCE_REFERENCING	//added 2g5a/05-September-2014 - required for NLC 1j2b+, optional for NLC 1k11a+
 #endif
 //#define GIA_SEMANTIC_PARSER
-#define GIA_PREPROCESSOR_SENTENCE_DISABLE		//NB GIA_PREPROCESSOR_SENTENCE is temporarily enabled for executeGIAonStandardTestScenarios16-GIA3e8c+.sh testing
+//#define GIA_PREPROCESSOR_SENTENCE_DISABLE		//NB GIA_PREPROCESSOR_SENTENCE is temporarily enabled for executeGIAonStandardTestScenarios16-GIA3e8c+.sh testing
 
 //#define GIA_DEBUG_DISABLE_3f_CODE
 #ifndef GIA_DEBUG_DISABLE_3f_CODE
 
+	#define GIA_PREPROCESSOR_SENTENCE_DETERMINE_AMBIGUOUS_PREPOSITION_POS_TYPES_BASED_ON_CONTEXT	//3f2a	//uses heuristics to verify preposition pos type - designed to replace the need for a more accurate pos tagger; GIA_PREPROCESSOR_SENTENCE_EXECUTE_PRELIM_POS_TAGGER/GIA_PREPROCESSOR_POS_TAGGER
+	#ifdef GIA_PREPROCESSOR_SENTENCE_DETERMINE_AMBIGUOUS_PREPOSITION_POS_TYPES_BASED_ON_CONTEXT
+		#define GIA_PREPROCESSOR_SENTENCE_DETERMINE_AMBIGUOUS_PREPOSITION_POS_TYPES_BASED_ON_CONTEXT_METHOD1
+		#define GIA_PREPROCESSOR_SENTENCE_DETERMINE_AMBIGUOUS_PREPOSITION_POS_TYPES_BASED_ON_CONTEXT_METHOD2
+	#endif
+	
 	//#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DYNAMIC //3f1a	//collapses any two consective words found in same wordlist (ie predicted to be of same pos type); even if this is not 100% accuracy (due to ambiguous POS types) it should be sufficient for GIA pos tagger database training
 	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DYNAMIC
 		//#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_COLLAPSE_AUXILIARY_LISTS_TO_VERB_LISTS	//assumes GIA LRP wordlists.txt index file includes auxiliary lists (they are not treated as verbs)
@@ -776,10 +782,12 @@
 	
 	//#ifdef GIA_PREPROCESSOR_SENTENCE	//has not yet been defined
 		#ifndef GIA_PREPROCESSOR_POS_TAGGER_DISABLE
-			#define GIA_PREPROCESSOR_SENTENCE_EXECUTE_PRELIM_POS_TAGGER	//3e1a	//either uses third party NLP POS tagger or GIA pos tagger (GIA_PREPROCESSOR_POS_TAGGER)
-			#ifdef GIA_PREPROCESSOR_SENTENCE_EXECUTE_PRELIM_POS_TAGGER
-				#define GIA_PREPROCESSOR_POS_TAGGER	//3e2a	//GIA pos tagger
-			#endif
+			//#ifndef GIA_PREPROCESSOR_SENTENCE_DETERMINE_AMBIGUOUS_PREPOSITION_POS_TYPES_BASED_ON_CONTEXT
+				#define GIA_PREPROCESSOR_SENTENCE_EXECUTE_PRELIM_POS_TAGGER	//3e1a	//either uses third party NLP POS tagger or GIA pos tagger (GIA_PREPROCESSOR_POS_TAGGER)
+				#ifdef GIA_PREPROCESSOR_SENTENCE_EXECUTE_PRELIM_POS_TAGGER
+					#define GIA_PREPROCESSOR_POS_TAGGER	//3e2a	//GIA pos tagger (optional); else use third party NLP pos tagger
+				#endif
+			//#endif
 		#endif
 		#ifdef GIA_PREPROCESSOR_SENTENCE_EXECUTE_PRELIM_POS_TAGGER
 			//#define GIA_PREPROCESSOR_POS_TAGGER_EXECUTE_BEFORE_LRP	//3e7c	//must set executeGIAgeneratePOStaggerDatabase.sh to execute GIAgeneratePOStaggerDatabase.exe without -lrp
