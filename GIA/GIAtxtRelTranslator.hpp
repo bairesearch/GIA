@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslator.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f1w 22-February-2018
+ * Project Version: 3f1x 22-February-2018
  * Requirements: requires plain text file
  * Description: Textual relation translator
  * /
@@ -85,6 +85,7 @@ class GIAtxtRelTranslatorClass
 				private: bool verifyPOStype(GIApreprocessorWord* currentWord, unsigned char wordPOStype);
 				private: bool updatePerformance(const int performanceTemp, int* performanceMax, int* performance, GIAtxtRelTranslatorRulesGroup* currentParseTreeGroup, GIAtxtRelTranslatorRulesGroup* currentParseTreeGroupTemp, const bool passedTemp, int* minIndexOfMatchesFoundBackupOptimum, vector<GIApreprocessorWord*>* sentenceContentsSubset, const int minIndexOfMatchesFoundBackup, GIAtxtRelTranslatorRulesComponent* previousParseTreeComponent);
 					private: bool deleteAllSubgroupsRecurse(GIAtxtRelTranslatorRulesGroup* currentParseTreeGroup, int layer);
+					private: bool deleteParseComponent(GIAtxtRelTranslatorRulesComponent* currentParseTreeComponent);
 				private: int calculateMinIndexOfMatchesFound(vector<GIApreprocessorWord*>* sentenceContentsSubset);
 				private: void clearAllWordsAlreadyFoundMatchInComponent(vector<GIApreprocessorWord*>* sentenceContentsSubset, const int minIndexOfMatchesFoundBackup);
 				private: void restoreAllWordsAlreadyFoundMatchInComponent(vector<GIApreprocessorWord*>* sentenceContentsSubset, const int minIndexOfMatchesFoundNew);

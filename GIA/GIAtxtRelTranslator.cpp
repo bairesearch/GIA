@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f1w 22-February-2018
+ * Project Version: 3f1x 22-February-2018
  * Requirements: requires plain text file
  * Description: Textual relation translator
  * /
@@ -507,6 +507,8 @@ bool GIAtxtRelTranslatorClass::generateRulesGroupTreeComponents(vector<GIAtxtRel
 	
 	int minIndexOfMatchesFoundBackup1 = calculateMinIndexOfMatchesFound(sentenceContentsSubset);
 
+	//cout << "layer = " << layer << endl;
+	
 	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_OR
 	int minIndexOfMatchesFoundBackupOptimum = calculateMinIndexOfMatchesFound(sentenceContentsSubset);
 	bool subcomponentsOr = false;
@@ -572,7 +574,7 @@ bool GIAtxtRelTranslatorClass::generateRulesGroupTreeComponents(vector<GIAtxtRel
 						{
 							//NB subcomponents are added to currentParseTreeGroup in the same way (ie at same level) as ordinary components - therefore delete the artificial component representing the subcomponents section:
 							currentParseTreeGroup->components.pop_back();
-							delete newParseComponent;
+							deleteParseComponent(newParseComponent);
 
 							int performanceTemp = *performance;
 							if(generateRulesGroupTreeComponents(&(component->subComponents), sentenceContentsSubset, currentParseTreeGroup, &performanceTemp, true, component->componentType, component->optional, layer, previousGroupType, numberOfConsecutiveTimesPreviousGroupType))
@@ -630,7 +632,7 @@ bool GIAtxtRelTranslatorClass::generateRulesGroupTreeComponents(vector<GIAtxtRel
 									else
 									{
 										currentParseTreeGroup->components.pop_back();	//remove last component added
-										delete newParseComponent;
+										deleteParseComponent(newParseComponent);
 									}
 								}
 								else
@@ -702,7 +704,7 @@ bool GIAtxtRelTranslatorClass::generateRulesGroupTreeComponents(vector<GIAtxtRel
 								//cout << "clearAllWordsAlreadyFoundMatchInComponent, minIndexOfMatchesFoundBackup2 = " << minIndexOfMatchesFoundBackup2 << endl;
 								clearAllWordsAlreadyFoundMatchInComponent(sentenceContentsSubset, minIndexOfMatchesFoundBackup2);
 								currentParseTreeGroup->components.pop_back();
-								delete newParseComponent;
+								deleteParseComponent(newParseComponent);
 							}
 						}
 					#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_MISSING
@@ -1095,6 +1097,24 @@ bool GIAtxtRelTranslatorClass::deleteAllSubgroupsRecurse(GIAtxtRelTranslatorRule
 		delete currentParseTreeComponent;
 	}
 }
+
+bool GIAtxtRelTranslatorClass::deleteParseComponent(GIAtxtRelTranslatorRulesComponent* currentParseTreeComponent)
+{
+	bool result = true;
+	
+	if(currentParseTreeComponent->parseTreeGroupRef != NULL)
+	{
+		if(!deleteAllSubgroupsRecurse(currentParseTreeComponent->parseTreeGroupRef, 0))
+		{
+			result = false;
+		}
+		delete (currentParseTreeComponent->parseTreeGroupRef);
+	}
+		
+	delete currentParseTreeComponent;
+}
+
+
 
 
 int GIAtxtRelTranslatorClass::calculateMinIndexOfMatchesFound(vector<GIApreprocessorWord*>* sentenceContentsSubset)
