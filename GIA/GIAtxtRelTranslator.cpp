@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f8d 18-April-2018
+ * Project Version: 3f8e 18-April-2018
  * Requirements: requires plain text file
  * Description: Textual relation translator
  * /
@@ -1358,10 +1358,9 @@ bool GIAtxtRelTranslatorClass::updatePerformance(const int performanceTemp, int*
 			}
 			#endif
 			
-			//
+			*minIndexOfMatchesFoundBackupOptimum = calculateMinIndexOfMatchesFound(sentenceContentsSubset);	//moved to higher level nesting in 3f8e
 		}
-		*minIndexOfMatchesFoundBackupOptimum = calculateMinIndexOfMatchesFound(sentenceContentsSubset);	//TODO: move to higher level nesting in 3f8e
-
+		
 	}
 	clearAllWordsAlreadyFoundMatchInComponent(sentenceContentsSubset, minIndexOfMatchesFoundBackup);
 	
