@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorPOStagger.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f3j 10-April-2018
+ * Project Version: 3f3k 10-April-2018
  * Requirements: requires plain text file
  * Description: Preprocessor POS tagger
  * /
@@ -1205,6 +1205,7 @@ bool GIApreprocessorPOStaggerClass::determinePOSambiguityInfo(GIApreprocessorPla
 	//cout << "contextWord->tagName = " << contextWord->tagName << endl;
 	if(findWordInWordListAllTypesWithPOSambiguityInfo(contextWord->tagName, &contextWordFound, contextWordPOSambiguityInfo))
 	{
+		//cout << "contextWord->tagName = " << contextWord->tagName << endl;
 		foundWordInLists = true;
 	}
 	else

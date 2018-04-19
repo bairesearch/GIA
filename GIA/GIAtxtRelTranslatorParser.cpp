@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f3j 10-April-2018
+ * Project Version: 3f3k 10-April-2018
  * Requirements: 
  * Description: Textual Relation Translator Parser
  * /
@@ -44,7 +44,7 @@ bool GIAtxtRelTranslatorParserClass::convertSentenceTxtRelationsIntoGIAnetworkNo
 	
 	int numberOfWordsInSentence = translatorVariables->currentPreprocessorSentenceInList->sentenceContentsLRP.size();
 	translatorVariables->currentSentenceInList->relationshipEntityArtificialIndexCurrent = GIAsentenceClass.getMinIndexOfDynamicallyGeneratedEntity(numberOfWordsInSentence) + SENTENCE_FIRST_ARTIFICIAL_INDEX;
-
+	
 	vector<bool> GIAentityNodeArrayFilled(GIAtranslatorOperations.getEntityArrayMaxIndex(translatorVariables));		//NB could also use currentSentence->maxNumberOfWordsInSentence
 	vector<GIAentityNode*> GIAnetworkIndexNodeArray(GIAtranslatorOperations.getEntityArrayMaxIndex(translatorVariables));
 	vector<GIAentityNode*> GIAentityNodeArray(GIAtranslatorOperations.getEntityArrayMaxIndex(translatorVariables));
@@ -141,13 +141,10 @@ bool GIAtxtRelTranslatorParserClass::convertSentenceTxtRelationsIntoGIAnetworkNo
 
 	GIAsynRelTranslatorDefineSubstances.defineSubstancesAllNodes(translatorVariables);
 
-	for(int w=0; w<GIAtranslatorOperations.getEntityArrayMaxIndex(translatorVariables); w++)
+	for(int w=GIA_NLP_START_ENTITY_INDEX; w<=numberOfWordsInSentence; w++)
 	{
-		if(w < numberOfWordsInSentence)
-		{
-			GIAentityNode* entity = GIAentityNodeArray[w];
-			((translatorVariables->currentPreprocessorSentenceInList->sentenceContentsLRP)[w])->translatorEntity = entity;	//code from setPreprocessorSentenceTranslatorEntityReferences
-		}
+		GIAentityNode* entity = GIAentityNodeArray[w];
+		((translatorVariables->currentPreprocessorSentenceInList->sentenceContentsLRP)[GIAtranslatorOperations.convertEntityIndexToSentenceContentsIndex(w)])->translatorEntity = entity;	//code from setPreprocessorSentenceTranslatorEntityReferences
 	}
 	
 	if(!generateSemanticRelationsFromTxtRelationsWrapper(translatorVariables))
@@ -159,30 +156,27 @@ bool GIAtxtRelTranslatorParserClass::convertSentenceTxtRelationsIntoGIAnetworkNo
 	identifyComparisonVariable(translatorVariables);
 	#endif
 	
-	for(int w=0; w<GIAtranslatorOperations.getEntityArrayMaxIndex(translatorVariables); w++)
+	for(int w=GIA_NLP_START_ENTITY_INDEX; w<=numberOfWordsInSentence; w++)
 	{
-		if(w < numberOfWordsInSentence)
+		GIAentityNode* entity = GIAentityNodeArray[w];
+		bool pass = true;
+		#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_NUMBER_OF
+		if(entity->isNumberOf)
 		{
-			GIAentityNode* entity = GIAentityNodeArray[w];
-			bool pass = true;
-			#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_NUMBER_OF
-			if(entity->isNumberOf)
-			{
-				pass = false;	//in case of sentences containing a single entity x without a semanticRelationFunction being executed; i.e. "the number of x"
-			}
+			pass = false;	//in case of sentences containing a single entity x without a semanticRelationFunction being executed; i.e. "the number of x"
+		}
+		#endif
+		if(entity->semanticRelationEntityIsReferenced)
+		{
+			pass = false;
+		}
+		if(pass)
+		{
+			GIAtranslatorOperations.disableInstanceAndNetworkIndexEntityBasedUponFirstSentenceToAppearInNetwork(entity);
+			#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS2
+			cout << "DISABLING entity = " << entity->entityName << endl;
+			cout << "entity->entityType = " << entity->entityType << endl;
 			#endif
-			if(entity->semanticRelationEntityIsReferenced)
-			{
-				pass = false;
-			}
-			if(pass)
-			{
-				GIAtranslatorOperations.disableInstanceAndNetworkIndexEntityBasedUponFirstSentenceToAppearInNetwork(entity);
-				#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS2
-				cout << "DISABLING entity = " << entity->entityName << endl;
-				cout << "entity->entityType = " << entity->entityType << endl;
-				#endif
-			}
 		}
 	}
 	
@@ -216,8 +210,7 @@ bool GIAtxtRelTranslatorParserClass::convertSentenceTxtRelationsIntoGIAnetworkNo
 	{
 		result = false;
 	}	
-	
-	
+		
 	return result;
 }
 
@@ -234,9 +227,9 @@ bool GIAtxtRelTranslatorParserClass::locateAndAddAllNetworkIndexEntitiesBasedOnT
 	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3_USE_SYN_REL_TRANSLATOR_FEATURES
 	currentFeatureInList = firstFeatureInSentence;
 	#endif
-	for(int w=0; w<numberOfWordsInSentence; w++)
+	for(int w=GIA_NLP_START_ENTITY_INDEX; w<=numberOfWordsInSentence; w++)
 	{
-		GIApreprocessorPlainTextWord* currentWord = (translatorVariables->currentPreprocessorSentenceInList)->sentenceContentsLRP[w];
+		GIApreprocessorPlainTextWord* currentWord = (translatorVariables->currentPreprocessorSentenceInList)->sentenceContentsLRP[GIAtranslatorOperations.convertEntityIndexToSentenceContentsIndex(w)];
 		
 		#ifndef GIA_TXT_REL_TRANSLATOR_RULES_GIA3_USE_SYN_REL_TRANSLATOR_FEATURES
 		GIAfeature currentFeatureTemp;
@@ -252,6 +245,7 @@ bool GIAtxtRelTranslatorParserClass::locateAndAddAllNetworkIndexEntitiesBasedOnT
 		//GIAentityNode* entity = new GIAentityNode();
 		bool entityAlreadyExistant = false;
 		bool entityEnabled = true;	//CHECKTHIS
+		//cout << "currentFeatureInList->lemma = " << currentFeatureInList->lemma << endl;
 		GIAentityNode* entity = GIAtranslatorOperations.findOrAddNetworkIndexEntityNodeByNameSimpleWrapper(&(currentFeatureInList->lemma), &entityAlreadyExistant, translatorVariables, entityEnabled);
 
 		(*translatorVariables->GIAentityNodeArrayFilled)[w] = true;
@@ -467,9 +461,9 @@ bool GIAtxtRelTranslatorParserClass::reconcileSameReferenceSetConnectionsForAllR
 void GIAtxtRelTranslatorParserClass::setPreprocessorSentenceTranslatorEntityReferences(GIApreprocessorSentence* currentPreprocessorSentenceInList, constEffective vector<GIAentityNode*>* GIAentityNodeArray)
 {
 	int numberOfWordsInSentence = (currentPreprocessorSentenceInList->sentenceContentsLRP).size();	//+1?
-	for(int w=0; w<numberOfWordsInSentence; w++)
+	for(int w=GIA_NLP_START_ENTITY_INDEX; w<=numberOfWordsInSentence; w++)
 	{
-		((currentPreprocessorSentenceInList->sentenceContentsLRP)[w])->translatorEntity = (*GIAentityNodeArray)[w];
+		((currentPreprocessorSentenceInList->sentenceContentsLRP)[GIAtranslatorOperations.convertEntityIndexToSentenceContentsIndex(w)])->translatorEntity = (*GIAentityNodeArray)[w];
 	}
 }
 	
@@ -707,9 +701,9 @@ bool GIAtxtRelTranslatorParserClass::generateSemanticRelationsFromTxtRelations(G
 				int semanticRelationReturnFunctionNameIndexTypeDynamic = GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_SEMANTIC_RELATION_INDEX_TYPE_DELIMITER;
 				int nearestPreceedingDelimiterIndex = INT_DEFAULT_VALUE; 
 				int nearestPreceedingSubjectIndex = INT_DEFAULT_VALUE;
-				for(int w = parseTreeComponentSemanticRelationEntity->entityIndexTemp; w>=0; w--)
+				for(int w = parseTreeComponentSemanticRelationEntity->entityIndexTemp; w>=GIA_NLP_START_ENTITY_INDEX; w--)
 				{	
-					GIApreprocessorPlainTextWord* currentWord = (translatorVariables->currentPreprocessorSentenceInList)->sentenceContentsLRP[w];
+					GIApreprocessorPlainTextWord* currentWord = (translatorVariables->currentPreprocessorSentenceInList)->sentenceContentsLRP[GIAtranslatorOperations.convertEntityIndexToSentenceContentsIndex(w)];
 					if(nearestPreceedingDelimiterIndex == INT_DEFAULT_VALUE)
 					{
 						if(currentWord->wordPOStypeInferred == GIA_PREPROCESSOR_POS_TYPE_VERB)

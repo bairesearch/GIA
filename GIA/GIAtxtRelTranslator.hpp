@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslator.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f3j 10-April-2018
+ * Project Version: 3f3k 10-April-2018
  * Requirements: requires plain text file
  * Description: Textual relation translator
  * /
@@ -41,10 +41,12 @@
 #ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3
 
 //#include "SHAREDvars.hpp"
+#include "GIAtranslatorOperations.hpp"
 #ifdef GIA_TXT_REL_TRANSLATOR_HYBRID
 #include "GIAtxtRelTranslatorHybrid.hpp"
 #endif
 #include "GIAtxtRelTranslatorRules.hpp"
+
 #include "GIApreprocessorPOStagger.hpp"
 #include "GIApreprocessorPOStaggerDatabase.hpp"
 #include "GIApreprocessorMultiwordReduction.hpp"
@@ -58,6 +60,7 @@
 class GIAtxtRelTranslatorClass
 {
 	//private: SHAREDvarsClass SHAREDvars;
+	private: GIAtranslatorOperationsClass GIAtranslatorOperations;
 	#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID
 	private: GIAtxtRelTranslatorHybridClass GIAtxtRelTranslatorHybrid;
 	#endif

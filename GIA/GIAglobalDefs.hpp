@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f3j 10-April-2018
+ * Project Version: 3f3k 10-April-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  * /
@@ -735,6 +735,7 @@
 
 #include "SHAREDglobalDefs.hpp"
 
+
 //#define GIA_PRINT_EXECUTION_TIME
 
 #ifdef USE_NLC
@@ -757,6 +758,7 @@
 			//#define GIA_DEBUG_TXT_REL_TRANSLATOR_RULES    
 			//#define GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS2
 			//#define GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS
+			//#define GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_SYN_REL_TRANSLATOR_OUTPUT_BACKWARDS_COMPATIBILITY	//not supported (due to propernouns being replicated in wordlistNouns.txt)
 			
 			#define GIA_TXT_REL_TRANSLATOR_RULES_ASSUME_HIGH_LEVEL_REFERENCE_SETS_DO_NOT_CONTAIN_EXPLICIT_SEMANTIC_RELATION_FUNCTION
 			
@@ -794,7 +796,9 @@
 			
 			#define GIA_PREPROCESSOR_INITIALISE_WORD_INDEX_LIST_FROM_LRP_FILES	//this is required to detect all possible pos types for wordList words
 			#ifdef GIA_PREPROCESSOR_INITIALISE_WORD_INDEX_LIST_FROM_LRP_FILES
-				#define GIA_PREPROCESSOR_INITIALISE_WORD_INDEX_LIST_FROM_LRP_FILES_SUPPORT_UPPERCASE_PROPERNOUN_WORD_LISTS	//NB this is not backwards compatible with GIAsynRelTranslator
+				#ifndef GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_SYN_REL_TRANSLATOR_OUTPUT_BACKWARDS_COMPATIBILITY
+					#define GIA_PREPROCESSOR_INITIALISE_WORD_INDEX_LIST_FROM_LRP_FILES_SUPPORT_UPPERCASE_PROPERNOUN_WORD_LISTS	//NB this is not backwards compatible with GIAsynRelTranslator
+				#endif
 			#endif
 			#define GIA_PREPROCESSOR_REPLACE_VERB_AND_NOUN_LISTS_WITH_VERB_AND_NOUN_LISTS_WITH_VARIANTS
 			#ifdef GIA_PREPROCESSOR_REPLACE_VERB_AND_NOUN_LISTS_WITH_VERB_AND_NOUN_LISTS_WITH_VARIANTS

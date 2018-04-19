@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f3j 10-April-2018
+ * Project Version: 3f3k 10-April-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
@@ -2899,6 +2899,9 @@ bool GIAtranslatorOperationsClass::addTimeConditionProperty(GIAtimeConditionNode
 	else if(entity->semanticRelationWordPOStypeInferred == GIA_PREPROCESSOR_POS_TYPE_DATE)
 	{
 		int index = INT_DEFAULT_VALUE;
+		#ifndef GIA_PREPROCESSOR_INITIALISE_WORD_INDEX_LIST_FROM_LRP_FILES_SUPPORT_UPPERCASE_PROPERNOUN_WORD_LISTS
+		entityName = SHAREDvars.convertStringToFirstUpperCase(&entityName);
+		#endif
 		string lastTwoCharactersOfEntityName = entityName.substr(entityName.length()-TIME_DAY_OF_MONTH_APPEND_LENGTH, TIME_DAY_OF_MONTH_APPEND_LENGTH);
 		if(SHAREDvars.textInTextArray(entityName, GIAtimeConditionMonthNameArray, TIME_MONTH_NUMBER_OF_TYPES, &index))
 		{
@@ -3163,6 +3166,16 @@ int GIAtranslatorOperationsClass::getEntityArrayMaxIndex(GIAtranslatorVariablesC
 {
 	int numberOfWordsInSentence = translatorVariables->currentPreprocessorSentenceInList->sentenceContentsLRP.size();
 	return GIAsentenceClass.getMaxIndexOfDynamicallyGeneratedEntity(numberOfWordsInSentence);	
+}
+int GIAtranslatorOperationsClass::convertSentenceContentsIndexToEntityIndex(const int sentenceContentsIndex)
+{
+	int entityIndex = sentenceContentsIndex+GIA_NLP_START_ENTITY_INDEX;
+	return entityIndex;
+}
+int GIAtranslatorOperationsClass::convertEntityIndexToSentenceContentsIndex(const int entityIndex)
+{
+	int sentenceContentsIndex = entityIndex-GIA_NLP_START_ENTITY_INDEX;
+	return sentenceContentsIndex;
 }
 #else
 int GIAtranslatorOperationsClass::getEntityArrayMaxIndex(GIAtranslatorVariablesClass* translatorVariables)

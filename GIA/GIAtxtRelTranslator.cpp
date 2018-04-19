@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f3j 10-April-2018
+ * Project Version: 3f3k 10-April-2018
  * Requirements: requires plain text file
  * Description: Textual relation translator
  * /
@@ -953,7 +953,7 @@ bool GIAtxtRelTranslatorClass::generateRulesGroupTreeComponent(GIAtxtRelTranslat
 				#endif
 				foundWordMatch = true;
 				currentWord->alreadyFoundMatch = true;
-				currentWord->translatorSentenceEntityIndex = w;	//NB alternatively, translatorSentenceEntityIndex could be defined for each word at the very start of executeTxtRelTranslator()
+				currentWord->translatorSentenceEntityIndex = GIAtranslatorOperations.convertSentenceContentsIndexToEntityIndex(w);	//NB alternatively, translatorSentenceEntityIndex could be defined for each word at the very start of executeTxtRelTranslator()
 				*performance = *performance + 1;
 				currentParseTreeComponent->candidateStringMatch = currentWord;
 			}

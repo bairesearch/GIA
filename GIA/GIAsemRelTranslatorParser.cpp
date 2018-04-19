@@ -26,7 +26,7 @@
  * File Name: GIAsemRelTranslatorParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f3j 10-April-2018
+ * Project Version: 3f3k 10-April-2018
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  * Description: Semantic Relation Translator Parser
  * /
@@ -273,7 +273,7 @@ void GIAsemRelTranslatorParserClass::locateAndAddAllNetworkIndexEntitiesBasedOnS
 				
 				#ifndef GIA_SEM_REL_TRANSLATOR_GIA2_USE_SYN_REL_TRANSLATOR_FEATURES
 				#ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3
-				GIApreprocessorPlainTextWord* currentWord = (translatorVariables->currentPreprocessorSentenceInList)->sentenceContentsLRP[relationIndex[i]];
+				GIApreprocessorPlainTextWord* currentWord = (translatorVariables->currentPreprocessorSentenceInList)->sentenceContentsLRP[GIAtranslatorOperations.convertEntityIndexToSentenceContentsIndex(relationIndex[i])];
 				networkIndexEntity->semanticRelationWordPOStypeInferred = currentWord->wordPOStypeInferred;
 				#else
 				GIAfeature* currentFeatureInList = translatorVariables->currentSentenceInList->firstFeatureInList;
