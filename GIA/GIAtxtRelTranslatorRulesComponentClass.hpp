@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorRulesComponentClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f3c 10-April-2018
+ * Project Version: 3f3d 10-April-2018
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Rules
  * /
@@ -126,11 +126,11 @@ public:
 	bool isAuxiliaryQuery;
 	bool isWhichOrEquivalentWhatQuery;
 	#endif
-	#ifdef GIA_ALIASES
+	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_ALIASES
 	bool isNameQuery;
 	bool isName;
 	#endif
-	#ifdef GIA_TRANSLATOR_NUMBER_OF
+	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_NUMBER_OF
 	bool isNumberOf;
 	#endif
 	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_WORD_NOUN_VERB_VARIANT

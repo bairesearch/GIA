@@ -27,7 +27,7 @@
  * File Name: GIAtxtRelTranslatorRules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f3c 10-April-2018
+ * Project Version: 3f3d 10-April-2018
  * /
  *******************************************************************************/
  
@@ -284,13 +284,45 @@
 					</or>
 					<component referenceSetTypeHybrid="unknown" componentType="string" stringType="LRPexternalWordLists" wordPOStype="auxiliaryDoing" optional="true" />
 				</group>
+				<group groupName="descriptiveNounWithDeterminer">
+					<!-- {det} noun -->
+					<example><!-- {the} house --></example>
+					<or>
+						<component referenceSetTypeHybrid="unknown" componentType="group" groupTypeName="subReferenceSetsPart" groupName="descriptiveNounWithDeterminerNumberOf" semanticRelationReturnEntity="true" />
+						<component referenceSetTypeHybrid="unknown" componentType="group" groupTypeName="subReferenceSetsPart" groupName="descriptiveNounWithDeterminerStandard" semanticRelationReturnEntity="true" />
+					</or>
+					<!--</repeat>-->
+				</group>
+				<group groupName="descriptiveNounWithDeterminerStandard" semanticRelationFunctionName="numerosityDeterminer">
+					<!-- {det} noun -->
+					<example><!-- {the} house --></example>
+					<component referenceSetTypeHybrid="unknown" componentType="group" groupTypeName="subReferenceSetsPart" groupName="determiner" optional="true" semanticRelationIndexType="object" />
+					<component referenceSetTypeHybrid="subReferenceSet" componentType="group" groupTypeName="subReferenceSetsPart" groupName="descriptiveNoun" semanticRelationIndexType="subject" semanticRelationReturnEntity="true" />	<!-- NB 'semanticRelationIndexType="subject"' is decared to reference semanticRelationReturnFunctionNameIndexType="subject" only [could be renamed to "thing"] -->
+					<!--</repeat>-->
+				</group>
+				<!-- #ifdefGIA_TXT_REL_TRANSLATOR_RULES_CODE_NUMBER_OF -->
+				<group groupName="descriptiveNounWithDeterminerNumberOf">
+					<!-- the number of -->
+					<example><!-- the number of --></example>
+					<component referenceSetTypeHybrid="unknown" componentType="string" stringType="explicit" word="the" />
+					<component referenceSetTypeHybrid="unknown" componentType="string" stringType="explicit" word="number" />
+					<component referenceSetTypeHybrid="unknown" componentType="string" stringType="explicit" word="of" />
+					<component referenceSetTypeHybrid="subReferenceSet" componentType="group" groupTypeName="subReferenceSetsPart" groupName="descriptiveNoun" isNumberOf="true" semanticRelationReturnEntity="true" />
+				</group>
+				<!-- #endif -->
 				<group groupName="determiner">
 					<!-- {predet} det -->
 					<example><!-- all these --></example>
 					<or>
-						<component referenceSetTypeHybrid="unknown" componentType="group" groupTypeName="subReferenceSetsPart" groupName="determinerEnforced" semanticRelationReturnEntity="true"  />
+						<component referenceSetTypeHybrid="unknown" componentType="group" groupTypeName="subReferenceSetsPart" groupName="predeterminerAndDeterminer" semanticRelationReturnEntity="true"  />
 						<component referenceSetTypeHybrid="unknown" componentType="string" stringType="LRPexternalWordLists" wordPOStype="determiner" semanticRelationReturnEntity="true" />
 					</or>
+				</group>
+				<group groupName="predeterminerAndDeterminer" semanticRelationFunctionName="numerosityPredeterminer">
+					<!-- {predet} det -->
+					<example><!-- all these --></example>
+					<component referenceSetTypeHybrid="unknown" componentType="string" stringType="LRPexternalWordLists" wordPOStype="predeterminer" semanticRelationIndexType="object" />
+					<component referenceSetTypeHybrid="unknown" componentType="string" stringType="LRPexternalWordLists" wordPOStype="determiner" semanticRelationIndexType="subject" semanticRelationReturnEntity="true" />
 				</group>
 				<group groupName="descriptiveAdjective">
 					<!-- {adv} adj -->
@@ -377,12 +409,6 @@
 						<component referenceSetTypeHybrid="unknown" componentType="group" groupTypeName="subReferenceSetsPart" groupName="descriptiveNounEnforced" semanticRelationReturnEntity="true" />
 						<component referenceSetTypeHybrid="unknown" componentType="group" groupTypeName="subReferenceSetsPart" groupName="nounSequence" semanticRelationReturnEntity="true" />
 					</or>
-				</group>
-				<group groupName="determinerEnforced" semanticRelationFunctionName="numerosityPredeterminer">
-					<!-- {predet} det -->
-					<example><!-- all these --></example>
-					<component referenceSetTypeHybrid="unknown" componentType="string" stringType="LRPexternalWordLists" wordPOStype="predeterminer" semanticRelationIndexType="object" />
-					<component referenceSetTypeHybrid="unknown" componentType="string" stringType="LRPexternalWordLists" wordPOStype="determiner" semanticRelationIndexType="subject" semanticRelationReturnEntity="true" />
 				</group>
 				<group groupName="descriptiveAdjectiveEnforced" semanticRelationFunctionName="propertyReverse">
 					<!-- {adv} adj -->
@@ -503,11 +529,10 @@
 					<example><!-- Tom's car --></example>
 					<component referenceSetTypeHybrid="subReferenceSet" componentType="group" groupTypeName="possessiveEndingOrPronounPossessiveAdjective" semanticRelationReturnEntity="true" />	
 				</group>
-				<group groupName="thing" semanticRelationFunctionName="numerosityDeterminer">
+				<group groupName="thing">
 					<!-- {det} {adv} {adj} noun -->
 					<example><!-- {the} {very} {big} house {that is in the house} --></example>
-					<component referenceSetTypeHybrid="unknown" componentType="group" groupTypeName="subReferenceSetsPart" groupName="determiner" optional="true" semanticRelationIndexType="object" />
-					<component referenceSetTypeHybrid="subReferenceSet" componentType="group" groupTypeName="subReferenceSetsPart" groupName="descriptiveNoun" semanticRelationIndexType="subject" semanticRelationReturnEntity="true" />	<!-- NB 'semanticRelationIndexType="subject"' is decared to reference semanticRelationReturnFunctionNameIndexType="subject" only [could be renamed to "thing"] -->
+					<component referenceSetTypeHybrid="unknown" componentType="group" groupTypeName="subReferenceSetsPart" groupName="descriptiveNounWithDeterminer" semanticRelationReturnEntity="true" />
 					<component referenceSetTypeHybrid="subReferenceSet" componentType="group" groupTypeName="subReferenceSetsAppend" optional="true" />
 					<!--</repeat>-->
 				</group>

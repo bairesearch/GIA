@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f3c 10-April-2018
+ * Project Version: 3f3d 10-April-2018
  * Requirements: 
  * Description: Textual Relation Translator Parser
  * /
@@ -568,7 +568,7 @@ bool GIAtxtRelTranslatorParserClass::generateSemanticRelationsFromTxtRelations(G
 			parseTreeComponentSemanticRelationEntity->isWhichOrEquivalentWhatQuery = true;
 		}
 		#endif
-		#ifdef GIA_ALIASES
+		#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_ALIASES
 		else if(parseTreeComponent->isNameQuery)
 		{
 			translatorVariables->currentSentenceInList->isQuestion = true;
@@ -580,7 +580,7 @@ bool GIAtxtRelTranslatorParserClass::generateSemanticRelationsFromTxtRelations(G
 			parseTreeComponentSemanticRelationEntity->isName = true;
 		}
 		#endif
-		#ifdef GIA_TRANSLATOR_NUMBER_OF
+		#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_NUMBER_OF
 		if(parseTreeComponent->isNumberOf)
 		{
 			parseTreeComponentSemanticRelationEntity->isNumberOf = true;
@@ -1129,7 +1129,7 @@ bool GIAtxtRelTranslatorParserClass::createSemanticRelationInMemory(GIAtranslato
 		GIAsemRelTranslatorOperations.GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(translatorVariables, GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITION_REVERSE, functionEntityIndex2, functionEntityIndex3, sameReferenceSet);		
 	}
 
-	#ifdef GIA_ALIASES
+	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_ALIASES
 	else if(semanticRelationFunctionName == GIAtxtRelSemanticDependencyRelationNameArray[GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_definitionAlias])
 	{
 		GIAsemRelTranslatorOperations.GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(translatorVariables, GIA_ENTITY_VECTOR_CONNECTION_TYPE_DEFINITION_DIRECT_ALIAS, functionEntityIndex1, functionEntityIndex2, sameReferenceSet);
@@ -1416,7 +1416,7 @@ bool GIAtxtRelTranslatorParserClass::createSemanticRelationInNetwork(GIAtranslat
 		#endif
 	}
 	
-	#ifdef GIA_ALIASES
+	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_ALIASES
 	else if(semanticRelationFunctionName == GIAtxtRelSemanticDependencyRelationNameArray[GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_definitionAlias])
 	{
 		if(!GIAtranslatorOperations.connectDefinitionAliasWrapper(translatorVariables, entitySemanticRelationFunction1, &entitySemanticRelationFunction2, entitySemanticRelationFunction3, sameReferenceSet))
