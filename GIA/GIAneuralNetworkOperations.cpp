@@ -26,9 +26,9 @@
  * File Name: GIAneuralNetworkOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e12b 12-February-2018
- * Description: 
- *
+ * Project Version: 3f1a 22-February-2018
+ * Description: Neural Network - visual representation of GIA contents in prototype biological neural network
+ * /
  *******************************************************************************/
 
 

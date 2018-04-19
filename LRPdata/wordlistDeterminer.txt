@@ -36,16 +36,6 @@ sixty
 seventy
 eighty
 ninety
-0
-1
-2
-3
-4
-5
-6
-7
-8
-9
 both
 few
 fewer

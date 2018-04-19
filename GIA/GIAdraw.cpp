@@ -26,10 +26,10 @@
  * File Name: GIAdraw.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e12b 12-February-2018
+ * Project Version: 3f1a 22-February-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
- * Description: Draws GIA nodes in GIA network/tree
- *
+ * Description: Draw - Draws GIA nodes in GIA network/tree
+ * /
  *******************************************************************************/
 
 
@@ -218,10 +218,13 @@ bool GIAdrawClass::determineBasicPrintPositionsOfAllNodes(vector<GIAentityNode*>
 	drawVariables->maxNumberSentences = 1;
 	#endif
 	bool printFromXMLcoordinatesAlreadyDefined = false;
-	if((*(entityNodesActiveListComplete->begin()))->printCoordsAlreadyDefined)
+	if(entityNodesActiveListComplete->size() > 0)
 	{
-		printFromXMLcoordinatesAlreadyDefined = true;
-		drawVariables->maxNumberSentences = 1;
+		if((*(entityNodesActiveListComplete->begin()))->printCoordsAlreadyDefined)
+		{
+			printFromXMLcoordinatesAlreadyDefined = true;
+			drawVariables->maxNumberSentences = 1;
+		}
 	}
 	
 	if(drawVariables->sentenceToPrint == GIA_DRAW_SENTENCE_INDEX_PRINT_ALL_SENTENCES)
@@ -540,7 +543,7 @@ bool GIAdrawClass::initialiseEntityNodeForPrinting(GIAentityNode* entityNode, in
 				}
 				*/
 
-				#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
+				#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE
 				if(entityNode->isLogicReferenceEntity)
 				{
 					entityColour = GIA_DRAW_LOGIC_REFERENCE_ENTITY_COLOUR;
@@ -563,7 +566,7 @@ bool GIAdrawClass::initialiseEntityNodeForPrinting(GIAentityNode* entityNode, in
 					string quantityNumberStringTemp;
 					if(entityNode->isQuery)
 					{
-						quantityNumberStringTemp = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;
+						quantityNumberStringTemp = GIA_SYN_REL_TRANSLATOR_REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;
 					}
 					else
 					{
@@ -576,6 +579,12 @@ bool GIAdrawClass::initialiseEntityNodeForPrinting(GIAentityNode* entityNode, in
 				{
 					nameOfBox = nameOfBox + "!" + entityNode->entityName;
 				}
+				#ifdef GIA_DRAW_PRINT_ALIASES
+				else if(entityNode->aliasList.size() > 0)
+				{
+					nameOfBox = entityNode->aliasList[0];
+				}
+				#endif
 				else
 				{
 					nameOfBox = entityNode->entityName;

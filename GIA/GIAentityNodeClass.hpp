@@ -26,9 +26,9 @@
  * File Name: GIAentityNodeClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e12b 12-February-2018
+ * Project Version: 3f1a 22-February-2018
  * NB a substance is an instance of an entity, any given entity may contain/comprise/have multiple substances - and substances are unrelated to definitions between entities [they just define what comprises any given entity]
- *
+ * /
  *******************************************************************************/
 
 
@@ -93,7 +93,7 @@ static int relationshipEntityTypesArray[GIA_RELATIONSHIP_ENTITY_NUMBER_OF_TYPES]
 	#define GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_TITLE (1)
 	#define GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_QUOTES (2)
 	#define GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_SUBCLASS (3)
-	#define GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_MULTIWORD_WORD_DELIMITER "_"	//this is now equivalent to STANFORD_PARSER_PREPOSITION_DELIMITER
+	#define GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_MULTIWORD_WORD_DELIMITER "_"	//this is now equivalent to GIA_SYN_REL_TRANSLATOR_STANFORD_PARSER_PREPOSITION_DELIMITER
 	#define GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_TITLE_DELIMITER "_"
 	#define GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_QUOTES_DELIMITER "_"	//this filler does not appear compatible with Relex (Stanford only); try another filler character (NB "-" doesn't work with Relex either)
 	#define GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_SUBCLASS_DELIMITER "_"
@@ -105,7 +105,7 @@ static int relationshipEntityTypesArray[GIA_RELATIONSHIP_ENTITY_NUMBER_OF_TYPES]
 
 #ifdef GIA_PREDETERMINERS
 	//added 2i34a
-	//must be synced with GIAtranslatorDefs.h entityPredeterminerSmallArray;
+	//must be synced with GIAsynRelTranslatorDefs.h entityPredeterminerSmallArray;
 	#define GRAMMATICAL_PREDETERMINER_UNDEFINED (INT_DEFAULT_VALUE)	//-1
 	#define GRAMMATICAL_PREDETERMINER_EACH 0
 	#define GRAMMATICAL_PREDETERMINER_EVERY 1
@@ -219,6 +219,11 @@ static int relationshipEntityTypesArray[GIA_RELATIONSHIP_ENTITY_NUMBER_OF_TYPES]
 
 #define GRAMMATICAL_PROPERNOUN_NAME "propernoun"	//added 28 April 2012 (for cff export)
 
+
+#define GRAMMATICAL_PRONOUN_PERSON_UNDEFINED 0
+#define GRAMMATICAL_PRONOUN_PERSON_FIRST 1
+#define GRAMMATICAL_PRONOUN_PERSON_SECOND 2
+#define GRAMMATICAL_PRONOUN_PERSON_THIRD 3
 
 #define QUANTITY_NUMBER_UNDEFINED (1)
 #define QUANTITY_NUMBER_LOW_NUMBER_OF_TYPES (20)
@@ -361,13 +366,9 @@ class GIAentityNode
 public:
 
 	GIAentityNode(void);
-	#ifdef USE_NLC
-	//#ifdef NLC_NONOO
 	GIAentityNode(string newEntityName);
-	//#endif
-	#endif
+	void initialiseEntity();
 	~GIAentityNode(void);
-
 
 	/*GIA Internal Entity Referencing*/
 	long idActiveList;
@@ -427,7 +428,7 @@ public:
 	string quantityNumberString;	//eg "6:45"
 	int quantityModifier;	//not yet implemented
 	string quantityModifierString;	//eg "almost"
-	bool hasQuantityMultiplier;
+	bool hasQuantityMultiplier;	//quantity multiplier, _quantity_mult(hundred, three)	//only used by Relex
 	bool hasMeasure;
 	int measureType;
 
@@ -481,7 +482,7 @@ public:
 	bool isName;
 	bool isNameQuery;
 	#endif
-	#ifdef GIA_NUMBER_OF
+	#ifdef GIA_TRANSLATOR_NUMBER_OF
 	bool isNumberOf;	//added NLC1j18a/24-September-2014
 	#endif
 	
@@ -515,10 +516,10 @@ public:
 	#endif
 	#endif
 	#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES
-	bool alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp;	//#ifdef GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES
+	bool alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp;	//#ifdef GIA_SYN_REL_TRANSLATOR_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES
 	bool mustSetIsConceptBasedOnApposRelation;
 	bool isPronounReference;
-	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_ENSURE_DEPENDENT_IS_NOT_ASSIGNED_CONCEPT
+	#ifdef GIA_SYN_REL_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_ENSURE_DEPENDENT_IS_NOT_ASSIGNED_CONCEPT
 	bool mustNotSetIsConceptBasedOnPrenomonalModifierRelation;
 	#endif
 		//subclasses:
@@ -533,7 +534,7 @@ public:
 	#endif
 	#endif
 		//expletives:
-	#ifdef GIA_EXPLETIVES
+	#ifdef GIA_TRANSLATOR_EXPLETIVES
 	bool isExpletive;	//added 2n7b
 	#endif
 	
@@ -602,7 +603,7 @@ public:
 	#endif
 	#endif
 	
-	#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
+	#ifdef GIA_TXT_REL_TRANSLATOR
 	bool isLogicReferenceEntity;
 	int logicReferenceClass;
 	string logicReferenceClassType;
@@ -616,6 +617,19 @@ public:
 	int conceptIndex;
 	#endif
 	*/
+	#endif
+	
+	#ifdef GIA_TXT_REL_TRANSLATOR_RULES
+	string semanticRelationReturnFunctionName; 
+	int semanticRelationReturnFunctionNameIndexType;
+	//bool semanticRelationReturnFunctionNameSameReferenceSet;
+	int semanticRelationPreprocessorEntityIndex;	//NB could rely on entityIndexTemp instead
+	#endif
+	int semanticRelationWordPOStypeInferred;
+	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3
+	string semanticRelationWordDeterminer;
+	string semanticRelationWordPredeterminer;
+	bool semanticRelationEntityIsReferenced;
 	#endif
 };
 

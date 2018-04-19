@@ -26,10 +26,10 @@
  * File Name: GIAnlg.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e12b 12-February-2018
+ * Project Version: 3f1a 22-February-2018
  * Requirements: requires GIA translated data, and NLG2 to be installed
- * Description: GIA natural language generation (using NLG2)
- *
+ * Description: NLG - natural language generation
+ * /
  *******************************************************************************/
 
 
@@ -39,7 +39,7 @@
 #include "GIAglobalDefs.hpp"
 #include "GIAentityNodeClass.hpp"
 #include "GIAtranslatorOperations.hpp"
-#include "GIAtranslatorDefineGrammar.hpp"
+#include "GIAtranslatorGrammar.hpp"
 
 class GIANLGentity
 {

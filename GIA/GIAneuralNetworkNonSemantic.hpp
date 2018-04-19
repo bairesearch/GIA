@@ -26,9 +26,9 @@
  * File Name: GIAneuralNetworkNonSemantic.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e12b 12-February-2018
- * Description: 
- *
+ * Project Version: 3f1a 22-February-2018
+ * Description: Neural Network - visual representation of GIA contents in prototype biological neural network
+ * /
  *******************************************************************************/
 
 
@@ -44,6 +44,8 @@
 #include "SHAREDvars.hpp"
 #include "GIApreprocessorMultiwordReduction.hpp"
 
+//move to GIApreprocessorMultiwordReductionClass.hpp:
+ 
 #define GIA_TRANSLATOR_ENGLISH_INDEFINITE_CONCEPT_DEFINITION_DELIMITER "is"	//e.g. a dog is an animal
 #define GIA_TRANSLATOR_ENGLISH_PLURAL_CONCEPT_DEFINITION_DELIMITER "are"	//e.g. dogs are animals
 
@@ -52,12 +54,6 @@ static string translatorEnglishArticlesArray[GIA_TRANSLATOR_ENGLISH_ARTICLES_NUM
 
 #define GIA_TRANSLATOR_ENGLISH_POSSESSIVE_DETERMINERS_NUMBER_OF_TYPES (8)
 static string translatorEnglishPossessiveDeterminersArray[GIA_TRANSLATOR_ENGLISH_POSSESSIVE_DETERMINERS_NUMBER_OF_TYPES] = {"my", "your", "his", "her", "its", "our", "their", "'s"};	//one's
-
-#define GIA_TRANSLATOR_ENGLISH_NUMBERS_NUMBER_OF_TYPES (28)
-static string translatorEnglishNumbersArray[GIA_TRANSLATOR_ENGLISH_NUMBERS_NUMBER_OF_TYPES] = {"zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"};
-
-#define GIA_TRANSLATOR_ENGLISH_NUMBERS_NUMERICAL_NUMBER_OF_TYPES (10)
-static char translatorEnglishNumbersNumericalArray[GIA_TRANSLATOR_ENGLISH_NUMBERS_NUMERICAL_NUMBER_OF_TYPES] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
 
 #define GIA_TRANSLATOR_ENGLISH_INDEFINITE_PRONOUNS_PLURAL_NUMBER_OF_TYPES (5)
 static string translatorEnglishIndefinitePronounsPluralArray[GIA_TRANSLATOR_ENGLISH_INDEFINITE_PRONOUNS_PLURAL_NUMBER_OF_TYPES] = {"both", "few", "fewer", "many", "several"};
@@ -91,7 +87,7 @@ class GIAneuralNetworkNonSemanticClass
 	
 	#ifdef GIA_NEURAL_NETWORK_NON_SEMANTIC_ACTIVE
 	public: bool addTextToNetwork(GIAtranslatorVariablesClass* translatorVariables);
-		private: bool addTextToNetworkLogicReference(GIAneuralNetworkVariablesClass* neuralNetworkVariables, GIApreprocessorLogicReference* firstLogicReferenceInList, ANNneuron* higherLogicReferenceArtificialSynapseNeuron, bool higherLogicReferenceArtificialSynapseNeuronDirection);
+		private: bool addTextToNetworkLogicReference(GIAneuralNetworkVariablesClass* neuralNetworkVariables, GIAtxtRelTranslatorHybridLogicReference* firstLogicReferenceInList, ANNneuron* higherLogicReferenceArtificialSynapseNeuron, bool higherLogicReferenceArtificialSynapseNeuronDirection);
 			#ifdef GIA_NEURAL_NETWORK_NON_SEMANTIC_REPLACE_WORDS_WITH_LEMMAS
 			private: bool replaceWordsWithLemmas(GIApreprocessorSubReferenceSet* referenceSet);
 			#endif
@@ -113,7 +109,7 @@ class GIAneuralNetworkNonSemanticClass
 	public: bool performQuery(GIAtranslatorVariablesClass* translatorVariables, GIAtranslatorVariablesClass* translatorVariablesQuery);
 	public: bool determineReferenceSetDefinite(GIApreprocessorSubReferenceSet* firstSubReferenceSetInList);
 	private: GIApreprocessorWord* getDelimiterWord(GIApreprocessorSubReferenceSet* referenceSetDelimiter);
-	private: GIApreprocessorWord* getLogicReferenceWord(GIApreprocessorLogicReference* logicReference);
+	private: GIApreprocessorWord* getLogicReferenceWord(GIAtxtRelTranslatorHybridLogicReference* logicReference);
 	private: int generateArtificialLayer(GIAneuralNetworkVariablesClass* neuralNetworkVariables);
 	#endif
 

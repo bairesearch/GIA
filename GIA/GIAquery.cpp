@@ -26,11 +26,11 @@
  * File Name: GIAquery.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e12b 12-February-2018
+ * Project Version: 3f1a 22-February-2018
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
- * Description: locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
+ * Description: Query - locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  * ?Limitations: will only locate a exact answer (based upon a comparison node) if it provides the maximum number of matched nodes
- *
+ * /
  *******************************************************************************/
 
 
@@ -177,7 +177,7 @@ GIAentityNode* GIAqueryClass::answerQueryOrFindAndTagForHighlightingMatchingStru
 		if(!(currentQueryEntityNode->disabled))
 		{
 		#endif
-			if(currentQueryEntityNode->entityName != REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)	//added 22 August 2012
+			if(currentQueryEntityNode->entityName != GIA_SYN_REL_TRANSLATOR_REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)	//added 22 August 2012
 			{
 				bool foundQueryEntityNodeName = false;
 				string queryEntityNodeName = currentQueryEntityNode->entityName;
@@ -622,7 +622,7 @@ GIAentityNode* GIAqueryClass::answerQueryOrFindAndTagForHighlightingMatchingStru
 		if(!(currentQueryEntityNode->disabled))
 		{
 		#endif
-			if(currentQueryEntityNode->entityName != REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)	//added 22 August 2012
+			if(currentQueryEntityNode->entityName != GIA_SYN_REL_TRANSLATOR_REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)	//added 22 August 2012
 			{
 				bool foundQueryEntityNodeName = false;
 				string queryEntityNodeName = currentQueryEntityNode->entityName;
@@ -2164,7 +2164,7 @@ void GIAqueryClass::compareEntityReferenceTrace(GIAentityNode* queryEntityNode, 
 								#endif
 								#endif
 								#ifdef GIA_ADVANCED_REFERENCING_ENSURE_QUANTITY_MATCHES
-								#ifdef GIA_NUMBER_OF
+								#ifdef GIA_TRANSLATOR_NUMBER_OF
 								if(queryEntityNode->isNumberOf || entityNode->isNumberOf)
 								{
 									passPluralityMatch = false;

@@ -26,9 +26,10 @@
  * File Name: GIAmain.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e12b 12-February-2018
+ * Project Version: 3f1a 22-February-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
- *
+ * Description: Main
+ * /
  *******************************************************************************/
 
 
@@ -41,9 +42,6 @@
 #include "GIAsentenceClass.hpp"
 #include "GIAentityNodeClass.hpp"
 #include "GIAentityConnectionClass.hpp"
-#ifdef USE_CE
-#include "CECodeextensionClass.h"
-#endif
 #include "GIAtranslator.hpp"
 #include "GIAtranslatorOperations.hpp"
 #include "GIAdraw.hpp"
@@ -65,11 +63,11 @@
 #include "GIApreprocessor.hpp"
 #include "GIApreprocessorMultiwordReduction.hpp"
 #endif
-#ifdef GIA_SEMANTIC_PARSER
-#ifdef GIA_SEMANTIC_PARSER_READ_SEMANTIC_RELATIONS
-#include "GIAsemanticParser.hpp"
+#ifdef GIA_SEM_REL_TRANSLATOR
+#ifdef GIA_SEM_REL_TRANSLATOR_READ_SEMANTIC_RELATIONS
+#include "GIAsemRelTranslator.hpp"
 #endif
-#include "GIAsemanticParserDatabase.hpp"
+#include "GIAsemRelTranslatorDatabase.hpp"
 #endif
 #ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_PERSISTENT
 #include "GIApreprocessorPOStaggerDatabase.hpp"
@@ -83,6 +81,9 @@
 #include "GIAneuralNetworkNonSemantic.hpp"
 #endif
 #include "GIAneuralNetworkOperations.hpp"
+#endif
+#ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3
+#include "GIAtxtRelTranslator.hpp"
 #endif
 
 #define GIA_MAXIMUM_NUMBER_OF_FILES_IN_INPUT_FILE_LIST (1000000)
@@ -119,11 +120,11 @@ class GIAmainClass
 	#ifdef GIA_NLG
 	private: GIAnlgClass GIAnlg;
 	#endif
-	#ifdef GIA_SEMANTIC_PARSER
-	#ifdef GIA_SEMANTIC_PARSER_READ_SEMANTIC_RELATIONS
-	private: GIAsemanticParserClass GIAsemanticParser;
+	#ifdef GIA_SEM_REL_TRANSLATOR
+	#ifdef GIA_SEM_REL_TRANSLATOR_READ_SEMANTIC_RELATIONS
+	private: GIAsemRelTranslatorClass GIAsemRelTranslator;
 	#endif
-	private: GIAsemanticParserDatabaseClass GIAsemanticParserDatabase;
+	private: GIAsemRelTranslatorDatabaseClass GIAsemRelTranslatorDatabase;
 	#endif
 	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_PERSISTENT
 	private: GIApreprocessorPOStaggerDatabaseClass GIApreprocessorPOStaggerDatabase;	
@@ -137,6 +138,9 @@ class GIAmainClass
 	#endif
 	private: GIAneuralNetworkOperationsClass GIAneuralNetworkOperations;
 	#endif
+	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3
+	private: GIAtxtRelTranslatorClass GIAtxtRelTranslator;
+	#endif
 
 	public: bool executeGIA(
 
@@ -148,10 +152,6 @@ class GIAmainClass
 
 		bool useInputTextPlainTXTFile,
 		string inputTextPlainTXTfileName,
-		#ifdef USE_CE
-		bool useInputTextCodeextensionsTXTFileName,
-		string inputTextCodeextensionsTXTFileName,
-		#endif
 		bool useInputTextNLPrelationXMLFile,
 		string inputTextNLPrelationXMLfileName,
 		bool useInputTextNLPfeatureXMLFile,
@@ -235,7 +235,7 @@ class GIAmainClass
 		bool useDatabase,
 		string KBdatabaseFolderName,
 		#endif
-		#ifdef GIA_SEMANTIC_PARSER
+		#ifdef GIA_SEM_REL_TRANSLATOR
 		string semanticParserDatabaseFolderName,
 		#endif
 		#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_PERSISTENT

@@ -26,9 +26,9 @@
  * File Name: GIAsentenceClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e12b 12-February-2018
+ * Project Version: 3f1a 22-February-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
- *
+ * /
  *******************************************************************************/
 
 
@@ -185,13 +185,13 @@ public:
 	bool auxiliaryIndicatesDifferentReferenceSet;
 	bool rcmodIndicatesSameReferenceSet;
 
-	#ifdef GIA_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF
+	#ifdef GIA_SYN_REL_TRANSLATOR_REDISTRIBUTE_RELATIONS_SUPPORT_NAME_OF
 	bool isNameTemp;
 	#endif
 
-	#ifdef GIA_SEMANTIC_PARSER
+	#ifdef GIA_SEM_REL_TRANSLATOR_COMMON
 	bool sameReferenceSet;
-	#ifdef GIA_SEMANTIC_PARSER_SUPPORT_QUERIES
+	#ifdef GIA_SEM_REL_TRANSLATOR_SUPPORT_QUERIES
 	string corpusSpecialRelationGovernorIsQuery;
 	string corpusSpecialRelationDependentIsQuery;
 	#endif
@@ -237,10 +237,10 @@ public:
 	#endif
 
 	int NER;
+	string stanfordPOS;
 	#ifdef GIA_STANFORD_CORENLP
 	int CharacterOffsetBegin;
 	int CharacterOffsetEnd;
-	string stanfordPOS;
 	string NormalizedNER;
 	string Timex;
 	#endif
@@ -266,15 +266,15 @@ public:
 	#endif
 
 	#ifndef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES
-	bool alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp;	//#ifdef GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES
+	bool alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp;	//#ifdef GIA_SYN_REL_TRANSLATOR_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES
 	bool mustSetIsConceptBasedOnApposRelation;
 	bool isPronounReference;
 	#endif
 
 	bool entityDisabled;	//added 14 July 2012b
 
-	#ifdef GIA_SEMANTIC_PARSER
-	int GIAsemanticParserPOStype;
+	#ifdef GIA_SEM_REL_TRANSLATOR
+	int GIAsemRelTranslatorPOStype;
 	#endif
 
 	#ifdef GIA_FEATURE_POS_TAG_NN_ONLY_MARK_AS_SINGULAR_WITH_DETERMINER
@@ -356,6 +356,8 @@ class GIAsentenceClassClass
 	
 	int getMinIndexOfDynamicallyGeneratedEntity(GIAsentence* currentSentenceInList);
 	int getMaxIndexOfDynamicallyGeneratedEntity(GIAsentence* currentSentenceInList);
+	int getMinIndexOfDynamicallyGeneratedEntity(const int numberOfWordsInSentence);
+	int getMaxIndexOfDynamicallyGeneratedEntity(const int numberOfWordsInSentence);
 	bool relationIndexIsNormal(int relationIndex);
 };
 

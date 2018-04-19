@@ -26,22 +26,22 @@
  * File Name: GIAbot.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e12b 12-February-2018
+ * Project Version: 3f1a 22-February-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
- * Description: Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
- *
+ * Description: Bot
+ * /
  *******************************************************************************/
 
 
 #include "GIAbot.hpp"
 
 #ifdef GIA_BOT_SWITCH_FIRST_AND_SECOND_PERSON
-void GIAbotClass::botSwitchFirstAndSecondPerson(GIAtranslatorVariablesClass* translatorVariables)
+void GIAbotClass::botSwitchFirstAndSecondPersonSyntactic(GIAtranslatorVariablesClass* translatorVariables)
 {
 	GIArelation* currentRelationInList = translatorVariables->currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
+		#ifdef GIA_SYN_REL_TRANSLATOR_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		if(!(currentRelationInList->disabled))
 		{
 		#endif
@@ -85,19 +85,21 @@ void GIAbotClass::botSwitchFirstAndSecondPerson(GIAtranslatorVariablesClass* tra
 					}
 				}
 			}
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
+		#ifdef GIA_SYN_REL_TRANSLATOR_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		}
 		#endif
 		currentRelationInList = currentRelationInList->next;
 	}
 }
 
-void GIAbotClass::botSwitchFirstAndSecondPersonSemantic(GIAsentence* currentSentenceInList)
+
+void GIAbotClass::botSwitchFirstAndSecondPersonSemantic(GIAtranslatorVariablesClass* translatorVariables)
 {
+	GIAsentence* currentSentenceInList = translatorVariables->currentSentenceInList;
 	GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
+		#ifdef GIA_SYN_REL_TRANSLATOR_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		if(!(currentRelationInList->disabled))
 		{
 		#endif
@@ -133,10 +135,39 @@ void GIAbotClass::botSwitchFirstAndSecondPersonSemantic(GIAsentence* currentSent
 					}
 				}
 			}
-		#ifdef GIA_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
+		#ifdef GIA_SYN_REL_TRANSLATOR_DO_NOT_PARSE_DISABLED_RELATIONS_OLD
 		}
 		#endif
 		currentRelationInList = currentRelationInList->next;
 	}
 }
+
+#ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3
+#ifndef GIA_TXT_REL_TRANSLATOR_RULES_GIA3_USE_SEM_REL_TRANSLATOR_PARSER
+void GIAbotClass::botSwitchFirstAndSecondPersonTxt(GIAtranslatorVariablesClass* translatorVariables)
+{
+	int numberOfWordsInSentence = translatorVariables->currentPreprocessorSentenceInList->sentenceContentsLRP.size();
+	vector<GIApreprocessorWord*>* sentenceContents = &(translatorVariables->firstGIApreprocessorSentenceInList->sentenceContentsLRP);
+	for(int w=0; w<sentenceContents->size(); w++)
+	{
+		GIApreprocessorWord* currentWord = (*sentenceContents)[w];
+		for(int i=0; i<FEATURE_FIRST_PERSON_NUMBER_OF_TYPES; i++)
+		{
+			if(currentWord->translatorEntity->entityName == featureFirstPersonNameArray[i])
+			{
+				currentWord->translatorEntity->entityName = featureSecondPersonNameArray[i];
+			}
+		}
+		for(int i=0; i<FEATURE_SECOND_PERSON_NUMBER_OF_TYPES; i++)
+		{
+			if(currentWord->translatorEntity->entityName == featureSecondPersonNameArray[i])
+			{
+				currentWord->translatorEntity->entityName = featureFirstPersonNameArray[i];
+			}
+		}
+	}
+}
+#endif
+#endif
+
 #endif

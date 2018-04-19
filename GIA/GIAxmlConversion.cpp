@@ -26,11 +26,11 @@
  * File Name: GIAxmlConversion.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e12b 12-February-2018
- * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
+ * Project Version: 3f1a 22-February-2018
+ * Description: XML Conversion - Converts GIA network nodes into an XML file, or converts an XML file into GIA network nodes
  * NB this function creates entity idActiveListReorderdIDforXMLsave values upon write to speed up linking process (does not use original idActiveList values)
  * NB this function creates entity idActiveList values upon read (it could create idActiveListReorderdIDforXMLsave values instead - however currently it is assumed that when an XML file is loaded, this will populate the idActiveList in its entirety)
- *
+ * /
  *******************************************************************************/
 
 
@@ -267,7 +267,7 @@ bool GIAxmlConversionClass::parseEntityNodeTag(XMLparserTag* firstTagInEntityNod
 	#endif
 
 	bool disabledFound = false;
-	#ifdef GIA_EXPLETIVES
+	#ifdef GIA_TRANSLATOR_EXPLETIVES
 	bool isExpletiveFound = false;
 	#endif
 	
@@ -542,7 +542,7 @@ bool GIAxmlConversionClass::parseEntityNodeTag(XMLparserTag* firstTagInEntityNod
 				entityNode->disabled = attributeValue;
 				disabledFound = true;
 			}
-			#ifdef GIA_EXPLETIVES
+			#ifdef GIA_TRANSLATOR_EXPLETIVES
 			else if(currentAttribute->name == NET_XML_ATTRIBUTE_isExpletive)
 			{
 				bool attributeValue = SHAREDvars.convertStringToInt(currentAttribute->value);
@@ -1230,7 +1230,7 @@ XMLparserTag* GIAxmlConversionClass::generateXMLentityNodeTag(XMLparserTag* curr
 	currentAttribute->value = SHAREDvars.convertIntToString(int(currentEntity->disabled));
 	currentAttribute = XMLparserClass.createNewAttribute(currentAttribute);
 
-	#ifdef GIA_EXPLETIVES
+	#ifdef GIA_TRANSLATOR_EXPLETIVES
 	currentAttribute->name = NET_XML_ATTRIBUTE_isExpletive;
 	currentAttribute->value = SHAREDvars.convertIntToString(int(currentEntity->isExpletive));
 	currentAttribute = XMLparserClass.createNewAttribute(currentAttribute);

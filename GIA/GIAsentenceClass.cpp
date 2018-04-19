@@ -26,9 +26,9 @@
  * File Name: GIAsentenceClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e12b 12-February-2018
+ * Project Version: 3f1a 22-February-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
- *
+ * /
  *******************************************************************************/
 
 
@@ -159,9 +159,9 @@ GIArelation::GIArelation(void)
 	auxiliaryIndicatesDifferentReferenceSet = false;
 	rcmodIndicatesSameReferenceSet = false;
 
-	#ifdef GIA_SEMANTIC_PARSER
+	#ifdef GIA_SEM_REL_TRANSLATOR_COMMON
 	sameReferenceSet = false;
-	#ifdef GIA_SEMANTIC_PARSER_SUPPORT_QUERIES
+	#ifdef GIA_SEM_REL_TRANSLATOR_SUPPORT_QUERIES
 	corpusSpecialRelationGovernorIsQuery = "";
 	corpusSpecialRelationDependentIsQuery = "";
 	#endif
@@ -179,7 +179,7 @@ GIArelation::GIArelation(void)
 	#endif
 	#endif
 	#endif
-
+	
 	next = NULL;
 }
 
@@ -210,10 +210,10 @@ GIAfeature::GIAfeature(void)
 	#endif
 
 	NER = FEATURE_NER_UNDEFINED;
+	stanfordPOS = "";
 	#ifdef GIA_STANFORD_CORENLP
 	CharacterOffsetBegin = INT_DEFAULT_VALUE;
 	CharacterOffsetEnd = INT_DEFAULT_VALUE;
-	stanfordPOS = "";
 	NormalizedNER = "";
 	Timex = "";
 	#endif
@@ -241,15 +241,15 @@ GIAfeature::GIAfeature(void)
 	previousWordInSentenceIsTo = false;
 
 	#ifndef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES
-	alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp = false;		//#ifdef GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES
+	alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp = false;		//#ifdef GIA_SYN_REL_TRANSLATOR_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES
 	mustSetIsConceptBasedOnApposRelation = false;
 	isPronounReference = false;
 	#endif
 
 	entityDisabled = false;
 
-	#ifdef GIA_SEMANTIC_PARSER
-	GIAsemanticParserPOStype = 0;	//ie GIA_SEMANTIC_PARSER_POS_TYPE_UNDEFINED
+	#ifdef GIA_SEM_REL_TRANSLATOR
+	GIAsemRelTranslatorPOStype = 0;	//ie GIA_SEM_REL_TRANSLATOR_POS_TYPE_UNDEFINED
 	#endif
 
 	#ifdef GIA_FEATURE_POS_TAG_NN_ONLY_MARK_AS_SINGULAR_WITH_DETERMINER
@@ -502,13 +502,23 @@ int GIAsentenceClassClass::calculateNumberOfWordsInSentence(const GIAfeature* fi
 
 int GIAsentenceClassClass::getMinIndexOfDynamicallyGeneratedEntity(GIAsentence* currentSentenceInList) 
 {
-	int minIndexOfDynamicallyGeneratedEntity = currentSentenceInList->numberOfWordsInSentence + GIA_NLP_START_ENTITY_INDEX;		//OLD: FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY
-	return minIndexOfDynamicallyGeneratedEntity;	
+	return getMinIndexOfDynamicallyGeneratedEntity(currentSentenceInList->numberOfWordsInSentence);
 }
 
 int GIAsentenceClassClass::getMaxIndexOfDynamicallyGeneratedEntity(GIAsentence* currentSentenceInList) 
 {
-	int maxIndexOfDynamicallyGeneratedEntity = getMinIndexOfDynamicallyGeneratedEntity(currentSentenceInList) + MAX_NUMBER_OF_SPECIAL_WORDS_PER_SENTENCE;
+	return getMaxIndexOfDynamicallyGeneratedEntity(currentSentenceInList->numberOfWordsInSentence);
+}
+
+int GIAsentenceClassClass::getMinIndexOfDynamicallyGeneratedEntity(const int numberOfWordsInSentence) 
+{
+	int minIndexOfDynamicallyGeneratedEntity = numberOfWordsInSentence + GIA_NLP_START_ENTITY_INDEX;		//OLD: FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY
+	return minIndexOfDynamicallyGeneratedEntity;	
+}
+
+int GIAsentenceClassClass::getMaxIndexOfDynamicallyGeneratedEntity(const int numberOfWordsInSentence) 
+{
+	int maxIndexOfDynamicallyGeneratedEntity = getMinIndexOfDynamicallyGeneratedEntity(numberOfWordsInSentence) + MAX_NUMBER_OF_SPECIAL_WORDS_PER_SENTENCE;
 	return maxIndexOfDynamicallyGeneratedEntity;
 }
 

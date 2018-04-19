@@ -26,10 +26,10 @@
  * File Name: GIAdraw.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e12b 12-February-2018
+ * Project Version: 3f1a 22-February-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
- * Description: Draws GIA nodes in GIA network/tree
- *
+ * Description: Draw - Draws GIA nodes in GIA network/tree
+ * /
  *******************************************************************************/
 
 
@@ -53,6 +53,9 @@
 #include "RTpixelMaps.hpp"
 
 
+#ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3_COLLAPSE_ALIASES_ONLY
+	#define GIA_DRAW_PRINT_ALIASES
+#endif
 
 #define GIA_DRAW_USE_UNIQUE_COLOURS_FOR_ENTITY_DEFINITION_NODES	
 #ifndef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
@@ -240,7 +243,7 @@
 
 #define GIA_DRAW_UNDEFINED_CONNECTION_COLOUR (INT_DEFAULT_VALUE)
 
-#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
+#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE
 	#define GIA_DRAW_LOGIC_REFERENCE_ENTITY_COLOUR (DAT_FILE_COLOUR_DARKGREEN)
 #endif
 

@@ -26,10 +26,10 @@
  * File Name: GIAcxlConversion.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e12b 12-February-2018
- * Description: Converts GIA network nodes into an XML, or converts an XML file into GIA network nodes
+ * Project Version: 3f1a 22-February-2018
+ * Description: CXL Conversion - Converts GIA network nodes into a CXL file
  * NB this function creates entity idActiveListReorderdIDforXMLsave values upon write to speed up linking process (does not use original idActiveList values)
- *
+ * /
  *******************************************************************************/
 
 

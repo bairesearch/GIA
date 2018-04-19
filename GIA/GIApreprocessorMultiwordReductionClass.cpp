@@ -26,10 +26,10 @@
  * File Name: GIApreprocessorMultiwordReductionClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e12b 12-February-2018
+ * Project Version: 3f1a 22-February-2018
  * Requirements: requires plain text file
- * Description: Preprocessor Multiword Reduction
- *
+ * Description: Preprocessor Multiword Reduction Class
+ * /
  *******************************************************************************/
 
 
@@ -46,7 +46,7 @@ GIApreprocessorWord::GIApreprocessorWord(string tagNameNew)
 }
 GIApreprocessorWord::~GIApreprocessorWord(void)
 {
-	#ifdef GIA_PREPROCESSOR_SENTENCE_EXECUTE_PRELIM_POS_TAGGER
+	#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_EXECUTE_PRELIM_POS_TAGGER
 	#ifdef GIA_PREPROCESSOR_POS_TAGGER
 	if(featureReferencePrelim != NULL)
 	{
@@ -66,7 +66,7 @@ void GIApreprocessorWord::initialiseGIApreprocessorWord()
 {
 	tagName = "";
 
-	#ifdef GIA_PREPROCESSOR_SENTENCE_EXECUTE_PRELIM_POS_TAGGER
+	#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_EXECUTE_PRELIM_POS_TAGGER
 	featureReferencePrelim = NULL;
 	#endif
 	#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
@@ -94,6 +94,18 @@ void GIApreprocessorWord::initialiseGIApreprocessorWord()
 	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_PREDICTION_VERIFICATION
 	centreWordPOSambiguityInfo = 0;
 	#endif
+	#endif
+	
+	#ifdef GIA_TXT_REL_TRANSLATOR_RULES
+	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START
+	unambiguousPOSindex = GIA_SHARED_POS_TYPE_UNDEFINED;	//GIA_PREPROCESSOR_POS_TYPE_UNDEFINED is out of scope
+	#else
+	POSambiguityInfo = 0;
+	#endif
+	wordPOStypeInferred = GIA_SHARED_POS_TYPE_UNDEFINED;
+	alreadyFoundMatch = false;
+	translatorSentenceEntityIndex = GIA_ENTITY_INDEX_UNDEFINED;
+	translatorEntity = NULL;
 	#endif
 		
 	nextTag = NULL;
@@ -343,19 +355,32 @@ int GIApreprocessorMultiwordReductionClassClass::calculateLengthOfGeneratedVecto
 
 bool GIApreprocessorMultiwordReductionClassClass::generateSentenceWordList(GIApreprocessorWord* sentenceContentsFirstWord, vector<GIApreprocessorWord*>* wordList)
 {
+	return generateSentenceWordList(sentenceContentsFirstWord, wordList, GIA_PREPROCESSOR_WORD_LIST_INDEX_NO_REQUIREMENT, GIA_PREPROCESSOR_WORD_LIST_INDEX_NO_REQUIREMENT);
+}
+bool GIApreprocessorMultiwordReductionClassClass::generateSentenceWordList(GIApreprocessorWord* sentenceContentsFirstWord, vector<GIApreprocessorWord*>* wordList, int startIndex, int endIndex)
+{
 	bool result = true;
 	
 	wordList->clear();	//added 3b3i
 	
+	int index = 0;
 	GIApreprocessorWord* currentWordInSentence = sentenceContentsFirstWord;
 	while(currentWordInSentence->nextTag != NULL)
 	{
-		wordList->push_back(currentWordInSentence);
+		if((startIndex == GIA_PREPROCESSOR_WORD_LIST_INDEX_NO_REQUIREMENT) || (index >= startIndex))
+		{
+			if((endIndex == GIA_PREPROCESSOR_WORD_LIST_INDEX_NO_REQUIREMENT) || (index < endIndex))
+			{
+				wordList->push_back(currentWordInSentence);
+			}
+		}
+		
 		currentWordInSentence = currentWordInSentence->nextTag;
+		index++;
 	}
 	
 	#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
-	cout << "GIApreprocessorReferenceSetClass::generateSentenceWordList{}: " << endl;
+	cout << "GIAtxtRelTranslatorHybridReferenceSetClass::generateSentenceWordList{}: " << endl;
 	for(int i=0; i<wordList->size(); i++)
 	{
 		cout << ((*wordList)[i])->tagName << STRING_SPACE;
@@ -939,10 +964,16 @@ bool GIApreprocessorMultiwordReductionClassClass::replaceWordListAtIndexWithSimp
 
 bool GIApreprocessorMultiwordReductionClassClass::printWordList(const vector<GIApreprocessorWord*>* wordList)
 {
+	cerr << printWordListString(wordList) << endl;
+}
+string GIApreprocessorMultiwordReductionClassClass::printWordListString(const vector<GIApreprocessorWord*>* wordList)
+{
+	string output = "";
 	for(int i=0; i<wordList->size(); i++)
 	{
-		cerr << "word = " << ((*wordList)[i])->tagName << endl;
+		output = output + ((*wordList)[i])->tagName;
 	}
+	return output;
 }
 
 #endif			
@@ -960,3 +991,40 @@ void GIApreprocessorMultiwordReductionClassClass::preprocessorFillCurrentWord(GI
 	(*entityIndex) = (*entityIndex) + 1;
 	*currentWord = "";
 }
+
+int GIApreprocessorMultiwordReductionClassClass::getPOStypeFromName(const string wordPOStypeName)
+{	
+	int wordPOStype = GIA_PREPROCESSOR_POS_TYPE_UNDEFINED;
+	if(!SHAREDvars.textInTextArray(wordPOStypeName, GIApreprocessorPOStypeNameArray, GIA_PREPROCESSOR_POS_TYPE_ARRAY_NUMBER_OF_TYPES, &wordPOStype))
+	{
+		cerr << "GIApreprocessorMultiwordReductionClassClass::getPOStypeFromName{} error: GIA LRP wordPOStypeName not found in GIApreprocessorPOStypeNameArray, wordPOStypeName = " << wordPOStypeName << endl;
+		exit(EXIT_ERROR);
+	}
+	return wordPOStype;
+}
+
+//based on NLCpreprocessorSentenceClassClass::isStringNumberPreprocessorMath(string phrase)
+bool GIApreprocessorMultiwordReductionClassClass::isStringNumber(const string phrase)
+{
+	bool stringIsNumber = false;
+	if(phrase == STRING_FULLSTOP)
+	{
+		stringIsNumber = false;
+	}
+	else
+	{
+		stringIsNumber = true;
+		for(int i=0; i<phrase.length(); i++)
+		{
+			char c = phrase[i];
+			bool numberFound = SHAREDvars.charInCharArray(c, translatorEnglishNumbersNumericalFractionalArray, GIA_TRANSLATOR_ENGLISH_NUMBERS_NUMERICAL_FRACTIONAL_NUMBER_OF_TYPES);
+			if(!numberFound)
+			{
+				stringIsNumber = false;
+			}
+		}
+	}
+	
+	return stringIsNumber;
+}
+

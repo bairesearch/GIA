@@ -26,8 +26,8 @@
  * File Name: GIAentityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e12b 12-February-2018
- *
+ * Project Version: 3f1a 22-February-2018
+ * /
  *******************************************************************************/
 
 
@@ -57,8 +57,17 @@ GIAnetworkIndexEntityLoaded::~GIAnetworkIndexEntityLoaded(void)
 #endif
 #endif
 
-//~nouns
+
 GIAentityNode::GIAentityNode(void)
+{
+	initialiseEntity();
+}
+GIAentityNode::GIAentityNode(string newEntityName)
+{
+	initialiseEntity();
+	entityName = newEntityName;
+}
+void GIAentityNode::initialiseEntity()
 {
 	/*GIA Internal Entity Referencing*/
 	idActiveList = 0;
@@ -146,7 +155,7 @@ GIAentityNode::GIAentityNode(void)
 	isName = false;
 	isNameQuery = false;
 	#endif
-	#ifdef GIA_NUMBER_OF
+	#ifdef GIA_TRANSLATOR_NUMBER_OF
 	isNumberOf = false;
 	#endif
 	
@@ -201,10 +210,10 @@ GIAentityNode::GIAentityNode(void)
 	#endif
 	#endif
 	#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES
-	alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp = false;		//#ifdef GIA_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES
+	alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp = false;		//#ifdef GIA_SYN_REL_TRANSLATOR_DEFINE_SUBSTANCES_BASED_UPON_DETERMINATES_OF_DEFINITION_ENTITIES
 	mustSetIsConceptBasedOnApposRelation = false;
 	isPronounReference = false;
-	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_ENSURE_DEPENDENT_IS_NOT_ASSIGNED_CONCEPT
+	#ifdef GIA_SYN_REL_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_ENSURE_DEPENDENT_IS_NOT_ASSIGNED_CONCEPT
 	mustNotSetIsConceptBasedOnPrenomonalModifierRelation = false;
 	#endif
 		//subclasses:
@@ -219,7 +228,7 @@ GIAentityNode::GIAentityNode(void)
 	#endif
 	#endif
 		//expletives:
-	#ifdef GIA_EXPLETIVES
+	#ifdef GIA_TRANSLATOR_EXPLETIVES
 	isExpletive = false;
 	#endif
 		//databasing:
@@ -285,10 +294,10 @@ GIAentityNode::GIAentityNode(void)
 	entityShortcutToConceptNeuron = NULL;
 	#endif
 	#endif
-	#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
+	#ifdef GIA_TXT_REL_TRANSLATOR
 	isLogicReferenceEntity = false;
-	logicReferenceClass = INT_DEFAULT_VALUE;	//GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_UNDEFINED;
-	logicReferenceClassType = "";	//GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CLASS_UNDEFINED_TYPE_unknown;
+	logicReferenceClass = INT_DEFAULT_VALUE;	//GIA_TXT_REL_TRANSLATOR_LOGIC_REFERENCE_CLASS_UNDEFINED;
+	logicReferenceClassType = "";	//GIA_TXT_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_CLASS_UNDEFINED_TYPE_unknown;
 	#endif
 	
 	#ifdef GIA_NEURAL_NETWORK
@@ -300,17 +309,21 @@ GIAentityNode::GIAentityNode(void)
 	#endif
 	*/
 	#endif
+	
+	#ifdef GIA_TXT_REL_TRANSLATOR_RULES
+	semanticRelationReturnFunctionName = ""; 
+	semanticRelationReturnFunctionNameIndexType = INT_DEFAULT_VALUE;
+	//semanticRelationReturnFunctionNameSameReferenceSet = false;
+	semanticRelationPreprocessorEntityIndex = GIA_ENTITY_INDEX_UNDEFINED;
+	#endif
+	semanticRelationWordPOStypeInferred = INT_DEFAULT_VALUE;	//GIA_SHARED_POS_TYPE_UNDEFINED;
+	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3
+	semanticRelationWordDeterminer = "";
+	semanticRelationWordPredeterminer = "";
+	semanticRelationEntityIsReferenced = false;
+	#endif
 }
-/*
-#ifdef USE_NLC
-//#ifdef NLC_NONOO
-GIAentityNode::GIAentityNode(string newEntityName)	//must be synced with the above constructor - NB must create GIAentityNode::initialiseVariables if this constructor is actually in use
-{
 
-}
-//#endif
-#endif
-*/
 GIAentityNode::~GIAentityNode(void)
 {
 	//delete all connections
@@ -377,9 +390,9 @@ void GIAentityNodeClassClass::disconnectNodeFromAllButDefinitions(const GIAentit
 int GIAentityNodeClassClass::calculateQuantityNumberInt(const string quantityNumberString)
 {
 	/*
-	if(quantityNumberString == REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
+	if(quantityNumberString == GIA_SYN_REL_TRANSLATOR_REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
 	{
-		quantityNumberInt = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_QUANTITY_NUMBER_REPLACEMENT;
+		quantityNumberInt = GIA_SYN_REL_TRANSLATOR_REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_QUANTITY_NUMBER_REPLACEMENT;
 	}
 	else
 	{
@@ -725,7 +738,7 @@ bool GIAentityNodeClassClass::testEntityCharacteristic(const GIAentityNode* enti
 	testEntityCharacteristicIterationbool(entity->isName, entityCharacteristic, "isName", &foundMatch);
 	testEntityCharacteristicIterationbool(entity->isNameQuery, entityCharacteristic, "isNameQuery", &foundMatch);
 	#endif
-	#ifdef GIA_NUMBER_OF
+	#ifdef GIA_TRANSLATOR_NUMBER_OF
 	testEntityCharacteristicIterationbool(entity->isNumberOf, entityCharacteristic, "isNumberOf", &foundMatch);
 	#endif
 
@@ -741,7 +754,7 @@ bool GIAentityNodeClassClass::testEntityCharacteristic(const GIAentityNode* enti
 	testEntityCharacteristicIterationbool(entity->alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp, entityCharacteristic, "alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp", &foundMatch);
 	testEntityCharacteristicIterationbool(entity->mustSetIsConceptBasedOnApposRelation, entityCharacteristic, "mustSetIsConceptBasedOnApposRelation", &foundMatch);
 	testEntityCharacteristicIterationbool(entity->isPronounReference, entityCharacteristic, "isPronounReference", &foundMatch);
-	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_ENSURE_DEPENDENT_IS_NOT_ASSIGNED_CONCEPT
+	#ifdef GIA_SYN_REL_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_ENSURE_DEPENDENT_IS_NOT_ASSIGNED_CONCEPT
 	testEntityCharacteristicIterationbool(entity->mustNotSetIsConceptBasedOnPrenomonalModifierRelation, entityCharacteristic, "mustNotSetIsConceptBasedOnPrenomonalModifierRelation", &foundMatch);
 	#endif
 	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES
@@ -750,7 +763,7 @@ bool GIAentityNodeClassClass::testEntityCharacteristic(const GIAentityNode* enti
 	testEntityCharacteristicIterationbool(entity->addSubClass, entityCharacteristic, "addSubClass", &foundMatch);
 	#endif
 	#endif
-	#ifdef GIA_EXPLETIVES
+	#ifdef GIA_TRANSLATOR_EXPLETIVES
 	testEntityCharacteristicIterationbool(entity->isExpletive, entityCharacteristic, "isExpletive", &foundMatch);	
 	#endif	
 	
@@ -888,7 +901,7 @@ bool GIAentityNodeClassClass::setEntityCharacteristic(GIAentityNode* entity, GIA
 	setEntityCharacteristicIterationbool(&(entity->isName), entityCharacteristic, "isName", &foundMatch);
 	setEntityCharacteristicIterationbool(&(entity->isNameQuery), entityCharacteristic, "isNameQuery", &foundMatch);
 	#endif
-	#ifdef GIA_NUMBER_OF
+	#ifdef GIA_TRANSLATOR_NUMBER_OF
 	setEntityCharacteristicIterationbool(&(entity->isNumberOf), entityCharacteristic, "isNumberOf", &foundMatch);
 	#endif
 	
@@ -899,7 +912,7 @@ bool GIAentityNodeClassClass::setEntityCharacteristic(GIAentityNode* entity, GIA
 	setEntityCharacteristicIterationbool(&(entity->alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp), entityCharacteristic, "alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp", &foundMatch);
 	setEntityCharacteristicIterationbool(&(entity->mustSetIsConceptBasedOnApposRelation), entityCharacteristic, "mustSetIsConceptBasedOnApposRelation", &foundMatch);
 	setEntityCharacteristicIterationbool(&(entity->isPronounReference), entityCharacteristic, "isPronounReference", &foundMatch);
-	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_ENSURE_DEPENDENT_IS_NOT_ASSIGNED_CONCEPT
+	#ifdef GIA_SYN_REL_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_ENSURE_DEPENDENT_IS_NOT_ASSIGNED_CONCEPT
 	setEntityCharacteristicIterationbool(&(entity->mustNotSetIsConceptBasedOnPrenomonalModifierRelation), entityCharacteristic, "mustNotSetIsConceptBasedOnPrenomonalModifierRelation", &foundMatch);
 	#endif
 	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES
@@ -908,7 +921,7 @@ bool GIAentityNodeClassClass::setEntityCharacteristic(GIAentityNode* entity, GIA
 	setEntityCharacteristicIterationbool(&(entity->addSubClass), entityCharacteristic, "addSubClass", &foundMatch);
 	#endif
 	#endif
-	#ifdef GIA_EXPLETIVES
+	#ifdef GIA_TRANSLATOR_EXPLETIVES
 	setEntityCharacteristicIterationbool(&(entity->isExpletive), entityCharacteristic, "isExpletive", &foundMatch);
 	#endif	
 
@@ -1014,7 +1027,7 @@ bool GIAentityNodeClassClass::getEntityCharacteristic(const GIAentityNode* entit
 	getEntityCharacteristicIterationbool(entity->isName, entityCharacteristic, "isName", &foundMatch);
 	getEntityCharacteristicIterationbool(entity->isNameQuery, entityCharacteristic, "isNameQuery", &foundMatch);
 	#endif
-	#ifdef GIA_NUMBER_OF
+	#ifdef GIA_TRANSLATOR_NUMBER_OF
 	getEntityCharacteristicIterationbool(entity->isNumberOf, entityCharacteristic, "isNumberOf", &foundMatch);
 	#endif
 	
@@ -1025,7 +1038,7 @@ bool GIAentityNodeClassClass::getEntityCharacteristic(const GIAentityNode* entit
 	getEntityCharacteristicIterationbool(entity->alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp, entityCharacteristic, "alreadyAssignedSubstancesBasedOnDeterminatesOfDefinitionEntitiesTemp", &foundMatch);
 	getEntityCharacteristicIterationbool(entity->mustSetIsConceptBasedOnApposRelation, entityCharacteristic, "mustSetIsConceptBasedOnApposRelation", &foundMatch);
 	getEntityCharacteristicIterationbool(entity->isPronounReference, entityCharacteristic, "isPronounReference", &foundMatch);
-	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_ENSURE_DEPENDENT_IS_NOT_ASSIGNED_CONCEPT
+	#ifdef GIA_SYN_REL_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_ENSURE_DEPENDENT_IS_NOT_ASSIGNED_CONCEPT
 	getEntityCharacteristicIterationbool(entity->mustNotSetIsConceptBasedOnPrenomonalModifierRelation, entityCharacteristic, "mustNotSetIsConceptBasedOnPrenomonalModifierRelation", &foundMatch);
 	#endif
 	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES
@@ -1034,7 +1047,7 @@ bool GIAentityNodeClassClass::getEntityCharacteristic(const GIAentityNode* entit
 	getEntityCharacteristicIterationbool(entity->addSubClass, entityCharacteristic, "addSubClass", &foundMatch);
 	#endif
 	#endif
-	#ifdef GIA_EXPLETIVES
+	#ifdef GIA_TRANSLATOR_EXPLETIVES
 	getEntityCharacteristicIterationbool(entity->isExpletive, entityCharacteristic, "isExpletive", &foundMatch);
 	#endif
 	

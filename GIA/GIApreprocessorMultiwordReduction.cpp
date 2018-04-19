@@ -26,16 +26,16 @@
  * File Name: GIApreprocessorMultiwordReduction.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e12b 12-February-2018
+ * Project Version: 3f1a 22-February-2018
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
- *
+ * /
  *******************************************************************************/
 
 
 #include "GIApreprocessorMultiwordReduction.hpp"
-#ifdef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
-#include "GIAtranslatorDefs.hpp"
+#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
+#include "GIAsynRelTranslatorDefs.hpp"
 #endif
 
 
@@ -66,7 +66,7 @@ unordered_map<string, GIApreprocessorMultiwordReductionWord*> wordListRecordAuxi
 #ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_COLLAPSE_PREDETERMINER_LIST_TO_DETERMINER_LIST
 unordered_map<string, GIApreprocessorMultiwordReductionWord*> wordListRecordAuxiliaryPredeterminer;
 #endif
-#ifdef GIA_PREPROCESSOR_POS_TAGGER_INITIALISE_WORD_INDEX_LIST_FROM_LRP_FILES
+#ifdef GIA_PREPROCESSOR_INITIALISE_WORD_INDEX_LIST_FROM_LRP_FILES
 unordered_map<string, GIApreprocessorMultiwordReductionWord*> verbListWithVariantsGlobal;
 unordered_map<string, GIApreprocessorMultiwordReductionWord*> nounListWithVariantsGlobal;
 #endif
@@ -141,7 +141,7 @@ bool GIApreprocessorMultiwordReductionClass::transferWordList(int GIAposType1, i
 
 
 
-#ifdef GIA_PREPROCESSOR_POS_TAGGER_INITIALISE_WORD_INDEX_LIST_FROM_LRP_FILES
+#ifdef GIA_PREPROCESSOR_INITIALISE_WORD_INDEX_LIST_FROM_LRP_FILES
 bool wordListAllTypesWithPOSambiguityInfoLoaded;
 unordered_map<string, pair<GIApreprocessorMultiwordReductionWord*, unsigned long>> wordListAllTypesWithPOSambiguityInfo;		//NB the int corresponds to the POS type ambiguity of the word (binary 11000000 implies that the word may either be a verb or a preposition)	
 unordered_map<string, pair<GIApreprocessorMultiwordReductionWord*, unsigned long>>* GIApreprocessorMultiwordReductionClass::getWordListAllTypesWithPOSambiguityInfo()
@@ -399,6 +399,7 @@ bool GIApreprocessorMultiwordReductionClass::loadWordList(const string wordListF
 			if(currentToken == CHAR_NEWLINE)
 			{
 				GIApreprocessorMultiwordReductionWord* currentTagInWordList = new GIApreprocessorMultiwordReductionWord();
+				//cout << "currentWord = " << currentWord << endl;
 				currentTagInWordList->tagName = currentWord;
 				wordList->insert(pair<string, GIApreprocessorMultiwordReductionWord*>(currentWord, currentTagInWordList));
 				//*dummyWordForWordListPosType = currentWord;	//OLD: set dummyWordForWordListPosType to last word in list (e.g. z..)
@@ -503,6 +504,233 @@ bool GIApreprocessorMultiwordReductionClass::loadIrregularVerbList(const string 
 
 	return result;
 }
+
+/*
+---
+LRP rules;
+add alternate phrasal verb based on 'or'
+add alternate tag based upon '/'
+take (at least) first word in phrasal verb definition string as base
+generate all tenses variations of the verb based upon a) rules and b) irregular verbs
+*/
+
+//NB current implementation cannot take into account 3 alternate tags (ie x/y/z)
+bool GIApreprocessorMultiwordReductionClass::loadPhrasalVerbDataAndGenerateAllTenseVariants(const string phrasalVerbDatabaseFileName, multimap<string, GIApreprocessorMultiwordReductionPhrasalVerbSentence*>* phrasalVerbList, unordered_map<string, GIApreprocessorMultiwordReductionIrregularVerbSentence*>* irregularVerbList)
+{
+	bool result = true;
+
+	GIApreprocessorMultiwordReductionPhrasalVerbSentence* currentTagInPhrasalVerbList = new GIApreprocessorMultiwordReductionPhrasalVerbSentence();
+	GIApreprocessorMultiwordReductionPhrasalVerbSentence* recordOfNonAlternateTagInPhrasalVerbList = currentTagInPhrasalVerbList;
+
+	GIApreprocessorMultiwordReductionPhrasalVerbWord* firstTagInPhrasalVerb = currentTagInPhrasalVerbList->firstTagInSentence;
+	GIApreprocessorMultiwordReductionPhrasalVerbWord* currentTagInPhrasalVerb = firstTagInPhrasalVerb;
+	GIApreprocessorMultiwordReductionPhrasalVerbWord* recordOfNonAlternateTagInPhrasalVerb = currentTagInPhrasalVerb;
+	
+	ifstream parseFileObject(phrasalVerbDatabaseFileName.c_str());
+	if(!parseFileObject.rdbuf()->is_open())
+	{
+		//txt file does not exist in current directory.
+		cout << "Error: Phrasal Verb Database File does not exist in current directory: " << phrasalVerbDatabaseFileName << endl;
+		result = false;
+	}
+	else
+	{
+		int charCount = 0;
+		char currentToken;
+		bool parsingVerbBase = true;
+		string currentWord = "";
+		bool currentWordOptional = false;
+		bool currentWordAlternate = false;
+		bool currentPhrasalVerbAlternate = false;
+		string phrasalVerbBaseNameRecord = "";
+		while(parseFileObject.get(currentToken))
+		{
+			if((currentToken == CHAR_NEWLINE) || (currentToken == CHAR_SPACE))
+			{
+				if(currentWord == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_OR)
+				{
+					currentTagInPhrasalVerbList->alternateSentence = new GIApreprocessorMultiwordReductionPhrasalVerbSentence();
+					currentTagInPhrasalVerbList = currentTagInPhrasalVerbList->alternateSentence;
+					currentTagInPhrasalVerb = currentTagInPhrasalVerbList->firstTagInSentence;
+					currentPhrasalVerbAlternate = true;
+				}
+				else
+				{
+					//COPY1
+					//add LRP tag to LRP string (LRP tag list)
+					currentTagInPhrasalVerb->tagName = currentWord;
+					if(currentWordOptional)
+					{
+						currentTagInPhrasalVerb->optional = true;
+					}
+					if(parsingVerbBase)
+					{
+						currentTagInPhrasalVerb->base = true;
+					}
+					else
+					{
+						if(currentWord == phrasalVerbBaseNameRecord)
+						{
+							currentTagInPhrasalVerb->base = true;
+						}
+					}
+					bool foundTagArbitraryName = false;
+					int i;
+					if(SHAREDvars.textInTextArray(currentWord, lrpPhrasalVerbDatabaseTagArbitraryNameArray, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_ARBITRARYNAME_SOMEBODY_NUMBER_OF_TYPES, &i))
+					{
+						foundTagArbitraryName = true;
+						currentTagInPhrasalVerb->tagSpecialArbitraryName = true;
+						currentTagInPhrasalVerb->tagSpecialArbitraryNameType = i;
+					}
+					if(currentTagInPhrasalVerb->base)
+					{
+						generateStandardTenseVariantsOfVerbBase(currentTagInPhrasalVerb, irregularVerbList, GIA_PREPROCESSOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE);
+					}
+
+
+					currentTagInPhrasalVerb->nextTag = new GIApreprocessorMultiwordReductionPhrasalVerbWord();
+					currentTagInPhrasalVerb = static_cast<GIApreprocessorMultiwordReductionPhrasalVerbWord*>(currentTagInPhrasalVerb->nextTag);
+					if(currentWordAlternate)
+					{
+						//revert to non-alternate tag...
+						currentTagInPhrasalVerb = recordOfNonAlternateTagInPhrasalVerb;
+						currentTagInPhrasalVerb->nextTag = new GIApreprocessorMultiwordReductionPhrasalVerbWord();
+						currentTagInPhrasalVerb = static_cast<GIApreprocessorMultiwordReductionPhrasalVerbWord*>(currentTagInPhrasalVerb->nextTag);
+					}
+
+					if(currentToken == CHAR_NEWLINE)
+					{
+						if(currentPhrasalVerbAlternate)
+						{
+							//revert to non-alternate phrasal verb...
+							currentTagInPhrasalVerbList = recordOfNonAlternateTagInPhrasalVerbList;
+							currentPhrasalVerbAlternate = false;
+						}
+						
+						phrasalVerbList->insert(pair<string, GIApreprocessorMultiwordReductionPhrasalVerbSentence*>(firstTagInPhrasalVerb->tagName, currentTagInPhrasalVerbList));
+						if(firstTagInPhrasalVerb->base)
+						{	
+							//for each variant of the firstTagInPhrasalVerb, insert the sentence into the list keyed by the variant name
+							for(int i=0; i<GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_MAX_NUM_TENSE_FORMS; i++)
+							{
+								for(int j=0; j<GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_MAX_NUM_TENSE_FORM_VERSIONS; j++)
+								{
+									string verbVariant = firstTagInPhrasalVerb->grammaticalTenseFormsArray[i][j];
+									phrasalVerbList->insert(pair<string, GIApreprocessorMultiwordReductionPhrasalVerbSentence*>(verbVariant, currentTagInPhrasalVerbList));
+								}
+							}
+						}
+						
+						currentTagInPhrasalVerbList = new GIApreprocessorMultiwordReductionPhrasalVerbSentence();
+						firstTagInPhrasalVerb = currentTagInPhrasalVerbList->firstTagInSentence;
+						currentTagInPhrasalVerb = firstTagInPhrasalVerb; 
+						recordOfNonAlternateTagInPhrasalVerbList = currentTagInPhrasalVerbList;
+						recordOfNonAlternateTagInPhrasalVerb = currentTagInPhrasalVerb;
+					}
+
+					if(!currentWordAlternate)
+					{
+						recordOfNonAlternateTagInPhrasalVerb = currentTagInPhrasalVerb;
+					}
+					if(parsingVerbBase)
+					{
+						phrasalVerbBaseNameRecord = currentWord;
+					}
+				}
+
+				parsingVerbBase = false;
+				//currentWordOptional = false;	//removed 1p1aTEMP5b
+				currentWordAlternate = false;
+				currentWord = "";
+				if((currentToken == CHAR_NEWLINE) || (currentWord == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_OR))
+				{
+					parsingVerbBase = true;
+					phrasalVerbBaseNameRecord = "";
+				}
+				//start parsing new
+
+			}
+			else if(currentToken == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_ALTERNATE)
+			{
+
+				//COPY2
+
+				currentTagInPhrasalVerb->tagName = currentWord;		//NB current implementation can take into account 2 or more alternate tags (eg x/y/z)...
+				if(currentWordOptional)
+				{
+					currentTagInPhrasalVerb->optional = true;
+				}
+				if(parsingVerbBase)
+				{
+					currentTagInPhrasalVerb->base = true;
+				}
+				else
+				{
+					if(currentWord == phrasalVerbBaseNameRecord)
+					{
+						currentTagInPhrasalVerb->base = true;
+					}
+				}
+				bool foundTagArbitraryName = false;
+				int i;
+				if(SHAREDvars.textInTextArray(currentWord, lrpPhrasalVerbDatabaseTagArbitraryNameArray, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_ARBITRARYNAME_SOMEBODY_NUMBER_OF_TYPES, &i))
+				{
+					foundTagArbitraryName = true;
+					currentTagInPhrasalVerb->tagSpecialArbitraryName = true;
+					currentTagInPhrasalVerb->tagSpecialArbitraryNameType = i;
+				}
+				if(currentTagInPhrasalVerb->base)
+				{
+					generateStandardTenseVariantsOfVerbBase(currentTagInPhrasalVerb, irregularVerbList, GIA_PREPROCESSOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE);								
+				}
+				if(!currentWordAlternate)
+				{//added 1p1aTEMP6d
+					recordOfNonAlternateTagInPhrasalVerb = currentTagInPhrasalVerb;
+				}
+
+				currentTagInPhrasalVerb->alternateTag = new GIApreprocessorMultiwordReductionPhrasalVerbWord();
+				currentTagInPhrasalVerb = currentTagInPhrasalVerb->alternateTag;
+
+				//wordIndex does not change...
+				//parsingVerbBase = false;		//should not be parsing verb base here, as it should never have alternate cases eg base/base
+				currentWordAlternate = true;
+				//currentWordOptional = false;	//removed 1p1aTEMP5b
+				currentWord = "";
+			}
+			else if(currentToken == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_OPEN_OPTIONAL)
+			{
+				currentWordOptional = true;
+			}
+			else if(currentToken == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_CLOSE_OPTIONAL)
+			{//moved 1p1aTEMP5b
+				currentWordOptional = false;
+			}
+			#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_APOSTROPHES_POSSESSION_AND_OMISSION
+			else if(currentToken == CHAR_APOSTROPHE)
+			{
+				currentTagInPhrasalVerb->tagName = currentWord;
+				currentTagInPhrasalVerb->nextTag = new GIApreprocessorMultiwordReductionPhrasalVerbWord();
+				currentTagInPhrasalVerb = static_cast<GIApreprocessorMultiwordReductionPhrasalVerbWord*>(currentTagInPhrasalVerb->nextTag);
+				currentWord = "";
+				currentWord = currentWord + currentToken;
+			}
+			#endif
+			else
+			{
+				currentWord = currentWord + currentToken;
+			}
+
+			charCount++;
+		}
+		parseFileObject.close();
+	}
+
+
+
+
+	return result;
+}
+
 
 bool GIApreprocessorMultiwordReductionClass::generateStandardTenseVariantsOfVerbBase(GIApreprocessorMultiwordReductionWord* baseTag, unordered_map<string, GIApreprocessorMultiwordReductionIrregularVerbSentence*>* irregularVerbList, bool grammaticallyStrict)
 {
@@ -778,7 +1006,6 @@ void GIApreprocessorMultiwordReductionClass::copyDefaultVerbTenseFormsToAlternat
 
 
 
-
 #ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
 GIApreprocessorMultiwordReductionTagTextCorrespondenceInfo* GIApreprocessorMultiwordReductionClass::getActiveGIApreprocessorMultiwordReductionTagTextCorrespondenceInfo()
 {
@@ -825,6 +1052,13 @@ bool GIApreprocessorMultiwordReductionClass::parseTextFileAndReduceLanguage(GIAp
 
 	string currentFolder = SHAREDvars.getCurrentDirectory();
 
+	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_COLLAPSE_NUMERICAL_WORDS_TO_NUMBERS
+	if(!replaceAllNumericalWordsWithNumbers(firstGIApreprocessorSentenceInList))
+	{
+		result = false;
+	}
+	#endif
+
 	//cout << "searchAndReplacePhrasalVerbs" << endl;
 	GIApreprocessorMultiwordReductionTagTextCorrespondenceInfo* firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo = getActiveGIApreprocessorMultiwordReductionTagTextCorrespondenceInfo();
 	if(!searchAndReplacePhrasalVerbs(firstGIApreprocessorSentenceInList, &phrasalVerbListGlobal, firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo))
@@ -832,43 +1066,29 @@ bool GIApreprocessorMultiwordReductionClass::parseTextFileAndReduceLanguage(GIAp
 		result = false;
 	}
 
+	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_ORIGINAL
 	for(unordered_map<string, multimap<string, GIApreprocessorMultiwordReductionBasicSentence*>*>::iterator multiwordListsIter = multiwordListsGlobal.begin(); multiwordListsIter != multiwordListsGlobal.end(); multiwordListsIter++)
 	{
 		string multiwordListName = multiwordListsIter->first;
 		multimap<string, GIApreprocessorMultiwordReductionBasicSentence*>* multiwordList = multiwordListsIter->second;
-		int multiwordListType = INT_DEFAULT_VALUE;
-		if(SHAREDvars.textInTextArray(multiwordListName, GIApreprocessorPOStypeNameArray, GIA_PREPROCESSOR_POS_TYPE_ARRAY_NUMBER_OF_TYPES, &multiwordListType))
+		int multiwordListType = GIApreprocessorMultiwordReductionClassObject.getPOStypeFromName(multiwordListName);
+		if(!searchAndReplaceMultiwordWordList(firstGIApreprocessorSentenceInList, multiwordList, firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, multiwordListType))
 		{
-			if(!searchAndReplaceMultiwordWordList(firstGIApreprocessorSentenceInList, multiwordList, firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, multiwordListType))
-			{
-				result = false;
-			}
+			result = false;
 		}
-		else
-		{
-			cerr << "GIApreprocessorMultiwordReductionClass::parseTextFileAndReduceLanguage{} error: GIA LRP multiwordListType not found in GIApreprocessorPOStypeNameArray, multiwordListName = " << multiwordListName << endl;
-			exit(EXIT_ERROR);
-		}
-	}		
+	}
+	#endif		
 
 	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DYNAMIC
 	for(unordered_map<string, unordered_map<string, GIApreprocessorMultiwordReductionWord*>*>::iterator wordListsIter = wordListsGlobal.begin(); wordListsIter != wordListsGlobal.end(); wordListsIter++)
 	{
 		string wordListName = wordListsIter->first;
 		unordered_map<string, GIApreprocessorMultiwordReductionWord*>* wordList = wordListsIter->second;
-		int wordListType = INT_DEFAULT_VALUE;
-		if(SHAREDvars.textInTextArray(wordListName, GIApreprocessorPOStypeNameArray, GIA_PREPROCESSOR_POS_TYPE_ARRAY_NUMBER_OF_TYPES, &wordListType))
+		int wordListType = GIApreprocessorMultiwordReductionClassObject.getPOStypeFromName(wordListName);
+		if(!searchAndReplaceMultiwordWordListDynamic(firstGIApreprocessorSentenceInList, wordList, firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, wordListType))
 		{
-			if(!searchAndReplaceMultiwordWordListDynamic(firstGIApreprocessorSentenceInList, wordList, firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo, wordListType))
-			{
-				result = false;
-			}			
-		}
-		else
-		{
-			cerr << "GIApreprocessorMultiwordReductionClass::parseTextFileAndReduceLanguage{} error: GIA LRP wordListType not found in GIApreprocessorPOStypeNameArray, wordListName = " << wordListName << endl;
-			exit(EXIT_ERROR);
-		}
+			result = false;
+		}			
 	}
 	#endif
 	
@@ -885,231 +1105,6 @@ bool GIApreprocessorMultiwordReductionClass::parseTextFileAndReduceLanguage(GIAp
 
 
 
-/*
----
-LRP rules;
-add alternate phrasal verb based on 'or'
-add alternate tag based upon '/'
-take (at least) first word in phrasal verb definition string as base
-generate all tenses variations of the verb based upon a) rules and b) irregular verbs
-*/
-
-//NB current implementation cannot take into account 3 alternate tags (ie x/y/z)
-bool GIApreprocessorMultiwordReductionClass::loadPhrasalVerbDataAndGenerateAllTenseVariants(const string phrasalVerbDatabaseFileName, multimap<string, GIApreprocessorMultiwordReductionPhrasalVerbSentence*>* phrasalVerbList, unordered_map<string, GIApreprocessorMultiwordReductionIrregularVerbSentence*>* irregularVerbList)
-{
-	bool result = true;
-
-	GIApreprocessorMultiwordReductionPhrasalVerbSentence* currentTagInPhrasalVerbList = new GIApreprocessorMultiwordReductionPhrasalVerbSentence();
-	GIApreprocessorMultiwordReductionPhrasalVerbSentence* recordOfNonAlternateTagInPhrasalVerbList = currentTagInPhrasalVerbList;
-
-	GIApreprocessorMultiwordReductionPhrasalVerbWord* firstTagInPhrasalVerb = currentTagInPhrasalVerbList->firstTagInSentence;
-	GIApreprocessorMultiwordReductionPhrasalVerbWord* currentTagInPhrasalVerb = firstTagInPhrasalVerb;
-	GIApreprocessorMultiwordReductionPhrasalVerbWord* recordOfNonAlternateTagInPhrasalVerb = currentTagInPhrasalVerb;
-	
-	ifstream parseFileObject(phrasalVerbDatabaseFileName.c_str());
-	if(!parseFileObject.rdbuf()->is_open())
-	{
-		//txt file does not exist in current directory.
-		cout << "Error: Phrasal Verb Database File does not exist in current directory: " << phrasalVerbDatabaseFileName << endl;
-		result = false;
-	}
-	else
-	{
-		int charCount = 0;
-		char currentToken;
-		bool parsingVerbBase = true;
-		string currentWord = "";
-		bool currentWordOptional = false;
-		bool currentWordAlternate = false;
-		bool currentPhrasalVerbAlternate = false;
-		string phrasalVerbBaseNameRecord = "";
-		while(parseFileObject.get(currentToken))
-		{
-			if((currentToken == CHAR_NEWLINE) || (currentToken == CHAR_SPACE))
-			{
-				if(currentWord == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_OR)
-				{
-					currentTagInPhrasalVerbList->alternateSentence = new GIApreprocessorMultiwordReductionPhrasalVerbSentence();
-					currentTagInPhrasalVerbList = currentTagInPhrasalVerbList->alternateSentence;
-					currentTagInPhrasalVerb = currentTagInPhrasalVerbList->firstTagInSentence;
-					currentPhrasalVerbAlternate = true;
-				}
-				else
-				{
-					//COPY1
-					//add LRP tag to LRP string (LRP tag list)
-					currentTagInPhrasalVerb->tagName = currentWord;
-					if(currentWordOptional)
-					{
-						currentTagInPhrasalVerb->optional = true;
-					}
-					if(parsingVerbBase)
-					{
-						currentTagInPhrasalVerb->base = true;
-					}
-					else
-					{
-						if(currentWord == phrasalVerbBaseNameRecord)
-						{
-							currentTagInPhrasalVerb->base = true;
-						}
-					}
-					bool foundTagArbitraryName = false;
-					int i;
-					if(SHAREDvars.textInTextArray(currentWord, lrpPhrasalVerbDatabaseTagArbitraryNameArray, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_ARBITRARYNAME_SOMEBODY_NUMBER_OF_TYPES, &i))
-					{
-						foundTagArbitraryName = true;
-						currentTagInPhrasalVerb->tagSpecialArbitraryName = true;
-						currentTagInPhrasalVerb->tagSpecialArbitraryNameType = i;
-					}
-					if(currentTagInPhrasalVerb->base)
-					{
-						generateStandardTenseVariantsOfVerbBase(currentTagInPhrasalVerb, irregularVerbList, GIA_PREPROCESSOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE);
-					}
-
-
-					currentTagInPhrasalVerb->nextTag = new GIApreprocessorMultiwordReductionPhrasalVerbWord();
-					currentTagInPhrasalVerb = static_cast<GIApreprocessorMultiwordReductionPhrasalVerbWord*>(currentTagInPhrasalVerb->nextTag);
-					if(currentWordAlternate)
-					{
-						//revert to non-alternate tag...
-						currentTagInPhrasalVerb = recordOfNonAlternateTagInPhrasalVerb;
-						currentTagInPhrasalVerb->nextTag = new GIApreprocessorMultiwordReductionPhrasalVerbWord();
-						currentTagInPhrasalVerb = static_cast<GIApreprocessorMultiwordReductionPhrasalVerbWord*>(currentTagInPhrasalVerb->nextTag);
-					}
-
-					if(currentToken == CHAR_NEWLINE)
-					{
-						if(currentPhrasalVerbAlternate)
-						{
-							//revert to non-alternate phrasal verb...
-							currentTagInPhrasalVerbList = recordOfNonAlternateTagInPhrasalVerbList;
-							currentPhrasalVerbAlternate = false;
-						}
-						
-						phrasalVerbList->insert(pair<string, GIApreprocessorMultiwordReductionPhrasalVerbSentence*>(firstTagInPhrasalVerb->tagName, currentTagInPhrasalVerbList));
-						if(firstTagInPhrasalVerb->base)
-						{	
-							//for each variant of the firstTagInPhrasalVerb, insert the sentence into the list keyed by the variant name
-							for(int i=0; i<GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_MAX_NUM_TENSE_FORMS; i++)
-							{
-								for(int j=0; j<GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_MAX_NUM_TENSE_FORM_VERSIONS; j++)
-								{
-									string verbVariant = firstTagInPhrasalVerb->grammaticalTenseFormsArray[i][j];
-									phrasalVerbList->insert(pair<string, GIApreprocessorMultiwordReductionPhrasalVerbSentence*>(verbVariant, currentTagInPhrasalVerbList));
-								}
-							}
-						}
-						
-						currentTagInPhrasalVerbList = new GIApreprocessorMultiwordReductionPhrasalVerbSentence();
-						firstTagInPhrasalVerb = currentTagInPhrasalVerbList->firstTagInSentence;
-						currentTagInPhrasalVerb = firstTagInPhrasalVerb; 
-						recordOfNonAlternateTagInPhrasalVerbList = currentTagInPhrasalVerbList;
-						recordOfNonAlternateTagInPhrasalVerb = currentTagInPhrasalVerb;
-					}
-
-					if(!currentWordAlternate)
-					{
-						recordOfNonAlternateTagInPhrasalVerb = currentTagInPhrasalVerb;
-					}
-					if(parsingVerbBase)
-					{
-						phrasalVerbBaseNameRecord = currentWord;
-					}
-				}
-
-				parsingVerbBase = false;
-				//currentWordOptional = false;	//removed 1p1aTEMP5b
-				currentWordAlternate = false;
-				currentWord = "";
-				if((currentToken == CHAR_NEWLINE) || (currentWord == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_OR))
-				{
-					parsingVerbBase = true;
-					phrasalVerbBaseNameRecord = "";
-				}
-				//start parsing new
-
-			}
-			else if(currentToken == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_ALTERNATE)
-			{
-
-				//COPY2
-
-				currentTagInPhrasalVerb->tagName = currentWord;		//NB current implementation can take into account 2 or more alternate tags (eg x/y/z)...
-				if(currentWordOptional)
-				{
-					currentTagInPhrasalVerb->optional = true;
-				}
-				if(parsingVerbBase)
-				{
-					currentTagInPhrasalVerb->base = true;
-				}
-				else
-				{
-					if(currentWord == phrasalVerbBaseNameRecord)
-					{
-						currentTagInPhrasalVerb->base = true;
-					}
-				}
-				bool foundTagArbitraryName = false;
-				int i;
-				if(SHAREDvars.textInTextArray(currentWord, lrpPhrasalVerbDatabaseTagArbitraryNameArray, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_ARBITRARYNAME_SOMEBODY_NUMBER_OF_TYPES, &i))
-				{
-					foundTagArbitraryName = true;
-					currentTagInPhrasalVerb->tagSpecialArbitraryName = true;
-					currentTagInPhrasalVerb->tagSpecialArbitraryNameType = i;
-				}
-				if(currentTagInPhrasalVerb->base)
-				{
-					generateStandardTenseVariantsOfVerbBase(currentTagInPhrasalVerb, irregularVerbList, GIA_PREPROCESSOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE);								
-				}
-				if(!currentWordAlternate)
-				{//added 1p1aTEMP6d
-					recordOfNonAlternateTagInPhrasalVerb = currentTagInPhrasalVerb;
-				}
-
-				currentTagInPhrasalVerb->alternateTag = new GIApreprocessorMultiwordReductionPhrasalVerbWord();
-				currentTagInPhrasalVerb = currentTagInPhrasalVerb->alternateTag;
-
-				//wordIndex does not change...
-				//parsingVerbBase = false;		//should not be parsing verb base here, as it should never have alternate cases eg base/base
-				currentWordAlternate = true;
-				//currentWordOptional = false;	//removed 1p1aTEMP5b
-				currentWord = "";
-			}
-			else if(currentToken == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_OPEN_OPTIONAL)
-			{
-				currentWordOptional = true;
-			}
-			else if(currentToken == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_PHRASALVERB_DATABASE_TAG_CLOSE_OPTIONAL)
-			{//moved 1p1aTEMP5b
-				currentWordOptional = false;
-			}
-			#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_APOSTROPHES_POSSESSION_AND_OMISSION
-			else if(currentToken == CHAR_APOSTROPHE)
-			{
-				currentTagInPhrasalVerb->tagName = currentWord;
-				currentTagInPhrasalVerb->nextTag = new GIApreprocessorMultiwordReductionPhrasalVerbWord();
-				currentTagInPhrasalVerb = static_cast<GIApreprocessorMultiwordReductionPhrasalVerbWord*>(currentTagInPhrasalVerb->nextTag);
-				currentWord = "";
-				currentWord = currentWord + currentToken;
-			}
-			#endif
-			else
-			{
-				currentWord = currentWord + currentToken;
-			}
-
-			charCount++;
-		}
-		parseFileObject.close();
-	}
-
-
-
-
-	return result;
-}
 
 	
 
@@ -1747,7 +1742,7 @@ void GIApreprocessorMultiwordReductionClass::createNewCorrespondenceInfo(GIAprep
 			currentTagInPlainTextSentenceTemp2->tagName = tagNameWithLastLetterDropped;	//remove last GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_MULTIWORD_WORD_DELIMITER
 			(*currentCorrespondenceInfo)->sentenceIndex = currentGIApreprocessorSentenceInList->sentenceIndexOriginal;
 			(*currentCorrespondenceInfo)->entityIndex = newEntityIndex;	//this is not currently used for LRP collapsed multiword word
-			//#ifdef GIA_SEMANTIC_PARSER
+			//#ifdef GIA_SEM_REL_TRANSLATOR
 			(*currentCorrespondenceInfo)->lemmaWithLRP = currentTagInPlainTextSentenceTemp2->tagName;	//added 2j6c	//required for GIA2 only?
 			//#endif
 			(*currentCorrespondenceInfo)->wordWithLRP = currentTagInPlainTextSentenceTemp2->tagName;
@@ -2636,7 +2631,7 @@ bool GIApreprocessorMultiwordReductionClass::identifyConditionType(GIAentityNode
 
 #endif
 
-#ifdef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
+#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
 bool GIApreprocessorMultiwordReductionClass::checkGrammaticalWordTypeFeaturePrelim(GIApreprocessorWord* wordTag, const int GIAposType)
 {
 	bool result = false;
@@ -2672,7 +2667,7 @@ bool GIApreprocessorMultiwordReductionClass::determineIsWordType(GIApreprocessor
 	
 	string wordLowerCase = SHAREDvars.convertStringToLowerCase(&(wordTag->tagName));
 	
-	#ifdef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
+	#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
 	if(usePOSprelim)
 	{
 		if(checkGrammaticalWordTypeFeaturePrelim(wordTag, GIAposType))		
@@ -2685,7 +2680,7 @@ bool GIApreprocessorMultiwordReductionClass::determineIsWordType(GIApreprocessor
 					GIApreprocessorMultiwordReductionPlainTextWord* currentTagInPlainTextSentenceTemp = static_cast<GIApreprocessorMultiwordReductionPlainTextWord*>(wordTag);
 					if(!(currentTagInPlainTextSentenceTemp->collapsedMultiwordWord || currentTagInPlainTextSentenceTemp->collapsedPhrasalVerbExactDefinedSection))
 					{
-						cout << "GIApreprocessorMultiwordReductionClass::determineIsWordType{} warning: GIA_PREPROCESSOR_SENTENCE_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS: usePOSprelim && checkGrammaticalWordTypeFeaturePrelim && (GIAposType == GIA_PREPROCESSOR_POS_TYPE_VERB) && !determineVerbCaseStandardWithAdditional" << endl;		
+						cout << "GIApreprocessorMultiwordReductionClass::determineIsWordType{} warning: GIA_TXT_REL_TRANSLATOR_HYBRID_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS: usePOSprelim && checkGrammaticalWordTypeFeaturePrelim && (GIAposType == GIA_PREPROCESSOR_POS_TYPE_VERB) && !determineVerbCaseStandardWithAdditional" << endl;		
 					}
 					
 					*grammaticalBaseTenseForm = GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_INFINITIVE;
@@ -2714,7 +2709,7 @@ bool GIApreprocessorMultiwordReductionClass::determineIsWordType(GIApreprocessor
 				wordTypeDetected = true;
 			}
 		}
-	#ifdef GIA_PREPROCESSOR_SENTENCE_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
+	#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
 	}
 	#endif
 	
@@ -2794,6 +2789,7 @@ bool GIApreprocessorMultiwordReductionClass::determineVerbCaseStandardWithAdditi
 	
 	return foundVerbCaseStandardOrAdditional;
 }
+/*
 bool GIApreprocessorMultiwordReductionClass::convertVerbCaseGrammaticalTenseFormToTenseModifier(const int grammaticalTenseForm, int* grammaticalTenseModifier)
 {
 	bool result = false;
@@ -2802,7 +2798,7 @@ bool GIApreprocessorMultiwordReductionClass::convertVerbCaseGrammaticalTenseForm
 	
 	if(grammaticalTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS)
 	{
-		*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE;
+		*grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE_TEMP;	//corrected @GIA3f1a //OLD: GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE
 		result = true;
 	}
 	else if(grammaticalTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST)
@@ -2830,6 +2826,7 @@ bool GIApreprocessorMultiwordReductionClass::convertVerbCaseGrammaticalTenseForm
 	
 	return result;
 }
+*/
 bool GIApreprocessorMultiwordReductionClass::verbCaseDetectGrammaticallyStrictVariant(const int grammaticalTenseForm)
 {
 	bool result = false;
@@ -2873,7 +2870,7 @@ bool GIApreprocessorMultiwordReductionClass::determineVerbCaseAdditional(const s
 
 bool GIApreprocessorMultiwordReductionClass::determineIsPreposition(GIApreprocessorWord* wordTag, const bool usePOSprelim)
 {
-	bool wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_PREPROCESSOR_SENTENCE_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_PREPOSITION);
+	bool wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_TXT_REL_TRANSLATOR_HYBRID_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_PREPOSITION);
 	return wordTypeDetected;
 }
 /*
@@ -2887,7 +2884,7 @@ bool GIApreprocessorMultiwordReductionClass::determineIsPreposition(const string
 
 bool GIApreprocessorMultiwordReductionClass::determineIsAdverb(GIApreprocessorWord* wordTag, const bool usePOSprelim)
 {
-	bool wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_PREPROCESSOR_SENTENCE_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_ADVERB);
+	bool wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_TXT_REL_TRANSLATOR_HYBRID_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_ADVERB);
 	return wordTypeDetected;
 }
 /*
@@ -2901,7 +2898,7 @@ bool GIApreprocessorMultiwordReductionClass::determineIsAdverb(const string word
 
 bool GIApreprocessorMultiwordReductionClass::determineIsAdjective(GIApreprocessorWord* wordTag, const bool usePOSprelim)
 {
-	bool wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_PREPROCESSOR_SENTENCE_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_ADJECTIVE);
+	bool wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_TXT_REL_TRANSLATOR_HYBRID_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_ADJECTIVE);
 	return wordTypeDetected;
 }
 /*
@@ -2921,7 +2918,7 @@ bool GIApreprocessorMultiwordReductionClass::determineIsNoun(GIApreprocessorWord
 }
 bool GIApreprocessorMultiwordReductionClass::determineIsNoun(GIApreprocessorWord* wordTag, const bool usePOSprelim, string* baseNameFound, int* grammaticalBaseForm)
 {
-	bool wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_PREPROCESSOR_SENTENCE_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_NOUN, baseNameFound, grammaticalBaseForm);
+	bool wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_TXT_REL_TRANSLATOR_HYBRID_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_NOUN, baseNameFound, grammaticalBaseForm);
 	return wordTypeDetected;
 }
 /*
@@ -2948,7 +2945,7 @@ bool GIApreprocessorMultiwordReductionClass::determineNounPluralVariant(const st
 
 bool GIApreprocessorMultiwordReductionClass::determineIsConjunction(GIApreprocessorWord* wordTag, const bool usePOSprelim)
 {
-	bool wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_PREPROCESSOR_SENTENCE_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_CONJUNCTION_COORDINATING);	//OLD: GIA_PREPROCESSOR_POS_TYPE_CONJUNCTION
+	bool wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_TXT_REL_TRANSLATOR_HYBRID_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_CONJUNCTION_COORDINATING);	//OLD: GIA_PREPROCESSOR_POS_TYPE_CONJUNCTION
 	return wordTypeDetected;
 }
 /*
@@ -2962,7 +2959,7 @@ bool GIApreprocessorMultiwordReductionClass::determineIsConjunction(const string
 
 bool GIApreprocessorMultiwordReductionClass::determineIsDeterminer(GIApreprocessorWord* wordTag, const bool usePOSprelim)
 {
-	bool wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_PREPROCESSOR_SENTENCE_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_DETERMINER);
+	bool wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_TXT_REL_TRANSLATOR_HYBRID_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_DETERMINER);
 	return wordTypeDetected;
 }
 /*
@@ -2978,7 +2975,7 @@ bool GIApreprocessorMultiwordReductionClass::determineIsAuxiliaryBeing(GIAprepro
 {
 	bool wordTypeDetected = false;
 	#ifndef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_COLLAPSE_AUXILIARY_LISTS_TO_VERB_LISTS
-	wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_PREPROCESSOR_SENTENCE_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_AUXILIARY_BEING);
+	wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_TXT_REL_TRANSLATOR_HYBRID_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_AUXILIARY_BEING);
 	#else
 	wordTypeDetected = determineIsWordType(wordTag->tagName, wordListRecordAuxiliaryBeing);
 	/*
@@ -2994,7 +2991,7 @@ bool GIApreprocessorMultiwordReductionClass::determineIsAuxiliaryHaving(GIAprepr
 {
 	bool wordTypeDetected = false;
 	#ifndef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_COLLAPSE_AUXILIARY_LISTS_TO_VERB_LISTS
-	wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_PREPROCESSOR_SENTENCE_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_AUXILIARY_HAVING);
+	wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_TXT_REL_TRANSLATOR_HYBRID_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_AUXILIARY_HAVING);
 	#else
 	wordTypeDetected = determineIsWordType(wordTag->tagName, wordListRecordAuxiliaryHaving);
 	/*
@@ -3010,7 +3007,7 @@ bool GIApreprocessorMultiwordReductionClass::determineIsAuxiliaryDoing(GIAprepro
 {
 	bool wordTypeDetected = false;
 	#ifndef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_COLLAPSE_AUXILIARY_LISTS_TO_VERB_LISTS
-	wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_PREPROCESSOR_SENTENCE_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_AUXILIARY_DOING);
+	wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_TXT_REL_TRANSLATOR_HYBRID_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_AUXILIARY_DOING);
 	#else
 	wordTypeDetected = determineIsWordType(wordTag->tagName, wordListRecordAuxiliaryDoing);
 	/*
@@ -3027,18 +3024,7 @@ bool GIApreprocessorMultiwordReductionClass::detectAuxiliary(GIApreprocessorWord
 {
 	bool wordTypeDetected = false;
 	#ifndef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_COLLAPSE_AUXILIARY_LISTS_TO_VERB_LISTS
-	if(determineIsWordType(wordTag, usePOSprelim, GIA_PREPROCESSOR_SENTENCE_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_AUXILIARY_BEING))
-	{
-		wordTypeDetected = true;
-	}
-	if(determineIsWordType(wordTag, usePOSprelim, GIA_PREPROCESSOR_SENTENCE_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_AUXILIARY_HAVING))
-	{
-		wordTypeDetected = true;
-	}
-	if(determineIsWordType(wordTag, usePOSprelim, GIA_PREPROCESSOR_SENTENCE_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_AUXILIARY_DOING))
-	{
-		wordTypeDetected = true;
-	}
+	wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_TXT_REL_TRANSLATOR_HYBRID_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_AUXILIARY);
 	#else
 	if(determineIsWordType(wordTag->tagName, wordListRecordAuxiliaryBeing))
 	{
@@ -3073,7 +3059,7 @@ bool GIApreprocessorMultiwordReductionClass::detectAuxiliary(GIApreprocessorWord
 bool GIApreprocessorMultiwordReductionClass::detectModalAuxiliary(GIApreprocessorWord* wordTag, const bool usePOSprelim)
 {
 	bool wordTypeDetected = false;
-	wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_PREPROCESSOR_SENTENCE_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_MODALAUXILIARY);
+	wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_TXT_REL_TRANSLATOR_HYBRID_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_MODALAUXILIARY);
 	/*
 	if(SHAREDvars.textInTextArray(currentWord, entityModalAuxiliaryArray, ENTITY_MODALAUXILIARY_NUMBER_OF_TYPES))
 	{
@@ -3086,7 +3072,7 @@ bool GIApreprocessorMultiwordReductionClass::detectModalAuxiliary(GIApreprocesso
 bool GIApreprocessorMultiwordReductionClass::detectRcmodSameReferenceSetDelimiter(GIApreprocessorWord* wordTag, const bool usePOSprelim)
 {
 	bool wordTypeDetected = false;
-	wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_PREPROCESSOR_SENTENCE_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_RCMOD);
+	wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_TXT_REL_TRANSLATOR_HYBRID_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_RCMOD);
 	/*
 	if(SHAREDvars.textInTextArray(currentWord, entityRcmodSameReferenceSetDelimiter, ENTITY_REFERENCE_SET_RCMOD_SAME_REFERENCE_SET_DELIMITER_NUMBER_OF_TYPES))
 	{
@@ -3187,7 +3173,7 @@ bool GIApreprocessorMultiwordReductionClass::generateVerbCase(const string baseN
 */
 
 
-#ifdef GIA_PREPROCESSOR_POS_TAGGER_INITIALISE_WORD_INDEX_LIST_FROM_LRP_FILES
+#ifdef GIA_PREPROCESSOR_INITIALISE_WORD_INDEX_LIST_FROM_LRP_FILES
 bool GIApreprocessorMultiwordReductionClass::createWordIndexListFromLRPfiles()
 {
 	bool result = true;
@@ -3219,12 +3205,12 @@ bool GIApreprocessorMultiwordReductionClass::createWordIndexListFromLRPfiles()
 				{
 					string index = iter->first;
 					GIApreprocessorMultiwordReductionWord* word = iter->second;
-					#ifdef GIA_PREPROCESSOR_SENTENCE_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY
+					#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY
 					if(verbCaseDetectGrammaticallyStrictVariant(word->grammaticalTenseForm))	//ensure that the word is a grammatically strict verb
 					{
 					#endif
 						verbListWithVariantsGlobal.insert(pair<string, GIApreprocessorMultiwordReductionWord*>(index, word));
-					#ifdef GIA_PREPROCESSOR_SENTENCE_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY
+					#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY
 					}
 					#endif
 				}
@@ -3232,18 +3218,25 @@ bool GIApreprocessorMultiwordReductionClass::createWordIndexListFromLRPfiles()
 				{
 					string index = iter->first;
 					GIApreprocessorMultiwordReductionWord* word = iter->second;
-					#ifdef GIA_PREPROCESSOR_SENTENCE_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY
+					#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY
 					if(verbCaseDetectGrammaticallyStrictVariant(word->grammaticalTenseForm))	//ensure that the word is a grammatically strict verb
 					{
 					#endif
 						verbListWithVariantsGlobal.insert(pair<string, GIApreprocessorMultiwordReductionWord*>(index, word));
-					#ifdef GIA_PREPROCESSOR_SENTENCE_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY
+					#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY
 					}
 					#endif
 				}
 				#endif
 				nounListWithVariantsGlobal.insert(nounListGlobal->begin(), nounListGlobal->end());
 				nounListWithVariantsGlobal.insert(nounPluralVariantsListGlobal.begin(), nounPluralVariantsListGlobal.end());
+				
+				#ifdef GIA_PREPROCESSOR_REPLACE_VERB_AND_NOUN_LISTS_WITH_VERB_AND_NOUN_LISTS_WITH_VARIANTS
+				verbListGlobal->clear();
+				nounListGlobal->clear();
+				verbListGlobal->insert(verbListWithVariantsGlobal.begin(), verbListWithVariantsGlobal.end());
+				nounListGlobal->insert(nounListWithVariantsGlobal.begin(), nounListWithVariantsGlobal.end());
+				#endif
 			}
 	
 	
@@ -3326,5 +3319,204 @@ bool GIApreprocessorMultiwordReductionClass::createWordIndexListFromLRPfiles()
 
 
 
+
+#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_COLLAPSE_NUMERICAL_WORDS_TO_NUMBERS
+
+bool GIApreprocessorMultiwordReductionClass::replaceAllNumericalWordsWithNumbers(GIApreprocessorSentence* firstGIApreprocessorSentenceInList)
+{
+	bool result = true;
+	
+	GIApreprocessorSentence* currentGIApreprocessorSentenceInList = firstGIApreprocessorSentenceInList;
+	while(currentGIApreprocessorSentenceInList->next != NULL)
+	{	
+		GIApreprocessorMultiwordReductionPlainTextWord* firstTagInPlainTextSentence = NULL;
+		GIApreprocessorMultiwordReductionClassObject.generateFlatSentenceWordList(&(currentGIApreprocessorSentenceInList->sentenceContentsLRP), &firstTagInPlainTextSentence);
+		GIApreprocessorWord* currentTag = firstTagInPlainTextSentence;
+		GIApreprocessorWord* firstTagInNumericalWord = NULL;
+		GIApreprocessorWord* previousTag = NULL;
+		bool parsingNumericalWord = false;
+		while(currentTag->nextTag != NULL)
+		{
+			bool foundDelimiter = false;
+			
+			string currentWordText = SHAREDvars.convertStringToLowerCase(&(currentTag->tagName));
+			if(SHAREDvars.textInTextArray(currentWordText, translatorEnglishNumbersArray, GIA_TRANSLATOR_ENGLISH_NUMBERS_NUMBER_OF_TYPES))
+			{
+				//cout << "currentWordText = " << currentWordText << endl;
+				if(parsingNumericalWord)
+				{
+					//continue parsing
+				}
+				else
+				{
+					firstTagInNumericalWord = currentTag;
+					parsingNumericalWord = true;
+				}
+			}
+			else
+			{
+				if(parsingNumericalWord)
+				{
+					if(currentWordText == GIA_TRANSLATOR_ENGLISH_NUMBERS_DELIMITER)
+					{
+						//continue parsing
+						foundDelimiter = true;
+					}
+					else
+					{
+						parsingNumericalWord = false;
+						GIApreprocessorWord* tagSucceedingNumericalWordTagList = NULL;
+						if(previousTag->nextTag->tagName == GIA_TRANSLATOR_ENGLISH_NUMBERS_DELIMITER)
+						{
+							tagSucceedingNumericalWordTagList = previousTag->nextTag;
+						}
+						else
+						{
+							tagSucceedingNumericalWordTagList = currentTag;
+						} 
+						//cout << "tagSucceedingNumericalWordTagList = " << tagSucceedingNumericalWordTagList->tagName << endl;
+						//cout << "previousTag = " << previousTag->tagName << endl;
+						previousTag->nextTag = new GIApreprocessorWord();	//isolate the numerical word tag list
+						vector<GIApreprocessorWord*> text;
+						GIApreprocessorMultiwordReductionClassObject.generateSentenceWordList(firstTagInNumericalWord, &text);
+						
+						//convert numerical word list to lower case and remove all references to 'and':
+						for(vector<GIApreprocessorWord*>::iterator iter = text.begin(); iter != text.end(); )
+						{
+							string wordText = (*iter)->tagName;
+							//cout << "wordText = " << wordText << endl;
+							(*iter)->tagName = SHAREDvars.convertStringToLowerCase(&wordText);
+							
+							if(wordText == GIA_TRANSLATOR_ENGLISH_NUMBERS_DELIMITER)
+							{
+								iter = text.erase(iter);
+							}
+							else
+							{
+								iter++;
+							}
+						}
+
+						
+						long number = convertWordToNumber(&text);
+						//cout << "number = " << number << endl;
+						firstTagInNumericalWord->tagName = SHAREDvars.convertLongToString(number);
+						firstTagInNumericalWord->nextTag = tagSucceedingNumericalWordTagList;
+					}
+				}
+			}
+			if(!foundDelimiter)
+			{
+				previousTag = currentTag;	//don't include any final "and" words within the numerical word list (e.g "the number of dogs was three and the number of chickens was five")
+			}
+			
+			currentTag = currentTag->nextTag;
+		}
+			
+		GIApreprocessorMultiwordReductionClassObject.generateSentenceWordList(firstTagInPlainTextSentence, &(currentGIApreprocessorSentenceInList->sentenceContentsLRP));
+	
+		currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->next;
+	}
+		
+	return result;		
+}
+
+//based on https://www.roseindia.net/answers/viewqa/Java-Interview-Questions/13787-Java-program---convert-words-into-numbers.html
+
+long GIApreprocessorMultiwordReductionClass::convertWordToNumber(vector<GIApreprocessorWord*>* numericalWordList)
+{
+		
+	long totalValue = 0;
+	bool processed = false;
+	for(int n = 0; n < GIA_TRANSLATOR_ENGLISH_NUMBERS_MAGITUDES_NUMBER_OF_TYPES; n++) 
+	{
+		int index = GIApreprocessorMultiwordReductionClassObject.findStringInWordList(numericalWordList, translatorEnglishNumbersMagnitudesTextArray[n]);
+		if(index != CPP_STRING_FIND_RESULT_FAIL_VALUE)
+		{
+			vector<GIApreprocessorWord*>::const_iterator first1 = numericalWordList->begin();
+			vector<GIApreprocessorWord*>::const_iterator last1 = numericalWordList->begin() + index;
+			vector<GIApreprocessorWord*> text1(first1, last1);
+
+			vector<GIApreprocessorWord*>::const_iterator first2 = numericalWordList->begin() + index + translatorEnglishNumbersMagnitudesTextArray[n].length();
+			vector<GIApreprocessorWord*>::const_iterator last2 = numericalWordList->end();
+			vector<GIApreprocessorWord*> text2(first2, last2);
+
+			if(text1.empty())
+			{	
+				GIApreprocessorMultiwordReductionPlainTextWord* newWord = new GIApreprocessorMultiwordReductionPlainTextWord();
+				newWord->tagName = "one";
+				text1.push_back(newWord);
+			}
+			if(text2.empty())
+			{
+				GIApreprocessorMultiwordReductionPlainTextWord* newWord = new GIApreprocessorMultiwordReductionPlainTextWord();
+				newWord->tagName = "zero";
+				text2.push_back(newWord);
+			}
+			
+			totalValue = parseNumerals(&text1) * translatorEnglishNumbersMagnitudesNumberArray[n] + convertWordToNumber(&text2);
+			processed = true;
+			break;
+		}
+	}
+
+	if(processed)
+	{
+		return totalValue;
+	}
+	else
+	{
+		return parseNumerals(numericalWordList);
+	}
+}
+
+long GIApreprocessorMultiwordReductionClass::parseNumerals(vector<GIApreprocessorWord*>* numericalWordListSubset)
+{
+	long value = 0;
+		
+	for(int i=0; i<numericalWordListSubset->size(); i++) 
+	{
+		string wordText = (*numericalWordListSubset)[i]->tagName;
+		
+		if(!SHAREDvars.textInTextArray(wordText, translatorEnglishNumbersNumeralsTextArray, GIA_TRANSLATOR_ENGLISH_NUMBERS_NUMBER_OF_TYPES))
+		{
+			cerr << "GIApreprocessorMultiwordReductionClass::parseNumerals{} error: unknown numerical word: " << wordText << endl;
+			exit(EXIT_ERROR);
+		}
+
+		long subval = getValueOf(wordText);
+		if(subval == 100) 
+		{
+			if(value == 0)
+			{
+				value = 100;
+			}
+			else
+			{
+				value *= 100;
+			}
+		} 
+		else
+		{
+			value += subval;
+		}
+	}
+
+	return value;
+}
+
+long GIApreprocessorMultiwordReductionClass::getValueOf(const string wordText) 
+{
+	int index = 0;
+	if(!SHAREDvars.textInTextArray(wordText, translatorEnglishNumbersNumeralsTextArray, GIA_TRANSLATOR_ENGLISH_NUMBERS_NUMERALS_NUMBER_OF_TYPES, &index))
+	{
+		cerr << "GIApreprocessorMultiwordReductionClass::getValueOf{} error: wordText not in translatorEnglishNumbersNumeralsTextArray: " << wordText << endl;
+		exit(EXIT_ERROR);
+	}
+	long number = translatorEnglishNumbersNumeralsNumberArray[index];
+	return number;
+}
+			
+#endif
 
 

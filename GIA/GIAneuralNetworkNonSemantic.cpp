@@ -26,14 +26,15 @@
  * File Name: GIAneuralNetworkNonSemantic.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e12b 12-February-2018
- * Description: 
- *
+ * Project Version: 3f1a 22-February-2018
+ * Description: Neural Network - visual representation of GIA contents in prototype biological neural network
+ * /
  *******************************************************************************/
 
 
 #include "GIAneuralNetworkNonSemantic.hpp"
-#include "GIAtranslatorDefs.hpp"
+#include "GIAsynRelTranslatorDefs.hpp"
+#include "GIAtxtRelTranslatorHybridReferenceSet.hpp"	//requried for GIAtxtRelTranslatorHybrid objects
 
 #ifdef GIA_NEURAL_NETWORK
 
@@ -61,15 +62,15 @@ bool GIAneuralNetworkNonSemanticClass::addTextToNetwork(GIAtranslatorVariablesCl
 	return result;
 }
 
-bool GIAneuralNetworkNonSemanticClass::addTextToNetworkLogicReference(GIAneuralNetworkVariablesClass* neuralNetworkVariables, GIApreprocessorLogicReference* firstLogicReferenceInList, ANNneuron* higherLogicReferenceArtificialSynapseNeuron, bool higherLogicReferenceArtificialSynapseNeuronDirection)
+bool GIAneuralNetworkNonSemanticClass::addTextToNetworkLogicReference(GIAneuralNetworkVariablesClass* neuralNetworkVariables, GIAtxtRelTranslatorHybridLogicReference* firstLogicReferenceInList, ANNneuron* higherLogicReferenceArtificialSynapseNeuron, bool higherLogicReferenceArtificialSynapseNeuronDirection)
 {
 	bool result = true;
 	
-	GIApreprocessorLogicReference* currentLogicReferenceInList = firstLogicReferenceInList;
+	GIAtxtRelTranslatorHybridLogicReference* currentLogicReferenceInList = firstLogicReferenceInList;
 	bool stillParsingLogicReferenceLayer = true;
 	while(stillParsingLogicReferenceLayer)
 	{		
-		#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
+		#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE
 		if(currentLogicReferenceInList->hasSubLogicReference)
 		{
 			GIApreprocessorWord* logicReferenceWord = getLogicReferenceWord(currentLogicReferenceInList);
@@ -84,7 +85,7 @@ bool GIAneuralNetworkNonSemanticClass::addTextToNetworkLogicReference(GIAneuralN
 			}
 			else
 			{
-				#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CONJUNCTION_LR_WITH_EMBEDDED_PREPOSITION_VERB_LR_DELETE_IMPLICIT_GOVERNOR
+				#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE_CONJUNCTION_LR_WITH_EMBEDDED_PREPOSITION_VERB_LR_DELETE_IMPLICIT_GOVERNOR
 				if(currentLogicReferenceInList->firstSubLogicReferenceInListGovernor != NULL)
 				{
 				#endif
@@ -92,7 +93,7 @@ bool GIAneuralNetworkNonSemanticClass::addTextToNetworkLogicReference(GIAneuralN
 					{
 						result = false;
 					}
-				#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CONJUNCTION_LR_WITH_EMBEDDED_PREPOSITION_VERB_LR_DELETE_IMPLICIT_GOVERNOR
+				#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE_CONJUNCTION_LR_WITH_EMBEDDED_PREPOSITION_VERB_LR_DELETE_IMPLICIT_GOVERNOR
 				}
 				#endif
 				if(!addTextToNetworkLogicReference(neuralNetworkVariables, currentLogicReferenceInList->firstSubLogicReferenceInListDependent, higherLogicReferenceArtificialSynapseNeuron, true))
@@ -122,11 +123,11 @@ bool GIAneuralNetworkNonSemanticClass::addTextToNetworkLogicReference(GIAneuralN
 			ANNneuron* conceptNeuronSubject = NULL;
 			ANNneuron* conceptNeuronObject = NULL;
 		
-			if(!identifyAndDemarcateConceptsInReferenceSet(neuralNetworkVariables, currentLogicReferenceInList->logicReferenceVariable->referenceSetSubject, GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_TYPE_SUBJECT, indefiniteConceptDefinitionFound, &foundConceptSubject, &conceptNeuronSubject))
+			if(!identifyAndDemarcateConceptsInReferenceSet(neuralNetworkVariables, currentLogicReferenceInList->logicReferenceVariable->referenceSetSubject, GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_TYPE_SUBJECT, indefiniteConceptDefinitionFound, &foundConceptSubject, &conceptNeuronSubject))
 			{
 				result = false;
 			}
-			if(!identifyAndDemarcateConceptsInReferenceSet(neuralNetworkVariables, currentLogicReferenceInList->logicReferenceVariable->referenceSetObject, GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_TYPE_OBJECT, indefiniteConceptDefinitionFound, &foundConceptObject, &conceptNeuronObject))
+			if(!identifyAndDemarcateConceptsInReferenceSet(neuralNetworkVariables, currentLogicReferenceInList->logicReferenceVariable->referenceSetObject, GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_TYPE_OBJECT, indefiniteConceptDefinitionFound, &foundConceptObject, &conceptNeuronObject))
 			{
 				result = false;
 			}	
@@ -167,22 +168,22 @@ bool GIAneuralNetworkNonSemanticClass::addTextToNetworkLogicReference(GIAneuralN
 				}
 
 				#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
-				cout << "addTextToNetworkLogicReference GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_TYPE_SUBJECT, neuralNetworkVariables->sentenceIndex = " << neuralNetworkVariables->sentenceIndex << endl;
+				cout << "addTextToNetworkLogicReference GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_TYPE_SUBJECT, neuralNetworkVariables->sentenceIndex = " << neuralNetworkVariables->sentenceIndex << endl;
 				#endif
-				if(!findOrAddReferenceSetInNetwork(neuralNetworkVariables, currentLogicReferenceInList->logicReferenceVariable->referenceSetSubject, &referenceSetSubjectSubnetEntry, referenceSetDelimiterSubnetEntry, GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_TYPE_SUBJECT))
+				if(!findOrAddReferenceSetInNetwork(neuralNetworkVariables, currentLogicReferenceInList->logicReferenceVariable->referenceSetSubject, &referenceSetSubjectSubnetEntry, referenceSetDelimiterSubnetEntry, GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_TYPE_SUBJECT))
 				{
 					result = false;
 				}
 				#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
-				cout << "addTextToNetworkLogicReference GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_TYPE_OBJECT, neuralNetworkVariables->sentenceIndex = " << neuralNetworkVariables->sentenceIndex << endl;
+				cout << "addTextToNetworkLogicReference GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_TYPE_OBJECT, neuralNetworkVariables->sentenceIndex = " << neuralNetworkVariables->sentenceIndex << endl;
 				#endif
-				if(!findOrAddReferenceSetInNetwork(neuralNetworkVariables, currentLogicReferenceInList->logicReferenceVariable->referenceSetObject, &referenceSetObjectSubnetEntry, referenceSetDelimiterSubnetEntry, GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_TYPE_OBJECT))
+				if(!findOrAddReferenceSetInNetwork(neuralNetworkVariables, currentLogicReferenceInList->logicReferenceVariable->referenceSetObject, &referenceSetObjectSubnetEntry, referenceSetDelimiterSubnetEntry, GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_TYPE_OBJECT))
 				{
 					result = false;
 				}
-				#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_RECORD_SAME_REFERENCE_SET_DELIMITERS
+				#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_RECORD_SAME_REFERENCE_SET_DELIMITERS
 				#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
-				cout << "addTextToNetworkLogicReference GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_TYPE_DELIMITER, neuralNetworkVariables->sentenceIndex = " << neuralNetworkVariables->sentenceIndex << endl;
+				cout << "addTextToNetworkLogicReference GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_TYPE_DELIMITER, neuralNetworkVariables->sentenceIndex = " << neuralNetworkVariables->sentenceIndex << endl;
 				#endif
 				
 				if(!connectReferenceSetsInNetwork(neuralNetworkVariables, referenceSetSubjectSubnetEntry, referenceSetObjectSubnetEntry, &referenceSetDelimiterSubnetEntry, currentLogicReferenceInList->logicReferenceVariable->referenceSetDelimiter))
@@ -191,7 +192,7 @@ bool GIAneuralNetworkNonSemanticClass::addTextToNetworkLogicReference(GIAneuralN
 				}
 				#endif
 				
-				#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
+				#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE
 				if(higherLogicReferenceArtificialSynapseNeuron != NULL)
 				{
 					if(higherLogicReferenceArtificialSynapseNeuronDirection)
@@ -206,7 +207,7 @@ bool GIAneuralNetworkNonSemanticClass::addTextToNetworkLogicReference(GIAneuralN
 				#endif
 			}
 					
-		#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
+		#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE
 		}
 		#endif
 		
@@ -485,7 +486,7 @@ bool GIAneuralNetworkNonSemanticClass::findOrAddReferenceSetInNetwork(GIAneuralN
 					ANNneuron* conceptNeuron = word->wordShortcutToConceptNeuron;		//ANNneuron* conceptNeuron = findConceptInNetwork(wordTag);
 					conceptNeuron->GIAactiveForSubnetIdentification = true;
 					#ifdef GIA_NEURAL_NETWORK_NON_SEMANTIC_BYPASS_AUXILIARIES
-					if(!(currentSubReferenceSetInList->isReferenceSetDelimiter) || (currentSubReferenceSetInList->delimiterType != GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_AUXILIARY))
+					if(!(currentSubReferenceSetInList->isReferenceSetDelimiter) || (currentSubReferenceSetInList->delimiterType != GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_DELIMITER_TYPE_AUXILIARY))
 					{
 					#endif
 						idealNumberOfActiveConceptNeuronsInSubnet++;
@@ -831,7 +832,7 @@ bool GIAneuralNetworkNonSemanticClass::addReferenceSetInNetwork(GIAneuralNetwork
 	GIApreprocessorWord* firstLegalWordInSubnet = NULL;
 	bool firstWordInReferenceSet = true;
 	bool firstInstanceNeuronInReferenceSet = false;
-	#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_SUB_REFERENCE_SETS
+	#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_SUB_REFERENCE_SETS
 	ANNneuron* lastSubreferenceSetSubnetEntry = NULL;
 	ANNneuron* lastVerbSubreferenceSetSubnetEntry = NULL;
 	#endif
@@ -844,7 +845,7 @@ bool GIAneuralNetworkNonSemanticClass::addReferenceSetInNetwork(GIAneuralNetwork
 		cout << "GIAneuralNetworkNonSemanticClass::addReferenceSetInNetwork : (*referenceSetSubnetEntry != NULL); using referenceSetSubnetEntry as previousConceptNeuronOrConnectedSynapse" << endl;
 		referenceSetSubnetEntryCreated = true;
 		firstWordInReferenceSet = false;
-		#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_SUB_REFERENCE_SETS
+		#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_SUB_REFERENCE_SETS
 		lastSubreferenceSetSubnetEntry = *referenceSetSubnetEntry;
 		#endif
 		previousConceptNeuronOrConnectedSynapse = *referenceSetSubnetEntry
@@ -859,7 +860,7 @@ bool GIAneuralNetworkNonSemanticClass::addReferenceSetInNetwork(GIAneuralNetwork
 	GIApreprocessorSubReferenceSet* currentSubReferenceSetInList = firstSubReferenceSetInList;
 	while(currentSubReferenceSetInList->next != NULL)
 	{
-		#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_SUB_REFERENCE_SETS
+		#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_SUB_REFERENCE_SETS
 		if(currentSubReferenceSetInList->isReferenceSetDelimiter)
 		{
 			if(referenceSetSubnetEntryCreated)
@@ -869,9 +870,9 @@ bool GIAneuralNetworkNonSemanticClass::addReferenceSetInNetwork(GIAneuralNetwork
 		
 				ANNneuron* newArtificialSynapseNeuron = findOrAddConceptAndConnectNewSynapseArtificialInstanceNeuron(neuralNetworkVariables, delimiterWordTag);
 				
-				//CHECKTHIS; GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_SPECIAL_CASE_OBJECT_REFERS_TO_PREVIOUS_DELIMITER_VERB
+				//CHECKTHIS; GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_DELIMITER_SPECIAL_CASE_OBJECT_REFERS_TO_PREVIOUS_DELIMITER_VERB
 						
-				if(currentSubReferenceSetInList->delimiterSpecialCase == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_SPECIAL_CASE_DELIMITER_AND_OBJECT_REFER_TO_PREVIOUS_DELIMITER_VERB)
+				if(currentSubReferenceSetInList->delimiterSpecialCase == GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_DELIMITER_SPECIAL_CASE_DELIMITER_AND_OBJECT_REFER_TO_PREVIOUS_DELIMITER_VERB)
 				{
 					if(lastVerbSubreferenceSetSubnetEntry != NULL)
 					{
@@ -892,14 +893,14 @@ bool GIAneuralNetworkNonSemanticClass::addReferenceSetInNetwork(GIAneuralNetwork
 				}
 				
 				#ifdef GIA_NEURAL_NETWORK_NON_SEMANTIC_BYPASS_AUXILIARIES
-				if(currentSubReferenceSetInList->delimiterType == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_AUXILIARY)
+				if(currentSubReferenceSetInList->delimiterType == GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_DELIMITER_TYPE_AUXILIARY)
 				{
 					createBypassAuxiliaryConnection = true;
 					lastSubreferenceSetSubnetEntryNonDelimiter = lastSubreferenceSetSubnetEntry;
 				}
 				#endif
 		
-				if(currentSubReferenceSetInList->delimiterType == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_VERB)
+				if(currentSubReferenceSetInList->delimiterType == GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_DELIMITER_TYPE_VERB)
 				{
 					lastVerbSubreferenceSetSubnetEntry = newArtificialSynapseNeuron;
 				}
@@ -914,7 +915,7 @@ bool GIAneuralNetworkNonSemanticClass::addReferenceSetInNetwork(GIAneuralNetwork
 		else
 		{
 		#endif
-			#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_SUB_REFERENCE_SETS
+			#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_SUB_REFERENCE_SETS
 			bool firstInstanceNeuronInSubReferenceSet = true;
 			#endif
 			
@@ -975,7 +976,7 @@ bool GIAneuralNetworkNonSemanticClass::addReferenceSetInNetwork(GIAneuralNetwork
 							referenceSetSubnetEntryCreated = true;
 							firstInstanceNeuronInReferenceSet = false;
 						}
-						#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_SUB_REFERENCE_SETS
+						#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_SUB_REFERENCE_SETS
 						if(firstInstanceNeuronInSubReferenceSet)
 						{
 							firstInstanceNeuronInSubReferenceSet = false;
@@ -998,7 +999,7 @@ bool GIAneuralNetworkNonSemanticClass::addReferenceSetInNetwork(GIAneuralNetwork
 
 				previousWord = word;
 			}
-		#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_SUB_REFERENCE_SETS
+		#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_SUB_REFERENCE_SETS
 		}
 		#endif
 		
@@ -1060,7 +1061,7 @@ bool GIAneuralNetworkNonSemanticClass::connectReferenceSetsInNetwork(GIAneuralNe
 		GIAneuralNetworkNonSemanticOperations.createANNconnection(*referenceSetDelimiterSubnetEntry, referenceSetObjectSubnetEntry, GIA_ANN_CONNECTION_TYPE_INSTANCE_TO_INSTANCE);	
 	
 		#ifdef GIA_NEURAL_NETWORK_NON_SEMANTIC_BYPASS_AUXILIARIES
-		if(referenceSetDelimiter->delimiterType == GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_TYPE_AUXILIARY)
+		if(referenceSetDelimiter->delimiterType == GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_DELIMITER_TYPE_AUXILIARY)
 		{
 			GIAneuralNetworkNonSemanticOperations.createANNconnection(referenceSetSubjectSubnetEntry, referenceSetObjectSubnetEntry, GIA_ANN_CONNECTION_TYPE_INSTANCE_TO_INSTANCE);
 		}
@@ -1177,7 +1178,7 @@ GIApreprocessorWord* GIAneuralNetworkNonSemanticClass::getDelimiterWord(GIAprepr
 	return delimiterWordTag;
 }
 
-GIApreprocessorWord* GIAneuralNetworkNonSemanticClass::getLogicReferenceWord(GIApreprocessorLogicReference* logicReference)
+GIApreprocessorWord* GIAneuralNetworkNonSemanticClass::getLogicReferenceWord(GIAtxtRelTranslatorHybridLogicReference* logicReference)
 {
 	GIApreprocessorWord* logicReferenceWordTag = (logicReference->logicReferenceContents)[0];	//CHECKTHIS
 	return logicReferenceWordTag;

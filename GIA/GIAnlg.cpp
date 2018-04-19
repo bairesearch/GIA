@@ -26,10 +26,10 @@
  * File Name: GIAnlg.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e12b 12-February-2018
+ * Project Version: 3f1a 22-February-2018
  * Requirements: requires GIA translated data, and NLG2 to be installed
- * Description: GIA natural language generation (using NLG2)
- *
+ * Description: NLG - natural language generation
+ * /
  *******************************************************************************/
 
 
@@ -375,7 +375,7 @@ bool GIAnlgClass::generateLanguageFromTextIteration(GIAentityConnection* current
 			result = false;	//e.g. Tom's and the rabbit's hat
 		}
 		#ifdef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
-		//#ifndef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
+		//#ifndef GIA_TXT_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE
 		if(interationIndex == 0)
 		{
 			if(!parseSameReferenceSetOnly)
@@ -1076,7 +1076,7 @@ string GIAnlgClass::calcDeterminate(GIAentityNode* entityNode, const bool defini
 	else
 	{
 		//stanford/relex compatible
-		//NB GIAEntityNodeGrammaticalGenderArray is not currently filled by fillGrammaticalArraysStanford()	[see GIAtranslatorDefineGrammar.cpp]
+		//NB GIAEntityNodeGrammaticalGenderArray is not currently filled by fillGrammaticalArraysStanford()	[see GIAtranslatorGrammar.cpp]
 		if(entityNode->grammaticalProperNounTemp)
 		{
 			isPerson = true;
@@ -1134,7 +1134,7 @@ string GIAnlgClass::calcDeterminate(GIAentityNode* entityNode, const bool defini
 	}
 
 	//that
-	if(entityNode->entityName == RELATION_DEPENDENT_THAT)
+	if(entityNode->entityName == GIA_SYN_REL_TRANSLATOR_RELATION_DEPENDENT_THAT)
 	{
 		addDeterminate = false;
 	}
@@ -1144,7 +1144,7 @@ string GIAnlgClass::calcDeterminate(GIAentityNode* entityNode, const bool defini
 	{
 		for(vector<string>::iterator aliasIter = entityNode->aliasList.begin(); aliasIter != entityNode->aliasList.end(); aliasIter++)
 		{
-			if(*aliasIter != REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
+			if(*aliasIter != GIA_SYN_REL_TRANSLATOR_REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
 			{
 				addDeterminate = false;
 			}
@@ -1241,7 +1241,7 @@ string GIAnlgClass::calcNounWord(GIAentityNode* entityNode, const bool possessiv
 		string quantityNumberStringTemp;
 		if(entityNode->isQuery)
 		{
-			quantityNumberStringTemp = REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;
+			quantityNumberStringTemp = GIA_SYN_REL_TRANSLATOR_REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE;
 		}
 		else
 		{
@@ -1252,7 +1252,7 @@ string GIAnlgClass::calcNounWord(GIAentityNode* entityNode, const bool possessiv
 	}
 	else if(entityNode->negative)
 	{
-		nounWord = string(RELATION_TYPE_NEGATIVE_CONTEXT_1) + GIA_NLG_TEXT_SPACE + nounWord;
+		nounWord = string(GIA_SYN_REL_TRANSLATOR_RELATION_TYPE_NEGATIVE_CONTEXT_1) + GIA_NLG_TEXT_SPACE + nounWord;
 	}
 	/*
 	#ifdef GIA_NLG_SUPPORT_TIME_CONDITIONS
@@ -1274,7 +1274,7 @@ string GIAnlgClass::calcNounWord(GIAentityNode* entityNode, const bool possessiv
 	{
 		for(vector<string>::iterator aliasIter = entityNode->aliasList.begin(); aliasIter != entityNode->aliasList.end(); aliasIter++)
 		{
-			if(*aliasIter != REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
+			if(*aliasIter != GIA_SYN_REL_TRANSLATOR_REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
 			{
 				nounWord = *aliasIter;
 			}		

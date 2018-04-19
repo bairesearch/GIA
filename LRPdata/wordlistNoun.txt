@@ -1,37 +1,18 @@
 'hood
 's gravenhage
 0.22
-0
-1
 1-dodecanol
 1-hitter
-10
-100
-1000
-10000
-100000
-1000000
-1000000000
-1000000000000
-11
 11-plus
 11 november
-12
 12-tone music
 12-tone system
-120
-13
-14
-144
 14 july
-15
 1530s
 15 august 1945
 15 may organization
 15 minutes
-16
 16 pf
-17
 1728
 1750s
 1760s
@@ -39,7 +20,6 @@
 1780s
 1790s
 17 november
-18
 18-karat gold
 1820s
 1830s
@@ -49,7 +29,6 @@
 1870s
 1880s
 1890s
-19
 1900s
 1920s
 1930s
@@ -73,35 +52,22 @@
 1st earl of balfour
 1st lieutenant
 1st viscount montgomery of alamein
-2
 2-hitter
 2-hydroxybenzoic acid
 2-methylpropenoic acid
-20
 20/20
-21
-22
 22-karat gold
-23
-24
 24-hour interval
 24-karat gold
 24/7
-25
-26
-27
-28
-29
 2 chronicles
 2 esdras
 2 kings
 2 maccabees
 2 samuel
 2nd lieutenant
-3
 3-d
 3-hitter
-30
 30 minutes
 365 days
 366 days
@@ -109,36 +75,22 @@
 3d radar
 3rd october organization
 3tc
-4
 4-hitter
-40
 401-k
 401-k plan
 440 yards
 4to
 4wd
-5
 5-hitter
 5-hydroxy-3-methylglutaryl-coenzyme a reductase
 5-hydroxytryptamine
-50
-500
-6
-60
 60 minutes
 6 june 1944
-7
-70
-78
-8
-80
 880 yards
 8 may 1945
 8vo
-9
 9-11
 9/11
-90
 a'man
 a-bomb
 a-horizon
@@ -30743,7 +30695,6 @@ dph
 dphil
 dprk
 dpt vaccine
-dr.
 dr. j
 dr. johnson
 dr. seuss
@@ -54218,7 +54169,6 @@ hystricidae
 hystricomorpha
 hytrin
 hz
-i
 i-beam
 i. a. richards
 i. f. stone
@@ -70726,22 +70676,16 @@ mp
 mpeg
 mph
 mps
-mr
-mr.
 mr. moto
 mrd
 mri
 mrna
-mrs
-mrs.
 mrs. gandhi
 mrs. henry wood
 mrs. humphrey ward
 mrs. simpson
 mrta
-ms
 ms-dos
-ms.
 msasa
 msb
 msc
@@ -84992,7 +84936,6 @@ production order
 productiveness
 productivity
 proenzyme
-prof
 profanation
 profaneness
 profanity
@@ -89674,7 +89617,6 @@ reunion
 reuptake
 reusable program
 reusable routine
-rev
 revaluation
 revealed religion
 revealing

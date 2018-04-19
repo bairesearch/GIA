@@ -26,10 +26,10 @@
  * File Name: GIApreprocessorPOStagger.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e12b 12-February-2018
+ * Project Version: 3f1a 22-February-2018
  * Requirements: requires plain text file
- * Description: preprocessor POS tagger
- *
+ * Description: Preprocessor POS tagger database
+ * /
  *******************************************************************************/
 
 
@@ -161,10 +161,7 @@ class GIApreprocessorPOStaggerDatabaseClass
 	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_PREDICTION_VERIFICATION
 	public: bool verifyPOStaggerDatabasePredictionAgainstPOSambiguityInfo(const unsigned char centreWordPOSindexPrediction, const unsigned int centreWordPOSambiguityInfo, unsigned char* centreWordPOSvalueFirstAmbiguousPrediction);
 	#endif
-
-	public: unsigned char convertPOSambiguityInfoToIndex(unsigned long POSambiguityInfo);
-		public: bool determinePOSambiguityInfoIsAmbiguous(const unsigned long POSambiguityInfo, unsigned char* unambiguousPOSinfoIndex, const bool treatWordAsAmbiguousIfNullPOSvalue);
-
+	
 	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_AND_MAP_USE_6BIT_INDICES
 	private: char DBconvertByteToBase64(unsigned char byte);
 	public: unsigned char DBconvertBase64ToByte(char base64char);
@@ -172,8 +169,14 @@ class GIApreprocessorPOStaggerDatabaseClass
 	private: string DBconvertByteToHex(const unsigned char byte);
 	public: unsigned char DBconvertHexToByte(string hexString);
 	#endif
+	
+	public: unsigned char convertPOSambiguityInfoToIndex(unsigned long POSambiguityInfo);
+		public: bool determinePOSambiguityInfoIsAmbiguous(const unsigned long POSambiguityInfo, unsigned char* unambiguousPOSinfoIndex, const bool treatWordAsAmbiguousIfNullPOSvalue);
+
 			
 };
 
 #endif
+
+
 

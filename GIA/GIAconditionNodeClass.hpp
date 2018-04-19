@@ -26,8 +26,8 @@
  * File Name: GIAconditionNodeClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e12b 12-February-2018
- *
+ * Project Version: 3f1a 22-February-2018
+ * /
  *******************************************************************************/
 
 
@@ -64,6 +64,26 @@
 #define TIME_MONTH_NOVEMBER "November"
 #define TIME_MONTH_DECEMBER "December"
 #define TIME_MONTH_NUMBER_OF_TYPES (12)
+static string GIAtimeConditionMonthNameArray[TIME_MONTH_NUMBER_OF_TYPES] = {TIME_MONTH_JANUARY, TIME_MONTH_FEBRUARY, TIME_MONTH_MARCH, TIME_MONTH_APRIL, TIME_MONTH_MAY, TIME_MONTH_JUNE, TIME_MONTH_JULY, TIME_MONTH_AUGUST, TIME_MONTH_SEPTEMBER, TIME_MONTH_OCTOBER, TIME_MONTH_NOVEMBER, TIME_MONTH_DECEMBER};
+
+#define TIME_DAY_OF_WEEK_MONDAY "Monday"
+#define TIME_DAY_OF_WEEK_TUESDAY "Tuesday"
+#define TIME_DAY_OF_WEEK_WEDNESDAY "Wednesday"
+#define TIME_DAY_OF_WEEK_THURSDAY "Thursday"
+#define TIME_DAY_OF_WEEK_FRIDAY "Friday"
+#define TIME_DAY_OF_WEEK_SATURDAY "Saturday"
+#define TIME_DAY_OF_WEEK_SUNDAY "Sunday"
+#define TIME_DAY_OF_WEEK_NUMBER_OF_TYPES (7)
+static string GIAtimeConditionDayOfWeekNameArray[TIME_DAY_OF_WEEK_NUMBER_OF_TYPES] = {TIME_DAY_OF_WEEK_MONDAY, TIME_DAY_OF_WEEK_TUESDAY, TIME_DAY_OF_WEEK_WEDNESDAY, TIME_DAY_OF_WEEK_THURSDAY, TIME_DAY_OF_WEEK_FRIDAY, TIME_DAY_OF_WEEK_SATURDAY, TIME_DAY_OF_WEEK_SUNDAY};
+
+#define TIME_DAY_OF_MONTH_APPEND_TYPE_1 "st"
+#define TIME_DAY_OF_MONTH_APPEND_TYPE_2 "nd"
+#define TIME_DAY_OF_MONTH_APPEND_TYPE_3 "rd"
+#define TIME_DAY_OF_MONTH_APPEND_TYPE_4 "th"
+#define TIME_DAY_OF_MONTH_APPEND_NUMBER_OF_TYPES (4)
+static string GIAtimeConditionDayOfMonthAppendNameArray[TIME_DAY_OF_MONTH_APPEND_NUMBER_OF_TYPES] = {TIME_DAY_OF_MONTH_APPEND_TYPE_1, TIME_DAY_OF_MONTH_APPEND_TYPE_2, TIME_DAY_OF_MONTH_APPEND_TYPE_3, TIME_DAY_OF_MONTH_APPEND_TYPE_4};
+#define TIME_DAY_OF_MONTH_APPEND_LENGTH (2)
+
 
 #define MONDAY (0)
 #define TUESDAY (1)
@@ -101,21 +121,10 @@ public:
 		tenseundefined, present, past, future
 	}tense;
 	*/
+	
 	double second;
 	int hour;
 	int dayOfWeek;
-	/*
-	enum
-	{
-		monday, tuesday, wednesday, thursday, friday, saturday, sunday, dayundefined
-	}dayOfWeek;
-	*/
-	/*
-	enum
-	{
-		january, february, march, april, may, june, july, august, september, october, november, december, monthundefined
-	}month;
-	*/
 	int month;
 	int dayOfMonth;
 	long year;	//in years < 0AD is negative

@@ -26,9 +26,10 @@
  * File Name: GIAnlp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e12b 12-February-2018
+ * Project Version: 3f1a 22-February-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
- *
+ * Description: NLP - external natural language processing
+ * /
  *******************************************************************************/
 
 
@@ -53,7 +54,7 @@ void GIAnlpClass::executeNLPparser(const string inputTextPlainTXTfileName, const
 		NLPParser = translatorVariables->NLPfeatureParser;
 	}
 	bool NLPrelexCompatibilityMode = translatorVariables->NLPrelexCompatibilityMode;
-	#ifdef GIA_SEMANTIC_PARSER_SUPPORT_USE_RELEX_COMPATIBILITY_MODE_FOR_FEATURE_PARSER_TO_GENERATE_ADDITIONAL_RELATIONS_REQUIRED_BY_GIA2
+	#ifdef GIA_SEM_REL_TRANSLATOR_SUPPORT_USE_RELEX_COMPATIBILITY_MODE_FOR_FEATURE_PARSER_TO_GENERATE_ADDITIONAL_RELATIONS_REQUIRED_BY_GIA2
 	if(!parseRelationsOrFeatures)
 	{
 		NLPrelexCompatibilityMode = true;
@@ -214,7 +215,7 @@ void GIAnlpClass::executeNLPparser(const string inputTextPlainTXTfileName, const
 }
 
 
-bool GIAnlpClass::parseNLPparserFile(const string inputTextNLPrelationXMLfileName, const string inputTextNLPfeatureXMLfileName, const bool isQuery, GIAparagraph* firstParagraphInList, const int NLPfeatureParser, const int NLPdependencyRelationsParser, const bool NLPrelexCompatibilityMode)
+bool GIAnlpClass::parseNLPparserFile(const string inputTextNLPrelationXMLfileName, const string inputTextNLPfeatureXMLfileName, const bool isQuery, GIAsentence* firstSentenceInList, const int NLPfeatureParser, const int NLPdependencyRelationsParser, const bool NLPrelexCompatibilityMode)
 {
 	bool result = true;
 
@@ -222,7 +223,7 @@ bool GIAnlpClass::parseNLPparserFile(const string inputTextNLPrelationXMLfileNam
 
 
 	//Parse Features
-	if(!parseNLPparserFeaturesFile(inputTextNLPfeatureXMLfileName, isQuery, firstParagraphInList, NLPfeatureParser, &createNewSentences))
+	if(!parseNLPparserFeaturesFile(inputTextNLPfeatureXMLfileName, isQuery, firstSentenceInList, NLPfeatureParser, &createNewSentences))
 	{
 		result = false;
 	}
@@ -231,7 +232,7 @@ bool GIAnlpClass::parseNLPparserFile(const string inputTextNLPrelationXMLfileNam
 	//Parse Relations
 	if(result)
 	{
-		if(!parseNLPparserRelationsFile(inputTextNLPrelationXMLfileName, isQuery, firstParagraphInList, NLPdependencyRelationsParser, NLPrelexCompatibilityMode, createNewSentences, false))
+		if(!parseNLPparserRelationsFile(inputTextNLPrelationXMLfileName, isQuery, firstSentenceInList, NLPdependencyRelationsParser, NLPrelexCompatibilityMode, createNewSentences, false))
 		{
 			result = false;
 		}
@@ -240,19 +241,19 @@ bool GIAnlpClass::parseNLPparserFile(const string inputTextNLPrelationXMLfileNam
 	return result;
 }
 
-bool GIAnlpClass::parseNLPparserFeaturesFile(const string inputTextNLPfeatureXMLfileName, const bool isQuery, GIAparagraph* firstParagraphInList, const int NLPfeatureParser, bool* createNewSentences)
+bool GIAnlpClass::parseNLPparserFeaturesFile(const string inputTextNLPfeatureXMLfileName, const bool isQuery, GIAsentence* firstSentenceInList, const int NLPfeatureParser, bool* createNewSentences)
 {
 	bool result = true;
 
 	#ifdef GIA_RELEX
 	if(NLPfeatureParser == GIA_NLP_PARSER_RELEX)
 	{
-		#ifdef GIA_SEMANTIC_PARSER_SUPPORT_USE_RELEX_COMPATIBILITY_MODE_FOR_FEATURE_PARSER_TO_GENERATE_ADDITIONAL_RELATIONS_REQUIRED_BY_GIA2
-		bool NLPrelexCompatibilityMode = true;		//GIA_SEMANTIC_PARSER_SUPPORT_USE_RELEX_COMPATIBILITY_MODE_FOR_FEATURE_PARSER_TO_GENERATE_ADDITIONAL_RELATIONS_REQUIRED_BY_GIA2 - use stanford compatibilty mode only when parsing features, and only add special relations; RELATION_TYPE_MODAL_AUX, RELATION_TYPE_PASSIVE_AUX, RELATION_TYPE_COPULA, RELATION_TYPE_DETERMINER
+		#ifdef GIA_SEM_REL_TRANSLATOR_SUPPORT_USE_RELEX_COMPATIBILITY_MODE_FOR_FEATURE_PARSER_TO_GENERATE_ADDITIONAL_RELATIONS_REQUIRED_BY_GIA2
+		bool NLPrelexCompatibilityMode = true;		//GIA_SEM_REL_TRANSLATOR_SUPPORT_USE_RELEX_COMPATIBILITY_MODE_FOR_FEATURE_PARSER_TO_GENERATE_ADDITIONAL_RELATIONS_REQUIRED_BY_GIA2 - use stanford compatibilty mode only when parsing features, and only add special relations; GIA_SYN_REL_TRANSLATOR_RELATION_TYPE_MODAL_AUX, GIA_SYN_REL_TRANSLATOR_RELATION_TYPE_PASSIVE_AUX, GIA_SYN_REL_TRANSLATOR_RELATION_TYPE_COPULA, GIA_SYN_REL_TRANSLATOR_RELATION_TYPE_DETERMINER
 		#else
 		bool NLPrelexCompatibilityMode = false;		//irrelevant (not used) - only used when parsing syntatic dependency relations of a Relex file
 		#endif
-		if(!parseRelexFile(inputTextNLPfeatureXMLfileName, isQuery, firstParagraphInList, false, true, NLPrelexCompatibilityMode,* createNewSentences, false))
+		if(!parseRelexFile(inputTextNLPfeatureXMLfileName, isQuery, firstSentenceInList, false, true, NLPrelexCompatibilityMode,* createNewSentences, false))
 		{
 			result = false;
 		}
@@ -262,14 +263,14 @@ bool GIAnlpClass::parseNLPparserFeaturesFile(const string inputTextNLPfeatureXML
 	#ifdef GIA_STANFORD_CORENLP
 	if(NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP)
 	{
-		if(!parseStanfordCoreNLPfile(inputTextNLPfeatureXMLfileName, isQuery, firstParagraphInList, false, true,* createNewSentences, false))
+		if(!parseStanfordCoreNLPfile(inputTextNLPfeatureXMLfileName, isQuery, firstSentenceInList, false, true,* createNewSentences, false))
 		{
 			result = false;
 		}
 		*createNewSentences = false;
 	}
 	#endif
-	#ifndef GIA_REDISTRIBUTE_STANFORD_RELATIONS_QUERY_VARIABLE_DEBUG_DO_NOT_MAKE_FINAL_CHANGES_YET
+	#ifndef GIA_SYN_REL_TRANSLATOR_REDISTRIBUTE_STANFORD_RELATIONS_QUERY_VARIABLE_DEBUG_DO_NOT_MAKE_FINAL_CHANGES_YET
 	#ifdef GIA_STANFORD_PARSER
 	if(NLPfeatureParser == GIA_NLP_PARSER_STANFORD_PARSER)
 	{
@@ -290,14 +291,14 @@ bool GIAnlpClass::parseNLPparserFeaturesFile(const string inputTextNLPfeatureXML
 	return result;
 }
 
-bool GIAnlpClass::parseNLPparserRelationsFile(const string inputTextNLPrelationXMLfileName, const bool isQuery, GIAparagraph* firstParagraphInList, const int NLPdependencyRelationsParser, const bool NLPrelexCompatibilityMode, const bool createNewSentences, const bool onlyParseIfCorpusLookupFailed)
+bool GIAnlpClass::parseNLPparserRelationsFile(const string inputTextNLPrelationXMLfileName, const bool isQuery, GIAsentence* firstSentenceInList, const int NLPdependencyRelationsParser, const bool NLPrelexCompatibilityMode, const bool createNewSentences, const bool onlyParseIfCorpusLookupFailed)
 {
 	bool result = true;
 
 	#ifdef GIA_RELEX
 	if(NLPdependencyRelationsParser == GIA_NLP_PARSER_RELEX)
 	{
-		if(!parseRelexFile(inputTextNLPrelationXMLfileName, isQuery, firstParagraphInList, true, false, NLPrelexCompatibilityMode, createNewSentences, onlyParseIfCorpusLookupFailed))
+		if(!parseRelexFile(inputTextNLPrelationXMLfileName, isQuery, firstSentenceInList, true, false, NLPrelexCompatibilityMode, createNewSentences, onlyParseIfCorpusLookupFailed))
 		{
 			result = false;
 		}
@@ -306,7 +307,7 @@ bool GIAnlpClass::parseNLPparserRelationsFile(const string inputTextNLPrelationX
 	#ifdef GIA_STANFORD_CORENLP
 	if(NLPdependencyRelationsParser == GIA_NLP_PARSER_STANFORD_CORENLP)
 	{
-		if(!parseStanfordCoreNLPfile(inputTextNLPrelationXMLfileName, isQuery, firstParagraphInList, true, false, createNewSentences, onlyParseIfCorpusLookupFailed))
+		if(!parseStanfordCoreNLPfile(inputTextNLPrelationXMLfileName, isQuery, firstSentenceInList, true, false, createNewSentences, onlyParseIfCorpusLookupFailed))
 		{
 			result = false;
 		}
@@ -315,7 +316,7 @@ bool GIAnlpClass::parseNLPparserRelationsFile(const string inputTextNLPrelationX
 	#ifdef GIA_STANFORD_PARSER
 	if(NLPdependencyRelationsParser == GIA_NLP_PARSER_STANFORD_PARSER)
 	{
-		if(!parseStanfordParserFile(inputTextNLPrelationXMLfileName, isQuery, firstParagraphInList, createNewSentences, onlyParseIfCorpusLookupFailed))
+		if(!parseStanfordParserFile(inputTextNLPrelationXMLfileName, isQuery, firstSentenceInList, createNewSentences, onlyParseIfCorpusLookupFailed))
 		{
 			result = false;
 		}
@@ -326,12 +327,10 @@ bool GIAnlpClass::parseNLPparserRelationsFile(const string inputTextNLPrelationX
 }
 
 #ifdef GIA_RELEX
-bool GIAnlpClass::parseRelexFile(const string inputTextNLPrelationXMLfileName, const bool isQuery, GIAparagraph* firstParagraphInList, const bool parseRelations, const bool parseFeatures, const bool NLPrelexCompatibilityMode, const bool createNewSentences, const bool onlyParseIfCorpusLookupFailed)
+bool GIAnlpClass::parseRelexFile(const string inputTextNLPrelationXMLfileName, const bool isQuery, GIAsentence* firstSentenceInList, const bool parseRelations, const bool parseFeatures, const bool NLPrelexCompatibilityMode, const bool createNewSentences, const bool onlyParseIfCorpusLookupFailed)
 {
 	bool result = true;
 
-	GIAparagraph* currentParagraph = firstParagraphInList;
-	GIAsentence* firstSentenceInList = firstParagraphInList->firstSentenceInList;
 	GIAsentence* currentSentence = firstSentenceInList;
 
 	XMLparserTag* firstTagInXMLFile = new XMLparserTag();
@@ -342,146 +341,120 @@ bool GIAnlpClass::parseRelexFile(const string inputTextNLPrelationXMLfileName, c
 
 	if(result)
 	{
-		#ifdef GIA_RELEX_UPDATE_ADD_PARAGRAPH_TAGS
-		XMLparserTag* currentTag2 = firstTagInXMLFile;
-		currentTag2 = XMLparserClass.parseTagDownALevel(currentTag2, Relex_CFF_XML_TAG_nlparse, &result);
+		XMLparserTag* currentTag = firstTagInXMLFile;
+		currentTag = XMLparserClass.parseTagDownALevel(currentTag, Relex_CFF_XML_TAG_nlparse, &result);
+		
 		if(result)
 		{
 			//now for every sentence;
-			while(currentTag2->nextTag != NULL)
+			while(currentTag->nextTag != NULL)
 			{
-				if(currentTag2->name == Relex_CFF_XML_TAG_paragraph)
+				if(currentTag->name == Relex_CFF_XML_TAG_sentence)
 				{
-					XMLparserTag* currentTag = currentTag2;
-					currentTag = XMLparserClass.parseTagDownALevel(currentTag, Relex_CFF_XML_TAG_paragraph, &result);
-		#else
-					XMLparserTag* currentTag = firstTagInXMLFile;
-					currentTag = XMLparserClass.parseTagDownALevel(currentTag, Relex_CFF_XML_TAG_nlparse, &result);
-		#endif
-
-					if(result)
+					if(!onlyParseIfCorpusLookupFailed || !(currentSentence->semanticParserSuccessful))
 					{
-						//now for every sentence;
-						while(currentTag->nextTag != NULL)
+						//locate and record sentence index
+						XMLparserAttribute* firstAttributeInSentenceTag = currentTag->firstAttribute;
+						XMLparserAttribute* currentAttributeInSentenceTag = firstAttributeInSentenceTag;
+						bool foundSentenceIndexAttribute = false;
+						while(currentAttributeInSentenceTag->nextAttribute != NULL)
 						{
-							if(currentTag->name == Relex_CFF_XML_TAG_sentence)
+							if(currentAttributeInSentenceTag->name == Relex_CFF_XML_ATTRIBUTE_index)
 							{
-								if(!onlyParseIfCorpusLookupFailed || !(currentSentence->semanticParserSuccessful))
-								{
-									//locate and record sentence index
-									XMLparserAttribute* firstAttributeInSentenceTag = currentTag->firstAttribute;
-									XMLparserAttribute* currentAttributeInSentenceTag = firstAttributeInSentenceTag;
-									bool foundSentenceIndexAttribute = false;
-									while(currentAttributeInSentenceTag->nextAttribute != NULL)
-									{
-										if(currentAttributeInSentenceTag->name == Relex_CFF_XML_ATTRIBUTE_index)
-										{
-											int sentenceIndex = SHAREDvars.convertStringToInt(currentAttributeInSentenceTag->value);
-											currentSentence->sentenceIndex = sentenceIndex;
-											foundSentenceIndexAttribute = true;
-										}
-										currentAttributeInSentenceTag = currentAttributeInSentenceTag->nextAttribute;
-									}
-									if(!foundSentenceIndexAttribute)
-									{
-										cerr << "error: sentence index attribute expected" << endl;
-										exit(EXIT_ERROR);
-									}
-
-									XMLparserTag* firstTagInSentence;
-									firstTagInSentence = XMLparserClass.parseTagDownALevel(currentTag, Relex_CFF_XML_TAG_sentence, &result);
-									XMLparserTag* firstTagInFirstParse;
-									firstTagInFirstParse = XMLparserClass.parseTagDownALevel(firstTagInSentence, Relex_CFF_XML_TAG_parse, &result);
-
-									if(result)
-									{
-										XMLparserTag* currentTagInParse = firstTagInFirstParse;
-										while(currentTagInParse->nextTag != NULL)
-										{
-
-											if(currentTagInParse->name == Relex_CFF_XML_TAG_features)
-											{
-												if(parseFeatures)
-												{
-													int numberOfWordsInSentence = 0;
-													GIAnlpParser.GIATHparseRelexFeaturesText(&(currentTagInParse->value), currentSentence, &numberOfWordsInSentence);
-													#ifdef GIA_RECORD_MAXIMUM_NUMBER_OF_WORDS_IN_SENTENCE
-													currentSentence->numberOfWordsInSentence = numberOfWordsInSentence;
-													#endif
-													if(isQuery)
-													{
-														#ifdef GIA_QUERIES_MUST_BE_QUESTIONS
-														if(!(currentSentence->isQuestion))
-														{
-															cerr << "error: GIA query is not a question" << endl;
-															exit(EXIT_ERROR);
-														}
-														#endif
-													}
-												}
-											}
-											else if(currentTagInParse->name == Relex_CFF_XML_TAG_relations)
-											{
-												if(parseRelations)
-												{
-													#ifdef GIA_RECORD_MAXIMUM_NUMBER_OF_WORDS_IN_SENTENCE_OR_MAX_FEATURE_INDEX
-													int numberOfWordsInSentence = currentSentence->numberOfWordsInSentence;
-													#else
-													int numberOfWordsInSentence = 0;
-													#endif
-													GIAnlpParser.GIATHparseRelexRelationsText(&(currentTagInParse->value), currentSentence, &numberOfWordsInSentence, NLPrelexCompatibilityMode);
-													#ifdef GIA_RECORD_MAX_FEATURE_INDEX
-													currentSentence->numberOfWordsInSentence = numberOfWordsInSentence;
-													#endif
-												}
-												#ifdef GIA_SEMANTIC_PARSER_SUPPORT_USE_RELEX_COMPATIBILITY_MODE_FOR_FEATURE_PARSER_TO_GENERATE_ADDITIONAL_RELATIONS_REQUIRED_BY_GIA2
-												if(!parseRelations && NLPrelexCompatibilityMode)
-												{
-													int numberOfWordsInSentence = 0;
-													bool featuresNotPreviouslyFilled = false;	//NB featuresNotPreviouslyFilled could be set to true as secondary relations are only used to create GIA2 semantic relations, and as such lemma information is disgarded [only feature indicies are important]
-													string relationsText = currentTagInParse->value;
-													if(relationsText[0] == '\n')
-													{
-														relationsText = relationsText.substr(1, (relationsText.length() -1));
-													}
-
-													GIAnlpParser.GIATHparseStanfordParserRelationsText(&relationsText, currentSentence, &numberOfWordsInSentence, featuresNotPreviouslyFilled, false, NLPrelexCompatibilityMode);
-												}
-												#endif
-											}
-
-											currentTagInParse = currentTagInParse->nextTag;
-										}
-
-									}
-
-									if(createNewSentences)
-									{
-										GIAsentence* newSentence = new GIAsentence();
-										newSentence->previous = currentSentence;
-										currentSentence->next = newSentence;
-									}
-								}
-
-								currentSentence = currentSentence->next;
-
+								int sentenceIndex = SHAREDvars.convertStringToInt(currentAttributeInSentenceTag->value);
+								currentSentence->sentenceIndex = sentenceIndex;
+								foundSentenceIndexAttribute = true;
 							}
-							currentTag = currentTag->nextTag;
+							currentAttributeInSentenceTag = currentAttributeInSentenceTag->nextAttribute;
+						}
+						if(!foundSentenceIndexAttribute)
+						{
+							cerr << "error: sentence index attribute expected" << endl;
+							exit(EXIT_ERROR);
 						}
 
+						XMLparserTag* firstTagInSentence;
+						firstTagInSentence = XMLparserClass.parseTagDownALevel(currentTag, Relex_CFF_XML_TAG_sentence, &result);
+						XMLparserTag* firstTagInFirstParse;
+						firstTagInFirstParse = XMLparserClass.parseTagDownALevel(firstTagInSentence, Relex_CFF_XML_TAG_parse, &result);
+
+						if(result)
+						{
+							XMLparserTag* currentTagInParse = firstTagInFirstParse;
+							while(currentTagInParse->nextTag != NULL)
+							{
+
+								if(currentTagInParse->name == Relex_CFF_XML_TAG_features)
+								{
+									if(parseFeatures)
+									{
+										int numberOfWordsInSentence = 0;
+										GIAnlpParser.GIATHparseRelexFeaturesText(&(currentTagInParse->value), currentSentence, &numberOfWordsInSentence);
+										#ifdef GIA_RECORD_MAXIMUM_NUMBER_OF_WORDS_IN_SENTENCE
+										currentSentence->numberOfWordsInSentence = numberOfWordsInSentence;
+										#endif
+										if(isQuery)
+										{
+											#ifdef GIA_QUERIES_MUST_BE_QUESTIONS
+											if(!(currentSentence->isQuestion))
+											{
+												cerr << "error: GIA query is not a question" << endl;
+												exit(EXIT_ERROR);
+											}
+											#endif
+										}
+									}
+								}
+								else if(currentTagInParse->name == Relex_CFF_XML_TAG_relations)
+								{
+									if(parseRelations)
+									{
+										#ifdef GIA_RECORD_MAXIMUM_NUMBER_OF_WORDS_IN_SENTENCE_OR_MAX_FEATURE_INDEX
+										int numberOfWordsInSentence = currentSentence->numberOfWordsInSentence;
+										#else
+										int numberOfWordsInSentence = 0;
+										#endif
+										GIAnlpParser.GIATHparseRelexRelationsText(&(currentTagInParse->value), currentSentence, &numberOfWordsInSentence, NLPrelexCompatibilityMode);
+										#ifdef GIA_RECORD_MAX_FEATURE_INDEX
+										currentSentence->numberOfWordsInSentence = numberOfWordsInSentence;
+										#endif
+									}
+									#ifdef GIA_SEM_REL_TRANSLATOR_SUPPORT_USE_RELEX_COMPATIBILITY_MODE_FOR_FEATURE_PARSER_TO_GENERATE_ADDITIONAL_RELATIONS_REQUIRED_BY_GIA2
+									if(!parseRelations && NLPrelexCompatibilityMode)
+									{
+										int numberOfWordsInSentence = 0;
+										bool featuresNotPreviouslyFilled = false;	//NB featuresNotPreviouslyFilled could be set to true as secondary relations are only used to create GIA2 semantic relations, and as such lemma information is disgarded [only feature indicies are important]
+										string relationsText = currentTagInParse->value;
+										if(relationsText[0] == '\n')
+										{
+											relationsText = relationsText.substr(1, (relationsText.length() -1));
+										}
+
+										GIAnlpParser.GIATHparseStanfordParserRelationsText(&relationsText, currentSentence, &numberOfWordsInSentence, featuresNotPreviouslyFilled, false, NLPrelexCompatibilityMode);
+									}
+									#endif
+								}
+
+								currentTagInParse = currentTagInParse->nextTag;
+							}
+
+						}
+
+						if(createNewSentences)
+						{
+							GIAsentence* newSentence = new GIAsentence();
+							newSentence->previous = currentSentence;
+							currentSentence->next = newSentence;
+						}
 					}
-		#ifdef GIA_RELEX_UPDATE_ADD_PARAGRAPH_TAGS
-					GIAparagraph* newParagraph = new GIAparagraph();
-					newParagraph->previous = currentParagraph;
-					currentParagraph->next = newParagraph;
-					firstSentenceInList = newParagraph->firstSentenceInList;
-					currentSentence = firstSentenceInList;
-					currentParagraph = currentParagraph->next;
+
+					currentSentence = currentSentence->next;
+
 				}
-				currentTag2 = currentTag2->nextTag;
+				currentTag = currentTag->nextTag;
 			}
+
 		}
-		#endif
 	}
 
 	delete firstTagInXMLFile;
@@ -492,17 +465,10 @@ bool GIAnlpClass::parseRelexFile(const string inputTextNLPrelationXMLfileName, c
 
 
 #ifdef GIA_STANFORD_CORENLP
-bool GIAnlpClass::parseStanfordCoreNLPfile(const string inputTextNLPrelationXMLfileName, const bool isQuery, GIAparagraph* firstParagraphInList, const bool parseRelations, const bool parseFeatures, const bool createNewSentences, const bool onlyParseIfCorpusLookupFailed)
+bool GIAnlpClass::parseStanfordCoreNLPfile(const string inputTextNLPrelationXMLfileName, const bool isQuery, GIAsentence* firstSentenceInList, const bool parseRelations, const bool parseFeatures, const bool createNewSentences, const bool onlyParseIfCorpusLookupFailed)
 {
 	bool result = true;
 
-
-	GIAparagraph* currentParagraph = firstParagraphInList;
-	GIAparagraph* newParagraph = new GIAparagraph();
-	newParagraph->previous = currentParagraph;
-	currentParagraph->next = newParagraph;
-
-	GIAsentence* firstSentenceInList = firstParagraphInList->firstSentenceInList;
 	GIAsentence* currentSentence = firstSentenceInList;
 	
 	XMLparserTag* firstTagInXMLFile = new XMLparserTag();
@@ -579,8 +545,8 @@ bool GIAnlpClass::parseStanfordCoreNLPfile(const string inputTextNLPrelationXMLf
 								{
 									string TagValue = currentTagInToken->value;
 									currentFeatureInList->word = TagValue;
-									#ifndef GIA_REDISTRIBUTE_STANFORD_RELATIONS_QUERY_VARIABLE_DEBUG_DO_NOT_MAKE_FINAL_CHANGES_YET
-									#ifdef GIA_TRANSLATOR_COMPENSATE_FOR_SWITCH_OBJ_SUB_DEFINITION_QUESTIONS_ANOMALY_ADVANCED
+									#ifndef GIA_SYN_REL_TRANSLATOR_REDISTRIBUTE_STANFORD_RELATIONS_QUERY_VARIABLE_DEBUG_DO_NOT_MAKE_FINAL_CHANGES_YET
+									#ifdef GIA_SYN_REL_TRANSLATOR_COMPENSATE_FOR_SWITCH_OBJ_SUB_DEFINITION_QUESTIONS_ANOMALY_ADVANCED
 									if(currentFeatureInList->word == FEATURE_WORD_QUESTIONMARK)
 									{
 										isQuestion = true;
@@ -715,8 +681,8 @@ bool GIAnlpClass::parseStanfordCoreNLPfile(const string inputTextNLPrelationXMLf
 						currentSentence->numberOfWordsInSentence = numberOfWordsInSentence;	//added GIA 2d1a
 						#endif
 
-						#ifndef GIA_REDISTRIBUTE_STANFORD_RELATIONS_QUERY_VARIABLE_DEBUG_DO_NOT_MAKE_FINAL_CHANGES_YET
-						#ifdef GIA_TRANSLATOR_COMPENSATE_FOR_SWITCH_OBJ_SUB_DEFINITION_QUESTIONS_ANOMALY_ADVANCED
+						#ifndef GIA_SYN_REL_TRANSLATOR_REDISTRIBUTE_STANFORD_RELATIONS_QUERY_VARIABLE_DEBUG_DO_NOT_MAKE_FINAL_CHANGES_YET
+						#ifdef GIA_SYN_REL_TRANSLATOR_COMPENSATE_FOR_SWITCH_OBJ_SUB_DEFINITION_QUESTIONS_ANOMALY_ADVANCED
 						if(isQuery)
 						{
 							if(isQuestion)
@@ -815,7 +781,7 @@ bool GIAnlpClass::parseStanfordCoreNLPfile(const string inputTextNLPrelationXMLf
 
 										#ifdef GIA_STANFORD_CORE_NLP_VERSION_2013_04_04_OR_GREATER
 										#ifdef GIA_NLP_PARSER_STANFORD_PARSER_DISABLE_ROOT_RELATION
-										if(currentRelationInList->relationType != RELATION_TYPE_ROOT)
+										if(currentRelationInList->relationType != GIA_SYN_REL_TRANSLATOR_RELATION_TYPE_ROOT)
 										{
 										#endif
 										#endif
@@ -967,16 +933,10 @@ int GIAnlpClass::countSubstring(const std::string& str, const std::string& sub)
 }
 
 
-bool GIAnlpClass::parseStanfordParserFile(const string inputTextNLPrelationXMLfileName, const bool isQuery, GIAparagraph* firstParagraphInList, const bool createNewSentences, const bool onlyParseIfCorpusLookupFailed)
+bool GIAnlpClass::parseStanfordParserFile(const string inputTextNLPrelationXMLfileName, const bool isQuery, GIAsentence* firstSentenceInList, const bool createNewSentences, const bool onlyParseIfCorpusLookupFailed)
 {
 	bool result = true;
 
-	GIAparagraph* currentParagraph = firstParagraphInList;
-	GIAparagraph* newParagraph = new GIAparagraph();
-	newParagraph->previous = currentParagraph;
-	currentParagraph->next = newParagraph;
-
-	GIAsentence* firstSentenceInList = firstParagraphInList->firstSentenceInList;
 	bool parseGIA2file = false;
 	if(!parseStanfordParserFile(inputTextNLPrelationXMLfileName, isQuery, firstSentenceInList, createNewSentences, parseGIA2file, onlyParseIfCorpusLookupFailed))
 	{
@@ -1137,7 +1097,7 @@ bool GIAnlpClass::parseStanfordParserFile(const string inputTextNLPrelationXMLfi
 
 
 #ifdef GIA_OUTPUT_INTERNAL_RELATIONS_IN_RELEX_FORMAT
-void GIAnlpClass::outputInternalRelationsInRelexFormat(const string* nameOfRelexCompactFormatCFFfile, const string* originalInputFileName, GIAparagraph* firstParagraphInList, const int NLPdependencyRelationsParser, const int NLPfeatureParser, const string NLPexeFolderArray[])
+void GIAnlpClass::outputInternalRelationsInRelexFormat(const string* nameOfRelexCompactFormatCFFfile, const string* originalInputFileName, GIAsentence* firstSentenceInList, const int NLPdependencyRelationsParser, const int NLPfeatureParser, const string NLPexeFolderArray[])
 {
 	bool result = true;
 
@@ -1192,82 +1152,58 @@ void GIAnlpClass::outputInternalRelationsInRelexFormat(const string* nameOfRelex
 	newTag1 = new XMLparserTag();
 	currentTagL1->nextTag = newTag1;
 
-	GIAparagraph* currentParagraph = firstParagraphInList;
-	GIAsentence* firstSentenceInList = firstParagraphInList->firstSentenceInList;
-
-	#ifdef GIA_RELEX_UPDATE_ADD_PARAGRAPH_TAGS
-	while(currentParagraph->next != NULL)
+	XMLparserTag* firstTagL1b = currentTagL1;
+	XMLparserTag* currentTagL1b = firstTagL1b;
+	GIAsentence* currentSentence = firstSentenceInList;
+	while(currentSentence->next != NULL)
 	{
-		firstSentenceInList = currentParagraph->firstSentenceInList;
+		string sentenceIndexString = SHAREDvars.convertIntToString(currentSentence->sentenceIndex);
 
-		currentTagL1->name = Relex_CFF_XML_TAG_paragraph;
-		XMLparserTag* firstTagL1b = new XMLparserTag();
-		currentTagL1->firstLowerLevelTag = firstTagL1b;
-	#else
-		XMLparserTag* firstTagL1b = currentTagL1;
-	#endif
+		currentTagL1b->name = Relex_CFF_XML_TAG_sentence;
+		XMLparserTag* firstTagL2 = new XMLparserTag();
+		currentTagL1b->firstLowerLevelTag = firstTagL2;
+		currentAttribute = currentTagL1b->firstAttribute;
+		currentAttribute->name = Relex_CFF_XML_ATTRIBUTE_index;
+		currentAttribute->value = sentenceIndexString;
+		newAttribute = new XMLparserAttribute();
+		currentAttribute->nextAttribute = newAttribute;
+		currentAttribute = currentAttribute->nextAttribute;
+		currentAttribute->name = Relex_CFF_XML_ATTRIBUTE_parses;
+		currentAttribute->value = "1";
+		newAttribute = new XMLparserAttribute();
+		currentAttribute->nextAttribute = newAttribute;
 
-		XMLparserTag* currentTagL1b = firstTagL1b;
-		GIAsentence* currentSentence = firstSentenceInList;
-		while(currentSentence->next != NULL)
-		{
-			string sentenceIndexString = SHAREDvars.convertIntToString(currentSentence->sentenceIndex);
+		XMLparserTag* currentTagL2 = firstTagL2;
+		currentTagL2->name = Relex_CFF_XML_TAG_parse;
+		XMLparserTag* firstTagL3 = new XMLparserTag();
+		currentTagL2->firstLowerLevelTag = firstTagL3;
+		currentAttribute = currentTagL2->firstAttribute;
+		currentAttribute->name = Relex_CFF_XML_ATTRIBUTE_id;
+		currentAttribute->value = "1";
+		newAttribute = new XMLparserAttribute();
+		currentAttribute->nextAttribute = newAttribute;
 
-			currentTagL1b->name = Relex_CFF_XML_TAG_sentence;
-			XMLparserTag* firstTagL2 = new XMLparserTag();
-			currentTagL1b->firstLowerLevelTag = firstTagL2;
-			currentAttribute = currentTagL1b->firstAttribute;
-			currentAttribute->name = Relex_CFF_XML_ATTRIBUTE_index;
-			currentAttribute->value = sentenceIndexString;
-			newAttribute = new XMLparserAttribute();
-			currentAttribute->nextAttribute = newAttribute;
-			currentAttribute = currentAttribute->nextAttribute;
-			currentAttribute->name = Relex_CFF_XML_ATTRIBUTE_parses;
-			currentAttribute->value = "1";
-			newAttribute = new XMLparserAttribute();
-			currentAttribute->nextAttribute = newAttribute;
+		XMLparserTag* currentTagL3 = firstTagL3;
+		currentTagL3->name = Relex_CFF_XML_TAG_features;
+		currentTagL3->value = GIAnlpParser.generateRelexCFFfeatureTagContent(currentSentence->firstFeatureInList);	//fill in currentTagL3->value with features
+		XMLparserTag* newTag3 = new XMLparserTag();
+		currentTagL3->nextTag = newTag3;
+		currentTagL3= currentTagL3->nextTag;
 
-			XMLparserTag* currentTagL2 = firstTagL2;
-			currentTagL2->name = Relex_CFF_XML_TAG_parse;
-			XMLparserTag* firstTagL3 = new XMLparserTag();
-			currentTagL2->firstLowerLevelTag = firstTagL3;
-			currentAttribute = currentTagL2->firstAttribute;
-			currentAttribute->name = Relex_CFF_XML_ATTRIBUTE_id;
-			currentAttribute->value = "1";
-			newAttribute = new XMLparserAttribute();
-			currentAttribute->nextAttribute = newAttribute;
+		currentTagL3->name = Relex_CFF_XML_TAG_relations;
+		currentTagL3->value = GIAnlpParser.generateRelexCFFrelationTagContent(currentSentence->firstRelationInList);	//fill in currentTagL3->value with relations
+		newTag3 = new XMLparserTag();
+		currentTagL3->nextTag = newTag3;
+		currentTagL3= currentTagL3->nextTag;
 
-			XMLparserTag* currentTagL3 = firstTagL3;
-			currentTagL3->name = Relex_CFF_XML_TAG_features;
-			currentTagL3->value = GIAnlpParser.generateRelexCFFfeatureTagContent(currentSentence->firstFeatureInList);	//fill in currentTagL3->value with features
-			XMLparserTag* newTag3 = new XMLparserTag();
-			currentTagL3->nextTag = newTag3;
-			currentTagL3= currentTagL3->nextTag;
+		XMLparserTag* newTag2 = new XMLparserTag();
+		currentTagL2->nextTag = newTag2;
 
-			currentTagL3->name = Relex_CFF_XML_TAG_relations;
-			currentTagL3->value = GIAnlpParser.generateRelexCFFrelationTagContent(currentSentence->firstRelationInList);	//fill in currentTagL3->value with relations
-			newTag3 = new XMLparserTag();
-			currentTagL3->nextTag = newTag3;
-			currentTagL3= currentTagL3->nextTag;
-
-			XMLparserTag* newTag2 = new XMLparserTag();
-			currentTagL2->nextTag = newTag2;
-
-			XMLparserTag* newTag1b = new XMLparserTag();
-			currentTagL1b->nextTag = newTag1b;
-			currentTagL1b =	currentTagL1b->nextTag;
-			currentSentence = currentSentence->next;
-		}
-
-
-
-	#ifdef GIA_RELEX_UPDATE_ADD_PARAGRAPH_TAGS
-		newTag1 = new XMLparserTag();
-		currentTagL1->nextTag = newTag1;
-		currentTagL1 = currentTagL1->nextTag;
-		currentParagraph = currentParagraph->next;
+		XMLparserTag* newTag1b = new XMLparserTag();
+		currentTagL1b->nextTag = newTag1b;
+		currentTagL1b =	currentTagL1b->nextTag;
+		currentSentence = currentSentence->next;
 	}
-	#endif
 
  	if(!XMLparserClass.writeXMLfile(*nameOfRelexCompactFormatCFFfile, firstTagInXMLFile))
  	{

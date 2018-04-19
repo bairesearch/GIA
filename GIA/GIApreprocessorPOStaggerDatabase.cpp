@@ -26,15 +26,15 @@
  * File Name: GIApreprocessorPOStagger.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e12b 12-February-2018
+ * Project Version: 3f1a 22-February-2018
  * Requirements: requires plain text file
- * Description: preprocessor POS tagger
- *
+ * Description: Preprocessor POS tagger database
+ * /
  *******************************************************************************/
 
 
 #include "GIApreprocessorPOStagger.hpp"
-#include "GIAtranslatorDefs.hpp"
+#include "GIAsynRelTranslatorDefs.hpp"
 
 
 
@@ -396,7 +396,7 @@ bool GIApreprocessorPOStaggerDatabaseClass::externalANNexecuteScript(string scri
 string GIApreprocessorPOStaggerDatabaseClass::DBgenerateFileName(vector<unsigned long>* POSambiguityInfoPermutation)
 {
 	//eg network/server/GIAPOStaggerDatabase/ffff/ffff/ffff/ffff/ffff/POSpermutationffffffffffffffffffffff.pos
-	//string serverName = GIAdatabase.DBgenerateServerDatabaseName(&(GIAconnectionistNetworkPOStypeNameAbbreviationArray[firstFeatureInList->GIAsemanticParserPOStype]), fileType, GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_DEFAULT_DATABASE_NAME, GIAposTaggerDatabaseFolderName);
+	//string serverName = GIAdatabase.DBgenerateServerDatabaseName(&(GIAconnectionistNetworkPOStypeNameAbbreviationArray[firstFeatureInList->GIAsemRelTranslatorPOStype]), fileType, GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_DEFAULT_DATABASE_NAME, GIAposTaggerDatabaseFolderName);
 	string serverName = GIAposTaggerDatabaseFolderName;
 	string fileName = serverName;
 
@@ -631,77 +631,6 @@ bool GIApreprocessorPOStaggerDatabaseClass::verifyPOStaggerDatabasePredictionAga
 
 
 
-unsigned char GIApreprocessorPOStaggerDatabaseClass::convertPOSambiguityInfoToIndex(unsigned long POSambiguityInfo)
-{
-	unsigned char POSambiguityInfoIndex = GIA_PREPROCESSOR_POS_TYPE_UNDEFINED;
-	if(!determinePOSambiguityInfoIsAmbiguous(POSambiguityInfo, &POSambiguityInfoIndex, true))
-	{
-		//cout << "unambiguousPOSvalue = " << int(unambiguousPOSvalue) << endl;
-		//cout << "unambiguousPOSvalue = " << int((unsigned char)(char(int(unambiguousPOSvalue)))) << endl;
-	}
-	else
-	{
-		cerr << "GIApreprocessorPOStaggerDatabaseClass::convertPOSambiguityInfoToIndex error: determinePOSambiguityInfoIsAmbiguous; verify that GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY_ONLY_TRAIN_UNAMBIGUOUS_PERMUTATIONS is true" << endl;
-		exit(EXIT_ERROR);
-	}
-	
-	return POSambiguityInfoIndex;
-}
-
-bool GIApreprocessorPOStaggerDatabaseClass::determinePOSambiguityInfoIsAmbiguous(const unsigned long POSambiguityInfo, unsigned char* unambiguousPOSinfoIndex, const bool treatWordAsAmbiguousIfNullPOSvalue)
-{
-	bool ambiguous = false;
-	
-	//cout << "POSambiguityInfo = " << POSambiguityInfo << endl;
-	//cout << "GIA_PREPROCESSOR_POS_TAGGER_DATABASE_POS_NUMBER_OF_TYPES = " << GIA_PREPROCESSOR_POS_TAGGER_DATABASE_POS_NUMBER_OF_TYPES << endl;
-	
-	int numberOfPOStypesRecorded = 0;
-	for(int POStype = 0; POStype<GIA_PREPROCESSOR_POS_TAGGER_DATABASE_POS_NUMBER_OF_TYPES; POStype++)	//GIA_PREPROCESSOR_POS_TYPE_ARRAY_NUMBER_OF_TYPES
-	{
-		bool bitValue = SHAREDvars.getBitValue(POSambiguityInfo, POStype);
-		if(bitValue)
-		{
-			*unambiguousPOSinfoIndex = POStype;
-			numberOfPOStypesRecorded++;
-		}
-	}
-	if(numberOfPOStypesRecorded > 1)
-	{
-		ambiguous = true;
-	}
-	if(POSambiguityInfo == 0)
-	{
-		if(treatWordAsAmbiguousIfNullPOSvalue)
-		{
-			ambiguous = true;
-		}
-		else
-		{
-			*unambiguousPOSinfoIndex = GIA_PREPROCESSOR_POS_TYPE_UNDEFINED;
-		}
-	}
-
-	/*
-	if(!ambiguous)
-	{
-		//this is required when determinePOSambiguityInfoIsAmbiguous is being used to calculate unambiguousPOSvalue for special characters also
-		for(int POStype = 0; POStype<GIA_PREPROCESSOR_POS_TAGGER_DATABASE_POS_NUMBER_OF_TYPES; POStype++)
-		{
-			bool bitValue = SHAREDvars.getBitValue(POSambiguityInfo, POStype);
-			if(bitValue)
-			{
-				*unambiguousPOSinfoIndex = POStype;
-			}
-		}
-	}
-	*/
-	
-	//cout << "POSambiguityInfoIndex = " << int(*unambiguousPOSinfoIndex) << endl;
-				
-	return ambiguous;
-}	
-
-
 
 #ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_AND_MAP_USE_6BIT_INDICES
 char GIApreprocessorPOStaggerDatabaseClass::DBconvertByteToBase64(unsigned char byte)
@@ -793,3 +722,76 @@ unsigned char GIApreprocessorPOStaggerDatabaseClass::DBconvertHexToByte(string h
 	return byte;
 }
 #endif
+
+
+
+unsigned char GIApreprocessorPOStaggerDatabaseClass::convertPOSambiguityInfoToIndex(unsigned long POSambiguityInfo)
+{
+	unsigned char POSambiguityInfoIndex = GIA_PREPROCESSOR_POS_TYPE_UNDEFINED;
+	if(!determinePOSambiguityInfoIsAmbiguous(POSambiguityInfo, &POSambiguityInfoIndex, true))
+	{
+		//cout << "unambiguousPOSvalue = " << int(unambiguousPOSvalue) << endl;
+		//cout << "unambiguousPOSvalue = " << int((unsigned char)(char(int(unambiguousPOSvalue)))) << endl;
+	}
+	else
+	{
+		cerr << "GIApreprocessorPOStaggerDatabaseClass::convertPOSambiguityInfoToIndex error: determinePOSambiguityInfoIsAmbiguous; verify that GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY_ONLY_TRAIN_UNAMBIGUOUS_PERMUTATIONS is true" << endl;
+		exit(EXIT_ERROR);
+	}
+	
+	return POSambiguityInfoIndex;
+}
+
+bool GIApreprocessorPOStaggerDatabaseClass::determinePOSambiguityInfoIsAmbiguous(const unsigned long POSambiguityInfo, unsigned char* unambiguousPOSinfoIndex, const bool treatWordAsAmbiguousIfNullPOSvalue)
+{
+	bool ambiguous = false;
+	
+	//cout << "POSambiguityInfo = " << POSambiguityInfo << endl;
+	//cout << "GIA_PREPROCESSOR_POS_TAGGER_DATABASE_POS_NUMBER_OF_TYPES = " << GIA_PREPROCESSOR_POS_TAGGER_DATABASE_POS_NUMBER_OF_TYPES << endl;
+	
+	int numberOfPOStypesRecorded = 0;
+	for(int POStype = 0; POStype<GIA_PREPROCESSOR_POS_TAGGER_DATABASE_POS_NUMBER_OF_TYPES; POStype++)	//GIA_PREPROCESSOR_POS_TYPE_ARRAY_NUMBER_OF_TYPES
+	{
+		bool bitValue = SHAREDvars.getBitValue(POSambiguityInfo, POStype);
+		if(bitValue)
+		{
+			*unambiguousPOSinfoIndex = POStype;
+			numberOfPOStypesRecorded++;
+		}
+	}
+	if(numberOfPOStypesRecorded > 1)
+	{
+		ambiguous = true;
+	}
+	if(POSambiguityInfo == 0)
+	{
+		if(treatWordAsAmbiguousIfNullPOSvalue)
+		{
+			ambiguous = true;
+		}
+		else
+		{
+			*unambiguousPOSinfoIndex = GIA_PREPROCESSOR_POS_TYPE_UNDEFINED;
+		}
+	}
+
+	/*
+	if(!ambiguous)
+	{
+		//this is required when determinePOSambiguityInfoIsAmbiguous is being used to calculate unambiguousPOSvalue for special characters also
+		for(int POStype = 0; POStype<GIA_PREPROCESSOR_POS_TAGGER_DATABASE_POS_NUMBER_OF_TYPES; POStype++)
+		{
+			bool bitValue = SHAREDvars.getBitValue(POSambiguityInfo, POStype);
+			if(bitValue)
+			{
+				*unambiguousPOSinfoIndex = POStype;
+			}
+		}
+	}
+	*/
+	
+	//cout << "POSambiguityInfoIndex = " << int(*unambiguousPOSinfoIndex) << endl;
+				
+	return ambiguous;
+}	
+

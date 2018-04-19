@@ -1,0 +1,16 @@
+$
+£
+¥
+¢
+dollar
+pound
+yen
+yuan
+cent
+euro
+dollars
+pounds
+yens
+yuans
+cents
+euros

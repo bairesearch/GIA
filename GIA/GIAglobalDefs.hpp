@@ -26,10 +26,10 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3e12b 12-February-2018
+ * Project Version: 3f1a 22-February-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
- *
+ * /
  *
  * 		Dependencies Introduction
  *		=================================
@@ -729,6 +729,7 @@
  *
  *******************************************************************************/
 
+
 #ifndef HEADER_GIA_GLOBAL_DEFS
 #define HEADER_GIA_GLOBAL_DEFS
 
@@ -737,41 +738,143 @@
 #ifdef USE_NLC
 	#define GIA_DISABLE_CROSS_SENTENCE_REFERENCING	//added 2g5a/05-September-2014 - required for NLC 1j2b+, optional for NLC 1k11a+
 #endif
-//#define GIA_SEMANTIC_PARSER
-//#define GIA_PREPROCESSOR_SENTENCE_DISABLE		//NB GIA_PREPROCESSOR_SENTENCE is temporarily enabled for executeGIAonStandardTestScenarios16-GIA3e8c+.sh testing
-
+//#define GIA_SEM_REL_TRANSLATOR	//GIA2
+#define GIA_TXT_REL_TRANSLATOR	//GIA3	//NB GIA_TXT_REL_TRANSLATOR is temporarily enabled for executeGIAonStandardTestScenarios16-GIA3e8c+.sh testing
+	//requires GIA_PREPROCESSOR
+	
 //#define GIA_DEBUG_DISABLE_3f_CODE
-#ifndef GIA_DEBUG_DISABLE_3f_CODE
+#ifndef GIA_DEBUG_DISABLE_3f_CODE	
+	#ifdef GIA_TXT_REL_TRANSLATOR
+		#define GIA_TXT_REL_TRANSLATOR_RULES		
+		#ifdef GIA_TXT_REL_TRANSLATOR_RULES
+						
+			#define GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS
+			#define GIA_DEBUG_TXT_REL_TRANSLATOR_RULES
+			#define GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_RECORD_COMPONENT_PARSED_GROUP_REF_NAME_FOR_PRINT
+			
+			#define GIA_TXT_REL_TRANSLATOR_RULES_END_OF_SENTENCE_STRING (STRING_FULLSTOP)
+			
+			#define GIA_TXT_REL_TRANSLATOR_RULES_LAYER_START (1)
+			#define GIA_TXT_REL_TRANSLATOR_RULES_LOGIC_REFERENCES
+			#define GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_RESTRICT_RECURSION	//mandatory
+			#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_RESTRICT_RECURSION
+				#define GIA_TXT_REL_TRANSLATOR_GROUP_TYPE_MAX_NUMBER_CONSECUTIVE_LAYERS (2)	//prevents infinite loop of groupType referenceSetType="logicReferenceSet/subReferenceSet/etc" (ie groupTypeName="logicReferenceSets/subReferenceSets/etc") parsing	//figure must take into account any intermediary groupType layers, eg logicReferenceSetsOptional:logicReferenceSet
+				#ifdef GIA_TXT_REL_TRANSLATOR_RULES_LOGIC_REFERENCES
+					#define GIA_TXT_REL_TRANSLATOR_GROUP_TYPE_MAX_NUMBER_CONSECUTIVE_LAYERS_LOGIC_REFERENCES (3)
+				#endif
+			#endif
+			
+			#define GIA_TXT_REL_TRANSLATOR_RULES_LOGIC_REFERENCES_QUERIES
+			
+			#define GIA_PREPROCESSOR_INITIALISE_WORD_INDEX_LIST_FROM_LRP_FILES	//this is required to detect all possible pos types for wordList words
+			#define GIA_PREPROCESSOR_REPLACE_VERB_AND_NOUN_LISTS_WITH_VERB_AND_NOUN_LISTS_WITH_VARIANTS
+			#define GIA_TXT_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START		//TESTINGTHIS; optional (ideally should be able to disable this)
+			#define GIA_TXT_REL_TRANSLATOR_RULES_TREAT_UNKNOWN_POSTYPES	//precondition: all optional strings must have a known pos type to be processed (unknown not supported)
+			#ifdef GIA_TXT_REL_TRANSLATOR_RULES_TREAT_UNKNOWN_POSTYPES
+				//#define GIA_TXT_REL_TRANSLATOR_RULES_TREAT_UNKNOWN_POSTYPES_AS_WILDCARDS
+				#define GIA_TXT_REL_TRANSLATOR_RULES_TREAT_UNKNOWN_POSTYPES_AS_NOUNS
+			#endif
+			#define GIA_TXT_REL_TRANSLATOR_RULES_GIA3	//GIA3
+			#ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3
+				//parse GIAtxtRelTranslatorRules.xml file for all semantic relations
+				
+				#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_COLLAPSE_NUMERICAL_WORDS_TO_NUMBERS
 
-	#define GIA_PREPROCESSOR_SENTENCE_DETERMINE_AMBIGUOUS_PREPOSITION_POS_TYPES_BASED_ON_CONTEXT	//3f2a	//uses heuristics to verify preposition pos type - designed to replace the need for a more accurate pos tagger; GIA_PREPROCESSOR_SENTENCE_EXECUTE_PRELIM_POS_TAGGER/GIA_PREPROCESSOR_POS_TAGGER
-	#ifdef GIA_PREPROCESSOR_SENTENCE_DETERMINE_AMBIGUOUS_PREPOSITION_POS_TYPES_BASED_ON_CONTEXT
-		#define GIA_PREPROCESSOR_SENTENCE_DETERMINE_AMBIGUOUS_PREPOSITION_POS_TYPES_BASED_ON_CONTEXT_METHOD1
-		#define GIA_PREPROCESSOR_SENTENCE_DETERMINE_AMBIGUOUS_PREPOSITION_POS_TYPES_BASED_ON_CONTEXT_METHOD2
+				#define GIA_TXT_REL_TRANSLATOR_RULES_GIA3_COLLAPSE_ALIASES_ONLY	//this is required for GIA3 as there is no independent relation distribution stage (to collapse entity names) before which networkIndex nodes are defined
+				
+				#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_STORE_REDUNDANT_SUPERSET_WORD_LISTS	//e.g. record pronoun list, not just specific pronoun lists (not supported by GIA pos tagger; only supported by GIA_TXT_REL_TRANSLATOR_RULES)
+				
+				#define GIA_TXT_REL_TRANSLATOR_RULES_PARSE_SUBREFERENCE_SETS	//mandatory (equivalent to GIA_TXT_REL_TRANSLATOR_RULES_GIA3)
+				//#define GIA_TXT_REL_TRANSLATOR_HYBRID_RECONCILE_REFERENCES_AFTER_SEMANTIC_PARSING_EVERY_SENTENCE	//???
+				
+				//#define GIA_TXT_REL_TRANSLATOR_RULES_GIA3_USE_SEM_REL_TRANSLATOR_PARSER	//optional	//retains sem rel parser as an intermediary translation format
+				#ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3_USE_SEM_REL_TRANSLATOR_PARSER
+					#define GIA_SEM_REL_TRANSLATOR_COMMON
+				#endif
+					
+				//#define GIA_TXT_REL_TRANSLATOR_RULES_GIA3_USE_SYN_REL_TRANSLATOR_FEATURES 	//optional	//retains external nlp for feature detection
+				#ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3_USE_SYN_REL_TRANSLATOR_FEATURES
+					#ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3_USE_SEM_REL_TRANSLATOR_PARSER
+						#define GIA_SEM_REL_TRANSLATOR_GIA2_USE_SYN_REL_TRANSLATOR_FEATURES	//enable syn rel translator features for semantic relation parser GIA2 code
+					#endif
+				#else
+					#define GIA_TRANSLATOR_WITHOUT_SYN_REL_TRANSLATOR_FEATURES
+					#define GIA_TXT_REL_TRANSLATOR_RULES_GIA3_WITHOUT_SYN_REL_TRANSLATOR_FEATURES
+					#define GIA_DISABLE_SYNTACTIC_TRANSLATOR
+					#define GIA_TXT_REL_TRANSLATOR_RULES_ENTITY_GRAMMAR
+				#endif					
+				
+				#define GIA_TXT_REL_TRANSLATOR_STORE_REFERENCE_SETS	//for backwards compatibility
+			#else
+				//parse GIAtxtRelTranslatorRules.xml file for logicReference and referenceSets only (not coded)
+				#define GIA_TXT_REL_TRANSLATOR_HYBRID		//NOT currently supported	//optional: only parses logic references and reference sets - doesn't parse subreference sets (relies on GIA syn/sem translator to parse these)
+			#endif
+			
+			#define GIA_TXT_REL_TRANSLATOR_MAX_NUMBER_OF_SEMANTIC_FUNCTIONS_EXECUTED_PER_GROUP (2)
+
+			//debug (make mandatory):
+			#define GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_QUERY
+			#define GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_SEMANTIC_RELATION_RETURN_FUNCTION_NAME
+			#define GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_SEMANTIC_RELATION_RECORD_AND_CONNECT
+			#define GIA_TXT_REL_TRANSLATOR_RULES_CODE_OPTIONAL
+			//#define GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_MISSING	//not currently used (is it compatible or necessary with the current implementation?)
+			#define GIA_TXT_REL_TRANSLATOR_RULES_CODE_GROUP_PREVIOUS_WORD_POS_TYPE
+			#define GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_REPEAT
+			#define GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_OR
+			#define GIA_TXT_REL_TRANSLATOR_RULES_TREAT_CONJUNCTION_ITEMS_AS_SAME_REFERENCE_SET
+			#define GIA_TXT_REL_TRANSLATOR_RULES_CODE_CASE_INSENSITIVE
+			#define GIA_TXT_REL_TRANSLATOR_RULES_CODE_NUMBERS
+			#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_NUMBERS
+				#define GIA_TXT_REL_TRANSLATOR_RULES_CODE_DATE
+				#define GIA_TXT_REL_TRANSLATOR_RULES_CODE_UNIT
+				#define GIA_TXT_REL_TRANSLATOR_RULES_CODE_MONEY
+				#define GIA_TXT_REL_TRANSLATOR_RULES_CODE_QUANTITY	//reuired for multiple cases
+				#define GIA_TXT_REL_TRANSLATOR_RULES_CODE_MEASURE
+			#endif
+			#define GIA_TXT_REL_TRANSLATOR_RULES_CODE_TITLE
+			#define GIA_TXT_REL_TRANSLATOR_RULES_CODE_PROPERNOUNS
+
+		#else
+			//#define GIA_TXT_REL_TRANSLATOR_HYBRID_DEPRECIATED		//depreciated: superceeded by GIA_TXT_REL_TRANSLATOR_RULES		//depreciated dedicated (hard coded) logic reference / reference set parse code
+			#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_DEPRECIATED
+				#define GIA_TXT_REL_TRANSLATOR_HYBRID
+			#endif
+		#endif
+	#else
+		#define GIA_SEM_REL_TRANSLATOR_GIA2_USE_SYN_REL_TRANSLATOR_FEATURES	//optional	//semantic relation parser uses external synactic parser features
+		#ifndef GIA_SEM_REL_TRANSLATOR_GIA2_USE_SYN_REL_TRANSLATOR_FEATURES
+			#define GIA_TRANSLATOR_WITHOUT_SYN_REL_TRANSLATOR_FEATURES
+		#endif
+	#endif
+#endif
+
+//#define GIA_DEBUG_DISABLE_3e_CODE
+#ifndef GIA_DEBUG_DISABLE_3e_CODE
+							
+	#define GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_SUBJECT_AND_DUMMY_DELIMITER_DISABLE_CHANGES	//used until changes have been debugged	//3e8d
+	#ifndef COMPILE_GIA_GENERATE_POS_TAGGER_DATABASE
+		#define GIA_PREPROCESSOR_POS_TAGGER_DISABLE	//disable prelim pos tagger until GIA/thirdparty pos tagger performance is acceptable
 	#endif
 	
-	//#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DYNAMIC //3f1a	//collapses any two consective words found in same wordlist (ie predicted to be of same pos type); even if this is not 100% accuracy (due to ambiguous POS types) it should be sufficient for GIA pos tagger database training
+	#define GIA_TXT_REL_TRANSLATOR_HYBRID_DETERMINE_AMBIGUOUS_PREPOSITION_POS_TYPES_BASED_ON_CONTEXT	//3e12a	//uses heuristics to verify preposition pos type - designed to replace the need for a more accurate pos tagger; GIA_TXT_REL_TRANSLATOR_HYBRID_EXECUTE_PRELIM_POS_TAGGER/GIA_PREPROCESSOR_POS_TAGGER
+	#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_DETERMINE_AMBIGUOUS_PREPOSITION_POS_TYPES_BASED_ON_CONTEXT
+		#define GIA_TXT_REL_TRANSLATOR_HYBRID_DETERMINE_AMBIGUOUS_PREPOSITION_POS_TYPES_BASED_ON_CONTEXT_METHOD1
+		#define GIA_TXT_REL_TRANSLATOR_HYBRID_DETERMINE_AMBIGUOUS_PREPOSITION_POS_TYPES_BASED_ON_CONTEXT_METHOD2
+	#endif
+	
+	//#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DYNAMIC //3e11a	//collapses any two consective words found in same wordlist (ie predicted to be of same pos type); even if this is not 100% accuracy (due to ambiguous POS types) it should be sufficient for GIA pos tagger database training
 	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_DYNAMIC
 		//#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_COLLAPSE_AUXILIARY_LISTS_TO_VERB_LISTS	//assumes GIA LRP wordlists.txt index file includes auxiliary lists (they are not treated as verbs)
 		//#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_COLLAPSE_AUXILIARY_LISTS_TO_AUXILIARY_LIST	//not yet supported	//assumes GIA LRP wordlists.txt index file includes auxiliary lists (they are not treated as verbs)
 		//#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_COLLAPSE_PREDETERMINER_LIST_TO_DETERMINER_LIST
 	#endif
 	
-#endif
-
-//#define GIA_DEBUG_DISABLE_3e_CODE
-#ifndef GIA_DEBUG_DISABLE_3e_CODE
-							
-	#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_SUBJECT_AND_DUMMY_DELIMITER_DISABLE_CHANGES	//used until changes have been debugged	//3e8d
-	#ifndef COMPILE_GIA_GENERATE_POS_TAGGER_DATABASE
-		#define GIA_PREPROCESSOR_POS_TAGGER_DISABLE	//disable prelim pos tagger until GIA/thirdparty pos tagger performance is acceptable
-	#endif
+	#define GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_DELIMITER_SPECIAL_CASE_DELIMITER_VERB_STATE_SUCCEEDED_BY_NOUN
 	
-	#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_SPECIAL_CASE_DELIMITER_VERB_STATE_SUCCEEDED_BY_NOUN
+	//#define GIA_GRAMMATICAL_WORD_TYPES_EXTENDED	//3e5a	//removed 3e11a - no longer required by GIA pos tagger - use GIAposTag arrays instead	//GIA only; not in wordnet
 	
-	//#define GIA_GRAMMATICAL_WORD_TYPES_EXTENDED	//3e5a	//removed 3f1a - no longer required by GIA pos tagger - use GIAposTag arrays instead	//GIA only; not in wordnet
-	
-	#define GIA_PREPROCESSOR_SENTENCE_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY	//3e8b
-	#define GIA_PREPROCESSOR_SENTENCE_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT (false)
+	#define GIA_TXT_REL_TRANSLATOR_HYBRID_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY	//3e8b
+	#define GIA_TXT_REL_TRANSLATOR_HYBRID_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT (false)
 
 	//#define GIA_PREPROCESSOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY	//disabled as higher level semantic processing of actions interprets all verb variants (regardless of whether they are grammatically strict verbs) as verbs
 	#ifdef GIA_PREPROCESSOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY
@@ -780,35 +883,36 @@
 		#define GIA_PREPROCESSOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE (false)
 	#endif
 	
-	//#ifdef GIA_PREPROCESSOR_SENTENCE	//has not yet been defined
+	#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID
+		#define GIA_TXT_REL_TRANSLATOR_STORE_REFERENCE_SETS	//mandatory with GIA_TXT_REL_TRANSLATOR_HYBRID as hybrid uses reference sets
+		
 		#ifndef GIA_PREPROCESSOR_POS_TAGGER_DISABLE
-			//#ifndef GIA_PREPROCESSOR_SENTENCE_DETERMINE_AMBIGUOUS_PREPOSITION_POS_TYPES_BASED_ON_CONTEXT
-				#define GIA_PREPROCESSOR_SENTENCE_EXECUTE_PRELIM_POS_TAGGER	//3e1a	//either uses third party NLP POS tagger or GIA pos tagger (GIA_PREPROCESSOR_POS_TAGGER)
-				#ifdef GIA_PREPROCESSOR_SENTENCE_EXECUTE_PRELIM_POS_TAGGER
+			//#ifndef GIA_TXT_REL_TRANSLATOR_HYBRID_DETERMINE_AMBIGUOUS_PREPOSITION_POS_TYPES_BASED_ON_CONTEXT
+				#define GIA_TXT_REL_TRANSLATOR_HYBRID_EXECUTE_PRELIM_POS_TAGGER	//3e1a	//either uses third party NLP POS tagger or GIA pos tagger (GIA_PREPROCESSOR_POS_TAGGER)
+				#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_EXECUTE_PRELIM_POS_TAGGER
 					#define GIA_PREPROCESSOR_POS_TAGGER	//3e2a	//GIA pos tagger (optional); else use third party NLP pos tagger
 				#endif
 			//#endif
 		#endif
-		#ifdef GIA_PREPROCESSOR_SENTENCE_EXECUTE_PRELIM_POS_TAGGER
-			//#define GIA_PREPROCESSOR_POS_TAGGER_EXECUTE_BEFORE_LRP	//3e7c	//must set executeGIAgeneratePOStaggerDatabase.sh to execute GIAgeneratePOStaggerDatabase.exe without -lrp
-			//#define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_SET_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
-			#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
+		#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_EXECUTE_PRELIM_POS_TAGGER
+			//#define GIA_TXT_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE_SET_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
+			#define GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
 		#endif
-		#ifndef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
-			#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_PREFERENCE_VERB_OR_NOUN_OVER_ADJECTIVE_POS_AMBIGUITY	//doesnt work as it is unsure whether to select adjective over verb/noun or verb/noun over adjective. Therefore GIA_PREPROCESSOR_SENTENCE must rely on a functioning GIA_PREPROCESSOR_POS_TAGGER
+		#ifndef GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
+			#define GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_PREFERENCE_VERB_OR_NOUN_OVER_ADJECTIVE_POS_AMBIGUITY	//doesnt work as it is unsure whether to select adjective over verb/noun or verb/noun over adjective. Therefore GIA_TXT_REL_TRANSLATOR_HYBRID must rely on a functioning GIA_PREPROCESSOR_POS_TAGGER
 		#endif
-	//#endif
+	#endif
 	
 	#ifdef COMPILE_GIA_GENERATE_POS_TAGGER_DATABASE
 		#define GIA_PREPROCESSOR_POS_TAGGER
 	#endif
 	#ifdef GIA_PREPROCESSOR_POS_TAGGER
 		
-		#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY	//3e9b			//this is now mandatory for GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM and GIA_PREPROCESSOR_POS_TAGGER_DATABASE_MAP databases as POSambiguityInfo is no longer restricted to 8 bit (ie is now 64 bit long) - to maintain database performance (>=GIA3f1a) 
+		#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY	//3e9b			//this is now mandatory for GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM and GIA_PREPROCESSOR_POS_TAGGER_DATABASE_MAP databases as POSambiguityInfo is no longer restricted to 8 bit (ie is now 64 bit long) - to maintain database performance (>=GIA3e11a) 
 		#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY
 			#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY_ONLY_TRAIN_UNAMBIGUOUS_PERMUTATIONS		//With a classification net or file system DB can risk feeding it with bad hypothetical pos permutations (because will take the permutation predicted with the highest hits), but cannot with a neural net (as this would degrade neural net performance; there would be more than 1 bad permutation for every good permutation fed on average)?
 			#ifndef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY_ONLY_TRAIN_UNAMBIGUOUS_PERMUTATIONS
-				//#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY_ASSIGN_WEIGHTS_TO_TRAINED_POS_TYPES	//3f1a - this is required to compensate for always ambiguous POStypes (e.g. auxiliary "have" [can be a verb also]); the more specialised POStype hypothesis (e.g. auxiliary) is assigned a higher weight than the less specialised POStype hypothesis (e.g. verb) - derived from wordlist size
+				//#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY_ASSIGN_WEIGHTS_TO_TRAINED_POS_TYPES	//3e11a - this is required to compensate for always ambiguous POStypes (e.g. auxiliary "have" [can be a verb also]); the more specialised POStype hypothesis (e.g. auxiliary) is assigned a higher weight than the less specialised POStype hypothesis (e.g. verb) - derived from wordlist size
 				#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY_ASSIGN_WEIGHTS_TO_TRAINED_POS_TYPES
 					#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY_ASSIGN_WEIGHTS_TO_TRAINED_POS_TYPES_WEIGHT_STANDARD (1.0)
 					#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY_ASSIGN_WEIGHTS_TO_TRAINED_POS_TYPES_WEIGHT_HIGH (2.0)
@@ -917,8 +1021,6 @@
 			#endif
 		#endif
 		
-		#define GIA_PREPROCESSOR_POS_TAGGER_POS_AMBIGUITY_INFO_UNKNOWN (0)	//NB if POS info unknown (input/wiki text word not found in LRP word lists), then POSambiguityInfoFound = 0
-
 		#ifdef GIA_PREPROCESSOR_POS_TAGGER_INCLUDE_CENTRE_WORD_IN_POS_PERMUTATION
 			#define GIA_PREPROCESSOR_POS_TAGGER_MAX_WORDS_IN_DATABASE_POS_PERMUTATION (GIA_PREPROCESSOR_POS_TAGGER_MAX_CONTEXT_WORDS_IN_DATABASE_POS_PERMUTATION+1)
 		#else
@@ -947,8 +1049,10 @@
 			//#define GIA_PREPROCESSOR_POS_TAGGER_POS_DEBUG
 			//#define GIA_PREPROCESSOR_POS_TAGGER_INITIALISE_WORD_INDEX_LIST_FROM_WIKI_DUMP_TEXT	//NOT USED
 		#endif
-		#define GIA_PREPROCESSOR_POS_TAGGER_INITIALISE_WORD_INDEX_LIST_FROM_LRP_FILES
+		#define GIA_PREPROCESSOR_INITIALISE_WORD_INDEX_LIST_FROM_LRP_FILES
 	#endif
+	
+	#define GIA_PREPROCESSOR_POS_TAGGER_POS_AMBIGUITY_INFO_UNKNOWN (0)	//NB if POS info unknown (input/wiki text word not found in LRP word lists), then POSambiguityInfoFound = 0
 #endif
 
 
@@ -986,18 +1090,19 @@
 				//#define GIA_NEURAL_NETWORK_NON_SEMANTIC	//not used
 				#ifdef GIA_NEURAL_NETWORK_NON_SEMANTIC
 					//#define GIA_NEURAL_NETWORK_USE_ARTIFICIAL_INSTANCE_NEURON_SYNAPSES
-					//#define GIA_NEURAL_NETWORK_NON_SEMANTIC_ACTIVE	//3d4a	//not yet finished (must replace GIA referencing and queries with neural net processing)
+					#ifdef GIA_TXT_REL_TRANSLATOR_STORE_REFERENCE_SETS
+						//#define GIA_NEURAL_NETWORK_NON_SEMANTIC_ACTIVE	//3d4a	//not yet finished (must replace GIA referencing and queries with neural net processing)
+					#endif
 					#ifdef GIA_NEURAL_NETWORK_NON_SEMANTIC_ACTIVE
 						//#assert GIA_NEURAL_NETWORK_USE_ARTIFICIAL_INSTANCE_NEURON_SYNAPSES - NB GIA_NEURAL_NETWORK_NON_SEMANTIC_ACTIVE currently requires GIA_NEURAL_NETWORK_USE_ARTIFICIAL_INSTANCE_NEURON_SYNAPSES (this is not an architectural limitation; the alternative just hasn't been coded)
 						#define GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS_TYPE_UNKNOWN (0)
-						#define GIA_NEURAL_NETWORK_DISABLE_SEMANTIC_TRANSLATOR
+						#define GIA_DISABLE_SEMANTIC_TRANSLATOR
 						#define GIA_NEURAL_NETWORK_ACTIVE
 						//#define GIA_NEURAL_NETWORK_NON_SEMANTIC_CREATE_DIRECT_CONNECTION_BETWEEN_DELIMITER_AND_OBJECT	//not coded or used
 						#define GIA_NEURAL_NETWORK_NON_SEMANTIC_BYPASS_AUXILIARIES
 						#define GIA_NEURAL_NETWORK_NON_SEMANTIC_REPLACE_WORDS_WITH_LEMMAS
 						#define GIA_NEURAL_NETWORK_NON_SEMANTIC_REFERENCE_SET_IDENTIFICATION_MAX_ERROR (1)	//should be dynamic depending on size of reference set (currently set to 1 to take into account mismatch between indefinite/definite determiners for a uniquely identifiable/referenced referenceSet; a/the)	//assume that there are no stray words (e.g. "that")	//FUTURE: need to take into account lemma differences - eg The dog rides the bike. The dog that rode the bike... (rides/rode)
 						#define GIA_DEBUG_NEURAL_NETWORK_ACTIVE
-						//NB GIA_NEURAL_NETWORK_NON_SEMANTIC_ACTIVE requires GIA_PREPROCESSOR_SENTENCE and GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET
 					#endif
 				#endif
 			#endif
@@ -1020,20 +1125,20 @@
 			#endif
 		#endif
 	#endif
-	//#ifdef GIA_PREPROCESSOR_SENTENCE	//not yet defined
-		//#define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_PREPOSITIONS_MUST_SUCCEED_COMMA	//removed 3d5b
-	//#endif
-	#define GIA_PREPROCESSOR_DERIVE_NOUN_VARIANTS
-	#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_SUPPORT_CONSECUTIVE_VERBS	//3d5d
-	//#define GIA_DEBUG_PREPROCESSOR_SENTENCE_RECONCILE_REFERENCES_DISABLE	//temp debug
-	#ifndef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_SUBJECT_AND_DUMMY_DELIMITER_DISABLE_CHANGES
-		#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_SUBJECT_AND_DUMMY_DELIMITER_AND_OBJECT_FIRST_SUBREFERENCE_ONLY	//3d5e
-		#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_SUBJECT_AND_DUMMY_DELIMITER_ONLY	//3d5e
+	#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID	//not yet defined
+		//#define GIA_TXT_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE_PREPOSITIONS_MUST_SUCCEED_COMMA	//removed 3d5b
 	#endif
-	#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_SPECIAL_CASE_DELIMITER_VERB_STATE_SUCCEEDED_BY_NOUN	//3d8b
-		#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_SPECIAL_CASE_DELIMITER_VERB_NOT_PRECEEDED_BY_THAT_WHICH_AND_NOT_PRECEEDED_BY_AUXILIARY_DETECT	//3d5d
-		#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_SPECIAL_CASE_DELIMITER_VERB_NOT_PRECEEDED_BY_THAT_WHICH_AND_NOT_PRECEEDED_BY_AUXILIARY_DETECT
-			//#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITER_SPECIAL_CASE_DELIMITER_VERB_NOT_PRECEEDED_BY_THAT_WHICH_AND_NOT_PRECEEDED_BY_AUXILIARY_IGNORE	//3d5f	//disabled 3e8b (not required because verb case states e.g. "the moved bike..." will be detected based on preceeding determiners, and subsequently ignored as reference set delimiters )
+	#define GIA_PREPROCESSOR_DERIVE_NOUN_VARIANTS
+	#define GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_SUPPORT_CONSECUTIVE_VERBS	//3d5d
+	//#define GIA_DEBUG_PREPROCESSOR_SENTENCE_RECONCILE_REFERENCES_DISABLE	//temp debug
+	#ifndef GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_SUBJECT_AND_DUMMY_DELIMITER_DISABLE_CHANGES
+		#define GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_SUBJECT_AND_DUMMY_DELIMITER_AND_OBJECT_FIRST_SUBREFERENCE_ONLY	//3d5e
+		#define GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_SUBJECT_AND_DUMMY_DELIMITER_ONLY	//3d5e
+	#endif
+	#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_DELIMITER_SPECIAL_CASE_DELIMITER_VERB_STATE_SUCCEEDED_BY_NOUN	//3d8b
+		#define GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_DELIMITER_SPECIAL_CASE_DELIMITER_VERB_NOT_PRECEEDED_BY_THAT_WHICH_AND_NOT_PRECEEDED_BY_AUXILIARY_DETECT	//3d5d
+		#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_DELIMITER_SPECIAL_CASE_DELIMITER_VERB_NOT_PRECEEDED_BY_THAT_WHICH_AND_NOT_PRECEEDED_BY_AUXILIARY_DETECT
+			//#define GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_DELIMITER_SPECIAL_CASE_DELIMITER_VERB_NOT_PRECEEDED_BY_THAT_WHICH_AND_NOT_PRECEEDED_BY_AUXILIARY_IGNORE	//3d5f	//disabled 3e8b (not required because verb case states e.g. "the moved bike..." will be detected based on preceeding determiners, and subsequently ignored as reference set delimiters )
 		#endif
 	#endif
 	#define GIA_PREPROCESSOR_DETERMINE_VERB_CASE_ADDITIONAL_EXTENDED	//activated 3d5f
@@ -1100,7 +1205,7 @@
 #ifndef GIA_DEBUG_DISABLE_3a_CODE
 	
 	//this provides a major architectural change:
-	#define GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS	//creates an artificial have/be entity node for every property/definition connection [required to store time information consistently and reference the connection]	//this is required for GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
+	#define GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS	//creates an artificial have/be entity node for every property/definition connection [required to store time information consistently and reference the connection]	//this is required for GIA_TXT_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE
 	#ifdef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
 		//#define GIA_QUERY_SKIP_OVER_PROPERTY_AND_DEFINITION_RELATIONSHIP_ENTITIES	//this is designed for GIA3 but is not operative (not used for advanced referencing; only used for post processing reference set matching GIA_ENABLE_CONCEPT_ADVANCED_REFERENCING; ie specific concepts)
 		#ifdef GIA_QUERY_SKIP_OVER_PROPERTY_AND_DEFINITION_RELATIONSHIP_ENTITIES
@@ -1134,22 +1239,11 @@
 	#define GIA_PREPROCESSOR
 	#ifdef GIA_PREPROCESSOR
 		//#define GIA_PREPROCESSOR_SUPPORT_PUNCTUATION_MARKS_WITH_PRECEEDING_WHITE_SPACE	//not yet coded: do not currently support punctuation marks with preceeding white space. Currently skip (do not parse) multiple white space/punctuation characters (eg ". "/".."/"  "/" .")	
-		#ifndef USE_NLC
-			#ifdef GIA_NEURAL_NETWORK_NON_SEMANTIC_ACTIVE
-				#define GIA_PREPROCESSOR_SENTENCE	//mandatory
-			#else
-				#ifndef GIA_PREPROCESSOR_POS_TAGGER_DISABLE
-					#define GIA_PREPROCESSOR_SENTENCE	//3a1a	//optional (not reliable due to POS tag ambiguity)
-				#endif
-				#ifndef GIA_PREPROCESSOR_SENTENCE_DISABLE
-					#define GIA_PREPROCESSOR_SENTENCE
-				#endif
-			#endif
-		#endif
+
 		#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_LOAD_WORD_LISTS
-		#ifdef GIA_PREPROCESSOR_SENTENCE
+		#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID
 					
-			//#define GIA_PREPROCESSOR_SENTENCE_TEMPORARY_SENTENCE_INDEX (-2)
+			//#define GIA_TXT_REL_TRANSLATOR_HYBRID_TEMPORARY_SENTENCE_INDEX (-2)
 			#define GIA_PREPROCESSOR_REASSIGN_UNIQUE_SENTENCE_INDICES_FOR_SENTENCES
 			#ifdef GIA_PREPROCESSOR_REASSIGN_UNIQUE_SENTENCE_INDICES_FOR_SENTENCES
 				#define GIA_PREPROCESSOR_ASSIGN_UNIQUE_SENTENCE_INDICES_FOR_SENTENCES
@@ -1158,16 +1252,16 @@
 				#endif
 			#endif
 				
-			#define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
-			#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
+			#define GIA_TXT_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE
+			#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE
 				//#assert defined GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
 
-				#define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_ERROR_CHECKING
-				#define GIA_PREPROCESSOR_SENTENCE_LOGIC_CONJUNCTIONS_ALLOW_INTERMEDIARY_PREPOSITION_AND_VERB_LOGIC_REFERENCES
-				#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_CONJUNCTIONS_ALLOW_INTERMEDIARY_PREPOSITION_AND_VERB_LOGIC_REFERENCES
-					#define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CONJUNCTION_LR_WITH_EMBEDDED_PREPOSITION_VERB_LR	//3a5i
-					#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CONJUNCTION_LR_WITH_EMBEDDED_PREPOSITION_VERB_LR
-						#define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CONJUNCTION_LR_WITH_EMBEDDED_PREPOSITION_VERB_LR_DELETE_IMPLICIT_GOVERNOR
+				#define GIA_TXT_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE_ERROR_CHECKING
+				#define GIA_TXT_REL_TRANSLATOR_HYBRID_LOGIC_CONJUNCTIONS_ALLOW_INTERMEDIARY_PREPOSITION_AND_VERB_LOGIC_REFERENCES
+				#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_LOGIC_CONJUNCTIONS_ALLOW_INTERMEDIARY_PREPOSITION_AND_VERB_LOGIC_REFERENCES
+					#define GIA_TXT_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE_CONJUNCTION_LR_WITH_EMBEDDED_PREPOSITION_VERB_LR	//3a5i
+					#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE_CONJUNCTION_LR_WITH_EMBEDDED_PREPOSITION_VERB_LR
+						#define GIA_TXT_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE_CONJUNCTION_LR_WITH_EMBEDDED_PREPOSITION_VERB_LR_DELETE_IMPLICIT_GOVERNOR
 					#endif
 				#endif
 				
@@ -1181,85 +1275,85 @@
 					//#define GIA_PREPROCESSOR_REASSIGN_UNIQUE_SENTENCE_INDICES_FOR_LOGIC_REFERENCE_VARIABLES_IGNORE_CONNECTIONS_TO_SENTENCE_LOGIC_REFERENCE_SET	//use this if the connection between the logicReference entity and the logicReferenceVariable should have the sentenceIndex of the currentGIApreprocessorSentenceInList rather than that of the logicReferenceVariable 
 				#endif
 				
-				#define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_REMOVE_DOUBLE_WHITE_SPACE
-				#define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_OUTPUT_LOGIC_REFERENCE_SETS_FOR_HIGH_LEVEL_SEMANTIC_PARSE	//3a7a	//OLD: this is not required as the information is contained within GIApreprocessorLogicReference structure and it can be manually derived (without NLP)
-				#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_OUTPUT_LOGIC_REFERENCE_SETS_FOR_HIGH_LEVEL_SEMANTIC_PARSE
+				#define GIA_TXT_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE_REMOVE_DOUBLE_WHITE_SPACE
+				#define GIA_TXT_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE_OUTPUT_LOGIC_REFERENCE_SETS_FOR_HIGH_LEVEL_SEMANTIC_PARSE	//3a7a	//OLD: this is not required as the information is contained within GIAtxtRelTranslatorHybridLogicReference structure and it can be manually derived (without NLP)
+				#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE_OUTPUT_LOGIC_REFERENCE_SETS_FOR_HIGH_LEVEL_SEMANTIC_PARSE
 					#define GIA_PREPROCESSOR_ASSIGN_UNIQUE_SENTENCE_INDICES_FOR_SENTENCES	//mandatory
-					#define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_OUTPUT_LOGIC_REFERENCE_SETS_FOR_HIGH_LEVEL_SEMANTIC_PARSE_SUPPORT_VERB_TENSE
-					//#define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_OUTPUT_LOGIC_REFERENCE_SETS_FOR_HIGH_LEVEL_SEMANTIC_PARSE_VERBOSE
-					#define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_OUTPUT_LOGIC_REFERENCE_SETS_FOR_HIGH_LEVEL_SEMANTIC_PARSE_VERB_DELIMITERS_ONLY	//this is required because NLP doesn't parse "A giadummyrelationshipsubject [logic reference preposition eg considering] a giadummyrelationshipobject."
+					#define GIA_TXT_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE_OUTPUT_LOGIC_REFERENCE_SETS_FOR_HIGH_LEVEL_SEMANTIC_PARSE_SUPPORT_VERB_TENSE
+					//#define GIA_TXT_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE_OUTPUT_LOGIC_REFERENCE_SETS_FOR_HIGH_LEVEL_SEMANTIC_PARSE_VERBOSE
+					#define GIA_TXT_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE_OUTPUT_LOGIC_REFERENCE_SETS_FOR_HIGH_LEVEL_SEMANTIC_PARSE_VERB_DELIMITERS_ONLY	//this is required because NLP doesn't parse "A giadummyrelationshipsubject [logic reference preposition eg considering] a giadummyrelationshipobject."
 				#endif
-				#define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_RECURSION	//mandatory 3a5e //eg It is proposed that [X is Q] but [all [chickens are blue] except for [Tom]], Tom said that [Mary said [the car goes to the fair]], I think that [Tom thinks [I am happy]]
-				//#define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_ABSTRACT_CONJUNCTIONS	//eg eg subsequent_to and before (FUTURE: and -> subsequent_to + before)
-				#define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_SKIP_APPENDED_THAT	//eg Tom said that... ['that' will not be recorded in the logical condition variable]
-				#ifdef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_SKIP_APPENDED_THAT
-					#define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_SKIP_APPENDED_THAT_NAME "that"
-					#define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_SUPPORT_PREPOSITIONS_WITH_THAT
+				#define GIA_TXT_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE_RECURSION	//mandatory 3a5e //eg It is proposed that [X is Q] but [all [chickens are blue] except for [Tom]], Tom said that [Mary said [the car goes to the fair]], I think that [Tom thinks [I am happy]]
+				//#define GIA_TXT_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE_ABSTRACT_CONJUNCTIONS	//eg eg subsequent_to and before (FUTURE: and -> subsequent_to + before)
+				#define GIA_TXT_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE_SKIP_APPENDED_THAT	//eg Tom said that... ['that' will not be recorded in the logical condition variable]
+				#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE_SKIP_APPENDED_THAT
+					#define GIA_TXT_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE_SKIP_APPENDED_THAT_NAME "that"
+					#define GIA_TXT_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE_SUPPORT_PREPOSITIONS_WITH_THAT
 				#endif
 				
-				//#define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_CONJUNCTIONS_ADD_EXPLICIT_SUBJECT_TEXT_FOR_CONJUNCTIONS	//CHECKTHIS (based on splitMathDetectedLineIntoNLPparsablePhrasesLogicalConditionAddExplicitSubjectTextForConjunctions)
-				#define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_ASSUME_PARSING_REFERENCE_VARIABLE_AT_START_OF_SENTENCE	//required for some logic references (eg propositions; "Tom said that B"), but not other logic references (eg regarding; "Regards Q...")
-				#define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_NEW_LOGIC_REFERENCE_CHAR (CHAR_COMMA)
+				//#define GIA_TXT_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE_CONJUNCTIONS_ADD_EXPLICIT_SUBJECT_TEXT_FOR_CONJUNCTIONS	//CHECKTHIS (based on splitMathDetectedLineIntoNLPparsablePhrasesLogicalConditionAddExplicitSubjectTextForConjunctions)
+				#define GIA_TXT_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE_ASSUME_PARSING_REFERENCE_VARIABLE_AT_START_OF_SENTENCE	//required for some logic references (eg propositions; "Tom said that B"), but not other logic references (eg regarding; "Regards Q...")
 			#endif
-			#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET
-			#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET
+			#define GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET
+			#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET
 				//#assert defined GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
 				
-				#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_RECORD_SAME_REFERENCE_SET_DELIMITERS	//this is currently required to process delimiter (eg being/having/verb/preposition) tense, adverbs (eg very near), and adjectives (eg rides fast) using NLP 	
-				#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_RECORD_SAME_REFERENCE_SET_DELIMITERS
-					#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_RECORD_SAME_REFERENCE_SET_DELIMITERS_UPDATE_ENTITY_OLD_METHOD
+				#define GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_RECORD_SAME_REFERENCE_SET_DELIMITERS	//this is currently required to process delimiter (eg being/having/verb/preposition) tense, adverbs (eg very near), and adjectives (eg rides fast) using NLP 	
+				#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_RECORD_SAME_REFERENCE_SET_DELIMITERS
+					#define GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_RECORD_SAME_REFERENCE_SET_DELIMITERS_UPDATE_ENTITY_OLD_METHOD
 				#endif
-				#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_SUB_REFERENCE_SETS	//this improves NLP/GIA translator semantic parser (by reducing the size of the text chunks being processed)
-				#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_SUB_REFERENCE_SETS
-					#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_SUB_REFERENCE_SETS_DELIMITERS	//mandatory	//eg The car had a bike. -> GIAdummyactionsubject + "had " + GIAdummyactionobject
-					#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_SUB_REFERENCE_SETS_DELIMITERS
-						#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITERS_DISCARD_THAT_WHICH
-						#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_DELIMITERS_CONTAIN_VERB_ADJECTIVES	//this is currently required to process verb delimiter adjectives (eg rides fast) using NLP 
+				#define GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_SUB_REFERENCE_SETS	//this improves NLP/GIA translator semantic parser (by reducing the size of the text chunks being processed)
+				#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_SUB_REFERENCE_SETS
+					#define GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_SUB_REFERENCE_SETS_DELIMITERS	//mandatory	//eg The car had a bike. -> GIAdummyactionsubject + "had " + GIAdummyactionobject
+					#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_SUB_REFERENCE_SETS_DELIMITERS
+						#define GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_DELIMITERS_DISCARD_THAT_WHICH
+						#define GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_DELIMITERS_CONTAIN_VERB_ADJECTIVES	//this is currently required to process verb delimiter adjectives (eg rides fast) using NLP 
 					#endif
 				#endif
-				#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT	//this is required a) for third party NLP (as opposed to GIA direct semantic relation parser) and b) to relink logic reference variable entities without a subject/delimiter back to the high level logic reference GIA network structure 
-				#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT
+				#define GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_NLP_TEXT	//this is required a) for third party NLP (as opposed to GIA direct semantic relation parser) and b) to relink logic reference variable entities without a subject/delimiter back to the high level logic reference GIA network structure 
+				#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_NLP_TEXT
 					#ifdef GIA_DISABLE_CROSS_SENTENCE_REFERENCING
-						#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_NO_ADVANCED_REFERENCING	//will be disabled by default
+						#define GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_NO_ADVANCED_REFERENCING	//will be disabled by default
 					#else
-						#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_NO_ADVANCED_REFERENCING
+						#define GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_NO_ADVANCED_REFERENCING
 					#endif
 					
-					#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP "compartmentalises"		//giadummyrelationship	//verify no conflict with NLC_PREPROCESSOR_INTERPRET_SINGLE_WORD_SENTENCES_AS_ACTIONS_DUMMY_TEXT_ACTION	//"do"?
-					#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_SUBJECT "giadummyrelationshipsubject"	//verify no conflict with NLC_PREPROCESSOR_INTERPRET_SINGLE_WORD_SENTENCES_AS_ACTIONS_DUMMY_TEXT_ACTION_SUBJECT	//"they"?
-					#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_OBJECT "giadummyrelationshipobject"	//verify no conflict with NLC_PREPROCESSOR_INTERPRET_SINGLE_WORD_SENTENCES_AS_ACTIONS_DUMMY_TEXT_ACTION_OBJECT	//"this"?
-					#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_FULL_SIZE (1)
-					#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_SUBJECT_FULL_SIZE (2)
-					#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_OBJECT_FULL_SIZE (2)
-					static string giaPreprocessorSentenceReferenceSetAddDummyNLPtextRelationshipFullArray[GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_FULL_SIZE] = {GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP};
-					static string giaPreprocessorSentenceReferenceSetAddDummyNLPtextRelationshipSubjectFullArray[GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_SUBJECT_FULL_SIZE] = {"A", GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_SUBJECT};
-					static string giaPreprocessorSentenceReferenceSetAddDummyNLPtextRelationshipObjectFullArray[GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_OBJECT_FULL_SIZE] = {"a", GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_OBJECT};
-					#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_LEMMA "compartmentalise"
-					#ifndef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_SUBJECT_AND_DUMMY_DELIMITER_ONLY
-						#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_SUBJECT_AND_DUMMY_DELIMITER_AND_DUMMY_OBJECT
+					#define GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP "compartmentalises"		//giadummyrelationship	//verify no conflict with NLC_PREPROCESSOR_INTERPRET_SINGLE_WORD_SENTENCES_AS_ACTIONS_DUMMY_TEXT_ACTION	//"do"?
+					#define GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_SUBJECT "giadummyrelationshipsubject"	//verify no conflict with NLC_PREPROCESSOR_INTERPRET_SINGLE_WORD_SENTENCES_AS_ACTIONS_DUMMY_TEXT_ACTION_SUBJECT	//"they"?
+					#define GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_OBJECT "giadummyrelationshipobject"	//verify no conflict with NLC_PREPROCESSOR_INTERPRET_SINGLE_WORD_SENTENCES_AS_ACTIONS_DUMMY_TEXT_ACTION_OBJECT	//"this"?
+					#define GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_FULL_SIZE (1)
+					#define GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_SUBJECT_FULL_SIZE (2)
+					#define GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_OBJECT_FULL_SIZE (2)
+					static string giaPreprocessorSentenceReferenceSetAddDummyNLPtextRelationshipFullArray[GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_FULL_SIZE] = {GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP};
+					static string giaPreprocessorSentenceReferenceSetAddDummyNLPtextRelationshipSubjectFullArray[GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_SUBJECT_FULL_SIZE] = {"A", GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_SUBJECT};
+					static string giaPreprocessorSentenceReferenceSetAddDummyNLPtextRelationshipObjectFullArray[GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_OBJECT_FULL_SIZE] = {"a", GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_OBJECT};
+					#define GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_LEMMA "compartmentalise"
+					#ifndef GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_SUBJECT_AND_DUMMY_DELIMITER_ONLY
+						#define GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_SUBJECT_AND_DUMMY_DELIMITER_AND_DUMMY_OBJECT
 					#endif
-					#define GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_SUBJECT_AND_DUMMY_DELIMITER_AND_OBJECT	//set reference set as subject/object before semantic relation parse	//this is required to parse object conditions that are parsed by GIA as properties/conditions (instead of actions) of the relationship eg Tom rides to the park ('to' is connected to 'ride') 
-					#ifdef GIA_PREPROCESSOR_SENTENCE_REFERENCE_SET_ADD_DUMMY_SUBJECT_AND_DUMMY_DELIMITER_AND_OBJECT
-						#define GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE_SET_CONJUNCTION_AND_OR_TEXT_TO_REFERENCE_SET_OBJECT_BEFORE_SEMANTIC_RELATION_PARSE
+					#define GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_SUBJECT_AND_DUMMY_DELIMITER_AND_OBJECT	//set reference set as subject/object before semantic relation parse	//this is required to parse object conditions that are parsed by GIA as properties/conditions (instead of actions) of the relationship eg Tom rides to the park ('to' is connected to 'ride') 
+					#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_SUBJECT_AND_DUMMY_DELIMITER_AND_OBJECT
+						#define GIA_TXT_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE_SET_CONJUNCTION_AND_OR_TEXT_TO_REFERENCE_SET_OBJECT_BEFORE_SEMANTIC_RELATION_PARSE
 					#endif
 				#endif	
 			#else
 				#define GIA_PREPROCESSOR_ASSIGN_UNIQUE_SENTENCE_INDICES_FOR_LOGIC_REFERENCE_VARIABLES	//mandatory
 			#endif
-			//#define GIA_PREPROCESSOR_SENTENCE_RECONCILE_REFERENCES_AFTER_SEMANTIC_PARSING_EVERY_SENTENCE	//this is unsupported as each GIApreprocessorSentence will contain multiple GIAsentences
+			//#define GIA_TXT_REL_TRANSLATOR_HYBRID_RECONCILE_REFERENCES_AFTER_SEMANTIC_PARSING_EVERY_SENTENCE	//this is unsupported as each GIApreprocessorSentence will contain multiple GIAsentences
 			//#define GIA_PREPROCESSOR_RECORD_PARSABLE_PHRASE_POSITION_APPROXIMATE	//unimplemented
 			//#define GIA_PREPROCESSOR_SUPPORT_MULTILINE_SENTENCES	//unimplemented
 			//#define GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
 			//#define GIA_DEBUG_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
 			//#define GIA_DEBUG_PREPROCESSOR_SENTENCE_PREMATURE_QUIT	
-			#define GIA_PREPROCESSOR_SENTENCE_PRINT_OUTPUT	//temp debug
+			#define GIA_TXT_REL_TRANSLATOR_HYBRID_PRINT_OUTPUT	//temp debug
 		#endif
 		#define GIA_PREPROCESSOR_INTERMEDIARY_MULTIWORD_FILE_EXTENSION ".intermediary.multiword"
 		#define GIA_PREPROCESSOR_INTERMEDIARY_SENTENCE_FILE_EXTENSION ".intermediary.sentence"
-		#ifdef GIA_PREPROCESSOR_SENTENCE_EXECUTE_PRELIM_POS_TAGGER
+		#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_EXECUTE_PRELIM_POS_TAGGER
 			#define GIA_PREPROCESSOR_INTERMEDIARY_PRELIM_FILE_EXTENSION ".intermediary.prelim"
 		#endif
 		#define GIA_PREPROCESSOR_OUTPUT_FOR_NLP_ONLY_FILE_EXTENSION ".forNLPonly"
+		#define GIA_TXT_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE_NEW_LOGIC_REFERENCE_CHAR (CHAR_COMMA)
 	#endif
 #endif
 
@@ -1298,10 +1392,10 @@
 	#endif
 #endif
 #ifndef GIA_DEBUG_DISABLE_2n_CODE
-	#define GIA_EXPLETIVES	//2n7b
-	#ifdef GIA_EXPLETIVES
-		#define GIA_EXPLETIVES_WORKAROUND_STANFORD_ANOMALY_HAS_ASSIGNMENTS		//2n7b
-		#ifndef GIA_EXPLETIVES_WORKAROUND_STANFORD_ANOMALY_HAS_ASSIGNMENTS
+	#define GIA_TRANSLATOR_EXPLETIVES	//2n7b
+	#ifdef GIA_TRANSLATOR_EXPLETIVES
+		#define GIA_TRANSLATOR_EXPLETIVES_WORKAROUND_STANFORD_ANOMALY_HAS_ASSIGNMENTS		//2n7b
+		#ifndef GIA_TRANSLATOR_EXPLETIVES_WORKAROUND_STANFORD_ANOMALY_HAS_ASSIGNMENTS
 			#define GIA_ADVANCED_REFERENCING_PREVENT_DOUBLE_LINKS_IN_SAME_SENTENCE	//2n7b	//this is only necessary due to faulty NLP relation assignments
 		#endif
 	#endif
@@ -1309,7 +1403,7 @@
 #ifndef GIA_DEBUG_DISABLE_2m_CODE
 	#define GIA_SYNONYMN_DETECTION_DISABLE_DURING_SPECIFIC_CONCEPT_ACTION_LINKING	//2m3a
 	#define GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES	//2m2a
-	#define GIA_TRANSLATOR_INTERPRET_OF_AS_POSSESSIVE_FOR_SUBSTANCES_PLURAL_GOVERNOR	//2m1b
+	#define GIA_SYN_REL_TRANSLATOR_INTERPRET_OF_AS_POSSESSIVE_FOR_SUBSTANCES_PLURAL_GOVERNOR	//2m1b
 	//#define GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_QUALITIES	//added 2m1a, disabled 2m1c, removed 3a1a
 	#define GIA_TRANSLATOR_INTERPRET_OF_AS_DEFINITION_FOR_SUBSTANCES_PROPERNOUN_DEPENDENT //2m1c
 	#define GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DISABLE_PROPERTIES_OR_DEFINITIONS	//2m1a/b
@@ -1323,7 +1417,7 @@
 		#define GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES_DETECT_USER_DECLARED_SUBCLASS_ENTITIES	//2m6a
 	#endif
 	#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DISABLE_PROPERTIES_OR_DEFINITIONS
-		#define GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_ENSURE_DEPENDENT_IS_NOT_ASSIGNED_CONCEPT	//CHECKTHIS
+		#define GIA_SYN_REL_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_ENSURE_DEPENDENT_IS_NOT_ASSIGNED_CONCEPT	//CHECKTHIS
 	#endif
 #endif
 
@@ -1338,35 +1432,35 @@
 #endif
 
 #ifndef GIA_DEBUG_DISABLE_2k_CODE
-	//#ifdef GIA_SEMANTIC_PARSER_SUBSETS	//has not yet been defined
-		#ifndef GIA_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE	//logic reference preprocessor already splits/processes conjunctions
-			//#define GIA_SEMANTIC_PARSER_SUBSETS_OPTIMISE_BASED_ON_CONJUNCTIONS	//2k1a [UNTESTED]		//NB training a connectionist network with this optimisation requires the NLP to directly connect the primary entity (object) in each subphrase to the subject, with the conjunction relations being auxiliary to these connections (not supported by Stanford Parser/CoreNLP at present; to implement a workaround see NLC removeRedundantConditionConjunctions/addConjunctionsConnectedToConditionConjunctionObject for related code)
+	//#ifdef GIA_SEM_REL_TRANSLATOR_SUBSETS	//has not yet been defined
+		#ifndef GIA_TXT_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE	//logic reference preprocessor already splits/processes conjunctions
+			//#define GIA_SEM_REL_TRANSLATOR_SUBSETS_OPTIMISE_BASED_ON_CONJUNCTIONS	//2k1a [UNTESTED]		//NB training a connectionist network with this optimisation requires the NLP to directly connect the primary entity (object) in each subphrase to the subject, with the conjunction relations being auxiliary to these connections (not supported by Stanford Parser/CoreNLP at present; to implement a workaround see NLC removeRedundantConditionConjunctions/addConjunctionsConnectedToConditionConjunctionObject for related code)
 		#endif
-		//#define GIA_SEMANTIC_PARSER_SUBSETS_OPTIMISED_DATABASE	//2k3a	//optionally disabled 3a4a for user friendly output format
-		#ifdef GIA_SEMANTIC_PARSER_SUBSETS_OPTIMISED_DATABASE
-			//#define GIA_SEMANTIC_PARSER_WRITE_SEMANTIC_RELATIONS_UNOPTIMISED_TEXT_CORPUS	//for offline reimplementions of GIA_SEMANTIC_PARSER_SUBSETS_OPTIMISED_DATABASE only
-			#define GIA_SEMANTIC_PARSER_SUBSETS_OPTIMISED_DATABASE_EXTENSIVE	//added 2k3d; record semantic relation tuple files for all non-existant relations
-			#ifdef GIA_SEMANTIC_PARSER_SUBSETS_OPTIMISED_DATABASE_EXTENSIVE
-				//#ifdef GIA_SEMANTIC_PARSER_SUPPORT_BOTH_FAST_CORPUS_LOOKUP_PATH_AND_SLOW_SYNTACTIC_RULE_BASED_PATH	//has not yet been defined
-					#define GIA_SEMANTIC_PARSER_SUBSETS_EXPECT_TO_FIND_DATABASE_FILES_FOR_ALL_FEATURE_PERMUTATIONS	//added 2k3d
+		//#define GIA_SEM_REL_TRANSLATOR_SUBSETS_OPTIMISED_DATABASE	//2k3a	//optionally disabled 3a4a for user friendly output format
+		#ifdef GIA_SEM_REL_TRANSLATOR_SUBSETS_OPTIMISED_DATABASE
+			//#define GIA_SEM_REL_TRANSLATOR_WRITE_SEMANTIC_RELATIONS_UNOPTIMISED_TEXT_CORPUS	//for offline reimplementions of GIA_SEM_REL_TRANSLATOR_SUBSETS_OPTIMISED_DATABASE only
+			#define GIA_SEM_REL_TRANSLATOR_SUBSETS_OPTIMISED_DATABASE_EXTENSIVE	//added 2k3d; record semantic relation tuple files for all non-existant relations
+			#ifdef GIA_SEM_REL_TRANSLATOR_SUBSETS_OPTIMISED_DATABASE_EXTENSIVE
+				//#ifdef GIA_SEM_REL_TRANSLATOR_SUPPORT_BOTH_FAST_CORPUS_LOOKUP_PATH_AND_SLOW_SYNTACTIC_RULE_BASED_PATH	//has not yet been defined
+					#define GIA_SEM_REL_TRANSLATOR_SUBSETS_EXPECT_TO_FIND_DATABASE_FILES_FOR_ALL_FEATURE_PERMUTATIONS	//added 2k3d
 				//#endif
 			#endif
 		#else
-			#define GIA_SEMANTIC_PARSER_SUBSETS_UNOPTIMISED_TEXT_CORPUS	//original GIA2 implementation: semantic relation designation based on text corpus lookup (indexed by POS permutation)
-			#ifdef GIA_SEMANTIC_PARSER_SUBSETS_UNOPTIMISED_TEXT_CORPUS
-				#define GIA_SEMANTIC_PARSER_WRITE_SEMANTIC_RELATIONS_UNOPTIMISED_TEXT_CORPUS
-				//#ifdef GIA_SEMANTIC_PARSER_SUPPORT_BOTH_FAST_CORPUS_LOOKUP_PATH_AND_SLOW_SYNTACTIC_RULE_BASED_PATH	//has not yet been defined
-					#define GIA_SEMANTIC_PARSER_SUBSETS_EXPECT_TO_FIND_DATABASE_FILES_FOR_ALL_FEATURE_PERMUTATIONS	//added 2k3d
+			#define GIA_SEM_REL_TRANSLATOR_SUBSETS_UNOPTIMISED_TEXT_CORPUS	//original GIA2 implementation: semantic relation designation based on text corpus lookup (indexed by POS permutation)
+			#ifdef GIA_SEM_REL_TRANSLATOR_SUBSETS_UNOPTIMISED_TEXT_CORPUS
+				#define GIA_SEM_REL_TRANSLATOR_WRITE_SEMANTIC_RELATIONS_UNOPTIMISED_TEXT_CORPUS
+				//#ifdef GIA_SEM_REL_TRANSLATOR_SUPPORT_BOTH_FAST_CORPUS_LOOKUP_PATH_AND_SLOW_SYNTACTIC_RULE_BASED_PATH	//has not yet been defined
+					#define GIA_SEM_REL_TRANSLATOR_SUBSETS_EXPECT_TO_FIND_DATABASE_FILES_FOR_ALL_FEATURE_PERMUTATIONS	//added 2k3d
 				//#endif
 			#endif
 		#endif
-		#ifdef GIA_SEMANTIC_PARSER_WRITE_SEMANTIC_RELATIONS_UNOPTIMISED_TEXT_CORPUS
-			//#define GIA_SEMANTIC_PARSER_CONNECTIONIST_NETWORK_USE_TEXT_CORPUS_FOR_TEMP_RELATION_DATA_STORAGE	//original GIA2 implementation	//disabled 2k3a
-			//#define GIA_SEMANTIC_PARSER_WRITE_SEMANTIC_RELATIONS_UNOPTIMISED_TEXT_CORPUS_OLD	//disabled 2k3d
+		#ifdef GIA_SEM_REL_TRANSLATOR_WRITE_SEMANTIC_RELATIONS_UNOPTIMISED_TEXT_CORPUS
+			//#define GIA_SEM_REL_TRANSLATOR_CONNECTIONIST_NETWORK_USE_TEXT_CORPUS_FOR_TEMP_RELATION_DATA_STORAGE	//original GIA2 implementation	//disabled 2k3a
+			//#define GIA_SEM_REL_TRANSLATOR_WRITE_SEMANTIC_RELATIONS_UNOPTIMISED_TEXT_CORPUS_OLD	//disabled 2k3d
 		#endif
 	//#endif
 	#ifdef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC_RECORD_AUX_INFO
-		#define GIA_RECORD_POSSESSION_AUXILIARY_HAS_INFORMATION	//added 2k3a	//supported by GIA2 including GIA_SEMANTIC_PARSER_SUBSETS_OPTIMISED_DATABASE (unlike GIA_RECORD_RCMOD_SET_INFORMATION)  //only required to identify subject (primary entity holding math value) in nlp parsable phrase?
+		#define GIA_RECORD_POSSESSION_AUXILIARY_HAS_INFORMATION	//added 2k3a	//supported by GIA2 including GIA_SEM_REL_TRANSLATOR_SUBSETS_OPTIMISED_DATABASE (unlike GIA_RECORD_RCMOD_SET_INFORMATION)  //only required to identify subject (primary entity holding math value) in nlp parsable phrase?
 	#endif
 #endif
 
@@ -1376,8 +1470,8 @@
 		#define GIA_STANFORD_PARSER_VERSION_2015_04_20_BUG_FAILURE_TO_PARSE_SHORT_POSSESSIVE_CASES	//eg "The dog's value."
 	#endif
 	#define GIA_STANFORD_PARSER_AND_CORENLP_VERSION_2014_04_04_OR_GREATER
-	#define GIA_DYNAMICALLY_LINK_FROM_CONDITIONS	//added 2j4a
-	#ifdef GIA_DYNAMICALLY_LINK_FROM_CONDITIONS
+	#define GIA_SYN_REL_TRANSLATOR_DYNAMICALLY_LINK_FROM_CONDITIONS	//added 2j4a
+	#ifdef GIA_SYN_REL_TRANSLATOR_DYNAMICALLY_LINK_FROM_CONDITIONS
 		//#define GIA_DYNAMICALLY_LINK_FROM_CONDITIONS_GENERALISE_ACTION_TYPES	//disabled 2j13b (to only support move function; this supports use of from conditions in other contexts)
 		#define GIA_STANFORD_PARSER_CONNECT_TO_CONDITION_TO_FROM_CONDITION_BUG_GIA_WORKAROUND
 		#ifdef GIA_STANFORD_PARSER_CONNECT_TO_CONDITION_TO_FROM_CONDITION_BUG_GIA_WORKAROUND
@@ -1385,23 +1479,23 @@
 			#define GIA_STANFORD_PARSER_CONNECT_TO_CONDITION_TO_FROM_CONDITION_BUG_GIA_WORKAROUND_GENERALISE_CONDITION_TYPES	//2j7a
 		#endif
 		//#define GIA_STANFORD_PARSER_CONNECT_PREPOSITIONS_TO_ACTION_RATHER_THAN_ACTION_OBJECT_GENERALISE_ACTION_TYPES	//added 2j7a, disable 2j10a for backwards compatibility in GIA output (NB does not improve grammatical correctness of translation, as it just parses that which is ambiguous differently)
-		//#define GIA_LINK_ACTION_CONDITIONS_CORRECT_SAME_REFERENCE_SET		//2j7a, disabled 2j14a for NLC compatibility
+		//#define GIA_SYN_REL_TRANSLATOR_LINK_ACTION_CONDITIONS_CORRECT_SAME_REFERENCE_SET		//2j7a, disabled 2j14a for NLC compatibility
 		//#define GIA_DYNAMICALLY_LINK_FROM_CONDITIONS_ONLY_ACCEPT_AT_CONDITIONS	//not coded
 		#define GIA_STANFORD_PARSER_CONNECT_PREPOSITIONS_TO_ACTION_OBJECT_RATHER_THAN_ACTION	//2j7a	//eg "Move the bike near the car." - note this case is ambigious - note stanford connects the "near" preposition to the car object (instead of the move action)
 	#endif
-	#define GIA_DYNAMICALLY_LINK_ENTITIES_DISABLE_GIA_SEMANTIC_PARSER_SEMANTIC_RELATION_GENERATION	//2j5b
-	//#define GIA_SEMANTIC_PARSER_CREATE_FEATURES_FOR_ARTIFICIAL_ENTITIES	//considered for 2j5a but rejected	//this method is broken as of 3b4a and requires reimplementation
-	#ifndef GIA_SEMANTIC_PARSER_CREATE_FEATURES_FOR_ARTIFICIAL_ENTITIES
-		#define GIA_SEMANTIC_PARSER_CORRECT_POSTAGS_FIX1	//2j5a
-		#define GIA_SEMANTIC_PARSER_CORRECT_POSTAGS_FIX2	//2j5d
+	#define GIA_DYNAMICALLY_LINK_ENTITIES_DISABLE_GIA_SEM_REL_TRANSLATOR_SEMANTIC_RELATION_GENERATION	//2j5b
+	//#define GIA_SEM_REL_TRANSLATOR_CREATE_FEATURES_FOR_ARTIFICIAL_ENTITIES	//depreciated 3f1a	//considered for 2j5a but rejected	//this method is broken as of 3b4a and requires reimplementation
+	#ifndef GIA_SEM_REL_TRANSLATOR_CREATE_FEATURES_FOR_ARTIFICIAL_ENTITIES
+		#define GIA_SEM_REL_TRANSLATOR_CORRECT_POSTAGS_FIX1	//2j5a
+		#define GIA_SEM_REL_TRANSLATOR_CORRECT_POSTAGS_FIX2	//2j5d
 	#endif
 	#ifndef GIA_RECORD_POSSESSION_AUXILIARY_HAS_INFORMATION
-		//#define GIA_RECORD_RCMOD_SET_INFORMATION	//added 2j8a, disabled 2k3a (not supported by GIA_SEMANTIC_PARSER_SUBSETS_OPTIMISED_DATABASE), no longer supported 2l5b 	//was only required to identify subject (primary entity holding math value) in nlp parsable phrase, but possessionAuxiliaryHave is now used for this purpose	//originally implemented 2i16a but rejected
+		//#define GIA_RECORD_RCMOD_SET_INFORMATION	//added 2j8a, disabled 2k3a (not supported by GIA_SEM_REL_TRANSLATOR_SUBSETS_OPTIMISED_DATABASE), no longer supported 2l5b 	//was only required to identify subject (primary entity holding math value) in nlp parsable phrase, but possessionAuxiliaryHave is now used for this purpose	//originally implemented 2i16a but rejected
 	#endif
 #endif
 
 #ifndef GIA_DEBUG_DISABLE_2g_CODE
-	#define GIA_NUMBER_OF	//added 2g9a/24-September-2014
+	#define GIA_TRANSLATOR_NUMBER_OF	//added 2g9a/24-September-2014
 	#ifdef USE_NLC
 		#define GIA_NLC_INTEGRATION	//GIA uses NLCpreprocessorSentence code
 		#ifdef GIA_NLC_INTEGRATION
@@ -1420,14 +1514,14 @@
 		#endif
 	#endif
 	#define GIA_STORE_CONNECTION_SENTENCE_INDEX	//mandatory 3a1a	//added 2f15d/16-July-2014 [required for NLC 1g15a+]
-	#define GIA_REMOVE_REDUNDANT_LOGICAL_CONDITION_ENTITIES	//added 2f13a/14-July-2014
+	#define GIA_SYN_REL_TRANSLATOR_REMOVE_REDUNDANT_LOGICAL_CONDITION_ENTITIES	//added 2f13a/14-July-2014
 	#define GIA_XML_RECORD_ADDITIONAL_VARIABLES
 #endif
 
 #define GIA_CREATE_NON_SPECIFIC_CONCEPTS_FOR_ALL_NETWORK_INDEXES		//mandatory as of 3a1a	//2a7a
 #ifndef GIA_DEBUG_DISABLE_2i_CODE
-	//#ifdef GIA_TRANSLATOR_INTERPRET_OF_AS_POSSESSIVE_FOR_SUBSTANCES	//defined out of scope
-		#define GIA_TRANSLATOR_INTERPRET_OF_AS_POSSESSIVE_FOR_SUBSTANCES_PLURAL_DEPENDENT	//added 2i7e
+	//#ifdef GIA_SYN_REL_TRANSLATOR_INTERPRET_OF_AS_POSSESSIVE_FOR_SUBSTANCES	//defined out of scope
+		#define GIA_SYN_REL_TRANSLATOR_INTERPRET_OF_AS_POSSESSIVE_FOR_SUBSTANCES_PLURAL_DEPENDENT	//added 2i7e
 	//endif
 	#define GIA_PREDETERMINERS	//added 2i34a
 	#define GIA_PREVENT_CONCEPTS_FROM_BEEN_ADDED_AS_CHILDREN_OF_NON_CONCEPTS	//2i20a
@@ -1446,13 +1540,13 @@
 	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_INTRAWORD_PUNCTUATION_MARK
 		#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NLP_PARSABLE_PHRASE_SUPPORT_FILENAMES_WITH_FULLSTOPS_AND_FLOATS_AND_TIMES	//2i18a
 	#endif
-	#define GIA_TRANSLATOR_CONVERT_AMOD_WITH_NUMBERS_TO_QUANTITY_RELATION	//2i12a
+	#define GIA_SYN_REL_TRANSLATOR_CONVERT_AMOD_WITH_NUMBERS_TO_QUANTITY_RELATION	//2i12a
 	#define GIA_TRANSLATOR_DO_NOT_CREATE_CONCEPT_PROPERTIES_FOR_NON_CONCEPT_PARENTS	//2i10a
 	#ifdef GIA_CREATE_NON_SPECIFIC_CONCEPTS_FOR_ALL_NETWORK_INDEXES
 		#ifndef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_DISABLE_PROPERTIES_OR_DEFINITIONS
-			#define GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_PROPERTIES_OR_DEFINITIONS_DYNAMICALLY_LINK_PRENOMINAL_MODIFIERS_OF_NOUNS	//disabled 2m1a	//2i9a	//requires GIA_CREATE_NON_SPECIFIC_CONCEPTS_FOR_ALL_NETWORK_INDEXES (this is required such that only the instance list of a networkIndex need be parsed when tracing both its definitions and properties/conditions)
+			#define GIA_SYN_REL_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_PROPERTIES_OR_DEFINITIONS_DYNAMICALLY_LINK_PRENOMINAL_MODIFIERS_OF_NOUNS	//disabled 2m1a	//2i9a	//requires GIA_CREATE_NON_SPECIFIC_CONCEPTS_FOR_ALL_NETWORK_INDEXES (this is required such that only the instance list of a networkIndex need be parsed when tracing both its definitions and properties/conditions)
 		#endif
-		#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_PROPERTIES_OR_DEFINITIONS_DYNAMICALLY_LINK_PRENOMINAL_MODIFIERS_OF_NOUNS
+		#ifdef GIA_SYN_REL_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_PROPERTIES_OR_DEFINITIONS_DYNAMICALLY_LINK_PRENOMINAL_MODIFIERS_OF_NOUNS
 			#define GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_PROPERTIES_OR_DEFINITIONS_DYNAMICALLY_LINK_PRENOMINAL_MODIFIERS_OF_NOUNS_SWITCH_DEFINITION_LINKS_IF_NON_MATCHING_CONCEPTS	//2i10b - designed to enable compatibility with NLC
 			#define GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_PROPERTIES_OR_DEFINITIONS_DYNAMICALLY_LINK_PRENOMINAL_MODIFIERS_OF_NOUNS_ENSURE_PROPERTY_PARENT_IS_DEFINITE	//2i28a
 			#define GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_PROPERTIES_OR_DEFINITIONS_DYNAMICALLY_LINK_PRENOMINAL_MODIFIERS_OF_NOUNS_ENSURE_PROPERTY_PARENT_IS_CONCEPT_IF_NECESSARY	//2i30a
@@ -1507,9 +1601,9 @@
 //#define GIA_ENABLE_WARNINGS
 
 
-#define GIA_TRANSLATOR_ONLY_MERGE_ENTITY_NODES_WHEN_LINK_PREESTABLISHED_REFERENCES_GIA	//disabled GIA 2c3c [for GIA_SEMANTIC_PARSER_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN], upgraded and reenabled 3c4b
+#define GIA_TRANSLATOR_ONLY_MERGE_ENTITY_NODES_WHEN_LINK_PREESTABLISHED_REFERENCES_GIA	//disabled GIA 2c3c [for GIA_SEM_REL_TRANSLATOR_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN], upgraded and reenabled 3c4b
 
-#define GIA_NON_STANDARD_CONDITION_CONDITION_CONNECTIONS_CONNECT_CONJUNCTIONS_TO_THEIR_RELEVANT_PREPOSITIONS	//required for USE_NLC
+#define GIA_SYN_REL_TRANSLATOR_NON_STANDARD_CONDITION_CONDITION_CONNECTIONS_CONNECT_CONJUNCTIONS_TO_THEIR_RELEVANT_PREPOSITIONS	//required for USE_NLC
 
 //#ifndef GIA_TRANSLATOR_TRANSFORM_THE_ACTION_OF_POSSESSION_EG_HAVING_INTO_A_PROPERTY_BASIC	//requirement removed 2o6a
 	#define GIA_INITIALISE_PREPOSITION_ENTITIES_AT_START_OF_TRANSLATOR	//mandatory 3a1a //assumes GIA_CREATE_NON_SPECIFIC_CONCEPTS_FOR_ALL_NETWORK_INDEXES is true (why is this required?)
@@ -1525,53 +1619,54 @@
 	#define GIA_ASSUME_QUOTES_HAVE_BEEN_REDUCED_TO_SINGLE_WORDS	//added 2i36a
 #endif
 	
-#ifdef GIA_SEMANTIC_PARSER
-	#define GIA_SEMANTIC_PARSER_WRITE_SEMANTIC_RELATIONS
-	#define GIA_SEMANTIC_PARSER_READ_SEMANTIC_RELATIONS		//GIA 2b1a - sets GIA into semantic parser (OLD: corpus) read mode
-	#ifdef GIA_SEMANTIC_PARSER_READ_SEMANTIC_RELATIONS
-		#define GIA_SEMANTIC_PARSER_SUPPORT_BOTH_FAST_CORPUS_LOOKUP_PATH_AND_SLOW_SYNTACTIC_RULE_BASED_PATH
-		#ifdef GIA_SEMANTIC_PARSER_SUPPORT_BOTH_FAST_CORPUS_LOOKUP_PATH_AND_SLOW_SYNTACTIC_RULE_BASED_PATH
-			#ifdef GIA_SEMANTIC_PARSER_WRITE_SEMANTIC_RELATIONS
-				#define GIA_SEMANTIC_PARSER_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
+#ifdef GIA_SEM_REL_TRANSLATOR
+	#define GIA_SEM_REL_TRANSLATOR_COMMON
+	#define GIA_SEM_REL_TRANSLATOR_WRITE_SEMANTIC_RELATIONS
+	#define GIA_SEM_REL_TRANSLATOR_READ_SEMANTIC_RELATIONS		//GIA 2b1a - sets GIA into semantic parser (OLD: corpus) read mode
+	#ifdef GIA_SEM_REL_TRANSLATOR_READ_SEMANTIC_RELATIONS
+		#define GIA_SEM_REL_TRANSLATOR_SUPPORT_BOTH_FAST_CORPUS_LOOKUP_PATH_AND_SLOW_SYNTACTIC_RULE_BASED_PATH
+		#ifdef GIA_SEM_REL_TRANSLATOR_SUPPORT_BOTH_FAST_CORPUS_LOOKUP_PATH_AND_SLOW_SYNTACTIC_RULE_BASED_PATH
+			#ifdef GIA_SEM_REL_TRANSLATOR_WRITE_SEMANTIC_RELATIONS
+				#define GIA_SEM_REL_TRANSLATOR_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
 			#endif
 		#else
-			#define GIA_SEMANTIC_PARSER_DO_NOT_PARSE_DEPENDENCY_RELATION_FILE
-			//#define GIA_SEMANTIC_PARSER_PARSE_PARTIALLY_FILLED_SEMANTIC_RELATIONS
+			#define GIA_SEM_REL_TRANSLATOR_DO_NOT_PARSE_DEPENDENCY_RELATION_FILE
+			//#define GIA_SEM_REL_TRANSLATOR_PARSE_PARTIALLY_FILLED_SEMANTIC_RELATIONS
 		#endif
 	#else
 		//this compilation is for development purposes only:
-		#ifdef GIA_SEMANTIC_PARSER_WRITE_SEMANTIC_RELATIONS
-			#define GIA_SEMANTIC_PARSER_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
-			#ifdef GIA_SEMANTIC_PARSER_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
+		#ifdef GIA_SEM_REL_TRANSLATOR_WRITE_SEMANTIC_RELATIONS
+			#define GIA_SEM_REL_TRANSLATOR_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
+			#ifdef GIA_SEM_REL_TRANSLATOR_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
 				//#define GIA_RECORD_LINK_PREESTABLISHED_REFERENCES_GIA
 			#endif
 			#define GIA_ADVANCED_REFERENCING_DISABLE_LINKING	//do not link references when generating semantic relation text corpus
 		#endif
 	#endif
 
-	#define GIA_SEMANTIC_PARSER_RECORD_DETERMINERS_AS_DEFINITE_INDEFINITE_SPECIFIC
-	#define GIA_SEMANTIC_PARSER_SUPPORT_QUERIES
-	#ifdef GIA_SEMANTIC_PARSER_SUPPORT_QUERIES
-		//new implementation of GIA_SEMANTIC_PARSER_SUPPORT_QUERIES
-		#define GIA_SEMANTIC_PARSER_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_QVAR_AND_IS_QUERY_TAG_TAG_NAME "_$qVarisQuery"
-		#define GIA_SEMANTIC_PARSER_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_QVAR_AND_IS_NAME_QUERY_TAG_TAG_NAME "_$qVarisNameQuery"
-		#define GIA_SEMANTIC_PARSER_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_QVAR_AND_IS_WHICH_OR_EQUIVALENT_WHAT_QUERY_TAG_TAG_NAME "_$qVarisWhichOrEquivalentWhatQuery"
-		#define GIA_SEMANTIC_PARSER_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_QUERY_TAG_TAG_NAME "isQuery"
-		#define GIA_SEMANTIC_PARSER_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_NAME_QUERY_TAG_TAG_NAME "isNameQuery"
-		#define GIA_SEMANTIC_PARSER_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_WHICH_OR_EQUIVALENT_WHAT_QUERY_TAG_TAG_NAME "isWhichOrEquivalentWhatQuery"
+	#define GIA_SEM_REL_TRANSLATOR_RECORD_DETERMINERS_AS_DEFINITE_INDEFINITE_SPECIFIC
+	#define GIA_SEM_REL_TRANSLATOR_SUPPORT_QUERIES
+	#ifdef GIA_SEM_REL_TRANSLATOR_SUPPORT_QUERIES
+		//new implementation of GIA_SEM_REL_TRANSLATOR_SUPPORT_QUERIES
+		#define GIA_SEM_REL_TRANSLATOR_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_QVAR_AND_IS_QUERY_TAG_TAG_NAME "_$qVarisQuery"
+		#define GIA_SEM_REL_TRANSLATOR_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_QVAR_AND_IS_NAME_QUERY_TAG_TAG_NAME "_$qVarisNameQuery"
+		#define GIA_SEM_REL_TRANSLATOR_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_QVAR_AND_IS_WHICH_OR_EQUIVALENT_WHAT_QUERY_TAG_TAG_NAME "_$qVarisWhichOrEquivalentWhatQuery"
+		#define GIA_SEM_REL_TRANSLATOR_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_QUERY_TAG_TAG_NAME "isQuery"
+		#define GIA_SEM_REL_TRANSLATOR_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_NAME_QUERY_TAG_TAG_NAME "isNameQuery"
+		#define GIA_SEM_REL_TRANSLATOR_SUPPORT_QUERIES_SPECIAL_SEMANTIC_RELATION_IS_WHICH_OR_EQUIVALENT_WHAT_QUERY_TAG_TAG_NAME "isWhichOrEquivalentWhatQuery"
 	#endif
-	#define GIA_SEMANTIC_PARSER_SUBSETS	//2d1a	//switches between just using the primary sentence files generated by GIA_SEMANTIC_PARSER_WRITE_SEMANTIC_RELATIONS_UNOPTIMISED_TEXT_CORPUS and the subset sentence files generated by either
-	#ifdef GIA_SEMANTIC_PARSER_SUBSETS
+	#define GIA_SEM_REL_TRANSLATOR_SUBSETS	//2d1a	//switches between just using the primary sentence files generated by GIA_SEM_REL_TRANSLATOR_WRITE_SEMANTIC_RELATIONS_UNOPTIMISED_TEXT_CORPUS and the subset sentence files generated by either
+	#ifdef GIA_SEM_REL_TRANSLATOR_SUBSETS
 		#define GIA_RECORD_MAXIMUM_NUMBER_OF_WORDS_IN_SENTENCE	//NB numberOfWordsInSentence is only currently used by GIA2
-		#define GIA_SEMANTIC_PARSER_DATABASE_FILESYSTEM_USE_FLAT_FILE	//temporarily enabled for debugging
-		#define GIA_SEMANTIC_PARSER_CONNECTIONIST_NETWORK_MIN_SUBSET_SIZE (2)	//ie 2 words in subset is the minimimum	//CHECKTHIS
+		#define GIA_SEM_REL_TRANSLATOR_DATABASE_FILESYSTEM_USE_FLAT_FILE	//temporarily enabled for debugging
+		#define GIA_SEM_REL_TRANSLATOR_CONNECTIONIST_NETWORK_MIN_SUBSET_SIZE (2)	//ie 2 words in subset is the minimimum	//CHECKTHIS
 	#else
-		#define GIA_SEMANTIC_PARSER_DATABASE_FILESYSTEM_USE_FLAT_FILE
+		#define GIA_SEM_REL_TRANSLATOR_DATABASE_FILESYSTEM_USE_FLAT_FILE
 	#endif
-	#ifdef GIA_SEMANTIC_PARSER_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
-		#define GIA_SEMANTIC_PARSER_SUPPORT_USE_RELEX_COMPATIBILITY_MODE_FOR_FEATURE_PARSER_TO_GENERATE_ADDITIONAL_RELATIONS_REQUIRED_BY_GIA2
-	#elif defined GIA_SEMANTIC_PARSER_SUBSETS
-		#define GIA_SEMANTIC_PARSER_SUPPORT_USE_RELEX_COMPATIBILITY_MODE_FOR_FEATURE_PARSER_TO_GENERATE_ADDITIONAL_RELATIONS_REQUIRED_BY_GIA2	//this is required as semantic relations from multiple corpus files may be required to properly parse a sentence [if a single corpus file does not exist for the entire sentence]
+	#ifdef GIA_SEM_REL_TRANSLATOR_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
+		#define GIA_SEM_REL_TRANSLATOR_SUPPORT_USE_RELEX_COMPATIBILITY_MODE_FOR_FEATURE_PARSER_TO_GENERATE_ADDITIONAL_RELATIONS_REQUIRED_BY_GIA2
+	#elif defined GIA_SEM_REL_TRANSLATOR_SUBSETS
+		#define GIA_SEM_REL_TRANSLATOR_SUPPORT_USE_RELEX_COMPATIBILITY_MODE_FOR_FEATURE_PARSER_TO_GENERATE_ADDITIONAL_RELATIONS_REQUIRED_BY_GIA2	//this is required as semantic relations from multiple corpus files may be required to properly parse a sentence [if a single corpus file does not exist for the entire sentence]
 	#endif
 #endif
 
@@ -1585,7 +1680,7 @@
 #define GIA_RELEX_FIX_DO_NOT_ASSIGN_DEFINITE_IF_UNCOUNTABLE
 
 //variables currently being tested (2a1a+)
-#define GIA_TRANSLATOR_SUPPORT_CSUB_AND_COP_GENERATE_ADJECTIVES
+#define GIA_SYN_REL_TRANSLATOR_SUPPORT_CSUB_AND_COP_GENERATE_ADJECTIVES
 
 //variables currently being tested (1q1a+)
 #define GIA_TRANSLATOR_DREAM_MODE_LINK_SPECIFIC_CONCEPTS_AND_ACTIONS	//required for NLC
@@ -1596,14 +1691,14 @@
 
 //variables currently being tested (1t1a+)
 #define GIA_TRANSLATOR_XML_INTERPRETATION
-//#define GIA_TEMPORARY_COMPILATION_GCC_FLAG_E_PREPROCESS_TRANSLATOR_XML_FILES	//for use with compileGIAstopAfterPreprocessingXML.bat only: g++ -E GIAmain.cpp GIAparser.cpp GIAtranslator.cpp GIAtranslatorDefineGrammar.cpp GIAtranslatorDefineReferencing.cpp GIAtranslatorRedistributeRelationsStanford.xml GIAtranslatorRedistributeRelationsRelex.xml GIAtranslatorDefineSubstances.xml GIAtranslatorLinkEntities.xml GIAtranslatorApplyAdvancedFeatures.xml GIAtranslatorOperations.cpp GIAentityNodeClass.cpp GIAentityConnectionClass.cpp GIAconditionNodeClass.cpp GIAsentenceClass.cpp GIAdraw.cpp GIAxmlConversion.cpp GIAcxlConversion.cpp GIAquery.cpp GIAdatabase.cpp GIAnlp.cpp GIAwordnet.cpp GIAnlg.cpp GIApreprocessorMultiwordReduction.cpp GIAbot.cpp XMLparserClass.cpp XMLrulesClass.cpp LDsvg.cpp LDopengl.cpp LDparser.cpp LDsprite.cpp LDreferenceManipulation.cpp LDreferenceClass.cpp RToperations.cpp  RTparser.cpp  RTpixelMaps.cpp  RTppm.cpp  RTraytracer.cpp  RTreferenceManipulation.cpp  RTscene.cpp  RTviewinfo.cpp SHAREDglobalDefs.cpp SHAREDvector.cpp SHAREDvars.cpp
+//#define GIA_TEMPORARY_COMPILATION_GCC_FLAG_E_PREPROCESS_TRANSLATOR_XML_FILES	//for use with compileGIAstopAfterPreprocessingXML.bat only: g++ -E GIAmain.cpp GIAparser.cpp GIAtranslator.cpp GIAtranslatorGrammar.cpp GIAtranslatorReferencing.cpp GIAsynRelTranslatorRedistributeRelationsStanford.xml GIAsynRelTranslatorRedistributeRelationsRelex.xml GIAsynRelTranslatorDefineSubstances.xml GIAsynRelTranslatorLinkEntities.xml GIAsynRelTranslatorApplyAdvancedFeatures.xml GIAtranslatorOperations.cpp GIAentityNodeClass.cpp GIAentityConnectionClass.cpp GIAconditionNodeClass.cpp GIAsentenceClass.cpp GIAdraw.cpp GIAxmlConversion.cpp GIAcxlConversion.cpp GIAquery.cpp GIAdatabase.cpp GIAnlp.cpp GIAwordnet.cpp GIAnlg.cpp GIApreprocessorMultiwordReduction.cpp GIAbot.cpp XMLparserClass.cpp XMLrulesClass.cpp LDsvg.cpp LDopengl.cpp LDparser.cpp LDsprite.cpp LDreferenceManipulation.cpp LDreferenceClass.cpp RToperations.cpp  RTparser.cpp  RTpixelMaps.cpp  RTppm.cpp  RTraytracer.cpp  RTreferenceManipulation.cpp  RTscene.cpp  RTviewinfo.cpp SHAREDglobalDefs.cpp SHAREDvector.cpp SHAREDvars.cpp
 //#define GIA_DO_NOT_USE_UNTESTED_BUGFIX_REGARDING_grammaticalDefiniteIndexOfDeterminerTemp	//1t6b
 #define GIA_SPECIFIC_ACTION_NETWORK_INDEXES
-#define GIA_WORKAROUND_RELEX_BUG_OCCASIONAL_QVAR_INDEX_SAME_AS_ANOTHER_RELATION_INDEX
+#define GIA_SYN_REL_TRANSLATOR_WORKAROUND_RELEX_BUG_OCCASIONAL_QVAR_INDEX_SAME_AS_ANOTHER_RELATION_INDEX
 #define GIA_GENERIC_ENTITY_INTERPRETATION	//mandatory 3a1a					//1t6b
 #define GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION	//mandatory 3a1a
 #ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION
-	#define GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION	//1t1a (tested 1ttd, tested with generalised link entity preparation generalised redistribution modifications 1t2m)
+	#define GIA_SYN_REL_TRANSLATOR_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION	//1t1a (tested 1ttd, tested with generalised link entity preparation generalised redistribution modifications 1t2m)
 	#define GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_LINK			//1t2a (tested 1t3a)
 	#define GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_SUBSTANCES		//1t2b (tested 1t3a)
 #endif
@@ -1614,7 +1709,7 @@
 #define GIA_STANFORD_CORE_NLP_VERSION_2013_04_04_OR_GREATER	//disable this if using previously tested version of Stanford CoreNLP (stanford-corenlp-2012-04-03)
 #define GIA_TRANSLATOR_REDISTRIBUTE_RELATIONS_WORKAROUND_STANFORD_BUG_SINGLE_DIGIT_TIMES_MARKED_AS_ADJECTIVE
 #define GIA_1S8D_LOW_PRI_RELEX_UPDATE_CHECK_THAT_IT_DOESNT_BREAK_STANFORD_OPTIMISATION_APPLY_FIX_TO_IS_NAME_QUERY_PROPOGATION
-//#define GIA_1S3A_ADD_INTERPRETION_OF_IN_AS_POSSESSIVE_FOR_SUBSTANCES	//disabled in GIA 1s10d due to misinterpretation of "in" in "Apples are used for eating in the forest."
+//#define GIA_SYN_REL_TRANSLATOR_ADD_INTERPRETION_OF_IN_AS_POSSESSIVE_FOR_SUBSTANCES	//disabled in GIA 1s10d due to misinterpretation of "in" in "Apples are used for eating in the forest."
 
 
 //variables currently being tested (1r1a+)
@@ -1626,11 +1721,11 @@
 
 #define GIA_QUERY_DO_NOT_SEARCH_DISABLED_NODES
 
-#define GIA_TRANSLATOR_REDISTRIBUTE_STANFORD_RELATIONS_EXPLITIVES
-#define GIA_TRANSLATOR_INTERPRET_CLAUSAL_COMPLEMENT_AS_ACTION_OBJECT_INSTEAD_OF_ACTION_PROPERTY	//added to bring Stanford back into line with Relex: eg He says that you like to swim / ccomp(say, like) -> obj(say, like), Moses knew I was angry. / ccomp(knew-2, angry-5) ->  obj(knew-2, angry-5
+#define GIA_SYN_REL_TRANSLATOR_REDISTRIBUTE_STANFORD_RELATIONS_EXPLITIVES
+#define GIA_SYN_REL_TRANSLATOR_INTERPRET_CLAUSAL_COMPLEMENT_AS_ACTION_OBJECT_INSTEAD_OF_ACTION_PROPERTY	//added to bring Stanford back into line with Relex: eg He says that you like to swim / ccomp(say, like) -> obj(say, like), Moses knew I was angry. / ccomp(knew-2, angry-5) ->  obj(knew-2, angry-5
 
-#define GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_PROPERTIES_TAKE_DEPENDENT_AS_PROPERTY_INSTEAD_OF_GOVERNOR	//interpret "toy"/"red" as property of "shop"/"dog" (originally "shop"/"dog" was interpreted as property of "toy"/"red")
-#ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_PROPERTIES_TAKE_DEPENDENT_AS_PROPERTY_INSTEAD_OF_GOVERNOR
+#define GIA_SYN_REL_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_PROPERTIES_TAKE_DEPENDENT_AS_PROPERTY_INSTEAD_OF_GOVERNOR	//interpret "toy"/"red" as property of "shop"/"dog" (originally "shop"/"dog" was interpreted as property of "toy"/"red")
+#ifdef GIA_SYN_REL_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_PROPERTIES_TAKE_DEPENDENT_AS_PROPERTY_INSTEAD_OF_GOVERNOR
 	#define GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_PROPERTIES_DEFINE_NOUNS_WITH_PRENOMINAL_MODIFIERS_AS_SUBSTANCES		//redundant with GIA_CREATE_NON_SPECIFIC_CONCEPTS_FOR_ALL_NETWORK_INDEXES 	//only enable this when "toy" is property of "shop" (ie do not enable this when "shop" is property of "toy")
 #endif
 
@@ -1648,7 +1743,7 @@
 
 #define STANFORD_CORENLP_DISABLE_INDEPENDENT_POS_TAGGER_WHEN_PARSING_DEPENDENCY_RELATIONS	//added 22 Sept to enable Stanford CoreNLP to be used to parse dependency relations with comparable (NOT: same) accuracy as stanford parser (ie when stanford CoreNLP is set as both relation and feature parser)
 #ifndef GIA_DEBUG_DISABLE_2i_CODE
-	#ifndef GIA_SEMANTIC_PARSER		//NB GIA2 doesn't support STANFORD_PARSER_USE_POS_TAGS (because the semantic relations word types being written must match those being read [and read can only use feature parser])
+	#ifndef GIA_SEM_REL_TRANSLATOR		//NB GIA2 doesn't support STANFORD_PARSER_USE_POS_TAGS (because the semantic relations word types being written must match those being read [and read can only use feature parser])
 		#define STANFORD_PARSER_USE_POS_TAGS	//added 23 July 2012 to support Stanford Parser POS tags instead of Stanford CoreNLP POS tags (Stanford Parser POS tags are sometimes more accurate than Stanford CoreNLP POS tags)
 	#endif
 	#ifndef STANFORD_PARSER_USE_POS_TAGS
@@ -1667,6 +1762,7 @@
 
 #define GIA_PREPROCESSOR_MULTIWORD_REDUCTION
 #ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
+	#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_ORIGINAL	//includes multiword preposition reduction
 	#define GIA_PREPROCESSOR	//required for legacy support of GIA_PREPROCESSOR_MULTIWORD_REDUCTION
 	#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_REPLACE_OUTPUT_FOR_NLP_TEMPORARILY
 	#define GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS
@@ -1678,6 +1774,7 @@
 		#define GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_LIBERAL		//alternate implementation added 5 July 2013 - requires GIA_PREPROCESSOR_MULTIWORD_REDUCTION for reading of WordnetVerbs.txt - this is used to normalise the tagging of continuous verbs (eg in the making of)
 		#ifdef GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_LIBERAL
 			#define GIA_PREPROCESSOR_MULTIWORD_REDUCTION_LOAD_WORD_LISTS
+			//#define GIA_TRANSLATOR_BACKUP_OF_OLD_GRAMMAR_EXECUTION_WITHOUT_BUG_CORRECTION
 		#endif
 		//#define GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_OLD_IMPLEMENTATION
 		#ifndef GIA_DEBUG_DISABLE_2h_CODE
@@ -1690,19 +1787,6 @@
 #endif
 
 //variables currently being tested (1o1a+)
-
-#ifdef USE_CE
-	#define GIA_WITH_CE_CONVERT_PUNCTUATION_MARK_CHARACTERS_TO_FULL_STOPS
-	#ifdef GIA_WITH_CE_CONVERT_PUNCTUATION_MARK_CHARACTERS_TO_FULL_STOPS
-		#define GIA_NLP_MAXIMUM_NUMBER_WORDS_PER_SENTENCE_THAT_NLP_CAN_PARSE_DUE_TO_3GB_MEMORY_LIMITATION (150)
-		#define GIA_WITH_CE_MINIMUM_NUMBER_WORDS_BEFORE_CONVERTING_PUNCTUATION_MARKS_TO_FULL_STOPS (GIA_NLP_MAXIMUM_NUMBER_WORDS_PER_SENTENCE_THAT_NLP_CAN_PARSE_DUE_TO_3GB_MEMORY_LIMITATION/2)
-		#define GIA_WITH_CE_CONVERT_PUNCTUATION_MARK_CHARACTERS_TO_FULL_STOPS_BIAS_REPLACEMENT_TOWARDS_END_OF_CODEEXTENSION_BASED_ON_EXPECTED_GREATED_DISTANCE_BETWEEN_PUNCTUATION_MARKS
-	#endif
-	#define GIA_WITH_CE_USE_CODEEXTENSION_HEIRACHY
-	#define GIA_WITH_CE_DERIVE_SCODEEXTENSION_PREPEND
-	//#define GIA_WITH_CE_USE_ALL_CODEEXTENSION_COMBINATIONS	//else just use first
-	//#define GIA_WITH_CE_DEBUG
-#endif
 
 #define GIA_ALIASES
 #ifdef GIA_ALIASES
@@ -1815,7 +1899,7 @@
 //variables currently under attention for testing purposes
 
 #define WORDNET_SEARCH_RELATED_SYNSETS
-#define GIA_ASSIGN_SUBSTANCE_TO_PROPER_NOUNS		//this was (effectively) disabled before version 1h3b 	//NB used to be called 'GIA_DO_NOT_ASSIGN_SUBSTANCE_TO_PROPER_NOUNS'
+#define GIA_SYN_REL_TRANSLATOR_ASSIGN_SUBSTANCE_TO_PROPER_NOUNS		//this was (effectively) disabled before version 1h3b 	//NB used to be called 'GIA_DO_NOT_ASSIGN_SUBSTANCE_TO_PROPER_NOUNS'
 #define GIA_OUTPUT_INTERNAL_RELATIONS_IN_RELEX_FORMAT
 //#define GIA_STANFORD_DO_NOT_USE_UNTESTED_RELEX_OPTIMISATION_CODE2
 /*#define GIA_ORIGINAL_PRONOMINAL_COREFERENCE_RESOLUTION_IGNORE_SUBSTANCES_TAKE_NETWORK_INDEXES_ONLY	//untested (removed 1l1c)*/	//commented out completely
@@ -1879,9 +1963,6 @@
 		#endif
 	#endif
 	#define GIA_RELEX_1_4_0	//default: enabled (otherwise use Relex 1.3.0)
-	#ifdef GIA_RELEX_1_4_0
-		//#define GIA_RELEX_UPDATE_ADD_PARAGRAPH_TAGS		//BAI paragraph tag support has not yet been added to Relex 1.3.0	//NB GIA no longer works with BAI Relex <paragraph> tag upgrade - as sentence ID is now used for a variety of purposes (without paragraph id): therefore will need to determine a new method of establishing intra paragraph referencing.
-	#endif
 #endif
 #ifdef GIA_STANFORD_CORENLP		//a more advanced implementation of stanford parser (with lemma, entity name detection, etc: Stanford CoreNLP integrates all our NLP tools for the English language, including the part-of-speech (stanfordPOS) tagger, the named entity recognizer (NER), the parser, and the coreference resolution system)
 	#ifdef GIA_NLP_CLIENT_SERVER
@@ -1941,16 +2022,16 @@
 
 //~GIAtranslator
 #define GIA_NETWORK_INDEX_ENTITY_NODE_MAP_NOT_VECTOR	//this is required (the current set of code has had the alternative case removed - see GIAtranslator.cpp.copyWithDataStructureOptions for an example set of code that supports disabling this feature)
-#define REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE "_$qVar"
-#define REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_LENGTH (6)
-#define GIA_TRANSLATOR_COMPENSATE_FOR_SWITCH_OBJ_SUB_DEFINITION_QUESTIONS_ANOMALY
-#define GIA_TRANSLATOR_COMPENSATE_FOR_SWITCH_OBJ_SUB_DEFINITION_QUESTIONS_ANOMALY_ADVANCED	//this is now MANDATORY
-#ifdef GIA_TRANSLATOR_COMPENSATE_FOR_SWITCH_OBJ_SUB_DEFINITION_QUESTIONS_ANOMALY_ADVANCED
-	#define GIA_PERFORM_RELATION_GOVERNOR_ARGUMENT_SWITCHING_WHERE_NECESSARY	//this was changed 27 July 2013
-	#define GIA_PERFORM_RELATION_GOVERNOR_ARGUMENT_SWITCHING_ONLY_WHEN_REQUIRED	//this was changed 27 July 2013
+#define GIA_SYN_REL_TRANSLATOR_REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE "_$qVar"
+#define GIA_SYN_REL_TRANSLATOR_REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE_LENGTH (6)
+#define GIA_SYN_REL_TRANSLATOR_COMPENSATE_FOR_SWITCH_OBJ_SUB_DEFINITION_QUESTIONS_ANOMALY
+#define GIA_SYN_REL_TRANSLATOR_COMPENSATE_FOR_SWITCH_OBJ_SUB_DEFINITION_QUESTIONS_ANOMALY_ADVANCED	//this is now MANDATORY
+#ifdef GIA_SYN_REL_TRANSLATOR_COMPENSATE_FOR_SWITCH_OBJ_SUB_DEFINITION_QUESTIONS_ANOMALY_ADVANCED
+	#define GIA_SYN_REL_TRANSLATOR_PERFORM_RELATION_GOVERNOR_ARGUMENT_SWITCHING_WHERE_NECESSARY	//this was changed 27 July 2013
+	#define GIA_SYN_REL_TRANSLATOR_PERFORM_RELATION_GOVERNOR_ARGUMENT_SWITCHING_ONLY_WHEN_REQUIRED	//this was changed 27 July 2013
 #else
-	#define GIA_PERFORM_RELATION_GOVERNOR_ARGUMENT_SWITCHING_WHERE_NECESSARY
-	#define GIA_PERFORM_RELATION_GOVERNOR_ARGUMENT_SWITCHING_ONLY_WHEN_REQUIRED
+	#define GIA_SYN_REL_TRANSLATOR_PERFORM_RELATION_GOVERNOR_ARGUMENT_SWITCHING_WHERE_NECESSARY
+	#define GIA_SYN_REL_TRANSLATOR_PERFORM_RELATION_GOVERNOR_ARGUMENT_SWITCHING_ONLY_WHEN_REQUIRED
 #endif
 
 //~GIAmain
