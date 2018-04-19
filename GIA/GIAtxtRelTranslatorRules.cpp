@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorRules.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f2o 04-April-2018
+ * Project Version: 3f2p 04-April-2018
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Rules
  * /
@@ -272,6 +272,12 @@ bool GIAtxtRelTranslatorRulesClass::parseComponents(XMLparserTag* firstTxtRelTra
 			#ifdef GIA_TRANSLATOR_NUMBER_OF
 			string isNumberOf = GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_VALUE_false;
 			#endif
+			#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_WORD_NOUN_VERB_VARIANT
+			string wordVerbVariantType = GIApreprocessorMultiwordReductionVerbDatabaseTagBaseTenseFormArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_UNKNOWN];
+			int wordVerbVariantTypeInt = GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_UNKNOWN;
+			string wordNounVariantType = GIApreprocessorMultiwordReductionNounDatabaseTagBaseTenseFormArray[GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NOUN_DATABASE_TAG_BASE_TENSE_FORM_UNKNOWN];
+			int wordNounVariantTypeInt = GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NOUN_DATABASE_TAG_BASE_TENSE_FORM_UNKNOWN;
+			#endif
 
 			#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID
 			int referenceSetTypeHybridInt = GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_REFERENCE_SET_TYPE_HYBRID_UNKNOWN;
@@ -465,6 +471,24 @@ bool GIAtxtRelTranslatorRulesClass::parseComponents(XMLparserTag* firstTxtRelTra
 				//cerr << "GIAtxtRelTranslatorRules::extractGIAtxtRelTranslatorRulesGroups{} error: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_isNumberOf, &isNumberOf)" << endl;
 			}
 			#endif
+			#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_WORD_NOUN_VERB_VARIANT
+			if(!XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_wordVerbVariantType, &wordVerbVariantType))
+			{
+				if(!SHAREDvars.textInTextArray(wordVerbVariantType, GIApreprocessorMultiwordReductionVerbDatabaseTagBaseTenseFormArray, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_NUMBER_OF_TYPES, &wordVerbVariantTypeInt))
+				{
+					cerr << "GIAtxtRelTranslatorRules::extractGIAtxtRelTranslatorRulesGroups{} error: semanticRelationReturnFunctionNameIndexType unknown; wordVerbVariantType = " << wordVerbVariantType << endl;
+					exit(EXIT_ERROR);
+				}
+			}
+			if(!XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_wordNounVariantType, &wordNounVariantType))
+			{
+				if(!SHAREDvars.textInTextArray(wordNounVariantType, GIApreprocessorMultiwordReductionNounDatabaseTagBaseTenseFormArray, GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NOUN_DATABASE_TAG_BASE_TENSE_FORM_NUMBER_OF_TYPES, &wordNounVariantTypeInt))
+				{
+					cerr << "GIAtxtRelTranslatorRules::extractGIAtxtRelTranslatorRulesGroups{} error: semanticRelationReturnFunctionNameIndexType unknown; wordNounVariantType = " << wordNounVariantType << endl;
+					exit(EXIT_ERROR);
+				}		
+			}						
+			#endif			
 
 			
 			GIAtxtRelTranslatorRulesComponent* component = new GIAtxtRelTranslatorRulesComponent();
@@ -502,6 +526,10 @@ bool GIAtxtRelTranslatorRulesClass::parseComponents(XMLparserTag* firstTxtRelTra
 			#ifdef GIA_TRANSLATOR_NUMBER_OF
 			component->isNumberOf = SHAREDvars.convertStringToBool(isNumberOf);
 			#endif
+			#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_WORD_NOUN_VERB_VARIANT
+			component->wordVerbVariantType = wordVerbVariantTypeInt;
+			component->wordNounVariantType = wordNounVariantTypeInt;
+			#endif				
 			
 			componentsList->push_back(component);
 

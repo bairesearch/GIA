@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f2o 04-April-2018
+ * Project Version: 3f2p 04-April-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  * /
@@ -862,6 +862,9 @@
 			#define GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_REPEAT
 			#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_REPEAT
 				#define GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_REPEAT_IGNORE_CONSECUTIVE_PLURAL_NOUNS	//3f2n
+				#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_REPEAT_IGNORE_CONSECUTIVE_PLURAL_NOUNS
+					#define GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_WORD_NOUN_VERB_VARIANT	//3f2p
+				#endif
 			#endif
 			#define GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_OR
 			#define GIA_TXT_REL_TRANSLATOR_RULES_TREAT_CONJUNCTION_ITEMS_AS_SAME_REFERENCE_SET
@@ -878,6 +881,7 @@
 			#endif
 			#define GIA_TXT_REL_TRANSLATOR_RULES_CODE_TITLE
 			#define GIA_TXT_REL_TRANSLATOR_RULES_CODE_PROPERNOUNS
+			
 
 		#else
 			//#define GIA_TXT_REL_TRANSLATOR_HYBRID_DEPRECIATED		//depreciated: superceeded by GIA_TXT_REL_TRANSLATOR_RULES		//depreciated dedicated (hard coded) logic reference / reference set parse code
