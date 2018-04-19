@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorWordClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f10g 19-April-2018
+ * Project Version: 3f10h 19-April-2018
  * Requirements: requires plain text file
  * Description: Preprocessor Word Class
  * /
@@ -466,7 +466,7 @@ static char translatorEnglishConsonants[GIA_TRANSLATOR_ENGLISH_CONSONANTS_NUMBER
 static string translatorEnglishNounPluralModifierAdditionDefaultArray[GIA_TRANSLATOR_ENGLISH_NOUN_PLURAL_MODIFIER_ADDITION_DEFAULT_NUMBER_OF_TYPES] = {"s"};
 #define GIA_TRANSLATOR_ENGLISH_NOUN_PLURAL_MODIFIER_ADDITION_NUMBER_OF_TYPES (6)
 static string translatorEnglishNounPluralModifierAdditionArray[GIA_TRANSLATOR_ENGLISH_NOUN_PLURAL_MODIFIER_ADDITION_NUMBER_OF_TYPES][2] = {{"ch", "es"}, {"s", "es"}, {"sh", "es"}, {"x", "es"}, {"z", "es"}, {"o", "es"}};
-#define GIA_TRANSLATOR_ENGLISH_NOUN_PLURAL_MODIFIER_REPLACEMENT_SUCCEEDING_CONSONANT_NUMBER_OF_TYPES (6)
+#define GIA_TRANSLATOR_ENGLISH_NOUN_PLURAL_MODIFIER_REPLACEMENT_SUCCEEDING_CONSONANT_NUMBER_OF_TYPES (1)
 static string translatorEnglishNounPluralModifierReplacementSucceedingConsonantArray[GIA_TRANSLATOR_ENGLISH_NOUN_PLURAL_MODIFIER_REPLACEMENT_SUCCEEDING_CONSONANT_NUMBER_OF_TYPES][2] = {{"Cy", "Cies"}};
 #define GIA_TRANSLATOR_ENGLISH_NOUN_PLURAL_MODIFIER_REPLACEMENT_NUMBER_OF_TYPES (14)
 static string translatorEnglishNounPluralModifierReplacementArray[GIA_TRANSLATOR_ENGLISH_NOUN_PLURAL_MODIFIER_REPLACEMENT_NUMBER_OF_TYPES][2] = {{"f", "fe"}, {"fe", "ves"}, {"ix", "ices"}, {"us", "i"}, {"lum", "la"}, {"ium", "ia"}, {"ex", "ices"}, {"um", "a"}, {"a", "ae"}, {"mnus", "mnui"}, {"is", "es"}, {"eau", "eaus"}, {"eau", "eaux"}, {"o", "i"}};

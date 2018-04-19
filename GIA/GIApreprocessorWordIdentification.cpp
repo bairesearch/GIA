@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorWordIdentification.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f10g 19-April-2018
+ * Project Version: 3f10h 19-April-2018
  * Requirements: requires plain text file
  * Description: Preprocessor Word Identification
  * /
@@ -567,17 +567,24 @@ bool GIApreprocessorWordIdentificationClass::generateNounPluralVariants(GIAprepr
 			string stringToFind = translatorEnglishNounPluralModifierReplacementSucceedingConsonantArray[i][0];
 			if(word.length()-stringToFind.length() >= 1)
 			{
-				char hypotheticalConsonantChar = word.length()-stringToFind.length()-1;
+				char hypotheticalConsonantChar = word[word.length()-stringToFind.length()-1];
 				if(SHAREDvars.charInCharArray(hypotheticalConsonantChar, translatorEnglishConsonants, GIA_TRANSLATOR_ENGLISH_CONSONANTS_NUMBER_OF_TYPES))
 				{
 					//find string at end of word
+					stringToFind[0] = hypotheticalConsonantChar;	//modify stringToFind; replace template consonant C with actual consonant
 					if(word.find(stringToFind, word.length()-stringToFind.length()) != CPP_STRING_FIND_RESULT_FAIL_VALUE)
 					{
 						string stringToAddOrReplace = translatorEnglishNounPluralModifierReplacementSucceedingConsonantArray[i][1];
+						stringToAddOrReplace[0] = hypotheticalConsonantChar;	//modify stringToAddOrReplace; replace template consonant C with actual consonant
+						
 						string nounPluralVariant = word.substr(0, word.length()-stringToFind.length());
 						nounPluralVariant = nounPluralVariant + stringToAddOrReplace;
 						//nounPluralVariants->push_back(nounPluralVariant);
 						nounPluralVariantsList->insert(pair<string, GIApreprocessorMultiwordReductionWord*>(nounPluralVariant, wordTag));
+						//cout << "nounPluralVariant = " << nounPluralVariant << endl;
+						
+						//cout << "word" << word << endl;
+						//cout << "stringToFind = " << stringToFind << endl;
 						//cout << "nounPluralVariant = " << nounPluralVariant << endl;
 					}
 				}
