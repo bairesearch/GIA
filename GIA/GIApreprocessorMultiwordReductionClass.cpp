@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorMultiwordReductionClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f4e 14-April-2018
+ * Project Version: 3f5a 15-April-2018
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction Class
  * /
@@ -81,6 +81,8 @@ GIApreprocessorMultiwordReductionWord::GIApreprocessorMultiwordReductionWord(voi
 	
 	grammaticalTenseModifier = GRAMMATICAL_TENSE_MODIFIER_INFINITIVE_OR_IMPERATIVE_OR_PRESENT_NOT_THIRD_PERSON_SINGULAR_OR_STATE_TEMP;
 	baseName = "";
+	
+	alternateTagBasic = NULL;
 
 }
 GIApreprocessorMultiwordReductionWord::~GIApreprocessorMultiwordReductionWord(void)

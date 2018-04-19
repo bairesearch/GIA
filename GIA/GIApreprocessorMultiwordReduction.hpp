@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorMultiwordReduction.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f4e 14-April-2018
+ * Project Version: 3f5a 15-April-2018
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  * /
@@ -69,7 +69,7 @@ class GIApreprocessorMultiwordReductionClass
 	public: bool getUseLRP();
 		private: bool loadWordListWrapper(bool* wordListLoaded, const string wordListFileName, unordered_map<string, GIApreprocessorMultiwordReductionWord*>* wordList);
 			private: bool loadWordList(const string wordListFileName, unordered_map<string, GIApreprocessorMultiwordReductionWord*>* wordList);
-		private: bool loadIrregularVerbList(const string irregularVerbListFileName, unordered_map<string, GIApreprocessorMultiwordReductionIrregularVerbSentence*>* irregularVerbList);
+		private: bool loadStructuredDataListIrregularVerb(const string irregularVerbListFileName, unordered_map<string, GIApreprocessorMultiwordReductionIrregularVerbSentence*>* irregularVerbList);
 		private: bool loadPhrasalVerbDataAndGenerateAllTenseVariants(const string phrasalVerbDatabaseFileName, multimap<string, GIApreprocessorMultiwordReductionPhrasalVerbSentence*>* phrasalVerbList, unordered_map<string, GIApreprocessorMultiwordReductionIrregularVerbSentence*>* irregularVerbList);
 	
 	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION
@@ -96,8 +96,8 @@ class GIApreprocessorMultiwordReductionClass
 	#endif
 
 	#ifdef GIA_PREPROCESSOR_DERIVE_NOUN_VARIANTS
-	private: bool generateNounPluralVariantsList();
-		private: bool generateNounPluralVariants(GIApreprocessorMultiwordReductionWord* wordTag, unordered_map<string, GIApreprocessorMultiwordReductionWord*>* nounPluralVariantsList);
+	private: bool generateNounPluralVariantsList(unordered_map<string, GIApreprocessorMultiwordReductionBasicSentence*>* irregularNounList);
+		private: bool generateNounPluralVariants(GIApreprocessorMultiwordReductionWord* wordTag, unordered_map<string, GIApreprocessorMultiwordReductionWord*>* nounPluralVariantsList, unordered_map<string, GIApreprocessorMultiwordReductionBasicSentence*>* irregularNounList);
 	#endif
 	
 	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_LOAD_WORD_LISTS
@@ -121,7 +121,7 @@ class GIApreprocessorMultiwordReductionClass
 	#endif
 
 	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_LOAD_INVERSE_PREPOSITIONS_LIST
-	private: bool loadPrepositionsInverseList(const string prepositionsInverseListFileName, unordered_map<string, GIApreprocessorMultiwordReductionBasicSentence*>* prepositionInverseList);
+	private: bool loadStructuredDataList(const string prepositionsInverseListFileName, unordered_map<string, GIApreprocessorMultiwordReductionBasicSentence*>* prepositionInverseList);
 	#endif
 	#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_PREPOSITIONS
 	public: void detectIfInverseOrTwoWayConditionRequired(const string conditionName, bool* inverseConditionRequired, bool* twoWayConditionRequired, string* inverseConditionName);
@@ -151,7 +151,7 @@ class GIApreprocessorMultiwordReductionClass
 	public: bool determineIsNoun(GIApreprocessorPlainTextWord* wordTag, const bool usePOSprelim);
 		public: bool determineIsNoun(GIApreprocessorPlainTextWord* wordTag, const bool usePOSprelim, string* baseNameFound, int* grammaticalBaseForm);
 			//public: bool determineIsNoun(const string word);
-			public: bool determineNounPluralVariant(const string word, GIApreprocessorMultiwordReductionWord** nounBaseFormFound);
+			public: bool determineNounPluralVariant(const string word, GIApreprocessorMultiwordReductionWord** nounBaseFound, int* grammaticalBaseTenseForm);
 	public: bool determineIsConjunction(GIApreprocessorPlainTextWord* wordTag, const bool usePOSprelim);
 		//public: bool determineIsConjunction(const string word);
 	public: bool determineIsDeterminer(GIApreprocessorPlainTextWord* wordTag, const bool usePOSprelim);

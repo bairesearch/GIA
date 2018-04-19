@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorMultiwordReduction.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f4e 14-April-2018
+ * Project Version: 3f5a 15-April-2018
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  * /
@@ -54,7 +54,9 @@ unordered_map<string, unordered_map<string, GIApreprocessorMultiwordReductionWor
 unordered_map<string, GIApreprocessorMultiwordReductionWord*> verbCaseStandardListGlobal;
 unordered_map<string, GIApreprocessorMultiwordReductionWord*> verbCaseAdditionalListGlobal;
 unordered_map<string, GIApreprocessorMultiwordReductionIrregularVerbSentence*> irregularVerbListGlobal;
+unordered_map<string, GIApreprocessorMultiwordReductionBasicSentence*> irregularNounListGlobal;
 bool irregularVerbListLoaded;
+bool irregularNounListLoaded;
 #ifdef GIA_PREPROCESSOR_DERIVE_NOUN_VARIANTS
 unordered_map<string, GIApreprocessorMultiwordReductionWord*> nounPluralVariantsListGlobal;
 #endif
@@ -205,9 +207,9 @@ bool GIApreprocessorMultiwordReductionClass::initialiseLRP(const string newLRPDa
 		
 		#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_LOAD_INVERSE_PREPOSITIONS_LIST
 		prepositionInverseListLoaded = false;
-		if(!loadPrepositionsInverseList(GIA_PREPROCESSOR_MULTIWORD_REDUCTION_INVERSEPREPOSITIONS_DATABASE_FILE_NAME, &prepositionInverseListGlobal))
+		if(!loadStructuredDataList(GIA_PREPROCESSOR_MULTIWORD_REDUCTION_INVERSEPREPOSITIONS_DATABASE_FILE_NAME, &prepositionInverseListGlobal))
 		{
-			cout << "!loadPrepositionsInverseList (GIA with GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_PREPOSITIONS requires -lrpfolder to be set): prepositionsInverseListFileName = " << GIA_PREPROCESSOR_MULTIWORD_REDUCTION_INVERSEPREPOSITIONS_DATABASE_FILE_NAME << endl;
+			cout << "!loadStructuredDataList (GIA with GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NORMALISE_PREPOSITIONS requires -lrpfolder to be set): prepositionsInverseListFileName = " << GIA_PREPROCESSOR_MULTIWORD_REDUCTION_INVERSEPREPOSITIONS_DATABASE_FILE_NAME << endl;
 			result = false;
 		}
 		else
@@ -271,9 +273,10 @@ bool GIApreprocessorMultiwordReductionClass::initialiseLRP(const string newLRPDa
 		#endif
 		
 		irregularVerbListLoaded = false;
-		if(!loadIrregularVerbList(GIA_PREPROCESSOR_MULTIWORD_REDUCTION_IRREGULARVERB_DATABASE_FILE_NAME, &irregularVerbListGlobal))
+		if(!loadStructuredDataListIrregularVerb(GIA_PREPROCESSOR_MULTIWORD_REDUCTION_IRREGULARVERB_DATABASE_FILE_NAME, &irregularVerbListGlobal))
 		{
-			cout << "!loadIrregularVerbList (GIA with GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_CONSERVATIVE requires -lrpfolder to be set): irregularVerbListFileName = " << GIA_PREPROCESSOR_MULTIWORD_REDUCTION_IRREGULARVERB_DATABASE_FILE_NAME << endl;
+			cout << "!loadStructuredDataListIrregularVerb: irregularVerbListFileName = " << GIA_PREPROCESSOR_MULTIWORD_REDUCTION_IRREGULARVERB_DATABASE_FILE_NAME << endl;
+			//(GIA with GIA_TRANSLATOR_CORRECT_IRREGULAR_VERB_LEMMAS_CONSERVATIVE requires -lrpfolder to be set)
 			result = false;
 		}
 		else
@@ -281,13 +284,23 @@ bool GIApreprocessorMultiwordReductionClass::initialiseLRP(const string newLRPDa
 			irregularVerbListLoaded = true;
 		}
 
+		irregularNounListLoaded = false;
+		if(!loadStructuredDataList(GIA_PREPROCESSOR_MULTIWORD_REDUCTION_IRREGULARNOUN_DATABASE_FILE_NAME, &irregularNounListGlobal))
+		{
+			cout << "!loadIrregularNounList: irregularNounListFileName = " << GIA_PREPROCESSOR_MULTIWORD_REDUCTION_IRREGULARNOUN_DATABASE_FILE_NAME << endl;
+			result = false;
+		}
+		else
+		{
+			irregularNounListLoaded = true;
+		}
 
 		if(!generateVerbCaseStandardAndAdditionalList(GIA_PREPROCESSOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE))	//this is required to make verbList usable
 		{
 			result = false;
 		}
 		#ifdef GIA_PREPROCESSOR_DERIVE_NOUN_VARIANTS
-		if(!generateNounPluralVariantsList())
+		if(!generateNounPluralVariantsList(&irregularNounListGlobal))
 		{
 			result = false;
 		}
@@ -427,7 +440,8 @@ bool GIApreprocessorMultiwordReductionClass::loadWordList(const string wordListF
 	return result;
 }
 
-bool GIApreprocessorMultiwordReductionClass::loadIrregularVerbList(const string irregularVerbListFileName, unordered_map<string, GIApreprocessorMultiwordReductionIrregularVerbSentence*>* irregularVerbList)
+//note this function is a replica of loadStructuredDataList;
+bool GIApreprocessorMultiwordReductionClass::loadStructuredDataListIrregularVerb(const string irregularVerbListFileName, unordered_map<string, GIApreprocessorMultiwordReductionIrregularVerbSentence*>* irregularVerbList)
 {
 	bool result = true;
 
@@ -1791,7 +1805,7 @@ void GIApreprocessorMultiwordReductionClass::revertNLPtagNameToOfficialLRPtagNam
 
 
 #ifdef GIA_PREPROCESSOR_DERIVE_NOUN_VARIANTS
-bool GIApreprocessorMultiwordReductionClass::generateNounPluralVariantsList()
+bool GIApreprocessorMultiwordReductionClass::generateNounPluralVariantsList(unordered_map<string, GIApreprocessorMultiwordReductionBasicSentence*>* irregularNounList)
 {
 	//aka parseVerbDataGenerateAllTenseVariants
 	
@@ -1808,74 +1822,102 @@ bool GIApreprocessorMultiwordReductionClass::generateNounPluralVariantsList()
 		for(unordered_map<string, GIApreprocessorMultiwordReductionWord*>::iterator currentTagInNounListIterator = nounList->begin(); currentTagInNounListIterator != nounList->end(); ++currentTagInNounListIterator)
 		{	
 			GIApreprocessorMultiwordReductionWord* currentTagInNounList = currentTagInNounListIterator->second;	
-			generateNounPluralVariants(currentTagInNounList, nounPluralVariantsList);
+			generateNounPluralVariants(currentTagInNounList, nounPluralVariantsList, irregularNounList);
 		}
 	}
+	
 	return result;
 }
 
-bool GIApreprocessorMultiwordReductionClass::generateNounPluralVariants(GIApreprocessorMultiwordReductionWord* wordTag, unordered_map<string, GIApreprocessorMultiwordReductionWord*>* nounPluralVariantsList)
+bool GIApreprocessorMultiwordReductionClass::generateNounPluralVariants(GIApreprocessorMultiwordReductionWord* wordTag, unordered_map<string, GIApreprocessorMultiwordReductionWord*>* nounPluralVariantsList, unordered_map<string, GIApreprocessorMultiwordReductionBasicSentence*>* irregularNounList)
 {
 	//vector<string>* nounPluralVariants = wordTag->nounPluralVariants;
 	string word = wordTag->tagName;
 	
-	for(int i=0; i<GIA_TRANSLATOR_ENGLISH_NOUN_PLURAL_MODIFIER_ADDITION_DEFAULT_NUMBER_OF_TYPES; i++)
+	GIApreprocessorMultiwordReductionBasicSentence* sentenceFound = NULL;
+	if(findSentenceInSentenceListBasic(irregularNounList, word, &sentenceFound))
 	{
-		string stringToAddOrReplace = translatorEnglishNounPluralModifierAdditionDefaultArray[i];
-		string nounPluralVariant = word + stringToAddOrReplace;
-		//nounPluralVariants->push_back(nounPluralVariant);
-		nounPluralVariantsList->insert(pair<string, GIApreprocessorMultiwordReductionWord*>(nounPluralVariant, wordTag));
-		//cout << "nounPluralVariant = " << nounPluralVariant << endl;
-	}
-			
-	for(int i=0; i<GIA_TRANSLATOR_ENGLISH_NOUN_PLURAL_MODIFIER_ADDITION_NUMBER_OF_TYPES; i++)
-	{
-		string stringToFind = translatorEnglishNounPluralModifierAdditionArray[i][0];
-		//find string at end of word
-		if(word.find(stringToFind, word.length()-stringToFind.length()) != CPP_STRING_FIND_RESULT_FAIL_VALUE)
+		//irregular noun found
+		GIApreprocessorMultiwordReductionWord* firstTagInIrregularNoun = sentenceFound->firstTagInSentence;
+		GIApreprocessorMultiwordReductionWord* currentTagInIrregularNoun = firstTagInIrregularNoun;
+		for(int i=1; i<=GIA_PREPROCESSOR_MULTIWORD_REDUCTION_IRREGULARNOUN_DATABASE_NUMBER_OF_TAGS; i++)
 		{
-			string stringToAddOrReplace = translatorEnglishNounPluralModifierAdditionArray[i][1];
+			if(i == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_IRREGULARNOUN_DATABASE_TAG_NOUN_PLURAL_FORM)
+			{
+				GIApreprocessorMultiwordReductionWord* firstTagInNounPluralVariants = currentTagInIrregularNoun;
+				GIApreprocessorMultiwordReductionWord* currentTagInNounPluralVariants = firstTagInNounPluralVariants;
+				while(currentTagInNounPluralVariants->alternateTagBasic != NULL)
+				{
+					string nounPluralVariant = currentTagInNounPluralVariants->tagName;
+					//cout << "irregular nounPluralVariant = " << nounPluralVariant << endl;
+					nounPluralVariantsList->insert(pair<string, GIApreprocessorMultiwordReductionWord*>(nounPluralVariant, wordTag));
+					
+					currentTagInNounPluralVariants = static_cast<GIApreprocessorMultiwordReductionWord*>(currentTagInNounPluralVariants->alternateTagBasic);
+				}
+			}
+			currentTagInIrregularNoun = static_cast<GIApreprocessorMultiwordReductionWord*>(currentTagInIrregularNoun->nextTag);
+		}	
+	}
+	else
+	{
+		for(int i=0; i<GIA_TRANSLATOR_ENGLISH_NOUN_PLURAL_MODIFIER_ADDITION_DEFAULT_NUMBER_OF_TYPES; i++)
+		{
+			string stringToAddOrReplace = translatorEnglishNounPluralModifierAdditionDefaultArray[i];
 			string nounPluralVariant = word + stringToAddOrReplace;
 			//nounPluralVariants->push_back(nounPluralVariant);
 			nounPluralVariantsList->insert(pair<string, GIApreprocessorMultiwordReductionWord*>(nounPluralVariant, wordTag));
 			//cout << "nounPluralVariant = " << nounPluralVariant << endl;
 		}
-	}
 
-	for(int i=0; i<GIA_TRANSLATOR_ENGLISH_NOUN_PLURAL_MODIFIER_REPLACEMENT_SUCCEEDING_CONSONANT_NUMBER_OF_TYPES; i++)
-	{
-		string stringToFind = translatorEnglishNounPluralModifierReplacementSucceedingConsonantArray[i][0];
-		if(word.length()-stringToFind.length() >= 1)
+		for(int i=0; i<GIA_TRANSLATOR_ENGLISH_NOUN_PLURAL_MODIFIER_ADDITION_NUMBER_OF_TYPES; i++)
 		{
-			char hypotheticalConsonantChar = word.length()-stringToFind.length()-1;
-			if(SHAREDvars.charInCharArray(hypotheticalConsonantChar, translatorEnglishConsonants, GIA_TRANSLATOR_ENGLISH_CONSONANTS_NUMBER_OF_TYPES))
+			string stringToFind = translatorEnglishNounPluralModifierAdditionArray[i][0];
+			//find string at end of word
+			if(word.find(stringToFind, word.length()-stringToFind.length()) != CPP_STRING_FIND_RESULT_FAIL_VALUE)
 			{
-				//find string at end of word
-				if(word.find(stringToFind, word.length()-stringToFind.length()) != CPP_STRING_FIND_RESULT_FAIL_VALUE)
+				string stringToAddOrReplace = translatorEnglishNounPluralModifierAdditionArray[i][1];
+				string nounPluralVariant = word + stringToAddOrReplace;
+				//nounPluralVariants->push_back(nounPluralVariant);
+				nounPluralVariantsList->insert(pair<string, GIApreprocessorMultiwordReductionWord*>(nounPluralVariant, wordTag));
+				//cout << "nounPluralVariant = " << nounPluralVariant << endl;
+			}
+		}
+
+		for(int i=0; i<GIA_TRANSLATOR_ENGLISH_NOUN_PLURAL_MODIFIER_REPLACEMENT_SUCCEEDING_CONSONANT_NUMBER_OF_TYPES; i++)
+		{
+			string stringToFind = translatorEnglishNounPluralModifierReplacementSucceedingConsonantArray[i][0];
+			if(word.length()-stringToFind.length() >= 1)
+			{
+				char hypotheticalConsonantChar = word.length()-stringToFind.length()-1;
+				if(SHAREDvars.charInCharArray(hypotheticalConsonantChar, translatorEnglishConsonants, GIA_TRANSLATOR_ENGLISH_CONSONANTS_NUMBER_OF_TYPES))
 				{
-					string stringToAddOrReplace = translatorEnglishNounPluralModifierReplacementSucceedingConsonantArray[i][1];
-					string nounPluralVariant = word.substr(0, word.length()-stringToFind.length());
-					nounPluralVariant = nounPluralVariant + stringToAddOrReplace;
-					//nounPluralVariants->push_back(nounPluralVariant);
-					nounPluralVariantsList->insert(pair<string, GIApreprocessorMultiwordReductionWord*>(nounPluralVariant, wordTag));
-					//cout << "nounPluralVariant = " << nounPluralVariant << endl;
+					//find string at end of word
+					if(word.find(stringToFind, word.length()-stringToFind.length()) != CPP_STRING_FIND_RESULT_FAIL_VALUE)
+					{
+						string stringToAddOrReplace = translatorEnglishNounPluralModifierReplacementSucceedingConsonantArray[i][1];
+						string nounPluralVariant = word.substr(0, word.length()-stringToFind.length());
+						nounPluralVariant = nounPluralVariant + stringToAddOrReplace;
+						//nounPluralVariants->push_back(nounPluralVariant);
+						nounPluralVariantsList->insert(pair<string, GIApreprocessorMultiwordReductionWord*>(nounPluralVariant, wordTag));
+						//cout << "nounPluralVariant = " << nounPluralVariant << endl;
+					}
 				}
 			}
 		}
-	}
-	
-	for(int i=0; i<GIA_TRANSLATOR_ENGLISH_NOUN_PLURAL_MODIFIER_REPLACEMENT_NUMBER_OF_TYPES; i++)
-	{
-		string stringToFind = translatorEnglishNounPluralModifierReplacementArray[i][0];
-		//find string at end of word
-		if(word.find(stringToFind, word.length()-stringToFind.length()) != CPP_STRING_FIND_RESULT_FAIL_VALUE)
+
+		for(int i=0; i<GIA_TRANSLATOR_ENGLISH_NOUN_PLURAL_MODIFIER_REPLACEMENT_NUMBER_OF_TYPES; i++)
 		{
-			string stringToAddOrReplace = translatorEnglishNounPluralModifierReplacementArray[i][1];
-			string nounPluralVariant = word.substr(0, word.length()-stringToFind.length());
-			nounPluralVariant = nounPluralVariant + stringToAddOrReplace;
-			//nounPluralVariant->push_back(nounPluralVariant);
-			nounPluralVariantsList->insert(pair<string, GIApreprocessorMultiwordReductionWord*>(nounPluralVariant, wordTag));
-			//cout << "nounPluralVariant = " << nounPluralVariant << endl;
+			string stringToFind = translatorEnglishNounPluralModifierReplacementArray[i][0];
+			//find string at end of word
+			if(word.find(stringToFind, word.length()-stringToFind.length()) != CPP_STRING_FIND_RESULT_FAIL_VALUE)
+			{
+				string stringToAddOrReplace = translatorEnglishNounPluralModifierReplacementArray[i][1];
+				string nounPluralVariant = word.substr(0, word.length()-stringToFind.length());
+				nounPluralVariant = nounPluralVariant + stringToAddOrReplace;
+				//nounPluralVariant->push_back(nounPluralVariant);
+				nounPluralVariantsList->insert(pair<string, GIApreprocessorMultiwordReductionWord*>(nounPluralVariant, wordTag));
+				//cout << "nounPluralVariant = " << nounPluralVariant << endl;
+			}
 		}
 	}
 }
@@ -2572,53 +2614,73 @@ bool GIApreprocessorMultiwordReductionClass::determineIfWordIsIrregularVerbConti
 
 
 #ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_LOAD_INVERSE_PREPOSITIONS_LIST
-bool GIApreprocessorMultiwordReductionClass::loadPrepositionsInverseList(const string prepositionsInverseListFileName, unordered_map<string, GIApreprocessorMultiwordReductionBasicSentence*>* prepositionInverseList)
+bool GIApreprocessorMultiwordReductionClass::loadStructuredDataList(const string structuredDataListFileName, unordered_map<string, GIApreprocessorMultiwordReductionBasicSentence*>* structuredDataList)
 {
 	bool result = true;
 
 	GIApreprocessorMultiwordReductionWord* firstTagInRow = new GIApreprocessorMultiwordReductionWord();
 	GIApreprocessorMultiwordReductionWord* currentTagInRow = firstTagInRow;
-
-	ifstream parseFileObject(prepositionsInverseListFileName.c_str());
+	GIApreprocessorMultiwordReductionWord* currentTagInAlternateList = currentTagInRow;
+	
+	ifstream parseFileObject(structuredDataListFileName.c_str());
 	if(!parseFileObject.rdbuf()->is_open())
 	{
 		//txt file does not exist in current directory.
-		cout << "Error: Prepositions Inverse Database File does not exist in current directory: " << prepositionsInverseListFileName << endl;
+		cout << "Error: Structured data list does not exist in current directory: " << structuredDataListFileName << endl;
 		result = false;
 	}
 	else
 	{
 		int lineIndex = 0;
 		int charCount = 0;
+		int wordIndex = 0;
+		int alternateWordIndex = 0;
 		char currentToken;
 		string currentWord = "";
 		while(parseFileObject.get(currentToken))
 		{
-			if(currentToken == CHAR_NEWLINE)
+			if((currentToken == CHAR_NEWLINE) || (currentToken == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_STRUCTURED_DATABASE_TAG_NEXTCOLUMN))
 			{
-
-				currentTagInRow->tagName = currentWord;
-				currentTagInRow->nextTag = new GIApreprocessorMultiwordReductionWord();
-				currentTagInRow = static_cast<GIApreprocessorMultiwordReductionWord*>(currentTagInRow->nextTag);	//not required
-				
-				GIApreprocessorMultiwordReductionBasicSentence* sentence = new GIApreprocessorMultiwordReductionBasicSentence();
-				sentence->firstTagInSentence = firstTagInRow;
-				prepositionInverseList->insert(pair<string, GIApreprocessorMultiwordReductionBasicSentence*>(firstTagInRow->tagName, sentence));
-
-				firstTagInRow = new GIApreprocessorMultiwordReductionWord();
-				currentTagInRow = firstTagInRow;
-
-				currentWord = "";
-				lineIndex++;
-			}
-			else if(currentToken == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_INVERSEPREPOSITIONS_DATABASE_TAG_NEXTCOLUMN)
-			{
-
-				currentTagInRow->tagName = currentWord;
+				//create "LRP tag" to store phrasal verb base or past/past participle tense variant
+				currentTagInAlternateList->tagName = currentWord;
+				currentTagInAlternateList->alternateTagBasic = new GIApreprocessorMultiwordReductionWord();
+				//cout << "currentWord = " << currentWord << endl;
+					
 				currentTagInRow->nextTag = new GIApreprocessorMultiwordReductionWord();
 				currentTagInRow = static_cast<GIApreprocessorMultiwordReductionWord*>(currentTagInRow->nextTag);
+				currentTagInAlternateList = currentTagInRow;
 
+				if(currentToken == CHAR_NEWLINE)
+				{
+					GIApreprocessorMultiwordReductionBasicSentence* sentence = new GIApreprocessorMultiwordReductionBasicSentence();
+					sentence->firstTagInSentence = firstTagInRow;
+					structuredDataList->insert(pair<string, GIApreprocessorMultiwordReductionBasicSentence*>(firstTagInRow->tagName, sentence));
+					firstTagInRow = new GIApreprocessorMultiwordReductionWord();
+					currentTagInRow = firstTagInRow;
+					currentTagInAlternateList = currentTagInRow;
+					wordIndex = 0;
+					lineIndex++;
+				}
+				else
+				{
+					wordIndex++;
+				}
+				
+				alternateWordIndex = 0;
 				currentWord = "";
+
+				//start parsing new line
+			}
+			else if(currentToken == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_STRUCTURED_DATABASE_TAG_ALTERNATE)
+			{
+				currentTagInAlternateList->tagName = currentWord;
+				currentTagInAlternateList->alternateTagBasic = new GIApreprocessorMultiwordReductionWord();
+				currentTagInAlternateList = currentTagInAlternateList->alternateTagBasic;
+				//cout << "currentWord = " << currentWord << endl;
+				
+				//wordIndex does not change...
+				currentWord = "";
+				alternateWordIndex++;
 			}
 			else
 			{
@@ -2807,15 +2869,20 @@ bool GIApreprocessorMultiwordReductionClass::determineIsWordType(GIApreprocessor
 		if(wordTypeDetected)
 		{
 			*baseNameFound = wordLowerCase;
-			*grammaticalBaseTenseForm = GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NOUN_DATABASE_TAG_BASE_FORM_SINGULAR;	
+			*grammaticalBaseTenseForm = GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NOUN_DATABASE_TAG_BASE_TENSE_FORM_SINGULAR;	
 		}
 
-		GIApreprocessorMultiwordReductionWord* nounBaseFormFound = NULL;	
-		if(determineNounPluralVariant(wordLowerCase, &nounBaseFormFound))
+		GIApreprocessorMultiwordReductionWord* nounBaseFound = NULL;	
+		int nounGrammaticalBaseTenseForm = GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NOUN_DATABASE_TAG_BASE_TENSE_FORM_UNKNOWN;
+		if(determineNounPluralVariant(wordLowerCase, &nounBaseFound, &nounGrammaticalBaseTenseForm))
 		{
 			wordTypeDetected = true;
-			*baseNameFound = nounBaseFormFound->tagName;
-			*grammaticalBaseTenseForm = GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NOUN_DATABASE_TAG_BASE_FORM_PLURAL;
+			*baseNameFound = nounBaseFound->tagName;
+			#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NOUN_VARIANTS_PRIORITISE_IRREGULAR_PLURAL_FORM
+			*grammaticalBaseTenseForm = GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NOUN_DATABASE_TAG_BASE_TENSE_FORM_PLURAL;
+			#else
+			*grammaticalBaseTenseForm = nounGrammaticalBaseTenseForm;	//could be GRAMMATICAL_NUMBER_PLURAL or GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NOUN_DATABASE_TAG_BASE_TENSE_FORM_SINGULAR_OR_PLURAL
+			#endif
 		}
 	}
 	
@@ -3021,7 +3088,7 @@ bool GIApreprocessorMultiwordReductionClass::determineIsNoun(const string word)
 	return findWordInWordList(nounList, word);
 }
 */
-bool GIApreprocessorMultiwordReductionClass::determineNounPluralVariant(const string word, GIApreprocessorMultiwordReductionWord** nounBaseFormFound)
+bool GIApreprocessorMultiwordReductionClass::determineNounPluralVariant(const string word, GIApreprocessorMultiwordReductionWord** nounBaseFound, int* grammaticalBaseTenseForm)
 {
 	bool foundNounPluralVariant = false;
 	
@@ -3030,8 +3097,18 @@ bool GIApreprocessorMultiwordReductionClass::determineNounPluralVariant(const st
 	if(findWordInWordList(nounPluralVariantsList, word, &wordFound))
 	{
 		foundNounPluralVariant = true;
-		*nounBaseFormFound = wordFound;
+		*nounBaseFound = wordFound;
+		*grammaticalBaseTenseForm = GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NOUN_DATABASE_TAG_BASE_TENSE_FORM_PLURAL;
+	
+		//compensate for irregular nouns (GIA3f5a);
+		string nounSingularForm = wordFound->tagName;
+		string nounPluralForm = word;
+		if(nounSingularForm == nounPluralForm)
+		{
+			*grammaticalBaseTenseForm = GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NOUN_DATABASE_TAG_BASE_TENSE_FORM_SINGULAR_OR_PLURAL;
+		}
 	}
+	
 	
 	return foundNounPluralVariant;	
 }

@@ -8,9 +8,12 @@ yen
 yuan
 cent
 euro
+penny
 dollars
 pounds
 yens
 yuans
 cents
 euros
+pence
+pennies

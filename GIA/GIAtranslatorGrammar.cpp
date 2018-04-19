@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorGrammar.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f4e 14-April-2018
+ * Project Version: 3f5a 15-April-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
@@ -55,11 +55,16 @@ bool GIAtranslatorGrammarClass::calculateGrammarUsingInferredPosTypes(GIApreproc
 	//calculate the  PENN pos type/grammatical number of nouns;
 	if(currentWord->wordPOStypeInferred == GIA_SEM_REL_TRANSLATOR_POS_TYPE_NOUN)	//NB is equivalent to GIA_PREPROCESSOR_POS_TYPE_NOUN
 	{
-		GIApreprocessorMultiwordReductionWord* nounBaseFormFound = NULL;
-		if(GIApreprocessorMultiwordReduction.determineNounPluralVariant(wordTextLowerCase, &nounBaseFormFound))
+		GIApreprocessorMultiwordReductionWord* nounBaseFound = NULL;
+		int nounGrammaticalBaseTenseForm = GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NOUN_DATABASE_TAG_BASE_TENSE_FORM_UNKNOWN;
+		if(GIApreprocessorMultiwordReduction.determineNounPluralVariant(wordTextLowerCase, &nounBaseFound, &nounGrammaticalBaseTenseForm))
 		{
-			currentFeature->lemma = nounBaseFormFound->tagName;
+			currentFeature->lemma = nounBaseFound->tagName;
+			#ifdef GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NOUN_VARIANTS_PRIORITISE_IRREGULAR_PLURAL_FORM
 			currentFeature->grammaticalNumber = GRAMMATICAL_NUMBER_PLURAL;	//what about words that dont have explicit plural modification e.g. "sheep"? (this is why an external dedicated POS tagger can be useful; because it should use context to derive morphology)
+			#else
+			currentFeature->grammaticalNumber = nounGrammaticalBaseTenseForm;	//could be GRAMMATICAL_NUMBER_PLURAL or GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NOUN_DATABASE_TAG_BASE_TENSE_FORM_SINGULAR_OR_PLURAL
+			#endif
 			currentFeature->stanfordPOS = FEATURE_POS_TAG_NOUN_NNS;
 			//cout << "determineNounPluralVariant: currentFeature->lemma = " << currentFeature->lemma << endl;
 		}

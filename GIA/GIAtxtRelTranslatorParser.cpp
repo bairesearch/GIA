@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f4e 14-April-2018
+ * Project Version: 3f5a 15-April-2018
  * Requirements: 
  * Description: Textual Relation Translator Parser
  * /
@@ -1869,6 +1869,7 @@ void GIAtxtRelTranslatorParserClass::defineSubstancesBasedOnNetworkAndDeterminer
 					if(entity->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL)
 					{
 						isConcept = true;
+						//cout << "(entity->grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL) entity = " << entity->entityName << endl;
 					}
 				}		
 

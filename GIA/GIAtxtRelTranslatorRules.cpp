@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorRules.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f4e 14-April-2018
+ * Project Version: 3f5a 15-April-2018
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Rules
  * /
@@ -554,6 +554,7 @@ bool GIAtxtRelTranslatorRulesClass::parseComponents(XMLparserTag* firstTxtRelTra
 			#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_WORD_NOUN_VERB_VARIANT
 			component->wordVerbVariantType = wordVerbVariantTypeInt;
 			component->wordNounVariantType = wordNounVariantTypeInt;
+			//cout << "wordNounVariantTypeInt = " << wordNounVariantTypeInt << endl;
 			#endif				
 			
 			componentsList->push_back(component);
