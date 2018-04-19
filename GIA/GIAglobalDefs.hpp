@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f3k 10-April-2018
+ * Project Version: 3f3l 10-April-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  * /
@@ -758,7 +758,8 @@
 			//#define GIA_DEBUG_TXT_REL_TRANSLATOR_RULES    
 			//#define GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS2
 			//#define GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS
-			//#define GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_SYN_REL_TRANSLATOR_OUTPUT_BACKWARDS_COMPATIBILITY	//not supported (due to propernouns being replicated in wordlistNouns.txt)
+			
+			//#define GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_SYN_REL_TRANSLATOR_OUTPUT_BACKWARDS_COMPATIBILITY  //not supported (due to propernouns being replicated in wordlistNouns.txt)
 			
 			#define GIA_TXT_REL_TRANSLATOR_RULES_ASSUME_HIGH_LEVEL_REFERENCE_SETS_DO_NOT_CONTAIN_EXPLICIT_SEMANTIC_RELATION_FUNCTION
 			
@@ -868,6 +869,9 @@
 				#define GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_REPEAT_IGNORE_CONSECUTIVE_PLURAL_NOUNS	//3f2n
 				#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_REPEAT_IGNORE_CONSECUTIVE_PLURAL_NOUNS
 					#define GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_WORD_NOUN_VERB_VARIANT	//3f2p
+					#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_WORD_NOUN_VERB_VARIANT
+						#define GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_WORD_NOUN_VERB_VARIANT_INTERPRET_PAST_AND_PAST_PARTICIPLE_THE_SAME
+					#endif
 				#endif
 			#endif
 			#define GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_OR

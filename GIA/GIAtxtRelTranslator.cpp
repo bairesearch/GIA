@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f3k 10-April-2018
+ * Project Version: 3f3l 10-April-2018
  * Requirements: requires plain text file
  * Description: Textual relation translator
  * /
@@ -194,15 +194,15 @@ bool GIAtxtRelTranslatorClass::executeTxtRelTranslator(GIAtranslatorVariablesCla
 			GIApreprocessorMultiwordReductionWord* nounBaseFormFound = NULL;
 			if(GIApreprocessorMultiwordReduction.determineNounPluralVariant(wordTextLowerCase, &nounBaseFormFound))
 			{
-				//cout << "contextWord->wordNounVariantGrammaticalTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NOUN_DATABASE_TAG_BASE_TENSE_FORM_PLURAL; contextWord = " << contextWord->tagName << endl;
 				contextWord->wordNounVariantGrammaticalTenseForm = GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NOUN_DATABASE_TAG_BASE_TENSE_FORM_PLURAL;	//will only be valid if wordPOStype == noun
+				//cout << "contextWord->wordNounVariantGrammaticalTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NOUN_DATABASE_TAG_BASE_TENSE_FORM_PLURAL; contextWord = " << contextWord->tagName << endl;
 			}
 			string verbBaseNameFound = "";
 			int verbGrammaticalBaseTenseForm = GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_UNKNOWN;
 			if(GIApreprocessorMultiwordReduction.determineVerbCaseStandardWithAdditional(wordTextLowerCase, &verbBaseNameFound, &verbGrammaticalBaseTenseForm))
 			{
-				//cout << "contextWord->wordVerbVariantGrammaticalTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PLURAL; contextWord = " << contextWord->tagName << endl;
-				contextWord->wordNounVariantGrammaticalTenseForm = verbGrammaticalBaseTenseForm;	//will only be valid if wordPOStype == verb
+				contextWord->wordVerbVariantGrammaticalTenseForm = verbGrammaticalBaseTenseForm;	//will only be valid if wordPOStype == verb
+				//cout << "contextWord->wordVerbVariantGrammaticalTenseForm == " << contextWord->verbGrammaticalBaseTenseForm << ", contextWord = " << contextWord->tagName << endl;
 			}			
 			#endif
 			
@@ -422,6 +422,9 @@ bool GIAtxtRelTranslatorClass::generateParseTreeIntro(vector<GIAtxtRelTranslator
 			else
 			{
 			#endif
+				/*
+				if((groupType->referenceSetType == GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_REFERENCE_SET_TYPE_REFERENCESET))
+				*/
 				if((groupType->referenceSetType == GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_REFERENCE_SET_TYPE_LOGICREFERENCESET) ||
 				(groupType->referenceSetType == GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_REFERENCE_SET_TYPE_REFERENCESET))
 				//if(groupType->groupTypeName == GIAtxtRelTranslatorRulesGroupsTypes[GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_TYPE_LOGICREFERENCESETSOPTIONAL])
@@ -692,11 +695,22 @@ bool GIAtxtRelTranslatorClass::generateRulesGroupTreeComponents(vector<GIAtxtRel
 						if(component->missing)
 						{
 							//skipMissingComponent = true;
+							#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_WORD_NOUN_VERB_VARIANT
+							GIAtxtRelTranslatorRulesComponent* newParseComponent = new GIAtxtRelTranslatorRulesComponent(*component);	//copy rules component
+							forwardNounVerbVariantRequirements(currentParseTreeGroup, newParseComponent);
+							#else
+							GIAtxtRelTranslatorRulesComponent* newParseComponent = NULL;
+							#endif
+							
 							GIApreprocessorPlainTextWord* currentWord = sentenceContentsSubset->at(minIndexOfMatchesFoundBackup2+1);
-							if(findStringMatch(component, currentWord))
+							if(findStringMatch(component, currentWord, newParseComponent))
 							{
 								foundWordMatch = false;	//component should be missing but was found
 							}
+							
+							#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_WORD_NOUN_VERB_VARIANT
+							deleteParseComponent(newParseComponent);
+							#endif
 						}
 						else
 						{
@@ -708,6 +722,11 @@ bool GIAtxtRelTranslatorClass::generateRulesGroupTreeComponents(vector<GIAtxtRel
 							//newParseComponent->subComponents.clear();	//NB this is necessary as newParseComponent is a copied version of the original rules object
 							currentParseTreeGroup->components.push_back(newParseComponent);
 
+				
+							#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_WORD_NOUN_VERB_VARIANT
+							forwardNounVerbVariantRequirements(currentParseTreeGroup, newParseComponent);
+							#endif
+			
 							if((component->componentType == GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_OR) ||
 							(component->componentType == GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_REPEAT))
 							{
@@ -946,7 +965,7 @@ bool GIAtxtRelTranslatorClass::generateRulesGroupTreeComponent(GIAtxtRelTranslat
 
 			//cout << "minIndexOfMatchesFound = " << minIndexOfMatchesFound << endl;
 			//cout << "currentWord = " << currentWord->tagName << endl;
-			if(findStringMatch(component, currentWord))
+			if(findStringMatch(component, currentWord, currentParseTreeComponent))
 			{
 				#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS
 				cout << "findStringMatch: currentWord = " << currentWord->tagName << endl;
@@ -1018,6 +1037,10 @@ bool GIAtxtRelTranslatorClass::generateRulesGroupTreeComponent(GIAtxtRelTranslat
 				newParseGroup->components.clear();	//CHECKTHIS; added 5 Mar 2018
 				currentParseTreeComponent->parseTreeGroupRef = newParseGroup;
 				//currentParseTreeComponent->groupRefName = newParseGroup->groupName;	//added 17 March 2018
+				
+				#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_WORD_NOUN_VERB_VARIANT
+				forwardNounVerbVariantRequirements(currentParseTreeComponent, newParseGroup);
+				#endif
 
 				if(generateParseTreeGroup(currentParseTreeComponent->groupRef, sentenceContentsSubset, newParseGroup, performance, layer+1, component->groupTypeRefName, numberOfConsecutiveTimesPreviousGroupType))
 				{
@@ -1029,6 +1052,10 @@ bool GIAtxtRelTranslatorClass::generateRulesGroupTreeComponent(GIAtxtRelTranslat
 				GIAtxtRelTranslatorRulesGroup* newParseGroup = new GIAtxtRelTranslatorRulesGroup();	//create new cgroup component
 				currentParseTreeComponent->parseTreeGroupRef = newParseGroup;
 
+				#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_WORD_NOUN_VERB_VARIANT
+				forwardNounVerbVariantRequirements(currentParseTreeComponent, newParseGroup);
+				#endif
+				
 				if(generateParseTreeGroupType(currentParseTreeComponent->groupTypeRef, sentenceContentsSubset, newParseGroup, performance, layer+1, component->groupTypeRefName, numberOfConsecutiveTimesPreviousGroupType, currentParseTreeComponent))
 				{
 					foundWordMatch = true;
@@ -1056,7 +1083,47 @@ bool GIAtxtRelTranslatorClass::generateRulesGroupTreeComponent(GIAtxtRelTranslat
 	return foundWordMatch;
 }
 
-bool GIAtxtRelTranslatorClass::findStringMatch(GIAtxtRelTranslatorRulesComponent* component, GIApreprocessorPlainTextWord* currentWord)
+#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_WORD_NOUN_VERB_VARIANT
+bool GIAtxtRelTranslatorClass::forwardNounVerbVariantRequirements(GIAtxtRelTranslatorRulesComponent* component, GIAtxtRelTranslatorRulesGroup* newParseGroup)
+{
+	bool result = true;
+	if(component->semanticRelationReturnEntity)
+	{
+		//cout << "1 GIAtxtRelTranslatorClass::forwardNounVerbVariantRequirements: currentComponent->semanticRelationReturnEntity" << endl;
+		if(component->wordVerbVariantType != GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_UNKNOWN)
+		{
+			newParseGroup->wordVerbVariantTypeDerived = component->wordVerbVariantType;
+			//cout << "1 newParseGroup->wordVerbVariantTypeDerived = " << newParseGroup->wordVerbVariantTypeDerived << endl;
+		}
+		if(component->wordNounVariantType != GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NOUN_DATABASE_TAG_BASE_TENSE_FORM_UNKNOWN)
+		{
+			newParseGroup->wordNounVariantTypeDerived = component->wordNounVariantType;		
+		}		
+	}
+	return result;
+}
+bool GIAtxtRelTranslatorClass::forwardNounVerbVariantRequirements(GIAtxtRelTranslatorRulesGroup* currentParseGroup, GIAtxtRelTranslatorRulesComponent* currentComponent)
+{
+	bool result = true;
+	if(currentComponent->semanticRelationReturnEntity)
+	{
+		//cout << "2 GIAtxtRelTranslatorClass::forwardNounVerbVariantRequirements: currentComponent->semanticRelationReturnEntity" << endl;
+		if(currentParseGroup->wordVerbVariantTypeDerived != GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_UNKNOWN)
+		{
+			currentComponent->wordVerbVariantType = currentParseGroup->wordVerbVariantTypeDerived;
+			//cout << "2 currentComponent->wordVerbVariantType = " << currentComponent->wordVerbVariantType << endl;
+		}
+		if(currentParseGroup->wordNounVariantTypeDerived != GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NOUN_DATABASE_TAG_BASE_TENSE_FORM_UNKNOWN)
+		{
+			currentComponent->wordNounVariantType = currentParseGroup->wordNounVariantTypeDerived;		
+		}		
+	}
+	return result;
+}
+#endif
+			
+
+bool GIAtxtRelTranslatorClass::findStringMatch(GIAtxtRelTranslatorRulesComponent* component, GIApreprocessorPlainTextWord* currentWord, GIAtxtRelTranslatorRulesComponent* currentParseTreeComponent)
 {
 	bool foundWordMatchTemp = false;
 	if(component->stringType == GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_STRINGTYPE_LRPEXTERNALWORDLISTS)
@@ -1092,36 +1159,62 @@ bool GIAtxtRelTranslatorClass::findStringMatch(GIAtxtRelTranslatorRulesComponent
 		else
 		{
 		#endif
-			#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_WORD_NOUN_VERB_VARIANT
-			bool pass = true;
-			
-			if(component->wordVerbVariantType != GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_UNKNOWN)
+
+			//cout << "wordPOStypeName = " << wordPOStypeName << endl;
+			//cout << "wordPOStype = " << wordPOStype << endl;
+			if(verifyPOStype(currentWord, wordPOStype))
 			{
-				if(currentWord->wordVerbVariantGrammaticalTenseForm != component->wordVerbVariantType)
+				#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_WORD_NOUN_VERB_VARIANT
+				bool pass = true;
+				if(currentParseTreeComponent->wordVerbVariantType != GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_UNKNOWN)
 				{
-					pass = false;
+					//cout << "currentParseTreeComponent->wordVerbVariantType != GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_UNKNOWN = " << currentParseTreeComponent->wordVerbVariantType << endl;
+
+					bool verbVariantMatchFound = false;
+					if(currentWord->wordVerbVariantGrammaticalTenseForm == currentParseTreeComponent->wordVerbVariantType)
+					{
+						verbVariantMatchFound = true;
+					}
+					#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_WORD_NOUN_VERB_VARIANT_INTERPRET_PAST_AND_PAST_PARTICIPLE_THE_SAME
+					else if((currentParseTreeComponent->wordVerbVariantType == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST) && (currentWord->wordVerbVariantGrammaticalTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PASTPARTICIPLE))
+					{
+						verbVariantMatchFound = true;
+					}
+					else if((currentParseTreeComponent->wordVerbVariantType == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PASTPARTICIPLE) && (currentWord->wordVerbVariantGrammaticalTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_PAST))
+					{
+						verbVariantMatchFound = true;
+					}
+					#endif
+					if(verbVariantMatchFound)
+					{
+						//cout << "\tpass: currentWord->wordVerbVariantGrammaticalTenseForm = " << currentWord->wordVerbVariantGrammaticalTenseForm << endl;
+						//cout << "\tcurrentWord = " << currentWord->tagName << endl;
+					}
+					else
+					{
+						//cout << "\tfail: currentWord->wordVerbVariantGrammaticalTenseForm = " << currentWord->wordVerbVariantGrammaticalTenseForm << endl;
+						//cout << "\tcurrentWord = " << currentWord->tagName << endl;
+						pass = false;
+					}
+				}
+				if(currentParseTreeComponent->wordNounVariantType != GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NOUN_DATABASE_TAG_BASE_TENSE_FORM_UNKNOWN)
+				{
+					if(currentWord->wordNounVariantGrammaticalTenseForm != currentParseTreeComponent->wordNounVariantType)
+					{
+						pass = false;
+					}			
 				}		
-			}
-			if(component->wordNounVariantType != GIA_PREPROCESSOR_MULTIWORD_REDUCTION_NOUN_DATABASE_TAG_BASE_TENSE_FORM_UNKNOWN)
-			{
-				if(currentWord->wordNounVariantGrammaticalTenseForm != component->wordNounVariantType)
+				if(pass)
 				{
-					pass = false;
-				}			
-			}		
-			if(pass)
-			{
-			#endif
-				//cout << "wordPOStypeName = " << wordPOStypeName << endl;
-				//cout << "wordPOStype = " << wordPOStype << endl;
-				if(verifyPOStype(currentWord, wordPOStype))
-				{
+				#endif
+
 					foundWordMatchTemp = true;
 					currentWord->wordPOStypeInferred = wordPOStype;
+	
+				#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_WORD_NOUN_VERB_VARIANT
 				}
-			#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_WORD_NOUN_VERB_VARIANT
+				#endif	
 			}
-			#endif	
 		#ifdef GIA_TXT_REL_TRANSLATOR_RULES_TREAT_UNKNOWN_POSTYPES
 		}
 		#endif
