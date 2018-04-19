@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorMultiwordReduction.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f2g 04-April-2018
+ * Project Version: 3f2h 04-April-2018
  * Requirements: requires plain text file
  * Description: Preprocessor Multiword Reduction
  * /
@@ -3258,6 +3258,22 @@ bool GIApreprocessorMultiwordReductionClass::createWordIndexListFromLRPfiles()
 				nounListGlobal->clear();
 				verbListGlobal->insert(verbListWithVariantsGlobal.begin(), verbListWithVariantsGlobal.end());
 				nounListGlobal->insert(nounListWithVariantsGlobal.begin(), nounListWithVariantsGlobal.end());
+				#endif
+				
+				#ifdef GIA_PREPROCESSOR_REMOVE_VERB_VARIANT_CONTINUOUS_FROM_NOUN_LISTS
+				for(unordered_map<string, GIApreprocessorMultiwordReductionWord*>::iterator iter = verbListWithVariantsGlobal.begin(); iter != verbListWithVariantsGlobal.end(); iter++)
+				{
+					string index = iter->first;
+					GIApreprocessorMultiwordReductionWord* word = iter->second;
+					if(word->grammaticalTenseForm == GIA_PREPROCESSOR_MULTIWORD_REDUCTION_VERB_DATABASE_TAG_BASE_TENSE_FORM_CONTINUOUS)
+					{
+						unordered_map<string, GIApreprocessorMultiwordReductionWord*>::iterator it=nounListGlobal.find(index);
+						if(it != nounListGlobal.end())
+						{
+							nounListGlobal.delete(it);
+						}
+					}
+				}
 				#endif
 			}
 	

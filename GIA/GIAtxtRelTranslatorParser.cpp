@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f2g 04-April-2018
+ * Project Version: 3f2h 04-April-2018
  * Requirements: 
  * Description: Textual Relation Translator Parser
  * /
@@ -1814,11 +1814,14 @@ void GIAtxtRelTranslatorParserClass::defineSubstancesBasedOnNetworkAndDeterminer
 
 						if(foundActionNetworkIndex)
 						{
+							/*
 							if(entity->entityType != GIA_ENTITY_TYPE_ACTION)
 							{
-								cerr << "GIAtxtRelTranslatorParserClass::defineSubstancesBasedOnNetworkAndDeterminerInfo{} error: foundActionNetworkIndex && (entity->entityType != GIA_ENTITY_TYPE_ACTION)" << endl;
+								//this will be the case with actionConcepts without objects
+								cout << "GIAtxtRelTranslatorParserClass::defineSubstancesBasedOnNetworkAndDeterminerInfo{}: foundActionNetworkIndex && (entity->entityType != GIA_ENTITY_TYPE_ACTION)" << endl;
 							}
 							cout << "isActionConcept" << endl;
+							*/
 							entity->entityType = GIA_ENTITY_TYPE_ACTION;	//this should already be the case (considering entity->grammaticalWordTypeTemp == GRAMMATICAL_WORD_TYPE_VERB)
 							entity->isActionConcept = true;
 						}

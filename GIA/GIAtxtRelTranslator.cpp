@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f2g 04-April-2018
+ * Project Version: 3f2h 04-April-2018
  * Requirements: requires plain text file
  * Description: Textual relation translator
  * /
@@ -445,35 +445,24 @@ bool GIAtxtRelTranslatorClass::generateParseTreeGroupType(GIAtxtRelTranslatorRul
 
 		int minIndexOfMatchesFoundBackup2 = calculateMinIndexOfMatchesFound(sentenceContentsSubset);
 
-		#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_GROUP_PREVIOUS_WORD_POS_TYPE
-		//FUTURE: should pass previousWordPOStype from higher level function rather than relying on copied version of currentParseTreeGroup->previousWordPOStype (from group->previousWordPOStype)
-		if((group->previousWordPOStype == "") || 
-		(minIndexOfMatchesFoundBackup2 >= 0 && 
-		(sentenceContentsSubset->at(minIndexOfMatchesFoundBackup2)->wordPOStypeInferred == GIApreprocessorMultiwordReductionClassObject.getPOStypeFromName(group->previousWordPOStype))))
-		//OLD: verifyPOStype(sentenceContentsSubset->at(minIndexOfMatchesFoundBackup2), GIApreprocessorMultiwordReductionClassObject.getPOStypeFromName(group->previousWordPOStype))))
-		{
+		#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS
+		GIAtxtRelTranslatorRules.printParseTreeDebugIndentation(layer);
+		cout << "group->groupName = " << group->groupName << endl;
 		#endif
-			#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS
-			GIAtxtRelTranslatorRules.printParseTreeDebugIndentation(layer);
-			cout << "group->groupName = " << group->groupName << endl;
-			#endif
 
-			GIAtxtRelTranslatorRulesGroup* currentParseTreeGroupTemp = new GIAtxtRelTranslatorRulesGroup(*group);
-			currentParseTreeGroupTemp->groupTypeNameBackup = groupType->groupTypeName;
-			currentParseTreeGroupTemp->components.clear();	//CHECKTHIS; added 5 Mar 2018
-			int performanceTemp = performanceOriginal;
-			bool passedTemp = false;
-			if(generateParseTreeGroup(group, sentenceContentsSubset, currentParseTreeGroupTemp, &performanceTemp, layer+1, previousGroupType, numberOfConsecutiveTimesPreviousGroupType))
-			{
-				result = true;	//at least one group has been successfully parsed
-				passedTemp = true;
-				//cout << "passedTemp2" << endl;
-				//exit(EXIT_ERROR);	//DEBUG
-			}
-			updatePerformance(performanceTemp, &performanceMax, performance, currentParseTreeGroup, currentParseTreeGroupTemp, passedTemp, &minIndexOfMatchesFoundBackupOptimum, sentenceContentsSubset, minIndexOfMatchesFoundBackup2, previousParseTreeComponent);
-		#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_GROUP_PREVIOUS_WORD_POS_TYPE
+		GIAtxtRelTranslatorRulesGroup* currentParseTreeGroupTemp = new GIAtxtRelTranslatorRulesGroup(*group);
+		currentParseTreeGroupTemp->groupTypeNameBackup = groupType->groupTypeName;
+		currentParseTreeGroupTemp->components.clear();	//CHECKTHIS; added 5 Mar 2018
+		int performanceTemp = performanceOriginal;
+		bool passedTemp = false;
+		if(generateParseTreeGroup(group, sentenceContentsSubset, currentParseTreeGroupTemp, &performanceTemp, layer+1, previousGroupType, numberOfConsecutiveTimesPreviousGroupType))
+		{
+			result = true;	//at least one group has been successfully parsed
+			passedTemp = true;
+			//cout << "passedTemp2" << endl;
+			//exit(EXIT_ERROR);	//DEBUG
 		}
-		#endif				
+		updatePerformance(performanceTemp, &performanceMax, performance, currentParseTreeGroup, currentParseTreeGroupTemp, passedTemp, &minIndexOfMatchesFoundBackupOptimum, sentenceContentsSubset, minIndexOfMatchesFoundBackup2, previousParseTreeComponent);
 	}
 	
 	if(result)
@@ -491,13 +480,45 @@ bool GIAtxtRelTranslatorClass::generateParseTreeGroupType(GIAtxtRelTranslatorRul
 bool GIAtxtRelTranslatorClass::generateParseTreeGroup(GIAtxtRelTranslatorRulesGroup* group, vector<GIApreprocessorWord*>* sentenceContentsSubset, GIAtxtRelTranslatorRulesGroup* currentParseTreeGroup, int* performance, int layer, string previousGroupType, int numberOfConsecutiveTimesPreviousGroupType)
 {
 	bool foundWordMatch = true;
-	
-	if(!generateRulesGroupTreeComponents(&(group->components), sentenceContentsSubset, currentParseTreeGroup, performance, false, INT_DEFAULT_VALUE, false, layer, previousGroupType, numberOfConsecutiveTimesPreviousGroupType))
+
+	int minIndexOfMatchesFoundBackup2 = calculateMinIndexOfMatchesFound(sentenceContentsSubset);
+
+	bool pass = true;
+	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_GROUP_PREVIOUS_WORD_POS_TYPE
+	//FUTURE: should pass previousWordPOStype from higher level function rather than relying on copied version of currentParseTreeGroup->previousWordPOStype (from group->previousWordPOStype)
+	if(group->previousWordPOStype != "")
 	{
-		//currentParseTreeGroup->components.clear();	//already done in generateRulesGroupTreeComponents
-		foundWordMatch = false;
+		pass = false;
+		if((minIndexOfMatchesFoundBackup2 >= 0 && (sentenceContentsSubset->at(minIndexOfMatchesFoundBackup2)->wordPOStypeInferred == GIApreprocessorMultiwordReductionClassObject.getPOStypeFromName(group->previousWordPOStype))))
+		//OLD: verifyPOStype(sentenceContentsSubset->at(minIndexOfMatchesFoundBackup2), GIApreprocessorMultiwordReductionClassObject.getPOStypeFromName(group->previousWordPOStype))))
+		{
+			pass = true;
+		}
 	}
-	
+	#endif
+	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_GROUP_EXISTS_PRECEEDING_WORD_POS_TYPE
+	if(group->existsPreceedingWordPOStype != "")
+	{
+		pass = false;
+		for(int j=0; j<=minIndexOfMatchesFoundBackup2; j++)
+		{
+			if(sentenceContentsSubset->at(j)->wordPOStypeInferred == GIApreprocessorMultiwordReductionClassObject.getPOStypeFromName(group->existsPreceedingWordPOStype))
+			{
+				//cout << "group->existsPreceedingWordPOStype = " << group->existsPreceedingWordPOStype << endl;
+				pass = true;
+			}
+		}
+	}
+	#endif
+	if(pass)
+	{	
+		if(!generateRulesGroupTreeComponents(&(group->components), sentenceContentsSubset, currentParseTreeGroup, performance, false, INT_DEFAULT_VALUE, false, layer, previousGroupType, numberOfConsecutiveTimesPreviousGroupType))
+		{
+			//currentParseTreeGroup->components.clear();	//already done in generateRulesGroupTreeComponents
+			foundWordMatch = false;
+		}
+	}
+			
 	return foundWordMatch;
 }
 

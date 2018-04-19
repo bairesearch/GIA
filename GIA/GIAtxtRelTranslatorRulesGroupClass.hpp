@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorRulesGroupClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f2g 04-April-2018
+ * Project Version: 3f2h 04-April-2018
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Rules
  * /
@@ -72,8 +72,13 @@ public:
 	string semanticRelationFunctionConditionNewName;
 	#endif
 	string groupName;
+	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_GROUP_PREVIOUS_WORD_POS_TYPE
 	string previousWordPOStype;
-	
+	#endif
+	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_GROUP_EXISTS_PRECEEDING_WORD_POS_TYPE
+	string existsPreceedingWordPOStype;
+	#endif
+		
 	string groupTypeNameBackup;
 	
 	int numberOfConsecutiveTimesPreviousGroupType;
