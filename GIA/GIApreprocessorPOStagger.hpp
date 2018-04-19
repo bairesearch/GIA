@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorPOStagger.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f10h 19-April-2018
+ * Project Version: 3f10i 19-April-2018
  * Requirements: requires plain text file
  * Description: Preprocessor POS tagger
  * /
@@ -104,6 +104,9 @@ class GIApreprocessorPOStaggerClass
 	public: void generatePOSambiguityInfoUnambiguousPermutationArray(vector<vector<unsigned long>*>* POSambiguityInfoUnambiguousPermutationArray, vector<unsigned long>* POSambiguityInfoPermutation, vector<unsigned long>* POSambiguityInfoUnambiguousPermutationLocal, int wordIndex);
 	public: bool determinePOSambiguityInfo(GIApreprocessorPlainTextWord* contextWord, unsigned long* contextWordPOSambiguityInfo, bool* contextWordPOSisAmbiguous, unsigned char* contextWordUnambiguousPOSindex, bool* identifiedEveryWordInDatabasePOSpermutation);
 		public: bool findWordInWordListAllTypesWithPOSambiguityInfo(const string word, GIApreprocessorMultiwordReductionWord** wordFound, unsigned long* POSambiguityInfoFound);
+		#ifdef GIA_TXT_REL_TRANSLATOR_RULES_TREAT_UNKNOWN_POSTYPES_MID_SENTENCE_CAPITALISED_WORDS_AS_PROPERNOUNS
+		public: bool isMidSentenceUppercaseWordLikelyProperNoun(GIApreprocessorPlainTextWord* contextWord);
+		#endif
 
 	public: bool printPOSambiguityInfoPermutation(vector<unsigned long>* POSambiguityInfoPermutation);
 	#endif

@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorPOStagger.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f10h 19-April-2018
+ * Project Version: 3f10i 19-April-2018
  * Requirements: requires plain text file
  * Description: Preprocessor POS tagger
  * /
@@ -1200,86 +1200,113 @@ bool GIApreprocessorPOStaggerClass::determinePOSambiguityInfo(GIApreprocessorPla
 	
 	int entityIndex = (static_cast<GIApreprocessorMultiwordReductionPlainTextWord*>(contextWord))->entityIndex;
 	//cout << "entityIndex = " << entityIndex << endl;
+	string wordText = contextWord->tagName;
 	
 	bool foundWordInLists = false;
 	GIApreprocessorMultiwordReductionWord* contextWordFound = NULL;
 	#ifdef GIA_PREPROCESSOR_INITIALISE_WORD_INDEX_LIST_FROM_LRP_FILES_SUPPORT_UPPERCASE_PROPERNOUN_WORD_LISTS
 	//CHECKTHIS: verify that currentWord->tagName is case sensitive
-	//cout << "contextWord->tagName = " << contextWord->tagName << endl;
-	if(findWordInWordListAllTypesWithPOSambiguityInfo(contextWord->tagName, &contextWordFound, contextWordPOSambiguityInfo))
+	//cout << "wordText = " << wordText << endl;
+	if(findWordInWordListAllTypesWithPOSambiguityInfo(wordText, &contextWordFound, contextWordPOSambiguityInfo))
 	{
-		//cout << "1 contextWord->tagName = " << contextWord->tagName << endl;
+		//cout << "1 wordText = " << wordText << endl;
 		foundWordInLists = true;
 	}
-	#ifdef GIA_PREPROCESSOR_INITIALISE_WORD_INDEX_LIST_FROM_LRP_FILES_SUPPORT_UPPERCASE_PROPERNOUN_WORD_LISTS_IF_FIRST_WORD_OF_SENTENCE_IS_IN_PROPERNOUN_LIST_THEN_CHECK_OTHER_LISTS_ALSO
-	if((entityIndex == GIA_NLP_START_ENTITY_INDEX) || (!foundWordInLists))
+	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_TREAT_UNKNOWN_POSTYPES_MID_SENTENCE_CAPITALISED_WORDS_AS_PROPERNOUNS_METHOD1
+	if((!foundWordInLists) && isMidSentenceUppercaseWordLikelyProperNoun(contextWord))
 	{
-		char firstCharacterOfFirstWordInSentence = (contextWord->tagName)[0];
-		if(isupper(firstCharacterOfFirstWordInSentence))
-		{
-			string contextWordLowerCase = SHAREDvars.convertStringToLowerCase(&(contextWord->tagName));
-			unsigned long contextWordLowerCasePOSambiguityInfo = 0;
-			//cout << "contextWordLowerCase = " << contextWordLowerCase << endl;
-			if(findWordInWordListAllTypesWithPOSambiguityInfo(contextWordLowerCase, &contextWordFound, &contextWordLowerCasePOSambiguityInfo))
-			{
-				if((entityIndex == GIA_NLP_START_ENTITY_INDEX) && foundWordInLists)
-				{
-					//cout << "2 contextWord->tagName = " << contextWord->tagName << endl;
-					//cout << "*contextWordPOSambiguityInfo = " << *contextWordPOSambiguityInfo << endl;
-					//cout << "contextWordLowerCasePOSambiguityInfo = " << contextWordLowerCasePOSambiguityInfo << endl;
-					*contextWordPOSambiguityInfo = (*contextWordPOSambiguityInfo | contextWordLowerCasePOSambiguityInfo);	//combine the potential pos types for upper case version and lower case version of word
-				}
-				else
-				{
-					*contextWordPOSambiguityInfo = contextWordLowerCasePOSambiguityInfo;
-				}
-				foundWordInLists = true;
-			}
-		}
+		foundWordInLists = true;
+		*contextWordPOSambiguityInfo = SHAREDvars.setBitValue(GIA_PREPROCESSOR_POS_TAGGER_POS_AMBIGUITY_INFO_UNKNOWN, GIA_PREPROCESSOR_POS_TYPE_PROPERNOUN_DEFAULT, true);	//set as propernoun
 	}
-	#else
 	else
 	{
-		string contextWordLowerCase = SHAREDvars.convertStringToLowerCase(&(contextWord->tagName));
-		//cout << "contextWordLowerCase = " << contextWordLowerCase << endl;
-		if(findWordInWordListAllTypesWithPOSambiguityInfo(contextWordLowerCase, &contextWordFound, contextWordPOSambiguityInfo))
+	#endif
+		#ifdef GIA_PREPROCESSOR_INITIALISE_WORD_INDEX_LIST_FROM_LRP_FILES_SUPPORT_UPPERCASE_PROPERNOUN_WORD_LISTS_IF_FIRST_WORD_OF_SENTENCE_IS_IN_PROPERNOUN_LIST_THEN_CHECK_OTHER_LISTS_ALSO
+		if((entityIndex == GIA_NLP_START_ENTITY_INDEX) || (!foundWordInLists))
 		{
-			foundWordInLists = true;
+			if(GIApreprocessorWordClassObject.wordIsUpperCase(wordText))
+			{
+				string contextWordLowerCase = SHAREDvars.convertStringToLowerCase(&(wordText));
+				unsigned long contextWordLowerCasePOSambiguityInfo = 0;
+				//cout << "contextWordLowerCase = " << contextWordLowerCase << endl;
+				if(findWordInWordListAllTypesWithPOSambiguityInfo(contextWordLowerCase, &contextWordFound, &contextWordLowerCasePOSambiguityInfo))
+				{
+					if((entityIndex == GIA_NLP_START_ENTITY_INDEX) && foundWordInLists)
+					{
+						//cout << "2 wordText = " << wordText << endl;
+						//cout << "*contextWordPOSambiguityInfo = " << *contextWordPOSambiguityInfo << endl;
+						//cout << "contextWordLowerCasePOSambiguityInfo = " << contextWordLowerCasePOSambiguityInfo << endl;
+						*contextWordPOSambiguityInfo = (*contextWordPOSambiguityInfo | contextWordLowerCasePOSambiguityInfo);	//combine the potential pos types for upper case version and lower case version of word
+					}
+					else
+					{
+						*contextWordPOSambiguityInfo = contextWordLowerCasePOSambiguityInfo;
+					}
+					foundWordInLists = true;
+				}
+			}
 		}
+		#else
+		if(!foundWordInLists)
+		{
+			#ifdef GIA_TXT_REL_TRANSLATOR_RULES_TREAT_UNKNOWN_POSTYPES_MID_SENTENCE_CAPITALISED_WORDS_AS_PROPERNOUNS_METHOD1
+			if(midSentenceUppercaseWordSetToProperNoun(wordText, contextWordPOSambiguityInfo))
+			{
+				foundWordInLists = true;
+			}
+			else
+			{
+			#endif
+				string contextWordLowerCase = SHAREDvars.convertStringToLowerCase(&(wordText));
+				//cout << "contextWordLowerCase = " << contextWordLowerCase << endl;
+				if(findWordInWordListAllTypesWithPOSambiguityInfo(contextWordLowerCase, &contextWordFound, contextWordPOSambiguityInfo))
+				{
+					foundWordInLists = true;
+				}
+			#ifdef GIA_TXT_REL_TRANSLATOR_RULES_TREAT_UNKNOWN_POSTYPES_MID_SENTENCE_CAPITALISED_WORDS_AS_PROPERNOUNS_METHOD1
+			}
+			#endif
+		}
+		#endif
+	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_TREAT_UNKNOWN_POSTYPES_MID_SENTENCE_CAPITALISED_WORDS_AS_PROPERNOUNS_METHOD1
 	}
 	#endif
 	#else
-	string contextWordLowerCase = SHAREDvars.convertStringToLowerCase(&(contextWord->tagName));
+	string contextWordLowerCase = SHAREDvars.convertStringToLowerCase(&(wordText));
 	if(findWordInWordListAllTypesWithPOSambiguityInfo(contextWordLowerCase, &contextWordFound, contextWordPOSambiguityInfo))
 	{	
 		foundWordInLists = true;
 	}
+	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_TREAT_UNKNOWN_POSTYPES_MID_SENTENCE_CAPITALISED_WORDS_AS_PROPERNOUNS_METHOD1
+	if((!foundWordInLists) && isMidSentenceUppercaseWordLikelyProperNoun(contextWord))
+	{
+		foundWordInLists = true;
+		*contextWordPOSambiguityInfo = SHAREDvars.setBitValue(GIA_PREPROCESSOR_POS_TAGGER_POS_AMBIGUITY_INFO_UNKNOWN, GIA_PREPROCESSOR_POS_TYPE_PROPERNOUN_DEFAULT, true);	//set as propernoun
+	}
 	#endif
-	
+	#endif
+
+	#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
+	GIApreprocessorMultiwordReductionPlainTextWord* contextWordMultiwordReductionPlainTextWord = static_cast<GIApreprocessorMultiwordReductionPlainTextWord*>(contextWord);
+	if(contextWordMultiwordReductionPlainTextWord->collapsedMultiwordWord || contextWordMultiwordReductionPlainTextWord->collapsedPhrasalVerbExactDefinedSection)
+	{
+		*contextWordUnambiguousPOSindex = contextWordMultiwordReductionPlainTextWord->collapsedMultiwordWordType;
+		*contextWordPOSambiguityInfo = SHAREDvars.setBitValue(GIA_PREPROCESSOR_POS_TAGGER_POS_AMBIGUITY_INFO_UNKNOWN, *contextWordUnambiguousPOSindex, true);
+		*contextWordPOSisAmbiguous = false;
+		foundWordInLists = true;
+	}
+	#endif
+
 	if(!foundWordInLists)
 	{
 		/*
 		cout << "!foundWordInLists" << endl;
-		cout << "contextWord->tagName = " << contextWord->tagName << endl;
+		cout << "wordText = " << wordText << endl;
 		exit(0);
 		*/
 		
-		#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
-		GIApreprocessorMultiwordReductionPlainTextWord* contextWordMultiwordReductionPlainTextWord = static_cast<GIApreprocessorMultiwordReductionPlainTextWord*>(contextWord);
-		if(contextWordMultiwordReductionPlainTextWord->collapsedMultiwordWord || contextWordMultiwordReductionPlainTextWord->collapsedPhrasalVerbExactDefinedSection)
-		{
-			*contextWordUnambiguousPOSindex = contextWordMultiwordReductionPlainTextWord->collapsedMultiwordWordType;
-			*contextWordPOSambiguityInfo = SHAREDvars.setBitValue(GIA_PREPROCESSOR_POS_TAGGER_POS_AMBIGUITY_INFO_UNKNOWN, *contextWordUnambiguousPOSindex, true);
-			*contextWordPOSisAmbiguous = false;
-		}
-		else
-		{
-		#endif
-			*identifiedEveryWordInDatabasePOSpermutation = false;
-			*contextWordPOSisAmbiguous = true;
-		#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
-		}
-		#endif
+		*identifiedEveryWordInDatabasePOSpermutation = false;
+		*contextWordPOSisAmbiguous = true;
 		
 		#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_NUMBERS
 		if(GIApreprocessorWordClassObject.isStringNumber(contextWordMultiwordReductionPlainTextWord->tagName))
@@ -1299,6 +1326,24 @@ bool GIApreprocessorPOStaggerClass::determinePOSambiguityInfo(GIApreprocessorPla
 	return result;
 }
 
+#ifdef GIA_TXT_REL_TRANSLATOR_RULES_TREAT_UNKNOWN_POSTYPES_MID_SENTENCE_CAPITALISED_WORDS_AS_PROPERNOUNS
+bool GIApreprocessorPOStaggerClass::isMidSentenceUppercaseWordLikelyProperNoun(GIApreprocessorPlainTextWord* contextWord)
+{
+	string wordText = contextWord->tagName;
+	int entityIndex = (static_cast<GIApreprocessorMultiwordReductionPlainTextWord*>(contextWord))->entityIndex;
+
+	bool foundWordInLists = false;
+	if(entityIndex != GIA_NLP_START_ENTITY_INDEX)
+	{
+		if(GIApreprocessorWordClassObject.wordIsUpperCase(wordText))
+		{
+			foundWordInLists = true;
+		}
+	}
+	return foundWordInLists;
+}
+#endif
+		
 bool GIApreprocessorPOStaggerClass::findWordInWordListAllTypesWithPOSambiguityInfo(const string word, GIApreprocessorMultiwordReductionWord** wordFound, unsigned long* POSambiguityInfoFound)
 {	
 	bool result = false;

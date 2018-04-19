@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorWordClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f10h 19-April-2018
+ * Project Version: 3f10i 19-April-2018
  * Requirements: requires plain text file
  * Description: Preprocessor Word Class
  * /
@@ -1079,4 +1079,19 @@ bool GIApreprocessorWordClassClass::isStringNumber(const string phrase)
 	
 	return stringIsNumber;
 }
+
+bool GIApreprocessorWordClassClass::wordIsUpperCase(const string wordText)
+{
+	bool result = false;
+	if(wordText.size() > 0)
+	{
+		char firstCharacterOfWord = (wordText)[0];
+		if(isupper(firstCharacterOfWord))
+		{
+			result = true;
+		}
+	}
+	return result;
+}
+
 
