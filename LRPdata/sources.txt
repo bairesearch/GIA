@@ -9,7 +9,7 @@ Adverbs - Wordnet
 Adjectives - Wordnet
 Verbs - Wordnet
 Units - Converticious
-Propernoun Family/First  - Carnegie Mellon University
+Propernoun Family/First - Carnegie Mellon University
 Propernoun Place - Wiktionary
 
 Special word lists;

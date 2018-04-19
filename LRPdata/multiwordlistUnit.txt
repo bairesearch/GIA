@@ -64,13 +64,13 @@ leap year
 average Gregorian calendar year
 average Julian calendar year
 tropical year
-Pounds per square inch
-British thermal unit
-Therm américain
-Angular mil
-Angular mil
-Minute of arc
-Second of arc
+pounds per square inch
+british thermal unit
+therm américain
+angular mil
+angular mil
+minute of arc
+second of arc
 
 cubic meters
 cubic decimeters
@@ -121,11 +121,13 @@ leap years
 average Gregorian calendar years
 average Julian calendar years
 tropical years
-Pounds per square inches
-British thermal units
-Therm américains
-Angular mils
-Angular mils
-Minutes of arc
-Seconds of arc
+pounds per square inches
+british thermal units
+therm américains
+angular mils
+angular mils
+minutes of arc
+seconds of arc
 
+million floating point operations per second
+million instructions per second
