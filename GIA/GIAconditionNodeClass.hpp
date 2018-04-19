@@ -26,7 +26,7 @@
  * File Name: GIAconditionNodeClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f1f 22-February-2018
+ * Project Version: 3f1g 22-February-2018
  * /
  *******************************************************************************/
 
@@ -51,28 +51,28 @@
 #define CONDITION_NODE_TYPE_LOCATION_STRING "2"
 #define CONDITION_NODE_TYPE_REASON_STRING "3"
 
-#define TIME_MONTH_JANUARY "january"
-#define TIME_MONTH_FEBRUARY "february"
-#define TIME_MONTH_MARCH "march"
-#define TIME_MONTH_APRIL "april"
-#define TIME_MONTH_MAY "may"
-#define TIME_MONTH_JUNE "june"
-#define TIME_MONTH_JULY "july"
-#define TIME_MONTH_AUGUST "august"
-#define TIME_MONTH_SEPTEMBER "september"
-#define TIME_MONTH_OCTOBER "october"
-#define TIME_MONTH_NOVEMBER "november"
-#define TIME_MONTH_DECEMBER "december"
+#define TIME_MONTH_JANUARY "January"
+#define TIME_MONTH_FEBRUARY "February"
+#define TIME_MONTH_MARCH "March"
+#define TIME_MONTH_APRIL "April"
+#define TIME_MONTH_MAY "May"
+#define TIME_MONTH_JUNE "June"
+#define TIME_MONTH_JULY "July"
+#define TIME_MONTH_AUGUST "August"
+#define TIME_MONTH_SEPTEMBER "September"
+#define TIME_MONTH_OCTOBER "October"
+#define TIME_MONTH_NOVEMBER "November"
+#define TIME_MONTH_DECEMBER "December"
 #define TIME_MONTH_NUMBER_OF_TYPES (12)
 static string GIAtimeConditionMonthNameArray[TIME_MONTH_NUMBER_OF_TYPES] = {TIME_MONTH_JANUARY, TIME_MONTH_FEBRUARY, TIME_MONTH_MARCH, TIME_MONTH_APRIL, TIME_MONTH_MAY, TIME_MONTH_JUNE, TIME_MONTH_JULY, TIME_MONTH_AUGUST, TIME_MONTH_SEPTEMBER, TIME_MONTH_OCTOBER, TIME_MONTH_NOVEMBER, TIME_MONTH_DECEMBER};
 
-#define TIME_DAY_OF_WEEK_MONDAY "monday"
-#define TIME_DAY_OF_WEEK_TUESDAY "tuesday"
-#define TIME_DAY_OF_WEEK_WEDNESDAY "wednesday"
-#define TIME_DAY_OF_WEEK_THURSDAY "thursday"
-#define TIME_DAY_OF_WEEK_FRIDAY "friday"
-#define TIME_DAY_OF_WEEK_SATURDAY "saturday"
-#define TIME_DAY_OF_WEEK_SUNDAY "sunday"
+#define TIME_DAY_OF_WEEK_MONDAY "Monday"
+#define TIME_DAY_OF_WEEK_TUESDAY "Tuesday"
+#define TIME_DAY_OF_WEEK_WEDNESDAY "Wednesday"
+#define TIME_DAY_OF_WEEK_THURSDAY "Thursday"
+#define TIME_DAY_OF_WEEK_FRIDAY "Friday"
+#define TIME_DAY_OF_WEEK_SATURDAY "Saturday"
+#define TIME_DAY_OF_WEEK_SUNDAY "Sunday"
 #define TIME_DAY_OF_WEEK_NUMBER_OF_TYPES (7)
 static string GIAtimeConditionDayOfWeekNameArray[TIME_DAY_OF_WEEK_NUMBER_OF_TYPES] = {TIME_DAY_OF_WEEK_MONDAY, TIME_DAY_OF_WEEK_TUESDAY, TIME_DAY_OF_WEEK_WEDNESDAY, TIME_DAY_OF_WEEK_THURSDAY, TIME_DAY_OF_WEEK_FRIDAY, TIME_DAY_OF_WEEK_SATURDAY, TIME_DAY_OF_WEEK_SUNDAY};
 
