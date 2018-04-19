@@ -27,7 +27,7 @@
  * File Name: GIAtxtRelTranslatorRules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f2b 04-April-2018
+ * Project Version: 3f2c 04-April-2018
  * /
  *******************************************************************************/
  
@@ -593,7 +593,6 @@
 					<!-- [] -->
 					<example><!-- (which x had) a bike --></example>
 					<component referenceSetTypeHybrid="unknown" componentType="group" groupTypeName="subReferenceSetsSubject" semanticRelationIndexType="subject" semanticRelationReturnEntity="true" />
-					<component referenceSetTypeHybrid="unknown" componentType="group" groupTypeName="subReferenceSetsAppend" optional="true" />
 				</group>
 				<group groupName="quality">
 					<!-- {adv} adj -->
@@ -782,6 +781,12 @@
 					<!-- added 06 March 2018; eg Tom rides the bike very fast {through the park} -->
 					<component referenceSetTypeHybrid="unknown" componentType="group" groupTypeName="subReferenceSetsPart" groupName="descriptiveAdverb" semanticRelationReturnFunctionName="property" semanticRelationReturnFunctionNameIndexType="delimiter" semanticRelationReturnEntity="true" />
 					<component referenceSetTypeHybrid="unknown" componentType="group" groupTypeName="subReferenceSetsAppend" groupName="prep" optional="true" />
+				</group>
+				<group groupName="propertyWith" previousWordPOStype="noun" semanticRelationFunctionName="propertyObject">	
+					<!-- with [] -->
+					<example><!-- {{Africa has a castle}} with [] --></example>
+					<component referenceSetTypeHybrid="unknown" componentType="string" stringType="tokens" tokenLayer="special" tokenClass="auxiliary" tokenType="propertyAppend" semanticRelationIndexType="delimiter" semanticRelationReturnFunctionName="propertySubject" semanticRelationReturnFunctionNameIndexType="subject" semanticRelationReturnEntity="true" />
+					<component referenceSetTypeHybrid="unknown" componentType="group" groupTypeName="subReferenceSetsSubject" groupName="thing" semanticRelationIndexType="object" />
 				</group>
 				<group groupName="prep">
 					<!-- prep [] -->
@@ -1201,7 +1206,13 @@
 		</groups>
 		<tokens>
 			<layer name="special">
-
+				<class name="auxiliary">
+					<type name="propertyAppend">
+						<instance name="with" />
+						<instance name="containing" />
+						<instance name="comprising" />
+					</type>	
+				</class>
 			</layer>
 			<layer name="POSsubsets">
 				<class name="determiner">
