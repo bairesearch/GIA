@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorSentenceClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f3o 10-April-2018
+ * Project Version: 3f4a 14-April-2018
  * Requirements: requires plain text file
  * Description: Preprocessor Sentence Class
  * /
@@ -86,6 +86,11 @@ public:
 	int indentation;
 	#endif
 	
+	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_PARSE_ISOLATED_SUBREFERENCE_SETS_OPTIMISED
+	bool parseIsolatedSubreferenceSets;
+	bool parseIsolatedSubreferenceSetsOnly;
+	bool parseIsolatedSubreferenceSetsFirst;
+	#endif
 
 	GIApreprocessorSentence* next;
 };

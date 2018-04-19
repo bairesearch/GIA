@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f3o 10-April-2018
+ * Project Version: 3f4a 14-April-2018
  * Requirements: requires plain text file
  * Description: Textual relation translator
  * /
@@ -232,10 +232,18 @@ bool GIAtxtRelTranslatorClass::executeTxtRelTranslator(GIAtranslatorVariablesCla
 		int iOptimum = 0;
 		#endif
 		bool foundParse = false;
+		bool parseIsolatedSubreferenceSets = false;
+		#ifdef GIA_TXT_REL_TRANSLATOR_RULES_PARSE_ISOLATED_SUBREFERENCE_SETS_OPTIMISED
+		if((currentGIApreprocessorSentenceInList->parseIsolatedSubreferenceSets) && ((currentGIApreprocessorSentenceInList->parseIsolatedSubreferenceSetsFirst) || (currentGIApreprocessorSentenceInList->parseIsolatedSubreferenceSetsOnly)))
+		{
+			parseIsolatedSubreferenceSets = true;
+		}
+		#endif
+		
 		#ifdef GIA_TXT_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START
-		if(generateParseTreeIntroWrapper(&GIAtxtRelTranslatorRulesGroupTypes, sentenceContents, firstParseTreeGroup, &performance, false, &POSambiguityInfoUnambiguousPermutationArray, &performanceMax, &iOptimum, &minIndexOfMatchesFoundBackupOptimum))	
+		if(generateParseTreeIntroWrapper(&GIAtxtRelTranslatorRulesGroupTypes, sentenceContents, firstParseTreeGroup, &performance, parseIsolatedSubreferenceSets, &POSambiguityInfoUnambiguousPermutationArray, &performanceMax, &iOptimum, &minIndexOfMatchesFoundBackupOptimum))	
 		#else
-		if(generateParseTreeIntroWrapper(&GIAtxtRelTranslatorRulesGroupTypes, sentenceContents, firstParseTreeGroup, &performance, false))
+		if(generateParseTreeIntroWrapper(&GIAtxtRelTranslatorRulesGroupTypes, sentenceContents, firstParseTreeGroup, &performance, parseIsolatedSubreferenceSets))
 		#endif
 		{
 			foundParse = true;
@@ -243,14 +251,30 @@ bool GIAtxtRelTranslatorClass::executeTxtRelTranslator(GIAtranslatorVariablesCla
 		#ifdef GIA_TXT_REL_TRANSLATOR_RULES_PARSE_ISOLATED_SUBREFERENCE_SETS
 		if(!foundParse)
 		{
-			#ifdef GIA_TXT_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START
-			if(generateParseTreeIntroWrapper(&GIAtxtRelTranslatorRulesGroupTypes, sentenceContents, firstParseTreeGroup, &performance, true, &POSambiguityInfoUnambiguousPermutationArray, &performanceMax, &iOptimum, &minIndexOfMatchesFoundBackupOptimum))	
-			#else
-			if(generateParseTreeIntroWrapper(&GIAtxtRelTranslatorRulesGroupTypes, sentenceContents, firstParseTreeGroup, &performance, true))
-			#endif
+			bool parseIsolatedSubreferenceSets2 = true;
+			#ifdef GIA_TXT_REL_TRANSLATOR_RULES_PARSE_ISOLATED_SUBREFERENCE_SETS_OPTIMISED
+			if(currentGIApreprocessorSentenceInList->parseIsolatedSubreferenceSets)
 			{
-				foundParse = true;
+				if(!(currentGIApreprocessorSentenceInList->parseIsolatedSubreferenceSetsOnly))
+				{
+					if(currentGIApreprocessorSentenceInList->parseIsolatedSubreferenceSetsFirst)
+					{
+						parseIsolatedSubreferenceSets2 = false;
+					}
+			#endif
+
+					#ifdef GIA_TXT_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START
+					if(generateParseTreeIntroWrapper(&GIAtxtRelTranslatorRulesGroupTypes, sentenceContents, firstParseTreeGroup, &performance, parseIsolatedSubreferenceSets2, &POSambiguityInfoUnambiguousPermutationArray, &performanceMax, &iOptimum, &minIndexOfMatchesFoundBackupOptimum))	
+					#else
+					if(generateParseTreeIntroWrapper(&GIAtxtRelTranslatorRulesGroupTypes, sentenceContents, firstParseTreeGroup, &performance, parseIsolatedSubreferenceSets2))
+					#endif
+					{
+						foundParse = true;
+					}
+			#ifdef GIA_TXT_REL_TRANSLATOR_RULES_PARSE_ISOLATED_SUBREFERENCE_SETS_OPTIMISED
+				}
 			}
+			#endif
 		}
 		#endif
 		if(!foundParse)

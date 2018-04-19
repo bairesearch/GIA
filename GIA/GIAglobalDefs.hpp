@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f3o 10-April-2018
+ * Project Version: 3f4a 14-April-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  * /
@@ -736,10 +736,11 @@
 #include "SHAREDglobalDefs.hpp"
 
 
-//#define GIA_PRINT_EXECUTION_TIME
+//#define GIA_PRINT_EXECUTION_TIME	//disable this while performing incremental automated testing
 
 #ifdef USE_NLC
 	#define GIA_DISABLE_CROSS_SENTENCE_REFERENCING	//added 2g5a/05-September-2014 - required for NLC 1j2b+, optional for NLC 1k11a+
+	#define	GIA_EXTERNAL_PROCESSING
 #endif
 //#define GIA_SEM_REL_TRANSLATOR	//GIA2
 #define GIA_TXT_REL_TRANSLATOR	//GIA3
@@ -793,6 +794,11 @@
 			
 			//#ifdef USE_NLC
 				#define GIA_TXT_REL_TRANSLATOR_RULES_PARSE_ISOLATED_SUBREFERENCE_SETS	//3f2l
+				#ifdef GIA_TXT_REL_TRANSLATOR_RULES_PARSE_ISOLATED_SUBREFERENCE_SETS
+					#ifdef USE_NLC
+						#define GIA_TXT_REL_TRANSLATOR_RULES_PARSE_ISOLATED_SUBREFERENCE_SETS_OPTIMISED	//3f4a
+					#endif
+				#endif
 			//#endif
 			
 			#define GIA_PREPROCESSOR_INITIALISE_WORD_INDEX_LIST_FROM_LRP_FILES	//this is required to detect all possible pos types for wordList words
@@ -909,9 +915,6 @@
 	#endif
 #endif
 
-#ifdef USE_NLC
-	#define	GIA_EXTERNAL_PROCESSING
-#endif
 
 //#define GIA_ADVANCED_REFERENCING_SUPPORT_REFERENCING_OF_ENTITIES_WITH_PREDETERMINERS	//when was this disabled?
 
