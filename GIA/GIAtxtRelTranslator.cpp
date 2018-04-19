@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f2n 04-April-2018
+ * Project Version: 3f2o 04-April-2018
  * Requirements: requires plain text file
  * Description: Textual relation translator
  * /
@@ -177,6 +177,14 @@ bool GIAtxtRelTranslatorClass::executeTxtRelTranslator(GIAtranslatorVariablesCla
 		
 		vector<unsigned long> POSambiguityInfoPermutation;
 		vector<GIApreprocessorWord*>* sentenceContents = &(currentGIApreprocessorSentenceInList->sentenceContentsLRP);
+		
+		//resetting of word->alreadyFoundMatch is required in case a higher level app (e.g. NLC) shares word objects between sentences:
+		for(int w=0; w<sentenceContents->size(); w++)
+		{
+			GIApreprocessorWord* currentWord = sentenceContents->at(w);
+			currentWord->alreadyFoundMatch = false;
+		}
+	
 		for(int w=0; w<sentenceContents->size(); w++)
 		{
 			GIApreprocessorWord* contextWord = sentenceContents->at(w);
