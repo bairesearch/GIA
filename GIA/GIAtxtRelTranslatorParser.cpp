@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f5b 15-April-2018
+ * Project Version: 3f5c 15-April-2018
  * Requirements: 
  * Description: Textual Relation Translator Parser
  * /
@@ -159,24 +159,24 @@ bool GIAtxtRelTranslatorParserClass::convertSentenceTxtRelationsIntoGIAnetworkNo
 	for(int w=GIA_NLP_START_ENTITY_INDEX; w<=numberOfWordsInSentence; w++)
 	{
 		GIAentityNode* entity = GIAentityNodeArray[w];
-		bool pass = true;
+		bool disableEntity = true;
 		#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_NUMBER_OF
 		if(entity->isNumberOf)
 		{
-			pass = false;	//in case of sentences containing a single entity x without a semanticRelationFunction being executed; i.e. "the number of x"
+			disableEntity = false;	//in case of sentences containing a single entity x without a semanticRelationFunction being executed; i.e. "the number of x"
 		}
 		#endif
 		if(entity->semanticRelationEntityIsReferenced)
 		{
-			pass = false;
+			disableEntity = false;
 		}
-		if(pass)
+		if(disableEntity)
 		{
-			GIAtranslatorOperations.disableInstanceAndNetworkIndexEntityBasedUponFirstSentenceToAppearInNetwork(entity);
 			#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS2
 			cout << "DISABLING entity = " << entity->entityName << endl;
 			cout << "entity->entityType = " << entity->entityType << endl;
 			#endif
+			GIAtranslatorOperations.disableInstanceAndNetworkIndexEntityBasedUponFirstSentenceToAppearInNetwork(entity);
 		}
 	}
 	

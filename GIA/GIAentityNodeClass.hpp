@@ -26,7 +26,7 @@
  * File Name: GIAentityNodeClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f5b 15-April-2018
+ * Project Version: 3f5c 15-April-2018
  * NB a substance is an instance of an entity, any given entity may contain/comprise/have multiple substances - and substances are unrelated to definitions between entities [they just define what comprises any given entity]
  * /
  *******************************************************************************/
@@ -501,7 +501,6 @@ public:
 	/*GIA Miscellaneous Internal Variables*/
 	bool disabled;	//temporary for networkIndex entities: used for GIA translator reference paser only - overwritten every time a new sentence is parsed
 	bool permanentNetworkIndex;	//networkIndex entity is to be drawn/saved to XML (if false, this entity has been deemed redundant in semantic network generation)
-	bool firstSentenceToAppearInNetwork;
 		//CXL:
 	bool CXLdummyNode;
 		//referencing:

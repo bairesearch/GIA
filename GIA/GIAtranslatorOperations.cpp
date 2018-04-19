@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f5b 15-April-2018
+ * Project Version: 3f5c 15-April-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
@@ -1145,23 +1145,15 @@ void GIAtranslatorOperationsClass::applyNetworkIndexEntityAlreadyExistsFunction(
 	{
 		if(tempEntityEnabled)
 		{
-			if(!(entity->disabled))
-			{
-				entity->firstSentenceToAppearInNetwork = false;
-			}
 			entity->disabled = false;
 		}
-	}
-	else
-	{
-		entity->firstSentenceToAppearInNetwork = true;
 	}
 }
 
 void GIAtranslatorOperationsClass::disableNetworkIndexEntityBasedUponFirstSentenceToAppearInNetwork(GIAentityNode* entity)
 {
 	#ifndef GIA_SYN_REL_TRANSLATOR_DO_NOT_SUPPORT_SPECIAL_CASE_1D_RELATIONS_REMOVE_ARTEFACT_NETWORK_INDEX_ENTITY_NODES
-	if(entity->firstSentenceToAppearInNetwork)
+	if(!(entity->permanentNetworkIndex))
 	{
 		entity->disabled = true;
 	}

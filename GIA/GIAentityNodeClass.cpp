@@ -26,7 +26,7 @@
  * File Name: GIAentityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f5b 15-April-2018
+ * Project Version: 3f5c 15-April-2018
  * /
  *******************************************************************************/
 
@@ -195,7 +195,6 @@ void GIAentityNode::initialiseEntity()
 	/*GIA Miscellaneous Internal Variables*/
 	disabled = false;
 	permanentNetworkIndex = false;
-	firstSentenceToAppearInNetwork = true;
 		//CXL:
 	CXLdummyNode = false;
 		//referencing:
