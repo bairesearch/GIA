@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f8a 18-April-2018
+ * Project Version: 3f8b 18-April-2018
  * Requirements: 
  * Description: Textual Relation Translator Parser
  * /
@@ -1580,6 +1580,8 @@ bool GIAtxtRelTranslatorParserClass::createSemanticRelationInNetwork(GIAtranslat
 	#endif
 	else if(semanticRelationFunctionName == GIAtxtRelSemanticDependencyRelationNameArray[GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_numerosityPredeterminer])
 	{
+		//cout << "entitySemanticRelationFunction1->entityName = " << entitySemanticRelationFunction1->entityName << endl;
+		//cout << "entitySemanticRelationFunction2->entityName = " << entitySemanticRelationFunction2->entityName << endl;
 		entitySemanticRelationFunction1->semanticRelationWordPredeterminer = entitySemanticRelationFunction2->entityName;
 		entitySemanticRelationFunction2->semanticRelationEntityIsReferenced = false;
 	}

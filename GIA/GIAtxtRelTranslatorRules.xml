@@ -27,7 +27,7 @@
  * File Name: GIAtxtRelTranslatorRules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f8a 18-April-2018
+ * Project Version: 3f8b 18-April-2018
  * /
  *******************************************************************************/
  
@@ -553,6 +553,7 @@
 					<example><!-- {fast} bike --></example>
 					<!--<component componentType="string" stringType="LRPexternalWordLists" wordPOStype="noun" semanticRelationReturnEntity="true" />-->
 					<or>
+						<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="nounWithPostDeterminer" semanticRelationReturnEntity="true" />
 						<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="descriptiveNounEnforced" semanticRelationReturnEntity="true" />
 						<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="nounSequence" semanticRelationReturnEntity="true" />
 					</or>
@@ -574,6 +575,12 @@
 					<example><!-- {fast} bike --></example>
 					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="descriptiveAdjective" semanticRelationIndexType="subject" />
 					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="nounSequence" semanticRelationIndexType="object" semanticRelationReturnEntity="true" />
+				</group>
+				<group groupName="nounWithPostDeterminer" semanticRelationFunctionName="numerosityPredeterminer">
+					<!-- noun postDeterminer -->
+					<example><!-- bikes all --></example>
+					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="nounSequence" semanticRelationIndexType="subject" semanticRelationReturnEntity="true" />
+					<component componentType="string" stringType="tokens" tokenLayer="POSsubsets" tokenClass="determiner" tokenType="postDeterminer" semanticRelationIndexType="object" />
 				</group>
 			</groupType>
 			<groupType groupTypeName="subReferenceSetsSpecial" referenceSetType="subReferenceSet">
@@ -1521,6 +1528,10 @@
 					<type name="determinerBasicIndefinite">
 						<instance name="a" />
 						<instance name="an" />
+					</type>	
+					<type name="postDeterminer">
+						<instance name="each" />
+						<instance name="all" />
 					</type>	
 				</class>
 				<class name="wh">
