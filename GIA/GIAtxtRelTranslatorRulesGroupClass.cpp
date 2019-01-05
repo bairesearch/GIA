@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorRulesGroupClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g9b 03-January-2019
+ * Project Version: 3g9c 03-January-2019
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Rules
  * /
@@ -159,6 +159,9 @@ GIAtxtRelTranslatorRulesGroup::GIAtxtRelTranslatorRulesGroup(void)
 	//activationPathWordFirstParseTreeGroupActivationPointArray = NULL;	
 	#endif
 	wordGroupNeuron = false;
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_TAKE_LAST_SUCCESSFUL_PARSE_LIMIT_ITERATIONS_PREFERENCE_WEIGHT
+	groupWeight = 0;
+	#endif
 	
 	//ANNfrontGroupConnectionList = NULL;
 	//ANNbackGroupConnectionList = NULL;

@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetwork.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g9b 03-January-2019
+ * Project Version: 3g9c 03-January-2019
  * Requirements: 
  * Description: Textual Relation Translator Neural Network
  * /
@@ -47,6 +47,9 @@ GIAtxtRelTranslatorRulesGroup* topLevelParseTreeGroupLocal;
 
 #ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_TAKE_LAST_SUCCESSFUL_PARSE_LIMIT_ITERATIONS
 static bool maxIteration;
+#endif
+#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_TAKE_LAST_SUCCESSFUL_PARSE_LIMIT_ITERATIONS_PREFERENCE_WEIGHT
+static int parseTreeMaxWeight;
 #endif
 
 bool GIAtxtRelTranslatorNeuralNetworkClass::executeTxtRelTranslatorNeuralNetwork(GIAtranslatorVariablesClass* translatorVariables, vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, vector<GIApreprocessorPlainTextWord*>* sentenceContents, GIAtxtRelTranslatorRulesGroup** topLevelParseTreeGroup, const bool parseIsolatedSubreferenceSets, const bool parserEnabled, int* performance)
@@ -164,7 +167,9 @@ bool GIAtxtRelTranslatorNeuralNetworkClass::executeTxtRelTranslatorNeuralNetwork
 		int performanceNOTUSED = 0;
 		bool print = false;
 		bool performancePreprocess = false;
-		traceBackpropParseTree(topLevelParseTreeGroupLocal, 1, print, performancePreprocess, &performanceNOTUSED, NULL);	//added GIA3g6aTEMP32 - set all parseTreeGroup groups in final heirachy to neuronTraced to prevent their memory from being deleted during resetAllNeuronComponents
+		bool calculateMaxWeight = false;
+		int maxWeightNOTUSED = 0;
+		traceBackpropParseTree(topLevelParseTreeGroupLocal, 1, print, performancePreprocess, &performanceNOTUSED, NULL, calculateMaxWeight, &maxWeightNOTUSED);	//added GIA3g6aTEMP32 - set all parseTreeGroup groups in final heirachy to neuronTraced to prevent their memory from being deleted during resetAllNeuronComponents
 	}
 	#endif
 	for(int w=0; w<sentenceContents->size(); w++)	//start at every w in sentence
@@ -474,6 +479,9 @@ bool GIAtxtRelTranslatorNeuralNetworkClass::propagateWordThroughNetworkGroupIntr
 
 	int maxIterationIndex = GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_MAX_ITERATIONS;
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_TAKE_LAST_SUCCESSFUL_PARSE_LIMIT_ITERATIONS
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_TAKE_LAST_SUCCESSFUL_PARSE_LIMIT_ITERATIONS_PREFERENCE_WEIGHT
+	parseTreeMaxWeight = 0;
+	#endif
 	maxIteration = false;
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_TAKE_LAST_SUCCESSFUL_PARSE_LIMIT_ITERATIONS_WEAK
 	bool limitedIterations = false;
@@ -500,7 +508,12 @@ bool GIAtxtRelTranslatorNeuralNetworkClass::propagateWordThroughNetworkGroupIntr
 			vector<GIAtxtRelTranslatorRulesGroup*> activationPathWordFirstActivationMemoryGroupArray = forwardPropogationSentenceData->activationPathWordFirstActivationMemoryGroupArray[w];
 			vector<GIAtxtRelTranslatorRulesGroup*> activationPathWordFirstParseTreeGroupArray = forwardPropogationSentenceData->activationPathWordFirstParseTreeGroupArray[w];
 
+			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ENFORCE_STRICT_ITERATION_INDICES
+			int groupArraySize = activationPathWordFirstActivationMemoryGroupArray.size();
+			for(int i=0; i<groupArraySize; i++)
+			#else
 			for(int i=0; i<activationPathWordFirstActivationMemoryGroupArray.size(); i++) 	//for each existing parseTreeGroup stored at w
+			#endif
 			{
 				GIAtxtRelTranslatorRulesGroup* activationPathWordFirstActivationMemoryGroup = activationPathWordFirstActivationMemoryGroupArray[i];
 				GIAtxtRelTranslatorRulesGroup* activationPathWordFirstParseTreeGroup = activationPathWordFirstParseTreeGroupArray[i];
@@ -571,7 +584,12 @@ bool GIAtxtRelTranslatorNeuralNetworkClass::propagateWordThroughNetworkGroupIntr
 
 					vector<GIAtxtRelTranslatorRulesGroup*> activationPathWordFirstActivationMemoryGroupArrayNext = forwardPropogationSentenceData->activationPathWordFirstActivationMemoryGroupArray[wNext];
 					vector<GIAtxtRelTranslatorRulesGroup*> activationPathWordFirstParseTreeGroupArrayNext = forwardPropogationSentenceData->activationPathWordFirstParseTreeGroupArray[wNext];
+					#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ENFORCE_STRICT_ITERATION_INDICES
+					int groupArrayNextSize = activationPathWordFirstActivationMemoryGroupArrayNext.size();
+					for(int i2=0; i2<groupArrayNextSize; i2++)
+					#else
 					for(int i2=0; i2<activationPathWordFirstActivationMemoryGroupArrayNext.size(); i2++) 	//for each adjacent parseTreeGroup available (that does not skip an encapsulate word), ie stored at w+n (where n is number of words in the left parse group)
+					#endif
 					{
 						GIAtxtRelTranslatorRulesGroup* activationPathWordFirstActivationMemoryGroupNext = activationPathWordFirstActivationMemoryGroupArrayNext[i2];
 						GIAtxtRelTranslatorRulesGroup* activationPathWordFirstParseTreeGroupNext = activationPathWordFirstParseTreeGroupArrayNext[i2];
@@ -971,7 +989,6 @@ bool GIAtxtRelTranslatorNeuralNetworkClass::propagateWordThroughNetworkGroupSele
 						}
 					}
 				}
-
 			}
 			#endif
 			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SUPPORT_FUZZY_LAST_COMPONENTS_METHOD2
@@ -1196,30 +1213,46 @@ bool GIAtxtRelTranslatorNeuralNetworkClass::propagateWordThroughNetworkGroupComp
 					forwardPropogationSentenceData->finishedPassingSentenceWords = true;
 					#endif
 					
-					#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE
-					forwardPropogationSentenceData->toplevelGroupActivationFound = true;
-					topLevelParseTreeGroupLocal = activationPathWordCurrentParseTreeGroupOwner;
-
-					#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_RECORD_PERFORMANCE
-					if(!updatePerformance(activationPathWordCurrentParseTreeGroupOwner, forwardPropogationSentenceData, layer))
+					#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_TAKE_LAST_SUCCESSFUL_PARSE_LIMIT_ITERATIONS_PREFERENCE_WEIGHT
+					bool print = false;
+					bool performancePreprocess = false;
+					int performanceNOTUSED = 0;
+					bool calculateMaxWeight = true;
+					int maxWeight = 0;
+					traceBackpropParseTree(activationPathWordCurrentParseTreeGroupOwner, 1, print, performancePreprocess, &performanceNOTUSED, forwardPropogationSentenceData->sentenceContents, calculateMaxWeight, &maxWeight);
+					resetNeuronBackprop(activationPathWordCurrentParseTreeGroupOwner, GIA_TXT_REL_TRANSLATOR_RULES_GROUP_BOOL_INDEX_BACKPROP_NEURON_TRACED);
+					if(maxWeight >= parseTreeMaxWeight)
 					{
-						//result = false;
-					}
-					#endif
+						parseTreeMaxWeight = maxWeight;
 					#endif
 					
-					/*
-					#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE
-					cout << "topLevelGroup found" << endl;
-					printBackpropParseTree(topLevelParseTreeGroupLocal, 1);
-					cout << "end printBackpropParseTree" << endl;
+						#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE
+						forwardPropogationSentenceData->toplevelGroupActivationFound = true;
+						topLevelParseTreeGroupLocal = activationPathWordCurrentParseTreeGroupOwner;
+
+						#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_RECORD_PERFORMANCE
+						if(!updatePerformance(activationPathWordCurrentParseTreeGroupOwner, forwardPropogationSentenceData, layer))
+						{
+							//result = false;
+						}
+						#endif
+						#endif
+						
+						#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE
+						cout << "topLevelGroup found" << endl;
+						printBackpropParseTree(topLevelParseTreeGroupLocal, 1);
+						cout << "end printBackpropParseTree" << endl;
+						#endif
+
+						/*
+						cout << "topLevelGroup" << endl;
+						cout << "finishedPassingSentenceWords (temp exit)" << endl;
+						exit(0);
+						*/
+					
+					#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_TAKE_LAST_SUCCESSFUL_PARSE_LIMIT_ITERATIONS_PREFERENCE_WEIGHT
+					}
 					#endif
-					*/
-					/*
-					cout << "topLevelGroup" << endl;
-					cout << "finishedPassingSentenceWords (temp exit)" << endl;
-					exit(0);
-					*/
 				}
 				
 			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ENFORCE_WORD_CONNECTIVITY	
@@ -1807,7 +1840,9 @@ bool GIAtxtRelTranslatorNeuralNetworkClass::printBackpropParseTree(GIAtxtRelTran
 	bool print = true;
 	bool performancePreprocess = false;
 	int performanceNOTUSED = 0;
-	traceBackpropParseTree(group, 1, print, performancePreprocess, &performanceNOTUSED, NULL);
+	bool calculateMaxWeight = false;
+	int maxWeightNOTUSED = 0;
+	traceBackpropParseTree(group, 1, print, performancePreprocess, &performanceNOTUSED, NULL, calculateMaxWeight, &maxWeightNOTUSED);
 	resetNeuronBackprop(group, GIA_TXT_REL_TRANSLATOR_RULES_GROUP_BOOL_INDEX_BACKPROP_NEURON_TRACED);
 }
 
@@ -1931,7 +1966,9 @@ bool GIAtxtRelTranslatorNeuralNetworkClass::updatePerformance(GIAtxtRelTranslato
 		int performanceTemp = 0;
 		bool print = false;
 		bool performancePreprocess = true;
-		traceBackpropParseTree(currentParseTreeGroup, 1, print, performancePreprocess, &performanceTemp, forwardPropogationSentenceData->sentenceContents);
+		bool calculateMaxWeight = false;
+		int maxWeightNOTUSED = 0;
+		traceBackpropParseTree(currentParseTreeGroup, 1, print, performancePreprocess, &performanceTemp, forwardPropogationSentenceData->sentenceContents, calculateMaxWeight, &maxWeightNOTUSED);
 		resetNeuronBackprop(currentParseTreeGroup, GIA_TXT_REL_TRANSLATOR_RULES_GROUP_BOOL_INDEX_BACKPROP_NEURON_TRACED);
 
 		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE
@@ -1955,13 +1992,23 @@ bool GIAtxtRelTranslatorNeuralNetworkClass::updatePerformance(GIAtxtRelTranslato
 }
 #endif
 
-bool GIAtxtRelTranslatorNeuralNetworkClass::traceBackpropParseTree(GIAtxtRelTranslatorRulesGroup* currentParseTreeGroup, int level, bool print, bool performancePreprocess, int* performance, vector<GIApreprocessorPlainTextWord*>* sentenceContents)
+bool GIAtxtRelTranslatorNeuralNetworkClass::traceBackpropParseTree(GIAtxtRelTranslatorRulesGroup* currentParseTreeGroup, int level, const bool print, const bool performancePreprocess, int* performance, vector<GIApreprocessorPlainTextWord*>* sentenceContents, const bool calculateMaxWeight, int* maxWeight)
 {
 	bool result = true;
 	
 	if(!currentParseTreeGroup->neuronTraced)
 	{
 		currentParseTreeGroup->neuronTraced = true;
+		
+		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_TAKE_LAST_SUCCESSFUL_PARSE_LIMIT_ITERATIONS_PREFERENCE_WEIGHT
+		if(calculateMaxWeight)
+		{
+			if(currentParseTreeGroup->groupWeight > *maxWeight)
+			{
+				*maxWeight = currentParseTreeGroup->groupWeight;
+			}
+		}
+		#endif
 
 		if(performancePreprocess)
 		{
@@ -2024,7 +2071,7 @@ bool GIAtxtRelTranslatorNeuralNetworkClass::traceBackpropParseTree(GIAtxtRelTran
 					}
 					#endif
 					
-					traceBackpropParseTree(currentComponent->parseTreeGroupRef, level+1, print, performancePreprocess, performance, sentenceContents);
+					traceBackpropParseTree(currentComponent->parseTreeGroupRef, level+1, print, performancePreprocess, performance, sentenceContents, calculateMaxWeight, maxWeight);
 				}
 			//}
 		}	

@@ -27,7 +27,7 @@
  * File Name: GIAtxtRelTranslatorRules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g9b 03-January-2019
+ * Project Version: 3g9c 03-January-2019
  * /
  *******************************************************************************/
  
@@ -447,7 +447,7 @@
 					</or>
 					<!--</repeat>-->
 				</group>
-				<group groupName="descriptiveNounWithDeterminerOf" semanticRelationFunctionName="numerosityDeterminer">
+				<group groupName="descriptiveNounWithDeterminerOf" semanticRelationFunctionName="numerosityDeterminer" groupWeight="10">
 					<!-- {det} noun -->
 					<example><!-- {the} house of/called ... --></example>
 					<!-- introduced GIA3f10g -->
@@ -505,7 +505,7 @@
 					<component componentType="string" stringType="explicit" word="of" />
 					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="descriptiveNounWithDeterminerBasicDefiniteEnforced" semanticRelationIndexType="object" />
 				</group>
-				<group groupName="complementDefinitionAlias" semanticRelationFunctionName="definitionAlias">	
+				<group groupName="complementDefinitionAlias" semanticRelationFunctionName="definitionAlias" groupWeight="10">	
 					<!-- verb noun -->
 					<example><!-- {{the}} file called x.txt --></example>
 					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="nounSequence" semanticRelationIndexType="subject" semanticRelationReturnEntity="true" />
@@ -521,7 +521,7 @@
 					<!--</repeat>-->
 				</group>
 				<!-- #ifdefGIA_TXT_REL_TRANSLATOR_RULES_CODE_NUMBER_OF -->
-				<group groupName="descriptiveNounWithDeterminerNumberOf">
+				<group groupName="descriptiveNounWithDeterminerNumberOf" groupWeight="10">
 					<!-- the number of -->
 					<example><!-- the number of --></example>
 					<component componentType="string" stringType="explicit" word="the" />
