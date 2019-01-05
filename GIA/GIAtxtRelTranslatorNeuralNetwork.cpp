@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetwork.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g1j 24-April-2018
+ * Project Version: 3g1k 24-April-2018
  * Requirements: 
  * Description: Textual Relation Translator Neural Network
  * /
@@ -938,12 +938,19 @@ bool GIAtxtRelTranslatorNeuralNetworkClass::propagateWordThroughNetworkGroupComp
 
 		//activation sequence completed, propagate next layer up
 		bool passThrough = true;
+		bool ownerGroupPropagated = ownerGroup->neuronPropagated;
 		if(!propagateWordThroughNetworkGroup(translatorVariables, ownerGroup, &(ownerGroup->semanticRelationReturnEntityForwardPropogationSignalData), forwardPropogationWordData, forwardPropogationSentenceData, (layer+1), measureActivationRecencyOnly, activationPathWordCurrentParseTreeGroupOwner, passThrough))
 		{
 			result = false;
 		}
 		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PREVENT_CIRCULAR_CONNECTION_LOOPS
-		resetNeuronForwardProp(ownerGroup, GIA_TXT_REL_TRANSLATOR_RULES_GROUP_BOOL_INDEX_FORWARDPROP_NEURON_PROPAGATED);
+		if(measureActivationRecencyOnly)
+		{
+			if(!ownerGroupPropagated)
+			{
+				ownerGroup->neuronPropagated = false;	//restore to original state after test pass (measureActivationRecencyOnly)	//3g1k
+			}
+		}
 		#endif
 		
 		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ENFORCE_WORD_CONNECTIVITY
