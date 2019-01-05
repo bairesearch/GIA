@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorPOStagger.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f10i 19-April-2018
+ * Project Version: 3f11a 20-April-2018
  * Requirements: requires plain text file
  * Description: Preprocessor POS tagger database
  * /
@@ -42,9 +42,9 @@ static string GIAposTaggerDatabaseFolderName;
 #ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_INTERNAL
 ANNneuron* firstInputNeuronInNetworkGIAposTagger;
 ANNneuron* firstOutputNeuronInNetworkGIAposTagger;
-long numberOfInputNeuronsGIAposTagger;
-long numberOfOutputNeuronsGIAposTagger;
-long numberOfLayersGIAposTagger;	//static variable not currently utilised
+int64_t numberOfInputNeuronsGIAposTagger;
+int64_t numberOfOutputNeuronsGIAposTagger;
+int64_t numberOfLayersGIAposTagger;	//static variable not currently utilised
 #endif
 #ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_PERSISTENT
 void GIApreprocessorPOStaggerDatabaseClass::initialisePOStaggerDatabase(const string newGIAposTaggerDatabaseFolderName)
@@ -82,17 +82,17 @@ void GIApreprocessorPOStaggerDatabaseClass::initialisePOStaggerDatabase(const st
 
 
 #ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_MAP
-multimap<string, pair<unsigned long, int>> POStaggerMap;		//each key is ~10 64bit ints long: word context POS (ambiguity info) permutation, and the value is 1 64 bit int long: POS (ambiguity info) for central word
+multimap<string, pair<uint64_t, int>> POStaggerMap;		//each key is ~10 64bit ints int64_t: word context POS (ambiguity info) permutation, and the value is 1 64 bit int int64_t: POS (ambiguity info) for central word
 	//as it currently stands POStaggerMap will be roughly the same size as the original wiki dump text (ie 12GB; too large)
-bool GIApreprocessorPOStaggerClass::findInstancePOStaggerMap(vector<unsigned long>* POSambiguityInfoPermutation, unsigned long centreWordPOSambiguityInfo, int* numberOfInstances, const bool incrementIfFound)
+bool GIApreprocessorPOStaggerClass::findInstancePOStaggerMap(vector<uint64_t>* POSambiguityInfoPermutation, uint64_t centreWordPOSambiguityInfo, int* numberOfInstances, const bool incrementIfFound)
 {
 	bool result = false;
 
 	string POSambiguityInfoPermutationIndexString = convertPOSambiguityInfoPermutationToPOSambiguityInfoPermutationIndexString(POSambiguityInfoPermutation);	
-	pair<multimap<string, pair<unsigned long, int>>::iterator, multimap<string, pair<unsigned long, int>>::iterator> rangeFound = POStaggerMap.equal_range(POSambiguityInfoPermutationIndexString);
-	for(multimap<string, pair<unsigned long, int>>::iterator it = rangeFound.first; it != rangeFound.second; it++)
+	pair<multimap<string, pair<uint64_t, int>>::iterator, multimap<string, pair<uint64_t, int>>::iterator> rangeFound = POStaggerMap.equal_range(POSambiguityInfoPermutationIndexString);
+	for(multimap<string, pair<uint64_t, int>>::iterator it = rangeFound.first; it != rangeFound.second; it++)
 	{
-		unsigned long centreWordPOSambiguityInfoCurrent = (it->second).first;
+		uint64_t centreWordPOSambiguityInfoCurrent = (it->second).first;
 		if(centreWordPOSambiguityInfoCurrent == centreWordPOSambiguityInfo)
 		{
 			result = true;
@@ -106,18 +106,18 @@ bool GIApreprocessorPOStaggerClass::findInstancePOStaggerMap(vector<unsigned lon
 	
 	return result;
 }	
-void GIApreprocessorPOStaggerClass::insertInstanceInPOStaggerMap(vector<unsigned long>* POSambiguityInfoPermutation, const unsigned long centreWordPOSambiguityInfo, const int numberOfInstances)
+void GIApreprocessorPOStaggerClass::insertInstanceInPOStaggerMap(vector<uint64_t>* POSambiguityInfoPermutation, const uint64_t centreWordPOSambiguityInfo, const int numberOfInstances)
 {
 	string POSambiguityInfoPermutationIndexString = convertPOSambiguityInfoPermutationToPOSambiguityInfoPermutationIndexString(POSambiguityInfoPermutation);
-	pair<unsigned long, int> value = make_pair(centreWordPOSambiguityInfo, numberOfInstances);
-	POStaggerMap.insert(pair<string, pair<unsigned long, int>>(POSambiguityInfoPermutationIndexString, value));
+	pair<uint64_t, int> value = make_pair(centreWordPOSambiguityInfo, numberOfInstances);
+	POStaggerMap.insert(pair<string, pair<uint64_t, int>>(POSambiguityInfoPermutationIndexString, value));
 }	
-multimap<string, pair<unsigned long, int>>* GIApreprocessorPOStaggerClass::getPOStaggerMap()
+multimap<string, pair<uint64_t, int>>* GIApreprocessorPOStaggerClass::getPOStaggerMap()
 {
 	return &POStaggerMap;
 }
 #endif
-string GIApreprocessorPOStaggerDatabaseClass::convertPOSambiguityInfoPermutationToPOSambiguityInfoPermutationIndexString(vector<unsigned long>* POSambiguityInfoPermutation)
+string GIApreprocessorPOStaggerDatabaseClass::convertPOSambiguityInfoPermutationToPOSambiguityInfoPermutationIndexString(vector<uint64_t>* POSambiguityInfoPermutation)
 {
 	string POSambiguityInfoPermutationIndexString = "";
 	for(int i=0; i<POSambiguityInfoPermutation->size(); i++)
@@ -279,7 +279,7 @@ bool GIApreprocessorPOStaggerDatabaseClass::externalANNpredict(ANNexperience* fi
 	
 	//read predictions batch file
 	vector<string> YpredictBatchFileContents;
-	int numberOfLinesInFile = 0;	//verify int is sufficient (else require long)
+	int numberOfLinesInFile = 0;	//verify int is sufficient (else require int64_t)
 	if(!SHAREDvars.getLinesFromFile(YpredictBatchFileName, &YpredictBatchFileContents, &numberOfLinesInFile))
 	{
 		result = false;
@@ -309,7 +309,7 @@ bool GIApreprocessorPOStaggerDatabaseClass::externalANNpredict(ANNexperience* fi
 		cerr << "GIApreprocessorPOStaggerDatabaseClass::externalANNpredict{} error: GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_Y_PREDICT_HOT_ENCODED not coded" << endl;
 		exit(EXIT_ERROR);
 		#else
-		long classTargetValue = long(SHAREDvars.convertStringToDouble(classTargetValueString));	//assume that YpredictBatchFileContents is not hot encoded
+		int64_t classTargetValue = int64_t(SHAREDvars.convertStringToDouble(classTargetValueString));	//assume that YpredictBatchFileContents is not hot encoded
 		cout << "GIApreprocessorPOStaggerDatabaseClass::externalANNgeneratePredictions{}: classTargetValue = " << classTargetValue << endl;
 		#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_PREDICT_RETURN_ERRORS
 		double predictionError = SHAREDvars.convertStringToDouble(predictionErrorString);
@@ -361,7 +361,7 @@ string GIApreprocessorPOStaggerDatabaseClass::externalANNgenerateBatchDataExperi
 	string experienceOutputString = "";
 	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_Y_TRAIN_HOT_ENCODED
 	int numberOfOutputNeurons = GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_NUMBER_OF_OUTPUT_NEURONS;
-	for(long i = 0; i < numberOfOutputNeurons; i++)
+	for(int64_t i = 0; i < numberOfOutputNeurons; i++)
 	{		
 		string format = "%g";	//"%0.0f";
 		if(i == currentExperienceInList->classTargetValue)
@@ -393,7 +393,7 @@ bool GIApreprocessorPOStaggerDatabaseClass::externalANNexecuteScript(string scri
 
 
 #ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM
-string GIApreprocessorPOStaggerDatabaseClass::DBgenerateFileName(vector<unsigned long>* POSambiguityInfoPermutation)
+string GIApreprocessorPOStaggerDatabaseClass::DBgenerateFileName(vector<uint64_t>* POSambiguityInfoPermutation)
 {
 	//eg network/server/GIAPOStaggerDatabase/ffff/ffff/ffff/ffff/ffff/POSpermutationffffffffffffffffffffff.pos
 	//string serverName = GIAdatabase.DBgenerateServerDatabaseName(&(GIAconnectionistNetworkPOStypeNameAbbreviationArray[firstFeatureInList->GIAsemRelTranslatorPOStype]), fileType, GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_DEFAULT_DATABASE_NAME, GIAposTaggerDatabaseFolderName);
@@ -427,7 +427,7 @@ string GIApreprocessorPOStaggerDatabaseClass::DBgenerateFileName(vector<unsigned
 	return fileName;
 }
 
-string GIApreprocessorPOStaggerDatabaseClass::DBgenerateSubFolderName(vector<unsigned long>* POSambiguityInfoPermutation, const int level, const int numberOfWordsPerLevel)
+string GIApreprocessorPOStaggerDatabaseClass::DBgenerateSubFolderName(vector<uint64_t>* POSambiguityInfoPermutation, const int level, const int numberOfWordsPerLevel)
 {
 	string folderName = "";
 	for(int i=level*numberOfWordsPerLevel; i<(level*numberOfWordsPerLevel)+numberOfWordsPerLevel; i++)
@@ -455,7 +455,7 @@ string GIApreprocessorPOStaggerDatabaseClass::DBgenerateSubFolderName(vector<uns
 
 
 
-bool GIApreprocessorPOStaggerDatabaseClass::DBreadPOSpermutationEstimates(vector<unsigned long>* POSambiguityInfoPermutation, vector<string>* centreWordPOSambiguityInfoList)
+bool GIApreprocessorPOStaggerDatabaseClass::DBreadPOSpermutationEstimates(vector<uint64_t>* POSambiguityInfoPermutation, vector<string>* centreWordPOSambiguityInfoList)
 {
 	bool POSpermutationEntryExistent = false;
 	
@@ -492,7 +492,7 @@ bool GIApreprocessorPOStaggerDatabaseClass::DBreadPOSpermutationEstimates(vector
 }
 
 #ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE
-bool GIApreprocessorPOStaggerDatabaseClass::DBwritePOSpermutationEstimate(vector<unsigned long>* POSambiguityInfoPermutation, const unsigned long centreWordPOSambiguityInfo)
+bool GIApreprocessorPOStaggerDatabaseClass::DBwritePOSpermutationEstimate(vector<uint64_t>* POSambiguityInfoPermutation, const uint64_t centreWordPOSambiguityInfo)
 {
 	bool result = true;
 	
@@ -591,7 +591,7 @@ string GIApreprocessorPOStaggerDatabaseClass::generateIntFormatString(int number
 }
 
 
-string GIApreprocessorPOStaggerDatabaseClass::DBconvertByteToBinaryString(unsigned long integer)
+string GIApreprocessorPOStaggerDatabaseClass::DBconvertByteToBinaryString(uint64_t integer)
 {
 	string binaryString = ""; 
 	for(int i=0; i<64; i++)
@@ -725,7 +725,7 @@ unsigned char GIApreprocessorPOStaggerDatabaseClass::DBconvertHexToByte(string h
 
 
 
-unsigned char GIApreprocessorPOStaggerDatabaseClass::convertPOSambiguityInfoToIndex(unsigned long POSambiguityInfo)
+unsigned char GIApreprocessorPOStaggerDatabaseClass::convertPOSambiguityInfoToIndex(uint64_t POSambiguityInfo)
 {
 	unsigned char POSambiguityInfoIndex = GIA_PREPROCESSOR_POS_TYPE_UNDEFINED;
 	if(!determinePOSambiguityInfoIsAmbiguous(POSambiguityInfo, &POSambiguityInfoIndex, true))
@@ -742,7 +742,7 @@ unsigned char GIApreprocessorPOStaggerDatabaseClass::convertPOSambiguityInfoToIn
 	return POSambiguityInfoIndex;
 }
 
-bool GIApreprocessorPOStaggerDatabaseClass::determinePOSambiguityInfoIsAmbiguous(const unsigned long POSambiguityInfo, unsigned char* unambiguousPOSinfoIndex, const bool treatWordAsAmbiguousIfNullPOSvalue)
+bool GIApreprocessorPOStaggerDatabaseClass::determinePOSambiguityInfoIsAmbiguous(const uint64_t POSambiguityInfo, unsigned char* unambiguousPOSinfoIndex, const bool treatWordAsAmbiguousIfNullPOSvalue)
 {
 	bool ambiguous = false;
 	

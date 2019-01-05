@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorWordClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f10i 19-April-2018
+ * Project Version: 3f11a 20-April-2018
  * Requirements: requires plain text file
  * Description: Preprocessor Word Class
  * /
@@ -427,23 +427,29 @@ bool GIApreprocessorWordClassClass::generateFlatSentenceWordList(const vector<GI
 
 bool GIApreprocessorWordClassClass::addWordListToWordList(vector<GIApreprocessorPlainTextWord*>* wordList, vector<GIApreprocessorPlainTextWord*>* wordListToAdd)
 {
+	bool result = true;
 	for(int i=0; i<wordListToAdd->size(); i++)
 	{
 		wordList->push_back((*wordListToAdd)[i]);
 	}
+	return result;
 }
 bool GIApreprocessorWordClassClass::addStringArrayToWordList(vector<GIApreprocessorPlainTextWord*>* wordList, const string* stringArrayToAdd, const int arraySize)
 {
+	bool result = true;
 	for(int i=0; i<arraySize; i++)
 	{
 		GIApreprocessorPlainTextWord* newWord = new GIApreprocessorMultiwordReductionPlainTextWord(stringArrayToAdd[i]);
 		wordList->push_back(newWord);
 	}
+	return result;
 }
 bool GIApreprocessorWordClassClass::addStringToWordList(vector<GIApreprocessorPlainTextWord*>* wordList, const string stringToAdd)
 {
+	bool result = true;
 	GIApreprocessorPlainTextWord* newWord = new GIApreprocessorMultiwordReductionPlainTextWord(stringToAdd);
 	wordList->push_back(newWord);
+	return result;
 }
 
 

@@ -26,7 +26,7 @@
  * File Name: GIAconditionNodeClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f10i 19-April-2018
+ * Project Version: 3f11a 20-April-2018
  * /
  *******************************************************************************/
 
@@ -127,14 +127,14 @@ public:
 	int dayOfWeek;
 	int month;
 	int dayOfMonth;
-	long year;	//in years < 0AD is negative
+	int64_t year;	//in years < 0AD is negative
 	double period;	//in seconds
-	long totalTimeInSeconds;
+	int64_t totalTimeInSeconds;
 
 	bool tenseOnlyTimeCondition;
 	bool isProgressive;
 
-	long idActiveListReorderdIDforXMLsave;	//for CXL output only
+	int64_t idActiveListReorderdIDforXMLsave;	//for CXL output only
 	int printX;			//for CXL output only
 	int printY;			//for CXL output only
 	bool printCoordsAlreadyDefined;
@@ -147,7 +147,7 @@ public:
 class GIAconditionNodeClassClass
 {
 	private: SHAREDvarsClass SHAREDvars;
-	public: string generateDateTimeConditionName(const int dayOfMonth, const int month, const long year);
+	public: string generateDateTimeConditionName(const int dayOfMonth, const int month, const int64_t year);
 };
 
 

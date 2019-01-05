@@ -26,7 +26,7 @@
  * File Name: GIAcxlConversion.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f10i 19-April-2018
+ * Project Version: 3f11a 20-April-2018
  * Description: CXL Conversion - Converts GIA network nodes into a CXL file
  * NB this function creates entity idActiveListReorderdIDforXMLsave values upon write to speed up linking process (does not use original idActiveList values)
  * /
@@ -86,7 +86,7 @@ bool GIAcxlConversionClass::writeCmapToolsCXLfile(const string xmlFileName, vect
 	XMLparserTag* newTag2 = new XMLparserTag();	//had to add a null tag
 	currentTagL2->nextTag = newTag2;
 
-	long currentCmapNodeIDinCmapNodeList;
+	int64_t currentCmapNodeIDinCmapNodeList;
 
 	#ifdef GIA_SEMANTIC_NET_CXL_REORDER_NETWORK_INDEX_IDS_UPON_CXL_WRITE_INSTEAD_OF_CXL_READ_OLD
 	currentCmapNodeIDinCmapNodeList = 0;
@@ -97,7 +97,7 @@ bool GIAcxlConversionClass::writeCmapToolsCXLfile(const string xmlFileName, vect
 	#endif
 
 	currentCmapNodeIDinCmapNodeList = 0;
-	long firstCmapNodeIDInNetworkIndexList = currentCmapNodeIDinCmapNodeList;
+	int64_t firstCmapNodeIDInNetworkIndexList = currentCmapNodeIDinCmapNodeList;
 	if(!generateCXLentityNodeTagList(currentTagL2, entityNodesActiveListComplete, entityNodesActiveListNetworkIndexes, &currentCmapNodeIDinCmapNodeList, true, false))
 	{
 		result = false;
@@ -106,7 +106,7 @@ bool GIAcxlConversionClass::writeCmapToolsCXLfile(const string xmlFileName, vect
 	newTag2 = new XMLparserTag();	//had to add a null tag
 	currentTagL2->nextTag = newTag2;
 
-	long firstCmapNodeIDInLinkingPhraseList = currentCmapNodeIDinCmapNodeList;	//NOT NECESSARY: redundant
+	int64_t firstCmapNodeIDInLinkingPhraseList = currentCmapNodeIDinCmapNodeList;	//NOT NECESSARY: redundant
 	if(!generateCXLentityNodeTagList(currentTagL2, entityNodesActiveListComplete, entityNodesActiveListNetworkIndexes, &currentCmapNodeIDinCmapNodeList, false, false))
 	{
 		result = false;
@@ -167,7 +167,7 @@ bool GIAcxlConversionClass::writeCmapToolsCXLfile(const string xmlFileName, vect
 }
 
 //generateCXLentityNodeTagList{}: generates and fills <networkIndex-list>, <networkIndex-appearance-list>, <linking-phrase-list> and <linking-phrase-appearance-list> tags.
-bool GIAcxlConversionClass::generateCXLentityNodeTagList(XMLparserTag* firstTagInMap, vector<GIAentityNode*>* entityNodesActiveListComplete, const vector<GIAentityNode*>* entityNodesActiveListNetworkIndexes, long* currentCmapNodeIDinCmapNodeList, bool networkIndexOrLinkingPhraseList, bool appearanceList)
+bool GIAcxlConversionClass::generateCXLentityNodeTagList(XMLparserTag* firstTagInMap, vector<GIAentityNode*>* entityNodesActiveListComplete, const vector<GIAentityNode*>* entityNodesActiveListNetworkIndexes, int64_t* currentCmapNodeIDinCmapNodeList, bool networkIndexOrLinkingPhraseList, bool appearanceList)
 {
 	bool result = true;
 
@@ -227,7 +227,7 @@ bool GIAcxlConversionClass::generateCXLentityNodeTagList(XMLparserTag* firstTagI
 }
 
 
-XMLparserTag* GIAcxlConversionClass::addToCXLentityNodeTagList(XMLparserTag* currentTagL1, vector<GIAentityNode*>* entityNodesList, long* currentCmapNodeIDinCmapNodeList, bool networkIndexOrLinkingPhraseList, bool appearanceList, const int entityType)
+XMLparserTag* GIAcxlConversionClass::addToCXLentityNodeTagList(XMLparserTag* currentTagL1, vector<GIAentityNode*>* entityNodesList, int64_t* currentCmapNodeIDinCmapNodeList, bool networkIndexOrLinkingPhraseList, bool appearanceList, const int entityType)
 {
 	bool result = true;
 
@@ -254,12 +254,12 @@ XMLparserTag* GIAcxlConversionClass::addToCXLentityNodeTagList(XMLparserTag* cur
 
 					#ifdef GIA_SEMANTIC_NET_CXL_REORDER_NETWORK_INDEX_IDS_UPON_CXL_WRITE_INSTEAD_OF_CXL_READ
 					currentEntity->idActiveListReorderdIDforXMLsave = *currentCmapNodeIDinCmapNodeList;
-					long currentEntityID = currentEntity->idActiveListReorderdIDforXMLsave;
+					int64_t currentEntityID = currentEntity->idActiveListReorderdIDforXMLsave;
 					#elif defined GIA_SEMANTIC_NET_CXL_REORDER_NETWORK_INDEX_IDS_UPON_CXL_WRITE_INSTEAD_OF_CXL_READ_OLD
 					//idActiveListReorderdIDforXMLsave already set
-					long currentEntityID = currentEntity->idActiveListReorderdIDforXMLsave;
+					int64_t currentEntityID = currentEntity->idActiveListReorderdIDforXMLsave;
 					#else
-					long currentEntityID = currentEntity->idActiveList;
+					int64_t currentEntityID = currentEntity->idActiveList;
 					#endif
 
 					currentTagL1 = generateCXLentityNodeTag(currentTagL1, currentEntity->entityName, currentEntityID, currentEntity->printX, currentEntity->printY, networkIndexOrLinkingPhraseList, appearanceList);
@@ -275,7 +275,7 @@ XMLparserTag* GIAcxlConversionClass::addToCXLentityNodeTagList(XMLparserTag* cur
 	return currentTagL1;
 }
 
-XMLparserTag* GIAcxlConversionClass::generateCXLentityNodeTag(XMLparserTag* currentTagL1, string entityName, long entityID, int printX, int printY, const bool networkIndexOrLinkingPhraseList, const bool appearanceList)
+XMLparserTag* GIAcxlConversionClass::generateCXLentityNodeTag(XMLparserTag* currentTagL1, string entityName, int64_t entityID, int printX, int printY, const bool networkIndexOrLinkingPhraseList, const bool appearanceList)
 {
 	bool result = true;
 
@@ -339,7 +339,7 @@ XMLparserTag* GIAcxlConversionClass::generateCXLentityNodeTag(XMLparserTag* curr
 }
 
 //generateCXLconnectionNodeTagList{}: generates <connection-list> tag, and fills <linking-phrase-list>, and  <linking-phrase-appearance-list> tags
-bool GIAcxlConversionClass::generateCXLconnectionNodeTagList(XMLparserTag* firstTagInMap, vector<GIAentityNode*>* entityNodesActiveListComplete, const vector<GIAentityNode*>* entityNodesActiveListNetworkIndexes, long* currentCmapNodeIDinCmapNodeList, XMLparserTag* firstTagInLinkingPhraseList, XMLparserTag* firstTagInLinkingPhraseAppearanceList)
+bool GIAcxlConversionClass::generateCXLconnectionNodeTagList(XMLparserTag* firstTagInMap, vector<GIAentityNode*>* entityNodesActiveListComplete, const vector<GIAentityNode*>* entityNodesActiveListNetworkIndexes, int64_t* currentCmapNodeIDinCmapNodeList, XMLparserTag* firstTagInLinkingPhraseList, XMLparserTag* firstTagInLinkingPhraseAppearanceList)
 {
 	bool result = true;
 
@@ -456,7 +456,7 @@ bool GIAcxlConversionClass::checkIfPassedRedundantNetworkIndexNodeRemoval(GIAent
 }
 #endif
 
-XMLparserTag* GIAcxlConversionClass::addToCXLconnectionNodeTagList(XMLparserTag* currentTagL1, vector<GIAentityNode*>* entityNodesList, long* currentCmapNodeIDinCmapNodeList, const XMLparserTag* firstTagL1, XMLparserTag** currentTagInLinkingPhraseList, XMLparserTag** currentTagInLinkingPhraseAppearanceList, XMLparserTag* firstTagInConnectionsList, const int entityType)
+XMLparserTag* GIAcxlConversionClass::addToCXLconnectionNodeTagList(XMLparserTag* currentTagL1, vector<GIAentityNode*>* entityNodesList, int64_t* currentCmapNodeIDinCmapNodeList, const XMLparserTag* firstTagL1, XMLparserTag** currentTagInLinkingPhraseList, XMLparserTag** currentTagInLinkingPhraseAppearanceList, XMLparserTag* firstTagInConnectionsList, const int entityType)
 {
 	bool result = true;
 
@@ -497,7 +497,7 @@ XMLparserTag* GIAcxlConversionClass::addToCXLconnectionNodeTagList(XMLparserTag*
 								GIAentityConnectionClass* entityObjectConnection = entityObjectVectorConnection->begin();	//this could equally be back() as there is only 1 subject/object connection
 
 								string connectionTypeName = currentEntity->entityName;
-								long linkingPhraseID = currentEntity->idActiveListReorderdIDforXMLsave;
+								int64_t linkingPhraseID = currentEntity->idActiveListReorderdIDforXMLsave;
 								if(subjectIsEmpty)
 								{
 									entitySubjectConnection->entity = new GIAentityNode();
@@ -582,7 +582,7 @@ XMLparserTag* GIAcxlConversionClass::addToCXLconnectionNodeTagList(XMLparserTag*
 	return currentTagL1;
 }
 
-XMLparserTag* GIAcxlConversionClass::generateCXLconnectionNodeTagAndLinkingPhraseTags(XMLparserTag* currentTagL1, const GIAentityNode* entity1, const GIAentityNode* entity2, string connectionTypeName, long* currentCmapNodeIDinCmapNodeList, XMLparserTag** currentTagInLinkingPhraseList, XMLparserTag** currentTagInLinkingPhraseAppearanceList, const XMLparserTag* firstTagInConnectionsList, const bool alreadyMadeLinkingPhrase)
+XMLparserTag* GIAcxlConversionClass::generateCXLconnectionNodeTagAndLinkingPhraseTags(XMLparserTag* currentTagL1, const GIAentityNode* entity1, const GIAentityNode* entity2, string connectionTypeName, int64_t* currentCmapNodeIDinCmapNodeList, XMLparserTag** currentTagInLinkingPhraseList, XMLparserTag** currentTagInLinkingPhraseAppearanceList, const XMLparserTag* firstTagInConnectionsList, const bool alreadyMadeLinkingPhrase)
 {
 	#ifdef GIA_SEMANTIC_NET_CXL_REORDER_NETWORK_INDEX_IDS_UPON_CXL_WRITE_INSTEAD_OF_CXL_READ
 	int entity1ID = entity1->idActiveListReorderdIDforXMLsave;
@@ -668,7 +668,7 @@ XMLparserTag* GIAcxlConversionClass::generateCXLconnectionNodeTagAndLinkingPhras
 }
 
 
-XMLparserTag* GIAcxlConversionClass::generateCXLconnectionNodeTag(XMLparserTag* currentTagL1, long fromID, long toID)
+XMLparserTag* GIAcxlConversionClass::generateCXLconnectionNodeTag(XMLparserTag* currentTagL1, int64_t fromID, int64_t toID)
 {
 	bool result = true;
 
@@ -701,7 +701,7 @@ XMLparserTag* GIAcxlConversionClass::generateCXLconnectionNodeTag(XMLparserTag* 
 
 #ifdef GIA_SEMANTIC_NET_CXL_REORDER_NETWORK_INDEX_IDS_UPON_CXL_WRITE_INSTEAD_OF_CXL_READ_OLD
 //this method is insufficient due to time condition nodes
-void resetIDsForNodeList2(vector<GIAentityNode*>* entityNodesList, long* currentEntityNodeIDinNetworkIndexEntityNodesList, int entityType)
+void resetIDsForNodeList2(vector<GIAentityNode*>* entityNodesList, int64_t* currentEntityNodeIDinNetworkIndexEntityNodesList, int entityType)
 {
 	for(vector<GIAentityNode*>::iterator entityNodesActiveCompleteListIterator = entityNodesList->begin(); entityNodesActiveCompleteListIterator < entityNodesList->end(); entityNodesActiveCompleteListIterator++)
 	{

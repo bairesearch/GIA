@@ -26,7 +26,7 @@
  * File Name: GIAentityConnectionClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f10i 19-April-2018
+ * Project Version: 3f11a 20-April-2018
  * NB a substance is an instance of an entity, any given entity may contain/comprise/have multiple substances - and substances are unrelated to definitions between entities [they just define what comprises any given entity]
  * /
  *******************************************************************************/
@@ -90,7 +90,7 @@ class GIAentityConnection
 public:
 	GIAentityConnection(void);
 	~GIAentityConnection(void);
-	GIAentityConnection(string* entityName, long idInstance);
+	GIAentityConnection(string* entityName, int64_t idInstance);
 	
 	void initialiseDefaultValues(void);
 
@@ -108,11 +108,11 @@ public:
 	#ifdef GIA_DATABASE
 	bool referenceLoaded;
 	string entityName;	//records the vector connection target entity name (to enable loading from db) [of target]
-	long idInstance;	//records the vector connection target instance id (to enable loading from db) [of target]
+	int64_t idInstance;	//records the vector connection target instance id (to enable loading from db) [of target]
 	bool loaded;		//signifies whether the vector connection target node has been loaded and is in RAM (eg from the db)
 	bool modified;		//signifies whether the database needs to be updated upon exit with modified reference
 	bool added;		//signifies whether the database needs to be updated upon exit with new reference
-	//long referenceIndex; 	//OLD [now assume referenceIndex equals the index of the connection in the connection vector] added 24 May 2012 (needs to be populated)
+	//int64_t referenceIndex; 	//OLD [now assume referenceIndex equals the index of the connection in the connection vector] added 24 May 2012 (needs to be populated)
 	#endif
 
 	#ifdef GIA_DRAW_PRINT_ENTITY_NODES_IN_ORDER_OF_SENTENCE_INDEX_ADVANCED

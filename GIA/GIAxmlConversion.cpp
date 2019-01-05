@@ -26,7 +26,7 @@
  * File Name: GIAxmlConversion.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f10i 19-April-2018
+ * Project Version: 3f11a 20-April-2018
  * Description: XML Conversion - Converts GIA network nodes into an XML file, or converts an XML file into GIA network nodes
  * NB this function creates entity idActiveListReorderdIDforXMLsave values upon write to speed up linking process (does not use original idActiveList values)
  * NB this function creates entity idActiveList values upon read (it could create idActiveListReorderdIDforXMLsave values instead - however currently it is assumed that when an XML file is loaded, this will populate the idActiveList in its entirety)
@@ -46,7 +46,7 @@ bool GIAxmlConversionClass::readSemanticNetXMLfileOptimised(const string xmlFile
 	readSemanticNetXMLfile(xmlFileName, entityNodesActiveListComplete, entityNodesActiveListNetworkIndexes);
 
 	//now convert entityNodesActiveListComplete to entityNodesCompleteListMap;
-	long vectorSize = entityNodesActiveListNetworkIndexes->size();
+	int64_t vectorSize = entityNodesActiveListNetworkIndexes->size();
 	for(int entityIndex=0; entityIndex<vectorSize; entityIndex++)
 	{
 		GIAentityNode* entityNode = entityNodesActiveListNetworkIndexes->at(entityIndex);
@@ -135,7 +135,7 @@ bool GIAxmlConversionClass::parseSemanticNetTag(XMLparserTag* firstTagInNetwork,
 
 	if(result)
 	{
-		long currentEntityNodeIDinCompleteList = 0;
+		int64_t currentEntityNodeIDinCompleteList = 0;
 		XMLparserTag* currentTagUpdatedL2 = currentTagUpdatedL1->firstLowerLevelTag;
 
 		for(int entityType=0; entityType<GIA_ENTITY_NUMBER_OF_TYPES; entityType++)
@@ -160,10 +160,10 @@ bool GIAxmlConversionClass::parseSemanticNetTag(XMLparserTag* firstTagInNetwork,
 }
 
 
-bool GIAxmlConversionClass::parseSemanticEntityTypeNodeContainerTag(XMLparserTag* currentTagUpdatedL2, vector<GIAentityNode*>* entityNodesActiveListComplete, vector<GIAentityNode*>* entityNodesActiveListType, const bool linkConnections, long* currentEntityNodeIDinCompleteList)
+bool GIAxmlConversionClass::parseSemanticEntityTypeNodeContainerTag(XMLparserTag* currentTagUpdatedL2, vector<GIAentityNode*>* entityNodesActiveListComplete, vector<GIAentityNode*>* entityNodesActiveListType, const bool linkConnections, int64_t* currentEntityNodeIDinCompleteList)
 {
 	bool result = true;
-	long currentEntityNodeIDinEntityTypeNodeList = 0;
+	int64_t currentEntityNodeIDinEntityTypeNodeList = 0;
 
 	XMLparserTag* currentTagUpdatedL3 = currentTagUpdatedL2->firstLowerLevelTag;
 	while(currentTagUpdatedL3->nextTag != NULL)
@@ -295,7 +295,7 @@ bool GIAxmlConversionClass::parseEntityNodeTag(XMLparserTag* firstTagInEntityNod
 		{
 			if(currentAttribute->name == NET_XML_ATTRIBUTE_id)
 			{
-				long attributeValue = SHAREDvars.convertStringToLong(currentAttribute->value);
+				int64_t attributeValue = SHAREDvars.convertStringToLong(currentAttribute->value);
 				entityNode->idActiveList = attributeValue;
 				idFound = true;
 			}
@@ -661,7 +661,7 @@ bool GIAxmlConversionClass::parseEntityVectorConnectionNodeListTag(const XMLpars
 		{
 			const XMLparserAttribute* currentAttribute = currentTagUpdatedL1->firstAttribute;
 
-			long idActiveList = INT_DEFAULT_VALUE;
+			int64_t idActiveList = INT_DEFAULT_VALUE;
 			GIAentityConnection* newConnection = new GIAentityConnection();
 
 			bool idFound = false;
@@ -691,7 +691,7 @@ bool GIAxmlConversionClass::parseEntityVectorConnectionNodeListTag(const XMLpars
 			{
 				if(currentAttribute->name == NET_XML_ATTRIBUTE_id)
 				{
-					long attributeValue = SHAREDvars.convertStringToLong(currentAttribute->value);
+					int64_t attributeValue = SHAREDvars.convertStringToLong(currentAttribute->value);
 					idActiveList = attributeValue;
 					idFound = true;
 				}
@@ -850,7 +850,7 @@ bool GIAxmlConversionClass::parseTimeConditionNodeTag(XMLparserTag* firstTagInTi
 		}
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_year)
 		{
-			long attributeValue = SHAREDvars.convertStringToLong(currentAttribute->value);
+			int64_t attributeValue = SHAREDvars.convertStringToLong(currentAttribute->value);
 			timeConditionNode->year = attributeValue;
 			yearFound = true;
 		}
@@ -862,7 +862,7 @@ bool GIAxmlConversionClass::parseTimeConditionNodeTag(XMLparserTag* firstTagInTi
 		}
 		else if(currentAttribute->name == NET_XML_ATTRIBUTE_totalTimeInSeconds)
 		{
-			long attributeValue = SHAREDvars.convertStringToLong(currentAttribute->value);
+			int64_t attributeValue = SHAREDvars.convertStringToLong(currentAttribute->value);
 			timeConditionNode->totalTimeInSeconds = attributeValue;
 			totalTimeInSecondsFound = true;
 		}
@@ -923,7 +923,7 @@ bool GIAxmlConversionClass::writeSemanticNetXMLFile(const string xmlFileName, ve
 	currentTagL1->nextTag = newTag1;
 
 
-	long currentEntityNodeIDinEntityNodesActiveCompleteList;
+	int64_t currentEntityNodeIDinEntityNodesActiveCompleteList;
 	#ifdef GIA_SEMANTIC_NET_XML_REORDER_NETWORK_INDEX_IDS_UPON_XML_WRITE_INSTEAD_OF_XML_READ
 	currentEntityNodeIDinEntityNodesActiveCompleteList = 0;
 	for(int entityType=0; entityType<GIA_ENTITY_NUMBER_OF_TYPES; entityType++)
@@ -963,7 +963,7 @@ bool GIAxmlConversionClass::writeSemanticNetXMLFile(const string xmlFileName, ve
 
 
 #ifdef GIA_SEMANTIC_NET_XML_REORDER_NETWORK_INDEX_IDS_UPON_XML_WRITE_INSTEAD_OF_XML_READ
-void GIAxmlConversionClass::resetIDsForNodeList(vector<GIAentityNode*>* entityNodesActiveListComplete, long* currentEntityNodeIDinEntityNodesActiveCompleteList, const int entityType)
+void GIAxmlConversionClass::resetIDsForNodeList(vector<GIAentityNode*>* entityNodesActiveListComplete, int64_t* currentEntityNodeIDinEntityNodesActiveCompleteList, const int entityType)
 {
 	for(vector<GIAentityNode*>::iterator entityNodesActiveCompleteListIterator = entityNodesActiveListComplete->begin(); entityNodesActiveCompleteListIterator < entityNodesActiveListComplete->end(); entityNodesActiveCompleteListIterator++)
 	{
@@ -985,7 +985,7 @@ void GIAxmlConversionClass::resetIDsForNodeList(vector<GIAentityNode*>* entityNo
 #endif
 
 
-bool GIAxmlConversionClass::generateXMLentityNodeTagList(XMLparserTag* firstTagInSemanticNet, vector<GIAentityNode*>* entityNodesList, string entityContainerTagName, long* currentEntityNodeIDinEntityNodesActiveCompleteList, const int entityType)
+bool GIAxmlConversionClass::generateXMLentityNodeTagList(XMLparserTag* firstTagInSemanticNet, vector<GIAentityNode*>* entityNodesList, string entityContainerTagName, int64_t* currentEntityNodeIDinEntityNodesActiveCompleteList, const int entityType)
 {
 	bool result = true;
 
@@ -1029,7 +1029,7 @@ bool GIAxmlConversionClass::generateXMLentityNodeTagList(XMLparserTag* firstTagI
 
 
 
-XMLparserTag* GIAxmlConversionClass::generateXMLentityNodeTag(XMLparserTag* currentTagL1, GIAentityNode* currentEntity, long currentEntityNodeIDinEntityNodesActiveCompleteList)
+XMLparserTag* GIAxmlConversionClass::generateXMLentityNodeTag(XMLparserTag* currentTagL1, GIAentityNode* currentEntity, int64_t currentEntityNodeIDinEntityNodesActiveCompleteList)
 {
 	bool result = true;
 

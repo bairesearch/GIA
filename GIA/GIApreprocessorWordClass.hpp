@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorWordClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f10i 19-April-2018
+ * Project Version: 3f11a 20-April-2018
  * Requirements: requires plain text file
  * Description: Preprocessor Word Class
  * /
@@ -82,9 +82,9 @@ static string translatorEnglishNumbersArray[GIA_TRANSLATOR_ENGLISH_NUMBERS_NUMBE
 #define GIA_TRANSLATOR_ENGLISH_NUMBERS_NUMERALS_NUMBER_OF_TYPES (29)
 #define GIA_TRANSLATOR_ENGLISH_NUMBERS_MAGITUDES_NUMBER_OF_TYPES (4)
 static string translatorEnglishNumbersNumeralsTextArray[GIA_TRANSLATOR_ENGLISH_NUMBERS_NUMERALS_NUMBER_OF_TYPES] = { "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "ninteen", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety", "hundred" };
-static long translatorEnglishNumbersNumeralsNumberArray[GIA_TRANSLATOR_ENGLISH_NUMBERS_NUMERALS_NUMBER_OF_TYPES] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 30, 40, 50, 60, 70, 80, 90, 100 };
+static int64_t translatorEnglishNumbersNumeralsNumberArray[GIA_TRANSLATOR_ENGLISH_NUMBERS_NUMERALS_NUMBER_OF_TYPES] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 30, 40, 50, 60, 70, 80, 90, 100 };
 static string translatorEnglishNumbersMagnitudesTextArray[GIA_TRANSLATOR_ENGLISH_NUMBERS_MAGITUDES_NUMBER_OF_TYPES] = { "trillion", "billion", "million", "thousand" };
-static long translatorEnglishNumbersMagnitudesNumberArray[GIA_TRANSLATOR_ENGLISH_NUMBERS_MAGITUDES_NUMBER_OF_TYPES] = { 1000000000000L, 1000000000L, 1000000L, 1000L };
+static int64_t translatorEnglishNumbersMagnitudesNumberArray[GIA_TRANSLATOR_ENGLISH_NUMBERS_MAGITUDES_NUMBER_OF_TYPES] = { 1000000000000L, 1000000000L, 1000000L, 1000L };
 
 #define GIA_TRANSLATOR_ENGLISH_NUMBERS_NUMERICAL_NUMBER_OF_TYPES (10)
 static char translatorEnglishNumbersNumericalArray[GIA_TRANSLATOR_ENGLISH_NUMBERS_NUMERICAL_NUMBER_OF_TYPES] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
@@ -595,7 +595,7 @@ public:
 	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START
 	unsigned char unambiguousPOSindex;
 	#else
-	unsigned long POSambiguityInfo;
+	uint64_t POSambiguityInfo;
 	#endif
 	int wordPOStypeInferred;
 	bool alreadyFoundMatch;

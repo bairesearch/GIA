@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorWordIdentification.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f10i 19-April-2018
+ * Project Version: 3f11a 20-April-2018
  * Requirements: requires plain text file
  * Description: Preprocessor Word Identification
  * /
@@ -63,12 +63,12 @@ class GIApreprocessorWordIdentificationClass
 	private: bool transferWordList(int GIAposType1, int GIAposType2, unordered_map<string, GIApreprocessorMultiwordReductionWord*>** wordList1record);
 	
 	#ifdef GIA_PREPROCESSOR_INITIALISE_WORD_INDEX_LIST_FROM_LRP_FILES
-	public: unordered_map<string, pair<GIApreprocessorMultiwordReductionWord*, unsigned long>>* getWordListAllTypesWithPOSambiguityInfo();
+	public: unordered_map<string, pair<GIApreprocessorMultiwordReductionWord*, uint64_t>>* getWordListAllTypesWithPOSambiguityInfo();
 	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY_ASSIGN_WEIGHTS_TO_TRAINED_POS_TYPES
 	public: double getGIApreprocessorPOStypeWeight(int GIAposType);
 	#endif
 	//private: bool findInstanceInMapWordListAllTypesWithPOSambiguityInfo(unordered_map<string, pair<GIApreprocessorMultiwordReductionWord*, unsigned char>>* mapWordListAllTypesWithPOSambiguityInfo, const string wordIndex, GIApreprocessorMultiwordReductionWord* word, unsigned char* POSambiguityInfo);
-	private: void insertInstanceInMapWordListAllTypesWithPOSambiguityInfo(unordered_map<string, pair<GIApreprocessorMultiwordReductionWord*, unsigned long>>* mapWordListAllTypesWithPOSambiguityInfo, const string wordIndex, GIApreprocessorMultiwordReductionWord* word, const unsigned long POSambiguityInfo);
+	private: void insertInstanceInMapWordListAllTypesWithPOSambiguityInfo(unordered_map<string, pair<GIApreprocessorMultiwordReductionWord*, uint64_t>>* mapWordListAllTypesWithPOSambiguityInfo, const string wordIndex, GIApreprocessorMultiwordReductionWord* word, const uint64_t POSambiguityInfo);
 	#endif
 	
 	public: bool initialiseLRP(const string newLRPDataFolderName, const bool newUseLRP);

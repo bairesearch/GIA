@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f10i 19-April-2018
+ * Project Version: 3f11a 20-April-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: GIA specific global definitions
  * /
@@ -616,7 +616,7 @@
  *			(Linux Ubuntu 16.04 Only)
  *			sudo apt-get install wordnet [wordnet-sense-index] OR;
  *			sudo dpkg -i wordnet_1%3a3.0-33_amd64.deb wordnet-base_1%3a3.0-33_all.deb wordnet-dev_1%3a3.0-33_amd64.deb  wordnet-gui_1%3a3.0-33_amd64.deb [wordnet-sense-index_1%3a3.0-32_all.deb]
-
+ *
  *			(Linux Ubuntu 14.04 Only)
  *			sudo apt-get install wordnet wordnet-dev wordnet-sense-index OR;
  *			sudo dpkg -i wordnet_1%3a3.0-31_amd64.deb wordnet-base_1%3a3.0-31_all.deb wordnet-dev_1%3a3.0-31_amd64.deb wordnet-gui_1%3a3.0-31_amd64.deb wordnet-sense-index_1%3a3.0-31_all.deb
@@ -1005,7 +1005,7 @@
 	#endif
 	#ifdef GIA_PREPROCESSOR_POS_TAGGER
 		
-		#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY	//3e9b			//this is now mandatory for GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM and GIA_PREPROCESSOR_POS_TAGGER_DATABASE_MAP databases as POSambiguityInfo is no longer restricted to 8 bit (ie is now 64 bit long) - to maintain database performance (>=GIA3e11a) 
+		#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY	//3e9b			//this is now mandatory for GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM and GIA_PREPROCESSOR_POS_TAGGER_DATABASE_MAP databases as POSambiguityInfo is no longer restricted to 8 bit (ie is now 64 bit int64_t) - to maintain database performance (>=GIA3e11a) 
 		#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY
 			#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY_ONLY_TRAIN_UNAMBIGUOUS_PERMUTATIONS		//With a classification net or file system DB can risk feeding it with bad hypothetical pos permutations (because will take the permutation predicted with the highest hits), but cannot with a neural net (as this would degrade neural net performance; there would be more than 1 bad permutation for every good permutation fed on average)?
 			#ifndef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY_ONLY_TRAIN_UNAMBIGUOUS_PERMUTATIONS
@@ -1124,7 +1124,7 @@
 			#define GIA_PREPROCESSOR_POS_TAGGER_MAX_WORDS_IN_DATABASE_POS_PERMUTATION (GIA_PREPROCESSOR_POS_TAGGER_MAX_CONTEXT_WORDS_IN_DATABASE_POS_PERMUTATION)
 		#endif
 
-		#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_POS_MAX_BITS_INTERMEDIATE (64)	//size(unsigned long), i.e. 64 == GIA_PREPROCESSOR_POS_TAGGER_DATABASE_POS_MAX_NUMBER_OF_TYPES_THEORETICAL
+		#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_POS_MAX_BITS_INTERMEDIATE (64)	//size(uint64_t), i.e. 64 == GIA_PREPROCESSOR_POS_TAGGER_DATABASE_POS_MAX_NUMBER_OF_TYPES_THEORETICAL
 		#ifndef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK
 			#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY_ONLY_TRAIN_UNAMBIGUOUS_PERMUTATIONS
 				#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_AND_MAP_USE_6BIT_INDICES	//3e9d

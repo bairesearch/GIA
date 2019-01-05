@@ -26,7 +26,7 @@
  * File Name: GIAentityNodeClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f10i 19-April-2018
+ * Project Version: 3f11a 20-April-2018
  * NB a substance is an instance of an entity, any given entity may contain/comprise/have multiple substances - and substances are unrelated to definitions between entities [they just define what comprises any given entity]
  * /
  *******************************************************************************/
@@ -353,7 +353,7 @@ public:
 	~GIAnetworkIndexEntityLoaded(void);
 
 	bool loaded;
-	long numberOfInstances;
+	int64_t numberOfInstances;
 	#ifdef GIA_DATABASE_DO_NOT_WRITE_DISABLED_ENTITY_NODES
 	bool disabled; 	//added 29 November 2012 for GIA_DATABASE_DO_NOT_WRITE_DISABLED_ENTITY_NODES support
 	#endif
@@ -371,9 +371,9 @@ public:
 	~GIAentityNode(void);
 
 	/*GIA Internal Entity Referencing*/
-	long idActiveList;
-	long idActiveListReorderdIDforXMLsave;	//for CXL output only
-	long idInstance; 		//not for networkIndexes (this instance idActiveList of the networkIndex entityName)
+	int64_t idActiveList;
+	int64_t idActiveListReorderdIDforXMLsave;	//for CXL output only
+	int64_t idInstance; 		//not for networkIndexes (this instance idActiveList of the networkIndex entityName)
 
 
 	/*GIA Entity Name*/
@@ -577,7 +577,7 @@ public:
 	bool NLCmathTextParsablePhraseEntity;
 	#endif
 	bool NLCisAlias;
-	long NLCidInstanceBackup;
+	int64_t NLCidInstanceBackup;
 	bool NLCfirstInstanceOfProperNounInContext;
 	#endif
 

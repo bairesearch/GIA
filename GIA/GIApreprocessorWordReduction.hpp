@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorWordReduction.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f10i 19-April-2018
+ * Project Version: 3f11a 20-April-2018
  * Requirements: requires plain text file
  * Description: Preprocessor Word Reduction
  * /
@@ -88,9 +88,9 @@ class GIApreprocessorWordReductionClass
 
 	#ifdef GIA_PREPROCESSOR_WORD_COLLAPSE_NUMERICAL_WORDS_TO_NUMBERS
 	private: bool replaceAllNumericalWordsWithNumbers(GIApreprocessorSentence* firstGIApreprocessorSentenceInList);
-		private: long convertWordToNumber(vector<GIApreprocessorPlainTextWord*>* numericalWordList);
-			private: long parseNumerals(vector<GIApreprocessorPlainTextWord*>* numericalWordListSubset);
-				private: long getValueOf(const string wordText);
+		private: int64_t convertWordToNumber(vector<GIApreprocessorPlainTextWord*>* numericalWordList);
+			private: int64_t parseNumerals(vector<GIApreprocessorPlainTextWord*>* numericalWordListSubset);
+				private: int64_t getValueOf(const string wordText);
 	#endif
 			
 };

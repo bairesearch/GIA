@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorPOStagger.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f10i 19-April-2018
+ * Project Version: 3f11a 20-April-2018
  * Requirements: requires plain text file
  * Description: Preprocessor POS tagger database
  * /
@@ -115,7 +115,7 @@ class GIApreprocessorPOStaggerDatabaseClass
 	private: void insertInstanceInPOStaggerMap(const string POSambiguityInfoPermutation, const unsigned char centreWordPOSambiguityInfo, const int numberOfInstances);
 	private: multimap<string, pair<unsigned char, int>>* getPOStaggerMap();
 	#endif
-	public: string convertPOSambiguityInfoPermutationToPOSambiguityInfoPermutationIndexString(vector<unsigned long>* POSambiguityInfoPermutation);
+	public: string convertPOSambiguityInfoPermutationToPOSambiguityInfoPermutationIndexString(vector<uint64_t>* POSambiguityInfoPermutation);
 	
 	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK
 	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_INTERNAL
@@ -147,16 +147,16 @@ class GIApreprocessorPOStaggerDatabaseClass
 	#endif
 
 	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM
-	private: string DBgenerateFileName(vector<unsigned long>* POSambiguityInfoPermutation);
-		private: string DBgenerateSubFolderName(vector<unsigned long>* POSambiguityInfoPermutation, const int level, const int numberOfWordsPerLevel);
-	public: bool DBreadPOSpermutationEstimates(vector<unsigned long>* POSambiguityInfoPermutation, vector<string>* centreWordPOSambiguityInfoList);
+	private: string DBgenerateFileName(vector<uint64_t>* POSambiguityInfoPermutation);
+		private: string DBgenerateSubFolderName(vector<uint64_t>* POSambiguityInfoPermutation, const int level, const int numberOfWordsPerLevel);
+	public: bool DBreadPOSpermutationEstimates(vector<uint64_t>* POSambiguityInfoPermutation, vector<string>* centreWordPOSambiguityInfoList);
 	#ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE
-	public: bool DBwritePOSpermutationEstimate(vector<unsigned long>* POSambiguityInfoPermutation, const unsigned long centreWordPOSambiguityInfo);
+	public: bool DBwritePOSpermutationEstimate(vector<uint64_t>* POSambiguityInfoPermutation, const uint64_t centreWordPOSambiguityInfo);
 	#endif
 	#endif
 	
 	public: string generateIntFormatString(int numberOfCharacters);
-	public: string DBconvertByteToBinaryString(unsigned long byte);
+	public: string DBconvertByteToBinaryString(uint64_t byte);
 	
 	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_PREDICTION_VERIFICATION
 	public: bool verifyPOStaggerDatabasePredictionAgainstPOSambiguityInfo(const unsigned char centreWordPOSindexPrediction, const unsigned int centreWordPOSambiguityInfo, unsigned char* centreWordPOSvalueFirstAmbiguousPrediction);
@@ -170,8 +170,8 @@ class GIApreprocessorPOStaggerDatabaseClass
 	public: unsigned char DBconvertHexToByte(string hexString);
 	#endif
 	
-	public: unsigned char convertPOSambiguityInfoToIndex(unsigned long POSambiguityInfo);
-		public: bool determinePOSambiguityInfoIsAmbiguous(const unsigned long POSambiguityInfo, unsigned char* unambiguousPOSinfoIndex, const bool treatWordAsAmbiguousIfNullPOSvalue);
+	public: unsigned char convertPOSambiguityInfoToIndex(uint64_t POSambiguityInfo);
+		public: bool determinePOSambiguityInfoIsAmbiguous(const uint64_t POSambiguityInfo, unsigned char* unambiguousPOSinfoIndex, const bool treatWordAsAmbiguousIfNullPOSvalue);
 
 			
 };

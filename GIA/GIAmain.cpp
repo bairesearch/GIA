@@ -26,7 +26,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f10i 19-April-2018
+ * Project Version: 3f11a 20-April-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Main
  * /
@@ -667,7 +667,7 @@ int main(const int argc, const char** argv)
 
 	if(SHAREDvarsClass().argumentExists(argc, argv, "-version"))
 	{
-		cout << "GIA.exe - Project Version: 3f10i 19-April-2018" << endl;
+		cout << "GIA.exe - Project Version: 3f11a 20-April-2018" << endl;
 		exit(EXIT_OK);
 	}
 
@@ -676,7 +676,7 @@ int main(const int argc, const char** argv)
 	translatorVariables->isQuery = false;
 	translatorVariables->entityNodesActiveListComplete = new vector<GIAentityNode*>;
 	translatorVariables->entityNodesActiveListNetworkIndexes = new unordered_map<string, GIAentityNode*>;
-	translatorVariables->timeConditionNodesActiveList = new unordered_map<long, GIAtimeConditionNode*>;
+	translatorVariables->timeConditionNodesActiveList = new unordered_map<int64_t, GIAtimeConditionNode*>;
 	translatorVariables->entityNodesActiveListSentences = new map<int, vector<GIAentityNode*>*>;
 	translatorVariables->NLPfeatureParser = NLPfeatureParser;
 	translatorVariables->NLPdependencyRelationsParser = NLPdependencyRelationsParser;
@@ -695,7 +695,7 @@ int main(const int argc, const char** argv)
 	translatorVariablesQuery->isQuery = true;
 	translatorVariablesQuery->entityNodesActiveListComplete = new vector<GIAentityNode*>;
 	translatorVariablesQuery->entityNodesActiveListNetworkIndexes = new unordered_map<string, GIAentityNode*>;
-	translatorVariablesQuery->timeConditionNodesActiveList = new unordered_map<long, GIAtimeConditionNode*>;
+	translatorVariablesQuery->timeConditionNodesActiveList = new unordered_map<int64_t, GIAtimeConditionNode*>;
 	translatorVariablesQuery->entityNodesActiveListSentences = new map<int, vector<GIAentityNode*>*>;
 	translatorVariablesQuery->NLPfeatureParser = queryNLPfeatureParser;
 	translatorVariablesQuery->NLPdependencyRelationsParser = queryNLPdependencyRelationsParser;

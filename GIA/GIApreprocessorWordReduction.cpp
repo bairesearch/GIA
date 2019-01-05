@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorWordReduction.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f10i 19-April-2018
+ * Project Version: 3f11a 20-April-2018
  * Requirements: requires plain text file
  * Description: Preprocessor Word Reduction
  * /
@@ -1810,7 +1810,7 @@ bool GIApreprocessorWordReductionClass::replaceAllNumericalWordsWithNumbers(GIAp
 						}
 
 						
-						long number = convertWordToNumber(&text);
+						int64_t number = convertWordToNumber(&text);
 						//cout << "number = " << number << endl;
 						firstTagInNumericalWord->tagName = SHAREDvars.convertLongToString(number);
 						firstTagInNumericalWord->nextTag = tagSucceedingNumericalWordTagList;
@@ -1835,10 +1835,10 @@ bool GIApreprocessorWordReductionClass::replaceAllNumericalWordsWithNumbers(GIAp
 
 //based on https://www.roseindia.net/answers/viewqa/Java-Interview-Questions/13787-Java-program---convert-words-into-numbers.html
 
-long GIApreprocessorWordReductionClass::convertWordToNumber(vector<GIApreprocessorPlainTextWord*>* numericalWordList)
+int64_t GIApreprocessorWordReductionClass::convertWordToNumber(vector<GIApreprocessorPlainTextWord*>* numericalWordList)
 {
 		
-	long totalValue = 0;
+	int64_t totalValue = 0;
 	bool processed = false;
 	for(int n = 0; n < GIA_TRANSLATOR_ENGLISH_NUMBERS_MAGITUDES_NUMBER_OF_TYPES; n++) 
 	{
@@ -1882,9 +1882,9 @@ long GIApreprocessorWordReductionClass::convertWordToNumber(vector<GIApreprocess
 	}
 }
 
-long GIApreprocessorWordReductionClass::parseNumerals(vector<GIApreprocessorPlainTextWord*>* numericalWordListSubset)
+int64_t GIApreprocessorWordReductionClass::parseNumerals(vector<GIApreprocessorPlainTextWord*>* numericalWordListSubset)
 {
-	long value = 0;
+	int64_t value = 0;
 		
 	for(int i=0; i<numericalWordListSubset->size(); i++) 
 	{
@@ -1896,7 +1896,7 @@ long GIApreprocessorWordReductionClass::parseNumerals(vector<GIApreprocessorPlai
 			exit(EXIT_ERROR);
 		}
 
-		long subval = getValueOf(wordText);
+		int64_t subval = getValueOf(wordText);
 		if(subval == 100) 
 		{
 			if(value == 0)
@@ -1917,7 +1917,7 @@ long GIApreprocessorWordReductionClass::parseNumerals(vector<GIApreprocessorPlai
 	return value;
 }
 
-long GIApreprocessorWordReductionClass::getValueOf(const string wordText) 
+int64_t GIApreprocessorWordReductionClass::getValueOf(const string wordText) 
 {
 	int index = 0;
 	if(!SHAREDvars.textInTextArray(wordText, translatorEnglishNumbersNumeralsTextArray, GIA_TRANSLATOR_ENGLISH_NUMBERS_NUMERALS_NUMBER_OF_TYPES, &index))
@@ -1925,7 +1925,7 @@ long GIApreprocessorWordReductionClass::getValueOf(const string wordText)
 		cerr << "GIApreprocessorWordIdentificationClass::getValueOf{} error: wordText not in translatorEnglishNumbersNumeralsTextArray: " << wordText << endl;
 		exit(EXIT_ERROR);
 	}
-	long number = translatorEnglishNumbersNumeralsNumberArray[index];
+	int64_t number = translatorEnglishNumbersNumeralsNumberArray[index];
 	return number;
 }
 			

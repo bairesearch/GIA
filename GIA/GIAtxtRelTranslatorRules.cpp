@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorRules.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f10i 19-April-2018
+ * Project Version: 3f11a 20-April-2018
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Rules
  * /
@@ -1125,6 +1125,8 @@ bool GIAtxtRelTranslatorRulesClass::isClassTag(string word, string layerNameToFi
 
 bool GIAtxtRelTranslatorRulesClass::printComponent(GIAtxtRelTranslatorRulesComponent* currentParseTreeComponent, int layer)
 {
+	bool result = true;
+	
 	printParseTreeDebugIndentation(layer);
 	string componentTagRegenerated = "";
 	if(currentParseTreeComponent->componentType == GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_STRING)
@@ -1153,14 +1155,20 @@ bool GIAtxtRelTranslatorRulesClass::printComponent(GIAtxtRelTranslatorRulesCompo
 		componentTagRegenerated = componentTagRegenerated + CHAR_TAG_OPEN + GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_GROUP_TAG_component + STRING_SPACE + GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_componentType + CHAR_TAG_ATTRIBUTE_VAL_EQUALS_STR + GIAtxtRelTranslatorRulesGroupsComponentTypes[currentParseTreeComponent->componentType] + STRING_SPACE + GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_groupTypeNameRef + CHAR_TAG_ATTRIBUTE_VAL_EQUALS_STR + currentParseTreeComponent->groupTypeRefName + STRING_SPACE + GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_groupNameRef + CHAR_TAG_ATTRIBUTE_VAL_EQUALS_STR + currentParseTreeComponent->groupRefName + STRING_SPACE + CHAR_TAG_CLOSE;	
 	}
 	cout << componentTagRegenerated << endl;
+	
+	return result;
 }
 
 bool GIAtxtRelTranslatorRulesClass::printParseTreeDebugIndentation(int layer)
 {
+	bool result = true;
+	
 	for(int i=0; i<layer; i++)
 	{
 		cout << "\t";
 	}
+	
+	return result;
 }
 
 #endif

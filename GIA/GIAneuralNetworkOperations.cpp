@@ -26,7 +26,7 @@
  * File Name: GIAneuralNetworkOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f10i 19-April-2018
+ * Project Version: 3f11a 20-April-2018
  * Description: Neural Network - visual representation of GIA contents in prototype biological neural network
  * /
  *******************************************************************************/
@@ -65,9 +65,9 @@ bool GIAneuralNetworkOperationsClass::readNeuralNetXMLfile(const string xmlFileN
 {
 	bool result = false;
 
-	long numberOfInputNeuronsLoaded;
-	long numberOfOutputNeuronsLoaded;
-	long numberOfLayersLoaded;
+	int64_t numberOfInputNeuronsLoaded;
+	int64_t numberOfOutputNeuronsLoaded;
+	int64_t numberOfLayersLoaded;
 
 	ANNneuron* firstOutputNeuronInNetwork = ANNxmlConversion.readNetXMLfileAndRecordFormationVariables(xmlFileName, firstInputNeuronInNetwork, &numberOfInputNeuronsLoaded, &numberOfOutputNeuronsLoaded, &numberOfLayersLoaded);
 
@@ -1237,9 +1237,9 @@ bool GIAneuralNetworkOperationsClass::verifySpecificConceptProperties(GIAneuralN
 
 #endif
 
-long GIAneuralNetworkOperationsClass::getCurrentTime()
+int64_t GIAneuralNetworkOperationsClass::getCurrentTime()
 {
-	return static_cast<long int>(time(NULL));
+	return static_cast<int64_t int>(time(NULL));
 }
 
 #endif

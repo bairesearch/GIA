@@ -26,7 +26,7 @@
  * File Name: GIAneuralNetworkOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f10i 19-April-2018
+ * Project Version: 3f11a 20-April-2018
  * Description: Neural Network - visual representation of GIA contents in prototype biological neural network
  * /
  *******************************************************************************/
@@ -65,14 +65,14 @@ public:
 	
 	ANNneuron* firstInputNeuronInNetwork;
 	
-	long neuronIDcounter;
-	long conceptNeuronOrderIDcounter;
-	long specificConceptNeuronOrderIDcounter;
-	long instanceNeuronOrderIDcounter;
+	int64_t neuronIDcounter;
+	int64_t conceptNeuronOrderIDcounter;
+	int64_t specificConceptNeuronOrderIDcounter;
+	int64_t instanceNeuronOrderIDcounter;
 
 	#ifdef GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS
-	long substanceConceptIDcounter;
-	long referenceSetDelimiterConceptIDcounter;
+	int64_t substanceConceptIDcounter;
+	int64_t referenceSetDelimiterConceptIDcounter;
 	#endif
 		
 	int sentenceIndex;
@@ -149,7 +149,7 @@ class GIAneuralNetworkOperationsClass
 			public: bool verifySpecificConceptProperties(GIAneuralNetworkVariablesClass* neuralNetworkVariables, ANNneuron* specificConcept, const vector<GIApreprocessorPlainTextWord*>* subReferenceSetContents, const int indexOfStartOfSpecificConcept, const int indexOfSpecificConcept);
 	#endif
 
-	long getCurrentTime();
+	int64_t getCurrentTime();
 };
 
 #endif

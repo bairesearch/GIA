@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f10i 19-April-2018
+ * Project Version: 3f11a 20-April-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
@@ -1048,7 +1048,7 @@ void GIAtranslatorOperationsClass::forwardInfoToNewSubstance(GIAentityNode* enti
 
 /*
 #ifdef GIA_TIME_NODE_INDEXING
-void addTenseOnlyTimeConditionToSubstance(GIAentityNode* substanceNode, int tense, vector<GIAtimeConditionNode*>* timeConditionNodesActiveList, vector<long>* timeConditionNumbersActiveList)
+void addTenseOnlyTimeConditionToSubstance(GIAentityNode* substanceNode, int tense, vector<GIAtimeConditionNode*>* timeConditionNodesActiveList, vector<int64_t>* timeConditionNumbersActiveList)
 #else
 void addTenseOnlyTimeConditionToSubstance(GIAentityNode* substanceNode, int tense)
 #endif
@@ -1061,7 +1061,7 @@ void GIAtranslatorOperationsClass::addTenseOnlyTimeConditionToSubstance(GIAentit
 	#ifdef GIA_TIME_NODE_INDEXING
 	int timeConditionEntityIndex = INT_DEFAULT_VALUE;
 	bool argumentEntityAlreadyExistant = false;
-	long timeConditionTotalTimeInSeconds = 0; //cannot assign absolute time to an event which occurs in the past.... //calculateTotalTimeInSeconds{};
+	int64_t timeConditionTotalTimeInSeconds = 0; //cannot assign absolute time to an event which occurs in the past.... //calculateTotalTimeInSeconds{};
 	GIAtimeConditionNode* newTimeCondition = findOrAddTimeNodeByNumber(timeConditionNodesActiveList, networkIndexEntityNamesList, timeConditionAbsoluteTimeValue, &argumentEntityAlreadyExistant, &timeConditionEntityIndex, true);
 	#else
 	GIAtimeConditionNode* newTimeCondition = new GIAtimeConditionNode();
@@ -1840,9 +1840,9 @@ bool GIAtranslatorOperationsClass::findEntityNodeNameInVector(GIAentityNode* ent
 
 
 
-long GIAtranslatorOperationsClass::determineNextIdInstance(GIAentityNode* entity)
+int64_t GIAtranslatorOperationsClass::determineNextIdInstance(GIAentityNode* entity)
 {
-	long nextIdInstance;
+	int64_t nextIdInstance;
 	GIAentityNode* networkIndexEntity;
 	#ifdef GIA_APPLY_BUG_WORKAROUND_WHERE_A_NETWORK_INDEX_ENTITY_OF_INSTANCE_0_CAN_HAVE_NODE_DEFINING_INSTANCE
 	if(entity->idInstance == GIA_DATABASE_NODE_NETWORK_INDEX_ID_INSTANCE)
@@ -1873,7 +1873,7 @@ long GIAtranslatorOperationsClass::determineNextIdInstance(GIAentityNode* entity
 	#ifdef GIA_ID_INSTANCE_ALLOW_INSTANCE_DELETIONS
 	if(!(networkIndexEntity->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_INSTANCE].empty()))
 	{
-		long previousIdInstance = networkIndexEntity->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_INSTANCE].back()->entity->idInstance;
+		int64_t previousIdInstance = networkIndexEntity->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_INSTANCE].back()->entity->idInstance;
 		nextIdInstance = previousIdInstance + 1;
 	}
 	else
@@ -1881,14 +1881,14 @@ long GIAtranslatorOperationsClass::determineNextIdInstance(GIAentityNode* entity
 		nextIdInstance = GIA_DATABASE_NODE_NETWORK_INDEX_ID_INSTANCE + 1;
 	}
 	#else
-	long numberOfInstances =  networkIndexEntity->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_INSTANCE].size();
+	int64_t numberOfInstances =  networkIndexEntity->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_INSTANCE].size();
 	nextIdInstance = numberOfInstances;
 	#endif
 #elif !defined GIA_DATABASE
 	#ifdef GIA_ID_INSTANCE_ALLOW_INSTANCE_DELETIONS
 	if(!(networkIndexEntity->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_INSTANCE].empty()))
 	{
-		long previousIdInstance = networkIndexEntity->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_INSTANCE].back()->entity->idInstance;
+		int64_t previousIdInstance = networkIndexEntity->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_INSTANCE].back()->entity->idInstance;
 		nextIdInstance = previousIdInstance + 1;
 	}
 	else
@@ -1896,7 +1896,7 @@ long GIAtranslatorOperationsClass::determineNextIdInstance(GIAentityNode* entity
 		nextIdInstance = GIA_DATABASE_NODE_NETWORK_INDEX_ID_INSTANCE + 1;
 	}
 	#else
-	long numberOfInstances =  networkIndexEntity->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_INSTANCE].size();
+	int64_t numberOfInstances =  networkIndexEntity->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_INSTANCE].size();
 	nextIdInstance = numberOfInstances;
 	#endif
 #else
@@ -2737,7 +2737,9 @@ bool GIAtranslatorOperationsClass::connectPrenominalModifierWrapper(GIAtranslato
 #ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3
 bool GIAtranslatorOperationsClass::connectMultiwordAuxiliaryWrapper(GIAtranslatorVariablesClass* translatorVariables, GIAentityNode* entitySemanticRelationFunction1, GIAentityNode* entitySemanticRelationFunction2, const bool sameReferenceSet)
 {
+	bool result = true;
 	entitySemanticRelationFunction1->multiwordAuxiliaryList.push_back(entitySemanticRelationFunction2->entityName);
+	return result;
 }
 #endif
 

@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f10i 19-April-2018
+ * Project Version: 3f11a 20-April-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
@@ -95,10 +95,10 @@ public:
 	//network variables;
 	unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes;
 	vector<GIAentityNode*>* entityNodesActiveListComplete;
-	long currentEntityNodeIDInNetworkIndexEntityNodesList;
-	long currentEntityNodeIDInCompleteList;
+	int64_t currentEntityNodeIDInNetworkIndexEntityNodesList;
+	int64_t currentEntityNodeIDInCompleteList;
 	map<int, vector<GIAentityNode*>*>* entityNodesActiveListSentences;
-	const unordered_map<long, GIAtimeConditionNode*>* timeConditionNodesActiveList;
+	const unordered_map<int64_t, GIAtimeConditionNode*>* timeConditionNodesActiveList;
 
 	GIAsentence* firstSentenceInList;
 	
@@ -114,7 +114,7 @@ public:
 	#endif
 	
 	vector<GIAentityNode*>* sentenceNetworkIndexEntityNodesList;
-	unordered_map<long, GIAtimeConditionNode*>* sentenceTimeConditionNodesList;
+	unordered_map<int64_t, GIAtimeConditionNode*>* sentenceTimeConditionNodesList;
 	
 	vector<GIAfeature*>* featureArrayTemp;	//only used at start of translator
 
@@ -303,11 +303,11 @@ class GIAtranslatorOperationsClass
 		public: bool findSameSentenceEntityNodePointerInVector(GIAentityNode* entityNode, const GIAentityNode* entityNodeToFind, const int connectionType, GIAentityConnection** connectionFound, const int sentenceIndex);
 		private: bool findEntityNodeNameInVector(GIAentityNode* entityNode, const string* entityNodeNameToFind, const int connectionType, GIAentityConnection** connectionFound);
 
-	private: long determineNextIdInstance(GIAentityNode* entity);
+	private: int64_t determineNextIdInstance(GIAentityNode* entity);
 
 	#ifdef GIA_DATABASE
 	/*//replaced with optimised function findEntityNodesActiveListCompleteFastIndexDBactive()
-	bool entityInActiveListComplete(string* entityName, long idInstance);
+	bool entityInActiveListComplete(string* entityName, int64_t idInstance);
 	bool entityInActiveListComplete(GIAentityNode* entity);
 	*/
 	public: void addInstanceEntityNodeToActiveLists(GIAentityNode* entity, GIAtranslatorVariablesClass* translatorVariables);

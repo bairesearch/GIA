@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorWordIdentification.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f10i 19-April-2018
+ * Project Version: 3f11a 20-April-2018
  * Requirements: requires plain text file
  * Description: Preprocessor Word Identification
  * /
@@ -138,8 +138,8 @@ bool GIApreprocessorWordIdentificationClass::transferWordList(int GIAposType1, i
 
 #ifdef GIA_PREPROCESSOR_INITIALISE_WORD_INDEX_LIST_FROM_LRP_FILES
 bool wordListAllTypesWithPOSambiguityInfoLoaded;
-unordered_map<string, pair<GIApreprocessorMultiwordReductionWord*, unsigned long>> wordListAllTypesWithPOSambiguityInfo;		//NB the int corresponds to the POS type ambiguity of the word (binary 11000000 implies that the word may either be a verb or a preposition)	
-unordered_map<string, pair<GIApreprocessorMultiwordReductionWord*, unsigned long>>* GIApreprocessorWordIdentificationClass::getWordListAllTypesWithPOSambiguityInfo()
+unordered_map<string, pair<GIApreprocessorMultiwordReductionWord*, uint64_t>> wordListAllTypesWithPOSambiguityInfo;		//NB the int corresponds to the POS type ambiguity of the word (binary 11000000 implies that the word may either be a verb or a preposition)	
+unordered_map<string, pair<GIApreprocessorMultiwordReductionWord*, uint64_t>>* GIApreprocessorWordIdentificationClass::getWordListAllTypesWithPOSambiguityInfo()
 {
 	return &wordListAllTypesWithPOSambiguityInfo;
 }
@@ -151,11 +151,11 @@ double GIApreprocessorWordIdentificationClass::getGIApreprocessorPOStypeWeight(i
 }
 #endif
 /*
-bool GIApreprocessorWordIdentificationClass::findInstanceInMapWordListAllTypesWithPOSambiguityInfo(unordered_map<string, pair<GIApreprocessorMultiwordReductionWord*, unsigned long>>* mapWordListAllTypesWithPOSambiguityInfo, const string wordIndex, GIApreprocessorMultiwordReductionWord* word, unsigned long* POSambiguityInfo)
+bool GIApreprocessorWordIdentificationClass::findInstanceInMapWordListAllTypesWithPOSambiguityInfo(unordered_map<string, pair<GIApreprocessorMultiwordReductionWord*, uint64_t>>* mapWordListAllTypesWithPOSambiguityInfo, const string wordIndex, GIApreprocessorMultiwordReductionWord* word, uint64_t* POSambiguityInfo)
 {
 	bool result = false;
 	
-	unordered_map<string, pair<GIApreprocessorMultiwordReductionWord*, unsigned long>>::iterator it;
+	unordered_map<string, pair<GIApreprocessorMultiwordReductionWord*, uint64_t>>::iterator it;
 	it = mapWordListAllTypesWithPOSambiguityInfo->find(wordIndex);
 	if(it != mapWordListAllTypesWithPOSambiguityInfo->end())
 	{
@@ -167,10 +167,10 @@ bool GIApreprocessorWordIdentificationClass::findInstanceInMapWordListAllTypesWi
 	return result;
 }
 */
-void GIApreprocessorWordIdentificationClass::insertInstanceInMapWordListAllTypesWithPOSambiguityInfo(unordered_map<string, pair<GIApreprocessorMultiwordReductionWord*, unsigned long>>* mapWordListAllTypesWithPOSambiguityInfo, const string wordIndex, GIApreprocessorMultiwordReductionWord* word, const unsigned long POSambiguityInfo)
+void GIApreprocessorWordIdentificationClass::insertInstanceInMapWordListAllTypesWithPOSambiguityInfo(unordered_map<string, pair<GIApreprocessorMultiwordReductionWord*, uint64_t>>* mapWordListAllTypesWithPOSambiguityInfo, const string wordIndex, GIApreprocessorMultiwordReductionWord* word, const uint64_t POSambiguityInfo)
 {
-	pair<GIApreprocessorMultiwordReductionWord*, unsigned long> value = make_pair(word, POSambiguityInfo);
-	mapWordListAllTypesWithPOSambiguityInfo->insert(pair<string, pair<GIApreprocessorMultiwordReductionWord*, unsigned long>>(wordIndex, value));
+	pair<GIApreprocessorMultiwordReductionWord*, uint64_t> value = make_pair(word, POSambiguityInfo);
+	mapWordListAllTypesWithPOSambiguityInfo->insert(pair<string, pair<GIApreprocessorMultiwordReductionWord*, uint64_t>>(wordIndex, value));
 }
 #endif
 
@@ -489,6 +489,7 @@ bool GIApreprocessorWordIdentificationClass::generateNounPluralVariantsList(unor
 	//aka parseVerbDataGenerateAllTenseVariants
 	
 	bool result = true;
+	
 	if(!wordListsLoaded)
 	{
 		cerr << "GIApreprocessorWordIdentificationClass::generateNounPluralVariantsList: (!nounListLoaded)" << endl;
@@ -510,6 +511,8 @@ bool GIApreprocessorWordIdentificationClass::generateNounPluralVariantsList(unor
 
 bool GIApreprocessorWordIdentificationClass::generateNounPluralVariants(GIApreprocessorMultiwordReductionWord* wordTag, unordered_map<string, GIApreprocessorMultiwordReductionWord*>* nounPluralVariantsList, unordered_map<string, GIApreprocessorMultiwordReductionBasicSentence*>* irregularNounList)
 {
+	bool result = true;
+	
 	//vector<string>* nounPluralVariants = wordTag->nounPluralVariants;
 	string word = wordTag->tagName;
 	
@@ -606,6 +609,8 @@ bool GIApreprocessorWordIdentificationClass::generateNounPluralVariants(GIAprepr
 			}
 		}
 	}
+	
+	return result;
 }
 
 #endif
@@ -617,6 +622,7 @@ bool GIApreprocessorWordIdentificationClass::generateVerbCaseStandardAndAddition
 	//aka parseVerbDataGenerateAllTenseVariants
 	
 	bool result = true;
+	
 	if(!wordListsLoaded || !irregularVerbListLoaded)
 	{
 		cout << "GIApreprocessorWordIdentificationClass::generateVerbCaseStandardAndAdditionalList: (!wordListsLoaded || !irregularVerbListLoaded)" << endl;
@@ -663,6 +669,7 @@ bool GIApreprocessorWordIdentificationClass::generateVerbCaseStandardAndAddition
 			generateAdditionalTenseVariantsOfVerbBase(verbCaseAdditionalList, currentTagInVerbList, irregularVerbFound, grammaticallyStrict);
 		}
 	}
+	
 	return result;
 }
 
@@ -1800,7 +1807,7 @@ bool GIApreprocessorWordIdentificationClass::createWordIndexListFromLRPfiles()
 			{
 				string wordIndex = iter->first;
 				GIApreprocessorMultiwordReductionWord* word = iter->second;
-				unsigned long POStypeAmbiguity = 0;
+				uint64_t POStypeAmbiguity = 0;
 				for(int GIAposType=0; GIAposType<GIA_PREPROCESSOR_POS_TYPE_ARRAY_NUMBER_OF_TYPES; GIAposType++)
 				{		
 					string POStypeName = GIApreprocessorPOStypeNameArray[GIAposType];

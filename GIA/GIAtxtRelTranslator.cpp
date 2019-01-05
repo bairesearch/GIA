@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f10i 19-April-2018
+ * Project Version: 3f11a 20-April-2018
  * Requirements: requires plain text file
  * Description: Textual relation translator
  * /
@@ -135,6 +135,8 @@ bool GIAtxtRelTranslatorClass::parseTxtfileAndCreateSemanticNetworkBasedUponSema
 	{
 		result = false;
 	}
+	
+	return result;
 }
 
 
@@ -175,7 +177,7 @@ bool GIAtxtRelTranslatorClass::executeTxtRelTranslator(GIAtranslatorVariablesCla
 		GIAtxtRelTranslatorRulesGroup* firstParseTreeGroup = new GIAtxtRelTranslatorRulesGroup();
 		currentGIApreprocessorSentenceInList->firstParseTreeGroup = firstParseTreeGroup;
 		
-		vector<unsigned long> POSambiguityInfoPermutation;
+		vector<uint64_t> POSambiguityInfoPermutation;
 		vector<GIApreprocessorPlainTextWord*>* sentenceContents = &(currentGIApreprocessorSentenceInList->sentenceContentsLRP);
 		
 		//resetting of word->alreadyFoundMatch is required in case a higher level app (e.g. NLC) shares word objects between sentences:
@@ -216,7 +218,7 @@ bool GIAtxtRelTranslatorClass::executeTxtRelTranslator(GIAtranslatorVariablesCla
 			#endif
 			bool contextWordPOSisAmbiguous = false;
 			bool identifiedEveryWordInDatabasePOSpermutationNOTUSED = true;
-			unsigned long contextWordPOSambiguityInfo = GIA_PREPROCESSOR_POS_TAGGER_POS_AMBIGUITY_INFO_UNKNOWN;	//default value
+			uint64_t contextWordPOSambiguityInfo = GIA_PREPROCESSOR_POS_TAGGER_POS_AMBIGUITY_INFO_UNKNOWN;	//default value
 			unsigned char contextWordUnambiguousPOSindex = INT_DEFAULT_VALUE;	//GIA_PREPROCESSOR_POS_TYPE_UNDEFINED;
 			if(!GIApreprocessorPOStagger.determinePOSambiguityInfo(contextWord, &contextWordPOSambiguityInfo, &contextWordPOSisAmbiguous, &contextWordUnambiguousPOSindex, &identifiedEveryWordInDatabasePOSpermutationNOTUSED))
 			{
@@ -228,8 +230,8 @@ bool GIAtxtRelTranslatorClass::executeTxtRelTranslator(GIAtranslatorVariablesCla
 			
 		#ifdef GIA_TXT_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START
 		int minIndexOfMatchesFoundBackupOptimum = calculateMinIndexOfMatchesFound(sentenceContents);
-		vector<vector<unsigned long>*> POSambiguityInfoUnambiguousPermutationArray;
-		vector<unsigned long>* POSambiguityInfoUnambiguousPermutationNew = new vector<unsigned long>(POSambiguityInfoPermutation.size());
+		vector<vector<uint64_t>*> POSambiguityInfoUnambiguousPermutationArray;
+		vector<uint64_t>* POSambiguityInfoUnambiguousPermutationNew = new vector<uint64_t>(POSambiguityInfoPermutation.size());
 		POSambiguityInfoUnambiguousPermutationArray.push_back(POSambiguityInfoUnambiguousPermutationNew);
 		GIApreprocessorPOStagger.generatePOSambiguityInfoUnambiguousPermutationArray(&POSambiguityInfoUnambiguousPermutationArray, &POSambiguityInfoPermutation, POSambiguityInfoUnambiguousPermutationNew, 0);
 		int performance = 0; 
@@ -312,7 +314,7 @@ bool GIAtxtRelTranslatorClass::executeTxtRelTranslator(GIAtranslatorVariablesCla
 }
 
 #ifdef GIA_TXT_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START
-bool GIAtxtRelTranslatorClass::generateParseTreeIntroWrapper(vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, vector<GIApreprocessorPlainTextWord*>* sentenceContents, GIAtxtRelTranslatorRulesGroup* firstParseTreeGroup, int* performance, const bool parseIsolatedSubreferenceSets, vector<vector<unsigned long>*>* POSambiguityInfoUnambiguousPermutationArray, int* performanceMax, int* iOptimum, int* minIndexOfMatchesFoundBackupOptimum)
+bool GIAtxtRelTranslatorClass::generateParseTreeIntroWrapper(vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, vector<GIApreprocessorPlainTextWord*>* sentenceContents, GIAtxtRelTranslatorRulesGroup* firstParseTreeGroup, int* performance, const bool parseIsolatedSubreferenceSets, vector<vector<uint64_t>*>* POSambiguityInfoUnambiguousPermutationArray, int* performanceMax, int* iOptimum, int* minIndexOfMatchesFoundBackupOptimum)
 #else
 bool GIAtxtRelTranslatorClass::generateParseTreeIntroWrapper(vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, vector<GIApreprocessorPlainTextWord*>* sentenceContents, GIAtxtRelTranslatorRulesGroup* firstParseTreeGroup, int* performance, const bool parseIsolatedSubreferenceSets)
 #endif
@@ -322,7 +324,7 @@ bool GIAtxtRelTranslatorClass::generateParseTreeIntroWrapper(vector<GIAtxtRelTra
 	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START
 	for(int i=0; i<POSambiguityInfoUnambiguousPermutationArray->size(); i++)
 	{
-		vector<unsigned long>* POSambiguityInfoPermutationTemp = (*POSambiguityInfoUnambiguousPermutationArray)[i];
+		vector<uint64_t>* POSambiguityInfoPermutationTemp = (*POSambiguityInfoUnambiguousPermutationArray)[i];
 		for(int w=0; w<sentenceContents->size(); w++)
 		{
 			GIApreprocessorPlainTextWord* contextWord = sentenceContents->at(w);
@@ -1408,6 +1410,8 @@ bool GIAtxtRelTranslatorClass::deleteAllSubgroupsRecurse(GIAtxtRelTranslatorRule
 		
 		delete currentParseTreeComponent;
 	}
+	
+	return result;
 }
 
 bool GIAtxtRelTranslatorClass::deleteParseComponent(GIAtxtRelTranslatorRulesComponent* currentParseTreeComponent)
@@ -1424,6 +1428,8 @@ bool GIAtxtRelTranslatorClass::deleteParseComponent(GIAtxtRelTranslatorRulesComp
 	}
 		
 	delete currentParseTreeComponent;
+	
+	return result;
 }
 
 

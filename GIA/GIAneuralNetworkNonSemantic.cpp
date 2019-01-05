@@ -26,7 +26,7 @@
  * File Name: GIAneuralNetworkNonSemantic.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f10i 19-April-2018
+ * Project Version: 3f11a 20-April-2018
  * Description: Neural Network - visual representation of GIA contents in prototype biological neural network
  * /
  *******************************************************************************/
@@ -501,7 +501,7 @@ bool GIAneuralNetworkNonSemanticClass::findOrAddReferenceSetInNetwork(GIAneuralN
 		//identify the closest matching subnet in network
 		bool foundExistingSubnet = false;
 		int maxNumberOfActiveConceptNeuronsInSubnet = 0;
-		long activationAgeOfExistingSubnet = 0;
+		int64_t activationAgeOfExistingSubnet = 0;
 		ANNneuronConnection* connectionEntryToSubnetWithMaximumNumberActiveConceptNeuronsConnected = NULL;
 		currentSubReferenceSetInList = firstSubReferenceSetInList;
 		while(currentSubReferenceSetInList->next != NULL)
@@ -516,7 +516,7 @@ bool GIAneuralNetworkNonSemanticClass::findOrAddReferenceSetInNetwork(GIAneuralN
 					if(connection->GIAconnectionType == GIA_ANN_CONNECTION_TYPE_INSTANCE_TO_INSTANCE)
 					{
 						int numberOfActiveConceptNeuronsInSubnet = 1;
-						long activationAgeOfExistingSubnetTemp = 0;
+						int64_t activationAgeOfExistingSubnetTemp = 0;
 						calculateNumberActiveConceptNeuronsInSubnet(connection, &numberOfActiveConceptNeuronsInSubnet, &activationAgeOfExistingSubnetTemp);
 						calculateNumberActiveConceptNeuronsInSubnetReset(connection);
 						if((numberOfActiveConceptNeuronsInSubnet > maxNumberOfActiveConceptNeuronsInSubnet) || ((numberOfActiveConceptNeuronsInSubnet == maxNumberOfActiveConceptNeuronsInSubnet) && (activationAgeOfExistingSubnetTemp < activationAgeOfExistingSubnet)))
@@ -546,7 +546,7 @@ bool GIAneuralNetworkNonSemanticClass::findOrAddReferenceSetInNetwork(GIAneuralN
 				cout << "adapt existing subnet" << endl;
 
 				int numberOfActiveConceptNeuronsInSubnet = 1;
-				long activationAgeOfExistingSubnetTemp = 0;
+				int64_t activationAgeOfExistingSubnetTemp = 0;
 				calculateNumberActiveConceptNeuronsInSubnet(connectionEntryToSubnetWithMaximumNumberActiveConceptNeuronsConnected, &numberOfActiveConceptNeuronsInSubnet, &activationAgeOfExistingSubnetTemp);	//this will mark which active concept neurons are used by best case subnet
 
 				ANNneuron* conceptNeuronPrevious = NULL;
@@ -722,7 +722,7 @@ bool GIAneuralNetworkNonSemanticClass::findOrAddReferenceSetInNetwork(GIAneuralN
 	return result;
 }
 
-void GIAneuralNetworkNonSemanticClass::calculateNumberActiveConceptNeuronsInSubnet(ANNneuronConnection* currentNeuronConnectionInInstanceSubnet, int* numberOfActiveConceptNeuronsInSubnet, long* activationAgeOfSubnetSynapsesTotal)
+void GIAneuralNetworkNonSemanticClass::calculateNumberActiveConceptNeuronsInSubnet(ANNneuronConnection* currentNeuronConnectionInInstanceSubnet, int* numberOfActiveConceptNeuronsInSubnet, int64_t* activationAgeOfSubnetSynapsesTotal)
 {
 	bool direction = true;
 	bool reset = false;
@@ -734,7 +734,7 @@ void GIAneuralNetworkNonSemanticClass::calculateNumberActiveConceptNeuronsInSubn
 {
 	bool direction = true;
 	int numberOfActiveConceptNeuronsInSubnet = 1;
-	long activationAgeOfSubnetSynapsesTotal = 0;
+	int64_t activationAgeOfSubnetSynapsesTotal = 0;
 	bool reset = true;
 	bool updateActivationAge = false;
 	calculateNumberActiveConceptNeuronsInSubnet(currentNeuronConnectionInInstanceSubnet, direction, &numberOfActiveConceptNeuronsInSubnet, &activationAgeOfSubnetSynapsesTotal, reset, updateActivationAge);
@@ -744,14 +744,14 @@ void GIAneuralNetworkNonSemanticClass::calculateNumberActiveConceptNeuronsInSubn
 {
 	bool direction = true;
 	int numberOfActiveConceptNeuronsInSubnet = 1;
-	long activationAgeOfSubnetSynapsesTotal = 0;
+	int64_t activationAgeOfSubnetSynapsesTotal = 0;
 	bool reset = false;
 	bool updateActivationAge = true;
 	calculateNumberActiveConceptNeuronsInSubnet(currentNeuronConnectionInInstanceSubnet, direction, &numberOfActiveConceptNeuronsInSubnet, &activationAgeOfSubnetSynapsesTotal, reset, updateActivationAge);
 }
 
 
-void GIAneuralNetworkNonSemanticClass::calculateNumberActiveConceptNeuronsInSubnet(ANNneuronConnection* currentNeuronConnectionInInstanceSubnet, bool direction, int* numberOfActiveConceptNeuronsInSubnet, long* activationAgeOfSubnetSynapsesTotal, bool reset, bool updateActivationAge)
+void GIAneuralNetworkNonSemanticClass::calculateNumberActiveConceptNeuronsInSubnet(ANNneuronConnection* currentNeuronConnectionInInstanceSubnet, bool direction, int* numberOfActiveConceptNeuronsInSubnet, int64_t* activationAgeOfSubnetSynapsesTotal, bool reset, bool updateActivationAge)
 {
 	ANNneuron* artificialInstanceNeuron = NULL;
 	if(direction)
