@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorRulesComponentClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g1e 24-April-2018
+ * Project Version: 3g1f 24-April-2018
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Rules
  * /
@@ -166,12 +166,7 @@ public:
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN
 	vector<ANNneuronConnection*> ANNbackNeuronConnectionList;
 	#endif
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_STORE_MULTIPLE_BACK_GROUP_REFS
-	vector<GIAtxtRelTranslatorRulesGroup*> parseTreeGroupRefs;
-	#endif
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_BACK_GROUP_REF_REPEAT_COUNTER
-	int parseTreeGroupRefRepeatCounter;
-	#endif
+	vector<GIAtxtRelTranslatorRulesGroup*> activationGroupRefs;
 	#endif
 };
 

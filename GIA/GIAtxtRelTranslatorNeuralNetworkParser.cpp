@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetworkParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g1e 24-April-2018
+ * Project Version: 3g1f 24-April-2018
  * Requirements: 
  * Description: Textual Relation Translator Neural Network Parser
  * /
@@ -164,6 +164,8 @@ bool GIAtxtRelTranslatorNeuralNetworkParserClass::generateSemanticRelationsFromT
 #endif
 #endif
 
+#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SAVE_PARSE_TREE
+
 #ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_RECORD_PERFORMANCE
 bool GIAtxtRelTranslatorNeuralNetworkParserClass::updatePerformance(GIAtxtRelTranslatorRulesGroup* currentParseTreeGroup, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData, int layer)
 {
@@ -175,7 +177,7 @@ bool GIAtxtRelTranslatorNeuralNetworkParserClass::updatePerformance(GIAtxtRelTra
 	if(topLevelGroup)
 	{
 		int performanceTemp = 0;
-		traceBackpropActivationPath(currentParseTreeGroup, 1, false, &performanceTemp, forwardPropogationSentenceData->sentenceContents);
+		traceBackpropParseTree(currentParseTreeGroup, 1, false, &performanceTemp, forwardPropogationSentenceData->sentenceContents);
 		resetNeuronBackprop(currentParseTreeGroup, GIA_TXT_REL_TRANSLATOR_RULES_GROUP_BOOL_INDEX_BACKPROP_NEURON_PRINTED);
 
 		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE
@@ -200,9 +202,7 @@ bool GIAtxtRelTranslatorNeuralNetworkParserClass::updatePerformance(GIAtxtRelTra
 }
 #endif
 
-
-
-bool GIAtxtRelTranslatorNeuralNetworkParserClass::traceBackpropActivationPath(GIAtxtRelTranslatorRulesGroup* group, int level, bool print, int* performance, vector<GIApreprocessorPlainTextWord*>* sentenceContents)
+bool GIAtxtRelTranslatorNeuralNetworkParserClass::traceBackpropParseTree(GIAtxtRelTranslatorRulesGroup* group, int level, bool print, int* performance, vector<GIApreprocessorPlainTextWord*>* sentenceContents)
 {
 	bool result = true;
 	
@@ -232,7 +232,7 @@ bool GIAtxtRelTranslatorNeuralNetworkParserClass::traceBackpropActivationPath(GI
 			{
 				//#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE
 				GIAtxtRelTranslatorRules.printParseTreeDebugIndentation(level);
-				cout << "traceBackpropActivationPath: group->groupName = " << group->groupName << ", group->groupTypeNameBackup = " << group->groupTypeNameBackup << endl;		//<< ", parse word (providing semanticRelationReturnEntity) = ?"
+				cout << "traceBackpropParseTree: group->groupName = " << group->groupName << ", group->groupTypeNameBackup = " << group->groupTypeNameBackup << endl;		//<< ", parse word (providing semanticRelationReturnEntity) = ?"
 				//#endif
 			}
 
@@ -261,47 +261,8 @@ bool GIAtxtRelTranslatorNeuralNetworkParserClass::traceBackpropActivationPath(GI
 						GIAtxtRelTranslatorRules.printComponent(currentComponent, level);
 					}
 				}
-				#ifndef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SAVE_PARSE_TREE
-				else if(GIAtxtRelTranslatorRulesComponentClassObject.componentHasSubcomponents(currentComponent))
-				{					
-					for(int i2=0; i2<currentComponent->subComponents.size(); i2++)
-					{
-						GIAtxtRelTranslatorRulesComponent* subComponent = (currentComponent->subComponents)[i2];
-						if(print)
-						{
-							if(subComponent->componentType == GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_STRING)
-							{
-								GIAtxtRelTranslatorRules.printComponent(subComponent, level);
-							}
-							else
-							{
-								#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE_EXTRA
-								GIAtxtRelTranslatorRules.printComponent(subComponent, level);
-								#endif
-							}
-						}
-						#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_STORE_MULTIPLE_BACK_PARSETREE_GROUP_REFS
-						for(int j=0; j<subComponent->parseTreeGroupRefs.size(); j++)
-						{
-							traceBackpropActivationPath(subComponent->parseTreeGroupRefs[j], level+1, print, performance, sentenceContents);
-						}
-						#else
-						if(subComponent->parseTreeGroupRef != NULL)
-						{
-							traceBackpropActivationPath(subComponent->parseTreeGroupRef, level+1, print, performance, sentenceContents);
-						}
-						#endif
-					}
-				}
-				#endif
 				else
 				{					
-					#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_STORE_MULTIPLE_BACK_PARSETREE_GROUP_REFS
-					for(int j=0; j<currentComponent->parseTreeGroupRefs.size(); j++)
-					{
-						traceBackpropActivationPath(currentComponent->parseTreeGroupRefs[j], level+1, print, performance, sentenceContents);
-					}
-					#else
 					if(currentComponent->parseTreeGroupRef != NULL)
 					{							
 						#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE_EXTRA
@@ -312,9 +273,8 @@ bool GIAtxtRelTranslatorNeuralNetworkParserClass::traceBackpropActivationPath(GI
 						}
 						#endif
 						
-						traceBackpropActivationPath(currentComponent->parseTreeGroupRef, level+1, print, performance, sentenceContents);
+						traceBackpropParseTree(currentComponent->parseTreeGroupRef, level+1, print, performance, sentenceContents);
 					}
-					#endif
 				}
 			}	
 		}
@@ -325,43 +285,6 @@ bool GIAtxtRelTranslatorNeuralNetworkParserClass::traceBackpropActivationPath(GI
 
 
 
-#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PREVENT_CIRCULAR_CONNECTION_LOOPS
-bool GIAtxtRelTranslatorNeuralNetworkParserClass::resetNeuronForwardProp(GIAtxtRelTranslatorRulesGroup* group, const int groupBoolIndexType)
-{
-	bool result = true;
-	
-	bool* boolPointer = NULL;
-	if(groupBoolIndexType == GIA_TXT_REL_TRANSLATOR_RULES_GROUP_BOOL_INDEX_FORWARDPROP_NEURON_PROPAGATED)
-	{
-		boolPointer = &(group->neuronPropagated);
-	}
-	else if(groupBoolIndexType == GIA_TXT_REL_TRANSLATOR_RULES_GROUP_BOOL_INDEX_FORWARDPROP_NEURON_PREVIOUS_POS_WORD_TYPE_TESTED)
-	{
-		boolPointer = &(group->neuronPreviousWordPOStypeTested);
-	}
-			
-	if(*boolPointer)
-	{
-		//cout << "resetNeuronForwardProp: group = " << group->groupName << endl;
-		*boolPointer = false;
-		for(int i=0; i<group->ANNfrontComponentConnectionList.size(); i++)
-		{
-			GIAtxtRelTranslatorRulesComponent* currentComponent = (group->ANNfrontComponentConnectionList)[i];
-			GIAtxtRelTranslatorRulesComponent* ownerComponent = currentComponent;
-			if(currentComponent->isSubcomponent)
-			{
-				ownerComponent = currentComponent->ownerComponent;
-			}
-			GIAtxtRelTranslatorRulesGroup* ownerGroup = ownerComponent->ownerGroup;
-			resetNeuronForwardProp(ownerGroup, groupBoolIndexType);
-		}
-	}
-	
-	return result;
-}
-
-
-//consider upgrading for GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_STORE_MULTIPLE_BACK_GROUP_REFS/parseTreeGroupRefs support
 bool GIAtxtRelTranslatorNeuralNetworkParserClass::resetNeuronBackprop(GIAtxtRelTranslatorRulesGroup* group, const int groupBoolIndexType)
 {
 	bool result = true;
@@ -405,6 +328,43 @@ bool GIAtxtRelTranslatorNeuralNetworkParserClass::resetNeuronBackprop(GIAtxtRelT
 					resetNeuronBackprop(currentComponent->parseTreeGroupRef, groupBoolIndexType);
 				}	
 			}
+		}
+	}
+	
+	return result;
+}
+
+#endif
+
+#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PREVENT_CIRCULAR_CONNECTION_LOOPS
+bool GIAtxtRelTranslatorNeuralNetworkParserClass::resetNeuronForwardProp(GIAtxtRelTranslatorRulesGroup* group, const int groupBoolIndexType)
+{
+	bool result = true;
+	
+	bool* boolPointer = NULL;
+	if(groupBoolIndexType == GIA_TXT_REL_TRANSLATOR_RULES_GROUP_BOOL_INDEX_FORWARDPROP_NEURON_PROPAGATED)
+	{
+		boolPointer = &(group->neuronPropagated);
+	}
+	else if(groupBoolIndexType == GIA_TXT_REL_TRANSLATOR_RULES_GROUP_BOOL_INDEX_FORWARDPROP_NEURON_PREVIOUS_POS_WORD_TYPE_TESTED)
+	{
+		boolPointer = &(group->neuronPreviousWordPOStypeTested);
+	}
+			
+	if(*boolPointer)
+	{
+		//cout << "resetNeuronForwardProp: group = " << group->groupName << endl;
+		*boolPointer = false;
+		for(int i=0; i<group->ANNfrontComponentConnectionList.size(); i++)
+		{
+			GIAtxtRelTranslatorRulesComponent* currentComponent = (group->ANNfrontComponentConnectionList)[i];
+			GIAtxtRelTranslatorRulesComponent* ownerComponent = currentComponent;
+			if(currentComponent->isSubcomponent)
+			{
+				ownerComponent = currentComponent->ownerComponent;
+			}
+			GIAtxtRelTranslatorRulesGroup* ownerGroup = ownerComponent->ownerGroup;
+			resetNeuronForwardProp(ownerGroup, groupBoolIndexType);
 		}
 	}
 	

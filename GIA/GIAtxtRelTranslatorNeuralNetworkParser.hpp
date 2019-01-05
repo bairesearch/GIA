@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetworkParser.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g1e 24-April-2018
+ * Project Version: 3g1f 24-April-2018
  * Requirements: 
  * Description: Textual Relation Translator Neural Network Parser
  * /
@@ -64,14 +64,16 @@ class GIAtxtRelTranslatorNeuralNetworkParserClass
 	#endif
 	#endif
 
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SAVE_PARSE_TREE
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_RECORD_PERFORMANCE
 	public: bool updatePerformance(GIAtxtRelTranslatorRulesGroup* currentParseTreeGroup, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData, int layer);
 	#endif
-		public: bool traceBackpropActivationPath(GIAtxtRelTranslatorRulesGroup* group, int level, bool print, int* performance, vector<GIApreprocessorPlainTextWord*>* sentenceContents);
-
+		public: bool traceBackpropParseTree(GIAtxtRelTranslatorRulesGroup* group, int level, bool print, int* performance, vector<GIApreprocessorPlainTextWord*>* sentenceContents);
+		public: bool resetNeuronBackprop(GIAtxtRelTranslatorRulesGroup* group, const int groupBoolIndexType);
+	#endif
+	
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PREVENT_CIRCULAR_CONNECTION_LOOPS
 	public: bool resetNeuronForwardProp(GIAtxtRelTranslatorRulesGroup* group, const int groupBoolIndexType);
-	public: bool resetNeuronBackprop(GIAtxtRelTranslatorRulesGroup* group, const int groupBoolIndexType);
 	#endif
 	
 };

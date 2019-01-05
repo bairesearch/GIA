@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetwork.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g1e 24-April-2018
+ * Project Version: 3g1f 24-April-2018
  * Requirements: 
  * Description: Textual Relation Translator Neural Network
  * /
@@ -93,11 +93,13 @@ class GIAtxtRelTranslatorNeuralNetworkClass
 
 	private: bool resetAllNeurons(vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, const int groupBoolIndexType);
 	private: bool resetAllNeuronComponents(vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, const int groupBoolIndexType);
-	private: bool printBackpropActivationPath(GIAtxtRelTranslatorRulesGroup* group, int level);
+	private: bool printBackpropParseTree(GIAtxtRelTranslatorRulesGroup* group, int level);
 	private: bool groupActivationCompleted(GIAtxtRelTranslatorRulesGroup* group);
 	private: bool resetGroupActivation(GIAtxtRelTranslatorRulesGroup* group);
 		private: bool resetComponentActivation(GIAtxtRelTranslatorRulesComponent* currentComponent);
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SAVE_PARSE_TREE
 	private: bool resetGroupParseTreeGroupRef(GIAtxtRelTranslatorRulesGroup* group);
+	#endif
 	private: bool setParseTreeGroupRefOfAllComponents(GIAtxtRelTranslatorRulesGroup* group, GIAtxtRelTranslatorRulesGroup* parseTreeGroupRef);
 	private: bool componentHasSubcomponents(GIAtxtRelTranslatorRulesComponent* component);
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SUPPORT_TRAILING_OPTIONAL_COMPONENTS_AND_SUBCOMPONENTS
