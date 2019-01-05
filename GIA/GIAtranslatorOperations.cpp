@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g5a 27-October-2018
+ * Project Version: 3g6a 24-November-2018
  * Requirements: requires text parsed by X Parser
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
@@ -2899,14 +2899,14 @@ bool GIAtranslatorOperationsClass::addTimeConditionProperty(GIAtimeConditionNode
 		string lastTwoCharactersOfEntityName = entityName.substr(entityName.length()-TIME_DAY_OF_MONTH_APPEND_LENGTH, TIME_DAY_OF_MONTH_APPEND_LENGTH);
 		if(SHAREDvars.textInTextArray(entityName, GIAtimeConditionMonthNameArray, TIME_MONTH_NUMBER_OF_TYPES, &index))
 		{
-			int month = index;
+			int month = index+1;
 			timeConditionNode->month = month;
 			//cout << "GIAtranslatorOperationsClass::addTimeConditionProperty{} pass: month = " << month << endl;
 			result = true;
 		}
 		else if(SHAREDvars.textInTextArray(entityName, GIAtimeConditionDayOfWeekNameArray, TIME_DAY_OF_WEEK_NUMBER_OF_TYPES, &index))
 		{
-			int dayOfWeek = index;
+			int dayOfWeek = index+1;
 			timeConditionNode->dayOfWeek = dayOfWeek;
 			//cout << "GIAtranslatorOperationsClass::addTimeConditionProperty{} pass: dayOfWeek = " << dayOfWeek << endl;
 			result = true;

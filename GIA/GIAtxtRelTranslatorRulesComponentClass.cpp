@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorRulesComponentClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g5a 27-October-2018
+ * Project Version: 3g6a 24-November-2018
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Rules
  * /
@@ -45,6 +45,7 @@ GIAtxtRelTranslatorRulesComponent::GIAtxtRelTranslatorRulesComponent(void)
 	#endif
 	
 	componentType = GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_UNKNOWN;
+	componentIndex = INT_DEFAULT_VALUE;
 	
 	groupTypeRefName = "";
 	groupRefName = "";
@@ -88,7 +89,7 @@ GIAtxtRelTranslatorRulesComponent::GIAtxtRelTranslatorRulesComponent(void)
 	#endif
 	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_WORD_NOUN_VERB_VARIANT
 	wordVerbVariantType = GIA_PREPROCESSOR_WORD_VERB_DATABASE_TAG_BASE_TENSE_FORM_UNKNOWN;
-	wordVerbVariantType = GIA_PREPROCESSOR_WORD_NOUN_DATABASE_TAG_BASE_TENSE_FORM_UNKNOWN;
+	wordNounVariantType = GIA_PREPROCESSOR_WORD_NOUN_DATABASE_TAG_BASE_TENSE_FORM_UNKNOWN;
 	#endif		
 	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_NUMBER_EXPLETIVES
 	isExpletive = false;
@@ -102,22 +103,18 @@ GIAtxtRelTranslatorRulesComponent::GIAtxtRelTranslatorRulesComponent(void)
 	//parse tree variables:
 	candidateStringMatch = NULL;
 	parseTreeGroupRef = NULL;
+	componentRef = NULL;
 	wordPOStypeInferred = GIA_PREPROCESSOR_POS_TYPE_UNDEFINED;
-	originalComponentRef = NULL;
 	
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
 	ownerGroup = NULL;
 	isSubcomponent = false;
 	ownerComponent = NULL;
 	neuronComponentConnectionActive = false;
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PREFERENCE_MOST_RECENT_ACTIVATED_PATHWAY
 	neuronComponentConnectionActiveWordRecord = NULL;
-	hypotheticalActivation = false;
-	#endif
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN
 	//ANNbackNeuronConnectionList = NULL;
 	#endif
-	//activationGroupRefs = NULL;
 	#endif
 }
 GIAtxtRelTranslatorRulesComponent::~GIAtxtRelTranslatorRulesComponent(void)

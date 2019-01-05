@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g5a 27-October-2018
+ * Project Version: 3g6a 24-November-2018
  * Requirements: requires plain text file
  * Description: Textual Relation Translator
  * /
@@ -97,10 +97,6 @@ bool GIAtxtRelTranslatorClass::parseTxtfileAndCreateSemanticNetworkBasedUponSema
 	{
 		result = false;
 	}
-	
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SAVE_PARSE_TREE
-	GIAtxtRelTranslatorNeuralNetwork.resetAllNeuronComponents(GIAtxtRelTranslatorRulesGroupTypes, GIA_TXT_REL_TRANSLATOR_RULES_GROUP_BOOL_INDEX_ALLGROUPTYPES_PARSE_TREE_GROUP_REF);	//this is required to initialise currentParseTreeGroup for every group	//moved GIA3g5aTEMP32	//note GIA_TXT_REL_TRANSLATOR_RULES_GROUP_BOOL_INDEX_ALLGROUPTYPES_PARSE_TREE_GROUP_REF_ENFORCE_MEM_CLEAR is not required because parseTreeRefs have not been initialised
-	#endif
 	#endif
 	
 	
@@ -120,6 +116,10 @@ bool GIAtxtRelTranslatorClass::parseTxtfileAndCreateSemanticNetworkBasedUponSema
 	if(!executeTxtRelTranslatorWrapper(translatorVariables, GIAtxtRelTranslatorRulesTokenLayers, GIAtxtRelTranslatorRulesGroupTypes))
 	{
 		result = false;
+		/*
+		cerr << "!executeTxtRelTranslatorWrapper" << endl;
+		exit(EXIT_ERROR);
+		*/
 	}
 	
 	/*
@@ -222,12 +222,92 @@ bool GIAtxtRelTranslatorClass::executeTxtRelTranslatorWrapper(GIAtranslatorVaria
 		currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->next;
 	}
 	
-	#ifndef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
-	if(!GIAtxtRelTranslatorInverseNeuralNetwork.transferParseTreePOStypeInferredToWordList(translatorVariables))	//is this required without GIA_TXT_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START?
+	if(!transferParseTreePOStypeInferredToWordList(translatorVariables))	//is this required without GIA_TXT_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START?
 	{
 		result = false;
 	}
+	
+	return result;
+}
+
+bool GIAtxtRelTranslatorClass::transferParseTreePOStypeInferredToWordList(GIAtranslatorVariablesClass* translatorVariables)
+{
+	bool result = true;
+	
+	#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_RULES
+	cout << "printParseTreeDebug: " << endl;
 	#endif
+	
+	GIApreprocessorSentence* currentGIApreprocessorSentenceInList = translatorVariables->firstGIApreprocessorSentenceInList;
+	while(currentGIApreprocessorSentenceInList->next != NULL)
+	{
+		vector<GIApreprocessorPlainTextWord*>* sentenceContents = GIApreprocessorSentenceClassObject.getSentenceContents(currentGIApreprocessorSentenceInList);
+
+		//this will replace the sentenceContents word->wordPOStypeInferred values with their ideal value as stored in the parse tree (in the case where the ideal word->wordPOStypeInferred values were overwritten by a more recent bad parse):
+		
+		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
+		if(currentGIApreprocessorSentenceInList->firstParseTreeGroup != NULL)
+		{
+		#endif
+			GIAtxtRelTranslatorRulesGroup* firstParseTreeGroup = currentGIApreprocessorSentenceInList->firstParseTreeGroup;
+			int layer = GIA_TXT_REL_TRANSLATOR_RULES_LAYER_START;
+			#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_RULES
+			cout << "firstParseTreeGroup: groupTypeName = " << firstParseTreeGroup->groupTypeNameBackup << ", groupName = " << firstParseTreeGroup->groupName << endl;
+			#endif
+			if(!transferParseTreePOStypeInferredToWordList(firstParseTreeGroup, layer))
+			{
+				result = false;
+			}
+
+			#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_RULES
+			for(int w=0; w<sentenceContents->size(); w++)
+			{
+				GIApreprocessorPlainTextWord* contextWord = sentenceContents->at(w);
+				cout << "GIApreprocessorPOStypeNameArray[contextWord->wordPOStypeInferred] = " << GIApreprocessorPOStypeNameArray[contextWord->wordPOStypeInferred] << endl;
+			}
+			#endif
+		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
+		}
+		#endif
+		
+		currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->next;
+	}
+	#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_RULES
+	cout << "\n" << endl;
+	#endif
+
+	return result;
+}
+
+bool GIAtxtRelTranslatorClass::transferParseTreePOStypeInferredToWordList(GIAtxtRelTranslatorRulesGroup* currentParseTreeGroup, int layer)
+{
+	bool result = true;
+	
+	for(int i=0; i<currentParseTreeGroup->components.size(); i++)
+	{
+		GIAtxtRelTranslatorRulesComponent* currentParseTreeComponent = (currentParseTreeGroup->components)[i];
+		
+		if(currentParseTreeComponent->componentType == GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_STRING)	//redundant
+		{
+			if(currentParseTreeComponent->candidateStringMatch != NULL)
+			{
+				//this will replace the sentenceContents word->wordPOStypeInferred with the ideal value as stored in the parse tree (in the case where the ideal word->wordPOStypeInferred value was overwritten by more recent bad parse):
+				currentParseTreeComponent->candidateStringMatch->wordPOStypeInferred = currentParseTreeComponent->wordPOStypeInferred;
+				//cout << "currentParseTreeComponent->candidateStringMatch->wordPOStypeInferred = " << currentParseTreeComponent->candidateStringMatch->wordPOStypeInferred << endl;
+			}
+		}
+		
+		#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_RULES
+		GIAtxtRelTranslatorRules.printComponent(currentParseTreeComponent, layer);
+		#endif
+		if(currentParseTreeComponent->parseTreeGroupRef != NULL)
+		{
+			if(!transferParseTreePOStypeInferredToWordList(currentParseTreeComponent->parseTreeGroupRef, layer+1))
+			{
+				result = false;
+			}
+		}
+	}
 	
 	return result;
 }
@@ -348,10 +428,13 @@ bool GIAtxtRelTranslatorClass::generateParseTreeIntroWrapper(GIAtranslatorVariab
 		vector<uint64_t>* POSambiguityInfoPermutationTemp = (*POSambiguityInfoUnambiguousPermutationArray)[i];
 		setSentenceContentsWordsUnambiguousPOSindex(sentenceContents, POSambiguityInfoPermutationTemp);
 
-		//#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS	
 		#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE
 		cout << "POSambiguityInfoUnambiguousPermutationArray index = " << i << endl;
-		//GIApreprocessorPOStagger.printPOSambiguityInfoPermutation(POSambiguityInfoPermutationTemp);
+		//GIApreprocessorPOStagger.printPOSambiguityInfoPermutationAssumeUnambiguous(POSambiguityInfoPermutationTemp);	//printPOSambiguityInfoPermutation
+		#endif
+		#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS3
+		cout << "POSambiguityInfoUnambiguousPermutationArray index = " << i << endl;
+		GIApreprocessorPOStagger.printPOSambiguityInfoPermutationAssumeUnambiguous(POSambiguityInfoPermutationTemp);		
 		#endif
 
 		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
@@ -391,6 +474,13 @@ bool GIAtxtRelTranslatorClass::generateParseTreeIntroWrapper(GIAtranslatorVariab
 			#ifndef GIA_TXT_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START	
 			*performance = performanceTemp;
 			#endif
+			
+			//cout << "performanceTemp = " << performanceTemp << endl;
+			//exit(EXIT_ERROR);
+		}
+		else
+		{
+			//cout << "!executeTxtRelTranslatorNeuralNetwork" << endl;		
 		}
 
 	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START
@@ -434,8 +524,8 @@ bool GIAtxtRelTranslatorClass::setSentenceContentsWordsUnambiguousPOSindex(vecto
 		unsigned char unambiguousPOSinfoIndex = GIA_PREPROCESSOR_POS_TYPE_UNDEFINED;
 		bool wordAmbiguous = GIApreprocessorPOStaggerDatabase.determinePOSambiguityInfoIsAmbiguous(POSambiguityInfoPermutationTemp->at(w), &unambiguousPOSinfoIndex, false);
 		contextWord->unambiguousPOSindex = unambiguousPOSinfoIndex;
-		#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE
-		//#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS
+		//#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE
+		#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS_POS_TYPES
 		//cout << "unambiguousPOSinfoIndex = " << int(unambiguousPOSinfoIndex) << endl;
 		cout << "GIApreprocessorPOStypeNameArray[unambiguousPOSinfoIndex] = " << GIApreprocessorPOStypeNameArray[unambiguousPOSinfoIndex] << endl;
 		#endif
@@ -445,7 +535,7 @@ bool GIAtxtRelTranslatorClass::setSentenceContentsWordsUnambiguousPOSindex(vecto
 }
 #endif
 	
-
+#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
 //based on GIAtxtRelTranslatorInverseNeuralNetworkClass::updatePerformanceNeuralNetwork
 bool GIAtxtRelTranslatorClass::updatePerformanceNeuralNetwork(const int performanceTemp, int* performance, GIApreprocessorSentence* currentGIApreprocessorSentenceInList, GIAtxtRelTranslatorRulesGroup* firstParseTreeGroupTemp, const bool passedTemp, const int permutationIndex, int* performanceMaxPermutationIndex)
 {
@@ -453,17 +543,15 @@ bool GIAtxtRelTranslatorClass::updatePerformanceNeuralNetwork(const int performa
 	
 	if(passedTemp)
 	{
-		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_TEMPORARY_WORKAROUND_TAKE_POS_PERMUTATION_CORRESPONDING_TO_FIRST_SUCCESSFUL_PARSE_TREE
 		if(performanceTemp > *performance)
-		#else
-		if((performanceTemp >= *performance) && (POSpermutationStatisticalProbabilityTemp > POSpermutationStatisticalProbability)) //TODO: 
-		#endif
 		{
 			result = true;
 			*performance = performanceTemp;
 			currentGIApreprocessorSentenceInList->firstParseTreeGroup = firstParseTreeGroupTemp;
-			cout << "GIAtxtRelTranslatorClass::updatePerformanceNeuralNetwork: firstParseTreeGroup->groupName = " << firstParseTreeGroupTemp->groupName << endl;
 			*performanceMaxPermutationIndex = permutationIndex;
+			
+			//cout << "firstParseTreeGroup->groupName = " << firstParseTreeGroupTemp->groupName << endl;
+			//exit(EXIT_ERROR);
 		}
 	}
 
@@ -485,9 +573,9 @@ bool GIAtxtRelTranslatorClass::deleteAllSubgroupsRecurse(GIAtxtRelTranslatorRule
 {
 	bool result = true;
 	
-	if(!currentParseTreeGroup->neuronPrinted)
+	if(!currentParseTreeGroup->neuronTraced)
 	{
-		currentParseTreeGroup->neuronPrinted = true;
+		currentParseTreeGroup->neuronTraced = true;
 		
 		for(int i=0; i<currentParseTreeGroup->components.size(); i++)
 		{
@@ -512,7 +600,7 @@ bool GIAtxtRelTranslatorClass::deleteAllSubgroupsRecurse(GIAtxtRelTranslatorRule
 	
 	return result;
 }
-
+#endif
 
 #endif
 

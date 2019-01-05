@@ -26,7 +26,7 @@
  * File Name: GIAsentenceClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g5a 27-October-2018
+ * Project Version: 3g6a 24-November-2018
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * /
  *******************************************************************************/

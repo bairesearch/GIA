@@ -27,7 +27,7 @@
  * File Name: GIAtxtRelTranslatorParserOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g5a 27-October-2018
+ * Project Version: 3g6a 24-November-2018
  * Requirements: 
  * Description: Textual Relation Translator Parser Operations
  * /
@@ -56,6 +56,7 @@ bool GIAtxtRelTranslatorParserOperationsClass::generateSemanticRelationsFromTxtR
 	bool result = true;
 
 	int numberOfComponentsInGroup = currentParseTreeGroup->components.size();
+	//cout << "numberOfComponentsInGroup = " << numberOfComponentsInGroup << endl;
 	vector<GIAtxtRelTranslatorParserForwardPropogationSignalData> parseTreeComponentSignalDataArray(numberOfComponentsInGroup);
 		
 	for(int i=0; i<currentParseTreeGroup->components.size(); i++)

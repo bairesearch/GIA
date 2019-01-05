@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorRules.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g5a 27-October-2018
+ * Project Version: 3g6a 24-November-2018
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Rules
  * /
@@ -259,6 +259,7 @@ bool GIAtxtRelTranslatorRulesClass::parseComponents(XMLparserTag* firstTxtRelTra
 	
 	XMLparserTag* currentTagInTxtRelTranslatorGroupTag = firstTxtRelTranslatorRulesFirstComponentTag;
 	bool foundTxtRelTranslatorGroupTag = false;	//NOTUSED
+	int componentIndex = GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_COMPONENT_INDEX_FIRST;
 	while(currentTagInTxtRelTranslatorGroupTag->nextTag != NULL)
 	{
 		if(currentTagInTxtRelTranslatorGroupTag->name == GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_GROUP_TAG_example)
@@ -538,6 +539,7 @@ bool GIAtxtRelTranslatorRulesClass::parseComponents(XMLparserTag* firstTxtRelTra
 			#endif
 			
 			GIAtxtRelTranslatorRulesComponent* component = new GIAtxtRelTranslatorRulesComponent();
+			component->componentIndex = componentIndex;
 			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
 			component->ownerGroup = groupOwner;	//enables reverse lookup for ANN
 			if(parseSubcomponent)
@@ -590,7 +592,9 @@ bool GIAtxtRelTranslatorRulesClass::parseComponents(XMLparserTag* firstTxtRelTra
 			#endif
 			
 			componentsList->push_back(component);
-
+			
+			componentIndex++;
+			
 			//XMLparserTag* firstTagInTxtRelTranslatorComponentTag = XMLparserClass.parseTagDownALevel(currentTagInTxtRelTranslatorGroupTag, GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_GROUP_TAG_component, &result);
 		}
 		else if(currentTagInTxtRelTranslatorGroupTag->name == GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_GROUP_TAG_or)
@@ -602,6 +606,7 @@ bool GIAtxtRelTranslatorRulesClass::parseComponents(XMLparserTag* firstTxtRelTra
 			}
 			
 			GIAtxtRelTranslatorRulesComponent* component = new GIAtxtRelTranslatorRulesComponent();
+			component->componentIndex = componentIndex;
 			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
 			component->ownerGroup = groupOwner;	//enables reverse lookup for ANN
 			#endif
@@ -615,6 +620,8 @@ bool GIAtxtRelTranslatorRulesClass::parseComponents(XMLparserTag* firstTxtRelTra
 				cerr << "GIAtxtRelTranslatorRules::extractGIAtxtRelTranslatorRulesGroups{} error: !parseComponents(firstTagInTxtRelTranslatorOrTag, &(component->components))" << endl;
 				exit(EXIT_ERROR);			
 			}
+			
+			componentIndex++;
 		}
 		else if(!parseSubcomponent && currentTagInTxtRelTranslatorGroupTag->name == GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_GROUP_TAG_repeat)
 		{	
@@ -631,6 +638,7 @@ bool GIAtxtRelTranslatorRulesClass::parseComponents(XMLparserTag* firstTxtRelTra
 			}
 			
 			GIAtxtRelTranslatorRulesComponent* component = new GIAtxtRelTranslatorRulesComponent();
+			component->componentIndex = componentIndex;
 			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
 			component->ownerGroup = groupOwner;	//enables reverse lookup for ANN
 			#endif
@@ -645,6 +653,8 @@ bool GIAtxtRelTranslatorRulesClass::parseComponents(XMLparserTag* firstTxtRelTra
 				cerr << "GIAtxtRelTranslatorRules::extractGIAtxtRelTranslatorRulesGroups{} error: !parseComponents(firstTagInTxtRelTranslatorRepeatTag, &(component->components))" << endl;
 				exit(EXIT_ERROR);			
 			}
+			
+			componentIndex++;
 		}
 		else
 		{
