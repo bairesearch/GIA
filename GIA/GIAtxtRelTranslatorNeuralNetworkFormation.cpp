@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetworkFormation.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g8a 19-December-2018
+ * Project Version: 3g8b 19-December-2018
  * Requirements: 
  * Description: Textual Relation Translator Neural Network Formation
  * /
@@ -432,22 +432,26 @@ bool GIAtxtRelTranslatorNeuralNetworkFormationClass::createNeuronLayerIntro(vect
 		{
 			if(groupType->groupTypeName == GIAtxtRelTranslatorRulesGroupsTypes[GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_TYPE_STATEMENTS])
 			{
+				/*
 				if(topLevelGroupInOuputLayerSectionStatements != NULL)
 				{
 					cerr << "GIAtxtRelTranslatorNeuralNetworkClass::createNeuronLayers{} error: (topLevelGroupInOuputLayerSectionStatements != NULL): more than one (groupType->referenceSetType == GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_REFERENCE_SET_TYPE_SENTENCE) && (groupType->groupTypeName == GIAtxtRelTranslatorRulesGroupsTypes[GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_TYPE_STATEMENTS]) defined" << endl;
 					exit(EXIT_ERROR);
 				}
+				*/
 				passGroupTests = true;
 				topLevelGroupInOuputLayerSectionStatements = new GIAtxtRelTranslatorRulesGroup();
 				topLevelGroup = topLevelGroupInOuputLayerSectionStatements;
 			}
 			else if(groupType->groupTypeName == GIAtxtRelTranslatorRulesGroupsTypes[GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_TYPE_QUESTIONS])
 			{
+				/*
 				if(topLevelGroupInOuputLayerSectionQuestions != NULL)
 				{
 					cerr << "GIAtxtRelTranslatorNeuralNetworkClass::createNeuronLayers{} error: (topLevelGroupInOuputLayerSectionQuestions != NULL): more than one (groupType->referenceSetType == GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_REFERENCE_SET_TYPE_SENTENCE) && (groupType->groupTypeName == GIAtxtRelTranslatorRulesGroupsTypes[GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_TYPE_QUESTIONS]) defined" << endl;
 					exit(EXIT_ERROR);
 				}
+				*/
 				passGroupTests = true;
 				topLevelGroupInOuputLayerSectionQuestions = new GIAtxtRelTranslatorRulesGroup();
 				topLevelGroup = topLevelGroupInOuputLayerSectionQuestions;
