@@ -27,7 +27,7 @@
  * File Name: GIAtxtRelTranslatorParserOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g1l 24-April-2018
+ * Project Version: 3g1m 24-April-2018
  * Requirements: 
  * Description: Textual Relation Translator Parser Operations
  * /
@@ -343,11 +343,11 @@ bool GIAtxtRelTranslatorParserOperationsClass::generateSemanticRelationsFromTxtR
 			GIAtxtRelTranslatorRules.printParseTreeDebugIndentation(layer);
 			cout << "\e[32m foundExplicitReturnFunctionName \e[0m" << endl;
 			GIAtxtRelTranslatorRules.printParseTreeDebugIndentation(layer);
-			cout << "\e[32m parseTreeComponentSemanticRelationEntity->entityName = " << parseTreeComponentSemanticRelationEntity->entityName << "\e[0m" << endl;
+			cout << "\e[32m (semanticRelationReturnFunctionEntityArray->parseTreeComponentSignalData)->entityName = " << (parseTreeComponentSignalData->semanticRelationReturnEntity)->entityName << "\e[0m" << endl;
 			GIAtxtRelTranslatorRules.printParseTreeDebugIndentation(layer);
-			cout << "\e[32m parseTreeComponentSemanticRelationEntity->semanticRelationReturnFunctionName = " << parseTreeComponentSemanticRelationEntity->semanticRelationReturnFunctionName << "\e[0m" << endl;
+			cout << "\e[32m (semanticRelationReturnFunctionEntityArray->parseTreeComponentSignalData)->semanticRelationReturnFunctionName = " << (parseTreeComponentSignalData->semanticRelationReturnEntity)->semanticRelationReturnFunctionName << "\e[0m" << endl;
 			GIAtxtRelTranslatorRules.printParseTreeDebugIndentation(layer);
-			cout << "\e[32m parseTreeComponentSemanticRelationEntity->semanticRelationReturnFunctionNameIndexType = " << parseTreeComponentSemanticRelationEntity->semanticRelationReturnFunctionNameIndexType << "\e[0m" << endl;
+			cout << "\e[32m (parseTreeComponentSignalData->semanticRelationReturnEntity)->semanticRelationReturnFunctionNameIndexType = " << (parseTreeComponentSignalData->semanticRelationReturnEntity)->semanticRelationReturnFunctionNameIndexType << "\e[0m" << endl;
 			#endif
 				
 			if(parseTreeComponent->semanticRelationReturnFunctionNameIndexType == GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_SEMANTIC_RELATION_INDEX_TYPE_UNKNOWN)
@@ -361,10 +361,10 @@ bool GIAtxtRelTranslatorParserOperationsClass::generateSemanticRelationsFromTxtR
 			#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS2
 			GIAtxtRelTranslatorRules.printParseTreeDebugIndentation(layer);
 			cout << "\e[32m foundImplicitReturnFunctionName" << "\e[0m" << endl;
-			for(int i=0; i<parseTreeComponentSemanticRelationEntityArray.size(); i++)
+			for(int i=0; i<(parseTreeComponentSignalData->semanticRelationReturnFunctionEntityArray).size(); i++)
 			{
 				GIAtxtRelTranslatorRules.printParseTreeDebugIndentation(layer);
-				cout << "\e[32m parseTreeComponentSemanticRelationEntityArray[i] = " << parseTreeComponentSemanticRelationEntityArray[i]->entityName << "\e[0m" << endl;
+				cout << "\e[32m (parseTreeComponentSignalData->semanticRelationReturnFunctionEntityArray)[i] = " << (parseTreeComponentSignalData->semanticRelationReturnFunctionEntityArray)[i]->entityName << "\e[0m" << endl;
 			}			
 			#endif
 			

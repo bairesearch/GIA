@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g1l 24-April-2018
+ * Project Version: 3g1m 24-April-2018
  * Requirements: requires plain text file
  * Description: Textual Relation Translator
  * /
@@ -315,7 +315,7 @@ bool GIAtxtRelTranslatorClass::executeTxtRelTranslator(GIAtranslatorVariablesCla
 		GIAtxtRelTranslatorInverseNeuralNetwork.clearAllWordsAlreadyFoundMatchInComponent(sentenceContents, minIndexOfMatchesFoundBackupOptimum);	//redundant?	
 		#endif
 		cerr << "GIAtxtRelTranslatorClass::executeTxtRelTranslator{}: Failed to parse sentence " << currentGIApreprocessorSentenceInList->sentenceIndexOriginal << ", sentenceContents = " << GIApreprocessorWordClassObject.printWordListString(GIApreprocessorSentenceClassObject.getSentenceContents(currentGIApreprocessorSentenceInList)) << endl;
-		exit(EXIT_ERROR);
+		//exit(EXIT_ERROR);
 	}
 	#endif
 	
@@ -464,8 +464,7 @@ bool GIAtxtRelTranslatorClass::updatePerformanceNeuralNetwork(const int performa
 		//delete all subgroups/components recursively in currentParseTreeGroupTemp
 		if(firstParseTreeGroupTemp != NULL)
 		{
-			deleteAllSubgroupsRecurse(firstParseTreeGroupTemp, 1);
-			delete firstParseTreeGroupTemp;
+			//deleteAllSubgroupsRecurse(firstParseTreeGroupTemp, 1);	//CHECKTHIS
 		}
 	}
 	
@@ -478,24 +477,29 @@ bool GIAtxtRelTranslatorClass::deleteAllSubgroupsRecurse(GIAtxtRelTranslatorRule
 {
 	bool result = true;
 	
-	for(int i=0; i<currentParseTreeGroup->components.size(); i++)
+	if(!currentParseTreeGroup->neuronPrinted)
 	{
-		GIAtxtRelTranslatorRulesComponent* currentParseTreeComponent = (currentParseTreeGroup->components)[i];
-		if(currentParseTreeComponent->parseTreeGroupRef != NULL)
-		{
-			#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS
-			GIAtxtRelTranslatorRules.printParseTreeDebugIndentation(layer);
-			cout << "deleteAllSubgroupsRecurse" << endl;
-			#endif
-			
-			if(!deleteAllSubgroupsRecurse(currentParseTreeComponent->parseTreeGroupRef, layer+1))
-			{
-				result = false;
-			}
-			delete (currentParseTreeComponent->parseTreeGroupRef);
-		}
+		currentParseTreeGroup->neuronPrinted = true;
 		
-		delete currentParseTreeComponent;
+		for(int i=0; i<currentParseTreeGroup->components.size(); i++)
+		{
+			GIAtxtRelTranslatorRulesComponent* currentParseTreeComponent = (currentParseTreeGroup->components)[i];
+			if(currentParseTreeComponent->parseTreeGroupRef != NULL)
+			{
+				#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS
+				GIAtxtRelTranslatorRules.printParseTreeDebugIndentation(layer);
+				cout << "deleteAllSubgroupsRecurse" << endl;
+				#endif
+				
+				if(!deleteAllSubgroupsRecurse(currentParseTreeComponent->parseTreeGroupRef, layer+1))
+				{
+					result = false;
+				}
+			}
+			
+			delete currentParseTreeComponent;
+		}
+		delete currentParseTreeGroup;
 	}
 	
 	return result;
