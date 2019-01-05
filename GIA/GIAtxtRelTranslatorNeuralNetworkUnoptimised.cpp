@@ -24,7 +24,7 @@
 /*******************************************************************************
  *
  * File Name: GIAtxtRelTranslatorNeuralNetworkUnoptimised.cpp
- * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
+ * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
  * Project Version: 3g7a 12-December-2018
  * Requirements: 

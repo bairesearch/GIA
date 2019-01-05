@@ -24,9 +24,9 @@
 /*******************************************************************************
  *
  * File Name: GIAneuralNetworkNonSemantic.hpp
- * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
+ * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g8i 19-December-2018
+ * Project Version: 3g9a 03-January-2019
  * Description: Neural Network - visual representation of GIA contents in prototype biological neural network
  * /
  *******************************************************************************/
