@@ -27,7 +27,7 @@
  * File Name: GIAtxtRelTranslatorRules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g2b 21-May-2018
+ * Project Version: 3g2c 21-May-2018
  * /
  *******************************************************************************/
  
@@ -1392,14 +1392,16 @@
 			</groupType>
 			<groupType groupTypeName="logicReferenceSetsOptional" referenceSetType="logicReferenceSet">
 				<group groupName="referenceSetsOrLogicReferenceSets">
+					<!--
 					<component componentType="group" groupTypeName="referenceSets" semanticRelationReturnEntity="true" />
+					-->
 					<!-- 
 					Support recursive logic references;
+					-->
 					<or>
 						<component componentType="group" groupTypeName="referenceSets" semanticRelationReturnEntity="true" />
 						<component componentType="group" groupTypeName="logicReferenceSets" semanticRelationReturnEntity="true" />
 					</or>
-					-->
 				</group>
 			</groupType>
 			<groupType groupTypeName="queries" referenceSetType="referenceSet">

@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetwork.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g2b 21-May-2018
+ * Project Version: 3g2c 21-May-2018
  * Requirements: 
  * Description: Textual Relation Translator Neural Network
  * /
@@ -570,11 +570,11 @@ bool GIAtxtRelTranslatorNeuralNetworkClass::propagateWordThroughNetworkGroupComp
 	ownerGroup->currentParseTreeGroup->components.push_back(newParseComponent);
 	#endif
 	
-	//#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE_EXTRA4
+	#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE_EXTRA4
 	GIAtxtRelTranslatorRules.printParseTreeDebugIndentation(layer+1);
 	cout << "4: propagateWordThroughNetworkGroup: " <<  ownerGroup->groupTypeNameBackup << ":" << ownerGroup->groupName << endl;	
 	GIAtxtRelTranslatorRules.printComponent(currentComponent, layer+1);
-	//#endif
+	#endif
 	
 	if(lastComponentFuzzyAndCompatible)
 	{
@@ -614,11 +614,10 @@ bool GIAtxtRelTranslatorNeuralNetworkClass::propagateWordThroughNetworkGroupComp
 				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ENFORCE_WORD_CONNECTIVITY_POSHOC
 				if(forwardPropogationWordData->w == forwardPropogationSentenceData->sentenceContents->size()-1)
 				{
-					cout << "topLevelGroup" << endl;
-					exit(0);
-				
 					if(isSentenceWordDataFullyConnected(forwardPropogationSentenceData))
 					{
+						cout << "topLevelGroup" << endl;
+						exit(0);
 				#endif
 
 						result = true;
@@ -704,6 +703,7 @@ void GIAtxtRelTranslatorNeuralNetworkClass::isSentenceWordDataFullyConnected(vec
 	for(int i = 0; i<currentWordData->previousWordConnections.size(); i++)
 	{
 		GIAtxtRelTranslatorNeuralNetworkForwardPropogationWordData* previousWordData = (currentWordData->previousWordConnections)[i];
+		cout << "previousWordConnectionsFound == true: previousWordData->w = " << previousWordData->w << endl;
 		(*previousWordConnectionsFound)[previousWordData->w] = true;
 		isSentenceWordDataFullyConnected(previousWordConnectionsFound, previousWordData);
 	}
