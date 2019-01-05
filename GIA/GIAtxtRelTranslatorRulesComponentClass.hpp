@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorRulesComponentClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g4a 26-September-2018
+ * Project Version: 3g5a 27-October-2018
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Rules
  * /
@@ -153,18 +153,22 @@ public:
 	//parse tree variables:
 	GIApreprocessorPlainTextWord* candidateStringMatch;
 	GIAtxtRelTranslatorRulesGroup* parseTreeGroupRef;
-	GIAtxtRelTranslatorRulesComponent* componentRef;	//backup of original component (non-parse-tree)
 	int wordPOStypeInferred;
+	GIAtxtRelTranslatorRulesComponent* originalComponentRef;	//for parseTreeGroup components only
 	
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
 	GIAtxtRelTranslatorRulesGroup* ownerGroup;
 	bool isSubcomponent;
 	GIAtxtRelTranslatorRulesComponent* ownerComponent;	//if isSubComponent==true only
 	bool neuronComponentConnectionActive;
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PREFERENCE_MOST_RECENT_ACTIVATED_PATHWAY
 	GIApreprocessorPlainTextWord* neuronComponentConnectionActiveWordRecord;
+	bool hypotheticalActivation;
+	#endif
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN
 	vector<ANNneuronConnection*> ANNbackNeuronConnectionList;
 	#endif
+	vector<GIAtxtRelTranslatorRulesGroup*> activationGroupRefs;
 	#endif
 };
 

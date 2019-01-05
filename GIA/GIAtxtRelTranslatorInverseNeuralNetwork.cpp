@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorInverseNeuralNetwork.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g4a 26-September-2018
+ * Project Version: 3g5a 27-October-2018
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Inverse Neural Network
  * /
@@ -88,11 +88,6 @@ bool GIAtxtRelTranslatorInverseNeuralNetworkClass::generateParseTreeIntro(vector
 	if(result)
 	{
 		//cout << "performance = " << performance << endl;
-		#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS3
-		cout << "GIAtxtRelTranslatorInverseNeuralNetworkClass::generateParseTreeIntro FOUND result" << endl;
-		#endif
-		//exit(EXIT_ERROR);
-		
 		restoreAllWordsAlreadyFoundMatchInComponent(sentenceContents, *performance);
 	}
 	else
@@ -133,20 +128,7 @@ bool GIAtxtRelTranslatorInverseNeuralNetworkClass::generateParseTreeGroupType(ve
 	GIAtxtRelTranslatorRules.printParseTreeDebugIndentation(layer);
 	cout << "minIndexOfMatchesFoundBackupOptimum = " << minIndexOfMatchesFoundBackupOptimum << endl;
 	#endif
-
-	#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS3
-	if(groupType->groupTypeName == "logicReferenceSets")
-	{
-		GIAtxtRelTranslatorRules.printParseTreeDebugIndentation(layer);
-		cout << "start groupType->groupTypeName == logicReferenceSets" << endl;
-	}
-	if(groupType->groupTypeName == "referenceSets")
-	{
-		GIAtxtRelTranslatorRules.printParseTreeDebugIndentation(layer);
-		cout << "start groupType->groupTypeName == referenceSets" << endl;
-	}
-	#endif
-				
+	
 	int performanceOriginal = *performance;
 	for(int i=0; i<groupType->groups.size(); i++)
 	{
@@ -163,7 +145,7 @@ bool GIAtxtRelTranslatorInverseNeuralNetworkClass::generateParseTreeGroupType(ve
 		#ifndef GIA_TXT_REL_TRANSLATOR_RULES_DEFINE_GROUP_TYPE_BACKUP_AT_START
 		currentParseTreeGroupTemp->groupTypeNameBackup = groupType->groupTypeName;
 		#endif
-		currentParseTreeGroupTemp->components.clear();	//added 5 Mar 2018
+		currentParseTreeGroupTemp->components.clear();	//CHECKTHIS; added 5 Mar 2018
 		int performanceTemp = performanceOriginal;
 		bool passedTemp = false;
 		if(generateParseTreeGroup(GIAtxtRelTranslatorRulesTokenLayers, group, sentenceContentsSubset, currentParseTreeGroupTemp, &performanceTemp, layer+1, previousGroupType, numberOfConsecutiveTimesPreviousGroupType))
@@ -179,37 +161,10 @@ bool GIAtxtRelTranslatorInverseNeuralNetworkClass::generateParseTreeGroupType(ve
 	if(result)
 	{
 		restoreAllWordsAlreadyFoundMatchInComponent(sentenceContentsSubset, *performance);
-		
-		#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS3
-		//cout << "layer = " << layer << endl;
-		if(groupType->groupTypeName == "logicReferenceSets")
-		{
-			GIAtxtRelTranslatorRules.printParseTreeDebugIndentation(layer);
-			cout << "end pass groupType->groupTypeName == logicReferenceSets" << endl;
-		}
-		if(groupType->groupTypeName == "referenceSets")
-		{
-			GIAtxtRelTranslatorRules.printParseTreeDebugIndentation(layer);
-			cout << "end pass groupType->groupTypeName == referenceSets" << endl;
-		}
-		#endif
 	}
 	else
 	{
 		clearAllWordsAlreadyFoundMatchInComponent(sentenceContentsSubset, minIndexOfMatchesFoundBackupOptimum);	//redundant?
-		
-		#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS3
-		if(groupType->groupTypeName == "logicReferenceSets")
-		{
-			GIAtxtRelTranslatorRules.printParseTreeDebugIndentation(layer);
-			cout << "end fail groupType->groupTypeName == logicReferenceSets" << endl;
-		}
-		if(groupType->groupTypeName == "referenceSets")
-		{
-			GIAtxtRelTranslatorRules.printParseTreeDebugIndentation(layer);
-			cout << "end fail groupType->groupTypeName == referenceSets" << endl;
-		}
-		#endif
 	}
 	
 	return result;
@@ -220,7 +175,7 @@ bool GIAtxtRelTranslatorInverseNeuralNetworkClass::generateParseTreeGroup(vector
 	bool foundWordMatch = true;
 
 	int minIndexOfMatchesFoundBackup2 = calculateMinIndexOfMatchesFound(sentenceContentsSubset);
-
+	
 	bool pass = true;
 	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_GROUP_PREVIOUS_WORD_POS_TYPE
 	//FUTURE: should pass previousWordPOStype from higher level function rather than relying on copied version of currentParseTreeGroup->previousWordPOStype (from group->previousWordPOStype)
@@ -250,14 +205,6 @@ bool GIAtxtRelTranslatorInverseNeuralNetworkClass::generateParseTreeGroup(vector
 	#endif
 	if(pass)
 	{	
-		#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS3
-		if(group->groupName == "referenceSetsOrLogicReferenceSets")
-		{
-			GIAtxtRelTranslatorRules.printParseTreeDebugIndentation(layer);
-			cout << "group->groupName == referenceSetsOrLogicReferenceSets" << endl;
-		}
-		#endif
-	
 		if(!generateRulesGroupTreeComponents(GIAtxtRelTranslatorRulesTokenLayers, &(group->components), sentenceContentsSubset, currentParseTreeGroup, performance, false, INT_DEFAULT_VALUE, false, layer, previousGroupType, numberOfConsecutiveTimesPreviousGroupType))
 		{
 			//currentParseTreeGroup->components.clear();	//already done in generateRulesGroupTreeComponents
@@ -675,9 +622,7 @@ bool GIAtxtRelTranslatorInverseNeuralNetworkClass::generateRulesGroupTreeCompone
 			//special case for logicReferenceSets - check referenceSetType instead of groupType; as logicReferenceSets groupTypes include recursive generalised (not groupName specific) referencing: <groupType groupTypeName="logicReferenceSets" -> <groupType groupTypeName="logicReferenceSetsOptional" ->  <groupType groupTypeName="logicReferenceSets"
 			if((component->groupTypeRef->referenceSetType == GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_REFERENCE_SET_TYPE_LOGICREFERENCESET) && (layer > GIA_TXT_REL_TRANSLATOR_GROUP_TYPE_MAX_NUMBER_CONSECUTIVE_LAYERS_LOGIC_REFERENCES))
 			{
-				#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS3
-				cout << "false pass 2" << endl;
-				#endif
+				//cout << "false pass 2" << endl;
 				pass = false;
 			}		
 		}
@@ -697,7 +642,7 @@ bool GIAtxtRelTranslatorInverseNeuralNetworkClass::generateRulesGroupTreeCompone
 			{
 				//cout << "(component->groupRef != NULL)" << endl;
 				GIAtxtRelTranslatorRulesGroup* newParseGroup = new GIAtxtRelTranslatorRulesGroup(*(component->groupRef));	//copy group component
-				newParseGroup->components.clear();	//added 5 Mar 2018
+				newParseGroup->components.clear();	//CHECKTHIS; added 5 Mar 2018
 				currentParseTreeComponent->parseTreeGroupRef = newParseGroup;
 				//currentParseTreeComponent->groupRefName = newParseGroup->groupName;	//added 17 March 2018
 				

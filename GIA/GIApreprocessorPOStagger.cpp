@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorPOStagger.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g4a 26-September-2018
+ * Project Version: 3g5a 27-October-2018
  * Requirements: requires plain text file
  * Description: Preprocessor POS tagger
  * /
@@ -1452,24 +1452,6 @@ bool GIApreprocessorPOStaggerClass::printPOSambiguityInfo(uint64_t POSambiguityI
 	
 	return result;
 }
-
-
-bool GIApreprocessorPOStaggerClass::printPOSambiguityInfoPermutationAssumeUnambiguous(vector<uint64_t>* POSambiguityInfoPermutation)
-{
-	bool result = true;
-	
-	for(int i=0; i<POSambiguityInfoPermutation->size(); i++)
-	{
-		uint64_t POSambiguityInfo = (*POSambiguityInfoPermutation)[i];	
-		unsigned char unambiguousPOSinfoIndex = GIA_PREPROCESSOR_POS_TYPE_UNDEFINED;
-		bool wordAmbiguous = GIApreprocessorPOStaggerDatabase.determinePOSambiguityInfoIsAmbiguous(POSambiguityInfoPermutation->at(i), &unambiguousPOSinfoIndex, false);
-		cout << "GIApreprocessorPOStypeNameArray[" << i << "] = " << GIApreprocessorPOStypeNameArray[unambiguousPOSinfoIndex] << endl;
-	}
-	
-	return result;
-}
-
-
 
 #endif
 

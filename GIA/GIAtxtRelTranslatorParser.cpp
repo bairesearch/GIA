@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g4a 26-September-2018
+ * Project Version: 3g5a 27-October-2018
  * Requirements: 
  * Description: Textual Relation Translator Parser
  * /
@@ -368,7 +368,7 @@ bool GIAtxtRelTranslatorParserClass::generateSemanticRelationsFromTxtRelationsWr
 	#endif
 	
 	GIAtxtRelTranslatorRulesGroup* firstParseTreeGroup = translatorVariables->currentPreprocessorSentenceInList->firstParseTreeGroup;
-	//cout << "firstParseTreeGroup->groupName = " << firstParseTreeGroup->groupName << endl;
+	cout << "firstParseTreeGroup->groupName = " << firstParseTreeGroup->groupName << endl;
 	
 	int layer = 0;
 	if(!GIAtxtRelTranslatorParserOperations.generateSemanticRelationsFromTxtRelationsWrapper(translatorVariables, firstParseTreeGroup, layer))
