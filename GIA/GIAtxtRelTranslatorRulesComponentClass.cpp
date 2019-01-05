@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorRulesComponentClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g1o 24-April-2018
+ * Project Version: 3g2a 21-May-2018
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Rules
  * /
@@ -109,13 +109,10 @@ GIAtxtRelTranslatorRulesComponent::GIAtxtRelTranslatorRulesComponent(void)
 	isSubcomponent = false;
 	ownerComponent = NULL;
 	neuronComponentConnectionActive = false;
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PREFERENCE_MOST_RECENT_ACTIVATED_PATHWAY
 	neuronComponentConnectionActiveWordRecord = NULL;
-	#endif
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN
 	//ANNbackNeuronConnectionList = NULL;
 	#endif
-	//activationGroupRefs = NULL;
 	#endif
 }
 GIAtxtRelTranslatorRulesComponent::~GIAtxtRelTranslatorRulesComponent(void)
