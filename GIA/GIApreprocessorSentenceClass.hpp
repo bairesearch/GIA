@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorSentenceClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g9d 03-January-2019
+ * Project Version: 3g9e 03-January-2019
  * Requirements: requires plain text file
  * Description: Preprocessor Sentence Class
  * /

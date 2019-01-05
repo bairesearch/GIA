@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetwork.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g9d 03-January-2019
+ * Project Version: 3g9e 03-January-2019
  * Requirements: 
  * Description: Textual Relation Translator Neural Network
  * /
@@ -305,7 +305,8 @@ bool GIAtxtRelTranslatorNeuralNetworkClass::propagateWordThroughNetworkWordGroup
 		#endif
 		#ifdef GIA_TXT_REL_TRANSLATOR_RULES_TREAT_UNKNOWN_POSTYPES_MID_SENTENCE_CAPITALISED_WORDS_AS_PROPERNOUNS_METHOD2
 		if(GIApreprocessorPOStagger.isMidSentenceUppercaseWordLikelyProperNoun(currentWord))
-		{	
+		{		
+			//cout << "isMidSentenceUppercaseWordLikelyProperNoun" << endl;
 			int wordPOStype = GIA_PREPROCESSOR_POS_TYPE_PROPERNOUN_DEFAULT;
 			if(propagateWordThroughNetworkWordGroupInit(translatorVariables, w, wordPOStype, &forwardPropogationSignalData, forwardPropogationWordData, forwardPropogationSentenceData, layer))
 			{

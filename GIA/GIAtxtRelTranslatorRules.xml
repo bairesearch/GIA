@@ -27,7 +27,7 @@
  * File Name: GIAtxtRelTranslatorRules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g9d 03-January-2019
+ * Project Version: 3g9e 03-January-2019
  * /
  *******************************************************************************/
  
@@ -470,14 +470,14 @@
 					</or>
 					<!--</repeat>-->
 				</group>
-				<group groupName="nounPluralOfPropernoun" semanticRelationFunctionName="propertyReverse">	
+				<group groupName="nounPluralOfPropernoun" semanticRelationFunctionName="propertyReverse" groupWeight="11">	
 					<!-- verb noun -->
 					<example><!-- {{the}} gardens of Kriton {{are old.}} --></example>
 					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="nounSequence" wordNounVariantType="plural" semanticRelationIndexType="subject" semanticRelationReturnEntity="true" />
 					<component componentType="string" stringType="explicit" word="of" />
 					<component componentType="string" stringType="LRPexternalWordLists" wordPOStype="propernounPlace" semanticRelationIndexType="object" />
 				</group>
-				<group groupName="nounOfPropernoun" semanticRelationFunctionName="definitionAlias">	
+				<group groupName="nounOfPropernoun" semanticRelationFunctionName="definitionAlias" groupWeight="11">	
 					<!-- verb noun -->
 					<example><!-- {{the}} house of Kriton {{is blue.}} --></example>
 					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="nounSequence" wordNounVariantType="singular" semanticRelationIndexType="subject" semanticRelationReturnEntity="true" />
@@ -505,7 +505,7 @@
 					<component componentType="string" stringType="explicit" word="of" />
 					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="descriptiveNounWithDeterminerBasicDefiniteEnforced" semanticRelationIndexType="object" />
 				</group>
-				<group groupName="complementDefinitionAlias" semanticRelationFunctionName="definitionAlias" groupWeight="10">	
+				<group groupName="complementDefinitionAlias" semanticRelationFunctionName="definitionAlias" groupWeight="11">	
 					<!-- verb noun -->
 					<example><!-- {{the}} file called x.txt --></example>
 					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="nounSequence" semanticRelationIndexType="subject" semanticRelationReturnEntity="true" />
@@ -1165,7 +1165,7 @@
 					<component componentType="group" groupTypeName="subReferenceSetsDelimiterAndObject" groupName="action" wordVerbVariantType="continuous" semanticRelationIndexType="delimiter" semanticRelationReturnEntity="true" />
 					<component componentType="group" groupTypeName="subReferenceSetsSpecial" groupName="conditionLinkToDelimiter" />
 				</group>				
-				<group groupName="definitionAlias3" semanticRelationFunctionName="definitionAliasWithAuxiliary">
+				<group groupName="definitionAlias3" semanticRelationFunctionName="definitionAliasWithAuxiliary" groupWeight="10">
 					<!-- The name of [] is [] -->
 					<example><!-- The name of the red dog is Tom. --></example>
 					<component componentType="string" stringType="explicit" word="the" />
@@ -1407,7 +1407,7 @@
 			<groupType groupTypeName="queries" referenceSetType="referenceSet">
 				<!-- reference set queries basic -->
 				
-				<group groupName="queryDefinitionAlias3" semanticRelationFunctionName="definitionAliasWithAuxiliary">
+				<group groupName="queryDefinitionAlias3" semanticRelationFunctionName="definitionAliasWithAuxiliary" groupWeight="10">
 					<!-- wh {aux} the name of [] ? -->
 					<example><!-- What is the name of the dog? 
 					--></example>
