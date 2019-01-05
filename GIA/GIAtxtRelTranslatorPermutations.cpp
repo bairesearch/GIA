@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorPermutations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g1c 24-April-2018
+ * Project Version: 3g1d 24-April-2018
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Permutations
  * /
@@ -110,9 +110,12 @@ bool GIAtxtRelTranslatorPermutationsClass::executeTxtRelTranslator(GIAtranslator
 		In the future use a neural net to train the system to identify new rule groups (or upgrade/refine rule groups)
 	*/
 	
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
+	GIAtxtRelTranslatorRulesGroup* firstParseTreeGroup = NULL;	//not used by GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK (write directly to currentGIApreprocessorSentenceInList->firstParseTreeGroup)
+	#else
 	GIAtxtRelTranslatorRulesGroup* firstParseTreeGroup = new GIAtxtRelTranslatorRulesGroup();
 	currentGIApreprocessorSentenceInList->firstParseTreeGroup = firstParseTreeGroup;
-		
+	#endif
 		
 	int performance = 0; 
 	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START
@@ -130,9 +133,9 @@ bool GIAtxtRelTranslatorPermutationsClass::executeTxtRelTranslator(GIAtranslator
 	#endif
 
 	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START
-	if(generateParseTreeIntroWrapper(translatorVariables, GIAtxtRelTranslatorRulesTokenLayers, GIAtxtRelTranslatorRulesGroupTypes, sentenceContents, firstParseTreeGroup, &performance, parseIsolatedSubreferenceSets1, &POSambiguityInfoUnambiguousPermutationArray, &iOptimum, &minIndexOfMatchesFoundBackupOptimum))	
+	if(generateParseTreeIntroWrapper(translatorVariables, GIAtxtRelTranslatorRulesTokenLayers, GIAtxtRelTranslatorRulesGroupTypes, currentGIApreprocessorSentenceInList, firstParseTreeGroup, &performance, parseIsolatedSubreferenceSets1, &POSambiguityInfoUnambiguousPermutationArray, &iOptimum, &minIndexOfMatchesFoundBackupOptimum))	
 	#else
-	if(generateParseTreeIntroWrapper(translatorVariables, GIAtxtRelTranslatorRulesTokenLayers, GIAtxtRelTranslatorRulesGroupTypes, sentenceContents, firstParseTreeGroup, &performance, parseIsolatedSubreferenceSets1, POSambiguityInfoPermutation))
+	if(generateParseTreeIntroWrapper(translatorVariables, GIAtxtRelTranslatorRulesTokenLayers, GIAtxtRelTranslatorRulesGroupTypes, currentGIApreprocessorSentenceInList, firstParseTreeGroup, &performance, parseIsolatedSubreferenceSets1, POSambiguityInfoPermutation))
 	#endif
 	{
 		foundParse = true;
@@ -146,9 +149,9 @@ bool GIAtxtRelTranslatorPermutationsClass::executeTxtRelTranslator(GIAtranslator
 		{
 		#endif
 			#ifdef GIA_TXT_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START
-			if(generateParseTreeIntroWrapper(translatorVariables, GIAtxtRelTranslatorRulesTokenLayers, GIAtxtRelTranslatorRulesGroupTypes, sentenceContents, firstParseTreeGroup, &performance, parseIsolatedSubreferenceSets2, &POSambiguityInfoUnambiguousPermutationArray, &iOptimum, &minIndexOfMatchesFoundBackupOptimum))	
+			if(generateParseTreeIntroWrapper(translatorVariables, GIAtxtRelTranslatorRulesTokenLayers, GIAtxtRelTranslatorRulesGroupTypes, currentGIApreprocessorSentenceInList, firstParseTreeGroup, &performance, parseIsolatedSubreferenceSets2, &POSambiguityInfoUnambiguousPermutationArray, &iOptimum, &minIndexOfMatchesFoundBackupOptimum))	
 			#else
-			if(generateParseTreeIntroWrapper(translatorVariables, GIAtxtRelTranslatorRulesTokenLayers, GIAtxtRelTranslatorRulesGroupTypes, sentenceContents, firstParseTreeGroup, &performance, parseIsolatedSubreferenceSets2, POSambiguityInfoPermutation))
+			if(generateParseTreeIntroWrapper(translatorVariables, GIAtxtRelTranslatorRulesTokenLayers, GIAtxtRelTranslatorRulesGroupTypes, currentGIApreprocessorSentenceInList, firstParseTreeGroup, &performance, parseIsolatedSubreferenceSets2, POSambiguityInfoPermutation))
 			#endif
 			{
 				foundParse = true;
@@ -183,13 +186,15 @@ bool GIAtxtRelTranslatorPermutationsClass::executeTxtRelTranslator(GIAtranslator
 
 
 #ifdef GIA_TXT_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START
-bool GIAtxtRelTranslatorPermutationsClass::generateParseTreeIntroWrapper(GIAtranslatorVariablesClass* translatorVariables, vector<XMLparserTag*>* GIAtxtRelTranslatorRulesTokenLayers, vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, vector<GIApreprocessorPlainTextWord*>* sentenceContents, GIAtxtRelTranslatorRulesGroup* firstParseTreeGroup, int* performance, const bool parseIsolatedSubreferenceSets, vector<vector<uint64_t>*>* POSambiguityInfoUnambiguousPermutationArray, int* iOptimum, int* minIndexOfMatchesFoundBackupOptimum)
+bool GIAtxtRelTranslatorPermutationsClass::generateParseTreeIntroWrapper(GIAtranslatorVariablesClass* translatorVariables, vector<XMLparserTag*>* GIAtxtRelTranslatorRulesTokenLayers, vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, GIApreprocessorSentence* currentGIApreprocessorSentenceInList, GIAtxtRelTranslatorRulesGroup* firstParseTreeGroup, int* performance, const bool parseIsolatedSubreferenceSets, vector<vector<uint64_t>*>* POSambiguityInfoUnambiguousPermutationArray, int* iOptimum, int* minIndexOfMatchesFoundBackupOptimum)
 #else
-bool GIAtxtRelTranslatorPermutationsClass::generateParseTreeIntroWrapper(GIAtranslatorVariablesClass* translatorVariables, vector<XMLparserTag*>* GIAtxtRelTranslatorRulesTokenLayers, vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, vector<GIApreprocessorPlainTextWord*>* sentenceContents, GIAtxtRelTranslatorRulesGroup* firstParseTreeGroup, int* performance, const bool parseIsolatedSubreferenceSets, vector<uint64_t>* POSambiguityInfoPermutation)
+bool GIAtxtRelTranslatorPermutationsClass::generateParseTreeIntroWrapper(GIAtranslatorVariablesClass* translatorVariables, vector<XMLparserTag*>* GIAtxtRelTranslatorRulesTokenLayers, vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, GIApreprocessorSentence* currentGIApreprocessorSentenceInList, GIAtxtRelTranslatorRulesGroup* firstParseTreeGroup, int* performance, const bool parseIsolatedSubreferenceSets, vector<uint64_t>* POSambiguityInfoPermutation)
 #endif
 {
 	bool result = false;
 	
+	vector<GIApreprocessorPlainTextWord*>* sentenceContents = GIApreprocessorSentenceClassObject.getSentenceContents(currentGIApreprocessorSentenceInList);
+
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
 	int performanceMaxPermutationIndex = INT_DEFAULT_VALUE;
 	int performanceMax = 0;
@@ -207,34 +212,42 @@ bool GIAtxtRelTranslatorPermutationsClass::generateParseTreeIntroWrapper(GIAtran
 		//GIApreprocessorPOStagger.printPOSambiguityInfoPermutation(POSambiguityInfoPermutationTemp);
 		#endif
 
-		GIAtxtRelTranslatorRulesGroup* firstParseTreeGroupTemp = new GIAtxtRelTranslatorRulesGroup();
+		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
+		GIAtxtRelTranslatorRulesGroup* firstParseTreeGroupTemp = NULL;
+		#else
+		GIAtxtRelTranslatorRulesGroup* firstParseTreeGroupTemp = new GIAtxtRelTranslatorRulesGroup();		
+		#endif
 
 		int minIndexOfMatchesFoundBackup2 = calculateMinIndexOfMatchesFound(sentenceContents);
 	#else
-		for(int w=0; w<sentenceContents->size(); w++)
-		{
-			(sentenceContents->at(w))->POSambiguityInfo = (*POSambiguityInfoPermutation)[w];
-		}
-		GIAtxtRelTranslatorRulesGroup* firstParseTreeGroupTemp = firstParseTreeGroup;
+	for(int w=0; w<sentenceContents->size(); w++)
+	{
+		(sentenceContents->at(w))->POSambiguityInfo = (*POSambiguityInfoPermutation)[w];
+	}
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
+	GIAtxtRelTranslatorRulesGroup* firstParseTreeGroupTemp = NULL;
+	#else
+	GIAtxtRelTranslatorRulesGroup* firstParseTreeGroupTemp = firstParseTreeGroup;
+	#endif
 	#endif
 	
 		int performanceTemp = 0;
 		bool passedTemp = false;
 		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
-		if(GIAtxtRelTranslatorNeuralNetwork.executeTxtRelTranslatorNeuralNetwork(translatorVariables, GIAtxtRelTranslatorRulesGroupTypes, sentenceContents, &performanceTemp, parseIsolatedSubreferenceSets, false))
-		{
-			passedTemp =  true;
-			result = true;
-			#ifdef GIA_TXT_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START
-			if(performanceTemp > performanceMax)
-			{
-				performanceMax = performanceTemp;
-				performanceMaxPermutationIndex = i;
-			}
-			#endif
-		}
+		
+		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SAVE_PARSE_TREE
+		bool parserEnabled = false;
+		#else
+		#ifdef GIA_TXT_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START
+		bool parserEnabled = false;
+		#else
+		bool parserEnabled = true;
+		#endif
+		#endif
+		if(GIAtxtRelTranslatorNeuralNetwork.executeTxtRelTranslatorNeuralNetwork(translatorVariables, GIAtxtRelTranslatorRulesGroupTypes, sentenceContents, &firstParseTreeGroupTemp, parseIsolatedSubreferenceSets, parserEnabled, &performanceTemp))
 		#else	
 		if(generateParseTreeIntro(GIAtxtRelTranslatorRulesTokenLayers, GIAtxtRelTranslatorRulesGroupTypes, sentenceContents, firstParseTreeGroupTemp, &performanceTemp, parseIsolatedSubreferenceSets))
+		#endif
 		{
 			passedTemp =  true;
 			result = true;
@@ -245,36 +258,49 @@ bool GIAtxtRelTranslatorPermutationsClass::generateParseTreeIntroWrapper(GIAtran
 			*performance = performanceTemp;
 			#endif
 		}
-		#endif
 
+	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START
+	
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
-	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START	
-	}
-	vector<uint64_t>* POSambiguityInfoPermutationTemp = (*POSambiguityInfoUnambiguousPermutationArray)[performanceMaxPermutationIndex];
-	setSentenceContentsWordsUnambiguousPOSindex(sentenceContents, POSambiguityInfoPermutationTemp);
-	int performanceTemp = 0;
-	if(GIAtxtRelTranslatorNeuralNetwork.executeTxtRelTranslatorNeuralNetwork(translatorVariables, GIAtxtRelTranslatorRulesGroupTypes, sentenceContents, &performanceTemp, parseIsolatedSubreferenceSets, true))
-	{
-		result = true;	
-		*performance = sentenceContents->size();	//hard set to maximum performance
-	}		
-	#endif
-	#else
-	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START	
-		if(updatePerformance(performanceTemp, performance, firstParseTreeGroup, firstParseTreeGroupTemp, passedTemp, minIndexOfMatchesFoundBackupOptimum, sentenceContents, minIndexOfMatchesFoundBackup2, NULL))
+		if(updatePerformanceNeuralNetwork(performanceTemp, performance, currentGIApreprocessorSentenceInList, firstParseTreeGroupTemp, passedTemp, i, &performanceMaxPermutationIndex))
 		{
 			*iOptimum = i;	
 		}
-		
 	}
-	
+	#else
+		if(GIAtxtRelTranslatorInverseNeuralNetwork.updatePerformance(performanceTemp, performance, firstParseTreeGroup, firstParseTreeGroupTemp, passedTemp, minIndexOfMatchesFoundBackupOptimum, sentenceContents, minIndexOfMatchesFoundBackup2, NULL))
+		{
+			*iOptimum = i;	
+		}
+	}
 	if(result)
 	{
 		//cout << "performance = " << performance << endl;
 		restoreAllWordsAlreadyFoundMatchInComponent(sentenceContents, *performance);
 	}
 	#endif
+	
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
+	#ifndef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SAVE_PARSE_TREE
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE
+	bool parserEnabled = true;
+	#else
+	bool parserEnabled = false;
+	cerr << "GIAtxtRelTranslatorPermutationsClass::generateParseTreeIntroWrapper warning: !GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SAVE_PARSE_TREE && !GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE; is this for debug?" << endl;
 	#endif
+	vector<uint64_t>* POSambiguityInfoPermutationTemp = (*POSambiguityInfoUnambiguousPermutationArray)[performanceMaxPermutationIndex];
+	setSentenceContentsWordsUnambiguousPOSindex(sentenceContents, POSambiguityInfoPermutationTemp);
+	int performanceTemp = 0;
+	if(GIAtxtRelTranslatorNeuralNetwork.executeTxtRelTranslatorNeuralNetwork(translatorVariables, GIAtxtRelTranslatorRulesGroupTypes, sentenceContents, firstParseTreeGroup, &performanceTemp, parseIsolatedSubreferenceSets, parserEnabled))
+	{
+		result = true;	
+		*performance = sentenceContents->size();	//hard set to maximum performance
+	}
+	#endif
+	#endif
+	
+	#endif
+	
 
 	return result;
 }	
@@ -301,6 +327,65 @@ bool GIAtxtRelTranslatorPermutationsClass::setSentenceContentsWordsUnambiguousPO
 }
 #endif
 	
+
+//based on GIAtxtRelTranslatorInverseNeuralNetworkClass::updatePerformanceNeuralNetwork
+bool GIAtxtRelTranslatorPermutationsClass::updatePerformanceNeuralNetwork(const int performanceTemp, int* performance, GIApreprocessorSentence* currentGIApreprocessorSentenceInList, GIAtxtRelTranslatorRulesGroup* firstParseTreeGroupTemp, const bool passedTemp, const int permutationIndex, int* performanceMaxPermutationIndex)
+{
+	bool result = false;
+	
+	if(passedTemp)
+	{
+		if(performanceTemp > *performance)
+		{
+			result = true;
+			*performance = performanceTemp;
+			#ifndef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SAVE_PARSE_TREE
+			currentGIApreprocessorSentenceInList->firstParseTreeGroup = firstParseTreeGroupTemp;
+			#endif
+			*performanceMaxPermutationIndex = permutationIndex;
+		}
+	}
+	
+	#ifndef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SAVE_PARSE_TREE
+	if(!result)
+	{
+		//delete all subgroups/components recursively in currentParseTreeGroupTemp
+		deleteAllSubgroupsRecurse(firstParseTreeGroupTemp, 1);
+	}
+	delete firstParseTreeGroupTemp;
+	#endif
+	
+	return result;
+}
+
+//based on GIAtxtRelTranslatorInverseNeuralNetworkClass::deleteAllSubgroupsRecurse
+//note it assumes subcomponents
+bool GIAtxtRelTranslatorPermutationsClass::deleteAllSubgroupsRecurse(GIAtxtRelTranslatorRulesGroup* currentParseTreeGroup, int layer)
+{
+	bool result = true;
+	
+	for(int i=0; i<currentParseTreeGroup->components.size(); i++)
+	{
+		GIAtxtRelTranslatorRulesComponent* currentParseTreeComponent = (currentParseTreeGroup->components)[i];
+		if(currentParseTreeComponent->parseTreeGroupRef != NULL)
+		{
+			#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS
+			GIAtxtRelTranslatorRules.printParseTreeDebugIndentation(layer);
+			cout << "deleteAllSubgroupsRecurse" << endl;
+			#endif
+			
+			if(!deleteAllSubgroupsRecurse(currentParseTreeComponent->parseTreeGroupRef, layer+1))
+			{
+				result = false;
+			}
+			delete (currentParseTreeComponent->parseTreeGroupRef);
+		}
+		
+		delete currentParseTreeComponent;
+	}
+	
+	return result;
+}
 
 #endif
 

@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorParser.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g1c 24-April-2018
+ * Project Version: 3g1d 24-April-2018
  * Requirements: 
  * Description: Textual Relation Translator Parser
  * /
@@ -62,7 +62,7 @@
 #include "GIAtxtRelTranslatorRulesComponentClass.hpp"
 #include "GIAtxtRelTranslatorHybrid.hpp"
 #ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE
-#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_MIRROR_PARSE_HIERACHIES
+#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SAVE_PARSE_TREE
 #include "GIAtxtRelTranslatorNeuralNetworkParser.hpp"
 #else
 #include "GIAtxtRelTranslatorPermutations.hpp"
@@ -98,7 +98,7 @@ class GIAtxtRelTranslatorParserClass
 	private: GIAtxtRelTranslatorRulesComponentClass GIAtxtRelTranslatorRulesComponentClassObject;
 	private: GIAtxtRelTranslatorHybridClass GIAtxtRelTranslatorHybrid;
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_MIRROR_PARSE_HIERACHIES
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SAVE_PARSE_TREE
 	private: GIAtxtRelTranslatorNeuralNetworkParserClass GIAtxtRelTranslatorNeuralNetworkParser;
 	#else
 	private: GIAtxtRelTranslatorPermutationsClass GIAtxtRelTranslatorPermutations;	

@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorRulesGroupClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g1c 24-April-2018
+ * Project Version: 3g1d 24-April-2018
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Rules
  * /
@@ -57,23 +57,54 @@ GIAtxtRelTranslatorParserForwardPropogationSignalData::~GIAtxtRelTranslatorParse
 #ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
 GIAtxtRelTranslatorNeuralNetworkForwardPropogationSignalData::GIAtxtRelTranslatorNeuralNetworkForwardPropogationSignalData(void)
 {
+	//group specific variables:
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE
-	parserEnabled = false;
-	performance = NULL;
 	//parserForwardPropogationSignalData = NULL;
 	#endif
-	
 	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_WORD_NOUN_VERB_VARIANT
 	wordNounVariantType = GIA_PREPROCESSOR_WORD_NOUN_DATABASE_TAG_BASE_TENSE_FORM_UNKNOWN;
 	wordVerbVariantType = GIA_PREPROCESSOR_WORD_VERB_DATABASE_TAG_BASE_TENSE_FORM_UNKNOWN;
 	#endif
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SAVE_PARSE_TREE
+	GIAtxtRelTranslatorRulesGroup* currentParseTreeGroup;
+	#endif
+}
+GIAtxtRelTranslatorNeuralNetworkForwardPropogationSignalData::~GIAtxtRelTranslatorNeuralNetworkForwardPropogationSignalData(void)
+{
+
+}
+
+GIAtxtRelTranslatorNeuralNetworkForwardPropogationWordData::GIAtxtRelTranslatorNeuralNetworkForwardPropogationWordData(void)
+{
+	//word specific variables:
 	wordReference = NULL;
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PREVIOUS_WORD_POS_TYPE_CHECKS
 	wordPOStype = GIA_PREPROCESSOR_POS_TYPE_UNDEFINED;
 	#endif
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ENFORCE_WORD_CONNECTIVITY
+	previousSentenceWord = NULL;
+	validActivationPathWordConnectivity = false;
+	foundFirstPreviousActivatedComponent = false;
+	#endif	
 	
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PREVIOUS_WORD_POS_TYPE_CHECKS_GLOBAL
+
+}
+GIAtxtRelTranslatorNeuralNetworkForwardPropogationWordData::~GIAtxtRelTranslatorNeuralNetworkForwardPropogationWordData(void)
+{
+
+}
+
+GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData::GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData(void)
+{
+	//sentence specific variables:
+	toplevelGroupActivationFound = false;
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE
+	parserEnabled = false;
+	performance = 0;
+	#endif
 	sentenceContents = NULL;
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SAVE_PARSE_TREE
+	topLevelParseTreeGroup = NULL;
 	#endif
 	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_QUERIES
 	isQuery = false;
@@ -81,10 +112,9 @@ GIAtxtRelTranslatorNeuralNetworkForwardPropogationSignalData::GIAtxtRelTranslato
 	//#ifdef GIA_TXT_REL_TRANSLATOR_RULES_PARSE_ISOLATED_SUBREFERENCE_SETS
 	parseIsolatedSubreferenceSets = false;
 	//#endif
-	
 
 }
-GIAtxtRelTranslatorNeuralNetworkForwardPropogationSignalData::~GIAtxtRelTranslatorNeuralNetworkForwardPropogationSignalData(void)
+GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData::~GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData(void)
 {
 
 }
