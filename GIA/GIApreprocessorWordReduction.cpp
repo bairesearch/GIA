@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorWordReduction.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g1a 24-April-2018
+ * Project Version: 3g1b 24-April-2018
  * Requirements: requires plain text file
  * Description: Preprocessor Word Reduction
  * /
@@ -461,8 +461,8 @@ bool GIApreprocessorWordReductionClass::searchAndReplacePhrasalVerbs(GIApreproce
 	while(currentGIApreprocessorSentenceInList->next != NULL)
 	{
 		GIApreprocessorMultiwordReductionPlainTextWord* firstTagInPlainTextSentence = NULL;
-		//cout << "(currentGIApreprocessorSentenceInList->sentenceContentsLRP).size() = " << (currentGIApreprocessorSentenceInList->sentenceContentsLRP).size() << endl;
-		GIApreprocessorWordClassObject.generateFlatSentenceWordList(&(currentGIApreprocessorSentenceInList->sentenceContentsLRP), &firstTagInPlainTextSentence);
+		//cout << "GIApreprocessorSentenceClassObject.getSentenceContents(currentGIApreprocessorSentenceInList)->size() = " << GIApreprocessorSentenceClassObject.getSentenceContents(currentGIApreprocessorSentenceInList)->size() << endl;
+		GIApreprocessorWordClassObject.generateFlatSentenceWordList(GIApreprocessorSentenceClassObject.getSentenceContents(currentGIApreprocessorSentenceInList), &firstTagInPlainTextSentence);
 		GIApreprocessorMultiwordReductionPlainTextWord* currentTagInPlainTextSentence = firstTagInPlainTextSentence;
 		GIApreprocessorMultiwordReductionPlainTextWord* previousTagInPlainTextSentence = NULL;
 		while(currentTagInPlainTextSentence->nextTag != NULL)
@@ -786,7 +786,7 @@ bool GIApreprocessorWordReductionClass::searchAndReplacePhrasalVerbs(GIApreproce
 		cout << endl;
 		#endif
 		
-		GIApreprocessorWordClassObject.generateSentenceWordList(firstTagInPlainTextSentence, &(currentGIApreprocessorSentenceInList->sentenceContentsLRP));
+		GIApreprocessorWordClassObject.generateSentenceWordList(firstTagInPlainTextSentence, GIApreprocessorSentenceClassObject.getSentenceContents(currentGIApreprocessorSentenceInList));
 
 		currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->next;
 	}
@@ -868,7 +868,7 @@ bool GIApreprocessorWordReductionClass::searchAndReplaceMultiwordWordList(GIApre
 		//cout << "sentenceIndexTemp = " << sentenceIndexTemp << endl;
 	
 		GIApreprocessorMultiwordReductionPlainTextWord* firstTagInPlainTextSentence = NULL;
-		GIApreprocessorWordClassObject.generateFlatSentenceWordList(&(currentGIApreprocessorSentenceInList->sentenceContentsLRP), &firstTagInPlainTextSentence);
+		GIApreprocessorWordClassObject.generateFlatSentenceWordList(GIApreprocessorSentenceClassObject.getSentenceContents(currentGIApreprocessorSentenceInList), &firstTagInPlainTextSentence);
 		GIApreprocessorMultiwordReductionPlainTextWord* currentTagInPlainTextSentence = firstTagInPlainTextSentence;
 		GIApreprocessorMultiwordReductionPlainTextWord* previousTagInPlainTextSentence = NULL;
 
@@ -965,7 +965,7 @@ bool GIApreprocessorWordReductionClass::searchAndReplaceMultiwordWordList(GIApre
 			currentTagInPlainTextSentence = static_cast<GIApreprocessorMultiwordReductionPlainTextWord*>(currentTagInPlainTextSentence->nextTag);
 		}
 		
-		GIApreprocessorWordClassObject.generateSentenceWordList(firstTagInPlainTextSentence, &(currentGIApreprocessorSentenceInList->sentenceContentsLRP));
+		GIApreprocessorWordClassObject.generateSentenceWordList(firstTagInPlainTextSentence, GIApreprocessorSentenceClassObject.getSentenceContents(currentGIApreprocessorSentenceInList));
 
 		sentenceIndexTemp++;
 		currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->next;
@@ -993,7 +993,7 @@ bool GIApreprocessorWordReductionClass::searchAndReplaceMultiwordWordListDynamic
 		//cout << "sentenceIndexTemp = " << sentenceIndexTemp << endl;
 	
 		GIApreprocessorMultiwordReductionPlainTextWord* firstTagInPlainTextSentence = NULL;
-		GIApreprocessorWordClassObject.generateFlatSentenceWordList(&(currentGIApreprocessorSentenceInList->sentenceContentsLRP), &firstTagInPlainTextSentence);
+		GIApreprocessorWordClassObject.generateFlatSentenceWordList(GIApreprocessorSentenceClassObject.getSentenceContents(currentGIApreprocessorSentenceInList), &firstTagInPlainTextSentence);
 		GIApreprocessorMultiwordReductionPlainTextWord* currentTagInPlainTextSentence = firstTagInPlainTextSentence;
 		GIApreprocessorMultiwordReductionPlainTextWord* previousTagInPlainTextSentence = NULL;
 
@@ -1040,7 +1040,7 @@ bool GIApreprocessorWordReductionClass::searchAndReplaceMultiwordWordListDynamic
 			currentTagInPlainTextSentence = static_cast<GIApreprocessorMultiwordReductionPlainTextWord*>(currentTagInPlainTextSentence->nextTag);
 		}
 		
-		GIApreprocessorWordClassObject.generateSentenceWordList(firstTagInPlainTextSentence, &(currentGIApreprocessorSentenceInList->sentenceContentsLRP));
+		GIApreprocessorWordClassObject.generateSentenceWordList(firstTagInPlainTextSentence, GIApreprocessorSentenceClassObject.getSentenceContents(currentGIApreprocessorSentenceInList));
 
 		sentenceIndexTemp++;
 		currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->next;
@@ -1112,7 +1112,7 @@ void GIApreprocessorWordReductionClass::renumberEntityIndiciesInCorrespondenceIn
 	}
 }
 
-bool GIApreprocessorWordReductionClass::writeTagListToFile(const GIApreprocessorSentence* firstGIApreprocessorSentenceInList, const string plainTextLRPoutputFileName, const string plainTextLRPforNLPoutputFileName, const bool performLRPoutput, const bool performLRPforNLPoutput)
+bool GIApreprocessorWordReductionClass::writeTagListToFile(GIApreprocessorSentence* firstGIApreprocessorSentenceInList, const string plainTextLRPoutputFileName, const string plainTextLRPforNLPoutputFileName, const bool performLRPoutput, const bool performLRPforNLPoutput)
 {
 	bool result = true;
 	
@@ -1129,14 +1129,14 @@ bool GIApreprocessorWordReductionClass::writeTagListToFile(const GIApreprocessor
 	
 	bool firstCharacterInFile = true;
 
-	const GIApreprocessorSentence* currentGIApreprocessorSentenceInList = firstGIApreprocessorSentenceInList;
+	GIApreprocessorSentence* currentGIApreprocessorSentenceInList = firstGIApreprocessorSentenceInList;
 	while(currentGIApreprocessorSentenceInList->next != NULL)
 	{
 		string sentenceContentsLRP = "";
 		string sentenceContentsLRPforNLP = "";
 		bool firstCharacterInSentence = true;
 		GIApreprocessorMultiwordReductionPlainTextWord* firstTagInPlainTextSentence = NULL;
-		GIApreprocessorWordClassObject.generateFlatSentenceWordList(&(currentGIApreprocessorSentenceInList->sentenceContentsLRP), &firstTagInPlainTextSentence);
+		GIApreprocessorWordClassObject.generateFlatSentenceWordList(GIApreprocessorSentenceClassObject.getSentenceContents(currentGIApreprocessorSentenceInList), &firstTagInPlainTextSentence);
 
 		GIApreprocessorMultiwordReductionPlainTextWord* currentTagInPlainTextSentence = firstTagInPlainTextSentence;
 		while(currentTagInPlainTextSentence->nextTag != NULL)
@@ -1742,7 +1742,7 @@ bool GIApreprocessorWordReductionClass::replaceAllNumericalWordsWithNumbers(GIAp
 	while(currentGIApreprocessorSentenceInList->next != NULL)
 	{	
 		GIApreprocessorMultiwordReductionPlainTextWord* firstTagInPlainTextSentence = NULL;
-		GIApreprocessorWordClassObject.generateFlatSentenceWordList(&(currentGIApreprocessorSentenceInList->sentenceContentsLRP), &firstTagInPlainTextSentence);
+		GIApreprocessorWordClassObject.generateFlatSentenceWordList(GIApreprocessorSentenceClassObject.getSentenceContents(currentGIApreprocessorSentenceInList), &firstTagInPlainTextSentence);
 		GIApreprocessorPlainTextWord* currentTag = firstTagInPlainTextSentence;
 		GIApreprocessorPlainTextWord* firstTagInNumericalWord = NULL;
 		GIApreprocessorPlainTextWord* previousTag = NULL;
@@ -1825,7 +1825,7 @@ bool GIApreprocessorWordReductionClass::replaceAllNumericalWordsWithNumbers(GIAp
 			currentTag = static_cast<GIApreprocessorPlainTextWord*>(currentTag->nextTag);
 		}
 			
-		GIApreprocessorWordClassObject.generateSentenceWordList(firstTagInPlainTextSentence, &(currentGIApreprocessorSentenceInList->sentenceContentsLRP));
+		GIApreprocessorWordClassObject.generateSentenceWordList(firstTagInPlainTextSentence, GIApreprocessorSentenceClassObject.getSentenceContents(currentGIApreprocessorSentenceInList));
 	
 		currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->next;
 	}

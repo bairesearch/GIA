@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorHybrid.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g1a 24-April-2018
+ * Project Version: 3g1b 24-April-2018
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Hybrid
  * /
@@ -91,9 +91,9 @@ bool GIAtxtRelTranslatorHybridClass::executePrelimFeatureProcessingOnSentences(c
 	{
 		currentGIApreprocessorSentenceInList->sentenceReferencePrelim = currentSentenceInList;	//this doesnt appear to be used
 		
-		if(currentGIApreprocessorSentenceInList->sentenceContentsLRP.size() != currentSentenceInList->numberOfWordsInSentence)
+		if(GIApreprocessorSentenceClassObject.getSentenceContents(currentGIApreprocessorSentenceInList)->size() != currentSentenceInList->numberOfWordsInSentence)
 		{
-			cerr << "GIAtxtRelTranslatorHybridClass::executePrelimFeatureProcessingOnSentences{} error: (currentGIApreprocessorSentenceInList->sentenceContentsLRP->size() != currentSentenceInList->numberOfWordsInSentence)" << endl;
+			cerr << "GIAtxtRelTranslatorHybridClass::executePrelimFeatureProcessingOnSentences{} error: GIApreprocessorSentenceClassObject.getSentenceContents(currentGIApreprocessorSentenceInList)->size() != currentSentenceInList->numberOfWordsInSentence)" << endl;
 			exit(EXIT_ERROR);
 		}
 				
@@ -102,7 +102,7 @@ bool GIAtxtRelTranslatorHybridClass::executePrelimFeatureProcessingOnSentences(c
 		{
 			bool grammaticallyStrict = true;	//grammaticallyStrict required for preprocessor POS detection
 			GIAtranslatorGrammar.extractPOSrelatedGrammaticalInformationStanford(currentFeatureInList, grammaticallyStrict);	//this is required to derive grammaticalWordType from NLP POS tags for GIA_TXT_REL_TRANSLATOR_HYBRID_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
-			currentGIApreprocessorSentenceInList->sentenceContentsLRP[w]->featureReferencePrelim = currentFeatureInList;
+			(*GIApreprocessorSentenceClassObject.getSentenceContents(currentGIApreprocessorSentenceInList))[w]->featureReferencePrelim = currentFeatureInList;
 			currentFeatureInList = currentFeatureInList->next;
 		}
 		

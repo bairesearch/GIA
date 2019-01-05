@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorRulesGroupClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g1a 24-April-2018
+ * Project Version: 3g1b 24-April-2018
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Rules
  * /
@@ -39,7 +39,7 @@
 
 
 #ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
-GIAtxtRelTranslatorNeuralNetworkForwardPropogationSignalDataPackage::GIAtxtRelTranslatorNeuralNetworkForwardPropogationSignalDataPackage(void)
+GIAtxtRelTranslatorNeuralNetworkForwardPropogationSignalData::GIAtxtRelTranslatorNeuralNetworkForwardPropogationSignalData(void)
 {
 	wordReference = NULL;
 
@@ -59,8 +59,13 @@ GIAtxtRelTranslatorNeuralNetworkForwardPropogationSignalDataPackage::GIAtxtRelTr
 	//#ifdef GIA_TXT_REL_TRANSLATOR_RULES_PARSE_ISOLATED_SUBREFERENCE_SETS
 	parseIsolatedSubreferenceSets = false;
 	//#endif
+	
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE
+	//insert semantic relation function parameters here
+	//translatorVariables = NULL;
+	#endif
 }
-GIAtxtRelTranslatorNeuralNetworkForwardPropogationSignalDataPackage::~GIAtxtRelTranslatorNeuralNetworkForwardPropogationSignalDataPackage(void)
+GIAtxtRelTranslatorNeuralNetworkForwardPropogationSignalData::~GIAtxtRelTranslatorNeuralNetworkForwardPropogationSignalData(void)
 {
 
 }
@@ -113,6 +118,9 @@ GIAtxtRelTranslatorRulesGroup::GIAtxtRelTranslatorRulesGroup(void)
 	neuronActive = false;
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SUPPORT_TRAILING_OPTIONAL_COMPONENTS_AND_SUBCOMPONENTS_SOLIDIFY_NET
 	//neuronSolidified = false;
+	#endif
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_BASIC_ALL_ACTIVE_OR_SUBCOMPONENTS
+	//artificialComponents = NULL;
 	#endif
 	#endif
 }

@@ -26,7 +26,7 @@
  * File Name: GIApreprocessor.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g1a 24-April-2018
+ * Project Version: 3g1b 24-April-2018
  * Requirements: requires plain text file
  * Description: Preprocessor
  * /
@@ -114,7 +114,7 @@ bool GIApreprocessorClass::preprocessTextForGIA(string* inputTextPlainTXTfileNam
 	GIApreprocessorSentence* currentGIApreprocessorSentenceInList = translatorVariables->firstGIApreprocessorSentenceInList;
 	while(currentGIApreprocessorSentenceInList->next != NULL)
 	{
-		cout << "currentGIApreprocessorSentenceInList->sentenceContentsLRPfirstWord = " << GIApreprocessorWordClassObject.generateTextFromVectorWordList(&(currentGIApreprocessorSentenceInList->sentenceContentsLRP), false) << endl;
+		cout << "currentGIApreprocessorSentenceInList->sentenceContentsLRPfirstWord = " << GIApreprocessorWordClassObject.generateTextFromVectorWordList(GIApreprocessorSentenceClassObject.getSentenceContents(currentPreprocessorSentenceInList), false) << endl;
 		currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->next;
 	}
 	#endif
@@ -629,7 +629,7 @@ bool GIApreprocessorClass::addSentenceToPreprocessorSentence(GIAtranslatorVariab
 	if(getPreprocessorSentence(translatorVariables->firstGIApreprocessorSentenceInList, sentenceIndex, &preprocessorSentenceFound))
 	{
 		preprocessorSentenceFound->sentenceReference = currentSentenceInList;
-		vector<GIApreprocessorPlainTextWord*> preprocessorSentenceWordList = preprocessorSentenceFound->sentenceContentsLRP;
+		vector<GIApreprocessorPlainTextWord*> preprocessorSentenceWordList = *GIApreprocessorSentenceClassObject.getSentenceContents(preprocessorSentenceFound);
 	#endif
 		//translatorVariables->preprocessorSentenceWordListTemp = preprocessorSentenceWordList;
 		

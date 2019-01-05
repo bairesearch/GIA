@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g1a 24-April-2018
+ * Project Version: 3g1b 24-April-2018
  * Requirements: requires plain text file
  * Description: Textual relation translator
  * /
@@ -43,6 +43,7 @@ bool GIAtxtRelTranslatorClass::parseTxtfileAndCreateSemanticNetworkBasedUponSema
 {
 	bool result = true;
 
+	GIApreprocessorSentence* currentGIApreprocessorSentenceInList = NULL;
 	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3_USE_SYN_REL_TRANSLATOR_FEATURES
 	#ifdef STANFORD_PARSER_USE_POS_TAGS
 	cout << "error: performSemanticParserLookupAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences{} doesn't support STANFORD_PARSER_USE_POS_TAGS (because the semantic relations word types being written must match those being read [and read can only use feature parser])" << endl;
@@ -54,7 +55,7 @@ bool GIAtxtRelTranslatorClass::parseTxtfileAndCreateSemanticNetworkBasedUponSema
 	}
 	#else
 	//generate empty sentence class list (without GIAfeatures):
-	GIApreprocessorSentence* currentGIApreprocessorSentenceInList = translatorVariables->firstGIApreprocessorSentenceInList;
+	currentGIApreprocessorSentenceInList = translatorVariables->firstGIApreprocessorSentenceInList;
 	GIAsentence* currentSentenceInList = translatorVariables->firstSentenceInList;
 	while(currentGIApreprocessorSentenceInList->next != NULL)
 	{
@@ -64,7 +65,7 @@ bool GIAtxtRelTranslatorClass::parseTxtfileAndCreateSemanticNetworkBasedUponSema
 
 		/*
 		cout << "currentGIApreprocessorSentenceInList = " << endl;
-		GIApreprocessorWordClassObject.printWordList(&(currentGIApreprocessorSentenceInList->sentenceContentsLRP));
+		GIApreprocessorWordClassObject.printWordList(GIApreprocessorSentenceClassObject.getSentenceContents(currentGIApreprocessorSentenceInList));
 		*/
 		
 		currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->next;
@@ -98,12 +99,28 @@ bool GIAtxtRelTranslatorClass::parseTxtfileAndCreateSemanticNetworkBasedUponSema
 	}
 	#endif
 	
+	
+	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_DEFINE_WORD_TRANSLATOR_SENTENCE_ENTITY_INDEX_AT_START
+	currentGIApreprocessorSentenceInList = translatorVariables->firstGIApreprocessorSentenceInList;
+	while(currentGIApreprocessorSentenceInList->next != NULL)
+	{
+		vector<GIApreprocessorPlainTextWord*>* sentenceContents = GIApreprocessorSentenceClassObject.getSentenceContents(currentGIApreprocessorSentenceInList);
+		for(int w=0; w<sentenceContents->size(); w++)
+		{	
+			GIApreprocessorPlainTextWord* currentWord = sentenceContents->at(w);
+			currentWord->translatorSentenceEntityIndex = GIAtranslatorOperations.convertSentenceContentsIndexToEntityIndex(w);
+		}
+		currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->next;
+	}
+	#endif		
+	#ifndef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE
 	//execute translator
 	if(!executeTxtRelTranslatorWrapper(translatorVariables, &GIAtxtRelTranslatorRulesTokenLayers, &GIAtxtRelTranslatorRulesGroupTypes))
 	{
 		result = false;
 	}
-
+	#endif
+	
 	/*
 	currentGIApreprocessorSentenceInList = translatorVariables->firstGIApreprocessorSentenceInList;
 	while(currentGIApreprocessorSentenceInList->next != NULL)
@@ -182,11 +199,11 @@ bool GIAtxtRelTranslatorClass::executeTxtRelTranslatorWrapper(GIAtranslatorVaria
 	while(currentGIApreprocessorSentenceInList->next != NULL)
 	{			
 		#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS
-		cout << "GIAtxtRelTranslatorClass::executeTxtRelTranslator{}: sentence " << currentGIApreprocessorSentenceInList->sentenceIndexOriginal << ", sentenceContentsLRP = " << GIApreprocessorWordClassObject.printWordListString(&(currentGIApreprocessorSentenceInList->sentenceContentsLRP)) << endl;
+		cout << "GIAtxtRelTranslatorClass::executeTxtRelTranslator{}: sentence " << currentGIApreprocessorSentenceInList->sentenceIndexOriginal << ", sentenceContents = " << GIApreprocessorWordClassObject.printWordListString(GIApreprocessorSentenceClassObject.getSentenceContents(currentGIApreprocessorSentenceInList)) << endl;
 		#endif
 			
 		vector<uint64_t> POSambiguityInfoPermutation;
-		vector<GIApreprocessorPlainTextWord*>* sentenceContents = &(currentGIApreprocessorSentenceInList->sentenceContentsLRP);
+		vector<GIApreprocessorPlainTextWord*>* sentenceContents = GIApreprocessorSentenceClassObject.getSentenceContents(currentGIApreprocessorSentenceInList);
 		
 		//resetting of word->alreadyFoundMatch is required in case a higher level app (e.g. NLC) shares word objects between sentences:
 		for(int w=0; w<sentenceContents->size(); w++)
@@ -257,7 +274,7 @@ bool GIAtxtRelTranslatorClass::executeTxtRelTranslator(vector<XMLparserTag*>* GI
 {
 	bool result = true;
 
-	vector<GIApreprocessorPlainTextWord*>* sentenceContents = &(currentGIApreprocessorSentenceInList->sentenceContentsLRP);
+	vector<GIApreprocessorPlainTextWord*>* sentenceContents = GIApreprocessorSentenceClassObject.getSentenceContents(currentGIApreprocessorSentenceInList);
 
 	/*
 	algorithm (v0.1);
@@ -350,7 +367,7 @@ bool GIAtxtRelTranslatorClass::executeTxtRelTranslator(vector<XMLparserTag*>* GI
 	else
 	{
 		clearAllWordsAlreadyFoundMatchInComponent(sentenceContents, minIndexOfMatchesFoundBackupOptimum);	//redundant?	
-		cerr << "GIAtxtRelTranslatorClass::executeTxtRelTranslator{}: Failed to parse sentence " << currentGIApreprocessorSentenceInList->sentenceIndexOriginal << ", sentenceContentsLRP = " << GIApreprocessorWordClassObject.printWordListString(&(currentGIApreprocessorSentenceInList->sentenceContentsLRP)) << endl;
+		cerr << "GIAtxtRelTranslatorClass::executeTxtRelTranslator{}: Failed to parse sentence " << currentGIApreprocessorSentenceInList->sentenceIndexOriginal << ", sentenceContents = " << GIApreprocessorWordClassObject.printWordListString(GIApreprocessorSentenceClassObject.getSentenceContents(currentGIApreprocessorSentenceInList)) << endl;
 		//exit(EXIT_ERROR);
 	}
 	#endif
@@ -996,7 +1013,9 @@ bool GIAtxtRelTranslatorClass::generateRulesGroupTreeComponent(vector<XMLparserT
 				#endif
 				foundWordMatch = true;
 				currentWord->alreadyFoundMatch = true;
-				currentWord->translatorSentenceEntityIndex = GIAtranslatorOperations.convertSentenceContentsIndexToEntityIndex(w);	//NB alternatively, translatorSentenceEntityIndex could be defined for each word at the very start of executeTxtRelTranslator()
+				#ifndef GIA_TXT_REL_TRANSLATOR_RULES_DEFINE_WORD_TRANSLATOR_SENTENCE_ENTITY_INDEX_AT_START
+				currentWord->translatorSentenceEntityIndex = GIAtranslatorOperations.convertSentenceContentsIndexToEntityIndex(w);
+				#endif
 				*performance = *performance + 1;
 				currentParseTreeComponent->candidateStringMatch = currentWord;
 			}
@@ -1488,7 +1507,7 @@ bool GIAtxtRelTranslatorClass::transferParseTreePOStypeInferredToWordList(GIAtra
 	GIApreprocessorSentence* currentGIApreprocessorSentenceInList = translatorVariables->firstGIApreprocessorSentenceInList;
 	while(currentGIApreprocessorSentenceInList->next != NULL)
 	{
-		vector<GIApreprocessorPlainTextWord*>* sentenceContents = &(currentGIApreprocessorSentenceInList->sentenceContentsLRP);
+		vector<GIApreprocessorPlainTextWord*>* sentenceContents = GIApreprocessorSentenceClassObject.getSentenceContents(currentGIApreprocessorSentenceInList);
 
 		//this will replace the sentenceContents word->wordPOStypeInferred values with their ideal value as stored in the parse tree (in the case where the ideal word->wordPOStypeInferred values were overwritten by a more recent bad parse):
 		

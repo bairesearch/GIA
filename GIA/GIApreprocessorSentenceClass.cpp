@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorSentenceClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g1a 24-April-2018
+ * Project Version: 3g1b 24-April-2018
  * Requirements: requires plain text file
  * Description: Preprocessor Sentence Class
  * /
@@ -105,9 +105,14 @@ GIApreprocessorSentence::~GIApreprocessorSentence(void)
 	}
 }
 
-void GIApreprocessorSentence::copyPreprocessorSentence(GIApreprocessorSentence* sentenceToCopy, GIApreprocessorSentence* newSentence)
+void GIApreprocessorSentenceClass::copyPreprocessorSentence(GIApreprocessorSentence* sentenceToCopy, GIApreprocessorSentence* newSentence)
 {
 	*newSentence = *sentenceToCopy;
+}
+
+vector<GIApreprocessorPlainTextWord*>* GIApreprocessorSentenceClass::getSentenceContents(GIApreprocessorSentence* currentGIApreprocessorSentenceInList)
+{
+	return  &(currentGIApreprocessorSentenceInList->sentenceContentsLRP);
 }
 
 
