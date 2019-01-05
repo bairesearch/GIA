@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g8h 19-December-2018
+ * Project Version: 3g8i 19-December-2018
  * Requirements: 
  * Description: GIA specific global definitions
  * /
@@ -839,7 +839,7 @@
 			#endif
 		#endif
 		
-		#define GIA_TXT_REL_TRANSLATOR_RULES_DEFINE_GROUP_TYPE_BACKUP_AT_START	//3g1b	//required for GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PREFERENCE_MOST_RECENT_ACTIVATED_PATHWAY_OLD
+		#define GIA_TXT_REL_TRANSLATOR_RULES_DEFINE_GROUP_TYPE_BACKUP_AT_START	//3g1b
 		#define GIA_TXT_REL_TRANSLATOR_RULES_DEFINE_WORD_TRANSLATOR_SENTENCE_ENTITY_INDEX_AT_START	//3g1a	//required for GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
 
 		//#define GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PREVENT_CIRCULAR_CONNECTION_LOOPS	//3g1a	//temporarily enabled until determined due to parse these	//disabled 3g6a

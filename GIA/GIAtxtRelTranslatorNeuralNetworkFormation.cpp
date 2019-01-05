@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetworkFormation.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g8h 19-December-2018
+ * Project Version: 3g8i 19-December-2018
  * Requirements: 
  * Description: Textual Relation Translator Neural Network Formation
  * /
@@ -461,6 +461,21 @@ bool GIAtxtRelTranslatorNeuralNetworkFormationClass::createNeuronLayerIntro(vect
 				topLevelGroupInOuputLayerSectionQuestions = new GIAtxtRelTranslatorRulesGroup();
 				topLevelGroup = topLevelGroupInOuputLayerSectionQuestions;
 			}
+			#ifdef GIA_TXT_REL_TRANSLATOR_RULES_PARSE_ISOLATED_SUBREFERENCE_SETS
+			else if(groupType->groupTypeName == GIAtxtRelTranslatorRulesGroupsTypes[GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_TYPE_SUBJECTS])
+			{
+				/*
+				if(topLevelGroupInOuputLayerSectionSubjects != NULL)
+				{
+					cerr << "GIAtxtRelTranslatorNeuralNetworkClass::createNeuronLayers{} error: (topLevelGroupInOuputLayerSectionSubjects != NULL): more than one (groupType->referenceSetType == GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_REFERENCE_SET_TYPE_SENTENCE) && (groupType->groupTypeName == GIAtxtRelTranslatorRulesGroupsTypes[GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_TYPE_SUBJECTS]) defined" << endl;
+					exit(EXIT_ERROR);
+				}
+				*/
+				passGroupTests = true;
+				topLevelGroupInOuputLayerSectionSubjects = new GIAtxtRelTranslatorRulesGroup();
+				topLevelGroup = topLevelGroupInOuputLayerSectionSubjects;
+			}
+			#endif
 		}
 		
 		if(passGroupTests)
