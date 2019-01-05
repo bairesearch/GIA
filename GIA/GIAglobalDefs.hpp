@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g3a 03-June-2018
+ * Project Version: 3g4a 26-September-2018
  * Requirements: 
  * Description: GIA specific global definitions
  * /
@@ -803,7 +803,7 @@
 		#endif
 		#define GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_CREATE_NEURONS_FOR_NOUN_VERB_VARIANTS	//3g1a
 	#else
-		#define GIA_TXT_REL_TRANSLATOR_INVERSE_NEURAL_NETWORK
+		#define GIA_TXT_REL_TRANSLATOR_INVERSE_NEURAL_NETWORK	//3f
 	#endif
 #endif
 	
@@ -818,7 +818,8 @@
 		#define GIA_TXT_REL_TRANSLATOR_RULES		
 		#ifdef GIA_TXT_REL_TRANSLATOR_RULES
 		
-			//#define GIA_DEBUG_TXT_REL_TRANSLATOR_RULES    
+			#define GIA_DEBUG_TXT_REL_TRANSLATOR_RULES    
+			//#define GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS3
 			//#define GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS2
 			//#define GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS
 			
@@ -865,7 +866,7 @@
 			#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_RESTRICT_RECURSION
 				#define GIA_TXT_REL_TRANSLATOR_GROUP_TYPE_MAX_NUMBER_CONSECUTIVE_LAYERS (2)	//prevents infinite loop of groupType referenceSetType="logicReferenceSet/subReferenceSet/etc" (ie groupTypeName="logicReferenceSets/subReferenceSets/etc") parsing	//figure must take into account any intermediary groupType layers, eg logicReferenceSetsOptional:logicReferenceSet
 				#ifdef GIA_TXT_REL_TRANSLATOR_RULES_LOGIC_REFERENCES
-					#define GIA_TXT_REL_TRANSLATOR_GROUP_TYPE_MAX_NUMBER_CONSECUTIVE_LAYERS_LOGIC_REFERENCES (6)
+					#define GIA_TXT_REL_TRANSLATOR_GROUP_TYPE_MAX_NUMBER_CONSECUTIVE_LAYERS_LOGIC_REFERENCES (7)	//6
 				#endif
 			#endif
 			

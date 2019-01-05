@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g3a 03-June-2018
+ * Project Version: 3g4a 26-September-2018
  * Requirements: requires plain text file
  * Description: Textual Relation Translator
  * /
@@ -344,10 +344,13 @@ bool GIAtxtRelTranslatorClass::generateParseTreeIntroWrapper(GIAtranslatorVariab
 		vector<uint64_t>* POSambiguityInfoPermutationTemp = (*POSambiguityInfoUnambiguousPermutationArray)[i];
 		setSentenceContentsWordsUnambiguousPOSindex(sentenceContents, POSambiguityInfoPermutationTemp);
 
-		//#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS	
 		#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE
 		cout << "POSambiguityInfoUnambiguousPermutationArray index = " << i << endl;
-		//GIApreprocessorPOStagger.printPOSambiguityInfoPermutation(POSambiguityInfoPermutationTemp);
+		//GIApreprocessorPOStagger.printPOSambiguityInfoPermutationAssumeUnambiguous(POSambiguityInfoPermutationTemp);	//printPOSambiguityInfoPermutation
+		#endif
+		#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS3
+		cout << "POSambiguityInfoUnambiguousPermutationArray index = " << i << endl;
+		GIApreprocessorPOStagger.printPOSambiguityInfoPermutationAssumeUnambiguous(POSambiguityInfoPermutationTemp);		
 		#endif
 
 		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
