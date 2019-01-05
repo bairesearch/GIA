@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslator.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g1h 24-April-2018
+ * Project Version: 3g1i 24-April-2018
  * Requirements: requires plain text file
  * Description: Textual Relation Translator
  * /
@@ -47,12 +47,15 @@
 #endif
 #include "GIAtxtRelTranslatorRules.hpp"
 #ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
+#include "GIAtxtRelTranslatorNeuralNetwork.hpp"
 #include "GIAtxtRelTranslatorNeuralNetworkFormation.hpp"
 #endif
-#include "GIAtxtRelTranslatorPermutations.hpp"
+#include "GIAtxtRelTranslatorInverseNeuralNetwork.hpp"
 #ifdef GIA_PREPROCESSOR_INITIALISE_WORD_INDEX_LIST_FROM_LRP_FILES
 #include "GIApreprocessorWordIdentification.hpp"
 #endif
+#include "GIApreprocessorPOStagger.hpp"
+#include "GIApreprocessorPOStaggerDatabase.hpp"
 #include "GIApreprocessorWordClass.hpp"
 #ifdef GIA_OUTPUT_INTERNAL_RELATIONS_IN_RELEX_FORMAT
 #include "GIAnlp.hpp"
@@ -68,13 +71,16 @@ class GIAtxtRelTranslatorClass
 	private: GIAtxtRelTranslatorHybridClass GIAtxtRelTranslatorHybrid;
 	#endif
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
+	private: GIAtxtRelTranslatorNeuralNetworkClass GIAtxtRelTranslatorNeuralNetwork;
 	private: GIAtxtRelTranslatorNeuralNetworkFormationClass GIAtxtRelTranslatorNeuralNetworkFormation;
 	#endif
-	private: GIAtxtRelTranslatorPermutationsClass GIAtxtRelTranslatorPermutations;
+	private: GIAtxtRelTranslatorInverseNeuralNetworkClass GIAtxtRelTranslatorInverseNeuralNetwork;	
 	private: GIAtxtRelTranslatorRulesClass GIAtxtRelTranslatorRules;
 	#ifdef GIA_PREPROCESSOR_INITIALISE_WORD_INDEX_LIST_FROM_LRP_FILES
 	private: GIApreprocessorWordIdentificationClass GIApreprocessorWordIdentification;
 	#endif
+	private: GIApreprocessorPOStaggerClass GIApreprocessorPOStagger;
+	private: GIApreprocessorPOStaggerDatabaseClass GIApreprocessorPOStaggerDatabase;
 	private: GIApreprocessorWordClassClass GIApreprocessorWordClassObject;
 	private: GIApreprocessorSentenceClass GIApreprocessorSentenceClassObject;
 	#ifdef GIA_OUTPUT_INTERNAL_RELATIONS_IN_RELEX_FORMAT
@@ -84,6 +90,19 @@ class GIAtxtRelTranslatorClass
 	private: SHAREDvarsClass SHAREDvars;
 
 	public: bool parseTxtfileAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences(GIAtranslatorVariablesClass* translatorVariables, const string inputTextPlainTXTfileName, string inputTextNLPrelationXMLfileName, const string inputTextNLPfeatureXMLfileName, const string outputCFFfileName);
+
+		public: bool executeTxtRelTranslatorWrapper(GIAtranslatorVariablesClass* translatorVariables, vector<XMLparserTag*>* GIAtxtRelTranslatorRulesTokenLayers, vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes);
+			public: bool executeTxtRelTranslator(GIAtranslatorVariablesClass* translatorVariables, vector<XMLparserTag*>* GIAtxtRelTranslatorRulesTokenLayers, vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, GIApreprocessorSentence* currentGIApreprocessorSentenceInList, vector<uint64_t>* POSambiguityInfoPermutation);
+				#ifdef GIA_TXT_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START
+				private: bool generateParseTreeIntroWrapper(GIAtranslatorVariablesClass* translatorVariables, vector<XMLparserTag*>* GIAtxtRelTranslatorRulesTokenLayers, vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, GIApreprocessorSentence* currentGIApreprocessorSentenceInList, GIAtxtRelTranslatorRulesGroup* firstParseTreeGroup, int* performance, const bool parseIsolatedSubreferenceSets, vector<vector<uint64_t>*>* POSambiguityInfoUnambiguousPermutationArray, int* iOptimum, int* minIndexOfMatchesFoundBackupOptimum);
+				#else
+				private: bool generateParseTreeIntroWrapper(GIAtranslatorVariablesClass* translatorVariables, vector<XMLparserTag*>* GIAtxtRelTranslatorRulesTokenLayers, vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, GIApreprocessorSentence* currentGIApreprocessorSentenceInList, GIAtxtRelTranslatorRulesGroup* firstParseTreeGroup, int* performance, const bool parseIsolatedSubreferenceSets, vector<uint64_t>* POSambiguityInfoPermutation);
+				#endif
+					#ifdef GIA_TXT_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START
+					private: bool setSentenceContentsWordsUnambiguousPOSindex(vector<GIApreprocessorPlainTextWord*>* sentenceContents, vector<uint64_t>* POSambiguityInfoPermutationTemp);
+					#endif
+					private: bool updatePerformanceNeuralNetwork(const int performanceTemp, int* performance, GIApreprocessorSentence* currentGIApreprocessorSentenceInList, GIAtxtRelTranslatorRulesGroup* firstParseTreeGroupTemp, const bool passedTemp, const int permutationIndex, int* performanceMaxPermutationIndex);
+					private: bool deleteAllSubgroupsRecurse(GIAtxtRelTranslatorRulesGroup* currentParseTreeGroup, int layer);
 
 };
 #endif

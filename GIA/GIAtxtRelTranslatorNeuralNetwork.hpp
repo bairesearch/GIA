@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetwork.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g1h 24-April-2018
+ * Project Version: 3g1i 24-April-2018
  * Requirements: 
  * Description: Textual Relation Translator Neural Network
  * /
@@ -43,7 +43,6 @@
 #include "GIAtxtRelTranslatorRulesGroupClass.hpp"
 #include "GIAtxtRelTranslatorRulesComponentClass.hpp"
 #include "GIAtxtRelTranslatorNeuralNetworkFormation.hpp"
-#include "GIAtxtRelTranslatorNeuralNetworkParser.hpp"
 #ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE
 #include "GIAtxtRelTranslatorParserOperations.hpp"
 #endif
@@ -78,7 +77,6 @@ class GIAtxtRelTranslatorNeuralNetworkClass
 	private: GIAtxtRelTranslatorRulesGroupClass GIAtxtRelTranslatorRulesGroupClassObject;
 	private: GIAtxtRelTranslatorRulesComponentClass GIAtxtRelTranslatorRulesComponentClassObject;
 	private: GIAtxtRelTranslatorNeuralNetworkFormationClass GIAtxtRelTranslatorNeuralNetworkFormation;
-	private: GIAtxtRelTranslatorNeuralNetworkParserClass GIAtxtRelTranslatorNeuralNetworkParser;
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE
 	private: GIAtxtRelTranslatorParserOperationsClass GIAtxtRelTranslatorParserOperations;
 	#endif
@@ -125,6 +123,17 @@ class GIAtxtRelTranslatorNeuralNetworkClass
 			private: bool solidifyNeuralNetBackpropComponent(GIAtxtRelTranslatorRulesComponent* currentComponent, int level, const bool lastComponent, const bool solidifyComponent);
 	#endif
 		private: bool isLastComponentFuzzy(GIAtxtRelTranslatorRulesGroup* group);
+	#endif
+	
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SAVE_PARSE_TREE
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_RECORD_PERFORMANCE
+	public: bool updatePerformance(GIAtxtRelTranslatorRulesGroup* currentParseTreeGroup, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData, int layer);
+	#endif
+		public: bool traceBackpropParseTree(GIAtxtRelTranslatorRulesGroup* group, int level, bool print, int* performance, vector<GIApreprocessorPlainTextWord*>* sentenceContents);
+		public: bool resetNeuronBackprop(GIAtxtRelTranslatorRulesGroup* group, const int groupBoolIndexType);
+	#endif
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PREVENT_CIRCULAR_CONNECTION_LOOPS
+	public: bool resetNeuronForwardProp(GIAtxtRelTranslatorRulesGroup* group, const int groupBoolIndexType);
 	#endif
 
 };

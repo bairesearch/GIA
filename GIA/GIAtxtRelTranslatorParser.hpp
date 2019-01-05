@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorParser.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g1h 24-April-2018
+ * Project Version: 3g1i 24-April-2018
  * Requirements: 
  * Description: Textual Relation Translator Parser
  * /
@@ -61,13 +61,6 @@
 #include "GIAtxtRelTranslatorRulesGroupClass.hpp"
 #include "GIAtxtRelTranslatorRulesComponentClass.hpp"
 #include "GIAtxtRelTranslatorHybrid.hpp"
-#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE
-#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SAVE_PARSE_TREE
-#include "GIAtxtRelTranslatorNeuralNetworkParser.hpp"
-#else
-#include "GIAtxtRelTranslatorPermutations.hpp"
-#endif
-#endif
 #include "GIAtxtRelTranslatorParserOperations.hpp"
 
 
@@ -97,13 +90,6 @@ class GIAtxtRelTranslatorParserClass
 	private: GIAtxtRelTranslatorRulesGroupClass GIAtxtRelTranslatorRulesGroupClassObject;
 	private: GIAtxtRelTranslatorRulesComponentClass GIAtxtRelTranslatorRulesComponentClassObject;
 	private: GIAtxtRelTranslatorHybridClass GIAtxtRelTranslatorHybrid;
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SAVE_PARSE_TREE
-	private: GIAtxtRelTranslatorNeuralNetworkParserClass GIAtxtRelTranslatorNeuralNetworkParser;
-	#else
-	private: GIAtxtRelTranslatorPermutationsClass GIAtxtRelTranslatorPermutations;	
-	#endif
-	#endif
 	private: GIAtxtRelTranslatorParserOperationsClass GIAtxtRelTranslatorParserOperations;
 	private: GIAsynRelTranslatorDefineSubstancesClass GIAsynRelTranslatorDefineSubstances;
 	private: GIAsynRelTranslatorApplyAdvancedFeaturesClass GIAsynRelTranslatorApplyAdvancedFeatures;

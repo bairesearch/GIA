@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g1h 24-April-2018
+ * Project Version: 3g1i 24-April-2018
  * Requirements: 
  * Description: GIA specific global definitions
  * /
@@ -753,7 +753,7 @@
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
 		
 		//#define GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE_EXTRA3
-		#define GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE_EXTRA2
+		//#define GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE_EXTRA2
 		//#define GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE_EXTRA
 		#define GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE
 		//#define GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_CREATE
@@ -769,10 +769,7 @@
 			#define GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ENFORCE_WORD_CONNECTIVITY	//3g1e - emulates GIA_TXT_REL_TRANSLATOR_INVERSE_NEURAL_NETWORK: reject all activation paths that do not connect to a previous word in sentence			//for every possible activation path for a word, select the one which connects to the group containing the most recent activated component
 			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ENFORCE_WORD_CONNECTIVITY
 				//#define GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ENFORCE_WORD_CONNECTIVITY_ONLY_TEST_FIRST_ENCOUNTERED_ACTIVE_COMPONENT
-				#define GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SAVE_PARSE_TREE	//3g1e	//NOT YET IMPLEMENTED	//alternative implementation that saves parsed neural net in separate data structure
-				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SAVE_PARSE_TREE
-					#define GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_SEPARATE
-				#endif
+				#define GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SAVE_PARSE_TREE	//3g1e, mandatory 3g1i	//saves parsed neural net in separate data structure
 				#define GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PREFERENCE_MOST_RECENT_ACTIVATED_PATHWAY_WEAK
 				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PREFERENCE_MOST_RECENT_ACTIVATED_PATHWAY_WEAK
 					//#define GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PREFERENCE_MOST_RECENT_ACTIVATED_PATHWAY_WEAK_MIN_NUMBER_OF_RECENCY_GRADATIONS (2)	//OLD

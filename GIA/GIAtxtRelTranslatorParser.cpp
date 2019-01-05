@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g1h 24-April-2018
+ * Project Version: 3g1i 24-April-2018
  * Requirements: 
  * Description: Textual Relation Translator Parser
  * /
@@ -147,19 +147,10 @@ bool GIAtxtRelTranslatorParserClass::convertSentenceTxtRelationsIntoGIAnetworkNo
 		((*GIApreprocessorSentenceClassObject.getSentenceContents(translatorVariables->currentPreprocessorSentenceInList))[GIAtranslatorOperations.convertEntityIndexToSentenceContentsIndex(w)])->translatorEntity = entity;	//code from setPreprocessorSentenceTranslatorEntityReferences
 	}
 	
-	#if defined GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE && !defined GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_SEPARATE	
-	vector<XMLparserTag*>* GIAtxtRelTranslatorRulesTokenLayers = GIAtxtRelTranslatorRules.getGIAtxtRelTranslatorRulesTokenLayersGlobal();
-	vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes = GIAtxtRelTranslatorRules.getGIAtxtRelTranslatorRulesGroupTypesGlobal();
-	if(!GIAtxtRelTranslatorPermutations.executeTxtRelTranslatorWrapper(translatorVariables, GIAtxtRelTranslatorRulesTokenLayers, GIAtxtRelTranslatorRulesGroupTypes))
-	{
-		result = false;
-	}
-	#else
 	if(!generateSemanticRelationsFromTxtRelationsWrapper(translatorVariables))
 	{
 		result = false;
 	}
-	#endif
 
 	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_QUERY
 	identifyComparisonVariable(translatorVariables);
@@ -370,6 +361,7 @@ bool GIAtxtRelTranslatorParserClass::generateSemanticRelationsFromTxtRelationsWr
 	bool result = true;
 	
 	GIAtxtRelTranslatorRulesGroup* firstParseTreeGroup = translatorVariables->currentPreprocessorSentenceInList->firstParseTreeGroup;
+	cout << "firstParseTreeGroup->groupName = " << firstParseTreeGroup->groupName << endl;
 	
 	int layer = 0;
 	if(!GIAtxtRelTranslatorParserOperations.generateSemanticRelationsFromTxtRelationsWrapper(translatorVariables, firstParseTreeGroup, layer))
