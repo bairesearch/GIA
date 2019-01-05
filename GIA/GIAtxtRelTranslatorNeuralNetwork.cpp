@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetwork.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g8f 19-December-2018
+ * Project Version: 3g8g 19-December-2018
  * Requirements: 
  * Description: Textual Relation Translator Neural Network
  * /
@@ -1074,6 +1074,7 @@ bool GIAtxtRelTranslatorNeuralNetworkClass::propagateWordThroughNetworkGroupComp
 {
 	bool result = false;
 	
+	//cout << "4: GIAtxtRelTranslatorNeuralNetworkClass::propagateWordThroughNetworkGroupComponent: " <<  ownerGroup->groupTypeNameBackup << ":" << ownerGroup->groupName << endl;		
 		
 	ownerComponent->neuronComponentConnectionActive = true;
 	currentComponent->neuronComponentConnectionActive = true;	//if hasSubComponents
@@ -1084,10 +1085,14 @@ bool GIAtxtRelTranslatorNeuralNetworkClass::propagateWordThroughNetworkGroupComp
 	//create new parseTreeGroup
 	//copied from GIAtxtRelTranslatorInverseNeuralNetworkClass::generateRulesGroupTreeComponents;
 	GIAtxtRelTranslatorRulesComponent* newParseComponent = new GIAtxtRelTranslatorRulesComponent(*currentComponent);	//copy rules component
-	newParseComponent->componentRef = currentComponent;
+	newParseComponent->componentRef = currentComponent;	
 	newParseComponent->neuronComponentConnectionActive = true;
 	newParseComponent->neuronComponentConnectionActiveWordRecord = forwardPropogationWordData->wordReference;
 	newParseComponent->parseTreeGroupRef = activationPathWordCurrentParseTreeGroup;
+	if(newParseComponent->groupRefName == "")
+	{
+		newParseComponent->groupRefName = activationPathWordCurrentParseTreeGroup->groupName;
+	}
 	//currentWord->wordPOStypeInferred = forwardPropogationWordData->wordPOStype;	//NO: this is required to quickly check wordPOStypeInferred of previous words in current parse tree	//this will be set later by GIAtxtRelTranslatorClass::transferParseTreePOStypeInferredToWordList based on parseComponent->wordPOStypeInferred
 	newParseComponent->wordPOStypeInferred = forwardPropogationWordData->wordPOStype;	//store a copy of wordPOStypeInferred in parseTree (which will not overwritten by a future bad parse unlike that copied to currentWord)
 	activationPathWordCurrentParseTreeGroupOwner->components.push_back(newParseComponent);
