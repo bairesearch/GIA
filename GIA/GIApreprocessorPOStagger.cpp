@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorPOStagger.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g1b 24-April-2018
+ * Project Version: 3g1c 24-April-2018
  * Requirements: requires plain text file
  * Description: Preprocessor POS tagger
  * /
@@ -1193,6 +1193,63 @@ void GIApreprocessorPOStaggerClass::generatePOSambiguityInfoUnambiguousPermutati
 		}
 	}
 }
+
+#ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3
+bool GIApreprocessorPOStaggerClass::determinePOSambiguityInfoWrapper(vector<GIApreprocessorPlainTextWord*>* sentenceContents, vector<uint64_t>* POSambiguityInfoPermutation)
+{
+	bool result = true;
+	
+	//resetting of word->alreadyFoundMatch is required in case a higher level app (e.g. NLC) shares word objects between sentences:
+	for(int w=0; w<sentenceContents->size(); w++)
+	{
+		GIApreprocessorPlainTextWord* currentWord = sentenceContents->at(w);
+		currentWord->alreadyFoundMatch = false;
+	}
+
+	for(int w=0; w<sentenceContents->size(); w++)
+	{
+		GIApreprocessorPlainTextWord* contextWord = sentenceContents->at(w);
+
+		#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_WORD_NOUN_VERB_VARIANT
+		string wordTextLowerCase = SHAREDvars.convertStringToLowerCase(&(contextWord->tagName));
+		GIApreprocessorMultiwordReductionWord* nounBaseFound = NULL;
+		int nounGrammaticalBaseTenseForm = GIA_PREPROCESSOR_WORD_NOUN_DATABASE_TAG_BASE_TENSE_FORM_UNKNOWN;
+		if(GIApreprocessorWordIdentification.determineNounPluralVariant(wordTextLowerCase, &nounBaseFound, &nounGrammaticalBaseTenseForm))
+		{
+			#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_WORD_NOUN_VERB_VARIANT_DETECT_IRREGULAR_NOUN_FORMS
+			contextWord->wordNounVariantGrammaticalTenseForm = nounGrammaticalBaseTenseForm;	//will only be valid if wordPOStype == noun
+			#else
+			contextWord->wordNounVariantGrammaticalTenseForm = GIA_PREPROCESSOR_WORD_NOUN_DATABASE_TAG_BASE_TENSE_FORM_PLURAL;
+			#endif
+			//cout << "contextWord->wordNounVariantGrammaticalTenseForm == " << contextWord->wordNounVariantGrammaticalTenseForm << ", contextWord = " << contextWord->tagName << endl;
+		}
+		string verbBaseNameFound = "";
+		int verbGrammaticalBaseTenseForm = GIA_PREPROCESSOR_WORD_VERB_DATABASE_TAG_BASE_TENSE_FORM_UNKNOWN;
+		if(GIApreprocessorWordIdentification.determineVerbCaseStandardWithAdditional(wordTextLowerCase, &verbBaseNameFound, &verbGrammaticalBaseTenseForm))
+		{
+			contextWord->wordVerbVariantGrammaticalTenseForm = verbGrammaticalBaseTenseForm;	//will only be valid if wordPOStype == verb
+			//cout << "contextWord->wordVerbVariantGrammaticalTenseForm == " << contextWord->verbGrammaticalBaseTenseForm << ", contextWord = " << contextWord->tagName << endl;
+		}			
+		#endif
+
+		#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS
+		cout << "contextWord = " << contextWord->tagName << endl;
+		#endif
+		bool contextWordPOSisAmbiguous = false;
+		bool identifiedEveryWordInDatabasePOSpermutationNOTUSED = true;
+		uint64_t contextWordPOSambiguityInfo = GIA_PREPROCESSOR_POS_TAGGER_POS_AMBIGUITY_INFO_UNKNOWN;	//default value
+		unsigned char contextWordUnambiguousPOSindex = INT_DEFAULT_VALUE;	//GIA_PREPROCESSOR_POS_TYPE_UNDEFINED;
+		if(!determinePOSambiguityInfo(contextWord, &contextWordPOSambiguityInfo, &contextWordPOSisAmbiguous, &contextWordUnambiguousPOSindex, &identifiedEveryWordInDatabasePOSpermutationNOTUSED))
+		{
+			result = false;
+		}
+
+		POSambiguityInfoPermutation->push_back(contextWordPOSambiguityInfo);
+	}
+	
+	return result;
+}
+#endif
 
 bool GIApreprocessorPOStaggerClass::determinePOSambiguityInfo(GIApreprocessorPlainTextWord* contextWord, uint64_t* contextWordPOSambiguityInfo, bool* contextWordPOSisAmbiguous, unsigned char* contextWordUnambiguousPOSindex, bool* identifiedEveryWordInDatabasePOSpermutation)
 {

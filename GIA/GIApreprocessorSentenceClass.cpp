@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorSentenceClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g1b 24-April-2018
+ * Project Version: 3g1c 24-April-2018
  * Requirements: requires plain text file
  * Description: Preprocessor Sentence Class
  * /
@@ -114,6 +114,35 @@ vector<GIApreprocessorPlainTextWord*>* GIApreprocessorSentenceClass::getSentence
 {
 	return  &(currentGIApreprocessorSentenceInList->sentenceContentsLRP);
 }
+
+#ifdef GIA_TXT_REL_TRANSLATOR_RULES_PARSE_ISOLATED_SUBREFERENCE_SETS_OPTIMISED
+bool GIApreprocessorSentenceClass::calculateParseIsolatedSubreferenceSets1(GIApreprocessorSentence* currentGIApreprocessorSentenceInList, bool* parseIsolatedSubreferenceSets1)
+{
+	bool result = true;
+	if((currentGIApreprocessorSentenceInList->parseIsolatedSubreferenceSets) && ((currentGIApreprocessorSentenceInList->parseIsolatedSubreferenceSetsFirst) || (currentGIApreprocessorSentenceInList->parseIsolatedSubreferenceSetsOnly)))
+	{
+		*parseIsolatedSubreferenceSets1 = true;
+	}
+	return result;
+}
+bool GIApreprocessorSentenceClass::calculateParseIsolatedSubreferenceSets2(GIApreprocessorSentence* currentGIApreprocessorSentenceInList, bool* parseIsolatedSubreferenceSets2)
+{
+	bool result = false;
+	if(currentGIApreprocessorSentenceInList->parseIsolatedSubreferenceSets)
+	{
+		if(!(currentGIApreprocessorSentenceInList->parseIsolatedSubreferenceSetsOnly))
+		{
+			result = true;
+			if(currentGIApreprocessorSentenceInList->parseIsolatedSubreferenceSetsFirst)
+			{
+				parseIsolatedSubreferenceSets2 = false;
+			}
+		}
+	}			
+	return result;
+}
+#endif	
+
 
 
 

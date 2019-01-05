@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetworkParser.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g1b 24-April-2018
+ * Project Version: 3g1c 24-April-2018
  * Requirements: 
  * Description: Textual Relation Translator Neural Network Parser
  * /
@@ -40,15 +40,31 @@
 
 #ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
 
-#include "GIAtxtRelTranslatorParser.hpp"
+//#include "GIAtxtRelTranslatorParser.hpp"
+#include "GIAtxtRelTranslatorParserOperations.hpp"
+#include "GIAtxtRelTranslatorRulesComponentClass.hpp"
+#include "GIAtxtRelTranslatorRules.hpp"
+#include "GIApreprocessorWordClass.hpp"
+
 
 class GIAtxtRelTranslatorNeuralNetworkParserClass
 {
 	private: SHAREDvarsClass SHAREDvars;
-	private: GIAtxtRelTranslatorParserClass GIAtxtRelTranslatorParser;
+	//private: GIAtxtRelTranslatorParserClass GIAtxtRelTranslatorParser;
+	private: GIAtxtRelTranslatorParserOperationsClass GIAtxtRelTranslatorParserOperations;
+	private: GIAtxtRelTranslatorRulesComponentClass GIAtxtRelTranslatorRulesComponentClassObject;
+	private: GIAtxtRelTranslatorRulesClass GIAtxtRelTranslatorRules;
+	private: GIApreprocessorWordClassClass GIApreprocessorWordClassObject;
 
-	
+	public: bool generateSemanticRelationsFromTxtRelationsWrapper(GIAtranslatorVariablesClass* translatorVariables, GIAtxtRelTranslatorRulesGroup* firstParseTreeGroup, int layer);
+		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE
+		public: bool generateSemanticRelationsFromTxtRelationsNeuralNetwork(GIAtranslatorVariablesClass* translatorVariables, GIAtxtRelTranslatorRulesGroup* currentParseTreeGroup, GIAtxtRelTranslatorParserForwardPropogationSignalData* parserForwardPropogationSignalData, int layer);
+		#endif
 
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_RECORD_PERFORMANCE
+	public: bool updatePerformance(GIAtxtRelTranslatorRulesGroup* currentParseTreeGroup, int* performance, int layer);
+	#endif
+		public: bool traceBackpropActivationPath(GIAtxtRelTranslatorRulesGroup* group, int level, bool print, int* performance);
 
 };
 

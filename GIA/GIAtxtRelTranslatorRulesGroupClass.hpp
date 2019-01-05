@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorRulesGroupClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g1b 24-April-2018
+ * Project Version: 3g1c 24-April-2018
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Rules
  * /
@@ -83,6 +83,24 @@ static string GIAtxtRelTranslatorRulesGroupsComponentReferenceSetTypes[GIA_TXT_R
 static string GIAtxtRelTranslatorRulesGroupsTypes[GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_TYPE_NUMBER_OF_TYPES] = {"unknown", "logicReferenceSets", "referenceSets", "subReferenceSets", "subReferenceSetsPart", "subReferenceSetsAppend", "logicReferenceSetsOptional", "statements", "questions", "subjects"};
 
 
+class GIAtxtRelTranslatorParserForwardPropogationSignalData
+{
+public:
+	GIAtxtRelTranslatorParserForwardPropogationSignalData(void);
+	~GIAtxtRelTranslatorParserForwardPropogationSignalData(void);
+	
+	GIAentityNode* semanticRelationReturnEntity;
+	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_SEMANTIC_RELATION_RECORD_AND_CONNECT
+	GIAentityNode* semanticRelationReturnEntitySubject;
+	GIAentityNode* semanticRelationReturnEntityDelimiter;
+	string semanticRelationReturnFunctionNameRecord;
+	#endif
+	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_SEMANTIC_RELATION_RETURN_FUNCTION_NAME
+	vector<GIAentityNode*> semanticRelationReturnFunctionEntityArray;
+	#endif
+};
+
+
 #ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
 class GIAtxtRelTranslatorNeuralNetworkForwardPropogationSignalData
 {
@@ -90,17 +108,26 @@ public:
 	GIAtxtRelTranslatorNeuralNetworkForwardPropogationSignalData(void);
 	~GIAtxtRelTranslatorNeuralNetworkForwardPropogationSignalData(void);
 	
-	GIApreprocessorPlainTextWord* wordReference;
-
+	//group specific variables:
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE
+	bool parserEnabled;
+	int* performance;
+	GIAtxtRelTranslatorParserForwardPropogationSignalData parserForwardPropogationSignalData;	//semantic relation function parameters
+	#endif
+	
+	//component specific variables:
 	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_WORD_NOUN_VERB_VARIANT
 	int wordNounVariantType;
 	int wordVerbVariantType;
 	#endif
+	GIApreprocessorPlainTextWord* wordReference;
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PREVIOUS_WORD_POS_TYPE_CHECKS
-	int wordPOStype;
+	int wordPOStype;	
+	#endif
+	
+	//sentence specific variables:
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PREVIOUS_WORD_POS_TYPE_CHECKS_GLOBAL
 	vector<GIApreprocessorPlainTextWord*>* sentenceContents;
-	#endif
 	#endif
 	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_QUERIES
 	bool isQuery;
@@ -109,10 +136,6 @@ public:
 	bool parseIsolatedSubreferenceSets;
 	//#endif
 	
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE
-	//insert semantic relation function parameters here
-	GIAtranslatorVariablesClass* translatorVariables;
-	#endif
 };
 #endif
 
@@ -129,7 +152,7 @@ public:
 	string semanticRelationFunctionConditionNewName;
 	#endif
 	string groupName;
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PREVIOUS_WORD_POS_TYPE_CHECKS
+	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_GROUP_PREVIOUS_WORD_POS_TYPE
 	string previousWordPOStype;
 	string existsPreceedingWordPOStype;
 	#endif
@@ -159,15 +182,13 @@ public:
 	bool neuronGenerated;
 	bool neuronPropagated;
 	bool neuronPreviousWordPOStypeTested;
-	GIAtxtRelTranslatorNeuralNetworkForwardPropogationSignalData* semanticRelationReturnEntityForwardPropogationSignalDataPackage;
+	GIAtxtRelTranslatorNeuralNetworkForwardPropogationSignalData semanticRelationReturnEntityForwardPropogationSignalData;
+	GIAtxtRelTranslatorNeuralNetworkForwardPropogationSignalData semanticRelationReturnEntityForwardPropogationSignalDataProspective;	//temporary	//only update semanticRelationReturnEntityForwardPropogationSignalData upon complete/group activation (prevents ownerGroup->semanticRelationReturnEntityForwardPropogationSignalData from being invalidated by partial reactivations of a group; when accessed by an unrelated instance of GIAtxtRelTranslatorNeuralNetworkParserClass::generateSemanticRelationsFromTxtRelationsNeuralNetwor) 
 	bool allComponentsActivatedAtLeastOnce;
 	bool neuronPrinted;
 	bool neuronActive;	//interpretation: all components are active (unless they are optional / unused or cases)
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SUPPORT_TRAILING_OPTIONAL_COMPONENTS_AND_SUBCOMPONENTS_SOLIDIFY_NET
 	//bool neuronSolidified;
-	#endif
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_BASIC_ALL_ACTIVE_OR_SUBCOMPONENTS
-	vector<GIAtxtRelTranslatorRulesComponent*> artificialComponents;
 	#endif
 	#endif
 };
