@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetwork.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g1i 24-April-2018
+ * Project Version: 3g1j 24-April-2018
  * Requirements: 
  * Description: Textual Relation Translator Neural Network
  * /
@@ -566,6 +566,7 @@ bool GIAtxtRelTranslatorNeuralNetworkClass::propagateWordThroughNetworkGroupSele
 					#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ENFORCE_WORD_CONNECTIVITY
 					if(measureActivationRecencyOnlyFirstBifurcation)
 					{
+						//cout << "measureActivationRecencyOnlyFirstBifurcation" << endl;
 						forwardPropogationWordData->foundMostRecentContribution = false;
 						forwardPropogationWordData->mostRecentContributionWordIndex = INT_DEFAULT_VALUE;
 					}
@@ -584,11 +585,12 @@ bool GIAtxtRelTranslatorNeuralNetworkClass::propagateWordThroughNetworkGroupSele
 							
 								if(forwardPropogationWordData->mostRecentContributionWordIndex >= mostRecentContributionWordIndex)
 								{
-									#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE_EXTRA3
-									GIAtxtRelTranslatorRules.printParseTreeDebugIndentation(layer+1);
-									cout << "*foundFrontLayerActivationPathMostRecentContribution = true" << endl;
+									#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE_EXTRA4
+									//GIAtxtRelTranslatorRules.printParseTreeDebugIndentation(layer+1);
+									//cout << "*foundFrontLayerActivationPathMostRecentContribution = true" << endl;
 									//cout << "requireResetGroupActivation = " << requireResetGroupActivation << endl;
-									//cout << "\e[36m forwardPropogationWordData->mostRecentContributionWordIndex = " << forwardPropogationWordData->mostRecentContributionWordIndex << ", i = " << i << "\e[0m" << endl;
+									GIAtxtRelTranslatorRules.printParseTreeDebugIndentation(layer+1);
+									cout << "\e[36m forwardPropogationWordData->mostRecentContributionWordIndex = " << forwardPropogationWordData->mostRecentContributionWordIndex << ", i = " << i << ", forwardPropogationWordData->mostRecentContributionWordIndex = " << forwardPropogationWordData->mostRecentContributionWordIndex << "\e[0m" << endl;
 									#endif
 
 									mostRecentContributionWordIndex = forwardPropogationWordData->mostRecentContributionWordIndex;
@@ -630,7 +632,10 @@ bool GIAtxtRelTranslatorNeuralNetworkClass::propagateWordThroughNetworkGroupSele
 	}
 	
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ENFORCE_WORD_CONNECTIVITY
-	removeLessRecentContributionIndices(frontLayerActivationPathMostRecentContribution);
+	if(measureActivationRecencyOnlyFirstBifurcation)
+	{
+		removeLessRecentContributionIndices(frontLayerActivationPathMostRecentContribution);
+	}
 	#endif
 	
 	return result;
@@ -853,10 +858,10 @@ bool GIAtxtRelTranslatorNeuralNetworkClass::propagateWordThroughNetworkGroupComp
 	}
 	#endif
 	
-	#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE_EXTRA3
+	#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE_EXTRA4
 	GIAtxtRelTranslatorRules.printParseTreeDebugIndentation(layer+1);
-	cout << "4: propagateWordThroughNetworkGroup: " <<  ownerGroup->groupTypeNameBackup << ":" << ownerGroup->groupName << endl;	
-	GIAtxtRelTranslatorRules.printComponent(currentComponent, layer+1);		
+	cout << "4: propagateWordThroughNetworkGroup: " <<  ownerGroup->groupTypeNameBackup << ":" << ownerGroup->groupName << ", forwardPropogationWordData->mostRecentContributionWordIndex = " << forwardPropogationWordData->mostRecentContributionWordIndex << endl;	
+	GIAtxtRelTranslatorRules.printComponent(currentComponent, layer+1);
 	#endif
 
 	if(activationSequenceCompleted)
@@ -1139,17 +1144,17 @@ bool GIAtxtRelTranslatorNeuralNetworkClass::propagateWordThroughNetworkGroupVeri
 					{
 						#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ENFORCE_WORD_CONNECTIVITY_ONLY_TEST_FIRST_ENCOUNTERED_ACTIVE_COMPONENT
 						if(!forwardPropogationWordData->foundMostRecentContribution)
-						{
+						#else
+						if(previousActiveComponent->neuronComponentConnectionActiveWordRecord->translatorSentenceEntityIndex > forwardPropogationWordData->mostRecentContributionWordIndex)
 						#endif
+						{
 							forwardPropogationWordData->foundMostRecentContribution = true;
 							#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE_EXTRA
 							//cout << "frontLayerActivationPathMostRecentContributionRequireResetGroupActivation = " << frontLayerActivationPathMostRecentContributionRequireResetGroupActivation << endl;
 							cout << "previousActiveComponent->neuronComponentConnectionActiveWordRecord->translatorSentenceEntityIndex = " << previousActiveComponent->neuronComponentConnectionActiveWordRecord->translatorSentenceEntityIndex << endl;
 							#endif
 							forwardPropogationWordData->mostRecentContributionWordIndex = previousActiveComponent->neuronComponentConnectionActiveWordRecord->translatorSentenceEntityIndex;
-						#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ENFORCE_WORD_CONNECTIVITY_ONLY_TEST_FIRST_ENCOUNTERED_ACTIVE_COMPONENT
 						}
-						#endif
 					}
 				}
 				#endif
