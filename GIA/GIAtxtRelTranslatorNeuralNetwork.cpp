@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetwork.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g8g 19-December-2018
+ * Project Version: 3g8h 19-December-2018
  * Requirements: 
  * Description: Textual Relation Translator Neural Network
  * /
@@ -45,6 +45,9 @@
 GIAtxtRelTranslatorRulesGroup* topLevelParseTreeGroupLocal;
 #endif
 
+#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_TAKE_LAST_SUCCESSFUL_PARSE
+static bool maxIterationIndex;
+#endif
 
 bool GIAtxtRelTranslatorNeuralNetworkClass::executeTxtRelTranslatorNeuralNetwork(GIAtranslatorVariablesClass* translatorVariables, vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, vector<GIApreprocessorPlainTextWord*>* sentenceContents, GIAtxtRelTranslatorRulesGroup** topLevelParseTreeGroup, const bool parseIsolatedSubreferenceSets, const bool parserEnabled, int* performance)
 {
@@ -469,6 +472,9 @@ bool GIAtxtRelTranslatorNeuralNetworkClass::propagateWordThroughNetworkGroupIntr
 	
 	vector<GIApreprocessorPlainTextWord*>* sentenceContents = forwardPropogationSentenceData->sentenceContents;
 
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_TAKE_LAST_SUCCESSFUL_PARSE
+	maxIterationIndex = false;
+	#endif
 	bool foundTopLevelGroup = false;
 	bool stillGeneratingSets = true;
 	int connectIterationIndex = 1;
@@ -677,6 +683,12 @@ bool GIAtxtRelTranslatorNeuralNetworkClass::propagateWordThroughNetworkGroupIntr
 		{
 			stillGeneratingSets = false;
 		}
+		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_TAKE_LAST_SUCCESSFUL_PARSE
+		if(maxIterationIndex)
+		{
+			stillGeneratingSets = false;
+		}
+		#endif
 							
 		connectIterationIndex++;
 	}
@@ -1159,8 +1171,12 @@ bool GIAtxtRelTranslatorNeuralNetworkClass::propagateWordThroughNetworkGroupComp
 			#endif
 				if(forwardPropogationSentenceData->forwardPropogationActivationPointData->connectToPreviousActivationGroup)
 				{
+					#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_TAKE_LAST_SUCCESSFUL_PARSE
+					maxIterationIndex = true;	//3g8h	//CHECKTHIS //always take successfully parses that require the least number of iterations
+					#else
 					forwardPropogationSentenceData->finishedPassingSentenceWords = true;
-
+					#endif
+					
 					#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE
 					forwardPropogationSentenceData->toplevelGroupActivationFound = true;
 					topLevelParseTreeGroupLocal = activationPathWordCurrentParseTreeGroupOwner;
