@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g2c 21-May-2018
+ * Project Version: 3g3a 03-June-2018
  * Requirements: 
  * Description: GIA specific global definitions
  * /
@@ -865,7 +865,7 @@
 			#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_RESTRICT_RECURSION
 				#define GIA_TXT_REL_TRANSLATOR_GROUP_TYPE_MAX_NUMBER_CONSECUTIVE_LAYERS (2)	//prevents infinite loop of groupType referenceSetType="logicReferenceSet/subReferenceSet/etc" (ie groupTypeName="logicReferenceSets/subReferenceSets/etc") parsing	//figure must take into account any intermediary groupType layers, eg logicReferenceSetsOptional:logicReferenceSet
 				#ifdef GIA_TXT_REL_TRANSLATOR_RULES_LOGIC_REFERENCES
-					#define GIA_TXT_REL_TRANSLATOR_GROUP_TYPE_MAX_NUMBER_CONSECUTIVE_LAYERS_LOGIC_REFERENCES (4)
+					#define GIA_TXT_REL_TRANSLATOR_GROUP_TYPE_MAX_NUMBER_CONSECUTIVE_LAYERS_LOGIC_REFERENCES (6)
 				#endif
 			#endif
 			

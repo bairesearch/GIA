@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorInverseNeuralNetwork.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g2c 21-May-2018
+ * Project Version: 3g3a 03-June-2018
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Inverse Neural Network
  * /
@@ -145,7 +145,7 @@ bool GIAtxtRelTranslatorInverseNeuralNetworkClass::generateParseTreeGroupType(ve
 		#ifndef GIA_TXT_REL_TRANSLATOR_RULES_DEFINE_GROUP_TYPE_BACKUP_AT_START
 		currentParseTreeGroupTemp->groupTypeNameBackup = groupType->groupTypeName;
 		#endif
-		currentParseTreeGroupTemp->components.clear();	//CHECKTHIS; added 5 Mar 2018
+		currentParseTreeGroupTemp->components.clear();	//added 5 Mar 2018
 		int performanceTemp = performanceOriginal;
 		bool passedTemp = false;
 		if(generateParseTreeGroup(GIAtxtRelTranslatorRulesTokenLayers, group, sentenceContentsSubset, currentParseTreeGroupTemp, &performanceTemp, layer+1, previousGroupType, numberOfConsecutiveTimesPreviousGroupType))
@@ -596,7 +596,7 @@ bool GIAtxtRelTranslatorInverseNeuralNetworkClass::generateRulesGroupTreeCompone
 			{
 				if(component->groupTypeRefName == previousGroupType)
 				{
-					if(numberOfConsecutiveTimesPreviousGroupType < GIA_TXT_REL_TRANSLATOR_GROUP_TYPE_MAX_NUMBER_CONSECUTIVE_LAYERS-1)
+					if(numberOfConsecutiveTimesPreviousGroupType < GIA_TXT_REL_TRANSLATOR_GROUP_TYPE_MAX_NUMBER_CONSECUTIVE_LAYERS)
 					{
 						pass = true;
 						numberOfConsecutiveTimesPreviousGroupType++;
@@ -642,7 +642,7 @@ bool GIAtxtRelTranslatorInverseNeuralNetworkClass::generateRulesGroupTreeCompone
 			{
 				//cout << "(component->groupRef != NULL)" << endl;
 				GIAtxtRelTranslatorRulesGroup* newParseGroup = new GIAtxtRelTranslatorRulesGroup(*(component->groupRef));	//copy group component
-				newParseGroup->components.clear();	//CHECKTHIS; added 5 Mar 2018
+				newParseGroup->components.clear();	//added 5 Mar 2018
 				currentParseTreeComponent->parseTreeGroupRef = newParseGroup;
 				//currentParseTreeComponent->groupRefName = newParseGroup->groupName;	//added 17 March 2018
 				

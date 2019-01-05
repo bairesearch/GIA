@@ -81,14 +81,13 @@ bool GIAtxtRelTranslatorNeuralNetworkClass::executeTxtRelTranslatorNeuralNetwork
 	forwardPropogationSentenceData.parseIsolatedSubreferenceSets = parseIsolatedSubreferenceSets;
 	#endif
 	forwardPropogationSentenceData.GIAtxtRelTranslatorRulesGroupTypes = GIAtxtRelTranslatorRulesGroupTypes;
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ENFORCE_WORD_CONNECTIVITY_POSHOC
 	for(int w=0; w<sentenceContents->size(); w++)
 	{
-		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ENFORCE_WORD_CONNECTIVITY_POSHOC
 		GIAtxtRelTranslatorNeuralNetworkForwardPropogationWordData* forwardPropogationWordData = new GIAtxtRelTranslatorNeuralNetworkForwardPropogationWordData();
 		forwardPropogationSentenceData.forwardPropogationWordDataArray.push_back(forwardPropogationWordData);
-		#endif
 	}
-	forwardPropogationSentenceData.activationPathWordFirstParseTreeGroupArray.resize(sentenceContents->size());
+	#endif
 	
 	resetAllNeuronComponents(GIAtxtRelTranslatorRulesGroupTypes, GIA_TXT_REL_TRANSLATOR_RULES_GROUP_BOOL_INDEX_ALLGROUPTYPES_PARSE_TREE_GROUP_REF);	//this is required to initialise currentParseTreeGroup for every group
 	
@@ -441,8 +440,6 @@ bool GIAtxtRelTranslatorNeuralNetworkClass::propagateWordThroughNetworkGroupSele
 					GIAtxtRelTranslatorRulesGroup* currentParseTreeGroupNew = new GIAtxtRelTranslatorRulesGroup(*ownerGroup);	//create a new parse tree group (in case of 1. first encounter with group or 2. recursion into different group)
 					currentParseTreeGroupNew->components.clear();
 					ownerGroup->currentParseTreeGroupArray.push_back(currentParseTreeGroupNew);
-					int currentParseTreeGroupArrayNewlyCreatedIndex = ownerGroup->currentParseTreeGroupArray.size()-1;
-					bool deleteNewlyCreatedParseTreeGroup = false;
 					for(int i2=0; i2<ownerGroup->currentParseTreeGroupArray.size(); i2++)
 					{
 						GIAtxtRelTranslatorRulesGroup* activationPathWordCurrentParseTreeGroupOwner = ownerGroup->currentParseTreeGroupArray[i2];
@@ -515,17 +512,11 @@ bool GIAtxtRelTranslatorNeuralNetworkClass::propagateWordThroughNetworkGroupSele
 						{
 							if(activationPathWordCurrentParseTreeGroupOwner == currentParseTreeGroupNew)
 							{
-								deleteNewlyCreatedParseTreeGroup = true;
+								//delete newly created parseTreeGroup
+								deleteComponents(activationPathWordCurrentParseTreeGroup);
+								delete activationPathWordCurrentParseTreeGroup;
 							}
 						}
-					}
-					if(deleteNewlyCreatedParseTreeGroup)
-					{
-						//delete newly created parseTreeGroup
-						deleteComponents(currentParseTreeGroupNew);
-						delete currentParseTreeGroupNew;
-						vector<GIAtxtRelTranslatorRulesGroup*>::iterator currentParseTreeGroupNewIter = ownerGroup->currentParseTreeGroupArray.begin() + currentParseTreeGroupArrayNewlyCreatedIndex;
-						ownerGroup->currentParseTreeGroupArray.erase(currentParseTreeGroupNewIter);
 					}
 				}
 			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PREVENT_CIRCULAR_CONNECTION_LOOPS
@@ -815,7 +806,6 @@ bool GIAtxtRelTranslatorNeuralNetworkClass::propagateWordThroughNetworkGroupComp
 		//cout << "propagateWordThroughNetworkGroupComponentPassNextWord: ownerGroup = " << ownerGroup->groupName << ", ownerGroup->groupTypeNameBackup = " << ownerGroup->groupTypeNameBackup << endl;
 					
 		//pass next word though network
-		cout << "forwardPropogationWordData->w = " << forwardPropogationWordData->w << endl;
 		int w = forwardPropogationWordData->w + 1;
 		bool expectToSeeConnectionWithPreviousWordTrace = false;
 		if(forwardPropogationSignalData->foundPreviousActiveWord)
@@ -1231,7 +1221,6 @@ bool GIAtxtRelTranslatorNeuralNetworkClass::propagateWordThroughNetworkGroupVeri
 	
 	return sequentialActivationFound;
 }
-
 
 
 

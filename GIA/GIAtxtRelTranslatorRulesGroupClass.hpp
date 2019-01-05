@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorRulesGroupClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g2c 21-May-2018
+ * Project Version: 3g3a 03-June-2018
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Rules
  * /
@@ -46,7 +46,6 @@
 
 
 #define GIA_TXT_REL_TRANSLATOR_RULES_GROUP_BOOL_INDEX_ALLGROUPTYPES_NEURON_GENERATED (1)	//type 1
-#define GIA_TXT_REL_TRANSLATOR_RULES_GROUP_BOOL_INDEX_ALLGROUPTYPES_ALL_COMPONENTS_ACTIVATED_AT_LEAST_ONCE (2)	//type 1
 
 #define GIA_TXT_REL_TRANSLATOR_RULES_GROUP_BOOL_INDEX_FORWARDPROP_NEURON_PROPAGATED (3)	//type 2
 #define GIA_TXT_REL_TRANSLATOR_RULES_GROUP_BOOL_INDEX_FORWARDPROP_NEURON_PREVIOUS_POS_WORD_TYPE_TESTED (4)	//type 2
@@ -171,10 +170,9 @@ public:
 	bool neuronPreviousWordPOStypeTested;
 	GIAtxtRelTranslatorNeuralNetworkForwardPropogationSignalData semanticRelationReturnEntityForwardPropogationSignalData;
 	GIAtxtRelTranslatorNeuralNetworkForwardPropogationSignalData semanticRelationReturnEntityForwardPropogationSignalDataProspective;	//temporary	//only update semanticRelationReturnEntityForwardPropogationSignalData upon complete/group activation (prevents ownerGroup->semanticRelationReturnEntityForwardPropogationSignalData from being invalidated by partial reactivations of a group; when accessed by an unrelated instance of GIAtxtRelTranslatorNeuralNetworkParserClass::generateSemanticRelationsFromTxtRelationsNeuralNetwor) 
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SAVE_PARSE_TREE
-	GIAtxtRelTranslatorRulesGroup* currentParseTreeGroup;
-	#endif	
-	bool allComponentsActivatedAtLeastOnce;
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE
+	vector<GIAtxtRelTranslatorRulesGroup*> currentParseTreeGroupArray;
+	#endif
 	bool neuronPrinted;
 	bool neuronActive;	//interpretation: all components are active (unless they are optional / unused or cases)
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SOLIDIFY_NET_BACKPROP
@@ -219,6 +217,8 @@ public:
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ENFORCE_WORD_CONNECTIVITY_POSHOC
 	vector<GIAtxtRelTranslatorNeuralNetworkForwardPropogationWordData*> previousWordConnections;
 	#endif
+	
+	GIAtxtRelTranslatorRulesGroup* activationPathWordFirstParseTreeGroup;
 };
 	
 class GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData
@@ -248,6 +248,8 @@ public:
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ENFORCE_WORD_CONNECTIVITY_POSHOC
 	vector<GIAtxtRelTranslatorNeuralNetworkForwardPropogationWordData*> forwardPropogationWordDataArray;
 	#endif
+	
+	vector<GIAtxtRelTranslatorRulesGroup*> activationPathWordFirstParseTreeGroupArray;
 };
 #endif
 
