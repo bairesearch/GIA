@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorPermutations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g1d 24-April-2018
+ * Project Version: 3g1e 24-April-2018
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Permutations
  * /
@@ -46,6 +46,7 @@
 #ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
 #include "GIAtxtRelTranslatorNeuralNetwork.hpp"
 #endif
+#include "GIAtxtRelTranslatorInverseNeuralNetwork.hpp"
 #include "GIApreprocessorPOStagger.hpp"
 #include "GIApreprocessorPOStaggerDatabase.hpp"
 #include "GIApreprocessorWordClass.hpp"
@@ -60,6 +61,7 @@ class GIAtxtRelTranslatorPermutationsClass
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
 	private: GIAtxtRelTranslatorNeuralNetworkClass GIAtxtRelTranslatorNeuralNetwork;
 	#endif
+	private: GIAtxtRelTranslatorInverseNeuralNetworkClass GIAtxtRelTranslatorInverseNeuralNetwork;
 	private: GIAtxtRelTranslatorRulesClass GIAtxtRelTranslatorRules;
 	private: GIApreprocessorPOStaggerClass GIApreprocessorPOStagger;
 	private: GIApreprocessorPOStaggerDatabaseClass GIApreprocessorPOStaggerDatabase;

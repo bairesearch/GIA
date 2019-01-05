@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetworkFormation.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g1d 24-April-2018
+ * Project Version: 3g1e 24-April-2018
  * Requirements: 
  * Description: Textual Relation Translator Neural Network Formation
  * /
@@ -84,9 +84,10 @@ class GIAtxtRelTranslatorNeuralNetworkFormationClass
 	private: void addGroupToLayer(GIAtxtRelTranslatorRulesGroup** currentGroupInLayer, int* numberOfGroupsInSection);
 	private: bool createGroupANNconnectionIO(GIAtxtRelTranslatorRulesGroup* group, GIAtxtRelTranslatorRulesGroup* higherLevelGroup);
 	private: bool createGroupANNconnection(GIAtxtRelTranslatorRulesGroup* group, GIAtxtRelTranslatorRulesComponent* higherLevelComponent);
+		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN
 		private: ANNneuronConnection* createANNconnection(GIAtxtRelTranslatorRulesGroup* group, GIAtxtRelTranslatorRulesGroup* higherLevelGroup);
 		private: ANNneuronConnection* createANNconnection(GIAtxtRelTranslatorRulesGroup* group, GIAtxtRelTranslatorRulesComponent* higherLevelComponent);
-
+		#endif
 };
 
 #endif

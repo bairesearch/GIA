@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g1d 24-April-2018
+ * Project Version: 3g1e 24-April-2018
  * Requirements: 
  * Description: Textual Relation Translator Parser
  * /
@@ -147,7 +147,7 @@ bool GIAtxtRelTranslatorParserClass::convertSentenceTxtRelationsIntoGIAnetworkNo
 		((*GIApreprocessorSentenceClassObject.getSentenceContents(translatorVariables->currentPreprocessorSentenceInList))[GIAtranslatorOperations.convertEntityIndexToSentenceContentsIndex(w)])->translatorEntity = entity;	//code from setPreprocessorSentenceTranslatorEntityReferences
 	}
 	
-	#if defined GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE && not defined GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_SEPARATE	
+	#if defined GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE && !defined GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_SEPARATE	
 	vector<XMLparserTag*>* GIAtxtRelTranslatorRulesTokenLayers = GIAtxtRelTranslatorRules.getGIAtxtRelTranslatorRulesTokenLayersGlobal();
 	vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes = GIAtxtRelTranslatorRules.getGIAtxtRelTranslatorRulesGroupTypesGlobal();
 	if(!GIAtxtRelTranslatorPermutations.executeTxtRelTranslatorWrapper(translatorVariables, GIAtxtRelTranslatorRulesTokenLayers, GIAtxtRelTranslatorRulesGroupTypes))
@@ -155,7 +155,7 @@ bool GIAtxtRelTranslatorParserClass::convertSentenceTxtRelationsIntoGIAnetworkNo
 		result = false;
 	}
 	#else
-	if(!GIAtxtRelTranslatorParserOperations.generateSemanticRelationsFromTxtRelationsWrapper(translatorVariables))
+	if(!generateSemanticRelationsFromTxtRelationsWrapper(translatorVariables))
 	{
 		result = false;
 	}

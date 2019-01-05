@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetworkFormation.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g1d 24-April-2018
+ * Project Version: 3g1e 24-April-2018
  * Requirements: 
  * Description: Textual Relation Translator Neural Network Formation
  * /
@@ -456,7 +456,7 @@ bool GIAtxtRelTranslatorNeuralNetworkFormationClass::createNeuronLayerIntro(vect
 		
 		if(passGroupTests)
 		{
-			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ADD_ANN_LAYER_FOR_EVERY_GROUP_TYPE
+			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN_ADD_LAYER_FOR_EVERY_GROUP_TYPE
 			ANNneuron* currentGroupNeuronInLayer = NULL;
 			ANNneuron* previousGroupNeuronInLayer = NULL;
 			#endif	
@@ -465,7 +465,7 @@ bool GIAtxtRelTranslatorNeuralNetworkFormationClass::createNeuronLayerIntro(vect
 				GIAtxtRelTranslatorRulesGroup* group = (groupType->groups)[j];
 				
 				createGroupANNconnectionIO(group, topLevelGroup);
-				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ADD_ANN_LAYER_FOR_EVERY_GROUP_TYPE
+				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN_ADD_LAYER_FOR_EVERY_GROUP_TYPE
 				currentGroupNeuronInLayer = group->neuronReference;
 				if(j != 0)
 				{
@@ -478,7 +478,7 @@ bool GIAtxtRelTranslatorNeuralNetworkFormationClass::createNeuronLayerIntro(vect
 					result = false;
 				}
 				
-				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ADD_ANN_LAYER_FOR_EVERY_GROUP_TYPE
+				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN_ADD_LAYER_FOR_EVERY_GROUP_TYPE
 				previousGroupNeuronInLayer = currentGroupNeuronInLayer;
 				#endif
 			}
@@ -492,7 +492,7 @@ bool GIAtxtRelTranslatorNeuralNetworkFormationClass::createNeuronLayerGroupType(
 {
 	bool result = true;
 	
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ADD_ANN_LAYER_FOR_EVERY_GROUP_TYPE
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN_ADD_LAYER_FOR_EVERY_GROUP_TYPE
 	ANNneuron* currentGroupNeuronInLayer = NULL;
 	ANNneuron* previousGroupNeuronInLayer = NULL;
 	#endif	
@@ -501,7 +501,7 @@ bool GIAtxtRelTranslatorNeuralNetworkFormationClass::createNeuronLayerGroupType(
 		GIAtxtRelTranslatorRulesGroup* group = (groupType->groups)[j];
 		
 		createGroupANNconnection(group, higherLevelComponent);
-		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ADD_ANN_LAYER_FOR_EVERY_GROUP_TYPE
+		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN_ADD_LAYER_FOR_EVERY_GROUP_TYPE
 		currentGroupNeuronInLayer = group->neuronReference;
 		if(j != 0)
 		{
@@ -514,7 +514,7 @@ bool GIAtxtRelTranslatorNeuralNetworkFormationClass::createNeuronLayerGroupType(
 			result = false;
 		}
 		
-		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ADD_ANN_LAYER_FOR_EVERY_GROUP_TYPE
+		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN_ADD_LAYER_FOR_EVERY_GROUP_TYPE
 		previousGroupNeuronInLayer = currentGroupNeuronInLayer;
 		#endif
 	}
@@ -744,7 +744,7 @@ GIAtxtRelTranslatorRulesGroup* GIAtxtRelTranslatorNeuralNetworkFormationClass::g
 	GIAtxtRelTranslatorRulesGroup* currentGroupInInputLayerSection = firstGroupInInputLayerSection;
 	for(int i=0; i<groupIndexInSection; i++)
 	{
-		currentGroupInInputLayerSection = currentGroupInInputLayerSection->next;	
+		currentGroupInInputLayerSection = currentGroupInInputLayerSection->next;
 	}
 	return currentGroupInInputLayerSection;
 }
@@ -764,7 +764,9 @@ bool GIAtxtRelTranslatorNeuralNetworkFormationClass::createGroupANNconnectionIO(
 	group->ANNfrontGroupConnectionList.push_back(higherLevelGroup);
 	higherLevelGroup->ANNbackGroupConnectionList.push_back(group);
 	
-	createANNconnection(group, higherLevelGroup); 
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN
+	createANNconnection(group, higherLevelGroup);
+	#endif
 }
 
 bool GIAtxtRelTranslatorNeuralNetworkFormationClass::createGroupANNconnection(GIAtxtRelTranslatorRulesGroup* group, GIAtxtRelTranslatorRulesComponent* higherLevelComponent)
@@ -773,9 +775,12 @@ bool GIAtxtRelTranslatorNeuralNetworkFormationClass::createGroupANNconnection(GI
 	
 	group->ANNfrontComponentConnectionList.push_back(higherLevelComponent);
 	
-	createANNconnection(group, higherLevelComponent); 
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN
+	createANNconnection(group, higherLevelComponent);
+	#endif
 }
 
+#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN
 ANNneuronConnection* GIAtxtRelTranslatorNeuralNetworkFormationClass::createANNconnection(GIAtxtRelTranslatorRulesGroup* group, GIAtxtRelTranslatorRulesGroup* higherLevelGroup)
 {
 	ANNneuron* neuron1 = group->neuronReference;
@@ -806,7 +811,7 @@ ANNneuronConnection* GIAtxtRelTranslatorNeuralNetworkFormationClass::createANNco
 	
 	return newANNneuronConnection;
 }
-
+#endif
 
 
 #endif
