@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetwork.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g1g 24-April-2018
+ * Project Version: 3g1h 24-April-2018
  * Requirements: 
  * Description: Textual Relation Translator Neural Network
  * /
@@ -101,25 +101,28 @@ class GIAtxtRelTranslatorNeuralNetworkClass
 									#endif
 							private: bool propagateWordThroughNetworkGroupVerifyComponentSequenceActivationReady(GIAtxtRelTranslatorRulesComponent* testComponent, vector<GIAtxtRelTranslatorRulesComponent*>* components, GIAtxtRelTranslatorNeuralNetworkForwardPropogationWordData* forwardPropogationWordData, bool* activationSequenceCompleted, const bool frontLayerActivationPathMostRecentContributionRequireResetGroupActivation);
 							private: bool propagateWordThroughNetworkGroupVerifyComponentSequenceOrActivationReady(GIAtxtRelTranslatorRulesComponent* testComponent, vector<GIAtxtRelTranslatorRulesComponent*>* components, const bool frontLayerActivationPathMostRecentContributionRequireResetGroupActivation);
-							private: bool propagateWordThroughNetworkGroupVerifyComponentSequenceRepeatActivationReady(GIAtxtRelTranslatorRulesComponent* testComponent, vector<GIAtxtRelTranslatorRulesComponent*>* components, const bool frontLayerActivationPathMostRecentContributionRequireResetGroupActivation, bool* repeatDetected);
+							private: bool propagateWordThroughNetworkGroupVerifyComponentSequenceRepeatActivationReady(GIAtxtRelTranslatorRulesComponent* testComponent, vector<GIAtxtRelTranslatorRulesComponent*>* components, GIAtxtRelTranslatorNeuralNetworkForwardPropogationWordData* forwardPropogationWordData, const bool frontLayerActivationPathMostRecentContributionRequireResetGroupActivation, bool* repeatDetected);
 
 	private: bool resetAllNeurons(vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, const int groupBoolIndexType);
 	private: bool resetAllNeuronComponents(vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, const int groupBoolIndexType);
 	private: bool printBackpropParseTree(GIAtxtRelTranslatorRulesGroup* group, int level);
 	private: bool groupActivationCompleted(GIAtxtRelTranslatorRulesGroup* group);
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SUPPORT_TRAILING_OPTIONAL_COMPONENTS_AND_SUBCOMPONENTS_DYNAMIC_RESET_INCLUDE_PARTIALLY_OR_FULLY_ACTIVATED_GROUPS
+	private: bool groupPartiallyOrFullyActivated(GIAtxtRelTranslatorRulesGroup* group);
+	#endif
 	private: bool resetGroupActivation(GIAtxtRelTranslatorRulesGroup* group);
 		private: bool resetComponentActivation(GIAtxtRelTranslatorRulesComponent* currentComponent);
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SAVE_PARSE_TREE
-	private: bool resetGroupParseTreeGroupRef(GIAtxtRelTranslatorRulesGroup* group);
+	private: bool resetGroupParseTreeGroupRef(GIAtxtRelTranslatorRulesGroup* group, const bool deleteExistingParseTreeGroupRef);
 	#endif
 	private: bool setParseTreeGroupRefOfAllComponents(GIAtxtRelTranslatorRulesGroup* group, GIAtxtRelTranslatorRulesGroup* parseTreeGroupRef);
 	private: bool componentHasSubcomponents(GIAtxtRelTranslatorRulesComponent* component);
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SUPPORT_TRAILING_OPTIONAL_COMPONENTS_AND_SUBCOMPONENTS
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SUPPORT_TRAILING_OPTIONAL_COMPONENTS_AND_SUBCOMPONENTS_SOLIDIFY_NET
-	private: bool solidifyNeuralNetIntro(GIAtxtRelTranslatorRulesGroup* group, int level);
-		private: bool solidifyNeuralNetGroupLastComponent(GIAtxtRelTranslatorRulesGroup* group, int level);
-		private: bool solidifyNeuralNetGroup(GIAtxtRelTranslatorRulesGroup* group, int level);
-			private: bool solidifyNeuralNetComponent(GIAtxtRelTranslatorRulesComponent* currentComponent, int level, const bool lastComponent, const bool solidifyComponent);
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SOLIDIFY_NET_BACKPROP
+	private: bool solidifyNeuralNetBackpropIntro(GIAtxtRelTranslatorRulesGroup* group, int level);
+		private: bool solidifyNeuralNetBackpropGroupLastComponent(GIAtxtRelTranslatorRulesGroup* group, int level);
+		private: bool solidifyNeuralNetBackpropGroup(GIAtxtRelTranslatorRulesGroup* group, int level);
+			private: bool solidifyNeuralNetBackpropComponent(GIAtxtRelTranslatorRulesComponent* currentComponent, int level, const bool lastComponent, const bool solidifyComponent);
 	#endif
 		private: bool isLastComponentFuzzy(GIAtxtRelTranslatorRulesGroup* group);
 	#endif
