@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorRules.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g8e 19-December-2018
+ * Project Version: 3g8f 19-December-2018
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Rules
  * /
@@ -830,7 +830,7 @@ bool GIAtxtRelTranslatorRulesClass::extractGIAtxtRelTranslatorRulesTokens(vector
 							if(layerName == GIA_TXT_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_LAYER_NAME)
 							{
 								//cout << "DEBUG: (layerName == GIA_TXT_REL_TRANSLATOR_RULES_TOKENS_TAG_layer_logicReference)" << endl;
-								foundTxtRelTranslatorLogicReferenceTag = true;
+								foundTxtRelTranslatorLogicReferenceTag = true;	//only record the first 3 <layer> tags
 								firstTagInTxtRelTranslatorLogicReferenceTag = XMLparserClass.parseTagDownALevel(currentTagInTokens, GIA_TXT_REL_TRANSLATOR_RULES_TOKENS_TAG_layer, &result);
 								//*firstTxtRelTranslatorRulesTokenFirstLogicReferenceTag = firstTagInTxtRelTranslatorLogicReferenceTag;
 							}

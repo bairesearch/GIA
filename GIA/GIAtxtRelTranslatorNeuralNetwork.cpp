@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetwork.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g8e 19-December-2018
+ * Project Version: 3g8f 19-December-2018
  * Requirements: 
  * Description: Textual Relation Translator Neural Network
  * /
@@ -112,9 +112,9 @@ bool GIAtxtRelTranslatorNeuralNetworkClass::executeTxtRelTranslatorNeuralNetwork
 		cout << "propagateWordThroughNetworkWordGroupIntro{} finished" << endl;
 		exit(EXIT_ERROR);
 		*/
-		if(propagateWordThroughNetworkGroupIntro(translatorVariables, &forwardPropogationSentenceData))
+		if(!propagateWordThroughNetworkGroupIntro(translatorVariables, &forwardPropogationSentenceData))
 		{
-			result = true;
+			result = false;
 		}
 	}
 	else
@@ -424,7 +424,7 @@ bool GIAtxtRelTranslatorNeuralNetworkClass::propagateWordThroughNetworkWordGroup
 	
 bool GIAtxtRelTranslatorNeuralNetworkClass::propagateWordThroughNetworkWordGroupInit(GIAtranslatorVariablesClass* translatorVariables, const int w, GIAtxtRelTranslatorRulesGroup* inputLayerGroup, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSignalData* forwardPropogationSignalData, GIAtxtRelTranslatorNeuralNetworkForwardPropogationWordData* forwardPropogationWordData, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData, int layer)
 {
-	bool result = false;
+	bool result = true;
 	
 	//cout << "activationPathWordFirstParseTreeGroupNext->inputGroupString" << endl;
 	
