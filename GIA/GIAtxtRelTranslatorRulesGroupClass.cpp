@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorRulesGroupClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g2a 21-May-2018
+ * Project Version: 3g2b 21-May-2018
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Rules
  * /
@@ -161,6 +161,9 @@ GIAtxtRelTranslatorNeuralNetworkForwardPropogationWordData::GIAtxtRelTranslatorN
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ENFORCE_WORD_CONNECTIVITY
 	expectToSeeConnectionWithPreviousWordTrace = false;
 	#endif
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ENFORCE_WORD_CONNECTIVITY_POSHOC
+	//previousWordConnections = NULL;
+	#endif
 }
 GIAtxtRelTranslatorNeuralNetworkForwardPropogationWordData::~GIAtxtRelTranslatorNeuralNetworkForwardPropogationWordData(void)
 {
@@ -183,7 +186,13 @@ GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData::GIAtxtRelTransla
 	parseIsolatedSubreferenceSets = false;
 	//#endif
 	
+	finishedPassingSentenceWords = false;
+	
 	GIAtxtRelTranslatorRulesGroupTypes = NULL;
+	
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ENFORCE_WORD_CONNECTIVITY_POSHOC
+	//forwardPropogationWordDataArray = NULL;
+	#endif
 }
 GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData::~GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData(void)
 {
