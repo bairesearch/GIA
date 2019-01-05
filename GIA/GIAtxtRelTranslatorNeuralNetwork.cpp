@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetwork.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g9a 03-January-2019
+ * Project Version: 3g9b 03-January-2019
  * Requirements: 
  * Description: Textual Relation Translator Neural Network
  * /
@@ -45,8 +45,8 @@
 GIAtxtRelTranslatorRulesGroup* topLevelParseTreeGroupLocal;
 #endif
 
-#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_TAKE_LAST_SUCCESSFUL_PARSE
-static bool maxIterationIndex;
+#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_TAKE_LAST_SUCCESSFUL_PARSE_LIMIT_ITERATIONS
+static bool maxIteration;
 #endif
 
 bool GIAtxtRelTranslatorNeuralNetworkClass::executeTxtRelTranslatorNeuralNetwork(GIAtranslatorVariablesClass* translatorVariables, vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, vector<GIApreprocessorPlainTextWord*>* sentenceContents, GIAtxtRelTranslatorRulesGroup** topLevelParseTreeGroup, const bool parseIsolatedSubreferenceSets, const bool parserEnabled, int* performance)
@@ -472,8 +472,12 @@ bool GIAtxtRelTranslatorNeuralNetworkClass::propagateWordThroughNetworkGroupIntr
 	
 	vector<GIApreprocessorPlainTextWord*>* sentenceContents = forwardPropogationSentenceData->sentenceContents;
 
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_TAKE_LAST_SUCCESSFUL_PARSE
-	maxIterationIndex = false;
+	int maxIterationIndex = GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_MAX_ITERATIONS;
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_TAKE_LAST_SUCCESSFUL_PARSE_LIMIT_ITERATIONS
+	maxIteration = false;
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_TAKE_LAST_SUCCESSFUL_PARSE_LIMIT_ITERATIONS_WEAK
+	bool limitedIterations = false;
+	#endif
 	#endif
 	bool foundTopLevelGroup = false;
 	bool stillGeneratingSets = true;
@@ -679,14 +683,23 @@ bool GIAtxtRelTranslatorNeuralNetworkClass::propagateWordThroughNetworkGroupIntr
 		{
 			stillGeneratingSets = false;
 		}
-		if(connectIterationIndex >= GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_MAX_ITERATIONS)
+		if(connectIterationIndex >= maxIterationIndex)
 		{
 			stillGeneratingSets = false;
 		}
-		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_TAKE_LAST_SUCCESSFUL_PARSE
-		if(maxIterationIndex)
+		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_TAKE_LAST_SUCCESSFUL_PARSE_LIMIT_ITERATIONS
+		if(maxIteration)
 		{
+			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_TAKE_LAST_SUCCESSFUL_PARSE_LIMIT_ITERATIONS_WEAK
+			maxIteration = false;
+			if(!limitedIterations)
+			{
+				limitedIterations = true;
+				maxIterationIndex = connectIterationIndex+GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_TAKE_LAST_SUCCESSFUL_PARSE_LIMIT_ITERATIONS_WEAK_OFFSET;	//allow 1 more iteration once maxIteration detected
+			}
+			#else
 			stillGeneratingSets = false;
+			#endif
 		}
 		#endif
 							
@@ -1176,7 +1189,9 @@ bool GIAtxtRelTranslatorNeuralNetworkClass::propagateWordThroughNetworkGroupComp
 				if(forwardPropogationSentenceData->forwardPropogationActivationPointData->connectToPreviousActivationGroup)
 				{
 					#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_TAKE_LAST_SUCCESSFUL_PARSE
-					maxIterationIndex = true;	//3g8h	//CHECKTHIS //always take successfully parses that require the least number of iterations
+					#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_TAKE_LAST_SUCCESSFUL_PARSE_LIMIT_ITERATIONS
+					maxIteration = true;	//3g8h	//CHECKTHIS //always take successfully parses that require the least number of iterations
+					#endif
 					#else
 					forwardPropogationSentenceData->finishedPassingSentenceWords = true;
 					#endif
@@ -1193,6 +1208,13 @@ bool GIAtxtRelTranslatorNeuralNetworkClass::propagateWordThroughNetworkGroupComp
 					#endif
 					#endif
 					
+					/*
+					#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE
+					cout << "topLevelGroup found" << endl;
+					printBackpropParseTree(topLevelParseTreeGroupLocal, 1);
+					cout << "end printBackpropParseTree" << endl;
+					#endif
+					*/
 					/*
 					cout << "topLevelGroup" << endl;
 					cout << "finishedPassingSentenceWords (temp exit)" << endl;
