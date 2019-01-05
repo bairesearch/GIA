@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetwork.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g1n 24-April-2018
+ * Project Version: 3g1o 24-April-2018
  * Requirements: 
  * Description: Textual Relation Translator Neural Network
  * /
@@ -825,6 +825,7 @@ bool GIAtxtRelTranslatorNeuralNetworkClass::propagateWordThroughNetworkGroupComp
 						cout << "solidifyNeuralNetBackpropGroup:, foundPreviousActiveComponent: ownerGroup = " << ownerGroup->groupName << ", ownerGroup->groupTypeNameBackup = " << ownerGroup->groupTypeNameBackup << endl;
 						GIAtxtRelTranslatorRules.printComponent(component, 0);
 						#endif
+						int previousActiveComponentWordIndex = component->neuronComponentConnectionActiveWordRecord->translatorSentenceEntityIndex;	//forwardPropogationWordData->wordReference->translatorSentenceEntityIndex - 1
 						if(GIAtxtRelTranslatorRulesComponentClassObject.componentHasSubcomponents(component))
 						{
 							int numberActiveSubcomponents = 0;
@@ -836,7 +837,7 @@ bool GIAtxtRelTranslatorNeuralNetworkClass::propagateWordThroughNetworkGroupComp
 									for(int i3=0; i3<subComponent->activationGroupRefs.size(); i3++)
 									{
 										GIAtxtRelTranslatorRulesGroup* subComponentGroupRef = (subComponent->activationGroupRefs)[i3];
-										solidifyNeuralNetBackpropGroup(subComponentGroupRef, layer+1);	
+										solidifyNeuralNetBackpropGroup(subComponentGroupRef, layer+1, previousActiveComponentWordIndex);
 									}	
 								}
 							}
@@ -846,7 +847,7 @@ bool GIAtxtRelTranslatorNeuralNetworkClass::propagateWordThroughNetworkGroupComp
 							for(int i3=0; i3<component->activationGroupRefs.size(); i3++)
 							{
 								GIAtxtRelTranslatorRulesGroup* componentGroupRef = (component->activationGroupRefs)[i3];
-								solidifyNeuralNetBackpropGroup(componentGroupRef, layer+1);	
+								solidifyNeuralNetBackpropGroup(componentGroupRef, layer+1, previousActiveComponentWordIndex);
 							}
 						}
 						#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE_EXTRA2
@@ -1649,13 +1650,14 @@ bool GIAtxtRelTranslatorNeuralNetworkClass::solidifyNeuralNetBackpropGroupLastCo
 			}
 			if(solidifyLowerLevelComponents)
 			{
+				int wordIndexToSolidifyForwardPropNOTUSED = 0;
 				if(i1 == indexOfLastComponentInGroup)
 				{
-					solidifyNeuralNetBackpropComponent(currentComponent, level, true, solidifyComponent);
+					solidifyNeuralNetBackpropComponent(currentComponent, level, true, solidifyComponent, wordIndexToSolidifyForwardPropNOTUSED);
 				}
 				else
 				{
-					solidifyNeuralNetBackpropComponent(currentComponent, level, false, solidifyComponent);
+					solidifyNeuralNetBackpropComponent(currentComponent, level, false, solidifyComponent, wordIndexToSolidifyForwardPropNOTUSED);
 				}
 			}
 		}
@@ -1664,7 +1666,7 @@ bool GIAtxtRelTranslatorNeuralNetworkClass::solidifyNeuralNetBackpropGroupLastCo
 	return result;
 }
 
-bool GIAtxtRelTranslatorNeuralNetworkClass::solidifyNeuralNetBackpropGroup(GIAtxtRelTranslatorRulesGroup* group, int level)
+bool GIAtxtRelTranslatorNeuralNetworkClass::solidifyNeuralNetBackpropGroup(GIAtxtRelTranslatorRulesGroup* group, int level, int wordIndexToSolidifyForwardProp)
 {
 	bool result = true;
 		
@@ -1674,8 +1676,12 @@ bool GIAtxtRelTranslatorNeuralNetworkClass::solidifyNeuralNetBackpropGroup(GIAtx
 		for(int i1=0; i1<group->components.size(); i1++)
 		{
 			GIAtxtRelTranslatorRulesComponent* currentComponent = (group->components)[i1];
-			solidifyNeuralNetBackpropComponent(currentComponent, level, false, true);
+			solidifyNeuralNetBackpropComponent(currentComponent, level, false, true, wordIndexToSolidifyForwardProp);
 		}
+		
+		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SOLIDIFY_NET_FORWARDPROP
+		solidifyNeuralNetForwardpropGroup(group, level, wordIndexToSolidifyForwardProp);
+		#endif
 	}
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SOLIDIFY_NET_BACKPROP_BREAK_ALL_CONNECTIONS_TO_INACTIVE_GROUPS
 	else
@@ -1687,7 +1693,7 @@ bool GIAtxtRelTranslatorNeuralNetworkClass::solidifyNeuralNetBackpropGroup(GIAtx
 	return result;
 }
 
-bool GIAtxtRelTranslatorNeuralNetworkClass::solidifyNeuralNetBackpropComponent(GIAtxtRelTranslatorRulesComponent* currentComponent, int level, const bool lastComponent, const bool solidifyComponent)
+bool GIAtxtRelTranslatorNeuralNetworkClass::solidifyNeuralNetBackpropComponent(GIAtxtRelTranslatorRulesComponent* currentComponent, int level, const bool lastComponent, const bool solidifyComponent, int wordIndexToSolidifyForwardProp)
 {
 	bool result = true;
 	
@@ -1720,7 +1726,7 @@ bool GIAtxtRelTranslatorNeuralNetworkClass::solidifyNeuralNetBackpropComponent(G
 				}
 				else
 				{
-					solidifyNeuralNetBackpropGroup(tempGroup, level+1);
+					solidifyNeuralNetBackpropGroup(tempGroup, level+1, wordIndexToSolidifyForwardProp);
 				}
 			}
 		}
@@ -1737,7 +1743,7 @@ bool GIAtxtRelTranslatorNeuralNetworkClass::solidifyNeuralNetBackpropComponent(G
 			}
 			else
 			{
-				solidifyNeuralNetBackpropGroup(tempGroup, level+1);
+				solidifyNeuralNetBackpropGroup(tempGroup, level+1, wordIndexToSolidifyForwardProp);
 			}
 		}
 	}
@@ -1746,6 +1752,50 @@ bool GIAtxtRelTranslatorNeuralNetworkClass::solidifyNeuralNetBackpropComponent(G
 }	
 			
 #endif
+
+#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SOLIDIFY_NET_FORWARDPROP
+bool GIAtxtRelTranslatorNeuralNetworkClass::solidifyNeuralNetForwardpropGroup(GIAtxtRelTranslatorRulesGroup* group, int level, int wordIndexToSolidifyForwardProp)
+{
+	bool result = true;
+
+	resetGroupActivation(group);
+	for(int i=0; i<group->ANNfrontComponentConnectionList.size(); i++)
+	{
+		GIAtxtRelTranslatorRulesComponent* currentComponent = (group->ANNfrontComponentConnectionList)[i];
+		GIAtxtRelTranslatorRulesGroup* ownerGroup = currentComponent->ownerGroup;	
+		GIAtxtRelTranslatorRulesComponent* ownerComponent = currentComponent;
+		if(currentComponent->isSubcomponent)
+		{
+			ownerComponent = currentComponent->ownerComponent;
+		}
+		
+		GIAtxtRelTranslatorRulesComponent* lastActiveComponent = NULL;
+		bool foundLastActiveComponent = false;
+		for(int i=ownerGroup->components.size()-1; i>=0; i--)
+		{
+			GIAtxtRelTranslatorRulesComponent* component = (ownerGroup->components)[i];
+			if(!foundLastActiveComponent)
+			{
+				if(component->neuronComponentConnectionActive)
+				{
+					foundLastActiveComponent = true;
+					lastActiveComponent = component;
+				}
+			}
+		}
+		if(lastActiveComponent != NULL)
+		{
+			if(lastActiveComponent->neuronComponentConnectionActiveWordRecord->translatorSentenceEntityIndex == wordIndexToSolidifyForwardProp)
+			{
+				solidifyNeuralNetForwardpropGroup(ownerGroup, level+1, wordIndexToSolidifyForwardProp);
+			}
+		}
+	}
+	
+	return result;
+}
+#endif
+
 
 bool GIAtxtRelTranslatorNeuralNetworkClass::isLastComponentFuzzy(GIAtxtRelTranslatorRulesGroup* group)
 {

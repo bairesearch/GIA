@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetwork.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g1n 24-April-2018
+ * Project Version: 3g1o 24-April-2018
  * Requirements: 
  * Description: Textual Relation Translator Neural Network
  * /
@@ -120,8 +120,11 @@ class GIAtxtRelTranslatorNeuralNetworkClass
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SOLIDIFY_NET_BACKPROP
 	private: bool solidifyNeuralNetBackpropIntro(GIAtxtRelTranslatorRulesGroup* group, int level);
 		private: bool solidifyNeuralNetBackpropGroupLastComponent(GIAtxtRelTranslatorRulesGroup* group, int level);
-		private: bool solidifyNeuralNetBackpropGroup(GIAtxtRelTranslatorRulesGroup* group, int level);
-			private: bool solidifyNeuralNetBackpropComponent(GIAtxtRelTranslatorRulesComponent* currentComponent, int level, const bool lastComponent, const bool solidifyComponent);
+		private: bool solidifyNeuralNetBackpropGroup(GIAtxtRelTranslatorRulesGroup* group, int level, int wordIndexToSolidifyForwardProp);
+			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SOLIDIFY_NET_FORWARDPROP
+			bool solidifyNeuralNetForwardpropGroup(GIAtxtRelTranslatorRulesGroup* group, int level, int wordIndexToSolidifyForwardProp);
+			#endif
+			private: bool solidifyNeuralNetBackpropComponent(GIAtxtRelTranslatorRulesComponent* currentComponent, int level, const bool lastComponent, const bool solidifyComponent, int wordIndexToSolidifyForwardProp);
 	#endif
 		private: bool isLastComponentFuzzy(GIAtxtRelTranslatorRulesGroup* group);
 	#endif
