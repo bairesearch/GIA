@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g8c 19-December-2018
+ * Project Version: 3g8d 19-December-2018
  * Requirements: 
  * Description: GIA specific global definitions
  * /
@@ -736,7 +736,7 @@
 #include "SHAREDglobalDefs.hpp"
 
 
-//#define GIA_PRINT_EXECUTION_TIME	//disable this while performing incremental automated testing
+#define GIA_PRINT_EXECUTION_TIME	//disable this while performing incremental automated testing
 
 #ifdef USE_NLC
 	#define GIA_DISABLE_CROSS_SENTENCE_REFERENCING	//added 2g5a/05-September-2014 - required for NLC 1j2b+, optional for NLC 1k11a+
@@ -754,13 +754,13 @@
 	#define GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK	//3g1a
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
 		
-		//#define GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE_EXTRA6
+		#define GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE_EXTRA6
 			//#define GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE_EXTRA5
-		//#define GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE_EXTRA4
+		#define GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE_EXTRA4
 			//#define GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE_EXTRA3
 			//#define GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE_EXTRA2
 			//#define GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE_EXTRA
-		//#define GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE
+		#define GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE
 			//#define GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_CREATE
 		#define GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS_POS_TYPES
 		
