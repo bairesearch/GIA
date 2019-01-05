@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g9c 03-January-2019
+ * Project Version: 3g9d 03-January-2019
  * Requirements: 
  * Description: GIA specific global definitions
  * /
@@ -969,8 +969,10 @@
 				
 				#define GIA_TXT_REL_TRANSLATOR_RULES_GIA3_CONNECT_MEAURES_AS_CONDITIONS_BACKWARDS_COMPATIBILITY
 				
-				#define GIA_PREPROCESSOR_WORD_COLLAPSE_NUMERICAL_WORDS_TO_NUMBERS
-
+				#ifdef USE_NLC
+					#define GIA_PREPROCESSOR_WORD_COLLAPSE_NUMERICAL_WORDS_TO_NUMBERS
+				#endif
+				
 				#define GIA_TXT_REL_TRANSLATOR_RULES_GIA3_COLLAPSE_ALIASES_ONLY	//this is required for GIA3 as there is no independent relation distribution stage (to collapse entity names) before which networkIndex nodes are defined
 				
 				#define GIA_PREPROCESSOR_WORD_STORE_REDUNDANT_SUPERSET_WORD_LISTS	//e.g. record pronoun list, not just specific pronoun lists (not supported by GIA pos tagger; only supported by GIA_TXT_REL_TRANSLATOR_RULES)
