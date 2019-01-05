@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorRules.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f11a 20-April-2018
+ * Project Version: 3g1a 24-April-2018
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Rules
  * /
@@ -203,7 +203,7 @@ bool GIAtxtRelTranslatorRulesClass::extractGIAtxtRelTranslatorRulesGroups(vector
 
 									XMLparserTag* firstTagInTxtRelTranslatorGroupTag = XMLparserClass.parseTagDownALevel(currentTagInTxtRelTranslatorGroupTypeTag, GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_GROUPTYPE_TAG_group, &result);
 
-									if(!parseComponents(firstTagInTxtRelTranslatorGroupTag, &(group->components), false))
+									if(!parseComponents(firstTagInTxtRelTranslatorGroupTag, group, &(group->components), false, NULL))
 									{
 										cerr << "GIAtxtRelTranslatorRules::extractGIAtxtRelTranslatorRulesGroups{} error: !parseComponents(firstTagInTxtRelTranslatorGroupTag, &(group->components), false))" << endl;
 										exit(EXIT_ERROR);			
@@ -240,7 +240,7 @@ bool GIAtxtRelTranslatorRulesClass::extractGIAtxtRelTranslatorRulesGroups(vector
 }
 
 
-bool GIAtxtRelTranslatorRulesClass::parseComponents(XMLparserTag* firstTxtRelTranslatorRulesFirstComponentTag, vector<GIAtxtRelTranslatorRulesComponent*>* componentsList, const bool parseSubcomponent)
+bool GIAtxtRelTranslatorRulesClass::parseComponents(XMLparserTag* firstTxtRelTranslatorRulesFirstComponentTag, GIAtxtRelTranslatorRulesGroup* groupOwner, vector<GIAtxtRelTranslatorRulesComponent*>* componentsList, const bool parseSubcomponent, GIAtxtRelTranslatorRulesComponent* subComponentOwner)
 {
 	bool result = true;
 	
@@ -525,6 +525,14 @@ bool GIAtxtRelTranslatorRulesClass::parseComponents(XMLparserTag* firstTxtRelTra
 			#endif
 			
 			GIAtxtRelTranslatorRulesComponent* component = new GIAtxtRelTranslatorRulesComponent();
+			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
+			component->ownerGroup = groupOwner;	//enables reverse lookup for ANN
+			if(parseSubcomponent)
+			{
+				component->isSubcomponent = true;
+				component->ownerComponent = subComponentOwner;
+			}
+			#endif
 			#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID
 			component->referenceSetTypeHybrid = referenceSetTypeHybridInt;
 			#endif
@@ -581,12 +589,15 @@ bool GIAtxtRelTranslatorRulesClass::parseComponents(XMLparserTag* firstTxtRelTra
 			}
 			
 			GIAtxtRelTranslatorRulesComponent* component = new GIAtxtRelTranslatorRulesComponent();
+			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
+			component->ownerGroup = groupOwner;	//enables reverse lookup for ANN
+			#endif
 			component->componentType = GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_OR;
 			componentsList->push_back(component);
 
 			XMLparserTag* firstTagInTxtRelTranslatorOrTag = XMLparserClass.parseTagDownALevel(currentTagInTxtRelTranslatorGroupTag, GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_GROUP_TAG_or, &result);
 
-			if(!parseComponents(firstTagInTxtRelTranslatorOrTag, &(component->subComponents), true))
+			if(!parseComponents(firstTagInTxtRelTranslatorOrTag, groupOwner, &(component->subComponents), true, component))
 			{
 				cerr << "GIAtxtRelTranslatorRules::extractGIAtxtRelTranslatorRulesGroups{} error: !parseComponents(firstTagInTxtRelTranslatorOrTag, &(component->components))" << endl;
 				exit(EXIT_ERROR);			
@@ -607,13 +618,16 @@ bool GIAtxtRelTranslatorRulesClass::parseComponents(XMLparserTag* firstTxtRelTra
 			}
 			
 			GIAtxtRelTranslatorRulesComponent* component = new GIAtxtRelTranslatorRulesComponent();
+			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
+			component->ownerGroup = groupOwner;	//enables reverse lookup for ANN
+			#endif
 			component->componentType = GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_REPEAT;
 			component->optional = SHAREDvars.convertStringToBool(optional);
 			componentsList->push_back(component);
 
 			XMLparserTag* firstTagInTxtRelTranslatorRepeatTag = XMLparserClass.parseTagDownALevel(currentTagInTxtRelTranslatorGroupTag, GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_GROUP_TAG_repeat, &result);
 
-			if(!parseComponents(firstTagInTxtRelTranslatorRepeatTag, &(component->subComponents), true))
+			if(!parseComponents(firstTagInTxtRelTranslatorRepeatTag, groupOwner, &(component->subComponents), true, component))
 			{
 				cerr << "GIAtxtRelTranslatorRules::extractGIAtxtRelTranslatorRulesGroups{} error: !parseComponents(firstTagInTxtRelTranslatorRepeatTag, &(component->components))" << endl;
 				exit(EXIT_ERROR);			
@@ -641,6 +655,10 @@ bool GIAtxtRelTranslatorRulesClass::connectGroupsReferences(vector<GIAtxtRelTran
 		for(int j=0; j<(groupType->groups).size(); j++)
 		{
 			GIAtxtRelTranslatorRulesGroup* group = (groupType->groups)[j];
+			#ifdef GIA_TXT_REL_TRANSLATOR_RULES_DEFINE_GROUP_TYPE_BACKUP_AT_START
+			group->groupTypeNameBackup = groupType->groupTypeName;
+			group->groupTypeReferenceSetTypeBackup = groupType->referenceSetType;
+			#endif
 			if(!connectComponentsReferences(GIAtxtRelTranslatorRulesGroupTypes, &(group->components), false))
 			{
 				result = false;

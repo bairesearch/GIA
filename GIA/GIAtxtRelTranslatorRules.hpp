@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorRules.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3f11a 20-April-2018
+ * Project Version: 3g1a 24-April-2018
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Rules
  * /
@@ -112,8 +112,12 @@ static string GIAtxtRelSemanticDependencyRelationNameArray[GIA_TXT_REL_TRANSLATO
 				#define GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_GROUP_ATTRIBUTE_semanticRelationFunctionName ((string)"semanticRelationFunctionName")	//the semantic relation to be applied to the current component (requires a subject or delimiter and an object)
 				#define GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_GROUP_ATTRIBUTE_semanticRelationFunctionName2 ((string)"semanticRelationFunctionName2")	//the semantic relation to be applied to the current component (requires a subject or delimiter and an object) #2
 					#define GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_GROUP_ATTRIBUTE_semanticRelationFunctionConditionNewName ((string)"semanticRelationFunctionConditionNewName")	
+				#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_GROUP_PREVIOUS_WORD_POS_TYPE
 				#define GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_GROUP_ATTRIBUTE_previousWordPOStype ((string)"previousWordPOStype")	//ensures that the previous word was of wordPOStype x (e.g. preposition/verb) before executing this group
+				#endif
+				#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_GROUP_EXISTS_PRECEEDING_WORD_POS_TYPE
 				#define GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_GROUP_ATTRIBUTE_existsPreceedingWordPOStype ((string)"existsPreceedingWordPOStype")	//ensures that a previous word was of wordPOStype x (e.g. preposition/verb) before executing this group
+				#endif
 				//REDUNDANT (see special case 1 for solution): #define GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_GROUP_ATTRIBUTE_semanticRelationReturnEntityAndConnectToSubject ((string)"semanticRelationReturnEntityAndConnectToSubject")	//requires the following attributes to be specified for one of its components: semanticRelationReturnFunctionName="conditionSubject" semanticRelationReturnEntity="true"
 				#define GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_GROUP_TAG_component ((string)"component")
 					#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID
@@ -274,7 +278,7 @@ class GIAtxtRelTranslatorRulesClass
 	#ifdef GIA_TXT_REL_TRANSLATOR_RULES
 
 	public: bool extractGIAtxtRelTranslatorRulesGroups(vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes);
-		private: bool parseComponents(XMLparserTag* firstTxtRelTranslatorRulesFirstComponentTag, vector<GIAtxtRelTranslatorRulesComponent*>* componentsList, const bool parseSubcomponent);
+		private: bool parseComponents(XMLparserTag* firstTxtRelTranslatorRulesFirstComponentTag, GIAtxtRelTranslatorRulesGroup* groupOwner, vector<GIAtxtRelTranslatorRulesComponent*>* componentsList, const bool parseSubcomponent, GIAtxtRelTranslatorRulesComponent* subComponentOwner);
 		private: bool connectGroupsReferences(vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes);
 			private: bool connectComponentsReferences(vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, vector<GIAtxtRelTranslatorRulesComponent*>* components, bool subcomponents);
 				private: bool findGroupType(vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, const string groupTypeName, GIAtxtRelTranslatorRulesGroupType** groupTypeFound);

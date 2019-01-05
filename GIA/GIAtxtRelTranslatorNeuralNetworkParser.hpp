@@ -23,16 +23,35 @@
 
 /*******************************************************************************
  *
- * File Name: GIAsynRelTranslatorRedistributeRelationsStanford.cpp
+ * File Name: GIAtxtRelTranslatorNeuralNetworkParser.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
  * Project Version: 3g1a 24-April-2018
- * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
- * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
+ * Requirements: 
+ * Description: Textual Relation Translator Neural Network Parser
  * /
  *******************************************************************************/
 
 
-#include "GIAsynRelTranslatorRedistributeRelationsStanford.hpp"
+#ifndef HEADER_GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSER
+#define HEADER_GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSER
 
-//see XML for dynamic translation code
+#include "GIAglobalDefs.hpp"
+
+#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
+
+#include "GIAtxtRelTranslatorParser.hpp"
+
+class GIAtxtRelTranslatorNeuralNetworkParserClass
+{
+	private: SHAREDvarsClass SHAREDvars;
+	private: GIAtxtRelTranslatorParserClass GIAtxtRelTranslatorParser;
+
+	
+
+
+};
+
+#endif
+
+#endif
