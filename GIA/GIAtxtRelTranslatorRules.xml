@@ -27,7 +27,7 @@
  * File Name: GIAtxtRelTranslatorRules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2018 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g1m 24-April-2018
+ * Project Version: 3g1n 24-April-2018
  * /
  *******************************************************************************/
  
@@ -836,7 +836,7 @@
 			</groupType>
 			<groupType groupTypeName="subReferenceSetsObject" referenceSetType="subReferenceSet">
 				<!-- not necessary (could rely on dedicated nlp instead) -->
-				<group groupName="indirectObject" semanticRelationFunctionName="conditionNew" semanticRelationFunctionConditionNewName="to" previousWordPOStype="verb">
+				<group groupName="indirectObject" semanticRelationFunctionName="conditionNew" semanticRelationFunctionConditionNewName="to">	<!-- previousWordPOStype="verb" -->
 					<!-- {det} {adv} {adj} noun {det} {adv} {adj} noun -->
 					<example><!-- {{the officer gave}} the youth a ride --></example>
 					<component componentType="group" groupTypeName="subReferenceSetsSubject" semanticRelationIndexType="object" />
