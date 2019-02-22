@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetworkOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g10a 23-January-2019
+ * Project Version: 3g10b 23-January-2019
  * Requirements: 
  * Description: Textual Relation Translator Neural Network - generic functions
  * /
@@ -527,7 +527,7 @@ bool GIAtxtRelTranslatorNeuralNetworkOperationsClass::traceBackpropParseTree(GIA
 					printComponent(currentComponent, level);
 				}
 			}
-			#ifndef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_OPTIMISED	//CHECKTHIS
+			#ifndef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_HEAVY_OPTIMISED	//CHECKTHIS
 			else
 			{
 			#endif					
@@ -543,7 +543,7 @@ bool GIAtxtRelTranslatorNeuralNetworkOperationsClass::traceBackpropParseTree(GIA
 					
 					traceBackpropParseTree(currentComponent->parseTreeGroupRef, level+1, print, performancePreprocess, performance, sentenceContents, calculateMaxWeight, maxWeight);
 				}
-			#ifndef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_OPTIMISED
+			#ifndef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_HEAVY_OPTIMISED
 			}
 			#endif
 		}	
@@ -1048,7 +1048,7 @@ bool GIAtxtRelTranslatorNeuralNetworkOperationsClass::resetGroupParseTreeGroupRe
 	}
 	group->activationMemoryGroupArray.clear();
 
-	GIAtxtRelTranslatorRulesGroup* tempMemoryGroup = copyGroup(group);
+	GIAtxtRelTranslatorRulesGroup* tempMemoryGroup = GIAtxtRelTranslatorRules.copyGroup(group);
 	group->activationMemoryGroupArray.push_back(tempMemoryGroup);
 	#endif
 	
