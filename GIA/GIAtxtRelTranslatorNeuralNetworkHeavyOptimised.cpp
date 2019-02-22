@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetworkHeavyOptimised.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g10b 23-January-2019
+ * Project Version: 3g10c 23-January-2019
  * Requirements: 
  * Description: Textual Relation Translator Neural Network
  * /
@@ -924,6 +924,11 @@ bool GIAtxtRelTranslatorNeuralNetworkHeavyOptimisedClass::propagateWordThroughNe
 			{
 				if(GIAtxtRelTranslatorRulesComponentClassObject.componentHasSubcomponents(ownerComponentOrig))
 				{
+					/*
+					cout << "propagateWordThroughNetworkGroupSelect: " <<  ownerGroup->groupTypeNameBackup << ":" << ownerGroup->groupName << endl;	
+					GIAtxtRelTranslatorNeuralNetworkOperations.printComponent(currentComponent, layer+1);
+					cout << "componentIndex = " << componentIndex << endl;
+					*/
 					activationMemoryGroupCurrentComponent = activationMemoryGroupOwnerComponent->subComponents[componentIndex];
 				}
 			}

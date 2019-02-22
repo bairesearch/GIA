@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorRules.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g10b 23-January-2019
+ * Project Version: 3g10c 23-January-2019
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Rules
  * /
@@ -1263,12 +1263,7 @@ bool GIAtxtRelTranslatorRulesClass::removeLastOptionalComponents(vector<GIAtxtRe
 					#else
 					componentsNew1->pop_back();
 					#endif
-					for(int c=GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_COMPONENT_INDEX_FIRST; c<groupNew1->components.size(); c++)
-					{
-						GIAtxtRelTranslatorRulesComponent* component = groupNew1->components[c];
-						component->componentIndex = c;
-						component->ownerGroup = groupNew1;
-					}
+					updateComponentsOwnerGroupAndIndexes(groupNew1, &(groupNew1->components));
 					(groupType->groups).push_back(groupNew1);
 
 					//create groupNew2
@@ -1283,12 +1278,7 @@ bool GIAtxtRelTranslatorRulesClass::removeLastOptionalComponents(vector<GIAtxtRe
 					GIAtxtRelTranslatorRulesComponent* lastComponentNew2 = (*componentsNew2)[components->size()-1];
 					#endif
 					lastComponentNew2->optional = false;
-					for(int c=GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_COMPONENT_INDEX_FIRST; c<groupNew2->components.size(); c++)
-					{
-						GIAtxtRelTranslatorRulesComponent* component = groupNew2->components[c];
-						component->componentIndex = c;
-						component->ownerGroup = groupNew2;
-					}
+					updateComponentsOwnerGroupAndIndexes(groupNew2, &(groupNew2->components));
 					(groupType->groups).push_back(groupNew2);
 
 					GIAtxtRelTranslatorRulesComponent* artificialGroupOrComponent = NULL;
@@ -1344,6 +1334,11 @@ bool GIAtxtRelTranslatorRulesClass::removeLastOptionalComponents(vector<GIAtxtRe
 					artificialGroupComponentNew2->isSubcomponent = true;
 					artificialGroupComponentNew2->semanticRelationReturnEntity = true;
 					artificialGroupOrComponent->subComponents.push_back(artificialGroupComponentNew2);
+					for(int c=GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_COMPONENT_INDEX_FIRST; c<artificialGroupOrComponent->subComponents.size(); c++)
+					{
+						GIAtxtRelTranslatorRulesComponent* subcomponent = artificialGroupOrComponent->subComponents[c];
+						subcomponent->componentIndex = c;
+					}
 					
 					#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE_EXTRA8
 					cout << "artificialGroupComponentNew1->groupRefName = " << artificialGroupComponentNew1->groupRefName << endl;
@@ -1398,6 +1393,23 @@ bool GIAtxtRelTranslatorRulesClass::copyComponents(vector<GIAtxtRelTranslatorRul
 	return result;
 }
 
+bool GIAtxtRelTranslatorRulesClass::updateComponentsOwnerGroupAndIndexes(GIAtxtRelTranslatorRulesGroup* group, vector<GIAtxtRelTranslatorRulesComponent*>* components)
+{
+	bool result = true;
+	
+	for(int c=GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_COMPONENT_INDEX_FIRST; c<components->size(); c++)
+	{
+		GIAtxtRelTranslatorRulesComponent* component = (*components)[c];
+		component->componentIndex = c;
+		component->ownerGroup = group;
+		if(GIAtxtRelTranslatorRulesComponentClassObject.componentHasSubcomponents(component))
+		{
+			updateComponentsOwnerGroupAndIndexes(group, &(component->subComponents));
+		}
+	}
+	
+	return result;
+}					
 
 #endif
 
