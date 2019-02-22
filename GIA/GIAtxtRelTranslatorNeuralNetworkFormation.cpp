@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetworkFormation.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g9e 03-January-2019
+ * Project Version: 3g10a 23-January-2019
  * Requirements: 
  * Description: Textual Relation Translator Neural Network Formation
  * /
@@ -440,7 +440,7 @@ bool GIAtxtRelTranslatorNeuralNetworkFormationClass::createNeuronLayerIntro(vect
 				/*
 				if(topLevelGroupInOuputLayerSectionStatements != NULL)
 				{
-					cerr << "GIAtxtRelTranslatorNeuralNetworkClass::createNeuronLayers{} error: (topLevelGroupInOuputLayerSectionStatements != NULL): more than one (groupType->referenceSetType == GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_REFERENCE_SET_TYPE_SENTENCE) && (groupType->groupTypeName == GIAtxtRelTranslatorRulesGroupsTypes[GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_TYPE_STATEMENTS]) defined" << endl;
+					cerr << "GIAtxtRelTranslatorNeuralNetworkFormationClass::createNeuronLayers{} error: (topLevelGroupInOuputLayerSectionStatements != NULL): more than one (groupType->referenceSetType == GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_REFERENCE_SET_TYPE_SENTENCE) && (groupType->groupTypeName == GIAtxtRelTranslatorRulesGroupsTypes[GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_TYPE_STATEMENTS]) defined" << endl;
 					exit(EXIT_ERROR);
 				}
 				*/
@@ -453,7 +453,7 @@ bool GIAtxtRelTranslatorNeuralNetworkFormationClass::createNeuronLayerIntro(vect
 				/*
 				if(topLevelGroupInOuputLayerSectionQuestions != NULL)
 				{
-					cerr << "GIAtxtRelTranslatorNeuralNetworkClass::createNeuronLayers{} error: (topLevelGroupInOuputLayerSectionQuestions != NULL): more than one (groupType->referenceSetType == GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_REFERENCE_SET_TYPE_SENTENCE) && (groupType->groupTypeName == GIAtxtRelTranslatorRulesGroupsTypes[GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_TYPE_QUESTIONS]) defined" << endl;
+					cerr << "GIAtxtRelTranslatorNeuralNetworkFormationClass::createNeuronLayers{} error: (topLevelGroupInOuputLayerSectionQuestions != NULL): more than one (groupType->referenceSetType == GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_REFERENCE_SET_TYPE_SENTENCE) && (groupType->groupTypeName == GIAtxtRelTranslatorRulesGroupsTypes[GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_TYPE_QUESTIONS]) defined" << endl;
 					exit(EXIT_ERROR);
 				}
 				*/
@@ -467,7 +467,7 @@ bool GIAtxtRelTranslatorNeuralNetworkFormationClass::createNeuronLayerIntro(vect
 				/*
 				if(topLevelGroupInOuputLayerSectionSubjects != NULL)
 				{
-					cerr << "GIAtxtRelTranslatorNeuralNetworkClass::createNeuronLayers{} error: (topLevelGroupInOuputLayerSectionSubjects != NULL): more than one (groupType->referenceSetType == GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_REFERENCE_SET_TYPE_SENTENCE) && (groupType->groupTypeName == GIAtxtRelTranslatorRulesGroupsTypes[GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_TYPE_SUBJECTS]) defined" << endl;
+					cerr << "GIAtxtRelTranslatorNeuralNetworkFormationClass::createNeuronLayers{} error: (topLevelGroupInOuputLayerSectionSubjects != NULL): more than one (groupType->referenceSetType == GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_REFERENCE_SET_TYPE_SENTENCE) && (groupType->groupTypeName == GIAtxtRelTranslatorRulesGroupsTypes[GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_TYPE_SUBJECTS]) defined" << endl;
 					exit(EXIT_ERROR);
 				}
 				*/
@@ -584,7 +584,7 @@ bool GIAtxtRelTranslatorNeuralNetworkFormationClass::createNeuronLayerComponents
 				
 				stringGroup = getInputGroupLayerSection(firstGroupInInputLayerSectionWordPOStype, wordPOStype);
 				#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_CREATE
-				cout << "GIAtxtRelTranslatorNeuralNetworkClass::createNeuronLayerGroupType{}: getInputGroupLayerSection): wordPOStypeName = " << wordPOStypeName << endl;
+				cout << "GIAtxtRelTranslatorNeuralNetworkFormationClass::createNeuronLayerGroupType{}: getInputGroupLayerSection): wordPOStypeName = " << wordPOStypeName << endl;
 				#endif
 			}
 			else if(component->stringType == GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_STRINGTYPE_EXPLICIT)
@@ -595,12 +595,12 @@ bool GIAtxtRelTranslatorNeuralNetworkFormationClass::createNeuronLayerComponents
 				{
 					stringGroup = iter->second;
 					#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_CREATE
-					cout << "GIAtxtRelTranslatorNeuralNetworkClass::createNeuronLayerGroupType{}: (iter != inputLayerSectionExplicitWordMap.end()): word = " << word << endl;
+					cout << "GIAtxtRelTranslatorNeuralNetworkFormationClass::createNeuronLayerGroupType{}: (iter != inputLayerSectionExplicitWordMap.end()): word = " << word << endl;
 					#endif	
 				}
 				else
 				{
-					cerr << "GIAtxtRelTranslatorNeuralNetworkClass::createNeuronLayerComponents{} error: cannot find word in inputLayerSectionExplicitWordMap: word = " << word << endl;
+					cerr << "GIAtxtRelTranslatorNeuralNetworkFormationClass::createNeuronLayerComponents{} error: cannot find word in inputLayerSectionExplicitWordMap: word = " << word << endl;
 					exit(EXIT_ERROR);
 				}
 			}
@@ -609,12 +609,12 @@ bool GIAtxtRelTranslatorNeuralNetworkFormationClass::createNeuronLayerComponents
 				if(findTokensLayerClassType(component->tokenLayer, component->tokenClass, component->tokenType, &stringGroup))
 				{
 					#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_CREATE
-					cout << "GIAtxtRelTranslatorNeuralNetworkClass::createNeuronLayerGroupType{}: findTokensLayerClassType: component->tokenClass = " << component->tokenClass << ", component->tokenType = " << component->tokenType << endl;
+					cout << "GIAtxtRelTranslatorNeuralNetworkFormationClass::createNeuronLayerGroupType{}: findTokensLayerClassType: component->tokenClass = " << component->tokenClass << ", component->tokenType = " << component->tokenType << endl;
 					#endif				
 				}
 				else
 				{
-					cerr << "GIAtxtRelTranslatorNeuralNetworkClass::createNeuronLayerComponents{} error: !findTokensLayerClassType(): component->tokenClass = " << component->tokenClass << ", component->tokenType = " << component->tokenType << endl;
+					cerr << "GIAtxtRelTranslatorNeuralNetworkFormationClass::createNeuronLayerComponents{} error: !findTokensLayerClassType(): component->tokenClass = " << component->tokenClass << ", component->tokenType = " << component->tokenType << endl;
 					exit(EXIT_ERROR);
 				}
 			}
@@ -626,6 +626,10 @@ bool GIAtxtRelTranslatorNeuralNetworkFormationClass::createNeuronLayerComponents
 			if(component->groupRef != NULL)
 			{
 				createGroupANNconnection(component->groupRef, component);
+				
+				#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE_EXTRA8
+				cout << "createGroupANNconnection: component->groupRef->groupName = " << component->groupRef->groupName << ", higher level component groupOwner group->groupName = " << group->groupName << endl;
+				#endif
 
 				//#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_WORD_NOUN_VERB_VARIANT
 				//forwardNounVerbVariantRequirementsComponentToGroup(currentParseTreeComponent, newParseGroup);
@@ -634,7 +638,7 @@ bool GIAtxtRelTranslatorNeuralNetworkFormationClass::createNeuronLayerComponents
 				if(createNeuronLayerGroup(GIAtxtRelTranslatorRulesTokenLayers, component->groupRef))
 				{
 					#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_CREATE
-					cout << "GIAtxtRelTranslatorNeuralNetworkClass::createNeuronLayerComponents{}: createNeuronLayerGroup" << endl;
+					cout << "GIAtxtRelTranslatorNeuralNetworkFormationClass::createNeuronLayerComponents{}: createNeuronLayerGroup" << endl;
 					#endif
 					//foundWordMatch = true;
 				}
@@ -648,14 +652,14 @@ bool GIAtxtRelTranslatorNeuralNetworkFormationClass::createNeuronLayerComponents
 				if(createNeuronLayerGroupType(GIAtxtRelTranslatorRulesTokenLayers, component, component->groupTypeRef))
 				{
 					#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_CREATE
-					cout << "GIAtxtRelTranslatorNeuralNetworkClass::createNeuronLayerComponents{}: createNeuronLayerGroupType" << endl;
+					cout << "GIAtxtRelTranslatorNeuralNetworkFormationClass::createNeuronLayerComponents{}: createNeuronLayerGroupType" << endl;
 					#endif
 					//foundWordMatch = true;
 				}
 			}
 			else
 			{
-				cerr << "GIAtxtRelTranslatorNeuralNetworkClass::createNeuronLayerComponents{} error: (component->componentType == GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_GROUP) && (component->groupTypeRef/groupRef == NULL)" << endl;
+				cerr << "GIAtxtRelTranslatorNeuralNetworkFormationClass::createNeuronLayerComponents{} error: (component->componentType == GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_GROUP) && (component->groupTypeRef/groupRef == NULL)" << endl;
 				exit(EXIT_ERROR);
 			}
 			
@@ -665,13 +669,13 @@ bool GIAtxtRelTranslatorNeuralNetworkFormationClass::createNeuronLayerComponents
 			if(subcomponents)
 			{
 				result = false;
-				cerr << "GIAtxtRelTranslatorNeuralNetworkClass::createNeuronLayerComponents{} error: (component->componentType == GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_OR/REPEAT) && subcomponents" << endl;
+				cerr << "GIAtxtRelTranslatorNeuralNetworkFormationClass::createNeuronLayerComponents{} error: (component->componentType == GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_OR/REPEAT) && subcomponents" << endl;
 				exit(EXIT_ERROR);
 			}
 			if(!createNeuronLayerComponents(GIAtxtRelTranslatorRulesTokenLayers, group, &(component->subComponents), true, component))	//CHECKTHIS (NB repeat/optional subcomponents are currently added directly to the groupNeuron like the other neurons)
 			{
 				result = false;
-				cerr << "GIAtxtRelTranslatorNeuralNetworkClass::createNeuronLayerComponents{} error: !connectComponentsReferences()" << endl;
+				cerr << "GIAtxtRelTranslatorNeuralNetworkFormationClass::createNeuronLayerComponents{} error: !connectComponentsReferences()" << endl;
 				exit(EXIT_ERROR);		
 			}
 		}
@@ -795,7 +799,7 @@ bool GIAtxtRelTranslatorNeuralNetworkFormationClass::createGroupANNconnectionIO(
 
 bool GIAtxtRelTranslatorNeuralNetworkFormationClass::createGroupANNconnection(GIAtxtRelTranslatorRulesGroup* group, GIAtxtRelTranslatorRulesComponent* higherLevelComponent)
 {
-	//cout << "GIAtxtRelTranslatorNeuralNetworkClass::createGroupANNconnection" << endl;
+	//cout << "GIAtxtRelTranslatorNeuralNetworkFormationClass::createGroupANNconnection" << endl;
 	
 	group->ANNfrontComponentConnectionList.push_back(higherLevelComponent);
 	

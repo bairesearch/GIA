@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorRules.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g9e 03-January-2019
+ * Project Version: 3g10a 23-January-2019
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Rules
  * /
@@ -277,6 +277,7 @@ class GIAtxtRelTranslatorRulesClass
 {
 	private: XMLparserClassClass XMLparserClass;
 	private: SHAREDvarsClass SHAREDvars;
+	private: GIAtxtRelTranslatorRulesComponentClass GIAtxtRelTranslatorRulesComponentClassObject;
 	
 	#ifdef GIA_TXT_REL_TRANSLATOR_RULES
 
@@ -294,9 +295,13 @@ class GIAtxtRelTranslatorRulesClass
 	public: bool isClassTagWrapper(string word, string layerNameToFind, string classNameToFind, string classTypeNameToFind, vector<XMLparserTag*>* GIAtxtRelTranslatorRulesTokenLayers);
 		public: bool isClassTag(string word, string layerNameToFind, string classNameToFind, string* classTypeNameFound, vector<XMLparserTag*>* GIAtxtRelTranslatorRulesTokenLayers);
 		public: bool isClassTag(string word, string layerNameToFind, string classNameToFind, string classTypeNameToFind, vector<XMLparserTag*>* GIAtxtRelTranslatorRulesTokenLayers);
-		
-	public: bool printComponent(GIAtxtRelTranslatorRulesComponent* currentParseTreeComponent, int layer);
-	public: bool printParseTreeDebugIndentation(int layer);
+	
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_REMOVE_LAST_OPTIONAL_COMPONENTS
+	private: bool removeLastOptionalComponents(vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes);
+	#endif
+
+	public: GIAtxtRelTranslatorRulesGroup* copyGroup(GIAtxtRelTranslatorRulesGroup* group);
+		public: bool copyComponents(vector<GIAtxtRelTranslatorRulesComponent*>* components, vector<GIAtxtRelTranslatorRulesComponent*>* componentsNew);
 	
 	#endif
 

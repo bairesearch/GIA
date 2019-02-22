@@ -23,10 +23,10 @@
 
 /*******************************************************************************
  *
- * File Name: GIAtxtRelTranslatorInverseNeuralNetwork.hpp
+ * File Name: GIAtxtRelTranslatorNeuralNetworkInverse.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g9e 03-January-2019
+ * Project Version: 3g10a 23-January-2019
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Inverse Neural Network
  * /
@@ -44,17 +44,19 @@
 #include "GIAtxtRelTranslatorRules.hpp"
 #include "GIAtxtRelTranslatorRulesGroupClass.hpp"
 #include "GIAtxtRelTranslatorRulesComponentClass.hpp"
+#include "GIAtxtRelTranslatorNeuralNetworkOperations.hpp"
 #include "GIApreprocessorPOStagger.hpp"
 #include "GIApreprocessorWordClass.hpp"
 #include "GIApreprocessorSentenceClass.hpp"
 #include "SHAREDvars.hpp"
 
-class GIAtxtRelTranslatorInverseNeuralNetworkClass
+class GIAtxtRelTranslatorNeuralNetworkInverseClass
 {
 	private: GIAtranslatorOperationsClass GIAtranslatorOperations;
 	private: GIAtxtRelTranslatorRulesGroupClass GIAtxtRelTranslatorRulesGroupClassObject;
 	private: GIAtxtRelTranslatorRulesComponentClass GIAtxtRelTranslatorRulesComponentClassObject;
 	private: GIAtxtRelTranslatorRulesClass GIAtxtRelTranslatorRules;
+	private: GIAtxtRelTranslatorNeuralNetworkOperationsClass GIAtxtRelTranslatorNeuralNetworkOperations;	//required for printComponent/printParseTreeDebugIndentation
 	private: GIApreprocessorPOStaggerClass GIApreprocessorPOStagger;
 	private: GIApreprocessorWordClassClass GIApreprocessorWordClassObject;
 	private: GIApreprocessorSentenceClass GIApreprocessorSentenceClassObject;
@@ -74,7 +76,6 @@ class GIAtxtRelTranslatorInverseNeuralNetworkClass
 		public: bool updatePerformance(const int performanceTemp, int* performance, GIAtxtRelTranslatorRulesGroup* currentParseTreeGroup, GIAtxtRelTranslatorRulesGroup* currentParseTreeGroupTemp, const bool passedTemp, int* minIndexOfMatchesFoundBackupOptimum, vector<GIApreprocessorPlainTextWord*>* sentenceContentsSubset, const int minIndexOfMatchesFoundBackup, GIAtxtRelTranslatorRulesComponent* previousParseTreeComponent);
 			private: bool deleteAllSubgroupsRecurse(GIAtxtRelTranslatorRulesGroup* currentParseTreeGroup, int layer);
 			private: bool deleteParseComponent(GIAtxtRelTranslatorRulesComponent* currentParseTreeComponent);
-		public: int calculateMinIndexOfMatchesFound(vector<GIApreprocessorPlainTextWord*>* sentenceContentsSubset);
 		public: void clearAllWordsAlreadyFoundMatchInComponent(vector<GIApreprocessorPlainTextWord*>* sentenceContentsSubset, const int minIndexOfMatchesFoundBackup);
 		public: void restoreAllWordsAlreadyFoundMatchInComponent(vector<GIApreprocessorPlainTextWord*>* sentenceContentsSubset, const int minIndexOfMatchesFoundNew);
 	private: void defineSubstancesBasedOnNetworkAndDeterminerInfo(GIAtranslatorVariablesClass* translatorVariables);

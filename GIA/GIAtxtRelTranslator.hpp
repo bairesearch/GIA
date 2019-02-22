@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslator.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g9e 03-January-2019
+ * Project Version: 3g10a 23-January-2019
  * Requirements: requires plain text file
  * Description: Textual Relation Translator
  * /
@@ -47,14 +47,20 @@
 #endif
 #include "GIAtxtRelTranslatorRules.hpp"
 #ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
-#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_UNOPTIMISED
-#include "GIAtxtRelTranslatorNeuralNetworkUnoptimised.hpp"
+#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_HEAVY
+#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_HEAVY_UNOPTIMISED
+#include "GIAtxtRelTranslatorNeuralNetworkHeavyUnoptimised.hpp"
 #else
-#include "GIAtxtRelTranslatorNeuralNetwork.hpp"
+#include "GIAtxtRelTranslatorNeuralNetworkHeavyOptimised.hpp"
+#endif
+#else
+#include "GIAtxtRelTranslatorNeuralNetworkLight.hpp"
 #endif
 #include "GIAtxtRelTranslatorNeuralNetworkFormation.hpp"
+#else
+#include "GIAtxtRelTranslatorNeuralNetworkInverse.hpp"
 #endif
-#include "GIAtxtRelTranslatorInverseNeuralNetwork.hpp"
+#include "GIAtxtRelTranslatorNeuralNetworkOperations.hpp"
 #ifdef GIA_PREPROCESSOR_INITIALISE_WORD_INDEX_LIST_FROM_LRP_FILES
 #include "GIApreprocessorWordIdentification.hpp"
 #endif
@@ -75,14 +81,20 @@ class GIAtxtRelTranslatorClass
 	private: GIAtxtRelTranslatorHybridClass GIAtxtRelTranslatorHybrid;
 	#endif
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_UNOPTIMISED
-	private: GIAtxtRelTranslatorNeuralNetworkUnoptimisedClass GIAtxtRelTranslatorNeuralNetwork;
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_HEAVY
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_HEAVY_UNOPTIMISED
+	private: GIAtxtRelTranslatorNeuralNetworkHeavyUnoptimisedClass GIAtxtRelTranslatorNeuralNetwork;
 	#else
-	private: GIAtxtRelTranslatorNeuralNetworkClass GIAtxtRelTranslatorNeuralNetwork;
+	private: GIAtxtRelTranslatorNeuralNetworkHeavyOptimisedClass GIAtxtRelTranslatorNeuralNetwork;
+	#endif
+	#else
+	private: GIAtxtRelTranslatorNeuralNetworkLightClass GIAtxtRelTranslatorNeuralNetwork;	
 	#endif
 	private: GIAtxtRelTranslatorNeuralNetworkFormationClass GIAtxtRelTranslatorNeuralNetworkFormation;
+	#else
+	private: GIAtxtRelTranslatorNeuralNetworkInverseClass GIAtxtRelTranslatorNeuralNetworkInverse;	
 	#endif
-	private: GIAtxtRelTranslatorInverseNeuralNetworkClass GIAtxtRelTranslatorInverseNeuralNetwork;	
+	private: GIAtxtRelTranslatorNeuralNetworkOperationsClass GIAtxtRelTranslatorNeuralNetworkOperations;	//required for printComponent/printParseTreeDebugIndentation	
 	private: GIAtxtRelTranslatorRulesClass GIAtxtRelTranslatorRules;
 	#ifdef GIA_PREPROCESSOR_INITIALISE_WORD_INDEX_LIST_FROM_LRP_FILES
 	private: GIApreprocessorWordIdentificationClass GIApreprocessorWordIdentification;

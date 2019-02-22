@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorRulesGroupClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g9e 03-January-2019
+ * Project Version: 3g10a 23-January-2019
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Rules
  * /
@@ -93,8 +93,10 @@ public:
 	GIAtxtRelTranslatorDebug(void);
 	~GIAtxtRelTranslatorDebug(void);
 	
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_HEAVY
 	int activationMemoryGroupArrayIndex;
 	int activationMemoryGroupArraySize;
+	#endif
 	bool firstComponentActive;
 	bool secondComponentActive;
 };
@@ -234,7 +236,7 @@ public:
 	GIAtxtRelTranslatorNeuralNetworkForwardPropogationSignalData semanticRelationReturnEntityForwardPropogationSignalDataProspective;	//temporary	//only update semanticRelationReturnEntityForwardPropogationSignalData upon complete/group activation (prevents ownerGroup->semanticRelationReturnEntityForwardPropogationSignalData from being invalidated by partial reactivations of a group; when accessed by an unrelated instance of GIAtxtRelTranslatorNeuralNetworkParserClass::generateSemanticRelationsFromTxtRelationsNeuralNetwor) 
 	
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SAVE_MEMORY_GROUPS
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_UNOPTIMISED
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_HEAVY_UNOPTIMISED
 	vector<GIAtxtRelTranslatorRulesGroup*> activationMemoryGroupArray;
 	#endif
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SAVE_MEMORY_GROUPS_PREVENT_CIRCULAR_CONNECTION_LOOPS
@@ -242,8 +244,11 @@ public:
 	#endif
 	#endif
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_UNOPTIMISED
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_HEAVY_UNOPTIMISED
 	vector<GIAtxtRelTranslatorRulesGroup*> currentParseTreeGroupArray;
+	#endif
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_NEW
+	GIAtxtRelTranslatorRulesGroup* currentParseTreeGroupTemp;	//used fill in currentParseTreeGroupTemp components before adding currentParseTreeGroup to parseTreeGroup network
 	#endif
 	//parse tree variables:
 	GIAtxtRelTranslatorRulesGroup* parseTreeGroupRefReverse;
@@ -258,8 +263,10 @@ public:
 	//bool neuronSolidified;
 	#endif
 	#endif
-
 	
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_REMOVE_LAST_OPTIONAL_COMPONENTS
+	GIAtxtRelTranslatorRulesGroup* optionalComponentsWrapperGroup;
+	#endif
 
 };
 
@@ -320,11 +327,13 @@ public:
 
 	vector<GIAtxtRelTranslatorNeuralNetworkForwardPropogationWordData*> forwardPropogationWordDataArray;
 	
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_UNOPTIMISED
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_HEAVY
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_HEAVY_UNOPTIMISED
 	vector<GIAtxtRelTranslatorRulesGroup*> activationPathWordFirstParseTreeGroupArray;
 	#else
 	vector<vector<GIAtxtRelTranslatorRulesGroup*>> activationPathWordFirstActivationMemoryGroupArray;
 	vector<vector<GIAtxtRelTranslatorRulesGroup*>> activationPathWordFirstParseTreeGroupArray;
+	#endif
 	#endif
 	
 	GIAtxtRelTranslatorNeuralNetworkForwardPropogationActivationPointData* forwardPropogationActivationPointData;

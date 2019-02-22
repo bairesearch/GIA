@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorRulesComponentClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g9e 03-January-2019
+ * Project Version: 3g10a 23-January-2019
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Rules
  * /
@@ -105,6 +105,10 @@ GIAtxtRelTranslatorRulesComponent::GIAtxtRelTranslatorRulesComponent(void)
 	parseTreeGroupRef = NULL;
 	componentRef = NULL;
 	wordPOStypeInferred = GIA_PREPROCESSOR_POS_TYPE_UNDEFINED;
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_BIO2
+	groupFrontComponentConnectionListIndex = INT_DEFAULT_VALUE;
+	numberOfWordsCurrentlyParsed = INT_DEFAULT_VALUE;
+	#endif
 	
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
 	ownerGroup = NULL;

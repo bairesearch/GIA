@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorRulesGroupClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g9e 03-January-2019
+ * Project Version: 3g10a 23-January-2019
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Rules
  * /
@@ -41,8 +41,10 @@
 
 GIAtxtRelTranslatorDebug::GIAtxtRelTranslatorDebug(void)
 {
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_HEAVY
 	activationMemoryGroupArrayIndex = INT_DEFAULT_VALUE;
 	activationMemoryGroupArraySize = INT_DEFAULT_VALUE;
+	#endif
 	firstComponentActive = false;
 	secondComponentActive = false;	
 }
@@ -184,7 +186,7 @@ GIAtxtRelTranslatorRulesGroup::GIAtxtRelTranslatorRulesGroup(void)
 	//semanticRelationReturnEntityForwardPropogationSignalDataProspective = NULL;
 	
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SAVE_MEMORY_GROUPS
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_UNOPTIMISED
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_HEAVY_UNOPTIMISED
 	//activationMemoryGroupArray = NULL;
 	#endif
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SAVE_MEMORY_GROUPS_PREVENT_CIRCULAR_CONNECTION_LOOPS
@@ -192,9 +194,12 @@ GIAtxtRelTranslatorRulesGroup::GIAtxtRelTranslatorRulesGroup(void)
 	#endif
 	#endif
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_UNOPTIMISED
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_HEAVY_UNOPTIMISED
 	//currentParseTreeGroupArray = NULL;
 	#endif
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_NEW
+	currentParseTreeGroupTemp = NULL;	//used fill in currentParseTreeGroupTemp components before adding currentParseTreeGroup to parseTreeGroup network
+	#endif	
 	//parse tree variables:
 	parseTreeGroupRefReverse = NULL;
 	parseTreeGroupRefReverseComponentIndex = INT_DEFAULT_VALUE;
@@ -207,6 +212,10 @@ GIAtxtRelTranslatorRulesGroup::GIAtxtRelTranslatorRulesGroup(void)
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SOLIDIFY_NET_BACKPROP
 	//neuronSolidified = false;
 	#endif
+	#endif
+	
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_REMOVE_LAST_OPTIONAL_COMPONENTS
+	optionalComponentsWrapperGroup = NULL;
 	#endif
 }
 GIAtxtRelTranslatorRulesGroup::~GIAtxtRelTranslatorRulesGroup(void)
@@ -264,7 +273,7 @@ GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData::GIAtxtRelTransla
 	
 	//forwardPropogationWordDataArray = NULL;
 	
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_UNOPTIMISED
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_HEAVY_UNOPTIMISED
 	//activationPathWordFirstParseTreeGroupArray = NULL;
 	#else
 	//activationPathWordFirstActivationMemoryGroupArray = NULL;
