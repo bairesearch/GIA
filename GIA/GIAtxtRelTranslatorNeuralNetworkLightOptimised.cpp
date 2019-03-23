@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetworkLightOptimised.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g11h 01-March-2019
+ * Project Version: 3g11i 01-March-2019
  * Requirements: 
  * Description: Textual Relation Translator Neural Network Light Optimised - ~O(n)
  * /
@@ -911,7 +911,7 @@ bool GIAtxtRelTranslatorNeuralNetworkLightOptimisedClass::propagateWordThroughNe
 				}
 				*/
 				*resetUnallowed = false;
-				if(GIAtxtRelTranslatorNeuralNetworkOperations.resetAllowed(ownerGroup, activationPathWordCurrentParseTreeGroup, forwardPropogationWordData, *existingActivationFound, forwardPropogationSentenceData))
+				if(GIAtxtRelTranslatorNeuralNetworkOperations.resetAllowed(ownerGroup, activationPathWordCurrentParseTreeGroup, forwardPropogationWordData, *existingActivationFound, forwardPropogationSentenceData, firstActiveComponentInGroup))
 				{
 				#endif
 					#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE_EXTRA3
@@ -1002,6 +1002,14 @@ bool GIAtxtRelTranslatorNeuralNetworkLightOptimisedClass::propagateWordThroughNe
 			#endif
 		}
 	}
+		
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_PREPROCESS_DONT_OVERWRITE_REFERENCESETS_THAT_CAPTURES_EOS_MOD
+	if(!GIAtxtRelTranslatorNeuralNetworkOperations.resetAllowed(ownerGroup, activationPathWordCurrentParseTreeGroup, forwardPropogationWordData, *existingActivationFound, forwardPropogationSentenceData, firstActiveComponentInGroup))
+	{
+		*resetUnallowed = true;
+	}
+	#endif
+				
 	
 	/*
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ENFORCE_WORD_CONNECTIVITY_POSHOC	

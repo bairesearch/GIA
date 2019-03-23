@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetworkOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g11h 01-March-2019
+ * Project Version: 3g11i 01-March-2019
  * Requirements: 
  * Description: Textual Relation Translator Neural Network Operations - generic functions
  * /
@@ -1865,13 +1865,13 @@ int GIAtxtRelTranslatorNeuralNetworkOperationsClass::calculateMinIndexOfMatchesF
 
 #ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_PREPROCESS_DONT_OVERWRITE_REFERENCESETS_THAT_CAPTURES_EOS
 //determines if reset is allowed
-bool GIAtxtRelTranslatorNeuralNetworkOperationsClass::resetAllowed(GIAtxtRelTranslatorRulesGroup* ownerGroup, GIAtxtRelTranslatorRulesGroup* activationPathWordCurrentParseTreeGroup, GIAtxtRelTranslatorNeuralNetworkForwardPropogationWordData* forwardPropogationWordData, const bool existingActivationFound, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData)
+bool GIAtxtRelTranslatorNeuralNetworkOperationsClass::resetAllowed(GIAtxtRelTranslatorRulesGroup* ownerGroup, GIAtxtRelTranslatorRulesGroup* activationPathWordCurrentParseTreeGroup, GIAtxtRelTranslatorNeuralNetworkForwardPropogationWordData* forwardPropogationWordData, const bool existingActivationFound, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData, const bool firstActiveComponentInGroup)
 {
 	bool result = false;
 	
 	if((ownerGroup->groupName == "general") && (ownerGroup->groupTypeNameBackup == "referenceSets"))	//CHECKTHIS magic strings
 	{
-		if(existingActivatedComponentCapturesLastWordInSentence(ownerGroup, activationPathWordCurrentParseTreeGroup, forwardPropogationWordData, existingActivationFound, forwardPropogationSentenceData))
+		if(existingActivatedComponentCapturesLastWordInSentence(ownerGroup, activationPathWordCurrentParseTreeGroup, forwardPropogationWordData, existingActivationFound, forwardPropogationSentenceData, firstActiveComponentInGroup))
 		{
 			result = true;
 		}
@@ -1884,7 +1884,8 @@ bool GIAtxtRelTranslatorNeuralNetworkOperationsClass::resetAllowed(GIAtxtRelTran
 	return result;
 }
 
-bool GIAtxtRelTranslatorNeuralNetworkOperationsClass::existingActivatedComponentCapturesLastWordInSentence(GIAtxtRelTranslatorRulesGroup* ownerGroup, GIAtxtRelTranslatorRulesGroup* activationPathWordCurrentParseTreeGroup, GIAtxtRelTranslatorNeuralNetworkForwardPropogationWordData* forwardPropogationWordData, const bool existingActivationFound, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData)
+//requires GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_REVERSE;
+bool GIAtxtRelTranslatorNeuralNetworkOperationsClass::existingActivatedComponentCapturesLastWordInSentence(GIAtxtRelTranslatorRulesGroup* ownerGroup, GIAtxtRelTranslatorRulesGroup* activationPathWordCurrentParseTreeGroup, GIAtxtRelTranslatorNeuralNetworkForwardPropogationWordData* forwardPropogationWordData, const bool existingActivationFound, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData, const bool firstActiveComponentInGroup)
 {
 	bool result = false;
 
@@ -1894,15 +1895,29 @@ bool GIAtxtRelTranslatorNeuralNetworkOperationsClass::existingActivatedComponent
 	GIAtxtRelTranslatorRulesComponent* lastActiveComponentInParseTree = NULL;
 	GIAtxtRelTranslatorRulesGroup* ownerGroupParseTreeGroup = ownerGroup->currentParseTreeGroupTemp;
 	
-	if(existingActivationFound)
+
+	if(ownerGroupParseTreeGroup->components.size() > 0)
 	{
-		if(ownerGroupParseTreeGroup->components.size() > 0)
+		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_PREPROCESS_DONT_OVERWRITE_REFERENCESETS_THAT_CAPTURES_EOS_MOD
+		if(firstActiveComponentInGroup)
+		#else
+		if(existingActivationFound)
+		#endif
 		{
+			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_PREPROCESS_DONT_OVERWRITE_REFERENCESETS_THAT_CAPTURES_EOS_MOD
+			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_REVERSE
+			int lastActiveComponentInParseTreeIndex = ownerGroupParseTreeGroup->components.size() - 1;
+			#else
+			int lastActiveComponentInParseTreeIndex = ownerGroupParseTreeGroup->components.size() - 1;
+			#endif
+			#else
 			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_REVERSE
 			int lastActiveComponentInParseTreeIndex = 0;
 			#else
 			int lastActiveComponentInParseTreeIndex = ownerGroupParseTreeGroup->components.size() - 1;
 			#endif
+			#endif
+			
 			GIAtxtRelTranslatorRulesComponent* lastActiveComponentInParseTree = (ownerGroupParseTreeGroup->components)[lastActiveComponentInParseTreeIndex];
 
 			lastActiveComponentInParseTreeParseTreeGroupRef = lastActiveComponentInParseTree->parseTreeGroupRef;
@@ -1914,6 +1929,7 @@ bool GIAtxtRelTranslatorNeuralNetworkOperationsClass::existingActivatedComponent
 		}
 		else
 		{
+			cout << "!firstActiveComponentInGroup" << endl;
 			result = true;
 		}
 	}
