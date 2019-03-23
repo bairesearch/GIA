@@ -27,7 +27,7 @@
  * File Name: GIAtxtRelTranslatorRules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g11k 01-March-2019
+ * Project Version: 3g11l 01-March-2019
  * /
  *******************************************************************************/
  
@@ -1280,9 +1280,15 @@
 					<!-- [] verb_proposition {that} [] -->
 					<example><!-- Tom proposed {that} the apple is happy. --></example>
 					<component componentType="group" groupTypeName="subReferenceSetsSubject" semanticRelationIndexType="subject" />
-					<component componentType="string" stringType="LRPexternalWordLists" wordPOStype="verb" semanticRelationIndexType="delimiter" semanticRelationReturnEntity="true" />
 					<!-- OLD: <component componentType="string" stringType="tokens" tokenLayer="logicReference" tokenClass="verb" tokenType="proposition" semanticRelationIndexType="delimiter" /> -->
+					<!-- #ifdefGIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SOLIDIFY_NET_BACKPROP -->
+					<component componentType="group" groupTypeName="logicReferenceSetsSubgroups" groupName="verb1Centre" semanticRelationIndexType="delimiter" semanticRelationReturnEntity="true" />
+					<!-- #else -->
+					<!-- 
+					<component componentType="string" stringType="LRPexternalWordLists" wordPOStype="verb" semanticRelationIndexType="delimiter" semanticRelationReturnEntity="true" />
 					<component componentType="string" stringType="explicit" word="that" optional="true" />
+					-->
+					<!-- #endif -->
 					<component componentType="group" groupTypeName="logicReferenceSetsOptional" groupName="referenceSetsOrLogicReferenceSets" semanticRelationIndexType="object" />
 				</group>
 				<!--
@@ -1302,9 +1308,16 @@
 					<!-- [] {,} prep {that} [] -->
 					<example><!-- The house is blue, considering the apple. --></example>
 					<component componentType="group" groupTypeName="logicReferenceSetsOptional" groupName="referenceSetsOrLogicReferenceSets" semanticRelationIndexType="object" />
+					<component componentType="group" groupTypeName="logicReferenceSetsOptional" groupName="referenceSetsOrLogicReferenceSets" semanticRelationIndexType="object" />
+					<!-- #ifdefGIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SOLIDIFY_NET_BACKPROP -->
+					<component componentType="group" groupTypeName="logicReferenceSetsSubgroups" groupName="preposition1Centre" semanticRelationIndexType="delimiter" semanticRelationReturnEntity="true" />
+					<!-- #else -->
+					<!--
 					<component componentType="string" stringType="explicit" word="," />
-					<!--<component componentType="string" stringType="tokens" tokenLayer="logicReference" tokenClass="preposition" semanticRelationIndexType="delimiter" semanticRelationReturnEntity="true" />-->
 					<component componentType="string" stringType="LRPexternalWordLists" wordPOStype="preposition" semanticRelationIndexType="delimiter" semanticRelationReturnEntity="true" />
+					-->
+					<!-- #endif -->
+					<!--OLD: <component componentType="string" stringType="tokens" tokenLayer="logicReference" tokenClass="preposition" semanticRelationIndexType="delimiter" semanticRelationReturnEntity="true" />-->
 					<component componentType="string" stringType="explicit" word="that" optional="true" />
 					<component componentType="group" groupTypeName="logicReferenceSetsOptional" groupName="referenceSetsOrLogicReferenceSets" semanticRelationIndexType="subject" />
 				</group>
@@ -1416,9 +1429,15 @@
 					<!-- [] verb_proposition {that} [] -->
 					<example><!-- Tom proposed {that} the apple is happy. --></example>
 					<component componentType="group" groupTypeName="subReferenceSetsSubject" semanticRelationIndexType="subject" />
-					<component componentType="string" stringType="LRPexternalWordLists" wordPOStype="verb" semanticRelationIndexType="delimiter" semanticRelationReturnEntity="true" />
 					<!-- OLD: <component componentType="string" stringType="tokens" tokenLayer="logicReference" tokenClass="verb" tokenType="proposition" semanticRelationIndexType="delimiter" /> -->
+					<!-- #ifdefGIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SOLIDIFY_NET_BACKPROP -->
+					<component componentType="group" groupTypeName="logicReferenceSetsSubgroups" groupName="verb1Centre" semanticRelationIndexType="delimiter" semanticRelationReturnEntity="true" />
+					<!-- #else -->
+					<!-- 
+					<component componentType="string" stringType="LRPexternalWordLists" wordPOStype="verb" semanticRelationIndexType="delimiter" semanticRelationReturnEntity="true" />
 					<component componentType="string" stringType="explicit" word="that" optional="true" />
+					-->
+					<!-- #endif -->
 					<component componentType="group" groupTypeName="logicReferenceSetsOptional" groupName="referenceSetsOrLogicReferenceSets2" semanticRelationIndexType="object" />
 				</group>
 				<!--
@@ -1438,9 +1457,15 @@
 					<!-- [] {,} prep {that} [] -->
 					<example><!-- The house is blue, considering the apple. --></example>
 					<component componentType="group" groupTypeName="logicReferenceSetsOptional" groupName="referenceSetsOrLogicReferenceSets2" semanticRelationIndexType="object" />
+					<!-- #ifdefGIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SOLIDIFY_NET_BACKPROP -->
+					<component componentType="group" groupTypeName="logicReferenceSetsSubgroups" groupName="preposition1Centre" semanticRelationIndexType="delimiter" semanticRelationReturnEntity="true" />
+					<!-- #else -->
+					<!--
 					<component componentType="string" stringType="explicit" word="," />
-					<!--<component componentType="string" stringType="tokens" tokenLayer="logicReference" tokenClass="preposition" semanticRelationIndexType="delimiter" semanticRelationReturnEntity="true" />-->
 					<component componentType="string" stringType="LRPexternalWordLists" wordPOStype="preposition" semanticRelationIndexType="delimiter" semanticRelationReturnEntity="true" />
+					-->
+					<!-- #endif -->
+					<!--OLD: <component componentType="string" stringType="tokens" tokenLayer="logicReference" tokenClass="preposition" semanticRelationIndexType="delimiter" semanticRelationReturnEntity="true" />-->
 					<component componentType="string" stringType="explicit" word="that" optional="true" />
 					<component componentType="group" groupTypeName="logicReferenceSetsOptional" groupName="referenceSetsOrLogicReferenceSets2" semanticRelationIndexType="subject" />
 				</group>
@@ -1553,6 +1578,18 @@
 					<component componentType="group" groupTypeName="logicReferenceSets" semanticRelationReturnEntity="true" />
 				</group>
 			</groupType>
+			<!-- #ifdefGIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SOLIDIFY_NET_BACKPROP -->
+			<groupType groupTypeName="logicReferenceSetsSubgroups" referenceSetType="logicReferenceSet">
+				<group groupName="verb1Centre" groupUniqueIdentifier="logicReferenceSetsSubgroups:verb1Centre">
+					<component componentType="string" stringType="LRPexternalWordLists" wordPOStype="verb" semanticRelationReturnEntity="true" />
+					<component componentType="string" stringType="explicit" word="that" />	
+				</group>
+				<group groupName="preposition1Centre" groupUniqueIdentifier="logicReferenceSetsSubgroups:preposition1Centre">
+					<component componentType="string" stringType="explicit" word="," />
+					<component componentType="string" stringType="LRPexternalWordLists" wordPOStype="preposition" semanticRelationReturnEntity="true" />
+				</group>
+			</groupType>
+			<!-- #endif -->
 			<groupType groupTypeName="queries" referenceSetType="referenceSet">
 				<!-- reference set queries basic -->
 				
