@@ -27,7 +27,7 @@
  * File Name: GIAtxtRelTranslatorRules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g11a 01-March-2019
+ * Project Version: 3g11b 01-March-2019
  * /
  *******************************************************************************/
  
@@ -1184,28 +1184,28 @@
 					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="auxiliarySequenceBeingSimple" semanticRelationIndexType="delimiter" semanticRelationReturnEntity="true" />
 					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="nounMultiwordPropernoun" semanticRelationIndexType="object" />
 				</group>
-				<group groupName="definitionAlias1-withNoExternalProcessing" semanticRelationFunctionName="definitionAliasWithAuxiliary">
+				<group groupName="definitionAlias1-withNoExternalProcessing" groupUniqueIdentifier="referenceSets:definitionAlias1-withNoExternalProcessing" semanticRelationFunctionName="definitionAliasWithAuxiliary">
 					<!-- aux propernoun  -->
 					<example><!-- [] is Jim --></example>
 					<component componentType="group" groupTypeName="subReferenceSetsSpecialPossessiveOrDeterminerThingEnforced" semanticRelationIndexType="subject" />
 					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="auxiliarySequenceBeingSimple" semanticRelationIndexType="delimiter" semanticRelationReturnEntity="true" />
 					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="nounMultiwordPropernoun" semanticRelationIndexType="object" />
 				</group>
-				<group groupName="definitionAlias2-withNoExternalProcessing" semanticRelationFunctionName="definitionAliasWithAuxiliary">
+				<group groupName="definitionAlias2-withNoExternalProcessing" groupUniqueIdentifier="referenceSets:definitionAlias2-withNoExternalProcessing" semanticRelationFunctionName="definitionAliasWithAuxiliary">
 					<!-- aux propernoun  -->
 					<example><!-- Jim is [] --></example>
 					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="nounMultiwordPropernoun" semanticRelationIndexType="object" />
 					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="auxiliarySequenceBeingSimple" semanticRelationIndexType="delimiter" semanticRelationReturnEntity="true" />
 					<component componentType="group" groupTypeName="subReferenceSetsSpecialPossessiveOrDeterminerThingEnforced" semanticRelationIndexType="subject" />
 				</group>
-				<group groupName="definitionAlias1-withExternalProcessing" semanticRelationFunctionName="definitionAliasWithAuxiliary">
+				<group groupName="definitionAlias1-withExternalProcessing" groupUniqueIdentifier="referenceSets:definitionAlias1-withExternalProcessing" semanticRelationFunctionName="definitionAliasWithAuxiliary">
 					<!-- aux propernoun  -->
 					<example><!-- [] is Jim --></example>
 					<component componentType="group" groupTypeName="subReferenceSetsSpecialPossessiveOrDeterminerDefiniteThingEnforced" semanticRelationIndexType="subject" />
 					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="auxiliarySequenceBeingSimple" semanticRelationIndexType="delimiter" semanticRelationReturnEntity="true" />
 					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="nounMultiwordPropernoun" semanticRelationIndexType="object" />
 				</group>
-				<group groupName="definitionAlias2-withExternalProcessing" semanticRelationFunctionName="definitionAliasWithAuxiliary">
+				<group groupName="definitionAlias2-withExternalProcessing" groupUniqueIdentifier="referenceSets:definitionAlias2-withExternalProcessing" semanticRelationFunctionName="definitionAliasWithAuxiliary">
 					<!-- aux propernoun  -->
 					<example><!-- Jim is [] --></example>
 					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="nounMultiwordPropernoun" semanticRelationIndexType="object" />
