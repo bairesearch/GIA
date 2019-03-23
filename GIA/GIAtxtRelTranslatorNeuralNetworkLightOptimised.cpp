@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetworkLightOptimised.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g11e 01-March-2019
+ * Project Version: 3g11f 01-March-2019
  * Requirements: 
  * Description: Textual Relation Translator Neural Network Light Optimised - ~O(n)
  * /
@@ -138,7 +138,8 @@ bool GIAtxtRelTranslatorNeuralNetworkLightOptimisedClass::executeTxtRelTranslato
 	{
 		*performance = 0;		
 	}
-		
+	
+	#ifndef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_REPLICATE_TOP_LEVEL_PARSE_TREE	
 	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START
 	if(sentenceValidActivationPath)
 	{
@@ -160,6 +161,7 @@ bool GIAtxtRelTranslatorNeuralNetworkLightOptimisedClass::executeTxtRelTranslato
 	{
 		GIAtxtRelTranslatorNeuralNetworkOperations.resetAllNeuronComponents(GIAtxtRelTranslatorRulesGroupTypes, GIA_TXT_REL_TRANSLATOR_RULES_GROUP_BOOL_INDEX_ALLGROUPTYPES_PARSE_TREE_GROUP_REF);
 	}
+	#endif
 	#endif
 	
 	//TODO: resetSemanticRelationReturnEntityForwardPropogationSignalDataPackage(sentenceContents)
@@ -1158,19 +1160,22 @@ bool GIAtxtRelTranslatorNeuralNetworkLightOptimisedClass::propagateWordThroughNe
 						#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE
 						forwardPropogationSentenceData->toplevelGroupActivationFound = true;
 						
+						#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_REPLICATE_TOP_LEVEL_PARSE_TREE
+						topLevelParseTreeGroupLocal = GIAtxtRelTranslatorNeuralNetworkOperations.replicateParseTree(activationPathWordCurrentParseTreeGroupOwner, 0);
+						#else
 						//OLD: topLevelParseTreeGroupLocal = activationPathWordCurrentParseTreeGroupOwner;
 						//copy currentParseTreeGroupTemp so it cant be overwritten;
 						topLevelParseTreeGroupLocal = GIAtxtRelTranslatorRules.copyGroup(activationPathWordCurrentParseTreeGroupOwner);
+						
+						#endif
 						#endif
 						
 						
 						#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS_POS_TYPES
 						cout << "topLevelGroup" << endl;
-						/*
 						cout << "parseTreeMaxWeight1 = " << parseTreeMaxWeight << endl;
 						cout << "topLevelParseTreeGroupLocal->groupName = " << topLevelParseTreeGroupLocal->groupName << endl;
 						printBackpropParseTree(topLevelParseTreeGroupLocal, 3);
-						*/
 						#endif
 						/*
 						cout << "topLevelGroup" << endl;

@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetworkOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g11e 01-March-2019
+ * Project Version: 3g11f 01-March-2019
  * Requirements: 
  * Description: Textual Relation Translator Neural Network Operations - generic functions
  * /
@@ -1977,6 +1977,29 @@ bool GIAtxtRelTranslatorNeuralNetworkOperationsClass::existingActivatedComponent
 	return result;
 }
 #endif
+
+
+GIAtxtRelTranslatorRulesGroup* GIAtxtRelTranslatorNeuralNetworkOperationsClass::replicateParseTree(GIAtxtRelTranslatorRulesGroup* parseTreeGroupToReplicate, int level)
+{
+	bool result = false;
+
+	GIAtxtRelTranslatorRulesGroup* parseTreeGroupNew = GIAtxtRelTranslatorRules.copyGroup(parseTreeGroupToReplicate);
+	//parseTreeGroupNew->components.clear();
+	
+	for(int i=0; i<parseTreeGroupToReplicate->components.size(); i++)
+	{
+		GIAtxtRelTranslatorRulesComponent* currentComponent = (parseTreeGroupToReplicate->components)[i];
+				
+		if(currentComponent->parseTreeGroupRef != NULL)
+		{
+			GIAtxtRelTranslatorRulesGroup* componentParseTreeGroupNew = replicateParseTree(currentComponent->parseTreeGroupRef, level+1);
+			(parseTreeGroupNew->components)[i]->parseTreeGroupRef = componentParseTreeGroupNew;
+			//parseTreeGroupNew->components.push_back(componentParseTreeGroupNew);
+		}
+	}
+	
+	return parseTreeGroupNew;
+}
 
 
 
