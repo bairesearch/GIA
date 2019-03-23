@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetworkLightOptimised.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g11c 01-March-2019
+ * Project Version: 3g11d 01-March-2019
  * Requirements: 
  * Description: Textual Relation Translator Neural Network Light Optimised - ~O(n)
  * /
@@ -1143,11 +1143,20 @@ bool GIAtxtRelTranslatorNeuralNetworkLightOptimisedClass::propagateWordThroughNe
 	
 						#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE
 						forwardPropogationSentenceData->toplevelGroupActivationFound = true;
-						topLevelParseTreeGroupLocal = activationPathWordCurrentParseTreeGroupOwner;
+						
+						//OLD: topLevelParseTreeGroupLocal = activationPathWordCurrentParseTreeGroupOwner;
+						//copy currentParseTreeGroupTemp so it cant be overwritten;
+						topLevelParseTreeGroupLocal = GIAtxtRelTranslatorRules.copyGroup(activationPathWordCurrentParseTreeGroupOwner);
 						#endif
 						
-						#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE_EXTRA
+						
+						#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS_POS_TYPES
 						cout << "topLevelGroup" << endl;
+						/*
+						cout << "parseTreeMaxWeight1 = " << parseTreeMaxWeight << endl;
+						cout << "topLevelParseTreeGroupLocal->groupName = " << topLevelParseTreeGroupLocal->groupName << endl;
+						printBackpropParseTree(topLevelParseTreeGroupLocal, 3);
+						*/
 						#endif
 						/*
 						cout << "topLevelGroup" << endl;
@@ -1156,6 +1165,10 @@ bool GIAtxtRelTranslatorNeuralNetworkLightOptimisedClass::propagateWordThroughNe
 						*/
 						
 					#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_TAKE_LAST_SUCCESSFUL_PARSE_LIMIT_ITERATIONS_PREFERENCE_WEIGHT
+					}
+					else
+					{
+						//cout << "parseTreeMaxWeight2 = " << parseTreeMaxWeight << endl;
 					}
 					#endif
 					

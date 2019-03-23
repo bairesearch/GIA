@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetworkOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g11c 01-March-2019
+ * Project Version: 3g11d 01-March-2019
  * Requirements: 
  * Description: Textual Relation Translator Neural Network Operations - generic functions
  * /
@@ -752,6 +752,7 @@ bool GIAtxtRelTranslatorNeuralNetworkOperationsClass::traceBackpropParseTree(GIA
 		{
 			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_TAKE_LAST_SUCCESSFUL_PARSE_LIMIT_ITERATIONS_PREFERENCE_WEIGHT_SUM
 			*maxWeight = *maxWeight + currentParseTreeGroup->groupWeight;
+			//cout << "*maxWeight = " << *maxWeight << endl;
 			#else
 			if(currentParseTreeGroup->groupWeight > *maxWeight)
 			{
