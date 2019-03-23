@@ -27,7 +27,7 @@
  * File Name: GIAtxtRelTranslatorRules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g11l 01-March-2019
+ * Project Version: 3g11m 01-March-2019
  * /
  *******************************************************************************/
  
@@ -474,35 +474,35 @@
 					<!-- verb noun -->
 					<example><!-- {{the}} gardens of Kriton {{are old.}} --></example>
 					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="nounSequence" wordNounVariantType="plural" semanticRelationIndexType="subject" semanticRelationReturnEntity="true" />
-					<component componentType="string" stringType="explicit" word="of" />
+					<component componentType="string" stringType="explicit" word="of" addToExplicitWordTempPOS="true" />
 					<component componentType="string" stringType="LRPexternalWordLists" wordPOStype="propernounPlace" semanticRelationIndexType="object" />
 				</group>
 				<group groupName="nounOfPropernoun" groupUniqueIdentifier="subReferenceSetsPart:nounOfPropernoun" semanticRelationFunctionName="definitionAlias" groupWeight="11">	
 					<!-- verb noun -->
 					<example><!-- {{the}} house of Kriton {{is blue.}} --></example>
 					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="nounSequence" wordNounVariantType="singular" semanticRelationIndexType="subject" semanticRelationReturnEntity="true" />
-					<component componentType="string" stringType="explicit" word="of" />
+					<component componentType="string" stringType="explicit" word="of" addToExplicitWordTempPOS="true" />
 					<component componentType="string" stringType="LRPexternalWordLists" wordPOStype="propernounPlace" semanticRelationIndexType="object" />
 				</group>
 				<group groupName="nounOfPluralNoun" groupUniqueIdentifier="subReferenceSetsPart:nounOfPluralNoun" semanticRelationFunctionName="property">	
 					<!-- verb noun -->
 					<example><!-- {{the}} box of berries {{is old.}} --></example>
 					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="nounSequence" semanticRelationIndexType="subject" semanticRelationReturnEntity="true" />
-					<component componentType="string" stringType="explicit" word="of" />
+					<component componentType="string" stringType="explicit" word="of" addToExplicitWordTempPOS="true" />
 					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="descriptiveNoun" wordNounVariantType="plural" semanticRelationIndexType="object" />
 				</group>
 				<group groupName="nounOfNoun" groupUniqueIdentifier="subReferenceSetsPart:nounOfNoun" semanticRelationFunctionName="property">	<!-- OLD: definition -->	
 					<!-- verb noun -->
 					<example><!-- {{the}} game of chess {{is good.}} --></example>
 					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="nounSequence" semanticRelationIndexType="subject" semanticRelationReturnEntity="true" />
-					<component componentType="string" stringType="explicit" word="of" />
+					<component componentType="string" stringType="explicit" word="of" addToExplicitWordTempPOS="true" />
 					<component componentType="string" stringType="LRPexternalWordLists" wordPOStype="noun" semanticRelationIndexType="object" />
 				</group>
 				<group groupName="nounOfDeterminerNoun" groupUniqueIdentifier="subReferenceSetsPart:nounOfDeterminerNoun" semanticRelationFunctionName="propertyReverse">	
 					<!-- verb noun -->
 					<example><!-- {{the}} march of the sun {{was tiresome.}} --></example>
 					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="nounSequence" semanticRelationIndexType="subject" semanticRelationReturnEntity="true" />
-					<component componentType="string" stringType="explicit" word="of" />
+					<component componentType="string" stringType="explicit" word="of" addToExplicitWordTempPOS="true" />
 					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="descriptiveNounWithDeterminerBasicDefiniteEnforced" semanticRelationIndexType="object" />
 				</group>
 				<group groupName="complementDefinitionAlias" groupUniqueIdentifier="subReferenceSetsPart:complementDefinitionAlias" semanticRelationFunctionName="definitionAlias" groupWeight="11">	
@@ -525,8 +525,8 @@
 					<!-- the number of -->
 					<example><!-- the number of --></example>
 					<component componentType="string" stringType="explicit" word="the" />
-					<component componentType="string" stringType="explicit" word="number" />
-					<component componentType="string" stringType="explicit" word="of" />
+					<component componentType="string" stringType="explicit" word="number" addToExplicitWordTempPOS="true" />
+					<component componentType="string" stringType="explicit" word="of" addToExplicitWordTempPOS="true" />
 					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="descriptiveNoun" isNumberOf="true" semanticRelationReturnEntity="true" />
 				</group>
 				<!-- #endif -->
@@ -591,7 +591,7 @@
 					<!-- quant units of descriptiveNoun -->
 					<example><!-- {Tom pours} 4 litres of milk --></example>
 					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="unit" semanticRelationIndexType="object" />
-					<component componentType="string" stringType="explicit" word="of" />
+					<component componentType="string" stringType="explicit" word="of" addToExplicitWordTempPOS="true" />
 					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="descriptiveNoun" semanticRelationIndexType="subject" semanticRelationReturnEntity="true" />
 				</group>
 				<!-- #endif -->
@@ -1169,9 +1169,9 @@
 				<group groupName="definitionAlias3" groupUniqueIdentifier="referenceSets:definitionAlias3" semanticRelationFunctionName="definitionAliasWithAuxiliary" groupWeight="20">
 					<!-- The name of [] is [] -->
 					<example><!-- The name of the red dog is Tom. --></example>
-					<component componentType="string" stringType="explicit" word="the" />
-					<component componentType="string" stringType="explicit" word="name" />
-					<component componentType="string" stringType="explicit" word="of" />
+					<component componentType="string" stringType="explicit" word="the" />	<!-- addToExplicitWordTempPOS not required -->
+					<component componentType="string" stringType="explicit" word="name" addToExplicitWordTempPOS="true" />	<!-- addToExplicitWordTempPOS not required -->
+					<component componentType="string" stringType="explicit" word="of" addToExplicitWordTempPOS="true" />	<!-- addToExplicitWordTempPOS not required -->
 					<component componentType="group" groupTypeName="subReferenceSetsSubject" semanticRelationIndexType="subject" />
 					<!--<component componentType="string" stringType="tokens" tokenLayer="special" tokenClass="auxiliary" tokenType="definitionSingular" semanticRelationIndexType="delimiter" semanticRelationReturnEntity="true" />-->
 					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="auxiliarySequenceBeingSimple" semanticRelationIndexType="delimiter" semanticRelationReturnEntity="true" />
@@ -1600,8 +1600,8 @@
 					<component componentType="string" stringType="tokens" tokenLayer="POSsubsets" tokenClass="wh" tokenType="what" semanticRelationIndexType="object" queryComparisonVariable="true" isNameQuery="true" semanticRelationReturnEntity="true" />
 					<component componentType="string" stringType="LRPexternalWordLists" wordPOStype="auxiliaryBeing" semanticRelationIndexType="delimiter" />
 					<component componentType="string" stringType="explicit" word="the" />
-					<component componentType="string" stringType="explicit" word="name" />
-					<component componentType="string" stringType="explicit" word="of" />
+					<component componentType="string" stringType="explicit" word="name" addToExplicitWordTempPOS="true" />	<!-- addToExplicitWordTempPOS not required -->
+					<component componentType="string" stringType="explicit" word="of" addToExplicitWordTempPOS="true" />	<!-- addToExplicitWordTempPOS not required -->
 					<component componentType="group" groupTypeName="subReferenceSetsSubject" semanticRelationIndexType="subject" />
 				</group>
 				<group groupName="queryDefinitionAlias4" groupUniqueIdentifier="queries:queryDefinitionAlias4" semanticRelationFunctionName="definitionAliasWithAuxiliary">

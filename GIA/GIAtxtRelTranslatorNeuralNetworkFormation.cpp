@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetworkFormation.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g11l 01-March-2019
+ * Project Version: 3g11m 01-March-2019
  * Requirements: 
  * Description: Textual Relation Translator Neural Network Formation
  * /
@@ -56,11 +56,21 @@ int numberOfInputGroupsInSectionExplicitWord;
 int numberOfInputGroupsInSectionTokensLayer;
 unordered_map<string, GIAtxtRelTranslatorRulesGroup*> inputLayerSectionExplicitWordMap;
 unordered_map<string, GIAtxtRelTranslatorRulesGroup*> inputLayerSectionTokensLayerMap;
+#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ADD_EXPLICIT_WORD_REFERENCES_AS_INDEPENDENT_POS_PERMUTATIONS
+vector<string> explicitWordListLocal;
+#endif
 
 //high level groupType names should be synced with GIAtxtRelTranslatorClass::generateParseTreeIntro
 GIAtxtRelTranslatorRulesGroup* topLevelGroupInOuputLayerSectionStatements;
 GIAtxtRelTranslatorRulesGroup* topLevelGroupInOuputLayerSectionQuestions;
 GIAtxtRelTranslatorRulesGroup* topLevelGroupInOuputLayerSectionSubjects;
+
+#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ADD_EXPLICIT_WORD_REFERENCES_AS_INDEPENDENT_POS_PERMUTATIONS
+vector<string>* GIAtxtRelTranslatorNeuralNetworkFormationClass::getExplicitWordList()
+{
+	return &explicitWordListLocal;
+}
+#endif
 
 unordered_map<string, GIAtxtRelTranslatorRulesGroup*>* GIAtxtRelTranslatorNeuralNetworkFormationClass::getInputLayerSectionExplicitWordMap()
 {
@@ -234,7 +244,11 @@ bool GIAtxtRelTranslatorNeuralNetworkFormationClass::createInputNeuronLayerSecti
 	
 	inputLayerSectionExplicitWordMap.clear();	//added GIA3g11aTEMP62
 	
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ADD_EXPLICIT_WORD_REFERENCES_AS_INDEPENDENT_POS_PERMUTATIONS
+	explicitWordListLocal.clear();
+	#endif
 	vector<string> explicitWordList;
+	
 	for(int i=0; i<GIAtxtRelTranslatorRulesGroupTypes->size(); i++)
 	{
 		GIAtxtRelTranslatorRulesGroupType* groupType = GIAtxtRelTranslatorRulesGroupTypes->at(i);
@@ -252,6 +266,13 @@ bool GIAtxtRelTranslatorNeuralNetworkFormationClass::createInputNeuronLayerSecti
 		inputLayerSectionExplicitWordMap.insert(pair<string, GIAtxtRelTranslatorRulesGroup*>(explicitWordList[i], *currentGroupInInputLayerSection));
 		addGroupToLayer(currentGroupInInputLayerSection, numberOfGroupsInSection);
 	}
+	
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ADD_EXPLICIT_WORD_REFERENCES_AS_INDEPENDENT_POS_PERMUTATIONS
+	#ifndef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ADD_EXPLICIT_WORD_REFERENCES_AS_INDEPENDENT_POS_PERMUTATIONS_EFFICIENT
+	explicitWordListLocal = explicitWordList;
+	#endif
+	#endif
+	
 	
 	return result;
 }
@@ -273,6 +294,16 @@ bool GIAtxtRelTranslatorNeuralNetworkFormationClass::createInputNeuronLayerSecti
 					explicitWordList->push_back(word);
 					#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_CREATE
 					cout << "GIAtxtRelTranslatorRulesClass::connectComponentsReferences{} explicitWordList->push_back(word) = " << word << endl;
+					#endif
+					
+					#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ADD_EXPLICIT_WORD_REFERENCES_AS_INDEPENDENT_POS_PERMUTATIONS_EFFICIENT
+					if(component->stringTypeExplicitAddToExplicitWordTempPOS)
+					{
+						explicitWordListLocal.push_back(word);
+						#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_CREATE
+						cout << "GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ADD_EXPLICIT_WORD_REFERENCES_AS_INDEPENDENT_POS_PERMUTATIONS_EFFICIENT: explicitWordListLocal.push_back(word) = " << word << endl;
+						#endif 
+					}
 					#endif
 				}
 			}

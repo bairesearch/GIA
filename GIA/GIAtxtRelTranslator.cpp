@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g11l 01-March-2019
+ * Project Version: 3g11m 01-March-2019
  * Requirements: requires plain text file
  * Description: Textual Relation Translator
  * /
@@ -211,7 +211,13 @@ bool GIAtxtRelTranslatorClass::executeTxtRelTranslatorWrapper(GIAtranslatorVaria
 		vector<uint64_t> POSambiguityInfoPermutation;
 		vector<GIApreprocessorPlainTextWord*>* sentenceContents = GIApreprocessorSentenceClassObject.getSentenceContents(currentGIApreprocessorSentenceInList);
 		
-		if(!GIApreprocessorPOStagger.determinePOSambiguityInfoWrapper(sentenceContents, &POSambiguityInfoPermutation))
+		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ADD_EXPLICIT_WORD_REFERENCES_AS_INDEPENDENT_POS_PERMUTATIONS
+		vector<string>* explicitWordList = GIAtxtRelTranslatorNeuralNetworkFormation.getExplicitWordList();
+		#else
+		vector<string>* explicitWordList = NULL;
+		#endif
+		
+		if(!GIApreprocessorPOStagger.determinePOSambiguityInfoWrapper(sentenceContents, &POSambiguityInfoPermutation, explicitWordList))
 		{
 			result = false;
 		}

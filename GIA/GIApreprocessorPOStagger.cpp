@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorPOStagger.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g11l 01-March-2019
+ * Project Version: 3g11m 01-March-2019
  * Requirements: requires plain text file
  * Description: Preprocessor POS tagger
  * /
@@ -1195,7 +1195,7 @@ void GIApreprocessorPOStaggerClass::generatePOSambiguityInfoUnambiguousPermutati
 }
 
 #ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3
-bool GIApreprocessorPOStaggerClass::determinePOSambiguityInfoWrapper(vector<GIApreprocessorPlainTextWord*>* sentenceContents, vector<uint64_t>* POSambiguityInfoPermutation)
+bool GIApreprocessorPOStaggerClass::determinePOSambiguityInfoWrapper(vector<GIApreprocessorPlainTextWord*>* sentenceContents, vector<uint64_t>* POSambiguityInfoPermutation, vector<string>* explicitWordList)
 {
 	bool result = true;
 	
@@ -1244,6 +1244,16 @@ bool GIApreprocessorPOStaggerClass::determinePOSambiguityInfoWrapper(vector<GIAp
 			result = false;
 		}
 
+		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ADD_EXPLICIT_WORD_REFERENCES_AS_INDEPENDENT_POS_PERMUTATIONS
+		vector<string>::iterator explicitWordListIterator = find(explicitWordList->begin(), explicitWordList->end(), wordTextLowerCase);
+		if(explicitWordListIterator != explicitWordList->end())
+		{
+			//cout << "found explicit word; wordTextLowerCase = " << wordTextLowerCase << endl;
+			//add explicit case to contextWordPOSambiguityInfo
+			contextWordPOSambiguityInfo = SHAREDvars.setBitValue(contextWordPOSambiguityInfo, GIA_PREPROCESSOR_POS_TYPE_EXPLICITWORDTEMP, true);	//set as explicitWordTemp
+		}
+		#endif
+  
 		POSambiguityInfoPermutation->push_back(contextWordPOSambiguityInfo);
 	}
 	
