@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetworkOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g11n 01-March-2019
+ * Project Version: 3g11o 01-March-2019
  * Requirements: 
  * Description: Textual Relation Translator Neural Network Operations - generic functions
  * /
@@ -749,6 +749,8 @@ bool GIAtxtRelTranslatorNeuralNetworkOperationsClass::updatePerformance(GIAtxtRe
 bool GIAtxtRelTranslatorNeuralNetworkOperationsClass::updatePerformanceGroup(GIAtxtRelTranslatorRulesGroup* currentParseTreeGroup, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData, int layer)
 {
 	bool result = true;
+	
+	//cout << "updatePerformanceGroup" << endl;
 			 
 	int performanceTemp = 0;
 	bool print = false;
@@ -803,10 +805,12 @@ bool GIAtxtRelTranslatorNeuralNetworkOperationsClass::traceBackpropParseTree(GIA
 {
 	bool result = true;
 	
+	#ifndef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_DONT_SET_NEURON_TRACED
 	if(!currentParseTreeGroup->neuronTraced)
 	{
 		currentParseTreeGroup->neuronTraced = true;
-		
+	#endif
+	
 		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_TAKE_LAST_SUCCESSFUL_PARSE_LIMIT_ITERATIONS_PREFERENCE_WEIGHT
 		if(calculateMaxWeight)
 		{
@@ -863,14 +867,15 @@ bool GIAtxtRelTranslatorNeuralNetworkOperationsClass::traceBackpropParseTree(GIA
 						if(currentComponent->candidateStringMatch->alreadyFoundMatch)
 						{
 							result = false;
+							//cout << "duplicate instance of word detected in parsetree - fail to parse sentence" << endl;
 							//duplicate instance of word detected in parsetree - fail to parse sentence
 						}
 						else
 						{
 					#endif
-						currentComponent->candidateStringMatch->alreadyFoundMatch = true;
-						//nb this method won't work if subReferenceSets are syntactically identical (and neural net groups are therefore reused); eg the red dog eats a blue apple.
-							//"the" and "a" will use identical neural groups and so will only count to +1 performance total
+							currentComponent->candidateStringMatch->alreadyFoundMatch = true;
+							//nb this method won't work if subReferenceSets are syntactically identical (and neural net groups are therefore reused); eg the red dog eats a blue apple.
+								//"the" and "a" will use identical neural groups and so will only count to +1 performance total
 					#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ENFORCE_WORD_CONNECTIVITY_POSHOC_STRICT_MUTUALLY_EXCLUSIVE
 						}
 					}
@@ -908,8 +913,10 @@ bool GIAtxtRelTranslatorNeuralNetworkOperationsClass::traceBackpropParseTree(GIA
 			#ifndef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_HEAVY_OPTIMISED
 			}
 			#endif
-		}	
+		}
+	#ifndef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_DONT_SET_NEURON_TRACED	
 	}
+	#endif
 	
 	return result;
 }
@@ -1477,7 +1484,6 @@ bool GIAtxtRelTranslatorNeuralNetworkOperationsClass::resetGroupParseTreeGroupRe
 		{
 			#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE_EXTRA8
 			cout << "group->currentParseTreeGroupTemp = " << group->currentParseTreeGroupTemp->groupName << endl;
-			
 			if(!firstExecution)
 			{
 				if(group->currentParseTreeGroupTemp->groupName != group->groupName)
@@ -1488,12 +1494,16 @@ bool GIAtxtRelTranslatorNeuralNetworkOperationsClass::resetGroupParseTreeGroupRe
 			}
 			#endif
 			
+			#ifndef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_DONT_SET_NEURON_TRACED
 			if(!(group->currentParseTreeGroupTemp->neuronTraced))	//fixed GIA3g11aTEMP14
 			//if(!(group->neuronTraced))	//added GIA3g6aTEMP32 - only delete parseTreeGroup if !neuronTraced
 			{
+			#endif
 				//delete group->currentParseTreeGroupTemp;	//OLD: don't delete components
 				deleteGroup(group->currentParseTreeGroupTemp);	//added GIA3g11aTEMP27
+			#ifndef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_DONT_SET_NEURON_TRACED
 			}
+			#endif
 		}
 	}
 	group->currentParseTreeGroupTemp = new GIAtxtRelTranslatorRulesGroup(*group);
@@ -2095,6 +2105,24 @@ bool GIAtxtRelTranslatorNeuralNetworkOperationsClass::existingActivatedComponent
 }
 #endif
 
+
+void GIAtxtRelTranslatorNeuralNetworkOperationsClass::deleteParseTree(GIAtxtRelTranslatorRulesGroup* parseTreeGroupToDelete, int level)
+{
+	if(parseTreeGroupToDelete != NULL)
+	{
+		for(int i=0; i<parseTreeGroupToDelete->components.size(); i++)
+		{
+			GIAtxtRelTranslatorRulesComponent* currentComponent = (parseTreeGroupToDelete->components)[i];
+
+			if(currentComponent->parseTreeGroupRef != NULL)
+			{
+				deleteParseTree(currentComponent->parseTreeGroupRef, level+1);
+			}
+		}
+
+		deleteGroup(parseTreeGroupToDelete);
+	}
+}
 
 GIAtxtRelTranslatorRulesGroup* GIAtxtRelTranslatorNeuralNetworkOperationsClass::replicateParseTree(GIAtxtRelTranslatorRulesGroup* parseTreeGroupToReplicate, int level)
 {

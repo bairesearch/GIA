@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetworkHeavyOptimised.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g11n 01-March-2019
+ * Project Version: 3g11o 01-March-2019
  * Requirements: 
  * Description: Textual Relation Translator Neural Network Heavy Optimised - ~O(nlogn)
  * /
