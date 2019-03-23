@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetworkOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g11i 01-March-2019
+ * Project Version: 3g11j 01-March-2019
  * Requirements: 
  * Description: Textual Relation Translator Neural Network Operations - generic functions
  * /
@@ -1896,47 +1896,59 @@ bool GIAtxtRelTranslatorNeuralNetworkOperationsClass::existingActivatedComponent
 	GIAtxtRelTranslatorRulesGroup* ownerGroupParseTreeGroup = ownerGroup->currentParseTreeGroupTemp;
 	
 
-	if(ownerGroupParseTreeGroup->components.size() > 0)
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SOLIDIFY_NET_BACKPROP
+	if(!(ownerGroupParseTreeGroup->solidified))
 	{
-		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_PREPROCESS_DONT_OVERWRITE_REFERENCESETS_THAT_CAPTURES_EOS_MOD
-		if(firstActiveComponentInGroup)
-		#else
-		if(existingActivationFound)
-		#endif
+	#endif
+		if(ownerGroupParseTreeGroup->components.size() > 0)
 		{
 			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_PREPROCESS_DONT_OVERWRITE_REFERENCESETS_THAT_CAPTURES_EOS_MOD
-			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_REVERSE
-			int lastActiveComponentInParseTreeIndex = ownerGroupParseTreeGroup->components.size() - 1;
+			if(firstActiveComponentInGroup)
 			#else
-			int lastActiveComponentInParseTreeIndex = ownerGroupParseTreeGroup->components.size() - 1;
+			if(existingActivationFound)
 			#endif
-			#else
-			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_REVERSE
-			int lastActiveComponentInParseTreeIndex = 0;
-			#else
-			int lastActiveComponentInParseTreeIndex = ownerGroupParseTreeGroup->components.size() - 1;
-			#endif
-			#endif
-			
-			GIAtxtRelTranslatorRulesComponent* lastActiveComponentInParseTree = (ownerGroupParseTreeGroup->components)[lastActiveComponentInParseTreeIndex];
-
-			lastActiveComponentInParseTreeParseTreeGroupRef = lastActiveComponentInParseTree->parseTreeGroupRef;
-
-			if(existingActivatedComponentCapturesLastWordInSentence(prospectiveNewlyActiveComponentInParseTreeParseTreeGroupRef, lastActiveComponentInParseTreeParseTreeGroupRef, lastActiveComponentInParseTree, forwardPropogationWordData, existingActivationFound, forwardPropogationSentenceData))
 			{
+				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_PREPROCESS_DONT_OVERWRITE_REFERENCESETS_THAT_CAPTURES_EOS_MOD
+				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_REVERSE
+				int lastActiveComponentInParseTreeIndex = ownerGroupParseTreeGroup->components.size() - 1;
+				#else
+				int lastActiveComponentInParseTreeIndex = ownerGroupParseTreeGroup->components.size() - 1;
+				#endif
+				#else
+				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_REVERSE
+				int lastActiveComponentInParseTreeIndex = 0;
+				#else
+				int lastActiveComponentInParseTreeIndex = ownerGroupParseTreeGroup->components.size() - 1;
+				#endif
+				#endif
+
+				GIAtxtRelTranslatorRulesComponent* lastActiveComponentInParseTree = (ownerGroupParseTreeGroup->components)[lastActiveComponentInParseTreeIndex];
+
+				lastActiveComponentInParseTreeParseTreeGroupRef = lastActiveComponentInParseTree->parseTreeGroupRef;
+
+				if(existingActivatedComponentCapturesLastWordInSentence(prospectiveNewlyActiveComponentInParseTreeParseTreeGroupRef, lastActiveComponentInParseTreeParseTreeGroupRef, lastActiveComponentInParseTree, forwardPropogationWordData, existingActivationFound, forwardPropogationSentenceData))
+				{
+					result = true;
+				}
+			}
+			else
+			{
+				//cout << "!firstActiveComponentInGroup" << endl;
 				result = true;
 			}
 		}
 		else
 		{
-			cout << "!firstActiveComponentInGroup" << endl;
 			result = true;
 		}
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SOLIDIFY_NET_BACKPROP
 	}
 	else
 	{
+		//cout << "ownerGroupParseTreeGroup->solidified" << endl;
 		result = true;
 	}
+	#endif
 	
 	return result;
 }
@@ -2017,6 +2029,15 @@ bool GIAtxtRelTranslatorNeuralNetworkOperationsClass::existingActivatedComponent
 			//overwritten/newly activated component's parseTree contains last word in sentence 
 			result = true;
 		}
+		
+		/*
+		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_PREPROCESS_DONT_OVERWRITE_REFERENCESETS_THAT_CAPTURES_EOS_MOD2
+		if(wordIndexMax2 < wordIndexMax1-1)
+		{
+			result = true;	//entity refers to separate referenceSet:general group
+		}
+		#endif
+		*/
 	}
 	else
 	{
