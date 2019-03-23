@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetworkLightUnoptimised.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g11f 01-March-2019
+ * Project Version: 3g11g 01-March-2019
  * Requirements: 
  * Description: Textual Relation Translator Neural Network Light Unoptimised - ~O(n^2)
  * /
@@ -751,12 +751,8 @@ bool GIAtxtRelTranslatorNeuralNetworkLightUnoptimisedClass::propagateWordThrough
 			#endif
 			{
 			#endif
-				GIAtxtRelTranslatorNeuralNetworkOperations.updatePerformance(activationPathWordCurrentParseTreeGroupOwner, forwardPropogationSentenceData, layer);
-				
-				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ENFORCE_WORD_CONNECTIVITY_POSHOC_STRICT
-				if(forwardPropogationSentenceData->performance == forwardPropogationSentenceData->sentenceContents->size())
+				if(GIAtxtRelTranslatorNeuralNetworkOperations.updatePerformance(activationPathWordCurrentParseTreeGroupOwner, forwardPropogationSentenceData, layer))
 				{
-				#endif
 					/*
 					cout << "topLevelGroup && GIAtxtRelTranslatorNeuralNetworkOperations.isSentenceWordDataFullyConnected; TEMP EXIT" << endl;
 					exit(EXIT_ERROR);
@@ -774,14 +770,12 @@ bool GIAtxtRelTranslatorNeuralNetworkLightUnoptimisedClass::propagateWordThrough
 					cout << "finishedPassingSentenceWords (temp exit)" << endl;
 					exit(0);
 					*/
-				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ENFORCE_WORD_CONNECTIVITY_POSHOC_STRICT
 				}
 				else
 				{
 					//fail
 					restoreGroupActivations(ownerGroup, ownerGroupOrig, activationPathWordCurrentParseTreeGroupOwner, forwardPropogationWordData, true);
 				}	
-				#endif
 
 			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ENFORCE_WORD_CONNECTIVITY_POSHOC
 			}

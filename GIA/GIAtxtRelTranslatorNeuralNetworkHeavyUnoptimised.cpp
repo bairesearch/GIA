@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetworkHeavyUnoptimised.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g11f 01-March-2019
+ * Project Version: 3g11g 01-March-2019
  * Requirements: 
  * Description: Textual Relation Translator Neural Network Heavy Unoptimised - ~O(n^2)
  * /
@@ -1349,7 +1349,7 @@ bool GIAtxtRelTranslatorNeuralNetworkHeavyUnoptimisedClass::propagateWordThrough
 					if(forwardPropogationWordData->w == forwardPropogationSentenceData->sentenceContents->size()-1)	//end of sentence punctuation mark found
 					{
 					#endif
-						#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ENFORCE_WORD_CONNECTIVITY_POSHOC_STRICT
+						#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ENFORCE_WORD_CONNECTIVITY_POSHOC_STRICT_OLD
 						if(GIAtxtRelTranslatorNeuralNetworkOperations.isSentenceWordDataFullyConnected(forwardPropogationSentenceData))
 						{
 						#endif
@@ -1380,7 +1380,7 @@ bool GIAtxtRelTranslatorNeuralNetworkHeavyUnoptimisedClass::propagateWordThrough
 							exit(0);
 							*/
 
-						#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ENFORCE_WORD_CONNECTIVITY_POSHOC_STRICT
+						#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ENFORCE_WORD_CONNECTIVITY_POSHOC_STRICT_OLD
 						}
 						else
 						{

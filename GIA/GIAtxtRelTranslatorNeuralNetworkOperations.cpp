@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetworkOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g11f 01-March-2019
+ * Project Version: 3g11g 01-March-2019
  * Requirements: 
  * Description: Textual Relation Translator Neural Network Operations - generic functions
  * /
@@ -694,7 +694,7 @@ bool GIAtxtRelTranslatorNeuralNetworkOperationsClass::updatePerformance(GIAtxtRe
 	bool topLevelGroup = GIAtxtRelTranslatorRulesGroupClassObject.isTopLevelGroupType(currentParseTreeGroup->groupTypeNameBackup, currentParseTreeGroup->groupTypeReferenceSetTypeBackup, forwardPropogationSentenceData->isQuery, forwardPropogationSentenceData->parseIsolatedSubreferenceSets);
 	if(topLevelGroup)
 	{
-		updatePerformanceGroup(currentParseTreeGroup, forwardPropogationSentenceData, layer);
+		result = updatePerformanceGroup(currentParseTreeGroup, forwardPropogationSentenceData, layer);
 	}
 	
 	return result;
@@ -708,7 +708,10 @@ bool GIAtxtRelTranslatorNeuralNetworkOperationsClass::updatePerformanceGroup(GIA
 	int performanceTemp = 0;
 	bool print = false;
 	bool performancePreprocess = true;
-	traceBackpropParseTree(currentParseTreeGroup, 1, print, performancePreprocess, &performanceTemp, forwardPropogationSentenceData->sentenceContents);
+	if(!traceBackpropParseTree(currentParseTreeGroup, 1, print, performancePreprocess, &performanceTemp, forwardPropogationSentenceData->sentenceContents))
+	{
+		result = false;
+	}
 	resetNeuronBackprop(currentParseTreeGroup, GIA_TXT_REL_TRANSLATOR_RULES_GROUP_BOOL_INDEX_BACKPROP_NEURON_TRACED);
 
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE
@@ -727,7 +730,19 @@ bool GIAtxtRelTranslatorNeuralNetworkOperationsClass::updatePerformanceGroup(GIA
 	}
 	#endif
 	#endif
-			
+	
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ENFORCE_WORD_CONNECTIVITY_POSHOC_STRICT
+	if(result)
+	{
+		if(forwardPropogationSentenceData->performance != forwardPropogationSentenceData->sentenceContents->size())
+		{
+	#endif
+			result = false;
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ENFORCE_WORD_CONNECTIVITY_POSHOC_STRICT
+		}
+	}
+	#endif
+				
 	return result;
 }
 #endif
@@ -797,9 +812,24 @@ bool GIAtxtRelTranslatorNeuralNetworkOperationsClass::traceBackpropParseTree(GIA
 			{
 				if(GIApreprocessorWordClassObject.isWordInWordlist(sentenceContents, currentComponent->candidateStringMatch))
 				{
-					currentComponent->candidateStringMatch->alreadyFoundMatch = true;
-					//nb this method won't work if subReferenceSets are syntactically identical (and neural net groups are therefore reused); eg the red dog eats a blue apple.
-						//"the" and "a" will use identical neural groups and so will only count to +1 performance total
+					#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ENFORCE_WORD_CONNECTIVITY_POSHOC_STRICT_MUTUALLY_EXCLUSIVE
+					if(currentComponent->componentType == GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_STRING)	//redundant?
+					{
+						if(currentComponent->candidateStringMatch->alreadyFoundMatch)
+						{
+							result = false;
+							//duplicate instance of word detected in parsetree - fail to parse sentence
+						}
+						else
+						{
+					#endif
+						currentComponent->candidateStringMatch->alreadyFoundMatch = true;
+						//nb this method won't work if subReferenceSets are syntactically identical (and neural net groups are therefore reused); eg the red dog eats a blue apple.
+							//"the" and "a" will use identical neural groups and so will only count to +1 performance total
+					#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ENFORCE_WORD_CONNECTIVITY_POSHOC_STRICT_MUTUALLY_EXCLUSIVE
+						}
+					}
+					#endif
 				}
 			}
 			#endif
@@ -825,7 +855,10 @@ bool GIAtxtRelTranslatorNeuralNetworkOperationsClass::traceBackpropParseTree(GIA
 					}
 					#endif
 					
-					traceBackpropParseTree(currentComponent->parseTreeGroupRef, level+1, print, performancePreprocess, performance, sentenceContents, calculateMaxWeight, maxWeight);
+					if(!traceBackpropParseTree(currentComponent->parseTreeGroupRef, level+1, print, performancePreprocess, performance, sentenceContents, calculateMaxWeight, maxWeight))
+					{
+						result = false;
+					}
 				}
 			#ifndef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_HEAVY_OPTIMISED
 			}
