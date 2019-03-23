@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetworkOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g11j 01-March-2019
+ * Project Version: 3g11k 01-March-2019
  * Requirements: 
  * Description: Textual Relation Translator Neural Network Operations - generic functions
  * /
@@ -595,6 +595,9 @@ bool GIAtxtRelTranslatorNeuralNetworkOperationsClass::verifyNewActivationParseTr
 			}
 
 			result = true;
+			
+			
+			bool foundProspectiveNewlyActiveComponentParseTreeWordForEveryLastActiveComponentParseTreeWord = true;
 			for(int i=0; i<lastActiveComponentInParseTreeParseTreeWordIndexList.size(); i++)
 			{
 				bool foundLastActiveComponentParseTreeWord = false;
@@ -617,8 +620,50 @@ bool GIAtxtRelTranslatorNeuralNetworkOperationsClass::verifyNewActivationParseTr
 				if(!foundLastActiveComponentParseTreeWord)
 				{
 					result = false;	
+					foundProspectiveNewlyActiveComponentParseTreeWordForEveryLastActiveComponentParseTreeWord = false;
 				}
 			}
+		
+			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_TAKE_LAST_SUCCESSFUL_PARSE_LIMIT_ITERATIONS_PREFERENCE_WEIGHT_DYNAMIC
+			if(foundProspectiveNewlyActiveComponentParseTreeWordForEveryLastActiveComponentParseTreeWord)
+			{
+				if((prospectiveNewlyActiveComponentInParseTreeParseTreeGroupRef != NULL) && (lastActiveComponentInParseTreeParseTreeGroupRef != NULL))
+				{
+					bool foundLastActiveComponentParseTreeWordForEveryProspectiveNewlyActiveComponentParseTreeWord = true;
+
+					for(int j=0; j<prospectiveNewlyActiveComponentInParseTreeParseTreeWordIndexList.size(); j++)
+					{
+						bool foundProspectiveActiveComponentParseTreeWord = false;
+
+						for(int i=0; i<lastActiveComponentInParseTreeParseTreeWordIndexList.size(); i++)
+						{
+							if(prospectiveNewlyActiveComponentInParseTreeParseTreeWordIndexList[j] == lastActiveComponentInParseTreeParseTreeWordIndexList[i])
+							{
+								foundProspectiveActiveComponentParseTreeWord = true;
+								//cout << "GIAtxtRelTranslatorNeuralNetworkOperationsClass::verifyNewActivationParseTreeContainsExistingActivationWordsInParseTree debug: foundLastActiveComponentParseTreeWord; prospectiveNewlyActiveComponentInParseTreeParseTreeWordIndexList[j] = " << prospectiveNewlyActiveComponentInParseTreeParseTreeWordIndexList[j] << endl;
+							}
+						}
+						if(!foundProspectiveActiveComponentParseTreeWord)
+						{
+							foundLastActiveComponentParseTreeWordForEveryProspectiveNewlyActiveComponentParseTreeWord = false;
+						}
+					}
+					
+					if(foundLastActiveComponentParseTreeWordForEveryProspectiveNewlyActiveComponentParseTreeWord)
+					{
+						bool foundMatchingSetOfLastActiveAndProspectiveActiveComponentParseTreeWords = true;
+						if(foundMatchingSetOfLastActiveAndProspectiveActiveComponentParseTreeWords)
+						{
+							if(prospectiveNewlyActiveComponentInParseTreeParseTreeGroupRef->groupWeight < lastActiveComponentInParseTreeParseTreeGroupRef->groupWeight)
+							{
+								//cout << "(prospectiveNewlyActiveComponentInParseTreeParseTreeGroupRef->groupWeight < lastActiveComponentInParseTreeParseTreeGroupRef->groupWeight)" << endl;
+								result = false;	
+							}
+						}
+					}
+				}
+			}
+			#endif
 		}
 		else
 		{

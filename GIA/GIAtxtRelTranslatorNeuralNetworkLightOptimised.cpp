@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetworkLightOptimised.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g11j 01-March-2019
+ * Project Version: 3g11k 01-March-2019
  * Requirements: 
  * Description: Textual Relation Translator Neural Network Light Optimised - ~O(n)
  * /
@@ -897,7 +897,7 @@ bool GIAtxtRelTranslatorNeuralNetworkLightOptimisedClass::propagateWordThroughNe
 			#endif
 			
 			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PREVIOUS_WORD_POS_TYPE_CHECKS
-			if(componentTests2(ownerGroup, activationPathWordCurrentParseTreeGroup, forwardPropogationSignalData, forwardPropogationWordData, forwardPropogationSentenceData))
+			if(componentTests2(ownerGroup, activationPathWordCurrentParseTreeGroup, forwardPropogationSignalData, forwardPropogationWordData, forwardPropogationSentenceData, activationSequenceCompleted))
 			{
 			#endif
 				#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE_EXTRA3
@@ -1307,51 +1307,58 @@ bool GIAtxtRelTranslatorNeuralNetworkLightOptimisedClass::solidifyNeuralNetBackp
 
 
 #ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PREVIOUS_WORD_POS_TYPE_CHECKS
-bool GIAtxtRelTranslatorNeuralNetworkLightOptimisedClass::componentTests2(GIAtxtRelTranslatorRulesGroup* group, GIAtxtRelTranslatorRulesGroup* currentParseTreeGroup, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSignalData* forwardPropogationSignalData, GIAtxtRelTranslatorNeuralNetworkForwardPropogationWordData* forwardPropogationWordData, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData)
+bool GIAtxtRelTranslatorNeuralNetworkLightOptimisedClass::componentTests2(GIAtxtRelTranslatorRulesGroup* group, GIAtxtRelTranslatorRulesGroup* currentParseTreeGroup, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSignalData* forwardPropogationSignalData, GIAtxtRelTranslatorNeuralNetworkForwardPropogationWordData* forwardPropogationWordData, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData, const bool activationSequenceCompleted)
 {
 	bool componentTests = true;
 	
-	/*
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PREVIOUS_WORD_POS_TYPE_CHECKS_GLOBAL
-	Algorithm:
-	#else
-	Algorithm:
-	previousWordPOStype/existsPreceedingWordPOStype requirement: there exists a previous word POStype
-	OLD:
-	previousWordPOStype/existsPreceedingWordPOStype requirement: there exists a previous word POStype that was succesfully parsed by a higher order neuron/group.
-		Question: so how will the program know this until the higher order neuron group has been parsed?
-		Conclusion: will need to;
-			a) record the wordPos type for every activated component in a group
-			b) read both;
-				i) previous components in current group and 
-				ii) read up the tree to see if this condition is met (ie there exists a previous word POStype that was succesfully parsed by a higher order neuron/group)
-	#endif
-	*/
-	int currentWordIndex = forwardPropogationWordData->w;
-	if(currentWordIndex > 0)	//CHECKTHIS
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_REVERSE
+	if(activationSequenceCompleted)
 	{
-		if(group->previousWordPOStype != "")
+	#endif
+		/*
+		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PREVIOUS_WORD_POS_TYPE_CHECKS_GLOBAL
+		Algorithm:
+		#else
+		Algorithm:
+		previousWordPOStype/existsPreceedingWordPOStype requirement: there exists a previous word POStype
+		OLD:
+		previousWordPOStype/existsPreceedingWordPOStype requirement: there exists a previous word POStype that was succesfully parsed by a higher order neuron/group.
+			Question: so how will the program know this until the higher order neuron group has been parsed?
+			Conclusion: will need to;
+				a) record the wordPos type for every activated component in a group
+				b) read both;
+					i) previous components in current group and 
+					ii) read up the tree to see if this condition is met (ie there exists a previous word POStype that was succesfully parsed by a higher order neuron/group)
+		#endif
+		*/
+		int currentWordIndex = forwardPropogationWordData->w;
+		if(currentWordIndex > 0)	//CHECKTHIS
 		{
-			componentTests = false;
-			int previousWordPOStype = GIApreprocessorWordClassObject.getPOStypeFromName(group->previousWordPOStype);
-
-			if(findPreviousWordInSentence(forwardPropogationSentenceData->sentenceContents, currentWordIndex, previousWordPOStype))		
+			if(group->previousWordPOStype != "")
 			{
-				//cout << "componentTests = true" << endl;
-				componentTests = true;
+				componentTests = false;
+				int previousWordPOStype = GIApreprocessorWordClassObject.getPOStypeFromName(group->previousWordPOStype);
+
+				if(findPreviousWordInSentence(forwardPropogationSentenceData->sentenceContents, currentWordIndex, previousWordPOStype))		
+				{
+					//cout << "componentTests = true" << endl;
+					componentTests = true;
+				}
+			}
+			if(group->existsPreceedingWordPOStype != "")
+			{
+				componentTests = false;
+				int existsPreceedingWordPOStype = GIApreprocessorWordClassObject.getPOStypeFromName(group->existsPreceedingWordPOStype);
+
+				if(findPreceedingWordInSentence(forwardPropogationSentenceData->sentenceContents, currentWordIndex, existsPreceedingWordPOStype))		
+				{
+					componentTests = true;
+				}
 			}
 		}
-		if(group->existsPreceedingWordPOStype != "")
-		{
-			componentTests = false;
-			int existsPreceedingWordPOStype = GIApreprocessorWordClassObject.getPOStypeFromName(group->existsPreceedingWordPOStype);
-
-			if(findPreceedingWordInSentence(forwardPropogationSentenceData->sentenceContents, currentWordIndex, existsPreceedingWordPOStype))		
-			{
-				componentTests = true;
-			}
-		}
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_REVERSE
 	}
+	#endif
 	
 	return componentTests;
 }
