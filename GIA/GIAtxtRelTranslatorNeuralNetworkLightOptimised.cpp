@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetworkLightOptimised.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g11d 01-March-2019
+ * Project Version: 3g11e 01-March-2019
  * Requirements: 
  * Description: Textual Relation Translator Neural Network Light Optimised - ~O(n)
  * /
@@ -304,6 +304,7 @@ bool GIAtxtRelTranslatorNeuralNetworkLightOptimisedClass::propagateWordThroughNe
 			}
 		}
 	}
+
 
 	if(!GIAtxtRelTranslatorNeuralNetworkOperations.currentWordAmbiguous(currentWord))
 	{
@@ -727,7 +728,7 @@ bool GIAtxtRelTranslatorNeuralNetworkLightOptimisedClass::propagateWordThroughNe
 						{
 							requireResetGroupActivationGroupWasActive = ownerGroup->neuronActive;
 
-							#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE_EXTRA2
+							#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE_EXTRA4
 							cout << "resetGroupActivation - " << ownerGroup->groupTypeNameBackup << ":" << ownerGroup->groupName << endl;
 							#endif
 							bool clearParseTreeGroup = false;
@@ -941,30 +942,43 @@ bool GIAtxtRelTranslatorNeuralNetworkLightOptimisedClass::propagateWordThroughNe
 								GIAtxtRelTranslatorNeuralNetworkOperations.printParseTreeDebugIndentation(layer+1);
 								cout << "3d2: propagateWordThroughNetworkGroup: " <<  ownerGroup->groupTypeNameBackup << ":" << ownerGroup->groupName << endl;	
 								#endif
-
-								*sequentialActivationFound = true;
-								#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_ALLOW_MULTIPLE_ACTIVATIONS_VERIFY_CONTAINS_EXISTING_WORDS_IN_PARSETREE
-								if(!measureSequentialActivationOnly)
+								
+								#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_VERIFY_OWNER_GROUP_DOESNT_CONTAIN_NEWLY_ACTIVATED_COMPONENT_IN_ITS_PARSE_TREE
+								if(verifyOwnerParseTreeGroupDoesntContainNewActivationComponentParseTree(ownerGroup, activationPathWordCurrentParseTreeGroup, layer))
 								{
 								#endif
-									#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_PREPROCESS_DONT_OVERWRITE_COMPONENT_WHEN_NEW_COMPONENT_AVAILABLE
-									if(!(*existingActivationFound && ownerGroup->newActivationFoundDuringPreprocess))
+									#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE_EXTRA3
+									GIAtxtRelTranslatorNeuralNetworkOperations.printParseTreeDebugIndentation(layer+1);
+									cout << "3d3: propagateWordThroughNetworkGroup: " <<  ownerGroup->groupTypeNameBackup << ":" << ownerGroup->groupName << endl;	
+									#endif
+
+									*sequentialActivationFound = true;
+									#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_ALLOW_MULTIPLE_ACTIVATIONS_VERIFY_CONTAINS_EXISTING_WORDS_IN_PARSETREE
+									if(!measureSequentialActivationOnly)
 									{
 									#endif
-										if(propagateWordThroughNetworkGroupComponent(translatorVariables, group, currentComponent, ownerGroup, ownerComponent, forwardPropogationSignalData, forwardPropogationWordData, forwardPropogationSentenceData, activationSequenceCompleted, layer, activationPathWordCurrentParseTreeGroup, groupFrontComponentConnectionListIndex, *existingActivationFound, debug))
+										#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_PREPROCESS_DONT_OVERWRITE_COMPONENT_WHEN_NEW_COMPONENT_AVAILABLE
+										if(!(*existingActivationFound && ownerGroup->newActivationFoundDuringPreprocess))
 										{
-											result = true;
+										#endif
+											if(propagateWordThroughNetworkGroupComponent(translatorVariables, group, currentComponent, ownerGroup, ownerComponent, forwardPropogationSignalData, forwardPropogationWordData, forwardPropogationSentenceData, activationSequenceCompleted, layer, activationPathWordCurrentParseTreeGroup, groupFrontComponentConnectionListIndex, *existingActivationFound, debug))
+											{
+												result = true;
+											}
+										#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_PREPROCESS_DONT_OVERWRITE_COMPONENT_WHEN_NEW_COMPONENT_AVAILABLE
 										}
-									#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_PREPROCESS_DONT_OVERWRITE_COMPONENT_WHEN_NEW_COMPONENT_AVAILABLE
-									}
-									else
-									{
-										cout << "GIAtxtRelTranslatorNeuralNetworkLightOptimisedClass::propagateWordThroughNetworkGroupComponentWrapper{}: existingActivationFound && ownerGroup->newActivationFoundDuringPreprocess" << endl;
+										else
+										{
+											cout << "GIAtxtRelTranslatorNeuralNetworkLightOptimisedClass::propagateWordThroughNetworkGroupComponentWrapper{}: existingActivationFound && ownerGroup->newActivationFoundDuringPreprocess" << endl;
+										}
+										#endif
+									#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_ALLOW_MULTIPLE_ACTIVATIONS_VERIFY_CONTAINS_EXISTING_WORDS_IN_PARSETREE
 									}
 									#endif
-								#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_ALLOW_MULTIPLE_ACTIVATIONS_VERIFY_CONTAINS_EXISTING_WORDS_IN_PARSETREE
+								#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_VERIFY_OWNER_GROUP_DOESNT_CONTAIN_NEWLY_ACTIVATED_COMPONENT_IN_ITS_PARSE_TREE
 								}
 								#endif
+
 							#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_ALLOW_MULTIPLE_ACTIVATIONS_VERIFY_MAX_NUMBER_OF_WORDS_IN_PARSETREE
 							}
 							#endif
@@ -1386,40 +1400,7 @@ bool GIAtxtRelTranslatorNeuralNetworkLightOptimisedClass::findPreceedingWordInSe
 #endif
 
 
-
-
-
-bool GIAtxtRelTranslatorNeuralNetworkLightOptimisedClass::printBackpropParseTree(GIAtxtRelTranslatorRulesGroup* group, int level)
-{
-	bool print = true;
-	bool performancePreprocess = false;
-	int performanceNOTUSED = 0;
-	GIAtxtRelTranslatorNeuralNetworkOperations.traceBackpropParseTree(group, 1, print, performancePreprocess, &performanceNOTUSED, NULL);
-	GIAtxtRelTranslatorNeuralNetworkOperations.resetNeuronBackprop(group, GIA_TXT_REL_TRANSLATOR_RULES_GROUP_BOOL_INDEX_BACKPROP_NEURON_TRACED);
-}
-
-
-
-
-bool GIAtxtRelTranslatorNeuralNetworkLightOptimisedClass::groupActivationCompleted(GIAtxtRelTranslatorRulesGroup* group)
-{	
-	bool groupActivationCompleted = true;
-	
-	for(int i2=0; i2<group->components.size(); i2++)
-	{
-		GIAtxtRelTranslatorRulesComponent* currentComponent2 = (group->components)[i2];
-		if(!(currentComponent2->neuronComponentConnectionActive))
-		{
-			if(!(currentComponent2->optional))
-			{
-				groupActivationCompleted = false;
-			}
-		}
-	}
-	
-	return groupActivationCompleted;
-}
-			
+		
 
 #ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_ALLOW_MULTIPLE_ACTIVATIONS_VERIFY_MAX_NUMBER_OF_WORDS_IN_PARSETREE
 bool GIAtxtRelTranslatorNeuralNetworkLightOptimisedClass::existingActivationVerifyMaxNumberWordsInParseTree(GIAtxtRelTranslatorRulesGroup* ownerGroup, GIAtxtRelTranslatorRulesGroup* activationPathWordCurrentParseTreeGroup, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData, int layer, const bool existingActivationFound)
@@ -1487,8 +1468,89 @@ bool GIAtxtRelTranslatorNeuralNetworkLightOptimisedClass::existingActivationVeri
 }
 #endif
 	
+
+#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_VERIFY_OWNER_GROUP_DOESNT_CONTAIN_NEWLY_ACTIVATED_COMPONENT_IN_ITS_PARSE_TREE
+bool GIAtxtRelTranslatorNeuralNetworkLightOptimisedClass::verifyOwnerParseTreeGroupDoesntContainNewActivationComponentParseTree(GIAtxtRelTranslatorRulesGroup* ownerGroup, GIAtxtRelTranslatorRulesGroup* activationPathWordCurrentParseTreeGroup, int layer)
+{
+	bool result = true;
+
+	GIAtxtRelTranslatorRulesGroup* currentParseTreeGroupTemp = ownerGroup->currentParseTreeGroupTemp;
+	if((currentParseTreeGroupTemp != NULL) && (activationPathWordCurrentParseTreeGroup != NULL))
+	{
+		/*
+		if(parseTreeContainsGroup(currentParseTreeGroupTemp, activationPathWordCurrentParseTreeGroup, layer))
+		{
+			result = false;
+		}
+		*/
+		if(parseTreeContainsGroup(activationPathWordCurrentParseTreeGroup, currentParseTreeGroupTemp, layer))
+		{
+			result = false;
+		}
+	}	
+	
+	return result;
+}
+bool GIAtxtRelTranslatorNeuralNetworkLightOptimisedClass::parseTreeContainsGroup(GIAtxtRelTranslatorRulesGroup* currentParseTreeGroup, GIAtxtRelTranslatorRulesGroup* parseTreeGroupToFind, int level)
+{
+	bool result = false;
+
+	if(currentParseTreeGroup == parseTreeGroupToFind)
+	{
+		result = true;
+	}
+	
+	for(int i=0; i<currentParseTreeGroup->components.size(); i++)
+	{
+		GIAtxtRelTranslatorRulesComponent* currentComponent = (currentParseTreeGroup->components)[i];
+				
+		if(currentComponent->parseTreeGroupRef != NULL)
+		{
+			if(parseTreeContainsGroup(currentComponent->parseTreeGroupRef, parseTreeGroupToFind, level+1))
+			{
+				result = true;
+			}	
+		}
+	}
+	
+	return result;
+}
+#endif
+
 	
 
+
+bool GIAtxtRelTranslatorNeuralNetworkLightOptimisedClass::printBackpropParseTree(GIAtxtRelTranslatorRulesGroup* group, int level)
+{
+	bool print = true;
+	bool performancePreprocess = false;
+	int performanceNOTUSED = 0;
+	GIAtxtRelTranslatorNeuralNetworkOperations.traceBackpropParseTree(group, 1, print, performancePreprocess, &performanceNOTUSED, NULL);
+	GIAtxtRelTranslatorNeuralNetworkOperations.resetNeuronBackprop(group, GIA_TXT_REL_TRANSLATOR_RULES_GROUP_BOOL_INDEX_BACKPROP_NEURON_TRACED);
+}
+
+
+
+
+bool GIAtxtRelTranslatorNeuralNetworkLightOptimisedClass::groupActivationCompleted(GIAtxtRelTranslatorRulesGroup* group)
+{	
+	bool groupActivationCompleted = true;
+	
+	for(int i2=0; i2<group->components.size(); i2++)
+	{
+		GIAtxtRelTranslatorRulesComponent* currentComponent2 = (group->components)[i2];
+		if(!(currentComponent2->neuronComponentConnectionActive))
+		{
+			if(!(currentComponent2->optional))
+			{
+				groupActivationCompleted = false;
+			}
+		}
+	}
+	
+	return groupActivationCompleted;
+}
+	
 
 
 #endif
