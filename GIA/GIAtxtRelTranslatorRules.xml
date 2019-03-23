@@ -27,7 +27,7 @@
  * File Name: GIAtxtRelTranslatorRules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g11g 01-March-2019
+ * Project Version: 3g11h 01-March-2019
  * /
  *******************************************************************************/
  
@@ -1120,7 +1120,7 @@
 			</groupType>
 			<groupType groupTypeName="referenceSets" referenceSetType="referenceSet">
 				<!-- #ifdefGIA_TXT_REL_TRANSLATOR_RULES_CODE_NUMBER_EXPLETIVES -->
-				<group groupName="explitives" groupUniqueIdentifier="referenceSets:explitives">
+				<group groupName="explitives" groupUniqueIdentifier="referenceSets:explitives" groupWeight="10">
 					<!-- there is a [] -->
 					<component componentType="string" stringType="explicit" word="there" />
 					<component componentType="string" stringType="explicit" word="is" />
@@ -1258,13 +1258,13 @@
 					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="auxiliarySequenceBeingSimple" semanticRelationIndexType="delimiter" semanticRelationReturnEntity="true" />
 					<component componentType="group" groupTypeName="subReferenceSetsSubject" groupName="thingSpecificWithoutDeterminer" wordNounVariantType="singular" semanticRelationIndexType="object" />
 				</group>
-				<group groupName="expletive" groupUniqueIdentifier="referenceSets:expletive">
+				<group groupName="expletive" groupUniqueIdentifier="referenceSets:expletive" groupWeight="10">
 					<!-- there auxBeing [] [append] -->
 					<example><!-- there is a new movie {that we can see} --></example>
 					<component componentType="string" stringType="explicit" word="there" />
 					<!--<component componentType="string" stringType="tokens" tokenLayer="special" tokenClass="auxiliary" tokenType="definitionSingular" />-->
 					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="auxiliarySequenceBeingSimple" />
-					<component componentType="group" groupTypeName="subReferenceSetsSubject" groupName="thing" />
+					<component componentType="group" groupTypeName="subReferenceSetsSubject" groupName="thing" isExpletive="true" semanticRelationReturnEntity="true" />
 				</group>
 			</groupType>
 			<groupType groupTypeName="logicReferenceSets" referenceSetType="logicReferenceSet">
