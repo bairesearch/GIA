@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g11m 01-March-2019
+ * Project Version: 3g11n 01-March-2019
  * Requirements: 
  * Description: GIA specific global definitions
  * /
@@ -917,6 +917,7 @@
 					#define GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SOLIDIFY_NET_BACKPROP		//GIA3g11j	//GIA3g1cTEMP4	//disabled GIA3g1cTEMP5
 					#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SOLIDIFY_NET_BACKPROP
 						#define GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SOLIDIFY_NET_BACKPROP_AFTER_ACTIVATING_INDIVIDUAL_COMPONENTS	//GIA3g1cTEMP4	
+						#define GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_SOLIDIFY	//preprocessor tag for GIAtxtRelTranslatorRules.xml
 					#endif
 				
 					#define GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_PREPROCESS	//GIA3g11aTEMP57

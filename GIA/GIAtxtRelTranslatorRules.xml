@@ -27,7 +27,7 @@
  * File Name: GIAtxtRelTranslatorRules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g11m 01-March-2019
+ * Project Version: 3g11n 01-March-2019
  * /
  *******************************************************************************/
  
@@ -637,6 +637,17 @@
 						<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="nounSequence" semanticRelationReturnEntity="true" />
 					</or>
 				</group>
+				<!-- #ifdefGIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED -->
+				<group groupName="descriptiveNounAdvanced" groupUniqueIdentifier="subReferenceSetsPart:descriptiveNounAdvanced">
+					<!-- {descriptiveAdjective} noun -->
+					<example><!-- {3} bears --></example>
+					<or>
+						<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="descriptiveNoun" semanticRelationReturnEntity="true" />
+						<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="quantityNoun" semanticRelationReturnEntity="true" />
+						<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="nounNumber" semanticRelationReturnEntity="true" />
+					</or>
+				</group>
+				<!-- #endif -->
 				<group groupName="descriptiveAdjectiveEnforced" groupUniqueIdentifier="subReferenceSetsPart:descriptiveAdjectiveEnforced" semanticRelationFunctionName="propertyReverse">
 					<!-- {adv} adj -->
 					<example><!-- {really} happy --></example>
@@ -758,13 +769,17 @@
 			</groupType>
 			
 			<groupType groupTypeName="possessiveEndingOrPronounPossessiveAdjective" referenceSetType="subReferenceSet">
+	
 				<group groupName="possessiveEnding" groupUniqueIdentifier="possessiveEndingOrPronounPossessiveAdjective:possessiveEnding" semanticRelationFunctionName="propertyReverse">
 					<!-- []'s [] -->
 					<example><!-- Tom's car --></example>
 					<component componentType="group" groupTypeName="subReferenceSetsSubject" groupName="thing" semanticRelationIndexType="object" />
 					<component componentType="string" stringType="explicit" word="'s" />
+					<!-- #ifdefGIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED -->
+					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="descriptiveNounAdvanced" semanticRelationIndexType="subject" semanticRelationReturnEntity="true" />
+					<!-- #else -->
 					<!-- <component componentType="group" groupTypeName="subReferenceSetsSubject" semanticRelationIndexType="subject" semanticRelationReturnEntity="true" /> -->
-					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="descriptiveNoun" semanticRelationIndexType="subject" semanticRelationReturnEntity="true" />
+					<!-- #endif -->
 				</group>
 				<group groupName="pronounPossessiveAdjective" groupUniqueIdentifier="possessiveEndingOrPronounPossessiveAdjective:pronounPossessiveAdjective" semanticRelationFunctionName="propertyReverse">
 					<!-- his [] -->
@@ -1281,7 +1296,7 @@
 					<example><!-- Tom proposed {that} the apple is happy. --></example>
 					<component componentType="group" groupTypeName="subReferenceSetsSubject" semanticRelationIndexType="subject" />
 					<!-- OLD: <component componentType="string" stringType="tokens" tokenLayer="logicReference" tokenClass="verb" tokenType="proposition" semanticRelationIndexType="delimiter" /> -->
-					<!-- #ifdefGIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SOLIDIFY_NET_BACKPROP -->
+					<!-- #ifdefGIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_SOLIDIFY -->
 					<component componentType="group" groupTypeName="logicReferenceSetsSubgroups" groupName="verb1Centre" semanticRelationIndexType="delimiter" semanticRelationReturnEntity="true" />
 					<!-- #else -->
 					<!-- 
@@ -1309,7 +1324,7 @@
 					<example><!-- The house is blue, considering the apple. --></example>
 					<component componentType="group" groupTypeName="logicReferenceSetsOptional" groupName="referenceSetsOrLogicReferenceSets" semanticRelationIndexType="object" />
 					<component componentType="group" groupTypeName="logicReferenceSetsOptional" groupName="referenceSetsOrLogicReferenceSets" semanticRelationIndexType="object" />
-					<!-- #ifdefGIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SOLIDIFY_NET_BACKPROP -->
+					<!-- #ifdefGIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_SOLIDIFY -->
 					<component componentType="group" groupTypeName="logicReferenceSetsSubgroups" groupName="preposition1Centre" semanticRelationIndexType="delimiter" semanticRelationReturnEntity="true" />
 					<!-- #else -->
 					<!--
@@ -1430,7 +1445,7 @@
 					<example><!-- Tom proposed {that} the apple is happy. --></example>
 					<component componentType="group" groupTypeName="subReferenceSetsSubject" semanticRelationIndexType="subject" />
 					<!-- OLD: <component componentType="string" stringType="tokens" tokenLayer="logicReference" tokenClass="verb" tokenType="proposition" semanticRelationIndexType="delimiter" /> -->
-					<!-- #ifdefGIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SOLIDIFY_NET_BACKPROP -->
+					<!-- #ifdefGIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_SOLIDIFY -->
 					<component componentType="group" groupTypeName="logicReferenceSetsSubgroups" groupName="verb1Centre" semanticRelationIndexType="delimiter" semanticRelationReturnEntity="true" />
 					<!-- #else -->
 					<!-- 
@@ -1457,7 +1472,7 @@
 					<!-- [] {,} prep {that} [] -->
 					<example><!-- The house is blue, considering the apple. --></example>
 					<component componentType="group" groupTypeName="logicReferenceSetsOptional" groupName="referenceSetsOrLogicReferenceSets2" semanticRelationIndexType="object" />
-					<!-- #ifdefGIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SOLIDIFY_NET_BACKPROP -->
+					<!-- #ifdefGIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_SOLIDIFY -->
 					<component componentType="group" groupTypeName="logicReferenceSetsSubgroups" groupName="preposition1Centre" semanticRelationIndexType="delimiter" semanticRelationReturnEntity="true" />
 					<!-- #else -->
 					<!--
@@ -1578,7 +1593,7 @@
 					<component componentType="group" groupTypeName="logicReferenceSets" semanticRelationReturnEntity="true" />
 				</group>
 			</groupType>
-			<!-- #ifdefGIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SOLIDIFY_NET_BACKPROP -->
+			<!-- #ifdefGIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_SOLIDIFY -->
 			<groupType groupTypeName="logicReferenceSetsSubgroups" referenceSetType="logicReferenceSet">
 				<group groupName="verb1Centre" groupUniqueIdentifier="logicReferenceSetsSubgroups:verb1Centre">
 					<component componentType="string" stringType="LRPexternalWordLists" wordPOStype="verb" semanticRelationReturnEntity="true" />
