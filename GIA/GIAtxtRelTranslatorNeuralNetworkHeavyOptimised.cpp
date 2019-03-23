@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetworkHeavyOptimised.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g11b 01-March-2019
+ * Project Version: 3g11c 01-March-2019
  * Requirements: 
  * Description: Textual Relation Translator Neural Network Heavy Optimised - ~O(nlogn)
  * /
@@ -1304,9 +1304,7 @@ bool GIAtxtRelTranslatorNeuralNetworkHeavyOptimisedClass::printBackpropParseTree
 	bool print = true;
 	bool performancePreprocess = false;
 	int performanceNOTUSED = 0;
-	bool calculateMaxWeight = false;
-	int maxWeightNOTUSED = 0;
-	GIAtxtRelTranslatorNeuralNetworkOperations.traceBackpropParseTree(group, 1, print, performancePreprocess, &performanceNOTUSED, NULL, calculateMaxWeight, &maxWeightNOTUSED);
+	GIAtxtRelTranslatorNeuralNetworkOperations.traceBackpropParseTree(group, 1, print, performancePreprocess, &performanceNOTUSED, NULL);
 	GIAtxtRelTranslatorNeuralNetworkOperations.resetNeuronBackprop(group, GIA_TXT_REL_TRANSLATOR_RULES_GROUP_BOOL_INDEX_BACKPROP_NEURON_TRACED);
 }
 

@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorRulesGroupClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g11b 01-March-2019
+ * Project Version: 3g11c 01-March-2019
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Rules
  * /
@@ -214,10 +214,10 @@ GIAtxtRelTranslatorRulesGroup::GIAtxtRelTranslatorRulesGroup(void)
 	//parse tree variables:
 	parseTreeGroupRefReverse = NULL;
 	parseTreeGroupRefReverseComponentIndex = INT_DEFAULT_VALUE;
+	#endif	
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SOLIDIFY_NET_BACKPROP_AFTER_ACTIVATING_INDIVIDUAL_COMPONENTS
 	solidified = false;
 	#endif
-	#endif	
 	neuronTraced = false;
 	neuronActive = false;
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SOLIDIFY_NET_BACKPROP

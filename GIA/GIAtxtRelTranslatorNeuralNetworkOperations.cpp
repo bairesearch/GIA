@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetworkOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g11b 01-March-2019
+ * Project Version: 3g11c 01-March-2019
  * Requirements: 
  * Description: Textual Relation Translator Neural Network Operations - generic functions
  * /
@@ -779,10 +779,10 @@ bool GIAtxtRelTranslatorNeuralNetworkOperationsClass::traceBackpropParseTree(GIA
 				
 		if(print)
 		{
-			#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE
+			//#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE
 			printParseTreeDebugIndentation(level);
 			cout << "traceBackpropParseTree: currentParseTreeGroup->groupName = " << currentParseTreeGroup->groupName << ", currentParseTreeGroup->groupTypeNameBackup = " << currentParseTreeGroup->groupTypeNameBackup << endl;		//<< ", parse word (providing semanticRelationReturnEntity) = ?"
-			#endif
+			//#endif
 		}
 
 		for(int i=0; i<currentParseTreeGroup->components.size(); i++)
@@ -1200,6 +1200,13 @@ bool GIAtxtRelTranslatorNeuralNetworkOperationsClass::resetAllNeuronComponents(v
 				group->neuronProcessed = false;
 			}
 			#endif
+			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SOLIDIFY_NET_BACKPROP
+			if(groupBoolIndexType == GIA_TXT_REL_TRANSLATOR_RULES_GROUP_BOOL_INDEX_BACKPROP_SOLIDIFY)
+			{
+				group->currentParseTreeGroupTemp->solidified = false;
+			}
+			#endif
+	
 		}
 	}
 	
