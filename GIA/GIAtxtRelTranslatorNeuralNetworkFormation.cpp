@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetworkFormation.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g10c 23-January-2019
+ * Project Version: 3g11a 01-March-2019
  * Requirements: 
  * Description: Textual Relation Translator Neural Network Formation
  * /
@@ -232,6 +232,8 @@ bool GIAtxtRelTranslatorNeuralNetworkFormationClass::createInputNeuronLayerSecti
 {
 	bool result = true;
 	
+	inputLayerSectionExplicitWordMap.clear();	//added GIA3g11aTEMP62
+	
 	vector<string> explicitWordList;
 	for(int i=0; i<GIAtxtRelTranslatorRulesGroupTypes->size(); i++)
 	{
@@ -300,6 +302,8 @@ bool GIAtxtRelTranslatorNeuralNetworkFormationClass::createInputNeuronLayerSecti
 {
 	bool classTagFound = false;
 	bool result = false;
+	
+	inputLayerSectionTokensLayerMap.clear();	//added GIA3g11aTEMP62
 	
 	for(int i=0; i<GIAtxtRelTranslatorRulesTokenLayers->size(); i++)
 	{

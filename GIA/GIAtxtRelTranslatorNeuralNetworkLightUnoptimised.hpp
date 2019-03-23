@@ -23,18 +23,18 @@
 
 /*******************************************************************************
  *
- * File Name: GIAtxtRelTranslatorNeuralNetworkLight.hpp
+ * File Name: GIAtxtRelTranslatorNeuralNetworkLightUnoptimised.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g10c 23-January-2019
+ * Project Version: 3g11a 01-March-2019
  * Requirements: 
- * Description: Textual Relation Translator Neural Network
+ * Description: Textual Relation Translator Neural Network Light Unoptimised - ~O(n^2)
  * /
  *******************************************************************************/
 
 
-#ifndef HEADER_GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT
-#define HEADER_GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT
+#ifndef HEADER_GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_UNOPTIMISED
+#define HEADER_GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_UNOPTIMISED
 
 #include "GIAglobalDefs.hpp"
 #include "SHAREDvars.hpp"
@@ -54,10 +54,10 @@
 
 
 
-#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT
+#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_UNOPTIMISED
 
 
-class GIAtxtRelTranslatorNeuralNetworkLightClass
+class GIAtxtRelTranslatorNeuralNetworkLightUnoptimisedClass
 {
 	private: SHAREDvarsClass SHAREDvars;
 	private: XMLparserClassClass XMLparserClass;
@@ -104,9 +104,6 @@ class GIAtxtRelTranslatorNeuralNetworkLightClass
 
 	private: bool printBackpropParseTree(GIAtxtRelTranslatorRulesGroup* group, int level);
 	private: bool groupActivationCompleted(GIAtxtRelTranslatorRulesGroup* group);
-
-	private: bool restoreGroupActivation(GIAtxtRelTranslatorRulesGroup* group, GIAtxtRelTranslatorRulesGroup* groupOrig);
-		private: bool restoreComponentsActivation(vector<GIAtxtRelTranslatorRulesComponent*>* components, vector<GIAtxtRelTranslatorRulesComponent*>* componentsOrig);
 	
 
 };

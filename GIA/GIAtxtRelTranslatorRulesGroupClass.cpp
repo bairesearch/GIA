@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorRulesGroupClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g10c 23-January-2019
+ * Project Version: 3g11a 01-March-2019
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Rules
  * /
@@ -144,6 +144,14 @@ GIAtxtRelTranslatorRulesGroup::GIAtxtRelTranslatorRulesGroup(void)
 	//components = NULL;
 	
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_PREPROCESS
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_PREPROCESS_RESET
+	nonResetActivationFoundDuringPreprocess = false;
+	#endif
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_PREPROCESS_DONT_OVERWRITE_COMPONENT_WHEN_NEW_COMPONENT_AVAILABLE
+	newActivationFoundDuringPreprocess = false;
+	#endif
+	#endif
 	numberWordsInSet = 0;
 	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_WORD_NOUN_VERB_VARIANT
 	//forwardPropogationSignalData = NULL;
@@ -180,6 +188,9 @@ GIAtxtRelTranslatorRulesGroup::GIAtxtRelTranslatorRulesGroup(void)
 	
 	neuronGenerated = false;
 	neuronPropagated = false;
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_RESET_ONLY_ONCE_FOUND_FIRST_COMPONENT_RESET_ONCE_PER_WORD_BASIC
+	neuronProcessed = false;
+	#endif
 	neuronPropagatedSave = false;
 	neuronPreviousWordPOStypeTested = false;
 	//semanticRelationReturnEntityForwardPropogationSignalData = NULL;

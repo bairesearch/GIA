@@ -26,7 +26,7 @@
  * File Name: GIAbot.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g10c 23-January-2019
+ * Project Version: 3g11a 01-March-2019
  * Requirements: 
  * Description: Bot
  * /

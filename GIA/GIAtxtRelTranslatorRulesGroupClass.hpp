@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorRulesGroupClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g10c 23-January-2019
+ * Project Version: 3g11a 01-March-2019
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Rules
  * /
@@ -55,6 +55,7 @@
 #define GIA_TXT_REL_TRANSLATOR_RULES_GROUP_BOOL_INDEX_ALLGROUPTYPES_NEURON_PROPAGATED (9)	//type 3
 #define GIA_TXT_REL_TRANSLATOR_RULES_GROUP_BOOL_INDEX_ALLGROUPTYPES_NEURON_PROPAGATED_SAVE (10)	//type 3
 #define GIA_TXT_REL_TRANSLATOR_RULES_GROUP_BOOL_INDEX_ALLGROUPTYPES_NEURON_PROPAGATED_RESET (11)	//type 3
+#define GIA_TXT_REL_TRANSLATOR_RULES_GROUP_BOOL_INDEX_ALLGROUPTYPES_NEURON_PROCESSED (12)	//type 3
 
 #define GIA_TXT_REL_TRANSLATOR_RULES_GROUP_BOOL_INDEX_BACKPROP_NEURON_TRACED (7)	//type 4
 //#define GIA_TXT_REL_TRANSLATOR_RULES_GROUP_BOOL_INDEX_BACKPROP_SOLIDIFY (8)	//type 4
@@ -194,6 +195,14 @@ public:
 	vector<GIAtxtRelTranslatorRulesComponent*> components;
 	
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_PREPROCESS
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_PREPROCESS_RESET
+	bool nonResetActivationFoundDuringPreprocess;
+	#endif
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_PREPROCESS_DONT_OVERWRITE_COMPONENT_WHEN_NEW_COMPONENT_AVAILABLE
+	bool newActivationFoundDuringPreprocess;
+	#endif
+	#endif
 	int numberWordsInSet;
 	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_WORD_NOUN_VERB_VARIANT
 	GIAtxtRelTranslatorNeuralNetworkForwardPropogationSignalData forwardPropogationSignalData;
@@ -230,6 +239,9 @@ public:
 	
 	bool neuronGenerated;
 	bool neuronPropagated;
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_RESET_ONLY_ONCE_FOUND_FIRST_COMPONENT_RESET_ONCE_PER_WORD_BASIC
+	bool neuronProcessed;
+	#endif
 	bool neuronPropagatedSave;
 	bool neuronPreviousWordPOStypeTested;
 	GIAtxtRelTranslatorNeuralNetworkForwardPropogationSignalData semanticRelationReturnEntityForwardPropogationSignalData;

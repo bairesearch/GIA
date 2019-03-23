@@ -23,17 +23,30 @@
 
 /*******************************************************************************
  *
- * File Name: GIAneuralNetworkSymbolicCore.cpp
+ * File Name: GIAtxtRelTranslatorNeuralNetworkSpiked.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
  * Project Version: 3g11a 01-March-2019
- * Description: Neural Network - visual representation of GIA contents in prototype biological neural network
+ * Requirements: 
+ * Description: Textual Relation Translator Neural Network Spiked
  * /
  *******************************************************************************/
 
 
-#include "GIAneuralNetworkSymbolicCore.hpp"
+#ifndef HEADER_GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SPIKED
+#define HEADER_GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SPIKED
 
-#ifdef GIA_NEURAL_NETWORK_SYMBOLIC_CORE_ACTIVE
+#include "GIAglobalDefs.hpp"
+
+
+#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SPIKED
+
+
+class GIAtxtRelTranslatorNeuralNetworkSpikedClass
+{
+
+};
+
+#endif
 
 #endif

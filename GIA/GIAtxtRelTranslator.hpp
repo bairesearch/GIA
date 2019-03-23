@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslator.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g10c 23-January-2019
+ * Project Version: 3g11a 01-March-2019
  * Requirements: requires plain text file
  * Description: Textual Relation Translator
  * /
@@ -54,7 +54,11 @@
 #include "GIAtxtRelTranslatorNeuralNetworkHeavyOptimised.hpp"
 #endif
 #else
-#include "GIAtxtRelTranslatorNeuralNetworkLight.hpp"
+#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_UNOPTIMISED
+#include "GIAtxtRelTranslatorNeuralNetworkLightUnoptimised.hpp"
+#else
+#include "GIAtxtRelTranslatorNeuralNetworkLightOptimised.hpp"
+#endif
 #endif
 #include "GIAtxtRelTranslatorNeuralNetworkFormation.hpp"
 #else
@@ -88,7 +92,11 @@ class GIAtxtRelTranslatorClass
 	private: GIAtxtRelTranslatorNeuralNetworkHeavyOptimisedClass GIAtxtRelTranslatorNeuralNetwork;
 	#endif
 	#else
-	private: GIAtxtRelTranslatorNeuralNetworkLightClass GIAtxtRelTranslatorNeuralNetwork;	
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_UNOPTIMISED
+	private: GIAtxtRelTranslatorNeuralNetworkLightUnoptimisedClass GIAtxtRelTranslatorNeuralNetwork;	
+	#else
+	private: GIAtxtRelTranslatorNeuralNetworkLightOptimisedClass GIAtxtRelTranslatorNeuralNetwork;	
+	#endif
 	#endif
 	private: GIAtxtRelTranslatorNeuralNetworkFormationClass GIAtxtRelTranslatorNeuralNetworkFormation;
 	#else

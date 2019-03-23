@@ -23,21 +23,21 @@
 
 /*******************************************************************************
  *
- * File Name: GIAtxtRelTranslatorNeuralNetworkLight.cpp
+ * File Name: GIAtxtRelTranslatorNeuralNetworkLightUnoptimised.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g10c 23-January-2019
+ * Project Version: 3g11a 01-March-2019
  * Requirements: 
- * Description: Textual Relation Translator Neural Network
+ * Description: Textual Relation Translator Neural Network Light Unoptimised - ~O(n^2)
  * /
  *******************************************************************************/
 
 
-#include "GIAtxtRelTranslatorNeuralNetworkLight.hpp"
+#include "GIAtxtRelTranslatorNeuralNetworkLightUnoptimised.hpp"
 #include "SHAREDvars.hpp"
 
 
-#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT
+#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_UNOPTIMISED
 
 
 
@@ -50,7 +50,7 @@ vector<GIAtxtRelTranslatorRulesGroup*> parseTreeGroupsArray;
 #endif
 
 
-bool GIAtxtRelTranslatorNeuralNetworkLightClass::executeTxtRelTranslatorNeuralNetwork(GIAtranslatorVariablesClass* translatorVariables, vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, vector<GIApreprocessorPlainTextWord*>* sentenceContents, GIAtxtRelTranslatorRulesGroup** topLevelParseTreeGroup, const bool parseIsolatedSubreferenceSets, const bool parserEnabled, int* performance)
+bool GIAtxtRelTranslatorNeuralNetworkLightUnoptimisedClass::executeTxtRelTranslatorNeuralNetwork(GIAtranslatorVariablesClass* translatorVariables, vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, vector<GIApreprocessorPlainTextWord*>* sentenceContents, GIAtxtRelTranslatorRulesGroup** topLevelParseTreeGroup, const bool parseIsolatedSubreferenceSets, const bool parserEnabled, int* performance)
 {
 	bool result = false;
 
@@ -87,7 +87,7 @@ bool GIAtxtRelTranslatorNeuralNetworkLightClass::executeTxtRelTranslatorNeuralNe
 		forwardPropogationSentenceData.forwardPropogationWordDataArray.push_back(forwardPropogationWordData);
 	}
 	
-	GIAtxtRelTranslatorNeuralNetworkOperations.resetAllNeuronComponents(GIAtxtRelTranslatorRulesGroupTypes, GIA_TXT_REL_TRANSLATOR_RULES_GROUP_BOOL_INDEX_ALLGROUPTYPES_PARSE_TREE_GROUP_REF);	//this is required to initialise currentParseTreeGroup for every group (only required for first execution of GIAtxtRelTranslatorNeuralNetworkLightClass::executeTxtRelTranslatorNeuralNetwork)
+	GIAtxtRelTranslatorNeuralNetworkOperations.resetAllNeuronComponents(GIAtxtRelTranslatorRulesGroupTypes, GIA_TXT_REL_TRANSLATOR_RULES_GROUP_BOOL_INDEX_ALLGROUPTYPES_PARSE_TREE_GROUP_REF);	//this is required to initialise currentParseTreeGroup for every group (only required for first execution of GIAtxtRelTranslatorNeuralNetworkLightUnoptimisedClass::executeTxtRelTranslatorNeuralNetwork)
 	#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE_EXTRA8
 	firstExecution = false;
 	#endif
@@ -108,7 +108,7 @@ bool GIAtxtRelTranslatorNeuralNetworkLightClass::executeTxtRelTranslatorNeuralNe
 	}
 	else
 	{
-		cerr << "GIAtxtRelTranslatorNeuralNetworkLightClass::executeTxtRelTranslatorNeuralNetwork{} error: sentenceContents->size() == 0" << endl;
+		cerr << "GIAtxtRelTranslatorNeuralNetworkLightUnoptimisedClass::executeTxtRelTranslatorNeuralNetwork{} error: sentenceContents->size() == 0" << endl;
 		exit(EXIT_ERROR);		
 	}
 	
@@ -137,7 +137,7 @@ bool GIAtxtRelTranslatorNeuralNetworkLightClass::executeTxtRelTranslatorNeuralNe
 		#endif
 		
 		/*
-		cout << "DEBUG: finished executing GIAtxtRelTranslatorNeuralNetworkLightClass::executeTxtRelTranslatorNeuralNetwork (exiting)" << endl;
+		cout << "DEBUG: finished executing GIAtxtRelTranslatorNeuralNetworkLightUnoptimisedClass::executeTxtRelTranslatorNeuralNetwork (exiting)" << endl;
 		exit(EXIT_ERROR);
 		*/
 	}
@@ -173,7 +173,7 @@ bool GIAtxtRelTranslatorNeuralNetworkLightClass::executeTxtRelTranslatorNeuralNe
 	
 	/*
 	#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE
-	cout << "DEBUG: finished executing GIAtxtRelTranslatorNeuralNetworkLightClass::executeTxtRelTranslatorNeuralNetwork (exiting)" << endl;
+	cout << "DEBUG: finished executing GIAtxtRelTranslatorNeuralNetworkLightUnoptimisedClass::executeTxtRelTranslatorNeuralNetwork (exiting)" << endl;
 	exit(EXIT_ERROR);
 	#endif
 	*/
@@ -184,7 +184,7 @@ bool GIAtxtRelTranslatorNeuralNetworkLightClass::executeTxtRelTranslatorNeuralNe
 	
 
 
-bool GIAtxtRelTranslatorNeuralNetworkLightClass::propagateWordThroughNetworkIntro(GIAtranslatorVariablesClass* translatorVariables, const int w, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData, int layer, GIAtxtRelTranslatorRulesGroup* activationPathWordFirstParseTreeGroup)
+bool GIAtxtRelTranslatorNeuralNetworkLightUnoptimisedClass::propagateWordThroughNetworkIntro(GIAtranslatorVariablesClass* translatorVariables, const int w, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData, int layer, GIAtxtRelTranslatorRulesGroup* activationPathWordFirstParseTreeGroup)
 {
 	bool result = false;
 
@@ -288,7 +288,7 @@ bool GIAtxtRelTranslatorNeuralNetworkLightClass::propagateWordThroughNetworkIntr
 		forwardPropogationWordData->wordPOStype = GIA_PREPROCESSOR_POS_TYPE_UNDEFINED;	
 		#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE
 		GIAtxtRelTranslatorNeuralNetworkOperations.printParseTreeDebugIndentation(layer);
-		cout << "GIAtxtRelTranslatorNeuralNetworkLightClass::propagateWordThroughNetworkIntro: GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_STRINGTYPE_EXPLICIT" << endl;
+		cout << "GIAtxtRelTranslatorNeuralNetworkLightUnoptimisedClass::propagateWordThroughNetworkIntro: GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_STRINGTYPE_EXPLICIT" << endl;
 		#endif
 		if(propagateWordThroughNetworkGroupInit(translatorVariables, w, inputLayerGroup, &forwardPropogationSignalData, forwardPropogationWordData, forwardPropogationSentenceData, layer, activationPathWordFirstParseTreeGroup))
 		{
@@ -301,7 +301,7 @@ bool GIAtxtRelTranslatorNeuralNetworkLightClass::propagateWordThroughNetworkIntr
 		forwardPropogationWordData->wordPOStype = GIA_PREPROCESSOR_POS_TYPE_UNDEFINED;	
 		#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE
 		GIAtxtRelTranslatorNeuralNetworkOperations.printParseTreeDebugIndentation(layer);
-		cout << "GIAtxtRelTranslatorNeuralNetworkLightClass::propagateWordThroughNetworkIntro: GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_STRINGTYPE_EXPLICIT" << endl;
+		cout << "GIAtxtRelTranslatorNeuralNetworkLightUnoptimisedClass::propagateWordThroughNetworkIntro: GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_STRINGTYPE_EXPLICIT" << endl;
 		#endif
 		if(propagateWordThroughNetworkGroupInit(translatorVariables, w, inputLayerGroup, &forwardPropogationSignalData, forwardPropogationWordData, forwardPropogationSentenceData, layer, activationPathWordFirstParseTreeGroup))
 		{
@@ -313,7 +313,7 @@ bool GIAtxtRelTranslatorNeuralNetworkLightClass::propagateWordThroughNetworkIntr
 		forwardPropogationWordData->wordPOStype = GIA_PREPROCESSOR_POS_TYPE_UNDEFINED;	
 		#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE
 		GIAtxtRelTranslatorNeuralNetworkOperations.printParseTreeDebugIndentation(layer);
-		cout << "GIAtxtRelTranslatorNeuralNetworkLightClass::propagateWordThroughNetworkIntro: GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_STRINGTYPE_EXPLICIT" << endl;
+		cout << "GIAtxtRelTranslatorNeuralNetworkLightUnoptimisedClass::propagateWordThroughNetworkIntro: GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_STRINGTYPE_EXPLICIT" << endl;
 		#endif
 		if(propagateWordThroughNetworkGroupInit(translatorVariables, w, inputLayerGroup, &forwardPropogationSignalData, forwardPropogationWordData, forwardPropogationSentenceData, layer, activationPathWordFirstParseTreeGroup))
 		{
@@ -344,13 +344,13 @@ bool GIAtxtRelTranslatorNeuralNetworkLightClass::propagateWordThroughNetworkIntr
 						}
 						else
 						{
-							cerr << "GIAtxtRelTranslatorNeuralNetworkLightClass::propagateWordThroughNetworkIntro{} error: wordPOStype cannot be derived from GIAtokenLayerClassName, GIAtokenLayerClassName = " << GIAtokenLayerClassName << endl;
+							cerr << "GIAtxtRelTranslatorNeuralNetworkLightUnoptimisedClass::propagateWordThroughNetworkIntro{} error: wordPOStype cannot be derived from GIAtokenLayerClassName, GIAtokenLayerClassName = " << GIAtokenLayerClassName << endl;
 							exit(EXIT_ERROR);
 						}
 							
 						#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE
 						GIAtxtRelTranslatorNeuralNetworkOperations.printParseTreeDebugIndentation(layer);
-						cout << "GIAtxtRelTranslatorNeuralNetworkLightClass::propagateWordThroughNetworkIntro: GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_STRINGTYPE_TOKENS" << endl;
+						cout << "GIAtxtRelTranslatorNeuralNetworkLightUnoptimisedClass::propagateWordThroughNetworkIntro: GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_STRINGTYPE_TOKENS" << endl;
 						#endif
 						if(propagateWordThroughNetworkGroupInit(translatorVariables, w, currentGroupInInputLayerSectionTokensLayerClassType, &forwardPropogationSignalData, forwardPropogationWordData, forwardPropogationSentenceData, layer, activationPathWordFirstParseTreeGroup))
 						{
@@ -374,14 +374,14 @@ bool GIAtxtRelTranslatorNeuralNetworkLightClass::propagateWordThroughNetworkIntr
 }
 
 	
-bool GIAtxtRelTranslatorNeuralNetworkLightClass::propagateWordThroughNetworkGroupInit(GIAtranslatorVariablesClass* translatorVariables, const int w, int wordPOStype, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSignalData* forwardPropogationSignalData, GIAtxtRelTranslatorNeuralNetworkForwardPropogationWordData* forwardPropogationWordData, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData, int layer, GIAtxtRelTranslatorRulesGroup* activationPathWordFirstParseTreeGroup)
+bool GIAtxtRelTranslatorNeuralNetworkLightUnoptimisedClass::propagateWordThroughNetworkGroupInit(GIAtranslatorVariablesClass* translatorVariables, const int w, int wordPOStype, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSignalData* forwardPropogationSignalData, GIAtxtRelTranslatorNeuralNetworkForwardPropogationWordData* forwardPropogationWordData, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData, int layer, GIAtxtRelTranslatorRulesGroup* activationPathWordFirstParseTreeGroup)
 {
 	bool result = false;
 	
 	GIAtxtRelTranslatorRulesGroup* inputLayerGroup = GIAtxtRelTranslatorNeuralNetworkFormation.getInputGroupLayerSection(GIAtxtRelTranslatorNeuralNetworkFormation.getFirstGroupInInputLayerSectionWordPOStype(), wordPOStype);
 	#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE
 	GIAtxtRelTranslatorNeuralNetworkOperations.printParseTreeDebugIndentation(layer);
-	cout << "GIAtxtRelTranslatorNeuralNetworkLightClass::propagateWordThroughNetworkIntro: GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_STRINGTYPE_LRPEXTERNALWORDLISTS, wordPOStype = " << wordPOStype << endl;
+	cout << "GIAtxtRelTranslatorNeuralNetworkLightUnoptimisedClass::propagateWordThroughNetworkIntro: GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_STRINGTYPE_LRPEXTERNALWORDLISTS, wordPOStype = " << wordPOStype << endl;
 	#endif
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PREVIOUS_WORD_POS_TYPE_CHECKS
 	forwardPropogationWordData->wordPOStype = wordPOStype;
@@ -395,7 +395,7 @@ bool GIAtxtRelTranslatorNeuralNetworkLightClass::propagateWordThroughNetworkGrou
 	return result;
 }	
 	
-bool GIAtxtRelTranslatorNeuralNetworkLightClass::propagateWordThroughNetworkGroupInit(GIAtranslatorVariablesClass* translatorVariables, const int w, GIAtxtRelTranslatorRulesGroup* inputLayerGroup, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSignalData* forwardPropogationSignalData, GIAtxtRelTranslatorNeuralNetworkForwardPropogationWordData* forwardPropogationWordData, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData, int layer, GIAtxtRelTranslatorRulesGroup* activationPathWordFirstParseTreeGroup)
+bool GIAtxtRelTranslatorNeuralNetworkLightUnoptimisedClass::propagateWordThroughNetworkGroupInit(GIAtranslatorVariablesClass* translatorVariables, const int w, GIAtxtRelTranslatorRulesGroup* inputLayerGroup, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSignalData* forwardPropogationSignalData, GIAtxtRelTranslatorNeuralNetworkForwardPropogationWordData* forwardPropogationWordData, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData, int layer, GIAtxtRelTranslatorRulesGroup* activationPathWordFirstParseTreeGroup)
 {
 	bool result = false;
 	
@@ -410,7 +410,7 @@ bool GIAtxtRelTranslatorNeuralNetworkLightClass::propagateWordThroughNetworkGrou
 }				
 				
 
-bool GIAtxtRelTranslatorNeuralNetworkLightClass::propagateWordThroughNetworkGroupIntro(GIAtranslatorVariablesClass* translatorVariables, GIAtxtRelTranslatorRulesGroup* group, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSignalData* forwardPropogationSignalData, GIAtxtRelTranslatorNeuralNetworkForwardPropogationWordData* forwardPropogationWordData, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData, int layer, GIAtxtRelTranslatorRulesGroup* activationPathWordFirstParseTreeGroup)
+bool GIAtxtRelTranslatorNeuralNetworkLightUnoptimisedClass::propagateWordThroughNetworkGroupIntro(GIAtranslatorVariablesClass* translatorVariables, GIAtxtRelTranslatorRulesGroup* group, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSignalData* forwardPropogationSignalData, GIAtxtRelTranslatorNeuralNetworkForwardPropogationWordData* forwardPropogationWordData, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData, int layer, GIAtxtRelTranslatorRulesGroup* activationPathWordFirstParseTreeGroup)
 {
 	bool result = false;
 	
@@ -422,7 +422,7 @@ bool GIAtxtRelTranslatorNeuralNetworkLightClass::propagateWordThroughNetworkGrou
 	return result;
 }
 
-bool GIAtxtRelTranslatorNeuralNetworkLightClass::propagateWordThroughNetworkGroup(GIAtranslatorVariablesClass* translatorVariables, GIAtxtRelTranslatorRulesGroup* group, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSignalData* forwardPropogationSignalData, GIAtxtRelTranslatorNeuralNetworkForwardPropogationWordData* forwardPropogationWordData, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData, int layer, GIAtxtRelTranslatorRulesGroup* activationPathWordCurrentParseTreeGroup)
+bool GIAtxtRelTranslatorNeuralNetworkLightUnoptimisedClass::propagateWordThroughNetworkGroup(GIAtranslatorVariablesClass* translatorVariables, GIAtxtRelTranslatorRulesGroup* group, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSignalData* forwardPropogationSignalData, GIAtxtRelTranslatorNeuralNetworkForwardPropogationWordData* forwardPropogationWordData, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData, int layer, GIAtxtRelTranslatorRulesGroup* activationPathWordCurrentParseTreeGroup)
 {
 	bool result = false;
 	
@@ -456,7 +456,7 @@ bool GIAtxtRelTranslatorNeuralNetworkLightClass::propagateWordThroughNetworkGrou
 	return result;
 }
 		
-bool GIAtxtRelTranslatorNeuralNetworkLightClass::propagateWordThroughNetworkGroupSelect(GIAtranslatorVariablesClass* translatorVariables, GIAtxtRelTranslatorRulesGroup* group, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSignalData* forwardPropogationSignalData, GIAtxtRelTranslatorNeuralNetworkForwardPropogationWordData* forwardPropogationWordData, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData, int layer, GIAtxtRelTranslatorRulesGroup* activationPathWordCurrentParseTreeGroup)
+bool GIAtxtRelTranslatorNeuralNetworkLightUnoptimisedClass::propagateWordThroughNetworkGroupSelect(GIAtranslatorVariablesClass* translatorVariables, GIAtxtRelTranslatorRulesGroup* group, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSignalData* forwardPropogationSignalData, GIAtxtRelTranslatorNeuralNetworkForwardPropogationWordData* forwardPropogationWordData, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData, int layer, GIAtxtRelTranslatorRulesGroup* activationPathWordCurrentParseTreeGroup)
 {
 	bool result = false;
 	
@@ -494,60 +494,39 @@ bool GIAtxtRelTranslatorNeuralNetworkLightClass::propagateWordThroughNetworkGrou
 				if(GIAtxtRelTranslatorNeuralNetworkOperations.componentTests1(ownerComponent, ownerGroup, forwardPropogationSignalData, forwardPropogationWordData, forwardPropogationSentenceData))	//static component tests (component activations irrelevant)
 				{
 				#endif
-					/*
-					#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SOLIDIFY_NET_BACKPROP
-					if(!(currentParseTreeGroup->solidified))	//this saves time by considering only recently activated groups
-					{
-					#endif
-					*/
-						/*
-						#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SOLIDIFY_NET_BACKPROP
-						currentParseTreeGroup->solidified = true;
-						#endif
-						*/
 						
-						if(currentComponent->componentType == GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_STRING)
-						{
-							currentComponent->candidateStringMatch = forwardPropogationWordData->wordReference;
-						}
+					if(currentComponent->componentType == GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_STRING)
+					{
+						currentComponent->candidateStringMatch = forwardPropogationWordData->wordReference;
+					}
 
-						GIAtxtRelTranslatorDebug debug;
-						#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE_EXTRA4
-						debug.firstComponentActive = ownerGroup->components[0]->neuronComponentConnectionActive;
-						if(ownerGroup->components.size() >= 2)
-						{
-							debug.secondComponentActive = ownerGroup->components[1]->neuronComponentConnectionActive;
-						}
-						#endif
-
-						#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE_EXTRA2
-						GIAtxtRelTranslatorNeuralNetworkOperations.printParseTreeDebugIndentation(layer+1);
-						cout << "2b: propagateWordThroughNetworkGroup: " <<  ownerGroup->groupTypeNameBackup << ":" << ownerGroup->groupName << endl;		
-						//cout << "currentComponent componentType = " << currentComponent->componentType << endl;
-						GIAtxtRelTranslatorNeuralNetworkOperations.printComponent(currentComponent, layer+1);
-						#endif
-
-						if(currentComponent->semanticRelationReturnEntity)
-						{
-							ownerGroup->semanticRelationReturnEntityForwardPropogationSignalDataProspective = *forwardPropogationSignalData;
-						}
-
-						bool deleteNewlyCreatedMemoryGroup = false;
-						if(propagateWordThroughNetworkGroupComponentWrapper(translatorVariables, group, currentComponent, ownerGroup, ownerComponent, forwardPropogationSignalData, forwardPropogationWordData, forwardPropogationSentenceData, layer, activationPathWordCurrentParseTreeGroup, i, &debug))
-						{
-							result = true;
-						}
-
-						/*
-						#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SOLIDIFY_NET_BACKPROP
-						currentParseTreeGroup->solidified = false;
-						#endif
-						*/
-					/*
-					#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SOLIDIFY_NET_BACKPROP	
+					GIAtxtRelTranslatorDebug debug;
+					#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE_EXTRA4
+					debug.firstComponentActive = ownerGroup->components[0]->neuronComponentConnectionActive;
+					if(ownerGroup->components.size() >= 2)
+					{
+						debug.secondComponentActive = ownerGroup->components[1]->neuronComponentConnectionActive;
 					}
 					#endif
-					*/
+
+					#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE_EXTRA2
+					GIAtxtRelTranslatorNeuralNetworkOperations.printParseTreeDebugIndentation(layer+1);
+					cout << "2b: propagateWordThroughNetworkGroup: " <<  ownerGroup->groupTypeNameBackup << ":" << ownerGroup->groupName << endl;		
+					//cout << "currentComponent componentType = " << currentComponent->componentType << endl;
+					GIAtxtRelTranslatorNeuralNetworkOperations.printComponent(currentComponent, layer+1);
+					#endif
+
+					if(currentComponent->semanticRelationReturnEntity)
+					{
+						ownerGroup->semanticRelationReturnEntityForwardPropogationSignalDataProspective = *forwardPropogationSignalData;
+					}
+
+					bool deleteNewlyCreatedMemoryGroup = false;
+					if(propagateWordThroughNetworkGroupComponentWrapper(translatorVariables, group, currentComponent, ownerGroup, ownerComponent, forwardPropogationSignalData, forwardPropogationWordData, forwardPropogationSentenceData, layer, activationPathWordCurrentParseTreeGroup, i, &debug))
+					{
+						result = true;
+					}
+
 				#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_WORD_NOUN_VERB_VARIANT
 				}
 				#endif
@@ -562,7 +541,7 @@ bool GIAtxtRelTranslatorNeuralNetworkLightClass::propagateWordThroughNetworkGrou
 	
 
 
-bool GIAtxtRelTranslatorNeuralNetworkLightClass::propagateWordThroughNetworkGroupComponentWrapper(GIAtranslatorVariablesClass* translatorVariables, GIAtxtRelTranslatorRulesGroup* group, GIAtxtRelTranslatorRulesComponent* currentComponent, GIAtxtRelTranslatorRulesGroup* ownerGroup, GIAtxtRelTranslatorRulesComponent* ownerComponent, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSignalData* forwardPropogationSignalData, GIAtxtRelTranslatorNeuralNetworkForwardPropogationWordData* forwardPropogationWordData, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData, int layer, GIAtxtRelTranslatorRulesGroup* activationPathWordCurrentParseTreeGroup, int groupFrontComponentConnectionListIndex, GIAtxtRelTranslatorDebug* debug)
+bool GIAtxtRelTranslatorNeuralNetworkLightUnoptimisedClass::propagateWordThroughNetworkGroupComponentWrapper(GIAtranslatorVariablesClass* translatorVariables, GIAtxtRelTranslatorRulesGroup* group, GIAtxtRelTranslatorRulesComponent* currentComponent, GIAtxtRelTranslatorRulesGroup* ownerGroup, GIAtxtRelTranslatorRulesComponent* ownerComponent, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSignalData* forwardPropogationSignalData, GIAtxtRelTranslatorNeuralNetworkForwardPropogationWordData* forwardPropogationWordData, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData, int layer, GIAtxtRelTranslatorRulesGroup* activationPathWordCurrentParseTreeGroup, int groupFrontComponentConnectionListIndex, GIAtxtRelTranslatorDebug* debug)
 {
 	bool result = false;
 	
@@ -597,7 +576,7 @@ bool GIAtxtRelTranslatorNeuralNetworkLightClass::propagateWordThroughNetworkGrou
 				{
 					subComponentsPassed = true;
 					#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE
-					//cout << "GIAtxtRelTranslatorNeuralNetworkLightClass::propagateWordThroughNetworkGroup: propagateWordThroughNetworkGroupVerifyComponentSequenceOrActivationReady" << endl;
+					//cout << "GIAtxtRelTranslatorNeuralNetworkLightUnoptimisedClass::propagateWordThroughNetworkGroup: propagateWordThroughNetworkGroupVerifyComponentSequenceOrActivationReady" << endl;
 					#endif
 				}
 			}
@@ -607,7 +586,7 @@ bool GIAtxtRelTranslatorNeuralNetworkLightClass::propagateWordThroughNetworkGrou
 				{
 					subComponentsPassed = true;
 					#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE
-					//cout << "GIAtxtRelTranslatorNeuralNetworkLightClass::propagateWordThroughNetworkGroup: propagateWordThroughNetworkGroupVerifyComponentSequenceRepeatActivationReady" << endl;
+					//cout << "GIAtxtRelTranslatorNeuralNetworkLightUnoptimisedClass::propagateWordThroughNetworkGroup: propagateWordThroughNetworkGroupVerifyComponentSequenceRepeatActivationReady" << endl;
 					#endif
 				}
 			}
@@ -663,7 +642,7 @@ bool GIAtxtRelTranslatorNeuralNetworkLightClass::propagateWordThroughNetworkGrou
 	
 	
 //precondition: only components (not subcomponents) use special condition flags (wordNounVariantType/wordVerbVariantType)
-bool GIAtxtRelTranslatorNeuralNetworkLightClass::propagateWordThroughNetworkGroupComponent(GIAtranslatorVariablesClass* translatorVariables, GIAtxtRelTranslatorRulesGroup* group, GIAtxtRelTranslatorRulesComponent* currentComponent, GIAtxtRelTranslatorRulesGroup* ownerGroup, GIAtxtRelTranslatorRulesComponent* ownerComponent, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSignalData* forwardPropogationSignalData, GIAtxtRelTranslatorNeuralNetworkForwardPropogationWordData* forwardPropogationWordData, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData, const bool activationSequenceCompleted, int layer, GIAtxtRelTranslatorRulesGroup* activationPathWordCurrentParseTreeGroup, int groupFrontComponentConnectionListIndex, GIAtxtRelTranslatorDebug* debug)
+bool GIAtxtRelTranslatorNeuralNetworkLightUnoptimisedClass::propagateWordThroughNetworkGroupComponent(GIAtranslatorVariablesClass* translatorVariables, GIAtxtRelTranslatorRulesGroup* group, GIAtxtRelTranslatorRulesComponent* currentComponent, GIAtxtRelTranslatorRulesGroup* ownerGroup, GIAtxtRelTranslatorRulesComponent* ownerComponent, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSignalData* forwardPropogationSignalData, GIAtxtRelTranslatorNeuralNetworkForwardPropogationWordData* forwardPropogationWordData, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData, const bool activationSequenceCompleted, int layer, GIAtxtRelTranslatorRulesGroup* activationPathWordCurrentParseTreeGroup, int groupFrontComponentConnectionListIndex, GIAtxtRelTranslatorDebug* debug)
 {
 	bool result = false;
 	
@@ -728,7 +707,7 @@ bool GIAtxtRelTranslatorNeuralNetworkLightClass::propagateWordThroughNetworkGrou
 	/*
 	if(ownerGroup->currentParseTreeGroupTemp->groupName != ownerGroup->groupName)
 	{
-		cerr << "GIAtxtRelTranslatorNeuralNetworkLightClass::propagateWordThroughNetworkGroupComponent error (ownerGroup->currentParseTreeGroupTemp->groupName != ownerGroup->groupName)" << endl;
+		cerr << "GIAtxtRelTranslatorNeuralNetworkLightUnoptimisedClass::propagateWordThroughNetworkGroupComponent error (ownerGroup->currentParseTreeGroupTemp->groupName != ownerGroup->groupName)" << endl;
 		exit(EXIT_ERROR);
 	}
 	*/
@@ -746,7 +725,7 @@ bool GIAtxtRelTranslatorNeuralNetworkLightClass::propagateWordThroughNetworkGrou
 		/*
 		if(ownerGroup->currentParseTreeGroupTemp->groupName != ownerGroup->groupName)
 		{
-			cerr << "GIAtxtRelTranslatorNeuralNetworkLightClass::propagateWordThroughNetworkGroupComponent error: (ownerGroup->currentParseTreeGroupTemp->groupName != ownerGroup->groupName)" << endl;
+			cerr << "GIAtxtRelTranslatorNeuralNetworkLightUnoptimisedClass::propagateWordThroughNetworkGroupComponent error: (ownerGroup->currentParseTreeGroupTemp->groupName != ownerGroup->groupName)" << endl;
 			exit(EXIT_ERROR);
 		}
 		*/
@@ -827,9 +806,9 @@ bool GIAtxtRelTranslatorNeuralNetworkLightClass::propagateWordThroughNetworkGrou
 				
 				/*
 				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_REVERSE
-				cerr << "GIAtxtRelTranslatorNeuralNetworkLightClass::propagateWordThroughNetworkGroupComponent error: !(forwardPropogationWordData->w == 0)" << endl;
+				cerr << "GIAtxtRelTranslatorNeuralNetworkLightUnoptimisedClass::propagateWordThroughNetworkGroupComponent error: !(forwardPropogationWordData->w == 0)" << endl;
 				#else
-				cerr << "GIAtxtRelTranslatorNeuralNetworkLightClass::propagateWordThroughNetworkGroupComponent error: !(forwardPropogationWordData->w == forwardPropogationSentenceData->sentenceContents.size()-1)" << endl;
+				cerr << "GIAtxtRelTranslatorNeuralNetworkLightUnoptimisedClass::propagateWordThroughNetworkGroupComponent error: !(forwardPropogationWordData->w == forwardPropogationSentenceData->sentenceContents.size()-1)" << endl;
 				#endif
 				cerr << "forwardPropogationWordData->w = " << forwardPropogationWordData->w << endl;
 				exit(EXIT_ERROR);
@@ -884,13 +863,12 @@ bool GIAtxtRelTranslatorNeuralNetworkLightClass::propagateWordThroughNetworkGrou
 }
 
 
-void GIAtxtRelTranslatorNeuralNetworkLightClass::restoreGroupActivations(GIAtxtRelTranslatorRulesGroup* ownerGroup, GIAtxtRelTranslatorRulesGroup* ownerGroupOrig, GIAtxtRelTranslatorRulesGroup* activationPathWordCurrentParseTreeGroupOwner, GIAtxtRelTranslatorNeuralNetworkForwardPropogationWordData* forwardPropogationWordData, bool restoreCurrentParseTreeGroupTemp)
+void GIAtxtRelTranslatorNeuralNetworkLightUnoptimisedClass::restoreGroupActivations(GIAtxtRelTranslatorRulesGroup* ownerGroup, GIAtxtRelTranslatorRulesGroup* ownerGroupOrig, GIAtxtRelTranslatorRulesGroup* activationPathWordCurrentParseTreeGroupOwner, GIAtxtRelTranslatorNeuralNetworkForwardPropogationWordData* forwardPropogationWordData, bool restoreCurrentParseTreeGroupTemp)
 {
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_NEW
 	if(restoreCurrentParseTreeGroupTemp)
 	{
-		GIAtxtRelTranslatorNeuralNetworkOperations.deleteGroup(ownerGroup->currentParseTreeGroupTemp);	//CHECKTHIS - delete newly created currentParseTreeGroupTemp 
-		ownerGroup->currentParseTreeGroupTemp = activationPathWordCurrentParseTreeGroupOwner;	//restore original group from memory
+		GIAtxtRelTranslatorNeuralNetworkOperations.restoreGroupParseTreeGroupRef(ownerGroup, activationPathWordCurrentParseTreeGroupOwner);	//restore original group from memory
 	}
 	//cout << "ownerGroup->currentParseTreeGroupTemp = " << ownerGroup->currentParseTreeGroupTemp->groupName << endl;
 	
@@ -904,7 +882,7 @@ void GIAtxtRelTranslatorNeuralNetworkLightClass::restoreGroupActivations(GIAtxtR
 	ownerGroup->currentParseTreeGroupTemp->components.pop_back();
 	#endif
 	delete latestParseTreeComponent;
-	restoreGroupActivation(ownerGroup, ownerGroupOrig);
+	GIAtxtRelTranslatorNeuralNetworkOperations.restoreGroupActivation(ownerGroup, ownerGroupOrig);
 	//NOTNECESSARY: GIAtxtRelTranslatorNeuralNetworkOperations.resetGroupParseTreeGroupRef(ownerGroup, true);
 	#endif
 		
@@ -914,12 +892,12 @@ void GIAtxtRelTranslatorNeuralNetworkLightClass::restoreGroupActivations(GIAtxtR
 	for(int i2=0; i2<parseTreeGroupsArray.size(); i2++)
 	{
 		GIAtxtRelTranslatorRulesGroup* parseTreeGroup = parseTreeGroupsArray[i2];
-		if(parseTreeGroup == activationPathWordCurrentParseTreeGroupOwner)	//this check is only allowed if GIAtxtRelTranslatorNeuralNetworkLightClass::restoreGroupActivations is always executed when if(!propagateWordThroughNetworkGroup) / if(!propagateWordThroughNetworkGroupComponentPassNextWord)
+		if(parseTreeGroup == activationPathWordCurrentParseTreeGroupOwner)	//this check is only allowed if GIAtxtRelTranslatorNeuralNetworkLightUnoptimisedClass::restoreGroupActivations is always executed when if(!propagateWordThroughNetworkGroup) / if(!propagateWordThroughNetworkGroupComponentPassNextWord)
 		{
 			for(int i1=0; i1<parseTreeGroup->components.size(); i1++)
 			{
 				GIAtxtRelTranslatorRulesComponent* parseTreeComponent = (parseTreeGroup->components)[i1];
-				int parseTreeComponentWordIndex = GIAtxtRelTranslatorNeuralNetwork.GIAtxtRelTranslatorNeuralNetworkOperations.convertSentenceEntityIndexToWordIndex(parseTreeComponent->neuronComponentConnectionActiveWordRecord->translatorSentenceEntityIndex);
+				int parseTreeComponentWordIndex = GIAtxtRelTranslatorNeuralNetworkOperations.convertSentenceEntityIndexToWordIndex(parseTreeComponent->neuronComponentConnectionActiveWordRecord->translatorSentenceEntityIndex);
 				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_REVERSE
 				if(parseTreeComponentWordIndex <= forwardPropogationWordData->w)
 				#else
@@ -949,7 +927,7 @@ void GIAtxtRelTranslatorNeuralNetworkLightClass::restoreGroupActivations(GIAtxtR
 	#endif
 }
 
-bool GIAtxtRelTranslatorNeuralNetworkLightClass::propagateWordThroughNetworkGroupComponentPassNextWord(GIAtranslatorVariablesClass* translatorVariables, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSignalData* forwardPropogationSignalData, GIAtxtRelTranslatorNeuralNetworkForwardPropogationWordData* forwardPropogationWordData, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData, const int layer, GIAtxtRelTranslatorRulesGroup* activationPathWordCurrentParseTreeGroup, GIAtxtRelTranslatorRulesGroup* activationPathWordCurrentParseTreeGroupOwner)
+bool GIAtxtRelTranslatorNeuralNetworkLightUnoptimisedClass::propagateWordThroughNetworkGroupComponentPassNextWord(GIAtranslatorVariablesClass* translatorVariables, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSignalData* forwardPropogationSignalData, GIAtxtRelTranslatorNeuralNetworkForwardPropogationWordData* forwardPropogationWordData, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData, const int layer, GIAtxtRelTranslatorRulesGroup* activationPathWordCurrentParseTreeGroup, GIAtxtRelTranslatorRulesGroup* activationPathWordCurrentParseTreeGroupOwner)
 {
 	bool result = false;
 	
@@ -989,7 +967,7 @@ bool GIAtxtRelTranslatorNeuralNetworkLightClass::propagateWordThroughNetworkGrou
 
 
 #ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PREVIOUS_WORD_POS_TYPE_CHECKS
-bool GIAtxtRelTranslatorNeuralNetworkLightClass::componentTests2(GIAtxtRelTranslatorRulesGroup* group, GIAtxtRelTranslatorRulesGroup* currentParseTreeGroup, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSignalData* forwardPropogationSignalData, GIAtxtRelTranslatorNeuralNetworkForwardPropogationWordData* forwardPropogationWordData, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData)
+bool GIAtxtRelTranslatorNeuralNetworkLightUnoptimisedClass::componentTests2(GIAtxtRelTranslatorRulesGroup* group, GIAtxtRelTranslatorRulesGroup* currentParseTreeGroup, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSignalData* forwardPropogationSignalData, GIAtxtRelTranslatorNeuralNetworkForwardPropogationWordData* forwardPropogationWordData, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData)
 {
 	bool componentTests = true;
 	
@@ -1038,7 +1016,7 @@ bool GIAtxtRelTranslatorNeuralNetworkLightClass::componentTests2(GIAtxtRelTransl
 	return componentTests;
 }
 
-bool GIAtxtRelTranslatorNeuralNetworkLightClass::findPreviousWordInSentence(vector<GIApreprocessorPlainTextWord*>* sentenceContents, int currentWordIndex, int previousWordPOStype)
+bool GIAtxtRelTranslatorNeuralNetworkLightUnoptimisedClass::findPreviousWordInSentence(vector<GIApreprocessorPlainTextWord*>* sentenceContents, int currentWordIndex, int previousWordPOStype)
 {
 	bool result = false;
 	
@@ -1069,7 +1047,7 @@ bool GIAtxtRelTranslatorNeuralNetworkLightClass::findPreviousWordInSentence(vect
 			
 	return result;
 }
-bool GIAtxtRelTranslatorNeuralNetworkLightClass::findPreceedingWordInSentence(vector<GIApreprocessorPlainTextWord*>* sentenceContents, int currentWordIndex, int existsPreceedingWordPOStype)
+bool GIAtxtRelTranslatorNeuralNetworkLightUnoptimisedClass::findPreceedingWordInSentence(vector<GIApreprocessorPlainTextWord*>* sentenceContents, int currentWordIndex, int existsPreceedingWordPOStype)
 {
 	bool result = false;
 	
@@ -1101,7 +1079,7 @@ bool GIAtxtRelTranslatorNeuralNetworkLightClass::findPreceedingWordInSentence(ve
 
 
 
-bool GIAtxtRelTranslatorNeuralNetworkLightClass::printBackpropParseTree(GIAtxtRelTranslatorRulesGroup* group, int level)
+bool GIAtxtRelTranslatorNeuralNetworkLightUnoptimisedClass::printBackpropParseTree(GIAtxtRelTranslatorRulesGroup* group, int level)
 {
 	bool print = true;
 	bool performancePreprocess = false;
@@ -1113,7 +1091,7 @@ bool GIAtxtRelTranslatorNeuralNetworkLightClass::printBackpropParseTree(GIAtxtRe
 
 
 
-bool GIAtxtRelTranslatorNeuralNetworkLightClass::groupActivationCompleted(GIAtxtRelTranslatorRulesGroup* group)
+bool GIAtxtRelTranslatorNeuralNetworkLightUnoptimisedClass::groupActivationCompleted(GIAtxtRelTranslatorRulesGroup* group)
 {	
 	bool groupActivationCompleted = true;
 	
@@ -1138,34 +1116,6 @@ bool GIAtxtRelTranslatorNeuralNetworkLightClass::groupActivationCompleted(GIAtxt
 }
 				
 
-
-bool GIAtxtRelTranslatorNeuralNetworkLightClass::restoreGroupActivation(GIAtxtRelTranslatorRulesGroup* group, GIAtxtRelTranslatorRulesGroup* groupOrig)
-{	
-	bool result = true;
-
-	group->neuronActive = groupOrig->neuronActive;	//not used
-	restoreComponentsActivation(&(group->components), &(groupOrig->components));
-	
-	return result;
-}
-
-bool GIAtxtRelTranslatorNeuralNetworkLightClass::restoreComponentsActivation(vector<GIAtxtRelTranslatorRulesComponent*>* components, vector<GIAtxtRelTranslatorRulesComponent*>* componentsOrig)
-{	
-	bool result = true;
-	
-	for(int i1=0; i1<components->size(); i1++)
-	{
-		GIAtxtRelTranslatorRulesComponent* currentComponent = (*components)[i1];
-		GIAtxtRelTranslatorRulesComponent* currentComponentOrig = (*componentsOrig)[i1];
-		currentComponent->neuronComponentConnectionActive = currentComponentOrig->neuronComponentConnectionActive;
-		if(GIAtxtRelTranslatorRulesComponentClassObject.componentHasSubcomponents(currentComponent))
-		{
-			restoreComponentsActivation(&(currentComponent->subComponents), &(currentComponentOrig->subComponents));
-		}
-	}
-	
-	return result;
-}
 
 
 
