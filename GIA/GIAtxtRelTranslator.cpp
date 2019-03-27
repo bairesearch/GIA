@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g11o 01-March-2019
+ * Project Version: 3g11p 01-March-2019
  * Requirements: requires plain text file
  * Description: Textual Relation Translator
  * /
@@ -565,6 +565,12 @@ bool GIAtxtRelTranslatorClass::updatePerformanceNeuralNetwork(const int performa
 		{
 			result = true;
 			*performance = performanceTemp;
+			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_FREE_MEMORY
+			if(currentGIApreprocessorSentenceInList->firstParseTreeGroup != NULL)
+			{
+				GIAtxtRelTranslatorNeuralNetworkOperations.deleteParseTree(currentGIApreprocessorSentenceInList->firstParseTreeGroup, 0);
+			}
+			#endif
 			currentGIApreprocessorSentenceInList->firstParseTreeGroup = firstParseTreeGroupTemp;
 			*performanceMaxPermutationIndex = permutationIndex;
 			
