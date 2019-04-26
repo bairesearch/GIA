@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorRules.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3h3a 24-April-2019
+ * Project Version: 3h3b 24-April-2019
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Rules
  * /
@@ -55,6 +55,19 @@ vector<XMLparserTag*>* GIAtxtRelTranslatorRulesClass::getGIAtxtRelTranslatorRule
 bool GIAtxtRelTranslatorRulesClass::extractGIAtxtRelTranslatorRulesGroups(vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes)
 {
 	bool result = true;
+	
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN
+	for(int i=0; i<GIAtxtRelTranslatorRulesGroupTypes->size(); i++)
+	{
+		GIAtxtRelTranslatorRulesGroupType* groupType = GIAtxtRelTranslatorRulesGroupTypes->at(i);
+		for(int j=0; j<(groupType->groups).size(); j++)
+		{
+			GIAtxtRelTranslatorRulesGroupNeuralNetwork* group = (groupType->groups)[j];
+			delete group->neuronReference;
+		}
+	}
+	#endif
+
 	XMLparserTag* firstTagInRulesTag = XMLparserClass.parseTagDownALevel(GIAtxtRelTranslatorFirstTagInXMLfile, RULES_XML_TAG_rules, &result);
 	if(result)
 	{
@@ -231,10 +244,6 @@ bool GIAtxtRelTranslatorRulesClass::extractGIAtxtRelTranslatorRulesGroups(vector
 									#ifdef GIA_TXT_REL_TRANSLATOR_RULES_DEFINE_GROUP_TYPE_BACKUP_AT_START
 									group->groupTypeName = groupType->groupTypeName;
 									group->groupTypeReferenceSetType = groupType->referenceSetType;
-									#endif
-									
-									#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN
-									group->neuronReference->GIAentityName = group->groupTypeName + ":" + group->groupName;
 									#endif
 									
 									/*
@@ -731,6 +740,11 @@ bool GIAtxtRelTranslatorRulesClass::connectGroupsReferences(vector<GIAtxtRelTran
 		for(int j=0; j<(groupType->groups).size(); j++)
 		{
 			GIAtxtRelTranslatorRulesGroupNeuralNetwork* group = (groupType->groups)[j];
+
+			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN
+			group->initiateANNneuron(group->groupTypeName + ":" + group->groupName);
+			#endif
+									
 			#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE_EXTRA8
 			cout << "GIAtxtRelTranslatorRulesClass::connectGroupsReferences{}: group->groupName = " << group->groupName << endl;
 			#endif

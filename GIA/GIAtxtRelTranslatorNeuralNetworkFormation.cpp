@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetworkFormation.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3h3a 24-April-2019
+ * Project Version: 3h3b 24-April-2019
  * Requirements: 
  * Description: Textual Relation Translator Neural Network Formation
  * /
@@ -216,8 +216,10 @@ bool GIAtxtRelTranslatorNeuralNetworkFormationClass::createInputNeuronLayerSecti
 	
 	for(int i=0; i<GIA_PREPROCESSOR_WORD_NOUN_DATABASE_TAG_BASE_TENSE_FORM_NUMBER_OF_TYPES; i++)
 	{
-		createGroupANNconnectionIO(currentGroupInInputLayerSectionWordPOStype, *currentGroupInInputLayerSectionWordNounVariantType);	//switched GIA3h1c
+		createGroupANNconnectionIO(currentGroupInInputLayerSectionWordPOStype, *currentGroupInInputLayerSectionWordNounVariantType);	//switched GIA3h3a
+		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN
 		(*currentGroupInInputLayerSectionWordNounVariantType)->neuronReference->GIAentityName = GIApreprocessorMultiwordReductionNounDatabaseTagBaseTenseFormArray[i];
+		#endif
 		addGroupToLayer(currentGroupInInputLayerSectionWordNounVariantType, numberOfGroupsInSection);		
 	}
 	
@@ -230,8 +232,10 @@ bool GIAtxtRelTranslatorNeuralNetworkFormationClass::createInputNeuronLayerSecti
 	
 	for(int i=0; i<GIA_PREPROCESSOR_WORD_VERB_DATABASE_TAG_BASE_TENSE_FORM_NUMBER_OF_TYPES; i++)
 	{
-		createGroupANNconnectionIO(currentGroupInInputLayerSectionWordPOStype, *currentGroupInInputLayerSectionWordVerbVariantType);	//switched GIA3h1c
+		createGroupANNconnectionIO(currentGroupInInputLayerSectionWordPOStype, *currentGroupInInputLayerSectionWordVerbVariantType);	//switched GIA3h3a
+		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN
 		(*currentGroupInInputLayerSectionWordVerbVariantType)->neuronReference->GIAentityName = GIApreprocessorMultiwordReductionVerbDatabaseTagBaseTenseFormArray[i];
+		#endif
 		addGroupToLayer(currentGroupInInputLayerSectionWordVerbVariantType, numberOfGroupsInSection);		
 	}
 	
@@ -422,8 +426,9 @@ bool GIAtxtRelTranslatorNeuralNetworkFormationClass::createInputNeuronLayerSecti
 								}
 								
 								currentGroupInInputLayerSectionTokensLayerClassTypeInstance->GIAtokenLayerClassTypeInstanceName = instanceName;
+								#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN
 								currentGroupInInputLayerSectionTokensLayerClassTypeInstance->neuronReference->GIAentityName = instanceName;
-								
+								#endif
 								createGroupANNconnectionIO(currentGroupInInputLayerSectionTokensLayerClassTypeInstance, currentGroupInInputLayerSectionTokensLayerClassType);
 								addGroupToLayer(&currentGroupInInputLayerSectionTokensLayerClassTypeInstance, &numberOfGroupsInSectionTokensLayerClassTypeInstance);
 							}
@@ -432,7 +437,9 @@ bool GIAtxtRelTranslatorNeuralNetworkFormationClass::createInputNeuronLayerSecti
 						}
 							
 						currentGroupInInputLayerSectionTokensLayerClassType->GIAtokenLayerClassTypeName = classTypeName;
+						#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN
 						currentGroupInInputLayerSectionTokensLayerClassType->neuronReference->GIAentityName = classTypeName;
+						#endif
 						//cout << "classTypeName = " << classTypeName << endl;
 						createGroupANNconnectionIO(currentGroupInInputLayerSectionTokensLayerClassType, currentGroupInInputLayerSectionTokensLayerClass);
 						addGroupToLayer(&currentGroupInInputLayerSectionTokensLayerClassType, &numberOfGroupsInSectionTokensLayerClassType);
@@ -442,7 +449,9 @@ bool GIAtxtRelTranslatorNeuralNetworkFormationClass::createInputNeuronLayerSecti
 				}
 				
 				currentGroupInInputLayerSectionTokensLayerClass->GIAtokenLayerClassName = className;
+				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN
 				currentGroupInInputLayerSectionTokensLayerClass->neuronReference->GIAentityName = className;
+				#endif
 				//cout << "className = " << className << endl;
 				createGroupANNconnectionIO(currentGroupInInputLayerSectionTokensLayerClass, *currentGroupInInputLayerSectionTokensLayer);
 				addGroupToLayer(&currentGroupInInputLayerSectionTokensLayerClass, &numberOfGroupsInSectionTokensLayerClass);
@@ -452,7 +461,9 @@ bool GIAtxtRelTranslatorNeuralNetworkFormationClass::createInputNeuronLayerSecti
 		}
 		
 		(*currentGroupInInputLayerSectionTokensLayer)->GIAtokenLayerName = layerName;
+		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN
 		(*currentGroupInInputLayerSectionTokensLayer)->neuronReference->GIAentityName = layerName;
+		#endif
 		//cout << "layerName = " << layerName << endl;
 		inputLayerSectionTokensLayerMap.insert(pair<string, GIAtxtRelTranslatorRulesGroupNeuralNetwork*>(layerName, *currentGroupInInputLayerSectionTokensLayer));
 		addGroupToLayer(currentGroupInInputLayerSectionTokensLayer, numberOfGroupsInSectionTokensLayer);

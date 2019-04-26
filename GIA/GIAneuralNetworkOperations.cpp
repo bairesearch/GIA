@@ -26,7 +26,7 @@
  * File Name: GIAneuralNetworkOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3h3a 24-April-2019
+ * Project Version: 3h3b 24-April-2019
  * Description: Neural Network - visual representation of GIA contents in prototype biological neural network
  * /
  *******************************************************************************/
@@ -432,9 +432,9 @@ bool GIAneuralNetworkOperationsClass::determinePositonsOfNeurons(vector<GIAtxtRe
 							{
 								GIAtxtRelTranslatorRulesComponentNeuralNetwork* currentComponent = (group->ANNfrontComponentConnectionList)[i3];
 			 					GIAtxtRelTranslatorRulesGroupNeuralNetwork* ownerGroup = currentComponent->ownerGroup;	
-								if(group->groupTypeName == groupBase->groupTypeName)		//added GIA3h1cTEMP33
+								if(group->groupTypeName == groupBase->groupTypeName)		//added GIA3h3aTEMP33
 								{
-									if(group != ownerGroup)	//added GIA3h1cTEMP33 //OR: (group != groupBase)	//required for cases where a group directly references itself eg subReferenceSetsObject:act; <component componentType="group" groupTypeName="subReferenceSetsObject" optional="true" />
+									if(group != ownerGroup)	//added GIA3h3aTEMP33 //OR: (group != groupBase)	//required for cases where a group directly references itself eg subReferenceSetsObject:act; <component componentType="group" groupTypeName="subReferenceSetsObject" optional="true" />
 									{
 										if(ownerGroup == groupBase)
 										{
@@ -451,6 +451,10 @@ bool GIAneuralNetworkOperationsClass::determinePositonsOfNeurons(vector<GIAtxtRe
 						groupBase->neuronDisplayPositionSet = true;
 						groupBase->neuronDisplayPositionX = x;
 						groupBase->neuronDisplayPositionY = y;
+						
+						//cout << "groupBase->groupName = " << groupBase->groupName << endl;
+						//cout << "groupType->neuronDisplayPositionX/Y = " << groupBase->neuronDisplayPositionX << "/" << groupBase->neuronDisplayPositionY << endl;
+
 						x++;
 					}
 				}
@@ -542,6 +546,13 @@ bool GIAneuralNetworkOperationsClass::determinePositonsOfNeurons(vector<GIAtxtRe
 		y++;
 	}
 	
+	//cout << "\n\n\n\n\n\n" << endl;
+
+	//create neuron layer connections;
+	ANNneuron* firstGroupNeuronInLayerX = NULL;
+	ANNneuron* previousGroupNeuronInLayerX = NULL;
+	ANNneuron* firstGroupNeuronInGroupTypeLastLayer = NULL;
+	
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN_CALCULATE_BOUNDING_BOXES
 	int groupTypeLayerYsum = GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN_GROUPTYPE_INPUT_POSITION_Y;
 	for(int groupTypeY=0; groupTypeY<=groupTypeMaxY; groupTypeY++)
@@ -619,8 +630,47 @@ bool GIAneuralNetworkOperationsClass::determinePositonsOfNeurons(vector<GIAtxtRe
 									group->neuronReference->xPosRel = groupTypeXposAbsolute + group->neuronDisplayPositionX*GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN_GROUP_SPACING_X;
 									group->neuronReference->yPosRel = groupTypeYposAbsolute + group->neuronDisplayPositionY*GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN_GROUP_SPACING_Y;
 									group->neuronReference->id = id;
-									//cout << "group->neuronReference->id = " << group->neuronReference->id << endl;
-									//cout << "group->neuronReference->GIAentityName = " << group->neuronReference->GIAentityName << endl;
+									
+									/*
+									cout << "group->neuronReference->id = " << group->neuronReference->id << endl;
+									cout << "group->neuronReference->GIAentityName = " << group->neuronReference->GIAentityName << endl;
+									cout << "groupType->neuronDisplayPositionX/Y, group->neuronDisplayPositionX/Y = " << groupType->neuronDisplayPositionX << "/" << groupType->neuronDisplayPositionY << ", " << group->neuronDisplayPositionX << "/" << group->neuronDisplayPositionY << endl;
+									*/
+									
+									#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN_CALCULATE_BOUNDING_BOXES2
+									bool firstGroupNeuronInLayerXFound = false;
+									ANNneuron* currentGroupNeuronInLayerX = group->neuronReference;
+									//if(!(group->neuronConnectivitySet))
+									//{
+									//group->neuronConnectivitySet = true;
+									if((groupType->neuronDisplayPositionX == 0) && (group->neuronDisplayPositionX == 0))
+									{
+										//cout << "((groupType->neuronDisplayPositionX == 0) && (group->neuronDisplayPositionX == 0))" << endl;
+
+										firstGroupNeuronInLayerXFound = true;
+										firstGroupNeuronInLayerX = currentGroupNeuronInLayerX;
+
+										if((groupType->neuronDisplayPositionY == 0) && (group->neuronDisplayPositionY == 0))
+										{
+											firstNeuronInNetworkPre->hasFrontLayer = true;
+											firstNeuronInNetworkPre->firstNeuronInFrontLayer = firstGroupNeuronInLayerX;	
+										}
+										else
+										{
+											firstGroupNeuronInGroupTypeLastLayer->hasFrontLayer = true;
+											firstGroupNeuronInGroupTypeLastLayer->firstNeuronInFrontLayer = firstGroupNeuronInLayerX;	
+										}
+
+										firstGroupNeuronInGroupTypeLastLayer = firstGroupNeuronInLayerX;
+									}
+									else
+									{
+										previousGroupNeuronInLayerX->nextNeuron = currentGroupNeuronInLayerX;
+									}
+									previousGroupNeuronInLayerX = currentGroupNeuronInLayerX;
+									//}
+									#endif
+	
 									id++;
 								}
 							}
@@ -629,10 +679,14 @@ bool GIAneuralNetworkOperationsClass::determinePositonsOfNeurons(vector<GIAtxtRe
 				}
 				groupTypeLayerXsum = groupTypeLayerXsum + groupTypeLayerMaxX*GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN_GROUP_SPACING_X + GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN_GROUPTYPE_SPACING_X;
 			}
+			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN_CALCULATE_BOUNDING_BOXES2
+			previousGroupNeuronInLayerX->nextNeuron = new ANNneuron();	//create a null neuron at end of layer	
+			#endif		
 		}
 		groupTypeLayerYsum = groupTypeLayerYsum + groupTypeLayerMaxY*GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN_GROUP_SPACING_Y + GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN_GROUPTYPE_SPACING_Y;
 	}
 	#else
+	cerr << "GIAneuralNetworkOperationsClass::determinePositonsOfNeurons{} warning: !GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN_CALCULATE_BOUNDING_BOXES has not been coded" << endl;
 	for(int i=0; i<GIAtxtRelTranslatorRulesGroupTypes->size(); i++)
 	{
 		GIAtxtRelTranslatorRulesGroupType* groupType = GIAtxtRelTranslatorRulesGroupTypes->at(i);
@@ -647,12 +701,9 @@ bool GIAneuralNetworkOperationsClass::determinePositonsOfNeurons(vector<GIAtxtRe
 		}
 	}
 	#endif
-	
-	
-	//create neuron layer connections;
-	ANNneuron* firstGroupNeuronInLayerX = NULL;
-	ANNneuron* previousGroupNeuronInLayerX = NULL;
-	ANNneuron* firstGroupNeuronInGroupTypeLastLayer = NULL;
+		
+
+	#ifndef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN_CALCULATE_BOUNDING_BOXES2
 	for(int groupTypeY=0; groupTypeY<=groupTypeMaxY; groupTypeY++)
 	{
 		int groupTypeLayerMaxY = 0;
@@ -665,7 +716,7 @@ bool GIAneuralNetworkOperationsClass::determinePositonsOfNeurons(vector<GIAtxtRe
 				{
 					GIAtxtRelTranslatorRulesGroupNeuralNetwork* group = (groupType->groups)[i1];
 					ANNneuron* currentGroupNeuronInLayerX = group->neuronReference;
-					if(group->neuronDisplayPositionX == 0)
+					if(group->neuronDisplayPositionX == 0)	//CHECKTHIS
 					{	
 						if(group->neuronDisplayPositionY > groupTypeLayerMaxY)
 						{
@@ -693,32 +744,42 @@ bool GIAneuralNetworkOperationsClass::determinePositonsOfNeurons(vector<GIAtxtRe
 						{
 							bool firstGroupNeuronInLayerXFound = false;
 							ANNneuron* currentGroupNeuronInLayerX = group->neuronReference;
-						
-							if((groupType->neuronDisplayPositionX == 0) && (group->neuronDisplayPositionX == 0))
+							if(!(group->neuronConnectivitySet))
 							{
-								firstGroupNeuronInLayerXFound = true;
-								firstGroupNeuronInLayerX = currentGroupNeuronInLayerX;
+								group->neuronConnectivitySet = true;
 								
-								if((groupType->neuronDisplayPositionY == 0) && (group->neuronDisplayPositionY == 0))
+								/*
+								cout << "group->neuronReference->id = " << group->neuronReference->id << endl;
+								cout << "group->neuronReference->GIAentityName = " << group->neuronReference->GIAentityName << endl;
+								cout << "groupType->neuronDisplayPositionX/Y, group->neuronDisplayPositionX/Y = " << groupType->neuronDisplayPositionX << "/" << groupType->neuronDisplayPositionY << ", " << group->neuronDisplayPositionX << "/" << group->neuronDisplayPositionY << endl;
+								*/
+								if((groupType->neuronDisplayPositionX == 0) && (group->neuronDisplayPositionX == 0))
 								{
-									firstNeuronInNetworkPre->hasFrontLayer = true;
-									firstNeuronInNetworkPre->firstNeuronInFrontLayer = firstGroupNeuronInLayerX;	
+									//cout << "((groupType->neuronDisplayPositionX == 0) && (group->neuronDisplayPositionX == 0))" << endl;
+									
+									firstGroupNeuronInLayerXFound = true;
+									firstGroupNeuronInLayerX = currentGroupNeuronInLayerX;
+
+									if((groupType->neuronDisplayPositionY == 0) && (group->neuronDisplayPositionY == 0))
+									{
+										firstNeuronInNetworkPre->hasFrontLayer = true;
+										firstNeuronInNetworkPre->firstNeuronInFrontLayer = firstGroupNeuronInLayerX;	
+									}
+									else
+									{
+										firstGroupNeuronInGroupTypeLastLayer->hasFrontLayer = true;
+										firstGroupNeuronInGroupTypeLastLayer->firstNeuronInFrontLayer = firstGroupNeuronInLayerX;	
+									}
+
+									firstGroupNeuronInGroupTypeLastLayer = firstGroupNeuronInLayerX;
 								}
 								else
 								{
-									
-									firstGroupNeuronInGroupTypeLastLayer->hasFrontLayer = true;
-									firstGroupNeuronInGroupTypeLastLayer->firstNeuronInFrontLayer = firstGroupNeuronInLayerX;	
+									previousGroupNeuronInLayerX->nextNeuron = currentGroupNeuronInLayerX;
 								}
-								
-								firstGroupNeuronInGroupTypeLastLayer = firstGroupNeuronInLayerX;
+
+								previousGroupNeuronInLayerX = currentGroupNeuronInLayerX;
 							}
-							else
-							{
-								previousGroupNeuronInLayerX->nextNeuron = currentGroupNeuronInLayerX;
-							}
-							
-							previousGroupNeuronInLayerX = currentGroupNeuronInLayerX;
 						}
 					}
 				}
@@ -727,6 +788,7 @@ bool GIAneuralNetworkOperationsClass::determinePositonsOfNeurons(vector<GIAtxtRe
 			previousGroupNeuronInLayerX->nextNeuron = new ANNneuron();	//create a null neuron at end of layer
 		}
 	}
+	#endif
 	
 	*idBase = id;
 	

@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorRulesGroupClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3h3a 24-April-2019
+ * Project Version: 3h3b 24-April-2019
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Rules
  * /
@@ -171,12 +171,11 @@ GIAtxtRelTranslatorRulesGroupNeuralNetwork::GIAtxtRelTranslatorRulesGroupNeuralN
 	//ANNfrontComponentConnectionList = NULL;
 	next = NULL;
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN
-	neuronReference = new ANNneuron();
+	initiateANNneuron("");
 	neuronDisplayPositionSet = false;
 	neuronDisplayPositionX = INT_DEFAULT_VALUE;
 	neuronDisplayPositionY = INT_DEFAULT_VALUE;
-	neuronReference->spatialCoordinatesSet3D = true;	//required for draw
-	neuronReference->hasBackLayer = true;	//required for draw
+	neuronConnectivitySet = false;
 	#endif
 	GIAtokenLayerName = "";
 	GIAtokenLayerClassName = "";
@@ -218,6 +217,19 @@ GIAtxtRelTranslatorRulesGroupNeuralNetwork::GIAtxtRelTranslatorRulesGroupNeuralN
 GIAtxtRelTranslatorRulesGroupNeuralNetwork::~GIAtxtRelTranslatorRulesGroupNeuralNetwork(void)
 {
 }
+
+
+#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN
+void GIAtxtRelTranslatorRulesGroupNeuralNetwork::initiateANNneuron(const string groupName)	
+{
+	neuronReference = new ANNneuron();
+	neuronReference->GIAentityName = groupName;
+	neuronReference->spatialCoordinatesSet3D = true;	//required for draw
+	neuronReference->hasBackLayer = true;	//required for draw
+}
+#endif
+			
+
 
 
 GIAtxtRelTranslatorRulesGroupActivationMemory::GIAtxtRelTranslatorRulesGroupActivationMemory(void)
@@ -452,7 +464,6 @@ bool GIAtxtRelTranslatorRulesGroupClass::determineIsQuery(vector<GIApreprocessor
 	return isQuery;
 }
 #endif
-
 
 
 
