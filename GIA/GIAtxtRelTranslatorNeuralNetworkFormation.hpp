@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetworkFormation.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3h2a 22-April-2019
+ * Project Version: 3h3a 24-April-2019
  * Requirements: 
  * Description: Textual Relation Translator Neural Network Formation
  * /
@@ -65,6 +65,9 @@ class GIAtxtRelTranslatorNeuralNetworkFormationClass
 	public: unordered_map<string, GIAtxtRelTranslatorRulesGroupNeuralNetwork*>* getInputLayerSectionExplicitWordMap();
 	public: unordered_map<string, GIAtxtRelTranslatorRulesGroupNeuralNetwork*>* getInputLayerSectionTokensLayerMap();
 	public: GIAtxtRelTranslatorRulesGroupNeuralNetwork* getFirstGroupInInputLayerSectionWordPOStype();
+	#ifdef GIA_NEURAL_NETWORK
+	public: GIAtxtRelTranslatorRulesGroupNeuralNetwork* getFirstInputGroupInNetwork();
+	#endif
 
 	public: bool createGIAtxtRelTranslatorNeuralNetwork(vector<XMLparserTag*>* GIAtxtRelTranslatorRulesTokenLayers, vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes);
 		private: bool createInputNeuronLayer(vector<XMLparserTag*>* GIAtxtRelTranslatorRulesTokenLayers, vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes);
@@ -86,6 +89,7 @@ class GIAtxtRelTranslatorNeuralNetworkFormationClass
 	public: GIAtxtRelTranslatorRulesGroupNeuralNetwork* getInputGroupLayerSection(GIAtxtRelTranslatorRulesGroupNeuralNetwork* firstGroupInInputLayerSection, int groupIndexInSection);
 	private: void addGroupToLayer(GIAtxtRelTranslatorRulesGroupNeuralNetwork** currentGroupInLayer, int* numberOfGroupsInSection);
 	private: bool createGroupANNconnectionIO(GIAtxtRelTranslatorRulesGroupNeuralNetwork* group, GIAtxtRelTranslatorRulesGroupNeuralNetwork* higherLevelGroup);
+	private: bool createGroupANNconnectionIObasic(GIAtxtRelTranslatorRulesGroupNeuralNetwork* group, GIAtxtRelTranslatorRulesGroupNeuralNetwork* higherLevelGroup);
 	private: bool createGroupANNconnection(GIAtxtRelTranslatorRulesGroupNeuralNetwork* group, GIAtxtRelTranslatorRulesComponentNeuralNetwork* higherLevelComponent);
 		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN
 		private: ANNneuronConnection* createANNconnection(GIAtxtRelTranslatorRulesGroupNeuralNetwork* group, GIAtxtRelTranslatorRulesGroupNeuralNetwork* higherLevelGroup);

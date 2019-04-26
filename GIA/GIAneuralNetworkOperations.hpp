@@ -26,7 +26,7 @@
  * File Name: GIAneuralNetworkOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3h2a 22-April-2019
+ * Project Version: 3h3a 24-April-2019
  * Description: Neural Network - visual representation of GIA contents in prototype biological neural network
  * /
  *******************************************************************************/
@@ -35,14 +35,22 @@
 #ifndef HEADER_GIA_NEURAL_NETWORK_OPERATIONS
 #define HEADER_GIA_NEURAL_NETWORK_OPERATIONS
 
-
+#include "GIAglobalDefs.hpp"
 
 #ifdef GIA_NEURAL_NETWORK
 
 #include "ANNneuronClass.hpp"
 #include "ANNneuronConnectionClass.hpp"
 #include "GIAtranslatorOperations.hpp"
+#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN
+#include "GIAtxtRelTranslatorRules.hpp"
+#include "GIAtxtRelTranslatorNeuralNetworkFormation.hpp"
+//#include "GIApreprocessorWordClass.hpp"
+#endif
 #include "ANNxmlConversion.hpp"
+#include "ANNxmlConversion.hpp"
+#include "SHAREDvars.hpp"
+
 
 #define GIA_NEURAL_NETWORK_LAYER_CONCEPT_NEURONS (1)
 #define GIA_NEURAL_NETWORK_LAYER_SPECIFIC_CONCEPT_NEURONS (2)
@@ -82,13 +90,23 @@ class GIAneuralNetworkOperationsClass
 {
 	private: GIAentityNodeClassClass GIAentityNodeClass;
 	private: GIAtranslatorOperationsClass GIAtranslatorOperations;
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN
+	private: GIAtxtRelTranslatorRulesClass GIAtxtRelTranslatorRules;
+	private: GIAtxtRelTranslatorNeuralNetworkFormationClass GIAtxtRelTranslatorNeuralNetworkFormation;
+	#endif
 	private: ANNneuronClassClass ANNneuronClass;
 	private: ANNxmlConversionClass ANNxmlConversion;
+	private: SHAREDvarsClass SHAREDvars;
 
 	public: bool readNeuralNetXMLfile(const string xmlFileName, ANNneuron* firstInputNeuronInNetwork);
 	public: bool writeNeuralNetXMLfile(const string xmlFileName, ANNneuron* ANNfirstInputNeuronInNetwork);
 			
 	public: void initiateGIAneuralNetwork(GIAneuralNetworkVariablesClass* neuralNetworkVariables);
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN
+	public: bool generateNeuralNetFromGIAtxtRelTranslatorNet(GIAtranslatorVariablesClass* translatorVariables);
+		private: bool determinePositonsOfInputNeurons(int64_t* idBase, ANNneuron** firstNeuronInNetworkPre);
+		private: bool determinePositonsOfNeurons(vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, int64_t* idBase, ANNneuron* firstNeuronInNetworkPre);
+	#endif
 	#ifndef GIA_NEURAL_NETWORK_ACTIVE
 	public: bool generateNeuralNetFromSemanticNet(GIAtranslatorVariablesClass* translatorVariables);
 		#ifdef GIA_NEURAL_NETWORK_GENERATE_SPECIFIC_CONCEPT_NETWORKS

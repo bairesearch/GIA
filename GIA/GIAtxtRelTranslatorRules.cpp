@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorRules.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3h2a 22-April-2019
+ * Project Version: 3h3a 24-April-2019
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Rules
  * /
@@ -231,6 +231,10 @@ bool GIAtxtRelTranslatorRulesClass::extractGIAtxtRelTranslatorRulesGroups(vector
 									#ifdef GIA_TXT_REL_TRANSLATOR_RULES_DEFINE_GROUP_TYPE_BACKUP_AT_START
 									group->groupTypeName = groupType->groupTypeName;
 									group->groupTypeReferenceSetType = groupType->referenceSetType;
+									#endif
+									
+									#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN
+									group->neuronReference->GIAentityName = group->groupTypeName + ":" + group->groupName;
 									#endif
 									
 									/*
@@ -730,6 +734,7 @@ bool GIAtxtRelTranslatorRulesClass::connectGroupsReferences(vector<GIAtxtRelTran
 			#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE_EXTRA8
 			cout << "GIAtxtRelTranslatorRulesClass::connectGroupsReferences{}: group->groupName = " << group->groupName << endl;
 			#endif
+			//cout << "GIAtxtRelTranslatorRulesClass::connectGroupsReferences{}: group->groupName = " << group->groupName << endl;
 			if(!connectComponentsReferences(GIAtxtRelTranslatorRulesGroupTypes, &(group->components), false))
 			{
 				result = false;
@@ -767,7 +772,8 @@ bool GIAtxtRelTranslatorRulesClass::connectComponentsReferences(vector<GIAtxtRel
 						result = false;
 						cerr << "GIAtxtRelTranslatorRulesClass::connectComponentsReferences{} error: !findGroupType(), component->groupTypeRefName = " << component->groupTypeRefName << endl;
 						exit(EXIT_ERROR);
-					}					
+					}
+					//cout << "\tcomponent->groupTypeRef->groupTypeName = " << component->groupTypeRef->groupTypeName << endl;					
 				}
 			}
 		}

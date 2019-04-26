@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorRulesGroupClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3h2a 22-April-2019
+ * Project Version: 3h3a 24-April-2019
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Rules
  * /
@@ -230,6 +230,9 @@ public:
 	GIAtxtRelTranslatorRulesGroupNeuralNetwork* next;
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN
 	ANNneuron* neuronReference;
+	bool neuronDisplayPositionSet;
+	int neuronDisplayPositionX;
+	int neuronDisplayPositionY;
 	#endif
 	string GIAtokenLayerName;
 	string GIAtokenLayerClassName;
@@ -366,6 +369,14 @@ public:
 
 	string groupTypeName;
 	int referenceSetType;
+	
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN
+	bool neuronDisplayPositionSet;
+	int neuronDisplayPositionX;
+	int neuronDisplayPositionY;
+	int groupTypeXindex;
+	int groupMaxY;
+	#endif
 		
 	vector<GIAtxtRelTranslatorRulesGroupNeuralNetwork*> groups;
 };

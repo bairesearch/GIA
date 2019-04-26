@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorRulesGroupClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3h2a 22-April-2019
+ * Project Version: 3h3a 24-April-2019
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Rules
  * /
@@ -172,6 +172,11 @@ GIAtxtRelTranslatorRulesGroupNeuralNetwork::GIAtxtRelTranslatorRulesGroupNeuralN
 	next = NULL;
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN
 	neuronReference = new ANNneuron();
+	neuronDisplayPositionSet = false;
+	neuronDisplayPositionX = INT_DEFAULT_VALUE;
+	neuronDisplayPositionY = INT_DEFAULT_VALUE;
+	neuronReference->spatialCoordinatesSet3D = true;	//required for draw
+	neuronReference->hasBackLayer = true;	//required for draw
 	#endif
 	GIAtokenLayerName = "";
 	GIAtokenLayerClassName = "";
@@ -293,6 +298,14 @@ GIAtxtRelTranslatorRulesGroupType::GIAtxtRelTranslatorRulesGroupType(void)
 	groupTypeName = "";
 	
 	referenceSetType = GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_REFERENCE_SET_TYPE_NUMBER_OF_TYPES;
+
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN
+	neuronDisplayPositionSet = false;
+	neuronDisplayPositionX = INT_DEFAULT_VALUE;
+	neuronDisplayPositionY = INT_DEFAULT_VALUE;
+	groupTypeXindex = INT_DEFAULT_VALUE;
+	groupMaxY = 0;
+	#endif
 }
 GIAtxtRelTranslatorRulesGroupType::~GIAtxtRelTranslatorRulesGroupType(void)
 {
