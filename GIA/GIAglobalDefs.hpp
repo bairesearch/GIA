@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3h4a 25-April-2019
+ * Project Version: 3h4b 25-April-2019
  * Requirements: 
  * Description: GIA specific global definitions
  * /
@@ -751,6 +751,15 @@
 	#ifdef USE_ANN
 		#define GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN	//GIA3h3a
 		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN
+			
+			//#ifdef GIA_NEURAL_NETWORK_SYMBOLIC_CORE	//not yet defined;
+				#define GIA_NEURAL_NETWORK_SYMBOLIC_CORE_ENFORCE_2D	//GIA3h4b //do not use z dimension to display net
+				#ifdef GIA_NEURAL_NETWORK_SYMBOLIC_CORE_ENFORCE_2D
+					#define GIA_NEURAL_NETWORK_SYMBOLIC_CORE_ENFORCE_2D_SENTENCE_YPOS_SPACING (1)
+					//#define GIA_NEURAL_NETWORK_SYMBOLIC_CORE_ENFORCE_2D_SENTENCE_YPOS_OFFSET (10)	//~= max number of words per sentence/2	//now is dynamic
+				#endif
+			//#endif
+					
 			#define GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN_CALCULATE_BOUNDING_BOXES	//GIA3h3a	//reduces display x (width) - more compact	
 			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN_CALCULATE_BOUNDING_BOXES
 				#define GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN_CALCULATE_BOUNDING_BOXES2	//GIA3h3b	//optional; no change in output

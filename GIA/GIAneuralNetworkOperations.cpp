@@ -26,7 +26,7 @@
  * File Name: GIAneuralNetworkOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3h4a 25-April-2019
+ * Project Version: 3h4b 25-April-2019
  * Description: Neural Network - visual representation of GIA contents in prototype biological neural network
  * /
  *******************************************************************************/
@@ -1050,7 +1050,7 @@ bool GIAneuralNetworkOperationsClass::generateNeuralNetFromSemanticNet(GIAtransl
 			ANNneuron* specificConceptNeuron = conceptNeuron;
 			#ifdef GIA_NEURAL_NETWORK_GENERATE_SPECIFIC_CONCEPT_NETWORKS
 			//generate concept entity connections
-			if(getSpecificConceptNeuronAndLink(&neuralNetworkVariables, &currentInstanceNeuron, instanceEntity, &specificConceptNeuron))
+			if(getSpecificConceptNeuronAndLink(translatorVariables, &neuralNetworkVariables, &currentInstanceNeuron, instanceEntity, &specificConceptNeuron))
 			{	
 				//cout << "getSpecificConceptNeuronAndLink passed" << endl;
 			}
@@ -1069,7 +1069,13 @@ bool GIAneuralNetworkOperationsClass::generateNeuralNetFromSemanticNet(GIAtransl
 				if(!(instanceEntity->parsedForANNgeneration))
 				{	
 					//create a new instance neuron, and create a connection between the concept and the instance neuron
-					ANNneuron* instanceNeuron = createNewInstanceNeuron(&neuralNetworkVariables, &currentInstanceNeuron, instanceEntity->entityName, instanceEntity->idInstance, specificConceptNeuron, artificialLayer, GIA_ANN_CONNECTION_TYPE_CONCEPT_TO_INSTANCE);
+					#ifdef GIA_NEURAL_NETWORK_SYMBOLIC_CORE_ENFORCE_2D
+					int sentenceOffset = calculateSentenceOffset(translatorVariables->firstGIApreprocessorSentenceInList, instanceEntity->sentenceIndexTemp);
+					//int sentenceOffset = instanceEntity->sentenceIndexTemp * GIA_NEURAL_NETWORK_SYMBOLIC_CORE_ENFORCE_2D_SENTENCE_YPOS_OFFSET;
+					#else
+					int sentenceOffset = 0;
+					#endif
+					ANNneuron* instanceNeuron = createNewInstanceNeuron(&neuralNetworkVariables, &currentInstanceNeuron, instanceEntity->entityName, instanceEntity->idInstance, specificConceptNeuron, artificialLayer, GIA_ANN_CONNECTION_TYPE_CONCEPT_TO_INSTANCE, sentenceOffset);
 					previousEntityIsConcept = false;	//this ensure that GIA_ANN_CONNECTION_TYPE_INSTANCE_TO_INSTANCE connections are now created
 					previousNeuron = instanceNeuron;
 				}
@@ -1082,7 +1088,7 @@ bool GIAneuralNetworkOperationsClass::generateNeuralNetFromSemanticNet(GIAtransl
 				cout << "instanceEntity = " << instanceEntity->entityName << endl;
 				#endif
 				
-				if(!generateSubnetFromConnectedInstances(&neuralNetworkVariables, &currentInstanceNeuron, previousEntityIsConcept, previousNeuron, instanceEntity, artificialLayer, false, false))
+				if(!generateSubnetFromConnectedInstances(translatorVariables, &neuralNetworkVariables, &currentInstanceNeuron, previousEntityIsConcept, previousNeuron, instanceEntity, artificialLayer, false, false))
 				{
 					result = false;
 				}
@@ -1098,6 +1104,7 @@ bool GIAneuralNetworkOperationsClass::generateNeuralNetFromSemanticNet(GIAtransl
 	
 	return result;
 }
+
 
 #ifdef GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS
 bool GIAneuralNetworkOperationsClass::generateConceptIndexBitNeurons(GIAneuralNetworkVariablesClass* neuralNetworkVariables, ANNneuron* firstConceptIndexBitNeuronInLayer, int conceptIndexMaxSizeBits, int conceptIndexType)
@@ -1129,7 +1136,7 @@ int GIAneuralNetworkOperationsClass::getConceptIndexType(const GIAentityNode* en
 }	
 #endif
 
-bool GIAneuralNetworkOperationsClass::generateSubnetFromConnectedInstances(GIAneuralNetworkVariablesClass* neuralNetworkVariables, ANNneuron** currentInstanceNeuron, bool previousEntityIsConcept, ANNneuron* previousNeuron, GIAentityNode* entity, int artificialLayer, bool parsingConcept, bool parsingSpecificConcept)
+bool GIAneuralNetworkOperationsClass::generateSubnetFromConnectedInstances(GIAtranslatorVariablesClass* translatorVariables, GIAneuralNetworkVariablesClass* neuralNetworkVariables, ANNneuron** currentInstanceNeuron, bool previousEntityIsConcept, ANNneuron* previousNeuron, GIAentityNode* entity, int artificialLayer, bool parsingConcept, bool parsingSpecificConcept)
 {
 	bool result = true;
 	
@@ -1217,7 +1224,13 @@ bool GIAneuralNetworkOperationsClass::generateSubnetFromConnectedInstances(GIAne
 								}
 							}
 
-							ANNneuron* newNeuron = createNewInstanceNeuron(neuralNetworkVariables, currentInstanceNeuron, entity2->entityName, entity->idInstance, conceptNeuron2, artificialLayerNew, ANNconnectionType2);
+							#ifdef GIA_NEURAL_NETWORK_SYMBOLIC_CORE_ENFORCE_2D
+							int sentenceOffset = calculateSentenceOffset(translatorVariables->firstGIApreprocessorSentenceInList, entity2->sentenceIndexTemp);
+							//int sentenceOffset = entity2->sentenceIndexTemp * GIA_NEURAL_NETWORK_SYMBOLIC_CORE_ENFORCE_2D_SENTENCE_YPOS_OFFSET;
+							#else
+							int sentenceOffset = 0;
+							#endif
+							ANNneuron* newNeuron = createNewInstanceNeuron(neuralNetworkVariables, currentInstanceNeuron, entity2->entityName, entity->idInstance, conceptNeuron2, artificialLayerNew, ANNconnectionType2, sentenceOffset);
 
 							//add a connection between the previous neuron and the newNeuron
 							int ANNconnectionType = GIA_ANN_CONNECTION_TYPE_UNDEFINED;
@@ -1240,7 +1253,7 @@ bool GIAneuralNetworkOperationsClass::generateSubnetFromConnectedInstances(GIAne
 							}
 
 							//recurse
-							if(!generateSubnetFromConnectedInstances(neuralNetworkVariables, currentInstanceNeuron, false, newNeuron, entity2, artificialLayerNew, false, false))	//OLD: if(!generateSubnetFromConnectedInstances(firstInputNeuronInNetwork, conceptNeuron2, entity2, directionNew, artificialLayerNew)
+							if(!generateSubnetFromConnectedInstances(translatorVariables, neuralNetworkVariables, currentInstanceNeuron, false, newNeuron, entity2, artificialLayerNew, false, false))	//OLD: if(!generateSubnetFromConnectedInstances(firstInputNeuronInNetwork, conceptNeuron2, entity2, directionNew, artificialLayerNew)
 							{
 								result = false;
 							}
@@ -1292,7 +1305,7 @@ bool GIAneuralNetworkOperationsClass::calculateLayerOfSpecificConceptNeuron(GIAe
 	return result;
 }
 
-bool GIAneuralNetworkOperationsClass::getSpecificConceptNeuronAndLink(GIAneuralNetworkVariablesClass* neuralNetworkVariables, ANNneuron** currentInstanceNeuron, GIAentityNode* entity, ANNneuron** specificConceptNeuronFound)
+bool GIAneuralNetworkOperationsClass::getSpecificConceptNeuronAndLink(GIAtranslatorVariablesClass* translatorVariables, GIAneuralNetworkVariablesClass* neuralNetworkVariables, ANNneuron** currentInstanceNeuron, GIAentityNode* entity, ANNneuron** specificConceptNeuronFound)
 {
 	bool result = false;
 	
@@ -1340,7 +1353,7 @@ bool GIAneuralNetworkOperationsClass::getSpecificConceptNeuronAndLink(GIAneuralN
 				//create specific concept neural subnet if not already created (e.g. it may already be created if there exists a diamond shaped connection structure)
 				conceptEntity->parsedForANNgeneration = true;
 				int artificialLayer = GIA_NEURAL_NETWORK_OFFSET_INSTANCE_NEURONS_LAYERS;
-				if(!generateSubnetFromConnectedInstances(neuralNetworkVariables, currentInstanceNeuron, true, conceptNeuron, conceptEntity, artificialLayer, true, specificConceptDetected))
+				if(!generateSubnetFromConnectedInstances(translatorVariables, neuralNetworkVariables, currentInstanceNeuron, true, conceptNeuron, conceptEntity, artificialLayer, true, specificConceptDetected))
 				{
 
 				}
@@ -1350,7 +1363,7 @@ bool GIAneuralNetworkOperationsClass::getSpecificConceptNeuronAndLink(GIAneuralN
 			if(specificConceptDetected)
 			{	
 				ANNneuron* specificConceptNeuronFoundTemp = NULL;	//disgard higher level specific concepts
-				if(!getSpecificConceptNeuronAndLink(neuralNetworkVariables, currentInstanceNeuron, conceptEntity, &specificConceptNeuronFoundTemp))
+				if(!getSpecificConceptNeuronAndLink(translatorVariables, neuralNetworkVariables, currentInstanceNeuron, conceptEntity, &specificConceptNeuronFoundTemp))
 				{
 					
 				}
@@ -1630,7 +1643,7 @@ ANNneuron* GIAneuralNetworkOperationsClass::createNewSpecificConceptNeuron(GIAne
 	return newNeuron;
 }
 
-ANNneuron* GIAneuralNetworkOperationsClass::createNewInstanceNeuron(GIAneuralNetworkVariablesClass* neuralNetworkVariables, ANNneuron** currentInstanceNeuron, const string entityName, const int instanceID, ANNneuron* conceptNeuron, const int artificialLayer, const int ANNconnectionType)
+ANNneuron* GIAneuralNetworkOperationsClass::createNewInstanceNeuron(GIAneuralNetworkVariablesClass* neuralNetworkVariables, ANNneuron** currentInstanceNeuron, const string entityName, const int instanceID, ANNneuron* conceptNeuron, const int artificialLayer, const int ANNconnectionType, const int sentenceOffset)
 {
 	#ifdef GIA_DEBUG_NEURAL_NETWORK
 	cout << "InstanceNeuron: conceptNeuron->GIAentityName = " << conceptNeuron->GIAentityName << endl;
@@ -1644,8 +1657,13 @@ ANNneuron* GIAneuralNetworkOperationsClass::createNewInstanceNeuron(GIAneuralNet
 	#else
 	(*currentInstanceNeuron)->xPosRel = conceptNeuron->xPosRel;
 	#endif
+	#ifdef GIA_NEURAL_NETWORK_SYMBOLIC_CORE_ENFORCE_2D
+	(*currentInstanceNeuron)->yPosRel = neuralNetworkVariables->yPosRelStart + artificialLayer + sentenceOffset;
+	(*currentInstanceNeuron)->zPosRel = 0;
+	#else
 	(*currentInstanceNeuron)->yPosRel = neuralNetworkVariables->yPosRelStart + artificialLayer;
 	(*currentInstanceNeuron)->zPosRel = instanceID;
+	#endif
 	(*currentInstanceNeuron)->GIAactivationAge = getCurrentTime();
 
 	ANNneuronClass.fillInNeuronIDProperties((*currentInstanceNeuron), neuralNetworkVariables->neuronIDcounter, neuralNetworkVariables->instanceNeuronOrderIDcounter, GIA_NEURAL_NETWORK_LAYER_SYNAPSE_ARTIFICIAL_INSTANCE_NEURONS, GIA_NEURAL_NETWORK_SUBNET_COUNTER);
@@ -2001,6 +2019,26 @@ int64_t GIAneuralNetworkOperationsClass::getCurrentTime()
 {
 	return static_cast<int64_t>(time(NULL));
 }
+
+#ifdef GIA_NEURAL_NETWORK_SYMBOLIC_CORE_ENFORCE_2D
+int GIAneuralNetworkOperationsClass::calculateSentenceOffset(GIApreprocessorSentence* firstGIApreprocessorSentenceInList, int sentenceIndex)
+{
+	int sentenceOffset = 0;
+	GIApreprocessorSentence* currentGIApreprocessorSentenceInList = firstGIApreprocessorSentenceInList;
+	while(currentGIApreprocessorSentenceInList->next != NULL)
+	{
+		int sentenceSize = currentGIApreprocessorSentenceInList->sentenceContentsLRP.size();
+		if(currentGIApreprocessorSentenceInList->sentenceIndexOriginal < sentenceIndex)
+		{
+			sentenceOffset = sentenceOffset + sentenceSize + GIA_NEURAL_NETWORK_SYMBOLIC_CORE_ENFORCE_2D_SENTENCE_YPOS_SPACING;
+		}
+		currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->next;
+	}
+	//cout << "sentenceOffset = " << sentenceOffset << endl;
+	return sentenceOffset;
+}
+#endif
+
 
 #endif
 

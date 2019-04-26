@@ -26,7 +26,7 @@
  * File Name: GIAneuralNetworkOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3h4a 25-April-2019
+ * Project Version: 3h4b 25-April-2019
  * Description: Neural Network - visual representation of GIA contents in prototype biological neural network
  * /
  *******************************************************************************/
@@ -45,6 +45,7 @@
 #ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN
 #include "GIAtxtRelTranslatorRules.hpp"
 #include "GIAtxtRelTranslatorNeuralNetworkFormation.hpp"
+#include "GIApreprocessorSentenceClass.hpp"
 //#include "GIApreprocessorWordClass.hpp"
 #endif
 #include "ANNxmlConversion.hpp"
@@ -113,14 +114,14 @@ class GIAneuralNetworkOperationsClass
 	public: bool generateNeuralNetFromSemanticNet(GIAtranslatorVariablesClass* translatorVariables);
 		#ifdef GIA_NEURAL_NETWORK_GENERATE_SPECIFIC_CONCEPT_NETWORKS
 		private: bool calculateLayerOfSpecificConceptNeuron(GIAentityNode* entity, int layer, int* maxLayer);
-		private: bool getSpecificConceptNeuronAndLink(GIAneuralNetworkVariablesClass* neuralNetworkVariables, ANNneuron** currentSynapseArtificialInstanceNeuron, GIAentityNode* entity, ANNneuron** specificConceptNeuronFound);
+		private: bool getSpecificConceptNeuronAndLink(GIAtranslatorVariablesClass* translatorVariables, GIAneuralNetworkVariablesClass* neuralNetworkVariables, ANNneuron** currentSynapseArtificialInstanceNeuron, GIAentityNode* entity, ANNneuron** specificConceptNeuronFound);
 		#endif
 		private: bool getConceptNeuron(GIAentityNode* entity, ANNneuron** conceptNeuronFound);
 		#ifdef GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS
 		private: bool generateConceptIndexBitNeurons(GIAneuralNetworkVariablesClass* neuralNetworkVariables, ANNneuron* firstConceptIndexBitNeuronInLayer, int conceptIndexMaxSizeBits, int conceptIndexType);
 		private: int getConceptIndexType(const GIAentityNode* entity);
 		#endif
-		private: bool generateSubnetFromConnectedInstances(GIAneuralNetworkVariablesClass* neuralNetworkVariables, ANNneuron** currentInstanceNeuron, bool previousEntityIsConcept, ANNneuron* previousNeuron, GIAentityNode* entity, int artificialLayer, bool parsingConcept, bool parsingSpecificConcept);
+		private: bool generateSubnetFromConnectedInstances(GIAtranslatorVariablesClass* translatorVariables, GIAneuralNetworkVariablesClass* neuralNetworkVariables, ANNneuron** currentInstanceNeuron, bool previousEntityIsConcept, ANNneuron* previousNeuron, GIAentityNode* entity, int artificialLayer, bool parsingConcept, bool parsingSpecificConcept);
 	#endif
 	private: ANNneuron* getLastNeuronInNeuralNet(ANNneuron* firstInputNeuronInNetwork);
 
@@ -142,7 +143,7 @@ class GIAneuralNetworkOperationsClass
 	#endif
 	public: ANNneuron* createNewConceptNeuron(GIAneuralNetworkVariablesClass* neuralNetworkVariables, ANNneuron** currentConceptNeuron, const string entityName, const int xPosRel, const int conceptIndexType);
 	public: ANNneuron* createNewSpecificConceptNeuron(GIAneuralNetworkVariablesClass* neuralNetworkVariables, ANNneuron** currentSpecificConceptNeuron, const string entityName, const int xPosRel, const int layer, const int conceptIndexType);
-	public: ANNneuron* createNewInstanceNeuron(GIAneuralNetworkVariablesClass* neuralNetworkVariables, ANNneuron** currentInstanceNeuron, const string entityName, const int instanceID, ANNneuron* conceptNeuron, const int artificialLayer, const int ANNconnectionType);
+	public: ANNneuron* createNewInstanceNeuron(GIAneuralNetworkVariablesClass* neuralNetworkVariables, ANNneuron** currentInstanceNeuron, const string entityName, const int instanceID, ANNneuron* conceptNeuron, const int artificialLayer, const int ANNconnectionType, const int sentenceOffset);
 	#ifdef GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS
 	private: int generateInstanceNeuronXposRel(GIAneuralNetworkVariablesClass* neuralNetworkVariables, ANNneuron* conceptNeuron);
 	private: bool connectConceptNeuronToConceptIndexBitNeurons(GIAneuralNetworkVariablesClass* neuralNetworkVariables, ANNneuron* conceptNeuron, int conceptIndexType);
@@ -169,6 +170,10 @@ class GIAneuralNetworkOperationsClass
 			public: bool verifySpecificConceptProperties(GIAneuralNetworkVariablesClass* neuralNetworkVariables, ANNneuron* specificConcept, const vector<GIApreprocessorPlainTextWord*>* subReferenceSetContents, const int indexOfStartOfSpecificConcept, const int indexOfSpecificConcept);
 	#endif
 
+	#ifdef GIA_NEURAL_NETWORK_SYMBOLIC_CORE_ENFORCE_2D
+	int calculateSentenceOffset(GIApreprocessorSentence* firstGIApreprocessorSentenceInList, int sentenceIndex);
+	#endif
+	
 	int64_t getCurrentTime();
 };
 
