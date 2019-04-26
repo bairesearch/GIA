@@ -27,7 +27,7 @@
  * File Name: GIAtxtRelTranslatorParserOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g11q 01-March-2019
+ * Project Version: 3h1a 20-April-2019
  * Requirements: 
  * Description: Textual Relation Translator Parser Operations
  * /
@@ -37,7 +37,7 @@
 #include "GIAtxtRelTranslatorParserOperations.hpp"
 
 
-bool GIAtxtRelTranslatorParserOperationsClass::generateSemanticRelationsFromTxtRelationsWrapper(GIAtranslatorVariablesClass* translatorVariables, GIAtxtRelTranslatorRulesGroup* firstParseTreeGroup, int layer)
+bool GIAtxtRelTranslatorParserOperationsClass::generateSemanticRelationsFromTxtRelationsWrapper(GIAtranslatorVariablesClass* translatorVariables, GIAtxtRelTranslatorRulesGroupParseTree* firstParseTreeGroup, int layer)
 {
 	bool result = true;
 	
@@ -51,7 +51,7 @@ bool GIAtxtRelTranslatorParserOperationsClass::generateSemanticRelationsFromTxtR
 }
 
 
-bool GIAtxtRelTranslatorParserOperationsClass::generateSemanticRelationsFromTxtRelations(GIAtranslatorVariablesClass* translatorVariables, GIAtxtRelTranslatorRulesGroup* currentParseTreeGroup, GIAtxtRelTranslatorParserForwardPropogationSignalData* parserForwardPropogationSignalData, int layer)
+bool GIAtxtRelTranslatorParserOperationsClass::generateSemanticRelationsFromTxtRelations(GIAtranslatorVariablesClass* translatorVariables, GIAtxtRelTranslatorRulesGroupParseTree* currentParseTreeGroup, GIAtxtRelTranslatorParserForwardPropogationSignalData* parserForwardPropogationSignalData, int layer)
 {
 	bool result = true;
 
@@ -61,8 +61,8 @@ bool GIAtxtRelTranslatorParserOperationsClass::generateSemanticRelationsFromTxtR
 		
 	for(int i=0; i<currentParseTreeGroup->components.size(); i++)
 	{
-		GIAtxtRelTranslatorRulesComponent* componentOwner = (currentParseTreeGroup->components).at(i);
-		GIAtxtRelTranslatorRulesComponent* parseTreeComponent = componentOwner;
+		GIAtxtRelTranslatorRulesComponentParseTree* componentOwner = (currentParseTreeGroup->components).at(i);
+		GIAtxtRelTranslatorRulesComponentParseTree* parseTreeComponent = componentOwner;
 	
 		GIAtxtRelTranslatorParserForwardPropogationSignalData* parseTreeComponentSignalData = &(parseTreeComponentSignalDataArray[i]);
 		
@@ -105,17 +105,17 @@ bool GIAtxtRelTranslatorParserOperationsClass::generateSemanticRelationsFromTxtR
 	return result;
 }
 
-bool GIAtxtRelTranslatorParserOperationsClass::generateSemanticRelationsFromTxtRelationsPart2(GIAtranslatorVariablesClass* translatorVariables, GIAtxtRelTranslatorRulesGroup* currentParseTreeGroup, vector<GIAtxtRelTranslatorParserForwardPropogationSignalData>* parseTreeComponentSignalDataArray, GIAtxtRelTranslatorParserForwardPropogationSignalData* parserForwardPropogationSignalData, int layer)
+bool GIAtxtRelTranslatorParserOperationsClass::generateSemanticRelationsFromTxtRelationsPart2(GIAtranslatorVariablesClass* translatorVariables, GIAtxtRelTranslatorRulesGroupParseTree* currentParseTreeGroup, vector<GIAtxtRelTranslatorParserForwardPropogationSignalData>* parseTreeComponentSignalDataArray, GIAtxtRelTranslatorParserForwardPropogationSignalData* parserForwardPropogationSignalData, int layer)
 {	
 	bool result = true;
 	
 	parserForwardPropogationSignalData->semanticRelationReturnEntity = NULL;
 	
 	//required;
-	vector<GIAtxtRelTranslatorRulesComponent*> parseTreeComponentSemanticRelationFunctionListArray;
-	vector<GIAtxtRelTranslatorRulesComponent*> parseTreeComponentSemanticRelationFunctionSubject(GIA_TXT_REL_TRANSLATOR_MAX_NUMBER_OF_SEMANTIC_FUNCTIONS_EXECUTED_PER_GROUP); //= NULL;
-	vector<GIAtxtRelTranslatorRulesComponent*> parseTreeComponentSemanticRelationFunctionObject(GIA_TXT_REL_TRANSLATOR_MAX_NUMBER_OF_SEMANTIC_FUNCTIONS_EXECUTED_PER_GROUP); //= NULL;
-	vector<GIAtxtRelTranslatorRulesComponent*> parseTreeComponentSemanticRelationFunctionDelimiter(GIA_TXT_REL_TRANSLATOR_MAX_NUMBER_OF_SEMANTIC_FUNCTIONS_EXECUTED_PER_GROUP); //= NULL;
+	vector<GIAtxtRelTranslatorRulesComponentParseTree*> parseTreeComponentSemanticRelationFunctionListArray;
+	vector<GIAtxtRelTranslatorRulesComponentParseTree*> parseTreeComponentSemanticRelationFunctionSubject(GIA_TXT_REL_TRANSLATOR_MAX_NUMBER_OF_SEMANTIC_FUNCTIONS_EXECUTED_PER_GROUP); //= NULL;
+	vector<GIAtxtRelTranslatorRulesComponentParseTree*> parseTreeComponentSemanticRelationFunctionObject(GIA_TXT_REL_TRANSLATOR_MAX_NUMBER_OF_SEMANTIC_FUNCTIONS_EXECUTED_PER_GROUP); //= NULL;
+	vector<GIAtxtRelTranslatorRulesComponentParseTree*> parseTreeComponentSemanticRelationFunctionDelimiter(GIA_TXT_REL_TRANSLATOR_MAX_NUMBER_OF_SEMANTIC_FUNCTIONS_EXECUTED_PER_GROUP); //= NULL;
 	for(int i=0; i<GIA_TXT_REL_TRANSLATOR_MAX_NUMBER_OF_SEMANTIC_FUNCTIONS_EXECUTED_PER_GROUP; i++)
 	{
 		parseTreeComponentSemanticRelationFunctionSubject[i] = NULL;
@@ -149,7 +149,7 @@ bool GIAtxtRelTranslatorParserOperationsClass::generateSemanticRelationsFromTxtR
 	
 	for(int i=0; i<currentParseTreeGroup->components.size(); i++)
 	{
-		GIAtxtRelTranslatorRulesComponent* parseTreeComponent = (currentParseTreeGroup->components).at(i);
+		GIAtxtRelTranslatorRulesComponentParseTree* parseTreeComponent = (currentParseTreeGroup->components).at(i);
 		
 		GIAtxtRelTranslatorParserForwardPropogationSignalData* parseTreeComponentSignalData = &((*parseTreeComponentSignalDataArray)[i]);
 		
@@ -401,12 +401,12 @@ bool GIAtxtRelTranslatorParserOperationsClass::generateSemanticRelationsFromTxtR
 				}
 				*/
 
-				//cout << "\n\n currentParseTreeGroup->groupTypeNameBackup = " << currentParseTreeGroup->groupTypeNameBackup << endl;
+				//cout << "\n\n currentParseTreeGroup->groupTypeName = " << currentParseTreeGroup->groupTypeName << endl;
 				//cout << "currentParseTreeGroup->groupName = " << currentParseTreeGroup->groupName << endl;
 				#ifdef GIA_TXT_REL_TRANSLATOR_RULES_ASSUME_HIGH_LEVEL_REFERENCE_SETS_DO_NOT_CONTAIN_EXPLICIT_SEMANTIC_RELATION_FUNCTION
 				bool sameReferenceSet = false;
-				if((currentParseTreeGroup->groupTypeNameBackup == GIAtxtRelTranslatorRulesGroupsTypes[GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_TYPE_LOGICREFERENCESETS]) ||
-				(currentParseTreeGroup->groupTypeNameBackup == GIAtxtRelTranslatorRulesGroupsTypes[GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_TYPE_REFERENCESETS]))
+				if((currentParseTreeGroup->groupTypeName == GIAtxtRelTranslatorRulesGroupsTypes[GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_TYPE_LOGICREFERENCESETS]) ||
+				(currentParseTreeGroup->groupTypeName == GIAtxtRelTranslatorRulesGroupsTypes[GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_TYPE_REFERENCESETS]))
 				{
 					sameReferenceSet = false;
 				}
@@ -490,10 +490,10 @@ bool GIAtxtRelTranslatorParserOperationsClass::generateSemanticRelationsFromTxtR
 
 			#ifdef GIA_TXT_REL_TRANSLATOR_RULES_ASSUME_HIGH_LEVEL_REFERENCE_SETS_DO_NOT_CONTAIN_EXPLICIT_SEMANTIC_RELATION_FUNCTION
 			bool sameReferenceSet = false;
-			//cout << "\n\n currentParseTreeGroup->groupTypeNameBackup = " << currentParseTreeGroup->groupTypeNameBackup << endl;
+			//cout << "\n\n currentParseTreeGroup->groupTypeName = " << currentParseTreeGroup->groupTypeName << endl;
 			//cout << "currentParseTreeGroup->groupName = " << currentParseTreeGroup->groupName << endl;
-			if((currentParseTreeGroup->groupTypeNameBackup == GIAtxtRelTranslatorRulesGroupsTypes[GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_TYPE_LOGICREFERENCESETS]) ||
-			(currentParseTreeGroup->groupTypeNameBackup == GIAtxtRelTranslatorRulesGroupsTypes[GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_TYPE_REFERENCESETS]))
+			if((currentParseTreeGroup->groupTypeName == GIAtxtRelTranslatorRulesGroupsTypes[GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_TYPE_LOGICREFERENCESETS]) ||
+			(currentParseTreeGroup->groupTypeName == GIAtxtRelTranslatorRulesGroupsTypes[GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_TYPE_REFERENCESETS]))
 			{
 				sameReferenceSet = false;
 			}

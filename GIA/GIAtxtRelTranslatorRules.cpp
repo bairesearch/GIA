@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorRules.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g11q 01-March-2019
+ * Project Version: 3h1a 20-April-2019
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Rules
  * /
@@ -211,7 +211,7 @@ bool GIAtxtRelTranslatorRulesClass::extractGIAtxtRelTranslatorRulesGroups(vector
 								#endif
 								if(passGroupNameRequirements)
 								{
-									GIAtxtRelTranslatorRulesGroup* group = new GIAtxtRelTranslatorRulesGroup();	
+									GIAtxtRelTranslatorRulesGroupNeuralNetwork* group = new GIAtxtRelTranslatorRulesGroupNeuralNetwork();	
 									group->semanticRelationFunctionName = semanticRelationFunctionName;
 									#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_NEW_CONDITIONS
 									group->semanticRelationFunctionConditionNewName = semanticRelationFunctionConditionNewName;
@@ -229,13 +229,13 @@ bool GIAtxtRelTranslatorRulesClass::extractGIAtxtRelTranslatorRulesGroups(vector
 									#endif
 									
 									#ifdef GIA_TXT_REL_TRANSLATOR_RULES_DEFINE_GROUP_TYPE_BACKUP_AT_START
-									group->groupTypeNameBackup = groupType->groupTypeName;
-									group->groupTypeReferenceSetTypeBackup = groupType->referenceSetType;
+									group->groupTypeName = groupType->groupTypeName;
+									group->groupTypeReferenceSetType = groupType->referenceSetType;
 									#endif
 									
 									/*
 									#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_NEW
-									group->currentParseTreeGroupTemp = new GIAtxtRelTranslatorRulesGroup(*group);
+									group->currentParseTreeGroupTemp = new GIAtxtRelTranslatorRulesGroupNeuralNetwork(*group);
 									#endif
 									*/
 									
@@ -289,7 +289,7 @@ bool GIAtxtRelTranslatorRulesClass::extractGIAtxtRelTranslatorRulesGroups(vector
 }
 
 
-bool GIAtxtRelTranslatorRulesClass::parseComponents(XMLparserTag* firstTxtRelTranslatorRulesFirstComponentTag, GIAtxtRelTranslatorRulesGroup* groupOwner, vector<GIAtxtRelTranslatorRulesComponent*>* componentsList, const bool parseSubcomponent, GIAtxtRelTranslatorRulesComponent* subComponentOwner)
+bool GIAtxtRelTranslatorRulesClass::parseComponents(XMLparserTag* firstTxtRelTranslatorRulesFirstComponentTag, GIAtxtRelTranslatorRulesGroupNeuralNetwork* groupOwner, vector<GIAtxtRelTranslatorRulesComponentNeuralNetwork*>* componentsList, const bool parseSubcomponent, GIAtxtRelTranslatorRulesComponentNeuralNetwork* subComponentOwner)
 {
 	bool result = true;
 	
@@ -584,7 +584,7 @@ bool GIAtxtRelTranslatorRulesClass::parseComponents(XMLparserTag* firstTxtRelTra
 			}
 			#endif
 			
-			GIAtxtRelTranslatorRulesComponent* component = new GIAtxtRelTranslatorRulesComponent();
+			GIAtxtRelTranslatorRulesComponentNeuralNetwork* component = new GIAtxtRelTranslatorRulesComponentNeuralNetwork();
 			component->componentIndex = componentIndex;
 			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
 			component->ownerGroup = groupOwner;	//enables reverse lookup for ANN
@@ -654,7 +654,7 @@ bool GIAtxtRelTranslatorRulesClass::parseComponents(XMLparserTag* firstTxtRelTra
 				exit(EXIT_ERROR);
 			}
 			
-			GIAtxtRelTranslatorRulesComponent* component = new GIAtxtRelTranslatorRulesComponent();
+			GIAtxtRelTranslatorRulesComponentNeuralNetwork* component = new GIAtxtRelTranslatorRulesComponentNeuralNetwork();
 			component->componentIndex = componentIndex;
 			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
 			component->ownerGroup = groupOwner;	//enables reverse lookup for ANN
@@ -686,7 +686,7 @@ bool GIAtxtRelTranslatorRulesClass::parseComponents(XMLparserTag* firstTxtRelTra
 				//cerr << "GIAtxtRelTranslatorRules::extractGIAtxtRelTranslatorRulesGroups{} error: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_optional, &optional)" << endl;
 			}
 			
-			GIAtxtRelTranslatorRulesComponent* component = new GIAtxtRelTranslatorRulesComponent();
+			GIAtxtRelTranslatorRulesComponentNeuralNetwork* component = new GIAtxtRelTranslatorRulesComponentNeuralNetwork();
 			component->componentIndex = componentIndex;
 			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
 			component->ownerGroup = groupOwner;	//enables reverse lookup for ANN
@@ -726,7 +726,7 @@ bool GIAtxtRelTranslatorRulesClass::connectGroupsReferences(vector<GIAtxtRelTran
 		GIAtxtRelTranslatorRulesGroupType* groupType = GIAtxtRelTranslatorRulesGroupTypes->at(i);
 		for(int j=0; j<(groupType->groups).size(); j++)
 		{
-			GIAtxtRelTranslatorRulesGroup* group = (groupType->groups)[j];
+			GIAtxtRelTranslatorRulesGroupNeuralNetwork* group = (groupType->groups)[j];
 			#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE_EXTRA8
 			cout << "GIAtxtRelTranslatorRulesClass::connectGroupsReferences{}: group->groupName = " << group->groupName << endl;
 			#endif
@@ -738,12 +738,12 @@ bool GIAtxtRelTranslatorRulesClass::connectGroupsReferences(vector<GIAtxtRelTran
 	}
 	return result;
 }
-bool GIAtxtRelTranslatorRulesClass::connectComponentsReferences(vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, vector<GIAtxtRelTranslatorRulesComponent*>* components, bool subcomponents)
+bool GIAtxtRelTranslatorRulesClass::connectComponentsReferences(vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, vector<GIAtxtRelTranslatorRulesComponentNeuralNetwork*>* components, bool subcomponents)
 {
 	bool result = true;
 	for(int j=0; j<components->size(); j++)
 	{
-		GIAtxtRelTranslatorRulesComponent* component = (*components)[j];
+		GIAtxtRelTranslatorRulesComponentNeuralNetwork* component = (*components)[j];
 		if(component->componentType == GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_GROUP)
 		{
 			if(component->groupTypeRefName != "")
@@ -804,7 +804,7 @@ bool GIAtxtRelTranslatorRulesClass::findGroupType(vector<GIAtxtRelTranslatorRule
 	}
 	return result;
 }
-bool GIAtxtRelTranslatorRulesClass::findGroup(vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, const string groupTypeName, const string groupName, GIAtxtRelTranslatorRulesGroupType** groupTypeFound, GIAtxtRelTranslatorRulesGroup** groupFound)
+bool GIAtxtRelTranslatorRulesClass::findGroup(vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, const string groupTypeName, const string groupName, GIAtxtRelTranslatorRulesGroupType** groupTypeFound, GIAtxtRelTranslatorRulesGroupNeuralNetwork** groupFound)
 {
 	bool result = false;
 	for(int i=0; i<GIAtxtRelTranslatorRulesGroupTypes->size(); i++)
@@ -815,7 +815,7 @@ bool GIAtxtRelTranslatorRulesClass::findGroup(vector<GIAtxtRelTranslatorRulesGro
 			*groupTypeFound = groupType;
 			for(int j=0; j<groupType->groups.size(); j++)
 			{
-				GIAtxtRelTranslatorRulesGroup* group = (groupType->groups)[j];
+				GIAtxtRelTranslatorRulesGroupNeuralNetwork* group = (groupType->groups)[j];
 				if(group->groupName == groupName)
 				{
 					*groupFound = group;
@@ -1230,10 +1230,10 @@ bool GIAtxtRelTranslatorRulesClass::removeLastOptionalComponents(vector<GIAtxtRe
 		int groupTypeGroupsSizeOrig = (groupType->groups).size();
 		for(int j=0; j<(groupType->groups).size(); j++)
 		{
-			GIAtxtRelTranslatorRulesGroup* group = (groupType->groups)[j];
-			vector<GIAtxtRelTranslatorRulesComponent*>* components = &(group->components);
+			GIAtxtRelTranslatorRulesGroupNeuralNetwork* group = (groupType->groups)[j];
+			vector<GIAtxtRelTranslatorRulesComponentNeuralNetwork*>* components = &(group->components);
 			
-			GIAtxtRelTranslatorRulesGroup* optionalComponentsWrapperGroup = NULL;
+			GIAtxtRelTranslatorRulesGroupNeuralNetwork* optionalComponentsWrapperGroup = NULL;
 			bool wrapperGroupAlreadyDefined = false;
 			if(j >= groupTypeGroupsSizeOrig)
 			{
@@ -1247,9 +1247,9 @@ bool GIAtxtRelTranslatorRulesClass::removeLastOptionalComponents(vector<GIAtxtRe
 			if(components->size() > 0)
 			{
 				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_REVERSE
-				GIAtxtRelTranslatorRulesComponent* lastComponent = (*components)[0];
+				GIAtxtRelTranslatorRulesComponentNeuralNetwork* lastComponent = (*components)[0];
 				#else
-				GIAtxtRelTranslatorRulesComponent* lastComponent = (*components)[components->size()-1];
+				GIAtxtRelTranslatorRulesComponentNeuralNetwork* lastComponent = (*components)[components->size()-1];
 				#endif
 				if(components->size() == 1 && lastComponent->optional)
 				{
@@ -1265,11 +1265,11 @@ bool GIAtxtRelTranslatorRulesClass::removeLastOptionalComponents(vector<GIAtxtRe
 					#endif
 
 					//create groupNew1
-					GIAtxtRelTranslatorRulesGroup* groupNew1 = copyGroup(group);
+					GIAtxtRelTranslatorRulesGroupNeuralNetwork* groupNew1 = copyGroup(group);
 					groupNew1->groupName = groupNew1->groupName + GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_REMOVE_LAST_OPTIONAL_COMPONENTS_ARTIFICIAL_GROUP_NAME_APPEND1;
 					groupNew1->optionalComponentsWrapperGroup = group;
 					//remove last component from groupNew1;
-					vector<GIAtxtRelTranslatorRulesComponent*>* componentsNew1 = &(groupNew1->components);
+					vector<GIAtxtRelTranslatorRulesComponentNeuralNetwork*>* componentsNew1 = &(groupNew1->components);
 					#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_REVERSE
 					//componentsNew1.pop_front();
 					componentsNew1->erase(componentsNew1->begin());
@@ -1280,21 +1280,21 @@ bool GIAtxtRelTranslatorRulesClass::removeLastOptionalComponents(vector<GIAtxtRe
 					(groupType->groups).push_back(groupNew1);
 
 					//create groupNew2
-					GIAtxtRelTranslatorRulesGroup* groupNew2 = copyGroup(group);
+					GIAtxtRelTranslatorRulesGroupNeuralNetwork* groupNew2 = copyGroup(group);
 					groupNew2->groupName = groupNew2->groupName + GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_REMOVE_LAST_OPTIONAL_COMPONENTS_ARTIFICIAL_GROUP_NAME_APPEND2;
 					groupNew2->optionalComponentsWrapperGroup = group;
 					//set last component to !optional;
-					vector<GIAtxtRelTranslatorRulesComponent*>* componentsNew2 = &(groupNew2->components);
+					vector<GIAtxtRelTranslatorRulesComponentNeuralNetwork*>* componentsNew2 = &(groupNew2->components);
 					#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_REVERSE
-					GIAtxtRelTranslatorRulesComponent* lastComponentNew2 = (*componentsNew2)[0];
+					GIAtxtRelTranslatorRulesComponentNeuralNetwork* lastComponentNew2 = (*componentsNew2)[0];
 					#else
-					GIAtxtRelTranslatorRulesComponent* lastComponentNew2 = (*componentsNew2)[components->size()-1];
+					GIAtxtRelTranslatorRulesComponentNeuralNetwork* lastComponentNew2 = (*componentsNew2)[components->size()-1];
 					#endif
 					lastComponentNew2->optional = false;
 					updateComponentsOwnerGroupAndIndexes(groupNew2, &(groupNew2->components));
 					(groupType->groups).push_back(groupNew2);
 
-					GIAtxtRelTranslatorRulesComponent* artificialGroupOrComponent = NULL;
+					GIAtxtRelTranslatorRulesComponentNeuralNetwork* artificialGroupOrComponent = NULL;
 					if(wrapperGroupAlreadyDefined)
 					{
 						artificialGroupOrComponent = optionalComponentsWrapperGroup->components[0];
@@ -1304,7 +1304,7 @@ bool GIAtxtRelTranslatorRulesClass::removeLastOptionalComponents(vector<GIAtxtRe
 						j--;
 						for(int q=0; q<artificialGroupOrComponent->subComponents.size(); q++)
 						{	
-							GIAtxtRelTranslatorRulesComponent* component = artificialGroupOrComponent->subComponents[q];
+							GIAtxtRelTranslatorRulesComponentNeuralNetwork* component = artificialGroupOrComponent->subComponents[q];
 							if(component->groupRefName == group->groupName)
 							{
 								(artificialGroupOrComponent->subComponents).erase((artificialGroupOrComponent->subComponents).begin() + q);
@@ -1316,7 +1316,7 @@ bool GIAtxtRelTranslatorRulesClass::removeLastOptionalComponents(vector<GIAtxtRe
 					{
 						//turn group into a wrapper group with an or function pointing to both groups
 						optionalComponentsWrapperGroup = group;
-						artificialGroupOrComponent = new GIAtxtRelTranslatorRulesComponent();
+						artificialGroupOrComponent = new GIAtxtRelTranslatorRulesComponentNeuralNetwork();
 						artificialGroupOrComponent->componentIndex = GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_COMPONENT_INDEX_FIRST;
 						#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
 						artificialGroupOrComponent->ownerGroup = group;	//enables reverse lookup for ANN
@@ -1327,9 +1327,9 @@ bool GIAtxtRelTranslatorRulesClass::removeLastOptionalComponents(vector<GIAtxtRe
 					}
 
 					//add newly created artificial groups to wrapper group
-					GIAtxtRelTranslatorRulesComponent* artificialGroupComponentNew1 = new GIAtxtRelTranslatorRulesComponent();
+					GIAtxtRelTranslatorRulesComponentNeuralNetwork* artificialGroupComponentNew1 = new GIAtxtRelTranslatorRulesComponentNeuralNetwork();
 					artificialGroupComponentNew1->groupRefName = groupNew1->groupName;
-					artificialGroupComponentNew1->groupTypeRefName = optionalComponentsWrapperGroup->groupTypeNameBackup;
+					artificialGroupComponentNew1->groupTypeRefName = optionalComponentsWrapperGroup->groupTypeName;
 					artificialGroupComponentNew1->componentType = GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_GROUP;
 					artificialGroupComponentNew1->componentIndex = artificialGroupOrComponent->subComponents.size();
 					artificialGroupComponentNew1->ownerGroup = optionalComponentsWrapperGroup;
@@ -1337,9 +1337,9 @@ bool GIAtxtRelTranslatorRulesClass::removeLastOptionalComponents(vector<GIAtxtRe
 					artificialGroupComponentNew1->isSubcomponent = true;
 					artificialGroupComponentNew1->semanticRelationReturnEntity = true;
 					artificialGroupOrComponent->subComponents.push_back(artificialGroupComponentNew1);
-					GIAtxtRelTranslatorRulesComponent* artificialGroupComponentNew2 = new GIAtxtRelTranslatorRulesComponent();
+					GIAtxtRelTranslatorRulesComponentNeuralNetwork* artificialGroupComponentNew2 = new GIAtxtRelTranslatorRulesComponentNeuralNetwork();
 					artificialGroupComponentNew2->groupRefName = groupNew2->groupName;
-					artificialGroupComponentNew2->groupTypeRefName = optionalComponentsWrapperGroup->groupTypeNameBackup;
+					artificialGroupComponentNew2->groupTypeRefName = optionalComponentsWrapperGroup->groupTypeName;
 					artificialGroupComponentNew2->componentType = GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_GROUP;
 					artificialGroupComponentNew2->componentIndex = artificialGroupOrComponent->subComponents.size();
 					artificialGroupComponentNew2->ownerGroup = optionalComponentsWrapperGroup;
@@ -1349,7 +1349,7 @@ bool GIAtxtRelTranslatorRulesClass::removeLastOptionalComponents(vector<GIAtxtRe
 					artificialGroupOrComponent->subComponents.push_back(artificialGroupComponentNew2);
 					for(int c=GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_COMPONENT_INDEX_FIRST; c<artificialGroupOrComponent->subComponents.size(); c++)
 					{
-						GIAtxtRelTranslatorRulesComponent* subcomponent = artificialGroupOrComponent->subComponents[c];
+						GIAtxtRelTranslatorRulesComponentNeuralNetwork* subcomponent = artificialGroupOrComponent->subComponents[c];
 						subcomponent->componentIndex = c;
 					}
 					
@@ -1377,24 +1377,22 @@ bool GIAtxtRelTranslatorRulesClass::removeLastOptionalComponents(vector<GIAtxtRe
 
 #endif
 	
-GIAtxtRelTranslatorRulesGroup* GIAtxtRelTranslatorRulesClass::copyGroup(GIAtxtRelTranslatorRulesGroup* group)
+GIAtxtRelTranslatorRulesGroupNeuralNetwork* GIAtxtRelTranslatorRulesClass::copyGroup(GIAtxtRelTranslatorRulesGroupNeuralNetwork* group)
 {		
-	GIAtxtRelTranslatorRulesGroup* newGroup = new GIAtxtRelTranslatorRulesGroup(*group);
+	GIAtxtRelTranslatorRulesGroupNeuralNetwork* newGroup = new GIAtxtRelTranslatorRulesGroupNeuralNetwork(*group);
 	newGroup->components.clear();
 	copyComponents(&(group->components), &(newGroup->components));
 
 	return newGroup;
 }
-
-
-bool GIAtxtRelTranslatorRulesClass::copyComponents(vector<GIAtxtRelTranslatorRulesComponent*>* components, vector<GIAtxtRelTranslatorRulesComponent*>* componentsNew)
+bool GIAtxtRelTranslatorRulesClass::copyComponents(vector<GIAtxtRelTranslatorRulesComponentNeuralNetwork*>* components, vector<GIAtxtRelTranslatorRulesComponentNeuralNetwork*>* componentsNew)
 {	
 	bool result = true;
 	
 	for(int i=0; i<components->size(); i++)
 	{
-		GIAtxtRelTranslatorRulesComponent* currentComponent = (*components)[i];
-		GIAtxtRelTranslatorRulesComponent* newComponent = new GIAtxtRelTranslatorRulesComponent(*currentComponent);
+		GIAtxtRelTranslatorRulesComponentNeuralNetwork* currentComponent = (*components)[i];
+		GIAtxtRelTranslatorRulesComponentNeuralNetwork* newComponent = new GIAtxtRelTranslatorRulesComponentNeuralNetwork(*currentComponent);
 		componentsNew->push_back(newComponent);
 		if(GIAtxtRelTranslatorRulesComponentClassObject.componentHasSubcomponents(currentComponent))
 		{
@@ -1406,13 +1404,48 @@ bool GIAtxtRelTranslatorRulesClass::copyComponents(vector<GIAtxtRelTranslatorRul
 	return result;
 }
 
-bool GIAtxtRelTranslatorRulesClass::updateComponentsOwnerGroupAndIndexes(GIAtxtRelTranslatorRulesGroup* group, vector<GIAtxtRelTranslatorRulesComponent*>* components)
+GIAtxtRelTranslatorRulesGroupParseTree* GIAtxtRelTranslatorRulesClass::copyGroup(GIAtxtRelTranslatorRulesGroupParseTree* group)
+{		
+	GIAtxtRelTranslatorRulesGroupParseTree* newGroup = new GIAtxtRelTranslatorRulesGroupParseTree(*group);
+	newGroup->components.clear();
+	copyComponents(&(group->components), &(newGroup->components));
+
+	return newGroup;
+}
+bool GIAtxtRelTranslatorRulesClass::copyComponents(vector<GIAtxtRelTranslatorRulesComponentParseTree*>* components, vector<GIAtxtRelTranslatorRulesComponentParseTree*>* componentsNew)
+{	
+	bool result = true;
+	
+	for(int i=0; i<components->size(); i++)
+	{
+		GIAtxtRelTranslatorRulesComponentParseTree* currentComponent = (*components)[i];
+		GIAtxtRelTranslatorRulesComponentParseTree* newComponent = new GIAtxtRelTranslatorRulesComponentParseTree(*currentComponent);
+		componentsNew->push_back(newComponent);
+	}
+	
+	return result;
+}
+
+GIAtxtRelTranslatorRulesGroupActivationMemory* GIAtxtRelTranslatorRulesClass::copyGroup(GIAtxtRelTranslatorRulesGroupActivationMemory* group)
+{		
+	GIAtxtRelTranslatorRulesGroupActivationMemory* newGroup = new GIAtxtRelTranslatorRulesGroupActivationMemory(*group);
+	newGroup->components.clear();
+	copyComponents(&(group->components), &(newGroup->components));
+
+	return newGroup;
+}
+
+
+
+
+#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_REMOVE_LAST_OPTIONAL_COMPONENTS
+bool GIAtxtRelTranslatorRulesClass::updateComponentsOwnerGroupAndIndexes(GIAtxtRelTranslatorRulesGroupNeuralNetwork* group, vector<GIAtxtRelTranslatorRulesComponentNeuralNetwork*>* components)
 {
 	bool result = true;
 	
 	for(int c=GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_COMPONENT_INDEX_FIRST; c<components->size(); c++)
 	{
-		GIAtxtRelTranslatorRulesComponent* component = (*components)[c];
+		GIAtxtRelTranslatorRulesComponentNeuralNetwork* component = (*components)[c];
 		component->componentIndex = c;
 		component->ownerGroup = group;
 		if(GIAtxtRelTranslatorRulesComponentClassObject.componentHasSubcomponents(component))
@@ -1422,7 +1455,8 @@ bool GIAtxtRelTranslatorRulesClass::updateComponentsOwnerGroupAndIndexes(GIAtxtR
 	}
 	
 	return result;
-}					
+}		
+#endif			
 
 #endif
 

@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g11q 01-March-2019
+ * Project Version: 3h1a 20-April-2019
  * Requirements: 
  * Description: GIA specific global definitions
  * /
@@ -899,6 +899,7 @@
 				#define GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED		//GIA3g11a
 				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED 
 				
+					#define GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_BIO_DO_NOT_RELY_ON_PARSE_TREE_MEMORY	//GIA3h1a
 					
 					#define GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_REPLICATE_TOP_LEVEL_PARSE_TREE	//GIA3g11f - required for GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED
 					#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_REPLICATE_TOP_LEVEL_PARSE_TREE
@@ -1023,7 +1024,7 @@
 		#endif
 			
 	#else
-		#define GIA_TXT_REL_TRANSLATOR_INVERSE_NEURAL_NETWORK	//3f
+		#define GIA_TXT_REL_TRANSLATOR_INVERSE_NEURAL_NETWORK	//GIA3f
 	#endif
 #endif
 	

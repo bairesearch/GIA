@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorRules.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g11q 01-March-2019
+ * Project Version: 3h1a 20-April-2019
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Rules
  * /
@@ -288,11 +288,11 @@ class GIAtxtRelTranslatorRulesClass
 	public: vector<XMLparserTag*>* getGIAtxtRelTranslatorRulesTokenLayersGlobal();
 
 	public: bool extractGIAtxtRelTranslatorRulesGroups(vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes);
-		private: bool parseComponents(XMLparserTag* firstTxtRelTranslatorRulesFirstComponentTag, GIAtxtRelTranslatorRulesGroup* groupOwner, vector<GIAtxtRelTranslatorRulesComponent*>* componentsList, const bool parseSubcomponent, GIAtxtRelTranslatorRulesComponent* subComponentOwner);
+		private: bool parseComponents(XMLparserTag* firstTxtRelTranslatorRulesFirstComponentTag, GIAtxtRelTranslatorRulesGroupNeuralNetwork* groupOwner, vector<GIAtxtRelTranslatorRulesComponentNeuralNetwork*>* componentsList, const bool parseSubcomponent, GIAtxtRelTranslatorRulesComponentNeuralNetwork* subComponentOwner);
 		private: bool connectGroupsReferences(vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes);
-			private: bool connectComponentsReferences(vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, vector<GIAtxtRelTranslatorRulesComponent*>* components, bool subcomponents);
+			private: bool connectComponentsReferences(vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, vector<GIAtxtRelTranslatorRulesComponentNeuralNetwork*>* components, bool subcomponents);
 				private: bool findGroupType(vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, const string groupTypeName, GIAtxtRelTranslatorRulesGroupType** groupTypeFound);
-				private: bool findGroup(vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, const string groupTypeName, const string groupName, GIAtxtRelTranslatorRulesGroupType** groupTypeFound, GIAtxtRelTranslatorRulesGroup** groupFound);
+				private: bool findGroup(vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, const string groupTypeName, const string groupName, GIAtxtRelTranslatorRulesGroupType** groupTypeFound, GIAtxtRelTranslatorRulesGroupNeuralNetwork** groupFound);
 	public: bool extractGIAtxtRelTranslatorRulesTokens(vector<XMLparserTag*>* GIAtxtRelTranslatorRulesTokenLayers);
 
 	public: bool isClassTagWrapper(string word, string layerNameToFind, string classNameToFind, string classTypeNameToFind, vector<XMLparserTag*>* GIAtxtRelTranslatorRulesTokenLayers);
@@ -303,10 +303,15 @@ class GIAtxtRelTranslatorRulesClass
 	private: bool removeLastOptionalComponents(vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes);
 	#endif
 
-	public: GIAtxtRelTranslatorRulesGroup* copyGroup(GIAtxtRelTranslatorRulesGroup* group);
-		public: bool copyComponents(vector<GIAtxtRelTranslatorRulesComponent*>* components, vector<GIAtxtRelTranslatorRulesComponent*>* componentsNew);
+	public: GIAtxtRelTranslatorRulesGroupNeuralNetwork* copyGroup(GIAtxtRelTranslatorRulesGroupNeuralNetwork* group);
+		public: bool copyComponents(vector<GIAtxtRelTranslatorRulesComponentNeuralNetwork*>* components, vector<GIAtxtRelTranslatorRulesComponentNeuralNetwork*>* componentsNew);
+	public: GIAtxtRelTranslatorRulesGroupParseTree* copyGroup(GIAtxtRelTranslatorRulesGroupParseTree* group);
+		public: bool copyComponents(vector<GIAtxtRelTranslatorRulesComponentParseTree*>* components, vector<GIAtxtRelTranslatorRulesComponentParseTree*>* componentsNew);
+	public: GIAtxtRelTranslatorRulesGroupActivationMemory* copyGroup(GIAtxtRelTranslatorRulesGroupActivationMemory* group);
 	
-	public: bool updateComponentsOwnerGroupAndIndexes(GIAtxtRelTranslatorRulesGroup* group, vector<GIAtxtRelTranslatorRulesComponent*>* components);
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_REMOVE_LAST_OPTIONAL_COMPONENTS
+	public: bool updateComponentsOwnerGroupAndIndexes(GIAtxtRelTranslatorRulesGroupNeuralNetwork* group, vector<GIAtxtRelTranslatorRulesComponentNeuralNetwork*>* components);
+	#endif
 
 	#endif
 

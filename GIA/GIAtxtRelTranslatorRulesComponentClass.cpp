@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorRulesComponentClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g11q 01-March-2019
+ * Project Version: 3h1a 20-April-2019
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Rules
  * /
@@ -97,14 +97,42 @@ GIAtxtRelTranslatorRulesComponent::GIAtxtRelTranslatorRulesComponent(void)
 	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_NUMBER_EXPLETIVES
 	isExpletive = false;
 	#endif	
-		
+	
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
+	neuronComponentConnectionActive = false;
+	neuronComponentConnectionActiveWordRecord = NULL;
+	#endif
+	candidateStringMatch = NULL;
 	groupTypeRef = NULL;
 	groupRef = NULL;
 	
+}
+GIAtxtRelTranslatorRulesComponent::~GIAtxtRelTranslatorRulesComponent(void)
+{
+}
+
+
+GIAtxtRelTranslatorRulesComponentNeuralNetwork::GIAtxtRelTranslatorRulesComponentNeuralNetwork(void)
+{
 	//subComponents = NULL;
-	
+
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
+	ownerGroup = NULL;	
+	isSubcomponent = false;
+	ownerComponent = NULL;
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN
+	//ANNbackNeuronConnectionList = NULL;
+	#endif
+	#endif
+}
+GIAtxtRelTranslatorRulesComponentNeuralNetwork::~GIAtxtRelTranslatorRulesComponentNeuralNetwork(void)
+{
+}
+
+
+GIAtxtRelTranslatorRulesComponentParseTree::GIAtxtRelTranslatorRulesComponentParseTree(void)
+{
 	//parse tree variables:
-	candidateStringMatch = NULL;
 	parseTreeGroupRef = NULL;
 	componentRef = NULL;
 	wordPOStypeInferred = GIA_PREPROCESSOR_POS_TYPE_UNDEFINED;
@@ -112,21 +140,11 @@ GIAtxtRelTranslatorRulesComponent::GIAtxtRelTranslatorRulesComponent(void)
 	groupFrontComponentConnectionListIndex = INT_DEFAULT_VALUE;
 	numberOfWordsCurrentlyParsed = INT_DEFAULT_VALUE;
 	#endif
-	
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
-	ownerGroup = NULL;
-	isSubcomponent = false;
-	ownerComponent = NULL;
-	neuronComponentConnectionActive = false;
-	neuronComponentConnectionActiveWordRecord = NULL;
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN
-	//ANNbackNeuronConnectionList = NULL;
-	#endif
-	#endif
 }
-GIAtxtRelTranslatorRulesComponent::~GIAtxtRelTranslatorRulesComponent(void)
+GIAtxtRelTranslatorRulesComponentParseTree::~GIAtxtRelTranslatorRulesComponentParseTree(void)
 {
 }
+
 
 
 bool GIAtxtRelTranslatorRulesComponentClass::componentHasSubcomponents(GIAtxtRelTranslatorRulesComponent* component)

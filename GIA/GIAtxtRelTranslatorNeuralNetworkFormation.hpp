@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetworkFormation.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3g11q 01-March-2019
+ * Project Version: 3h1a 20-April-2019
  * Requirements: 
  * Description: Textual Relation Translator Neural Network Formation
  * /
@@ -62,34 +62,34 @@ class GIAtxtRelTranslatorNeuralNetworkFormationClass
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ADD_EXPLICIT_WORD_REFERENCES_AS_INDEPENDENT_POS_PERMUTATIONS
 	public: vector<string>* getExplicitWordList();
 	#endif
-	public: unordered_map<string, GIAtxtRelTranslatorRulesGroup*>* getInputLayerSectionExplicitWordMap();
-	public: unordered_map<string, GIAtxtRelTranslatorRulesGroup*>* getInputLayerSectionTokensLayerMap();
-	public: GIAtxtRelTranslatorRulesGroup* getFirstGroupInInputLayerSectionWordPOStype();
+	public: unordered_map<string, GIAtxtRelTranslatorRulesGroupNeuralNetwork*>* getInputLayerSectionExplicitWordMap();
+	public: unordered_map<string, GIAtxtRelTranslatorRulesGroupNeuralNetwork*>* getInputLayerSectionTokensLayerMap();
+	public: GIAtxtRelTranslatorRulesGroupNeuralNetwork* getFirstGroupInInputLayerSectionWordPOStype();
 
 	public: bool createGIAtxtRelTranslatorNeuralNetwork(vector<XMLparserTag*>* GIAtxtRelTranslatorRulesTokenLayers, vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes);
 		private: bool createInputNeuronLayer(vector<XMLparserTag*>* GIAtxtRelTranslatorRulesTokenLayers, vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes);
-			private: bool createInputNeuronLayerSectionWordPOStype(GIAtxtRelTranslatorRulesGroup** currentGroupInInputLayerSectionWordPOStype, int* numberOfGroupsInSection);
-				private: bool createInputNeuronLayerSectionNounVariantType(GIAtxtRelTranslatorRulesGroup* currentGroupInInputLayerSectionWordPOStype, GIAtxtRelTranslatorRulesGroup** currentGroupInInputLayerSectionWordNounVariantType, int* numberOfGroupsInSection);
-				private: bool createInputNeuronLayerSectionVerbVariantType(GIAtxtRelTranslatorRulesGroup* currentGroupInInputLayerSectionWordPOStype, GIAtxtRelTranslatorRulesGroup** currentGroupInInputLayerSectionWordVerbVariantType, int* numberOfGroupsInSection);
-			private: bool createInputNeuronLayerSectionExplicitWord(GIAtxtRelTranslatorRulesGroup** currentGroupInInputLayerSection, int* numberOfGroupsInSection, vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes);	
-				private: bool createInputNeuronLayerSectionExplicitWord(vector<GIAtxtRelTranslatorRulesComponent*>* components, bool subcomponents, vector<string>* explicitWordList);	
-			private: bool createInputNeuronLayerSectionTokensLayer(vector<XMLparserTag*>* GIAtxtRelTranslatorRulesTokenLayers, GIAtxtRelTranslatorRulesGroup** currentGroupInInputLayerSectionTokensLayer, int* numberOfGroupsInSectionTokensLayer);
+			private: bool createInputNeuronLayerSectionWordPOStype(GIAtxtRelTranslatorRulesGroupNeuralNetwork** currentGroupInInputLayerSectionWordPOStype, int* numberOfGroupsInSection);
+				private: bool createInputNeuronLayerSectionNounVariantType(GIAtxtRelTranslatorRulesGroupNeuralNetwork* currentGroupInInputLayerSectionWordPOStype, GIAtxtRelTranslatorRulesGroupNeuralNetwork** currentGroupInInputLayerSectionWordNounVariantType, int* numberOfGroupsInSection);
+				private: bool createInputNeuronLayerSectionVerbVariantType(GIAtxtRelTranslatorRulesGroupNeuralNetwork* currentGroupInInputLayerSectionWordPOStype, GIAtxtRelTranslatorRulesGroupNeuralNetwork** currentGroupInInputLayerSectionWordVerbVariantType, int* numberOfGroupsInSection);
+			private: bool createInputNeuronLayerSectionExplicitWord(GIAtxtRelTranslatorRulesGroupNeuralNetwork** currentGroupInInputLayerSection, int* numberOfGroupsInSection, vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes);	
+				private: bool createInputNeuronLayerSectionExplicitWord(vector<GIAtxtRelTranslatorRulesComponentNeuralNetwork*>* components, bool subcomponents, vector<string>* explicitWordList);	
+			private: bool createInputNeuronLayerSectionTokensLayer(vector<XMLparserTag*>* GIAtxtRelTranslatorRulesTokenLayers, GIAtxtRelTranslatorRulesGroupNeuralNetwork** currentGroupInInputLayerSectionTokensLayer, int* numberOfGroupsInSectionTokensLayer);
 		private: bool createNeuronLayerIntro(vector<XMLparserTag*>* GIAtxtRelTranslatorRulesTokenLayers, vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes);
-			private: bool createNeuronLayerGroupType(vector<XMLparserTag*>* GIAtxtRelTranslatorRulesTokenLayers, GIAtxtRelTranslatorRulesComponent* higherLevelComponent, GIAtxtRelTranslatorRulesGroupType* groupType);
-				private: bool createNeuronLayerGroup(vector<XMLparserTag*>* GIAtxtRelTranslatorRulesTokenLayers, GIAtxtRelTranslatorRulesGroup* group);
-					private: bool createNeuronLayerComponents(vector<XMLparserTag*>* GIAtxtRelTranslatorRulesTokenLayers, GIAtxtRelTranslatorRulesGroup* group, vector<GIAtxtRelTranslatorRulesComponent*>* components, bool subcomponents, GIAtxtRelTranslatorRulesComponent* higherLevelComponent);
+			private: bool createNeuronLayerGroupType(vector<XMLparserTag*>* GIAtxtRelTranslatorRulesTokenLayers, GIAtxtRelTranslatorRulesComponentNeuralNetwork* higherLevelComponent, GIAtxtRelTranslatorRulesGroupType* groupType);
+				private: bool createNeuronLayerGroup(vector<XMLparserTag*>* GIAtxtRelTranslatorRulesTokenLayers, GIAtxtRelTranslatorRulesGroupNeuralNetwork* group);
+					private: bool createNeuronLayerComponents(vector<XMLparserTag*>* GIAtxtRelTranslatorRulesTokenLayers, GIAtxtRelTranslatorRulesGroupNeuralNetwork* group, vector<GIAtxtRelTranslatorRulesComponentNeuralNetwork*>* components, bool subcomponents, GIAtxtRelTranslatorRulesComponentNeuralNetwork* higherLevelComponent);
 
-	private: bool findTokensLayerClassType(string layerName, string layerClassName, string layerClassTypeName, GIAtxtRelTranslatorRulesGroup** groupFound);		
-		private: bool findTokensLayerClass(string layerName, string layerClassName, GIAtxtRelTranslatorRulesGroup** layerClassGroupFound);
+	private: bool findTokensLayerClassType(string layerName, string layerClassName, string layerClassTypeName, GIAtxtRelTranslatorRulesGroupNeuralNetwork** groupFound);		
+		private: bool findTokensLayerClass(string layerName, string layerClassName, GIAtxtRelTranslatorRulesGroupNeuralNetwork** layerClassGroupFound);
 	private: bool findWordInList(const string word, vector<string>* explicitWordList);
-	public: bool findWordInGroupMap(const string word, unordered_map<string, GIAtxtRelTranslatorRulesGroup*>* wordMap, GIAtxtRelTranslatorRulesGroup** groupFound);
-	public: GIAtxtRelTranslatorRulesGroup* getInputGroupLayerSection(GIAtxtRelTranslatorRulesGroup* firstGroupInInputLayerSection, int groupIndexInSection);
-	private: void addGroupToLayer(GIAtxtRelTranslatorRulesGroup** currentGroupInLayer, int* numberOfGroupsInSection);
-	private: bool createGroupANNconnectionIO(GIAtxtRelTranslatorRulesGroup* group, GIAtxtRelTranslatorRulesGroup* higherLevelGroup);
-	private: bool createGroupANNconnection(GIAtxtRelTranslatorRulesGroup* group, GIAtxtRelTranslatorRulesComponent* higherLevelComponent);
+	public: bool findWordInGroupMap(const string word, unordered_map<string, GIAtxtRelTranslatorRulesGroupNeuralNetwork*>* wordMap, GIAtxtRelTranslatorRulesGroupNeuralNetwork** groupFound);
+	public: GIAtxtRelTranslatorRulesGroupNeuralNetwork* getInputGroupLayerSection(GIAtxtRelTranslatorRulesGroupNeuralNetwork* firstGroupInInputLayerSection, int groupIndexInSection);
+	private: void addGroupToLayer(GIAtxtRelTranslatorRulesGroupNeuralNetwork** currentGroupInLayer, int* numberOfGroupsInSection);
+	private: bool createGroupANNconnectionIO(GIAtxtRelTranslatorRulesGroupNeuralNetwork* group, GIAtxtRelTranslatorRulesGroupNeuralNetwork* higherLevelGroup);
+	private: bool createGroupANNconnection(GIAtxtRelTranslatorRulesGroupNeuralNetwork* group, GIAtxtRelTranslatorRulesComponentNeuralNetwork* higherLevelComponent);
 		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN
-		private: ANNneuronConnection* createANNconnection(GIAtxtRelTranslatorRulesGroup* group, GIAtxtRelTranslatorRulesGroup* higherLevelGroup);
-		private: ANNneuronConnection* createANNconnection(GIAtxtRelTranslatorRulesGroup* group, GIAtxtRelTranslatorRulesComponent* higherLevelComponent);
+		private: ANNneuronConnection* createANNconnection(GIAtxtRelTranslatorRulesGroupNeuralNetwork* group, GIAtxtRelTranslatorRulesGroupNeuralNetwork* higherLevelGroup);
+		private: ANNneuronConnection* createANNconnection(GIAtxtRelTranslatorRulesGroupNeuralNetwork* group, GIAtxtRelTranslatorRulesComponentNeuralNetwork* higherLevelComponent);
 		#endif
 };
 
