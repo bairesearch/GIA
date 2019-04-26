@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetworkOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3h1a 20-April-2019
+ * Project Version: 3h2a 22-April-2019
  * Requirements: 
  * Description: Textual Relation Translator Neural Network Operations - generic functions
  * /
@@ -406,6 +406,8 @@ bool GIAtxtRelTranslatorNeuralNetworkOperationsClass::componentWordConnectivityT
 {
 	bool result = false;
 		
+	//cout << "\t GIAtxtRelTranslatorNeuralNetworkOperationsClass::componentWordConnectivityTests{}: " << endl;
+
 	int wordIndexMax = -1;
 	int wordIndexMin = REALLY_LARGE_INT;
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_REVERSE
@@ -495,6 +497,23 @@ bool GIAtxtRelTranslatorNeuralNetworkOperationsClass::getMinMaxWordIndexInParseT
 	}
 	#endif
 	
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_BIO_DO_NOT_RELY_ON_PARSE_TREE_MEMORY
+	if(currentParseTreeGroup->components.size() > 0)
+	{
+		if(findMaxOrMinWordIndex)
+		{
+			*wordIndexMaxOrMin = currentParseTreeGroup->parseTreeMaxWordIndex;
+			//cout << "currentParseTreeGroup->parseTreeMaxWordIndex = " << currentParseTreeGroup->parseTreeMaxWordIndex << endl;
+			result = true;
+		}
+		else
+		{
+			*wordIndexMaxOrMin = currentParseTreeGroup->parseTreeMinWordIndex;
+			//cout << "currentParseTreeGroup->parseTreeMinWordIndex = " << currentParseTreeGroup->parseTreeMinWordIndex << endl;
+			result = true;
+		}
+	}
+	#else
 	for(int i=0; i<currentParseTreeGroup->components.size(); i++)
 	{
 		GIAtxtRelTranslatorRulesComponentParseTree* currentComponent = (currentParseTreeGroup->components)[i];
@@ -532,6 +551,7 @@ bool GIAtxtRelTranslatorNeuralNetworkOperationsClass::getMinMaxWordIndexInParseT
 			}
 		}
 	}
+	#endif
 	
 	return result;	
 }
@@ -543,19 +563,6 @@ bool GIAtxtRelTranslatorNeuralNetworkOperationsClass::getMinMaxWordIndexInParseT
 
 
 #ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE
-
-int GIAtxtRelTranslatorNeuralNetworkOperationsClass::countNumberWordsInParseTree(GIAtxtRelTranslatorRulesGroupParseTree* currentParseTreeGroup, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData, int layer)
-{	
-	int performanceOrig = forwardPropogationSentenceData->performance;
-	
-	updatePerformanceGroup(currentParseTreeGroup, forwardPropogationSentenceData, layer);
-	int performance = forwardPropogationSentenceData->performance;
-
-	forwardPropogationSentenceData->performance = performanceOrig;
-	 
-	return performance;
-}
-
 
 #ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_RECORD_PERFORMANCE
 

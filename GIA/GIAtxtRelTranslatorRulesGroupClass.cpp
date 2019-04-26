@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorRulesGroupClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3h1a 20-April-2019
+ * Project Version: 3h2a 22-April-2019
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Rules
  * /
@@ -251,8 +251,7 @@ GIAtxtRelTranslatorRulesGroupActivationMemory::~GIAtxtRelTranslatorRulesGroupAct
 }
 
 GIAtxtRelTranslatorRulesGroupParseTree::GIAtxtRelTranslatorRulesGroupParseTree(void)
-{
-	
+{	
 	//GIAtxtRelTranslatorRulesGroupParseTree variables;
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_HEAVY_OPTIMISED
@@ -273,8 +272,16 @@ GIAtxtRelTranslatorRulesGroupParseTree::GIAtxtRelTranslatorRulesGroupParseTree(v
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_HEAVY_UNOPTIMISED
 	neuronActive = false;
 	#endif
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_BIO_DO_NOT_RELY_ON_PARSE_TREE_MEMORY
+	parseTreeMinWordIndex = INT_DEFAULT_VALUE;
+	parseTreeMaxWordIndex = INT_DEFAULT_VALUE;
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_TAKE_LAST_SUCCESSFUL_PARSE_LIMIT_ITERATIONS_PREFERENCE_WEIGHT_DYNAMIC
+	parseTreeMaxWeight = 0.0;
+	parseTreeMinWeight = 0.0;
+	parseTreeTotalWeight = 0.0;
 	#endif
-	
+	#endif
+	#endif
 }
 GIAtxtRelTranslatorRulesGroupParseTree::~GIAtxtRelTranslatorRulesGroupParseTree(void)
 {
