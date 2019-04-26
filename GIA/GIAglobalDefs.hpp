@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3h3b 24-April-2019
+ * Project Version: 3h4a 25-April-2019
  * Requirements: 
  * Description: GIA specific global definitions
  * /
@@ -753,7 +753,7 @@
 		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN
 			#define GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN_CALCULATE_BOUNDING_BOXES	//GIA3h3a	//reduces display x (width) - more compact	
 			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN_CALCULATE_BOUNDING_BOXES
-				#define GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN_CALCULATE_BOUNDING_BOXES2	//GIA3h3b
+				#define GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN_CALCULATE_BOUNDING_BOXES2	//GIA3h3b	//optional; no change in output
 			#endif
 			#define GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN_SUPPORT_RECURSION	//where recursion prevents optimisation of display y coordinate of groupType, use its position within the xml file
 
@@ -1561,6 +1561,10 @@
 				#endif
 			#else
 				#define GIA_NEURAL_NETWORK_OFFSET_INSTANCE_NEURONS_LAYERS (1)
+			#endif
+			
+			#ifndef GIA_NEURAL_NETWORK_ACTIVE
+				#define GIA_NEURAL_NETWORK_PASSIVE
 			#endif
 		#endif
 	#endif

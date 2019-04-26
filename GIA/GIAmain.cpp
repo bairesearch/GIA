@@ -26,7 +26,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3h3b 24-April-2019
+ * Project Version: 3h4a 25-April-2019
  * Requirements: 
  * Description: Main
  * /
@@ -667,7 +667,7 @@ int main(const int argc, const char** argv)
 
 	if(SHAREDvarsClass().argumentExists(argc, argv, "-version"))
 	{
-		cout << "GIA.exe - Project Version: 3h3b 24-April-2019" << endl;
+		cout << "GIA.exe - Project Version: 3h4a 25-April-2019" << endl;
 		exit(EXIT_OK);
 	}
 
@@ -1820,11 +1820,10 @@ bool GIAmainClass::executeGIA2()
 	#ifdef GIA_NEURAL_NETWORK
 	
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN
-	GIAneuralNetworkOperations.generateNeuralNetFromGIAtxtRelTranslatorNet(translatorVariables);	//generate neural network	//FUTURE must combine generateNeuralNetFromGIAtxtRelTranslatorNet and generateNeuralNetFromSemanticNet 
-	#else
-	#ifndef GIA_NEURAL_NETWORK_ACTIVE
-	GIAneuralNetworkOperations.generateNeuralNetFromSemanticNet(translatorVariables);	//generate neural network
+	GIAneuralNetworkOperations.generateNeuralNetFromGIAtxtRelTranslatorNet(translatorVariables);	//generate GIA NLP neural network
 	#endif
+	#ifdef GIA_NEURAL_NETWORK_PASSIVE
+	GIAneuralNetworkOperations.generateNeuralNetFromSemanticNet(translatorVariables);	//generate GIA KB neural network
 	#endif
 	
 	if(ANNdrawOutput)

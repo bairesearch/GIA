@@ -26,7 +26,7 @@
  * File Name: GIAneuralNetworkOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3h3b 24-April-2019
+ * Project Version: 3h4a 25-April-2019
  * Description: Neural Network - visual representation of GIA contents in prototype biological neural network
  * /
  *******************************************************************************/
@@ -82,6 +82,8 @@ public:
 	int64_t substanceConceptIDcounter;
 	int64_t referenceSetDelimiterConceptIDcounter;
 	#endif
+	
+	int yPosRelStart;
 		
 	int sentenceIndex;
 };
@@ -104,10 +106,10 @@ class GIAneuralNetworkOperationsClass
 	public: void initiateGIAneuralNetwork(GIAneuralNetworkVariablesClass* neuralNetworkVariables);
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN
 	public: bool generateNeuralNetFromGIAtxtRelTranslatorNet(GIAtranslatorVariablesClass* translatorVariables);
-		private: bool determinePositonsOfInputNeurons(int64_t* idBase, ANNneuron** firstNeuronInNetworkPre);
-		private: bool determinePositonsOfNeurons(vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, int64_t* idBase, ANNneuron* firstNeuronInNetworkPre);
+		private: bool determinePositonsOfInputNeurons(int64_t* idBase, ANNneuron** firstOutputNeuronInNetworkPre);
+		private: bool determinePositonsOfNeurons(vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, int64_t* idBase, ANNneuron* firstOutputNeuronInNetworkPre, ANNneuron** firstOutputNeuronInNetworkPost);
 	#endif
-	#ifndef GIA_NEURAL_NETWORK_ACTIVE
+	#ifdef GIA_NEURAL_NETWORK_PASSIVE
 	public: bool generateNeuralNetFromSemanticNet(GIAtranslatorVariablesClass* translatorVariables);
 		#ifdef GIA_NEURAL_NETWORK_GENERATE_SPECIFIC_CONCEPT_NETWORKS
 		private: bool calculateLayerOfSpecificConceptNeuron(GIAentityNode* entity, int layer, int* maxLayer);

@@ -26,7 +26,7 @@
  * File Name: GIAneuralNetworkOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3h3b 24-April-2019
+ * Project Version: 3h4a 25-April-2019
  * Description: Neural Network - visual representation of GIA contents in prototype biological neural network
  * /
  *******************************************************************************/
@@ -53,6 +53,8 @@ GIAneuralNetworkVariablesClass::GIAneuralNetworkVariablesClass(void)
 	referenceSetDelimiterConceptIDcounter = 0;
 	#endif
 	
+	int yPosRelStart = 0;
+	
 	sentenceIndex = 0;
 }
 GIAneuralNetworkVariablesClass::~GIAneuralNetworkVariablesClass(void)
@@ -69,23 +71,27 @@ bool GIAneuralNetworkOperationsClass::generateNeuralNetFromGIAtxtRelTranslatorNe
 	
 	vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes = GIAtxtRelTranslatorRules.getGIAtxtRelTranslatorRulesGroupTypesGlobal();
 	
+	GIAtxtRelTranslatorRulesGroupNeuralNetwork* firstInputGroupInNetwork = GIAtxtRelTranslatorNeuralNetworkFormation.getFirstInputGroupInNetwork();
+	ANNneuron* firstInputNeuronInNetwork = firstInputGroupInNetwork->neuronReference;
+	
 	int64_t id = 0;
-	ANNneuron* firstNeuronInNetworkPre = NULL;
-	determinePositonsOfInputNeurons(&id, &firstNeuronInNetworkPre);	
-	determinePositonsOfNeurons(GIAtxtRelTranslatorRulesGroupTypes, &id, firstNeuronInNetworkPre);
+	ANNneuron* firstOutputNeuronInNetworkPre = NULL;
+	ANNneuron* firstOutputNeuronInNetworkPost = NULL;
+	determinePositonsOfInputNeurons(&id, &firstOutputNeuronInNetworkPre);	
+	determinePositonsOfNeurons(GIAtxtRelTranslatorRulesGroupTypes, &id, firstOutputNeuronInNetworkPre, &firstOutputNeuronInNetworkPost);
 	
 	//cout << "determinePositonsOfNeurons done" << endl;
 	
-	GIAtxtRelTranslatorRulesGroupNeuralNetwork* firstInputGroupInNetwork = GIAtxtRelTranslatorNeuralNetworkFormation.getFirstInputGroupInNetwork();
-	delete (translatorVariables->firstInputNeuronInNetwork);
-	translatorVariables->firstInputNeuronInNetwork = firstInputGroupInNetwork->neuronReference;
+	delete (translatorVariables->firstInputNeuronInNetwork);	//delete the ANNneuron object created by GIAmain.cpp
+	translatorVariables->firstInputNeuronInNetwork = firstInputNeuronInNetwork;
+	translatorVariables->firstOutputNeuronInNetwork = firstOutputNeuronInNetworkPost;
 
 	//cout << "GIAneuralNetworkOperationsClass::generateNeuralNetFromGIAtxtRelTranslatorNet done" << endl;
 	
 	return result;	
 }
 
-bool GIAneuralNetworkOperationsClass::determinePositonsOfInputNeurons(int64_t* idBase, ANNneuron** firstNeuronInNetworkPre)
+bool GIAneuralNetworkOperationsClass::determinePositonsOfInputNeurons(int64_t* idBase, ANNneuron** firstOutputNeuronInNetworkPre)
 {
 	bool result = true;	
 
@@ -392,7 +398,7 @@ bool GIAneuralNetworkOperationsClass::determinePositonsOfInputNeurons(int64_t* i
 	currentGroupNeuronInLayer3->nextNeuron = new ANNneuron();	//create a null neuron at end of layer
 	currentGroupNeuronInLayer4->nextNeuron = new ANNneuron();	//create a null neuron at end of layer
 	
-	*firstNeuronInNetworkPre = firstNeuronInLayer4;
+	*firstOutputNeuronInNetworkPre = firstNeuronInLayer4;
 	
 	*idBase = id;
 
@@ -400,7 +406,7 @@ bool GIAneuralNetworkOperationsClass::determinePositonsOfInputNeurons(int64_t* i
 }
 
 
-bool GIAneuralNetworkOperationsClass::determinePositonsOfNeurons(vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, int64_t* idBase, ANNneuron* firstNeuronInNetworkPre)
+bool GIAneuralNetworkOperationsClass::determinePositonsOfNeurons(vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, int64_t* idBase, ANNneuron* firstOutputNeuronInNetworkPre, ANNneuron** firstOutputNeuronInNetworkPost)
 {
 	bool result = true;
 	
@@ -630,7 +636,7 @@ bool GIAneuralNetworkOperationsClass::determinePositonsOfNeurons(vector<GIAtxtRe
 									group->neuronReference->xPosRel = groupTypeXposAbsolute + group->neuronDisplayPositionX*GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN_GROUP_SPACING_X;
 									group->neuronReference->yPosRel = groupTypeYposAbsolute + group->neuronDisplayPositionY*GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN_GROUP_SPACING_Y;
 									group->neuronReference->id = id;
-									
+																		
 									/*
 									cout << "group->neuronReference->id = " << group->neuronReference->id << endl;
 									cout << "group->neuronReference->GIAentityName = " << group->neuronReference->GIAentityName << endl;
@@ -649,11 +655,12 @@ bool GIAneuralNetworkOperationsClass::determinePositonsOfNeurons(vector<GIAtxtRe
 
 										firstGroupNeuronInLayerXFound = true;
 										firstGroupNeuronInLayerX = currentGroupNeuronInLayerX;
+										*firstOutputNeuronInNetworkPost = firstGroupNeuronInLayerX;
 
 										if((groupType->neuronDisplayPositionY == 0) && (group->neuronDisplayPositionY == 0))
 										{
-											firstNeuronInNetworkPre->hasFrontLayer = true;
-											firstNeuronInNetworkPre->firstNeuronInFrontLayer = firstGroupNeuronInLayerX;	
+											firstOutputNeuronInNetworkPre->hasFrontLayer = true;
+											firstOutputNeuronInNetworkPre->firstNeuronInFrontLayer = firstGroupNeuronInLayerX;	
 										}
 										else
 										{
@@ -759,11 +766,12 @@ bool GIAneuralNetworkOperationsClass::determinePositonsOfNeurons(vector<GIAtxtRe
 									
 									firstGroupNeuronInLayerXFound = true;
 									firstGroupNeuronInLayerX = currentGroupNeuronInLayerX;
+									*firstOutputNeuronInNetworkPost = firstGroupNeuronInLayerX;
 
 									if((groupType->neuronDisplayPositionY == 0) && (group->neuronDisplayPositionY == 0))
 									{
-										firstNeuronInNetworkPre->hasFrontLayer = true;
-										firstNeuronInNetworkPre->firstNeuronInFrontLayer = firstGroupNeuronInLayerX;	
+										firstOutputNeuronInNetworkPre->hasFrontLayer = true;
+										firstOutputNeuronInNetworkPre->firstNeuronInFrontLayer = firstGroupNeuronInLayerX;	
 									}
 									else
 									{
@@ -926,7 +934,7 @@ method B* [more realistic biological implementation]: a new neuron is assigned f
 */
 #endif
 
-#ifndef GIA_NEURAL_NETWORK_ACTIVE
+#ifdef GIA_NEURAL_NETWORK_PASSIVE
 //NB neural connections are defined in same direction as GIA connections. Define front [direction=true] neural connections from concept to instance (synapse artificial neuron) and vice versa. Define front [direction=true] neural connections from concept to specific concept, to more specific concept etc.
 bool GIAneuralNetworkOperationsClass::generateNeuralNetFromSemanticNet(GIAtranslatorVariablesClass* translatorVariables)
 {
@@ -939,7 +947,17 @@ bool GIAneuralNetworkOperationsClass::generateNeuralNetFromSemanticNet(GIAtransl
 		//NOT POSSIBLE: ANNneuron* currentConceptNeuron = getLastNeuronInNeuralNet(neuralNetworkVariables->firstInputNeuronInNetwork);	//in case the neural net is already populated
 
 	GIAneuralNetworkVariablesClass neuralNetworkVariables;
+	
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN
+	//connect GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN to GIA ANN;
+	neuralNetworkVariables.firstInputNeuronInNetwork = new ANNneuron();
+	translatorVariables->firstOutputNeuronInNetwork->hasFrontLayer = true;
+	translatorVariables->firstOutputNeuronInNetwork->firstNeuronInFrontLayer = neuralNetworkVariables.firstInputNeuronInNetwork;
+	neuralNetworkVariables.yPosRelStart = translatorVariables->firstOutputNeuronInNetwork->yPosRel + GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN_GROUPTYPE_SPACING_Y;	
+	#else
 	neuralNetworkVariables.firstInputNeuronInNetwork = translatorVariables->firstInputNeuronInNetwork;
+	#endif
+
 	initiateGIAneuralNetwork(&neuralNetworkVariables);
 		
 	ANNneuron* firstConceptNeuron = getFirstConceptNeuron(neuralNetworkVariables.firstInputNeuronInNetwork);
@@ -1525,7 +1543,7 @@ ANNneuron* GIAneuralNetworkOperationsClass::createNewConceptIndexBitNeuron(GIAne
 	(*currentConceptIndexBitNeuron)->GIAisConceptEntity = false;	//CHECKTHIS
 	(*currentConceptIndexBitNeuron)->spatialCoordinatesSet3D = true;
 	(*currentConceptIndexBitNeuron)->xPosRel = xPosRel;
-	(*currentConceptIndexBitNeuron)->yPosRel = GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS_LAYER;	//ie networkIndexEntity->idInstance;
+	(*currentConceptIndexBitNeuron)->yPosRel = neuralNetworkVariables->yPosRelStart + GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS_LAYER;	//ie networkIndexEntity->idInstance;
 	(*currentConceptIndexBitNeuron)->zPosRel = 0;
 
 	int layer = GIAANNsymbolicCoreConceptIndexBitsTypeCrossReferenceLayerIndex[conceptIndexType];
@@ -1556,7 +1574,7 @@ ANNneuron* GIAneuralNetworkOperationsClass::createNewConceptNeuron(GIAneuralNetw
 	(*currentConceptNeuron)->GIAisConceptEntity = true;
 	(*currentConceptNeuron)->spatialCoordinatesSet3D = true;
 	(*currentConceptNeuron)->xPosRel = xPosRel;
-	(*currentConceptNeuron)->yPosRel = 0;	//ie networkIndexEntity->idInstance;
+	(*currentConceptNeuron)->yPosRel = neuralNetworkVariables->yPosRelStart + 0;	//ie networkIndexEntity->idInstance;
 	(*currentConceptNeuron)->zPosRel = 0;
 
 	ANNneuronClass.fillInNeuronIDProperties((*currentConceptNeuron), neuralNetworkVariables->neuronIDcounter, neuralNetworkVariables->conceptNeuronOrderIDcounter, GIA_NEURAL_NETWORK_LAYER_CONCEPT_NEURONS, GIA_NEURAL_NETWORK_SUBNET_COUNTER);
@@ -1587,10 +1605,10 @@ ANNneuron* GIAneuralNetworkOperationsClass::createNewSpecificConceptNeuron(GIAne
 	(*currentSpecificConceptNeuron)->spatialCoordinatesSet3D = true;
 	(*currentSpecificConceptNeuron)->xPosRel = xPosRel;	//currentConceptNeuron->xPosRel
 	#ifdef GIA_NEURAL_NETWORK_OFFSET_INSTANCE_NEURONS
-	(*currentSpecificConceptNeuron)->yPosRel = layer;
+	(*currentSpecificConceptNeuron)->yPosRel = neuralNetworkVariables->yPosRelStart + layer;
 	(*currentSpecificConceptNeuron)->zPosRel = 0;				
 	#else
-	(*currentSpecificConceptNeuron)->yPosRel = 0;
+	(*currentSpecificConceptNeuron)->yPosRel = neuralNetworkVariables->yPosRelStart + 0;
 	(*currentSpecificConceptNeuron)->zPosRel = layer;	
 	#endif
 
@@ -1626,7 +1644,7 @@ ANNneuron* GIAneuralNetworkOperationsClass::createNewInstanceNeuron(GIAneuralNet
 	#else
 	(*currentInstanceNeuron)->xPosRel = conceptNeuron->xPosRel;
 	#endif
-	(*currentInstanceNeuron)->yPosRel = artificialLayer;
+	(*currentInstanceNeuron)->yPosRel = neuralNetworkVariables->yPosRelStart + artificialLayer;
 	(*currentInstanceNeuron)->zPosRel = instanceID;
 	(*currentInstanceNeuron)->GIAactivationAge = getCurrentTime();
 
