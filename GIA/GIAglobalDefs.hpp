@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3h4b 25-April-2019
+ * Project Version: 3h4c 25-April-2019
  * Requirements: 
  * Description: GIA specific global definitions
  * /
@@ -753,11 +753,13 @@
 		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN
 			
 			//#ifdef GIA_NEURAL_NETWORK_SYMBOLIC_CORE	//not yet defined;
-				#define GIA_NEURAL_NETWORK_SYMBOLIC_CORE_ENFORCE_2D	//GIA3h4b //do not use z dimension to display net
-				#ifdef GIA_NEURAL_NETWORK_SYMBOLIC_CORE_ENFORCE_2D
-					#define GIA_NEURAL_NETWORK_SYMBOLIC_CORE_ENFORCE_2D_SENTENCE_YPOS_SPACING (1)
-					//#define GIA_NEURAL_NETWORK_SYMBOLIC_CORE_ENFORCE_2D_SENTENCE_YPOS_OFFSET (10)	//~= max number of words per sentence/2	//now is dynamic
+				#define GIA_NEURAL_NETWORK_IGNORE_DISABLED_ENTITIES	//GIA3h4c
+				#define GIA_NEURAL_NETWORK_SYMBOLIC_CORE_SEPARATE_INSTANCES_BY_SENTENCE_INDEX	//GIA3h4b //do not use z dimension to display net
+				#ifdef GIA_NEURAL_NETWORK_SYMBOLIC_CORE_SEPARATE_INSTANCES_BY_SENTENCE_INDEX
+					#define GIA_NEURAL_NETWORK_SYMBOLIC_CORE_SEPARATE_INSTANCES_BY_SENTENCE_INDEX_SENTENCE_YPOS_SPACING (1)
+					//#define GIA_NEURAL_NETWORK_SYMBOLIC_CORE_SEPARATE_INSTANCES_BY_SENTENCE_INDEX_SENTENCE_YPOS_OFFSET (10)	//~= max number of words per sentence/2	//now is dynamic
 				#endif
+				#define GIA_NEURAL_NETWORK_SYMBOLIC_CORE_USE_ENTITY_INDEX_RATHER_THAN_ARTIFICIAL_LAYER	//GIA3h4c
 			//#endif
 					
 			#define GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN_CALCULATE_BOUNDING_BOXES	//GIA3h3a	//reduces display x (width) - more compact	
