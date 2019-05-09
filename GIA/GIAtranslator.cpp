@@ -26,7 +26,7 @@
  * File Name: GIAtranslator.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3h4c 25-April-2019
+ * Project Version: 3i1a 27-April-2019
  * Requirements: requires text parsed by X Parser
  * Description: Translator
  * /
@@ -193,6 +193,18 @@ bool GIAtranslatorClass::convertSentenceRelationsIntoGIAnetworkNodesWrapper(GIAt
 {
 	bool result = true;
 	
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OPTIMISED
+	vector<XMLparserTag*>* GIAtxtRelTranslatorRulesTokenLayers = GIAtxtRelTranslatorRules.getGIAtxtRelTranslatorRulesTokenLayersGlobal();
+	vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes = GIAtxtRelTranslatorRules.getGIAtxtRelTranslatorRulesGroupTypesGlobal();
+	GIAtxtRelTranslatorNeuralNetworkOperations.resetAllNeuronComponents(GIAtxtRelTranslatorRulesGroupTypes, GIA_TXT_REL_TRANSLATOR_RULES_GROUP_BOOL_INDEX_ALLGROUPTYPES_NEURON_DEMARKATEOPTIMUMPATHWAY_RESET);
+	translatorVariables->parserDemarkateOptimumPathway = true;
+	if(GIAtxtRelTranslatorPermutations.executeTxtRelTranslatorWrapper2(translatorVariables, GIAtxtRelTranslatorRulesTokenLayers, GIAtxtRelTranslatorRulesGroupTypes, translatorVariables->currentPreprocessorSentenceInList))
+	{
+		result = false;
+	}
+	translatorVariables->parserDemarkateOptimumPathway = false;
+	#endif
+	
 	bool enableAdvancedReferencing = false;
 	#ifdef GIA_ADVANCED_REFERENCING
 	enableAdvancedReferencing = true;
@@ -254,7 +266,8 @@ bool GIAtranslatorClass::convertSentenceRelationsIntoGIAnetworkNodesWrapper(GIAt
 
 		vector<GIAentityNode*> referenceSetDefiniteEntityList;
 		int numberReferenceSets = GIAtranslatorReferencing.identifyReferenceSets(&sentenceNetworkIndexEntityNodesList, translatorVariables->NLPdependencyRelationsType, &referenceSetDefiniteEntityList);	//NB NLPdependencyRelationsType is no longer used here
-	
+		//cout << "numberReferenceSets = " << numberReferenceSets << endl;
+		
 		#ifdef GIA_DATABASE
 		GIAdatabase.setUseDatabase(useDatabaseOriginal);
 		#endif

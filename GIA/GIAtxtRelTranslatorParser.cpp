@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3h4c 25-April-2019
+ * Project Version: 3i1a 27-April-2019
  * Requirements: 
  * Description: Textual Relation Translator Parser
  * /
@@ -70,7 +70,31 @@ bool GIAtxtRelTranslatorParserClass::convertSentenceTxtRelationsIntoGIAnetworkNo
 	#ifdef GIA_BOT_SWITCH_FIRST_AND_SECOND_PERSON
 	//GIAbot.botSwitchFirstAndSecondPersonTxt(translatorVariables);
 	#endif
+
+
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_UNOPTIMISED
+	#ifndef GIA_ADVANCED_REFERENCING_DISABLE_LINKING
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_ONLY_PEFORM_PRELIM_PROPAGATION_IF_ADVANCED_REFERENCING
+	if(linkPreestablishedReferencesGIA)
+	{
+	#endif
+	#endif
+		vector<XMLparserTag*>* GIAtxtRelTranslatorRulesTokenLayers = GIAtxtRelTranslatorRules.getGIAtxtRelTranslatorRulesTokenLayersGlobal();
+		vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes = GIAtxtRelTranslatorRules.getGIAtxtRelTranslatorRulesGroupTypesGlobal();
+		translatorVariables->parserAllowed = false;
+		if(GIAtxtRelTranslatorPermutations.executeTxtRelTranslatorWrapper2(translatorVariables, GIAtxtRelTranslatorRulesTokenLayers, GIAtxtRelTranslatorRulesGroupTypes, translatorVariables->currentPreprocessorSentenceInList))
+		{
+			result = false;
+		}
+		translatorVariables->parserAllowed = true;
+	#ifndef GIA_ADVANCED_REFERENCING_DISABLE_LINKING
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_ONLY_PEFORM_PRELIM_PROPAGATION_IF_ADVANCED_REFERENCING
+	}
+	#endif
+	#endif
+	#endif
 	
+		
 #ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3_USE_SYN_REL_TRANSLATOR_FEATURES
 	GIAtranslatorOperations.generateTempFeatureArray(translatorVariables, &featureArrayTemp);	//regeneration required for Relex in case query variables detected
 
@@ -141,9 +165,11 @@ bool GIAtxtRelTranslatorParserClass::convertSentenceTxtRelationsIntoGIAnetworkNo
 
 	GIAsynRelTranslatorDefineSubstances.defineSubstancesAllNodes(translatorVariables);
 
+	//cout << "numberOfWordsInSentence = " << numberOfWordsInSentence << endl;
 	for(int w=GIA_NLP_START_ENTITY_INDEX; w<=numberOfWordsInSentence; w++)
 	{
 		GIAentityNode* entity = GIAentityNodeArray[w];
+		//cout << "entity->entityName = " << entity->entityName << endl;
 		((*GIApreprocessorSentenceClassObject.getSentenceContents(translatorVariables->currentPreprocessorSentenceInList))[GIAtranslatorOperations.convertEntityIndexToSentenceContentsIndex(w)])->translatorEntity = entity;	//code from setPreprocessorSentenceTranslatorEntityReferences
 	}
 	
@@ -262,7 +288,9 @@ bool GIAtxtRelTranslatorParserClass::locateAndAddAllNetworkIndexEntitiesBasedOnT
 		#endif
 
 		entity->semanticRelationPreprocessorEntityIndex = currentWord->translatorSentenceEntityIndex;
+		#ifndef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OLD
 		entity->semanticRelationWordPOStypeInferred = currentWord->wordPOStypeInferred;
+		#endif
 		entity->sentenceIndexTemp = translatorVariables->sentenceIndex;
 		entity->entityIndexTemp = w;
 		entity->wordOrig = wordName;
@@ -330,6 +358,7 @@ void GIAtxtRelTranslatorParserClass::identifyComparisonVariable(GIAtranslatorVar
 #endif
 
 
+
 #ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3_USE_SEM_REL_TRANSLATOR_PARSER
 bool GIAtxtRelTranslatorParserClass::generateSemanticRelationsFromTxtRelationsWrapperSentences(GIAtranslatorVariablesClass* translatorVariables)
 {
@@ -355,7 +384,29 @@ bool GIAtxtRelTranslatorParserClass::generateSemanticRelationsFromTxtRelationsWr
 }
 #endif
 
+#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_SIMULTANEOUS
+bool GIAtxtRelTranslatorParserClass::generateSemanticRelationsFromTxtRelationsWrapper(GIAtranslatorVariablesClass* translatorVariables)
+{
+	bool result = true;
+	
+	vector<XMLparserTag*>* GIAtxtRelTranslatorRulesTokenLayers = GIAtxtRelTranslatorRules.getGIAtxtRelTranslatorRulesTokenLayersGlobal();
+	vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes = GIAtxtRelTranslatorRules.getGIAtxtRelTranslatorRulesGroupTypesGlobal();
 
+	if(!GIAtxtRelTranslatorPermutations.executeTxtRelTranslatorWrapper2(translatorVariables, GIAtxtRelTranslatorRulesTokenLayers, GIAtxtRelTranslatorRulesGroupTypes, translatorVariables->currentPreprocessorSentenceInList))
+	{
+		result = false;
+	}
+
+	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_ASSUME_HIGH_LEVEL_REFERENCE_SETS_DO_NOT_CONTAIN_EXPLICIT_SEMANTIC_RELATION_FUNCTION
+	if(!reconcileSameReferenceSetConnectionsForAllRelationshipEntities(translatorVariables))
+	{
+		result = false;
+	}
+	#endif
+	
+	return result;
+}
+#else
 bool GIAtxtRelTranslatorParserClass::generateSemanticRelationsFromTxtRelationsWrapper(GIAtranslatorVariablesClass* translatorVariables)
 {
 	bool result = true;
@@ -386,6 +437,7 @@ bool GIAtxtRelTranslatorParserClass::generateSemanticRelationsFromTxtRelationsWr
 	
 	return result;
 }
+#endif
 
 #ifdef GIA_TXT_REL_TRANSLATOR_RULES_ASSUME_HIGH_LEVEL_REFERENCE_SETS_DO_NOT_CONTAIN_EXPLICIT_SEMANTIC_RELATION_FUNCTION
 bool GIAtxtRelTranslatorParserClass::reconcileSameReferenceSetConnectionsForAllRelationshipEntities(GIAtranslatorVariablesClass* translatorVariables)

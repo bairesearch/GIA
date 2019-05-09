@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorRulesComponentClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3h4c 25-April-2019
+ * Project Version: 3i1a 27-April-2019
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Rules
  * /
@@ -86,6 +86,9 @@ static string GIAtxtRelTranslatorRulesGroupsComponentSemanticRelationIndexTypes[
 class GIAtxtRelTranslatorRulesGroupType;
 class GIAtxtRelTranslatorRulesGroupNeuralNetwork;
 class GIAtxtRelTranslatorRulesGroupParseTree;
+#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_SIMULTANEOUS_BIO
+class GIAtxtRelTranslatorParserForwardPropogationSignalData;
+#endif
 
 class GIAtxtRelTranslatorRulesComponent
 {
@@ -157,6 +160,10 @@ public:
 	GIApreprocessorPlainTextWord* candidateStringMatch;
 	GIAtxtRelTranslatorRulesGroupType* groupTypeRef;	
 	GIAtxtRelTranslatorRulesGroupNeuralNetwork* groupRef;
+	
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_SIMULTANEOUS_BIO
+	GIAtxtRelTranslatorParserForwardPropogationSignalData* parserForwardPropogationSignalData;	//semantic relation function parameters of parseTreeGroupRef->semanticRelationReturnEntityForwardPropogationSignalData
+	#endif
 
 };
 
@@ -177,6 +184,9 @@ public:
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN
 	vector<ANNneuronConnection*> ANNbackNeuronConnectionList;
 	#endif
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_SIMULTANEOUS_DELETE_INCOMPLETE_PATHS_SEMANTIC_RELATIONS
+	vector<int> optimumPathwayWordList;
+	#endif
 	#endif
 };
 
@@ -188,12 +198,17 @@ public:
 	~GIAtxtRelTranslatorRulesComponentParseTree(void);
 
 	//parse tree variables:
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_GENERATE_PARSE_TREE
 	GIAtxtRelTranslatorRulesGroupParseTree* parseTreeGroupRef;
+	#endif
 	GIAtxtRelTranslatorRulesComponentNeuralNetwork* componentRef;	//backup of original component (non-parse-tree)
 	int wordPOStypeInferred;
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_BIO2
 	int groupFrontComponentConnectionListIndex;
 	int numberOfWordsCurrentlyParsed;
+	#endif
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_SIMULTANEOUS_DELETE_INCOMPLETE_PATHS_SEMANTIC_RELATIONS
+	int wordIndex;
 	#endif
 };
 

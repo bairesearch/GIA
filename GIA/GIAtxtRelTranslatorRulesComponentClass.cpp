@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorRulesComponentClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3h4c 25-April-2019
+ * Project Version: 3i1a 27-April-2019
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Rules
  * /
@@ -106,6 +106,10 @@ GIAtxtRelTranslatorRulesComponent::GIAtxtRelTranslatorRulesComponent(void)
 	groupTypeRef = NULL;
 	groupRef = NULL;
 	
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_SIMULTANEOUS_BIO
+	parserForwardPropogationSignalData = NULL;
+	#endif
+	
 }
 GIAtxtRelTranslatorRulesComponent::~GIAtxtRelTranslatorRulesComponent(void)
 {
@@ -123,6 +127,9 @@ GIAtxtRelTranslatorRulesComponentNeuralNetwork::GIAtxtRelTranslatorRulesComponen
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN
 	//ANNbackNeuronConnectionList = NULL;
 	#endif
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_SIMULTANEOUS_DELETE_INCOMPLETE_PATHS_SEMANTIC_RELATIONS
+	//optimumPathwayWordList = NULL;
+	#endif
 	#endif
 }
 GIAtxtRelTranslatorRulesComponentNeuralNetwork::~GIAtxtRelTranslatorRulesComponentNeuralNetwork(void)
@@ -133,12 +140,17 @@ GIAtxtRelTranslatorRulesComponentNeuralNetwork::~GIAtxtRelTranslatorRulesCompone
 GIAtxtRelTranslatorRulesComponentParseTree::GIAtxtRelTranslatorRulesComponentParseTree(void)
 {
 	//parse tree variables:
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_GENERATE_PARSE_TREE
 	parseTreeGroupRef = NULL;
+	#endif
 	componentRef = NULL;
 	wordPOStypeInferred = GIA_PREPROCESSOR_POS_TYPE_UNDEFINED;
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_BIO2
 	groupFrontComponentConnectionListIndex = INT_DEFAULT_VALUE;
 	numberOfWordsCurrentlyParsed = INT_DEFAULT_VALUE;
+	#endif
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_SIMULTANEOUS_DELETE_INCOMPLETE_PATHS_SEMANTIC_RELATIONS
+	int wordIndex;
 	#endif
 }
 GIAtxtRelTranslatorRulesComponentParseTree::~GIAtxtRelTranslatorRulesComponentParseTree(void)

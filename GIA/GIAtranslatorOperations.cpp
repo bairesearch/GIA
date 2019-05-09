@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3h4c 25-April-2019
+ * Project Version: 3i1a 27-April-2019
  * Requirements: requires text parsed by X Parser
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
@@ -114,6 +114,13 @@ GIAtranslatorVariablesClass::GIAtranslatorVariablesClass(void)
 	firstInputNeuronInNetwork = NULL;
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN
 	firstOutputNeuronInNetwork = NULL;	//intermediary variable for neural network connection purposes
+	#endif
+	#endif
+	
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC
+	parserAllowed = true;
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OPTIMISED
+	parserDemarkateOptimumPathway = false;
 	#endif
 	#endif
 }
@@ -2238,6 +2245,7 @@ bool GIAtranslatorOperationsClass::checkIndefiniteEntityCorrespondingToDefiniteE
 #ifdef GIA_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS_CONCEPTS
 bool GIAtranslatorOperationsClass::checkIfSentenceIsMathTextParsablePhrase(const int sentenceIndex)
 {
+	//cout << "df" << endl;
 	bool sentenceIsMathTextParsablePhrase = false;
 	NLCpreprocessorSentence* firstNLCsentenceInList = getFirstNLCsentenceInListGIA();
 	NLCpreprocessorSentence* sentence = NULL;
@@ -2897,8 +2905,12 @@ bool GIAtranslatorOperationsClass::addTimeConditionProperty(GIAtimeConditionNode
 	else if(entity->semanticRelationWordPOStypeInferred == GIA_PREPROCESSOR_POS_TYPE_DATE)
 	{
 		int index = INT_DEFAULT_VALUE;
+		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_SIMULTANEOUS
+		entityName = SHAREDvars.convertStringToFirstUpperCase(&entityName);
+		#else
 		#ifndef GIA_PREPROCESSOR_INITIALISE_WORD_INDEX_LIST_FROM_LRP_FILES_SUPPORT_UPPERCASE_PROPERNOUN_WORD_LISTS
 		entityName = SHAREDvars.convertStringToFirstUpperCase(&entityName);
+		#endif
 		#endif
 		string lastTwoCharactersOfEntityName = entityName.substr(entityName.length()-TIME_DAY_OF_MONTH_APPEND_LENGTH, TIME_DAY_OF_MONTH_APPEND_LENGTH);
 		if(SHAREDvars.textInTextArray(entityName, GIAtimeConditionMonthNameArray, TIME_MONTH_NUMBER_OF_TYPES, &index))
@@ -2962,6 +2974,7 @@ bool GIAtranslatorOperationsClass::connectQuantityToEntity(GIAtranslatorVariable
 		else
 		{
 			cerr << "GIAtranslatorOperationsClass::connectQuantityToEntity{} error: (entitySemanticRelationFunction2->semanticRelationWordPOStypeInferred != GIA_PREPROCESSOR_POS_TYPE_NUMBER)" << endl;
+			cerr << "entitySemanticRelationFunction2->semanticRelationWordPOStypeInferred = " << entitySemanticRelationFunction2->semanticRelationWordPOStypeInferred << endl;
 			exit(EXIT_ERROR);
 		}
 		
