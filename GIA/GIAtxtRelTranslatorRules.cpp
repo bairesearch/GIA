@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorRules.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3i3b 24-June-2019
+ * Project Version: 3i3c 24-June-2019
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Rules
  * /
@@ -1338,7 +1338,7 @@ bool GIAtxtRelTranslatorRulesClass::removeOptionalComponent(GIAtxtRelTranslatorR
 	//remove optional component from groupNew1;
 	vector<GIAtxtRelTranslatorRulesComponentNeuralNetwork*>* componentsNew1 = &(groupNew1->components);
 	componentsNew1->erase(componentsNew1->begin()+optionalComponentIndex);	//CHECKTHIS
-	updateComponentsOwnerGroupAndIndexes(groupNew1, &(groupNew1->components));
+	updateComponentsOwnerGroupAndIndexes(groupNew1, &(groupNew1->components), false, NULL);
 	(groupType->groups).push_back(groupNew1);
 
 	//create groupNew2
@@ -1349,7 +1349,7 @@ bool GIAtxtRelTranslatorRulesClass::removeOptionalComponent(GIAtxtRelTranslatorR
 	vector<GIAtxtRelTranslatorRulesComponentNeuralNetwork*>* componentsNew2 = &(groupNew2->components);
 	GIAtxtRelTranslatorRulesComponentNeuralNetwork* optionalComponentNew2 = (*componentsNew2)[optionalComponentIndex];
 	optionalComponentNew2->optional = false;
-	updateComponentsOwnerGroupAndIndexes(groupNew2, &(groupNew2->components));
+	updateComponentsOwnerGroupAndIndexes(groupNew2, &(groupNew2->components), false, NULL);
 	(groupType->groups).push_back(groupNew2);
 
 	GIAtxtRelTranslatorRulesComponentNeuralNetwork* artificialGroupOrComponent = NULL;
@@ -1477,7 +1477,7 @@ bool GIAtxtRelTranslatorRulesClass::removeLastOptionalComponents(vector<GIAtxtRe
 					#else
 					componentsNew1->pop_back();
 					#endif
-					updateComponentsOwnerGroupAndIndexes(groupNew1, &(groupNew1->components));
+					updateComponentsOwnerGroupAndIndexes(groupNew1, &(groupNew1->components), false, NULL);
 					(groupType->groups).push_back(groupNew1);
 
 					//create groupNew2
@@ -1492,7 +1492,7 @@ bool GIAtxtRelTranslatorRulesClass::removeLastOptionalComponents(vector<GIAtxtRe
 					GIAtxtRelTranslatorRulesComponentNeuralNetwork* lastComponentNew2 = (*componentsNew2)[components->size()-1];
 					#endif
 					lastComponentNew2->optional = false;
-					updateComponentsOwnerGroupAndIndexes(groupNew2, &(groupNew2->components));
+					updateComponentsOwnerGroupAndIndexes(groupNew2, &(groupNew2->components), false, NULL);
 					(groupType->groups).push_back(groupNew2);
 
 					GIAtxtRelTranslatorRulesComponentNeuralNetwork* artificialGroupOrComponent = NULL;
@@ -1641,7 +1641,7 @@ GIAtxtRelTranslatorRulesGroupActivationMemory* GIAtxtRelTranslatorRulesClass::co
 
 
 #ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_REMOVE_LAST_OPTIONAL_COMPONENTS
-bool GIAtxtRelTranslatorRulesClass::updateComponentsOwnerGroupAndIndexes(GIAtxtRelTranslatorRulesGroupNeuralNetwork* group, vector<GIAtxtRelTranslatorRulesComponentNeuralNetwork*>* components)
+bool GIAtxtRelTranslatorRulesClass::updateComponentsOwnerGroupAndIndexes(GIAtxtRelTranslatorRulesGroupNeuralNetwork* group, vector<GIAtxtRelTranslatorRulesComponentNeuralNetwork*>* components, const bool isSubcomponent, GIAtxtRelTranslatorRulesComponentNeuralNetwork* ownerComponent)
 {
 	bool result = true;
 	
@@ -1650,9 +1650,13 @@ bool GIAtxtRelTranslatorRulesClass::updateComponentsOwnerGroupAndIndexes(GIAtxtR
 		GIAtxtRelTranslatorRulesComponentNeuralNetwork* component = (*components)[c];
 		component->componentIndex = c;
 		component->ownerGroup = group;
+		if(isSubcomponent)
+		{
+			component->ownerComponent = ownerComponent;	//added GIA3i3c
+		}
 		if(GIAtxtRelTranslatorRulesComponentClassObject.componentHasSubcomponents(component))
 		{
-			updateComponentsOwnerGroupAndIndexes(group, &(component->subComponents));
+			updateComponentsOwnerGroupAndIndexes(group, &(component->subComponents), true, component);
 		}
 	}
 	
