@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorRules.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3i1a 27-April-2019
+ * Project Version: 3i2a 27-May-2019
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Rules
  * /
@@ -97,8 +97,10 @@ static string GIAtxtRelWithExternalProcessingGroupNameArray[GIA_TXT_REL_TRANSLAT
 #define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_conditionNew 42
 #define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_attributeMeasure 43
 #define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_attributeMeasurePer 44
-#define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_NUMBER_OF_TYPES (45)
-static string GIAtxtRelSemanticDependencyRelationNameArray[GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_NUMBER_OF_TYPES] = {"unknown", "createSubstanceInstance", "createActionInstance", "NA", "property", "action", "actionSubject", "actionObject", "condition", "NA", "NA", "definition", "definitionAlias", "definitionAliasWithAuxiliary", "attributeQuantity", "definitionWithAuxiliary", "propertyWithAuxiliary", "definitionSubject", "definitionObject", "propertySubject", "propertyObject", "conditionSubject", "conditionObject", "tenseAttributeModalAuxiliaryOrCopula", "tenseAttributeModalAuxiliaryOrCopulaSingle", "multiwordAuxiliary", "multiwordPreposition", "multiwordNoun", "multiwordAlias", "multiwordDate", "numerosityPredeterminer", "numerosityDeterminer", "propertyReverse", "actionSubjectReverse", "actionObjectReverse", "conditionSubjectReverse", "conditionObjectReverse", "logicDefinition", "logicAction", "logicCondition", "logicConclusion", "logicConjunction", "conditionNew", "attributeMeasure", "attributeMeasurePer"};
+#define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_thingMultiAdjConjunction 45
+#define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_thingMultiConjunction 46
+#define GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_NUMBER_OF_TYPES (47)
+static string GIAtxtRelSemanticDependencyRelationNameArray[GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_NUMBER_OF_TYPES] = {"unknown", "createSubstanceInstance", "createActionInstance", "NA", "property", "action", "actionSubject", "actionObject", "condition", "NA", "NA", "definition", "definitionAlias", "definitionAliasWithAuxiliary", "attributeQuantity", "definitionWithAuxiliary", "propertyWithAuxiliary", "definitionSubject", "definitionObject", "propertySubject", "propertyObject", "conditionSubject", "conditionObject", "tenseAttributeModalAuxiliaryOrCopula", "tenseAttributeModalAuxiliaryOrCopulaSingle", "multiwordAuxiliary", "multiwordPreposition", "multiwordNoun", "multiwordAlias", "multiwordDate", "numerosityPredeterminer", "numerosityDeterminer", "propertyReverse", "actionSubjectReverse", "actionObjectReverse", "conditionSubjectReverse", "conditionObjectReverse", "logicDefinition", "logicAction", "logicCondition", "logicConclusion", "logicConjunction", "conditionNew", "attributeMeasure", "attributeMeasurePer", "thingMultiAdjConjunction", "thingMultiConjunction"};
 
 #define GIA_TXT_REL_TRANSLATOR_SEMANTIC_RELATION_RETURN_FUNCTION_NAME_INDEX_TYPE_SEMANTIC_FUNCTION_EXECUTION_INDEX (0)	//semanticRelationReturnFunctionNameIndexType "subject"/"delimiter" refers to "subject"/"delimiter" of semantic relation function 0
 
@@ -217,7 +219,8 @@ static string GIAtxtRelTranslatorHybridLogicReferenceClasses[GIA_TXT_REL_TRANSLA
 #define GIA_TXT_REL_TRANSLATOR_LOGIC_REFERENCE_CLASS_NUM (GIA_TXT_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_CLASS_NUM + 2)
 static string GIAtxtRelTranslatorLogicReferenceClasses[GIA_TXT_REL_TRANSLATOR_LOGIC_REFERENCE_CLASS_NUM] = {GIA_TXT_REL_TRANSLATOR_LOGIC_REFERENCE_CLASS_undefined, GIA_TXT_REL_TRANSLATOR_LOGIC_REFERENCE_CLASS_conjunction, GIA_TXT_REL_TRANSLATOR_LOGIC_REFERENCE_CLASS_verb, GIA_TXT_REL_TRANSLATOR_LOGIC_REFERENCE_CLASS_preposition, GIA_TXT_REL_TRANSLATOR_LOGIC_REFERENCE_CLASS_definition, GIA_TXT_REL_TRANSLATOR_LOGIC_REFERENCE_CLASS_conclusion};
 #ifdef GIA_TXT_REL_TRANSLATOR_LOGIC_REFERENCE_DYNAMIC_RELATIONSHIP_ENTITY_TYPES
-static int GIAtxtRelTranslatorLogicReferenceClassesCrossReferenceEntityType[GIA_TXT_REL_TRANSLATOR_LOGIC_REFERENCE_CLASS_NUM] = {GIA_ENTITY_TYPE_UNDEFINED, GIA_ENTITY_TYPE_UNDEFINED, GIA_ENTITY_TYPE_ACTION, GIA_ENTITY_TYPE_CONDITION, GIA_ENTITY_TYPE_DEFINITION, GIA_ENTITY_TYPE_CONDITION};
+//static int GIAtxtRelTranslatorLogicReferenceClassesCrossReferenceEntityType[GIA_TXT_REL_TRANSLATOR_LOGIC_REFERENCE_CLASS_NUM] = {GIA_ENTITY_TYPE_UNDEFINED, GIA_ENTITY_TYPE_UNDEFINED, GIA_ENTITY_TYPE_ACTION, GIA_ENTITY_TYPE_CONDITION, GIA_ENTITY_TYPE_DEFINITION, GIA_ENTITY_TYPE_CONDITION};
+static int GIAtxtRelTranslatorLogicReferenceClassesCrossReferenceEntityType[GIA_TXT_REL_TRANSLATOR_LOGIC_REFERENCE_CLASS_NUM] = {GIA_ENTITY_TYPE_UNDEFINED, GIA_ENTITY_TYPE_CONDITION, GIA_ENTITY_TYPE_ACTION, GIA_ENTITY_TYPE_CONDITION, GIA_ENTITY_TYPE_DEFINITION, GIA_ENTITY_TYPE_CONDITION};
 #endif
 
 #define GIA_TXT_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_CLASS_CONJUNCTION_COMPONENT_IMPLICIT_INFERRED (11)	//used to demarkate components of conjunction logic references 

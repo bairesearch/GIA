@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3i1a 27-April-2019
+ * Project Version: 3i2a 27-May-2019
  * Requirements: 
  * Description: Textual Relation Translator Parser
  * /
@@ -232,7 +232,10 @@ bool GIAtxtRelTranslatorParserClass::convertSentenceTxtRelationsIntoGIAnetworkNo
 	//applyAdvancedFeaturesBasedOnSemanticRelations(translatorVariables);
 	GIAsemRelTranslatorParser.defineQualitiesBasedOnSemanticRelations(translatorVariables);
 
-
+	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_SUBJECT_MULTI_POSTHOC_COLLAPSE_CONJUNCTION_ENTITIES
+	//collapseConjunctionEntities(translatorVariables);
+	#endif
+	
 	vector<GIAentityNode*>* entityNodesActiveListSentence = new vector<GIAentityNode*>;
 	if(!GIAsemRelTranslatorParser.convertSentenceSemanticRelationsIntoGIAnetworkNodesEndPart1(translatorVariables, entityNodesActiveListSentence))
 	{
@@ -754,5 +757,80 @@ void GIAtxtRelTranslatorParserClass::defineSubstancesBasedOnNetworkAndDeterminer
 	}	
 }
 
+#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_SUBJECT_MULTI_POSTHOC_COLLAPSE_CONJUNCTION_ENTITIES
+void GIAtxtRelTranslatorParserClass::collapseConjunctionEntities(GIAtranslatorVariablesClass* translatorVariables)
+{
+	for(int i=0; i<GIAtranslatorOperations.getEntityArrayMaxIndex(translatorVariables); i++)
+	{
+		if((*translatorVariables->GIAentityNodeArrayFilled)[i])
+		{
+			GIAentityNode* entity = (*translatorVariables->GIAentityNodeArray)[i];
+			if(entity->entityName == GIA_TXT_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_CLASS_CONJUNCTION_TYPE_and)
+			{
+				cout << "GIA_TXT_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_CLASS_CONJUNCTION_TYPE_and found" << endl;
+				
+				//directly connect relationEntity subject to objects
+				GIAentityConnection* relationshipSubjectEntityConnection = GIAtranslatorOperations.getRelationshipSubjectEntityConnection(entity);
+				//int connectionTypeReverse = relationshipSubjectEntityConnection->connectionType;
+				
+				GIAentityNode* relationshipSubjectEntity = GIAtranslatorOperations.getRelationshipSubjectEntity(entity);
+				GIAentityNode* relationshipEntityOrig = relationshipSubjectEntity;
+				//int connectionTypeReverse = generateConnectionTypeReverse(relationshipEntityType);
+				
+				for(vector<GIAentityConnection*>::iterator connectionIter = entity->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_RELATIONSHIP_OBJECT].begin(); connectionIter != entity->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_RELATIONSHIP_OBJECT].end(); connectionIter++)
+				{	
+					GIAentityNode* relationshipObjectEntity = (*connectionIter)->entity;
+					
+					deleteRelationshipEntity(relationshipSubjectEntity, relationshipObjectEntity, entity);
+					
+					int connectionTypeTargetToRelationship = GIAtranslatorOperations.generateConnectionTypeReverse(relationshipEntityOrig->entityType);
+					bool sameReferenceSet = relationshipSubjectEntityConnection->sameReferenceSet;
+					GIAtranslatorOperations.connectEntities(relationshipEntityOrig, relationshipObjectEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_RELATIONSHIP_OBJECT, connectionTypeTargetToRelationship, sameReferenceSet, translatorVariables);		
+				}
+			}
+		}
+	}
+}
+
+//this general function should be moved;
+void GIAtxtRelTranslatorParserClass::deleteRelationshipEntity(GIAentityNode* relationshipSubjectEntity, GIAentityNode* relationshipObjectEntity, GIAentityNode* relationshipEntity)
+{
+	for(int connectionType = 0; connectionType<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; connectionType++)
+	{ 
+		for(vector<GIAentityConnection*>::iterator connectionIter = relationshipSubjectEntity->entityVectorConnectionsArray[connectionType].begin(); connectionIter != relationshipSubjectEntity->entityVectorConnectionsArray[connectionType].end(); )
+		{	
+			GIAentityNode* tempEntity = (*connectionIter)->entity;	
+			//int connectionTypeTargetToRelationship = (*connectionIter)->connectionType;	//not used; this is rederived
+			if(tempEntity == relationshipEntity)
+			{
+				connectionIter = relationshipObjectEntity->entityVectorConnectionsArray[connectionType].erase(connectionIter);
+			}
+			else
+			{
+				connectionIter++;
+			}
+		}
+	}
+	for(int connectionType = 0; connectionType<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; connectionType++)
+	{ 
+		for(vector<GIAentityConnection*>::iterator connectionIter = relationshipObjectEntity->entityVectorConnectionsArray[connectionType].begin(); connectionIter != relationshipObjectEntity->entityVectorConnectionsArray[connectionType].end(); )
+		{	
+			GIAentityNode* tempEntity = (*connectionIter)->entity;	
+			if(tempEntity == relationshipEntity)
+			{
+				connectionIter = relationshipObjectEntity->entityVectorConnectionsArray[connectionType].erase(connectionIter);
+			}
+			else
+			{
+				connectionIter++;
+			}		
+		}
+	}
+	
+	GIAtranslatorOperations.disableEntity(relationshipEntity);	//entity no longer used and should be deleted
+	
+}
+#endif
+	
 
 #endif

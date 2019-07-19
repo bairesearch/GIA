@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3i1a 27-April-2019
+ * Project Version: 3i2a 27-May-2019
  * Requirements: requires text parsed by X Parser
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
@@ -198,6 +198,8 @@ int GIAtranslatorOperationsClass::generateConnectionType(int relationshipEntityT
 
 int GIAtranslatorOperationsClass::generateConnectionTypeReverse(int relationshipEntityType)
 {
+	//cout << "relationshipEntityType = " << relationshipEntityType << endl;
+	
 	int connectionType = entityTypesCrossReferenceEntityVectorConnectionReverseArray[relationshipEntityType];
 	if(connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_UNKNOWN)
 	{

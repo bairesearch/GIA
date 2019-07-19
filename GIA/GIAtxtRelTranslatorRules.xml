@@ -27,7 +27,7 @@
  * File Name: GIAtxtRelTranslatorRules.xml
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3i1a 27-April-2019
+ * Project Version: 3i2a 27-May-2019
  * /
  *******************************************************************************/
  
@@ -715,6 +715,20 @@
 					<component componentType="group" groupTypeName="subReferenceSetsSubject" semanticRelationReturnEntity="true" />
 					<component componentType="string" stringType="explicit" word="," optional="true" />
 				</group>
+				<!-- #ifdefGIA_TXT_REL_TRANSLATOR_RULES_CODE_SUBJECT_MULTI -->
+				<group groupName="thingMultiAdjConjunctionIncrement" groupUniqueIdentifier="subReferenceSetsSpecial:thingMultiAdjConjunctionIncrement">
+					<!-- [],  -->
+					<example><!-- blue, --></example>
+					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="descriptiveAdjective" semanticRelationReturnEntity="true" />
+					<component componentType="string" stringType="explicit" word="," />
+				</group>
+				<group groupName="thingMultiConjunctionIncrement" groupUniqueIdentifier="subReferenceSetsSpecial:thingMultiConjunctionIncrement">
+					<!-- [],  -->
+					<example><!-- dog, --></example>
+					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="descriptiveNoun" semanticRelationReturnEntity="true" />
+					<component componentType="string" stringType="explicit" word="," />
+				</group>
+				<!-- #endif -->
 			</groupType>
 			
 			<groupType groupTypeName="subReferenceSetsSpecialPossessiveOrDeterminerDefiniteThingEnforced" referenceSetType="subReferenceSet">
@@ -846,6 +860,34 @@
 					<!-- quant units of descriptiveNoun -->
 					<example><!-- {Tom pours} 4 litres of milk --></example>
 					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="measureNoun" semanticRelationReturnEntity="true" />
+				</group>
+				<!-- #endif -->
+				<!-- #ifdefGIA_TXT_REL_TRANSLATOR_RULES_CODE_SUBJECT_MULTI -->
+				<group groupName="thingMultiAdj" groupUniqueIdentifier="subReferenceSetsSubject:thingMultiAdj" semanticRelationFunctionName="thingMultiAdjConjunction">
+					<!-- {det} {adv} {adj}, {adv} {adj}, {and} {adv} {adj} noun -->
+					<example><!-- {the} {blue,} {big, and} {happy} house --></example>
+					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="determiner" optional="true" />
+					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="descriptiveAdjective" semanticRelationIndexType="list" />
+					<component componentType="string" stringType="explicit" word="," />
+					<repeat optional="true">
+						<component componentType="group" groupTypeName="subReferenceSetsSpecial" groupName="thingMultiAdjConjunctionIncrement" semanticRelationIndexType="list" />
+					</repeat>
+					<component componentType="string" stringType="tokens" tokenLayer="logicReference" tokenClass="conjunction" tokenType="conjunctionCoordinatingList" semanticRelationIndexType="delimiter" optional="true" />
+					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="descriptiveNounEnforced" semanticRelationIndexType="subject" semanticRelationReturnEntity="true" /> 
+					<!--<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="descriptiveNoun" semanticRelationIndexType="subject" semanticRelationReturnEntity="true" /> -->
+					<component componentType="group" groupTypeName="subReferenceSetsAppend" optional="true" />
+				</group>
+				<group groupName="thingMulti" groupUniqueIdentifier="subReferenceSetsSubject:thingMulti" semanticRelationFunctionName="thingMultiConjunction">
+					<!-- {det} {adv} {adj} noun, {adv} {adj} noun, and {adv} {adj} noun -->
+					<example><!-- {the} {dog,} {cat, and} mouse --></example>
+					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="descriptiveNounWithDeterminer" semanticRelationIndexType="list" />
+					<component componentType="string" stringType="explicit" word="," optional="true" />
+					<repeat optional="true">
+						<component componentType="group" groupTypeName="subReferenceSetsSpecial" groupName="thingMultiConjunctionIncrement" semanticRelationIndexType="list" />
+					</repeat>
+					<component componentType="string" stringType="tokens" tokenLayer="logicReference" tokenClass="conjunction" tokenType="conjunctionCoordinatingList" semanticRelationIndexType="delimiter" semanticRelationReturnEntity="true" />
+					<component componentType="group" groupTypeName="subReferenceSetsPart" groupName="descriptiveNoun" semanticRelationIndexType="list" />
+					<component componentType="group" groupTypeName="subReferenceSetsAppend" optional="true" />
 				</group>
 				<!-- #endif -->
 				
@@ -1502,7 +1544,7 @@
 					<repeat optional="true">
 						<component componentType="group" groupTypeName="subReferenceSetsSpecial" groupName="conjunction1increment" semanticRelationIndexType="list" />
 					</repeat>
-					<component componentType="string" stringType="tokens" tokenLayer="logicReference" tokenClass="conjunction" tokenType="conjunctionCoordinatingList" semanticRelationIndexType="delimiter" />
+					<component componentType="string" stringType="tokens" tokenLayer="logicReference" tokenClass="conjunction" tokenType="conjunctionCoordinatingList" semanticRelationIndexType="delimiter" semanticRelationReturnEntity="true" />
 					<component componentType="group" groupTypeName="logicReferenceSetsOptional" groupName="referenceSetsOrLogicReferenceSets2" semanticRelationIndexType="list" />
 				</group>
 				<group groupName="conjunction2" groupUniqueIdentifier="logicReferenceSets2:conjunction2" semanticRelationFunctionName="logicConjunction">
@@ -1513,7 +1555,7 @@
 					<repeat optional="true">
 						<component componentType="group" groupTypeName="subReferenceSetsSpecial" groupName="conjunction2increment" semanticRelationIndexType="list" semanticRelationConnect="true" />
 					</repeat>
-					<component componentType="string" stringType="tokens" tokenLayer="logicReference" tokenClass="conjunction" tokenType="conjunctionCoordinatingList" semanticRelationIndexType="delimiter" />
+					<component componentType="string" stringType="tokens" tokenLayer="logicReference" tokenClass="conjunction" tokenType="conjunctionCoordinatingList" semanticRelationIndexType="delimiter" semanticRelationReturnEntity="true" />
 					<component componentType="group" groupTypeName="subReferenceSetsSubject" semanticRelationIndexType="list" semanticRelationConnect="true" />
 				</group>
 				<!--

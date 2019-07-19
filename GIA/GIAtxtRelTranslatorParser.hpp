@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorParser.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3i1a 27-April-2019
+ * Project Version: 3i2a 27-May-2019
  * Requirements: 
  * Description: Textual Relation Translator Parser
  * /
@@ -119,6 +119,11 @@ class GIAtxtRelTranslatorParserClass
 
 		private: void defineSubstancesBasedOnNetworkAndDeterminerInfo(GIAtranslatorVariablesClass* translatorVariables);
 
+	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_SUBJECT_MULTI_POSTHOC_COLLAPSE_CONJUNCTION_ENTITIES
+	private: void collapseConjunctionEntities(GIAtranslatorVariablesClass* translatorVariables);
+		public: void deleteRelationshipEntity(GIAentityNode* relationshipSubjectEntity, GIAentityNode* relationshipObjectEntity, GIAentityNode* relationshipEntity);
+	#endif
+	
 };
 
 #endif

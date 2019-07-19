@@ -27,7 +27,7 @@
  * File Name: GIAtxtRelTranslatorParserOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3i1a 27-April-2019
+ * Project Version: 3i2a 27-May-2019
  * Requirements: 
  * Description: Textual Relation Translator Parser Operations
  * /
@@ -956,6 +956,23 @@ bool GIAtxtRelTranslatorParserOperationsClass::createSemanticRelationInMemory(GI
 		GIAsemRelTranslatorOperations.GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(translatorVariables, GIA_ENTITY_VECTOR_CONNECTION_TYPE_MEASURE_PER, functionEntityIndex1, functionEntityIndex2, sameReferenceSet);
 	}
 	#endif
+	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_SUBJECT_MULTI
+	else if(semanticRelationFunctionName == GIAtxtRelSemanticDependencyRelationNameArray[GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_thingMultiAdjConjunction])
+	{
+		for(int i=0; i<entitySemanticRelationFunctionListArray->size(); i++)
+		{
+			GIAsemRelTranslatorOperations.GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(translatorVariables, GIA_ENTITY_VECTOR_CONNECTION_TYPE_PROPERTY_DIRECT, functionEntityIndex1, ((*entitySemanticRelationFunctionListArray)[i])->semanticRelationPreprocessorEntityIndex, sameReferenceSet);
+		}
+	}
+	else if(semanticRelationFunctionName == GIAtxtRelSemanticDependencyRelationNameArray[GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_thingMultiConjunction])
+	{
+		for(int i=0; i<entitySemanticRelationFunctionListArray->size(); i++)
+		{
+			GIAsemRelTranslatorOperations.GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(translatorVariables, GIA_ENTITY_VECTOR_CONNECTION_TYPE_LOGIC_CONJUNCTION, functionEntityIndex3, ((*entitySemanticRelationFunctionListArray)[i])->semanticRelationPreprocessorEntityIndex, sameReferenceSet);
+			//note passes up conjunction (e.g. "and") entity (ie semanticRelationIndexType="delimiter"), because GIAtxtRelTranslatorParser doesn't support multiple semanticRelationReturnEntities. GIA_TXT_REL_TRANSLATOR_RULES_CODE_SUBJECT_MULTI therefore requires a post hoc operation where intermediate "and" logicReference entities are resolved into their components
+		}
+	}
+	#endif
 	else
 	{	
 		bool exitProgram = true;
@@ -1257,7 +1274,8 @@ bool GIAtxtRelTranslatorParserOperationsClass::createSemanticRelationInNetwork(G
 	{
 		for(int i=0; i<entitySemanticRelationFunctionListArray->size(); i++)
 		{
-			GIAtranslatorOperations.connectLogicReferenceConjunction(translatorVariables, GIA_TXT_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_CLASS_UNDEFINED_TYPE_unknown, entitySemanticRelationFunction1, entitySemanticRelationFunction2, sameReferenceSet);
+			//OLD: GIAtranslatorOperations.connectLogicReferenceConjunction(translatorVariables, GIA_TXT_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_CLASS_UNDEFINED_TYPE_unknown, entitySemanticRelationFunction1, entitySemanticRelationFunction2, sameReferenceSet);
+			GIAtranslatorOperations.connectLogicReferenceConjunction(translatorVariables, GIA_TXT_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_CLASS_UNDEFINED_TYPE_unknown, (*entitySemanticRelationFunctionListArray)[i], entitySemanticRelationFunction3, sameReferenceSet);
 		}
 	}
 	#endif
@@ -1282,6 +1300,29 @@ bool GIAtxtRelTranslatorParserOperationsClass::createSemanticRelationInNetwork(G
 	else if(semanticRelationFunctionName == GIAtxtRelSemanticDependencyRelationNameArray[GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_attributeMeasurePer])
 	{
 		GIAtranslatorOperations.connectMeasurePerToEntity(translatorVariables, entitySemanticRelationFunction1, entitySemanticRelationFunction2, sameReferenceSet);
+	}
+	#endif
+	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_SUBJECT_MULTI
+	else if(semanticRelationFunctionName == GIAtxtRelSemanticDependencyRelationNameArray[GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_thingMultiAdjConjunction])
+	{
+		for(int i=0; i<entitySemanticRelationFunctionListArray->size(); i++)
+		{
+			#ifdef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
+			entitySemanticRelationFunction3 = NULL;
+			entitySemanticRelationFunction3 = GIAtranslatorOperations.findOrAddEntityNodeByNameSimpleWrapperRelationshipArtificialProperty(entitySemanticRelationFunction1, (*entitySemanticRelationFunctionListArray)[i], translatorVariables);
+			GIAtranslatorOperations.connectPropertyToEntity(entitySemanticRelationFunction1, (*entitySemanticRelationFunctionListArray)[i], entitySemanticRelationFunction3, sameReferenceSet, translatorVariables);
+			#else
+			GIAtranslatorOperations.connectDirectPropertyToEntity(entitySemanticRelationFunction1, (*entitySemanticRelationFunctionListArray)[i], sameReferenceSet, translatorVariables);									
+			#endif
+		}
+	}
+	else if(semanticRelationFunctionName == GIAtxtRelSemanticDependencyRelationNameArray[GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_thingMultiConjunction])
+	{
+		for(int i=0; i<entitySemanticRelationFunctionListArray->size(); i++)
+		{
+			GIAtranslatorOperations.connectLogicReferenceConjunction(translatorVariables, GIA_TXT_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_CLASS_UNDEFINED_TYPE_unknown, (*entitySemanticRelationFunctionListArray)[i], entitySemanticRelationFunction3, sameReferenceSet);
+			//note passes up conjunction (e.g. "and") entity (ie semanticRelationIndexType="delimiter"), because GIAtxtRelTranslatorParser doesn't support multiple semanticRelationReturnEntities. GIA_TXT_REL_TRANSLATOR_RULES_CODE_SUBJECT_MULTI therefore requires a post hoc operation where intermediate "and" logicReference entities are resolved into their components
+		}
 	}
 	#endif
 	else

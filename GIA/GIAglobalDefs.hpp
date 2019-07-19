@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3i1a 27-April-2019
+ * Project Version: 3i2a 27-May-2019
  * Requirements: 
  * Description: GIA specific global definitions
  * /
@@ -752,6 +752,13 @@
 	//#define GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PRINT_FINAL
 	//#define GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PRINT_FINAL2
 	
+	//#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_NUMBERS	//not yet defined
+		#define GIA_TXT_REL_TRANSLATOR_RULES_CODE_SUBJECT_MULTI
+		#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_SUBJECT_MULTI
+			#define GIA_TXT_REL_TRANSLATOR_RULES_CODE_SUBJECT_MULTI_POSTHOC_COLLAPSE_CONJUNCTION_ENTITIES	//resolves the meaning of conjunction entities	//NOTYETCODED
+		#endif
+	//#endif
+			
 	//#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE	//not yet defined
 		//#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED	//not yet defined
 			#define GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_BIO_DO_NOT_RELY_ON_PARSE_TREE_MEMORY	//GIA3h2a	//assume cannot backprop through parseTreeGroupNeuralNet
