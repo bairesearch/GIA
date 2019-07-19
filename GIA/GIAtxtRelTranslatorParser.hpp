@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorParser.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3i3a 24-June-2019
+ * Project Version: 3i3b 24-June-2019
  * Requirements: 
  * Description: Textual Relation Translator Parser
  * /

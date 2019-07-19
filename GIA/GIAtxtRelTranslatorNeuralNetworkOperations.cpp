@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetworkOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3i3a 24-June-2019
+ * Project Version: 3i3b 24-June-2019
  * Requirements: 
  * Description: Textual Relation Translator Neural Network Operations - generic functions
  * /
@@ -64,6 +64,7 @@ bool GIAtxtRelTranslatorNeuralNetworkOperationsClass::propagateWordThroughNetwor
 	
 	bool stillParsingActiveComponents = true;
 	int numberOfInactiveComponentsRemaining = 0;
+		
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ENFORCE_WORD_CONNECTIVITY
 	*previousActiveComponent = NULL;
 	#endif
@@ -81,7 +82,7 @@ bool GIAtxtRelTranslatorNeuralNetworkOperationsClass::propagateWordThroughNetwor
 			*lastActiveComponent = component;
 		}
 		#endif
-				
+						
 		if(stillParsingActiveComponents)
 		{
 			/*
@@ -115,7 +116,7 @@ bool GIAtxtRelTranslatorNeuralNetworkOperationsClass::propagateWordThroughNetwor
 						//component already activated
 						#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_ALLOW_MULTIPLE_ACTIVATIONS
 						sequentialActivationFound = true;
-						*existingActivationFound = true;		
+						*existingActivationFound = true;	
 						#endif
 					}
 				}
@@ -303,7 +304,8 @@ bool GIAtxtRelTranslatorNeuralNetworkOperationsClass::componentWordConnectivityT
 		GIAtxtRelTranslatorRulesComponentParseTree* lastActiveComponentInParseTree = (activationPathWordCurrentParseTreeGroupOwner->components)[lastActiveComponentInParseTreeIndex];
 		GIAtxtRelTranslatorRulesGroupParseTree* lastActiveComponentInParseTreeParseTreeGroupRef = lastActiveComponentInParseTree->parseTreeGroupRef;
 		
-		result = componentWordConnectivityTests(prospectiveNewlyActiveComponentInParseTreeParseTreeGroupRef, lastActiveComponentInParseTreeParseTreeGroupRef, lastActiveComponentInParseTree, forwardPropogationWordData, existingActivationFoundNOTUSED);
+		GIAtxtRelTranslatorRulesGroupParseTree* previousActiveComponentInParseTreeParseTreeGroupRefNOTUSED = NULL;
+		result = componentWordConnectivityTests(prospectiveNewlyActiveComponentInParseTreeParseTreeGroupRef, lastActiveComponentInParseTreeParseTreeGroupRef, lastActiveComponentInParseTree, previousActiveComponentInParseTreeParseTreeGroupRefNOTUSED, forwardPropogationWordData, existingActivationFoundNOTUSED);
 	}
 	else
 	{

@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3i3a 24-June-2019
+ * Project Version: 3i3b 24-June-2019
  * Requirements: 
  * Description: GIA specific global definitions
  * /
@@ -764,8 +764,14 @@
 
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK		
 		//#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE	//not yet defined
-			/*
+			
+			//#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_REMOVE_LAST_OPTIONAL_COMPONENTS	//not yet defined
+				#define GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_REMOVE_LAST_OPTIONAL_COMPONENTS_OR_OPTIONAL_REPEAT	//3i3b
+			//#endif
+			
+			#define GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_PRELIM	//temp var for debug; must be set if GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED is set
 			//#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED	//not yet defined
+			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_PRELIM
 				#define GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_BIO_DO_NOT_RELY_ON_PARSE_TREE_MEMORY	//GIA3h2a	//assume cannot backprop through parseTreeGroupNeuralNet
 				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_BIO_DO_NOT_RELY_ON_PARSE_TREE_MEMORY
 					#define GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_BIO_WEAK0	//requires lastParseComponent->parseTreeGroupRef
@@ -833,9 +839,8 @@
 						//#define GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_SIMULTANEOUS_BIO_LIMIT_GENERATION_OF_SEM_NET_FROM_INCOMPLETE_PATHS	//trial GIA3i1aTEMP35
 					#endif
 				#endif
-
+			#endif
 			//#endif
-			*/
 
 
 			#define GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_PERFORMANCE	//GIA3i1a	//equivalent to old <GIA3g1i GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE	//required for performance calculations only (doesnt assume parse tree is generated or saved)
@@ -1071,7 +1076,7 @@
 			#define GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT	//GIA3g10a
 			//light: only ever maintain a single instance of the neural network in memory
 			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT
-				//#define GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED		//GIA3g11a
+				#define GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED		//GIA3g11a
 				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED 
 				
 					#define GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_REPLICATE_TOP_LEVEL_PARSE_TREE	//GIA3g11f - required for GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED
