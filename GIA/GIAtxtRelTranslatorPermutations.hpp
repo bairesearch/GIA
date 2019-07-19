@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorPermutations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3i2a 27-May-2019
+ * Project Version: 3i2b 27-May-2019
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Permutations
  * /
@@ -95,10 +95,10 @@ class GIAtxtRelTranslatorPermutationsClass
 	#endif
 	#endif
 	private: GIAtxtRelTranslatorNeuralNetworkFormationClass GIAtxtRelTranslatorNeuralNetworkFormation;
-	private: GIAtxtRelTranslatorNeuralNetworkOperationsClass GIAtxtRelTranslatorNeuralNetworkOperations;	//required for printComponent/printParseTreeDebugIndentation	
 	#else
 	private: GIAtxtRelTranslatorNeuralNetworkInverseClass GIAtxtRelTranslatorNeuralNetworkInverse;	
 	#endif
+	private: GIAtxtRelTranslatorNeuralNetworkOperationsClass GIAtxtRelTranslatorNeuralNetworkOperations;	//required for printComponent/printParseTreeDebugIndentation	
 	private: GIAtxtRelTranslatorRulesClass GIAtxtRelTranslatorRules;
 	private: GIApreprocessorPOStaggerClass GIApreprocessorPOStagger;
 	private: GIApreprocessorPOStaggerDatabaseClass GIApreprocessorPOStaggerDatabase;
