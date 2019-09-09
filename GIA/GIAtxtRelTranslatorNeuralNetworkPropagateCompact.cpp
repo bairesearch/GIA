@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetworkPropagateCompact.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j2b 10-August-2019
+ * Project Version: 3j2c 10-August-2019
  * Requirements: 
  * Description: Textual Relation Translator Neural Network Propagate Compact - ~O(n)
  * /
@@ -1306,6 +1306,9 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactClass::upperNeuronLastWordI
 		int wordIndexMaxMax;
 		int wordIndexMinToFindAbove;		
 		int wordIndexMaxToFindAbove;
+		int wordIndexLastAboveEffectiveAfterGroupReset = INT_DEFAULT_VALUE;
+
+		bool execute = false;
 		if(forwardPropogationSentenceData->parseSentenceReverse)
 		{
 			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_DEBUG_ENSURE_PROSPECTIVE_WORD_CONNECTIVITY
@@ -1345,32 +1348,12 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactClass::upperNeuronLastWordI
 				wordIndexMinToFindAbove = wordIndexMax+1;
 			
 				//need to disregard wordIndexMin/Max of last activated component in uppergroups (assuming it was effectively activated by current component)
-				int wordIndexMinAboveEffectiveAfterGroupReset = INT_DEFAULT_VALUE;
 				if(existingActivationFound)	//ie ownerGroupParseTreeGroup != NULL
 				{
-					wordIndexMinAboveEffectiveAfterGroupReset = ownerGroupParseTreeGroup->parseTreeMaxWordIndex+1;
+					wordIndexLastAboveEffectiveAfterGroupReset = ownerGroupParseTreeGroup->parseTreeMaxWordIndex+1;
 				}
 				
-				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_DEBUG_ENSURE_PROSPECTIVE_WORD_CONNECTIVITY
-				cout << "wordIndexMaxToFindAbove = " << wordIndexMaxToFindAbove << endl;
-				cout << "wordIndexMinToFindAbove = " << wordIndexMinToFindAbove << endl;
-				cout << "wordIndexMinAboveEffectiveAfterGroupReset = " << wordIndexMinAboveEffectiveAfterGroupReset << endl;
-				#endif
-				
-				if(upperNeuronLastWordIndexAlignsWithThatOfProspectiveComponent(forwardPropogationSentenceData, wordIndexMinToFindAbove, wordIndexMaxToFindAbove, wordIndexMinAboveEffectiveAfterGroupReset, 0, ownerGroup, false, false))
-				{	
-					result = true;
-				}
-				else
-				{
-					#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_DEBUG_ENSURE_PROSPECTIVE_WORD_CONNECTIVITY
-					cout << "!upperNeuronLastWordIndexAlignsWithThatOfProspectiveComponent" << endl;
-					#endif
-				}
-			}
-			else
-			{
-				result = true;
+				execute = true;
 			}
 		}
 		else
@@ -1397,28 +1380,38 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactClass::upperNeuronLastWordI
 				wordIndexMaxToFindAbove = wordIndexMin-1;
 			
 				//need to disregard wordIndexMin/Max of last activated component in uppergroups (assuming it was effectively activated by current component)
-				int wordIndexMaxAboveEffectiveAfterGroupReset = INT_DEFAULT_VALUE;
 				if(existingActivationFound)	//ie ownerGroupParseTreeGroup != NULL
 				{
-					wordIndexMaxAboveEffectiveAfterGroupReset = ownerGroupParseTreeGroup->parseTreeMinWordIndex-1;	
+					wordIndexLastAboveEffectiveAfterGroupReset = ownerGroupParseTreeGroup->parseTreeMinWordIndex-1;	
 				}
 				
-				if(upperNeuronLastWordIndexAlignsWithThatOfProspectiveComponent(forwardPropogationSentenceData, wordIndexMinToFindAbove, wordIndexMaxToFindAbove, wordIndexMaxAboveEffectiveAfterGroupReset, 0, ownerGroup, false, false))
-				{
-					result = true;
-				}
-				else
-				{
-					#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_DEBUG_ENSURE_PROSPECTIVE_WORD_CONNECTIVITY
-					cout << "!upperNeuronLastWordIndexAlignsWithThatOfProspectiveComponent" << endl;
-					#endif
-				}
+				execute = true;
 			}
-			else
+		}	
+		
+		if(execute)
+		{
+			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_DEBUG_ENSURE_PROSPECTIVE_WORD_CONNECTIVITY
+			cout << "wordIndexMaxToFindAbove = " << wordIndexMaxToFindAbove << endl;
+			cout << "wordIndexMinToFindAbove = " << wordIndexMinToFindAbove << endl;
+			cout << "wordIndexMinAboveEffectiveAfterGroupReset = " << wordIndexMinAboveEffectiveAfterGroupReset << endl;
+			#endif
+				
+			if(upperNeuronLastWordIndexAlignsWithThatOfProspectiveComponent(forwardPropogationSentenceData, wordIndexMinToFindAbove, wordIndexMaxToFindAbove, wordIndexLastAboveEffectiveAfterGroupReset, 0, ownerGroup, false, false))
 			{
 				result = true;
 			}
-		}	
+			else
+			{
+				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_DEBUG_ENSURE_PROSPECTIVE_WORD_CONNECTIVITY
+				cout << "!upperNeuronLastWordIndexAlignsWithThatOfProspectiveComponent" << endl;
+				#endif
+			}
+		}
+		else
+		{
+			result = true;
+		}
 	}
 	else
 	{
@@ -1432,90 +1425,182 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactClass::upperNeuronLastWordI
 bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactClass::upperNeuronLastWordIndexAlignsWithThatOfProspectiveComponent(GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData, const int wordIndexMinToFindAbove, const int wordIndexMaxToFindAbove, const int wordIndexLastAboveEffectiveAfterGroupReset, int level, GIAtxtRelTranslatorRulesGroupNeuralNetwork* group, bool wordIndexMinFound, bool wordIndexMaxFound)
 {
 	bool result = false;
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_ENSURE_PROSPECTIVE_WORD_CONNECTIVITY_BETWEEN_NEWLY_ACTIVATED_COMPONENT_AND_PREVIOUSLY_ACTIVATED_GROUP_OPTIMISED
+	bool keepExecuting = true;
+	#endif
 	
 	for(int i=0; i<group->ANNfrontComponentConnectionList.size(); i++)
 	{
-		GIAtxtRelTranslatorRulesComponentNeuralNetwork* currentComponent = (group->ANNfrontComponentConnectionList)[i];
-		GIAtxtRelTranslatorRulesGroupNeuralNetwork* ownerGroup = currentComponent->ownerGroup;
-		
-		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_DEBUG_ENSURE_PROSPECTIVE_WORD_CONNECTIVITY
-		GIAtxtRelTranslatorNeuralNetworkPropagateOperations.printParseTreeDebugIndentation(level);
-		cout << "ownerGroup->groupIndex = " << ownerGroup->groupIndex << endl;
+		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_ENSURE_PROSPECTIVE_WORD_CONNECTIVITY_BETWEEN_NEWLY_ACTIVATED_COMPONENT_AND_PREVIOUSLY_ACTIVATED_GROUP_OPTIMISED
+		if(keepExecuting)
+		{
+			bool keepExecutingLocal = true;
 		#endif
-		
-		GIAtxtRelTranslatorRulesGroupParseTree* ownerGroupParseTree = ownerGroup->currentParseTreeGroupTemp;
-		int parseTreeMinWordIndexEffectiveAfterGroupReset = ownerGroupParseTree->parseTreeMinWordIndex;
-		int parseTreeMaxWordIndexEffectiveAfterGroupReset = ownerGroupParseTree->parseTreeMaxWordIndex;
-		
-		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_DEBUG_ENSURE_PROSPECTIVE_WORD_CONNECTIVITY
-		GIAtxtRelTranslatorNeuralNetworkPropagateOperations.printParseTreeDebugIndentation(level);
-		cout << "parseTreeMinWordIndex = " << parseTreeMinWordIndexEffectiveAfterGroupReset << endl;
-		GIAtxtRelTranslatorNeuralNetworkPropagateOperations.printParseTreeDebugIndentation(level);
-		cout << "parseTreeMaxWordIndex = " << parseTreeMaxWordIndexEffectiveAfterGroupReset << endl;
-		#endif
-		
-		if(currentComponent->neuronComponentConnectionActive)
-		{//currentComponent was activated by the group being reset - so determine the ownerGroup's expected [older] parseTreeMinWordIndex/parseTreeMaxWordIndex values assuming the group is reset
-			if(wordIndexLastAboveEffectiveAfterGroupReset != INT_DEFAULT_VALUE)
-			{
-				if(forwardPropogationSentenceData->parseSentenceReverse)
-				{
-					if(parseTreeMinWordIndexEffectiveAfterGroupReset < wordIndexLastAboveEffectiveAfterGroupReset)
-					{
-						parseTreeMinWordIndexEffectiveAfterGroupReset = wordIndexLastAboveEffectiveAfterGroupReset;
-					}
-				}
-				else
-				{
-					if(parseTreeMaxWordIndexEffectiveAfterGroupReset > wordIndexLastAboveEffectiveAfterGroupReset)
-					{
-						parseTreeMaxWordIndexEffectiveAfterGroupReset = wordIndexLastAboveEffectiveAfterGroupReset;
-					}
-				}
-			}
-		}
-		
-		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_DEBUG_ENSURE_PROSPECTIVE_WORD_CONNECTIVITY
-		GIAtxtRelTranslatorNeuralNetworkPropagateOperations.printParseTreeDebugIndentation(level);
-		cout << "parseTreeMinWordIndexEffectiveAfterGroupReset = " << parseTreeMinWordIndexEffectiveAfterGroupReset << endl;
-		GIAtxtRelTranslatorNeuralNetworkPropagateOperations.printParseTreeDebugIndentation(level);
-		cout << "parseTreeMaxWordIndexEffectiveAfterGroupReset = " << parseTreeMaxWordIndexEffectiveAfterGroupReset << endl;
-		#endif
-		
-		if(!wordIndexMinFound)	//assume will find wordIndexMin match before wordIndexMax match when propagating up network - CHECKTHIS
-		{
-			if(parseTreeMinWordIndexEffectiveAfterGroupReset == wordIndexMinToFindAbove)
-			{
-				wordIndexMinFound = true;
-				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_DEBUG_ENSURE_PROSPECTIVE_WORD_CONNECTIVITY
-				cout << "GIAtxtRelTranslatorNeuralNetworkPropagateOperationsClass::upperNeuronLastWordIndexAlignsWithThatOfProspectiveComponent - wordIndexMinFound" << endl;
-				#endif
-			}
-		}
-		if(wordIndexMinFound)
-		{
-			if(parseTreeMaxWordIndexEffectiveAfterGroupReset == wordIndexMaxToFindAbove)
-			{
-				wordIndexMaxFound = true;
-				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_DEBUG_ENSURE_PROSPECTIVE_WORD_CONNECTIVITY
-				cout << "GIAtxtRelTranslatorNeuralNetworkPropagateOperationsClass::upperNeuronLastWordIndexAlignsWithThatOfProspectiveComponent - wordIndexMaxFound" << endl;
-				#endif
-			}
-		}
-		if(wordIndexMinFound && wordIndexMaxFound)
-		{
-			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_DEBUG_ENSURE_PROSPECTIVE_WORD_CONNECTIVITY
-			cout << "GIAtxtRelTranslatorNeuralNetworkPropagateOperationsClass::upperNeuronLastWordIndexAlignsWithThatOfProspectiveComponent - (wordIndexMinFound && wordIndexMaxFound); result == true" << endl;
-			//exit(EXIT_ERROR);
-			#endif
-			result = true;
-		}
-		
-		if(upperNeuronLastWordIndexAlignsWithThatOfProspectiveComponent(forwardPropogationSentenceData, wordIndexMinToFindAbove, wordIndexMaxToFindAbove, wordIndexLastAboveEffectiveAfterGroupReset, level+1, ownerGroup, wordIndexMinFound, wordIndexMaxFound))
-		{
-			result = true;
-		}
+			
+			GIAtxtRelTranslatorRulesComponentNeuralNetwork* currentComponent = (group->ANNfrontComponentConnectionList)[i];
+			GIAtxtRelTranslatorRulesGroupNeuralNetwork* ownerGroup = currentComponent->ownerGroup;
 
+			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_DEBUG_ENSURE_PROSPECTIVE_WORD_CONNECTIVITY
+			GIAtxtRelTranslatorNeuralNetworkPropagateOperations.printParseTreeDebugIndentation(level);
+			cout << "ownerGroup->groupIndex = " << ownerGroup->groupIndex << endl;
+			#endif
+
+			GIAtxtRelTranslatorRulesGroupParseTree* ownerGroupParseTree = ownerGroup->currentParseTreeGroupTemp;
+			int parseTreeMinWordIndexEffectiveAfterGroupReset = ownerGroupParseTree->parseTreeMinWordIndex;
+			int parseTreeMaxWordIndexEffectiveAfterGroupReset = ownerGroupParseTree->parseTreeMaxWordIndex;
+
+			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_DEBUG_ENSURE_PROSPECTIVE_WORD_CONNECTIVITY
+			GIAtxtRelTranslatorNeuralNetworkPropagateOperations.printParseTreeDebugIndentation(level);
+			cout << "parseTreeMinWordIndex = " << parseTreeMinWordIndexEffectiveAfterGroupReset << endl;
+			GIAtxtRelTranslatorNeuralNetworkPropagateOperations.printParseTreeDebugIndentation(level);
+			cout << "parseTreeMaxWordIndex = " << parseTreeMaxWordIndexEffectiveAfterGroupReset << endl;
+			#endif
+
+
+			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_ENSURE_PROSPECTIVE_WORD_CONNECTIVITY_BETWEEN_NEWLY_ACTIVATED_COMPONENT_AND_PREVIOUSLY_ACTIVATED_GROUP_OPTIMISED
+			bool groupHasPreceedingComponent = false;
+			if(forwardPropogationSentenceData->parseSentenceReverse)
+			{
+				if(currentComponent->componentIndex < ownerGroup->components.size()-1)
+				{
+					groupHasPreceedingComponent = true;
+				}
+			}
+			else
+			{
+				 if(currentComponent->componentIndex > 0)
+				 {
+			 		groupHasPreceedingComponent = true;
+				 }
+			}
+			#endif
+
+			if(currentComponent->neuronComponentConnectionActive)
+			{//currentComponent was activated by the group being reset - so determine the ownerGroup's expected [older] parseTreeMinWordIndex/parseTreeMaxWordIndex values assuming the group is reset
+				if(wordIndexLastAboveEffectiveAfterGroupReset != INT_DEFAULT_VALUE)
+				{
+					if(forwardPropogationSentenceData->parseSentenceReverse)
+					{
+						if(parseTreeMinWordIndexEffectiveAfterGroupReset < wordIndexLastAboveEffectiveAfterGroupReset)
+						{
+							parseTreeMinWordIndexEffectiveAfterGroupReset = wordIndexLastAboveEffectiveAfterGroupReset;
+						}
+					}
+					else
+					{
+						if(parseTreeMaxWordIndexEffectiveAfterGroupReset > wordIndexLastAboveEffectiveAfterGroupReset)
+						{
+							parseTreeMaxWordIndexEffectiveAfterGroupReset = wordIndexLastAboveEffectiveAfterGroupReset;
+						}
+					}
+				}
+			}
+
+			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_DEBUG_ENSURE_PROSPECTIVE_WORD_CONNECTIVITY
+			GIAtxtRelTranslatorNeuralNetworkPropagateOperations.printParseTreeDebugIndentation(level);
+			cout << "parseTreeMinWordIndexEffectiveAfterGroupReset = " << parseTreeMinWordIndexEffectiveAfterGroupReset << endl;
+			GIAtxtRelTranslatorNeuralNetworkPropagateOperations.printParseTreeDebugIndentation(level);
+			cout << "parseTreeMaxWordIndexEffectiveAfterGroupReset = " << parseTreeMaxWordIndexEffectiveAfterGroupReset << endl;
+			#endif
+
+			if(forwardPropogationSentenceData->parseSentenceReverse)
+			{
+				//assume will find wordIndexMin match before wordIndexMax match when propagating up network - CHECKTHIS
+				if(!wordIndexMinFound)
+				{
+					if(parseTreeMinWordIndexEffectiveAfterGroupReset == wordIndexMinToFindAbove)
+					{
+						wordIndexMinFound = true;
+						#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_DEBUG_ENSURE_PROSPECTIVE_WORD_CONNECTIVITY
+						cout << "GIAtxtRelTranslatorNeuralNetworkPropagateOperationsClass::upperNeuronLastWordIndexAlignsWithThatOfProspectiveComponent - wordIndexMinFound" << endl;
+						#endif
+					}
+					#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_ENSURE_PROSPECTIVE_WORD_CONNECTIVITY_BETWEEN_NEWLY_ACTIVATED_COMPONENT_AND_PREVIOUSLY_ACTIVATED_GROUP_OPTIMISED
+					else
+					{
+						if(groupHasPreceedingComponent)
+						{
+							keepExecutingLocal = false;
+						}
+					}
+					#endif
+
+
+				}
+				if(wordIndexMinFound)
+				{
+					if(parseTreeMaxWordIndexEffectiveAfterGroupReset == wordIndexMaxToFindAbove)
+					{
+						wordIndexMaxFound = true;
+						#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_DEBUG_ENSURE_PROSPECTIVE_WORD_CONNECTIVITY
+						cout << "GIAtxtRelTranslatorNeuralNetworkPropagateOperationsClass::upperNeuronLastWordIndexAlignsWithThatOfProspectiveComponent - wordIndexMaxFound" << endl;
+						#endif
+					}
+				}
+			}
+			else
+			{
+				//assume will find wordIndexMax match before wordIndexMin match when propagating up network - CHECKTHIS
+				if(!wordIndexMaxFound)
+				{
+					if(parseTreeMaxWordIndexEffectiveAfterGroupReset == wordIndexMaxToFindAbove)
+					{
+						wordIndexMaxFound = true;
+						#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_DEBUG_ENSURE_PROSPECTIVE_WORD_CONNECTIVITY
+						cout << "GIAtxtRelTranslatorNeuralNetworkPropagateOperationsClass::upperNeuronLastWordIndexAlignsWithThatOfProspectiveComponent - wordIndexMaxFound" << endl;
+						#endif
+					}
+					#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_ENSURE_PROSPECTIVE_WORD_CONNECTIVITY_BETWEEN_NEWLY_ACTIVATED_COMPONENT_AND_PREVIOUSLY_ACTIVATED_GROUP_OPTIMISED
+					else
+					{
+						if(groupHasPreceedingComponent)
+						{
+							keepExecutingLocal = false;
+						}
+					}
+					#endif
+				}
+				if(wordIndexMaxFound)
+				{
+					if(parseTreeMinWordIndexEffectiveAfterGroupReset == wordIndexMinToFindAbove)
+					{
+						wordIndexMinFound = true;
+						#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_DEBUG_ENSURE_PROSPECTIVE_WORD_CONNECTIVITY
+						cout << "GIAtxtRelTranslatorNeuralNetworkPropagateOperationsClass::upperNeuronLastWordIndexAlignsWithThatOfProspectiveComponent - wordIndexMinFound" << endl;
+						#endif
+					}
+				}		
+			}
+
+
+			if(wordIndexMinFound && wordIndexMaxFound)
+			{
+				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_DEBUG_ENSURE_PROSPECTIVE_WORD_CONNECTIVITY
+				cout << "GIAtxtRelTranslatorNeuralNetworkPropagateOperationsClass::upperNeuronLastWordIndexAlignsWithThatOfProspectiveComponent - (wordIndexMinFound && wordIndexMaxFound); result == true" << endl;
+				//exit(EXIT_ERROR);
+				#endif
+				result = true;
+				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_ENSURE_PROSPECTIVE_WORD_CONNECTIVITY_BETWEEN_NEWLY_ACTIVATED_COMPONENT_AND_PREVIOUSLY_ACTIVATED_GROUP_OPTIMISED
+				keepExecuting = false;
+				#endif
+			}
+			else
+			{
+				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_ENSURE_PROSPECTIVE_WORD_CONNECTIVITY_BETWEEN_NEWLY_ACTIVATED_COMPONENT_AND_PREVIOUSLY_ACTIVATED_GROUP_OPTIMISED
+				if(keepExecutingLocal)
+				{
+				#endif
+					if(upperNeuronLastWordIndexAlignsWithThatOfProspectiveComponent(forwardPropogationSentenceData, wordIndexMinToFindAbove, wordIndexMaxToFindAbove, wordIndexLastAboveEffectiveAfterGroupReset, level+1, ownerGroup, wordIndexMinFound, wordIndexMaxFound))
+					{
+						result = true;
+					}
+				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_ENSURE_PROSPECTIVE_WORD_CONNECTIVITY_BETWEEN_NEWLY_ACTIVATED_COMPONENT_AND_PREVIOUSLY_ACTIVATED_GROUP_OPTIMISED
+				}
+				#endif
+			}
+		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_ENSURE_PROSPECTIVE_WORD_CONNECTIVITY_BETWEEN_NEWLY_ACTIVATED_COMPONENT_AND_PREVIOUSLY_ACTIVATED_GROUP_OPTIMISED
+		}
+		#endif
 	}
 	
 	return result;
