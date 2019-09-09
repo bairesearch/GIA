@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetworkPropagateOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j3a 08-September-2019
+ * Project Version: 3j4a 09-September-2019
  * Requirements: 
  * Description: Textual Relation Translator Neural Network Operations - generic functions
  * /
@@ -150,6 +150,19 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateOperationsClass::propagateWordThro
 				
 				stillParsingActiveComponents = false;
 
+				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE_ALL_POS_VALUES_SIMULTANEOUSLY
+				bool previousComponentWasActivatedBySameWordDifferentPOSpropagation = false;
+				if(*previousActiveComponent != NULL)
+				{
+					if((*previousActiveComponent)->neuronComponentConnectionActiveWordRecord = forwardPropogationWordData->wordReference)
+					{
+						previousComponentWasActivatedBySameWordDifferentPOSpropagation = true;
+						//cout << "upperNeuronContainsWordIndexOfProspectiveComponentTest" << endl;
+					}
+				}
+				if(!previousComponentWasActivatedBySameWordDifferentPOSpropagation)
+				{
+				#endif		
 				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_PREVENT_WRITE_IF_UPPER_NEURON_ALREADY_CONTAINS_WORD_INDEX_OF_EXISTING_COMPONENT
 				bool upperNeuronContainsWordIndexOfProspectiveComponentTest = false;
 				if(!(component->ownerGroup->neuronActive))
@@ -216,6 +229,19 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateOperationsClass::propagateWordThro
 									//always reset, as existing first activated component is not connected (by wordIndices) to prospective activated next component
 								}
 								#endif
+								#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE_ALL_POS_VALUES_SIMULTANEOUSLY
+								if(existingActivationFound)
+								{
+									if(!(forwardPropogationSignalData->firstPOSval))
+									{
+										if(component->neuronComponentConnectionActiveWordRecord = forwardPropogationWordData->wordReference)
+										{
+											//component has been activated by previous POS propagation
+											allowComponentReset = false;
+										}
+									}
+								}
+								#endif
 								if(allowComponentReset)
 								{
 									sequentialActivationFound = true;
@@ -241,7 +267,10 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateOperationsClass::propagateWordThro
 					}
 				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_PREVENT_WRITE_IF_UPPER_NEURON_ALREADY_CONTAINS_WORD_INDEX_OF_EXISTING_COMPONENT
 				}
-				#endif	
+				#endif
+				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE_ALL_POS_VALUES_SIMULTANEOUSLY
+				}
+				#endif
 			}
 			else
 			{

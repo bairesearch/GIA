@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetworkPropagateLightOptimised.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j3a 08-September-2019
+ * Project Version: 3j4a 09-September-2019
  * Requirements: 
  * Description: Textual Relation Translator Neural Network Light Optimised - ~O(n)
  * /
@@ -160,7 +160,6 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateLightOptimisedClass::executeTxtRel
 	}
 	
 	#ifndef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_REPLICATE_TOP_LEVEL_PARSE_TREE	
-	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START
 	if(sentenceValidActivationPath)
 	{
 		int performanceNOTUSED = 0;
@@ -181,7 +180,6 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateLightOptimisedClass::executeTxtRel
 	{
 		GIAtxtRelTranslatorNeuralNetworkPropagateOperations.resetAllNeuronComponents(GIAtxtRelTranslatorRulesGroupTypes, GIA_TXT_REL_TRANSLATOR_RULES_GROUP_BOOL_INDEX_ALLGROUPTYPES_PARSE_TREE_GROUP_REF);
 	}
-	#endif
 	#endif
 	
 	//TODO: resetSemanticRelationReturnEntityForwardPropogationSignalDataPackage(sentenceContents)
@@ -368,6 +366,9 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateLightOptimisedClass::propagateWord
 			#ifdef GIA_TXT_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START
 			int wordPOStype = currentWord->unambiguousPOSindex;
 			#else
+			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE_ALL_POS_VALUES_SIMULTANEOUSLY
+			forwardPropogationSignalData.firstPOSval = true;
+			#endif
 			for(int wordPOStype=0; wordPOStype<GIA_PREPROCESSOR_POS_TYPE_ARRAY_NUMBER_OF_TYPES; wordPOStype++)
 			{
 				if(SHAREDvars.getBitValue(currentWord->POSambiguityInfo, wordPOStype))
@@ -380,6 +381,9 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateLightOptimisedClass::propagateWord
 
 			#ifdef GIA_TXT_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START
 			#else
+					#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE_ALL_POS_VALUES_SIMULTANEOUSLY
+					forwardPropogationSignalData.firstPOSval = false;
+					#endif
 				}
 			}
 			#endif
@@ -1005,14 +1009,14 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateLightOptimisedClass::propagateWord
 				if(measureSequentialActivationOnly)
 				{
 					*resetUnallowed = false;
-					if(!resetAllowed(ownerGroup, activationPathWordCurrentParseTreeGroup, forwardPropogationWordData, *existingActivationFound, forwardPropogationSentenceData))
+					if(!resetAllowed(ownerGroup, activationPathWordCurrentParseTreeGroup, forwardPropogationSignalData, forwardPropogationWordData, *existingActivationFound, forwardPropogationSentenceData))
 					{
 						*resetUnallowed = true;
 					}
 				}
 				*/
 				*resetUnallowed = false;
-				if(resetAllowed(ownerGroup, activationPathWordCurrentParseTreeGroup, forwardPropogationWordData, *existingActivationFound, forwardPropogationSentenceData, firstActiveComponentInGroup))
+				if(resetAllowed(ownerGroup, activationPathWordCurrentParseTreeGroup, forwardPropogationSignalData, forwardPropogationWordData, *existingActivationFound, forwardPropogationSentenceData, firstActiveComponentInGroup, ownerComponent))
 				{
 				#endif
 					#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE_EXTRA3
@@ -1113,7 +1117,7 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateLightOptimisedClass::propagateWord
 	}
 		
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_PREPROCESS_DONT_OVERWRITE_REFERENCESETS_THAT_CAPTURES_EOS_MOD
-	if(!resetAllowed(ownerGroup, activationPathWordCurrentParseTreeGroup, forwardPropogationWordData, *existingActivationFound, forwardPropogationSentenceData, firstActiveComponentInGroup))
+	if(!resetAllowed(ownerGroup, activationPathWordCurrentParseTreeGroup, forwardPropogationSignalData, forwardPropogationWordData, *existingActivationFound, forwardPropogationSentenceData, firstActiveComponentInGroup, ownerComponent))
 	{
 		*resetUnallowed = true;
 	}
@@ -1691,7 +1695,7 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateLightOptimisedClass::findPreceedin
 
 #ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_PREPROCESS_DONT_OVERWRITE_REFERENCESETS_THAT_CAPTURES_EOS
 //determines if reset is allowed
-bool GIAtxtRelTranslatorNeuralNetworkPropagateLightOptimisedClass::resetAllowed(GIAtxtRelTranslatorRulesGroupNeuralNetwork* ownerGroup, GIAtxtRelTranslatorRulesGroupParseTree* activationPathWordCurrentParseTreeGroup, GIAtxtRelTranslatorNeuralNetworkForwardPropogationWordData* forwardPropogationWordData, const bool existingActivationFound, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData, const bool firstActiveComponentInGroup)
+bool GIAtxtRelTranslatorNeuralNetworkPropagateLightOptimisedClass::resetAllowed(GIAtxtRelTranslatorRulesGroupNeuralNetwork* ownerGroup, GIAtxtRelTranslatorRulesGroupParseTree* activationPathWordCurrentParseTreeGroup, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSignalData* forwardPropogationSignalData, GIAtxtRelTranslatorNeuralNetworkForwardPropogationWordData* forwardPropogationWordData, const bool existingActivationFound, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData, const bool firstActiveComponentInGroup, GIAtxtRelTranslatorRulesComponentNeuralNetwork* ownerComponent)
 {
 	bool result = false;
 	
@@ -1706,6 +1710,21 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateLightOptimisedClass::resetAllowed(
 	{
 		result = true;
 	}
+	
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE_ALL_POS_VALUES_SIMULTANEOUSLY
+	//TODO: check this is the one and only place this check needs to take place
+	if(existingActivationFound)
+	{
+		if(!(forwardPropogationSignalData->firstPOSval))
+		{
+			if(ownerComponent->neuronComponentConnectionActiveWordRecord = forwardPropogationWordData->wordReference)
+			{
+				//component has been activated by previous POS propagation
+				result = false;
+			}
+		}
+	}
+	#endif
 	
 	return result;
 }

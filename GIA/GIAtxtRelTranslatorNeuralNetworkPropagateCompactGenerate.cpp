@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerate.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j3a 08-September-2019
+ * Project Version: 3j4a 09-September-2019
  * Requirements: 
  * Description: Textual Relation Translator Neural Network Propagate Compact - unsupervised training of sequence grammar parse network
  * /
@@ -54,16 +54,16 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::formTxtRelTr
 */
 
 
-bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::executeTxtRelTranslatorNeuralNetwork(GIAtranslatorVariablesClass* translatorVariables, vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, vector<GIApreprocessorPlainTextWord*>* sentenceContents, const bool createNewConnections, vector<GIAtxtRelTranslatorRulesGroupNeuralNetwork*>* firstLayer)
+bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::executeTxtRelTranslatorNeuralNetwork(GIAtranslatorVariablesClass* translatorVariables, vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, vector<GIApreprocessorPlainTextWord*>* sentenceContents, const bool createNewConnections)
 {
 	GIAtxtRelTranslatorRulesGroupParseTree* topLevelParseTreeGroup = NULL; 
 	bool parseIsolatedSubreferenceSets = false;
 	bool parserEnabled = false;
 	int performance = 0;
-	return executeTxtRelTranslatorNeuralNetwork(translatorVariables, GIAtxtRelTranslatorRulesGroupTypes, sentenceContents, &topLevelParseTreeGroup, parseIsolatedSubreferenceSets, parserEnabled, &performance, createNewConnections, firstLayer);
+	return executeTxtRelTranslatorNeuralNetwork(translatorVariables, GIAtxtRelTranslatorRulesGroupTypes, sentenceContents, &topLevelParseTreeGroup, parseIsolatedSubreferenceSets, parserEnabled, &performance, createNewConnections);
 }
 
-bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::executeTxtRelTranslatorNeuralNetwork(GIAtranslatorVariablesClass* translatorVariables, vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, vector<GIApreprocessorPlainTextWord*>* sentenceContents, GIAtxtRelTranslatorRulesGroupParseTree** topLevelParseTreeGroup, const bool parseIsolatedSubreferenceSets, const bool parserEnabled, int* performance, const bool createNewConnections, vector<GIAtxtRelTranslatorRulesGroupNeuralNetwork*>* firstLayer)
+bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::executeTxtRelTranslatorNeuralNetwork(GIAtranslatorVariablesClass* translatorVariables, vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, vector<GIApreprocessorPlainTextWord*>* sentenceContents, GIAtxtRelTranslatorRulesGroupParseTree** topLevelParseTreeGroup, const bool parseIsolatedSubreferenceSets, const bool parserEnabled, int* performance, const bool createNewConnections)
 {
 	bool result = false;
 	
@@ -78,7 +78,7 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::executeTxtRe
 	cout << "\n\n\n\n\nGIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::executeTxtRelTranslatorNeuralNetwork 1" << endl;
 	#endif
 	
-	bool toplevelGroupActivationFound = GIAtxtRelTranslatorNeuralNetworkPropagateCompact.executeTxtRelTranslatorNeuralNetworkPart1(translatorVariables, GIAtxtRelTranslatorRulesGroupTypes, &forwardPropogationSentenceData, topLevelParseTreeGroup, parseIsolatedSubreferenceSets, parserEnabled, performance, createNewConnections, firstLayer);
+	bool toplevelGroupActivationFound = GIAtxtRelTranslatorNeuralNetworkPropagateCompact.executeTxtRelTranslatorNeuralNetworkPart1(translatorVariables, GIAtxtRelTranslatorRulesGroupTypes, &forwardPropogationSentenceData, topLevelParseTreeGroup, parseIsolatedSubreferenceSets, parserEnabled, performance);
 	
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_DEBUG
 	cout << "GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::executeTxtRelTranslatorNeuralNetwork 2" << endl;
@@ -88,17 +88,17 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::executeTxtRe
 	{
 		if(createNewConnections)
 		{
-			findAndReconcileVariation(translatorVariables, GIAtxtRelTranslatorRulesGroupTypes, &forwardPropogationSentenceData, firstLayer);
+			findAndReconcileVariation(translatorVariables, GIAtxtRelTranslatorRulesGroupTypes, &forwardPropogationSentenceData);
 		}
 	}
 	
-	GIAtxtRelTranslatorNeuralNetworkPropagateCompact.executeTxtRelTranslatorNeuralNetworkPart2(translatorVariables, GIAtxtRelTranslatorRulesGroupTypes, &forwardPropogationSentenceData, topLevelParseTreeGroup, parseIsolatedSubreferenceSets, parserEnabled, performance, createNewConnections, firstLayer);
+	GIAtxtRelTranslatorNeuralNetworkPropagateCompact.executeTxtRelTranslatorNeuralNetworkPart2(translatorVariables, GIAtxtRelTranslatorRulesGroupTypes, &forwardPropogationSentenceData, topLevelParseTreeGroup, parseIsolatedSubreferenceSets, parserEnabled, performance);
 		
 	return toplevelGroupActivationFound;
 }
 
 
-bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::findAndReconcileVariation(GIAtranslatorVariablesClass* translatorVariables, vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData, vector<GIAtxtRelTranslatorRulesGroupNeuralNetwork*>* firstLayer)
+bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::findAndReconcileVariation(GIAtranslatorVariablesClass* translatorVariables, vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData)
 {
 	bool result = true;
 	
@@ -106,7 +106,7 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::findAndRecon
 	if(translatorVariables->currentPreprocessorSentenceInList->sentenceIndexOriginal <= translatorVariables->maxNumberSentences/2)
 	{
 	#endif
-		bool foundAndReconciledMissingOrDifferentIncrementalNeurons = findAndReconcileIncrementalVariation(translatorVariables, GIAtxtRelTranslatorRulesGroupTypes, forwardPropogationSentenceData, firstLayer);
+		bool foundAndReconciledMissingOrDifferentIncrementalNeurons = findAndReconcileIncrementalVariation(translatorVariables, GIAtxtRelTranslatorRulesGroupTypes, forwardPropogationSentenceData);
 
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_DEBUG_TEST_VERIFICATION_AFTER_GENERATION
 	}
@@ -117,7 +117,7 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::findAndRecon
 	#endif
 	
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_VERIFICATION
-	if(!GIAtxtRelTranslatorNeuralNetworkPropagateCompact.performPropagationTest(translatorVariables, GIAtxtRelTranslatorRulesGroupTypes, forwardPropogationSentenceData, firstLayer))
+	if(!GIAtxtRelTranslatorNeuralNetworkPropagateCompact.performPropagationTest(translatorVariables, GIAtxtRelTranslatorRulesGroupTypes, forwardPropogationSentenceData))
 	{
 		cerr << "GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::findAndReconcileVariation fail: !performPropagation verification" << endl;
 		exit(EXIT_ERROR);
@@ -136,14 +136,19 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::findAndRecon
 
 
 
-bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::findAndReconcileIncrementalVariation(GIAtranslatorVariablesClass* translatorVariables, vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData, vector<GIAtxtRelTranslatorRulesGroupNeuralNetwork*>* firstLayer)
+bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::findAndReconcileIncrementalVariation(GIAtranslatorVariablesClass* translatorVariables, vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData)
 {
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_DEBUG_PRINT_GROUP_INDICES
 	cout << "GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::findAndReconcileIncrementalVariation" << endl;
 	#endif
 		
 	bool foundAndReconciledMissingOrDifferentIncrementalNeurons = false;
-		
+	
+	
+	//if GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE_ALL_POS_VALUES_SIMULTANEOUSLY, first layer contains firstPOS neuron for each wordIndex only
+	vector<GIAtxtRelTranslatorRulesGroupNeuralNetwork*> firstLayer;
+	GIAtxtRelTranslatorNeuralNetworkPropagateCompact.defineFirstLayer(translatorVariables, forwardPropogationSentenceData, &firstLayer);
+
 	/*
 	algorithm2;
 	let l be the first word in the sentence word sequence
@@ -204,7 +209,7 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::findAndRecon
 		int currentFirstInputNeuronIndexInSequence;
 		if(forwardPropogationSentenceData->parseSentenceReverse)
 		{
-			currentFirstInputNeuronIndexInSequence = firstLayer->size()-1-indexInSequence;
+			currentFirstInputNeuronIndexInSequence = forwardPropogationSentenceData->sentenceContents->size()-1-indexInSequence;
 		}
 		else
 		{
@@ -215,7 +220,8 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::findAndRecon
 		cout << "\e[35m \n** loopIndex = " << loopIndex << ", indexInSequence = " << indexInSequence << ", word = " << (forwardPropogationSentenceData->sentenceContents)->at(currentFirstInputNeuronIndexInSequence)->tagName << " \e[0m" << endl;
 		#endif
 
-		GIAtxtRelTranslatorRulesGroupNeuralNetwork* currentLayerNeuronGroupStart = (*firstLayer)[currentFirstInputNeuronIndexInSequence];
+		//if GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE_ALL_POS_VALUES_SIMULTANEOUSLY, first layer contains firstPOS neuron for each wordIndex only
+		GIAtxtRelTranslatorRulesGroupNeuralNetwork* currentLayerNeuronGroupStart = (firstLayer)[currentFirstInputNeuronIndexInSequence];
 	
 		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_DEBUG
 		cout << "GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::stillIdentifyingHighLevelNeurons" << endl;
@@ -229,7 +235,7 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::findAndRecon
 		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_COMPONENT_DETECT_LOCAL_VARATION
 		if(findingCentralVariation)
 		{
-			if(GIAtxtRelTranslatorNeuralNetworkPropagateCompact.performPropagation(translatorVariables, GIAtxtRelTranslatorRulesGroupTypes, forwardPropogationSentenceData, firstLayer, false, indexInSequence, activatedNeuronWithMaxWordIndexCoverageFirstWordIndexAllowed, activatedNeuronWithMaxWordIndexCoverageLastWordIndexAllowed))
+			if(GIAtxtRelTranslatorNeuralNetworkPropagateCompact.performPropagation(translatorVariables, GIAtxtRelTranslatorRulesGroupTypes, forwardPropogationSentenceData, false, indexInSequence, activatedNeuronWithMaxWordIndexCoverageFirstWordIndexAllowed, activatedNeuronWithMaxWordIndexCoverageLastWordIndexAllowed))
 			{
 				toplevelGroupActivationFound = true;	//note this will only be set true if the entire sentence word indices have been covered (ie only when currentFirstInputNeuronIndexInSequence=start)
 			}
@@ -237,7 +243,7 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::findAndRecon
 		else
 		{
 		#endif
-			if(GIAtxtRelTranslatorNeuralNetworkPropagateCompact.performPropagation(translatorVariables, GIAtxtRelTranslatorRulesGroupTypes, forwardPropogationSentenceData, firstLayer, false, indexInSequence))
+			if(GIAtxtRelTranslatorNeuralNetworkPropagateCompact.performPropagation(translatorVariables, GIAtxtRelTranslatorRulesGroupTypes, forwardPropogationSentenceData, false, indexInSequence))
 			{
 				toplevelGroupActivationFound = true;	//note this will only be set true if the entire sentence word indices have been covered (ie only when currentFirstInputNeuronIndexInSequence=start)
 			}
@@ -291,7 +297,7 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::findAndRecon
 		else
 		{
 		#endif
-			if(!GIAtxtRelTranslatorNeuralNetworkPropagateCompact.verifyActivatedNeuronsAtLeastOne(forwardPropogationSentenceData, firstLayer, &(forwardPropogationSentenceData->fullyActivatedNeuronWithMaxWordIndexCoverage), &(forwardPropogationSentenceData->partiallyActivatedNeuronWithMaxWordIndexCoverage), newNeuronSequenceGroup1))
+			if(!GIAtxtRelTranslatorNeuralNetworkPropagateCompact.verifyActivatedNeuronsAtLeastOne(forwardPropogationSentenceData, &firstLayer, &(forwardPropogationSentenceData->fullyActivatedNeuronWithMaxWordIndexCoverage), &(forwardPropogationSentenceData->partiallyActivatedNeuronWithMaxWordIndexCoverage), newNeuronSequenceGroup1))
 			{
 				//case a			
 				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_DEBUG_SPLIT
@@ -320,7 +326,7 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::findAndRecon
 
 					if(forwardPropogationSentenceData->parseSentenceReverse)
 					{
-						indexInSequence = firstLayer->size()-1 - (forwardPropogationSentenceData->fullyActivatedNeuronWithMaxWordIndexCoverage->parseTreeMinWordIndex - 1);	//CHECKTHIS
+						indexInSequence = forwardPropogationSentenceData->sentenceContents->size()-1 - (forwardPropogationSentenceData->fullyActivatedNeuronWithMaxWordIndexCoverage->parseTreeMinWordIndex - 1);	//CHECKTHIS
 					}
 					else
 					{
@@ -339,7 +345,7 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::findAndRecon
 
 					if(forwardPropogationSentenceData->parseSentenceReverse)
 					{
-						indexInSequence = firstLayer->size()-1 - (forwardPropogationSentenceData->partiallyActivatedNeuronWithMaxWordIndexCoverage->parseTreeMinWordIndex - 1);	//CHECKTHIS
+						indexInSequence = forwardPropogationSentenceData->sentenceContents->size()-1 - (forwardPropogationSentenceData->partiallyActivatedNeuronWithMaxWordIndexCoverage->parseTreeMinWordIndex - 1);	//CHECKTHIS
 					}
 					else
 					{
@@ -405,7 +411,7 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::findAndRecon
 		}
 		#endif
 		
-		if(indexInSequence < firstLayer->size())
+		if(indexInSequence < forwardPropogationSentenceData->sentenceContents->size())
 		{
 			stillIdentifyingHighLevelNeurons = true;	
 			//see how many words successfully propagated through the next time
