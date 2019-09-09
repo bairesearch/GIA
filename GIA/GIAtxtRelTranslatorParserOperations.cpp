@@ -27,7 +27,7 @@
  * File Name: GIAtxtRelTranslatorParserOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j1d 03-August-2019
+ * Project Version: 3j1e 03-August-2019
  * Requirements: 
  * Description: Textual Relation Translator Parser Operations
  * /
@@ -166,7 +166,11 @@ bool GIAtxtRelTranslatorParserOperationsClass::generateSemanticRelationsFromTxtR
 			if(parseTreeComponent->candidateStringMatch != NULL)
 			{
 				//cout << "parseTreeComponent->candidateStringMatch->translatorSentenceEntityIndex = " << parseTreeComponent->candidateStringMatch->translatorSentenceEntityIndex << endl;
+				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OLD_BUG
 				if(entity->entityIndexTemp == GIAtranslatorOperations.convertSentenceContentsIndexToEntityIndex(parseTreeComponent->candidateStringMatch->translatorSentenceEntityIndex))
+				#else
+				if(entity->entityIndexTemp == parseTreeComponent->candidateStringMatch->translatorSentenceEntityIndex)	//OLD: 	if(entity->entityIndexTemp == GIAtranslatorOperations.convertSentenceContentsIndexToEntityIndex(parseTreeComponent->candidateStringMatch->translatorSentenceEntityIndex))
+				#endif
 				{
 					entity->semanticRelationWordPOStypeInferred = parseTreeComponent->candidateStringMatch->wordPOStypeInferred;
 					//cout << "entity->semanticRelationWordPOStypeInferred = " << entity->semanticRelationWordPOStypeInferred << endl;

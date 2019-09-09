@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j1d 03-August-2019
+ * Project Version: 3j1e 03-August-2019
  * Requirements: 
  * Description: GIA specific global definitions
  * /
@@ -751,6 +751,8 @@
 
 //#define GIA_DEBUG_DISABLE_3j_CODE
 #ifndef GIA_DEBUG_DISABLE_3j_CODE
+	//#define GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OLD_BUG
+	
 	//#define GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEMANTICALLY_DETERMINED_DYNAMIC_CONNECTIONS	//3j1a
 #endif
 
