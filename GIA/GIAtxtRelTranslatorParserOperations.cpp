@@ -27,7 +27,7 @@
  * File Name: GIAtxtRelTranslatorParserOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j1a 03-August-2019
+ * Project Version: 3j1b 03-August-2019
  * Requirements: 
  * Description: Textual Relation Translator Parser Operations
  * /
@@ -467,8 +467,8 @@ bool GIAtxtRelTranslatorParserOperationsClass::generateSemanticRelationsFromTxtR
 				bool sameReferenceSet = true;
 				#endif
 
-				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEMANTICALLY_DETERMINED_DYNAMIC_CONNECTIONS
 				bool semanticRelationReturnConnectionDynamic = false;
+				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEMANTICALLY_DETERMINED_DYNAMIC_CONNECTIONS
 				if(tempEntity->semanticRelationReturnConnectionDynamic)
 				{
 					semanticRelationReturnConnectionDynamic = true;
