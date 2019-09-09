@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetworkPropagateLightOptimised.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j2h 10-August-2019
+ * Project Version: 3j2i 10-August-2019
  * Requirements: 
  * Description: Textual Relation Translator Neural Network Light Optimised - ~O(n)
  * /
@@ -1220,7 +1220,7 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateLightOptimisedClass::propagateWord
 		cerr << "GIAtxtRelTranslatorNeuralNetworkPropagateLightOptimisedClass::propagateWordThroughNetworkGroupComponent: GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_ALLOW_MULTIPLE_ACTIVATIONS: !GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_ALLOW_MULTIPLE_ACTIVATIONS_TAKE_LAST_ACTIVATION_AS_PARSETREE is not coded (planned implementation: store multiple parseTrees for each component activation)" << endl; 
 		#endif
 		
-		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_BIO_DO_NOT_RELY_ON_PARSE_TREE_MEMORY
+		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_BIO_DO_NOT_RELY_ON_PARSE_TREE_MEMORY
 		if(currentParseTreeGroupTemp->components.size() > 0)
 		{
 			GIAtxtRelTranslatorRulesComponentParseTree* previousParseComponent = NULL;
@@ -1267,7 +1267,7 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateLightOptimisedClass::propagateWord
 	}
 	#endif
 	
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_BIO_DO_NOT_RELY_ON_PARSE_TREE_MEMORY
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_BIO_DO_NOT_RELY_ON_PARSE_TREE_MEMORY
 	//cout << "currentComponent->neuronComponentConnectionActiveWordRecord->translatorSentenceWordIndex = " << currentComponent->neuronComponentConnectionActiveWordRecord->translatorSentenceWordIndex << endl;
 	if(currentParseTreeGroupTemp->parseTreeMaxWordIndex == INT_DEFAULT_VALUE)
 	{
@@ -1710,7 +1710,7 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateLightOptimisedClass::resetAllowed(
 	return result;
 }
 
-//requires GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_REVERSE;
+//requires GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_REVERSE_DIRECTION;
 bool GIAtxtRelTranslatorNeuralNetworkPropagateLightOptimisedClass::existingActivatedComponentCapturesLastWordInSentence(GIAtxtRelTranslatorRulesGroupNeuralNetwork* ownerGroup, GIAtxtRelTranslatorRulesGroupParseTree* activationPathWordCurrentParseTreeGroup, GIAtxtRelTranslatorNeuralNetworkForwardPropogationWordData* forwardPropogationWordData, const bool existingActivationFound, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData, const bool firstActiveComponentInGroup)
 {
 	bool result = false;
@@ -1939,7 +1939,7 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateLightOptimisedClass::verifyNewActi
 				lastActiveComponentInParseTreeParseTreeGroupRef = lastActiveComponentInParseTree->parseTreeGroupRef;
 			}
 			
-		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_BIO_DO_NOT_RELY_ON_PARSE_TREE_MEMORY
+		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_BIO_DO_NOT_RELY_ON_PARSE_TREE_MEMORY
 			int prospectiveNewlyActiveComponentInParseTreeParseTreeWordIndexMin;
 			int prospectiveNewlyActiveComponentInParseTreeParseTreeWordIndexMax;
 			int lastActiveComponentInParseTreeParseTreeWordIndexMin;
@@ -1954,7 +1954,7 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateLightOptimisedClass::verifyNewActi
 				prospectiveNewlyActiveComponentInParseTreeParseTreeWordIndexMin = forwardPropogationWordData->wordReference->translatorSentenceWordIndex;
 				prospectiveNewlyActiveComponentInParseTreeParseTreeWordIndexMax = forwardPropogationWordData->wordReference->translatorSentenceWordIndex;
 			}
-			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_BIO_DO_NOT_RELY_ON_PARSE_TREE_MEMORY_WEAK
+			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_BIO_DO_NOT_RELY_ON_PARSE_TREE_MEMORY_WEAK
 			if(lastActiveComponentInParseTreeParseTreeGroupRef != NULL)
 			{
 				lastActiveComponentInParseTreeParseTreeWordIndexMin = lastActiveComponentInParseTreeParseTreeGroupRef->parseTreeMinWordIndex;
@@ -2207,7 +2207,7 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateLightOptimisedClass::existingActiv
 
 int GIAtxtRelTranslatorNeuralNetworkPropagateLightOptimisedClass::countNumberWordsInParseTree(GIAtxtRelTranslatorRulesGroupParseTree* currentParseTreeGroup, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData, int layer)
 {	
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_BIO_DO_NOT_RELY_ON_PARSE_TREE_MEMORY
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_BIO_DO_NOT_RELY_ON_PARSE_TREE_MEMORY
 	int performance = 0;
 	if(currentParseTreeGroup->components.size() > 0)
 	{

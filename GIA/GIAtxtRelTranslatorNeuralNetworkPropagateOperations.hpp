@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetworkPropagateOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j2h 10-August-2019
+ * Project Version: 3j2i 10-August-2019
  * Requirements: 
  * Description: Textual Relation Translator Neural Network Operations - generic functions
  * /
@@ -70,8 +70,8 @@ class GIAtxtRelTranslatorNeuralNetworkPropagateOperationsClass
 
 #ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
 
-	public: void setParseSentenceReverseStrict(const bool parseSentenceReverseNew, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData);	//set parseSentenceReverse irrespective of GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_REVERSE
-	public: void setParseSentenceReverse(const bool normalDirection, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData);	//determine and set parseSentenceReverse depending on GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_REVERSE	
+	public: void setParseSentenceReverseStrict(const bool parseSentenceReverseNew, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData);	//set parseSentenceReverse irrespective of GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_REVERSE_DIRECTION
+	public: void setParseSentenceReverse(const bool normalDirection, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData);	//determine and set parseSentenceReverse depending on GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_REVERSE_DIRECTION	
 
 	public: bool propagateWordThroughNetworkGroupVerifyComponentSequenceActivationReady(GIAtxtRelTranslatorRulesComponentNeuralNetwork* testComponent, vector<GIAtxtRelTranslatorRulesComponentNeuralNetwork*>* components, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSignalData* forwardPropogationSignalData, GIAtxtRelTranslatorNeuralNetworkForwardPropogationWordData* forwardPropogationWordData, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData, bool* activationSequenceCompleted, bool* firstActiveComponentInGroup, GIAtxtRelTranslatorRulesComponentNeuralNetwork** previousActiveComponent, GIAtxtRelTranslatorRulesComponentNeuralNetwork** lastActiveComponent);
 	public: bool propagateWordThroughNetworkGroupVerifyComponentSequenceOrActivationReady(GIAtxtRelTranslatorRulesComponentNeuralNetwork* testComponent, vector<GIAtxtRelTranslatorRulesComponentNeuralNetwork*>* components);

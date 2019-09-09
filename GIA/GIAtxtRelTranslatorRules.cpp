@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorRules.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j2h 10-August-2019
+ * Project Version: 3j2i 10-August-2019
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Rules
  * /
@@ -1322,7 +1322,7 @@ bool GIAtxtRelTranslatorRulesClass::removeLastOptionalComponents(vector<GIAtxtRe
 					
 			if(components->size() > 0)
 			{
-				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_REVERSE
+				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_REVERSE_DIRECTION
 				int lastComponentOptionalComponentIndex = 0;
 				#else
 				int lastComponentOptionalComponentIndex = components->size()-1;
@@ -1513,7 +1513,7 @@ bool GIAtxtRelTranslatorRulesClass::removeLastOptionalComponents(vector<GIAtxtRe
 							
 			if(components->size() > 0)
 			{
-				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_REVERSE
+				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_REVERSE_DIRECTION
 				GIAtxtRelTranslatorRulesComponentNeuralNetwork* lastComponent = (*components)[0];
 				#else
 				GIAtxtRelTranslatorRulesComponentNeuralNetwork* lastComponent = (*components)[components->size()-1];
@@ -1537,7 +1537,7 @@ bool GIAtxtRelTranslatorRulesClass::removeLastOptionalComponents(vector<GIAtxtRe
 					groupNew1->optionalComponentsWrapperGroup = group;
 					//remove last component from groupNew1;
 					vector<GIAtxtRelTranslatorRulesComponentNeuralNetwork*>* componentsNew1 = &(groupNew1->components);
-					#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_REVERSE
+					#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_REVERSE_DIRECTION
 					//componentsNew1.pop_front();
 					componentsNew1->erase(componentsNew1->begin());
 					#else
@@ -1552,7 +1552,7 @@ bool GIAtxtRelTranslatorRulesClass::removeLastOptionalComponents(vector<GIAtxtRe
 					groupNew2->optionalComponentsWrapperGroup = group;
 					//set last component to !optional;
 					vector<GIAtxtRelTranslatorRulesComponentNeuralNetwork*>* componentsNew2 = &(groupNew2->components);
-					#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_REVERSE
+					#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_REVERSE_DIRECTION
 					GIAtxtRelTranslatorRulesComponentNeuralNetwork* lastComponentNew2 = (*componentsNew2)[0];
 					#else
 					GIAtxtRelTranslatorRulesComponentNeuralNetwork* lastComponentNew2 = (*componentsNew2)[components->size()-1];

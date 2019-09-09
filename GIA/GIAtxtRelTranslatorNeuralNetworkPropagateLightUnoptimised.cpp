@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetworkPropagateLightUnoptimised.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j2h 10-August-2019
+ * Project Version: 3j2i 10-August-2019
  * Requirements: 
  * Description: Textual Relation Translator Neural Network Light Unoptimised - ~O(n^2)
  * /
@@ -812,7 +812,7 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateLightUnoptimisedClass::propagateWo
 				}
 				
 				/*
-				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_REVERSE
+				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_REVERSE_DIRECTION
 				cerr << "GIAtxtRelTranslatorNeuralNetworkPropagateLightUnoptimisedClass::propagateWordThroughNetworkGroupComponent error: !(forwardPropogationWordData->w == 0)" << endl;
 				#else
 				cerr << "GIAtxtRelTranslatorNeuralNetworkPropagateLightUnoptimisedClass::propagateWordThroughNetworkGroupComponent error: !(forwardPropogationWordData->w == forwardPropogationSentenceData->sentenceContents.size()-1)" << endl;

@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetworkPropagateOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j2h 10-August-2019
+ * Project Version: 3j2i 10-August-2019
  * Requirements: 
  * Description: Textual Relation Translator Neural Network Operations - generic functions
  * /
@@ -56,7 +56,7 @@ void GIAtxtRelTranslatorNeuralNetworkPropagateOperationsClass::setParseSentenceR
 	bool parseSentenceReverseNew = false;
 	if(normalDirection)
 	{
-		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_REVERSE
+		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_REVERSE_DIRECTION
 		parseSentenceReverseNew = true;
 		#else
 		parseSentenceReverseNew = false;
@@ -64,7 +64,7 @@ void GIAtxtRelTranslatorNeuralNetworkPropagateOperationsClass::setParseSentenceR
 	}
 	else
 	{
-		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_REVERSE
+		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_REVERSE_DIRECTION
 		parseSentenceReverseNew = false;
 		#else
 		parseSentenceReverseNew = true;
@@ -860,7 +860,7 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateOperationsClass::componentWordConn
 	else if(existingActivationFound)
 	{
 	
-		//assumes GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_REVERSE:
+		//assumes GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_REVERSE_DIRECTION:
 		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ENFORCE_WORD_CONNECTIVITY_POSHOC_STRICT_MUTUALLY_EXCLUSIVE_BIO
 		if(previousActiveComponentInParseTreeParseTreeGroupRef != NULL)
 		{
@@ -901,7 +901,7 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateOperationsClass::getMinMaxWordInde
 	}
 	#endif
 	
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_BIO_DO_NOT_RELY_ON_PARSE_TREE_MEMORY
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_BIO_DO_NOT_RELY_ON_PARSE_TREE_MEMORY
 	if(currentParseTreeGroup->components.size() > 0)
 	{
 		if(findMaxOrMinWordIndex)
@@ -1655,7 +1655,7 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateOperationsClass::resetComponentsAc
 	{
 		GIAtxtRelTranslatorRulesComponentNeuralNetwork* currentComponent = (*components)[i1];
 		
-		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_RESET_COMPONENT_NEURONCOMPONENTCONNECTIONACTIVEWORDRECORD
+		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_RESET_COMPONENT_NEURONCOMPONENTCONNECTIONACTIVEWORDRECORD
 		currentComponent->neuronComponentConnectionActiveWordRecord = NULL;
 		#endif
 		currentComponent->neuronComponentConnectionActive = false;

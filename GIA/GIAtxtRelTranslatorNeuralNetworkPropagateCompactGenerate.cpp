@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerate.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j2h 10-August-2019
+ * Project Version: 3j2i 10-August-2019
  * Requirements: 
  * Description: Textual Relation Translator Neural Network Propagate Compact - unsupervised training of sequence grammar parse network
  * /
@@ -826,7 +826,7 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::splitGroupsC
 		//perform another propagation from start of DIFFERENTorMISSING
 
 	/*
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_REVERSE
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_REVERSE_DIRECTION
 	int differentOrMissingComponent1Index = partiallyActivatedNeuronWithMaxWordIndexCoverage2lastWordIndex-1;	CHECKTHIS
 	int differentOrMissingComponent2Index = partiallyActivatedNeuronWithMaxWordIndexCoverage1lastWordIndex+1;
 	#else
@@ -1015,7 +1015,7 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::findAndConne
 	//perform another propagation from start of DIFFERENTorMISSING
 
 	GIAtxtRelTranslatorNeuralNetworkPropagateOperations.setParseSentenceReverse(direction, forwardPropogationSentenceData);	//ie set to parseReverse==true
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_REVERSE
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_REVERSE_DIRECTION
 	int activatedNeuronWithMaxWordIndexCoverageFirstWordIndexAllowed = partiallyActivatedNeuronWithMaxWordIndexCoverage2lastWordIndex-1;
 	int activatedNeuronWithMaxWordIndexCoverageLastWordIndexAllowed = partiallyActivatedNeuronWithMaxWordIndexCoverage1lastWordIndex+1;
 	#else
