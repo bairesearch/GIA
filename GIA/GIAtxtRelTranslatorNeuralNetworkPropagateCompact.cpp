@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetworkPropagateCompact.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j2c 10-August-2019
+ * Project Version: 3j2d 10-August-2019
  * Requirements: 
  * Description: Textual Relation Translator Neural Network Propagate Compact - ~O(n)
  * /
@@ -1063,10 +1063,10 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactClass::verifyActivatedNeuro
 					pass = false;					
 				}
 			}
+			#endif
 			
 			if(*partiallyActivatedNeuronWithMaxWordIndexCoverage != NULL)
 			{
-				//condition2: dont select a matched neuron partiallyActivatedNeuronWithMaxWordIndexCoverage and split it if the final activated component groupRef (ie of the matched sequence equals) in partiallyActivatedNeuronWithMaxWordIndexCoverage equals the next unactivated component groupRef in partiallyActivatedNeuronWithMaxWordIndexCoverage
 				int lastActivatedIndex = INT_DEFAULT_VALUE;
 				int firstUnactivatedIndex = INT_DEFAULT_VALUE;
 				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_SUPPORT_PARTIAL_SENTENCE_PROPAGATION
@@ -1075,6 +1075,9 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactClass::verifyActivatedNeuro
 				identifyComponentIndexLastActivatedIndex(forwardPropogationSentenceData, *partiallyActivatedNeuronWithMaxWordIndexCoverage, &lastActivatedIndex);
 				bool partialActivationConfirmed = identifyComponentIndexFirstUnactivatedIndex(forwardPropogationSentenceData, *partiallyActivatedNeuronWithMaxWordIndexCoverage, &firstUnactivatedIndex);
 				#endif
+				
+				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_NEVER_SPLIT_GROUP_BETWEEN_TWO_IDENTICAL_COMPONENTS
+				//condition2: dont select a matched neuron partiallyActivatedNeuronWithMaxWordIndexCoverage and split it if the final activated component groupRef (ie of the matched sequence equals) in partiallyActivatedNeuronWithMaxWordIndexCoverage equals the next unactivated component groupRef in partiallyActivatedNeuronWithMaxWordIndexCoverage
 				if(partialActivationConfirmed)	//partial activation test required in case where partiallyActivatedNeuronWithMaxWordIndexCoverage is recorded by GIAtxtRelTranslatorNeuralNetworkPropagateCompactClass::propagateWordThroughNetworkGroupComponentWrapper but is subsequently fully activated
 				{
 					//cout << "lastActivatedIndex = " << lastActivatedIndex << endl;
@@ -1097,8 +1100,8 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactClass::verifyActivatedNeuro
 						}
 					}
 				}
+				#endif
 			}
-			#endif
 		} 
 		if(*fullyActivatedNeuronWithMaxWordIndexCoverage != NULL)
 		{

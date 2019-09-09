@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetworkPropagateOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j2c 10-August-2019
+ * Project Version: 3j2d 10-August-2019
  * Requirements: 
  * Description: Textual Relation Translator Neural Network Operations - generic functions
  * /
@@ -329,12 +329,19 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateOperationsClass::propagateWordThro
 	
 	if(sequentialActivationFound)
 	{
-		if(numberOfInactiveComponentsRemaining == 0)
+		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_SUPPORT_PARTIAL_SENTENCE_PROPAGATION
+		if(!(*missingStartComponentsFound))
 		{
-			//cout << "*activationSequenceCompleted" << endl;
-			
-			*activationSequenceCompleted = true;
+		#endif
+			if(numberOfInactiveComponentsRemaining == 0)
+			{
+				//cout << "*activationSequenceCompleted" << endl;
+
+				*activationSequenceCompleted = true;
+			}
+		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_SUPPORT_PARTIAL_SENTENCE_PROPAGATION
 		}
+		#endif
 		//cout << "numberOfInactiveComponentsRemaining = " << numberOfInactiveComponentsRemaining << endl;
 	}
 
