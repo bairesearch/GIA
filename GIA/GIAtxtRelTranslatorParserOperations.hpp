@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorParserOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j1e 03-August-2019
+ * Project Version: 3j2a 10-August-2019
  * Requirements: 
  * Description: Textual Relation Translator Parser Operations
  * /
@@ -55,7 +55,7 @@
 #include "GIAsynRelTranslatorRedistributeRelations.hpp"
 #endif
 #ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PRINT_FINAL
-#include "GIAtxtRelTranslatorNeuralNetworkOperations.hpp"
+#include "GIAtxtRelTranslatorNeuralNetworkPropagateOperations.hpp"
 #endif
 #include "GIAtranslatorReferencing.hpp"
 #include "GIAsemRelTranslatorParser.hpp"
@@ -85,7 +85,7 @@ class GIAtxtRelTranslatorParserOperationsClass
 	private: GIAsynRelTranslatorRedistributeRelationsClass GIAsynRelTranslatorRedistributeRelations;
 	#endif
 	#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PRINT_FINAL
-	private: GIAtxtRelTranslatorNeuralNetworkOperationsClass GIAtxtRelTranslatorNeuralNetworkOperations;
+	private: GIAtxtRelTranslatorNeuralNetworkPropagateOperationsClass GIAtxtRelTranslatorNeuralNetworkPropagateOperations;
 	#endif
 	private: GIAtranslatorReferencingClass GIAtranslatorReferencing;
 	private: GIAsemRelTranslatorParserClass GIAsemRelTranslatorParser;

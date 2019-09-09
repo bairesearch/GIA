@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j1e 03-August-2019
+ * Project Version: 3j2a 10-August-2019
  * Requirements: requires plain text file
  * Description: Textual Relation Translator
  * /
@@ -84,17 +84,14 @@ bool GIAtxtRelTranslatorClass::parseTxtfileAndCreateSemanticNetworkBasedUponSema
 	}
 	#endif
 
-	//parse extractGIAtxtRelTranslatorRules
 	vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes = new vector<GIAtxtRelTranslatorRulesGroupType*>;
-	if(!GIAtxtRelTranslatorRules.extractGIAtxtRelTranslatorRulesGroups(GIAtxtRelTranslatorRulesGroupTypes))
-	{
-		result = false;
-	}
 	vector<XMLparserTag*>* GIAtxtRelTranslatorRulesTokenLayers = new vector<XMLparserTag*>;
-	if(!GIAtxtRelTranslatorRules.extractGIAtxtRelTranslatorRulesTokens(GIAtxtRelTranslatorRulesTokenLayers))
+	if(!GIAtxtRelTranslatorRules.extractGIAtxtRelTranslatorRules(GIAtxtRelTranslatorRulesGroupTypes, GIAtxtRelTranslatorRulesTokenLayers))
 	{
 		result = false;
 	}
+	
+	//cout << "GIAtxtRelTranslatorRulesGroupTypes->size() = " << GIAtxtRelTranslatorRulesGroupTypes->size() << endl;
 	
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
 	if(!GIAtxtRelTranslatorNeuralNetworkFormation.createGIAtxtRelTranslatorNeuralNetwork(GIAtxtRelTranslatorRulesTokenLayers, GIAtxtRelTranslatorRulesGroupTypes))
@@ -102,6 +99,7 @@ bool GIAtxtRelTranslatorClass::parseTxtfileAndCreateSemanticNetworkBasedUponSema
 		result = false;
 	}
 	#endif
+
 	
 	
 	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_DEFINE_WORD_TRANSLATOR_SENTENCE_ENTITY_INDEX_AT_START
@@ -113,6 +111,9 @@ bool GIAtxtRelTranslatorClass::parseTxtfileAndCreateSemanticNetworkBasedUponSema
 		{	
 			GIApreprocessorPlainTextWord* currentWord = sentenceContents->at(w);
 			currentWord->translatorSentenceEntityIndex = GIAtranslatorOperations.convertSentenceContentsIndexToEntityIndex(w);
+			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
+			currentWord->translatorSentenceWordIndex = w;
+			#endif
 		}
 		currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->next;
 	}
@@ -136,6 +137,11 @@ bool GIAtxtRelTranslatorClass::parseTxtfileAndCreateSemanticNetworkBasedUponSema
 	}
 	#endif
 	
+#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN_DELAY_ANN_CONNECTIVITY_TILL_END
+	GIAtxtRelTranslatorNeuralNetworkFormation.createANNconnectivity(GIAtxtRelTranslatorRulesGroupTypes);
+	#endif
+#else
 	/*
 	currentGIApreprocessorSentenceInList = translatorVariables->firstGIApreprocessorSentenceInList;
 	while(currentGIApreprocessorSentenceInList->next != NULL)
@@ -185,8 +191,9 @@ bool GIAtxtRelTranslatorClass::parseTxtfileAndCreateSemanticNetworkBasedUponSema
 	if(!GIAtranslator.parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyParsedSentences(translatorVariables, inputTextNLPrelationXMLfileName, inputTextNLPfeatureXMLfileName, outputCFFfileName))	//inputTextNLPrelationXMLfileName/inputTextNLPfeatureXMLfileName/NLPfeatureParser/NLPdependencyRelationsParser/NLPrelexCompatibilityMode/NLPassumePreCollapsedStanfordRelations not used (relations and features have already been parsed)
 	{
 		result = false;
-	}
-	
+	}	
+#endif
+
 	return result;
 }
 

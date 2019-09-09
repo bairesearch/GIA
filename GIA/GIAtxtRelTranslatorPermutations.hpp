@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorPermutations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j1e 03-August-2019
+ * Project Version: 3j2a 10-August-2019
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Permutations
  * /
@@ -47,23 +47,28 @@
 #endif
 #include "GIAtxtRelTranslatorRules.hpp"
 #ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
+#include "GIAtxtRelTranslatorNeuralNetworkFormation.hpp"
+#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR
+#include "GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerate.hpp"
+#else
 #ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_HEAVY
 #ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_HEAVY_UNOPTIMISED
-#include "GIAtxtRelTranslatorNeuralNetworkHeavyUnoptimised.hpp"
+#include "GIAtxtRelTranslatorNeuralNetworkPropagateHeavyUnoptimised.hpp"
 #else
-#include "GIAtxtRelTranslatorNeuralNetworkHeavyOptimised.hpp"
+#include "GIAtxtRelTranslatorNeuralNetworkPropagateHeavyOptimised.hpp"
 #endif
 #else
 #ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_UNOPTIMISED
-#include "GIAtxtRelTranslatorNeuralNetworkLightUnoptimised.hpp"
+#include "GIAtxtRelTranslatorNeuralNetworkPropagateLightUnoptimised.hpp"
 #else
-#include "GIAtxtRelTranslatorNeuralNetworkLightOptimised.hpp"
+#include "GIAtxtRelTranslatorNeuralNetworkPropagateLightOptimised.hpp"
+#endif
 #endif
 #endif
 #else
-#include "GIAtxtRelTranslatorNeuralNetworkInverse.hpp"
+#include "GIAtxtRelTranslatorNeuralNetworkPropagateInverse.hpp"
 #endif
-#include "GIAtxtRelTranslatorNeuralNetworkOperations.hpp"
+#include "GIAtxtRelTranslatorNeuralNetworkPropagateOperations.hpp"
 #include "GIApreprocessorPOStagger.hpp"
 #include "GIApreprocessorPOStaggerDatabase.hpp"
 #include "GIApreprocessorWordClass.hpp"
@@ -81,24 +86,28 @@ class GIAtxtRelTranslatorPermutationsClass
 	private: GIAtxtRelTranslatorHybridClass GIAtxtRelTranslatorHybrid;
 	#endif
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
+	private: GIAtxtRelTranslatorNeuralNetworkFormationClass GIAtxtRelTranslatorNeuralNetworkFormation;
+#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR
+	private: GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerate;
+#else
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_HEAVY
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_HEAVY_UNOPTIMISED
-	private: GIAtxtRelTranslatorNeuralNetworkHeavyUnoptimisedClass GIAtxtRelTranslatorNeuralNetwork;
+	private: GIAtxtRelTranslatorNeuralNetworkPropagateHeavyUnoptimisedClass GIAtxtRelTranslatorNeuralNetwork;
 	#else
-	private: GIAtxtRelTranslatorNeuralNetworkHeavyOptimisedClass GIAtxtRelTranslatorNeuralNetwork;
+	private: GIAtxtRelTranslatorNeuralNetworkPropagateHeavyOptimisedClass GIAtxtRelTranslatorNeuralNetwork;
 	#endif
 	#else
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_UNOPTIMISED
-	private: GIAtxtRelTranslatorNeuralNetworkLightUnoptimisedClass GIAtxtRelTranslatorNeuralNetwork;	
+	private: GIAtxtRelTranslatorNeuralNetworkPropagateLightUnoptimisedClass GIAtxtRelTranslatorNeuralNetwork;	
 	#else
-	private: GIAtxtRelTranslatorNeuralNetworkLightOptimisedClass GIAtxtRelTranslatorNeuralNetwork;	
+	private: GIAtxtRelTranslatorNeuralNetworkPropagateLightOptimisedClass GIAtxtRelTranslatorNeuralNetwork;	
 	#endif
 	#endif
-	private: GIAtxtRelTranslatorNeuralNetworkFormationClass GIAtxtRelTranslatorNeuralNetworkFormation;
+#endif
 	#else
-	private: GIAtxtRelTranslatorNeuralNetworkInverseClass GIAtxtRelTranslatorNeuralNetworkInverse;	
+	private: GIAtxtRelTranslatorNeuralNetworkPropagateInverseClass GIAtxtRelTranslatorNeuralNetworkPropagateInverse;	
 	#endif
-	private: GIAtxtRelTranslatorNeuralNetworkOperationsClass GIAtxtRelTranslatorNeuralNetworkOperations;	//required for printComponent/printParseTreeDebugIndentation	
+	private: GIAtxtRelTranslatorNeuralNetworkPropagateOperationsClass GIAtxtRelTranslatorNeuralNetworkPropagateOperations;	//required for printComponent/printParseTreeDebugIndentation	
 	private: GIAtxtRelTranslatorRulesClass GIAtxtRelTranslatorRules;
 	private: GIApreprocessorPOStaggerClass GIApreprocessorPOStagger;
 	private: GIApreprocessorPOStaggerDatabaseClass GIApreprocessorPOStaggerDatabase;
@@ -123,7 +132,7 @@ class GIAtxtRelTranslatorPermutationsClass
 			private: bool generateParseTreeIntroWrapper(GIAtranslatorVariablesClass* translatorVariables, vector<XMLparserTag*>* GIAtxtRelTranslatorRulesTokenLayers, vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, GIApreprocessorSentence* currentGIApreprocessorSentenceInList, GIAtxtRelTranslatorRulesGroupParseTree* firstParseTreeGroup, int* performance, const bool parseIsolatedSubreferenceSets, vector<uint64_t>* POSambiguityInfoPermutation);
 			#endif
 				#ifdef GIA_TXT_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START
-				private: bool setSentenceContentsWordsUnambiguousPOSindex(vector<GIApreprocessorPlainTextWord*>* sentenceContents, vector<uint64_t>* POSambiguityInfoPermutationTemp);
+				public: bool setSentenceContentsWordsUnambiguousPOSindex(vector<GIApreprocessorPlainTextWord*>* sentenceContents, vector<uint64_t>* POSambiguityInfoPermutationTemp);
 				#endif
 				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
 				private: bool updatePerformanceNeuralNetwork(const int performanceTemp, int* performance, GIApreprocessorSentence* currentGIApreprocessorSentenceInList, GIAtxtRelTranslatorRulesGroupParseTree* firstParseTreeGroupTemp, const bool passedTemp, const int permutationIndex, int* performanceMaxPermutationIndex);

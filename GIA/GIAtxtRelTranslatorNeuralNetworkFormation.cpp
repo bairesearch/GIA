@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetworkFormation.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j1e 03-August-2019
+ * Project Version: 3j2a 10-August-2019
  * Requirements: 
  * Description: Textual Relation Translator Neural Network Formation
  * /
@@ -115,8 +115,10 @@ bool GIAtxtRelTranslatorNeuralNetworkFormationClass::createGIAtxtRelTranslatorNe
 	bool result = true;
 	
 	createInputNeuronLayer(GIAtxtRelTranslatorRulesTokenLayers, GIAtxtRelTranslatorRulesGroupTypes);
-			
+	
+	#ifndef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SIMPLE_WORD_POS_TYPE_INPUT_ONLY		
 	createNeuronLayerIntro(GIAtxtRelTranslatorRulesTokenLayers, GIAtxtRelTranslatorRulesGroupTypes);
+	#endif
 	
 	#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_CREATE
 	cout << "exiting normally" << endl;
@@ -153,18 +155,22 @@ bool GIAtxtRelTranslatorNeuralNetworkFormationClass::createInputNeuronLayer(vect
 	{
 		result = false;
 	}
+	
+	#ifndef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SIMPLE_WORD_POS_TYPE_INPUT_ONLY
 	firstGroupInInputLayerSectionExplicitWord = new GIAtxtRelTranslatorRulesGroupNeuralNetwork();
 	currentGroupInInputLayerSection = firstGroupInInputLayerSectionExplicitWord;
 	if(!createInputNeuronLayerSectionExplicitWord(&currentGroupInInputLayerSection, &numberOfInputGroupsInSectionExplicitWord, GIAtxtRelTranslatorRulesGroupTypes))
 	{
 		result = false;
 	}
+	
 	firstGroupInInputLayerSectionTokensLayer = new GIAtxtRelTranslatorRulesGroupNeuralNetwork();
 	currentGroupInInputLayerSection = firstGroupInInputLayerSectionTokensLayer;
 	if(!createInputNeuronLayerSectionTokensLayer(GIAtxtRelTranslatorRulesTokenLayers, &currentGroupInInputLayerSection, &numberOfInputGroupsInSectionTokensLayer))
 	{
 		result = false;
 	}
+	#endif
 
 	return result;
 }
@@ -877,13 +883,30 @@ bool GIAtxtRelTranslatorNeuralNetworkFormationClass::createGroupANNconnection(GI
 	//cout << "GIAtxtRelTranslatorNeuralNetworkFormationClass::createGroupANNconnection" << endl;
 	
 	group->ANNfrontComponentConnectionList.push_back(higherLevelComponent);
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR
+	higherLevelComponent->ANNbackGroupConnectionList.push_back(group);
+	#endif
 	
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN
+	#ifndef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN_DELAY_ANN_CONNECTIVITY_TILL_END
 	createANNconnection(group, higherLevelComponent);
+	#endif
 	#endif
 }
 
 #ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN
+ANNneuronConnection* GIAtxtRelTranslatorNeuralNetworkFormationClass::createANNconnection(GIAtxtRelTranslatorRulesGroupNeuralNetwork* group, GIAtxtRelTranslatorRulesComponentNeuralNetwork* higherLevelComponent)
+{
+	vector<ANNneuronConnection*>* ANNbackNeuronConnectionList = &(higherLevelComponent->ANNbackNeuronConnectionList);
+	GIAtxtRelTranslatorRulesGroupNeuralNetwork* higherLevelGroup = higherLevelComponent->ownerGroup;
+
+	ANNneuronConnection* newANNneuronConnection = createANNconnection(group, higherLevelGroup);
+	
+	ANNbackNeuronConnectionList->push_back(newANNneuronConnection);
+	
+	return newANNneuronConnection;
+}
+
 ANNneuronConnection* GIAtxtRelTranslatorNeuralNetworkFormationClass::createANNconnection(GIAtxtRelTranslatorRulesGroupNeuralNetwork* group, GIAtxtRelTranslatorRulesGroupNeuralNetwork* higherLevelGroup)
 {
 	ANNneuron* neuron1 = group->neuronReference;
@@ -898,17 +921,35 @@ ANNneuronConnection* GIAtxtRelTranslatorNeuralNetworkFormationClass::createANNco
 	return newANNneuronConnection;
 }
 
-ANNneuronConnection* GIAtxtRelTranslatorNeuralNetworkFormationClass::createANNconnection(GIAtxtRelTranslatorRulesGroupNeuralNetwork* group, GIAtxtRelTranslatorRulesComponentNeuralNetwork* higherLevelComponent)
-{
-	vector<ANNneuronConnection*>* ANNbackNeuronConnectionList = &(higherLevelComponent->ANNbackNeuronConnectionList);
-	GIAtxtRelTranslatorRulesGroupNeuralNetwork* higherLevelGroup = higherLevelComponent->ownerGroup;
 
-	ANNneuronConnection* newANNneuronConnection = createANNconnection(group, higherLevelGroup);
-	
-	ANNbackNeuronConnectionList->push_back(newANNneuronConnection);
-	
-	return newANNneuronConnection;
+#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN_DELAY_ANN_CONNECTIVITY_TILL_END
+bool GIAtxtRelTranslatorNeuralNetworkFormationClass::createANNconnectivity(vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes)
+{	
+	for(int i=0; i<GIAtxtRelTranslatorRulesGroupTypes->size(); i++)
+	{
+		GIAtxtRelTranslatorRulesGroupType* groupType = GIAtxtRelTranslatorRulesGroupTypes->at(i);
+		for(int j=0; j<(groupType->groups).size(); j++)
+		{
+			GIAtxtRelTranslatorRulesGroupNeuralNetwork* group = (groupType->groups)[j];
+			for(int k=0; k<group->components.size(); k++)
+			{
+				GIAtxtRelTranslatorRulesComponentNeuralNetwork* component = (group->components).at(k);
+				for(int l=0; l<component->ANNbackGroupConnectionList.size(); l++)
+				{
+					GIAtxtRelTranslatorRulesGroupNeuralNetwork* groupSource = component->ANNbackGroupConnectionList[l];
+					createANNconnection(groupSource, component);
+				}
+				/*
+				GIAtxtRelTranslatorRulesGroupNeuralNetwork* groupSource = component->groupRef;
+				createANNconnection(groupSource, component);
+				*/
+			}
+		}
+	}
+
 }
+#endif
+
 #endif
 
 

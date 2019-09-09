@@ -23,18 +23,18 @@
 
 /*******************************************************************************
  *
- * File Name: GIAtxtRelTranslatorNeuralNetworkHeavyUnoptimised.hpp
+ * File Name: GIAtxtRelTranslatorNeuralNetworkPropagateHeavyUnoptimised.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j1e 03-August-2019
+ * Project Version: 3j2a 10-August-2019
  * Requirements: 
  * Description: Textual Relation Translator Neural Network Heavy Unoptimised - ~O(n^2)
  * /
  *******************************************************************************/
 
 
-#ifndef HEADER_GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_HEAVY_UNOPTIMISED
-#define HEADER_GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_HEAVY_UNOPTIMISED
+#ifndef HEADER_GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE_HEAVY_UNOPTIMISED
+#define HEADER_GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE_HEAVY_UNOPTIMISED
 
 #include "GIAglobalDefs.hpp"
 #include "SHAREDvars.hpp"
@@ -42,7 +42,7 @@
 #include "GIAtxtRelTranslatorRules.hpp"
 #include "GIAtxtRelTranslatorRulesGroupClass.hpp"
 #include "GIAtxtRelTranslatorRulesComponentClass.hpp"
-#include "GIAtxtRelTranslatorNeuralNetworkOperations.hpp"
+#include "GIAtxtRelTranslatorNeuralNetworkPropagateOperations.hpp"
 #include "GIAtxtRelTranslatorNeuralNetworkFormation.hpp"
 #ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE
 #include "GIAtxtRelTranslatorParserOperations.hpp"
@@ -57,7 +57,7 @@
 #ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_HEAVY
 #ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_HEAVY_UNOPTIMISED
 
-class GIAtxtRelTranslatorNeuralNetworkHeavyUnoptimisedClass
+class GIAtxtRelTranslatorNeuralNetworkPropagateHeavyUnoptimisedClass
 {
 	private: SHAREDvarsClass SHAREDvars;
 	private: XMLparserClassClass XMLparserClass;
@@ -67,7 +67,7 @@ class GIAtxtRelTranslatorNeuralNetworkHeavyUnoptimisedClass
 	private: GIAtxtRelTranslatorRulesClass GIAtxtRelTranslatorRules;
 	private: GIAtxtRelTranslatorRulesGroupClass GIAtxtRelTranslatorRulesGroupClassObject;
 	private: GIAtxtRelTranslatorRulesComponentClass GIAtxtRelTranslatorRulesComponentClassObject;
-	private: GIAtxtRelTranslatorNeuralNetworkOperationsClass GIAtxtRelTranslatorNeuralNetworkOperations;
+	private: GIAtxtRelTranslatorNeuralNetworkPropagateOperationsClass GIAtxtRelTranslatorNeuralNetworkPropagateOperations;
 	private: GIAtxtRelTranslatorNeuralNetworkFormationClass GIAtxtRelTranslatorNeuralNetworkFormation;
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE
 	private: GIAtxtRelTranslatorParserOperationsClass GIAtxtRelTranslatorParserOperations;

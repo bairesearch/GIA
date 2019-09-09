@@ -23,18 +23,18 @@
 
 /*******************************************************************************
  *
- * File Name: GIAtxtRelTranslatorNeuralNetworkInverse.hpp
+ * File Name: GIAtxtRelTranslatorNeuralNetworkPropagateInverse.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j1e 03-August-2019
+ * Project Version: 3j2a 10-August-2019
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Neural Network Inverse
  * /
  *******************************************************************************/
 
 
-#ifndef HEADER_GIA_TXT_REL_TRANSLATOR_INVERSE_NEURAL_NETWORK
-#define HEADER_GIA_TXT_REL_TRANSLATOR_INVERSE_NEURAL_NETWORK
+#ifndef HEADER_GIA_TXT_REL_TRANSLATOR_INVERSE_PROPAGATE_NEURAL_NETWORK
+#define HEADER_GIA_TXT_REL_TRANSLATOR_INVERSE_PROPAGATE_NEURAL_NETWORK
 
 #include "GIAglobalDefs.hpp"
 
@@ -45,19 +45,19 @@
 #include "GIAtxtRelTranslatorRules.hpp"
 #include "GIAtxtRelTranslatorRulesGroupClass.hpp"
 #include "GIAtxtRelTranslatorRulesComponentClass.hpp"
-#include "GIAtxtRelTranslatorNeuralNetworkOperations.hpp"
+#include "GIAtxtRelTranslatorNeuralNetworkPropagateOperations.hpp"
 #include "GIApreprocessorPOStagger.hpp"
 #include "GIApreprocessorWordClass.hpp"
 #include "GIApreprocessorSentenceClass.hpp"
 #include "SHAREDvars.hpp"
 
-class GIAtxtRelTranslatorNeuralNetworkInverseClass
+class GIAtxtRelTranslatorNeuralNetworkPropagateInverseClass
 {
 	private: GIAtranslatorOperationsClass GIAtranslatorOperations;
 	private: GIAtxtRelTranslatorRulesGroupClass GIAtxtRelTranslatorRulesGroupClassObject;
 	private: GIAtxtRelTranslatorRulesComponentClass GIAtxtRelTranslatorRulesComponentClassObject;
 	private: GIAtxtRelTranslatorRulesClass GIAtxtRelTranslatorRules;
-	private: GIAtxtRelTranslatorNeuralNetworkOperationsClass GIAtxtRelTranslatorNeuralNetworkOperations;	//required for printComponent/printParseTreeDebugIndentation
+	private: GIAtxtRelTranslatorNeuralNetworkPropagateOperationsClass GIAtxtRelTranslatorNeuralNetworkPropagateOperations;	//required for printComponent/printParseTreeDebugIndentation
 	private: GIApreprocessorPOStaggerClass GIApreprocessorPOStagger;
 	private: GIApreprocessorWordClassClass GIApreprocessorWordClassObject;
 	private: GIApreprocessorSentenceClass GIApreprocessorSentenceClassObject;

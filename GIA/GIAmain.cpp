@@ -26,7 +26,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j1e 03-August-2019
+ * Project Version: 3j2a 10-August-2019
  * Requirements: 
  * Description: Main
  * /
@@ -667,7 +667,7 @@ int main(const int argc, const char** argv)
 
 	if(SHAREDvarsClass().argumentExists(argc, argv, "-version"))
 	{
-		cout << "GIA.exe - Project Version: 3j1e 03-August-2019" << endl;
+		cout << "GIA.exe - Project Version: 3j2a 10-August-2019" << endl;
 		exit(EXIT_OK);
 	}
 
@@ -835,6 +835,14 @@ static char errmessage[] = "Usage:  GIAposTaggerGenerateDatabase.exe [options]\n
 "\n\t-lrpfolder [string]           : folder of LRP data files (list of multiword verbs, multiword prepositions etc) (def: same as exe)"
 "\n\t-wikiDumpFolder               : wiki dump folder (def: /home/systemusername/soft/wiki/output)"
 "\n\t-wikiDumpFileBatchIndex       : batch index"
+#ifdef GIA_NEURAL_NETWORK
+"\n\t-oannxml [string]    : neural network definition .xml output filename (def: neuralNet.xml)"
+"\n\t-oannldr [string]    : neural network display .ldr output filename (def: neuralNet.ldr)"
+"\n\t-oannsvg [string]    : neural network display .svg output filename (def: neuralNet.svg)"
+"\n\t-oannppm [string]    : neural network display .ppm opengl output filename (def: neuralNet.ppm)"
+"\n\t-oannppm2 [string]   : neural network display .ppm raytraced output filename (def: neuralNetRaytraced.ppm)"
+"\n\t-oannall [string]    : neural network display .xml/.svg/.ldr/.ppm default generic output filename (def: neuralNet)"
+#endif
 "\n\n\tThis program generates the POS tagger database for a wiki dump batch.\n\n";
 
 int main(const int argc, const char** argv)
@@ -875,6 +883,47 @@ int main(const int argc, const char** argv)
 	{
 		wikiDumpFileBatchIndex = int(SHAREDvarsClass().getFloatArgument(argc, argv, "-wikiDumpFileBatchIndex"));
 	}
+	
+	#ifdef GIA_NEURAL_NETWORK
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-oannxml"))
+	{
+		ANNoutputXMLFileName = SHAREDvarsClass().getStringArgument(argc, argv, "-oannxml");
+		ANNuseOutputXMLFile = true;
+	}
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-oannldr"))
+	{
+		ANNoutputLDRFileName = SHAREDvarsClass().getStringArgument(argc, argv, "-oannldr");
+		ANNuseOutputLDRFile = true;
+	}
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-oannsvg"))
+	{
+		ANNoutputSVGFileName = SHAREDvarsClass().getStringArgument(argc, argv, "-oannsvg");
+		ANNuseOutputSVGFile = true;
+	}
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-oannppm"))
+	{
+		ANNoutputPPMFileName = SHAREDvarsClass().getStringArgument(argc, argv, "-oannppm");
+		ANNuseOutputPPMFile = true;
+		ANNuseOutputLDRFile = true;	//required for OpenGL image generation
+	}
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-oannppm2"))
+	{
+		ANNoutputPPMFileNameRaytraced = SHAREDvarsClass().getStringArgument(argc, argv, "-oannppm2");
+		ANNuseOutputPPMFileRaytraced = true;
+		ANNuseOutputLDRFile = true;	//required for raytrace image generation
+	}
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-oannall"))
+	{
+		ANNoutputAllFileName = SHAREDvarsClass().getStringArgument(argc, argv, "-oannall");
+		ANNuseOutputAllFile = true;
+	}
+	#ifndef ANN_DISPLAY_DISABLE_SPRITES
+	if(SHAREDvarsClass().argumentExists(argc, argv, "-annsprites"))
+	{
+		ANNuseSprites = true;
+	}
+	#endif
+	#endif
 		
 	POStaggerDatabaseFolderName = POStaggerDatabaseFolderName + CHAR_FOLDER_DELIMITER;
 	lrpDataFolderName = lrpDataFolderName + CHAR_FOLDER_DELIMITER;	
@@ -891,17 +940,51 @@ int main(const int argc, const char** argv)
 	cout << "wikiDumpFolderName = " << wikiDumpFolderName << endl;
 	cout << "wikiDumpFileBatchIndex = " << wikiDumpFileBatchIndex << endl;
 
+	GIAtranslatorVariablesClass* translatorVariables = new GIAtranslatorVariablesClass();
+
 	GIApreprocessorPOStaggerDatabaseClass().initialisePOStaggerDatabase(POStaggerDatabaseFolderName);
 	
 	if(!GIApreprocessorWordClass().initialiseLRP(lrpDataFolderName, useLRP))
 	{
 		result = false;
 	}
+
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR		
+	vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes;
+	vector<XMLparserTag*>* GIAtxtRelTranslatorRulesTokenLayers;
+	if(!GIAtxtRelTranslatorRules.extractGIAtxtRelTranslatorRules(GIAtxtRelTranslatorRulesGroupTypes, GIAtxtRelTranslatorRulesTokenLayers))
+	{
+		result = false;
+	}
+	#endif	
 	
 	if(!GIApreprocessorPOStaggerClass().generatePOStaggerDatabaseFromWikiDumpText(wikiDumpFolderName, wikiDumpFileBatchIndex, useLRP))
 	{
 		result = false;
 	}	
+	
+	#ifdef GIA_NEURAL_NETWORK
+	
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN
+	GIAneuralNetworkOperations.generateNeuralNetFromGIAtxtRelTranslatorNet(translatorVariables);	//generate GIA NLP neural network
+	#endif
+	#ifdef GIA_NEURAL_NETWORK_PASSIVE
+	GIAneuralNetworkOperations.generateNeuralNetFromSemanticNet(translatorVariables);	//generate GIA KB neural network
+	#endif
+	
+	if(ANNdrawOutput)
+	{
+		string ANNoutputTALFileName = string(NEURAL_NETWORK_VISUALISATION_BASE_FILE_NAME) + NEURAL_NETWORK_VISUALISATION_TAL_FILE_EXTENSION;
+		ANNdisplay.outputNeuralNetworkToVectorGraphicsAndRaytrace(translatorVariables->firstInputNeuronInNetwork, ANNuseSprites, ANNuseOutputPPMFileRaytraced, ANNdisplayInOpenGL, ANNuseOutputLDRFile, ANNuseOutputSVGFile, ANNuseOutputPPMFile, ANNoutputLDRFileName, ANNoutputSVGFileName, ANNoutputPPMFileName, ANNoutputPPMFileNameRaytraced, ANNoutputTALFileName, rasterImageWidth, rasterImageHeight);
+	}
+	if(ANNuseOutputXMLFile)
+	{
+		if(!GIAneuralNetworkOperations.writeNeuralNetXMLfile(ANNoutputXMLFileName, translatorVariables->firstInputNeuronInNetwork))
+		{
+			result = false;
+		}
+	}		
+	#endif
 }
 #endif
 

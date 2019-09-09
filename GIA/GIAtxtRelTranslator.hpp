@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslator.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j1e 03-August-2019
+ * Project Version: 3j2a 10-August-2019
  * Requirements: requires plain text file
  * Description: Textual Relation Translator
  * /
@@ -48,8 +48,11 @@
 #include "GIAtxtRelTranslatorRules.hpp"
 #ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
 #include "GIAtxtRelTranslatorNeuralNetworkFormation.hpp"
+#include "GIAtxtRelTranslatorNeuralNetworkPropagateOperations.hpp"
 #endif
-#include "GIAtxtRelTranslatorNeuralNetworkOperations.hpp"
+#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR
+#include "GIAtxtRelTranslatorNeuralNetworkPropagateCompact.hpp"
+#endif
 //#ifndef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_SIMULTANEOUS
 #include "GIAtxtRelTranslatorPermutations.hpp"
 //#endif
@@ -72,7 +75,7 @@ class GIAtxtRelTranslatorClass
 	#endif
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
 	private: GIAtxtRelTranslatorNeuralNetworkFormationClass GIAtxtRelTranslatorNeuralNetworkFormation;
-	private: GIAtxtRelTranslatorNeuralNetworkOperationsClass GIAtxtRelTranslatorNeuralNetworkOperations;	//required for printComponent/printParseTreeDebugIndentation	
+	private: GIAtxtRelTranslatorNeuralNetworkPropagateOperationsClass GIAtxtRelTranslatorNeuralNetworkPropagateOperations;	//required for printComponent/printParseTreeDebugIndentation	
 	#endif
 	//#ifndef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_SIMULTANEOUS
 	private: GIAtxtRelTranslatorPermutationsClass GIAtxtRelTranslatorPermutations;

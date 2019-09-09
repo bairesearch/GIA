@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorPOStagger.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j1e 03-August-2019
+ * Project Version: 3j2a 10-August-2019
  * Requirements: requires plain text file
  * Description: Preprocessor POS tagger
  * /
@@ -45,7 +45,12 @@
 #endif
 #include "GIAtranslatorGrammar.hpp"
 #include "GIApreprocessorPOStaggerDatabase.hpp"
-		
+#ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_NEURAL_NETWORK_SEQUENCE_GRAMMAR
+#include "GIAtxtRelTranslatorNeuralNetworkSequenceGrammar.hpp"
+#endif
+#ifdef USE_ANN
+#include "ANNexperienceClass.hpp"
+#endif	
 		
 
 
@@ -62,7 +67,10 @@ class GIApreprocessorPOStaggerClass
 	private: GIAtranslatorOperationsClass GIAtranslatorOperations;
 	private: GIAtranslatorGrammarClass GIAtranslatorGrammar;
 	private: GIApreprocessorPOStaggerDatabaseClass GIApreprocessorPOStaggerDatabase;
-	
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_NEURAL_NETWORK_SEQUENCE_GRAMMAR
+	private: GIAtxtRelTranslatorNeuralNetworkSequenceGrammarClass GIAtxtRelTranslatorNeuralNetworkSequenceGrammar;
+	#endif
+		
 	#ifdef GIA_PREPROCESSOR_POS_TAGGER
 	
 	#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_EXECUTE_PRELIM_POS_TAGGER
@@ -116,6 +124,9 @@ class GIApreprocessorPOStaggerClass
 	public: bool printPOSambiguityInfoPermutationAssumeUnambiguous(vector<uint64_t>* POSambiguityInfoPermutation);
 	#endif
 
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK
+	public: bool generateANNexperienceFromPOSambiguityInfoPermutationStandalone(vector<uint64_t>* POSambiguityInfoPermutation, const unsigned char outputNeuronExperienceValue, ANNexperience* currentExperience);
+	#endif
 };
 
 #endif

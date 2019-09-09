@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j1e 03-August-2019
+ * Project Version: 3j2a 10-August-2019
  * Requirements: 
  * Description: Textual Relation Translator Parser
  * /
@@ -941,7 +941,7 @@ bool GIAtxtRelTranslatorParserClass::findIdealSemanticRelationshipSourceInSenten
 	bool foundSimilarSubnet = false;
 	
 	int subsetSimilarityBaseline = 0;
-	calculateSimilarityOfSubnets(relationshipEntity, relationshipSourceEntity, relationshipTargetEntity, &subsetSimilarityBaseline);
+	calculateSimilarityOfSubnets(translatorVariables, relationshipEntity, relationshipSourceEntity, relationshipTargetEntity, &subsetSimilarityBaseline);
 	maxSimilarityOfSubnet = subsetSimilarityBaseline;
 	
 	for(int w=0; w<GIAtranslatorOperations.getEntityArrayMaxIndex(translatorVariables); w++)
@@ -1011,7 +1011,7 @@ bool GIAtxtRelTranslatorParserClass::findIdealSemanticRelationshipSourceInSenten
 						if(relationshipSource2->semanticRelationConnectionDynamic)
 						{
 							int subsetSimilarity = 0;
-							calculateSimilarityOfSubnets(relationshipEntity2, relationshipSourceEntity2, relationshipTargetEntity, &subsetSimilarity);
+							calculateSimilarityOfSubnets(translatorVariables, relationshipEntity2, relationshipSourceEntity2, relationshipTargetEntity, &subsetSimilarity);
 							if(subsetSimilarity > maxSimilarityOfSubnet)
 							{
 								foundSimilarSubnet = true;
@@ -1028,9 +1028,12 @@ bool GIAtxtRelTranslatorParserClass::findIdealSemanticRelationshipSourceInSenten
 	return foundSimilarSubnet;
 }
 
-bool GIAtxtRelTranslatorParserClass::calculateSimilarityOfSubnets(GIAentityNode* relationshipEntity, GIAentityNode* relationshipSourceEntity, GIAentityNode* relationshipTargetEntity, int* subsetSimilarity)
+bool GIAtxtRelTranslatorParserClass::calculateSimilarityOfSubnets(GIAtranslatorVariablesClass* translatorVariables, GIAentityNode* relationshipEntity, GIAentityNode* relationshipSourceEntity, GIAentityNode* relationshipTargetEntity, int* subsetSimilarity)
 {
 	//TODO: fill this
+	//find existence of exact relationship in [extra-sentence] existing database (relationshipSourceEntity - relationshipEntity - relationshipTargetEntity), or 
+	//find existence of exact relationship in [extra-sentence] existing database (relationshipSourceEntity - [arbitrary] - relationshipTargetEntity), or 
+	
 }
 
 #endif

@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorRules.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j1e 03-August-2019
+ * Project Version: 3j2a 10-August-2019
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Rules
  * /
@@ -40,6 +40,10 @@
 
 #ifdef GIA_TXT_REL_TRANSLATOR_RULES
 
+#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR
+static int newNeuronIndex;
+#endif
+
 vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypesGlobal;
 vector<XMLparserTag*>* GIAtxtRelTranslatorRulesTokenLayersGlobal;
 
@@ -51,6 +55,56 @@ vector<XMLparserTag*>* GIAtxtRelTranslatorRulesClass::getGIAtxtRelTranslatorRule
 {
 	return GIAtxtRelTranslatorRulesTokenLayersGlobal;
 }
+
+bool GIAtxtRelTranslatorRulesClass::extractGIAtxtRelTranslatorRules(vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, vector<XMLparserTag*>* GIAtxtRelTranslatorRulesTokenLayers)
+{
+	bool result = true;
+	
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR		
+	//FUTURE GIA - upgrade GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR to read/write GIAtxtRelTranslatorRulesGenerated.xml
+	GIAtxtRelTranslatorRulesGroupType* groupType = new GIAtxtRelTranslatorRulesGroupType();
+	groupType->groupTypeName = GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_GROUP_TYPE_NAME;
+	groupType->referenceSetType = GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_GROUP_TYPE_REFERENCE_SET_TYPE;
+	GIAtxtRelTranslatorRulesGroupTypes->push_back(groupType);
+	initialiseNewGroupIndex(GIAtxtRelTranslatorRulesGroupTypes);
+	GIAtxtRelTranslatorRulesGroupTypesGlobal = GIAtxtRelTranslatorRulesGroupTypes;
+	#else
+	//parse extractGIAtxtRelTranslatorRules
+	if(!extractGIAtxtRelTranslatorRulesGroups(GIAtxtRelTranslatorRulesGroupTypes))
+	{
+		result = false;
+	}
+	if(!extractGIAtxtRelTranslatorRulesTokens(GIAtxtRelTranslatorRulesTokenLayers))
+	{
+		result = false;
+	}
+	#endif
+	
+	return result;
+}
+
+#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR
+void GIAtxtRelTranslatorRulesClass::initialiseNewGroupIndex(vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes)
+{
+	GIAtxtRelTranslatorRulesGroupType* groupType = getSequenceGrammarGroupTypeDefault(GIAtxtRelTranslatorRulesGroupTypes);
+	newNeuronIndex = groupType->groups.size();	//0
+}
+int* GIAtxtRelTranslatorRulesClass::getNewGroupIndex()
+{
+	return &newNeuronIndex;
+}
+GIAtxtRelTranslatorRulesGroupType* GIAtxtRelTranslatorRulesClass::getSequenceGrammarGroupTypeDefault(vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes)
+{
+	GIAtxtRelTranslatorRulesGroupType* groupType = NULL;
+	if(!findGroupType(GIAtxtRelTranslatorRulesGroupTypes, GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_GROUP_TYPE_NAME, &groupType))
+	{
+		cerr << "GIAtxtRelTranslatorRulesClass::getSequenceGrammarGroupTypeDefault error: !findGroupType" << endl;
+		exit(EXIT_ERROR);
+	}
+	return groupType;
+}
+#endif
+
 
 bool GIAtxtRelTranslatorRulesClass::extractGIAtxtRelTranslatorRulesGroups(vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes)
 {
@@ -143,7 +197,7 @@ bool GIAtxtRelTranslatorRulesClass::extractGIAtxtRelTranslatorRulesGroups(vector
 						while(currentTagInTxtRelTranslatorGroupTypeTag->nextTag != NULL)
 						{
 							if(currentTagInTxtRelTranslatorGroupTypeTag->name == GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_GROUPTYPE_TAG_group)
-							{								
+							{																
 								vector<string> semanticRelationFunctionName(GIA_TXT_REL_TRANSLATOR_MAX_NUMBER_OF_SEMANTIC_FUNCTIONS_EXECUTED_PER_GROUP);
 								#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_NEW_CONDITIONS
 								string semanticRelationFunctionConditionNewName = "";
@@ -1606,6 +1660,8 @@ bool GIAtxtRelTranslatorRulesClass::copyComponents(vector<GIAtxtRelTranslatorRul
 	for(int i=0; i<components->size(); i++)
 	{
 		GIAtxtRelTranslatorRulesComponentNeuralNetwork* currentComponent = (*components)[i];
+		copyComponent(currentComponent, componentsNew);
+		/*
 		GIAtxtRelTranslatorRulesComponentNeuralNetwork* newComponent = new GIAtxtRelTranslatorRulesComponentNeuralNetwork(*currentComponent);
 		componentsNew->push_back(newComponent);
 		if(GIAtxtRelTranslatorRulesComponentClassObject.componentHasSubcomponents(currentComponent))
@@ -1613,6 +1669,22 @@ bool GIAtxtRelTranslatorRulesClass::copyComponents(vector<GIAtxtRelTranslatorRul
 			newComponent->subComponents.clear();
 			copyComponents(&(currentComponent->subComponents), &(newComponent->subComponents)); 
 		}
+		*/
+	}
+	
+	return result;
+}
+
+bool GIAtxtRelTranslatorRulesClass::copyComponent(GIAtxtRelTranslatorRulesComponentNeuralNetwork* currentComponent, vector<GIAtxtRelTranslatorRulesComponentNeuralNetwork*>* componentsNew)
+{	
+	bool result = true;
+	
+	GIAtxtRelTranslatorRulesComponentNeuralNetwork* newComponent = new GIAtxtRelTranslatorRulesComponentNeuralNetwork(*currentComponent);
+	componentsNew->push_back(newComponent);
+	if(GIAtxtRelTranslatorRulesComponentClassObject.componentHasSubcomponents(currentComponent))
+	{
+		newComponent->subComponents.clear();
+		copyComponents(&(currentComponent->subComponents), &(newComponent->subComponents)); 
 	}
 	
 	return result;
@@ -1640,6 +1712,7 @@ bool GIAtxtRelTranslatorRulesClass::copyComponents(vector<GIAtxtRelTranslatorRul
 	return result;
 }
 
+
 GIAtxtRelTranslatorRulesGroupActivationMemory* GIAtxtRelTranslatorRulesClass::copyGroup(GIAtxtRelTranslatorRulesGroupActivationMemory* group)
 {		
 	GIAtxtRelTranslatorRulesGroupActivationMemory* newGroup = new GIAtxtRelTranslatorRulesGroupActivationMemory(*group);
@@ -1652,7 +1725,6 @@ GIAtxtRelTranslatorRulesGroupActivationMemory* GIAtxtRelTranslatorRulesClass::co
 
 
 
-#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_REMOVE_LAST_OPTIONAL_COMPONENTS
 bool GIAtxtRelTranslatorRulesClass::updateComponentsOwnerGroupAndIndexes(GIAtxtRelTranslatorRulesGroupNeuralNetwork* group, vector<GIAtxtRelTranslatorRulesComponentNeuralNetwork*>* components, const bool isSubcomponent, GIAtxtRelTranslatorRulesComponentNeuralNetwork* ownerComponent)
 {
 	bool result = true;
@@ -1674,7 +1746,6 @@ bool GIAtxtRelTranslatorRulesClass::updateComponentsOwnerGroupAndIndexes(GIAtxtR
 	
 	return result;
 }		
-#endif			
 
 #endif
 

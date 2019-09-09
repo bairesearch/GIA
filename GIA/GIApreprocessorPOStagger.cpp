@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorPOStagger.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j1e 03-August-2019
+ * Project Version: 3j2a 10-August-2019
  * Requirements: requires plain text file
  * Description: Preprocessor POS tagger
  * /
@@ -69,13 +69,15 @@ bool GIApreprocessorPOStaggerClass::executePrelimFeatureProcessingOnSentences(co
 	
 	GIApreprocessorSentence* currentGIApreprocessorSentenceInList = translatorVariables->firstGIApreprocessorSentenceInList;
 	while(currentGIApreprocessorSentenceInList->next != NULL)
-	{			
-		for(int wCentre=0; wCentre<GIApreprocessorSentenceClassObject.getSentenceContents(currentGIApreprocessorSentenceInList)->size(); wCentre++)
+	{
+		vector<GIApreprocessorPlainTextWord*>* sentenceContents = GIApreprocessorSentenceClassObject.getSentenceContents(currentGIApreprocessorSentenceInList);
+			
+		for(int wCentre=0; wCentre<sentenceContents->size(); wCentre++)
 		{
 			GIAfeature* currentFeatureInList = new GIAfeature();	//prelim feature
 
 			//centre word calculations
-			GIApreprocessorPlainTextWord* centreWord = (*GIApreprocessorSentenceClassObject.getSentenceContents(currentGIApreprocessorSentenceInList))[wCentre];
+			GIApreprocessorPlainTextWord* centreWord = (*sentenceContents)[wCentre];
 			#ifdef GIA_PREPROCESSOR_POS_TAGGER_POS_DEBUG
 			cout << "centreWord = " << centreWord->tagName << endl;
 			#endif
@@ -101,7 +103,7 @@ bool GIApreprocessorPOStaggerClass::executePrelimFeatureProcessingOnSentences(co
 				*/
 				
 				vector<uint64_t> POSambiguityInfoPermutation;
-				if(!generatePOSambiguityInfoPermutation(GIApreprocessorSentenceClassObject.getSentenceContents(currentGIApreprocessorSentenceInList), wCentre, &identifiedEveryWordInDatabasePOSpermutation, &identifiedEveryWordInDatabasePOSpermutationIsUnambiguous, &POSambiguityInfoPermutation))
+				if(!generatePOSambiguityInfoPermutation(sentenceContents, wCentre, &identifiedEveryWordInDatabasePOSpermutation, &identifiedEveryWordInDatabasePOSpermutationIsUnambiguous, &POSambiguityInfoPermutation))
 				{
 					result = false;
 				}
@@ -241,7 +243,7 @@ bool GIApreprocessorPOStaggerClass::executePrelimFeatureProcessingOnSentences(co
 			}
 
 
-			(*GIApreprocessorSentenceClassObject.getSentenceContents(currentGIApreprocessorSentenceInList))[wCentre]->featureReferencePrelim = currentFeatureInList;
+			(*sentenceContents)[wCentre]->featureReferencePrelim = currentFeatureInList;
 		}
 		
 		currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->next;
@@ -255,9 +257,11 @@ bool GIApreprocessorPOStaggerClass::executePrelimFeatureProcessingOnSentences(co
 	currentGIApreprocessorSentenceInList = translatorVariables->firstGIApreprocessorSentenceInList;
 	while(currentGIApreprocessorSentenceInList->next != NULL)
 	{	
-		for(int wCentre=0; wCentre<GIApreprocessorSentenceClassObject.getSentenceContents(currentGIApreprocessorSentenceInList)->size(); wCentre++)
+		vector<GIApreprocessorPlainTextWord*>* sentenceContents = GIApreprocessorSentenceClassObject.getSentenceContents(currentGIApreprocessorSentenceInList);
+	
+		for(int wCentre=0; wCentre<sentenceContents->size(); wCentre++)
 		{
-			GIApreprocessorPlainTextWord* centreWord = (*GIApreprocessorSentenceClassObject.getSentenceContents(currentGIApreprocessorSentenceInList))[wCentre];
+			GIApreprocessorPlainTextWord* centreWord = (*sentenceContents)[wCentre];
 			
 			#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY
 			for(int i=0; i<centreWord->POStaggerExperiencePermutations.size(); i++)
@@ -295,11 +299,13 @@ bool GIApreprocessorPOStaggerClass::executePrelimFeatureProcessingOnSentences(co
 	//apply predictions	
 	currentGIApreprocessorSentenceInList = translatorVariables->firstGIApreprocessorSentenceInList;
 	while(currentGIApreprocessorSentenceInList->next != NULL)
-	{			
-		for(int wCentre=0; wCentre<GIApreprocessorSentenceClassObject.getSentenceContents(currentGIApreprocessorSentenceInList)->size(); wCentre++)
+	{		
+		vector<GIApreprocessorPlainTextWord*>* sentenceContents = GIApreprocessorSentenceClassObject.getSentenceContents(currentGIApreprocessorSentenceInList);
+	
+		for(int wCentre=0; wCentre<sentenceContents->size(); wCentre++)
 		{
-			GIApreprocessorPlainTextWord* centreWord = (*GIApreprocessorSentenceClassObject.getSentenceContents(currentGIApreprocessorSentenceInList))[wCentre];
-			GIAfeature* currentFeatureInList = (*GIApreprocessorSentenceClassObject.getSentenceContents(currentGIApreprocessorSentenceInList))[wCentre]->featureReferencePrelim;
+			GIApreprocessorPlainTextWord* centreWord = (*sentenceContents)[wCentre];
+			GIAfeature* currentFeatureInList = (*sentenceContents)[wCentre]->featureReferencePrelim;
 			#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY
 			if(centreWord->POStaggerExperiencePermutations.size() > 0)
 			{
@@ -491,9 +497,11 @@ bool GIApreprocessorPOStaggerClass::createWordIndexListFromWikiDumpText(bool use
 		GIApreprocessorSentence* currentGIApreprocessorSentenceInList = firstGIApreprocessorSentenceInWikiDumpText;
 		while(currentGIApreprocessorSentenceInList->next != NULL)
 		{	
-			for(int w=0; w<GIApreprocessorSentenceClassObject.getSentenceContents(currentGIApreprocessorSentenceInList)->size(); w++)
+			vector<GIApreprocessorPlainTextWord*>* sentenceContents = GIApreprocessorSentenceClassObject.getSentenceContents(currentGIApreprocessorSentenceInList);
+
+			for(int w=0; w<sentenceContents->size(); w++)
 			{		
-				GIApreprocessorPlainTextWord* currentWord = (*GIApreprocessorSentenceClassObject.getSentenceContents(currentGIApreprocessorSentenceInList))[w];
+				GIApreprocessorPlainTextWord* currentWord = (*sentenceContents)[w];
 				string wordLowerCase = SHAREDvars.convertStringToLowerCase(&(currentWord->tagName));	//CHECKTHIS: verify that currentWord->tagName is case sensitive
 				wikiDumpWordIndexListGlobal->insert(pair<string, GIApreprocessorMultiwordReductionWord*>(wordLowerCase, currentWord));
 			}
@@ -591,10 +599,16 @@ bool GIApreprocessorPOStaggerClass::generatePOStaggerDatabaseFromWikiDumpText(co
 	GIApreprocessorSentence* currentGIApreprocessorSentenceInList = firstGIApreprocessorSentenceInWikiDumpText;
 	while(currentGIApreprocessorSentenceInList->next != NULL)
 	{	
-		for(int wCentre=0; wCentre<GIApreprocessorSentenceClassObject.getSentenceContents(currentGIApreprocessorSentenceInList)->size(); wCentre++)
+		vector<GIApreprocessorPlainTextWord*>* sentenceContents = GIApreprocessorSentenceClassObject.getSentenceContents(currentGIApreprocessorSentenceInList);
+		
+		#ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE_RAW
+		int wCentre=-1;	//irrelevant (NOTUSED)
+		#else
+		for(int wCentre=0; wCentre<sentenceContents->size(); wCentre++)
 		{
+		#endif
 			//centre word calculations
-			GIApreprocessorPlainTextWord* centreWord = (*GIApreprocessorSentenceClassObject.getSentenceContents(currentGIApreprocessorSentenceInList))[wCentre];
+			GIApreprocessorPlainTextWord* centreWord = (*sentenceContents)[wCentre];
 			#ifdef GIA_PREPROCESSOR_POS_TAGGER_POS_DEBUG
 			cout << "centreWord = " << centreWord->tagName << endl;
 			#endif
@@ -604,6 +618,7 @@ bool GIApreprocessorPOStaggerClass::generatePOStaggerDatabaseFromWikiDumpText(co
 			bool identifiedEveryWordInDatabasePOSpermutation = true;
 			bool identifiedEveryWordInDatabasePOSpermutationIsUnambiguous = true;
 
+			#ifndef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE_RAW
 			string centreWordLowerCase = SHAREDvars.convertStringToLowerCase(&(centreWord->tagName));	//CHECKTHIS: verify that currentWord->tagName is case sensitive
 			GIApreprocessorMultiwordReductionWord* centreWordFound = NULL;
 			//bool identifiedCentreWordInDatabasePOSpermutation = true;
@@ -613,13 +628,15 @@ bool GIApreprocessorPOStaggerClass::generatePOStaggerDatabaseFromWikiDumpText(co
 				//identifiedCentreWordInDatabasePOSpermutation = false;
 				identifiedEveryWordInDatabasePOSpermutation = false;
 			}
+			#endif
 
 			vector<uint64_t> POSambiguityInfoPermutation;
-			if(!generatePOSambiguityInfoPermutation(GIApreprocessorSentenceClassObject.getSentenceContents(currentGIApreprocessorSentenceInList), wCentre, &identifiedEveryWordInDatabasePOSpermutation, &identifiedEveryWordInDatabasePOSpermutationIsUnambiguous, &POSambiguityInfoPermutation))
+			if(!generatePOSambiguityInfoPermutation(sentenceContents, wCentre, &identifiedEveryWordInDatabasePOSpermutation, &identifiedEveryWordInDatabasePOSpermutationIsUnambiguous, &POSambiguityInfoPermutation))
 			{
 				result = false;
 			}
 
+			#ifndef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE_RAW
 			#ifdef GIA_PREPROCESSOR_POS_TAGGER_ONLY_ADD_DATABASE_ENTRY_IF_POS_AMBIGUITY_INFO_FOUND_FOR_EVERY_CONTEXT_WORD
 			if(identifiedEveryWordInDatabasePOSpermutation)
 			{
@@ -634,6 +651,7 @@ bool GIApreprocessorPOStaggerClass::generatePOStaggerDatabaseFromWikiDumpText(co
 					if(!centreWordAmbiguous)
 					{
 					#endif
+			#endif
 						#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY
 						vector<vector<uint64_t>*> POSambiguityInfoUnambiguousPermutationArray;
 						vector<uint64_t>* POSambiguityInfoUnambiguousPermutationNew = new vector<uint64_t>(POSambiguityInfoPermutation.size());
@@ -642,9 +660,27 @@ bool GIApreprocessorPOStaggerClass::generatePOStaggerDatabaseFromWikiDumpText(co
 						for(int i=0; i<POSambiguityInfoUnambiguousPermutationArray.size(); i++)
 						{
 							vector<uint64_t>* POSambiguityInfoPermutationTemp = POSambiguityInfoUnambiguousPermutationArray[i];
+							#ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_NEURAL_NETWORK_SEQUENCE_GRAMMAR
+							GIAtxtRelTranslatorPermutations.setSentenceContentsWordsUnambiguousPOSindex(sentenceContents, POSambiguityInfoPermutationTemp);
+							#endif
+	
 						#else
 							vector<uint64_t>* POSambiguityInfoPermutationTemp = &POSambiguityInfoPermutation;
+							#ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_NEURAL_NETWORK_SEQUENCE_GRAMMAR
+							(sentenceContents->at(w))->POSambiguityInfo = (*POSambiguityInfoPermutation)[w];
+							#endif
 						#endif
+						
+							#ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_NEURAL_NETWORK_SEQUENCE_GRAMMAR
+							vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes = getGIAtxtRelTranslatorRulesGroupTypesGlobal();
+							bool createNewConnections = true; 
+							int maxNumLayers = GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_MAX_NUMBER_LAYERS;
+							vector<GIAtxtRelTranslatorRulesGroupNeuralNetwork*> firstLayer;
+							if(GIAtxtRelTranslatorNeuralNetworkSequenceGrammar.executeTxtRelTranslatorNeuralNetworkSequenceGrammarAppendOrVerify(translatorVariables, GIAtxtRelTranslatorRulesGroupTypes, sentenceContents, createNewConnections, &firstLayer))
+							{
+								result = true;
+							}
+							#else
 							#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL
 							#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_MEMORY_FREE_WRITE_EXPERIENCES_DIRECTLY_TO_FILE
 							if(!addPOStaggerDatabaseEntry(centreWordPOSambiguityInfo, POSambiguityInfoPermutationTemp, centreWordUnambiguousPOSindex, &XtrainBatchFileObject, &YtrainBatchFileObject))
@@ -657,9 +693,11 @@ bool GIApreprocessorPOStaggerClass::generatePOStaggerDatabaseFromWikiDumpText(co
 							{
 								result = false;
 							}
+							#endif
 						#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY
 						}
 						#endif
+			#ifndef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE_RAW			
 					#ifndef GIA_PREPROCESSOR_POS_TAGGER_INCLUDE_CENTRE_WORD_IN_POS_PERMUTATION_EVEN_IF_AMBIGUOUS
 					}
 					#endif  
@@ -673,7 +711,10 @@ bool GIApreprocessorPOStaggerClass::generatePOStaggerDatabaseFromWikiDumpText(co
 			#ifdef GIA_PREPROCESSOR_POS_TAGGER_ONLY_ADD_DATABASE_ENTRY_IF_POS_AMBIGUITY_INFO_FOUND_FOR_EVERY_CONTEXT_WORD
 			}
 			#endif
+			#endif
+		#ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE_RAW
 		}
+		#endif
 
 		#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_MEMORY_FREE_DELETE_PREPROCESSOR_SENTENCES_ONCE_PROCESSED
 		GIApreprocessorSentence* previousGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList;
@@ -1004,49 +1045,7 @@ bool GIApreprocessorPOStaggerClass::createPreprocessSentencesBasic(const string 
 #ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK
 bool GIApreprocessorPOStaggerClass::generateANNexperienceFromPOSambiguityInfoPermutation(vector<uint64_t>* POSambiguityInfoPermutation, const unsigned char centreWordUnambiguousPOSindex, ANNexperience* currentExperience)
 {
-	bool result = true;
-	
-	vector<bool> inputNeuronExperienceValues(GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_NUMBER_OF_INPUT_NEURONS, false);
-	for(int i=0; i<GIA_PREPROCESSOR_POS_TAGGER_MAX_CONTEXT_WORDS_IN_DATABASE_POS_PERMUTATION; i++)
-	{
-		int POSambiguityInfoNeuralNetworkInputNeuron = INT_DEFAULT_VALUE;
-		vector<bool> inputNeuronExperienceValuesContextWord(GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_NUMBER_OF_INPUT_NEURONS_PER_CONTEXT_WORD, false);	
-
-		int numberOfPOStypesToCheck = GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_NUMBER_OF_INPUT_NEURONS_PER_CONTEXT_WORD;
-		for(int POStype = 0; POStype<numberOfPOStypesToCheck; POStype++)
-		{
-			bool bitValue = SHAREDvars.getBitValue((*POSambiguityInfoPermutation)[i], POStype);
-			inputNeuronExperienceValuesContextWord[POStype] = bitValue;
-		}
-
-		for(int j=0; j<GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_NUMBER_OF_INPUT_NEURONS_PER_CONTEXT_WORD; j++)
-		{
-			inputNeuronExperienceValues[i*GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_NUMBER_OF_INPUT_NEURONS_PER_CONTEXT_WORD+j] = inputNeuronExperienceValuesContextWord[j];	
-		}
-	}
-	
-	/*
-	for(int i=0; i<POSambiguityInfoPermutation.size(); i++)
-	{
-		cout << int((*POSambiguityInfoPermutation)[i]);
-	}
-	cout << endl;
-	cout << "inputNeuronExperienceValues = " << convertBoolVectorToString(&inputNeuronExperienceValues) << endl;
-	*/
-	
-	int outputNeuronExperienceValueCentreWord = centreWordUnambiguousPOSindex;
-	//only feed neural network with experience if centre word POS is not ambiguous
-	//now create an experience and train the network with the experience
-	currentExperience->classTargetValue = outputNeuronExperienceValueCentreWord;	//CHECKTHIS
-	ANNexperienceInput* currentExperienceInput = currentExperience->firstExperienceInput;
-	for(int i=0; i<GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_NUMBER_OF_INPUT_NEURONS; i++)
-	{
-		currentExperienceInput->inputValue = inputNeuronExperienceValues[i];
-		currentExperienceInput->next = new ANNexperienceInput();
-		currentExperienceInput = currentExperienceInput->next;
-	}
-	
-	return result;
+	return generateANNexperienceFromPOSambiguityInfoPermutationStandalone(POSambiguityInfoPermutation, centreWordUnambiguousPOSindex, currentExperience);
 }
 
 #endif
@@ -1065,11 +1064,18 @@ bool GIApreprocessorPOStaggerClass::generatePOSambiguityInfoPermutation(vector<G
 	
 	GIApreprocessorPlainTextWord* centreWord = (*sentenceContents)[wCentre];
 
-	//context word calculations	
+	//context word calculations
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE_RAW	
+	int wMin = 0;
+	int wMax = GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE_RAW_SENTENCE_MAX_NUM_WORDS;
+	int wSize = wMax - wMin;	//GIA_PREPROCESSOR_POS_TAGGER_MAX_CONTEXT_WORDS_IN_DATABASE_POS_PERMUTATION
+	POSambiguityInfoPermutation->resize(GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE_RAW_SENTENCE_MAX_NUM_WORDS, GIA_PREPROCESSOR_POS_TAGGER_POS_AMBIGUITY_INFO_UNKNOWN);	//GIA_PREPROCESSOR_POS_TAGGER_MAX_WORDS_IN_DATABASE_POS_PERMUTATION = max size of wSize
+	#else
 	int wMin = wCentre - (GIA_PREPROCESSOR_POS_TAGGER_MAX_CONTEXT_WORDS_IN_DATABASE_POS_PERMUTATION/2);
 	int wMax = wCentre + (GIA_PREPROCESSOR_POS_TAGGER_MAX_CONTEXT_WORDS_IN_DATABASE_POS_PERMUTATION/2);
 	int wSize = wMax - wMin;	//GIA_PREPROCESSOR_POS_TAGGER_MAX_CONTEXT_WORDS_IN_DATABASE_POS_PERMUTATION
 	POSambiguityInfoPermutation->resize(GIA_PREPROCESSOR_POS_TAGGER_MAX_WORDS_IN_DATABASE_POS_PERMUTATION, GIA_PREPROCESSOR_POS_TAGGER_POS_AMBIGUITY_INFO_UNKNOWN);	//GIA_PREPROCESSOR_POS_TAGGER_MAX_WORDS_IN_DATABASE_POS_PERMUTATION = max size of wSize
+	#endif
 	int POSambiguityInfoPermutationIndex = 0;	
 
 	for(int w=wMin; w<=wMax; w++)
@@ -1483,4 +1489,53 @@ bool GIApreprocessorPOStaggerClass::printPOSambiguityInfoPermutationAssumeUnambi
 
 #endif
 
+
+#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK
+bool GIApreprocessorPOStaggerClass::generateANNexperienceFromPOSambiguityInfoPermutationStandalone(vector<uint64_t>* POSambiguityInfoPermutation, const unsigned char outputNeuronExperienceValue, ANNexperience* currentExperience)
+{
+	bool result = true;
+	
+	vector<bool> inputNeuronExperienceValues(GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_NUMBER_OF_INPUT_NEURONS, false);
+	for(int i=0; i<GIA_PREPROCESSOR_POS_TAGGER_MAX_CONTEXT_WORDS_IN_DATABASE_POS_PERMUTATION; i++)
+	{
+		int POSambiguityInfoNeuralNetworkInputNeuron = INT_DEFAULT_VALUE;
+		vector<bool> inputNeuronExperienceValuesContextWord(GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_NUMBER_OF_INPUT_NEURONS_PER_CONTEXT_WORD, false);	
+
+		int numberOfPOStypesToCheck = GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_NUMBER_OF_INPUT_NEURONS_PER_CONTEXT_WORD;
+		for(int POStype = 0; POStype<numberOfPOStypesToCheck; POStype++)
+		{
+			bool bitValue = SHAREDvars.getBitValue((*POSambiguityInfoPermutation)[i], POStype);
+			inputNeuronExperienceValuesContextWord[POStype] = bitValue;
+		}
+
+		for(int j=0; j<GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_NUMBER_OF_INPUT_NEURONS_PER_CONTEXT_WORD; j++)
+		{
+			inputNeuronExperienceValues[i*GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_NUMBER_OF_INPUT_NEURONS_PER_CONTEXT_WORD+j] = inputNeuronExperienceValuesContextWord[j];	
+		}
+	}
+	
+	/*
+	for(int i=0; i<POSambiguityInfoPermutation.size(); i++)
+	{
+		cout << int((*POSambiguityInfoPermutation)[i]);
+	}
+	cout << endl;
+	cout << "inputNeuronExperienceValues = " << convertBoolVectorToString(&inputNeuronExperienceValues) << endl;
+	*/
+	
+	int outputNeuronExperienceValueCentreWord = centreWordUnambiguousPOSindex;
+	//only feed neural network with experience if centre word POS is not ambiguous
+	//now create an experience and train the network with the experience
+	currentExperience->classTargetValue = outputNeuronExperienceValueCentreWord;	//CHECKTHIS
+	ANNexperienceInput* currentExperienceInput = currentExperience->firstExperienceInput;
+	for(int i=0; i<GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_NUMBER_OF_INPUT_NEURONS; i++)
+	{
+		currentExperienceInput->inputValue = inputNeuronExperienceValues[i];
+		currentExperienceInput->next = new ANNexperienceInput();
+		currentExperienceInput = currentExperienceInput->next;
+	}
+	
+	return result;
+}
+#endif
 

@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorWordClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j1e 03-August-2019
+ * Project Version: 3j2a 10-August-2019
  * Requirements: requires plain text file
  * Description: Preprocessor Word Class
  * /
@@ -605,6 +605,9 @@ public:
 	int wordPOStypeInferred;
 	bool alreadyFoundMatch;
 	int translatorSentenceEntityIndex;
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
+	int translatorSentenceWordIndex;	//for code efficiency only: = translatorSentenceEntityIndex - 1
+	#endif
 	GIAentityNode* translatorEntity;
 	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_WORD_NOUN_VERB_VARIANT
 	int wordVerbVariantGrammaticalTenseForm;

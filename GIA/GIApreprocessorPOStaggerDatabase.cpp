@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorPOStagger.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j1e 03-August-2019
+ * Project Version: 3j2a 10-August-2019
  * Requirements: requires plain text file
  * Description: Preprocessor POS tagger database
  * /
@@ -345,15 +345,7 @@ bool GIApreprocessorPOStaggerDatabaseClass::externalANNgenerateBatchDataExperien
 
 string GIApreprocessorPOStaggerDatabaseClass::externalANNgenerateBatchDataExperienceInput(ANNexperience* currentExperienceInList)
 {	
-	string experienceInputString = "";
-	ANNexperienceInput* currentExperienceInput = currentExperienceInList->firstExperienceInput;
-	while(currentExperienceInput->next != NULL)
-	{
-		string format = "%g";	//"%0.0f";
-		experienceInputString = experienceInputString + SHAREDvars.convertDoubleToString(currentExperienceInput->inputValue, format) + GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_BATCH_FILE_DELIMITER;
-		currentExperienceInput = currentExperienceInput->next;
-	}
-	return experienceInputString;
+	return externalANNgenerateExperienceInputStandalone(currentExperienceInList);
 }
 
 string GIApreprocessorPOStaggerDatabaseClass::externalANNgenerateBatchDataExperienceOutput(ANNexperience* currentExperienceInList)
@@ -793,5 +785,21 @@ bool GIApreprocessorPOStaggerDatabaseClass::determinePOSambiguityInfoIsAmbiguous
 	//cout << "POSambiguityInfoIndex = " << int(*unambiguousPOSinfoIndex) << endl;
 				
 	return ambiguous;
-}	
+}
+
+#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK
+string GIApreprocessorPOStaggerDatabaseClass::externalANNgenerateExperienceInputStandalone(ANNexperience* currentExperienceInList)
+{	
+	string experienceInputString = "";
+	ANNexperienceInput* currentExperienceInput = currentExperienceInList->firstExperienceInput;
+	while(currentExperienceInput->next != NULL)
+	{
+		string format = "%g";	//"%0.0f";
+		experienceInputString = experienceInputString + SHAREDvars.convertDoubleToString(currentExperienceInput->inputValue, format) + GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_BATCH_FILE_DELIMITER;
+		currentExperienceInput = currentExperienceInput->next;
+	}
+	return experienceInputString;
+}
+#endif
+	
 
