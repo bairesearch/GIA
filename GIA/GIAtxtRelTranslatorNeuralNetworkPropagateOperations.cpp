@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetworkPropagateOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j2e 10-August-2019
+ * Project Version: 3j2f 10-August-2019
  * Requirements: 
  * Description: Textual Relation Translator Neural Network Operations - generic functions
  * /
@@ -718,6 +718,15 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateOperationsClass::componentWordConn
 	GIAtxtRelTranslatorRulesGroupParseTree* previousActiveComponentInParseTreeParseTreeGroupRef = NULL;	
 	GIAtxtRelTranslatorRulesComponentParseTree* lastActiveComponentInParseTree = NULL;
 	GIAtxtRelTranslatorRulesGroupParseTree* ownerGroupParseTreeGroup = ownerGroup->currentParseTreeGroupTemp;
+	
+	/*
+	cout << "GIAtxtRelTranslatorNeuralNetworkPropagateOperationsClass::componentWordConnectivityTestsWrapper ownerGroup->groupIndex = " << ownerGroup->groupIndex << endl;
+	if(ownerGroup->currentParseTreeGroupTemp == NULL)
+	{
+		cout << "GIAtxtRelTranslatorNeuralNetworkPropagateOperationsClass::componentWordConnectivityTestsWrapper ownerGroup->currentParseTreeGroupTemp == NULL" << endl;
+	}
+	cout << "GIAtxtRelTranslatorNeuralNetworkPropagateOperationsClass::componentWordConnectivityTestsWrapper ownerGroup->components.size() = " << ownerGroup->components.size() << endl;
+	*/
 	
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR
 	if(existingActivationFound)
@@ -2507,7 +2516,6 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateOperationsClass::traceBackpropNeur
 		{
 			GIAtxtRelTranslatorRulesGroupNeuralNetwork* groupSource = component->ANNbackGroupConnectionList[l];
 			traceBackpropNeuralNetwork(groupSource, level+1);
-
 		}	
 	}
 		

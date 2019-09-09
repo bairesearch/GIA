@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorPOStagger.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j2e 10-August-2019
+ * Project Version: 3j2f 10-August-2019
  * Requirements: requires plain text file
  * Description: Preprocessor POS tagger
  * /
@@ -657,6 +657,24 @@ bool GIApreprocessorPOStaggerClass::generatePOStaggerDatabaseFromWikiDumpText(co
 					{
 					#endif
 			#endif
+						#ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_NEURAL_NETWORK_SEQUENCE_GRAMMAR_ONLY_TRAIN_UNAMBIGUOUS_PERMUTATIONS
+						/*
+						bool allWordsHaveUnambigiousPOS = true;
+						for(int i=0; i<POSambiguityInfoPermutation.size(); i++)
+						{
+							bool treatWordAsAmbiguousIfNullPOSvalue = true;
+							int unambiguousPOSinfoIndexNOTUSED;
+							if(GIApreprocessorPOStaggerDatabase.determinePOSambiguityInfoIsAmbiguous(POSambiguityInfoPermutation[i], &,unambiguousPOSinfoIndexNOTUSED, treatWordAsAmbiguousIfNullPOSvalue);
+							{
+								allWordsHaveUnambigiousPOS = false;
+							}
+						}
+						if(allWordsHaveUnambigiousPOS)
+						*/
+						if(identifiedEveryWordInDatabasePOSpermutationIsUnambiguous)
+						{
+							setSentenceContentsWordsUnambiguousPOSindex(sentenceContents, &POSambiguityInfoPermutation);
+						#else
 						#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY
 						vector<vector<uint64_t>*> POSambiguityInfoUnambiguousPermutationArray;
 						vector<uint64_t>* POSambiguityInfoUnambiguousPermutationNew = new vector<uint64_t>(POSambiguityInfoPermutation.size());
@@ -674,6 +692,7 @@ bool GIApreprocessorPOStaggerClass::generatePOStaggerDatabaseFromWikiDumpText(co
 							#ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_NEURAL_NETWORK_SEQUENCE_GRAMMAR
 							(sentenceContents->at(w))->POSambiguityInfo = (*POSambiguityInfoPermutation)[w];
 							#endif
+						#endif
 						#endif
 						
 							#ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_NEURAL_NETWORK_SEQUENCE_GRAMMAR
@@ -698,8 +717,11 @@ bool GIApreprocessorPOStaggerClass::generatePOStaggerDatabaseFromWikiDumpText(co
 								result = false;
 							}
 							#endif
+						#ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_NEURAL_NETWORK_SEQUENCE_GRAMMAR_ONLY_TRAIN_UNAMBIGUOUS_PERMUTATIONS
+						}
 						#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY
 						}
+						#endif
 						#endif
 			#ifndef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE_RAW			
 					#ifndef GIA_PREPROCESSOR_POS_TAGGER_INCLUDE_CENTRE_WORD_IN_POS_PERMUTATION_EVEN_IF_AMBIGUOUS

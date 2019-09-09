@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetworkPropagateCompact.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j2e 10-August-2019
+ * Project Version: 3j2f 10-August-2019
  * Requirements: 
  * Description: Textual Relation Translator Neural Network Propagate Compact - ~O(n)
  * /
@@ -278,6 +278,11 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactClass::performPropagation(G
 		
 		GIAtxtRelTranslatorRulesGroupNeuralNetwork* firstLayerNeuronGroup = (*firstLayer)[firstLayerNeuronIndex]; 
 
+		/*
+		cout << "firstLayerNeuronGroup->groupIndex = " << firstLayerNeuronGroup->groupIndex << endl;
+		cout << "firstLayerNeuronGroup->components.size() = " << firstLayerNeuronGroup->components.size() << endl;
+		*/
+	
 		GIAtxtRelTranslatorNeuralNetworkForwardPropogationWordData* forwardPropogationWordData = forwardPropogationSentenceData->forwardPropogationWordDataArray[firstLayerNeuronIndex];	//OLD: firstLayerNeuronGroup->wordDataTemp;
 		//cout << "forwardPropogationWordData->wordDataTemp->tagName = " << forwardPropogationWordData->wordReference->tagName << endl;
 
@@ -443,7 +448,14 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactClass::propagateWordThrough
 		#endif
 			GIAtxtRelTranslatorRulesComponentNeuralNetwork* currentComponent = (group->ANNfrontComponentConnectionList)[i];
  
-			GIAtxtRelTranslatorRulesGroupNeuralNetwork* ownerGroup = currentComponent->ownerGroup;	
+			GIAtxtRelTranslatorRulesGroupNeuralNetwork* ownerGroup = currentComponent->ownerGroup;
+			
+			/*
+			cout << "ownerGroup:" << endl;
+			cout << "ownerGroup->groupIndex = " << ownerGroup->groupIndex << endl;
+			cout << "ownerGroup->components.size() = " << ownerGroup->components.size() << endl;
+			*/
+		
 			int componentIndex = currentComponent->componentIndex;	
 			
 			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PREVENT_CIRCULAR_CONNECTION_LOOPS
@@ -1065,11 +1077,10 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactClass::verifyActivatedNeuro
 			}
 			#endif
 			
+			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_NEVER_SPLIT_GROUP_BETWEEN_TWO_IDENTICAL_COMPONENTS
+			//condition2: dont select a matched neuron partiallyActivatedNeuronWithMaxWordIndexCoverage and split it if the final activated component groupRef (ie of the matched sequence equals) in partiallyActivatedNeuronWithMaxWordIndexCoverage equals the next unactivated component groupRef in partiallyActivatedNeuronWithMaxWordIndexCoverage
 			if(*partiallyActivatedNeuronWithMaxWordIndexCoverage != NULL)
 			{
-				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_NEVER_SPLIT_GROUP_BETWEEN_TWO_IDENTICAL_COMPONENTS
-				//condition2: dont select a matched neuron partiallyActivatedNeuronWithMaxWordIndexCoverage and split it if the final activated component groupRef (ie of the matched sequence equals) in partiallyActivatedNeuronWithMaxWordIndexCoverage equals the next unactivated component groupRef in partiallyActivatedNeuronWithMaxWordIndexCoverage
-				
 				int lastActivatedIndex = INT_DEFAULT_VALUE;
 				int firstUnactivatedIndex = INT_DEFAULT_VALUE;
 				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_SUPPORT_PARTIAL_SENTENCE_PROPAGATION
@@ -1084,6 +1095,11 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactClass::verifyActivatedNeuro
 					//cout << "lastActivatedIndex = " << lastActivatedIndex << endl;
 					//cout << "firstUnactivatedIndex = " << firstUnactivatedIndex << endl;
 					//cout << "(*partiallyActivatedNeuronWithMaxWordIndexCoverage)->components.size() = " << (*partiallyActivatedNeuronWithMaxWordIndexCoverage)->components.size() << endl;
+					if(lastActivatedIndex == firstUnactivatedIndex)
+					{
+						cout << "(lastActivatedIndex == firstUnactivatedIndex)" << endl;
+						exit(EXIT_ERROR);
+					}
 					GIAtxtRelTranslatorRulesComponentNeuralNetwork* lastActivatedComponent = ((*partiallyActivatedNeuronWithMaxWordIndexCoverage)->groupRef)->components[lastActivatedIndex];		//BAD: (*partiallyActivatedNeuronWithMaxWordIndexCoverage)->components[lastActivatedIndex]->componentRef;
 					GIAtxtRelTranslatorRulesComponentNeuralNetwork* firstNonActivatedComponent = ((*partiallyActivatedNeuronWithMaxWordIndexCoverage)->groupRef)->components[firstUnactivatedIndex];	//BAD: (*partiallyActivatedNeuronWithMaxWordIndexCoverage)->components[firstUnactivatedIndex]->componentRef;
 					if(lastActivatedComponent->groupRef == firstNonActivatedComponent->groupRef)
@@ -1101,20 +1117,21 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactClass::verifyActivatedNeuro
 						}
 					}
 				}
-				#endif
-				
-				/*
-				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_REQUIRE_NUM_COMPONENTS_ENFORCE_DURING_SPLIT
-				
+			}
+			#endif
+			
+			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_REQUIRE_NUM_COMPONENTS_ENFORCE_DURING_SPLIT_OLD
+			if(*partiallyActivatedNeuronWithMaxWordIndexCoverage != NULL)
+			{
 				bool passMinComponentsChecks = true;
-				
+
 				int numberOfActivatedComponents = (*partiallyActivatedNeuronWithMaxWordIndexCoverage)->components.size();
 				int numberOfComponents = (*partiallyActivatedNeuronWithMaxWordIndexCoverage)->groupRef->components.size();
 
 				int firstActivatedIndexUnordered = INT_DEFAULT_VALUE;				
 				int lastActivatedIndexUnordered = INT_DEFAULT_VALUE;
 				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_SUPPORT_PARTIAL_SENTENCE_PROPAGATION
-				bool partialActivationConfirmed = identifyComponentIndexFirstAndLastActivatedIndexUnordered(forwardPropogationSentenceData, *partiallyActivatedNeuronWithMaxWordIndexCoverage, &firstActivatedIndexUnordered, &lastActivatedIndexUnordered);
+				identifyComponentIndexFirstAndLastActivatedIndexUnordered(forwardPropogationSentenceData, *partiallyActivatedNeuronWithMaxWordIndexCoverage, &firstActivatedIndexUnordered, &lastActivatedIndexUnordered);
 				if(!((firstActivatedIndexUnordered == 0) || (firstActivatedIndexUnordered >= GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_MIN_NUM_COMPONENTS)))
 				{
 					passMinComponentsChecks = false;
@@ -1123,13 +1140,13 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactClass::verifyActivatedNeuro
 				{
 					passMinComponentsChecks = false;
 				}
-				if(!((lastActivatedIndexUnordered == numberOfComponents-1) || (numberOfComponents-lastActivateIndexUnordered >= GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_MIN_NUM_COMPONENTS)))
+				if(!((lastActivatedIndexUnordered == numberOfComponents-1) || (numberOfComponents-lastActivatedIndexUnordered >= GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_MIN_NUM_COMPONENTS)))
 				{
 					passMinComponentsChecks = false;
 				}				
 				#else
 				firstActivatedIndexUnordered = 0;
-				bool partialActivationConfirmed = identifyComponentIndexLastActivatedIndexUnordered(forwardPropogationSentenceData, *partiallyActivatedNeuronWithMaxWordIndexCoverage, &lastActivatedIndexUnordered);
+				identifyComponentIndexLastActivatedIndexUnordered(forwardPropogationSentenceData, *partiallyActivatedNeuronWithMaxWordIndexCoverage, &lastActivatedIndexUnordered);
 				int numberOfInactivatedComponents = numberOfComponents - numberOfActivatedComponents;
 				if(!(numberOfActivatedComponents >= GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_MIN_NUM_COMPONENTS))
 				{
@@ -1140,15 +1157,13 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactClass::verifyActivatedNeuro
 					passMinComponentsChecks = false;
 				}
 				#endif
-				
+
 				if(!passMinComponentsChecks)
 				{
 					pass = false;
-				}			
-			
-				#endif
-				*/
-			}
+				}
+			}	
+			#endif
 		} 
 		if(*fullyActivatedNeuronWithMaxWordIndexCoverage != NULL)
 		{
@@ -1488,7 +1503,7 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactClass::upperNeuronLastWordI
 			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_DEBUG_ENSURE_PROSPECTIVE_WORD_CONNECTIVITY
 			cout << "wordIndexMaxToFindAbove = " << wordIndexMaxToFindAbove << endl;
 			cout << "wordIndexMinToFindAbove = " << wordIndexMinToFindAbove << endl;
-			cout << "wordIndexMinAboveEffectiveAfterGroupReset = " << wordIndexMinAboveEffectiveAfterGroupReset << endl;
+			cout << "wordIndexLastAboveEffectiveAfterGroupReset = " << wordIndexLastAboveEffectiveAfterGroupReset << endl;
 			#endif
 				
 			if(upperNeuronLastWordIndexAlignsWithThatOfProspectiveComponent(forwardPropogationSentenceData, wordIndexMinToFindAbove, wordIndexMaxToFindAbove, wordIndexLastAboveEffectiveAfterGroupReset, 0, ownerGroup, false, false))
