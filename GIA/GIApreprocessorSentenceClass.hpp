@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorSentenceClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j2g 10-August-2019
+ * Project Version: 3j2h 10-August-2019
  * Requirements: requires plain text file
  * Description: Preprocessor Sentence Class
  * /
@@ -95,6 +95,8 @@ public:
 
 class GIApreprocessorSentenceClass
 {
+	private: GIApreprocessorWordClassClass GIApreprocessorWordClassObject;
+
 	public: void copyPreprocessorSentence(GIApreprocessorSentence* sentenceToCopy, GIApreprocessorSentence* newSentence);
 	public: vector<GIApreprocessorPlainTextWord*>* getSentenceContents(GIApreprocessorSentence* currentGIApreprocessorSentenceInList);
 	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_PARSE_ISOLATED_SUBREFERENCE_SETS_OPTIMISED
@@ -102,7 +104,7 @@ class GIApreprocessorSentenceClass
 	public: bool calculateParseIsolatedSubreferenceSets2(GIApreprocessorSentence* currentGIApreprocessorSentenceInList, bool* parseIsolatedSubreferenceSets2);
 	#endif
 	
-	public: void printSentence(vector<GIApreprocessorPlainTextWord*>* sentenceContents);
+	public: void printSentence(vector<GIApreprocessorPlainTextWord*>* sentenceContents, const bool error);
 
 };
 

@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j2g 10-August-2019
+ * Project Version: 3j2h 10-August-2019
  * Requirements: 
  * Description: GIA specific global definitions
  * /
@@ -864,6 +864,7 @@
 						#define GIA_PREPROCESSOR_POS_TAGGER_GENERATE_NEURAL_NETWORK_SEQUENCE_GRAMMAR_ONLY_TRAIN_UNAMBIGUOUS_PERMUTATIONS			
 					//#endif
 					#define GIA_PREPROCESSOR_POS_TAGGER_GENERATE_NEURAL_NETWORK_SEQUENCE_GRAMMAR_PRINT_SENTENCES
+					#define GIA_PREPROCESSOR_POS_TAGGER_GENERATE_NEURAL_NETWORK_SEQUENCE_GRAMMAR_SENTENCE_MIN_WORDS (2)
 				#endif
 			#else
 				//assume compiled with COMPILE_GIA or COMPILE_GIA_WITH_ANN

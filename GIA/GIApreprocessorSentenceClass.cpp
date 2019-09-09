@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorSentenceClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j2g 10-August-2019
+ * Project Version: 3j2h 10-August-2019
  * Requirements: requires plain text file
  * Description: Preprocessor Sentence Class
  * /
@@ -143,13 +143,24 @@ bool GIApreprocessorSentenceClass::calculateParseIsolatedSubreferenceSets2(GIApr
 }
 #endif	
 
-void GIApreprocessorSentenceClass::printSentence(vector<GIApreprocessorPlainTextWord*>* sentenceContents)
+void GIApreprocessorSentenceClass::printSentence(vector<GIApreprocessorPlainTextWord*>* sentenceContents, const bool error)
 {
+	if(error)
+	{
+		cerr << "sentenceContents = " << GIApreprocessorWordClassObject.printWordListString(sentenceContents) << endl;
+	}
+	else
+	{
+		cout << "sentenceContents = " << GIApreprocessorWordClassObject.printWordListString(sentenceContents) << endl;
+	}
+	
+	/*
 	for(int w=0; w<sentenceContents->size(); w++)
 	{
 		cout << sentenceContents->at(w)->tagName << " ";
 	}
 	cout << endl;
+	*/
 }
 
 
