@@ -26,7 +26,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j2a 10-August-2019
+ * Project Version: 3j2b 10-August-2019
  * Requirements: 
  * Description: Main
  * /
@@ -667,7 +667,7 @@ int main(const int argc, const char** argv)
 
 	if(SHAREDvarsClass().argumentExists(argc, argv, "-version"))
 	{
-		cout << "GIA.exe - Project Version: 3j2a 10-August-2019" << endl;
+		cout << "GIA.exe - Project Version: 3j2b 10-August-2019" << endl;
 		exit(EXIT_OK);
 	}
 
@@ -858,7 +858,29 @@ int main(const int argc, const char** argv)
 	string POStaggerDatabaseFolderName = GIA_DATABASE_FILESYSTEM_DEFAULT_SERVER_OR_MOUNT_NAME_BASE + GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM_DEFAULT_DATABASE_NAME;
 	string wikiDumpFolderName = GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE_DOC_XML_OUTPUT_FOLDER;
 	int wikiDumpFileBatchIndex = 0;
-		
+	
+	#ifdef GIA_NEURAL_NETWORK
+	bool ANNuseInputXMLFile = false;
+	string ANNinputXMLFileName = string(NEURAL_NETWORK_VISUALISATION_BASE_FILE_NAME) + NEURAL_NETWORK_VISUALISATION_XML_FILE_EXTENSION;
+	bool ANNuseOutputXMLFile = false;
+	string ANNoutputXMLFileName = string(NEURAL_NETWORK_VISUALISATION_BASE_FILE_NAME) + NEURAL_NETWORK_VISUALISATION_XML_FILE_EXTENSION;
+	bool ANNuseOutputLDRFile = false;
+	string ANNoutputLDRFileName = string(NEURAL_NETWORK_VISUALISATION_BASE_FILE_NAME) + NEURAL_NETWORK_VISUALISATION_LDR_FILE_EXTENSION;
+	bool ANNuseOutputSVGFile = false;
+	string ANNoutputSVGFileName = string(NEURAL_NETWORK_VISUALISATION_BASE_FILE_NAME) + NEURAL_NETWORK_VISUALISATION_SVG_FILE_EXTENSION;
+	bool ANNuseOutputPPMFile = false;
+	string ANNoutputPPMFileName = string(NEURAL_NETWORK_VISUALISATION_BASE_FILE_NAME) + NEURAL_NETWORK_VISUALISATION_PPM_FILE_EXTENSION;
+	bool ANNuseOutputPPMFileRaytraced = false;
+	string ANNoutputPPMFileNameRaytraced = string(NEURAL_NETWORK_VISUALISATION_BASE_FILE_NAME) + NEURAL_NETWORK_VISUALISATION_PPM_RAYTRACED_FILE_EXTENSION;
+	string ANNoutputTALFileName = string(NEURAL_NETWORK_VISUALISATION_BASE_FILE_NAME) + NEURAL_NETWORK_VISUALISATION_TAL_FILE_EXTENSION;
+	bool ANNuseOutputAllFile = false;
+	string ANNoutputAllFileName = NEURAL_NETWORK_VISUALISATION_BASE_FILE_NAME;
+	bool ANNuseSprites = true;
+	#endif
+	
+	int rasterImageWidth = 640;
+	int rasterImageHeight = 480;
+			
 	if(SHAREDvarsClass().argumentExists(argc, argv, "-lrpfolder"))
 	{
 		lrpDataFolderName = SHAREDvarsClass().getStringArgument(argc, argv, "-lrpfolder");
@@ -924,6 +946,72 @@ int main(const int argc, const char** argv)
 	}
 	#endif
 	#endif
+	
+
+	#ifdef GIA_NEURAL_NETWORK
+	bool ANNdisplayInOpenGL = false;
+	bool ANNdrawOutput = false;
+	if(ANNuseOutputPPMFile)
+	{
+		ANNdisplayInOpenGL = true;
+	}
+	if(ANNuseOutputLDRFile)
+	{
+		ANNdrawOutput = true;
+	}
+	if(ANNuseOutputSVGFile)
+	{
+		ANNdrawOutput = true;
+	}
+	if(ANNuseOutputPPMFile)
+	{
+		ANNdrawOutput = true;
+	}
+	if(ANNuseOutputPPMFileRaytraced)
+	{
+		ANNdrawOutput = true;
+	}
+	if(ANNuseOutputAllFile)
+	{
+		ANNdrawOutput = true;
+	}	
+	if(ANNdrawOutput)
+	{
+		if(ANNuseOutputAllFile)
+		{
+			if(!ANNuseOutputLDRFile)
+			{
+				ANNuseOutputLDRFile = true;
+				ANNoutputLDRFileName = ANNoutputAllFileName + NEURAL_NETWORK_VISUALISATION_LDR_FILE_EXTENSION;
+			}
+
+			if(!ANNuseOutputXMLFile)
+			{
+				ANNuseOutputXMLFile = true;
+				ANNoutputXMLFileName = ANNoutputAllFileName + NEURAL_NETWORK_VISUALISATION_XML_FILE_EXTENSION;
+			}
+
+			if(!ANNuseOutputSVGFile)
+			{
+				ANNuseOutputSVGFile = true;	//SVG output is not always required when printing/drawing neural network
+				ANNoutputSVGFileName = ANNoutputAllFileName + NEURAL_NETWORK_VISUALISATION_SVG_FILE_EXTENSION;
+			}
+			if(!ANNuseOutputPPMFile)
+			{
+				ANNuseOutputPPMFile = true;
+				ANNoutputPPMFileName = ANNoutputAllFileName + NEURAL_NETWORK_VISUALISATION_PPM_FILE_EXTENSION;
+			}
+			/* disable raytrace output by default
+			if(!ANNuseOutputPPMFileRaytraced)
+			{
+				ANNuseOutputPPMFileRaytraced = true;
+				ANNoutputPPMFileNameRaytraced = ANNoutputAllFileName + NEURAL_NETWORK_VISUALISATION_PPM_RAYTRACED_FILE_EXTENSION;
+			}
+			*/
+		}
+	}
+	#endif
+	
 		
 	POStaggerDatabaseFolderName = POStaggerDatabaseFolderName + CHAR_FOLDER_DELIMITER;
 	lrpDataFolderName = lrpDataFolderName + CHAR_FOLDER_DELIMITER;	
@@ -944,15 +1032,21 @@ int main(const int argc, const char** argv)
 
 	GIApreprocessorPOStaggerDatabaseClass().initialisePOStaggerDatabase(POStaggerDatabaseFolderName);
 	
-	if(!GIApreprocessorWordClass().initialiseLRP(lrpDataFolderName, useLRP))
+	#ifdef GIA_PREPROCESSOR
+	if(!GIApreprocessorWordIdentificationClass().initialiseLRP(lrpDataFolderName, useLRP))
 	{
 		result = false;
 	}
+	#endif
 
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR		
-	vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes;
-	vector<XMLparserTag*>* GIAtxtRelTranslatorRulesTokenLayers;
-	if(!GIAtxtRelTranslatorRules.extractGIAtxtRelTranslatorRules(GIAtxtRelTranslatorRulesGroupTypes, GIAtxtRelTranslatorRulesTokenLayers))
+	vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes = new vector<GIAtxtRelTranslatorRulesGroupType*>;
+	vector<XMLparserTag*>* GIAtxtRelTranslatorRulesTokenLayers = new vector<XMLparserTag*>;
+	if(!GIAtxtRelTranslatorRulesClass().extractGIAtxtRelTranslatorRules(GIAtxtRelTranslatorRulesGroupTypes, GIAtxtRelTranslatorRulesTokenLayers))
+	{
+		result = false;
+	}
+	if(!GIAtxtRelTranslatorNeuralNetworkFormationClass().createGIAtxtRelTranslatorNeuralNetwork(GIAtxtRelTranslatorRulesTokenLayers, GIAtxtRelTranslatorRulesGroupTypes))
 	{
 		result = false;
 	}
@@ -966,20 +1060,20 @@ int main(const int argc, const char** argv)
 	#ifdef GIA_NEURAL_NETWORK
 	
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN
-	GIAneuralNetworkOperations.generateNeuralNetFromGIAtxtRelTranslatorNet(translatorVariables);	//generate GIA NLP neural network
+	GIAneuralNetworkOperationsClass().generateNeuralNetFromGIAtxtRelTranslatorNet(translatorVariables);	//generate GIA NLP neural network
 	#endif
 	#ifdef GIA_NEURAL_NETWORK_PASSIVE
-	GIAneuralNetworkOperations.generateNeuralNetFromSemanticNet(translatorVariables);	//generate GIA KB neural network
+	GIAneuralNetworkOperationsClass().generateNeuralNetFromSemanticNet(translatorVariables);	//generate GIA KB neural network
 	#endif
 	
 	if(ANNdrawOutput)
 	{
 		string ANNoutputTALFileName = string(NEURAL_NETWORK_VISUALISATION_BASE_FILE_NAME) + NEURAL_NETWORK_VISUALISATION_TAL_FILE_EXTENSION;
-		ANNdisplay.outputNeuralNetworkToVectorGraphicsAndRaytrace(translatorVariables->firstInputNeuronInNetwork, ANNuseSprites, ANNuseOutputPPMFileRaytraced, ANNdisplayInOpenGL, ANNuseOutputLDRFile, ANNuseOutputSVGFile, ANNuseOutputPPMFile, ANNoutputLDRFileName, ANNoutputSVGFileName, ANNoutputPPMFileName, ANNoutputPPMFileNameRaytraced, ANNoutputTALFileName, rasterImageWidth, rasterImageHeight);
+		ANNdisplayClass().outputNeuralNetworkToVectorGraphicsAndRaytrace(translatorVariables->firstInputNeuronInNetwork, ANNuseSprites, ANNuseOutputPPMFileRaytraced, ANNdisplayInOpenGL, ANNuseOutputLDRFile, ANNuseOutputSVGFile, ANNuseOutputPPMFile, ANNoutputLDRFileName, ANNoutputSVGFileName, ANNoutputPPMFileName, ANNoutputPPMFileNameRaytraced, ANNoutputTALFileName, rasterImageWidth, rasterImageHeight);
 	}
 	if(ANNuseOutputXMLFile)
 	{
-		if(!GIAneuralNetworkOperations.writeNeuralNetXMLfile(ANNoutputXMLFileName, translatorVariables->firstInputNeuronInNetwork))
+		if(!GIAneuralNetworkOperationsClass().writeNeuralNetXMLfile(ANNoutputXMLFileName, translatorVariables->firstInputNeuronInNetwork))
 		{
 			result = false;
 		}

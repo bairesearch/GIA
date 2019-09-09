@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorWordClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j2a 10-August-2019
+ * Project Version: 3j2b 10-August-2019
  * Requirements: requires plain text file
  * Description: Preprocessor Word Class
  * /
@@ -1100,6 +1100,24 @@ bool GIApreprocessorWordClassClass::isStringNumber(const string phrase)
 	
 	return stringIsNumber;
 }
+
+#ifdef GIA_TXT_REL_TRANSLATOR_RULES_TREAT_UNKNOWN_POSTYPES_MID_SENTENCE_CAPITALISED_WORDS_AS_PROPERNOUNS
+bool GIApreprocessorWordClassClass::isMidSentenceUppercaseWordLikelyProperNoun(GIApreprocessorPlainTextWord* contextWord)
+{
+	string wordText = contextWord->tagName;
+	int entityIndex = (static_cast<GIApreprocessorMultiwordReductionPlainTextWord*>(contextWord))->entityIndex;
+
+	bool foundWordInLists = false;
+	if(entityIndex != GIA_NLP_START_ENTITY_INDEX)
+	{
+		if(wordIsUpperCase(wordText))
+		{
+			foundWordInLists = true;
+		}
+	}
+	return foundWordInLists;
+}
+#endif
 
 bool GIApreprocessorWordClassClass::wordIsUpperCase(const string wordText)
 {

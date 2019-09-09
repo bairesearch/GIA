@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerate.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j2a 10-August-2019
+ * Project Version: 3j2b 10-August-2019
  * Requirements: 
  * Description: Textual Relation Translator Neural Network Propagate Compact - unsupervised training of sequence grammar parse network
  * /
@@ -244,7 +244,7 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::findAndRecon
 			toplevelGroupActivationFound = true;	//note this will only be set true if the entire sentence word indices have been covered (ie only when currentFirstInputNeuronIndexInSequence=start)
 		}
 		
-		if(!GIAtxtRelTranslatorNeuralNetworkPropagateCompact.verifyActivatedNeuronsAtLeastOne(forwardPropogationSentenceData, forwardPropogationSentenceData->fullyActivatedNeuronWithMaxWordIndexCoverage, forwardPropogationSentenceData->partiallyActivatedNeuronWithMaxWordIndexCoverage, newNeuronSequenceGroup1))
+		if(!GIAtxtRelTranslatorNeuralNetworkPropagateCompact.verifyActivatedNeuronsAtLeastOne(forwardPropogationSentenceData, firstLayer, &(forwardPropogationSentenceData->fullyActivatedNeuronWithMaxWordIndexCoverage), &(forwardPropogationSentenceData->partiallyActivatedNeuronWithMaxWordIndexCoverage), newNeuronSequenceGroup1))
 		{
 			//case a
 			foundAndReconciledMissingOrDifferentIncrementalNeurons = true;
@@ -318,14 +318,15 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::findAndRecon
 				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_SUPPORT_PARTIAL_SENTENCE_PROPAGATION
 				int indexToSplitVector1 = INT_DEFAULT_VALUE;
 				int indexToSplitVector2 = INT_DEFAULT_VALUE;			
-				identifyComponentIndexLastActivatedIndex(forwardPropogationSentenceData, forwardPropogationSentenceData->partiallyActivatedNeuronWithMaxWordIndexCoverage, &indexToSplitVector1, &indexToSplitVector2);
+				GIAtxtRelTranslatorNeuralNetworkPropagateCompact.identifyComponentIndexFirstAndLastActivatedIndexUnordered(forwardPropogationSentenceData, forwardPropogationSentenceData->partiallyActivatedNeuronWithMaxWordIndexCoverage, &indexToSplitVector1, &indexToSplitVector2);
 				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_DEBUG_PRINT_GROUP_INDICES
 				cout << "indexToSplitVector1 = " << indexToSplitVector1 << endl;
 				cout << "indexToSplitVector2 = " << indexToSplitVector2 << endl;				
 				#endif				
-				GIAtxtRelTranslatorRulesGroupNeuralNetwork* newNeuron = splitGroupAtLastActivatedComponent(forwardPropogationSentenceData, GIAtxtRelTranslatorRulesGroupTypes, forwardPropogationSentenceData->partiallyActivatedNeuronWithMaxWordIndexCoverage->groupRef, indexToSplitVector1, indexToSplitVector2);	//note passing partiallyActivatedNeuronWithMaxWordIndexCoverage instead of partiallyActivatedNeuronWithMaxWordIndexCoverage->groupRef because groupRef's activations may have been overwritten if the neuron was reset after being saved to partiallyActivatedNeuronWithMaxWordIndexCoverage
+				GIAtxtRelTranslatorRulesGroupNeuralNetwork* newNeuron = splitGroupAtLastActivatedComponentUnordered(forwardPropogationSentenceData, GIAtxtRelTranslatorRulesGroupTypes, forwardPropogationSentenceData->partiallyActivatedNeuronWithMaxWordIndexCoverage->groupRef, indexToSplitVector1, indexToSplitVector2);	//note passing partiallyActivatedNeuronWithMaxWordIndexCoverage instead of partiallyActivatedNeuronWithMaxWordIndexCoverage->groupRef because groupRef's activations may have been overwritten if the neuron was reset after being saved to partiallyActivatedNeuronWithMaxWordIndexCoverage
 				#else
-				int indexToSplitVector = identifyComponentIndexLastActivatedIndex(forwardPropogationSentenceData, forwardPropogationSentenceData->partiallyActivatedNeuronWithMaxWordIndexCoverage);
+				int indexToSplitVector = INT_DEFAULT_VALUE;
+				GIAtxtRelTranslatorNeuralNetworkPropagateCompact.identifyComponentIndexLastActivatedIndex(forwardPropogationSentenceData, forwardPropogationSentenceData->partiallyActivatedNeuronWithMaxWordIndexCoverage, &indexToSplitVector);
 				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_DEBUG_PRINT_GROUP_INDICES
 				cout << "indexToSplitVector = " << indexToSplitVector << endl;				
 				#endif
@@ -417,6 +418,9 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::findAndRecon
 			addComponentToGroup(forwardPropogationSentenceData, listOfHighLevelNeurons1[i], grammaticalSentenceNeuron, GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_GROUP, false);
 		}
 		GIAtxtRelTranslatorRules.updateComponentsOwnerGroupAndIndexes(grammaticalSentenceNeuron, &(grammaticalSentenceNeuron->components), false, NULL);
+		#endif
+		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_DEBUG
+		GIAtxtRelTranslatorNeuralNetworkPropagateOperations.traceBackpropNeuralNetwork(grammaticalSentenceNeuron, 0);
 		#endif
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_PREVENT_TOP_LEVEL_NEURON_DUPLICATION
 	}
@@ -634,12 +638,12 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::performPropa
 	*activatedNeuronWithMaxWordIndexCoverage = NULL;
 	if(forwardPropogationSentenceData->partiallyActivatedNeuronWithMaxWordIndexCoverage != NULL)
 	{
-		*partiallyActivatedNeuronWithMaxWordIndexCoveragelastActivatedIndex = identifyComponentIndexLastActivatedIndex(forwardPropogationSentenceData, forwardPropogationSentenceData->partiallyActivatedNeuronWithMaxWordIndexCoverage);	//CHECKTHIS: forwardPropogationSentenceData->partiallyActivatedNeuronWithMaxWordIndexCoverage)
+		GIAtxtRelTranslatorNeuralNetworkPropagateCompact.identifyComponentIndexLastActivatedIndex(forwardPropogationSentenceData, forwardPropogationSentenceData->partiallyActivatedNeuronWithMaxWordIndexCoverage, partiallyActivatedNeuronWithMaxWordIndexCoveragelastActivatedIndex);	//CHECKTHIS: forwardPropogationSentenceData->partiallyActivatedNeuronWithMaxWordIndexCoverage)
 		*partiallyActivatedNeuronWithMaxWordIndexCoveragelastWordIndex = 0;
 		*partiallyActivatedNeuronWithMaxWordIndexCoveragenumUnactivatedComponents = forwardPropogationSentenceData->partiallyActivatedNeuronWithMaxWordIndexCoverage->groupRef->components.size() - forwardPropogationSentenceData->partiallyActivatedNeuronWithMaxWordIndexCoverage->components.size();	//CHECKTHIS: forwardPropogationSentenceData->partiallyActivatedNeuronWithMaxWordIndexCoverag
 	}
 	
-	if(GIAtxtRelTranslatorNeuralNetworkPropagateCompact.verifyActivatedNeuronsAtLeastOne(forwardPropogationSentenceData, forwardPropogationSentenceData->fullyActivatedNeuronWithMaxWordIndexCoverage, forwardPropogationSentenceData->partiallyActivatedNeuronWithMaxWordIndexCoverage, NULL))
+	if(GIAtxtRelTranslatorNeuralNetworkPropagateCompact.verifyActivatedNeuronsAtLeastOneBasic(forwardPropogationSentenceData, forwardPropogationSentenceData->fullyActivatedNeuronWithMaxWordIndexCoverage, forwardPropogationSentenceData->partiallyActivatedNeuronWithMaxWordIndexCoverage))
 	{
 		int activatedNeuronWithMaxWordIndexCoverageFirstWordIndex;	//CHECKTHIS
 		if(forwardPropogationSentenceData->parseSentenceReverse)
@@ -784,11 +788,13 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::splitGroupsC
 		int indexToSplitVector1 = partiallyActivatedNeuronWithMaxWordIndexCoverage1lastActivatedIndex;
 		int indexToSplitVector2 = partiallyActivatedNeuronWithMaxWordIndexCoverage2lastActivatedIndex;
 		/*
+		int indexToSplitVector1 = INT_DEFAULT_VALUE;
+		int indexToSplitVector2 = INT_DEFAULT_VALUE;
 		GIAtxtRelTranslatorNeuralNetworkPropagateOperations.setParseSentenceReverse(false, forwardPropogationSentenceData);	//forward (see above)			
-		int indexToSplitVector1 = identifyComponentIndexLastActivatedIndex(forwardPropogationSentenceData, activatedNeuronWithMaxWordIndexCoverage1);
+		GIAtxtRelTranslatorNeuralNetworkPropagateCompact.identifyComponentIndexLastActivatedIndex(forwardPropogationSentenceData, activatedNeuronWithMaxWordIndexCoverage1, &indexToSplitVector1);
 		//GIAtxtRelTranslatorRulesGroupNeuralNetwork* newHiddenLayerNeuron1 = splitGroupAtLastActivatedComponent(forwardPropogationSentenceData, GIAtxtRelTranslatorRulesGroupTypes, activatedNeuronWithMaxWordIndexCoverage1, indexToSplitVector1);
 		GIAtxtRelTranslatorNeuralNetworkPropagateOperations.setParseSentenceReverse(true, forwardPropogationSentenceData);	//reverse (see above)
-		int indexToSplitVector2 = identifyComponentIndexLastActivatedIndex(forwardPropogationSentenceData, activatedNeuronWithMaxWordIndexCoverage2);
+		GIAtxtRelTranslatorNeuralNetworkPropagateCompact.identifyComponentIndexLastActivatedIndex(forwardPropogationSentenceData, activatedNeuronWithMaxWordIndexCoverage2, &indexToSplitVector2);
 		//GIAtxtRelTranslatorRulesGroupNeuralNetwork* newHiddenLayerNeuron2 = splitGroupAtLastActivatedComponent(forwardPropogationSentenceData, GIAtxtRelTranslatorRulesGroupTypes, activatedNeuronWithMaxWordIndexCoverage2, indexToSplitVector2);
 		*/
 		
@@ -906,7 +912,7 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::findAndConne
 	}
 
 	
-	if(!GIAtxtRelTranslatorNeuralNetworkPropagateCompact.verifyActivatedNeuronsAtLeastOne(forwardPropogationSentenceData, forwardPropogationSentenceData->fullyActivatedNeuronWithMaxWordIndexCoverage, forwardPropogationSentenceData->partiallyActivatedNeuronWithMaxWordIndexCoverage, NULL))
+	if(!GIAtxtRelTranslatorNeuralNetworkPropagateCompact.verifyActivatedNeuronsAtLeastOneBasic(forwardPropogationSentenceData, forwardPropogationSentenceData->fullyActivatedNeuronWithMaxWordIndexCoverage, forwardPropogationSentenceData->partiallyActivatedNeuronWithMaxWordIndexCoverage))
 	{
 		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_2
 		//NOT YET CODED (max 2 comp per neiron)
@@ -1033,10 +1039,11 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::findAndConne
 				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_SUPPORT_PARTIAL_SENTENCE_PROPAGATION
 				int indexToSplitVector1 = INT_DEFAULT_VALUE;
 				int indexToSplitVector2 = INT_DEFAULT_VALUE; 				
-				identifyComponentIndexLastActivatedIndex(forwardPropogationSentenceData, activatedNeuronWithMaxWordIndexCoverage, &indexToSplitVector1, &indexToSplitVector2);
-				GIAtxtRelTranslatorRulesGroupNeuralNetwork* newNeuron = splitGroupAtLastActivatedComponent(forwardPropogationSentenceData, GIAtxtRelTranslatorRulesGroupTypes, activatedNeuronWithMaxWordIndexCoverage->groupRef, indexToSplitVector1, indexToSplitVector2);
+				GIAtxtRelTranslatorNeuralNetworkPropagateCompact.identifyComponentIndexFirstAndLastActivatedIndexUnordered(forwardPropogationSentenceData, activatedNeuronWithMaxWordIndexCoverage, &indexToSplitVector1, &indexToSplitVector2);
+				GIAtxtRelTranslatorRulesGroupNeuralNetwork* newNeuron = splitGroupAtLastActivatedComponentUnordered(forwardPropogationSentenceData, GIAtxtRelTranslatorRulesGroupTypes, activatedNeuronWithMaxWordIndexCoverage->groupRef, indexToSplitVector1, indexToSplitVector2);
 				#else							
-				int indexToSplitVector = identifyComponentIndexLastActivatedIndex(forwardPropogationSentenceData, activatedNeuronWithMaxWordIndexCoverage);
+				int indexToSplitVector = INT_DEFAULT_VALUE;
+				GIAtxtRelTranslatorNeuralNetworkPropagateCompact.identifyComponentIndexLastActivatedIndex(forwardPropogationSentenceData, activatedNeuronWithMaxWordIndexCoverage, &indexToSplitVector);
 				GIAtxtRelTranslatorRulesGroupNeuralNetwork* newNeuron = splitGroupAtLastActivatedComponent(forwardPropogationSentenceData, GIAtxtRelTranslatorRulesGroupTypes, activatedNeuronWithMaxWordIndexCoverage->groupRef, indexToSplitVector);
 				#endif
 				//connect activated part to DIFFERENTorMISSING
@@ -1077,10 +1084,11 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::findAndConne
 					#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_SUPPORT_PARTIAL_SENTENCE_PROPAGATION
 					int indexToSplitVector1 = INT_DEFAULT_VALUE;
 					int indexToSplitVector2 = INT_DEFAULT_VALUE;			
-					identifyComponentIndexLastActivatedIndex(forwardPropogationSentenceData, activatedNeuronWithMaxWordIndexCoverage, &indexToSplitVector1, &indexToSplitVector2);
-					GIAtxtRelTranslatorRulesGroupNeuralNetwork* newNeuron = splitGroupAtLastActivatedComponent(forwardPropogationSentenceData, GIAtxtRelTranslatorRulesGroupTypes, activatedNeuronWithMaxWordIndexCoverage->groupRef, indexToSplitVector1, indexToSplitVector2);
+					GIAtxtRelTranslatorNeuralNetworkPropagateCompact.identifyComponentIndexFirstAndLastActivatedIndexUnordered(forwardPropogationSentenceData, activatedNeuronWithMaxWordIndexCoverage, &indexToSplitVector1, &indexToSplitVector2);
+					GIAtxtRelTranslatorRulesGroupNeuralNetwork* newNeuron = splitGroupAtLastActivatedComponentUnordered(forwardPropogationSentenceData, GIAtxtRelTranslatorRulesGroupTypes, activatedNeuronWithMaxWordIndexCoverage->groupRef, indexToSplitVector1, indexToSplitVector2);
 					#else
-					int indexToSplitVector = identifyComponentIndexLastActivatedIndex(forwardPropogationSentenceData, activatedNeuronWithMaxWordIndexCoverage);
+					int indexToSplitVector = INT_DEFAULT_VALUE;
+					GIAtxtRelTranslatorNeuralNetworkPropagateCompact.identifyComponentIndexLastActivatedIndex(forwardPropogationSentenceData, activatedNeuronWithMaxWordIndexCoverage, &indexToSplitVector);
 					newNeuron1 = splitGroupAtLastActivatedComponent(forwardPropogationSentenceData, GIAtxtRelTranslatorRulesGroupTypes, activatedNeuronWithMaxWordIndexCoverage->groupRef, indexToSplitVector);
 					#endif
 				}
@@ -1190,7 +1198,7 @@ GIAtxtRelTranslatorRulesGroupNeuralNetwork* GIAtxtRelTranslatorNeuralNetworkProp
 }
 */
 
-//NB indexToSplitVector is the first component index in the second part of component to be splitted
+//NB indexToSplitVector = lastActivatedComponent (the last component index in the first part of component to be splitted) (do not assume normal order: "first" and "last" definitions respect (forwardPropogationSentenceData->parseSentenceReverse))
 GIAtxtRelTranslatorRulesGroupNeuralNetwork* GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::splitGroupAtLastActivatedComponent(GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData, vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, GIAtxtRelTranslatorRulesGroupNeuralNetwork* neuronToSplit, int indexToSplitVector)
 {
 	GIAtxtRelTranslatorRulesGroupNeuralNetwork* newHiddenLayerNeuron = createNewGroup();	
@@ -1198,8 +1206,8 @@ GIAtxtRelTranslatorRulesGroupNeuralNetwork* GIAtxtRelTranslatorNeuralNetworkProp
 	groupType->groups.push_back(newHiddenLayerNeuron);
 		
 	vector<GIAtxtRelTranslatorRulesComponentNeuralNetwork*>* components = &(neuronToSplit->components);
-	vector<GIAtxtRelTranslatorRulesComponentNeuralNetwork*> componentsPart1(components->begin(), components->begin() + indexToSplitVector);
-        vector<GIAtxtRelTranslatorRulesComponentNeuralNetwork*> componentsPart2(components->begin() + indexToSplitVector, components->end());
+	vector<GIAtxtRelTranslatorRulesComponentNeuralNetwork*> componentsPart1(components->begin(), components->begin() + indexToSplitVector+1);
+        vector<GIAtxtRelTranslatorRulesComponentNeuralNetwork*> componentsPart2(components->begin() + indexToSplitVector+1, components->end());
 	
 	if(forwardPropogationSentenceData->parseSentenceReverse)
 	{
@@ -1220,9 +1228,9 @@ GIAtxtRelTranslatorRulesGroupNeuralNetwork* GIAtxtRelTranslatorNeuralNetworkProp
 }
 
 #ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_SUPPORT_PARTIAL_SENTENCE_PROPAGATION
-//indexToSplitVector1 = firstActivatedComponent (always assume normal order)
-//indexToSplitVector2 = lastActivatedComponent (always assume normal order)
-GIAtxtRelTranslatorRulesGroupNeuralNetwork* GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::splitGroupAtLastActivatedComponent(GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData, vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, GIAtxtRelTranslatorRulesGroupNeuralNetwork* neuronToSplit, int indexToSplitVector1, int indexToSplitVector2)
+//indexToSplitVector1 = firstActivatedComponent (unordered; always assume normal order: "first" and "last" definitions do not respect (forwardPropogationSentenceData->parseSentenceReverse))
+//indexToSplitVector2 = lastActivatedComponent (unordered; always assume normal order: "first" and "last" definitions do not respect (forwardPropogationSentenceData->parseSentenceReverse))
+GIAtxtRelTranslatorRulesGroupNeuralNetwork* GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::splitGroupAtLastActivatedComponentUnordered(GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData, vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, GIAtxtRelTranslatorRulesGroupNeuralNetwork* neuronToSplit, int indexToSplitVector1, int indexToSplitVector2)
 {
 	GIAtxtRelTranslatorRulesGroupNeuralNetwork* newHiddenLayerNeuron = createNewGroup();	
 	GIAtxtRelTranslatorRulesGroupType* groupType = GIAtxtRelTranslatorRules.getSequenceGrammarGroupTypeDefault(GIAtxtRelTranslatorRulesGroupTypes);	
@@ -1235,7 +1243,7 @@ GIAtxtRelTranslatorRulesGroupNeuralNetwork* GIAtxtRelTranslatorNeuralNetworkProp
 		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_DEBUG_PRINT_GROUP_INDICES
 		cout << "split at right (indexToSplitVector2) only: newHiddenLayerNeuron->groupIndex = " << newHiddenLayerNeuron->groupIndex << ", neuronToSplit->groupIndex = " << neuronToSplit->groupIndex << endl;
 		#endif
-		//split at right (indexToSplitVector2) only
+		//split at right of centre (indexToSplitVector2) only - there was no unmatched first section (from GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_SUPPORT_PARTIAL_SENTENCE_PROPAGATION)
 		vector<GIAtxtRelTranslatorRulesComponentNeuralNetwork*> componentsPart1(components->begin(), components->begin()+indexToSplitVector2+1);
         	vector<GIAtxtRelTranslatorRulesComponentNeuralNetwork*> componentsPart2(components->begin()+indexToSplitVector2+1, components->end());
 
@@ -1257,7 +1265,7 @@ GIAtxtRelTranslatorRulesGroupNeuralNetwork* GIAtxtRelTranslatorNeuralNetworkProp
 		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_DEBUG_PRINT_GROUP_INDICES
 		cout << "split at left (indexToSplitVector1) only: newHiddenLayerNeuron->groupIndex = " << newHiddenLayerNeuron->groupIndex << ", neuronToSplit->groupIndex = " << neuronToSplit->groupIndex << endl;
 		#endif
-		//split at left (indexToSplitVector1) only
+		//split at left of centre (indexToSplitVector1) only - there was no unmatched last section
 		vector<GIAtxtRelTranslatorRulesComponentNeuralNetwork*> componentsPart1(components->begin(), components->begin()+indexToSplitVector1);
 		vector<GIAtxtRelTranslatorRulesComponentNeuralNetwork*> componentsPart2(components->begin()+indexToSplitVector1, components->end());
 		
@@ -1308,31 +1316,7 @@ GIAtxtRelTranslatorRulesGroupNeuralNetwork* GIAtxtRelTranslatorNeuralNetworkProp
 #endif
 
 
-//returns a componentIndex
-int GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::identifyComponentIndexLastActivatedIndex(GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData, GIAtxtRelTranslatorRulesGroupParseTree* parseTreeGroupNeuron)
-{
-	int numberOfActivatedComponents = parseTreeGroupNeuron->components.size();
-	GIAtxtRelTranslatorRulesGroupNeuralNetwork* groupOrig = parseTreeGroupNeuron->groupRef;
-	int firstNonActivatedIndex;
-	if(forwardPropogationSentenceData->parseSentenceReverse)
-	{
-		firstNonActivatedIndex = groupOrig->components.size()-numberOfActivatedComponents; //CHECKTHIS: groupOrig->components.size()-1-numberOfActivatedComponents;
-	}
-	else
-	{
-		firstNonActivatedIndex = numberOfActivatedComponents;
-	}
-	return firstNonActivatedIndex;
-}
-#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_SUPPORT_PARTIAL_SENTENCE_PROPAGATION
-void GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::identifyComponentIndexLastActivatedIndex(GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData, GIAtxtRelTranslatorRulesGroupParseTree* parseTreeGroupNeuron, int* firstActivatedIndex, int* lastActivatedIndex)
-{
-	int numberOfActivatedComponents = parseTreeGroupNeuron->components.size();
-	GIAtxtRelTranslatorRulesComponentNeuralNetwork* firstActivatedComponent = parseTreeGroupNeuron->components[0]->componentRef;
-	*firstActivatedIndex = firstActivatedComponent->componentIndex;
-	*lastActivatedIndex = *firstActivatedIndex + numberOfActivatedComponents-1;
-}
-#endif
+
 
 	
 bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::addComponentToGroup(GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData, GIAtxtRelTranslatorRulesGroupNeuralNetwork* group, GIAtxtRelTranslatorRulesGroupNeuralNetwork* higherLevelComponentGroupOwner, int componentType, bool insertAtStart)
