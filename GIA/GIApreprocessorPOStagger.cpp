@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorPOStagger.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j2f 10-August-2019
+ * Project Version: 3j2g 10-August-2019
  * Requirements: requires plain text file
  * Description: Preprocessor POS tagger
  * /
@@ -606,6 +606,10 @@ bool GIApreprocessorPOStaggerClass::generatePOStaggerDatabaseFromWikiDumpText(co
 	{	
 		vector<GIApreprocessorPlainTextWord*>* sentenceContents = GIApreprocessorSentenceClassObject.getSentenceContents(currentGIApreprocessorSentenceInList);
 		
+		#ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_NEURAL_NETWORK_SEQUENCE_GRAMMAR_PRINT_SENTENCES
+		GIApreprocessorSentenceClassObject.printSentence(sentenceContents);
+		#endif
+		
 		#ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE_RAW
 		int wCentre=-1;	//irrelevant (NOTUSED)
 		#else
@@ -719,6 +723,7 @@ bool GIApreprocessorPOStaggerClass::generatePOStaggerDatabaseFromWikiDumpText(co
 							#endif
 						#ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_NEURAL_NETWORK_SEQUENCE_GRAMMAR_ONLY_TRAIN_UNAMBIGUOUS_PERMUTATIONS
 						}
+						#else
 						#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY
 						}
 						#endif

@@ -26,7 +26,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j2f 10-August-2019
+ * Project Version: 3j2g 10-August-2019
  * Requirements: 
  * Description: Main
  * /
@@ -667,7 +667,7 @@ int main(const int argc, const char** argv)
 
 	if(SHAREDvarsClass().argumentExists(argc, argv, "-version"))
 	{
-		cout << "GIA.exe - Project Version: 3j2f 10-August-2019" << endl;
+		cout << "GIA.exe - Project Version: 3j2g 10-August-2019" << endl;
 		exit(EXIT_OK);
 	}
 
@@ -1011,7 +1011,6 @@ int main(const int argc, const char** argv)
 		}
 	}
 	#endif
-	
 		
 	POStaggerDatabaseFolderName = POStaggerDatabaseFolderName + CHAR_FOLDER_DELIMITER;
 	lrpDataFolderName = lrpDataFolderName + CHAR_FOLDER_DELIMITER;	
@@ -1057,6 +1056,12 @@ int main(const int argc, const char** argv)
 		result = false;
 	}	
 	
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN_DELAY_ANN_CONNECTIVITY_TILL_END
+	GIAtxtRelTranslatorNeuralNetworkFormationClass().createANNconnectivity(GIAtxtRelTranslatorRulesGroupTypes);
+	#endif
+	#endif
+
 	#ifdef GIA_NEURAL_NETWORK
 	
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN

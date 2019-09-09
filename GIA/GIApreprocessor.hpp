@@ -26,7 +26,7 @@
  * File Name: GIApreprocessor.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j2f 10-August-2019
+ * Project Version: 3j2g 10-August-2019
  * Requirements: requires plain text file
  * Description: Preprocessor
  * /
@@ -99,8 +99,7 @@ class GIApreprocessorClass
 		public: bool addSentenceEntityOutputToPreprocessorSentenceWordList(vector<GIApreprocessorPlainTextWord*>* preprocessorSentenceWordList, GIAtranslatorVariablesClass* translatorVariables);
 	#endif	
 	#endif
-
-
+		
 };
 
 #endif
