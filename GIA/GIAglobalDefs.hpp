@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j2d 10-August-2019
+ * Project Version: 3j2e 10-August-2019
  * Requirements: 
  * Description: GIA specific global definitions
  * /
@@ -889,6 +889,7 @@
 		#endif
 		#define GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_REQUIRE_NUM_COMPONENTS
 		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_REQUIRE_NUM_COMPONENTS
+			//#define GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_REQUIRE_NUM_COMPONENTS_ENFORCE_DURING_SPLIT	//GIA3j2f
 			#define GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_MIN_NUM_COMPONENTS (2)	//each neuron has to have at least 2 components
 		#endif
 		//#define GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_MAX_NUMBER_LAYERS (200)	//adjust //~=GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE_RAW_SENTENCE_MAX_NUM_WORDS
