@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetworkPropagateLightOptimised.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j2k 10-August-2019
+ * Project Version: 3j2l 10-August-2019
  * Requirements: 
  * Description: Textual Relation Translator Neural Network Light Optimised - ~O(n)
  * /
@@ -1867,7 +1867,7 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateLightOptimisedClass::existingActiv
 	int wordIndexMaxComparisonInt;
 	if(forwardPropogationSentenceData->parseSentenceReverse)
 	{
-		wordIndexMaxComparisonInt = forwardPropogationSentenceData->sentenceContents->size()-1;		//ignore full stop
+		wordIndexMaxComparisonInt = forwardPropogationSentenceData->sentenceContents->size()-1-1;		//ignore full stop
 	}
 	else
 	{
