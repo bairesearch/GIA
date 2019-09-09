@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetworkFormation.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j2i 10-August-2019
+ * Project Version: 3j2j 10-August-2019
  * Requirements: 
  * Description: Textual Relation Translator Neural Network Formation
  * /
@@ -902,7 +902,10 @@ ANNneuronConnection* GIAtxtRelTranslatorNeuralNetworkFormationClass::createANNco
 	GIAtxtRelTranslatorRulesGroupNeuralNetwork* higherLevelGroup = higherLevelComponent->ownerGroup;
 
 	ANNneuronConnection* newANNneuronConnection = createANNconnection(group, higherLevelGroup);
-	
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_WEIGHTS
+	newANNneuronConnection->GIAconnectionStrength = higherLevelComponent->componentStrength;
+	#endif
+				
 	ANNbackNeuronConnectionList->push_back(newANNneuronConnection);
 	
 	return newANNneuronConnection;
@@ -932,6 +935,9 @@ bool GIAtxtRelTranslatorNeuralNetworkFormationClass::createANNconnectivity(vecto
 		for(int j=0; j<(groupType->groups).size(); j++)
 		{
 			GIAtxtRelTranslatorRulesGroupNeuralNetwork* group = (groupType->groups)[j];
+			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_WEIGHTS
+			group->neuronReference->GIAneuronStrength = group->groupStrength;
+			#endif
 			for(int k=0; k<group->components.size(); k++)
 			{
 				GIAtxtRelTranslatorRulesComponentNeuralNetwork* component = (group->components).at(k);

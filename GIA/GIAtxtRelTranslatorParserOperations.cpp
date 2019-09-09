@@ -27,7 +27,7 @@
  * File Name: GIAtxtRelTranslatorParserOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j2i 10-August-2019
+ * Project Version: 3j2j 10-August-2019
  * Requirements: 
  * Description: Textual Relation Translator Parser Operations
  * /
@@ -715,9 +715,9 @@ bool GIAtxtRelTranslatorParserOperationsClass::createSemanticRelation(GIAtransla
 	}
 			
 	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3_USE_SEM_REL_TRANSLATOR_PARSER
-	return createSemanticRelationInMemory(translatorVariables, semanticRelationFunctionName, semanticRelationFunctionConditionNewName, entitySemanticRelationFunctionListArray, entitySemanticRelationFunction1, entitySemanticRelationFunction2, entitySemanticRelationFunction3, semanticRelationReturnConnectionDynamic, sameReferenceSet);
+	return createSemanticRelationInMemory(translatorVariables, semanticRelationFunctionName, semanticRelationFunctionConditionNewName, entitySemanticRelationFunctionListArray, entitySemanticRelationFunction1, entitySemanticRelationFunction2, entitySemanticRelationFunction3, sameReferenceSet, semanticRelationReturnConnectionDynamic);
 	#else
-	return createSemanticRelationInNetwork(translatorVariables, semanticRelationFunctionName, semanticRelationFunctionConditionNewName, entitySemanticRelationFunctionListArray, entitySemanticRelationFunction1, entitySemanticRelationFunction2, entitySemanticRelationFunction3, semanticRelationReturnConnectionDynamic, sameReferenceSet);	
+	return createSemanticRelationInNetwork(translatorVariables, semanticRelationFunctionName, semanticRelationFunctionConditionNewName, entitySemanticRelationFunctionListArray, entitySemanticRelationFunction1, entitySemanticRelationFunction2, entitySemanticRelationFunction3, sameReferenceSet, semanticRelationReturnConnectionDynamic);	
 	#endif
 }
 

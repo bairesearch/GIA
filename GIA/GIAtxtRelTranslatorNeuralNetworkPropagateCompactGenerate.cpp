@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerate.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j2i 10-August-2019
+ * Project Version: 3j2j 10-August-2019
  * Requirements: 
  * Description: Textual Relation Translator Neural Network Propagate Compact - unsupervised training of sequence grammar parse network
  * /
@@ -107,26 +107,37 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::findAndRecon
 	{
 	#endif
 		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_OPTIONAL_AND_MULTIPLE_INPUTS
+		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_COMPONENT_DETECT_CENTRAL_VARIATION
 		bool foundAndReconciledMissingOrDifferentCentralNeuron = findAndReconcileCentralVariation(translatorVariables, GIAtxtRelTranslatorRulesGroupTypes, forwardPropogationSentenceData, firstLayer);
 		if(!foundAndReconciledMissingOrDifferentCentralNeuron)
-		{			
+		{
 		#endif
+			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_COMPONENT_DETECT_EDGE_VARIATION
+			bool foundAndReconciledMissingOrDifferentEdgeNeuron = findAndReconcileEdgeVariation(translatorVariables, GIAtxtRelTranslatorRulesGroupTypes, forwardPropogationSentenceData, firstLayer);
+			if(!foundAndReconciledMissingOrDifferentEdgeNeuron)
+			{
+			#endif
+		#endif
+				bool foundAndReconciledMissingOrDifferentIncrementalNeurons = findAndReconcileIncrementalVariation(translatorVariables, GIAtxtRelTranslatorRulesGroupTypes, forwardPropogationSentenceData, firstLayer);
 
-			bool foundAndReconciledMissingOrDifferentIncrementalNeurons = findAndReconcileIncrementalVariation(translatorVariables, GIAtxtRelTranslatorRulesGroupTypes, forwardPropogationSentenceData, firstLayer);
-
-			/*
-			OLD algorithm1 (relies on biologically unfeasible backprop);
-			for every neuron hx in network connected to first input neuron
-				verify that it corresponds to the first input component
-					check next input component in hx
-						verify that it encapsulates the second input neuron in sequence (recursive)
-				3 before breaking the neuron apart check to see if there exists a neuron with the desired input components
-					there won't be 
-				this algorithm requires back propagation; require an algorithm that performs forward prop only
-			*/	
-
+				/*
+				OLD algorithm1 (relies on biologically unfeasible backprop);
+				for every neuron hx in network connected to first input neuron
+					verify that it corresponds to the first input component
+						check next input component in hx
+							verify that it encapsulates the second input neuron in sequence (recursive)
+					3 before breaking the neuron apart check to see if there exists a neuron with the desired input components
+						there won't be 
+					this algorithm requires back propagation; require an algorithm that performs forward prop only
+				*/	
+		
 		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_OPTIONAL_AND_MULTIPLE_INPUTS
+			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_COMPONENT_DETECT_EDGE_VARIATION
+			}
+			#endif
+		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_COMPONENT_DETECT_CENTRAL_VARIATION
 		}
+		#endif
 		#endif
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_DEBUG_TEST_VERIFICATION_AFTER_GENERATION
 	}
@@ -153,6 +164,8 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::findAndRecon
 }
 
 	
+
+
 
 bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::findAndReconcileIncrementalVariation(GIAtranslatorVariablesClass* translatorVariables, vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData, vector<GIAtxtRelTranslatorRulesGroupNeuralNetwork*>* firstLayer)
 {
@@ -590,8 +603,23 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::createOrAppe
 	return result;
 }		
 			
-			
+
 #ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_OPTIONAL_AND_MULTIPLE_INPUTS
+#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_COMPONENT_DETECT_CENTRAL_VARIATION
+bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::findAndReconcileCentralVariation(GIAtranslatorVariablesClass* translatorVariables, vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData, vector<GIAtxtRelTranslatorRulesGroupNeuralNetwork*>* firstLayer)
+{
+
+}
+#endif
+#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_COMPONENT_DETECT_EDGE_VARIATION
+bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::findAndReconcileEdgeVariation(GIAtranslatorVariablesClass* translatorVariables, vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData, vector<GIAtxtRelTranslatorRulesGroupNeuralNetwork*>* firstLayer)
+{
+
+}
+#endif
+
+			
+#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_COMPONENT_DETECT_CENTRAL_VARIATION_OLD
 
 bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::findAndReconcileCentralVariation(GIAtranslatorVariablesClass* translatorVariables, vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData, vector<GIAtxtRelTranslatorRulesGroupNeuralNetwork*>* firstLayer)
 {
@@ -1269,6 +1297,8 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::findAndConne
 }				
 					
 
+
+#endif
 
 #endif
 

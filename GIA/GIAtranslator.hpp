@@ -26,7 +26,7 @@
  * File Name: GIAtranslator.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j2i 10-August-2019
+ * Project Version: 3j2j 10-August-2019
  * Requirements: requires text parsed by X Parser
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
@@ -68,7 +68,7 @@
 #ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OPTIMISED
 #include "GIAtxtRelTranslatorRules.hpp"
 #include "GIAtxtRelTranslatorPermutations.hpp"
-#include "GIAtxtRelTranslatorNeuralNetworkOperations.hpp"
+#include "GIAtxtRelTranslatorNeuralNetworkPropagateOperations.hpp"
 #endif
 
 #include "SHAREDvars.hpp"
@@ -106,7 +106,7 @@ class GIAtranslatorClass
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OPTIMISED
 	private: GIAtxtRelTranslatorRulesClass GIAtxtRelTranslatorRules;
 	private: GIAtxtRelTranslatorPermutationsClass GIAtxtRelTranslatorPermutations;
-	private: GIAtxtRelTranslatorNeuralNetworkOperationsClass GIAtxtRelTranslatorNeuralNetworkOperations;
+	private: GIAtxtRelTranslatorNeuralNetworkPropagateOperationsClass GIAtxtRelTranslatorNeuralNetworkPropagateOperations;
 	#endif
 	private: SHAREDvarsClass SHAREDvars;
 
