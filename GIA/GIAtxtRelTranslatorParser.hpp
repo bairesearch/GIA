@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorParser.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3i3c 24-June-2019
+ * Project Version: 3j1a 03-August-2019
  * Requirements: 
  * Description: Textual Relation Translator Parser
  * /
@@ -123,6 +123,13 @@ class GIAtxtRelTranslatorParserClass
 	private: void collapseConjunctionEntities(GIAtranslatorVariablesClass* translatorVariables);
 		public: void deleteRelationshipEntity(GIAentityNode* relationshipSubjectEntity, GIAentityNode* relationshipObjectEntity, GIAentityNode* relationshipEntity);
 	#endif
+	
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEMANTICALLY_DETERMINED_DYNAMIC_CONNECTIONS
+	private: bool relinkDynamicConnections(GIAtranslatorVariablesClass* translatorVariables);
+		private: bool findIdealSemanticRelationshipSourceInSentenceSubnet(GIAtranslatorVariablesClass* translatorVariables, bool relationshipSourceIsSubject, GIAentityNode* relationshipEntity, GIAentityNode* relationshipSource, GIAentityNode* relationshipTarget, GIAentityNode** relationshipSourceNewFound);
+			private: bool calculateSimilarityOfSubnets(GIAentityNode* relationshipEntity, GIAentityNode* relationshipSource, GIAentityNode* relationshipTarget, int* subsetSimilarity);
+	#endif
+
 	
 };
 

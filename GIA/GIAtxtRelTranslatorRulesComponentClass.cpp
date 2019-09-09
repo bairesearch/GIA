@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorRulesComponentClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3i3c 24-June-2019
+ * Project Version: 3j1a 03-August-2019
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Rules
  * /
@@ -69,7 +69,10 @@ GIAtxtRelTranslatorRulesComponent::GIAtxtRelTranslatorRulesComponent(void)
 		semanticRelationIndexType[i] = GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_SEMANTIC_RELATION_INDEX_TYPE_UNKNOWN;
 	}
 	semanticRelationReturnEntity = false;
-
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEMANTICALLY_DETERMINED_DYNAMIC_CONNECTIONS
+	semanticRelationReturnConnectionDynamic = false;
+	#endif
+	
 	semanticRelationReturnFunctionName = "";
 	semanticRelationReturnFunctionNameIndexType = GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_SEMANTIC_RELATION_INDEX_TYPE_UNKNOWN;
 	

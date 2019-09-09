@@ -27,7 +27,7 @@
  * File Name: GIAtxtRelTranslatorParserOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3i3c 24-June-2019
+ * Project Version: 3j1a 03-August-2019
  * Requirements: 
  * Description: Textual Relation Translator Parser Operations
  * /
@@ -58,7 +58,7 @@ bool GIAtxtRelTranslatorParserOperationsClass::generateSemanticRelationsFromTxtR
 	int numberOfComponentsInGroup = currentParseTreeGroup->components.size();
 	//cout << "numberOfComponentsInGroup = " << numberOfComponentsInGroup << endl;
 	vector<GIAtxtRelTranslatorParserForwardPropogationSignalData> parseTreeComponentSignalDataArray(numberOfComponentsInGroup);
-		
+	
 	for(int i=0; i<currentParseTreeGroup->components.size(); i++)
 	{		
 		GIAtxtRelTranslatorRulesComponentParseTree* componentOwner = (currentParseTreeGroup->components).at(i);
@@ -150,13 +150,12 @@ bool GIAtxtRelTranslatorParserOperationsClass::generateSemanticRelationsFromTxtR
 	bool foundExplicitReturnFunctionName = false;
 	bool foundImplicitReturnFunctionName = false;
 	#endif
-	
 
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC
 	for(int i=0; i<currentParseTreeGroup->components.size(); i++)
 	{
 		GIAtxtRelTranslatorRulesComponentParseTree* parseTreeComponent = (currentParseTreeGroup->components).at(i);
-			
+		
 		for(int w=GIA_NLP_START_ENTITY_INDEX; w<=translatorVariables->currentPreprocessorSentenceInList->sentenceContentsLRP.size(); w++)
 		{
 			GIAentityNode* entity = (*translatorVariables->GIAentityNodeArray)[w];
@@ -290,6 +289,22 @@ bool GIAtxtRelTranslatorParserOperationsClass::generateSemanticRelationsFromTxtR
 			
 			parserForwardPropogationSignalData->semanticRelationReturnEntity = parseTreeComponentSignalData->semanticRelationReturnEntity;
 			
+			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEMANTICALLY_DETERMINED_DYNAMIC_CONNECTIONS
+			if(parseTreeComponent->semanticRelationReturnConnectionDynamic)
+			{
+				(parseTreeComponentSignalData->semanticRelationReturnEntity)->semanticRelationReturnConnectionDynamic = true;
+			}
+			#endif
+			/*
+			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEMANTICALLY_DETERMINED_DYNAMIC_CONNECTIONS
+			if(parseTreeComponent->semanticRelationReturnConnectionDynamic)
+			{
+				//semanticRelationReturnConnectionDynamic = true;
+				parserForwardPropogationSignalData->semanticRelationReturnConnectionDynamic = true;
+			}
+			#endif
+			*/
+			
 			if(parseTreeComponentSignalData->semanticRelationReturnEntity == NULL)
 			{
 				cerr << "GIAtxtRelTranslatorParserOperationsClass::generateSemanticRelationsFromTxtRelations{} error; (parseTreeComponent->semanticRelationReturnEntity) && (parseTreeComponentSignalData->semanticRelationReturnEntity == NULL)" << endl;
@@ -329,7 +344,7 @@ bool GIAtxtRelTranslatorParserOperationsClass::generateSemanticRelationsFromTxtR
 			}
 		}
 		#endif
-		
+							
 		#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_SEMANTIC_RELATION_RETURN_FUNCTION_NAME
 		if(parseTreeComponent->semanticRelationReturnEntity && parseTreeComponent->semanticRelationReturnFunctionName != "")	//first/lowest level layer; defines both semanticRelationReturnFunctionNameIndexType and semanticRelationReturnFunctionName
 		{
@@ -452,6 +467,14 @@ bool GIAtxtRelTranslatorParserOperationsClass::generateSemanticRelationsFromTxtR
 				bool sameReferenceSet = true;
 				#endif
 
+				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEMANTICALLY_DETERMINED_DYNAMIC_CONNECTIONS
+				bool semanticRelationReturnConnectionDynamic = false;
+				if(tempEntity->semanticRelationReturnConnectionDynamic)
+				{
+					semanticRelationReturnConnectionDynamic = true;
+				}
+				#endif
+					
 				if(tempEntity->semanticRelationReturnFunctionNameIndexType == GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_SEMANTIC_RELATION_INDEX_TYPE_LIST)
 				{
 					cerr << "GIAtxtRelTranslatorParserOperationsClass::generateSemanticRelationsFromTxtRelations{} error: Illegal semanticRelationReturnFunctionNameIndexType; (tempEntity->semanticRelationReturnFunctionNameIndexType == GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_SEMANTIC_RELATION_INDEX_TYPE_LIST)" << endl;
@@ -464,7 +487,7 @@ bool GIAtxtRelTranslatorParserOperationsClass::generateSemanticRelationsFromTxtR
 						if(entitySemanticRelationFunctionSubject[GIA_TXT_REL_TRANSLATOR_SEMANTIC_RELATION_RETURN_FUNCTION_NAME_INDEX_TYPE_SEMANTIC_FUNCTION_EXECUTION_INDEX]->entityIndexTemp < tempEntity->entityIndexTemp)
 						{
 							//bool sameReferenceSet = tempEntity->semanticRelationReturnFunctionNameSameReferenceSet;
-							createSemanticRelationPair(translatorVariables, tempEntity->semanticRelationReturnFunctionName, entitySemanticRelationFunctionSubject[GIA_TXT_REL_TRANSLATOR_SEMANTIC_RELATION_RETURN_FUNCTION_NAME_INDEX_TYPE_SEMANTIC_FUNCTION_EXECUTION_INDEX], tempEntity, sameReferenceSet, layer);
+							createSemanticRelationPair(translatorVariables, tempEntity->semanticRelationReturnFunctionName, entitySemanticRelationFunctionSubject[GIA_TXT_REL_TRANSLATOR_SEMANTIC_RELATION_RETURN_FUNCTION_NAME_INDEX_TYPE_SEMANTIC_FUNCTION_EXECUTION_INDEX], tempEntity, sameReferenceSet, semanticRelationReturnConnectionDynamic, layer);
 							iter1 = (parserForwardPropogationSignalData->semanticRelationReturnFunctionEntityArray).erase(iter1);
 							erasedElement = true;
 						}
@@ -488,7 +511,7 @@ bool GIAtxtRelTranslatorParserOperationsClass::generateSemanticRelationsFromTxtR
 						if(entitySemanticRelationFunctionDelimiter[GIA_TXT_REL_TRANSLATOR_SEMANTIC_RELATION_RETURN_FUNCTION_NAME_INDEX_TYPE_SEMANTIC_FUNCTION_EXECUTION_INDEX]->entityIndexTemp < tempEntity->entityIndexTemp)
 						{
 							//bool sameReferenceSet = tempEntity->semanticRelationReturnFunctionNameSameReferenceSet;
-							createSemanticRelationPair(translatorVariables, tempEntity->semanticRelationReturnFunctionName, entitySemanticRelationFunctionDelimiter[GIA_TXT_REL_TRANSLATOR_SEMANTIC_RELATION_RETURN_FUNCTION_NAME_INDEX_TYPE_SEMANTIC_FUNCTION_EXECUTION_INDEX], tempEntity, sameReferenceSet, layer);
+							createSemanticRelationPair(translatorVariables, tempEntity->semanticRelationReturnFunctionName, entitySemanticRelationFunctionDelimiter[GIA_TXT_REL_TRANSLATOR_SEMANTIC_RELATION_RETURN_FUNCTION_NAME_INDEX_TYPE_SEMANTIC_FUNCTION_EXECUTION_INDEX], tempEntity, sameReferenceSet, semanticRelationReturnConnectionDynamic, layer);
 							iter1 = (parserForwardPropogationSignalData->semanticRelationReturnFunctionEntityArray).erase(iter1);
 							erasedElement = true;
 						}
@@ -595,7 +618,7 @@ bool GIAtxtRelTranslatorParserOperationsClass::createSemanticRelationOrdered(GIA
 			//GIAtxtRelTranslatorNeuralNetworkOperations.printParseTreeDebugIndentation(layer);
 			//cout << "createSemanticRelationOrdered{}: " << GIAsemRelTranslatorOperations.generateGIA2semanticDependencyRelationText(entitySemanticRelationFunctionObject->entityName, entitySemanticRelationFunctionDelimiter->entityName, semanticRelationFunctionName, entitySemanticRelationFunctionObject->semanticRelationPreprocessorEntityIndex, entitySemanticRelationFunctionDelimiter->semanticRelationPreprocessorEntityIndex, sameReferenceSet) << endl;
 			#endif
-			return createSemanticRelation(translatorVariables, semanticRelationFunctionName, semanticRelationFunctionConditionNewName, NULL, entitySemanticRelationFunctionObject, entitySemanticRelationFunctionDelimiter, NULL, sameReferenceSet, layer);
+			return createSemanticRelation(translatorVariables, semanticRelationFunctionName, semanticRelationFunctionConditionNewName, NULL, entitySemanticRelationFunctionObject, entitySemanticRelationFunctionDelimiter, NULL, sameReferenceSet, false, layer);
 		}
 		else if(entitySemanticRelationFunctionObject == NULL)
 		{			
@@ -603,7 +626,7 @@ bool GIAtxtRelTranslatorParserOperationsClass::createSemanticRelationOrdered(GIA
 			//GIAtxtRelTranslatorNeuralNetworkOperations.printParseTreeDebugIndentation(layer);
 			//cout << "createSemanticRelationOrdered{}: " << GIAsemRelTranslatorOperations.generateGIA2semanticDependencyRelationText(entitySemanticRelationFunctionSubject->entityName, entitySemanticRelationFunctionDelimiter->entityName, semanticRelationFunctionName, entitySemanticRelationFunctionSubject->semanticRelationPreprocessorEntityIndex, entitySemanticRelationFunctionDelimiter->semanticRelationPreprocessorEntityIndex, sameReferenceSet) << endl;
 			#endif
-			return createSemanticRelation(translatorVariables, semanticRelationFunctionName, semanticRelationFunctionConditionNewName, NULL, entitySemanticRelationFunctionSubject, entitySemanticRelationFunctionDelimiter, NULL, sameReferenceSet, layer);
+			return createSemanticRelation(translatorVariables, semanticRelationFunctionName, semanticRelationFunctionConditionNewName, NULL, entitySemanticRelationFunctionSubject, entitySemanticRelationFunctionDelimiter, NULL, sameReferenceSet, false, layer);
 		}
 		else
 		{	
@@ -621,7 +644,7 @@ bool GIAtxtRelTranslatorParserOperationsClass::createSemanticRelationOrdered(GIA
 			{
 				//cout << "warning (entitySemanticRelationFunctionDelimiter != NULL): semanticRelationFunctionName = " << semanticRelationFunctionName << endl;
 			}
-			return createSemanticRelation(translatorVariables, semanticRelationFunctionName, semanticRelationFunctionConditionNewName, NULL, entitySemanticRelationFunctionSubject, entitySemanticRelationFunctionObject, entitySemanticRelationFunctionDelimiter, sameReferenceSet, layer);
+			return createSemanticRelation(translatorVariables, semanticRelationFunctionName, semanticRelationFunctionConditionNewName, NULL, entitySemanticRelationFunctionSubject, entitySemanticRelationFunctionObject, entitySemanticRelationFunctionDelimiter, sameReferenceSet, false, layer);
 		}
 	}
 	else
@@ -630,22 +653,22 @@ bool GIAtxtRelTranslatorParserOperationsClass::createSemanticRelationOrdered(GIA
 		//GIAtxtRelTranslatorNeuralNetworkOperations.printParseTreeDebugIndentation(layer);
 		//cout << "createSemanticRelationOrdered{}: " << semanticRelationFunctionName << "(entitySemanticRelationFunctionListArray)" << endl;
 		#endif
-		return createSemanticRelation(translatorVariables, semanticRelationFunctionName, semanticRelationFunctionConditionNewName, entitySemanticRelationFunctionListArray, entitySemanticRelationFunctionSubject, entitySemanticRelationFunctionObject, entitySemanticRelationFunctionDelimiter, sameReferenceSet, layer);
+		return createSemanticRelation(translatorVariables, semanticRelationFunctionName, semanticRelationFunctionConditionNewName, entitySemanticRelationFunctionListArray, entitySemanticRelationFunctionSubject, entitySemanticRelationFunctionObject, entitySemanticRelationFunctionDelimiter, sameReferenceSet, false, layer);
 	}
 }
 
-bool GIAtxtRelTranslatorParserOperationsClass::createSemanticRelationPair(GIAtranslatorVariablesClass* translatorVariables, const string semanticRelationFunctionName, GIAentityNode* entitySemanticRelationFunction1, GIAentityNode* entitySemanticRelationFunction2, const bool sameReferenceSet, int layer)
+bool GIAtxtRelTranslatorParserOperationsClass::createSemanticRelationPair(GIAtranslatorVariablesClass* translatorVariables, const string semanticRelationFunctionName, GIAentityNode* entitySemanticRelationFunction1, GIAentityNode* entitySemanticRelationFunction2, const bool sameReferenceSet, const bool semanticRelationReturnConnectionDynamic, int layer)
 {
 	#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS2
 	//GIAtxtRelTranslatorNeuralNetworkOperations.printParseTreeDebugIndentation(layer);
 	//cout << "\e[33m **** createSemanticRelationPair{}: semanticRelationFunctionName = " << semanticRelationFunctionName << "\e[0m" << endl; 
 		//OLD: GIAsemRelTranslatorOperations.generateGIA2semanticDependencyRelationText(entitySemanticRelationFunction1->entityName, entitySemanticRelationFunction2->entityName, semanticRelationFunctionName, entitySemanticRelationFunction1->semanticRelationPreprocessorEntityIndex, entitySemanticRelationFunction2->semanticRelationPreprocessorEntityIndex, sameReferenceSet) << endl;
 	#endif
-	return createSemanticRelation(translatorVariables, semanticRelationFunctionName, "", NULL, entitySemanticRelationFunction1, entitySemanticRelationFunction2, NULL, sameReferenceSet, layer);
+	return createSemanticRelation(translatorVariables, semanticRelationFunctionName, "", NULL, entitySemanticRelationFunction1, entitySemanticRelationFunction2, NULL, sameReferenceSet, semanticRelationReturnConnectionDynamic, layer);
 }
 
 
-bool GIAtxtRelTranslatorParserOperationsClass::createSemanticRelation(GIAtranslatorVariablesClass* translatorVariables, const string semanticRelationFunctionName, const string semanticRelationFunctionConditionNewName, vector<GIAentityNode*>* entitySemanticRelationFunctionListArray, GIAentityNode* entitySemanticRelationFunction1, GIAentityNode* entitySemanticRelationFunction2, GIAentityNode* entitySemanticRelationFunction3, const bool sameReferenceSet, int layer)
+bool GIAtxtRelTranslatorParserOperationsClass::createSemanticRelation(GIAtranslatorVariablesClass* translatorVariables, const string semanticRelationFunctionName, const string semanticRelationFunctionConditionNewName, vector<GIAentityNode*>* entitySemanticRelationFunctionListArray, GIAentityNode* entitySemanticRelationFunction1, GIAentityNode* entitySemanticRelationFunction2, GIAentityNode* entitySemanticRelationFunction3, const bool sameReferenceSet, const bool semanticRelationReturnConnectionDynamic, int layer)
 {
 	#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS2
 	GIAtxtRelTranslatorNeuralNetworkOperations.printParseTreeDebugIndentation(layer);
@@ -688,21 +711,21 @@ bool GIAtxtRelTranslatorParserOperationsClass::createSemanticRelation(GIAtransla
 	}
 			
 	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3_USE_SEM_REL_TRANSLATOR_PARSER
-	return createSemanticRelationInMemory(translatorVariables, semanticRelationFunctionName, semanticRelationFunctionConditionNewName, entitySemanticRelationFunctionListArray, entitySemanticRelationFunction1, entitySemanticRelationFunction2, entitySemanticRelationFunction3, sameReferenceSet);
+	return createSemanticRelationInMemory(translatorVariables, semanticRelationFunctionName, semanticRelationFunctionConditionNewName, entitySemanticRelationFunctionListArray, entitySemanticRelationFunction1, entitySemanticRelationFunction2, entitySemanticRelationFunction3, semanticRelationReturnConnectionDynamic, sameReferenceSet);
 	#else
-	return createSemanticRelationInNetwork(translatorVariables, semanticRelationFunctionName, semanticRelationFunctionConditionNewName, entitySemanticRelationFunctionListArray, entitySemanticRelationFunction1, entitySemanticRelationFunction2, entitySemanticRelationFunction3, sameReferenceSet);	
+	return createSemanticRelationInNetwork(translatorVariables, semanticRelationFunctionName, semanticRelationFunctionConditionNewName, entitySemanticRelationFunctionListArray, entitySemanticRelationFunction1, entitySemanticRelationFunction2, entitySemanticRelationFunction3, semanticRelationReturnConnectionDynamic, sameReferenceSet);	
 	#endif
 }
 
 #ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3_USE_SEM_REL_TRANSLATOR_PARSER
-bool GIAtxtRelTranslatorParserOperationsClass::createSemanticRelationInMemory(GIAtranslatorVariablesClass* translatorVariables, const string semanticRelationFunctionName, const string semanticRelationFunctionConditionNewName, vector<GIAentityNode*>* entitySemanticRelationFunctionListArray, GIAentityNode* entitySemanticRelationFunction1, GIAentityNode* entitySemanticRelationFunction2, GIAentityNode* entitySemanticRelationFunction3, const bool sameReferenceSet)
+bool GIAtxtRelTranslatorParserOperationsClass::createSemanticRelationInMemory(GIAtranslatorVariablesClass* translatorVariables, const string semanticRelationFunctionName, const string semanticRelationFunctionConditionNewName, vector<GIAentityNode*>* entitySemanticRelationFunctionListArray, GIAentityNode* entitySemanticRelationFunction1, GIAentityNode* entitySemanticRelationFunction2, GIAentityNode* entitySemanticRelationFunction3, const bool sameReferenceSet, const bool semanticRelationReturnConnectionDynamic)
 {
 	bool result = true;
 	
 	int functionEntityIndex1 = entitySemanticRelationFunction1->semanticRelationPreprocessorEntityIndex;
 	int functionEntityIndex2 = entitySemanticRelationFunction2->semanticRelationPreprocessorEntityIndex;
 	int functionEntityIndex3 = entitySemanticRelationFunction3->semanticRelationPreprocessorEntityIndex;
-	
+				
 	/*										
 	if(semanticRelationFunctionName == GIAtxtRelSemanticDependencyRelationNameArray[GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_createSubstanceInstance])
 	{
@@ -984,12 +1007,19 @@ bool GIAtxtRelTranslatorParserOperationsClass::createSemanticRelationInMemory(GI
 	}
 }
 #else
-bool GIAtxtRelTranslatorParserOperationsClass::createSemanticRelationInNetwork(GIAtranslatorVariablesClass* translatorVariables, const string semanticRelationFunctionName, const string semanticRelationFunctionConditionNewName, vector<GIAentityNode*>* entitySemanticRelationFunctionListArray, GIAentityNode* entitySemanticRelationFunction1, GIAentityNode* entitySemanticRelationFunction2, GIAentityNode* entitySemanticRelationFunction3, const bool sameReferenceSet)
+bool GIAtxtRelTranslatorParserOperationsClass::createSemanticRelationInNetwork(GIAtranslatorVariablesClass* translatorVariables, const string semanticRelationFunctionName, const string semanticRelationFunctionConditionNewName, vector<GIAentityNode*>* entitySemanticRelationFunctionListArray, GIAentityNode* entitySemanticRelationFunction1, GIAentityNode* entitySemanticRelationFunction2, GIAentityNode* entitySemanticRelationFunction3, const bool sameReferenceSet, const bool semanticRelationReturnConnectionDynamic)
 {
 	bool result = true;
 	
 	//cout << "translatorVariables->sentenceIndex = " << translatorVariables->sentenceIndex << endl;
-				
+	
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEMANTICALLY_DETERMINED_DYNAMIC_CONNECTIONS
+	if(semanticRelationReturnConnectionDynamic)
+	{
+		GIAtranslatorOperations.semanticRelationReturnConnectionDynamic = true;
+	}
+	#endif
+						
 	#ifdef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
 	if((semanticRelationFunctionName == GIAtxtRelSemanticDependencyRelationNameArray[GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_property]) ||
 	(semanticRelationFunctionName == GIAtxtRelSemanticDependencyRelationNameArray[GIA_TXT_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_propertyReverse]) ||
@@ -1334,6 +1364,13 @@ bool GIAtxtRelTranslatorParserOperationsClass::createSemanticRelationInNetwork(G
 			exit(EXIT_ERROR);
 		}
 	}
+	
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEMANTICALLY_DETERMINED_DYNAMIC_CONNECTIONS
+	if(semanticRelationReturnConnectionDynamic)
+	{
+		GIAtranslatorOperations.semanticRelationReturnConnectionDynamic = false;
+	}
+	#endif	
 	
 	return result;
 }

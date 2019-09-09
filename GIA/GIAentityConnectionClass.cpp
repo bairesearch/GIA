@@ -26,7 +26,7 @@
  * File Name: GIAentityConnectionClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3i3c 24-June-2019
+ * Project Version: 3j1a 03-August-2019
  * /
  *******************************************************************************/
 
@@ -108,6 +108,10 @@ void GIAentityConnection::initialiseDefaultValues(void)
 	#endif
 	sentenceIndexTemp = GIA_SENTENCE_INDEX_UNDEFINED2;
 
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEMANTICALLY_DETERMINED_DYNAMIC_CONNECTIONS
+	semanticRelationConnectionDynamic = false;
+	#endif
+	
 	/*
 	#ifdef GIA_NLG
 	parsedForLanguageGeneration = false;

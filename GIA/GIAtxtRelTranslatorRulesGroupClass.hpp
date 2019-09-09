@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorRulesGroupClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3i3c 24-June-2019
+ * Project Version: 3j1a 03-August-2019
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Rules
  * /
@@ -112,6 +112,11 @@ public:
 	~GIAtxtRelTranslatorParserForwardPropogationSignalData(void);
 	
 	GIAentityNode* semanticRelationReturnEntity;
+	/*
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEMANTICALLY_DETERMINED_DYNAMIC_CONNECTIONS
+	bool semanticRelationReturnConnectionDynamic;
+	#endif
+	*/
 	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_SEMANTIC_RELATION_RECORD_AND_CONNECT
 	GIAentityNode* semanticRelationReturnEntitySubject;
 	GIAentityNode* semanticRelationReturnEntityDelimiter;

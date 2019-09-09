@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3i3c 24-June-2019
+ * Project Version: 3j1a 03-August-2019
  * Requirements: requires text parsed by X Parser
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
@@ -42,11 +42,20 @@ NLCpreprocessorSentence* firstNLCsentenceInListLocalGIA;
 
 
 
+//these local vars can be moved to GIAtranslatorOperationsClass structure?
 static bool foundComparisonVariable;
-static GIAentityNode* comparisonVariableNode;
+static GIAentityNode* comparisonVariableNode; 
 
 
-
+#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEMANTICALLY_DETERMINED_DYNAMIC_CONNECTIONS
+GIAtranslatorOperationsClass::GIAtranslatorOperationsClass(void)
+{
+	semanticRelationReturnConnectionDynamic = false;
+}
+GIAtranslatorOperationsClass::~GIAtranslatorOperationsClass(void)
+{
+}
+#endif
 
 GIAtranslatorVariablesClass::GIAtranslatorVariablesClass(void)
 {
@@ -752,8 +761,15 @@ void GIAtranslatorOperationsClass::connectRelationshipInstanceToObject(GIAentity
 
 void GIAtranslatorOperationsClass::connectEntities(GIAentityNode* entity1, GIAentityNode* entity2, const int connectionType, const int connectionTypeInverse, const bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables)
 {
-	writeVectorConnection(entity1, entity2, connectionType, sameReferenceSet, translatorVariables);
-	writeVectorConnection(entity2, entity1, connectionTypeInverse, sameReferenceSet, translatorVariables);
+	GIAentityConnection* connection1 = writeVectorConnection(entity1, entity2, connectionType, sameReferenceSet, translatorVariables);
+	GIAentityConnection* connection2 = writeVectorConnection(entity2, entity1, connectionTypeInverse, sameReferenceSet, translatorVariables);
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEMANTICALLY_DETERMINED_DYNAMIC_CONNECTIONS
+	if(semanticRelationReturnConnectionDynamic)
+	{
+		connection1->semanticRelationConnectionDynamic = true;
+		connection2->semanticRelationConnectionDynamic = true;
+	}
+	#endif	
 }
 
 

@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetworkParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3i3c 24-June-2019
+ * Project Version: 3j1a 03-August-2019
  * Requirements: 
  * Description: Textual Relation Translator Neural Network Parser
  * /
@@ -70,7 +70,7 @@ bool GIAtxtRelTranslatorNeuralNetworkParserClass::generateSemanticRelationsFromT
 	
 	int numberOfComponentsInGroup = currentParseTreeGroup->components.size();
 	vector<GIAtxtRelTranslatorParserForwardPropogationSignalData> parseTreeComponentSignalDataArray(numberOfComponentsInGroup);
-		
+	
 	/*
 	//code used if GIAtxtRelTranslatorRulesGroupParseTree* currentParseTreeGroup replaced with GIAtxtRelTranslatorRulesGroupNeuralNetwork* currentParseTreeGroup
 	if(currentParseTreeGroup->neuronActive)
@@ -171,11 +171,12 @@ bool GIAtxtRelTranslatorNeuralNetworkParserClass::generateSemanticRelationsFromT
 			}
 			*/
 		}
-		
+
 		if(!GIAtxtRelTranslatorParserOperations.generateSemanticRelationsFromTxtRelationsPart2(translatorVariables, currentParseTreeGroup, &parseTreeComponentSignalDataArray, parserForwardPropogationSignalData, layer))
 		{
 			result = false;
 		}
+
 	/*
 	}
 	else

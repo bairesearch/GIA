@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3i3c 24-June-2019
+ * Project Version: 3j1a 03-August-2019
  * Requirements: 
  * Description: Textual Relation Translator Parser
  * /
@@ -399,6 +399,13 @@ bool GIAtxtRelTranslatorParserClass::generateSemanticRelationsFromTxtRelationsWr
 	{
 		result = false;
 	}
+	
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEMANTICALLY_DETERMINED_DYNAMIC_CONNECTIONS
+	if(!relinkDynamicConnections(translatorVariables))	//CHECKTHIS
+	{
+		result = false;
+	}
+	#endif
 
 	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_ASSUME_HIGH_LEVEL_REFERENCE_SETS_DO_NOT_CONTAIN_EXPLICIT_SEMANTIC_RELATION_FUNCTION
 	if(!reconcileSameReferenceSetConnectionsForAllRelationshipEntities(translatorVariables))
@@ -430,7 +437,14 @@ bool GIAtxtRelTranslatorParserClass::generateSemanticRelationsFromTxtRelationsWr
 	{
 		result = false;
 	}
-
+	
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEMANTICALLY_DETERMINED_DYNAMIC_CONNECTIONS
+	if(!relinkDynamicConnections(translatorVariables))
+	{
+		result = false;
+	}
+	#endif
+	
 	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_ASSUME_HIGH_LEVEL_REFERENCE_SETS_DO_NOT_CONTAIN_EXPLICIT_SEMANTIC_RELATION_FUNCTION
 	if(!reconcileSameReferenceSetConnectionsForAllRelationshipEntities(translatorVariables))
 	{
@@ -831,6 +845,196 @@ void GIAtxtRelTranslatorParserClass::deleteRelationshipEntity(GIAentityNode* rel
 	
 }
 #endif
+	
+#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEMANTICALLY_DETERMINED_DYNAMIC_CONNECTIONS
+bool GIAtxtRelTranslatorParserClass::relinkDynamicConnections(GIAtranslatorVariablesClass* translatorVariables)
+{
+	bool result = true;
+
+	for(int w=0; w<GIAtranslatorOperations.getEntityArrayMaxIndex(translatorVariables); w++)
+	{
+		if((*translatorVariables->GIAentityNodeArrayFilled)[w])
+		{
+			GIAentityNode* relationshipEntity = (*translatorVariables->GIAentityNodeArray)[w];
+			if(GIAentityNodeClassObject.entityIsRelationship(relationshipEntity))
+			{
+				GIAentityConnection* relationshipSubject = NULL;
+				GIAentityNode* relationshipSubjectEntity = NULL;
+				GIAentityConnection* relationshipObject = NULL;
+				GIAentityNode* relationshipObjectEntity = NULL;
+				bool subjectFound = false;
+				bool objectFound = false;
+				if(!(relationshipEntity->relationshipSubjectEntity->empty()))
+				{
+					subjectFound = true;
+					relationshipSubject = (relationshipEntity->relationshipSubjectEntity->back());
+					relationshipSubjectEntity = relationshipSubject->entity;
+				}
+				else
+				{
+					cerr << "GIAtxtRelTranslatorParserOperationsClass::relinkDynamicConnections error; relationshipEntity->relationshipSubjectEntity->empty()" << endl;
+					cerr << "relationshipEntity = " << relationshipEntity->entityName << endl;
+					exit(EXIT_ERROR);
+				}
+				if(!(relationshipEntity->relationshipObjectEntity->empty()))
+				{
+					objectFound = true;
+					relationshipObject = (relationshipEntity->relationshipObjectEntity->back());
+					relationshipObjectEntity = relationshipObject->entity;
+				}
+				else
+				{
+					cerr << "GIAtxtRelTranslatorParserOperationsClass::relinkDynamicConnections error; relationshipEntity->relationshipObjectEntity->empty()" << endl;
+					cerr << "relationshipEntity = " << relationshipEntity->entityName << endl;
+					exit(EXIT_ERROR);
+				}
+				
+				bool semanticRelationConnectionDynamicFound = false;
+				GIAentityConnection* relationshipSource = NULL;
+				GIAentityNode* relationshipSourceEntity = NULL;
+				GIAentityNode* relationshipTargetEntity = NULL;
+				bool relationshipSourceIsSubject = false;
+				if(relationshipSubject->semanticRelationConnectionDynamic)
+				{
+					semanticRelationConnectionDynamicFound = true;
+					relationshipSource = relationshipSubject;
+					relationshipSourceEntity = relationshipSubjectEntity;
+					relationshipTargetEntity = relationshipObjectEntity;
+					relationshipSourceIsSubject = true;
+				}
+				else if(relationshipObject->semanticRelationConnectionDynamic)
+				{
+					semanticRelationConnectionDynamicFound = true;
+					relationshipSource = relationshipObject;
+					relationshipSourceEntity = relationshipObjectEntity;
+					relationshipTargetEntity = relationshipSubjectEntity;
+					relationshipSourceIsSubject = false;
+				}
+				
+				if(semanticRelationConnectionDynamicFound)
+				{
+					//find ideal semantic relationship source in sentence subnet 
+					GIAentityNode* relationshipSourceNew = NULL;
+					bool relationshipSourceNewFound = findIdealSemanticRelationshipSourceInSentenceSubnet(translatorVariables, relationshipSourceIsSubject, relationshipEntity, relationshipSourceEntity, relationshipTargetEntity, &relationshipSourceNew);
+
+					//disable semanticRelationConnectionDynamic
+					relationshipSource->semanticRelationConnectionDynamic = false;
+					GIAentityConnection* sourceRelationshipReverse = GIAtranslatorOperations.getConnection(relationshipSourceEntity, relationshipEntity);
+					sourceRelationshipReverse->semanticRelationConnectionDynamic = false;
+					
+					//create new connection to new source
+					if(relationshipSourceNewFound)
+					{
+						GIAtranslatorOperations.connectRelationshipInstanceToSubject(relationshipSourceNew, relationshipEntity, relationshipSource->sameReferenceSet, relationshipEntity->entityType, translatorVariables);
+					}
+				}
+			}
+		}
+	}
+		
+	return result;
+}
+
+bool GIAtxtRelTranslatorParserClass::findIdealSemanticRelationshipSourceInSentenceSubnet(GIAtranslatorVariablesClass* translatorVariables, bool relationshipSourceIsSubject, GIAentityNode* relationshipEntity, GIAentityNode* relationshipSourceEntity, GIAentityNode* relationshipTargetEntity, GIAentityNode** relationshipSourceNewFound)
+{
+	int maxSimilarityOfSubnet = 0;
+	bool foundSimilarSubnet = false;
+	
+	int subsetSimilarityBaseline = 0;
+	calculateSimilarityOfSubnets(relationshipEntity, relationshipSourceEntity, relationshipTargetEntity, &subsetSimilarityBaseline);
+	maxSimilarityOfSubnet = subsetSimilarityBaseline;
+	
+	for(int w=0; w<GIAtranslatorOperations.getEntityArrayMaxIndex(translatorVariables); w++)
+	{
+		if((*translatorVariables->GIAentityNodeArrayFilled)[w])
+		{
+			GIAentityNode* relationshipEntity2 = (*translatorVariables->GIAentityNodeArray)[w];
+			if(GIAentityNodeClassObject.entityIsRelationship(relationshipEntity2))
+			{
+				if(relationshipEntity2 != relationshipEntity)
+				{
+					GIAentityConnection* relationshipSubject = NULL;
+					GIAentityNode* relationshipSubjectEntity = NULL;
+					GIAentityConnection* relationshipObject = NULL;
+					GIAentityNode* relationshipObjectEntity = NULL;
+					bool subjectFound = false;
+					bool objectFound = false;
+					if(!(relationshipEntity2->relationshipSubjectEntity->empty()))
+					{
+						subjectFound = true;
+						relationshipSubject = (relationshipEntity2->relationshipSubjectEntity->back());
+						relationshipSubjectEntity = relationshipSubject->entity;
+					}
+					else
+					{
+						cerr << "GIAtxtRelTranslatorParserOperationsClass::findIdealSemanticRelationshipSourceInSentenceSubnet error; relationshipEntity2->relationshipSubjectEntity->empty()" << endl;
+						cerr << "relationshipEntity2 = " << relationshipEntity2->entityName << endl;
+						exit(EXIT_ERROR);
+					}
+					if(!(relationshipEntity2->relationshipObjectEntity->empty()))
+					{
+						objectFound = true;
+						relationshipObject = (relationshipEntity2->relationshipObjectEntity->back());
+						relationshipObjectEntity = relationshipObject->entity;
+					}
+					else
+					{
+						cerr << "GIAtxtRelTranslatorParserOperationsClass::findIdealSemanticRelationshipSourceInSentenceSubnet error; relationshipEntity2->relationshipObjectEntity->empty()" << endl;
+						cerr << "relationshipEntity2 = " << relationshipEntity2->entityName << endl;
+						exit(EXIT_ERROR);
+					}
+
+					bool semanticRelationConnectionDynamicFound2 = false;
+					GIAentityConnection* relationshipSource2 = NULL;
+					GIAentityNode* relationshipSourceEntity2 = NULL;
+					GIAentityNode* relationshipTargetEntity2 = NULL;
+					bool relationshipSourceIsSubject2 = false;
+					if(relationshipSubject->semanticRelationConnectionDynamic)
+					{
+						semanticRelationConnectionDynamicFound2 = true;
+						relationshipSource2 = relationshipSubject;
+						relationshipSourceEntity2 = relationshipSubjectEntity;
+						relationshipTargetEntity2 = relationshipObjectEntity;
+						relationshipSourceIsSubject2 = true;
+					}
+					else if(relationshipObject->semanticRelationConnectionDynamic)
+					{
+						semanticRelationConnectionDynamicFound2 = true;
+						relationshipSource2 = relationshipObject;
+						relationshipSourceEntity2 = relationshipObjectEntity;
+						relationshipTargetEntity2 = relationshipSubjectEntity;
+						relationshipSourceIsSubject2 = false;
+					}
+				
+					if(semanticRelationConnectionDynamicFound2)
+					{
+						if(relationshipSource2->semanticRelationConnectionDynamic)
+						{
+							int subsetSimilarity = 0;
+							calculateSimilarityOfSubnets(relationshipEntity2, relationshipSourceEntity2, relationshipTargetEntity, &subsetSimilarity);
+							if(subsetSimilarity > maxSimilarityOfSubnet)
+							{
+								foundSimilarSubnet = true;
+								maxSimilarityOfSubnet = subsetSimilarity;
+								*relationshipSourceNewFound = relationshipSourceEntity2;
+							}
+						}
+					}		
+				}
+			}
+		}
+	}
+		
+	return foundSimilarSubnet;
+}
+
+bool GIAtxtRelTranslatorParserClass::calculateSimilarityOfSubnets(GIAentityNode* relationshipEntity, GIAentityNode* relationshipSourceEntity, GIAentityNode* relationshipTargetEntity, int* subsetSimilarity)
+{
+	//TODO: fill this
+}
+
+#endif
+	
 	
 
 #endif
