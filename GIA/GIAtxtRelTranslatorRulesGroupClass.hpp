@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorRulesGroupClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j2l 10-August-2019
+ * Project Version: 3j3a 08-September-2019
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Rules
  * /
@@ -463,6 +463,12 @@ public:
 	bool recordActivatedNeuronWithMaxWordIndexCoverage;
 	GIAtxtRelTranslatorRulesGroupParseTree* partiallyActivatedNeuronWithMaxWordIndexCoverage;
 	GIAtxtRelTranslatorRulesGroupParseTree* fullyActivatedNeuronWithMaxWordIndexCoverage;
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_COMPONENT_DETECT_LOCAL_VARATION
+	bool findingCandidateComponent2;
+	GIAtxtRelTranslatorRulesComponentNeuralNetwork* candidateComponent2ToFind;
+	bool foundCandidateComponent2;
+	GIAtxtRelTranslatorRulesGroupParseTree* candidateComponent2sourceParseTreeGroup;
+	#endif
 	#endif
 	
 	//sentence specific variables:

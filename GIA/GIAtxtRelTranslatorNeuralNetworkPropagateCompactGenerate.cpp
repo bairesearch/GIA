@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerate.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j2l 10-August-2019
+ * Project Version: 3j3a 08-September-2019
  * Requirements: 
  * Description: Textual Relation Translator Neural Network Propagate Compact - unsupervised training of sequence grammar parse network
  * /
@@ -106,39 +106,8 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::findAndRecon
 	if(translatorVariables->currentPreprocessorSentenceInList->sentenceIndexOriginal <= translatorVariables->maxNumberSentences/2)
 	{
 	#endif
-		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_OPTIONAL_AND_MULTIPLE_INPUTS
-		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_COMPONENT_DETECT_CENTRAL_VARIATION
-		bool foundAndReconciledMissingOrDifferentCentralNeuron = findAndReconcileCentralVariation(translatorVariables, GIAtxtRelTranslatorRulesGroupTypes, forwardPropogationSentenceData, firstLayer);
-		if(!foundAndReconciledMissingOrDifferentCentralNeuron)
-		{
-		#endif
-			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_COMPONENT_DETECT_EDGE_VARIATION
-			bool foundAndReconciledMissingOrDifferentEdgeNeuron = findAndReconcileEdgeVariation(translatorVariables, GIAtxtRelTranslatorRulesGroupTypes, forwardPropogationSentenceData, firstLayer);
-			if(!foundAndReconciledMissingOrDifferentEdgeNeuron)
-			{
-			#endif
-		#endif
-				bool foundAndReconciledMissingOrDifferentIncrementalNeurons = findAndReconcileIncrementalVariation(translatorVariables, GIAtxtRelTranslatorRulesGroupTypes, forwardPropogationSentenceData, firstLayer);
+		bool foundAndReconciledMissingOrDifferentIncrementalNeurons = findAndReconcileIncrementalVariation(translatorVariables, GIAtxtRelTranslatorRulesGroupTypes, forwardPropogationSentenceData, firstLayer);
 
-				/*
-				OLD algorithm1 (relies on biologically unfeasible backprop);
-				for every neuron hx in network connected to first input neuron
-					verify that it corresponds to the first input component
-						check next input component in hx
-							verify that it encapsulates the second input neuron in sequence (recursive)
-					3 before breaking the neuron apart check to see if there exists a neuron with the desired input components
-						there won't be 
-					this algorithm requires back propagation; require an algorithm that performs forward prop only
-				*/	
-		
-		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_OPTIONAL_AND_MULTIPLE_INPUTS
-			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_COMPONENT_DETECT_EDGE_VARIATION
-			}
-			#endif
-		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_COMPONENT_DETECT_CENTRAL_VARIATION
-		}
-		#endif
-		#endif
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_DEBUG_TEST_VERIFICATION_AFTER_GENERATION
 	}
 	#endif
@@ -174,7 +143,7 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::findAndRecon
 	#endif
 		
 	bool foundAndReconciledMissingOrDifferentIncrementalNeurons = false;
-	
+		
 	/*
 	algorithm2;
 	let l be the first word in the sentence word sequence
@@ -213,16 +182,21 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::findAndRecon
 	bool toplevelGroupActivationFound = false;
 
 	vector<GIAtxtRelTranslatorRulesGroupNeuralNetwork*> listOfHighLevelNeurons1;	//vectorQ
+	vector<GIAtxtRelTranslatorRulesGroupNeuralNetwork*>* listOfHighLevelNeuronsCurrent = &listOfHighLevelNeurons1;
 	bool creatingNewNeuronSequence1 = false;	//this is used to ensure that only a single neuron is created to store the unrecognised sequence (not 1 neuron per word of the sequence)
 	int neuronSequenceIndex1 = 0;
 	GIAtxtRelTranslatorRulesGroupNeuralNetwork* newNeuronSequenceGroup1 = NULL;
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_2_ADD_ALL_PERMUTATIONS
-	vector<GIAtxtRelTranslatorRulesGroupNeuralNetwork*> listOfHighLevelNeurons2;	//vectorQ
-	bool creatingNewNeuronSequence2 = false;
-	int neuronSequenceIndex2 = 0;
-	GIAtxtRelTranslatorRulesGroupNeuralNetwork* newNeuronSequenceGroup2 = NULL;
-	#endif	
-	
+
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_COMPONENT_DETECT_LOCAL_VARATION
+	bool findingCandidateComponent1 = true;
+	bool findingCandidateComponent2 = false;
+	bool findingCentralVariation = false;
+	int activatedNeuronWithMaxWordIndexCoverageFirstWordIndexAllowed = INT_DEFAULT_VALUE;	//for central variation detection only
+	int activatedNeuronWithMaxWordIndexCoverageLastWordIndexAllowed = INT_DEFAULT_VALUE;	//for central variation detection only
+	GIAtxtRelTranslatorRulesGroupParseTree* candidateNeuronBaseParseTree = NULL;
+	vector<GIAtxtRelTranslatorRulesGroupNeuralNetwork*> listOfHighLevelNeuronsCentralVariation;
+	#endif
+			
 	int loopIndex = 0;
 	
 	while(stillIdentifyingHighLevelNeurons)
@@ -252,313 +226,448 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::findAndRecon
 		forwardPropogationSentenceData->recordActivatedNeuronWithMaxWordIndexCoverage = true;
 		forwardPropogationSentenceData->fullyActivatedNeuronWithMaxWordIndexCoverage = NULL;
 		forwardPropogationSentenceData->partiallyActivatedNeuronWithMaxWordIndexCoverage = NULL;
-		if(GIAtxtRelTranslatorNeuralNetworkPropagateCompact.performPropagation(translatorVariables, GIAtxtRelTranslatorRulesGroupTypes, forwardPropogationSentenceData, firstLayer, false, indexInSequence))
+		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_COMPONENT_DETECT_LOCAL_VARATION
+		if(findingCentralVariation)
 		{
-			toplevelGroupActivationFound = true;	//note this will only be set true if the entire sentence word indices have been covered (ie only when currentFirstInputNeuronIndexInSequence=start)
-		}
-		
-		if(!GIAtxtRelTranslatorNeuralNetworkPropagateCompact.verifyActivatedNeuronsAtLeastOne(forwardPropogationSentenceData, firstLayer, &(forwardPropogationSentenceData->fullyActivatedNeuronWithMaxWordIndexCoverage), &(forwardPropogationSentenceData->partiallyActivatedNeuronWithMaxWordIndexCoverage), newNeuronSequenceGroup1))
-		{
-			//case a
-			foundAndReconciledMissingOrDifferentIncrementalNeurons = true;
-			
-			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_DEBUG_SPLIT
-			cout << "A createOrAppendFirstLevelHiddenLayerGroup" << endl;
-			#endif
-			createOrAppendFirstLevelHiddenLayerGroup(GIAtxtRelTranslatorRulesGroupTypes, forwardPropogationSentenceData, currentLayerNeuronGroupStart, &creatingNewNeuronSequence1, &neuronSequenceIndex1, &newNeuronSequenceGroup1, &listOfHighLevelNeurons1);
-			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_2_ADD_ALL_PERMUTATIONS
-			if(indexInSequence > 0)
+			if(GIAtxtRelTranslatorNeuralNetworkPropagateCompact.performPropagation(translatorVariables, GIAtxtRelTranslatorRulesGroupTypes, forwardPropogationSentenceData, firstLayer, false, indexInSequence, activatedNeuronWithMaxWordIndexCoverageFirstWordIndexAllowed, activatedNeuronWithMaxWordIndexCoverageLastWordIndexAllowed))
 			{
-				createOrAppendFirstLevelHiddenLayerGroup(GIAtxtRelTranslatorRulesGroupTypes, forwardPropogationSentenceData, currentLayerNeuronGroupStart, &creatingNewNeuronSequence2, &neuronSequenceIndex2, &newNeuronSequenceGroup2, &listOfHighLevelNeurons2);
+				toplevelGroupActivationFound = true;	//note this will only be set true if the entire sentence word indices have been covered (ie only when currentFirstInputNeuronIndexInSequence=start)
 			}
-			#endif
-			
-			indexInSequence++;
 		}
 		else
 		{
-			creatingNewNeuronSequence1 = false;
-			neuronSequenceIndex1 = 0;
-			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_2_ADD_ALL_PERMUTATIONS
-			creatingNewNeuronSequence2 = false;
-			neuronSequenceIndex2 = 0;
-			#endif
-			foundAndReconciledMissingOrDifferentIncrementalNeurons = true;
-			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_2
-			if(forwardPropogationSentenceData->fullyActivatedNeuronWithMaxWordIndexCoverage != NULL)
-			#else
-			if(!GIAtxtRelTranslatorNeuralNetworkPropagateCompact.verifyActivatedNeuronWithMaxWordIndexCoverage(forwardPropogationSentenceData, forwardPropogationSentenceData->fullyActivatedNeuronWithMaxWordIndexCoverage, forwardPropogationSentenceData->partiallyActivatedNeuronWithMaxWordIndexCoverage, currentFirstInputNeuronIndexInSequence, true))
-			#endif
-			{	
-				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_DEBUG_SPLIT
-				cout << "B listOfHighLevelNeurons1.push_back(forwardPropogationSentenceData->fullyActivatedNeuronWithMaxWordIndexCoverage->groupRef);" << endl;
-				cout << "forwardPropogationSentenceData->fullyActivatedNeuronWithMaxWordIndexCoverage->groupRef->groupIndex = " << forwardPropogationSentenceData->fullyActivatedNeuronWithMaxWordIndexCoverage->groupRef->groupIndex << endl;
-				#endif
-				//fully activated group coverage+weight is > partially activated group coverage+weight
-				//case c
-				if(forwardPropogationSentenceData->parseSentenceReverse)
-				{
-					indexInSequence = firstLayer->size()-1 - (forwardPropogationSentenceData->fullyActivatedNeuronWithMaxWordIndexCoverage->parseTreeMinWordIndex - 1);	//CHECKTHIS
-				}
-				else
-				{
-					indexInSequence = forwardPropogationSentenceData->fullyActivatedNeuronWithMaxWordIndexCoverage->parseTreeMaxWordIndex + 1;
-				}
-				listOfHighLevelNeurons1.push_back(forwardPropogationSentenceData->fullyActivatedNeuronWithMaxWordIndexCoverage->groupRef);
-				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_2_ADD_ALL_PERMUTATIONS
-				if(indexInSequence > 0)
-				{
-					listOfHighLevelNeurons2.push_back(forwardPropogationSentenceData->fullyActivatedNeuronWithMaxWordIndexCoverage->groupRef);
-				}
-				#endif
-			}
-			#ifndef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_2
-			else
+		#endif
+			if(GIAtxtRelTranslatorNeuralNetworkPropagateCompact.performPropagation(translatorVariables, GIAtxtRelTranslatorRulesGroupTypes, forwardPropogationSentenceData, firstLayer, false, indexInSequence))
 			{
-				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_DEBUG_SPLIT
-				cout << "C splitGroupAtLastActivatedComponent" << endl;
-				#endif
-				//partially activated group coverage+weight is > fully activated group coverage+weight
-				//case b
+				toplevelGroupActivationFound = true;	//note this will only be set true if the entire sentence word indices have been covered (ie only when currentFirstInputNeuronIndexInSequence=start)
+			}
+		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_COMPONENT_DETECT_LOCAL_VARATION
+		}
+		#endif
+		
+		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_COMPONENT_DETECT_LOCAL_VARATION
+		if(findingCandidateComponent2)
+		{
+			findingCandidateComponent2 = false;
+			
+			if(forwardPropogationSentenceData->foundCandidateComponent2)
+			{
+				listOfHighLevelNeuronsCurrent->push_back(candidateNeuronBaseParseTree->groupRef);
+
+				GIAtxtRelTranslatorRulesGroupParseTree* candidateComponent2sourceParseTreeGroup = forwardPropogationSentenceData->candidateComponent2sourceParseTreeGroup;
+
 				if(forwardPropogationSentenceData->parseSentenceReverse)
 				{
-					indexInSequence = firstLayer->size()-1 - (forwardPropogationSentenceData->partiallyActivatedNeuronWithMaxWordIndexCoverage->parseTreeMinWordIndex - 1);	//CHECKTHIS
+					activatedNeuronWithMaxWordIndexCoverageFirstWordIndexAllowed = candidateNeuronBaseParseTree->parseTreeMinWordIndex-1;
+					activatedNeuronWithMaxWordIndexCoverageLastWordIndexAllowed = candidateComponent2sourceParseTreeGroup->parseTreeMaxWordIndex+1;
 				}
 				else
 				{
-					indexInSequence = forwardPropogationSentenceData->partiallyActivatedNeuronWithMaxWordIndexCoverage->parseTreeMaxWordIndex + 1;
+					activatedNeuronWithMaxWordIndexCoverageFirstWordIndexAllowed = candidateNeuronBaseParseTree->parseTreeMaxWordIndex+1;
+					activatedNeuronWithMaxWordIndexCoverageLastWordIndexAllowed = candidateComponent2sourceParseTreeGroup->parseTreeMinWordIndex-1;
 				}
 				
-				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_SUPPORT_PARTIAL_SENTENCE_PROPAGATION
-				int indexToSplitVector1 = INT_DEFAULT_VALUE;
-				int indexToSplitVector2 = INT_DEFAULT_VALUE;			
-				GIAtxtRelTranslatorNeuralNetworkPropagateCompact.identifyComponentIndexFirstAndLastActivatedIndexUnordered(forwardPropogationSentenceData, forwardPropogationSentenceData->partiallyActivatedNeuronWithMaxWordIndexCoverage, &indexToSplitVector1, &indexToSplitVector2);
-				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_DEBUG_PRINT_GROUP_INDICES
-				cout << "indexToSplitVector1 = " << indexToSplitVector1 << endl;
-				cout << "indexToSplitVector2 = " << indexToSplitVector2 << endl;				
-				#endif				
-				GIAtxtRelTranslatorRulesGroupNeuralNetwork* newNeuron = splitGroupAtLastActivatedComponentUnordered(forwardPropogationSentenceData, GIAtxtRelTranslatorRulesGroupTypes, forwardPropogationSentenceData->partiallyActivatedNeuronWithMaxWordIndexCoverage->groupRef, indexToSplitVector1, indexToSplitVector2);	//note passing partiallyActivatedNeuronWithMaxWordIndexCoverage instead of partiallyActivatedNeuronWithMaxWordIndexCoverage->groupRef because groupRef's activations may have been overwritten if the neuron was reset after being saved to partiallyActivatedNeuronWithMaxWordIndexCoverage
-				#else
-				int indexToSplitVector = INT_DEFAULT_VALUE;
-				GIAtxtRelTranslatorNeuralNetworkPropagateCompact.identifyComponentIndexLastActivatedIndex(forwardPropogationSentenceData, forwardPropogationSentenceData->partiallyActivatedNeuronWithMaxWordIndexCoverage, &indexToSplitVector);
-				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_DEBUG_PRINT_GROUP_INDICES
-				cout << "indexToSplitVector = " << indexToSplitVector << endl;				
-				#endif
-				GIAtxtRelTranslatorRulesGroupNeuralNetwork* newNeuron = splitGroupAtLastActivatedComponent(forwardPropogationSentenceData, GIAtxtRelTranslatorRulesGroupTypes, forwardPropogationSentenceData->partiallyActivatedNeuronWithMaxWordIndexCoverage->groupRef, indexToSplitVector);	//note passing partiallyActivatedNeuronWithMaxWordIndexCoverage instead of partiallyActivatedNeuronWithMaxWordIndexCoverage->groupRef because groupRef's activations may have been overwritten if the neuron was reset after being saved to partiallyActivatedNeuronWithMaxWordIndexCoverage
-				#endif
-				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_DEBUG_PRINT_GROUP_INDICES
-				cout << "forwardPropogationSentenceData->partiallyActivatedNeuronWithMaxWordIndexCoverage->parseTreeMaxWordIndex = " << forwardPropogationSentenceData->partiallyActivatedNeuronWithMaxWordIndexCoverage->parseTreeMaxWordIndex << endl;
-				cout << "forwardPropogationSentenceData->partiallyActivatedNeuronWithMaxWordIndexCoverage->parseTreeMinWordIndex = " << forwardPropogationSentenceData->partiallyActivatedNeuronWithMaxWordIndexCoverage->parseTreeMinWordIndex << endl;
-				cout << "indexInSequence = " << indexInSequence << endl;
-				#endif				
-				listOfHighLevelNeurons1.push_back(newNeuron);
-				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_2_ADD_ALL_PERMUTATIONS
-				if(indexInSequence > 0)
+				if(activatedNeuronWithMaxWordIndexCoverageFirstWordIndexAllowed == activatedNeuronWithMaxWordIndexCoverageLastWordIndexAllowed)
 				{
-					listOfHighLevelNeurons2.push_back(newNeuron);
+					//perfect match detected between activated section of candidateNeuronBaseParseTree and candidateComponent2sourceParseTreeGroup, set component2 of candidateNeuronBase as optional
 				}
-				#endif
+				else
+				{
+					findingCentralVariation = true;
+					listOfHighLevelNeuronsCurrent = &listOfHighLevelNeuronsCentralVariation;
+				}
 			}
-			#endif
-		}
+			else
+			{
+				splitNeuronAndAddToList(GIAtxtRelTranslatorRulesGroupTypes, forwardPropogationSentenceData, listOfHighLevelNeuronsCurrent, candidateNeuronBaseParseTree);	//listOfHighLevelNeuronsCurrent CHECKTHIS
 
-		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_FREE_MEMORY
-		GIAtxtRelTranslatorNeuralNetworkPropagateOperations.deinitialiseParseTreeGroupList(GIAtxtRelTranslatorRulesGroupTypes, parseTreeGroupListPointer);
-		#endif
-
-		
-		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_2
-		if(toplevelGroupActivationFound)
-		{
-			stillIdentifyingHighLevelNeurons = false;
+				//go back to standard findAndReconcileIncrementalVariation routine
+			}
+			
+			forwardPropogationSentenceData->findingCandidateComponent2 = false;
+			forwardPropogationSentenceData->candidateComponent2ToFind = NULL;
+			candidateNeuronBaseParseTree = NULL;
 		}
 		else
 		{
 		#endif
-			if(indexInSequence < firstLayer->size())
+			if(!GIAtxtRelTranslatorNeuralNetworkPropagateCompact.verifyActivatedNeuronsAtLeastOne(forwardPropogationSentenceData, firstLayer, &(forwardPropogationSentenceData->fullyActivatedNeuronWithMaxWordIndexCoverage), &(forwardPropogationSentenceData->partiallyActivatedNeuronWithMaxWordIndexCoverage), newNeuronSequenceGroup1))
 			{
-				stillIdentifyingHighLevelNeurons = true;	
-				//see how many words successfully propagated through the next time
+				//case a			
+				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_DEBUG_SPLIT
+				cout << "A createOrAppendFirstLevelHiddenLayerGroup" << endl;
+				#endif
+				foundAndReconciledMissingOrDifferentIncrementalNeurons = true;
+
+				createOrAppendFirstLevelHiddenLayerGroup(GIAtxtRelTranslatorRulesGroupTypes, forwardPropogationSentenceData, currentLayerNeuronGroupStart, &creatingNewNeuronSequence1, &neuronSequenceIndex1, &newNeuronSequenceGroup1, listOfHighLevelNeuronsCurrent);
+
+				indexInSequence++;
 			}
 			else
 			{
-				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_2
-				//start odd 2-tuples
-				GIAtxtRelTranslatorRulesGroupNeuralNetwork* grammaticalSentenceNeuron = createNewHiddenLayerGroup(forwardPropogationSentenceData, GIAtxtRelTranslatorRulesGroupTypes);
-				for(int i=0; i<listOfHighLevelNeurons1.size()-1; i+2)
-				{
-					GIAtxtRelTranslatorRulesGroupNeuralNetwork* grammaticalSentenceNeuron = createNewHiddenLayerGroup(forwardPropogationSentenceData, GIAtxtRelTranslatorRulesGroupTypes);
-					addComponentToGroup(forwardPropogationSentenceData, listOfHighLevelNeurons1[i], grammaticalSentenceNeuron, GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_GROUP, false);
-					addComponentToGroup(forwardPropogationSentenceData, listOfHighLevelNeurons1[i+1], grammaticalSentenceNeuron, GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_GROUP, false);
+				creatingNewNeuronSequence1 = false;
+				neuronSequenceIndex1 = 0;
+				foundAndReconciledMissingOrDifferentIncrementalNeurons = true;
 
+				if(!GIAtxtRelTranslatorNeuralNetworkPropagateCompact.verifyActivatedNeuronWithMaxWordIndexCoverage(forwardPropogationSentenceData, forwardPropogationSentenceData->fullyActivatedNeuronWithMaxWordIndexCoverage, forwardPropogationSentenceData->partiallyActivatedNeuronWithMaxWordIndexCoverage, currentFirstInputNeuronIndexInSequence, true))
+				{	
+					//case c
+					#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_DEBUG_SPLIT
+					cout << "B listOfHighLevelNeuronsCurrent->push_back(forwardPropogationSentenceData->fullyActivatedNeuronWithMaxWordIndexCoverage->groupRef);" << endl;
+					cout << "forwardPropogationSentenceData->fullyActivatedNeuronWithMaxWordIndexCoverage->groupRef->groupIndex = " << forwardPropogationSentenceData->fullyActivatedNeuronWithMaxWordIndexCoverage->groupRef->groupIndex << endl;
+					#endif
+					//fully activated group coverage+weight is > partially activated group coverage+weight
+
+					if(forwardPropogationSentenceData->parseSentenceReverse)
+					{
+						indexInSequence = firstLayer->size()-1 - (forwardPropogationSentenceData->fullyActivatedNeuronWithMaxWordIndexCoverage->parseTreeMinWordIndex - 1);	//CHECKTHIS
+					}
+					else
+					{
+						indexInSequence = forwardPropogationSentenceData->fullyActivatedNeuronWithMaxWordIndexCoverage->parseTreeMaxWordIndex + 1;
+					}
+					
+					listOfHighLevelNeuronsCurrent->push_back(forwardPropogationSentenceData->fullyActivatedNeuronWithMaxWordIndexCoverage->groupRef);
 				}
-				listOfHighLevelNeurons1.clear();
-				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_2_ADD_ALL_PERMUTATIONS
-				//start even 2-tuples
-				for(int i=0; i<listOfHighLevelNeurons2.size()-1; i+2)
+				else
 				{
-					GIAtxtRelTranslatorRulesGroupNeuralNetwork* grammaticalSentenceNeuron = createNewHiddenLayerGroup(forwardPropogationSentenceData, GIAtxtRelTranslatorRulesGroupTypes);
-					addComponentToGroup(forwardPropogationSentenceData, listOfHighLevelNeurons2[i], grammaticalSentenceNeuron, GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_GROUP, false);
-					addComponentToGroup(forwardPropogationSentenceData, listOfHighLevelNeurons2[i+1], grammaticalSentenceNeuron, GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_GROUP, false);
+					//case b
+					#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_DEBUG_SPLIT
+					cout << "C splitGroupAtLastActivatedComponent" << endl;
+					#endif
+					//partially activated group coverage+weight is > fully activated group coverage+weight
+
+					if(forwardPropogationSentenceData->parseSentenceReverse)
+					{
+						indexInSequence = firstLayer->size()-1 - (forwardPropogationSentenceData->partiallyActivatedNeuronWithMaxWordIndexCoverage->parseTreeMinWordIndex - 1);	//CHECKTHIS
+					}
+					else
+					{
+						indexInSequence = forwardPropogationSentenceData->partiallyActivatedNeuronWithMaxWordIndexCoverage->parseTreeMaxWordIndex + 1;
+					}
+						
+					#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_COMPONENT_DETECT_LOCAL_VARATION
+					bool foundLocalVariationCandidate = false;
+					if(findingCandidateComponent1)
+					{
+						GIAtxtRelTranslatorRulesComponentNeuralNetwork* candidateComponent2 = NULL; 
+						candidateNeuronBaseParseTree = forwardPropogationSentenceData->partiallyActivatedNeuronWithMaxWordIndexCoverage;
+						if(verifyAndMarkNeuronAsCandidateWrapper(forwardPropogationSentenceData, candidateNeuronBaseParseTree, &candidateComponent2))
+						{
+							foundLocalVariationCandidate = true;
+							findingCandidateComponent1 = false;
+							findingCandidateComponent2 = true;
+							forwardPropogationSentenceData->findingCandidateComponent2 = true;
+							forwardPropogationSentenceData->candidateComponent2ToFind = candidateComponent2;
+						}
+					}
+					if(!foundLocalVariationCandidate)
+					{
+					#endif
+						splitNeuronAndAddToList(GIAtxtRelTranslatorRulesGroupTypes, forwardPropogationSentenceData, listOfHighLevelNeuronsCurrent, forwardPropogationSentenceData->partiallyActivatedNeuronWithMaxWordIndexCoverage);
+					#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_COMPONENT_DETECT_LOCAL_VARATION
+					}
+					#endif
 				}
-				listOfHighLevelNeurons2.clear();
-				#endif
-				indexInSequence = 0;
-				#else
-				stillIdentifyingHighLevelNeurons = false;
-				#endif
-			}	
-		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_2
+			}			
+
+			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_FREE_MEMORY
+			GIAtxtRelTranslatorNeuralNetworkPropagateOperations.deinitialiseParseTreeGroupList(GIAtxtRelTranslatorRulesGroupTypes, parseTreeGroupListPointer);
+			#endif
+			
+			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_COMPONENT_DETECT_LOCAL_VARATION
+			if(findingCentralVariation)
+			{
+				if(currentFirstInputNeuronIndexInSequence == activatedNeuronWithMaxWordIndexCoverageLastWordIndexAllowed)
+				{
+					GIAtxtRelTranslatorRulesGroupNeuralNetwork* grammaticalSentenceNeuron = NULL;
+					if(connectListOfHighLevelNeuronsToNewNeuron(GIAtxtRelTranslatorRulesGroupTypes, forwardPropogationSentenceData, listOfHighLevelNeuronsCurrent, &grammaticalSentenceNeuron, false))
+					{
+						listOfHighLevelNeurons1.push_back(grammaticalSentenceNeuron);
+					}
+					#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_PREVENT_TOP_LEVEL_NEURON_DUPLICATION
+					else
+					{
+						listOfHighLevelNeurons1.push_back((*listOfHighLevelNeuronsCurrent)[0]);
+					}
+					#endif
+					findingCentralVariation = false;
+					findingCandidateComponent1 = true;
+					listOfHighLevelNeuronsCurrent = &listOfHighLevelNeurons1;
+					activatedNeuronWithMaxWordIndexCoverageFirstWordIndexAllowed = INT_DEFAULT_VALUE;
+					activatedNeuronWithMaxWordIndexCoverageLastWordIndexAllowed = INT_DEFAULT_VALUE;
+					//candidateNeuronBaseParseTree = NULL;	//already done
+				}
+			}
+			#endif
+
+		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_COMPONENT_DETECT_LOCAL_VARATION
 		}
 		#endif
+		
+		if(indexInSequence < firstLayer->size())
+		{
+			stillIdentifyingHighLevelNeurons = true;	
+			//see how many words successfully propagated through the next time
+		}
+		else
+		{
+			stillIdentifyingHighLevelNeurons = false;
+		}	
 		
 		loopIndex++;
 	}
 
+	GIAtxtRelTranslatorRulesGroupNeuralNetwork* grammaticalSentenceNeuron = NULL;
+	connectListOfHighLevelNeuronsToNewNeuron(GIAtxtRelTranslatorRulesGroupTypes, forwardPropogationSentenceData, &listOfHighLevelNeurons1, &grammaticalSentenceNeuron, true);
+	
+	return foundAndReconciledMissingOrDifferentIncrementalNeurons;
+}
+
+bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::splitNeuronAndAddToList(vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData, vector<GIAtxtRelTranslatorRulesGroupNeuralNetwork*>* listOfHighLevelNeurons, GIAtxtRelTranslatorRulesGroupParseTree* partiallyActivatedNeuronWithMaxWordIndexCoverage)
+{
+	bool result = false;
+	
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_SUPPORT_PARTIAL_SENTENCE_PROPAGATION
+	int indexToSplitVector1 = INT_DEFAULT_VALUE;
+	int indexToSplitVector2 = INT_DEFAULT_VALUE;			
+	GIAtxtRelTranslatorNeuralNetworkPropagateCompact.identifyComponentIndexFirstAndLastActivatedIndexUnordered(forwardPropogationSentenceData, partiallyActivatedNeuronWithMaxWordIndexCoverage, &indexToSplitVector1, &indexToSplitVector2);
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_DEBUG_PRINT_GROUP_INDICES
+	cout << "indexToSplitVector1 = " << indexToSplitVector1 << endl;
+	cout << "indexToSplitVector2 = " << indexToSplitVector2 << endl;				
+	#endif				
+	GIAtxtRelTranslatorRulesGroupNeuralNetwork* newNeuron = splitGroupAtLastActivatedComponentUnordered(forwardPropogationSentenceData, GIAtxtRelTranslatorRulesGroupTypes, partiallyActivatedNeuronWithMaxWordIndexCoverage->groupRef, indexToSplitVector1, indexToSplitVector2);	//note passing partiallyActivatedNeuronWithMaxWordIndexCoverage instead of partiallyActivatedNeuronWithMaxWordIndexCoverage->groupRef because groupRef's activations may have been overwritten if the neuron was reset after being saved to partiallyActivatedNeuronWithMaxWordIndexCoverage
+	#else
+	int indexToSplitVector = INT_DEFAULT_VALUE;
+	GIAtxtRelTranslatorNeuralNetworkPropagateCompact.identifyComponentIndexLastActivatedIndex(forwardPropogationSentenceData, partiallyActivatedNeuronWithMaxWordIndexCoverage, &indexToSplitVector);
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_DEBUG_PRINT_GROUP_INDICES
+	cout << "indexToSplitVector = " << indexToSplitVector << endl;				
+	#endif
+	GIAtxtRelTranslatorRulesGroupNeuralNetwork* newNeuron = splitGroupAtLastActivatedComponent(forwardPropogationSentenceData, GIAtxtRelTranslatorRulesGroupTypes, partiallyActivatedNeuronWithMaxWordIndexCoverage->groupRef, indexToSplitVector);	//note passing partiallyActivatedNeuronWithMaxWordIndexCoverage instead of partiallyActivatedNeuronWithMaxWordIndexCoverage->groupRef because groupRef's activations may have been overwritten if the neuron was reset after being saved to partiallyActivatedNeuronWithMaxWordIndexCoverage
+	#endif
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_DEBUG_PRINT_GROUP_INDICES
+	cout << "partiallyActivatedNeuronWithMaxWordIndexCoverage->parseTreeMaxWordIndex = " << partiallyActivatedNeuronWithMaxWordIndexCoverage->parseTreeMaxWordIndex << endl;
+	cout << "partiallyActivatedNeuronWithMaxWordIndexCoverage->parseTreeMinWordIndex = " << partiallyActivatedNeuronWithMaxWordIndexCoverage->parseTreeMinWordIndex << endl;
+	//cout << "indexInSequence = " << indexInSequence << endl;
+	#endif				
+	listOfHighLevelNeurons->push_back(newNeuron);
+	
+	return result;
+}
+						
+bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::connectListOfHighLevelNeuronsToNewNeuron(vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData, vector<GIAtxtRelTranslatorRulesGroupNeuralNetwork*>* listOfHighLevelNeurons, GIAtxtRelTranslatorRulesGroupNeuralNetwork** grammaticalSentenceNeuron, const bool createTopLevelNeuron)
+{
+	bool result = false;
+	
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_PREVENT_TOP_LEVEL_NEURON_DUPLICATION
-	if(listOfHighLevelNeurons1.size() > 1)
+	if(listOfHighLevelNeurons->size() > 1)
 	{
 	#endif
-		#ifndef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_2
+		result = true;
+		
 		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_DEBUG_PRINT_GROUP_INDICES
 		cout << "GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::findAndReconcileIncrementalVariation - creating top level sentence neuron;" << endl;
 		#endif
-		GIAtxtRelTranslatorRulesGroupNeuralNetwork* grammaticalSentenceNeuron = createNewHiddenLayerGroup(forwardPropogationSentenceData, GIAtxtRelTranslatorRulesGroupTypes);
+		*grammaticalSentenceNeuron = createNewHiddenLayerGroup(forwardPropogationSentenceData, GIAtxtRelTranslatorRulesGroupTypes);
 		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN_SEGREGATE_TOP_LAYER_NEURONS
-		grammaticalSentenceNeuron->topLevelSentenceNeuron = true;
-		#endif
-		for(int k=0; k<listOfHighLevelNeurons1.size(); k++)
+		if(createTopLevelNeuron)
 		{
-			bool normalAddition = true;
+			(*grammaticalSentenceNeuron)->topLevelSentenceNeuron = true;
+		}
+		#endif
+		for(int k=0; k<listOfHighLevelNeurons->size(); k++)
+		{
 			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_REQUIRE_NUM_COMPONENTS_ENFORCE_DURING_FIRST_HIDDEN_LAYER_GENERATION
-			if(listOfHighLevelNeurons1[k]->firstHiddenLayerNeuron)
+			GIAtxtRelTranslatorRulesGroupNeuralNetwork* singleComponentNeuronCandidate = (*listOfHighLevelNeurons)[k];
+			if(!directWireLowLevelPOSneuronToGrammaticalSentenceNeuron(GIAtxtRelTranslatorRulesGroupTypes, forwardPropogationSentenceData, singleComponentNeuronCandidate, (*grammaticalSentenceNeuron)))
 			{
-				if(listOfHighLevelNeurons1[k]->components.size() == 1)
-				{
-					GIAtxtRelTranslatorRulesGroupNeuralNetwork* singleComponentNeuron = listOfHighLevelNeurons1[k];
-					
-					//cout << "singleComponentNeuron->groupIndex = " << singleComponentNeuron->groupIndex << endl;
-					
-					//direct wire low level POS neuron to grammaticalSentenceNeuron (dont ever create intermediary single component neuron)
-					normalAddition = false;
-					
-					GIAtxtRelTranslatorRulesComponentNeuralNetwork* component = singleComponentNeuron->components[0];
-					
-					//doesnt seem to ever be required;
-					for(int i=0; i<singleComponentNeuron->ANNfrontComponentConnectionList.size(); i++)
-					{
-						GIAtxtRelTranslatorRulesComponentNeuralNetwork* currentComponent = (singleComponentNeuron->ANNfrontComponentConnectionList)[i];
-						GIAtxtRelTranslatorRulesGroupNeuralNetwork* higherLevelGroup = currentComponent->ownerGroup;
-						//cout << "higherLevelGroup->groupIndex = " << higherLevelGroup->groupIndex << endl;
-						
-						/*
-						//method1;
-						for(int j=0; j<higherLevelGroup->components.size(); j++)
-						{	
-							GIAtxtRelTranslatorRulesComponentNeuralNetwork* currentComponent2 = (higherLevelGroup->components)[j];
-							if(currentComponent2 == currentComponent)
-							{
-								higherLevelGroup->components.erase(higherLevelGroup->components.begin()+j);
-								j--;
-							}
-						}
-						GIAtxtRelTranslatorRules.updateComponentsOwnerGroupAndIndexes(higherLevelGroup, &(higherLevelGroup->components), false, NULL);	
-						delete currentComponent;
-						*/
-						//method2;
-						for(int j=0; j<currentComponent->ANNbackGroupConnectionList.size(); j++)
-						{
-							GIAtxtRelTranslatorRulesGroupNeuralNetwork* firstHiddenLayerGroup = (currentComponent->ANNbackGroupConnectionList)[j];
-							if(firstHiddenLayerGroup == singleComponentNeuron)
-							{
-								currentComponent->ANNbackGroupConnectionList.erase(currentComponent->ANNbackGroupConnectionList.begin()+j);
-								j--;
-							}
-						}
-					}
-					
-					for(int i=0; i<component->ANNbackGroupConnectionList.size(); i++)
-					{
-						GIAtxtRelTranslatorRulesGroupNeuralNetwork* lowerLevelPOSgroup = (component->ANNbackGroupConnectionList)[i];
-						//GIAtxtRelTranslatorNeuralNetworkFormation.deleteGroupANNconnectionForward(lowerLevelPOSgroup, component);
-						for(int j=0; j<lowerLevelPOSgroup->ANNfrontComponentConnectionList.size(); j++)
-						{
-							GIAtxtRelTranslatorRulesComponentNeuralNetwork* currentComponent = (lowerLevelPOSgroup->ANNfrontComponentConnectionList)[j];
-							if(currentComponent == component)
-							{
-								lowerLevelPOSgroup->ANNfrontComponentConnectionList.erase(lowerLevelPOSgroup->ANNfrontComponentConnectionList.begin()+j);
-								j--;
-							}
-						}
-						
-						addComponentToGroup(forwardPropogationSentenceData, lowerLevelPOSgroup, grammaticalSentenceNeuron, GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_GROUP, false);
-					}
-					
-	
-					/*
-					cout << "\t GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_REQUIRE_NUM_COMPONENTS_ENFORCE_DURING_FIRST_HIDDEN_LAYER_GENERATION;" << endl;
-					cout << "\tgrammaticalSentenceNeuron->groupIndex = " << grammaticalSentenceNeuron->groupIndex << endl;
-					cout << "\tlowerLevelPOSgroup->groupIndex = " << lowerLevelPOSgroup->groupIndex << endl;
-					cout << "\tlistOfHighLevelNeurons1[i]->groupIndex = " << singleComponentNeuron->groupIndex << endl;
-					*/
-
-					GIAtxtRelTranslatorRulesGroupType* groupType = GIAtxtRelTranslatorRules.getSequenceGrammarGroupTypeDefault(GIAtxtRelTranslatorRulesGroupTypes);
-					//groupType->groups.erase(remove(groupType->groups.begin(), groupType->groups.end(), singleComponentNeuron), groupType->groups.end());
-					for(int i2=0; i2<groupType->groups.size(); i2++)
-					{
-						GIAtxtRelTranslatorRulesGroupNeuralNetwork* group = (groupType->groups)[i2];
-						if(group == singleComponentNeuron)
-						{
-							groupType->groups.erase(groupType->groups.begin()+i2);
-        						i2--;
-						}
-					}
-
-					/*
-					//parseTreeGroup has already been removed by GIAtxtRelTranslatorNeuralNetworkPropagateOperations.deinitialiseParseTreeGroupList;
-					if(singleComponentNeuron->currentParseTreeGroupTemp != NULL)
-					{
-						GIAtxtRelTranslatorNeuralNetworkPropagateOperations.deleteGroup(singleComponentNeuron->currentParseTreeGroupTemp);
-						parseTreeGroupListPointer->erase(remove(parseTreeGroupListPointer->begin(), parseTreeGroupListPointer->end(), singleComponentNeuron->currentParseTreeGroupTemp), parseTreeGroupListPointer->end());
-					}
-					*/
-
-					GIAtxtRelTranslatorNeuralNetworkPropagateOperations.deleteGroup(singleComponentNeuron);	
-				}
-			}
-			if(normalAddition)
-			{
-				listOfHighLevelNeurons1[k]->firstHiddenLayerNeuron = false;	//NOT REQUIRED? prevents parsing of future sentence from matching this neuron as partially/fullyActivatedNeuronWithMaxWordIndexCoverage, and then treating it like firstHiddenLayerNeuron above
 			#endif
-			
-				addComponentToGroup(forwardPropogationSentenceData, listOfHighLevelNeurons1[k], grammaticalSentenceNeuron, GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_GROUP, false);
+				addComponentToGroup(forwardPropogationSentenceData, (*listOfHighLevelNeurons)[k], (*grammaticalSentenceNeuron), GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_GROUP, false);
 			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_REQUIRE_NUM_COMPONENTS_ENFORCE_DURING_FIRST_HIDDEN_LAYER_GENERATION
 			}
 			#endif
 		}
-		GIAtxtRelTranslatorRules.updateComponentsOwnerGroupAndIndexes(grammaticalSentenceNeuron, &(grammaticalSentenceNeuron->components), false, NULL);
-		#endif
-		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_DEBUG
-		GIAtxtRelTranslatorNeuralNetworkPropagateOperations.traceBackpropNeuralNetwork(grammaticalSentenceNeuron, 0);
-		#endif
+		GIAtxtRelTranslatorRules.updateComponentsOwnerGroupAndIndexes((*grammaticalSentenceNeuron), &((*grammaticalSentenceNeuron)->components), false, NULL);
+
+		if(createTopLevelNeuron)
+		{
+			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_DEBUG
+			GIAtxtRelTranslatorNeuralNetworkPropagateOperations.traceBackpropNeuralNetwork((*grammaticalSentenceNeuron), 0);
+			#endif
+		}
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_PREVENT_TOP_LEVEL_NEURON_DUPLICATION
 	}
 	else
 	{
 		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_REQUIRE_NUM_COMPONENTS_ENFORCE_DURING_FIRST_HIDDEN_LAYER_GENERATION
-		if(listOfHighLevelNeurons1.size() == 1)
+		if(listOfHighLevelNeurons->size() == 1)
 		{
-			listOfHighLevelNeurons1[0]->firstHiddenLayerNeuron = false;
+			(*listOfHighLevelNeurons)[0]->firstHiddenLayerNeuron = false;
+			
+			/*
+			if(createTopLevelNeuron)
+			{			
+				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_DEBUG
+				GIAtxtRelTranslatorNeuralNetworkPropagateOperations.traceBackpropNeuralNetwork((*listOfHighLevelNeurons)[0], 0);
+				#endif
+			}
+			*/
 		}
 		#endif
 	}
 	#endif
 	
-	return foundAndReconciledMissingOrDifferentIncrementalNeurons;
+	return result;
 }
 
-
 	
+#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_COMPONENT_DETECT_LOCAL_VARATION
+bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::verifyAndMarkNeuronAsCandidateWrapper(GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData, GIAtxtRelTranslatorRulesGroupParseTree* candidateNeuronBaseParseTree, GIAtxtRelTranslatorRulesComponentNeuralNetwork** candidateComponent2)
+{
+	bool result = false;
+	
+	GIAtxtRelTranslatorRulesGroupNeuralNetwork* candidateNeuronBase = candidateNeuronBaseParseTree->groupRef;
+		
+	int lastActivatedIndex = INT_DEFAULT_VALUE;
+	int firstUnactivatedIndex = INT_DEFAULT_VALUE;	
+	GIAtxtRelTranslatorNeuralNetworkPropagateCompact.identifyComponentIndexLastActivatedAndFirstUnactivatedIndex(forwardPropogationSentenceData, candidateNeuronBaseParseTree, &lastActivatedIndex, &firstUnactivatedIndex);
+		
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_SUPPORT_PARTIAL_SENTENCE_PROPAGATION
+	bool missingStartComponentsFound = false;
+	int indexOfFirstComponent;
+	if(forwardPropogationSentenceData->parseSentenceReverse)
+	{
+		indexOfFirstComponent = candidateNeuronBaseParseTree->components.size()-1;
+		GIAtxtRelTranslatorRulesComponentParseTree* firstActiveComponent = candidateNeuronBaseParseTree->components[indexOfFirstComponent];
+		if(firstActiveComponent->componentRef->componentIndex != candidateNeuronBase->components.size()-1)
+		{
+			missingStartComponentsFound = true;
+		}
+	}
+	else
+	{
+		indexOfFirstComponent = 0;
+		GIAtxtRelTranslatorRulesComponentParseTree* firstActiveComponent = candidateNeuronBaseParseTree->components[indexOfFirstComponent];
+		if(firstActiveComponent->componentRef->componentIndex != 0)
+		{
+			missingStartComponentsFound = true;
+		}
+	}
+	if(!missingStartComponentsFound)
+	{
+	#endif
+		bool missingEndComponentsFound = false;
+		int missingEndComponentsIndex;
+		if(forwardPropogationSentenceData->parseSentenceReverse)
+		{
+			if(firstUnactivatedIndex > 0)
+			{
+				missingEndComponentsFound = true;
+				missingEndComponentsIndex = firstUnactivatedIndex-1;
+			}
+		}
+		else
+		{
+			if(firstUnactivatedIndex < candidateNeuronBase->components.size()-1)
+			{
+				missingEndComponentsFound = true;
+				missingEndComponentsIndex = firstUnactivatedIndex+1;
+			}
+		}
+		
+		if(missingEndComponentsFound)
+		{
+			*candidateComponent2 = candidateNeuronBase->components[missingEndComponentsIndex];
+			result = true;
+		}
+		else
+		{
+			if(verifyAndMarkNeuronAsCandidate(forwardPropogationSentenceData, candidateNeuronBase, candidateComponent2))
+			{
+				result = true;
+			}
+		}
+		
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_SUPPORT_PARTIAL_SENTENCE_PROPAGATION
+	}
+	#endif
+
+	return result;
+}
+	
+bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::verifyAndMarkNeuronAsCandidate(GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData, GIAtxtRelTranslatorRulesGroupNeuralNetwork* currentNeuron, GIAtxtRelTranslatorRulesComponentNeuralNetwork** candidateComponent2)
+{
+	bool result = false;
+	
+	for(int i=0; i<currentNeuron->ANNfrontComponentConnectionList.size(); i++)
+	{
+		GIAtxtRelTranslatorRulesComponentNeuralNetwork* currentComponent = (currentNeuron->ANNfrontComponentConnectionList)[i];
+		GIAtxtRelTranslatorRulesGroupNeuralNetwork* higherLevelGroup = currentComponent->ownerGroup;
+		//cout << "higherLevelGroup->groupIndex = " << higherLevelGroup->groupIndex << endl;
+		
+		//note this function currently relies on higherLevelGroup instead of higherLevelGroup->parseTreeTemp to detect component activations (neuronComponentConnectionActive); CHECKTHIS
+		//GIAtxtRelTranslatorRulesGroupNeuralNetwork* higherLevelGroupParseTree = higherLevelGroup->parseTreeTemp;
+		
+		bool foundPriorComponent = false;
+		bool foundPostComponent = false;
+		bool foundCurrentComponent = false;
+		bool allPriorComponentsActive = true;
+		for(int j=0; j<higherLevelGroup->components.size(); j++)
+		{
+			int c;
+			if(forwardPropogationSentenceData->parseSentenceReverse)
+			{
+				c = higherLevelGroup->components.size()-1-j;
+			}
+			else
+			{
+				c = j;
+			}
+				
+			GIAtxtRelTranslatorRulesComponentNeuralNetwork* currentComponent2 = higherLevelGroup->components[c];
+			if(foundCurrentComponent)
+			{
+				if(!foundPostComponent)
+				{
+					foundPostComponent = true;
+					if(allPriorComponentsActive)
+					{
+						//record first post component
+						*candidateComponent2 = currentComponent2;
+						result = true;
+					}
+				}
+			}
+			else
+			{
+				if(c == currentComponent->componentIndex)
+				{
+					foundCurrentComponent = true;
+				}
+				else
+				{
+					foundPriorComponent = true;
+					if(!(currentComponent2->neuronComponentConnectionActive))
+					{
+						allPriorComponentsActive = false;
+					}
+				}
+			}
+		}
+		if(allPriorComponentsActive && !foundPostComponent)
+		{
+			if(verifyAndMarkNeuronAsCandidate(forwardPropogationSentenceData, higherLevelGroup, candidateComponent2))
+			{
+				result = true;
+			}
+		}
+	}
+	
+	return result;
+}
+#endif
+	
+
 bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::createOrAppendFirstLevelHiddenLayerGroup(vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData, GIAtxtRelTranslatorRulesGroupNeuralNetwork* currentLayerNeuronGroupStart, bool* creatingNewNeuronSequence, int* neuronSequenceIndex, GIAtxtRelTranslatorRulesGroupNeuralNetwork** newNeuronSequenceGroup, vector<GIAtxtRelTranslatorRulesGroupNeuralNetwork*>* listOfHighLevelNeurons)
 {
 	bool result = true;
@@ -603,704 +712,116 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::createOrAppe
 	return result;
 }		
 			
-
-#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_OPTIONAL_AND_MULTIPLE_INPUTS
-#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_COMPONENT_DETECT_CENTRAL_VARIATION
-bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::findAndReconcileCentralVariation(GIAtranslatorVariablesClass* translatorVariables, vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData, vector<GIAtxtRelTranslatorRulesGroupNeuralNetwork*>* firstLayer)
+#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_REQUIRE_NUM_COMPONENTS_ENFORCE_DURING_FIRST_HIDDEN_LAYER_GENERATION
+bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::directWireLowLevelPOSneuronToGrammaticalSentenceNeuron(vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData, GIAtxtRelTranslatorRulesGroupNeuralNetwork* singleComponentNeuronCandidate, GIAtxtRelTranslatorRulesGroupNeuralNetwork* grammaticalSentenceNeuron)
 {
-
-}
-#endif
-#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_COMPONENT_DETECT_EDGE_VARIATION
-bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::findAndReconcileEdgeVariation(GIAtranslatorVariablesClass* translatorVariables, vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData, vector<GIAtxtRelTranslatorRulesGroupNeuralNetwork*>* firstLayer)
-{
-
-}
-#endif
-
-			
-#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_COMPONENT_DETECT_CENTRAL_VARIATION_OLD
-
-bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::findAndReconcileCentralVariation(GIAtranslatorVariablesClass* translatorVariables, vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData, vector<GIAtxtRelTranslatorRulesGroupNeuralNetwork*>* firstLayer)
-{
-	bool foundAndReconciledMissingOrDifferentCentralNeuron = false;
-	/*algorithm3;
-	issue with this algorithm is that it cannot reuse groups for embeded optional components eg rcmod;
-		1 the dog barks
-		2 the dog that is near the house barks
-		will create 2 independent top level groups (the dog barks group will not be reused by 2)
-		note if executing bidirectionally, then need to update GIAtxtRelTranslatorNeuralNetworkPropagateCompact to store bool reverseDirection as a flag
-		SOLUTION? to redundancy prob; go in both directions and find group that is incomplete by 1 missing or 1 diff component 
-	*/
+	bool directWire = false;
 	
-	//bool normalDirection = false;	//forwards
-	//normalDirection, &neuronWithMaxWordIndexCoverage1isPartiallyActivated, &activatedNeuronWithMaxWordIndexCoverage1, &partiallyActivatedNeuronWithMaxWordIndexCoverage1lastActivatedIndex, &partiallyActivatedNeuronWithMaxWordIndexCoverage1lastWordIndex, &partiallyActivatedNeuronWithMaxWordIndexCoverage1numUnactivatedComponents, 
-	//OLD DEL &partiallyActivatedNeuronWithMaxWordIndexCoverage1lastActivatedIndex;
-
-	
-	//propagate in one direction and identify _?
-	bool parseSentenceReverse1 = true;	//forward
-	bool neuronWithMaxWordIndexCoverage1isPartiallyActivated = false;
-	GIAtxtRelTranslatorRulesGroupNeuralNetwork* activatedNeuronWithMaxWordIndexCoverage1 = NULL;
-	int partiallyActivatedNeuronWithMaxWordIndexCoverage1lastActivatedIndex;
-	int partiallyActivatedNeuronWithMaxWordIndexCoverage1lastWordIndex;
-	int partiallyActivatedNeuronWithMaxWordIndexCoverage1numUnactivatedComponents;
-	if(performPropagationDirection(translatorVariables, GIAtxtRelTranslatorRulesGroupTypes, forwardPropogationSentenceData, firstLayer, parseSentenceReverse1, &neuronWithMaxWordIndexCoverage1isPartiallyActivated, &activatedNeuronWithMaxWordIndexCoverage1, &partiallyActivatedNeuronWithMaxWordIndexCoverage1lastActivatedIndex, &partiallyActivatedNeuronWithMaxWordIndexCoverage1lastWordIndex, &partiallyActivatedNeuronWithMaxWordIndexCoverage1numUnactivatedComponents))
+	if(singleComponentNeuronCandidate->firstHiddenLayerNeuron)
 	{
-
-	}
-
-	//now propagate in opposite direction
-	bool parseSentenceReverse2 = false;	//reverse
-	bool neuronWithMaxWordIndexCoverage2isPartiallyActivated = false;
-	GIAtxtRelTranslatorRulesGroupNeuralNetwork* activatedNeuronWithMaxWordIndexCoverage2 = NULL;
-	int partiallyActivatedNeuronWithMaxWordIndexCoverage2lastActivatedIndex;
-	int partiallyActivatedNeuronWithMaxWordIndexCoverage2lastWordIndex;
-	int partiallyActivatedNeuronWithMaxWordIndexCoverage2numUnactivatedComponents;
-	if(performPropagationDirection(translatorVariables, GIAtxtRelTranslatorRulesGroupTypes, forwardPropogationSentenceData, firstLayer, parseSentenceReverse2, &neuronWithMaxWordIndexCoverage2isPartiallyActivated, &activatedNeuronWithMaxWordIndexCoverage2, &partiallyActivatedNeuronWithMaxWordIndexCoverage2lastActivatedIndex, &partiallyActivatedNeuronWithMaxWordIndexCoverage2lastWordIndex, &partiallyActivatedNeuronWithMaxWordIndexCoverage2numUnactivatedComponents))
-	{
-
-	}
-
-	
-	bool optionalComponentFound = false;
-	if(partiallyActivatedNeuronWithMaxWordIndexCoverage1lastWordIndex+1 == partiallyActivatedNeuronWithMaxWordIndexCoverage2lastWordIndex)
-	{
-		optionalComponentFound = true;	//case: MISSING, else DIFFERENT
-	}
-	bool singleMissingOrDifferentComponent = false;
-	if(partiallyActivatedNeuronWithMaxWordIndexCoverage1lastActivatedIndex+1 == partiallyActivatedNeuronWithMaxWordIndexCoverage2lastActivatedIndex)
-	{
-		singleMissingOrDifferentComponent = true;	//case: MISSING, else DIFFERENT
-	}
-	
-	//CHECKTHIS case: neuronWithMaxWordIndexCoverage1isFullyActivated/neuronWithMaxWordIndexCoverage1isFullyActivated
-	
-	#ifndef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_2
-	if(neuronWithMaxWordIndexCoverage1isPartiallyActivated && neuronWithMaxWordIndexCoverage2isPartiallyActivated && (activatedNeuronWithMaxWordIndexCoverage1 == activatedNeuronWithMaxWordIndexCoverage2))
-	{
-		//case 1: found-DIFFERENTorMISSING-found
-		if(singleMissingOrDifferentComponent)
+		if(singleComponentNeuronCandidate->components.size() == 1)
 		{
-			GIAtxtRelTranslatorRulesComponentNeuralNetwork* differentOrMissingComponent = activatedNeuronWithMaxWordIndexCoverage1->components[partiallyActivatedNeuronWithMaxWordIndexCoverage1lastWordIndex+1];	//DIFFERENTorMISSINGcomponent
-			if(optionalComponentFound)
+			GIAtxtRelTranslatorRulesGroupNeuralNetwork* singleComponentNeuron = singleComponentNeuronCandidate;
+
+			//cout << "GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::directWireLowLevelPOSneuronToGrammaticalSentenceNeuron: singleComponentNeuron->groupIndex = " << singleComponentNeuron->groupIndex << endl;
+
+			//direct wire low level POS neuron to grammaticalSentenceNeuron (dont ever create intermediary single component neuron)
+			directWire = true;
+
+			GIAtxtRelTranslatorRulesComponentNeuralNetwork* component = singleComponentNeuron->components[0];
+
+			//doesnt seem to ever be required;
+			for(int i=0; i<singleComponentNeuron->ANNfrontComponentConnectionList.size(); i++)
 			{
-				foundAndReconciledMissingOrDifferentCentralNeuron = true;
-				
-				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_SUPPORT_OPTIONAL_COMPONENTS
-				differentOrMissingComponent->optional = true;
-				#else
-				//create a new version of the neuron without the optional component
-				GIAtxtRelTranslatorRulesGroupNeuralNetwork* newHiddenLayerNeuron = createNewGroup();	
-				GIAtxtRelTranslatorRulesGroupType* groupType = GIAtxtRelTranslatorRules.getSequenceGrammarGroupTypeDefault(GIAtxtRelTranslatorRulesGroupTypes);	
-				groupType->groups.push_back(newHiddenLayerNeuron);
-				
-				GIAtxtRelTranslatorRules.copyComponents(&(activatedNeuronWithMaxWordIndexCoverage1->components), &(newHiddenLayerNeuron->components));
-				for(int i=0; i<newHiddenLayerNeuron->components.size(); i++)
-				{
-					GIAtxtRelTranslatorRulesComponentNeuralNetwork* component = newHiddenLayerNeuron->components[i];
-					if(i != differentOrMissingComponent->componentIndex)
-					{
-						for(int i2=0; i2<component->ANNbackGroupConnectionList.size(); i2++)
-						{
-							GIAtxtRelTranslatorRulesGroupNeuralNetwork* group = component->ANNbackGroupConnectionList[i2];
-							group->ANNfrontComponentConnectionList.push_back(component);
-						}
-					}
-				}
+				GIAtxtRelTranslatorRulesComponentNeuralNetwork* currentComponent = (singleComponentNeuron->ANNfrontComponentConnectionList)[i];
+				GIAtxtRelTranslatorRulesGroupNeuralNetwork* higherLevelGroup = currentComponent->ownerGroup;
+				//cout << "higherLevelGroup->groupIndex = " << higherLevelGroup->groupIndex << endl;
+
 				/*
-				newHiddenLayerNeuron->components = activatedNeuronWithMaxWordIndexCoverage1->components;
-				newHiddenLayerNeuron->components.erase(newHiddenLayerNeuron->components.begin()+differentOrMissingComponent->componentIndex, newHiddenLayerNeuron->components.begin()+differentOrMissingComponent->componentIndex+1); //remove missing component
+				//method1;
+				for(int j=0; j<higherLevelGroup->components.size(); j++)
+				{	
+					GIAtxtRelTranslatorRulesComponentNeuralNetwork* currentComponent2 = (higherLevelGroup->components)[j];
+					if(currentComponent2 == currentComponent)
+					{
+						higherLevelGroup->components.erase(higherLevelGroup->components.begin()+j);
+						j--;
+					}
+				}
+				GIAtxtRelTranslatorRules.updateComponentsOwnerGroupAndIndexes(higherLevelGroup, &(higherLevelGroup->components), false, NULL);	
+				delete currentComponent;
 				*/
-				GIAtxtRelTranslatorRules.updateComponentsOwnerGroupAndIndexes(newHiddenLayerNeuron, &(newHiddenLayerNeuron->components), false, NULL);
-				#endif
-			}
-			else
-			{
-				//perform another propagation from start of DIFFERENTorMISSING
-				bool direction = true;
-				if(findAndConnectDifferentOrMissingSection(translatorVariables, GIAtxtRelTranslatorRulesGroupTypes, forwardPropogationSentenceData, partiallyActivatedNeuronWithMaxWordIndexCoverage1lastWordIndex, partiallyActivatedNeuronWithMaxWordIndexCoverage2lastWordIndex, firstLayer, direction, differentOrMissingComponent))
+				//method2;
+				for(int j=0; j<currentComponent->ANNbackGroupConnectionList.size(); j++)
 				{
-					foundAndReconciledMissingOrDifferentCentralNeuron = true;
-				}
-			}
-		}
-		else
-		{
-			//FUTURE: add support for multiple diff/missing components?
-		}
-	}
-	else 
-	#endif
-	if(neuronWithMaxWordIndexCoverage1isPartiallyActivated && neuronWithMaxWordIndexCoverage2isPartiallyActivated)	//REDUNDANT with singleMissingOrDifferentComponent: && partiallyActivatedNeuronWithMaxWordIndexCoverage1numUnactivatedComponents==1 && partiallyActivatedNeuronWithMaxWordIndexCoverage2numUnactivatedComponents==1
-	{
-		//case 1: found-DIFFERENTorMISSING-found
-		if(singleMissingOrDifferentComponent)
-		{			
-			if(findGroupDirectlyAbove(activatedNeuronWithMaxWordIndexCoverage1, activatedNeuronWithMaxWordIndexCoverage2))
-			{
-				//case 3:                               2 DIFFERENTorMISSING-found
-		        	//          1 found-DIFFERENTorMISSING /
-				bool direction = true;
-				if(splitGroupsConnectedByOptionalOrDifferentComponent(translatorVariables, GIAtxtRelTranslatorRulesGroupTypes, forwardPropogationSentenceData, activatedNeuronWithMaxWordIndexCoverage1, activatedNeuronWithMaxWordIndexCoverage2, partiallyActivatedNeuronWithMaxWordIndexCoverage1lastActivatedIndex, partiallyActivatedNeuronWithMaxWordIndexCoverage2lastActivatedIndex, partiallyActivatedNeuronWithMaxWordIndexCoverage1lastWordIndex, partiallyActivatedNeuronWithMaxWordIndexCoverage2lastWordIndex, firstLayer, direction, optionalComponentFound))
-				{
-					foundAndReconciledMissingOrDifferentCentralNeuron = true;
-				}
-			}
-			else if(findGroupDirectlyAbove(activatedNeuronWithMaxWordIndexCoverage2, activatedNeuronWithMaxWordIndexCoverage1))
-			{
-				//case 2:   2 found-DIFFERENTorMISSING
-		        	//                                 \ 1 DIFFERENTorMISSING-found
-				bool direction = false;
-				if(splitGroupsConnectedByOptionalOrDifferentComponent(translatorVariables, GIAtxtRelTranslatorRulesGroupTypes, forwardPropogationSentenceData, activatedNeuronWithMaxWordIndexCoverage1, activatedNeuronWithMaxWordIndexCoverage2, partiallyActivatedNeuronWithMaxWordIndexCoverage1lastActivatedIndex, partiallyActivatedNeuronWithMaxWordIndexCoverage2lastActivatedIndex, partiallyActivatedNeuronWithMaxWordIndexCoverage1lastWordIndex, partiallyActivatedNeuronWithMaxWordIndexCoverage2lastWordIndex, firstLayer, direction, optionalComponentFound))
-				{
-					foundAndReconciledMissingOrDifferentCentralNeuron = true;
-				}
-			}
-		}
-		else
-		{
-			//FUTURE: add support for multiple diff/missing components?
-		}
-	}
-	
-	return foundAndReconciledMissingOrDifferentCentralNeuron;
-}
-
-bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::performPropagationDirection(GIAtranslatorVariablesClass* translatorVariables, vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData, vector<GIAtxtRelTranslatorRulesGroupNeuralNetwork*>* firstLayer, const bool parseSentenceReverse, bool* neuronWithMaxWordIndexCoverageisPartiallyActivated, GIAtxtRelTranslatorRulesGroupNeuralNetwork** activatedNeuronWithMaxWordIndexCoverage, int* partiallyActivatedNeuronWithMaxWordIndexCoveragelastActivatedIndex, int* partiallyActivatedNeuronWithMaxWordIndexCoveragelastWordIndex, int* partiallyActivatedNeuronWithMaxWordIndexCoveragenumUnactivatedComponents)
-{
-	bool result = true;
-	
-	GIAtxtRelTranslatorNeuralNetworkPropagateOperations.setParseSentenceReverseStrict(parseSentenceReverse, forwardPropogationSentenceData);
-	//forwardPropogationSentenceData->findMissingOrOptionalComponent = true;	//NOTCHRRENTLYUSED
-	forwardPropogationSentenceData->recordActivatedNeuronWithMaxWordIndexCoverage = true;
-	forwardPropogationSentenceData->fullyActivatedNeuronWithMaxWordIndexCoverage = NULL;
-	forwardPropogationSentenceData->partiallyActivatedNeuronWithMaxWordIndexCoverage = NULL;
-	if(GIAtxtRelTranslatorNeuralNetworkPropagateCompact.performPropagation(translatorVariables, GIAtxtRelTranslatorRulesGroupTypes, forwardPropogationSentenceData, firstLayer, false, 0))
-	{
-
-	}
-	
-	*neuronWithMaxWordIndexCoverageisPartiallyActivated = false;
-	*activatedNeuronWithMaxWordIndexCoverage = NULL;
-	if(forwardPropogationSentenceData->partiallyActivatedNeuronWithMaxWordIndexCoverage != NULL)
-	{
-		GIAtxtRelTranslatorNeuralNetworkPropagateCompact.identifyComponentIndexLastActivatedIndex(forwardPropogationSentenceData, forwardPropogationSentenceData->partiallyActivatedNeuronWithMaxWordIndexCoverage, partiallyActivatedNeuronWithMaxWordIndexCoveragelastActivatedIndex);	//CHECKTHIS: forwardPropogationSentenceData->partiallyActivatedNeuronWithMaxWordIndexCoverage)
-		*partiallyActivatedNeuronWithMaxWordIndexCoveragelastWordIndex = 0;
-		*partiallyActivatedNeuronWithMaxWordIndexCoveragenumUnactivatedComponents = forwardPropogationSentenceData->partiallyActivatedNeuronWithMaxWordIndexCoverage->groupRef->components.size() - forwardPropogationSentenceData->partiallyActivatedNeuronWithMaxWordIndexCoverage->components.size();	//CHECKTHIS: forwardPropogationSentenceData->partiallyActivatedNeuronWithMaxWordIndexCoverag
-	}
-	
-	if(GIAtxtRelTranslatorNeuralNetworkPropagateCompact.verifyActivatedNeuronsAtLeastOneBasic(forwardPropogationSentenceData, forwardPropogationSentenceData->fullyActivatedNeuronWithMaxWordIndexCoverage, forwardPropogationSentenceData->partiallyActivatedNeuronWithMaxWordIndexCoverage))
-	{
-		int activatedNeuronWithMaxWordIndexCoverageFirstWordIndex;	//CHECKTHIS
-		if(forwardPropogationSentenceData->parseSentenceReverse)
-		{
-			activatedNeuronWithMaxWordIndexCoverageFirstWordIndex = forwardPropogationSentenceData->sentenceContents->size()-1;
-		}
-		else
-		{
-			activatedNeuronWithMaxWordIndexCoverageFirstWordIndex = 0;
-		}
-	
-		if(GIAtxtRelTranslatorNeuralNetworkPropagateCompact.verifyActivatedNeuronWithMaxWordIndexCoverage(forwardPropogationSentenceData, forwardPropogationSentenceData->fullyActivatedNeuronWithMaxWordIndexCoverage, forwardPropogationSentenceData->partiallyActivatedNeuronWithMaxWordIndexCoverage, activatedNeuronWithMaxWordIndexCoverageFirstWordIndex, true))
-		{
-			*neuronWithMaxWordIndexCoverageisPartiallyActivated = false;
-			*activatedNeuronWithMaxWordIndexCoverage = forwardPropogationSentenceData->partiallyActivatedNeuronWithMaxWordIndexCoverage->groupRef;
-			if(!parseSentenceReverse)
-			{
-				*partiallyActivatedNeuronWithMaxWordIndexCoveragelastWordIndex = forwardPropogationSentenceData->partiallyActivatedNeuronWithMaxWordIndexCoverage->parseTreeMaxWordIndex;
-			}
-			else
-			{
-				*partiallyActivatedNeuronWithMaxWordIndexCoveragelastWordIndex = forwardPropogationSentenceData->partiallyActivatedNeuronWithMaxWordIndexCoverage->parseTreeMinWordIndex;
-			}
-
-			*partiallyActivatedNeuronWithMaxWordIndexCoveragenumUnactivatedComponents = (*activatedNeuronWithMaxWordIndexCoverage)->components.size() - *partiallyActivatedNeuronWithMaxWordIndexCoveragelastActivatedIndex;
-		}
-		else
-		{
-			//fully activated group coverage+weight is > partially activated group coverage+weight
-
-			*neuronWithMaxWordIndexCoverageisPartiallyActivated = true;
-			*activatedNeuronWithMaxWordIndexCoverage = forwardPropogationSentenceData->fullyActivatedNeuronWithMaxWordIndexCoverage->groupRef;
-		}
-	}
-	
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_FREE_MEMORY
-	GIAtxtRelTranslatorNeuralNetworkPropagateOperations.deinitialiseParseTreeGroupList(GIAtxtRelTranslatorRulesGroupTypes, parseTreeGroupListPointer);
-	#endif
-	
-	return result;
-}
-
-bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::splitGroupsConnectedByOptionalOrDifferentComponent(GIAtranslatorVariablesClass* translatorVariables, vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData, GIAtxtRelTranslatorRulesGroupNeuralNetwork* activatedNeuronWithMaxWordIndexCoverage1, GIAtxtRelTranslatorRulesGroupNeuralNetwork* activatedNeuronWithMaxWordIndexCoverage2, const int partiallyActivatedNeuronWithMaxWordIndexCoverage1lastActivatedIndex, const int partiallyActivatedNeuronWithMaxWordIndexCoverage2lastActivatedIndex, const int partiallyActivatedNeuronWithMaxWordIndexCoverage1lastWordIndex, const int partiallyActivatedNeuronWithMaxWordIndexCoverage2lastWordIndex, vector<GIAtxtRelTranslatorRulesGroupNeuralNetwork*>* firstLayer, const bool direction, const bool optionalComponentFound)
-{
-	bool result = false;
-	
-	//
-	//direction = true:
-	//if(findGroupDirectlyAbove(activatedNeuronWithMaxWordIndexCoverage1 [below], activatedNeuronWithMaxWordIndexCoverage2 [above]))	
-	//                                   2 DIFFERENTorMISSING-found
-	//          1 found-DIFFERENTorMISSING /
-	// or;
-	//direction = false:
-	//if(findGroupDirectlyAbove(activatedNeuronWithMaxWordIndexCoverage2 [below], activatedNeuronWithMaxWordIndexCoverage1 [above]))
-	//           1 found-DIFFERENTorMISSING
-	//                                 \ 2 DIFFERENTorMISSING-found	
-
-	//split A and B (to Aa/Ab and Ba/Bb)
-	//if optional: connect Aa to Bb
-	//if different: 
-		//perform another propagation from start of DIFFERENTorMISSING
-
-	/*
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_REVERSE_DIRECTION
-	int differentOrMissingComponent1Index = partiallyActivatedNeuronWithMaxWordIndexCoverage2lastWordIndex-1;	CHECKTHIS
-	int differentOrMissingComponent2Index = partiallyActivatedNeuronWithMaxWordIndexCoverage1lastWordIndex+1;
-	#else
-	*/
-	int differentOrMissingComponent1Index = partiallyActivatedNeuronWithMaxWordIndexCoverage1lastWordIndex+1;
-	int differentOrMissingComponent2Index = partiallyActivatedNeuronWithMaxWordIndexCoverage2lastWordIndex-1;
-	//#endif
-	GIAtxtRelTranslatorRulesComponentNeuralNetwork* differentOrMissingComponent1 = activatedNeuronWithMaxWordIndexCoverage1->components[differentOrMissingComponent1Index];	//DIFFERENTorMISSINGcomponent
-	GIAtxtRelTranslatorRulesComponentNeuralNetwork* differentOrMissingComponent2 = activatedNeuronWithMaxWordIndexCoverage2->components[differentOrMissingComponent2Index];	//DIFFERENTorMISSINGcomponent	
-	GIAtxtRelTranslatorRulesComponentNeuralNetwork* differentOrMissingComponentLow = NULL;	
-	GIAtxtRelTranslatorRulesComponentNeuralNetwork* differentOrMissingComponentHigh = NULL;	
-	GIAtxtRelTranslatorRulesGroupNeuralNetwork* activatedNeuronWithMaxWordIndexCoverageLow = NULL;
-	GIAtxtRelTranslatorRulesGroupNeuralNetwork* activatedNeuronWithMaxWordIndexCoverageHigh = NULL;
-	if(direction)
-	{
-		differentOrMissingComponentLow = differentOrMissingComponent1;
-		differentOrMissingComponentHigh = differentOrMissingComponent2;
-		activatedNeuronWithMaxWordIndexCoverageLow = activatedNeuronWithMaxWordIndexCoverage1;
-		activatedNeuronWithMaxWordIndexCoverageHigh = activatedNeuronWithMaxWordIndexCoverage2;
-	}
-	else
-	{
-		differentOrMissingComponentLow = differentOrMissingComponent2;
-		differentOrMissingComponentHigh = differentOrMissingComponent1;
-		activatedNeuronWithMaxWordIndexCoverageLow = activatedNeuronWithMaxWordIndexCoverage2;
-		activatedNeuronWithMaxWordIndexCoverageHigh = activatedNeuronWithMaxWordIndexCoverage1;
-	}
-				
-
-	if(optionalComponentFound)
-	{
-		result = true;
-		
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_2
-
-				//NO: differentOrMissingComponent->optional = true;
-		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_SUPPORT_OPTIONAL_COMPONENTS
-		differentOrMissingComponent1->optional = true;
-		differentOrMissingComponent2->optional = true;
-		#else
-		//create a new group containing component 1 of group 1 and component 2 of group 2, and join it to whatever the highest original group is joined to above
-		GIAtxtRelTranslatorRulesGroupType* groupType = GIAtxtRelTranslatorRules.getSequenceGrammarGroupTypeDefault(GIAtxtRelTranslatorRulesGroupTypes);
-		GIAtxtRelTranslatorRulesGroupNeuralNetwork* newNeuronMerged = createNewGroup();		//1 and 2 without DIFFERENTorMISSING
-		groupType->groups.push_back(newNeuronMerged);
-		
-		//CHECKTHIS;
-		GIAtxtRelTranslatorRules.copyComponent(activatedNeuronWithMaxWordIndexCoverage1->components[partiallyActivatedNeuronWithMaxWordIndexCoverage1lastWordIndex], &(newNeuronMerged->components));
-		GIAtxtRelTranslatorRules.copyComponent(activatedNeuronWithMaxWordIndexCoverage2->components[partiallyActivatedNeuronWithMaxWordIndexCoverage2lastWordIndex], &(newNeuronMerged->components));
-		
-		for(int i=0; i<newNeuronMerged->components.size(); i++)
-		{
-			GIAtxtRelTranslatorRulesComponentNeuralNetwork* component = newNeuronMerged->components[i];
-			for(int i2=0; i2<component->ANNbackGroupConnectionList.size(); i2++)
-			{
-				GIAtxtRelTranslatorRulesGroupNeuralNetwork* group = component->ANNbackGroupConnectionList[i2];
-				group->ANNfrontComponentConnectionList.push_back(component);
-			}
-		}
-		/* //FUTURE: consider mirroring forward connections;
-		for(int i2=0; i2<activatedNeuronWithMaxWordIndexCoverageHigh->ANNfrontGroupConnectionList.size(); i2++)
-		{
-			GIAtxtRelTranslatorRulesComponentNeuralNetwork* component = activatedNeuronWithMaxWordIndexCoverageHigh->ANNfrontGroupConnectionList[i2];
-			newNeuronMerged->ANNfrontComponentConnectionList.push_back(component);
-			component->ANNbackGroupConnectionList.push_back(newNeuronMerged);
-		}
-		*/
-		
-		GIAtxtRelTranslatorRules.updateComponentsOwnerGroupAndIndexes(newNeuronMerged, &(newNeuronMerged->components), false, NULL);
-		
-		#endif
-	
-	#else
-		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_SUPPORT_OPTIONAL_COMPONENTS
-		differentOrMissingComponent1->optional = true;
-		differentOrMissingComponent2->optional = true;
-		#else
-		//CHECKTHIS; offset by 10
-		int indexToSplitVector1 = partiallyActivatedNeuronWithMaxWordIndexCoverage1lastActivatedIndex;
-		int indexToSplitVector2 = partiallyActivatedNeuronWithMaxWordIndexCoverage2lastActivatedIndex;
-		/*
-		int indexToSplitVector1 = INT_DEFAULT_VALUE;
-		int indexToSplitVector2 = INT_DEFAULT_VALUE;
-		GIAtxtRelTranslatorNeuralNetworkPropagateOperations.setParseSentenceReverse(false, forwardPropogationSentenceData);	//forward (see above)			
-		GIAtxtRelTranslatorNeuralNetworkPropagateCompact.identifyComponentIndexLastActivatedIndex(forwardPropogationSentenceData, activatedNeuronWithMaxWordIndexCoverage1, &indexToSplitVector1);
-		//GIAtxtRelTranslatorRulesGroupNeuralNetwork* newHiddenLayerNeuron1 = splitGroupAtLastActivatedComponent(forwardPropogationSentenceData, GIAtxtRelTranslatorRulesGroupTypes, activatedNeuronWithMaxWordIndexCoverage1, indexToSplitVector1);
-		GIAtxtRelTranslatorNeuralNetworkPropagateOperations.setParseSentenceReverse(true, forwardPropogationSentenceData);	//reverse (see above)
-		GIAtxtRelTranslatorNeuralNetworkPropagateCompact.identifyComponentIndexLastActivatedIndex(forwardPropogationSentenceData, activatedNeuronWithMaxWordIndexCoverage2, &indexToSplitVector2);
-		//GIAtxtRelTranslatorRulesGroupNeuralNetwork* newHiddenLayerNeuron2 = splitGroupAtLastActivatedComponent(forwardPropogationSentenceData, GIAtxtRelTranslatorRulesGroupTypes, activatedNeuronWithMaxWordIndexCoverage2, indexToSplitVector2);
-		*/
-		
-		GIAtxtRelTranslatorRulesGroupType* groupType = GIAtxtRelTranslatorRules.getSequenceGrammarGroupTypeDefault(GIAtxtRelTranslatorRulesGroupTypes);
-		GIAtxtRelTranslatorRulesGroupNeuralNetwork* newNeuron1split = createNewGroup();		//1 without DIFFERENTorMISSING
-		groupType->groups.push_back(newNeuron1split);
-		GIAtxtRelTranslatorRulesGroupNeuralNetwork* newNeuron2split = createNewGroup();		//2 without DIFFERENTorMISSING
-		groupType->groups.push_back(newNeuron2split);	
-
-		GIAtxtRelTranslatorRulesGroupNeuralNetwork* newNeuronSplitHigh = NULL;
-		GIAtxtRelTranslatorRulesGroupNeuralNetwork* newNeuronSplitLow = NULL;
-		if(direction)
-		{
-			newNeuronSplitLow = newNeuron1split;
-			newNeuronSplitHigh = newNeuron2split;
-		}
-		else
-		{
-			newNeuronSplitLow = newNeuron2split;
-			newNeuronSplitHigh = newNeuron1split;
-		}
-	
-	
-		//GIAtxtRelTranslatorRules.copyComponents(&(newHiddenLayerNeuron1->components), &(newNeuron1split->components));
-		//GIAtxtRelTranslatorRules.copyComponents(&(newHiddenLayerNeuron2->components), &(newNeuron2split->components));
-		GIAtxtRelTranslatorRules.copyComponents(&(activatedNeuronWithMaxWordIndexCoverage1->components), &(newNeuron1split->components));
-		GIAtxtRelTranslatorRules.copyComponents(&(activatedNeuronWithMaxWordIndexCoverage2->components), &(newNeuron2split->components));
-		newNeuron1split->components.erase(newNeuron1split->components.begin()+differentOrMissingComponent1Index);
-		newNeuron2split->components.erase(newNeuron2split->components.begin()+differentOrMissingComponent2Index);
-		
-		for(int i=0; i<newNeuron1split->components.size(); i++)
-		{
-			GIAtxtRelTranslatorRulesComponentNeuralNetwork* component = newNeuron1split->components[i];
-			//if(i != differentOrMissingComponent1->componentIndex)
-			//{
-				for(int i2=0; i2<component->ANNbackGroupConnectionList.size(); i2++)
-				{
-					GIAtxtRelTranslatorRulesGroupNeuralNetwork* group = component->ANNbackGroupConnectionList[i2];
-					group->ANNfrontComponentConnectionList.push_back(component);
-				}
-			//}
-		}
-		for(int i=0; i<newNeuron2split->components.size(); i++)
-		{
-			GIAtxtRelTranslatorRulesComponentNeuralNetwork* component = newNeuron2split->components[i];
-			if(i != differentOrMissingComponent2->componentIndex)
-			{
-				for(int i2=0; i2<component->ANNbackGroupConnectionList.size(); i2++)
-				{
-					GIAtxtRelTranslatorRulesGroupNeuralNetwork* group = component->ANNbackGroupConnectionList[i2];
-					group->ANNfrontComponentConnectionList.push_back(component);
-				}
-			}
-		}
-		/* //FUTURE: consider mirroring forward connections;
-		for(int i2=0; i2<activatedNeuronWithMaxWordIndexCoverageHigh->ANNfrontGroupConnectionList.size(); i2++)
-		{
-			GIAtxtRelTranslatorRulesComponentNeuralNetwork* component = activatedNeuronWithMaxWordIndexCoverageHigh->ANNfrontGroupConnectionList[i2];
-			newNeuronSplitHigh->ANNfrontComponentConnectionList.push_back(component);
-			component->ANNbackGroupConnectionList.push_back(newNeuronSplitHigh);
-		}
-		*/
-		
-		GIAtxtRelTranslatorRules.updateComponentsOwnerGroupAndIndexes(newNeuron1split, newNeuron1split->components, false, NULL);
-		GIAtxtRelTranslatorRules.updateComponentsOwnerGroupAndIndexes(newNeuron2split, newNeuron2split->components, false, NULL);
-
-
-		GIAtxtRelTranslatorNeuralNetworkPropagateOperations.setParseSentenceReverseStrict(true, forwardPropogationSentenceData);	//temp forward			
-		if(direction)
-		{
-			addComponentToGroup(forwardPropogationSentenceData, newNeuron1split, newNeuron2split, GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_GROUP, true);		//add to start (create a new 'DIFFERENTorMISSING')
-		}
-		else
-		{
-			addComponentToGroup(forwardPropogationSentenceData, newNeuron2split, newNeuron1split, GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_GROUP, false);	//add to end (create a new 'DIFFERENTorMISSING')			
-		}
-		
-		#endif
-		
-	#endif
-	}
-	else
-	{	
-		bool direction2 = true;
-		if(findAndConnectDifferentOrMissingSection(translatorVariables, GIAtxtRelTranslatorRulesGroupTypes, forwardPropogationSentenceData, partiallyActivatedNeuronWithMaxWordIndexCoverage1lastWordIndex, partiallyActivatedNeuronWithMaxWordIndexCoverage2lastWordIndex, firstLayer, direction2, differentOrMissingComponentHigh))
-		{
-			result = true;
-		}
-	}
-	
-	return result;
-}
-
-
-bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::findAndConnectDifferentOrMissingSection(GIAtranslatorVariablesClass* translatorVariables, vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData, const int partiallyActivatedNeuronWithMaxWordIndexCoverage1lastWordIndex, const int partiallyActivatedNeuronWithMaxWordIndexCoverage2lastWordIndex, vector<GIAtxtRelTranslatorRulesGroupNeuralNetwork*>* firstLayer, const bool direction, GIAtxtRelTranslatorRulesComponentNeuralNetwork* differentOrMissingComponent)
-{
-	bool result = false;
-	
-	//perform another propagation from start of DIFFERENTorMISSING
-
-	GIAtxtRelTranslatorNeuralNetworkPropagateOperations.setParseSentenceReverse(direction, forwardPropogationSentenceData);	//ie set to parseReverse==true
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_REVERSE_DIRECTION
-	int activatedNeuronWithMaxWordIndexCoverageFirstWordIndexAllowed = partiallyActivatedNeuronWithMaxWordIndexCoverage2lastWordIndex-1;
-	int activatedNeuronWithMaxWordIndexCoverageLastWordIndexAllowed = partiallyActivatedNeuronWithMaxWordIndexCoverage1lastWordIndex+1;
-	#else
-	int activatedNeuronWithMaxWordIndexCoverageFirstWordIndexAllowed = partiallyActivatedNeuronWithMaxWordIndexCoverage1lastWordIndex+1;
-	int activatedNeuronWithMaxWordIndexCoverageLastWordIndexAllowed = partiallyActivatedNeuronWithMaxWordIndexCoverage2lastWordIndex-1;
-	#endif
-	forwardPropogationSentenceData->recordActivatedNeuronWithMaxWordIndexCoverage = true;
-	forwardPropogationSentenceData->fullyActivatedNeuronWithMaxWordIndexCoverage = NULL;
-	forwardPropogationSentenceData->partiallyActivatedNeuronWithMaxWordIndexCoverage = NULL;
-	if(GIAtxtRelTranslatorNeuralNetworkPropagateCompact.performPropagation(translatorVariables, GIAtxtRelTranslatorRulesGroupTypes, forwardPropogationSentenceData, firstLayer, false, activatedNeuronWithMaxWordIndexCoverageFirstWordIndexAllowed, activatedNeuronWithMaxWordIndexCoverageLastWordIndexAllowed))
-	{
-
-	}
-
-	
-	if(!GIAtxtRelTranslatorNeuralNetworkPropagateCompact.verifyActivatedNeuronsAtLeastOneBasic(forwardPropogationSentenceData, forwardPropogationSentenceData->fullyActivatedNeuronWithMaxWordIndexCoverage, forwardPropogationSentenceData->partiallyActivatedNeuronWithMaxWordIndexCoverage))
-	{
-		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_2
-		//NOT YET CODED (max 2 comp per neiron)
-		int numberOfWordsMissing = (partiallyActivatedNeuronWithMaxWordIndexCoverage2lastWordIndex-1) - partiallyActivatedNeuronWithMaxWordIndexCoverage1lastWordIndex;
-		/*
-		int numberOfWordsMissing = 0;
-		if(forwardPropogationSentenceData->parseSentenceReverse)
-		{
-			numberOfWordsMissing = (partiallyActivatedNeuronWithMaxWordIndexCoverage2lastWordIndex-1) - partiallyActivatedNeuronWithMaxWordIndexCoverage1lastWordIndex;
-		}
-		else
-		{
-			numberOfWordsMissing = partiallyActivatedNeuronWithMaxWordIndexCoverage2lastWordIndex - (partiallyActivatedNeuronWithMaxWordIndexCoverage1lastWordIndex+1);
-		}
-		*/
-		if(numberOfWordsMissing <= 2)
-		{
-		#endif
-			result = true;
-			
-			//no DIFFERENTorMISSING sequence found, create one; (CHECKTHIS)
-			
-			//create a new neuron2 with the missing components (POS words)
-			GIAtxtRelTranslatorRulesGroupNeuralNetwork* newNeuron2withMissingPOScomponents = createNewHiddenLayerGroup(forwardPropogationSentenceData, GIAtxtRelTranslatorRulesGroupTypes);
-	
-			if(forwardPropogationSentenceData->parseSentenceReverse)
-			{
-				for(int w=partiallyActivatedNeuronWithMaxWordIndexCoverage2lastWordIndex-1; w>partiallyActivatedNeuronWithMaxWordIndexCoverage1lastWordIndex; w--)
-				{
-					GIAtxtRelTranslatorRulesGroupNeuralNetwork* inputLayerPOSneuron = (*firstLayer)[w];
-					addComponentToFirstLevelHiddenLayerGroup(forwardPropogationSentenceData, newNeuron2withMissingPOScomponents, inputLayerPOSneuron);	//if reverse; add to start [ie add to start]
-				}
-			}
-			else
-			{
-				for(int w=partiallyActivatedNeuronWithMaxWordIndexCoverage1lastWordIndex+1; w<partiallyActivatedNeuronWithMaxWordIndexCoverage2lastWordIndex; w++)
-				{
-					GIAtxtRelTranslatorRulesGroupNeuralNetwork* inputLayerPOSneuron = (*firstLayer)[w];
-					addComponentToFirstLevelHiddenLayerGroup(forwardPropogationSentenceData, newNeuron2withMissingPOScomponents, inputLayerPOSneuron);	//if reverse; add to start [ie add to end]
-				}	
-			}
-			
-			addComponentToGroup(forwardPropogationSentenceData, newNeuron2withMissingPOScomponents, differentOrMissingComponent);
-			
-		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_2
-		}
-		#endif
-	}
-	else
-	{
-		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_2
-		if(forwardPropogationSentenceData->fullyActivatedNeuronWithMaxWordIndexCoverage != NULL)
-		#else
-		if(!GIAtxtRelTranslatorNeuralNetworkPropagateCompact.verifyActivatedNeuronWithMaxWordIndexCoverage(forwardPropogationSentenceData, forwardPropogationSentenceData->fullyActivatedNeuronWithMaxWordIndexCoverage, forwardPropogationSentenceData->partiallyActivatedNeuronWithMaxWordIndexCoverage, activatedNeuronWithMaxWordIndexCoverageFirstWordIndexAllowed, activatedNeuronWithMaxWordIndexCoverageLastWordIndexAllowed, true))
-		#endif
-		{
-			if(findAndConnectDifferentOrMissingSectionSub(translatorVariables, GIAtxtRelTranslatorRulesGroupTypes, forwardPropogationSentenceData, partiallyActivatedNeuronWithMaxWordIndexCoverage1lastWordIndex, partiallyActivatedNeuronWithMaxWordIndexCoverage2lastWordIndex, activatedNeuronWithMaxWordIndexCoverageLastWordIndexAllowed, firstLayer, direction, differentOrMissingComponent, true, forwardPropogationSentenceData->fullyActivatedNeuronWithMaxWordIndexCoverage))
-			{
-				result = true;
-			}
-		}
-		#ifndef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_2
-		else
-		{
-			if(findAndConnectDifferentOrMissingSectionSub(translatorVariables, GIAtxtRelTranslatorRulesGroupTypes, forwardPropogationSentenceData, partiallyActivatedNeuronWithMaxWordIndexCoverage1lastWordIndex, partiallyActivatedNeuronWithMaxWordIndexCoverage2lastWordIndex, activatedNeuronWithMaxWordIndexCoverageLastWordIndexAllowed, firstLayer, direction, differentOrMissingComponent, false, forwardPropogationSentenceData->partiallyActivatedNeuronWithMaxWordIndexCoverage))
-			{
-				result = true;
-			}
-		}
-		#endif
-	}
-
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_FREE_MEMORY
-	GIAtxtRelTranslatorNeuralNetworkPropagateOperations.deinitialiseParseTreeGroupList(GIAtxtRelTranslatorRulesGroupTypes, parseTreeGroupListPointer);
-	#endif
-	
-	return result;
-}
-
-
-//TODO;
-
-bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass::findAndConnectDifferentOrMissingSectionSub(GIAtranslatorVariablesClass* translatorVariables, vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData, int partiallyActivatedNeuronWithMaxWordIndexCoverage1lastWordIndex, int partiallyActivatedNeuronWithMaxWordIndexCoverage2lastWordIndex, int activatedNeuronWithMaxWordIndexCoverageLastWordIndexAllowed, vector<GIAtxtRelTranslatorRulesGroupNeuralNetwork*>* firstLayer, bool direction, GIAtxtRelTranslatorRulesComponentNeuralNetwork* differentOrMissingComponent, bool isFullyActivatedNeuronWithMaxWordIndexCoverage, GIAtxtRelTranslatorRulesGroupParseTree* activatedNeuronWithMaxWordIndexCoverage)
-{
-	bool result = false;
-	
-	//fully activated group coverage+weight is > partially activated group coverage+weight
-	bool adjacent = false;
-	if(verifyLastWordIndex(forwardPropogationSentenceData, activatedNeuronWithMaxWordIndexCoverage, activatedNeuronWithMaxWordIndexCoverageLastWordIndexAllowed, &adjacent))
-	{
-		
-		int activatedNeuronWithMaxWordIndexCoverageFirstWordIndex;
-		int activatedNeuronWithMaxWordIndexCoverageLastWordIndex;
-		if(forwardPropogationSentenceData->parseSentenceReverse)
-		{
-			activatedNeuronWithMaxWordIndexCoverageFirstWordIndex = activatedNeuronWithMaxWordIndexCoverage->parseTreeMaxWordIndex;
-			activatedNeuronWithMaxWordIndexCoverageLastWordIndex = activatedNeuronWithMaxWordIndexCoverage->parseTreeMinWordIndex;
-		}
-		else
-		{
-			activatedNeuronWithMaxWordIndexCoverageFirstWordIndex = activatedNeuronWithMaxWordIndexCoverage->parseTreeMinWordIndex;
-			activatedNeuronWithMaxWordIndexCoverageLastWordIndex = activatedNeuronWithMaxWordIndexCoverage->parseTreeMaxWordIndex;
-		}
-
-		//neuron completely encapsulates missing/different words
-		if(adjacent)
-		{
-			result = true;
-			
-			#ifndef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_2
-			if(isFullyActivatedNeuronWithMaxWordIndexCoverage)
-			{
-			#endif
-				//create connection from fullyActivatedNeuronWithMaxWordIndexCoverage to DIFFERENTorMISSINGcomponent
-				addComponentToGroup(forwardPropogationSentenceData, activatedNeuronWithMaxWordIndexCoverage->groupRef, differentOrMissingComponent);
-			#ifndef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_2
-			}
-			else
-			{
-				//split partiallyActivatedNeuronWithMaxWordIndexCoverage at current activated component, and connect activated part to DIFFERENTorMISSING
-
-				//split partiallyActivatedNeuronWithMaxWordIndexCoverage at current activated component		
-				
-				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_SUPPORT_PARTIAL_SENTENCE_PROPAGATION
-				int indexToSplitVector1 = INT_DEFAULT_VALUE;
-				int indexToSplitVector2 = INT_DEFAULT_VALUE; 				
-				GIAtxtRelTranslatorNeuralNetworkPropagateCompact.identifyComponentIndexFirstAndLastActivatedIndexUnordered(forwardPropogationSentenceData, activatedNeuronWithMaxWordIndexCoverage, &indexToSplitVector1, &indexToSplitVector2);
-				GIAtxtRelTranslatorRulesGroupNeuralNetwork* newNeuron = splitGroupAtLastActivatedComponentUnordered(forwardPropogationSentenceData, GIAtxtRelTranslatorRulesGroupTypes, activatedNeuronWithMaxWordIndexCoverage->groupRef, indexToSplitVector1, indexToSplitVector2);
-				#else							
-				int indexToSplitVector = INT_DEFAULT_VALUE;
-				GIAtxtRelTranslatorNeuralNetworkPropagateCompact.identifyComponentIndexLastActivatedIndex(forwardPropogationSentenceData, activatedNeuronWithMaxWordIndexCoverage, &indexToSplitVector);
-				GIAtxtRelTranslatorRulesGroupNeuralNetwork* newNeuron = splitGroupAtLastActivatedComponent(forwardPropogationSentenceData, GIAtxtRelTranslatorRulesGroupTypes, activatedNeuronWithMaxWordIndexCoverage->groupRef, indexToSplitVector);
-				#endif
-				//connect activated part to DIFFERENTorMISSING
-				addComponentToGroup(forwardPropogationSentenceData, newNeuron, differentOrMissingComponent);
-			}
-			#endif
-		}
-		else
-		{
-			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_2
-			//NOT YET CODED (max 2 comp per neuron)
-			int numberOfWordsMissing = 0;
-			if(forwardPropogationSentenceData->parseSentenceReverse)
-			{
-				numberOfWordsMissing = (activatedNeuronWithMaxWordIndexCoverageLastWordIndex-1) - partiallyActivatedNeuronWithMaxWordIndexCoverage1lastWordIndex;
-			}
-			else
-			{
-				numberOfWordsMissing = partiallyActivatedNeuronWithMaxWordIndexCoverage2lastWordIndex - activatedNeuronWithMaxWordIndexCoverageLastWordIndex+1;
-			}
-			if(numberOfWordsMissing <= 2)
-			{
-			#else
-				if(isFullyActivatedNeuronWithMaxWordIndexCoverage)
-				{
-					//create a new neuron1 with the missing components (POS words), and connect both neuron1 and fullyActivatedNeuronWithMaxWordIndexCoverage to a new neuron3, then connect the new neuron3 to DIFFERENTorMISSINGcomponent
-				}
-				else
-				{
-					//split partiallyActivatedNeuronWithMaxWordIndexCoverage at current activated component, mark activated part as neuron1. then create a new neuron2 with the missing components (POS words), and connect both new neuron2 and neuron1 to a new neuron3, then connect the new neuron3 to DIFFERENTorMISSING
-				}
-				
-				
-				GIAtxtRelTranslatorRulesGroupNeuralNetwork* newNeuron1 = NULL;
-				if(!isFullyActivatedNeuronWithMaxWordIndexCoverage)
-				{
-					//split partiallyActivatedNeuronWithMaxWordIndexCoverage at current activated component, mark activated part as neuron1	
-					#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_SUPPORT_PARTIAL_SENTENCE_PROPAGATION
-					int indexToSplitVector1 = INT_DEFAULT_VALUE;
-					int indexToSplitVector2 = INT_DEFAULT_VALUE;			
-					GIAtxtRelTranslatorNeuralNetworkPropagateCompact.identifyComponentIndexFirstAndLastActivatedIndexUnordered(forwardPropogationSentenceData, activatedNeuronWithMaxWordIndexCoverage, &indexToSplitVector1, &indexToSplitVector2);
-					GIAtxtRelTranslatorRulesGroupNeuralNetwork* newNeuron = splitGroupAtLastActivatedComponentUnordered(forwardPropogationSentenceData, GIAtxtRelTranslatorRulesGroupTypes, activatedNeuronWithMaxWordIndexCoverage->groupRef, indexToSplitVector1, indexToSplitVector2);
-					#else
-					int indexToSplitVector = INT_DEFAULT_VALUE;
-					GIAtxtRelTranslatorNeuralNetworkPropagateCompact.identifyComponentIndexLastActivatedIndex(forwardPropogationSentenceData, activatedNeuronWithMaxWordIndexCoverage, &indexToSplitVector);
-					newNeuron1 = splitGroupAtLastActivatedComponent(forwardPropogationSentenceData, GIAtxtRelTranslatorRulesGroupTypes, activatedNeuronWithMaxWordIndexCoverage->groupRef, indexToSplitVector);
-					#endif
-				}
-			#endif
-				result = true;
-			
-				//create a new neuron2 with the missing components (POS words)
-				GIAtxtRelTranslatorRulesGroupNeuralNetwork* newNeuron2 = createNewHiddenLayerGroup(forwardPropogationSentenceData, GIAtxtRelTranslatorRulesGroupTypes);
-				if(forwardPropogationSentenceData->parseSentenceReverse)
-				{
-					for(int w=activatedNeuronWithMaxWordIndexCoverageLastWordIndex-1; w>partiallyActivatedNeuronWithMaxWordIndexCoverage1lastWordIndex; w--)
+					GIAtxtRelTranslatorRulesGroupNeuralNetwork* firstHiddenLayerGroup = (currentComponent->ANNbackGroupConnectionList)[j];
+					if(firstHiddenLayerGroup == singleComponentNeuron)
 					{
-						GIAtxtRelTranslatorRulesGroupNeuralNetwork* inputLayerPOSneuron = (*firstLayer)[w];
-						addComponentToFirstLevelHiddenLayerGroup(forwardPropogationSentenceData, newNeuron2, inputLayerPOSneuron);
+						currentComponent->ANNbackGroupConnectionList.erase(currentComponent->ANNbackGroupConnectionList.begin()+j);
+						j--;
 					}
 				}
-				else
+			}
+
+			for(int i=0; i<component->ANNbackGroupConnectionList.size(); i++)
+			{
+				GIAtxtRelTranslatorRulesGroupNeuralNetwork* lowerLevelPOSgroup = (component->ANNbackGroupConnectionList)[i];
+				//GIAtxtRelTranslatorNeuralNetworkFormation.deleteGroupANNconnectionForward(lowerLevelPOSgroup, component);
+				for(int j=0; j<lowerLevelPOSgroup->ANNfrontComponentConnectionList.size(); j++)
 				{
-					for(int w=activatedNeuronWithMaxWordIndexCoverageLastWordIndex+1; w<partiallyActivatedNeuronWithMaxWordIndexCoverage2lastWordIndex; w++)
+					GIAtxtRelTranslatorRulesComponentNeuralNetwork* currentComponent = (lowerLevelPOSgroup->ANNfrontComponentConnectionList)[j];
+					if(currentComponent == component)
 					{
-						GIAtxtRelTranslatorRulesGroupNeuralNetwork* inputLayerPOSneuron = (*firstLayer)[w];
-						addComponentToFirstLevelHiddenLayerGroup(forwardPropogationSentenceData, newNeuron2, inputLayerPOSneuron);
+						lowerLevelPOSgroup->ANNfrontComponentConnectionList.erase(lowerLevelPOSgroup->ANNfrontComponentConnectionList.begin()+j);
+						j--;
 					}
 				}
 
-
-				GIAtxtRelTranslatorRulesGroupNeuralNetwork* newNeuron3 = createNewHiddenLayerGroup(forwardPropogationSentenceData, GIAtxtRelTranslatorRulesGroupTypes);
-				#ifndef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_2
-				if(isFullyActivatedNeuronWithMaxWordIndexCoverage)
-				{
-				#endif
-					//connect both neuron2 and fullyActivatedNeuronWithMaxWordIndexCoverage to a new neuron3
-					addComponentToGroup(forwardPropogationSentenceData, activatedNeuronWithMaxWordIndexCoverage->groupRef, newNeuron3, GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_GROUP, false);	//OLD: addComponentToGroup(forwardPropogationSentenceData, activatedNeuronWithMaxWordIndexCoverage->groupRef, newNeuron2,
-				#ifndef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_2
-				}
-				else
-				{
-					//connect both new neuron2 and neuron1 to a new neuron3
-					addComponentToGroup(forwardPropogationSentenceData, newNeuron1, newNeuron3, GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_GROUP, false);	//CHECKTHIS check order
-				}
-				#endif
-				addComponentToGroup(forwardPropogationSentenceData, newNeuron2, newNeuron3, GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_GROUP, false);
-	
-	
-				//connect the new neuron3 to DIFFERENTorMISSINGcomponent
-				addComponentToGroup(forwardPropogationSentenceData, newNeuron3, differentOrMissingComponent);
-		
-			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_2
+				addComponentToGroup(forwardPropogationSentenceData, lowerLevelPOSgroup, grammaticalSentenceNeuron, GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_GROUP, false);
 			}
-			#endif
+
+
+			/*
+			cout << "\t GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_REQUIRE_NUM_COMPONENTS_ENFORCE_DURING_FIRST_HIDDEN_LAYER_GENERATION;" << endl;
+			cout << "\tgrammaticalSentenceNeuron->groupIndex = " << grammaticalSentenceNeuron->groupIndex << endl;
+			cout << "\tlowerLevelPOSgroup->groupIndex = " << lowerLevelPOSgroup->groupIndex << endl;
+			cout << "\tlistOfHighLevelNeurons1[i]->groupIndex = " << singleComponentNeuron->groupIndex << endl;
+			*/
+
+			GIAtxtRelTranslatorRulesGroupType* groupType = GIAtxtRelTranslatorRules.getSequenceGrammarGroupTypeDefault(GIAtxtRelTranslatorRulesGroupTypes);
+			//groupType->groups.erase(remove(groupType->groups.begin(), groupType->groups.end(), singleComponentNeuron), groupType->groups.end());
+			for(int i2=0; i2<groupType->groups.size(); i2++)
+			{
+				GIAtxtRelTranslatorRulesGroupNeuralNetwork* group = (groupType->groups)[i2];
+				if(group == singleComponentNeuron)
+				{
+					groupType->groups.erase(groupType->groups.begin()+i2);
+        				i2--;
+				}
+			}
+
+			/*
+			//parseTreeGroup has already been removed by GIAtxtRelTranslatorNeuralNetworkPropagateOperations.deinitialiseParseTreeGroupList;
+			if(singleComponentNeuron->currentParseTreeGroupTemp != NULL)
+			{
+				GIAtxtRelTranslatorNeuralNetworkPropagateOperations.deleteGroup(singleComponentNeuron->currentParseTreeGroupTemp);
+				parseTreeGroupListPointer->erase(remove(parseTreeGroupListPointer->begin(), parseTreeGroupListPointer->end(), singleComponentNeuron->currentParseTreeGroupTemp), parseTreeGroupListPointer->end());
+			}
+			*/
+
+			GIAtxtRelTranslatorNeuralNetworkPropagateOperations.deleteGroup(singleComponentNeuron);	
 		}
 	}
-	else
+	if(!directWire)
 	{
-		//do nothing
+		singleComponentNeuronCandidate->firstHiddenLayerNeuron = false;	//NOT REQUIRED? prevents parsing of future sentence from matching this neuron as partially/fullyActivatedNeuronWithMaxWordIndexCoverage, and then treating it like firstHiddenLayerNeuron above
 	}
 	
-	return result;
-}				
-					
-
-
+	return directWire;
+}
 #endif
 
-#endif
+
 
 
 

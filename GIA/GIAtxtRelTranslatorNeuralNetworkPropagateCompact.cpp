@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetworkPropagateCompact.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j2l 10-August-2019
+ * Project Version: 3j3a 08-September-2019
  * Requirements: 
  * Description: Textual Relation Translator Neural Network Propagate Compact - ~O(n)
  * /
@@ -447,9 +447,21 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactClass::propagateWordThrough
 		{
 		#endif
 			GIAtxtRelTranslatorRulesComponentNeuralNetwork* currentComponent = (group->ANNfrontComponentConnectionList)[i];
- 
 			GIAtxtRelTranslatorRulesGroupNeuralNetwork* ownerGroup = currentComponent->ownerGroup;
 			
+			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_COMPONENT_DETECT_LOCAL_VARATION
+			if((forwardPropogationSentenceData->findingCandidateComponent2))
+			{
+				if(!(forwardPropogationSentenceData->foundCandidateComponent2))
+				{
+					if(currentComponent == forwardPropogationSentenceData->candidateComponent2ToFind)
+					{
+						forwardPropogationSentenceData->foundCandidateComponent2 = true;
+						forwardPropogationSentenceData->candidateComponent2sourceParseTreeGroup = activationPathWordCurrentParseTreeGroup;
+					}
+				}
+			}
+			#endif
 			/*
 			cout << "ownerGroup:" << endl;
 			cout << "ownerGroup->groupIndex = " << ownerGroup->groupIndex << endl;
@@ -1087,13 +1099,8 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactClass::verifyActivatedNeuro
 			{
 				int lastActivatedIndex = INT_DEFAULT_VALUE;
 				int firstUnactivatedIndex = INT_DEFAULT_VALUE;
-				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_SUPPORT_PARTIAL_SENTENCE_PROPAGATION
 				bool partialActivationConfirmed = identifyComponentIndexLastActivatedAndFirstUnactivatedIndex(forwardPropogationSentenceData, *partiallyActivatedNeuronWithMaxWordIndexCoverage, &lastActivatedIndex, &firstUnactivatedIndex);
-				#else
-				identifyComponentIndexLastActivatedIndex(forwardPropogationSentenceData, *partiallyActivatedNeuronWithMaxWordIndexCoverage, &lastActivatedIndex);
-				bool partialActivationConfirmed = identifyComponentIndexFirstUnactivatedIndex(forwardPropogationSentenceData, *partiallyActivatedNeuronWithMaxWordIndexCoverage, &firstUnactivatedIndex);
-				#endif
-								
+	
 				if(partialActivationConfirmed)	//partial activation test required in case where partiallyActivatedNeuronWithMaxWordIndexCoverage is recorded by GIAtxtRelTranslatorNeuralNetworkPropagateCompactClass::propagateWordThroughNetworkGroupComponentWrapper but is subsequently fully activated
 				{
 					//cout << "lastActivatedIndex = " << lastActivatedIndex << endl;
@@ -1295,30 +1302,7 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactClass::identifyComponentInd
 	}
 	return result;
 }
-//preconditions: note no components->size() boundary check required as identifyComponentIndexFirstUnactivatedIndex can only be executed on partiallyActivatedNeuronWithMaxWordIndexCoverage (never fullyActivatedNeuronWithMaxWordIndexCoverage)
-//partialActivationConfirmed: tests whether there is at least 1 unactivated component succeeding the activated component (not for GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_SUPPORT_PARTIAL_SENTENCE_PROPAGATION case where missingStartComponentsFound, but all remaining components are active)
-bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactClass::identifyComponentIndexFirstUnactivatedIndex(GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData, GIAtxtRelTranslatorRulesGroupParseTree* parseTreeGroupNeuron, int* firstUnactivatedIndex)
-{
-	bool partialActivationConfirmed = false;
-	
-	int numberOfActivatedComponents = parseTreeGroupNeuron->components.size();
-	GIAtxtRelTranslatorRulesGroupNeuralNetwork* groupOrig = parseTreeGroupNeuron->groupRef;
-	if(parseTreeGroupNeuron->components.size() < groupOrig->components.size())
-	{
-		partialActivationConfirmed = true;
-		
-		if(forwardPropogationSentenceData->parseSentenceReverse)
-		{
-			*firstUnactivatedIndex = groupOrig->components.size()-1-numberOfActivatedComponents;
-		}
-		else
-		{
-			*firstUnactivatedIndex = numberOfActivatedComponents;
-		}
-	}
-	
-	return partialActivationConfirmed;
-}
+
 #ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_SUPPORT_PARTIAL_SENTENCE_PROPAGATION
 //CHECKTHIS;
 //ordered (do not assume normal order): "first" and "last" definitions respect (forwardPropogationSentenceData->parseSentenceReverse)
@@ -1374,7 +1358,36 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactClass::identifyComponentInd
 	return result;
 }
 #else
-//unordred (assume normal order): "first" and "last" definitions do not respect (forwardPropogationSentenceData->parseSentenceReverse)
+
+//preconditions: note no components->size() boundary check required as identifyComponentIndexFirstUnactivatedIndex can only be executed on partiallyActivatedNeuronWithMaxWordIndexCoverage (never fullyActivatedNeuronWithMaxWordIndexCoverage)
+//partialActivationConfirmed: tests whether there is at least 1 unactivated component succeeding the activated component (not for GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_SUPPORT_PARTIAL_SENTENCE_PROPAGATION case where missingStartComponentsFound, but all remaining components are active)
+bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactClass::identifyComponentIndexLastActivatedAndFirstUnactivatedIndex(GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData, GIAtxtRelTranslatorRulesGroupParseTree* parseTreeGroupNeuron, int* lastActivatedIndex, int* firstUnactivatedIndex)
+{
+	bool partialActivationConfirmed = false;
+	
+	int numberOfActivatedComponents = parseTreeGroupNeuron->components.size();
+	GIAtxtRelTranslatorRulesGroupNeuralNetwork* groupOrig = parseTreeGroupNeuron->groupRef;
+	if(parseTreeGroupNeuron->components.size() < groupOrig->components.size())
+	{
+		partialActivationConfirmed = true;
+		
+		if(forwardPropogationSentenceData->parseSentenceReverse)
+		{
+			*lastActivatedIndex = groupOrig->components.size()-numberOfActivatedComponents;
+			*firstUnactivatedIndex = groupOrig->components.size()-1-numberOfActivatedComponents;
+		}
+		else
+		{
+			*lastActivatedIndex = numberOfActivatedComponents-1;
+			*firstUnactivatedIndex = numberOfActivatedComponents;
+		}
+	}
+	
+	return partialActivationConfirmed;
+}
+
+
+//unordered (assume normal order): "first" and "last" definitions do not respect (forwardPropogationSentenceData->parseSentenceReverse)
 bool GIAtxtRelTranslatorNeuralNetworkPropagateCompactClass::identifyComponentIndexLastActivatedIndexUnordered(GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData* forwardPropogationSentenceData, GIAtxtRelTranslatorRulesGroupParseTree* parseTreeGroupNeuron, int* lastActivatedIndex)
 {
 	bool result = false;
