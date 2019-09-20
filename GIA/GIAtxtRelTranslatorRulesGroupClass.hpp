@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorRulesGroupClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j4a 09-September-2019
+ * Project Version: 3j5a 13-September-2019
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Rules
  * /
@@ -246,7 +246,9 @@ public:
 	bool firstHiddenLayerNeuron;
 	#endif
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR
-	GIAtxtRelTranslatorNeuralNetworkForwardPropogationWordData* wordDataTemp;
+	bool groupTypeIsString;
+	//GIAtxtRelTranslatorNeuralNetworkForwardPropogationWordData* wordDataTemp;
+	int wordPOStype;
 	int groupIndex;
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_WEIGHTS
 	double groupStrength;
@@ -375,6 +377,10 @@ public:
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR
 	GIAtxtRelTranslatorRulesGroupNeuralNetwork* groupRef;	//backup of original group (non-parse-tree)
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_VARIABLE_FIRST_COMPONENTS
+	//bool variableStartComponentFound;
+	bool missingOrVariableStartComponentFound;
+	#endif
 	#endif
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_HEAVY
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_HEAVY_OPTIMISED
@@ -399,8 +405,8 @@ public:
 	bool neuronActive;	//interpretation: all components are active (unless they are optional / unused or cases)
 	#endif
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_BIO_DO_NOT_RELY_ON_PARSE_TREE_MEMORY
-	int parseTreeMinWordIndex;	//sentenceIndex
-	int parseTreeMaxWordIndex;	//sentenceIndex
+	int parseTreeMinWordIndex;
+	int parseTreeMaxWordIndex;
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_TAKE_LAST_SUCCESSFUL_PARSE_LIMIT_ITERATIONS_PREFERENCE_WEIGHT_DYNAMIC
 	double parseTreeMaxWeight;	//NOT USED
 	double parseTreeMinWeight;
@@ -465,13 +471,24 @@ public:
 	
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR
 	bool recordActivatedNeuronWithMaxWordIndexCoverage;
-	GIAtxtRelTranslatorRulesGroupParseTree* partiallyActivatedNeuronWithMaxWordIndexCoverage;
-	GIAtxtRelTranslatorRulesGroupParseTree* fullyActivatedNeuronWithMaxWordIndexCoverage;
+	GIAtxtRelTranslatorRulesGroupParseTree* activatedNeuronWithMaxWordIndexCoverage;
+	bool activatedNeuronWithMaxWordIndexCoveragePartial;
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_VARIABLE_FIRST_COMPONENTS
+	bool activatedNeuronWithMaxWordIndexCoverageVariable;	//ie candidateCoverageMissingOrVariableStartComponent
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_PREVENT_INTRASENTENCE_MATCHING
+	vector<GIAtxtRelTranslatorRulesGroupNeuralNetwork*> listOfHighLevelNeuronsCompleteHistory;
+	#endif
+	#endif
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_COMPONENT_DETECT_LOCAL_VARATION
 	bool findingCandidateComponent2;
 	GIAtxtRelTranslatorRulesComponentNeuralNetwork* candidateComponent2ToFind;
 	bool foundCandidateComponent2;
 	GIAtxtRelTranslatorRulesGroupParseTree* candidateComponent2sourceParseTreeGroup;
+	#endif
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE_ALL_POS_VALUES_SIMULTANEOUSLY
+	vector<vector<GIAtxtRelTranslatorRulesGroupNeuralNetwork*>*>* firstLayer;
+	#else
+	vector<GIAtxtRelTranslatorRulesGroupNeuralNetwork*>* firstLayer;
 	#endif
 	#endif
 	

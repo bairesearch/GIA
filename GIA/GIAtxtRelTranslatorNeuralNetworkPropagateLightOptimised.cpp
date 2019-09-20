@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorNeuralNetworkPropagateLightOptimised.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j4a 09-September-2019
+ * Project Version: 3j5a 13-September-2019
  * Requirements: 
  * Description: Textual Relation Translator Neural Network Light Optimised - ~O(n)
  * /
@@ -49,7 +49,7 @@ static GIAtxtRelTranslatorRulesGroupParseTree* topLevelParseTreeGroupLocalLight;
 static int parseTreeMaxWeight;
 #endif
 
-#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_FREE_MEMORY
+#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_FREE_MEMORY
 static vector<GIAtxtRelTranslatorRulesGroupParseTree*> parseTreeGroupListLight;
 static vector<GIAtxtRelTranslatorRulesComponentParseTree*> parseTreeComponentListExtra;
 #endif
@@ -95,7 +95,7 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateLightOptimisedClass::executeTxtRel
 	
 	GIAtxtRelTranslatorNeuralNetworkPropagateOperations.resetAllNeuronComponents(GIAtxtRelTranslatorRulesGroupTypes, GIA_TXT_REL_TRANSLATOR_RULES_GROUP_BOOL_INDEX_ALLGROUPTYPES_NEURON_COMPONENT_CONNECTION_ACTIVE); //this is required for GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED
 	GIAtxtRelTranslatorNeuralNetworkPropagateOperations.resetAllNeuronComponents(GIAtxtRelTranslatorRulesGroupTypes, GIA_TXT_REL_TRANSLATOR_RULES_GROUP_BOOL_INDEX_ALLGROUPTYPES_PARSE_TREE_GROUP_REF);	//this is required to initialise currentParseTreeGroup for every group (only required for first execution of GIAtxtRelTranslatorNeuralNetworkPropagateLightOptimisedClass::executeTxtRelTranslatorNeuralNetwork)
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_FREE_MEMORY
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_FREE_MEMORY
 	GIAtxtRelTranslatorNeuralNetworkPropagateOperations.initialiseParseTreeGroupList(GIAtxtRelTranslatorRulesGroupTypes, &parseTreeGroupListLight);
 	#endif
 
@@ -191,10 +191,10 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateLightOptimisedClass::executeTxtRel
 	#endif
 	*/
 	
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_FREE_MEMORY
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_FREE_MEMORY
 	GIAtxtRelTranslatorNeuralNetworkPropagateOperations.deinitialiseParseTreeGroupList(GIAtxtRelTranslatorRulesGroupTypes, &parseTreeGroupListLight);
 	#endif
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_FREE_MEMORY
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_FREE_MEMORY
 	for(int i2=0; i2<parseTreeComponentListExtra.size(); i2++)
 	{
 		GIAtxtRelTranslatorRulesComponentParseTree* parseTreeComponentTemp = parseTreeComponentListExtra[i2];
@@ -202,7 +202,7 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateLightOptimisedClass::executeTxtRel
 	}
 	parseTreeComponentListExtra.clear();
 	#endif
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_FREE_MEMORY
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_FREE_MEMORY
 	for(int w=0; w<sentenceContents->size(); w++)
 	{
 		GIAtxtRelTranslatorNeuralNetworkForwardPropogationWordData* forwardPropogationWordData = forwardPropogationSentenceData.forwardPropogationWordDataArray[w];
@@ -812,12 +812,12 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateLightOptimisedClass::propagateWord
 								}
 								#endif
 
-								#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_FREE_MEMORY
+								#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_FREE_MEMORY
 								clearParseTreeGroup = false;
 								#endif
 								GIAtxtRelTranslatorNeuralNetworkPropagateOperations.resetGroupActivation(ownerGroup);
 								GIAtxtRelTranslatorNeuralNetworkPropagateOperations.resetGroupParseTreeGroupRef(ownerGroup, clearParseTreeGroup);
-								#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_FREE_MEMORY
+								#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_FREE_MEMORY
 								parseTreeGroupListLight.push_back(ownerGroup->currentParseTreeGroupTemp);
 								#endif
 							}
@@ -844,7 +844,7 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateLightOptimisedClass::propagateWord
 							if(propagateWordThroughNetworkGroupComponentWrapper(translatorVariables, group, currentComponent, ownerGroup, ownerComponent, forwardPropogationSignalData, forwardPropogationWordData, forwardPropogationSentenceData, layer, activationPathWordCurrentParseTreeGroup, i, measureSequentialActivationOnly, &sequentialActivationFound, &existingActivationFound, &resetUnallowed, &debug))
 							{
 								result = true;
-								#ifndef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_FREE_MEMORY
+								#ifndef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_FREE_MEMORY
 								#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_RESET_ONLY_ONCE_FOUND_FIRST_COMPONENT_RESTORE
 								if(requireResetGroupActivation)
 								{
@@ -865,7 +865,7 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateLightOptimisedClass::propagateWord
 									cout << "restoreGroupActivation - " << ownerGroup->groupTypeName << ":" << ownerGroup->groupName << endl;
 									#endif
 									GIAtxtRelTranslatorNeuralNetworkPropagateOperations.restoreGroupActivation(ownerGroup, ownerGroupOrig);
-									#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_FREE_MEMORY
+									#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_FREE_MEMORY
 									ownerGroup->currentParseTreeGroupTemp = currentParseTreeGroupOrig;
 									#else
 									GIAtxtRelTranslatorNeuralNetworkPropagateOperations.restoreGroupParseTreeGroupRef(ownerGroup, currentParseTreeGroupOrig);
@@ -897,7 +897,7 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateLightOptimisedClass::propagateWord
 						}
 						#endif
 
-						#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_FREE_MEMORY
+						#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_FREE_MEMORY
 						#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_RESET_ONLY_ONCE_FOUND_FIRST_COMPONENT_RESTORE
 						GIAtxtRelTranslatorNeuralNetworkPropagateOperations.deleteGroup(ownerGroupOrig);
 						#endif
@@ -1217,7 +1217,7 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateLightOptimisedClass::propagateWord
 			currentParseTreeGroupTemp->components.pop_back();
 		}
 		//delete oldParseComponent;
-		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_FREE_MEMORY
+		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_FREE_MEMORY
 		parseTreeComponentListExtra.push_back(oldParseComponent);	//mark overwritten component for deletion
 		#endif
 		#else

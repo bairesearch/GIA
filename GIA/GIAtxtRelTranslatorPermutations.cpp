@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorPermutations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j4a 09-September-2019
+ * Project Version: 3j5a 13-September-2019
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Permutations
  * /
@@ -381,10 +381,14 @@ bool GIAtxtRelTranslatorPermutationsClass::generateParseTreeIntroWrapper(GIAtran
 	#endif
 	
 		#ifdef GIA_TXT_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START
+		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_DEBUG_MAX_POS_PERMUTATIONS
+		for(int i=0; i<GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_DEBUG_MAX_POS_PERMUTATIONS_NUM; i++)
+		#else
 		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_DEBUG_SINGLE_POS_PERMUTATION
 		for(int i=0; i<1; i++)
 		#else
 		for(int i=0; i<POSambiguityInfoUnambiguousPermutationArray->size(); i++)
+		#endif
 		#endif
 		{
 			vector<uint64_t>* POSambiguityInfoPermutationTemp = (*POSambiguityInfoUnambiguousPermutationArray)[i];
@@ -505,7 +509,7 @@ bool GIAtxtRelTranslatorPermutationsClass::generateParseTreeIntroWrapper(GIAtran
 				{
 					result = false;
 				}
-				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_FREE_MEMORY
+				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_FREE_MEMORY
 				GIAtxtRelTranslatorNeuralNetworkPropagateOperations.deleteParseTree(firstParseTreeGroup, 0);
 				#endif
 				#endif
@@ -586,7 +590,7 @@ bool GIAtxtRelTranslatorPermutationsClass::updatePerformanceNeuralNetwork(const 
 		{
 			result = true;
 			*performance = performanceTemp;
-			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_FREE_MEMORY
+			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_FREE_MEMORY
 			if(currentGIApreprocessorSentenceInList->firstParseTreeGroup != NULL)
 			{
 				GIAtxtRelTranslatorNeuralNetworkPropagateOperations.deleteParseTree(currentGIApreprocessorSentenceInList->firstParseTreeGroup, 0);

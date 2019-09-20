@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorRulesGroupClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j4a 09-September-2019
+ * Project Version: 3j5a 13-September-2019
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Rules
  * /
@@ -186,7 +186,9 @@ GIAtxtRelTranslatorRulesGroupNeuralNetwork::GIAtxtRelTranslatorRulesGroupNeuralN
 	firstHiddenLayerNeuron = false;
 	#endif
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR
-	wordDataTemp = NULL;
+	groupTypeIsString = false;
+	//wordDataTemp = NULL;
+	wordPOStype = INT_DEFAULT_VALUE;
 	groupIndex = INT_DEFAULT_VALUE;
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_WEIGHTS
 	groupStrength = 0;
@@ -319,6 +321,10 @@ GIAtxtRelTranslatorRulesGroupParseTree::GIAtxtRelTranslatorRulesGroupParseTree(v
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR
 	groupRef = NULL;
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_VARIABLE_FIRST_COMPONENTS
+	//variableStartComponentFound = false;
+	missingOrVariableStartComponentFound = false;
+	#endif
 	#endif
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_HEAVY
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_HEAVY_OPTIMISED
@@ -401,13 +407,24 @@ GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData::GIAtxtRelTransla
 
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR
 	recordActivatedNeuronWithMaxWordIndexCoverage = false;
-	partiallyActivatedNeuronWithMaxWordIndexCoverage = NULL;
-	fullyActivatedNeuronWithMaxWordIndexCoverage = NULL;
+	activatedNeuronWithMaxWordIndexCoverage = NULL;
+	activatedNeuronWithMaxWordIndexCoveragePartial = false;
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_VARIABLE_FIRST_COMPONENTS
+	activatedNeuronWithMaxWordIndexCoverageVariable = false;
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_PREVENT_INTRASENTENCE_MATCHING
+	//listOfHighLevelNeuronsCompleteHistory = NULL;
+	#endif	
+	#endif
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_COMPONENT_DETECT_LOCAL_VARATION
 	findingCandidateComponent2 = false;
 	candidateComponent2ToFind = NULL;
 	foundCandidateComponent2 = false;
 	candidateComponent2sourceParseTreeGroup = NULL;
+	#endif
+	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE_ALL_POS_VALUES_SIMULTANEOUSLY
+	firstLayer = NULL;
+	#else
+	firstLayer = NULL;
 	#endif
 	#endif
 	
