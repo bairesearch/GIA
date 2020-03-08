@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorPOStagger.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j6b 10-January-2020
+ * Project Version: 3j6c 10-January-2020
  * Requirements: requires plain text file
  * Description: Preprocessor POS tagger
  * /
@@ -591,9 +591,13 @@ bool GIApreprocessorPOStaggerClass::generatePOStaggerDatabaseFromWikiDumpText(co
 	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL
 	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_MEMORY_FREE_WRITE_EXPERIENCES_DIRECTLY_TO_FILE
 	string XtrainBatchFileName = GIApreprocessorPOStaggerDatabase.externalANNgenerateBatchFileName(GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_X_TRAIN_BATCH_FILE_NAME_PARTA, wikiDumpFileBatchIndex);
+	#ifndef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE_WITHOUT_TARGET_CLASSES
 	string YtrainBatchFileName = GIApreprocessorPOStaggerDatabase.externalANNgenerateBatchFileName(GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_Y_TRAIN_BATCH_FILE_NAME_PARTA, wikiDumpFileBatchIndex);
+	#endif
 	ofstream XtrainBatchFileObject(XtrainBatchFileName.c_str());
+	#ifndef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE_WITHOUT_TARGET_CLASSES
 	ofstream YtrainBatchFileObject(YtrainBatchFileName.c_str());
+	#endif
 	#else
 	ANNexperience* firstExperienceInList = new ANNexperience();
 	ANNexperience* currentExperienceInList = firstExperienceInList;
@@ -725,9 +729,6 @@ bool GIApreprocessorPOStaggerClass::generatePOStaggerDatabaseFromWikiDumpText(co
 								#endif
 
 									#ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_NEURAL_NETWORK_SEQUENCE_GRAMMAR
-
-
-
 									vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes = GIAtxtRelTranslatorRules.getGIAtxtRelTranslatorRulesGroupTypesGlobal();
 									bool createNewConnections = true; 
 									vector<GIAtxtRelTranslatorRulesGroupNeuralNetwork*> firstLayer;
@@ -735,6 +736,10 @@ bool GIApreprocessorPOStaggerClass::generatePOStaggerDatabaseFromWikiDumpText(co
 									{
 										result = true;
 									}
+									#else
+									
+									#ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE_WITHOUT_TARGET_CLASSES
+									if(!addPOStaggerDatabaseEntry(POSambiguityInfoPermutationTemp, &XtrainBatchFileObject))
 									#else
 									#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL
 									#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_MEMORY_FREE_WRITE_EXPERIENCES_DIRECTLY_TO_FILE
@@ -744,6 +749,7 @@ bool GIApreprocessorPOStaggerClass::generatePOStaggerDatabaseFromWikiDumpText(co
 									#endif
 									#else
 									if(!addPOStaggerDatabaseEntry(centreWordPOSambiguityInfo, POSambiguityInfoPermutationTemp, centreWordUnambiguousPOSindex, &numberOfNeuralNetworkFeeds))
+									#endif
 									#endif
 									{
 										result = false;
@@ -820,7 +826,9 @@ bool GIApreprocessorPOStaggerClass::generatePOStaggerDatabaseFromWikiDumpText(co
 	#elif defined GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL
 	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_MEMORY_FREE_WRITE_EXPERIENCES_DIRECTLY_TO_FILE
 	XtrainBatchFileObject.close();
+	#ifndef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE_WITHOUT_TARGET_CLASSES
 	YtrainBatchFileObject.close();
+	#endif
 	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_TRAIN_EXECUTE_FEED_SINGLE_BATCH_ONLY
 	GIApreprocessorPOStaggerDatabase.externalANNgenerateBatchTrainDataExecuteFeed();
 	#endif
@@ -833,6 +841,31 @@ bool GIApreprocessorPOStaggerClass::generatePOStaggerDatabaseFromWikiDumpText(co
 	
 	return result;
 }
+
+
+#ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE_WITHOUT_TARGET_CLASSES
+
+#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK
+#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL
+#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_MEMORY_FREE_WRITE_EXPERIENCES_DIRECTLY_TO_FILE
+bool GIApreprocessorPOStaggerClass::addPOStaggerDatabaseEntry(vector<uint64_t>* POSambiguityInfoPermutation, ofstream* XtrainBatchFileObject)
+{
+	bool result = true;
+	
+	ANNexperience* currentExperienceInList = new ANNexperience();
+	unsigned char centreWordUnambiguousPOSindexUNUSED = 0; 
+	generateANNexperienceFromPOSambiguityInfoPermutation(POSambiguityInfoPermutation, centreWordUnambiguousPOSindexUNUSED, currentExperienceInList);
+	string experienceInputString = GIApreprocessorPOStaggerDatabase.externalANNgenerateBatchDataExperienceInput(currentExperienceInList);
+	*XtrainBatchFileObject << experienceInputString << endl;
+	delete currentExperienceInList;
+
+	return result;	
+}
+#endif
+#endif
+#endif
+
+#else
 
 #ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL
 #ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_MEMORY_FREE_WRITE_EXPERIENCES_DIRECTLY_TO_FILE
@@ -906,6 +939,7 @@ bool GIApreprocessorPOStaggerClass::addPOStaggerDatabaseEntry(const uint64_t cen
 	
 	return result;	
 }
+#endif
 
 string GIApreprocessorPOStaggerClass::generateWikiDumpTextInputFileName(int wikiDumpFileBatchIndex)
 {
@@ -1161,11 +1195,18 @@ bool GIApreprocessorPOStaggerClass::generatePOSambiguityInfoPermutation(vector<G
 	GIApreprocessorPlainTextWord* centreWord = (*sentenceContents)[wCentre];
 
 	//context word calculations
-	#ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE_RAW	
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE_RAW
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE_EXCLUDE_POS_INDEX_OUT_OF_SENTENCE_BOUNDS
+	int wMin = 0;
+	int wMax = sentenceContents->size()-1;
+	int wSize = wMax - wMin;
+	POSambiguityInfoPermutation->resize(sentenceContents->size(), GIA_PREPROCESSOR_POS_TAGGER_POS_AMBIGUITY_INFO_UNKNOWN);	//GIA_PREPROCESSOR_POS_TAGGER_MAX_WORDS_IN_DATABASE_POS_PERMUTATION = max size of wSize	
+	#else	
 	int wMin = 0;
 	int wMax = GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE_RAW_SENTENCE_MAX_NUM_WORDS;
 	int wSize = wMax - wMin;	//GIA_PREPROCESSOR_POS_TAGGER_MAX_CONTEXT_WORDS_IN_DATABASE_POS_PERMUTATION
 	POSambiguityInfoPermutation->resize(GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE_RAW_SENTENCE_MAX_NUM_WORDS, GIA_PREPROCESSOR_POS_TAGGER_POS_AMBIGUITY_INFO_UNKNOWN);	//GIA_PREPROCESSOR_POS_TAGGER_MAX_WORDS_IN_DATABASE_POS_PERMUTATION = max size of wSize
+	#endif
 	#else
 	int wMin = wCentre - (GIA_PREPROCESSOR_POS_TAGGER_MAX_CONTEXT_WORDS_IN_DATABASE_POS_PERMUTATION/2);
 	int wMax = wCentre + (GIA_PREPROCESSOR_POS_TAGGER_MAX_CONTEXT_WORDS_IN_DATABASE_POS_PERMUTATION/2);
@@ -1587,8 +1628,12 @@ bool GIApreprocessorPOStaggerClass::generateANNexperienceFromPOSambiguityInfoPer
 {
 	bool result = true;
 	
-	vector<bool> inputNeuronExperienceValues(GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_NUMBER_OF_INPUT_NEURONS, false);
-	for(int i=0; i<GIA_PREPROCESSOR_POS_TAGGER_MAX_CONTEXT_WORDS_IN_DATABASE_POS_PERMUTATION; i++)
+	//cout << "POSambiguityInfoPermutation->size() = " << POSambiguityInfoPermutation->size() << endl;
+	
+	int numberOfInputNeurons = GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_NUMBER_OF_INPUT_NEURONS_PER_CONTEXT_WORD*POSambiguityInfoPermutation->size();	//eg *GIA_PREPROCESSOR_POS_TAGGER_MAX_CONTEXT_WORDS_IN_DATABASE_POS_PERMUTATION
+	
+	vector<bool> inputNeuronExperienceValues(numberOfInputNeurons, false);
+	for(int i=0; i<POSambiguityInfoPermutation->size(); i++)
 	{
 		int POSambiguityInfoNeuralNetworkInputNeuron = INT_DEFAULT_VALUE;
 		vector<bool> inputNeuronExperienceValuesContextWord(GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_NUMBER_OF_INPUT_NEURONS_PER_CONTEXT_WORD, false);	
@@ -1615,12 +1660,11 @@ bool GIApreprocessorPOStaggerClass::generateANNexperienceFromPOSambiguityInfoPer
 	cout << "inputNeuronExperienceValues = " << convertBoolVectorToString(&inputNeuronExperienceValues) << endl;
 	*/
 	
-	int outputNeuronExperienceValueCentreWord = outputNeuronExperienceValue;
 	//only feed neural network with experience if centre word POS is not ambiguous
 	//now create an experience and train the network with the experience
-	currentExperience->classTargetValue = outputNeuronExperienceValueCentreWord;	//CHECKTHIS
+	currentExperience->classTargetValue = outputNeuronExperienceValue;
 	ANNexperienceInput* currentExperienceInput = currentExperience->firstExperienceInput;
-	for(int i=0; i<GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_NUMBER_OF_INPUT_NEURONS; i++)
+	for(int i=0; i<numberOfInputNeurons; i++)
 	{
 		currentExperienceInput->inputValue = inputNeuronExperienceValues[i];
 		currentExperienceInput->next = new ANNexperienceInput();
