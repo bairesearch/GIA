@@ -26,7 +26,7 @@
  * File Name: GIAtranslator.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j6d 10-January-2020
+ * Project Version: 3k1a 05-March-2020
  * Requirements: requires text parsed by X Parser
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
@@ -65,10 +65,10 @@
 #ifdef GIA_TXT_REL_TRANSLATOR_HYBRID
 #include "GIAtxtRelTranslatorHybrid.hpp"
 #endif
-#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OPTIMISED
+#ifdef GIA_TXT_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OPTIMISED
 #include "GIAtxtRelTranslatorRules.hpp"
 #include "GIAtxtRelTranslatorPermutations.hpp"
-#include "GIAtxtRelTranslatorNeuralNetworkPropagateOperations.hpp"
+#include "GIAtxtRelTranslatorSANIPropagateOperations.hpp"
 #endif
 
 #include "SHAREDvars.hpp"
@@ -103,10 +103,10 @@ class GIAtranslatorClass
 	#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID
 	private: GIAtxtRelTranslatorHybridClass GIAtxtRelTranslatorHybrid;
 	#endif
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OPTIMISED
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OPTIMISED
 	private: GIAtxtRelTranslatorRulesClass GIAtxtRelTranslatorRules;
 	private: GIAtxtRelTranslatorPermutationsClass GIAtxtRelTranslatorPermutations;
-	private: GIAtxtRelTranslatorNeuralNetworkPropagateOperationsClass GIAtxtRelTranslatorNeuralNetworkPropagateOperations;
+	private: GIAtxtRelTranslatorSANIPropagateOperationsClass GIAtxtRelTranslatorSANIPropagateOperations;
 	#endif
 	private: SHAREDvarsClass SHAREDvars;
 

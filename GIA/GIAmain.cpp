@@ -26,7 +26,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j6d 10-January-2020
+ * Project Version: 3k1a 05-March-2020
  * Requirements: 
  * Description: Main
  * /
@@ -667,7 +667,7 @@ int main(const int argc, const char** argv)
 
 	if(SHAREDvarsClass().argumentExists(argc, argv, "-version"))
 	{
-		cout << "GIA.exe - Project Version: 3j6d 10-January-2020" << endl;
+		cout << "GIA.exe - Project Version: 3k1a 05-March-2020" << endl;
 		exit(EXIT_OK);
 	}
 
@@ -1038,14 +1038,14 @@ int main(const int argc, const char** argv)
 	}
 	#endif
 
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR		
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR		
 	vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes = new vector<GIAtxtRelTranslatorRulesGroupType*>;
 	vector<XMLparserTag*>* GIAtxtRelTranslatorRulesTokenLayers = new vector<XMLparserTag*>;
 	if(!GIAtxtRelTranslatorRulesClass().extractGIAtxtRelTranslatorRules(GIAtxtRelTranslatorRulesGroupTypes, GIAtxtRelTranslatorRulesTokenLayers))
 	{
 		result = false;
 	}
-	if(!GIAtxtRelTranslatorNeuralNetworkFormationClass().createGIAtxtRelTranslatorNeuralNetwork(GIAtxtRelTranslatorRulesTokenLayers, GIAtxtRelTranslatorRulesGroupTypes))
+	if(!GIAtxtRelTranslatorSANIFormationClass().createGIAtxtRelTranslatorSANI(GIAtxtRelTranslatorRulesTokenLayers, GIAtxtRelTranslatorRulesGroupTypes))
 	{
 		result = false;
 	}
@@ -1060,15 +1060,15 @@ int main(const int argc, const char** argv)
 		result = false;
 	}	
 	
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN_DELAY_ANN_CONNECTIVITY_TILL_END
-	GIAtxtRelTranslatorNeuralNetworkFormationClass().createANNconnectivity(GIAtxtRelTranslatorRulesGroupTypes);
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_ANN_DELAY_ANN_CONNECTIVITY_TILL_END
+	GIAtxtRelTranslatorSANIFormationClass().createANNconnectivity(GIAtxtRelTranslatorRulesGroupTypes);
 	#endif
 	#endif
 
 	#ifdef GIA_NEURAL_NETWORK
 	
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_ANN
 	GIAneuralNetworkOperationsClass().generateNeuralNetFromGIAtxtRelTranslatorNet(translatorVariables);	//generate GIA NLP neural network
 	#endif
 	#ifdef GIA_NEURAL_NETWORK_PASSIVE
@@ -2005,7 +2005,7 @@ bool GIAmainClass::executeGIA2()
 
 	#ifdef GIA_NEURAL_NETWORK
 	
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_ANN
 	GIAneuralNetworkOperations.generateNeuralNetFromGIAtxtRelTranslatorNet(translatorVariables);	//generate GIA NLP neural network
 	#endif
 	#ifdef GIA_NEURAL_NETWORK_PASSIVE

@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorPermutations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j6d 10-January-2020
+ * Project Version: 3k1a 05-March-2020
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Permutations
  * /
@@ -37,7 +37,7 @@
 
 #ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3
 
-#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OPTIMISED
+#ifdef GIA_TXT_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OPTIMISED
 static int performanceMaxPermutationIndexRecord;	//temp var (per sentence)
 static bool parseIsolatedSubreferenceSetsRecord;
 #endif
@@ -62,7 +62,7 @@ bool GIAtxtRelTranslatorPermutationsClass::executeTxtRelTranslatorWrapper(GIAtra
 	//cout << "GIAtxtRelTranslatorPermutationsClass::executeTxtRelTranslatorWrapper" << endl;
 
 
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_DEBUG_TEST_VERIFICATION_AFTER_GENERATION
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_DEBUG_TEST_VERIFICATION_AFTER_GENERATION
 	//code from GIAtranslatorClass::parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyParsedSentences;
 	//count maxNumberSentences
 	GIApreprocessorSentence* currentSentenceInList = translatorVariables->firstGIApreprocessorSentenceInList;
@@ -80,7 +80,7 @@ bool GIAtxtRelTranslatorPermutationsClass::executeTxtRelTranslatorWrapper(GIAtra
 	GIApreprocessorSentence* currentGIApreprocessorSentenceInList = translatorVariables->firstGIApreprocessorSentenceInList;
 	while(currentGIApreprocessorSentenceInList->next != NULL)
 	{		
-		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_DEBUG_TEST_VERIFICATION_AFTER_GENERATION
+		#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_DEBUG_TEST_VERIFICATION_AFTER_GENERATION
 		translatorVariables->currentPreprocessorSentenceInList = currentGIApreprocessorSentenceInList;
 		#endif
 		
@@ -96,7 +96,7 @@ bool GIAtxtRelTranslatorPermutationsClass::executeTxtRelTranslatorWrapper(GIAtra
 		currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->next;
 	}
 	
-	#ifndef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC
+	#ifndef GIA_TXT_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC
 	if(!transferParseTreePOStypeInferredToWordList(translatorVariables))	//is this required without GIA_TXT_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START?
 	{
 		result = false;
@@ -128,8 +128,8 @@ bool GIAtxtRelTranslatorPermutationsClass::executeTxtRelTranslatorWrapper2(GIAtr
 	vector<uint64_t> POSambiguityInfoPermutation;
 	vector<GIApreprocessorPlainTextWord*>* sentenceContents = GIApreprocessorSentenceClassObject.getSentenceContents(currentGIApreprocessorSentenceInList);
 
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ADD_EXPLICIT_WORD_REFERENCES_AS_INDEPENDENT_POS_PERMUTATIONS
-	vector<string>* explicitWordList = GIAtxtRelTranslatorNeuralNetworkFormation.getExplicitWordList();
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_ADD_EXPLICIT_WORD_REFERENCES_AS_INDEPENDENT_POS_PERMUTATIONS
+	vector<string>* explicitWordList = GIAtxtRelTranslatorSANIFormation.getExplicitWordList();
 	#else
 	vector<string>* explicitWordList = NULL;
 	#endif
@@ -150,7 +150,7 @@ bool GIAtxtRelTranslatorPermutationsClass::executeTxtRelTranslatorWrapper2(GIAtr
 }
 
 
-#ifndef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC
+#ifndef GIA_TXT_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC
 bool GIAtxtRelTranslatorPermutationsClass::transferParseTreePOStypeInferredToWordList(GIAtranslatorVariablesClass* translatorVariables)
 {
 	bool result = true;
@@ -166,7 +166,7 @@ bool GIAtxtRelTranslatorPermutationsClass::transferParseTreePOStypeInferredToWor
 
 		//this will replace the sentenceContents word->wordPOStypeInferred values with their ideal value as stored in the parse tree (in the case where the ideal word->wordPOStypeInferred values were overwritten by a more recent bad parse):
 		
-		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
+		#ifdef GIA_TXT_REL_TRANSLATOR_SANI
 		if(currentGIApreprocessorSentenceInList->firstParseTreeGroup != NULL)
 		{
 		#endif
@@ -187,7 +187,7 @@ bool GIAtxtRelTranslatorPermutationsClass::transferParseTreePOStypeInferredToWor
 				cout << "GIApreprocessorPOStypeNameArray[contextWord->wordPOStypeInferred] = " << GIApreprocessorPOStypeNameArray[contextWord->wordPOStypeInferred] << endl;
 			}
 			#endif
-		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
+		#ifdef GIA_TXT_REL_TRANSLATOR_SANI
 		}
 		#endif
 		
@@ -206,7 +206,7 @@ bool GIAtxtRelTranslatorPermutationsClass::transferParseTreePOStypeInferredToWor
 	
 	for(int i=0; i<currentParseTreeGroup->components.size(); i++)
 	{
-		GIAtxtRelTranslatorNeuralNetworkPropagateOperations.printParseTreeDebugIndentation(layer);
+		GIAtxtRelTranslatorSANIPropagateOperations.printParseTreeDebugIndentation(layer);
 		
 		//#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_RULES
 		//cout << "transferParseTreePOStypeInferredToWordList currentParseTreeGroup: " <<  currentParseTreeGroup->groupTypeName << ":" << currentParseTreeGroup->groupName << endl;		
@@ -227,7 +227,7 @@ bool GIAtxtRelTranslatorPermutationsClass::transferParseTreePOStypeInferredToWor
 		}
 		
 		#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_RULES
-		GIAtxtRelTranslatorNeuralNetworkPropagateOperations.printComponent(currentParseTreeComponent, layer);
+		GIAtxtRelTranslatorSANIPropagateOperations.printComponent(currentParseTreeComponent, layer);
 		#endif
 		if(currentParseTreeComponent->parseTreeGroupRef != NULL)
 		{
@@ -262,8 +262,8 @@ bool GIAtxtRelTranslatorPermutationsClass::executeTxtRelTranslator(GIAtranslator
 		In the future use a neural net to train the system to identify new rule groups (or upgrade/refine rule groups)
 	*/
 	
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
-	GIAtxtRelTranslatorRulesGroupParseTree* firstParseTreeGroup = NULL;	//not used by GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK (write directly to currentGIApreprocessorSentenceInList->firstParseTreeGroup)
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI
+	GIAtxtRelTranslatorRulesGroupParseTree* firstParseTreeGroup = NULL;	//not used by GIA_TXT_REL_TRANSLATOR_SANI (write directly to currentGIApreprocessorSentenceInList->firstParseTreeGroup)
 	#else
 	GIAtxtRelTranslatorRulesGroupParseTree* firstParseTreeGroup = new GIAtxtRelTranslatorRulesGroupParseTree();
 	currentGIApreprocessorSentenceInList->firstParseTreeGroup = firstParseTreeGroup;
@@ -271,7 +271,7 @@ bool GIAtxtRelTranslatorPermutationsClass::executeTxtRelTranslator(GIAtranslator
 		
 	int performance = 0; 
 	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START
-	int minIndexOfMatchesFoundBackupOptimum = GIAtxtRelTranslatorNeuralNetworkPropagateOperations.calculateMinIndexOfMatchesFound(sentenceContents);
+	int minIndexOfMatchesFoundBackupOptimum = GIAtxtRelTranslatorSANIPropagateOperations.calculateMinIndexOfMatchesFound(sentenceContents);
 	vector<vector<uint64_t>*> POSambiguityInfoUnambiguousPermutationArray;
 	vector<uint64_t>* POSambiguityInfoUnambiguousPermutationNew = new vector<uint64_t>(POSambiguityInfoPermutation->size());
 	POSambiguityInfoUnambiguousPermutationArray.push_back(POSambiguityInfoUnambiguousPermutationNew);
@@ -280,7 +280,7 @@ bool GIAtxtRelTranslatorPermutationsClass::executeTxtRelTranslator(GIAtranslator
 	#endif
 	bool foundParse = false;
 	
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OPTIMISED
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OPTIMISED
 	if(translatorVariables->parserDemarkateOptimumPathway)
 	{
 	#endif
@@ -296,7 +296,7 @@ bool GIAtxtRelTranslatorPermutationsClass::executeTxtRelTranslator(GIAtranslator
 		#endif
 		{
 			foundParse = true;
-			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OPTIMISED
+			#ifdef GIA_TXT_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OPTIMISED
 			parseIsolatedSubreferenceSetsRecord = parseIsolatedSubreferenceSets1;
 			#endif
 		}
@@ -315,7 +315,7 @@ bool GIAtxtRelTranslatorPermutationsClass::executeTxtRelTranslator(GIAtranslator
 				#endif
 				{
 					foundParse = true;
-					#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OPTIMISED
+					#ifdef GIA_TXT_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OPTIMISED
 					parseIsolatedSubreferenceSetsRecord = parseIsolatedSubreferenceSets2;
 					#endif
 				}
@@ -324,7 +324,7 @@ bool GIAtxtRelTranslatorPermutationsClass::executeTxtRelTranslator(GIAtranslator
 			#endif
 		}
 		#endif
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OPTIMISED
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OPTIMISED
 	}
 	else
 	{
@@ -346,8 +346,8 @@ bool GIAtxtRelTranslatorPermutationsClass::executeTxtRelTranslator(GIAtranslator
 	}
 	else
 	{
-		#ifndef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
-		GIAtxtRelTranslatorNeuralNetworkPropagateInverse.clearAllWordsAlreadyFoundMatchInComponent(sentenceContents, minIndexOfMatchesFoundBackupOptimum);	//redundant?	
+		#ifndef GIA_TXT_REL_TRANSLATOR_SANI
+		GIAtxtRelTranslatorSANIPropagateInverse.clearAllWordsAlreadyFoundMatchInComponent(sentenceContents, minIndexOfMatchesFoundBackupOptimum);	//redundant?	
 		#endif
 		cerr << "GIAtxtRelTranslatorPermutationsClass::executeTxtRelTranslator{}: Failed to parse sentence " << currentGIApreprocessorSentenceInList->sentenceIndexOriginal << ", ";
 		GIApreprocessorSentenceClassObject.printSentence(GIApreprocessorSentenceClassObject.getSentenceContents(currentGIApreprocessorSentenceInList), true);
@@ -370,21 +370,21 @@ bool GIAtxtRelTranslatorPermutationsClass::generateParseTreeIntroWrapper(GIAtran
 	
 	vector<GIApreprocessorPlainTextWord*>* sentenceContents = GIApreprocessorSentenceClassObject.getSentenceContents(currentGIApreprocessorSentenceInList);
 
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI
 	int performanceMaxPermutationIndex = INT_DEFAULT_VALUE;
 	int performanceMax = 0;
 	#endif
 	
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OPTIMISED
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OPTIMISED
 	if(translatorVariables->parserDemarkateOptimumPathway)
 	{
 	#endif
 	
 		#ifdef GIA_TXT_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START
-		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_DEBUG_MAX_POS_PERMUTATIONS
-		for(int i=0; i<GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_DEBUG_MAX_POS_PERMUTATIONS_NUM; i++)
+		#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_DEBUG_MAX_POS_PERMUTATIONS
+		for(int i=0; i<GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_DEBUG_MAX_POS_PERMUTATIONS_NUM; i++)
 		#else
-		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_DEBUG_SINGLE_POS_PERMUTATION
+		#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_DEBUG_SINGLE_POS_PERMUTATION
 		for(int i=0; i<1; i++)
 		#else
 		for(int i=0; i<POSambiguityInfoUnambiguousPermutationArray->size(); i++)
@@ -394,7 +394,7 @@ bool GIAtxtRelTranslatorPermutationsClass::generateParseTreeIntroWrapper(GIAtran
 			vector<uint64_t>* POSambiguityInfoPermutationTemp = (*POSambiguityInfoUnambiguousPermutationArray)[i];
 			GIApreprocessorPOStagger.setSentenceContentsWordsUnambiguousPOSindex(sentenceContents, POSambiguityInfoPermutationTemp);
 	
-			#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE
+			#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_SANI_PROPAGATE
 			cout << "POSambiguityInfoUnambiguousPermutationArray index = " << i << endl;
 			//GIApreprocessorPOStagger.printPOSambiguityInfoPermutationAssumeUnambiguous(POSambiguityInfoPermutationTemp);	//printPOSambiguityInfoPermutation
 			#endif
@@ -403,19 +403,19 @@ bool GIAtxtRelTranslatorPermutationsClass::generateParseTreeIntroWrapper(GIAtran
 			GIApreprocessorPOStagger.printPOSambiguityInfoPermutationAssumeUnambiguous(POSambiguityInfoPermutationTemp);		
 			#endif
 	
-			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
+			#ifdef GIA_TXT_REL_TRANSLATOR_SANI
 			GIAtxtRelTranslatorRulesGroupParseTree* firstParseTreeGroupTemp = NULL;
 			#else
 			GIAtxtRelTranslatorRulesGroupParseTree* firstParseTreeGroupTemp = new GIAtxtRelTranslatorRulesGroupParseTree();		
 			#endif
 	
-			int minIndexOfMatchesFoundBackup2 = GIAtxtRelTranslatorNeuralNetworkPropagateOperations.calculateMinIndexOfMatchesFound(sentenceContents);
+			int minIndexOfMatchesFoundBackup2 = GIAtxtRelTranslatorSANIPropagateOperations.calculateMinIndexOfMatchesFound(sentenceContents);
 		#else
 		for(int w=0; w<sentenceContents->size(); w++)
 		{
 			(sentenceContents->at(w))->POSambiguityInfo = (*POSambiguityInfoPermutation)[w];
 		}
-		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
+		#ifdef GIA_TXT_REL_TRANSLATOR_SANI
 		GIAtxtRelTranslatorRulesGroupParseTree* firstParseTreeGroupTemp = NULL;
 		#else
 		GIAtxtRelTranslatorRulesGroupParseTree* firstParseTreeGroupTemp = firstParseTreeGroup;
@@ -426,16 +426,16 @@ bool GIAtxtRelTranslatorPermutationsClass::generateParseTreeIntroWrapper(GIAtran
 			int performanceTemp = 0;
 			bool passedTemp = false;
 			
-			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
+			#ifdef GIA_TXT_REL_TRANSLATOR_SANI
 			bool parserEnabled = false;
-			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR
+			#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR
 			bool createNewConnections = true; 
-			if(GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerate.executeTxtRelTranslatorNeuralNetwork(translatorVariables, GIAtxtRelTranslatorRulesGroupTypes, sentenceContents, &firstParseTreeGroupTemp, parseIsolatedSubreferenceSets, parserEnabled, &performanceTemp, createNewConnections))
+			if(GIAtxtRelTranslatorSANIPropagateCompactGenerate.executeTxtRelTranslatorNeuralNetwork(translatorVariables, GIAtxtRelTranslatorRulesGroupTypes, sentenceContents, &firstParseTreeGroupTemp, parseIsolatedSubreferenceSets, parserEnabled, &performanceTemp, createNewConnections))
 			#else
-			if(GIAtxtRelTranslatorNeuralNetwork.executeTxtRelTranslatorNeuralNetwork(translatorVariables, GIAtxtRelTranslatorRulesGroupTypes, sentenceContents, &firstParseTreeGroupTemp, parseIsolatedSubreferenceSets, parserEnabled, &performanceTemp))
+			if(GIAtxtRelTranslatorSANI.executeTxtRelTranslatorNeuralNetwork(translatorVariables, GIAtxtRelTranslatorRulesGroupTypes, sentenceContents, &firstParseTreeGroupTemp, parseIsolatedSubreferenceSets, parserEnabled, &performanceTemp))
 			#endif
 			#else	
-			if(GIAtxtRelTranslatorNeuralNetworkPropagateInverse.generateParseTreeIntro(GIAtxtRelTranslatorRulesTokenLayers, GIAtxtRelTranslatorRulesGroupTypes, sentenceContents, firstParseTreeGroupTemp, &performanceTemp, parseIsolatedSubreferenceSets))
+			if(GIAtxtRelTranslatorSANIPropagateInverse.generateParseTreeIntro(GIAtxtRelTranslatorRulesTokenLayers, GIAtxtRelTranslatorRulesGroupTypes, sentenceContents, firstParseTreeGroupTemp, &performanceTemp, parseIsolatedSubreferenceSets))
 			#endif
 			{
 				passedTemp =  true;
@@ -457,7 +457,7 @@ bool GIAtxtRelTranslatorPermutationsClass::generateParseTreeIntroWrapper(GIAtran
 	
 		#ifdef GIA_TXT_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START
 		
-		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
+		#ifdef GIA_TXT_REL_TRANSLATOR_SANI
 			if(updatePerformanceNeuralNetwork(performanceTemp, performance, currentGIApreprocessorSentenceInList, firstParseTreeGroupTemp, passedTemp, i, &performanceMaxPermutationIndex))
 			{
 				*iOptimum = i;	
@@ -467,7 +467,7 @@ bool GIAtxtRelTranslatorPermutationsClass::generateParseTreeIntroWrapper(GIAtran
 	
 		}
 		#else
-			if(GIAtxtRelTranslatorNeuralNetworkPropagateInverse.updatePerformance(performanceTemp, performance, firstParseTreeGroup, firstParseTreeGroupTemp, passedTemp, minIndexOfMatchesFoundBackupOptimum, sentenceContents, minIndexOfMatchesFoundBackup2, NULL))
+			if(GIAtxtRelTranslatorSANIPropagateInverse.updatePerformance(performanceTemp, performance, firstParseTreeGroup, firstParseTreeGroupTemp, passedTemp, minIndexOfMatchesFoundBackupOptimum, sentenceContents, minIndexOfMatchesFoundBackup2, NULL))
 			{
 				*iOptimum = i;	
 			}
@@ -475,14 +475,14 @@ bool GIAtxtRelTranslatorPermutationsClass::generateParseTreeIntroWrapper(GIAtran
 		if(result)
 		{
 			//cout << "performance = " << performance << endl;
-			GIAtxtRelTranslatorNeuralNetworkPropagateInverse.restoreAllWordsAlreadyFoundMatchInComponent(sentenceContents, *performance);
+			GIAtxtRelTranslatorSANIPropagateInverse.restoreAllWordsAlreadyFoundMatchInComponent(sentenceContents, *performance);
 		}
 		#endif
 		
 		#endif
 			
 	
-		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_SIMULTANEOUS
+		#ifdef GIA_TXT_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS
 		if(result)
 		{
 			
@@ -492,49 +492,49 @@ bool GIAtxtRelTranslatorPermutationsClass::generateParseTreeIntroWrapper(GIAtran
 			GIApreprocessorPOStagger.setSentenceContentsWordsUnambiguousPOSindex(sentenceContents, POSambiguityInfoPermutationTemp);
 			int performanceTemp = 0;
 			
-			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_UNOPTIMISED
+			#ifdef GIA_TXT_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_UNOPTIMISED
 			if(translatorVariables->parserAllowed)
 			{
 			#endif
-				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_SIMULTANEOUS_DELETE_INCOMPLETE_PATHS_SEMANTIC_RELATIONS
+				#ifdef GIA_TXT_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS_DELETE_INCOMPLETE_PATHS_SEMANTIC_RELATIONS
 				parserEnabled = false; 
 				performanceTemp = 0;
 				//derive optimum pathway (store in parseTree)
-				if(!GIAtxtRelTranslatorNeuralNetwork.executeTxtRelTranslatorNeuralNetwork(translatorVariables, GIAtxtRelTranslatorRulesGroupTypes, sentenceContents, &firstParseTreeGroup, parseIsolatedSubreferenceSets, parserEnabled, &performanceTemp))
+				if(!GIAtxtRelTranslatorSANI.executeTxtRelTranslatorNeuralNetwork(translatorVariables, GIAtxtRelTranslatorRulesGroupTypes, sentenceContents, &firstParseTreeGroup, parseIsolatedSubreferenceSets, parserEnabled, &performanceTemp))
 				{
 					result = false;	
 				}
 				//mark optimum pathway
-				if(!GIAtxtRelTranslatorNeuralNetwork.demarkateOptimumPathwayBackprop(firstParseTreeGroup))
+				if(!GIAtxtRelTranslatorSANI.demarkateOptimumPathwayBackprop(firstParseTreeGroup))
 				{
 					result = false;
 				}
-				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_FREE_MEMORY
-				GIAtxtRelTranslatorNeuralNetworkPropagateOperations.deleteParseTree(firstParseTreeGroup, 0);
+				#ifdef GIA_TXT_REL_TRANSLATOR_SANI_FREE_MEMORY
+				GIAtxtRelTranslatorSANIPropagateOperations.deleteParseTree(firstParseTreeGroup, 0);
 				#endif
 				#endif
 				
 				parserEnabled = true;
-			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_UNOPTIMISED
+			#ifdef GIA_TXT_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_UNOPTIMISED
 			}
 			else
 			{
 				parserEnabled = false;
 			}
 			#endif
-			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OPTIMISED
+			#ifdef GIA_TXT_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OPTIMISED
 			performanceMaxPermutationIndexRecord = performanceMaxPermutationIndex;
 			#else
 			result = false;
 			performanceTemp = 0;
-			if(GIAtxtRelTranslatorNeuralNetwork.executeTxtRelTranslatorNeuralNetwork(translatorVariables, GIAtxtRelTranslatorRulesGroupTypes, sentenceContents, &firstParseTreeGroup, parseIsolatedSubreferenceSets, parserEnabled, &performanceTemp))
+			if(GIAtxtRelTranslatorSANI.executeTxtRelTranslatorNeuralNetwork(translatorVariables, GIAtxtRelTranslatorRulesGroupTypes, sentenceContents, &firstParseTreeGroup, parseIsolatedSubreferenceSets, parserEnabled, &performanceTemp))
 			{
 				result = true;	
 				*performance = sentenceContents->size();	//hard set to maximum performance
 			}
 	
-			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_SIMULTANEOUS_DELETE_INCOMPLETE_PATHS_SEMANTIC_RELATIONS
-			GIAtxtRelTranslatorNeuralNetworkPropagateOperations.resetAllNeuronComponents(GIAtxtRelTranslatorRulesGroupTypes, GIA_TXT_REL_TRANSLATOR_RULES_GROUP_BOOL_INDEX_ALLGROUPTYPES_NEURON_DEMARKATEOPTIMUMPATHWAY_RESET);
+			#ifdef GIA_TXT_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS_DELETE_INCOMPLETE_PATHS_SEMANTIC_RELATIONS
+			GIAtxtRelTranslatorSANIPropagateOperations.resetAllNeuronComponents(GIAtxtRelTranslatorRulesGroupTypes, GIA_TXT_REL_TRANSLATOR_RULES_GROUP_BOOL_INDEX_ALLGROUPTYPES_NEURON_DEMARKATEOPTIMUMPATHWAY_RESET);
 			#endif
 			
 			#endif
@@ -546,7 +546,7 @@ bool GIAtxtRelTranslatorPermutationsClass::generateParseTreeIntroWrapper(GIAtran
 		}
 		#endif
 		
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OPTIMISED
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OPTIMISED
 	}
 	else
 	{
@@ -557,13 +557,13 @@ bool GIAtxtRelTranslatorPermutationsClass::generateParseTreeIntroWrapper(GIAtran
 			GIApreprocessorPOStagger.setSentenceContentsWordsUnambiguousPOSindex(sentenceContents, POSambiguityInfoPermutationTemp);
 			int performanceTemp = 0;
 			
-			if(GIAtxtRelTranslatorNeuralNetwork.executeTxtRelTranslatorNeuralNetwork(translatorVariables, GIAtxtRelTranslatorRulesGroupTypes, sentenceContents, &firstParseTreeGroup, parseIsolatedSubreferenceSets, parserEnabled, &performanceTemp))
+			if(GIAtxtRelTranslatorSANI.executeTxtRelTranslatorNeuralNetwork(translatorVariables, GIAtxtRelTranslatorRulesGroupTypes, sentenceContents, &firstParseTreeGroup, parseIsolatedSubreferenceSets, parserEnabled, &performanceTemp))
 			{
 				result = true;	
 				*performance = sentenceContents->size();	//hard set to maximum performance
 			}
 			
-			#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PRINT_FINAL2
+			#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_SANI_PRINT_FINAL2
 			if(firstParseTreeGroup != NULL)
 			{
 				cout << "(firstParseTreeGroup != NULL)" << endl;
@@ -578,8 +578,8 @@ bool GIAtxtRelTranslatorPermutationsClass::generateParseTreeIntroWrapper(GIAtran
 }	
 
 	
-#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
-//based on GIAtxtRelTranslatorNeuralNetworkPropagateInverseClass::updatePerformanceNeuralNetwork
+#ifdef GIA_TXT_REL_TRANSLATOR_SANI
+//based on GIAtxtRelTranslatorSANIPropagateInverseClass::updatePerformanceNeuralNetwork
 bool GIAtxtRelTranslatorPermutationsClass::updatePerformanceNeuralNetwork(const int performanceTemp, int* performance, GIApreprocessorSentence* currentGIApreprocessorSentenceInList, GIAtxtRelTranslatorRulesGroupParseTree* firstParseTreeGroupTemp, const bool passedTemp, const int permutationIndex, int* performanceMaxPermutationIndex)
 {
 	bool result = false;
@@ -590,13 +590,13 @@ bool GIAtxtRelTranslatorPermutationsClass::updatePerformanceNeuralNetwork(const 
 		{
 			result = true;
 			*performance = performanceTemp;
-			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_FREE_MEMORY
+			#ifdef GIA_TXT_REL_TRANSLATOR_SANI_FREE_MEMORY
 			if(currentGIApreprocessorSentenceInList->firstParseTreeGroup != NULL)
 			{
-				GIAtxtRelTranslatorNeuralNetworkPropagateOperations.deleteParseTree(currentGIApreprocessorSentenceInList->firstParseTreeGroup, 0);
+				GIAtxtRelTranslatorSANIPropagateOperations.deleteParseTree(currentGIApreprocessorSentenceInList->firstParseTreeGroup, 0);
 			}
 			#endif
-			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_SAVE_PARSE_TREE
+			#ifdef GIA_TXT_REL_TRANSLATOR_SANI_PARSE_SAVE_PARSE_TREE
 			currentGIApreprocessorSentenceInList->firstParseTreeGroup = firstParseTreeGroupTemp;
 			#endif
 			*performanceMaxPermutationIndex = permutationIndex;
@@ -606,7 +606,7 @@ bool GIAtxtRelTranslatorPermutationsClass::updatePerformanceNeuralNetwork(const 
 		}
 	}
 
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_SAVE_PARSE_TREE
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_PARSE_SAVE_PARSE_TREE
 	if(!result)
 	{
 		//delete all subgroups/components recursively in currentParseTreeGroupTemp
@@ -620,7 +620,7 @@ bool GIAtxtRelTranslatorPermutationsClass::updatePerformanceNeuralNetwork(const 
 	return result;
 }
 
-//based on GIAtxtRelTranslatorNeuralNetworkPropagateInverseClass::deleteAllSubgroupsRecurse
+//based on GIAtxtRelTranslatorSANIPropagateInverseClass::deleteAllSubgroupsRecurse
 //note it assumes subcomponents
 bool GIAtxtRelTranslatorPermutationsClass::deleteAllSubgroupsRecurse(GIAtxtRelTranslatorRulesGroupParseTree* currentParseTreeGroup, int layer)
 {
@@ -636,7 +636,7 @@ bool GIAtxtRelTranslatorPermutationsClass::deleteAllSubgroupsRecurse(GIAtxtRelTr
 			if(currentParseTreeComponent->parseTreeGroupRef != NULL)
 			{
 				#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS
-				GIAtxtRelTranslatorNeuralNetworkPropagateOperations.printParseTreeDebugIndentation(layer);
+				GIAtxtRelTranslatorSANIPropagateOperations.printParseTreeDebugIndentation(layer);
 				cout << "deleteAllSubgroupsRecurse" << endl;
 				#endif
 				
@@ -658,7 +658,7 @@ bool GIAtxtRelTranslatorPermutationsClass::deleteAllSubgroupsRecurse(GIAtxtRelTr
 
 
 
-#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PRINT_FINAL2
+#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_SANI_PRINT_FINAL2
 bool GIAtxtRelTranslatorPermutationsClass::printParseTree(GIAtxtRelTranslatorRulesGroupParseTree* currentParseTreeGroup, int layer)
 {
 	bool result = true;
@@ -666,7 +666,7 @@ bool GIAtxtRelTranslatorPermutationsClass::printParseTree(GIAtxtRelTranslatorRul
 	for(int i=0; i<currentParseTreeGroup->components.size(); i++)
 	{				
 		GIAtxtRelTranslatorRulesComponentParseTree* parseTreeComponent = (currentParseTreeGroup->components).at(i);
-		GIAtxtRelTranslatorNeuralNetworkPropagateOperations.printComponent(parseTreeComponent, layer);
+		GIAtxtRelTranslatorSANIPropagateOperations.printComponent(parseTreeComponent, layer);
 
 		if(parseTreeComponent->parseTreeGroupRef != NULL)
 		{

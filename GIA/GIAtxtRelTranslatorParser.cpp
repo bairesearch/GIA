@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j6d 10-January-2020
+ * Project Version: 3k1a 05-March-2020
  * Requirements: 
  * Description: Textual Relation Translator Parser
  * /
@@ -72,9 +72,9 @@ bool GIAtxtRelTranslatorParserClass::convertSentenceTxtRelationsIntoGIAnetworkNo
 	#endif
 
 
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_UNOPTIMISED
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_UNOPTIMISED
 	#ifndef GIA_ADVANCED_REFERENCING_DISABLE_LINKING
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_ONLY_PEFORM_PRELIM_PROPAGATION_IF_ADVANCED_REFERENCING
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_ONLY_PEFORM_PRELIM_PROPAGATION_IF_ADVANCED_REFERENCING
 	if(linkPreestablishedReferencesGIA)
 	{
 	#endif
@@ -88,7 +88,7 @@ bool GIAtxtRelTranslatorParserClass::convertSentenceTxtRelationsIntoGIAnetworkNo
 		}
 		translatorVariables->parserAllowed = true;
 	#ifndef GIA_ADVANCED_REFERENCING_DISABLE_LINKING
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_ONLY_PEFORM_PRELIM_PROPAGATION_IF_ADVANCED_REFERENCING
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_ONLY_PEFORM_PRELIM_PROPAGATION_IF_ADVANCED_REFERENCING
 	}
 	#endif
 	#endif
@@ -291,7 +291,7 @@ bool GIAtxtRelTranslatorParserClass::locateAndAddAllNetworkIndexEntitiesBasedOnT
 		#endif
 
 		entity->semanticRelationPreprocessorEntityIndex = currentWord->translatorSentenceEntityIndex;
-		#ifndef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OLD
+		#ifndef GIA_TXT_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OLD
 		entity->semanticRelationWordPOStypeInferred = currentWord->wordPOStypeInferred;
 		#endif
 		entity->sentenceIndexTemp = translatorVariables->sentenceIndex;
@@ -387,7 +387,7 @@ bool GIAtxtRelTranslatorParserClass::generateSemanticRelationsFromTxtRelationsWr
 }
 #endif
 
-#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_SIMULTANEOUS
+#ifdef GIA_TXT_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS
 bool GIAtxtRelTranslatorParserClass::generateSemanticRelationsFromTxtRelationsWrapper(GIAtranslatorVariablesClass* translatorVariables)
 {
 	bool result = true;
@@ -400,7 +400,7 @@ bool GIAtxtRelTranslatorParserClass::generateSemanticRelationsFromTxtRelationsWr
 		result = false;
 	}
 	
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEMANTICALLY_DETERMINED_DYNAMIC_CONNECTIONS
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEMANTICALLY_DETERMINED_DYNAMIC_CONNECTIONS
 	if(!relinkDynamicConnections(translatorVariables))	//CHECKTHIS
 	{
 		result = false;
@@ -421,7 +421,7 @@ bool GIAtxtRelTranslatorParserClass::generateSemanticRelationsFromTxtRelationsWr
 {
 	bool result = true;
 	
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI
 	if(translatorVariables->currentPreprocessorSentenceInList->firstParseTreeGroup == NULL)
 	{
 		//cout << "(translatorVariables->currentPreprocessorSentenceInList->firstParseTreeGroup == NULL)" << endl;
@@ -438,7 +438,7 @@ bool GIAtxtRelTranslatorParserClass::generateSemanticRelationsFromTxtRelationsWr
 		result = false;
 	}
 	
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEMANTICALLY_DETERMINED_DYNAMIC_CONNECTIONS
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEMANTICALLY_DETERMINED_DYNAMIC_CONNECTIONS
 	if(!relinkDynamicConnections(translatorVariables))
 	{
 		result = false;
@@ -846,7 +846,7 @@ void GIAtxtRelTranslatorParserClass::deleteRelationshipEntity(GIAentityNode* rel
 }
 #endif
 	
-#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEMANTICALLY_DETERMINED_DYNAMIC_CONNECTIONS
+#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEMANTICALLY_DETERMINED_DYNAMIC_CONNECTIONS
 bool GIAtxtRelTranslatorParserClass::relinkDynamicConnections(GIAtranslatorVariablesClass* translatorVariables)
 {
 	bool result = true;

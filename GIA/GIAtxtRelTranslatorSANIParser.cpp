@@ -23,31 +23,31 @@
 
 /*******************************************************************************
  *
- * File Name: GIAtxtRelTranslatorNeuralNetworkParser.cpp
+ * File Name: GIAtxtRelTranslatorSANIParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j6d 10-January-2020
+ * Project Version: 3k1a 05-March-2020
  * Requirements: 
- * Description: Textual Relation Translator Neural Network Parser
+ * Description: Textual Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Parser
  * /
  *******************************************************************************/
 
 
-#include "GIAtxtRelTranslatorNeuralNetworkParser.hpp"
+#include "GIAtxtRelTranslatorSANIParser.hpp"
 #include "SHAREDvars.hpp"
 
 
 
 //TODO: check this code
 
-#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSER
+#ifdef GIA_TXT_REL_TRANSLATOR_SANI_PARSER
 
-#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_SIMULTANEOUS
-bool GIAtxtRelTranslatorNeuralNetworkParserClass::generateSemanticRelationsFromTxtRelationsWrapperNeuralNetwork(GIAtranslatorVariablesClass* translatorVariables, GIAtxtRelTranslatorRulesGroupParseTree* firstParseTreeGroup, GIAtxtRelTranslatorNeuralNetworkForwardPropogationSignalData* forwardPropogationSignalData, int layer)
+#ifdef GIA_TXT_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS
+bool GIAtxtRelTranslatorSANIParserClass::generateSemanticRelationsFromTxtRelationsWrapperNeuralNetwork(GIAtranslatorVariablesClass* translatorVariables, GIAtxtRelTranslatorRulesGroupParseTree* firstParseTreeGroup, GIAtxtRelTranslatorSANIForwardPropogationSignalData* forwardPropogationSignalData, int layer)
 {
 	bool result = true;
 	
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_BASIC
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_PARSE_BASIC
 	forwardPropogationSignalData->parserForwardPropogationSignalData = GIAtxtRelTranslatorParserForwardPropogationSignalData();	//reinitialise parserForwardPropogationSignalData (clear all variables)
 	#endif
 	
@@ -57,14 +57,14 @@ bool GIAtxtRelTranslatorNeuralNetworkParserClass::generateSemanticRelationsFromT
 		result = false;
 	}
 
-	#ifndef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_BASIC
+	#ifndef GIA_TXT_REL_TRANSLATOR_SANI_PARSE_BASIC
 	forwardPropogationSignalData->parserForwardPropogationSignalData = parserForwardPropogationSignalData;	//store for next generateSemanticRelationsFromTxtRelationsWrapper execution
 	#endif
 		
 	return result;
 }
 
-bool GIAtxtRelTranslatorNeuralNetworkParserClass::generateSemanticRelationsFromTxtRelationsNeuralNetwork(GIAtranslatorVariablesClass* translatorVariables, GIAtxtRelTranslatorRulesGroupParseTree* currentParseTreeGroup, GIAtxtRelTranslatorParserForwardPropogationSignalData* parserForwardPropogationSignalData, int layer)
+bool GIAtxtRelTranslatorSANIParserClass::generateSemanticRelationsFromTxtRelationsNeuralNetwork(GIAtranslatorVariablesClass* translatorVariables, GIAtxtRelTranslatorRulesGroupParseTree* currentParseTreeGroup, GIAtxtRelTranslatorParserForwardPropogationSignalData* parserForwardPropogationSignalData, int layer)
 {
 	bool result = true;
 	
@@ -109,12 +109,12 @@ bool GIAtxtRelTranslatorNeuralNetworkParserClass::generateSemanticRelationsFromT
 
 				if(parseTreeComponent->componentType == GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_GROUP)
 				{
-					#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_SIMULTANEOUS_BIO
+					#ifdef GIA_TXT_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS_BIO
 					*parseTreeComponentSignalData = *(parseTreeComponent->parserForwardPropogationSignalData);
 					#else
 					if(parseTreeComponent->parseTreeGroupRef != NULL)
 					{
-						#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_BASIC
+						#ifdef GIA_TXT_REL_TRANSLATOR_SANI_PARSE_BASIC
 						if(!generateSemanticRelationsFromTxtRelationsNeuralNetwork(translatorVariables, parseTreeComponent->parseTreeGroupRef, parseTreeComponentSignalData, layer+1))
 						{
 							result = false;
@@ -122,11 +122,11 @@ bool GIAtxtRelTranslatorNeuralNetworkParserClass::generateSemanticRelationsFromT
 						#else
 						*parseTreeComponentSignalData = (parseTreeComponent->parseTreeGroupRef->groupOrig->semanticRelationReturnEntityForwardPropogationSignalData).parserForwardPropogationSignalData;
 						/*
-						//note can't check parseTreeComponent->parseTreeGroupRef->neuronActive as it may have been reset by GIAtxtRelTranslatorNeuralNetworkClass::propagateWordThroughNetworkGroup; resetGroupActivation
+						//note can't check parseTreeComponent->parseTreeGroupRef->neuronActive as it may have been reset by GIAtxtRelTranslatorSANIClass::propagateWordThroughNetworkGroup; resetGroupActivation
 							//note it will not reset semanticRelationReturnEntityForwardPropogationSignalData, but deactivate the group+components
 						if(!parseTreeComponent->parseTreeGroupRef->neuronActive)
 						{
-							cerr << "GIAtxtRelTranslatorNeuralNetworkParserClass::generateSemanticRelationsFromTxtRelationsNeuralNetwork{} error; (!parseTreeComponent->parseTreeGroupRef->neuronActive)" << endl;
+							cerr << "GIAtxtRelTranslatorSANIParserClass::generateSemanticRelationsFromTxtRelationsNeuralNetwork{} error; (!parseTreeComponent->parseTreeGroupRef->neuronActive)" << endl;
 							exit(EXIT_ERROR);
 						}
 						*/						
@@ -134,14 +134,14 @@ bool GIAtxtRelTranslatorNeuralNetworkParserClass::generateSemanticRelationsFromT
 					}
 					else
 					{
-						cout << "GIAtxtRelTranslatorNeuralNetworkParserClass::generateSemanticRelationsFromTxtRelationsNeuralNetwork error: (parseTreeComponent->parseTreeGroupRef == NULL)" << endl;
+						cout << "GIAtxtRelTranslatorSANIParserClass::generateSemanticRelationsFromTxtRelationsNeuralNetwork error: (parseTreeComponent->parseTreeGroupRef == NULL)" << endl;
 						exit(EXIT_ERROR);
 					}
 					#endif
 					
 					if(parseTreeComponentSignalData->semanticRelationReturnEntity == NULL)
 					{
-						cerr << "GIAtxtRelTranslatorNeuralNetworkParserClass::generateSemanticRelationsFromTxtRelationsNeuralNetwork{} error; (parseTreeComponentSignalData->semanticRelationReturnEntity == NULL)" << endl;
+						cerr << "GIAtxtRelTranslatorSANIParserClass::generateSemanticRelationsFromTxtRelationsNeuralNetwork{} error; (parseTreeComponentSignalData->semanticRelationReturnEntity == NULL)" << endl;
 						exit(EXIT_ERROR);
 					}
 				}
@@ -165,7 +165,7 @@ bool GIAtxtRelTranslatorNeuralNetworkParserClass::generateSemanticRelationsFromT
 				bool optional = false;
 				if(!(ownerComponent->optional))
 				{
-					cerr << "GIAtxtRelTranslatorNeuralNetworkParserClass::generateSemanticRelationsFromTxtRelationsNeuralNetwork error: !(ownerComponent->optional)" << endl;
+					cerr << "GIAtxtRelTranslatorSANIParserClass::generateSemanticRelationsFromTxtRelationsNeuralNetwork error: !(ownerComponent->optional)" << endl;
 					exit(EXIT_ERROR);
 				}
 			}
@@ -181,8 +181,8 @@ bool GIAtxtRelTranslatorNeuralNetworkParserClass::generateSemanticRelationsFromT
 	}
 	else
 	{
-		#ifndef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_BASIC
-		cerr << "GIAtxtRelTranslatorNeuralNetworkParserClass::generateSemanticRelationsFromTxtRelationsNeuralNetwork error: !(currentParseTreeGroup->neuronActive)" << endl;
+		#ifndef GIA_TXT_REL_TRANSLATOR_SANI_PARSE_BASIC
+		cerr << "GIAtxtRelTranslatorSANIParserClass::generateSemanticRelationsFromTxtRelationsNeuralNetwork error: !(currentParseTreeGroup->neuronActive)" << endl;
 		exit(EXIT_ERROR);
 		#endif
 	}

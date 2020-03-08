@@ -26,7 +26,7 @@
  * File Name: GIAentityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j6d 10-January-2020
+ * Project Version: 3k1a 05-March-2020
  * /
  *******************************************************************************/
 
@@ -314,7 +314,7 @@ void GIAentityNode::initialiseEntity()
 	semanticRelationReturnFunctionNameIndexType = INT_DEFAULT_VALUE;
 	//semanticRelationReturnFunctionNameSameReferenceSet = false;
 	semanticRelationPreprocessorEntityIndex = GIA_ENTITY_INDEX_UNDEFINED;
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEMANTICALLY_DETERMINED_DYNAMIC_CONNECTIONS
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEMANTICALLY_DETERMINED_DYNAMIC_CONNECTIONS
 	semanticRelationReturnConnectionDynamic = false;
 	#endif
 	#endif

@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorRules.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j6d 10-January-2020
+ * Project Version: 3k1a 05-March-2020
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Rules
  * /
@@ -41,8 +41,8 @@
 #include "XMLparserClass.hpp"
 #include "GIAtxtRelTranslatorRulesGroupClass.hpp"
 #include "GIAtxtRelTranslatorRulesComponentClass.hpp"
-#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR
-//#include "GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerate.hpp"
+#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR
+//#include "GIAtxtRelTranslatorSANIPropagateCompactGenerate.hpp"
 #endif
 
 
@@ -122,7 +122,7 @@ static string GIAtxtRelSemanticDependencyRelationNameArray[GIA_TXT_REL_TRANSLATO
 				#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_GROUP_EXISTS_PRECEEDING_WORD_POS_TYPE
 				#define GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_GROUP_ATTRIBUTE_existsPreceedingWordPOStype ((string)"existsPreceedingWordPOStype")	//ensures that a previous word was of wordPOStype x (e.g. preposition/verb) before executing this group
 				#endif
-				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_TAKE_LAST_SUCCESSFUL_PARSE_LIMIT_ITERATIONS_PREFERENCE_WEIGHT_BASE
+				#ifdef GIA_TXT_REL_TRANSLATOR_SANI_TAKE_LAST_SUCCESSFUL_PARSE_LIMIT_ITERATIONS_PREFERENCE_WEIGHT_BASE
 				#define GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_GROUP_ATTRIBUTE_groupWeight ((string)"groupWeight")
 				#endif
 				//REDUNDANT (see special case 1 for solution): #define GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_GROUP_ATTRIBUTE_semanticRelationReturnEntityAndConnectToSubject ((string)"semanticRelationReturnEntityAndConnectToSubject")	//requires the following attributes to be specified for one of its components: semanticRelationReturnFunctionName="conditionSubject" semanticRelationReturnEntity="true"
@@ -148,14 +148,14 @@ static string GIAtxtRelSemanticDependencyRelationNameArray[GIA_TXT_REL_TRANSLATO
 					#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_MISSING
 					#define GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_missing ((string)"missing")
 					#endif
-					#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ADD_EXPLICIT_WORD_REFERENCES_AS_INDEPENDENT_POS_PERMUTATIONS_EFFICIENT
+					#ifdef GIA_TXT_REL_TRANSLATOR_SANI_ADD_EXPLICIT_WORD_REFERENCES_AS_INDEPENDENT_POS_PERMUTATIONS_EFFICIENT
 					#define GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_addToExplicitWordTempPOS ((string)"addToExplicitWordTempPOS")	
 					#endif
 					
 					#define GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_semanticRelationIndexType ((string)"semanticRelationIndexType")
 					#define GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_semanticRelationIndexType2 ((string)"semanticRelationIndexType2")
 					#define GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_semanticRelationReturnEntity ((string)"semanticRelationReturnEntity")	//specifies that the current component returns the following entity (for subsequent higher level processing)	//used by multiple special cases?
-					#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEMANTICALLY_DETERMINED_DYNAMIC_CONNECTIONS
+					#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEMANTICALLY_DETERMINED_DYNAMIC_CONNECTIONS
 					#define GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_semanticRelationReturnConnectionDynamic ((string)"semanticRelationReturnConnectionDynamic")	//specifies whether the returned semantic relation connection made (to target) will be determined dynamically based on semantic content of possible targets (action/delimiter or noun/object) 			
 					#endif
 					//special case 1;
@@ -290,13 +290,13 @@ class GIAtxtRelTranslatorRulesClass
 	private: SHAREDvarsClass SHAREDvars;
 	private: GIAtxtRelTranslatorRulesComponentClass GIAtxtRelTranslatorRulesComponentClassObject;
 	private: GIAtxtRelTranslatorRulesGroupClass GIAtxtRelTranslatorRulesGroupClassObject;
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR
-	//private: GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerateClass GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerate;
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR
+	//private: GIAtxtRelTranslatorSANIPropagateCompactGenerateClass GIAtxtRelTranslatorSANIPropagateCompactGenerate;
 	#endif
 		
 	#ifdef GIA_TXT_REL_TRANSLATOR_RULES
 
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR
 	public: void initialiseNewGroupIndex(vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes);
 	public: int* getNewGroupIndex();
 	public: GIAtxtRelTranslatorRulesGroupType* getSequenceGrammarGroupTypeDefault(vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes);
@@ -318,7 +318,7 @@ class GIAtxtRelTranslatorRulesClass
 		public: bool isClassTag(string word, string layerNameToFind, string classNameToFind, string* classTypeNameFound, vector<XMLparserTag*>* GIAtxtRelTranslatorRulesTokenLayers);
 		public: bool isClassTag(string word, string layerNameToFind, string classNameToFind, string classTypeNameToFind, vector<XMLparserTag*>* GIAtxtRelTranslatorRulesTokenLayers);
 	
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_REMOVE_LAST_OPTIONAL_COMPONENTS
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_REMOVE_LAST_OPTIONAL_COMPONENTS
 	private: bool removeLastOptionalComponents(vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes);
 		private: bool removeOptionalComponent(GIAtxtRelTranslatorRulesGroupType* groupType, int* groupIndex, const int groupTypeGroupsSizeOrig, GIAtxtRelTranslatorRulesGroupNeuralNetwork* group, const int optionalComponentIndex);	
 	#endif

@@ -23,12 +23,12 @@
 
 /*******************************************************************************
  *
- * File Name: GIAtxtRelTranslatorNeuralNetworkPropagateInverse.hpp
+ * File Name: GIAtxtRelTranslatorSANIPropagateInverse.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j6d 10-January-2020
+ * Project Version: 3k1a 05-March-2020
  * Requirements: requires plain text file
- * Description: Textual Relation Translator Neural Network Inverse
+ * Description: Textual Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Inverse
  * /
  *******************************************************************************/
 
@@ -45,19 +45,19 @@
 #include "GIAtxtRelTranslatorRules.hpp"
 #include "GIAtxtRelTranslatorRulesGroupClass.hpp"
 #include "GIAtxtRelTranslatorRulesComponentClass.hpp"
-#include "GIAtxtRelTranslatorNeuralNetworkPropagateOperations.hpp"
+#include "GIAtxtRelTranslatorSANIPropagateOperations.hpp"
 #include "GIApreprocessorPOStagger.hpp"
 #include "GIApreprocessorWordClass.hpp"
 #include "GIApreprocessorSentenceClass.hpp"
 #include "SHAREDvars.hpp"
 
-class GIAtxtRelTranslatorNeuralNetworkPropagateInverseClass
+class GIAtxtRelTranslatorSANIPropagateInverseClass
 {
 	private: GIAtranslatorOperationsClass GIAtranslatorOperations;
 	private: GIAtxtRelTranslatorRulesGroupClass GIAtxtRelTranslatorRulesGroupClassObject;
 	private: GIAtxtRelTranslatorRulesComponentClass GIAtxtRelTranslatorRulesComponentClassObject;
 	private: GIAtxtRelTranslatorRulesClass GIAtxtRelTranslatorRules;
-	private: GIAtxtRelTranslatorNeuralNetworkPropagateOperationsClass GIAtxtRelTranslatorNeuralNetworkPropagateOperations;	//required for printComponent/printParseTreeDebugIndentation
+	private: GIAtxtRelTranslatorSANIPropagateOperationsClass GIAtxtRelTranslatorSANIPropagateOperations;	//required for printComponent/printParseTreeDebugIndentation
 	private: GIApreprocessorPOStaggerClass GIApreprocessorPOStagger;
 	private: GIApreprocessorWordClassClass GIApreprocessorWordClassObject;
 	private: GIApreprocessorSentenceClass GIApreprocessorSentenceClassObject;

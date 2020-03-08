@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorRulesGroupClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j6d 10-January-2020
+ * Project Version: 3k1a 05-March-2020
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Rules
  * /
@@ -38,7 +38,7 @@
 
 #include "GIAglobalDefs.hpp"
 #include "GIApreprocessorWordClass.hpp"
-#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
+#ifdef GIA_TXT_REL_TRANSLATOR_SANI
 #include "ANNneuronClass.hpp"
 #include "ANNneuronConnectionClass.hpp"
 #endif
@@ -94,7 +94,7 @@ public:
 	GIAtxtRelTranslatorDebug(void);
 	~GIAtxtRelTranslatorDebug(void);
 	
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_HEAVY
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_HEAVY
 	int activationMemoryGroupArrayIndex;
 	int activationMemoryGroupArraySize;
 	#endif
@@ -112,7 +112,7 @@ public:
 	
 	GIAentityNode* semanticRelationReturnEntity;
 	/*
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEMANTICALLY_DETERMINED_DYNAMIC_CONNECTIONS
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEMANTICALLY_DETERMINED_DYNAMIC_CONNECTIONS
 	bool semanticRelationReturnConnectionDynamic;
 	#endif
 	*/
@@ -126,15 +126,15 @@ public:
 	#endif
 };
 
-#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
-class GIAtxtRelTranslatorNeuralNetworkForwardPropogationSignalData
+#ifdef GIA_TXT_REL_TRANSLATOR_SANI
+class GIAtxtRelTranslatorSANIForwardPropogationSignalData
 {
 public:
-	GIAtxtRelTranslatorNeuralNetworkForwardPropogationSignalData(void);
-	~GIAtxtRelTranslatorNeuralNetworkForwardPropogationSignalData(void);
+	GIAtxtRelTranslatorSANIForwardPropogationSignalData(void);
+	~GIAtxtRelTranslatorSANIForwardPropogationSignalData(void);
 	
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_SUPPORT_PARTIAL_SENTENCE_PROPAGATION
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_SUPPORT_PARTIAL_SENTENCE_PROPAGATION
 	int firstIndexInSequence;
 	#endif
 	//bool createNewConnections;
@@ -148,40 +148,40 @@ public:
 	int wordVerbVariantType;
 	#endif	
 	
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ENFORCE_WORD_CONNECTIVITY
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_ENFORCE_WORD_CONNECTIVITY
 	bool foundPreviousActiveWord;
 	#endif
 	
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_SIMULTANEOUS
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS
 	GIAtxtRelTranslatorParserForwardPropogationSignalData parserForwardPropogationSignalData;	//semantic relation function parameters
 	#endif
 	
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE_ALL_POS_VALUES_SIMULTANEOUSLY
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_PROPAGATE_ALL_POS_VALUES_SIMULTANEOUSLY
 	bool firstPOSval;
 	#endif
 };
 
-class GIAtxtRelTranslatorNeuralNetworkForwardPropogationWordData
+class GIAtxtRelTranslatorSANIForwardPropogationWordData
 {
 public:
-	GIAtxtRelTranslatorNeuralNetworkForwardPropogationWordData(void);
-	~GIAtxtRelTranslatorNeuralNetworkForwardPropogationWordData(void);
+	GIAtxtRelTranslatorSANIForwardPropogationWordData(void);
+	~GIAtxtRelTranslatorSANIForwardPropogationWordData(void);
 		
 	 //word specific variables:
 	GIApreprocessorPlainTextWord* wordReference;
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PREVIOUS_WORD_POS_TYPE_CHECKS
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_PREVIOUS_WORD_POS_TYPE_CHECKS
 	int wordPOStype;	
 	#endif
 	
 	int w;
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ENFORCE_WORD_CONNECTIVITY_BASIC
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_ENFORCE_WORD_CONNECTIVITY_BASIC
 	bool expectToSeeConnectionWithPreviousWordTrace;
 	#endif
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ENFORCE_WORD_CONNECTIVITY_POSHOC
-	vector<GIAtxtRelTranslatorNeuralNetworkForwardPropogationWordData*> previousWordConnections;
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_ENFORCE_WORD_CONNECTIVITY_POSHOC
+	vector<GIAtxtRelTranslatorSANIForwardPropogationWordData*> previousWordConnections;
 	#endif
 		
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ENFORCE_WORD_CONNECTIVITY_BASIC
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_ENFORCE_WORD_CONNECTIVITY_BASIC
 	bool foundPreviousActiveWord;	//debug only
 	#endif
 };
@@ -209,7 +209,7 @@ public:
 	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_NEW_CONDITIONS
 	string semanticRelationFunctionConditionNewName;
 	#endif				
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_TAKE_LAST_SUCCESSFUL_PARSE_LIMIT_ITERATIONS_PREFERENCE_WEIGHT_BASE
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_TAKE_LAST_SUCCESSFUL_PARSE_LIMIT_ITERATIONS_PREFERENCE_WEIGHT_BASE
 	int groupWeight;
 	#endif
 				
@@ -234,34 +234,40 @@ class GIAtxtRelTranslatorRulesGroupNeuralNetwork: public GIAtxtRelTranslatorRule
 public:
 	GIAtxtRelTranslatorRulesGroupNeuralNetwork(void);
 	~GIAtxtRelTranslatorRulesGroupNeuralNetwork(void);
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_ANN
 	public: void initiateANNneuron(const string groupName);
 	#endif
 	
 	vector<GIAtxtRelTranslatorRulesComponentNeuralNetwork*> components;	
 
 	//GIAtxtRelTranslatorRulesGroupNeuralNetwork variables;
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_REQUIRE_NUM_COMPONENTS_ENFORCE_DURING_FIRST_HIDDEN_LAYER_GENERATION
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_VERIFY_NO_CIRCULAR
+	bool verified;
+	#endif
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS
+	bool inputLayerNeuron;
+	#endif
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_REQUIRE_NUM_COMPONENTS_ENFORCE_DURING_FIRST_HIDDEN_LAYER_GENERATION
 	bool firstHiddenLayerNeuron;
 	#endif
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR
 	bool groupTypeIsString;
-	//GIAtxtRelTranslatorNeuralNetworkForwardPropogationWordData* wordDataTemp;
+	//GIAtxtRelTranslatorSANIForwardPropogationWordData* wordDataTemp;
 	int wordPOStype;
 	int groupIndex;
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_WEIGHTS
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_WEIGHTS
 	double groupStrength;
 	#endif
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN_SEGREGATE_TOP_LAYER_NEURONS
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_ANN_SEGREGATE_TOP_LAYER_NEURONS
 	bool topLevelSentenceNeuron;
 	#endif
 	#endif
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_PREPROCESS
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_PREPROCESS_RESET
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_LIGHT_OPTIMISED_PREPROCESS
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_LIGHT_OPTIMISED_PREPROCESS_RESET
 	bool nonResetActivationFoundDuringPreprocess;
 	#endif
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_PREPROCESS_DONT_OVERWRITE_COMPONENT_WHEN_NEW_COMPONENT_AVAILABLE
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_LIGHT_OPTIMISED_PREPROCESS_DONT_OVERWRITE_COMPONENT_WHEN_NEW_COMPONENT_AVAILABLE
 	bool newActivationFoundDuringPreprocess;
 	#endif
 	#endif
@@ -269,13 +275,13 @@ public:
 	vector<GIAtxtRelTranslatorRulesGroupNeuralNetwork*> ANNbackGroupConnectionList;	//for IO only
 	vector<GIAtxtRelTranslatorRulesComponentNeuralNetwork*> ANNfrontComponentConnectionList;
 	GIAtxtRelTranslatorRulesGroupNeuralNetwork* next;
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_ANN
 	ANNneuron* neuronReference;
 	bool neuronDisplayPositionSet;
 	int neuronDisplayPositionX;
 	int neuronDisplayPositionY;
 	bool neuronConnectivitySet;
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN_CENTRE_NEURONS
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_ANN_CENTRE_NEURONS
 	int neuronDisplayPositionXcentred;	
 	int neuronDisplayPositionYcentred;	
 	#endif
@@ -286,37 +292,37 @@ public:
 	string GIAtokenLayerClassTypeInstanceName;
 	bool neuronGenerated;
 	bool neuronPropagated;
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_OPTIMISED_RESET_ONLY_ONCE_FOUND_FIRST_COMPONENT_RESET_ONCE_PER_WORD_BASIC
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_LIGHT_OPTIMISED_RESET_ONLY_ONCE_FOUND_FIRST_COMPONENT_RESET_ONCE_PER_WORD_BASIC
 	bool neuronProcessed;
 	#endif
 	bool neuronPropagatedSave;
 	bool neuronPreviousWordPOStypeTested;	//NOT USED
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT
-	GIAtxtRelTranslatorNeuralNetworkForwardPropogationSignalData semanticRelationReturnEntityForwardPropogationSignalData;
-	GIAtxtRelTranslatorNeuralNetworkForwardPropogationSignalData semanticRelationReturnEntityForwardPropogationSignalDataProspective;	//temporary	//only update semanticRelationReturnEntityForwardPropogationSignalData upon complete/group activation (prevents ownerGroup->semanticRelationReturnEntityForwardPropogationSignalData from being invalidated by partial reactivations of a group; when accessed by an unrelated instance of GIAtxtRelTranslatorNeuralNetworkParserClass::generateSemanticRelationsFromTxtRelationsNeuralNetwor) 	
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SOLIDIFY_NET_BACKPROP_AFTER_ACTIVATING_INDIVIDUAL_COMPONENTS
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SOLIDIFY_BIO_WEAK3
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_LIGHT
+	GIAtxtRelTranslatorSANIForwardPropogationSignalData semanticRelationReturnEntityForwardPropogationSignalData;
+	GIAtxtRelTranslatorSANIForwardPropogationSignalData semanticRelationReturnEntityForwardPropogationSignalDataProspective;	//temporary	//only update semanticRelationReturnEntityForwardPropogationSignalData upon complete/group activation (prevents ownerGroup->semanticRelationReturnEntityForwardPropogationSignalData from being invalidated by partial reactivations of a group; when accessed by an unrelated instance of GIAtxtRelTranslatorSANIParserClass::generateSemanticRelationsFromTxtRelationsNeuralNetwor) 	
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SOLIDIFY_NET_BACKPROP_AFTER_ACTIVATING_INDIVIDUAL_COMPONENTS
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SOLIDIFY_BIO_WEAK3
 	bool solidified;
 	#endif
 	#endif
 	#endif
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SAVE_MEMORY_GROUPS
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_HEAVY_UNOPTIMISED
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SAVE_MEMORY_GROUPS
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_HEAVY_UNOPTIMISED
 	vector<GIAtxtRelTranslatorRulesGroupActivationMemory*> activationMemoryGroupArray;
 	#endif
 	#endif
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_HEAVY_UNOPTIMISED
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_PARSE
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_HEAVY_UNOPTIMISED
 	vector<GIAtxtRelTranslatorRulesGroupParseTree*> currentParseTreeGroupArray;
 	#endif
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT_NEW
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_LIGHT_NEW
 	GIAtxtRelTranslatorRulesGroupParseTree* currentParseTreeGroupTemp;	//used fill in currentParseTreeGroupTemp components before adding currentParseTreeGroup to parseTreeGroup network
 	#endif
-	//#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_LIGHT
+	//#ifdef GIA_TXT_REL_TRANSLATOR_SANI_LIGHT
 	bool neuronActive;	//interpretation: all components are active (unless they are optional / unused or cases)
 	//#endif	
 	#endif
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_REMOVE_LAST_OPTIONAL_COMPONENTS
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_REMOVE_LAST_OPTIONAL_COMPONENTS
 	GIAtxtRelTranslatorRulesGroupNeuralNetwork* optionalComponentsWrapperGroup;
 	#endif
 	#endif	
@@ -334,28 +340,28 @@ public:
 	//vector<GIAtxtRelTranslatorRulesComponentNeuralNetwork*> components;	
 
 	//GIAtxtRelTranslatorRulesGroupActivationMemory variables;
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_HEAVY
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_HEAVY_OPTIMISED
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_HEAVY
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_HEAVY_OPTIMISED
 	int numberWordsInSet;
 	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_WORD_NOUN_VERB_VARIANT
-	GIAtxtRelTranslatorNeuralNetworkForwardPropogationSignalData forwardPropogationSignalData;
+	GIAtxtRelTranslatorSANIForwardPropogationSignalData forwardPropogationSignalData;
 	#endif
-	GIAtxtRelTranslatorNeuralNetworkForwardPropogationWordData forwardPropogationWordData;
+	GIAtxtRelTranslatorSANIForwardPropogationWordData forwardPropogationWordData;
 	int layer;
 	bool inputGroupString;
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SAVE_MEMORY_GROUPS
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SAVE_MEMORY_GROUPS
 	GIAtxtRelTranslatorRulesGroupNeuralNetwork* groupOrig;	//for memoryActivationGroups only
 	#endif
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_EFFICIENCY_STORE_POINT_ARRAY_IN_BASE_GROUP
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_EFFICIENCY_STORE_POINT_ARRAY_IN_BASE_GROUP
 	bool pointArrayGenerated;
 	bool firstLevelActivationPointAdded;
 	vector<GIAtxtRelTranslatorRulesGroupActivationMemory*> activationPathWordFirstActivationMemoryGroupActivationPointArray;
 	#endif
 	bool wordGroupNeuron;
 	#endif
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SAVE_MEMORY_GROUPS
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SAVE_MEMORY_GROUPS_PREVENT_CIRCULAR_CONNECTION_LOOPS
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SAVE_MEMORY_GROUPS
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SAVE_MEMORY_GROUPS_PREVENT_CIRCULAR_CONNECTION_LOOPS
 	int lastWordIndexActivated;
 	#endif
 	#endif
@@ -374,40 +380,40 @@ public:
 	vector<GIAtxtRelTranslatorRulesComponentParseTree*> components;	
 
 	//GIAtxtRelTranslatorRulesGroupParseTree variables;
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR
 	GIAtxtRelTranslatorRulesGroupNeuralNetwork* groupRef;	//backup of original group (non-parse-tree)
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_VARIABLE_FIRST_COMPONENTS
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_VARIABLE_FIRST_COMPONENTS
 	//bool variableStartComponentFound;
 	bool missingOrVariableStartComponentFound;
 	#endif
 	#endif
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_HEAVY
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_HEAVY_OPTIMISED
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_EFFICIENCY_STORE_POINT_ARRAY_IN_BASE_GROUP
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_HEAVY
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_HEAVY_OPTIMISED
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_EFFICIENCY_STORE_POINT_ARRAY_IN_BASE_GROUP
 	vector<GIAtxtRelTranslatorRulesGroupParseTree*> activationPathWordFirstParseTreeGroupActivationPointArray;	
 	#endif	
-	GIAtxtRelTranslatorNeuralNetworkForwardPropogationSignalData semanticRelationReturnEntityForwardPropogationSignalData;
-	GIAtxtRelTranslatorNeuralNetworkForwardPropogationSignalData semanticRelationReturnEntityForwardPropogationSignalDataProspective;	//temporary	//only update semanticRelationReturnEntityForwardPropogationSignalData upon complete/group activation (prevents ownerGroup->semanticRelationReturnEntityForwardPropogationSignalData from being invalidated by partial reactivations of a group; when accessed by an unrelated instance of GIAtxtRelTranslatorNeuralNetworkParserClass::generateSemanticRelationsFromTxtRelationsNeuralNetwor) 	
+	GIAtxtRelTranslatorSANIForwardPropogationSignalData semanticRelationReturnEntityForwardPropogationSignalData;
+	GIAtxtRelTranslatorSANIForwardPropogationSignalData semanticRelationReturnEntityForwardPropogationSignalDataProspective;	//temporary	//only update semanticRelationReturnEntityForwardPropogationSignalData upon complete/group activation (prevents ownerGroup->semanticRelationReturnEntityForwardPropogationSignalData from being invalidated by partial reactivations of a group; when accessed by an unrelated instance of GIAtxtRelTranslatorSANIParserClass::generateSemanticRelationsFromTxtRelationsNeuralNetwor) 	
 	#endif
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_HEAVY_UNOPTIMISED
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_HEAVY_UNOPTIMISED
 	GIAtxtRelTranslatorRulesGroupNeuralNetwork* parseTreeGroupRefReverse;
 	int parseTreeGroupRefReverseComponentIndex;
 	#endif
 	#endif
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SOLIDIFY_NET_BACKPROP_AFTER_ACTIVATING_INDIVIDUAL_COMPONENTS
-	#ifndef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SOLIDIFY_BIO
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SOLIDIFY_NET_BACKPROP_AFTER_ACTIVATING_INDIVIDUAL_COMPONENTS
+	#ifndef GIA_TXT_REL_TRANSLATOR_SANI_SOLIDIFY_BIO
 	bool solidified;
 	#endif
 	#endif
 	bool neuronTraced;
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_HEAVY_UNOPTIMISED
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_HEAVY_UNOPTIMISED
 	bool neuronActive;	//interpretation: all components are active (unless they are optional / unused or cases)
 	#endif
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_BIO_DO_NOT_RELY_ON_PARSE_TREE_MEMORY
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_BIO_DO_NOT_RELY_ON_PARSE_TREE_MEMORY
 	int parseTreeMinWordIndex;
 	int parseTreeMaxWordIndex;
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_TAKE_LAST_SUCCESSFUL_PARSE_LIMIT_ITERATIONS_PREFERENCE_WEIGHT_DYNAMIC
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_TAKE_LAST_SUCCESSFUL_PARSE_LIMIT_ITERATIONS_PREFERENCE_WEIGHT_DYNAMIC
 	double parseTreeMaxWeight;	//NOT USED
 	double parseTreeMinWeight;
 	double parseTreeTotalWeight;	//NOT USED
@@ -432,7 +438,7 @@ public:
 	string groupTypeName;
 	int referenceSetType;
 	
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_ANN
 	bool neuronDisplayPositionSet;
 	int neuronDisplayPositionX;
 	int neuronDisplayPositionY;
@@ -445,13 +451,13 @@ public:
 
 
 
-#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
+#ifdef GIA_TXT_REL_TRANSLATOR_SANI
 	
-class GIAtxtRelTranslatorNeuralNetworkForwardPropogationActivationPointData
+class GIAtxtRelTranslatorSANIForwardPropogationActivationPointData
 {
 public:
-	GIAtxtRelTranslatorNeuralNetworkForwardPropogationActivationPointData(void);
-	~GIAtxtRelTranslatorNeuralNetworkForwardPropogationActivationPointData(void);
+	GIAtxtRelTranslatorSANIForwardPropogationActivationPointData(void);
+	~GIAtxtRelTranslatorSANIForwardPropogationActivationPointData(void);
 	
 	bool generateActivationPointArray;
 	bool connectToPreviousActivationGroup;
@@ -461,31 +467,31 @@ public:
 	int activationPathW;
 };
 
-class GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData
+class GIAtxtRelTranslatorSANIForwardPropogationSentenceData
 {
 public:
-	GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData(void);
-	~GIAtxtRelTranslatorNeuralNetworkForwardPropogationSentenceData(void);
+	GIAtxtRelTranslatorSANIForwardPropogationSentenceData(void);
+	~GIAtxtRelTranslatorSANIForwardPropogationSentenceData(void);
 	
 	bool parseSentenceReverse;
 	
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR
 	bool recordActivatedNeuronWithMaxWordIndexCoverage;
 	GIAtxtRelTranslatorRulesGroupParseTree* activatedNeuronWithMaxWordIndexCoverage;
 	bool activatedNeuronWithMaxWordIndexCoveragePartial;
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_VARIABLE_FIRST_COMPONENTS
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_VARIABLE_FIRST_COMPONENTS
 	bool activatedNeuronWithMaxWordIndexCoverageVariable;	//ie candidateCoverageMissingOrVariableStartComponent
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_PREVENT_INTRASENTENCE_MATCHING
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_PREVENT_INTRASENTENCE_MATCHING
 	vector<GIAtxtRelTranslatorRulesGroupNeuralNetwork*> listOfHighLevelNeuronsCompleteHistory;
 	#endif
 	#endif
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_COMPONENT_DETECT_LOCAL_VARATION
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_COMPONENT_DETECT_LOCAL_VARATION
 	bool findingCandidateComponent2;
 	GIAtxtRelTranslatorRulesComponentNeuralNetwork* candidateComponent2ToFind;
 	bool foundCandidateComponent2;
 	GIAtxtRelTranslatorRulesGroupParseTree* candidateComponent2sourceParseTreeGroup;
 	#endif
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PROPAGATE_ALL_POS_VALUES_SIMULTANEOUSLY
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_PROPAGATE_ALL_POS_VALUES_SIMULTANEOUSLY
 	vector<vector<GIAtxtRelTranslatorRulesGroupNeuralNetwork*>*>* firstLayer;
 	#else
 	vector<GIAtxtRelTranslatorRulesGroupNeuralNetwork*>* firstLayer;
@@ -494,10 +500,10 @@ public:
 	
 	//sentence specific variables:
 	bool toplevelGroupActivationFound;
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_SIMULTANEOUS
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS
 	bool parserEnabled;
 	#endif
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_PERFORMANCE
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_PARSE_PERFORMANCE
 	int performance;
 	#endif
 	vector<GIApreprocessorPlainTextWord*>* sentenceContents;
@@ -512,10 +518,10 @@ public:
 	
 	vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes;
 
-	vector<GIAtxtRelTranslatorNeuralNetworkForwardPropogationWordData*> forwardPropogationWordDataArray;
+	vector<GIAtxtRelTranslatorSANIForwardPropogationWordData*> forwardPropogationWordDataArray;
 	
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_HEAVY
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_HEAVY_UNOPTIMISED
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_HEAVY
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_HEAVY_UNOPTIMISED
 	vector<GIAtxtRelTranslatorRulesGroupParseTree*> activationPathWordFirstParseTreeGroupArray;
 	#else
 	vector<vector<GIAtxtRelTranslatorRulesGroupActivationMemory*>> activationPathWordFirstActivationMemoryGroupArray;
@@ -523,7 +529,7 @@ public:
 	#endif
 	#endif
 	
-	GIAtxtRelTranslatorNeuralNetworkForwardPropogationActivationPointData* forwardPropogationActivationPointData;
+	GIAtxtRelTranslatorSANIForwardPropogationActivationPointData* forwardPropogationActivationPointData;
 };
 
 #endif

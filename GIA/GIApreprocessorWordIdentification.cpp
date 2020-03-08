@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorWordIdentification.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j6d 10-January-2020
+ * Project Version: 3k1a 05-March-2020
  * Requirements: requires plain text file
  * Description: Preprocessor Word Identification
  * /
@@ -1635,7 +1635,7 @@ bool GIApreprocessorWordIdentificationClass::detectRcmodSameReferenceSetDelimite
 	return wordTypeDetected;
 }
 
-#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OLD
+#ifdef GIA_TXT_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OLD
 bool GIApreprocessorWordIdentificationClass::determineIsWordTypeStringBasic(const string word, const int GIAposType)
 {
 	unordered_map<string, GIApreprocessorMultiwordReductionWord*>* wordTypeList = getWordList(GIAposType);

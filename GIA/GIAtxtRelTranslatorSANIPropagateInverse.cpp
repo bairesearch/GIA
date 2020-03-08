@@ -23,22 +23,22 @@
 
 /*******************************************************************************
  *
- * File Name: GIAtxtRelTranslatorNeuralNetworkPropagateInverse.cpp
+ * File Name: GIAtxtRelTranslatorSANIPropagateInverse.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j6d 10-January-2020
+ * Project Version: 3k1a 05-March-2020
  * Requirements: requires plain text file
- * Description: Textual Relation Translator Neural Network Inverse
+ * Description: Textual Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Inverse
  * /
  *******************************************************************************/
 
 
-#include "GIAtxtRelTranslatorNeuralNetworkPropagateInverse.hpp"
+#include "GIAtxtRelTranslatorSANIPropagateInverse.hpp"
 
 #ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3
 #ifdef GIA_TXT_REL_TRANSLATOR_INVERSE_NEURAL_NETWORK
 
-bool GIAtxtRelTranslatorNeuralNetworkPropagateInverseClass::generateParseTreeIntro(vector<XMLparserTag*>* GIAtxtRelTranslatorRulesTokenLayers, vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, vector<GIApreprocessorPlainTextWord*>* sentenceContents, GIAtxtRelTranslatorRulesGroupParseTree* firstParseTreeGroup, int* performance, const bool parseIsolatedSubreferenceSets)
+bool GIAtxtRelTranslatorSANIPropagateInverseClass::generateParseTreeIntro(vector<XMLparserTag*>* GIAtxtRelTranslatorRulesTokenLayers, vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, vector<GIApreprocessorPlainTextWord*>* sentenceContents, GIAtxtRelTranslatorRulesGroupParseTree* firstParseTreeGroup, int* performance, const bool parseIsolatedSubreferenceSets)
 {
 	bool result = false;
 
@@ -47,7 +47,7 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateInverseClass::generateParseTreeInt
 	#endif
 
 	//generate firstParseTreeGroup (firstTxtRelTranslatorRulesGroupInSentence) tree
-	int minIndexOfMatchesFoundBackupOptimum = GIAtxtRelTranslatorNeuralNetworkPropagateOperations.calculateMinIndexOfMatchesFound(sentenceContents);
+	int minIndexOfMatchesFoundBackupOptimum = GIAtxtRelTranslatorSANIPropagateOperations.calculateMinIndexOfMatchesFound(sentenceContents);
 	
 	for(int i=0; i<GIAtxtRelTranslatorRulesGroupTypes->size(); i++)
 	{
@@ -57,7 +57,7 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateInverseClass::generateParseTreeInt
 		
 		GIAtxtRelTranslatorRulesGroupType* groupType = GIAtxtRelTranslatorRulesGroupTypes->at(i);
 		
-		int minIndexOfMatchesFoundBackup2 = GIAtxtRelTranslatorNeuralNetworkPropagateOperations.calculateMinIndexOfMatchesFound(sentenceContents);
+		int minIndexOfMatchesFoundBackup2 = GIAtxtRelTranslatorSANIPropagateOperations.calculateMinIndexOfMatchesFound(sentenceContents);
 
 		bool passGroupTests = GIAtxtRelTranslatorRulesGroupClassObject.isTopLevelGroupType(groupType->groupTypeName, groupType->referenceSetType, isQuery, parseIsolatedSubreferenceSets);	
 		if(passGroupTests)
@@ -90,7 +90,7 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateInverseClass::generateParseTreeInt
 	{
 		//cout << "performance = " << performance << endl;
 		#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS3
-		cout << "GIAtxtRelTranslatorNeuralNetworkPropagateInverseClass::generateParseTreeIntro FOUND result" << endl;
+		cout << "GIAtxtRelTranslatorSANIPropagateInverseClass::generateParseTreeIntro FOUND result" << endl;
 		#endif
 		//exit(EXIT_ERROR);
 		
@@ -102,7 +102,7 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateInverseClass::generateParseTreeInt
 	}
 
 	//check parser has reached end of sentence
-	int minIndexOfMatchesFound = GIAtxtRelTranslatorNeuralNetworkPropagateOperations.calculateMinIndexOfMatchesFound(sentenceContents);
+	int minIndexOfMatchesFound = GIAtxtRelTranslatorSANIPropagateOperations.calculateMinIndexOfMatchesFound(sentenceContents);
 	int numberOfTokensInSentence = sentenceContents->size();
 	//cout << "minIndexOfMatchesFound = " << minIndexOfMatchesFound << endl;	
 	//cout << "numberOfTokensInSentence = " << numberOfTokensInSentence << endl;
@@ -122,28 +122,28 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateInverseClass::generateParseTreeInt
 	return result;
 }
 
-bool GIAtxtRelTranslatorNeuralNetworkPropagateInverseClass::generateParseTreeGroupType(vector<XMLparserTag*>* GIAtxtRelTranslatorRulesTokenLayers, GIAtxtRelTranslatorRulesGroupType* groupType, vector<GIApreprocessorPlainTextWord*>* sentenceContentsSubset, GIAtxtRelTranslatorRulesGroupParseTree* currentParseTreeGroup, int* performance, int layer, string previousGroupType, int numberOfConsecutiveTimesPreviousGroupType, GIAtxtRelTranslatorRulesComponentParseTree* previousParseTreeComponent)
+bool GIAtxtRelTranslatorSANIPropagateInverseClass::generateParseTreeGroupType(vector<XMLparserTag*>* GIAtxtRelTranslatorRulesTokenLayers, GIAtxtRelTranslatorRulesGroupType* groupType, vector<GIApreprocessorPlainTextWord*>* sentenceContentsSubset, GIAtxtRelTranslatorRulesGroupParseTree* currentParseTreeGroup, int* performance, int layer, string previousGroupType, int numberOfConsecutiveTimesPreviousGroupType, GIAtxtRelTranslatorRulesComponentParseTree* previousParseTreeComponent)
 {
 	bool result = false;
 	
-	int minIndexOfMatchesFoundBackupOptimum = GIAtxtRelTranslatorNeuralNetworkPropagateOperations.calculateMinIndexOfMatchesFound(sentenceContentsSubset);
+	int minIndexOfMatchesFoundBackupOptimum = GIAtxtRelTranslatorSANIPropagateOperations.calculateMinIndexOfMatchesFound(sentenceContentsSubset);
 
 	#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS
-	GIAtxtRelTranslatorNeuralNetworkPropagateOperations.printParseTreeDebugIndentation(layer);
+	GIAtxtRelTranslatorSANIPropagateOperations.printParseTreeDebugIndentation(layer);
 	cout << "groupType->groupTypeName = " << groupType->groupTypeName << endl;
-	GIAtxtRelTranslatorNeuralNetworkPropagateOperations.printParseTreeDebugIndentation(layer);
+	GIAtxtRelTranslatorSANIPropagateOperations.printParseTreeDebugIndentation(layer);
 	cout << "minIndexOfMatchesFoundBackupOptimum = " << minIndexOfMatchesFoundBackupOptimum << endl;
 	#endif
 
 	#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS3
 	if(groupType->groupTypeName == "logicReferenceSets")
 	{
-		GIAtxtRelTranslatorNeuralNetworkPropagateOperations.printParseTreeDebugIndentation(layer);
+		GIAtxtRelTranslatorSANIPropagateOperations.printParseTreeDebugIndentation(layer);
 		cout << "start groupType->groupTypeName == logicReferenceSets" << endl;
 	}
 	if(groupType->groupTypeName == "referenceSets")
 	{
-		GIAtxtRelTranslatorNeuralNetworkPropagateOperations.printParseTreeDebugIndentation(layer);
+		GIAtxtRelTranslatorSANIPropagateOperations.printParseTreeDebugIndentation(layer);
 		cout << "start groupType->groupTypeName == referenceSets" << endl;
 	}
 	#endif
@@ -153,14 +153,14 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateInverseClass::generateParseTreeGro
 	{
 		GIAtxtRelTranslatorRulesGroupNeuralNetwork* group = (groupType->groups)[i];
 
-		int minIndexOfMatchesFoundBackup2 = GIAtxtRelTranslatorNeuralNetworkPropagateOperations.calculateMinIndexOfMatchesFound(sentenceContentsSubset);
+		int minIndexOfMatchesFoundBackup2 = GIAtxtRelTranslatorSANIPropagateOperations.calculateMinIndexOfMatchesFound(sentenceContentsSubset);
 
 		#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS
-		GIAtxtRelTranslatorNeuralNetworkPropagateOperations.printParseTreeDebugIndentation(layer);
+		GIAtxtRelTranslatorSANIPropagateOperations.printParseTreeDebugIndentation(layer);
 		cout << "group->groupName = " << group->groupName << endl;
 		#endif
 
-		GIAtxtRelTranslatorRulesGroupParseTree* currentParseTreeGroupTemp = GIAtxtRelTranslatorNeuralNetworkPropagateOperations.convertNeuralNetworkGroupToParseTreeGroupNew(group);	//new GIAtxtRelTranslatorRulesGroupParseTree(*GIAtxtRelTranslatorNeuralNetworkPropagateOperations.convertNeuralNetworkGroupToParseTreeGroup(group));	
+		GIAtxtRelTranslatorRulesGroupParseTree* currentParseTreeGroupTemp = GIAtxtRelTranslatorSANIPropagateOperations.convertNeuralNetworkGroupToParseTreeGroupNew(group);	//new GIAtxtRelTranslatorRulesGroupParseTree(*GIAtxtRelTranslatorSANIPropagateOperations.convertNeuralNetworkGroupToParseTreeGroup(group));	
 		#ifndef GIA_TXT_REL_TRANSLATOR_RULES_DEFINE_GROUP_TYPE_BACKUP_AT_START
 		currentParseTreeGroupTemp->groupTypeName = groupType->groupTypeName;
 		#endif
@@ -185,12 +185,12 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateInverseClass::generateParseTreeGro
 		//cout << "layer = " << layer << endl;
 		if(groupType->groupTypeName == "logicReferenceSets")
 		{
-			GIAtxtRelTranslatorNeuralNetworkPropagateOperations.printParseTreeDebugIndentation(layer);
+			GIAtxtRelTranslatorSANIPropagateOperations.printParseTreeDebugIndentation(layer);
 			cout << "end pass groupType->groupTypeName == logicReferenceSets" << endl;
 		}
 		if(groupType->groupTypeName == "referenceSets")
 		{
-			GIAtxtRelTranslatorNeuralNetworkPropagateOperations.printParseTreeDebugIndentation(layer);
+			GIAtxtRelTranslatorSANIPropagateOperations.printParseTreeDebugIndentation(layer);
 			cout << "end pass groupType->groupTypeName == referenceSets" << endl;
 		}
 		#endif
@@ -202,12 +202,12 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateInverseClass::generateParseTreeGro
 		#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS3
 		if(groupType->groupTypeName == "logicReferenceSets")
 		{
-			GIAtxtRelTranslatorNeuralNetworkPropagateOperations.printParseTreeDebugIndentation(layer);
+			GIAtxtRelTranslatorSANIPropagateOperations.printParseTreeDebugIndentation(layer);
 			cout << "end fail groupType->groupTypeName == logicReferenceSets" << endl;
 		}
 		if(groupType->groupTypeName == "referenceSets")
 		{
-			GIAtxtRelTranslatorNeuralNetworkPropagateOperations.printParseTreeDebugIndentation(layer);
+			GIAtxtRelTranslatorSANIPropagateOperations.printParseTreeDebugIndentation(layer);
 			cout << "end fail groupType->groupTypeName == referenceSets" << endl;
 		}
 		#endif
@@ -216,11 +216,11 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateInverseClass::generateParseTreeGro
 	return result;
 }
 
-bool GIAtxtRelTranslatorNeuralNetworkPropagateInverseClass::generateParseTreeGroup(vector<XMLparserTag*>* GIAtxtRelTranslatorRulesTokenLayers, GIAtxtRelTranslatorRulesGroupNeuralNetwork* group, vector<GIApreprocessorPlainTextWord*>* sentenceContentsSubset, GIAtxtRelTranslatorRulesGroupParseTree* currentParseTreeGroup, int* performance, int layer, string previousGroupType, int numberOfConsecutiveTimesPreviousGroupType)
+bool GIAtxtRelTranslatorSANIPropagateInverseClass::generateParseTreeGroup(vector<XMLparserTag*>* GIAtxtRelTranslatorRulesTokenLayers, GIAtxtRelTranslatorRulesGroupNeuralNetwork* group, vector<GIApreprocessorPlainTextWord*>* sentenceContentsSubset, GIAtxtRelTranslatorRulesGroupParseTree* currentParseTreeGroup, int* performance, int layer, string previousGroupType, int numberOfConsecutiveTimesPreviousGroupType)
 {
 	bool foundWordMatch = true;
 
-	int minIndexOfMatchesFoundBackup2 = GIAtxtRelTranslatorNeuralNetworkPropagateOperations.calculateMinIndexOfMatchesFound(sentenceContentsSubset);
+	int minIndexOfMatchesFoundBackup2 = GIAtxtRelTranslatorSANIPropagateOperations.calculateMinIndexOfMatchesFound(sentenceContentsSubset);
 
 	bool pass = true;
 	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_GROUP_PREVIOUS_WORD_POS_TYPE
@@ -254,7 +254,7 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateInverseClass::generateParseTreeGro
 		#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS3
 		if(group->groupName == "referenceSetsOrLogicReferenceSets")
 		{
-			GIAtxtRelTranslatorNeuralNetworkPropagateOperations.printParseTreeDebugIndentation(layer);
+			GIAtxtRelTranslatorSANIPropagateOperations.printParseTreeDebugIndentation(layer);
 			cout << "group->groupName == referenceSetsOrLogicReferenceSets" << endl;
 		}
 		#endif
@@ -273,16 +273,16 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateInverseClass::generateParseTreeGro
 	return foundWordMatch;
 }
 
-bool GIAtxtRelTranslatorNeuralNetworkPropagateInverseClass::generateRulesGroupTreeComponents(vector<XMLparserTag*>* GIAtxtRelTranslatorRulesTokenLayers, vector<GIAtxtRelTranslatorRulesComponentNeuralNetwork*>* components, vector<GIApreprocessorPlainTextWord*>* sentenceContentsSubset, GIAtxtRelTranslatorRulesGroupParseTree* currentParseTreeGroup, int* performance, bool subcomponents, int subcomponentsType, bool subcomponentsOptional, int layer, string previousGroupType, int numberOfConsecutiveTimesPreviousGroupType)
+bool GIAtxtRelTranslatorSANIPropagateInverseClass::generateRulesGroupTreeComponents(vector<XMLparserTag*>* GIAtxtRelTranslatorRulesTokenLayers, vector<GIAtxtRelTranslatorRulesComponentNeuralNetwork*>* components, vector<GIApreprocessorPlainTextWord*>* sentenceContentsSubset, GIAtxtRelTranslatorRulesGroupParseTree* currentParseTreeGroup, int* performance, bool subcomponents, int subcomponentsType, bool subcomponentsOptional, int layer, string previousGroupType, int numberOfConsecutiveTimesPreviousGroupType)
 {
 	bool foundWordMatch = true;
 	
-	int minIndexOfMatchesFoundBackup1 = GIAtxtRelTranslatorNeuralNetworkPropagateOperations.calculateMinIndexOfMatchesFound(sentenceContentsSubset);
+	int minIndexOfMatchesFoundBackup1 = GIAtxtRelTranslatorSANIPropagateOperations.calculateMinIndexOfMatchesFound(sentenceContentsSubset);
 
 	//cout << "layer = " << layer << endl;
 	
 	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_OR
-	int minIndexOfMatchesFoundBackupOptimum = GIAtxtRelTranslatorNeuralNetworkPropagateOperations.calculateMinIndexOfMatchesFound(sentenceContentsSubset);
+	int minIndexOfMatchesFoundBackupOptimum = GIAtxtRelTranslatorSANIPropagateOperations.calculateMinIndexOfMatchesFound(sentenceContentsSubset);
 	bool subcomponentsOr = false;
 	bool subcomponentsOrFoundMatch = false;	
 	if(subcomponents && (subcomponentsType == GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_OR))
@@ -314,13 +314,13 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateInverseClass::generateRulesGroupTr
 			if(foundWordMatch || (subcomponentsOr && !subcomponentsOrFoundMatch))
 			{//only continue while foundWordMatch:
 			
-				int minIndexOfMatchesFoundBackup2 = GIAtxtRelTranslatorNeuralNetworkPropagateOperations.calculateMinIndexOfMatchesFound(sentenceContentsSubset);
+				int minIndexOfMatchesFoundBackup2 = GIAtxtRelTranslatorSANIPropagateOperations.calculateMinIndexOfMatchesFound(sentenceContentsSubset);
 				vector<GIApreprocessorPlainTextWord*> sentenceContentsBackup2;
 				
 				if(minIndexOfMatchesFoundBackup2 < int(sentenceContentsSubset->size()))
 				{
 					#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS
-					GIAtxtRelTranslatorNeuralNetworkPropagateOperations.printComponent(component, layer);
+					GIAtxtRelTranslatorSANIPropagateOperations.printComponent(component, layer);
 					#endif
 					
 					bool passRepeatChecks = true;
@@ -358,7 +358,7 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateInverseClass::generateRulesGroupTr
 						{
 							//skipMissingComponent = true;
 							#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_WORD_NOUN_VERB_VARIANT
-							GIAtxtRelTranslatorRulesComponentParseTree* newParseComponent = GIAtxtRelTranslatorNeuralNetworkPropagateOperations.convertNeuralNetworkComponentToParseTreeComponentNew(component);	//new GIAtxtRelTranslatorRulesComponentParseTree(*GIAtxtRelTranslatorNeuralNetworkPropagateOperations.convertNeuralNetworkComponentToParseTreeComponent(component));	//copy rules component
+							GIAtxtRelTranslatorRulesComponentParseTree* newParseComponent = GIAtxtRelTranslatorSANIPropagateOperations.convertNeuralNetworkComponentToParseTreeComponentNew(component);	//new GIAtxtRelTranslatorRulesComponentParseTree(*GIAtxtRelTranslatorSANIPropagateOperations.convertNeuralNetworkComponentToParseTreeComponent(component));	//copy rules component
 							forwardNounVerbVariantRequirementsGroupToComponent(currentParseTreeGroup, newParseComponent);
 							#else
 							GIAtxtRelTranslatorRulesComponentParseTree* newParseComponent = NULL;
@@ -378,7 +378,7 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateInverseClass::generateRulesGroupTr
 						{
 						#endif
 
-							GIAtxtRelTranslatorRulesComponentParseTree* newParseComponent = GIAtxtRelTranslatorNeuralNetworkPropagateOperations.convertNeuralNetworkComponentToParseTreeComponentNew(component);	//new GIAtxtRelTranslatorRulesComponentParseTree(*GIAtxtRelTranslatorNeuralNetworkPropagateOperations.convertNeuralNetworkComponentToParseTreeComponent(component));	//copy rules component
+							GIAtxtRelTranslatorRulesComponentParseTree* newParseComponent = GIAtxtRelTranslatorSANIPropagateOperations.convertNeuralNetworkComponentToParseTreeComponentNew(component);	//new GIAtxtRelTranslatorRulesComponentParseTree(*GIAtxtRelTranslatorSANIPropagateOperations.convertNeuralNetworkComponentToParseTreeComponent(component));	//copy rules component
 							//newParseComponent->groupTypeRef = NULL;	
 							//newParseComponent->groupRef = NULL;
 							//newParseComponent->subComponents.clear();	//NB this is necessary as newParseComponent is a copied version of the original rules object
@@ -442,8 +442,8 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateInverseClass::generateRulesGroupTr
 										{
 											subcomponentsOrFoundMatch = true;
 											/*
-											GIAtxtRelTranslatorNeuralNetworkPropagateOperations.printComponent(component, layer);
-											GIAtxtRelTranslatorNeuralNetworkPropagateOperations.printParseTreeDebugIndentation(layer);
+											GIAtxtRelTranslatorSANIPropagateOperations.printComponent(component, layer);
+											GIAtxtRelTranslatorSANIPropagateOperations.printParseTreeDebugIndentation(layer);
 											cout << "updatePerformance{} performance = " << *performance << endl;
 											*/
 										}
@@ -502,9 +502,9 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateInverseClass::generateRulesGroupTr
 										if(component->optional || subcomponentsOptional)
 										{
 											/*
-											GIAtxtRelTranslatorNeuralNetworkPropagateOperations.printParseTreeDebugIndentation(layer);
+											GIAtxtRelTranslatorSANIPropagateOperations.printParseTreeDebugIndentation(layer);
 											cout << "(component->optional) && !generateRulesGroupTreeComponent" << endl;
-											GIAtxtRelTranslatorNeuralNetworkPropagateOperations.printParseTreeDebugIndentation(layer);
+											GIAtxtRelTranslatorSANIPropagateOperations.printParseTreeDebugIndentation(layer);
 											cout << "minIndexOfMatchesFoundBackup2 = " << minIndexOfMatchesFoundBackup2 << endl;
 											*/
 										}
@@ -576,7 +576,7 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateInverseClass::generateRulesGroupTr
 		clearAllWordsAlreadyFoundMatchInComponent(sentenceContentsSubset, minIndexOfMatchesFoundBackup1);
 		
 		#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS
-		GIAtxtRelTranslatorNeuralNetworkPropagateOperations.printParseTreeDebugIndentation(layer);
+		GIAtxtRelTranslatorSANIPropagateOperations.printParseTreeDebugIndentation(layer);
 		cout << "FAIL" << endl;
 		#endif
 
@@ -584,7 +584,7 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateInverseClass::generateRulesGroupTr
 	else
 	{
 		#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS
-		GIAtxtRelTranslatorNeuralNetworkPropagateOperations.printParseTreeDebugIndentation(layer);
+		GIAtxtRelTranslatorSANIPropagateOperations.printParseTreeDebugIndentation(layer);
 		cout << "PASS" << endl;
 		#endif
 	}
@@ -592,7 +592,7 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateInverseClass::generateRulesGroupTr
 	return foundWordMatch;
 }
 
-bool GIAtxtRelTranslatorNeuralNetworkPropagateInverseClass::generateRulesGroupTreeComponent(vector<XMLparserTag*>* GIAtxtRelTranslatorRulesTokenLayers, GIAtxtRelTranslatorRulesComponentNeuralNetwork* component, vector<GIApreprocessorPlainTextWord*>* sentenceContentsSubset, GIAtxtRelTranslatorRulesComponentParseTree* currentParseTreeComponent, int* performance, int layer, string previousGroupType, int numberOfConsecutiveTimesPreviousGroupType)
+bool GIAtxtRelTranslatorSANIPropagateInverseClass::generateRulesGroupTreeComponent(vector<XMLparserTag*>* GIAtxtRelTranslatorRulesTokenLayers, GIAtxtRelTranslatorRulesComponentNeuralNetwork* component, vector<GIApreprocessorPlainTextWord*>* sentenceContentsSubset, GIAtxtRelTranslatorRulesComponentParseTree* currentParseTreeComponent, int* performance, int layer, string previousGroupType, int numberOfConsecutiveTimesPreviousGroupType)
 {
 	bool foundWordMatch = false;
 
@@ -617,7 +617,7 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateInverseClass::generateRulesGroupTr
 
 	if(component->componentType == GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_STRING)
 	{
-		int minIndexOfMatchesFound = GIAtxtRelTranslatorNeuralNetworkPropagateOperations.calculateMinIndexOfMatchesFound(sentenceContentsSubset);
+		int minIndexOfMatchesFound = GIAtxtRelTranslatorSANIPropagateOperations.calculateMinIndexOfMatchesFound(sentenceContentsSubset);
 		int w = minIndexOfMatchesFound+1;
 		if(w < sentenceContentsSubset->size())
 		{	
@@ -685,7 +685,7 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateInverseClass::generateRulesGroupTr
 		}
 		else
 		{
-			cerr << "GIAtxtRelTranslatorNeuralNetworkPropagateInverseClass::generateRulesGroupTreeComponent{} error: (component->componentType == GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_GROUP) && (component->groupTypeRef == NULL)" << endl;
+			cerr << "GIAtxtRelTranslatorSANIPropagateInverseClass::generateRulesGroupTreeComponent{} error: (component->componentType == GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_GROUP) && (component->groupTypeRef == NULL)" << endl;
 			cout << "component->groupTypeRefName = " << component->groupTypeRefName << endl;
 			cout << "component->groupRefName = " << component->groupRefName << endl;
 			cout << "previousGroupType = " << previousGroupType << endl;
@@ -698,7 +698,7 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateInverseClass::generateRulesGroupTr
 			if(component->groupRef != NULL)
 			{
 				//cout << "(component->groupRef != NULL)" << endl;
-				GIAtxtRelTranslatorRulesGroupParseTree* newParseGroup = GIAtxtRelTranslatorNeuralNetworkPropagateOperations.convertNeuralNetworkGroupToParseTreeGroupNew(component->groupRef);	//new GIAtxtRelTranslatorRulesGroupParseTree(*GIAtxtRelTranslatorNeuralNetworkPropagateOperations.convertNeuralNetworkGroupToParseTreeGroup(component->groupRef));	//copy group component
+				GIAtxtRelTranslatorRulesGroupParseTree* newParseGroup = GIAtxtRelTranslatorSANIPropagateOperations.convertNeuralNetworkGroupToParseTreeGroupNew(component->groupRef);	//new GIAtxtRelTranslatorRulesGroupParseTree(*GIAtxtRelTranslatorSANIPropagateOperations.convertNeuralNetworkGroupToParseTreeGroup(component->groupRef));	//copy group component
 				newParseGroup->components.clear();	//added 5 Mar 2018
 				currentParseTreeComponent->parseTreeGroupRef = newParseGroup;
 				//currentParseTreeComponent->groupRefName = newParseGroup->groupName;	//added 17 March 2018
@@ -728,7 +728,7 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateInverseClass::generateRulesGroupTr
 			}
 			else
 			{
-				cerr << "GIAtxtRelTranslatorNeuralNetworkPropagateInverseClass::generateRulesGroupTreeComponent{} error: (component->componentType == GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_GROUP) && (component->groupTypeRef/groupRef == NULL)" << endl;
+				cerr << "GIAtxtRelTranslatorSANIPropagateInverseClass::generateRulesGroupTreeComponent{} error: (component->componentType == GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_GROUP) && (component->groupTypeRef/groupRef == NULL)" << endl;
 				exit(EXIT_ERROR);
 			}
 		#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_RESTRICT_RECURSION
@@ -741,7 +741,7 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateInverseClass::generateRulesGroupTr
 	} 
 	else
 	{
-		cerr << "GIAtxtRelTranslatorNeuralNetworkPropagateInverseClass::generateRulesGroupTreeComponent{} error: component->componentType illdefined" << endl;
+		cerr << "GIAtxtRelTranslatorSANIPropagateInverseClass::generateRulesGroupTreeComponent{} error: component->componentType illdefined" << endl;
 		exit(EXIT_ERROR);
 	}
 	
@@ -749,10 +749,10 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateInverseClass::generateRulesGroupTr
 }
 
 #ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_WORD_NOUN_VERB_VARIANT
-bool GIAtxtRelTranslatorNeuralNetworkPropagateInverseClass::forwardNounVerbVariantRequirementsComponentToGroup(GIAtxtRelTranslatorRulesComponentParseTree* component, GIAtxtRelTranslatorRulesGroupParseTree* newParseGroup)
+bool GIAtxtRelTranslatorSANIPropagateInverseClass::forwardNounVerbVariantRequirementsComponentToGroup(GIAtxtRelTranslatorRulesComponentParseTree* component, GIAtxtRelTranslatorRulesGroupParseTree* newParseGroup)
 {
 	bool result = true;
-	//cout << "1 GIAtxtRelTranslatorNeuralNetworkPropagateInverseClass::forwardNounVerbVariantRequirementsComponentToGroup: currentComponent->semanticRelationReturnEntity" << endl;
+	//cout << "1 GIAtxtRelTranslatorSANIPropagateInverseClass::forwardNounVerbVariantRequirementsComponentToGroup: currentComponent->semanticRelationReturnEntity" << endl;
 	if(component->wordVerbVariantType != GIA_PREPROCESSOR_WORD_VERB_DATABASE_TAG_BASE_TENSE_FORM_UNKNOWN)
 	{
 		newParseGroup->wordVerbVariantTypeDerived = component->wordVerbVariantType;
@@ -765,12 +765,12 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateInverseClass::forwardNounVerbVaria
 	}		
 	return result;
 }
-bool GIAtxtRelTranslatorNeuralNetworkPropagateInverseClass::forwardNounVerbVariantRequirementsGroupToComponent(GIAtxtRelTranslatorRulesGroupParseTree* currentParseGroup, GIAtxtRelTranslatorRulesComponentParseTree* currentComponent)
+bool GIAtxtRelTranslatorSANIPropagateInverseClass::forwardNounVerbVariantRequirementsGroupToComponent(GIAtxtRelTranslatorRulesGroupParseTree* currentParseGroup, GIAtxtRelTranslatorRulesComponentParseTree* currentComponent)
 {
 	bool result = true;
 	if(currentComponent->semanticRelationReturnEntity)
 	{
-		//cout << "2 GIAtxtRelTranslatorNeuralNetworkPropagateInverseClass::forwardNounVerbVariantRequirementsGroupToComponent: currentComponent->semanticRelationReturnEntity" << endl;
+		//cout << "2 GIAtxtRelTranslatorSANIPropagateInverseClass::forwardNounVerbVariantRequirementsGroupToComponent: currentComponent->semanticRelationReturnEntity" << endl;
 		if(currentParseGroup->wordVerbVariantTypeDerived != GIA_PREPROCESSOR_WORD_VERB_DATABASE_TAG_BASE_TENSE_FORM_UNKNOWN)
 		{
 			currentComponent->wordVerbVariantType = currentParseGroup->wordVerbVariantTypeDerived;
@@ -787,7 +787,7 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateInverseClass::forwardNounVerbVaria
 #endif
 			
 
-bool GIAtxtRelTranslatorNeuralNetworkPropagateInverseClass::findStringMatch(vector<XMLparserTag*>* GIAtxtRelTranslatorRulesTokenLayers, GIAtxtRelTranslatorRulesComponentNeuralNetwork* component, GIApreprocessorPlainTextWord* currentWord, GIAtxtRelTranslatorRulesComponentParseTree* currentParseTreeComponent)
+bool GIAtxtRelTranslatorSANIPropagateInverseClass::findStringMatch(vector<XMLparserTag*>* GIAtxtRelTranslatorRulesTokenLayers, GIAtxtRelTranslatorRulesComponentNeuralNetwork* component, GIApreprocessorPlainTextWord* currentWord, GIAtxtRelTranslatorRulesComponentParseTree* currentParseTreeComponent)
 {
 	bool foundWordMatchTemp = false;
 	if(component->stringType == GIA_TXT_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_STRINGTYPE_LRPEXTERNALWORDLISTS)
@@ -950,7 +950,7 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateInverseClass::findStringMatch(vect
 			}
 			else
 			{
-				cerr << "GIAtxtRelTranslatorNeuralNetworkPropagateInverseClass::generateRulesGroupTreeComponent{} error: !if(textInTextArray(component->tokenClass, GIApreprocessorPOStypeNameArray, GIA_PREPROCESSOR_POS_TYPE_ARRAY_NUMBER_OF_TYPES, &wordPOStype)" << endl;
+				cerr << "GIAtxtRelTranslatorSANIPropagateInverseClass::generateRulesGroupTreeComponent{} error: !if(textInTextArray(component->tokenClass, GIApreprocessorPOStypeNameArray, GIA_PREPROCESSOR_POS_TYPE_ARRAY_NUMBER_OF_TYPES, &wordPOStype)" << endl;
 				cerr << "currentWord->tagName = " << currentWord->tagName << endl;
 				cerr << "component->tokenLayer = " << component->tokenLayer << endl;
 				cerr << "component->tokenClass = " << component->tokenClass << endl;
@@ -961,13 +961,13 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateInverseClass::findStringMatch(vect
 	}
 	else
 	{
-		cerr << "GIAtxtRelTranslatorNeuralNetworkPropagateInverseClass::generateRulesGroupTreeComponent{} error: component->stringType illegal" << endl;
+		cerr << "GIAtxtRelTranslatorSANIPropagateInverseClass::generateRulesGroupTreeComponent{} error: component->stringType illegal" << endl;
 		exit(EXIT_ERROR);
 	}
 	return foundWordMatchTemp;
 }
 
-bool GIAtxtRelTranslatorNeuralNetworkPropagateInverseClass::verifyPOStype(GIApreprocessorPlainTextWord* currentWord, unsigned char wordPOStype)
+bool GIAtxtRelTranslatorSANIPropagateInverseClass::verifyPOStype(GIApreprocessorPlainTextWord* currentWord, unsigned char wordPOStype)
 {
 	bool result = false;
 							
@@ -988,7 +988,7 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateInverseClass::verifyPOStype(GIApre
 
 
 							
-bool GIAtxtRelTranslatorNeuralNetworkPropagateInverseClass::updatePerformance(const int performanceTemp, int* performance, GIAtxtRelTranslatorRulesGroupParseTree* currentParseTreeGroup, GIAtxtRelTranslatorRulesGroupParseTree* currentParseTreeGroupTemp, const bool passedTemp, int* minIndexOfMatchesFoundBackupOptimum, vector<GIApreprocessorPlainTextWord*>* sentenceContentsSubset, const int minIndexOfMatchesFoundBackup, GIAtxtRelTranslatorRulesComponentParseTree* previousParseTreeComponent)
+bool GIAtxtRelTranslatorSANIPropagateInverseClass::updatePerformance(const int performanceTemp, int* performance, GIAtxtRelTranslatorRulesGroupParseTree* currentParseTreeGroup, GIAtxtRelTranslatorRulesGroupParseTree* currentParseTreeGroupTemp, const bool passedTemp, int* minIndexOfMatchesFoundBackupOptimum, vector<GIApreprocessorPlainTextWord*>* sentenceContentsSubset, const int minIndexOfMatchesFoundBackup, GIAtxtRelTranslatorRulesComponentParseTree* previousParseTreeComponent)
 {
 	bool result = false;
 	
@@ -1009,7 +1009,7 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateInverseClass::updatePerformance(co
 			}
 			#endif
 			
-			*minIndexOfMatchesFoundBackupOptimum = GIAtxtRelTranslatorNeuralNetworkPropagateOperations.calculateMinIndexOfMatchesFound(sentenceContentsSubset);	//moved to higher level nesting in 3f8e
+			*minIndexOfMatchesFoundBackupOptimum = GIAtxtRelTranslatorSANIPropagateOperations.calculateMinIndexOfMatchesFound(sentenceContentsSubset);	//moved to higher level nesting in 3f8e
 		}
 		
 	}
@@ -1025,7 +1025,7 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateInverseClass::updatePerformance(co
 	return result;
 }
 
-bool GIAtxtRelTranslatorNeuralNetworkPropagateInverseClass::deleteAllSubgroupsRecurse(GIAtxtRelTranslatorRulesGroupParseTree* currentParseTreeGroup, int layer)
+bool GIAtxtRelTranslatorSANIPropagateInverseClass::deleteAllSubgroupsRecurse(GIAtxtRelTranslatorRulesGroupParseTree* currentParseTreeGroup, int layer)
 {
 	bool result = true;
 	
@@ -1035,7 +1035,7 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateInverseClass::deleteAllSubgroupsRe
 		if(currentParseTreeComponent->parseTreeGroupRef != NULL)
 		{
 			#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS
-			GIAtxtRelTranslatorNeuralNetworkPropagateOperations.printParseTreeDebugIndentation(layer);
+			GIAtxtRelTranslatorSANIPropagateOperations.printParseTreeDebugIndentation(layer);
 			cout << "deleteAllSubgroupsRecurse" << endl;
 			#endif
 			
@@ -1052,7 +1052,7 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateInverseClass::deleteAllSubgroupsRe
 	return result;
 }
 
-bool GIAtxtRelTranslatorNeuralNetworkPropagateInverseClass::deleteParseComponent(GIAtxtRelTranslatorRulesComponentParseTree* currentParseTreeComponent)
+bool GIAtxtRelTranslatorSANIPropagateInverseClass::deleteParseComponent(GIAtxtRelTranslatorRulesComponentParseTree* currentParseTreeComponent)
 {
 	bool result = true;
 	
@@ -1072,7 +1072,7 @@ bool GIAtxtRelTranslatorNeuralNetworkPropagateInverseClass::deleteParseComponent
 
 
 
-void GIAtxtRelTranslatorNeuralNetworkPropagateInverseClass::clearAllWordsAlreadyFoundMatchInComponent(vector<GIApreprocessorPlainTextWord*>* sentenceContentsSubset, const int minIndexOfMatchesFoundBackup)
+void GIAtxtRelTranslatorSANIPropagateInverseClass::clearAllWordsAlreadyFoundMatchInComponent(vector<GIApreprocessorPlainTextWord*>* sentenceContentsSubset, const int minIndexOfMatchesFoundBackup)
 {	
 	for(int w=0; w<sentenceContentsSubset->size(); w++)
 	{
@@ -1084,7 +1084,7 @@ void GIAtxtRelTranslatorNeuralNetworkPropagateInverseClass::clearAllWordsAlready
 	}
 }
 
-void GIAtxtRelTranslatorNeuralNetworkPropagateInverseClass::restoreAllWordsAlreadyFoundMatchInComponent(vector<GIApreprocessorPlainTextWord*>* sentenceContentsSubset, const int minIndexOfMatchesFoundNew)
+void GIAtxtRelTranslatorSANIPropagateInverseClass::restoreAllWordsAlreadyFoundMatchInComponent(vector<GIApreprocessorPlainTextWord*>* sentenceContentsSubset, const int minIndexOfMatchesFoundNew)
 {	
 	//cout << "restoreAllWordsAlreadyFoundMatchInComponent: minIndexOfMatchesFoundNew = " << minIndexOfMatchesFoundNew << endl;
 	//exit(EXIT_ERROR);

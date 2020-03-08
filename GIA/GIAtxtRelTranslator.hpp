@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslator.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j6d 10-January-2020
+ * Project Version: 3k1a 05-March-2020
  * Requirements: requires plain text file
  * Description: Textual Relation Translator
  * /
@@ -46,14 +46,14 @@
 #include "GIAtxtRelTranslatorHybrid.hpp"
 #endif
 #include "GIAtxtRelTranslatorRules.hpp"
-#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
-#include "GIAtxtRelTranslatorNeuralNetworkFormation.hpp"
-#include "GIAtxtRelTranslatorNeuralNetworkPropagateOperations.hpp"
+#ifdef GIA_TXT_REL_TRANSLATOR_SANI
+#include "GIAtxtRelTranslatorSANIFormation.hpp"
+#include "GIAtxtRelTranslatorSANIPropagateOperations.hpp"
 #endif
-#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR
-#include "GIAtxtRelTranslatorNeuralNetworkPropagateCompact.hpp"
+#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR
+#include "GIAtxtRelTranslatorSANIPropagateCompact.hpp"
 #endif
-//#ifndef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_SIMULTANEOUS
+//#ifndef GIA_TXT_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS
 #include "GIAtxtRelTranslatorPermutations.hpp"
 //#endif
 #ifdef GIA_PREPROCESSOR_INITIALISE_WORD_INDEX_LIST_FROM_LRP_FILES
@@ -73,11 +73,11 @@ class GIAtxtRelTranslatorClass
 	#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID
 	private: GIAtxtRelTranslatorHybridClass GIAtxtRelTranslatorHybrid;
 	#endif
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
-	private: GIAtxtRelTranslatorNeuralNetworkFormationClass GIAtxtRelTranslatorNeuralNetworkFormation;
-	private: GIAtxtRelTranslatorNeuralNetworkPropagateOperationsClass GIAtxtRelTranslatorNeuralNetworkPropagateOperations;	//required for printComponent/printParseTreeDebugIndentation	
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI
+	private: GIAtxtRelTranslatorSANIFormationClass GIAtxtRelTranslatorSANIFormation;
+	private: GIAtxtRelTranslatorSANIPropagateOperationsClass GIAtxtRelTranslatorSANIPropagateOperations;	//required for printComponent/printParseTreeDebugIndentation	
 	#endif
-	//#ifndef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_SIMULTANEOUS
+	//#ifndef GIA_TXT_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS
 	private: GIAtxtRelTranslatorPermutationsClass GIAtxtRelTranslatorPermutations;
 	//#endif
 	private: GIAtxtRelTranslatorRulesClass GIAtxtRelTranslatorRules;

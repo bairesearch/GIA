@@ -23,30 +23,23 @@
 
 /*******************************************************************************
  *
- * File Name: GIAtxtRelTranslatorNeuralNetworkSpiked.hpp
+ * File Name: GIAtxtRelTranslatorSANISpiked.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j6d 10-January-2020
+ * Project Version: 3k1a 05-March-2020
  * Requirements: 
- * Description: Textual Relation Translator Neural Network Spiked
+ * Description: Textual Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Spiked
  * /
  *******************************************************************************/
 
 
-#ifndef HEADER_GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SPIKED
-#define HEADER_GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SPIKED
-
-#include "GIAglobalDefs.hpp"
+#include "GIAtxtRelTranslatorSANISpiked.hpp"
+#include "SHAREDvars.hpp"
 
 
-#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SPIKED
+#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SPIKED
 
 
-class GIAtxtRelTranslatorNeuralNetworkSpikedClass
-{
 
-};
-
-#endif
 
 #endif

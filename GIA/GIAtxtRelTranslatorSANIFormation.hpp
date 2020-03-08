@@ -23,18 +23,18 @@
 
 /*******************************************************************************
  *
- * File Name: GIAtxtRelTranslatorNeuralNetworkFormation.hpp
+ * File Name: GIAtxtRelTranslatorSANIFormation.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j6d 10-January-2020
+ * Project Version: 3k1a 05-March-2020
  * Requirements: 
- * Description: Textual Relation Translator Neural Network Formation
+ * Description: Textual Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Formation
  * /
  *******************************************************************************/
 
 
-#ifndef HEADER_GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_FORMATION
-#define HEADER_GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_FORMATION
+#ifndef HEADER_GIA_TXT_REL_TRANSLATOR_SANI_FORMATION
+#define HEADER_GIA_TXT_REL_TRANSLATOR_SANI_FORMATION
 
 #include "GIAglobalDefs.hpp"
 #include "SHAREDvars.hpp"
@@ -46,9 +46,9 @@
 #include "GIApreprocessorWordClass.hpp"
 #include "ANNdisplay.hpp"
 
-#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK
+#ifdef GIA_TXT_REL_TRANSLATOR_SANI
 
-class GIAtxtRelTranslatorNeuralNetworkFormationClass
+class GIAtxtRelTranslatorSANIFormationClass
 {
 	private: SHAREDvarsClass SHAREDvars;
 	private: XMLparserClassClass XMLparserClass;
@@ -57,7 +57,7 @@ class GIAtxtRelTranslatorNeuralNetworkFormationClass
 	private: GIAtxtRelTranslatorRulesClass GIAtxtRelTranslatorRules;
 	private: ANNdisplayClass ANNdisplay;
 	
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ADD_EXPLICIT_WORD_REFERENCES_AS_INDEPENDENT_POS_PERMUTATIONS
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_ADD_EXPLICIT_WORD_REFERENCES_AS_INDEPENDENT_POS_PERMUTATIONS
 	public: vector<string>* getExplicitWordList();
 	#endif
 	public: unordered_map<string, GIAtxtRelTranslatorRulesGroupNeuralNetwork*>* getInputLayerSectionExplicitWordMap();
@@ -67,7 +67,7 @@ class GIAtxtRelTranslatorNeuralNetworkFormationClass
 	public: GIAtxtRelTranslatorRulesGroupNeuralNetwork* getFirstInputGroupInNetwork();
 	#endif
 
-	public: bool createGIAtxtRelTranslatorNeuralNetwork(vector<XMLparserTag*>* GIAtxtRelTranslatorRulesTokenLayers, vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes);
+	public: bool createGIAtxtRelTranslatorSANI(vector<XMLparserTag*>* GIAtxtRelTranslatorRulesTokenLayers, vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes);
 		private: bool createInputNeuronLayer(vector<XMLparserTag*>* GIAtxtRelTranslatorRulesTokenLayers, vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes);
 			private: bool createInputNeuronLayerSectionWordPOStype(GIAtxtRelTranslatorRulesGroupNeuralNetwork** currentGroupInInputLayerSectionWordPOStype, int* numberOfGroupsInSection);
 				private: bool createInputNeuronLayerSectionNounVariantType(GIAtxtRelTranslatorRulesGroupNeuralNetwork* currentGroupInInputLayerSectionWordPOStype, GIAtxtRelTranslatorRulesGroupNeuralNetwork** currentGroupInInputLayerSectionWordNounVariantType, int* numberOfGroupsInSection);
@@ -89,10 +89,10 @@ class GIAtxtRelTranslatorNeuralNetworkFormationClass
 	private: bool createGroupANNconnectionIO(GIAtxtRelTranslatorRulesGroupNeuralNetwork* group, GIAtxtRelTranslatorRulesGroupNeuralNetwork* higherLevelGroup);
 	private: bool createGroupANNconnectionIObasic(GIAtxtRelTranslatorRulesGroupNeuralNetwork* group, GIAtxtRelTranslatorRulesGroupNeuralNetwork* higherLevelGroup);
 	public: bool createGroupANNconnection(GIAtxtRelTranslatorRulesGroupNeuralNetwork* group, GIAtxtRelTranslatorRulesComponentNeuralNetwork* higherLevelComponent);
-		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN
+		#ifdef GIA_TXT_REL_TRANSLATOR_SANI_ANN
 		private: ANNneuronConnection* createANNconnection(GIAtxtRelTranslatorRulesGroupNeuralNetwork* group, GIAtxtRelTranslatorRulesComponentNeuralNetwork* higherLevelComponent);
 			private: ANNneuronConnection* createANNconnection(GIAtxtRelTranslatorRulesGroupNeuralNetwork* group, GIAtxtRelTranslatorRulesGroupNeuralNetwork* higherLevelGroup);
-		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN_DELAY_ANN_CONNECTIVITY_TILL_END
+		#ifdef GIA_TXT_REL_TRANSLATOR_SANI_ANN_DELAY_ANN_CONNECTIVITY_TILL_END
 		public: bool createANNconnectivity(vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes);
 		#endif
 		#endif

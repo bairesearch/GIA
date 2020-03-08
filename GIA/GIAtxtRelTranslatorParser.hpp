@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorParser.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j6d 10-January-2020
+ * Project Version: 3k1a 05-March-2020
  * Requirements: 
  * Description: Textual Relation Translator Parser
  * /
@@ -61,7 +61,7 @@
 #include "GIAtxtRelTranslatorRulesGroupClass.hpp"
 #include "GIAtxtRelTranslatorRulesComponentClass.hpp"
 #include "GIAtxtRelTranslatorHybrid.hpp"
-#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_SIMULTANEOUS
+#ifdef GIA_TXT_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS
 #include "GIAtxtRelTranslatorPermutations.hpp"
 #else
 #include "GIAtxtRelTranslatorParserOperations.hpp"
@@ -93,7 +93,7 @@ class GIAtxtRelTranslatorParserClass
 	private: GIAtxtRelTranslatorRulesGroupClass GIAtxtRelTranslatorRulesGroupClassObject;
 	private: GIAtxtRelTranslatorRulesComponentClass GIAtxtRelTranslatorRulesComponentClassObject;
 	private: GIAtxtRelTranslatorHybridClass GIAtxtRelTranslatorHybrid;
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_PARSE_SIMULTANEOUS
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS
 	private: GIAtxtRelTranslatorPermutationsClass GIAtxtRelTranslatorPermutations;	
 	#else
 	private: GIAtxtRelTranslatorParserOperationsClass GIAtxtRelTranslatorParserOperations;
@@ -124,7 +124,7 @@ class GIAtxtRelTranslatorParserClass
 		public: void deleteRelationshipEntity(GIAentityNode* relationshipSubjectEntity, GIAentityNode* relationshipObjectEntity, GIAentityNode* relationshipEntity);
 	#endif
 	
-	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEMANTICALLY_DETERMINED_DYNAMIC_CONNECTIONS
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEMANTICALLY_DETERMINED_DYNAMIC_CONNECTIONS
 	private: bool relinkDynamicConnections(GIAtranslatorVariablesClass* translatorVariables);
 		private: bool findIdealSemanticRelationshipSourceInSentenceSubnet(GIAtranslatorVariablesClass* translatorVariables, bool relationshipSourceIsSubject, GIAentityNode* relationshipEntity, GIAentityNode* relationshipSource, GIAentityNode* relationshipTarget, GIAentityNode** relationshipSourceNewFound);
 			private: bool calculateSimilarityOfSubnets(GIAtranslatorVariablesClass* translatorVariables, GIAentityNode* relationshipEntity, GIAentityNode* relationshipSource, GIAentityNode* relationshipTarget, int* subsetSimilarity);
