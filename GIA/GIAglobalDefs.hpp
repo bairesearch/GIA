@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j6a 10-January-2020
+ * Project Version: 3j6b 10-January-2020
  * Requirements: 
  * Description: GIA specific global definitions
  * /
@@ -1757,7 +1757,7 @@
 		//#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_DO_NOT_TRAIN_POS_INDEX_OUT_OF_SENTENCE_BOUNDS	//GIA3j6a	//optional: 1) can theoretically increase neural net training performance with !GIA_PREPROCESSOR_POS_TAGGER_DATABASE_TRAIN_AMBIGUOUS_PERMUTATIONS&&!GIA_PREPROCESSOR_POS_TAGGER_DATABASE_GENERATE_SET_OF_ARTIFICIAL_UNAMBIGUOUS_PERMUTATIONS_FOR_EVERY_AMBIGOUS_PERMUTATION as not overloading training set with sequences containing majority unambigious out of bounds POS). 2) can guarantee that the neural net is provided a min amount of data during training (however will prevent small sentence sequences from being entered into db) 
 		#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_TRAIN_AMBIGUOUS_PERMUTATIONS	//clarification def added GIA3j6a
 		#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_TRAIN_AMBIGUOUS_PERMUTATIONS
-
+			//#define DEBUG_GIA_PREPROCESSOR_POS_TAGGER_DATABASE_CALCULATE_PERCENTAGE_POS_AMBIGUOUS_WORDS	//GIA3j6b	//temp
 		#else
 			#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY	//GIA3e9b			//this is now mandatory for GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM and GIA_PREPROCESSOR_POS_TAGGER_DATABASE_MAP databases as POSambiguityInfo is no longer restricted to 8 bit (ie is now 64 bit int64_t) - to maintain database performance (>=GIA3e11a) 
 			#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY
@@ -1806,9 +1806,11 @@
 		
 		#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK
 			#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_PERSISTENT
-			#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL	//GIA3e6a	//use keras (execute external python scripts)
-			#ifndef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL
-				#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_INTERNAL
+			#ifndef DEBUG_GIA_PREPROCESSOR_POS_TAGGER_DATABASE_CALCULATE_PERCENTAGE_POS_AMBIGUOUS_WORDS	
+				#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL	//GIA3e6a	//use keras (execute external python scripts)
+				#ifndef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL
+					#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_INTERNAL
+				#endif
 			#endif
 			#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL
 				#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_USE_ANN	//GIA3j2a

@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorPOStagger.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j6a 10-January-2020
+ * Project Version: 3j6b 10-January-2020
  * Requirements: requires plain text file
  * Description: Preprocessor POS tagger database
  * /
@@ -787,7 +787,7 @@ bool GIApreprocessorPOStaggerDatabaseClass::determinePOSambiguityInfoIsAmbiguous
 	return ambiguous;
 }
 
-#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK
+#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL
 string GIApreprocessorPOStaggerDatabaseClass::externalANNgenerateExperienceInputStandalone(ANNexperience* currentExperienceInList)
 {	
 	string experienceInputString = "";

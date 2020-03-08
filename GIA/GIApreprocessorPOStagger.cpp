@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorPOStagger.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j6a 10-January-2020
+ * Project Version: 3j6b 10-January-2020
  * Requirements: requires plain text file
  * Description: Preprocessor POS tagger
  * /
@@ -626,6 +626,9 @@ bool GIApreprocessorPOStaggerClass::generatePOStaggerDatabaseFromWikiDumpText(co
 			#ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE_RAW
 			int wCentre=-1;	//irrelevant (NOTUSED)
 			#else
+			#ifdef DEBUG_GIA_PREPROCESSOR_POS_TAGGER_DATABASE_CALCULATE_PERCENTAGE_POS_AMBIGUOUS_WORDS
+			int nonAmbiguousWordCount = 0;
+			#endif
 			for(int wCentre=0; wCentre<sentenceContents->size(); wCentre++)
 			{
 			#endif
@@ -669,6 +672,9 @@ bool GIApreprocessorPOStaggerClass::generatePOStaggerDatabaseFromWikiDumpText(co
 							#ifndef GIA_PREPROCESSOR_POS_TAGGER_INCLUDE_CENTRE_WORD_IN_POS_PERMUTATION_EVEN_IF_AMBIGUOUS
 							if(!centreWordAmbiguous)
 							{
+								#ifdef DEBUG_GIA_PREPROCESSOR_POS_TAGGER_DATABASE_CALCULATE_PERCENTAGE_POS_AMBIGUOUS_WORDS
+								nonAmbiguousWordCount++;
+								#endif
 							#endif
 					#endif
 								#ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_NEURAL_NETWORK_SEQUENCE_GRAMMAR_ONLY_TRAIN_UNAMBIGUOUS_PERMUTATIONS
@@ -774,6 +780,10 @@ bool GIApreprocessorPOStaggerClass::generatePOStaggerDatabaseFromWikiDumpText(co
 				}
 			#ifndef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE_RAW
 			}
+			#ifdef DEBUG_GIA_PREPROCESSOR_POS_TAGGER_DATABASE_CALCULATE_PERCENTAGE_POS_AMBIGUOUS_WORDS
+			int ambiguousWordCount = sentenceContents->size() - nonAmbiguousWordCount;
+			cout << "ambiguousWordCount\tsentenceContentsSize\t" << ambiguousWordCount << "\t" << sentenceContents->size() << endl;
+			#endif
 			#endif
 
 			#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_MEMORY_FREE_DELETE_PREPROCESSOR_SENTENCES_ONCE_PROCESSED
