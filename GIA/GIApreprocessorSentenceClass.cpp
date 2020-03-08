@@ -24,9 +24,9 @@
 /*******************************************************************************
  *
  * File Name: GIApreprocessorSentenceClass.cpp
- * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
+ * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j5a 13-September-2019
+ * Project Version: 3j6a 10-January-2020
  * Requirements: requires plain text file
  * Description: Preprocessor Sentence Class
  * /

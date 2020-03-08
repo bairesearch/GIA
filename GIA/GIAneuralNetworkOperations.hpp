@@ -24,9 +24,9 @@
 /*******************************************************************************
  *
  * File Name: GIAneuralNetworkOperations.hpp
- * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
+ * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j5a 13-September-2019
+ * Project Version: 3j6a 10-January-2020
  * Description: Neural Network - visual representation of GIA contents in prototype biological neural network
  * /
  *******************************************************************************/
@@ -129,7 +129,7 @@ class GIAneuralNetworkOperationsClass
 	public: ANNneuron* getFirstConceptNeuron(ANNneuron* firstInputNeuronInNetwork);
 	public: ANNneuron* getFirstSpecificConceptNeuron(ANNneuron* firstInputNeuronInNetwork);
 	public: ANNneuron* getFirstInstanceNeuron(ANNneuron* firstInputNeuronInNetwork);
-	#ifdef GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS_MAX
+	#ifdef GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS
 	private: ANNneuron* getFirstConceptIndexBitNeuron(ANNneuron* firstInputNeuronInNetwork, const int conceptIndexType);
 	private: ANNneuron* getFirstConceptIndexBitNeuron(ANNneuron* firstInputNeuronInNetwork, const GIAentityNode* entity);
 		private: ANNneuron* getFirstSubstanceConceptIndexBitNeuron(ANNneuron* firstInputNeuronInNetwork);

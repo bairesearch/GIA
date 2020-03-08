@@ -24,9 +24,9 @@
 /*******************************************************************************
  *
  * File Name: GIAglobalsDefs.hpp
- * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
+ * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j5a 13-September-2019
+ * Project Version: 3j6a 10-January-2020
  * Requirements: 
  * Description: GIA specific global definitions
  * /
@@ -875,6 +875,7 @@
 		//#define GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_PRELIMTEST_GENERATE_CLASSIFICATION_NET_INPUT_DATASET	//generates preliminary (non-functional) representation of sequence grammer network exclusively using ANNneuronClass rather than GIAtxtRelTranslatorRulesGroupClass:ANNneuronClass
 		#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_PRELIMTEST_GENERATE_CLASSIFICATION_NET_INPUT_DATASET
 			#ifdef COMPILE_GIA_GENERATE_POS_TAGGER_DATABASE	//ie GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE
+				//output POS tag derivations from wikidump to file
 				//assume compiled with COMPILE_GIA_WITH_ANN_GENERATE_POS_TAGGER_DATABASE
 				#define GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_PRELIMTEST_GENERATE_CLASSIFICATION_NET_INPUT_DATASET_VIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE
 				#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR_PRELIMTEST_GENERATE_CLASSIFICATION_NET_INPUT_DATASET_VIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE
@@ -898,8 +899,9 @@
 		#else
 			//final version (non testing) 
 			#ifdef COMPILE_GIA_GENERATE_POS_TAGGER_DATABASE	//ie GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE
+				//execute GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerate directly/immediately on wikidump POS tag derivations
 				//assume compiled with COMPILE_GIA_WITH_ANN_GENERATE_POS_TAGGER_DATABASE
-				#define GIA_PREPROCESSOR_POS_TAGGER_GENERATE_NEURAL_NETWORK_SEQUENCE_GRAMMAR
+				#define GIA_PREPROCESSOR_POS_TAGGER_GENERATE_NEURAL_NETWORK_SEQUENCE_GRAMMAR		
 				#ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_NEURAL_NETWORK_SEQUENCE_GRAMMAR
 					#define GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE_RAW	//this is an adaption of GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE to output entire sentence POS rather than that centred on a particular word
 					//#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_INTERNAL_CLASSIFICATION_NET	//uses these variables
@@ -1008,6 +1010,12 @@
 		#endif		
 	#endif
 	
+#endif
+
+#ifdef COMPILE_GIA_GENERATE_POS_TAGGER_DATABASE
+	#ifndef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_SEQUENCE_GRAMMAR
+		#define COMPILE_GIA_GENERATE_POS_TAGGER_DATABASE_ORIG
+	#endif
 #endif
 
 //#define GIA_DEBUG_DISABLE_3i_CODE
@@ -1139,7 +1147,9 @@
 	
 	#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK			
 		#ifdef USE_ANN
-			#define GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN	//GIA3h3a
+			#ifndef COMPILE_GIA_GENERATE_POS_TAGGER_DATABASE_ORIG
+				#define GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN	//GIA3h3a
+			#endif
 			#ifdef GIA_TXT_REL_TRANSLATOR_NEURAL_NETWORK_ANN
 
 				//#ifdef GIA_NEURAL_NETWORK_SYMBOLIC_CORE	//not yet defined;
@@ -1744,14 +1754,23 @@
 	#endif
 	#ifdef GIA_PREPROCESSOR_POS_TAGGER
 		
-		#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY	//GIA3e9b			//this is now mandatory for GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM and GIA_PREPROCESSOR_POS_TAGGER_DATABASE_MAP databases as POSambiguityInfo is no longer restricted to 8 bit (ie is now 64 bit int64_t) - to maintain database performance (>=GIA3e11a) 
-		#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY
-			#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY_ONLY_TRAIN_UNAMBIGUOUS_PERMUTATIONS		//With a classification net or file system DB can risk feeding it with bad hypothetical pos permutations (because will take the permutation predicted with the highest hits), but cannot with a neural net (as this would degrade neural net performance; there would be more than 1 bad permutation for every good permutation fed on average)?
-			#ifndef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY_ONLY_TRAIN_UNAMBIGUOUS_PERMUTATIONS
-				//#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY_ASSIGN_WEIGHTS_TO_TRAINED_POS_TYPES	//GIA3e11a - this is required to compensate for always ambiguous POStypes (e.g. auxiliary "have" [can be a verb also]); the more specialised POStype hypothesis (e.g. auxiliary) is assigned a higher weight than the less specialised POStype hypothesis (e.g. verb) - derived from wordlist size
-				#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY_ASSIGN_WEIGHTS_TO_TRAINED_POS_TYPES
-					#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY_ASSIGN_WEIGHTS_TO_TRAINED_POS_TYPES_WEIGHT_STANDARD (1.0)
-					#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY_ASSIGN_WEIGHTS_TO_TRAINED_POS_TYPES_WEIGHT_HIGH (2.0)
+		//#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_DO_NOT_TRAIN_POS_INDEX_OUT_OF_SENTENCE_BOUNDS	//GIA3j6a	//optional: 1) can theoretically increase neural net training performance with !GIA_PREPROCESSOR_POS_TAGGER_DATABASE_TRAIN_AMBIGUOUS_PERMUTATIONS&&!GIA_PREPROCESSOR_POS_TAGGER_DATABASE_GENERATE_SET_OF_ARTIFICIAL_UNAMBIGUOUS_PERMUTATIONS_FOR_EVERY_AMBIGOUS_PERMUTATION as not overloading training set with sequences containing majority unambigious out of bounds POS). 2) can guarantee that the neural net is provided a min amount of data during training (however will prevent small sentence sequences from being entered into db) 
+		#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_TRAIN_AMBIGUOUS_PERMUTATIONS	//clarification def added GIA3j6a
+		#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_TRAIN_AMBIGUOUS_PERMUTATIONS
+
+		#else
+			#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY	//GIA3e9b			//this is now mandatory for GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FILESYSTEM and GIA_PREPROCESSOR_POS_TAGGER_DATABASE_MAP databases as POSambiguityInfo is no longer restricted to 8 bit (ie is now 64 bit int64_t) - to maintain database performance (>=GIA3e11a) 
+			#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY
+				#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_GENERATE_SET_OF_ARTIFICIAL_UNAMBIGUOUS_PERMUTATIONS_FOR_EVERY_AMBIGOUS_PERMUTATION	//clarification def added GIA3j6a
+				#ifndef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_GENERATE_SET_OF_ARTIFICIAL_UNAMBIGUOUS_PERMUTATIONS_FOR_EVERY_AMBIGOUS_PERMUTATION
+					#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY_ONLY_TRAIN_UNAMBIGUOUS_PERMUTATIONS		//With a classification net or file system DB can risk feeding it with bad hypothetical pos permutations (because will take the permutation predicted with the highest hits), but cannot with a neural net (as this would degrade neural net performance; there would be more than 1 bad permutation for every good permutation fed on average)?
+					#ifndef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY_ONLY_TRAIN_UNAMBIGUOUS_PERMUTATIONS
+						//#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY_ASSIGN_WEIGHTS_TO_TRAINED_POS_TYPES	//GIA3e11a - this is required to compensate for always ambiguous POStypes (e.g. auxiliary "have" [can be a verb also]); the more specialised POStype hypothesis (e.g. auxiliary) is assigned a higher weight than the less specialised POStype hypothesis (e.g. verb) - derived from wordlist size
+						#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY_ASSIGN_WEIGHTS_TO_TRAINED_POS_TYPES
+							#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY_ASSIGN_WEIGHTS_TO_TRAINED_POS_TYPES_WEIGHT_STANDARD (1.0)
+							#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY_ASSIGN_WEIGHTS_TO_TRAINED_POS_TYPES_WEIGHT_HIGH (2.0)
+						#endif
+					#endif
 				#endif
 			#endif
 		#endif
@@ -1797,7 +1816,7 @@
 				#define GIA_DEBUG_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_PRINT_PREDICTIONS	//temp
 				#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_MEMORY_FREE_WRITE_EXPERIENCES_DIRECTLY_TO_FILE
 				//#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_TRAIN_EXECUTE_FEED	//currently disabled due to a combination of a memory leak and the size of the batch data
-				#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_TRAIN_SINGLE_BATCH_ONLY	//currently required due to a combination of a memory leak and the size of the batch data
+				//#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_TRAIN_SINGLE_BATCH_ONLY	//currently required due to a combination of a memory leak and the size of the batch data
 				#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_TRAIN_SINGLE_BATCH_ONLY
 					#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_TRAIN_EXECUTE_FEED
 						#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_TRAIN_EXECUTE_FEED_SINGLE_BATCH_ONLY 
@@ -1876,6 +1895,7 @@
 		#endif	
 
 		#ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE
+			#define GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE_DOC_XML_OUTPUT_START_FILE (0)	//0
 			#define GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE_DOC_XML_OUTPUT_NUMBER_OF_FILES (1203)	//wiki dump files are generated with WikiExtractor (https://github.com/attardi/wikiextractor)	//121	
 			#define GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE_DOC_XML_OUTPUT_NAME_PART_A "wiki_"
 			#define GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE_DOC_XML_OUTPUT_NAME_PART_B_INDEX_NUMBER_OF_CHARACTERS (4)
@@ -1900,7 +1920,9 @@
 		//#define GIA_DEBUG_QUERY2
 	#endif
 	#ifdef USE_ANN
-		#define GIA_NEURAL_NETWORK	//experimental only
+		#ifndef COMPILE_GIA_GENERATE_POS_TAGGER_DATABASE_ORIG
+			#define GIA_NEURAL_NETWORK	//experimental only
+		#endif
 		#ifdef GIA_NEURAL_NETWORK
 			#define GIA_NEURAL_NETWORK_MAX_SPECIFIC_CONCEPT_DEPTH (5)
 			#define GIA_NEURAL_NETWORK_MAX_INSTANCE_DEPTH (5)

@@ -24,9 +24,9 @@
 /*******************************************************************************
  *
  * File Name: GIApreprocessorPOStagger.cpp
- * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
+ * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j5a 13-September-2019
+ * Project Version: 3j6a 10-January-2020
  * Requirements: requires plain text file
  * Description: Preprocessor POS tagger
  * /
@@ -527,7 +527,7 @@ bool GIApreprocessorPOStaggerClass::generatePOStaggerDatabaseFromWikiDumpText(co
 
 	string currentFolder = SHAREDvarsClass().getCurrentDirectory();
 			
-	for(int wikiDumpFileBatchIndex=0; wikiDumpFileBatchIndex<GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE_DOC_XML_OUTPUT_NUMBER_OF_FILES; wikiDumpFileBatchIndex++)
+	for(int wikiDumpFileBatchIndex=GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE_DOC_XML_OUTPUT_START_FILE; wikiDumpFileBatchIndex<GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE_DOC_XML_OUTPUT_NUMBER_OF_FILES; wikiDumpFileBatchIndex++)
 	{
 		if(!generatePOStaggerDatabaseFromWikiDumpText(wikiDumpFolderName, wikiDumpFileBatchIndex, useLRP))
 		{
@@ -653,121 +653,125 @@ bool GIApreprocessorPOStaggerClass::generatePOStaggerDatabaseFromWikiDumpText(co
 				#endif
 
 				vector<uint64_t> POSambiguityInfoPermutation;
-				if(!generatePOSambiguityInfoPermutation(sentenceContents, wCentre, &identifiedEveryWordInDatabasePOSpermutation, &identifiedEveryWordInDatabasePOSpermutationIsUnambiguous, &POSambiguityInfoPermutation))
+				if(generatePOSambiguityInfoPermutation(sentenceContents, wCentre, &identifiedEveryWordInDatabasePOSpermutation, &identifiedEveryWordInDatabasePOSpermutationIsUnambiguous, &POSambiguityInfoPermutation))
 				{
-					result = false;
-				}
-
-				#ifndef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE_RAW
-				#ifdef GIA_PREPROCESSOR_POS_TAGGER_ONLY_ADD_DATABASE_ENTRY_IF_POS_AMBIGUITY_INFO_FOUND_FOR_EVERY_CONTEXT_WORD
-				if(identifiedEveryWordInDatabasePOSpermutation)
-				{
-				#endif
-					unsigned char centreWordUnambiguousPOSindex = INT_DEFAULT_VALUE;
-					bool centreWordAmbiguous = GIApreprocessorPOStaggerDatabase.determinePOSambiguityInfoIsAmbiguous(centreWordPOSambiguityInfo, &centreWordUnambiguousPOSindex, true);
-					#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY_ONLY_TRAIN_UNAMBIGUOUS_PERMUTATIONS
-					if(identifiedEveryWordInDatabasePOSpermutationIsUnambiguous && !centreWordAmbiguous)
+					#ifndef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE_RAW
+					#ifdef GIA_PREPROCESSOR_POS_TAGGER_ONLY_ADD_DATABASE_ENTRY_IF_POS_AMBIGUITY_INFO_FOUND_FOR_EVERY_CONTEXT_WORD
+					if(identifiedEveryWordInDatabasePOSpermutation)
 					{
 					#endif
-						#ifndef GIA_PREPROCESSOR_POS_TAGGER_INCLUDE_CENTRE_WORD_IN_POS_PERMUTATION_EVEN_IF_AMBIGUOUS
-						if(!centreWordAmbiguous)
+						unsigned char centreWordUnambiguousPOSindex = INT_DEFAULT_VALUE;
+						bool centreWordAmbiguous = GIApreprocessorPOStaggerDatabase.determinePOSambiguityInfoIsAmbiguous(centreWordPOSambiguityInfo, &centreWordUnambiguousPOSindex, true);
+						#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY_ONLY_TRAIN_UNAMBIGUOUS_PERMUTATIONS
+						if(identifiedEveryWordInDatabasePOSpermutationIsUnambiguous && !centreWordAmbiguous)
 						{
 						#endif
-				#endif
-							#ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_NEURAL_NETWORK_SEQUENCE_GRAMMAR_ONLY_TRAIN_UNAMBIGUOUS_PERMUTATIONS
-							/*
-							bool allWordsHaveUnambigiousPOS = true;
-							for(int i=0; i<POSambiguityInfoPermutation.size(); i++)
+							#ifndef GIA_PREPROCESSOR_POS_TAGGER_INCLUDE_CENTRE_WORD_IN_POS_PERMUTATION_EVEN_IF_AMBIGUOUS
+							if(!centreWordAmbiguous)
 							{
-								bool treatWordAsAmbiguousIfNullPOSvalue = true;
-								int unambiguousPOSinfoIndexNOTUSED;
-								if(GIApreprocessorPOStaggerDatabase.determinePOSambiguityInfoIsAmbiguous(POSambiguityInfoPermutation[i], &,unambiguousPOSinfoIndexNOTUSED, treatWordAsAmbiguousIfNullPOSvalue);
+							#endif
+					#endif
+								#ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_NEURAL_NETWORK_SEQUENCE_GRAMMAR_ONLY_TRAIN_UNAMBIGUOUS_PERMUTATIONS
+								/*
+								bool allWordsHaveUnambigiousPOS = true;
+								for(int i=0; i<POSambiguityInfoPermutation.size(); i++)
 								{
-									allWordsHaveUnambigiousPOS = false;
+									bool treatWordAsAmbiguousIfNullPOSvalue = true;
+									int unambiguousPOSinfoIndexNOTUSED;
+									if(GIApreprocessorPOStaggerDatabase.determinePOSambiguityInfoIsAmbiguous(POSambiguityInfoPermutation[i], &,unambiguousPOSinfoIndexNOTUSED, treatWordAsAmbiguousIfNullPOSvalue);
+									{
+										allWordsHaveUnambigiousPOS = false;
+									}
 								}
-							}
-							if(allWordsHaveUnambigiousPOS)
-							*/
-							if(identifiedEveryWordInDatabasePOSpermutationIsUnambiguous)
-							{
-								setSentenceContentsWordsUnambiguousPOSindex(sentenceContents, &POSambiguityInfoPermutation);
-								
+								if(allWordsHaveUnambigiousPOS)
+								*/
+								if(identifiedEveryWordInDatabasePOSpermutationIsUnambiguous)
+								{
+									setSentenceContentsWordsUnambiguousPOSindex(sentenceContents, &POSambiguityInfoPermutation);
+
+									#ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_NEURAL_NETWORK_SEQUENCE_GRAMMAR_PRINT_SENTENCES
+									GIApreprocessorSentenceClassObject.printSentence(sentenceContents, false);
+									#endif
+								#else
+
 								#ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_NEURAL_NETWORK_SEQUENCE_GRAMMAR_PRINT_SENTENCES
 								GIApreprocessorSentenceClassObject.printSentence(sentenceContents, false);
 								#endif
-							#else
-							
-							#ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_NEURAL_NETWORK_SEQUENCE_GRAMMAR_PRINT_SENTENCES
-							GIApreprocessorSentenceClassObject.printSentence(sentenceContents, false);
-							#endif
-								
-							#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY
-							vector<vector<uint64_t>*> POSambiguityInfoUnambiguousPermutationArray;
-							vector<uint64_t>* POSambiguityInfoUnambiguousPermutationNew = new vector<uint64_t>(POSambiguityInfoPermutation.size());
-							POSambiguityInfoUnambiguousPermutationArray.push_back(POSambiguityInfoUnambiguousPermutationNew);
-							generatePOSambiguityInfoUnambiguousPermutationArray(&POSambiguityInfoUnambiguousPermutationArray, &POSambiguityInfoPermutation, POSambiguityInfoUnambiguousPermutationNew, 0);
-							for(int i=0; i<POSambiguityInfoUnambiguousPermutationArray.size(); i++)
-							{
-								vector<uint64_t>* POSambiguityInfoPermutationTemp = POSambiguityInfoUnambiguousPermutationArray[i];
-								#ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_NEURAL_NETWORK_SEQUENCE_GRAMMAR
-								setSentenceContentsWordsUnambiguousPOSindex(sentenceContents, POSambiguityInfoPermutationTemp);
-								#endif
 
-							#else
-								vector<uint64_t>* POSambiguityInfoPermutationTemp = &POSambiguityInfoPermutation;
-								#ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_NEURAL_NETWORK_SEQUENCE_GRAMMAR
-								(sentenceContents->at(w))->POSambiguityInfo = (*POSambiguityInfoPermutation)[w];
-								#endif
-							#endif
-							#endif
-
-								#ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_NEURAL_NETWORK_SEQUENCE_GRAMMAR
-								
-
-
-								vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes = GIAtxtRelTranslatorRules.getGIAtxtRelTranslatorRulesGroupTypesGlobal();
-								bool createNewConnections = true; 
-								vector<GIAtxtRelTranslatorRulesGroupNeuralNetwork*> firstLayer;
-								if(GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerate.executeTxtRelTranslatorNeuralNetwork(&translatorVariablesNOTUSED, GIAtxtRelTranslatorRulesGroupTypes, sentenceContents, createNewConnections, &firstLayer))
+								#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY
+								vector<vector<uint64_t>*> POSambiguityInfoUnambiguousPermutationArray;
+								vector<uint64_t>* POSambiguityInfoUnambiguousPermutationNew = new vector<uint64_t>(POSambiguityInfoPermutation.size());
+								POSambiguityInfoUnambiguousPermutationArray.push_back(POSambiguityInfoUnambiguousPermutationNew);
+								generatePOSambiguityInfoUnambiguousPermutationArray(&POSambiguityInfoUnambiguousPermutationArray, &POSambiguityInfoPermutation, POSambiguityInfoUnambiguousPermutationNew, 0);
+								for(int i=0; i<POSambiguityInfoUnambiguousPermutationArray.size(); i++)
 								{
-									result = true;
+									vector<uint64_t>* POSambiguityInfoPermutationTemp = POSambiguityInfoUnambiguousPermutationArray[i];
+									#ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_NEURAL_NETWORK_SEQUENCE_GRAMMAR
+									setSentenceContentsWordsUnambiguousPOSindex(sentenceContents, POSambiguityInfoPermutationTemp);
+									#endif
+
+								#else
+									vector<uint64_t>* POSambiguityInfoPermutationTemp = &POSambiguityInfoPermutation;
+									#ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_NEURAL_NETWORK_SEQUENCE_GRAMMAR
+									(sentenceContents->at(w))->POSambiguityInfo = (*POSambiguityInfoPermutation)[w];
+									#endif
+								#endif
+								#endif
+
+									#ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_NEURAL_NETWORK_SEQUENCE_GRAMMAR
+
+
+
+									vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes = GIAtxtRelTranslatorRules.getGIAtxtRelTranslatorRulesGroupTypesGlobal();
+									bool createNewConnections = true; 
+									vector<GIAtxtRelTranslatorRulesGroupNeuralNetwork*> firstLayer;
+									if(GIAtxtRelTranslatorNeuralNetworkPropagateCompactGenerate.executeTxtRelTranslatorNeuralNetwork(&translatorVariablesNOTUSED, GIAtxtRelTranslatorRulesGroupTypes, sentenceContents, createNewConnections, &firstLayer))
+									{
+										result = true;
+									}
+									#else
+									#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL
+									#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_MEMORY_FREE_WRITE_EXPERIENCES_DIRECTLY_TO_FILE
+									if(!addPOStaggerDatabaseEntry(centreWordPOSambiguityInfo, POSambiguityInfoPermutationTemp, centreWordUnambiguousPOSindex, &XtrainBatchFileObject, &YtrainBatchFileObject))
+									#else
+									if(!addPOStaggerDatabaseEntry(centreWordPOSambiguityInfo, POSambiguityInfoPermutationTemp, centreWordUnambiguousPOSindex, currentExperienceInList))
+									#endif
+									#else
+									if(!addPOStaggerDatabaseEntry(centreWordPOSambiguityInfo, POSambiguityInfoPermutationTemp, centreWordUnambiguousPOSindex, &numberOfNeuralNetworkFeeds))
+									#endif
+									{
+										result = false;
+									}
+									#endif
+								#ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_NEURAL_NETWORK_SEQUENCE_GRAMMAR_ONLY_TRAIN_UNAMBIGUOUS_PERMUTATIONS
 								}
 								#else
-								#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL
-								#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_MEMORY_FREE_WRITE_EXPERIENCES_DIRECTLY_TO_FILE
-								if(!addPOStaggerDatabaseEntry(centreWordPOSambiguityInfo, POSambiguityInfoPermutationTemp, centreWordUnambiguousPOSindex, &XtrainBatchFileObject, &YtrainBatchFileObject))
-								#else
-								if(!addPOStaggerDatabaseEntry(centreWordPOSambiguityInfo, POSambiguityInfoPermutationTemp, centreWordUnambiguousPOSindex, currentExperienceInList))
-								#endif
-								#else
-								if(!addPOStaggerDatabaseEntry(centreWordPOSambiguityInfo, POSambiguityInfoPermutationTemp, centreWordUnambiguousPOSindex, &numberOfNeuralNetworkFeeds))
-								#endif
-								{
-									result = false;
+								#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY
 								}
 								#endif
-							#ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_NEURAL_NETWORK_SEQUENCE_GRAMMAR_ONLY_TRAIN_UNAMBIGUOUS_PERMUTATIONS
+								#endif
+					#ifndef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE_RAW			
+							#ifndef GIA_PREPROCESSOR_POS_TAGGER_INCLUDE_CENTRE_WORD_IN_POS_PERMUTATION_EVEN_IF_AMBIGUOUS
 							}
-							#else
-							#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY
-							}
+							#endif  
+
+							#ifdef GIA_PREPROCESSOR_POS_TAGGER_POS_DEBUG
+							cout << "insertInstanceInPOStaggerMap: POSambiguityInfoPermutation = " << POSambiguityInfoPermutation << ", centreWordPOSambiguityInfo = " << centreWordPOSambiguityInfo << endl;
 							#endif
-							#endif
-				#ifndef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE_RAW			
-						#ifndef GIA_PREPROCESSOR_POS_TAGGER_INCLUDE_CENTRE_WORD_IN_POS_PERMUTATION_EVEN_IF_AMBIGUOUS
+						#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY_ONLY_TRAIN_UNAMBIGUOUS_PERMUTATIONS
 						}
-						#endif  
-
-						#ifdef GIA_PREPROCESSOR_POS_TAGGER_POS_DEBUG
-						cout << "insertInstanceInPOStaggerMap: POSambiguityInfoPermutation = " << POSambiguityInfoPermutation << ", centreWordPOSambiguityInfo = " << centreWordPOSambiguityInfo << endl;
 						#endif
-					#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY_ONLY_TRAIN_UNAMBIGUOUS_PERMUTATIONS
+					#ifdef GIA_PREPROCESSOR_POS_TAGGER_ONLY_ADD_DATABASE_ENTRY_IF_POS_AMBIGUITY_INFO_FOUND_FOR_EVERY_CONTEXT_WORD
 					}
 					#endif
-				#ifdef GIA_PREPROCESSOR_POS_TAGGER_ONLY_ADD_DATABASE_ENTRY_IF_POS_AMBIGUITY_INFO_FOUND_FOR_EVERY_CONTEXT_WORD
+					#endif
 				}
-				#endif
-				#endif
+				else
+				{
+					#ifndef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_DO_NOT_TRAIN_POS_INDEX_OUT_OF_SENTENCE_BOUNDS
+					result = false;
+					#endif
+				}
 			#ifndef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE_RAW
 			}
 			#endif
@@ -1160,59 +1164,72 @@ bool GIApreprocessorPOStaggerClass::generatePOSambiguityInfoPermutation(vector<G
 	#endif
 	int POSambiguityInfoPermutationIndex = 0;	
 
-	for(int w=wMin; w<=wMax; w++)
-	{	
-		/*
-		#ifdef GIA_PREPROCESSOR_POS_TAGGER_INCLUDE_CENTRE_WORD_IN_POS_PERMUTATION_OLD
-		if(w == wCentre)	
-		{
-			(*POSambiguityInfoPermutation)[POSambiguityInfoPermutationIndex] = SHAREDvars.setBitValue(GIA_PREPROCESSOR_POS_TAGGER_POS_AMBIGUITY_INFO_UNKNOWN, GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_INPUT_CENTRE_WORD_NOTUSED, true);
-			POSambiguityInfoPermutationIndex++;	//?
-		}
-		#else
-		*/
-		#ifndef GIA_PREPROCESSOR_POS_TAGGER_INCLUDE_CENTRE_WORD_IN_POS_PERMUTATION
-		if(w == wCentre)	
-		{
-			//ignore centre word
-		}
-		else 
-		#endif
-		/*
-		#endif
-		*/
-		if((w < 0) || (w >= sentenceContents->size()))
-		{
-			(*POSambiguityInfoPermutation)[POSambiguityInfoPermutationIndex] = SHAREDvars.setBitValue(GIA_PREPROCESSOR_POS_TAGGER_POS_AMBIGUITY_INFO_UNKNOWN, GIA_PREPROCESSOR_POS_TAGGER_DATABASE_POS_INDEX_OUT_OF_SENTENCE_BOUNDS, true);	
-			POSambiguityInfoPermutationIndex++;					
-		}
-		else
-		{
-			GIApreprocessorPlainTextWord* contextWord = sentenceContents->at(w);
-
-			bool contextWordPOSisAmbiguous = false;
-			uint64_t contextWordPOSambiguityInfo = GIA_PREPROCESSOR_POS_TAGGER_POS_AMBIGUITY_INFO_UNKNOWN;	//default value
-			unsigned char contextWordUnambiguousPOSindex = INT_DEFAULT_VALUE;	//GIA_PREPROCESSOR_POS_TYPE_UNDEFINED;
-			if(!determinePOSambiguityInfo(contextWord, &contextWordPOSambiguityInfo, &contextWordPOSisAmbiguous, &contextWordUnambiguousPOSindex, identifiedEveryWordInDatabasePOSpermutation))
-			{
-				result = false;
-			}
-			#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY_ONLY_TRAIN_UNAMBIGUOUS_PERMUTATIONS
-			if(contextWordPOSisAmbiguous)
-			{
-				*identifiedEveryWordInDatabasePOSpermutationIsUnambiguous = false;
-			}
-			#endif
-			
-			(*POSambiguityInfoPermutation)[POSambiguityInfoPermutationIndex] = contextWordPOSambiguityInfo;
-			/*
-			cout << "\t\tcontextWordLowerCase = " << contextWordLowerCase << endl;
-			cout << "\t\tPOSambiguityInfoPermutationIndex = " << POSambiguityInfoPermutationIndex << endl;
-			cout << "\t\tcontextWordPOSambiguityInfo = " << contextWordPOSambiguityInfo <<endl;
-			*/
-			POSambiguityInfoPermutationIndex++;
-		}
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_DO_NOT_TRAIN_POS_INDEX_OUT_OF_SENTENCE_BOUNDS
+	bool sequenceContainsPosIndexOutOfSentenceBounds = false;
+	if((wMin < 0) || (wMax >= sentenceContents->size()))
+	{
+		sequenceContainsPosIndexOutOfSentenceBounds = true;
+		result = false;
 	}
+	if(!sequenceContainsPosIndexOutOfSentenceBounds)
+	{
+	#endif
+		for(int w=wMin; w<=wMax; w++)
+		{	
+			/*
+			#ifdef GIA_PREPROCESSOR_POS_TAGGER_INCLUDE_CENTRE_WORD_IN_POS_PERMUTATION_OLD
+			if(w == wCentre)	
+			{
+				(*POSambiguityInfoPermutation)[POSambiguityInfoPermutationIndex] = SHAREDvars.setBitValue(GIA_PREPROCESSOR_POS_TAGGER_POS_AMBIGUITY_INFO_UNKNOWN, GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_INPUT_CENTRE_WORD_NOTUSED, true);
+				POSambiguityInfoPermutationIndex++;	//?
+			}
+			#else
+			*/
+			#ifndef GIA_PREPROCESSOR_POS_TAGGER_INCLUDE_CENTRE_WORD_IN_POS_PERMUTATION
+			if(w == wCentre)	
+			{
+				//ignore centre word
+			}
+			else 
+			#endif
+			/*
+			#endif
+			*/
+			if((w < 0) || (w >= sentenceContents->size()))
+			{
+				(*POSambiguityInfoPermutation)[POSambiguityInfoPermutationIndex] = SHAREDvars.setBitValue(GIA_PREPROCESSOR_POS_TAGGER_POS_AMBIGUITY_INFO_UNKNOWN, GIA_PREPROCESSOR_POS_TAGGER_DATABASE_POS_INDEX_OUT_OF_SENTENCE_BOUNDS, true);	
+				POSambiguityInfoPermutationIndex++;					
+			}
+			else
+			{
+				GIApreprocessorPlainTextWord* contextWord = sentenceContents->at(w);
+
+				bool contextWordPOSisAmbiguous = false;
+				uint64_t contextWordPOSambiguityInfo = GIA_PREPROCESSOR_POS_TAGGER_POS_AMBIGUITY_INFO_UNKNOWN;	//default value
+				unsigned char contextWordUnambiguousPOSindex = INT_DEFAULT_VALUE;	//GIA_PREPROCESSOR_POS_TYPE_UNDEFINED;
+				if(!determinePOSambiguityInfo(contextWord, &contextWordPOSambiguityInfo, &contextWordPOSisAmbiguous, &contextWordUnambiguousPOSindex, identifiedEveryWordInDatabasePOSpermutation))
+				{
+					result = false;
+				}
+				#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY_ONLY_TRAIN_UNAMBIGUOUS_PERMUTATIONS
+				if(contextWordPOSisAmbiguous)
+				{
+					*identifiedEveryWordInDatabasePOSpermutationIsUnambiguous = false;
+				}
+				#endif
+
+				(*POSambiguityInfoPermutation)[POSambiguityInfoPermutationIndex] = contextWordPOSambiguityInfo;
+				/*
+				cout << "\t\tcontextWordLowerCase = " << contextWordLowerCase << endl;
+				cout << "\t\tPOSambiguityInfoPermutationIndex = " << POSambiguityInfoPermutationIndex << endl;
+				cout << "\t\tcontextWordPOSambiguityInfo = " << contextWordPOSambiguityInfo <<endl;
+				*/
+				POSambiguityInfoPermutationIndex++;
+			}
+		}
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_DO_NOT_TRAIN_POS_INDEX_OUT_OF_SENTENCE_BOUNDS
+	}
+	#endif
 		
 	return result;
 }	

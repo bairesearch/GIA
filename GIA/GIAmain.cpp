@@ -24,9 +24,9 @@
 /*******************************************************************************
  *
  * File Name: GIAmain.cpp
- * Author: Richard Bruce Baxter - Copyright (c) 2005-2019 Baxter AI (baxterai.com)
+ * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3j5a 13-September-2019
+ * Project Version: 3j6a 10-January-2020
  * Requirements: 
  * Description: Main
  * /
@@ -667,7 +667,7 @@ int main(const int argc, const char** argv)
 
 	if(SHAREDvarsClass().argumentExists(argc, argv, "-version"))
 	{
-		cout << "GIA.exe - Project Version: 3j5a 13-September-2019" << endl;
+		cout << "GIA.exe - Project Version: 3j6a 10-January-2020" << endl;
 		exit(EXIT_OK);
 	}
 
@@ -1051,7 +1051,11 @@ int main(const int argc, const char** argv)
 	}
 	#endif	
 	
+	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_NEURAL_NETWORK_EXTERNAL_TRAIN_SINGLE_BATCH_ONLY
 	if(!GIApreprocessorPOStaggerClass().generatePOStaggerDatabaseFromWikiDumpText(wikiDumpFolderName, wikiDumpFileBatchIndex, useLRP))
+	#else
+	if(!GIApreprocessorPOStaggerClass().generatePOStaggerDatabaseFromWikiDumpText(wikiDumpFolderName, useLRP))	
+	#endif
 	{
 		result = false;
 	}	
