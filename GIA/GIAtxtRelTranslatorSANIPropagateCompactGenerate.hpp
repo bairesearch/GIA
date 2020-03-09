@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorSANIPropagateCompactGenerate.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k1b 05-March-2020
+ * Project Version: 3k1c 05-March-2020
  * Requirements: 
  * Description: Textual Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Propagate Compact - unsupervised training of sequence grammar parse network
  * /

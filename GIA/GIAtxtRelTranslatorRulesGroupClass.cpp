@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorRulesGroupClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k1b 05-March-2020
+ * Project Version: 3k1c 05-March-2020
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Rules
  * /
@@ -183,7 +183,7 @@ GIAtxtRelTranslatorRulesGroupNeuralNetwork::GIAtxtRelTranslatorRulesGroupNeuralN
 	//GIAtxtRelTranslatorRulesGroupNeuralNetwork variables;
 	#ifdef GIA_TXT_REL_TRANSLATOR_SANI
 	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR
-	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_ACTIVATED_NEURON_WITH_MAX_WORD_COVERAGE_SUPPORT_FIRST_COMPONENT_VARIABLE
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_FIRST_COMPONENTS
 	activatedNeuronWithMaxWordIndexCoverageVariableStartComponentTemp = false;
 	#endif
 	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_VERIFY_NO_CIRCULAR
@@ -334,9 +334,11 @@ GIAtxtRelTranslatorRulesGroupParseTree::GIAtxtRelTranslatorRulesGroupParseTree(v
 	//variableStartComponentFound = false;
 	missingOrVariableStartComponentFound = false;
 	#endif
-	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_ACTIVATED_NEURON_WITH_MAX_WORD_COVERAGE_SUPPORT_FIRST_COMPONENT_VARIABLE
+	/*
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_FIRST_COMPONENTS
 	missingStartComponentFound = false;
 	#endif
+	*/
 	#endif
 	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_HEAVY
 	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_HEAVY_OPTIMISED
@@ -418,7 +420,7 @@ GIAtxtRelTranslatorSANIForwardPropogationSentenceData::GIAtxtRelTranslatorSANIFo
 	parseSentenceReverse = false;
 
 	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR
-	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_ACTIVATED_NEURON_WITH_MAX_WORD_COVERAGE_SUPPORT_FIRST_COMPONENT_VARIABLE
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_FIRST_COMPONENTS
 	recordActivatedNeuronWithMaxWordIndexCoverageSupportVariableStartComponent = true;
 	#endif
 	recordActivatedNeuronWithMaxWordIndexCoverage = false;
@@ -431,7 +433,7 @@ GIAtxtRelTranslatorSANIForwardPropogationSentenceData::GIAtxtRelTranslatorSANIFo
 	#endif	
 	#endif
 	/*
-	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_ACTIVATED_NEURON_WITH_MAX_WORD_COVERAGE_SUPPORT_FIRST_COMPONENT_VARIABLE
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_FIRST_COMPONENTS
 	activatedNeuronWithMaxWordIndexCoverageMissingStartComponent = false;
 	#endif
 	*/
