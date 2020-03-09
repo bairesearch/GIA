@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorRulesGroupClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k1a 05-March-2020
+ * Project Version: 3k1b 05-March-2020
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Rules
  * /
@@ -182,6 +182,10 @@ GIAtxtRelTranslatorRulesGroupNeuralNetwork::GIAtxtRelTranslatorRulesGroupNeuralN
 {
 	//GIAtxtRelTranslatorRulesGroupNeuralNetwork variables;
 	#ifdef GIA_TXT_REL_TRANSLATOR_SANI
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_ACTIVATED_NEURON_WITH_MAX_WORD_COVERAGE_SUPPORT_FIRST_COMPONENT_VARIABLE
+	activatedNeuronWithMaxWordIndexCoverageVariableStartComponentTemp = false;
+	#endif
 	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_VERIFY_NO_CIRCULAR
 	verified = false;
 	#endif
@@ -191,7 +195,6 @@ GIAtxtRelTranslatorRulesGroupNeuralNetwork::GIAtxtRelTranslatorRulesGroupNeuralN
 	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_REQUIRE_NUM_COMPONENTS_ENFORCE_DURING_FIRST_HIDDEN_LAYER_GENERATION
 	firstHiddenLayerNeuron = false;
 	#endif
-	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR
 	groupTypeIsString = false;
 	//wordDataTemp = NULL;
 	wordPOStype = INT_DEFAULT_VALUE;
@@ -331,6 +334,9 @@ GIAtxtRelTranslatorRulesGroupParseTree::GIAtxtRelTranslatorRulesGroupParseTree(v
 	//variableStartComponentFound = false;
 	missingOrVariableStartComponentFound = false;
 	#endif
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_ACTIVATED_NEURON_WITH_MAX_WORD_COVERAGE_SUPPORT_FIRST_COMPONENT_VARIABLE
+	missingStartComponentFound = false;
+	#endif
 	#endif
 	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_HEAVY
 	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_HEAVY_OPTIMISED
@@ -412,15 +418,23 @@ GIAtxtRelTranslatorSANIForwardPropogationSentenceData::GIAtxtRelTranslatorSANIFo
 	parseSentenceReverse = false;
 
 	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_ACTIVATED_NEURON_WITH_MAX_WORD_COVERAGE_SUPPORT_FIRST_COMPONENT_VARIABLE
+	recordActivatedNeuronWithMaxWordIndexCoverageSupportVariableStartComponent = true;
+	#endif
 	recordActivatedNeuronWithMaxWordIndexCoverage = false;
 	activatedNeuronWithMaxWordIndexCoverage = NULL;
 	activatedNeuronWithMaxWordIndexCoveragePartial = false;
 	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_VARIABLE_FIRST_COMPONENTS
-	activatedNeuronWithMaxWordIndexCoverageVariable = false;
+	activatedNeuronWithMaxWordIndexCoverageVariableStartComponent = false;
 	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_PREVENT_INTRASENTENCE_MATCHING
 	//listOfHighLevelNeuronsCompleteHistory = NULL;
 	#endif	
 	#endif
+	/*
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_ACTIVATED_NEURON_WITH_MAX_WORD_COVERAGE_SUPPORT_FIRST_COMPONENT_VARIABLE
+	activatedNeuronWithMaxWordIndexCoverageMissingStartComponent = false;
+	#endif
+	*/
 	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_COMPONENT_DETECT_LOCAL_VARATION
 	findingCandidateComponent2 = false;
 	candidateComponent2ToFind = NULL;

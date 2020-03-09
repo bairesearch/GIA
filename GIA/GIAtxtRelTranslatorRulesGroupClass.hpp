@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorRulesGroupClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k1a 05-March-2020
+ * Project Version: 3k1b 05-March-2020
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Rules
  * /
@@ -242,6 +242,10 @@ public:
 
 	//GIAtxtRelTranslatorRulesGroupNeuralNetwork variables;
 	#ifdef GIA_TXT_REL_TRANSLATOR_SANI
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_ACTIVATED_NEURON_WITH_MAX_WORD_COVERAGE_SUPPORT_FIRST_COMPONENT_VARIABLE
+	bool activatedNeuronWithMaxWordIndexCoverageVariableStartComponentTemp;
+	#endif
 	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_VERIFY_NO_CIRCULAR
 	bool verified;
 	#endif
@@ -251,7 +255,6 @@ public:
 	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_REQUIRE_NUM_COMPONENTS_ENFORCE_DURING_FIRST_HIDDEN_LAYER_GENERATION
 	bool firstHiddenLayerNeuron;
 	#endif
-	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR
 	bool groupTypeIsString;
 	//GIAtxtRelTranslatorSANIForwardPropogationWordData* wordDataTemp;
 	int wordPOStype;
@@ -387,6 +390,9 @@ public:
 	//bool variableStartComponentFound;
 	bool missingOrVariableStartComponentFound;
 	#endif
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_ACTIVATED_NEURON_WITH_MAX_WORD_COVERAGE_SUPPORT_FIRST_COMPONENT_VARIABLE
+	bool missingStartComponentFound;
+	#endif
 	#endif
 	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_HEAVY
 	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_HEAVY_OPTIMISED
@@ -476,15 +482,23 @@ public:
 	bool parseSentenceReverse;
 	
 	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_ACTIVATED_NEURON_WITH_MAX_WORD_COVERAGE_SUPPORT_FIRST_COMPONENT_VARIABLE
+	bool recordActivatedNeuronWithMaxWordIndexCoverageSupportVariableStartComponent;
+	#endif
 	bool recordActivatedNeuronWithMaxWordIndexCoverage;
 	GIAtxtRelTranslatorRulesGroupParseTree* activatedNeuronWithMaxWordIndexCoverage;
 	bool activatedNeuronWithMaxWordIndexCoveragePartial;
 	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_VARIABLE_FIRST_COMPONENTS
-	bool activatedNeuronWithMaxWordIndexCoverageVariable;	//ie candidateCoverageMissingOrVariableStartComponent
+	bool activatedNeuronWithMaxWordIndexCoverageVariableStartComponent;	//ie candidateCoverageMissingOrVariableStartComponent
 	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_PREVENT_INTRASENTENCE_MATCHING
 	vector<GIAtxtRelTranslatorRulesGroupNeuralNetwork*> listOfHighLevelNeuronsCompleteHistory;
 	#endif
 	#endif
+	/*
+	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_ACTIVATED_NEURON_WITH_MAX_WORD_COVERAGE_SUPPORT_FIRST_COMPONENT_VARIABLE
+	bool activatedNeuronWithMaxWordIndexCoverageMissingStartComponent;
+	#endif
+	*/
 	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_COMPONENT_DETECT_LOCAL_VARATION
 	bool findingCandidateComponent2;
 	GIAtxtRelTranslatorRulesComponentNeuralNetwork* candidateComponent2ToFind;

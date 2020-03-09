@@ -26,7 +26,7 @@
  * File Name: GIAtxtRelTranslatorSANIPropagateCompact.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k1a 05-March-2020
+ * Project Version: 3k1b 05-March-2020
  * Requirements: 
  * Description: Textual Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Propagate Compact - ~O(n)
  * /
@@ -576,7 +576,11 @@ bool GIAtxtRelTranslatorSANIPropagateCompactClass::propagateWordThroughNetworkGr
 						missingOrVariableStartComponentFound = false;	//the first component found was variable and correct
 						if(numberOfInactiveComponentsRemaining == 0)
 						{
-							activationSequenceCompleted = true;
+							if(activationSequenceCompleted != true)
+							{
+								cout << "GIAtxtRelTranslatorSANIPropagateCompactClass::propagateWordThroughNetworkGroupComponentWrapper warning: (numberOfInactiveComponentsRemaining == 0) && (activationSequenceCompleted != true)" << endl;
+							}
+							activationSequenceCompleted = true;	//why isn't this guaranteed to be already marked as true by GIAtxtRelTranslatorSANIPropagateOperationsClass::propagateWordThroughNetworkGroupVerifyComponentSequenceActivationReady?
 						}
 					}
 				}
@@ -638,12 +642,18 @@ bool GIAtxtRelTranslatorSANIPropagateCompactClass::propagateWordThroughNetworkGr
 						}	
 					}
 				}
-
-				if(missingOrVariableStartComponentFound)
-				{
-					ownerGroup->currentParseTreeGroupTemp->missingOrVariableStartComponentFound = true;
-				}
 			}
+			
+			if(missingOrVariableStartComponentFound)
+			{
+				ownerGroup->currentParseTreeGroupTemp->missingOrVariableStartComponentFound = true;
+			}
+			#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_ACTIVATED_NEURON_WITH_MAX_WORD_COVERAGE_SUPPORT_FIRST_COMPONENT_VARIABLE
+			if(missingStartComponentsFound)
+			{
+				ownerGroup->currentParseTreeGroupTemp->missingStartComponentFound = true;
+			}
+			#endif
 		}
 		#endif
 		#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_VARIABLE_FIRST_COMPONENTS
@@ -718,21 +728,26 @@ bool GIAtxtRelTranslatorSANIPropagateCompactClass::propagateWordThroughNetworkGr
 					if(!missingStartComponentsFound)
 					{
 					#endif
+					#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_ACTIVATED_NEURON_WITH_MAX_WORD_COVERAGE_SUPPORT_FIRST_COMPONENT_VARIABLE
+					if(forwardPropogationSentenceData->recordActivatedNeuronWithMaxWordIndexCoverageSupportVariableStartComponent || !missingOrVariableStartComponentFound)
+					{
+					#endif
 						#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_DEBUG
 						cout << "++++++++++++++++++++++++++++++++++++++++++ forwardPropogationSentenceData->activatedNeuronWithMaxWordIndexCoverage" << endl;
 						#endif
 						forwardPropogationSentenceData->activatedNeuronWithMaxWordIndexCoverage = ownerGroup->currentParseTreeGroupTemp;
 						forwardPropogationSentenceData->activatedNeuronWithMaxWordIndexCoveragePartial = true;
 						#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_VARIABLE_FIRST_COMPONENTS
-						if(ownerGroup->currentParseTreeGroupTemp->missingOrVariableStartComponentFound)
-						{
-							forwardPropogationSentenceData->activatedNeuronWithMaxWordIndexCoverageVariable = true;
-						}
-						else
-						{
-							forwardPropogationSentenceData->activatedNeuronWithMaxWordIndexCoverageVariable = false;
-						}
+						forwardPropogationSentenceData->activatedNeuronWithMaxWordIndexCoverageVariableStartComponent = ownerGroup->currentParseTreeGroupTemp->missingOrVariableStartComponentFound;
 						#endif
+						/*
+						#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_ACTIVATED_NEURON_WITH_MAX_WORD_COVERAGE_SUPPORT_FIRST_COMPONENT_VARIABLE
+						forwardPropogationSentenceData->activatedNeuronWithMaxWordIndexCoverageMissingStartComponent = ownerGroup->currentParseTreeGroupTemp->missingStartComponentFound;	//NOTUSED
+						#endif
+						*/
+					#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_ACTIVATED_NEURON_WITH_MAX_WORD_COVERAGE_SUPPORT_FIRST_COMPONENT_VARIABLE
+					}
+					#endif
 					#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_ACTIVATED_NEURON_WITH_MAX_WORD_COVERAGE_ENFORCE_FIRST_COMPONENT_NOT_MISSING
 					}
 					#endif
@@ -887,6 +902,10 @@ bool GIAtxtRelTranslatorSANIPropagateCompactClass::propagateWordThroughNetworkGr
 				if(!missingStartComponentsFound)
 				{
 				#endif
+				#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_ACTIVATED_NEURON_WITH_MAX_WORD_COVERAGE_SUPPORT_FIRST_COMPONENT_VARIABLE
+				if(forwardPropogationSentenceData->recordActivatedNeuronWithMaxWordIndexCoverageSupportVariableStartComponent || !missingOrVariableStartComponentFound)
+				{
+				#endif
 					#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_DEBUG		
 					cout << "topLevelGroup1" << endl;
 					//cout << "\t\t\tmissingStartComponentsFound = " << missingStartComponentsFound << endl;
@@ -895,15 +914,16 @@ bool GIAtxtRelTranslatorSANIPropagateCompactClass::propagateWordThroughNetworkGr
 					forwardPropogationSentenceData->activatedNeuronWithMaxWordIndexCoverage = activationPathWordCurrentParseTreeGroupOwner;
 					forwardPropogationSentenceData->activatedNeuronWithMaxWordIndexCoveragePartial = false;
 					#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_VARIABLE_FIRST_COMPONENTS
-					if(missingOrVariableStartComponentFound)
-					{
-						forwardPropogationSentenceData->activatedNeuronWithMaxWordIndexCoverageVariable = true;
-					}
-					else
-					{
-						forwardPropogationSentenceData->activatedNeuronWithMaxWordIndexCoverageVariable = false;
-					}
+					forwardPropogationSentenceData->activatedNeuronWithMaxWordIndexCoverageVariableStartComponent = missingOrVariableStartComponentFound;
 					#endif
+					/*
+					#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_ACTIVATED_NEURON_WITH_MAX_WORD_COVERAGE_SUPPORT_FIRST_COMPONENT_VARIABLE
+					forwardPropogationSentenceData->activatedNeuronWithMaxWordIndexCoverageMissingStartComponent = missingStartComponentsFound;	//NOTUSED
+					#endif
+					*/
+				#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_ACTIVATED_NEURON_WITH_MAX_WORD_COVERAGE_SUPPORT_FIRST_COMPONENT_VARIABLE
+				}
+				#endif
 				#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_ACTIVATED_NEURON_WITH_MAX_WORD_COVERAGE_ENFORCE_FIRST_COMPONENT_NOT_MISSING
 				}
 				#endif
@@ -1340,7 +1360,7 @@ bool GIAtxtRelTranslatorSANIPropagateCompactClass::verifyActivatedNeuronWithMaxW
 							}
 						}
 						#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_VARIABLE_FIRST_COMPONENTS
-						if(forwardPropogationSentenceData->activatedNeuronWithMaxWordIndexCoverageVariable && !(candidateCoverageVariable))
+						if(forwardPropogationSentenceData->activatedNeuronWithMaxWordIndexCoverageVariableStartComponent && !(candidateCoverageVariable))
 						{
 							if(activatedNeuronCandidateCoverage == activatedNeuronBaselineCoverage)
 							{
