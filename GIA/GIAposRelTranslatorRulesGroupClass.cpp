@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorRulesGroupClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k2a 10-March-2020
+ * Project Version: 3k3a 10-March-2020
  * Requirements: requires plain text file
  * Description: Part-of-speech Relation Translator Rules
  * /
@@ -189,9 +189,7 @@ GIAposRelTranslatorRulesGroupNeuralNetwork::GIAposRelTranslatorRulesGroupNeuralN
 	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_VERIFY_NO_CIRCULAR
 	verified = false;
 	#endif
-	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS
 	inputLayerNeuron = false;
-	#endif
 	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_REQUIRE_NUM_COMPONENTS_ENFORCE_DURING_FIRST_HIDDEN_LAYER_GENERATION
 	firstHiddenLayerNeuron = false;
 	#endif
@@ -420,13 +418,16 @@ GIAposRelTranslatorSANIForwardPropogationSentenceData::GIAposRelTranslatorSANIFo
 	parseSentenceReverse = false;
 
 	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR
-	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_FIRST_COMPONENTS
-	recordActivatedNeuronWithMaxWordIndexCoverageSupportVariableStartComponent = true;
-	#endif
 	recordActivatedNeuronWithMaxWordIndexCoverage = false;
 	activatedNeuronWithMaxWordIndexCoverage = NULL;
 	activatedNeuronWithMaxWordIndexCoveragePartial = false;
 	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_VARIABLE_FIRST_COMPONENTS
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_FIRST_COMPONENTS
+	recordActivatedNeuronWithMaxWordIndexCoverageSupportVariableStartComponent = true;
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_FIRST_COMPONENTS_REQUIRE_MATCHING_DEPTH
+	variableFirstComponentMaxDepth = 0;
+	#endif
+	#endif
 	activatedNeuronWithMaxWordIndexCoverageVariableStartComponent = false;
 	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_PREVENT_INTRASENTENCE_MATCHING
 	//listOfHighLevelNeuronsCompleteHistory = NULL;

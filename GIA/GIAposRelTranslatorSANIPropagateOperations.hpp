@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorSANIPropagateOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k2a 10-March-2020
+ * Project Version: 3k3a 10-March-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Operations - generic functions
  * /
@@ -177,7 +177,18 @@ class GIAposRelTranslatorSANIPropagateOperationsClass
 	#ifdef GIA_POS_REL_TRANSLATOR_SANI_ENFORCE_WORD_CONNECTIVITY_VERIFY_HYPOTHETICAL_PROPOGATION_FINDS_PREVIOUS_WORD_NOUNS_ONLY
 	public: bool isWordPOStypeNoun(int wordPOStype);
 	#endif
+	
+	public: int countParseTreeLeafSize(GIAposRelTranslatorRulesGroupParseTree* currentParseTreeGroup);
+	public: bool countNeuralNetworkMaxLeafSizeAndDepth(GIAposRelTranslatorRulesGroupNeuralNetwork* currentGroup, int* maxLeafSize, int* maxDepth);
+		public: bool countNeuralNetworkMaxLeafSizeAndDepth(GIAposRelTranslatorRulesComponentNeuralNetwork* component, int* maxLeafSize, int* maxDepth);
+	public: GIAposRelTranslatorRulesComponentNeuralNetwork* getFirstComponent(GIAposRelTranslatorSANIForwardPropogationSentenceData* forwardPropogationSentenceData, GIAposRelTranslatorRulesGroupNeuralNetwork* currentNeuron, bool fromStart);
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_FIRST_COMPONENTS_REQUIRE_MATCHING_DEPTH	
+	public: int calculateDepthFromBinaryTreeLeafSize(int numberOfLeafNodesInBinaryTree);
+	#endif
 
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_FIRST_COMPONENTS_RANDOMISE
+	public: double generateRandomNumber();
+	#endif
 #endif
 	public: bool deleteGroup(GIAposRelTranslatorRulesGroupNeuralNetwork* group);
 		public: bool deleteComponents(vector<GIAposRelTranslatorRulesComponentNeuralNetwork*>* components);
