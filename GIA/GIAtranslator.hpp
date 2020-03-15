@@ -26,7 +26,7 @@
  * File Name: GIAtranslator.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k1c 05-March-2020
+ * Project Version: 3k2a 10-March-2020
  * Requirements: requires text parsed by X Parser
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
@@ -42,11 +42,11 @@
 #include "GIAentityConnectionClass.hpp"
 #include "GIAtranslatorOperations.hpp"
 #include "GIAtranslatorReferencing.hpp"
-#ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3
-#ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3_USE_SEM_REL_TRANSLATOR_PARSER
+#ifdef GIA_POS_REL_TRANSLATOR_RULES_GIA3
+#ifdef GIA_POS_REL_TRANSLATOR_RULES_GIA3_USE_SEM_REL_TRANSLATOR_PARSER
 #include "GIAsemRelTranslatorParser.hpp"
 #else
-#include "GIAtxtRelTranslatorParser.hpp"
+#include "GIAposRelTranslatorParser.hpp"
 #endif
 #else
 #include "GIAsynRelTranslatorParser.hpp"
@@ -62,13 +62,13 @@
 #ifdef GIA_PREPROCESSOR
 #include "GIApreprocessorSentenceClass.hpp"
 #endif
-#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID
-#include "GIAtxtRelTranslatorHybrid.hpp"
+#ifdef GIA_POS_REL_TRANSLATOR_HYBRID
+#include "GIAposRelTranslatorHybrid.hpp"
 #endif
-#ifdef GIA_TXT_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OPTIMISED
-#include "GIAtxtRelTranslatorRules.hpp"
-#include "GIAtxtRelTranslatorPermutations.hpp"
-#include "GIAtxtRelTranslatorSANIPropagateOperations.hpp"
+#ifdef GIA_POS_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OPTIMISED
+#include "GIAposRelTranslatorRules.hpp"
+#include "GIAposRelTranslatorPermutations.hpp"
+#include "GIAposRelTranslatorSANIPropagateOperations.hpp"
 #endif
 
 #include "SHAREDvars.hpp"
@@ -80,11 +80,11 @@ class GIAtranslatorClass
 	private: GIAentityNodeClassClass GIAentityNodeClass;
 	private: GIAtranslatorOperationsClass GIAtranslatorOperations;
 	private: GIAtranslatorReferencingClass GIAtranslatorReferencing;
-	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3
-	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3_USE_SEM_REL_TRANSLATOR_PARSER
+	#ifdef GIA_POS_REL_TRANSLATOR_RULES_GIA3
+	#ifdef GIA_POS_REL_TRANSLATOR_RULES_GIA3_USE_SEM_REL_TRANSLATOR_PARSER
 	private: GIAsemRelTranslatorParserClass GIAsemRelTranslatorParser;
 	#else
-	private: GIAtxtRelTranslatorParserClass GIAtxtRelTranslatorParser;
+	private: GIAposRelTranslatorParserClass GIAposRelTranslatorParser;
 	#endif
 	#else
 	private: GIAsynRelTranslatorParserClass GIAsynRelTranslatorParser;
@@ -100,13 +100,13 @@ class GIAtranslatorClass
 	#ifdef GIA_PREPROCESSOR
 	private: GIApreprocessorSentence GIApreprocessorSentenceObject;
 	#endif
-	#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID
-	private: GIAtxtRelTranslatorHybridClass GIAtxtRelTranslatorHybrid;
+	#ifdef GIA_POS_REL_TRANSLATOR_HYBRID
+	private: GIAposRelTranslatorHybridClass GIAposRelTranslatorHybrid;
 	#endif
-	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OPTIMISED
-	private: GIAtxtRelTranslatorRulesClass GIAtxtRelTranslatorRules;
-	private: GIAtxtRelTranslatorPermutationsClass GIAtxtRelTranslatorPermutations;
-	private: GIAtxtRelTranslatorSANIPropagateOperationsClass GIAtxtRelTranslatorSANIPropagateOperations;
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OPTIMISED
+	private: GIAposRelTranslatorRulesClass GIAposRelTranslatorRules;
+	private: GIAposRelTranslatorPermutationsClass GIAposRelTranslatorPermutations;
+	private: GIAposRelTranslatorSANIPropagateOperationsClass GIAposRelTranslatorSANIPropagateOperations;
 	#endif
 	private: SHAREDvarsClass SHAREDvars;
 

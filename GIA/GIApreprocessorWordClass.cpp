@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorWordClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k1c 05-March-2020
+ * Project Version: 3k2a 10-March-2020
  * Requirements: requires plain text file
  * Description: Preprocessor Word Class
  * /
@@ -47,7 +47,7 @@ GIApreprocessorWord::GIApreprocessorWord(string tagNameNew)
 }
 GIApreprocessorWord::~GIApreprocessorWord(void)
 {
-	#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_EXECUTE_PRELIM_POS_TAGGER
+	#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_EXECUTE_PRELIM_POS_TAGGER
 	#ifdef GIA_PREPROCESSOR_POS_TAGGER
 	if(featureReferencePrelim != NULL)
 	{
@@ -126,7 +126,7 @@ GIApreprocessorPlainTextWord::~GIApreprocessorPlainTextWord(void)
 }
 void GIApreprocessorPlainTextWord::initialiseGIApreprocessorPlainTextWord()
 {
-	#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_EXECUTE_PRELIM_POS_TAGGER
+	#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_EXECUTE_PRELIM_POS_TAGGER
 	featureReferencePrelim = NULL;
 	#endif
 	#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
@@ -154,8 +154,8 @@ void GIApreprocessorPlainTextWord::initialiseGIApreprocessorPlainTextWord()
 	#endif
 	#endif
 	
-	#ifdef GIA_TXT_REL_TRANSLATOR_RULES
-	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START
+	#ifdef GIA_POS_REL_TRANSLATOR_RULES
+	#ifdef GIA_POS_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START
 	unambiguousPOSindex = GIA_SHARED_POS_TYPE_UNDEFINED;	//GIA_PREPROCESSOR_POS_TYPE_UNDEFINED is out of scope
 	#else
 	POSambiguityInfo = 0;
@@ -163,15 +163,15 @@ void GIApreprocessorPlainTextWord::initialiseGIApreprocessorPlainTextWord()
 	wordPOStypeInferred = GIA_SHARED_POS_TYPE_UNDEFINED;
 	alreadyFoundMatch = false;
 	translatorSentenceEntityIndex = GIA_ENTITY_INDEX_UNDEFINED;
-	#ifdef GIA_TXT_REL_TRANSLATOR_SANI
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI
 	translatorSentenceWordIndex = GIA_ENTITY_INDEX_UNDEFINED;
 	#endif
 	translatorEntity = NULL;
-	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_WORD_NOUN_VERB_VARIANT
+	#ifdef GIA_POS_REL_TRANSLATOR_RULES_CODE_COMPONENT_WORD_NOUN_VERB_VARIANT
 	wordVerbVariantGrammaticalTenseForm = GIA_PREPROCESSOR_WORD_VERB_DATABASE_TAG_BASE_TENSE_FORM_UNKNOWN;
 	wordNounVariantGrammaticalTenseForm = GIA_PREPROCESSOR_WORD_NOUN_DATABASE_TAG_BASE_TENSE_FORM_SINGULAR;
 	#endif
-	#ifdef GIA_TXT_REL_TRANSLATOR_SANI
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI
 	//wordPropagated = false;
 	#endif
 	#endif	
@@ -389,7 +389,7 @@ bool GIApreprocessorWordClassClass::generateSentenceWordList(GIApreprocessorPlai
 	}
 	
 	#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
-	cout << "GIAtxtRelTranslatorHybridReferenceSetClass::generateSentenceWordList{}: " << endl;
+	cout << "GIAposRelTranslatorHybridReferenceSetClass::generateSentenceWordList{}: " << endl;
 	for(int i=0; i<wordList->size(); i++)
 	{
 		cout << ((*wordList)[i])->tagName << STRING_SPACE;
@@ -1101,7 +1101,7 @@ bool GIApreprocessorWordClassClass::isStringNumber(const string phrase)
 	return stringIsNumber;
 }
 
-#ifdef GIA_TXT_REL_TRANSLATOR_RULES_TREAT_UNKNOWN_POSTYPES_MID_SENTENCE_CAPITALISED_WORDS_AS_PROPERNOUNS
+#ifdef GIA_POS_REL_TRANSLATOR_RULES_TREAT_UNKNOWN_POSTYPES_MID_SENTENCE_CAPITALISED_WORDS_AS_PROPERNOUNS
 bool GIApreprocessorWordClassClass::isMidSentenceUppercaseWordLikelyProperNoun(GIApreprocessorPlainTextWord* contextWord)
 {
 	string wordText = contextWord->tagName;

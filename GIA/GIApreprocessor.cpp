@@ -26,7 +26,7 @@
  * File Name: GIApreprocessor.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k1c 05-March-2020
+ * Project Version: 3k2a 10-March-2020
  * Requirements: requires plain text file
  * Description: Preprocessor
  * /
@@ -85,7 +85,7 @@ bool GIApreprocessorClass::preprocessTextForGIA(string* inputTextPlainTXTfileNam
 	
 	string outputLRPTextForNLPonlyPlainTXTFileNameBase = outputLRPTextPlainTXTFileName + GIA_PREPROCESSOR_OUTPUT_FOR_NLP_ONLY_FILE_EXTENSION;	
 	
-	#ifdef GIA_TXT_REL_TRANSLATOR
+	#ifdef GIA_POS_REL_TRANSLATOR
 	#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
 	string outputLRPTextPlainTXTFileNameIntermediaryMultiword = outputLRPTextPlainTXTFileName + GIA_PREPROCESSOR_INTERMEDIARY_MULTIWORD_FILE_EXTENSION;
 	string outputLRPTextForNLPonlyPlainTXTFileNameIntermediaryMultiword = outputLRPTextForNLPonlyPlainTXTFileNameBase + GIA_PREPROCESSOR_INTERMEDIARY_MULTIWORD_FILE_EXTENSION;
@@ -128,7 +128,7 @@ bool GIApreprocessorClass::preprocessTextForGIA(string* inputTextPlainTXTfileNam
 	}
 	#endif
 	
-	#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID
+	#ifdef GIA_POS_REL_TRANSLATOR_HYBRID
 	if(!preprocessSentencesForGIAwrapper(translatorVariables, outputLRPTextPlainTXTFileName, inputTextNLPfeatureXMLfileName, outputLRPTextPlainTXTFileNameIntermediarySentence, outputLRPTextForNLPonlyPlainTXTFileNameIntermediarySentence, isQuery))
 	{
 		result = false;
@@ -147,37 +147,37 @@ bool GIApreprocessorClass::preprocessTextForGIA(string* inputTextPlainTXTfileNam
 	return result;
 }
 
-#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID
+#ifdef GIA_POS_REL_TRANSLATOR_HYBRID
 bool GIApreprocessorClass::preprocessSentencesForGIAwrapper(GIAtranslatorVariablesClass* translatorVariables, const string outputLRPTextPlainTXTFileName, const string inputTextNLPfeatureXMLfileName, const string outputFileName, const string outputFileNameLRPforNLP, const bool isQuery)
 {
 	bool result = true;
 	
-#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_DEPRECIATED
-	#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_EXECUTE_PRELIM_POS_TAGGER
-	if(!GIAtxtRelTranslatorHybrid.executePrelimFeatureProcessingOnSentences(outputLRPTextPlainTXTFileName, inputTextNLPfeatureXMLfileName, translatorVariables))
+#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_DEPRECIATED
+	#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_EXECUTE_PRELIM_POS_TAGGER
+	if(!GIAposRelTranslatorHybrid.executePrelimFeatureProcessingOnSentences(outputLRPTextPlainTXTFileName, inputTextNLPfeatureXMLfileName, translatorVariables))
 	{
 		result = true;
 	}	
 	#endif
-	if(!GIAtxtRelTranslatorHybrid.executeTxtRelTranslatorDepreciated(translatorVariables->firstGIApreprocessorSentenceInList, outputFileName, outputFileNameLRPforNLP))
+	if(!GIAposRelTranslatorHybrid.executeTxtRelTranslatorDepreciated(translatorVariables->firstGIApreprocessorSentenceInList, outputFileName, outputFileNameLRPforNLP))
 	{
 		result = false;
 	}
 	#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
-	if(!GIAtxtRelTranslatorHybrid.updateGIApreprocessorMultiwordReductionTagTextCorrespondenceInfo(translatorVariables->firstGIApreprocessorSentenceInList, isQuery))
+	if(!GIAposRelTranslatorHybrid.updateGIApreprocessorMultiwordReductionTagTextCorrespondenceInfo(translatorVariables->firstGIApreprocessorSentenceInList, isQuery))
 	{
 		result = false;
 	}			
 	#endif
 #else
-	GIAtxtRelTranslatorRulesGroup* firstTxtRelTranslatorRulesGroupInSentence = new GIAtxtRelTranslatorRulesGroup();
-	if(!GIAtxtRelTranslator.executeTxtRelTranslator(translatorVariables, &firstTxtRelTranslatorRulesGroupInSentence))
+	GIAposRelTranslatorRulesGroup* firstTxtRelTranslatorRulesGroupInSentence = new GIAposRelTranslatorRulesGroup();
+	if(!GIAposRelTranslator.executeTxtRelTranslator(translatorVariables, &firstTxtRelTranslatorRulesGroupInSentence))
 	{
 		result = false;
 	}
 		
 	//NOT YET CODED:
-	if(!GIAtxtRelTranslatorHybrid.convertTxtRelationsToLogicReferencesAndReferenceSets(translatorVariables, firstTxtRelTranslatorRulesGroupInSentence))
+	if(!GIAposRelTranslatorHybrid.convertTxtRelationsToLogicReferencesAndReferenceSets(translatorVariables, firstTxtRelTranslatorRulesGroupInSentence))
 	{
 		result = false;
 	}	
@@ -614,12 +614,12 @@ bool GIApreprocessorClass::addSentenceToPreprocessorSentence(GIAtranslatorVariab
 	
 	int sentenceIndex = GIAtranslatorOperations.getCurrentSentenceIndex(translatorVariables);
 	
-	#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID
+	#ifdef GIA_POS_REL_TRANSLATOR_HYBRID
 	GIApreprocessorSubReferenceSet* subReferenceSetFound = NULL;
-	if(GIAtxtRelTranslatorHybrid.getPreprocessorSentenceSubReferenceSet(translatorVariables->firstGIApreprocessorSentenceInList, sentenceIndex, &subReferenceSetFound))
+	if(GIAposRelTranslatorHybrid.getPreprocessorSentenceSubReferenceSet(translatorVariables->firstGIApreprocessorSentenceInList, sentenceIndex, &subReferenceSetFound))
 	{
 		subReferenceSetFound->sentenceReference = currentSentenceInList;
-		#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_NLP_TEXT
+		#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_NLP_TEXT
 		vector<GIApreprocessorPlainTextWord*> preprocessorSentenceWordList = subReferenceSetFound->subReferenceSetContentsOutputForNLP;		
 		#else
 		vector<GIApreprocessorPlainTextWord*> preprocessorSentenceWordList = subReferenceSetFound->subReferenceSetContents;		
@@ -655,7 +655,7 @@ bool GIApreprocessorClass::addSentenceToPreprocessorSentence(GIAtranslatorVariab
 	return result;
 }
 	
-#ifndef GIA_TXT_REL_TRANSLATOR_HYBRID			
+#ifndef GIA_POS_REL_TRANSLATOR_HYBRID			
 bool GIApreprocessorClass::getPreprocessorSentence(GIApreprocessorSentence* firstGIApreprocessorSentenceInList, int sentenceIndex, GIApreprocessorSentence** sentenceFound)
 {
 	bool result = false;	
@@ -720,7 +720,7 @@ bool GIApreprocessorClass::addSentenceFeatureOutputToPreprocessorSentenceWordLis
 			#endif
 			if(NLPparsedWordOriginal != preprocessorSentenceWord->tagName)
 			{
-				cerr << "GIAtxtRelTranslatorHybridClass::addSentenceFeatureOutputToPreprocessorSentenceWordList{} error: (currentFeatureInList->word != preprocessorSentenceWord->tagName)" << endl;
+				cerr << "GIAposRelTranslatorHybridClass::addSentenceFeatureOutputToPreprocessorSentenceWordList{} error: (currentFeatureInList->word != preprocessorSentenceWord->tagName)" << endl;
 				cerr << "currentFeatureInList->word = " << currentFeatureInList->word << endl;
 				cerr << "preprocessorSentenceWord->tagName = " << preprocessorSentenceWord->tagName << endl;
 				cerr << (currentFeatureInList->word).length() << endl;

@@ -26,7 +26,7 @@
  * File Name: GIApreprocessor.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k1c 05-March-2020
+ * Project Version: 3k2a 10-March-2020
  * Requirements: requires plain text file
  * Description: Preprocessor
  * /
@@ -50,9 +50,9 @@
 #include "GIApreprocessorPOStagger.hpp"
 #include "GIApreprocessorPOStaggerDatabase.hpp"
 #endif
-#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID
-#include "GIAtxtRelTranslator.hpp"
-#include "GIAtxtRelTranslatorHybrid.hpp"
+#ifdef GIA_POS_REL_TRANSLATOR_HYBRID
+#include "GIAposRelTranslator.hpp"
+#include "GIAposRelTranslatorHybrid.hpp"
 #endif
 
 
@@ -67,8 +67,8 @@ class GIApreprocessorClass
 	private: GIApreprocessorWordReductionClass GIApreprocessorWordReduction;
 	#endif
 	private: GIApreprocessorSentenceClass GIApreprocessorSentenceClassObject;
-	#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID
-	private: GIAtxtRelTranslatorHybridClass GIAtxtRelTranslatorHybrid;
+	#ifdef GIA_POS_REL_TRANSLATOR_HYBRID
+	private: GIAposRelTranslatorHybridClass GIAposRelTranslatorHybrid;
 	#endif
 	private: GIAtranslatorOperationsClass GIAtranslatorOperations;
 	#ifdef GIA_PREPROCESSOR_POS_TAGGER
@@ -78,7 +78,7 @@ class GIApreprocessorClass
 	#ifdef GIA_PREPROCESSOR
 	public: bool preprocessTextForGIAwrapper(const bool useLRP, string* inputTextPlainTXTfileName, const string outputLRPTextPlainTXTFileName, const bool isQuery, GIAtranslatorVariablesClass* translatorVariables, bool* useInputTextPlainTXTFile, const string inputTextNLPfeatureXMLfileName);
 		public: bool preprocessTextForGIA(string* inputTextPlainTXTfileName, const string outputLRPTextPlainTXTFileName, const bool isQuery, GIAtranslatorVariablesClass* translatorVariables, const string inputTextNLPfeatureXMLfileName);
-			#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID
+			#ifdef GIA_POS_REL_TRANSLATOR_HYBRID
 			bool preprocessSentencesForGIAwrapper(GIAtranslatorVariablesClass* translatorVariables, const string outputLRPTextPlainTXTFileName, const string inputTextNLPfeatureXMLfileName, const string outputFileName, const string outputFileNameLRPforNLP, const bool isQuery);
 			#endif
 		public: bool regenerateFileFromPreprocessedTextWithoutLRP(string* inputTextPlainTXTfileName, const string outputLRPTextPlainTXTFileName, GIAtranslatorVariablesClass* translatorVariables);
@@ -92,7 +92,7 @@ class GIApreprocessorClass
 	
 	#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
 	public: bool addSentenceToPreprocessorSentence(GIAtranslatorVariablesClass* translatorVariables);
-		#ifndef GIA_TXT_REL_TRANSLATOR_HYBRID
+		#ifndef GIA_POS_REL_TRANSLATOR_HYBRID
 		public: bool getPreprocessorSentence(GIApreprocessorSentence* firstGIApreprocessorSentenceInList, int sentenceIndex, GIApreprocessorSentence** sentenceFound);
 		#endif
 		public: bool addSentenceFeatureOutputToPreprocessorSentenceWordList(vector<GIApreprocessorPlainTextWord*>* preprocessorSentenceWordList, GIAtranslatorVariablesClass* translatorVariables, bool originalNLPfeatures);

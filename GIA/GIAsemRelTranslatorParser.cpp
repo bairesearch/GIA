@@ -26,7 +26,7 @@
  * File Name: GIAsemRelTranslatorParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k1c 05-March-2020
+ * Project Version: 3k2a 10-March-2020
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  * Description: Semantic Relation Translator Parser
  * /
@@ -272,7 +272,7 @@ void GIAsemRelTranslatorParserClass::locateAndAddAllNetworkIndexEntitiesBasedOnS
 				
 				
 				#ifndef GIA_SEM_REL_TRANSLATOR_GIA2_USE_SYN_REL_TRANSLATOR_FEATURES
-				#ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3
+				#ifdef GIA_POS_REL_TRANSLATOR_RULES_GIA3
 				GIApreprocessorPlainTextWord* currentWord = (*GIApreprocessorSentenceClassObject.getSentenceContents(translatorVariables->currentPreprocessorSentenceInList))[GIAtranslatorOperations.convertEntityIndexToSentenceContentsIndex(relationIndex[i])];
 				networkIndexEntity->semanticRelationWordPOStypeInferred = currentWord->wordPOStypeInferred;
 				#else
@@ -355,7 +355,7 @@ void GIAsemRelTranslatorParserClass::fillGrammaticalTenseArraysStanfordBasedOnSe
 				updateGrammaticalValuesBasedOnModalAuxiliaryOrCopula(entity, auxiliaryOrCopulaString);
 				currentRelationInList->disabled = true;
 				
-				#ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3
+				#ifdef GIA_POS_REL_TRANSLATOR_RULES_GIA3
 				fillGrammaticalTenseArraysStanfordBasedOnSemanticRelationsMultiwordAuxiliary(translatorVariables, modalAuxiliaryIndex, entity);
 				#endif
 			}
@@ -369,7 +369,7 @@ void GIAsemRelTranslatorParserClass::fillGrammaticalTenseArraysStanfordBasedOnSe
 				updateGrammaticalValuesBasedOnModalAuxiliaryOrCopula(entity, auxiliaryOrCopulaString);
 				currentRelationInList->disabled = true;
 				
-				#ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3
+				#ifdef GIA_POS_REL_TRANSLATOR_RULES_GIA3
 				fillGrammaticalTenseArraysStanfordBasedOnSemanticRelationsMultiwordAuxiliary(translatorVariables, modalAuxiliaryIndex, entity);
 				#endif
 			}
@@ -378,7 +378,7 @@ void GIAsemRelTranslatorParserClass::fillGrammaticalTenseArraysStanfordBasedOnSe
 	}
 }
 
-#ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3
+#ifdef GIA_POS_REL_TRANSLATOR_RULES_GIA3
 void GIAsemRelTranslatorParserClass::fillGrammaticalTenseArraysStanfordBasedOnSemanticRelationsMultiwordAuxiliary(GIAtranslatorVariablesClass* translatorVariables, int modalAuxiliaryIndex, GIAentityNode* entity)
 {
 	//CHECKTHIS
@@ -821,8 +821,8 @@ void GIAsemRelTranslatorParserClass::defineConnectionsBasedOnSemanticRelations(G
 				currentRelationInList->disabled = true;
 			}
 			#endif
-			#ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3
-			#ifdef GIA_TXT_REL_TRANSLATOR_RULES_LOGIC_REFERENCES
+			#ifdef GIA_POS_REL_TRANSLATOR_RULES_GIA3
+			#ifdef GIA_POS_REL_TRANSLATOR_RULES_LOGIC_REFERENCES
 			else if(currentRelationInList->relationType == GIA2semanticDependencyRelationNameArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_LOGIC_DEFINITION_DIRECT])
 			{
 				GIArelation* currentRelationInList2 = NULL;
@@ -834,7 +834,7 @@ void GIAsemRelTranslatorParserClass::defineConnectionsBasedOnSemanticRelations(G
 					int entity2IndexRelation2 = currentRelationInList2->relationGovernorIndex;
 					GIAentityNode* entity2relation2 = (*translatorVariables->GIAentityNodeArray)[entity2IndexRelation2];
 
-					GIAtranslatorOperations.connectLogicReference(translatorVariables, GIA_TXT_REL_TRANSLATOR_LOGIC_REFERENCE_CLASS_DEFINITION, GIA_TXT_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_CLASS_UNDEFINED_TYPE_unknown, entity1, entity2relation2, entity3, sameReferenceSet);
+					GIAtranslatorOperations.connectLogicReference(translatorVariables, GIA_POS_REL_TRANSLATOR_LOGIC_REFERENCE_CLASS_DEFINITION, GIA_POS_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_CLASS_UNDEFINED_TYPE_unknown, entity1, entity2relation2, entity3, sameReferenceSet);
 					currentRelationInList2->disabled = true;
 				}
 				else
@@ -855,7 +855,7 @@ void GIAsemRelTranslatorParserClass::defineConnectionsBasedOnSemanticRelations(G
 					int entity2IndexRelation2 = currentRelationInList2->relationGovernorIndex;
 					GIAentityNode* entity2relation2 = (*translatorVariables->GIAentityNodeArray)[entity2IndexRelation2];
 
-					GIAtranslatorOperations.connectLogicReference(translatorVariables, GIA_TXT_REL_TRANSLATOR_LOGIC_REFERENCE_CLASS_VERB, GIA_TXT_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_CLASS_UNDEFINED_TYPE_unknown, entity1, entity2relation2, entity3, sameReferenceSet);
+					GIAtranslatorOperations.connectLogicReference(translatorVariables, GIA_POS_REL_TRANSLATOR_LOGIC_REFERENCE_CLASS_VERB, GIA_POS_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_CLASS_UNDEFINED_TYPE_unknown, entity1, entity2relation2, entity3, sameReferenceSet);
 					currentRelationInList2->disabled = true;
 				}
 				else
@@ -876,7 +876,7 @@ void GIAsemRelTranslatorParserClass::defineConnectionsBasedOnSemanticRelations(G
 					int entity2IndexRelation2 = currentRelationInList2->relationGovernorIndex;
 					GIAentityNode* entity2relation2 = (*translatorVariables->GIAentityNodeArray)[entity2IndexRelation2];
 
-					GIAtranslatorOperations.connectLogicReference(translatorVariables, GIA_TXT_REL_TRANSLATOR_LOGIC_REFERENCE_CLASS_PREPOSITION, GIA_TXT_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_CLASS_UNDEFINED_TYPE_unknown, entity1, entity2relation2, entity3, sameReferenceSet);
+					GIAtranslatorOperations.connectLogicReference(translatorVariables, GIA_POS_REL_TRANSLATOR_LOGIC_REFERENCE_CLASS_PREPOSITION, GIA_POS_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_CLASS_UNDEFINED_TYPE_unknown, entity1, entity2relation2, entity3, sameReferenceSet);
 					currentRelationInList2->disabled = true;
 				}
 				else
@@ -888,12 +888,12 @@ void GIAsemRelTranslatorParserClass::defineConnectionsBasedOnSemanticRelations(G
 			}
 			else if(currentRelationInList->relationType == GIA2semanticDependencyRelationNameArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_LOGIC_CONCLUSION])
 			{
-				GIAtranslatorOperations.connectLogicReferenceConclusion(translatorVariables, GIA_TXT_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_CLASS_UNDEFINED_TYPE_unknown, entity1, entity2, sameReferenceSet);
+				GIAtranslatorOperations.connectLogicReferenceConclusion(translatorVariables, GIA_POS_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_CLASS_UNDEFINED_TYPE_unknown, entity1, entity2, sameReferenceSet);
 				currentRelationInList->disabled = true;
 			}	
 			else if(currentRelationInList->relationType == GIA2semanticDependencyRelationNameArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_LOGIC_CONJUNCTION])
 			{
-				GIAtranslatorOperations.connectLogicReferenceConjunction(translatorVariables, GIA_TXT_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_CLASS_UNDEFINED_TYPE_unknown, entity1, entity2, sameReferenceSet);
+				GIAtranslatorOperations.connectLogicReferenceConjunction(translatorVariables, GIA_POS_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_CLASS_UNDEFINED_TYPE_unknown, entity1, entity2, sameReferenceSet);
 				currentRelationInList->disabled = true;
 			}		
 			#endif
@@ -941,7 +941,7 @@ void GIAsemRelTranslatorParserClass::defineConnectionsBasedOnSemanticRelations(G
 				}
 				currentRelationInList->disabled = true;
 			}
-			#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_NEW_CONDITIONS
+			#ifdef GIA_POS_REL_TRANSLATOR_RULES_CODE_NEW_CONDITIONS
 			else if(currentRelationInList->relationType == GIA2semanticDependencyRelationNameArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_NEW])
 			{
 				GIAentityNode* relationshipEntity = GIAtranslatorOperations.findOrAddEntityNodeByNameSimpleWrapperRelationshipArtificialCondition(entity1, entity2, currentRelationInList->semanticRelationFunctionConditionNewName, translatorVariables);
@@ -958,7 +958,7 @@ void GIAsemRelTranslatorParserClass::defineConnectionsBasedOnSemanticRelations(G
 				currentRelationInList->disabled = true;
 				GIAtranslatorOperations.connectQuantityToEntity(entity1, entity2, sameReferenceSet, translatorVariables);
 			}
-			#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_MEASURE
+			#ifdef GIA_POS_REL_TRANSLATOR_RULES_CODE_MEASURE
 			else if(currentRelationInList->relationType == GIA2semanticDependencyRelationNameArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_MEASURE])
 			{
 				GIAtranslatorOperations.connectMeasureToEntity(translatorVariables, entitySemanticRelationFunction1, entitySemanticRelationFunction2, sameReferenceSet);
@@ -1359,7 +1359,7 @@ void GIAsemRelTranslatorParserClass::defineQualitiesBasedOnSemanticRelations(GIA
 			GIAentityNode* entity = (*translatorVariables->GIAentityNodeArray)[w];
 			if(!(entity->disabled))
 			{
-				#ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3
+				#ifdef GIA_POS_REL_TRANSLATOR_RULES_GIA3
 				if(entity->entityType == GIA_ENTITY_TYPE_SUBSTANCE)	//this check is required in case an adverb (e.g. not) has been used as a property relation entity
 				{
 				#endif
@@ -1367,7 +1367,7 @@ void GIAsemRelTranslatorParserClass::defineQualitiesBasedOnSemanticRelations(GIA
 					{
 						entity->entityType = GIA_ENTITY_TYPE_QUALITY;
 					}
-				#ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3	
+				#ifdef GIA_POS_REL_TRANSLATOR_RULES_GIA3	
 				}
 				#endif
 			}

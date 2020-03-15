@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorSentenceClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k1c 05-March-2020
+ * Project Version: 3k2a 10-March-2020
  * Requirements: requires plain text file
  * Description: Preprocessor Sentence Class
  * /
@@ -41,11 +41,11 @@
 #include "GIAentityNodeClass.hpp"	//required for primaryEntityTemp, GIA_PREPROCESSOR_RECORD_REFERENCES
 #include "GIAsentenceClass.hpp"	//required for GIA_PREPROCESSOR_RECORD_REFERENCES
 #include "GIApreprocessorWordClass.hpp"
-#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID
-#include "GIAtxtRelTranslatorHybridSentenceClass.hpp"
+#ifdef GIA_POS_REL_TRANSLATOR_HYBRID
+#include "GIAposRelTranslatorHybridSentenceClass.hpp"
 #endif
-#ifdef GIA_TXT_REL_TRANSLATOR_RULES
-#include "GIAtxtRelTranslatorRulesGroupClass.hpp"
+#ifdef GIA_POS_REL_TRANSLATOR_RULES
+#include "GIAposRelTranslatorRulesGroupClass.hpp"
 #endif
 
 
@@ -62,14 +62,14 @@ public:
 	vector<GIApreprocessorPlainTextWord*> sentenceContentsLRP;
 	//#endif
 	
-	#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID
-	bool hasLogicReference;	//if false, then firstLogicReferenceInList will only have a single GIAtxtRelTranslatorHybridLogicReference
-	GIAtxtRelTranslatorHybridLogicReference* firstLogicReferenceInList;
+	#ifdef GIA_POS_REL_TRANSLATOR_HYBRID
+	bool hasLogicReference;	//if false, then firstLogicReferenceInList will only have a single GIAposRelTranslatorHybridLogicReference
+	GIAposRelTranslatorHybridLogicReference* firstLogicReferenceInList;
 	//int logicReferenceTotal;
 	#ifdef GIA_PREPROCESSOR_ASSIGN_UNIQUE_SENTENCE_INDICES_FOR_SENTENCES
 	int sentenceIndex;
 	#endif
-	#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_EXECUTE_PRELIM_POS_TAGGER
+	#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_EXECUTE_PRELIM_POS_TAGGER
 	GIAsentence* sentenceReferencePrelim;		//temporary GIA sentence data (POS tags) required for execution of GIA preprocessor
 	#endif	
 	#else
@@ -77,14 +77,14 @@ public:
 	GIAsentence* sentenceReference;
 	#endif	
 	#endif
-	#ifdef GIA_TXT_REL_TRANSLATOR_RULES
-	GIAtxtRelTranslatorRulesGroupParseTree* firstParseTreeGroup;
+	#ifdef GIA_POS_REL_TRANSLATOR_RULES
+	GIAposRelTranslatorRulesGroupParseTree* firstParseTreeGroup;
 	#endif
 	#ifdef GIA_PREPROCESSOR_WORD_EXTRACT_INDENTATION
 	int indentation;
 	#endif
 	
-	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_PARSE_ISOLATED_SUBREFERENCE_SETS_OPTIMISED
+	#ifdef GIA_POS_REL_TRANSLATOR_RULES_PARSE_ISOLATED_SUBREFERENCE_SETS_OPTIMISED
 	bool parseIsolatedSubreferenceSets;
 	bool parseIsolatedSubreferenceSetsOnly;
 	bool parseIsolatedSubreferenceSetsFirst;
@@ -99,7 +99,7 @@ class GIApreprocessorSentenceClass
 
 	public: void copyPreprocessorSentence(GIApreprocessorSentence* sentenceToCopy, GIApreprocessorSentence* newSentence);
 	public: vector<GIApreprocessorPlainTextWord*>* getSentenceContents(GIApreprocessorSentence* currentGIApreprocessorSentenceInList);
-	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_PARSE_ISOLATED_SUBREFERENCE_SETS_OPTIMISED
+	#ifdef GIA_POS_REL_TRANSLATOR_RULES_PARSE_ISOLATED_SUBREFERENCE_SETS_OPTIMISED
 	public: bool calculateParseIsolatedSubreferenceSets1(GIApreprocessorSentence* currentGIApreprocessorSentenceInList, bool* parseIsolatedSubreferenceSets1);
 	public: bool calculateParseIsolatedSubreferenceSets2(GIApreprocessorSentence* currentGIApreprocessorSentenceInList, bool* parseIsolatedSubreferenceSets2);
 	#endif

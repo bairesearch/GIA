@@ -26,7 +26,7 @@
  * File Name: GIAsynRelTranslatorParser.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k1c 05-March-2020
+ * Project Version: 3k2a 10-March-2020
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
@@ -72,8 +72,8 @@
 #ifdef GIA_PREPROCESSOR
 #include "GIApreprocessor.hpp"
 #endif
-#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID
-#include "GIAtxtRelTranslatorHybrid.hpp"
+#ifdef GIA_POS_REL_TRANSLATOR_HYBRID
+#include "GIAposRelTranslatorHybrid.hpp"
 #endif
 #include "SHAREDvars.hpp"	//file io
 
@@ -113,8 +113,8 @@ class GIAsynRelTranslatorParserClass
 	#ifdef GIA_PREPROCESSOR
 	private: GIApreprocessorClass GIApreprocessor;
 	#endif
-	#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID
-	private: GIAtxtRelTranslatorHybridClass GIAtxtRelTranslatorHybrid;
+	#ifdef GIA_POS_REL_TRANSLATOR_HYBRID
+	private: GIAposRelTranslatorHybridClass GIAposRelTranslatorHybrid;
 	#endif
 	
 	public: bool convertSentenceSyntacticRelationsIntoGIAnetworkNodes(GIAtranslatorVariablesClass* translatorVariables, GIAcoreference* firstGIAcoreferenceInList);

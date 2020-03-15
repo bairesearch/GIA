@@ -26,7 +26,7 @@
  * File Name: GIAnlg.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k1c 05-March-2020
+ * Project Version: 3k2a 10-March-2020
  * Requirements: requires GIA translated data, and NLG2 to be installed
  * Description: NLG - natural language generation
  * /
@@ -375,7 +375,7 @@ bool GIAnlgClass::generateLanguageFromTextIteration(GIAentityConnection* current
 			result = false;	//e.g. Tom's and the rabbit's hat
 		}
 		#ifdef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
-		//#ifndef GIA_TXT_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE
+		//#ifndef GIA_POS_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE
 		if(interationIndex == 0)
 		{
 			if(!parseSameReferenceSetOnly)

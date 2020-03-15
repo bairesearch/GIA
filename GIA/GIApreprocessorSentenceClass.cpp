@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorSentenceClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k1c 05-March-2020
+ * Project Version: 3k2a 10-March-2020
  * Requirements: requires plain text file
  * Description: Preprocessor Sentence Class
  * /
@@ -46,14 +46,14 @@ GIApreprocessorSentence::GIApreprocessorSentence(void)
 	//sentenceContentsLRP = "";
 	//#endif
 	
-	#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID
+	#ifdef GIA_POS_REL_TRANSLATOR_HYBRID
 	hasLogicReference = false;
-	firstLogicReferenceInList = new GIAtxtRelTranslatorHybridLogicReference();
+	firstLogicReferenceInList = new GIAposRelTranslatorHybridLogicReference();
 	//logicReferenceTotal = 0;
 	#ifdef GIA_PREPROCESSOR_ASSIGN_UNIQUE_SENTENCE_INDICES_FOR_SENTENCES
 	sentenceIndex = INT_DEFAULT_VALUE;
 	#endif
-	#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_EXECUTE_PRELIM_POS_TAGGER
+	#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_EXECUTE_PRELIM_POS_TAGGER
 	sentenceReferencePrelim = NULL;
 	#endif	
 	#else
@@ -61,14 +61,14 @@ GIApreprocessorSentence::GIApreprocessorSentence(void)
 	sentenceReference = NULL;
 	#endif	
 	#endif
-	#ifdef GIA_TXT_REL_TRANSLATOR_RULES
+	#ifdef GIA_POS_REL_TRANSLATOR_RULES
 	firstParseTreeGroup = NULL;
 	#endif
 	#ifdef GIA_PREPROCESSOR_WORD_EXTRACT_INDENTATION
 	indentation = 0;
 	#endif		
 
-	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_PARSE_ISOLATED_SUBREFERENCE_SETS_OPTIMISED
+	#ifdef GIA_POS_REL_TRANSLATOR_RULES_PARSE_ISOLATED_SUBREFERENCE_SETS_OPTIMISED
 	parseIsolatedSubreferenceSets = false;
 	parseIsolatedSubreferenceSetsOnly = false;
 	parseIsolatedSubreferenceSetsFirst = false;
@@ -95,7 +95,7 @@ GIApreprocessorSentence::~GIApreprocessorSentence(void)
 	sentenceContentsOriginal.clear();
 	sentenceContentsLRP.clear();
 	
-	#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID
+	#ifdef GIA_POS_REL_TRANSLATOR_HYBRID
 	delete firstLogicReferenceInList;
 	#endif
 	
@@ -115,7 +115,7 @@ vector<GIApreprocessorPlainTextWord*>* GIApreprocessorSentenceClass::getSentence
 	return  &(currentGIApreprocessorSentenceInList->sentenceContentsLRP);
 }
 
-#ifdef GIA_TXT_REL_TRANSLATOR_RULES_PARSE_ISOLATED_SUBREFERENCE_SETS_OPTIMISED
+#ifdef GIA_POS_REL_TRANSLATOR_RULES_PARSE_ISOLATED_SUBREFERENCE_SETS_OPTIMISED
 bool GIApreprocessorSentenceClass::calculateParseIsolatedSubreferenceSets1(GIApreprocessorSentence* currentGIApreprocessorSentenceInList, bool* parseIsolatedSubreferenceSets1)
 {
 	bool result = true;

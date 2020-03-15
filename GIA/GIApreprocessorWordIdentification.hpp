@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorWordIdentification.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k1c 05-March-2020
+ * Project Version: 3k2a 10-March-2020
  * Requirements: requires plain text file
  * Description: Preprocessor Word Identification
  * /
@@ -143,7 +143,7 @@ class GIApreprocessorWordIdentificationClass
 	public: bool detectAuxiliary(GIApreprocessorPlainTextWord* wordTag, const bool usePOSprelim);
 	public: bool detectModalAuxiliary(GIApreprocessorPlainTextWord* wordTag, const bool usePOSprelim);
 	public: bool detectRcmodSameReferenceSetDelimiter(GIApreprocessorPlainTextWord* wordTag, const bool usePOSprelim);
-	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OLD
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OLD
 	public: bool determineIsWordTypeStringBasic(const string word, const int GIAposType);
 	#endif
 	

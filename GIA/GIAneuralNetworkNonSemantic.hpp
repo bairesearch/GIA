@@ -26,7 +26,7 @@
  * File Name: GIAneuralNetworkNonSemantic.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k1c 05-March-2020
+ * Project Version: 3k2a 10-March-2020
  * Description: Neural Network - visual representation of GIA contents in prototype biological neural network
  * /
  *******************************************************************************/
@@ -87,7 +87,7 @@ class GIAneuralNetworkNonSemanticClass
 	
 	#ifdef GIA_NEURAL_NETWORK_NON_SEMANTIC_ACTIVE
 	public: bool addTextToNetwork(GIAtranslatorVariablesClass* translatorVariables);
-		private: bool addTextToNetworkLogicReference(GIAneuralNetworkVariablesClass* neuralNetworkVariables, GIAtxtRelTranslatorHybridLogicReference* firstLogicReferenceInList, ANNneuron* higherLogicReferenceArtificialSynapseNeuron, bool higherLogicReferenceArtificialSynapseNeuronDirection);
+		private: bool addTextToNetworkLogicReference(GIAneuralNetworkVariablesClass* neuralNetworkVariables, GIAposRelTranslatorHybridLogicReference* firstLogicReferenceInList, ANNneuron* higherLogicReferenceArtificialSynapseNeuron, bool higherLogicReferenceArtificialSynapseNeuronDirection);
 			#ifdef GIA_NEURAL_NETWORK_NON_SEMANTIC_REPLACE_WORDS_WITH_LEMMAS
 			private: bool replaceWordsWithLemmas(GIApreprocessorSubReferenceSet* referenceSet);
 			#endif
@@ -109,7 +109,7 @@ class GIAneuralNetworkNonSemanticClass
 	public: bool performQuery(GIAtranslatorVariablesClass* translatorVariables, GIAtranslatorVariablesClass* translatorVariablesQuery);
 	public: bool determineReferenceSetDefinite(GIApreprocessorSubReferenceSet* firstSubReferenceSetInList);
 	private: GIApreprocessorPlainTextWord* getDelimiterWord(GIApreprocessorSubReferenceSet* referenceSetDelimiter);
-	private: GIApreprocessorPlainTextWord* getLogicReferenceWord(GIAtxtRelTranslatorHybridLogicReference* logicReference);
+	private: GIApreprocessorPlainTextWord* getLogicReferenceWord(GIAposRelTranslatorHybridLogicReference* logicReference);
 	private: int generateArtificialLayer(GIAneuralNetworkVariablesClass* neuralNetworkVariables);
 	#endif
 

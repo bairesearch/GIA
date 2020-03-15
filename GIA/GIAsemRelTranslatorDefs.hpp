@@ -26,7 +26,7 @@
  * File Name: GIAsemRelTranslatorDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k1c 05-March-2020
+ * Project Version: 3k2a 10-March-2020
  * Requirements: 
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  *
@@ -354,8 +354,8 @@ static string GIA2semanticDependencyRelationSecondaryNameArray[GIA_SEM_REL_TRANS
 #ifdef GIA_SEM_REL_TRANSLATOR_SUBSETS_OPTIMISED_DATABASE
 	#define GIA_ENTITY_VECTOR_CONNECTION_TYPE_NONE (23)
 #endif
-#ifdef GIA_TXT_REL_TRANSLATOR_RULES
-//#ifdef GIA_TXT_REL_TRANSLATOR_RULES_ENTITY_GRAMMAR
+#ifdef GIA_POS_REL_TRANSLATOR_RULES
+//#ifdef GIA_POS_REL_TRANSLATOR_RULES_ENTITY_GRAMMAR
 #define GIA_ENTITY_VECTOR_CONNECTION_TYPE_MULTIWORD_AUXILIARY (24)
 //#ifndef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
 #define GIA_ENTITY_VECTOR_CONNECTION_TYPE_MULTIWORD_PREPOSITION (25)	//assumes that GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION multiword preposition reduction is disabled
@@ -364,7 +364,7 @@ static string GIA2semanticDependencyRelationSecondaryNameArray[GIA_SEM_REL_TRANS
 #define GIA_ENTITY_VECTOR_CONNECTION_TYPE_MULTIWORD_DATE (27)
 #define GIA_ENTITY_VECTOR_CONNECTION_TYPE_PREDETERMINER (28)
 //#endif
-//#ifdef GIA_TXT_REL_TRANSLATOR_RULES_LOGIC_REFERENCES
+//#ifdef GIA_POS_REL_TRANSLATOR_RULES_LOGIC_REFERENCES
 #define GIA_ENTITY_VECTOR_CONNECTION_TYPE_LOGIC_DEFINITION (29)
 #define GIA_ENTITY_VECTOR_CONNECTION_TYPE_LOGIC_DEFINITION_REVERSE (30)
 #define GIA_ENTITY_VECTOR_CONNECTION_TYPE_LOGIC_ACTION (31)
@@ -378,7 +378,7 @@ static string GIA2semanticDependencyRelationSecondaryNameArray[GIA_SEM_REL_TRANS
 #define GIA_ENTITY_VECTOR_CONNECTION_TYPE_MEASURE (38)
 #define GIA_ENTITY_VECTOR_CONNECTION_TYPE_MEASURE_PER (39)
 #endif
-#ifdef GIA_TXT_REL_TRANSLATOR_RULES
+#ifdef GIA_POS_REL_TRANSLATOR_RULES
 #define GIA_SEM_REL_TRANSLATOR_SEMANTIC_DEPENDENCY_RELATION_NUMBER_OF_TYPES (GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES + 12 + 16)	//extends GIAentityNodeClass.h GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES
 static string GIA2semanticDependencyRelationNameArray[GIA_SEM_REL_TRANSLATOR_SEMANTIC_DEPENDENCY_RELATION_NUMBER_OF_TYPES] = {"action", "actionReverse", "condition", "conditionReverse", "property", "propertyReverse", "definition", "definitionReverse", "relationshipSubject", "relationshipObject", "instance", "instanceReverse", "propertyDirect", "definitionDirect", "determiner", "modalAuxiliaryOrCopula", "modalAuxiliaryOrCopulaSingle", "quantity", "compositionAuxiliaryNOTUSED", "definitionDirectAlias", "definitionAlias", "definitionReverseAlias", "prenominalModifier", "none", "multiwordAuxiliary", "multiwordPreposition", "multiwordAlias", "multiwordDate", "numerosityPredeterminer", "logicDefinition", "logicDefinitionReverse", "logicAction", "logicActionReverse", "logicCondition", "logicConditionReverse", "logicConclusion", "logicConjunction", "conditionNew", "measure", "measurePer"};
 #else

@@ -26,7 +26,7 @@
  * File Name: GIAentityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k1c 05-March-2020
+ * Project Version: 3k2a 10-March-2020
  * /
  *******************************************************************************/
 
@@ -293,10 +293,10 @@ void GIAentityNode::initialiseEntity()
 	entityShortcutToConceptNeuron = NULL;
 	#endif
 	#endif
-	#ifdef GIA_TXT_REL_TRANSLATOR
+	#ifdef GIA_POS_REL_TRANSLATOR
 	isLogicReferenceEntity = false;
-	logicReferenceClass = INT_DEFAULT_VALUE;	//GIA_TXT_REL_TRANSLATOR_LOGIC_REFERENCE_CLASS_UNDEFINED;
-	logicReferenceClassType = "";	//GIA_TXT_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_CLASS_UNDEFINED_TYPE_unknown;
+	logicReferenceClass = INT_DEFAULT_VALUE;	//GIA_POS_REL_TRANSLATOR_LOGIC_REFERENCE_CLASS_UNDEFINED;
+	logicReferenceClassType = "";	//GIA_POS_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_CLASS_UNDEFINED_TYPE_unknown;
 	#endif
 	
 	#ifdef GIA_NEURAL_NETWORK
@@ -309,17 +309,17 @@ void GIAentityNode::initialiseEntity()
 	*/
 	#endif
 	
-	#ifdef GIA_TXT_REL_TRANSLATOR_RULES
+	#ifdef GIA_POS_REL_TRANSLATOR_RULES
 	semanticRelationReturnFunctionName = ""; 
 	semanticRelationReturnFunctionNameIndexType = INT_DEFAULT_VALUE;
 	//semanticRelationReturnFunctionNameSameReferenceSet = false;
 	semanticRelationPreprocessorEntityIndex = GIA_ENTITY_INDEX_UNDEFINED;
-	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEMANTICALLY_DETERMINED_DYNAMIC_CONNECTIONS
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEMANTICALLY_DETERMINED_DYNAMIC_CONNECTIONS
 	semanticRelationReturnConnectionDynamic = false;
 	#endif
 	#endif
 	semanticRelationWordPOStypeInferred = INT_DEFAULT_VALUE;	//GIA_SHARED_POS_TYPE_UNDEFINED;
-	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3
+	#ifdef GIA_POS_REL_TRANSLATOR_RULES_GIA3
 	semanticRelationWordDeterminer = "";
 	semanticRelationWordPredeterminer = "";
 	semanticRelationEntityIsReferenced = false;

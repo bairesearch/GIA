@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorWordIdentification.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k1c 05-March-2020
+ * Project Version: 3k2a 10-March-2020
  * Requirements: requires plain text file
  * Description: Preprocessor Word Identification
  * /
@@ -34,7 +34,7 @@
 
 
 #include "GIApreprocessorWordIdentification.hpp"
-#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
+#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
 #include "GIAsynRelTranslatorDefs.hpp"
 #endif
 
@@ -1149,7 +1149,7 @@ bool GIApreprocessorWordIdentificationClass::identifyConditionType(GIAentityNode
 
 #endif
 
-#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
+#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
 bool GIApreprocessorWordIdentificationClass::checkGrammaticalWordTypeFeaturePrelim(GIApreprocessorPlainTextWord* wordTag, const int GIAposType)
 {
 	bool result = false;
@@ -1185,7 +1185,7 @@ bool GIApreprocessorWordIdentificationClass::determineIsWordType(GIApreprocessor
 	
 	string wordLowerCase = SHAREDvars.convertStringToLowerCase(&(wordTag->tagName));
 	
-	#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
+	#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
 	if(usePOSprelim)
 	{
 		if(checkGrammaticalWordTypeFeaturePrelim(wordTag, GIAposType))		
@@ -1198,7 +1198,7 @@ bool GIApreprocessorWordIdentificationClass::determineIsWordType(GIApreprocessor
 					GIApreprocessorMultiwordReductionPlainTextWord* currentTagInPlainTextSentenceTemp = static_cast<GIApreprocessorMultiwordReductionPlainTextWord*>(wordTag);
 					if(!(currentTagInPlainTextSentenceTemp->collapsedMultiwordWord || currentTagInPlainTextSentenceTemp->collapsedPhrasalVerbExactDefinedSection))
 					{
-						cout << "GIApreprocessorWordIdentificationClass::determineIsWordType{} warning: GIA_TXT_REL_TRANSLATOR_HYBRID_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS: usePOSprelim && checkGrammaticalWordTypeFeaturePrelim && (GIAposType == GIA_PREPROCESSOR_POS_TYPE_VERB) && !determineVerbCaseStandardWithAdditional" << endl;		
+						cout << "GIApreprocessorWordIdentificationClass::determineIsWordType{} warning: GIA_POS_REL_TRANSLATOR_HYBRID_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS: usePOSprelim && checkGrammaticalWordTypeFeaturePrelim && (GIAposType == GIA_PREPROCESSOR_POS_TYPE_VERB) && !determineVerbCaseStandardWithAdditional" << endl;		
 					}
 					
 					*grammaticalBaseTenseForm = GIA_PREPROCESSOR_WORD_VERB_DATABASE_TAG_BASE_TENSE_FORM_INFINITIVE;
@@ -1227,7 +1227,7 @@ bool GIApreprocessorWordIdentificationClass::determineIsWordType(GIApreprocessor
 				wordTypeDetected = true;
 			}
 		}
-	#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
+	#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
 	}
 	#endif
 	
@@ -1409,7 +1409,7 @@ bool GIApreprocessorWordIdentificationClass::determineVerbCaseAdditional(const s
 
 bool GIApreprocessorWordIdentificationClass::determineIsPreposition(GIApreprocessorPlainTextWord* wordTag, const bool usePOSprelim)
 {
-	bool wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_TXT_REL_TRANSLATOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_PREPOSITION);
+	bool wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_POS_REL_TRANSLATOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_PREPOSITION);
 	return wordTypeDetected;
 }
 bool GIApreprocessorWordIdentificationClass::determineIsPrepositionString(const string word)
@@ -1422,7 +1422,7 @@ bool GIApreprocessorWordIdentificationClass::determineIsPrepositionString(const 
 
 bool GIApreprocessorWordIdentificationClass::determineIsAdverb(GIApreprocessorPlainTextWord* wordTag, const bool usePOSprelim)
 {
-	bool wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_TXT_REL_TRANSLATOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_ADVERB);
+	bool wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_POS_REL_TRANSLATOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_ADVERB);
 	return wordTypeDetected;
 }
 bool GIApreprocessorWordIdentificationClass::determineIsAdverbString(const string word)
@@ -1435,7 +1435,7 @@ bool GIApreprocessorWordIdentificationClass::determineIsAdverbString(const strin
 
 bool GIApreprocessorWordIdentificationClass::determineIsAdjective(GIApreprocessorPlainTextWord* wordTag, const bool usePOSprelim)
 {
-	bool wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_TXT_REL_TRANSLATOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_ADJECTIVE);
+	bool wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_POS_REL_TRANSLATOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_ADJECTIVE);
 	return wordTypeDetected;
 }
 bool GIApreprocessorWordIdentificationClass::determineIsAdjectiveString(const string word)
@@ -1454,7 +1454,7 @@ bool GIApreprocessorWordIdentificationClass::determineIsNoun(GIApreprocessorPlai
 }
 bool GIApreprocessorWordIdentificationClass::determineIsNoun(GIApreprocessorPlainTextWord* wordTag, const bool usePOSprelim, string* baseNameFound, int* grammaticalBaseForm)
 {
-	bool wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_TXT_REL_TRANSLATOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_NOUN, baseNameFound, grammaticalBaseForm);
+	bool wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_POS_REL_TRANSLATOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_NOUN, baseNameFound, grammaticalBaseForm);
 	return wordTypeDetected;
 }
 bool GIApreprocessorWordIdentificationClass::determineIsNounString(const string word)
@@ -1498,7 +1498,7 @@ bool GIApreprocessorWordIdentificationClass::determineNounPluralVariant(const st
 
 bool GIApreprocessorWordIdentificationClass::determineIsConjunction(GIApreprocessorPlainTextWord* wordTag, const bool usePOSprelim)
 {
-	bool wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_TXT_REL_TRANSLATOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_CONJUNCTION_COORDINATING);	//OLD: GIA_PREPROCESSOR_POS_TYPE_CONJUNCTION
+	bool wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_POS_REL_TRANSLATOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_CONJUNCTION_COORDINATING);	//OLD: GIA_PREPROCESSOR_POS_TYPE_CONJUNCTION
 	return wordTypeDetected;
 }
 /*
@@ -1512,7 +1512,7 @@ bool GIApreprocessorWordIdentificationClass::determineIsConjunctionString(const 
 
 bool GIApreprocessorWordIdentificationClass::determineIsDeterminer(GIApreprocessorPlainTextWord* wordTag, const bool usePOSprelim)
 {
-	bool wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_TXT_REL_TRANSLATOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_DETERMINER);
+	bool wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_POS_REL_TRANSLATOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_DETERMINER);
 	return wordTypeDetected;
 }
 /*
@@ -1528,7 +1528,7 @@ bool GIApreprocessorWordIdentificationClass::determineIsAuxiliaryBeing(GIAprepro
 {
 	bool wordTypeDetected = false;
 	#ifndef GIA_PREPROCESSOR_WORD_COLLAPSE_AUXILIARY_LISTS_TO_VERB_LISTS
-	wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_TXT_REL_TRANSLATOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_AUXILIARY_BEING);
+	wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_POS_REL_TRANSLATOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_AUXILIARY_BEING);
 	#else
 	wordTypeDetected = determineIsWordType(wordTag->tagName, wordListRecordAuxiliaryBeing);
 	/*
@@ -1544,7 +1544,7 @@ bool GIApreprocessorWordIdentificationClass::determineIsAuxiliaryHaving(GIAprepr
 {
 	bool wordTypeDetected = false;
 	#ifndef GIA_PREPROCESSOR_WORD_COLLAPSE_AUXILIARY_LISTS_TO_VERB_LISTS
-	wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_TXT_REL_TRANSLATOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_AUXILIARY_HAVING);
+	wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_POS_REL_TRANSLATOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_AUXILIARY_HAVING);
 	#else
 	wordTypeDetected = determineIsWordType(wordTag->tagName, wordListRecordAuxiliaryHaving);
 	/*
@@ -1560,7 +1560,7 @@ bool GIApreprocessorWordIdentificationClass::determineIsAuxiliaryDoing(GIAprepro
 {
 	bool wordTypeDetected = false;
 	#ifndef GIA_PREPROCESSOR_WORD_COLLAPSE_AUXILIARY_LISTS_TO_VERB_LISTS
-	wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_TXT_REL_TRANSLATOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_AUXILIARY_DOING);
+	wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_POS_REL_TRANSLATOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_AUXILIARY_DOING);
 	#else
 	wordTypeDetected = determineIsWordType(wordTag->tagName, wordListRecordAuxiliaryDoing);
 	/*
@@ -1577,7 +1577,7 @@ bool GIApreprocessorWordIdentificationClass::detectAuxiliary(GIApreprocessorPlai
 {
 	bool wordTypeDetected = false;
 	#ifndef GIA_PREPROCESSOR_WORD_COLLAPSE_AUXILIARY_LISTS_TO_VERB_LISTS
-	wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_TXT_REL_TRANSLATOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_AUXILIARY);
+	wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_POS_REL_TRANSLATOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_AUXILIARY);
 	#else
 	if(determineIsWordType(wordTag->tagName, wordListRecordAuxiliaryBeing))
 	{
@@ -1612,7 +1612,7 @@ bool GIApreprocessorWordIdentificationClass::detectAuxiliary(GIApreprocessorPlai
 bool GIApreprocessorWordIdentificationClass::detectModalAuxiliary(GIApreprocessorPlainTextWord* wordTag, const bool usePOSprelim)
 {
 	bool wordTypeDetected = false;
-	wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_TXT_REL_TRANSLATOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_MODALAUXILIARY);
+	wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_POS_REL_TRANSLATOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_MODALAUXILIARY);
 	/*
 	if(SHAREDvars.textInTextArray(currentWord, entityModalAuxiliaryArray, ENTITY_MODALAUXILIARY_NUMBER_OF_TYPES))
 	{
@@ -1625,7 +1625,7 @@ bool GIApreprocessorWordIdentificationClass::detectModalAuxiliary(GIApreprocesso
 bool GIApreprocessorWordIdentificationClass::detectRcmodSameReferenceSetDelimiter(GIApreprocessorPlainTextWord* wordTag, const bool usePOSprelim)
 {
 	bool wordTypeDetected = false;
-	wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_TXT_REL_TRANSLATOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_RCMOD);
+	wordTypeDetected = determineIsWordType(wordTag, usePOSprelim, GIA_POS_REL_TRANSLATOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT, GIA_PREPROCESSOR_POS_TYPE_RCMOD);
 	/*
 	if(SHAREDvars.textInTextArray(currentWord, entityRcmodSameReferenceSetDelimiter, ENTITY_REFERENCE_SET_RCMOD_SAME_REFERENCE_SET_DELIMITER_NUMBER_OF_TYPES))
 	{
@@ -1635,7 +1635,7 @@ bool GIApreprocessorWordIdentificationClass::detectRcmodSameReferenceSetDelimite
 	return wordTypeDetected;
 }
 
-#ifdef GIA_TXT_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OLD
+#ifdef GIA_POS_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OLD
 bool GIApreprocessorWordIdentificationClass::determineIsWordTypeStringBasic(const string word, const int GIAposType)
 {
 	unordered_map<string, GIApreprocessorMultiwordReductionWord*>* wordTypeList = getWordList(GIAposType);
@@ -1752,12 +1752,12 @@ bool GIApreprocessorWordIdentificationClass::createWordIndexListFromLRPfiles()
 				{
 					string index = iter->first;
 					GIApreprocessorMultiwordReductionWord* word = iter->second;
-					#ifdef GIA_TXT_REL_TRANSLATOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY
+					#ifdef GIA_POS_REL_TRANSLATOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY
 					if(verbCaseDetectGrammaticallyStrictVariant(word->grammaticalTenseForm))	//ensure that the word is a grammatically strict verb
 					{
 					#endif
 						verbListWithVariantsGlobal.insert(pair<string, GIApreprocessorMultiwordReductionWord*>(index, word));
-					#ifdef GIA_TXT_REL_TRANSLATOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY
+					#ifdef GIA_POS_REL_TRANSLATOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY
 					}
 					#endif
 				}
@@ -1765,12 +1765,12 @@ bool GIApreprocessorWordIdentificationClass::createWordIndexListFromLRPfiles()
 				{
 					string index = iter->first;
 					GIApreprocessorMultiwordReductionWord* word = iter->second;
-					#ifdef GIA_TXT_REL_TRANSLATOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY
+					#ifdef GIA_POS_REL_TRANSLATOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY
 					if(verbCaseDetectGrammaticallyStrictVariant(word->grammaticalTenseForm))	//ensure that the word is a grammatically strict verb
 					{
 					#endif
 						verbListWithVariantsGlobal.insert(pair<string, GIApreprocessorMultiwordReductionWord*>(index, word));
-					#ifdef GIA_TXT_REL_TRANSLATOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY
+					#ifdef GIA_POS_REL_TRANSLATOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY
 					}
 					#endif
 				}

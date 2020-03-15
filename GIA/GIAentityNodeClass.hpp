@@ -26,7 +26,7 @@
  * File Name: GIAentityNodeClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k1c 05-March-2020
+ * Project Version: 3k2a 10-March-2020
  * NB a substance is an instance of an entity, any given entity may contain/comprise/have multiple substances - and substances are unrelated to definitions between entities [they just define what comprises any given entity]
  * /
  *******************************************************************************/
@@ -602,7 +602,7 @@ public:
 	#endif
 	#endif
 	
-	#ifdef GIA_TXT_REL_TRANSLATOR
+	#ifdef GIA_POS_REL_TRANSLATOR
 	bool isLogicReferenceEntity;
 	int logicReferenceClass;
 	string logicReferenceClassType;
@@ -618,17 +618,17 @@ public:
 	*/
 	#endif
 	
-	#ifdef GIA_TXT_REL_TRANSLATOR_RULES
+	#ifdef GIA_POS_REL_TRANSLATOR_RULES
 	string semanticRelationReturnFunctionName; 
 	int semanticRelationReturnFunctionNameIndexType;
 	//bool semanticRelationReturnFunctionNameSameReferenceSet;
 	int semanticRelationPreprocessorEntityIndex;	//NB could rely on entityIndexTemp instead
-	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEMANTICALLY_DETERMINED_DYNAMIC_CONNECTIONS
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEMANTICALLY_DETERMINED_DYNAMIC_CONNECTIONS
 	bool semanticRelationReturnConnectionDynamic;
 	#endif
 	#endif
 	int semanticRelationWordPOStypeInferred;
-	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3
+	#ifdef GIA_POS_REL_TRANSLATOR_RULES_GIA3
 	string semanticRelationWordDeterminer;
 	string semanticRelationWordPredeterminer;
 	bool semanticRelationEntityIsReferenced;

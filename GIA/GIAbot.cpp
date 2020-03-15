@@ -26,7 +26,7 @@
  * File Name: GIAbot.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k1c 05-March-2020
+ * Project Version: 3k2a 10-March-2020
  * Requirements: 
  * Description: Bot
  * /
@@ -142,8 +142,8 @@ void GIAbotClass::botSwitchFirstAndSecondPersonSemantic(GIAtranslatorVariablesCl
 	}
 }
 
-#ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3
-#ifndef GIA_TXT_REL_TRANSLATOR_RULES_GIA3_USE_SEM_REL_TRANSLATOR_PARSER
+#ifdef GIA_POS_REL_TRANSLATOR_RULES_GIA3
+#ifndef GIA_POS_REL_TRANSLATOR_RULES_GIA3_USE_SEM_REL_TRANSLATOR_PARSER
 void GIAbotClass::botSwitchFirstAndSecondPersonTxt(GIAtranslatorVariablesClass* translatorVariables)
 {
 	int numberOfWordsInSentence = GIApreprocessorSentenceClassObject.getSentenceContents(translatorVariables->currentPreprocessorSentenceInList)->size();

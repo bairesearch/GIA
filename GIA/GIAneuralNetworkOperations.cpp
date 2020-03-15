@@ -26,7 +26,7 @@
  * File Name: GIAneuralNetworkOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k1c 05-March-2020
+ * Project Version: 3k2a 10-March-2020
  * Description: Neural Network - visual representation of GIA contents in prototype biological neural network
  * /
  *******************************************************************************/
@@ -63,22 +63,22 @@ GIAneuralNetworkVariablesClass::~GIAneuralNetworkVariablesClass(void)
 }
 
 
-#ifdef GIA_TXT_REL_TRANSLATOR_SANI_ANN
+#ifdef GIA_POS_REL_TRANSLATOR_SANI_ANN
 	
-bool GIAneuralNetworkOperationsClass::generateNeuralNetFromGIAtxtRelTranslatorNet(GIAtranslatorVariablesClass* translatorVariables)
+bool GIAneuralNetworkOperationsClass::generateNeuralNetFromGIAposRelTranslatorNet(GIAtranslatorVariablesClass* translatorVariables)
 {
 	bool result = true;
 	
-	vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes = GIAtxtRelTranslatorRules.getGIAtxtRelTranslatorRulesGroupTypesGlobal();
+	vector<GIAposRelTranslatorRulesGroupType*>* GIAposRelTranslatorRulesGroupTypes = GIAposRelTranslatorRules.getGIAposRelTranslatorRulesGroupTypesGlobal();
 	
-	GIAtxtRelTranslatorRulesGroupNeuralNetwork* firstInputGroupInNetwork = GIAtxtRelTranslatorSANIFormation.getFirstInputGroupInNetwork();
+	GIAposRelTranslatorRulesGroupNeuralNetwork* firstInputGroupInNetwork = GIAposRelTranslatorSANIFormation.getFirstInputGroupInNetwork();
 	ANNneuron* firstInputNeuronInNetwork = firstInputGroupInNetwork->neuronReference;
 	
 	int64_t id = 0;
 	ANNneuron* firstOutputNeuronInNetworkPre = NULL;
 	ANNneuron* firstOutputNeuronInNetworkPost = NULL;
 	determinePositonsOfInputNeurons(&id, &firstOutputNeuronInNetworkPre);	
-	determinePositonsOfNeurons(GIAtxtRelTranslatorRulesGroupTypes, &id, firstOutputNeuronInNetworkPre, &firstOutputNeuronInNetworkPost);
+	determinePositonsOfNeurons(GIAposRelTranslatorRulesGroupTypes, &id, firstOutputNeuronInNetworkPre, &firstOutputNeuronInNetworkPost);
 	
 	//cout << "determinePositonsOfNeurons done" << endl;
 	
@@ -86,7 +86,7 @@ bool GIAneuralNetworkOperationsClass::generateNeuralNetFromGIAtxtRelTranslatorNe
 	translatorVariables->firstInputNeuronInNetwork = firstInputNeuronInNetwork;
 	translatorVariables->firstOutputNeuronInNetwork = firstOutputNeuronInNetworkPost;
 
-	//cout << "GIAneuralNetworkOperationsClass::generateNeuralNetFromGIAtxtRelTranslatorNet done" << endl;
+	//cout << "GIAneuralNetworkOperationsClass::generateNeuralNetFromGIAposRelTranslatorNet done" << endl;
 	
 	return result;	
 }
@@ -102,18 +102,18 @@ bool GIAneuralNetworkOperationsClass::determinePositonsOfInputNeurons(int64_t* i
 	int x3flatAbsolute = 0;
 	int x4flatAbsolute = 0;
 		
-	vector<GIAtxtRelTranslatorRulesGroupType*> GIAtxtRelTranslatorRulesGroupTypesArtificial;
-	GIAtxtRelTranslatorRulesGroupType GIAtxtRelTranslatorRulesGroupTypeArtificialSectionWordPOStype;
-	GIAtxtRelTranslatorRulesGroupType GIAtxtRelTranslatorRulesGroupTypeArtificialSectionExplicitWordMap;
-	GIAtxtRelTranslatorRulesGroupType GIAtxtRelTranslatorRulesGroupTypeArtificialSectionTokensLayerMap;
-	GIAtxtRelTranslatorRulesGroupTypeArtificialSectionWordPOStype.groupTypeXindex = 0;
-	GIAtxtRelTranslatorRulesGroupTypeArtificialSectionExplicitWordMap.groupTypeXindex = 1;
-	GIAtxtRelTranslatorRulesGroupTypeArtificialSectionTokensLayerMap.groupTypeXindex = 2;
-	GIAtxtRelTranslatorRulesGroupTypesArtificial.push_back(&GIAtxtRelTranslatorRulesGroupTypeArtificialSectionWordPOStype);
-	GIAtxtRelTranslatorRulesGroupTypesArtificial.push_back(&GIAtxtRelTranslatorRulesGroupTypeArtificialSectionExplicitWordMap);
-	GIAtxtRelTranslatorRulesGroupTypesArtificial.push_back(&GIAtxtRelTranslatorRulesGroupTypeArtificialSectionTokensLayerMap);
+	vector<GIAposRelTranslatorRulesGroupType*> GIAposRelTranslatorRulesGroupTypesArtificial;
+	GIAposRelTranslatorRulesGroupType GIAposRelTranslatorRulesGroupTypeArtificialSectionWordPOStype;
+	GIAposRelTranslatorRulesGroupType GIAposRelTranslatorRulesGroupTypeArtificialSectionExplicitWordMap;
+	GIAposRelTranslatorRulesGroupType GIAposRelTranslatorRulesGroupTypeArtificialSectionTokensLayerMap;
+	GIAposRelTranslatorRulesGroupTypeArtificialSectionWordPOStype.groupTypeXindex = 0;
+	GIAposRelTranslatorRulesGroupTypeArtificialSectionExplicitWordMap.groupTypeXindex = 1;
+	GIAposRelTranslatorRulesGroupTypeArtificialSectionTokensLayerMap.groupTypeXindex = 2;
+	GIAposRelTranslatorRulesGroupTypesArtificial.push_back(&GIAposRelTranslatorRulesGroupTypeArtificialSectionWordPOStype);
+	GIAposRelTranslatorRulesGroupTypesArtificial.push_back(&GIAposRelTranslatorRulesGroupTypeArtificialSectionExplicitWordMap);
+	GIAposRelTranslatorRulesGroupTypesArtificial.push_back(&GIAposRelTranslatorRulesGroupTypeArtificialSectionTokensLayerMap);
 	
-	GIAtxtRelTranslatorRulesGroupType* groupType = &GIAtxtRelTranslatorRulesGroupTypeArtificialSectionWordPOStype;
+	GIAposRelTranslatorRulesGroupType* groupType = &GIAposRelTranslatorRulesGroupTypeArtificialSectionWordPOStype;
 	ANNneuron* currentGroupNeuronInLayer1 = NULL;
 	ANNneuron* previousGroupNeuronInLayer1 = NULL;
 	ANNneuron* currentGroupNeuronInLayer2 = NULL;
@@ -131,11 +131,11 @@ bool GIAneuralNetworkOperationsClass::determinePositonsOfInputNeurons(int64_t* i
 	int x = 0;
 	int x2flat = 0;
 	int maxX = 0;
-	GIAtxtRelTranslatorRulesGroupNeuralNetwork* firstGroupInInputLayerSectionWordPOStype = GIAtxtRelTranslatorSANIFormation.getFirstGroupInInputLayerSectionWordPOStype();
-	GIAtxtRelTranslatorRulesGroupNeuralNetwork* currentGroupInInputLayerSectionWordPOStype = firstGroupInInputLayerSectionWordPOStype;
+	GIAposRelTranslatorRulesGroupNeuralNetwork* firstGroupInInputLayerSectionWordPOStype = GIAposRelTranslatorSANIFormation.getFirstGroupInInputLayerSectionWordPOStype();
+	GIAposRelTranslatorRulesGroupNeuralNetwork* currentGroupInInputLayerSectionWordPOStype = firstGroupInInputLayerSectionWordPOStype;
 	while(currentGroupInInputLayerSectionWordPOStype->next != NULL)
 	{		
-		GIAtxtRelTranslatorRulesGroupNeuralNetwork* group = currentGroupInInputLayerSectionWordPOStype;
+		GIAposRelTranslatorRulesGroupNeuralNetwork* group = currentGroupInInputLayerSectionWordPOStype;
 		currentGroupNeuronInLayer1 = group->neuronReference;
 		if(x1flatAbsolute != 0)
 		{
@@ -149,24 +149,24 @@ bool GIAneuralNetworkOperationsClass::determinePositonsOfInputNeurons(int64_t* i
 		group->neuronDisplayPositionSet = true;
 		group->neuronDisplayPositionX = x;
 		group->neuronDisplayPositionY = 0;
-		groupType->neuronDisplayPositionX = GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_ARTIFICIAL_INPUT_POSITION_X_WORDPOSTYPE;
-		groupType->neuronDisplayPositionY = GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_ARTIFICIAL_INPUT_POSITION_Y;
-		#ifdef GIA_TXT_REL_TRANSLATOR_SANI_ANN_CALCULATE_BOUNDING_BOXES
-		int groupTypeXposAbsolute = maxX*GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUP_ARTIFICIAL_SPACING_X + groupType->groupTypeXindex*GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_ARTIFICIAL_SPACING_X;
+		groupType->neuronDisplayPositionX = GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_ARTIFICIAL_INPUT_POSITION_X_WORDPOSTYPE;
+		groupType->neuronDisplayPositionY = GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_ARTIFICIAL_INPUT_POSITION_Y;
+		#ifdef GIA_POS_REL_TRANSLATOR_SANI_ANN_CALCULATE_BOUNDING_BOXES
+		int groupTypeXposAbsolute = maxX*GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUP_ARTIFICIAL_SPACING_X + groupType->groupTypeXindex*GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_ARTIFICIAL_SPACING_X;
 		#else
-		int groupTypeXposAbsolute = groupType->neuronDisplayPositionX*GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_ARTIFICIAL_SPACING_X;
+		int groupTypeXposAbsolute = groupType->neuronDisplayPositionX*GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_ARTIFICIAL_SPACING_X;
 		#endif
-		group->neuronReference->xPosRel = groupTypeXposAbsolute + group->neuronDisplayPositionX*GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUP_ARTIFICIAL_SPACING_X;
-		group->neuronReference->yPosRel = groupType->neuronDisplayPositionY*GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_ARTIFICIAL_SPACING_Y + group->neuronDisplayPositionY*GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUP_ARTIFICIAL_SPACING_Y;
+		group->neuronReference->xPosRel = groupTypeXposAbsolute + group->neuronDisplayPositionX*GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUP_ARTIFICIAL_SPACING_X;
+		group->neuronReference->yPosRel = groupType->neuronDisplayPositionY*GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_ARTIFICIAL_SPACING_Y + group->neuronDisplayPositionY*GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUP_ARTIFICIAL_SPACING_Y;
 		group->neuronReference->id = id;
 		id++;
 		
-		#ifdef GIA_TXT_REL_TRANSLATOR_SANI_CREATE_NEURONS_FOR_NOUN_VERB_VARIANTS
+		#ifdef GIA_POS_REL_TRANSLATOR_SANI_CREATE_NEURONS_FOR_NOUN_VERB_VARIANTS
 		int x2 = 0;
 		for(int i2=0; i2<group->ANNfrontGroupConnectionList.size(); i2++)
 		{			
-			GIAtxtRelTranslatorRulesGroupNeuralNetwork* higherLevelGroup = (group->ANNfrontGroupConnectionList)[i2];
-			GIAtxtRelTranslatorRulesGroupNeuralNetwork* group = higherLevelGroup;
+			GIAposRelTranslatorRulesGroupNeuralNetwork* higherLevelGroup = (group->ANNfrontGroupConnectionList)[i2];
+			GIAposRelTranslatorRulesGroupNeuralNetwork* group = higherLevelGroup;
 			currentGroupNeuronInLayer2 = group->neuronReference;
 			if(x2flatAbsolute != 0)
 			{
@@ -179,14 +179,14 @@ bool GIAneuralNetworkOperationsClass::determinePositonsOfInputNeurons(int64_t* i
 		
 			group->neuronDisplayPositionSet = true;
 			group->neuronDisplayPositionX = x2flat;
-			group->neuronDisplayPositionY = GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUP_ARTIFICIAL_INPUT_POSITION_Y_WORDPOSTYPE_NOUN_VERB_VARIANTS;
-			#ifdef GIA_TXT_REL_TRANSLATOR_SANI_ANN_CALCULATE_BOUNDING_BOXES
-			int groupTypeXposAbsolute = maxX*GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUP_ARTIFICIAL_SPACING_X + groupType->groupTypeXindex*GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_ARTIFICIAL_SPACING_X;
+			group->neuronDisplayPositionY = GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUP_ARTIFICIAL_INPUT_POSITION_Y_WORDPOSTYPE_NOUN_VERB_VARIANTS;
+			#ifdef GIA_POS_REL_TRANSLATOR_SANI_ANN_CALCULATE_BOUNDING_BOXES
+			int groupTypeXposAbsolute = maxX*GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUP_ARTIFICIAL_SPACING_X + groupType->groupTypeXindex*GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_ARTIFICIAL_SPACING_X;
 			#else
-			int groupTypeXposAbsolute = groupType->neuronDisplayPositionX*GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_ARTIFICIAL_SPACING_X;
+			int groupTypeXposAbsolute = groupType->neuronDisplayPositionX*GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_ARTIFICIAL_SPACING_X;
 			#endif
-			group->neuronReference->xPosRel = groupTypeXposAbsolute + group->neuronDisplayPositionX*GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUP_ARTIFICIAL_SPACING_X;
-			group->neuronReference->yPosRel = groupType->neuronDisplayPositionY*GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_ARTIFICIAL_SPACING_Y + group->neuronDisplayPositionY*GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUP_ARTIFICIAL_SPACING_Y;
+			group->neuronReference->xPosRel = groupTypeXposAbsolute + group->neuronDisplayPositionX*GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUP_ARTIFICIAL_SPACING_X;
+			group->neuronReference->yPosRel = groupType->neuronDisplayPositionY*GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_ARTIFICIAL_SPACING_Y + group->neuronDisplayPositionY*GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUP_ARTIFICIAL_SPACING_Y;
 			group->neuronReference->id = id;
 			id++;
 		
@@ -206,14 +206,14 @@ bool GIAneuralNetworkOperationsClass::determinePositonsOfInputNeurons(int64_t* i
 	}
 	maxX = x1flatAbsolute;
 	
-	#ifndef GIA_TXT_REL_TRANSLATOR_SANI_SIMPLE_WORD_POS_TYPE_INPUT_ONLY
-	groupType = &GIAtxtRelTranslatorRulesGroupTypeArtificialSectionExplicitWordMap;
+	#ifndef GIA_POS_REL_TRANSLATOR_SANI_SIMPLE_WORD_POS_TYPE_INPUT_ONLY
+	groupType = &GIAposRelTranslatorRulesGroupTypeArtificialSectionExplicitWordMap;
 	x = 0;
-	unordered_map<string, GIAtxtRelTranslatorRulesGroupNeuralNetwork*>* inputLayerSectionExplicitWordMap = GIAtxtRelTranslatorSANIFormation.getInputLayerSectionExplicitWordMap();
-	for(unordered_map<string, GIAtxtRelTranslatorRulesGroupNeuralNetwork*>::iterator iter1 = inputLayerSectionExplicitWordMap->begin(); iter1 != inputLayerSectionExplicitWordMap->end(); iter1++)
+	unordered_map<string, GIAposRelTranslatorRulesGroupNeuralNetwork*>* inputLayerSectionExplicitWordMap = GIAposRelTranslatorSANIFormation.getInputLayerSectionExplicitWordMap();
+	for(unordered_map<string, GIAposRelTranslatorRulesGroupNeuralNetwork*>::iterator iter1 = inputLayerSectionExplicitWordMap->begin(); iter1 != inputLayerSectionExplicitWordMap->end(); iter1++)
 	{
-		GIAtxtRelTranslatorRulesGroupNeuralNetwork* currentGroupInExplicitWordMap = iter1->second;
-		GIAtxtRelTranslatorRulesGroupNeuralNetwork* group = currentGroupInExplicitWordMap;
+		GIAposRelTranslatorRulesGroupNeuralNetwork* currentGroupInExplicitWordMap = iter1->second;
+		GIAposRelTranslatorRulesGroupNeuralNetwork* group = currentGroupInExplicitWordMap;
 		currentGroupNeuronInLayer1 = group->neuronReference;
 		if(currentGroupNeuronInLayer1->nextNeuron != NULL)
 		{
@@ -227,15 +227,15 @@ bool GIAneuralNetworkOperationsClass::determinePositonsOfInputNeurons(int64_t* i
 		group->neuronDisplayPositionSet = true;
 		group->neuronDisplayPositionX = x;
 		group->neuronDisplayPositionY = 0;
-		groupType->neuronDisplayPositionX = GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_ARTIFICIAL_INPUT_POSITION_X_EXPLICITWORD;
-		groupType->neuronDisplayPositionY = GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_ARTIFICIAL_INPUT_POSITION_Y;
-		#ifdef GIA_TXT_REL_TRANSLATOR_SANI_ANN_CALCULATE_BOUNDING_BOXES
-		int groupTypeXposAbsolute = maxX*GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUP_ARTIFICIAL_SPACING_X + groupType->groupTypeXindex*GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_ARTIFICIAL_SPACING_X;
+		groupType->neuronDisplayPositionX = GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_ARTIFICIAL_INPUT_POSITION_X_EXPLICITWORD;
+		groupType->neuronDisplayPositionY = GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_ARTIFICIAL_INPUT_POSITION_Y;
+		#ifdef GIA_POS_REL_TRANSLATOR_SANI_ANN_CALCULATE_BOUNDING_BOXES
+		int groupTypeXposAbsolute = maxX*GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUP_ARTIFICIAL_SPACING_X + groupType->groupTypeXindex*GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_ARTIFICIAL_SPACING_X;
 		#else
-		int groupTypeXposAbsolute = groupType->neuronDisplayPositionX*GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_ARTIFICIAL_SPACING_X;
+		int groupTypeXposAbsolute = groupType->neuronDisplayPositionX*GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_ARTIFICIAL_SPACING_X;
 		#endif
-		group->neuronReference->xPosRel = groupTypeXposAbsolute + group->neuronDisplayPositionX*GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUP_ARTIFICIAL_SPACING_X;
-		group->neuronReference->yPosRel = groupType->neuronDisplayPositionY*GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_ARTIFICIAL_SPACING_Y + group->neuronDisplayPositionY*GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUP_ARTIFICIAL_SPACING_Y;
+		group->neuronReference->xPosRel = groupTypeXposAbsolute + group->neuronDisplayPositionX*GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUP_ARTIFICIAL_SPACING_X;
+		group->neuronReference->yPosRel = groupType->neuronDisplayPositionY*GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_ARTIFICIAL_SPACING_Y + group->neuronDisplayPositionY*GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUP_ARTIFICIAL_SPACING_Y;
 		group->neuronReference->id = id;
 		id++;
 			
@@ -245,17 +245,17 @@ bool GIAneuralNetworkOperationsClass::determinePositonsOfInputNeurons(int64_t* i
 	}
 	maxX = x1flatAbsolute;
 	
-	groupType = &GIAtxtRelTranslatorRulesGroupTypeArtificialSectionTokensLayerMap;	
+	groupType = &GIAposRelTranslatorRulesGroupTypeArtificialSectionTokensLayerMap;	
 	int x1 = 0;
 	int x1flat = 0;
 	x2flat = 0;
 	int x3flat = 0;
 	int x4flat = 0;
-	unordered_map<string, GIAtxtRelTranslatorRulesGroupNeuralNetwork*>* inputLayerSectionTokensLayerMap = GIAtxtRelTranslatorSANIFormation.getInputLayerSectionTokensLayerMap();
-	for(unordered_map<string, GIAtxtRelTranslatorRulesGroupNeuralNetwork*>::iterator iter1 = inputLayerSectionTokensLayerMap->begin(); iter1 != inputLayerSectionTokensLayerMap->end(); iter1++)
+	unordered_map<string, GIAposRelTranslatorRulesGroupNeuralNetwork*>* inputLayerSectionTokensLayerMap = GIAposRelTranslatorSANIFormation.getInputLayerSectionTokensLayerMap();
+	for(unordered_map<string, GIAposRelTranslatorRulesGroupNeuralNetwork*>::iterator iter1 = inputLayerSectionTokensLayerMap->begin(); iter1 != inputLayerSectionTokensLayerMap->end(); iter1++)
 	{
-		GIAtxtRelTranslatorRulesGroupNeuralNetwork* currentGroupInInputLayerSectionTokensLayer = iter1->second;
-		GIAtxtRelTranslatorRulesGroupNeuralNetwork* group = currentGroupInInputLayerSectionTokensLayer;
+		GIAposRelTranslatorRulesGroupNeuralNetwork* currentGroupInInputLayerSectionTokensLayer = iter1->second;
+		GIAposRelTranslatorRulesGroupNeuralNetwork* group = currentGroupInInputLayerSectionTokensLayer;
 		currentGroupNeuronInLayer4 = group->neuronReference;
 		if(x4flatAbsolute != 0)
 		{
@@ -268,24 +268,24 @@ bool GIAneuralNetworkOperationsClass::determinePositonsOfInputNeurons(int64_t* i
 		
 		group->neuronDisplayPositionSet = true;
 		group->neuronDisplayPositionX = x1flat;
-		group->neuronDisplayPositionY = GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUP_ARTIFICIAL_INPUT_POSITION_Y_EXPLICITTOKENSLAYER_LAYER;
-		groupType->neuronDisplayPositionX = GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_ARTIFICIAL_INPUT_POSITION_X_EXPLICITTOKENSLAYER;
-		groupType->neuronDisplayPositionY = GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_ARTIFICIAL_INPUT_POSITION_Y;
-		#ifdef GIA_TXT_REL_TRANSLATOR_SANI_ANN_CALCULATE_BOUNDING_BOXES
-		int groupTypeXposAbsolute = maxX*GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUP_ARTIFICIAL_SPACING_X + groupType->groupTypeXindex*GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_ARTIFICIAL_SPACING_X;
+		group->neuronDisplayPositionY = GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUP_ARTIFICIAL_INPUT_POSITION_Y_EXPLICITTOKENSLAYER_LAYER;
+		groupType->neuronDisplayPositionX = GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_ARTIFICIAL_INPUT_POSITION_X_EXPLICITTOKENSLAYER;
+		groupType->neuronDisplayPositionY = GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_ARTIFICIAL_INPUT_POSITION_Y;
+		#ifdef GIA_POS_REL_TRANSLATOR_SANI_ANN_CALCULATE_BOUNDING_BOXES
+		int groupTypeXposAbsolute = maxX*GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUP_ARTIFICIAL_SPACING_X + groupType->groupTypeXindex*GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_ARTIFICIAL_SPACING_X;
 		#else
-		int groupTypeXposAbsolute = groupType->neuronDisplayPositionX*GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_ARTIFICIAL_SPACING_X;
+		int groupTypeXposAbsolute = groupType->neuronDisplayPositionX*GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_ARTIFICIAL_SPACING_X;
 		#endif
-		group->neuronReference->xPosRel = groupTypeXposAbsolute + group->neuronDisplayPositionX*GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUP_ARTIFICIAL_SPACING_X;
-		group->neuronReference->yPosRel = groupType->neuronDisplayPositionY*GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_ARTIFICIAL_SPACING_Y + group->neuronDisplayPositionY*GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUP_ARTIFICIAL_SPACING_Y;
+		group->neuronReference->xPosRel = groupTypeXposAbsolute + group->neuronDisplayPositionX*GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUP_ARTIFICIAL_SPACING_X;
+		group->neuronReference->yPosRel = groupType->neuronDisplayPositionY*GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_ARTIFICIAL_SPACING_Y + group->neuronDisplayPositionY*GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUP_ARTIFICIAL_SPACING_Y;
 		group->neuronReference->id = id;
 		id++;
 		
 		int x2 = 0;
 		for(int i=0; i<currentGroupInInputLayerSectionTokensLayer->ANNbackGroupConnectionList.size(); i++)
 		{
-			GIAtxtRelTranslatorRulesGroupNeuralNetwork* currentGroupInInputLayerSectionTokensLayerClass = (currentGroupInInputLayerSectionTokensLayer->ANNbackGroupConnectionList)[i];
-			GIAtxtRelTranslatorRulesGroupNeuralNetwork* group = currentGroupInInputLayerSectionTokensLayerClass;
+			GIAposRelTranslatorRulesGroupNeuralNetwork* currentGroupInInputLayerSectionTokensLayerClass = (currentGroupInInputLayerSectionTokensLayer->ANNbackGroupConnectionList)[i];
+			GIAposRelTranslatorRulesGroupNeuralNetwork* group = currentGroupInInputLayerSectionTokensLayerClass;
 			currentGroupNeuronInLayer3 = group->neuronReference;
 			if(x3flatAbsolute != 0)
 			{
@@ -298,28 +298,28 @@ bool GIAneuralNetworkOperationsClass::determinePositonsOfInputNeurons(int64_t* i
 			
 			group->neuronDisplayPositionSet = true;
 			group->neuronDisplayPositionX = x2flat;
-			group->neuronDisplayPositionY = GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUP_ARTIFICIAL_INPUT_POSITION_Y_EXPLICITTOKENSLAYER_LAYER_CLASS;
-			#ifdef GIA_TXT_REL_TRANSLATOR_SANI_ANN_CALCULATE_BOUNDING_BOXES
-			int groupTypeXposAbsolute = maxX*GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUP_ARTIFICIAL_SPACING_X + groupType->groupTypeXindex*GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_ARTIFICIAL_SPACING_X;
+			group->neuronDisplayPositionY = GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUP_ARTIFICIAL_INPUT_POSITION_Y_EXPLICITTOKENSLAYER_LAYER_CLASS;
+			#ifdef GIA_POS_REL_TRANSLATOR_SANI_ANN_CALCULATE_BOUNDING_BOXES
+			int groupTypeXposAbsolute = maxX*GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUP_ARTIFICIAL_SPACING_X + groupType->groupTypeXindex*GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_ARTIFICIAL_SPACING_X;
 			#else
-			int groupTypeXposAbsolute = groupType->neuronDisplayPositionX*GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_ARTIFICIAL_SPACING_X;
+			int groupTypeXposAbsolute = groupType->neuronDisplayPositionX*GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_ARTIFICIAL_SPACING_X;
 			#endif
-			group->neuronReference->xPosRel = groupTypeXposAbsolute + group->neuronDisplayPositionX*GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUP_ARTIFICIAL_SPACING_X;
-			group->neuronReference->yPosRel = groupType->neuronDisplayPositionY*GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_ARTIFICIAL_SPACING_Y + group->neuronDisplayPositionY*GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUP_ARTIFICIAL_SPACING_Y;
+			group->neuronReference->xPosRel = groupTypeXposAbsolute + group->neuronDisplayPositionX*GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUP_ARTIFICIAL_SPACING_X;
+			group->neuronReference->yPosRel = groupType->neuronDisplayPositionY*GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_ARTIFICIAL_SPACING_Y + group->neuronDisplayPositionY*GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUP_ARTIFICIAL_SPACING_Y;
 			group->neuronReference->id = id;
 			id++;
 		
 			int x3 = 0;
 			for(int i=0; i<currentGroupInInputLayerSectionTokensLayerClass->ANNbackGroupConnectionList.size(); i++)
 			{
-				GIAtxtRelTranslatorRulesGroupNeuralNetwork* currentGroupInInputLayerSectionTokensLayerClassType = (currentGroupInInputLayerSectionTokensLayerClass->ANNbackGroupConnectionList)[i];
-				GIAtxtRelTranslatorRulesGroupNeuralNetwork* group = currentGroupInInputLayerSectionTokensLayerClassType;
+				GIAposRelTranslatorRulesGroupNeuralNetwork* currentGroupInInputLayerSectionTokensLayerClassType = (currentGroupInInputLayerSectionTokensLayerClass->ANNbackGroupConnectionList)[i];
+				GIAposRelTranslatorRulesGroupNeuralNetwork* group = currentGroupInInputLayerSectionTokensLayerClassType;
 				currentGroupNeuronInLayer2 = group->neuronReference;
 				if(x2flatAbsolute != 0)
 				{
 					previousGroupNeuronInLayer2->nextNeuron = currentGroupNeuronInLayer2;
 				}
-				#ifndef GIA_TXT_REL_TRANSLATOR_SANI_CREATE_NEURONS_FOR_NOUN_VERB_VARIANTS
+				#ifndef GIA_POS_REL_TRANSLATOR_SANI_CREATE_NEURONS_FOR_NOUN_VERB_VARIANTS
 				else
 				{
 					firstNeuronInLayer2 = currentGroupNeuronInLayer2;
@@ -328,22 +328,22 @@ bool GIAneuralNetworkOperationsClass::determinePositonsOfInputNeurons(int64_t* i
 				
 				group->neuronDisplayPositionSet = true;
 				group->neuronDisplayPositionX = x3flat;
-				group->neuronDisplayPositionY = GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUP_ARTIFICIAL_INPUT_POSITION_Y_EXPLICITTOKENSLAYER_LAYER_CLASS_TYPE;
-				#ifdef GIA_TXT_REL_TRANSLATOR_SANI_ANN_CALCULATE_BOUNDING_BOXES
-				int groupTypeXposAbsolute = maxX*GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUP_ARTIFICIAL_SPACING_X + groupType->groupTypeXindex*GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_ARTIFICIAL_SPACING_X;
+				group->neuronDisplayPositionY = GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUP_ARTIFICIAL_INPUT_POSITION_Y_EXPLICITTOKENSLAYER_LAYER_CLASS_TYPE;
+				#ifdef GIA_POS_REL_TRANSLATOR_SANI_ANN_CALCULATE_BOUNDING_BOXES
+				int groupTypeXposAbsolute = maxX*GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUP_ARTIFICIAL_SPACING_X + groupType->groupTypeXindex*GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_ARTIFICIAL_SPACING_X;
 				#else
-				int groupTypeXposAbsolute = groupType->neuronDisplayPositionX*GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_ARTIFICIAL_SPACING_X;
+				int groupTypeXposAbsolute = groupType->neuronDisplayPositionX*GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_ARTIFICIAL_SPACING_X;
 				#endif
-				group->neuronReference->xPosRel = groupTypeXposAbsolute + group->neuronDisplayPositionX*GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUP_ARTIFICIAL_SPACING_X;
-				group->neuronReference->yPosRel = groupType->neuronDisplayPositionY*GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_ARTIFICIAL_SPACING_Y + group->neuronDisplayPositionY*GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUP_ARTIFICIAL_SPACING_Y;
+				group->neuronReference->xPosRel = groupTypeXposAbsolute + group->neuronDisplayPositionX*GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUP_ARTIFICIAL_SPACING_X;
+				group->neuronReference->yPosRel = groupType->neuronDisplayPositionY*GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_ARTIFICIAL_SPACING_Y + group->neuronDisplayPositionY*GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUP_ARTIFICIAL_SPACING_Y;
 				group->neuronReference->id = id;
 				id++;
 		
 				int x4 = 0;
 				for(int i=0; i<currentGroupInInputLayerSectionTokensLayerClassType->ANNbackGroupConnectionList.size(); i++)
 				{
-					GIAtxtRelTranslatorRulesGroupNeuralNetwork* currentGroupInInputLayerSectionTokensLayerClassTypeInstance = (currentGroupInInputLayerSectionTokensLayerClassType->ANNbackGroupConnectionList)[i];
-					GIAtxtRelTranslatorRulesGroupNeuralNetwork* group = currentGroupInInputLayerSectionTokensLayerClassTypeInstance;
+					GIAposRelTranslatorRulesGroupNeuralNetwork* currentGroupInInputLayerSectionTokensLayerClassTypeInstance = (currentGroupInInputLayerSectionTokensLayerClassType->ANNbackGroupConnectionList)[i];
+					GIAposRelTranslatorRulesGroupNeuralNetwork* group = currentGroupInInputLayerSectionTokensLayerClassTypeInstance;
 					currentGroupNeuronInLayer1 = group->neuronReference;
 					if(x1flatAbsolute != 0)
 					{
@@ -352,14 +352,14 @@ bool GIAneuralNetworkOperationsClass::determinePositonsOfInputNeurons(int64_t* i
 					
 					group->neuronDisplayPositionSet = true;
 					group->neuronDisplayPositionX = x4flat;
-					group->neuronDisplayPositionY = GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUP_ARTIFICIAL_INPUT_POSITION_Y_EXPLICITTOKENSLAYER_LAYER_CLASS_TYPE_INSTANCE;
-					#ifdef GIA_TXT_REL_TRANSLATOR_SANI_ANN_CALCULATE_BOUNDING_BOXES
-					int groupTypeXposAbsolute = maxX*GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUP_ARTIFICIAL_SPACING_X + groupType->groupTypeXindex*GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_ARTIFICIAL_SPACING_X;
+					group->neuronDisplayPositionY = GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUP_ARTIFICIAL_INPUT_POSITION_Y_EXPLICITTOKENSLAYER_LAYER_CLASS_TYPE_INSTANCE;
+					#ifdef GIA_POS_REL_TRANSLATOR_SANI_ANN_CALCULATE_BOUNDING_BOXES
+					int groupTypeXposAbsolute = maxX*GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUP_ARTIFICIAL_SPACING_X + groupType->groupTypeXindex*GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_ARTIFICIAL_SPACING_X;
 					#else
-					int groupTypeXposAbsolute = groupType->neuronDisplayPositionX*GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_ARTIFICIAL_SPACING_X;
+					int groupTypeXposAbsolute = groupType->neuronDisplayPositionX*GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_ARTIFICIAL_SPACING_X;
 					#endif
-					group->neuronReference->xPosRel = groupTypeXposAbsolute + group->neuronDisplayPositionX*GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUP_ARTIFICIAL_SPACING_X;
-					group->neuronReference->yPosRel = groupType->neuronDisplayPositionY*GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_ARTIFICIAL_SPACING_Y + group->neuronDisplayPositionY*GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUP_ARTIFICIAL_SPACING_Y;
+					group->neuronReference->xPosRel = groupTypeXposAbsolute + group->neuronDisplayPositionX*GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUP_ARTIFICIAL_SPACING_X;
+					group->neuronReference->yPosRel = groupType->neuronDisplayPositionY*GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_ARTIFICIAL_SPACING_Y + group->neuronDisplayPositionY*GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUP_ARTIFICIAL_SPACING_Y;
 					group->neuronReference->id = id;
 					id++;
 		
@@ -388,11 +388,11 @@ bool GIAneuralNetworkOperationsClass::determinePositonsOfInputNeurons(int64_t* i
 	}	
 	#endif
 	
-	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_CREATE_NEURONS_FOR_NOUN_VERB_VARIANTS
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_CREATE_NEURONS_FOR_NOUN_VERB_VARIANTS
 	firstNeuronInLayer1->hasFrontLayer = true;
 	firstNeuronInLayer1->firstNeuronInFrontLayer = firstNeuronInLayer2;
 	#endif
-	#ifndef GIA_TXT_REL_TRANSLATOR_SANI_SIMPLE_WORD_POS_TYPE_INPUT_ONLY
+	#ifndef GIA_POS_REL_TRANSLATOR_SANI_SIMPLE_WORD_POS_TYPE_INPUT_ONLY
 	firstNeuronInLayer2->hasFrontLayer = true;
 	firstNeuronInLayer2->firstNeuronInFrontLayer = firstNeuronInLayer3;
 	firstNeuronInLayer3->hasFrontLayer = true;
@@ -400,16 +400,16 @@ bool GIAneuralNetworkOperationsClass::determinePositonsOfInputNeurons(int64_t* i
 	#endif
 	
 	currentGroupNeuronInLayer1->nextNeuron = new ANNneuron();	//create a null neuron at end of layer
-	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_CREATE_NEURONS_FOR_NOUN_VERB_VARIANTS
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_CREATE_NEURONS_FOR_NOUN_VERB_VARIANTS
 	currentGroupNeuronInLayer2->nextNeuron = new ANNneuron();	//create a null neuron at end of layer
 	#endif
-	#ifndef GIA_TXT_REL_TRANSLATOR_SANI_SIMPLE_WORD_POS_TYPE_INPUT_ONLY
+	#ifndef GIA_POS_REL_TRANSLATOR_SANI_SIMPLE_WORD_POS_TYPE_INPUT_ONLY
 	currentGroupNeuronInLayer3->nextNeuron = new ANNneuron();	//create a null neuron at end of layer
 	currentGroupNeuronInLayer4->nextNeuron = new ANNneuron();	//create a null neuron at end of layer
 	#endif
 	
-	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SIMPLE_WORD_POS_TYPE_INPUT_ONLY
-	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_CREATE_NEURONS_FOR_NOUN_VERB_VARIANTS
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SIMPLE_WORD_POS_TYPE_INPUT_ONLY
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_CREATE_NEURONS_FOR_NOUN_VERB_VARIANTS
 	*firstOutputNeuronInNetworkPre = firstNeuronInLayer2;
 	#else
 	*firstOutputNeuronInNetworkPre = firstNeuronInLayer1;
@@ -424,33 +424,33 @@ bool GIAneuralNetworkOperationsClass::determinePositonsOfInputNeurons(int64_t* i
 }
 
 
-bool GIAneuralNetworkOperationsClass::determinePositonsOfNeurons(vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, int64_t* idBase, ANNneuron* firstOutputNeuronInNetworkPre, ANNneuron** firstOutputNeuronInNetworkPost)
+bool GIAneuralNetworkOperationsClass::determinePositonsOfNeurons(vector<GIAposRelTranslatorRulesGroupType*>* GIAposRelTranslatorRulesGroupTypes, int64_t* idBase, ANNneuron* firstOutputNeuronInNetworkPre, ANNneuron** firstOutputNeuronInNetworkPost)
 {
 	bool result = true;
 	
 	int64_t id = *idBase;
 	
 	bool foundAtLeastOneNeuron = false;
-	for(int i=0; i<GIAtxtRelTranslatorRulesGroupTypes->size(); i++)
+	for(int i=0; i<GIAposRelTranslatorRulesGroupTypes->size(); i++)
 	{
-		GIAtxtRelTranslatorRulesGroupType* groupType = GIAtxtRelTranslatorRulesGroupTypes->at(i);
+		GIAposRelTranslatorRulesGroupType* groupType = GIAposRelTranslatorRulesGroupTypes->at(i);
 		for(int i1=0; i1<groupType->groups.size(); i1++)
 		{
-			GIAtxtRelTranslatorRulesGroupNeuralNetwork* groupBase = (groupType->groups)[i1];
+			GIAposRelTranslatorRulesGroupNeuralNetwork* groupBase = (groupType->groups)[i1];
 			foundAtLeastOneNeuron = true;
 		}
 	}			
 
 	if(foundAtLeastOneNeuron)
 	{
-		for(int i=0; i<GIAtxtRelTranslatorRulesGroupTypes->size(); i++)
+		for(int i=0; i<GIAposRelTranslatorRulesGroupTypes->size(); i++)
 		{
-			GIAtxtRelTranslatorRulesGroupType* groupType = GIAtxtRelTranslatorRulesGroupTypes->at(i);
-			vector<GIAtxtRelTranslatorRulesGroupNeuralNetwork*> groupsOrdered;
+			GIAposRelTranslatorRulesGroupType* groupType = GIAposRelTranslatorRulesGroupTypes->at(i);
+			vector<GIAposRelTranslatorRulesGroupNeuralNetwork*> groupsOrdered;
 
 			bool stillDisplayOrdering = true;
 			int y = 0;
-			#ifdef GIA_TXT_REL_TRANSLATOR_SANI_ANN_CENTRE_NEURONS
+			#ifdef GIA_POS_REL_TRANSLATOR_SANI_ANN_CENTRE_NEURONS
 			int groupMaxY = 0;
 			int groupMaxXacrossAllY = 0;
 			#endif
@@ -460,19 +460,19 @@ bool GIAneuralNetworkOperationsClass::determinePositonsOfNeurons(vector<GIAtxtRe
 				bool neuronDisplayPositionNotSetFound = false;
 				for(int i1=0; i1<groupType->groups.size(); i1++)
 				{
-					GIAtxtRelTranslatorRulesGroupNeuralNetwork* groupBase = (groupType->groups)[i1];
+					GIAposRelTranslatorRulesGroupNeuralNetwork* groupBase = (groupType->groups)[i1];
 					if(!(groupBase->neuronDisplayPositionSet))
 					{
 						bool foundLowerLevelNeuronToBase = false;
 						for(int i2=0; i2<groupType->groups.size(); i2++)
 						{
-							GIAtxtRelTranslatorRulesGroupNeuralNetwork* group = (groupType->groups)[i2];
+							GIAposRelTranslatorRulesGroupNeuralNetwork* group = (groupType->groups)[i2];
 							if(!(group->neuronDisplayPositionSet) || (group->neuronDisplayPositionY == y))	//OLD: if(!(group->neuronDisplayPositionSet))
 							{
 								for(int i3=0; i3<group->ANNfrontComponentConnectionList.size(); i3++)
 								{
-									GIAtxtRelTranslatorRulesComponentNeuralNetwork* currentComponent = (group->ANNfrontComponentConnectionList)[i3];
-			 						GIAtxtRelTranslatorRulesGroupNeuralNetwork* ownerGroup = currentComponent->ownerGroup;	
+									GIAposRelTranslatorRulesComponentNeuralNetwork* currentComponent = (group->ANNfrontComponentConnectionList)[i3];
+			 						GIAposRelTranslatorRulesGroupNeuralNetwork* ownerGroup = currentComponent->ownerGroup;	
 									if(group->groupTypeName == groupBase->groupTypeName)		//added GIA3h3aTEMP33
 									{
 										if(group != ownerGroup)	//added GIA3h3aTEMP33 //OR: (group != groupBase)	//required for cases where a group directly references itself eg subReferenceSetsObject:act; <component componentType="group" groupTypeName="subReferenceSetsObject" optional="true" />
@@ -497,7 +497,7 @@ bool GIAneuralNetworkOperationsClass::determinePositonsOfNeurons(vector<GIAtxtRe
 
 							//cout << "groupBase->groupName = " << groupBase->groupName << endl;
 							//cout << "groupType->neuronDisplayPositionX/Y = " << groupBase->neuronDisplayPositionX << "/" << groupBase->neuronDisplayPositionY << endl;
-							#ifdef GIA_TXT_REL_TRANSLATOR_SANI_ANN_CENTRE_NEURONS
+							#ifdef GIA_POS_REL_TRANSLATOR_SANI_ANN_CENTRE_NEURONS
 							if(x > groupMaxXacrossAllY)
 							{
 								groupMaxXacrossAllY = x;
@@ -511,20 +511,20 @@ bool GIAneuralNetworkOperationsClass::determinePositonsOfNeurons(vector<GIAtxtRe
 				{
 					stillDisplayOrdering = false;
 				}
-				#ifdef GIA_TXT_REL_TRANSLATOR_SANI_ANN_CENTRE_NEURONS
+				#ifdef GIA_POS_REL_TRANSLATOR_SANI_ANN_CENTRE_NEURONS
 				groupMaxY = y;
 				#endif
 				y++;
 			}
 
-			#ifdef GIA_TXT_REL_TRANSLATOR_SANI_ANN_CENTRE_NEURONS
-			#ifdef GIA_TXT_REL_TRANSLATOR_SANI_ANN_CENTRE_NEURONS_X_AXIS
+			#ifdef GIA_POS_REL_TRANSLATOR_SANI_ANN_CENTRE_NEURONS
+			#ifdef GIA_POS_REL_TRANSLATOR_SANI_ANN_CENTRE_NEURONS_X_AXIS
 			for(int y=0; y<groupMaxY; y++)
 			{
 				int groupMaxX = 0;
 				for(int i1=0; i1<groupType->groups.size(); i1++)
 				{
-					GIAtxtRelTranslatorRulesGroupNeuralNetwork* group = (groupType->groups)[i1];
+					GIAposRelTranslatorRulesGroupNeuralNetwork* group = (groupType->groups)[i1];
 					if(group->neuronDisplayPositionY == y)
 					{
 						if(group->neuronDisplayPositionX > groupMaxX)
@@ -535,7 +535,7 @@ bool GIAneuralNetworkOperationsClass::determinePositonsOfNeurons(vector<GIAtxtRe
 				}			
 				for(int i1=0; i1<groupType->groups.size(); i1++)
 				{
-					GIAtxtRelTranslatorRulesGroupNeuralNetwork* group = (groupType->groups)[i1];
+					GIAposRelTranslatorRulesGroupNeuralNetwork* group = (groupType->groups)[i1];
 					if(group->neuronDisplayPositionY == y)
 					{
 						group->neuronDisplayPositionXcentred = group->neuronDisplayPositionX + (groupMaxXacrossAllY-groupMaxX)/2;
@@ -548,30 +548,30 @@ bool GIAneuralNetworkOperationsClass::determinePositonsOfNeurons(vector<GIAtxtRe
 			{
 				for(int i1=0; i1<groupType->groups.size(); i1++)
 				{
-					GIAtxtRelTranslatorRulesGroupNeuralNetwork* group = (groupType->groups)[i1];
+					GIAposRelTranslatorRulesGroupNeuralNetwork* group = (groupType->groups)[i1];
 					group->neuronDisplayPositionXcentred = group->neuronDisplayPositionX;
 				}
 			}
 			#endif
-			#ifdef GIA_TXT_REL_TRANSLATOR_SANI_ANN_SEGREGATE_TOP_LAYER_NEURONS
+			#ifdef GIA_POS_REL_TRANSLATOR_SANI_ANN_SEGREGATE_TOP_LAYER_NEURONS
 			for(int i1=0; i1<groupType->groups.size(); i1++)
 			{
-				GIAtxtRelTranslatorRulesGroupNeuralNetwork* group = (groupType->groups)[i1];
+				GIAposRelTranslatorRulesGroupNeuralNetwork* group = (groupType->groups)[i1];
 				if(group->topLevelSentenceNeuron)
 				{
-					group->neuronDisplayPositionYcentred = group->neuronDisplayPositionY + GIA_TXT_REL_TRANSLATOR_SANI_ANN_SEGREGATE_TOP_LAYER_NEURONS_Y_SEPARATION;
+					group->neuronDisplayPositionYcentred = group->neuronDisplayPositionY + GIA_POS_REL_TRANSLATOR_SANI_ANN_SEGREGATE_TOP_LAYER_NEURONS_Y_SEPARATION;
 
 				}
 			}
 			#endif
 			/*
-			#ifdef GIA_TXT_REL_TRANSLATOR_SANI_ANN_SEGREGATE_TOP_LAYER_NEURONS_OLD
+			#ifdef GIA_POS_REL_TRANSLATOR_SANI_ANN_SEGREGATE_TOP_LAYER_NEURONS_OLD
 			for(int i1=0; i1<groupType->groups.size(); i1++)
 			{
-				GIAtxtRelTranslatorRulesGroupNeuralNetwork* group = (groupType->groups)[i1];
+				GIAposRelTranslatorRulesGroupNeuralNetwork* group = (groupType->groups)[i1];
 				if(group->neuronDisplayPositionY == groupMaxY-1)
 				{
-					group->neuronDisplayPositionYcentred = group->neuronDisplayPositionY + GIA_TXT_REL_TRANSLATOR_SANI_ANN_SEGREGATE_TOP_LAYER_NEURONS_Y_SEPARATION;
+					group->neuronDisplayPositionYcentred = group->neuronDisplayPositionY + GIA_POS_REL_TRANSLATOR_SANI_ANN_SEGREGATE_TOP_LAYER_NEURONS_Y_SEPARATION;
 				}
 			}
 			#endif
@@ -584,18 +584,18 @@ bool GIAneuralNetworkOperationsClass::determinePositonsOfNeurons(vector<GIAtxtRe
 		bool stillDisplayOrdering = true;
 		int y = 0;
 		int groupTypeMaxY = 0;
-		#ifdef GIA_TXT_REL_TRANSLATOR_SANI_ANN_SUPPORT_RECURSION
+		#ifdef GIA_POS_REL_TRANSLATOR_SANI_ANN_SUPPORT_RECURSION
 		int numberOfGroupTypesFound = 0;
-		int totalNumberGroupTypes = GIAtxtRelTranslatorRulesGroupTypes->size();
+		int totalNumberGroupTypes = GIAposRelTranslatorRulesGroupTypes->size();
 		bool activateLowestLevelUndisplayedGroupTypeAsInferredByXMLdisplayOrderFound = false;
 		#endif
 		while(stillDisplayOrdering)
 		{
 			int x = 0;
 			bool neuronDisplayPositionNotSetFound = false;
-			for(int i=0; i<GIAtxtRelTranslatorRulesGroupTypes->size(); i++)
+			for(int i=0; i<GIAposRelTranslatorRulesGroupTypes->size(); i++)
 			{
-				GIAtxtRelTranslatorRulesGroupType* groupTypeBase = GIAtxtRelTranslatorRulesGroupTypes->at(i);
+				GIAposRelTranslatorRulesGroupType* groupTypeBase = GIAposRelTranslatorRulesGroupTypes->at(i);
 				if(!(groupTypeBase->neuronDisplayPositionSet))
 				{
 					bool foundLowerLevelNeuronToBase = false;
@@ -605,20 +605,20 @@ bool GIAneuralNetworkOperationsClass::determinePositonsOfNeurons(vector<GIAtxtRe
 					}
 					else
 					{
-						for(int i1=0; i1<GIAtxtRelTranslatorRulesGroupTypes->size(); i1++)
+						for(int i1=0; i1<GIAposRelTranslatorRulesGroupTypes->size(); i1++)
 						{
-							GIAtxtRelTranslatorRulesGroupType* groupType = GIAtxtRelTranslatorRulesGroupTypes->at(i1);
+							GIAposRelTranslatorRulesGroupType* groupType = GIAposRelTranslatorRulesGroupTypes->at(i1);
 							if(groupType != groupTypeBase)
 							{
 								if(!(groupType->neuronDisplayPositionSet) || (groupType->neuronDisplayPositionY == y))	//OLD:	if(!(groupType->neuronDisplayPositionSet))
 								{	
 									for(int i2=0; i2<groupType->groups.size(); i2++)
 									{
-										GIAtxtRelTranslatorRulesGroupNeuralNetwork* group = (groupType->groups)[i2];
+										GIAposRelTranslatorRulesGroupNeuralNetwork* group = (groupType->groups)[i2];
 										for(int i3=0; i3<group->ANNfrontComponentConnectionList.size(); i3++)
 										{
-											GIAtxtRelTranslatorRulesComponentNeuralNetwork* currentComponent = (group->ANNfrontComponentConnectionList)[i3];
-			 								GIAtxtRelTranslatorRulesGroupNeuralNetwork* ownerGroup = currentComponent->ownerGroup;
+											GIAposRelTranslatorRulesComponentNeuralNetwork* currentComponent = (group->ANNfrontComponentConnectionList)[i3];
+			 								GIAposRelTranslatorRulesGroupNeuralNetwork* ownerGroup = currentComponent->ownerGroup;
 											if(ownerGroup->groupTypeName == groupTypeBase->groupTypeName)
 											{
 												foundLowerLevelNeuronToBase = true;
@@ -643,7 +643,7 @@ bool GIAneuralNetworkOperationsClass::determinePositonsOfNeurons(vector<GIAtxtRe
 			}
 			if(!neuronDisplayPositionNotSetFound)
 			{
-				#ifdef GIA_TXT_REL_TRANSLATOR_SANI_ANN_SUPPORT_RECURSION
+				#ifdef GIA_POS_REL_TRANSLATOR_SANI_ANN_SUPPORT_RECURSION
 				if(numberOfGroupTypesFound < totalNumberGroupTypes)
 				{
 					activateLowestLevelUndisplayedGroupTypeAsInferredByXMLdisplayOrderFound = true;
@@ -667,20 +667,20 @@ bool GIAneuralNetworkOperationsClass::determinePositonsOfNeurons(vector<GIAtxtRe
 		ANNneuron* previousGroupNeuronInLayerX = NULL;
 		ANNneuron* firstGroupNeuronInGroupTypeLastLayer = NULL;
 
-		#ifdef GIA_TXT_REL_TRANSLATOR_SANI_ANN_CALCULATE_BOUNDING_BOXES
-		int groupTypeLayerYsum = GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_INPUT_POSITION_Y;
+		#ifdef GIA_POS_REL_TRANSLATOR_SANI_ANN_CALCULATE_BOUNDING_BOXES
+		int groupTypeLayerYsum = GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_INPUT_POSITION_Y;
 		for(int groupTypeY=0; groupTypeY<=groupTypeMaxY; groupTypeY++)
 		{
 			int groupTypeLayerMaxY = 0;
 			int groupTypeMaxX = 0;
-			for(int i=0; i<GIAtxtRelTranslatorRulesGroupTypes->size(); i++)
+			for(int i=0; i<GIAposRelTranslatorRulesGroupTypes->size(); i++)
 			{
-				GIAtxtRelTranslatorRulesGroupType* groupType = GIAtxtRelTranslatorRulesGroupTypes->at(i);
+				GIAposRelTranslatorRulesGroupType* groupType = GIAposRelTranslatorRulesGroupTypes->at(i);
 				if(groupType->neuronDisplayPositionY == groupTypeY)
 				{
 					for(int i1=0; i1<groupType->groups.size(); i1++)
 					{
-						GIAtxtRelTranslatorRulesGroupNeuralNetwork* group = (groupType->groups)[i1];
+						GIAposRelTranslatorRulesGroupNeuralNetwork* group = (groupType->groups)[i1];
 						ANNneuron* currentGroupNeuronInLayerX = group->neuronReference;
 						if(group->neuronDisplayPositionX == 0)
 						{	
@@ -699,18 +699,18 @@ bool GIAneuralNetworkOperationsClass::determinePositonsOfNeurons(vector<GIAtxtRe
 
 			for(int groupY=0; groupY<=groupTypeLayerMaxY; groupY++)
 			{
-				int groupTypeLayerXsum = GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_INPUT_POSITION_X;
+				int groupTypeLayerXsum = GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_INPUT_POSITION_X;
 				for(int groupTypeX=0; groupTypeX<=groupTypeMaxX; groupTypeX++)
 				{
 					int groupTypeLayerMaxX = 0;
-					for(int i=0; i<GIAtxtRelTranslatorRulesGroupTypes->size(); i++)
+					for(int i=0; i<GIAposRelTranslatorRulesGroupTypes->size(); i++)
 					{
-						GIAtxtRelTranslatorRulesGroupType* groupType = GIAtxtRelTranslatorRulesGroupTypes->at(i);
+						GIAposRelTranslatorRulesGroupType* groupType = GIAposRelTranslatorRulesGroupTypes->at(i);
 						if((groupType->neuronDisplayPositionY == groupTypeY) && (groupType->neuronDisplayPositionX == groupTypeX))
 						{
 							for(int i1=0; i1<groupType->groups.size(); i1++)
 							{
-								GIAtxtRelTranslatorRulesGroupNeuralNetwork* group = (groupType->groups)[i1];
+								GIAposRelTranslatorRulesGroupNeuralNetwork* group = (groupType->groups)[i1];
 								if(group->neuronDisplayPositionY == groupY)
 								{	
 									if(group->neuronDisplayPositionX > groupTypeLayerMaxX)
@@ -723,31 +723,31 @@ bool GIAneuralNetworkOperationsClass::determinePositonsOfNeurons(vector<GIAtxtRe
 					}
 					for(int groupX=0; groupX<=groupTypeLayerMaxX; groupX++)
 					{
-						for(int i=0; i<GIAtxtRelTranslatorRulesGroupTypes->size(); i++)
+						for(int i=0; i<GIAposRelTranslatorRulesGroupTypes->size(); i++)
 						{
-							GIAtxtRelTranslatorRulesGroupType* groupType = GIAtxtRelTranslatorRulesGroupTypes->at(i);
+							GIAposRelTranslatorRulesGroupType* groupType = GIAposRelTranslatorRulesGroupTypes->at(i);
 							if((groupType->neuronDisplayPositionY == groupTypeY) && (groupType->neuronDisplayPositionX == groupTypeX))
 							{
 								for(int i1=0; i1<groupType->groups.size(); i1++)
 								{
-									GIAtxtRelTranslatorRulesGroupNeuralNetwork* group = (groupType->groups)[i1];
+									GIAposRelTranslatorRulesGroupNeuralNetwork* group = (groupType->groups)[i1];
 									if((group->neuronDisplayPositionY == groupY) && (group->neuronDisplayPositionX == groupX))
 									{
-										GIAtxtRelTranslatorRulesGroupNeuralNetwork* group = (groupType->groups)[i1];
-										#ifdef GIA_TXT_REL_TRANSLATOR_SANI_ANN_CALCULATE_BOUNDING_BOXES
+										GIAposRelTranslatorRulesGroupNeuralNetwork* group = (groupType->groups)[i1];
+										#ifdef GIA_POS_REL_TRANSLATOR_SANI_ANN_CALCULATE_BOUNDING_BOXES
 										int groupTypeXposAbsolute = groupTypeLayerXsum;
 										int groupTypeYposAbsolute = groupTypeLayerYsum;
 										#else
-										int groupTypeXposAbsolute = GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_INPUT_POSITION_X + groupType->neuronDisplayPositionX*GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_SPACING_X;
-										int groupTypeYposAbsolute = GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_INPUT_POSITION_Y + groupType->neuronDisplayPositionY*GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_SPACING_Y;
+										int groupTypeXposAbsolute = GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_INPUT_POSITION_X + groupType->neuronDisplayPositionX*GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_SPACING_X;
+										int groupTypeYposAbsolute = GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_INPUT_POSITION_Y + groupType->neuronDisplayPositionY*GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_SPACING_Y;
 										#endif
 
-										#ifdef GIA_TXT_REL_TRANSLATOR_SANI_ANN_CENTRE_NEURONS
-										group->neuronReference->xPosRel = groupTypeXposAbsolute + group->neuronDisplayPositionXcentred*GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUP_SPACING_X;
-										group->neuronReference->yPosRel = groupTypeYposAbsolute + group->neuronDisplayPositionYcentred*GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUP_SPACING_Y;
+										#ifdef GIA_POS_REL_TRANSLATOR_SANI_ANN_CENTRE_NEURONS
+										group->neuronReference->xPosRel = groupTypeXposAbsolute + group->neuronDisplayPositionXcentred*GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUP_SPACING_X;
+										group->neuronReference->yPosRel = groupTypeYposAbsolute + group->neuronDisplayPositionYcentred*GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUP_SPACING_Y;
 										#else
-										group->neuronReference->xPosRel = groupTypeXposAbsolute + group->neuronDisplayPositionX*GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUP_SPACING_X;
-										group->neuronReference->yPosRel = groupTypeYposAbsolute + group->neuronDisplayPositionY*GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUP_SPACING_Y;
+										group->neuronReference->xPosRel = groupTypeXposAbsolute + group->neuronDisplayPositionX*GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUP_SPACING_X;
+										group->neuronReference->yPosRel = groupTypeYposAbsolute + group->neuronDisplayPositionY*GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUP_SPACING_Y;
 										#endif
 										group->neuronReference->id = id;
 
@@ -757,7 +757,7 @@ bool GIAneuralNetworkOperationsClass::determinePositonsOfNeurons(vector<GIAtxtRe
 										cout << "groupType->neuronDisplayPositionX/Y, group->neuronDisplayPositionX/Y = " << groupType->neuronDisplayPositionX << "/" << groupType->neuronDisplayPositionY << ", " << group->neuronDisplayPositionX << "/" << group->neuronDisplayPositionY << endl;
 										*/
 
-										#ifdef GIA_TXT_REL_TRANSLATOR_SANI_ANN_CALCULATE_BOUNDING_BOXES2
+										#ifdef GIA_POS_REL_TRANSLATOR_SANI_ANN_CALCULATE_BOUNDING_BOXES2
 										bool firstGroupNeuronInLayerXFound = false;
 										ANNneuron* currentGroupNeuronInLayerX = group->neuronReference;
 										//if(!(group->neuronConnectivitySet))
@@ -798,25 +798,25 @@ bool GIAneuralNetworkOperationsClass::determinePositonsOfNeurons(vector<GIAtxtRe
 							}
 						}
 					}
-					groupTypeLayerXsum = groupTypeLayerXsum + groupTypeLayerMaxX*GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUP_SPACING_X + GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_SPACING_X;
+					groupTypeLayerXsum = groupTypeLayerXsum + groupTypeLayerMaxX*GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUP_SPACING_X + GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_SPACING_X;
 				}
-				#ifdef GIA_TXT_REL_TRANSLATOR_SANI_ANN_CALCULATE_BOUNDING_BOXES2
+				#ifdef GIA_POS_REL_TRANSLATOR_SANI_ANN_CALCULATE_BOUNDING_BOXES2
 				previousGroupNeuronInLayerX->nextNeuron = new ANNneuron();	//create a null neuron at end of layer	
 				#endif		
 			}
-			groupTypeLayerYsum = groupTypeLayerYsum + groupTypeLayerMaxY*GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUP_SPACING_Y + GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_SPACING_Y;
+			groupTypeLayerYsum = groupTypeLayerYsum + groupTypeLayerMaxY*GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUP_SPACING_Y + GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_SPACING_Y;
 		}
 		#else
-		cerr << "GIAneuralNetworkOperationsClass::determinePositonsOfNeurons{} warning: !GIA_TXT_REL_TRANSLATOR_SANI_ANN_CALCULATE_BOUNDING_BOXES has not been coded" << endl;
-		for(int i=0; i<GIAtxtRelTranslatorRulesGroupTypes->size(); i++)
+		cerr << "GIAneuralNetworkOperationsClass::determinePositonsOfNeurons{} warning: !GIA_POS_REL_TRANSLATOR_SANI_ANN_CALCULATE_BOUNDING_BOXES has not been coded" << endl;
+		for(int i=0; i<GIAposRelTranslatorRulesGroupTypes->size(); i++)
 		{
-			GIAtxtRelTranslatorRulesGroupType* groupType = GIAtxtRelTranslatorRulesGroupTypes->at(i);
+			GIAposRelTranslatorRulesGroupType* groupType = GIAposRelTranslatorRulesGroupTypes->at(i);
 
 			for(int i1=0; i1<groupType->groups.size(); i1++)
 			{
-				GIAtxtRelTranslatorRulesGroupNeuralNetwork* group = (groupType->groups)[i1];
-				group->neuronReference->xPosRel = GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_INPUT_POSITION_X + groupType->neuronDisplayPositionX*GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_SPACING_X + group->neuronDisplayPositionX*GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUP_SPACING_X;
-				group->neuronReference->yPosRel = GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_INPUT_POSITION_Y + groupType->neuronDisplayPositionY*GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_SPACING_Y + group->neuronDisplayPositionY*GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUP_SPACING_Y;
+				GIAposRelTranslatorRulesGroupNeuralNetwork* group = (groupType->groups)[i1];
+				group->neuronReference->xPosRel = GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_INPUT_POSITION_X + groupType->neuronDisplayPositionX*GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_SPACING_X + group->neuronDisplayPositionX*GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUP_SPACING_X;
+				group->neuronReference->yPosRel = GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_INPUT_POSITION_Y + groupType->neuronDisplayPositionY*GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_SPACING_Y + group->neuronDisplayPositionY*GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUP_SPACING_Y;
 				group->neuronReference->id = id;
 				id++;
 			}
@@ -824,18 +824,18 @@ bool GIAneuralNetworkOperationsClass::determinePositonsOfNeurons(vector<GIAtxtRe
 		#endif
 
 
-		#ifndef GIA_TXT_REL_TRANSLATOR_SANI_ANN_CALCULATE_BOUNDING_BOXES2
+		#ifndef GIA_POS_REL_TRANSLATOR_SANI_ANN_CALCULATE_BOUNDING_BOXES2
 		for(int groupTypeY=0; groupTypeY<=groupTypeMaxY; groupTypeY++)
 		{
 			int groupTypeLayerMaxY = 0;
-			for(int i=0; i<GIAtxtRelTranslatorRulesGroupTypes->size(); i++)
+			for(int i=0; i<GIAposRelTranslatorRulesGroupTypes->size(); i++)
 			{
-				GIAtxtRelTranslatorRulesGroupType* groupType = GIAtxtRelTranslatorRulesGroupTypes->at(i);
+				GIAposRelTranslatorRulesGroupType* groupType = GIAposRelTranslatorRulesGroupTypes->at(i);
 				if(groupType->neuronDisplayPositionY == groupTypeY)
 				{
 					for(int i1=0; i1<groupType->groups.size(); i1++)
 					{
-						GIAtxtRelTranslatorRulesGroupNeuralNetwork* group = (groupType->groups)[i1];
+						GIAposRelTranslatorRulesGroupNeuralNetwork* group = (groupType->groups)[i1];
 						ANNneuron* currentGroupNeuronInLayerX = group->neuronReference;
 						if(group->neuronDisplayPositionX == 0)	//CHECKTHIS
 						{	
@@ -853,14 +853,14 @@ bool GIAneuralNetworkOperationsClass::determinePositonsOfNeurons(vector<GIAtxtRe
 
 			for(int groupY=0; groupY<=groupTypeLayerMaxY; groupY++)
 			{	
-				for(int i=0; i<GIAtxtRelTranslatorRulesGroupTypes->size(); i++)
+				for(int i=0; i<GIAposRelTranslatorRulesGroupTypes->size(); i++)
 				{
-					GIAtxtRelTranslatorRulesGroupType* groupType = GIAtxtRelTranslatorRulesGroupTypes->at(i);
+					GIAposRelTranslatorRulesGroupType* groupType = GIAposRelTranslatorRulesGroupTypes->at(i);
 					if(groupType->neuronDisplayPositionY == groupTypeY)
 					{
 						for(int i1=0; i1<groupType->groups.size(); i1++)
 						{
-							GIAtxtRelTranslatorRulesGroupNeuralNetwork* group = (groupType->groups)[i1];
+							GIAposRelTranslatorRulesGroupNeuralNetwork* group = (groupType->groups)[i1];
 							if(group->neuronDisplayPositionY == groupY)
 							{
 								bool firstGroupNeuronInLayerXFound = false;
@@ -1063,12 +1063,12 @@ bool GIAneuralNetworkOperationsClass::generateNeuralNetFromSemanticNet(GIAtransl
 
 	GIAneuralNetworkVariablesClass neuralNetworkVariables;
 	
-	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_ANN
-	//connect GIA_TXT_REL_TRANSLATOR_SANI_ANN to GIA ANN;
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_ANN
+	//connect GIA_POS_REL_TRANSLATOR_SANI_ANN to GIA ANN;
 	neuralNetworkVariables.firstInputNeuronInNetwork = new ANNneuron();
 	translatorVariables->firstOutputNeuronInNetwork->hasFrontLayer = true;
 	translatorVariables->firstOutputNeuronInNetwork->firstNeuronInFrontLayer = neuralNetworkVariables.firstInputNeuronInNetwork;
-	neuralNetworkVariables.yPosRelStart = translatorVariables->firstOutputNeuronInNetwork->yPosRel + GIA_TXT_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_SPACING_Y;	
+	neuralNetworkVariables.yPosRelStart = translatorVariables->firstOutputNeuronInNetwork->yPosRel + GIA_POS_REL_TRANSLATOR_SANI_ANN_GROUPTYPE_SPACING_Y;	
 	#else
 	neuralNetworkVariables.firstInputNeuronInNetwork = translatorVariables->firstInputNeuronInNetwork;
 	#endif

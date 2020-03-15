@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorPOStagger.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k1c 05-March-2020
+ * Project Version: 3k2a 10-March-2020
  * Requirements: requires plain text file
  * Description: Preprocessor POS tagger
  * /
@@ -46,8 +46,8 @@
 #include "GIAtranslatorGrammar.hpp"
 #include "GIApreprocessorPOStaggerDatabase.hpp"
 #ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_NEURAL_NETWORK_SEQUENCE_GRAMMAR
-#include "GIAtxtRelTranslatorSANIPropagateCompactGenerate.hpp"
-#include "GIAtxtRelTranslatorRules.hpp"
+#include "GIAposRelTranslatorSANIPropagateCompactGenerate.hpp"
+#include "GIAposRelTranslatorRules.hpp"
 #endif
 #ifdef USE_ANN
 #include "ANNexperienceClass.hpp"
@@ -70,13 +70,13 @@ class GIApreprocessorPOStaggerClass
 	private: GIAtranslatorGrammarClass GIAtranslatorGrammar;
 	private: GIApreprocessorPOStaggerDatabaseClass GIApreprocessorPOStaggerDatabase;
 	#ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_NEURAL_NETWORK_SEQUENCE_GRAMMAR
-	private: GIAtxtRelTranslatorSANIPropagateCompactGenerateClass GIAtxtRelTranslatorSANIPropagateCompactGenerate;
-	private: GIAtxtRelTranslatorRulesClass GIAtxtRelTranslatorRules;
+	private: GIAposRelTranslatorSANIPropagateCompactGenerateClass GIAposRelTranslatorSANIPropagateCompactGenerate;
+	private: GIAposRelTranslatorRulesClass GIAposRelTranslatorRules;
 	#endif
 		
 	#ifdef GIA_PREPROCESSOR_POS_TAGGER
 	
-	#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_EXECUTE_PRELIM_POS_TAGGER
+	#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_EXECUTE_PRELIM_POS_TAGGER
 	public: bool executePrelimFeatureProcessingOnSentences(const string outputLRPTextPlainTXTFileName, const string inputTextNLPfeatureXMLfileName, GIAtranslatorVariablesClass* translatorVariables);
 		private: bool predictPOStaggerDatabaseEntry(const uint64_t centreWordPOSambiguityInfo, vector<uint64_t>* POSambiguityInfoPermutation, const unsigned char centreWordUnambiguousPOSindex, GIApreprocessorPlainTextWord* centreWord, bool* foundMatchingCentreWordPOSambiguityInfo, unsigned char* centreWordPOSindexPrediction, bool* centreWordPOSisAmbiguous, double* experienceBackPropagationPassError, int* maximumNumberOfInstances);
 	#endif
@@ -117,7 +117,7 @@ class GIApreprocessorPOStaggerClass
 	#endif
 	#ifdef GIA_PREPROCESSOR_INITIALISE_WORD_INDEX_LIST_FROM_LRP_FILES
 	public: void generatePOSambiguityInfoUnambiguousPermutationArray(vector<vector<uint64_t>*>* POSambiguityInfoUnambiguousPermutationArray, vector<uint64_t>* POSambiguityInfoPermutation, vector<uint64_t>* POSambiguityInfoUnambiguousPermutationLocal, int wordIndex);
-	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3
+	#ifdef GIA_POS_REL_TRANSLATOR_RULES_GIA3
 	public: bool determinePOSambiguityInfoWrapper(vector<GIApreprocessorPlainTextWord*>* sentenceContents, vector<uint64_t>* POSambiguityInfoPermutation, vector<string>* explicitWordList);
 	#endif	
 		public: bool determinePOSambiguityInfo(GIApreprocessorPlainTextWord* contextWord, uint64_t* contextWordPOSambiguityInfo, bool* contextWordPOSisAmbiguous, unsigned char* contextWordUnambiguousPOSindex, bool* identifiedEveryWordInDatabasePOSpermutation);
@@ -132,7 +132,7 @@ class GIApreprocessorPOStaggerClass
 	public: bool generateANNexperienceFromPOSambiguityInfoPermutationStandalone(vector<uint64_t>* POSambiguityInfoPermutation, const unsigned char outputNeuronExperienceValue, ANNexperience* currentExperience);
 	#endif
 	
-	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START
+	#ifdef GIA_POS_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START
 	public: bool setSentenceContentsWordsUnambiguousPOSindex(vector<GIApreprocessorPlainTextWord*>* sentenceContents, vector<uint64_t>* POSambiguityInfoPermutationTemp);
 	#endif
 };

@@ -26,7 +26,7 @@
  * File Name: GIAneuralNetworkOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k1c 05-March-2020
+ * Project Version: 3k2a 10-March-2020
  * Description: Neural Network - visual representation of GIA contents in prototype biological neural network
  * /
  *******************************************************************************/
@@ -42,9 +42,9 @@
 #include "ANNneuronClass.hpp"
 #include "ANNneuronConnectionClass.hpp"
 #include "GIAtranslatorOperations.hpp"
-#ifdef GIA_TXT_REL_TRANSLATOR_SANI_ANN
-#include "GIAtxtRelTranslatorRules.hpp"
-#include "GIAtxtRelTranslatorSANIFormation.hpp"
+#ifdef GIA_POS_REL_TRANSLATOR_SANI_ANN
+#include "GIAposRelTranslatorRules.hpp"
+#include "GIAposRelTranslatorSANIFormation.hpp"
 #include "GIApreprocessorSentenceClass.hpp"
 //#include "GIApreprocessorWordClass.hpp"
 #endif
@@ -93,9 +93,9 @@ class GIAneuralNetworkOperationsClass
 {
 	private: GIAentityNodeClassClass GIAentityNodeClass;
 	private: GIAtranslatorOperationsClass GIAtranslatorOperations;
-	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_ANN
-	private: GIAtxtRelTranslatorRulesClass GIAtxtRelTranslatorRules;
-	private: GIAtxtRelTranslatorSANIFormationClass GIAtxtRelTranslatorSANIFormation;
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_ANN
+	private: GIAposRelTranslatorRulesClass GIAposRelTranslatorRules;
+	private: GIAposRelTranslatorSANIFormationClass GIAposRelTranslatorSANIFormation;
 	#endif
 	private: ANNneuronClassClass ANNneuronClass;
 	private: ANNxmlConversionClass ANNxmlConversion;
@@ -105,10 +105,10 @@ class GIAneuralNetworkOperationsClass
 	public: bool writeNeuralNetXMLfile(const string xmlFileName, ANNneuron* ANNfirstInputNeuronInNetwork);
 			
 	public: void initiateGIAneuralNetwork(GIAneuralNetworkVariablesClass* neuralNetworkVariables);
-	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_ANN
-	public: bool generateNeuralNetFromGIAtxtRelTranslatorNet(GIAtranslatorVariablesClass* translatorVariables);
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_ANN
+	public: bool generateNeuralNetFromGIAposRelTranslatorNet(GIAtranslatorVariablesClass* translatorVariables);
 		private: bool determinePositonsOfInputNeurons(int64_t* idBase, ANNneuron** firstOutputNeuronInNetworkPre);
-		private: bool determinePositonsOfNeurons(vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes, int64_t* idBase, ANNneuron* firstOutputNeuronInNetworkPre, ANNneuron** firstOutputNeuronInNetworkPost);
+		private: bool determinePositonsOfNeurons(vector<GIAposRelTranslatorRulesGroupType*>* GIAposRelTranslatorRulesGroupTypes, int64_t* idBase, ANNneuron* firstOutputNeuronInNetworkPre, ANNneuron** firstOutputNeuronInNetworkPost);
 	#endif
 	#ifdef GIA_NEURAL_NETWORK_PASSIVE
 	public: bool generateNeuralNetFromSemanticNet(GIAtranslatorVariablesClass* translatorVariables);

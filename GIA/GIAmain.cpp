@@ -26,7 +26,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k1c 05-March-2020
+ * Project Version: 3k2a 10-March-2020
  * Requirements: 
  * Description: Main
  * /
@@ -667,7 +667,7 @@ int main(const int argc, const char** argv)
 
 	if(SHAREDvarsClass().argumentExists(argc, argv, "-version"))
 	{
-		cout << "GIA.exe - Project Version: 3k1c 05-March-2020" << endl;
+		cout << "GIA.exe - Project Version: 3k2a 10-March-2020" << endl;
 		exit(EXIT_OK);
 	}
 
@@ -1038,14 +1038,14 @@ int main(const int argc, const char** argv)
 	}
 	#endif
 
-	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR		
-	vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes = new vector<GIAtxtRelTranslatorRulesGroupType*>;
-	vector<XMLparserTag*>* GIAtxtRelTranslatorRulesTokenLayers = new vector<XMLparserTag*>;
-	if(!GIAtxtRelTranslatorRulesClass().extractGIAtxtRelTranslatorRules(GIAtxtRelTranslatorRulesGroupTypes, GIAtxtRelTranslatorRulesTokenLayers))
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR		
+	vector<GIAposRelTranslatorRulesGroupType*>* GIAposRelTranslatorRulesGroupTypes = new vector<GIAposRelTranslatorRulesGroupType*>;
+	vector<XMLparserTag*>* GIAposRelTranslatorRulesTokenLayers = new vector<XMLparserTag*>;
+	if(!GIAposRelTranslatorRulesClass().extractGIAposRelTranslatorRules(GIAposRelTranslatorRulesGroupTypes, GIAposRelTranslatorRulesTokenLayers))
 	{
 		result = false;
 	}
-	if(!GIAtxtRelTranslatorSANIFormationClass().createGIAtxtRelTranslatorSANI(GIAtxtRelTranslatorRulesTokenLayers, GIAtxtRelTranslatorRulesGroupTypes))
+	if(!GIAposRelTranslatorSANIFormationClass().createGIAposRelTranslatorSANI(GIAposRelTranslatorRulesTokenLayers, GIAposRelTranslatorRulesGroupTypes))
 	{
 		result = false;
 	}
@@ -1060,16 +1060,16 @@ int main(const int argc, const char** argv)
 		result = false;
 	}	
 	
-	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR
-	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_ANN_DELAY_ANN_CONNECTIVITY_TILL_END
-	GIAtxtRelTranslatorSANIFormationClass().createANNconnectivity(GIAtxtRelTranslatorRulesGroupTypes);
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_ANN_DELAY_ANN_CONNECTIVITY_TILL_END
+	GIAposRelTranslatorSANIFormationClass().createANNconnectivity(GIAposRelTranslatorRulesGroupTypes);
 	#endif
 	#endif
 
 	#ifdef GIA_NEURAL_NETWORK
 	
-	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_ANN
-	GIAneuralNetworkOperationsClass().generateNeuralNetFromGIAtxtRelTranslatorNet(translatorVariables);	//generate GIA NLP neural network
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_ANN
+	GIAneuralNetworkOperationsClass().generateNeuralNetFromGIAposRelTranslatorNet(translatorVariables);	//generate GIA NLP neural network
 	#endif
 	#ifdef GIA_NEURAL_NETWORK_PASSIVE
 	GIAneuralNetworkOperationsClass().generateNeuralNetFromSemanticNet(translatorVariables);	//generate GIA KB neural network
@@ -1586,10 +1586,10 @@ bool GIAmainClass::executeGIA2()
 	#ifdef GIA_DISABLE_SYNTACTIC_TRANSLATOR
 		if(useInputTextPlainTXTFile)
 		{
-			#ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3
-			#ifndef GIA_TXT_REL_TRANSLATOR_RULES_GIA3_USE_SYN_REL_TRANSLATOR_FEATURES
+			#ifdef GIA_POS_REL_TRANSLATOR_RULES_GIA3
+			#ifndef GIA_POS_REL_TRANSLATOR_RULES_GIA3_USE_SYN_REL_TRANSLATOR_FEATURES
 			translatorVariables->firstSentenceInList = new GIAsentence();
-			if(!GIAtxtRelTranslator.parseTxtfileAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences(translatorVariables, inputTextPlainTXTfileName, "", "", outputTextCFFFileName))
+			if(!GIAposRelTranslator.parseTxtfileAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences(translatorVariables, inputTextPlainTXTfileName, "", "", outputTextCFFFileName))
 			{
 				result = false;
 			}
@@ -1648,8 +1648,8 @@ bool GIAmainClass::executeGIA2()
 			else
 			{
 				translatorVariables->firstSentenceInList = new GIAsentence();
-				#ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3
-				if(!GIAtxtRelTranslator.parseTxtfileAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences(translatorVariables, inputTextPlainTXTfileName, inputTextNLPrelationXMLfileName, inputTextNLPfeatureXMLfileName, outputTextCFFFileName))
+				#ifdef GIA_POS_REL_TRANSLATOR_RULES_GIA3
+				if(!GIAposRelTranslator.parseTxtfileAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences(translatorVariables, inputTextPlainTXTfileName, inputTextNLPrelationXMLfileName, inputTextNLPfeatureXMLfileName, outputTextCFFFileName))
 				{
 					result = false;
 				}
@@ -1739,10 +1739,10 @@ bool GIAmainClass::executeGIA2()
 	#ifdef GIA_DISABLE_SYNTACTIC_TRANSLATOR
 		if(useInputQueryPlainTXTFile)
 		{
-			#ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3
-			#ifndef GIA_TXT_REL_TRANSLATOR_RULES_GIA3_USE_SYN_REL_TRANSLATOR_FEATURES
+			#ifdef GIA_POS_REL_TRANSLATOR_RULES_GIA3
+			#ifndef GIA_POS_REL_TRANSLATOR_RULES_GIA3_USE_SYN_REL_TRANSLATOR_FEATURES
 			translatorVariablesQuery->firstSentenceInList = new GIAsentence();
-			if(!GIAtxtRelTranslator.parseTxtfileAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences(translatorVariablesQuery, inputQueryPlainTXTFileName, "", "", outputQueryCFFFileName))
+			if(!GIAposRelTranslator.parseTxtfileAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences(translatorVariablesQuery, inputQueryPlainTXTFileName, "", "", outputQueryCFFFileName))
 			{
 				result = false;
 			}
@@ -1793,8 +1793,8 @@ bool GIAmainClass::executeGIA2()
 			else
 			{
 				translatorVariablesQuery->firstSentenceInList = new GIAsentence();
-				#ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3
-				if(!GIAtxtRelTranslator.parseTxtfileAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences(translatorVariablesQuery, inputQueryPlainTXTFileName, inputQueryNLPrelationXMLFileName, inputQueryNLPfeatureXMLFileName, outputQueryCFFFileName))
+				#ifdef GIA_POS_REL_TRANSLATOR_RULES_GIA3
+				if(!GIAposRelTranslator.parseTxtfileAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences(translatorVariablesQuery, inputQueryPlainTXTFileName, inputQueryNLPrelationXMLFileName, inputQueryNLPfeatureXMLFileName, outputQueryCFFFileName))
 				{
 					result = false;
 				}
@@ -2005,8 +2005,8 @@ bool GIAmainClass::executeGIA2()
 
 	#ifdef GIA_NEURAL_NETWORK
 	
-	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_ANN
-	GIAneuralNetworkOperations.generateNeuralNetFromGIAtxtRelTranslatorNet(translatorVariables);	//generate GIA NLP neural network
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_ANN
+	GIAneuralNetworkOperations.generateNeuralNetFromGIAposRelTranslatorNet(translatorVariables);	//generate GIA NLP neural network
 	#endif
 	#ifdef GIA_NEURAL_NETWORK_PASSIVE
 	GIAneuralNetworkOperations.generateNeuralNetFromSemanticNet(translatorVariables);	//generate GIA KB neural network

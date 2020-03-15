@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorWordClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k1c 05-March-2020
+ * Project Version: 3k2a 10-March-2020
  * Requirements: requires plain text file
  * Description: Preprocessor Word Class
  * /
@@ -46,7 +46,7 @@
 #endif
 #include "SHAREDvars.hpp"
 #include "GIAsynRelTranslatorDefs.hpp"	
-#include "GIAsemRelTranslatorDefs.hpp"	//required for GIA_PREPROCESSOR_POS_TYPE and GIA_TXT_REL_TRANSLATOR_HYBRID_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS	
+#include "GIAsemRelTranslatorDefs.hpp"	//required for GIA_PREPROCESSOR_POS_TYPE and GIA_POS_REL_TRANSLATOR_HYBRID_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS	
 
 
 
@@ -199,7 +199,7 @@ static char translatorEnglishNumbersNumericalFractionalArray[GIA_TRANSLATOR_ENGL
 #define GIA_PREPROCESSOR_POS_TYPE_NAME_POSINSERTTEMPLATE9 (GIA_SHARED_POS_TYPE_NAME_POSINSERTTEMPLATE9)
 #define GIA_PREPROCESSOR_POS_TYPE_NAME_POSINSERTTEMPLATE0 (GIA_SHARED_POS_TYPE_NAME_POSINSERTTEMPLATE0)
 
-#ifdef GIA_TXT_REL_TRANSLATOR_SANI_ADD_EXPLICIT_WORD_REFERENCES_AS_INDEPENDENT_POS_PERMUTATIONS
+#ifdef GIA_POS_REL_TRANSLATOR_SANI_ADD_EXPLICIT_WORD_REFERENCES_AS_INDEPENDENT_POS_PERMUTATIONS
 	#define GIA_PREPROCESSOR_POS_TYPE_EXPLICITWORDTEMP (GIA_PREPROCESSOR_POS_TYPE_POSINSERTTEMPLATE5)
 	#define GIA_PREPROCESSOR_POS_TYPE_NAME_EXPLICITWORDTEMP (GIA_PREPROCESSOR_POS_TYPE_NAME_POSINSERTTEMPLATE5)
 #endif
@@ -484,7 +484,7 @@ static string translatorEnglishNounPluralModifierReplacementArray[GIA_TRANSLATOR
 #define GIA_NEURAL_NETWORK_NON_SEMANTIC_PREPROCESSOR_WORD_TYPE_CONCEPT (1)
 #define GIA_NEURAL_NETWORK_NON_SEMANTIC_PREPROCESSOR_WORD_TYPE_SPECIFIC_CONCEPT (2)
 #define GIA_NEURAL_NETWORK_NON_SEMANTIC_PREPROCESSOR_WORD_TYPE_IGNORE (3)
-#ifndef GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET
+#ifndef GIA_POS_REL_TRANSLATOR_HYBRID_REFERENCE_SET
 #define GIA_NEURAL_NETWORK_NON_SEMANTIC_PREPROCESSOR_WORD_TYPE_CONCEPT_DEFINITION (4)
 #endif
 #endif
@@ -568,7 +568,7 @@ public:
 	~GIApreprocessorPlainTextWord(void);
 	void initialiseGIApreprocessorPlainTextWord();
 	
-	#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_EXECUTE_PRELIM_POS_TAGGER
+	#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_EXECUTE_PRELIM_POS_TAGGER
 	GIAfeature* featureReferencePrelim;
 	#endif
 	#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
@@ -596,8 +596,8 @@ public:
 	#endif
 	#endif
 
-	#ifdef GIA_TXT_REL_TRANSLATOR_RULES
-	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START
+	#ifdef GIA_POS_REL_TRANSLATOR_RULES
+	#ifdef GIA_POS_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START
 	unsigned char unambiguousPOSindex;
 	#else
 	uint64_t POSambiguityInfo;
@@ -605,15 +605,15 @@ public:
 	int wordPOStypeInferred;
 	bool alreadyFoundMatch;
 	int translatorSentenceEntityIndex;
-	#ifdef GIA_TXT_REL_TRANSLATOR_SANI
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI
 	int translatorSentenceWordIndex;	//for code efficiency only: = translatorSentenceEntityIndex - 1
 	#endif
 	GIAentityNode* translatorEntity;
-	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_WORD_NOUN_VERB_VARIANT
+	#ifdef GIA_POS_REL_TRANSLATOR_RULES_CODE_COMPONENT_WORD_NOUN_VERB_VARIANT
 	int wordVerbVariantGrammaticalTenseForm;
 	int wordNounVariantGrammaticalTenseForm;
 	#endif
-	#ifdef GIA_TXT_REL_TRANSLATOR_SANI
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI
 	//bool wordPropagated;
 	#endif
 	#endif
@@ -794,7 +794,7 @@ class GIApreprocessorWordClassClass
 	public: void preprocessorFillCurrentWord(GIApreprocessorMultiwordReductionPlainTextWord** currentWordInSentence, string* currentWord, int* entityIndex, int lastCharacterIndexOfWordInSentence);
 	public: int getPOStypeFromName(const string wordPOStypeName);
 	public: bool isStringNumber(const string phrase);
-	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_TREAT_UNKNOWN_POSTYPES_MID_SENTENCE_CAPITALISED_WORDS_AS_PROPERNOUNS
+	#ifdef GIA_POS_REL_TRANSLATOR_RULES_TREAT_UNKNOWN_POSTYPES_MID_SENTENCE_CAPITALISED_WORDS_AS_PROPERNOUNS
 	public: bool isMidSentenceUppercaseWordLikelyProperNoun(GIApreprocessorPlainTextWord* contextWord);
 	#endif
 	public: bool wordIsUpperCase(const string wordText);

@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k1c 05-March-2020
+ * Project Version: 3k2a 10-March-2020
  * Requirements: requires text parsed by X Parser
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
@@ -49,11 +49,11 @@
 #ifdef GIA_PREPROCESSOR_WORD_NORMALISE_PREPOSITIONS
 #include "GIApreprocessorWordIdentification.hpp"
 #endif
-#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID
+#ifdef GIA_POS_REL_TRANSLATOR_HYBRID
 #include "GIApreprocessorSentenceClass.hpp"
 #endif
-#ifdef GIA_TXT_REL_TRANSLATOR_LOGIC_REFERENCE
-#include "GIAtxtRelTranslatorRules.hpp"
+#ifdef GIA_POS_REL_TRANSLATOR_LOGIC_REFERENCE
+#include "GIAposRelTranslatorRules.hpp"
 #endif
 #ifdef GIA_NEURAL_NETWORK
 #include "ANNneuronClass.hpp"
@@ -61,7 +61,7 @@
 #include "SHAREDvars.hpp"
 
 
-#ifdef GIA_TXT_REL_TRANSLATOR_LOGIC_REFERENCE
+#ifdef GIA_POS_REL_TRANSLATOR_LOGIC_REFERENCE
 	#define GIA_ENTITY_TYPE_LOGIC_REFERENCE (GIA_ENTITY_TYPE_ACTION)
 #endif
 
@@ -109,7 +109,7 @@ public:
 	vector<GIAentityNode*>* GIAentityNodeArray;
 	vector<GIAentityNode*>* GIAfeatureTempEntityNodeArray;
 	GIAsentence* currentSentenceInList;	
-	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3
+	#ifdef GIA_POS_REL_TRANSLATOR_RULES_GIA3
 	GIApreprocessorSentence* currentPreprocessorSentenceInList;
 	#endif
 	
@@ -135,14 +135,14 @@ public:
 
 	#ifdef GIA_NEURAL_NETWORK
 	ANNneuron* firstInputNeuronInNetwork;
-	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_ANN
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_ANN
 	ANNneuron* firstOutputNeuronInNetwork;
 	#endif
 	#endif
 	
-	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC
 	bool parserAllowed;
-	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OPTIMISED
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OPTIMISED
 	bool parserDemarkateOptimumPathway;
 	#endif
 	#endif
@@ -157,7 +157,7 @@ adjective = happy
 
 class GIAtranslatorOperationsClass
 {
-	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEMANTICALLY_DETERMINED_DYNAMIC_CONNECTIONS
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEMANTICALLY_DETERMINED_DYNAMIC_CONNECTIONS
 	public: GIAtranslatorOperationsClass(void);
 	public: ~GIAtranslatorOperationsClass(void);
 	#endif
@@ -375,7 +375,7 @@ class GIAtranslatorOperationsClass
 	
 	public: bool connectDefinitionAliasWrapper(GIAtranslatorVariablesClass* translatorVariables, GIAentityNode* entitySemanticRelationFunction1, GIAentityNode** entitySemanticRelationFunction2, GIAentityNode* entitySemanticRelationFunction3, const bool sameReferenceSet);
 	public: bool connectPrenominalModifierWrapper(GIAtranslatorVariablesClass* translatorVariables, GIAentityNode* entitySemanticRelationFunction1, GIAentityNode* entitySemanticRelationFunction2, const bool sameReferenceSet);
-	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3
+	#ifdef GIA_POS_REL_TRANSLATOR_RULES_GIA3
 	public: bool connectMultiwordAuxiliaryWrapper(GIAtranslatorVariablesClass* translatorVariables, GIAentityNode* entitySemanticRelationFunction1, GIAentityNode* entitySemanticRelationFunction2, const bool sameReferenceSet);		
 	#endif
 	public: bool connectMultiwordPrepositionWrapper(GIAtranslatorVariablesClass* translatorVariables, GIAentityNode* entitySemanticRelationFunction1, GIAentityNode* entitySemanticRelationFunction2, const bool sameReferenceSet);		
@@ -383,7 +383,7 @@ class GIAtranslatorOperationsClass
 		//private: GIAentityNode* createNewRelationshipEntitySemantic(const int relationshipEntityType, const string relationshipEntityName, GIAtranslatorVariablesClass* translatorVariables);
 		private: bool connectMultiwordCollapse(GIAtranslatorVariablesClass* translatorVariables, GIAentityNode* entitySemanticRelationFunction1, GIAentityNode* entitySemanticRelationFunction2, const bool sameReferenceSet);
 		private: bool connectMultiwordCollapseReverse(GIAtranslatorVariablesClass* translatorVariables, GIAentityNode* entitySemanticRelationFunction1, GIAentityNode* entitySemanticRelationFunction2, const bool sameReferenceSet);
-			#ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3_COLLAPSE_ALIASES_ONLY
+			#ifdef GIA_POS_REL_TRANSLATOR_RULES_GIA3_COLLAPSE_ALIASES_ONLY
 			public: string* getFirstAlias(GIAentityNode* entity);
 			#endif
 			private: void passMultiwordGrammaticalParameters(GIAentityNode* entitySemanticRelationFunction1, GIAentityNode* entitySemanticRelationFunction2);
@@ -393,7 +393,7 @@ class GIAtranslatorOperationsClass
 	public: bool connectMeasureToEntity(GIAtranslatorVariablesClass* translatorVariables, GIAentityNode* entitySemanticRelationFunction1, GIAentityNode* entitySemanticRelationFunction2, const bool sameReferenceSet);
 	public: bool connectMeasurePerToEntity(GIAtranslatorVariablesClass* translatorVariables, GIAentityNode* entitySemanticRelationFunction1, GIAentityNode* entitySemanticRelationFunction2, const bool sameReferenceSet);
 
-	#ifdef GIA_TXT_REL_TRANSLATOR_LOGIC_REFERENCE
+	#ifdef GIA_POS_REL_TRANSLATOR_LOGIC_REFERENCE
 	public: bool connectLogicReferenceConjunction(GIAtranslatorVariablesClass* translatorVariables, const string logicReferenceClassType, GIAentityNode* targetEntity, GIAentityNode* logicReferenceEntity, const bool sameReferenceSet);
 	public: bool connectLogicReferenceConclusion(GIAtranslatorVariablesClass* translatorVariables, const string logicReferenceClassType, GIAentityNode* targetEntity, GIAentityNode* logicReferenceEntity, const bool sameReferenceSet);
 	public: bool connectLogicReference(GIAtranslatorVariablesClass* translatorVariables, const int logicReferenceClass, const string logicReferenceClassType, GIAentityNode* sourceEntity, GIAentityNode* targetEntity, GIAentityNode* logicReferenceEntity, const bool sameReferenceSet);
@@ -403,7 +403,7 @@ class GIAtranslatorOperationsClass
 			private: int generateConnectionTypeSourceToLogicReferenceRelationship(GIAentityNode* relationship);
 	#endif
 	
-	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3
+	#ifdef GIA_POS_REL_TRANSLATOR_RULES_GIA3
 	public: int getEntityArrayMaxIndex(GIAtranslatorVariablesClass* translatorVariables);
 	public: int convertSentenceContentsIndexToEntityIndex(const int sentenceContentsIndex);
 	public: int convertEntityIndexToSentenceContentsIndex(const int entityIndex);
@@ -417,7 +417,7 @@ class GIAtranslatorOperationsClass
 
 	public: void updateGrammaticalValuesBasedOnModalAuxiliaryOrCopula(GIAentityNode* entity, const string auxiliaryOrCopulaString);
 	
-	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_SEMANTICALLY_DETERMINED_DYNAMIC_CONNECTIONS
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEMANTICALLY_DETERMINED_DYNAMIC_CONNECTIONS
 	public: bool semanticRelationReturnConnectionDynamic;
 	#endif
 

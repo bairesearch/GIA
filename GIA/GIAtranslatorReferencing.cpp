@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k1c 05-March-2020
+ * Project Version: 3k2a 10-March-2020
  * Requirements: requires text parsed by X Parser
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
@@ -187,7 +187,7 @@ void GIAtranslatorReferencingClass::identifyComparisonVariableAlternateMethod(GI
 bool GIAtranslatorReferencingClass::entityPosInferredIsName(GIAentityNode* currentGIAEntityNode)
 {
 	bool result = false;
-	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OLD
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OLD
 	if(GIApreprocessorWordIdentification.determineIsWordTypeStringBasic(currentGIAEntityNode->entityName, GIA_PREPROCESSOR_POS_TYPE_PROPERNOUN_FIRST_MALE) || GIApreprocessorWordIdentification.determineIsWordTypeStringBasic(currentGIAEntityNode->entityName, GIA_PREPROCESSOR_POS_TYPE_PROPERNOUN_FIRST_FEMALE) || GIApreprocessorWordIdentification.determineIsWordTypeStringBasic(currentGIAEntityNode->entityName, GIA_PREPROCESSOR_POS_TYPE_PROPERNOUN_FAMILY))	
 	#else
 	if((currentGIAEntityNode->semanticRelationWordPOStypeInferred == GIA_PREPROCESSOR_POS_TYPE_PROPERNOUN_FIRST_MALE) || (currentGIAEntityNode->semanticRelationWordPOStypeInferred == GIA_PREPROCESSOR_POS_TYPE_PROPERNOUN_FIRST_FEMALE) || (currentGIAEntityNode->semanticRelationWordPOStypeInferred == GIA_PREPROCESSOR_POS_TYPE_PROPERNOUN_FAMILY))
@@ -200,7 +200,7 @@ bool GIAtranslatorReferencingClass::entityPosInferredIsName(GIAentityNode* curre
 bool GIAtranslatorReferencingClass::entityPosInferredIsPronoun(GIAentityNode* currentGIAEntityNode)
 {
 	bool result = false;
-	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OLD
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OLD
 	if(GIApreprocessorWordIdentification.determineIsWordTypeStringBasic(currentGIAEntityNode->entityName, GIA_PREPROCESSOR_POS_TYPE_PRONOUN_INDEFINITE) || GIApreprocessorWordIdentification.determineIsWordTypeStringBasic(currentGIAEntityNode->entityName, GIA_PREPROCESSOR_POS_TYPE_PRONOUN_INTERROGATIVE) || 
 	GIApreprocessorWordIdentification.determineIsWordTypeStringBasic(currentGIAEntityNode->entityName, GIA_PREPROCESSOR_POS_TYPE_PRONOUN_PERSONAL_OBJECT) || GIApreprocessorWordIdentification.determineIsWordTypeStringBasic(currentGIAEntityNode->entityName, GIA_PREPROCESSOR_POS_TYPE_PRONOUN_PERSONAL_SUBJECT) || GIApreprocessorWordIdentification.determineIsWordTypeStringBasic(currentGIAEntityNode->entityName, GIA_PREPROCESSOR_POS_TYPE_PRONOUN_POSSESSIVE_ADJECTIVE) ||
 	GIApreprocessorWordIdentification.determineIsWordTypeStringBasic(currentGIAEntityNode->entityName, GIA_PREPROCESSOR_POS_TYPE_PRONOUN_POSSESSIVE_ALONE) || GIApreprocessorWordIdentification.determineIsWordTypeStringBasic(currentGIAEntityNode->entityName, GIA_PREPROCESSOR_POS_TYPE_PRONOUN_REFLEXIVE))	//OLD: GIApreprocessorWordIdentification.determineIsWordTypeStringBasic(currentGIAEntityNode->entityName, GIA_PREPROCESSOR_POS_TYPE_PRONOUN_DEMONSTRATIVE), GIApreprocessorWordIdentification.determineIsWordTypeStringBasic(currentGIAEntityNode->entityName, GIA_PREPROCESSOR_POS_TYPE_PRONOUN_RELATIVE) (not supported as pronounRelative is not in wordlists.txt)	
@@ -218,7 +218,7 @@ bool GIAtranslatorReferencingClass::entityPosInferredIsPronoun(GIAentityNode* cu
 bool GIAtranslatorReferencingClass::entityPosInferredIsPronounPossessive(GIAentityNode* currentGIAEntityNode)
 {
 	bool result = false;
-	#ifdef GIA_TXT_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OLD
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OLD
 	if(GIApreprocessorWordIdentification.determineIsWordTypeStringBasic(currentGIAEntityNode->entityName, GIA_PREPROCESSOR_POS_TYPE_PRONOUN_POSSESSIVE_ADJECTIVE) || GIApreprocessorWordIdentification.determineIsWordTypeStringBasic(currentGIAEntityNode->entityName, GIA_PREPROCESSOR_POS_TYPE_PRONOUN_POSSESSIVE_ALONE))
 	#else
 	if((currentGIAEntityNode->semanticRelationWordPOStypeInferred == GIA_PREPROCESSOR_POS_TYPE_PRONOUN_POSSESSIVE_ADJECTIVE) || (currentGIAEntityNode->semanticRelationWordPOStypeInferred == GIA_PREPROCESSOR_POS_TYPE_PRONOUN_POSSESSIVE_ALONE))
@@ -292,7 +292,7 @@ void GIAtranslatorReferencingClass::linkPronounReferencesTxtRelTranslator(GIAtra
 				}
 				
 				bool findReferenceChild = false;
-				#ifdef GIA_TXT_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OLD
+				#ifdef GIA_POS_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OLD
 				if(GIApreprocessorWordIdentification.determineIsWordTypeStringBasic(currentGIAEntityNode->entityName, GIA_PREPROCESSOR_POS_TYPE_PRONOUN_POSSESSIVE_ALONE))
 				#else
 				if(currentGIAEntityNode->semanticRelationWordPOStypeInferred == GIA_PREPROCESSOR_POS_TYPE_PRONOUN_POSSESSIVE_ALONE)
@@ -1060,8 +1060,8 @@ void GIAtranslatorReferencingClass::identifyReferenceSetNetworkIndexEntityEntran
 				passDefiniteSetChecks = false;
 			}
 			#endif
-			#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_NO_ADVANCED_REFERENCING
-			if((currentInstance->entityName == GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_SUBJECT) || (currentInstance->entityName == GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_OBJECT))	//not required as actions are not definite entities: || (currentInstance->entityName == GIA_TXT_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_LEMMA)
+			#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_NO_ADVANCED_REFERENCING
+			if((currentInstance->entityName == GIA_POS_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_SUBJECT) || (currentInstance->entityName == GIA_POS_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_OBJECT))	//not required as actions are not definite entities: || (currentInstance->entityName == GIA_POS_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_LEMMA)
 			{
 				passDefiniteSetChecks = false;
 			}

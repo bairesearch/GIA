@@ -26,7 +26,7 @@
  * File Name: GIAmain.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k1c 05-March-2020
+ * Project Version: 3k2a 10-March-2020
  * Requirements: 
  * Description: Main
  * /
@@ -85,8 +85,8 @@
 #endif
 #include "GIAneuralNetworkOperations.hpp"
 #endif
-#ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3
-#include "GIAtxtRelTranslator.hpp"
+#ifdef GIA_POS_REL_TRANSLATOR_RULES_GIA3
+#include "GIAposRelTranslator.hpp"
 #endif
 
 #define GIA_MAXIMUM_NUMBER_OF_FILES_IN_INPUT_FILE_LIST (1000000)
@@ -144,8 +144,8 @@ class GIAmainClass
 	#endif
 	private: GIAneuralNetworkOperationsClass GIAneuralNetworkOperations;
 	#endif
-	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3
-	private: GIAtxtRelTranslatorClass GIAtxtRelTranslator;
+	#ifdef GIA_POS_REL_TRANSLATOR_RULES_GIA3
+	private: GIAposRelTranslatorClass GIAposRelTranslator;
 	#endif
 
 	public: bool executeGIA(

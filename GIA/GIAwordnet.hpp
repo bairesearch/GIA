@@ -26,7 +26,7 @@
  * File Name: GIAwordnet.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k1c 05-March-2020
+ * Project Version: 3k2a 10-March-2020
  * Requirements: requires wordnet libraries to be installed
  * Description: Wordnet - searches wordnet database and parses wordnet output
  * /

@@ -26,7 +26,7 @@
  * File Name: GIAsemRelTranslatorParser.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k1c 05-March-2020
+ * Project Version: 3k2a 10-March-2020
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  * Description: Semantic Relation Translator Parser
  * /
@@ -82,7 +82,7 @@ class GIAsemRelTranslatorParserClass
 	public: bool convertSentenceSemanticRelationsIntoGIAnetworkNodes(GIAtranslatorVariablesClass* translatorVariables, const bool linkPreestablishedReferencesGIA, GIAcoreference* firstGIAcoreferenceInList);
 		private: void locateAndAddAllNetworkIndexEntitiesBasedOnSemanticRelations(GIAtranslatorVariablesClass* translatorVariables);
 		private: void fillGrammaticalTenseArraysStanfordBasedOnSemanticRelations(GIAtranslatorVariablesClass* translatorVariables);
-		#ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3
+		#ifdef GIA_POS_REL_TRANSLATOR_RULES_GIA3
 		private: void fillGrammaticalTenseArraysStanfordBasedOnSemanticRelationsMultiwordAuxiliary(GIAtranslatorVariablesClass* translatorVariables, int modalAuxiliaryIndex, GIAentityNode* entity);
 		#endif
 		private: void defineSubstancesBasedOnSemanticRelations(GIAtranslatorVariablesClass* translatorVariables);

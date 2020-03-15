@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorWordReduction.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k1c 05-March-2020
+ * Project Version: 3k2a 10-March-2020
  * Requirements: requires plain text file
  * Description: Preprocessor Word Reduction
  * /
@@ -34,7 +34,7 @@
 
 
 #include "GIApreprocessorWordReduction.hpp"
-#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
+#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
 #include "GIAsynRelTranslatorDefs.hpp"
 #endif
 

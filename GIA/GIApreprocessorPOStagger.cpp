@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorPOStagger.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k1c 05-March-2020
+ * Project Version: 3k2a 10-March-2020
  * Requirements: requires plain text file
  * Description: Preprocessor POS tagger
  * /
@@ -62,7 +62,7 @@ OLD planned method: then for every triplet, find each word in index (ie get ID);
 
 
 
-#ifdef GIA_TXT_REL_TRANSLATOR_HYBRID_EXECUTE_PRELIM_POS_TAGGER
+#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_EXECUTE_PRELIM_POS_TAGGER
 bool GIApreprocessorPOStaggerClass::executePrelimFeatureProcessingOnSentences(const string outputLRPTextPlainTXTFileName, const string inputTextNLPfeatureXMLfileName, GIAtranslatorVariablesClass* translatorVariables)
 {
 	bool result = true;
@@ -220,14 +220,14 @@ bool GIApreprocessorPOStaggerClass::executePrelimFeatureProcessingOnSentences(co
 						else
 						{							
 							currentFeatureInList->GIAposType = GIA_PREPROCESSOR_POS_TYPE_UNDEFINED;
-							cerr << "GIA_PREPROCESSOR_POS_TAGGER GIAtxtRelTranslatorHybridClass::executePrelimFeatureProcessingOnSentences{} error: word POS cannot be determined (centreWordPOSisAmbiguous): " << centreWord->tagName << endl;
+							cerr << "GIA_PREPROCESSOR_POS_TAGGER GIAposRelTranslatorHybridClass::executePrelimFeatureProcessingOnSentences{} error: word POS cannot be determined (centreWordPOSisAmbiguous): " << centreWord->tagName << endl;
 							exit(EXIT_ERROR);
 						}
 					}
 					else
 					{
 						currentFeatureInList->GIAposType = GIA_PREPROCESSOR_POS_TYPE_UNDEFINED;
-						cout << "GIA_PREPROCESSOR_POS_TAGGER GIAtxtRelTranslatorHybridClass::executePrelimFeatureProcessingOnSentences{} warning: word POS cannot be determined (!foundMatchingCentreWordPOSambiguityInfo): " << centreWord->tagName << endl;
+						cout << "GIA_PREPROCESSOR_POS_TAGGER GIAposRelTranslatorHybridClass::executePrelimFeatureProcessingOnSentences{} warning: word POS cannot be determined (!foundMatchingCentreWordPOSambiguityInfo): " << centreWord->tagName << endl;
 					}
 					#endif
 
@@ -435,7 +435,7 @@ bool GIApreprocessorPOStaggerClass::predictPOStaggerDatabaseEntry(const uint64_t
 	else
 	{	
 		//currentFeatureInList->grammaticalWordType = GRAMMATICAL_WORD_TYPE_UNDEFINED;	
-		//cout << "GIA_PREPROCESSOR_POS_TAGGER GIAtxtRelTranslatorHybridClass::predictPOStaggerDatabaseEntry{} warning: word POS cannot be determined (!POSpermutationEntryExistent): " << centreWord->tagName << endl;
+		//cout << "GIA_PREPROCESSOR_POS_TAGGER GIAposRelTranslatorHybridClass::predictPOStaggerDatabaseEntry{} warning: word POS cannot be determined (!POSpermutationEntryExistent): " << centreWord->tagName << endl;
 	}
 	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY_ONLY_TRAIN_UNAMBIGUOUS_PERMUTATIONS
 	*centreWordPOSisAmbiguous = false;
@@ -729,10 +729,10 @@ bool GIApreprocessorPOStaggerClass::generatePOStaggerDatabaseFromWikiDumpText(co
 								#endif
 
 									#ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_NEURAL_NETWORK_SEQUENCE_GRAMMAR
-									vector<GIAtxtRelTranslatorRulesGroupType*>* GIAtxtRelTranslatorRulesGroupTypes = GIAtxtRelTranslatorRules.getGIAtxtRelTranslatorRulesGroupTypesGlobal();
+									vector<GIAposRelTranslatorRulesGroupType*>* GIAposRelTranslatorRulesGroupTypes = GIAposRelTranslatorRules.getGIAposRelTranslatorRulesGroupTypesGlobal();
 									bool createNewConnections = true; 
-									vector<GIAtxtRelTranslatorRulesGroupNeuralNetwork*> firstLayer;
-									if(GIAtxtRelTranslatorSANIPropagateCompactGenerate.executeTxtRelTranslatorNeuralNetwork(&translatorVariablesNOTUSED, GIAtxtRelTranslatorRulesGroupTypes, sentenceContents, createNewConnections))
+									vector<GIAposRelTranslatorRulesGroupNeuralNetwork*> firstLayer;
+									if(GIAposRelTranslatorSANIPropagateCompactGenerate.executeTxtRelTranslatorNeuralNetwork(&translatorVariablesNOTUSED, GIAposRelTranslatorRulesGroupTypes, sentenceContents, createNewConnections))
 									{
 										result = true;
 									}
@@ -1002,8 +1002,8 @@ bool GIApreprocessorPOStaggerClass::generatePreprocessorSentenceObjectsFromText(
 	}
 	
 	#ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_NEURAL_NETWORK_SEQUENCE_GRAMMAR
-	//code replicated from GIAtxtRelTranslatorClass::parseTxtfileAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences
-	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_DEFINE_WORD_TRANSLATOR_SENTENCE_ENTITY_INDEX_AT_START
+	//code replicated from GIAposRelTranslatorClass::parseTxtfileAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences
+	#ifdef GIA_POS_REL_TRANSLATOR_RULES_DEFINE_WORD_TRANSLATOR_SENTENCE_ENTITY_INDEX_AT_START
 	currentGIApreprocessorSentenceInList = firstGIApreprocessorSentenceInText;
 	while(currentGIApreprocessorSentenceInList->next != NULL)
 	{
@@ -1012,7 +1012,7 @@ bool GIApreprocessorPOStaggerClass::generatePreprocessorSentenceObjectsFromText(
 		{	
 			GIApreprocessorPlainTextWord* currentWord = sentenceContents->at(w);
 			currentWord->translatorSentenceEntityIndex = GIAtranslatorOperations.convertSentenceContentsIndexToEntityIndex(w);
-			#ifdef GIA_TXT_REL_TRANSLATOR_SANI
+			#ifdef GIA_POS_REL_TRANSLATOR_SANI
 			currentWord->translatorSentenceWordIndex = w;
 			#endif
 		}
@@ -1350,7 +1350,7 @@ void GIApreprocessorPOStaggerClass::generatePOSambiguityInfoUnambiguousPermutati
 	}
 }
 
-#ifdef GIA_TXT_REL_TRANSLATOR_RULES_GIA3
+#ifdef GIA_POS_REL_TRANSLATOR_RULES_GIA3
 bool GIApreprocessorPOStaggerClass::determinePOSambiguityInfoWrapper(vector<GIApreprocessorPlainTextWord*>* sentenceContents, vector<uint64_t>* POSambiguityInfoPermutation, vector<string>* explicitWordList)
 {
 	bool result = true;
@@ -1366,13 +1366,13 @@ bool GIApreprocessorPOStaggerClass::determinePOSambiguityInfoWrapper(vector<GIAp
 	{
 		GIApreprocessorPlainTextWord* contextWord = sentenceContents->at(w);
 
-		#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_WORD_NOUN_VERB_VARIANT
+		#ifdef GIA_POS_REL_TRANSLATOR_RULES_CODE_COMPONENT_WORD_NOUN_VERB_VARIANT
 		string wordTextLowerCase = SHAREDvars.convertStringToLowerCase(&(contextWord->tagName));
 		GIApreprocessorMultiwordReductionWord* nounBaseFound = NULL;
 		int nounGrammaticalBaseTenseForm = GIA_PREPROCESSOR_WORD_NOUN_DATABASE_TAG_BASE_TENSE_FORM_UNKNOWN;
 		if(GIApreprocessorWordIdentification.determineNounPluralVariant(wordTextLowerCase, &nounBaseFound, &nounGrammaticalBaseTenseForm))
 		{
-			#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_COMPONENT_WORD_NOUN_VERB_VARIANT_DETECT_IRREGULAR_NOUN_FORMS
+			#ifdef GIA_POS_REL_TRANSLATOR_RULES_CODE_COMPONENT_WORD_NOUN_VERB_VARIANT_DETECT_IRREGULAR_NOUN_FORMS
 			contextWord->wordNounVariantGrammaticalTenseForm = nounGrammaticalBaseTenseForm;	//will only be valid if wordPOStype == noun
 			#else
 			contextWord->wordNounVariantGrammaticalTenseForm = GIA_PREPROCESSOR_WORD_NOUN_DATABASE_TAG_BASE_TENSE_FORM_PLURAL;
@@ -1388,7 +1388,7 @@ bool GIApreprocessorPOStaggerClass::determinePOSambiguityInfoWrapper(vector<GIAp
 		}			
 		#endif
 
-		#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS
+		#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS
 		cout << "contextWord = " << contextWord->tagName << endl;
 		#endif
 		bool contextWordPOSisAmbiguous = false;
@@ -1400,7 +1400,7 @@ bool GIApreprocessorPOStaggerClass::determinePOSambiguityInfoWrapper(vector<GIAp
 			result = false;
 		}
 
-		#ifdef GIA_TXT_REL_TRANSLATOR_SANI_ADD_EXPLICIT_WORD_REFERENCES_AS_INDEPENDENT_POS_PERMUTATIONS
+		#ifdef GIA_POS_REL_TRANSLATOR_SANI_ADD_EXPLICIT_WORD_REFERENCES_AS_INDEPENDENT_POS_PERMUTATIONS
 		vector<string>::iterator explicitWordListIterator = find(explicitWordList->begin(), explicitWordList->end(), wordTextLowerCase);
 		if(explicitWordListIterator != explicitWordList->end())
 		{
@@ -1435,7 +1435,7 @@ bool GIApreprocessorPOStaggerClass::determinePOSambiguityInfo(GIApreprocessorPla
 		//cout << "1 wordText = " << wordText << endl;
 		foundWordInLists = true;
 	}
-	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_TREAT_UNKNOWN_POSTYPES_MID_SENTENCE_CAPITALISED_WORDS_AS_PROPERNOUNS_METHOD1
+	#ifdef GIA_POS_REL_TRANSLATOR_RULES_TREAT_UNKNOWN_POSTYPES_MID_SENTENCE_CAPITALISED_WORDS_AS_PROPERNOUNS_METHOD1
 	if((!foundWordInLists) && GIApreprocessorWordClassObject.isMidSentenceUppercaseWordLikelyProperNoun(contextWord))
 	{
 		foundWordInLists = true;
@@ -1472,7 +1472,7 @@ bool GIApreprocessorPOStaggerClass::determinePOSambiguityInfo(GIApreprocessorPla
 		#else
 		if(!foundWordInLists)
 		{
-			#ifdef GIA_TXT_REL_TRANSLATOR_RULES_TREAT_UNKNOWN_POSTYPES_MID_SENTENCE_CAPITALISED_WORDS_AS_PROPERNOUNS_METHOD1
+			#ifdef GIA_POS_REL_TRANSLATOR_RULES_TREAT_UNKNOWN_POSTYPES_MID_SENTENCE_CAPITALISED_WORDS_AS_PROPERNOUNS_METHOD1
 			if(midSentenceUppercaseWordSetToProperNoun(wordText, contextWordPOSambiguityInfo))
 			{
 				foundWordInLists = true;
@@ -1486,12 +1486,12 @@ bool GIApreprocessorPOStaggerClass::determinePOSambiguityInfo(GIApreprocessorPla
 				{
 					foundWordInLists = true;
 				}
-			#ifdef GIA_TXT_REL_TRANSLATOR_RULES_TREAT_UNKNOWN_POSTYPES_MID_SENTENCE_CAPITALISED_WORDS_AS_PROPERNOUNS_METHOD1
+			#ifdef GIA_POS_REL_TRANSLATOR_RULES_TREAT_UNKNOWN_POSTYPES_MID_SENTENCE_CAPITALISED_WORDS_AS_PROPERNOUNS_METHOD1
 			}
 			#endif
 		}
 		#endif
-	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_TREAT_UNKNOWN_POSTYPES_MID_SENTENCE_CAPITALISED_WORDS_AS_PROPERNOUNS_METHOD1
+	#ifdef GIA_POS_REL_TRANSLATOR_RULES_TREAT_UNKNOWN_POSTYPES_MID_SENTENCE_CAPITALISED_WORDS_AS_PROPERNOUNS_METHOD1
 	}
 	#endif
 	#else
@@ -1500,7 +1500,7 @@ bool GIApreprocessorPOStaggerClass::determinePOSambiguityInfo(GIApreprocessorPla
 	{	
 		foundWordInLists = true;
 	}
-	#ifdef GIA_TXT_REL_TRANSLATOR_RULES_TREAT_UNKNOWN_POSTYPES_MID_SENTENCE_CAPITALISED_WORDS_AS_PROPERNOUNS_METHOD1
+	#ifdef GIA_POS_REL_TRANSLATOR_RULES_TREAT_UNKNOWN_POSTYPES_MID_SENTENCE_CAPITALISED_WORDS_AS_PROPERNOUNS_METHOD1
 	if((!foundWordInLists) && GIApreprocessorWordClassObject.isMidSentenceUppercaseWordLikelyProperNoun(contextWord))
 	{
 		foundWordInLists = true;
@@ -1531,7 +1531,7 @@ bool GIApreprocessorPOStaggerClass::determinePOSambiguityInfo(GIApreprocessorPla
 		*identifiedEveryWordInDatabasePOSpermutation = false;
 		*contextWordPOSisAmbiguous = true;
 		
-		#ifdef GIA_TXT_REL_TRANSLATOR_RULES_CODE_NUMBERS
+		#ifdef GIA_POS_REL_TRANSLATOR_RULES_CODE_NUMBERS
 		if(GIApreprocessorWordClassObject.isStringNumber(contextWordMultiwordReductionPlainTextWord->tagName))
 		{
 			//cout << "isStringNumber" << endl;
@@ -1675,7 +1675,7 @@ bool GIApreprocessorPOStaggerClass::generateANNexperienceFromPOSambiguityInfoPer
 }
 #endif
 
-#ifdef GIA_TXT_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START
+#ifdef GIA_POS_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START
 bool GIApreprocessorPOStaggerClass::setSentenceContentsWordsUnambiguousPOSindex(vector<GIApreprocessorPlainTextWord*>* sentenceContents, vector<uint64_t>* POSambiguityInfoPermutationTemp)
 {
 	bool result = true;
@@ -1686,8 +1686,8 @@ bool GIApreprocessorPOStaggerClass::setSentenceContentsWordsUnambiguousPOSindex(
 		unsigned char unambiguousPOSinfoIndex = GIA_PREPROCESSOR_POS_TYPE_UNDEFINED;
 		bool wordAmbiguous = GIApreprocessorPOStaggerDatabase.determinePOSambiguityInfoIsAmbiguous(POSambiguityInfoPermutationTemp->at(w), &unambiguousPOSinfoIndex, false);
 		contextWord->unambiguousPOSindex = unambiguousPOSinfoIndex;
-		//#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_SANI_PROPAGATE
-		#ifdef GIA_DEBUG_TXT_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS_POS_TYPES
+		//#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_PROPAGATE
+		#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS_POS_TYPES
 		cout << "unambiguousPOSinfoIndex = " << int(unambiguousPOSinfoIndex) << endl;
 		cout << "GIApreprocessorPOStypeNameArray[unambiguousPOSinfoIndex] = " << GIApreprocessorPOStypeNameArray[unambiguousPOSinfoIndex] << endl;
 		#endif

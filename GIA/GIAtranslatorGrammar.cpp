@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorGrammar.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k1c 05-March-2020
+ * Project Version: 3k2a 10-March-2020
  * Requirements: requires text parsed by X Parser
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
@@ -44,7 +44,7 @@ bool GIAtranslatorGrammarClass::calculateGrammarUsingInferredPosTypes(GIApreproc
 	
 	//calculate grammar information independent of external NLP (part 1; without using det/aux semantic relations):
 	
-	string wordText = currentWord->tagName;	//OLD: if GIA_SEM_REL_TRANSLATOR (ie !GIA_TXT_REL_TRANSLATOR_RULES_GIA3) then semantic parser corpus header must store wordOrig values not lemma values (such that word grammar/morphology can be derived)
+	string wordText = currentWord->tagName;	//OLD: if GIA_SEM_REL_TRANSLATOR (ie !GIA_POS_REL_TRANSLATOR_RULES_GIA3) then semantic parser corpus header must store wordOrig values not lemma values (such that word grammar/morphology can be derived)
 	string wordTextLowerCase = SHAREDvars.convertStringToLowerCase(&wordText);
 	
 	currentFeature->lemma = wordText;
@@ -942,7 +942,7 @@ void GIAtranslatorGrammarClass::extractGrammaticalInformationFromStanfordPOStag(
 	if(SHAREDvars.textInTextArray(*POStag, posTagSingularNounArray, FEATURE_POS_TAG_SINGULAR_NOUN_NUMBER_OF_TYPES))
 	{
 		#ifdef GIA_FEATURE_POS_TAG_NN_ONLY_MARK_AS_SINGULAR_WITH_DETERMINER
-		//NB GIA_FEATURE_POS_TAG_NN_ONLY_MARK_AS_SINGULAR_WITH_DETERMINER: not supported by GIA_TXT_REL_TRANSLATOR as determinerPotentiallySingularDetected has not been defined
+		//NB GIA_FEATURE_POS_TAG_NN_ONLY_MARK_AS_SINGULAR_WITH_DETERMINER: not supported by GIA_POS_REL_TRANSLATOR as determinerPotentiallySingularDetected has not been defined
 		if((*POStag) == FEATURE_POS_TAG_NOUN_NN)
 		{
 			if(feature->determinerPotentiallySingularDetected)
