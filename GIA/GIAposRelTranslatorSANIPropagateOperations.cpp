@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorSANIPropagateOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k4a 17-March-2020
+ * Project Version: 3k5a 18-March-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Operations - generic functions
  * /
@@ -2259,32 +2259,42 @@ int GIAposRelTranslatorSANIPropagateOperationsClass::countParseTreeLeafSize(GIAp
 	
 	return size;
 }
+#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_FIRST_COMPONENTS_REQUIRE_MATCHING_DEPTH
 bool GIAposRelTranslatorSANIPropagateOperationsClass::countNeuralNetworkMaxLeafSizeAndDepth(GIAposRelTranslatorRulesGroupNeuralNetwork* currentNeuron, int* maxLeafSize, int* maxDepth)
 {
-	bool result = true;
+	bool result = true;	
+
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_OPTIMISE_FOR_DIVERGENT_CONVERGENT_PATHWAYS
+	if(!(currentNeuron->counted))
+	{
+		currentNeuron->counted = true;
+	#endif
 	
-	int maxDepthStart = *maxDepth + 1;
-	*maxDepth = maxDepthStart;	
-
-	if(currentNeuron->inputLayerNeuron)
-	{
-		*maxLeafSize = *maxLeafSize + 1;
-	}
-	else
-	{
-		for(int i=0; i<currentNeuron->components.size(); i++)
+		int maxDepthStart = *maxDepth + 1;
+		*maxDepth = maxDepthStart;
+	
+		if(currentNeuron->inputLayerNeuron)
 		{
-			int c = i;
-
-			GIAposRelTranslatorRulesComponentNeuralNetwork* component = (currentNeuron->components)[c];
-
-			int leafSize = 0;
-			int depth = maxDepthStart;
-			countNeuralNetworkMaxLeafSizeAndDepth(component, &leafSize, &depth);
-			*maxLeafSize = *maxLeafSize + leafSize;
-			*maxDepth = max(*maxDepth, depth);
+			*maxLeafSize = *maxLeafSize + 1;
 		}
+		else
+		{
+			for(int i=0; i<currentNeuron->components.size(); i++)
+			{
+				int c = i;
+
+				GIAposRelTranslatorRulesComponentNeuralNetwork* component = (currentNeuron->components)[c];
+
+				int leafSize = 0;
+				int depth = maxDepthStart;
+				countNeuralNetworkMaxLeafSizeAndDepth(component, &leafSize, &depth);
+				*maxLeafSize = *maxLeafSize + leafSize;
+				*maxDepth = max(*maxDepth, depth);
+			}
+		}
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_OPTIMISE_FOR_DIVERGENT_CONVERGENT_PATHWAYS
 	}
+	#endif
 	
 	return result;
 }
@@ -2310,6 +2320,46 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::countNeuralNetworkMaxLeafS
 	
 	return result;
 }
+#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_OPTIMISE_FOR_DIVERGENT_CONVERGENT_PATHWAYS
+bool GIAposRelTranslatorSANIPropagateOperationsClass::countNeuralNetworkMaxLeafSizeAndDepthReset(GIAposRelTranslatorRulesGroupNeuralNetwork* currentNeuron)
+{
+	bool result = true;	
+
+	if(currentNeuron->counted)
+	{
+		currentNeuron->counted = false;
+	
+		if(currentNeuron->inputLayerNeuron)
+		{
+		}
+		else
+		{
+			for(int i=0; i<currentNeuron->components.size(); i++)
+			{
+				int c = i;
+				GIAposRelTranslatorRulesComponentNeuralNetwork* component = (currentNeuron->components)[c];
+				
+				countNeuralNetworkMaxLeafSizeAndDepthReset(component);
+			}
+		}
+	}
+	
+	return result;
+}
+bool GIAposRelTranslatorSANIPropagateOperationsClass::countNeuralNetworkMaxLeafSizeAndDepthReset(GIAposRelTranslatorRulesComponentNeuralNetwork* component)
+{
+	bool result = true;
+				
+	for(int l=0; l<component->ANNbackGroupConnectionList.size(); l++)
+	{
+		GIAposRelTranslatorRulesGroupNeuralNetwork* groupSource = component->ANNbackGroupConnectionList[l];
+		countNeuralNetworkMaxLeafSizeAndDepthReset(groupSource);
+	}
+	
+	return result;
+}
+#endif
+#endif
 
 GIAposRelTranslatorRulesComponentNeuralNetwork* GIAposRelTranslatorSANIPropagateOperationsClass::getFirstComponent(GIAposRelTranslatorSANIForwardPropogationSentenceData* forwardPropogationSentenceData, GIAposRelTranslatorRulesGroupNeuralNetwork* currentNeuron, bool fromStart)
 {
