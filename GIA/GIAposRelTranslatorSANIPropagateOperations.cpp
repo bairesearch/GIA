@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorSANIPropagateOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k3a 10-March-2020
+ * Project Version: 3k4a 17-March-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Operations - generic functions
  * /
@@ -210,7 +210,7 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::propagateWordThroughNetwor
 									}
 									#endif
 									#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_PREVENT_RESET_IF_FIRST_INACTIVE_COMPONENT_GROUPREF_IS_SAME_AS_FUTURE_ACTIVE_COMPONENT_GROUPREF
-									if(findValidDualLowerLevelConnection(forwardPropogationSentenceData, components, component))
+									if(findValidDualLowerLevelConnection(forwardPropogationSentenceData, forwardPropogationWordData, components, component))
 									{
 										//cout << "!allowComponentReset; findValidDualLowerLevelConnection" << endl;
 										allowComponentReset = false;
@@ -555,7 +555,7 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::consecutiveSequenceDetecte
 
 
 #ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_PREVENT_RESET_IF_FIRST_INACTIVE_COMPONENT_GROUPREF_IS_SAME_AS_FUTURE_ACTIVE_COMPONENT_GROUPREF
-bool GIAposRelTranslatorSANIPropagateOperationsClass::findValidDualLowerLevelConnection(GIAposRelTranslatorSANIForwardPropogationSentenceData* forwardPropogationSentenceData, vector<GIAposRelTranslatorRulesComponentNeuralNetwork*>* components, GIAposRelTranslatorRulesComponentNeuralNetwork* component)
+bool GIAposRelTranslatorSANIPropagateOperationsClass::findValidDualLowerLevelConnection(GIAposRelTranslatorSANIForwardPropogationSentenceData* forwardPropogationSentenceData, GIAposRelTranslatorSANIForwardPropogationWordData* forwardPropogationWordData, vector<GIAposRelTranslatorRulesComponentNeuralNetwork*>* components, GIAposRelTranslatorRulesComponentNeuralNetwork* component)
 {	
 	bool validDualLowerLevelConnectionFound = false;
 	bool firstInactiveComponentFound = false;
@@ -594,9 +594,16 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::findValidDualLowerLevelCon
 
 							if(groupSource2 == groupSource)
 							{
-								validDualLowerLevelConnectionFound = true;
-								//cout << "\n\n\n\n GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_PREVENT_RESET_IF_FIRST_INACTIVE_COMPONENT_GROUPREF_IS_SAME_AS_FUTURE_ACTIVE_COMPONENT_GROUPREF_RECURSIVE: GIAposRelTranslatorSANIPropagateOperationsClass::findValidDualLowerLevelConnection validDualLowerLevelConnectionFound" << endl;
-								//exit(EXIT_ERROR);
+								#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_PREVENT_RESET_IF_FIRST_INACTIVE_COMPONENT_GROUPREF_IS_SAME_AS_FUTURE_ACTIVE_COMPONENT_GROUPREF_AND_SATISIFIES_WORD_INDEX
+								if(component->neuronComponentConnectionActiveWordRecord->translatorSentenceWordIndex == forwardPropogationWordData->wordReference->translatorSentenceWordIndex-1)	//or component->wordIndex
+								{
+								#endif
+									validDualLowerLevelConnectionFound = true;
+									//cout << "\n\n\n\n GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_PREVENT_RESET_IF_FIRST_INACTIVE_COMPONENT_GROUPREF_IS_SAME_AS_FUTURE_ACTIVE_COMPONENT_GROUPREF_RECURSIVE: GIAposRelTranslatorSANIPropagateOperationsClass::findValidDualLowerLevelConnection validDualLowerLevelConnectionFound" << endl;
+									//exit(EXIT_ERROR);
+								#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_PREVENT_RESET_IF_FIRST_INACTIVE_COMPONENT_GROUPREF_IS_SAME_AS_FUTURE_ACTIVE_COMPONENT_GROUPREF_AND_SATISIFIES_WORD_INDEX
+								}
+								#endif
 							}
 							else
 							{	
