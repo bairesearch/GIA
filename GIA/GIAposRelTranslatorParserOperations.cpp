@@ -27,7 +27,7 @@
  * File Name: GIAposRelTranslatorParserOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k6a 29-March-2020
+ * Project Version: 3k6b 29-March-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator Parser Operations
  * /

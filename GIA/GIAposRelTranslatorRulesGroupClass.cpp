@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorRulesGroupClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k6a 29-March-2020
+ * Project Version: 3k6b 29-March-2020
  * Requirements: requires plain text file
  * Description: Part-of-speech Relation Translator Rules
  * /
@@ -183,6 +183,10 @@ GIAposRelTranslatorRulesGroupNeuralNetwork::GIAposRelTranslatorRulesGroupNeuralN
 	//GIAposRelTranslatorRulesGroupNeuralNetwork variables;
 	#ifdef GIA_POS_REL_TRANSLATOR_SANI
 	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_RECORD_DEPTH
+	networkDepth = 0;
+	networkLeafSize = 0;
+	#endif	
 	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_OPTIMISE_FOR_DIVERGENT_CONVERGENT_PATHWAYS
 	counted = false;
 	#endif

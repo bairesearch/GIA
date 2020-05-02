@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorSANIPropagateOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k6a 29-March-2020
+ * Project Version: 3k6b 29-March-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Operations - generic functions
  * /
@@ -2260,6 +2260,92 @@ int GIAposRelTranslatorSANIPropagateOperationsClass::countParseTreeLeafSize(GIAp
 	return size;
 }
 #ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_FIRST_COMPONENTS_REQUIRE_MATCHING_DEPTH
+#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_RECORD_DEPTH
+
+bool GIAposRelTranslatorSANIPropagateOperationsClass::adjustNetworkDepth(GIAposRelTranslatorRulesGroupNeuralNetwork* group)
+{
+	bool result = true;
+	
+	int maxDepth = group->networkDepth;
+	
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_OPTIMISE_FOR_DIVERGENT_CONVERGENT_PATHWAYS
+	if(!(group->counted))
+	{
+		group->counted = true;
+	#endif
+		/*
+		#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_RECORD_DEPTH
+		GIAposRelTranslatorSANIPropagateOperations.countNeuralNetworkMaxLeafSizeAndDepth(ownerGroup, &maxLeafSize, &maxDepth);
+		#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_OPTIMISE_FOR_DIVERGENT_CONVERGENT_PATHWAYS
+		GIAposRelTranslatorSANIPropagateOperations.countNeuralNetworkMaxLeafSizeAndDepthReset(ownerGroup);
+		#endif
+		*/
+
+		for(int l=0; l<group->ANNfrontComponentConnectionList.size(); l++)
+		{
+			GIAposRelTranslatorRulesComponentNeuralNetwork* currentComponent = (group->ANNfrontComponentConnectionList)[l];
+			GIAposRelTranslatorRulesGroupNeuralNetwork* ownerGroup = currentComponent->ownerGroup;
+
+			ownerGroup->networkDepth = max(ownerGroup->networkDepth, maxDepth);
+
+			adjustNetworkDepth(ownerGroup);
+
+		}
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_OPTIMISE_FOR_DIVERGENT_CONVERGENT_PATHWAYS
+	}
+	#endif
+	
+	return result;
+}
+#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_OPTIMISE_FOR_DIVERGENT_CONVERGENT_PATHWAYS
+bool GIAposRelTranslatorSANIPropagateOperationsClass::adjustNetworkDepthReset(GIAposRelTranslatorRulesGroupNeuralNetwork* group)
+{
+	bool result = true;
+	
+	if(group->counted)
+	{
+		group->counted = false;
+
+		for(int l=0; l<group->ANNfrontComponentConnectionList.size(); l++)
+		{
+			GIAposRelTranslatorRulesComponentNeuralNetwork* currentComponent = (group->ANNfrontComponentConnectionList)[l];
+			GIAposRelTranslatorRulesGroupNeuralNetwork* ownerGroup = currentComponent->ownerGroup;
+
+			adjustNetworkDepthReset(ownerGroup);
+		}
+	}
+	
+	return result;
+}
+
+#endif
+
+	
+		
+bool GIAposRelTranslatorSANIPropagateOperationsClass::getNeuralNetworkDepth(GIAposRelTranslatorRulesGroupNeuralNetwork* currentNeuron, int* maxDepth)
+{
+	bool result = true;	
+
+	*maxDepth = currentNeuron->networkDepth;
+	
+	return result;
+}
+bool GIAposRelTranslatorSANIPropagateOperationsClass::getNeuralNetworkDepth(GIAposRelTranslatorRulesComponentNeuralNetwork* component, int* maxDepth)
+{
+	bool result = true;
+				
+	int componentMaxDepth = 0;	
+	
+	for(int l=0; l<component->ANNbackGroupConnectionList.size(); l++)
+	{
+		GIAposRelTranslatorRulesGroupNeuralNetwork* groupSource = component->ANNbackGroupConnectionList[l];
+		componentMaxDepth = max(componentMaxDepth, groupSource->networkDepth);
+	}
+	*maxDepth = componentMaxDepth;
+	
+	return result;
+}
+#endif
 bool GIAposRelTranslatorSANIPropagateOperationsClass::countNeuralNetworkMaxLeafSizeAndDepth(GIAposRelTranslatorRulesGroupNeuralNetwork* currentNeuron, int* maxLeafSize, int* maxDepth)
 {
 	bool result = true;	

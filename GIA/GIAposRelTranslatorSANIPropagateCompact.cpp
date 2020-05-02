@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorSANIPropagateCompact.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k6a 29-March-2020
+ * Project Version: 3k6b 29-March-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Propagate Compact - ~O(n)
  * /
@@ -747,9 +747,13 @@ bool GIAposRelTranslatorSANIPropagateCompactClass::propagateWordThroughNetworkGr
 						if(missingOrVariableStartComponentFound)
 						{
 							GIAposRelTranslatorRulesComponentNeuralNetwork* startComponent = GIAposRelTranslatorSANIPropagateOperations.getFirstComponent(forwardPropogationSentenceData, ownerGroup, true);
+							#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_RECORD_DEPTH
+							GIAposRelTranslatorSANIPropagateOperations.getNeuralNetworkDepth(startComponent, &variableComponentMaxDepth);
+							#else
 							GIAposRelTranslatorSANIPropagateOperations.countNeuralNetworkMaxLeafSizeAndDepth(startComponent, &variableComponentMaxLeafSize, &variableComponentMaxDepth);
 							#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_OPTIMISE_FOR_DIVERGENT_CONVERGENT_PATHWAYS
 							GIAposRelTranslatorSANIPropagateOperations.countNeuralNetworkMaxLeafSizeAndDepthReset(startComponent);
+							#endif
 							#endif
 						}
 						if(!missingOrVariableStartComponentFound || variableComponentMaxDepth < forwardPropogationSentenceData->variableFirstComponentMaxDepth)	//variableComponentMaxDepth == forwardPropogationSentenceData->variableFirstComponentMaxDepth
@@ -994,9 +998,13 @@ bool GIAposRelTranslatorSANIPropagateCompactClass::propagateWordThroughNetworkGr
 					if(missingOrVariableStartComponentFound)
 					{
 						GIAposRelTranslatorRulesComponentNeuralNetwork* startComponent = GIAposRelTranslatorSANIPropagateOperations.getFirstComponent(forwardPropogationSentenceData, ownerGroup, true);
+						#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_RECORD_DEPTH
+						GIAposRelTranslatorSANIPropagateOperations.getNeuralNetworkDepth(startComponent, &variableComponentMaxDepth);
+						#else
 						GIAposRelTranslatorSANIPropagateOperations.countNeuralNetworkMaxLeafSizeAndDepth(startComponent, &variableComponentMaxLeafSize, &variableComponentMaxDepth);
 						#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_OPTIMISE_FOR_DIVERGENT_CONVERGENT_PATHWAYS
 						GIAposRelTranslatorSANIPropagateOperations.countNeuralNetworkMaxLeafSizeAndDepthReset(startComponent);
+						#endif
 						#endif
 						/*
 						cout << "variableComponentMaxDepth = " << variableComponentMaxDepth << endl;
@@ -1105,9 +1113,13 @@ bool GIAposRelTranslatorSANIPropagateCompactClass::propagateWordThroughNetworkGr
 						int leafSize = GIAposRelTranslatorSANIPropagateOperations.countParseTreeLeafSize(activationPathWordCurrentParseTreeGroupOwner);
 						int maxLeafSize = 0;
 						int maxDepth = 0;
+						#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_RECORD_DEPTH
+						GIAposRelTranslatorSANIPropagateOperations.getNeuralNetworkDepth(ownerGroup, &maxDepth);
+						#else
 						GIAposRelTranslatorSANIPropagateOperations.countNeuralNetworkMaxLeafSizeAndDepth(ownerGroup, &maxLeafSize, &maxDepth);
 						#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_OPTIMISE_FOR_DIVERGENT_CONVERGENT_PATHWAYS
 						GIAposRelTranslatorSANIPropagateOperations.countNeuralNetworkMaxLeafSizeAndDepthReset(ownerGroup);
+						#endif
 						#endif
 						cout << "topLevelGroup" << endl;
 						cout << "\tparseTree leafSize = " << leafSize << endl;
