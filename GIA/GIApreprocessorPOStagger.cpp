@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorPOStagger.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k5a 18-March-2020
+ * Project Version: 3k6a 29-March-2020
  * Requirements: requires plain text file
  * Description: Preprocessor POS tagger
  * /
@@ -662,6 +662,8 @@ bool GIApreprocessorPOStaggerClass::generatePOStaggerDatabaseFromWikiDumpText(co
 				vector<uint64_t> POSambiguityInfoPermutation;
 				if(generatePOSambiguityInfoPermutation(sentenceContents, wCentre, &identifiedEveryWordInDatabasePOSpermutation, &identifiedEveryWordInDatabasePOSpermutationIsUnambiguous, &POSambiguityInfoPermutation))
 				{
+					//cout << "identifiedEveryWordInDatabasePOSpermutationIsUnambiguous = " << identifiedEveryWordInDatabasePOSpermutationIsUnambiguous << endl;
+
 					#ifndef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE_RAW
 					#ifdef GIA_PREPROCESSOR_POS_TAGGER_ONLY_ADD_DATABASE_ENTRY_IF_POS_AMBIGUITY_INFO_FOUND_FOR_EVERY_CONTEXT_WORD
 					if(identifiedEveryWordInDatabasePOSpermutation)
@@ -729,6 +731,8 @@ bool GIApreprocessorPOStaggerClass::generatePOStaggerDatabaseFromWikiDumpText(co
 								#endif
 
 									#ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_NEURAL_NETWORK_SEQUENCE_GRAMMAR
+									//cout << "GIA_PREPROCESSOR_POS_TAGGER_GENERATE_NEURAL_NETWORK_SEQUENCE_GRAMMAR: executeTxtRelTranslatorNeuralNetwork" << endl;
+									
 									vector<GIAposRelTranslatorRulesGroupType*>* GIAposRelTranslatorRulesGroupTypes = GIAposRelTranslatorRules.getGIAposRelTranslatorRulesGroupTypesGlobal();
 									bool createNewConnections = true; 
 									vector<GIAposRelTranslatorRulesGroupNeuralNetwork*> firstLayer;
@@ -1262,12 +1266,10 @@ bool GIApreprocessorPOStaggerClass::generatePOSambiguityInfoPermutation(vector<G
 				{
 					result = false;
 				}
-				#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_FEED_ALL_PERMUTATIONS_INDIVIDUALLY_ONLY_TRAIN_UNAMBIGUOUS_PERMUTATIONS
 				if(contextWordPOSisAmbiguous)
 				{
 					*identifiedEveryWordInDatabasePOSpermutationIsUnambiguous = false;
 				}
-				#endif
 
 				(*POSambiguityInfoPermutation)[POSambiguityInfoPermutationIndex] = contextWordPOSambiguityInfo;
 				/*

@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorSANIPropagateCompactGenerate.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k5a 18-March-2020
+ * Project Version: 3k6a 29-March-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Propagate Compact - unsupervised training of sequence grammar parse network
  * /
@@ -107,6 +107,13 @@ bool GIAposRelTranslatorSANIPropagateCompactGenerateClass::executeTxtRelTranslat
 				}
 				#endif
 			}
+			#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_FIRST_COMPONENTS_OPTIONAL
+			supportVariableFirstComponents = false;
+			if(findAndReconcileVariation(translatorVariables, GIAposRelTranslatorRulesGroupTypes, &forwardPropogationSentenceData, supportVariableFirstComponents))
+			{
+
+			}
+			#endif
 		}
 	}
 	
