@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorSANIPropagateOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k6b 29-March-2020
+ * Project Version: 3k7a 02-May-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Operations - generic functions
  * /
@@ -201,6 +201,18 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::propagateWordThroughNetwor
 								if(componentWordConnectivityTests)
 								{
 								#endif
+									#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_PREVENT_RESET_IF_REPEATED_SEQUENCE_DETECTED
+									if(consecutiveSequenceDetected(forwardPropogationSentenceData, forwardPropogationWordData, components, component))
+									{
+										if(findValidDualLowerLevelConnection(forwardPropogationSentenceData, forwardPropogationWordData, components, component, true))
+										{
+											if(repeatedSequenceDetected(forwardPropogationSentenceData, forwardPropogationWordData, components, component))
+											{
+												allowComponentReset = false;
+											}
+										}
+									}
+									#else
 									#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_PREVENT_RESET_IF_NEXT_SEQUENCE_IS_SAME_AS_CURRENT_SEQUENCE
 									if(consecutiveSequenceDetected(forwardPropogationSentenceData, forwardPropogationWordData, components, component))
 									{
@@ -210,11 +222,12 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::propagateWordThroughNetwor
 									}
 									#endif
 									#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_PREVENT_RESET_IF_FIRST_INACTIVE_COMPONENT_GROUPREF_IS_SAME_AS_FUTURE_ACTIVE_COMPONENT_GROUPREF
-									if(findValidDualLowerLevelConnection(forwardPropogationSentenceData, forwardPropogationWordData, components, component))
+									if(findValidDualLowerLevelConnection(forwardPropogationSentenceData, forwardPropogationWordData, components, component, true))
 									{
 										//cout << "!allowComponentReset; findValidDualLowerLevelConnection" << endl;
 										allowComponentReset = false;
 									}
+									#endif
 									#endif
 									/*
 									#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_PREVENT_WRITE_IF_UPPER_NEURON_ALREADY_CONTAINS_WORD_INDEX_OF_EXISTING_COMPONENT
@@ -303,7 +316,19 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::propagateWordThroughNetwor
 						{
 							if(component->componentType != GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_STRING)	//added GIA3j5aTEMP65
 							{
-								*missingOrVariableStartComponentFound = true;
+								#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_DISABLE_MULTIPLE_INPUTS_IF_HAS_IDENTICAL_COMPONENTS
+								bool validDualLowerLevelConnectionFound = false;
+								if(forwardPropogationSentenceData->recordActivatedNeuronWithMaxWordIndexCoverage)
+								{
+									validDualLowerLevelConnectionFound = findValidDualLowerLevelConnection(forwardPropogationSentenceData, forwardPropogationWordData, components, component, false);
+								}
+								if(!validDualLowerLevelConnectionFound)
+								{
+								#endif
+									*missingOrVariableStartComponentFound = true;
+								#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_DISABLE_MULTIPLE_INPUTS_IF_HAS_IDENTICAL_COMPONENTS
+								}
+								#endif	
 							}	
 						}
 						else
@@ -517,7 +542,115 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::upperNeuronContainsWordInd
 }
 #endif
 
+#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_PREVENT_RESET_IF_REPEATED_SEQUENCE_DETECTED
+bool GIAposRelTranslatorSANIPropagateOperationsClass::repeatedSequenceDetected(GIAposRelTranslatorSANIForwardPropogationSentenceData* forwardPropogationSentenceData, GIAposRelTranslatorSANIForwardPropogationWordData* forwardPropogationWordData, vector<GIAposRelTranslatorRulesComponentNeuralNetwork*>* components, GIAposRelTranslatorRulesComponentNeuralNetwork* component)
+{
+	bool result = true;
+	
+	int componentWordIndexCoverage = component->ownerGroup->currentParseTreeGroupTemp->parseTreeMaxWordIndex - component->ownerGroup->currentParseTreeGroupTemp->parseTreeMinWordIndex + 1;
+
+	vector<GIApreprocessorPlainTextWord*> componentWordArray;
+	vector<GIApreprocessorPlainTextWord*> componentWordArray2;
+	
+	int componentWmin = INT_DEFAULT_VALUE;
+	int componentWmax = INT_DEFAULT_VALUE;
+	int componentWmin2 = INT_DEFAULT_VALUE;
+	int componentWmax2 = INT_DEFAULT_VALUE;
+	if(forwardPropogationSentenceData->parseSentenceReverse)
+	{
+		componentWmax = forwardPropogationWordData->w+1+componentWordIndexCoverage;
+		componentWmin = forwardPropogationWordData->w+1;
+		componentWmax2 = forwardPropogationWordData->w;
+		componentWmin2 = forwardPropogationWordData->w - componentWordIndexCoverage;
+	}
+	else
+	{
+		componentWmin = forwardPropogationWordData->w-1-componentWordIndexCoverage;
+		componentWmax = forwardPropogationWordData->w-1;
+		componentWmin2 = forwardPropogationWordData->w;
+		componentWmax2 = forwardPropogationWordData->w + componentWordIndexCoverage;
+	}
+	
+	for(int w = componentWmin; w<=componentWmax; w++)
+	{
+		GIApreprocessorPlainTextWord* currentWord = (*(forwardPropogationSentenceData->sentenceContents))[w];	
+		componentWordArray.push_back(currentWord);
+	}
+	for(int w = componentWmin2; w<=componentWmax2; w++)
+	{
+		GIApreprocessorPlainTextWord* currentWord = (*(forwardPropogationSentenceData->sentenceContents))[w];	
+		componentWordArray2.push_back(currentWord);
+	}
+	for(int w = componentWmin; w<=componentWmax; w++)
+	{
+		//must sync code with GIAposRelTranslatorSANIPropagateCompactClass::propagateWordThroughNetworkIntro !currentWordAmbiguous exceptions
+		
+		if(!currentWordAmbiguous(componentWordArray[w]) && !currentWordAmbiguous(componentWordArray2[w]))
+		{
+			if(componentWordArray[w]->unambiguousPOSindex != componentWordArray2[w]->unambiguousPOSindex)
+			{
+				result = false;
+			}
+		}
+		else if(currentWordAmbiguous(componentWordArray[w]))
+		{
+			int wordPOStype = INT_DEFAULT_VALUE;
+			bool pass = getWordPOStypeFromAmbiguousWord(componentWordArray[w], &wordPOStype);
+			if(pass)
+			{
+				if(componentWordArray2[w]->unambiguousPOSindex != wordPOStype)
+				{
+					result = false;
+				}
+			}
+			else
+			{
+				result = false;
+			}
+		}		
+		else if(currentWordAmbiguous(componentWordArray2[w]))
+		{
+			int wordPOStype2 = INT_DEFAULT_VALUE;
+			bool pass = getWordPOStypeFromAmbiguousWord(componentWordArray2[w], &wordPOStype2);
+			if(pass)
+			{
+				if(componentWordArray2[w]->unambiguousPOSindex != wordPOStype2)
+				{
+					result = false;
+				}
+			}
+			else
+			{
+				result = false;
+			}
+		}
+		else
+		{
+			//both words are ambiguous
+
+			int wordPOStype1 = INT_DEFAULT_VALUE;
+			bool pass1 = getWordPOStypeFromAmbiguousWord(componentWordArray[w], &wordPOStype1);
+			int wordPOStype2 = INT_DEFAULT_VALUE;
+			bool pass2 = getWordPOStypeFromAmbiguousWord(componentWordArray2[w], &wordPOStype2);
+			if(pass1 && pass2)
+			{
+				if(wordPOStype1 != wordPOStype2)
+				{
+					result = false;
+				}
+			}
+			else
+			{
+				result = false;
+			}
+		}
+	}	
 							
+	return result;
+}
+#endif
+
+
 #ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_PREVENT_RESET_IF_NEXT_SEQUENCE_IS_SAME_AS_CURRENT_SEQUENCE
 bool GIAposRelTranslatorSANIPropagateOperationsClass::consecutiveSequenceDetected(GIAposRelTranslatorSANIForwardPropogationSentenceData* forwardPropogationSentenceData, GIAposRelTranslatorSANIForwardPropogationWordData* forwardPropogationWordData, vector<GIAposRelTranslatorRulesComponentNeuralNetwork*>* components, GIAposRelTranslatorRulesComponentNeuralNetwork* component)
 {
@@ -527,7 +660,7 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::consecutiveSequenceDetecte
 	{
 		//if(component->ownerGroup->neuronActive)
 		//if(component->neuronComponentConnectionActiveWordRecord == forwardPropogationWordData->wordReference)
-		//{
+		//{			
 			if(forwardPropogationSentenceData->parseSentenceReverse)
 			{
 				if(component->ownerGroup->currentParseTreeGroupTemp->parseTreeMinWordIndex == forwardPropogationWordData->w+1)
@@ -548,6 +681,10 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::consecutiveSequenceDetecte
 			}
 		//}
 	}
+	else
+	{
+		cout << "GIAposRelTranslatorSANIPropagateOperationsClass::consecutiveSequenceDetected warning: !(forwardPropogationSentenceData->recordActivatedNeuronWithMaxWordIndexCoverage)" << endl;
+	}
 							
 	return result;
 }
@@ -555,11 +692,11 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::consecutiveSequenceDetecte
 
 
 #ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_PREVENT_RESET_IF_FIRST_INACTIVE_COMPONENT_GROUPREF_IS_SAME_AS_FUTURE_ACTIVE_COMPONENT_GROUPREF
-bool GIAposRelTranslatorSANIPropagateOperationsClass::findValidDualLowerLevelConnection(GIAposRelTranslatorSANIForwardPropogationSentenceData* forwardPropogationSentenceData, GIAposRelTranslatorSANIForwardPropogationWordData* forwardPropogationWordData, vector<GIAposRelTranslatorRulesComponentNeuralNetwork*>* components, GIAposRelTranslatorRulesComponentNeuralNetwork* component)
+bool GIAposRelTranslatorSANIPropagateOperationsClass::findValidDualLowerLevelConnection(GIAposRelTranslatorSANIForwardPropogationSentenceData* forwardPropogationSentenceData, GIAposRelTranslatorSANIForwardPropogationWordData* forwardPropogationWordData, vector<GIAposRelTranslatorRulesComponentNeuralNetwork*>* components, GIAposRelTranslatorRulesComponentNeuralNetwork* component, bool assumeFirstComponentActive)
 {	
 	bool validDualLowerLevelConnectionFound = false;
-	bool firstInactiveComponentFound = false;
-	bool firstActiveComponentFound = false;
+	bool secondComponentFound = false;
+	bool firstComponentFound = false;
 	for(int i2=0; i2<components->size(); i2++)
 	{
 		int c2;
@@ -573,24 +710,38 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::findValidDualLowerLevelCon
 		}
 
 		GIAposRelTranslatorRulesComponentNeuralNetwork* component2 = (*components)[c2];
-		if(component2->neuronComponentConnectionActive)
+		
+		if(!firstComponentFound)
 		{
-			firstActiveComponentFound = true;
-		}
-		else if(firstActiveComponentFound)
-		{
-			if(!firstInactiveComponentFound)
+			if(assumeFirstComponentActive)
 			{
-				if(!(component2->neuronComponentConnectionActive))
+				if(component2->neuronComponentConnectionActive)
 				{
-					firstInactiveComponentFound = true;
-					for(int l=0; l<component2->ANNbackGroupConnectionList.size(); l++)
+					firstComponentFound = true;
+				}
+			}
+			else
+			{
+				if(!firstComponentFound)
+				{
+					firstComponentFound = true;
+				}	
+			}
+		}
+		else
+		{
+			if(!secondComponentFound)
+			{
+				if(!(component2->neuronComponentConnectionActive) || !assumeFirstComponentActive)
+				{
+					secondComponentFound = true;
+					for(int l2=0; l2<component2->ANNbackGroupConnectionList.size(); l2++)
 					{
-						GIAposRelTranslatorRulesGroupNeuralNetwork* groupSource2 = component2->ANNbackGroupConnectionList[l];
+						GIAposRelTranslatorRulesGroupNeuralNetwork* groupSource2 = component2->ANNbackGroupConnectionList[l2];
 
-						for(int l2=0; l2<component->ANNbackGroupConnectionList.size(); l2++)
+						for(int l=0; l<component->ANNbackGroupConnectionList.size(); l++)
 						{
-							GIAposRelTranslatorRulesGroupNeuralNetwork* groupSource = component->ANNbackGroupConnectionList[l2];
+							GIAposRelTranslatorRulesGroupNeuralNetwork* groupSource = component->ANNbackGroupConnectionList[l];
 
 							if(groupSource2 == groupSource)
 							{
@@ -2275,9 +2426,9 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::adjustNetworkDepth(GIAposR
 	#endif
 		/*
 		#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_RECORD_DEPTH
-		GIAposRelTranslatorSANIPropagateOperations.countNeuralNetworkMaxLeafSizeAndDepth(ownerGroup, &maxLeafSize, &maxDepth);
+		countNeuralNetworkMaxLeafSizeAndDepth(ownerGroup, &maxLeafSize, &maxDepth);
 		#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_OPTIMISE_FOR_DIVERGENT_CONVERGENT_PATHWAYS
-		GIAposRelTranslatorSANIPropagateOperations.countNeuralNetworkMaxLeafSizeAndDepthReset(ownerGroup);
+		countNeuralNetworkMaxLeafSizeAndDepthReset(ownerGroup);
 		#endif
 		*/
 
@@ -2903,8 +3054,29 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::isNeuronString(GIAposRelTr
 	return result;
 }
 
-
+bool GIAposRelTranslatorSANIPropagateOperationsClass::getWordPOStypeFromAmbiguousWord(GIApreprocessorPlainTextWord* currentWord, int* wordPOStype)
+{
+	bool result = false;
 	
-#endif
+	#ifdef GIA_POS_REL_TRANSLATOR_RULES_TREAT_UNKNOWN_POSTYPES_MID_SENTENCE_CAPITALISED_WORDS_AS_PROPERNOUNS_METHOD2
+	if(GIApreprocessorWordClassObject.isMidSentenceUppercaseWordLikelyProperNoun(currentWord))
+	{	
+		*wordPOStype = GIA_PREPROCESSOR_POS_TYPE_PROPERNOUN_DEFAULT;
+		result = true;
+	}
+	else
+	{
+	#endif
+		#ifdef GIA_POS_REL_TRANSLATOR_RULES_TREAT_UNKNOWN_POSTYPES_AS_NOUNS
+		*wordPOStype = GIA_PREPROCESSOR_POS_TYPE_NOUN;
+		result = true;		
+		#endif
+	#ifdef GIA_POS_REL_TRANSLATOR_RULES_TREAT_UNKNOWN_POSTYPES_MID_SENTENCE_CAPITALISED_WORDS_AS_PROPERNOUNS_METHOD2
+	}
+	#endif
+	
+	return result;
+}
 
+#endif	
 
