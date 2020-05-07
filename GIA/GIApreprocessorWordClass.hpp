@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorWordClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k8c 06-May-2020
+ * Project Version: 3k9a 07-May-2020
  * Requirements: requires plain text file
  * Description: Preprocessor Word Class
  * /

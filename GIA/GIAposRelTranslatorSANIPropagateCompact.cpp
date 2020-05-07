@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorSANIPropagateCompact.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k8c 06-May-2020
+ * Project Version: 3k9a 07-May-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Propagate Compact - ~O(n)
  * /
@@ -193,6 +193,7 @@ bool GIAposRelTranslatorSANIPropagateCompactClass::performPropagationTest(GIAtra
 {
 	bool result = false;
 	
+	bool resetAllNeuronComponents = true;
 	bool deinitialiseParseTreeGroupAfterFinish = true;
 	int firstIndexInSequence = 0;
 	forwardPropogationSentenceData->recordActivatedNeuronWithMaxWordIndexCoverage = false;
@@ -201,7 +202,7 @@ bool GIAposRelTranslatorSANIPropagateCompactClass::performPropagationTest(GIAtra
 	GIAposRelTranslatorSANIPropagateOperations.setParseSentenceReverse(false, forwardPropogationSentenceData);
 	#endif
 	
-	if(performPropagation(translatorVariables, GIAposRelTranslatorRulesGroupTypes, forwardPropogationSentenceData, deinitialiseParseTreeGroupAfterFinish, firstIndexInSequence))
+	if(performPropagation(translatorVariables, GIAposRelTranslatorRulesGroupTypes, forwardPropogationSentenceData, resetAllNeuronComponents, deinitialiseParseTreeGroupAfterFinish, firstIndexInSequence))
 	{
 		#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_NETWORK_NODES
 		cout << "toplevelGroupActivationFound: groupIndexes = " << GIAposRelTranslatorSANIPropagateOperations.printParseTreeGroupIndices(topLevelParseTreeGroupLocalCompact) << endl;
@@ -217,7 +218,7 @@ bool GIAposRelTranslatorSANIPropagateCompactClass::performPropagationTest(GIAtra
 }
 
 
-bool GIAposRelTranslatorSANIPropagateCompactClass::performPropagation(GIAtranslatorVariablesClass* translatorVariables, vector<GIAposRelTranslatorRulesGroupType*>* GIAposRelTranslatorRulesGroupTypes, GIAposRelTranslatorSANIForwardPropogationSentenceData* forwardPropogationSentenceData, const bool deinitialiseParseTreeGroupAfterFinish, const int firstIndexInSequence)
+bool GIAposRelTranslatorSANIPropagateCompactClass::performPropagation(GIAtranslatorVariablesClass* translatorVariables, vector<GIAposRelTranslatorRulesGroupType*>* GIAposRelTranslatorRulesGroupTypes, GIAposRelTranslatorSANIForwardPropogationSentenceData* forwardPropogationSentenceData, const bool resetAllNeuronComponents, const bool deinitialiseParseTreeGroupAfterFinish, const int firstIndexInSequence)
 {	
 	int activatedNeuronWithMaxWordIndexCoverageFirstWordIndexAllowed;
 	int activatedNeuronWithMaxWordIndexCoverageLastWordIndexAllowed;
@@ -231,11 +232,11 @@ bool GIAposRelTranslatorSANIPropagateCompactClass::performPropagation(GIAtransla
 		activatedNeuronWithMaxWordIndexCoverageFirstWordIndexAllowed = firstIndexInSequence;
 		activatedNeuronWithMaxWordIndexCoverageLastWordIndexAllowed = forwardPropogationSentenceData->sentenceContents->size()-1;
 	}
-	return performPropagation(translatorVariables, GIAposRelTranslatorRulesGroupTypes, forwardPropogationSentenceData, deinitialiseParseTreeGroupAfterFinish, firstIndexInSequence, activatedNeuronWithMaxWordIndexCoverageFirstWordIndexAllowed, activatedNeuronWithMaxWordIndexCoverageLastWordIndexAllowed);
+	return performPropagation(translatorVariables, GIAposRelTranslatorRulesGroupTypes, forwardPropogationSentenceData, resetAllNeuronComponents, deinitialiseParseTreeGroupAfterFinish, firstIndexInSequence, activatedNeuronWithMaxWordIndexCoverageFirstWordIndexAllowed, activatedNeuronWithMaxWordIndexCoverageLastWordIndexAllowed);
 }
 
 
-bool GIAposRelTranslatorSANIPropagateCompactClass::performPropagation(GIAtranslatorVariablesClass* translatorVariables, vector<GIAposRelTranslatorRulesGroupType*>* GIAposRelTranslatorRulesGroupTypes, GIAposRelTranslatorSANIForwardPropogationSentenceData* forwardPropogationSentenceData, const bool deinitialiseParseTreeGroupAfterFinish, const int activatedNeuronWithMaxWordIndexCoverageFirstWordIndexAllowed, const int activatedNeuronWithMaxWordIndexCoverageLastWordIndexAllowed)
+bool GIAposRelTranslatorSANIPropagateCompactClass::performPropagation(GIAtranslatorVariablesClass* translatorVariables, vector<GIAposRelTranslatorRulesGroupType*>* GIAposRelTranslatorRulesGroupTypes, GIAposRelTranslatorSANIForwardPropogationSentenceData* forwardPropogationSentenceData, const bool resetAllNeuronComponents, const bool deinitialiseParseTreeGroupAfterFinish, const int activatedNeuronWithMaxWordIndexCoverageFirstWordIndexAllowed, const int activatedNeuronWithMaxWordIndexCoverageLastWordIndexAllowed)
 {
 	int firstIndexInSequence;
 	if(forwardPropogationSentenceData->parseSentenceReverse)
@@ -246,18 +247,21 @@ bool GIAposRelTranslatorSANIPropagateCompactClass::performPropagation(GIAtransla
 	{
 		firstIndexInSequence = 0;
 	}
-	return performPropagation(translatorVariables, GIAposRelTranslatorRulesGroupTypes, forwardPropogationSentenceData, deinitialiseParseTreeGroupAfterFinish, firstIndexInSequence, activatedNeuronWithMaxWordIndexCoverageFirstWordIndexAllowed, activatedNeuronWithMaxWordIndexCoverageLastWordIndexAllowed);
+	return performPropagation(translatorVariables, GIAposRelTranslatorRulesGroupTypes, forwardPropogationSentenceData, resetAllNeuronComponents, deinitialiseParseTreeGroupAfterFinish, firstIndexInSequence, activatedNeuronWithMaxWordIndexCoverageFirstWordIndexAllowed, activatedNeuronWithMaxWordIndexCoverageLastWordIndexAllowed);
 
 }
 
-bool GIAposRelTranslatorSANIPropagateCompactClass::performPropagation(GIAtranslatorVariablesClass* translatorVariables, vector<GIAposRelTranslatorRulesGroupType*>* GIAposRelTranslatorRulesGroupTypes, GIAposRelTranslatorSANIForwardPropogationSentenceData* forwardPropogationSentenceData, const bool deinitialiseParseTreeGroupAfterFinish, const int firstIndexInSequence, const int activatedNeuronWithMaxWordIndexCoverageFirstWordIndexAllowed, const int activatedNeuronWithMaxWordIndexCoverageLastWordIndexAllowed)
+bool GIAposRelTranslatorSANIPropagateCompactClass::performPropagation(GIAtranslatorVariablesClass* translatorVariables, vector<GIAposRelTranslatorRulesGroupType*>* GIAposRelTranslatorRulesGroupTypes, GIAposRelTranslatorSANIForwardPropogationSentenceData* forwardPropogationSentenceData, const bool resetAllNeuronComponents, const bool deinitialiseParseTreeGroupAfterFinish, const int firstIndexInSequence, const int activatedNeuronWithMaxWordIndexCoverageFirstWordIndexAllowed, const int activatedNeuronWithMaxWordIndexCoverageLastWordIndexAllowed)
 {
 	bool result = false;
 	
 	forwardPropogationSentenceData->toplevelGroupActivationFound = false;
 	
-	GIAposRelTranslatorSANIPropagateOperations.resetAllNeuronComponents(GIAposRelTranslatorRulesGroupTypes, GIA_POS_REL_TRANSLATOR_RULES_GROUP_BOOL_INDEX_ALLGROUPTYPES_NEURON_COMPONENT_CONNECTION_ACTIVE); //this is required for GIA_POS_REL_TRANSLATOR_SANI_LIGHT_OPTIMISED
-	GIAposRelTranslatorSANIPropagateOperations.resetAllNeuronComponents(GIAposRelTranslatorRulesGroupTypes, GIA_POS_REL_TRANSLATOR_RULES_GROUP_BOOL_INDEX_ALLGROUPTYPES_PARSE_TREE_GROUP_REF);	//this is required to initialise currentParseTreeGroup for every group (only required for first execution of GIAposRelTranslatorSANIPropagateLightOptimisedClass::executeTxtRelTranslatorNeuralNetwork)
+	if(resetAllNeuronComponents)
+	{
+		GIAposRelTranslatorSANIPropagateOperations.resetAllNeuronComponents(GIAposRelTranslatorRulesGroupTypes, GIA_POS_REL_TRANSLATOR_RULES_GROUP_BOOL_INDEX_ALLGROUPTYPES_NEURON_COMPONENT_CONNECTION_ACTIVE); //this is required for GIA_POS_REL_TRANSLATOR_SANI_LIGHT_OPTIMISED
+		GIAposRelTranslatorSANIPropagateOperations.resetAllNeuronComponents(GIAposRelTranslatorRulesGroupTypes, GIA_POS_REL_TRANSLATOR_RULES_GROUP_BOOL_INDEX_ALLGROUPTYPES_PARSE_TREE_GROUP_REF);	//this is required to initialise currentParseTreeGroup for every group (only required for first execution of GIAposRelTranslatorSANIPropagateLightOptimisedClass::executeTxtRelTranslatorNeuralNetwork)
+	}
 	#ifdef GIA_POS_REL_TRANSLATOR_SANI_FREE_MEMORY
 	GIAposRelTranslatorSANIPropagateOperations.initialiseParseTreeGroupList(GIAposRelTranslatorRulesGroupTypes, &parseTreeGroupListCompact);
 	#endif
