@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorPermutations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k8a 06-May-2020
+ * Project Version: 3k8b 06-May-2020
  * Requirements: requires plain text file
  * Description: Part-of-speech Relation Translator Permutations
  * /
@@ -62,7 +62,7 @@ bool GIAposRelTranslatorPermutationsClass::executeTxtRelTranslatorWrapper(GIAtra
 	//cout << "GIAposRelTranslatorPermutationsClass::executeTxtRelTranslatorWrapper" << endl;
 
 
-	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_DEBUG_TEST_VERIFICATION_AFTER_GENERATION
+	#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_TEST_VERIFICATION_AFTER_GENERATION
 	//code from GIAtranslatorClass::parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyParsedSentences;
 	//count maxNumberSentences
 	GIApreprocessorSentence* currentSentenceInList = translatorVariables->firstGIApreprocessorSentenceInList;
@@ -80,7 +80,7 @@ bool GIAposRelTranslatorPermutationsClass::executeTxtRelTranslatorWrapper(GIAtra
 	GIApreprocessorSentence* currentGIApreprocessorSentenceInList = translatorVariables->firstGIApreprocessorSentenceInList;
 	while(currentGIApreprocessorSentenceInList->next != NULL)
 	{		
-		#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_DEBUG_TEST_VERIFICATION_AFTER_GENERATION
+		#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_TEST_VERIFICATION_AFTER_GENERATION
 		translatorVariables->currentPreprocessorSentenceInList = currentGIApreprocessorSentenceInList;
 		#endif
 		
@@ -381,10 +381,10 @@ bool GIAposRelTranslatorPermutationsClass::generateParseTreeIntroWrapper(GIAtran
 	#endif
 	
 		#ifdef GIA_POS_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START
-		#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_DEBUG_MAX_POS_PERMUTATIONS
-		for(int i=0; i<GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_DEBUG_MAX_POS_PERMUTATIONS_NUM; i++)
+		#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_MAX_POS_PERMUTATIONS
+		for(int i=0; i<GIA_DEBUG_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_MAX_POS_PERMUTATIONS_NUM; i++)
 		#else
-		#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_DEBUG_SINGLE_POS_PERMUTATION
+		#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_SINGLE_POS_PERMUTATION
 		for(int i=0; i<1; i++)
 		#else
 		for(int i=0; i<POSambiguityInfoUnambiguousPermutationArray->size(); i++)
