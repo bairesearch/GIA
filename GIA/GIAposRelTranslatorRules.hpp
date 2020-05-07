@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorRules.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k8b 06-May-2020
+ * Project Version: 3k8c 06-May-2020
  * Requirements: requires plain text file
  * Description: Part-of-speech Relation Translator Rules
  * /
@@ -300,6 +300,7 @@ class GIAposRelTranslatorRulesClass
 	public: void initialiseNewGroupIndex(vector<GIAposRelTranslatorRulesGroupType*>* GIAposRelTranslatorRulesGroupTypes);
 	public: int* getNewGroupIndex();
 	public: GIAposRelTranslatorRulesGroupType* getSequenceGrammarGroupTypeDefault(vector<GIAposRelTranslatorRulesGroupType*>* GIAposRelTranslatorRulesGroupTypes);
+	public: int assignGroupIndex(GIAposRelTranslatorRulesGroupNeuralNetwork* group);
 	#endif
 	
 	public: vector<GIAposRelTranslatorRulesGroupType*>* getGIAposRelTranslatorRulesGroupTypesGlobal();

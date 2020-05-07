@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorSANIFormation.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k8b 06-May-2020
+ * Project Version: 3k8c 06-May-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Formation
  * /
@@ -210,6 +210,12 @@ bool GIAposRelTranslatorSANIFormationClass::createInputNeuronLayerSectionWordPOS
 		#endif
 		#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR
 		(*currentGroupInInputLayerSectionWordPOStype)->groupTypeIsString = true;
+		#endif
+		#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_PROPAGATE_ASSIGN_GROUP_INDICES_TO_INPUT_NEURONS
+		int newNeuronIndex = GIAposRelTranslatorRules.assignGroupIndex(*currentGroupInInputLayerSectionWordPOStype);	
+		#ifdef GIA_POS_REL_TRANSLATOR_SANI_ANN
+		(*currentGroupInInputLayerSectionWordPOStype)->initiateANNneuron("groupIndex:" + SHAREDvars.convertIntToString(newNeuronIndex));
+		#endif
 		#endif
 		addGroupToLayer(currentGroupInInputLayerSectionWordPOStype, numberOfGroupsInSection);
 		#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_CREATE

@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorSANIPropagateCompact.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k8b 06-May-2020
+ * Project Version: 3k8c 06-May-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Propagate Compact - ~O(n)
  * /
@@ -191,6 +191,8 @@ bool GIAposRelTranslatorSANIPropagateCompactClass::executeTxtRelTranslatorNeural
 
 bool GIAposRelTranslatorSANIPropagateCompactClass::performPropagationTest(GIAtranslatorVariablesClass* translatorVariables, vector<GIAposRelTranslatorRulesGroupType*>* GIAposRelTranslatorRulesGroupTypes, GIAposRelTranslatorSANIForwardPropogationSentenceData* forwardPropogationSentenceData)
 {
+	bool result = false;
+	
 	bool deinitialiseParseTreeGroupAfterFinish = true;
 	int firstIndexInSequence = 0;
 	forwardPropogationSentenceData->recordActivatedNeuronWithMaxWordIndexCoverage = false;
@@ -199,7 +201,13 @@ bool GIAposRelTranslatorSANIPropagateCompactClass::performPropagationTest(GIAtra
 	GIAposRelTranslatorSANIPropagateOperations.setParseSentenceReverse(false, forwardPropogationSentenceData);
 	#endif
 	
-	bool result = performPropagation(translatorVariables, GIAposRelTranslatorRulesGroupTypes, forwardPropogationSentenceData, deinitialiseParseTreeGroupAfterFinish, firstIndexInSequence);
+	if(performPropagation(translatorVariables, GIAposRelTranslatorRulesGroupTypes, forwardPropogationSentenceData, deinitialiseParseTreeGroupAfterFinish, firstIndexInSequence))
+	{
+		#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_NETWORK_NODES
+		cout << "toplevelGroupActivationFound: groupIndexes = " << GIAposRelTranslatorSANIPropagateOperations.printParseTreeGroupIndices(topLevelParseTreeGroupLocalCompact) << endl;
+		#endif
+		result = true;
+	}
 	
 	#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_TEST_VERIFICATION_PROPAGATION_IN_OPPOSITE_DIRECTION
 	GIAposRelTranslatorSANIPropagateOperations.setParseSentenceReverse(true, forwardPropogationSentenceData);

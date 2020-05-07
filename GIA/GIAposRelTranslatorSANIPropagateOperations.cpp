@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorSANIPropagateOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k8b 06-May-2020
+ * Project Version: 3k8c 06-May-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Operations - generic functions
  * /
@@ -3085,4 +3085,27 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::getWordPOStypeFromAmbiguou
 }
 
 #endif	
+
+
+string GIAposRelTranslatorSANIPropagateOperationsClass::printParseTreeGroupIndices(GIAposRelTranslatorRulesGroupParseTree* currentParseTreeGroup)
+{
+	string groupIndicesString = "";
+	
+	groupIndicesString = groupIndicesString + SHAREDvars.convertIntToString(currentParseTreeGroup->groupRef->groupIndex) + " ";
+	//cout << currentParseTreeGroup->groupRef->groupIndex << " ";
+	//cout << currentParseTreeGroup->groupRef->neuronReference->GIAentityName << " ";
+	
+	for(int i=0; i<currentParseTreeGroup->components.size(); i++)
+	{
+		GIAposRelTranslatorRulesComponentParseTree* currentComponent = (currentParseTreeGroup->components)[i];
+
+		if(currentComponent->parseTreeGroupRef != NULL)
+		{
+			groupIndicesString = groupIndicesString + printParseTreeGroupIndices(currentComponent->parseTreeGroupRef);
+		}
+	}
+
+	return groupIndicesString;
+}
+
 

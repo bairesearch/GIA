@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorPermutations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k8b 06-May-2020
+ * Project Version: 3k8c 06-May-2020
  * Requirements: requires plain text file
  * Description: Part-of-speech Relation Translator Permutations
  * /
@@ -247,6 +247,11 @@ bool GIAposRelTranslatorPermutationsClass::executeTxtRelTranslator(GIAtranslator
 {
 	bool result = true;
 	
+	#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_RULES_PRINT_SENTENCES
+	cout << endl;
+	GIApreprocessorSentenceClassObject.printSentence(GIApreprocessorSentenceClassObject.getSentenceContents(currentGIApreprocessorSentenceInList), true);
+	#endif
+
 	vector<GIApreprocessorPlainTextWord*>* sentenceContents = GIApreprocessorSentenceClassObject.getSentenceContents(currentGIApreprocessorSentenceInList);
 
 	/*
@@ -342,7 +347,11 @@ bool GIAposRelTranslatorPermutationsClass::executeTxtRelTranslator(GIAtranslator
 	#ifdef GIA_POS_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START
 	if(foundParse)
 	{
-		//cout << "GIAposRelTranslatorPermutationsClass::executeTxtRelTranslator{}: Succeeded to parse sentence " << currentGIApreprocessorSentenceInList->sentenceIndexOriginal << ", sentenceContents = " << GIApreprocessorWordClassObject.printWordListString(GIApreprocessorSentenceClassObject.getSentenceContents(currentGIApreprocessorSentenceInList)) << endl;
+		#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR
+		cout << "GIAposRelTranslatorPermutationsClass::executeTxtRelTranslator{}: Successfully parsed sentence " << currentGIApreprocessorSentenceInList->sentenceIndexOriginal << ", ";
+		GIApreprocessorSentenceClassObject.printSentence(GIApreprocessorSentenceClassObject.getSentenceContents(currentGIApreprocessorSentenceInList), true);
+		//cout << "sentenceContents = " << GIApreprocessorWordClassObject.printWordListString(GIApreprocessorSentenceClassObject.getSentenceContents(currentGIApreprocessorSentenceInList)) << endl;
+		#endif
 	}
 	else
 	{

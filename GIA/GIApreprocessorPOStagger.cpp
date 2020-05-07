@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorPOStagger.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k8b 06-May-2020
+ * Project Version: 3k8c 06-May-2020
  * Requirements: requires plain text file
  * Description: Preprocessor POS tagger
  * /
@@ -1682,6 +1682,10 @@ bool GIApreprocessorPOStaggerClass::setSentenceContentsWordsUnambiguousPOSindex(
 {
 	bool result = true;
 	
+	#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_RULES_PRINT_SENTENCES
+	cout << "sentencePOS = ";
+	#endif
+	
 	for(int w=0; w<sentenceContents->size(); w++)
 	{
 		GIApreprocessorPlainTextWord* contextWord = sentenceContents->at(w);
@@ -1693,7 +1697,14 @@ bool GIApreprocessorPOStaggerClass::setSentenceContentsWordsUnambiguousPOSindex(
 		cout << "unambiguousPOSinfoIndex = " << int(unambiguousPOSinfoIndex) << endl;
 		cout << "GIApreprocessorPOStypeNameArray[unambiguousPOSinfoIndex] = " << GIApreprocessorPOStypeNameArray[unambiguousPOSinfoIndex] << endl;
 		#endif
+		#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_RULES_PRINT_SENTENCES
+		cout << GIApreprocessorPOStypeCrossReferenceStanfordPos[unambiguousPOSinfoIndex] << " ";
+		#endif
 	}
+	#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_RULES_PRINT_SENTENCES
+	cout << endl;
+	#endif
+
 
 	return result;
 }

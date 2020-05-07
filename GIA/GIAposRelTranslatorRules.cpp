@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorRules.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k8b 06-May-2020
+ * Project Version: 3k8c 06-May-2020
  * Requirements: requires plain text file
  * Description: Part-of-speech Relation Translator Rules
  * /
@@ -102,6 +102,13 @@ GIAposRelTranslatorRulesGroupType* GIAposRelTranslatorRulesClass::getSequenceGra
 		exit(EXIT_ERROR);
 	}
 	return groupType;
+}
+int GIAposRelTranslatorRulesClass::assignGroupIndex(GIAposRelTranslatorRulesGroupNeuralNetwork* group)
+{	
+	int* newNeuronIndex = getNewGroupIndex();
+	group->groupIndex = *newNeuronIndex;
+	*newNeuronIndex = *newNeuronIndex + 1;
+	return *newNeuronIndex;
 }
 #endif
 
