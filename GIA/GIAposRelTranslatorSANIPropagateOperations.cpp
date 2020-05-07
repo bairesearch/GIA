@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorSANIPropagateOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k7b 02-May-2020
+ * Project Version: 3k8a 06-May-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Operations - generic functions
  * /
@@ -320,7 +320,12 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::propagateWordThroughNetwor
 								bool validDualLowerLevelConnectionFound = false;
 								if(forwardPropogationSentenceData->recordActivatedNeuronWithMaxWordIndexCoverage)
 								{
+									//cout << "recordActivatedNeuronWithMaxWordIndexCoverage" << endl;
 									validDualLowerLevelConnectionFound = findValidDualLowerLevelConnection(forwardPropogationSentenceData, forwardPropogationWordData, components, component, false);
+									if(validDualLowerLevelConnectionFound)
+									{
+										cout << "validDualLowerLevelConnectionFound" << endl;
+									}
 								}
 								if(!validDualLowerLevelConnectionFound)
 								{
@@ -750,6 +755,7 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::findValidDualLowerLevelCon
 								{
 								#endif
 									validDualLowerLevelConnectionFound = true;
+									cout << "validDualLowerLevelConnectionFound" << endl;
 									//cout << "\n\n\n\n GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_PREVENT_RESET_IF_FIRST_INACTIVE_COMPONENT_GROUPREF_IS_SAME_AS_FUTURE_ACTIVE_COMPONENT_GROUPREF_RECURSIVE: GIAposRelTranslatorSANIPropagateOperationsClass::findValidDualLowerLevelConnection validDualLowerLevelConnectionFound" << endl;
 									//exit(EXIT_ERROR);
 								#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_PREVENT_RESET_IF_FIRST_INACTIVE_COMPONENT_GROUPREF_IS_SAME_AS_FUTURE_ACTIVE_COMPONENT_GROUPREF_AND_SATISIFIES_WORD_INDEX
