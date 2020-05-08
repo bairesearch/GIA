@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorSANIPropagateOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k10c 08-May-2020
+ * Project Version: 3k10d 08-May-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Operations - generic functions
  * /
@@ -568,17 +568,17 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::repeatedSequenceDetected(G
 	int componentWmax2 = INT_DEFAULT_VALUE;
 	if(forwardPropogationSentenceData->parseSentenceReverse)
 	{
-		componentWmax = forwardPropogationWordData->w+componentWordIndexCoverage;
-		componentWmin = forwardPropogationWordData->w;
-		componentWmax2 = forwardPropogationWordData->w-1;
-		componentWmin2 = forwardPropogationWordData->w-1-componentWordIndexCoverage;
+		componentWmax = component->neuronComponentConnectionActiveWordRecord->translatorSentenceWordIndex+componentWordIndexCoverage;
+		componentWmin = component->neuronComponentConnectionActiveWordRecord->translatorSentenceWordIndex;
+		componentWmax2 = component->neuronComponentConnectionActiveWordRecord->translatorSentenceWordIndex-1;
+		componentWmin2 = component->neuronComponentConnectionActiveWordRecord->translatorSentenceWordIndex-1-componentWordIndexCoverage;
 	}
 	else
 	{
-		componentWmin = forwardPropogationWordData->w-componentWordIndexCoverage;
-		componentWmax = forwardPropogationWordData->w;
-		componentWmin2 = forwardPropogationWordData->w+1;
-		componentWmax2 = forwardPropogationWordData->w+1+componentWordIndexCoverage;
+		componentWmin = component->neuronComponentConnectionActiveWordRecord->translatorSentenceWordIndex-componentWordIndexCoverage;
+		componentWmax = component->neuronComponentConnectionActiveWordRecord->translatorSentenceWordIndex;
+		componentWmin2 = component->neuronComponentConnectionActiveWordRecord->translatorSentenceWordIndex+1;
+		componentWmax2 = component->neuronComponentConnectionActiveWordRecord->translatorSentenceWordIndex+1+componentWordIndexCoverage;
 	}
 	
 	for(int w = componentWmin; w<=componentWmax; w++)
