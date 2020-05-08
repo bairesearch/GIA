@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorSANIPropagateOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k10a 08-May-2020
+ * Project Version: 3k10b 08-May-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Operations - generic functions
  * /
@@ -197,49 +197,52 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::propagateWordThroughNetwor
 							if(i == 0)	//start component in group
 							{
 								bool allowComponentReset = true;
+								/*
 								#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_FORCE_RESET_IF_NO_WORD_CONNECTIVITY_BETWEEN_PREVIOUS_ACTIVE_COMPONENTS_AND_NEWLY_ACTIVATED_COMPONENT
 								if(componentWordConnectivityTests)
 								{
 								#endif
-									#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_PREVENT_RESET_IF_REPEATED_SEQUENCE_DETECTED
-									if(consecutiveSequenceDetected(forwardPropogationSentenceData, forwardPropogationWordData, components, component))
+								*/
+								#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_PREVENT_RESET_IF_REPEATED_SEQUENCE_DETECTED
+								//if(consecutiveSequenceDetected(forwardPropogationSentenceData, forwardPropogationWordData, components, component))
+								//{
+								if(findValidDualLowerLevelConnection(forwardPropogationSentenceData, forwardPropogationWordData, components, component, true))
+								{
+									if(repeatedSequenceDetected(forwardPropogationSentenceData, forwardPropogationWordData, components, component))
 									{
-										if(findValidDualLowerLevelConnection(forwardPropogationSentenceData, forwardPropogationWordData, components, component, true))
-										{
-											if(repeatedSequenceDetected(forwardPropogationSentenceData, forwardPropogationWordData, components, component))
-											{
-												allowComponentReset = false;
-											}
-										}
-									}
-									#else
-									#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_PREVENT_RESET_IF_NEXT_SEQUENCE_IS_SAME_AS_CURRENT_SEQUENCE
-									if(consecutiveSequenceDetected(forwardPropogationSentenceData, forwardPropogationWordData, components, component))
-									{
-										//cout << "!allowComponentReset: consecutiveSequenceDetected - component->ownerGroup->groupIndex = " << component->ownerGroup->groupIndex << endl;
-										//cout << "!allowComponentReset; consecutiveSequenceDetected" << endl;
 										allowComponentReset = false;
 									}
-									#endif
-									#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_PREVENT_RESET_IF_FIRST_INACTIVE_COMPONENT_GROUPREF_IS_SAME_AS_FUTURE_ACTIVE_COMPONENT_GROUPREF
-									if(findValidDualLowerLevelConnection(forwardPropogationSentenceData, forwardPropogationWordData, components, component, true))
+								}
+								//}
+								#else
+								#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_PREVENT_RESET_IF_NEXT_SEQUENCE_IS_SAME_AS_CURRENT_SEQUENCE
+								if(consecutiveSequenceDetected(forwardPropogationSentenceData, forwardPropogationWordData, components, component))
+								{
+									//cout << "!allowComponentReset: consecutiveSequenceDetected - component->ownerGroup->groupIndex = " << component->ownerGroup->groupIndex << endl;
+									//cout << "!allowComponentReset; consecutiveSequenceDetected" << endl;
+									allowComponentReset = false;
+								}
+								#endif
+								#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_PREVENT_RESET_IF_FIRST_INACTIVE_COMPONENT_GROUPREF_IS_SAME_AS_FUTURE_ACTIVE_COMPONENT_GROUPREF
+								if(findValidDualLowerLevelConnection(forwardPropogationSentenceData, forwardPropogationWordData, components, component, true))
+								{
+									//cout << "!allowComponentReset; findValidDualLowerLevelConnection" << endl;
+									allowComponentReset = false;
+								}
+								#endif
+								#endif
+								/*
+								#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_PREVENT_WRITE_IF_UPPER_NEURON_ALREADY_CONTAINS_WORD_INDEX_OF_EXISTING_COMPONENT
+								if(!(component->ownerGroup->neuronComponentConnectionActive))
+								{
+									if(upperNeuronContainsWordIndexOfProspectiveComponent(forwardPropogationSentenceData, forwardPropogationWordData, component, component->ownerGroup))
 									{
-										//cout << "!allowComponentReset; findValidDualLowerLevelConnection" << endl;
-										allowComponentReset = false;
+										allowComponentReset = true;
 									}
-									#endif
-									#endif
-									/*
-									#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_PREVENT_WRITE_IF_UPPER_NEURON_ALREADY_CONTAINS_WORD_INDEX_OF_EXISTING_COMPONENT
-									if(!(component->ownerGroup->neuronComponentConnectionActive))
-									{
-										if(upperNeuronContainsWordIndexOfProspectiveComponent(forwardPropogationSentenceData, forwardPropogationWordData, component, component->ownerGroup))
-										{
-											allowComponentReset = true;
-										}
-									}
-									#endif
-									*/
+								}
+								#endif
+								*/
+								/*
 								#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_FORCE_RESET_IF_NO_WORD_CONNECTIVITY_BETWEEN_PREVIOUS_ACTIVE_COMPONENTS_AND_NEWLY_ACTIVATED_COMPONENT
 								}
 								else
@@ -247,6 +250,7 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::propagateWordThroughNetwor
 									//always reset, as existing first activated component is not connected (by wordIndices) to prospective activated next component
 								}
 								#endif
+								*/
 								#ifdef GIA_POS_REL_TRANSLATOR_SANI_PROPAGATE_ALL_POS_VALUES_SIMULTANEOUSLY
 								if(existingActivationFound)
 								{
@@ -548,6 +552,7 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::upperNeuronContainsWordInd
 #endif
 
 #ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_PREVENT_RESET_IF_REPEATED_SEQUENCE_DETECTED
+//assumes component refers to current component [forwardPropogationWordData->w is last word index in this component], and testing against next component in group
 bool GIAposRelTranslatorSANIPropagateOperationsClass::repeatedSequenceDetected(GIAposRelTranslatorSANIForwardPropogationSentenceData* forwardPropogationSentenceData, GIAposRelTranslatorSANIForwardPropogationWordData* forwardPropogationWordData, vector<GIAposRelTranslatorRulesComponentNeuralNetwork*>* components, GIAposRelTranslatorRulesComponentNeuralNetwork* component)
 {
 	bool result = true;
@@ -563,17 +568,17 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::repeatedSequenceDetected(G
 	int componentWmax2 = INT_DEFAULT_VALUE;
 	if(forwardPropogationSentenceData->parseSentenceReverse)
 	{
-		componentWmax = forwardPropogationWordData->w+1+componentWordIndexCoverage;
-		componentWmin = forwardPropogationWordData->w+1;
-		componentWmax2 = forwardPropogationWordData->w;
-		componentWmin2 = forwardPropogationWordData->w - componentWordIndexCoverage;
+		componentWmax = forwardPropogationWordData->w+componentWordIndexCoverage;
+		componentWmin = forwardPropogationWordData->w;
+		componentWmax2 = forwardPropogationWordData->w-1;
+		componentWmin2 = forwardPropogationWordData->w-1-componentWordIndexCoverage;
 	}
 	else
 	{
-		componentWmin = forwardPropogationWordData->w-1-componentWordIndexCoverage;
-		componentWmax = forwardPropogationWordData->w-1;
-		componentWmin2 = forwardPropogationWordData->w;
-		componentWmax2 = forwardPropogationWordData->w + componentWordIndexCoverage;
+		componentWmin = forwardPropogationWordData->w-componentWordIndexCoverage;
+		componentWmax = forwardPropogationWordData->w;
+		componentWmin2 = forwardPropogationWordData->w+1;
+		componentWmax2 = forwardPropogationWordData->w+1+componentWordIndexCoverage;
 	}
 	
 	for(int w = componentWmin; w<=componentWmax; w++)
@@ -697,6 +702,7 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::consecutiveSequenceDetecte
 
 
 #ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_PREVENT_RESET_IF_FIRST_INACTIVE_COMPONENT_GROUPREF_IS_SAME_AS_FUTURE_ACTIVE_COMPONENT_GROUPREF
+//assumes component refers to current component, and testing against next component in group
 bool GIAposRelTranslatorSANIPropagateOperationsClass::findValidDualLowerLevelConnection(GIAposRelTranslatorSANIForwardPropogationSentenceData* forwardPropogationSentenceData, GIAposRelTranslatorSANIForwardPropogationWordData* forwardPropogationWordData, vector<GIAposRelTranslatorRulesComponentNeuralNetwork*>* components, GIAposRelTranslatorRulesComponentNeuralNetwork* component, bool assumeFirstComponentActive)
 {	
 	bool validDualLowerLevelConnectionFound = false;

@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorHybridLogicReference.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k10a 08-May-2020
+ * Project Version: 3k10b 08-May-2020
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Hybrid Logic Reference
  * /
