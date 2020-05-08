@@ -26,7 +26,7 @@
  * File Name: GIAsemRelTranslatorDatabase.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k10b 08-May-2020
+ * Project Version: 3k10c 08-May-2020
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  * Description: Semantic Relation Translator
  * /

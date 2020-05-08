@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorSANIPropagateCompactGenerate.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k10b 08-May-2020
+ * Project Version: 3k10c 08-May-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Propagate Compact - unsupervised training of sequence grammar parse network
  * /
@@ -107,12 +107,20 @@ class GIAposRelTranslatorSANIPropagateCompactGenerateClass
 	private: bool verifyLastWordIndex(GIAposRelTranslatorSANIForwardPropogationSentenceData* forwardPropogationSentenceData, GIAposRelTranslatorRulesGroupParseTree* parseTreeGroup, int lastWordIndex, bool* adjacent);
 	
 	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_PREVENT_INTRASENTENCE_MATCHING
-	private: bool addSubneuronsToList(vector<GIAposRelTranslatorRulesGroupNeuralNetwork*>* listOfHighLevelNeuronsCompleteHistory, GIAposRelTranslatorRulesGroupNeuralNetwork* currentNeuron);
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_GENERATE_ENSURE_ALL_NEURONS_IN_SUBGROUP_ARE_NOT_USED_BY_ANY_NEW_CANDIDATE
+	private: bool addSubNeuronsToList(vector<GIAposRelTranslatorRulesGroupNeuralNetwork*>* listOfHighLevelNeuronsCompleteHistory, GIAposRelTranslatorRulesGroupNeuralNetwork* currentNeuron);
 	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_OPTIMISE_FOR_DIVERGENT_CONVERGENT_PATHWAYS
-	private: bool addSubneuronsToListReset(GIAposRelTranslatorRulesGroupNeuralNetwork* currentNeuron);
+	private: bool addSubNeuronsToListReset(GIAposRelTranslatorRulesGroupNeuralNetwork* currentNeuron);
 	#endif
 	#endif
-	
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_GENERATE_ENSURE_ALL_NEURONS_IN_SUBGROUP_DO_NOT_HAVE_CONNECTIONS_TO_ANY_NEW_CANDIDATE
+	private: bool addParentNeuronsToList(vector<GIAposRelTranslatorRulesGroupNeuralNetwork*>* listOfHighLevelNeuronsCompleteHistory, GIAposRelTranslatorRulesGroupNeuralNetwork* currentNeuron);
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_OPTIMISE_FOR_DIVERGENT_CONVERGENT_PATHWAYS
+	private: bool addParentNeuronsToListReset(GIAposRelTranslatorRulesGroupNeuralNetwork* currentNeuron);
+	#endif
+	#endif
+	#endif
+		
 	int calculateNextIndexInSequence(GIAposRelTranslatorSANIForwardPropogationSentenceData* forwardPropogationSentenceData);
 };
 
