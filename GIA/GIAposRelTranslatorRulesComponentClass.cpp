@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorRulesComponentClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k9b 07-May-2020
+ * Project Version: 3k10a 08-May-2020
  * Requirements: requires plain text file
  * Description: Part-of-speech Relation Translator Rules
  * /
@@ -111,6 +111,9 @@ GIAposRelTranslatorRulesComponent::GIAposRelTranslatorRulesComponent(void)
 	#ifdef GIA_POS_REL_TRANSLATOR_SANI
 	neuronComponentConnectionActive = false;
 	neuronComponentConnectionActiveWordRecord = NULL;
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_ENFORCE_WORD_CONNECTIVITY_BETWEEN_PREVIOUS_ACTIVE_COMPONENTS_AND_NEWLY_ACTIVATED_COMPONENT_MEMORY
+	//neuronComponentConnectionActiveWordRecordMemory = NULL;
+	#endif
 	#endif
 	candidateStringMatch = NULL;
 	groupTypeRef = NULL;
@@ -131,7 +134,7 @@ GIAposRelTranslatorRulesComponentNeuralNetwork::GIAposRelTranslatorRulesComponen
 	//subComponents = NULL;
 
 	#ifdef GIA_POS_REL_TRANSLATOR_SANI
-	ownerGroup = NULL;	
+	ownerGroup = NULL;
 	isSubcomponent = false;
 	ownerComponent = NULL;
 	#ifdef GIA_POS_REL_TRANSLATOR_SANI_ANN

@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorSANIPropagateCompact.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k9b 07-May-2020
+ * Project Version: 3k10a 08-May-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Propagate Compact - ~O(n)
  * /
@@ -753,7 +753,9 @@ bool GIAposRelTranslatorSANIPropagateCompactClass::propagateWordThroughNetworkGr
 	#endif
 	currentComponent->neuronComponentConnectionActive = true;
 	currentComponent->neuronComponentConnectionActiveWordRecord = forwardPropogationWordData->wordReference;
-	
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_ENFORCE_WORD_CONNECTIVITY_BETWEEN_PREVIOUS_ACTIVE_COMPONENTS_AND_NEWLY_ACTIVATED_COMPONENT_MEMORY
+	currentComponent->neuronComponentConnectionActiveWordRecordMemory.push_back(currentComponent->neuronComponentConnectionActiveWordRecord);	//note neuronComponentConnectionActiveWordRecordMemory is stored in currentComponent not newParseComponent such that it can be retained across executions of resetGroupParseTreeGroupRef(ownerGroup, false)
+	#endif
 	
 	if(forwardPropogationWordData->wordReference->translatorSentenceWordIndex < 0)
 	{

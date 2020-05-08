@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorSANIPropagateOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k9b 07-May-2020
+ * Project Version: 3k10a 08-May-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Operations - generic functions
  * /
@@ -1107,7 +1107,20 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::componentWordConnectivityT
 	cout << "existingActivationFound = " << existingActivationFound << endl;
 	#endif
 	
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_ENFORCE_WORD_CONNECTIVITY_BETWEEN_PREVIOUS_ACTIVE_COMPONENTS_AND_NEWLY_ACTIVATED_COMPONENT_MEMORY
+	int wordIndexProspectiveFirst;
+	if(parseSentenceReverse)
+	{
+		wordIndexProspectiveFirst = wordIndexMax;
+	}
+	else
+	{
+		wordIndexProspectiveFirst = wordIndexMin;
+	}
+	if(componentWordConnectivityTestsCompareToMemory(wordIndexProspectiveFirst, lastActiveComponentInParseTree))
+	#else
 	if(wordIndexMin-wordIndexMax == 1)
+	#endif
 	{
 		result = true;
 	}
@@ -1145,6 +1158,7 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::componentWordConnectivityT
 
 	return result;
 }
+
 bool GIAposRelTranslatorSANIPropagateOperationsClass::getMinMaxWordIndexInParseTree(GIAposRelTranslatorRulesGroupParseTree* currentParseTreeGroup, bool findMaxOrMinWordIndex, int* wordIndexMaxOrMin, int level)
 {
 	bool result = false;
@@ -1215,6 +1229,35 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::getMinMaxWordIndexInParseT
 	
 	return result;	
 }
+
+#ifdef GIA_POS_REL_TRANSLATOR_SANI_ENFORCE_WORD_CONNECTIVITY_BETWEEN_PREVIOUS_ACTIVE_COMPONENTS_AND_NEWLY_ACTIVATED_COMPONENT_MEMORY
+bool GIAposRelTranslatorSANIPropagateOperationsClass::componentWordConnectivityTestsCompareToMemory(const int wordIndexProspectiveFirst, GIAposRelTranslatorRulesComponentParseTree* lastActiveComponentInParseTree)
+{
+	bool result = false;
+	
+	for(int m=0; m<lastActiveComponentInParseTree->componentRef->neuronComponentConnectionActiveWordRecordMemory.size(); m++)
+	{
+		int wordIndexMin;
+		int wordIndexMax;
+		if(parseSentenceReverse)
+		{
+			wordIndexMin = lastActiveComponentInParseTree->componentRef->neuronComponentConnectionActiveWordRecordMemory[m]->translatorSentenceWordIndex;
+			wordIndexMax = wordIndexProspectiveFirst;
+		}
+		else
+		{
+			wordIndexMin = wordIndexProspectiveFirst;
+			wordIndexMax = lastActiveComponentInParseTree->componentRef->neuronComponentConnectionActiveWordRecordMemory[m]->translatorSentenceWordIndex;
+		}
+		if(wordIndexMin-wordIndexMax == 1)
+		{
+			result = true;
+		}	
+	}
+	
+	return result;
+}
+#endif
 
 #endif
 
@@ -2077,7 +2120,7 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::resetGroupParseTreeGroupRe
 				}
 			}
 			#endif
-			
+	
 			#ifndef GIA_POS_REL_TRANSLATOR_SANI_DONT_SET_NEURON_TRACED
 			if(!(group->currentParseTreeGroupTemp->neuronTraced))	//fixed GIA3g11aTEMP14
 			//if(!(group->neuronTraced))	//added GIA3g6aTEMP32 - only delete parseTreeGroup if !neuronTraced
@@ -2092,6 +2135,18 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::resetGroupParseTreeGroupRe
 	}
 	group->currentParseTreeGroupTemp = convertNeuralNetworkGroupToParseTreeGroupNew(group); 	//new GIAposRelTranslatorRulesGroupParseTree(*convertNeuralNetworkGroupToParseTreeGroup(group));
 	group->currentParseTreeGroupTemp->components.clear();	//added 3g1h
+	
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_ENFORCE_WORD_CONNECTIVITY_BETWEEN_PREVIOUS_ACTIVE_COMPONENTS_AND_NEWLY_ACTIVATED_COMPONENT_MEMORY	
+	//clear neuronComponentConnectionActiveWordRecordMemory
+	if(deleteExistingParseTreeGroupRef)
+	{
+		for(int i=0; i<group->components.size(); i++)
+		{
+			GIAposRelTranslatorRulesComponent* currentComponent = (group->components)[i];
+			currentComponent->neuronComponentConnectionActiveWordRecordMemory.clear();
+		}
+	}
+	#endif
 	
 	return result;
 }

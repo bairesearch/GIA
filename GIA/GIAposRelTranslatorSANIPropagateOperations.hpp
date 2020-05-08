@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorSANIPropagateOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k9b 07-May-2020
+ * Project Version: 3k10a 08-May-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Operations - generic functions
  * /
@@ -105,6 +105,9 @@ class GIAposRelTranslatorSANIPropagateOperationsClass
 	#endif
 			private: bool componentWordConnectivityTests(GIAposRelTranslatorRulesGroupParseTree* prospectiveNewlyActiveComponentInParseTreeParseTreeGroupRef, GIAposRelTranslatorRulesGroupParseTree* lastActiveComponentInParseTreeParseTreeGroupRef, GIAposRelTranslatorRulesComponentParseTree* lastActiveComponentInParseTree, GIAposRelTranslatorRulesGroupParseTree* previousActiveComponentInParseTreeParseTreeGroupRef, GIAposRelTranslatorSANIForwardPropogationWordData* forwardPropogationWordData, const bool existingActivationFound);
 				public: bool getMinMaxWordIndexInParseTree(GIAposRelTranslatorRulesGroupParseTree* currentParseTreeGroup, bool findMaxOrMinWordIndex, int* wordIndexMaxOrMin, int level);
+				#ifdef GIA_POS_REL_TRANSLATOR_SANI_ENFORCE_WORD_CONNECTIVITY_BETWEEN_PREVIOUS_ACTIVE_COMPONENTS_AND_NEWLY_ACTIVATED_COMPONENT_MEMORY
+				private: bool componentWordConnectivityTestsCompareToMemory(const int wordIndexProspectiveFirst, GIAposRelTranslatorRulesComponentParseTree* lastActiveComponentInParseTree);
+				#endif
 	#endif
 		
 	#ifdef GIA_POS_REL_TRANSLATOR_SANI_TAKE_LAST_SUCCESSFUL_PARSE_LIMIT_ITERATIONS_PREFERENCE_WEIGHT
