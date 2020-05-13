@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorSANIPropagateLightOptimised.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k10d 08-May-2020
+ * Project Version: 3k11a 09-May-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Light Optimised - ~O(n)
  * /
@@ -1198,7 +1198,7 @@ bool GIAposRelTranslatorSANIPropagateLightOptimisedClass::propagateWordThroughNe
 	GIAposRelTranslatorRulesGroupParseTree* currentParseTreeGroupTemp = ownerGroup->currentParseTreeGroupTemp;
 
 
-	#ifdef GIA_POS_REL_TRANSLATOR_SANI_LIGHT_OPTIMISED_ALLOW_MULTIPLE_ACTIVATIONS
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_ALLOW_MULTIPLE_ACTIVATIONS
 	if(existingActivationFound)
 	{
 		#ifdef GIA_POS_REL_TRANSLATOR_SANI_LIGHT_OPTIMISED_ALLOW_MULTIPLE_ACTIVATIONS_TAKE_LAST_ACTIVATION_AS_PARSETREE
@@ -1221,7 +1221,7 @@ bool GIAposRelTranslatorSANIPropagateLightOptimisedClass::propagateWordThroughNe
 		parseTreeComponentListExtra.push_back(oldParseComponent);	//mark overwritten component for deletion
 		#endif
 		#else
-		cerr << "GIAposRelTranslatorSANIPropagateLightOptimisedClass::propagateWordThroughNetworkGroupComponent: GIA_POS_REL_TRANSLATOR_SANI_LIGHT_OPTIMISED_ALLOW_MULTIPLE_ACTIVATIONS: !GIA_POS_REL_TRANSLATOR_SANI_LIGHT_OPTIMISED_ALLOW_MULTIPLE_ACTIVATIONS_TAKE_LAST_ACTIVATION_AS_PARSETREE is not coded (planned implementation: store multiple parseTrees for each component activation)" << endl; 
+		cerr << "GIAposRelTranslatorSANIPropagateLightOptimisedClass::propagateWordThroughNetworkGroupComponent: GIA_POS_REL_TRANSLATOR_SANI_ALLOW_MULTIPLE_ACTIVATIONS: !GIA_POS_REL_TRANSLATOR_SANI_LIGHT_OPTIMISED_ALLOW_MULTIPLE_ACTIVATIONS_TAKE_LAST_ACTIVATION_AS_PARSETREE is not coded (planned implementation: store multiple parseTrees for each component activation)" << endl; 
 		#endif
 		
 		#ifdef GIA_POS_REL_TRANSLATOR_SANI_BIO_DO_NOT_RELY_ON_PARSE_TREE_MEMORY
