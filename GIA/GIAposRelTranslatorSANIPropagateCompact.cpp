@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorSANIPropagateCompact.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k13a 11-May-2020
+ * Project Version: 3k14a 12-May-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Propagate Compact - ~O(n)
  * /
@@ -259,7 +259,6 @@ bool GIAposRelTranslatorSANIPropagateCompactClass::performPropagation(GIAtransla
 	
 	if(resetAllNeuronComponents)
 	{
-		cout << "resetAllNeuronComponents!" << endl;
 		GIAposRelTranslatorSANIPropagateOperations.resetAllNeuronComponents(GIAposRelTranslatorRulesGroupTypes, GIA_POS_REL_TRANSLATOR_RULES_GROUP_BOOL_INDEX_ALLGROUPTYPES_NEURON_COMPONENT_CONNECTION_ACTIVE); //this is required for GIA_POS_REL_TRANSLATOR_SANI_LIGHT_OPTIMISED
 		GIAposRelTranslatorSANIPropagateOperations.resetAllNeuronComponents(GIAposRelTranslatorRulesGroupTypes, GIA_POS_REL_TRANSLATOR_RULES_GROUP_BOOL_INDEX_ALLGROUPTYPES_PARSE_TREE_GROUP_REF);	//this is required to initialise currentParseTreeGroup for every group (only required for first execution of GIAposRelTranslatorSANIPropagateLightOptimisedClass::executeTxtRelTranslatorNeuralNetwork)
 	}
@@ -582,7 +581,9 @@ bool GIAposRelTranslatorSANIPropagateCompactClass::propagateWordThroughNetworkGr
 		#endif
 
 		if(*sequentialActivationFound)
-		{			
+		{	
+			//cout << "missingOrVariableStartComponentFound = " << missingOrVariableStartComponentFound << endl;
+					
 			#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_PROPAGATE_EXTRA3
 			GIAposRelTranslatorSANIPropagateOperations.printParseTreeDebugIndentation(layer+1);
 			#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_VARIABLE_FIRST_COMPONENTS
@@ -608,7 +609,7 @@ bool GIAposRelTranslatorSANIPropagateCompactClass::propagateWordThroughNetworkGr
 		else
 		{
 			#ifdef GIA_POS_REL_TRANSLATOR_SANI_ENFORCE_WORD_CONNECTIVITY_BETWEEN_PREVIOUS_ACTIVE_COMPONENTS_AND_NEWLY_ACTIVATED_COMPONENT_MEMORY
-			cout << "restoring currentParseTreeGroupBackup" << endl;
+			//cout << "restoring currentParseTreeGroupBackup" << endl;
 			ownerGroup->currentParseTreeGroupTemp = currentParseTreeGroupBackup;
 			if(previousActiveComponent != NULL)
 			{
@@ -646,9 +647,9 @@ bool GIAposRelTranslatorSANIPropagateCompactClass::propagateWordThroughNetworkGr
 		
 	if(existingActivationFound)
 	{
-		//#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR
+		#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR
 		cout << "******** resetGroupParseTreeGroupRef" << endl;
-		//#endif
+		#endif
 		ownerGroup->neuronActive = false;	//not used
 		GIAposRelTranslatorSANIPropagateOperations.resetGroupActivation(ownerGroup);	//OLD: component activations have already been reset by GIAposRelTranslatorSANIPropagateOperationsClass::propagateWordThroughNetworkGroupVerifyComponentSequenceActivationReady
 		GIAposRelTranslatorSANIPropagateOperations.resetGroupParseTreeGroupRef(ownerGroup, false);
@@ -668,9 +669,11 @@ bool GIAposRelTranslatorSANIPropagateCompactClass::propagateWordThroughNetworkGr
 	#endif
 	currentComponent->neuronComponentConnectionActive = true;
 	currentComponent->neuronComponentConnectionActiveWordRecord = forwardPropogationWordData->wordReference;
-	cerr << "\ncurrentComponent->neuronComponentConnectionActiveWordRecord is set, ownerGroup->groupIndex = " << ownerGroup->groupIndex << ", currentComponent->componentIndex = " << currentComponent->componentIndex << endl;
-	cerr << "currentComponent->neuronComponentConnectionActiveWordRecord->translatorSentenceWordIndex = " << currentComponent->neuronComponentConnectionActiveWordRecord->translatorSentenceWordIndex << endl;
-	cerr << "currentComponent->componentIndex = " << currentComponent->componentIndex << endl;
+	/*
+	cout << "\ncurrentComponent->neuronComponentConnectionActiveWordRecord is set, ownerGroup->groupIndex = " << ownerGroup->groupIndex << ", currentComponent->componentIndex = " << currentComponent->componentIndex << endl;
+	cout << "currentComponent->neuronComponentConnectionActiveWordRecord->translatorSentenceWordIndex = " << currentComponent->neuronComponentConnectionActiveWordRecord->translatorSentenceWordIndex << endl;
+	cout << "currentComponent->componentIndex = " << currentComponent->componentIndex << endl;
+	*/
 	
 	#ifdef GIA_POS_REL_TRANSLATOR_SANI_ENFORCE_WORD_CONNECTIVITY_BETWEEN_PREVIOUS_ACTIVE_COMPONENTS_AND_NEWLY_ACTIVATED_COMPONENT_MEMORY
 	currentComponent->neuronComponentConnectionActiveWordRecordMemory.push_back(currentComponent->neuronComponentConnectionActiveWordRecord);	//note neuronComponentConnectionActiveWordRecordMemory is stored in currentComponent not newParseComponent such that it can be retained across executions of resetGroupParseTreeGroupRef(ownerGroup, false)
@@ -1142,7 +1145,7 @@ bool GIAposRelTranslatorSANIPropagateCompactClass::updateActivatedNeuronWithMaxW
 		#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_UPDATE_ACTIVATED_NEURON_WITH_MAX_WORD_INDEX_COVERAGE
 		cout << "verifyActivatedNeuronWithMaxWordIndexCoverage" << endl;
 		#endif
-		
+
 		#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_ENFORCE_FIRST_COMPONENT_NOT_MISSING
 		if(!missingStartComponentsFound)
 		{
@@ -1173,22 +1176,27 @@ bool GIAposRelTranslatorSANIPropagateCompactClass::updateActivatedNeuronWithMaxW
 				GIAposRelTranslatorSANIPropagateOperations.countNeuralNetworkMaxLeafSizeAndDepthReset(startComponent);
 				#endif
 				#endif
+				/*
+				if(startComponent->componentType == GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_STRING)
+				{
+					cerr << "GIAposRelTranslatorSANIPropagateCompactClass::updateActivatedNeuronWithMaxWordIndexCoverage error: (startComponent->componentType == GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_STRING)" << endl;
+					exit(EXIT_ERROR);	
+				}
+				*/
 			}
 			#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_UPDATE_ACTIVATED_NEURON_WITH_MAX_WORD_INDEX_COVERAGE
-			cout << "forwardPropogationSentenceData->variableFirstComponentMaxDepth = " << forwardPropogationSentenceData->variableFirstComponentMaxDepth << endl;
-			cout << "variableComponentMaxDepth = " << variableComponentMaxDepth << endl;
-			cout << "missingOrVariableStartComponentFound = " << missingOrVariableStartComponentFound << endl;
+			cout << "\n\t\tvariableComponentMaxDepth = " << variableComponentMaxDepth << endl;
+			cout << "\t\tforwardPropogationSentenceData->variableFirstComponentMaxDepth = " << forwardPropogationSentenceData->variableFirstComponentMaxDepth << endl;
+			cout << "\t\tmissingOrVariableStartComponentFound = " << missingOrVariableStartComponentFound << endl;
+			//cout << "GIAposRelTranslatorSANIPropagateOperations.countParseTreeLeafSize(currentParseTreeGroupTemp) = " << GIAposRelTranslatorSANIPropagateOperations.countParseTreeLeafSize(currentParseTreeGroupTemp) << endl;
 			#endif
-			
-			if(!missingOrVariableStartComponentFound || variableComponentMaxDepth < forwardPropogationSentenceData->variableFirstComponentMaxDepth)	//variableComponentMaxDepth == forwardPropogationSentenceData->variableFirstComponentMaxDepth
+	
+			if(!missingOrVariableStartComponentFound || variableComponentMaxDepth == forwardPropogationSentenceData->variableFirstComponentMaxDepth)	//ORIGSPEC //intermediary: variableComponentMaxDepth < forwardPropogationSentenceData->variableFirstComponentMaxDepth
 			{
 			#endif
 			#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_FIRST_COMPONENTS_REQUIRE_SIZEABLE_SUBTREES
-			if(!missingOrVariableStartComponentFound || GIAposRelTranslatorSANIPropagateOperations.countParseTreeLeafSize(activationPathWordCurrentParseTreeGroupOwner)+1 >= GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_FIRST_COMPONENTS_REQUIRE_SIZEABLE_SUBTREES_MIN_NEURONS)
-			{
-			#endif
-			#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_FIRST_COMPONENTS_REQUIRE_SIZEABLE_SUBTREES
-			if(!missingOrVariableStartComponentFound || GIAposRelTranslatorSANIPropagateOperations.countParseTreeLeafSize(currentParseTreeGroupTemp)+1 >= GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_FIRST_COMPONENTS_REQUIRE_SIZEABLE_SUBTREES_MIN_NEURONS)
+			//cout << "GIAposRelTranslatorSANIPropagateOperations.countParseTreeLeafSize(currentParseTreeGroupTemp) = " << GIAposRelTranslatorSANIPropagateOperations.countParseTreeLeafSize(currentParseTreeGroupTemp) << endl;
+			if(!missingOrVariableStartComponentFound || GIAposRelTranslatorSANIPropagateOperations.countParseTreeLeafSize(currentParseTreeGroupTemp) >= GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_FIRST_COMPONENTS_REQUIRE_SIZEABLE_SUBTREES_MIN_NEURONS)
 			{
 			#endif
 			#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_FIRST_COMPONENTS_RANDOMISE
@@ -1196,12 +1204,24 @@ bool GIAposRelTranslatorSANIPropagateCompactClass::updateActivatedNeuronWithMaxW
 			if(randomProb > GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_FIRST_COMPONENTS_RANDOMISE_PROB)
 			{
 			#endif
+				/*
+				if(!missingOrVariableStartComponentFound)
+				{
+					if(GIAposRelTranslatorSANIPropagateOperations.countParseTreeLeafSize(currentParseTreeGroupTemp) < 2)
+					{
+						cerr << "GIAposRelTranslatorSANIPropagateCompactClass::updateActivatedNeuronWithMaxWordIndexCoverage error: !missingOrVariableStartComponentFound && if(GIAposRelTranslatorSANIPropagateOperations.countParseTreeLeafSize(currentParseTreeGroupTemp) < 2)" << endl;
+						exit(EXIT_ERROR);
+					}
+				}
+				*/
+				
 				#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR
-				cout << "++++++++++++++++++++++++++++++++++++++++++ forwardPropogationSentenceData->activatedNeuronWithMaxWordIndexCoverage" << endl;;
+				cout << "++++++++++++++++++++++++++++++++++++++++++ forwardPropogationSentenceData->activatedNeuronWithMaxWordIndexCoverage" << endl;
+				//cout << "\tactivatedNeuronWithMaxWordIndexCoverageVariableStartComponentSet = " << activatedNeuronWithMaxWordIndexCoverageVariableStartComponentSet << endl;		
 				#endif
 				#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_UPDATE_ACTIVATED_NEURON_WITH_MAX_WORD_INDEX_COVERAGE
 				cout << "\tcandidateCoveragePartial = " << candidateCoveragePartial << endl;
-				cout << "\tforwardPropogationWordData->w = " << forwardPropogationWordData->w << endl
+				cout << "\tforwardPropogationWordData->w = " << forwardPropogationWordData->w << endl;
 				#endif
 				forwardPropogationSentenceData->activatedNeuronWithMaxWordIndexCoverage = currentParseTreeGroupTemp;
 				forwardPropogationSentenceData->activatedNeuronWithMaxWordIndexCoveragePartial = candidateCoveragePartial;
@@ -1267,19 +1287,7 @@ bool GIAposRelTranslatorSANIPropagateCompactClass::sequentialActivationConnectiv
 						lastActiveComponentInParseTreeIndex = 0;
 						lastActiveComponentInParseTree = (currentParseTreeGroupTemp->components)[lastActiveComponentInParseTreeIndex];
 						lastActiveComponent = lastActiveComponentInParseTree->componentRef;
-						
-						/*
-						cout << endl;
-						cout << "lastActiveComponentInParseTreeIndex = " << lastActiveComponentInParseTreeIndex << endl;
-						cout << "currentComponent->componentIndex = " << currentComponent->componentIndex << endl;
-						cout << "lastActiveComponent->componentIndex = " << lastActiveComponent->componentIndex << endl;
-						cout << "lastActiveComponentInParseTree->componentIndex = " << lastActiveComponentInParseTree->componentIndex << endl;
-						cout << "lastActiveComponent->neuronComponentConnectionActive = " << lastActiveComponent->neuronComponentConnectionActive << endl;
-						cout << "lastActiveComponent->componentType = " << lastActiveComponent->componentType << endl;
-						cout << "lastActiveComponent->neuronComponentConnectionActiveWordRecord->translatorSentenceWordIndex = " << lastActiveComponent->neuronComponentConnectionActiveWordRecord->translatorSentenceWordIndex << endl;
-						cout << "ownerGroup->groupIndex = " << ownerGroup->groupIndex << endl;
-						*/
-						
+
 						if(lastActiveComponent->neuronComponentConnectionActiveWordRecord == NULL)
 						{
 							cerr << "GIAposRelTranslatorSANIPropagateCompactClass::sequentialActivationConnectivityTests error: lastActiveComponent->neuronComponentConnectionActiveWordRecord == NULL" << endl;
