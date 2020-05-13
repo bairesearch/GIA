@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorSANIPropagateOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k11d 09-May-2020
+ * Project Version: 3k12a 10-May-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Operations - generic functions
  * /
@@ -320,18 +320,64 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::propagateWordThroughNetwor
 						{
 							if(component->componentType != GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_STRING)	//added GIA3j5aTEMP65
 							{
-								#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_DISABLE_MULTIPLE_INPUTS_IF_HAS_IDENTICAL_COMPONENTS
-								bool validDualLowerLevelConnectionFound = false;
-								if(forwardPropogationSentenceData->recordActivatedNeuronWithMaxWordIndexCoverage)
+								bool passCriteria = true;
+								
+								#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_FIRST_COMPONENT_ALL_NEURONS_IN_COMPONENT_SUBGROUPS_ARE_UNIQUE
+								GIAposRelTranslatorRulesComponentNeuralNetwork* secondComponent = NULL;
+								if(forwardPropogationSentenceData->parseSentenceReverse)
 								{
-									//cout << "recordActivatedNeuronWithMaxWordIndexCoverage" << endl;
-									validDualLowerLevelConnectionFound = findValidDualLowerLevelConnection(forwardPropogationSentenceData, forwardPropogationWordData, components, component, false);
-									if(validDualLowerLevelConnectionFound)
-									{
-										cout << "validDualLowerLevelConnectionFound" << endl;
-									}
+									secondComponent = (*components)[c-1];	//as i==0
 								}
-								if(!validDualLowerLevelConnectionFound)
+								else
+								{
+									secondComponent = (*components)[c+1];	//as i==0
+								}	
+								if(secondComponent->ANNbackGroupConnectionList.size() > 1)
+								{
+									cerr << "GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_FIRST_COMPONENT_ALL_NEURONS_IN_COMPONENT_SUBGROUPS_ARE_UNIQUE GIAposRelTranslatorSANIPropagateOperationsClass::propagateWordThroughNetworkGroupVerifyComponentSequenceActivationReady error: (secondComponent->ANNbackGroupConnectionList.size() > 1)" << endl;
+									exit(EXIT_ERROR); 
+								}
+								GIAposRelTranslatorRulesGroupNeuralNetwork* secondComponentSubGroup = (secondComponent->ANNbackGroupConnectionList)[0];	//second component only has 1 reference	
+								#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_PREVENT_INTRASENTENCE_MATCHING_EFFICIENT
+								if(groupContainsNeuronWithinProspectiveAlternateSubgroupEfficient(secondComponentSubGroup))
+								#else
+								if(groupContainsNeuronWithinProspectiveAlternateSubgroup(forwardPropogationSentenceData, secondComponentSubGroup))
+								#endif
+								{	
+									passCriteria = false;
+									//cout << "existingSubgroupContainsNeuronWithinProspectiveAlternateSubgroup" << endl;
+								}
+								#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_OPTIMISE_FOR_DIVERGENT_CONVERGENT_PATHWAYS
+								groupContainsNeuronWithinProspectiveAlternateSubgroupReset(secondComponentSubGroup);
+								#endif
+								#endif
+								
+								#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_FIRST_COMPONENT_ALL_NEURONS_IN_VARIABLE_COMPONENT_SUBGROUPS_ARE_UNIQUE
+								for(int j=0; j<component->ANNbackGroupConnectionList.size(); j++)
+								{
+									GIAposRelTranslatorRulesGroupNeuralNetwork* subGroup = (component->ANNbackGroupConnectionList)[j];
+									#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_PREVENT_INTRASENTENCE_MATCHING_EFFICIENT
+									if(groupContainsNeuronWithinProspectiveAlternateSubgroupEfficient(subGroup))
+									#else
+									if(groupContainsNeuronWithinProspectiveAlternateSubgroup(forwardPropogationSentenceData, subGroup))
+									#endif
+									{	
+										passCriteria = false;
+										//cout << "existingSubgroupContainsNeuronWithinProspectiveAlternateSubgroup" << endl;
+									}
+									#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_OPTIMISE_FOR_DIVERGENT_CONVERGENT_PATHWAYS
+									groupContainsNeuronWithinProspectiveAlternateSubgroupReset(subGroup);
+									#endif
+								}
+								#endif
+								#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_DISABLE_MULTIPLE_INPUTS_IF_HAS_IDENTICAL_COMPONENTS
+								//cout << "recordActivatedNeuronWithMaxWordIndexCoverage" << endl;
+								if(findValidDualLowerLevelConnection(forwardPropogationSentenceData, forwardPropogationWordData, components, component, false))
+								{	
+									passCriteria = false;
+									//cout << "validDualLowerLevelConnectionFound" << endl;
+								}
+								if(passCriteria)
 								{
 								#endif
 									*missingOrVariableStartComponentFound = true;
@@ -662,6 +708,142 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::repeatedSequenceDetected(G
 }
 #endif
 
+#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_PREVENT_INTRASENTENCE_MATCHING_EFFICIENT
+bool GIAposRelTranslatorSANIPropagateOperationsClass::groupContainsNeuronWithinProspectiveAlternateSubgroupEfficient(GIAposRelTranslatorRulesGroupNeuralNetwork* currentNeuron)
+{
+	bool result = false;
+	
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_OPTIMISE_FOR_DIVERGENT_CONVERGENT_PATHWAYS
+	if(!currentNeuron->counted)
+	{
+		currentNeuron->counted = true;
+	#endif
+		if(!isNeuronString(currentNeuron))	//CHECKTHIS
+		{
+			#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_VERIFY_NO_CIRCULAR
+			if(currentNeuron->verified)
+			{
+				cout << "GIAposRelTranslatorSANIPropagateOperationsClass::groupContainsNeuronWithinProspectiveAlternateSubgroup error: currentNeuron has already been parsed (circular loop detected)" << endl;
+				exit(EXIT_ERROR);
+			}
+			currentNeuron->verified = true;
+			#endif
+
+			if(currentNeuron->marked)
+			{
+				//cout << "groupContainsNeuronWithinProspectiveAlternateSubgroup" << endl;
+				result = true;	
+			}	
+			if(!result)
+			{
+				for(int i=0; i<currentNeuron->components.size(); i++)
+				{
+					GIAposRelTranslatorRulesComponentNeuralNetwork* currentComponent = currentNeuron->components[i];
+					for(int j=0; j<currentComponent->ANNbackGroupConnectionList.size(); j++)
+					{
+						GIAposRelTranslatorRulesGroupNeuralNetwork* subGroup = (currentComponent->ANNbackGroupConnectionList)[j];
+						if(groupContainsNeuronWithinProspectiveAlternateSubgroupEfficient(subGroup))
+						{
+							result = true;
+						}
+					}
+				}
+			}
+
+			#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_VERIFY_NO_CIRCULAR
+			currentNeuron->verified = false;
+			#endif
+		}
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_OPTIMISE_FOR_DIVERGENT_CONVERGENT_PATHWAYS
+	}
+	#endif
+	
+	return result;
+}
+#endif
+#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_PREVENT_INTRASENTENCE_MATCHING_BASIC
+bool GIAposRelTranslatorSANIPropagateOperationsClass::groupContainsNeuronWithinProspectiveAlternateSubgroup(GIAposRelTranslatorSANIForwardPropogationSentenceData* forwardPropogationSentenceData, GIAposRelTranslatorRulesGroupNeuralNetwork* currentNeuron)
+{
+	bool result = false;
+	
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_OPTIMISE_FOR_DIVERGENT_CONVERGENT_PATHWAYS
+	if(!currentNeuron->counted)
+	{
+		currentNeuron->counted = true;
+	#endif
+		if(!isNeuronString(currentNeuron))
+		{
+			#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_VERIFY_NO_CIRCULAR
+			if(currentNeuron->verified)
+			{
+				cout << "GIAposRelTranslatorSANIPropagateOperationsClass::groupContainsNeuronWithinProspectiveAlternateSubgroup error: currentNeuron has already been parsed (circular loop detected)" << endl;
+				exit(EXIT_ERROR);
+			}
+			currentNeuron->verified = true;
+			#endif
+
+			bool candidateNeuronInCompleteHistory = false;
+			for(int i=0; i<forwardPropogationSentenceData->listOfHighLevelNeuronsCompleteHistory.size(); i++)
+			{
+				if(currentNeuron == forwardPropogationSentenceData->listOfHighLevelNeuronsCompleteHistory[i])
+				{
+					//cout << "existingSubgroupContainsNeuronWithinProspectiveAlternateSubgroup" << endl;
+					result = true;	
+				}
+			}	
+			if(!result)
+			{
+				for(int i=0; i<currentNeuron->components.size(); i++)
+				{
+					GIAposRelTranslatorRulesComponentNeuralNetwork* currentComponent = currentNeuron->components[i];
+					for(int j=0; j<currentComponent->ANNbackGroupConnectionList.size(); j++)
+					{
+						GIAposRelTranslatorRulesGroupNeuralNetwork* subGroup = (currentComponent->ANNbackGroupConnectionList)[j];
+						if(groupContainsNeuronWithinProspectiveAlternateSubgroup(forwardPropogationSentenceData, subGroup))
+						{
+							result = true;
+						}
+					}
+				}
+			}
+
+			#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_VERIFY_NO_CIRCULAR
+			currentNeuron->verified = false;
+			#endif
+		}
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_OPTIMISE_FOR_DIVERGENT_CONVERGENT_PATHWAYS
+	}
+	#endif
+	
+	return result;
+}
+#endif
+#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_OPTIMISE_FOR_DIVERGENT_CONVERGENT_PATHWAYS
+bool GIAposRelTranslatorSANIPropagateOperationsClass::groupContainsNeuronWithinProspectiveAlternateSubgroupReset(GIAposRelTranslatorRulesGroupNeuralNetwork* currentNeuron)
+{
+	bool result = true;
+	
+	if(currentNeuron->counted)
+	{
+		currentNeuron->counted = false;
+		if(!isNeuronString(currentNeuron))
+		{
+			for(int i=0; i<currentNeuron->components.size(); i++)
+			{
+				GIAposRelTranslatorRulesComponentNeuralNetwork* currentComponent = currentNeuron->components[i];
+				for(int j=0; j<currentComponent->ANNbackGroupConnectionList.size(); j++)
+				{
+					GIAposRelTranslatorRulesGroupNeuralNetwork* subGroup = (currentComponent->ANNbackGroupConnectionList)[j];
+					groupContainsNeuronWithinProspectiveAlternateSubgroupReset(subGroup);
+				}
+			}
+		}
+	}
+	
+	return result;
+}
+#endif
+
 
 #ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_PREVENT_RESET_IF_NEXT_SEQUENCE_IS_SAME_AS_CURRENT_SEQUENCE
 bool GIAposRelTranslatorSANIPropagateOperationsClass::consecutiveSequenceDetected(GIAposRelTranslatorSANIForwardPropogationSentenceData* forwardPropogationSentenceData, GIAposRelTranslatorSANIForwardPropogationWordData* forwardPropogationWordData, vector<GIAposRelTranslatorRulesComponentNeuralNetwork*>* components, GIAposRelTranslatorRulesComponentNeuralNetwork* component)
@@ -763,7 +945,7 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::findValidDualLowerLevelCon
 								{
 								#endif
 									validDualLowerLevelConnectionFound = true;
-									cout << "validDualLowerLevelConnectionFound" << endl;
+									//cout << "validDualLowerLevelConnectionFound" << endl;
 									//cout << "\n\n\n\n GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_PREVENT_RESET_IF_FIRST_INACTIVE_COMPONENT_GROUPREF_IS_SAME_AS_FUTURE_ACTIVE_COMPONENT_GROUPREF_RECURSIVE: GIAposRelTranslatorSANIPropagateOperationsClass::findValidDualLowerLevelConnection validDualLowerLevelConnectionFound" << endl;
 									//exit(EXIT_ERROR);
 								#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_PREVENT_RESET_IF_FIRST_INACTIVE_COMPONENT_GROUPREF_IS_SAME_AS_FUTURE_ACTIVE_COMPONENT_GROUPREF_AND_SATISIFIES_WORD_INDEX

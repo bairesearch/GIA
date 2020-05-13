@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorSANIPropagateCompact.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k11d 09-May-2020
+ * Project Version: 3k12a 10-May-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Propagate Compact - ~O(n)
  * /
@@ -625,7 +625,7 @@ bool GIAposRelTranslatorSANIPropagateCompactClass::propagateWordThroughNetworkGr
 			if(*sequentialActivationFound)
 			{	
 				bool candidateCoveragePartial = true;
-				updateActivatedNeuronWithMaxWordIndexCoverage(ownerGroup, activationPathWordCurrentParseTreeGroupOwner, forwardPropogationSignalData, forwardPropogationWordData, forwardPropogationSentenceData, missingStartComponentsFound, missingOrVariableStartComponentFound, variableStartComponentFound, candidateCoveragePartial);
+				updateActivatedNeuronWithMaxWordIndexCoverage(ownerGroup, ownerGroup->currentParseTreeGroupTemp, forwardPropogationSignalData, forwardPropogationWordData, forwardPropogationSentenceData, missingStartComponentsFound, missingOrVariableStartComponentFound, variableStartComponentFound, candidateCoveragePartial);
 			}
 		}
 	}
@@ -1461,6 +1461,13 @@ bool GIAposRelTranslatorSANIPropagateCompactClass::verifyActivatedNeuronWithMaxW
 					
 	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_VARIABLE_FIRST_COMPONENTS
 	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_PREVENT_INTRASENTENCE_MATCHING
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_PREVENT_INTRASENTENCE_MATCHING_EFFICIENT
+	bool candidateNeuronInCompleteHistory = false;
+	if(activatedNeuronCandidate->groupRef->marked)
+	{
+		candidateNeuronInCompleteHistory = true;
+	}
+	#else
 	bool candidateNeuronInCompleteHistory = false;
 	for(int i=0; i<forwardPropogationSentenceData->listOfHighLevelNeuronsCompleteHistory.size(); i++)
 	{
@@ -1469,7 +1476,8 @@ bool GIAposRelTranslatorSANIPropagateCompactClass::verifyActivatedNeuronWithMaxW
 			//cout << "candidateNeuronInCompleteHistory" << endl;
 			candidateNeuronInCompleteHistory = true;	
 		}
-	}	
+	}
+	#endif
 	if(!candidateNeuronInCompleteHistory)
 	{
 	#endif

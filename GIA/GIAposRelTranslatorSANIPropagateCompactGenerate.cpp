@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorSANIPropagateCompactGenerate.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k11d 09-May-2020
+ * Project Version: 3k12a 10-May-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Propagate Compact - unsupervised training of sequence grammar parse network
  * /
@@ -119,7 +119,7 @@ bool GIAposRelTranslatorSANIPropagateCompactGenerateClass::executeTxtRelTranslat
 	#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_RULES_PRINT_SENTENCES
 	else
 	{
-		cout << "GIAposRelTranslatorSANIPropagateCompactGenerateClass::toplevelGroupActivationFound!" << endl;
+		//cout << "GIAposRelTranslatorSANIPropagateCompactGenerateClass::toplevelGroupActivationFound!" << endl;
 	}
 	#endif
 	
@@ -150,7 +150,7 @@ bool GIAposRelTranslatorSANIPropagateCompactGenerateClass::findAndReconcileVaria
 		}
 	}
 	#else
-	if(!findAndReconcileVariation(translatorVariables, GIAposRelTranslatorRulesGroupTypes, &forwardPropogationSentenceData, supportVariableFirstComponents))
+	if(!findAndReconcileVariation(translatorVariables, GIAposRelTranslatorRulesGroupTypes, forwardPropogationSentenceData, supportVariableFirstComponents))
 	{
 		result = false;
 	}
@@ -212,7 +212,7 @@ bool GIAposRelTranslatorSANIPropagateCompactGenerateClass::findAndReconcileIncre
 	forwardPropogationSentenceData->firstLayer = &firstLayer;
 	GIAposRelTranslatorSANIPropagateCompact.defineFirstLayer(translatorVariables, forwardPropogationSentenceData);
 	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_VARIABLE_FIRST_COMPONENTS
-	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_PREVENT_INTRASENTENCE_MATCHING
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_PREVENT_INTRASENTENCE_MATCHING_BASIC
 	forwardPropogationSentenceData->listOfHighLevelNeuronsCompleteHistory.clear();
 	#endif
 	#endif
@@ -394,13 +394,21 @@ bool GIAposRelTranslatorSANIPropagateCompactGenerateClass::findAndReconcileIncre
 	GIAposRelTranslatorRulesGroupNeuralNetwork* grammaticalSentenceNeuron = NULL;
 	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_GENERATE_INCREMENTALLY_SECTIONED
 	connectListOfHighLevelNeuronsToNewNeuronLimitNumComponentsSection(GIAposRelTranslatorRulesGroupTypes, forwardPropogationSentenceData, &listOfHighLevelNeurons1, &grammaticalSentenceNeuron, true, completedIdentifyingSentenceHighLevelNeurons, *indexInSequenceStart, highLevelNeuronPrior);
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_PREVENT_INTRASENTENCE_MATCHING_EFFICIENT
+	markSubNeuronsReset(*highLevelNeuronPrior);	
+	#endif	
 	#else
 	connectListOfHighLevelNeuronsToNewNeuron(GIAposRelTranslatorRulesGroupTypes, forwardPropogationSentenceData, &listOfHighLevelNeurons1, &grammaticalSentenceNeuron, true);
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_PREVENT_INTRASENTENCE_MATCHING_EFFICIENT
+	markSubNeuronsReset(grammaticalSentenceNeuron);	
+	#endif	
 	#endif
 	
 	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_GENERATE_INCREMENTALLY_SECTIONED
 	*indexInSequenceStart = indexInSequence;
 	#endif
+	
+
 	
 	return foundAndReconciledMissingOrDifferentIncrementalNeurons;
 }
@@ -465,7 +473,7 @@ bool GIAposRelTranslatorSANIPropagateCompactGenerateClass::findAndReconcileIncre
 	forwardPropogationSentenceData->firstLayer = &firstLayer;
 	GIAposRelTranslatorSANIPropagateCompact.defineFirstLayer(translatorVariables, forwardPropogationSentenceData);
 	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_VARIABLE_FIRST_COMPONENTS
-	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_PREVENT_INTRASENTENCE_MATCHING
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_PREVENT_INTRASENTENCE_MATCHING_BASIC
 	forwardPropogationSentenceData->listOfHighLevelNeuronsCompleteHistory.clear();
 	#endif
 	#endif
@@ -800,7 +808,7 @@ bool GIAposRelTranslatorSANIPropagateCompactGenerateClass::findAndReconcileIncre
 		
 		loopIndex++;
 	}
-
+	
 	/*
 	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_VERIFY_NO_CIRCULAR
 	//cout << "GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_VERIFY_NO_CIRCULAR:" << endl;
@@ -828,6 +836,10 @@ bool GIAposRelTranslatorSANIPropagateCompactGenerateClass::findAndReconcileIncre
 	
 	GIAposRelTranslatorRulesGroupNeuralNetwork* grammaticalSentenceNeuron = NULL;
 	connectListOfHighLevelNeuronsToNewNeuron(GIAposRelTranslatorRulesGroupTypes, forwardPropogationSentenceData, &listOfHighLevelNeurons1, &grammaticalSentenceNeuron, true);
+	
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_PREVENT_INTRASENTENCE_MATCHING_EFFICIENT
+	markSubNeuronsReset(grammaticalSentenceNeuron);	
+	#endif
 	
 	return foundAndReconciledMissingOrDifferentIncrementalNeurons;
 }
@@ -885,13 +897,24 @@ bool GIAposRelTranslatorSANIPropagateCompactGenerateClass::addNeuronToList(vecto
 				
 	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_VARIABLE_FIRST_COMPONENTS
 	
-	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_PREVENT_INTRASENTENCE_MATCHING
 	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_GENERATE_ENSURE_ALL_NEURONS_IN_SUBGROUP_ARE_NOT_USED_BY_ANY_NEW_CANDIDATE
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_PREVENT_INTRASENTENCE_MATCHING_EFFICIENT
+	markSubNeurons(neuron);	
+	#else
 	addSubNeuronsToList(&(forwardPropogationSentenceData->listOfHighLevelNeuronsCompleteHistory), neuron);	//add subneurons to listOfHighLevelNeuronsCompleteHistory before connecting its first component to listOfHighLevelNeurons heirachy
 	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_OPTIMISE_FOR_DIVERGENT_CONVERGENT_PATHWAYS
 	addSubNeuronsToListReset(neuron);
 	#endif
 	#endif
+	#else
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_PREVENT_INTRASENTENCE_MATCHING_EFFICIENT
+	neuron->marked = true;
+	#else
+	forwardPropogationSentenceData->listOfHighLevelNeuronsCompleteHistory.push_back(neuron);
+	#endif
+	#endif
+
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_PREVENT_INTRASENTENCE_MATCHING_BASIC	//GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_GENERATE_ENSURE_ALL_NEURONS_IN_SUBGROUP_DO_NOT_HAVE_CONNECTIONS_TO_ANY_NEW_CANDIDATE has not been implemented for GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_PREVENT_INTRASENTENCE_MATCHING_EFFICENT
 	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_GENERATE_ENSURE_ALL_NEURONS_IN_SUBGROUP_DO_NOT_HAVE_CONNECTIONS_TO_ANY_NEW_CANDIDATE
 	addParentNeuronsToList(&(forwardPropogationSentenceData->listOfHighLevelNeuronsCompleteHistory), neuron);
 	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_OPTIMISE_FOR_DIVERGENT_CONVERGENT_PATHWAYS
@@ -899,7 +922,8 @@ bool GIAposRelTranslatorSANIPropagateCompactGenerateClass::addNeuronToList(vecto
 	#endif
 	#endif
 	#endif
-	
+
+	#endif
 	
 	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS
 	//why doesnt the following "if(forwardPropogationSentenceData->activatedNeuronWithMaxWordIndexCoverageVariableStartComponent)" code work?
@@ -1044,6 +1068,9 @@ bool GIAposRelTranslatorSANIPropagateCompactGenerateClass::connectListOfHighLeve
 			#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_FIRST_COMPONENTS
 			if(currentHighLevelNeuron->activatedNeuronWithMaxWordIndexCoverageVariableStartComponentTemp)
 			{
+				#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_RULES_PRINT_SENTENCES_FAIL_ONLY
+				cout << "activatedNeuronWithMaxWordIndexCoverageVariableStartComponentTemp" << endl;
+				#endif
 				currentHighLevelNeuron->activatedNeuronWithMaxWordIndexCoverageVariableStartComponentTemp = false;
 			}
 			else
@@ -1470,12 +1497,27 @@ bool GIAposRelTranslatorSANIPropagateCompactGenerateClass::createOrAppendFirstLe
 		addComponentToFirstLevelHiddenLayerGroup(forwardPropogationSentenceData, currentLayerNeuronGroupStart, newNeuron);
 		listOfHighLevelNeurons->push_back(newNeuron);
 		#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_VARIABLE_FIRST_COMPONENTS
+		//all sublayer neurons are POS inputs/strings and will not be added to listOfHighLevelNeuronsCompleteHistory
 		#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_PREVENT_INTRASENTENCE_MATCHING
+		#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_PREVENT_INTRASENTENCE_MATCHING_EFFICIENT
+		newNeuron->marked = true;
+		#else
+		forwardPropogationSentenceData->listOfHighLevelNeuronsCompleteHistory.push_back(newNeuron);
+		#endif
+		/*
+		//OLD:
+		#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_PREVENT_INTRASENTENCE_MATCHING_BASIC
+		#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_GENERATE_ENSURE_ALL_NEURONS_IN_SUBGROUP_ARE_NOT_USED_BY_ANY_NEW_CANDIDATE	//irrelevant condition as all sublayer neurons are POS inputs/strings and will not be added to listOfHighLevelNeuronsCompleteHistory anyway
 		addSubNeuronsToList(&(forwardPropogationSentenceData->listOfHighLevelNeuronsCompleteHistory), newNeuron);
 		#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_OPTIMISE_FOR_DIVERGENT_CONVERGENT_PATHWAYS
 		addSubNeuronsToListReset(newNeuron);
 		#endif
+		#else
+		forwardPropogationSentenceData->listOfHighLevelNeuronsCompleteHistory.push_back(newNeuron);
+		#endif
 		#endif	
+		*/
+		#endif
 		#endif
 		*newNeuronSequenceGroup = newNeuron;
 	}
@@ -1921,9 +1963,74 @@ bool GIAposRelTranslatorSANIPropagateCompactGenerateClass::verifyLastWordIndex(G
 	return result;
 }
 
-
-
 #ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_PREVENT_INTRASENTENCE_MATCHING
+#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_PREVENT_INTRASENTENCE_MATCHING_EFFICIENT
+#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_GENERATE_ENSURE_ALL_NEURONS_IN_SUBGROUP_ARE_NOT_USED_BY_ANY_NEW_CANDIDATE
+bool GIAposRelTranslatorSANIPropagateCompactGenerateClass::markSubNeurons(GIAposRelTranslatorRulesGroupNeuralNetwork* currentNeuron)
+{
+	bool result = true;
+	
+	if(!currentNeuron->marked)
+	{
+		if(!GIAposRelTranslatorSANIPropagateOperations.isNeuronString(currentNeuron))	//CHECKTHIS
+		{
+			currentNeuron->marked = true;
+
+			#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_VERIFY_NO_CIRCULAR
+			if(currentNeuron->verified)
+			{
+				cout << "GIAposRelTranslatorSANIPropagateCompactGenerateClass::addSubNeuronsToList error: currentNeuron has already been parsed (circular loop detected)" << endl;
+				exit(EXIT_ERROR);
+			}
+			currentNeuron->verified = true;
+			#endif
+
+			for(int i=0; i<currentNeuron->components.size(); i++)
+			{
+				GIAposRelTranslatorRulesComponentNeuralNetwork* currentComponent = currentNeuron->components[i];
+				for(int j=0; j<currentComponent->ANNbackGroupConnectionList.size(); j++)
+				{
+					GIAposRelTranslatorRulesGroupNeuralNetwork* subGroup = (currentComponent->ANNbackGroupConnectionList)[j];
+					markSubNeurons(subGroup);
+				}
+			}
+
+			#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_VERIFY_NO_CIRCULAR
+			currentNeuron->verified = false;
+			#endif
+		}
+	}
+	
+	return result;
+}
+bool GIAposRelTranslatorSANIPropagateCompactGenerateClass::markSubNeuronsReset(GIAposRelTranslatorRulesGroupNeuralNetwork* currentNeuron)
+{
+	bool result = true;
+	
+	if(currentNeuron->marked)
+	{
+		if(!GIAposRelTranslatorSANIPropagateOperations.isNeuronString(currentNeuron))	//CHECKTHIS
+		{
+			currentNeuron->marked = false;
+
+			for(int i=0; i<currentNeuron->components.size(); i++)
+			{
+				GIAposRelTranslatorRulesComponentNeuralNetwork* currentComponent = currentNeuron->components[i];
+				for(int j=0; j<currentComponent->ANNbackGroupConnectionList.size(); j++)
+				{
+					GIAposRelTranslatorRulesGroupNeuralNetwork* subGroup = (currentComponent->ANNbackGroupConnectionList)[j];
+					markSubNeuronsReset(subGroup);
+				}
+			}
+		}
+	}
+	
+	return result;
+}
+#endif
+#endif
+
+#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_PREVENT_INTRASENTENCE_MATCHING_BASIC
 #ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_GENERATE_ENSURE_ALL_NEURONS_IN_SUBGROUP_ARE_NOT_USED_BY_ANY_NEW_CANDIDATE
 bool GIAposRelTranslatorSANIPropagateCompactGenerateClass::addSubNeuronsToList(vector<GIAposRelTranslatorRulesGroupNeuralNetwork*>* listOfHighLevelNeuronsCompleteHistory, GIAposRelTranslatorRulesGroupNeuralNetwork* currentNeuron)
 {
@@ -1993,7 +2100,6 @@ bool GIAposRelTranslatorSANIPropagateCompactGenerateClass::addSubNeuronsToListRe
 }
 #endif
 #endif
-
 #ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_GENERATE_ENSURE_ALL_NEURONS_IN_SUBGROUP_DO_NOT_HAVE_CONNECTIONS_TO_ANY_NEW_CANDIDATE
 bool GIAposRelTranslatorSANIPropagateCompactGenerateClass::addParentNeuronsToList(vector<GIAposRelTranslatorRulesGroupNeuralNetwork*>* listOfHighLevelNeuronsCompleteHistory, GIAposRelTranslatorRulesGroupNeuralNetwork* currentNeuron)
 {
