@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k11a 09-May-2020
+ * Project Version: 3k11b 09-May-2020
  * Requirements: 
  * Description: GIA specific global definitions
  * /
@@ -792,7 +792,9 @@
 		//#define GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_VARIABLE_FIRST_COMPONENTS_SIMPLIFY	//GIA3k8a - untested: consider enabling in the future
 		
 		//#define GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_PREVENT_RESET_IF_FIRST_INACTIVE_COMPONENT_GROUPREF_IS_SAME_AS_FUTURE_ACTIVE_COMPONENT_GROUPREF_AND_SATISIFIES_WORD_INDEX	//GIA3k4a, disabled GIA3k7a
-				
+			
+		#define GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_EXECUTE_WORD_CONNECTIVITY_TESTS_ONCE //execute sequentialActivationConnectivityTests at start to save multiple executions	//optional	//GIA3k11b
+			
 		#define GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS	//GIA3k1a
 		#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS
 			
