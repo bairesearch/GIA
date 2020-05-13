@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k11c 09-May-2020
+ * Project Version: 3k11d 09-May-2020
  * Requirements: 
  * Description: GIA specific global definitions
  * /
@@ -758,11 +758,11 @@
 	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR
 	
 		//debug variables (should all be disabled by default):		
-
+		
 		//#define GIA_DEBUG_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_SINGLE_POS_PERMUTATION
 		//#define GIA_DEBUG_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_MAX_POS_PERMUTATIONS
 		
-		//#define GIA_DEBUG_POS_REL_TRANSLATOR_RULES_PRINT_SENTENCES
+		#define GIA_DEBUG_POS_REL_TRANSLATOR_RULES_PRINT_SENTENCES
 		//#define GIA_DEBUG_POS_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS_POS_TYPES
 		//#define GIA_DEBUG_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_NETWORK_NODES
 

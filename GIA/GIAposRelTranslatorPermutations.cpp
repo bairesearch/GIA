@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorPermutations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k11c 09-May-2020
+ * Project Version: 3k11d 09-May-2020
  * Requirements: requires plain text file
  * Description: Part-of-speech Relation Translator Permutations
  * /
@@ -449,6 +449,9 @@ bool GIAposRelTranslatorPermutationsClass::generateParseTreeIntroWrapper(GIAtran
 			{
 				passedTemp =  true;
 				result = true;
+				#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_RULES_PRINT_SENTENCES
+				cout << "executeTxtRelTranslatorNeuralNetwork" << endl;	
+				#endif
 				#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS
 				cout << "passedTemp" << endl;
 				#endif
@@ -461,7 +464,9 @@ bool GIAposRelTranslatorPermutationsClass::generateParseTreeIntroWrapper(GIAtran
 			}
 			else
 			{
-				//cout << "!executeTxtRelTranslatorNeuralNetwork" << endl;		
+				#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_RULES_PRINT_SENTENCES
+				cout << "!executeTxtRelTranslatorNeuralNetwork" << endl;
+				#endif		
 			}
 	
 		#ifdef GIA_POS_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START
