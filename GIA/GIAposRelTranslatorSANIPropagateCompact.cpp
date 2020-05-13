@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorSANIPropagateCompact.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k14a 12-May-2020
+ * Project Version: 3k14b 12-May-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Propagate Compact - ~O(n)
  * /
@@ -119,6 +119,7 @@ bool GIAposRelTranslatorSANIPropagateCompactClass::executeTxtRelTranslatorNeural
 	bool sentenceValidActivationPath = false;
 
 	#ifdef GIA_POS_REL_TRANSLATOR_SANI_PARSE_SAVE_PARSE_TREE
+	//cout << "GIA_POS_REL_TRANSLATOR_SANI_PARSE_SAVE_PARSE_TREE: topLevelParseTreeGroupLocalCompact = NULL" << endl;
 	topLevelParseTreeGroupLocalCompact = NULL;
 	#endif
 
@@ -154,6 +155,12 @@ bool GIAposRelTranslatorSANIPropagateCompactClass::executeTxtRelTranslatorNeural
 	if(performPropagationTest(translatorVariables, GIAposRelTranslatorRulesGroupTypes, forwardPropogationSentenceData))
 	{
 		result = true;
+		//printBackpropParseTree(topLevelParseTreeGroupLocalCompact, 3);
+		
+		#ifdef GIA_POS_REL_TRANSLATOR_SANI_PARSE_SAVE_PARSE_TREE
+		//cout << "GIA_POS_REL_TRANSLATOR_SANI_PARSE_SAVE_PARSE_TREE: *topLevelParseTreeGroup = topLevelParseTreeGroupLocalCompact;" << endl;
+		*topLevelParseTreeGroup = topLevelParseTreeGroupLocalCompact;
+		#endif
 	}
 	#endif
 	
@@ -892,6 +899,9 @@ bool GIAposRelTranslatorSANIPropagateCompactClass::propagateWordThroughNetworkGr
 						#ifdef GIA_POS_REL_TRANSLATOR_SANI_REPLICATE_TOP_LEVEL_PARSE_TREE
 						GIAposRelTranslatorSANIPropagateOperations.deleteParseTree(topLevelParseTreeGroupLocalCompact, 0);
 						topLevelParseTreeGroupLocalCompact = GIAposRelTranslatorSANIPropagateOperations.replicateParseTree(activationPathWordCurrentParseTreeGroupOwner, 0);
+						#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS_POS_TYPES
+						//printBackpropParseTree(topLevelParseTreeGroupLocalCompact, 3);
+						#endif
 						#else
 						//OLD: topLevelParseTreeGroupLocalCompact = activationPathWordCurrentParseTreeGroupOwner;
 						//copy currentParseTreeGroupTemp so it cant be overwritten;

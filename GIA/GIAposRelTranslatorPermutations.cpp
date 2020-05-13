@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorPermutations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k14a 12-May-2020
+ * Project Version: 3k14b 12-May-2020
  * Requirements: requires plain text file
  * Description: Part-of-speech Relation Translator Permutations
  * /
@@ -375,7 +375,11 @@ bool GIAposRelTranslatorPermutationsClass::generateParseTreeIntroWrapper(GIAtran
 bool GIAposRelTranslatorPermutationsClass::generateParseTreeIntroWrapper(GIAtranslatorVariablesClass* translatorVariables, vector<XMLparserTag*>* GIAposRelTranslatorRulesTokenLayers, vector<GIAposRelTranslatorRulesGroupType*>* GIAposRelTranslatorRulesGroupTypes, GIApreprocessorSentence* currentGIApreprocessorSentenceInList, GIAposRelTranslatorRulesGroupParseTree* firstParseTreeGroup, int* performance, const bool parseIsolatedSubreferenceSets, vector<uint64_t>* POSambiguityInfoPermutation)
 #endif
 {
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_THROW_SENTENCE_FAIL_ERROR_IF_ANY_POS_PERMUTATION_FAILS
+	bool result = true;
+	#else
 	bool result = false;
+	#endif
 	
 	vector<GIApreprocessorPlainTextWord*>* sentenceContents = GIApreprocessorSentenceClassObject.getSentenceContents(currentGIApreprocessorSentenceInList);
 
@@ -448,7 +452,14 @@ bool GIAposRelTranslatorPermutationsClass::generateParseTreeIntroWrapper(GIAtran
 			#endif
 			{
 				passedTemp =  true;
+				#ifndef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_THROW_SENTENCE_FAIL_ERROR_IF_ANY_POS_PERMUTATION_FAILS
 				result = true;
+				#endif
+				
+				#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_PRINT_SUCCESSFULLY_TRACED_OR_GENERATED_PARSE_TREES
+				GIAposRelTranslatorSANIPropagateOperations.printParseTree(firstParseTreeGroupTemp, 0);
+				#endif
+				
 				#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_RULES_PRINT_SENTENCES
 				cout << "executeTxtRelTranslatorNeuralNetwork passed" << endl;	
 				#endif
@@ -464,6 +475,10 @@ bool GIAposRelTranslatorPermutationsClass::generateParseTreeIntroWrapper(GIAtran
 			}
 			else
 			{
+				#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_THROW_SENTENCE_FAIL_ERROR_IF_ANY_POS_PERMUTATION_FAILS
+				result = false;
+				#endif
+				
 				#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_RULES_PRINT_SENTENCES_FAIL_ONLY
 				cout << "executeTxtRelTranslatorNeuralNetwork failed" << endl;
 				#endif
@@ -574,6 +589,7 @@ bool GIAposRelTranslatorPermutationsClass::generateParseTreeIntroWrapper(GIAtran
 			GIApreprocessorPOStagger.setSentenceContentsWordsUnambiguousPOSindex(sentenceContents, POSambiguityInfoPermutationTemp);
 			int performanceTemp = 0;
 			
+			result = false;	
 			if(GIAposRelTranslatorSANI.executeTxtRelTranslatorNeuralNetwork(translatorVariables, GIAposRelTranslatorRulesGroupTypes, sentenceContents, &firstParseTreeGroup, parseIsolatedSubreferenceSets, parserEnabled, &performanceTemp))
 			{
 				result = true;	
