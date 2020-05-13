@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorPermutations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k12a 10-May-2020
+ * Project Version: 3k13a 11-May-2020
  * Requirements: requires plain text file
  * Description: Part-of-speech Relation Translator Permutations
  * /
@@ -584,7 +584,7 @@ bool GIAposRelTranslatorPermutationsClass::generateParseTreeIntroWrapper(GIAtran
 			if(firstParseTreeGroup != NULL)
 			{
 				cout << "(firstParseTreeGroup != NULL)" << endl;
-				printParseTree(firstParseTreeGroup, 0);
+				GIAposRelTranslatorSANIPropagateOperations.printParseTree(firstParseTreeGroup, 0);
 			}
 			#endif
 		}
@@ -674,29 +674,6 @@ bool GIAposRelTranslatorPermutationsClass::deleteAllSubgroupsRecurse(GIAposRelTr
 #endif
 
 
-
-#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_PRINT_FINAL2
-bool GIAposRelTranslatorPermutationsClass::printParseTree(GIAposRelTranslatorRulesGroupParseTree* currentParseTreeGroup, int layer)
-{
-	bool result = true;
-	
-	for(int i=0; i<currentParseTreeGroup->components.size(); i++)
-	{				
-		GIAposRelTranslatorRulesComponentParseTree* parseTreeComponent = (currentParseTreeGroup->components).at(i);
-		GIAposRelTranslatorSANIPropagateOperations.printComponent(parseTreeComponent, layer);
-
-		if(parseTreeComponent->parseTreeGroupRef != NULL)
-		{
-			if(!printParseTree(parseTreeComponent->parseTreeGroupRef, layer+1))
-			{
-				result = false;
-			}
-		}
-	}
-
-	return result;
-}
-#endif
 
 
 

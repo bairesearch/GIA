@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorPermutations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k12a 10-May-2020
+ * Project Version: 3k13a 11-May-2020
  * Requirements: requires plain text file
  * Description: Part-of-speech Relation Translator Permutations
  * /
@@ -135,10 +135,7 @@ class GIAposRelTranslatorPermutationsClass
 				private: bool updatePerformanceNeuralNetwork(const int performanceTemp, int* performance, GIApreprocessorSentence* currentGIApreprocessorSentenceInList, GIAposRelTranslatorRulesGroupParseTree* firstParseTreeGroupTemp, const bool passedTemp, const int permutationIndex, int* performanceMaxPermutationIndex);
 				private: bool deleteAllSubgroupsRecurse(GIAposRelTranslatorRulesGroupParseTree* currentParseTreeGroup, int layer);
 				#endif
-				
-	#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_PRINT_FINAL2
-	private: bool printParseTree(GIAposRelTranslatorRulesGroupParseTree* currentParseTreeGroup, int layer);
-	#endif
+			
 
 };
 #endif
