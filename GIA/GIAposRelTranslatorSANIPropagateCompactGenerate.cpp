@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorSANIPropagateCompactGenerate.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k11b 09-May-2020
+ * Project Version: 3k11c 09-May-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Propagate Compact - unsupervised training of sequence grammar parse network
  * /
@@ -93,31 +93,15 @@ bool GIAposRelTranslatorSANIPropagateCompactGenerateClass::executeTxtRelTranslat
 			#else
 			bool supportVariableFirstComponents = false;	//unused
 			#endif
-			#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_GENERATE_INCREMENTALLY_SECTIONED
-			int indexInSequenceStart = 0;
-			bool completedSentenceNetworkGeneration = false;
-			GIAposRelTranslatorRulesGroupNeuralNetwork* highLevelNeuronPrior;
-			while(!completedSentenceNetworkGeneration)
-			{
-				if(findAndReconcileIncrementalVariationLimitNumComponentsSection(translatorVariables, GIAposRelTranslatorRulesGroupTypes, &forwardPropogationSentenceData, supportVariableFirstComponents, &indexInSequenceStart, &highLevelNeuronPrior))
-				{
-					
-				}
-				if(indexInSequenceStart == sentenceContents->size())
-				{
-					completedSentenceNetworkGeneration = true;
-				}
-			}
-			#else
 			#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_VARIABLE_FIRST_COMPONENTS_PRELIM_TEST
 			GIAposRelTranslatorRulesGroupTypesBackup = copyRuleGroupType(GIAposRelTranslatorRulesGroupTypes);
 			#endif
-			if(!findAndReconcileVariation(translatorVariables, GIAposRelTranslatorRulesGroupTypes, &forwardPropogationSentenceData, supportVariableFirstComponents))
+			if(!findAndReconcileVariationWrapper(translatorVariables, GIAposRelTranslatorRulesGroupTypes, sentenceContents, &forwardPropogationSentenceData, supportVariableFirstComponents))
 			{
 				#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_VARIABLE_FIRST_COMPONENTS_PRELIM_TEST
 				GIAposRelTranslatorRulesGroupTypes = GIAposRelTranslatorRulesGroupTypesBackup;
 				bool supportVariableFirstComponents = false;
-				if(findAndReconcileVariation(translatorVariables, GIAposRelTranslatorRulesGroupTypes, &forwardPropogationSentenceData, supportVariableFirstComponents))
+				if(findAndReconcileVariationWrapper(translatorVariables, GIAposRelTranslatorRulesGroupTypes, sentenceContents, &forwardPropogationSentenceData, supportVariableFirstComponents))
 				{
 				
 				}
@@ -125,11 +109,10 @@ bool GIAposRelTranslatorSANIPropagateCompactGenerateClass::executeTxtRelTranslat
 			}
 			#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_FIRST_COMPONENTS_OPTIONAL
 			supportVariableFirstComponents = false;
-			if(findAndReconcileVariation(translatorVariables, GIAposRelTranslatorRulesGroupTypes, &forwardPropogationSentenceData, supportVariableFirstComponents))
+			if(findAndReconcileVariationWrapper(translatorVariables, GIAposRelTranslatorRulesGroupTypes, sentenceContents, &forwardPropogationSentenceData, supportVariableFirstComponents))
 			{
 
 			}
-			#endif
 			#endif
 		}
 	}
@@ -145,6 +128,37 @@ bool GIAposRelTranslatorSANIPropagateCompactGenerateClass::executeTxtRelTranslat
 	return toplevelGroupActivationFound;
 }
 
+bool GIAposRelTranslatorSANIPropagateCompactGenerateClass::findAndReconcileVariationWrapper(GIAtranslatorVariablesClass* translatorVariables, vector<GIAposRelTranslatorRulesGroupType*>* GIAposRelTranslatorRulesGroupTypes, vector<GIApreprocessorPlainTextWord*>* sentenceContents, GIAposRelTranslatorSANIForwardPropogationSentenceData* forwardPropogationSentenceData, const bool supportVariableFirstComponents)
+{
+	bool result = true;
+	
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_GENERATE_INCREMENTALLY_SECTIONED
+	int indexInSequenceStart = 0;
+	bool completedSentenceNetworkGeneration = false;
+	GIAposRelTranslatorRulesGroupNeuralNetwork* highLevelNeuronPrior;
+	while(!completedSentenceNetworkGeneration)
+	{	
+		bool resultTemp = false;
+		if(findAndReconcileIncrementalVariationLimitNumComponentsSection(translatorVariables, GIAposRelTranslatorRulesGroupTypes, forwardPropogationSentenceData, supportVariableFirstComponents, &indexInSequenceStart, &highLevelNeuronPrior))
+		{
+			resultTemp = true;
+		}
+		if(indexInSequenceStart == sentenceContents->size())
+		{
+			completedSentenceNetworkGeneration = true;
+			result = resultTemp;
+		}
+	}
+	#else
+	if(!findAndReconcileVariation(translatorVariables, GIAposRelTranslatorRulesGroupTypes, &forwardPropogationSentenceData, supportVariableFirstComponents))
+	{
+		result = false;
+	}
+	#endif
+	
+	return result;
+}
+			
 
 
 

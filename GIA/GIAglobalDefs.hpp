@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k11b 09-May-2020
+ * Project Version: 3k11c 09-May-2020
  * Requirements: 
  * Description: GIA specific global definitions
  * /
@@ -872,7 +872,7 @@
 		//untested variables (should all be disabled by default):
 		//#define GIA_POS_REL_TRANSLATOR_SANI_PROPAGATE_ALL_POS_VALUES_SIMULTANEOUSLY	//GIA3j4a	//untested
 		
-		//#define GIA_POS_REL_TRANSLATOR_SANI_PREVENT_RECORDING_TOP_LEVEL_NEURON_IF_RECORDING_MAX_COVERAGE_NEURON	//GIA3j5a	//untested
+		#define GIA_POS_REL_TRANSLATOR_SANI_PREVENT_RECORDING_TOP_LEVEL_NEURON_IF_RECORDING_MAX_COVERAGE_NEURON	//GIA3j5a	//enabled GIA3k10c
 		
 		#define GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_OPTIONAL_AND_MULTIPLE_INPUTS	//reduces complexity (size) of generated network, but increases algorithm complexity (CHECKTHIS)
 		#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_OPTIONAL_AND_MULTIPLE_INPUTS
