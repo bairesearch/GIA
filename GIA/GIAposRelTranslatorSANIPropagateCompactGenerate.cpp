@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorSANIPropagateCompactGenerate.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k14d 12-May-2020
+ * Project Version: 3k14e 12-May-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Propagate Compact - unsupervised training of sequence grammar parse network
  * /
@@ -1919,8 +1919,25 @@ bool GIAposRelTranslatorSANIPropagateCompactGenerateClass::addVariableComponentT
 
 	GIAposRelTranslatorRulesComponentNeuralNetwork* variableComponent = GIAposRelTranslatorSANIPropagateOperations.getFirstComponent(forwardPropogationSentenceData, higherLevelComponentGroupOwner, addToStart);
 	
-	addComponentToGroup(forwardPropogationSentenceData, group, variableComponent);
-	
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_FIRST_COMPONENTS_PREVENT_DUPLICATE_CONNECTIONS
+	bool duplicateConnectionFound = false;
+	for(int j=0; j<variableComponent->ANNbackGroupConnectionList.size(); j++)
+	{
+		GIAposRelTranslatorRulesGroupNeuralNetwork* subGroup = (variableComponent->ANNbackGroupConnectionList)[j];
+		if(subGroup == group)
+		{
+			duplicateConnectionFound = true;
+			//cout << "duplicateConnectionFound" << endl;
+		}
+	}
+	if(!duplicateConnectionFound)
+	{
+	#endif
+		addComponentToGroup(forwardPropogationSentenceData, group, variableComponent);
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_FIRST_COMPONENTS_PREVENT_DUPLICATE_CONNECTIONS
+	}
+	#endif
+		
 	return result;
 }
 
