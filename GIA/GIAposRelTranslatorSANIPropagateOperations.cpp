@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorSANIPropagateOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k14e 12-May-2020
+ * Project Version: 3k15a 14-May-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Operations - generic functions
  * /
@@ -621,55 +621,69 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::repeatedSequenceDetected(G
 	bool result = true;
 	
 	int componentWordIndexCoverage = component->ownerGroup->currentParseTreeGroupTemp->parseTreeMaxWordIndex - component->ownerGroup->currentParseTreeGroupTemp->parseTreeMinWordIndex + 1;
-
-	vector<GIApreprocessorPlainTextWord*> componentWordArray;
+	
+	/*
+	cout << "component->ownerGroup->currentParseTreeGroupTemp->components.size() = " << component->ownerGroup->currentParseTreeGroupTemp->components.size() << endl;
+	cout << "componentWordIndexCoverage = " << componentWordIndexCoverage << endl;
+	cout << "component->neuronComponentConnectionActiveWordRecord->translatorSentenceWordIndex = " << component->neuronComponentConnectionActiveWordRecord->translatorSentenceWordIndex << endl;
+	*/
+	
+	vector<GIApreprocessorPlainTextWord*> componentWordArray1;
 	vector<GIApreprocessorPlainTextWord*> componentWordArray2;
 	
-	int componentWmin = INT_DEFAULT_VALUE;
-	int componentWmax = INT_DEFAULT_VALUE;
+	int componentWmin1 = INT_DEFAULT_VALUE;
+	int componentWmax1 = INT_DEFAULT_VALUE;
 	int componentWmin2 = INT_DEFAULT_VALUE;
 	int componentWmax2 = INT_DEFAULT_VALUE;
 	if(forwardPropogationSentenceData->parseSentenceReverse)
 	{
-		componentWmax = component->neuronComponentConnectionActiveWordRecord->translatorSentenceWordIndex+componentWordIndexCoverage;
-		componentWmin = component->neuronComponentConnectionActiveWordRecord->translatorSentenceWordIndex;
+		componentWmax1 = component->neuronComponentConnectionActiveWordRecord->translatorSentenceWordIndex+(componentWordIndexCoverage-1);
+		componentWmin1 = component->neuronComponentConnectionActiveWordRecord->translatorSentenceWordIndex;
 		componentWmax2 = component->neuronComponentConnectionActiveWordRecord->translatorSentenceWordIndex-1;
-		componentWmin2 = component->neuronComponentConnectionActiveWordRecord->translatorSentenceWordIndex-1-componentWordIndexCoverage;
+		componentWmin2 = component->neuronComponentConnectionActiveWordRecord->translatorSentenceWordIndex-1-(componentWordIndexCoverage-1);
 	}
 	else
 	{
-		componentWmin = component->neuronComponentConnectionActiveWordRecord->translatorSentenceWordIndex-componentWordIndexCoverage;
-		componentWmax = component->neuronComponentConnectionActiveWordRecord->translatorSentenceWordIndex;
+		componentWmin1 = component->neuronComponentConnectionActiveWordRecord->translatorSentenceWordIndex-(componentWordIndexCoverage-1);
+		componentWmax1 = component->neuronComponentConnectionActiveWordRecord->translatorSentenceWordIndex;
 		componentWmin2 = component->neuronComponentConnectionActiveWordRecord->translatorSentenceWordIndex+1;
-		componentWmax2 = component->neuronComponentConnectionActiveWordRecord->translatorSentenceWordIndex+1+componentWordIndexCoverage;
+		componentWmax2 = component->neuronComponentConnectionActiveWordRecord->translatorSentenceWordIndex+1+(componentWordIndexCoverage-1);
 	}
+	/*
+	cout << "componentWmin1 = " << componentWmin1 << endl;
+	cout << "componentWmax1 = " << componentWmax1 << endl;
+	cout << "componentWmin2 = " << componentWmin2 << endl;
+	cout << "componentWmax2 = " << componentWmax2 << endl;
+	*/
 	
-	for(int w = componentWmin; w<=componentWmax; w++)
+	for(int w = componentWmin1; w<=componentWmax1; w++)
 	{
 		GIApreprocessorPlainTextWord* currentWord = (*(forwardPropogationSentenceData->sentenceContents))[w];	
-		componentWordArray.push_back(currentWord);
+		componentWordArray1.push_back(currentWord);
 	}
 	for(int w = componentWmin2; w<=componentWmax2; w++)
 	{
 		GIApreprocessorPlainTextWord* currentWord = (*(forwardPropogationSentenceData->sentenceContents))[w];	
 		componentWordArray2.push_back(currentWord);
 	}
-	for(int w = componentWmin; w<=componentWmax; w++)
+	//cout << "componentWmax1-componentWmin1+1 = " << endl;
+	for(int i=0; i<componentWmax1-componentWmin1+1; i++)
 	{
+		int w = i;
 		//must sync code with GIAposRelTranslatorSANIPropagateCompactClass::propagateWordThroughNetworkIntro !currentWordAmbiguous exceptions
 		
-		if(!currentWordAmbiguous(componentWordArray[w]) && !currentWordAmbiguous(componentWordArray2[w]))
+		if(!currentWordAmbiguous(componentWordArray1[w]) && !currentWordAmbiguous(componentWordArray2[w]))
 		{
-			if(componentWordArray[w]->unambiguousPOSindex != componentWordArray2[w]->unambiguousPOSindex)
+			if(componentWordArray1[w]->unambiguousPOSindex != componentWordArray2[w]->unambiguousPOSindex)
 			{
 				result = false;
 			}
 		}
 		#ifdef GIA_POS_REL_TRANSLATOR_RULES_TREAT_UNKNOWN_POSTYPES
-		else if(currentWordAmbiguous(componentWordArray[w]))
+		else if(currentWordAmbiguous(componentWordArray1[w]))
 		{
 			int wordPOStype = INT_DEFAULT_VALUE;
-			bool pass = getWordPOStypeFromAmbiguousWord(componentWordArray[w], &wordPOStype);
+			bool pass = getWordPOStypeFromAmbiguousWord(componentWordArray1[w], &wordPOStype);
 			if(pass)
 			{
 				if(componentWordArray2[w]->unambiguousPOSindex != wordPOStype)
@@ -703,7 +717,7 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::repeatedSequenceDetected(G
 			//both words are ambiguous
 
 			int wordPOStype1 = INT_DEFAULT_VALUE;
-			bool pass1 = getWordPOStypeFromAmbiguousWord(componentWordArray[w], &wordPOStype1);
+			bool pass1 = getWordPOStypeFromAmbiguousWord(componentWordArray1[w], &wordPOStype1);
 			int wordPOStype2 = INT_DEFAULT_VALUE;
 			bool pass2 = getWordPOStypeFromAmbiguousWord(componentWordArray2[w], &wordPOStype2);
 			if(pass1 && pass2)
@@ -1709,7 +1723,12 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::traceBackpropParseTree(GIA
 		{
 			GIAposRelTranslatorRulesComponentParseTree* currentComponent = (currentParseTreeGroup->components)[i];
 			
-			//printComponent(currentComponent, level);
+			//#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_PROPAGATE_EXTRA
+			if(print)	
+			{
+				printComponent(currentComponent, level);	//TEMP for DEBUG
+			}
+			//#endif
 			
 			#ifndef GIA_POS_REL_TRANSLATOR_SANI_PARSE_PERFORMANCE_RECORD_PERFORMANCE_METHOD_OLD_INCREMENT_FOR_EVERY_GROUP_REF_RECURSE
 			if(performancePreprocess)
@@ -1723,7 +1742,7 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::traceBackpropParseTree(GIA
 						if(currentComponent->candidateStringMatch->alreadyFoundMatch)
 						{
 							result = false;
-							//cout << "duplicate instance of word detected in parsetree - fail to parse sentence" << endl;
+							cout << "duplicate instance of word detected in parsetree - fail to parse sentence" << endl;
 							//duplicate instance of word detected in parsetree - fail to parse sentence
 						}
 						else
@@ -1764,13 +1783,13 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::traceBackpropParseTree(GIA
 			#endif					
 				if(currentComponent->parseTreeGroupRef != NULL)
 				{							
-					#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_PROPAGATE_EXTRA
+					//#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_PROPAGATE_EXTRA
 					if(print)
 					{
 						printParseTreeDebugIndentation(level);
 						cout << "(currentComponent->parseTreeGroupRef != NULL): currentComponent->parseTreeGroupRef->groupName = " << currentComponent->parseTreeGroupRef->groupName << endl;
 					}
-					#endif
+					//#endif
 					
 					if(!traceBackpropParseTree(currentComponent->parseTreeGroupRef, level+1, print, performancePreprocess, performance, sentenceContents, calculateMaxWeight, maxWeight))
 					{
@@ -2726,6 +2745,32 @@ int GIAposRelTranslatorSANIPropagateOperationsClass::countParseTreeLeafSize(GIAp
 	
 	return size;
 }
+int GIAposRelTranslatorSANIPropagateOperationsClass::countParseTreeLeafSizeUnoptimised(GIAposRelTranslatorRulesGroupParseTree* currentParseTreeGroup)
+{
+	int size = 0;
+		
+	if(currentParseTreeGroup != NULL)
+	{	
+		if(currentParseTreeGroup->groupRef->groupTypeIsString)
+		{
+			cout << "currentParseTreeGroup->groupRef->groupTypeIsString" << endl;
+		}
+		if(currentParseTreeGroup->groupRef->inputLayerNeuron)
+		{
+			cout << "currentParseTreeGroup->groupRef->inputLayerNeuron" << endl;
+		}
+			
+		for(int i=0; i<currentParseTreeGroup->components.size(); i++)
+		{
+			GIAposRelTranslatorRulesComponentParseTree* currentComponent = (currentParseTreeGroup->components)[i];
+						
+			size = size + countParseTreeLeafSizeUnoptimised(currentComponent->parseTreeGroupRef);
+		}
+	}
+	
+	return size;
+}
+
 #ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_FIRST_COMPONENTS_REQUIRE_MATCHING_DEPTH
 #ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_RECORD_DEPTH
 
@@ -3474,5 +3519,79 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::printParseTree(GIAposRelTr
 
 	return result;
 }
+
+#ifdef GIA_DEBUG_GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_WORDCONNECTIVITY_VERIFICATION_CONTINUOUS
+bool GIAposRelTranslatorSANIPropagateOperationsClass::verifyWordIndexCoverageIntegrity(GIAposRelTranslatorSANIForwardPropogationSentenceData* forwardPropogationSentenceData, GIAposRelTranslatorRulesGroupParseTree* currentParseTreeGroup, GIAposRelTranslatorSANIForwardPropogationWordData* forwardPropogationWordData)
+{
+	bool result = true;
+	
+	if(!(forwardPropogationSentenceData->recordActivatedNeuronWithMaxWordIndexCoverage))	//requires component->candidateStringMatch to be set
+	{
+		if(currentParseTreeGroup->parseTreeMinWordIndex == 0)
+		{			
+			result = false;
+			
+			//cout << "\nGIAposRelTranslatorSANIPropagateOperationsClass::verifyWordIndexCoverageIntegrity START" << endl;
+
+			int parseTreeGroupWordIndexCoverage = calculateCoverage(currentParseTreeGroup);
+			//cout << "parseTreeGroupWordIndexCoverage = " << parseTreeGroupWordIndexCoverage << endl;
+
+			int wordIndexCurrent = forwardPropogationWordData->wordReference->translatorSentenceWordIndex;
+
+			int performanceTemp = 0;
+			#ifdef GIA_DEBUG_GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_WORDCONNECTIVITY_VERIFICATION_CONTINUOUS2
+			bool print = true;	//set to true for debug only. default: false
+			#else
+			bool print = false;
+			#endif
+			bool performancePreprocess = true;
+			if(!traceBackpropParseTree(currentParseTreeGroup, 1, print, performancePreprocess, &performanceTemp, forwardPropogationSentenceData->sentenceContents))
+			{
+				cout << "GIAposRelTranslatorSANIPropagateOperationsClass::verifyWordIndexCoverageIntegrity fail #1" << endl;
+				result = false;
+			}
+			resetNeuronBackprop(currentParseTreeGroup, GIA_POS_REL_TRANSLATOR_RULES_GROUP_BOOL_INDEX_BACKPROP_NEURON_TRACED);
+
+			int performance = 0;
+			for(int i=0; i<forwardPropogationSentenceData->sentenceContents->size(); i++)
+			{
+				GIApreprocessorPlainTextWord* currentWord = (forwardPropogationSentenceData->sentenceContents)->at(i);
+				if(currentWord->alreadyFoundMatch)
+				{
+					//cout << "i = " << i << endl;
+					if(i<=wordIndexCurrent)
+					{
+						performance = performance + 1;
+					}
+					currentWord->alreadyFoundMatch = false;
+				}
+			}
+
+			if(performance == wordIndexCurrent+1)
+			{
+				result = true;
+			}
+			else
+			{
+				result = false;
+				cerr << "GIAposRelTranslatorSANIPropagateOperationsClass::verifyWordIndexCoverageIntegrity fail: (performance != wordIndexCurrent+1)" << endl;
+				cerr << "wordIndexCurrent = " << wordIndexCurrent << endl;
+				cerr << "performance = " << performance << endl;
+				cerr << "parseTreeGroupWordIndexCoverage = " << parseTreeGroupWordIndexCoverage << endl;
+				cerr << "currentParseTreeGroup->components.size() = " << currentParseTreeGroup->components.size() << endl;
+				cerr << "currentParseTreeGroup->components[0]->neuronComponentConnectionActiveWordRecord->translatorSentenceWordIndex = " << currentParseTreeGroup->components[0]->neuronComponentConnectionActiveWordRecord->translatorSentenceWordIndex << endl;
+				cerr << "currentParseTreeGroup->components[0]->componentType = " << currentParseTreeGroup->components[0]->componentType << endl;
+				cerr << "currentParseTreeGroup->components[0]->componentRef->componentIndex = " << currentParseTreeGroup->components[0]->componentRef->componentIndex << endl;
+				cerr << "currentParseTreeGroup->groupRef = " << endl;
+				printGroup(currentParseTreeGroup->groupRef, 1);
+				exit(EXIT_ERROR);
+			}
+		}
+	}
+	
+	return result;
+}
+#endif
+
 
 

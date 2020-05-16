@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorSANIPropagateOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k14e 12-May-2020
+ * Project Version: 3k15a 14-May-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Operations - generic functions
  * /
@@ -197,6 +197,7 @@ class GIAposRelTranslatorSANIPropagateOperationsClass
 	#endif
 	
 	public: int countParseTreeLeafSize(GIAposRelTranslatorRulesGroupParseTree* currentParseTreeGroup);
+	public: int countParseTreeLeafSizeUnoptimised(GIAposRelTranslatorRulesGroupParseTree* currentParseTreeGroup);
 	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_FIRST_COMPONENTS_REQUIRE_MATCHING_DEPTH
 	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_RECORD_DEPTH
 	public: bool adjustNetworkDepth(GIAposRelTranslatorRulesGroupNeuralNetwork* group);
@@ -267,6 +268,10 @@ class GIAposRelTranslatorSANIPropagateOperationsClass
 	public: string printParseTreeGroupIndicesFlat(GIAposRelTranslatorRulesGroupParseTree* currentParseTreeGroup);
 
 	public: bool printParseTree(GIAposRelTranslatorRulesGroupParseTree* currentParseTreeGroup, int layer);
+	
+	#ifdef GIA_DEBUG_GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_WORDCONNECTIVITY_VERIFICATION_CONTINUOUS
+	public: bool verifyWordIndexCoverageIntegrity(GIAposRelTranslatorSANIForwardPropogationSentenceData* forwardPropogationSentenceData, GIAposRelTranslatorRulesGroupParseTree* currentParseTreeGroup, GIAposRelTranslatorSANIForwardPropogationWordData* forwardPropogationWordData);
+	#endif
 };
 
 
