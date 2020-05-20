@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorHybridReferenceSet.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k15d 14-May-2020
+ * Project Version: 3k15e 14-May-2020
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Hybrid Reference Set
  * /
