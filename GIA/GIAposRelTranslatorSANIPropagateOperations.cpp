@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorSANIPropagateOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k15c 14-May-2020
+ * Project Version: 3k15d 14-May-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Operations - generic functions
  * /
@@ -182,7 +182,7 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::propagateWordThroughNetwor
 				{
 				#endif
 					
-					#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_PREVENT_RESET_IF_REPEATED_SEQUENCE_DETECTED_ALTERNATE
+					#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_PREVENT_ACTIVATION_IF_REPEATED_SEQUENCE_MISMATCH_DETECTED
 					bool allowFirstComponentActivation = true;
 					if(i == 0)	//start component in group
 					{
@@ -192,7 +192,7 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::propagateWordThroughNetwor
 							if(!findValidDualLowerLevelConnectionAlternate(forwardPropogationSentenceData, forwardPropogationWordData, components, component))
 							{
 								allowFirstComponentActivation = false;
-								//cout << "GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_PREVENT_RESET_IF_REPEATED_SEQUENCE_DETECTED_ALTERNATE: repeatedSequenceDetected && !findValidDualLowerLevelConnectionAlternate: !allowComponentActivation" << endl;
+								//cout << "GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_PREVENT_ACTIVATION_IF_REPEATED_SEQUENCE_MISMATCH_DETECTED: repeatedSequenceDetected && !findValidDualLowerLevelConnectionAlternate: !allowComponentActivation" << endl;
 							}
 						}
 						if(!repeatedSequenceDetected(forwardPropogationSentenceData, forwardPropogationWordData, activationPathWordCurrentParseTreeGroup, wordTranslatorSentenceWordIndex))
@@ -200,7 +200,7 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::propagateWordThroughNetwor
 							if(findValidDualLowerLevelConnectionAlternate(forwardPropogationSentenceData, forwardPropogationWordData, components, component))
 							{
 								allowFirstComponentActivation = false;
-								//cout << "GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_PREVENT_RESET_IF_REPEATED_SEQUENCE_DETECTED_ALTERNATE: !repeatedSequenceDetected && findValidDualLowerLevelConnectionAlternate: !allowComponentActivation" << endl;
+								//cout << "GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_PREVENT_ACTIVATION_IF_REPEATED_SEQUENCE_MISMATCH_DETECTED: !repeatedSequenceDetected && findValidDualLowerLevelConnectionAlternate: !allowComponentActivation" << endl;
 							}
 						}
 					}
@@ -230,6 +230,7 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::propagateWordThroughNetwor
 									#endif
 									*/
 									#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_PREVENT_RESET_IF_REPEATED_SEQUENCE_DETECTED
+									#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_PREVENT_RESET_IF_REPEATED_SEQUENCE_DETECTED_ACTIVE
 									//if(consecutiveSequenceDetected(forwardPropogationSentenceData, forwardPropogationWordData, components, component))
 									//{
 									//if first component input group matches second component input group, and repeated POS sequences detected in sentence from firstComponent matching first and second componets, then disallow reactivation/reset of first component 
@@ -242,6 +243,7 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::propagateWordThroughNetwor
 										}
 									}
 									//}
+									#endif
 									#else
 									#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_PREVENT_RESET_IF_NEXT_SEQUENCE_IS_SAME_AS_CURRENT_SEQUENCE
 									if(consecutiveSequenceDetected(forwardPropogationSentenceData, forwardPropogationWordData, components, component))
@@ -315,7 +317,7 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::propagateWordThroughNetwor
 							sequentialActivationFound = true;
 							//cout << "!(component->neuronComponentConnectionActive)" << endl;
 						}
-					#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_PREVENT_RESET_IF_REPEATED_SEQUENCE_DETECTED_ALTERNATE
+					#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_PREVENT_ACTIVATION_IF_REPEATED_SEQUENCE_MISMATCH_DETECTED
 					}
 					else
 					{
@@ -762,60 +764,66 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::repeatedSequenceDetected(G
 					result = false;
 				}
 			}
-			#ifdef GIA_POS_REL_TRANSLATOR_RULES_TREAT_UNKNOWN_POSTYPES
-			else if(currentWordAmbiguous(componentWordArray1[i]))
-			{
-				int wordPOStype = INT_DEFAULT_VALUE;
-				bool pass = getWordPOStypeFromAmbiguousWord(componentWordArray1[i], &wordPOStype);
-				if(pass)
-				{
-					if(componentWordArray2[i]->unambiguousPOSindex != wordPOStype)
-					{
-						result = false;
-					}
-				}
-				else
-				{
-					result = false;
-				}
-			}		
-			else if(currentWordAmbiguous(componentWordArray2[i]))
-			{
-				int wordPOStype2 = INT_DEFAULT_VALUE;
-				bool pass = getWordPOStypeFromAmbiguousWord(componentWordArray2[i], &wordPOStype2);
-				if(pass)
-				{
-					if(componentWordArray2[i]->unambiguousPOSindex != wordPOStype2)
-					{
-						result = false;
-					}
-				}
-				else
-				{
-					result = false;
-				}
-			}
 			else
-			{
-				//both words are ambiguous
-
-				int wordPOStype1 = INT_DEFAULT_VALUE;
-				bool pass1 = getWordPOStypeFromAmbiguousWord(componentWordArray1[i], &wordPOStype1);
-				int wordPOStype2 = INT_DEFAULT_VALUE;
-				bool pass2 = getWordPOStypeFromAmbiguousWord(componentWordArray2[i], &wordPOStype2);
-				if(pass1 && pass2)
+			{				
+				#ifdef GIA_POS_REL_TRANSLATOR_RULES_TREAT_UNKNOWN_POSTYPES
+				if(currentWordAmbiguous(componentWordArray1[i]))
+				{	
+					//cout << "a currentWordAmbiguous 1" << endl;
+					int wordPOStype1 = INT_DEFAULT_VALUE;
+					bool pass = getWordPOStypeFromAmbiguousWord(componentWordArray1[i], &wordPOStype1);
+					if(pass)
+					{
+						if(componentWordArray2[i]->unambiguousPOSindex != wordPOStype1)
+						{
+							result = false;
+						}
+					}
+					else
+					{
+						result = false;
+					}
+				}		
+				else if(currentWordAmbiguous(componentWordArray2[i]))
 				{
-					if(wordPOStype1 != wordPOStype2)
+					//cout << "a currentWordAmbiguous 2" << endl;
+					int wordPOStype2 = INT_DEFAULT_VALUE;
+					bool pass = getWordPOStypeFromAmbiguousWord(componentWordArray2[i], &wordPOStype2);
+					if(pass)
+					{
+						if(componentWordArray1[i]->unambiguousPOSindex != wordPOStype2)
+						{
+							result = false;
+						}
+					}
+					else
 					{
 						result = false;
 					}
 				}
 				else
 				{
-					result = false;
+					//cout << "a currentWordAmbiguous 3 " << endl;
+					//both words are ambiguous
+
+					int wordPOStype1 = INT_DEFAULT_VALUE;
+					bool pass1 = getWordPOStypeFromAmbiguousWord(componentWordArray1[i], &wordPOStype1);
+					int wordPOStype2 = INT_DEFAULT_VALUE;
+					bool pass2 = getWordPOStypeFromAmbiguousWord(componentWordArray2[i], &wordPOStype2);
+					if(pass1 && pass2)
+					{
+						if(wordPOStype1 != wordPOStype2)
+						{
+							result = false;
+						}
+					}
+					else
+					{
+						result = false;
+					}
 				}
+				#endif
 			}
-			#endif
 		}	
 	}
 					
@@ -1001,7 +1009,7 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::consecutiveSequenceDetecte
 
 
 
-#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_PREVENT_RESET_IF_REPEATED_SEQUENCE_DETECTED_ALTERNATE
+#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_PREVENT_ACTIVATION_IF_REPEATED_SEQUENCE_MISMATCH_DETECTED
 bool GIAposRelTranslatorSANIPropagateOperationsClass::findValidDualLowerLevelConnectionAlternate(GIAposRelTranslatorSANIForwardPropogationSentenceData* forwardPropogationSentenceData, GIAposRelTranslatorSANIForwardPropogationWordData* forwardPropogationWordData, vector<GIAposRelTranslatorRulesComponentNeuralNetwork*>* components, GIAposRelTranslatorRulesComponentNeuralNetwork* component)
 {	
 	bool validDualLowerLevelConnectionFound = false;
