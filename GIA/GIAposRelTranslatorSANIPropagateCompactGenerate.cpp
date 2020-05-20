@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorSANIPropagateCompactGenerate.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k15b 14-May-2020
+ * Project Version: 3k15c 14-May-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Propagate Compact - unsupervised training of sequence grammar parse network
  * /
@@ -204,7 +204,7 @@ bool GIAposRelTranslatorSANIPropagateCompactGenerateClass::findAndReconcileVaria
 	#endif
 	if(!GIAposRelTranslatorSANIPropagateCompact.performPropagationTest(translatorVariables, GIAposRelTranslatorRulesGroupTypes, forwardPropogationSentenceData))
 	{
-		cerr << "GIAposRelTranslatorSANIPropagateCompactGenerateClass::findAndReconcileVariation fail: !performPropagationTest verification" << endl;
+		cerr << "GIAposRelTranslatorSANIPropagateCompactGenerateClass::findAndReconcileVariationWrapper fail: !performPropagationTest verification" << endl;
 		exit(EXIT_ERROR);
 		result = false;
 	}	
@@ -242,7 +242,7 @@ bool GIAposRelTranslatorSANIPropagateCompactGenerateClass::findAndReconcileVaria
 	#endif
 	if(!GIAposRelTranslatorSANIPropagateCompact.performPropagationTest(translatorVariables, GIAposRelTranslatorRulesGroupTypes, forwardPropogationSentenceData))
 	{
-		cerr << "GIAposRelTranslatorSANIPropagateCompactGenerateClass::findAndReconcileVariation fail: !performPropagationTest verification" << endl;
+		cerr << "GIAposRelTranslatorSANIPropagateCompactGenerateClass::findAndReconcileVariationLimitNumComponentsSection fail: !performPropagationTest verification" << endl;
 		exit(EXIT_ERROR);
 		result = false;
 	}	
@@ -1192,9 +1192,9 @@ bool GIAposRelTranslatorSANIPropagateCompactGenerateClass::connectListOfHighLeve
 		int lowestLayerNeuronIndex = 0;
 		bool foundLowestLayerNeuron = findLowestLayerNeuron(highLevelNeuronPriorArray, &lowestLayerNeuron, &lowestLayerNeuronIndex);
 		
-		#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_FORMATION
+		//#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_FORMATION
 		cout << "currentHighLevelNeuron->activatedNeuronWithMaxWordIndexCoverageVariableStartComponentTemp" << endl;
-		#endif
+		//#endif
 
 		grammaticalSentenceNeuronSubHigher = currentHighLevelNeuron;
 		addVariableComponentToGroup(forwardPropogationSentenceData, lowestLayerNeuron, grammaticalSentenceNeuronSubHigher, true);
@@ -2238,7 +2238,7 @@ GIAposRelTranslatorRulesGroupNeuralNetwork* GIAposRelTranslatorSANIPropagateComp
 	cout << "GIAposRelTranslatorSANIPropagateCompactGenerateClass::createNewGroup - groupIndex = " << newNeuronIndex << endl;
 	#endif
 	#ifdef GIA_POS_REL_TRANSLATOR_SANI_ANN
-	newGroup->initiateANNneuron("groupIndex:" + SHAREDvars.convertIntToString(newNeuronIndex));	//GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_NEURON_NAME	//newGroup->groupTypeName + ":" + newGroup->groupName
+	newGroup->initiateANNneuron("groupIndex:" + SHAREDvars.convertIntToString(newNeuronIndex-1));	//GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_NEURON_NAME	//newGroup->groupTypeName + ":" + newGroup->groupName
 	#endif
 	
 	return newGroup;

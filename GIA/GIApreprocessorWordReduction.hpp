@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorWordReduction.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k15b 14-May-2020
+ * Project Version: 3k15c 14-May-2020
  * Requirements: requires plain text file
  * Description: Preprocessor Word Reduction
  * /
