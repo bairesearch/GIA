@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorSANIPropagateOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k15e 14-May-2020
+ * Project Version: 3k15f 14-May-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Operations - generic functions
  * /
@@ -323,13 +323,13 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::propagateWordThroughNetwor
 					*previousActiveComponent = component;
 				}
 				#endif
-
+				
 				if(component->optional)
 				{
 					//ignore optional components
 				}
 				else
-				{
+				{					
 					#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_VARIABLE_FIRST_COMPONENTS
 					//note it doesn't matter if the start component is active or inactive. Even if it has been activated miscellaneously (ie without maintaining word index connectivity), it can be reset.
 					if(forwardPropogationSentenceData->recordActivatedNeuronWithMaxWordIndexCoverage)
@@ -409,6 +409,7 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::propagateWordThroughNetwor
 									if(passCriteria)
 									{
 									#endif
+										cout << "missingOrVariableStartComponentFound = true" << endl;
 										*missingOrVariableStartComponentFound = true;
 									#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_DISABLE_MULTIPLE_INPUTS_IF_HAS_IDENTICAL_COMPONENTS
 									}
@@ -426,6 +427,7 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::propagateWordThroughNetwor
 					if(!(component->neuronComponentConnectionActive))
 					{
 						#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_SUPPORT_PARTIAL_SENTENCE_PROPAGATION
+						#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_VARIABLE_FIRST_COMPONENTS_MISSING
 						if(forwardPropogationSignalData->firstIndexInSequence == 0)
 						{
 							/*
@@ -445,15 +447,11 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::propagateWordThroughNetwor
 							//#endif
 						}
 						else
-						{
+						{							
 							if(*previousActiveComponent == NULL)
 							{
-								#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_VARIABLE_FIRST_COMPONENTS_MISSING
 								//support activation of group components with missing start components
 								*missingStartComponentsFound = true;
-								#else
-								stillParsingActiveComponents = false;
-								#endif
 							}
 							else
 							{	
@@ -474,6 +472,9 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::propagateWordThroughNetwor
 								//#endif
 							}
 						}
+						#else
+						stillParsingActiveComponents = false;
+						#endif
 						#else
 						stillParsingActiveComponents = false;	
 						#endif
@@ -545,6 +546,7 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::propagateWordThroughNetwor
 			if(*numberOfInactiveComponentsRemaining == 0)
 			{
 				*activationSequenceCompleted = true;
+				//cout << "activationSequenceCompleted = true" << endl;
 			}
 		#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_VARIABLE_FIRST_COMPONENTS	
 		}
@@ -568,7 +570,7 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::upperNeuronContainsWordInd
 	{
 		GIAposRelTranslatorRulesComponentNeuralNetwork* currentComponent = (group->ANNfrontComponentConnectionList)[i];
 		GIAposRelTranslatorRulesGroupNeuralNetwork* ownerGroup = currentComponent->ownerGroup;
-		cout << "ownerGroup->groupIndex = " << ownerGroup->groupIndex << endl;
+		//cout << "ownerGroup->groupIndex = " << ownerGroup->groupIndex << endl;
 	
 		//method2;
 		GIAposRelTranslatorRulesComponentNeuralNetwork* previousComponent = NULL;

@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorSANIPropagateCompactGenerate.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k15e 14-May-2020
+ * Project Version: 3k15f 14-May-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Propagate Compact - unsupervised training of sequence grammar parse network
  * /
@@ -180,6 +180,9 @@ bool GIAposRelTranslatorSANIPropagateCompactGenerateClass::findAndReconcileVaria
 	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_ADD_NEW_NEURONS_TO_SYMMETRICAL_TREE
 	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_VERIFICATION
 	#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_WORDCONNECTIVITY_VERIFICATION
+	cout << "GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_VERIFICATION: performPropagationTest:" << endl;
+	#endif
+	#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_RULES_PRINT_SENTENCES
 	cout << "GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_VERIFICATION: performPropagationTest:" << endl;
 	#endif
 	if(!GIAposRelTranslatorSANIPropagateCompact.performPropagationTest(translatorVariables, GIAposRelTranslatorRulesGroupTypes, forwardPropogationSentenceData))
@@ -2441,6 +2444,13 @@ bool GIAposRelTranslatorSANIPropagateCompactGenerateClass::updateHighLevelNeuron
 			}
 			addComponentToGroup(forwardPropogationSentenceData, highLevelNeuronPriorCurrent, grammaticalSentenceNeuronSubHigher, componentType, false);
 
+			#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_FORMATION2
+			GIAposRelTranslatorSANIPropagateOperations.printParseTreeDebugIndentation(i);
+			cout << "(*highLevelNeuronPriorArray)[i] != NULL), i = " << i << endl;
+			GIAposRelTranslatorSANIPropagateOperations.printParseTreeDebugIndentation(i);
+			cout << "adding highLevelNeuronPriorCurrent->groupIndex = " << highLevelNeuronPriorCurrent->groupIndex << " to grammaticalSentenceNeuronSubHigher->groupIndex = " << grammaticalSentenceNeuronSubHigher->groupIndex << endl;
+			#endif
+			
 			#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_RECORD_DEPTH
 			grammaticalSentenceNeuronSubHigher->networkDepth = max(grammaticalSentenceNeuronSubHigher->networkDepth, highLevelNeuronPriorCurrent->networkDepth + 1);
 			#endif
@@ -2452,6 +2462,11 @@ bool GIAposRelTranslatorSANIPropagateCompactGenerateClass::updateHighLevelNeuron
 			}
 			addComponentToGroup(forwardPropogationSentenceData, grammaticalSentenceNeuronSub, grammaticalSentenceNeuronSubHigher, componentType, false);
 
+			#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_FORMATION2
+			GIAposRelTranslatorSANIPropagateOperations.printParseTreeDebugIndentation(i);
+			cout << "adding grammaticalSentenceNeuronSub->groupIndex = " << grammaticalSentenceNeuronSub->groupIndex << " to grammaticalSentenceNeuronSubHigher->groupIndex = " << grammaticalSentenceNeuronSubHigher->groupIndex << endl;
+			#endif
+			
 			#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_RECORD_DEPTH
 			grammaticalSentenceNeuronSubHigher->networkDepth = max(grammaticalSentenceNeuronSubHigher->networkDepth, grammaticalSentenceNeuronSub->networkDepth + 1);
 			#endif

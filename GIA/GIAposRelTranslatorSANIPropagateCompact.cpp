@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorSANIPropagateCompact.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k15e 14-May-2020
+ * Project Version: 3k15f 14-May-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Propagate Compact - ~O(n)
  * /
@@ -536,7 +536,8 @@ bool GIAposRelTranslatorSANIPropagateCompactClass::propagateWordThroughNetworkGr
 	bool variableStartComponentFound = false;	//temp debug only
 	int numberOfInactiveComponentsRemaining = 0;
 	
-
+	//cout << "\townerGroup->groupIndex = " << ownerGroup->groupIndex << endl;
+	
 	if(GIAposRelTranslatorSANIPropagateOperations.propagateWordThroughNetworkGroupVerifyComponentSequenceActivationReady(currentComponent, &(ownerGroup->components), forwardPropogationSignalData, forwardPropogationWordData, forwardPropogationSentenceData, activationPathWordCurrentParseTreeGroup, &activationSequenceCompleted, &firstActiveComponentInGroup, &previousActiveComponent, &finalActiveComponent, existingActivationFound, &missingStartComponentsFound, &missingOrVariableStartComponentFound, &numberOfInactiveComponentsRemaining))
 	{	
 		#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_PROPAGATE_EXTRA3_PRIMARY
@@ -636,8 +637,8 @@ bool GIAposRelTranslatorSANIPropagateCompactClass::propagateWordThroughNetworkGr
 		
 	if(existingActivationFound)
 	{		
-		#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR
-		cout << "******** resetGroupParseTreeGroupRef, groupIndex = " << ownerGroup->groupIndex" << endl;
+		#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_PROPAGATE	//GIA_DEBUG_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR
+		cout << "******** resetGroupParseTreeGroupRef, groupIndex = " << ownerGroup->groupIndex << endl;
 		#endif
 		ownerGroup->neuronActive = false;	//not used
 		GIAposRelTranslatorSANIPropagateOperations.resetGroupActivation(ownerGroup);	//OLD: component activations have already been reset by GIAposRelTranslatorSANIPropagateOperationsClass::propagateWordThroughNetworkGroupVerifyComponentSequenceActivationReady
@@ -1184,12 +1185,12 @@ bool GIAposRelTranslatorSANIPropagateCompactClass::sequentialActivationConnectiv
 		if(!skipWordConnectivityTests)
 		{		
 			if(!existingActivationFound)
-			{	
+			{
 				bool groupHasPreceedingComponent = false;
 				if(currentParseTreeGroupTemp->components.size() > 0)
-				{	
+				{
 					bool lastActiveComponentInParseTreeIndexCheck = false;
-
+					
 					//this check is presumably required in the event GIAposRelTranslatorSANIPropagateCompactClass::propagateWordThroughNetworkGroupComponent was previously called with missingStartComponentsFound in order to save forwardPropogationSentenceData->activatedNeuronWithMaxWordIndexCoverage via updateActivatedNeuronWithMaxWordIndexCoverage 
 					int lastActiveComponentInParseTreeIndex;
 					GIAposRelTranslatorRulesComponentParseTree* lastActiveComponentInParseTree = NULL;
@@ -1265,7 +1266,7 @@ bool GIAposRelTranslatorSANIPropagateCompactClass::sequentialActivationConnectiv
 			}
 		}
 		if(passBasicWordConnectivityTest || skipWordConnectivityTests)
-		{
+		{			
 			/*
 			#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_VARIABLE_FIRST_COMPONENTS
 			Note if variableStartComponentFound, then componentWordConnectivityTestsWrapper is not required to be reexecuted, since if the previous component was variable (ie miscellaneously activated) and components->size()==1, no word index connectivity test is required to be conducted. 
