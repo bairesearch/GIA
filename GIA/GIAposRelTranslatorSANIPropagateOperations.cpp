@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorSANIPropagateOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k17b 26-May-2020
+ * Project Version: 3k17c 26-May-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Operations - generic functions
  * /
@@ -430,6 +430,8 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::propagateWordThroughNetwor
 						
 					if(!(component->neuronComponentConnectionActive))
 					{
+
+						#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_VARIABLE_FIRST_COMPONENTS
 						#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_VARIABLE_FIRST_COMPONENTS_MISSING
 						if(forwardPropogationSentenceData->recordActivatedNeuronWithMaxWordIndexCoverageSupportVariableStartComponent)
 						{							
@@ -456,6 +458,34 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::propagateWordThroughNetwor
 						}
 						#else
 						stillParsingActiveComponents = false;
+						#endif
+						#else
+					
+						#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_SUPPORT_PARTIAL_SENTENCE_PROPAGATION
+						//#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_VARIABLE_FIRST_COMPONENTS_MISSING
+						if(forwardPropogationSignalData->firstIndexInSequence == 0)
+						{
+							stillParsingActiveComponents = false;	
+						}
+						else
+						{							
+							if(*previousActiveComponent == NULL)
+							{
+								//support activation of group components with missing start components
+								*missingStartComponentsFound = true;
+							}
+							else
+							{
+								stillParsingActiveComponents = false;	//found an active component then a missing component (fail)
+							}
+						}
+						//#else
+						//stillParsingActiveComponents = false;
+						//#endif
+						#else
+						stillParsingActiveComponents = false;	
+						#endif
+						
 						#endif
 					}						
 				}

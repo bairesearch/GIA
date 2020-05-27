@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k17b 26-May-2020
+ * Project Version: 3k17c 26-May-2020
  * Requirements: 
  * Description: GIA specific global definitions
  * /
@@ -808,7 +808,7 @@
 	
 		
 		
-		//#define GIA_POS_REL_TRANSLATOR_SANI_FORWARD_DIRECTION	//GIA3k17a
+		#define GIA_POS_REL_TRANSLATOR_SANI_FORWARD_DIRECTION	//GIA3k17a
 
 		#define GIA_POS_REL_TRANSLATOR_SANI_TAKE_LAST_SUCCESSFUL_PARSE_LIMIT_ITERATIONS_PREFERENCE_WEIGHT_FIX	//GIA3k13a
 		
