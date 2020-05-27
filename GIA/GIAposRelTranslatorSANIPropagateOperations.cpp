@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorSANIPropagateOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k17a 26-May-2020
+ * Project Version: 3k17b 26-May-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Operations - generic functions
  * /
@@ -97,10 +97,11 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::propagateWordThroughNetwor
 	int numberOfInactiveComponentsRemaining = 0;
 	GIAposRelTranslatorRulesGroupParseTree* activationPathWordCurrentParseTreeGroupNOTUSED = NULL;
 	GIAposRelTranslatorRulesGroupNeuralNetwork* ownerGroupNOTUSED = NULL;
-	return propagateWordThroughNetworkGroupVerifyComponentSequenceActivationReady(testComponent, components, forwardPropogationSignalData, forwardPropogationWordData, forwardPropogationSentenceData, activationPathWordCurrentParseTreeGroupNOTUSED, activationSequenceCompleted, firstActiveComponentInGroup, previousActiveComponent, finalActiveComponent, existingActivationFound, &missingStartComponentsFoundNOTUSED, &missingOrVariableStartComponentFoundNOTUSED, &numberOfInactiveComponentsRemaining, ownerGroupNOTUSED);
+	bool componentWordConnectivityTestsResultNOTUSED = false;
+	return propagateWordThroughNetworkGroupVerifyComponentSequenceActivationReady(testComponent, components, forwardPropogationSignalData, forwardPropogationWordData, forwardPropogationSentenceData, activationPathWordCurrentParseTreeGroupNOTUSED, activationSequenceCompleted, firstActiveComponentInGroup, previousActiveComponent, finalActiveComponent, existingActivationFound, &missingStartComponentsFoundNOTUSED, &missingOrVariableStartComponentFoundNOTUSED, &numberOfInactiveComponentsRemaining, ownerGroupNOTUSED, componentWordConnectivityTestsResultNOTUSED);
 }
 
-bool GIAposRelTranslatorSANIPropagateOperationsClass::propagateWordThroughNetworkGroupVerifyComponentSequenceActivationReady(GIAposRelTranslatorRulesComponentNeuralNetwork* testComponent, vector<GIAposRelTranslatorRulesComponentNeuralNetwork*>* components, GIAposRelTranslatorSANIForwardPropogationSignalData* forwardPropogationSignalData, GIAposRelTranslatorSANIForwardPropogationWordData* forwardPropogationWordData, GIAposRelTranslatorSANIForwardPropogationSentenceData* forwardPropogationSentenceData, GIAposRelTranslatorRulesGroupParseTree* activationPathWordCurrentParseTreeGroup, bool* activationSequenceCompleted, bool* firstActiveComponentInGroup, GIAposRelTranslatorRulesComponentNeuralNetwork** previousActiveComponent, GIAposRelTranslatorRulesComponentNeuralNetwork** finalActiveComponent, bool* existingActivationFound, bool* missingStartComponentsFound, bool* missingOrVariableStartComponentFound, int* numberOfInactiveComponentsRemaining, GIAposRelTranslatorRulesGroupNeuralNetwork* ownerGroup)
+bool GIAposRelTranslatorSANIPropagateOperationsClass::propagateWordThroughNetworkGroupVerifyComponentSequenceActivationReady(GIAposRelTranslatorRulesComponentNeuralNetwork* testComponent, vector<GIAposRelTranslatorRulesComponentNeuralNetwork*>* components, GIAposRelTranslatorSANIForwardPropogationSignalData* forwardPropogationSignalData, GIAposRelTranslatorSANIForwardPropogationWordData* forwardPropogationWordData, GIAposRelTranslatorSANIForwardPropogationSentenceData* forwardPropogationSentenceData, GIAposRelTranslatorRulesGroupParseTree* activationPathWordCurrentParseTreeGroup, bool* activationSequenceCompleted, bool* firstActiveComponentInGroup, GIAposRelTranslatorRulesComponentNeuralNetwork** previousActiveComponent, GIAposRelTranslatorRulesComponentNeuralNetwork** finalActiveComponent, bool* existingActivationFound, bool* missingStartComponentsFound, bool* missingOrVariableStartComponentFound, int* numberOfInactiveComponentsRemaining, GIAposRelTranslatorRulesGroupNeuralNetwork* ownerGroup, const bool componentWordConnectivityTestsResult)
 {	
 	bool sequentialActivationFound = false;
 	
@@ -215,12 +216,6 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::propagateWordThroughNetwor
 								if(i == 0)	//start component in group
 								{
 									bool allowFirstComponentReset = true;
-									/*
-									#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_FORCE_RESET_IF_NO_WORD_CONNECTIVITY_BETWEEN_PREVIOUS_ACTIVE_COMPONENTS_AND_NEWLY_ACTIVATED_COMPONENT
-									if(componentWordConnectivityTests)
-									{
-									#endif
-									*/
 									#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_PREVENT_RESET_IF_REPEATED_SEQUENCE_DETECTED
 									#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_PREVENT_RESET_IF_REPEATED_SEQUENCE_DETECTED_ACTIVE
 									//if first component input group matches second component input group, and repeated POS sequences detected in sentence from firstComponent matching first and second componets, then disallow reactivation/reset of first component 
@@ -234,19 +229,32 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::propagateWordThroughNetwor
 									}
 									#endif
 									#else
-									#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_PREVENT_RESET_IF_NEXT_SEQUENCE_IS_SAME_AS_CURRENT_SEQUENCE
-									if(consecutiveSequenceDetected(forwardPropogationSentenceData, forwardPropogationWordData, components, component))
+									#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_FORCE_RESET_IF_NO_WORD_CONNECTIVITY_BETWEEN_PREVIOUS_ACTIVE_COMPONENTS_AND_NEWLY_ACTIVATED_COMPONENT
+									if(componentWordConnectivityTestsResult)
 									{
-										//cout << "!allowFirstComponentReset: consecutiveSequenceDetected - component->ownerGroup->groupIndex = " << component->ownerGroup->groupIndex << endl;
-										//cout << "!allowFirstComponentReset; consecutiveSequenceDetected" << endl;
-										allowFirstComponentReset = false;
-									}
+										//cout << "componentWordConnectivityTestsResult" << endl;
 									#endif
-									#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_PREVENT_RESET_IF_FIRST_INACTIVE_COMPONENT_GROUPREF_IS_SAME_AS_FUTURE_ACTIVE_COMPONENT_GROUPREF
-									if(findValidDualLowerLevelConnection(forwardPropogationSentenceData, forwardPropogationWordData, components, component, true))
+										#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_PREVENT_RESET_IF_NEXT_SEQUENCE_IS_SAME_AS_CURRENT_SEQUENCE
+										if(consecutiveSequenceDetected(forwardPropogationSentenceData, forwardPropogationWordData, components, component))
+										{
+											//cout << "!allowFirstComponentReset: consecutiveSequenceDetected - component->ownerGroup->groupIndex = " << component->ownerGroup->groupIndex << endl;
+											//cout << "!allowFirstComponentReset; consecutiveSequenceDetected" << endl;
+											allowFirstComponentReset = false;
+										}
+										#endif
+										#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_PREVENT_RESET_IF_FIRST_INACTIVE_COMPONENT_GROUPREF_IS_SAME_AS_FUTURE_ACTIVE_COMPONENT_GROUPREF
+										if(findValidDualLowerLevelConnection(forwardPropogationSentenceData, forwardPropogationWordData, components, component, true))
+										{
+											//cout << "!allowFirstComponentReset; findValidDualLowerLevelConnection" << endl;
+											allowFirstComponentReset = false;
+										}
+										#endif
+									#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_FORCE_RESET_IF_NO_WORD_CONNECTIVITY_BETWEEN_PREVIOUS_ACTIVE_COMPONENTS_AND_NEWLY_ACTIVATED_COMPONENT
+									}
+									else
 									{
-										//cout << "!allowFirstComponentReset; findValidDualLowerLevelConnection" << endl;
-										allowFirstComponentReset = false;
+										//cout << "!componentWordConnectivityTestsResult" << endl;
+										//always reset, as existing first activated component is not connected (by wordIndices) to prospective activated next component
 									}
 									#endif
 									#endif
@@ -258,15 +266,6 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::propagateWordThroughNetwor
 										{
 											allowFirstComponentReset = true;
 										}
-									}
-									#endif
-									*/
-									/*
-									#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_FORCE_RESET_IF_NO_WORD_CONNECTIVITY_BETWEEN_PREVIOUS_ACTIVE_COMPONENTS_AND_NEWLY_ACTIVATED_COMPONENT
-									}
-									else
-									{
-										//always reset, as existing first activated component is not connected (by wordIndices) to prospective activated next component
 									}
 									#endif
 									*/
@@ -906,7 +905,7 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::consecutiveSequenceDetecte
 	}
 	else
 	{
-		cout << "GIAposRelTranslatorSANIPropagateOperationsClass::consecutiveSequenceDetected warning: !(forwardPropogationSentenceData->recordActivatedNeuronWithMaxWordIndexCoverage)" << endl;
+		//cout << "GIAposRelTranslatorSANIPropagateOperationsClass::consecutiveSequenceDetected warning: !(forwardPropogationSentenceData->recordActivatedNeuronWithMaxWordIndexCoverage)" << endl;
 	}
 							
 	return result;
