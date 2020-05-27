@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorRulesGroupClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k16a 25-May-2020
+ * Project Version: 3k17a 26-May-2020
  * Requirements: requires plain text file
  * Description: Part-of-speech Relation Translator Rules
  * /
@@ -499,11 +499,9 @@ public:
 	GIAposRelTranslatorRulesGroupParseTree* activatedNeuronWithMaxWordIndexCoverage;
 	bool activatedNeuronWithMaxWordIndexCoveragePartial;
 	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_VARIABLE_FIRST_COMPONENTS
-	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_FIRST_COMPONENTS
 	bool recordActivatedNeuronWithMaxWordIndexCoverageSupportVariableStartComponent;
 	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_FIRST_COMPONENTS_REQUIRE_MATCHING_DEPTH
 	int variableFirstComponentMaxDepth;
-	#endif
 	#endif
 	bool activatedNeuronWithMaxWordIndexCoverageVariableStartComponent;	//ie candidateCoverageMissingOrVariableStartComponent
 	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_PREVENT_INTRASENTENCE_MATCHING_BASIC
