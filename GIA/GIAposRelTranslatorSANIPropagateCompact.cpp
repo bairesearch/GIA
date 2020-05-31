@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorSANIPropagateCompact.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3l1c 28-May-2020
+ * Project Version: 3l1d 28-May-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Propagate Compact - ~O(n)
  * /
@@ -2462,12 +2462,12 @@ bool GIAposRelTranslatorSANIPropagateCompactClass::printSANInetworkSVG(GIAtransl
 	bool ANNuseSprites = true;
 	
 	//small:
-	//int widthSVG = 3840;	//1920
-	//int heightSVG = 2160;	//1080	//1400
+	int widthSVG = 3840;	//1920
+	int heightSVG = 2160;	//1080	//1400
 	
 	//large/medium:
-	int widthSVG = 14400;
-	int heightSVG = 2430;
+	//int widthSVG = 14400;
+	//int heightSVG = 2430;
 	
 	ANNdisplay.outputNeuralNetworkToVectorGraphicsAndRaytrace(translatorVariables->firstInputNeuronInNetwork, ANNuseSprites, ANNuseOutputPPMFileRaytraced, ANNdisplayInOpenGL, ANNuseOutputLDRFile, ANNuseOutputSVGFile, ANNuseOutputPPMFile, ANNoutputLDRFileName, ANNoutputSVGFileName, ANNoutputPPMFileName, ANNoutputPPMFileNameRaytraced, ANNoutputTALFileName, rasterImageWidth, rasterImageHeight, widthSVG, heightSVG);
 
