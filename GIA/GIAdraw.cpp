@@ -26,7 +26,7 @@
  * File Name: GIAdraw.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k17c 26-May-2020
+ * Project Version: 3l1a 28-May-2020
  * Requirements: 
  * Description: Draw - Draws GIA nodes in GIA network/tree
  * /
@@ -88,7 +88,7 @@ bool GIAdrawClass::printGIAnetworkNodesToSVGstring(GIAtranslatorVariablesClass* 
 	return result;
 }
 
-bool GIAdrawClass::printGIAnetworkNodes(GIAtranslatorVariablesClass* translatorVariables, const int width, const int height, const string outputFileNameLDR, const string outputFileNameSVG, const string outputFileNamePPM, const bool display, const bool useOutputLDRfile, const bool useOutputPPMfile, const bool useOutputSVGfile)
+bool GIAdrawClass::printGIAnetworkNodes(GIAtranslatorVariablesClass* translatorVariables, const int width, const int height, const string outputFileNameLDR, const string outputFileNameSVG, const string outputFileNamePPM, const bool display, const bool useOutputLDRfile, const bool useOutputSVGfile, const bool useOutputPPMfile)
 {//most of this is copied from CSexecFlow.cpp
 	bool result = true;
 

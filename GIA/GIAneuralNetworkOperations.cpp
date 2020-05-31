@@ -26,7 +26,7 @@
  * File Name: GIAneuralNetworkOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k17c 26-May-2020
+ * Project Version: 3l1a 28-May-2020
  * Description: Neural Network - visual representation of GIA contents in prototype biological neural network
  * /
  *******************************************************************************/
@@ -64,7 +64,26 @@ GIAneuralNetworkVariablesClass::~GIAneuralNetworkVariablesClass(void)
 
 
 #ifdef GIA_POS_REL_TRANSLATOR_SANI_ANN
-	
+
+#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_CONTINUOUSLY_OUTPUT_NETWORK
+static bool alreadyCoordinatedInputNeurons;
+static ANNneuron* firstOutputNeuronInNetworkPreRecord;
+static int64_t idBaseRecord;
+void GIAneuralNetworkOperationsClass::initialiseIncrementalGeneration()
+{
+	alreadyCoordinatedInputNeurons = false;
+	firstOutputNeuronInNetworkPreRecord = NULL;
+	idBaseRecord = 0;
+}
+/*
+bool GIAneuralNetworkOperationsClass::generateNeuralNetFromGIAposRelTranslatorNetReset(GIAtranslatorVariablesClass* translatorVariables)
+{
+	vector<GIAposRelTranslatorRulesGroupType*>* GIAposRelTranslatorRulesGroupTypes = GIAposRelTranslatorRules.getGIAposRelTranslatorRulesGroupTypesGlobal();
+	determinePositonsOfNeuronsReset(GIAposRelTranslatorRulesGroupTypes);
+}
+*/
+#endif
+
 bool GIAneuralNetworkOperationsClass::generateNeuralNetFromGIAposRelTranslatorNet(GIAtranslatorVariablesClass* translatorVariables)
 {
 	bool result = true;
@@ -77,12 +96,37 @@ bool GIAneuralNetworkOperationsClass::generateNeuralNetFromGIAposRelTranslatorNe
 	int64_t id = 0;
 	ANNneuron* firstOutputNeuronInNetworkPre = NULL;
 	ANNneuron* firstOutputNeuronInNetworkPost = NULL;
-	determinePositonsOfInputNeurons(&id, &firstOutputNeuronInNetworkPre);	
+	
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_CONTINUOUSLY_OUTPUT_NETWORK
+	if(!alreadyCoordinatedInputNeurons)
+	{
+		determinePositonsOfInputNeurons(&id, &firstOutputNeuronInNetworkPre);	
+		alreadyCoordinatedInputNeurons = true;
+		firstOutputNeuronInNetworkPreRecord = firstOutputNeuronInNetworkPre;
+		idBaseRecord = id;
+	}
+	else
+	{
+		firstOutputNeuronInNetworkPre = firstOutputNeuronInNetworkPreRecord;
+		id = idBaseRecord;
+		
+		firstOutputNeuronInNetworkPre->hasFrontLayer = false;
+		firstOutputNeuronInNetworkPre->firstNeuronInFrontLayer = NULL;
+		
+		determinePositonsOfNeuronsReset(GIAposRelTranslatorRulesGroupTypes);
+	}
+	#else
+	determinePositonsOfInputNeurons(&id, &firstOutputNeuronInNetworkPre);
+	#endif
+	
 	determinePositonsOfNeurons(GIAposRelTranslatorRulesGroupTypes, &id, firstOutputNeuronInNetworkPre, &firstOutputNeuronInNetworkPost);
 	
 	//cout << "determinePositonsOfNeurons done" << endl;
 	
+	#ifndef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_CONTINUOUSLY_OUTPUT_NETWORK
 	delete (translatorVariables->firstInputNeuronInNetwork);	//delete the ANNneuron object created by GIAmain.cpp
+	#endif
+	
 	translatorVariables->firstInputNeuronInNetwork = firstInputNeuronInNetwork;
 	translatorVariables->firstOutputNeuronInNetwork = firstOutputNeuronInNetworkPost;
 
@@ -424,6 +468,7 @@ bool GIAneuralNetworkOperationsClass::determinePositonsOfInputNeurons(int64_t* i
 }
 
 
+	
 bool GIAneuralNetworkOperationsClass::determinePositonsOfNeurons(vector<GIAposRelTranslatorRulesGroupType*>* GIAposRelTranslatorRulesGroupTypes, int64_t* idBase, ANNneuron* firstOutputNeuronInNetworkPre, ANNneuron** firstOutputNeuronInNetworkPost)
 {
 	bool result = true;
@@ -917,6 +962,44 @@ bool GIAneuralNetworkOperationsClass::determinePositonsOfNeurons(vector<GIAposRe
 	
 	return result;
 }
+
+#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_CONTINUOUSLY_OUTPUT_NETWORK
+bool GIAneuralNetworkOperationsClass::determinePositonsOfNeuronsReset(vector<GIAposRelTranslatorRulesGroupType*>* GIAposRelTranslatorRulesGroupTypes)
+{
+	bool result = true;
+	
+	for(int i=0; i<GIAposRelTranslatorRulesGroupTypes->size(); i++)
+	{
+		GIAposRelTranslatorRulesGroupType* groupType = GIAposRelTranslatorRulesGroupTypes->at(i);
+		
+		groupType->neuronDisplayPositionSet = false;
+		groupType->neuronDisplayPositionX = INT_DEFAULT_VALUE;
+		groupType->neuronDisplayPositionY = INT_DEFAULT_VALUE;
+		groupType->groupTypeXindex = INT_DEFAULT_VALUE;
+		groupType->groupMaxY = 0;
+			
+		for(int i1=0; i1<groupType->groups.size(); i1++)
+		{
+			GIAposRelTranslatorRulesGroupNeuralNetwork* group = (groupType->groups)[i1];
+			
+			group->neuronDisplayPositionSet = false;
+			group->neuronDisplayPositionX = INT_DEFAULT_VALUE;
+			group->neuronDisplayPositionY = INT_DEFAULT_VALUE;
+			group->neuronConnectivitySet = false;
+			#ifdef GIA_POS_REL_TRANSLATOR_SANI_ANN_CENTRE_NEURONS
+			group->neuronDisplayPositionXcentred = INT_DEFAULT_VALUE;
+			group->neuronDisplayPositionYcentred = INT_DEFAULT_VALUE;	
+			#endif
+			
+			group->neuronReference->hasFrontLayer = false;
+			group->neuronReference->firstNeuronInFrontLayer = NULL;
+		}
+	}	
+	
+	return result;
+}
+#endif
+
 
 #endif
 

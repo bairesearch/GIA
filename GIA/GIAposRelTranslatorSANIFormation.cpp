@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorSANIFormation.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k17c 26-May-2020
+ * Project Version: 3l1a 28-May-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Formation
  * /
@@ -909,19 +909,26 @@ bool GIAposRelTranslatorSANIFormationClass::createGroupANNconnection(GIAposRelTr
 #ifdef GIA_POS_REL_TRANSLATOR_SANI_ANN
 ANNneuronConnection* GIAposRelTranslatorSANIFormationClass::createANNconnection(GIAposRelTranslatorRulesGroupNeuralNetwork* group, GIAposRelTranslatorRulesComponentNeuralNetwork* higherLevelComponent)
 {
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_WEIGHTS
+	return createANNconnection(group, higherLevelComponent, higherLevelComponent->componentStrength);
+	#else
+	return createANNconnection(group, higherLevelComponent, 0);
+	#endif
+}
+ANNneuronConnection* GIAposRelTranslatorSANIFormationClass::createANNconnection(GIAposRelTranslatorRulesGroupNeuralNetwork* group, GIAposRelTranslatorRulesComponentNeuralNetwork* higherLevelComponent, const double connectionStrength)
+{
 	vector<ANNneuronConnection*>* ANNbackNeuronConnectionList = &(higherLevelComponent->ANNbackNeuronConnectionList);
 	GIAposRelTranslatorRulesGroupNeuralNetwork* higherLevelGroup = higherLevelComponent->ownerGroup;
 
 	ANNneuronConnection* newANNneuronConnection = createANNconnection(group, higherLevelGroup);
 	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_WEIGHTS
-	newANNneuronConnection->GIAconnectionStrength = higherLevelComponent->componentStrength;
+	newANNneuronConnection->GIAconnectionStrength = connectionStrength;
 	#endif
 				
 	ANNbackNeuronConnectionList->push_back(newANNneuronConnection);
 	
 	return newANNneuronConnection;
 }
-
 ANNneuronConnection* GIAposRelTranslatorSANIFormationClass::createANNconnection(GIAposRelTranslatorRulesGroupNeuralNetwork* group, GIAposRelTranslatorRulesGroupNeuralNetwork* higherLevelGroup)
 {
 	ANNneuron* neuron1 = group->neuronReference;
@@ -934,6 +941,29 @@ ANNneuronConnection* GIAposRelTranslatorSANIFormationClass::createANNconnection(
 	(neuron2->backANNneuronConnectionList).push_back(newANNneuronConnection);
 	
 	return newANNneuronConnection;
+}
+
+void GIAposRelTranslatorSANIFormationClass::deleteANNconnections(GIAposRelTranslatorRulesGroupNeuralNetwork* group, GIAposRelTranslatorRulesComponentNeuralNetwork* component)
+{				
+	GIAposRelTranslatorRulesGroupNeuralNetwork* groupTarget = component->ownerGroup;
+
+	//code derived from GIAposRelTranslatorSANIFormationClass::createANNconnection;
+	for(int l=0; l<component->ANNbackGroupConnectionList.size(); l++)
+	{
+		GIAposRelTranslatorRulesGroupNeuralNetwork* groupSource = component->ANNbackGroupConnectionList[l];
+		(groupSource->neuronReference->frontANNneuronConnectionList).clear();
+	}
+	(groupTarget->neuronReference->backANNneuronConnectionList).clear();
+
+	//code derived from GIAposRelTranslatorSANIFormationClass::createANNconnection;
+	vector<ANNneuronConnection*>* ANNbackNeuronConnectionList = &(component->ANNbackNeuronConnectionList);
+	for(int l=0; l<ANNbackNeuronConnectionList->size(); l++)
+	{
+		ANNneuronConnection* ANNbackNeuronConnection = (*ANNbackNeuronConnectionList)[l];
+		ANNbackNeuronConnection->frontNeuron = NULL;	//prevent frontNeuron deletion during deconstruction
+		delete ANNbackNeuronConnection;
+	}
+	ANNbackNeuronConnectionList->clear();
 }
 
 
@@ -955,17 +985,46 @@ bool GIAposRelTranslatorSANIFormationClass::createANNconnectivity(vector<GIAposR
 				for(int l=0; l<component->ANNbackGroupConnectionList.size(); l++)
 				{
 					GIAposRelTranslatorRulesGroupNeuralNetwork* groupSource = component->ANNbackGroupConnectionList[l];
+					//cout << "createANNconnection" << endl;
+					#ifdef GIA_POS_REL_TRANSLATOR_SANI_ANN_COLOUR_CONNECTIONS_BASED_ON_COMPONENT_INDEX
+					#ifdef GIA_POS_REL_TRANSLATOR_SANI_ANN_COLOUR_CONNECTIONS_BASED_ON_COMPONENT_INDEX_EXACT
+					ANNneuronConnection* connection = createANNconnection(groupSource, component);
+					connection->GIAcomponentIndexFirst = (bool)k;
+					#else
+					ANNneuronConnection* connection = createANNconnection(groupSource, component);
+					connection->GIAcomponentIndex = k;
+					#endif
+					#else
 					createANNconnection(groupSource, component);
+					#endif
 				}
-				/*
-				GIAposRelTranslatorRulesGroupNeuralNetwork* groupSource = component->groupRef;
-				createANNconnection(groupSource, component);
-				*/
 			}
 		}
 	}
 
 }
+#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_CONTINUOUSLY_OUTPUT_NETWORK
+bool GIAposRelTranslatorSANIFormationClass::createANNconnectivityReset(vector<GIAposRelTranslatorRulesGroupType*>* GIAposRelTranslatorRulesGroupTypes)
+{	
+	for(int i=0; i<GIAposRelTranslatorRulesGroupTypes->size(); i++)
+	{
+		GIAposRelTranslatorRulesGroupType* groupType = GIAposRelTranslatorRulesGroupTypes->at(i);
+		for(int j=0; j<(groupType->groups).size(); j++)
+		{
+			GIAposRelTranslatorRulesGroupNeuralNetwork* group = (groupType->groups)[j];
+			#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_WEIGHTS
+			group->neuronReference->GIAneuronStrength = group->groupStrength;
+			#endif
+			for(int k=0; k<group->components.size(); k++)
+			{
+				GIAposRelTranslatorRulesComponentNeuralNetwork* component = (group->components).at(k);
+				
+				deleteANNconnections(group, component);
+			}
+		}
+	}
+}				
+#endif
 #endif
 
 #endif

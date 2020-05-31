@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorPermutations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3k17c 26-May-2020
+ * Project Version: 3l1a 28-May-2020
  * Requirements: requires plain text file
  * Description: Part-of-speech Relation Translator Permutations
  * /
@@ -42,10 +42,21 @@ static int performanceMaxPermutationIndexRecord;	//temp var (per sentence)
 static bool parseIsolatedSubreferenceSetsRecord;
 #endif
 
+#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_CONTINUOUSLY_OUTPUT_NETWORK
+#include "GIAneuralNetworkOperations.hpp"
+#endif
+
 bool GIAposRelTranslatorPermutationsClass::executeTxtRelTranslatorWrapper(GIAtranslatorVariablesClass* translatorVariables, vector<XMLparserTag*>* GIAposRelTranslatorRulesTokenLayers, vector<GIAposRelTranslatorRulesGroupType*>* GIAposRelTranslatorRulesGroupTypes)
 {
 	bool result = true;
 
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_CONTINUOUSLY_OUTPUT_NETWORK
+	cout << "GIAposRelTranslatorSANIPropagateCompactGenerate.initialiseIncrementalGeneration" << endl;
+	GIAposRelTranslatorSANIPropagateCompactGenerate.initialiseIncrementalGeneration();
+	cout << "GIAneuralNetworkOperationsClass().initialiseIncrementalGeneration" << endl;
+	GIAneuralNetworkOperationsClass().initialiseIncrementalGeneration();
+	#endif
+	
 	/*
 	algorithm (v0.1);
 		For every word in sentence
@@ -246,7 +257,7 @@ bool GIAposRelTranslatorPermutationsClass::transferParseTreePOStypeInferredToWor
 bool GIAposRelTranslatorPermutationsClass::executeTxtRelTranslator(GIAtranslatorVariablesClass* translatorVariables, vector<XMLparserTag*>* GIAposRelTranslatorRulesTokenLayers, vector<GIAposRelTranslatorRulesGroupType*>* GIAposRelTranslatorRulesGroupTypes, GIApreprocessorSentence* currentGIApreprocessorSentenceInList, vector<uint64_t>* POSambiguityInfoPermutation)
 {
 	bool result = true;
-	
+
 	#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_RULES_PRINT_SENTENCES
 	cout << endl;
 	GIApreprocessorSentenceClassObject.printSentence(GIApreprocessorSentenceClassObject.getSentenceContents(currentGIApreprocessorSentenceInList), true);
