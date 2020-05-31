@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorPermutations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3l1a 28-May-2020
+ * Project Version: 3l1b 28-May-2020
  * Requirements: requires plain text file
  * Description: Part-of-speech Relation Translator Permutations
  * /
@@ -43,7 +43,9 @@ static bool parseIsolatedSubreferenceSetsRecord;
 #endif
 
 #ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_CONTINUOUSLY_OUTPUT_NETWORK
+#include "GIAposRelTranslatorSANIPropagateCompact.hpp"
 #include "GIAneuralNetworkOperations.hpp"
+
 #endif
 
 bool GIAposRelTranslatorPermutationsClass::executeTxtRelTranslatorWrapper(GIAtranslatorVariablesClass* translatorVariables, vector<XMLparserTag*>* GIAposRelTranslatorRulesTokenLayers, vector<GIAposRelTranslatorRulesGroupType*>* GIAposRelTranslatorRulesGroupTypes)
@@ -51,8 +53,8 @@ bool GIAposRelTranslatorPermutationsClass::executeTxtRelTranslatorWrapper(GIAtra
 	bool result = true;
 
 	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_CONTINUOUSLY_OUTPUT_NETWORK
-	cout << "GIAposRelTranslatorSANIPropagateCompactGenerate.initialiseIncrementalGeneration" << endl;
-	GIAposRelTranslatorSANIPropagateCompactGenerate.initialiseIncrementalGeneration();
+	cout << "GIAposRelTranslatorSANIPropagateCompactClass().initialiseIncrementalGeneration" << endl;
+	GIAposRelTranslatorSANIPropagateCompactClass().initialiseIncrementalGeneration();
 	cout << "GIAneuralNetworkOperationsClass().initialiseIncrementalGeneration" << endl;
 	GIAneuralNetworkOperationsClass().initialiseIncrementalGeneration();
 	#endif
@@ -73,7 +75,7 @@ bool GIAposRelTranslatorPermutationsClass::executeTxtRelTranslatorWrapper(GIAtra
 	//cout << "GIAposRelTranslatorPermutationsClass::executeTxtRelTranslatorWrapper" << endl;
 
 
-	#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_TEST_VERIFICATION_AFTER_GENERATION
+	#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_STORE_SENTENCE_INDEXING
 	//code from GIAtranslatorClass::parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyParsedSentences;
 	//count maxNumberSentences
 	GIApreprocessorSentence* currentSentenceInList = translatorVariables->firstGIApreprocessorSentenceInList;
@@ -91,7 +93,7 @@ bool GIAposRelTranslatorPermutationsClass::executeTxtRelTranslatorWrapper(GIAtra
 	GIApreprocessorSentence* currentGIApreprocessorSentenceInList = translatorVariables->firstGIApreprocessorSentenceInList;
 	while(currentGIApreprocessorSentenceInList->next != NULL)
 	{		
-		#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_TEST_VERIFICATION_AFTER_GENERATION
+		#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_STORE_SENTENCE_INDEXING
 		translatorVariables->currentPreprocessorSentenceInList = currentGIApreprocessorSentenceInList;
 		#endif
 		

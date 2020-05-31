@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorSANIFormation.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3l1a 28-May-2020
+ * Project Version: 3l1b 28-May-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Formation
  * /
@@ -979,6 +979,9 @@ bool GIAposRelTranslatorSANIFormationClass::createANNconnectivity(vector<GIAposR
 			#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_WEIGHTS
 			group->neuronReference->GIAneuronStrength = group->groupStrength;
 			#endif
+			#ifdef GIA_POS_REL_TRANSLATOR_SANI_ANN_COLOUR_CONNECTIONS_BASED_ON_ACTIVATION
+			bool foundActiveComponent = false;
+			#endif
 			for(int k=0; k<group->components.size(); k++)
 			{
 				GIAposRelTranslatorRulesComponentNeuralNetwork* component = (group->components).at(k);
@@ -998,7 +1001,28 @@ bool GIAposRelTranslatorSANIFormationClass::createANNconnectivity(vector<GIAposR
 					createANNconnection(groupSource, component);
 					#endif
 				}
+				#ifdef GIA_POS_REL_TRANSLATOR_SANI_ANN_COLOUR_CONNECTIONS_BASED_ON_ACTIVATION
+				if(component->neuronComponentConnectionActive)
+				{
+					foundActiveComponent = true;
+				}
+				#endif
 			}
+			
+			#ifdef GIA_POS_REL_TRANSLATOR_SANI_ANN_COLOUR_CONNECTIONS_BASED_ON_ACTIVATION
+			if(group->neuronActive)
+			{
+				group->neuronReference->activationLevel = ANN_ALGORITHM_SEQUENCE_GRAMMAR_NETWORK_PRINT_COLOURS_ACTIVE_LEVEL_FULL;
+			}
+			else if(foundActiveComponent)
+			{
+				group->neuronReference->activationLevel = ANN_ALGORITHM_SEQUENCE_GRAMMAR_NETWORK_PRINT_COLOURS_ACTIVE_LEVEL_PARTIAL;
+			}
+			else
+			{
+				group->neuronReference->activationLevel = ANN_ALGORITHM_SEQUENCE_GRAMMAR_NETWORK_PRINT_COLOURS_ACTIVE_LEVEL_INACTIVE;
+			}
+			#endif
 		}
 	}
 
@@ -1012,13 +1036,9 @@ bool GIAposRelTranslatorSANIFormationClass::createANNconnectivityReset(vector<GI
 		for(int j=0; j<(groupType->groups).size(); j++)
 		{
 			GIAposRelTranslatorRulesGroupNeuralNetwork* group = (groupType->groups)[j];
-			#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_WEIGHTS
-			group->neuronReference->GIAneuronStrength = group->groupStrength;
-			#endif
 			for(int k=0; k<group->components.size(); k++)
 			{
 				GIAposRelTranslatorRulesComponentNeuralNetwork* component = (group->components).at(k);
-				
 				deleteANNconnections(group, component);
 			}
 		}

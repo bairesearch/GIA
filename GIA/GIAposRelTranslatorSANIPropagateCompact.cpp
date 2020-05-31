@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorSANIPropagateCompact.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3l1a 28-May-2020
+ * Project Version: 3l1b 28-May-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Propagate Compact - ~O(n)
  * /
@@ -35,7 +35,10 @@
 
 #include "GIAposRelTranslatorSANIPropagateCompact.hpp"
 #include "SHAREDvars.hpp"
-
+#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_CONTINUOUSLY_OUTPUT_NETWORK
+#include "GIAneuralNetworkOperations.hpp"
+#include "ANNdisplay.hpp"
+#endif
 
 #ifdef GIA_POS_REL_TRANSLATOR_SANI_COMPACT
 
@@ -57,6 +60,15 @@ static vector<GIAposRelTranslatorRulesGroupParseTree*> parseTreeGroupListCompact
 vector<GIAposRelTranslatorRulesGroupParseTree*>* GIAposRelTranslatorSANIPropagateCompactClass::getParseTreeGroupList()
 {
 	return &parseTreeGroupListCompact;
+}
+#endif
+
+
+#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_CONTINUOUSLY_OUTPUT_NETWORK
+static int incrementalGenerationIndex;
+void GIAposRelTranslatorSANIPropagateCompactClass::initialiseIncrementalGeneration()
+{
+	incrementalGenerationIndex = 0;
 }
 #endif
 
@@ -140,6 +152,9 @@ bool GIAposRelTranslatorSANIPropagateCompactClass::executeTxtRelTranslatorNeural
 	#endif
 	forwardPropogationSentenceData->GIAposRelTranslatorRulesGroupTypes = GIAposRelTranslatorRulesGroupTypes;
 	*/
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_CONTINUOUSLY_OUTPUT_NETWORK_PROPAGATION
+	forwardPropogationSentenceData->GIAposRelTranslatorRulesGroupTypes = GIAposRelTranslatorRulesGroupTypes;
+	#endif
 	
 	for(int w=0; w<forwardPropogationSentenceData->sentenceContents->size(); w++)
 	{	
@@ -653,7 +668,7 @@ bool GIAposRelTranslatorSANIPropagateCompactClass::propagateWordThroughNetworkGr
 		#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_PROPAGATE	//GIA_DEBUG_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR
 		cout << "******** resetGroupParseTreeGroupRef, groupIndex = " << ownerGroup->groupIndex << endl;
 		#endif
-		ownerGroup->neuronActive = false;	//not used
+		ownerGroup->neuronActive = false;	//required for GIA_POS_REL_TRANSLATOR_SANI_ANN_COLOUR_CONNECTIONS_BASED_ON_ACTIVATION
 		GIAposRelTranslatorSANIPropagateOperations.resetGroupActivation(ownerGroup);	//OLD: component activations have already been reset by GIAposRelTranslatorSANIPropagateOperationsClass::propagateWordThroughNetworkGroupVerifyComponentSequenceActivationReady
 		GIAposRelTranslatorSANIPropagateOperations.resetGroupParseTreeGroupRef(ownerGroup, false);
 		#ifdef GIA_POS_REL_TRANSLATOR_SANI_FREE_MEMORY
@@ -711,6 +726,19 @@ bool GIAposRelTranslatorSANIPropagateCompactClass::propagateWordThroughNetworkGr
 	}
 	#endif
 
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_CONTINUOUSLY_OUTPUT_NETWORK_PROPAGATION
+	if(!(forwardPropogationSentenceData->recordActivatedNeuronWithMaxWordIndexCoverage))
+	{
+		#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_CONTINUOUSLY_OUTPUT_NETWORK_PROPAGATION_RESTRICT_TO_POST_GENERATION_PHASE
+		if(translatorVariables->currentPreprocessorSentenceInList->sentenceIndexOriginal > translatorVariables->maxNumberSentences/2)
+		{
+		#endif
+			printSANInetworkSVG(translatorVariables, forwardPropogationSentenceData->GIAposRelTranslatorRulesGroupTypes);
+		#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_CONTINUOUSLY_OUTPUT_NETWORK_PROPAGATION_RESTRICT_TO_POST_GENERATION_PHASE
+		}
+		#endif
+	}
+	#endif
 	
 	#ifdef GIA_POS_REL_TRANSLATOR_SANI_BIO_DO_NOT_RELY_ON_PARSE_TREE_MEMORY
 	if(currentParseTreeGroupTemp->parseTreeMaxWordIndex == INT_DEFAULT_VALUE)
@@ -743,7 +771,7 @@ bool GIAposRelTranslatorSANIPropagateCompactClass::propagateWordThroughNetworkGr
 
 	if(activationSequenceCompleted)
 	{			
-		ownerGroup->neuronActive = true;	//not used
+		ownerGroup->neuronActive = true;	//required for GIA_POS_REL_TRANSLATOR_SANI_ANN_COLOUR_CONNECTIONS_BASED_ON_ACTIVATION
 		
 		#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_WEIGHTS
 		//if(!(forwardPropogationSentenceData->recordActivatedNeuronWithMaxWordIndexCoverage)) {
@@ -2378,6 +2406,54 @@ bool GIAposRelTranslatorSANIPropagateCompactClass::upperNeuronLastWordIndexAlign
 #endif
 
 
+#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_CONTINUOUSLY_OUTPUT_NETWORK
+bool GIAposRelTranslatorSANIPropagateCompactClass::printSANInetworkSVG(GIAtranslatorVariablesClass* translatorVariables, vector<GIAposRelTranslatorRulesGroupType*>* GIAposRelTranslatorRulesGroupTypes)
+{
+	bool result = true;
+	
+	string outputTextSVGFileName = string(NEURAL_NETWORK_VISUALISATION_BASE_FILE_NAME) + "IncrementalGeneration" + SHAREDvars.convertIntToString(incrementalGenerationIndex) + NEURAL_NETWORK_VISUALISATION_SVG_FILE_EXTENSION;
+	cout << "GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_CONTINUOUSLY_OUTPUT_NETWORK: outputTextSVGFileName = " << outputTextSVGFileName << endl;
+	
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_ANN_DELAY_ANN_CONNECTIVITY_TILL_END
+	GIAposRelTranslatorSANIFormation.createANNconnectivity(GIAposRelTranslatorRulesGroupTypes);
+	#endif
+	
+	GIAneuralNetworkOperationsClass().generateNeuralNetFromGIAposRelTranslatorNet(translatorVariables);	//generate GIA NLP neural network
+
+	int rasterImageWidth = 0;
+	int rasterImageHeight = 0;
+	bool ANNdisplayInOpenGL = false;
+	bool ANNuseInputXMLFile = false;
+	string ANNinputXMLFileName = string(NEURAL_NETWORK_VISUALISATION_BASE_FILE_NAME) + NEURAL_NETWORK_VISUALISATION_XML_FILE_EXTENSION;
+	bool ANNuseOutputXMLFile = false;
+	string ANNoutputXMLFileName = string(NEURAL_NETWORK_VISUALISATION_BASE_FILE_NAME) + NEURAL_NETWORK_VISUALISATION_XML_FILE_EXTENSION;
+	bool ANNuseOutputLDRFile = false;
+	string ANNoutputLDRFileName = string(NEURAL_NETWORK_VISUALISATION_BASE_FILE_NAME) + NEURAL_NETWORK_VISUALISATION_LDR_FILE_EXTENSION;
+	bool ANNuseOutputSVGFile = true;
+	string ANNoutputSVGFileName = outputTextSVGFileName;
+	bool ANNuseOutputPPMFile = false;
+	string ANNoutputPPMFileName = string(NEURAL_NETWORK_VISUALISATION_BASE_FILE_NAME) + NEURAL_NETWORK_VISUALISATION_PPM_FILE_EXTENSION;
+	bool ANNuseOutputPPMFileRaytraced = false;
+	string ANNoutputPPMFileNameRaytraced = string(NEURAL_NETWORK_VISUALISATION_BASE_FILE_NAME) + NEURAL_NETWORK_VISUALISATION_PPM_RAYTRACED_FILE_EXTENSION;
+	string ANNoutputTALFileName = string(NEURAL_NETWORK_VISUALISATION_BASE_FILE_NAME) + NEURAL_NETWORK_VISUALISATION_TAL_FILE_EXTENSION;
+	bool ANNuseSprites = true;
+	
+	//int widthSVG = 3840;	//1920
+	//int heightSVG = 2160;	//1080	//1400
+	int widthSVG = 14400;
+	int heightSVG = 2430;
+	
+	ANNdisplay.outputNeuralNetworkToVectorGraphicsAndRaytrace(translatorVariables->firstInputNeuronInNetwork, ANNuseSprites, ANNuseOutputPPMFileRaytraced, ANNdisplayInOpenGL, ANNuseOutputLDRFile, ANNuseOutputSVGFile, ANNuseOutputPPMFile, ANNoutputLDRFileName, ANNoutputSVGFileName, ANNoutputPPMFileName, ANNoutputPPMFileNameRaytraced, ANNoutputTALFileName, rasterImageWidth, rasterImageHeight, widthSVG, heightSVG);
+
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_ANN_DELAY_ANN_CONNECTIVITY_TILL_END
+	GIAposRelTranslatorSANIFormation.createANNconnectivityReset(GIAposRelTranslatorRulesGroupTypes);
+	#endif
+	
+	incrementalGenerationIndex++;
+	
+	return result;
+}
+#endif
 
 
 #endif
