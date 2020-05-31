@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorSANIPropagateCompact.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3l1b 28-May-2020
+ * Project Version: 3l1c 28-May-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Propagate Compact - ~O(n)
  * /
@@ -327,6 +327,19 @@ bool GIAposRelTranslatorSANIPropagateCompactClass::performPropagation(GIAtransla
 		#endif
 	}
 	
+	/*
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_ANN_COLOUR_CONNECTIONS_BASED_ON_ACTIVATION_INPUT_NEURONS
+	//deactivate all input neurons
+	GIAposRelTranslatorRulesGroupNeuralNetwork* firstGroupInInputLayerSectionWordPOStype = GIAposRelTranslatorSANIFormation.getFirstGroupInInputLayerSectionWordPOStype();
+	GIAposRelTranslatorRulesGroupNeuralNetwork* currentGroupInInputLayerSection = firstGroupInInputLayerSection;
+	for(int i=0; i<groupIndexInSection; i++)
+	{
+		currentGroupInInputLayerSection->neuronActive = false;
+		currentGroupInInputLayerSection = currentGroupInInputLayerSection->next;
+	}
+	#endif
+	*/
+	
 	if(forwardPropogationSentenceData->toplevelGroupActivationFound)
 	{
 		result = true;
@@ -418,10 +431,20 @@ bool GIAposRelTranslatorSANIPropagateCompactClass::propagateWordThroughNetworkGr
 		#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_PROPAGATE
 		cout << "GIAposRelTranslatorSANIPropagateLightOptimisedClass::propagateWordThroughNetworkIntro: GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_STRINGTYPE_LRPEXTERNALWORDLISTS, wordPOStype = " << wordPOStype << endl;
 		#endif
+		
+		#ifdef GIA_POS_REL_TRANSLATOR_SANI_ANN_COLOUR_CONNECTIONS_BASED_ON_ACTIVATION_INPUT_NEURONS
+		inputLayerGroup->neuronActive = true;
+		inputLayerGroup->neuronReference->activationLevel = ANN_ALGORITHM_SEQUENCE_GRAMMAR_NETWORK_PRINT_COLOURS_ACTIVE_LEVEL_FULL;
+		#endif
 	
 		GIAposRelTranslatorRulesGroupParseTree* activationPathWordFirstParseTreeGroup = NULL;	//not properly used by GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR
 		int layer = 0;
 		propagateWordThroughNetworkGroup(translatorVariables, inputLayerGroup, forwardPropogationSignalData, forwardPropogationWordData, forwardPropogationSentenceData, layer, activationPathWordFirstParseTreeGroup);
+		
+		#ifdef GIA_POS_REL_TRANSLATOR_SANI_ANN_COLOUR_CONNECTIONS_BASED_ON_ACTIVATION_INPUT_NEURONS
+		inputLayerGroup->neuronActive = false;
+		inputLayerGroup->neuronReference->activationLevel = ANN_ALGORITHM_SEQUENCE_GRAMMAR_NETWORK_PRINT_COLOURS_ACTIVE_LEVEL_INACTIVE;
+		#endif
 	}
 			
 	return result;
@@ -2438,8 +2461,11 @@ bool GIAposRelTranslatorSANIPropagateCompactClass::printSANInetworkSVG(GIAtransl
 	string ANNoutputTALFileName = string(NEURAL_NETWORK_VISUALISATION_BASE_FILE_NAME) + NEURAL_NETWORK_VISUALISATION_TAL_FILE_EXTENSION;
 	bool ANNuseSprites = true;
 	
+	//small:
 	//int widthSVG = 3840;	//1920
 	//int heightSVG = 2160;	//1080	//1400
+	
+	//large/medium:
 	int widthSVG = 14400;
 	int heightSVG = 2430;
 	

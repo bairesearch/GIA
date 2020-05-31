@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3l1b 28-May-2020
+ * Project Version: 3l1c 28-May-2020
  * Requirements: 
  * Description: GIA specific global definitions
  * /
@@ -771,6 +771,9 @@
 	//#endif
 	
 	#define GIA_POS_REL_TRANSLATOR_SANI_ANN_COLOUR_CONNECTIONS_BASED_ON_ACTIVATION	//GIA3l1b
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_ANN_COLOUR_CONNECTIONS_BASED_ON_ACTIVATION
+		#define GIA_POS_REL_TRANSLATOR_SANI_ANN_COLOUR_CONNECTIONS_BASED_ON_ACTIVATION_INPUT_NEURONS	//GIA3l1c
+	#endif
 	
 	#define GIA_POS_REL_TRANSLATOR_SANI_ANN_COLOUR_CONNECTIONS_BASED_ON_COMPONENT_INDEX	//GIA3l1a
 	#ifdef GIA_POS_REL_TRANSLATOR_SANI_ANN_COLOUR_CONNECTIONS_BASED_ON_COMPONENT_INDEX
