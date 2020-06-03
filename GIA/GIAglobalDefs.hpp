@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3l2a 02-June-2020
+ * Project Version: 3l3a 02-June-2020
  * Requirements: 
  * Description: GIA specific global definitions
  * /
@@ -747,7 +747,7 @@
 #ifdef GIA_POS_REL_TRANSLATOR
 	#define GIA_POS_REL_TRANSLATOR_SANI	//GIA3g1a
 	#ifdef GIA_POS_REL_TRANSLATOR_SANI
-		#define GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR	//GIA3j2a	
+		//#define GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR	//GIA3j2a	
 	#endif
 #endif
 
@@ -790,6 +790,10 @@
 //#define GIA_DEBUG_DISABLE_3k_CODE
 #ifndef GIA_DEBUG_DISABLE_3k_CODE
 
+	#ifdef USE_NLC
+		#define GIA_PREPROCESSOR_POS_TYPE_CROSS_REFERENCE_STANFORD_POS_ARRAY_LIMITED	//GIA3l3a	//restores GIApreprocessorPOStypeCrossReferenceStanfordPos to original state
+	#endif
+	
 	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR
 	
 	

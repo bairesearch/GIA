@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorSentenceClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3l2a 02-June-2020
+ * Project Version: 3l3a 02-June-2020
  * Requirements: requires plain text file
  * Description: Preprocessor Sentence Class
  * /
@@ -135,7 +135,7 @@ bool GIApreprocessorSentenceClass::calculateParseIsolatedSubreferenceSets2(GIApr
 			result = true;
 			if(currentGIApreprocessorSentenceInList->parseIsolatedSubreferenceSetsFirst)
 			{
-				parseIsolatedSubreferenceSets2 = false;
+				*parseIsolatedSubreferenceSets2 = false;
 			}
 		}
 	}			

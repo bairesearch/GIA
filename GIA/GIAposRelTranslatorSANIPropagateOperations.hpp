@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorSANIPropagateOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3l2a 02-June-2020
+ * Project Version: 3l3a 02-June-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Operations - generic functions
  * /
@@ -39,7 +39,6 @@
 
 #include "GIAglobalDefs.hpp"
 
-#ifdef GIA_POS_REL_TRANSLATOR_SANI
 
 #include "SHAREDvars.hpp"
 #include "XMLparserClass.hpp"
@@ -71,7 +70,8 @@ class GIAposRelTranslatorSANIPropagateOperationsClass
 	//private: GIAposRelTranslatorParserOperationsClass GIAposRelTranslatorParserOperations;
 	#endif
 
-
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI
+	
 	public: void setParseSentenceReverseStrict(const bool parseSentenceReverseNew, GIAposRelTranslatorSANIForwardPropogationSentenceData* forwardPropogationSentenceData);	//set parseSentenceReverse irrespective of GIA_POS_REL_TRANSLATOR_SANI_REVERSE_DIRECTION
 	public: void setParseSentenceReverse(const bool normalDirection, GIAposRelTranslatorSANIForwardPropogationSentenceData* forwardPropogationSentenceData);	//determine and set parseSentenceReverse depending on GIA_POS_REL_TRANSLATOR_SANI_REVERSE_DIRECTION	
 
@@ -230,7 +230,8 @@ class GIAposRelTranslatorSANIPropagateOperationsClass
 	public: double generateRandomNumber();
 	#endif
 
-
+	#endif
+	
 
 	public: bool deleteGroup(GIAposRelTranslatorRulesGroupNeuralNetwork* group);
 		public: bool deleteComponents(vector<GIAposRelTranslatorRulesComponentNeuralNetwork*>* components);
@@ -285,6 +286,5 @@ class GIAposRelTranslatorSANIPropagateOperationsClass
 };
 
 
-#endif
 
 #endif
