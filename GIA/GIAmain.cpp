@@ -26,7 +26,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3l3a 02-June-2020
+ * Project Version: 3l3b 02-June-2020
  * Requirements: 
  * Description: Main
  * /
@@ -669,7 +669,7 @@ int main(const int argc, const char** argv)
 
 	if(SHAREDvarsClass().argumentExists(argc, argv, "-version"))
 	{
-		cout << "GIA.exe - Project Version: 3l3a 02-June-2020" << endl;
+		cout << "GIA.exe - Project Version: 3l3b 02-June-2020" << endl;
 		exit(EXIT_OK);
 	}
 
