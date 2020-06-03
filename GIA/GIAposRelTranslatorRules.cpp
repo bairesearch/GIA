@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorRules.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3l1d 28-May-2020
+ * Project Version: 3l2a 02-June-2020
  * Requirements: requires plain text file
  * Description: Part-of-speech Relation Translator Rules
  * /
@@ -1731,7 +1731,7 @@ GIAposRelTranslatorRulesGroupActivationMemory* GIAposRelTranslatorRulesClass::co
 
 
 
-
+#ifdef GIA_POS_REL_TRANSLATOR_SANI
 bool GIAposRelTranslatorRulesClass::updateComponentsOwnerGroupAndIndexes(GIAposRelTranslatorRulesGroupNeuralNetwork* group, vector<GIAposRelTranslatorRulesComponentNeuralNetwork*>* components, const bool isSubcomponent, GIAposRelTranslatorRulesComponentNeuralNetwork* ownerComponent)
 {
 	bool result = true;
@@ -1752,7 +1752,8 @@ bool GIAposRelTranslatorRulesClass::updateComponentsOwnerGroupAndIndexes(GIAposR
 	}
 	
 	return result;
-}		
+}
+#endif		
 
 #endif
 

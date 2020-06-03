@@ -27,7 +27,7 @@
  * File Name: GIAposRelTranslatorParserOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3l1d 28-May-2020
+ * Project Version: 3l2a 02-June-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator Parser Operations
  * /
@@ -36,6 +36,8 @@
 
 #include "GIAposRelTranslatorParserOperations.hpp"
 
+
+#ifdef GIA_POS_REL_TRANSLATOR_RULES_GIA3
 
 bool GIAposRelTranslatorParserOperationsClass::generateSemanticRelationsFromTxtRelationsWrapper(GIAtranslatorVariablesClass* translatorVariables, GIAposRelTranslatorRulesGroupParseTree* firstParseTreeGroup, int layer)
 {
@@ -1514,4 +1516,6 @@ bool GIAposRelTranslatorParserOperationsClass::createSemanticRelationMultiwordDa
 	
 	return result;
 }
+#endif
+
 #endif

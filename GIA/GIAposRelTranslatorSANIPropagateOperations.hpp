@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorSANIPropagateOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3l1d 28-May-2020
+ * Project Version: 3l2a 02-June-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Operations - generic functions
  * /
@@ -38,6 +38,9 @@
 
 
 #include "GIAglobalDefs.hpp"
+
+#ifdef GIA_POS_REL_TRANSLATOR_SANI
+
 #include "SHAREDvars.hpp"
 #include "XMLparserClass.hpp"
 #include "GIAposRelTranslatorRules.hpp"
@@ -68,7 +71,6 @@ class GIAposRelTranslatorSANIPropagateOperationsClass
 	//private: GIAposRelTranslatorParserOperationsClass GIAposRelTranslatorParserOperations;
 	#endif
 
-#ifdef GIA_POS_REL_TRANSLATOR_SANI
 
 	public: void setParseSentenceReverseStrict(const bool parseSentenceReverseNew, GIAposRelTranslatorSANIForwardPropogationSentenceData* forwardPropogationSentenceData);	//set parseSentenceReverse irrespective of GIA_POS_REL_TRANSLATOR_SANI_REVERSE_DIRECTION
 	public: void setParseSentenceReverse(const bool normalDirection, GIAposRelTranslatorSANIForwardPropogationSentenceData* forwardPropogationSentenceData);	//determine and set parseSentenceReverse depending on GIA_POS_REL_TRANSLATOR_SANI_REVERSE_DIRECTION	
@@ -227,7 +229,9 @@ class GIAposRelTranslatorSANIPropagateOperationsClass
 	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_FIRST_COMPONENTS_RANDOMISE
 	public: double generateRandomNumber();
 	#endif
-#endif
+
+
+
 	public: bool deleteGroup(GIAposRelTranslatorRulesGroupNeuralNetwork* group);
 		public: bool deleteComponents(vector<GIAposRelTranslatorRulesComponentNeuralNetwork*>* components);
 	public: bool deleteGroup(GIAposRelTranslatorRulesGroupParseTree* group);
@@ -268,15 +272,19 @@ class GIAposRelTranslatorSANIPropagateOperationsClass
 	public: bool getWordPOStypeFromAmbiguousWord(GIApreprocessorPlainTextWord* currentWord, int* wordPOStype);
 	#endif
 	
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR
 	public: bool printParseTreeGroupIndices(GIAposRelTranslatorRulesGroupParseTree* currentParseTreeGroup, int layer);
 	public: string printParseTreeGroupIndicesFlat(GIAposRelTranslatorRulesGroupParseTree* currentParseTreeGroup);
 
 	public: bool printParseTree(GIAposRelTranslatorRulesGroupParseTree* currentParseTreeGroup, int layer);
+	#endif
 	
 	#ifdef GIA_DEBUG_GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_WORDCONNECTIVITY_VERIFICATION_CONTINUOUS
 	public: bool verifyWordIndexCoverageIntegrity(GIAposRelTranslatorSANIForwardPropogationSentenceData* forwardPropogationSentenceData, GIAposRelTranslatorRulesGroupParseTree* currentParseTreeGroup, GIAposRelTranslatorSANIForwardPropogationWordData* forwardPropogationWordData);
 	#endif
 };
 
+
+#endif
 
 #endif

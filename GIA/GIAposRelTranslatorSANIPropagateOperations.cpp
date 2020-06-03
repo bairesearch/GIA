@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorSANIPropagateOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3l1d 28-May-2020
+ * Project Version: 3l2a 02-June-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Operations - generic functions
  * /
@@ -2754,6 +2754,7 @@ int GIAposRelTranslatorSANIPropagateOperationsClass::countParseTreeLeafSizeUnopt
 		
 	if(currentParseTreeGroup != NULL)
 	{	
+		#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR
 		if(currentParseTreeGroup->groupRef->groupTypeIsString)
 		{
 			cout << "currentParseTreeGroup->groupRef->groupTypeIsString" << endl;
@@ -2762,6 +2763,7 @@ int GIAposRelTranslatorSANIPropagateOperationsClass::countParseTreeLeafSizeUnopt
 		{
 			cout << "currentParseTreeGroup->groupRef->inputLayerNeuron" << endl;
 		}
+		#endif
 			
 		for(int i=0; i<currentParseTreeGroup->components.size(); i++)
 		{
@@ -3003,8 +3005,6 @@ double GIAposRelTranslatorSANIPropagateOperationsClass::generateRandomNumber()
 {
 	double randomNumberBetween0And1 = rand()/double(RAND_MAX);
 }
-#endif
-
 #endif
 
 
@@ -3423,6 +3423,7 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::getWordPOStypeFromAmbiguou
 #endif	
 
 
+#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR
 bool GIAposRelTranslatorSANIPropagateOperationsClass::printParseTreeGroupIndices(GIAposRelTranslatorRulesGroupParseTree* currentParseTreeGroup, int layer)
 {
 	bool result = true;
@@ -3477,7 +3478,6 @@ string GIAposRelTranslatorSANIPropagateOperationsClass::printParseTreeGroupIndic
 	return groupIndicesString;
 }
 
-
 bool GIAposRelTranslatorSANIPropagateOperationsClass::printParseTree(GIAposRelTranslatorRulesGroupParseTree* currentParseTreeGroup, int layer)
 {
 	bool result = true;
@@ -3508,6 +3508,8 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::printParseTree(GIAposRelTr
 
 	return result;
 }
+#endif
+
 
 #ifdef GIA_DEBUG_GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_WORDCONNECTIVITY_VERIFICATION_CONTINUOUS
 bool GIAposRelTranslatorSANIPropagateOperationsClass::verifyWordIndexCoverageIntegrity(GIAposRelTranslatorSANIForwardPropogationSentenceData* forwardPropogationSentenceData, GIAposRelTranslatorRulesGroupParseTree* currentParseTreeGroup, GIAposRelTranslatorSANIForwardPropogationWordData* forwardPropogationWordData)
@@ -3578,6 +3580,9 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::verifyWordIndexCoverageInt
 	return result;
 }
 #endif
+
+#endif
+
 
 
 

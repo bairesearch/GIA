@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorSANIPropagateCompactGenerate.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3l1d 28-May-2020
+ * Project Version: 3l2a 02-June-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Propagate Compact - unsupervised training of sequence grammar parse network
  * /
@@ -1069,12 +1069,10 @@ bool GIAposRelTranslatorSANIPropagateCompactGenerateClass::addNeuronToList(vecto
 	#endif
 	
 	#endif
-	#endif
 	
 	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS
 	//why doesnt the following "if(forwardPropogationSentenceData->activatedNeuronWithMaxWordIndexCoverageVariableStartComponent)" code work?
 	#else
-	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_VARIABLE_FIRST_COMPONENTS
 	if(forwardPropogationSentenceData->activatedNeuronWithMaxWordIndexCoverageVariableStartComponent)
 	{
 		#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_BASIC
@@ -1115,7 +1113,6 @@ bool GIAposRelTranslatorSANIPropagateCompactGenerateClass::addNeuronToList(vecto
 			addComponentToGroup(forwardPropogationSentenceData, grammaticalSentenceNeuron, variableComponent);
 		}
 	}
-	#endif
 	#endif
 	
 	#endif
@@ -2239,6 +2236,7 @@ bool GIAposRelTranslatorSANIPropagateCompactGenerateClass::markSubNeurons(GIApos
 	
 	return result;
 }
+#endif
 bool GIAposRelTranslatorSANIPropagateCompactGenerateClass::markSubNeuronsReset(GIAposRelTranslatorRulesGroupNeuralNetwork* currentNeuron)
 {
 	bool result = true;

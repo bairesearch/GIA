@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorRules.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3l1d 28-May-2020
+ * Project Version: 3l2a 02-June-2020
  * Requirements: requires plain text file
  * Description: Part-of-speech Relation Translator Rules
  * /
@@ -38,13 +38,15 @@
 
 
 #include "GIAglobalDefs.hpp"
+
+#ifdef GIA_POS_REL_TRANSLATOR_RULES
+
 #include "XMLparserClass.hpp"
 #include "GIAposRelTranslatorRulesGroupClass.hpp"
 #include "GIAposRelTranslatorRulesComponentClass.hpp"
 #ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR
 //#include "GIAposRelTranslatorSANIPropagateCompactGenerate.hpp"
 #endif
-
 
 #define GIA_POS_REL_TRANSLATOR_RULES_GROUPS_WITH_NO_EXTERNAL_PROCESSING_NUMBER_OF_TYPES (2)
 static string GIAtxtRelWithNoExternalProcessingGroupNameArray[GIA_POS_REL_TRANSLATOR_RULES_GROUPS_WITH_NO_EXTERNAL_PROCESSING_NUMBER_OF_TYPES] = {"definitionAlias1-withNoExternalProcessing", "definitionAlias2-withNoExternalProcessing"};
@@ -294,8 +296,6 @@ class GIAposRelTranslatorRulesClass
 	//private: GIAposRelTranslatorSANIPropagateCompactGenerateClass GIAposRelTranslatorSANIPropagateCompactGenerate;
 	#endif
 		
-	#ifdef GIA_POS_REL_TRANSLATOR_RULES
-
 	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR
 	public: void initialiseNewGroupIndex(vector<GIAposRelTranslatorRulesGroupType*>* GIAposRelTranslatorRulesGroupTypes);
 	public: int* getNewGroupIndex();
@@ -331,14 +331,14 @@ class GIAposRelTranslatorRulesClass
 		public: bool copyComponents(vector<GIAposRelTranslatorRulesComponentParseTree*>* components, vector<GIAposRelTranslatorRulesComponentParseTree*>* componentsNew);
 	public: GIAposRelTranslatorRulesGroupActivationMemory* copyGroup(GIAposRelTranslatorRulesGroupActivationMemory* group);
 	
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI
 	public: bool updateComponentsOwnerGroupAndIndexes(GIAposRelTranslatorRulesGroupNeuralNetwork* group, vector<GIAposRelTranslatorRulesComponentNeuralNetwork*>* components, const bool isSubcomponent, GIAposRelTranslatorRulesComponentNeuralNetwork* ownerComponent);
-
 	#endif
-
+	
 };
 
 
 
-
+#endif
 
 #endif
