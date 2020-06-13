@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3l3b 02-June-2020
+ * Project Version: 3l4a 05-June-2020
  * Requirements: 
  * Description: GIA specific global definitions
  * /
@@ -754,6 +754,11 @@
 
 //#define GIA_DEBUG_DISABLE_3l_CODE
 #ifndef GIA_DEBUG_DISABLE_3l_CODE
+	
+	//QA variables:
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR
+		//#define GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_ENSURE_ONLY_ONE_TOP_LEVEL_NEURON_FOUND_PER_SENTENCE	//GIA3l4a	//CHECKTHIS	//this ensures that multiple grammatically valid parse trees are not generated for any sentence POS permutation	//note this is not required if the algorithm can select the highest weighted valid parse tree
+	#endif
 	
 	//#ifdef GIA_POS_REL_TRANSLATOR_SANI_ANN	//not yet defined
 		//#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS	//not yet defined

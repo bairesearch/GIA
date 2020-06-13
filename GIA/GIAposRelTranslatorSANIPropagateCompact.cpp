@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorSANIPropagateCompact.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3l3b 02-June-2020
+ * Project Version: 3l4a 05-June-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Propagate Compact - ~O(n)
  * /
@@ -860,65 +860,78 @@ bool GIAposRelTranslatorSANIPropagateCompactClass::propagateWordThroughNetworkGr
 
 					if(topLevelParseTreeGroupWordIndexCoverage == forwardPropogationSentenceData->sentenceContents->size())
 					{
-						#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR
-						int leafSize = GIAposRelTranslatorSANIPropagateOperations.countParseTreeLeafSize(activationPathWordCurrentParseTreeGroupOwner);
-						int maxLeafSize = 0;
-						int maxDepth = 0;
-						#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_RECORD_DEPTH
-						GIAposRelTranslatorSANIPropagateOperations.getNeuralNetworkDepth(ownerGroup, &maxDepth);
-						#else
-						GIAposRelTranslatorSANIPropagateOperations.countNeuralNetworkMaxLeafSizeAndDepth(ownerGroup, &maxLeafSize, &maxDepth);
-						#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_OPTIMISE_FOR_DIVERGENT_CONVERGENT_PATHWAYS
-						GIAposRelTranslatorSANIPropagateOperations.countNeuralNetworkMaxLeafSizeAndDepthReset(ownerGroup);
-						#endif
-						#endif
-						cout << "topLevelGroup" << endl;
-						cout << "\tparseTree leafSize = " << leafSize << endl;
-						cout << "\tneuralNetwork maxLeafSize = " << maxLeafSize << endl;
-						cout << "\tneuralNetwork maxDepth = " << maxDepth << endl;
-						#endif
-						
-
-						#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_WORDCONNECTIVITY_VERIFICATION
-						if(!GIAposRelTranslatorSANIPropagateOperations.updatePerformanceGroup(activationPathWordCurrentParseTreeGroupOwner, forwardPropogationSentenceData, layer))
+						#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_ENSURE_ONLY_ONE_TOP_LEVEL_NEURON_FOUND_PER_SENTENCE
+						if(forwardPropogationSentenceData->toplevelGroupActivationFound)
 						{
-							cerr << "GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_WORDCONNECTIVITY_VERIFICATION; GIAposRelTranslatorSANIPropagateCompactClass::propagateWordThroughNetworkGroupComponent error: !GIAposRelTranslatorSANIPropagateOperations.updatePerformance" << endl;
-							cerr << "forwardPropogationSentenceData->performance = " << forwardPropogationSentenceData->performance << endl;
-							cerr << "forwardPropogationSentenceData->sentenceContents->size() = " << forwardPropogationSentenceData->sentenceContents->size() << endl;
-							GIAposRelTranslatorSANIPropagateOperations.printParseTree(activationPathWordCurrentParseTreeGroupOwner, 0);
+							cerr << "GIAposRelTranslatorSANIPropagateCompactClass::propagateWordThroughNetworkGroupComponent - topLevelGroup && already found (forwardPropogationSentenceData->toplevelGroupActivationFound)" << endl;
 							exit(EXIT_ERROR);
 						}
+						else
+						{
 						#endif
+						
+							#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR
+							int leafSize = GIAposRelTranslatorSANIPropagateOperations.countParseTreeLeafSize(activationPathWordCurrentParseTreeGroupOwner);
+							int maxLeafSize = 0;
+							int maxDepth = 0;
+							#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_RECORD_DEPTH
+							GIAposRelTranslatorSANIPropagateOperations.getNeuralNetworkDepth(ownerGroup, &maxDepth);
+							#else
+							GIAposRelTranslatorSANIPropagateOperations.countNeuralNetworkMaxLeafSizeAndDepth(ownerGroup, &maxLeafSize, &maxDepth);
+							#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_OPTIMISE_FOR_DIVERGENT_CONVERGENT_PATHWAYS
+							GIAposRelTranslatorSANIPropagateOperations.countNeuralNetworkMaxLeafSizeAndDepthReset(ownerGroup);
+							#endif
+							#endif
+							cout << "topLevelGroup" << endl;
+							cout << "\tparseTree leafSize = " << leafSize << endl;
+							cout << "\tneuralNetwork maxLeafSize = " << maxLeafSize << endl;
+							cout << "\tneuralNetwork maxDepth = " << maxDepth << endl;
+							#endif
 
-						topLevelGroup = true;
 
-						forwardPropogationSentenceData->finishedPassingSentenceWords = true;
+							#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_WORDCONNECTIVITY_VERIFICATION
+							if(!GIAposRelTranslatorSANIPropagateOperations.updatePerformanceGroup(activationPathWordCurrentParseTreeGroupOwner, forwardPropogationSentenceData, layer))
+							{
+								cerr << "GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_WORDCONNECTIVITY_VERIFICATION; GIAposRelTranslatorSANIPropagateCompactClass::propagateWordThroughNetworkGroupComponent error: !GIAposRelTranslatorSANIPropagateOperations.updatePerformance" << endl;
+								cerr << "forwardPropogationSentenceData->performance = " << forwardPropogationSentenceData->performance << endl;
+								cerr << "forwardPropogationSentenceData->sentenceContents->size() = " << forwardPropogationSentenceData->sentenceContents->size() << endl;
+								GIAposRelTranslatorSANIPropagateOperations.printParseTree(activationPathWordCurrentParseTreeGroupOwner, 0);
+								exit(EXIT_ERROR);
+							}
+							#endif
 
-						forwardPropogationSentenceData->toplevelGroupActivationFound = true;
+							topLevelGroup = true;
 
-						parseTreeMaxWeight = maxWeight;
+							forwardPropogationSentenceData->finishedPassingSentenceWords = true;
 
-						#ifdef GIA_POS_REL_TRANSLATOR_SANI_PARSE_SAVE_PARSE_TREE
-						#ifdef GIA_POS_REL_TRANSLATOR_SANI_REPLICATE_TOP_LEVEL_PARSE_TREE
-						GIAposRelTranslatorSANIPropagateOperations.deleteParseTree(topLevelParseTreeGroupLocalCompact, 0);
-						topLevelParseTreeGroupLocalCompact = GIAposRelTranslatorSANIPropagateOperations.replicateParseTree(activationPathWordCurrentParseTreeGroupOwner, 0);
-						#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS_POS_TYPES
-						//printBackpropParseTree(topLevelParseTreeGroupLocalCompact, 3);
-						#endif
-						#else
-						//OLD: topLevelParseTreeGroupLocalCompact = activationPathWordCurrentParseTreeGroupOwner;
-						//copy currentParseTreeGroupTemp so it cant be overwritten;
-						topLevelParseTreeGroupLocalCompact = GIAposRelTranslatorRules.copyGroup(activationPathWordCurrentParseTreeGroupOwner);
-						#endif
-						#endif
+							forwardPropogationSentenceData->toplevelGroupActivationFound = true;
 
-						#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS_POS_TYPES
-						cout << "topLevelGroup" << endl;
-						#ifdef GIA_POS_REL_TRANSLATOR_SANI_TAKE_LAST_SUCCESSFUL_PARSE_LIMIT_ITERATIONS_PREFERENCE_WEIGHT
-						cout << "parseTreeMaxWeight1 = " << parseTreeMaxWeight << endl;
-						#endif
-						cout << "topLevelParseTreeGroupLocalCompact->groupName = " << activationPathWordCurrentParseTreeGroupOwner->groupName << endl;
-						printBackpropParseTree(activationPathWordCurrentParseTreeGroupOwner, 3);
+							parseTreeMaxWeight = maxWeight;
+
+							#ifdef GIA_POS_REL_TRANSLATOR_SANI_PARSE_SAVE_PARSE_TREE
+							#ifdef GIA_POS_REL_TRANSLATOR_SANI_REPLICATE_TOP_LEVEL_PARSE_TREE
+							GIAposRelTranslatorSANIPropagateOperations.deleteParseTree(topLevelParseTreeGroupLocalCompact, 0);
+							topLevelParseTreeGroupLocalCompact = GIAposRelTranslatorSANIPropagateOperations.replicateParseTree(activationPathWordCurrentParseTreeGroupOwner, 0);
+							#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS_POS_TYPES
+							//printBackpropParseTree(topLevelParseTreeGroupLocalCompact, 3);
+							#endif
+							#else
+							//OLD: topLevelParseTreeGroupLocalCompact = activationPathWordCurrentParseTreeGroupOwner;
+							//copy currentParseTreeGroupTemp so it cant be overwritten;
+							topLevelParseTreeGroupLocalCompact = GIAposRelTranslatorRules.copyGroup(activationPathWordCurrentParseTreeGroupOwner);
+							#endif
+							#endif
+
+							#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS_POS_TYPES
+							cout << "topLevelGroup" << endl;
+							#ifdef GIA_POS_REL_TRANSLATOR_SANI_TAKE_LAST_SUCCESSFUL_PARSE_LIMIT_ITERATIONS_PREFERENCE_WEIGHT
+							cout << "parseTreeMaxWeight1 = " << parseTreeMaxWeight << endl;
+							#endif
+							cout << "topLevelParseTreeGroupLocalCompact->groupName = " << activationPathWordCurrentParseTreeGroupOwner->groupName << endl;
+							printBackpropParseTree(activationPathWordCurrentParseTreeGroupOwner, 3);
+							#endif
+						#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_ENSURE_ONLY_ONE_TOP_LEVEL_NEURON_FOUND_PER_SENTENCE
+						}
 						#endif
 					}
 				}
