@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorSANIPropagateOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3l4a 05-June-2020
+ * Project Version: 3l5a 10-June-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Operations - generic functions
  * /
@@ -355,8 +355,10 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::propagateWordThroughNetwor
 							#endif
 							if(variableFirstComponentTypeRequirements)
 							{
+								#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_FIRST_COMPONENTS_NON_STRING
 								if(component->componentType != GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_STRING)	//added GIA3j5aTEMP65
 								{
+								#endif
 									bool passCriteria = true;
 
 									#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_FIRST_COMPONENT_ALL_NEURONS_IN_COMPONENT_SUBGROUPS_ARE_UNIQUE
@@ -382,6 +384,7 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::propagateWordThroughNetwor
 									#endif
 									{	
 										passCriteria = false;
+										//cout << "groupContainsNeuronWithinProspectiveAlternateSubgroupEfficient" << endl;
 									}
 									#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_OPTIMISE_FOR_DIVERGENT_CONVERGENT_PATHWAYS
 									groupContainsNeuronWithinProspectiveAlternateSubgroupReset(secondComponentSubGroup);
@@ -409,6 +412,7 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::propagateWordThroughNetwor
 									if(findValidDualLowerLevelConnection(forwardPropogationSentenceData, forwardPropogationWordData, components, component, false))
 									{	
 										passCriteria = false;
+										//cout << "findValidDualLowerLevelConnection" << endl;
 									}
 									if(passCriteria)
 									{
@@ -418,7 +422,9 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::propagateWordThroughNetwor
 									#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_DISABLE_MULTIPLE_INPUTS_IF_HAS_IDENTICAL_COMPONENTS
 									}
 									#endif	
+								#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_FIRST_COMPONENTS_NON_STRING
 								}
+								#endif
 							}	
 						}
 						else
@@ -438,7 +444,20 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::propagateWordThroughNetwor
 							if(*previousActiveComponent == NULL)
 							{
 								//support activation of group components with missing start components
-								*missingStartComponentsFound = true;
+								#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_FIRST_COMPONENTS_NON_STRING_COMPREHENSIVE
+								if(component->componentType != GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_STRING)
+								{
+								#endif
+									*missingStartComponentsFound = true;
+								#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_FIRST_COMPONENTS_NON_STRING_COMPREHENSIVE
+								}
+								else
+								{
+									//cout << "GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_FIRST_COMPONENTS_NON_STRING_COMPREHENSIVE: (component->componentType == GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_STRING)" << endl;
+									stillParsingActiveComponents = false;	
+								}
+								#endif
+								
 							}
 							else
 							{	
@@ -1782,45 +1801,44 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::traceBackpropParseTree(GIA
 		{
 			GIAposRelTranslatorRulesComponentParseTree* currentComponent = (currentParseTreeGroup->components)[i];
 			
-			/*
 			#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_PROPAGATE_EXTRA
 			if(print)	
 			{
 				printComponent(currentComponent, level);	//TEMP for DEBUG
 			}
 			#endif
-			*/
-			
-			#ifndef GIA_POS_REL_TRANSLATOR_SANI_PARSE_PERFORMANCE_RECORD_PERFORMANCE_METHOD_OLD_INCREMENT_FOR_EVERY_GROUP_REF_RECURSE
-			if(performancePreprocess)
-			{	
-				if(GIApreprocessorWordClassObject.isWordInWordlist(sentenceContents, currentComponent->candidateStringMatch))
-				{					
-					#ifdef GIA_POS_REL_TRANSLATOR_SANI_ENFORCE_WORD_CONNECTIVITY_POSHOC_STRICT_MUTUALLY_EXCLUSIVE
-					if(currentComponent->componentType == GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_STRING)	//redundant?
-					{
-						if(currentComponent->candidateStringMatch->alreadyFoundMatch)
-						{
-							result = false;
-							cout << "duplicate instance of word detected in parsetree - fail to parse sentence" << endl;
-							//duplicate instance of word detected in parsetree - fail to parse sentence
-						}
-						else
-						{
-					#endif							
-							currentComponent->candidateStringMatch->alreadyFoundMatch = true;
-							//nb this method won't work if subReferenceSets are syntactically identical (and neural net groups are therefore reused); eg the red dog eats a blue apple.
-								//"the" and "a" will use identical neural groups and so will only count to +1 performance total
-					#ifdef GIA_POS_REL_TRANSLATOR_SANI_ENFORCE_WORD_CONNECTIVITY_POSHOC_STRICT_MUTUALLY_EXCLUSIVE
-						}
-					}
-					#endif
-				}
-			}
-			#endif
-	
+		
 			if(currentComponent->componentType == GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_STRING)
 			{
+			
+				#ifndef GIA_POS_REL_TRANSLATOR_SANI_PARSE_PERFORMANCE_RECORD_PERFORMANCE_METHOD_OLD_INCREMENT_FOR_EVERY_GROUP_REF_RECURSE
+				if(performancePreprocess)
+				{	
+					if(GIApreprocessorWordClassObject.isWordInWordlist(sentenceContents, currentComponent->candidateStringMatch))
+					{	
+						#ifdef GIA_POS_REL_TRANSLATOR_SANI_ENFORCE_WORD_CONNECTIVITY_POSHOC_STRICT_MUTUALLY_EXCLUSIVE
+						if(currentComponent->componentType == GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_STRING)	//redundant?
+						{
+							if(currentComponent->candidateStringMatch->alreadyFoundMatch)
+							{
+								result = false;
+								//cout << "duplicate instance of word detected in parsetree - fail to parse sentence" << endl;
+								//duplicate instance of word detected in parsetree - fail to parse sentence
+							}
+							else
+							{
+						#endif		
+								currentComponent->candidateStringMatch->alreadyFoundMatch = true;
+								//nb this method won't work if subReferenceSets are syntactically identical (and neural net groups are therefore reused); eg the red dog eats a blue apple.
+									//"the" and "a" will use identical neural groups and so will only count to +1 performance total
+						#ifdef GIA_POS_REL_TRANSLATOR_SANI_ENFORCE_WORD_CONNECTIVITY_POSHOC_STRICT_MUTUALLY_EXCLUSIVE
+							}
+						}
+						#endif
+					}
+				}
+				#endif
+
 				if(print)
 				{
 					printComponent(currentComponent, level+1);	//+1 added @GIA3j5aTEMP66
@@ -1831,7 +1849,7 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::traceBackpropParseTree(GIA
 			{
 			#endif					
 				if(currentComponent->parseTreeGroupRef != NULL)
-				{							
+				{												
 					//#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_PROPAGATE_EXTRA
 					if(print)
 					{
@@ -2730,7 +2748,10 @@ int GIAposRelTranslatorSANIPropagateOperationsClass::countParseTreeLeafSize(GIAp
 {
 	int size = 0;
 	
-	size = currentParseTreeGroup->parseTreeMaxWordIndex - currentParseTreeGroup->parseTreeMinWordIndex + 1;
+	if(currentParseTreeGroup != NULL)
+	{
+		size = currentParseTreeGroup->parseTreeMaxWordIndex - currentParseTreeGroup->parseTreeMinWordIndex + 1;
+	}
 	
 	/*
 	if(currentParseTreeGroup != NULL)
@@ -2776,7 +2797,6 @@ int GIAposRelTranslatorSANIPropagateOperationsClass::countParseTreeLeafSizeUnopt
 	return size;
 }
 
-#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_FIRST_COMPONENTS_REQUIRE_MATCHING_DEPTH
 #ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_RECORD_DEPTH
 
 bool GIAposRelTranslatorSANIPropagateOperationsClass::adjustNetworkDepth(GIAposRelTranslatorRulesGroupNeuralNetwork* group)
@@ -2830,7 +2850,8 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::adjustNetworkDepthReset(GI
 
 #endif
 
-	
+#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_FIRST_COMPONENTS_FIRST_COMP_REQUIRE
+
 		
 bool GIAposRelTranslatorSANIPropagateOperationsClass::getNeuralNetworkDepth(GIAposRelTranslatorRulesGroupNeuralNetwork* currentNeuron, int* maxDepth)
 {
@@ -2978,7 +2999,7 @@ GIAposRelTranslatorRulesComponentNeuralNetwork* GIAposRelTranslatorSANIPropagate
 }
 
 
-#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_FIRST_COMPONENTS_REQUIRE_MATCHING_DEPTH	
+#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_FIRST_COMPONENTS_FIRST_COMP_REQUIRE_MATCHING_DEPTH	
 int GIAposRelTranslatorSANIPropagateOperationsClass::calculateDepthFromBinaryTreeLeafSize(int numberOfLeafNodesInBinaryTree)
 {
 	//see http://courses.cs.vt.edu/~cs3114/Fall09/wmcquain/Notes/T03a.BinaryTreeTheorems.pdf
