@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorSANIPropagateOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3l6b 21-June-2020
+ * Project Version: 3l6c 21-June-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Operations - generic functions
  * /
@@ -319,6 +319,58 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::propagateWordThroughNetwor
 				#ifdef GIA_POS_REL_TRANSLATOR_SANI_PROPAGATE_ALL_POS_VALUES_SIMULTANEOUSLY
 				}
 				#endif
+				
+				
+				#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_VARIABLE_LAST_COMPONENTS
+				if(forwardPropogationSentenceData->recordActivatedNeuronWithMaxWordIndexCoverageSupportVariableEndComponent)
+				{					
+					if(i == 0)
+					{
+						bool variableFirstComponentTypeRequirements = false;
+						if(!(component->neuronComponentConnectionActive))	//consider removing this requirement to allow groups identified for last variable components creation to have their activations reset
+						{
+							variableFirstComponentTypeRequirements = true;
+						}
+						if(variableFirstComponentTypeRequirements)
+						{
+							#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_COMPONENTS
+							bool testFirstComponentNotString = false;
+							bool testLastComponentNotString = false;
+							bool testFirstComponentSubgroupsUnique = false;
+							bool testLastComponentSubgroupsUnique = false;
+							bool testNotDualLowerLevelConnections = false;
+							#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_LAST_COMPONENTS_NON_STRING
+							testFirstComponentNotString = true;
+							testLastComponentNotString = true;
+							#endif
+							#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_LAST_COMPONENT_ALL_NEURONS_IN_FIRST_COMPONENT_SUBGROUPS_ARE_UNIQUE
+							testFirstComponentSubgroupsUnique = true;
+							#endif
+							#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_LAST_COMPONENT_ALL_NEURONS_IN_LAST_COMPONENT_SUBGROUPS_ARE_UNIQUE
+							testLastComponentSubgroupsUnique = true;
+							#endif
+							#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_DISABLE_MULTIPLE_INPUTS_IF_HAS_IDENTICAL_COMPONENTS
+							testNotDualLowerLevelConnections = true;
+							#endif
+							if(calculateVariableComponentPassCriteria(component, components, forwardPropogationSignalData, forwardPropogationWordData, forwardPropogationSentenceData, testFirstComponentNotString, testLastComponentNotString, testFirstComponentSubgroupsUnique, testLastComponentSubgroupsUnique, testNotDualLowerLevelConnections))
+							{
+							#endif
+								//cout << "missingOrVariableEndComponentFound = true" << endl;
+								*missingOrVariableEndComponentFound = true;
+							#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_COMPONENTS
+							}
+							#endif
+						}	
+					}
+					else
+					{
+						*missingOrVariableEndComponentFound = false;
+					}
+				}
+				else
+				{
+				}
+				#endif	
 			}
 			else
 			{
@@ -388,55 +440,6 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::propagateWordThroughNetwor
 						else
 						{
 							*missingOrVariableStartComponentFound = false;	//removed @GIA3j5aTEMP18
-						}
-					}
-					#endif
-					#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_VARIABLE_LAST_COMPONENTS
-					if(forwardPropogationSentenceData->recordActivatedNeuronWithMaxWordIndexCoverageSupportVariableEndComponent)
-					{
-						if(i == 0)
-						{
-							bool variableFirstComponentTypeRequirements = false;
-							#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_LAST_COMPONENTS
-							if(component->neuronComponentConnectionActive)
-							{
-								variableFirstComponentTypeRequirements = true;
-							}
-							#endif
-							if(variableFirstComponentTypeRequirements)
-							{
-								#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_COMPONENTS
-								bool testFirstComponentNotString = false;
-								bool testLastComponentNotString = false;
-								bool testFirstComponentSubgroupsUnique = false;
-								bool testLastComponentSubgroupsUnique = false;
-								bool testNotDualLowerLevelConnections = false;
-								#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_LAST_COMPONENTS_NON_STRING
-								testFirstComponentNotString = true;
-								testLastComponentNotString = true;
-								#endif
-								#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_LAST_COMPONENT_ALL_NEURONS_IN_FIRST_COMPONENT_SUBGROUPS_ARE_UNIQUE
-								testFirstComponentSubgroupsUnique = true;
-								#endif
-								#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_LAST_COMPONENT_ALL_NEURONS_IN_LAST_COMPONENT_SUBGROUPS_ARE_UNIQUE
-								testLastComponentSubgroupsUnique = true;
-								#endif
-								#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_DISABLE_MULTIPLE_INPUTS_IF_HAS_IDENTICAL_COMPONENTS
-								testNotDualLowerLevelConnections = true;
-								#endif
-								if(calculateVariableComponentPassCriteria(component, components, forwardPropogationSignalData, forwardPropogationWordData, forwardPropogationSentenceData, testFirstComponentNotString, testLastComponentNotString, testFirstComponentSubgroupsUnique, testLastComponentSubgroupsUnique, testNotDualLowerLevelConnections))
-								{
-								#endif
-									//cout << "missingOrVariableEndComponentFound = true" << endl;
-									*missingOrVariableEndComponentFound = true;
-								#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_COMPONENTS
-								}
-								#endif
-							}	
-						}
-						else
-						{
-							*missingOrVariableEndComponentFound = false;
 						}
 					}
 					#endif
@@ -585,6 +588,15 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::propagateWordThroughNetwor
 			if(*numberOfInactiveComponentsRemaining == 0)
 			{
 				*activationSequenceCompleted = true;
+				
+				/*
+				if(*missingOrVariableEndComponentFound)
+				{
+					cerr << "GIAposRelTranslatorSANIPropagateOperationsClass::propagateWordThroughNetworkGroupVerifyComponentSequenceActivationReady error: activationSequenceCompleted && missingOrVariableEndComponentFound" << endl;
+					exit(EXIT_ERROR);
+				}
+				*/
+	
 			}
 		#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_VARIABLE_FIRST_COMPONENTS	
 		}
@@ -594,6 +606,13 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::propagateWordThroughNetwor
 		#endif	
 		#endif
 	}
+	
+	/*
+	if(*missingOrVariableEndComponentFound)
+	{
+		cout << "2 missingOrVariableEndComponentFound = true" << endl;
+	}
+	*/
 
 	return sequentialActivationFound;
 }
@@ -674,7 +693,6 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::calculateVariableComponent
 		if(findValidDualLowerLevelConnection(forwardPropogationSentenceData, forwardPropogationWordData, components, component, false))
 		{	
 			passCriteria = false;
-			//cout << "findValidDualLowerLevelConnection" << endl;
 		}
 	}
 	#endif

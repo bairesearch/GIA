@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorSANIPropagateCompactGenerate.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3l6b 21-June-2020
+ * Project Version: 3l6c 21-June-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Propagate Compact - unsupervised training of sequence grammar parse network
  * /
@@ -488,6 +488,7 @@ bool GIAposRelTranslatorSANIPropagateCompactGenerateClass::findAndReconcileIncre
 			{	
 			#endif
 				//case c
+				//fully activated group coverage+weight is > partially activated group coverage+weight
 				#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_FORMATION2
 				cout << "B addNeuronToList, printParseTree:" << endl;
 				GIAposRelTranslatorSANIPropagateOperations.printParseTree(forwardPropogationSentenceData->activatedNeuronWithMaxWordIndexCoverage, 0);
@@ -503,34 +504,21 @@ bool GIAposRelTranslatorSANIPropagateCompactGenerateClass::findAndReconcileIncre
 				cout << "\tGIAposRelTranslatorSANIPropagateOperations.countParseTreeLeafSize(forwardPropogationSentenceData->activatedNeuronWithMaxWordIndexCoverage) = " << GIAposRelTranslatorSANIPropagateOperations.countParseTreeLeafSize(forwardPropogationSentenceData->activatedNeuronWithMaxWordIndexCoverage) << endl;
 				cout << "\tforwardPropogationSentenceData->activatedNeuronWithMaxWordIndexCoverageVariableStartComponent = " << forwardPropogationSentenceData->activatedNeuronWithMaxWordIndexCoverageVariableStartComponent << endl;
 				#endif
-				//fully activated group coverage+weight is > partially activated group coverage+weight
 
 				addNeuronToList(GIAposRelTranslatorRulesGroupTypes, forwardPropogationSentenceData, listOfHighLevelNeuronsCurrent, forwardPropogationSentenceData->activatedNeuronWithMaxWordIndexCoverage->groupRef, &indexInSequence);
 
 				#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_FIRST_COMPONENTS
 				forwardPropogationSentenceData->activatedNeuronWithMaxWordIndexCoverage->groupRef->activatedNeuronWithMaxWordIndexCoverageVariableStartComponentTemp = forwardPropogationSentenceData->activatedNeuronWithMaxWordIndexCoverageVariableStartComponent;
 				#endif
-
-				#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_COMPONENTS_X_COMP_REQUIRE_MATCHING_DEPTH
-				#ifndef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_ADD_NEW_NEURONS_TO_SYMMETRICAL_TREE
-				#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_RECORD_DEPTH
-				int matchedNeuronDepth = forwardPropogationSentenceData->activatedNeuronWithMaxWordIndexCoverage->groupRef->networkDepth;
-				#else
-				int matchedNeuronDepth = GIAposRelTranslatorSANIPropagateOperations.calculateDepthFromBinaryTreeLeafSize(GIAposRelTranslatorSANIPropagateOperations.countParseTreeLeafSize(forwardPropogationSentenceData->activatedNeuronWithMaxWordIndexCoverage));
-				#endif
-				forwardPropogationSentenceData->variableFirstComponentMaxDepth = max((forwardPropogationSentenceData->variableFirstComponentMaxDepth + variableFirstComponentMaxDepthModifier), matchedNeuronDepth);
-				#endif
-				#endif
-
 			#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_LAST_COMPONENTS
 			}
 			else
 			{
 				//case b
+				//partially activated group coverage+weight is > fully activated group coverage+weight
 				#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_BASIC
 				cout << "C addNeuronToList, forwardPropogationSentenceData->activatedNeuronWithMaxWordIndexCoverage->groupRef->groupIndex = " << forwardPropogationSentenceData->activatedNeuronWithMaxWordIndexCoverage->groupRef->groupIndex << endl;
 				#endif
-				//partially activated group coverage+weight is > fully activated group coverage+weight
 
 				addNeuronToList(GIAposRelTranslatorRulesGroupTypes, forwardPropogationSentenceData, listOfHighLevelNeuronsCurrent, forwardPropogationSentenceData->activatedNeuronWithMaxWordIndexCoverage->groupRef, &indexInSequence);
 
@@ -539,6 +527,17 @@ bool GIAposRelTranslatorSANIPropagateCompactGenerateClass::findAndReconcileIncre
 				#endif
 				
 			}
+			#endif
+			
+			#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_COMPONENTS_X_COMP_REQUIRE_MATCHING_DEPTH
+			#ifndef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_ADD_NEW_NEURONS_TO_SYMMETRICAL_TREE
+			#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_RECORD_DEPTH
+			int matchedNeuronDepth = forwardPropogationSentenceData->activatedNeuronWithMaxWordIndexCoverage->groupRef->networkDepth;
+			#else
+			int matchedNeuronDepth = GIAposRelTranslatorSANIPropagateOperations.calculateDepthFromBinaryTreeLeafSize(GIAposRelTranslatorSANIPropagateOperations.countParseTreeLeafSize(forwardPropogationSentenceData->activatedNeuronWithMaxWordIndexCoverage));
+			#endif
+			forwardPropogationSentenceData->variableFirstComponentMaxDepth = max((forwardPropogationSentenceData->variableFirstComponentMaxDepth + variableFirstComponentMaxDepthModifier), matchedNeuronDepth);
+			#endif
 			#endif
 				
 				
@@ -1266,9 +1265,9 @@ bool GIAposRelTranslatorSANIPropagateCompactGenerateClass::connectListOfHighLeve
 			int lowestLayerNeuronIndex = 0;
 			bool foundLowestLayerNeuron = findLowestLayerNeuron(highLevelNeuronPriorArray, &lowestLayerNeuron, &lowestLayerNeuronIndex);
 
-			//#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_FORMATION
+			#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_FORMATION
 			cout << "currentHighLevelNeuron->activatedNeuronWithMaxWordIndexCoverageVariableStartComponentTemp" << endl;
-			//#endif
+			#endif
 
 			grammaticalSentenceNeuronSubHigher = currentHighLevelNeuron;
 			addVariableComponentToGroup(forwardPropogationSentenceData, lowestLayerNeuron, grammaticalSentenceNeuronSubHigher, true);
