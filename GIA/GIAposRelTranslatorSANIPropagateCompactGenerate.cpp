@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorSANIPropagateCompactGenerate.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3l5a 10-June-2020
+ * Project Version: 3l6a 21-June-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Propagate Compact - unsupervised training of sequence grammar parse network
  * /
@@ -1618,7 +1618,7 @@ bool GIAposRelTranslatorSANIPropagateCompactGenerateClass::verifyAndMarkNeuronAs
 	GIAposRelTranslatorSANIPropagateCompact.identifyComponentIndexLastActivatedAndFirstUnactivatedIndex(forwardPropogationSentenceData, candidateNeuronBaseParseTree, &lastActivatedIndex, &firstUnactivatedIndex);
 		
 	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_SUPPORT_PARTIAL_SENTENCE_PROPAGATION
-	bool missingStartComponentsFound = false;
+	bool missingStartComponentFound = false;
 	int indexOfFirstComponent;
 	if(forwardPropogationSentenceData->parseSentenceReverse)
 	{
@@ -1626,7 +1626,7 @@ bool GIAposRelTranslatorSANIPropagateCompactGenerateClass::verifyAndMarkNeuronAs
 		GIAposRelTranslatorRulesComponentParseTree* firstActiveComponent = candidateNeuronBaseParseTree->components[indexOfFirstComponent];
 		if(firstActiveComponent->componentRef->componentIndex != candidateNeuronBase->components.size()-1)
 		{
-			missingStartComponentsFound = true;
+			missingStartComponentFound = true;
 		}
 	}
 	else
@@ -1635,10 +1635,10 @@ bool GIAposRelTranslatorSANIPropagateCompactGenerateClass::verifyAndMarkNeuronAs
 		GIAposRelTranslatorRulesComponentParseTree* firstActiveComponent = candidateNeuronBaseParseTree->components[indexOfFirstComponent];
 		if(firstActiveComponent->componentRef->componentIndex != 0)
 		{
-			missingStartComponentsFound = true;
+			missingStartComponentFound = true;
 		}
 	}
-	if(!missingStartComponentsFound)
+	if(!missingStartComponentFound)
 	{
 	#endif
 		bool missingEndComponentsFound = false;
