@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorSANIPropagateCompactGenerate.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3l6a 21-June-2020
+ * Project Version: 3l6b 21-June-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Propagate Compact - unsupervised training of sequence grammar parse network
  * /
@@ -141,7 +141,7 @@ class GIAposRelTranslatorSANIPropagateCompactGenerateClass
 	private: int calculateNextIndexInSequence(GIAposRelTranslatorSANIForwardPropogationSentenceData* forwardPropogationSentenceData);
 	
 	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_ADD_NEW_NEURONS_TO_SYMMETRICAL_TREE
-	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_FIRST_COMPONENTS_FIRST_COMP_REQUIRE_MATCHING_DEPTH
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_COMPONENTS_X_COMP_REQUIRE_MATCHING_DEPTH
 	private: int calculateLowestLayerNeuronMaxDepth(vector<GIAposRelTranslatorRulesGroupNeuralNetwork*>* highLevelNeuronPriorArray);
 	#endif
 	private: bool findLowestLayerNeuron(vector<GIAposRelTranslatorRulesGroupNeuralNetwork*>* highLevelNeuronPriorArray, GIAposRelTranslatorRulesGroupNeuralNetwork** lowestLayerNeuron, int* lowestLayerNeuronIndex);

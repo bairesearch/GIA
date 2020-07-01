@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorRulesGroupClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3l6a 21-June-2020
+ * Project Version: 3l6b 21-June-2020
  * Requirements: requires plain text file
  * Description: Part-of-speech Relation Translator Rules
  * /
@@ -258,6 +258,9 @@ public:
 	#endif
 	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_FIRST_COMPONENTS
 	bool activatedNeuronWithMaxWordIndexCoverageVariableStartComponentTemp;
+	#endif
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_LAST_COMPONENTS
+	bool activatedNeuronWithMaxWordIndexCoverageVariableEndComponentTemp;	
 	#endif
 	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_VERIFY_NO_CIRCULAR
 	bool verified;
@@ -498,9 +501,12 @@ public:
 	bool recordActivatedNeuronWithMaxWordIndexCoverage;
 	GIAposRelTranslatorRulesGroupParseTree* activatedNeuronWithMaxWordIndexCoverage;
 	bool activatedNeuronWithMaxWordIndexCoveragePartial;
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_LAST_COMPONENTS
+	bool recordActivatedNeuronWithMaxWordIndexCoverageSupportVariableEndComponent;
+	#endif
 	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_VARIABLE_FIRST_COMPONENTS
 	bool recordActivatedNeuronWithMaxWordIndexCoverageSupportVariableStartComponent;
-	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_FIRST_COMPONENTS_FIRST_COMP_REQUIRE_MATCHING_DEPTH
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_COMPONENTS_X_COMP_REQUIRE_MATCHING_DEPTH
 	int variableFirstComponentMaxDepth;
 	#endif
 	bool activatedNeuronWithMaxWordIndexCoverageVariableStartComponent;	//ie candidateCoverageMissingOrVariableStartComponent

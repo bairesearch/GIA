@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorRulesGroupClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3l6a 21-June-2020
+ * Project Version: 3l6b 21-June-2020
  * Requirements: requires plain text file
  * Description: Part-of-speech Relation Translator Rules
  * /
@@ -198,6 +198,9 @@ GIAposRelTranslatorRulesGroupNeuralNetwork::GIAposRelTranslatorRulesGroupNeuralN
 	#endif
 	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_FIRST_COMPONENTS
 	activatedNeuronWithMaxWordIndexCoverageVariableStartComponentTemp = false;
+	#endif
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_LAST_COMPONENTS
+	activatedNeuronWithMaxWordIndexCoverageVariableEndComponentTemp = false;	
 	#endif
 	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_VERIFY_NO_CIRCULAR
 	verified = false;
@@ -434,9 +437,12 @@ GIAposRelTranslatorSANIForwardPropogationSentenceData::GIAposRelTranslatorSANIFo
 	recordActivatedNeuronWithMaxWordIndexCoverage = false;
 	activatedNeuronWithMaxWordIndexCoverage = NULL;
 	activatedNeuronWithMaxWordIndexCoveragePartial = false;
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_LAST_COMPONENTS
+	recordActivatedNeuronWithMaxWordIndexCoverageSupportVariableEndComponent = false;
+	#endif
 	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_VARIABLE_FIRST_COMPONENTS
 	recordActivatedNeuronWithMaxWordIndexCoverageSupportVariableStartComponent = false;
-	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_FIRST_COMPONENTS_FIRST_COMP_REQUIRE_MATCHING_DEPTH
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_COMPONENTS_X_COMP_REQUIRE_MATCHING_DEPTH
 	variableFirstComponentMaxDepth = 0;
 	#endif
 	activatedNeuronWithMaxWordIndexCoverageVariableStartComponent = false;
