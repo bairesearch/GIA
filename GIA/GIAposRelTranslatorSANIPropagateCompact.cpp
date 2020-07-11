@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorSANIPropagateCompact.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3l7a 06-July-2020
+ * Project Version: 3l7b 06-July-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Propagate Compact - ~O(n)
  * /
@@ -638,12 +638,15 @@ bool GIAposRelTranslatorSANIPropagateCompactClass::propagateWordThroughNetworkGr
 			*/
 		}
 		
-			
+	
+		#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_VARIABLE_LAST_COMPONENTS
+		propagateVariableEndComponentRemoveLastParseTreeComponent(translatorVariables, layer, ownerGroup, currentComponent, &(ownerGroup->components), forwardPropogationSignalData, forwardPropogationWordData, forwardPropogationSentenceData, &activationSequenceCompleted, previousActiveComponent, finalActiveComponent, &existingActivationFoundEndComponent, componentWordConnectivityTests, &missingOrVariableEndComponentFound, sequentialActivationFound, activationPathWordCurrentParseTreeGroup);
+		#endif		
 		#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_VARIABLE_FIRST_COMPONENTS
 		verifyMissingOrVariableStartComponentFound(translatorVariables, layer, ownerGroup, currentComponent, &(ownerGroup->components), forwardPropogationSignalData, forwardPropogationWordData, forwardPropogationSentenceData, &activationSequenceCompleted, firstActiveComponentInGroup, previousActiveComponent, finalActiveComponent, existingActivationFoundStartComponent, &missingStartComponentFound, &variableStartComponentFound, componentWordConnectivityTests, &missingOrVariableStartComponentFound, numberOfInactiveComponentsRemaining, sequentialActivationFound, activationPathWordCurrentParseTreeGroup);
 		verifyMissingOrVariableStartComponentFoundAllowedWordIndices(translatorVariables, layer, ownerGroup, currentComponent, &(ownerGroup->components), forwardPropogationSignalData, forwardPropogationWordData, forwardPropogationSentenceData, &activationSequenceCompleted, firstActiveComponentInGroup, previousActiveComponent, finalActiveComponent, existingActivationFoundStartComponent, &missingStartComponentFound, &variableStartComponentFound, componentWordConnectivityTests, &missingOrVariableStartComponentFound, numberOfInactiveComponentsRemaining, sequentialActivationFound, activationPathWordCurrentParseTreeGroup);
 		#endif
-
+		
 		if(*sequentialActivationFound)
 		{	
 			//cout << "sequentialActivationFound: missingOrVariableStartComponentFound = " << missingOrVariableStartComponentFound << endl;
@@ -1077,6 +1080,7 @@ bool GIAposRelTranslatorSANIPropagateCompactClass::verifyMissingOrVariableStartC
 		{
 			//guaranteed: (missingStartComponentFound || missingStartComponentFound) && testComponent->w != 0 [ie second+ component]
 
+			//test verifyActivatedNeuronWithMaxWordIndexAllowed:
 			bool firstLastWordIndexTestHypotheticalWithoutVariableStartComponent = false; 
 			GIAposRelTranslatorRulesGroupParseTree activatedNeuronCandidate;	//activatedNeuronCandidate is only used for both verifyActivatedNeuronWithMaxWordIndexAllowed purposes and updating ownerGroup->currentParseTreeGroupTemp->parseTreeMinWordIndex/parseTreeMaxWordIndex in the case a variable first component is detected
 			activatedNeuronCandidate.parseTreeMaxWordIndex = forwardPropogationWordData->wordReference->translatorSentenceWordIndex;
@@ -1114,7 +1118,7 @@ bool GIAposRelTranslatorSANIPropagateCompactClass::verifyMissingOrVariableStartC
 				{
 					if(!(*sequentialActivationFound))
 					{
-						if((previousActiveComponent != NULL) && (ownerGroup->currentParseTreeGroupTemp->components.size() == 1))	//only 1 component has been activated
+						if((previousActiveComponent != NULL) && (ownerGroup->currentParseTreeGroupTemp->components.size() == 1))	//only 1 component has been activated	//ie (!*missingStartComponentFound)
 						{
 							//variable first component detected
 							//word indices do not align (ie !sequentialActivationFound), so assume first component was miscellaneously activated (mark it as variable) 
@@ -1195,7 +1199,113 @@ bool GIAposRelTranslatorSANIPropagateCompactClass::verifyMissingOrVariableStartC
 	return result;
 }
 #endif
+#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_VARIABLE_LAST_COMPONENTS
+bool GIAposRelTranslatorSANIPropagateCompactClass::propagateVariableEndComponentRemoveLastParseTreeComponent(GIAtranslatorVariablesClass* translatorVariables, int layer, GIAposRelTranslatorRulesGroupNeuralNetwork* ownerGroup, GIAposRelTranslatorRulesComponentNeuralNetwork* testComponent, vector<GIAposRelTranslatorRulesComponentNeuralNetwork*>* components, GIAposRelTranslatorSANIForwardPropogationSignalData* forwardPropogationSignalData, GIAposRelTranslatorSANIForwardPropogationWordData* forwardPropogationWordData, GIAposRelTranslatorSANIForwardPropogationSentenceData* forwardPropogationSentenceData, bool* activationSequenceCompleted, GIAposRelTranslatorRulesComponentNeuralNetwork* previousActiveComponent, GIAposRelTranslatorRulesComponentNeuralNetwork* finalActiveComponent, bool* existingActivationFoundEndComponent, const bool componentWordConnectivityTests, bool* missingOrVariableEndComponentFound, bool* sequentialActivationFound, GIAposRelTranslatorRulesGroupParseTree* activationPathWordCurrentParseTreeGroup)
+{
+	bool result = true;
+
+	if(componentWordConnectivityTests)
+	{
+		*sequentialActivationFound = true;	//redundant
+	}
+		
+	if(*existingActivationFoundEndComponent)
+	{
+		//test verifyActivatedNeuronWithMaxWordIndexAllowed:
+		
+		bool firstLastWordIndexTestHypotheticalWithVariableEndComponent = false; 
+				
+		GIAposRelTranslatorRulesGroupParseTree activatedNeuronCandidate;	//activatedNeuronCandidate is only used for both verifyActivatedNeuronWithMaxWordIndexAllowed purposes and updating ownerGroup->currentParseTreeGroupTemp->parseTreeMinWordIndex/parseTreeMaxWordIndex in the case a variable first component is detected
+
+		if(ownerGroup->currentParseTreeGroupTemp->components.size() == 0)
+		{
+			cerr << "GIAposRelTranslatorSANIPropagateCompactClass::propagateVariableEndComponentRemoveLastParseTreeComponent error: (ownerGroup->currentParseTreeGroupTemp->components.size() == 0)" << endl;
+			exit(EXIT_ERROR);
+		}
+		
+		//this code is derived from GIAposRelTranslatorSANIPropagateCompactClass::verifyMissingOrVariableStartComponentFound;
+		#ifdef GIA_POS_REL_TRANSLATOR_SANI_PARSE_SAVE_PARSE_TREE
+		//get first component in parseTreeGroup:
+		GIAposRelTranslatorRulesComponentParseTree* firstComponentParseTree = GIAposRelTranslatorSANIPropagateOperations.getFirstComponent(forwardPropogationSentenceData, ownerGroup->currentParseTreeGroupTemp, true);
+		if(firstComponentParseTree->parseTreeGroupRef != NULL)
+		{
+			activatedNeuronCandidate.parseTreeMaxWordIndex = firstComponentParseTree->parseTreeGroupRef->parseTreeMaxWordIndex;
+			activatedNeuronCandidate.parseTreeMinWordIndex = firstComponentParseTree->parseTreeGroupRef->parseTreeMinWordIndex;		
+		}
+		else
+		{
+			activatedNeuronCandidate.parseTreeMaxWordIndex = firstComponentParseTree->neuronComponentConnectionActiveWordRecord->translatorSentenceWordIndex;
+			activatedNeuronCandidate.parseTreeMinWordIndex = firstComponentParseTree->neuronComponentConnectionActiveWordRecord->translatorSentenceWordIndex;	
+		}
+		#else
+		//GIAposRelTranslatorRulesComponentNeuralNetwork* firstComponent = GIAposRelTranslatorSANIPropagateOperations.getFirstComponent(forwardPropogationSentenceData, ownerGroup, true);
+		cerr << "GIAposRelTranslatorSANIPropagateCompactClass::propagateVariableEndComponentRemoveLastParseTreeComponent currently requires GIA_POS_REL_TRANSLATOR_SANI_PARSE_SAVE_PARSE_TREE" << endl;
+		exit(EXIT_ERROR);
+		#endif
+		
+		updateParseTreeMaxMinWordIndexOfParentBasic(&activatedNeuronCandidate, forwardPropogationWordData, activationPathWordCurrentParseTreeGroup);
+		if(verifyActivatedNeuronWithMaxWordIndexAllowed(forwardPropogationSentenceData, forwardPropogationSignalData, &activatedNeuronCandidate, true))
+		{
+			firstLastWordIndexTestHypotheticalWithVariableEndComponent = true;
+		}
+		else
+		{
+			*existingActivationFoundEndComponent = false;
+			*sequentialActivationFound = false;
+		}
+
+		if(firstLastWordIndexTestHypotheticalWithVariableEndComponent)
+		{
+			if(*existingActivationFoundEndComponent)
+			{
+				*activationSequenceCompleted = false;	//redundant?
+
+				//this code is derived from GIAposRelTranslatorSANIPropagateCompactClass::propagateWordThroughNetworkGroupComponent (first section) and could be moved there (but would require rederivation of activatedNeuronCandidate)
+				if(*existingActivationFoundEndComponent)
+				{
+					//readjust ownerGroup->currentParseTreeGroupTemp including parseTreeMaxWordIndex/parseTreeMinWordIndex (remove last component) 
+
+					#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_PROPAGATE
+					cout << "******** reduceGroupParseTreeGroupRef, groupIndex = " << ownerGroup->groupIndex << endl;
+					#endif
+					GIAposRelTranslatorRulesGroupParseTree* parseTreeGroupRecord = ownerGroup->currentParseTreeGroupTemp;	//record reference to ownerGroup->currentParseTreeGroupTemp before resetting
+					
+					//GIAposRelTranslatorSANIPropagateOperations.resetGroupActivation(ownerGroup);	//not required as last component values will shortly be overwritten
+					GIAposRelTranslatorSANIPropagateOperations.resetGroupParseTreeGroupRef(ownerGroup, false);	
+									
+					*(ownerGroup->currentParseTreeGroupTemp) = *(parseTreeGroupRecord);	//replicate	//CHECKTHIS
+					//or ownerGroup->currentParseTreeGroupTemp = new GIAposRelTranslatorRulesGroupParseTree(*(parseTreeGroupRecord));	//NO: not allowed because ownerGroup->currentParseTreeGroupTemp has already been added to ownerGroup->parseTreeGroupMemory?
+					
+					GIAposRelTranslatorRulesGroupParseTree* currentParseTreeGroupTemp = ownerGroup->currentParseTreeGroupTemp;	//new ownerGroup->currentParseTreeGroupTemp
+					currentParseTreeGroupTemp->components.clear();
+					GIAposRelTranslatorRulesComponentParseTree* newFirstParseComponent = new GIAposRelTranslatorRulesComponentParseTree(*GIAposRelTranslatorSANIPropagateOperations.getFirstComponent(forwardPropogationSentenceData, parseTreeGroupRecord, true)); 	//replicate first parse tree component
+					if(forwardPropogationSentenceData->parseSentenceReverse)
+					{
+						//currentParseTreeGroupTemp->components.push_front(newParseComponent);
+						currentParseTreeGroupTemp->components.insert(currentParseTreeGroupTemp->components.begin(), newFirstParseComponent);
+					}
+					else
+					{
+						currentParseTreeGroupTemp->components.push_back(newFirstParseComponent);
+					}
+
+					#ifdef GIA_POS_REL_TRANSLATOR_SANI_FREE_MEMORY
+					parseTreeGroupListCompact.push_back(ownerGroup->currentParseTreeGroupTemp);
+					#endif	
+					#ifdef GIA_POS_REL_TRANSLATOR_SANI_ENFORCE_WORD_CONNECTIVITY_BETWEEN_PREVIOUS_ACTIVE_COMPONENTS_AND_NEWLY_ACTIVATED_COMPONENT_MEMORY
+					//ownerGroup->parseTreeGroupMemory.push_back(ownerGroup->currentParseTreeGroupTemp);	//not required (as memory is only currently used for groups with first component active)
+					#endif
+
+					ownerGroup->currentParseTreeGroupTemp->parseTreeMinWordIndex = activatedNeuronCandidate.parseTreeMinWordIndex;
+					ownerGroup->currentParseTreeGroupTemp->parseTreeMaxWordIndex = activatedNeuronCandidate.parseTreeMaxWordIndex;
+				}
+			}
+		}
+	}
 	
+	return result;
+}
+#endif	
 		
 
 
@@ -1422,7 +1532,7 @@ bool GIAposRelTranslatorSANIPropagateCompactClass::sequentialActivationConnectiv
 					{
                                         	groupHasPreceedingComponent = true;
                                                 
-                                        	/*
+                                        	/*	//removed GIA3l7a
 						bool lastActiveComponentInParseTreeIndexCheck = false;
 
 						//this check is presumably required in the event GIAposRelTranslatorSANIPropagateCompactClass::propagateWordThroughNetworkGroupComponent was previously called with missingStartComponentFound in order to save forwardPropogationSentenceData->activatedNeuronWithMaxWordIndexCoverage via updateActivatedNeuronWithMaxWordIndexCoverage 
