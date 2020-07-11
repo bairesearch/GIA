@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorSANIPropagateOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3l7b 06-July-2020
+ * Project Version: 3l7c 06-July-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Operations - generic functions
  * /
@@ -222,7 +222,7 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::propagateWordThroughNetwor
 									{
 										sequentialActivationFound = true;
 										*existingActivationFoundEndComponent = true;
-										cout << "existingActivationFoundEndComponent" << endl;
+										//cout << "existingActivationFoundEndComponent" << endl;
 										
 										if(ownerGroup->currentParseTreeGroupTemp == NULL)
 										{
@@ -1490,12 +1490,12 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::componentWordConnectivityT
 				
 			if(componentWordConnectivityTests(ownerGroup, prospectiveNewlyActiveComponentInParseTreeParseTreeGroupRef, lastActiveComponent, lastActiveComponentInParseTreeParseTreeGroupRef, lastActiveComponentInParseTree, previousActiveComponentInParseTreeParseTreeGroupRef, forwardPropogationWordData, existingActivationFoundStartComponent))
 			{	
-				cout << "existingActivationFoundEndComponent pass" << endl;
+				//cout << "existingActivationFoundEndComponent pass" << endl;
 				result = true;
 			}
 			else
 			{
-				cout << "existingActivationFoundEndComponent fail" << endl;	
+				//cout << "existingActivationFoundEndComponent fail" << endl;	
 			}  
 		}
 		else
@@ -3823,7 +3823,7 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::verifyWordIndexCoverageInt
 	}
 	if(!result)
 	{
-		//cerr << "GIA_DEBUG_GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_WORDCONNECTIVITY_VERIFICATION_CONTINUOUS;" << endl;
+		cerr << "GIA_DEBUG_GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_WORDCONNECTIVITY_VERIFICATION_CONTINUOUS;" << endl;
 		cerr << "currentParseTreeGroup->parseTreeMinWordIndex = " << currentParseTreeGroup->parseTreeMinWordIndex << endl;
 		cerr << "currentParseTreeGroup->parseTreeMaxWordIndex = " << currentParseTreeGroup->parseTreeMaxWordIndex << endl;
 		cerr << "wordIndexCurrent = " << wordIndexCurrent << endl;
