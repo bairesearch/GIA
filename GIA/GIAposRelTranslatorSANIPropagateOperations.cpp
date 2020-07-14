@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorSANIPropagateOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3l7c 06-July-2020
+ * Project Version: 3l7d 06-July-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Operations - generic functions
  * /
@@ -695,11 +695,14 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::calculateVariableComponent
 	}
 	if(testLastComponentSubgroupsUnique)
 	{	
+		#ifndef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_LAST_COMPONENTS
 		if(secondComponent->ANNbackGroupConnectionList.size() > 1)
 		{
 			cerr << "testLastComponentSubgroupsUnique; GIAposRelTranslatorSANIPropagateOperationsClass::calculateVariableComponentPassCriteria error: (secondComponent->ANNbackGroupConnectionList.size() > 1)" << endl;
 			exit(EXIT_ERROR);
 		}
+		#endif
+		
 		GIAposRelTranslatorRulesGroupNeuralNetwork* secondComponentSubGroup = (secondComponent->ANNbackGroupConnectionList)[0];	//second component only has 1 reference	
 		#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_PREVENT_INTRASENTENCE_MATCHING_EFFICIENT
 		if(groupContainsNeuronWithinProspectiveAlternateSubgroupEfficient(secondComponentSubGroup))

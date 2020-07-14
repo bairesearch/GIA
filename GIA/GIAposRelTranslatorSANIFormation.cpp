@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorSANIFormation.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3l7c 06-July-2020
+ * Project Version: 3l7d 06-July-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Formation
  * /
@@ -994,7 +994,7 @@ bool GIAposRelTranslatorSANIFormationClass::createANNconnectivity(vector<GIAposR
 					#ifdef GIA_POS_REL_TRANSLATOR_SANI_ANN_COLOUR_CONNECTIONS_BASED_ON_COMPONENT_INDEX
 					#ifdef GIA_POS_REL_TRANSLATOR_SANI_ANN_COLOUR_CONNECTIONS_BASED_ON_COMPONENT_INDEX_EXACT
 					ANNneuronConnection* connection = createANNconnection(groupSource, component);
-					connection->GIAcomponentIndexFirst = (bool)k;
+					connection->GIAcomponentIndexFirst = !((bool)k);
 					#else
 					ANNneuronConnection* connection = createANNconnection(groupSource, component);
 					connection->GIAcomponentIndex = k;
