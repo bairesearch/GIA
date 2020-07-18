@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorPermutations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3l7d 06-July-2020
+ * Project Version: 3l8a 15-July-2020
  * Requirements: requires plain text file
  * Description: Part-of-speech Relation Translator Permutations
  * /
@@ -408,7 +408,17 @@ bool GIAposRelTranslatorPermutationsClass::generateParseTreeIntroWrapper(GIAtran
 	
 		#ifdef GIA_POS_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START
 		#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_MAX_POS_PERMUTATIONS
+		#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_MAX_POS_PERMUTATIONS_FOR_PARTICULAR_SENTENCE
+		int maxPosPermutations = POSambiguityInfoUnambiguousPermutationArray->size();
+		if(currentGIApreprocessorSentenceInList->sentenceIndexOriginal == GIA_DEBUG_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_MAX_POS_PERMUTATIONS_FOR_PARTICULAR_SENTENCE_INDEX)
+		{
+			cout << "\n\n GIA_DEBUG_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_MAX_POS_PERMUTATIONS_FOR_PARTICULAR_SENTENCE" << endl;
+			maxPosPermutations = GIA_DEBUG_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_MAX_POS_PERMUTATIONS_NUM;
+		}
+		for(int i=0; i<maxPosPermutations; i++)
+		#else
 		for(int i=0; i<GIA_DEBUG_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_MAX_POS_PERMUTATIONS_NUM; i++)
+		#endif
 		#else
 		#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_SINGLE_POS_PERMUTATION
 		for(int i=0; i<1; i++)
