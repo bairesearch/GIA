@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorSANIPropagateOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3l8b 15-July-2020
+ * Project Version: 3l8c 15-July-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Operations - generic functions
  * /
@@ -129,18 +129,18 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::propagateWordThroughNetwor
 		//cout << "i = " << i << endl;
 		//cout << "c = " << c << endl;
 
-		GIAposRelTranslatorRulesComponentNeuralNetwork* component = (*components)[c];
+		GIAposRelTranslatorRulesComponentNeuralNetwork* currentComponent = (*components)[c];
 
 		#ifdef GIA_POS_REL_TRANSLATOR_SANI_ENFORCE_WORD_CONNECTIVITY
-		if(component->neuronComponentConnectionActive)
+		if(currentComponent->neuronComponentConnectionActive)
 		{
-			*finalActiveComponent = component;
+			*finalActiveComponent = currentComponent;
 		}
 		#endif
 						
 		if(stillParsingActiveComponents)
 		{
-			if(component == testComponent)
+			if(currentComponent == testComponent)
 			{
 				#ifdef GIA_POS_REL_TRANSLATOR_SANI_ENFORCE_WORD_CONNECTIVITY
 				if(*previousActiveComponent == NULL)
@@ -151,400 +151,32 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::propagateWordThroughNetwor
 				
 				stillParsingActiveComponents = false;
 
-				#ifdef GIA_POS_REL_TRANSLATOR_SANI_PROPAGATE_ALL_POS_VALUES_SIMULTANEOUSLY
-				bool previousComponentWasActivatedBySameWordDifferentPOSpropagation = false;
-				if(*previousActiveComponent != NULL)
-				{
-					if((*previousActiveComponent)->neuronComponentConnectionActiveWordRecord = forwardPropogationWordData->wordReference)
-					{
-						previousComponentWasActivatedBySameWordDifferentPOSpropagation = true;
-					}
-				}
-				if(!previousComponentWasActivatedBySameWordDifferentPOSpropagation)
-				{
-				#endif		
-				#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_PREVENT_WRITE_IF_UPPER_NEURON_ALREADY_CONTAINS_WORD_INDEX_OF_EXISTING_COMPONENT
-				bool upperNeuronContainsWordIndexOfProspectiveComponentTest = false;
-				if(!(component->ownerGroup->neuronActive))
-				{
-					if(upperNeuronContainsWordIndexOfProspectiveComponent(forwardPropogationSentenceData, forwardPropogationWordData, component, component->ownerGroup))
-					{
-						upperNeuronContainsWordIndexOfProspectiveComponentTest = true;
-					}
-				}
-				if(!upperNeuronContainsWordIndexOfProspectiveComponentTest)
-				{
-				#endif
-					
-					#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_PREVENT_ACTIVATION_IF_REPEATED_SEQUENCE_MISMATCH_DETECTED
-					bool allowFirstComponentActivation = true;
-					if(i == 0)	//start component in group
-					{
-						int wordTranslatorSentenceWordIndex = forwardPropogationWordData->w;
-						//if repeated POS instance detected in sentence starting from forwardPropogationWordData, and first section [lowest level input] of second component is not equivalent to same input group as first component, then disallow activation[/reactivation] of first component
-						if(repeatedSequenceDetected(forwardPropogationSentenceData, forwardPropogationWordData, activationPathWordCurrentParseTreeGroup, wordTranslatorSentenceWordIndex))
-						{
-							if(!findValidDualLowerLevelConnectionAlternate(forwardPropogationSentenceData, forwardPropogationWordData, components, component))
-							{
-								allowFirstComponentActivation = false;
-								//cout << "GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_PREVENT_ACTIVATION_IF_REPEATED_SEQUENCE_MISMATCH_DETECTED: repeatedSequenceDetected && !findValidDualLowerLevelConnectionAlternate: !allowComponentActivation" << endl;
-							}
-						}
-						//if repeated POS instance not detected in sentence starting from forwardPropogationWordData, and first section [lowest level input] of second component is equivalent to same input group as first component, then disallow activation[/reactivation] of first component 
-						if(!repeatedSequenceDetected(forwardPropogationSentenceData, forwardPropogationWordData, activationPathWordCurrentParseTreeGroup, wordTranslatorSentenceWordIndex))
-						{
-							if(findValidDualLowerLevelConnectionAlternate(forwardPropogationSentenceData, forwardPropogationWordData, components, component))
-							{
-								allowFirstComponentActivation = false;
-								//cout << "GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_PREVENT_ACTIVATION_IF_REPEATED_SEQUENCE_MISMATCH_DETECTED: !repeatedSequenceDetected && findValidDualLowerLevelConnectionAlternate: !allowComponentActivation" << endl;
-							}
-						}
-					}
-					if(allowFirstComponentActivation)
-					{
-					#endif			
-						if(component->neuronComponentConnectionActive)
-						{							
-							if(component->componentType == GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_REPEAT)	//if the component contains repeats, then accept it if it is already active
-							{
-								//sequential activation found
-								sequentialActivationFound = true;
-							}
-							else
-							{
-
-								//component already activated
-								#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR
-								#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_LAST_COMPONENTS_REMEMBER_FIRST_COMPONENT_WORD_INDEX
-								if(i != 0)
-								{
-									if(*previousActiveComponent != NULL)	//alternate test does not support !GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_VARIABLE_FIRST_COMPONENTS: if(!(*missingStartComponentFound))
-									{
-										sequentialActivationFound = true;
-										*existingActivationFoundEndComponent = true;
-										//cout << "existingActivationFoundEndComponent" << endl;
-										
-										if(ownerGroup->currentParseTreeGroupTemp == NULL)
-										{
-											cerr << "GIAposRelTranslatorSANIPropagateOperationsClass::propagateWordThroughNetworkGroupVerifyComponentSequenceActivationReady error: (ownerGroup->currentParseTreeGroupTemp == NULL)" << endl;
-											exit(EXIT_ERROR);		
-										}
-										else
-										{
-											if(ownerGroup->currentParseTreeGroupTemp->components.size() == 0)
-											{
-												cerr << "GIAposRelTranslatorSANIPropagateOperationsClass::propagateWordThroughNetworkGroupVerifyComponentSequenceActivationReady error: (ownerGroup->currentParseTreeGroupTemp->components.size() == 0)" << endl;
-												exit(EXIT_ERROR);
-											}
-										}
-									}
-								}
-								#endif
-								if(i == 0)	//start component in group
-								{
-									bool allowFirstComponentReset = true;
-									#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_PREVENT_RESET_IF_REPEATED_SEQUENCE_DETECTED
-									#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_PREVENT_RESET_IF_REPEATED_SEQUENCE_DETECTED_ACTIVE
-									//if first component input group matches second component input group, and repeated POS sequences detected in sentence from firstComponent matching first and second componets, then disallow reactivation/reset of first component 
-									int wordTranslatorSentenceWordIndex = component->neuronComponentConnectionActiveWordRecord->translatorSentenceWordIndex;
-									if(findValidDualLowerLevelConnection(forwardPropogationSentenceData, forwardPropogationWordData, components, component, true))
-									{
-										if(repeatedSequenceDetected(forwardPropogationSentenceData, forwardPropogationWordData, component->ownerGroup->currentParseTreeGroupTemp, wordTranslatorSentenceWordIndex))
-										{
-											allowFirstComponentReset = false;
-										}
-									}
-									#endif
-									#else
-									#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_FORCE_RESET_IF_NO_WORD_CONNECTIVITY_BETWEEN_PREVIOUS_ACTIVE_COMPONENTS_AND_NEWLY_ACTIVATED_COMPONENT
-									if(componentWordConnectivityTestsResult)
-									{
-										//cout << "componentWordConnectivityTestsResult" << endl;
-									#endif
-										#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_PREVENT_RESET_IF_NEXT_SEQUENCE_IS_SAME_AS_CURRENT_SEQUENCE
-										if(consecutiveSequenceDetected(forwardPropogationSentenceData, forwardPropogationWordData, components, component))
-										{
-											//cout << "!allowFirstComponentReset: consecutiveSequenceDetected - component->ownerGroup->groupIndex = " << component->ownerGroup->groupIndex << endl;
-											//cout << "!allowFirstComponentReset; consecutiveSequenceDetected" << endl;
-											allowFirstComponentReset = false;
-										}
-										#endif
-										#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_PREVENT_RESET_IF_FIRST_INACTIVE_COMPONENT_GROUPREF_IS_SAME_AS_FUTURE_ACTIVE_COMPONENT_GROUPREF
-										if(findValidDualLowerLevelConnection(forwardPropogationSentenceData, forwardPropogationWordData, components, component, true))
-										{
-											//cout << "!allowFirstComponentReset; findValidDualLowerLevelConnection" << endl;
-											allowFirstComponentReset = false;
-										}
-										#endif
-									#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_FORCE_RESET_IF_NO_WORD_CONNECTIVITY_BETWEEN_PREVIOUS_ACTIVE_COMPONENTS_AND_NEWLY_ACTIVATED_COMPONENT
-									}
-									else
-									{
-										//cout << "!componentWordConnectivityTestsResult" << endl;
-										//always reset, as existing first activated component is not connected (by wordIndices) to prospective activated next component
-									}
-									#endif
-									#endif
-									/*
-									#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_PREVENT_WRITE_IF_UPPER_NEURON_ALREADY_CONTAINS_WORD_INDEX_OF_EXISTING_COMPONENT
-									if(!(component->ownerGroup->neuronComponentConnectionActive))
-									{
-										if(upperNeuronContainsWordIndexOfProspectiveComponent(forwardPropogationSentenceData, forwardPropogationWordData, component, component->ownerGroup))
-										{
-											allowFirstComponentReset = true;
-										}
-									}
-									#endif
-									*/
-									#ifdef GIA_POS_REL_TRANSLATOR_SANI_PROPAGATE_ALL_POS_VALUES_SIMULTANEOUSLY
-									if(existingActivationFoundStartComponent)
-									{
-										if(!(forwardPropogationSignalData->firstPOSval))
-										{
-											if(component->neuronComponentConnectionActiveWordRecord = forwardPropogationWordData->wordReference)
-											{
-												//component has been activated by previous POS propagation
-												allowFirstComponentReset = false;
-											}
-										}
-									}
-									#endif
-									if(allowFirstComponentReset)
-									{
-										sequentialActivationFound = true;
-										*existingActivationFoundStartComponent = true;
-									}
-									else
-									{
-										sequentialActivationFound = false;
-									}
-								}
-								#else
-								#ifdef GIA_POS_REL_TRANSLATOR_SANI_ALLOW_MULTIPLE_ACTIVATIONS
-								sequentialActivationFound = true;
-								*existingActivationFoundStartComponent = true;	
-								#endif
-								#endif
-							}
-						}
-						else
-						{
-							sequentialActivationFound = true;
-							//cout << "sequentialActivationFound" << endl;
-						}
-					#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_PREVENT_ACTIVATION_IF_REPEATED_SEQUENCE_MISMATCH_DETECTED
-					}
-					else
-					{
-						//sequentialActivationFound = false;
-					}
-					#endif
-				#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_PREVENT_WRITE_IF_UPPER_NEURON_ALREADY_CONTAINS_WORD_INDEX_OF_EXISTING_COMPONENT
-				}
-				#endif
-				#ifdef GIA_POS_REL_TRANSLATOR_SANI_PROPAGATE_ALL_POS_VALUES_SIMULTANEOUSLY
-				}
-				#endif
-				
+				identifySequentialActivationFound(components, forwardPropogationSignalData, forwardPropogationWordData, forwardPropogationSentenceData, activationPathWordCurrentParseTreeGroup, i, currentComponent, *previousActiveComponent, &sequentialActivationFound, existingActivationFoundStartComponent, existingActivationFoundEndComponent, ownerGroup, componentWordConnectivityTestsResult);
 				
 				#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_VARIABLE_LAST_COMPONENTS
-				if(forwardPropogationSentenceData->recordActivatedNeuronWithMaxWordIndexCoverageSupportVariableEndComponent)
-				{					
-					if(i == 0)
-					{
-						bool variableFirstComponentTypeRequirements = false;
-						if(!(component->neuronComponentConnectionActive))	//consider removing this requirement to allow groups identified for last variable components creation to have their activations reset
-						{
-							variableFirstComponentTypeRequirements = true;
-						}
-						if(variableFirstComponentTypeRequirements)
-						{
-							#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_COMPONENTS
-							bool testFirstComponentNotString = false;
-							bool testLastComponentNotString = false;
-							bool testFirstComponentSubgroupsUnique = false;
-							bool testLastComponentSubgroupsUnique = false;
-							bool testNotDualLowerLevelConnections = false;
-							#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_LAST_COMPONENTS_NON_STRING
-							testFirstComponentNotString = true;
-							testLastComponentNotString = true;
-							#endif
-							#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_LAST_COMPONENT_ALL_NEURONS_IN_FIRST_COMPONENT_SUBGROUPS_ARE_UNIQUE
-							testFirstComponentSubgroupsUnique = true;
-							#endif
-							#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_LAST_COMPONENT_ALL_NEURONS_IN_LAST_COMPONENT_SUBGROUPS_ARE_UNIQUE
-							testLastComponentSubgroupsUnique = true;
-							#endif
-							#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_DISABLE_MULTIPLE_INPUTS_IF_HAS_IDENTICAL_COMPONENTS
-							testNotDualLowerLevelConnections = true;
-							#endif
-							if(calculateVariableComponentPassCriteria(component, components, forwardPropogationSignalData, forwardPropogationWordData, forwardPropogationSentenceData, testFirstComponentNotString, testLastComponentNotString, testFirstComponentSubgroupsUnique, testLastComponentSubgroupsUnique, testNotDualLowerLevelConnections))
-							{
-							#endif
-								//cout << "missingOrVariableEndComponentFound = true" << endl;
-								*missingOrVariableEndComponentFound = true;
-							#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_COMPONENTS
-							}
-							#endif
-						}	
-					}
-					else
-					{
-						*missingOrVariableEndComponentFound = false;
-					}
-				}
-				else
-				{
-				}
-				#endif	
+				identifyMissingOrVariableEndComponentFound(components, forwardPropogationSignalData, forwardPropogationWordData, forwardPropogationSentenceData, activationPathWordCurrentParseTreeGroup, i, currentComponent, *previousActiveComponent, missingOrVariableEndComponentFound);
+				#endif
 			}
 			else
 			{
 				#ifdef GIA_POS_REL_TRANSLATOR_SANI_ENFORCE_WORD_CONNECTIVITY
-				if(component->neuronComponentConnectionActive)
+				if(currentComponent->neuronComponentConnectionActive)
 				{
-					*previousActiveComponent = component;
+					*previousActiveComponent = currentComponent;
 				}
 				#endif
 				
-				if(component->optional)
+				if(currentComponent->optional)
 				{
 					//ignore optional components
 				}
 				else
-				{					
+				{			
 					#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_VARIABLE_FIRST_COMPONENTS
-					//note it doesn't matter if the start component is active or inactive. Even if it has been activated miscellaneously (ie without maintaining word index connectivity), it can be reset.
-					if(forwardPropogationSentenceData->recordActivatedNeuronWithMaxWordIndexCoverageSupportVariableStartComponent)
-					{
-						if(i == 0)
-						{
-							bool variableFirstComponentTypeRequirements = false;
-							#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_VARIABLE_FIRST_COMPONENTS_MISSING
-							if(!(component->neuronComponentConnectionActive))
-							{
-								variableFirstComponentTypeRequirements = true;
-							}
-							#endif
-							#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_VARIABLE_FIRST_COMPONENTS_VARIABLE
-							if(component->neuronComponentConnectionActive)
-							{
-								variableFirstComponentTypeRequirements = true;
-							}
-							#endif
-							if(variableFirstComponentTypeRequirements)
-							{
-								#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_COMPONENTS
-								bool testFirstComponentNotString = false;
-								bool testLastComponentNotString = false;
-								bool testFirstComponentSubgroupsUnique = false;
-								bool testLastComponentSubgroupsUnique = false;
-								bool testNotDualLowerLevelConnections = false;
-								#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_FIRST_COMPONENTS_NON_STRING
-								testFirstComponentNotString = true;
-								#endif
-								//testLastComponentNotString = true;
-								#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_FIRST_COMPONENT_ALL_NEURONS_IN_FIRST_COMPONENT_SUBGROUPS_ARE_UNIQUE
-								testFirstComponentSubgroupsUnique = true;
-								#endif
-								#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_FIRST_COMPONENT_ALL_NEURONS_IN_LAST_COMPONENT_SUBGROUPS_ARE_UNIQUE
-								testLastComponentSubgroupsUnique = true;
-								#endif
-								#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_DISABLE_MULTIPLE_INPUTS_IF_HAS_IDENTICAL_COMPONENTS
-								testNotDualLowerLevelConnections = true;
-								#endif
-								if(calculateVariableComponentPassCriteria(component, components, forwardPropogationSignalData, forwardPropogationWordData, forwardPropogationSentenceData, testFirstComponentNotString, testLastComponentNotString, testFirstComponentSubgroupsUnique, testLastComponentSubgroupsUnique, testNotDualLowerLevelConnections))
-								{
-								#endif
-									//cout << "missingOrVariableStartComponentFound = true" << endl;
-									*missingOrVariableStartComponentFound = true;
-								#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_COMPONENTS
-								}
-								#endif
-							}	
-						}
-						else
-						{
-							*missingOrVariableStartComponentFound = false;	//removed @GIA3j5aTEMP18
-						}
-					}
+					identifyMissingOrVariableStartComponentFound(components, forwardPropogationSignalData, forwardPropogationWordData, forwardPropogationSentenceData, activationPathWordCurrentParseTreeGroup, i, currentComponent, *previousActiveComponent, missingOrVariableStartComponentFound);
 					#endif
-						
-					if(!(component->neuronComponentConnectionActive))
-					{
-
-						#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_VARIABLE_FIRST_COMPONENTS
-						#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_VARIABLE_FIRST_COMPONENTS_MISSING
-						if(forwardPropogationSentenceData->recordActivatedNeuronWithMaxWordIndexCoverageSupportVariableStartComponent)
-						{							
-							if(*previousActiveComponent == NULL)
-							{
-								//support activation of group components with missing start components
-								#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_FIRST_COMPONENTS_NON_STRING_COMPREHENSIVE
-								if(component->componentType != GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_STRING)
-								{
-								#endif
-									*missingStartComponentFound = true;
-									//cout << "2missingStartComponentFound" << endl;
-								#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_FIRST_COMPONENTS_NON_STRING_COMPREHENSIVE
-								}
-								else
-								{
-									//cout << "GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_FIRST_COMPONENTS_NON_STRING_COMPREHENSIVE: (component->componentType == GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_STRING)" << endl;
-									stillParsingActiveComponents = false;	
-								}
-								#endif
-								
-							}
-							else
-							{	
-								if((i == 0) && (component->componentType != GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_STRING))
-								{
-									//ie (*missingOrVariableStartComponentFound)
-								}
-								else
-								{
-									stillParsingActiveComponents = false;
-								}
-							}
-						}
-						else
-						{
-							stillParsingActiveComponents = false;
-						}
-						#else
-						stillParsingActiveComponents = false;
-						#endif
-						#else
 					
-						#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_SUPPORT_PARTIAL_SENTENCE_PROPAGATION
-						//#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_VARIABLE_FIRST_COMPONENTS_MISSING
-						if(forwardPropogationSignalData->firstIndexInSequence == 0)
-						{
-							stillParsingActiveComponents = false;	
-						}
-						else
-						{							
-							if(*previousActiveComponent == NULL)
-							{
-								//support activation of group components with missing start components
-								*missingStartComponentFound = true;
-								//cout << "1missingStartComponentFound" << endl;
-							}
-							else
-							{
-								stillParsingActiveComponents = false;	//found an active component then a missing component (fail)
-							}
-						}
-						//#else
-						//stillParsingActiveComponents = false;
-						//#endif
-						#else
-						stillParsingActiveComponents = false;	
-						#endif
-						
-						#endif
-					}						
+					identifyMissingStartComponentFound(components, forwardPropogationSignalData, forwardPropogationWordData, forwardPropogationSentenceData, activationPathWordCurrentParseTreeGroup, i, currentComponent, *previousActiveComponent, missingStartComponentFound, &stillParsingActiveComponents);
 				}
 			}
 		}
@@ -552,9 +184,9 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::propagateWordThroughNetwor
 		{
 			if(sequentialActivationFound)
 			{
-				if(!(component->optional))
+				if(!(currentComponent->optional))
 				{
-					if(!(component->neuronComponentConnectionActive))
+					if(!(currentComponent->neuronComponentConnectionActive))
 					{
 						*numberOfInactiveComponentsRemaining = *numberOfInactiveComponentsRemaining + 1;	
 					}
@@ -616,15 +248,6 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::propagateWordThroughNetwor
 			if(*numberOfInactiveComponentsRemaining == 0)
 			{
 				*activationSequenceCompleted = true;
-				
-				/*
-				if(*missingOrVariableEndComponentFound)
-				{
-					cerr << "GIAposRelTranslatorSANIPropagateOperationsClass::propagateWordThroughNetworkGroupVerifyComponentSequenceActivationReady error: activationSequenceCompleted && missingOrVariableEndComponentFound" << endl;
-					exit(EXIT_ERROR);
-				}
-				*/
-	
 			}
 		#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_VARIABLE_FIRST_COMPONENTS	
 		}
@@ -634,15 +257,414 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::propagateWordThroughNetwor
 		#endif	
 		#endif
 	}
-	
-	/*
-	if(*missingOrVariableEndComponentFound)
-	{
-		cout << "2 missingOrVariableEndComponentFound = true" << endl;
-	}
-	*/
 
 	return sequentialActivationFound;
+}
+
+
+
+bool GIAposRelTranslatorSANIPropagateOperationsClass::identifySequentialActivationFound(vector<GIAposRelTranslatorRulesComponentNeuralNetwork*>* components, GIAposRelTranslatorSANIForwardPropogationSignalData* forwardPropogationSignalData, GIAposRelTranslatorSANIForwardPropogationWordData* forwardPropogationWordData, GIAposRelTranslatorSANIForwardPropogationSentenceData* forwardPropogationSentenceData, GIAposRelTranslatorRulesGroupParseTree* activationPathWordCurrentParseTreeGroup, const int i, GIAposRelTranslatorRulesComponentNeuralNetwork* currentComponent, GIAposRelTranslatorRulesComponentNeuralNetwork* previousActiveComponent, bool* sequentialActivationFound, bool* existingActivationFoundStartComponent, bool* existingActivationFoundEndComponent, GIAposRelTranslatorRulesGroupNeuralNetwork* ownerGroup, const bool componentWordConnectivityTestsResult)
+{
+	bool result = true;
+	
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_PROPAGATE_ALL_POS_VALUES_SIMULTANEOUSLY
+	bool previousComponentWasActivatedBySameWordDifferentPOSpropagation = false;
+	if(previousActiveComponent != NULL)
+	{
+		if((previousActiveComponent)->neuronComponentConnectionActiveWordRecord = forwardPropogationWordData->wordReference)
+		{
+			previousComponentWasActivatedBySameWordDifferentPOSpropagation = true;
+		}
+	}
+	if(!previousComponentWasActivatedBySameWordDifferentPOSpropagation)
+	{
+	#endif		
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_PREVENT_WRITE_IF_UPPER_NEURON_ALREADY_CONTAINS_WORD_INDEX_OF_EXISTING_COMPONENT
+	bool upperNeuronContainsWordIndexOfProspectiveComponentTest = false;
+	if(!(currentComponent->ownerGroup->neuronActive))
+	{
+		if(upperNeuronContainsWordIndexOfProspectiveComponent(forwardPropogationSentenceData, forwardPropogationWordData, currentComponent, currentComponent->ownerGroup))
+		{
+			upperNeuronContainsWordIndexOfProspectiveComponentTest = true;
+		}
+	}
+	if(!upperNeuronContainsWordIndexOfProspectiveComponentTest)
+	{
+	#endif
+
+		#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_PREVENT_ACTIVATION_IF_REPEATED_SEQUENCE_MISMATCH_DETECTED
+		bool allowFirstComponentActivation = true;
+		if(i == 0)	//start component in group
+		{
+			int wordTranslatorSentenceWordIndex = forwardPropogationWordData->w;
+			//if repeated POS instance detected in sentence starting from forwardPropogationWordData, and first section [lowest level input] of second component is not equivalent to same input group as first component, then disallow activation[/reactivation] of first component
+			if(repeatedSequenceDetected(forwardPropogationSentenceData, forwardPropogationWordData, activationPathWordCurrentParseTreeGroup, wordTranslatorSentenceWordIndex))
+			{
+				if(!findValidDualLowerLevelConnectionAlternate(forwardPropogationSentenceData, forwardPropogationWordData, components, currentComponent))
+				{
+					allowFirstComponentActivation = false;
+					//cout << "GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_PREVENT_ACTIVATION_IF_REPEATED_SEQUENCE_MISMATCH_DETECTED: repeatedSequenceDetected && !findValidDualLowerLevelConnectionAlternate: !allowComponentActivation" << endl;
+				}
+			}
+			//if repeated POS instance not detected in sentence starting from forwardPropogationWordData, and first section [lowest level input] of second component is equivalent to same input group as first component, then disallow activation[/reactivation] of first component 
+			if(!repeatedSequenceDetected(forwardPropogationSentenceData, forwardPropogationWordData, activationPathWordCurrentParseTreeGroup, wordTranslatorSentenceWordIndex))
+			{
+				if(findValidDualLowerLevelConnectionAlternate(forwardPropogationSentenceData, forwardPropogationWordData, components, currentComponent))
+				{
+					allowFirstComponentActivation = false;
+					//cout << "GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_PREVENT_ACTIVATION_IF_REPEATED_SEQUENCE_MISMATCH_DETECTED: !repeatedSequenceDetected && findValidDualLowerLevelConnectionAlternate: !allowComponentActivation" << endl;
+				}
+			}
+		}
+		if(allowFirstComponentActivation)
+		{
+		#endif			
+			if(currentComponent->neuronComponentConnectionActive)
+			{							
+				if(currentComponent->componentType == GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_REPEAT)	//if the component contains repeats, then accept it if it is already active
+				{
+					//sequential activation found
+					*sequentialActivationFound = true;
+				}
+				else
+				{
+
+					//component already activated
+					#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR
+					#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_LAST_COMPONENTS_REMEMBER_FIRST_COMPONENT_WORD_INDEX
+					if(i != 0)
+					{
+						if(previousActiveComponent != NULL)	//alternate test does not support !GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_VARIABLE_FIRST_COMPONENTS: if(!(*missingStartComponentFound))
+						{
+							*sequentialActivationFound = true;
+							*existingActivationFoundEndComponent = true;
+							//cout << "existingActivationFoundEndComponent" << endl;
+
+							if(ownerGroup->currentParseTreeGroupTemp == NULL)
+							{
+								cerr << "GIAposRelTranslatorSANIPropagateOperationsClass::propagateWordThroughNetworkGroupVerifyComponentSequenceActivationReady error: (ownerGroup->currentParseTreeGroupTemp == NULL)" << endl;
+								exit(EXIT_ERROR);		
+							}
+							else
+							{
+								if(ownerGroup->currentParseTreeGroupTemp->components.size() == 0)
+								{
+									cerr << "GIAposRelTranslatorSANIPropagateOperationsClass::propagateWordThroughNetworkGroupVerifyComponentSequenceActivationReady error: (ownerGroup->currentParseTreeGroupTemp->components.size() == 0)" << endl;
+									exit(EXIT_ERROR);
+								}
+							}
+						}
+					}
+					#endif
+					if(i == 0)	//start component in group
+					{
+						bool allowFirstComponentReset = true;
+						#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_PREVENT_RESET_IF_REPEATED_SEQUENCE_DETECTED
+						#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_PREVENT_RESET_IF_REPEATED_SEQUENCE_DETECTED_ACTIVE
+						//if first component input group matches second component input group, and repeated POS sequences detected in sentence from firstComponent matching first and second componets, then disallow reactivation/reset of first component 
+						int wordTranslatorSentenceWordIndex = currentComponent->neuronComponentConnectionActiveWordRecord->translatorSentenceWordIndex;
+						if(findValidDualLowerLevelConnection(forwardPropogationSentenceData, forwardPropogationWordData, components, currentComponent, true))
+						{
+							if(repeatedSequenceDetected(forwardPropogationSentenceData, forwardPropogationWordData, currentComponent->ownerGroup->currentParseTreeGroupTemp, wordTranslatorSentenceWordIndex))
+							{
+								allowFirstComponentReset = false;
+							}
+						}
+						#endif
+						#else
+						#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_FORCE_RESET_IF_NO_WORD_CONNECTIVITY_BETWEEN_PREVIOUS_ACTIVE_COMPONENTS_AND_NEWLY_ACTIVATED_COMPONENT
+						if(componentWordConnectivityTestsResult)
+						{
+							//cout << "componentWordConnectivityTestsResult" << endl;
+						#endif
+							#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_PREVENT_RESET_IF_NEXT_SEQUENCE_IS_SAME_AS_CURRENT_SEQUENCE
+							if(consecutiveSequenceDetected(forwardPropogationSentenceData, forwardPropogationWordData, components, currentComponent))
+							{
+								//cout << "!allowFirstComponentReset: consecutiveSequenceDetected - currentComponent->ownerGroup->groupIndex = " << currentComponent->ownerGroup->groupIndex << endl;
+								//cout << "!allowFirstComponentReset; consecutiveSequenceDetected" << endl;
+								allowFirstComponentReset = false;
+							}
+							#endif
+							#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_PREVENT_RESET_IF_FIRST_INACTIVE_COMPONENT_GROUPREF_IS_SAME_AS_FUTURE_ACTIVE_COMPONENT_GROUPREF
+							if(findValidDualLowerLevelConnection(forwardPropogationSentenceData, forwardPropogationWordData, components, currentComponent, true))
+							{
+								//cout << "!allowFirstComponentReset; findValidDualLowerLevelConnection" << endl;
+								allowFirstComponentReset = false;
+							}
+							#endif
+						#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_FORCE_RESET_IF_NO_WORD_CONNECTIVITY_BETWEEN_PREVIOUS_ACTIVE_COMPONENTS_AND_NEWLY_ACTIVATED_COMPONENT
+						}
+						else
+						{
+							//cout << "!componentWordConnectivityTestsResult" << endl;
+							//always reset, as existing first activated component is not connected (by wordIndices) to prospective activated next component
+						}
+						#endif
+						#endif
+						/*
+						#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_PREVENT_WRITE_IF_UPPER_NEURON_ALREADY_CONTAINS_WORD_INDEX_OF_EXISTING_COMPONENT
+						if(!(currentComponent->ownerGroup->neuronComponentConnectionActive))
+						{
+							if(upperNeuronContainsWordIndexOfProspectiveComponent(forwardPropogationSentenceData, forwardPropogationWordData, currentComponent, currentComponent->ownerGroup))
+							{
+								allowFirstComponentReset = true;
+							}
+						}
+						#endif
+						*/
+						#ifdef GIA_POS_REL_TRANSLATOR_SANI_PROPAGATE_ALL_POS_VALUES_SIMULTANEOUSLY
+						if(existingActivationFoundStartComponent)
+						{
+							if(!(forwardPropogationSignalData->firstPOSval))
+							{
+								if(currentComponent->neuronComponentConnectionActiveWordRecord = forwardPropogationWordData->wordReference)
+								{
+									//component has been activated by previous POS propagation
+									allowFirstComponentReset = false;
+								}
+							}
+						}
+						#endif
+						if(allowFirstComponentReset)
+						{
+							*sequentialActivationFound = true;
+							*existingActivationFoundStartComponent = true;
+						}
+						else
+						{
+							*sequentialActivationFound = false;
+						}
+					}
+					#else
+					#ifdef GIA_POS_REL_TRANSLATOR_SANI_ALLOW_MULTIPLE_ACTIVATIONS
+					*sequentialActivationFound = true;
+					*existingActivationFoundStartComponent = true;	
+					#endif
+					#endif
+				}
+			}
+			else
+			{
+				*sequentialActivationFound = true;
+				//cout << "*sequentialActivationFound" << endl;
+			}
+		#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_PREVENT_ACTIVATION_IF_REPEATED_SEQUENCE_MISMATCH_DETECTED
+		}
+		else
+		{
+			//*sequentialActivationFound = false;
+		}
+		#endif
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_PREVENT_WRITE_IF_UPPER_NEURON_ALREADY_CONTAINS_WORD_INDEX_OF_EXISTING_COMPONENT
+	}
+	#endif
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_PROPAGATE_ALL_POS_VALUES_SIMULTANEOUSLY
+	}
+	#endif
+	
+	return result;
+}
+
+#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_VARIABLE_LAST_COMPONENTS
+bool GIAposRelTranslatorSANIPropagateOperationsClass::identifyMissingOrVariableEndComponentFound(vector<GIAposRelTranslatorRulesComponentNeuralNetwork*>* components, GIAposRelTranslatorSANIForwardPropogationSignalData* forwardPropogationSignalData, GIAposRelTranslatorSANIForwardPropogationWordData* forwardPropogationWordData, GIAposRelTranslatorSANIForwardPropogationSentenceData* forwardPropogationSentenceData, GIAposRelTranslatorRulesGroupParseTree* activationPathWordCurrentParseTreeGroup, const int i, GIAposRelTranslatorRulesComponentNeuralNetwork* currentComponent, GIAposRelTranslatorRulesComponentNeuralNetwork* previousActiveComponent, bool* missingOrVariableEndComponentFound)
+{
+	bool result = true;
+	
+	if(forwardPropogationSentenceData->recordActivatedNeuronWithMaxWordIndexCoverageSupportVariableEndComponent)
+	{					
+		if(i == 0)
+		{
+			bool variableFirstComponentTypeRequirements = false;
+			if(!(currentComponent->neuronComponentConnectionActive))	//consider removing this requirement to allow groups identified for last variable components creation to have their activations reset
+			{
+				variableFirstComponentTypeRequirements = true;
+			}
+			if(variableFirstComponentTypeRequirements)
+			{
+				#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_COMPONENTS
+				bool testFirstComponentNotString = false;
+				bool testLastComponentNotString = false;
+				bool testFirstComponentSubgroupsUnique = false;
+				bool testLastComponentSubgroupsUnique = false;
+				bool testNotDualLowerLevelConnections = false;
+				#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_LAST_COMPONENTS_NON_STRING
+				testFirstComponentNotString = true;
+				testLastComponentNotString = true;
+				#endif
+				#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_LAST_COMPONENT_ALL_NEURONS_IN_FIRST_COMPONENT_SUBGROUPS_ARE_UNIQUE
+				testFirstComponentSubgroupsUnique = true;
+				#endif
+				#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_LAST_COMPONENT_ALL_NEURONS_IN_LAST_COMPONENT_SUBGROUPS_ARE_UNIQUE
+				testLastComponentSubgroupsUnique = true;
+				#endif
+				#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_DISABLE_MULTIPLE_INPUTS_IF_HAS_IDENTICAL_COMPONENTS
+				testNotDualLowerLevelConnections = true;
+				#endif
+				if(calculateVariableComponentPassCriteria(currentComponent, components, forwardPropogationSignalData, forwardPropogationWordData, forwardPropogationSentenceData, testFirstComponentNotString, testLastComponentNotString, testFirstComponentSubgroupsUnique, testLastComponentSubgroupsUnique, testNotDualLowerLevelConnections))
+				{
+				#endif
+					//cout << "missingOrVariableEndComponentFound = true" << endl;
+					*missingOrVariableEndComponentFound = true;
+				#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_COMPONENTS
+				}
+				#endif
+			}	
+		}
+		else
+		{
+			*missingOrVariableEndComponentFound = false;
+		}
+	}
+	
+	return result;
+}
+#endif
+
+#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_VARIABLE_FIRST_COMPONENTS
+bool GIAposRelTranslatorSANIPropagateOperationsClass::identifyMissingOrVariableStartComponentFound(vector<GIAposRelTranslatorRulesComponentNeuralNetwork*>* components, GIAposRelTranslatorSANIForwardPropogationSignalData* forwardPropogationSignalData, GIAposRelTranslatorSANIForwardPropogationWordData* forwardPropogationWordData, GIAposRelTranslatorSANIForwardPropogationSentenceData* forwardPropogationSentenceData, GIAposRelTranslatorRulesGroupParseTree* activationPathWordCurrentParseTreeGroup, const int i, GIAposRelTranslatorRulesComponentNeuralNetwork* currentComponent, GIAposRelTranslatorRulesComponentNeuralNetwork* previousActiveComponent, bool* missingOrVariableStartComponentFound)
+{
+	bool result = true;
+	
+	//note it doesn't matter if the start component is active or inactive. Even if it has been activated miscellaneously (ie without maintaining word index connectivity), it can be reset.
+	if(forwardPropogationSentenceData->recordActivatedNeuronWithMaxWordIndexCoverageSupportVariableStartComponent)
+	{
+		if(i == 0)
+		{
+			bool variableFirstComponentTypeRequirements = false;
+			#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_VARIABLE_FIRST_COMPONENTS_MISSING
+			if(!(currentComponent->neuronComponentConnectionActive))
+			{
+				variableFirstComponentTypeRequirements = true;
+			}
+			#endif
+			#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_VARIABLE_FIRST_COMPONENTS_VARIABLE
+			if(currentComponent->neuronComponentConnectionActive)
+			{
+				variableFirstComponentTypeRequirements = true;
+			}
+			#endif
+			if(variableFirstComponentTypeRequirements)
+			{
+				#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_COMPONENTS
+				bool testFirstComponentNotString = false;
+				bool testLastComponentNotString = false;
+				bool testFirstComponentSubgroupsUnique = false;
+				bool testLastComponentSubgroupsUnique = false;
+				bool testNotDualLowerLevelConnections = false;
+				#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_FIRST_COMPONENTS_NON_STRING
+				testFirstComponentNotString = true;
+				#endif
+				//testLastComponentNotString = true;
+				#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_FIRST_COMPONENT_ALL_NEURONS_IN_FIRST_COMPONENT_SUBGROUPS_ARE_UNIQUE
+				testFirstComponentSubgroupsUnique = true;
+				#endif
+				#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_FIRST_COMPONENT_ALL_NEURONS_IN_LAST_COMPONENT_SUBGROUPS_ARE_UNIQUE
+				testLastComponentSubgroupsUnique = true;
+				#endif
+				#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_DISABLE_MULTIPLE_INPUTS_IF_HAS_IDENTICAL_COMPONENTS
+				testNotDualLowerLevelConnections = true;
+				#endif
+				if(calculateVariableComponentPassCriteria(currentComponent, components, forwardPropogationSignalData, forwardPropogationWordData, forwardPropogationSentenceData, testFirstComponentNotString, testLastComponentNotString, testFirstComponentSubgroupsUnique, testLastComponentSubgroupsUnique, testNotDualLowerLevelConnections))
+				{
+				#endif
+					//cout << "missingOrVariableStartComponentFound = true" << endl;
+					*missingOrVariableStartComponentFound = true;
+				#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_COMPONENTS
+				}
+				#endif
+			}	
+		}
+		else
+		{
+			*missingOrVariableStartComponentFound = false;	//removed @GIA3j5aTEMP18
+		}
+	}
+	
+	return result;
+}
+#endif
+
+bool GIAposRelTranslatorSANIPropagateOperationsClass::identifyMissingStartComponentFound(vector<GIAposRelTranslatorRulesComponentNeuralNetwork*>* components, GIAposRelTranslatorSANIForwardPropogationSignalData* forwardPropogationSignalData, GIAposRelTranslatorSANIForwardPropogationWordData* forwardPropogationWordData, GIAposRelTranslatorSANIForwardPropogationSentenceData* forwardPropogationSentenceData, GIAposRelTranslatorRulesGroupParseTree* activationPathWordCurrentParseTreeGroup, const int i, GIAposRelTranslatorRulesComponentNeuralNetwork* currentComponent, GIAposRelTranslatorRulesComponentNeuralNetwork* previousActiveComponent, bool* missingStartComponentFound, bool* stillParsingActiveComponents)
+{
+	bool result = true;
+	
+	if(!(currentComponent->neuronComponentConnectionActive))
+	{
+
+		#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_VARIABLE_FIRST_COMPONENTS
+		#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_VARIABLE_FIRST_COMPONENTS_MISSING
+		if(forwardPropogationSentenceData->recordActivatedNeuronWithMaxWordIndexCoverageSupportVariableStartComponent)
+		{							
+			if(previousActiveComponent == NULL)
+			{
+				//support activation of group components with missing start components
+				#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_FIRST_COMPONENTS_NON_STRING_COMPREHENSIVE
+				if(currentComponent->componentType != GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_STRING)
+				{
+				#endif
+					*missingStartComponentFound = true;
+					//cout << "2missingStartComponentFound" << endl;
+				#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_FIRST_COMPONENTS_NON_STRING_COMPREHENSIVE
+				}
+				else
+				{
+					//cout << "GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_SUPPORT_VARIABLE_FIRST_COMPONENTS_NON_STRING_COMPREHENSIVE: (currentComponent->componentType == GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_STRING)" << endl;
+					*stillParsingActiveComponents = false;	
+				}
+				#endif
+
+			}
+			else
+			{	
+				if((i == 0) && (currentComponent->componentType != GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_STRING))
+				{
+					//ie (*missingOrVariableStartComponentFound)
+				}
+				else
+				{
+					*stillParsingActiveComponents = false;
+				}
+			}
+		}
+		else
+		{
+			*stillParsingActiveComponents = false;
+		}
+		#else
+		*stillParsingActiveComponents = false;
+		#endif
+		#else
+
+		#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_SUPPORT_PARTIAL_SENTENCE_PROPAGATION
+		//#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_VARIABLE_FIRST_COMPONENTS_MISSING
+		if(forwardPropogationSignalData->firstIndexInSequence == 0)
+		{
+			*stillParsingActiveComponents = false;	
+		}
+		else
+		{							
+			if(previousActiveComponent == NULL)
+			{
+				//support activation of group components with missing start components
+				*missingStartComponentFound = true;
+				//cout << "1missingStartComponentFound" << endl;
+			}
+			else
+			{
+				*stillParsingActiveComponents = false;	//found an active component then a missing component (fail)
+			}
+		}
+		//#else
+		//stillParsingActiveComponents = false;
+		//#endif
+		#else
+		*stillParsingActiveComponents = false;	
+		#endif
+
+		#endif
+	}
+	
+	return result;		
 }
 
 
