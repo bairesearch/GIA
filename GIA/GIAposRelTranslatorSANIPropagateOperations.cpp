@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorSANIPropagateOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3l8c 15-July-2020
+ * Project Version: 3l8d 15-July-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Operations - generic functions
  * /
@@ -283,7 +283,7 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::identifySequentialActivati
 	bool upperNeuronContainsWordIndexOfProspectiveComponentTest = false;
 	if(!(currentComponent->ownerGroup->neuronActive))
 	{
-		if(upperNeuronContainsWordIndexOfProspectiveComponent(forwardPropogationSentenceData, forwardPropogationWordData, currentComponent, currentComponent->ownerGroup))
+		if(upperNeuronContainsWordIndexOfProspectiveComponent(forwardPropogationSentenceData, forwardPropogationWordData->wordRecord, currentComponent, currentComponent->ownerGroup))
 		{
 			upperNeuronContainsWordIndexOfProspectiveComponentTest = true;
 		}
@@ -343,7 +343,7 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::identifySequentialActivati
 							if(ownerGroup->currentParseTreeGroupTemp == NULL)
 							{
 								cerr << "GIAposRelTranslatorSANIPropagateOperationsClass::propagateWordThroughNetworkGroupVerifyComponentSequenceActivationReady error: (ownerGroup->currentParseTreeGroupTemp == NULL)" << endl;
-								exit(EXIT_ERROR);		
+								exit(EXIT_ERROR);
 							}
 							else
 							{
@@ -367,7 +367,15 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::identifySequentialActivati
 						{
 							if(repeatedSequenceDetected(forwardPropogationSentenceData, forwardPropogationWordData, currentComponent->ownerGroup->currentParseTreeGroupTemp, wordTranslatorSentenceWordIndex))
 							{
-								allowFirstComponentReset = false;
+								#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_PREVENT_RESET_IF_REPEATED_SEQUENCE_DETECTED_AND_WORD_INDEX_NOT_ALREADY_ENCAPSULATED_BY_HIGHER_LEVEL_GROUP_PREVIOUS_COMPONENT
+								if(!upperNeuronContainsWordIndexOfProspectiveComponent(forwardPropogationSentenceData, currentComponent->neuronComponentConnectionActiveWordRecord, currentComponent, currentComponent->ownerGroup))
+								{
+								#endif
+									allowFirstComponentReset = false;
+									//cout << "1allowFirstComponentReset = false;" << endl;
+								#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_PREVENT_RESET_IF_REPEATED_SEQUENCE_DETECTED_AND_WORD_INDEX_NOT_ALREADY_ENCAPSULATED_BY_HIGHER_LEVEL_GROUP_PREVIOUS_COMPONENT
+								}
+								#endif
 							}
 						}
 						#endif
@@ -383,6 +391,7 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::identifySequentialActivati
 								//cout << "!allowFirstComponentReset: consecutiveSequenceDetected - currentComponent->ownerGroup->groupIndex = " << currentComponent->ownerGroup->groupIndex << endl;
 								//cout << "!allowFirstComponentReset; consecutiveSequenceDetected" << endl;
 								allowFirstComponentReset = false;
+								//cout << "2allowFirstComponentReset = false;" << endl;
 							}
 							#endif
 							#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_PREVENT_RESET_IF_FIRST_INACTIVE_COMPONENT_GROUPREF_IS_SAME_AS_FUTURE_ACTIVE_COMPONENT_GROUPREF
@@ -390,6 +399,7 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::identifySequentialActivati
 							{
 								//cout << "!allowFirstComponentReset; findValidDualLowerLevelConnection" << endl;
 								allowFirstComponentReset = false;
+								//cout << "3allowFirstComponentReset = false;" << endl;
 							}
 							#endif
 						#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_FORCE_RESET_IF_NO_WORD_CONNECTIVITY_BETWEEN_PREVIOUS_ACTIVE_COMPONENTS_AND_NEWLY_ACTIVATED_COMPONENT
@@ -401,11 +411,22 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::identifySequentialActivati
 						}
 						#endif
 						#endif
+						/*//alternate method;
+						#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_PREVENT_RESET_IF_REPEATED_SEQUENCE_DETECTED_AND_WORD_INDEX_NOT_ALREADY_ENCAPSULATED_BY_HIGHER_LEVEL_GROUP_PREVIOUS_COMPONENT
+						if(currentComponent->neuronComponentConnectionActive)
+						{
+							if(upperNeuronContainsWordIndexOfProspectiveComponent(forwardPropogationSentenceData, currentComponent->neuronComponentConnectionActiveWordRecord, currentComponent, currentComponent->ownerGroup))
+							{
+								allowFirstComponentReset = true;
+							}
+						}
+						#endif
+						*/						
 						/*
 						#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_PREVENT_WRITE_IF_UPPER_NEURON_ALREADY_CONTAINS_WORD_INDEX_OF_EXISTING_COMPONENT
-						if(!(currentComponent->ownerGroup->neuronComponentConnectionActive))
+						if(!(currentComponent->ownerGroup->neuronComponentConnectionActive))	//?
 						{
-							if(upperNeuronContainsWordIndexOfProspectiveComponent(forwardPropogationSentenceData, forwardPropogationWordData, currentComponent, currentComponent->ownerGroup))
+							if(upperNeuronContainsWordIndexOfProspectiveComponent(forwardPropogationSentenceData, forwardPropogationWordData->wordRecord, currentComponent, currentComponent->ownerGroup))
 							{
 								allowFirstComponentReset = true;
 							}
@@ -421,6 +442,7 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::identifySequentialActivati
 								{
 									//component has been activated by previous POS propagation
 									allowFirstComponentReset = false;
+									//cout << "4allowFirstComponentReset = false;" << endl;
 								}
 							}
 						}
@@ -754,8 +776,8 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::calculateVariableComponent
 }
 #endif
 
-#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_PREVENT_WRITE_IF_UPPER_NEURON_ALREADY_CONTAINS_WORD_INDEX_OF_EXISTING_COMPONENT
-bool GIAposRelTranslatorSANIPropagateOperationsClass::upperNeuronContainsWordIndexOfProspectiveComponent(GIAposRelTranslatorSANIForwardPropogationSentenceData* forwardPropogationSentenceData, GIAposRelTranslatorSANIForwardPropogationWordData* forwardPropogationWordData, GIAposRelTranslatorRulesComponentNeuralNetwork* component, GIAposRelTranslatorRulesGroupNeuralNetwork* group)
+#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR
+bool GIAposRelTranslatorSANIPropagateOperationsClass::upperNeuronContainsWordIndexOfProspectiveComponent(GIAposRelTranslatorSANIForwardPropogationSentenceData* forwardPropogationSentenceData, GIApreprocessorPlainTextWord* neuronComponentConnectionActiveWordRecord, GIAposRelTranslatorRulesComponentNeuralNetwork* component, GIAposRelTranslatorRulesGroupNeuralNetwork* group)
 {
 	bool result = false;
 	
@@ -763,7 +785,7 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::upperNeuronContainsWordInd
 	{
 		GIAposRelTranslatorRulesComponentNeuralNetwork* currentComponent = (group->ANNfrontComponentConnectionList)[i];
 		GIAposRelTranslatorRulesGroupNeuralNetwork* ownerGroup = currentComponent->ownerGroup;
-		//cout << "ownerGroup->groupIndex = " << ownerGroup->groupIndex << endl;
+		//cout << "GIAposRelTranslatorSANIPropagateOperationsClass::upperNeuronContainsWordIndexOfProspectiveComponent: ownerGroup->groupIndex = " << ownerGroup->groupIndex << endl;
 	
 		//method2;
 		GIAposRelTranslatorRulesComponentNeuralNetwork* previousComponent = NULL;
@@ -789,14 +811,15 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::upperNeuronContainsWordInd
 		if(foundPreviousComponent)
 		{
 			previousComponent = (ownerGroup->components)[cPrevious];
+
 			if(previousComponent->neuronComponentConnectionActive)
-			{
-				if(previousComponent->neuronComponentConnectionActiveWordRecord == forwardPropogationWordData->wordReference)
+			{				
+				if(previousComponent->neuronComponentConnectionActiveWordRecord == neuronComponentConnectionActiveWordRecord)
 				{
 					result = true;
-					cout << "upperNeuronContainsWordIndexOfProspectiveComponent - forwardPropogationWordData has already been propagated to an upper group (prevent usage duplication)" << endl;
-					cout << "previousComponent->neuronComponentConnectionActiveWordRecord->w = " << previousComponent->neuronComponentConnectionActiveWordRecord->w << endl;
-					cout << "forwardPropogationWordData->wordReference->w = " << forwardPropogationWordData->wordReference->w << endl;
+					//cout << "upperNeuronContainsWordIndexOfProspectiveComponent - forwardPropogationWordData has already been propagated to an upper group (prevent usage duplication)" << endl;
+					//cout << "previousComponent->neuronComponentConnectionActiveWordRecord->w = " << previousComponent->neuronComponentConnectionActiveWordRecord->w << endl;
+					//cout << "neuronComponentConnectionActiveWordRecord->w = " << neuronComponentConnectionActiveWordRecord->w << endl;
 					//exit(EXIT_ERROR);
 				}
 			}
@@ -807,7 +830,7 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::upperNeuronContainsWordInd
 		GIAposRelTranslatorRulesGroupParseTree* ownerGroupParseTree = ownerGroup->currentParseTreeGroupTemp;
 		if(forwardPropogationSentenceData->parseSentenceReverse)
 		{
-			if(ownerGroupParseTree->currentParseTreeGroupTemp->parseTreeMinWordIndex == forwardPropogationWordData->w)	//<=	//component->neuronComponentConnectionActiveWordRecord->w
+			if(ownerGroupParseTree->currentParseTreeGroupTemp->parseTreeMinWordIndex == neuronComponentConnectionActiveWordRecord->w)	//<=	//component->neuronComponentConnectionActiveWordRecord->w
 			{
 				result = true;
 				cout << "upperNeuronContainsWordIndexOfProspectiveComponent 1 - forwardPropogationWordData has already been propagated to an upper group (prevent usage duplication)" << endl;
@@ -815,7 +838,7 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::upperNeuronContainsWordInd
 		}
 		else
 		{
-			if(ownerGroupParseTree->currentParseTreeGroupTemp->parseTreeMaxWordIndex == forwardPropogationWordData->w)	//>=
+			if(ownerGroupParseTree->currentParseTreeGroupTemp->parseTreeMaxWordIndex == neuronComponentConnectionActiveWordRecord->w)	//>=
 			{	
 				result = true;
 				cout << "upperNeuronContainsWordIndexOfProspectiveComponent 2 - forwardPropogationWordData has already been propagated to an upper group (prevent usage duplication)" << endl;
@@ -823,7 +846,7 @@ bool GIAposRelTranslatorSANIPropagateOperationsClass::upperNeuronContainsWordInd
 		}
 		*/
 
-		if(upperNeuronContainsWordIndexOfProspectiveComponent(forwardPropogationSentenceData, forwardPropogationWordData, component, ownerGroup))
+		if(upperNeuronContainsWordIndexOfProspectiveComponent(forwardPropogationSentenceData, neuronComponentConnectionActiveWordRecord, component, ownerGroup))
 		{
 			result = true;
 		}	

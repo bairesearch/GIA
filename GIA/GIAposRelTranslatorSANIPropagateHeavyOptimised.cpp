@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorSANIPropagateHeavyOptimised.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3l8c 15-July-2020
+ * Project Version: 3l8d 15-July-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Heavy Optimised - ~O(nlogn)
  * /
