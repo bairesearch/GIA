@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorSANIPropagateCompact.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3l8d 15-July-2020
+ * Project Version: 3l8e 15-July-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Propagate Compact - ~O(n)
  * /
@@ -285,7 +285,7 @@ bool GIAposRelTranslatorSANIPropagateCompactClass::performPropagation(GIAtransla
 	if(resetAllNeuronComponents)
 	{
 		GIAposRelTranslatorSANIPropagateOperations.resetAllNeuronComponents(GIAposRelTranslatorRulesGroupTypes, GIA_POS_REL_TRANSLATOR_RULES_GROUP_BOOL_INDEX_ALLGROUPTYPES_NEURON_COMPONENT_CONNECTION_ACTIVE); //this is required for GIA_POS_REL_TRANSLATOR_SANI_LIGHT_OPTIMISED
-		GIAposRelTranslatorSANIPropagateOperations.resetAllNeuronComponents(GIAposRelTranslatorRulesGroupTypes, GIA_POS_REL_TRANSLATOR_RULES_GROUP_BOOL_INDEX_ALLGROUPTYPES_PARSE_TREE_GROUP_REF);	//this is required to initialise currentParseTreeGroup for every group (only required for first execution of GIAposRelTranslatorSANIPropagateLightOptimisedClass::executeTxtRelTranslatorNeuralNetwork)
+		GIAposRelTranslatorSANIPropagateOperations.resetAllNeuronComponents(GIAposRelTranslatorRulesGroupTypes, GIA_POS_REL_TRANSLATOR_RULES_GROUP_BOOL_INDEX_ALLGROUPTYPES_PARSE_TREE_GROUP_REF);	//this is required to initialise currentParseTreeGroup for every group (only required for first execution of GIAposRelTranslatorSANIPropagateCompactClass::executeTxtRelTranslatorNeuralNetwork)
 	}
 	#ifdef GIA_POS_REL_TRANSLATOR_SANI_FREE_MEMORY
 	GIAposRelTranslatorSANIPropagateOperations.initialiseParseTreeGroupList(GIAposRelTranslatorRulesGroupTypes, &parseTreeGroupListCompact);
@@ -435,7 +435,7 @@ bool GIAposRelTranslatorSANIPropagateCompactClass::propagateWordThroughNetworkGr
 	else
 	{
 		#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_PROPAGATE
-		cout << "GIAposRelTranslatorSANIPropagateLightOptimisedClass::propagateWordThroughNetworkIntro: GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_STRINGTYPE_LRPEXTERNALWORDLISTS, wordPOStype = " << wordPOStype << endl;
+		cout << "GIAposRelTranslatorSANIPropagateCompactClass::propagateWordThroughNetworkIntro: GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_STRINGTYPE_LRPEXTERNALWORDLISTS, wordPOStype = " << wordPOStype << endl;
 		#endif
 		
 		#ifdef GIA_POS_REL_TRANSLATOR_SANI_ANN_COLOUR_CONNECTIONS_BASED_ON_ACTIVATION_INPUT_NEURONS
@@ -1262,49 +1262,46 @@ bool GIAposRelTranslatorSANIPropagateCompactClass::propagateVariableEndComponent
 
 		if(firstLastWordIndexTestHypotheticalWithVariableEndComponent)
 		{
+			//this code is derived from GIAposRelTranslatorSANIPropagateCompactClass::propagateWordThroughNetworkGroupComponent (first section) and could be moved there (but would require rederivation of activatedNeuronCandidate)
 			if(*existingActivationFoundEndComponent)
 			{
-				*activationSequenceCompleted = false;	//redundant?
+				*activationSequenceCompleted = true;	//added GIA3l8e
 
-				//this code is derived from GIAposRelTranslatorSANIPropagateCompactClass::propagateWordThroughNetworkGroupComponent (first section) and could be moved there (but would require rederivation of activatedNeuronCandidate)
-				if(*existingActivationFoundEndComponent)
+				//readjust ownerGroup->currentParseTreeGroupTemp including parseTreeMaxWordIndex/parseTreeMinWordIndex (remove last component) 
+
+				#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_PROPAGATE
+				cout << "******** reduceGroupParseTreeGroupRef, groupIndex = " << ownerGroup->groupIndex << endl;
+				#endif
+				GIAposRelTranslatorRulesGroupParseTree* parseTreeGroupRecord = ownerGroup->currentParseTreeGroupTemp;	//record reference to ownerGroup->currentParseTreeGroupTemp before resetting
+
+				//GIAposRelTranslatorSANIPropagateOperations.resetGroupActivation(ownerGroup);	//not required as last component values will shortly be overwritten
+				GIAposRelTranslatorSANIPropagateOperations.resetGroupParseTreeGroupRef(ownerGroup, false);	
+
+				*(ownerGroup->currentParseTreeGroupTemp) = *(parseTreeGroupRecord);	//replicate	//CHECKTHIS
+				//or ownerGroup->currentParseTreeGroupTemp = new GIAposRelTranslatorRulesGroupParseTree(*(parseTreeGroupRecord));	//NO: not allowed because ownerGroup->currentParseTreeGroupTemp has already been added to ownerGroup->parseTreeGroupMemory?
+
+				GIAposRelTranslatorRulesGroupParseTree* currentParseTreeGroupTemp = ownerGroup->currentParseTreeGroupTemp;	//new ownerGroup->currentParseTreeGroupTemp
+				currentParseTreeGroupTemp->components.clear();
+				GIAposRelTranslatorRulesComponentParseTree* newFirstParseComponent = new GIAposRelTranslatorRulesComponentParseTree(*GIAposRelTranslatorSANIPropagateOperations.getFirstComponent(forwardPropogationSentenceData, parseTreeGroupRecord, true)); 	//replicate first parse tree component
+				if(forwardPropogationSentenceData->parseSentenceReverse)
 				{
-					//readjust ownerGroup->currentParseTreeGroupTemp including parseTreeMaxWordIndex/parseTreeMinWordIndex (remove last component) 
-
-					#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_PROPAGATE
-					cout << "******** reduceGroupParseTreeGroupRef, groupIndex = " << ownerGroup->groupIndex << endl;
-					#endif
-					GIAposRelTranslatorRulesGroupParseTree* parseTreeGroupRecord = ownerGroup->currentParseTreeGroupTemp;	//record reference to ownerGroup->currentParseTreeGroupTemp before resetting
-					
-					//GIAposRelTranslatorSANIPropagateOperations.resetGroupActivation(ownerGroup);	//not required as last component values will shortly be overwritten
-					GIAposRelTranslatorSANIPropagateOperations.resetGroupParseTreeGroupRef(ownerGroup, false);	
-									
-					*(ownerGroup->currentParseTreeGroupTemp) = *(parseTreeGroupRecord);	//replicate	//CHECKTHIS
-					//or ownerGroup->currentParseTreeGroupTemp = new GIAposRelTranslatorRulesGroupParseTree(*(parseTreeGroupRecord));	//NO: not allowed because ownerGroup->currentParseTreeGroupTemp has already been added to ownerGroup->parseTreeGroupMemory?
-					
-					GIAposRelTranslatorRulesGroupParseTree* currentParseTreeGroupTemp = ownerGroup->currentParseTreeGroupTemp;	//new ownerGroup->currentParseTreeGroupTemp
-					currentParseTreeGroupTemp->components.clear();
-					GIAposRelTranslatorRulesComponentParseTree* newFirstParseComponent = new GIAposRelTranslatorRulesComponentParseTree(*GIAposRelTranslatorSANIPropagateOperations.getFirstComponent(forwardPropogationSentenceData, parseTreeGroupRecord, true)); 	//replicate first parse tree component
-					if(forwardPropogationSentenceData->parseSentenceReverse)
-					{
-						//currentParseTreeGroupTemp->components.push_front(newParseComponent);
-						currentParseTreeGroupTemp->components.insert(currentParseTreeGroupTemp->components.begin(), newFirstParseComponent);
-					}
-					else
-					{
-						currentParseTreeGroupTemp->components.push_back(newFirstParseComponent);
-					}
-
-					#ifdef GIA_POS_REL_TRANSLATOR_SANI_FREE_MEMORY
-					parseTreeGroupListCompact.push_back(ownerGroup->currentParseTreeGroupTemp);
-					#endif	
-					#ifdef GIA_POS_REL_TRANSLATOR_SANI_ENFORCE_WORD_CONNECTIVITY_BETWEEN_PREVIOUS_ACTIVE_COMPONENTS_AND_NEWLY_ACTIVATED_COMPONENT_MEMORY
-					//ownerGroup->parseTreeGroupMemory.push_back(ownerGroup->currentParseTreeGroupTemp);	//not required (as memory is only currently used for groups with first component active)
-					#endif
-
-					ownerGroup->currentParseTreeGroupTemp->parseTreeMinWordIndex = activatedNeuronCandidate.parseTreeMinWordIndex;
-					ownerGroup->currentParseTreeGroupTemp->parseTreeMaxWordIndex = activatedNeuronCandidate.parseTreeMaxWordIndex;
+					//currentParseTreeGroupTemp->components.push_front(newParseComponent);
+					currentParseTreeGroupTemp->components.insert(currentParseTreeGroupTemp->components.begin(), newFirstParseComponent);
 				}
+				else
+				{
+					currentParseTreeGroupTemp->components.push_back(newFirstParseComponent);
+				}
+
+				#ifdef GIA_POS_REL_TRANSLATOR_SANI_FREE_MEMORY
+				parseTreeGroupListCompact.push_back(ownerGroup->currentParseTreeGroupTemp);
+				#endif	
+				#ifdef GIA_POS_REL_TRANSLATOR_SANI_ENFORCE_WORD_CONNECTIVITY_BETWEEN_PREVIOUS_ACTIVE_COMPONENTS_AND_NEWLY_ACTIVATED_COMPONENT_MEMORY
+				//ownerGroup->parseTreeGroupMemory.push_back(ownerGroup->currentParseTreeGroupTemp);	//not required (as memory is only currently used for groups with first component active)
+				#endif
+
+				ownerGroup->currentParseTreeGroupTemp->parseTreeMinWordIndex = activatedNeuronCandidate.parseTreeMinWordIndex;
+				ownerGroup->currentParseTreeGroupTemp->parseTreeMaxWordIndex = activatedNeuronCandidate.parseTreeMaxWordIndex;
 			}
 		}
 	}
