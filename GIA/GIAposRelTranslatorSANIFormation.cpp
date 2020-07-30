@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorSANIFormation.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3l8e 15-July-2020
+ * Project Version: 3m1a 23-July-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Formation
  * /
@@ -39,6 +39,10 @@
 
 
 GIAposRelTranslatorRulesGroupNeuralNetwork* firstInputGroupInNetwork;
+#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_INPUT_WORDS
+GIAposRelTranslatorRulesGroupNeuralNetwork* firstGroupInInputLayerSectionWordOrig;
+unordered_map<string, GIAposRelTranslatorRulesGroupNeuralNetwork*> inputLayerSectionWordOrigMap;	//for efficient lookup
+#else
 GIAposRelTranslatorRulesGroupNeuralNetwork* firstGroupInInputLayerSectionWordPOStype;
 #ifdef GIA_POS_REL_TRANSLATOR_SANI_CREATE_NEURONS_FOR_NOUN_VERB_VARIANTS
 GIAposRelTranslatorRulesGroupNeuralNetwork* firstGroupInInputLayerSectionWordNounVariantType;
@@ -46,7 +50,11 @@ GIAposRelTranslatorRulesGroupNeuralNetwork* firstGroupInInputLayerSectionWordVer
 #endif
 GIAposRelTranslatorRulesGroupNeuralNetwork* firstGroupInInputLayerSectionExplicitWord;
 GIAposRelTranslatorRulesGroupNeuralNetwork* firstGroupInInputLayerSectionTokensLayer;
+#endif
 
+#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_INPUT_WORDS
+int numberOfInputGroupsInSectionWordOrig;
+#else
 int numberOfInputGroupsInSectionWordPOStype;
 #ifdef GIA_POS_REL_TRANSLATOR_SANI_CREATE_NEURONS_FOR_NOUN_VERB_VARIANTS
 int numberOfInputGroupsInSectionNounVariantType;
@@ -54,10 +62,12 @@ int numberOfInputGroupsInSectionVerbVariantType;
 #endif
 int numberOfInputGroupsInSectionExplicitWord;
 int numberOfInputGroupsInSectionTokensLayer;
+
 unordered_map<string, GIAposRelTranslatorRulesGroupNeuralNetwork*> inputLayerSectionExplicitWordMap;
 unordered_map<string, GIAposRelTranslatorRulesGroupNeuralNetwork*> inputLayerSectionTokensLayerMap;
 #ifdef GIA_POS_REL_TRANSLATOR_SANI_ADD_EXPLICIT_WORD_REFERENCES_AS_INDEPENDENT_POS_PERMUTATIONS
 vector<string> explicitWordListLocal;
+#endif
 #endif
 
 //high level groupType names should be synced with GIAposRelTranslatorClass::generateParseTreeIntro
@@ -65,27 +75,32 @@ GIAposRelTranslatorRulesGroupNeuralNetwork* topLevelGroupInOuputLayerSectionStat
 GIAposRelTranslatorRulesGroupNeuralNetwork* topLevelGroupInOuputLayerSectionQuestions;
 GIAposRelTranslatorRulesGroupNeuralNetwork* topLevelGroupInOuputLayerSectionSubjects;
 
+
+#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_INPUT_WORDS
+GIAposRelTranslatorRulesGroupNeuralNetwork* GIAposRelTranslatorSANIFormationClass::getFirstGroupInInputLayerSectionWordOrig()
+{
+	return firstGroupInInputLayerSectionWordOrig;
+}
+#else
 #ifdef GIA_POS_REL_TRANSLATOR_SANI_ADD_EXPLICIT_WORD_REFERENCES_AS_INDEPENDENT_POS_PERMUTATIONS
 vector<string>* GIAposRelTranslatorSANIFormationClass::getExplicitWordList()
 {
 	return &explicitWordListLocal;
 }
 #endif
-
 unordered_map<string, GIAposRelTranslatorRulesGroupNeuralNetwork*>* GIAposRelTranslatorSANIFormationClass::getInputLayerSectionExplicitWordMap()
 {
 	return &inputLayerSectionExplicitWordMap;
 }
-
 unordered_map<string, GIAposRelTranslatorRulesGroupNeuralNetwork*>* GIAposRelTranslatorSANIFormationClass::getInputLayerSectionTokensLayerMap()
 {
 	return &inputLayerSectionTokensLayerMap;
 }
-
 GIAposRelTranslatorRulesGroupNeuralNetwork* GIAposRelTranslatorSANIFormationClass::getFirstGroupInInputLayerSectionWordPOStype()
 {
 	return firstGroupInInputLayerSectionWordPOStype;
 }
+#endif
 
 #ifdef GIA_NEURAL_NETWORK
 GIAposRelTranslatorRulesGroupNeuralNetwork* GIAposRelTranslatorSANIFormationClass::getFirstInputGroupInNetwork()
@@ -143,11 +158,24 @@ bool GIAposRelTranslatorSANIFormationClass::createInputNeuronLayer(vector<XMLpar
 				types
 	*/
 
+
+	GIAposRelTranslatorRulesGroupNeuralNetwork* currentGroupInInputLayerSection = NULL;
+	
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_INPUT_WORDS
+	numberOfInputGroupsInSectionWordOrig = 0;
+	
+	firstGroupInInputLayerSectionWordOrig = new GIAposRelTranslatorRulesGroupNeuralNetwork();
+	firstInputGroupInNetwork = firstGroupInInputLayerSectionWordOrig;
+	currentGroupInInputLayerSection = firstGroupInInputLayerSectionWordOrig;
+	if(!createInputNeuronLayerSectionWordOrig(&currentGroupInInputLayerSection, &numberOfInputGroupsInSectionWordOrig))
+	{
+		result = false;
+	}	
+	#else
 	numberOfInputGroupsInSectionWordPOStype = 0;
 	numberOfInputGroupsInSectionExplicitWord = 0;
 	numberOfInputGroupsInSectionTokensLayer = 0;
 	
-	GIAposRelTranslatorRulesGroupNeuralNetwork* currentGroupInInputLayerSection = NULL;
 	firstGroupInInputLayerSectionWordPOStype = new GIAposRelTranslatorRulesGroupNeuralNetwork();
 	firstInputGroupInNetwork = firstGroupInInputLayerSectionWordPOStype;
 	currentGroupInInputLayerSection = firstGroupInInputLayerSectionWordPOStype;
@@ -171,11 +199,73 @@ bool GIAposRelTranslatorSANIFormationClass::createInputNeuronLayer(vector<XMLpar
 		result = false;
 	}
 	#endif
+	#endif
+
 
 	return result;
 }
 
+#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_INPUT_WORDS
+bool GIAposRelTranslatorSANIFormationClass::createInputNeuronLayerSectionWordOrig(GIAposRelTranslatorRulesGroupNeuralNetwork** currentGroupInInputLayerSectionWordOrig, int* numberOfGroupsInSection)
+{
+	bool result = true;
+	//initialise section as null
+	return result;
+}
+bool GIAposRelTranslatorSANIFormationClass::addInputNeuronLayerSectionWordOrig(GIApreprocessorPlainTextWord* currentWord, GIAposRelTranslatorRulesGroupNeuralNetwork** currentGroupInInputLayerSection)
+{
+	bool result = true;
+	
+	int* numberOfGroupsInSection = &numberOfInputGroupsInSectionWordOrig;
 
+	GIAposRelTranslatorRulesGroupNeuralNetwork* currentGroupInInputLayerSectionWordOrig = getFirstGroupInInputLayerSectionWordOrig();
+	while(currentGroupInInputLayerSectionWordOrig->next != NULL)
+	{
+		currentGroupInInputLayerSectionWordOrig = currentGroupInInputLayerSectionWordOrig->next;	//point to last group in section
+	}
+	*currentGroupInInputLayerSection = currentGroupInInputLayerSectionWordOrig;
+	
+	string wordOrig = currentWord->tagName;
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_ANN
+	currentGroupInInputLayerSectionWordOrig->neuronReference->GIAentityName = wordOrig;
+	#endif
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR
+	currentGroupInInputLayerSectionWordOrig->groupTypeIsString = true;
+	#endif
+	#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_PROPAGATE_ASSIGN_GROUP_INDICES_TO_INPUT_NEURONS
+	int newNeuronIndex = GIAposRelTranslatorRules.assignGroupIndex(currentGroupInInputLayerSectionWordOrig);	
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_ANN
+	currentGroupInInputLayerSectionWordOrig->initiateANNneuron("groupIndex:" + SHAREDvars.convertIntToString(newNeuronIndex));
+	#endif
+	#endif
+	addGroupToLayer(&currentGroupInInputLayerSectionWordOrig, numberOfGroupsInSection);
+	inputLayerSectionWordOrigMap.insert(pair<string, GIAposRelTranslatorRulesGroupNeuralNetwork*>(wordOrig, currentGroupInInputLayerSectionWordOrig));
+	#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_CREATE
+	cout << "GIAposRelTranslatorSANIFormationClass::createInputNeuronLayerSectionWordOrig{} addGroupToLayer(currentGroupInInputLayerSectionWordOrig, numberOfGroupsInSection);  i = " << i << endl;
+	#endif
+	
+	
+	return result;
+}
+bool GIAposRelTranslatorSANIFormationClass::findInputNeuronLayerSectionWordOrig(GIApreprocessorPlainTextWord* currentWord, GIAposRelTranslatorRulesGroupNeuralNetwork** currentGroupInInputLayerSection)
+{
+	bool result = false;
+	
+	string wordOrig = currentWord->tagName;
+	unordered_map<string, GIAposRelTranslatorRulesGroupNeuralNetwork*>::iterator iter = inputLayerSectionWordOrigMap.find(wordOrig);
+	if(iter != inputLayerSectionWordOrigMap.end())
+	{
+		result = true;
+		*currentGroupInInputLayerSection = iter->second;
+	}
+	else
+	{
+		//cerr << "GIAposRelTranslatorSANIFormationClass::findInputNeuronLayerSectionWordOrig{} error: cannot find word in inputLayerSectionWordOrigMap: wordOrig = " << wordOrig << endl;
+	}
+	
+	return result;
+}
+#else
 bool GIAposRelTranslatorSANIFormationClass::createInputNeuronLayerSectionWordPOStype(GIAposRelTranslatorRulesGroupNeuralNetwork** currentGroupInInputLayerSectionWordPOStype, int* numberOfGroupsInSection)
 {
 	bool result = true;
@@ -486,9 +576,10 @@ bool GIAposRelTranslatorSANIFormationClass::createInputNeuronLayerSectionTokensL
 	
 	return classTagFound;
 }
+#endif
 
 
-
+#ifndef GIA_POS_REL_TRANSLATOR_SANI_SIMPLE_WORD_POS_TYPE_INPUT_ONLY
 bool GIAposRelTranslatorSANIFormationClass::createNeuronLayerIntro(vector<XMLparserTag*>* GIAposRelTranslatorRulesTokenLayers, vector<GIAposRelTranslatorRulesGroupType*>* GIAposRelTranslatorRulesGroupTypes)
 {
 	bool result = true;
@@ -820,7 +911,7 @@ bool GIAposRelTranslatorSANIFormationClass::findTokensLayerClass(string layerNam
 	}
 	return result;
 }
-
+#endif
 
 			
 bool GIAposRelTranslatorSANIFormationClass::findWordInList(const string word, vector<string>* explicitWordList)

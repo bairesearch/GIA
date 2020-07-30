@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3l8e 15-July-2020
+ * Project Version: 3m1a 23-July-2020
  * Requirements: 
  * Description: GIA specific global definitions
  * /
@@ -752,6 +752,19 @@
 			#define GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS	//GIA3k1a
 			#define GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_VARIABLE_FIRST_COMPONENTS	//GIA3j5a
 			//#define GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_VARIABLE_LAST_COMPONENTS	//GIA3l8e
+		#endif
+	#endif
+#endif
+
+
+//#define GIA_DEBUG_DISABLE_3m_CODE
+#ifndef GIA_DEBUG_DISABLE_3m_CODE
+	//#define GIA_POS_REL_TRANSLATOR_SANI_SEMANTIC_NETWORK	//GIA3m1a	//store semantic network within SANI parse tree rather than generating from SANI parse tree
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEMANTIC_NETWORK
+		#define GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_INPUT_WORDS	//GIA3m1a	//input words rather than pos values into SANI
+		#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_INPUT_WORDS
+			#define GIA_POS_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START_DISABLE	//GIA3m1a
+			#define GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_INPUT_WORDS_LEMMAS	//optional (feed lemmas rather than exact words)
 		#endif
 	#endif
 #endif
@@ -1697,8 +1710,10 @@
 			//#define GIA_POS_REL_TRANSLATOR_SANI_PARSE_BASIC	//depreciated: modify and execute GIAposRelTranslatorParserClass::generateSemanticRelationsFromTxtRelations rather than adapting this code for GIAposRelTranslatorSANI
 		#endif
 		
-		#ifndef GIA_POS_REL_TRANSLATOR_SANI_PROPAGATE_ALL_POS_VALUES_SIMULTANEOUSLY
-			#define GIA_POS_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START	//GIA3g1aTEMP47	//GIA_POS_REL_TRANSLATOR_SANI_PARSE does not currently robustly support GIA_POS_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START
+		#ifndef GIA_POS_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START_DISABLE
+			#ifndef GIA_POS_REL_TRANSLATOR_SANI_PROPAGATE_ALL_POS_VALUES_SIMULTANEOUSLY
+				#define GIA_POS_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START	//GIA3g1aTEMP47	//GIA_POS_REL_TRANSLATOR_SANI_PARSE does not currently robustly support GIA_POS_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START
+			#endif
 		#endif
 		
 		#ifndef GIA_POS_REL_TRANSLATOR_SANI_COMPACT
@@ -1946,10 +1961,14 @@
 			
 			#define GIA_POS_REL_TRANSLATOR_RULES_ASSUME_HIGH_LEVEL_REFERENCE_SETS_DO_NOT_CONTAIN_EXPLICIT_SEMANTIC_RELATION_FUNCTION
 			
-			#ifdef GIA_POS_REL_TRANSLATOR_SANI
-				#define GIA_POS_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START		//assume mandatory (definately required for GIA_POS_REL_TRANSLATOR_SANI_PARSE_PERFORMANCE_RECORD_PERFORMANCE)
-			#else
-				#define GIA_POS_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START		//disabling this is not supported due to optional components (but ideally this should be disabled to increase performance)
+			#ifndef GIA_POS_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START_DISABLE	//added GIA3m1a
+				#ifndef GIA_POS_REL_TRANSLATOR_SANI_PROPAGATE_ALL_POS_VALUES_SIMULTANEOUSLY	//added GIA3m1a
+					#ifdef GIA_POS_REL_TRANSLATOR_SANI
+						#define GIA_POS_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START		//assume mandatory (definately required for GIA_POS_REL_TRANSLATOR_SANI_PARSE_PERFORMANCE_RECORD_PERFORMANCE)
+					#else
+						#define GIA_POS_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START		//disabling this is not supported due to optional components (but ideally this should be disabled to increase performance)
+					#endif
+				#endif
 			#endif
 			
 			#define GIA_POS_REL_TRANSLATOR_RULES_TREAT_UNKNOWN_POSTYPES	//precondition: all optional strings must have a known pos type to be processed (unknown not supported)

@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorSANIFormation.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3l8e 15-July-2020
+ * Project Version: 3m1a 23-July-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Formation
  * /
@@ -57,31 +57,44 @@ class GIAposRelTranslatorSANIFormationClass
 	private: GIAposRelTranslatorRulesClass GIAposRelTranslatorRules;
 	private: ANNdisplayClass ANNdisplay;
 	
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_INPUT_WORDS
+	public: GIAposRelTranslatorRulesGroupNeuralNetwork* getFirstGroupInInputLayerSectionWordOrig();
+	#else
 	#ifdef GIA_POS_REL_TRANSLATOR_SANI_ADD_EXPLICIT_WORD_REFERENCES_AS_INDEPENDENT_POS_PERMUTATIONS
 	public: vector<string>* getExplicitWordList();
 	#endif
 	public: unordered_map<string, GIAposRelTranslatorRulesGroupNeuralNetwork*>* getInputLayerSectionExplicitWordMap();
 	public: unordered_map<string, GIAposRelTranslatorRulesGroupNeuralNetwork*>* getInputLayerSectionTokensLayerMap();
 	public: GIAposRelTranslatorRulesGroupNeuralNetwork* getFirstGroupInInputLayerSectionWordPOStype();
+	#endif
 	#ifdef GIA_NEURAL_NETWORK
 	public: GIAposRelTranslatorRulesGroupNeuralNetwork* getFirstInputGroupInNetwork();
 	#endif
 
 	public: bool createGIAposRelTranslatorSANI(vector<XMLparserTag*>* GIAposRelTranslatorRulesTokenLayers, vector<GIAposRelTranslatorRulesGroupType*>* GIAposRelTranslatorRulesGroupTypes);
 		private: bool createInputNeuronLayer(vector<XMLparserTag*>* GIAposRelTranslatorRulesTokenLayers, vector<GIAposRelTranslatorRulesGroupType*>* GIAposRelTranslatorRulesGroupTypes);
+			#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_INPUT_WORDS
+			private: bool createInputNeuronLayerSectionWordOrig(GIAposRelTranslatorRulesGroupNeuralNetwork** currentGroupInInputLayerSectionWordOrig, int* numberOfGroupsInSection);
+			public: bool addInputNeuronLayerSectionWordOrig(GIApreprocessorPlainTextWord* currentWord, GIAposRelTranslatorRulesGroupNeuralNetwork** currentGroupInInputLayerSection);
+			public: bool findInputNeuronLayerSectionWordOrig(GIApreprocessorPlainTextWord* currentWord, GIAposRelTranslatorRulesGroupNeuralNetwork** currentGroupInInputLayerSection);
+			#else
 			private: bool createInputNeuronLayerSectionWordPOStype(GIAposRelTranslatorRulesGroupNeuralNetwork** currentGroupInInputLayerSectionWordPOStype, int* numberOfGroupsInSection);
 				private: bool createInputNeuronLayerSectionNounVariantType(GIAposRelTranslatorRulesGroupNeuralNetwork* currentGroupInInputLayerSectionWordPOStype, GIAposRelTranslatorRulesGroupNeuralNetwork** currentGroupInInputLayerSectionWordNounVariantType, int* numberOfGroupsInSection);
 				private: bool createInputNeuronLayerSectionVerbVariantType(GIAposRelTranslatorRulesGroupNeuralNetwork* currentGroupInInputLayerSectionWordPOStype, GIAposRelTranslatorRulesGroupNeuralNetwork** currentGroupInInputLayerSectionWordVerbVariantType, int* numberOfGroupsInSection);
 			private: bool createInputNeuronLayerSectionExplicitWord(GIAposRelTranslatorRulesGroupNeuralNetwork** currentGroupInInputLayerSection, int* numberOfGroupsInSection, vector<GIAposRelTranslatorRulesGroupType*>* GIAposRelTranslatorRulesGroupTypes);	
 				private: bool createInputNeuronLayerSectionExplicitWord(vector<GIAposRelTranslatorRulesComponentNeuralNetwork*>* components, bool subcomponents, vector<string>* explicitWordList);	
 			private: bool createInputNeuronLayerSectionTokensLayer(vector<XMLparserTag*>* GIAposRelTranslatorRulesTokenLayers, GIAposRelTranslatorRulesGroupNeuralNetwork** currentGroupInInputLayerSectionTokensLayer, int* numberOfGroupsInSectionTokensLayer);
+			#endif
+	#ifndef GIA_POS_REL_TRANSLATOR_SANI_SIMPLE_WORD_POS_TYPE_INPUT_ONLY
 		private: bool createNeuronLayerIntro(vector<XMLparserTag*>* GIAposRelTranslatorRulesTokenLayers, vector<GIAposRelTranslatorRulesGroupType*>* GIAposRelTranslatorRulesGroupTypes);
 			private: bool createNeuronLayerGroupType(vector<XMLparserTag*>* GIAposRelTranslatorRulesTokenLayers, GIAposRelTranslatorRulesComponentNeuralNetwork* higherLevelComponent, GIAposRelTranslatorRulesGroupType* groupType);
 				private: bool createNeuronLayerGroup(vector<XMLparserTag*>* GIAposRelTranslatorRulesTokenLayers, GIAposRelTranslatorRulesGroupNeuralNetwork* group);
 					private: bool createNeuronLayerComponents(vector<XMLparserTag*>* GIAposRelTranslatorRulesTokenLayers, GIAposRelTranslatorRulesGroupNeuralNetwork* group, vector<GIAposRelTranslatorRulesComponentNeuralNetwork*>* components, bool subcomponents, GIAposRelTranslatorRulesComponentNeuralNetwork* higherLevelComponent);
-
+		
+		
 	private: bool findTokensLayerClassType(string layerName, string layerClassName, string layerClassTypeName, GIAposRelTranslatorRulesGroupNeuralNetwork** groupFound);		
 		private: bool findTokensLayerClass(string layerName, string layerClassName, GIAposRelTranslatorRulesGroupNeuralNetwork** layerClassGroupFound);
+	#endif
 	private: bool findWordInList(const string word, vector<string>* explicitWordList);
 	public: bool findWordInGroupMap(const string word, unordered_map<string, GIAposRelTranslatorRulesGroupNeuralNetwork*>* wordMap, GIAposRelTranslatorRulesGroupNeuralNetwork** groupFound);
 	public: GIAposRelTranslatorRulesGroupNeuralNetwork* getInputGroupLayerSection(GIAposRelTranslatorRulesGroupNeuralNetwork* firstGroupInInputLayerSection, int groupIndexInSection);

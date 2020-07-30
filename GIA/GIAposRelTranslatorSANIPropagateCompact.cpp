@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorSANIPropagateCompact.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3l8e 15-July-2020
+ * Project Version: 3m1a 23-July-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Propagate Compact - ~O(n)
  * /
@@ -370,7 +370,14 @@ bool GIAposRelTranslatorSANIPropagateCompactClass::propagateWordThroughNetworkIn
 	#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_PROPAGATE
 	cout << "currentWord = " << currentWord->tagName << endl;
 	#endif
-		
+	
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_INPUT_WORDS
+	int wordPOStypeNOTUSED = INT_DEFAULT_VALUE;
+	if(!propagateWordThroughNetworkGroupInit(translatorVariables, w, wordPOStypeNOTUSED, forwardPropogationSignalData, forwardPropogationWordData, forwardPropogationSentenceData, getFirstLayer))
+	{
+		result = false;
+	}	
+	#else
 	if(!GIAposRelTranslatorSANIPropagateOperations.currentWordAmbiguous(currentWord))
 	{
 		#ifdef GIA_POS_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START
@@ -411,6 +418,7 @@ bool GIAposRelTranslatorSANIPropagateCompactClass::propagateWordThroughNetworkIn
 		}
 	}
 	#endif
+	#endif
 	
 	return result;
 }
@@ -419,8 +427,17 @@ bool GIAposRelTranslatorSANIPropagateCompactClass::propagateWordThroughNetworkGr
 {
 	bool result = true;
 	
+	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_INPUT_WORDS
+	GIApreprocessorPlainTextWord* currentWord = forwardPropogationWordData->wordReference;
+	GIAposRelTranslatorRulesGroupNeuralNetwork* inputLayerGroup;
+	if(!GIAposRelTranslatorSANIFormation.findInputNeuronLayerSectionWordOrig(currentWord, &inputLayerGroup))
+	{
+		GIAposRelTranslatorSANIFormation.addInputNeuronLayerSectionWordOrig(currentWord, &inputLayerGroup);
+	}
+	#else
 	GIAposRelTranslatorRulesGroupNeuralNetwork* inputLayerGroup = GIAposRelTranslatorSANIFormation.getInputGroupLayerSection(GIAposRelTranslatorSANIFormation.getFirstGroupInInputLayerSectionWordPOStype(), wordPOStype);	
-
+	#endif
+	
 	forwardPropogationWordData->wordPOStype = wordPOStype;
 	inputLayerGroup->wordPOStype = wordPOStype;
 
