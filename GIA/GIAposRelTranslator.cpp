@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m2b 30-July-2020
+ * Project Version: 3m3a 01-August-2020
  * Requirements: requires plain text file
  * Description: Part-of-speech Relation Translator
  * /
@@ -43,7 +43,7 @@ bool GIAposRelTranslatorClass::parseTxtfileAndCreateSemanticNetworkBasedUponSema
 {
 	bool result = true;
 
-	#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_PROPAGATE_EXTRA8
+	#ifdef SANI_DEBUG_PROPAGATE_EXTRA8
 	firstExecution = true;
 	#endif
 
@@ -84,17 +84,17 @@ bool GIAposRelTranslatorClass::parseTxtfileAndCreateSemanticNetworkBasedUponSema
 	}
 	#endif
 
-	vector<GIAposRelTranslatorRulesGroupType*>* GIAposRelTranslatorRulesGroupTypes = new vector<GIAposRelTranslatorRulesGroupType*>;
+	vector<SANIGroupType*>* SANIGroupTypes = new vector<SANIGroupType*>;
 	vector<XMLparserTag*>* GIAposRelTranslatorRulesTokenLayers = new vector<XMLparserTag*>;
-	if(!GIAposRelTranslatorRules.extractGIAposRelTranslatorRules(GIAposRelTranslatorRulesGroupTypes, GIAposRelTranslatorRulesTokenLayers))
+	if(!GIAposRelTranslatorRules.extractGIAposRelTranslatorRules(SANIGroupTypes, GIAposRelTranslatorRulesTokenLayers))
 	{
 		result = false;
 	}
 	
-	//cout << "GIAposRelTranslatorRulesGroupTypes->size() = " << GIAposRelTranslatorRulesGroupTypes->size() << endl;
+	//cout << "SANIGroupTypes->size() = " << SANIGroupTypes->size() << endl;
 	
-	#ifdef GIA_POS_REL_TRANSLATOR_SANI
-	if(!GIAposRelTranslatorSANIFormation.createGIAposRelTranslatorSANI(GIAposRelTranslatorRulesTokenLayers, GIAposRelTranslatorRulesGroupTypes))
+	#ifdef SANI
+	if(!SANIFormation.createSANI(GIAposRelTranslatorRulesTokenLayers, SANIGroupTypes))
 	{
 		result = false;
 	}
@@ -111,7 +111,7 @@ bool GIAposRelTranslatorClass::parseTxtfileAndCreateSemanticNetworkBasedUponSema
 		{	
 			GIApreprocessorPlainTextWord* currentWord = sentenceContents->at(w);
 			currentWord->translatorSentenceEntityIndex = GIAtranslatorOperations.convertSentenceContentsIndexToEntityIndex(w);
-			#ifdef GIA_POS_REL_TRANSLATOR_SANI
+			#ifdef SANI
 			currentWord->translatorSentenceWordIndex = w;
 			#endif
 		}
@@ -119,11 +119,11 @@ bool GIAposRelTranslatorClass::parseTxtfileAndCreateSemanticNetworkBasedUponSema
 	}
 	#endif	
 		
-	#ifdef GIA_POS_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS
+	#ifdef SANI_PARSE_SIMULTANEOUS
 	/*
-	#ifdef GIA_POS_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OPTIMISED
+	#ifdef SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OPTIMISED
 	translatorVariables->parserDemarkateOptimumPathway = true;	//note actual demarkateOptimumPathwayBackprop isnt required to be executed (it is done by GIAtranslatorClass::convertSentenceRelationsIntoGIAnetworkNodesWrapper for the given sentence), but everything else is (ie code require to extract 
-	if(!GIAposRelTranslatorPermutations.executeTxtRelTranslatorWrapper(translatorVariables, GIAposRelTranslatorRulesTokenLayers, GIAposRelTranslatorRulesGroupTypes))
+	if(!GIAposRelTranslatorPermutations.executeTxtRelTranslatorWrapper(translatorVariables, GIAposRelTranslatorRulesTokenLayers, SANIGroupTypes))
 	{
 		result = false;
 	}
@@ -131,15 +131,15 @@ bool GIAposRelTranslatorClass::parseTxtfileAndCreateSemanticNetworkBasedUponSema
 	#endif
 	*/
 	#else
-	if(!GIAposRelTranslatorPermutations.executeTxtRelTranslatorWrapper(translatorVariables, GIAposRelTranslatorRulesTokenLayers, GIAposRelTranslatorRulesGroupTypes))
+	if(!GIAposRelTranslatorPermutations.executeTxtRelTranslatorWrapper(translatorVariables, GIAposRelTranslatorRulesTokenLayers, SANIGroupTypes))
 	{
 		result = false;
 	}
 	#endif
 	
-#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR
-	#ifdef GIA_POS_REL_TRANSLATOR_SANI_ANN_DELAY_ANN_CONNECTIVITY_TILL_END
-	GIAposRelTranslatorSANIFormation.createANNconnectivity(GIAposRelTranslatorRulesGroupTypes);
+#ifdef SANI_SEQUENCE_GRAMMAR
+	#ifdef SANI_ANN_DELAY_ANN_CONNECTIVITY_TILL_END
+	SANIFormation.createANNconnectivity(SANIGroupTypes);
 	#endif
 #else
 	/*

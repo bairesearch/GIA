@@ -26,7 +26,7 @@
  * File Name: GIAneuralNetworkOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m2b 30-July-2020
+ * Project Version: 3m3a 01-August-2020
  * Description: Neural Network - visual representation of GIA contents in prototype biological neural network
  * /
  *******************************************************************************/
@@ -42,9 +42,9 @@
 #include "ANNneuronClass.hpp"
 #include "ANNneuronConnectionClass.hpp"
 #include "GIAtranslatorOperations.hpp"
-#ifdef GIA_POS_REL_TRANSLATOR_SANI_ANN
+#ifdef SANI_ANN
 #include "GIAposRelTranslatorRules.hpp"
-#include "GIAposRelTranslatorSANIFormation.hpp"
+#include "SANIFormation.hpp"
 #include "GIApreprocessorSentenceClass.hpp"
 //#include "GIApreprocessorWordClass.hpp"
 #endif
@@ -93,9 +93,9 @@ class GIAneuralNetworkOperationsClass
 {
 	private: GIAentityNodeClassClass GIAentityNodeClass;
 	private: GIAtranslatorOperationsClass GIAtranslatorOperations;
-	#ifdef GIA_POS_REL_TRANSLATOR_SANI_ANN
+	#ifdef SANI_ANN
 	private: GIAposRelTranslatorRulesClass GIAposRelTranslatorRules;
-	private: GIAposRelTranslatorSANIFormationClass GIAposRelTranslatorSANIFormation;
+	private: SANIFormationClass SANIFormation;
 	#endif
 	private: ANNneuronClassClass ANNneuronClass;
 	private: ANNxmlConversionClass ANNxmlConversion;
@@ -105,16 +105,16 @@ class GIAneuralNetworkOperationsClass
 	public: bool writeNeuralNetXMLfile(const string xmlFileName, ANNneuron* ANNfirstInputNeuronInNetwork);
 			
 	public: void initiateGIAneuralNetwork(GIAneuralNetworkVariablesClass* neuralNetworkVariables);
-	#ifdef GIA_POS_REL_TRANSLATOR_SANI_ANN
-	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_CONTINUOUSLY_OUTPUT_NETWORK
+	#ifdef SANI_ANN
+	#ifdef SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_CONTINUOUSLY_OUTPUT_NETWORK
 	public: void initialiseIncrementalGeneration();
 	//private: bool generateNeuralNetFromGIAposRelTranslatorNetReset(GIAtranslatorVariablesClass* translatorVariables);
 	#endif
 	public: bool generateNeuralNetFromGIAposRelTranslatorNet(GIAtranslatorVariablesClass* translatorVariables);
 		private: bool determinePositonsOfInputNeurons(int64_t* idBase, ANNneuron** firstOutputNeuronInNetworkPre);
-		private: bool determinePositonsOfNeurons(vector<GIAposRelTranslatorRulesGroupType*>* GIAposRelTranslatorRulesGroupTypes, int64_t* idBase, ANNneuron* firstOutputNeuronInNetworkPre, ANNneuron** firstOutputNeuronInNetworkPost);
-		#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_CONTINUOUSLY_OUTPUT_NETWORK
-		private: bool determinePositonsOfNeuronsReset(vector<GIAposRelTranslatorRulesGroupType*>* GIAposRelTranslatorRulesGroupTypes);
+		private: bool determinePositonsOfNeurons(vector<SANIGroupType*>* SANIGroupTypes, int64_t* idBase, ANNneuron* firstOutputNeuronInNetworkPre, ANNneuron** firstOutputNeuronInNetworkPost);
+		#ifdef SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_CONTINUOUSLY_OUTPUT_NETWORK
+		private: bool determinePositonsOfNeuronsReset(vector<SANIGroupType*>* SANIGroupTypes);
 		#endif	
 	#endif
 	#ifdef GIA_NEURAL_NETWORK_PASSIVE

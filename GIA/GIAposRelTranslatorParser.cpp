@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m2b 30-July-2020
+ * Project Version: 3m3a 01-August-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator Parser
  * /
@@ -72,23 +72,23 @@ bool GIAposRelTranslatorParserClass::convertSentenceTxtRelationsIntoGIAnetworkNo
 	#endif
 
 
-	#ifdef GIA_POS_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_UNOPTIMISED
+	#ifdef SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_UNOPTIMISED
 	#ifndef GIA_ADVANCED_REFERENCING_DISABLE_LINKING
-	#ifdef GIA_POS_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_ONLY_PEFORM_PRELIM_PROPAGATION_IF_ADVANCED_REFERENCING
+	#ifdef SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_ONLY_PEFORM_PRELIM_PROPAGATION_IF_ADVANCED_REFERENCING
 	if(linkPreestablishedReferencesGIA)
 	{
 	#endif
 	#endif
 		vector<XMLparserTag*>* GIAposRelTranslatorRulesTokenLayers = GIAposRelTranslatorRules.getGIAposRelTranslatorRulesTokenLayersGlobal();
-		vector<GIAposRelTranslatorRulesGroupType*>* GIAposRelTranslatorRulesGroupTypes = GIAposRelTranslatorRules.getGIAposRelTranslatorRulesGroupTypesGlobal();
+		vector<SANIGroupType*>* SANIGroupTypes = GIAposRelTranslatorRules.getSANIGroupTypesGlobal();
 		translatorVariables->parserAllowed = false;
-		if(GIAposRelTranslatorPermutations.executeTxtRelTranslatorWrapper2(translatorVariables, GIAposRelTranslatorRulesTokenLayers, GIAposRelTranslatorRulesGroupTypes, translatorVariables->currentPreprocessorSentenceInList))
+		if(GIAposRelTranslatorPermutations.executeTxtRelTranslatorWrapper2(translatorVariables, GIAposRelTranslatorRulesTokenLayers, SANIGroupTypes, translatorVariables->currentPreprocessorSentenceInList))
 		{
 			result = false;
 		}
 		translatorVariables->parserAllowed = true;
 	#ifndef GIA_ADVANCED_REFERENCING_DISABLE_LINKING
-	#ifdef GIA_POS_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_ONLY_PEFORM_PRELIM_PROPAGATION_IF_ADVANCED_REFERENCING
+	#ifdef SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_ONLY_PEFORM_PRELIM_PROPAGATION_IF_ADVANCED_REFERENCING
 	}
 	#endif
 	#endif
@@ -291,7 +291,7 @@ bool GIAposRelTranslatorParserClass::locateAndAddAllNetworkIndexEntitiesBasedOnT
 		#endif
 
 		entity->semanticRelationPreprocessorEntityIndex = currentWord->translatorSentenceEntityIndex;
-		#ifndef GIA_POS_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OLD
+		#ifndef SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OLD
 		entity->semanticRelationWordPOStypeInferred = currentWord->wordPOStypeInferred;
 		#endif
 		entity->sentenceIndexTemp = translatorVariables->sentenceIndex;
@@ -387,20 +387,20 @@ bool GIAposRelTranslatorParserClass::generateSemanticRelationsFromTxtRelationsWr
 }
 #endif
 
-#ifdef GIA_POS_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS
+#ifdef SANI_PARSE_SIMULTANEOUS
 bool GIAposRelTranslatorParserClass::generateSemanticRelationsFromTxtRelationsWrapper(GIAtranslatorVariablesClass* translatorVariables)
 {
 	bool result = true;
 	
 	vector<XMLparserTag*>* GIAposRelTranslatorRulesTokenLayers = GIAposRelTranslatorRules.getGIAposRelTranslatorRulesTokenLayersGlobal();
-	vector<GIAposRelTranslatorRulesGroupType*>* GIAposRelTranslatorRulesGroupTypes = GIAposRelTranslatorRules.getGIAposRelTranslatorRulesGroupTypesGlobal();
+	vector<SANIGroupType*>* SANIGroupTypes = GIAposRelTranslatorRules.getSANIGroupTypesGlobal();
 
-	if(!GIAposRelTranslatorPermutations.executeTxtRelTranslatorWrapper2(translatorVariables, GIAposRelTranslatorRulesTokenLayers, GIAposRelTranslatorRulesGroupTypes, translatorVariables->currentPreprocessorSentenceInList))
+	if(!GIAposRelTranslatorPermutations.executeTxtRelTranslatorWrapper2(translatorVariables, GIAposRelTranslatorRulesTokenLayers, SANIGroupTypes, translatorVariables->currentPreprocessorSentenceInList))
 	{
 		result = false;
 	}
 	
-	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEMANTICALLY_DETERMINED_DYNAMIC_CONNECTIONS
+	#ifdef SANI_SEMANTICALLY_DETERMINED_DYNAMIC_CONNECTIONS
 	if(!relinkDynamicConnections(translatorVariables))	//CHECKTHIS
 	{
 		result = false;
@@ -421,15 +421,15 @@ bool GIAposRelTranslatorParserClass::generateSemanticRelationsFromTxtRelationsWr
 {
 	bool result = true;
 	
-	#ifdef GIA_POS_REL_TRANSLATOR_SANI
+	#ifdef SANI
 	if(translatorVariables->currentPreprocessorSentenceInList->firstParseTreeGroup == NULL)
 	{
 		//cout << "(translatorVariables->currentPreprocessorSentenceInList->firstParseTreeGroup == NULL)" << endl;
-		translatorVariables->currentPreprocessorSentenceInList->firstParseTreeGroup = new GIAposRelTranslatorRulesGroupParseTree();
+		translatorVariables->currentPreprocessorSentenceInList->firstParseTreeGroup = new SANIGroupParseTree();
 	}
 	#endif
 	
-	GIAposRelTranslatorRulesGroupParseTree* firstParseTreeGroup = translatorVariables->currentPreprocessorSentenceInList->firstParseTreeGroup;
+	SANIGroupParseTree* firstParseTreeGroup = translatorVariables->currentPreprocessorSentenceInList->firstParseTreeGroup;
 	//cout << "firstParseTreeGroup->groupName = " << firstParseTreeGroup->groupName << endl;
 	
 	int layer = 0;
@@ -438,7 +438,7 @@ bool GIAposRelTranslatorParserClass::generateSemanticRelationsFromTxtRelationsWr
 		result = false;
 	}
 	
-	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEMANTICALLY_DETERMINED_DYNAMIC_CONNECTIONS
+	#ifdef SANI_SEMANTICALLY_DETERMINED_DYNAMIC_CONNECTIONS
 	if(!relinkDynamicConnections(translatorVariables))
 	{
 		result = false;
@@ -846,7 +846,7 @@ void GIAposRelTranslatorParserClass::deleteRelationshipEntity(GIAentityNode* rel
 }
 #endif
 	
-#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEMANTICALLY_DETERMINED_DYNAMIC_CONNECTIONS
+#ifdef SANI_SEMANTICALLY_DETERMINED_DYNAMIC_CONNECTIONS
 bool GIAposRelTranslatorParserClass::relinkDynamicConnections(GIAtranslatorVariablesClass* translatorVariables)
 {
 	bool result = true;

@@ -26,7 +26,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m2b 30-July-2020
+ * Project Version: 3m3a 01-August-2020
  * Requirements: 
  * Description: Main
  * /
@@ -669,7 +669,7 @@ int main(const int argc, const char** argv)
 
 	if(SHAREDvarsClass().argumentExists(argc, argv, "-version"))
 	{
-		cout << "GIA.exe - Project Version: 3m2b 30-July-2020" << endl;
+		cout << "GIA.exe - Project Version: 3m3a 01-August-2020" << endl;
 		exit(EXIT_OK);
 	}
 
@@ -1040,14 +1040,14 @@ int main(const int argc, const char** argv)
 	}
 	#endif
 
-	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR		
-	vector<GIAposRelTranslatorRulesGroupType*>* GIAposRelTranslatorRulesGroupTypes = new vector<GIAposRelTranslatorRulesGroupType*>;
+	#ifdef SANI_SEQUENCE_GRAMMAR		
+	vector<SANIGroupType*>* SANIGroupTypes = new vector<SANIGroupType*>;
 	vector<XMLparserTag*>* GIAposRelTranslatorRulesTokenLayers = new vector<XMLparserTag*>;
-	if(!GIAposRelTranslatorRulesClass().extractGIAposRelTranslatorRules(GIAposRelTranslatorRulesGroupTypes, GIAposRelTranslatorRulesTokenLayers))
+	if(!GIAposRelTranslatorRulesClass().extractGIAposRelTranslatorRules(SANIGroupTypes, GIAposRelTranslatorRulesTokenLayers))
 	{
 		result = false;
 	}
-	if(!GIAposRelTranslatorSANIFormationClass().createGIAposRelTranslatorSANI(GIAposRelTranslatorRulesTokenLayers, GIAposRelTranslatorRulesGroupTypes))
+	if(!SANIFormationClass().createSANI(GIAposRelTranslatorRulesTokenLayers, SANIGroupTypes))
 	{
 		result = false;
 	}
@@ -1062,15 +1062,15 @@ int main(const int argc, const char** argv)
 		result = false;
 	}	
 	
-	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR
-	#ifdef GIA_POS_REL_TRANSLATOR_SANI_ANN_DELAY_ANN_CONNECTIVITY_TILL_END
-	GIAposRelTranslatorSANIFormationClass().createANNconnectivity(GIAposRelTranslatorRulesGroupTypes);
+	#ifdef SANI_SEQUENCE_GRAMMAR
+	#ifdef SANI_ANN_DELAY_ANN_CONNECTIVITY_TILL_END
+	SANIFormationClass().createANNconnectivity(SANIGroupTypes);
 	#endif
 	#endif
 
 	#ifdef GIA_NEURAL_NETWORK
 	
-	#ifdef GIA_POS_REL_TRANSLATOR_SANI_ANN
+	#ifdef SANI_ANN
 	GIAneuralNetworkOperationsClass().generateNeuralNetFromGIAposRelTranslatorNet(translatorVariables);	//generate GIA NLP neural network
 	#endif
 	#ifdef GIA_NEURAL_NETWORK_PASSIVE
@@ -2007,7 +2007,7 @@ bool GIAmainClass::executeGIA2()
 
 	#ifdef GIA_NEURAL_NETWORK
 	
-	#ifdef GIA_POS_REL_TRANSLATOR_SANI_ANN
+	#ifdef SANI_ANN
 	GIAneuralNetworkOperations.generateNeuralNetFromGIAposRelTranslatorNet(translatorVariables);	//generate GIA NLP neural network
 	#endif
 	#ifdef GIA_NEURAL_NETWORK_PASSIVE

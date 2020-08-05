@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorRules.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m2b 30-July-2020
+ * Project Version: 3m3a 01-August-2020
  * Requirements: requires plain text file
  * Description: Part-of-speech Relation Translator Rules
  * /
@@ -40,37 +40,37 @@
 
 #ifdef GIA_POS_REL_TRANSLATOR_RULES
 
-#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR
+#ifdef SANI_SEQUENCE_GRAMMAR
 static int newNeuronIndex;
 #endif
 
-vector<GIAposRelTranslatorRulesGroupType*>* GIAposRelTranslatorRulesGroupTypesGlobal;
+vector<SANIGroupType*>* SANIGroupTypesGlobal;
 vector<XMLparserTag*>* GIAposRelTranslatorRulesTokenLayersGlobal;
 
-vector<GIAposRelTranslatorRulesGroupType*>* GIAposRelTranslatorRulesClass::getGIAposRelTranslatorRulesGroupTypesGlobal()
+vector<SANIGroupType*>* GIAposRelTranslatorRulesClass::getSANIGroupTypesGlobal()
 {
-	return GIAposRelTranslatorRulesGroupTypesGlobal;
+	return SANIGroupTypesGlobal;
 }
 vector<XMLparserTag*>* GIAposRelTranslatorRulesClass::getGIAposRelTranslatorRulesTokenLayersGlobal()
 {
 	return GIAposRelTranslatorRulesTokenLayersGlobal;
 }
 
-bool GIAposRelTranslatorRulesClass::extractGIAposRelTranslatorRules(vector<GIAposRelTranslatorRulesGroupType*>* GIAposRelTranslatorRulesGroupTypes, vector<XMLparserTag*>* GIAposRelTranslatorRulesTokenLayers)
+bool GIAposRelTranslatorRulesClass::extractGIAposRelTranslatorRules(vector<SANIGroupType*>* SANIGroupTypes, vector<XMLparserTag*>* GIAposRelTranslatorRulesTokenLayers)
 {
 	bool result = true;
 	
-	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR		
-	//FUTURE GIA - upgrade GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR to read/write GIAposRelTranslatorRulesGenerated.xml
-	GIAposRelTranslatorRulesGroupType* groupType = new GIAposRelTranslatorRulesGroupType();
-	groupType->groupTypeName = GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_GROUP_TYPE_NAME;
-	groupType->referenceSetType = GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_GROUP_TYPE_REFERENCE_SET_TYPE;
-	GIAposRelTranslatorRulesGroupTypes->push_back(groupType);
-	initialiseNewGroupIndex(GIAposRelTranslatorRulesGroupTypes);
-	GIAposRelTranslatorRulesGroupTypesGlobal = GIAposRelTranslatorRulesGroupTypes;
+	#ifdef SANI_SEQUENCE_GRAMMAR		
+	//FUTURE GIA - upgrade SANI_SEQUENCE_GRAMMAR to read/write GIAposRelTranslatorRulesGenerated.xml
+	SANIGroupType* groupType = new SANIGroupType();
+	groupType->groupTypeName = SANI_SEQUENCE_GRAMMAR_GROUP_TYPE_NAME;
+	groupType->referenceSetType = SANI_SEQUENCE_GRAMMAR_GROUP_TYPE_REFERENCE_SET_TYPE;
+	SANIGroupTypes->push_back(groupType);
+	initialiseNewGroupIndex(SANIGroupTypes);
+	SANIGroupTypesGlobal = SANIGroupTypes;
 	#else
 	//parse extractGIAposRelTranslatorRules
-	if(!extractGIAposRelTranslatorRulesGroups(GIAposRelTranslatorRulesGroupTypes))
+	if(!extractSANIGroups(SANIGroupTypes))
 	{
 		result = false;
 	}
@@ -83,27 +83,27 @@ bool GIAposRelTranslatorRulesClass::extractGIAposRelTranslatorRules(vector<GIApo
 	return result;
 }
 
-#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR
-void GIAposRelTranslatorRulesClass::initialiseNewGroupIndex(vector<GIAposRelTranslatorRulesGroupType*>* GIAposRelTranslatorRulesGroupTypes)
+#ifdef SANI_SEQUENCE_GRAMMAR
+void GIAposRelTranslatorRulesClass::initialiseNewGroupIndex(vector<SANIGroupType*>* SANIGroupTypes)
 {
-	GIAposRelTranslatorRulesGroupType* groupType = getSequenceGrammarGroupTypeDefault(GIAposRelTranslatorRulesGroupTypes);
+	SANIGroupType* groupType = getSequenceGrammarGroupTypeDefault(SANIGroupTypes);
 	newNeuronIndex = groupType->groups.size();	//0
 }
 int* GIAposRelTranslatorRulesClass::getNewGroupIndex()
 {
 	return &newNeuronIndex;
 }
-GIAposRelTranslatorRulesGroupType* GIAposRelTranslatorRulesClass::getSequenceGrammarGroupTypeDefault(vector<GIAposRelTranslatorRulesGroupType*>* GIAposRelTranslatorRulesGroupTypes)
+SANIGroupType* GIAposRelTranslatorRulesClass::getSequenceGrammarGroupTypeDefault(vector<SANIGroupType*>* SANIGroupTypes)
 {
-	GIAposRelTranslatorRulesGroupType* groupType = NULL;
-	if(!findGroupType(GIAposRelTranslatorRulesGroupTypes, GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_GROUP_TYPE_NAME, &groupType))
+	SANIGroupType* groupType = NULL;
+	if(!findGroupType(SANIGroupTypes, SANI_SEQUENCE_GRAMMAR_GROUP_TYPE_NAME, &groupType))
 	{
 		cerr << "GIAposRelTranslatorRulesClass::getSequenceGrammarGroupTypeDefault error: !findGroupType" << endl;
 		exit(EXIT_ERROR);
 	}
 	return groupType;
 }
-int GIAposRelTranslatorRulesClass::assignGroupIndex(GIAposRelTranslatorRulesGroupNeuralNetwork* group)
+int GIAposRelTranslatorRulesClass::assignGroupIndex(SANIGroupNeuralNetwork* group)
 {	
 	int* newNeuronIndex = getNewGroupIndex();
 	group->groupIndex = *newNeuronIndex;
@@ -113,17 +113,17 @@ int GIAposRelTranslatorRulesClass::assignGroupIndex(GIAposRelTranslatorRulesGrou
 #endif
 
 
-bool GIAposRelTranslatorRulesClass::extractGIAposRelTranslatorRulesGroups(vector<GIAposRelTranslatorRulesGroupType*>* GIAposRelTranslatorRulesGroupTypes)
+bool GIAposRelTranslatorRulesClass::extractSANIGroups(vector<SANIGroupType*>* SANIGroupTypes)
 {
 	bool result = true;
 	
-	#ifdef GIA_POS_REL_TRANSLATOR_SANI_ANN
-	for(int i=0; i<GIAposRelTranslatorRulesGroupTypes->size(); i++)
+	#ifdef SANI_ANN
+	for(int i=0; i<SANIGroupTypes->size(); i++)
 	{
-		GIAposRelTranslatorRulesGroupType* groupType = GIAposRelTranslatorRulesGroupTypes->at(i);
+		SANIGroupType* groupType = SANIGroupTypes->at(i);
 		for(int j=0; j<(groupType->groups).size(); j++)
 		{
-			GIAposRelTranslatorRulesGroupNeuralNetwork* group = (groupType->groups)[j];
+			SANIGroupNeuralNetwork* group = (groupType->groups)[j];
 			delete group->neuronReference;
 		}
 	}
@@ -172,29 +172,29 @@ bool GIAposRelTranslatorRulesClass::extractGIAposRelTranslatorRulesGroups(vector
 						foundTxtRelTranslatorGroupTypeTag = true;
 												
 						string groupTypeName = "";
-						string referenceSetType = GIAposRelTranslatorRulesGroupsComponentReferenceSetTypes[GIA_POS_REL_TRANSLATOR_RULES_GROUPS_REFERENCE_SET_TYPE_UNKNOWN];
+						string referenceSetType = SANIGroupsComponentReferenceSetTypes[GIA_POS_REL_TRANSLATOR_RULES_GROUPS_REFERENCE_SET_TYPE_UNKNOWN];
 						if(!XMLparserClass.getAttribute(currentTagInGroupsTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_GROUPTYPE_ATTRIBUTE_groupTypeName, &groupTypeName))
 						{
-							cerr << "GIAposRelTranslatorRules::extractGIAposRelTranslatorRulesGroups{} error: !XMLparserClass.getAttribute(currentTagInGroupsTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_GROUPTYPE_ATTRIBUTE_groupTypeName, &groupTypeName)" << endl;
+							cerr << "GIAposRelTranslatorRules::extractSANIGroups{} error: !XMLparserClass.getAttribute(currentTagInGroupsTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_GROUPTYPE_ATTRIBUTE_groupTypeName, &groupTypeName)" << endl;
 							exit(EXIT_ERROR);
 						}
 						if(!XMLparserClass.getAttribute(currentTagInGroupsTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_GROUPTYPE_ATTRIBUTE_referenceSetType, &referenceSetType))
 						{
-							cerr << "GIAposRelTranslatorRules::extractGIAposRelTranslatorRulesGroups{} error: !XMLparserClass.getAttribute(currentTagInGroupsTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_GROUPTYPE_ATTRIBUTE_referenceSetType, &referenceSetType)" << endl;
+							cerr << "GIAposRelTranslatorRules::extractSANIGroups{} error: !XMLparserClass.getAttribute(currentTagInGroupsTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_GROUPTYPE_ATTRIBUTE_referenceSetType, &referenceSetType)" << endl;
 							exit(EXIT_ERROR);
 						}
 					
 						int referenceSetTypeInt = GIA_POS_REL_TRANSLATOR_RULES_GROUPS_REFERENCE_SET_TYPE_UNKNOWN;
-						if(!SHAREDvars.textInTextArray(referenceSetType, GIAposRelTranslatorRulesGroupsComponentReferenceSetTypes, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_REFERENCE_SET_TYPE_NUMBER_OF_TYPES, &referenceSetTypeInt))
+						if(!SHAREDvars.textInTextArray(referenceSetType, SANIGroupsComponentReferenceSetTypes, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_REFERENCE_SET_TYPE_NUMBER_OF_TYPES, &referenceSetTypeInt))
 						{
-							cerr << "GIAposRelTranslatorRules::extractGIAposRelTranslatorRulesGroups{} error: componentType unknown; referenceSetType = " << referenceSetType << endl;
+							cerr << "GIAposRelTranslatorRules::extractSANIGroups{} error: componentType unknown; referenceSetType = " << referenceSetType << endl;
 							exit(EXIT_ERROR);
 						}
 								
-						GIAposRelTranslatorRulesGroupType* groupType = new GIAposRelTranslatorRulesGroupType();
+						SANIGroupType* groupType = new SANIGroupType();
 						groupType->groupTypeName = groupTypeName;
 						groupType->referenceSetType = referenceSetTypeInt;
-						GIAposRelTranslatorRulesGroupTypes->push_back(groupType);
+						SANIGroupTypes->push_back(groupType);
 						//cout << "groupType->groupTypeName = " << groupType->groupTypeName << endl;
 						
 						XMLparserTag* firstTagInTxtRelTranslatorGroupTypeTag = XMLparserClass.parseTagDownALevel(currentTagInGroupsTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_TAG_groupType, &result);
@@ -216,44 +216,44 @@ bool GIAposRelTranslatorRulesClass::extractGIAposRelTranslatorRulesGroups(vector
 								#ifdef GIA_POS_REL_TRANSLATOR_RULES_CODE_GROUP_EXISTS_PRECEEDING_WORD_POS_TYPE
 								string existsPreceedingWordPOStype = "";
 								#endif
-								#ifdef GIA_POS_REL_TRANSLATOR_SANI_TAKE_LAST_SUCCESSFUL_PARSE_LIMIT_ITERATIONS_PREFERENCE_WEIGHT_BASE
+								#ifdef SANI_TAKE_LAST_SUCCESSFUL_PARSE_LIMIT_ITERATIONS_PREFERENCE_WEIGHT_BASE
 								string groupWeight = "";
 								int groupWeightInt = 0;
 								#endif
 								if(!XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTypeTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_GROUP_ATTRIBUTE_semanticRelationFunctionName, &(semanticRelationFunctionName[0])))
 								{
-									//cerr << "GIAposRelTranslatorRules::extractGIAposRelTranslatorRulesGroups{} warning: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTypeTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_GROUP_ATTRIBUTE_semanticRelationFunctionName, &(semanticRelationFunctionName[2]))" << endl;
+									//cerr << "GIAposRelTranslatorRules::extractSANIGroups{} warning: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTypeTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_GROUP_ATTRIBUTE_semanticRelationFunctionName, &(semanticRelationFunctionName[2]))" << endl;
 								}
 								if(!XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTypeTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_GROUP_ATTRIBUTE_semanticRelationFunctionName2, &(semanticRelationFunctionName[1])))
 								{
-									//cerr << "GIAposRelTranslatorRules::extractGIAposRelTranslatorRulesGroups{} warning: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTypeTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_GROUP_ATTRIBUTE_semanticRelationFunctionName2, &(semanticRelationFunctionName2[1]))" << endl;
+									//cerr << "GIAposRelTranslatorRules::extractSANIGroups{} warning: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTypeTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_GROUP_ATTRIBUTE_semanticRelationFunctionName2, &(semanticRelationFunctionName2[1]))" << endl;
 								}
 								#ifdef GIA_POS_REL_TRANSLATOR_RULES_CODE_NEW_CONDITIONS
 								if(!XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTypeTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_GROUP_ATTRIBUTE_semanticRelationFunctionConditionNewName, &semanticRelationFunctionConditionNewName))
 								{
-									//cerr << "GIAposRelTranslatorRules::extractGIAposRelTranslatorRulesGroups{} warning: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTypeTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_GROUP_ATTRIBUTE_semanticRelationFunctionConditionNewName, &(semanticRelationFunctionConditionNewName[2]))" << endl;
+									//cerr << "GIAposRelTranslatorRules::extractSANIGroups{} warning: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTypeTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_GROUP_ATTRIBUTE_semanticRelationFunctionConditionNewName, &(semanticRelationFunctionConditionNewName[2]))" << endl;
 								}
 								#endif
 								if(!XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTypeTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_GROUP_ATTRIBUTE_groupName, &groupName))
 								{
-									//cerr << "GIAposRelTranslatorRules::extractGIAposRelTranslatorRulesGroups{} warning: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTypeTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_GROUP_ATTRIBUTE_groupName, &groupName)" << endl;
+									//cerr << "GIAposRelTranslatorRules::extractSANIGroups{} warning: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTypeTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_GROUP_ATTRIBUTE_groupName, &groupName)" << endl;
 								}
 								#ifdef GIA_POS_REL_TRANSLATOR_RULES_CODE_GROUP_PREVIOUS_WORD_POS_TYPE
 								if(!XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTypeTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_GROUP_ATTRIBUTE_previousWordPOStype, &previousWordPOStype))
 								{
-									//cerr << "GIAposRelTranslatorRules::extractGIAposRelTranslatorRulesGroups{} warning: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTypeTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_GROUP_ATTRIBUTE_previousWordPOStype, &previousWordPOStype)" << endl;
+									//cerr << "GIAposRelTranslatorRules::extractSANIGroups{} warning: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTypeTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_GROUP_ATTRIBUTE_previousWordPOStype, &previousWordPOStype)" << endl;
 								}
 								#endif
 								#ifdef GIA_POS_REL_TRANSLATOR_RULES_CODE_GROUP_EXISTS_PRECEEDING_WORD_POS_TYPE
 								if(!XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTypeTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_GROUP_ATTRIBUTE_existsPreceedingWordPOStype, &existsPreceedingWordPOStype))
 								{
-									//cerr << "GIAposRelTranslatorRules::extractGIAposRelTranslatorRulesGroups{} warning: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTypeTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_GROUP_ATTRIBUTE_existsPreceedingWordPOStype, &existsPreceedingWordPOStype)" << endl;
+									//cerr << "GIAposRelTranslatorRules::extractSANIGroups{} warning: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTypeTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_GROUP_ATTRIBUTE_existsPreceedingWordPOStype, &existsPreceedingWordPOStype)" << endl;
 								}
 								#endif
-								#ifdef GIA_POS_REL_TRANSLATOR_SANI_TAKE_LAST_SUCCESSFUL_PARSE_LIMIT_ITERATIONS_PREFERENCE_WEIGHT_BASE
+								#ifdef SANI_TAKE_LAST_SUCCESSFUL_PARSE_LIMIT_ITERATIONS_PREFERENCE_WEIGHT_BASE
 								if(!XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTypeTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_GROUP_ATTRIBUTE_groupWeight, &groupWeight))
 								{
-									//cerr << "GIAposRelTranslatorRules::extractGIAposRelTranslatorRulesGroups{} warning: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTypeTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_GROUP_ATTRIBUTE_groupWeight, &groupWeight)" << endl;
+									//cerr << "GIAposRelTranslatorRules::extractSANIGroups{} warning: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTypeTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_GROUP_ATTRIBUTE_groupWeight, &groupWeight)" << endl;
 								}
 								else
 								{
@@ -285,7 +285,7 @@ bool GIAposRelTranslatorRulesClass::extractGIAposRelTranslatorRulesGroups(vector
 								#endif
 								if(passGroupNameRequirements)
 								{
-									GIAposRelTranslatorRulesGroupNeuralNetwork* group = new GIAposRelTranslatorRulesGroupNeuralNetwork();	
+									SANIGroupNeuralNetwork* group = new SANIGroupNeuralNetwork();	
 									group->semanticRelationFunctionName = semanticRelationFunctionName;
 									#ifdef GIA_POS_REL_TRANSLATOR_RULES_CODE_NEW_CONDITIONS
 									group->semanticRelationFunctionConditionNewName = semanticRelationFunctionConditionNewName;
@@ -298,7 +298,7 @@ bool GIAposRelTranslatorRulesClass::extractGIAposRelTranslatorRulesGroups(vector
 									#ifdef GIA_POS_REL_TRANSLATOR_RULES_CODE_GROUP_EXISTS_PRECEEDING_WORD_POS_TYPE
 									group->existsPreceedingWordPOStype = existsPreceedingWordPOStype;
 									#endif
-									#ifdef GIA_POS_REL_TRANSLATOR_SANI_TAKE_LAST_SUCCESSFUL_PARSE_LIMIT_ITERATIONS_PREFERENCE_WEIGHT_BASE
+									#ifdef SANI_TAKE_LAST_SUCCESSFUL_PARSE_LIMIT_ITERATIONS_PREFERENCE_WEIGHT_BASE
 									group->groupWeight = groupWeightInt;
 									#endif
 									
@@ -308,8 +308,8 @@ bool GIAposRelTranslatorRulesClass::extractGIAposRelTranslatorRulesGroups(vector
 									#endif
 									
 									/*
-									#ifdef GIA_POS_REL_TRANSLATOR_SANI_LIGHT_NEW
-									group->currentParseTreeGroupTemp = new GIAposRelTranslatorRulesGroupNeuralNetwork(*group);
+									#ifdef SANI_LIGHT_NEW
+									group->currentParseTreeGroupTemp = new SANIGroupNeuralNetwork(*group);
 									#endif
 									*/
 									
@@ -319,14 +319,14 @@ bool GIAposRelTranslatorRulesClass::extractGIAposRelTranslatorRulesGroups(vector
 
 									if(!parseComponents(firstTagInTxtRelTranslatorGroupTag, group, &(group->components), false, NULL))
 									{
-										cerr << "GIAposRelTranslatorRules::extractGIAposRelTranslatorRulesGroups{} error: !parseComponents(firstTagInTxtRelTranslatorGroupTag, &(group->components), false))" << endl;
+										cerr << "GIAposRelTranslatorRules::extractSANIGroups{} error: !parseComponents(firstTagInTxtRelTranslatorGroupTag, &(group->components), false))" << endl;
 										exit(EXIT_ERROR);			
 									}
 								}
 							}
 							else
 							{
-								cerr << "GIAposRelTranslatorRules::extractGIAposRelTranslatorRulesGroups{} error: !(currentTagInGroups->name == GIA_POS_REL_TRANSLATOR_RULES_GROUPS_GROUPSTYPE_TAG_group)" << endl;
+								cerr << "GIAposRelTranslatorRules::extractSANIGroups{} error: !(currentTagInGroups->name == GIA_POS_REL_TRANSLATOR_RULES_GROUPS_GROUPSTYPE_TAG_group)" << endl;
 								exit(EXIT_ERROR);					
 							}
 
@@ -335,7 +335,7 @@ bool GIAposRelTranslatorRulesClass::extractGIAposRelTranslatorRulesGroups(vector
 					}
 					else
 					{
-						cerr << "GIAposRelTranslatorRules::extractGIAposRelTranslatorRulesGroups{} error: !(currentTagInGroups->name == GIA_POS_REL_TRANSLATOR_RULES_GROUPS_GROUPS_TAG_groupType)" << endl;
+						cerr << "GIAposRelTranslatorRules::extractSANIGroups{} error: !(currentTagInGroups->name == GIA_POS_REL_TRANSLATOR_RULES_GROUPS_GROUPS_TAG_groupType)" << endl;
 						exit(EXIT_ERROR);					
 					}
 					
@@ -345,31 +345,31 @@ bool GIAposRelTranslatorRulesClass::extractGIAposRelTranslatorRulesGroups(vector
 		}
 	}
 
-	#ifdef GIA_POS_REL_TRANSLATOR_SANI_REMOVE_LAST_OPTIONAL_COMPONENTS
-	if(!removeLastOptionalComponents(GIAposRelTranslatorRulesGroupTypes))
+	#ifdef SANI_REMOVE_LAST_OPTIONAL_COMPONENTS
+	if(!removeLastOptionalComponents(SANIGroupTypes))
 	{
 		result = false;
 	}	
 	#endif
 		
-	if(!connectGroupsReferences(GIAposRelTranslatorRulesGroupTypes))
+	if(!connectGroupsReferences(SANIGroupTypes))
 	{
 		result = false;
 	}
 	
-	GIAposRelTranslatorRulesGroupTypesGlobal = GIAposRelTranslatorRulesGroupTypes;
+	SANIGroupTypesGlobal = SANIGroupTypes;
 	
 	return result;
 }
 
 
-bool GIAposRelTranslatorRulesClass::parseComponents(XMLparserTag* firstTxtRelTranslatorRulesFirstComponentTag, GIAposRelTranslatorRulesGroupNeuralNetwork* groupOwner, vector<GIAposRelTranslatorRulesComponentNeuralNetwork*>* componentsList, const bool parseSubcomponent, GIAposRelTranslatorRulesComponentNeuralNetwork* subComponentOwner)
+bool GIAposRelTranslatorRulesClass::parseComponents(XMLparserTag* firstTxtRelTranslatorRulesFirstComponentTag, SANIGroupNeuralNetwork* groupOwner, vector<SANIComponentNeuralNetwork*>* componentsList, const bool parseSubcomponent, SANIComponentNeuralNetwork* subComponentOwner)
 {
 	bool result = true;
 	
 	XMLparserTag* currentTagInTxtRelTranslatorGroupTag = firstTxtRelTranslatorRulesFirstComponentTag;
 	bool foundTxtRelTranslatorGroupTag = false;	//NOTUSED
-	int componentIndex = GIA_POS_REL_TRANSLATOR_SANI_COMPONENT_INDEX_FIRST;
+	int componentIndex = SANI_COMPONENT_INDEX_FIRST;
 	while(currentTagInTxtRelTranslatorGroupTag->nextTag != NULL)
 	{
 		if(currentTagInTxtRelTranslatorGroupTag->name == GIA_POS_REL_TRANSLATOR_RULES_GROUPS_GROUP_TAG_example)
@@ -379,13 +379,13 @@ bool GIAposRelTranslatorRulesClass::parseComponents(XMLparserTag* firstTxtRelTra
 		else if(currentTagInTxtRelTranslatorGroupTag->name == GIA_POS_REL_TRANSLATOR_RULES_GROUPS_GROUP_TAG_component)
 		{			
 			#ifdef GIA_POS_REL_TRANSLATOR_HYBRID
-			string referenceSetTypeHybrid = GIAposRelTranslatorRulesGroupsComponentReferenceSetTypeHybridTypes[GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_REFERENCE_SET_TYPE_HYBRID_UNKNOWN];
+			string referenceSetTypeHybrid = SANIGroupsComponentReferenceSetTypeHybridTypes[GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_REFERENCE_SET_TYPE_HYBRID_UNKNOWN];
 			#endif
-			string componentType = GIAposRelTranslatorRulesGroupsComponentTypes[GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_UNKNOWN];
+			string componentType = SANIGroupsComponentTypes[GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_UNKNOWN];
 			int componentTypeInt = GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_UNKNOWN;
 			string groupTypeRefName = "";
 			string groupRefName = "";
-			string stringType = GIAposRelTranslatorRulesGroupsComponentStringTypes[GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_STRINGTYPE_UNKNOWN];
+			string stringType = SANIGroupsComponentStringTypes[GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_STRINGTYPE_UNKNOWN];
 			int stringTypeInt = GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_STRINGTYPE_UNKNOWN;
 			string word = "";
 			string wordPOStype = "";
@@ -395,21 +395,21 @@ bool GIAposRelTranslatorRulesClass::parseComponents(XMLparserTag* firstTxtRelTra
 			#ifdef GIA_POS_REL_TRANSLATOR_RULES_CODE_COMPONENT_MISSING
 			string missing = GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_VALUE_false;
 			#endif
-			#ifdef GIA_POS_REL_TRANSLATOR_SANI_ADD_EXPLICIT_WORD_REFERENCES_AS_INDEPENDENT_POS_PERMUTATIONS_EFFICIENT
+			#ifdef SANI_ADD_EXPLICIT_WORD_REFERENCES_AS_INDEPENDENT_POS_PERMUTATIONS_EFFICIENT
 			string addToExplicitWordTempPOS = GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_VALUE_false;
 			#endif
 			vector<string> semanticRelationIndexType(GIA_POS_REL_TRANSLATOR_MAX_NUMBER_OF_SEMANTIC_FUNCTIONS_EXECUTED_PER_GROUP);
 			vector<int> semanticRelationIndexTypeInt(GIA_POS_REL_TRANSLATOR_MAX_NUMBER_OF_SEMANTIC_FUNCTIONS_EXECUTED_PER_GROUP);
 			for(int i=0; i<GIA_POS_REL_TRANSLATOR_MAX_NUMBER_OF_SEMANTIC_FUNCTIONS_EXECUTED_PER_GROUP; i++)
 			{
-				semanticRelationIndexType[i] = GIAposRelTranslatorRulesGroupsComponentSemanticRelationIndexTypes[GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_SEMANTIC_RELATION_INDEX_TYPE_UNKNOWN];
+				semanticRelationIndexType[i] = SANIGroupsComponentSemanticRelationIndexTypes[GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_SEMANTIC_RELATION_INDEX_TYPE_UNKNOWN];
 			}
 			string semanticRelationReturnEntity = GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_VALUE_false;
-			#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEMANTICALLY_DETERMINED_DYNAMIC_CONNECTIONS
+			#ifdef SANI_SEMANTICALLY_DETERMINED_DYNAMIC_CONNECTIONS
 			string semanticRelationReturnConnectionDynamic = GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_VALUE_false;
 			#endif
 			string semanticRelationReturnFunctionName = "";
-			string semanticRelationReturnFunctionNameIndexType = GIAposRelTranslatorRulesGroupsComponentSemanticRelationIndexTypes[GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_SEMANTIC_RELATION_INDEX_TYPE_UNKNOWN];
+			string semanticRelationReturnFunctionNameIndexType = SANIGroupsComponentSemanticRelationIndexTypes[GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_SEMANTIC_RELATION_INDEX_TYPE_UNKNOWN];
 			int semanticRelationReturnFunctionNameIndexTypeInt = GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_SEMANTIC_RELATION_INDEX_TYPE_UNKNOWN;
 			string semanticRelationRecord = GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_VALUE_false;
 			string semanticRelationConnect = GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_VALUE_false;
@@ -441,20 +441,20 @@ bool GIAposRelTranslatorRulesClass::parseComponents(XMLparserTag* firstTxtRelTra
 			int referenceSetTypeHybridInt = GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_REFERENCE_SET_TYPE_HYBRID_UNKNOWN;
 			if(!XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_referenceSetTypeHybrid, &referenceSetTypeHybrid))
 			{
-				cerr << "GIAposRelTranslatorRules::extractGIAposRelTranslatorRulesGroups{} error: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_referenceSetTypeHybrid, &referenceSetTypeHybrid)" << endl;
+				cerr << "GIAposRelTranslatorRules::extractSANIGroups{} error: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_referenceSetTypeHybrid, &referenceSetTypeHybrid)" << endl;
 				exit(EXIT_ERROR);
 			}
-			if(!SHAREDvars.textInTextArray(referenceSetTypeHybrid, GIAposRelTranslatorRulesGroupsComponentReferenceSetTypeHybridTypes, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_REFERENCE_SET_TYPE_HYBRID_NUMBER_OF_TYPES, &referenceSetTypeHybridInt))
+			if(!SHAREDvars.textInTextArray(referenceSetTypeHybrid, SANIGroupsComponentReferenceSetTypeHybridTypes, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_REFERENCE_SET_TYPE_HYBRID_NUMBER_OF_TYPES, &referenceSetTypeHybridInt))
 			{
-				//cerr << "GIAposRelTranslatorRules::extractGIAposRelTranslatorRulesGroups{} error: referenceSetTypeHybrid unknown; componentType = " << referenceSetTypeHybrid << endl;
+				//cerr << "GIAposRelTranslatorRules::extractSANIGroups{} error: referenceSetTypeHybrid unknown; componentType = " << referenceSetTypeHybrid << endl;
 			}			
 			#endif
 			
 			if(XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_componentType, &componentType))
 			{
-				if(!SHAREDvars.textInTextArray(componentType, GIAposRelTranslatorRulesGroupsComponentTypes, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_NUMBER_OF_TYPES, &componentTypeInt))
+				if(!SHAREDvars.textInTextArray(componentType, SANIGroupsComponentTypes, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_NUMBER_OF_TYPES, &componentTypeInt))
 				{
-					cerr << "GIAposRelTranslatorRules::extractGIAposRelTranslatorRulesGroups{} error: componentType unknown; componentType = " << componentType << endl;
+					cerr << "GIAposRelTranslatorRules::extractSANIGroups{} error: componentType unknown; componentType = " << componentType << endl;
 					exit(EXIT_ERROR);
 				}
 				if(componentTypeInt == GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_GROUP)
@@ -465,7 +465,7 @@ bool GIAposRelTranslatorRulesClass::parseComponents(XMLparserTag* firstTxtRelTra
 					}
 					else 
 					{
-						cerr << "GIAposRelTranslatorRules::extractGIAposRelTranslatorRulesGroups{} error: (componentTypeInt == GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_GROUP) && groupTypeName not specified" << endl;
+						cerr << "GIAposRelTranslatorRules::extractSANIGroups{} error: (componentTypeInt == GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_GROUP) && groupTypeName not specified" << endl;
 						exit(EXIT_ERROR);
 					}
 					if(XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_groupNameRef, &groupRefName))
@@ -477,12 +477,12 @@ bool GIAposRelTranslatorRulesClass::parseComponents(XMLparserTag* firstTxtRelTra
 				{
 					if(!XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_stringType, &stringType))
 					{
-						cerr << "GIAposRelTranslatorRules::extractGIAposRelTranslatorRulesGroups{} error: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_stringType, &groupRefName)" << endl;
+						cerr << "GIAposRelTranslatorRules::extractSANIGroups{} error: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_stringType, &groupRefName)" << endl;
 						exit(EXIT_ERROR);
 					}
-					if(!SHAREDvars.textInTextArray(stringType, GIAposRelTranslatorRulesGroupsComponentStringTypes, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_STRINGTYPE_NUMBER_OF_TYPES, &stringTypeInt))
+					if(!SHAREDvars.textInTextArray(stringType, SANIGroupsComponentStringTypes, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_STRINGTYPE_NUMBER_OF_TYPES, &stringTypeInt))
 					{
-						cerr << "GIAposRelTranslatorRules::extractGIAposRelTranslatorRulesGroups{} error: stringType unknown; stringType = " << stringType << endl;
+						cerr << "GIAposRelTranslatorRules::extractSANIGroups{} error: stringType unknown; stringType = " << stringType << endl;
 						cout << "currentTagInTxtRelTranslatorGroupTag->lineCount = " << currentTagInTxtRelTranslatorGroupTag->lineCount << endl;
 						exit(EXIT_ERROR);
 					}
@@ -490,7 +490,7 @@ bool GIAposRelTranslatorRulesClass::parseComponents(XMLparserTag* firstTxtRelTra
 					{
 						if(!XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_wordPOStype, &wordPOStype))
 						{
-							cerr << "GIAposRelTranslatorRules::extractGIAposRelTranslatorRulesGroups{} error: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_wordPOStype, &groupRefName)" << endl;
+							cerr << "GIAposRelTranslatorRules::extractSANIGroups{} error: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_wordPOStype, &groupRefName)" << endl;
 							exit(EXIT_ERROR);
 						}
 					}
@@ -498,7 +498,7 @@ bool GIAposRelTranslatorRulesClass::parseComponents(XMLparserTag* firstTxtRelTra
 					{
 						if(!XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_word, &word))
 						{
-							cerr << "GIAposRelTranslatorRules::extractGIAposRelTranslatorRulesGroups{} error: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_word, &groupRefName)" << endl;
+							cerr << "GIAposRelTranslatorRules::extractSANIGroups{} error: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_word, &groupRefName)" << endl;
 							exit(EXIT_ERROR);
 						}	
 					}
@@ -506,34 +506,34 @@ bool GIAposRelTranslatorRulesClass::parseComponents(XMLparserTag* firstTxtRelTra
 					{
 						if(!XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_tokenLayer, &tokenLayer))
 						{
-							cerr << "GIAposRelTranslatorRules::extractGIAposRelTranslatorRulesGroups{} error: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_tokenLayer, &groupRefName)" << endl;
+							cerr << "GIAposRelTranslatorRules::extractSANIGroups{} error: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_tokenLayer, &groupRefName)" << endl;
 							exit(EXIT_ERROR);
 						}		
 						if(!XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_tokenClass, &tokenClass))
 						{
-							cerr << "GIAposRelTranslatorRules::extractGIAposRelTranslatorRulesGroups{} error: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_tokenClass, &groupRefName)" << endl;
+							cerr << "GIAposRelTranslatorRules::extractSANIGroups{} error: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_tokenClass, &groupRefName)" << endl;
 							exit(EXIT_ERROR);
 						}
 						if(!XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_tokenType, &tokenType))
 						{
-							//cerr << "GIAposRelTranslatorRules::extractGIAposRelTranslatorRulesGroups{} error: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_tokenType, &groupRefName)" << endl;
+							//cerr << "GIAposRelTranslatorRules::extractSANIGroups{} error: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_tokenType, &groupRefName)" << endl;
 						}
 					}
 					else
 					{
-						cerr << "GIAposRelTranslatorRules::extractGIAposRelTranslatorRulesGroups{} error: stringType unknown; stringType = " << stringType << ", stringTypeInt = " << stringTypeInt << endl;
+						cerr << "GIAposRelTranslatorRules::extractSANIGroups{} error: stringType unknown; stringType = " << stringType << ", stringTypeInt = " << stringTypeInt << endl;
 						exit(EXIT_ERROR);	
 					}
 				}
 				else
 				{
-					cerr << "GIAposRelTranslatorRules::extractGIAposRelTranslatorRulesGroups{} error: componentType unknown, componentTypeInt = " << componentTypeInt << endl;
+					cerr << "GIAposRelTranslatorRules::extractSANIGroups{} error: componentType unknown, componentTypeInt = " << componentTypeInt << endl;
 					exit(EXIT_ERROR);	
 				}
 			}
 			else
 			{
-				cerr << "GIAposRelTranslatorRules::extractGIAposRelTranslatorRulesGroups{} error: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_componentType, &componentType)" << endl;
+				cerr << "GIAposRelTranslatorRules::extractSANIGroups{} error: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_componentType, &componentType)" << endl;
 				cout << "currentTagInTxtRelTranslatorGroupTag->lineCount = " << currentTagInTxtRelTranslatorGroupTag->lineCount << endl;
 				exit(EXIT_ERROR);			
 			}
@@ -542,104 +542,104 @@ bool GIAposRelTranslatorRulesClass::parseComponents(XMLparserTag* firstTxtRelTra
 			#ifdef GIA_POS_REL_TRANSLATOR_RULES_CODE_COMPONENT_MISSING
 			if(!XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_missing, &missing))
 			{
-				cerr << "GIAposRelTranslatorRules::extractGIAposRelTranslatorRulesGroups{} error: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_missing, &groupRefName)" << endl;
+				cerr << "GIAposRelTranslatorRules::extractSANIGroups{} error: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_missing, &groupRefName)" << endl;
 				exit(EXIT_ERROR);
 			}
 			#endif
-			#ifdef GIA_POS_REL_TRANSLATOR_SANI_ADD_EXPLICIT_WORD_REFERENCES_AS_INDEPENDENT_POS_PERMUTATIONS_EFFICIENT
+			#ifdef SANI_ADD_EXPLICIT_WORD_REFERENCES_AS_INDEPENDENT_POS_PERMUTATIONS_EFFICIENT
 			if(!XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_addToExplicitWordTempPOS, &addToExplicitWordTempPOS))
 			{
-				//cerr << "GIAposRelTranslatorRules::extractGIAposRelTranslatorRulesGroups{} error: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_addToExplicitWordTempPOS, &groupRefName)" << endl;
+				//cerr << "GIAposRelTranslatorRules::extractSANIGroups{} error: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_addToExplicitWordTempPOS, &groupRefName)" << endl;
 			}
 			#endif
 			
 			if(!XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_semanticRelationIndexType, &(semanticRelationIndexType[0])))
 			{
-				//cerr << "GIAposRelTranslatorRules::extractGIAposRelTranslatorRulesGroups{} error: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_semanticRelationIndexType, &(semanticRelationIndexType[0]))" << endl;
+				//cerr << "GIAposRelTranslatorRules::extractSANIGroups{} error: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_semanticRelationIndexType, &(semanticRelationIndexType[0]))" << endl;
 			}
 			if(!XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_semanticRelationIndexType2, &(semanticRelationIndexType[1])))
 			{
-				//cerr << "GIAposRelTranslatorRules::extractGIAposRelTranslatorRulesGroups{} error: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_semanticRelationIndexType2, &(semanticRelationIndexType[1]))" << endl;
+				//cerr << "GIAposRelTranslatorRules::extractSANIGroups{} error: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_semanticRelationIndexType2, &(semanticRelationIndexType[1]))" << endl;
 			}
 			for(int i=0; i<GIA_POS_REL_TRANSLATOR_MAX_NUMBER_OF_SEMANTIC_FUNCTIONS_EXECUTED_PER_GROUP; i++)
 			{
-				if(!SHAREDvars.textInTextArray(semanticRelationIndexType[i], GIAposRelTranslatorRulesGroupsComponentSemanticRelationIndexTypes, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_SEMANTIC_RELATION_INDEX_NUMBER_OF_TYPES, &(semanticRelationIndexTypeInt[i])))
+				if(!SHAREDvars.textInTextArray(semanticRelationIndexType[i], SANIGroupsComponentSemanticRelationIndexTypes, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_SEMANTIC_RELATION_INDEX_NUMBER_OF_TYPES, &(semanticRelationIndexTypeInt[i])))
 				{
-					cerr << "GIAposRelTranslatorRules::extractGIAposRelTranslatorRulesGroups{} error: semanticRelationIndexType unknown; semanticRelationIndexType[i] = " << semanticRelationIndexType[i] << endl;
+					cerr << "GIAposRelTranslatorRules::extractSANIGroups{} error: semanticRelationIndexType unknown; semanticRelationIndexType[i] = " << semanticRelationIndexType[i] << endl;
 					exit(EXIT_ERROR);
 				}
 			}	
 			if(!XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_semanticRelationReturnEntity, &semanticRelationReturnEntity))
 			{
-				//cerr << "GIAposRelTranslatorRules::extractGIAposRelTranslatorRulesGroups{} error: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_semanticRelationReturnEntity, &semanticRelationReturnEntity)" << endl;
+				//cerr << "GIAposRelTranslatorRules::extractSANIGroups{} error: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_semanticRelationReturnEntity, &semanticRelationReturnEntity)" << endl;
 			}
-			#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEMANTICALLY_DETERMINED_DYNAMIC_CONNECTIONS
+			#ifdef SANI_SEMANTICALLY_DETERMINED_DYNAMIC_CONNECTIONS
 			if(!XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_semanticRelationReturnConnectionDynamic, &semanticRelationReturnConnectionDynamic))
 			{
-				//cerr << "GIAposRelTranslatorRules::extractGIAposRelTranslatorRulesGroups{} error: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_semanticRelationReturnConnectionDynamic, &semanticRelationReturnConnectionDynamic)" << endl;
+				//cerr << "GIAposRelTranslatorRules::extractSANIGroups{} error: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_semanticRelationReturnConnectionDynamic, &semanticRelationReturnConnectionDynamic)" << endl;
 			}
 			#endif
 			if(XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_semanticRelationReturnFunctionName, &semanticRelationReturnFunctionName))
 			{
 				if(XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_semanticRelationReturnFunctionNameIndexType, &semanticRelationReturnFunctionNameIndexType))
 				{
-					if(!SHAREDvars.textInTextArray(semanticRelationReturnFunctionNameIndexType, GIAposRelTranslatorRulesGroupsComponentSemanticRelationIndexTypes, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_SEMANTIC_RELATION_INDEX_NUMBER_OF_TYPES, &semanticRelationReturnFunctionNameIndexTypeInt))
+					if(!SHAREDvars.textInTextArray(semanticRelationReturnFunctionNameIndexType, SANIGroupsComponentSemanticRelationIndexTypes, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_SEMANTIC_RELATION_INDEX_NUMBER_OF_TYPES, &semanticRelationReturnFunctionNameIndexTypeInt))
 					{
-						cerr << "GIAposRelTranslatorRules::extractGIAposRelTranslatorRulesGroups{} error: semanticRelationReturnFunctionNameIndexType unknown; semanticRelationReturnFunctionNameIndexType = " << semanticRelationReturnFunctionNameIndexType << endl;
+						cerr << "GIAposRelTranslatorRules::extractSANIGroups{} error: semanticRelationReturnFunctionNameIndexType unknown; semanticRelationReturnFunctionNameIndexType = " << semanticRelationReturnFunctionNameIndexType << endl;
 						exit(EXIT_ERROR);
 					}
 				}
 				else
 				{
-					cerr << "GIAposRelTranslatorRules::extractGIAposRelTranslatorRulesGroups{} error: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_semanticRelationReturnFunctionNameIndexType, &semanticRelationReturnFunctionNameIndexType)" << endl;
+					cerr << "GIAposRelTranslatorRules::extractSANIGroups{} error: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_semanticRelationReturnFunctionNameIndexType, &semanticRelationReturnFunctionNameIndexType)" << endl;
 				}
 			}
 			else
 			{
-				//cerr << "GIAposRelTranslatorRules::extractGIAposRelTranslatorRulesGroups{} error: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_semanticRelationReturnFunctionName, &semanticRelationReturnFunctionName)" << endl;
+				//cerr << "GIAposRelTranslatorRules::extractSANIGroups{} error: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_semanticRelationReturnFunctionName, &semanticRelationReturnFunctionName)" << endl;
 			}
 
 			if(!XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_semanticRelationRecord, &semanticRelationRecord))
 			{
-				//cerr << "GIAposRelTranslatorRules::extractGIAposRelTranslatorRulesGroups{} error: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_semanticRelationRecord, &semanticRelationRecord)" << endl;
+				//cerr << "GIAposRelTranslatorRules::extractSANIGroups{} error: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_semanticRelationRecord, &semanticRelationRecord)" << endl;
 			}
 			if(!XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_semanticRelationConnect, &semanticRelationConnect))
 			{
-				//cerr << "GIAposRelTranslatorRules::extractGIAposRelTranslatorRulesGroups{} error: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_semanticRelationConnect, &semanticRelationConnect)" << endl;
+				//cerr << "GIAposRelTranslatorRules::extractSANIGroups{} error: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_semanticRelationConnect, &semanticRelationConnect)" << endl;
 			}
 			if(!XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_optional, &optional))
 			{
-				//cerr << "GIAposRelTranslatorRules::extractGIAposRelTranslatorRulesGroups{} warning: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_optional, &optional)" << endl;
+				//cerr << "GIAposRelTranslatorRules::extractSANIGroups{} warning: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_optional, &optional)" << endl;
 			}
 			
 			#ifdef GIA_POS_REL_TRANSLATOR_RULES_CODE_COMPONENT_QUERY
 			if(!XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_queryComparisonVariable, &queryComparisonVariable))
 			{
-				//cerr << "GIAposRelTranslatorRules::extractGIAposRelTranslatorRulesGroups{} error: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_queryComparisonVariable, &queryComparisonVariable)" << endl;
+				//cerr << "GIAposRelTranslatorRules::extractSANIGroups{} error: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_queryComparisonVariable, &queryComparisonVariable)" << endl;
 			}
 			if(!XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_isAuxiliaryQuery, &isAuxiliaryQuery))
 			{
-				//cerr << "GIAposRelTranslatorRules::extractGIAposRelTranslatorRulesGroups{} error: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_isAuxiliaryQuery, &isAuxiliaryQuery)" << endl;
+				//cerr << "GIAposRelTranslatorRules::extractSANIGroups{} error: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_isAuxiliaryQuery, &isAuxiliaryQuery)" << endl;
 			}
 			if(!XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_isWhichOrEquivalentWhatQuery, &isWhichOrEquivalentWhatQuery))
 			{
-				//cerr << "GIAposRelTranslatorRules::extractGIAposRelTranslatorRulesGroups{} error: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_isWhichOrEquivalentWhatQuery, &isWhichOrEquivalentWhatQuery)" << endl;
+				//cerr << "GIAposRelTranslatorRules::extractSANIGroups{} error: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_isWhichOrEquivalentWhatQuery, &isWhichOrEquivalentWhatQuery)" << endl;
 			}
 			#endif	
 			#ifdef GIA_POS_REL_TRANSLATOR_RULES_CODE_ALIASES
 			if(!XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_isNameQuery, &isNameQuery))
 			{
-				//cerr << "GIAposRelTranslatorRules::extractGIAposRelTranslatorRulesGroups{} error: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_isNameQuery, &isNameQuery)" << endl;
+				//cerr << "GIAposRelTranslatorRules::extractSANIGroups{} error: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_isNameQuery, &isNameQuery)" << endl;
 			}
 			if(!XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_isName, &isName))
 			{
-				//cerr << "GIAposRelTranslatorRules::extractGIAposRelTranslatorRulesGroups{} error: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_isName, &isName)" << endl;
+				//cerr << "GIAposRelTranslatorRules::extractSANIGroups{} error: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_isName, &isName)" << endl;
 			}
 			#endif
 			#ifdef GIA_POS_REL_TRANSLATOR_RULES_CODE_NUMBER_OF
 			if(!XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_isNumberOf, &isNumberOf))
 			{
-				//cerr << "GIAposRelTranslatorRules::extractGIAposRelTranslatorRulesGroups{} error: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_isNumberOf, &isNumberOf)" << endl;
+				//cerr << "GIAposRelTranslatorRules::extractSANIGroups{} error: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_isNumberOf, &isNumberOf)" << endl;
 			}
 			#endif
 			#ifdef GIA_POS_REL_TRANSLATOR_RULES_CODE_COMPONENT_WORD_NOUN_VERB_VARIANT
@@ -647,7 +647,7 @@ bool GIAposRelTranslatorRulesClass::parseComponents(XMLparserTag* firstTxtRelTra
 			{
 				if(!SHAREDvars.textInTextArray(wordVerbVariantType, GIApreprocessorMultiwordReductionVerbDatabaseTagBaseTenseFormArray, GIA_PREPROCESSOR_WORD_VERB_DATABASE_TAG_BASE_TENSE_FORM_NUMBER_OF_TYPES, &wordVerbVariantTypeInt))
 				{
-					cerr << "GIAposRelTranslatorRules::extractGIAposRelTranslatorRulesGroups{} error: semanticRelationReturnFunctionNameIndexType unknown; wordVerbVariantType = " << wordVerbVariantType << endl;
+					cerr << "GIAposRelTranslatorRules::extractSANIGroups{} error: semanticRelationReturnFunctionNameIndexType unknown; wordVerbVariantType = " << wordVerbVariantType << endl;
 					exit(EXIT_ERROR);
 				}
 			}
@@ -655,7 +655,7 @@ bool GIAposRelTranslatorRulesClass::parseComponents(XMLparserTag* firstTxtRelTra
 			{
 				if(!SHAREDvars.textInTextArray(wordNounVariantType, GIApreprocessorMultiwordReductionNounDatabaseTagBaseTenseFormArray, GIA_PREPROCESSOR_WORD_NOUN_DATABASE_TAG_BASE_TENSE_FORM_NUMBER_OF_TYPES, &wordNounVariantTypeInt))
 				{
-					cerr << "GIAposRelTranslatorRules::extractGIAposRelTranslatorRulesGroups{} error: semanticRelationReturnFunctionNameIndexType unknown; wordNounVariantType = " << wordNounVariantType << endl;
+					cerr << "GIAposRelTranslatorRules::extractSANIGroups{} error: semanticRelationReturnFunctionNameIndexType unknown; wordNounVariantType = " << wordNounVariantType << endl;
 					exit(EXIT_ERROR);
 				}		
 			}						
@@ -663,13 +663,13 @@ bool GIAposRelTranslatorRulesClass::parseComponents(XMLparserTag* firstTxtRelTra
 			#ifdef GIA_POS_REL_TRANSLATOR_RULES_CODE_NUMBER_EXPLETIVES
 			if(!XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_isExpletive, &isExpletive))
 			{
-				//cerr << "GIAposRelTranslatorRules::extractGIAposRelTranslatorRulesGroups{} error: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_isExpletive, &isExpletive)" << endl;
+				//cerr << "GIAposRelTranslatorRules::extractSANIGroups{} error: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_isExpletive, &isExpletive)" << endl;
 			}
 			#endif
 			
-			GIAposRelTranslatorRulesComponentNeuralNetwork* component = new GIAposRelTranslatorRulesComponentNeuralNetwork();
+			SANIComponentNeuralNetwork* component = new SANIComponentNeuralNetwork();
 			component->componentIndex = componentIndex;
-			#ifdef GIA_POS_REL_TRANSLATOR_SANI
+			#ifdef SANI
 			component->ownerGroup = groupOwner;	//enables reverse lookup for ANN
 			if(parseSubcomponent)
 			{
@@ -692,12 +692,12 @@ bool GIAposRelTranslatorRulesClass::parseComponents(XMLparserTag* firstTxtRelTra
 			#ifdef GIA_POS_REL_TRANSLATOR_RULES_CODE_COMPONENT_MISSING
 			component->missing = SHAREDvars.convertStringToBool(missing);
 			#endif
-			#ifdef GIA_POS_REL_TRANSLATOR_SANI_ADD_EXPLICIT_WORD_REFERENCES_AS_INDEPENDENT_POS_PERMUTATIONS_EFFICIENT
+			#ifdef SANI_ADD_EXPLICIT_WORD_REFERENCES_AS_INDEPENDENT_POS_PERMUTATIONS_EFFICIENT
 			component->stringTypeExplicitAddToExplicitWordTempPOS = SHAREDvars.convertStringToBool(addToExplicitWordTempPOS);
 			#endif
 			component->semanticRelationIndexType = semanticRelationIndexTypeInt;
 			component->semanticRelationReturnEntity = SHAREDvars.convertStringToBool(semanticRelationReturnEntity);
-			#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEMANTICALLY_DETERMINED_DYNAMIC_CONNECTIONS
+			#ifdef SANI_SEMANTICALLY_DETERMINED_DYNAMIC_CONNECTIONS
 			component->semanticRelationReturnConnectionDynamic = SHAREDvars.convertStringToBool(semanticRelationReturnConnectionDynamic);
 			#endif
 			component->semanticRelationReturnFunctionName = semanticRelationReturnFunctionName;
@@ -736,13 +736,13 @@ bool GIAposRelTranslatorRulesClass::parseComponents(XMLparserTag* firstTxtRelTra
 		{
 			if(parseSubcomponent)
 			{
-				cerr << "GIAposRelTranslatorRules::extractGIAposRelTranslatorRulesGroups{} error:(currentTagInTxtRelTranslatorGroupTag->name == GIA_POS_REL_TRANSLATOR_RULES_GROUPS_GROUP_TAG_or) && parseSubcomponent" << endl;
+				cerr << "GIAposRelTranslatorRules::extractSANIGroups{} error:(currentTagInTxtRelTranslatorGroupTag->name == GIA_POS_REL_TRANSLATOR_RULES_GROUPS_GROUP_TAG_or) && parseSubcomponent" << endl;
 				exit(EXIT_ERROR);
 			}
 			
-			GIAposRelTranslatorRulesComponentNeuralNetwork* component = new GIAposRelTranslatorRulesComponentNeuralNetwork();
+			SANIComponentNeuralNetwork* component = new SANIComponentNeuralNetwork();
 			component->componentIndex = componentIndex;
-			#ifdef GIA_POS_REL_TRANSLATOR_SANI
+			#ifdef SANI
 			component->ownerGroup = groupOwner;	//enables reverse lookup for ANN
 			#endif
 			component->componentType = GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_OR;
@@ -752,7 +752,7 @@ bool GIAposRelTranslatorRulesClass::parseComponents(XMLparserTag* firstTxtRelTra
 
 			if(!parseComponents(firstTagInTxtRelTranslatorOrTag, groupOwner, &(component->subComponents), true, component))
 			{
-				cerr << "GIAposRelTranslatorRules::extractGIAposRelTranslatorRulesGroups{} error: !parseComponents(firstTagInTxtRelTranslatorOrTag, &(component->components))" << endl;
+				cerr << "GIAposRelTranslatorRules::extractSANIGroups{} error: !parseComponents(firstTagInTxtRelTranslatorOrTag, &(component->components))" << endl;
 				exit(EXIT_ERROR);			
 			}
 			
@@ -762,19 +762,19 @@ bool GIAposRelTranslatorRulesClass::parseComponents(XMLparserTag* firstTxtRelTra
 		{	
 			if(parseSubcomponent)
 			{
-				cerr << "GIAposRelTranslatorRules::extractGIAposRelTranslatorRulesGroups{} error:(currentTagInTxtRelTranslatorGroupTag->name == GIA_POS_REL_TRANSLATOR_RULES_GROUPS_GROUP_TAG_repeat) && parseSubcomponent" << endl;
+				cerr << "GIAposRelTranslatorRules::extractSANIGroups{} error:(currentTagInTxtRelTranslatorGroupTag->name == GIA_POS_REL_TRANSLATOR_RULES_GROUPS_GROUP_TAG_repeat) && parseSubcomponent" << endl;
 				exit(EXIT_ERROR);
 			}
 					
 			string optional = GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_VALUE_false;
 			if(!XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_optional, &optional))
 			{
-				//cerr << "GIAposRelTranslatorRules::extractGIAposRelTranslatorRulesGroups{} error: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_optional, &optional)" << endl;
+				//cerr << "GIAposRelTranslatorRules::extractSANIGroups{} error: !XMLparserClass.getAttribute(currentTagInTxtRelTranslatorGroupTag, GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_ATTRIBUTE_optional, &optional)" << endl;
 			}
 			
-			GIAposRelTranslatorRulesComponentNeuralNetwork* component = new GIAposRelTranslatorRulesComponentNeuralNetwork();
+			SANIComponentNeuralNetwork* component = new SANIComponentNeuralNetwork();
 			component->componentIndex = componentIndex;
-			#ifdef GIA_POS_REL_TRANSLATOR_SANI
+			#ifdef SANI
 			component->ownerGroup = groupOwner;	//enables reverse lookup for ANN
 			#endif
 			component->componentType = GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_REPEAT;
@@ -785,7 +785,7 @@ bool GIAposRelTranslatorRulesClass::parseComponents(XMLparserTag* firstTxtRelTra
 
 			if(!parseComponents(firstTagInTxtRelTranslatorRepeatTag, groupOwner, &(component->subComponents), true, component))
 			{
-				cerr << "GIAposRelTranslatorRules::extractGIAposRelTranslatorRulesGroups{} error: !parseComponents(firstTagInTxtRelTranslatorRepeatTag, &(component->components))" << endl;
+				cerr << "GIAposRelTranslatorRules::extractSANIGroups{} error: !parseComponents(firstTagInTxtRelTranslatorRepeatTag, &(component->components))" << endl;
 				exit(EXIT_ERROR);			
 			}
 			
@@ -793,7 +793,7 @@ bool GIAposRelTranslatorRulesClass::parseComponents(XMLparserTag* firstTxtRelTra
 		}
 		else
 		{
-			cerr << "GIAposRelTranslatorRules::extractGIAposRelTranslatorRulesGroups{} error: !(currentTagInTxtRelTranslatorGroupTag->name == GIA_POS_REL_TRANSLATOR_RULES_GROUPS_GROUP_TAG_component); currentTagInTxtRelTranslatorGroupTag->name = " << currentTagInTxtRelTranslatorGroupTag->name << endl;
+			cerr << "GIAposRelTranslatorRules::extractSANIGroups{} error: !(currentTagInTxtRelTranslatorGroupTag->name == GIA_POS_REL_TRANSLATOR_RULES_GROUPS_GROUP_TAG_component); currentTagInTxtRelTranslatorGroupTag->name = " << currentTagInTxtRelTranslatorGroupTag->name << endl;
 			exit(EXIT_ERROR);					
 		}
 
@@ -804,25 +804,25 @@ bool GIAposRelTranslatorRulesClass::parseComponents(XMLparserTag* firstTxtRelTra
 }
 
 
-bool GIAposRelTranslatorRulesClass::connectGroupsReferences(vector<GIAposRelTranslatorRulesGroupType*>* GIAposRelTranslatorRulesGroupTypes)
+bool GIAposRelTranslatorRulesClass::connectGroupsReferences(vector<SANIGroupType*>* SANIGroupTypes)
 {
 	bool result = true;
-	for(int i=0; i<GIAposRelTranslatorRulesGroupTypes->size(); i++)
+	for(int i=0; i<SANIGroupTypes->size(); i++)
 	{
-		GIAposRelTranslatorRulesGroupType* groupType = GIAposRelTranslatorRulesGroupTypes->at(i);
+		SANIGroupType* groupType = SANIGroupTypes->at(i);
 		for(int j=0; j<(groupType->groups).size(); j++)
 		{
-			GIAposRelTranslatorRulesGroupNeuralNetwork* group = (groupType->groups)[j];
+			SANIGroupNeuralNetwork* group = (groupType->groups)[j];
 
-			#ifdef GIA_POS_REL_TRANSLATOR_SANI_ANN
+			#ifdef SANI_ANN
 			group->initiateANNneuron(group->groupTypeName + ":" + group->groupName);
 			#endif
 									
-			#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_PROPAGATE_EXTRA8
+			#ifdef SANI_DEBUG_PROPAGATE_EXTRA8
 			cout << "GIAposRelTranslatorRulesClass::connectGroupsReferences{}: group->groupName = " << group->groupName << endl;
 			#endif
 			//cout << "GIAposRelTranslatorRulesClass::connectGroupsReferences{}: group->groupName = " << group->groupName << endl;
-			if(!connectComponentsReferences(GIAposRelTranslatorRulesGroupTypes, &(group->components), false))
+			if(!connectComponentsReferences(SANIGroupTypes, &(group->components), false))
 			{
 				result = false;
 			}
@@ -830,22 +830,22 @@ bool GIAposRelTranslatorRulesClass::connectGroupsReferences(vector<GIAposRelTran
 	}
 	return result;
 }
-bool GIAposRelTranslatorRulesClass::connectComponentsReferences(vector<GIAposRelTranslatorRulesGroupType*>* GIAposRelTranslatorRulesGroupTypes, vector<GIAposRelTranslatorRulesComponentNeuralNetwork*>* components, bool subcomponents)
+bool GIAposRelTranslatorRulesClass::connectComponentsReferences(vector<SANIGroupType*>* SANIGroupTypes, vector<SANIComponentNeuralNetwork*>* components, bool subcomponents)
 {
 	bool result = true;
 	for(int j=0; j<components->size(); j++)
 	{
-		GIAposRelTranslatorRulesComponentNeuralNetwork* component = (*components)[j];
+		SANIComponentNeuralNetwork* component = (*components)[j];
 		if(component->componentType == GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_GROUP)
 		{
 			if(component->groupTypeRefName != "")
 			{
 				if(component->groupRefName != "")
 				{	
-					#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_PROPAGATE_EXTRA8
+					#ifdef SANI_DEBUG_PROPAGATE_EXTRA8
 					cout << "\tGIAposRelTranslatorRulesClass::connectComponentsReferences{}: component->groupTypeRefName = " << component->groupTypeRefName << ", component->groupRefName = " << component->groupRefName <<endl;
 					#endif
-					if(!findGroup(GIAposRelTranslatorRulesGroupTypes, component->groupTypeRefName, component->groupRefName, &(component->groupTypeRef), &(component->groupRef)))
+					if(!findGroup(SANIGroupTypes, component->groupTypeRefName, component->groupRefName, &(component->groupTypeRef), &(component->groupRef)))
 					{
 						result = false;
 						cerr << "GIAposRelTranslatorRulesClass::connectComponentsReferences{} error: !findGroup(), component->groupTypeRefName = " << component->groupTypeRefName << ", component->groupRefName = " << component->groupRefName <<endl;
@@ -854,7 +854,7 @@ bool GIAposRelTranslatorRulesClass::connectComponentsReferences(vector<GIAposRel
 				}
 				else
 				{
-					if(!findGroupType(GIAposRelTranslatorRulesGroupTypes, component->groupTypeRefName, &(component->groupTypeRef)))
+					if(!findGroupType(SANIGroupTypes, component->groupTypeRefName, &(component->groupTypeRef)))
 					{
 						result = false;
 						cerr << "GIAposRelTranslatorRulesClass::connectComponentsReferences{} error: !findGroupType(), component->groupTypeRefName = " << component->groupTypeRefName << endl;
@@ -872,7 +872,7 @@ bool GIAposRelTranslatorRulesClass::connectComponentsReferences(vector<GIAposRel
 				cerr << "GIAposRelTranslatorRulesClass::connectComponentsReferences{} error: (component->componentType == GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_OR/REPEAT) && subcomponents" << endl;
 				exit(EXIT_ERROR);	
 			}
-			if(!connectComponentsReferences(GIAposRelTranslatorRulesGroupTypes, &(component->subComponents), true))
+			if(!connectComponentsReferences(SANIGroupTypes, &(component->subComponents), true))
 			{
 				result = false;
 				cerr << "GIAposRelTranslatorRulesClass::connectComponentsReferences{} error: !connectComponentsReferences()" << endl;
@@ -882,12 +882,12 @@ bool GIAposRelTranslatorRulesClass::connectComponentsReferences(vector<GIAposRel
 	}
 	return result;
 }
-bool GIAposRelTranslatorRulesClass::findGroupType(vector<GIAposRelTranslatorRulesGroupType*>* GIAposRelTranslatorRulesGroupTypes, const string groupTypeName, GIAposRelTranslatorRulesGroupType** groupTypeFound)
+bool GIAposRelTranslatorRulesClass::findGroupType(vector<SANIGroupType*>* SANIGroupTypes, const string groupTypeName, SANIGroupType** groupTypeFound)
 {
 	bool result = false;
-	for(int i=0; i<GIAposRelTranslatorRulesGroupTypes->size(); i++)
+	for(int i=0; i<SANIGroupTypes->size(); i++)
 	{
-		GIAposRelTranslatorRulesGroupType* groupType = GIAposRelTranslatorRulesGroupTypes->at(i);
+		SANIGroupType* groupType = SANIGroupTypes->at(i);
 		//cout << "groupType->groupTypeName = " << groupType->groupTypeName << endl;
 		if(groupType->groupTypeName == groupTypeName)
 		{
@@ -897,18 +897,18 @@ bool GIAposRelTranslatorRulesClass::findGroupType(vector<GIAposRelTranslatorRule
 	}
 	return result;
 }
-bool GIAposRelTranslatorRulesClass::findGroup(vector<GIAposRelTranslatorRulesGroupType*>* GIAposRelTranslatorRulesGroupTypes, const string groupTypeName, const string groupName, GIAposRelTranslatorRulesGroupType** groupTypeFound, GIAposRelTranslatorRulesGroupNeuralNetwork** groupFound)
+bool GIAposRelTranslatorRulesClass::findGroup(vector<SANIGroupType*>* SANIGroupTypes, const string groupTypeName, const string groupName, SANIGroupType** groupTypeFound, SANIGroupNeuralNetwork** groupFound)
 {
 	bool result = false;
-	for(int i=0; i<GIAposRelTranslatorRulesGroupTypes->size(); i++)
+	for(int i=0; i<SANIGroupTypes->size(); i++)
 	{
-		GIAposRelTranslatorRulesGroupType* groupType = GIAposRelTranslatorRulesGroupTypes->at(i);
+		SANIGroupType* groupType = SANIGroupTypes->at(i);
 		if(groupType->groupTypeName == groupTypeName)
 		{
 			*groupTypeFound = groupType;
 			for(int j=0; j<groupType->groups.size(); j++)
 			{
-				GIAposRelTranslatorRulesGroupNeuralNetwork* group = (groupType->groups)[j];
+				SANIGroupNeuralNetwork* group = (groupType->groups)[j];
 				if(group->groupName == groupName)
 				{
 					*groupFound = group;
@@ -1014,13 +1014,13 @@ bool GIAposRelTranslatorRulesClass::extractGIAposRelTranslatorRulesTokens(vector
 								}
 								else
 								{
-									cerr << "GIAposRelTranslatorRules::extractGIAposRelTranslatorRulesGroups{} error: illegal class name = currentTagInTxtRelTranslatorLogicReference->firstAttribute->value = " << currentTagInTxtRelTranslatorLogicReference->firstAttribute->value << endl;
+									cerr << "GIAposRelTranslatorRules::extractSANIGroups{} error: illegal class name = currentTagInTxtRelTranslatorLogicReference->firstAttribute->value = " << currentTagInTxtRelTranslatorLogicReference->firstAttribute->value << endl;
 									exit(EXIT_ERROR);
 								}
 							}
 							else
 							{
-								cerr << "GIAposRelTranslatorRules::extractGIAposRelTranslatorRulesGroups{} error: illegal class name = currentTagInTxtRelTranslatorLogicReference->firstAttribute->name = " << currentTagInTxtRelTranslatorLogicReference->firstAttribute->name << ", expected: GIA_POS_REL_TRANSLATOR_RULES_TOKENS_ATTRIBUTE_name" << endl;
+								cerr << "GIAposRelTranslatorRules::extractSANIGroups{} error: illegal class name = currentTagInTxtRelTranslatorLogicReference->firstAttribute->name = " << currentTagInTxtRelTranslatorLogicReference->firstAttribute->name << ", expected: GIA_POS_REL_TRANSLATOR_RULES_TOKENS_ATTRIBUTE_name" << endl;
 								exit(EXIT_ERROR);
 							}
 
@@ -1039,7 +1039,7 @@ bool GIAposRelTranslatorRulesClass::extractGIAposRelTranslatorRulesTokens(vector
 										}
 										else
 										{
-											cerr << "GIAposRelTranslatorRules::extractGIAposRelTranslatorRulesGroups{} error: illegal type name = currentTagInClass->firstAttribute->name = " << currentTagInClass->firstAttribute->name << ", expected: GIA_POS_REL_TRANSLATOR_RULES_TOKENS_ATTRIBUTE_name" << endl;
+											cerr << "GIAposRelTranslatorRules::extractSANIGroups{} error: illegal type name = currentTagInClass->firstAttribute->name = " << currentTagInClass->firstAttribute->name << ", expected: GIA_POS_REL_TRANSLATOR_RULES_TOKENS_ATTRIBUTE_name" << endl;
 											exit(EXIT_ERROR);
 										}
 
@@ -1057,13 +1057,13 @@ bool GIAposRelTranslatorRulesClass::extractGIAposRelTranslatorRulesTokens(vector
 												}
 												else
 												{
-													cerr << "GIAposRelTranslatorRules::extractGIAposRelTranslatorRulesGroups{} error: illegal instance name = currentTagInType->firstAttribute->name = " << currentTagInType->firstAttribute->name << ", expected: GIA_POS_REL_TRANSLATOR_RULES_TOKENS_ATTRIBUTE_name" << endl;
+													cerr << "GIAposRelTranslatorRules::extractSANIGroups{} error: illegal instance name = currentTagInType->firstAttribute->name = " << currentTagInType->firstAttribute->name << ", expected: GIA_POS_REL_TRANSLATOR_RULES_TOKENS_ATTRIBUTE_name" << endl;
 													exit(EXIT_ERROR);
 												}
 											}
 											else
 											{
-												cerr << "GIAposRelTranslatorRules::extractGIAposRelTranslatorRulesGroups{} error: illegal currentTagInType->name = " << currentTagInType->name << ", expected: GIA_POS_REL_TRANSLATOR_RULES_TOKENS_TAG_instance" << endl;
+												cerr << "GIAposRelTranslatorRules::extractSANIGroups{} error: illegal currentTagInType->name = " << currentTagInType->name << ", expected: GIA_POS_REL_TRANSLATOR_RULES_TOKENS_TAG_instance" << endl;
 												exit(EXIT_ERROR);
 											}
 											currentTagInType = currentTagInType->nextTag;
@@ -1071,7 +1071,7 @@ bool GIAposRelTranslatorRulesClass::extractGIAposRelTranslatorRulesTokens(vector
 									}
 									else
 									{
-										cerr << "GIAposRelTranslatorRules::extractGIAposRelTranslatorRulesGroups{} error: illegal currentTagInClass->name = " << currentTagInClass->name << ", expected: GIA_POS_REL_TRANSLATOR_RULES_TOKENS_TAG_type" << endl;
+										cerr << "GIAposRelTranslatorRules::extractSANIGroups{} error: illegal currentTagInClass->name = " << currentTagInClass->name << ", expected: GIA_POS_REL_TRANSLATOR_RULES_TOKENS_TAG_type" << endl;
 										exit(EXIT_ERROR);
 									}
 									currentTagInClass = currentTagInClass->nextTag;
@@ -1080,7 +1080,7 @@ bool GIAposRelTranslatorRulesClass::extractGIAposRelTranslatorRulesTokens(vector
 						}
 						else
 						{
-							cerr << "GIAposRelTranslatorRules::extractGIAposRelTranslatorRulesGroups{} error: illegal currentTagInTxtRelTranslatorLogicReference->name = " << currentTagInTxtRelTranslatorLogicReference->name << ", expected: GIA_POS_REL_TRANSLATOR_RULES_TOKENS_TAG_class" << endl;
+							cerr << "GIAposRelTranslatorRules::extractSANIGroups{} error: illegal currentTagInTxtRelTranslatorLogicReference->name = " << currentTagInTxtRelTranslatorLogicReference->name << ", expected: GIA_POS_REL_TRANSLATOR_RULES_TOKENS_TAG_class" << endl;
 							exit(EXIT_ERROR);
 						}
 						currentTagInTxtRelTranslatorLogicReference = currentTagInTxtRelTranslatorLogicReference->nextTag;
@@ -1312,36 +1312,36 @@ bool GIAposRelTranslatorRulesClass::isClassTag(string word, string layerNameToFi
 
 
 
-#ifdef GIA_POS_REL_TRANSLATOR_SANI_REMOVE_LAST_OPTIONAL_COMPONENTS
-bool GIAposRelTranslatorRulesClass::removeLastOptionalComponents(vector<GIAposRelTranslatorRulesGroupType*>* GIAposRelTranslatorRulesGroupTypes)
+#ifdef SANI_REMOVE_LAST_OPTIONAL_COMPONENTS
+bool GIAposRelTranslatorRulesClass::removeLastOptionalComponents(vector<SANIGroupType*>* SANIGroupTypes)
 {
 	bool result = true;
 	
-	for(int i=0; i<GIAposRelTranslatorRulesGroupTypes->size(); i++)
+	for(int i=0; i<SANIGroupTypes->size(); i++)
 	{
-		GIAposRelTranslatorRulesGroupType* groupType = GIAposRelTranslatorRulesGroupTypes->at(i);
+		SANIGroupType* groupType = SANIGroupTypes->at(i);
 		
 		int groupTypeGroupsSizeOrig = (groupType->groups).size();
 		for(int groupIndex=0; groupIndex<(groupType->groups).size(); groupIndex++)
 		{
-			GIAposRelTranslatorRulesGroupNeuralNetwork* group = (groupType->groups)[groupIndex];
-			vector<GIAposRelTranslatorRulesComponentNeuralNetwork*>* components = &(group->components);
+			SANIGroupNeuralNetwork* group = (groupType->groups)[groupIndex];
+			vector<SANIComponentNeuralNetwork*>* components = &(group->components);
 					
 			if(components->size() > 0)
 			{
-				#ifdef GIA_POS_REL_TRANSLATOR_SANI_REVERSE_DIRECTION
+				#ifdef SANI_REVERSE_DIRECTION
 				int lastComponentOptionalComponentIndex = 0;
 				#else
 				int lastComponentOptionalComponentIndex = components->size()-1;
 				#endif
-				GIAposRelTranslatorRulesComponentNeuralNetwork* lastComponent = (*components)[lastComponentOptionalComponentIndex];
+				SANIComponentNeuralNetwork* lastComponent = (*components)[lastComponentOptionalComponentIndex];
 				
-				#ifdef GIA_POS_REL_TRANSLATOR_SANI_REMOVE_LAST_OPTIONAL_COMPONENTS_OR_OPTIONAL_REPEAT
+				#ifdef SANI_REMOVE_LAST_OPTIONAL_COMPONENTS_OR_OPTIONAL_REPEAT
 				bool hasOptionalRepeat = false;
 				int repeatOptionalComponentIndex = INT_DEFAULT_VALUE;
 				for(int q=0; q<group->components.size(); q++)
 				{	
-					GIAposRelTranslatorRulesComponentNeuralNetwork* component = group->components[q];
+					SANIComponentNeuralNetwork* component = group->components[q];
 					if((component->componentType == GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_REPEAT) && (component->optional))
 					{
 						hasOptionalRepeat = true;
@@ -1359,7 +1359,7 @@ bool GIAposRelTranslatorRulesClass::removeLastOptionalComponents(vector<GIAposRe
 					}
 					removeOptionalComponent(groupType, &groupIndex, groupTypeGroupsSizeOrig, group, lastComponentOptionalComponentIndex);
 				}
-				#ifdef GIA_POS_REL_TRANSLATOR_SANI_REMOVE_LAST_OPTIONAL_COMPONENTS_OR_OPTIONAL_REPEAT
+				#ifdef SANI_REMOVE_LAST_OPTIONAL_COMPONENTS_OR_OPTIONAL_REPEAT
 				else if(hasOptionalRepeat)
 				{
 					removeOptionalComponent(groupType, &groupIndex, groupTypeGroupsSizeOrig, group, repeatOptionalComponentIndex);
@@ -1374,58 +1374,58 @@ bool GIAposRelTranslatorRulesClass::removeLastOptionalComponents(vector<GIAposRe
 		}
 	}
 	
-	#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_PROPAGATE_EXTRA7
-	cout << "GIA_DEBUG_POS_REL_TRANSLATOR_SANI_PROPAGATE_EXTRA7 exit" << endl;
+	#ifdef SANI_DEBUG_PROPAGATE_EXTRA7
+	cout << "SANI_DEBUG_PROPAGATE_EXTRA7 exit" << endl;
 	exit(EXIT_ERROR);
 	#endif
 	
 	return result;
 }	
 
-bool GIAposRelTranslatorRulesClass::removeOptionalComponent(GIAposRelTranslatorRulesGroupType* groupType, int* groupIndex, const int groupTypeGroupsSizeOrig, GIAposRelTranslatorRulesGroupNeuralNetwork* group, const int optionalComponentIndex)
+bool GIAposRelTranslatorRulesClass::removeOptionalComponent(SANIGroupType* groupType, int* groupIndex, const int groupTypeGroupsSizeOrig, SANIGroupNeuralNetwork* group, const int optionalComponentIndex)
 {
 	bool result = true;
 	
-	vector<GIAposRelTranslatorRulesComponentNeuralNetwork*>* components = &(group->components);
+	vector<SANIComponentNeuralNetwork*>* components = &(group->components);
 	
-	GIAposRelTranslatorRulesGroupNeuralNetwork* optionalComponentsWrapperGroup = NULL;
+	SANIGroupNeuralNetwork* optionalComponentsWrapperGroup = NULL;
 	bool wrapperGroupAlreadyDefined = false;
 	if(*groupIndex >= groupTypeGroupsSizeOrig)
 	{
 		wrapperGroupAlreadyDefined = true;
 		optionalComponentsWrapperGroup = group->optionalComponentsWrapperGroup;
-		#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_PROPAGATE_EXTRA7
+		#ifdef SANI_DEBUG_PROPAGATE_EXTRA7
 		cout << "passed test: (*groupIndex >= groupTypeGroupsSizeOrig)" << endl;
 		#endif
 	}
 			
-	#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_PROPAGATE_EXTRA7
+	#ifdef SANI_DEBUG_PROPAGATE_EXTRA7
 	cout << "GIAposRelTranslatorRulesClass::removeOptionalComponent: remove optional component from groupNew1" << endl;
 	cout << "GIAposRelTranslatorRulesClass::removeOptionalComponent: set optional component from groupNew1 to optional==false" << endl;
 	#endif
 
 	//create groupNew1
-	GIAposRelTranslatorRulesGroupNeuralNetwork* groupNew1 = copyGroup(group);
-	groupNew1->groupName = groupNew1->groupName + GIA_POS_REL_TRANSLATOR_SANI_REMOVE_LAST_OPTIONAL_COMPONENTS_ARTIFICIAL_GROUP_NAME_APPEND1;
+	SANIGroupNeuralNetwork* groupNew1 = copyGroup(group);
+	groupNew1->groupName = groupNew1->groupName + SANI_REMOVE_LAST_OPTIONAL_COMPONENTS_ARTIFICIAL_GROUP_NAME_APPEND1;
 	groupNew1->optionalComponentsWrapperGroup = group;
 	//remove optional component from groupNew1;
-	vector<GIAposRelTranslatorRulesComponentNeuralNetwork*>* componentsNew1 = &(groupNew1->components);
+	vector<SANIComponentNeuralNetwork*>* componentsNew1 = &(groupNew1->components);
 	componentsNew1->erase(componentsNew1->begin()+optionalComponentIndex);	//CHECKTHIS
 	updateComponentsOwnerGroupAndIndexes(groupNew1, &(groupNew1->components), false, NULL);
 	(groupType->groups).push_back(groupNew1);
 
 	//create groupNew2
-	GIAposRelTranslatorRulesGroupNeuralNetwork* groupNew2 = copyGroup(group);
-	groupNew2->groupName = groupNew2->groupName + GIA_POS_REL_TRANSLATOR_SANI_REMOVE_LAST_OPTIONAL_COMPONENTS_ARTIFICIAL_GROUP_NAME_APPEND2;
+	SANIGroupNeuralNetwork* groupNew2 = copyGroup(group);
+	groupNew2->groupName = groupNew2->groupName + SANI_REMOVE_LAST_OPTIONAL_COMPONENTS_ARTIFICIAL_GROUP_NAME_APPEND2;
 	groupNew2->optionalComponentsWrapperGroup = group;
 	//set optional component to !optional;
-	vector<GIAposRelTranslatorRulesComponentNeuralNetwork*>* componentsNew2 = &(groupNew2->components);
-	GIAposRelTranslatorRulesComponentNeuralNetwork* optionalComponentNew2 = (*componentsNew2)[optionalComponentIndex];
+	vector<SANIComponentNeuralNetwork*>* componentsNew2 = &(groupNew2->components);
+	SANIComponentNeuralNetwork* optionalComponentNew2 = (*componentsNew2)[optionalComponentIndex];
 	optionalComponentNew2->optional = false;
 	updateComponentsOwnerGroupAndIndexes(groupNew2, &(groupNew2->components), false, NULL);
 	(groupType->groups).push_back(groupNew2);
 
-	GIAposRelTranslatorRulesComponentNeuralNetwork* artificialGroupOrComponent = NULL;
+	SANIComponentNeuralNetwork* artificialGroupOrComponent = NULL;
 	if(wrapperGroupAlreadyDefined)
 	{
 		artificialGroupOrComponent = optionalComponentsWrapperGroup->components[0];
@@ -1435,7 +1435,7 @@ bool GIAposRelTranslatorRulesClass::removeOptionalComponent(GIAposRelTranslatorR
 		(*groupIndex) = (*groupIndex) - 1;
 		for(int q=0; q<artificialGroupOrComponent->subComponents.size(); q++)
 		{	
-			GIAposRelTranslatorRulesComponentNeuralNetwork* component = artificialGroupOrComponent->subComponents[q];
+			SANIComponentNeuralNetwork* component = artificialGroupOrComponent->subComponents[q];
 			if(component->groupRefName == group->groupName)
 			{
 				(artificialGroupOrComponent->subComponents).erase((artificialGroupOrComponent->subComponents).begin() + q);
@@ -1447,9 +1447,9 @@ bool GIAposRelTranslatorRulesClass::removeOptionalComponent(GIAposRelTranslatorR
 	{
 		//turn group into a wrapper group with an or function pointing to both groups
 		optionalComponentsWrapperGroup = group;
-		artificialGroupOrComponent = new GIAposRelTranslatorRulesComponentNeuralNetwork();
-		artificialGroupOrComponent->componentIndex = GIA_POS_REL_TRANSLATOR_SANI_COMPONENT_INDEX_FIRST;
-		#ifdef GIA_POS_REL_TRANSLATOR_SANI
+		artificialGroupOrComponent = new SANIComponentNeuralNetwork();
+		artificialGroupOrComponent->componentIndex = SANI_COMPONENT_INDEX_FIRST;
+		#ifdef SANI
 		artificialGroupOrComponent->ownerGroup = group;	//enables reverse lookup for ANN
 		#endif
 		artificialGroupOrComponent->componentType = GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_OR;
@@ -1458,7 +1458,7 @@ bool GIAposRelTranslatorRulesClass::removeOptionalComponent(GIAposRelTranslatorR
 	}
 
 	//add newly created artificial groups to wrapper group
-	GIAposRelTranslatorRulesComponentNeuralNetwork* artificialGroupComponentNew1 = new GIAposRelTranslatorRulesComponentNeuralNetwork();
+	SANIComponentNeuralNetwork* artificialGroupComponentNew1 = new SANIComponentNeuralNetwork();
 	artificialGroupComponentNew1->groupRefName = groupNew1->groupName;
 	artificialGroupComponentNew1->groupTypeRefName = optionalComponentsWrapperGroup->groupTypeName;
 	artificialGroupComponentNew1->componentType = GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_GROUP;
@@ -1468,7 +1468,7 @@ bool GIAposRelTranslatorRulesClass::removeOptionalComponent(GIAposRelTranslatorR
 	artificialGroupComponentNew1->isSubcomponent = true;
 	artificialGroupComponentNew1->semanticRelationReturnEntity = true;
 	artificialGroupOrComponent->subComponents.push_back(artificialGroupComponentNew1);
-	GIAposRelTranslatorRulesComponentNeuralNetwork* artificialGroupComponentNew2 = new GIAposRelTranslatorRulesComponentNeuralNetwork();
+	SANIComponentNeuralNetwork* artificialGroupComponentNew2 = new SANIComponentNeuralNetwork();
 	artificialGroupComponentNew2->groupRefName = groupNew2->groupName;
 	artificialGroupComponentNew2->groupTypeRefName = optionalComponentsWrapperGroup->groupTypeName;
 	artificialGroupComponentNew2->componentType = GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_GROUP;
@@ -1478,13 +1478,13 @@ bool GIAposRelTranslatorRulesClass::removeOptionalComponent(GIAposRelTranslatorR
 	artificialGroupComponentNew2->isSubcomponent = true;
 	artificialGroupComponentNew2->semanticRelationReturnEntity = true;
 	artificialGroupOrComponent->subComponents.push_back(artificialGroupComponentNew2);
-	for(int c=GIA_POS_REL_TRANSLATOR_SANI_COMPONENT_INDEX_FIRST; c<artificialGroupOrComponent->subComponents.size(); c++)
+	for(int c=SANI_COMPONENT_INDEX_FIRST; c<artificialGroupOrComponent->subComponents.size(); c++)
 	{
-		GIAposRelTranslatorRulesComponentNeuralNetwork* subcomponent = artificialGroupOrComponent->subComponents[c];
+		SANIComponentNeuralNetwork* subcomponent = artificialGroupOrComponent->subComponents[c];
 		subcomponent->componentIndex = c;
 	}
 	
-	#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_PROPAGATE_EXTRA8
+	#ifdef SANI_DEBUG_PROPAGATE_EXTRA8
 	cout << "artificialGroupComponentNew1->groupRefName = " << artificialGroupComponentNew1->groupRefName << endl;
 	cout << "artificialGroupComponentNew2->groupRefName = " << artificialGroupComponentNew2->groupRefName << endl;
 	#endif
@@ -1493,37 +1493,37 @@ bool GIAposRelTranslatorRulesClass::removeOptionalComponent(GIAposRelTranslatorR
 }
 
 /*
-bool GIAposRelTranslatorRulesClass::removeLastOptionalComponents(vector<GIAposRelTranslatorRulesGroupType*>* GIAposRelTranslatorRulesGroupTypes)
+bool GIAposRelTranslatorRulesClass::removeLastOptionalComponents(vector<SANIGroupType*>* SANIGroupTypes)
 {
 	bool result = true;
 	
-	for(int i=0; i<GIAposRelTranslatorRulesGroupTypes->size(); i++)
+	for(int i=0; i<SANIGroupTypes->size(); i++)
 	{
-		GIAposRelTranslatorRulesGroupType* groupType = GIAposRelTranslatorRulesGroupTypes->at(i);
+		SANIGroupType* groupType = SANIGroupTypes->at(i);
 		
 		int groupTypeGroupsSizeOrig = (groupType->groups).size();
 		for(int j=0; j<(groupType->groups).size(); j++)
 		{
-			GIAposRelTranslatorRulesGroupNeuralNetwork* group = (groupType->groups)[j];
-			vector<GIAposRelTranslatorRulesComponentNeuralNetwork*>* components = &(group->components);
+			SANIGroupNeuralNetwork* group = (groupType->groups)[j];
+			vector<SANIComponentNeuralNetwork*>* components = &(group->components);
 			
-			GIAposRelTranslatorRulesGroupNeuralNetwork* optionalComponentsWrapperGroup = NULL;
+			SANIGroupNeuralNetwork* optionalComponentsWrapperGroup = NULL;
 			bool wrapperGroupAlreadyDefined = false;
 			if(j >= groupTypeGroupsSizeOrig)
 			{
 				wrapperGroupAlreadyDefined = true;
 				optionalComponentsWrapperGroup = group->optionalComponentsWrapperGroup;
-				#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_PROPAGATE_EXTRA7
+				#ifdef SANI_DEBUG_PROPAGATE_EXTRA7
 				cout << "passed test: (j >= groupTypeGroupsSizeOrig)" << endl;
 				#endif
 			}
 							
 			if(components->size() > 0)
 			{
-				#ifdef GIA_POS_REL_TRANSLATOR_SANI_REVERSE_DIRECTION
-				GIAposRelTranslatorRulesComponentNeuralNetwork* lastComponent = (*components)[0];
+				#ifdef SANI_REVERSE_DIRECTION
+				SANIComponentNeuralNetwork* lastComponent = (*components)[0];
 				#else
-				GIAposRelTranslatorRulesComponentNeuralNetwork* lastComponent = (*components)[components->size()-1];
+				SANIComponentNeuralNetwork* lastComponent = (*components)[components->size()-1];
 				#endif
 				if(components->size() == 1 && lastComponent->optional)
 				{
@@ -1533,18 +1533,18 @@ bool GIAposRelTranslatorRulesClass::removeLastOptionalComponents(vector<GIAposRe
 				if(lastComponent->optional)
 				{
 
-					#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_PROPAGATE_EXTRA7
+					#ifdef SANI_DEBUG_PROPAGATE_EXTRA7
 					cout << "GIAposRelTranslatorRulesClass::removeLastOptionalComponents: remove last component from groupNew1" << endl;
 					cout << "GIAposRelTranslatorRulesClass::removeLastOptionalComponents: set last component from groupNew1 to optional==false" << endl;
 					#endif
 
 					//create groupNew1
-					GIAposRelTranslatorRulesGroupNeuralNetwork* groupNew1 = copyGroup(group);
-					groupNew1->groupName = groupNew1->groupName + GIA_POS_REL_TRANSLATOR_SANI_REMOVE_LAST_OPTIONAL_COMPONENTS_ARTIFICIAL_GROUP_NAME_APPEND1;
+					SANIGroupNeuralNetwork* groupNew1 = copyGroup(group);
+					groupNew1->groupName = groupNew1->groupName + SANI_REMOVE_LAST_OPTIONAL_COMPONENTS_ARTIFICIAL_GROUP_NAME_APPEND1;
 					groupNew1->optionalComponentsWrapperGroup = group;
 					//remove last component from groupNew1;
-					vector<GIAposRelTranslatorRulesComponentNeuralNetwork*>* componentsNew1 = &(groupNew1->components);
-					#ifdef GIA_POS_REL_TRANSLATOR_SANI_REVERSE_DIRECTION
+					vector<SANIComponentNeuralNetwork*>* componentsNew1 = &(groupNew1->components);
+					#ifdef SANI_REVERSE_DIRECTION
 					//componentsNew1.pop_front();
 					componentsNew1->erase(componentsNew1->begin());
 					#else
@@ -1554,21 +1554,21 @@ bool GIAposRelTranslatorRulesClass::removeLastOptionalComponents(vector<GIAposRe
 					(groupType->groups).push_back(groupNew1);
 
 					//create groupNew2
-					GIAposRelTranslatorRulesGroupNeuralNetwork* groupNew2 = copyGroup(group);
-					groupNew2->groupName = groupNew2->groupName + GIA_POS_REL_TRANSLATOR_SANI_REMOVE_LAST_OPTIONAL_COMPONENTS_ARTIFICIAL_GROUP_NAME_APPEND2;
+					SANIGroupNeuralNetwork* groupNew2 = copyGroup(group);
+					groupNew2->groupName = groupNew2->groupName + SANI_REMOVE_LAST_OPTIONAL_COMPONENTS_ARTIFICIAL_GROUP_NAME_APPEND2;
 					groupNew2->optionalComponentsWrapperGroup = group;
 					//set last component to !optional;
-					vector<GIAposRelTranslatorRulesComponentNeuralNetwork*>* componentsNew2 = &(groupNew2->components);
-					#ifdef GIA_POS_REL_TRANSLATOR_SANI_REVERSE_DIRECTION
-					GIAposRelTranslatorRulesComponentNeuralNetwork* lastComponentNew2 = (*componentsNew2)[0];
+					vector<SANIComponentNeuralNetwork*>* componentsNew2 = &(groupNew2->components);
+					#ifdef SANI_REVERSE_DIRECTION
+					SANIComponentNeuralNetwork* lastComponentNew2 = (*componentsNew2)[0];
 					#else
-					GIAposRelTranslatorRulesComponentNeuralNetwork* lastComponentNew2 = (*componentsNew2)[components->size()-1];
+					SANIComponentNeuralNetwork* lastComponentNew2 = (*componentsNew2)[components->size()-1];
 					#endif
 					lastComponentNew2->optional = false;
 					updateComponentsOwnerGroupAndIndexes(groupNew2, &(groupNew2->components), false, NULL);
 					(groupType->groups).push_back(groupNew2);
 
-					GIAposRelTranslatorRulesComponentNeuralNetwork* artificialGroupOrComponent = NULL;
+					SANIComponentNeuralNetwork* artificialGroupOrComponent = NULL;
 					if(wrapperGroupAlreadyDefined)
 					{
 						artificialGroupOrComponent = optionalComponentsWrapperGroup->components[0];
@@ -1578,7 +1578,7 @@ bool GIAposRelTranslatorRulesClass::removeLastOptionalComponents(vector<GIAposRe
 						j--;
 						for(int q=0; q<artificialGroupOrComponent->subComponents.size(); q++)
 						{	
-							GIAposRelTranslatorRulesComponentNeuralNetwork* component = artificialGroupOrComponent->subComponents[q];
+							SANIComponentNeuralNetwork* component = artificialGroupOrComponent->subComponents[q];
 							if(component->groupRefName == group->groupName)
 							{
 								(artificialGroupOrComponent->subComponents).erase((artificialGroupOrComponent->subComponents).begin() + q);
@@ -1590,9 +1590,9 @@ bool GIAposRelTranslatorRulesClass::removeLastOptionalComponents(vector<GIAposRe
 					{
 						//turn group into a wrapper group with an or function pointing to both groups
 						optionalComponentsWrapperGroup = group;
-						artificialGroupOrComponent = new GIAposRelTranslatorRulesComponentNeuralNetwork();
-						artificialGroupOrComponent->componentIndex = GIA_POS_REL_TRANSLATOR_SANI_COMPONENT_INDEX_FIRST;
-						#ifdef GIA_POS_REL_TRANSLATOR_SANI
+						artificialGroupOrComponent = new SANIComponentNeuralNetwork();
+						artificialGroupOrComponent->componentIndex = SANI_COMPONENT_INDEX_FIRST;
+						#ifdef SANI
 						artificialGroupOrComponent->ownerGroup = group;	//enables reverse lookup for ANN
 						#endif
 						artificialGroupOrComponent->componentType = GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_OR;
@@ -1601,7 +1601,7 @@ bool GIAposRelTranslatorRulesClass::removeLastOptionalComponents(vector<GIAposRe
 					}
 
 					//add newly created artificial groups to wrapper group
-					GIAposRelTranslatorRulesComponentNeuralNetwork* artificialGroupComponentNew1 = new GIAposRelTranslatorRulesComponentNeuralNetwork();
+					SANIComponentNeuralNetwork* artificialGroupComponentNew1 = new SANIComponentNeuralNetwork();
 					artificialGroupComponentNew1->groupRefName = groupNew1->groupName;
 					artificialGroupComponentNew1->groupTypeRefName = optionalComponentsWrapperGroup->groupTypeName;
 					artificialGroupComponentNew1->componentType = GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_GROUP;
@@ -1611,7 +1611,7 @@ bool GIAposRelTranslatorRulesClass::removeLastOptionalComponents(vector<GIAposRe
 					artificialGroupComponentNew1->isSubcomponent = true;
 					artificialGroupComponentNew1->semanticRelationReturnEntity = true;
 					artificialGroupOrComponent->subComponents.push_back(artificialGroupComponentNew1);
-					GIAposRelTranslatorRulesComponentNeuralNetwork* artificialGroupComponentNew2 = new GIAposRelTranslatorRulesComponentNeuralNetwork();
+					SANIComponentNeuralNetwork* artificialGroupComponentNew2 = new SANIComponentNeuralNetwork();
 					artificialGroupComponentNew2->groupRefName = groupNew2->groupName;
 					artificialGroupComponentNew2->groupTypeRefName = optionalComponentsWrapperGroup->groupTypeName;
 					artificialGroupComponentNew2->componentType = GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_GROUP;
@@ -1621,13 +1621,13 @@ bool GIAposRelTranslatorRulesClass::removeLastOptionalComponents(vector<GIAposRe
 					artificialGroupComponentNew2->isSubcomponent = true;
 					artificialGroupComponentNew2->semanticRelationReturnEntity = true;
 					artificialGroupOrComponent->subComponents.push_back(artificialGroupComponentNew2);
-					for(int c=GIA_POS_REL_TRANSLATOR_SANI_COMPONENT_INDEX_FIRST; c<artificialGroupOrComponent->subComponents.size(); c++)
+					for(int c=SANI_COMPONENT_INDEX_FIRST; c<artificialGroupOrComponent->subComponents.size(); c++)
 					{
-						GIAposRelTranslatorRulesComponentNeuralNetwork* subcomponent = artificialGroupOrComponent->subComponents[c];
+						SANIComponentNeuralNetwork* subcomponent = artificialGroupOrComponent->subComponents[c];
 						subcomponent->componentIndex = c;
 					}
 					
-					#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_PROPAGATE_EXTRA8
+					#ifdef SANI_DEBUG_PROPAGATE_EXTRA8
 					cout << "artificialGroupComponentNew1->groupRefName = " << artificialGroupComponentNew1->groupRefName << endl;
 					cout << "artificialGroupComponentNew2->groupRefName = " << artificialGroupComponentNew2->groupRefName << endl;
 					#endif
@@ -1641,8 +1641,8 @@ bool GIAposRelTranslatorRulesClass::removeLastOptionalComponents(vector<GIAposRe
 		}
 	}
 	
-	#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_PROPAGATE_EXTRA7
-	cout << "GIA_DEBUG_POS_REL_TRANSLATOR_SANI_PROPAGATE_EXTRA7 exit" << endl;
+	#ifdef SANI_DEBUG_PROPAGATE_EXTRA7
+	cout << "SANI_DEBUG_PROPAGATE_EXTRA7 exit" << endl;
 	exit(EXIT_ERROR);
 	#endif
 	
@@ -1652,26 +1652,26 @@ bool GIAposRelTranslatorRulesClass::removeLastOptionalComponents(vector<GIAposRe
 
 #endif
 	
-GIAposRelTranslatorRulesGroupNeuralNetwork* GIAposRelTranslatorRulesClass::copyGroup(GIAposRelTranslatorRulesGroupNeuralNetwork* group)
+SANIGroupNeuralNetwork* GIAposRelTranslatorRulesClass::copyGroup(SANIGroupNeuralNetwork* group)
 {		
-	GIAposRelTranslatorRulesGroupNeuralNetwork* newGroup = new GIAposRelTranslatorRulesGroupNeuralNetwork(*group);
+	SANIGroupNeuralNetwork* newGroup = new SANIGroupNeuralNetwork(*group);
 	newGroup->components.clear();
 	copyComponents(&(group->components), &(newGroup->components));
 
 	return newGroup;
 }
-bool GIAposRelTranslatorRulesClass::copyComponents(vector<GIAposRelTranslatorRulesComponentNeuralNetwork*>* components, vector<GIAposRelTranslatorRulesComponentNeuralNetwork*>* componentsNew)
+bool GIAposRelTranslatorRulesClass::copyComponents(vector<SANIComponentNeuralNetwork*>* components, vector<SANIComponentNeuralNetwork*>* componentsNew)
 {	
 	bool result = true;
 	
 	for(int i=0; i<components->size(); i++)
 	{
-		GIAposRelTranslatorRulesComponentNeuralNetwork* currentComponent = (*components)[i];
+		SANIComponentNeuralNetwork* currentComponent = (*components)[i];
 		copyComponent(currentComponent, componentsNew);
 		/*
-		GIAposRelTranslatorRulesComponentNeuralNetwork* newComponent = new GIAposRelTranslatorRulesComponentNeuralNetwork(*currentComponent);
+		SANIComponentNeuralNetwork* newComponent = new SANIComponentNeuralNetwork(*currentComponent);
 		componentsNew->push_back(newComponent);
-		if(GIAposRelTranslatorRulesComponentClassObject.componentHasSubcomponents(currentComponent))
+		if(SANIComponentClassObject.componentHasSubcomponents(currentComponent))
 		{
 			newComponent->subComponents.clear();
 			copyComponents(&(currentComponent->subComponents), &(newComponent->subComponents)); 
@@ -1682,13 +1682,13 @@ bool GIAposRelTranslatorRulesClass::copyComponents(vector<GIAposRelTranslatorRul
 	return result;
 }
 
-bool GIAposRelTranslatorRulesClass::copyComponent(GIAposRelTranslatorRulesComponentNeuralNetwork* currentComponent, vector<GIAposRelTranslatorRulesComponentNeuralNetwork*>* componentsNew)
+bool GIAposRelTranslatorRulesClass::copyComponent(SANIComponentNeuralNetwork* currentComponent, vector<SANIComponentNeuralNetwork*>* componentsNew)
 {	
 	bool result = true;
 	
-	GIAposRelTranslatorRulesComponentNeuralNetwork* newComponent = new GIAposRelTranslatorRulesComponentNeuralNetwork(*currentComponent);
+	SANIComponentNeuralNetwork* newComponent = new SANIComponentNeuralNetwork(*currentComponent);
 	componentsNew->push_back(newComponent);
-	if(GIAposRelTranslatorRulesComponentClassObject.componentHasSubcomponents(currentComponent))
+	if(SANIComponentClassObject.componentHasSubcomponents(currentComponent))
 	{
 		newComponent->subComponents.clear();
 		copyComponents(&(currentComponent->subComponents), &(newComponent->subComponents)); 
@@ -1697,22 +1697,22 @@ bool GIAposRelTranslatorRulesClass::copyComponent(GIAposRelTranslatorRulesCompon
 	return result;
 }
 
-GIAposRelTranslatorRulesGroupParseTree* GIAposRelTranslatorRulesClass::copyGroup(GIAposRelTranslatorRulesGroupParseTree* group)
+SANIGroupParseTree* GIAposRelTranslatorRulesClass::copyGroup(SANIGroupParseTree* group)
 {		
-	GIAposRelTranslatorRulesGroupParseTree* newGroup = new GIAposRelTranslatorRulesGroupParseTree(*group);
+	SANIGroupParseTree* newGroup = new SANIGroupParseTree(*group);
 	newGroup->components.clear();
 	copyComponents(&(group->components), &(newGroup->components));
 
 	return newGroup;
 }
-bool GIAposRelTranslatorRulesClass::copyComponents(vector<GIAposRelTranslatorRulesComponentParseTree*>* components, vector<GIAposRelTranslatorRulesComponentParseTree*>* componentsNew)
+bool GIAposRelTranslatorRulesClass::copyComponents(vector<SANIComponentParseTree*>* components, vector<SANIComponentParseTree*>* componentsNew)
 {	
 	bool result = true;
 	
 	for(int i=0; i<components->size(); i++)
 	{
-		GIAposRelTranslatorRulesComponentParseTree* currentComponent = (*components)[i];
-		GIAposRelTranslatorRulesComponentParseTree* newComponent = new GIAposRelTranslatorRulesComponentParseTree(*currentComponent);
+		SANIComponentParseTree* currentComponent = (*components)[i];
+		SANIComponentParseTree* newComponent = new SANIComponentParseTree(*currentComponent);
 		componentsNew->push_back(newComponent);
 	}
 	
@@ -1720,9 +1720,9 @@ bool GIAposRelTranslatorRulesClass::copyComponents(vector<GIAposRelTranslatorRul
 }
 
 
-GIAposRelTranslatorRulesGroupActivationMemory* GIAposRelTranslatorRulesClass::copyGroup(GIAposRelTranslatorRulesGroupActivationMemory* group)
+SANIGroupActivationMemory* GIAposRelTranslatorRulesClass::copyGroup(SANIGroupActivationMemory* group)
 {		
-	GIAposRelTranslatorRulesGroupActivationMemory* newGroup = new GIAposRelTranslatorRulesGroupActivationMemory(*group);
+	SANIGroupActivationMemory* newGroup = new SANIGroupActivationMemory(*group);
 	newGroup->components.clear();
 	copyComponents(&(group->components), &(newGroup->components));
 
@@ -1731,21 +1731,21 @@ GIAposRelTranslatorRulesGroupActivationMemory* GIAposRelTranslatorRulesClass::co
 
 
 
-#ifdef GIA_POS_REL_TRANSLATOR_SANI
-bool GIAposRelTranslatorRulesClass::updateComponentsOwnerGroupAndIndexes(GIAposRelTranslatorRulesGroupNeuralNetwork* group, vector<GIAposRelTranslatorRulesComponentNeuralNetwork*>* components, const bool isSubcomponent, GIAposRelTranslatorRulesComponentNeuralNetwork* ownerComponent)
+#ifdef SANI
+bool GIAposRelTranslatorRulesClass::updateComponentsOwnerGroupAndIndexes(SANIGroupNeuralNetwork* group, vector<SANIComponentNeuralNetwork*>* components, const bool isSubcomponent, SANIComponentNeuralNetwork* ownerComponent)
 {
 	bool result = true;
 	
-	for(int c=GIA_POS_REL_TRANSLATOR_SANI_COMPONENT_INDEX_FIRST; c<components->size(); c++)
+	for(int c=SANI_COMPONENT_INDEX_FIRST; c<components->size(); c++)
 	{
-		GIAposRelTranslatorRulesComponentNeuralNetwork* component = (*components)[c];
+		SANIComponentNeuralNetwork* component = (*components)[c];
 		component->componentIndex = c;
 		component->ownerGroup = group;
 		if(isSubcomponent)
 		{
 			component->ownerComponent = ownerComponent;	//added GIA3i3c
 		}
-		if(GIAposRelTranslatorRulesComponentClassObject.componentHasSubcomponents(component))
+		if(SANIComponentClassObject.componentHasSubcomponents(component))
 		{
 			updateComponentsOwnerGroupAndIndexes(group, &(component->subComponents), true, component);
 		}

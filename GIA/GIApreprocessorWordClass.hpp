@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorWordClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m2b 30-July-2020
+ * Project Version: 3m3a 01-August-2020
  * Requirements: requires plain text file
  * Description: Preprocessor Word Class
  * /
@@ -199,7 +199,7 @@ static char translatorEnglishNumbersNumericalFractionalArray[GIA_TRANSLATOR_ENGL
 #define GIA_PREPROCESSOR_POS_TYPE_NAME_POSINSERTTEMPLATE9 (GIA_SHARED_POS_TYPE_NAME_POSINSERTTEMPLATE9)
 #define GIA_PREPROCESSOR_POS_TYPE_NAME_POSINSERTTEMPLATE0 (GIA_SHARED_POS_TYPE_NAME_POSINSERTTEMPLATE0)
 
-#ifdef GIA_POS_REL_TRANSLATOR_SANI_ADD_EXPLICIT_WORD_REFERENCES_AS_INDEPENDENT_POS_PERMUTATIONS
+#ifdef SANI_ADD_EXPLICIT_WORD_REFERENCES_AS_INDEPENDENT_POS_PERMUTATIONS
 	#define GIA_PREPROCESSOR_POS_TYPE_EXPLICITWORDTEMP (GIA_PREPROCESSOR_POS_TYPE_POSINSERTTEMPLATE5)
 	#define GIA_PREPROCESSOR_POS_TYPE_NAME_EXPLICITWORDTEMP (GIA_PREPROCESSOR_POS_TYPE_NAME_POSINSERTTEMPLATE5)
 #endif
@@ -609,7 +609,7 @@ public:
 	int wordPOStypeInferred;
 	bool alreadyFoundMatch;
 	int translatorSentenceEntityIndex;
-	#ifdef GIA_POS_REL_TRANSLATOR_SANI
+	#ifdef SANI
 	int translatorSentenceWordIndex;	//for code efficiency only: = translatorSentenceEntityIndex - 1
 	#endif
 	GIAentityNode* translatorEntity;
@@ -617,7 +617,7 @@ public:
 	int wordVerbVariantGrammaticalTenseForm;
 	int wordNounVariantGrammaticalTenseForm;
 	#endif
-	#ifdef GIA_POS_REL_TRANSLATOR_SANI
+	#ifdef SANI
 	//bool wordPropagated;
 	#endif
 	#endif

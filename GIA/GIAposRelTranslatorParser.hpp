@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorParser.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m2b 30-July-2020
+ * Project Version: 3m3a 01-August-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator Parser
  * /
@@ -58,10 +58,10 @@
 #include "GIAsemRelTranslatorParser.hpp"
 #include "GIAsynRelTranslatorParser.hpp"
 #include "GIAposRelTranslatorRules.hpp"
-#include "GIAposRelTranslatorRulesGroupClass.hpp"
-#include "GIAposRelTranslatorRulesComponentClass.hpp"
+#include "SANIGroupClass.hpp"
+#include "SANIComponentClass.hpp"
 #include "GIAposRelTranslatorHybrid.hpp"
-#ifdef GIA_POS_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS
+#ifdef SANI_PARSE_SIMULTANEOUS
 #include "GIAposRelTranslatorPermutations.hpp"
 #else
 #include "GIAposRelTranslatorParserOperations.hpp"
@@ -90,10 +90,10 @@ class GIAposRelTranslatorParserClass
 	private: GIAsemRelTranslatorParserClass GIAsemRelTranslatorParser;
 	private: GIAsynRelTranslatorParserClass GIAsynRelTranslatorParser;
 	private: GIAposRelTranslatorRulesClass GIAposRelTranslatorRules;
-	private: GIAposRelTranslatorRulesGroupClass GIAposRelTranslatorRulesGroupClassObject;
-	private: GIAposRelTranslatorRulesComponentClass GIAposRelTranslatorRulesComponentClassObject;
+	private: SANIGroupClass SANIGroupClassObject;
+	private: SANIComponentClass SANIComponentClassObject;
 	private: GIAposRelTranslatorHybridClass GIAposRelTranslatorHybrid;
-	#ifdef GIA_POS_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS
+	#ifdef SANI_PARSE_SIMULTANEOUS
 	private: GIAposRelTranslatorPermutationsClass GIAposRelTranslatorPermutations;	
 	#else
 	private: GIAposRelTranslatorParserOperationsClass GIAposRelTranslatorParserOperations;
@@ -124,7 +124,7 @@ class GIAposRelTranslatorParserClass
 		public: void deleteRelationshipEntity(GIAentityNode* relationshipSubjectEntity, GIAentityNode* relationshipObjectEntity, GIAentityNode* relationshipEntity);
 	#endif
 	
-	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEMANTICALLY_DETERMINED_DYNAMIC_CONNECTIONS
+	#ifdef SANI_SEMANTICALLY_DETERMINED_DYNAMIC_CONNECTIONS
 	private: bool relinkDynamicConnections(GIAtranslatorVariablesClass* translatorVariables);
 		private: bool findIdealSemanticRelationshipSourceInSentenceSubnet(GIAtranslatorVariablesClass* translatorVariables, bool relationshipSourceIsSubject, GIAentityNode* relationshipEntity, GIAentityNode* relationshipSource, GIAentityNode* relationshipTarget, GIAentityNode** relationshipSourceNewFound);
 			private: bool calculateSimilarityOfSubnets(GIAtranslatorVariablesClass* translatorVariables, GIAentityNode* relationshipEntity, GIAentityNode* relationshipSource, GIAentityNode* relationshipTarget, int* subsetSimilarity);

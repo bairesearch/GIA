@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorParserOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m2b 30-July-2020
+ * Project Version: 3m3a 01-August-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator Parser Operations
  * /
@@ -54,15 +54,15 @@
 #ifdef GIA_POS_REL_TRANSLATOR_RULES_GIA3_USE_SYN_REL_TRANSLATOR_FEATURES
 #include "GIAsynRelTranslatorRedistributeRelations.hpp"
 #endif
-#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_PRINT_FINAL
-#include "GIAposRelTranslatorSANIPropagateOperations.hpp"
+#ifdef SANI_DEBUG_PRINT_FINAL
+#include "SANIPropagateOperations.hpp"
 #endif
 #include "GIAtranslatorReferencing.hpp"
 #include "GIAsemRelTranslatorParser.hpp"
 #include "GIAsynRelTranslatorParser.hpp"
 #include "GIAposRelTranslatorRules.hpp"
-#include "GIAposRelTranslatorRulesGroupClass.hpp"
-#include "GIAposRelTranslatorRulesComponentClass.hpp"
+#include "SANIGroupClass.hpp"
+#include "SANIComponentClass.hpp"
 #include "GIAposRelTranslatorHybrid.hpp"
 
 #include "GIAsynRelTranslatorDefineSubstances.hpp"
@@ -84,15 +84,15 @@ class GIAposRelTranslatorParserOperationsClass
 	#ifdef GIA_POS_REL_TRANSLATOR_RULES_GIA3_USE_SYN_REL_TRANSLATOR_FEATURES
 	private: GIAsynRelTranslatorRedistributeRelationsClass GIAsynRelTranslatorRedistributeRelations;
 	#endif
-	#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_PRINT_FINAL
-	private: GIAposRelTranslatorSANIPropagateOperationsClass GIAposRelTranslatorSANIPropagateOperations;
+	#ifdef SANI_DEBUG_PRINT_FINAL
+	private: SANIPropagateOperationsClass SANIPropagateOperations;
 	#endif
 	private: GIAtranslatorReferencingClass GIAtranslatorReferencing;
 	private: GIAsemRelTranslatorParserClass GIAsemRelTranslatorParser;
 	private: GIAsynRelTranslatorParserClass GIAsynRelTranslatorParser;
 	private: GIAposRelTranslatorRulesClass GIAposRelTranslatorRules;
-	private: GIAposRelTranslatorRulesGroupClass GIAposRelTranslatorRulesGroupClassObject;
-	private: GIAposRelTranslatorRulesComponentClass GIAposRelTranslatorRulesComponentClassObject;
+	private: SANIGroupClass SANIGroupClassObject;
+	private: SANIComponentClass SANIComponentClassObject;
 	private: GIAposRelTranslatorHybridClass GIAposRelTranslatorHybrid;
 
 	private: GIAsynRelTranslatorDefineSubstancesClass GIAsynRelTranslatorDefineSubstances;
@@ -100,9 +100,9 @@ class GIAposRelTranslatorParserOperationsClass
 	private: GIApreprocessorSentenceClass GIApreprocessorSentenceClassObject;
 	private: SHAREDvarsClass SHAREDvars;
 	
-	public: bool generateSemanticRelationsFromTxtRelationsWrapper(GIAtranslatorVariablesClass* translatorVariables, GIAposRelTranslatorRulesGroupParseTree* firstParseTreeGroup, int layer);
-		private: bool generateSemanticRelationsFromTxtRelations(GIAtranslatorVariablesClass* translatorVariables, GIAposRelTranslatorRulesGroupParseTree* currentParseTreeGroup, GIAposRelTranslatorParserForwardPropogationSignalData* parserForwardPropogationSignalData, int layer);
-			public: bool generateSemanticRelationsFromTxtRelationsPart2(GIAtranslatorVariablesClass* translatorVariables, GIAposRelTranslatorRulesGroupParseTree* currentParseTreeGroup, vector<GIAposRelTranslatorParserForwardPropogationSignalData>* parseTreeComponentSignalDataArray, GIAposRelTranslatorParserForwardPropogationSignalData* parserForwardPropogationSignalData, int layer);
+	public: bool generateSemanticRelationsFromTxtRelationsWrapper(GIAtranslatorVariablesClass* translatorVariables, SANIGroupParseTree* firstParseTreeGroup, int layer);
+		private: bool generateSemanticRelationsFromTxtRelations(GIAtranslatorVariablesClass* translatorVariables, SANIGroupParseTree* currentParseTreeGroup, GIAposRelTranslatorParserForwardPropogationSignalData* parserForwardPropogationSignalData, int layer);
+			public: bool generateSemanticRelationsFromTxtRelationsPart2(GIAtranslatorVariablesClass* translatorVariables, SANIGroupParseTree* currentParseTreeGroup, vector<GIAposRelTranslatorParserForwardPropogationSignalData>* parseTreeComponentSignalDataArray, GIAposRelTranslatorParserForwardPropogationSignalData* parserForwardPropogationSignalData, int layer);
 				private: bool createSemanticRelationOrdered(GIAtranslatorVariablesClass* translatorVariables, const string semanticRelationFunctionName, const string semanticRelationFunctionConditionNewName, vector<GIAentityNode*>* entitySemanticRelationFunctionListArray, GIAentityNode* entitySemanticRelationFunctionSubject, GIAentityNode* entitySemanticRelationFunctionObject, GIAentityNode* entitySemanticRelationFunctionDelimiter, const bool sameReferenceSet, int layer);
 				private: bool createSemanticRelationPair(GIAtranslatorVariablesClass* translatorVariables, const string semanticRelationFunctionName, GIAentityNode* entitySemanticRelationFunction1, GIAentityNode* entitySemanticRelationFunction2, const bool sameReferenceSet, const bool semanticRelationReturnConnectionDynamic, int layer);
 					private: bool createSemanticRelation(GIAtranslatorVariablesClass* translatorVariables, const string semanticRelationFunctionName, const string semanticRelationFunctionConditionNewName, vector<GIAentityNode*>* entitySemanticRelationFunctionListArray, GIAentityNode* entitySemanticRelationFunction1, GIAentityNode* entitySemanticRelationFunction2, GIAentityNode* entitySemanticRelationFunction3, const bool sameReferenceSet, const bool semanticRelationReturnConnectionDynamic, int layer);

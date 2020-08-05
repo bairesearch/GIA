@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslator.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m2b 30-July-2020
+ * Project Version: 3m3a 01-August-2020
  * Requirements: requires plain text file
  * Description: Part-of-speech Relation Translator
  * /
@@ -46,14 +46,14 @@
 #include "GIAposRelTranslatorHybrid.hpp"
 #endif
 #include "GIAposRelTranslatorRules.hpp"
-#ifdef GIA_POS_REL_TRANSLATOR_SANI
-#include "GIAposRelTranslatorSANIFormation.hpp"
-#include "GIAposRelTranslatorSANIPropagateOperations.hpp"
+#ifdef SANI
+#include "SANIFormation.hpp"
+#include "SANIPropagateOperations.hpp"
 #endif
-#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR
-#include "GIAposRelTranslatorSANIPropagateCompact.hpp"
+#ifdef SANI_SEQUENCE_GRAMMAR
+#include "SANIPropagateCompact.hpp"
 #endif
-//#ifndef GIA_POS_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS
+//#ifndef SANI_PARSE_SIMULTANEOUS
 #include "GIAposRelTranslatorPermutations.hpp"
 //#endif
 #ifdef GIA_PREPROCESSOR_INITIALISE_WORD_INDEX_LIST_FROM_LRP_FILES
@@ -73,11 +73,11 @@ class GIAposRelTranslatorClass
 	#ifdef GIA_POS_REL_TRANSLATOR_HYBRID
 	private: GIAposRelTranslatorHybridClass GIAposRelTranslatorHybrid;
 	#endif
-	#ifdef GIA_POS_REL_TRANSLATOR_SANI
-	private: GIAposRelTranslatorSANIFormationClass GIAposRelTranslatorSANIFormation;
-	private: GIAposRelTranslatorSANIPropagateOperationsClass GIAposRelTranslatorSANIPropagateOperations;	//required for printComponent/printParseTreeDebugIndentation	
+	#ifdef SANI
+	private: SANIFormationClass SANIFormation;
+	private: SANIPropagateOperationsClass SANIPropagateOperations;	//required for printComponent/printParseTreeDebugIndentation	
 	#endif
-	//#ifndef GIA_POS_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS
+	//#ifndef SANI_PARSE_SIMULTANEOUS
 	private: GIAposRelTranslatorPermutationsClass GIAposRelTranslatorPermutations;
 	//#endif
 	private: GIAposRelTranslatorRulesClass GIAposRelTranslatorRules;

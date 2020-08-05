@@ -26,7 +26,7 @@
  * File Name: GIAtranslator.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m2b 30-July-2020
+ * Project Version: 3m3a 01-August-2020
  * Requirements: requires text parsed by X Parser
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
@@ -65,10 +65,10 @@
 #ifdef GIA_POS_REL_TRANSLATOR_HYBRID
 #include "GIAposRelTranslatorHybrid.hpp"
 #endif
-#ifdef GIA_POS_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OPTIMISED
+#ifdef SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OPTIMISED
 #include "GIAposRelTranslatorRules.hpp"
 #include "GIAposRelTranslatorPermutations.hpp"
-#include "GIAposRelTranslatorSANIPropagateOperations.hpp"
+#include "SANIPropagateOperations.hpp"
 #endif
 
 #include "SHAREDvars.hpp"
@@ -103,10 +103,10 @@ class GIAtranslatorClass
 	#ifdef GIA_POS_REL_TRANSLATOR_HYBRID
 	private: GIAposRelTranslatorHybridClass GIAposRelTranslatorHybrid;
 	#endif
-	#ifdef GIA_POS_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OPTIMISED
+	#ifdef SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OPTIMISED
 	private: GIAposRelTranslatorRulesClass GIAposRelTranslatorRules;
 	private: GIAposRelTranslatorPermutationsClass GIAposRelTranslatorPermutations;
-	private: GIAposRelTranslatorSANIPropagateOperationsClass GIAposRelTranslatorSANIPropagateOperations;
+	private: SANIPropagateOperationsClass SANIPropagateOperations;
 	#endif
 	private: SHAREDvarsClass SHAREDvars;
 

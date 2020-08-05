@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m2b 30-July-2020
+ * Project Version: 3m3a 01-August-2020
  * Requirements: requires text parsed by X Parser
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
@@ -47,7 +47,7 @@ static bool foundComparisonVariable;
 static GIAentityNode* comparisonVariableNode; 
 
 
-#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEMANTICALLY_DETERMINED_DYNAMIC_CONNECTIONS
+#ifdef SANI_SEMANTICALLY_DETERMINED_DYNAMIC_CONNECTIONS
 GIAtranslatorOperationsClass::GIAtranslatorOperationsClass(void)
 {
 	semanticRelationReturnConnectionDynamic = false;
@@ -121,14 +121,14 @@ GIAtranslatorVariablesClass::GIAtranslatorVariablesClass(void)
 	
 	#ifdef GIA_NEURAL_NETWORK
 	firstInputNeuronInNetwork = NULL;
-	#ifdef GIA_POS_REL_TRANSLATOR_SANI_ANN
+	#ifdef SANI_ANN
 	firstOutputNeuronInNetwork = NULL;	//intermediary variable for neural network connection purposes
 	#endif
 	#endif
 	
-	#ifdef GIA_POS_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC
+	#ifdef SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC
 	parserAllowed = true;
-	#ifdef GIA_POS_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OPTIMISED
+	#ifdef SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OPTIMISED
 	parserDemarkateOptimumPathway = false;
 	#endif
 	#endif
@@ -763,7 +763,7 @@ void GIAtranslatorOperationsClass::connectEntities(GIAentityNode* entity1, GIAen
 {
 	GIAentityConnection* connection1 = writeVectorConnection(entity1, entity2, connectionType, sameReferenceSet, translatorVariables);
 	GIAentityConnection* connection2 = writeVectorConnection(entity2, entity1, connectionTypeInverse, sameReferenceSet, translatorVariables);
-	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEMANTICALLY_DETERMINED_DYNAMIC_CONNECTIONS
+	#ifdef SANI_SEMANTICALLY_DETERMINED_DYNAMIC_CONNECTIONS
 	if(semanticRelationReturnConnectionDynamic)
 	{
 		connection1->semanticRelationConnectionDynamic = true;
@@ -2923,7 +2923,7 @@ bool GIAtranslatorOperationsClass::addTimeConditionProperty(GIAtimeConditionNode
 	else if(entity->semanticRelationWordPOStypeInferred == GIA_PREPROCESSOR_POS_TYPE_DATE)
 	{
 		int index = INT_DEFAULT_VALUE;
-		#ifdef GIA_POS_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS
+		#ifdef SANI_PARSE_SIMULTANEOUS
 		entityName = SHAREDvars.convertStringToFirstUpperCase(&entityName);
 		#else
 		#ifndef GIA_PREPROCESSOR_INITIALISE_WORD_INDEX_LIST_FROM_LRP_FILES_SUPPORT_UPPERCASE_PROPERNOUN_WORD_LISTS

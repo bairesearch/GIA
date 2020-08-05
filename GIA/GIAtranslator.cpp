@@ -26,7 +26,7 @@
  * File Name: GIAtranslator.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m2b 30-July-2020
+ * Project Version: 3m3a 01-August-2020
  * Requirements: requires text parsed by X Parser
  * Description: Translator
  * /
@@ -193,12 +193,12 @@ bool GIAtranslatorClass::convertSentenceRelationsIntoGIAnetworkNodesWrapper(GIAt
 {
 	bool result = true;
 	
-	#ifdef GIA_POS_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OPTIMISED
+	#ifdef SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OPTIMISED
 	vector<XMLparserTag*>* GIAposRelTranslatorRulesTokenLayers = GIAposRelTranslatorRules.getGIAposRelTranslatorRulesTokenLayersGlobal();
-	vector<GIAposRelTranslatorRulesGroupType*>* GIAposRelTranslatorRulesGroupTypes = GIAposRelTranslatorRules.getGIAposRelTranslatorRulesGroupTypesGlobal();
-	GIAposRelTranslatorSANIPropagateOperations.resetAllNeuronComponents(GIAposRelTranslatorRulesGroupTypes, GIA_POS_REL_TRANSLATOR_RULES_GROUP_BOOL_INDEX_ALLGROUPTYPES_NEURON_DEMARKATEOPTIMUMPATHWAY_RESET);
+	vector<SANIGroupType*>* SANIGroupTypes = GIAposRelTranslatorRules.getSANIGroupTypesGlobal();
+	SANIPropagateOperations.resetAllNeuronComponents(SANIGroupTypes, GIA_POS_REL_TRANSLATOR_RULES_GROUP_BOOL_INDEX_ALLGROUPTYPES_NEURON_DEMARKATEOPTIMUMPATHWAY_RESET);
 	translatorVariables->parserDemarkateOptimumPathway = true;
-	if(GIAposRelTranslatorPermutations.executeTxtRelTranslatorWrapper2(translatorVariables, GIAposRelTranslatorRulesTokenLayers, GIAposRelTranslatorRulesGroupTypes, translatorVariables->currentPreprocessorSentenceInList))
+	if(GIAposRelTranslatorPermutations.executeTxtRelTranslatorWrapper2(translatorVariables, GIAposRelTranslatorRulesTokenLayers, SANIGroupTypes, translatorVariables->currentPreprocessorSentenceInList))
 	{
 		result = false;
 	}

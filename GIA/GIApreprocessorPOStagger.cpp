@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorPOStagger.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m2b 30-July-2020
+ * Project Version: 3m3a 01-August-2020
  * Requirements: requires plain text file
  * Description: Preprocessor POS tagger
  * /
@@ -733,10 +733,10 @@ bool GIApreprocessorPOStaggerClass::generatePOStaggerDatabaseFromWikiDumpText(co
 									#ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_NEURAL_NETWORK_SEQUENCE_GRAMMAR
 									//cout << "GIA_PREPROCESSOR_POS_TAGGER_GENERATE_NEURAL_NETWORK_SEQUENCE_GRAMMAR: executeTxtRelTranslatorNeuralNetwork" << endl;
 									
-									vector<GIAposRelTranslatorRulesGroupType*>* GIAposRelTranslatorRulesGroupTypes = GIAposRelTranslatorRules.getGIAposRelTranslatorRulesGroupTypesGlobal();
+									vector<SANIGroupType*>* SANIGroupTypes = GIAposRelTranslatorRules.getSANIGroupTypesGlobal();
 									bool createNewConnections = true; 
-									vector<GIAposRelTranslatorRulesGroupNeuralNetwork*> firstLayer;
-									if(GIAposRelTranslatorSANIPropagateCompactGenerate.executeTxtRelTranslatorNeuralNetwork(&translatorVariablesNOTUSED, GIAposRelTranslatorRulesGroupTypes, sentenceContents, createNewConnections))
+									vector<SANIGroupNeuralNetwork*> firstLayer;
+									if(SANIPropagateCompactGenerate.executeTxtRelTranslatorNeuralNetwork(&translatorVariablesNOTUSED, SANIGroupTypes, sentenceContents, createNewConnections))
 									{
 										result = true;
 									}
@@ -1016,7 +1016,7 @@ bool GIApreprocessorPOStaggerClass::generatePreprocessorSentenceObjectsFromText(
 		{	
 			GIApreprocessorPlainTextWord* currentWord = sentenceContents->at(w);
 			currentWord->translatorSentenceEntityIndex = GIAtranslatorOperations.convertSentenceContentsIndexToEntityIndex(w);
-			#ifdef GIA_POS_REL_TRANSLATOR_SANI
+			#ifdef SANI
 			currentWord->translatorSentenceWordIndex = w;
 			#endif
 		}
@@ -1402,7 +1402,7 @@ bool GIApreprocessorPOStaggerClass::determinePOSambiguityInfoWrapper(vector<GIAp
 			result = false;
 		}
 
-		#ifdef GIA_POS_REL_TRANSLATOR_SANI_ADD_EXPLICIT_WORD_REFERENCES_AS_INDEPENDENT_POS_PERMUTATIONS
+		#ifdef SANI_ADD_EXPLICIT_WORD_REFERENCES_AS_INDEPENDENT_POS_PERMUTATIONS
 		vector<string>::iterator explicitWordListIterator = find(explicitWordList->begin(), explicitWordList->end(), wordTextLowerCase);
 		if(explicitWordListIterator != explicitWordList->end())
 		{
@@ -1692,7 +1692,7 @@ bool GIApreprocessorPOStaggerClass::setSentenceContentsWordsUnambiguousPOSindex(
 		unsigned char unambiguousPOSinfoIndex = GIA_PREPROCESSOR_POS_TYPE_UNDEFINED;
 		bool wordAmbiguous = GIApreprocessorPOStaggerDatabase.determinePOSambiguityInfoIsAmbiguous(POSambiguityInfoPermutationTemp->at(w), &unambiguousPOSinfoIndex, false);
 		contextWord->unambiguousPOSindex = unambiguousPOSinfoIndex;
-		//#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_SANI_PROPAGATE
+		//#ifdef SANI_DEBUG_PROPAGATE
 		#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS_POS_TYPES
 		cout << "unambiguousPOSinfoIndex = " << int(unambiguousPOSinfoIndex) << endl;
 		cout << "GIApreprocessorPOStypeNameArray[unambiguousPOSinfoIndex] = " << GIApreprocessorPOStypeNameArray[unambiguousPOSinfoIndex] << endl;

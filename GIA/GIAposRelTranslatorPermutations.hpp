@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorPermutations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m2b 30-July-2020
+ * Project Version: 3m3a 01-August-2020
  * Requirements: requires plain text file
  * Description: Part-of-speech Relation Translator Permutations
  * /
@@ -46,29 +46,29 @@
 #include "GIAposRelTranslatorHybrid.hpp"
 #endif
 #include "GIAposRelTranslatorRules.hpp"
-#ifdef GIA_POS_REL_TRANSLATOR_SANI
-#include "GIAposRelTranslatorSANIFormation.hpp"
-#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR
-#include "GIAposRelTranslatorSANIPropagateCompactGenerate.hpp"
+#ifdef SANI
+#include "SANIFormation.hpp"
+#ifdef SANI_SEQUENCE_GRAMMAR
+#include "SANIPropagateCompactGenerate.hpp"
 #else
-#ifdef GIA_POS_REL_TRANSLATOR_SANI_HEAVY
-#ifdef GIA_POS_REL_TRANSLATOR_SANI_HEAVY_UNOPTIMISED
-#include "GIAposRelTranslatorSANIPropagateHeavyUnoptimised.hpp"
+#ifdef SANI_HEAVY
+#ifdef SANI_HEAVY_UNOPTIMISED
+#include "SANIPropagateHeavyUnoptimised.hpp"
 #else
-#include "GIAposRelTranslatorSANIPropagateHeavyOptimised.hpp"
+#include "SANIPropagateHeavyOptimised.hpp"
 #endif
 #else
-#ifdef GIA_POS_REL_TRANSLATOR_SANI_LIGHT_UNOPTIMISED
-#include "GIAposRelTranslatorSANIPropagateLightUnoptimised.hpp"
+#ifdef SANI_LIGHT_UNOPTIMISED
+#include "SANIPropagateLightUnoptimised.hpp"
 #else
-#include "GIAposRelTranslatorSANIPropagateLightOptimised.hpp"
+#include "SANIPropagateLightOptimised.hpp"
 #endif
 #endif
 #endif
 #else
-#include "GIAposRelTranslatorSANIPropagateInverse.hpp"
+#include "SANIPropagateInverse.hpp"
 #endif
-#include "GIAposRelTranslatorSANIPropagateOperations.hpp"
+#include "SANIPropagateOperations.hpp"
 #include "GIApreprocessorPOStagger.hpp"
 #include "GIApreprocessorPOStaggerDatabase.hpp"
 #include "GIApreprocessorWordClass.hpp"
@@ -85,29 +85,29 @@ class GIAposRelTranslatorPermutationsClass
 	#ifdef GIA_POS_REL_TRANSLATOR_HYBRID
 	private: GIAposRelTranslatorHybridClass GIAposRelTranslatorHybrid;
 	#endif
-	#ifdef GIA_POS_REL_TRANSLATOR_SANI
-	private: GIAposRelTranslatorSANIFormationClass GIAposRelTranslatorSANIFormation;
-#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR
-	private: GIAposRelTranslatorSANIPropagateCompactGenerateClass GIAposRelTranslatorSANIPropagateCompactGenerate;
+	#ifdef SANI
+	private: SANIFormationClass SANIFormation;
+#ifdef SANI_SEQUENCE_GRAMMAR
+	private: SANIPropagateCompactGenerateClass SANIPropagateCompactGenerate;
 #else
-	#ifdef GIA_POS_REL_TRANSLATOR_SANI_HEAVY
-	#ifdef GIA_POS_REL_TRANSLATOR_SANI_HEAVY_UNOPTIMISED
-	private: GIAposRelTranslatorSANIPropagateHeavyUnoptimisedClass GIAposRelTranslatorSANI;
+	#ifdef SANI_HEAVY
+	#ifdef SANI_HEAVY_UNOPTIMISED
+	private: SANIPropagateHeavyUnoptimisedClass SANI;
 	#else
-	private: GIAposRelTranslatorSANIPropagateHeavyOptimisedClass GIAposRelTranslatorSANI;
+	private: SANIPropagateHeavyOptimisedClass SANI;
 	#endif
 	#else
-	#ifdef GIA_POS_REL_TRANSLATOR_SANI_LIGHT_UNOPTIMISED
-	private: GIAposRelTranslatorSANIPropagateLightUnoptimisedClass GIAposRelTranslatorSANI;	
+	#ifdef SANI_LIGHT_UNOPTIMISED
+	private: SANIPropagateLightUnoptimisedClass SANI;	
 	#else
-	private: GIAposRelTranslatorSANIPropagateLightOptimisedClass GIAposRelTranslatorSANI;	
+	private: SANIPropagateLightOptimisedClass SANI;	
 	#endif
 	#endif
 #endif
 	#else
-	private: GIAposRelTranslatorSANIPropagateInverseClass GIAposRelTranslatorSANIPropagateInverse;	
+	private: SANIPropagateInverseClass SANIPropagateInverse;	
 	#endif
-	private: GIAposRelTranslatorSANIPropagateOperationsClass GIAposRelTranslatorSANIPropagateOperations;	//required for printComponent/printParseTreeDebugIndentation	
+	private: SANIPropagateOperationsClass SANIPropagateOperations;	//required for printComponent/printParseTreeDebugIndentation	
 	private: GIAposRelTranslatorRulesClass GIAposRelTranslatorRules;
 	private: GIApreprocessorPOStaggerClass GIApreprocessorPOStagger;
 	private: GIApreprocessorPOStaggerDatabaseClass GIApreprocessorPOStaggerDatabase;
@@ -119,21 +119,21 @@ class GIAposRelTranslatorPermutationsClass
 	private: SHAREDvarsClass SHAREDvars;
 
 
-	public: bool executeTxtRelTranslatorWrapper(GIAtranslatorVariablesClass* translatorVariables, vector<XMLparserTag*>* GIAposRelTranslatorRulesTokenLayers, vector<GIAposRelTranslatorRulesGroupType*>* GIAposRelTranslatorRulesGroupTypes);
-		public: bool executeTxtRelTranslatorWrapper2(GIAtranslatorVariablesClass* translatorVariables, vector<XMLparserTag*>* GIAposRelTranslatorRulesTokenLayers, vector<GIAposRelTranslatorRulesGroupType*>* GIAposRelTranslatorRulesGroupTypes, GIApreprocessorSentence* currentGIApreprocessorSentenceInList);
-		#ifndef GIA_POS_REL_TRANSLATOR_SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC
+	public: bool executeTxtRelTranslatorWrapper(GIAtranslatorVariablesClass* translatorVariables, vector<XMLparserTag*>* GIAposRelTranslatorRulesTokenLayers, vector<SANIGroupType*>* SANIGroupTypes);
+		public: bool executeTxtRelTranslatorWrapper2(GIAtranslatorVariablesClass* translatorVariables, vector<XMLparserTag*>* GIAposRelTranslatorRulesTokenLayers, vector<SANIGroupType*>* SANIGroupTypes, GIApreprocessorSentence* currentGIApreprocessorSentenceInList);
+		#ifndef SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC
 		private: bool transferParseTreePOStypeInferredToWordList(GIAtranslatorVariablesClass* translatorVariables);
-			private: bool transferParseTreePOStypeInferredToWordList(GIAposRelTranslatorRulesGroupParseTree* currentParseTreeGroup, int layer);
+			private: bool transferParseTreePOStypeInferredToWordList(SANIGroupParseTree* currentParseTreeGroup, int layer);
 		#endif
-		public: bool executeTxtRelTranslator(GIAtranslatorVariablesClass* translatorVariables, vector<XMLparserTag*>* GIAposRelTranslatorRulesTokenLayers, vector<GIAposRelTranslatorRulesGroupType*>* GIAposRelTranslatorRulesGroupTypes, GIApreprocessorSentence* currentGIApreprocessorSentenceInList, vector<uint64_t>* POSambiguityInfoPermutation);
+		public: bool executeTxtRelTranslator(GIAtranslatorVariablesClass* translatorVariables, vector<XMLparserTag*>* GIAposRelTranslatorRulesTokenLayers, vector<SANIGroupType*>* SANIGroupTypes, GIApreprocessorSentence* currentGIApreprocessorSentenceInList, vector<uint64_t>* POSambiguityInfoPermutation);
 			#ifdef GIA_POS_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START
-			private: bool generateParseTreeIntroWrapper(GIAtranslatorVariablesClass* translatorVariables, vector<XMLparserTag*>* GIAposRelTranslatorRulesTokenLayers, vector<GIAposRelTranslatorRulesGroupType*>* GIAposRelTranslatorRulesGroupTypes, GIApreprocessorSentence* currentGIApreprocessorSentenceInList, GIAposRelTranslatorRulesGroupParseTree* firstParseTreeGroup, int* performance, const bool parseIsolatedSubreferenceSets, vector<vector<uint64_t>*>* POSambiguityInfoUnambiguousPermutationArray, int* iOptimum, int* minIndexOfMatchesFoundBackupOptimum);
+			private: bool generateParseTreeIntroWrapper(GIAtranslatorVariablesClass* translatorVariables, vector<XMLparserTag*>* GIAposRelTranslatorRulesTokenLayers, vector<SANIGroupType*>* SANIGroupTypes, GIApreprocessorSentence* currentGIApreprocessorSentenceInList, SANIGroupParseTree* firstParseTreeGroup, int* performance, const bool parseIsolatedSubreferenceSets, vector<vector<uint64_t>*>* POSambiguityInfoUnambiguousPermutationArray, int* iOptimum, int* minIndexOfMatchesFoundBackupOptimum);
 			#else
-			private: bool generateParseTreeIntroWrapper(GIAtranslatorVariablesClass* translatorVariables, vector<XMLparserTag*>* GIAposRelTranslatorRulesTokenLayers, vector<GIAposRelTranslatorRulesGroupType*>* GIAposRelTranslatorRulesGroupTypes, GIApreprocessorSentence* currentGIApreprocessorSentenceInList, GIAposRelTranslatorRulesGroupParseTree* firstParseTreeGroup, int* performance, const bool parseIsolatedSubreferenceSets, vector<uint64_t>* POSambiguityInfoPermutation);
+			private: bool generateParseTreeIntroWrapper(GIAtranslatorVariablesClass* translatorVariables, vector<XMLparserTag*>* GIAposRelTranslatorRulesTokenLayers, vector<SANIGroupType*>* SANIGroupTypes, GIApreprocessorSentence* currentGIApreprocessorSentenceInList, SANIGroupParseTree* firstParseTreeGroup, int* performance, const bool parseIsolatedSubreferenceSets, vector<uint64_t>* POSambiguityInfoPermutation);
 			#endif
-				#ifdef GIA_POS_REL_TRANSLATOR_SANI
-				private: bool updatePerformanceNeuralNetwork(const int performanceTemp, int* performance, GIApreprocessorSentence* currentGIApreprocessorSentenceInList, GIAposRelTranslatorRulesGroupParseTree* firstParseTreeGroupTemp, const bool passedTemp, const int permutationIndex, int* performanceMaxPermutationIndex);
-				private: bool deleteAllSubgroupsRecurse(GIAposRelTranslatorRulesGroupParseTree* currentParseTreeGroup, int layer);
+				#ifdef SANI
+				private: bool updatePerformanceNeuralNetwork(const int performanceTemp, int* performance, GIApreprocessorSentence* currentGIApreprocessorSentenceInList, SANIGroupParseTree* firstParseTreeGroupTemp, const bool passedTemp, const int permutationIndex, int* performanceMaxPermutationIndex);
+				private: bool deleteAllSubgroupsRecurse(SANIGroupParseTree* currentParseTreeGroup, int layer);
 				#endif
 			
 
