@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorSANIFormation.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m2a 30-July-2020
+ * Project Version: 3m2b 30-July-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Formation
  * /

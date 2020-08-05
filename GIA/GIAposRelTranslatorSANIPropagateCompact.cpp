@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorSANIPropagateCompact.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m2a 30-July-2020
+ * Project Version: 3m2b 30-July-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator SANI (Sequentially Activated Neuronal Input neural network) Propagate Compact - ~O(n)
  * /
@@ -2075,7 +2075,9 @@ bool GIAposRelTranslatorSANIPropagateCompactClass::verifyNeverSplitGroupBetweenT
 				//assume !GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_COMPONENT_SUPPORT_VARIABLE_FIRST_COMPONENTS (ie ANNbackGroupConnectionList contains single neurons) 
 				GIAposRelTranslatorRulesGroupNeuralNetwork* lastActivatedComponentSource = lastActivatedComponent->ANNbackGroupConnectionList[0];
 				GIAposRelTranslatorRulesGroupNeuralNetwork* firstNonActivatedComponentSource = firstNonActivatedComponent->ANNbackGroupConnectionList[0];
-				if(lastActivatedComponentSource == firstNonActivatedComponentSource)
+				int lastActivatedComponentSourceSize = lastActivatedComponent->ANNbackGroupConnectionList.size();
+				int firstNonActivatedComponentSourceSize = firstNonActivatedComponent->ANNbackGroupConnectionList.size();
+				if(((lastActivatedComponentSourceSize == 1) && (firstNonActivatedComponentSourceSize == 1)) && (lastActivatedComponentSource == firstNonActivatedComponentSource))
 				#else
 				if(lastActivatedComponent->groupRef == firstNonActivatedComponent->groupRef)
 				#endif
