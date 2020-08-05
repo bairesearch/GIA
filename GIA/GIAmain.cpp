@@ -26,7 +26,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m3a 01-August-2020
+ * Project Version: 3m3b 01-August-2020
  * Requirements: 
  * Description: Main
  * /
@@ -669,7 +669,7 @@ int main(const int argc, const char** argv)
 
 	if(SHAREDvarsClass().argumentExists(argc, argv, "-version"))
 	{
-		cout << "GIA.exe - Project Version: 3m3a 01-August-2020" << endl;
+		cout << "GIA.exe - Project Version: 3m3b 01-August-2020" << endl;
 		exit(EXIT_OK);
 	}
 
@@ -1043,11 +1043,11 @@ int main(const int argc, const char** argv)
 	#ifdef SANI_SEQUENCE_GRAMMAR		
 	vector<SANIGroupType*>* SANIGroupTypes = new vector<SANIGroupType*>;
 	vector<XMLparserTag*>* GIAposRelTranslatorRulesTokenLayers = new vector<XMLparserTag*>;
-	if(!GIAposRelTranslatorRulesClass().extractGIAposRelTranslatorRules(SANIGroupTypes, GIAposRelTranslatorRulesTokenLayers))
+	if(!GIAposRelTranslatorRules.extractGIAposRelTranslatorRules(SANIGroupTypes, GIAposRelTranslatorRulesTokenLayers))
 	{
 		result = false;
 	}
-	if(!SANIFormationClass().createSANI(GIAposRelTranslatorRulesTokenLayers, SANIGroupTypes))
+	if(!SANIformationClass().createSANI(GIAposRelTranslatorRulesTokenLayers, SANIGroupTypes))
 	{
 		result = false;
 	}
@@ -1064,7 +1064,7 @@ int main(const int argc, const char** argv)
 	
 	#ifdef SANI_SEQUENCE_GRAMMAR
 	#ifdef SANI_ANN_DELAY_ANN_CONNECTIVITY_TILL_END
-	SANIFormationClass().createANNconnectivity(SANIGroupTypes);
+	SANIformationClass().createANNconnectivity(SANIGroupTypes);
 	#endif
 	#endif
 

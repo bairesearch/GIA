@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorRules.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m3a 01-August-2020
+ * Project Version: 3m3b 01-August-2020
  * Requirements: requires plain text file
  * Description: Part-of-speech Relation Translator Rules
  * /
@@ -40,21 +40,7 @@
 
 #ifdef GIA_POS_REL_TRANSLATOR_RULES
 
-#ifdef SANI_SEQUENCE_GRAMMAR
-static int newNeuronIndex;
-#endif
 
-vector<SANIGroupType*>* SANIGroupTypesGlobal;
-vector<XMLparserTag*>* GIAposRelTranslatorRulesTokenLayersGlobal;
-
-vector<SANIGroupType*>* GIAposRelTranslatorRulesClass::getSANIGroupTypesGlobal()
-{
-	return SANIGroupTypesGlobal;
-}
-vector<XMLparserTag*>* GIAposRelTranslatorRulesClass::getGIAposRelTranslatorRulesTokenLayersGlobal()
-{
-	return GIAposRelTranslatorRulesTokenLayersGlobal;
-}
 
 bool GIAposRelTranslatorRulesClass::extractGIAposRelTranslatorRules(vector<SANIGroupType*>* SANIGroupTypes, vector<XMLparserTag*>* GIAposRelTranslatorRulesTokenLayers)
 {
@@ -64,10 +50,12 @@ bool GIAposRelTranslatorRulesClass::extractGIAposRelTranslatorRules(vector<SANIG
 	//FUTURE GIA - upgrade SANI_SEQUENCE_GRAMMAR to read/write GIAposRelTranslatorRulesGenerated.xml
 	SANIGroupType* groupType = new SANIGroupType();
 	groupType->groupTypeName = SANI_SEQUENCE_GRAMMAR_GROUP_TYPE_NAME;
+	#ifdef GIA_POS_REL_TRANSLATOR_RULES_USE
 	groupType->referenceSetType = SANI_SEQUENCE_GRAMMAR_GROUP_TYPE_REFERENCE_SET_TYPE;
+	#endif
 	SANIGroupTypes->push_back(groupType);
-	initialiseNewGroupIndex(SANIGroupTypes);
-	SANIGroupTypesGlobal = SANIGroupTypes;
+	SANInodes.initialiseNewGroupIndex(SANIGroupTypes);
+	SANInodes.setSANIGroupTypesGlobal(SANIGroupTypes);	//SANIGroupTypesGlobal = SANIGroupTypes;
 	#else
 	//parse extractGIAposRelTranslatorRules
 	if(!extractSANIGroups(SANIGroupTypes))
@@ -78,40 +66,13 @@ bool GIAposRelTranslatorRulesClass::extractGIAposRelTranslatorRules(vector<SANIG
 	{
 		result = false;
 	}
+	SANInodes.setSANIGroupTypesGlobal(SANIGroupTypes);	//SANIGroupTypesGlobal = SANIGroupTypes;
 	#endif
 	
 	return result;
 }
 
-#ifdef SANI_SEQUENCE_GRAMMAR
-void GIAposRelTranslatorRulesClass::initialiseNewGroupIndex(vector<SANIGroupType*>* SANIGroupTypes)
-{
-	SANIGroupType* groupType = getSequenceGrammarGroupTypeDefault(SANIGroupTypes);
-	newNeuronIndex = groupType->groups.size();	//0
-}
-int* GIAposRelTranslatorRulesClass::getNewGroupIndex()
-{
-	return &newNeuronIndex;
-}
-SANIGroupType* GIAposRelTranslatorRulesClass::getSequenceGrammarGroupTypeDefault(vector<SANIGroupType*>* SANIGroupTypes)
-{
-	SANIGroupType* groupType = NULL;
-	if(!findGroupType(SANIGroupTypes, SANI_SEQUENCE_GRAMMAR_GROUP_TYPE_NAME, &groupType))
-	{
-		cerr << "GIAposRelTranslatorRulesClass::getSequenceGrammarGroupTypeDefault error: !findGroupType" << endl;
-		exit(EXIT_ERROR);
-	}
-	return groupType;
-}
-int GIAposRelTranslatorRulesClass::assignGroupIndex(SANIGroupNeuralNetwork* group)
-{	
-	int* newNeuronIndex = getNewGroupIndex();
-	group->groupIndex = *newNeuronIndex;
-	*newNeuronIndex = *newNeuronIndex + 1;
-	return *newNeuronIndex;
-}
-#endif
-
+#ifdef GIA_POS_REL_TRANSLATOR_RULES_USE
 
 bool GIAposRelTranslatorRulesClass::extractSANIGroups(vector<SANIGroupType*>* SANIGroupTypes)
 {
@@ -344,9 +305,10 @@ bool GIAposRelTranslatorRulesClass::extractSANIGroups(vector<SANIGroupType*>* SA
 			}
 		}
 	}
+	
 
 	#ifdef SANI_REMOVE_LAST_OPTIONAL_COMPONENTS
-	if(!removeLastOptionalComponents(SANIGroupTypes))
+	if(!SANInodes.removeLastOptionalComponents(SANIGroupTypes))
 	{
 		result = false;
 	}	
@@ -356,9 +318,7 @@ bool GIAposRelTranslatorRulesClass::extractSANIGroups(vector<SANIGroupType*>* SA
 	{
 		result = false;
 	}
-	
-	SANIGroupTypesGlobal = SANIGroupTypes;
-	
+		
 	return result;
 }
 
@@ -845,19 +805,19 @@ bool GIAposRelTranslatorRulesClass::connectComponentsReferences(vector<SANIGroup
 					#ifdef SANI_DEBUG_PROPAGATE_EXTRA8
 					cout << "\tGIAposRelTranslatorRulesClass::connectComponentsReferences{}: component->groupTypeRefName = " << component->groupTypeRefName << ", component->groupRefName = " << component->groupRefName <<endl;
 					#endif
-					if(!findGroup(SANIGroupTypes, component->groupTypeRefName, component->groupRefName, &(component->groupTypeRef), &(component->groupRef)))
+					if(!SANInodes.findGroup(SANIGroupTypes, component->groupTypeRefName, component->groupRefName, &(component->groupTypeRef), &(component->groupRef)))
 					{
 						result = false;
-						cerr << "GIAposRelTranslatorRulesClass::connectComponentsReferences{} error: !findGroup(), component->groupTypeRefName = " << component->groupTypeRefName << ", component->groupRefName = " << component->groupRefName <<endl;
+						cerr << "GIAposRelTranslatorRulesClass::connectComponentsReferences{} error: !SANInodes.findGroup(), component->groupTypeRefName = " << component->groupTypeRefName << ", component->groupRefName = " << component->groupRefName <<endl;
 						exit(EXIT_ERROR);
 					}
 				}
 				else
 				{
-					if(!findGroupType(SANIGroupTypes, component->groupTypeRefName, &(component->groupTypeRef)))
+					if(!SANInodes.findGroupType(SANIGroupTypes, component->groupTypeRefName, &(component->groupTypeRef)))
 					{
 						result = false;
-						cerr << "GIAposRelTranslatorRulesClass::connectComponentsReferences{} error: !findGroupType(), component->groupTypeRefName = " << component->groupTypeRefName << endl;
+						cerr << "GIAposRelTranslatorRulesClass::connectComponentsReferences{} error: !SANInodes.findGroupType(), component->groupTypeRefName = " << component->groupTypeRefName << endl;
 						exit(EXIT_ERROR);
 					}
 					//cout << "\tcomponent->groupTypeRef->groupTypeName = " << component->groupTypeRef->groupTypeName << endl;					
@@ -877,43 +837,6 @@ bool GIAposRelTranslatorRulesClass::connectComponentsReferences(vector<SANIGroup
 				result = false;
 				cerr << "GIAposRelTranslatorRulesClass::connectComponentsReferences{} error: !connectComponentsReferences()" << endl;
 				exit(EXIT_ERROR);			
-			}
-		}
-	}
-	return result;
-}
-bool GIAposRelTranslatorRulesClass::findGroupType(vector<SANIGroupType*>* SANIGroupTypes, const string groupTypeName, SANIGroupType** groupTypeFound)
-{
-	bool result = false;
-	for(int i=0; i<SANIGroupTypes->size(); i++)
-	{
-		SANIGroupType* groupType = SANIGroupTypes->at(i);
-		//cout << "groupType->groupTypeName = " << groupType->groupTypeName << endl;
-		if(groupType->groupTypeName == groupTypeName)
-		{
-			*groupTypeFound = groupType;
-			result = true;
-		}
-	}
-	return result;
-}
-bool GIAposRelTranslatorRulesClass::findGroup(vector<SANIGroupType*>* SANIGroupTypes, const string groupTypeName, const string groupName, SANIGroupType** groupTypeFound, SANIGroupNeuralNetwork** groupFound)
-{
-	bool result = false;
-	for(int i=0; i<SANIGroupTypes->size(); i++)
-	{
-		SANIGroupType* groupType = SANIGroupTypes->at(i);
-		if(groupType->groupTypeName == groupTypeName)
-		{
-			*groupTypeFound = groupType;
-			for(int j=0; j<groupType->groups.size(); j++)
-			{
-				SANIGroupNeuralNetwork* group = (groupType->groups)[j];
-				if(group->groupName == groupName)
-				{
-					*groupFound = group;
-					result = true;
-				}
 			}
 		}
 	}
@@ -1090,8 +1013,8 @@ bool GIAposRelTranslatorRulesClass::extractGIAposRelTranslatorRulesTokens(vector
 		}
 	}
 	
-	GIAposRelTranslatorRulesTokenLayersGlobal = GIAposRelTranslatorRulesTokenLayers;
-
+	SANInodes.setGIAposRelTranslatorRulesTokenLayersGlobal(GIAposRelTranslatorRulesTokenLayers); //GIAposRelTranslatorRulesTokenLayersGlobal = GIAposRelTranslatorRulesTokenLayers;
+	
 	return result;
 }
 
@@ -1311,450 +1234,8 @@ bool GIAposRelTranslatorRulesClass::isClassTag(string word, string layerNameToFi
 }
 
 
-
-#ifdef SANI_REMOVE_LAST_OPTIONAL_COMPONENTS
-bool GIAposRelTranslatorRulesClass::removeLastOptionalComponents(vector<SANIGroupType*>* SANIGroupTypes)
-{
-	bool result = true;
 	
-	for(int i=0; i<SANIGroupTypes->size(); i++)
-	{
-		SANIGroupType* groupType = SANIGroupTypes->at(i);
-		
-		int groupTypeGroupsSizeOrig = (groupType->groups).size();
-		for(int groupIndex=0; groupIndex<(groupType->groups).size(); groupIndex++)
-		{
-			SANIGroupNeuralNetwork* group = (groupType->groups)[groupIndex];
-			vector<SANIComponentNeuralNetwork*>* components = &(group->components);
-					
-			if(components->size() > 0)
-			{
-				#ifdef SANI_REVERSE_DIRECTION
-				int lastComponentOptionalComponentIndex = 0;
-				#else
-				int lastComponentOptionalComponentIndex = components->size()-1;
-				#endif
-				SANIComponentNeuralNetwork* lastComponent = (*components)[lastComponentOptionalComponentIndex];
-				
-				#ifdef SANI_REMOVE_LAST_OPTIONAL_COMPONENTS_OR_OPTIONAL_REPEAT
-				bool hasOptionalRepeat = false;
-				int repeatOptionalComponentIndex = INT_DEFAULT_VALUE;
-				for(int q=0; q<group->components.size(); q++)
-				{	
-					SANIComponentNeuralNetwork* component = group->components[q];
-					if((component->componentType == GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_REPEAT) && (component->optional))
-					{
-						hasOptionalRepeat = true;
-						repeatOptionalComponentIndex = q;
-					}
-				}
-				#endif
-		
-				if(lastComponent->optional)
-				{
-					if(components->size() == 1 && lastComponent->optional)
-					{
-						//group only contains one component and it is optional
-						cerr << "GIAposRelTranslatorRulesClass::removeLastOptionalComponents{} warning: (components->size() == 1 && lastComponent->optional) - group only contains one component and it is optional" << endl;
-					}
-					removeOptionalComponent(groupType, &groupIndex, groupTypeGroupsSizeOrig, group, lastComponentOptionalComponentIndex);
-				}
-				#ifdef SANI_REMOVE_LAST_OPTIONAL_COMPONENTS_OR_OPTIONAL_REPEAT
-				else if(hasOptionalRepeat)
-				{
-					removeOptionalComponent(groupType, &groupIndex, groupTypeGroupsSizeOrig, group, repeatOptionalComponentIndex);
-				}
-				#endif
-			}
-			else
-			{
-				cerr << "GIAposRelTranslatorRulesClass::removeLastOptionalComponents{} error: " << (components->size() == 0) << endl;
-				exit(EXIT_ERROR);
-			}
-		}
-	}
-	
-	#ifdef SANI_DEBUG_PROPAGATE_EXTRA7
-	cout << "SANI_DEBUG_PROPAGATE_EXTRA7 exit" << endl;
-	exit(EXIT_ERROR);
-	#endif
-	
-	return result;
-}	
-
-bool GIAposRelTranslatorRulesClass::removeOptionalComponent(SANIGroupType* groupType, int* groupIndex, const int groupTypeGroupsSizeOrig, SANIGroupNeuralNetwork* group, const int optionalComponentIndex)
-{
-	bool result = true;
-	
-	vector<SANIComponentNeuralNetwork*>* components = &(group->components);
-	
-	SANIGroupNeuralNetwork* optionalComponentsWrapperGroup = NULL;
-	bool wrapperGroupAlreadyDefined = false;
-	if(*groupIndex >= groupTypeGroupsSizeOrig)
-	{
-		wrapperGroupAlreadyDefined = true;
-		optionalComponentsWrapperGroup = group->optionalComponentsWrapperGroup;
-		#ifdef SANI_DEBUG_PROPAGATE_EXTRA7
-		cout << "passed test: (*groupIndex >= groupTypeGroupsSizeOrig)" << endl;
-		#endif
-	}
-			
-	#ifdef SANI_DEBUG_PROPAGATE_EXTRA7
-	cout << "GIAposRelTranslatorRulesClass::removeOptionalComponent: remove optional component from groupNew1" << endl;
-	cout << "GIAposRelTranslatorRulesClass::removeOptionalComponent: set optional component from groupNew1 to optional==false" << endl;
-	#endif
-
-	//create groupNew1
-	SANIGroupNeuralNetwork* groupNew1 = copyGroup(group);
-	groupNew1->groupName = groupNew1->groupName + SANI_REMOVE_LAST_OPTIONAL_COMPONENTS_ARTIFICIAL_GROUP_NAME_APPEND1;
-	groupNew1->optionalComponentsWrapperGroup = group;
-	//remove optional component from groupNew1;
-	vector<SANIComponentNeuralNetwork*>* componentsNew1 = &(groupNew1->components);
-	componentsNew1->erase(componentsNew1->begin()+optionalComponentIndex);	//CHECKTHIS
-	updateComponentsOwnerGroupAndIndexes(groupNew1, &(groupNew1->components), false, NULL);
-	(groupType->groups).push_back(groupNew1);
-
-	//create groupNew2
-	SANIGroupNeuralNetwork* groupNew2 = copyGroup(group);
-	groupNew2->groupName = groupNew2->groupName + SANI_REMOVE_LAST_OPTIONAL_COMPONENTS_ARTIFICIAL_GROUP_NAME_APPEND2;
-	groupNew2->optionalComponentsWrapperGroup = group;
-	//set optional component to !optional;
-	vector<SANIComponentNeuralNetwork*>* componentsNew2 = &(groupNew2->components);
-	SANIComponentNeuralNetwork* optionalComponentNew2 = (*componentsNew2)[optionalComponentIndex];
-	optionalComponentNew2->optional = false;
-	updateComponentsOwnerGroupAndIndexes(groupNew2, &(groupNew2->components), false, NULL);
-	(groupType->groups).push_back(groupNew2);
-
-	SANIComponentNeuralNetwork* artificialGroupOrComponent = NULL;
-	if(wrapperGroupAlreadyDefined)
-	{
-		artificialGroupOrComponent = optionalComponentsWrapperGroup->components[0];
-		
-		//delete artifical group (reference) from groupTypes and artificialGroupOrComponent->components;
-		(groupType->groups).erase((groupType->groups).begin() + *groupIndex);
-		(*groupIndex) = (*groupIndex) - 1;
-		for(int q=0; q<artificialGroupOrComponent->subComponents.size(); q++)
-		{	
-			SANIComponentNeuralNetwork* component = artificialGroupOrComponent->subComponents[q];
-			if(component->groupRefName == group->groupName)
-			{
-				(artificialGroupOrComponent->subComponents).erase((artificialGroupOrComponent->subComponents).begin() + q);
-				q--;
-			}
-		}
-	}
-	else
-	{
-		//turn group into a wrapper group with an or function pointing to both groups
-		optionalComponentsWrapperGroup = group;
-		artificialGroupOrComponent = new SANIComponentNeuralNetwork();
-		artificialGroupOrComponent->componentIndex = SANI_COMPONENT_INDEX_FIRST;
-		#ifdef SANI
-		artificialGroupOrComponent->ownerGroup = group;	//enables reverse lookup for ANN
-		#endif
-		artificialGroupOrComponent->componentType = GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_OR;
-		components->clear();
-		components->push_back(artificialGroupOrComponent);
-	}
-
-	//add newly created artificial groups to wrapper group
-	SANIComponentNeuralNetwork* artificialGroupComponentNew1 = new SANIComponentNeuralNetwork();
-	artificialGroupComponentNew1->groupRefName = groupNew1->groupName;
-	artificialGroupComponentNew1->groupTypeRefName = optionalComponentsWrapperGroup->groupTypeName;
-	artificialGroupComponentNew1->componentType = GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_GROUP;
-	artificialGroupComponentNew1->componentIndex = artificialGroupOrComponent->subComponents.size();
-	artificialGroupComponentNew1->ownerGroup = optionalComponentsWrapperGroup;
-	artificialGroupComponentNew1->ownerComponent = artificialGroupOrComponent;
-	artificialGroupComponentNew1->isSubcomponent = true;
-	artificialGroupComponentNew1->semanticRelationReturnEntity = true;
-	artificialGroupOrComponent->subComponents.push_back(artificialGroupComponentNew1);
-	SANIComponentNeuralNetwork* artificialGroupComponentNew2 = new SANIComponentNeuralNetwork();
-	artificialGroupComponentNew2->groupRefName = groupNew2->groupName;
-	artificialGroupComponentNew2->groupTypeRefName = optionalComponentsWrapperGroup->groupTypeName;
-	artificialGroupComponentNew2->componentType = GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_GROUP;
-	artificialGroupComponentNew2->componentIndex = artificialGroupOrComponent->subComponents.size();
-	artificialGroupComponentNew2->ownerGroup = optionalComponentsWrapperGroup;
-	artificialGroupComponentNew2->ownerComponent = artificialGroupOrComponent;
-	artificialGroupComponentNew2->isSubcomponent = true;
-	artificialGroupComponentNew2->semanticRelationReturnEntity = true;
-	artificialGroupOrComponent->subComponents.push_back(artificialGroupComponentNew2);
-	for(int c=SANI_COMPONENT_INDEX_FIRST; c<artificialGroupOrComponent->subComponents.size(); c++)
-	{
-		SANIComponentNeuralNetwork* subcomponent = artificialGroupOrComponent->subComponents[c];
-		subcomponent->componentIndex = c;
-	}
-	
-	#ifdef SANI_DEBUG_PROPAGATE_EXTRA8
-	cout << "artificialGroupComponentNew1->groupRefName = " << artificialGroupComponentNew1->groupRefName << endl;
-	cout << "artificialGroupComponentNew2->groupRefName = " << artificialGroupComponentNew2->groupRefName << endl;
-	#endif
-	
-	return result;
-}
-
-/*
-bool GIAposRelTranslatorRulesClass::removeLastOptionalComponents(vector<SANIGroupType*>* SANIGroupTypes)
-{
-	bool result = true;
-	
-	for(int i=0; i<SANIGroupTypes->size(); i++)
-	{
-		SANIGroupType* groupType = SANIGroupTypes->at(i);
-		
-		int groupTypeGroupsSizeOrig = (groupType->groups).size();
-		for(int j=0; j<(groupType->groups).size(); j++)
-		{
-			SANIGroupNeuralNetwork* group = (groupType->groups)[j];
-			vector<SANIComponentNeuralNetwork*>* components = &(group->components);
-			
-			SANIGroupNeuralNetwork* optionalComponentsWrapperGroup = NULL;
-			bool wrapperGroupAlreadyDefined = false;
-			if(j >= groupTypeGroupsSizeOrig)
-			{
-				wrapperGroupAlreadyDefined = true;
-				optionalComponentsWrapperGroup = group->optionalComponentsWrapperGroup;
-				#ifdef SANI_DEBUG_PROPAGATE_EXTRA7
-				cout << "passed test: (j >= groupTypeGroupsSizeOrig)" << endl;
-				#endif
-			}
-							
-			if(components->size() > 0)
-			{
-				#ifdef SANI_REVERSE_DIRECTION
-				SANIComponentNeuralNetwork* lastComponent = (*components)[0];
-				#else
-				SANIComponentNeuralNetwork* lastComponent = (*components)[components->size()-1];
-				#endif
-				if(components->size() == 1 && lastComponent->optional)
-				{
-					//group only contains one component and it is optional
-					cerr << "GIAposRelTranslatorRulesClass::removeLastOptionalComponents{} warning: (components->size() == 1 && lastComponent->optional) - group only contains one component and it is optional" << endl;
-				}
-				if(lastComponent->optional)
-				{
-
-					#ifdef SANI_DEBUG_PROPAGATE_EXTRA7
-					cout << "GIAposRelTranslatorRulesClass::removeLastOptionalComponents: remove last component from groupNew1" << endl;
-					cout << "GIAposRelTranslatorRulesClass::removeLastOptionalComponents: set last component from groupNew1 to optional==false" << endl;
-					#endif
-
-					//create groupNew1
-					SANIGroupNeuralNetwork* groupNew1 = copyGroup(group);
-					groupNew1->groupName = groupNew1->groupName + SANI_REMOVE_LAST_OPTIONAL_COMPONENTS_ARTIFICIAL_GROUP_NAME_APPEND1;
-					groupNew1->optionalComponentsWrapperGroup = group;
-					//remove last component from groupNew1;
-					vector<SANIComponentNeuralNetwork*>* componentsNew1 = &(groupNew1->components);
-					#ifdef SANI_REVERSE_DIRECTION
-					//componentsNew1.pop_front();
-					componentsNew1->erase(componentsNew1->begin());
-					#else
-					componentsNew1->pop_back();
-					#endif
-					updateComponentsOwnerGroupAndIndexes(groupNew1, &(groupNew1->components), false, NULL);
-					(groupType->groups).push_back(groupNew1);
-
-					//create groupNew2
-					SANIGroupNeuralNetwork* groupNew2 = copyGroup(group);
-					groupNew2->groupName = groupNew2->groupName + SANI_REMOVE_LAST_OPTIONAL_COMPONENTS_ARTIFICIAL_GROUP_NAME_APPEND2;
-					groupNew2->optionalComponentsWrapperGroup = group;
-					//set last component to !optional;
-					vector<SANIComponentNeuralNetwork*>* componentsNew2 = &(groupNew2->components);
-					#ifdef SANI_REVERSE_DIRECTION
-					SANIComponentNeuralNetwork* lastComponentNew2 = (*componentsNew2)[0];
-					#else
-					SANIComponentNeuralNetwork* lastComponentNew2 = (*componentsNew2)[components->size()-1];
-					#endif
-					lastComponentNew2->optional = false;
-					updateComponentsOwnerGroupAndIndexes(groupNew2, &(groupNew2->components), false, NULL);
-					(groupType->groups).push_back(groupNew2);
-
-					SANIComponentNeuralNetwork* artificialGroupOrComponent = NULL;
-					if(wrapperGroupAlreadyDefined)
-					{
-						artificialGroupOrComponent = optionalComponentsWrapperGroup->components[0];
-						
-						//delete artifical group (reference) from groupTypes and artificialGroupOrComponent->components;
-						(groupType->groups).erase((groupType->groups).begin() + j);
-						j--;
-						for(int q=0; q<artificialGroupOrComponent->subComponents.size(); q++)
-						{	
-							SANIComponentNeuralNetwork* component = artificialGroupOrComponent->subComponents[q];
-							if(component->groupRefName == group->groupName)
-							{
-								(artificialGroupOrComponent->subComponents).erase((artificialGroupOrComponent->subComponents).begin() + q);
-								q--;
-							}
-						}
-					}
-					else
-					{
-						//turn group into a wrapper group with an or function pointing to both groups
-						optionalComponentsWrapperGroup = group;
-						artificialGroupOrComponent = new SANIComponentNeuralNetwork();
-						artificialGroupOrComponent->componentIndex = SANI_COMPONENT_INDEX_FIRST;
-						#ifdef SANI
-						artificialGroupOrComponent->ownerGroup = group;	//enables reverse lookup for ANN
-						#endif
-						artificialGroupOrComponent->componentType = GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_OR;
-						components->clear();
-						components->push_back(artificialGroupOrComponent);
-					}
-
-					//add newly created artificial groups to wrapper group
-					SANIComponentNeuralNetwork* artificialGroupComponentNew1 = new SANIComponentNeuralNetwork();
-					artificialGroupComponentNew1->groupRefName = groupNew1->groupName;
-					artificialGroupComponentNew1->groupTypeRefName = optionalComponentsWrapperGroup->groupTypeName;
-					artificialGroupComponentNew1->componentType = GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_GROUP;
-					artificialGroupComponentNew1->componentIndex = artificialGroupOrComponent->subComponents.size();
-					artificialGroupComponentNew1->ownerGroup = optionalComponentsWrapperGroup;
-					artificialGroupComponentNew1->ownerComponent = artificialGroupOrComponent;
-					artificialGroupComponentNew1->isSubcomponent = true;
-					artificialGroupComponentNew1->semanticRelationReturnEntity = true;
-					artificialGroupOrComponent->subComponents.push_back(artificialGroupComponentNew1);
-					SANIComponentNeuralNetwork* artificialGroupComponentNew2 = new SANIComponentNeuralNetwork();
-					artificialGroupComponentNew2->groupRefName = groupNew2->groupName;
-					artificialGroupComponentNew2->groupTypeRefName = optionalComponentsWrapperGroup->groupTypeName;
-					artificialGroupComponentNew2->componentType = GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_GROUP;
-					artificialGroupComponentNew2->componentIndex = artificialGroupOrComponent->subComponents.size();
-					artificialGroupComponentNew2->ownerGroup = optionalComponentsWrapperGroup;
-					artificialGroupComponentNew2->ownerComponent = artificialGroupOrComponent;
-					artificialGroupComponentNew2->isSubcomponent = true;
-					artificialGroupComponentNew2->semanticRelationReturnEntity = true;
-					artificialGroupOrComponent->subComponents.push_back(artificialGroupComponentNew2);
-					for(int c=SANI_COMPONENT_INDEX_FIRST; c<artificialGroupOrComponent->subComponents.size(); c++)
-					{
-						SANIComponentNeuralNetwork* subcomponent = artificialGroupOrComponent->subComponents[c];
-						subcomponent->componentIndex = c;
-					}
-					
-					#ifdef SANI_DEBUG_PROPAGATE_EXTRA8
-					cout << "artificialGroupComponentNew1->groupRefName = " << artificialGroupComponentNew1->groupRefName << endl;
-					cout << "artificialGroupComponentNew2->groupRefName = " << artificialGroupComponentNew2->groupRefName << endl;
-					#endif
-				}
-			}
-			else
-			{
-				cerr << "GIAposRelTranslatorRulesClass::removeLastOptionalComponents{} error: " << (components->size() == 0) << endl;
-				exit(EXIT_ERROR);
-			}
-		}
-	}
-	
-	#ifdef SANI_DEBUG_PROPAGATE_EXTRA7
-	cout << "SANI_DEBUG_PROPAGATE_EXTRA7 exit" << endl;
-	exit(EXIT_ERROR);
-	#endif
-	
-	return result;
-}
-*/
-
 #endif
-	
-SANIGroupNeuralNetwork* GIAposRelTranslatorRulesClass::copyGroup(SANIGroupNeuralNetwork* group)
-{		
-	SANIGroupNeuralNetwork* newGroup = new SANIGroupNeuralNetwork(*group);
-	newGroup->components.clear();
-	copyComponents(&(group->components), &(newGroup->components));
-
-	return newGroup;
-}
-bool GIAposRelTranslatorRulesClass::copyComponents(vector<SANIComponentNeuralNetwork*>* components, vector<SANIComponentNeuralNetwork*>* componentsNew)
-{	
-	bool result = true;
-	
-	for(int i=0; i<components->size(); i++)
-	{
-		SANIComponentNeuralNetwork* currentComponent = (*components)[i];
-		copyComponent(currentComponent, componentsNew);
-		/*
-		SANIComponentNeuralNetwork* newComponent = new SANIComponentNeuralNetwork(*currentComponent);
-		componentsNew->push_back(newComponent);
-		if(SANIComponentClassObject.componentHasSubcomponents(currentComponent))
-		{
-			newComponent->subComponents.clear();
-			copyComponents(&(currentComponent->subComponents), &(newComponent->subComponents)); 
-		}
-		*/
-	}
-	
-	return result;
-}
-
-bool GIAposRelTranslatorRulesClass::copyComponent(SANIComponentNeuralNetwork* currentComponent, vector<SANIComponentNeuralNetwork*>* componentsNew)
-{	
-	bool result = true;
-	
-	SANIComponentNeuralNetwork* newComponent = new SANIComponentNeuralNetwork(*currentComponent);
-	componentsNew->push_back(newComponent);
-	if(SANIComponentClassObject.componentHasSubcomponents(currentComponent))
-	{
-		newComponent->subComponents.clear();
-		copyComponents(&(currentComponent->subComponents), &(newComponent->subComponents)); 
-	}
-	
-	return result;
-}
-
-SANIGroupParseTree* GIAposRelTranslatorRulesClass::copyGroup(SANIGroupParseTree* group)
-{		
-	SANIGroupParseTree* newGroup = new SANIGroupParseTree(*group);
-	newGroup->components.clear();
-	copyComponents(&(group->components), &(newGroup->components));
-
-	return newGroup;
-}
-bool GIAposRelTranslatorRulesClass::copyComponents(vector<SANIComponentParseTree*>* components, vector<SANIComponentParseTree*>* componentsNew)
-{	
-	bool result = true;
-	
-	for(int i=0; i<components->size(); i++)
-	{
-		SANIComponentParseTree* currentComponent = (*components)[i];
-		SANIComponentParseTree* newComponent = new SANIComponentParseTree(*currentComponent);
-		componentsNew->push_back(newComponent);
-	}
-	
-	return result;
-}
-
-
-SANIGroupActivationMemory* GIAposRelTranslatorRulesClass::copyGroup(SANIGroupActivationMemory* group)
-{		
-	SANIGroupActivationMemory* newGroup = new SANIGroupActivationMemory(*group);
-	newGroup->components.clear();
-	copyComponents(&(group->components), &(newGroup->components));
-
-	return newGroup;
-}
-
-
-
-#ifdef SANI
-bool GIAposRelTranslatorRulesClass::updateComponentsOwnerGroupAndIndexes(SANIGroupNeuralNetwork* group, vector<SANIComponentNeuralNetwork*>* components, const bool isSubcomponent, SANIComponentNeuralNetwork* ownerComponent)
-{
-	bool result = true;
-	
-	for(int c=SANI_COMPONENT_INDEX_FIRST; c<components->size(); c++)
-	{
-		SANIComponentNeuralNetwork* component = (*components)[c];
-		component->componentIndex = c;
-		component->ownerGroup = group;
-		if(isSubcomponent)
-		{
-			component->ownerComponent = ownerComponent;	//added GIA3i3c
-		}
-		if(SANIComponentClassObject.componentHasSubcomponents(component))
-		{
-			updateComponentsOwnerGroupAndIndexes(group, &(component->subComponents), true, component);
-		}
-	}
-	
-	return result;
-}
-#endif		
-
 #endif
 
 

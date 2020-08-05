@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m3a 01-August-2020
+ * Project Version: 3m3b 01-August-2020
  * Requirements: requires plain text file
  * Description: Part-of-speech Relation Translator
  * /
@@ -37,8 +37,10 @@
 //#include "XMLparserClass.hpp"
 
 
+	
 #ifdef GIA_POS_REL_TRANSLATOR_RULES_GIA3
 
+	
 bool GIAposRelTranslatorClass::parseTxtfileAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences(GIAtranslatorVariablesClass* translatorVariables, const string inputTextPlainTXTfileName, string inputTextNLPrelationXMLfileName, const string inputTextNLPfeatureXMLfileName, const string outputCFFfileName)
 {
 	bool result = true;
@@ -94,7 +96,7 @@ bool GIAposRelTranslatorClass::parseTxtfileAndCreateSemanticNetworkBasedUponSema
 	//cout << "SANIGroupTypes->size() = " << SANIGroupTypes->size() << endl;
 	
 	#ifdef SANI
-	if(!SANIFormation.createSANI(GIAposRelTranslatorRulesTokenLayers, SANIGroupTypes))
+	if(!SANIformation.createSANI(GIAposRelTranslatorRulesTokenLayers, SANIGroupTypes))
 	{
 		result = false;
 	}
@@ -139,7 +141,7 @@ bool GIAposRelTranslatorClass::parseTxtfileAndCreateSemanticNetworkBasedUponSema
 	
 #ifdef SANI_SEQUENCE_GRAMMAR
 	#ifdef SANI_ANN_DELAY_ANN_CONNECTIVITY_TILL_END
-	SANIFormation.createANNconnectivity(SANIGroupTypes);
+	SANIformation.createANNconnectivity(SANIGroupTypes);
 	#endif
 #else
 	/*

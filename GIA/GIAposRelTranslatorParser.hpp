@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorParser.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m3a 01-August-2020
+ * Project Version: 3m3b 01-August-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator Parser
  * /
@@ -39,6 +39,7 @@
 #include "GIAglobalDefs.hpp"
 
 #ifdef GIA_POS_REL_TRANSLATOR_RULES_GIA3
+//#ifdef GIA_POS_REL_TRANSLATOR_RULES_USE
 
 #include "GIAsentenceClass.hpp"
 #include "GIAentityNodeClass.hpp"
@@ -57,9 +58,10 @@
 #include "GIAtranslatorReferencing.hpp"
 #include "GIAsemRelTranslatorParser.hpp"
 #include "GIAsynRelTranslatorParser.hpp"
-#include "GIAposRelTranslatorRules.hpp"
-#include "SANIGroupClass.hpp"
-#include "SANIComponentClass.hpp"
+//#include "GIAposRelTranslatorRules.hpp"
+#include "SANInodes.hpp"
+#include "SANInodesGroupClass.hpp"
+#include "SANInodesComponentClass.hpp"
 #include "GIAposRelTranslatorHybrid.hpp"
 #ifdef SANI_PARSE_SIMULTANEOUS
 #include "GIAposRelTranslatorPermutations.hpp"
@@ -89,14 +91,17 @@ class GIAposRelTranslatorParserClass
 	private: GIAtranslatorReferencingClass GIAtranslatorReferencing;
 	private: GIAsemRelTranslatorParserClass GIAsemRelTranslatorParser;
 	private: GIAsynRelTranslatorParserClass GIAsynRelTranslatorParser;
-	private: GIAposRelTranslatorRulesClass GIAposRelTranslatorRules;
-	private: SANIGroupClass SANIGroupClassObject;
-	private: SANIComponentClass SANIComponentClassObject;
+	//private: GIAposRelTranslatorRulesClass GIAposRelTranslatorRules;
+	private: SANInodesClass SANInodes;	
+	private: SANInodesGroupClass SANInodesGroupClassObject;
+	private: SANInodesComponentClass SANInodesComponentClassObject;
 	private: GIAposRelTranslatorHybridClass GIAposRelTranslatorHybrid;
 	#ifdef SANI_PARSE_SIMULTANEOUS
 	private: GIAposRelTranslatorPermutationsClass GIAposRelTranslatorPermutations;	
 	#else
+	#ifdef GIA_POS_REL_TRANSLATOR_RULES_USE
 	private: GIAposRelTranslatorParserOperationsClass GIAposRelTranslatorParserOperations;
+	#endif
 	#endif		
 	private: GIAsynRelTranslatorDefineSubstancesClass GIAsynRelTranslatorDefineSubstances;
 	private: GIAsynRelTranslatorApplyAdvancedFeaturesClass GIAsynRelTranslatorApplyAdvancedFeatures;
@@ -133,6 +138,7 @@ class GIAposRelTranslatorParserClass
 	
 };
 
+//#endif
 #endif
 
 #endif

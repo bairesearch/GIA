@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorWordClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m3a 01-August-2020
+ * Project Version: 3m3b 01-August-2020
  * Requirements: requires plain text file
  * Description: Preprocessor Word Class
  * /
@@ -600,7 +600,7 @@ public:
 	#endif
 	#endif
 
-	#ifdef GIA_POS_REL_TRANSLATOR_RULES
+	#ifdef SANI_NODES
 	#ifdef GIA_POS_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START
 	unsigned char unambiguousPOSindex;
 	#else
@@ -612,13 +612,12 @@ public:
 	#ifdef SANI
 	int translatorSentenceWordIndex;	//for code efficiency only: = translatorSentenceEntityIndex - 1
 	#endif
+	#ifdef GIA_POS_REL_TRANSLATOR_RULES
 	GIAentityNode* translatorEntity;
 	#ifdef GIA_POS_REL_TRANSLATOR_RULES_CODE_COMPONENT_WORD_NOUN_VERB_VARIANT
 	int wordVerbVariantGrammaticalTenseForm;
 	int wordNounVariantGrammaticalTenseForm;
 	#endif
-	#ifdef SANI
-	//bool wordPropagated;
 	#endif
 	#endif
 };

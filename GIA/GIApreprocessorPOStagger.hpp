@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorPOStagger.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m3a 01-August-2020
+ * Project Version: 3m3b 01-August-2020
  * Requirements: requires plain text file
  * Description: Preprocessor POS tagger
  * /
@@ -46,7 +46,7 @@
 #include "GIAtranslatorGrammar.hpp"
 #include "GIApreprocessorPOStaggerDatabase.hpp"
 #ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_NEURAL_NETWORK_SEQUENCE_GRAMMAR
-#include "SANIPropagateCompactGenerate.hpp"
+#include "SANIpropagateCompactGenerate.hpp"
 #include "GIAposRelTranslatorRules.hpp"
 #endif
 #ifdef USE_ANN
@@ -70,7 +70,7 @@ class GIApreprocessorPOStaggerClass
 	private: GIAtranslatorGrammarClass GIAtranslatorGrammar;
 	private: GIApreprocessorPOStaggerDatabaseClass GIApreprocessorPOStaggerDatabase;
 	#ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_NEURAL_NETWORK_SEQUENCE_GRAMMAR
-	private: SANIPropagateCompactGenerateClass SANIPropagateCompactGenerate;
+	private: SANIpropagateCompactGenerateClass SANIpropagateCompactGenerate;
 	private: GIAposRelTranslatorRulesClass GIAposRelTranslatorRules;
 	#endif
 		

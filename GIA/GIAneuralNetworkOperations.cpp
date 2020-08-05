@@ -26,7 +26,7 @@
  * File Name: GIAneuralNetworkOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m3a 01-August-2020
+ * Project Version: 3m3b 01-August-2020
  * Description: Neural Network - visual representation of GIA contents in prototype biological neural network
  * /
  *******************************************************************************/
@@ -78,7 +78,7 @@ void GIAneuralNetworkOperationsClass::initialiseIncrementalGeneration()
 /*
 bool GIAneuralNetworkOperationsClass::generateNeuralNetFromGIAposRelTranslatorNetReset(GIAtranslatorVariablesClass* translatorVariables)
 {
-	vector<SANIGroupType*>* SANIGroupTypes = GIAposRelTranslatorRules.getSANIGroupTypesGlobal();
+	vector<SANIGroupType*>* SANIGroupTypes = SANInodes.getSANIGroupTypesGlobal();
 	determinePositonsOfNeuronsReset(SANIGroupTypes);
 }
 */
@@ -88,9 +88,9 @@ bool GIAneuralNetworkOperationsClass::generateNeuralNetFromGIAposRelTranslatorNe
 {
 	bool result = true;
 	
-	vector<SANIGroupType*>* SANIGroupTypes = GIAposRelTranslatorRules.getSANIGroupTypesGlobal();
+	vector<SANIGroupType*>* SANIGroupTypes = SANInodes.getSANIGroupTypesGlobal();
 	
-	SANIGroupNeuralNetwork* firstInputGroupInNetwork = SANIFormation.getFirstInputGroupInNetwork();
+	SANIGroupNeuralNetwork* firstInputGroupInNetwork = SANIformation.getFirstInputGroupInNetwork();
 	ANNneuron* firstInputNeuronInNetwork = firstInputGroupInNetwork->neuronReference;
 	
 	int64_t id = 0;
@@ -176,9 +176,9 @@ bool GIAneuralNetworkOperationsClass::determinePositonsOfInputNeurons(int64_t* i
 	int x2flat = 0;
 	int maxX = 0;
 	#ifdef SANI_SEQUENCE_GRAMMAR_INPUT_WORDS
-	SANIGroupNeuralNetwork* firstGroupInInputLayerSectionWordPOStype = SANIFormation.getFirstGroupInInputLayerSectionWordOrig();	
+	SANIGroupNeuralNetwork* firstGroupInInputLayerSectionWordPOStype = SANIformation.getFirstGroupInInputLayerSectionWordOrig();	
 	#else
-	SANIGroupNeuralNetwork* firstGroupInInputLayerSectionWordPOStype = SANIFormation.getFirstGroupInInputLayerSectionWordPOStype();
+	SANIGroupNeuralNetwork* firstGroupInInputLayerSectionWordPOStype = SANIformation.getFirstGroupInInputLayerSectionWordPOStype();
 	#endif
 	SANIGroupNeuralNetwork* currentGroupInInputLayerSectionWordPOStype = firstGroupInInputLayerSectionWordPOStype;
 	while(currentGroupInInputLayerSectionWordPOStype->next != NULL)
@@ -257,7 +257,7 @@ bool GIAneuralNetworkOperationsClass::determinePositonsOfInputNeurons(int64_t* i
 	#ifndef SANI_SIMPLE_WORD_POS_TYPE_INPUT_ONLY
 	groupType = &SANIGroupTypeArtificialSectionExplicitWordMap;
 	x = 0;
-	unordered_map<string, SANIGroupNeuralNetwork*>* inputLayerSectionExplicitWordMap = SANIFormation.getInputLayerSectionExplicitWordMap();
+	unordered_map<string, SANIGroupNeuralNetwork*>* inputLayerSectionExplicitWordMap = SANIformation.getInputLayerSectionExplicitWordMap();
 	for(unordered_map<string, SANIGroupNeuralNetwork*>::iterator iter1 = inputLayerSectionExplicitWordMap->begin(); iter1 != inputLayerSectionExplicitWordMap->end(); iter1++)
 	{
 		SANIGroupNeuralNetwork* currentGroupInExplicitWordMap = iter1->second;
@@ -299,7 +299,7 @@ bool GIAneuralNetworkOperationsClass::determinePositonsOfInputNeurons(int64_t* i
 	x2flat = 0;
 	int x3flat = 0;
 	int x4flat = 0;
-	unordered_map<string, SANIGroupNeuralNetwork*>* inputLayerSectionTokensLayerMap = SANIFormation.getInputLayerSectionTokensLayerMap();
+	unordered_map<string, SANIGroupNeuralNetwork*>* inputLayerSectionTokensLayerMap = SANIformation.getInputLayerSectionTokensLayerMap();
 	for(unordered_map<string, SANIGroupNeuralNetwork*>::iterator iter1 = inputLayerSectionTokensLayerMap->begin(); iter1 != inputLayerSectionTokensLayerMap->end(); iter1++)
 	{
 		SANIGroupNeuralNetwork* currentGroupInInputLayerSectionTokensLayer = iter1->second;

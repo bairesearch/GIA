@@ -26,7 +26,7 @@
  * File Name: GIAneuralNetworkOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m3a 01-August-2020
+ * Project Version: 3m3b 01-August-2020
  * Description: Neural Network - visual representation of GIA contents in prototype biological neural network
  * /
  *******************************************************************************/
@@ -43,8 +43,13 @@
 #include "ANNneuronConnectionClass.hpp"
 #include "GIAtranslatorOperations.hpp"
 #ifdef SANI_ANN
+#include "SANInodes.hpp"
+/*
+#ifdef GIA_POS_REL_TRANSLATOR_RULES
 #include "GIAposRelTranslatorRules.hpp"
-#include "SANIFormation.hpp"
+#endif
+*/
+#include "SANIformation.hpp"
 #include "GIApreprocessorSentenceClass.hpp"
 //#include "GIApreprocessorWordClass.hpp"
 #endif
@@ -94,8 +99,13 @@ class GIAneuralNetworkOperationsClass
 	private: GIAentityNodeClassClass GIAentityNodeClass;
 	private: GIAtranslatorOperationsClass GIAtranslatorOperations;
 	#ifdef SANI_ANN
+	private: SANInodesClass SANInodes;
+	/*
+	#ifdef GIA_POS_REL_TRANSLATOR_RULES
 	private: GIAposRelTranslatorRulesClass GIAposRelTranslatorRules;
-	private: SANIFormationClass SANIFormation;
+	#endif
+	*/
+	private: SANIformationClass SANIformation;
 	#endif
 	private: ANNneuronClassClass ANNneuronClass;
 	private: ANNxmlConversionClass ANNxmlConversion;

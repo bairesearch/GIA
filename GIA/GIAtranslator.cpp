@@ -26,7 +26,7 @@
  * File Name: GIAtranslator.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m3a 01-August-2020
+ * Project Version: 3m3b 01-August-2020
  * Requirements: requires text parsed by X Parser
  * Description: Translator
  * /
@@ -194,9 +194,9 @@ bool GIAtranslatorClass::convertSentenceRelationsIntoGIAnetworkNodesWrapper(GIAt
 	bool result = true;
 	
 	#ifdef SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OPTIMISED
-	vector<XMLparserTag*>* GIAposRelTranslatorRulesTokenLayers = GIAposRelTranslatorRules.getGIAposRelTranslatorRulesTokenLayersGlobal();
-	vector<SANIGroupType*>* SANIGroupTypes = GIAposRelTranslatorRules.getSANIGroupTypesGlobal();
-	SANIPropagateOperations.resetAllNeuronComponents(SANIGroupTypes, GIA_POS_REL_TRANSLATOR_RULES_GROUP_BOOL_INDEX_ALLGROUPTYPES_NEURON_DEMARKATEOPTIMUMPATHWAY_RESET);
+	vector<XMLparserTag*>* GIAposRelTranslatorRulesTokenLayers = SANInodes.getGIAposRelTranslatorRulesTokenLayersGlobal();
+	vector<SANIGroupType*>* SANIGroupTypes = SANInodes.getSANIGroupTypesGlobal();
+	SANIpropagateOperations.resetAllNeuronComponents(SANIGroupTypes, GIA_POS_REL_TRANSLATOR_RULES_GROUP_BOOL_INDEX_ALLGROUPTYPES_NEURON_DEMARKATEOPTIMUMPATHWAY_RESET);
 	translatorVariables->parserDemarkateOptimumPathway = true;
 	if(GIAposRelTranslatorPermutations.executeTxtRelTranslatorWrapper2(translatorVariables, GIAposRelTranslatorRulesTokenLayers, SANIGroupTypes, translatorVariables->currentPreprocessorSentenceInList))
 	{
@@ -321,6 +321,7 @@ bool GIAtranslatorClass::convertSentenceRelationsIntoGIAnetworkNodes(GIAtranslat
 	bool result = true;
 	
 	#ifdef GIA_POS_REL_TRANSLATOR_RULES_GIA3
+	#ifdef GIA_POS_REL_TRANSLATOR_RULES_USE
 	translatorVariables->linkPreestablishedReferencesGIA = linkPreestablishedReferencesGIA;
 	#ifdef GIA_POS_REL_TRANSLATOR_RULES_GIA3_USE_SEM_REL_TRANSLATOR_PARSER
 	if(!GIAsemRelTranslatorParser.convertSentenceSemanticRelationsIntoGIAnetworkNodes(translatorVariables, linkPreestablishedReferencesGIA, firstGIAcoreferenceInList))
@@ -330,6 +331,7 @@ bool GIAtranslatorClass::convertSentenceRelationsIntoGIAnetworkNodes(GIAtranslat
 	{
 		result = false;
 	}
+	#endif
 	#else
 	#ifdef GIA_SEM_REL_TRANSLATOR_READ_SEMANTIC_RELATIONS
 	if(translatorVariables->parseGIA2file)

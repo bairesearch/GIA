@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorPermutations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m3a 01-August-2020
+ * Project Version: 3m3b 01-August-2020
  * Requirements: requires plain text file
  * Description: Part-of-speech Relation Translator Permutations
  * /
@@ -45,30 +45,31 @@
 #ifdef GIA_POS_REL_TRANSLATOR_HYBRID
 #include "GIAposRelTranslatorHybrid.hpp"
 #endif
-#include "GIAposRelTranslatorRules.hpp"
+//#include "GIAposRelTranslatorRules.hpp"
 #ifdef SANI
-#include "SANIFormation.hpp"
+#include "SANInodes.hpp"
+#include "SANIformation.hpp"
 #ifdef SANI_SEQUENCE_GRAMMAR
-#include "SANIPropagateCompactGenerate.hpp"
+#include "SANIpropagateCompactGenerate.hpp"
 #else
 #ifdef SANI_HEAVY
 #ifdef SANI_HEAVY_UNOPTIMISED
-#include "SANIPropagateHeavyUnoptimised.hpp"
+#include "SANIpropagateHeavyUnoptimised.hpp"
 #else
-#include "SANIPropagateHeavyOptimised.hpp"
+#include "SANIpropagateHeavyOptimised.hpp"
 #endif
 #else
 #ifdef SANI_LIGHT_UNOPTIMISED
-#include "SANIPropagateLightUnoptimised.hpp"
+#include "SANIpropagateLightUnoptimised.hpp"
 #else
-#include "SANIPropagateLightOptimised.hpp"
+#include "SANIpropagateLightOptimised.hpp"
 #endif
 #endif
 #endif
 #else
-#include "SANIPropagateInverse.hpp"
+#include "SANIpropagateInverse.hpp"
 #endif
-#include "SANIPropagateOperations.hpp"
+#include "SANIpropagateOperations.hpp"
 #include "GIApreprocessorPOStagger.hpp"
 #include "GIApreprocessorPOStaggerDatabase.hpp"
 #include "GIApreprocessorWordClass.hpp"
@@ -86,29 +87,32 @@ class GIAposRelTranslatorPermutationsClass
 	private: GIAposRelTranslatorHybridClass GIAposRelTranslatorHybrid;
 	#endif
 	#ifdef SANI
-	private: SANIFormationClass SANIFormation;
+	private: SANInodesClass SANInodes;
+	private: SANIformationClass SANIformation;
 #ifdef SANI_SEQUENCE_GRAMMAR
-	private: SANIPropagateCompactGenerateClass SANIPropagateCompactGenerate;
+	private: SANIpropagateCompactGenerateClass SANIpropagateCompactGenerate;
 #else
 	#ifdef SANI_HEAVY
 	#ifdef SANI_HEAVY_UNOPTIMISED
-	private: SANIPropagateHeavyUnoptimisedClass SANI;
+	private: SANIpropagateHeavyUnoptimisedClass SANIpropagate;
 	#else
-	private: SANIPropagateHeavyOptimisedClass SANI;
+	private: SANIpropagateHeavyOptimisedClass SANIpropagate;
 	#endif
 	#else
 	#ifdef SANI_LIGHT_UNOPTIMISED
-	private: SANIPropagateLightUnoptimisedClass SANI;	
+	private: SANIpropagateLightUnoptimisedClass SANIpropagate;	
 	#else
-	private: SANIPropagateLightOptimisedClass SANI;	
+	private: SANIpropagateLightOptimisedClass SANIpropagate;	
 	#endif
 	#endif
 #endif
 	#else
-	private: SANIPropagateInverseClass SANIPropagateInverse;	
+	private: SANIpropagateInverseClass SANIpropagateInverse;	
 	#endif
-	private: SANIPropagateOperationsClass SANIPropagateOperations;	//required for printComponent/printParseTreeDebugIndentation	
+	private: SANIpropagateOperationsClass SANIpropagateOperations;	//required for printComponent/printParseTreeDebugIndentation
+	/*
 	private: GIAposRelTranslatorRulesClass GIAposRelTranslatorRules;
+	*/
 	private: GIApreprocessorPOStaggerClass GIApreprocessorPOStagger;
 	private: GIApreprocessorPOStaggerDatabaseClass GIApreprocessorPOStaggerDatabase;
 	private: GIApreprocessorWordClassClass GIApreprocessorWordClassObject;

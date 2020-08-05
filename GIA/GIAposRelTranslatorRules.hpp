@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorRules.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m3a 01-August-2020
+ * Project Version: 3m3b 01-August-2020
  * Requirements: requires plain text file
  * Description: Part-of-speech Relation Translator Rules
  * /
@@ -42,10 +42,11 @@
 #ifdef GIA_POS_REL_TRANSLATOR_RULES
 
 #include "XMLparserClass.hpp"
-#include "SANIGroupClass.hpp"
-#include "SANIComponentClass.hpp"
+#include "SANInodes.hpp"
+#include "SANInodesGroupClass.hpp"
+#include "SANInodesComponentClass.hpp"
 #ifdef SANI_SEQUENCE_GRAMMAR
-//#include "SANIPropagateCompactGenerate.hpp"
+//#include "SANIpropagateCompactGenerate.hpp"
 #endif
 
 #define GIA_POS_REL_TRANSLATOR_RULES_GROUPS_WITH_NO_EXTERNAL_PROCESSING_NUMBER_OF_TYPES (2)
@@ -108,6 +109,7 @@ static string GIAtxtRelSemanticDependencyRelationNameArray[GIA_POS_REL_TRANSLATO
 
 #define GIA_POS_REL_TRANSLATOR_SEMANTIC_RELATION_RETURN_FUNCTION_NAME_INDEX_TYPE_SEMANTIC_FUNCTION_EXECUTION_INDEX (0)	//semanticRelationReturnFunctionNameIndexType "subject"/"delimiter" refers to "subject"/"delimiter" of semantic relation function 0
 
+/*
 #define GIA_POS_REL_TRANSLATOR_RULES_TAG_txtRelTranslator ((string)"txtRelTranslator")
 	#define GIA_POS_REL_TRANSLATOR_RULES_TAG_groups ((string)"groups")
 		#define GIA_POS_REL_TRANSLATOR_RULES_GROUPS_TAG_groupType ((string)"groupType")
@@ -197,6 +199,8 @@ static string GIAtxtRelSemanticDependencyRelationNameArray[GIA_POS_REL_TRANSLATO
 				#define GIA_POS_REL_TRANSLATOR_RULES_TOKENS_TAG_type ((string)"type")
 					#define GIA_POS_REL_TRANSLATOR_RULES_TOKENS_TAG_instance ((string)"instance")
 			#define GIA_POS_REL_TRANSLATOR_RULES_TOKENS_ATTRIBUTE_name ((string)"name")
+*/
+
 
 #define GIA_POS_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_LAYER_NAME "logicReference"
 
@@ -290,53 +294,27 @@ class GIAposRelTranslatorRulesClass
 {
 	private: XMLparserClassClass XMLparserClass;
 	private: SHAREDvarsClass SHAREDvars;
-	private: SANIComponentClass SANIComponentClassObject;
-	private: SANIGroupClass SANIGroupClassObject;
+	private: SANInodesClass SANInodes;
+	private: SANInodesComponentClass SANInodesComponentClassObject;
+	private: SANInodesGroupClass SANInodesGroupClassObject;
 	#ifdef SANI_SEQUENCE_GRAMMAR
-	//private: SANIPropagateCompactGenerateClass SANIPropagateCompactGenerate;
+	//private: SANIpropagateCompactGenerateClass SANIpropagateCompactGenerate;
 	#endif
-		
-	#ifdef SANI_SEQUENCE_GRAMMAR
-	public: void initialiseNewGroupIndex(vector<SANIGroupType*>* SANIGroupTypes);
-	public: int* getNewGroupIndex();
-	public: SANIGroupType* getSequenceGrammarGroupTypeDefault(vector<SANIGroupType*>* SANIGroupTypes);
-	public: int assignGroupIndex(SANIGroupNeuralNetwork* group);
-	#endif
-	
-	public: vector<SANIGroupType*>* getSANIGroupTypesGlobal();
-	public: vector<XMLparserTag*>* getGIAposRelTranslatorRulesTokenLayersGlobal();
 
 	public: bool extractGIAposRelTranslatorRules(vector<SANIGroupType*>* SANIGroupTypes, vector<XMLparserTag*>* GIAposRelTranslatorRulesTokenLayers);
+	#ifdef GIA_POS_REL_TRANSLATOR_RULES_USE
 		public: bool extractSANIGroups(vector<SANIGroupType*>* SANIGroupTypes);
 			private: bool parseComponents(XMLparserTag* firstTxtRelTranslatorRulesFirstComponentTag, SANIGroupNeuralNetwork* groupOwner, vector<SANIComponentNeuralNetwork*>* componentsList, const bool parseSubcomponent, SANIComponentNeuralNetwork* subComponentOwner);
 			private: bool connectGroupsReferences(vector<SANIGroupType*>* SANIGroupTypes);
 				private: bool connectComponentsReferences(vector<SANIGroupType*>* SANIGroupTypes, vector<SANIComponentNeuralNetwork*>* components, bool subcomponents);
-					public: bool findGroupType(vector<SANIGroupType*>* SANIGroupTypes, const string groupTypeName, SANIGroupType** groupTypeFound);
-					private: bool findGroup(vector<SANIGroupType*>* SANIGroupTypes, const string groupTypeName, const string groupName, SANIGroupType** groupTypeFound, SANIGroupNeuralNetwork** groupFound);
 		public: bool extractGIAposRelTranslatorRulesTokens(vector<XMLparserTag*>* GIAposRelTranslatorRulesTokenLayers);
 
 	public: bool isClassTagWrapper(string word, string layerNameToFind, string classNameToFind, string classTypeNameToFind, vector<XMLparserTag*>* GIAposRelTranslatorRulesTokenLayers);
 		public: bool isClassTag(string word, string layerNameToFind, string classNameToFind, string* classTypeNameFound, vector<XMLparserTag*>* GIAposRelTranslatorRulesTokenLayers);
 		public: bool isClassTag(string word, string layerNameToFind, string classNameToFind, string classTypeNameToFind, vector<XMLparserTag*>* GIAposRelTranslatorRulesTokenLayers);
-	
-	#ifdef SANI_REMOVE_LAST_OPTIONAL_COMPONENTS
-	private: bool removeLastOptionalComponents(vector<SANIGroupType*>* SANIGroupTypes);
-		private: bool removeOptionalComponent(SANIGroupType* groupType, int* groupIndex, const int groupTypeGroupsSizeOrig, SANIGroupNeuralNetwork* group, const int optionalComponentIndex);	
-	#endif
-
-	public: SANIGroupNeuralNetwork* copyGroup(SANIGroupNeuralNetwork* group);
-		public: bool copyComponents(vector<SANIComponentNeuralNetwork*>* components, vector<SANIComponentNeuralNetwork*>* componentsNew);
-			public: bool copyComponent(SANIComponentNeuralNetwork* currentComponent, vector<SANIComponentNeuralNetwork*>* componentsNew);
-	public: SANIGroupParseTree* copyGroup(SANIGroupParseTree* group);
-		public: bool copyComponents(vector<SANIComponentParseTree*>* components, vector<SANIComponentParseTree*>* componentsNew);
-	public: SANIGroupActivationMemory* copyGroup(SANIGroupActivationMemory* group);
-	
-	#ifdef SANI
-	public: bool updateComponentsOwnerGroupAndIndexes(SANIGroupNeuralNetwork* group, vector<SANIComponentNeuralNetwork*>* components, const bool isSubcomponent, SANIComponentNeuralNetwork* ownerComponent);
-	#endif
-	
+	#endif	
+		
 };
-
 
 
 #endif

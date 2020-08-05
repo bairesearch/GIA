@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m3a 01-August-2020
+ * Project Version: 3m3b 01-August-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator Parser
  * /
@@ -36,6 +36,7 @@
 #include "GIAposRelTranslatorParser.hpp"
 
 #ifdef GIA_POS_REL_TRANSLATOR_RULES_GIA3
+#ifdef GIA_POS_REL_TRANSLATOR_RULES_USE
 
 //based on convertSentenceSyntacticRelationsIntoGIAnetworkNodes{}:
 bool GIAposRelTranslatorParserClass::convertSentenceTxtRelationsIntoGIAnetworkNodes(GIAtranslatorVariablesClass* translatorVariables, const bool linkPreestablishedReferencesGIA, GIAcoreference* firstGIAcoreferenceInList)
@@ -392,8 +393,8 @@ bool GIAposRelTranslatorParserClass::generateSemanticRelationsFromTxtRelationsWr
 {
 	bool result = true;
 	
-	vector<XMLparserTag*>* GIAposRelTranslatorRulesTokenLayers = GIAposRelTranslatorRules.getGIAposRelTranslatorRulesTokenLayersGlobal();
-	vector<SANIGroupType*>* SANIGroupTypes = GIAposRelTranslatorRules.getSANIGroupTypesGlobal();
+	vector<XMLparserTag*>* GIAposRelTranslatorRulesTokenLayers = SANInodes.getGIAposRelTranslatorRulesTokenLayersGlobal();
+	vector<SANIGroupType*>* SANIGroupTypes = SANInodes.getSANIGroupTypesGlobal();
 
 	if(!GIAposRelTranslatorPermutations.executeTxtRelTranslatorWrapper2(translatorVariables, GIAposRelTranslatorRulesTokenLayers, SANIGroupTypes, translatorVariables->currentPreprocessorSentenceInList))
 	{
@@ -1039,5 +1040,5 @@ bool GIAposRelTranslatorParserClass::calculateSimilarityOfSubnets(GIAtranslatorV
 #endif
 	
 	
-
+#endif
 #endif
