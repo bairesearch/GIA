@@ -4,3 +4,6 @@
 [submodule "ANN"]
 	path = ANN
 	url = https://github.com/baxterai/openANN.git
+[submodule "SANI"]
+	path = SANI
+	url = https://github.com/baxterai/openSANI.git
