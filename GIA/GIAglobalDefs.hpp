@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m3c 01-August-2020
+ * Project Version: 3m3d 01-August-2020
  * Requirements: 
  * Description: GIA specific global definitions
  * /
@@ -751,7 +751,61 @@
 	#endif
 #endif
 
+
+//#define GIA_DEBUG_DISABLE_3k_CODE
+#ifndef GIA_DEBUG_DISABLE_3k_CODE
+
+	#ifdef USE_NLC
+		#define GIA_PREPROCESSOR_POS_TYPE_CROSS_REFERENCE_STANFORD_POS_ARRAY_LIMITED	//GIA3l3a	//restores GIApreprocessorPOStypeCrossReferenceStanfordPos to original state
+	#endif
 	
+#endif
+
+#ifdef COMPILE_GIA_GENERATE_POS_TAGGER_DATABASE
+	#ifdef SANI_SEQUENCE_GRAMMAR
+		#define GIA_PREPROCESSOR_POS_TAGGER_SEQUENCE	//sentence subset
+		#ifdef GIA_PREPROCESSOR_POS_TAGGER_SEQUENCE
+			//#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_TRAIN_AMBIGUOUS_PERMUTATIONS	//disabled GIA3k7a
+		#endif
+	#else
+		#define COMPILE_GIA_GENERATE_POS_TAGGER_DATABASE_ORIG
+		#ifdef COMPILE_GIA_GENERATE_POS_TAGGER_DATABASE_ORIG
+			#define GIA_PREPROCESSOR_POS_TAGGER_SENTENCE	//GIA3j6c	//enable for POStagSentence (else POStagSequence) database generation	//optional
+			#ifndef GIA_PREPROCESSOR_POS_TAGGER_SENTENCE
+				#define GIA_PREPROCESSOR_POS_TAGGER_SEQUENCE	//sentence subset
+				#ifdef GIA_PREPROCESSOR_POS_TAGGER_SEQUENCE
+					#define GIA_PREPROCESSOR_POS_TAGGER_DATABASE_TRAIN_AMBIGUOUS_PERMUTATIONS	//clarification def added GIA3j6a
+				#endif
+			#endif
+			#ifdef GIA_PREPROCESSOR_POS_TAGGER_SENTENCE
+				#define GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE_RAW
+			#endif
+		#endif
+	#endif
+#endif
+#ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE_RAW
+	#define GIA_PREPROCESSOR_POS_TAGGER_INCLUDE_CENTRE_WORD_IN_POS_PERMUTATION
+	#define GIA_PREPROCESSOR_POS_TAGGER_GENERATE_DATABASE_RAW_SENTENCE_MAX_NUM_WORDS (200)
+#endif
+
+//#define GIA_DEBUG_DISABLE_3i_CODE
+#ifndef GIA_DEBUG_DISABLE_3i_CODE
+	
+	//#ifdef GIA_POS_REL_TRANSLATOR_RULES_CODE_NUMBERS	//not yet defined
+		#define GIA_POS_REL_TRANSLATOR_RULES_CODE_SUBJECT_MULTI
+		#ifdef GIA_POS_REL_TRANSLATOR_RULES_CODE_SUBJECT_MULTI
+			#define GIA_POS_REL_TRANSLATOR_RULES_CODE_SUBJECT_MULTI_POSTHOC_COLLAPSE_CONJUNCTION_ENTITIES	//resolves the meaning of conjunction entities	//NOTYETCODED
+		#endif
+	//#endif
+#endif
+
+//#define GIA_DEBUG_DISABLE_3g_CODE
+#ifndef GIA_DEBUG_DISABLE_3g_CODE
+	#define GIA_POS_REL_TRANSLATOR_RULES_DEFINE_GROUP_TYPE_BACKUP_AT_START	//SANI1g1b
+	#define GIA_POS_REL_TRANSLATOR_RULES_DEFINE_WORD_TRANSLATOR_SENTENCE_ENTITY_INDEX_AT_START	//SANI1g1a	//required for SANI
+#endif
+
+
 //#define GIA_DEBUG_DISABLE_3f_CODE
 #ifndef GIA_DEBUG_DISABLE_3f_CODE
 	
