@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorRulesComponentClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m1a 23-July-2020
+ * Project Version: 3m2a 30-July-2020
  * Requirements: requires plain text file
  * Description: Part-of-speech Relation Translator Rules
  * /

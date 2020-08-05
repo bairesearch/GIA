@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m1a 23-July-2020
+ * Project Version: 3m2a 30-July-2020
  * Requirements: 
  * Description: GIA specific global definitions
  * /
@@ -759,6 +759,11 @@
 
 //#define GIA_DEBUG_DISABLE_3m_CODE
 #ifndef GIA_DEBUG_DISABLE_3m_CODE
+
+	//debug variables (should all be disabled by default):
+	//#define GIA_DEBUG_POS_REL_TRANSLATOR_RULES_PRINT_SENTENCES
+	//#define GIA_DEBUG_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_NETWORK_NODES
+	
 	//#define GIA_POS_REL_TRANSLATOR_SANI_SEMANTIC_NETWORK	//GIA3m1a	//store semantic network within SANI parse tree rather than generating from SANI parse tree
 	#ifdef GIA_POS_REL_TRANSLATOR_SANI_SEMANTIC_NETWORK
 		#define GIA_POS_REL_TRANSLATOR_SANI_SEQUENCE_GRAMMAR_INPUT_WORDS	//GIA3m1a	//input words rather than pos values into SANI
