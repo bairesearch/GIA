@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorHybridLogicReference.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m3b 01-August-2020
+ * Project Version: 3m3c 01-August-2020
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Hybrid Logic Reference
  * /
@@ -45,7 +45,7 @@
 #ifdef GIA_POS_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE
 
 //Limitation: doesn't support conjunctions with embedded preposition logic references, eg; "The chicken is green, considering the teapot, red, considering the apple, or blue, considering the pie."
-bool GIAposRelTranslatorHybridLogicReferenceClass::executeLogicReferencePreprocessor(const vector<GIApreprocessorPlainTextWord*>* sentenceContentsWordList, GIApreprocessorSentence* currentGIApreprocessorSentenceInList, vector<XMLparserTag*>* GIAposRelTranslatorRulesTokenLayers)
+bool GIAposRelTranslatorHybridLogicReferenceClass::executeLogicReferencePreprocessor(const vector<GIApreprocessorPlainTextWord*>* sentenceContentsWordList, GIApreprocessorSentence* currentGIApreprocessorSentenceInList, vector<XMLparserTag*>* SANIrulesTokenLayers)
 {
 	bool result = true;
 	
@@ -79,7 +79,7 @@ bool GIAposRelTranslatorHybridLogicReferenceClass::executeLogicReferencePreproce
 		bool foundClassType = false;
 		string logicReferenceClassType = "";
 		int logicReferenceClass = GIA_POS_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_CLASS_UNDEFINED;
-		if(GIAposRelTranslatorRules.isClassTag(currentWord->tagName, GIA_POS_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_LAYER_NAME, GIA_POS_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_CLASS_conjunction, &logicReferenceClassType, GIAposRelTranslatorRulesTokenLayers))
+		if(SANIrules.isClassTag(currentWord->tagName, GIA_POS_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_LAYER_NAME, GIA_POS_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_CLASS_conjunction, &logicReferenceClassType, SANIrulesTokenLayers))
 		{
 			#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE_SET_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
 			if(GIApreprocessorWordIdentification.determineIsConjunction(currentWord, usePOSprelim))
@@ -94,7 +94,7 @@ bool GIAposRelTranslatorHybridLogicReferenceClass::executeLogicReferencePreproce
 			}
 			#endif
 		}
-		else if(GIAposRelTranslatorRules.isClassTag(currentWord->tagName, GIA_POS_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_LAYER_NAME, GIA_POS_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_CLASS_preposition, &logicReferenceClassType, GIAposRelTranslatorRulesTokenLayers))
+		else if(SANIrules.isClassTag(currentWord->tagName, GIA_POS_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_LAYER_NAME, GIA_POS_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_CLASS_preposition, &logicReferenceClassType, SANIrulesTokenLayers))
 		{
 			#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE_SET_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
 			if(GIApreprocessorWordIdentification.determineIsPreposition(currentWord, usePOSprelim))
@@ -116,7 +116,7 @@ bool GIAposRelTranslatorHybridLogicReferenceClass::executeLogicReferencePreproce
 			}
 			#endif
 		}
-		else if(GIAposRelTranslatorRules.isClassTag(currentWord->tagName, GIA_POS_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_LAYER_NAME, GIA_POS_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_CLASS_verb, &logicReferenceClassType, GIAposRelTranslatorRulesTokenLayers))
+		else if(SANIrules.isClassTag(currentWord->tagName, GIA_POS_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_LAYER_NAME, GIA_POS_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_CLASS_verb, &logicReferenceClassType, SANIrulesTokenLayers))
 		{
 			#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE_SET_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
 			if(GIApreprocessorWordIdentification.determineIsVerb(currentWord, usePOSprelim, grammaticallyStrict))

@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorHybrid.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m3b 01-August-2020
+ * Project Version: 3m3c 01-August-2020
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Hybrid
  * /
@@ -55,7 +55,7 @@
 #include "GIAtranslatorGrammar.hpp"
 #endif
 #endif
-#include "GIAposRelTranslatorRules.hpp"
+#include "SANIrules.hpp"
 
 #ifdef GIA_POS_REL_TRANSLATOR
 
@@ -92,7 +92,7 @@ class GIAposRelTranslatorHybridClass
 	#endif	
 	#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_DEPRECIATED
 	public: bool executeTxtRelTranslatorDepreciated(GIApreprocessorSentence* firstGIApreprocessorSentenceInList, const string outputFileName, const string outputFileNameLRPforNLP);
-		private: bool executeTxtRelTranslatorDepreciatedSentence(GIApreprocessorSentence* currentGIApreprocessorSentenceInList, vector<XMLparserTag*>* GIAposRelTranslatorRulesTokenLayers);
+		private: bool executeTxtRelTranslatorDepreciatedSentence(GIApreprocessorSentence* currentGIApreprocessorSentenceInList, vector<XMLparserTag*>* SANIrulesTokenLayers);
 		private: string removePrependingWhiteSpace(string sentenceContents);
 		private: bool generateTxtRelTranslatorHybridSentenceNLPparsablePhrases(GIAposRelTranslatorHybridLogicReference* firstLogicReferenceInList, int* sentenceIndex, string* outputTextContentsSentence, string* outputTextContentsSentenceForNLP);
 			#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE_OUTPUT_LOGIC_REFERENCE_SETS_FOR_HIGH_LEVEL_SEMANTIC_PARSE

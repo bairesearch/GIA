@@ -26,7 +26,7 @@
  * File Name: GIAtranslator.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m3b 01-August-2020
+ * Project Version: 3m3c 01-August-2020
  * Requirements: requires text parsed by X Parser
  * Description: Translator
  * /
@@ -194,11 +194,11 @@ bool GIAtranslatorClass::convertSentenceRelationsIntoGIAnetworkNodesWrapper(GIAt
 	bool result = true;
 	
 	#ifdef SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OPTIMISED
-	vector<XMLparserTag*>* GIAposRelTranslatorRulesTokenLayers = SANInodes.getGIAposRelTranslatorRulesTokenLayersGlobal();
+	vector<XMLparserTag*>* SANIrulesTokenLayers = SANInodes.getSANIrulesTokenLayersGlobal();
 	vector<SANIGroupType*>* SANIGroupTypes = SANInodes.getSANIGroupTypesGlobal();
 	SANIpropagateOperations.resetAllNeuronComponents(SANIGroupTypes, GIA_POS_REL_TRANSLATOR_RULES_GROUP_BOOL_INDEX_ALLGROUPTYPES_NEURON_DEMARKATEOPTIMUMPATHWAY_RESET);
 	translatorVariables->parserDemarkateOptimumPathway = true;
-	if(GIAposRelTranslatorPermutations.executeTxtRelTranslatorWrapper2(translatorVariables, GIAposRelTranslatorRulesTokenLayers, SANIGroupTypes, translatorVariables->currentPreprocessorSentenceInList))
+	if(GIAposRelTranslatorPermutations.executeTxtRelTranslatorWrapper2(translatorVariables, SANIrulesTokenLayers, SANIGroupTypes, translatorVariables->currentPreprocessorSentenceInList))
 	{
 		result = false;
 	}

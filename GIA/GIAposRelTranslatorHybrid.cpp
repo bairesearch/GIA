@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorHybrid.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m3b 01-August-2020
+ * Project Version: 3m3c 01-August-2020
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Hybrid
  * /
@@ -138,8 +138,8 @@ bool GIAposRelTranslatorHybridClass::executeTxtRelTranslatorDepreciated(GIAprepr
 	
 	XMLparserTag* firstLogicReferenceClassTag = NULL;
 
-	vector<XMLparserTag*> GIAposRelTranslatorRulesTokenLayers;
-	if(!GIAposRelTranslatorRules.extractGIAposRelTranslatorRulesTokens(&GIAposRelTranslatorRulesTokenLayers))
+	vector<XMLparserTag*> SANIrulesTokenLayers;
+	if(!SANIrules.extractSANIrulesTokens(&SANIrulesTokenLayers))
 	{
 		result = true;
 	}
@@ -153,7 +153,7 @@ bool GIAposRelTranslatorHybridClass::executeTxtRelTranslatorDepreciated(GIAprepr
 	while(currentGIApreprocessorSentenceInList->next != NULL)
 	{
 		//string sentenceContentsOriginalText = removePrependingWhiteSpace(sentenceContents);	//only for NLC?
-		if(!executeTxtRelTranslatorDepreciatedSentence(currentGIApreprocessorSentenceInList, GIAposRelTranslatorRulesTokenLayers))
+		if(!executeTxtRelTranslatorDepreciatedSentence(currentGIApreprocessorSentenceInList, SANIrulesTokenLayers))
 		{
 			result = false;
 		}
@@ -203,7 +203,7 @@ bool GIAposRelTranslatorHybridClass::executeTxtRelTranslatorDepreciated(GIAprepr
 }
 
 
-bool GIAposRelTranslatorHybridClass::executeTxtRelTranslatorDepreciatedSentence(GIApreprocessorSentence* currentGIApreprocessorSentenceInList, vector<XMLparserTag*>* GIAposRelTranslatorRulesTokenLayers)
+bool GIAposRelTranslatorHybridClass::executeTxtRelTranslatorDepreciatedSentence(GIApreprocessorSentence* currentGIApreprocessorSentenceInList, vector<XMLparserTag*>* SANIrulesTokenLayers)
 {
 	bool result = true;
 	
@@ -215,7 +215,7 @@ bool GIAposRelTranslatorHybridClass::executeTxtRelTranslatorDepreciatedSentence(
 	int sentenceIndexOriginal = currentGIApreprocessorSentenceInList->sentenceIndexOriginal;
 
 	#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE
-	if(!GIAposRelTranslatorHybridLogicReferenceObject.executeLogicReferencePreprocessor(sentenceContentsWordList, currentGIApreprocessorSentenceInList, GIAposRelTranslatorRulesTokenLayers))
+	if(!GIAposRelTranslatorHybridLogicReferenceObject.executeLogicReferencePreprocessor(sentenceContentsWordList, currentGIApreprocessorSentenceInList, SANIrulesTokenLayers))
 	{
 		result = false;
 	}

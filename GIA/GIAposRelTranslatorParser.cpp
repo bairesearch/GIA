@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m3b 01-August-2020
+ * Project Version: 3m3c 01-August-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator Parser
  * /
@@ -80,10 +80,10 @@ bool GIAposRelTranslatorParserClass::convertSentenceTxtRelationsIntoGIAnetworkNo
 	{
 	#endif
 	#endif
-		vector<XMLparserTag*>* GIAposRelTranslatorRulesTokenLayers = GIAposRelTranslatorRules.getGIAposRelTranslatorRulesTokenLayersGlobal();
-		vector<SANIGroupType*>* SANIGroupTypes = GIAposRelTranslatorRules.getSANIGroupTypesGlobal();
+		vector<XMLparserTag*>* SANIrulesTokenLayers = SANIrules.getSANIrulesTokenLayersGlobal();
+		vector<SANIGroupType*>* SANIGroupTypes = SANIrules.getSANIGroupTypesGlobal();
 		translatorVariables->parserAllowed = false;
-		if(GIAposRelTranslatorPermutations.executeTxtRelTranslatorWrapper2(translatorVariables, GIAposRelTranslatorRulesTokenLayers, SANIGroupTypes, translatorVariables->currentPreprocessorSentenceInList))
+		if(GIAposRelTranslatorPermutations.executeTxtRelTranslatorWrapper2(translatorVariables, SANIrulesTokenLayers, SANIGroupTypes, translatorVariables->currentPreprocessorSentenceInList))
 		{
 			result = false;
 		}
@@ -393,10 +393,10 @@ bool GIAposRelTranslatorParserClass::generateSemanticRelationsFromTxtRelationsWr
 {
 	bool result = true;
 	
-	vector<XMLparserTag*>* GIAposRelTranslatorRulesTokenLayers = SANInodes.getGIAposRelTranslatorRulesTokenLayersGlobal();
+	vector<XMLparserTag*>* SANIrulesTokenLayers = SANInodes.getSANIrulesTokenLayersGlobal();
 	vector<SANIGroupType*>* SANIGroupTypes = SANInodes.getSANIGroupTypesGlobal();
 
-	if(!GIAposRelTranslatorPermutations.executeTxtRelTranslatorWrapper2(translatorVariables, GIAposRelTranslatorRulesTokenLayers, SANIGroupTypes, translatorVariables->currentPreprocessorSentenceInList))
+	if(!GIAposRelTranslatorPermutations.executeTxtRelTranslatorWrapper2(translatorVariables, SANIrulesTokenLayers, SANIGroupTypes, translatorVariables->currentPreprocessorSentenceInList))
 	{
 		result = false;
 	}

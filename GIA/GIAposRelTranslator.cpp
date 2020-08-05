@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m3b 01-August-2020
+ * Project Version: 3m3c 01-August-2020
  * Requirements: requires plain text file
  * Description: Part-of-speech Relation Translator
  * /
@@ -87,8 +87,8 @@ bool GIAposRelTranslatorClass::parseTxtfileAndCreateSemanticNetworkBasedUponSema
 	#endif
 
 	vector<SANIGroupType*>* SANIGroupTypes = new vector<SANIGroupType*>;
-	vector<XMLparserTag*>* GIAposRelTranslatorRulesTokenLayers = new vector<XMLparserTag*>;
-	if(!GIAposRelTranslatorRules.extractGIAposRelTranslatorRules(SANIGroupTypes, GIAposRelTranslatorRulesTokenLayers))
+	vector<XMLparserTag*>* SANIrulesTokenLayers = new vector<XMLparserTag*>;
+	if(!SANIrules.extractSANIrules(SANIGroupTypes, SANIrulesTokenLayers))
 	{
 		result = false;
 	}
@@ -96,7 +96,7 @@ bool GIAposRelTranslatorClass::parseTxtfileAndCreateSemanticNetworkBasedUponSema
 	//cout << "SANIGroupTypes->size() = " << SANIGroupTypes->size() << endl;
 	
 	#ifdef SANI
-	if(!SANIformation.createSANI(GIAposRelTranslatorRulesTokenLayers, SANIGroupTypes))
+	if(!SANIformation.createSANI(SANIrulesTokenLayers, SANIGroupTypes))
 	{
 		result = false;
 	}
@@ -125,7 +125,7 @@ bool GIAposRelTranslatorClass::parseTxtfileAndCreateSemanticNetworkBasedUponSema
 	/*
 	#ifdef SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OPTIMISED
 	translatorVariables->parserDemarkateOptimumPathway = true;	//note actual demarkateOptimumPathwayBackprop isnt required to be executed (it is done by GIAtranslatorClass::convertSentenceRelationsIntoGIAnetworkNodesWrapper for the given sentence), but everything else is (ie code require to extract 
-	if(!GIAposRelTranslatorPermutations.executeTxtRelTranslatorWrapper(translatorVariables, GIAposRelTranslatorRulesTokenLayers, SANIGroupTypes))
+	if(!GIAposRelTranslatorPermutations.executeTxtRelTranslatorWrapper(translatorVariables, SANIrulesTokenLayers, SANIGroupTypes))
 	{
 		result = false;
 	}
@@ -133,7 +133,7 @@ bool GIAposRelTranslatorClass::parseTxtfileAndCreateSemanticNetworkBasedUponSema
 	#endif
 	*/
 	#else
-	if(!GIAposRelTranslatorPermutations.executeTxtRelTranslatorWrapper(translatorVariables, GIAposRelTranslatorRulesTokenLayers, SANIGroupTypes))
+	if(!GIAposRelTranslatorPermutations.executeTxtRelTranslatorWrapper(translatorVariables, SANIrulesTokenLayers, SANIGroupTypes))
 	{
 		result = false;
 	}

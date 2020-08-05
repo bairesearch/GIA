@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslator.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m3b 01-August-2020
+ * Project Version: 3m3c 01-August-2020
  * Requirements: requires plain text file
  * Description: Part-of-speech Relation Translator
  * /
@@ -45,7 +45,7 @@
 #ifdef GIA_POS_REL_TRANSLATOR_HYBRID
 #include "GIAposRelTranslatorHybrid.hpp"
 #endif
-#include "GIAposRelTranslatorRules.hpp"
+#include "SANIrules.hpp"
 #ifdef SANI
 #include "SANIformation.hpp"
 #include "SANIpropagateOperations.hpp"
@@ -80,7 +80,7 @@ class GIAposRelTranslatorClass
 	//#ifndef SANI_PARSE_SIMULTANEOUS
 	private: GIAposRelTranslatorPermutationsClass GIAposRelTranslatorPermutations;
 	//#endif
-	private: GIAposRelTranslatorRulesClass GIAposRelTranslatorRules;
+	private: SANIrulesClass SANIrules;
 	#ifdef GIA_PREPROCESSOR_INITIALISE_WORD_INDEX_LIST_FROM_LRP_FILES
 	private: GIApreprocessorWordIdentificationClass GIApreprocessorWordIdentification;
 	#endif

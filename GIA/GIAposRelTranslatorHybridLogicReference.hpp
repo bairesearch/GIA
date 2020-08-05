@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorHybridLogicReference.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m3b 01-August-2020
+ * Project Version: 3m3c 01-August-2020
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Hybrid Logic Reference
  * /
@@ -39,7 +39,7 @@
 #include "GIAglobalDefs.hpp"
 #include "GIAposRelTranslatorHybridSentenceClass.hpp"
 #include "GIAposRelTranslatorHybridReferenceSet.hpp"
-#include "GIAposRelTranslatorRules.hpp"
+#include "SANIrules.hpp"
 #include "GIApreprocessorWordIdentification.hpp"	//required for isIntrawordPunctuationMark only
 #include "XMLparserClass.hpp"
 
@@ -56,11 +56,11 @@ class GIAposRelTranslatorHybridLogicReferenceClass
 	private: GIApreprocessorWordClass GIApreprocessorWordIdentification;
 	private: GIAposRelTranslatorHybridSentenceClassClass GIAposRelTranslatorHybridSentenceClass;
 	private: GIAposRelTranslatorHybridReferenceSetClass GIAposRelTranslatorHybridReferenceSet;
-	private: GIAposRelTranslatorRulesClass GIAposRelTranslatorRules;
+	private: SANIrulesClass SANIrules;
 
 	#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE
 	#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_DEPRECIATED
-	public: bool executeLogicReferencePreprocessor(const vector<GIApreprocessorPlainTextWord*>* sentenceContentsWordList, GIApreprocessorSentence* currentGIApreprocessorSentenceInList, vector<XMLparserTag*>* GIAposRelTranslatorRulesTokenLayers);
+	public: bool executeLogicReferencePreprocessor(const vector<GIApreprocessorPlainTextWord*>* sentenceContentsWordList, GIApreprocessorSentence* currentGIApreprocessorSentenceInList, vector<XMLparserTag*>* SANIrulesTokenLayers);
 		private: void addSentenceToText(string* sentenceContentsPreprocessed, GIApreprocessorSubReferenceSet* referenceSet, int* sentenceIndex);
 		private: bool logicReferenceClassIsPreposition(GIAposRelTranslatorHybridLogicReference* logicReference);
 		private: bool initialiseNextLogicReferenceConjunction(GIAposRelTranslatorHybridLogicReference** currentLogicReferenceInList, const int wordIndexSentence);

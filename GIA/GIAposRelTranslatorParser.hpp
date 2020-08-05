@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorParser.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m3b 01-August-2020
+ * Project Version: 3m3c 01-August-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator Parser
  * /
@@ -58,7 +58,7 @@
 #include "GIAtranslatorReferencing.hpp"
 #include "GIAsemRelTranslatorParser.hpp"
 #include "GIAsynRelTranslatorParser.hpp"
-//#include "GIAposRelTranslatorRules.hpp"
+//#include "SANIrules.hpp"
 #include "SANInodes.hpp"
 #include "SANInodesGroupClass.hpp"
 #include "SANInodesComponentClass.hpp"
@@ -91,7 +91,7 @@ class GIAposRelTranslatorParserClass
 	private: GIAtranslatorReferencingClass GIAtranslatorReferencing;
 	private: GIAsemRelTranslatorParserClass GIAsemRelTranslatorParser;
 	private: GIAsynRelTranslatorParserClass GIAsynRelTranslatorParser;
-	//private: GIAposRelTranslatorRulesClass GIAposRelTranslatorRules;
+	//private: SANIrulesClass SANIrules;
 	private: SANInodesClass SANInodes;	
 	private: SANInodesGroupClass SANInodesGroupClassObject;
 	private: SANInodesComponentClass SANInodesComponentClassObject;

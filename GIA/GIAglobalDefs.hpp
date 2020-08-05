@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m3b 01-August-2020
+ * Project Version: 3m3c 01-August-2020
  * Requirements: 
  * Description: GIA specific global definitions
  * /
@@ -855,7 +855,7 @@
 
 			#define GIA_POS_REL_TRANSLATOR_RULES_GIA3	//GIA3
 			#ifdef GIA_POS_REL_TRANSLATOR_RULES_GIA3
-				//parse GIAposRelTranslatorRules.xml file for all semantic relations
+				//parse SANIrules.xml file for all semantic relations
 				
 				#define GIA_POS_REL_TRANSLATOR_RULES_GIA3_CONNECT_MEAURES_AS_CONDITIONS_BACKWARDS_COMPATIBILITY
 				
@@ -889,7 +889,7 @@
 				
 				#define GIA_POS_REL_TRANSLATOR_STORE_REFERENCE_SETS	//for backwards compatibility
 			#else
-				//parse GIAposRelTranslatorRules.xml file for logicReference and referenceSets only (not coded)
+				//parse SANIrules.xml file for logicReference and referenceSets only (not coded)
 				#define GIA_POS_REL_TRANSLATOR_HYBRID		//NOT currently supported	//optional: only parses logic references and reference sets - doesn't parse subreference sets (relies on GIA syn/sem translator to parse these)
 			#endif
 			

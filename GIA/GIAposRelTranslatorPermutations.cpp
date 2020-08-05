@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorPermutations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m3b 01-August-2020
+ * Project Version: 3m3c 01-August-2020
  * Requirements: requires plain text file
  * Description: Part-of-speech Relation Translator Permutations
  * /
@@ -48,7 +48,7 @@ static bool parseIsolatedSubreferenceSetsRecord;
 
 #endif
 
-bool GIAposRelTranslatorPermutationsClass::executeTxtRelTranslatorWrapper(GIAtranslatorVariablesClass* translatorVariables, vector<XMLparserTag*>* GIAposRelTranslatorRulesTokenLayers, vector<SANIGroupType*>* SANIGroupTypes)
+bool GIAposRelTranslatorPermutationsClass::executeTxtRelTranslatorWrapper(GIAtranslatorVariablesClass* translatorVariables, vector<XMLparserTag*>* SANIrulesTokenLayers, vector<SANIGroupType*>* SANIGroupTypes)
 {
 	bool result = true;
 
@@ -101,7 +101,7 @@ bool GIAposRelTranslatorPermutationsClass::executeTxtRelTranslatorWrapper(GIAtra
 		cout << "GIAposRelTranslatorPermutationsClass::executeTxtRelTranslator{}: sentence " << currentGIApreprocessorSentenceInList->sentenceIndexOriginal << ", sentenceContents = " << GIApreprocessorWordClassObject.printWordListString(GIApreprocessorSentenceClassObject.getSentenceContents(currentGIApreprocessorSentenceInList)) << endl;
 		#endif
 			
-		if(!executeTxtRelTranslatorWrapper2(translatorVariables, GIAposRelTranslatorRulesTokenLayers, SANIGroupTypes, currentGIApreprocessorSentenceInList))
+		if(!executeTxtRelTranslatorWrapper2(translatorVariables, SANIrulesTokenLayers, SANIGroupTypes, currentGIApreprocessorSentenceInList))
 		{
 			result = false;
 		}
@@ -119,7 +119,7 @@ bool GIAposRelTranslatorPermutationsClass::executeTxtRelTranslatorWrapper(GIAtra
 	return result;
 }
 
-bool GIAposRelTranslatorPermutationsClass::executeTxtRelTranslatorWrapper2(GIAtranslatorVariablesClass* translatorVariables, vector<XMLparserTag*>* GIAposRelTranslatorRulesTokenLayers, vector<SANIGroupType*>* SANIGroupTypes, GIApreprocessorSentence* currentGIApreprocessorSentenceInList)
+bool GIAposRelTranslatorPermutationsClass::executeTxtRelTranslatorWrapper2(GIAtranslatorVariablesClass* translatorVariables, vector<XMLparserTag*>* SANIrulesTokenLayers, vector<SANIGroupType*>* SANIGroupTypes, GIApreprocessorSentence* currentGIApreprocessorSentenceInList)
 {
 	bool result = true;
 
@@ -152,7 +152,7 @@ bool GIAposRelTranslatorPermutationsClass::executeTxtRelTranslatorWrapper2(GIAtr
 		result = false;
 	}
 
-	if(!executeTxtRelTranslator(translatorVariables, GIAposRelTranslatorRulesTokenLayers, SANIGroupTypes, currentGIApreprocessorSentenceInList, &POSambiguityInfoPermutation))
+	if(!executeTxtRelTranslator(translatorVariables, SANIrulesTokenLayers, SANIGroupTypes, currentGIApreprocessorSentenceInList, &POSambiguityInfoPermutation))
 	{
 		result = false;
 	}
@@ -256,7 +256,7 @@ bool GIAposRelTranslatorPermutationsClass::transferParseTreePOStypeInferredToWor
 #endif
 
 
-bool GIAposRelTranslatorPermutationsClass::executeTxtRelTranslator(GIAtranslatorVariablesClass* translatorVariables, vector<XMLparserTag*>* GIAposRelTranslatorRulesTokenLayers, vector<SANIGroupType*>* SANIGroupTypes, GIApreprocessorSentence* currentGIApreprocessorSentenceInList, vector<uint64_t>* POSambiguityInfoPermutation)
+bool GIAposRelTranslatorPermutationsClass::executeTxtRelTranslator(GIAtranslatorVariablesClass* translatorVariables, vector<XMLparserTag*>* SANIrulesTokenLayers, vector<SANIGroupType*>* SANIGroupTypes, GIApreprocessorSentence* currentGIApreprocessorSentenceInList, vector<uint64_t>* POSambiguityInfoPermutation)
 {
 	bool result = true;
 
@@ -308,9 +308,9 @@ bool GIAposRelTranslatorPermutationsClass::executeTxtRelTranslator(GIAtranslator
 		#endif
 
 		#ifdef GIA_POS_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START
-		if(generateParseTreeIntroWrapper(translatorVariables, GIAposRelTranslatorRulesTokenLayers, SANIGroupTypes, currentGIApreprocessorSentenceInList, firstParseTreeGroup, &performance, parseIsolatedSubreferenceSets1, &POSambiguityInfoUnambiguousPermutationArray, &iOptimum, &minIndexOfMatchesFoundBackupOptimum))	
+		if(generateParseTreeIntroWrapper(translatorVariables, SANIrulesTokenLayers, SANIGroupTypes, currentGIApreprocessorSentenceInList, firstParseTreeGroup, &performance, parseIsolatedSubreferenceSets1, &POSambiguityInfoUnambiguousPermutationArray, &iOptimum, &minIndexOfMatchesFoundBackupOptimum))	
 		#else
-		if(generateParseTreeIntroWrapper(translatorVariables, GIAposRelTranslatorRulesTokenLayers, SANIGroupTypes, currentGIApreprocessorSentenceInList, firstParseTreeGroup, &performance, parseIsolatedSubreferenceSets1, POSambiguityInfoPermutation))
+		if(generateParseTreeIntroWrapper(translatorVariables, SANIrulesTokenLayers, SANIGroupTypes, currentGIApreprocessorSentenceInList, firstParseTreeGroup, &performance, parseIsolatedSubreferenceSets1, POSambiguityInfoPermutation))
 		#endif
 		{
 			foundParse = true;
@@ -327,9 +327,9 @@ bool GIAposRelTranslatorPermutationsClass::executeTxtRelTranslator(GIAtranslator
 			{
 			#endif
 				#ifdef GIA_POS_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START
-				if(generateParseTreeIntroWrapper(translatorVariables, GIAposRelTranslatorRulesTokenLayers, SANIGroupTypes, currentGIApreprocessorSentenceInList, firstParseTreeGroup, &performance, parseIsolatedSubreferenceSets2, &POSambiguityInfoUnambiguousPermutationArray, &iOptimum, &minIndexOfMatchesFoundBackupOptimum))	
+				if(generateParseTreeIntroWrapper(translatorVariables, SANIrulesTokenLayers, SANIGroupTypes, currentGIApreprocessorSentenceInList, firstParseTreeGroup, &performance, parseIsolatedSubreferenceSets2, &POSambiguityInfoUnambiguousPermutationArray, &iOptimum, &minIndexOfMatchesFoundBackupOptimum))	
 				#else
-				if(generateParseTreeIntroWrapper(translatorVariables, GIAposRelTranslatorRulesTokenLayers, SANIGroupTypes, currentGIApreprocessorSentenceInList, firstParseTreeGroup, &performance, parseIsolatedSubreferenceSets2, POSambiguityInfoPermutation))
+				if(generateParseTreeIntroWrapper(translatorVariables, SANIrulesTokenLayers, SANIGroupTypes, currentGIApreprocessorSentenceInList, firstParseTreeGroup, &performance, parseIsolatedSubreferenceSets2, POSambiguityInfoPermutation))
 				#endif
 				{
 					foundParse = true;
@@ -347,9 +347,9 @@ bool GIAposRelTranslatorPermutationsClass::executeTxtRelTranslator(GIAtranslator
 	else
 	{
 		#ifdef GIA_POS_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START
-		if(generateParseTreeIntroWrapper(translatorVariables, GIAposRelTranslatorRulesTokenLayers, SANIGroupTypes, currentGIApreprocessorSentenceInList, firstParseTreeGroup, &performance, parseIsolatedSubreferenceSetsRecord, &POSambiguityInfoUnambiguousPermutationArray, &iOptimum, &minIndexOfMatchesFoundBackupOptimum))	
+		if(generateParseTreeIntroWrapper(translatorVariables, SANIrulesTokenLayers, SANIGroupTypes, currentGIApreprocessorSentenceInList, firstParseTreeGroup, &performance, parseIsolatedSubreferenceSetsRecord, &POSambiguityInfoUnambiguousPermutationArray, &iOptimum, &minIndexOfMatchesFoundBackupOptimum))	
 		#else
-		if(generateParseTreeIntroWrapper(translatorVariables, GIAposRelTranslatorRulesTokenLayers, SANIGroupTypes, currentGIApreprocessorSentenceInList, firstParseTreeGroup, &performance, parseIsolatedSubreferenceSetsRecord, POSambiguityInfoPermutation))
+		if(generateParseTreeIntroWrapper(translatorVariables, SANIrulesTokenLayers, SANIGroupTypes, currentGIApreprocessorSentenceInList, firstParseTreeGroup, &performance, parseIsolatedSubreferenceSetsRecord, POSambiguityInfoPermutation))
 		#endif
 		{
 			foundParse = true;
@@ -383,9 +383,9 @@ bool GIAposRelTranslatorPermutationsClass::executeTxtRelTranslator(GIAtranslator
 
 
 #ifdef GIA_POS_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START
-bool GIAposRelTranslatorPermutationsClass::generateParseTreeIntroWrapper(GIAtranslatorVariablesClass* translatorVariables, vector<XMLparserTag*>* GIAposRelTranslatorRulesTokenLayers, vector<SANIGroupType*>* SANIGroupTypes, GIApreprocessorSentence* currentGIApreprocessorSentenceInList, SANIGroupParseTree* firstParseTreeGroup, int* performance, const bool parseIsolatedSubreferenceSets, vector<vector<uint64_t>*>* POSambiguityInfoUnambiguousPermutationArray, int* iOptimum, int* minIndexOfMatchesFoundBackupOptimum)
+bool GIAposRelTranslatorPermutationsClass::generateParseTreeIntroWrapper(GIAtranslatorVariablesClass* translatorVariables, vector<XMLparserTag*>* SANIrulesTokenLayers, vector<SANIGroupType*>* SANIGroupTypes, GIApreprocessorSentence* currentGIApreprocessorSentenceInList, SANIGroupParseTree* firstParseTreeGroup, int* performance, const bool parseIsolatedSubreferenceSets, vector<vector<uint64_t>*>* POSambiguityInfoUnambiguousPermutationArray, int* iOptimum, int* minIndexOfMatchesFoundBackupOptimum)
 #else
-bool GIAposRelTranslatorPermutationsClass::generateParseTreeIntroWrapper(GIAtranslatorVariablesClass* translatorVariables, vector<XMLparserTag*>* GIAposRelTranslatorRulesTokenLayers, vector<SANIGroupType*>* SANIGroupTypes, GIApreprocessorSentence* currentGIApreprocessorSentenceInList, SANIGroupParseTree* firstParseTreeGroup, int* performance, const bool parseIsolatedSubreferenceSets, vector<uint64_t>* POSambiguityInfoPermutation)
+bool GIAposRelTranslatorPermutationsClass::generateParseTreeIntroWrapper(GIAtranslatorVariablesClass* translatorVariables, vector<XMLparserTag*>* SANIrulesTokenLayers, vector<SANIGroupType*>* SANIGroupTypes, GIApreprocessorSentence* currentGIApreprocessorSentenceInList, SANIGroupParseTree* firstParseTreeGroup, int* performance, const bool parseIsolatedSubreferenceSets, vector<uint64_t>* POSambiguityInfoPermutation)
 #endif
 {
 	#ifdef SANI_SEQUENCE_GRAMMAR_THROW_SENTENCE_FAIL_ERROR_IF_ANY_POS_PERMUTATION_FAILS
@@ -471,7 +471,7 @@ bool GIAposRelTranslatorPermutationsClass::generateParseTreeIntroWrapper(GIAtran
 			if(SANIpropagate.executeTxtRelTranslatorNeuralNetwork(translatorVariables, SANIGroupTypes, sentenceContents, &firstParseTreeGroupTemp, parseIsolatedSubreferenceSets, parserEnabled, &performanceTemp))
 			#endif
 			#else	
-			if(SANIpropagateInverse.generateParseTreeIntro(GIAposRelTranslatorRulesTokenLayers, SANIGroupTypes, sentenceContents, firstParseTreeGroupTemp, &performanceTemp, parseIsolatedSubreferenceSets))
+			if(SANIpropagateInverse.generateParseTreeIntro(SANIrulesTokenLayers, SANIGroupTypes, sentenceContents, firstParseTreeGroupTemp, &performanceTemp, parseIsolatedSubreferenceSets))
 			#endif
 			{
 				passedTemp =  true;

@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorPOStagger.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m3b 01-August-2020
+ * Project Version: 3m3c 01-August-2020
  * Requirements: requires plain text file
  * Description: Preprocessor POS tagger
  * /
@@ -733,7 +733,7 @@ bool GIApreprocessorPOStaggerClass::generatePOStaggerDatabaseFromWikiDumpText(co
 									#ifdef GIA_PREPROCESSOR_POS_TAGGER_GENERATE_NEURAL_NETWORK_SEQUENCE_GRAMMAR
 									//cout << "GIA_PREPROCESSOR_POS_TAGGER_GENERATE_NEURAL_NETWORK_SEQUENCE_GRAMMAR: executeTxtRelTranslatorNeuralNetwork" << endl;
 									
-									vector<SANIGroupType*>* SANIGroupTypes = GIAposRelTranslatorRules.getSANIGroupTypesGlobal();
+									vector<SANIGroupType*>* SANIGroupTypes = SANIrules.getSANIGroupTypesGlobal();
 									bool createNewConnections = true; 
 									vector<SANIGroupNeuralNetwork*> firstLayer;
 									if(SANIpropagateCompactGenerate.executeTxtRelTranslatorNeuralNetwork(&translatorVariablesNOTUSED, SANIGroupTypes, sentenceContents, createNewConnections))
