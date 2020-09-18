@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorReferencing.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m6a 09-September-2020
+ * Project Version: 3m7a 11-September-2020
  * Requirements: requires text parsed by X Parser
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
@@ -45,7 +45,7 @@
 #include "GIAtranslatorOperations.hpp"
 #include "GIAdatabase.hpp"
 #ifdef SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OLD
-#include "GIApreprocessorWordIdentification.hpp"
+#include "LRPpreprocessorWordIdentification.hpp"
 #endif
 #include "SHAREDvars.hpp"
 
@@ -58,7 +58,7 @@ class GIAtranslatorReferencingClass
 	private: GIAqueryClass GIAquery;
 	private: GIAdatabaseClass GIAdatabase;
 	#ifdef SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OLD
-	private: GIApreprocessorWordIdentificationClass GIApreprocessorWordIdentification;
+	private: LRPpreprocessorWordIdentificationClass LRPpreprocessorWordIdentification;
 	#endif
 	
 	public: void identifyComparisonVariableAlternateMethod(GIAtranslatorVariablesClass* translatorVariables);				//Stanford Compatible / Relex Specific [$qvars not supported. What is the 'attr' stanford dependency relation?]

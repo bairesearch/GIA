@@ -26,7 +26,7 @@
  * File Name: GIAsemRelTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m6a 09-September-2020
+ * Project Version: 3m7a 11-September-2020
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  * Description: Semantic Relation Translator
  * /
@@ -152,9 +152,9 @@ bool GIAsemRelTranslatorClass::lookupSemanticParserFiles(GIAsentence* firstSente
 						bool foundACorpusSubsetForSecondWordInTuple = false;
 						#endif
 
-						if(currentSentenceInList->firstFeatureInList->entityIndex != GIA_NLP_START_ENTITY_INDEX)
+						if(currentSentenceInList->firstFeatureInList->entityIndex != LRP_NLP_START_ENTITY_INDEX)
 						{
-							cerr << "lookupSemanticParserFiles{} implementation error*: (sentence->firstFeatureInList->entityIndex != GIA_NLP_START_ENTITY_INDEX)" << endl;
+							cerr << "lookupSemanticParserFiles{} implementation error*: (sentence->firstFeatureInList->entityIndex != LRP_NLP_START_ENTITY_INDEX)" << endl;
 							exit(EXIT_ERROR);
 						}
 						#ifdef GIA_SEM_REL_TRANSLATOR_SUBSETS_OPTIMISE_BASED_ON_CONJUNCTIONS
@@ -167,7 +167,7 @@ bool GIAsemRelTranslatorClass::lookupSemanticParserFiles(GIAsentence* firstSente
 						#endif
 							int maxIndexOfFirstWordInTuple = (secondWordInTupleFeature->entityIndex - (GIA_SEM_REL_TRANSLATOR_CONNECTIONIST_NETWORK_MIN_SUBSET_SIZE-1));
 							#ifdef GIA_SEM_REL_TRANSLATOR_SUBSETS_OPTIMISED_DATABASE
-							for(int firstWordInTupleIndex = GIA_NLP_START_ENTITY_INDEX; firstWordInTupleIndex <= maxIndexOfFirstWordInTuple; firstWordInTupleIndex++)
+							for(int firstWordInTupleIndex = LRP_NLP_START_ENTITY_INDEX; firstWordInTupleIndex <= maxIndexOfFirstWordInTuple; firstWordInTupleIndex++)
 							{
 								int GIA2semanticDependencyRelationProbabilityTotalArray[GIA_SEM_REL_TRANSLATOR_SUBSETS_OPTIMISED_DATABASE_SEMANTIC_RELATION_NUMBER_OF_TYPES];
 								GIAsemRelTranslatorDatabase.initialiseIntArray(GIA2semanticDependencyRelationProbabilityTotalArray, GIA_SEM_REL_TRANSLATOR_SUBSETS_OPTIMISED_DATABASE_SEMANTIC_RELATION_NUMBER_OF_TYPES, 0);

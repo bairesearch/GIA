@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorParser.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m6a 09-September-2020
+ * Project Version: 3m7a 11-September-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator Parser
  * /
@@ -64,13 +64,14 @@
 #include "SANInodesComponentClass.hpp"
 #include "GIAposRelTranslatorHybrid.hpp"
 #ifdef SANI_PARSE_SIMULTANEOUS
-#include "GIAposRelTranslatorPermutations.hpp"
+#include "SANIposRelTranslatorPermutations.hpp"
 #else
 #include "GIAposRelTranslatorParserOperations.hpp"
 #endif
 
 #include "GIAsynRelTranslatorDefineSubstances.hpp"
 #include "GIAsynRelTranslatorApplyAdvancedFeatures.hpp"
+#include "LRPpreprocessorWordClass.hpp"
 #include "SHAREDvars.hpp"
 
 class GIAposRelTranslatorParserClass
@@ -97,7 +98,7 @@ class GIAposRelTranslatorParserClass
 	private: SANInodesComponentClass SANInodesComponentClassObject;
 	private: GIAposRelTranslatorHybridClass GIAposRelTranslatorHybrid;
 	#ifdef SANI_PARSE_SIMULTANEOUS
-	private: GIAposRelTranslatorPermutationsClass GIAposRelTranslatorPermutations;	
+	private: SANIposRelTranslatorPermutationsClass SANIposRelTranslatorPermutations;	
 	#else
 	#ifdef GIA_POS_REL_TRANSLATOR_RULES_USE
 	private: GIAposRelTranslatorParserOperationsClass GIAposRelTranslatorParserOperations;
@@ -105,9 +106,12 @@ class GIAposRelTranslatorParserClass
 	#endif		
 	private: GIAsynRelTranslatorDefineSubstancesClass GIAsynRelTranslatorDefineSubstances;
 	private: GIAsynRelTranslatorApplyAdvancedFeaturesClass GIAsynRelTranslatorApplyAdvancedFeatures;
-	private: GIApreprocessorSentenceClass GIApreprocessorSentenceClassObject;
+	private: LRPpreprocessorSentenceClass LRPpreprocessorSentenceClassObject;
+	private: LRPpreprocessorWordClassClass LRPpreprocessorWordClassObject;
 	private: SHAREDvarsClass SHAREDvars;
 	
+	public: void createSANItranslatorVariablesFromGIAtranslatorVariables(GIAtranslatorVariablesClass* translatorVariables, SANItranslatorVariablesClass* SANItranslatorVariables);
+
 	public: bool convertSentenceTxtRelationsIntoGIAnetworkNodes(GIAtranslatorVariablesClass* translatorVariables, const bool linkPreestablishedReferencesGIA, GIAcoreference* firstGIAcoreferenceInList);
 		private: bool locateAndAddAllNetworkIndexEntitiesBasedOnTxtRelations(GIAtranslatorVariablesClass* translatorVariables);
 		#ifdef GIA_POS_REL_TRANSLATOR_RULES_CODE_COMPONENT_QUERY
@@ -120,7 +124,7 @@ class GIAposRelTranslatorParserClass
 				#ifdef GIA_POS_REL_TRANSLATOR_RULES_ASSUME_HIGH_LEVEL_REFERENCE_SETS_DO_NOT_CONTAIN_EXPLICIT_SEMANTIC_RELATION_FUNCTION
 				private: bool reconcileSameReferenceSetConnectionsForAllRelationshipEntities(GIAtranslatorVariablesClass* translatorVariables);
 				#endif
-			private: void setPreprocessorSentenceTranslatorEntityReferences(GIApreprocessorSentence* currentPreprocessorSentenceInList, constEffective vector<GIAentityNode*>* GIAentityNodeArray);
+			private: void setPreprocessorSentenceTranslatorEntityReferences(LRPpreprocessorSentence* currentPreprocessorSentenceInList, constEffective vector<GIAentityNode*>* GIAentityNodeArray);
 
 		private: void defineSubstancesBasedOnNetworkAndDeterminerInfo(GIAtranslatorVariablesClass* translatorVariables);
 

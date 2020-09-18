@@ -27,7 +27,7 @@
  * File Name: GIAposRelTranslatorParserOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m6a 09-September-2020
+ * Project Version: 3m7a 11-September-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator Parser Operations
  * /
@@ -72,7 +72,7 @@ bool GIAposRelTranslatorParserOperationsClass::generateSemanticRelationsFromTxtR
 		#ifdef SANI_DEBUG_PRINT_FINAL
 		SANIpropagateOperations.printComponent(parseTreeComponent, layer);
 		#endif
-		#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS2
+		#ifdef SANI_DEBUG_RULES_PRINT_PARSE_PROCESS2
 		SANIpropagateOperations.printComponent(parseTreeComponent, layer);
 		#endif
 		
@@ -93,7 +93,7 @@ bool GIAposRelTranslatorParserOperationsClass::generateSemanticRelationsFromTxtR
 		}
 		else if(parseTreeComponent->componentType == GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_COMPONENTTYPE_STRING)
 		{
-			GIApreprocessorPlainTextWord* parseTreeComponentWord = parseTreeComponent->candidateStringMatch;
+			LRPpreprocessorPlainTextWord* parseTreeComponentWord = parseTreeComponent->candidateStringMatch;
 			parseTreeComponentSignalData->semanticRelationReturnEntity = parseTreeComponentWord->translatorEntity;
 			//cout << "parseTreeComponentWord->translatorEntity->entityName = " << parseTreeComponentWord->translatorEntity->entityName << endl;
 		}
@@ -159,7 +159,7 @@ bool GIAposRelTranslatorParserOperationsClass::generateSemanticRelationsFromTxtR
 	{
 		SANIComponentParseTree* parseTreeComponent = (currentParseTreeGroup->components).at(i);
 		
-		for(int w=GIA_NLP_START_ENTITY_INDEX; w<=translatorVariables->currentPreprocessorSentenceInList->sentenceContentsLRP.size(); w++)
+		for(int w=LRP_NLP_START_ENTITY_INDEX; w<=translatorVariables->currentPreprocessorSentenceInList->sentenceContentsLRP.size(); w++)
 		{
 			GIAentityNode* entity = (*translatorVariables->GIAentityNodeArray)[w];
 			#ifdef SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_STREAMLINED
@@ -170,9 +170,9 @@ bool GIAposRelTranslatorParserOperationsClass::generateSemanticRelationsFromTxtR
 			{
 				//cout << "parseTreeComponent->candidateStringMatch->translatorSentenceEntityIndex = " << parseTreeComponent->candidateStringMatch->translatorSentenceEntityIndex << endl;
 				#ifdef SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OLD_BUG
-				if(entity->entityIndexTemp == GIAtranslatorOperations.convertSentenceContentsIndexToEntityIndex(parseTreeComponent->candidateStringMatch->translatorSentenceEntityIndex))
+				if(entity->entityIndexTemp == LRPpreprocessorWordClassObject.convertSentenceContentsIndexToEntityIndex(parseTreeComponent->candidateStringMatch->translatorSentenceEntityIndex))
 				#else
-				if(entity->entityIndexTemp == parseTreeComponent->candidateStringMatch->translatorSentenceEntityIndex)	//OLD: 	if(entity->entityIndexTemp == GIAtranslatorOperations.convertSentenceContentsIndexToEntityIndex(parseTreeComponent->candidateStringMatch->translatorSentenceEntityIndex))
+				if(entity->entityIndexTemp == parseTreeComponent->candidateStringMatch->translatorSentenceEntityIndex)	//OLD: 	if(entity->entityIndexTemp == LRPpreprocessorWordClassObject.convertSentenceContentsIndexToEntityIndex(parseTreeComponent->candidateStringMatch->translatorSentenceEntityIndex))
 				#endif
 				{
 					entity->semanticRelationWordPOStypeInferred = parseTreeComponent->candidateStringMatch->wordPOStypeInferred;
@@ -242,14 +242,14 @@ bool GIAposRelTranslatorParserOperationsClass::generateSemanticRelationsFromTxtR
 		{
 			//if((currentParseTreeGroup->semanticRelationFunctionName)[j] != "")
 			//{	
-				#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS2
+				#ifdef SANI_DEBUG_RULES_PRINT_PARSE_PROCESS2
 				SANIpropagateOperations.printParseTreeDebugIndentation(layer);	
 				cout << "\e[31m (currentParseTreeGroup->semanticRelationFunctionName)[j] = " << (currentParseTreeGroup->semanticRelationFunctionName)[j] << "\e[0m" << endl; 
 				#endif
 					
 				if((parseTreeComponent->semanticRelationIndexType)[j] == GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_SEMANTIC_RELATION_INDEX_TYPE_LIST)
 				{
-					#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS2
+					#ifdef SANI_DEBUG_RULES_PRINT_PARSE_PROCESS2
 					SANIpropagateOperations.printParseTreeDebugIndentation(layer);
 					cout << "\e[31m GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_SEMANTIC_RELATION_INDEX_TYPE_LIST" << "\e[0m" << endl;
 					#endif
@@ -258,7 +258,7 @@ bool GIAposRelTranslatorParserOperationsClass::generateSemanticRelationsFromTxtR
 				}
 				else if((parseTreeComponent->semanticRelationIndexType)[j] == GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_SEMANTIC_RELATION_INDEX_TYPE_SUBJECT)
 				{
-					#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS2
+					#ifdef SANI_DEBUG_RULES_PRINT_PARSE_PROCESS2
 					SANIpropagateOperations.printParseTreeDebugIndentation(layer);
 					cout << "\e[31m 1 entitySemanticRelationFunctionSubject[j] = " << parseTreeComponentSignalData->semanticRelationReturnEntity->entityName << "\e[0m" << endl;
 					#endif
@@ -267,7 +267,7 @@ bool GIAposRelTranslatorParserOperationsClass::generateSemanticRelationsFromTxtR
 				}
 				else if((parseTreeComponent->semanticRelationIndexType)[j] == GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_SEMANTIC_RELATION_INDEX_TYPE_OBJECT)
 				{
-					#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS2
+					#ifdef SANI_DEBUG_RULES_PRINT_PARSE_PROCESS2
 					SANIpropagateOperations.printParseTreeDebugIndentation(layer);
 					cout << "\e[31m 2 entitySemanticRelationFunctionObject[j] = " << parseTreeComponentSignalData->semanticRelationReturnEntity->entityName << "\e[0m" << endl;
 					#endif
@@ -276,7 +276,7 @@ bool GIAposRelTranslatorParserOperationsClass::generateSemanticRelationsFromTxtR
 				}
 				else if((parseTreeComponent->semanticRelationIndexType)[j] == GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_SEMANTIC_RELATION_INDEX_TYPE_DELIMITER)
 				{
-					#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS2
+					#ifdef SANI_DEBUG_RULES_PRINT_PARSE_PROCESS2
 					SANIpropagateOperations.printParseTreeDebugIndentation(layer);
 					cout << "\e[31m 3 entitySemanticRelationFunctionDelimiter[j] = " << parseTreeComponentSignalData->semanticRelationReturnEntity->entityName << "\e[0m" << endl;
 					#endif
@@ -318,7 +318,7 @@ bool GIAposRelTranslatorParserOperationsClass::generateSemanticRelationsFromTxtR
 				exit(EXIT_ERROR);
 			}
 	
-			#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS2
+			#ifdef SANI_DEBUG_RULES_PRINT_PARSE_PROCESS2
 			SANIpropagateOperations.printParseTreeDebugIndentation(layer);
 			cout << "parserForwardPropogationSignalData->semanticRelationReturnEntity = " << (parserForwardPropogationSignalData->semanticRelationReturnEntity)->entityName << endl;
 			#endif
@@ -366,19 +366,19 @@ bool GIAposRelTranslatorParserOperationsClass::generateSemanticRelationsFromTxtR
 				int semanticRelationReturnFunctionNameIndexTypeDynamic = GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_SEMANTIC_RELATION_INDEX_TYPE_DELIMITER;
 				int nearestPreceedingDelimiterIndex = INT_DEFAULT_VALUE; 
 				int nearestPreceedingSubjectIndex = INT_DEFAULT_VALUE;
-				for(int w = (parseTreeComponentSignalData->semanticRelationReturnEntity)->entityIndexTemp; w>=GIA_NLP_START_ENTITY_INDEX; w--)
+				for(int w = (parseTreeComponentSignalData->semanticRelationReturnEntity)->entityIndexTemp; w>=LRP_NLP_START_ENTITY_INDEX; w--)
 				{	
-					GIApreprocessorPlainTextWord* currentWord = (*GIApreprocessorSentenceClassObject.getSentenceContents(translatorVariables->currentPreprocessorSentenceInList))[GIAtranslatorOperations.convertEntityIndexToSentenceContentsIndex(w)];
+					LRPpreprocessorPlainTextWord* currentWord = (*LRPpreprocessorSentenceClassObject.getSentenceContents(translatorVariables->currentPreprocessorSentenceInList))[LRPpreprocessorWordClassObject.convertEntityIndexToSentenceContentsIndex(w)];
 					if(nearestPreceedingDelimiterIndex == INT_DEFAULT_VALUE)
 					{
-						if(currentWord->wordPOStypeInferred == GIA_PREPROCESSOR_POS_TYPE_VERB)
+						if(currentWord->wordPOStypeInferred == LRP_PREPROCESSOR_POS_TYPE_VERB)
 						{
 							nearestPreceedingDelimiterIndex = w;
 						}
 					}
 					if(nearestPreceedingDelimiterIndex == INT_DEFAULT_VALUE)
 					{					
-						if(currentWord->wordPOStypeInferred == GIA_PREPROCESSOR_POS_TYPE_NOUN)
+						if(currentWord->wordPOStypeInferred == LRP_PREPROCESSOR_POS_TYPE_NOUN)
 						{
 							nearestPreceedingSubjectIndex = w;
 						}
@@ -396,7 +396,7 @@ bool GIAposRelTranslatorParserOperationsClass::generateSemanticRelationsFromTxtR
 			}
 			#endif
 			
-			#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS2
+			#ifdef SANI_DEBUG_RULES_PRINT_PARSE_PROCESS2
 			SANIpropagateOperations.printParseTreeDebugIndentation(layer);
 			cout << "\e[32m foundExplicitReturnFunctionName \e[0m" << endl;
 			SANIpropagateOperations.printParseTreeDebugIndentation(layer);
@@ -415,7 +415,7 @@ bool GIAposRelTranslatorParserOperationsClass::generateSemanticRelationsFromTxtR
 		}
 		if(!((parseTreeComponentSignalData->semanticRelationReturnFunctionEntityArray).empty()))	//intermediary (hidden layer); does not define semanticRelationReturnFunctionNameIndexType and semanticRelationReturnFunctionName (take from lower layer)
 		{
-			#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS2
+			#ifdef SANI_DEBUG_RULES_PRINT_PARSE_PROCESS2
 			SANIpropagateOperations.printParseTreeDebugIndentation(layer);
 			cout << "\e[32m foundImplicitReturnFunctionName" << "\e[0m" << endl;
 			for(int i=0; i<(parseTreeComponentSignalData->semanticRelationReturnFunctionEntityArray).size(); i++)
@@ -507,7 +507,7 @@ bool GIAposRelTranslatorParserOperationsClass::generateSemanticRelationsFromTxtR
 				}
 				else if(tempEntity->semanticRelationReturnFunctionNameIndexType == GIA_POS_REL_TRANSLATOR_RULES_GROUPS_COMPONENT_SEMANTIC_RELATION_INDEX_TYPE_DELIMITER)
 				{
-					#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS2
+					#ifdef SANI_DEBUG_RULES_PRINT_PARSE_PROCESS2
 					SANIpropagateOperations.printParseTreeDebugIndentation(layer);
 					cout << "\e[34m want to createSemanticRelationPair: tempEntity->semanticRelationReturnFunctionName = " << tempEntity->semanticRelationReturnFunctionName << "\e[0m" << endl;
 					SANIpropagateOperations.printParseTreeDebugIndentation(layer);
@@ -585,7 +585,7 @@ bool GIAposRelTranslatorParserOperationsClass::generateSemanticRelationsFromTxtR
 			{
 				numberOfSemanticRelationIndicesFound++;
 			}
-			#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS2
+			#ifdef SANI_DEBUG_RULES_PRINT_PARSE_PROCESS2
 			//cout << "entitySemanticRelationFunctionListArray.size() = " << entitySemanticRelationFunctionListArray.size() << endl;
 			#endif
 			if(entitySemanticRelationFunctionListArray.size() > 1)
@@ -599,7 +599,7 @@ bool GIAposRelTranslatorParserOperationsClass::generateSemanticRelationsFromTxtR
 			if(pass)
 			{
 			#endif
-				#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS2
+				#ifdef SANI_DEBUG_RULES_PRINT_PARSE_PROCESS2
 				//SANIpropagateOperations.printParseTreeDebugIndentation(layer);
 				//cout << "\e[33m **** createSemanticRelationOrdered{}: currentParseTreeGroup->semanticRelationFunctionName[i] = " << currentParseTreeGroup->semanticRelationFunctionName[i] << "\e[0m" << endl;
 					//OLD: GIAsemRelTranslatorOperations.generateGIA2semanticDependencyRelationText(entitySemanticRelationFunctionSubject[i]->entityName, entitySemanticRelationFunctionObject[i]->entityName, currentParseTreeGroup->semanticRelationFunctionName[i], entitySemanticRelationFunctionSubject[i]->semanticRelationPreprocessorEntityIndex, entitySemanticRelationFunctionObject[i]->semanticRelationPreprocessorEntityIndex, sameReferenceSet) << endl;
@@ -621,7 +621,7 @@ bool GIAposRelTranslatorParserOperationsClass::createSemanticRelationOrdered(GIA
 	{
 		if(entitySemanticRelationFunctionSubject == NULL)
 		{			
-			#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS2
+			#ifdef SANI_DEBUG_RULES_PRINT_PARSE_PROCESS2
 			//SANIpropagateOperations.printParseTreeDebugIndentation(layer);
 			//cout << "createSemanticRelationOrdered{}: " << GIAsemRelTranslatorOperations.generateGIA2semanticDependencyRelationText(entitySemanticRelationFunctionObject->entityName, entitySemanticRelationFunctionDelimiter->entityName, semanticRelationFunctionName, entitySemanticRelationFunctionObject->semanticRelationPreprocessorEntityIndex, entitySemanticRelationFunctionDelimiter->semanticRelationPreprocessorEntityIndex, sameReferenceSet) << endl;
 			#endif
@@ -629,7 +629,7 @@ bool GIAposRelTranslatorParserOperationsClass::createSemanticRelationOrdered(GIA
 		}
 		else if(entitySemanticRelationFunctionObject == NULL)
 		{			
-			#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS2
+			#ifdef SANI_DEBUG_RULES_PRINT_PARSE_PROCESS2
 			//SANIpropagateOperations.printParseTreeDebugIndentation(layer);
 			//cout << "createSemanticRelationOrdered{}: " << GIAsemRelTranslatorOperations.generateGIA2semanticDependencyRelationText(entitySemanticRelationFunctionSubject->entityName, entitySemanticRelationFunctionDelimiter->entityName, semanticRelationFunctionName, entitySemanticRelationFunctionSubject->semanticRelationPreprocessorEntityIndex, entitySemanticRelationFunctionDelimiter->semanticRelationPreprocessorEntityIndex, sameReferenceSet) << endl;
 			#endif
@@ -637,13 +637,13 @@ bool GIAposRelTranslatorParserOperationsClass::createSemanticRelationOrdered(GIA
 		}
 		else
 		{	
-			#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS2
+			#ifdef SANI_DEBUG_RULES_PRINT_PARSE_PROCESS2
 			//SANIpropagateOperations.printParseTreeDebugIndentation(layer);
 			//cout << "createSemanticRelationOrdered{}: " << GIAsemRelTranslatorOperations.generateGIA2semanticDependencyRelationText(entitySemanticRelationFunctionSubject->entityName, entitySemanticRelationFunctionObject->entityName, semanticRelationFunctionName, entitySemanticRelationFunctionSubject->semanticRelationPreprocessorEntityIndex, entitySemanticRelationFunctionObject->semanticRelationPreprocessorEntityIndex, sameReferenceSet) << endl;
 			#endif
 			if(entitySemanticRelationFunctionDelimiter != NULL)
 			{
-				#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS2
+				#ifdef SANI_DEBUG_RULES_PRINT_PARSE_PROCESS2
 				cout << "\tentitySemanticRelationFunctionDelimiter = " << entitySemanticRelationFunctionDelimiter->entityName << endl;
 				#endif
 			}
@@ -656,7 +656,7 @@ bool GIAposRelTranslatorParserOperationsClass::createSemanticRelationOrdered(GIA
 	}
 	else
 	{
-		#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS2
+		#ifdef SANI_DEBUG_RULES_PRINT_PARSE_PROCESS2
 		//SANIpropagateOperations.printParseTreeDebugIndentation(layer);
 		//cout << "createSemanticRelationOrdered{}: " << semanticRelationFunctionName << "(entitySemanticRelationFunctionListArray)" << endl;
 		#endif
@@ -666,7 +666,7 @@ bool GIAposRelTranslatorParserOperationsClass::createSemanticRelationOrdered(GIA
 
 bool GIAposRelTranslatorParserOperationsClass::createSemanticRelationPair(GIAtranslatorVariablesClass* translatorVariables, const string semanticRelationFunctionName, GIAentityNode* entitySemanticRelationFunction1, GIAentityNode* entitySemanticRelationFunction2, const bool sameReferenceSet, const bool semanticRelationReturnConnectionDynamic, int layer)
 {
-	#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS2
+	#ifdef SANI_DEBUG_RULES_PRINT_PARSE_PROCESS2
 	//SANIpropagateOperations.printParseTreeDebugIndentation(layer);
 	//cout << "\e[33m **** createSemanticRelationPair{}: semanticRelationFunctionName = " << semanticRelationFunctionName << "\e[0m" << endl; 
 		//OLD: GIAsemRelTranslatorOperations.generateGIA2semanticDependencyRelationText(entitySemanticRelationFunction1->entityName, entitySemanticRelationFunction2->entityName, semanticRelationFunctionName, entitySemanticRelationFunction1->semanticRelationPreprocessorEntityIndex, entitySemanticRelationFunction2->semanticRelationPreprocessorEntityIndex, sameReferenceSet) << endl;
@@ -677,7 +677,7 @@ bool GIAposRelTranslatorParserOperationsClass::createSemanticRelationPair(GIAtra
 
 bool GIAposRelTranslatorParserOperationsClass::createSemanticRelation(GIAtranslatorVariablesClass* translatorVariables, const string semanticRelationFunctionName, const string semanticRelationFunctionConditionNewName, vector<GIAentityNode*>* entitySemanticRelationFunctionListArray, GIAentityNode* entitySemanticRelationFunction1, GIAentityNode* entitySemanticRelationFunction2, GIAentityNode* entitySemanticRelationFunction3, const bool sameReferenceSet, const bool semanticRelationReturnConnectionDynamic, int layer)
 {
-	#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS2
+	#ifdef SANI_DEBUG_RULES_PRINT_PARSE_PROCESS2
 	SANIpropagateOperations.printParseTreeDebugIndentation(layer);
 	if(entitySemanticRelationFunctionListArray == NULL)
 	{
@@ -779,11 +779,11 @@ bool GIAposRelTranslatorParserOperationsClass::createSemanticRelationInMemory(GI
 	else if(semanticRelationFunctionName == GIAtxtRelSemanticDependencyRelationNameArray[GIA_POS_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_condition])
 	{
 		/*
-		#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED	//CHECKTHIS
+		#ifdef LRP_PREPROCESSOR_WORD_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED	//CHECKTHIS
 		#ifdef GIA_SEM_REL_TRANSLATOR_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
 		if(!(currentRelationInList->inverseRelationTwoWay))	//added 2j5e
 		{
-			#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_INVERSE_PREPOSITIONS
+			#ifdef LRP_PREPROCESSOR_WORD_NORMALISE_INVERSE_PREPOSITIONS
 			if(currentRelationInList->inverseRelationSingle)	//added 2j5g
 			{
 				GIAsemRelTranslatorOperations.GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(translatorVariables, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION, functionEntityIndex2, currentRelationInList->relationTypeIndexNonInversed, sameReferenceSet);	//use original (non-inversed) values
@@ -796,7 +796,7 @@ bool GIAposRelTranslatorParserOperationsClass::createSemanticRelationInMemory(GI
 				GIAsemRelTranslatorOperations.GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(translatorVariables, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION, functionEntityIndex1, functionEntityIndex3, sameReferenceSet);
 				GIAsemRelTranslatorOperations.GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(translatorVariables, GIA_ENTITY_VECTOR_CONNECTION_TYPE_CONDITION_REVERSE, functionEntityIndex2, functionEntityIndex3, sameReferenceSet);
 		/*	
-			#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_INVERSE_PREPOSITIONS
+			#ifdef LRP_PREPROCESSOR_WORD_NORMALISE_INVERSE_PREPOSITIONS
 			}
 			#endif
 		}
@@ -1105,12 +1105,12 @@ bool GIAposRelTranslatorParserOperationsClass::createSemanticRelationInNetwork(G
 		GIAtranslatorOperations.connectConditionToEntity(entitySemanticRelationFunction1, entitySemanticRelationFunction2, entitySemanticRelationFunction3, sameReferenceSet, translatorVariables);
 		
 		/*
-		#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_TWOWAY_PREPOSITIONS
+		#ifdef LRP_PREPROCESSOR_WORD_NORMALISE_TWOWAY_PREPOSITIONS
 		if(currentRelationInList->relationTwoWay)     //limitation only works when GIAtxtRelSemanticDependencyRelationNameArray[GIA_POS_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_condition is called based on a single GIArelation
 		{
 		      entitySemanticRelationFunction3->conditionTwoWay = true;        //sets conditionTwoWay for condition substance not networkIndex
 		}
-		#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED
+		#ifdef LRP_PREPROCESSOR_WORD_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED
 		if(currentRelationInList->inverseRelationTwoWay)      //limitation only works when GIAtxtRelSemanticDependencyRelationNameArray[GIA_POS_REL_TRANSLATOR_RULES_SEMANTIC_RELATION_condition is called based on a single GIArelation
 		{
 		      entitySemanticRelationFunction3->inverseConditionTwoWay = true; //sets inverseConditionTwoWay for condition substance not networkIndex

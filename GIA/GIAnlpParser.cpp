@@ -26,7 +26,7 @@
  * File Name: GIAnlpParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m6a 09-September-2020
+ * Project Version: 3m7a 11-September-2020
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: NLP Parser - Parses tabular subsections (Eg <relations>) of RelEx CFF/Stanford Parser File
  * /
@@ -119,7 +119,7 @@ void GIAnlpParserClass::GIATHparseStanfordParserRelationsText(const string* rela
 				currentRelation->relationDependent = relationDependent;
 				*/
 
-				#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
+				#ifdef LRP_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
 				if(!(currentRelation->relationDependentRevertedToOfficialLRPTemp))
 				#endif
 				{
@@ -192,7 +192,7 @@ void GIAnlpParserClass::GIATHparseStanfordParserRelationsText(const string* rela
 				}
 				*/
 
-				#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
+				#ifdef LRP_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
 				if(!(currentRelation->relationGovernorRevertedToOfficialLRPTemp))
 				#endif
 				{
@@ -580,14 +580,14 @@ void GIAnlpParserClass::convertStanfordRelationToRelex(GIArelation* currentRelat
 	}
 	#endif
 
-	#ifdef GIA_PREPROCESSOR_WORD_REPLACE_OUTPUT_FOR_NLP_TEMPORARILY
+	#ifdef LRP_PREPROCESSOR_WORD_REPLACE_OUTPUT_FOR_NLP_TEMPORARILY
 	convertStanfordRelationToRelexLRPreversion(currentRelationInList, currentSentenceInList, stanfordPrepositionFound, tempRelexPrepositionString, &relationTypeRelexStandard);
 	#endif
 
 	currentRelationInList->relationType = relationTypeRelexStandard;
 }
 
-#ifdef GIA_PREPROCESSOR_WORD_REPLACE_OUTPUT_FOR_NLP_TEMPORARILY
+#ifdef LRP_PREPROCESSOR_WORD_REPLACE_OUTPUT_FOR_NLP_TEMPORARILY
 void GIAnlpParserClass::convertStanfordRelationToRelexLRPreversion(GIArelation* currentRelationInList, const GIAsentence* currentSentenceInList, const bool stanfordPrepositionFound, const string tempRelexPrepositionString, string* relationTypeRelexStandard)
 {
 	//if(stanfordPrepositionFound)
@@ -604,13 +604,13 @@ void GIAnlpParserClass::convertStanfordRelationToRelexLRPreversion(GIArelation* 
 	*/
 	
 
-	if(GIApreprocessorWordIdentification.getUseLRP())
+	if(LRPpreprocessorWordIdentification.getUseLRP())
 	{
 		//if necessary revert temporary/dummy NLP multiword preposition to official LRP form
 		bool foundOfficialLRPreplacementString = false;
 		GIAfeature* tempFeature = new GIAfeature();
 		tempFeature->word = tempRelexPrepositionString;
-		GIApreprocessorWordReduction.revertNLPtagNameToOfficialLRPtagName(tempFeature, currentSentenceInList, currentRelationInList, true, &foundOfficialLRPreplacementString);
+		LRPpreprocessorWordReduction.revertNLPtagNameToOfficialLRPtagName(tempFeature, currentSentenceInList, currentRelationInList, true, &foundOfficialLRPreplacementString);
 		if(foundOfficialLRPreplacementString)
 		{
 			string officialLRPentityName = tempFeature->word;
@@ -634,7 +634,7 @@ void GIAnlpParserClass::convertStanfordRelationToRelexLRPreversion(GIArelation* 
 		string relationGovernorForNLPonly = currentRelationInList->relationGovernor;
 		tempFeature->word = relationGovernorForNLPonly;
 		tempFeature->entityIndex = currentRelationInList->relationGovernorIndex;
-		GIApreprocessorWordReduction.revertNLPtagNameToOfficialLRPtagName(tempFeature, currentSentenceInList, currentRelationInList, false, &foundOfficialLRPreplacementString);
+		LRPpreprocessorWordReduction.revertNLPtagNameToOfficialLRPtagName(tempFeature, currentSentenceInList, currentRelationInList, false, &foundOfficialLRPreplacementString);
 		if(foundOfficialLRPreplacementString)
 		{
 			string officialLRPentityName = tempFeature->lemma;
@@ -647,7 +647,7 @@ void GIAnlpParserClass::convertStanfordRelationToRelexLRPreversion(GIArelation* 
 		string relationDependentForNLPonly = currentRelationInList->relationDependent;
 		tempFeature->word = relationDependentForNLPonly;
 		tempFeature->entityIndex = currentRelationInList->relationDependentIndex;
-		GIApreprocessorWordReduction.revertNLPtagNameToOfficialLRPtagName(tempFeature, currentSentenceInList, currentRelationInList, false, &foundOfficialLRPreplacementString);
+		LRPpreprocessorWordReduction.revertNLPtagNameToOfficialLRPtagName(tempFeature, currentSentenceInList, currentRelationInList, false, &foundOfficialLRPreplacementString);
 		if(foundOfficialLRPreplacementString)
 		{
 			string officialLRPentityName = tempFeature->lemma;
@@ -665,12 +665,12 @@ void GIAnlpParserClass::convertStanfordRelationToRelexLRPreversion(GIArelation* 
 #ifdef GIA_SEM_REL_TRANSLATOR
 void convertGIAsemanticRelation(GIArelation* currentRelationInList, GIAsentence* currentSentenceInList)
 {
-	#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
+	#ifdef LRP_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
 	convertGIAsemanticRelationLRPreversion(currentRelationInList, currentSentenceInList);
 	#endif
 }
 
-#ifdef #ifdef GIA_PREPROCESSOR_WORD_REPLACE_OUTPUT_FOR_NLP_TEMPORARILY
+#ifdef #ifdef LRP_PREPROCESSOR_WORD_REPLACE_OUTPUT_FOR_NLP_TEMPORARILY
 void convertGIAsemanticRelationLRPreversion(GIArelation* currentRelationInList, GIAsentence* currentSentenceInList)
 {
 	if(getUseLRP())
@@ -683,7 +683,7 @@ void convertGIAsemanticRelationLRPreversion(GIArelation* currentRelationInList, 
 			{
 				currentFeatureInList = currentFeatureInList->next;
 			}
-			#ifdef GIA_PREPROCESSOR_WORD_DEBUG
+			#ifdef LRP_PREPROCESSOR_WORD_DEBUG
 			string relationGovernorForNLPonly = currentRelationInList->relationGovernor;
 			cout << "relationGovernorForNLPonly = " << relationGovernorForNLPonly << endl;
 			cout << "currentFeatureInList->word = " << currentFeatureInList->word << endl;
@@ -695,7 +695,7 @@ void convertGIAsemanticRelationLRPreversion(GIArelation* currentRelationInList, 
 				string officialLRPentityName = currentFeatureInList->word;
 				currentRelationInList->relationGovernor = officialLRPentityName;
 				currentRelationInList->relationGovernorRevertedToOfficialLRPTemp = true;
-				#ifdef GIA_PREPROCESSOR_WORD_DEBUG
+				#ifdef LRP_PREPROCESSOR_WORD_DEBUG
 				cout << "convertGIAsemanticRelationLRPreversion{} foundOfficialLRPreplacementString: relationGovernorForNLPonly = " << relationGovernorForNLPonly << ", currentRelationInList->relationGovernor= " << currentRelationInList->relationGovernor << endl;
 				#endif
 			}
@@ -707,7 +707,7 @@ void convertGIAsemanticRelationLRPreversion(GIArelation* currentRelationInList, 
 			{
 				currentFeatureInList = currentFeatureInList->next;
 			}
-			#ifdef GIA_PREPROCESSOR_WORD_DEBUG
+			#ifdef LRP_PREPROCESSOR_WORD_DEBUG
 			string relationDependentForNLPonly = currentRelationInList->relationDependent;
 			cout << "relationDependentForNLPonly = " << relationDependentForNLPonly << endl;
 			cout << "currentFeatureInList->word = " << currentFeatureInList->word << endl;
@@ -719,7 +719,7 @@ void convertGIAsemanticRelationLRPreversion(GIArelation* currentRelationInList, 
 				string officialLRPentityName = currentFeatureInList->word;
 				currentRelationInList->relationDependent = officialLRPentityName;
 				currentRelationInList->relationDependentRevertedToOfficialLRPTemp = true;
-				#ifdef GIA_PREPROCESSOR_WORD_DEBUG
+				#ifdef LRP_PREPROCESSOR_WORD_DEBUG
 				cout << "convertGIAsemanticRelationLRPreversion{} foundOfficialLRPreplacementString: relationDependentForNLPonly = " << relationDependentForNLPonly << ", currentRelationInList->relationDependent= " << currentRelationInList->relationDependent << endl;
 				#endif
 			}
@@ -809,12 +809,12 @@ void GIAnlpParserClass::GIATHparseRelexFeaturesText(const string* featuresText, 
 				}
 			#endif
 
-				#ifdef GIA_PREPROCESSOR_WORD_REPLACE_OUTPUT_FOR_NLP_TEMPORARILY
-				if(GIApreprocessorWordIdentification.getUseLRP())
+				#ifdef LRP_PREPROCESSOR_WORD_REPLACE_OUTPUT_FOR_NLP_TEMPORARILY
+				if(LRPpreprocessorWordIdentification.getUseLRP())
 				{
 					bool foundOfficialLRPreplacementString = false;
 					GIArelation* currentRelationInListForPrepositionsOnlyIrrelevant = NULL;
-					GIApreprocessorWordReduction.revertNLPtagNameToOfficialLRPtagName(currentFeature, currentSentenceInList, currentRelationInListForPrepositionsOnlyIrrelevant, false, &foundOfficialLRPreplacementString);
+					LRPpreprocessorWordReduction.revertNLPtagNameToOfficialLRPtagName(currentFeature, currentSentenceInList, currentRelationInListForPrepositionsOnlyIrrelevant, false, &foundOfficialLRPreplacementString);
 				}
 				#endif
 

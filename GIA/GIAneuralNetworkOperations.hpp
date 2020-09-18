@@ -26,7 +26,7 @@
  * File Name: GIAneuralNetworkOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m6a 09-September-2020
+ * Project Version: 3m7a 11-September-2020
  * Description: Neural Network - visual representation of GIA contents in prototype biological neural network
  * /
  *******************************************************************************/
@@ -50,8 +50,8 @@
 #endif
 */
 #include "SANIformation.hpp"
-#include "GIApreprocessorSentenceClass.hpp"
-//#include "GIApreprocessorWordClass.hpp"
+#include "LRPpreprocessorSentenceClass.hpp"
+//#include "LRPpreprocessorWordClass.hpp"
 #endif
 #include "ANNxmlConversion.hpp"
 #include "ANNxmlConversion.hpp"
@@ -115,18 +115,7 @@ class GIAneuralNetworkOperationsClass
 	public: bool writeNeuralNetXMLfile(const string xmlFileName, ANNneuron* ANNfirstInputNeuronInNetwork);
 			
 	public: void initiateGIAneuralNetwork(GIAneuralNetworkVariablesClass* neuralNetworkVariables);
-	#ifdef SANI_ANN
-	#ifdef SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_CONTINUOUSLY_OUTPUT_NETWORK
-	public: void initialiseIncrementalGeneration();
-	//private: bool generateNeuralNetFromGIAposRelTranslatorNetReset(GIAtranslatorVariablesClass* translatorVariables);
-	#endif
-	public: bool generateNeuralNetFromGIAposRelTranslatorNet(GIAtranslatorVariablesClass* translatorVariables);
-		private: bool determinePositonsOfInputNeurons(int64_t* idBase, ANNneuron** firstOutputNeuronInNetworkPre);
-		private: bool determinePositonsOfNeurons(vector<SANIGroupType*>* SANIGroupTypes, int64_t* idBase, ANNneuron* firstOutputNeuronInNetworkPre, ANNneuron** firstOutputNeuronInNetworkPost);
-		#ifdef SANI_SEQUENCE_GRAMMAR_LIMIT_NUM_COMPONENTS_CONTINUOUSLY_OUTPUT_NETWORK
-		private: bool determinePositonsOfNeuronsReset(vector<SANIGroupType*>* SANIGroupTypes);
-		#endif	
-	#endif
+
 	#ifdef GIA_NEURAL_NETWORK_PASSIVE
 	public: bool generateNeuralNetFromSemanticNet(GIAtranslatorVariablesClass* translatorVariables);
 		#ifdef GIA_NEURAL_NETWORK_GENERATE_SPECIFIC_CONCEPT_NETWORKS
@@ -177,18 +166,18 @@ class GIAneuralNetworkOperationsClass
 	#endif
 	
 	#ifdef GIA_NEURAL_NETWORK_ACTIVE
-	public: ANNneuron* addConceptToNetwork(GIAneuralNetworkVariablesClass* neuralNetworkVariables, GIApreprocessorPlainTextWord* wordTag, const bool specificConcept, const vector<GIApreprocessorPlainTextWord*>* subReferenceSetContents, const int indexOfStartOfSpecificConcept, const int indexOfSpecificConcept);
-		public: ANNneuron* addSpecificConceptToNetwork(GIAneuralNetworkVariablesClass* neuralNetworkVariables, GIApreprocessorPlainTextWord* wordTag, const vector<GIApreprocessorPlainTextWord*>* subReferenceSetContents, const int indexOfStartOfSpecificConcept, const int indexOfSpecificConcept);
-		public: ANNneuron* addConceptToNetwork(GIAneuralNetworkVariablesClass* neuralNetworkVariables, GIApreprocessorPlainTextWord* wordTag);
-			public: bool addSpecificConceptPropertiesToNetwork(GIAneuralNetworkVariablesClass* neuralNetworkVariables, ANNneuron* currentSpecificConceptNeuron, const vector<GIApreprocessorPlainTextWord*>* subReferenceSetContents, const int indexOfStartOfSpecificConcept, const int indexOfSpecificConcept);
-	public: bool findConceptInNetwork(GIAneuralNetworkVariablesClass* neuralNetworkVariables, GIApreprocessorPlainTextWord* wordTag, ANNneuron** conceptNeuronFound, const bool specificConcept, const vector<GIApreprocessorPlainTextWord*>* subReferenceSetContents, const int indexOfStartOfSpecificConcept, const int indexOfSpecificConcept);
-		public: bool findConceptInNetwork(GIAneuralNetworkVariablesClass* neuralNetworkVariables, GIApreprocessorPlainTextWord* wordTag, ANNneuron** conceptNeuronFound);
-		public: bool findSpecificConceptInNetwork(GIAneuralNetworkVariablesClass* neuralNetworkVariables, GIApreprocessorPlainTextWord* wordTag, ANNneuron** conceptNeuronFound, const vector<GIApreprocessorPlainTextWord*>* subReferenceSetContents, const int indexOfStartOfSpecificConcept, const int indexOfSpecificConcept);
-			public: bool verifySpecificConceptProperties(GIAneuralNetworkVariablesClass* neuralNetworkVariables, ANNneuron* specificConcept, const vector<GIApreprocessorPlainTextWord*>* subReferenceSetContents, const int indexOfStartOfSpecificConcept, const int indexOfSpecificConcept);
+	public: ANNneuron* addConceptToNetwork(GIAneuralNetworkVariablesClass* neuralNetworkVariables, LRPpreprocessorPlainTextWord* wordTag, const bool specificConcept, const vector<LRPpreprocessorPlainTextWord*>* subReferenceSetContents, const int indexOfStartOfSpecificConcept, const int indexOfSpecificConcept);
+		public: ANNneuron* addSpecificConceptToNetwork(GIAneuralNetworkVariablesClass* neuralNetworkVariables, LRPpreprocessorPlainTextWord* wordTag, const vector<LRPpreprocessorPlainTextWord*>* subReferenceSetContents, const int indexOfStartOfSpecificConcept, const int indexOfSpecificConcept);
+		public: ANNneuron* addConceptToNetwork(GIAneuralNetworkVariablesClass* neuralNetworkVariables, LRPpreprocessorPlainTextWord* wordTag);
+			public: bool addSpecificConceptPropertiesToNetwork(GIAneuralNetworkVariablesClass* neuralNetworkVariables, ANNneuron* currentSpecificConceptNeuron, const vector<LRPpreprocessorPlainTextWord*>* subReferenceSetContents, const int indexOfStartOfSpecificConcept, const int indexOfSpecificConcept);
+	public: bool findConceptInNetwork(GIAneuralNetworkVariablesClass* neuralNetworkVariables, LRPpreprocessorPlainTextWord* wordTag, ANNneuron** conceptNeuronFound, const bool specificConcept, const vector<LRPpreprocessorPlainTextWord*>* subReferenceSetContents, const int indexOfStartOfSpecificConcept, const int indexOfSpecificConcept);
+		public: bool findConceptInNetwork(GIAneuralNetworkVariablesClass* neuralNetworkVariables, LRPpreprocessorPlainTextWord* wordTag, ANNneuron** conceptNeuronFound);
+		public: bool findSpecificConceptInNetwork(GIAneuralNetworkVariablesClass* neuralNetworkVariables, LRPpreprocessorPlainTextWord* wordTag, ANNneuron** conceptNeuronFound, const vector<LRPpreprocessorPlainTextWord*>* subReferenceSetContents, const int indexOfStartOfSpecificConcept, const int indexOfSpecificConcept);
+			public: bool verifySpecificConceptProperties(GIAneuralNetworkVariablesClass* neuralNetworkVariables, ANNneuron* specificConcept, const vector<LRPpreprocessorPlainTextWord*>* subReferenceSetContents, const int indexOfStartOfSpecificConcept, const int indexOfSpecificConcept);
 	#endif
 
 	#ifdef GIA_NEURAL_NETWORK_SYMBOLIC_CORE_SEPARATE_INSTANCES_BY_SENTENCE_INDEX
-	int calculateSentenceOffset(GIApreprocessorSentence* firstGIApreprocessorSentenceInList, int sentenceIndex);
+	int calculateSentenceOffset(LRPpreprocessorSentence* firstLRPpreprocessorSentenceInList, int sentenceIndex);
 	#endif
 	
 	int64_t getCurrentTime();

@@ -26,7 +26,7 @@
  * File Name: GIAsynRelTranslatorParser.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m6a 09-September-2020
+ * Project Version: 3m7a 11-September-2020
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
@@ -60,17 +60,21 @@
 #ifdef GIA_BOT_SWITCH_FIRST_AND_SECOND_PERSON
 #include "GIAbot.hpp"
 #endif
-#include "GIApreprocessorWordIdentification.hpp"
-//#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
-//#include "GIApreprocessorWordReduction.hpp"
+#include "LRPpreprocessorWordIdentification.hpp"
+//#ifdef LRP_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
+//#include "LRPpreprocessorWordReduction.hpp"
 //#endif
 #include "GIAsemRelTranslatorOperations.hpp"
 #include "GIAsemRelTranslatorParser.hpp"
 #include "GIAsemRelTranslatorDatabase.hpp"
 #include "GIAsynRelTranslatorRules.hpp"
 #include "GIAsynRelTranslatorGeneric.hpp"
-#ifdef GIA_PREPROCESSOR
-#include "GIApreprocessor.hpp"
+#ifdef LRP_PREPROCESSOR
+#include "LRPpreprocessor.hpp"
+#ifdef LRP_PREPROCESSOR_RECORD_REFERENCES
+#include "LRPpreprocessorSentenceClass.hpp"
+#include "LRPpreprocessorWordClass.hpp"
+#endif
 #endif
 #ifdef GIA_POS_REL_TRANSLATOR_HYBRID
 #include "GIAposRelTranslatorHybrid.hpp"
@@ -82,9 +86,9 @@ class GIAsynRelTranslatorParserClass
 {
 	private: GIAtranslatorOperationsClass GIAtranslatorOperations;
 	private: SHAREDvarsClass SHAREDvars;
-	private: GIApreprocessorWordIdentificationClass GIApreprocessorWordIdentification;
-	//#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
-	//private: GIApreprocessorWordReductionClass GIApreprocessorWordReduction;
+	private: LRPpreprocessorWordIdentificationClass LRPpreprocessorWordIdentification;
+	//#ifdef LRP_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
+	//private: LRPpreprocessorWordReductionClass LRPpreprocessorWordReduction;
 	//#endif
 	private: GIAnlpClass GIAnlp;
 	private: GIAdatabaseClass GIAdatabase;
@@ -110,8 +114,12 @@ class GIAsynRelTranslatorParserClass
 	private: GIAbotClass GIAbot;
 	#endif
 	private: GIAsynRelTranslatorRulesClass GIAsynRelTranslatorRules;
-	#ifdef GIA_PREPROCESSOR
-	private: GIApreprocessorClass GIApreprocessor;
+	#ifdef LRP_PREPROCESSOR
+	private: LRPpreprocessorClass LRPpreprocessor;
+	#ifdef LRP_PREPROCESSOR_RECORD_REFERENCES
+	private: LRPpreprocessorSentenceClass LRPpreprocessorSentenceClassObject;
+	private: LRPpreprocessorWordClassClass LRPpreprocessorWordClassObject;
+	#endif
 	#endif
 	#ifdef GIA_POS_REL_TRANSLATOR_HYBRID
 	private: GIAposRelTranslatorHybridClass GIAposRelTranslatorHybrid;
@@ -125,12 +133,19 @@ class GIAsynRelTranslatorParserClass
 
 	//?substance to substance relationship - these they in actual fact represent different levels of detail in information to substance to action / action to action nodes - direct substance to substance relationships are missing the action/connectivity information
 
-	#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_PREPOSITIONS
+	#ifdef LRP_PREPROCESSOR_WORD_NORMALISE_PREPOSITIONS
 	private: void invertOrDuplicateConditionsIfRequired(GIAtranslatorVariablesClass* translatorVariables);
 		private: void createNewInverseConditionEntity(GIArelation* currentRelationInList, GIAtranslatorVariablesClass* translatorVariables, string inverseConditionName);
 	#endif
-	
-	public: int getEntityArrayMaxIndex(GIAtranslatorVariablesClass* translatorVariables);
+		
+	#ifdef LRP_PREPROCESSOR_RECORD_REFERENCES
+	public: bool addSentenceToPreprocessorSentence(GIAtranslatorVariablesClass* translatorVariables);
+		#ifndef GIA_POS_REL_TRANSLATOR_HYBRID
+		private: bool getPreprocessorSentence(LRPpreprocessorSentence* firstLRPpreprocessorSentenceInList, int sentenceIndex, LRPpreprocessorSentence** sentenceFound);
+		#endif
+		private: bool addSentenceFeatureOutputToPreprocessorSentenceWordList(vector<LRPpreprocessorPlainTextWord*>* preprocessorSentenceWordList, GIAtranslatorVariablesClass* translatorVariables, bool originalNLPfeatures);
+		private: bool addSentenceEntityOutputToPreprocessorSentenceWordList(vector<LRPpreprocessorPlainTextWord*>* preprocessorSentenceWordList, GIAtranslatorVariablesClass* translatorVariables);
+	#endif	
 
 };
 

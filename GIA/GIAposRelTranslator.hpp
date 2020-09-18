@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslator.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m6a 09-September-2020
+ * Project Version: 3m7a 11-September-2020
  * Requirements: requires plain text file
  * Description: Part-of-speech Relation Translator
  * /
@@ -53,17 +53,16 @@
 #ifdef SANI_SEQUENCE_GRAMMAR
 #include "SANIpropagateCompact.hpp"
 #endif
-//#ifndef SANI_PARSE_SIMULTANEOUS
-#include "GIAposRelTranslatorPermutations.hpp"
-//#endif
-#ifdef GIA_PREPROCESSOR_INITIALISE_WORD_INDEX_LIST_FROM_LRP_FILES
-#include "GIApreprocessorWordIdentification.hpp"
+#include "SANIposRelTranslator.hpp"
+#ifdef LRP_PREPROCESSOR_INITIALISE_WORD_INDEX_LIST_FROM_LRP_FILES
+#include "LRPpreprocessorWordIdentification.hpp"
 #endif
-#include "GIApreprocessorWordClass.hpp"
+#include "LRPpreprocessorWordClass.hpp"
 #ifdef GIA_OUTPUT_INTERNAL_RELATIONS_IN_RELEX_FORMAT
 #include "GIAnlp.hpp"
 #endif
 #include "GIAtranslator.hpp"
+#include "GIAposRelTranslatorParser.hpp"	//required for createSANItranslatorVariablesFromGIAtranslatorVariables
 #include "SHAREDvars.hpp"
 
 class GIAposRelTranslatorClass
@@ -77,19 +76,18 @@ class GIAposRelTranslatorClass
 	private: SANIformationClass SANIformation;
 	private: SANIpropagateOperationsClass SANIpropagateOperations;	//required for printComponent/printParseTreeDebugIndentation	
 	#endif
-	//#ifndef SANI_PARSE_SIMULTANEOUS
-	private: GIAposRelTranslatorPermutationsClass GIAposRelTranslatorPermutations;
-	//#endif
 	private: SANIrulesClass SANIrules;
-	#ifdef GIA_PREPROCESSOR_INITIALISE_WORD_INDEX_LIST_FROM_LRP_FILES
-	private: GIApreprocessorWordIdentificationClass GIApreprocessorWordIdentification;
+	private: SANIposRelTranslatorClass SANIposRelTranslator;
+	#ifdef LRP_PREPROCESSOR_INITIALISE_WORD_INDEX_LIST_FROM_LRP_FILES
+	private: LRPpreprocessorWordIdentificationClass LRPpreprocessorWordIdentification;
 	#endif
-	private: GIApreprocessorWordClassClass GIApreprocessorWordClassObject;
-	private: GIApreprocessorSentenceClass GIApreprocessorSentenceClassObject;
+	private: LRPpreprocessorWordClassClass LRPpreprocessorWordClassObject;
+	private: LRPpreprocessorSentenceClass LRPpreprocessorSentenceClassObject;
 	#ifdef GIA_OUTPUT_INTERNAL_RELATIONS_IN_RELEX_FORMAT
 	private: GIAnlpClass GIAnlp;
 	#endif
 	private: GIAtranslatorClass GIAtranslator;
+	private: GIAposRelTranslatorParserClass GIAposRelTranslatorParser;
 	private: SHAREDvarsClass SHAREDvars;
 
 	public: bool parseTxtfileAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences(GIAtranslatorVariablesClass* translatorVariables, const string inputTextPlainTXTfileName, string inputTextNLPrelationXMLfileName, const string inputTextNLPfeatureXMLfileName, const string outputCFFfileName);

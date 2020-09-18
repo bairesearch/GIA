@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorHybrid.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m6a 09-September-2020
+ * Project Version: 3m7a 11-September-2020
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Hybrid
  * /
@@ -46,29 +46,29 @@
 #ifdef GIA_POS_REL_TRANSLATOR_HYBRID_EXECUTE_PRELIM_POS_TAGGER
 bool GIAposRelTranslatorHybridClass::executePrelimFeatureProcessingOnSentences(const string outputLRPTextPlainTXTFileName, const string inputTextNLPfeatureXMLfileName, GIAtranslatorVariablesClass* translatorVariables)
 {
-	#ifdef GIA_PREPROCESSOR_INITIALISE_WORD_INDEX_LIST_FROM_LRP_FILES
-	if(!GIApreprocessorWordIdentification.createWordIndexListFromLRPfiles())
+	#ifdef LRP_PREPROCESSOR_INITIALISE_WORD_INDEX_LIST_FROM_LRP_FILES
+	if(!LRPpreprocessorWordIdentification.createWordIndexListFromLRPfiles())
 	{
 		result = false;
 	}
 	#endif
 	
-	#ifdef GIA_PREPROCESSOR_POS_TAGGER
-	if(!GIApreprocessorPOStagger.executePrelimFeatureProcessingOnSentences(outputLRPTextPlainTXTFileName, inputTextNLPfeatureXMLfileName, translatorVariables))
+	#ifdef LRP_PREPROCESSOR_POS_TAGGER
+	if(!LRPpreprocessorPOStagger.executePrelimFeatureProcessingOnSentences(outputLRPTextPlainTXTFileName, inputTextNLPfeatureXMLfileName, translatorVariables))
 	{
 		result = false;
 	}
 	#else
 	string currentDirectoryTemp = SHAREDvars.getCurrentDirectory();
 
-	string outputLRPTextPlainTXTFileNamePrelim = outputLRPTextPlainTXTFileName + GIA_PREPROCESSOR_INTERMEDIARY_PRELIM_FILE_EXTENSION;
+	string outputLRPTextPlainTXTFileNamePrelim = outputLRPTextPlainTXTFileName + LRP_PREPROCESSOR_INTERMEDIARY_PRELIM_FILE_EXTENSION;
 	string inputTextNLPfeatureXMLfileNamePrelim = string("prelim") + inputTextNLPfeatureXMLfileName;
 	//cout << "outputLRPTextPlainTXTFileNamePrelim = " << outputLRPTextPlainTXTFileNamePrelim << endl;
 	//cout << "inputTextNLPfeatureXMLfileNamePrelim = " << inputTextNLPfeatureXMLfileNamePrelim << endl;
 	
 	//print sentences to temporary file
 	SHAREDvars.setCurrentDirectory(outputFolder);
-	if(!GIApreprocessorWordIdentification.writeTagListToFile(translatorVariables->firstGIApreprocessorSentenceInList, outputLRPTextPlainTXTFileNamePrelim, "", true, false))
+	if(!LRPpreprocessorWordIdentification.writeTagListToFile(translatorVariables->firstLRPpreprocessorSentenceInList, outputLRPTextPlainTXTFileNamePrelim, "", true, false))
 	{
 		result = false;
 	}	
@@ -86,14 +86,14 @@ bool GIAposRelTranslatorHybridClass::executePrelimFeatureProcessingOnSentences(c
 	
 	//copy NLP extracted sentence (ie feature POS) data to the GIA preprocessor structure (as a temporary preliminary sentence record)
 	GIAsentence* currentSentenceInList = &firstSentenceInList;
-	GIApreprocessorSentence* currentGIApreprocessorSentenceInList = translatorVariables->firstGIApreprocessorSentenceInList;
+	LRPpreprocessorSentence* currentLRPpreprocessorSentenceInList = translatorVariables->firstLRPpreprocessorSentenceInList;
 	while(currentSentenceInList->next != NULL)
 	{
-		currentGIApreprocessorSentenceInList->sentenceReferencePrelim = currentSentenceInList;	//this doesnt appear to be used
+		currentLRPpreprocessorSentenceInList->sentenceReferencePrelim = currentSentenceInList;	//this doesnt appear to be used
 		
-		if(GIApreprocessorSentenceClassObject.getSentenceContents(currentGIApreprocessorSentenceInList)->size() != currentSentenceInList->numberOfWordsInSentence)
+		if(LRPpreprocessorSentenceClassObject.getSentenceContents(currentLRPpreprocessorSentenceInList)->size() != currentSentenceInList->numberOfWordsInSentence)
 		{
-			cerr << "GIAposRelTranslatorHybridClass::executePrelimFeatureProcessingOnSentences{} error: GIApreprocessorSentenceClassObject.getSentenceContents(currentGIApreprocessorSentenceInList)->size() != currentSentenceInList->numberOfWordsInSentence)" << endl;
+			cerr << "GIAposRelTranslatorHybridClass::executePrelimFeatureProcessingOnSentences{} error: LRPpreprocessorSentenceClassObject.getSentenceContents(currentLRPpreprocessorSentenceInList)->size() != currentSentenceInList->numberOfWordsInSentence)" << endl;
 			exit(EXIT_ERROR);
 		}
 				
@@ -102,7 +102,7 @@ bool GIAposRelTranslatorHybridClass::executePrelimFeatureProcessingOnSentences(c
 		{
 			bool grammaticallyStrict = true;	//grammaticallyStrict required for preprocessor POS detection
 			GIAtranslatorGrammar.extractPOSrelatedGrammaticalInformationStanford(currentFeatureInList, grammaticallyStrict);	//this is required to derive grammaticalWordType from NLP POS tags for GIA_POS_REL_TRANSLATOR_HYBRID_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
-			(*GIApreprocessorSentenceClassObject.getSentenceContents(currentGIApreprocessorSentenceInList))[w]->featureReferencePrelim = currentFeatureInList;
+			(*LRPpreprocessorSentenceClassObject.getSentenceContents(currentLRPpreprocessorSentenceInList))[w]->featureReferencePrelim = currentFeatureInList;
 			currentFeatureInList = currentFeatureInList->next;
 		}
 		
@@ -117,11 +117,11 @@ bool GIAposRelTranslatorHybridClass::executePrelimFeatureProcessingOnSentences(c
 		*/
 		/*
 		cout << "currentSentenceInList->firstFeatureInList->word = " << currentSentenceInList->firstFeatureInList->word << endl;	
-		cout << "currentGIApreprocessorSentenceInList->sentenceContentsOriginal[0]->tagName = " << currentGIApreprocessorSentenceInList->sentenceContentsOriginal[0]->tagName << endl;
+		cout << "currentLRPpreprocessorSentenceInList->sentenceContentsOriginal[0]->tagName = " << currentLRPpreprocessorSentenceInList->sentenceContentsOriginal[0]->tagName << endl;
 		*/
 		
 		currentSentenceInList = currentSentenceInList->next;
-		currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->next;
+		currentLRPpreprocessorSentenceInList = currentLRPpreprocessorSentenceInList->next;
 	}
 	
 	SHAREDvars.setCurrentDirectory(currentDirectoryTemp);	
@@ -132,7 +132,7 @@ bool GIAposRelTranslatorHybridClass::executePrelimFeatureProcessingOnSentences(c
 
 #ifdef GIA_POS_REL_TRANSLATOR_HYBRID_DEPRECIATED
 					
-bool GIAposRelTranslatorHybridClass::executeTxtRelTranslatorDepreciated(GIApreprocessorSentence* firstGIApreprocessorSentenceInList, const string outputFileName, const string outputFileNameLRPforNLP)
+bool GIAposRelTranslatorHybridClass::executeTxtRelTranslatorDepreciated(LRPpreprocessorSentence* firstLRPpreprocessorSentenceInList, const string outputFileName, const string outputFileNameLRPforNLP)
 {
 	bool result = true;
 	
@@ -146,27 +146,27 @@ bool GIAposRelTranslatorHybridClass::executeTxtRelTranslatorDepreciated(GIAprepr
 	
 	int charCount = 0;
 	char currentToken;
-	GIApreprocessorSentence* currentGIApreprocessorSentenceInList = firstGIApreprocessorSentenceInList;
-	int sentenceIndex = GIA_NLP_START_SENTENCE_INDEX;
+	LRPpreprocessorSentence* currentLRPpreprocessorSentenceInList = firstLRPpreprocessorSentenceInList;
+	int sentenceIndex = LRP_NLP_START_SENTENCE_INDEX;
 	string outputTextContents = "";
 	string outputTextContentsForNLP = "";
-	while(currentGIApreprocessorSentenceInList->next != NULL)
+	while(currentLRPpreprocessorSentenceInList->next != NULL)
 	{
 		//string sentenceContentsOriginalText = removePrependingWhiteSpace(sentenceContents);	//only for NLC?
-		if(!executeTxtRelTranslatorDepreciatedSentence(currentGIApreprocessorSentenceInList, SANIrulesTokenLayers))
+		if(!executeTxtRelTranslatorDepreciatedSentence(currentLRPpreprocessorSentenceInList, SANIrulesTokenLayers))
 		{
 			result = false;
 		}
 
 		string outputTextContentsSentence = "";
 		string outputTextContentsForNLPsentence = "";
-		#ifdef GIA_PREPROCESSOR_ASSIGN_UNIQUE_SENTENCE_INDICES_FOR_SENTENCES
-		currentGIApreprocessorSentenceInList->sentenceIndex = sentenceIndex;
-		outputTextContents = outputTextContents + GIA_PREPROCESSOR_ASSIGN_UNIQUE_SENTENCE_INDICES_FOR_SENTENCES_DUMMY_SENTENCE_CONTENTS + CHAR_FULLSTOP + CHAR_NEWLINE;
-		outputTextContentsForNLP = outputTextContentsForNLP + GIA_PREPROCESSOR_ASSIGN_UNIQUE_SENTENCE_INDICES_FOR_SENTENCES_DUMMY_SENTENCE_CONTENTS + CHAR_FULLSTOP + CHAR_NEWLINE;
+		#ifdef LRP_PREPROCESSOR_ASSIGN_UNIQUE_SENTENCE_INDICES_FOR_SENTENCES
+		currentLRPpreprocessorSentenceInList->sentenceIndex = sentenceIndex;
+		outputTextContents = outputTextContents + LRP_PREPROCESSOR_ASSIGN_UNIQUE_SENTENCE_INDICES_FOR_SENTENCES_DUMMY_SENTENCE_CONTENTS + CHAR_FULLSTOP + CHAR_NEWLINE;
+		outputTextContentsForNLP = outputTextContentsForNLP + LRP_PREPROCESSOR_ASSIGN_UNIQUE_SENTENCE_INDICES_FOR_SENTENCES_DUMMY_SENTENCE_CONTENTS + CHAR_FULLSTOP + CHAR_NEWLINE;
 		sentenceIndex++;
 		#endif
-		if(!generateTxtRelTranslatorHybridSentenceNLPparsablePhrases(currentGIApreprocessorSentenceInList->firstLogicReferenceInList, &sentenceIndex, &outputTextContentsSentence, &outputTextContentsForNLPsentence))
+		if(!generateTxtRelTranslatorHybridSentenceNLPparsablePhrases(currentLRPpreprocessorSentenceInList->firstLogicReferenceInList, &sentenceIndex, &outputTextContentsSentence, &outputTextContentsForNLPsentence))
 		{
 			result = false;
 		}
@@ -174,7 +174,7 @@ bool GIAposRelTranslatorHybridClass::executeTxtRelTranslatorDepreciated(GIAprepr
 		outputTextContents = outputTextContents + outputTextContentsSentence;
 		outputTextContentsForNLP = outputTextContentsForNLP + outputTextContentsForNLPsentence;
 		
-		currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->next;
+		currentLRPpreprocessorSentenceInList = currentLRPpreprocessorSentenceInList->next;
 	}
 
 	SHAREDvars.setCurrentDirectory(outputFolder);	//save output files to output folder
@@ -189,12 +189,12 @@ bool GIAposRelTranslatorHybridClass::executeTxtRelTranslatorDepreciated(GIAprepr
 	cout << "outputTextContents = \n" << outputTextContents << endl;
 	cout << "outputTextContentsForNLP = \n" << outputTextContentsForNLP << endl;
 	cout << endl;
-	currentGIApreprocessorSentenceInList = firstGIApreprocessorSentenceInList;
-	while(currentGIApreprocessorSentenceInList->next != NULL)
+	currentLRPpreprocessorSentenceInList = firstLRPpreprocessorSentenceInList;
+	while(currentLRPpreprocessorSentenceInList->next != NULL)
 	{
-		cout << "currentGIApreprocessorSentenceInList->sentenceIndex = " << currentGIApreprocessorSentenceInList->sentenceIndex << ", sentenceIndexOriginal: " << currentGIApreprocessorSentenceInList->sentenceIndexOriginal << endl;
-		GIAposRelTranslatorHybridLogicReferenceObject.printLogicReferenceLayer(currentGIApreprocessorSentenceInList->firstLogicReferenceInList);
-		currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->next;
+		cout << "currentLRPpreprocessorSentenceInList->sentenceIndex = " << currentLRPpreprocessorSentenceInList->sentenceIndex << ", sentenceIndexOriginal: " << currentLRPpreprocessorSentenceInList->sentenceIndexOriginal << endl;
+		GIAposRelTranslatorHybridLogicReferenceObject.printLogicReferenceLayer(currentLRPpreprocessorSentenceInList->firstLogicReferenceInList);
+		currentLRPpreprocessorSentenceInList = currentLRPpreprocessorSentenceInList->next;
 	}
 	cout << endl;
 	#endif
@@ -203,26 +203,26 @@ bool GIAposRelTranslatorHybridClass::executeTxtRelTranslatorDepreciated(GIAprepr
 }
 
 
-bool GIAposRelTranslatorHybridClass::executeTxtRelTranslatorDepreciatedSentence(GIApreprocessorSentence* currentGIApreprocessorSentenceInList, vector<XMLparserTag*>* SANIrulesTokenLayers)
+bool GIAposRelTranslatorHybridClass::executeTxtRelTranslatorDepreciatedSentence(LRPpreprocessorSentence* currentLRPpreprocessorSentenceInList, vector<XMLparserTag*>* SANIrulesTokenLayers)
 {
 	bool result = true;
 	
-	#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
-	vector<GIApreprocessorPlainTextWord*>* sentenceContentsWordList = &(currentGIApreprocessorSentenceInList->sentenceContentsLRP);
+	#ifdef LRP_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
+	vector<LRPpreprocessorPlainTextWord*>* sentenceContentsWordList = &(currentLRPpreprocessorSentenceInList->sentenceContentsLRP);
 	#else
-	vector<GIApreprocessorPlainTextWord*>* sentenceContentsWordList = &(currentGIApreprocessorSentenceInList->sentenceContentsOriginal);
+	vector<LRPpreprocessorPlainTextWord*>* sentenceContentsWordList = &(currentLRPpreprocessorSentenceInList->sentenceContentsOriginal);
 	#endif
-	int sentenceIndexOriginal = currentGIApreprocessorSentenceInList->sentenceIndexOriginal;
+	int sentenceIndexOriginal = currentLRPpreprocessorSentenceInList->sentenceIndexOriginal;
 
 	#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE
-	if(!GIAposRelTranslatorHybridLogicReferenceObject.executeLogicReferencePreprocessor(sentenceContentsWordList, currentGIApreprocessorSentenceInList, SANIrulesTokenLayers))
+	if(!GIAposRelTranslatorHybridLogicReferenceObject.executeLogicReferencePreprocessor(sentenceContentsWordList, currentLRPpreprocessorSentenceInList, SANIrulesTokenLayers))
 	{
 		result = false;
 	}
 	#else
 	#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_REFERENCE_SET
-	GIAposRelTranslatorHybridLogicReference* firstLogicReferenceInList = currentGIApreprocessorSentenceInList->firstLogicReferenceInList;
-	if(!GIAposRelTranslatorHybridReferenceSet.executeReferenceSetPreprocessor(sentenceContentsFirstWord, &sentenceContentsWordList, firstLogicReferenceInList->logicReferenceVariable, true, GIA_NLP_START_ENTITY_INDEX))
+	GIAposRelTranslatorHybridLogicReference* firstLogicReferenceInList = currentLRPpreprocessorSentenceInList->firstLogicReferenceInList;
+	if(!GIAposRelTranslatorHybridReferenceSet.executeReferenceSetPreprocessor(sentenceContentsFirstWord, &sentenceContentsWordList, firstLogicReferenceInList->logicReferenceVariable, true, LRP_NLP_START_ENTITY_INDEX))
 	{
 		result = false;
 	}
@@ -328,10 +328,10 @@ bool GIAposRelTranslatorHybridClass::generateTxtRelTranslatorHybridSentenceNLPpa
 			string sentenceContentsPreprocessedLogicReferenceVariables = "";
 			string sentenceContentsPreprocessedLogicReferenceVariablesForNLP = "";
 	
-			#ifdef GIA_PREPROCESSOR_ASSIGN_UNIQUE_SENTENCE_INDICES_FOR_LOGIC_REFERENCE_VARIABLES
+			#ifdef LRP_PREPROCESSOR_ASSIGN_UNIQUE_SENTENCE_INDICES_FOR_LOGIC_REFERENCE_VARIABLES
 			currentLogicReferenceInList->logicReferenceVariable->sentenceIndex = *sentenceIndex;
-			sentenceContentsPreprocessedLogicReferenceVariables = sentenceContentsPreprocessedLogicReferenceVariables + GIA_PREPROCESSOR_ASSIGN_UNIQUE_SENTENCE_INDICES_FOR_SENTENCES_DUMMY_LOGIC_REFERENCE_CONTENTS + CHAR_FULLSTOP + CHAR_NEWLINE;
-			sentenceContentsPreprocessedLogicReferenceVariablesForNLP = sentenceContentsPreprocessedLogicReferenceVariablesForNLP + GIA_PREPROCESSOR_ASSIGN_UNIQUE_SENTENCE_INDICES_FOR_SENTENCES_DUMMY_LOGIC_REFERENCE_CONTENTS + CHAR_FULLSTOP + CHAR_NEWLINE;
+			sentenceContentsPreprocessedLogicReferenceVariables = sentenceContentsPreprocessedLogicReferenceVariables + LRP_PREPROCESSOR_ASSIGN_UNIQUE_SENTENCE_INDICES_FOR_SENTENCES_DUMMY_LOGIC_REFERENCE_CONTENTS + CHAR_FULLSTOP + CHAR_NEWLINE;
+			sentenceContentsPreprocessedLogicReferenceVariablesForNLP = sentenceContentsPreprocessedLogicReferenceVariablesForNLP + LRP_PREPROCESSOR_ASSIGN_UNIQUE_SENTENCE_INDICES_FOR_SENTENCES_DUMMY_LOGIC_REFERENCE_CONTENTS + CHAR_FULLSTOP + CHAR_NEWLINE;
 			*sentenceIndex = *sentenceIndex + 1;
 			#endif
 
@@ -341,7 +341,7 @@ bool GIAposRelTranslatorHybridClass::generateTxtRelTranslatorHybridSentenceNLPpa
 			/*//redundant (equivalent code)
 			#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_REFERENCE_SET_SUB_REFERENCE_SETS
 			*/
-			GIApreprocessorSubReferenceSet* currentSubReferenceSetInList = currentLogicReferenceInList->logicReferenceVariable->referenceSetSubject;
+			LRPpreprocessorSubReferenceSet* currentSubReferenceSetInList = currentLogicReferenceInList->logicReferenceVariable->referenceSetSubject;
 			#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
 			cout << "addSentenceToSentenceContentsPreprocessedLogicReferenceVariables GIA_POS_REL_TRANSLATOR_HYBRID_REFERENCE_SET_TYPE_SUBJECT, sentenceIndex = " << *sentenceIndex << endl;
 			#endif
@@ -422,8 +422,8 @@ void GIAposRelTranslatorHybridClass::generateLogicReferenceSetContentsWithVariab
 			}
 			#endif
 			#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE_OUTPUT_LOGIC_REFERENCE_SETS_FOR_HIGH_LEVEL_SEMANTIC_PARSE_VERBOSE
-			GIApreprocessorPlainTextWord* firstSubLogicReferenceInListGovernorLogicReferenceVariableName = new GIApreprocessorPlainTextWord(currentLogicReferenceInList->firstSubLogicReferenceInListGovernor->logicReferenceVariable->logicReferenceVariableName);
-			GIApreprocessorPlainTextWord* firstSubLogicReferenceInListDependentLogicReferenceVariableName = new GIApreprocessorPlainTextWord(currentLogicReferenceInList->firstSubLogicReferenceInListDependent->logicReferenceVariable->logicReferenceVariableName);
+			LRPpreprocessorPlainTextWord* firstSubLogicReferenceInListGovernorLogicReferenceVariableName = new LRPpreprocessorPlainTextWord(currentLogicReferenceInList->firstSubLogicReferenceInListGovernor->logicReferenceVariable->logicReferenceVariableName);
+			LRPpreprocessorPlainTextWord* firstSubLogicReferenceInListDependentLogicReferenceVariableName = new LRPpreprocessorPlainTextWord(currentLogicReferenceInList->firstSubLogicReferenceInListDependent->logicReferenceVariable->logicReferenceVariableName);
 			(currentLogicReferenceInList->logicReferenceVariable->referenceSetSubject->subReferenceSetContents).push_back(firstSubLogicReferenceInListGovernorLogicReferenceVariableName);
 			(currentLogicReferenceInList->logicReferenceVariable->referenceSetObject->subReferenceSetContents).push_back(firstSubLogicReferenceInListDependentLogicReferenceVariableName);
 			//for debug only:
@@ -471,27 +471,27 @@ void GIAposRelTranslatorHybridClass::generateLogicReferenceSetContentsWithVariab
 #endif
 
 
-void GIAposRelTranslatorHybridClass::addSentenceToSentenceContentsPreprocessedLogicReferenceVariables(string* sentenceContentsPreprocessedLogicReferenceVariables, string* sentenceContentsPreprocessedLogicReferenceVariablesForNLP, GIApreprocessorSubReferenceSet* referenceSet, int* sentenceIndex, int referenceSetType)
+void GIAposRelTranslatorHybridClass::addSentenceToSentenceContentsPreprocessedLogicReferenceVariables(string* sentenceContentsPreprocessedLogicReferenceVariables, string* sentenceContentsPreprocessedLogicReferenceVariablesForNLP, LRPpreprocessorSubReferenceSet* referenceSet, int* sentenceIndex, int referenceSetType)
 {
 	#ifndef GIA_POS_REL_TRANSLATOR_HYBRID_REFERENCE_SET_RECORD_SAME_REFERENCE_SET_DELIMITERS
 	if(!(referenceSet->isReferenceSetDelimiter))
 	{
 	#endif
-		//cout << "add = " << GIApreprocessorWordClassObject.generateTextFromVectorWordList(&(referenceSet->subReferenceSetContents)) << endl;
+		//cout << "add = " << LRPpreprocessorWordClassObject.generateTextFromVectorWordList(&(referenceSet->subReferenceSetContents)) << endl;
 		
 		#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_NLP_TEXT
 		(referenceSet->subReferenceSetContentsOutputForNLP).clear();	//probably not required
 		#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_REFERENCE_SET_RECORD_SAME_REFERENCE_SET_DELIMITERS
 		if(referenceSet->isReferenceSetDelimiter)
 		{
-			GIApreprocessorWordClassObject.addStringArrayToWordList(&(referenceSet->subReferenceSetContentsOutputForNLP), giaPreprocessorSentenceReferenceSetAddDummyNLPtextRelationshipSubjectFullArray, GIA_POS_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_SUBJECT_FULL_SIZE);
-			GIApreprocessorWordClassObject.addWordListToWordList(&(referenceSet->subReferenceSetContentsOutputForNLP), &(referenceSet->subReferenceSetContents));
+			LRPpreprocessorWordClassObject.addStringArrayToWordList(&(referenceSet->subReferenceSetContentsOutputForNLP), giaPreprocessorSentenceReferenceSetAddDummyNLPtextRelationshipSubjectFullArray, GIA_POS_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_SUBJECT_FULL_SIZE);
+			LRPpreprocessorWordClassObject.addWordListToWordList(&(referenceSet->subReferenceSetContentsOutputForNLP), &(referenceSet->subReferenceSetContents));
 			#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_SUBJECT_AND_DUMMY_DELIMITER_AND_DUMMY_OBJECT
-			GIApreprocessorWordClassObject.addStringArrayToWordList(&(referenceSet->subReferenceSetContentsOutputForNLP), giaPreprocessorSentenceReferenceSetAddDummyNLPtextRelationshipObjectFullArray, GIA_POS_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_OBJECT_FULL_SIZE);
+			LRPpreprocessorWordClassObject.addStringArrayToWordList(&(referenceSet->subReferenceSetContentsOutputForNLP), giaPreprocessorSentenceReferenceSetAddDummyNLPtextRelationshipObjectFullArray, GIA_POS_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_OBJECT_FULL_SIZE);
 			#endif
-			GIApreprocessorWordClassObject.addStringToWordList(&(referenceSet->subReferenceSetContentsOutputForNLP), SHAREDvars.convertCharToString(CHAR_FULLSTOP));
+			LRPpreprocessorWordClassObject.addStringToWordList(&(referenceSet->subReferenceSetContentsOutputForNLP), SHAREDvars.convertCharToString(CHAR_FULLSTOP));
 			#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
-			cout << "referenceSet->subReferenceSetContentsOutputForNLP = " << GIApreprocessorWordClassObject.generateTextFromVectorWordList(&(referenceSet->subReferenceSetContentsOutputForNLP), true) << endl;
+			cout << "referenceSet->subReferenceSetContentsOutputForNLP = " << LRPpreprocessorWordClassObject.generateTextFromVectorWordList(&(referenceSet->subReferenceSetContentsOutputForNLP), true) << endl;
 			#endif
 			referenceSet->dummyNLPtestOffset = GIA_POS_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_SUBJECT_FULL_SIZE;
 		} 
@@ -505,26 +505,26 @@ void GIAposRelTranslatorHybridClass::addSentenceToSentenceContentsPreprocessedLo
 			if(referenceSetType == GIA_POS_REL_TRANSLATOR_HYBRID_REFERENCE_SET_TYPE_OBJECT)	
 			#endif
 			{
-				GIApreprocessorWordClassObject.addStringArrayToWordList(&(referenceSet->subReferenceSetContentsOutputForNLP), giaPreprocessorSentenceReferenceSetAddDummyNLPtextRelationshipSubjectFullArray, GIA_POS_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_SUBJECT_FULL_SIZE);
-				GIApreprocessorWordClassObject.addStringArrayToWordList(&(referenceSet->subReferenceSetContentsOutputForNLP), giaPreprocessorSentenceReferenceSetAddDummyNLPtextRelationshipFullArray, GIA_POS_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_FULL_SIZE);
-				GIApreprocessorWordClassObject.addWordListToWordList(&(referenceSet->subReferenceSetContentsOutputForNLP), &(referenceSet->subReferenceSetContents));
-				GIApreprocessorWordClassObject.addStringToWordList(&(referenceSet->subReferenceSetContentsOutputForNLP), SHAREDvars.convertCharToString(CHAR_FULLSTOP));
+				LRPpreprocessorWordClassObject.addStringArrayToWordList(&(referenceSet->subReferenceSetContentsOutputForNLP), giaPreprocessorSentenceReferenceSetAddDummyNLPtextRelationshipSubjectFullArray, GIA_POS_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_SUBJECT_FULL_SIZE);
+				LRPpreprocessorWordClassObject.addStringArrayToWordList(&(referenceSet->subReferenceSetContentsOutputForNLP), giaPreprocessorSentenceReferenceSetAddDummyNLPtextRelationshipFullArray, GIA_POS_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_FULL_SIZE);
+				LRPpreprocessorWordClassObject.addWordListToWordList(&(referenceSet->subReferenceSetContentsOutputForNLP), &(referenceSet->subReferenceSetContents));
+				LRPpreprocessorWordClassObject.addStringToWordList(&(referenceSet->subReferenceSetContentsOutputForNLP), SHAREDvars.convertCharToString(CHAR_FULLSTOP));
 				#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
-				cout << "referenceSet->subReferenceSetContentsOutputForNLP = " << GIApreprocessorWordClassObject.generateTextFromVectorWordList(&(referenceSet->subReferenceSetContentsOutputForNLP), true) << endl;
+				cout << "referenceSet->subReferenceSetContentsOutputForNLP = " << LRPpreprocessorWordClassObject.generateTextFromVectorWordList(&(referenceSet->subReferenceSetContentsOutputForNLP), true) << endl;
 				#endif
 				referenceSet->dummyNLPtestOffset = GIA_POS_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_SUBJECT_FULL_SIZE - GIA_POS_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_FULL_SIZE;
 			} 
 			else if(referenceSetType == GIA_POS_REL_TRANSLATOR_HYBRID_REFERENCE_SET_TYPE_SUBJECT)
 			{
 			#endif
-				GIApreprocessorWordClassObject.addWordListToWordList(&(referenceSet->subReferenceSetContentsOutputForNLP), &(referenceSet->subReferenceSetContents));
-				GIApreprocessorWordClassObject.addStringArrayToWordList(&(referenceSet->subReferenceSetContentsOutputForNLP), giaPreprocessorSentenceReferenceSetAddDummyNLPtextRelationshipFullArray, GIA_POS_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_FULL_SIZE);
+				LRPpreprocessorWordClassObject.addWordListToWordList(&(referenceSet->subReferenceSetContentsOutputForNLP), &(referenceSet->subReferenceSetContents));
+				LRPpreprocessorWordClassObject.addStringArrayToWordList(&(referenceSet->subReferenceSetContentsOutputForNLP), giaPreprocessorSentenceReferenceSetAddDummyNLPtextRelationshipFullArray, GIA_POS_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_FULL_SIZE);
 				#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_SUBJECT_AND_DUMMY_DELIMITER_AND_DUMMY_OBJECT
-				GIApreprocessorWordClassObject.addStringArrayToWordList(&(referenceSet->subReferenceSetContentsOutputForNLP), giaPreprocessorSentenceReferenceSetAddDummyNLPtextRelationshipObjectFullArray, GIA_POS_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_OBJECT_FULL_SIZE);
+				LRPpreprocessorWordClassObject.addStringArrayToWordList(&(referenceSet->subReferenceSetContentsOutputForNLP), giaPreprocessorSentenceReferenceSetAddDummyNLPtextRelationshipObjectFullArray, GIA_POS_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_NLP_TEXT_RELATIONSHIP_OBJECT_FULL_SIZE);
 				#endif
-				GIApreprocessorWordClassObject.addStringToWordList(&(referenceSet->subReferenceSetContentsOutputForNLP), SHAREDvars.convertCharToString(CHAR_FULLSTOP));
+				LRPpreprocessorWordClassObject.addStringToWordList(&(referenceSet->subReferenceSetContentsOutputForNLP), SHAREDvars.convertCharToString(CHAR_FULLSTOP));
 				#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
-				cout << "referenceSet->subReferenceSetContentsOutputForNLP = " << GIApreprocessorWordClassObject.generateTextFromVectorWordList(&(referenceSet->subReferenceSetContentsOutputForNLP), true) << endl;
+				cout << "referenceSet->subReferenceSetContentsOutputForNLP = " << LRPpreprocessorWordClassObject.generateTextFromVectorWordList(&(referenceSet->subReferenceSetContentsOutputForNLP), true) << endl;
 				#endif
 				referenceSet->dummyNLPtestOffset = 0;
 			#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_SUBJECT_AND_DUMMY_DELIMITER_AND_OBJECT
@@ -534,11 +534,11 @@ void GIAposRelTranslatorHybridClass::addSentenceToSentenceContentsPreprocessedLo
 		#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_REFERENCE_SET_RECORD_SAME_REFERENCE_SET_DELIMITERS
 		}
 		#endif
-		*sentenceContentsPreprocessedLogicReferenceVariables = *sentenceContentsPreprocessedLogicReferenceVariables + GIApreprocessorWordClassObject.generateTextFromVectorWordList(&(referenceSet->subReferenceSetContents)) + CHAR_NEWLINE;
-		*sentenceContentsPreprocessedLogicReferenceVariablesForNLP = *sentenceContentsPreprocessedLogicReferenceVariablesForNLP + GIApreprocessorWordClassObject.generateTextFromVectorWordList(&(referenceSet->subReferenceSetContentsOutputForNLP), true) + CHAR_NEWLINE;
+		*sentenceContentsPreprocessedLogicReferenceVariables = *sentenceContentsPreprocessedLogicReferenceVariables + LRPpreprocessorWordClassObject.generateTextFromVectorWordList(&(referenceSet->subReferenceSetContents)) + CHAR_NEWLINE;
+		*sentenceContentsPreprocessedLogicReferenceVariablesForNLP = *sentenceContentsPreprocessedLogicReferenceVariablesForNLP + LRPpreprocessorWordClassObject.generateTextFromVectorWordList(&(referenceSet->subReferenceSetContentsOutputForNLP), true) + CHAR_NEWLINE;
 		#else
-		*sentenceContentsPreprocessedLogicReferenceVariables = *sentenceContentsPreprocessedLogicReferenceVariables + GIApreprocessorWordClassObject.generateTextFromVectorWordList(&(referenceSet->subReferenceSetContents)) + CHAR_NEWLINE;
-		*sentenceContentsPreprocessedLogicReferenceVariablesForNLP = *sentenceContentsPreprocessedLogicReferenceVariablesForNLP + GIApreprocessorWordClassObject.generateTextFromVectorWordList(&(referenceSet->subReferenceSetContents), true) + CHAR_NEWLINE;
+		*sentenceContentsPreprocessedLogicReferenceVariables = *sentenceContentsPreprocessedLogicReferenceVariables + LRPpreprocessorWordClassObject.generateTextFromVectorWordList(&(referenceSet->subReferenceSetContents)) + CHAR_NEWLINE;
+		*sentenceContentsPreprocessedLogicReferenceVariablesForNLP = *sentenceContentsPreprocessedLogicReferenceVariablesForNLP + LRPpreprocessorWordClassObject.generateTextFromVectorWordList(&(referenceSet->subReferenceSetContents), true) + CHAR_NEWLINE;
 		#endif
 		
 		referenceSet->sentenceIndex = *sentenceIndex;
@@ -553,46 +553,46 @@ void GIAposRelTranslatorHybridClass::addSentenceToSentenceContentsPreprocessedLo
 
 
 //preconditions: all multiwords in GIArules.xml <preprocessor><logicReference><class name="preposition"> must be in LRPdata WikipediaEnglishClubMultiwordPrepositions.txt
-#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
-bool GIAposRelTranslatorHybridClass::updateGIApreprocessorMultiwordReductionTagTextCorrespondenceInfo(GIApreprocessorSentence* firstGIApreprocessorSentenceInList, const bool isQuery)
+#ifdef LRP_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
+bool GIAposRelTranslatorHybridClass::updateLRPpreprocessorMultiwordReductionTagTextCorrespondenceInfo(LRPpreprocessorSentence* firstLRPpreprocessorSentenceInList, const bool isQuery)
 {
 	bool result = true;
 
-	GIApreprocessorWordReduction.setActiveGIApreprocessorMultiwordReductionTagTextCorrespondenceInfo(isQuery);	
-	GIApreprocessorMultiwordReductionTagTextCorrespondenceInfo* firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo = GIApreprocessorWordReduction.getActiveGIApreprocessorMultiwordReductionTagTextCorrespondenceInfo();
-	GIApreprocessorMultiwordReductionTagTextCorrespondenceInfo* currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo = firstGIApreprocessorMultiwordReductiontagCorrespondenceInfo;
+	LRPpreprocessorWordReduction.setActiveLRPpreprocessorMultiwordReductionTagTextCorrespondenceInfo(isQuery);	
+	LRPpreprocessorMultiwordReductionTagTextCorrespondenceInfo* firstLRPpreprocessorMultiwordReductiontagCorrespondenceInfo = LRPpreprocessorWordReduction.getActiveLRPpreprocessorMultiwordReductionTagTextCorrespondenceInfo();
+	LRPpreprocessorMultiwordReductionTagTextCorrespondenceInfo* currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo = firstLRPpreprocessorMultiwordReductiontagCorrespondenceInfo;
 	while(currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->next != NULL)
 	{
 		int sentenceIndexOriginal = currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->sentenceIndex;
 		int entityIndexOriginal = currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->entityIndex;
 		
-		GIApreprocessorSentence* currentGIApreprocessorSentenceInList = NULL;
-		if(getGIApreprocessorSentence(firstGIApreprocessorSentenceInList, currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->sentenceIndex, &currentGIApreprocessorSentenceInList))
+		LRPpreprocessorSentence* currentLRPpreprocessorSentenceInList = NULL;
+		if(getLRPpreprocessorSentence(firstLRPpreprocessorSentenceInList, currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->sentenceIndex, &currentLRPpreprocessorSentenceInList))
 		{
 			//calling this multiple times is somewhat inefficient
-			GIApreprocessorSubReferenceSet* GIApreprocessorSubReferenceSetFound = NULL;
-			if(getGIAposRelTranslatorHybridReferenceSet(currentGIApreprocessorSentenceInList->firstLogicReferenceInList, entityIndexOriginal, &GIApreprocessorSubReferenceSetFound))
+			LRPpreprocessorSubReferenceSet* LRPpreprocessorSubReferenceSetFound = NULL;
+			if(getGIAposRelTranslatorHybridReferenceSet(currentLRPpreprocessorSentenceInList->firstLogicReferenceInList, entityIndexOriginal, &LRPpreprocessorSubReferenceSetFound))
 			{
-				currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->sentenceIndex = GIApreprocessorSubReferenceSetFound->sentenceIndex;
-				currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->entityIndex = entityIndexOriginal - (GIApreprocessorSubReferenceSetFound->firstIndexOfReferenceSetText - GIA_NLP_START_ENTITY_INDEX) + GIApreprocessorSubReferenceSetFound->dummyNLPtestOffset;
+				currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->sentenceIndex = LRPpreprocessorSubReferenceSetFound->sentenceIndex;
+				currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->entityIndex = entityIndexOriginal - (LRPpreprocessorSubReferenceSetFound->firstIndexOfReferenceSetText - LRP_NLP_START_ENTITY_INDEX) + LRPpreprocessorSubReferenceSetFound->dummyNLPtestOffset;
 				#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
 				cout << "entityIndexOriginal = " << entityIndexOriginal << endl;
 				cout << "sentenceIndexOriginal = " << sentenceIndexOriginal << endl;
-				cout << "currentGIApreprocessorSentenceInList->sentenceContentsOriginalText = " << currentGIApreprocessorSentenceInList->sentenceContentsOriginalText << endl;
+				cout << "currentLRPpreprocessorSentenceInList->sentenceContentsOriginalText = " << currentLRPpreprocessorSentenceInList->sentenceContentsOriginalText << endl;
 				cout << "currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->sentenceIndex = " << currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->sentenceIndex << endl;
 				cout << "currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->entityIndex = " << currentLRPtoLRPforNLPonlyTagNameAndLocationCorrespondenceInfo->entityIndex << endl;
-				cout << "GIApreprocessorSubReferenceSetFound->firstIndexOfReferenceSetText = " << GIApreprocessorSubReferenceSetFound->firstIndexOfReferenceSetText << endl;
+				cout << "LRPpreprocessorSubReferenceSetFound->firstIndexOfReferenceSetText = " << LRPpreprocessorSubReferenceSetFound->firstIndexOfReferenceSetText << endl;
 				#endif
 			}
 			else
 			{
-				cerr << "GIApreprocessor::updateGIApreprocessorMultiwordReductionTagTextCorrespondenceInfo{} error: !getGIAposRelTranslatorHybridReferenceSet" << endl;
+				cerr << "LRPpreprocessor::updateLRPpreprocessorMultiwordReductionTagTextCorrespondenceInfo{} error: !getGIAposRelTranslatorHybridReferenceSet" << endl;
 				exit(EXIT_ERROR);	
 			}
 		}
 		else
 		{
-			cerr << "GIApreprocessor::updateGIApreprocessorMultiwordReductionTagTextCorrespondenceInfo{} error: !getGIApreprocessorSentenceInList" << endl;
+			cerr << "LRPpreprocessor::updateLRPpreprocessorMultiwordReductionTagTextCorrespondenceInfo{} error: !getLRPpreprocessorSentenceInList" << endl;
 			exit(EXIT_ERROR);	
 		}
 		
@@ -605,24 +605,24 @@ bool GIAposRelTranslatorHybridClass::updateGIApreprocessorMultiwordReductionTagT
 
 		
 	
-bool GIAposRelTranslatorHybridClass::getGIApreprocessorSentence(GIApreprocessorSentence* firstGIApreprocessorSentenceInList, const int sentenceIndexOriginal, GIApreprocessorSentence** GIApreprocessorSentenceFound)
+bool GIAposRelTranslatorHybridClass::getLRPpreprocessorSentence(LRPpreprocessorSentence* firstLRPpreprocessorSentenceInList, const int sentenceIndexOriginal, LRPpreprocessorSentence** LRPpreprocessorSentenceFound)
 {
 	bool result = false;
-	GIApreprocessorSentence* currentGIApreprocessorSentenceInList = firstGIApreprocessorSentenceInList;
-	while(currentGIApreprocessorSentenceInList->next != NULL)
+	LRPpreprocessorSentence* currentLRPpreprocessorSentenceInList = firstLRPpreprocessorSentenceInList;
+	while(currentLRPpreprocessorSentenceInList->next != NULL)
 	{
-		if(currentGIApreprocessorSentenceInList->sentenceIndexOriginal == sentenceIndexOriginal)
+		if(currentLRPpreprocessorSentenceInList->sentenceIndexOriginal == sentenceIndexOriginal)
 		{
-			*GIApreprocessorSentenceFound = currentGIApreprocessorSentenceInList;
+			*LRPpreprocessorSentenceFound = currentLRPpreprocessorSentenceInList;
 			result = true;
 		}
 		
-		currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->next;
+		currentLRPpreprocessorSentenceInList = currentLRPpreprocessorSentenceInList->next;
 	}
 	return result;
 }
 
-bool GIAposRelTranslatorHybridClass::getGIAposRelTranslatorHybridReferenceSet(GIAposRelTranslatorHybridLogicReference* firstGIAposRelTranslatorHybridLogicReferenceInList, const int entityIndexOriginal, GIApreprocessorSubReferenceSet** GIApreprocessorSubReferenceSetFound)
+bool GIAposRelTranslatorHybridClass::getGIAposRelTranslatorHybridReferenceSet(GIAposRelTranslatorHybridLogicReference* firstGIAposRelTranslatorHybridLogicReferenceInList, const int entityIndexOriginal, LRPpreprocessorSubReferenceSet** LRPpreprocessorSubReferenceSetFound)
 {
 	//cout << "1 getGIAposRelTranslatorHybridReferenceSet: entityIndexOriginal = " << entityIndexOriginal << endl;
 
@@ -636,7 +636,7 @@ bool GIAposRelTranslatorHybridClass::getGIAposRelTranslatorHybridReferenceSet(GI
 		{
 			if(currentGIAposRelTranslatorHybridLogicReferenceInList->hasSubLogicReferenceArray)
 			{
-				if(getGIAposRelTranslatorHybridReferenceSet(currentGIAposRelTranslatorHybridLogicReferenceInList->firstSubLogicReferenceInListArray, entityIndexOriginal, GIApreprocessorSubReferenceSetFound))
+				if(getGIAposRelTranslatorHybridReferenceSet(currentGIAposRelTranslatorHybridLogicReferenceInList->firstSubLogicReferenceInListArray, entityIndexOriginal, LRPpreprocessorSubReferenceSetFound))
 				{
 					result = true;
 				}
@@ -647,14 +647,14 @@ bool GIAposRelTranslatorHybridClass::getGIAposRelTranslatorHybridReferenceSet(GI
 				if(currentGIAposRelTranslatorHybridLogicReferenceInList->firstSubLogicReferenceInListGovernor != NULL)
 				{
 				#endif
-					if(getGIAposRelTranslatorHybridReferenceSet(currentGIAposRelTranslatorHybridLogicReferenceInList->firstSubLogicReferenceInListGovernor, entityIndexOriginal, GIApreprocessorSubReferenceSetFound))
+					if(getGIAposRelTranslatorHybridReferenceSet(currentGIAposRelTranslatorHybridLogicReferenceInList->firstSubLogicReferenceInListGovernor, entityIndexOriginal, LRPpreprocessorSubReferenceSetFound))
 					{
 						result = true;
 					}
 				#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE_CONJUNCTION_LR_WITH_EMBEDDED_PREPOSITION_VERB_LR_DELETE_IMPLICIT_GOVERNOR
 				}
 				#endif
-				if(getGIAposRelTranslatorHybridReferenceSet(currentGIAposRelTranslatorHybridLogicReferenceInList->firstSubLogicReferenceInListDependent, entityIndexOriginal, GIApreprocessorSubReferenceSetFound))
+				if(getGIAposRelTranslatorHybridReferenceSet(currentGIAposRelTranslatorHybridLogicReferenceInList->firstSubLogicReferenceInListDependent, entityIndexOriginal, LRPpreprocessorSubReferenceSetFound))
 				{
 					result = true;
 				}
@@ -663,15 +663,15 @@ bool GIAposRelTranslatorHybridClass::getGIAposRelTranslatorHybridReferenceSet(GI
 		else
 		{
 		#endif
-			if(getGIAposRelTranslatorHybridReferenceSet(currentGIAposRelTranslatorHybridLogicReferenceInList->logicReferenceVariable->referenceSetSubject, entityIndexOriginal, GIApreprocessorSubReferenceSetFound))
+			if(getGIAposRelTranslatorHybridReferenceSet(currentGIAposRelTranslatorHybridLogicReferenceInList->logicReferenceVariable->referenceSetSubject, entityIndexOriginal, LRPpreprocessorSubReferenceSetFound))
 			{
 				result = true;
 			}
- 			if(getGIAposRelTranslatorHybridReferenceSet(currentGIAposRelTranslatorHybridLogicReferenceInList->logicReferenceVariable->referenceSetObject, entityIndexOriginal, GIApreprocessorSubReferenceSetFound))
+ 			if(getGIAposRelTranslatorHybridReferenceSet(currentGIAposRelTranslatorHybridLogicReferenceInList->logicReferenceVariable->referenceSetObject, entityIndexOriginal, LRPpreprocessorSubReferenceSetFound))
 			{
 				result = true;
 			}		
-			if(getGIAposRelTranslatorHybridReferenceSet(currentGIAposRelTranslatorHybridLogicReferenceInList->logicReferenceVariable->referenceSetDelimiter, entityIndexOriginal, GIApreprocessorSubReferenceSetFound))
+			if(getGIAposRelTranslatorHybridReferenceSet(currentGIAposRelTranslatorHybridLogicReferenceInList->logicReferenceVariable->referenceSetDelimiter, entityIndexOriginal, LRPpreprocessorSubReferenceSetFound))
 			{
 				result = true;
 			}
@@ -691,23 +691,23 @@ bool GIAposRelTranslatorHybridClass::getGIAposRelTranslatorHybridReferenceSet(GI
 	return result;
 }
 
-bool GIAposRelTranslatorHybridClass::getGIAposRelTranslatorHybridReferenceSet(GIApreprocessorSubReferenceSet* firstGIApreprocessorSubReferenceInList, const int entityIndexOriginal, GIApreprocessorSubReferenceSet** GIApreprocessorSubReferenceSetFound)
+bool GIAposRelTranslatorHybridClass::getGIAposRelTranslatorHybridReferenceSet(LRPpreprocessorSubReferenceSet* firstLRPpreprocessorSubReferenceInList, const int entityIndexOriginal, LRPpreprocessorSubReferenceSet** LRPpreprocessorSubReferenceSetFound)
 {
 	bool result = false;
 	//cout << "2 getGIAposRelTranslatorHybridReferenceSet: entityIndexOriginal = " << entityIndexOriginal << endl;
-	GIApreprocessorSubReferenceSet* currentGIApreprocessorSubReferenceInList = firstGIApreprocessorSubReferenceInList;
-	while(currentGIApreprocessorSubReferenceInList->next != NULL)
+	LRPpreprocessorSubReferenceSet* currentLRPpreprocessorSubReferenceInList = firstLRPpreprocessorSubReferenceInList;
+	while(currentLRPpreprocessorSubReferenceInList->next != NULL)
 	{
-		//cout << "\t getGIAposRelTranslatorHybridReferenceSet: currentGIApreprocessorSubReferenceInList->firstIndexOfReferenceSetText = " << currentGIApreprocessorSubReferenceInList->firstIndexOfReferenceSetText << endl;
-		//cout << "\t getGIAposRelTranslatorHybridReferenceSet: currentGIApreprocessorSubReferenceInList->lastIndexOfReferenceSetText = " << currentGIApreprocessorSubReferenceInList->lastIndexOfReferenceSetText << endl;
+		//cout << "\t getGIAposRelTranslatorHybridReferenceSet: currentLRPpreprocessorSubReferenceInList->firstIndexOfReferenceSetText = " << currentLRPpreprocessorSubReferenceInList->firstIndexOfReferenceSetText << endl;
+		//cout << "\t getGIAposRelTranslatorHybridReferenceSet: currentLRPpreprocessorSubReferenceInList->lastIndexOfReferenceSetText = " << currentLRPpreprocessorSubReferenceInList->lastIndexOfReferenceSetText << endl;
 
-		if((entityIndexOriginal >= currentGIApreprocessorSubReferenceInList->firstIndexOfReferenceSetText) && (entityIndexOriginal < currentGIApreprocessorSubReferenceInList->lastIndexOfReferenceSetText))
+		if((entityIndexOriginal >= currentLRPpreprocessorSubReferenceInList->firstIndexOfReferenceSetText) && (entityIndexOriginal < currentLRPpreprocessorSubReferenceInList->lastIndexOfReferenceSetText))
 		{
 			result = true;
-			*GIApreprocessorSubReferenceSetFound = currentGIApreprocessorSubReferenceInList;
+			*LRPpreprocessorSubReferenceSetFound = currentLRPpreprocessorSubReferenceInList;
 		}
 		
-		currentGIApreprocessorSubReferenceInList = currentGIApreprocessorSubReferenceInList->next;
+		currentLRPpreprocessorSubReferenceInList = currentLRPpreprocessorSubReferenceInList->next;
 	}
 	return result;
 }
@@ -719,20 +719,20 @@ bool GIAposRelTranslatorHybridClass::getGIAposRelTranslatorHybridReferenceSet(GI
 
 
 
-bool GIAposRelTranslatorHybridClass::connectPreprocessorSentenceReferenceSetEntitiesToLogicReferenceEntitiesWrapper(GIApreprocessorSentence* firstGIApreprocessorSentenceInList, GIAtranslatorVariablesClass* translatorVariables)
+bool GIAposRelTranslatorHybridClass::connectPreprocessorSentenceReferenceSetEntitiesToLogicReferenceEntitiesWrapper(LRPpreprocessorSentence* firstLRPpreprocessorSentenceInList, GIAtranslatorVariablesClass* translatorVariables)
 {
 	bool result = true;
-	GIApreprocessorSentence* currentGIApreprocessorSentenceInList = firstGIApreprocessorSentenceInList;
-	while(currentGIApreprocessorSentenceInList->next != NULL)
+	LRPpreprocessorSentence* currentLRPpreprocessorSentenceInList = firstLRPpreprocessorSentenceInList;
+	while(currentLRPpreprocessorSentenceInList->next != NULL)
 	{
-		connectPreprocessorSentenceReferenceSetEntitiesToLogicReferenceEntities(currentGIApreprocessorSentenceInList, currentGIApreprocessorSentenceInList->firstLogicReferenceInList, translatorVariables, NULL);
+		connectPreprocessorSentenceReferenceSetEntitiesToLogicReferenceEntities(currentLRPpreprocessorSentenceInList, currentLRPpreprocessorSentenceInList->firstLogicReferenceInList, translatorVariables, NULL);
 		
-		currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->next;
+		currentLRPpreprocessorSentenceInList = currentLRPpreprocessorSentenceInList->next;
 	}
 	return result;
 }
 
-bool GIAposRelTranslatorHybridClass::connectPreprocessorSentenceReferenceSetEntitiesToLogicReferenceEntities(GIApreprocessorSentence* currentGIApreprocessorSentenceInList, GIAposRelTranslatorHybridLogicReference* firstLogicReferenceInList, GIAtranslatorVariablesClass* translatorVariables, GIAentityNode* parentLogicReferenceEntity)
+bool GIAposRelTranslatorHybridClass::connectPreprocessorSentenceReferenceSetEntitiesToLogicReferenceEntities(LRPpreprocessorSentence* currentLRPpreprocessorSentenceInList, GIAposRelTranslatorHybridLogicReference* firstLogicReferenceInList, GIAtranslatorVariablesClass* translatorVariables, GIAentityNode* parentLogicReferenceEntity)
 {	
 	bool result = true;
 
@@ -754,11 +754,11 @@ bool GIAposRelTranslatorHybridClass::connectPreprocessorSentenceReferenceSetEnti
 	bool stillParsingLogicReferenceLayer = true;
 	while(stillParsingLogicReferenceLayer)
 	{			
-		#ifdef GIA_PREPROCESSOR_REASSIGN_UNIQUE_SENTENCE_INDICES_FOR_LOGIC_REFERENCE_VARIABLES
+		#ifdef LRP_PREPROCESSOR_REASSIGN_UNIQUE_SENTENCE_INDICES_FOR_LOGIC_REFERENCE_VARIABLES
 		translatorVariables->sentenceIndex = currentLogicReferenceInList->logicReferenceVariable->sentenceIndex; //this sentenceIndex will be replaced in the future
 		#else
-		#ifdef GIA_PREPROCESSOR_REASSIGN_UNIQUE_SENTENCE_INDICES_FOR_SENTENCES
-		translatorVariables->sentenceIndex = currentGIApreprocessorSentenceInList->sentenceIndex;
+		#ifdef LRP_PREPROCESSOR_REASSIGN_UNIQUE_SENTENCE_INDICES_FOR_SENTENCES
+		translatorVariables->sentenceIndex = currentLRPpreprocessorSentenceInList->sentenceIndex;
 		#else
 		//no new entities or connections will be created
 		#endif
@@ -785,11 +785,11 @@ bool GIAposRelTranslatorHybridClass::connectPreprocessorSentenceReferenceSetEnti
 					translatorVariables->sentenceIndex = currentLogicReferenceInList->logicReferenceVariable->referenceSetDelimiter->sentenceIndex;	
 					if(!findPrimaryEntityBasedOnSentenceIndexAndTypeAndDeleteDummyVariableConnections(currentLogicReferenceInList->logicReferenceVariable->referenceSetDelimiter, translatorVariables, GIA_POS_REL_TRANSLATOR_HYBRID_REFERENCE_SET_TYPE_DELIMITER, &logicReferenceEntity, NULL))
 					{
-						cerr << "GIApreprocessor::connectPreprocessorSentenceReferenceSetEntitiesToLogicReferenceEntities{} error: !findPrimaryEntityBasedOnSentenceIndexAndTypeAndDeleteDummyVariableConnections" << endl;
+						cerr << "LRPpreprocessor::connectPreprocessorSentenceReferenceSetEntitiesToLogicReferenceEntities{} error: !findPrimaryEntityBasedOnSentenceIndexAndTypeAndDeleteDummyVariableConnections" << endl;
 						exit(EXIT_ERROR);				
 					}
 					#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE_OUTPUT_LOGIC_REFERENCE_SETS_FOR_HIGH_LEVEL_SEMANTIC_PARSE			
-					changeSentenceIndexOfEntityNodesAndConnections(currentLogicReferenceInList->logicReferenceVariable->referenceSetDelimiter->sentenceIndex, currentGIApreprocessorSentenceInList->sentenceIndex, translatorVariables);	
+					changeSentenceIndexOfEntityNodesAndConnections(currentLogicReferenceInList->logicReferenceVariable->referenceSetDelimiter->sentenceIndex, currentLRPpreprocessorSentenceInList->sentenceIndex, translatorVariables);	
 					#endif
 					translatorVariables->sentenceIndex = sentenceIndexRecord;
 				#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE_OUTPUT_LOGIC_REFERENCE_SETS_FOR_HIGH_LEVEL_SEMANTIC_PARSE_VERB_DELIMITERS_ONLY
@@ -843,7 +843,7 @@ bool GIAposRelTranslatorHybridClass::connectPreprocessorSentenceReferenceSetEnti
 
 			if(currentLogicReferenceInList->hasSubLogicReferenceArray)
 			{
-				if(!connectPreprocessorSentenceReferenceSetEntitiesToLogicReferenceEntities(currentGIApreprocessorSentenceInList, currentLogicReferenceInList->firstSubLogicReferenceInListArray, translatorVariables, logicReferenceEntity));
+				if(!connectPreprocessorSentenceReferenceSetEntitiesToLogicReferenceEntities(currentLRPpreprocessorSentenceInList, currentLogicReferenceInList->firstSubLogicReferenceInListArray, translatorVariables, logicReferenceEntity));
 				{
 					result = false;
 				}
@@ -854,14 +854,14 @@ bool GIAposRelTranslatorHybridClass::connectPreprocessorSentenceReferenceSetEnti
 				if(currentLogicReferenceInList->firstSubLogicReferenceInListGovernor != NULL)
 				{
 				#endif
-					if(!connectPreprocessorSentenceReferenceSetEntitiesToLogicReferenceEntities(currentGIApreprocessorSentenceInList, currentLogicReferenceInList->firstSubLogicReferenceInListGovernor, translatorVariables, logicReferenceEntity));
+					if(!connectPreprocessorSentenceReferenceSetEntitiesToLogicReferenceEntities(currentLRPpreprocessorSentenceInList, currentLogicReferenceInList->firstSubLogicReferenceInListGovernor, translatorVariables, logicReferenceEntity));
 					{
 						result = false;
 					}
 				#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE_CONJUNCTION_LR_WITH_EMBEDDED_PREPOSITION_VERB_LR_DELETE_IMPLICIT_GOVERNOR
 				}
 				#endif
-				if(!connectPreprocessorSentenceReferenceSetEntitiesToLogicReferenceEntities(currentGIApreprocessorSentenceInList, currentLogicReferenceInList->firstSubLogicReferenceInListDependent, translatorVariables, logicReferenceEntity));
+				if(!connectPreprocessorSentenceReferenceSetEntitiesToLogicReferenceEntities(currentLRPpreprocessorSentenceInList, currentLogicReferenceInList->firstSubLogicReferenceInListDependent, translatorVariables, logicReferenceEntity));
 				{
 					result = false;
 				}
@@ -916,25 +916,25 @@ bool GIAposRelTranslatorHybridClass::connectPreprocessorSentenceReferenceSetEnti
 				#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_REFERENCE_SET_RECORD_SAME_REFERENCE_SET_DELIMITERS_UPDATE_ENTITY_OLD_METHOD
 				if(!findPrimaryEntityBasedOnSentenceIndexAndTypeAndDeleteDummyVariableConnections(currentLogicReferenceInList->logicReferenceVariable->referenceSetDelimiter, translatorVariables, GIA_POS_REL_TRANSLATOR_HYBRID_REFERENCE_SET_TYPE_DELIMITER, &delimiterEntity, NULL))
 				{
-					cerr << "GIApreprocessor::connectPreprocessorSentenceReferenceSetEntitiesToLogicReferenceEntities{} error: !findPrimaryEntityBasedOnSentenceIndexAndTypeAndDeleteDummyVariableConnections" << endl;
+					cerr << "LRPpreprocessor::connectPreprocessorSentenceReferenceSetEntitiesToLogicReferenceEntities{} error: !findPrimaryEntityBasedOnSentenceIndexAndTypeAndDeleteDummyVariableConnections" << endl;
 					exit(EXIT_ERROR);				
 				}
 				if(!updateRelationshipType(delimiterEntity, currentLogicReferenceInList->logicReferenceVariable->referenceSetDelimiter, currentLogicReferenceInList->logicReferenceVariable->referenceSetObject, translatorVariables))
 				{
-					cerr << "GIApreprocessor::connectPreprocessorSentenceReferenceSetEntitiesToLogicReferenceEntities{} error: !updateRelationshipType" << endl;
+					cerr << "LRPpreprocessor::connectPreprocessorSentenceReferenceSetEntitiesToLogicReferenceEntities{} error: !updateRelationshipType" << endl;
 					exit(EXIT_ERROR);	
 				}
 				#else
 				delimiterEntityTempTenseInformation = NULL;
 				if(!findPrimaryEntityBasedOnSentenceIndexAndTypeAndDeleteDummyVariableConnections(currentLogicReferenceInList->logicReferenceVariable->referenceSetDelimiter, translatorVariables, GIA_POS_REL_TRANSLATOR_HYBRID_REFERENCE_SET_TYPE_DELIMITER, &delimiterEntityTempTenseInformation, NULL))
 				{
-					cerr << "GIApreprocessor::connectPreprocessorSentenceReferenceSetEntitiesToLogicReferenceEntities{} error: !findPrimaryEntityBasedOnSentenceIndexAndTypeAndDeleteDummyVariableConnections" << endl;
+					cerr << "LRPpreprocessor::connectPreprocessorSentenceReferenceSetEntitiesToLogicReferenceEntities{} error: !findPrimaryEntityBasedOnSentenceIndexAndTypeAndDeleteDummyVariableConnections" << endl;
 					exit(EXIT_ERROR);				
 				}
 				delimiterEntity = createNewRelationship(currentLogicReferenceInList->logicReferenceVariable, translatorVariables);	//OLD: this will create an intermediary action/possession("have") node if necessary
 				if(!updateRelationshipTenseInformation(delimiterEntity, delimiterEntityTempTenseInformation, translatorVariables))
 				{
-					cerr << "GIApreprocessor::connectPreprocessorSentenceReferenceSetEntitiesToLogicReferenceEntities{} error: !updateRelationshipTenseInformation" << endl;
+					cerr << "LRPpreprocessor::connectPreprocessorSentenceReferenceSetEntitiesToLogicReferenceEntities{} error: !updateRelationshipTenseInformation" << endl;
 					exit(EXIT_ERROR);	
 				}
 				#endif
@@ -997,7 +997,7 @@ bool GIAposRelTranslatorHybridClass::connectPreprocessorSentenceReferenceSetEnti
 							/*
 							if(!delimiterDefined)
 							{
-								cerr << "GIApreprocessor::connectPreprocessorSentenceReferenceSetEntitiesToLogicReferenceEntities{} error: (firstLogicReferenceInListInUpper->hasSubLogicReference) && (!delimiterDefined)" << endl;
+								cerr << "LRPpreprocessor::connectPreprocessorSentenceReferenceSetEntitiesToLogicReferenceEntities{} error: (firstLogicReferenceInListInUpper->hasSubLogicReference) && (!delimiterDefined)" << endl;
 								exit(EXIT_ERROR);
 							}
 							*/
@@ -1005,7 +1005,7 @@ bool GIAposRelTranslatorHybridClass::connectPreprocessorSentenceReferenceSetEnti
 						}
 						else
 						{
-							cerr << "GIApreprocessor::connectPreprocessorSentenceReferenceSetEntitiesToLogicReferenceEntities{} error: !(firstLogicReferenceInListInUpper->hasSubLogicReference)" << endl;
+							cerr << "LRPpreprocessor::connectPreprocessorSentenceReferenceSetEntitiesToLogicReferenceEntities{} error: !(firstLogicReferenceInListInUpper->hasSubLogicReference)" << endl;
 							exit(EXIT_ERROR);
 						}
 					}
@@ -1057,7 +1057,7 @@ bool GIAposRelTranslatorHybridClass::connectPreprocessorSentenceReferenceSetEnti
 									//connect the delimiter to object 
 									GIAtranslatorOperations.connectLogicReferenceRelationshipToTarget(delimiterEntity, objectEntity, sameReferenceSetLogicReference, translatorVariables);
 									#else
-									cerr << "GIApreprocessor::connectPreprocessorSentenceReferenceSetEntitiesToLogicReferenceEntities{} error: islogicReferenceConjunctionAndOr(currentLogicReferenceInList) && (!subjectDefined && objectDefined) && !delimiterDefined" << endl;
+									cerr << "LRPpreprocessor::connectPreprocessorSentenceReferenceSetEntitiesToLogicReferenceEntities{} error: islogicReferenceConjunctionAndOr(currentLogicReferenceInList) && (!subjectDefined && objectDefined) && !delimiterDefined" << endl;
 									exit(EXIT_ERROR);
 									#endif
 								}
@@ -1079,7 +1079,7 @@ bool GIAposRelTranslatorHybridClass::connectPreprocessorSentenceReferenceSetEnti
 							{
 								if(delimiterDefined)
 								{
-									cerr << "GIApreprocessor::connectPreprocessorSentenceReferenceSetEntitiesToLogicReferenceEntities{} error: islogicReferenceConjunctionAndOr(currentLogicReferenceInList) && (subjectDefined && !objectDefined) && delimiterDefined" << endl;
+									cerr << "LRPpreprocessor::connectPreprocessorSentenceReferenceSetEntitiesToLogicReferenceEntities{} error: islogicReferenceConjunctionAndOr(currentLogicReferenceInList) && (subjectDefined && !objectDefined) && delimiterDefined" << endl;
 									exit(EXIT_ERROR);
 								}
 								else
@@ -1112,13 +1112,13 @@ bool GIAposRelTranslatorHybridClass::connectPreprocessorSentenceReferenceSetEnti
 					}
 					else
 					{
-						cerr << "GIApreprocessor::connectPreprocessorSentenceReferenceSetEntitiesToLogicReferenceEntities{} error: conjunctionFound && firstImplicitConjunctionSubject == NULL" << endl;
+						cerr << "LRPpreprocessor::connectPreprocessorSentenceReferenceSetEntitiesToLogicReferenceEntities{} error: conjunctionFound && firstImplicitConjunctionSubject == NULL" << endl;
 						exit(EXIT_ERROR);	
 					}
 				}
 				else
 				{
-					cerr << "GIApreprocessor::connectPreprocessorSentenceReferenceSetEntitiesToLogicReferenceEntities{} error: conjunctionFound && !findFirstImplicitConjunctionLogicReferenceSetBefore" << endl;
+					cerr << "LRPpreprocessor::connectPreprocessorSentenceReferenceSetEntitiesToLogicReferenceEntities{} error: conjunctionFound && !findFirstImplicitConjunctionLogicReferenceSetBefore" << endl;
 					exit(EXIT_ERROR);	
 				}
 			}
@@ -1148,7 +1148,7 @@ bool GIAposRelTranslatorHybridClass::connectPreprocessorSentenceReferenceSetEnti
 					{
 						if(objectDefined)
 						{
-							cerr << "GIApreprocessor::connectPreprocessorSentenceReferenceSetEntitiesToLogicReferenceEntities{} error: subjectDefined && !delimiterDefined && objectDefined" << endl;
+							cerr << "LRPpreprocessor::connectPreprocessorSentenceReferenceSetEntitiesToLogicReferenceEntities{} error: subjectDefined && !delimiterDefined && objectDefined" << endl;
 							exit(EXIT_ERROR);
 						}	
 						else
@@ -1169,7 +1169,7 @@ bool GIAposRelTranslatorHybridClass::connectPreprocessorSentenceReferenceSetEnti
 						else
 						{
 							//eg regarding (logicReference) moving (delimiter)
-							cerr << "GIApreprocessor::connectPreprocessorSentenceReferenceSetEntitiesToLogicReferenceEntities{} error: !subjectDefined && delimiterDefined && !objectDefined" << endl;
+							cerr << "LRPpreprocessor::connectPreprocessorSentenceReferenceSetEntitiesToLogicReferenceEntities{} error: !subjectDefined && delimiterDefined && !objectDefined" << endl;
 							exit(EXIT_ERROR);
 						}
 					}
@@ -1177,7 +1177,7 @@ bool GIAposRelTranslatorHybridClass::connectPreprocessorSentenceReferenceSetEnti
 					{
 						/*//may be a conjunction layer; this will be processed later
 						//eg regarding (logicReference) the pie (object)
-						cerr << "GIApreprocessor::connectPreprocessorSentenceReferenceSetEntitiesToLogicReferenceEntities{} error: !subjectDefined && !delimiterDefined && objectDefined" << endl;
+						cerr << "LRPpreprocessor::connectPreprocessorSentenceReferenceSetEntitiesToLogicReferenceEntities{} error: !subjectDefined && !delimiterDefined && objectDefined" << endl;
 						exit(EXIT_ERROR);
 						*/
 					}	
@@ -1188,8 +1188,8 @@ bool GIAposRelTranslatorHybridClass::connectPreprocessorSentenceReferenceSetEnti
 
 			#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE
 			//connect the logic reference to the delimiter or subject
-			#ifdef GIA_PREPROCESSOR_REASSIGN_UNIQUE_SENTENCE_INDICES_FOR_LOGIC_REFERENCE_VARIABLES_IGNORE_CONNECTIONS_TO_SENTENCE_LOGIC_REFERENCE_SET
-			translatorVariables->sentenceIndex = currentGIApreprocessorSentenceInList->sentenceIndex;
+			#ifdef LRP_PREPROCESSOR_REASSIGN_UNIQUE_SENTENCE_INDICES_FOR_LOGIC_REFERENCE_VARIABLES_IGNORE_CONNECTIONS_TO_SENTENCE_LOGIC_REFERENCE_SET
+			translatorVariables->sentenceIndex = currentLRPpreprocessorSentenceInList->sentenceIndex;
 			#endif
 			if(currentLogicReferenceInList->isSubLogicReferenceGovernor)
 			{
@@ -1202,7 +1202,7 @@ bool GIAposRelTranslatorHybridClass::connectPreprocessorSentenceReferenceSetEnti
 					else
 					{
 						//eg Tom is (connection) green proposed (action)
-						cerr << "GIApreprocessor::connectPreprocessorSentenceReferenceSetEntitiesToLogicReferenceEntities{} error: (currentGIApreprocessorSentenceInList->isSubLogicReferenceGovernor) && (currentGIApreprocessorSentenceInList->lastLogicReferenceInUpperLevel->logicReferenceClass == GIA_POS_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_CLASS_VERB) && (delimiterDefined)" << endl;
+						cerr << "LRPpreprocessor::connectPreprocessorSentenceReferenceSetEntitiesToLogicReferenceEntities{} error: (currentLRPpreprocessorSentenceInList->isSubLogicReferenceGovernor) && (currentLRPpreprocessorSentenceInList->lastLogicReferenceInUpperLevel->logicReferenceClass == GIA_POS_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_CLASS_VERB) && (delimiterDefined)" << endl;
 						exit(EXIT_ERROR);
 					}
 				}
@@ -1226,7 +1226,7 @@ bool GIAposRelTranslatorHybridClass::connectPreprocessorSentenceReferenceSetEnti
 					else
 					{
 						//eg The apple (object), considering (action). / Considering (action)...,  the apple (object)
-						cerr << "GIApreprocessor::connectPreprocessorSentenceReferenceSetEntitiesToLogicReferenceEntities{} error: (currentGIApreprocessorSentenceInList->isSubLogicReferenceGovernor) && (currentGIApreprocessorSentenceInList->lastLogicReferenceInUpperLevel->logicReferenceClass == GIA_POS_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_CLASS_PREPOSITION) && (delimiterDefined)" << endl;
+						cerr << "LRPpreprocessor::connectPreprocessorSentenceReferenceSetEntitiesToLogicReferenceEntities{} error: (currentLRPpreprocessorSentenceInList->isSubLogicReferenceGovernor) && (currentLRPpreprocessorSentenceInList->lastLogicReferenceInUpperLevel->logicReferenceClass == GIA_POS_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_CLASS_PREPOSITION) && (delimiterDefined)" << endl;
 						exit(EXIT_ERROR);
 					}
 
@@ -1244,26 +1244,26 @@ bool GIAposRelTranslatorHybridClass::connectPreprocessorSentenceReferenceSetEnti
 				}
 				else
 				{
-					cerr << "GIApreprocessor::connectPreprocessorSentenceReferenceSetEntitiesToLogicReferenceEntities{} error: (currentGIApreprocessorSentenceInList->isSubLogicReferenceArray) && (!delimiterDefined) && (!subjectDefined)." << endl;
+					cerr << "LRPpreprocessor::connectPreprocessorSentenceReferenceSetEntitiesToLogicReferenceEntities{} error: (currentLRPpreprocessorSentenceInList->isSubLogicReferenceArray) && (!delimiterDefined) && (!subjectDefined)." << endl;
 					exit(EXIT_ERROR);
 				}
 			}
 			#endif
 
-			#ifdef GIA_PREPROCESSOR_REASSIGN_UNIQUE_SENTENCE_INDICES_FOR_SENTENCES
-			#ifdef GIA_PREPROCESSOR_REASSIGN_UNIQUE_SENTENCE_INDICES_FOR_LOGIC_REFERENCE_VARIABLES
+			#ifdef LRP_PREPROCESSOR_REASSIGN_UNIQUE_SENTENCE_INDICES_FOR_SENTENCES
+			#ifdef LRP_PREPROCESSOR_REASSIGN_UNIQUE_SENTENCE_INDICES_FOR_LOGIC_REFERENCE_VARIABLES
 			changeSentenceIndexOfEntityNodesAndConnectionsForReferenceSet(currentLogicReferenceInList->logicReferenceVariable->referenceSetSubject, currentLogicReferenceInList->logicReferenceVariable->sentenceIndex, translatorVariables);
 			changeSentenceIndexOfEntityNodesAndConnectionsForReferenceSet(currentLogicReferenceInList->logicReferenceVariable->referenceSetObject, currentLogicReferenceInList->logicReferenceVariable->sentenceIndex, translatorVariables);
 			changeSentenceIndexOfEntityNodesAndConnectionsForReferenceSet(currentLogicReferenceInList->logicReferenceVariable->referenceSetDelimiter, currentLogicReferenceInList->logicReferenceVariable->sentenceIndex, translatorVariables);
 			#else
-			//cout << "currentGIApreprocessorSentenceInList->sentenceIndex = " << currentGIApreprocessorSentenceInList->sentenceIndex << endl;
+			//cout << "currentLRPpreprocessorSentenceInList->sentenceIndex = " << currentLRPpreprocessorSentenceInList->sentenceIndex << endl;
 			#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_REFERENCE_SET
-			changeSentenceIndexOfEntityNodesAndConnectionsForReferenceSet(currentLogicReferenceInList->logicReferenceVariable->referenceSetSubject, currentGIApreprocessorSentenceInList->sentenceIndex, translatorVariables);
-			changeSentenceIndexOfEntityNodesAndConnectionsForReferenceSet(currentLogicReferenceInList->logicReferenceVariable->referenceSetObject, currentGIApreprocessorSentenceInList->sentenceIndex, translatorVariables);
-			changeSentenceIndexOfEntityNodesAndConnectionsForReferenceSet(currentLogicReferenceInList->logicReferenceVariable->referenceSetDelimiter, currentGIApreprocessorSentenceInList->sentenceIndex, translatorVariables);
+			changeSentenceIndexOfEntityNodesAndConnectionsForReferenceSet(currentLogicReferenceInList->logicReferenceVariable->referenceSetSubject, currentLRPpreprocessorSentenceInList->sentenceIndex, translatorVariables);
+			changeSentenceIndexOfEntityNodesAndConnectionsForReferenceSet(currentLogicReferenceInList->logicReferenceVariable->referenceSetObject, currentLRPpreprocessorSentenceInList->sentenceIndex, translatorVariables);
+			changeSentenceIndexOfEntityNodesAndConnectionsForReferenceSet(currentLogicReferenceInList->logicReferenceVariable->referenceSetDelimiter, currentLRPpreprocessorSentenceInList->sentenceIndex, translatorVariables);
 			#else
 			#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE
-			changeSentenceIndexOfEntityNodesAndConnections(currentLogicReferenceInList->logicReferenceVariable->sentenceIndex, currentGIApreprocessorSentenceInList->sentenceIndex, translatorVariables);		
+			changeSentenceIndexOfEntityNodesAndConnections(currentLogicReferenceInList->logicReferenceVariable->sentenceIndex, currentLRPpreprocessorSentenceInList->sentenceIndex, translatorVariables);		
 			#endif
 			#endif
 			#endif
@@ -1271,7 +1271,7 @@ bool GIAposRelTranslatorHybridClass::connectPreprocessorSentenceReferenceSetEnti
 
 			#else
 			//implementation unknown
-			cerr << "GIApreprocessor::connectPreprocessorSentenceReferenceSetEntitiesToLogicReferenceEntities{} error: implementation currently requires GIA_POS_REL_TRANSLATOR_HYBRID_REFERENCE_SET" << endl;
+			cerr << "LRPpreprocessor::connectPreprocessorSentenceReferenceSetEntitiesToLogicReferenceEntities{} error: implementation currently requires GIA_POS_REL_TRANSLATOR_HYBRID_REFERENCE_SET" << endl;
 			exit(EXIT_ERROR);
 			#endif
 		#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE
@@ -1291,10 +1291,10 @@ bool GIAposRelTranslatorHybridClass::connectPreprocessorSentenceReferenceSetEnti
 	return result;
 }
 
-#ifdef GIA_PREPROCESSOR_ASSIGN_UNIQUE_SENTENCE_INDICES_FOR_SENTENCES
-void GIAposRelTranslatorHybridClass::changeSentenceIndexOfEntityNodesAndConnectionsForReferenceSet(GIApreprocessorSubReferenceSet* firstSubReferenceSetInList, const int sentenceIndexNew, GIAtranslatorVariablesClass* translatorVariables)
+#ifdef LRP_PREPROCESSOR_ASSIGN_UNIQUE_SENTENCE_INDICES_FOR_SENTENCES
+void GIAposRelTranslatorHybridClass::changeSentenceIndexOfEntityNodesAndConnectionsForReferenceSet(LRPpreprocessorSubReferenceSet* firstSubReferenceSetInList, const int sentenceIndexNew, GIAtranslatorVariablesClass* translatorVariables)
 {
-	GIApreprocessorSubReferenceSet* currentSubReferenceSetInList = firstSubReferenceSetInList;
+	LRPpreprocessorSubReferenceSet* currentSubReferenceSetInList = firstSubReferenceSetInList;
 	while(currentSubReferenceSetInList->next != NULL)
 	{
 		changeSentenceIndexOfEntityNodesAndConnections(currentSubReferenceSetInList->sentenceIndex, sentenceIndexNew, translatorVariables);		
@@ -1342,7 +1342,7 @@ void GIAposRelTranslatorHybridClass::changeSentenceIndexOfEntityNodesAndConnecti
 
 
 #ifdef GIA_POS_REL_TRANSLATOR_HYBRID_REFERENCE_SET_RECORD_SAME_REFERENCE_SET_DELIMITERS_UPDATE_ENTITY_OLD_METHOD
-bool GIAposRelTranslatorHybridClass::updateRelationshipType(GIAentityNode* relationshipEntity, GIApreprocessorSubReferenceSet* relationshipReference, GIApreprocessorSubReferenceSet* relationshipObject, GIAtranslatorVariablesClass* translatorVariables)
+bool GIAposRelTranslatorHybridClass::updateRelationshipType(GIAentityNode* relationshipEntity, LRPpreprocessorSubReferenceSet* relationshipReference, LRPpreprocessorSubReferenceSet* relationshipObject, GIAtranslatorVariablesClass* translatorVariables)
 {
 	bool result = true;
 	int relationshipEntityType = GIA_ENTITY_TYPE_UNDEFINED;
@@ -1353,7 +1353,7 @@ bool GIAposRelTranslatorHybridClass::updateRelationshipType(GIAentityNode* relat
 	return result;
 }
 #else
-bool GIAposRelTranslatorHybridClass::updateRelationshipTenseInformation(GIAentityNode* relationshipEntity, GIAentityNode* relationshipEntity, GIApreprocessorSubReferenceSet* delimiterEntityTempTenseInformation, GIAtranslatorVariablesClass* translatorVariables)
+bool GIAposRelTranslatorHybridClass::updateRelationshipTenseInformation(GIAentityNode* relationshipEntity, GIAentityNode* relationshipEntity, LRPpreprocessorSubReferenceSet* delimiterEntityTempTenseInformation, GIAtranslatorVariablesClass* translatorVariables)
 {
 	bool result = true;
 	relationshipEntity->grammaticalTenseTemp = delimiterEntityTempTenseInformation->grammaticalTenseTemp;
@@ -1417,7 +1417,7 @@ bool GIAposRelTranslatorHybridClass::findFirstImplicitConjunctionLogicReferenceS
 
 
 
-bool GIAposRelTranslatorHybridClass::findPrimaryEntityAndReconcileSubReferenceSets(GIAentityNode** primaryEntity, GIApreprocessorSubReferenceSet* firstSubReferenceSetInList, GIAentityNode* primaryDelimiterEntity, GIAtranslatorVariablesClass* translatorVariables, const int referenceSetType)
+bool GIAposRelTranslatorHybridClass::findPrimaryEntityAndReconcileSubReferenceSets(GIAentityNode** primaryEntity, LRPpreprocessorSubReferenceSet* firstSubReferenceSetInList, GIAentityNode* primaryDelimiterEntity, GIAtranslatorVariablesClass* translatorVariables, const int referenceSetType)
 {
 	#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
 	cout << "\n\nGIAposRelTranslatorHybridClass::findPrimaryEntityAndReconcileSubReferenceSets" << endl;
@@ -1425,7 +1425,7 @@ bool GIAposRelTranslatorHybridClass::findPrimaryEntityAndReconcileSubReferenceSe
 	
 	GIAentityNode* lastDelimiterEntity = NULL;
 	
-	GIApreprocessorSubReferenceSet* currentSubReferenceSetInList = firstSubReferenceSetInList;
+	LRPpreprocessorSubReferenceSet* currentSubReferenceSetInList = firstSubReferenceSetInList;
 	while(currentSubReferenceSetInList->next != NULL)
 	{
 		#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
@@ -1479,7 +1479,7 @@ bool GIAposRelTranslatorHybridClass::findPrimaryEntityAndReconcileSubReferenceSe
 							}
 							else
 							{
-								cerr << "GIApreprocessor::findPrimaryEntityAndReconcileSubReferenceSets{} error: (currentSubReferenceSetInList->delimiterSpecialCase == GIA_POS_REL_TRANSLATOR_HYBRID_REFERENCE_SET_DELIMITER_SPECIAL_CASE_DELIMITER_AND_OBJECT_REFER_TO_PREVIOUS_DELIMITER_VERB) && (lastDelimiterEntity == NULL)" << endl;
+								cerr << "LRPpreprocessor::findPrimaryEntityAndReconcileSubReferenceSets{} error: (currentSubReferenceSetInList->delimiterSpecialCase == GIA_POS_REL_TRANSLATOR_HYBRID_REFERENCE_SET_DELIMITER_SPECIAL_CASE_DELIMITER_AND_OBJECT_REFER_TO_PREVIOUS_DELIMITER_VERB) && (lastDelimiterEntity == NULL)" << endl;
 								exit(EXIT_ERROR);
 							}
 						}
@@ -1503,7 +1503,7 @@ bool GIAposRelTranslatorHybridClass::findPrimaryEntityAndReconcileSubReferenceSe
 						}
 						else
 						{
-							cerr << "GIApreprocessor::findPrimaryEntityAndReconcileSubReferenceSets{} error: !(currentSubReferenceSetInList->isReferenceSetDelimiter) && (lastDelimiterEntity == NULL)" << endl;
+							cerr << "LRPpreprocessor::findPrimaryEntityAndReconcileSubReferenceSets{} error: !(currentSubReferenceSetInList->isReferenceSetDelimiter) && (lastDelimiterEntity == NULL)" << endl;
 							exit(EXIT_ERROR);
 						}
 					}					
@@ -1516,7 +1516,7 @@ bool GIAposRelTranslatorHybridClass::findPrimaryEntityAndReconcileSubReferenceSe
 			}
 			else
 			{
-				cerr << "GIApreprocessor::findPrimaryEntityAndReconcileSubReferenceSets{} error: !findPrimaryEntityBasedOnSentenceIndexAndType" << endl;
+				cerr << "LRPpreprocessor::findPrimaryEntityAndReconcileSubReferenceSets{} error: !findPrimaryEntityBasedOnSentenceIndexAndType" << endl;
 				exit(EXIT_ERROR);
 			}
 		#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_REFERENCE_SET_SUB_REFERENCE_SETS
@@ -1570,7 +1570,7 @@ void GIAposRelTranslatorHybridClass::deleteExternalConnectionsToConnection(GIAen
 
 
 
-bool GIAposRelTranslatorHybridClass::findPrimaryEntityBasedOnSentenceIndexAndTypeAndDeleteDummyVariableConnections(GIApreprocessorSubReferenceSet* currentSubReferenceSetInList, GIAtranslatorVariablesClass* translatorVariables, const int referenceSetType, GIAentityNode** primaryEntity, GIAentityNode* primaryDelimiterEntity)
+bool GIAposRelTranslatorHybridClass::findPrimaryEntityBasedOnSentenceIndexAndTypeAndDeleteDummyVariableConnections(LRPpreprocessorSubReferenceSet* currentSubReferenceSetInList, GIAtranslatorVariablesClass* translatorVariables, const int referenceSetType, GIAentityNode** primaryEntity, GIAentityNode* primaryDelimiterEntity)
 {
 	bool result = true;
 	#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_REFERENCE_SET_RECORD_SAME_REFERENCE_SET_DELIMITERS
@@ -1745,7 +1745,7 @@ bool GIAposRelTranslatorHybridClass::findPrimaryEntityBasedOnSentenceIndexAndTyp
 	return result;
 }
 
-bool GIAposRelTranslatorHybridClass::findParentEntityBasedOnSentenceIndex(GIApreprocessorSubReferenceSet* currentSubReferenceSetInList, GIAtranslatorVariablesClass* translatorVariables, string parentEntityName, GIAentityNode** parentEntity)
+bool GIAposRelTranslatorHybridClass::findParentEntityBasedOnSentenceIndex(LRPpreprocessorSubReferenceSet* currentSubReferenceSetInList, GIAtranslatorVariablesClass* translatorVariables, string parentEntityName, GIAentityNode** parentEntity)
 {
 	bool result = false;
 	GIAentityNode* entityFound = NULL;
@@ -1898,7 +1898,7 @@ bool GIAposRelTranslatorHybridClass::findSameSentenceEntityNodePointerInVector(G
 
 
 //FUTURE GIA - upgrade getRelationshipNameAndType to use context to determine relationship type; property, condition, action, or definition? else how to distinguish between is adjective (eg tom is red) and is definition (a tom is red)?: need to look for the determiner of the subject/object (a x is a y/xs are ys/x is a y). actions (verb detection) and properties (have auxiliary detection) are ok.
-bool GIAposRelTranslatorHybridClass::getRelationshipNameAndType(GIApreprocessorSubReferenceSet* relationshipReference, GIApreprocessorSubReferenceSet* relationshipObject, int* relationshipEntityType, string* relationshipName)
+bool GIAposRelTranslatorHybridClass::getRelationshipNameAndType(LRPpreprocessorSubReferenceSet* relationshipReference, LRPpreprocessorSubReferenceSet* relationshipObject, int* relationshipEntityType, string* relationshipName)
 {
 	bool result = true; 
 	
@@ -1935,7 +1935,7 @@ bool GIAposRelTranslatorHybridClass::getRelationshipNameAndType(GIApreprocessorS
 	bool usePOSprelim = false;
 	#endif
 	
-	GIApreprocessorPlainTextWord* relationshipWord = (relationshipReference->subReferenceSetContents).back();
+	LRPpreprocessorPlainTextWord* relationshipWord = (relationshipReference->subReferenceSetContents).back();
 	*relationshipName = relationshipWord->tagName;
 	#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
 	cout << "relationshipName = " << *relationshipName << endl;
@@ -1956,8 +1956,8 @@ bool GIAposRelTranslatorHybridClass::getRelationshipNameAndType(GIApreprocessorS
 	
 	if(relationshipReference->delimiterType == GIA_POS_REL_TRANSLATOR_HYBRID_REFERENCE_SET_DELIMITER_TYPE_AUXILIARY)
 	{	
-		GIApreprocessorPlainTextWord* firstWordAfterAuxiliary = NULL;
-		GIApreprocessorPlainTextWord* secondWordAfterAuxiliary = NULL;
+		LRPpreprocessorPlainTextWord* firstWordAfterAuxiliary = NULL;
+		LRPpreprocessorPlainTextWord* secondWordAfterAuxiliary = NULL;
 		bool hasFirstWordAfterAuxiliary = false;
 		bool hasSecondWordAfterAuxiliary = false;
 		if(relationshipObject != NULL)
@@ -1994,9 +1994,9 @@ bool GIAposRelTranslatorHybridClass::getRelationshipNameAndType(GIApreprocessorS
 			#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
 			//cout << "firstWordAfterAuxiliary = " << firstWordAfterAuxiliary << endl;
 			#endif
-			if(GIApreprocessorWordIdentification.determineIsAuxiliaryBeing(relationshipWord, usePOSprelim))
+			if(LRPpreprocessorWordIdentification.determineIsAuxiliaryBeing(relationshipWord, usePOSprelim))
 			{
-				if(GIApreprocessorWordIdentification.determineIsAdjective(firstWordAfterAuxiliary, usePOSprelim) || (hasSecondWordAfterAuxiliary && GIApreprocessorWordIdentification.determineIsAdverb(firstWordAfterAuxiliary, usePOSprelim) && GIApreprocessorWordIdentification.determineIsAdjective(secondWordAfterAuxiliary, usePOSprelim)))
+				if(LRPpreprocessorWordIdentification.determineIsAdjective(firstWordAfterAuxiliary, usePOSprelim) || (hasSecondWordAfterAuxiliary && LRPpreprocessorWordIdentification.determineIsAdverb(firstWordAfterAuxiliary, usePOSprelim) && LRPpreprocessorWordIdentification.determineIsAdjective(secondWordAfterAuxiliary, usePOSprelim)))
 				{
 					*relationshipEntityType = GIA_ENTITY_TYPE_PROPERTY;
 					//FUTURE GIA: if GIA_ENTITY_TYPE_PROPERTY detected via determineIsAdjective(firstWordAfterAuxiliary)||determineIsAdjective(secondWordAfterAuxiliary), then need to set the relationshipEntityObject to GIA_ENTITY_TYPE_QUALITY also
@@ -2006,11 +2006,11 @@ bool GIAposRelTranslatorHybridClass::getRelationshipNameAndType(GIApreprocessorS
 					*relationshipEntityType = GIA_ENTITY_TYPE_DEFINITION;	
 				}
 			}
-			if(GIApreprocessorWordIdentification.determineIsAuxiliaryHaving(relationshipWord, usePOSprelim))
+			if(LRPpreprocessorWordIdentification.determineIsAuxiliaryHaving(relationshipWord, usePOSprelim))
 			{
 				*relationshipEntityType = GIA_ENTITY_TYPE_PROPERTY;		
 			}
-			if(GIApreprocessorWordIdentification.determineIsAuxiliaryDoing(relationshipWord, usePOSprelim))
+			if(LRPpreprocessorWordIdentification.determineIsAuxiliaryDoing(relationshipWord, usePOSprelim))
 			{
 				*relationshipEntityType = GIA_ENTITY_TYPE_ACTION;
 			}
@@ -2037,24 +2037,24 @@ bool GIAposRelTranslatorHybridClass::getRelationshipNameAndType(GIApreprocessorS
 
 
 	
-bool GIAposRelTranslatorHybridClass::getPreprocessorSentenceSubReferenceSet(GIApreprocessorSentence* firstGIApreprocessorSentenceInList, int sentenceIndex, GIApreprocessorSubReferenceSet** subReferenceSetFound)
+bool GIAposRelTranslatorHybridClass::getPreprocessorSentenceSubReferenceSet(LRPpreprocessorSentence* firstLRPpreprocessorSentenceInList, int sentenceIndex, LRPpreprocessorSubReferenceSet** subReferenceSetFound)
 {
 	bool result = false;
 	
-	GIApreprocessorSentence* currentGIApreprocessorSentenceInList = firstGIApreprocessorSentenceInList;
-	while(currentGIApreprocessorSentenceInList->next != NULL)
+	LRPpreprocessorSentence* currentLRPpreprocessorSentenceInList = firstLRPpreprocessorSentenceInList;
+	while(currentLRPpreprocessorSentenceInList->next != NULL)
 	{
-		if(getPreprocessorSentenceSubReferenceSet(currentGIApreprocessorSentenceInList->firstLogicReferenceInList, sentenceIndex, subReferenceSetFound))
+		if(getPreprocessorSentenceSubReferenceSet(currentLRPpreprocessorSentenceInList->firstLogicReferenceInList, sentenceIndex, subReferenceSetFound))
 		{
 			result = true;
 		}
 
-		currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->next;
+		currentLRPpreprocessorSentenceInList = currentLRPpreprocessorSentenceInList->next;
 	}
 	
 	return result;
 }
-bool GIAposRelTranslatorHybridClass::getPreprocessorSentenceSubReferenceSet(GIAposRelTranslatorHybridLogicReference* firstLogicReferenceInList, int sentenceIndex, GIApreprocessorSubReferenceSet** subReferenceSetFound)
+bool GIAposRelTranslatorHybridClass::getPreprocessorSentenceSubReferenceSet(GIAposRelTranslatorHybridLogicReference* firstLogicReferenceInList, int sentenceIndex, LRPpreprocessorSubReferenceSet** subReferenceSetFound)
 {		
 	bool result = false;
 	
@@ -2095,7 +2095,7 @@ bool GIAposRelTranslatorHybridClass::getPreprocessorSentenceSubReferenceSet(GIAp
 		{
 		#endif	
 
-			GIApreprocessorSubReferenceSet* currentSubReferenceSetInList = currentLogicReferenceInList->logicReferenceVariable->referenceSetSubject;
+			LRPpreprocessorSubReferenceSet* currentSubReferenceSetInList = currentLogicReferenceInList->logicReferenceVariable->referenceSetSubject;
 			while(currentSubReferenceSetInList->next != NULL)
 			{
 				if(currentSubReferenceSetInList->sentenceIndex == sentenceIndex)
@@ -2145,7 +2145,7 @@ GIAentityNode* GIAposRelTranslatorHybridClass::createNewRelationshipAndConnectTo
 	return createNewRelationshipAndConnectToSource(sourceEntity, logicReferenceVariable->referenceSetDelimiter, logicReferenceVariable->referenceSetObject, sameReferenceSet, translatorVariables);
 }
 
-GIAentityNode* GIAposRelTranslatorHybridClass::createNewRelationshipAndConnectToSource(GIAentityNode* sourceEntity, GIApreprocessorSubReferenceSet* relationshipReference, GIApreprocessorSubReferenceSet* relationshipObject, const bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables)	//OLD: this will create an intermediary action/possession("have") node if necessary
+GIAentityNode* GIAposRelTranslatorHybridClass::createNewRelationshipAndConnectToSource(GIAentityNode* sourceEntity, LRPpreprocessorSubReferenceSet* relationshipReference, LRPpreprocessorSubReferenceSet* relationshipObject, const bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables)	//OLD: this will create an intermediary action/possession("have") node if necessary
 {
 	GIAentityNode* relationshipEntity = createNewRelationship(relationshipReference, relationshipObject, translatorVariables);
 	GIAtranslatorOperations.connectLogicReferenceRelationshipToSource(relationshipEntity, sourceEntity, sameReferenceSet, translatorVariables);
@@ -2157,7 +2157,7 @@ GIAentityNode* GIAposRelTranslatorHybridClass::createNewRelationship(GIAposRelTr
 {
 	return createNewRelationship(logicReferenceVariable->referenceSetDelimiter, logicReferenceVariable->referenceSetObject, translatorVariables);
 }
-GIAentityNode* GIAposRelTranslatorHybridClass::createNewRelationship(GIApreprocessorSubReferenceSet* relationshipReference, GIApreprocessorSubReferenceSet* relationshipObject, GIAtranslatorVariablesClass* translatorVariables)
+GIAentityNode* GIAposRelTranslatorHybridClass::createNewRelationship(LRPpreprocessorSubReferenceSet* relationshipReference, LRPpreprocessorSubReferenceSet* relationshipObject, GIAtranslatorVariablesClass* translatorVariables)
 {
 	//FUTURE: upgrade createNewRelationship:getRelationshipNameAndType to detect auxiliary tense information, and any associated adverb/adjectives within relationshipReference [else use GIA_POS_REL_TRANSLATOR_HYBRID_REFERENCE_SET_RECORD_SAME_REFERENCE_SET_DELIMITERS: this is currently required to process delimiter (eg being/having/verb/preposition) tense, adverbs (eg very near), and adjectives (eg rides fast) using NLP]
 
@@ -2172,12 +2172,12 @@ GIAentityNode* GIAposRelTranslatorHybridClass::createNewRelationship(GIApreproce
 
 
 
-GIAentityNode* GIAposRelTranslatorHybridClass::createNewRelationshipEntity(vector<GIApreprocessorPlainTextWord*>* logicReferenceContents, const int relationshipEntityType, GIAtranslatorVariablesClass* translatorVariables)
+GIAentityNode* GIAposRelTranslatorHybridClass::createNewRelationshipEntity(vector<LRPpreprocessorPlainTextWord*>* logicReferenceContents, const int relationshipEntityType, GIAtranslatorVariablesClass* translatorVariables)
 {
 	GIAentityNode* relationshipEntity = NULL;
 	if(logicReferenceContents->size() == 1)
 	{
-		relationshipEntity = createNewRelationshipEntity(GIApreprocessorWordClassObject.generateTextFromVectorWordList(logicReferenceContents), relationshipEntityType, translatorVariables);
+		relationshipEntity = createNewRelationshipEntity(LRPpreprocessorWordClassObject.generateTextFromVectorWordList(logicReferenceContents), relationshipEntityType, translatorVariables);
 	}
 	else
 	{

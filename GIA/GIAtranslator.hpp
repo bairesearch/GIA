@@ -26,7 +26,7 @@
  * File Name: GIAtranslator.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m6a 09-September-2020
+ * Project Version: 3m7a 11-September-2020
  * Requirements: requires text parsed by X Parser
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
@@ -56,11 +56,11 @@
 #endif
 #endif
 #include "GIAdatabase.hpp"
-#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
-#include "GIApreprocessorWordReduction.hpp"
+#ifdef LRP_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
+#include "LRPpreprocessorWordReduction.hpp"
 #endif
-#ifdef GIA_PREPROCESSOR
-#include "GIApreprocessorSentenceClass.hpp"
+#ifdef LRP_PREPROCESSOR
+#include "LRPpreprocessorSentenceClass.hpp"
 #endif
 #ifdef GIA_POS_REL_TRANSLATOR_HYBRID
 #include "GIAposRelTranslatorHybrid.hpp"
@@ -68,7 +68,7 @@
 #ifdef SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OPTIMISED
 //#include "SANIrules.hpp"
 #include "SANInodes.hpp"
-#include "GIAposRelTranslatorPermutations.hpp"
+#include "SANIposRelTranslatorPermutations.hpp"
 #include "SANIpropagateOperations.hpp"
 #endif
 
@@ -95,11 +95,11 @@ class GIAtranslatorClass
 	#endif
 	#endif
 	private: GIAdatabaseClass GIAdatabase;
-	#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
-	private: GIApreprocessorWordReductionClass GIApreprocessorWordReduction;
+	#ifdef LRP_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
+	private: LRPpreprocessorWordReductionClass LRPpreprocessorWordReduction;
 	#endif
-	#ifdef GIA_PREPROCESSOR
-	private: GIApreprocessorSentence GIApreprocessorSentenceObject;
+	#ifdef LRP_PREPROCESSOR
+	private: LRPpreprocessorSentence LRPpreprocessorSentenceObject;
 	#endif
 	#ifdef GIA_POS_REL_TRANSLATOR_HYBRID
 	private: GIAposRelTranslatorHybridClass GIAposRelTranslatorHybrid;
@@ -107,7 +107,7 @@ class GIAtranslatorClass
 	#ifdef SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OPTIMISED
 	//private: SANIrulesClass SANIrules;
 	private: SANInodesClass SANInodes;
-	private: GIAposRelTranslatorPermutationsClass GIAposRelTranslatorPermutations;
+	private: SANIposRelTranslatorPermutationsClass SANIposRelTranslatorPermutations;
 	private: SANIpropagateOperationsClass SANIpropagateOperations;
 	#endif
 	private: SHAREDvarsClass SHAREDvars;

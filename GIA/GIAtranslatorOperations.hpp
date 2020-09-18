@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m6a 09-September-2020
+ * Project Version: 3m7a 11-September-2020
  * Requirements: requires text parsed by X Parser
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
@@ -46,11 +46,11 @@
 #include "NLCpreprocessorSentenceClass.hpp"
 #endif
 #include "GIAdatabase.hpp"
-#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_PREPOSITIONS
-#include "GIApreprocessorWordIdentification.hpp"
+#ifdef LRP_PREPROCESSOR_WORD_NORMALISE_PREPOSITIONS
+#include "LRPpreprocessorWordIdentification.hpp"
 #endif
 #ifdef GIA_POS_REL_TRANSLATOR_HYBRID
-#include "GIApreprocessorSentenceClass.hpp"
+#include "LRPpreprocessorSentenceClass.hpp"
 #endif
 #ifdef GIA_POS_REL_TRANSLATOR_LOGIC_REFERENCE
 #include "SANIrules.hpp"
@@ -110,7 +110,7 @@ public:
 	vector<GIAentityNode*>* GIAfeatureTempEntityNodeArray;
 	GIAsentence* currentSentenceInList;	
 	#ifdef GIA_POS_REL_TRANSLATOR_RULES_GIA3
-	GIApreprocessorSentence* currentPreprocessorSentenceInList;
+	LRPpreprocessorSentence* currentPreprocessorSentenceInList;
 	#endif
 	
 	vector<GIAentityNode*>* sentenceNetworkIndexEntityNodesList;
@@ -120,11 +120,11 @@ public:
 
 	int sentenceIndex;	//if parsedSentences only
 	
-	#ifdef GIA_PREPROCESSOR
+	#ifdef LRP_PREPROCESSOR
 	#ifdef USE_NLC
-	GIApreprocessorSentence* firstNLCpreprepreprocessorSentenceInList;
+	LRPtranslatorVariablesClass NLCpreprepreprocessorTranslatorVariables;
 	#endif
-	GIApreprocessorSentence* firstGIApreprocessorSentenceInList;
+	LRPtranslatorVariablesClass LRPpreprocessorTranslatorVariables;
 	#endif
 	#ifdef USE_NLCI
 	string nlcGeneratedCode;
@@ -133,18 +133,9 @@ public:
 	string giaQueryAnswer;
 	#endif
 
-	#ifdef GIA_NEURAL_NETWORK
-	ANNneuron* firstInputNeuronInNetwork;
-	#ifdef SANI_ANN
-	ANNneuron* firstOutputNeuronInNetwork;
-	#endif
-	#endif
 	
-	#ifdef SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC
-	bool parserAllowed;
-	#ifdef SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OPTIMISED
-	bool parserDemarkateOptimumPathway;
-	#endif
+	#ifdef GIA_NEURAL_NETWORK
+	ANNtranslatorVariablesClass ANNtranslatorVariables;
 	#endif
 };
 
@@ -163,9 +154,9 @@ class GIAtranslatorOperationsClass
 	#endif
 	
 	private: GIAsentenceClassClass GIAsentenceClass;
-	private: GIApreprocessorSentenceClass GIApreprocessorSentenceClassObject;
-	#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_PREPOSITIONS
-	private: GIApreprocessorWordIdentificationClass GIApreprocessorWordIdentification;
+	private: LRPpreprocessorSentenceClass LRPpreprocessorSentenceClassObject;
+	#ifdef LRP_PREPROCESSOR_WORD_NORMALISE_PREPOSITIONS
+	private: LRPpreprocessorWordIdentificationClass LRPpreprocessorWordIdentification;
 	#endif
 	private: GIAdatabaseClass GIAdatabase;
 	#ifdef GIA_NLC_INTEGRATION
@@ -405,8 +396,6 @@ class GIAtranslatorOperationsClass
 	
 	#ifdef GIA_POS_REL_TRANSLATOR_RULES_GIA3
 	public: int getEntityArrayMaxIndex(GIAtranslatorVariablesClass* translatorVariables);
-	public: int convertSentenceContentsIndexToEntityIndex(const int sentenceContentsIndex);
-	public: int convertEntityIndexToSentenceContentsIndex(const int entityIndex);
 	#else
 	public: int getEntityArrayMaxIndex(GIAtranslatorVariablesClass* translatorVariables);
 	#endif

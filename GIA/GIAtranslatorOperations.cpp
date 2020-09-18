@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m6a 09-September-2020
+ * Project Version: 3m7a 11-September-2020
  * Requirements: requires text parsed by X Parser
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
@@ -105,12 +105,12 @@ GIAtranslatorVariablesClass::GIAtranslatorVariablesClass(void)
 	//featureArrayTemp = NULL;
 	
 	sentenceIndex = INT_DEFAULT_VALUE;
-
-	#ifdef GIA_PREPROCESSOR
+	
+	#ifdef LRP_PREPROCESSOR
 	#ifdef USE_NLC
-	firstNLCpreprepreprocessorSentenceInList = NULL;
+	//NLCpreprepreprocessorTranslatorVariables = NULL;
 	#endif
-	firstGIApreprocessorSentenceInList = NULL;
+	//LRPpreprocessorTranslatorVariables = NULL;
 	#endif
 	#ifdef USE_NLCI
 	nlcGeneratedCode = "";	
@@ -120,17 +120,7 @@ GIAtranslatorVariablesClass::GIAtranslatorVariablesClass(void)
 	#endif	
 	
 	#ifdef GIA_NEURAL_NETWORK
-	firstInputNeuronInNetwork = NULL;
-	#ifdef SANI_ANN
-	firstOutputNeuronInNetwork = NULL;	//intermediary variable for neural network connection purposes
-	#endif
-	#endif
-	
-	#ifdef SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC
-	parserAllowed = true;
-	#ifdef SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OPTIMISED
-	parserDemarkateOptimumPathway = false;
-	#endif
+	//ANNtranslatorVariables = NULL;
 	#endif
 }
 GIAtranslatorVariablesClass::~GIAtranslatorVariablesClass(void)
@@ -571,8 +561,8 @@ bool GIAtranslatorOperationsClass::connectConditionToEntity(GIAentityNode* condi
 {
 	bool result = connectRelationshipToEntity(conditionRelationshipSubjectEntity, conditionRelationshipObjectEntity, conditionRelationshipEntity, sameReferenceSet, GIA_ENTITY_TYPE_CONDITION, translatorVariables);
 	
-	#ifdef GIA_PREPROCESSOR_WORD_DETECT_PREPOSITION_TYPE
-	GIApreprocessorWordIdentification.identifyConditionType(conditionRelationshipEntity);
+	#ifdef LRP_PREPROCESSOR_WORD_DETECT_PREPOSITION_TYPE
+	LRPpreprocessorWordIdentification.identifyConditionType(conditionRelationshipEntity);
 	#endif
 	
 	return result;
@@ -1488,7 +1478,7 @@ bool GIAtranslatorOperationsClass::findExistingRelationshipInSentenceEntityArray
 		
 		if(getRelationshipObjectEntity((*connectionIter)) == relationshipObjectEntity)
 		{
-			#ifdef GIA_PREPROCESSOR_FIND_EXISTING_RELATIONSHIP_IN_SENTENCE_ENFORCE_SAME_SENTENCE_CHECKS
+			#ifdef LRP_PREPROCESSOR_FIND_EXISTING_RELATIONSHIP_IN_SENTENCE_ENFORCE_SAME_SENTENCE_CHECKS
 			if(relationshipEntityTemp->entityName == relationshipEntityName)	//probably redundant
 			{	
 				int featureIndexTemp = relationshipEntityTemp->entityIndexTemp;
@@ -1497,7 +1487,7 @@ bool GIAtranslatorOperationsClass::findExistingRelationshipInSentenceEntityArray
 			#endif
 					*relationshipEntity = relationshipEntityTemp;
 					foundExistingRelationship = true;
-			#ifdef GIA_PREPROCESSOR_FIND_EXISTING_RELATIONSHIP_IN_SENTENCE_ENFORCE_SAME_SENTENCE_CHECKS
+			#ifdef LRP_PREPROCESSOR_FIND_EXISTING_RELATIONSHIP_IN_SENTENCE_ENFORCE_SAME_SENTENCE_CHECKS
 				}
 			}
 			#endif
@@ -1680,12 +1670,12 @@ GIAentityNode* GIAtranslatorOperationsClass::addRelationshipArtificialToEntity2(
 GIAentityNode* GIAtranslatorOperationsClass::findOrAddEntityNodeByNameSimpleWrapperRelationshipArtificial2(GIAentityNode* relationshipSubjectEntity, GIAentityNode* relationshipObjectEntity, const int relationshipEntityType, const string relationshipEntityName, GIAtranslatorVariablesClass* translatorVariablesSentencesParsed)
 {
 	GIAentityNode* relationshipEntity = NULL;
-	#ifndef GIA_PREPROCESSOR_FIND_EXISTING_RELATIONSHIP_IN_SENTENCE_ENFORCE_SAME_SENTENCE_CHECKS
+	#ifndef LRP_PREPROCESSOR_FIND_EXISTING_RELATIONSHIP_IN_SENTENCE_ENFORCE_SAME_SENTENCE_CHECKS
 	if(!findExistingRelationshipInSentenceEntityArray(relationshipSubjectEntity, relationshipObjectEntity, relationshipEntityType, relationshipEntityName, &relationshipEntity, translatorVariablesSentencesParsed))	//added 3a2b (see <=3a1j for equivalent change);
 	{
 	#endif
 		relationshipEntity = addEntityNodeByNameSimpleWrapperRelationshipArtificial2(relationshipEntityType, relationshipEntityName, translatorVariablesSentencesParsed);
-	#ifndef GIA_PREPROCESSOR_FIND_EXISTING_RELATIONSHIP_IN_SENTENCE_ENFORCE_SAME_SENTENCE_CHECKS	
+	#ifndef LRP_PREPROCESSOR_FIND_EXISTING_RELATIONSHIP_IN_SENTENCE_ENFORCE_SAME_SENTENCE_CHECKS	
 	}
 	#endif
 	
@@ -2775,11 +2765,11 @@ bool GIAtranslatorOperationsClass::connectMultiwordAuxiliaryWrapper(GIAtranslato
 
 bool GIAtranslatorOperationsClass::connectMultiwordPrepositionWrapper(GIAtranslatorVariablesClass* translatorVariables, GIAentityNode* entitySemanticRelationFunction1, GIAentityNode* entitySemanticRelationFunction2, const bool sameReferenceSet)
 {
-	#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
-	cout << "GIAtranslatorOperationsClass::connectMultiwordPrepositionWrapper{} warning; GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION (multiword prepositions should have been collapsed by GIA preprocessor) - check LRPdata/multiwordlists.txt for presence of 'preposition multiwordlistPreposition.txt'" << endl;
+	#ifdef LRP_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
+	cout << "GIAtranslatorOperationsClass::connectMultiwordPrepositionWrapper{} warning; LRP_PREPROCESSOR_WORD_MULTIWORD_REDUCTION (multiword prepositions should have been collapsed by GIA preprocessor) - check LRPdata/multiwordlists.txt for presence of 'preposition multiwordlistPreposition.txt'" << endl;
 	#endif
 	#ifdef GIA_POS_REL_TRANSLATOR_RULES_GIA3_COLLAPSE_ALIASES_ONLY
-	cout << "GIA_POS_REL_TRANSLATOR_RULES_GIA3_COLLAPSE_ALIASES_ONLY: GIAtranslatorOperationsClass::connectMultiwordPrepositionWrapper{} error; GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION (multiword prepositions should have been collapsed by GIA preprocessor) - check LRPdata/multiwordlists.txt for presence of 'preposition multiwordlistPreposition.txt'" << endl;	
+	cout << "GIA_POS_REL_TRANSLATOR_RULES_GIA3_COLLAPSE_ALIASES_ONLY: GIAtranslatorOperationsClass::connectMultiwordPrepositionWrapper{} error; LRP_PREPROCESSOR_WORD_MULTIWORD_REDUCTION (multiword prepositions should have been collapsed by GIA preprocessor) - check LRPdata/multiwordlists.txt for presence of 'preposition multiwordlistPreposition.txt'" << endl;	
 	exit(EXIT_ERROR);
 	#endif
 	return connectMultiwordCollapse(translatorVariables, entitySemanticRelationFunction1, entitySemanticRelationFunction2, sameReferenceSet);
@@ -2904,7 +2894,7 @@ bool GIAtranslatorOperationsClass::addTimeConditionProperty(GIAtimeConditionNode
 	bool result = false;
 	string entityName = entity->entityName;
 	
-	if(entity->semanticRelationWordPOStypeInferred == GIA_PREPROCESSOR_POS_TYPE_NUMBER)
+	if(entity->semanticRelationWordPOStypeInferred == LRP_PREPROCESSOR_POS_TYPE_NUMBER)
 	{
 		string yearName = entityName;
 		int year = SHAREDvars.convertStringToInt(yearName);
@@ -2920,13 +2910,13 @@ bool GIAtranslatorOperationsClass::addTimeConditionProperty(GIAtimeConditionNode
 			exit(EXIT_ERROR);
 		}
 	}
-	else if(entity->semanticRelationWordPOStypeInferred == GIA_PREPROCESSOR_POS_TYPE_DATE)
+	else if(entity->semanticRelationWordPOStypeInferred == LRP_PREPROCESSOR_POS_TYPE_DATE)
 	{
 		int index = INT_DEFAULT_VALUE;
 		#ifdef SANI_PARSE_SIMULTANEOUS
 		entityName = SHAREDvars.convertStringToFirstUpperCase(&entityName);
 		#else
-		#ifndef GIA_PREPROCESSOR_INITIALISE_WORD_INDEX_LIST_FROM_LRP_FILES_SUPPORT_UPPERCASE_PROPERNOUN_WORD_LISTS
+		#ifndef LRP_PREPROCESSOR_INITIALISE_WORD_INDEX_LIST_FROM_LRP_FILES_SUPPORT_UPPERCASE_PROPERNOUN_WORD_LISTS
 		entityName = SHAREDvars.convertStringToFirstUpperCase(&entityName);
 		#endif
 		#endif
@@ -2955,14 +2945,14 @@ bool GIAtranslatorOperationsClass::addTimeConditionProperty(GIAtimeConditionNode
 		}	
 		else
 		{
-			cerr << "GIAtranslatorOperationsClass::addTimeConditionProperty{} error: (entity->semanticRelationWordPOStypeInferred == GIA_PREPROCESSOR_POS_TYPE_DATE) && entity name contains unknown time data: " << entityName << endl;
+			cerr << "GIAtranslatorOperationsClass::addTimeConditionProperty{} error: (entity->semanticRelationWordPOStypeInferred == LRP_PREPROCESSOR_POS_TYPE_DATE) && entity name contains unknown time data: " << entityName << endl;
 			exit(EXIT_ERROR);
 		}
 	}
 	else
 	{
 		cerr << "GIAtranslatorOperationsClass::addTimeConditionProperty{} error: entity->semanticRelationWordPOStypeInferred unknown: " << entity->semanticRelationWordPOStypeInferred << endl;
-		cerr << "GIApreprocessorPOStypeNameArray[entity->semanticRelationWordPOStypeInferred] = " << GIApreprocessorPOStypeNameArray[entity->semanticRelationWordPOStypeInferred] << endl;
+		cerr << "LRPpreprocessorPOStypeNameArray[entity->semanticRelationWordPOStypeInferred] = " << LRPpreprocessorPOStypeNameArray[entity->semanticRelationWordPOStypeInferred] << endl;
 		exit(EXIT_ERROR);
 	}
 	
@@ -2980,7 +2970,7 @@ bool GIAtranslatorOperationsClass::connectQuantityToEntity(GIAtranslatorVariable
 	{
 	#endif
 			
-		if(entitySemanticRelationFunction2->semanticRelationWordPOStypeInferred == GIA_PREPROCESSOR_POS_TYPE_NUMBER)
+		if(entitySemanticRelationFunction2->semanticRelationWordPOStypeInferred == LRP_PREPROCESSOR_POS_TYPE_NUMBER)
 		{		
 			string quantityString = entitySemanticRelationFunction2->entityName;
 			int quantity = SHAREDvars.convertStringToInt(quantityString);
@@ -2991,7 +2981,7 @@ bool GIAtranslatorOperationsClass::connectQuantityToEntity(GIAtranslatorVariable
 		}
 		else
 		{
-			cerr << "GIAtranslatorOperationsClass::connectQuantityToEntity{} error: (entitySemanticRelationFunction2->semanticRelationWordPOStypeInferred != GIA_PREPROCESSOR_POS_TYPE_NUMBER)" << endl;
+			cerr << "GIAtranslatorOperationsClass::connectQuantityToEntity{} error: (entitySemanticRelationFunction2->semanticRelationWordPOStypeInferred != LRP_PREPROCESSOR_POS_TYPE_NUMBER)" << endl;
 			cerr << "entitySemanticRelationFunction2->semanticRelationWordPOStypeInferred = " << entitySemanticRelationFunction2->semanticRelationWordPOStypeInferred << endl;
 			exit(EXIT_ERROR);
 		}
@@ -3193,18 +3183,8 @@ GIAentityNode* GIAsemRelTranslatorParserClass::createNewRelationshipEntitySemant
 #ifdef GIA_POS_REL_TRANSLATOR_RULES_GIA3
 int GIAtranslatorOperationsClass::getEntityArrayMaxIndex(GIAtranslatorVariablesClass* translatorVariables)
 {
-	int numberOfWordsInSentence = GIApreprocessorSentenceClassObject.getSentenceContents(translatorVariables->currentPreprocessorSentenceInList)->size();
+	int numberOfWordsInSentence = LRPpreprocessorSentenceClassObject.getSentenceContents(translatorVariables->currentPreprocessorSentenceInList)->size();
 	return GIAsentenceClass.getMaxIndexOfDynamicallyGeneratedEntity(numberOfWordsInSentence);	
-}
-int GIAtranslatorOperationsClass::convertSentenceContentsIndexToEntityIndex(const int sentenceContentsIndex)
-{
-	int entityIndex = sentenceContentsIndex+GIA_NLP_START_ENTITY_INDEX;
-	return entityIndex;
-}
-int GIAtranslatorOperationsClass::convertEntityIndexToSentenceContentsIndex(const int entityIndex)
-{
-	int sentenceContentsIndex = entityIndex-GIA_NLP_START_ENTITY_INDEX;
-	return sentenceContentsIndex;
 }
 #else
 int GIAtranslatorOperationsClass::getEntityArrayMaxIndex(GIAtranslatorVariablesClass* translatorVariables)

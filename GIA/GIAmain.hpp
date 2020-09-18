@@ -26,7 +26,7 @@
  * File Name: GIAmain.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m6a 09-September-2020
+ * Project Version: 3m7a 11-September-2020
  * Requirements: 
  * Description: Main
  * /
@@ -59,11 +59,11 @@
 #ifdef GIA_NLG
 #include "GIAnlg.hpp"
 #endif
-#ifdef GIA_PREPROCESSOR
-#include "GIApreprocessor.hpp"
-#include "GIApreprocessorWordIdentification.hpp"
-#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
-#include "GIApreprocessorWordReduction.hpp" 
+#ifdef LRP_PREPROCESSOR
+#include "LRPpreprocessor.hpp"
+#include "LRPpreprocessorWordIdentification.hpp"
+#ifdef LRP_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
+#include "LRPpreprocessorWordReduction.hpp" 
 #endif
 #endif
 #ifdef GIA_SEM_REL_TRANSLATOR
@@ -72,8 +72,8 @@
 #endif
 #include "GIAsemRelTranslatorDatabase.hpp"
 #endif
-#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_PERSISTENT
-#include "GIApreprocessorPOStaggerDatabase.hpp"
+#ifdef LRP_PREPROCESSOR_POS_TAGGER_DATABASE_PERSISTENT
+#include "LRPpreprocessorPOStaggerDatabase.hpp"
 #endif
 #ifdef GIA_NEURAL_NETWORK
 #include "ANNneuronClass.hpp"
@@ -92,10 +92,11 @@
 #define GIA_MAXIMUM_NUMBER_OF_FILES_IN_INPUT_FILE_LIST (1000000)
 
 
-#ifdef COMPILE_GIA_OR_SANI
+
+#ifdef COMPILE_GIA
 int main(const int argc, const char** argv);
 #endif
-#ifdef COMPILE_GIA_WITH_ANN_GENERATE_POS_TAGGER_DATABASE
+#ifdef COMPILE_LRP_WITH_ANN_GENERATE_POS_TAGGER_DATABASE
 int main(const int argc, const char** argv);
 #endif
 
@@ -105,11 +106,11 @@ class GIAmainClass
 	private: GIAtranslatorClass GIAtranslator;
 	private: GIAtranslatorOperationsClass GIAtranslatorOperations;
 	private: GIAdatabaseClass GIAdatabase;
-	#ifdef GIA_PREPROCESSOR
-	private: GIApreprocessorClass GIApreprocessor;
-	private: GIApreprocessorWordIdentificationClass GIApreprocessorWordIdentification;
-	#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
-	private: GIApreprocessorWordReductionClass GIApreprocessorWordReduction;
+	#ifdef LRP_PREPROCESSOR
+	private: LRPpreprocessorClass LRPpreprocessor;
+	private: LRPpreprocessorWordIdentificationClass LRPpreprocessorWordIdentification;
+	#ifdef LRP_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
+	private: LRPpreprocessorWordReductionClass LRPpreprocessorWordReduction;
 	#endif
 	#endif
 	private: GIAnlpClass GIAnlp;
@@ -132,8 +133,8 @@ class GIAmainClass
 	#endif
 	private: GIAsemRelTranslatorDatabaseClass GIAsemRelTranslatorDatabase;
 	#endif
-	#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_PERSISTENT
-	private: GIApreprocessorPOStaggerDatabaseClass GIApreprocessorPOStaggerDatabase;	
+	#ifdef LRP_PREPROCESSOR_POS_TAGGER_DATABASE_PERSISTENT
+	private: LRPpreprocessorPOStaggerDatabaseClass LRPpreprocessorPOStaggerDatabase;	
 	#endif
 	#ifdef GIA_NEURAL_NETWORK
 	private: ANNneuronClassClass ANNneuronClassClassObject;
@@ -244,11 +245,11 @@ class GIAmainClass
 		#ifdef GIA_SEM_REL_TRANSLATOR
 		string semanticParserDatabaseFolderName,
 		#endif
-		#ifdef GIA_PREPROCESSOR_POS_TAGGER_DATABASE_PERSISTENT
+		#ifdef LRP_PREPROCESSOR_POS_TAGGER_DATABASE_PERSISTENT
 		string POStaggerDatabaseFolderName,
 		#endif
 		
-		#ifdef GIA_PREPROCESSOR
+		#ifdef LRP_PREPROCESSOR
 		bool useLRP,
 		bool useOutputLRPTextPlainTXTFile,
 		string outputLRPTextPlainTXTFileName,

@@ -26,7 +26,7 @@
  * File Name: GIAentityNodeClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m6a 09-September-2020
+ * Project Version: 3m7a 11-September-2020
  * NB a substance is an instance of an entity, any given entity may contain/comprise/have multiple substances - and substances are unrelated to definitions between entities [they just define what comprises any given entity]
  * /
  *******************************************************************************/
@@ -93,7 +93,7 @@ static int relationshipEntityTypesArray[GIA_RELATIONSHIP_ENTITY_NUMBER_OF_TYPES]
 	#define GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_TITLE (1)
 	#define GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_QUOTES (2)
 	#define GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_SUBCLASS (3)
-	#define GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_MULTIWORD_WORD_DELIMITER "_"	//this is now equivalent to GIA_SYN_REL_TRANSLATOR_STANFORD_PARSER_PREPOSITION_DELIMITER
+	#define GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_MULTIWORD_WORD_DELIMITER (LRP_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_MULTIWORD_WORD_DELIMITER)	//this is now equivalent to GIA_SYN_REL_TRANSLATOR_STANFORD_PARSER_PREPOSITION_DELIMITER
 	#define GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_TITLE_DELIMITER "_"
 	#define GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_QUOTES_DELIMITER "_"	//this filler does not appear compatible with Relex (Stanford only); try another filler character (NB "-" doesn't work with Relex either)
 	#define GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_SUBCLASS_DELIMITER "_"
@@ -114,9 +114,6 @@ static int relationshipEntityTypesArray[GIA_RELATIONSHIP_ENTITY_NUMBER_OF_TYPES]
 	static int entityPredeterminerSmallArray[GRAMMATICAL_PREDETERMINER_SMALL_ARRAY_NUMBER_OF_TYPES] = {GRAMMATICAL_PREDETERMINER_EACH, GRAMMATICAL_PREDETERMINER_EVERY, GRAMMATICAL_PREDETERMINER_ALL};	//added 2i34a
 
 #endif
-
-#define GIA_NLP_START_ENTITY_INDEX (1)
-#define GIA_NLP_START_SENTENCE_INDEX (1)
 
 #ifdef GIA_ALIASES
 	#define GIA_ALIASES_CONVERT_TO_STRING_DELIMITER ';'	//has to be different than attribute delimiter used in GIA filesystem database GIA_DATABASE_ATTRIBUTE_DELIMITER
@@ -162,32 +159,6 @@ static int relationshipEntityTypesArray[GIA_RELATIONSHIP_ENTITY_NUMBER_OF_TYPES]
 #define GRAMMATICAL_WORD_TYPE_SATELLITE_STRING "6"	/* not really a part of speech*/
 #define GRAMMATICAL_WORD_TYPE_ADJSAT_STRING "6"
 
-#ifndef HEADER_GIA_ENTITY_CONNECTION_CLASS
-#define GRAMMATICAL_TENSE_UNDEFINED 0
-#define GRAMMATICAL_TENSE_PRESENT 1		//eg mow / ~VBP
-#define GRAMMATICAL_TENSE_PAST 2		//eg mowed / ~VBD
-#define GRAMMATICAL_TENSE_FUTURE 3		//eg will mow / ?
-#define GRAMMATICAL_TENSE_NUMBER_OF_TYPES 4
-#define GRAMMATICAL_TENSE_PRESENT_STRING "1"
-#define GRAMMATICAL_TENSE_PAST_STRING "2"
-#define GRAMMATICAL_TENSE_FUTURE_STRING "3"
-#define GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE 0	//eg mowing / ~VBG
-#define GRAMMATICAL_TENSE_MODIFIER_PERFECT 1
-#define GRAMMATICAL_TENSE_MODIFIER_PASSIVE 2		//NB present passive is interpreted by GIA to be the same as state; eg is mowed (as opposed to was mowed)
-#define GRAMMATICAL_TENSE_MODIFIER_INFINITIVE 3		//eg to mow / ~VB	//added 2h2c: _ment/_ion nouns, eg enjoyment/abolition
-#define GRAMMATICAL_TENSE_MODIFIER_IMPERATIVE 4		//eg Mow the grass! / ~VB
-#define GRAMMATICAL_TENSE_MODIFIER_POTENTIAL 5	//added 2h2a/2h2c: _able/_ive adjectives (ignore nouns)	//eg mowable / affirmative
-#define GRAMMATICAL_TENSE_MODIFIER_POTENTIAL_INVERSE 6
-#define GRAMMATICAL_TENSE_MODIFIER_STATE 7	//added 2h2a	//eg is mowed (as opposed to was mowed)	//used for both states and affections - note noun versus verb base forms are not distinguished here by POS tagger; both are assigned VBN
-#define GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION 8	//added 2h2d: _ment/_ion nouns	//eg movement / transition	//note these are different than action networkIndexes, as these define an instance of an action, not an action in general; eg "the movement"/"the transition"
-#define GRAMMATICAL_TENSE_MODIFIER_NUMBER_OF_TYPES 9
-#define GRAMMATICAL_TENSE_MODIFIER_INFINITIVE_OR_IMPERATIVE_OR_PRESENT_NOT_THIRD_PERSON_SINGULAR_OR_STATE_TEMP (7)
-#define GRAMMATICAL_TENSE_MODIFIER_PAST_TENSE_OR_PAST_PARTICIPLE_OR_STATE_TEMP (8)
-#define GRAMMATICAL_TENSE_MODIFIER_PROGRESSIVE_TEMP (9)
-#define GRAMMATICAL_TENSE_MODIFIER_POTENTIAL_TEMP (10)
-#define GRAMMATICAL_TENSE_MODIFIER_POTENTIAL_INVERSE_TEMP (11)
-#define GRAMMATICAL_TENSE_MODIFIER_DESCRIPTION_TEMP (12)
-#endif
 
 #define GRAMMATICAL_NUMBER_UNDEFINED 0
 #define GRAMMATICAL_NUMBER_UNCOUNTABLE 1
@@ -581,13 +552,13 @@ public:
 	bool NLCfirstInstanceOfProperNounInContext;
 	#endif
 
-	#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_PREPOSITIONS
-	#ifdef GIA_PREPROCESSOR_WORD_DETECT_PREPOSITION_TYPE
+	#ifdef LRP_PREPROCESSOR_WORD_NORMALISE_PREPOSITIONS
+	#ifdef LRP_PREPROCESSOR_WORD_DETECT_PREPOSITION_TYPE
 	string conditionType2;	//added 2h1a/14-November-2014 - required for NLC 1m1a+
 	#endif
-	#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_TWOWAY_PREPOSITIONS
+	#ifdef LRP_PREPROCESSOR_WORD_NORMALISE_TWOWAY_PREPOSITIONS
 	bool conditionTwoWay;		//added 2h1e/14-November-2014 - required for NLC 1m1e+
-	#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED
+	#ifdef LRP_PREPROCESSOR_WORD_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED
 	bool inverseConditionTwoWay;	//added 2h1e/14-November-2014 - required for NLC 1m1e+
 	#endif
 	#endif

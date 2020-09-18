@@ -26,7 +26,7 @@
  * File Name: GIAdraw.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m6a 09-September-2020
+ * Project Version: 3m7a 11-September-2020
  * Requirements: 
  * Description: Draw - Draws GIA nodes in GIA network/tree
  * /
@@ -229,7 +229,7 @@ bool GIAdrawClass::determineBasicPrintPositionsOfAllNodes(vector<GIAentityNode*>
 	
 	if(drawVariables->sentenceToPrint == GIA_DRAW_SENTENCE_INDEX_PRINT_ALL_SENTENCES)
 	{
-		for(int sentenceIndex=GIA_NLP_START_SENTENCE_INDEX; sentenceIndex <= drawVariables->maxNumberSentences; sentenceIndex++)
+		for(int sentenceIndex=LRP_NLP_START_SENTENCE_INDEX; sentenceIndex <= drawVariables->maxNumberSentences; sentenceIndex++)
 		{
 			for(vector<GIAentityNode*>::iterator entityIter = entityNodesActiveListComplete->begin(); entityIter != entityNodesActiveListComplete->end(); entityIter++)
 			{

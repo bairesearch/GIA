@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m6a 09-September-2020
+ * Project Version: 3m7a 11-September-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator Parser
  * /
@@ -38,12 +38,25 @@
 #ifdef GIA_POS_REL_TRANSLATOR_RULES_GIA3
 #ifdef GIA_POS_REL_TRANSLATOR_RULES_USE
 
+
+void GIAposRelTranslatorParserClass::createSANItranslatorVariablesFromGIAtranslatorVariables(GIAtranslatorVariablesClass* translatorVariables, SANItranslatorVariablesClass* SANItranslatorVariables)
+{
+	SANItranslatorVariables->isQuery = translatorVariables->isQuery;
+	SANItranslatorVariables->LRPpreprocessorTranslatorVariables = translatorVariables->LRPpreprocessorTranslatorVariables; 
+	#ifdef SANI_NEURAL_NETWORK
+	SANItranslatorVariables->ANNtranslatorVariables = &(GIAtranslatorVariables.ANNtranslatorVariables);
+	#endif
+	#ifdef SANI_PARSE_SIMULTANEOUS
+	SANItranslatorVariables->GIAtranslatorVariables = translatorVariables;
+	#endif
+}
+
 //based on convertSentenceSyntacticRelationsIntoGIAnetworkNodes{}:
 bool GIAposRelTranslatorParserClass::convertSentenceTxtRelationsIntoGIAnetworkNodes(GIAtranslatorVariablesClass* translatorVariables, const bool linkPreestablishedReferencesGIA, GIAcoreference* firstGIAcoreferenceInList)
 {
 	bool result = true;
 	
-	int numberOfWordsInSentence = GIApreprocessorSentenceClassObject.getSentenceContents(translatorVariables->currentPreprocessorSentenceInList)->size();
+	int numberOfWordsInSentence = LRPpreprocessorSentenceClassObject.getSentenceContents(translatorVariables->currentPreprocessorSentenceInList)->size();
 	translatorVariables->currentSentenceInList->relationshipEntityArtificialIndexCurrent = GIAsentenceClass.getMinIndexOfDynamicallyGeneratedEntity(numberOfWordsInSentence) + SENTENCE_FIRST_ARTIFICIAL_INDEX;
 	
 	vector<bool> GIAentityNodeArrayFilled(GIAtranslatorOperations.getEntityArrayMaxIndex(translatorVariables));		//NB could also use currentSentence->maxNumberOfWordsInSentence
@@ -83,7 +96,7 @@ bool GIAposRelTranslatorParserClass::convertSentenceTxtRelationsIntoGIAnetworkNo
 		vector<XMLparserTag*>* SANIrulesTokenLayers = SANIrules.getSANIrulesTokenLayersGlobal();
 		vector<SANIGroupType*>* SANIGroupTypes = SANIrules.getSANIGroupTypesGlobal();
 		translatorVariables->parserAllowed = false;
-		if(GIAposRelTranslatorPermutations.executeTxtRelTranslatorWrapper2(translatorVariables, SANIrulesTokenLayers, SANIGroupTypes, translatorVariables->currentPreprocessorSentenceInList))
+		if(SANIposRelTranslatorPermutations.executeTxtRelTranslatorWrapper2(translatorVariables, SANIrulesTokenLayers, SANIGroupTypes, translatorVariables->currentPreprocessorSentenceInList))
 		{
 			result = false;
 		}
@@ -167,11 +180,11 @@ bool GIAposRelTranslatorParserClass::convertSentenceTxtRelationsIntoGIAnetworkNo
 	GIAsynRelTranslatorDefineSubstances.defineSubstancesAllNodes(translatorVariables);
 
 	//cout << "numberOfWordsInSentence = " << numberOfWordsInSentence << endl;
-	for(int w=GIA_NLP_START_ENTITY_INDEX; w<=numberOfWordsInSentence; w++)
+	for(int w=LRP_NLP_START_ENTITY_INDEX; w<=numberOfWordsInSentence; w++)
 	{
 		GIAentityNode* entity = GIAentityNodeArray[w];
 		//cout << "entity->entityName = " << entity->entityName << endl;
-		((*GIApreprocessorSentenceClassObject.getSentenceContents(translatorVariables->currentPreprocessorSentenceInList))[GIAtranslatorOperations.convertEntityIndexToSentenceContentsIndex(w)])->translatorEntity = entity;	//code from setPreprocessorSentenceTranslatorEntityReferences
+		((*LRPpreprocessorSentenceClassObject.getSentenceContents(translatorVariables->currentPreprocessorSentenceInList))[LRPpreprocessorWordClassObject.convertEntityIndexToSentenceContentsIndex(w)])->translatorEntity = entity;	//code from setPreprocessorSentenceTranslatorEntityReferences
 	}
 	
 	if(!generateSemanticRelationsFromTxtRelationsWrapper(translatorVariables))
@@ -183,7 +196,7 @@ bool GIAposRelTranslatorParserClass::convertSentenceTxtRelationsIntoGIAnetworkNo
 	identifyComparisonVariable(translatorVariables);
 	#endif
 	
-	for(int w=GIA_NLP_START_ENTITY_INDEX; w<=numberOfWordsInSentence; w++)
+	for(int w=LRP_NLP_START_ENTITY_INDEX; w<=numberOfWordsInSentence; w++)
 	{
 		GIAentityNode* entity = GIAentityNodeArray[w];
 		bool disableEntity = true;
@@ -205,7 +218,7 @@ bool GIAposRelTranslatorParserClass::convertSentenceTxtRelationsIntoGIAnetworkNo
 		#endif
 		if(disableEntity)
 		{
-			#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS2
+			#ifdef SANI_DEBUG_RULES_PRINT_PARSE_PROCESS2
 			cout << "DISABLING entity = " << entity->entityName << endl;
 			cout << "entity->entityType = " << entity->entityType << endl;
 			#endif
@@ -254,7 +267,7 @@ bool GIAposRelTranslatorParserClass::locateAndAddAllNetworkIndexEntitiesBasedOnT
 {
 	bool result = true;
 
-	int numberOfWordsInSentence = GIApreprocessorSentenceClassObject.getSentenceContents(translatorVariables->currentPreprocessorSentenceInList)->size();
+	int numberOfWordsInSentence = LRPpreprocessorSentenceClassObject.getSentenceContents(translatorVariables->currentPreprocessorSentenceInList)->size();
 
 	#ifdef GIA_GRAMMAR_IMPERATIVE_DETECTION
 	bool toDetected = false;
@@ -263,9 +276,9 @@ bool GIAposRelTranslatorParserClass::locateAndAddAllNetworkIndexEntitiesBasedOnT
 	#ifdef GIA_POS_REL_TRANSLATOR_RULES_GIA3_USE_SYN_REL_TRANSLATOR_FEATURES
 	currentFeatureInList = firstFeatureInSentence;
 	#endif
-	for(int w=GIA_NLP_START_ENTITY_INDEX; w<=numberOfWordsInSentence; w++)
+	for(int w=LRP_NLP_START_ENTITY_INDEX; w<=numberOfWordsInSentence; w++)
 	{
-		GIApreprocessorPlainTextWord* currentWord = (*GIApreprocessorSentenceClassObject.getSentenceContents(translatorVariables->currentPreprocessorSentenceInList))[GIAtranslatorOperations.convertEntityIndexToSentenceContentsIndex(w)];
+		LRPpreprocessorPlainTextWord* currentWord = (*LRPpreprocessorSentenceClassObject.getSentenceContents(translatorVariables->currentPreprocessorSentenceInList))[LRPpreprocessorWordClassObject.convertEntityIndexToSentenceContentsIndex(w)];
 		
 		#ifndef GIA_POS_REL_TRANSLATOR_RULES_GIA3_USE_SYN_REL_TRANSLATOR_FEATURES
 		GIAfeature currentFeatureTemp;
@@ -318,7 +331,7 @@ bool GIAposRelTranslatorParserClass::locateAndAddAllNetworkIndexEntitiesBasedOnT
 				toDetected = false;
 			}
 			#endif
-			GIAtranslatorGrammar.extractPOSrelatedGrammaticalInformationStanford(currentFeatureInList, GIA_PREPROCESSOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE);			//regenerate grammatical information for feature - it should identify the verb as an infinitive/imperative based on previousWordInSentenceIsTo
+			GIAtranslatorGrammar.extractPOSrelatedGrammaticalInformationStanford(currentFeatureInList, LRP_PREPROCESSOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE);			//regenerate grammatical information for feature - it should identify the verb as an infinitive/imperative based on previousWordInSentenceIsTo
 			GIAtranslatorGrammar.applyPOSrelatedGrammaticalInfoToEntity(entity, currentFeatureInList);	//regenerate grammatical information for entity
 		}
 		entity->grammaticalProperNounTemp = currentFeatureInList->grammaticalIsProperNoun;
@@ -348,7 +361,7 @@ void GIAposRelTranslatorParserClass::identifyComparisonVariable(GIAtranslatorVar
 				{
 					if((entityNode->entityName == GIA_SYN_REL_TRANSLATOR_REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE) || (entityNode->isWhichOrEquivalentWhatQuery) || (entityNode->isNameQuery))
 					{
-						#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS2
+						#ifdef SANI_DEBUG_RULES_PRINT_PARSE_PROCESS2
 						cout << "isQuery (entityNode->isNameQuery) = " << (entityNode->isNameQuery) << endl;
 						#endif
 						GIAtranslatorOperations.setComparisonVariableNode(entityNode);
@@ -396,7 +409,10 @@ bool GIAposRelTranslatorParserClass::generateSemanticRelationsFromTxtRelationsWr
 	vector<XMLparserTag*>* SANIrulesTokenLayers = SANInodes.getSANIrulesTokenLayersGlobal();
 	vector<SANIGroupType*>* SANIGroupTypes = SANInodes.getSANIGroupTypesGlobal();
 
-	if(!GIAposRelTranslatorPermutations.executeTxtRelTranslatorWrapper2(translatorVariables, SANIrulesTokenLayers, SANIGroupTypes, translatorVariables->currentPreprocessorSentenceInList))
+	SANItranslatorVariablesClass SANItranslatorVariables;
+	createSANItranslatorVariablesFromGIAtranslatorVariables(translatorVariables, &SANItranslatorVariables);
+	
+	if(!SANIposRelTranslatorPermutations.executeTxtRelTranslatorWrapper2(&SANItranslatorVariables, SANIrulesTokenLayers, SANIGroupTypes, translatorVariables->currentPreprocessorSentenceInList))
 	{
 		result = false;
 	}
@@ -537,12 +553,12 @@ bool GIAposRelTranslatorParserClass::reconcileSameReferenceSetConnectionsForAllR
 }
 #endif
 	
-void GIAposRelTranslatorParserClass::setPreprocessorSentenceTranslatorEntityReferences(GIApreprocessorSentence* currentPreprocessorSentenceInList, constEffective vector<GIAentityNode*>* GIAentityNodeArray)
+void GIAposRelTranslatorParserClass::setPreprocessorSentenceTranslatorEntityReferences(LRPpreprocessorSentence* currentPreprocessorSentenceInList, constEffective vector<GIAentityNode*>* GIAentityNodeArray)
 {
-	int numberOfWordsInSentence = GIApreprocessorSentenceClassObject.getSentenceContents(currentPreprocessorSentenceInList)->size();	//+1?
-	for(int w=GIA_NLP_START_ENTITY_INDEX; w<=numberOfWordsInSentence; w++)
+	int numberOfWordsInSentence = LRPpreprocessorSentenceClassObject.getSentenceContents(currentPreprocessorSentenceInList)->size();	//+1?
+	for(int w=LRP_NLP_START_ENTITY_INDEX; w<=numberOfWordsInSentence; w++)
 	{
-		((*GIApreprocessorSentenceClassObject.getSentenceContents(currentPreprocessorSentenceInList))[GIAtranslatorOperations.convertEntityIndexToSentenceContentsIndex(w)])->translatorEntity = (*GIAentityNodeArray)[w];
+		((*LRPpreprocessorSentenceClassObject.getSentenceContents(currentPreprocessorSentenceInList))[LRPpreprocessorWordClassObject.convertEntityIndexToSentenceContentsIndex(w)])->translatorEntity = (*GIAentityNodeArray)[w];
 	}
 }
 

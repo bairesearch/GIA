@@ -26,7 +26,7 @@
  * File Name: GIAsentenceClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m6a 09-September-2020
+ * Project Version: 3m7a 11-September-2020
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Sentence Class
  * /
@@ -134,12 +134,12 @@ GIArelation::GIArelation(void)
 	relationDependentIndex = INT_DEFAULT_VALUE;
 	relationGovernor = "";
 	relationGovernorIndex = INT_DEFAULT_VALUE;
-	#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
+	#ifdef LRP_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
 	relationGovernorRevertedToOfficialLRPTemp = false;
 	relationDependentRevertedToOfficialLRPTemp = false;
 	#endif
 
-	#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_INVERSE_PREPOSITIONS
+	#ifdef LRP_PREPROCESSOR_WORD_NORMALISE_INVERSE_PREPOSITIONS
 	relationTypeNonInversed = "";
 	relationTypeIndexNonInversed = INT_DEFAULT_VALUE;
 	#endif
@@ -168,14 +168,14 @@ GIArelation::GIArelation(void)
 	#endif
 	#endif
 
-	#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_PREPOSITIONS
+	#ifdef LRP_PREPROCESSOR_WORD_NORMALISE_PREPOSITIONS
 	inverseRelation = false;
-	#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_INVERSE_PREPOSITIONS
+	#ifdef LRP_PREPROCESSOR_WORD_NORMALISE_INVERSE_PREPOSITIONS
 	inverseRelationSingle = false;
 	#endif
-	#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_TWOWAY_PREPOSITIONS
+	#ifdef LRP_PREPROCESSOR_WORD_NORMALISE_TWOWAY_PREPOSITIONS
 	relationTwoWay = false;
-	#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED
+	#ifdef LRP_PREPROCESSOR_WORD_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED
 	inverseRelationTwoWay = false;
 	#endif
 	#endif
@@ -202,10 +202,10 @@ GIAfeature::GIAfeature(void)
 	entityIndex = 0;
 	word = "";
 	lemma = "";
-	#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
+	#ifdef LRP_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
 	wordWithLRPforNLPonly = "";
 	#endif
-	#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
+	#ifdef LRP_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
 	featureRevertedToOfficialLRPTemp = "";
 	#endif
 
@@ -237,8 +237,8 @@ GIAfeature::GIAfeature(void)
 	grammaticalGender = GRAMMATICAL_GENDER_UNDEFINED;
 	grammaticalIsPronoun = false;
 	grammaticalWordType = GRAMMATICAL_WORD_TYPE_UNDEFINED;
-	#ifdef GIA_PREPROCESSOR_POS_TAGGER
-	GIAposType = 0;	//GIA_PREPROCESSOR_POS_TYPE_UNDEFINED
+	#ifdef LRP_PREPROCESSOR_POS_TAGGER
+	GIAposType = 0;	//LRP_PREPROCESSOR_POS_TYPE_UNDEFINED
 	#endif
 	#ifdef GIA_PREDETERMINERS
 	grammaticalPredeterminer = GRAMMATICAL_PREDETERMINER_UNDEFINED;
@@ -294,7 +294,7 @@ GIAsentence::GIAsentence(void)
 
 	firstRelationInList = new GIArelation();	//auto constructor execution added 23 Feb 2012
 	firstFeatureInList = new GIAfeature();	//auto constructor execution added 23 Feb 2012
-	#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
+	#ifdef LRP_PREPROCESSOR_RECORD_REFERENCES
 	firstRelationInListOriginal = new GIArelation();
 	firstFeatureInListOriginal = new GIAfeature();
 	#endif
@@ -320,7 +320,7 @@ GIAsentence::~GIAsentence(void)
 		delete firstFeatureInList;
 	}
 	
-	#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
+	#ifdef LRP_PREPROCESSOR_RECORD_REFERENCES
 	if(firstRelationInListOriginal != NULL)
 	{
 		delete firstRelationInListOriginal;
@@ -410,7 +410,7 @@ void GIAsentenceClassClass::copySentence(GIAsentence* sentenceToCopy, GIAsentenc
 	newSentence->firstFeatureInList = new GIAfeature();
 	copyFeatures(sentenceToCopy->firstFeatureInList, newSentence->firstFeatureInList);
 	
-	#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
+	#ifdef LRP_PREPROCESSOR_RECORD_REFERENCES
 	newSentence->firstRelationInListOriginal = new GIArelation();
 	copyRelations(sentenceToCopy->firstRelationInListOriginal, newSentence->firstRelationInListOriginal);
 	newSentence->firstFeatureInListOriginal = new GIAfeature();
@@ -517,7 +517,7 @@ int GIAsentenceClassClass::getMaxIndexOfDynamicallyGeneratedEntity(GIAsentence* 
 
 int GIAsentenceClassClass::getMinIndexOfDynamicallyGeneratedEntity(const int numberOfWordsInSentence) 
 {
-	int minIndexOfDynamicallyGeneratedEntity = numberOfWordsInSentence + GIA_NLP_START_ENTITY_INDEX;		//OLD: FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY
+	int minIndexOfDynamicallyGeneratedEntity = numberOfWordsInSentence + LRP_NLP_START_ENTITY_INDEX;		//OLD: FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY
 	return minIndexOfDynamicallyGeneratedEntity;	
 }
 
@@ -529,9 +529,9 @@ int GIAsentenceClassClass::getMaxIndexOfDynamicallyGeneratedEntity(const int num
 
 bool GIAsentenceClassClass::relationIndexIsNormal(int relationIndex) 
 {
-	//this function is designed to support the creation of semantic dependency relations with special governor/dependent feature indices (<GIA_NLP_START_ENTITY_INDEX, e.g. -2, -1, 0)
+	//this function is designed to support the creation of semantic dependency relations with special governor/dependent feature indices (<LRP_NLP_START_ENTITY_INDEX, e.g. -2, -1, 0)
 	bool relationIndexIsNormal = false;
-	if(relationIndex >= GIA_NLP_START_ENTITY_INDEX)	//OLD: (currentRelation->relationDependentIndex > FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY)
+	if(relationIndex >= LRP_NLP_START_ENTITY_INDEX)	//OLD: (currentRelation->relationDependentIndex > FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY)
 	{
 		relationIndexIsNormal = true;
 	}

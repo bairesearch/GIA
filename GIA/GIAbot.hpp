@@ -26,7 +26,7 @@
  * File Name: GIAbot.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m6a 09-September-2020
+ * Project Version: 3m7a 11-September-2020
  * Requirements: 
  * Description: Bot
  * /
@@ -53,7 +53,7 @@ static string featureFirstPersonNameArray[FEATURE_FIRST_PERSON_NUMBER_OF_TYPES] 
 class GIAbotClass
 {
 	private: GIAsentenceClassClass GIAsentenceClass;
-	private: GIApreprocessorSentenceClass GIApreprocessorSentenceClassObject;
+	private: LRPpreprocessorSentenceClass LRPpreprocessorSentenceClassObject;
 
 	public: void botSwitchFirstAndSecondPersonSyntactic(GIAtranslatorVariablesClass* translatorVariables);
 	public: void botSwitchFirstAndSecondPersonSemantic(GIAtranslatorVariablesClass* translatorVariables);

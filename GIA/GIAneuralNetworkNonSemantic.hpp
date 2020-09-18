@@ -26,7 +26,7 @@
  * File Name: GIAneuralNetworkNonSemantic.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m6a 09-September-2020
+ * Project Version: 3m7a 11-September-2020
  * Description: Neural Network - visual representation of GIA contents in prototype biological neural network
  * /
  *******************************************************************************/
@@ -42,9 +42,9 @@
 #include "GIAtranslatorOperations.hpp"
 #include "GIAneuralNetworkOperations.hpp"
 #include "SHAREDvars.hpp"
-#include "GIApreprocessorWordIdentification.hpp"
+#include "LRPpreprocessorWordIdentification.hpp"
 
-//move to GIApreprocessorWordClass.hpp:
+//move to LRPpreprocessorWordClass.hpp:
  
 #define GIA_TRANSLATOR_ENGLISH_INDEFINITE_CONCEPT_DEFINITION_DELIMITER "is"	//e.g. a dog is an animal
 #define GIA_TRANSLATOR_ENGLISH_PLURAL_CONCEPT_DEFINITION_DELIMITER "are"	//e.g. dogs are animals
@@ -83,33 +83,33 @@ class GIAneuralNetworkNonSemanticClass
 	private: ANNneuronClassClass ANNneuronClass;
 	private: SHAREDvarsClass SHAREDvars;
 	private: GIAneuralNetworkOperationsClass GIAneuralNetworkOperations;
-	private: GIApreprocessorWordClass GIApreprocessorWordIdentification;
+	private: LRPpreprocessorWordClass LRPpreprocessorWordIdentification;
 	
 	#ifdef GIA_NEURAL_NETWORK_NON_SEMANTIC_ACTIVE
 	public: bool addTextToNetwork(GIAtranslatorVariablesClass* translatorVariables);
 		private: bool addTextToNetworkLogicReference(GIAneuralNetworkVariablesClass* neuralNetworkVariables, GIAposRelTranslatorHybridLogicReference* firstLogicReferenceInList, ANNneuron* higherLogicReferenceArtificialSynapseNeuron, bool higherLogicReferenceArtificialSynapseNeuronDirection);
 			#ifdef GIA_NEURAL_NETWORK_NON_SEMANTIC_REPLACE_WORDS_WITH_LEMMAS
-			private: bool replaceWordsWithLemmas(GIApreprocessorSubReferenceSet* referenceSet);
+			private: bool replaceWordsWithLemmas(LRPpreprocessorSubReferenceSet* referenceSet);
 			#endif
-			private: bool detectIndefiniteConceptDefinition(GIApreprocessorSubReferenceSet* referenceSetSubject, GIApreprocessorSubReferenceSet* referenceSetObject, GIApreprocessorSubReferenceSet* referenceSetDelimiter);
-			private: bool identifyAndDemarcateConceptsInReferenceSet(GIAneuralNetworkVariablesClass* neuralNetworkVariables, GIApreprocessorSubReferenceSet* currentSubReferenceSetInList, int referenceSetType, bool conceptDefinitionDetectedInSentence, bool* foundConcept, ANNneuron** conceptNeuronFound);				
-			private: bool detectIfWordIsConcept(const vector<GIApreprocessorPlainTextWord*>* subReferenceSetContents, int wordIndex, bool* specificConceptDetected, int* indexOfStartOfSpecificConcept, bool indefiniteConceptDefinitionFound);	
+			private: bool detectIndefiniteConceptDefinition(LRPpreprocessorSubReferenceSet* referenceSetSubject, LRPpreprocessorSubReferenceSet* referenceSetObject, LRPpreprocessorSubReferenceSet* referenceSetDelimiter);
+			private: bool identifyAndDemarcateConceptsInReferenceSet(GIAneuralNetworkVariablesClass* neuralNetworkVariables, LRPpreprocessorSubReferenceSet* currentSubReferenceSetInList, int referenceSetType, bool conceptDefinitionDetectedInSentence, bool* foundConcept, ANNneuron** conceptNeuronFound);				
+			private: bool detectIfWordIsConcept(const vector<LRPpreprocessorPlainTextWord*>* subReferenceSetContents, int wordIndex, bool* specificConceptDetected, int* indexOfStartOfSpecificConcept, bool indefiniteConceptDefinitionFound);	
 				private: bool detectIfWordIsDeterminer(const string word);
-				private: bool findIndexOfStartOfSpecificConcept(const vector<GIApreprocessorPlainTextWord*>* subReferenceSetContents, const int startIndexToSearch, int* indexOfStartOfSpecificConcept);
-				private: bool detectIfWordIsPluralNoun(const GIApreprocessorPlainTextWord* word);
-			private: bool findOrAddReferenceSetInNetwork(GIAneuralNetworkVariablesClass* neuralNetworkVariables, GIApreprocessorSubReferenceSet* firstSubReferenceSetInList, ANNneuron** referenceSetSubnetEntry, ANNneuron* referenceSetDelimiterSubnetEntry, int referenceSetType);
+				private: bool findIndexOfStartOfSpecificConcept(const vector<LRPpreprocessorPlainTextWord*>* subReferenceSetContents, const int startIndexToSearch, int* indexOfStartOfSpecificConcept);
+				private: bool detectIfWordIsPluralNoun(const LRPpreprocessorPlainTextWord* word);
+			private: bool findOrAddReferenceSetInNetwork(GIAneuralNetworkVariablesClass* neuralNetworkVariables, LRPpreprocessorSubReferenceSet* firstSubReferenceSetInList, ANNneuron** referenceSetSubnetEntry, ANNneuron* referenceSetDelimiterSubnetEntry, int referenceSetType);
 				private: void calculateNumberActiveConceptNeuronsInSubnet(ANNneuronConnection* currentNeuronConnectionInInstanceSubnet, int* numberOfActiveConceptNeuronsInSubnet, int64_t* activationAgeOfSubnetSynapsesTotal);
 				private: void calculateNumberActiveConceptNeuronsInSubnetReset(ANNneuronConnection* currentNeuronConnectionInInstanceSubnet);
 				private: void calculateNumberActiveConceptNeuronsInSubnetUpdateActivationAge(ANNneuronConnection* currentNeuronConnectionInInstanceSubnet);
 					private: void calculateNumberActiveConceptNeuronsInSubnet(ANNneuronConnection* currentNeuronConnectionInInstanceSubnet, bool direction, int* numberOfActiveConceptNeuronsInSubnet, int64_t* activationAgeOfSubnetSynapsesTotal, bool reset, bool updateActivationAge);
-				private: bool addReferenceSetInNetwork(GIAneuralNetworkVariablesClass* neuralNetworkVariables, GIApreprocessorSubReferenceSet* firstSubReferenceSetInList, ANNneuron** referenceSetSubnetEntry, ANNneuron* referenceSetDelimiterSubnetEntry, int referenceSetType);
-			private: bool createDelimiterArtificialSynapseNeuron(GIAneuralNetworkVariablesClass* neuralNetworkVariables, ANNneuron** referenceSetDelimiterSubnetEntry, GIApreprocessorSubReferenceSet* referenceSetDelimiter);
-			private: bool connectReferenceSetsInNetwork(GIAneuralNetworkVariablesClass* neuralNetworkVariables, ANNneuron* referenceSetSubjectSubnetEntry, ANNneuron* referenceSetObjectSubnetEntry, ANNneuron** referenceSetDelimiterSubnetEntry, GIApreprocessorSubReferenceSet* referenceSetDelimiter);
-				private: ANNneuron* findOrAddConceptAndConnectNewSynapseArtificialInstanceNeuron(GIAneuralNetworkVariablesClass* neuralNetworkVariables, GIApreprocessorPlainTextWord* wordTag);
+				private: bool addReferenceSetInNetwork(GIAneuralNetworkVariablesClass* neuralNetworkVariables, LRPpreprocessorSubReferenceSet* firstSubReferenceSetInList, ANNneuron** referenceSetSubnetEntry, ANNneuron* referenceSetDelimiterSubnetEntry, int referenceSetType);
+			private: bool createDelimiterArtificialSynapseNeuron(GIAneuralNetworkVariablesClass* neuralNetworkVariables, ANNneuron** referenceSetDelimiterSubnetEntry, LRPpreprocessorSubReferenceSet* referenceSetDelimiter);
+			private: bool connectReferenceSetsInNetwork(GIAneuralNetworkVariablesClass* neuralNetworkVariables, ANNneuron* referenceSetSubjectSubnetEntry, ANNneuron* referenceSetObjectSubnetEntry, ANNneuron** referenceSetDelimiterSubnetEntry, LRPpreprocessorSubReferenceSet* referenceSetDelimiter);
+				private: ANNneuron* findOrAddConceptAndConnectNewSynapseArtificialInstanceNeuron(GIAneuralNetworkVariablesClass* neuralNetworkVariables, LRPpreprocessorPlainTextWord* wordTag);
 	public: bool performQuery(GIAtranslatorVariablesClass* translatorVariables, GIAtranslatorVariablesClass* translatorVariablesQuery);
-	public: bool determineReferenceSetDefinite(GIApreprocessorSubReferenceSet* firstSubReferenceSetInList);
-	private: GIApreprocessorPlainTextWord* getDelimiterWord(GIApreprocessorSubReferenceSet* referenceSetDelimiter);
-	private: GIApreprocessorPlainTextWord* getLogicReferenceWord(GIAposRelTranslatorHybridLogicReference* logicReference);
+	public: bool determineReferenceSetDefinite(LRPpreprocessorSubReferenceSet* firstSubReferenceSetInList);
+	private: LRPpreprocessorPlainTextWord* getDelimiterWord(LRPpreprocessorSubReferenceSet* referenceSetDelimiter);
+	private: LRPpreprocessorPlainTextWord* getLogicReferenceWord(GIAposRelTranslatorHybridLogicReference* logicReference);
 	private: int generateArtificialLayer(GIAneuralNetworkVariablesClass* neuralNetworkVariables);
 	#endif
 

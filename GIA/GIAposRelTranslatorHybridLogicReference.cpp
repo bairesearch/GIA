@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorHybridLogicReference.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m6a 09-September-2020
+ * Project Version: 3m7a 11-September-2020
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Hybrid Logic Reference
  * /
@@ -45,7 +45,7 @@
 #ifdef GIA_POS_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE
 
 //Limitation: doesn't support conjunctions with embedded preposition logic references, eg; "The chicken is green, considering the teapot, red, considering the apple, or blue, considering the pie."
-bool GIAposRelTranslatorHybridLogicReferenceClass::executeLogicReferencePreprocessor(const vector<GIApreprocessorPlainTextWord*>* sentenceContentsWordList, GIApreprocessorSentence* currentGIApreprocessorSentenceInList, vector<XMLparserTag*>* SANIrulesTokenLayers)
+bool GIAposRelTranslatorHybridLogicReferenceClass::executeLogicReferencePreprocessor(const vector<LRPpreprocessorPlainTextWord*>* sentenceContentsWordList, LRPpreprocessorSentence* currentLRPpreprocessorSentenceInList, vector<XMLparserTag*>* SANIrulesTokenLayers)
 {
 	bool result = true;
 	
@@ -53,7 +53,7 @@ bool GIAposRelTranslatorHybridLogicReferenceClass::executeLogicReferencePreproce
 
 	int wordIndexSentence = 0;	//this gets reset at next sentence
 	int logicReferenceVariableNameIndex = 0;
-	vector<GIApreprocessorPlainTextWord*> logicReferenceVariableWordList;	//this gets reset after each logic reference variable
+	vector<LRPpreprocessorPlainTextWord*> logicReferenceVariableWordList;	//this gets reset after each logic reference variable
 	bool expectToFindSubjectAuxObjectLogicReferenceVariable = false;
 	bool whiteSpace = false;
 	
@@ -63,15 +63,15 @@ bool GIAposRelTranslatorHybridLogicReferenceClass::executeLogicReferencePreproce
 	bool usePOSprelim = false;
 	#endif
 	#ifdef GIA_POS_REL_TRANSLATOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY
-	bool grammaticallyStrict = true;	//this is irrelevant and could be set to GIA_POS_REL_TRANSLATOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT as determineIsWordType(usePOSprelim=true, ...) assumes grammaticallyStrict
+	bool grammaticallyStrict = true;	//this is irrelevant and could be set to LRP_PREPROCESSOR_GRAMMATICALLY_STRICT_VERB_VARIANTS_ONLY_VALUE_IRRELEVANT as determineIsWordType(usePOSprelim=true, ...) assumes grammaticallyStrict
 	#else
 	bool grammaticallyStrict = false;
 	#endif
 		
-	GIAposRelTranslatorHybridLogicReference* currentLogicReferenceInList = currentGIApreprocessorSentenceInList->firstLogicReferenceInList;
+	GIAposRelTranslatorHybridLogicReference* currentLogicReferenceInList = currentLRPpreprocessorSentenceInList->firstLogicReferenceInList;
 	for(int w=0; w<sentenceContentsWordList->size(); w++)
 	{
-		GIApreprocessorPlainTextWord* currentWord = (*sentenceContentsWordList)[w];
+		LRPpreprocessorPlainTextWord* currentWord = (*sentenceContentsWordList)[w];
 		
 		#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_LOGIC_REFERENCE
 		cout << "[currentWord = " << currentWord->tagName << "]" << endl;
@@ -82,7 +82,7 @@ bool GIAposRelTranslatorHybridLogicReferenceClass::executeLogicReferencePreproce
 		if(SANIrules.isClassTag(currentWord->tagName, GIA_POS_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_LAYER_NAME, GIA_POS_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_CLASS_conjunction, &logicReferenceClassType, SANIrulesTokenLayers))
 		{
 			#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE_SET_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
-			if(GIApreprocessorWordIdentification.determineIsConjunction(currentWord, usePOSprelim))
+			if(LRPpreprocessorWordIdentification.determineIsConjunction(currentWord, usePOSprelim))
 			{
 			#endif
 				logicReferenceClass = GIA_POS_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_CLASS_CONJUNCTION;
@@ -97,7 +97,7 @@ bool GIAposRelTranslatorHybridLogicReferenceClass::executeLogicReferencePreproce
 		else if(SANIrules.isClassTag(currentWord->tagName, GIA_POS_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_LAYER_NAME, GIA_POS_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_CLASS_preposition, &logicReferenceClassType, SANIrulesTokenLayers))
 		{
 			#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE_SET_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
-			if(GIApreprocessorWordIdentification.determineIsPreposition(currentWord, usePOSprelim))
+			if(LRPpreprocessorWordIdentification.determineIsPreposition(currentWord, usePOSprelim))
 			{
 			#endif
 				#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_DETERMINE_AMBIGUOUS_PREPOSITION_POS_TYPES_BASED_ON_CONTEXT
@@ -119,7 +119,7 @@ bool GIAposRelTranslatorHybridLogicReferenceClass::executeLogicReferencePreproce
 		else if(SANIrules.isClassTag(currentWord->tagName, GIA_POS_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_LAYER_NAME, GIA_POS_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_CLASS_verb, &logicReferenceClassType, SANIrulesTokenLayers))
 		{
 			#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE_SET_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
-			if(GIApreprocessorWordIdentification.determineIsVerb(currentWord, usePOSprelim, grammaticallyStrict))
+			if(LRPpreprocessorWordIdentification.determineIsVerb(currentWord, usePOSprelim, grammaticallyStrict))
 			{
 			#endif
 				logicReferenceClass = GIA_POS_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_CLASS_VERB;
@@ -140,9 +140,9 @@ bool GIAposRelTranslatorHybridLogicReferenceClass::executeLogicReferencePreproce
 			#endif
 
 			#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE_OUTPUT_LOGIC_REFERENCE_SETS_FOR_HIGH_LEVEL_SEMANTIC_PARSE_SUPPORT_VERB_TENSE
-			vector<GIApreprocessorPlainTextWord*> logicReferenceContents = generateLogicReferenceContents(currentWord, logicReferenceClassType, logicReferenceClass, &logicReferenceVariableWordList);
+			vector<LRPpreprocessorPlainTextWord*> logicReferenceContents = generateLogicReferenceContents(currentWord, logicReferenceClassType, logicReferenceClass, &logicReferenceVariableWordList);
 			#else
-			vector<GIApreprocessorPlainTextWord*> logicReferenceContents = generateLogicReferenceContentsBase(currentWord, logicReferenceClassType);
+			vector<LRPpreprocessorPlainTextWord*> logicReferenceContents = generateLogicReferenceContentsBase(currentWord, logicReferenceClassType);
 			#endif
 
 			if(logicReferenceClass == GIA_POS_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_CLASS_CONJUNCTION)
@@ -164,7 +164,7 @@ bool GIAposRelTranslatorHybridLogicReferenceClass::executeLogicReferencePreproce
 							result = false;
 						}
 						#else
-						cerr << "GIApreprocessor::executeLogicReferencePreprocessor{} error: GIA_POS_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE_ABSTRACT_CONJUNCTIONS not supported; eg subsequent_to and before" << endl;
+						cerr << "LRPpreprocessor::executeLogicReferencePreprocessor{} error: GIA_POS_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE_ABSTRACT_CONJUNCTIONS not supported; eg subsequent_to and before" << endl;
 						exit(EXIT_ERROR);
 						#endif
 					}
@@ -419,7 +419,7 @@ bool GIAposRelTranslatorHybridLogicReferenceClass::executeLogicReferencePreproce
 							#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE_PREPOSITIONS_MUST_SUCCEED_COMMA
 							cerr << "GIAposRelTranslatorHybridLogicReferenceClass::executeLogicReferencePreprocessor{} error: (logicReferenceClass == GIA_POS_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_CLASS_PREPOSITION) && (logicReferenceVariableWordList->size() != 0)" << endl;
 							cerr << "currentWord->tagName = " << currentWord->tagName << endl;
-							GIApreprocessorWordClassObject.printWordList(&logicReferenceVariableWordList);
+							LRPpreprocessorWordClassObject.printWordList(&logicReferenceVariableWordList);
 							exit(EXIT_ERROR);
 							#endif
 						}
@@ -492,14 +492,14 @@ bool GIAposRelTranslatorHybridLogicReferenceClass::executeLogicReferencePreproce
 				currentLogicReferenceInList->logicReferenceClass = GIA_POS_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_CLASS_CONJUNCTION_COMPONENT_IMPLICIT_INFERRED;
 			}
 		}
-		else if(((currentWord->tagName).length() == 1) && SHAREDvars.charInCharArray((currentWord->tagName)[0], nlpPunctionMarkCharacterEndOfSentenceArray, GIA_NLP_NUMBER_OF_PUNCTUATION_MARK_CHARACTERS_END_OF_SENTENCE))
+		else if(((currentWord->tagName).length() == 1) && SHAREDvars.charInCharArray((currentWord->tagName)[0], nlpPunctionMarkCharacterEndOfSentenceArray, LRP_NLP_NUMBER_OF_PUNCTUATION_MARK_CHARACTERS_END_OF_SENTENCE))
 		{
 			if(!fillLogicReferenceVariable(currentLogicReferenceInList, &logicReferenceVariableWordList, &logicReferenceVariableNameIndex, &expectToFindSubjectAuxObjectLogicReferenceVariable, wordIndexSentence))
 			{
 				result = false;
 			}
 		}
-		else if(((currentWord->tagName).length() == 1) && SHAREDvars.charInCharArray((currentWord->tagName)[0], nlpPunctionMarkCharacterArray, GIA_NLP_NUMBER_OF_PUNCTUATION_MARK_CHARACTERS))
+		else if(((currentWord->tagName).length() == 1) && SHAREDvars.charInCharArray((currentWord->tagName)[0], nlpPunctionMarkCharacterArray, LRP_NLP_NUMBER_OF_PUNCTUATION_MARK_CHARACTERS))
 		{
 			//CHAR_SEMICOLON / CHAR_COLON:
 			logicReferenceVariableWordList.push_back(currentWord);	//CHECKTHIS: assume that logic reference variable will not occur before a punctuation mark (CHAR_SEMICOLON / CHAR_COLON)
@@ -533,7 +533,7 @@ bool GIAposRelTranslatorHybridLogicReferenceClass::initialiseNextLogicReferenceC
 	(*currentLogicReferenceInList)->next = new GIAposRelTranslatorHybridLogicReference();
 	(*currentLogicReferenceInList)->next->previous = (*currentLogicReferenceInList);
 	(*currentLogicReferenceInList) = (*currentLogicReferenceInList)->next;
-	#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
+	#ifdef LRP_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
 	(*currentLogicReferenceInList)->logicReferenceVariable->wordIndexSentence = wordIndexSentence+1;	//CHECKTHIS
 	#endif
 	
@@ -542,11 +542,11 @@ bool GIAposRelTranslatorHybridLogicReferenceClass::initialiseNextLogicReferenceC
 
 bool GIAposRelTranslatorHybridLogicReferenceClass::initialiseNewSubLogicReferenceConjunctionInferred(GIAposRelTranslatorHybridLogicReference** currentLogicReferenceInList, const int wordIndexSentence, const bool copySubLogicReferences)
 {
-	vector<GIApreprocessorPlainTextWord*> logicReferenceContentsEmpty;
+	vector<LRPpreprocessorPlainTextWord*> logicReferenceContentsEmpty;
 	return initialiseNewSubLogicReferenceConjunction(currentLogicReferenceInList, logicReferenceContentsEmpty, GIA_POS_REL_TRANSLATOR_RULES_TOKENS_LOGIC_REFERENCE_CLASS_CONJUNCTION, "", wordIndexSentence, copySubLogicReferences);
 }
 
-bool GIAposRelTranslatorHybridLogicReferenceClass::initialiseNewSubLogicReferenceConjunction(GIAposRelTranslatorHybridLogicReference** currentLogicReferenceInList, const vector<GIApreprocessorPlainTextWord*> logicReferenceContents, const int logicReferenceClass, const string logicReferenceClassType, const int wordIndexSentence, const bool copySubLogicReferences)
+bool GIAposRelTranslatorHybridLogicReferenceClass::initialiseNewSubLogicReferenceConjunction(GIAposRelTranslatorHybridLogicReference** currentLogicReferenceInList, const vector<LRPpreprocessorPlainTextWord*> logicReferenceContents, const int logicReferenceClass, const string logicReferenceClassType, const int wordIndexSentence, const bool copySubLogicReferences)
 {
 	GIAposRelTranslatorHybridLogicReferenceVariable* currentLogicReferenceVariableInListTemp = (*currentLogicReferenceInList)->logicReferenceVariable;
 					
@@ -571,8 +571,8 @@ bool GIAposRelTranslatorHybridLogicReferenceClass::initialiseNewSubLogicReferenc
 	#endif
 	setLogicReferenceInfo((*currentLogicReferenceInList), logicReferenceContents, logicReferenceClass, logicReferenceClassType);	  
 	/*
-	#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
-	(*currentLogicReferenceInList)->logicReferenceVariable->wordIndexSentence = wordIndexSentence + GIA_NLP_START_ENTITY_INDEX;	//CHECKTHIS
+	#ifdef LRP_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
+	(*currentLogicReferenceInList)->logicReferenceVariable->wordIndexSentence = wordIndexSentence + LRP_NLP_START_ENTITY_INDEX;	//CHECKTHIS
 	#endif
 	*/
 	(*currentLogicReferenceInList)->logicReferenceVariable = (*currentLogicReferenceInList)->firstSubLogicReferenceInListArray->logicReferenceVariable;	//ie = new logicReferenceVariable
@@ -582,7 +582,7 @@ bool GIAposRelTranslatorHybridLogicReferenceClass::initialiseNewSubLogicReferenc
 
 
 
-bool GIAposRelTranslatorHybridLogicReferenceClass::initialiseNewSubLogicReference(GIAposRelTranslatorHybridLogicReference* currentLogicReferenceInList, const vector<GIApreprocessorPlainTextWord*> logicReferenceContents, const int logicReferenceClass, const string logicReferenceClassType, const int wordIndexSentence)
+bool GIAposRelTranslatorHybridLogicReferenceClass::initialiseNewSubLogicReference(GIAposRelTranslatorHybridLogicReference* currentLogicReferenceInList, const vector<LRPpreprocessorPlainTextWord*> logicReferenceContents, const int logicReferenceClass, const string logicReferenceClassType, const int wordIndexSentence)
 {
 	setLogicReferenceInfo(currentLogicReferenceInList, logicReferenceContents, logicReferenceClass, logicReferenceClassType);
 	currentLogicReferenceInList->hasSubLogicReference = true;
@@ -594,20 +594,20 @@ bool GIAposRelTranslatorHybridLogicReferenceClass::initialiseNewSubLogicReferenc
 	currentLogicReferenceInList->firstSubLogicReferenceInListDependent->isSubLogicReferenceDependent = true;
 	currentLogicReferenceInList->firstSubLogicReferenceInListDependent->lastLogicReferenceInUpperLevel = currentLogicReferenceInList; //so that can return to the current level upon the detection of a comma
 	/*
-	#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
-	currentLogicReferenceInList->logicReferenceVariable->wordIndexSentence = wordIndexSentence + GIA_NLP_START_ENTITY_INDEX;	//CHECKTHIS
+	#ifdef LRP_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
+	currentLogicReferenceInList->logicReferenceVariable->wordIndexSentence = wordIndexSentence + LRP_NLP_START_ENTITY_INDEX;	//CHECKTHIS
 	#endif
 	*/
 }
 
-bool GIAposRelTranslatorHybridLogicReferenceClass::fillLogicReferenceVariable(GIAposRelTranslatorHybridLogicReference* currentLogicReferenceInList, vector<GIApreprocessorPlainTextWord*>* logicReferenceVariableWordList, int* logicReferenceVariableNameIndex, bool* expectToFindSubjectAuxObjectLogicReferenceVariable, const int wordIndexSentence)
+bool GIAposRelTranslatorHybridLogicReferenceClass::fillLogicReferenceVariable(GIAposRelTranslatorHybridLogicReference* currentLogicReferenceInList, vector<LRPpreprocessorPlainTextWord*>* logicReferenceVariableWordList, int* logicReferenceVariableNameIndex, bool* expectToFindSubjectAuxObjectLogicReferenceVariable, const int wordIndexSentence)
 {
 	//exit parsing of logical condition variable
 	
 	bool result = true;
 	
-	#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
-	currentLogicReferenceInList->logicReferenceVariable->wordIndexSentence = wordIndexSentence - logicReferenceVariableWordList->size() + GIA_NLP_START_ENTITY_INDEX;	//CHECKTHIS
+	#ifdef LRP_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
+	currentLogicReferenceInList->logicReferenceVariable->wordIndexSentence = wordIndexSentence - logicReferenceVariableWordList->size() + LRP_NLP_START_ENTITY_INDEX;	//CHECKTHIS
 	//cout << "currentLogicReferenceInList->logicReferenceVariable->wordIndexSentence = " << currentLogicReferenceInList->logicReferenceVariable->wordIndexSentence << endl;
 	#endif
 	currentLogicReferenceInList->logicReferenceVariable->logicReferenceVariableContents = *logicReferenceVariableWordList;
@@ -630,7 +630,7 @@ bool GIAposRelTranslatorHybridLogicReferenceClass::fillLogicReferenceVariable(GI
 			{
 				//eg Tom is happy and fast 
 				//switch reference set subject/object
-				GIApreprocessorSubReferenceSet* tempSubReferenceSet = currentLogicReferenceInList->logicReferenceVariable->referenceSetObject;
+				LRPpreprocessorSubReferenceSet* tempSubReferenceSet = currentLogicReferenceInList->logicReferenceVariable->referenceSetObject;
 				currentLogicReferenceInList->logicReferenceVariable->referenceSetObject = currentLogicReferenceInList->logicReferenceVariable->referenceSetSubject;
 				currentLogicReferenceInList->logicReferenceVariable->referenceSetSubject = tempSubReferenceSet;
 			}
@@ -641,7 +641,7 @@ bool GIAposRelTranslatorHybridLogicReferenceClass::fillLogicReferenceVariable(GI
 		}
 		else
 		{
-			cerr << "GIApreprocessor::fillLogicReferenceVariable{} error: islogicReferenceConjunctionAndOr && isReferenceSetEmpty(referenceSetSubject)" << endl;
+			cerr << "LRPpreprocessor::fillLogicReferenceVariable{} error: islogicReferenceConjunctionAndOr && isReferenceSetEmpty(referenceSetSubject)" << endl;
 			exit(EXIT_ERROR);
 		}
 	}
@@ -659,7 +659,7 @@ bool GIAposRelTranslatorHybridLogicReferenceClass::fillLogicReferenceVariable(GI
 
 //note this function will not work if some logicReferences have class type preposition/conjunction
 //assume that the explicitConjunctionLogicReferenceInList refers to the implicit conjunction list on the next (nearest) highest level
-bool GIAposRelTranslatorHybridLogicReferenceClass::identifyImplicitLogicReferenceSets(GIAposRelTranslatorHybridLogicReference* explicitConjunctionLogicReferenceInList, const vector<GIApreprocessorPlainTextWord*> logicReferenceContents, const int logicReferenceClass, const string logicReferenceClassType)
+bool GIAposRelTranslatorHybridLogicReferenceClass::identifyImplicitLogicReferenceSets(GIAposRelTranslatorHybridLogicReference* explicitConjunctionLogicReferenceInList, const vector<LRPpreprocessorPlainTextWord*> logicReferenceContents, const int logicReferenceClass, const string logicReferenceClassType)
 {
 	bool result = false;
 	
@@ -702,7 +702,7 @@ bool GIAposRelTranslatorHybridLogicReferenceClass::identifyImplicitLogicReferenc
 	return result;	
 }
 	
-void GIAposRelTranslatorHybridLogicReferenceClass::setLogicReferenceInfo(GIAposRelTranslatorHybridLogicReference* logicReference, const vector<GIApreprocessorPlainTextWord*> logicReferenceContents, int logicReferenceClass, string logicReferenceClassType)
+void GIAposRelTranslatorHybridLogicReferenceClass::setLogicReferenceInfo(GIAposRelTranslatorHybridLogicReference* logicReference, const vector<LRPpreprocessorPlainTextWord*> logicReferenceContents, int logicReferenceClass, string logicReferenceClassType)
 {
 	logicReference->logicReferenceContents = logicReferenceContents;
 	logicReference->logicReferenceClass = logicReferenceClass;
@@ -710,11 +710,11 @@ void GIAposRelTranslatorHybridLogicReferenceClass::setLogicReferenceInfo(GIAposR
 }		
 
 #ifdef GIA_POS_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE_OUTPUT_LOGIC_REFERENCE_SETS_FOR_HIGH_LEVEL_SEMANTIC_PARSE_SUPPORT_VERB_TENSE
-vector<GIApreprocessorPlainTextWord*> GIAposRelTranslatorHybridLogicReferenceClass::generateLogicReferenceContents(GIApreprocessorPlainTextWord* logicReferenceWord, const string logicReferenceClassType, int logicReferenceClass, vector<GIApreprocessorPlainTextWord*>* logicReferenceVariableWordList)
+vector<LRPpreprocessorPlainTextWord*> GIAposRelTranslatorHybridLogicReferenceClass::generateLogicReferenceContents(LRPpreprocessorPlainTextWord* logicReferenceWord, const string logicReferenceClassType, int logicReferenceClass, vector<LRPpreprocessorPlainTextWord*>* logicReferenceVariableWordList)
 {
 	bool referenceSetDelimiterIndicatesSameReferenceSet = false;
 	
-	vector<GIApreprocessorPlainTextWord*> logicReferenceContents = generateLogicReferenceContentsBase(logicReferenceWord, logicReferenceClassType);
+	vector<LRPpreprocessorPlainTextWord*> logicReferenceContents = generateLogicReferenceContentsBase(logicReferenceWord, logicReferenceClassType);
 	
 	#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE_SET_PREFERENCE_NLP_PRELIM_POS_TAGS_OVER_LRP_WORD_TYPE_LISTS
 	bool usePOSprelim = true;
@@ -742,7 +742,7 @@ vector<GIApreprocessorPlainTextWord*> GIAposRelTranslatorHybridLogicReferenceCla
 		//verify that the auxiliary/verb is not preceeded by a modal auxiliary (e.g. for future cases; will be/have/ride), in which case must test the word prior to the modal auxiliary for that/which
 		if(wordIndex-1 >= 0)
 		{
-			if(GIApreprocessorWordIdentification.detectModalAuxiliary((*logicReferenceVariableWordList)[wordIndex-1], usePOSprelim))
+			if(LRPpreprocessorWordIdentification.detectModalAuxiliary((*logicReferenceVariableWordList)[wordIndex-1], usePOSprelim))
 			{	
 				previousWordIsModalAuxiliary = true;
 				wordIndexOfHypotheticalPreceedingThatWhich--;
@@ -751,7 +751,7 @@ vector<GIApreprocessorPlainTextWord*> GIAposRelTranslatorHybridLogicReferenceCla
 		//verify that the auxiliary/verb is not preceeded by an auxiliary (e.g. for doing auxiliaries; is being/having/doing, or for verbs; is riding, or for prepositions; is near), in which case must test the word prior to the modal auxiliary for that/which
 		if(wordIndex-1 >= 0)
 		{
-			if(GIApreprocessorWordIdentification.detectAuxiliary(((*logicReferenceVariableWordList)[wordIndex-1]), usePOSprelim))
+			if(LRPpreprocessorWordIdentification.detectAuxiliary(((*logicReferenceVariableWordList)[wordIndex-1]), usePOSprelim))
 			{	
 				//eg that is riding
 				previousWordIsModalAuxiliary = true;
@@ -767,7 +767,7 @@ vector<GIApreprocessorPlainTextWord*> GIAposRelTranslatorHybridLogicReferenceCla
 
 				if(wordIndex-2 >= 0)
 				{
-					if(GIApreprocessorWordIdentification.detectModalAuxiliary((*logicReferenceVariableWordList)[wordIndex-2], usePOSprelim))
+					if(LRPpreprocessorWordIdentification.detectModalAuxiliary((*logicReferenceVariableWordList)[wordIndex-2], usePOSprelim))
 					{
 						//eg that will be riding
 						wordIndexOfHypotheticalPreceedingThatWhich--;
@@ -779,7 +779,7 @@ vector<GIApreprocessorPlainTextWord*> GIAposRelTranslatorHybridLogicReferenceCla
 			{
 				if((currentDelimiterType == GIA_POS_REL_TRANSLATOR_HYBRID_REFERENCE_SET_DELIMITER_TYPE_PREPOSITION))
 				{
-					if(GIApreprocessorWordIdentification.determineIsAdverb((*logicReferenceVariableWordList)[wordIndex-1]), usePOSprelim)
+					if(LRPpreprocessorWordIdentification.determineIsAdverb((*logicReferenceVariableWordList)[wordIndex-1]), usePOSprelim)
 					{
 						if(wordIndex-2 >= 0)
 						{
@@ -799,7 +799,7 @@ vector<GIApreprocessorPlainTextWord*> GIAposRelTranslatorHybridLogicReferenceCla
 		bool currentWordIsReferenceSetDelimiterPreceededByThatWhich = false;
 		if(wordIndexOfHypotheticalPreceedingThatWhich >= 0)
 		{
-			if(GIApreprocessorWordIdentification.detectRcmodSameReferenceSetDelimiter((*logicReferenceVariableWordList)[wordIndexOfHypotheticalPreceedingThatWhich], usePOSprelim))
+			if(LRPpreprocessorWordIdentification.detectRcmodSameReferenceSetDelimiter((*logicReferenceVariableWordList)[wordIndexOfHypotheticalPreceedingThatWhich], usePOSprelim))
 			{
 				currentWordIsReferenceSetDelimiterPreceededByThatWhich = true;
 				#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
@@ -827,28 +827,28 @@ vector<GIApreprocessorPlainTextWord*> GIAposRelTranslatorHybridLogicReferenceCla
 		}
 		
 		#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
-		cout << "BEFORE: logicReferenceContents = " << GIApreprocessorWordClassObject.generateTextFromVectorWordList(&logicReferenceContents) << endl;
-		cout << "BEFORE: logicReferenceVariableWordList = " << GIApreprocessorWordClassObject.generateTextFromVectorWordList(logicReferenceVariableWordList) << endl;
+		cout << "BEFORE: logicReferenceContents = " << LRPpreprocessorWordClassObject.generateTextFromVectorWordList(&logicReferenceContents) << endl;
+		cout << "BEFORE: logicReferenceVariableWordList = " << LRPpreprocessorWordClassObject.generateTextFromVectorWordList(logicReferenceVariableWordList) << endl;
 		#endif
 		int logicReferenceDelimiterPrependTextSize = wordIndex-firstIndexOfReferenceSetDelimiterText;
 		for(int i=0; i<logicReferenceDelimiterPrependTextSize; i++)
 		{
-			GIApreprocessorPlainTextWord* prependWord = (*logicReferenceVariableWordList)[firstIndexOfReferenceSetDelimiterText+i];
+			LRPpreprocessorPlainTextWord* prependWord = (*logicReferenceVariableWordList)[firstIndexOfReferenceSetDelimiterText+i];
 			logicReferenceContents.insert(logicReferenceContents.begin(), prependWord);
 			logicReferenceVariableWordList->pop_back();
 		} 
 		#ifdef GIA_DEBUG_PREPROCESSOR_SENTENCE_REFERENCE_SET
-		cout << "AFTER: logicReferenceContents = " << GIApreprocessorWordClassObject.generateTextFromVectorWordList(&logicReferenceContents) << endl;
-		cout << "AFTER: logicReferenceVariableWordList = " << GIApreprocessorWordClassObject.generateTextFromVectorWordList(logicReferenceVariableWordList) << endl;
+		cout << "AFTER: logicReferenceContents = " << LRPpreprocessorWordClassObject.generateTextFromVectorWordList(&logicReferenceContents) << endl;
+		cout << "AFTER: logicReferenceVariableWordList = " << LRPpreprocessorWordClassObject.generateTextFromVectorWordList(logicReferenceVariableWordList) << endl;
 		#endif
 	}
 	
 	return logicReferenceContents;
 }
 #endif
-vector<GIApreprocessorPlainTextWord*> GIAposRelTranslatorHybridLogicReferenceClass::generateLogicReferenceContentsBase(GIApreprocessorPlainTextWord* logicReferenceWord, const string logicReferenceClassType)
+vector<LRPpreprocessorPlainTextWord*> GIAposRelTranslatorHybridLogicReferenceClass::generateLogicReferenceContentsBase(LRPpreprocessorPlainTextWord* logicReferenceWord, const string logicReferenceClassType)
 {
-	vector<GIApreprocessorPlainTextWord*> logicReferenceContents;
+	vector<LRPpreprocessorPlainTextWord*> logicReferenceContents;
 	logicReferenceContents.push_back(logicReferenceWord);	//logicReferenceClassType;	//this needs to be updated
 	return logicReferenceContents;
 }
@@ -959,7 +959,7 @@ bool GIAposRelTranslatorHybridLogicReferenceClass::printLogicReferenceLayer(GIAp
 			#endif
 			if(currentLogicReferenceInList->hasSubLogicReferenceArray)
 			{
-				cout << GIApreprocessorWordClassObject.generateTextFromVectorWordList(&currentLogicReferenceInList->logicReferenceContents) << "(";	//currentLogicReferenceInList->logicReferenceClassType 
+				cout << LRPpreprocessorWordClassObject.generateTextFromVectorWordList(&currentLogicReferenceInList->logicReferenceContents) << "(";	//currentLogicReferenceInList->logicReferenceClassType 
 				if(!printLogicReferenceLayer(currentLogicReferenceInList->firstSubLogicReferenceInListArray))
 				{
 					result = false;
@@ -968,7 +968,7 @@ bool GIAposRelTranslatorHybridLogicReferenceClass::printLogicReferenceLayer(GIAp
 			}
 			else
 			{
-				cout << GIApreprocessorWordClassObject.generateTextFromVectorWordList(&currentLogicReferenceInList->logicReferenceContents) << "(";
+				cout << LRPpreprocessorWordClassObject.generateTextFromVectorWordList(&currentLogicReferenceInList->logicReferenceContents) << "(";
 				#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE_CONJUNCTION_LR_WITH_EMBEDDED_PREPOSITION_VERB_LR_DELETE_IMPLICIT_GOVERNOR
 				if(currentLogicReferenceInList->firstSubLogicReferenceInListGovernor != NULL)
 				{
@@ -993,11 +993,11 @@ bool GIAposRelTranslatorHybridLogicReferenceClass::printLogicReferenceLayer(GIAp
 		#endif
 			//cout << "[RSsubj:";
 			cout << "[";
-			GIApreprocessorSubReferenceSet* currentSubReferenceSetInList = currentLogicReferenceInList->logicReferenceVariable->referenceSetSubject;
+			LRPpreprocessorSubReferenceSet* currentSubReferenceSetInList = currentLogicReferenceInList->logicReferenceVariable->referenceSetSubject;
 			while(currentSubReferenceSetInList->next != NULL)
 			{
-				//cout << "\t\treferenceSetSubject: currentSubReferenceSetInList->sentenceIndex = " << currentSubReferenceSetInList->sentenceIndex << ", subReferenceSetContents: " << GIApreprocessorWordClassObject.generateTextFromVectorWordList(&currentSubReferenceSetInList->subReferenceSetContents) << endl;
-				cout << "|" << currentSubReferenceSetInList->sentenceIndex << ";" << GIApreprocessorWordClassObject.generateTextFromVectorWordList(&currentSubReferenceSetInList->subReferenceSetContents);
+				//cout << "\t\treferenceSetSubject: currentSubReferenceSetInList->sentenceIndex = " << currentSubReferenceSetInList->sentenceIndex << ", subReferenceSetContents: " << LRPpreprocessorWordClassObject.generateTextFromVectorWordList(&currentSubReferenceSetInList->subReferenceSetContents) << endl;
+				cout << "|" << currentSubReferenceSetInList->sentenceIndex << ";" << LRPpreprocessorWordClassObject.generateTextFromVectorWordList(&currentSubReferenceSetInList->subReferenceSetContents);
 				currentSubReferenceSetInList = currentSubReferenceSetInList->next;
 			}
 			cout << "]";
@@ -1006,8 +1006,8 @@ bool GIAposRelTranslatorHybridLogicReferenceClass::printLogicReferenceLayer(GIAp
 			currentSubReferenceSetInList = currentLogicReferenceInList->logicReferenceVariable->referenceSetObject;
 			while(currentSubReferenceSetInList->next != NULL)
 			{
-				//cout << "\t\treferenceSetObject: currentSubReferenceSetInList->sentenceIndex = " << currentSubReferenceSetInList->sentenceIndex << ", subReferenceSetContents: " << GIApreprocessorWordClassObject.generateTextFromVectorWordList(&currentSubReferenceSetInList->subReferenceSetContents) << endl;
-				cout << "|" << currentSubReferenceSetInList->sentenceIndex << ";" << GIApreprocessorWordClassObject.generateTextFromVectorWordList(&currentSubReferenceSetInList->subReferenceSetContents);
+				//cout << "\t\treferenceSetObject: currentSubReferenceSetInList->sentenceIndex = " << currentSubReferenceSetInList->sentenceIndex << ", subReferenceSetContents: " << LRPpreprocessorWordClassObject.generateTextFromVectorWordList(&currentSubReferenceSetInList->subReferenceSetContents) << endl;
+				cout << "|" << currentSubReferenceSetInList->sentenceIndex << ";" << LRPpreprocessorWordClassObject.generateTextFromVectorWordList(&currentSubReferenceSetInList->subReferenceSetContents);
 				currentSubReferenceSetInList = currentSubReferenceSetInList->next;
 			}
 			cout << "]";
@@ -1016,8 +1016,8 @@ bool GIAposRelTranslatorHybridLogicReferenceClass::printLogicReferenceLayer(GIAp
 			currentSubReferenceSetInList = currentLogicReferenceInList->logicReferenceVariable->referenceSetDelimiter;
 			if(!(currentSubReferenceSetInList->subReferenceSetContents).empty())
 			{
-				//cout << "\t\treferenceSetDelimiter: currentSubReferenceSetInList->sentenceIndex = " << currentSubReferenceSetInList->sentenceIndex << ", subReferenceSetContents: " << GIApreprocessorWordClassObject.generateTextFromVectorWordList(&currentSubReferenceSetInList->subReferenceSetContents) << endl;
-				cout << "|" << currentSubReferenceSetInList->sentenceIndex << ";" << GIApreprocessorWordClassObject.generateTextFromVectorWordList(&currentSubReferenceSetInList->subReferenceSetContents);
+				//cout << "\t\treferenceSetDelimiter: currentSubReferenceSetInList->sentenceIndex = " << currentSubReferenceSetInList->sentenceIndex << ", subReferenceSetContents: " << LRPpreprocessorWordClassObject.generateTextFromVectorWordList(&currentSubReferenceSetInList->subReferenceSetContents) << endl;
+				cout << "|" << currentSubReferenceSetInList->sentenceIndex << ";" << LRPpreprocessorWordClassObject.generateTextFromVectorWordList(&currentSubReferenceSetInList->subReferenceSetContents);
 			}
 			cout << "]";
 		#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE

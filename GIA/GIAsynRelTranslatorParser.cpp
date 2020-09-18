@@ -26,7 +26,7 @@
  * File Name: GIAsynRelTranslatorParser.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m6a 09-September-2020
+ * Project Version: 3m7a 11-September-2020
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
@@ -137,7 +137,7 @@ bool GIAsynRelTranslatorParserClass::convertSentenceSyntacticRelationsIntoGIAnet
 	#endif
 	translatorVariables->GIAentityNodeArray = &GIAentityNodeArray;
 
-	#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_PREPOSITIONS
+	#ifdef LRP_PREPROCESSOR_WORD_NORMALISE_PREPOSITIONS
 	invertOrDuplicateConditionsIfRequired(translatorVariables);
 	#endif
 
@@ -295,7 +295,7 @@ bool GIAsynRelTranslatorParserClass::convertSentenceSyntacticRelationsIntoGIAnet
 	{
 	#endif
 		cout << "translatorVariables->currentSentenceInList->sentenceIndex = " << translatorVariables->currentSentenceInList->sentenceIndex << endl;
-		if(!GIApreprocessor.connectPreprocessorSentenceReferenceSetEntitiesToLogicReferenceEntitiesSentenceWrapper(translatorVariables->firstGIApreprocessorSentenceInList, translatorVariables))	//check the position of this function's execution
+		if(!LRPpreprocessor.connectPreprocessorSentenceReferenceSetEntitiesToLogicReferenceEntitiesSentenceWrapper(translatorVariables->LRPpreprocessorTranslatorVariables.firstLRPpreprocessorSentenceInList, translatorVariables))	//check the position of this function's execution
 		{
 			result = false;
 		}
@@ -491,14 +491,14 @@ bool GIAsynRelTranslatorParserClass::convertSentenceRelationsIntoGIAnetworkNodes
 	#endif
 
 
-	#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
+	#ifdef LRP_PREPROCESSOR_RECORD_REFERENCES
 	#ifdef GIA_ADVANCED_REFERENCING
 	if(translatorVariables->linkPreestablishedReferencesGIA)
 	{
 	#endif
-		if(translatorVariables->firstGIApreprocessorSentenceInList != NULL)
+		if(translatorVariables->LRPpreprocessorTranslatorVariables.firstLRPpreprocessorSentenceInList != NULL)
 		{
-			if(!GIApreprocessor.addSentenceToPreprocessorSentence(translatorVariables))
+			if(!addSentenceToPreprocessorSentence(translatorVariables))
 			{
 				result = false;
 			}
@@ -542,7 +542,7 @@ void GIAsynRelTranslatorParserClass::disableEntitiesBasedOnFeatureTempEntityNode
 
 
 
-#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_PREPOSITIONS
+#ifdef LRP_PREPROCESSOR_WORD_NORMALISE_PREPOSITIONS
 void GIAsynRelTranslatorParserClass::invertOrDuplicateConditionsIfRequired(GIAtranslatorVariablesClass* translatorVariables)
 {
 	GIArelation* currentRelationInList = translatorVariables->currentSentenceInList->firstRelationInList;
@@ -563,9 +563,9 @@ void GIAsynRelTranslatorParserClass::invertOrDuplicateConditionsIfRequired(GIAtr
 						bool twoWayConditionRequired = false;
 						string inverseConditionName = "";
 						
-						GIApreprocessorWordIdentification.detectIfInverseOrTwoWayConditionRequired(conditionName, &inverseConditionRequired, &twoWayConditionRequired, &inverseConditionName);
+						LRPpreprocessorWordIdentification.detectIfInverseOrTwoWayConditionRequired(conditionName, &inverseConditionRequired, &twoWayConditionRequired, &inverseConditionName);
 
-						#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_INVERSE_PREPOSITIONS
+						#ifdef LRP_PREPROCESSOR_WORD_NORMALISE_INVERSE_PREPOSITIONS
 						if(inverseConditionRequired)
 						{
 							createNewInverseConditionEntity(currentRelationInList, translatorVariables, inverseConditionName);
@@ -582,10 +582,10 @@ void GIAsynRelTranslatorParserClass::invertOrDuplicateConditionsIfRequired(GIAtr
 							currentRelationInList->relationDependentIndex = relationGovernorIndexTemp;
 						}
 						#endif
-						#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_TWOWAY_PREPOSITIONS
+						#ifdef LRP_PREPROCESSOR_WORD_NORMALISE_TWOWAY_PREPOSITIONS
 						if(twoWayConditionRequired)
 						{
-							#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED
+							#ifdef LRP_PREPROCESSOR_WORD_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED
 							GIArelation* lastRelationInList = translatorVariables->currentSentenceInList->firstRelationInList;
 							while(lastRelationInList->next != NULL)
 							{
@@ -623,7 +623,7 @@ void GIAsynRelTranslatorParserClass::createNewInverseConditionEntity(GIArelation
 	inverseConditionEntity->entityName = inverseConditionName;
 	inverseConditionEntity->wordOrig = inverseConditionName;	//is this necessary?
 	//why not set inverseConditionEntity->entityIndexTemp and inverseConditionEntity->sentenceIndexTemp?
-	#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_INVERSE_PREPOSITIONS
+	#ifdef LRP_PREPROCESSOR_WORD_NORMALISE_INVERSE_PREPOSITIONS
 	currentRelationInList->relationTypeNonInversed = currentRelationInList->relationType;
 	currentRelationInList->relationTypeIndexNonInversed = currentRelationInList->relationTypeIndex;
 	#endif
@@ -643,6 +643,178 @@ void GIAsynRelTranslatorParserClass::createNewInverseConditionEntity(GIArelation
 
 
 
+
+#ifdef LRP_PREPROCESSOR_RECORD_REFERENCES
+
+bool GIAsynRelTranslatorParserClass::addSentenceToPreprocessorSentence(GIAtranslatorVariablesClass* translatorVariables)
+{
+	bool result = true;
+	
+	GIAsentence* currentSentenceInList = translatorVariables->currentSentenceInList;
+	
+	int sentenceIndex = GIAtranslatorOperations.getCurrentSentenceIndex(translatorVariables);
+	
+	#ifdef GIA_POS_REL_TRANSLATOR_HYBRID
+	LRPpreprocessorSubReferenceSet* subReferenceSetFound = NULL;
+	if(GIAposRelTranslatorHybrid.getPreprocessorSentenceSubReferenceSet(translatorVariables->LRPpreprocessorTranslatorVariables.firstLRPpreprocessorSentenceInList, sentenceIndex, &subReferenceSetFound))
+	{
+		subReferenceSetFound->sentenceReference = currentSentenceInList;
+		#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_NLP_TEXT
+		vector<LRPpreprocessorPlainTextWord*> preprocessorSentenceWordList = subReferenceSetFound->subReferenceSetContentsOutputForNLP;		
+		#else
+		vector<LRPpreprocessorPlainTextWord*> preprocessorSentenceWordList = subReferenceSetFound->subReferenceSetContents;		
+		#endif
+	#else
+	LRPpreprocessorSentence* preprocessorSentenceFound = NULL;
+	if(getPreprocessorSentence(translatorVariables->LRPpreprocessorTranslatorVariables.firstLRPpreprocessorSentenceInList, sentenceIndex, &preprocessorSentenceFound))
+	{
+		preprocessorSentenceFound->sentenceReference = currentSentenceInList;
+		vector<LRPpreprocessorPlainTextWord*> preprocessorSentenceWordList = *(LRPpreprocessorSentenceClassObject.getSentenceContents(preprocessorSentenceFound));
+	#endif
+		//translatorVariables->preprocessorSentenceWordListTemp = preprocessorSentenceWordList;
+		
+		if(!addSentenceFeatureOutputToPreprocessorSentenceWordList(&preprocessorSentenceWordList, translatorVariables, true))
+		{
+			result = false;
+		}
+		if(!addSentenceFeatureOutputToPreprocessorSentenceWordList(&preprocessorSentenceWordList, translatorVariables, false))
+		{
+			result = false;
+		}
+		if(!addSentenceEntityOutputToPreprocessorSentenceWordList(&preprocessorSentenceWordList, translatorVariables))
+		{
+			result = false;
+		}
+	}
+	else
+	{
+		cerr << "GIAsynRelTranslatorParserClass::addSentenceToPreprocessorSentence{} error: !getPreprocessorSentence" << endl;
+		result = false;
+	}
+	
+	return result;
+}
+	
+#ifndef GIA_POS_REL_TRANSLATOR_HYBRID			
+bool GIAsynRelTranslatorParserClass::getPreprocessorSentence(LRPpreprocessorSentence* firstLRPpreprocessorSentenceInList, int sentenceIndex, LRPpreprocessorSentence** sentenceFound)
+{
+	bool result = false;	
+	LRPpreprocessorSentence* currentLRPpreprocessorSentenceInList = firstLRPpreprocessorSentenceInList;
+	while(currentLRPpreprocessorSentenceInList->next != NULL)
+	{
+		//cout << "sentenceIndex = " << sentenceIndex << endl;
+		//cout << "currentLRPpreprocessorSentenceInList->sentenceIndexOriginal = " << currentLRPpreprocessorSentenceInList->sentenceIndexOriginal << endl;
+		if(currentLRPpreprocessorSentenceInList->sentenceIndexOriginal == sentenceIndex)
+		{
+			*sentenceFound = currentLRPpreprocessorSentenceInList;
+			result = true;
+		}		
+		currentLRPpreprocessorSentenceInList = currentLRPpreprocessorSentenceInList->next;
+	}
+	
+	return result;
+}
+#endif
+	
+bool GIAsynRelTranslatorParserClass::addSentenceFeatureOutputToPreprocessorSentenceWordList(vector<LRPpreprocessorPlainTextWord*>* preprocessorSentenceWordList, GIAtranslatorVariablesClass* translatorVariables, bool originalNLPfeatures)
+{	
+	bool result = true;
+	
+	GIAsentence* currentSentenceInList = translatorVariables->currentSentenceInList;
+	//vector<LRPpreprocessorPlainTextWord*>* preprocessorSentenceWordList = translatorVariables->preprocessorSentenceWordListTemp;
+	
+	int entityIndex = LRP_NLP_START_ENTITY_INDEX;
+	int w = 0;
+	GIAfeature* currentFeatureInList = NULL;
+	if(originalNLPfeatures)
+	{
+		currentFeatureInList = currentSentenceInList->firstFeatureInListOriginal;
+	}
+	else
+	{
+		currentFeatureInList = currentSentenceInList->firstFeatureInList;
+	}
+	vector<LRPpreprocessorPlainTextWord*>::iterator preprocessorSentenceWordListIter = preprocessorSentenceWordList->begin();
+	while(currentFeatureInList->next != NULL)
+	{
+		LRPpreprocessorPlainTextWord* preprocessorSentenceWord = *preprocessorSentenceWordListIter;
+		if(originalNLPfeatures)
+		{
+			string NLPparsedWordOriginal = currentFeatureInList->word;
+			#ifdef GIA_STANFORD_PARSER_AND_CORENLP_FEATURE_PARSER_ANOMALY_WORD_CHANGES
+			if((translatorVariables->NLPfeatureParser == GIA_NLP_PARSER_STANFORD_CORENLP) || (translatorVariables->NLPfeatureParser == GIA_NLP_PARSER_STANFORD_PARSER))
+			{
+				if(NLPparsedWordOriginal == GIA_STANFORD_PARSER_AND_CORENLP_FEATURE_PARSER_LEFT_BRACKET_WORD)
+				{
+					NLPparsedWordOriginal = SHAREDvars.convertCharToString(CHAR_OPEN_BRACKET);
+				}
+				if(NLPparsedWordOriginal == GIA_STANFORD_PARSER_AND_CORENLP_FEATURE_PARSER_RIGHT_BRACKET_WORD)
+				{
+					NLPparsedWordOriginal = SHAREDvars.convertCharToString(CHAR_CLOSE_BRACKET);
+				}
+				if(SHAREDvars.textInTextArray(NLPparsedWordOriginal, stanfordParserAndCoreNLPinvertedCommasWordArray, GIA_STANFORD_PARSER_AND_CORENLP_FEATURE_PARSER_INVERTED_COMMAS_WORD_ARRAY_SIZE))
+				{
+					NLPparsedWordOriginal = SHAREDvars.convertCharToString(CHAR_INVERTED_COMMAS);
+				}
+			}
+			#endif
+			if(NLPparsedWordOriginal != preprocessorSentenceWord->tagName)
+			{
+				cerr << "GIAposRelTranslatorHybridClass::addSentenceFeatureOutputToPreprocessorSentenceWordList{} error: (currentFeatureInList->word != preprocessorSentenceWord->tagName)" << endl;
+				cerr << "currentFeatureInList->word = " << currentFeatureInList->word << endl;
+				cerr << "preprocessorSentenceWord->tagName = " << preprocessorSentenceWord->tagName << endl;
+				cerr << (currentFeatureInList->word).length() << endl;
+				cerr << (preprocessorSentenceWord->tagName).length() << endl;
+				cerr << "preprocessorSentenceWordList = " << LRPpreprocessorWordClassObject.generateTextFromVectorWordList(preprocessorSentenceWordList) << endl;
+				cerr << "originalNLPfeatures = " << originalNLPfeatures << endl;
+				exit(EXIT_ERROR);
+			}
+			preprocessorSentenceWord->featureReferenceOriginal = currentFeatureInList;
+		}
+		else
+		{
+			if((*translatorVariables->GIAentityNodeArrayFilled)[w])
+			{
+				preprocessorSentenceWord->featureReference = currentFeatureInList;
+			}
+		}
+		
+		currentFeatureInList = currentFeatureInList->next;
+		preprocessorSentenceWordListIter++;
+		entityIndex++;
+		w++;
+	}
+	
+	return result;
+}
+
+bool GIAsynRelTranslatorParserClass::addSentenceEntityOutputToPreprocessorSentenceWordList(vector<LRPpreprocessorPlainTextWord*>* preprocessorSentenceWordList, GIAtranslatorVariablesClass* translatorVariables)
+{	
+	bool result = true;
+	
+	GIAsentence* currentSentenceInList = translatorVariables->currentSentenceInList;
+	//vector<LRPpreprocessorPlainTextWord*>* preprocessorSentenceWordList = translatorVariables->preprocessorSentenceWordListTemp;
+	
+	vector<LRPpreprocessorPlainTextWord*>::iterator preprocessorSentenceWordListIter = preprocessorSentenceWordList->begin();
+	for(int i=0; i<preprocessorSentenceWordList->size()-1; i++)	//ignore artificial entities with entityIndex > preprocessorSentenceWordList.size() [feature list size]	//-1 to ignore the fullstop
+	{
+		LRPpreprocessorPlainTextWord* preprocessorSentenceWord = *preprocessorSentenceWordListIter;
+
+		//cout << "preprocessorSentenceWord = " << preprocessorSentenceWord->tagName << endl;
+		int w = i + LRP_NLP_START_ENTITY_INDEX;
+		if((*translatorVariables->GIAentityNodeArrayFilled)[w])
+		{
+			//cout << "preprocessorSentenceWord->entityReference = " << (*translatorVariables->GIAentityNodeArray)[w]->entityName << endl;
+			preprocessorSentenceWord->entityReference = (*translatorVariables->GIAentityNodeArray)[w];
+		}
+		
+		preprocessorSentenceWordListIter++;
+	}
+		
+	return result;
+}
+
+#endif
 
 
 

@@ -26,7 +26,7 @@
  * File Name: GIAdatabase.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m6a 09-September-2020
+ * Project Version: 3m7a 11-September-2020
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: performs simple GIA database functions (storing nodes in ordered arrays/vectors/maps)
  * /
@@ -270,39 +270,6 @@ int64_t GIAdatabaseClass::maximumLong(int64_t a, const int64_t b)
 
 #ifdef GIA_DATABASE
 
-bool GIAdatabaseClass::DBdirectoryExists(const string* folderName)
-{
-	bool folderExists = SHAREDvars.directoryExists(folderName);
-	return folderExists;
-}
-
-bool GIAdatabaseClass::DBcreateDirectory(const string* folderName)
-{
-	bool result = true;
-	SHAREDvars.createDirectory(folderName);
-	return result;
-}
-
-bool GIAdatabaseClass::DBsetCurrentDirectory(const string* folderName)
-{
-	bool result = true;
-	SHAREDvars.setCurrentDirectory(folderName);
-	return result;
-}
-
-bool GIAdatabaseClass::checkIfFolderExistsAndIfNotMakeAndSetAsCurrent(const string* folderName)
-{
-	bool result = true;
-	if(!DBdirectoryExists(folderName))
-	{
-		DBcreateDirectory(folderName);
-	}
-	DBsetCurrentDirectory(folderName);
-
-	return result;
-}
-
-
 string GIAdatabaseClass::DBgenerateServerDatabaseName(const string* entityName, const int fileType, const string defaultDatabaseName, string databaseFolderNameUserChoice)
 {
 	string databaseName;
@@ -343,7 +310,7 @@ string GIAdatabaseClass::DBgenerateFileName(const string* entityName, const int6
 	string serverName = DBgenerateServerDatabaseName(entityName, fileType, GIA_DATABASE_FILESYSTEM_DEFAULT_DATABASE_NAME, KBdatabaseFolderName);
 	string fileName = serverName;
 
-	DBsetCurrentDirectory(&fileName);
+	SHAREDvars.setCurrentDirectory(&fileName);
 
 	if(fileType == GIA_DATABASE_GENERATE_FILENAME_FILE_NETWORK_INDEX_ENTITY_NODES_LIST)
 	{
@@ -366,10 +333,10 @@ string GIAdatabaseClass::DBgenerateFileName(const string* entityName, const int6
 			string folderName = "";
 			folderName = folderName + entityName->at(level);
 			fileName = fileName + folderName + "/";
-			checkIfFolderExistsAndIfNotMakeAndSetAsCurrent(&folderName);
+			SHAREDvars.checkIfFolderExistsAndIfNotMakeAndSetAsCurrent(&folderName);
 		}
 		fileName = fileName + *entityName + "/";
-		checkIfFolderExistsAndIfNotMakeAndSetAsCurrent(entityName);
+		SHAREDvars.checkIfFolderExistsAndIfNotMakeAndSetAsCurrent(entityName);
 
 
 		char idInstanceStringCharStar[GIA_DATABASE_INSTANCE_ID_MAX_ORDER+1];	//+1 for char* string null character \0
@@ -384,10 +351,10 @@ string GIAdatabaseClass::DBgenerateFileName(const string* entityName, const int6
 			char idLevelChar2 = idInstanceString.at(levelOfChar2);
 			folderName = folderName + idLevelChar1 + idLevelChar2;
 			fileName = fileName + folderName + "/";
-			checkIfFolderExistsAndIfNotMakeAndSetAsCurrent(&folderName);
+			SHAREDvars.checkIfFolderExistsAndIfNotMakeAndSetAsCurrent(&folderName);
 		}
 		fileName = fileName + idInstanceString + "/";
-		checkIfFolderExistsAndIfNotMakeAndSetAsCurrent(&idInstanceString);
+		SHAREDvars.checkIfFolderExistsAndIfNotMakeAndSetAsCurrent(&idInstanceString);
 
 
 		if(fileType == GIA_DATABASE_GENERATE_FILENAME_FILE_ENTITY)

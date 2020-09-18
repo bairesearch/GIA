@@ -26,7 +26,7 @@
  * File Name: GIAentityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m6a 09-September-2020
+ * Project Version: 3m7a 11-September-2020
  * /
  *******************************************************************************/
 
@@ -274,13 +274,13 @@ void GIAentityNode::initialiseEntity()
 	NLCfirstInstanceOfProperNounInContext = false;
 	#endif
 
-	#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_PREPOSITIONS
-	#ifdef GIA_PREPROCESSOR_WORD_DETECT_PREPOSITION_TYPE
+	#ifdef LRP_PREPROCESSOR_WORD_NORMALISE_PREPOSITIONS
+	#ifdef LRP_PREPROCESSOR_WORD_DETECT_PREPOSITION_TYPE
 	conditionType2 = "";
 	#endif
-	#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_TWOWAY_PREPOSITIONS
+	#ifdef LRP_PREPROCESSOR_WORD_NORMALISE_TWOWAY_PREPOSITIONS
 	conditionTwoWay = false;
-	#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED
+	#ifdef LRP_PREPROCESSOR_WORD_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED
 	inverseConditionTwoWay = false;
 	#endif
 	#endif
@@ -318,7 +318,7 @@ void GIAentityNode::initialiseEntity()
 	semanticRelationReturnConnectionDynamic = false;
 	#endif
 	#endif
-	semanticRelationWordPOStypeInferred = INT_DEFAULT_VALUE;	//GIA_SHARED_POS_TYPE_UNDEFINED;
+	semanticRelationWordPOStypeInferred = INT_DEFAULT_VALUE;	//LRP_SHARED_POS_TYPE_UNDEFINED;
 	#ifdef GIA_POS_REL_TRANSLATOR_RULES_GIA3
 	semanticRelationWordDeterminer = "";
 	semanticRelationWordPredeterminer = "";

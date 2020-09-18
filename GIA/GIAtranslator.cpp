@@ -26,7 +26,7 @@
  * File Name: GIAtranslator.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m6a 09-September-2020
+ * Project Version: 3m7a 11-September-2020
  * Requirements: requires text parsed by X Parser
  * Description: Translator
  * /
@@ -40,13 +40,12 @@
 //Dependency Relationship Extractor
 
 
-
 bool GIAtranslatorClass::parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyParsedSentences(GIAtranslatorVariablesClass* translatorVariables, const string inputTextNLPrelationXMLfileName, const string inputTextNLPfeatureXMLfileName, const string outputCFFfileName)
 {
 	bool result = true;
 
-	#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
-	GIApreprocessorWordReduction.setActiveGIApreprocessorMultiwordReductionTagTextCorrespondenceInfo(translatorVariables->isQuery);	//required for local variable access
+	#ifdef LRP_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
+	LRPpreprocessorWordReduction.setActiveLRPpreprocessorMultiwordReductionTagTextCorrespondenceInfo(translatorVariables->isQuery);	//required for local variable access
 	#endif
 	
 	#ifndef GIA_POS_REL_TRANSLATOR_RULES_GIA3
@@ -81,7 +80,7 @@ bool GIAtranslatorClass::parseNLPparserFileAndCreateSemanticNetworkBasedUponDepe
 
 	#ifdef GIA_POS_REL_TRANSLATOR_RULES_GIA3
 	//count maxNumberSentences
-	GIApreprocessorSentence* currentSentenceInList = translatorVariables->firstGIApreprocessorSentenceInList;
+	LRPpreprocessorSentence* currentSentenceInList = translatorVariables->LRPpreprocessorTranslatorVariables.firstLRPpreprocessorSentenceInList;
 	while(currentSentenceInList->next != NULL)
 	{
 		if(currentSentenceInList->sentenceIndexOriginal > translatorVariables->maxNumberSentences)
@@ -127,7 +126,7 @@ bool GIAtranslatorClass::createSemanticNetworkBasedUponDependencyParsedSentences
 	}
 	#endif
 	
-	#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
+	#ifdef LRP_PREPROCESSOR_RECORD_REFERENCES
 	GIAsentenceClass.backupOriginalNLPsentenceContent(translatorVariables->firstSentenceInList);
 	#endif
 
@@ -152,17 +151,17 @@ bool GIAtranslatorClass::convertSentenceListRelationsIntoGIAnetworkNodes(GIAtran
 	bool result = true;
 	
 	/*
-	GIApreprocessorSentence* currentGIApreprocessorSentenceInList = translatorVariables->firstGIApreprocessorSentenceInList;
-	while(currentGIApreprocessorSentenceInList->next != NULL)
+	LRPpreprocessorSentence* currentLRPpreprocessorSentenceInList = translatorVariables->firstLRPpreprocessorSentenceInList;
+	while(currentLRPpreprocessorSentenceInList->next != NULL)
 	{
-		cout << "currentGIApreprocessorSentenceInList->sentenceIndexOriginal = " << currentGIApreprocessorSentenceInList->sentenceIndexOriginal << endl;
-		currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->next;
+		cout << "currentLRPpreprocessorSentenceInList->sentenceIndexOriginal = " << currentLRPpreprocessorSentenceInList->sentenceIndexOriginal << endl;
+		currentLRPpreprocessorSentenceInList = currentLRPpreprocessorSentenceInList->next;
 	}
 	*/
 		
 	translatorVariables->currentSentenceInList = translatorVariables->firstSentenceInList;
 	#ifdef GIA_POS_REL_TRANSLATOR_RULES_GIA3
-	translatorVariables->currentPreprocessorSentenceInList = translatorVariables->firstGIApreprocessorSentenceInList;	
+	translatorVariables->currentPreprocessorSentenceInList = translatorVariables->LRPpreprocessorTranslatorVariables.firstLRPpreprocessorSentenceInList;	
 	#endif
 	while(translatorVariables->currentSentenceInList->next != NULL)
 	{
@@ -197,12 +196,15 @@ bool GIAtranslatorClass::convertSentenceRelationsIntoGIAnetworkNodesWrapper(GIAt
 	vector<XMLparserTag*>* SANIrulesTokenLayers = SANInodes.getSANIrulesTokenLayersGlobal();
 	vector<SANIGroupType*>* SANIGroupTypes = SANInodes.getSANIGroupTypesGlobal();
 	SANIpropagateOperations.resetAllNeuronComponents(SANIGroupTypes, GIA_POS_REL_TRANSLATOR_RULES_GROUP_BOOL_INDEX_ALLGROUPTYPES_NEURON_DEMARKATEOPTIMUMPATHWAY_RESET);
-	translatorVariables->parserDemarkateOptimumPathway = true;
-	if(GIAposRelTranslatorPermutations.executeTxtRelTranslatorWrapper2(translatorVariables, SANIrulesTokenLayers, SANIGroupTypes, translatorVariables->currentPreprocessorSentenceInList))
+	
+	SANItranslatorVariablesClass SANItranslatorVariables;
+	GIAposRelTranslatorParser.createSANItranslatorVariablesFromGIAtranslatorVariables(translatorVariables, &SANItranslatorVariables);
+	SANItranslatorVariables.parserDemarkateOptimumPathway = true;
+	if(SANIposRelTranslatorPermutations.executeTxtRelTranslatorWrapper2(&SANItranslatorVariables, SANIrulesTokenLayers, SANIGroupTypes, translatorVariables->currentPreprocessorSentenceInList))
 	{
 		result = false;
 	}
-	translatorVariables->parserDemarkateOptimumPathway = false;
+	SANItranslatorVariables.parserDemarkateOptimumPathway = false;
 	#endif
 	
 	bool enableAdvancedReferencing = false;
@@ -247,8 +249,8 @@ bool GIAtranslatorClass::convertSentenceRelationsIntoGIAnetworkNodesWrapper(GIAt
 		translatorVariablesPrelim.currentSentenceInList = &currentSentenceInListTemp;
 		/*
 		#ifdef GIA_POS_REL_TRANSLATOR_RULES_GIA3
-		GIApreprocessorSentence currentPreprocessorSentenceInListTemp;
-		GIApreprocessorSentenceClassObject.copyPreprocessorSentence(translatorVariables->currentPreprocessorSentenceInList, &currentPreprocessorSentenceInListTemp);
+		LRPpreprocessorSentence currentPreprocessorSentenceInListTemp;
+		LRPpreprocessorSentenceClassObject.copyPreprocessorSentence(translatorVariables->currentPreprocessorSentenceInList, &currentPreprocessorSentenceInListTemp);
 		translatorVariablesPrelim.currentPreprocessorSentenceInList = &currentPreprocessorSentenceInListTemp;		
 		#endif
 		*/
@@ -370,7 +372,7 @@ bool GIAtranslatorClass::performGIApostProcessing(GIAtranslatorVariablesClass* t
 	#ifdef GIA_POS_REL_TRANSLATOR_HYBRID
 	#ifndef GIA_POS_REL_TRANSLATOR_HYBRID_RECONCILE_REFERENCES_AFTER_SEMANTIC_PARSING_EVERY_SENTENCE
 	#ifndef GIA_DEBUG_PREPROCESSOR_SENTENCE_RECONCILE_REFERENCES_DISABLE
-	if(!GIAposRelTranslatorHybrid.connectPreprocessorSentenceReferenceSetEntitiesToLogicReferenceEntitiesWrapper(translatorVariables->firstGIApreprocessorSentenceInList, translatorVariables))	//check the position of this function's execution
+	if(!GIAposRelTranslatorHybrid.connectPreprocessorSentenceReferenceSetEntitiesToLogicReferenceEntitiesWrapper(translatorVariables->firstLRPpreprocessorSentenceInList, translatorVariables))	//check the position of this function's execution
 	{
 		result = false;
 	}

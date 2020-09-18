@@ -26,7 +26,7 @@
  * File Name: GIAnlg.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m6a 09-September-2020
+ * Project Version: 3m7a 11-September-2020
  * Requirements: requires GIA translated data, and NLG2 to be installed
  * Description: NLG - natural language generation
  * /
@@ -596,9 +596,9 @@ bool GIAnlgClass::generateLanguageFromTextIterationPerformChecks(GIAentityConnec
 	{
 		result = false;
 	}
-	#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_PREPOSITIONS
-	#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_TWOWAY_PREPOSITIONS
-	#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED
+	#ifdef LRP_PREPROCESSOR_WORD_NORMALISE_PREPOSITIONS
+	#ifdef LRP_PREPROCESSOR_WORD_NORMALISE_TWOWAY_PREPOSITIONS
+	#ifdef LRP_PREPROCESSOR_WORD_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED
 	if(compareRelationshipConnectionType(connection, GIA_ENTITY_TYPE_CONDITION))	//if(currentEntity->entityType == GIA_ENTITY_TYPE_CONDITION)
 	{
 		GIAentityConnection* conditionObjectConnection = GIAtranslatorOperations.getRelationshipObjectEntityConnection(entity);

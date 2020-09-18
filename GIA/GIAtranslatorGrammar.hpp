@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorGrammar.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m6a 09-September-2020
+ * Project Version: 3m7a 11-September-2020
  * Requirements: requires text parsed by X Parser
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
@@ -47,7 +47,7 @@
 #include "GIAsemRelTranslatorDefs.hpp"
 #endif
 #include "GIAdatabase.hpp"
-#include "GIApreprocessorWordIdentification.hpp"
+#include "LRPpreprocessorWordIdentification.hpp"
 
 
 //#define GIA_STANFORD_CORE_NLP_PARSER_USE_AUXILIARY_TO_SET_TENSE_OF_VERB	//this seems theoretically possible pased upon the examples given (ie because the tense stanfordPOS information is replicated in both the auxiliary and the verb)
@@ -58,12 +58,12 @@ class GIAtranslatorGrammarClass
 	private: GIAtranslatorOperationsClass GIAtranslatorOperations;
 	private: GIAsentenceClassClass GIAsentenceClass;
 	private: GIAsynRelTranslatorGenericClass GIAsynRelTranslatorGeneric;
-	private: GIApreprocessorWordIdentificationClass GIApreprocessorWordIdentification;
+	private: LRPpreprocessorWordIdentificationClass LRPpreprocessorWordIdentification;
 	private: SHAREDvarsClass SHAREDvars;
 	
 
 	#ifdef GIA_TRANSLATOR_WITHOUT_SYN_REL_TRANSLATOR_FEATURES
-	public: bool calculateGrammarUsingInferredPosTypes(GIApreprocessorPlainTextWord* currentWord, GIAfeature* currentFeature);
+	public: bool calculateGrammarUsingInferredPosTypes(LRPpreprocessorPlainTextWord* currentWord, GIAfeature* currentFeature);
 	#endif
 
 	public: void locateAndAddAllFeatureTempEntities(GIAtranslatorVariablesClass* translatorVariables);

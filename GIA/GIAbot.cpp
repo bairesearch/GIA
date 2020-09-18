@@ -26,7 +26,7 @@
  * File Name: GIAbot.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m6a 09-September-2020
+ * Project Version: 3m7a 11-September-2020
  * Requirements: 
  * Description: Bot
  * /
@@ -146,11 +146,11 @@ void GIAbotClass::botSwitchFirstAndSecondPersonSemantic(GIAtranslatorVariablesCl
 #ifndef GIA_POS_REL_TRANSLATOR_RULES_GIA3_USE_SEM_REL_TRANSLATOR_PARSER
 void GIAbotClass::botSwitchFirstAndSecondPersonTxt(GIAtranslatorVariablesClass* translatorVariables)
 {
-	int numberOfWordsInSentence = GIApreprocessorSentenceClassObject.getSentenceContents(translatorVariables->currentPreprocessorSentenceInList)->size();
-	vector<GIApreprocessorPlainTextWord*>* sentenceContents = GIApreprocessorSentenceClassObject.getSentenceContents(translatorVariables->currentPreprocessorSentenceInList);
+	int numberOfWordsInSentence = LRPpreprocessorSentenceClassObject.getSentenceContents(translatorVariables->currentPreprocessorSentenceInList)->size();
+	vector<LRPpreprocessorPlainTextWord*>* sentenceContents = LRPpreprocessorSentenceClassObject.getSentenceContents(translatorVariables->currentPreprocessorSentenceInList);
 	for(int w=0; w<sentenceContents->size(); w++)
 	{
-		GIApreprocessorPlainTextWord* currentWord = (*sentenceContents)[w];
+		LRPpreprocessorPlainTextWord* currentWord = (*sentenceContents)[w];
 		for(int i=0; i<FEATURE_FIRST_PERSON_NUMBER_OF_TYPES; i++)
 		{
 			if(currentWord->translatorEntity->entityName == featureFirstPersonNameArray[i])

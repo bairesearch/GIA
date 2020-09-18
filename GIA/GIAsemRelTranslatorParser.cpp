@@ -26,7 +26,7 @@
  * File Name: GIAsemRelTranslatorParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m6a 09-September-2020
+ * Project Version: 3m7a 11-September-2020
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  * Description: Semantic Relation Translator Parser
  * /
@@ -36,7 +36,7 @@
 #include "GIAsemRelTranslatorParser.hpp"
 #ifdef GIA_SEM_REL_TRANSLATOR_SUBSETS
 #endif
-#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_PREPOSITIONS
+#ifdef LRP_PREPROCESSOR_WORD_NORMALISE_PREPOSITIONS
 #endif
 
 #ifndef LINUX
@@ -273,7 +273,7 @@ void GIAsemRelTranslatorParserClass::locateAndAddAllNetworkIndexEntitiesBasedOnS
 				
 				#ifndef GIA_SEM_REL_TRANSLATOR_GIA2_USE_SYN_REL_TRANSLATOR_FEATURES
 				#ifdef GIA_POS_REL_TRANSLATOR_RULES_GIA3
-				GIApreprocessorPlainTextWord* currentWord = (*GIApreprocessorSentenceClassObject.getSentenceContents(translatorVariables->currentPreprocessorSentenceInList))[GIAtranslatorOperations.convertEntityIndexToSentenceContentsIndex(relationIndex[i])];
+				LRPpreprocessorPlainTextWord* currentWord = (*LRPpreprocessorSentenceClassObject.getSentenceContents(translatorVariables->currentPreprocessorSentenceInList))[LRPpreprocessorWordClassObject.convertEntityIndexToSentenceContentsIndex(relationIndex[i])];
 				networkIndexEntity->semanticRelationWordPOStypeInferred = currentWord->wordPOStypeInferred;
 				#else
 				GIAfeature* currentFeatureInList = translatorVariables->currentSentenceInList->firstFeatureInList;
@@ -604,7 +604,7 @@ void GIAsemRelTranslatorParserClass::identifyComparisonVariableBasedOnSemanticRe
 }
 #endif
 
-//note entityNodesActiveListNetworkIndexes is required for GIA_PREPROCESSOR_WORD_NORMALISE_PREPOSITIONS only / featureArrayTemp is required for GIA_PREPROCESSOR_WORD_NORMALISE_PREPOSITIONS:GIA_SEM_REL_TRANSLATOR_CREATE_FEATURES_FOR_ARTIFICIAL_ENTITIES only
+//note entityNodesActiveListNetworkIndexes is required for LRP_PREPROCESSOR_WORD_NORMALISE_PREPOSITIONS only / featureArrayTemp is required for LRP_PREPROCESSOR_WORD_NORMALISE_PREPOSITIONS:GIA_SEM_REL_TRANSLATOR_CREATE_FEATURES_FOR_ARTIFICIAL_ENTITIES only
 void GIAsemRelTranslatorParserClass::defineConnectionsBasedOnSemanticRelations(GIAtranslatorVariablesClass* translatorVariables)
 {
 	GIArelation* currentRelationInList = translatorVariables->currentSentenceInList->firstRelationInList;
@@ -695,7 +695,7 @@ void GIAsemRelTranslatorParserClass::defineConnectionsBasedOnSemanticRelations(G
 
 					currentRelationInList2->disabled = true;
 
-					#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_PREPOSITIONS
+					#ifdef LRP_PREPROCESSOR_WORD_NORMALISE_PREPOSITIONS
 					invertOrDuplicateConditionsIfRequiredSemantic(translatorVariables, entity1, entity2relation2, entity3, sameReferenceSet);
 					#else
 					GIAtranslatorOperations.connectConditionToEntity(entity1, entity2relation2, entity3, sameReferenceSet, translatorVariables);
@@ -946,7 +946,7 @@ void GIAsemRelTranslatorParserClass::defineConnectionsBasedOnSemanticRelations(G
 			{
 				GIAentityNode* relationshipEntity = GIAtranslatorOperations.findOrAddEntityNodeByNameSimpleWrapperRelationshipArtificialCondition(entity1, entity2, currentRelationInList->semanticRelationFunctionConditionNewName, translatorVariables);
 				currentRelationInList->disabled = true;
-				#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_PREPOSITIONS
+				#ifdef LRP_PREPROCESSOR_WORD_NORMALISE_PREPOSITIONS
 				invertOrDuplicateConditionsIfRequiredSemantic(translatorVariables, entity1, entity2, entity3, sameReferenceSet);
 				#else
 				GIAtranslatorOperations.connectConditionToEntity(entity1, entity2, entity3, sameReferenceSet, translatorVariables);
@@ -1003,16 +1003,16 @@ bool findMatchingObject(GIAtranslatorVariablesClass* translatorVariables, const 
 	return foundMatchingObject;
 }			
 
-#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_PREPOSITIONS
+#ifdef LRP_PREPROCESSOR_WORD_NORMALISE_PREPOSITIONS
 //based on invertOrDuplicateConditionsIfRequired{}
 void GIAsemRelTranslatorParserClass::invertOrDuplicateConditionsIfRequiredSemantic(GIAtranslatorVariablesClass* translatorVariables, GIAentityNode* entity1, GIAentityNode* entity2, GIAentityNode* entity3condition, bool sameReferenceSet)
 {
 	bool inverseConditionRequired = false;
 	bool twoWayConditionRequired = false;
 	string inverseConditionName = "";
-	GIApreprocessorWordIdentification.detectIfInverseOrTwoWayConditionRequired(entity3condition->entityName, &inverseConditionRequired, &twoWayConditionRequired, &inverseConditionName);
+	LRPpreprocessorWordIdentification.detectIfInverseOrTwoWayConditionRequired(entity3condition->entityName, &inverseConditionRequired, &twoWayConditionRequired, &inverseConditionName);
 
-	#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_INVERSE_PREPOSITIONS
+	#ifdef LRP_PREPROCESSOR_WORD_NORMALISE_INVERSE_PREPOSITIONS
 	if(inverseConditionRequired)
 	{
 		GIAentityNode* inverseConditionEntity = createNewInverseConditionEntitySemantic(translatorVariables, inverseConditionName);
@@ -1023,10 +1023,10 @@ void GIAsemRelTranslatorParserClass::invertOrDuplicateConditionsIfRequiredSemant
 		GIAtranslatorOperations.connectConditionToEntity(entity1, entity2, entity3condition, sameReferenceSet, translatorVariables);
 	}
 	#endif
-	#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_TWOWAY_PREPOSITIONS
+	#ifdef LRP_PREPROCESSOR_WORD_NORMALISE_TWOWAY_PREPOSITIONS
 	if(twoWayConditionRequired)
 	{
-		#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED
+		#ifdef LRP_PREPROCESSOR_WORD_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED
 		/*
 		GIAentityNode* inverseConditionEntity = createNewInverseConditionEntitySemantic(translatorVariables, entity3condition->entityName);
 		GIAtranslatorOperations.connectConditionToEntity(entity2, entity1, inverseConditionEntity, sameReferenceSet, translatorVariables);
@@ -1198,7 +1198,7 @@ bool GIAsemRelTranslatorParserClass::generateAllPermutationsFromSemanticRelation
 		//now simulate GIA2 semantic relations for each subset of original sentence POS permutation
 		GIAfeature* secondWordInTupleFeature = firstFeatureInList;
 		int minIndexOfSecondWordInTuple = GIA_SEM_REL_TRANSLATOR_CONNECTIONIST_NETWORK_MIN_SUBSET_SIZE;
-		for(int i=GIA_NLP_START_ENTITY_INDEX; i<minIndexOfSecondWordInTuple; i++)
+		for(int i=LRP_NLP_START_ENTITY_INDEX; i<minIndexOfSecondWordInTuple; i++)
 		{
 			secondWordInTupleFeature = secondWordInTupleFeature->next;
 		}
@@ -1209,9 +1209,9 @@ bool GIAsemRelTranslatorParserClass::generateAllPermutationsFromSemanticRelation
 			GIAfeature* recordOfFeatureAfterSecondWordInTupleFeature = secondWordInTupleFeature->next;
 			secondWordInTupleFeature->next = dummyBlankFeature;	//temporarily disconnect node at end of sentence subset
 
-			if(firstFeatureInList->entityIndex != GIA_NLP_START_ENTITY_INDEX)
+			if(firstFeatureInList->entityIndex != LRP_NLP_START_ENTITY_INDEX)
 			{
-				cerr << "generateAllPermutationsFromSemanticRelationsFile{} implementation error*: (firstFeatureInList->entityIndex != GIA_NLP_START_ENTITY_INDEX)" << endl;
+				cerr << "generateAllPermutationsFromSemanticRelationsFile{} implementation error*: (firstFeatureInList->entityIndex != LRP_NLP_START_ENTITY_INDEX)" << endl;
 				exit(EXIT_ERROR);
 			}
 			#ifdef GIA_SEM_REL_TRANSLATOR_SUBSETS_OPTIMISE_BASED_ON_CONJUNCTIONS
@@ -1224,7 +1224,7 @@ bool GIAsemRelTranslatorParserClass::generateAllPermutationsFromSemanticRelation
 			#endif
 				int maxIndexOfFirstWordInTuple = (secondWordInTupleFeature->entityIndex - (GIA_SEM_REL_TRANSLATOR_CONNECTIONIST_NETWORK_MIN_SUBSET_SIZE-1));
 				#ifdef GIA_SEM_REL_TRANSLATOR_SUBSETS_OPTIMISED_DATABASE
-				for(int firstWordInTupleIndex = GIA_NLP_START_ENTITY_INDEX; firstWordInTupleIndex <= maxIndexOfFirstWordInTuple; firstWordInTupleIndex++)
+				for(int firstWordInTupleIndex = LRP_NLP_START_ENTITY_INDEX; firstWordInTupleIndex <= maxIndexOfFirstWordInTuple; firstWordInTupleIndex++)
 				{
 				#endif
 					GIAfeature* firstFeatureInSentenceSubset = firstFeatureInSentenceSubsetInitial;

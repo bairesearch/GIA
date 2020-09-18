@@ -26,7 +26,7 @@
  * File Name: GIAsemRelTranslatorDatabase.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m6a 09-September-2020
+ * Project Version: 3m7a 11-September-2020
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  * Description: Semantic Relation Translator
  * /
@@ -69,7 +69,7 @@ string GIAsemRelTranslatorDatabaseClass::semanticParserDBgenerateFolderName(cons
 	int fileType = 0;	//irrelevant
 	string serverName = GIAdatabase.DBgenerateServerDatabaseName(&(GIAconnectionistNetworkPOStypeNameAbbreviationArray[firstFeatureInList->GIAsemRelTranslatorPOStype]), fileType, GIA_SEM_REL_TRANSLATOR_DATABASE_FILESYSTEM_DEFAULT_DATABASE_NAME, semanticParserDatabaseFolderName);
 
-	GIAdatabase.DBsetCurrentDirectory(&serverName);
+	SHAREDvars.setCurrentDirectory(&serverName);
 
 	const GIAfeature* currentFeatureInSentence = firstFeatureInList;
 	while(currentFeatureInSentence->next != NULL)
@@ -79,7 +79,7 @@ string GIAsemRelTranslatorDatabaseClass::semanticParserDBgenerateFolderName(cons
 		folderName = folderName + POStypeAbbreviationName;					//eg network/server/GIAsemRelTranslatorDatabase/denovedenocorpus.txt
 		#else
 		folderName = folderName + POStypeAbbreviationName + "/";
-		GIAdatabase.checkIfFolderExistsAndIfNotMakeAndSetAsCurrent(&POStypeAbbreviationName);		//eg network/server/GIAsemRelTranslatorDatabase/de/no/ve/de/no/corpus.txt
+		SHAREDvars.checkIfFolderExistsAndIfNotMakeAndSetAsCurrent(&POStypeAbbreviationName);		//eg network/server/GIAsemRelTranslatorDatabase/de/no/ve/de/no/corpus.txt
 		#endif
 		currentFeatureInSentence = currentFeatureInSentence->next;
 	}

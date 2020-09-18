@@ -26,7 +26,7 @@
  * File Name: GIAdatabase.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m6a 09-September-2020
+ * Project Version: 3m7a 11-September-2020
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: performs simple GIA database functions (storing nodes in ordered arrays/vectors/maps)
  * /
@@ -191,13 +191,6 @@ class GIAdatabaseClass
 
 
 	#ifdef GIA_DATABASE
-
-	private: bool DBdirectoryExists(const string* folderName);
-	private: bool DBcreateDirectory(const string* folderName);
-	public: bool DBsetCurrentDirectory(const string* folderName);
-	public: bool checkIfFolderExistsAndIfNotMakeAndSetAsCurrent(const string* folderName);
-
-
 
 	public: string DBgenerateServerDatabaseName(const string* entityName, const int fileType, const string defaultDatabaseName, string databaseFolderNameUserChoice);
 	private: string DBgenerateFileName(const string* entityName, const int64_t idInstance, const int connectionType, const int fileType);

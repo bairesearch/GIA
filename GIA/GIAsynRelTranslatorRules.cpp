@@ -26,7 +26,7 @@
  * File Name: GIAsynRelTranslatorRules.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m6a 09-September-2020
+ * Project Version: 3m7a 11-September-2020
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
@@ -240,12 +240,12 @@ bool GIAsynRelTranslatorRulesClass::applyGIATranslatorGenericXMLparam(XMLparserT
 					else if(assertAttribute->value == "whichOrWhatQueryFound")
 					{
 						bool whichOrWhatQueryFound = false;
-						//if(GIAentityNodeArrayFilled[GIA_NLP_START_ENTITY_INDEX]	//"what" is not added to a relation and therefore GIAentityNodeArrayFilled will not be filled
-						if((*translatorVariables->featureArrayTemp)[GIA_NLP_START_ENTITY_INDEX] != NULL)
+						//if(GIAentityNodeArrayFilled[LRP_NLP_START_ENTITY_INDEX]	//"what" is not added to a relation and therefore GIAentityNodeArrayFilled will not be filled
+						if((*translatorVariables->featureArrayTemp)[LRP_NLP_START_ENTITY_INDEX] != NULL)
 						{
 							for(int i=0; i<FEATURE_QUERY_WORD_ACCEPTED_BY_ALTERNATE_METHOD_NUMBER_OF_TYPES; i++)
 							{
-								if((*translatorVariables->featureArrayTemp)[GIA_NLP_START_ENTITY_INDEX]->lemma == featureQueryWordAcceptedByAlternateMethodNameArray[i])
+								if((*translatorVariables->featureArrayTemp)[LRP_NLP_START_ENTITY_INDEX]->lemma == featureQueryWordAcceptedByAlternateMethodNameArray[i])
 								{
 									whichOrWhatQueryFound = true;
 								}
@@ -260,10 +260,10 @@ bool GIAsynRelTranslatorRulesClass::applyGIATranslatorGenericXMLparam(XMLparserT
 					{
 						bool firstWordOfSentenceIsWho = false;
 						#ifdef GIA_SYN_REL_TRANSLATOR_WORKAROUND_RELEX_BUG_OCCASIONAL_QVAR_INDEX_SAME_AS_ANOTHER_RELATION_INDEX
-						//if(GIAentityNodeArrayFilled[GIA_NLP_START_ENTITY_INDEX])	//approximately the reason: "who" is not added to a relation and therefore GIAentityNodeArrayFilled will not be filled
-						if((*translatorVariables->featureArrayTemp)[GIA_NLP_START_ENTITY_INDEX] != NULL)
+						//if(GIAentityNodeArrayFilled[LRP_NLP_START_ENTITY_INDEX])	//approximately the reason: "who" is not added to a relation and therefore GIAentityNodeArrayFilled will not be filled
+						if((*translatorVariables->featureArrayTemp)[LRP_NLP_START_ENTITY_INDEX] != NULL)
 						{
-							if((*translatorVariables->featureArrayTemp)[GIA_NLP_START_ENTITY_INDEX]->lemma == GIA_SYN_REL_TRANSLATOR_REFERENCE_TYPE_QUESTION_QUERY_WHO)
+							if((*translatorVariables->featureArrayTemp)[LRP_NLP_START_ENTITY_INDEX]->lemma == GIA_SYN_REL_TRANSLATOR_REFERENCE_TYPE_QUESTION_QUERY_WHO)
 							{
 								firstWordOfSentenceIsWho = true;
 							}

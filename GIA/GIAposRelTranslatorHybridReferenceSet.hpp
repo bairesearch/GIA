@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorHybridReferenceSet.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m6a 09-September-2020
+ * Project Version: 3m7a 11-September-2020
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Hybrid Reference Set
  * /
@@ -38,7 +38,7 @@
 
 #include "GIAglobalDefs.hpp"
 #include "GIAposRelTranslatorHybridSentenceClass.hpp"
-#include "GIApreprocessorWordIdentification.hpp"
+#include "LRPpreprocessorWordIdentification.hpp"
 
 #define GIA_POS_REL_TRANSLATOR_HYBRID_REFERENCE_SET_TYPE_UNKNOWN (0)
 #define GIA_POS_REL_TRANSLATOR_HYBRID_REFERENCE_SET_TYPE_SUBJECT (1)
@@ -60,31 +60,31 @@ class GIAposRelTranslatorHybridReferenceSetClass
 {
 	private: SHAREDvarsClass SHAREDvars;
 	private: GIAposRelTranslatorHybridSentenceClassClass GIAposRelTranslatorHybridSentenceClass;
-	private: GIApreprocessorWordClassClass GIApreprocessorWordClassObject;
-	private: GIApreprocessorWordIdentificationClass GIApreprocessorWordIdentification;
+	private: LRPpreprocessorWordClassClass LRPpreprocessorWordClassObject;
+	private: LRPpreprocessorWordIdentificationClass LRPpreprocessorWordIdentification;
 	#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_REFERENCE_SET
-	public: bool generateSentenceWordList(GIApreprocessorMultiwordReductionWord* sentenceContentsFirstWord, vector<GIApreprocessorPlainTextWord*>* logicReferenceVariableWordList);
+	public: bool generateSentenceWordList(LRPpreprocessorMultiwordReductionWord* sentenceContentsFirstWord, vector<LRPpreprocessorPlainTextWord*>* logicReferenceVariableWordList);
 	#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_DEPRECIATED
-	public: bool executeReferenceSetPreprocessor(const vector<GIApreprocessorPlainTextWord*>* logicReferenceVariableWordList, GIAposRelTranslatorHybridLogicReferenceVariable* logicReferenceVariable, const bool expectToFindSubjectAuxObjectLogicReferenceVariable, const int wordIndexSentence);
+	public: bool executeReferenceSetPreprocessor(const vector<LRPpreprocessorPlainTextWord*>* logicReferenceVariableWordList, GIAposRelTranslatorHybridLogicReferenceVariable* logicReferenceVariable, const bool expectToFindSubjectAuxObjectLogicReferenceVariable, const int wordIndexSentence);
 			#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_REFERENCE_SET_PREFERENCE_VERB_OR_NOUN_OVER_ADJECTIVE_POS_AMBIGUITY
-			private: bool determineIsVerbAndAdjective(GIApreprocessorPlainTextWord* currentWordTag, bool usePOSprelim, bool grammaticallyStrict);
+			private: bool determineIsVerbAndAdjective(LRPpreprocessorPlainTextWord* currentWordTag, bool usePOSprelim, bool grammaticallyStrict);
 			#endif
 			private: void updateIndices(const bool currentWordIsReferenceSetDelimiter, bool* referenceSetDelimiterDetected, bool* parsingReferenceSetDelimiter, const int currentDelimiterSpecialCase, const int wordIndexOfHypotheticalPreceedingThatWhich, const bool currentWordIsReferenceSetDelimiterPreceededByThatWhich, bool* referenceSetDelimiterIndicatesSameReferenceSet, int* firstIndexOfReferenceSetDelimiterText, int* lastIndexOfPreviousReferenceSet);
-			private: bool formSubReferenceSetTextFromWordList(const vector<GIApreprocessorPlainTextWord*>* logicReferenceVariableWordList, vector<GIApreprocessorPlainTextWord*>* subReferenceSetText, const int firstIndexOfSubReferenceSet, const int lastIndexOfSubReferenceSet);
-			private: bool addReferenceSetToReferenceSet(GIApreprocessorSubReferenceSet* firstSubReferenceSetInList, vector<GIApreprocessorPlainTextWord*>* subReferenceSetText, const bool referenceSetDelimiter, const int wordIndexLogicReference, const int wordIndexSentence, const int delimiterType, const int delimiterSpecialCase);
-				private: bool addSubReferenceSetToReferenceSet(GIApreprocessorSubReferenceSet* firstSubReferenceSetInList, vector<GIApreprocessorPlainTextWord*>* subReferenceSetText, const bool referenceSetDelimiter, const int wordIndexLogicReference, const int wordIndexSentence, const int delimiterType, const int delimiterSpecialCase);
+			private: bool formSubReferenceSetTextFromWordList(const vector<LRPpreprocessorPlainTextWord*>* logicReferenceVariableWordList, vector<LRPpreprocessorPlainTextWord*>* subReferenceSetText, const int firstIndexOfSubReferenceSet, const int lastIndexOfSubReferenceSet);
+			private: bool addReferenceSetToReferenceSet(LRPpreprocessorSubReferenceSet* firstSubReferenceSetInList, vector<LRPpreprocessorPlainTextWord*>* subReferenceSetText, const bool referenceSetDelimiter, const int wordIndexLogicReference, const int wordIndexSentence, const int delimiterType, const int delimiterSpecialCase);
+				private: bool addSubReferenceSetToReferenceSet(LRPpreprocessorSubReferenceSet* firstSubReferenceSetInList, vector<LRPpreprocessorPlainTextWord*>* subReferenceSetText, const bool referenceSetDelimiter, const int wordIndexLogicReference, const int wordIndexSentence, const int delimiterType, const int delimiterSpecialCase);
 	#endif
 			public: bool detectAuxiliary(const string currentWord);
 			public: bool detectModalAuxiliary(const string currentWord);
 			public: bool detectRcmodSameReferenceSetDelimiter(const string currentWord);
 
-	public: bool hasReferenceSet(GIApreprocessorSubReferenceSet* referenceSet);
-	public: void setReferenceSetText(GIApreprocessorSubReferenceSet* referenceSet, vector<GIApreprocessorPlainTextWord*>* text);
-	public: vector<GIApreprocessorPlainTextWord*> getReferenceSetText(GIApreprocessorSubReferenceSet* referenceSet);
-	public: void printSubReferenceSet(GIApreprocessorSubReferenceSet* currentSubReferenceSetInList);
+	public: bool hasReferenceSet(LRPpreprocessorSubReferenceSet* referenceSet);
+	public: void setReferenceSetText(LRPpreprocessorSubReferenceSet* referenceSet, vector<LRPpreprocessorPlainTextWord*>* text);
+	public: vector<LRPpreprocessorPlainTextWord*> getReferenceSetText(LRPpreprocessorSubReferenceSet* referenceSet);
+	public: void printSubReferenceSet(LRPpreprocessorSubReferenceSet* currentSubReferenceSetInList);
 	#endif
 	#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_DETERMINE_AMBIGUOUS_PREPOSITION_POS_TYPES_BASED_ON_CONTEXT
-	public: bool verifyIsPrepositionNotProgressiveVerbBasedOnContext(const vector<GIApreprocessorPlainTextWord*>* sentenceContentsWordList, const int prepositionWordIndex, const bool usePOSprelim);
+	public: bool verifyIsPrepositionNotProgressiveVerbBasedOnContext(const vector<LRPpreprocessorPlainTextWord*>* sentenceContentsWordList, const int prepositionWordIndex, const bool usePOSprelim);
 	#endif
 };
 

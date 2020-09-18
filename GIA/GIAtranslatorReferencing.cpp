@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m6a 09-September-2020
+ * Project Version: 3m7a 11-September-2020
  * Requirements: requires text parsed by X Parser
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
@@ -188,9 +188,9 @@ bool GIAtranslatorReferencingClass::entityPosInferredIsName(GIAentityNode* curre
 {
 	bool result = false;
 	#ifdef SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OLD
-	if(GIApreprocessorWordIdentification.determineIsWordTypeStringBasic(currentGIAEntityNode->entityName, GIA_PREPROCESSOR_POS_TYPE_PROPERNOUN_FIRST_MALE) || GIApreprocessorWordIdentification.determineIsWordTypeStringBasic(currentGIAEntityNode->entityName, GIA_PREPROCESSOR_POS_TYPE_PROPERNOUN_FIRST_FEMALE) || GIApreprocessorWordIdentification.determineIsWordTypeStringBasic(currentGIAEntityNode->entityName, GIA_PREPROCESSOR_POS_TYPE_PROPERNOUN_FAMILY))	
+	if(LRPpreprocessorWordIdentification.determineIsWordTypeStringBasic(currentGIAEntityNode->entityName, LRP_PREPROCESSOR_POS_TYPE_PROPERNOUN_FIRST_MALE) || LRPpreprocessorWordIdentification.determineIsWordTypeStringBasic(currentGIAEntityNode->entityName, LRP_PREPROCESSOR_POS_TYPE_PROPERNOUN_FIRST_FEMALE) || LRPpreprocessorWordIdentification.determineIsWordTypeStringBasic(currentGIAEntityNode->entityName, LRP_PREPROCESSOR_POS_TYPE_PROPERNOUN_FAMILY))	
 	#else
-	if((currentGIAEntityNode->semanticRelationWordPOStypeInferred == GIA_PREPROCESSOR_POS_TYPE_PROPERNOUN_FIRST_MALE) || (currentGIAEntityNode->semanticRelationWordPOStypeInferred == GIA_PREPROCESSOR_POS_TYPE_PROPERNOUN_FIRST_FEMALE) || (currentGIAEntityNode->semanticRelationWordPOStypeInferred == GIA_PREPROCESSOR_POS_TYPE_PROPERNOUN_FAMILY))
+	if((currentGIAEntityNode->semanticRelationWordPOStypeInferred == LRP_PREPROCESSOR_POS_TYPE_PROPERNOUN_FIRST_MALE) || (currentGIAEntityNode->semanticRelationWordPOStypeInferred == LRP_PREPROCESSOR_POS_TYPE_PROPERNOUN_FIRST_FEMALE) || (currentGIAEntityNode->semanticRelationWordPOStypeInferred == LRP_PREPROCESSOR_POS_TYPE_PROPERNOUN_FAMILY))
 	#endif
 	{
 		result = true;
@@ -201,13 +201,13 @@ bool GIAtranslatorReferencingClass::entityPosInferredIsPronoun(GIAentityNode* cu
 {
 	bool result = false;
 	#ifdef SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OLD
-	if(GIApreprocessorWordIdentification.determineIsWordTypeStringBasic(currentGIAEntityNode->entityName, GIA_PREPROCESSOR_POS_TYPE_PRONOUN_INDEFINITE) || GIApreprocessorWordIdentification.determineIsWordTypeStringBasic(currentGIAEntityNode->entityName, GIA_PREPROCESSOR_POS_TYPE_PRONOUN_INTERROGATIVE) || 
-	GIApreprocessorWordIdentification.determineIsWordTypeStringBasic(currentGIAEntityNode->entityName, GIA_PREPROCESSOR_POS_TYPE_PRONOUN_PERSONAL_OBJECT) || GIApreprocessorWordIdentification.determineIsWordTypeStringBasic(currentGIAEntityNode->entityName, GIA_PREPROCESSOR_POS_TYPE_PRONOUN_PERSONAL_SUBJECT) || GIApreprocessorWordIdentification.determineIsWordTypeStringBasic(currentGIAEntityNode->entityName, GIA_PREPROCESSOR_POS_TYPE_PRONOUN_POSSESSIVE_ADJECTIVE) ||
-	GIApreprocessorWordIdentification.determineIsWordTypeStringBasic(currentGIAEntityNode->entityName, GIA_PREPROCESSOR_POS_TYPE_PRONOUN_POSSESSIVE_ALONE) || GIApreprocessorWordIdentification.determineIsWordTypeStringBasic(currentGIAEntityNode->entityName, GIA_PREPROCESSOR_POS_TYPE_PRONOUN_REFLEXIVE))	//OLD: GIApreprocessorWordIdentification.determineIsWordTypeStringBasic(currentGIAEntityNode->entityName, GIA_PREPROCESSOR_POS_TYPE_PRONOUN_DEMONSTRATIVE), GIApreprocessorWordIdentification.determineIsWordTypeStringBasic(currentGIAEntityNode->entityName, GIA_PREPROCESSOR_POS_TYPE_PRONOUN_RELATIVE) (not supported as pronounRelative is not in wordlists.txt)	
+	if(LRPpreprocessorWordIdentification.determineIsWordTypeStringBasic(currentGIAEntityNode->entityName, LRP_PREPROCESSOR_POS_TYPE_PRONOUN_INDEFINITE) || LRPpreprocessorWordIdentification.determineIsWordTypeStringBasic(currentGIAEntityNode->entityName, LRP_PREPROCESSOR_POS_TYPE_PRONOUN_INTERROGATIVE) || 
+	LRPpreprocessorWordIdentification.determineIsWordTypeStringBasic(currentGIAEntityNode->entityName, LRP_PREPROCESSOR_POS_TYPE_PRONOUN_PERSONAL_OBJECT) || LRPpreprocessorWordIdentification.determineIsWordTypeStringBasic(currentGIAEntityNode->entityName, LRP_PREPROCESSOR_POS_TYPE_PRONOUN_PERSONAL_SUBJECT) || LRPpreprocessorWordIdentification.determineIsWordTypeStringBasic(currentGIAEntityNode->entityName, LRP_PREPROCESSOR_POS_TYPE_PRONOUN_POSSESSIVE_ADJECTIVE) ||
+	LRPpreprocessorWordIdentification.determineIsWordTypeStringBasic(currentGIAEntityNode->entityName, LRP_PREPROCESSOR_POS_TYPE_PRONOUN_POSSESSIVE_ALONE) || LRPpreprocessorWordIdentification.determineIsWordTypeStringBasic(currentGIAEntityNode->entityName, LRP_PREPROCESSOR_POS_TYPE_PRONOUN_REFLEXIVE))	//OLD: LRPpreprocessorWordIdentification.determineIsWordTypeStringBasic(currentGIAEntityNode->entityName, LRP_PREPROCESSOR_POS_TYPE_PRONOUN_DEMONSTRATIVE), LRPpreprocessorWordIdentification.determineIsWordTypeStringBasic(currentGIAEntityNode->entityName, LRP_PREPROCESSOR_POS_TYPE_PRONOUN_RELATIVE) (not supported as pronounRelative is not in wordlists.txt)	
 	#else
-	if((currentGIAEntityNode->semanticRelationWordPOStypeInferred == GIA_PREPROCESSOR_POS_TYPE_PRONOUN_DEMONSTRATIVE) || (currentGIAEntityNode->semanticRelationWordPOStypeInferred == GIA_PREPROCESSOR_POS_TYPE_PRONOUN_INDEFINITE) || (currentGIAEntityNode->semanticRelationWordPOStypeInferred == GIA_PREPROCESSOR_POS_TYPE_PRONOUN_INTERROGATIVE) || 
-	(currentGIAEntityNode->semanticRelationWordPOStypeInferred == GIA_PREPROCESSOR_POS_TYPE_PRONOUN_PERSONAL_OBJECT) || (currentGIAEntityNode->semanticRelationWordPOStypeInferred == GIA_PREPROCESSOR_POS_TYPE_PRONOUN_PERSONAL_SUBJECT) || (currentGIAEntityNode->semanticRelationWordPOStypeInferred == GIA_PREPROCESSOR_POS_TYPE_PRONOUN_POSSESSIVE_ADJECTIVE) ||
-	(currentGIAEntityNode->semanticRelationWordPOStypeInferred == GIA_PREPROCESSOR_POS_TYPE_PRONOUN_POSSESSIVE_ALONE) || (currentGIAEntityNode->semanticRelationWordPOStypeInferred == GIA_PREPROCESSOR_POS_TYPE_PRONOUN_REFLEXIVE) || (currentGIAEntityNode->semanticRelationWordPOStypeInferred == GIA_PREPROCESSOR_POS_TYPE_PRONOUN_RELATIVE))
+	if((currentGIAEntityNode->semanticRelationWordPOStypeInferred == LRP_PREPROCESSOR_POS_TYPE_PRONOUN_DEMONSTRATIVE) || (currentGIAEntityNode->semanticRelationWordPOStypeInferred == LRP_PREPROCESSOR_POS_TYPE_PRONOUN_INDEFINITE) || (currentGIAEntityNode->semanticRelationWordPOStypeInferred == LRP_PREPROCESSOR_POS_TYPE_PRONOUN_INTERROGATIVE) || 
+	(currentGIAEntityNode->semanticRelationWordPOStypeInferred == LRP_PREPROCESSOR_POS_TYPE_PRONOUN_PERSONAL_OBJECT) || (currentGIAEntityNode->semanticRelationWordPOStypeInferred == LRP_PREPROCESSOR_POS_TYPE_PRONOUN_PERSONAL_SUBJECT) || (currentGIAEntityNode->semanticRelationWordPOStypeInferred == LRP_PREPROCESSOR_POS_TYPE_PRONOUN_POSSESSIVE_ADJECTIVE) ||
+	(currentGIAEntityNode->semanticRelationWordPOStypeInferred == LRP_PREPROCESSOR_POS_TYPE_PRONOUN_POSSESSIVE_ALONE) || (currentGIAEntityNode->semanticRelationWordPOStypeInferred == LRP_PREPROCESSOR_POS_TYPE_PRONOUN_REFLEXIVE) || (currentGIAEntityNode->semanticRelationWordPOStypeInferred == LRP_PREPROCESSOR_POS_TYPE_PRONOUN_RELATIVE))
 	#endif
 	{
 		//cout << "entityPosInferredIsPronoun, currentGIAEntityNode = " << currentGIAEntityNode->entityName << endl;
@@ -219,9 +219,9 @@ bool GIAtranslatorReferencingClass::entityPosInferredIsPronounPossessive(GIAenti
 {
 	bool result = false;
 	#ifdef SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OLD
-	if(GIApreprocessorWordIdentification.determineIsWordTypeStringBasic(currentGIAEntityNode->entityName, GIA_PREPROCESSOR_POS_TYPE_PRONOUN_POSSESSIVE_ADJECTIVE) || GIApreprocessorWordIdentification.determineIsWordTypeStringBasic(currentGIAEntityNode->entityName, GIA_PREPROCESSOR_POS_TYPE_PRONOUN_POSSESSIVE_ALONE))
+	if(LRPpreprocessorWordIdentification.determineIsWordTypeStringBasic(currentGIAEntityNode->entityName, LRP_PREPROCESSOR_POS_TYPE_PRONOUN_POSSESSIVE_ADJECTIVE) || LRPpreprocessorWordIdentification.determineIsWordTypeStringBasic(currentGIAEntityNode->entityName, LRP_PREPROCESSOR_POS_TYPE_PRONOUN_POSSESSIVE_ALONE))
 	#else
-	if((currentGIAEntityNode->semanticRelationWordPOStypeInferred == GIA_PREPROCESSOR_POS_TYPE_PRONOUN_POSSESSIVE_ADJECTIVE) || (currentGIAEntityNode->semanticRelationWordPOStypeInferred == GIA_PREPROCESSOR_POS_TYPE_PRONOUN_POSSESSIVE_ALONE))
+	if((currentGIAEntityNode->semanticRelationWordPOStypeInferred == LRP_PREPROCESSOR_POS_TYPE_PRONOUN_POSSESSIVE_ADJECTIVE) || (currentGIAEntityNode->semanticRelationWordPOStypeInferred == LRP_PREPROCESSOR_POS_TYPE_PRONOUN_POSSESSIVE_ALONE))
 	#endif
 	{
 		result = true;
@@ -293,9 +293,9 @@ void GIAtranslatorReferencingClass::linkPronounReferencesTxtRelTranslator(GIAtra
 				
 				bool findReferenceChild = false;
 				#ifdef SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OLD
-				if(GIApreprocessorWordIdentification.determineIsWordTypeStringBasic(currentGIAEntityNode->entityName, GIA_PREPROCESSOR_POS_TYPE_PRONOUN_POSSESSIVE_ALONE))
+				if(LRPpreprocessorWordIdentification.determineIsWordTypeStringBasic(currentGIAEntityNode->entityName, LRP_PREPROCESSOR_POS_TYPE_PRONOUN_POSSESSIVE_ALONE))
 				#else
-				if(currentGIAEntityNode->semanticRelationWordPOStypeInferred == GIA_PREPROCESSOR_POS_TYPE_PRONOUN_POSSESSIVE_ALONE)
+				if(currentGIAEntityNode->semanticRelationWordPOStypeInferred == LRP_PREPROCESSOR_POS_TYPE_PRONOUN_POSSESSIVE_ALONE)
 				#endif
 				{
 					//mine yours his hers ours yours theirs

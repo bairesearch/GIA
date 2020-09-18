@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m6a 09-September-2020
+ * Project Version: 3m7a 11-September-2020
  * Requirements: requires plain text file
  * Description: Part-of-speech Relation Translator
  * /
@@ -40,16 +40,14 @@
 	
 #ifdef GIA_POS_REL_TRANSLATOR_RULES_GIA3
 
-	
+
 bool GIAposRelTranslatorClass::parseTxtfileAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences(GIAtranslatorVariablesClass* translatorVariables, const string inputTextPlainTXTfileName, string inputTextNLPrelationXMLfileName, const string inputTextNLPfeatureXMLfileName, const string outputCFFfileName)
 {
 	bool result = true;
 
-	#ifdef SANI_DEBUG_PROPAGATE_EXTRA8
-	firstExecution = true;
-	#endif
-
-	GIApreprocessorSentence* currentGIApreprocessorSentenceInList = NULL;
+	SANItranslatorVariablesClass SANItranslatorVariables;
+	GIAposRelTranslatorParser.createSANItranslatorVariablesFromGIAtranslatorVariables(translatorVariables, &SANItranslatorVariables);
+		
 	#ifdef GIA_POS_REL_TRANSLATOR_RULES_GIA3_USE_SYN_REL_TRANSLATOR_FEATURES
 	#ifdef STANFORD_PARSER_USE_POS_TAGS
 	cout << "error: performSemanticParserLookupAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences{} doesn't support STANFORD_PARSER_USE_POS_TAGS (because the semantic relations word types being written must match those being read [and read can only use feature parser])" << endl;
@@ -61,95 +59,33 @@ bool GIAposRelTranslatorClass::parseTxtfileAndCreateSemanticNetworkBasedUponSema
 	}
 	#else
 	//generate empty sentence class list (without GIAfeatures):
-	currentGIApreprocessorSentenceInList = translatorVariables->firstGIApreprocessorSentenceInList;
+	LRPpreprocessorSentence* currentLRPpreprocessorSentenceInList = translatorVariables->LRPpreprocessorTranslatorVariables.firstLRPpreprocessorSentenceInList;
 	GIAsentence* currentSentenceInList = translatorVariables->firstSentenceInList;
-	while(currentGIApreprocessorSentenceInList->next != NULL)
+	while(currentLRPpreprocessorSentenceInList->next != NULL)
 	{
 		GIAsentence* newSentence = new GIAsentence();
 		newSentence->previous = currentSentenceInList;
 		currentSentenceInList->next = newSentence;
 
 		/*
-		cout << "currentGIApreprocessorSentenceInList = " << endl;
-		GIApreprocessorWordClassObject.printWordList(GIApreprocessorSentenceClassObject.getSentenceContents(currentGIApreprocessorSentenceInList));
+		cout << "currentLRPpreprocessorSentenceInList = " << endl;
+		LRPpreprocessorWordClassObject.printWordList(LRPpreprocessorSentenceClassObject.getSentenceContents(currentLRPpreprocessorSentenceInList));
 		*/
 		
-		currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->next;
+		currentLRPpreprocessorSentenceInList = currentLRPpreprocessorSentenceInList->next;
 		currentSentenceInList = currentSentenceInList->next;
-	}
+	}	
 	#endif
+	
+	
+	SANIposRelTranslator.parseTxtfileAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences(&SANItranslatorVariables);
 
-	#ifdef GIA_PREPROCESSOR_INITIALISE_WORD_INDEX_LIST_FROM_LRP_FILES
-	if(!GIApreprocessorWordIdentification.createWordIndexListFromLRPfiles())
-	{
-		result = false;
-	}
-	#endif
-
-	vector<SANIGroupType*>* SANIGroupTypes = new vector<SANIGroupType*>;
-	vector<XMLparserTag*>* SANIrulesTokenLayers = new vector<XMLparserTag*>;
-	if(!SANIrules.extractSANIrules(SANIGroupTypes, SANIrulesTokenLayers))
-	{
-		result = false;
-	}
-	
-	//cout << "SANIGroupTypes->size() = " << SANIGroupTypes->size() << endl;
-	
-	#ifdef SANI_FORWARD
-	if(!SANIformation.createSANI(SANIrulesTokenLayers, SANIGroupTypes))
-	{
-		result = false;
-	}
-	#endif
-
-	
-	
-	#ifdef GIA_POS_REL_TRANSLATOR_RULES_DEFINE_WORD_TRANSLATOR_SENTENCE_ENTITY_INDEX_AT_START
-	currentGIApreprocessorSentenceInList = translatorVariables->firstGIApreprocessorSentenceInList;
-	while(currentGIApreprocessorSentenceInList->next != NULL)
-	{
-		vector<GIApreprocessorPlainTextWord*>* sentenceContents = GIApreprocessorSentenceClassObject.getSentenceContents(currentGIApreprocessorSentenceInList);
-		for(int w=0; w<sentenceContents->size(); w++)
-		{	
-			GIApreprocessorPlainTextWord* currentWord = sentenceContents->at(w);
-			currentWord->translatorSentenceEntityIndex = GIAtranslatorOperations.convertSentenceContentsIndexToEntityIndex(w);
-			#ifdef SANI_FORWARD
-			currentWord->translatorSentenceWordIndex = w;
-			#endif
-		}
-		currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->next;
-	}
-	#endif	
-		
-	#ifdef SANI_PARSE_SIMULTANEOUS
 	/*
-	#ifdef SANI_PARSE_SIMULTANEOUS_SET_WORD_POSTYPE_INFERRED_DYNAMIC_OPTIMISED
-	translatorVariables->parserDemarkateOptimumPathway = true;	//note actual demarkateOptimumPathwayBackprop isnt required to be executed (it is done by GIAtranslatorClass::convertSentenceRelationsIntoGIAnetworkNodesWrapper for the given sentence), but everything else is (ie code require to extract 
-	if(!GIAposRelTranslatorPermutations.executeTxtRelTranslatorWrapper(translatorVariables, SANIrulesTokenLayers, SANIGroupTypes))
+	currentLRPpreprocessorSentenceInList = translatorVariables->LRPpreprocessorTranslatorVariables.firstLRPpreprocessorSentenceInList;
+	while(currentLRPpreprocessorSentenceInList->next != NULL)
 	{
-		result = false;
-	}
-	translatorVariables->parserDemarkateOptimumPathway = false;
-	#endif
-	*/
-	#else
-	if(!GIAposRelTranslatorPermutations.executeTxtRelTranslatorWrapper(translatorVariables, SANIrulesTokenLayers, SANIGroupTypes))
-	{
-		result = false;
-	}
-	#endif
-	
-#ifdef SANI_SEQUENCE_GRAMMAR
-	#ifdef SANI_ANN_DELAY_ANN_CONNECTIVITY_TILL_END
-	SANIformation.createANNconnectivity(SANIGroupTypes);
-	#endif
-#else
-	/*
-	currentGIApreprocessorSentenceInList = translatorVariables->firstGIApreprocessorSentenceInList;
-	while(currentGIApreprocessorSentenceInList->next != NULL)
-	{
-		cout << "currentGIApreprocessorSentenceInList->sentenceIndexOriginal = " << currentGIApreprocessorSentenceInList->sentenceIndexOriginal << endl;
-		currentGIApreprocessorSentenceInList = currentGIApreprocessorSentenceInList->next;
+		cout << "currentLRPpreprocessorSentenceInList->sentenceIndexOriginal = " << currentLRPpreprocessorSentenceInList->sentenceIndexOriginal << endl;
+		currentLRPpreprocessorSentenceInList = currentLRPpreprocessorSentenceInList->next;
 	}
 	*/
 		
@@ -194,7 +130,7 @@ bool GIAposRelTranslatorClass::parseTxtfileAndCreateSemanticNetworkBasedUponSema
 	{
 		result = false;
 	}	
-#endif
+
 
 	return result;
 }

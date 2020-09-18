@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorHybridSentenceClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m6a 09-September-2020
+ * Project Version: 3m7a 11-September-2020
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Hybrid Sentence Class
  * /
@@ -38,27 +38,27 @@
 
 #include "GIAglobalDefs.hpp"
 #include "SHAREDvars.hpp"
-#include "GIAentityNodeClass.hpp"	//required for primaryEntityTemp, GIA_PREPROCESSOR_RECORD_REFERENCES
-#include "GIAsentenceClass.hpp"	//required for GIA_PREPROCESSOR_RECORD_REFERENCES
-#include "GIApreprocessorWordClass.hpp" 
+#include "GIAentityNodeClass.hpp"	//required for primaryEntityTemp, LRP_PREPROCESSOR_RECORD_REFERENCES
+#include "GIAsentenceClass.hpp"	//required for LRP_PREPROCESSOR_RECORD_REFERENCES
+#include "LRPpreprocessorWordClass.hpp" 
 
 
 
 
 #ifdef GIA_POS_REL_TRANSLATOR_HYBRID
 
-class GIApreprocessorSubReferenceSet
+class LRPpreprocessorSubReferenceSet
 {
 public:
-	GIApreprocessorSubReferenceSet(void);
-	~GIApreprocessorSubReferenceSet(void);
+	LRPpreprocessorSubReferenceSet(void);
+	~LRPpreprocessorSubReferenceSet(void);
 
-	int sentenceIndex;		//if GIA_PREPROCESSOR_ASSIGN_UNIQUE_SENTENCE_INDICES_FOR_LOGIC_REFERENCE_VARIABLES this is a temporary sentence index
-	vector<GIApreprocessorPlainTextWord*> subReferenceSetContents;
+	int sentenceIndex;		//if LRP_PREPROCESSOR_ASSIGN_UNIQUE_SENTENCE_INDICES_FOR_LOGIC_REFERENCE_VARIABLES this is a temporary sentence index
+	vector<LRPpreprocessorPlainTextWord*> subReferenceSetContents;
 	#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_NLP_TEXT
-	vector<GIApreprocessorPlainTextWord*> subReferenceSetContentsOutputForNLP;
+	vector<LRPpreprocessorPlainTextWord*> subReferenceSetContentsOutputForNLP;
 	#endif
-	#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
+	#ifdef LRP_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
 	int firstIndexOfReferenceSetText;
 	int lastIndexOfReferenceSetText;
 	int dummyNLPtestOffset;
@@ -69,13 +69,13 @@ public:
 	#endif
 	
 	bool isReferenceSetDelimiter;
-	GIApreprocessorSubReferenceSet* next;
+	LRPpreprocessorSubReferenceSet* next;
 	
 	//for optimisation purposes;
 	int delimiterType;
 	int delimiterSpecialCase;
 	
-	#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
+	#ifdef LRP_PREPROCESSOR_RECORD_REFERENCES
 	GIAsentence* sentenceReference;
 	#endif
 	
@@ -92,21 +92,21 @@ public:
 	GIAposRelTranslatorHybridLogicReferenceVariable(void);
 	~GIAposRelTranslatorHybridLogicReferenceVariable(void);
 
-	#ifdef GIA_PREPROCESSOR_ASSIGN_UNIQUE_SENTENCE_INDICES_FOR_LOGIC_REFERENCE_VARIABLES
+	#ifdef LRP_PREPROCESSOR_ASSIGN_UNIQUE_SENTENCE_INDICES_FOR_LOGIC_REFERENCE_VARIABLES
 	int sentenceIndex;
 	#endif
 	
-	vector<GIApreprocessorPlainTextWord*> logicReferenceVariableContents;
+	vector<LRPpreprocessorPlainTextWord*> logicReferenceVariableContents;
 	int logicReferenceVariableNameIndex;
 	string logicReferenceVariableName;	//replacement variable name for logical condition variable
 	
 	#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_REFERENCE_SET
-	GIApreprocessorSubReferenceSet* referenceSetSubject;	//referenceSetSubject
-	GIApreprocessorSubReferenceSet* referenceSetObject;	//referenceSetObject
-	GIApreprocessorSubReferenceSet* referenceSetDelimiter;	//NB if !GIA_POS_REL_TRANSLATOR_HYBRID_REFERENCE_SET_DELIMITERS, only the referenceSetContents string is used of the referenceSetDelimiter
+	LRPpreprocessorSubReferenceSet* referenceSetSubject;	//referenceSetSubject
+	LRPpreprocessorSubReferenceSet* referenceSetObject;	//referenceSetObject
+	LRPpreprocessorSubReferenceSet* referenceSetDelimiter;	//NB if !GIA_POS_REL_TRANSLATOR_HYBRID_REFERENCE_SET_DELIMITERS, only the referenceSetContents string is used of the referenceSetDelimiter
 	#endif
 	
-	#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
+	#ifdef LRP_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
 	int wordIndexSentence;
 	#endif
 };
@@ -117,7 +117,7 @@ public:
 	GIAposRelTranslatorHybridLogicReference(void);
 	~GIAposRelTranslatorHybridLogicReference(void);
 
-	vector<GIApreprocessorPlainTextWord*> logicReferenceContents;	   //similiar if not identical to GIAposRelTranslatorHybridLogicReferenceTypes[logicReferenceClassType];
+	vector<LRPpreprocessorPlainTextWord*> logicReferenceContents;	   //similiar if not identical to GIAposRelTranslatorHybridLogicReferenceTypes[logicReferenceClassType];
 	int logicReferenceClass;
 	string logicReferenceClassType;
 	GIAposRelTranslatorHybridLogicReferenceVariable* logicReferenceVariable;
@@ -135,7 +135,7 @@ public:
 	bool isSubLogicReferenceDependent;
 	bool isSubLogicReferenceArray;
 	#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE_OUTPUT_LOGIC_REFERENCE_SETS_FOR_HIGH_LEVEL_SEMANTIC_PARSE_VERBOSE
-	vector<GIApreprocessorPlainTextWord*> logicReferenceSetContentsWithVariableNames;
+	vector<LRPpreprocessorPlainTextWord*> logicReferenceSetContentsWithVariableNames;
 	int logicReferenceSetContentsWithVariableNamesSentenceIndex;
 	#endif
 	#endif

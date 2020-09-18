@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorHybridSentenceClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m6a 09-September-2020
+ * Project Version: 3m7a 11-September-2020
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Hybrid Sentence Class
  * /
@@ -40,14 +40,14 @@
 
 #ifdef GIA_POS_REL_TRANSLATOR_HYBRID
 
-GIApreprocessorSubReferenceSet::GIApreprocessorSubReferenceSet(void)
+LRPpreprocessorSubReferenceSet::LRPpreprocessorSubReferenceSet(void)
 {
 	sentenceIndex = INT_DEFAULT_VALUE;
 	//subReferenceSetContents = "";
 	#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_REFERENCE_SET_ADD_DUMMY_NLP_TEXT
 	//subReferenceSetContentsOutputForNLP = "";
 	#endif
-	#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
+	#ifdef LRP_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
 	firstIndexOfReferenceSetText = INT_DEFAULT_VALUE;
 	lastIndexOfReferenceSetText = INT_DEFAULT_VALUE;
 	dummyNLPtestOffset = 0;
@@ -63,7 +63,7 @@ GIApreprocessorSubReferenceSet::GIApreprocessorSubReferenceSet(void)
 	delimiterType = GIA_POS_REL_TRANSLATOR_HYBRID_REFERENCE_SET_DELIMITER_TYPE_UNDEFINED;
 	delimiterSpecialCase = GIA_POS_REL_TRANSLATOR_HYBRID_REFERENCE_SET_DELIMITER_SPECIAL_CASE_UNDEFINED;
 	
-	#ifdef GIA_PREPROCESSOR_RECORD_REFERENCES
+	#ifdef LRP_PREPROCESSOR_RECORD_REFERENCES
 	sentenceReference = NULL;
 	#endif
 	
@@ -73,13 +73,13 @@ GIApreprocessorSubReferenceSet::GIApreprocessorSubReferenceSet(void)
 
 	isFirstSubreferenceSetInList = false;
 }
-GIApreprocessorSubReferenceSet::~GIApreprocessorSubReferenceSet(void)
+LRPpreprocessorSubReferenceSet::~LRPpreprocessorSubReferenceSet(void)
 {
 }
 
 GIAposRelTranslatorHybridLogicReferenceVariable::GIAposRelTranslatorHybridLogicReferenceVariable(void)
 {
-	#ifdef GIA_PREPROCESSOR_ASSIGN_UNIQUE_SENTENCE_INDICES_FOR_LOGIC_REFERENCE_VARIABLES
+	#ifdef LRP_PREPROCESSOR_ASSIGN_UNIQUE_SENTENCE_INDICES_FOR_LOGIC_REFERENCE_VARIABLES
 	sentenceIndex = INT_DEFAULT_VALUE;
 	#endif
 	
@@ -88,12 +88,12 @@ GIAposRelTranslatorHybridLogicReferenceVariable::GIAposRelTranslatorHybridLogicR
 	logicReferenceVariableName = "";
 	
 	#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_REFERENCE_SET
-	referenceSetSubject = new GIApreprocessorSubReferenceSet();
-	referenceSetObject = new GIApreprocessorSubReferenceSet();
-	referenceSetDelimiter = new GIApreprocessorSubReferenceSet();
+	referenceSetSubject = new LRPpreprocessorSubReferenceSet();
+	referenceSetObject = new LRPpreprocessorSubReferenceSet();
+	referenceSetDelimiter = new LRPpreprocessorSubReferenceSet();
 	#endif
 	
-	#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
+	#ifdef LRP_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
 	wordIndexSentence = INT_DEFAULT_VALUE;
 	#endif
 }

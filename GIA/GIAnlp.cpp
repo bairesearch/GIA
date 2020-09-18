@@ -26,7 +26,7 @@
  * File Name: GIAnlp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m6a 09-September-2020
+ * Project Version: 3m7a 11-September-2020
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: NLP - external natural language processing
  * /
@@ -621,12 +621,12 @@ bool GIAnlpClass::parseStanfordCoreNLPfile(const string inputTextNLPrelationXMLf
 
 						if(parseFeatures)
 						{//process lemma only if parsing features
-							#ifdef GIA_PREPROCESSOR_WORD_REPLACE_OUTPUT_FOR_NLP_TEMPORARILY
-							if(GIApreprocessorWordIdentification.getUseLRP())
+							#ifdef LRP_PREPROCESSOR_WORD_REPLACE_OUTPUT_FOR_NLP_TEMPORARILY
+							if(LRPpreprocessorWordIdentification.getUseLRP())
 							{
 								bool foundOfficialLRPreplacementString = false;
 								GIArelation* currentRelationInListForPrepositionsOnlyIrrelevant = NULL;
-								GIApreprocessorWordReduction.revertNLPtagNameToOfficialLRPtagName(currentFeatureInList, currentSentence, currentRelationInListForPrepositionsOnlyIrrelevant, false, &foundOfficialLRPreplacementString);
+								LRPpreprocessorWordReduction.revertNLPtagNameToOfficialLRPtagName(currentFeatureInList, currentSentence, currentRelationInListForPrepositionsOnlyIrrelevant, false, &foundOfficialLRPreplacementString);
 							}
 							#endif
 
@@ -649,7 +649,7 @@ bool GIAnlpClass::parseStanfordCoreNLPfile(const string inputTextNLPrelationXMLf
 						}
 
 						#ifdef GIA_INCONSISTENCY_BETWEEN_STANFORD_PARSER_AND_STANFORD_CORENLP_PARSING_OF_CONSECUTIVE_FULL_STOPS
-						if(lastFeatureEntityIndex == GIA_NLP_START_ENTITY_INDEX)
+						if(lastFeatureEntityIndex == LRP_NLP_START_ENTITY_INDEX)
 						{
 							if(lastFeatureWord == string(STRING_FULLSTOP))
 							{
@@ -741,7 +741,7 @@ bool GIAnlpClass::parseStanfordCoreNLPfile(const string inputTextNLPrelationXMLf
 										GIAnlpParser.convertStanfordRelationToRelex(currentRelationInList, currentSentence);
 
 
-										#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
+										#ifdef LRP_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
 										if(!(currentRelationInList->relationGovernorRevertedToOfficialLRPTemp))
 										{
 										#endif
@@ -751,7 +751,7 @@ bool GIAnlpClass::parseStanfordCoreNLPfile(const string inputTextNLPrelationXMLf
 												currentFeatureInList = currentFeatureInList->next;
 											}
 											currentRelationInList->relationGovernor = currentFeatureInList->lemma;
-										#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
+										#ifdef LRP_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
 										}
 										if(!(currentRelationInList->relationDependentRevertedToOfficialLRPTemp))
 										{
@@ -762,7 +762,7 @@ bool GIAnlpClass::parseStanfordCoreNLPfile(const string inputTextNLPrelationXMLf
 												currentFeatureInList = currentFeatureInList->next;
 											}
 											currentRelationInList->relationDependent = currentFeatureInList->lemma;
-										#ifdef GIA_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
+										#ifdef LRP_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
 										}
 										#endif
 

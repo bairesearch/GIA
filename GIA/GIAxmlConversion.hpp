@@ -26,7 +26,7 @@
  * File Name: GIAxmlConversion.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m6a 09-September-2020
+ * Project Version: 3m7a 11-September-2020
  * Description: XML Conversion - Converts GIA network nodes into an XML file, or converts an XML file into GIA network nodes
  * /
  *******************************************************************************/
@@ -185,13 +185,13 @@ static string entityTypeNodeContainerXMLtags[GIA_ENTITY_NUMBER_OF_TYPES] = {NET_
 #define NET_XML_ATTRIBUTE_grammaticalTenseTemp ((string)"grammaticalTenseTemp")	//this is only used for NLC
 #endif
 
-#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_PREPOSITIONS
-#ifdef GIA_PREPROCESSOR_WORD_DETECT_PREPOSITION_TYPE
+#ifdef LRP_PREPROCESSOR_WORD_NORMALISE_PREPOSITIONS
+#ifdef LRP_PREPROCESSOR_WORD_DETECT_PREPOSITION_TYPE
 #define NET_XML_ATTRIBUTE_conditionType2 ((string)"conditionType2")
 #endif
-#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_TWOWAY_PREPOSITIONS
+#ifdef LRP_PREPROCESSOR_WORD_NORMALISE_TWOWAY_PREPOSITIONS
 #define NET_XML_ATTRIBUTE_conditionTwoWay ((string)"conditionTwoWay")
-#ifdef GIA_PREPROCESSOR_WORD_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED
+#ifdef LRP_PREPROCESSOR_WORD_NORMALISE_TWOWAY_PREPOSITIONS_DUAL_CONDITION_LINKS_ENABLED
 #define NET_XML_ATTRIBUTE_inverseConditionTwoWay ((string)"inverseConditionTwoWay")
 #endif
 #endif

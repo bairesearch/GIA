@@ -26,7 +26,7 @@
  * File Name: GIAsemRelTranslatorOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m6a 09-September-2020
+ * Project Version: 3m7a 11-September-2020
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  * Description: Semantic Relation Translator
  * /
@@ -565,7 +565,7 @@ GIAfeature* GIAsemRelTranslatorOperationsClass::generateOptimisedFeatureSubsetBa
 	bool foundCentralWord = false; 	//redundant because last feature in list will have been set to centralWord
 
 	GIAfeature* currentFeatureInSentenceSubset = firstFeatureInSentenceSubset;
-	int featureIndex = GIA_NLP_START_ENTITY_INDEX;	//1
+	int featureIndex = LRP_NLP_START_ENTITY_INDEX;	//1
 
 	while(currentFeatureInSentenceSubset->next != NULL)
 	{
@@ -620,7 +620,7 @@ GIAfeature* GIAsemRelTranslatorOperationsClass::generateOptimisedFeatureSubsetBa
 		firstFeatureInOptimisedSentenceSubset = new GIAfeature(*firstFeatureInSentenceSubset);	//copy feature
 		GIAfeature* currentFeatureInOptimisedSentenceSubset = firstFeatureInOptimisedSentenceSubset;
 		GIAfeature* currentFeatureInSentenceSubset = firstFeatureInSentenceSubset;
-		int featureIndex = GIA_NLP_START_ENTITY_INDEX;	//1
+		int featureIndex = LRP_NLP_START_ENTITY_INDEX;	//1
 		bool filteredSubphrase = false;
 		bool currentlyFilteringSubphrase = false;
 		while(currentFeatureInSentenceSubset = currentFeatureInSentenceSubset->next)
