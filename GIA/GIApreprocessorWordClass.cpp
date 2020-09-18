@@ -26,7 +26,7 @@
  * File Name: GIApreprocessorWordClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m3d 01-August-2020
+ * Project Version: 3m6a 09-September-2020
  * Requirements: requires plain text file
  * Description: Preprocessor Word Class
  * /
@@ -163,7 +163,7 @@ void GIApreprocessorPlainTextWord::initialiseGIApreprocessorPlainTextWord()
 	wordPOStypeInferred = GIA_SHARED_POS_TYPE_UNDEFINED;
 	alreadyFoundMatch = false;
 	translatorSentenceEntityIndex = GIA_ENTITY_INDEX_UNDEFINED;
-	#ifdef SANI
+	#ifdef SANI_FORWARD
 	translatorSentenceWordIndex = GIA_ENTITY_INDEX_UNDEFINED;
 	#endif
 	#ifdef GIA_POS_REL_TRANSLATOR_RULES

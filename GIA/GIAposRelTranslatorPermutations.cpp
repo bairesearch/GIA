@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorPermutations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m3d 01-August-2020
+ * Project Version: 3m6a 09-September-2020
  * Requirements: requires plain text file
  * Description: Part-of-speech Relation Translator Permutations
  * /
@@ -75,7 +75,7 @@ bool GIAposRelTranslatorPermutationsClass::executeTxtRelTranslatorWrapper(GIAtra
 	//cout << "GIAposRelTranslatorPermutationsClass::executeTxtRelTranslatorWrapper" << endl;
 
 
-	#ifdef SANI_DEBUG_SEQUENCE_GRAMMAR_STORE_SENTENCE_INDEXING
+	#ifdef SANI_SEQUENCE_GRAMMAR_STORE_SENTENCE_INDEXING
 	//code from GIAtranslatorClass::parseNLPparserFileAndCreateSemanticNetworkBasedUponDependencyParsedSentences;
 	//count maxNumberSentences
 	GIApreprocessorSentence* currentSentenceInList = translatorVariables->firstGIApreprocessorSentenceInList;
@@ -93,7 +93,7 @@ bool GIAposRelTranslatorPermutationsClass::executeTxtRelTranslatorWrapper(GIAtra
 	GIApreprocessorSentence* currentGIApreprocessorSentenceInList = translatorVariables->firstGIApreprocessorSentenceInList;
 	while(currentGIApreprocessorSentenceInList->next != NULL)
 	{		
-		#ifdef SANI_DEBUG_SEQUENCE_GRAMMAR_STORE_SENTENCE_INDEXING
+		#ifdef SANI_SEQUENCE_GRAMMAR_STORE_SENTENCE_INDEXING
 		translatorVariables->currentPreprocessorSentenceInList = currentGIApreprocessorSentenceInList;
 		#endif
 		
@@ -179,7 +179,7 @@ bool GIAposRelTranslatorPermutationsClass::transferParseTreePOStypeInferredToWor
 
 		//this will replace the sentenceContents word->wordPOStypeInferred values with their ideal value as stored in the parse tree (in the case where the ideal word->wordPOStypeInferred values were overwritten by a more recent bad parse):
 		
-		#ifdef SANI
+		#ifdef SANI_FORWARD
 		if(currentGIApreprocessorSentenceInList->firstParseTreeGroup != NULL)
 		{
 		#endif
@@ -200,7 +200,7 @@ bool GIAposRelTranslatorPermutationsClass::transferParseTreePOStypeInferredToWor
 				cout << "GIApreprocessorPOStypeNameArray[contextWord->wordPOStypeInferred] = " << GIApreprocessorPOStypeNameArray[contextWord->wordPOStypeInferred] << endl;
 			}
 			#endif
-		#ifdef SANI
+		#ifdef SANI_FORWARD
 		}
 		#endif
 		
@@ -280,7 +280,7 @@ bool GIAposRelTranslatorPermutationsClass::executeTxtRelTranslator(GIAtranslator
 		In the future use a neural net to train the system to identify new rule groups (or upgrade/refine rule groups)
 	*/
 	
-	#ifdef SANI
+	#ifdef SANI_FORWARD
 	SANIGroupParseTree* firstParseTreeGroup = NULL;	//not used by SANI (write directly to currentGIApreprocessorSentenceInList->firstParseTreeGroup)
 	#else
 	SANIGroupParseTree* firstParseTreeGroup = new SANIGroupParseTree();
@@ -368,7 +368,7 @@ bool GIAposRelTranslatorPermutationsClass::executeTxtRelTranslator(GIAtranslator
 	}
 	else
 	{
-		#ifndef SANI
+		#ifndef SANI_FORWARD
 		SANIpropagateInverse.clearAllWordsAlreadyFoundMatchInComponent(sentenceContents, minIndexOfMatchesFoundBackupOptimum);	//redundant?	
 		#endif
 		cerr << "GIAposRelTranslatorPermutationsClass::executeTxtRelTranslator{}: Failed to parse sentence " << currentGIApreprocessorSentenceInList->sentenceIndexOriginal << ", ";
@@ -396,7 +396,7 @@ bool GIAposRelTranslatorPermutationsClass::generateParseTreeIntroWrapper(GIAtran
 	
 	vector<GIApreprocessorPlainTextWord*>* sentenceContents = GIApreprocessorSentenceClassObject.getSentenceContents(currentGIApreprocessorSentenceInList);
 
-	#ifdef SANI
+	#ifdef SANI_FORWARD
 	int performanceMaxPermutationIndex = INT_DEFAULT_VALUE;
 	int performanceMax = 0;
 	#endif
@@ -439,7 +439,7 @@ bool GIAposRelTranslatorPermutationsClass::generateParseTreeIntroWrapper(GIAtran
 			GIApreprocessorPOStagger.printPOSambiguityInfoPermutationAssumeUnambiguous(POSambiguityInfoPermutationTemp);		
 			#endif
 	
-			#ifdef SANI
+			#ifdef SANI_FORWARD
 			SANIGroupParseTree* firstParseTreeGroupTemp = NULL;
 			#else
 			SANIGroupParseTree* firstParseTreeGroupTemp = new SANIGroupParseTree();		
@@ -451,7 +451,7 @@ bool GIAposRelTranslatorPermutationsClass::generateParseTreeIntroWrapper(GIAtran
 		{
 			(sentenceContents->at(w))->POSambiguityInfo = (*POSambiguityInfoPermutation)[w];
 		}
-		#ifdef SANI
+		#ifdef SANI_FORWARD
 		SANIGroupParseTree* firstParseTreeGroupTemp = NULL;
 		#else
 		SANIGroupParseTree* firstParseTreeGroupTemp = firstParseTreeGroup;
@@ -462,13 +462,13 @@ bool GIAposRelTranslatorPermutationsClass::generateParseTreeIntroWrapper(GIAtran
 			int performanceTemp = 0;
 			bool passedTemp = false;
 			
-			#ifdef SANI
+			#ifdef SANI_FORWARD
 			bool parserEnabled = false;
 			#ifdef SANI_SEQUENCE_GRAMMAR
 			bool createNewConnections = true; 
-			if(SANIpropagateCompactGenerate.executeTxtRelTranslatorNeuralNetwork(translatorVariables, SANIGroupTypes, sentenceContents, &firstParseTreeGroupTemp, parseIsolatedSubreferenceSets, parserEnabled, &performanceTemp, createNewConnections))
+			if(SANIpropagateCompactGenerate.generatePosRelTranslatorNeuralNetwork(translatorVariables, SANIGroupTypes, sentenceContents, &firstParseTreeGroupTemp, parseIsolatedSubreferenceSets, parserEnabled, &performanceTemp, createNewConnections))
 			#else
-			if(SANIpropagate.executeTxtRelTranslatorNeuralNetwork(translatorVariables, SANIGroupTypes, sentenceContents, &firstParseTreeGroupTemp, parseIsolatedSubreferenceSets, parserEnabled, &performanceTemp))
+			if(SANIpropagate.executePosRelTranslatorNeuralNetwork(translatorVariables, SANIGroupTypes, sentenceContents, &firstParseTreeGroupTemp, parseIsolatedSubreferenceSets, parserEnabled, &performanceTemp))
 			#endif
 			#else	
 			if(SANIpropagateInverse.generateParseTreeIntro(SANIrulesTokenLayers, SANIGroupTypes, sentenceContents, firstParseTreeGroupTemp, &performanceTemp, parseIsolatedSubreferenceSets))
@@ -484,7 +484,7 @@ bool GIAposRelTranslatorPermutationsClass::generateParseTreeIntroWrapper(GIAtran
 				#endif
 				
 				#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_RULES_PRINT_SENTENCES
-				cout << "executeTxtRelTranslatorNeuralNetwork passed" << endl;	
+				cout << "executePosRelTranslatorNeuralNetwork passed" << endl;	
 				#endif
 				#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_RULES_PRINT_PARSE_PROCESS
 				cout << "passedTemp" << endl;
@@ -503,16 +503,16 @@ bool GIAposRelTranslatorPermutationsClass::generateParseTreeIntroWrapper(GIAtran
 				#endif
 				
 				#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_RULES_PRINT_SENTENCES_FAIL_ONLY
-				cout << "executeTxtRelTranslatorNeuralNetwork failed" << endl;
+				cout << "executePosRelTranslatorNeuralNetwork failed" << endl;
 				#endif
 				#ifdef GIA_DEBUG_POS_REL_TRANSLATOR_RULES_PRINT_SENTENCES
-				cout << "executeTxtRelTranslatorNeuralNetwork failed" << endl;
+				cout << "executePosRelTranslatorNeuralNetwork failed" << endl;
 				#endif		
 			}
 	
 		#ifdef GIA_POS_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START
 		
-		#ifdef SANI
+		#ifdef SANI_FORWARD
 			if(updatePerformanceNeuralNetwork(performanceTemp, performance, currentGIApreprocessorSentenceInList, firstParseTreeGroupTemp, passedTemp, i, &performanceMaxPermutationIndex))
 			{
 				*iOptimum = i;	
@@ -555,7 +555,7 @@ bool GIAposRelTranslatorPermutationsClass::generateParseTreeIntroWrapper(GIAtran
 				parserEnabled = false; 
 				performanceTemp = 0;
 				//derive optimum pathway (store in parseTree)
-				if(!SANIpropagate.executeTxtRelTranslatorNeuralNetwork(translatorVariables, SANIGroupTypes, sentenceContents, &firstParseTreeGroup, parseIsolatedSubreferenceSets, parserEnabled, &performanceTemp))
+				if(!SANIpropagate.executePosRelTranslatorNeuralNetwork(translatorVariables, SANIGroupTypes, sentenceContents, &firstParseTreeGroup, parseIsolatedSubreferenceSets, parserEnabled, &performanceTemp))
 				{
 					result = false;	
 				}
@@ -582,7 +582,7 @@ bool GIAposRelTranslatorPermutationsClass::generateParseTreeIntroWrapper(GIAtran
 			#else
 			result = false;
 			performanceTemp = 0;
-			if(SANIpropagate.executeTxtRelTranslatorNeuralNetwork(translatorVariables, SANIGroupTypes, sentenceContents, &firstParseTreeGroup, parseIsolatedSubreferenceSets, parserEnabled, &performanceTemp))
+			if(SANIpropagate.executePosRelTranslatorNeuralNetwork(translatorVariables, SANIGroupTypes, sentenceContents, &firstParseTreeGroup, parseIsolatedSubreferenceSets, parserEnabled, &performanceTemp))
 			{
 				result = true;	
 				*performance = sentenceContents->size();	//hard set to maximum performance
@@ -613,7 +613,7 @@ bool GIAposRelTranslatorPermutationsClass::generateParseTreeIntroWrapper(GIAtran
 			int performanceTemp = 0;
 			
 			result = false;	
-			if(SANIpropagate.executeTxtRelTranslatorNeuralNetwork(translatorVariables, SANIGroupTypes, sentenceContents, &firstParseTreeGroup, parseIsolatedSubreferenceSets, parserEnabled, &performanceTemp))
+			if(SANIpropagate.executePosRelTranslatorNeuralNetwork(translatorVariables, SANIGroupTypes, sentenceContents, &firstParseTreeGroup, parseIsolatedSubreferenceSets, parserEnabled, &performanceTemp))
 			{
 				result = true;	
 				*performance = sentenceContents->size();	//hard set to maximum performance
@@ -634,7 +634,7 @@ bool GIAposRelTranslatorPermutationsClass::generateParseTreeIntroWrapper(GIAtran
 }	
 
 	
-#ifdef SANI
+#ifdef SANI_FORWARD
 //based on SANIpropagateInverseClass::updatePerformanceNeuralNetwork
 bool GIAposRelTranslatorPermutationsClass::updatePerformanceNeuralNetwork(const int performanceTemp, int* performance, GIApreprocessorSentence* currentGIApreprocessorSentenceInList, SANIGroupParseTree* firstParseTreeGroupTemp, const bool passedTemp, const int permutationIndex, int* performanceMaxPermutationIndex)
 {

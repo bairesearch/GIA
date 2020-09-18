@@ -26,7 +26,7 @@
  * File Name: GIAglobalsDefs.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m3d 01-August-2020
+ * Project Version: 3m6a 09-September-2020
  * Requirements: 
  * Description: GIA specific global definitions
  * /
@@ -742,14 +742,18 @@
 	#define GIA_DISABLE_CROSS_SENTENCE_REFERENCING	//added 2g5a/05-September-2014 - required for NLC 1j2b+, optional for NLC 1k11a+
 	#define	GIA_EXTERNAL_PROCESSING
 #endif
-//#define GIA_SEM_REL_TRANSLATOR	//GIA2
-#define GIA_POS_REL_TRANSLATOR	//GIA3	//requires GIA_PREPROCESSOR
-#ifdef GIA_POS_REL_TRANSLATOR
-	#include "SANIglobalDefs.hpp"
-	#ifndef SANI_SEQUENCE_GRAMMAR
-		#define GIA_POS_REL_TRANSLATOR_RULES_USE	//identified GIA3m3b
+#ifdef USE_SANI
+	#define GIA_POS_REL_TRANSLATOR	//GIA3	//requires GIA_PREPROCESSOR
+	#ifdef GIA_POS_REL_TRANSLATOR
+		#include "SANIglobalDefs.hpp"
+		#ifndef SANI_SEQUENCE_GRAMMAR
+			#define GIA_POS_REL_TRANSLATOR_RULES_USE	//identified GIA3m3b
+		#endif
 	#endif
+#else
+	//#define GIA_SEM_REL_TRANSLATOR	//GIA2
 #endif
+
 
 
 //#define GIA_DEBUG_DISABLE_3k_CODE
@@ -834,7 +838,7 @@
 			
 			#ifndef GIA_POS_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START_DISABLE	//added GIA3m1a
 				#ifndef SANI_PROPAGATE_ALL_POS_VALUES_SIMULTANEOUSLY	//added GIA3m1a
-					#ifdef SANI
+					#ifdef SANI_FORWARD
 						#define GIA_POS_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START		//assume mandatory (definately required for SANI_PARSE_PERFORMANCE_RECORD_PERFORMANCE)
 					#else
 						#define GIA_POS_REL_TRANSLATOR_RULES_ITERATE_OVER_UNAMBIGUOUS_POS_PERMUTATIONS_AT_START		//disabling this is not supported due to optional components (but ideally this should be disabled to increase performance)

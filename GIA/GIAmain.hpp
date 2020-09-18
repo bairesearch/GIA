@@ -26,7 +26,7 @@
  * File Name: GIAmain.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m3d 01-August-2020
+ * Project Version: 3m6a 09-September-2020
  * Requirements: 
  * Description: Main
  * /
@@ -92,7 +92,7 @@
 #define GIA_MAXIMUM_NUMBER_OF_FILES_IN_INPUT_FILE_LIST (1000000)
 
 
-#ifdef COMPILE_GIA
+#ifdef COMPILE_GIA_OR_SANI
 int main(const int argc, const char** argv);
 #endif
 #ifdef COMPILE_GIA_WITH_ANN_GENERATE_POS_TAGGER_DATABASE

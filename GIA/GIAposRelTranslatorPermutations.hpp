@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorPermutations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m3d 01-August-2020
+ * Project Version: 3m6a 09-September-2020
  * Requirements: requires plain text file
  * Description: Part-of-speech Relation Translator Permutations
  * /
@@ -46,7 +46,7 @@
 #include "GIAposRelTranslatorHybrid.hpp"
 #endif
 //#include "SANIrules.hpp"
-#ifdef SANI
+#ifdef SANI_FORWARD
 #include "SANInodes.hpp"
 #include "SANIformation.hpp"
 #ifdef SANI_SEQUENCE_GRAMMAR
@@ -86,7 +86,7 @@ class GIAposRelTranslatorPermutationsClass
 	#ifdef GIA_POS_REL_TRANSLATOR_HYBRID
 	private: GIAposRelTranslatorHybridClass GIAposRelTranslatorHybrid;
 	#endif
-	#ifdef SANI
+	#ifdef SANI_FORWARD
 	private: SANInodesClass SANInodes;
 	private: SANIformationClass SANIformation;
 #ifdef SANI_SEQUENCE_GRAMMAR
@@ -135,7 +135,7 @@ class GIAposRelTranslatorPermutationsClass
 			#else
 			private: bool generateParseTreeIntroWrapper(GIAtranslatorVariablesClass* translatorVariables, vector<XMLparserTag*>* SANIrulesTokenLayers, vector<SANIGroupType*>* SANIGroupTypes, GIApreprocessorSentence* currentGIApreprocessorSentenceInList, SANIGroupParseTree* firstParseTreeGroup, int* performance, const bool parseIsolatedSubreferenceSets, vector<uint64_t>* POSambiguityInfoPermutation);
 			#endif
-				#ifdef SANI
+				#ifdef SANI_FORWARD
 				private: bool updatePerformanceNeuralNetwork(const int performanceTemp, int* performance, GIApreprocessorSentence* currentGIApreprocessorSentenceInList, SANIGroupParseTree* firstParseTreeGroupTemp, const bool passedTemp, const int permutationIndex, int* performanceMaxPermutationIndex);
 				private: bool deleteAllSubgroupsRecurse(SANIGroupParseTree* currentParseTreeGroup, int layer);
 				#endif
