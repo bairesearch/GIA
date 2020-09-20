@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorParser.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m7a 11-September-2020
+ * Project Version: 3m7c 11-September-2020
  * Requirements: 
  * Description: Part-of-speech Relation Translator Parser
  * /
@@ -68,6 +68,7 @@
 #else
 #include "GIAposRelTranslatorParserOperations.hpp"
 #endif
+#include "SANIposRelTranslatorVariables.hpp"
 
 #include "GIAsynRelTranslatorDefineSubstances.hpp"
 #include "GIAsynRelTranslatorApplyAdvancedFeatures.hpp"
