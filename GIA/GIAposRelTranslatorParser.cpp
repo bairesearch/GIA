@@ -26,8 +26,8 @@
  * File Name: GIAposRelTranslatorParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m7c 11-September-2020
- * Requirements: 
+ * Project Version: 3n1a 15-October-2020
+ * Requirements: requires text parsed by BAI Sequentially Activated Neuronal Input (SANI)
  * Description: Part-of-speech Relation Translator Parser
  * /
  *******************************************************************************/
@@ -44,7 +44,7 @@ void GIAposRelTranslatorParserClass::createSANItranslatorVariablesFromGIAtransla
 	SANItranslatorVariables->isQuery = translatorVariables->isQuery;
 	SANItranslatorVariables->LRPpreprocessorTranslatorVariables = translatorVariables->LRPpreprocessorTranslatorVariables; 
 	#ifdef SANI_NEURAL_NETWORK
-	SANItranslatorVariables->ANNtranslatorVariables = &(GIAtranslatorVariables.ANNtranslatorVariables);
+	SANItranslatorVariables->ANNtranslatorVariables = &(translatorVariables->ANNtranslatorVariables);
 	#endif
 	#ifdef SANI_PARSE_SIMULTANEOUS
 	SANItranslatorVariables->GIAtranslatorVariables = translatorVariables;

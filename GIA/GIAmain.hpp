@@ -26,7 +26,7 @@
  * File Name: GIAmain.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m7c 11-September-2020
+ * Project Version: 3n1a 15-October-2020
  * Requirements: 
  * Description: Main
  * /
@@ -84,6 +84,9 @@
 #include "GIAneuralNetworkNonSemantic.hpp"
 #endif
 #include "GIAneuralNetworkOperations.hpp"
+#ifdef SANI_ANN
+#include "SANIneuralNetworkOperations.hpp"
+#endif
 #endif
 #ifdef GIA_POS_REL_TRANSLATOR_RULES_GIA3
 #include "GIAposRelTranslator.hpp"
@@ -144,6 +147,9 @@ class GIAmainClass
 	private: GIAneuralNetworkNonSemanticClass GIAneuralNetworkNonSemantic;
 	#endif
 	private: GIAneuralNetworkOperationsClass GIAneuralNetworkOperations;
+	#ifdef SANI_ANN
+	private: SANIneuralNetworkOperationsClass SANIneuralNetworkOperations;
+	#endif
 	#endif
 	#ifdef GIA_POS_REL_TRANSLATOR_RULES_GIA3
 	private: GIAposRelTranslatorClass GIAposRelTranslator;

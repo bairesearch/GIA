@@ -26,7 +26,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3m7c 11-September-2020
+ * Project Version: 3n1a 15-October-2020
  * Requirements: 
  * Description: Main
  * /
@@ -94,9 +94,6 @@ static char errmessage[] = "Usage:  GIA.exe [options]\n\n\twhere options are any
 "\n\t-dbread              : read from KB database (GIA knowledge base) [improves referencing capacity]"
 "\n\t-dbwrite             : write to KB database (GIA knowledge base) [saves knowledge]"
 "\n\t-dbfolder [string]   : KB database base folder path (def: /home/systemusername/source/GIAKBdatabase)"
-#endif
-#ifdef LRP_PREPROCESSOR_POS_TAGGER_DATABASE_PERSISTENT
-"\n\t-dbpostaggerfolder [string]   : pos tagger database base folder path (def: /home/systemusername/source/GIAPOStaggerDatabase)"
 #endif
 #ifdef GIA_SEM_REL_TRANSLATOR
 "\n\t-dbsemanticparserfolder [string]   : direct semantic parser (corpus or optimised) database base folder path (def: /home/systemusername/source/GIAsemanticparserdatabase)"
@@ -533,12 +530,6 @@ int main(const int argc, const char** argv)
 		semanticParserDatabaseFolderName = SHAREDvarsClass().getStringArgument(argc, argv, "-dbsemanticparserfolder");
 	}
 	#endif
-	#ifdef LRP_PREPROCESSOR_POS_TAGGER_DATABASE_PERSISTENT
-	if(SHAREDvarsClass().argumentExists(argc, argv, "-dbpostaggerfolder"))
-	{
-		POStaggerDatabaseFolderName = SHAREDvarsClass().getStringArgument(argc, argv, "-dbpostaggerfolder");
-	}
-	#endif
 
 	if(SHAREDvarsClass().argumentExists(argc, argv, "-nlprelexfolder"))
 	{
@@ -670,7 +661,7 @@ int main(const int argc, const char** argv)
 
 	if(SHAREDvarsClass().argumentExists(argc, argv, "-version"))
 	{
-		cout << "GIA.exe - Project Version: 3m7c 11-September-2020" << endl;
+		cout << "GIA.exe - Project Version: 3n1a 15-October-2020" << endl;
 		exit(EXIT_OK);
 	}
 
@@ -686,7 +677,7 @@ int main(const int argc, const char** argv)
 	translatorVariables->NLPrelexCompatibilityMode = NLPrelexCompatibilityMode;
 	translatorVariables->NLPassumePreCollapsedStanfordRelations = NLPassumePreCollapsedStanfordRelations;
 	#ifdef GIA_NEURAL_NETWORK
-	translatorVariables->ANNtranslatorVariables->firstInputNeuronInNetwork = new ANNneuron();
+	translatorVariables->ANNtranslatorVariables.firstInputNeuronInNetwork = new ANNneuron();
 	#endif
 	#ifdef GIA_NLP_CLIENT_SERVER
 	translatorVariables->NLPclient = NLPclient;
@@ -1744,7 +1735,7 @@ bool GIAmainClass::executeGIA2()
 	#ifdef GIA_NEURAL_NETWORK
 	
 	#ifdef SANI_ANN
-	GIAneuralNetworkOperations.generateNeuralNetFromSANInet(translatorVariables);	//generate GIA NLP neural network
+	SANIneuralNetworkOperations.generateNeuralNetFromSANInet(&(translatorVariables->ANNtranslatorVariables));	//generate GIA NLP neural network
 	#endif
 	#ifdef GIA_NEURAL_NETWORK_PASSIVE
 	GIAneuralNetworkOperations.generateNeuralNetFromSemanticNet(translatorVariables);	//generate GIA KB neural network
@@ -1753,11 +1744,11 @@ bool GIAmainClass::executeGIA2()
 	if(ANNdrawOutput)
 	{
 		string ANNoutputTALFileName = string(NEURAL_NETWORK_VISUALISATION_BASE_FILE_NAME) + NEURAL_NETWORK_VISUALISATION_TAL_FILE_EXTENSION;
-		ANNdisplay.outputNeuralNetworkToVectorGraphicsAndRaytrace(translatorVariables->firstInputNeuronInNetwork, ANNuseSprites, ANNuseOutputPPMFileRaytraced, ANNdisplayInOpenGL, ANNuseOutputLDRFile, ANNuseOutputSVGFile, ANNuseOutputPPMFile, ANNoutputLDRFileName, ANNoutputSVGFileName, ANNoutputPPMFileName, ANNoutputPPMFileNameRaytraced, ANNoutputTALFileName, rasterImageWidth, rasterImageHeight);
+		ANNdisplay.outputNeuralNetworkToVectorGraphicsAndRaytrace(translatorVariables->ANNtranslatorVariables.firstInputNeuronInNetwork, ANNuseSprites, ANNuseOutputPPMFileRaytraced, ANNdisplayInOpenGL, ANNuseOutputLDRFile, ANNuseOutputSVGFile, ANNuseOutputPPMFile, ANNoutputLDRFileName, ANNoutputSVGFileName, ANNoutputPPMFileName, ANNoutputPPMFileNameRaytraced, ANNoutputTALFileName, rasterImageWidth, rasterImageHeight);
 	}
 	if(ANNuseOutputXMLFile)
 	{
-		if(!GIAneuralNetworkOperations.writeNeuralNetXMLfile(ANNoutputXMLFileName, translatorVariables->firstInputNeuronInNetwork))
+		if(!GIAneuralNetworkOperations.writeNeuralNetXMLfile(ANNoutputXMLFileName, translatorVariables->ANNtranslatorVariables.firstInputNeuronInNetwork))
 		{
 			result = false;
 		}
