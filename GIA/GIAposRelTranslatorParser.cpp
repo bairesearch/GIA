@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3n2a 19-October-2020
+ * Project Version: 3n3a 29-October-2020
  * Requirements: requires text parsed by BAI Sequentially Activated Neuronal Input (SANI)
  * Description: Part-of-speech Relation Translator Parser
  * /
@@ -96,7 +96,7 @@ bool GIAposRelTranslatorParserClass::convertSentenceTxtRelationsIntoGIAnetworkNo
 		vector<XMLparserTag*>* SANIrulesTokenLayers = SANIrules.getSANIrulesTokenLayersGlobal();
 		vector<SANIGroupType*>* SANIGroupTypes = SANIrules.getSANIGroupTypesGlobal();
 		translatorVariables->parserAllowed = false;
-		if(SANIposRelTranslatorPermutations.executeTxtRelTranslatorWrapper2(translatorVariables, SANIrulesTokenLayers, SANIGroupTypes, translatorVariables->currentPreprocessorSentenceInList))
+		if(SANIposRelTranslatorPermutations.executePosRelTranslatorWrapper2(translatorVariables, SANIrulesTokenLayers, SANIGroupTypes, translatorVariables->currentPreprocessorSentenceInList))
 		{
 			result = false;
 		}
@@ -412,7 +412,7 @@ bool GIAposRelTranslatorParserClass::generateSemanticRelationsFromTxtRelationsWr
 	SANItranslatorVariablesClass SANItranslatorVariables;
 	createSANItranslatorVariablesFromGIAtranslatorVariables(translatorVariables, &SANItranslatorVariables);
 	
-	if(!SANIposRelTranslatorPermutations.executeTxtRelTranslatorWrapper2(&SANItranslatorVariables, SANIrulesTokenLayers, SANIGroupTypes, translatorVariables->currentPreprocessorSentenceInList))
+	if(!SANIposRelTranslatorPermutations.executePosRelTranslatorWrapper2(&SANItranslatorVariables, SANIrulesTokenLayers, SANIGroupTypes, translatorVariables->currentPreprocessorSentenceInList))
 	{
 		result = false;
 	}
