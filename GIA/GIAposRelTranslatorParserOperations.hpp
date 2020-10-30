@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorParserOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3n1a 15-October-2020
+ * Project Version: 3n2a 19-October-2020
  * Requirements: requires text parsed by BAI Sequentially Activated Neuronal Input (SANI)
  * Description: Part-of-speech Relation Translator Parser Operations
  * /
@@ -119,9 +119,6 @@ class GIAposRelTranslatorParserOperationsClass
 							private: bool createSemanticRelationMultiwordAlias(GIAtranslatorVariablesClass* translatorVariables, vector<GIAentityNode*>* entitySemanticRelationFunctionListArray, const bool sameReferenceSet);
 							#ifdef GIA_POS_REL_TRANSLATOR_RULES_CODE_DATE
 							private: bool createSemanticRelationMultiwordDate(GIAtranslatorVariablesClass* translatorVariables, vector<GIAentityNode*>* entitySemanticRelationFunctionListArray, const bool sameReferenceSet);
-							#endif
-							#ifdef GIA_POS_REL_TRANSLATOR_RULES_CODE_NUMBERS
-							private: bool createSemanticRelationMultiwordQuantity(GIAtranslatorVariablesClass* translatorVariables, vector<GIAentityNode*>* entitySemanticRelationFunctionListArray, const bool sameReferenceSet);
 							#endif
 };
 
