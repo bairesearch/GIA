@@ -26,7 +26,7 @@
  * File Name: GIAneuralNetworkNonSemantic.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3n4a 31-October-2020
+ * Project Version: 3o2a 08-November-2020
  * Description: Neural Network - visual representation of GIA contents in prototype biological neural network
  * /
  *******************************************************************************/
@@ -92,11 +92,10 @@ class GIAneuralNetworkNonSemanticClass
 			private: bool replaceWordsWithLemmas(LRPpreprocessorSubReferenceSet* referenceSet);
 			#endif
 			private: bool detectIndefiniteConceptDefinition(LRPpreprocessorSubReferenceSet* referenceSetSubject, LRPpreprocessorSubReferenceSet* referenceSetObject, LRPpreprocessorSubReferenceSet* referenceSetDelimiter);
-			private: bool identifyAndDemarcateConceptsInReferenceSet(GIAneuralNetworkVariablesClass* neuralNetworkVariables, LRPpreprocessorSubReferenceSet* currentSubReferenceSetInList, int referenceSetType, bool conceptDefinitionDetectedInSentence, bool* foundConcept, ANNneuron** conceptNeuronFound);				
+			private: bool identifyAndDemarcateConceptsInReferenceSet(GIAneuralNetworkVariablesClass* neuralNetworkVariables, LRPpreprocessorSubReferenceSet* currentSubReferenceSetInList, int referenceSetType, bool indefiniteConceptDefinitionFound, bool* foundConcept, ANNneuron** conceptNeuronFound);
 			private: bool detectIfWordIsConcept(const vector<LRPpreprocessorPlainTextWord*>* subReferenceSetContents, int wordIndex, bool* specificConceptDetected, int* indexOfStartOfSpecificConcept, bool indefiniteConceptDefinitionFound);	
 				private: bool detectIfWordIsDeterminer(const string word);
 				private: bool findIndexOfStartOfSpecificConcept(const vector<LRPpreprocessorPlainTextWord*>* subReferenceSetContents, const int startIndexToSearch, int* indexOfStartOfSpecificConcept);
-				private: bool detectIfWordIsPluralNoun(const LRPpreprocessorPlainTextWord* word);
 			private: bool findOrAddReferenceSetInNetwork(GIAneuralNetworkVariablesClass* neuralNetworkVariables, LRPpreprocessorSubReferenceSet* firstSubReferenceSetInList, ANNneuron** referenceSetSubnetEntry, ANNneuron* referenceSetDelimiterSubnetEntry, int referenceSetType);
 				private: void calculateNumberActiveConceptNeuronsInSubnet(ANNneuronConnection* currentNeuronConnectionInInstanceSubnet, int* numberOfActiveConceptNeuronsInSubnet, int64_t* activationAgeOfSubnetSynapsesTotal);
 				private: void calculateNumberActiveConceptNeuronsInSubnetReset(ANNneuronConnection* currentNeuronConnectionInInstanceSubnet);

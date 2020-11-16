@@ -26,7 +26,7 @@
  * File Name: GIAdatabase.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3n4a 31-October-2020
+ * Project Version: 3o2a 08-November-2020
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: performs simple GIA database functions (storing nodes in ordered arrays/vectors/maps)
  * /
@@ -45,17 +45,17 @@ static int useDatabase;
 static string KBdatabaseFolderName;
 
 #ifdef GIA_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS
-unordered_map<string, bool>* DBnetworkIndexEntityNodesLoadedList;		//load all references (ids/entity names) whenever a networkIndex node is used
+unordered_map<string,bool>* DBnetworkIndexEntityNodesLoadedList;		//load all references (ids/entity names) whenever a networkIndex node is used
 #else
-unordered_map<string, GIAnetworkIndexEntityLoaded*>* DBnetworkIndexEntityNodesLoadedList;		//do not load references (ids/entity names) whenever a networkIndex node is used - only load the total number of instances associated with that networkIndex node
+unordered_map<string,GIAnetworkIndexEntityLoaded*>* DBnetworkIndexEntityNodesLoadedList;		//do not load references (ids/entity names) whenever a networkIndex node is used - only load the total number of instances associated with that networkIndex node
 #endif
 
-unordered_map<string, GIAentityNode*>* entityNodesActiveListCompleteFastIndexDBcache;	//represents data loaded into RAM from database
-unordered_map<string, GIAentityNode*>* entityNodesActiveListCompleteFastIndexDBactive;	//represents data in entityNodesActiveListComplete
+unordered_map<string,GIAentityNode*>* entityNodesActiveListCompleteFastIndexDBcache;	//represents data loaded into RAM from database
+unordered_map<string,GIAentityNode*>* entityNodesActiveListCompleteFastIndexDBactive;	//represents data in entityNodesActiveListComplete
 
 #endif
 
-GIAentityNode* GIAdatabaseClass::findOrAddNetworkIndexEntityNodeByName(vector<GIAentityNode*>* entityNodesActiveListComplete, unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, const string* entityNodeName, bool* found, const bool addIfNonexistant, int64_t* currentEntityNodeIDinCompleteList, int64_t* currentEntityNodeIDinNetworkIndexEntityNodesList, const bool saveNetwork)
+GIAentityNode* GIAdatabaseClass::findOrAddNetworkIndexEntityNodeByName(vector<GIAentityNode*>* entityNodesActiveListComplete, unordered_map<string,GIAentityNode*>* entityNodesActiveListNetworkIndexes, const string* entityNodeName, bool* found, const bool addIfNonexistant, int64_t* currentEntityNodeIDinCompleteList, int64_t* currentEntityNodeIDinNetworkIndexEntityNodesList, const bool saveNetwork)
 {
 	#ifdef GIA_DATABASE
 	GIAentityNode* entityNodeFound = NULL;
@@ -74,14 +74,14 @@ GIAentityNode* GIAdatabaseClass::findOrAddNetworkIndexEntityNodeByName(vector<GI
 }
 
 #ifdef GIA_DATABASE
-GIAentityNode* GIAdatabaseClass::DBfindOrAddNetworkIndexEntityNodeByName(vector<GIAentityNode*>* entityNodesActiveListComplete, unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, const string* entityNodeName, bool* found, const bool addIfNonexistant, int64_t* currentEntityNodeIDinCompleteList, int64_t* currentEntityNodeIDinNetworkIndexEntityNodesList, const bool saveNetwork)
+GIAentityNode* GIAdatabaseClass::DBfindOrAddNetworkIndexEntityNodeByName(vector<GIAentityNode*>* entityNodesActiveListComplete, unordered_map<string,GIAentityNode*>* entityNodesActiveListNetworkIndexes, const string* entityNodeName, bool* found, const bool addIfNonexistant, int64_t* currentEntityNodeIDinCompleteList, int64_t* currentEntityNodeIDinNetworkIndexEntityNodesList, const bool saveNetwork)
 {
 	GIAentityNode* entityNodeFound = NULL;
 
 	#ifdef GIA_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS
-	unordered_map<string, bool>::iterator networkIndexEntityNodesLoadedListIterator = DBnetworkIndexEntityNodesLoadedList->find(*entityNodeName);
+	unordered_map<string,bool>::iterator networkIndexEntityNodesLoadedListIterator = DBnetworkIndexEntityNodesLoadedList->find(*entityNodeName);
 	#else
-	unordered_map<string, GIAnetworkIndexEntityLoaded*>::iterator networkIndexEntityNodesLoadedListIterator = DBnetworkIndexEntityNodesLoadedList->find(*entityNodeName);
+	unordered_map<string,GIAnetworkIndexEntityLoaded*>::iterator networkIndexEntityNodesLoadedListIterator = DBnetworkIndexEntityNodesLoadedList->find(*entityNodeName);
 	#endif
 
 	if(networkIndexEntityNodesLoadedListIterator != DBnetworkIndexEntityNodesLoadedList->end())
@@ -97,7 +97,7 @@ GIAentityNode* GIAdatabaseClass::DBfindOrAddNetworkIndexEntityNodeByName(vector<
 		GIAentityNode* networkIndexEntityNode;
 		if(networkIndexEntityNodeLoaded)
 		{
-			unordered_map<string, GIAentityNode*>::iterator networkIndexEntityNodesListIterator = entityNodesActiveListNetworkIndexes->find(*entityNodeName);
+			unordered_map<string,GIAentityNode*>::iterator networkIndexEntityNodesListIterator = entityNodesActiveListNetworkIndexes->find(*entityNodeName);
 			networkIndexEntityNode = networkIndexEntityNodesListIterator->second;
 		}
 		else
@@ -171,11 +171,11 @@ GIAentityNode* GIAdatabaseClass::DBfindOrAddNetworkIndexEntityNodeByName(vector<
 
 
 //uses fast search algorithm
-GIAentityNode* GIAdatabaseClass::LocalFindOrAddNetworkIndexEntityNodeByName(vector<GIAentityNode*>* entityNodesActiveListComplete, unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, const string* entityNodeName, bool* found, const bool addIfNonexistant, int64_t* currentEntityNodeIDinCompleteList, int64_t* currentEntityNodeIDinNetworkIndexEntityNodesList, const bool saveNetwork)
+GIAentityNode* GIAdatabaseClass::LocalFindOrAddNetworkIndexEntityNodeByName(vector<GIAentityNode*>* entityNodesActiveListComplete, unordered_map<string,GIAentityNode*>* entityNodesActiveListNetworkIndexes, const string* entityNodeName, bool* found, const bool addIfNonexistant, int64_t* currentEntityNodeIDinCompleteList, int64_t* currentEntityNodeIDinNetworkIndexEntityNodesList, const bool saveNetwork)
 {
 	GIAentityNode* entityNodeFound = NULL;
 
-	unordered_map<string, GIAentityNode*>::iterator networkIndexEntityNodesListIterator = entityNodesActiveListNetworkIndexes->find(*entityNodeName);
+	unordered_map<string,GIAentityNode*>::iterator networkIndexEntityNodesListIterator = entityNodesActiveListNetworkIndexes->find(*entityNodeName);
 
 	if(networkIndexEntityNodesListIterator != entityNodesActiveListNetworkIndexes->end())
 	{//networkIndex entity found
@@ -434,19 +434,19 @@ void DBreadReferencesFile(string* referencesFileName, GIAentityNode* entity)
 
 
 #ifdef GIA_DATABASE_TEST_MODE_LOAD_ALL_ENTITIES_AND_CONNECTIONS_TO_ACTIVE_LIST_UPON_READ
-void GIAdatabaseClass::DBreadDatabase(vector<GIAentityNode*>* entityNodesActiveListComplete, unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes)
+void GIAdatabaseClass::DBreadDatabase(vector<GIAentityNode*>* entityNodesActiveListComplete, unordered_map<string,GIAentityNode*>* entityNodesActiveListNetworkIndexes)
 {
 
 	initialiseDBentityNodesActiveListCompleteFastIndexDBcache();
 
 	//based on code from DBwriteNetworkIndexEntityNodesLoadedList()
 	#ifdef GIA_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS
-	for(unordered_map<string, bool>::iterator networkIndexEntityNodesLoadedListIterator = DBnetworkIndexEntityNodesLoadedList->begin(); networkIndexEntityNodesLoadedListIterator != DBnetworkIndexEntityNodesLoadedList->end(); networkIndexEntityNodesLoadedListIterator++)
+	for(unordered_map<string,bool>::iterator networkIndexEntityNodesLoadedListIterator = DBnetworkIndexEntityNodesLoadedList->begin(); networkIndexEntityNodesLoadedListIterator != DBnetworkIndexEntityNodesLoadedList->end(); networkIndexEntityNodesLoadedListIterator++)
 	{
 		string networkIndexEntityName = networkIndexEntityNodesLoadedListIterator->first;
 	}
 	#else
-	for(unordered_map<string, GIAnetworkIndexEntityLoaded*>::iterator networkIndexEntityNodesLoadedListIterator = DBnetworkIndexEntityNodesLoadedList->begin(); networkIndexEntityNodesLoadedListIterator != DBnetworkIndexEntityNodesLoadedList->end(); networkIndexEntityNodesLoadedListIterator++)
+	for(unordered_map<string,GIAnetworkIndexEntityLoaded*>::iterator networkIndexEntityNodesLoadedListIterator = DBnetworkIndexEntityNodesLoadedList->begin(); networkIndexEntityNodesLoadedListIterator != DBnetworkIndexEntityNodesLoadedList->end(); networkIndexEntityNodesLoadedListIterator++)
 	{
 		string networkIndexEntityName = networkIndexEntityNodesLoadedListIterator->first;
 		GIAnetworkIndexEntityLoaded* networkIndexEntityLoaded = networkIndexEntityNodesLoadedListIterator->second;
@@ -523,7 +523,7 @@ void GIAdatabaseClass::DBreadDatabase(vector<GIAentityNode*>* entityNodesActiveL
 
 
 
-void GIAdatabaseClass::initialiseDatabase(const bool readFromDatabase, const string newDatabaseFolderName, const bool useDatabase, vector<GIAentityNode*>* entityNodesActiveListComplete, unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes)
+void GIAdatabaseClass::initialiseDatabase(const bool readFromDatabase, const string newDatabaseFolderName, const bool useDatabase, vector<GIAentityNode*>* entityNodesActiveListComplete, unordered_map<string,GIAentityNode*>* entityNodesActiveListNetworkIndexes)
 {
 	if(useDatabase)
 	{	
@@ -567,7 +567,7 @@ void GIAdatabaseClass::initialiseDatabase(const bool readFromDatabase, const str
 	}
 }
 
-void GIAdatabaseClass::DBreadNetworkIndexEntityNodesLoadedList()	//unordered_map<string, bool>* DBnetworkIndexEntityNodesLoadedListLocal
+void GIAdatabaseClass::DBreadNetworkIndexEntityNodesLoadedList()	//unordered_map<string,bool>* DBnetworkIndexEntityNodesLoadedListLocal
 {
 	string networkIndexEntityNodesListFileName = DBgenerateFileName(NULL, NULL, NULL, GIA_DATABASE_GENERATE_FILENAME_FILE_NETWORK_INDEX_ENTITY_NODES_LIST);
 
@@ -1313,7 +1313,7 @@ void GIAdatabaseClass::DBappendVectorConnectionsReference(const string* entityNa
 }
 
 
-void GIAdatabaseClass::DBwriteNetworkIndexEntityNodesLoadedList()	//unordered_map<string, bool>* DBnetworkIndexEntityNodesLoadedList
+void GIAdatabaseClass::DBwriteNetworkIndexEntityNodesLoadedList()	//unordered_map<string,bool>* DBnetworkIndexEntityNodesLoadedList
 {
 
 	string networkIndexEntityNodesListFileName = DBgenerateFileName(NULL, NULL, NULL, GIA_DATABASE_GENERATE_FILENAME_FILE_NETWORK_INDEX_ENTITY_NODES_LIST);
@@ -1326,7 +1326,7 @@ void GIAdatabaseClass::DBwriteNetworkIndexEntityNodesLoadedList()	//unordered_ma
 	#endif
 
 	ofstream writeFileObject(networkIndexEntityNodesListFileName.c_str());
-	for(unordered_map<string, bool>::iterator networkIndexEntityNodesLoadedListIterator = DBnetworkIndexEntityNodesLoadedList->begin(); networkIndexEntityNodesLoadedListIterator != DBnetworkIndexEntityNodesLoadedList->end(); networkIndexEntityNodesLoadedListIterator++)
+	for(unordered_map<string,bool>::iterator networkIndexEntityNodesLoadedListIterator = DBnetworkIndexEntityNodesLoadedList->begin(); networkIndexEntityNodesLoadedListIterator != DBnetworkIndexEntityNodesLoadedList->end(); networkIndexEntityNodesLoadedListIterator++)
 	{
 		string networkIndexEntityName = networkIndexEntityNodesLoadedListIterator->first;
 		const char* networkIndexEntityNameCharStar = networkIndexEntityName.c_str();
@@ -1348,7 +1348,7 @@ void GIAdatabaseClass::DBwriteNetworkIndexEntityNodesLoadedList()	//unordered_ma
 	}
 	else
 	{
-		for(unordered_map<string, GIAnetworkIndexEntityLoaded*>::iterator networkIndexEntityNodesLoadedListIterator = DBnetworkIndexEntityNodesLoadedList->begin(); networkIndexEntityNodesLoadedListIterator != DBnetworkIndexEntityNodesLoadedList->end(); networkIndexEntityNodesLoadedListIterator++)
+		for(unordered_map<string,GIAnetworkIndexEntityLoaded*>::iterator networkIndexEntityNodesLoadedListIterator = DBnetworkIndexEntityNodesLoadedList->begin(); networkIndexEntityNodesLoadedListIterator != DBnetworkIndexEntityNodesLoadedList->end(); networkIndexEntityNodesLoadedListIterator++)
 		{
 			string networkIndexEntityName = networkIndexEntityNodesLoadedListIterator->first;
 			GIAnetworkIndexEntityLoaded* networkIndexEntityLoaded = networkIndexEntityNodesLoadedListIterator->second;
@@ -1388,7 +1388,7 @@ void GIAdatabaseClass::DBprintNetworkIndexEntityNodesLoadedList(const string exe
 	cout << "DBprintNetworkIndexEntityNodesLoadedList{}:" << executionStage << endl;
 
 #ifdef GIA_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS
-	for(unordered_map<string, bool>::iterator networkIndexEntityNodesLoadedListIterator = DBnetworkIndexEntityNodesLoadedList->begin(); networkIndexEntityNodesLoadedListIterator != DBnetworkIndexEntityNodesLoadedList->end(); networkIndexEntityNodesLoadedListIterator++)
+	for(unordered_map<string,bool>::iterator networkIndexEntityNodesLoadedListIterator = DBnetworkIndexEntityNodesLoadedList->begin(); networkIndexEntityNodesLoadedListIterator != DBnetworkIndexEntityNodesLoadedList->end(); networkIndexEntityNodesLoadedListIterator++)
 	{
 		string networkIndexEntityName = networkIndexEntityNodesLoadedListIterator->first;
 		bool networkIndexEntityNodeLoaded = networkIndexEntityNodesLoadedListIterator->second;
@@ -1397,7 +1397,7 @@ void GIAdatabaseClass::DBprintNetworkIndexEntityNodesLoadedList(const string exe
 		cout << "\t\tnetworkIndexEntityNodeLoaded = " << int(networkIndexEntityNodeLoaded) << endl;
 	}
 #else
-	for(unordered_map<string, GIAnetworkIndexEntityLoaded*>::iterator networkIndexEntityNodesLoadedListIterator = DBnetworkIndexEntityNodesLoadedList->begin(); networkIndexEntityNodesLoadedListIterator != DBnetworkIndexEntityNodesLoadedList->end(); networkIndexEntityNodesLoadedListIterator++)
+	for(unordered_map<string,GIAnetworkIndexEntityLoaded*>::iterator networkIndexEntityNodesLoadedListIterator = DBnetworkIndexEntityNodesLoadedList->begin(); networkIndexEntityNodesLoadedListIterator != DBnetworkIndexEntityNodesLoadedList->end(); networkIndexEntityNodesLoadedListIterator++)
 	{
 		string networkIndexEntityName = networkIndexEntityNodesLoadedListIterator->first;
 		GIAnetworkIndexEntityLoaded* networkIndexEntityLoaded = networkIndexEntityNodesLoadedListIterator->second;
@@ -1443,9 +1443,9 @@ int64_t GIAdatabaseClass::DBreadNumberOfReferencesInList(string* entityNodeName,
 void GIAdatabaseClass::initialiseDBnetworkIndexEntityNodesLoadedList()
 {
 	#ifdef GIA_DATABASE_ALWAYS_LOAD_NETWORK_INDEX_NODE_REFERENCE_LISTS
-	DBnetworkIndexEntityNodesLoadedList = new unordered_map<string, bool>;
+	DBnetworkIndexEntityNodesLoadedList = new unordered_map<string,bool>;
 	#else
-	DBnetworkIndexEntityNodesLoadedList = new unordered_map<string, GIAnetworkIndexEntityLoaded*>;
+	DBnetworkIndexEntityNodesLoadedList = new unordered_map<string,GIAnetworkIndexEntityLoaded*>;
 	#endif
 }
 
@@ -1459,11 +1459,11 @@ int GIAdatabaseClass::getUseDatabase()
 }
 
 /*
-GIAentityNode* GIAdatabaseClass::findEntityInActiveNetworkIndexList(const string* entityName, const int64_t idInstance, unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, bool* alreadyInRAM)
+GIAentityNode* GIAdatabaseClass::findEntityInActiveNetworkIndexList(const string* entityName, const int64_t idInstance, unordered_map<string,GIAentityNode*>* entityNodesActiveListNetworkIndexes, bool* alreadyInRAM)
 {
 	*alreadyInRAM = false;
 	GIAentityNode* entityNodeFoundInRAM = NULL;
-	unordered_map<string, GIAentityNode*>::iterator networkIndexEntityNodesListIterator = entityNodesActiveListNetworkIndexes->find(*entityName);
+	unordered_map<string,GIAentityNode*>::iterator networkIndexEntityNodesListIterator = entityNodesActiveListNetworkIndexes->find(*entityName);
 	if(networkIndexEntityNodesListIterator != entityNodesActiveListNetworkIndexes->end())
 	{//networkIndex entity found
 		GIAentityNode* entityNode = networkIndexEntityNodesListIterator->second;
@@ -1498,10 +1498,10 @@ GIAentityNode* GIAdatabaseClass::findEntityInActiveNetworkIndexList(const string
 }
 */
 
-GIAentityNode* GIAdatabaseClass::findEntityInActiveNetworkIndexList(const string entityName, unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes)
+GIAentityNode* GIAdatabaseClass::findEntityInActiveNetworkIndexList(const string entityName, unordered_map<string,GIAentityNode*>* entityNodesActiveListNetworkIndexes)
 {
 	GIAentityNode* entityNodeFound = NULL;
-	unordered_map<string, GIAentityNode*>::iterator networkIndexEntityNodesListIterator = entityNodesActiveListNetworkIndexes->find(entityName);
+	unordered_map<string,GIAentityNode*>::iterator networkIndexEntityNodesListIterator = entityNodesActiveListNetworkIndexes->find(entityName);
 	if(networkIndexEntityNodesListIterator != entityNodesActiveListNetworkIndexes->end())
 	{//networkIndex entity found
 		entityNodeFound = networkIndexEntityNodesListIterator->second;
@@ -1519,13 +1519,13 @@ GIAentityNode* GIAdatabaseClass::findEntityNodesActiveListCompleteFastIndexDBact
 	return findEntityNodesActiveListCompleteFastIndex(entityName, idInstance, foundNode, entityNodesActiveListCompleteFastIndexDBactive);
 }
 
-GIAentityNode* GIAdatabaseClass::findEntityNodesActiveListCompleteFastIndex(const string* entityName, const int64_t idInstance, bool* foundNode, const unordered_map<string, GIAentityNode*>* entityNodesActiveListCompleteFastIndex)
+GIAentityNode* GIAdatabaseClass::findEntityNodesActiveListCompleteFastIndex(const string* entityName, const int64_t idInstance, bool* foundNode, const unordered_map<string,GIAentityNode*>* entityNodesActiveListCompleteFastIndex)
 {
 	*foundNode = false;
 	GIAentityNode* foundEntityNode = NULL;
 	string entityNodesTempActiveListCompleteIndex = createEntityNodesActiveListCompleteFastIndexIndex(entityName, idInstance);
 
-	unordered_map<string, GIAentityNode*>::iterator entityNodesTempActiveListCompleteIterator = entityNodesActiveListCompleteFastIndexDBcache->find(entityNodesTempActiveListCompleteIndex);
+	unordered_map<string,GIAentityNode*>::iterator entityNodesTempActiveListCompleteIterator = entityNodesActiveListCompleteFastIndexDBcache->find(entityNodesTempActiveListCompleteIndex);
 
 	if(entityNodesTempActiveListCompleteIterator != entityNodesActiveListCompleteFastIndexDBcache->end())
 	{//entity found
@@ -1557,7 +1557,7 @@ void GIAdatabaseClass::addEntityNodesActiveListCompleteFastIndexDBactive(GIAenti
 	addEntityNodesActiveListCompleteFastIndex(entityNode, entityNodesActiveListCompleteFastIndexDBactive);
 }
 
-void GIAdatabaseClass::addEntityNodesActiveListCompleteFastIndex(GIAentityNode* entityNode, unordered_map<string, GIAentityNode*>* entityNodesActiveListCompleteFastIndex)
+void GIAdatabaseClass::addEntityNodesActiveListCompleteFastIndex(GIAentityNode* entityNode, unordered_map<string,GIAentityNode*>* entityNodesActiveListCompleteFastIndex)
 {
 	string entityName = entityNode->entityName;
 	int64_t idInstance = entityNode->idInstance;
@@ -1567,12 +1567,12 @@ void GIAdatabaseClass::addEntityNodesActiveListCompleteFastIndex(GIAentityNode* 
 
 void GIAdatabaseClass::initialiseDBentityNodesActiveListCompleteFastIndexDBcache()
 {
-	entityNodesActiveListCompleteFastIndexDBcache = new unordered_map<string, GIAentityNode*>;
+	entityNodesActiveListCompleteFastIndexDBcache = new unordered_map<string,GIAentityNode*>;
 }
 
 void GIAdatabaseClass::initialiseDBentityNodesActiveListCompleteFastIndexDBactive()
 {
-	entityNodesActiveListCompleteFastIndexDBactive = new unordered_map<string, GIAentityNode*>;
+	entityNodesActiveListCompleteFastIndexDBactive = new unordered_map<string,GIAentityNode*>;
 }
 
 void GIAdatabaseClass::clearDBentityNodesActiveListCompleteFastIndexDBcache()
@@ -1585,12 +1585,12 @@ void GIAdatabaseClass::clearDBentityNodesActiveListCompleteFastIndexDBactive()
 	entityNodesActiveListCompleteFastIndexDBactive->clear();
 }
 
-void GIAdatabaseClass::setDBentityNodesActiveListCompleteFastIndexDBactive(unordered_map<string, GIAentityNode*>* newEntityNodesActiveListCompleteFastIndexDBactive)
+void GIAdatabaseClass::setDBentityNodesActiveListCompleteFastIndexDBactive(unordered_map<string,GIAentityNode*>* newEntityNodesActiveListCompleteFastIndexDBactive)
 {
 	entityNodesActiveListCompleteFastIndexDBactive = newEntityNodesActiveListCompleteFastIndexDBactive;
 }
 
-unordered_map<string, GIAentityNode*>* GIAdatabaseClass::getDBentityNodesActiveListCompleteFastIndexDBactive()
+unordered_map<string,GIAentityNode*>* GIAdatabaseClass::getDBentityNodesActiveListCompleteFastIndexDBactive()
 {
 	return entityNodesActiveListCompleteFastIndexDBactive;
 }

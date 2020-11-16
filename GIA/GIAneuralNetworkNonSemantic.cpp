@@ -26,7 +26,7 @@
  * File Name: GIAneuralNetworkNonSemantic.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3n4a 31-October-2020
+ * Project Version: 3o2a 08-November-2020
  * Description: Neural Network - visual representation of GIA contents in prototype biological neural network
  * /
  *******************************************************************************/
@@ -357,8 +357,9 @@ bool GIAneuralNetworkNonSemanticClass::detectIfWordIsConcept(const vector<LRPpre
 			pluralConceptFound = false;
 		}
 
-		LRPpreprocessorMultiwordReductionWord* nounBaseFormFoundTemp;
-		if(!LRPpreprocessorWordIdentification.determineNounPluralVariant(wordTag->tagName, &nounBaseFormFoundTemp))
+		LRPpreprocessorMultiwordReductionWord* nounBaseFormFoundTemp = NULL;
+		int nounGrammaticalBaseTenseFormTemp = LRP_PREPROCESSOR_WORD_NOUN_DATABASE_TAG_BASE_TENSE_FORM_UNKNOWN;
+		if(!LRPpreprocessorWordIdentification.determineNounPluralVariant(wordTag->tagName, &nounBaseFormFoundTemp, &nounGrammaticalBaseTenseFormTemp))
 		{
 			pluralConceptFound = false;
 		}

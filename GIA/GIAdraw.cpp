@@ -26,7 +26,7 @@
  * File Name: GIAdraw.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3n4a 31-October-2020
+ * Project Version: 3o2a 08-November-2020
  * Requirements: 
  * Description: Draw - Draws GIA nodes in GIA network/tree
  * /
@@ -156,7 +156,7 @@ bool GIAdrawClass::printGIAnetworkNodes(GIAtranslatorVariablesClass* translatorV
 		delete topLevelReferenceInSceneFile;
 
 
-		unsigned char* rgbMap = new unsigned char[width*height*RGB_NUM];
+		uchar* rgbMap = new uchar[width*height*RGB_NUM];
 
 		LDopengl.setViewPort3Dortho(-100.0, width-100, height-100, -100.0, 1.0, -1.0);	//-100 is used to display the most left semantic network nodes
 

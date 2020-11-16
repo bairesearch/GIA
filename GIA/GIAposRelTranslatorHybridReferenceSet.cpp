@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorHybridReferenceSet.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3n4a 31-October-2020
+ * Project Version: 3o2a 08-November-2020
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Hybrid Reference Set
  * /
@@ -806,7 +806,7 @@ void GIAposRelTranslatorHybridReferenceSetClass::updateIndices(const bool curren
 }
 
 		
-bool GIAposRelTranslatorHybridReferenceSetClass::formSubReferenceSetTextFromWordList(const vector<LRPpreprocessorPlainTextWord*>* logicReferenceVariableWordList, vector<LRPpreprocessorPlainTextWord*>* subReferenceSetText, int firstIndexOfSubReferenceSet, int lastIndexOfSubReferenceSet)
+bool GIAposRelTranslatorHybridReferenceSetClass::formSubReferenceSetTextFromWordList(const vector<LRPpreprocessorPlainTextWord*>* logicReferenceVariableWordList, vector<LRPpreprocessorPlainTextWord*>* subReferenceSetText, const int firstIndexOfSubReferenceSet, const int lastIndexOfSubReferenceSet)
 {
 	bool result = true;
 	

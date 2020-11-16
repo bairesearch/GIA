@@ -26,7 +26,7 @@
  * File Name: GIAsynRelTranslatorParser.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3n4a 31-October-2020
+ * Project Version: 3o2a 08-November-2020
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
@@ -97,7 +97,7 @@ bool GIAsynRelTranslatorParserClass::convertSentenceSyntacticRelationsIntoGIAnet
 	//need to transfer featureArrayTemp->feature->entityDisabled information into GIAentityNodeArray...
 
 	
-	//this function is first only executed in a temporary fashion (where its output is only used by relex GIAtranslatorReferencing.linkPronounReferencesRelex())
+	//this function is first only executed in a temporary fashion (where its output is only used by relex GIAtranslatorReferencing.linkPronounReferencesRelex{})
 	translatorVariables->GIAentityNodeArray = &GIAfeatureTempEntityNodeArray;	//required by applyGrammaticalInfoToAllEntities (first execution), redistributeStanfordAndRelexRelationsCorrectPOStagsAndLemmasOfAllVerbs, GIAsynRelTranslatorRedistributeRelationsStanford/GIAsynRelTranslatorRedistributeRelationsRelex
  	GIAtranslatorGrammar.applyGrammaticalInfoToAllEntities(translatorVariables, translatorVariables->currentSentenceInList->firstFeatureInList);
 	
@@ -267,7 +267,7 @@ bool GIAsynRelTranslatorParserClass::convertSentenceSyntacticRelationsIntoGIAnet
 	#ifdef GIA_SEM_REL_TRANSLATOR_GENERATE_EXPERIENCES_FOR_CONNECTIONIST_NETWORK_TRAIN
 	if(!translatorVariables->linkPreestablishedReferencesGIA)
 	{
-		GIAsemRelTranslatorOperations.GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrainSpecial(translatorVariables);
+		GIAsemRelTranslatorOperations.GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrainSpecial(translatorVariables, translatorVariables->linkPreestablishedReferencesGIA);
 
 		GIAsemRelTranslatorOperations.determineGIAconnectionistNetworkPOStypeNames(translatorVariables->currentSentenceInList->firstFeatureInList, translatorVariables->NLPfeatureParser);
 		#ifdef GIA_SEM_REL_TRANSLATOR_WRITE_SEMANTIC_RELATIONS_UNOPTIMISED_TEXT_CORPUS
@@ -280,7 +280,7 @@ bool GIAsynRelTranslatorParserClass::convertSentenceSyntacticRelationsIntoGIAnet
 		#ifdef GIA_SEM_REL_TRANSLATOR_SUBSETS
 		if(!GIAsemRelTranslatorParser.generateAllPermutationsFromSemanticRelationsFile(translatorVariables))
 		{
-			cerr << "GIAsemRelTranslatorParser.generateAllPermutationsFromSemanticRelationsFile() failed" << endl;
+			cerr << "GIAsynRelTranslatorParserClass::convertSentenceSyntacticRelationsIntoGIAnetworkNodes{} failed" << endl;
 			exit(EXIT_ERROR);
 		}
 		#endif

@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3n4a 31-October-2020
+ * Project Version: 3o2a 08-November-2020
  * Requirements: requires text parsed by X Parser
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
@@ -35,7 +35,7 @@
 
 #include "GIAtranslatorReferencing.hpp"
 
-//unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes
+//unordered_map<string,GIAentityNode*>* entityNodesActiveListNetworkIndexes
 void GIAtranslatorReferencingClass::identifyComparisonVariableAlternateMethod(GIAtranslatorVariablesClass* translatorVariables)
 {
 	bool expectToFindComparisonVariable = false;
@@ -983,7 +983,7 @@ void GIAtranslatorReferencingClass::fillExplicitReferenceSameSetTags(GIAsentence
 }
 
 
-int GIAtranslatorReferencingClass::identifyReferenceSets(unordered_map<string, GIAentityNode*>* sentenceNetworkIndexEntityNodesList, const bool NLPdependencyRelationsType, vector<GIAentityNode*>* referenceSetDefiniteEntityList)
+int GIAtranslatorReferencingClass::identifyReferenceSets(unordered_map<string,GIAentityNode*>* sentenceNetworkIndexEntityNodesList, const bool NLPdependencyRelationsType, vector<GIAentityNode*>* referenceSetDefiniteEntityList)
 {
 
 	bool haveSentenceEntityIndexOfDeterminers = false;
@@ -996,7 +996,7 @@ int GIAtranslatorReferencingClass::identifyReferenceSets(unordered_map<string, G
 
 	int referenceSetID = 0;
 
-	for(unordered_map<string, GIAentityNode*>::iterator networkIndexEntityNodesListIter = sentenceNetworkIndexEntityNodesList->begin(); networkIndexEntityNodesListIter != sentenceNetworkIndexEntityNodesList->end(); networkIndexEntityNodesListIter++)
+	for(unordered_map<string,GIAentityNode*>::iterator networkIndexEntityNodesListIter = sentenceNetworkIndexEntityNodesList->begin(); networkIndexEntityNodesListIter != sentenceNetworkIndexEntityNodesList->end(); networkIndexEntityNodesListIter++)
 	{
 		GIAentityNode* entityNode = networkIndexEntityNodesListIter->second;
 		//cout << "entityNode->entityName = " << entityNode->entityName << endl;
@@ -1008,9 +1008,9 @@ int GIAtranslatorReferencingClass::identifyReferenceSets(unordered_map<string, G
 
 }
 
-void GIAtranslatorReferencingClass::resetReferenceSets(unordered_map<string, GIAentityNode*>* sentenceNetworkIndexEntityNodesList)
+void GIAtranslatorReferencingClass::resetReferenceSets(unordered_map<string,GIAentityNode*>* sentenceNetworkIndexEntityNodesList)
 {
-	for(unordered_map<string, GIAentityNode*>::iterator networkIndexEntityNodesListIter = sentenceNetworkIndexEntityNodesList->begin(); networkIndexEntityNodesListIter != sentenceNetworkIndexEntityNodesList->end(); networkIndexEntityNodesListIter++)
+	for(unordered_map<string,GIAentityNode*>::iterator networkIndexEntityNodesListIter = sentenceNetworkIndexEntityNodesList->begin(); networkIndexEntityNodesListIter != sentenceNetworkIndexEntityNodesList->end(); networkIndexEntityNodesListIter++)
 	{
 		GIAentityNode* entityNode = networkIndexEntityNodesListIter->second;
 		entityNode->referenceSetID = GIA_REFERENCE_SET_ID_UNDEFINED;
@@ -1107,7 +1107,7 @@ void GIAtranslatorReferencingClass::identifyReferenceSetNetworkIndexEntityEntran
 #ifdef GIA_ADVANCED_REFERENCING
 
 //based on answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork();
-void GIAtranslatorReferencingClass::createGIAcoreferenceInListBasedUponIdentifiedReferenceSets(unordered_map<string, GIAentityNode*>* sentenceNetworkIndexEntityNodesList, unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, GIAcoreference* firstGIAcoreferenceInList, vector<GIAentityNode*>* referenceSetDefiniteEntityList, const int sentenceIndex)
+void GIAtranslatorReferencingClass::createGIAcoreferenceInListBasedUponIdentifiedReferenceSets(unordered_map<string,GIAentityNode*>* sentenceNetworkIndexEntityNodesList, unordered_map<string,GIAentityNode*>* entityNodesActiveListNetworkIndexes, GIAcoreference* firstGIAcoreferenceInList, vector<GIAentityNode*>* referenceSetDefiniteEntityList, const int sentenceIndex)
 {
 	#ifdef GIA_DEBUG_QUERY2
 	cout << "**** createGIAcoreferenceInListBasedUponIdentifiedReferenceSets ***" << endl;
@@ -1148,7 +1148,7 @@ void GIAtranslatorReferencingClass::createGIAcoreferenceInListBasedUponIdentifie
 		GIAentityNode* networkEntityWithMaxNumberNodesMatched = NULL;
 		bool foundAtLeastOneMatch = false;
 
-		unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexesQuery = sentenceNetworkIndexEntityNodesList;
+		unordered_map<string,GIAentityNode*>* entityNodesActiveListNetworkIndexesQuery = sentenceNetworkIndexEntityNodesList;
 
 		#ifdef GIA_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS_CONCEPTS
 		if(GIAtranslatorOperations.checkIfSentenceIsMathTextParsablePhrase(sentenceIndex))
@@ -1262,13 +1262,13 @@ void GIAtranslatorReferencingClass::createGIAcoreferenceInListBasedUponIdentifie
 }
 
 
-void GIAtranslatorReferencingClass::createGIAcoreferenceInListBasedUponIdentifiedReferenceSet(unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexesQuery, unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, GIAreferenceTraceParameters* referenceTraceParameters, int* maxNumberOfMatchedNodes, GIAentityNode** queryEntityWithMaxNumberNodesMatched, GIAentityNode** networkEntityWithMaxNumberNodesMatched, bool* foundAtLeastOneMatch)
+void GIAtranslatorReferencingClass::createGIAcoreferenceInListBasedUponIdentifiedReferenceSet(unordered_map<string,GIAentityNode*>* entityNodesActiveListNetworkIndexesQuery, unordered_map<string,GIAentityNode*>* entityNodesActiveListNetworkIndexes, GIAreferenceTraceParameters* referenceTraceParameters, int* maxNumberOfMatchedNodes, GIAentityNode** queryEntityWithMaxNumberNodesMatched, GIAentityNode** networkEntityWithMaxNumberNodesMatched, bool* foundAtLeastOneMatch)
 {
 	int referenceSetID = referenceTraceParameters->referenceSetID;
 
 	GIAqueryTraceParameters queryTraceParameters;	//irrelevant
 
-	for(unordered_map<string, GIAentityNode*>::iterator entityIterQuery = entityNodesActiveListNetworkIndexesQuery->begin(); entityIterQuery != entityNodesActiveListNetworkIndexesQuery->end(); entityIterQuery++)
+	for(unordered_map<string,GIAentityNode*>::iterator entityIterQuery = entityNodesActiveListNetworkIndexesQuery->begin(); entityIterQuery != entityNodesActiveListNetworkIndexesQuery->end(); entityIterQuery++)
 	{//for each node in query semantic net;
 
 		GIAentityNode* currentQueryEntityNode = entityIterQuery->second;

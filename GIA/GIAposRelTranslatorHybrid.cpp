@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorHybrid.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3n4a 31-October-2020
+ * Project Version: 3o2a 08-November-2020
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Hybrid
  * /
@@ -222,7 +222,7 @@ bool GIAposRelTranslatorHybridClass::executeTxtRelTranslatorDepreciatedSentence(
 	#else
 	#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_REFERENCE_SET
 	GIAposRelTranslatorHybridLogicReference* firstLogicReferenceInList = currentLRPpreprocessorSentenceInList->firstLogicReferenceInList;
-	if(!GIAposRelTranslatorHybridReferenceSet.executeReferenceSetPreprocessor(sentenceContentsFirstWord, &sentenceContentsWordList, firstLogicReferenceInList->logicReferenceVariable, true, LRP_NLP_START_ENTITY_INDEX))
+	if(!GIAposRelTranslatorHybridReferenceSet.executeReferenceSetPreprocessor(&sentenceContentsWordList, firstLogicReferenceInList->logicReferenceVariable, true, LRP_NLP_START_ENTITY_INDEX))
 	{
 		result = false;
 	}
@@ -1353,7 +1353,7 @@ bool GIAposRelTranslatorHybridClass::updateRelationshipType(GIAentityNode* relat
 	return result;
 }
 #else
-bool GIAposRelTranslatorHybridClass::updateRelationshipTenseInformation(GIAentityNode* relationshipEntity, GIAentityNode* relationshipEntity, LRPpreprocessorSubReferenceSet* delimiterEntityTempTenseInformation, GIAtranslatorVariablesClass* translatorVariables)
+bool GIAposRelTranslatorHybridClass::updateRelationshipTenseInformation(GIAentityNode* relationshipEntity, LRPpreprocessorSubReferenceSet* delimiterEntityTempTenseInformation, GIAtranslatorVariablesClass* translatorVariables)
 {
 	bool result = true;
 	relationshipEntity->grammaticalTenseTemp = delimiterEntityTempTenseInformation->grammaticalTenseTemp;

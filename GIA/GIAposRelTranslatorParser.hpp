@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorParser.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3n4a 31-October-2020
+ * Project Version: 3o2a 08-November-2020
  * Requirements: requires text parsed by BAI Sequentially Activated Neuronal Input (SANI)
  * Description: Part-of-speech Relation Translator Parser
  * /
@@ -136,8 +136,8 @@ class GIAposRelTranslatorParserClass
 	
 	#ifdef SANI_SEMANTICALLY_DETERMINED_DYNAMIC_CONNECTIONS
 	private: bool relinkDynamicConnections(GIAtranslatorVariablesClass* translatorVariables);
-		private: bool findIdealSemanticRelationshipSourceInSentenceSubnet(GIAtranslatorVariablesClass* translatorVariables, bool relationshipSourceIsSubject, GIAentityNode* relationshipEntity, GIAentityNode* relationshipSource, GIAentityNode* relationshipTarget, GIAentityNode** relationshipSourceNewFound);
-			private: bool calculateSimilarityOfSubnets(GIAtranslatorVariablesClass* translatorVariables, GIAentityNode* relationshipEntity, GIAentityNode* relationshipSource, GIAentityNode* relationshipTarget, int* subsetSimilarity);
+		private: bool findIdealSemanticRelationshipSourceInSentenceSubnet(GIAtranslatorVariablesClass* translatorVariables, bool relationshipSourceIsSubject, GIAentityNode* relationshipEntity, GIAentityNode* relationshipSourceEntity, GIAentityNode* relationshipTargetEntity, GIAentityNode** relationshipSourceNewFound);
+			private: bool calculateSimilarityOfSubnets(GIAtranslatorVariablesClass* translatorVariables, GIAentityNode* relationshipEntity, GIAentityNode* relationshipSourceEntity, GIAentityNode* relationshipTargetEntity, int* subsetSimilarity);
 	#endif
 
 	

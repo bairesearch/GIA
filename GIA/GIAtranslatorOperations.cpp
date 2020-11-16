@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3n4a 31-October-2020
+ * Project Version: 3o2a 08-November-2020
  * Requirements: requires text parsed by X Parser
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
@@ -1229,9 +1229,9 @@ void GIAtranslatorOperationsClass::disableInstanceAndNetworkIndexEntity(GIAentit
 
 
 
-void GIAtranslatorOperationsClass::recordSentenceNetworkIndexNodesAsPermanentIfTheyAreStillEnabled(unordered_map<string, GIAentityNode*>* networkIndexEntityNodesListMap)
+void GIAtranslatorOperationsClass::recordSentenceNetworkIndexNodesAsPermanentIfTheyAreStillEnabled(unordered_map<string,GIAentityNode*>* networkIndexEntityNodesListMap)
 {
-	for(unordered_map<string, GIAentityNode*>::iterator networkIndexEntityNodesListMapIter = networkIndexEntityNodesListMap->begin(); networkIndexEntityNodesListMapIter != networkIndexEntityNodesListMap->end(); networkIndexEntityNodesListMapIter++)
+	for(unordered_map<string,GIAentityNode*>::iterator networkIndexEntityNodesListMapIter = networkIndexEntityNodesListMap->begin(); networkIndexEntityNodesListMapIter != networkIndexEntityNodesListMap->end(); networkIndexEntityNodesListMapIter++)
 	{
 		GIAentityNode* entityNode = networkIndexEntityNodesListMapIter->second;
 		if(!(entityNode->disabled))
@@ -1243,9 +1243,9 @@ void GIAtranslatorOperationsClass::recordSentenceNetworkIndexNodesAsPermanentIfT
 
 
 //(used for printing/xml write purposes)
-void GIAtranslatorOperationsClass::recordNetworkIndexNodesAsDisabledIfTheyAreNotPermanent(unordered_map<string, GIAentityNode*>* networkIndexEntityNodesListMap)
+void GIAtranslatorOperationsClass::recordNetworkIndexNodesAsDisabledIfTheyAreNotPermanent(unordered_map<string,GIAentityNode*>* networkIndexEntityNodesListMap)
 {
-	for(unordered_map<string, GIAentityNode*>::iterator networkIndexEntityNodesListMapIter = networkIndexEntityNodesListMap->begin(); networkIndexEntityNodesListMapIter != networkIndexEntityNodesListMap->end(); networkIndexEntityNodesListMapIter++)
+	for(unordered_map<string,GIAentityNode*>::iterator networkIndexEntityNodesListMapIter = networkIndexEntityNodesListMap->begin(); networkIndexEntityNodesListMapIter != networkIndexEntityNodesListMap->end(); networkIndexEntityNodesListMapIter++)
 	{
 		GIAentityNode* entityNode = networkIndexEntityNodesListMapIter->second;
 		if(!(entityNode->permanentNetworkIndex))
@@ -1256,9 +1256,9 @@ void GIAtranslatorOperationsClass::recordNetworkIndexNodesAsDisabledIfTheyAreNot
 }
 
 //(used for printing/xml write purposes)
-void GIAtranslatorOperationsClass::recordNetworkIndexNodesAsNonPermanentIfTheyAreDisabled(unordered_map<string, GIAentityNode*>* networkIndexEntityNodesListMap)
+void GIAtranslatorOperationsClass::recordNetworkIndexNodesAsNonPermanentIfTheyAreDisabled(unordered_map<string,GIAentityNode*>* networkIndexEntityNodesListMap)
 {
-	for(unordered_map<string, GIAentityNode*>::iterator networkIndexEntityNodesListMapIter = networkIndexEntityNodesListMap->begin(); networkIndexEntityNodesListMapIter != networkIndexEntityNodesListMap->end(); networkIndexEntityNodesListMapIter++)
+	for(unordered_map<string,GIAentityNode*>::iterator networkIndexEntityNodesListMapIter = networkIndexEntityNodesListMap->begin(); networkIndexEntityNodesListMapIter != networkIndexEntityNodesListMap->end(); networkIndexEntityNodesListMapIter++)
 	{
 		GIAentityNode* entityNode = networkIndexEntityNodesListMapIter->second;
 		if(entityNode->disabled)

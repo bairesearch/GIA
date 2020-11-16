@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorHybridReferenceSet.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3n4a 31-October-2020
+ * Project Version: 3o2a 08-November-2020
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Hybrid Reference Set
  * /
@@ -63,7 +63,6 @@ class GIAposRelTranslatorHybridReferenceSetClass
 	private: LRPpreprocessorWordClassClass LRPpreprocessorWordClassObject;
 	private: LRPpreprocessorWordIdentificationClass LRPpreprocessorWordIdentification;
 	#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_REFERENCE_SET
-	public: bool generateSentenceWordList(LRPpreprocessorMultiwordReductionWord* sentenceContentsFirstWord, vector<LRPpreprocessorPlainTextWord*>* logicReferenceVariableWordList);
 	#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_DEPRECIATED
 	public: bool executeReferenceSetPreprocessor(const vector<LRPpreprocessorPlainTextWord*>* logicReferenceVariableWordList, GIAposRelTranslatorHybridLogicReferenceVariable* logicReferenceVariable, const bool expectToFindSubjectAuxObjectLogicReferenceVariable, const int wordIndexSentence);
 			#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_REFERENCE_SET_PREFERENCE_VERB_OR_NOUN_OVER_ADJECTIVE_POS_AMBIGUITY
@@ -74,9 +73,6 @@ class GIAposRelTranslatorHybridReferenceSetClass
 			private: bool addReferenceSetToReferenceSet(LRPpreprocessorSubReferenceSet* firstSubReferenceSetInList, vector<LRPpreprocessorPlainTextWord*>* subReferenceSetText, const bool referenceSetDelimiter, const int wordIndexLogicReference, const int wordIndexSentence, const int delimiterType, const int delimiterSpecialCase);
 				private: bool addSubReferenceSetToReferenceSet(LRPpreprocessorSubReferenceSet* firstSubReferenceSetInList, vector<LRPpreprocessorPlainTextWord*>* subReferenceSetText, const bool referenceSetDelimiter, const int wordIndexLogicReference, const int wordIndexSentence, const int delimiterType, const int delimiterSpecialCase);
 	#endif
-			public: bool detectAuxiliary(const string currentWord);
-			public: bool detectModalAuxiliary(const string currentWord);
-			public: bool detectRcmodSameReferenceSetDelimiter(const string currentWord);
 
 	public: bool hasReferenceSet(LRPpreprocessorSubReferenceSet* referenceSet);
 	public: void setReferenceSetText(LRPpreprocessorSubReferenceSet* referenceSet, vector<LRPpreprocessorPlainTextWord*>* text);

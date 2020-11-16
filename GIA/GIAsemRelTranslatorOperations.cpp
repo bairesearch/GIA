@@ -26,7 +26,7 @@
  * File Name: GIAsemRelTranslatorOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3n4a 31-October-2020
+ * Project Version: 3o2a 08-November-2020
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  * Description: Semantic Relation Translator
  * /
@@ -219,7 +219,7 @@ void GIAsemRelTranslatorOperationsClass::writeSemanticParserCorpusFileOptimised(
 #endif
 
 //debug only:
-void GIAsemRelTranslatorDatabaseClass::writeSemanticRelationsFile(const GIAtranslatorVariablesClass* translatorVariables, const string sentenceSemanticRelationsFileName)
+void GIAsemRelTranslatorOperationsClass::writeSemanticRelationsFile(const GIAtranslatorVariablesClass* translatorVariables, const string sentenceSemanticRelationsFileName)
 {
 	string sentenceSemanticRelationsText = generateSemanticParserCorpusSemanticRelationsText(GIAsemRelTranslatorDatabase.getFirstRelationInSemanticParserSentenceList());
 	SHAREDvars.writeStringToFile(sentenceSemanticRelationsFileName, &semanticParserCorpusDatabaseSentenceText);

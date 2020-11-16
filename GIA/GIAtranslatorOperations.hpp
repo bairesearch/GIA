@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3n4a 31-October-2020
+ * Project Version: 3o2a 08-November-2020
  * Requirements: requires text parsed by X Parser
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
@@ -93,7 +93,7 @@ public:
 	bool linkPreestablishedReferencesGIA;
 	
 	//network variables;
-	unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes;
+	unordered_map<string,GIAentityNode*>* entityNodesActiveListNetworkIndexes;
 	vector<GIAentityNode*>* entityNodesActiveListComplete;
 	int64_t currentEntityNodeIDInNetworkIndexEntityNodesList;
 	int64_t currentEntityNodeIDInCompleteList;
@@ -182,11 +182,11 @@ class GIAtranslatorOperationsClass
 	public: GIAentityNode* getPropertyRelationshipSourceEntity(GIAentityNode* relationshipEntity);
 	public: GIAentityNode* getDefinitionRelationshipTargetEntity(GIAentityNode* relationshipEntity);
 	public: GIAentityNode* getDefinitionRelationshipSourceEntity(GIAentityNode* relationshipEntity);
-	public: GIAentityNode* getPropertyRelationshipObjectEntity(GIAentityConnection* connection);	
+	public: GIAentityNode* getPropertyRelationshipObjectEntity(GIAentityConnection* relationshipConnection);	
 	public: GIAentityNode* getPropertyRelationshipSubjectEntity(GIAentityConnection* relationshipConnectionReverse);
-	public: GIAentityNode* getDefinitionRelationshipObjectEntity(GIAentityConnection* connection);
+	public: GIAentityNode* getDefinitionRelationshipObjectEntity(GIAentityConnection* relationshipConnection);
 	public: GIAentityNode* getDefinitionRelationshipSubjectEntity(GIAentityConnection* relationshipConnectionReverse);
-		public: GIAentityNode* getRelationshipObjectEntity(GIAentityConnection* connection);
+		public: GIAentityNode* getRelationshipObjectEntity(GIAentityConnection* relationshipConnection);
 			public: GIAentityNode* getRelationshipObjectEntity(GIAentityNode* relationshipEntity);
 				public: GIAentityConnection* getRelationshipObjectEntityConnection(GIAentityNode* relationshipEntity);
 		public: GIAentityNode* getRelationshipSubjectEntity(GIAentityConnection* relationshipConnectionReverse);
@@ -264,9 +264,9 @@ class GIAtranslatorOperationsClass
 	public: void disableInstanceAndNetworkIndexEntityBasedUponFirstSentenceToAppearInNetwork(GIAentityNode* entity);
 	public: void disableInstanceAndNetworkIndexEntity(GIAentityNode* entity);
 
-	public: void recordSentenceNetworkIndexNodesAsPermanentIfTheyAreStillEnabled(unordered_map<string, GIAentityNode*>* networkIndexEntityNodesListMap);
-	public: void recordNetworkIndexNodesAsDisabledIfTheyAreNotPermanent(unordered_map<string, GIAentityNode*>* networkIndexEntityNodesListMap);
-	public: void recordNetworkIndexNodesAsNonPermanentIfTheyAreDisabled(unordered_map<string, GIAentityNode*>* networkIndexEntityNodesListMap);
+	public: void recordSentenceNetworkIndexNodesAsPermanentIfTheyAreStillEnabled(unordered_map<string,GIAentityNode*>* networkIndexEntityNodesListMap);
+	public: void recordNetworkIndexNodesAsDisabledIfTheyAreNotPermanent(unordered_map<string,GIAentityNode*>* networkIndexEntityNodesListMap);
+	public: void recordNetworkIndexNodesAsNonPermanentIfTheyAreDisabled(unordered_map<string,GIAentityNode*>* networkIndexEntityNodesListMap);
 
 	public: void convertRelexPOStypeToWordnetWordType(const string* relexPOStype, int* grammaticalWordTypeTemp, const bool grammaticallyStrict);
 	public: void convertStanfordPOStagToRelexPOStypeAndWordnetWordType(const string* POStag, string* relexPOStype, int* grammaticalWordTypeTemp, const bool grammaticallyStrict);

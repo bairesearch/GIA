@@ -26,7 +26,7 @@
  * File Name: GIAmain.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3n4a 31-October-2020
+ * Project Version: 3o2a 08-November-2020
  * Requirements: 
  * Description: Main
  * /
@@ -661,7 +661,7 @@ int main(const int argc, const char** argv)
 
 	if(SHAREDvarsClass().argumentExists(argc, argv, "-version"))
 	{
-		cout << "GIA.exe - Project Version: 3n4a 31-October-2020" << endl;
+		cout << "GIA.exe - Project Version: 3o2a 08-November-2020" << endl;
 		exit(EXIT_OK);
 	}
 
@@ -669,7 +669,7 @@ int main(const int argc, const char** argv)
 	GIAtranslatorVariablesClass* translatorVariables = new GIAtranslatorVariablesClass();
 	translatorVariables->isQuery = false;
 	translatorVariables->entityNodesActiveListComplete = new vector<GIAentityNode*>;
-	translatorVariables->entityNodesActiveListNetworkIndexes = new unordered_map<string, GIAentityNode*>;
+	translatorVariables->entityNodesActiveListNetworkIndexes = new unordered_map<string,GIAentityNode*>;
 	translatorVariables->timeConditionNodesActiveList = new unordered_map<int64_t, GIAtimeConditionNode*>;
 	translatorVariables->entityNodesActiveListSentences = new map<int, vector<GIAentityNode*>*>;
 	translatorVariables->NLPfeatureParser = NLPfeatureParser;
@@ -688,7 +688,7 @@ int main(const int argc, const char** argv)
 	GIAtranslatorVariablesClass* translatorVariablesQuery = new GIAtranslatorVariablesClass();
 	translatorVariablesQuery->isQuery = true;
 	translatorVariablesQuery->entityNodesActiveListComplete = new vector<GIAentityNode*>;
-	translatorVariablesQuery->entityNodesActiveListNetworkIndexes = new unordered_map<string, GIAentityNode*>;
+	translatorVariablesQuery->entityNodesActiveListNetworkIndexes = new unordered_map<string,GIAentityNode*>;
 	translatorVariablesQuery->timeConditionNodesActiveList = new unordered_map<int64_t, GIAtimeConditionNode*>;
 	translatorVariablesQuery->entityNodesActiveListSentences = new map<int, vector<GIAentityNode*>*>;
 	translatorVariablesQuery->NLPfeatureParser = queryNLPfeatureParser;
@@ -1782,7 +1782,7 @@ bool GIAmainClass::executeGIA2()
 	{
 		#ifdef GIA_DATABASE_DO_NOT_WRITE_DISABLED_ENTITY_NODES
 		//set networkIndexEntityLoaded disabled values (used by DBwriteNetworkIndexEntityNodesLoadedList() to prevent the writing of disabled networkIndex nodes...)
-		for(unordered_map<string, GIAentityNode*>::iterator networkIndexEntityNodesListMapIter = translatorVariables->entityNodesActiveListNetworkIndexes->begin(); networkIndexEntityNodesListMapIter != translatorVariables->entityNodesActiveListNetworkIndexes->end(); networkIndexEntityNodesListMapIter++)
+		for(unordered_map<string,GIAentityNode*>::iterator networkIndexEntityNodesListMapIter = translatorVariables->entityNodesActiveListNetworkIndexes->begin(); networkIndexEntityNodesListMapIter != translatorVariables->entityNodesActiveListNetworkIndexes->end(); networkIndexEntityNodesListMapIter++)
 		{
 			GIAentityNode* entityNode = networkIndexEntityNodesListMapIter->second;
 			if(entityNode->disabled)

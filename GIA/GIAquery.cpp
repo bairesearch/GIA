@@ -26,7 +26,7 @@
  * File Name: GIAquery.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3n4a 31-October-2020
+ * Project Version: 3o2a 08-November-2020
  * Requirements: requires a GIA network created for both existing knowledge and the query (question)
  * Description: Query - locates (and tags for highlighting) a given query GIA network (subnet) within a larger GIA network of existing knowledge, and identifies the exact answer if applicable (if a comparison variable has been defined within the GIA query network)
  * ?Limitations: will only locate a exact answer (based upon a comparison node) if it provides the maximum number of matched nodes
@@ -159,7 +159,7 @@ GIAreferenceTraceParameters::~GIAreferenceTraceParameters(void)
 
 
 #ifdef GIA_QUERY_SIMPLIFIED_SEARCH
-GIAentityNode* GIAqueryClass::answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork2(unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes, unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexesQuery, const bool detectComparisonVariable, GIAentityNode* comparisonVariableNode, const bool* foundAnswer, GIAentityNode* queryAnswerNode, const double* numberOfMatchedNodes, const string* queryAnswerContext)
+GIAentityNode* GIAqueryClass::answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork2(unordered_map<string,GIAentityNode*>* entityNodesActiveListNetworkIndexes, unordered_map<string,GIAentityNode*>* entityNodesActiveListNetworkIndexesQuery, const bool detectComparisonVariable, GIAentityNode* comparisonVariableNode, const bool* foundAnswer, GIAentityNode* queryAnswerNode, const double* numberOfMatchedNodes, const string* queryAnswerContext)
 {
 	bool traceModeIsQuery = TRACE_MODE_IS_QUERY_TRUE;
 
@@ -168,7 +168,7 @@ GIAentityNode* GIAqueryClass::answerQueryOrFindAndTagForHighlightingMatchingStru
 	bool foundBestAnswerCandidate = false;
 	int maxNumberMatchedNodes = 0;
 	
-	for(unordered_map<string, GIAentityNode*>::iterator entityIterQuery = entityNodesActiveListNetworkIndexesQuery->begin(); entityIterQuery != entityNodesActiveListNetworkIndexesQuery->end(); entityIterQuery++)
+	for(unordered_map<string,GIAentityNode*>::iterator entityIterQuery = entityNodesActiveListNetworkIndexesQuery->begin(); entityIterQuery != entityNodesActiveListNetworkIndexesQuery->end(); entityIterQuery++)
 	{//for each node in query semantic net;
 
 		GIAentityNode* currentQueryEntityNode = entityIterQuery->second;
@@ -599,8 +599,8 @@ bool GIAqueryClass::testReferencedEntityNodeForExactNameMatch2(GIAentityNode* qu
 
 GIAentityNode* GIAqueryClass::answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork(GIAtranslatorVariablesClass* translatorVariables, GIAtranslatorVariablesClass* translatorVariablesQuery, const bool detectComparisonVariable, GIAentityNode* comparisonVariableNode, bool* foundAnswer, GIAentityNode* queryAnswerNode, double* numberOfMatchedNodes, string* queryAnswerContext)
 {
-	unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexes = translatorVariables->entityNodesActiveListNetworkIndexes;
-	unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexesQuery = translatorVariablesQuery->entityNodesActiveListNetworkIndexes;
+	unordered_map<string,GIAentityNode*>* entityNodesActiveListNetworkIndexes = translatorVariables->entityNodesActiveListNetworkIndexes;
+	unordered_map<string,GIAentityNode*>* entityNodesActiveListNetworkIndexesQuery = translatorVariablesQuery->entityNodesActiveListNetworkIndexes;
 							
 	bool traceModeIsQuery = TRACE_MODE_IS_QUERY_TRUE;
 
@@ -613,7 +613,7 @@ GIAentityNode* GIAqueryClass::answerQueryOrFindAndTagForHighlightingMatchingStru
 
 	bool foundAtLeastOneMatch = false;
 
-	for(unordered_map<string, GIAentityNode*>::iterator entityIterQuery = entityNodesActiveListNetworkIndexesQuery->begin(); entityIterQuery != entityNodesActiveListNetworkIndexesQuery->end(); entityIterQuery++)
+	for(unordered_map<string,GIAentityNode*>::iterator entityIterQuery = entityNodesActiveListNetworkIndexesQuery->begin(); entityIterQuery != entityNodesActiveListNetworkIndexesQuery->end(); entityIterQuery++)
 	{//for each node in query semantic net;
 
 		GIAentityNode* currentQueryEntityNode = entityIterQuery->second;
@@ -1728,11 +1728,11 @@ void GIAqueryClass::generateTexualContextEntityString(string* texualContextEntit
 
 
 
-double GIAqueryClass::determineMaxConfidenceOfQuerySemanticNetwork(unordered_map<string, GIAentityNode*>* entityNodesActiveListNetworkIndexesQuery)
+double GIAqueryClass::determineMaxConfidenceOfQuerySemanticNetwork(unordered_map<string,GIAentityNode*>* entityNodesActiveListNetworkIndexesQuery)
 {
 	double maxNumberOfMatchedNodes = 0.0;
 
-	for(unordered_map<string, GIAentityNode*>::iterator connectionIterQuery = entityNodesActiveListNetworkIndexesQuery->begin(); connectionIterQuery != entityNodesActiveListNetworkIndexesQuery->end(); connectionIterQuery++)
+	for(unordered_map<string,GIAentityNode*>::iterator connectionIterQuery = entityNodesActiveListNetworkIndexesQuery->begin(); connectionIterQuery != entityNodesActiveListNetworkIndexesQuery->end(); connectionIterQuery++)
 	{//for each node in query semantic net;
 
 		GIAentityNode* currentQueryEntityNode = connectionIterQuery->second;

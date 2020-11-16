@@ -26,7 +26,7 @@
  * File Name: GIAtranslator.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3n4a 31-October-2020
+ * Project Version: 3o2a 08-November-2020
  * Requirements: requires text parsed by X Parser
  * Description: Translator
  * /
@@ -223,16 +223,16 @@ bool GIAtranslatorClass::convertSentenceRelationsIntoGIAnetworkNodesWrapper(GIAt
 		#endif
 
 		GIAcoreference* firstGIAcoreferenceInList = new GIAcoreference();
-		unordered_map<string, GIAentityNode*> sentenceNetworkIndexEntityNodesList;
+		unordered_map<string,GIAentityNode*> sentenceNetworkIndexEntityNodesList;
 		
 		//backup current database structures and create temporary database structures for !linkPreestablishedReferencesGIA run;
-		unordered_map<string, GIAentityNode*>* entityNodesActiveListCompleteFastIndexDBactiveOriginal;
-		unordered_map<string, GIAentityNode*>* entityNodesActiveListCompleteFastIndexDBactiveTemp;
+		unordered_map<string,GIAentityNode*>* entityNodesActiveListCompleteFastIndexDBactiveOriginal;
+		unordered_map<string,GIAentityNode*>* entityNodesActiveListCompleteFastIndexDBactiveTemp;
 		#ifdef GIA_DATABASE
 		if(GIAdatabase.getUseDatabase() != GIA_DATABASE_FALSE)
 		{
 			entityNodesActiveListCompleteFastIndexDBactiveOriginal = GIAdatabase.getDBentityNodesActiveListCompleteFastIndexDBactive();
-			entityNodesActiveListCompleteFastIndexDBactiveTemp = new unordered_map<string, GIAentityNode*>;
+			entityNodesActiveListCompleteFastIndexDBactiveTemp = new unordered_map<string,GIAentityNode*>;
 			GIAdatabase.setDBentityNodesActiveListCompleteFastIndexDBactive(entityNodesActiveListCompleteFastIndexDBactiveTemp);
 		}
 		#endif
@@ -440,7 +440,14 @@ void GIAtranslatorClass::createAndLinkNonSpecificConceptsForAllEntities(GIAtrans
 
 			//found instance in network matching concept...
 			bool sameReferenceSet = false;
-			GIAtranslatorOperations.connectDefinitionToEntity(entity, nonSpecificConceptEntity, sameReferenceSet);
+			
+			#ifdef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
+			//see "create intermediary auxiliary 'have'/'be' (property/definition relationship entity)" of GIAsynRelTranslatorGeneric.cpp:genericDependecyRelationInterpretation
+			GIAentityNode* relationshipEntity = GIAtranslatorOperations.findOrAddEntityNodeByNameSimpleWrapperRelationshipArtificialDefinition(entity1, entity2, translatorVariables);
+			GIAtranslatorOperations.connectDefinitionToEntity(entity, nonSpecificConceptEntity, relationshipEntity, sameReferenceSet, translatorVariables);
+			#else
+			GIAtranslatorOperations.connectDirectDefinitionToEntity(entity, nonSpecificConceptEntity, sameReferenceSet, translatorVariables);				
+			#endif
 		}
 	}
 }
