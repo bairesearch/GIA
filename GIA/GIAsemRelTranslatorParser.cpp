@@ -26,7 +26,7 @@
  * File Name: GIAsemRelTranslatorParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3o2a 08-November-2020
+ * Project Version: 3o3a 16-November-2020
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  * Description: Semantic Relation Translator Parser
  * /
@@ -46,7 +46,7 @@
 #ifdef GIA_SEM_REL_TRANSLATOR
 
 //based on convertSentenceSyntacticRelationsIntoGIAnetworkNodes{}:
-bool GIAsemRelTranslatorParserClass::convertSentenceSemanticRelationsIntoGIAnetworkNodes(GIAtranslatorVariablesClass* translatorVariables, const bool linkPreestablishedReferencesGIA, GIAcoreference* firstGIAcoreferenceInList)
+bool GIAsemRelTranslatorParserClass::convertSentenceSemanticRelationsIntoGIAnetworkNodes(GIAtranslatorVariablesClass* translatorVariables, bool linkPreestablishedReferencesGIA, GIAcoreference* firstGIAcoreferenceInList)
 {
 	bool result = true;
 	
@@ -563,7 +563,7 @@ void GIAsemRelTranslatorParserClass::identifyComparisonVariableBasedOnSemanticRe
 
 	if(translatorVariables->currentSentenceInList->isQuestion)
 	{
-		const GIArelation* currentRelationInList = translatorVariables->currentSentenceInList->firstRelationInList;
+		GIArelation* currentRelationInList = translatorVariables->currentSentenceInList->firstRelationInList;
  		while(currentRelationInList->next != NULL)
 		{
 			GIAentityNode* entityNodes[2];
@@ -984,7 +984,7 @@ void GIAsemRelTranslatorParserClass::defineConnectionsBasedOnSemanticRelations(G
 }
 	
 	
-bool GIAsemRelTranslatorParserClass::findMatchingObject(GIAtranslatorVariablesClass* translatorVariables, const string semanticRelationName, const int entity2Index, GIArelation** currentRelationInList2, int* entity2Index2)
+bool GIAsemRelTranslatorParserClass::findMatchingObject(GIAtranslatorVariablesClass* translatorVariables, string semanticRelationName, int entity2Index, GIArelation** currentRelationInList2, int* entity2Index2)
 {
 	bool foundMatchingObject = false;
 
@@ -1169,7 +1169,7 @@ void GIAsemRelTranslatorParserClass::defineQuantitiesBasedOnSemanticRelations(GI
 bool GIAsemRelTranslatorParserClass::generateAllPermutationsFromSemanticRelationsFile(GIAtranslatorVariablesClass* translatorVariables)
 {
 	GIAfeature* firstFeatureInList = translatorVariables->currentSentenceInList->firstFeatureInList;
-	const int NLPfeatureParser = translatorVariables->NLPfeatureParser;
+	int NLPfeatureParser = translatorVariables->NLPfeatureParser;
 	
 	//code based on loadSemanticParserCorpusDatabaseFile{}:
 	bool result = true;

@@ -26,7 +26,7 @@
  * File Name: GIAsentenceClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3o2a 08-November-2020
+ * Project Version: 3o3a 16-November-2020
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Sentence Class
  * /
@@ -357,12 +357,12 @@ class GIAsentenceClassClass
 				private: void copyStanfordMention(GIAstanfordCoreNLPmention* firstMentionInListToCopy, GIAstanfordCoreNLPmention* firstMentionInList);
 			#endif
 
-	public: int calculateNumberOfWordsInSentence(const GIAfeature* firstFeatureInList);
+	public: int calculateNumberOfWordsInSentence(GIAfeature* firstFeatureInList);
 	
 	int getMinIndexOfDynamicallyGeneratedEntity(GIAsentence* currentSentenceInList);
 	int getMaxIndexOfDynamicallyGeneratedEntity(GIAsentence* currentSentenceInList);
-	int getMinIndexOfDynamicallyGeneratedEntity(const int numberOfWordsInSentence);
-	int getMaxIndexOfDynamicallyGeneratedEntity(const int numberOfWordsInSentence);
+	int getMinIndexOfDynamicallyGeneratedEntity(int numberOfWordsInSentence);
+	int getMaxIndexOfDynamicallyGeneratedEntity(int numberOfWordsInSentence);
 	bool relationIndexIsNormal(int relationIndex);
 };
 

@@ -26,7 +26,7 @@
  * File Name: GIAsemRelTranslatorOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3o2a 08-November-2020
+ * Project Version: 3o3a 16-November-2020
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  * Description: Semantic Relation Translator
  * /
@@ -42,7 +42,7 @@
 
 #ifdef GIA_SEM_REL_TRANSLATOR_COMMON
 
-GIArelation* GIAsemRelTranslatorOperationsClass::GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(const GIAtranslatorVariablesClass* translatorVariables, int connectionType, int entityIndex1, int entityIndex2, bool sameReferenceSet)
+GIArelation* GIAsemRelTranslatorOperationsClass::GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAtranslatorVariablesClass* translatorVariables, int connectionType, int entityIndex1, int entityIndex2, bool sameReferenceSet)
 {
 	string GIA2semanticDependencyRelationText = "";
 	GIArelation* GIA2semanticDependencyRelation = GIAsemRelTranslatorDatabase.getCurrentRelationInSemanticParserSentenceList();
@@ -70,7 +70,7 @@ void GIA2nonHeuristicImplementationRemoveExperiencesForConnectionistNetworkTrain
 */
 
 //this function [recording aux/cop/det syntatical dependency relations] is required to extract tense and perform instance/networkIndex identification once GIA2 lookup has been performed: it is only currently supported by Stanford parser
-void GIAsemRelTranslatorOperationsClass::GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrainSpecial(const GIAtranslatorVariablesClass* translatorVariables, const bool linkPreestablishedReferencesGIA)
+void GIAsemRelTranslatorOperationsClass::GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrainSpecial(GIAtranslatorVariablesClass* translatorVariables, bool linkPreestablishedReferencesGIA)
 {
 	#ifndef GIA_SEM_REL_TRANSLATOR_SUPPORT_USE_RELEX_COMPATIBILITY_MODE_FOR_FEATURE_PARSER_TO_GENERATE_ADDITIONAL_RELATIONS_REQUIRED_BY_GIA2
 	if(translatorVariables->NLPdependencyRelationsType == GIA_DEPENDENCY_RELATIONS_TYPE_STANFORD)
@@ -78,7 +78,7 @@ void GIAsemRelTranslatorOperationsClass::GIA2nonHeuristicImplementationGenerateE
 	#endif
 		if(!linkPreestablishedReferencesGIA)
 		{
-			const GIArelation* currentRelationInList = translatorVariables->currentSentenceInList->firstRelationInList;
+			GIArelation* currentRelationInList = translatorVariables->currentSentenceInList->firstRelationInList;
 
 			while(currentRelationInList->next != NULL)
 			{
@@ -134,7 +134,7 @@ void GIAsemRelTranslatorOperationsClass::GIA2nonHeuristicImplementationGenerateE
 	#endif
 }
 
-void GIAsemRelTranslatorOperationsClass::generateGIA2semanticDependencyRelation(constEffective vector<GIAentityNode*>* GIAentityNodeArray, int connectionType, int entityIndex1, int entityIndex2, bool sameReferenceSet, string* GIA2semanticDependencyRelationText, GIArelation* GIA2semanticDependencyRelation)
+void GIAsemRelTranslatorOperationsClass::generateGIA2semanticDependencyRelation(vector<GIAentityNode*>* GIAentityNodeArray, int connectionType, int entityIndex1, int entityIndex2, bool sameReferenceSet, string* GIA2semanticDependencyRelationText, GIArelation* GIA2semanticDependencyRelation)
 {
 	#ifdef GIA_SEM_REL_TRANSLATOR_SUPPORT_QUERIES
 	string entityWord1 = (*GIAentityNodeArray)[entityIndex1]->entityName;
@@ -208,7 +208,7 @@ void GIAsemRelTranslatorOperationsClass::generateGIA2semanticDependencyRelation(
 
 #ifndef GIA_SEM_REL_TRANSLATOR_WRITE_SEMANTIC_RELATIONS_UNOPTIMISED_TEXT_CORPUS_OLD
 
-void GIAsemRelTranslatorOperationsClass::writeSemanticParserCorpusFileOptimised(const GIAtranslatorVariablesClass* translatorVariables)
+void GIAsemRelTranslatorOperationsClass::writeSemanticParserCorpusFileOptimised(GIAtranslatorVariablesClass* translatorVariables)
 {
 	string sentenceSemanticRelationsText = generateSemanticParserCorpusSemanticRelationsText(GIAsemRelTranslatorDatabase.getFirstRelationInSemanticParserSentenceList());
 	GIAsemRelTranslatorDatabase.writeSemanticParserCorpusFile(translatorVariables->currentSentenceInList->firstFeatureInList, &sentenceSemanticRelationsText);
@@ -219,16 +219,16 @@ void GIAsemRelTranslatorOperationsClass::writeSemanticParserCorpusFileOptimised(
 #endif
 
 //debug only:
-void GIAsemRelTranslatorOperationsClass::writeSemanticRelationsFile(const GIAtranslatorVariablesClass* translatorVariables, const string sentenceSemanticRelationsFileName)
+void GIAsemRelTranslatorOperationsClass::writeSemanticRelationsFile(GIAtranslatorVariablesClass* translatorVariables, string sentenceSemanticRelationsFileName)
 {
 	string sentenceSemanticRelationsText = generateSemanticParserCorpusSemanticRelationsText(GIAsemRelTranslatorDatabase.getFirstRelationInSemanticParserSentenceList());
 	SHAREDvars.writeStringToFile(sentenceSemanticRelationsFileName, &semanticParserCorpusDatabaseSentenceText);
 }
 
-string GIAsemRelTranslatorOperationsClass::generateSemanticParserCorpusSemanticRelationsText(const GIArelation* firstSemanticRelationInList)
+string GIAsemRelTranslatorOperationsClass::generateSemanticParserCorpusSemanticRelationsText(GIArelation* firstSemanticRelationInList)
 {
 	string sentenceSemanticRelationsText = "";
-	const GIArelation* currentSemanticRelationInList = firstSemanticRelationInList;
+	GIArelation* currentSemanticRelationInList = firstSemanticRelationInList;
 	while(currentSemanticRelationInList->next != NULL)
 	{
 		string GIA2semanticDependencyRelation = generateGIA2semanticDependencyRelationText(currentSemanticRelationInList->relationGovernor, currentSemanticRelationInList->relationDependent, currentSemanticRelationInList->relationType, currentSemanticRelationInList->relationGovernorIndex, currentSemanticRelationInList->relationDependentIndex, currentSemanticRelationInList->sameReferenceSet);
@@ -244,7 +244,7 @@ string GIAsemRelTranslatorOperationsClass::generateSemanticParserCorpusSemanticR
 
 #ifdef GIA_SEM_REL_TRANSLATOR
 
-void GIAsemRelTranslatorOperationsClass::determineGIAconnectionistNetworkPOStypeNames(GIAfeature* firstFeatureInList, const int NLPfeatureParser)
+void GIAsemRelTranslatorOperationsClass::determineGIAconnectionistNetworkPOStypeNames(GIAfeature* firstFeatureInList, int NLPfeatureParser)
 {
 	GIAfeature* currentFeatureInSentence = firstFeatureInList;
 	while(currentFeatureInSentence->next != NULL)
@@ -552,7 +552,7 @@ void GIAsemRelTranslatorOperationsClass::determineGIAconnectionistNetworkPOStype
 #ifdef GIA_SEM_REL_TRANSLATOR_SUBSETS_OPTIMISE_BASED_ON_CONJUNCTIONS
 //based on NLC generateLogicalConditionImplicitConjunctionsAndIdentifyCommand
 //eg extracts "The pie has a car [GIA_SEM_REL_TRANSLATOR_POS_TYPE_SPECIAL_REDUCED_CONJUNCTION] chicken" from "The pie has a car, bike, and chicken." (where centralWord corresponds to chicken; ie 10)
-GIAfeature* GIAsemRelTranslatorOperationsClass::generateOptimisedFeatureSubsetBasedOnContextualConjunctions(GIAfeature* firstFeatureInSentenceSubset, const int centralWord, bool* optimisedBasedOnContextualConjunctions)
+GIAfeature* GIAsemRelTranslatorOperationsClass::generateOptimisedFeatureSubsetBasedOnContextualConjunctions(GIAfeature* firstFeatureInSentenceSubset, int centralWord, bool* optimisedBasedOnContextualConjunctions)
 {
 	bool result = true;
 
@@ -669,7 +669,7 @@ GIAfeature* GIAsemRelTranslatorOperationsClass::generateOptimisedFeatureSubsetBa
 }
 #endif
 #ifdef GIA_SEM_REL_TRANSLATOR_SUBSETS_OPTIMISED_DATABASE
-int GIAsemRelTranslatorOperationsClass::calculateFirstWordInTupleIndexRelative(const int firstWordInTupleIndex, const int firstWordInSentenceSubsetIndex)
+int GIAsemRelTranslatorOperationsClass::calculateFirstWordInTupleIndexRelative(int firstWordInTupleIndex, int firstWordInSentenceSubsetIndex)
 {
 	int firstWordInTupleIndexRelative = firstWordInTupleIndex - firstWordInSentenceSubsetIndex + 1;
 	return firstWordInTupleIndexRelative;
@@ -680,14 +680,14 @@ int GIAsemRelTranslatorOperationsClass::calculateFirstWordInTupleIndexRelative(c
 
 #endif
 
-string GIAsemRelTranslatorOperationsClass::generateGIA2semanticDependencyRelationText(const string entityName1, const string entityName2, const string semanticRelation, const int entityIndex1, const int entityIndex2, const bool sameReferenceSet)
+string GIAsemRelTranslatorOperationsClass::generateGIA2semanticDependencyRelationText(string entityName1, string entityName2, string semanticRelation, int entityIndex1, int entityIndex2, bool sameReferenceSet)
 {
 	string GIA2semanticDependencyRelation = "";
 	GIA2semanticDependencyRelation = GIA2semanticDependencyRelation + semanticRelation + "(" + entityName1 + "-" + SHAREDvars.convertIntToString(entityIndex1) + ", " + entityName2 + "-" + SHAREDvars.convertIntToString(entityIndex2) + ") " + createSameReferenceSetRecord(sameReferenceSet);
 	return GIA2semanticDependencyRelation;
 }
 
-string GIAsemRelTranslatorOperationsClass::createSameReferenceSetRecord(const bool sameReferenceSet)
+string GIAsemRelTranslatorOperationsClass::createSameReferenceSetRecord(bool sameReferenceSet)
 {
 	string sameReferenceSetRecord = "[sameReferenceSet=" + SHAREDvars.convertBoolToString(sameReferenceSet) + "]";
 	return sameReferenceSetRecord;

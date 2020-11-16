@@ -26,7 +26,7 @@
  * File Name: GIAsemRelTranslator.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3o2a 08-November-2020
+ * Project Version: 3o3a 16-November-2020
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  * Description: Semantic Relation Translator
  * /
@@ -37,7 +37,7 @@
 
 #ifdef GIA_SEM_REL_TRANSLATOR_READ_SEMANTIC_RELATIONS
 
-bool GIAsemRelTranslatorClass::performSemanticParserLookupAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences(GIAtranslatorVariablesClass* translatorVariables, const string inputTextPlainTXTfileName, string inputTextNLPrelationXMLfileName, const string inputTextNLPfeatureXMLfileName, const string outputCFFfileName)
+bool GIAsemRelTranslatorClass::performSemanticParserLookupAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences(GIAtranslatorVariablesClass* translatorVariables, string inputTextPlainTXTfileName, string inputTextNLPrelationXMLfileName, string inputTextNLPfeatureXMLfileName, string outputCFFfileName)
 {
 	bool result = true;
 
@@ -86,7 +86,7 @@ bool GIAsemRelTranslatorClass::performSemanticParserLookupAndCreateSemanticNetwo
 	}
 }
 
-bool GIAsemRelTranslatorClass::lookupSemanticParserFiles(GIAsentence* firstSentenceInList, const int NLPfeatureParser)
+bool GIAsemRelTranslatorClass::lookupSemanticParserFiles(GIAsentence* firstSentenceInList, int NLPfeatureParser)
 {
 	bool result = true;
 	if(!lookupSemanticParserFiles(firstSentenceInList, NLPfeatureParser))
@@ -96,7 +96,7 @@ bool GIAsemRelTranslatorClass::lookupSemanticParserFiles(GIAsentence* firstSente
 	return result;
 }
 
-bool GIAsemRelTranslatorClass::lookupSemanticParserFiles(GIAsentence* firstSentenceInList, const int NLPfeatureParser)
+bool GIAsemRelTranslatorClass::lookupSemanticParserFiles(GIAsentence* firstSentenceInList, int NLPfeatureParser)
 {
 	bool result = true;
 	GIAsentence* currentSentenceInList = firstSentenceInList;

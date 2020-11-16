@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3o2a 08-November-2020
+ * Project Version: 3o3a 16-November-2020
  * Requirements: requires text parsed by BAI Sequentially Activated Neuronal Input (SANI)
  * Description: Part-of-speech Relation Translator Parser
  * /
@@ -52,7 +52,7 @@ void GIAposRelTranslatorParserClass::createSANItranslatorVariablesFromGIAtransla
 }
 
 //based on convertSentenceSyntacticRelationsIntoGIAnetworkNodes{}:
-bool GIAposRelTranslatorParserClass::convertSentenceTxtRelationsIntoGIAnetworkNodes(GIAtranslatorVariablesClass* translatorVariables, const bool linkPreestablishedReferencesGIA, GIAcoreference* firstGIAcoreferenceInList)
+bool GIAposRelTranslatorParserClass::convertSentenceTxtRelationsIntoGIAnetworkNodes(GIAtranslatorVariablesClass* translatorVariables, bool linkPreestablishedReferencesGIA, GIAcoreference* firstGIAcoreferenceInList)
 {
 	bool result = true;
 	
@@ -553,7 +553,7 @@ bool GIAposRelTranslatorParserClass::reconcileSameReferenceSetConnectionsForAllR
 }
 #endif
 	
-void GIAposRelTranslatorParserClass::setPreprocessorSentenceTranslatorEntityReferences(LRPpreprocessorSentence* currentPreprocessorSentenceInList, constEffective vector<GIAentityNode*>* GIAentityNodeArray)
+void GIAposRelTranslatorParserClass::setPreprocessorSentenceTranslatorEntityReferences(LRPpreprocessorSentence* currentPreprocessorSentenceInList, vector<GIAentityNode*>* GIAentityNodeArray)
 {
 	int numberOfWordsInSentence = LRPpreprocessorSentenceClassObject.getSentenceContents(currentPreprocessorSentenceInList)->size();	//+1?
 	for(int w=LRP_NLP_START_ENTITY_INDEX; w<=numberOfWordsInSentence; w++)

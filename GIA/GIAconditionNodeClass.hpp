@@ -26,7 +26,7 @@
  * File Name: GIAconditionNodeClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3o2a 08-November-2020
+ * Project Version: 3o3a 16-November-2020
  * /
  *******************************************************************************/
 
@@ -147,7 +147,7 @@ public:
 class GIAconditionNodeClassClass
 {
 	private: SHAREDvarsClass SHAREDvars;
-	public: string generateDateTimeConditionName(const int dayOfMonth, const int month, const int64_t year);
+	public: string generateDateTimeConditionName(int dayOfMonth, int month, int64_t year);
 };
 
 

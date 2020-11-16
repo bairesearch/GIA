@@ -26,7 +26,7 @@
  * File Name: GIAentityNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3o2a 08-November-2020
+ * Project Version: 3o3a 16-November-2020
  * /
  *******************************************************************************/
 
@@ -367,7 +367,7 @@ void GIAentityNodeClassClass::DBsetEntityConnectionsReferenceListsLoaded(GIAenti
 #endif
 
 
-void GIAentityNodeClassClass::disconnectNodeFromAllButDefinitions(const GIAentityNode* entityNode)
+void GIAentityNodeClassClass::disconnectNodeFromAllButDefinitions(GIAentityNode* entityNode)
 {
 	cout << "warning: disconnectNodeFromAllButDefinitions{} not yet coded" << endl;
 	/* need to delete its instance from the reverse lists of each node of each list of this entity...
@@ -389,7 +389,7 @@ void GIAentityNodeClassClass::disconnectNodeFromAllButDefinitions(const GIAentit
 
 
 
-int GIAentityNodeClassClass::calculateQuantityNumberInt(const string quantityNumberString)
+int GIAentityNodeClassClass::calculateQuantityNumberInt(string quantityNumberString)
 {
 	/*
 	if(quantityNumberString == GIA_SYN_REL_TRANSLATOR_REFERENCE_TYPE_QUESTION_COMPARISON_VARIABLE)
@@ -435,7 +435,7 @@ int GIAentityNodeClassClass::calculateQuantityNumberInt(const string quantityNum
 }
 
 
-int GIAentityNodeClassClass::calculateQuantityMultiplierInt(const string quantityMultiplierString)
+int GIAentityNodeClassClass::calculateQuantityMultiplierInt(string quantityMultiplierString)
 {
 	int quantityMultiplierInt = 1;
 	bool found = false;
@@ -472,7 +472,7 @@ int GIAentityNodeClassClass::calculateQuantityMultiplierInt(const string quantit
 	return quantityMultiplierInt;
 }
 
-int GIAentityNodeClassClass::calculateQuantityModifierInt(const string quantityModifierString)
+int GIAentityNodeClassClass::calculateQuantityModifierInt(string quantityModifierString)
 {
 	cout << "warning: calculateQuantityModifierInt{} not yet implemented" << endl;
 
@@ -489,7 +489,7 @@ int GIAentityNodeClassClass::calculateQuantityModifierInt(const string quantityM
 	return quantityModifierInt;
 }
 
-string GIAentityNodeClassClass::printQuantityNumberString(const GIAentityNode* entityNode)
+string GIAentityNodeClassClass::printQuantityNumberString(GIAentityNode* entityNode)
 {
 	string quantityNumberStringTemp;
 
@@ -522,7 +522,7 @@ void GIAentityNodeClassClass::convertAliasesToAliasesString(GIAentityNode* entit
 }
 
 //http://stackoverflow.com/questions/890164/how-can-i-split-a-string-by-a-delimiter-into-an-array
-vector<string> GIAentityNodeClassClass::explode(const string& str, const char& ch)
+vector<string> GIAentityNodeClassClass::explode(string& str, char& ch)
 {
 	string next = "";
 	vector<string> result;
@@ -551,7 +551,7 @@ vector<string> GIAentityNodeClassClass::explode(const string& str, const char& c
 	return result;
 }
 
-string* GIAentityNodeClassClass::convertDelimitedStringToArray(const string str, const char delimiter)
+string* GIAentityNodeClassClass::convertDelimitedStringToArray(string str, char delimiter)
 {
 	int delimiterCount = 0;
 
@@ -630,7 +630,7 @@ GIAentityCharacteristic::~GIAentityCharacteristic(void)
 {
 }
 
-bool GIAentityNodeClassClass::testEntityCharacteristics(const GIAentityNode* entity, vector<GIAentityCharacteristic*>* redistributeSpecialCasePropertiesTestVector, const bool andOrOr)
+bool GIAentityNodeClassClass::testEntityCharacteristics(GIAentityNode* entity, vector<GIAentityCharacteristic*>* redistributeSpecialCasePropertiesTestVector, bool andOrOr)
 {
 	bool passFound = false;
 	bool failureFound = false;
@@ -685,7 +685,7 @@ void GIAentityNodeClassClass::setEntityCharacteristics(GIAentityNode* entity, ve
 		setEntityCharacteristic(entity, entityCharacteristic);
 	}
 }
-bool GIAentityNodeClassClass::testEntityCharacteristic(const GIAentityNode* entity, const GIAentityCharacteristic* entityCharacteristic)
+bool GIAentityNodeClassClass::testEntityCharacteristic(GIAentityNode* entity, GIAentityCharacteristic* entityCharacteristic)
 {
 	bool foundMatch = false;
 	bool illegalVariable = false;
@@ -800,7 +800,7 @@ bool GIAentityNodeClassClass::testEntityCharacteristic(const GIAentityNode* enti
 
 	return result;
 }
-void GIAentityNodeClassClass::testEntityCharacteristicIterationbool(const bool entityVal, const GIAentityCharacteristic* entityCharacteristicTest, const string iterationVariable, bool* foundMatch)
+void GIAentityNodeClassClass::testEntityCharacteristicIterationbool(bool entityVal, GIAentityCharacteristic* entityCharacteristicTest, string iterationVariable, bool* foundMatch)
 {
 	if(entityCharacteristicTest->name == iterationVariable)
 	{
@@ -824,7 +824,7 @@ void GIAentityNodeClassClass::testEntityCharacteristicIterationbool(const bool e
 		}
 	}
 }
-void GIAentityNodeClassClass::testEntityCharacteristicIterationint(const int entityVal, const GIAentityCharacteristic* entityCharacteristicTest, const string iterationVariable, bool* foundMatch)
+void GIAentityNodeClassClass::testEntityCharacteristicIterationint(int entityVal, GIAentityCharacteristic* entityCharacteristicTest, string iterationVariable, bool* foundMatch)
 {
 	if(entityCharacteristicTest->name == iterationVariable)
 	{
@@ -835,7 +835,7 @@ void GIAentityNodeClassClass::testEntityCharacteristicIterationint(const int ent
 		}
 	}
 }
-void GIAentityNodeClassClass::testEntityCharacteristicIterationstring(const string entityVal, const GIAentityCharacteristic* entityCharacteristicTest, const string iterationVariable, bool* foundMatch)
+void GIAentityNodeClassClass::testEntityCharacteristicIterationstring(string entityVal, GIAentityCharacteristic* entityCharacteristicTest, string iterationVariable, bool* foundMatch)
 {
 	if(entityCharacteristicTest->name == iterationVariable)
 	{
@@ -935,7 +935,7 @@ bool GIAentityNodeClassClass::setEntityCharacteristic(GIAentityNode* entity, GIA
 	return foundMatch;
 }
 
-void GIAentityNodeClassClass::setEntityCharacteristicIterationbool(bool* entityVal, const GIAentityCharacteristic* entityCharacteristicSet, const string iterationVariable, bool* foundMatch)
+void GIAentityNodeClassClass::setEntityCharacteristicIterationbool(bool* entityVal, GIAentityCharacteristic* entityCharacteristicSet, string iterationVariable, bool* foundMatch)
 {
 	if(entityCharacteristicSet->name == iterationVariable)
 	{
@@ -957,7 +957,7 @@ void GIAentityNodeClassClass::setEntityCharacteristicIterationbool(bool* entityV
 		*foundMatch = true;
 	}
 }
-void GIAentityNodeClassClass::setEntityCharacteristicIterationint(int* entityVal, const GIAentityCharacteristic* entityCharacteristicSet, const string iterationVariable, bool* foundMatch)
+void GIAentityNodeClassClass::setEntityCharacteristicIterationint(int* entityVal, GIAentityCharacteristic* entityCharacteristicSet, string iterationVariable, bool* foundMatch)
 {
 	if(entityCharacteristicSet->name == iterationVariable)
 	{
@@ -966,7 +966,7 @@ void GIAentityNodeClassClass::setEntityCharacteristicIterationint(int* entityVal
 		*foundMatch = true;
 	}
 }
-void GIAentityNodeClassClass::setEntityCharacteristicIterationstring(string* entityVal, const GIAentityCharacteristic* entityCharacteristicSet, const string iterationVariable, bool* foundMatch)
+void GIAentityNodeClassClass::setEntityCharacteristicIterationstring(string* entityVal, GIAentityCharacteristic* entityCharacteristicSet, string iterationVariable, bool* foundMatch)
 {
 	if(entityCharacteristicSet->name == iterationVariable)
 	{
@@ -976,7 +976,7 @@ void GIAentityNodeClassClass::setEntityCharacteristicIterationstring(string* ent
 	}
 }
 
-bool GIAentityNodeClassClass::getEntityCharacteristic(const GIAentityNode* entity, GIAentityCharacteristic* entityCharacteristic)
+bool GIAentityNodeClassClass::getEntityCharacteristic(GIAentityNode* entity, GIAentityCharacteristic* entityCharacteristic)
 {
 	bool foundMatch = false;
 
@@ -1059,7 +1059,7 @@ bool GIAentityNodeClassClass::getEntityCharacteristic(const GIAentityNode* entit
 	}
 	return foundMatch;
 }
-void GIAentityNodeClassClass::getEntityCharacteristicIterationbool(const bool entityVal, GIAentityCharacteristic* entityCharacteristicGet, const string iterationVariable, bool* foundMatch)
+void GIAentityNodeClassClass::getEntityCharacteristicIterationbool(bool entityVal, GIAentityCharacteristic* entityCharacteristicGet, string iterationVariable, bool* foundMatch)
 {
 	if(entityCharacteristicGet->name == iterationVariable)
 	{
@@ -1076,7 +1076,7 @@ void GIAentityNodeClassClass::getEntityCharacteristicIterationbool(const bool en
 		*foundMatch = true;
 	}
 }
-void GIAentityNodeClassClass::getEntityCharacteristicIterationint(const int entityVal, GIAentityCharacteristic* entityCharacteristicGet, const string iterationVariable, bool* foundMatch)
+void GIAentityNodeClassClass::getEntityCharacteristicIterationint(int entityVal, GIAentityCharacteristic* entityCharacteristicGet, string iterationVariable, bool* foundMatch)
 {
 	if(entityCharacteristicGet->name == iterationVariable)
 	{
@@ -1085,7 +1085,7 @@ void GIAentityNodeClassClass::getEntityCharacteristicIterationint(const int enti
 		*foundMatch = true;
 	}
 }
-void GIAentityNodeClassClass::getEntityCharacteristicIterationstring(const string entityVal, GIAentityCharacteristic* entityCharacteristicGet, const string iterationVariable, bool* foundMatch)
+void GIAentityNodeClassClass::getEntityCharacteristicIterationstring(string entityVal, GIAentityCharacteristic* entityCharacteristicGet, string iterationVariable, bool* foundMatch)
 {
 	if(entityCharacteristicGet->name == iterationVariable)
 	{
@@ -1159,7 +1159,7 @@ string GIAentityNodeClassClass::getParentClassEntityNameFromSubClassEntityName(s
 	return parentEntityName;
 }
 
-string GIAentityNodeClassClass::getChildClassEntityNameFromSubClassEntityName(const string subClassEntityName)
+string GIAentityNodeClassClass::getChildClassEntityNameFromSubClassEntityName(string subClassEntityName)
 {
 	string childEntityName = "";
 	int index = subClassEntityName.find(GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_SUBCLASS_DELIMITER);
@@ -1174,13 +1174,13 @@ string GIAentityNodeClassClass::getChildClassEntityNameFromSubClassEntityName(co
 	return childEntityName;
 }
 
-string GIAentityNodeClassClass::createSubClassEntityName(const string childEntityName, const string parentEntityName)
+string GIAentityNodeClassClass::createSubClassEntityName(string childEntityName, string parentEntityName)
 {
 	string subClassEntityName = childEntityName + GIA_TRANSLATOR_UNIQUE_CONCATENATION_TYPES_SUBCLASS_DELIMITER + parentEntityName;
 	return subClassEntityName;
 }
 
-bool GIAentityNodeClassClass::detectPredeterminerNonReference(const GIAentityNode* entity)
+bool GIAentityNodeClassClass::detectPredeterminerNonReference(GIAentityNode* entity)
 {
 	bool predeterminerDetected = false;
 	predeterminerDetected = SHAREDvars.intInIntArray(entity->grammaticalPredeterminerTemp, entityPredeterminerSmallArray, GRAMMATICAL_PREDETERMINER_SMALL_ARRAY_NUMBER_OF_TYPES);
@@ -1189,7 +1189,7 @@ bool GIAentityNodeClassClass::detectPredeterminerNonReference(const GIAentityNod
 
 #endif
 
-bool GIAentityNodeClassClass::entityIsRelationship(const GIAentityNode* entity)
+bool GIAentityNodeClassClass::entityIsRelationship(GIAentityNode* entity)
 {
 	bool relationshipEntity = false;
 	if(entityTypesIsRelationshipArray[entity->entityType])
@@ -1206,7 +1206,7 @@ bool GIAentityNodeClassClass::entityIsRelationship(const GIAentityNode* entity)
 	return relationshipEntity;
 }
 
-int GIAentityNodeClassClass::getRelationshipEntityRelativeTypeIndex(const GIAentityNode* entity)
+int GIAentityNodeClassClass::getRelationshipEntityRelativeTypeIndex(GIAentityNode* entity)
 {
 	int relationshipEntityRelativeTypeIndex = entity->entityType - GIA_RELATIONSHIP_ENTITY_OFFSET_TO_FIRST_RELATIVE_TYPE_INDEX;
 	return relationshipEntityRelativeTypeIndex;

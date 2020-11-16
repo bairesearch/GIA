@@ -26,7 +26,7 @@
  * File Name: GIAsemRelTranslatorOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3o2a 08-November-2020
+ * Project Version: 3o3a 16-November-2020
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  * Description: Semantic Relation Translator
  * /
@@ -49,35 +49,35 @@ class GIAsemRelTranslatorOperationsClass
 	private: SHAREDvarsClass SHAREDvars;
 
 	#ifdef GIA_SEM_REL_TRANSLATOR_COMMON
-	public: GIArelation* GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(const GIAtranslatorVariablesClass* translatorVariables, int connectionType, int entityIndex1, int entityIndex2, bool sameReferenceSet);
-	public: void GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrainSpecial(const GIAtranslatorVariablesClass* translatorVariables, const bool linkPreestablishedReferencesGIA);
-		private: void generateGIA2semanticDependencyRelation(constEffective vector<GIAentityNode*>* GIAentityNodeArray, int connectionType, int entityIndex1, int entityIndex2, bool sameReferenceSet, string* GIA2semanticDependencyRelationText, GIArelation* GIA2semanticDependencyRelation);
+	public: GIArelation* GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrain(GIAtranslatorVariablesClass* translatorVariables, int connectionType, int entityIndex1, int entityIndex2, bool sameReferenceSet);
+	public: void GIA2nonHeuristicImplementationGenerateExperiencesForConnectionistNetworkTrainSpecial(GIAtranslatorVariablesClass* translatorVariables, bool linkPreestablishedReferencesGIA);
+		private: void generateGIA2semanticDependencyRelation(vector<GIAentityNode*>* GIAentityNodeArray, int connectionType, int entityIndex1, int entityIndex2, bool sameReferenceSet, string* GIA2semanticDependencyRelationText, GIArelation* GIA2semanticDependencyRelation);
 	#ifdef GIA_SEM_REL_TRANSLATOR_WRITE_SEMANTIC_RELATIONS_UNOPTIMISED_TEXT_CORPUS
 	#ifndef GIA_SEM_REL_TRANSLATOR_WRITE_SEMANTIC_RELATIONS_UNOPTIMISED_TEXT_CORPUS_OLD
-	public: void writeSemanticParserCorpusFileOptimised(const GIAtranslatorVariablesClass* translatorVariables);
+	public: void writeSemanticParserCorpusFileOptimised(GIAtranslatorVariablesClass* translatorVariables);
 	#endif
 	#endif
-	public: void writeSemanticRelationsFile(const GIAtranslatorVariablesClass* translatorVariables, const string sentenceSemanticRelationsFileName);
-		public: string generateSemanticParserCorpusSemanticRelationsText(const GIArelation* firstSemanticRelationInList);
+	public: void writeSemanticRelationsFile(GIAtranslatorVariablesClass* translatorVariables, string sentenceSemanticRelationsFileName);
+		public: string generateSemanticParserCorpusSemanticRelationsText(GIArelation* firstSemanticRelationInList);
 	#ifdef GIA_SEM_REL_TRANSLATOR
-	public: void determineGIAconnectionistNetworkPOStypeNames(GIAfeature* firstFeatureInList, const int NLPfeatureParser);
+	public: void determineGIAconnectionistNetworkPOStypeNames(GIAfeature* firstFeatureInList, int NLPfeatureParser);
 		private: void determineGIAconnectionistNetworkPOStypeNameStanford(GIAfeature* currentFeatureInSentence);
 		private: void determineGIAconnectionistNetworkPOStypeNameRelex(GIAfeature* currentFeatureInSentence);
 		private: void determineGIAconnectionistNetworkPOStypeNameShared(GIAfeature* currentFeatureInSentence, int* GIAsemRelTranslatorPOStype);
 	#endif
 	#ifdef GIA_SEM_REL_TRANSLATOR_SUBSETS
 	#ifdef GIA_SEM_REL_TRANSLATOR_SUBSETS_OPTIMISE_BASED_ON_CONJUNCTIONS
-	public: GIAfeature* generateOptimisedFeatureSubsetBasedOnContextualConjunctions(GIAfeature* firstFeatureInSentenceSubset, const int centralWord, bool* optimisedBasedOnContextualConjunctions);
+	public: GIAfeature* generateOptimisedFeatureSubsetBasedOnContextualConjunctions(GIAfeature* firstFeatureInSentenceSubset, int centralWord, bool* optimisedBasedOnContextualConjunctions);
 	#endif
 	#ifdef GIA_SEM_REL_TRANSLATOR_SUBSETS_OPTIMISED_DATABASE
-	public: int calculateFirstWordInTupleIndexRelative(const int firstWordInTupleIndex, const int firstWordInSentenceSubsetIndex);
+	public: int calculateFirstWordInTupleIndexRelative(int firstWordInTupleIndex, int firstWordInSentenceSubsetIndex);
 	#endif
 	#endif
 	
 	#endif
 	
-	public: string generateGIA2semanticDependencyRelationText(const string entityName1, const string entityName2, const string semanticRelation, const int entityIndex1, const int entityIndex2, const bool sameReferenceSet);
-		private: string createSameReferenceSetRecord(const bool sameReferenceSet);
+	public: string generateGIA2semanticDependencyRelationText(string entityName1, string entityName2, string semanticRelation, int entityIndex1, int entityIndex2, bool sameReferenceSet);
+		private: string createSameReferenceSetRecord(bool sameReferenceSet);
 };
 
 

@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorParser.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3o2a 08-November-2020
+ * Project Version: 3o3a 16-November-2020
  * Requirements: requires text parsed by BAI Sequentially Activated Neuronal Input (SANI)
  * Description: Part-of-speech Relation Translator Parser
  * /
@@ -113,7 +113,7 @@ class GIAposRelTranslatorParserClass
 	
 	public: void createSANItranslatorVariablesFromGIAtranslatorVariables(GIAtranslatorVariablesClass* translatorVariables, SANItranslatorVariablesClass* SANItranslatorVariables);
 
-	public: bool convertSentenceTxtRelationsIntoGIAnetworkNodes(GIAtranslatorVariablesClass* translatorVariables, const bool linkPreestablishedReferencesGIA, GIAcoreference* firstGIAcoreferenceInList);
+	public: bool convertSentenceTxtRelationsIntoGIAnetworkNodes(GIAtranslatorVariablesClass* translatorVariables, bool linkPreestablishedReferencesGIA, GIAcoreference* firstGIAcoreferenceInList);
 		private: bool locateAndAddAllNetworkIndexEntitiesBasedOnTxtRelations(GIAtranslatorVariablesClass* translatorVariables);
 		#ifdef GIA_POS_REL_TRANSLATOR_RULES_CODE_COMPONENT_QUERY
 		private: void identifyComparisonVariable(GIAtranslatorVariablesClass* translatorVariables);
@@ -125,7 +125,7 @@ class GIAposRelTranslatorParserClass
 				#ifdef GIA_POS_REL_TRANSLATOR_RULES_ASSUME_HIGH_LEVEL_REFERENCE_SETS_DO_NOT_CONTAIN_EXPLICIT_SEMANTIC_RELATION_FUNCTION
 				private: bool reconcileSameReferenceSetConnectionsForAllRelationshipEntities(GIAtranslatorVariablesClass* translatorVariables);
 				#endif
-			private: void setPreprocessorSentenceTranslatorEntityReferences(LRPpreprocessorSentence* currentPreprocessorSentenceInList, constEffective vector<GIAentityNode*>* GIAentityNodeArray);
+			private: void setPreprocessorSentenceTranslatorEntityReferences(LRPpreprocessorSentence* currentPreprocessorSentenceInList, vector<GIAentityNode*>* GIAentityNodeArray);
 
 		private: void defineSubstancesBasedOnNetworkAndDeterminerInfo(GIAtranslatorVariablesClass* translatorVariables);
 

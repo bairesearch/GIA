@@ -26,7 +26,7 @@
  * File Name: GIAsemRelTranslatorParser.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3o2a 08-November-2020
+ * Project Version: 3o3a 16-November-2020
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  * Description: Semantic Relation Translator Parser
  * /
@@ -79,7 +79,7 @@ class GIAsemRelTranslatorParserClass
 	private: GIAsemRelTranslatorDatabaseClass GIAsemRelTranslatorDatabase;
 	private: GIAnlpClass GIAnlp;
 	#ifdef GIA_SEM_REL_TRANSLATOR
-	public: bool convertSentenceSemanticRelationsIntoGIAnetworkNodes(GIAtranslatorVariablesClass* translatorVariables, const bool linkPreestablishedReferencesGIA, GIAcoreference* firstGIAcoreferenceInList);
+	public: bool convertSentenceSemanticRelationsIntoGIAnetworkNodes(GIAtranslatorVariablesClass* translatorVariables, bool linkPreestablishedReferencesGIA, GIAcoreference* firstGIAcoreferenceInList);
 		private: void locateAndAddAllNetworkIndexEntitiesBasedOnSemanticRelations(GIAtranslatorVariablesClass* translatorVariables);
 		private: void fillGrammaticalTenseArraysStanfordBasedOnSemanticRelations(GIAtranslatorVariablesClass* translatorVariables);
 		#ifdef GIA_POS_REL_TRANSLATOR_RULES_GIA3
@@ -90,7 +90,7 @@ class GIAsemRelTranslatorParserClass
 		private: void identifyComparisonVariableBasedOnSemanticRelations(GIAtranslatorVariablesClass* translatorVariables);
 		#endif
 		private: void defineConnectionsBasedOnSemanticRelations(GIAtranslatorVariablesClass* translatorVariables);
-			private: bool findMatchingObject(GIAtranslatorVariablesClass* translatorVariables, const string semanticRelationName, const int entity2Index, GIArelation** currentRelationInList2, int* entity2Index2);
+			private: bool findMatchingObject(GIAtranslatorVariablesClass* translatorVariables, string semanticRelationName, int entity2Index, GIArelation** currentRelationInList2, int* entity2Index2);
 			#ifdef LRP_PREPROCESSOR_WORD_NORMALISE_PREPOSITIONS
 			private: void invertOrDuplicateConditionsIfRequiredSemantic(GIAtranslatorVariablesClass* translatorVariables, GIAentityNode* entity1, GIAentityNode* entity2, GIAentityNode* entity3condition, bool sameReferenceSet);
 			private: GIAentityNode* createNewInverseConditionEntitySemantic(GIAtranslatorVariablesClass* translatorVariables, string inverseConditionName);

@@ -26,7 +26,7 @@
  * File Name: GIAsentenceClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3o2a 08-November-2020
+ * Project Version: 3o3a 16-November-2020
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Sentence Class
  * /
@@ -489,10 +489,10 @@ void GIAsentenceClassClass::copyStanfordMention(GIAstanfordCoreNLPmention* first
 	}
 }
 
-int GIAsentenceClassClass::calculateNumberOfWordsInSentence(const GIAfeature* firstFeatureInList)
+int GIAsentenceClassClass::calculateNumberOfWordsInSentence(GIAfeature* firstFeatureInList)
 {
 	int numberOfWordsInSentence = 0;
-	const GIAfeature* currentFeatureInList = firstFeatureInList;
+	GIAfeature* currentFeatureInList = firstFeatureInList;
 	while(currentFeatureInList->next != NULL)
 	{
 		numberOfWordsInSentence++;
@@ -515,13 +515,13 @@ int GIAsentenceClassClass::getMaxIndexOfDynamicallyGeneratedEntity(GIAsentence* 
 	return getMaxIndexOfDynamicallyGeneratedEntity(currentSentenceInList->numberOfWordsInSentence);
 }
 
-int GIAsentenceClassClass::getMinIndexOfDynamicallyGeneratedEntity(const int numberOfWordsInSentence) 
+int GIAsentenceClassClass::getMinIndexOfDynamicallyGeneratedEntity(int numberOfWordsInSentence) 
 {
 	int minIndexOfDynamicallyGeneratedEntity = numberOfWordsInSentence + LRP_NLP_START_ENTITY_INDEX;		//OLD: FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY
 	return minIndexOfDynamicallyGeneratedEntity;	
 }
 
-int GIAsentenceClassClass::getMaxIndexOfDynamicallyGeneratedEntity(const int numberOfWordsInSentence) 
+int GIAsentenceClassClass::getMaxIndexOfDynamicallyGeneratedEntity(int numberOfWordsInSentence) 
 {
 	int maxIndexOfDynamicallyGeneratedEntity = getMinIndexOfDynamicallyGeneratedEntity(numberOfWordsInSentence) + MAX_NUMBER_OF_SPECIAL_WORDS_PER_SENTENCE;
 	return maxIndexOfDynamicallyGeneratedEntity;

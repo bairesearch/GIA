@@ -26,7 +26,7 @@
  * File Name: GIAxmlConversion.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3o2a 08-November-2020
+ * Project Version: 3o3a 16-November-2020
  * Description: XML Conversion - Converts GIA network nodes into an XML file, or converts an XML file into GIA network nodes
  * NB this function creates entity idActiveListReorderdIDforXMLsave values upon write to speed up linking process (does not use original idActiveList values)
  * NB this function creates entity idActiveList values upon read (it could create idActiveListReorderdIDforXMLsave values instead - however currently it is assumed that when an XML file is loaded, this will populate the idActiveList in its entirety)
@@ -38,7 +38,7 @@
 
 //this function works and no longer needs to be tested
 
-bool GIAxmlConversionClass::readSemanticNetXMLfileOptimised(const string xmlFileName, vector<GIAentityNode*>* entityNodesActiveListComplete, unordered_map<string,GIAentityNode*>* networkIndexEntityNodesListMap, map<int, vector<GIAentityNode*>*>* entityNodesActiveListSentences)
+bool GIAxmlConversionClass::readSemanticNetXMLfileOptimised(string xmlFileName, vector<GIAentityNode*>* entityNodesActiveListComplete, unordered_map<string,GIAentityNode*>* networkIndexEntityNodesListMap, map<int, vector<GIAentityNode*>*>* entityNodesActiveListSentences)
 {
 	bool result = false;
 
@@ -74,7 +74,7 @@ bool GIAxmlConversionClass::readSemanticNetXMLfileOptimised(const string xmlFile
 	return result;
 }
 
-bool GIAxmlConversionClass::readSemanticNetXMLfile(const string xmlFileName, vector<GIAentityNode*>* entityNodesActiveListComplete, vector<GIAentityNode*>* entityNodesActiveListNetworkIndexes)
+bool GIAxmlConversionClass::readSemanticNetXMLfile(string xmlFileName, vector<GIAentityNode*>* entityNodesActiveListComplete, vector<GIAentityNode*>* entityNodesActiveListNetworkIndexes)
 {
 	bool result = true;
 
@@ -100,7 +100,7 @@ bool GIAxmlConversionClass::readSemanticNetXMLfile(const string xmlFileName, vec
 	return result;
 }
 
-bool GIAxmlConversionClass::parseSemanticNetTag(XMLparserTag* firstTagInNetwork, vector<GIAentityNode*>* entityNodesActiveListComplete, vector<GIAentityNode*>* entityNodesActiveListNetworkIndexes, const bool linkConnections)
+bool GIAxmlConversionClass::parseSemanticNetTag(XMLparserTag* firstTagInNetwork, vector<GIAentityNode*>* entityNodesActiveListComplete, vector<GIAentityNode*>* entityNodesActiveListNetworkIndexes, bool linkConnections)
 {
 	bool result = true;
 
@@ -160,7 +160,7 @@ bool GIAxmlConversionClass::parseSemanticNetTag(XMLparserTag* firstTagInNetwork,
 }
 
 
-bool GIAxmlConversionClass::parseSemanticEntityTypeNodeContainerTag(XMLparserTag* currentTagUpdatedL2, vector<GIAentityNode*>* entityNodesActiveListComplete, vector<GIAentityNode*>* entityNodesActiveListType, const bool linkConnections, int64_t* currentEntityNodeIDinCompleteList)
+bool GIAxmlConversionClass::parseSemanticEntityTypeNodeContainerTag(XMLparserTag* currentTagUpdatedL2, vector<GIAentityNode*>* entityNodesActiveListComplete, vector<GIAentityNode*>* entityNodesActiveListType, bool linkConnections, int64_t* currentEntityNodeIDinCompleteList)
 {
 	bool result = true;
 	int64_t currentEntityNodeIDinEntityTypeNodeList = 0;
@@ -210,7 +210,7 @@ bool GIAxmlConversionClass::parseSemanticEntityTypeNodeContainerTag(XMLparserTag
 
 
 
-bool GIAxmlConversionClass::parseEntityNodeTag(XMLparserTag* firstTagInEntityNode, GIAentityNode* entityNode, const vector<GIAentityNode*>* entityNodesActiveListComplete, const bool linkConnections)
+bool GIAxmlConversionClass::parseEntityNodeTag(XMLparserTag* firstTagInEntityNode, GIAentityNode* entityNode, vector<GIAentityNode*>* entityNodesActiveListComplete, bool linkConnections)
 {
 	bool result = true;
 
@@ -651,15 +651,15 @@ bool GIAxmlConversionClass::parseEntityNodeTag(XMLparserTag* firstTagInEntityNod
 }
 
 
-bool GIAxmlConversionClass::parseEntityVectorConnectionNodeListTag(const XMLparserTag* firstTagInEntityVectorConnectionNodeList, GIAentityNode* entityNode, const vector<GIAentityNode*>* entityNodesActiveListComplete, int entityVectorConnectionIndex)
+bool GIAxmlConversionClass::parseEntityVectorConnectionNodeListTag(XMLparserTag* firstTagInEntityVectorConnectionNodeList, GIAentityNode* entityNode, vector<GIAentityNode*>* entityNodesActiveListComplete, int entityVectorConnectionIndex)
 {
 	bool result = true;
-	const XMLparserTag* currentTagUpdatedL1 = firstTagInEntityVectorConnectionNodeList;
+	XMLparserTag* currentTagUpdatedL1 = firstTagInEntityVectorConnectionNodeList;
 	while(currentTagUpdatedL1->nextTag != NULL)
 	{
 		if(currentTagUpdatedL1->name == entityVectorConnectionXMLtagNameCrossReferenceNodeTypeArray[entityVectorConnectionIndex])
 		{
-			const XMLparserAttribute* currentAttribute = currentTagUpdatedL1->firstAttribute;
+			XMLparserAttribute* currentAttribute = currentTagUpdatedL1->firstAttribute;
 
 			int64_t idActiveList = INT_DEFAULT_VALUE;
 			GIAentityConnection* newConnection = new GIAentityConnection();
@@ -887,7 +887,7 @@ bool GIAxmlConversionClass::parseTimeConditionNodeTag(XMLparserTag* firstTagInTi
 
 
 
-bool GIAxmlConversionClass::writeSemanticNetXMLFileOptimised(const string xmlFileName, vector<GIAentityNode*>* entityNodesActiveListComplete, unordered_map<string,GIAentityNode*>* networkIndexEntityNodesListMap)
+bool GIAxmlConversionClass::writeSemanticNetXMLFileOptimised(string xmlFileName, vector<GIAentityNode*>* entityNodesActiveListComplete, unordered_map<string,GIAentityNode*>* networkIndexEntityNodesListMap)
 {
 	vector<GIAentityNode*>* entityNodesActiveListNetworkIndexes = new vector<GIAentityNode*>;
 	for(unordered_map<string,GIAentityNode*>::iterator networkIndexEntityNodesListMapIter = networkIndexEntityNodesListMap->begin(); networkIndexEntityNodesListMapIter != networkIndexEntityNodesListMap->end(); networkIndexEntityNodesListMapIter++)
@@ -905,7 +905,7 @@ bool GIAxmlConversionClass::writeSemanticNetXMLFileOptimised(const string xmlFil
 }
 
 
-bool GIAxmlConversionClass::writeSemanticNetXMLFile(const string xmlFileName, vector<GIAentityNode*>* entityNodesActiveListComplete, const vector<GIAentityNode*>* entityNodesActiveListNetworkIndexes)
+bool GIAxmlConversionClass::writeSemanticNetXMLFile(string xmlFileName, vector<GIAentityNode*>* entityNodesActiveListComplete, vector<GIAentityNode*>* entityNodesActiveListNetworkIndexes)
 {
 	bool result = true;
 
@@ -963,7 +963,7 @@ bool GIAxmlConversionClass::writeSemanticNetXMLFile(const string xmlFileName, ve
 
 
 #ifdef GIA_SEMANTIC_NET_XML_REORDER_NETWORK_INDEX_IDS_UPON_XML_WRITE_INSTEAD_OF_XML_READ
-void GIAxmlConversionClass::resetIDsForNodeList(vector<GIAentityNode*>* entityNodesActiveListComplete, int64_t* currentEntityNodeIDinEntityNodesActiveCompleteList, const int entityType)
+void GIAxmlConversionClass::resetIDsForNodeList(vector<GIAentityNode*>* entityNodesActiveListComplete, int64_t* currentEntityNodeIDinEntityNodesActiveCompleteList, int entityType)
 {
 	for(vector<GIAentityNode*>::iterator entityNodesActiveCompleteListIterator = entityNodesActiveListComplete->begin(); entityNodesActiveCompleteListIterator < entityNodesActiveListComplete->end(); entityNodesActiveCompleteListIterator++)
 	{
@@ -985,7 +985,7 @@ void GIAxmlConversionClass::resetIDsForNodeList(vector<GIAentityNode*>* entityNo
 #endif
 
 
-bool GIAxmlConversionClass::generateXMLentityNodeTagList(XMLparserTag* firstTagInSemanticNet, vector<GIAentityNode*>* entityNodesList, string entityContainerTagName, int64_t* currentEntityNodeIDinEntityNodesActiveCompleteList, const int entityType)
+bool GIAxmlConversionClass::generateXMLentityNodeTagList(XMLparserTag* firstTagInSemanticNet, vector<GIAentityNode*>* entityNodesList, string entityContainerTagName, int64_t* currentEntityNodeIDinEntityNodesActiveCompleteList, int entityType)
 {
 	bool result = true;
 
@@ -1439,7 +1439,7 @@ bool GIAxmlConversionClass::generateXMLconditionTimeNodeTagList(XMLparserTag* fi
 
 
 
-string GIAxmlConversionClass::convertBooleanArrayToString(const bool booleanArray[], const int booleanArraySize)
+string GIAxmlConversionClass::convertBooleanArrayToString(bool booleanArray[], int booleanArraySize)
 {
 	string str = "";
 	for(int i=0; i<booleanArraySize; i++)
@@ -1451,7 +1451,7 @@ string GIAxmlConversionClass::convertBooleanArrayToString(const bool booleanArra
 
 }
 
-void GIAxmlConversionClass::convertStringToBooleanArray(const string str, bool booleanArray[], const int booleanArraySize)
+void GIAxmlConversionClass::convertStringToBooleanArray(string str, bool booleanArray[], int booleanArraySize)
 {
 	for(int i=0; i<booleanArraySize; i++)
 	{

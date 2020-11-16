@@ -26,7 +26,7 @@
  * File Name: GIAneuralNetworkNonSemantic.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3o2a 08-November-2020
+ * Project Version: 3o3a 16-November-2020
  * Description: Neural Network - visual representation of GIA contents in prototype biological neural network
  * /
  *******************************************************************************/
@@ -325,7 +325,7 @@ bool GIAneuralNetworkNonSemanticClass::identifyAndDemarcateConceptsInReferenceSe
 	return result;
 }
 
-bool GIAneuralNetworkNonSemanticClass::detectIfWordIsConcept(const vector<LRPpreprocessorPlainTextWord*>* subReferenceSetContents, int wordIndex, bool* specificConceptDetected, int* indexOfStartOfSpecificConcept, bool indefiniteConceptDefinitionFound)
+bool GIAneuralNetworkNonSemanticClass::detectIfWordIsConcept(vector<LRPpreprocessorPlainTextWord*>* subReferenceSetContents, int wordIndex, bool* specificConceptDetected, int* indexOfStartOfSpecificConcept, bool indefiniteConceptDefinitionFound)
 {
 	bool isConcept = false;
 	
@@ -385,7 +385,7 @@ bool GIAneuralNetworkNonSemanticClass::detectIfWordIsConcept(const vector<LRPpre
 }
 
 
-bool GIAneuralNetworkNonSemanticClass::detectIfWordIsDeterminer(const string word)
+bool GIAneuralNetworkNonSemanticClass::detectIfWordIsDeterminer(string word)
 {
 	bool isDeterminer = false;
 	
@@ -417,7 +417,7 @@ bool GIAneuralNetworkNonSemanticClass::detectIfWordIsDeterminer(const string wor
 	return isDeterminer;
 }
 
-bool GIAneuralNetworkNonSemanticClass::findIndexOfStartOfSpecificConcept(const vector<LRPpreprocessorPlainTextWord*>* subReferenceSetContents, const int startIndexToSearch, int* indexOfStartOfSpecificConcept)
+bool GIAneuralNetworkNonSemanticClass::findIndexOfStartOfSpecificConcept(vector<LRPpreprocessorPlainTextWord*>* subReferenceSetContents, int startIndexToSearch, int* indexOfStartOfSpecificConcept)
 {
 	bool foundSpecificConcept = false;
 	int indexOfSearch = startIndexToSearch;

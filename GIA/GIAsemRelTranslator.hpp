@@ -26,7 +26,7 @@
  * File Name: GIAsemRelTranslator.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3o2a 08-November-2020
+ * Project Version: 3o3a 16-November-2020
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  * Description: Semantic Relation Translator
  * /
@@ -53,9 +53,9 @@ class GIAsemRelTranslatorClass
 	private: GIAsemRelTranslatorOperationsClass GIAsemRelTranslatorOperations;
 	private: GIAsemRelTranslatorDatabaseClass GIAsemRelTranslatorDatabase;
 
-	public: bool performSemanticParserLookupAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences(GIAtranslatorVariablesClass* translatorVariables, const string inputTextPlainTXTfileName, string inputTextNLPrelationXMLfileName, const string inputTextNLPfeatureXMLfileName, const string outputCFFfileName);
-		private: bool lookupSemanticParserFiles(GIAsentence* firstSentenceInList, const int NLPfeatureParser);
-			private: bool lookupSemanticParserFiles(GIAsentence* firstSentenceInList, const int NLPfeatureParser);
+	public: bool performSemanticParserLookupAndCreateSemanticNetworkBasedUponSemanticDependencyParsedSentences(GIAtranslatorVariablesClass* translatorVariables, string inputTextPlainTXTfileName, string inputTextNLPrelationXMLfileName, string inputTextNLPfeatureXMLfileName, string outputCFFfileName);
+		private: bool lookupSemanticParserFiles(GIAsentence* firstSentenceInList, int NLPfeatureParser);
+			private: bool lookupSemanticParserFiles(GIAsentence* firstSentenceInList, int NLPfeatureParser);
 };
 #endif
 

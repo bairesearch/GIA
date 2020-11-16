@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorGrammar.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3o2a 08-November-2020
+ * Project Version: 3o3a 16-November-2020
  * Requirements: requires text parsed by X Parser
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
@@ -790,11 +790,11 @@ void GIAtranslatorGrammarClass::fillGrammaticalArraysStanford(GIAtranslatorVaria
 	}
 }
 
-void GIAtranslatorGrammarClass::extractPastTense(GIAfeature* featureWithEntityIndex, const int entityIndexContainingTenseIndication, const GIAfeature* firstFeatureInList, const int NLPfeatureParser)
+void GIAtranslatorGrammarClass::extractPastTense(GIAfeature* featureWithEntityIndex, int entityIndexContainingTenseIndication, GIAfeature* firstFeatureInList, int NLPfeatureParser)
 {
 	//use the copular to set the tense of the noun
 
-	const GIAfeature* currentFeatureInList = firstFeatureInList;
+	GIAfeature* currentFeatureInList = firstFeatureInList;
 	while(currentFeatureInList->next != NULL)
 	{
 		if(currentFeatureInList->entityIndex == entityIndexContainingTenseIndication)
@@ -804,7 +804,7 @@ void GIAtranslatorGrammarClass::extractPastTense(GIAfeature* featureWithEntityIn
 		currentFeatureInList = currentFeatureInList->next;
 	}
 }
-void GIAtranslatorGrammarClass::extractPastTenseFromPOStag(const string* POStag, GIAfeature* feature)
+void GIAtranslatorGrammarClass::extractPastTenseFromPOStag(string* POStag, GIAfeature* feature)
 {
 	bool pastTenseDetected = false;
 
@@ -822,7 +822,7 @@ void GIAtranslatorGrammarClass::extractPastTenseFromPOStag(const string* POStag,
 	}
 }
 
-void GIAtranslatorGrammarClass::extractGrammaticalInformationStanford(GIAfeature* firstFeatureInList, const int NLPfeatureParser)
+void GIAtranslatorGrammarClass::extractGrammaticalInformationStanford(GIAfeature* firstFeatureInList, int NLPfeatureParser)
 {
 	#ifdef GIA_GRAMMAR_IMPERATIVE_DETECTION
 	bool toDetected = false;
@@ -887,14 +887,14 @@ void GIAtranslatorGrammarClass::extractGrammaticalInformationStanford(GIAfeature
 	}
 }
 
-void GIAtranslatorGrammarClass::extractPOSrelatedGrammaticalInformationStanford(GIAfeature* currentFeature, const bool grammaticallyStrict)
+void GIAtranslatorGrammarClass::extractPOSrelatedGrammaticalInformationStanford(GIAfeature* currentFeature, bool grammaticallyStrict)
 {
 	extractGrammaticalInformationFromStanfordPOStag(&(currentFeature->stanfordPOS), currentFeature);
 	GIAtranslatorOperations.convertStanfordPOStagToRelexPOStypeAndWordnetWordType(&(currentFeature->stanfordPOS), &(currentFeature->type), &(currentFeature->grammaticalWordType), grammaticallyStrict);
 }
 
 //Preconditions: extractGrammaticalInformationStanford()/extractGrammaticalInformationFromStanfordPOStag() must be executed before relations (eg aux/cop) are processed, as they may [possibly] overwrite the tenses here established
-void GIAtranslatorGrammarClass::extractGrammaticalInformationFromStanfordPOStag(const string* POStag, GIAfeature* feature)
+void GIAtranslatorGrammarClass::extractGrammaticalInformationFromStanfordPOStag(string* POStag, GIAfeature* feature)
 {
 	//past tense extraction;
 	//this is required for past tense verbs without auxillaries; eg He ran fast.     nsubj ( ran-2 , He-1 ), advmod ( ran-2 , fast-3 ) .
@@ -1028,7 +1028,7 @@ void GIAtranslatorGrammarClass::extractGrammaticalInformationFromStanfordPOStag(
 
 
 #ifdef GIA_ADVANCED_REFERENCING_FIND_SUBJ_OBJ_RELATION_MATCHING_AUXILIARY_AND_SET_NOT_SAME_REFERENCE_SET
-void GIAtranslatorGrammarClass::findSubjObjRelationMatchingAuxiliaryAndSetNotSameReferenceSet(GIAsentence* currentSentenceInList, const int subjectObjectEntityWithAuxiliaryEntityIndex, const string* subjectObjectEntityWithAuxiliaryEntityName)
+void GIAtranslatorGrammarClass::findSubjObjRelationMatchingAuxiliaryAndSetNotSameReferenceSet(GIAsentence* currentSentenceInList, int subjectObjectEntityWithAuxiliaryEntityIndex, string* subjectObjectEntityWithAuxiliaryEntityName)
 {
 	GIArelation* currentRelationInList = currentSentenceInList->firstRelationInList;
 	while(currentRelationInList->next != NULL)

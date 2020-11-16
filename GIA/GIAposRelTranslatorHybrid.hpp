@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorHybrid.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3o2a 08-November-2020
+ * Project Version: 3o3a 16-November-2020
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Hybrid
  * /
@@ -88,10 +88,10 @@ class GIAposRelTranslatorHybridClass
 		
 	#ifdef GIA_POS_REL_TRANSLATOR_HYBRID
 	#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_EXECUTE_PRELIM_POS_TAGGER
-	public: bool executePrelimFeatureProcessingOnSentences(const string outputLRPTextPlainTXTFileName, const string inputTextNLPfeatureXMLfileName, GIAtranslatorVariablesClass* translatorVariables);
+	public: bool executePrelimFeatureProcessingOnSentences(string outputLRPTextPlainTXTFileName, string inputTextNLPfeatureXMLfileName, GIAtranslatorVariablesClass* translatorVariables);
 	#endif	
 	#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_DEPRECIATED
-	public: bool executeTxtRelTranslatorDepreciated(LRPpreprocessorSentence* firstLRPpreprocessorSentenceInList, const string outputFileName, const string outputFileNameLRPforNLP);
+	public: bool executeTxtRelTranslatorDepreciated(LRPpreprocessorSentence* firstLRPpreprocessorSentenceInList, string outputFileName, string outputFileNameLRPforNLP);
 		private: bool executeTxtRelTranslatorDepreciatedSentence(LRPpreprocessorSentence* currentLRPpreprocessorSentenceInList, vector<XMLparserTag*>* SANIrulesTokenLayers);
 		private: string removePrependingWhiteSpace(string sentenceContents);
 		private: bool generateTxtRelTranslatorHybridSentenceNLPparsablePhrases(GIAposRelTranslatorHybridLogicReference* firstLogicReferenceInList, int* sentenceIndex, string* outputTextContentsSentence, string* outputTextContentsSentenceForNLP);
@@ -101,10 +101,10 @@ class GIAposRelTranslatorHybridClass
 			#endif
 			private: void addSentenceToSentenceContentsPreprocessedLogicReferenceVariables(string* sentenceContentsPreprocessedLogicReferenceVariables, string* sentenceContentsPreprocessedLogicReferenceVariablesForNLP, LRPpreprocessorSubReferenceSet* referenceSet, int* sentenceIndex, int referenceSetType);
 	#ifdef LRP_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
-	public: bool updateLRPpreprocessorMultiwordReductionTagTextCorrespondenceInfo(LRPpreprocessorSentence* firstLRPpreprocessorSentenceInList, const bool isQuery);
-		private: bool getLRPpreprocessorSentence(LRPpreprocessorSentence* firstLRPpreprocessorSentenceInList, const int sentenceIndexOriginal, LRPpreprocessorSentence** LRPpreprocessorSentenceFound);
-		private: bool getGIAposRelTranslatorHybridReferenceSet(GIAposRelTranslatorHybridLogicReference* firstGIAposRelTranslatorHybridLogicReferenceInList, const int entityIndexOriginal, LRPpreprocessorSubReferenceSet** LRPpreprocessorSubReferenceSetFound);
-			private: bool getGIAposRelTranslatorHybridReferenceSet(LRPpreprocessorSubReferenceSet* firstLRPpreprocessorSubReferenceInList, const int entityIndexOriginal, LRPpreprocessorSubReferenceSet** LRPpreprocessorSubReferenceSetFound);
+	public: bool updateLRPpreprocessorMultiwordReductionTagTextCorrespondenceInfo(LRPpreprocessorSentence* firstLRPpreprocessorSentenceInList, bool isQuery);
+		private: bool getLRPpreprocessorSentence(LRPpreprocessorSentence* firstLRPpreprocessorSentenceInList, int sentenceIndexOriginal, LRPpreprocessorSentence** LRPpreprocessorSentenceFound);
+		private: bool getGIAposRelTranslatorHybridReferenceSet(GIAposRelTranslatorHybridLogicReference* firstGIAposRelTranslatorHybridLogicReferenceInList, int entityIndexOriginal, LRPpreprocessorSubReferenceSet** LRPpreprocessorSubReferenceSetFound);
+			private: bool getGIAposRelTranslatorHybridReferenceSet(LRPpreprocessorSubReferenceSet* firstLRPpreprocessorSubReferenceInList, int entityIndexOriginal, LRPpreprocessorSubReferenceSet** LRPpreprocessorSubReferenceSetFound);
 	#endif
 	#endif
 			
@@ -113,8 +113,8 @@ class GIAposRelTranslatorHybridClass
 		private: bool connectPreprocessorSentenceReferenceSetEntitiesToLogicReferenceEntities(LRPpreprocessorSentence* currentLRPpreprocessorSentenceInList, GIAposRelTranslatorHybridLogicReference* firstLogicReferenceInList, GIAtranslatorVariablesClass* translatorVariables, GIAentityNode* parentLogicReferenceEntity);
 
 			#ifdef LRP_PREPROCESSOR_ASSIGN_UNIQUE_SENTENCE_INDICES_FOR_SENTENCES
-			private: void changeSentenceIndexOfEntityNodesAndConnectionsForReferenceSet(LRPpreprocessorSubReferenceSet* firstSubReferenceSetInList, const int sentenceIndexNew, GIAtranslatorVariablesClass* translatorVariables);
-			private: void changeSentenceIndexOfEntityNodesAndConnections(const int sentenceIndexOriginal, const int sentenceIndexNew, GIAtranslatorVariablesClass* translatorVariables);
+			private: void changeSentenceIndexOfEntityNodesAndConnectionsForReferenceSet(LRPpreprocessorSubReferenceSet* firstSubReferenceSetInList, int sentenceIndexNew, GIAtranslatorVariablesClass* translatorVariables);
+			private: void changeSentenceIndexOfEntityNodesAndConnections(int sentenceIndexOriginal, int sentenceIndexNew, GIAtranslatorVariablesClass* translatorVariables);
 			#endif
 			
 			#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_REFERENCE_SET_RECORD_SAME_REFERENCE_SET_DELIMITERS_UPDATE_ENTITY_OLD_METHOD
@@ -124,27 +124,27 @@ class GIAposRelTranslatorHybridClass
 			#endif
 
 			private: bool findFirstImplicitConjunctionLogicReferenceSetBefore(GIAposRelTranslatorHybridLogicReference* conjunctionLogicReferenceInList, GIAposRelTranslatorHybridLogicReference** firstImplicitConjunction);
-			private: bool findPrimaryEntityAndReconcileSubReferenceSets(GIAentityNode** primaryEntity, LRPpreprocessorSubReferenceSet* firstSubReferenceSetInList, GIAentityNode* primaryDelimiterEntity, GIAtranslatorVariablesClass* translatorVariables, const int referenceSetType);;
+			private: bool findPrimaryEntityAndReconcileSubReferenceSets(GIAentityNode** primaryEntity, LRPpreprocessorSubReferenceSet* firstSubReferenceSetInList, GIAentityNode* primaryDelimiterEntity, GIAtranslatorVariablesClass* translatorVariables, int referenceSetType);;
 			private: void deleteExternalConnectionsToConnection(GIAentityConnection* connection);
-				private: bool findPrimaryEntityBasedOnSentenceIndexAndTypeAndDeleteDummyVariableConnections(LRPpreprocessorSubReferenceSet* currentSubReferenceSetInList, GIAtranslatorVariablesClass* translatorVariables, const int referenceSetType, GIAentityNode** primaryEntity, GIAentityNode* primaryDelimiterEntity);
+				private: bool findPrimaryEntityBasedOnSentenceIndexAndTypeAndDeleteDummyVariableConnections(LRPpreprocessorSubReferenceSet* currentSubReferenceSetInList, GIAtranslatorVariablesClass* translatorVariables, int referenceSetType, GIAentityNode** primaryEntity, GIAentityNode* primaryDelimiterEntity);
 					private: bool findParentEntityBasedOnSentenceIndex(LRPpreprocessorSubReferenceSet* currentSubReferenceSetInList, GIAtranslatorVariablesClass* translatorVariables, string parentEntityName, GIAentityNode** parentEntity);
-					private: bool findSameSentenceRelationshipEntityNodePointerInVector(GIAentityNode* entityNode, const bool direction, GIAentityConnection** connectionFound, const int sentenceIndex);
+					private: bool findSameSentenceRelationshipEntityNodePointerInVector(GIAentityNode* entityNode, bool direction, GIAentityConnection** connectionFound, int sentenceIndex);
 					private: bool transferPropertyAndConditionConnectionsBetweenDummyDelimiterAndRealDelimiter(GIAentityNode* dummyDelimiterEntity, GIAentityNode* primaryDelimiterEntity);
-					private: bool findSameSentenceSubjectObjectEntityNodePointerInVector(GIAentityNode* entityNode, const int connectionType, GIAentityConnection** connectionFound, const int sentenceIndex);
-					private: bool findSameSentenceEntityNodePointerInVector(GIAentityNode* entityNode, string entityNameToFind, GIAentityConnection** connectionFound, const int sentenceIndex);
+					private: bool findSameSentenceSubjectObjectEntityNodePointerInVector(GIAentityNode* entityNode, int connectionType, GIAentityConnection** connectionFound, int sentenceIndex);
+					private: bool findSameSentenceEntityNodePointerInVector(GIAentityNode* entityNode, string entityNameToFind, GIAentityConnection** connectionFound, int sentenceIndex);
 	private: bool getRelationshipNameAndType(LRPpreprocessorSubReferenceSet* relationshipReference, LRPpreprocessorSubReferenceSet* relationshipObject, int* relationshipEntityType, string* relationshipName);
 	
 	public: bool getPreprocessorSentenceSubReferenceSet(LRPpreprocessorSentence* firstLRPpreprocessorSentenceInList, int sentenceIndex, LRPpreprocessorSubReferenceSet** subReferenceSetFound);
 		public: bool getPreprocessorSentenceSubReferenceSet(GIAposRelTranslatorHybridLogicReference* firstLogicReferenceInList, int sentenceIndex, LRPpreprocessorSubReferenceSet** subReferenceSetFound);
 
-	private: GIAentityNode* createNewRelationshipAndConnectToSource(GIAentityNode* sourceEntity, GIAposRelTranslatorHybridLogicReferenceVariable* logicReferenceVariable, const bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables);
-		private: GIAentityNode* createNewRelationshipAndConnectToSource(GIAentityNode* sourceEntity, LRPpreprocessorSubReferenceSet* relationshipReference, LRPpreprocessorSubReferenceSet* relationshipObject, const bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables);
+	private: GIAentityNode* createNewRelationshipAndConnectToSource(GIAentityNode* sourceEntity, GIAposRelTranslatorHybridLogicReferenceVariable* logicReferenceVariable, bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables);
+		private: GIAentityNode* createNewRelationshipAndConnectToSource(GIAentityNode* sourceEntity, LRPpreprocessorSubReferenceSet* relationshipReference, LRPpreprocessorSubReferenceSet* relationshipObject, bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables);
 		private: GIAentityNode* createNewRelationship(GIAposRelTranslatorHybridLogicReferenceVariable* logicReferenceVariable, GIAtranslatorVariablesClass* translatorVariables);
 			private: GIAentityNode* createNewRelationship(LRPpreprocessorSubReferenceSet* relationshipReference, LRPpreprocessorSubReferenceSet* relationshipObject, GIAtranslatorVariablesClass* translatorVariables);
 	#endif
 
-	private: GIAentityNode* createNewRelationshipEntity(vector<LRPpreprocessorPlainTextWord*>* logicReferenceContents, const int relationshipEntityType, GIAtranslatorVariablesClass* translatorVariables);
-		private: GIAentityNode* createNewRelationshipEntity(string relationshipEntityName, const int relationshipEntityType, GIAtranslatorVariablesClass* translatorVariables);
+	private: GIAentityNode* createNewRelationshipEntity(vector<LRPpreprocessorPlainTextWord*>* logicReferenceContents, int relationshipEntityType, GIAtranslatorVariablesClass* translatorVariables);
+		private: GIAentityNode* createNewRelationshipEntity(string relationshipEntityName, int relationshipEntityType, GIAtranslatorVariablesClass* translatorVariables);
 
 	
 };

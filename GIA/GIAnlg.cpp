@@ -26,7 +26,7 @@
  * File Name: GIAnlg.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3o2a 08-November-2020
+ * Project Version: 3o3a 16-November-2020
  * Requirements: requires GIA translated data, and NLG2 to be installed
  * Description: NLG - natural language generation
  * /
@@ -271,7 +271,7 @@ string GIAnlgClass::generateLanguageFromNLGentityList(GIANLGentity* firstNLGenti
 
 
 
-bool GIAnlgClass::generateLanguageFromTextIteration(GIAentityConnection* currentConnection, GIANLGentity** currentNLGentity, const bool parseSameReferenceSetOnly, const int interationIndex, const bool isRelationshipReverseIterationAction, const bool isRelationshipReverseIterationProperty, const bool isRelationshipReverseIterationPropertyPossessive)
+bool GIAnlgClass::generateLanguageFromTextIteration(GIAentityConnection* currentConnection, GIANLGentity** currentNLGentity, bool parseSameReferenceSetOnly, int interationIndex, bool isRelationshipReverseIterationAction, bool isRelationshipReverseIterationProperty, bool isRelationshipReverseIterationPropertyPossessive)
 {
 	bool result = true;
 	
@@ -583,7 +583,7 @@ bool GIAnlgClass::generateLanguageFromTextIteration(GIAentityConnection* current
 	return result;
 }
 
-bool GIAnlgClass::generateLanguageFromTextIterationPerformChecks(GIAentityConnection* connection, const bool parseQualities)
+bool GIAnlgClass::generateLanguageFromTextIterationPerformChecks(GIAentityConnection* connection, bool parseQualities)
 {
 	bool result = true;
 	
@@ -633,7 +633,7 @@ bool GIAnlgClass::generateLanguageFromTextIterationPerformChecks(GIAentityConnec
 }
 
 //specific to english
-bool GIAnlgClass::generateQualityPrependText(GIAentityNode* currentEntity, GIANLGentity** currentNLGentity, const bool testSameReferenceSet, const bool generateNewNLGentities)
+bool GIAnlgClass::generateQualityPrependText(GIAentityNode* currentEntity, GIANLGentity** currentNLGentity, bool testSameReferenceSet, bool generateNewNLGentities)
 {
 	bool result = true;
 	
@@ -687,7 +687,7 @@ bool GIAnlgClass::generateQualityPrependText(GIAentityNode* currentEntity, GIANL
 	return result;
 }
 
-bool GIAnlgClass::generateConjunctionOfNLGentitiesInSection(const int subphraseCountMax, vector<GIANLGentity*>* NLGentitiesInSection)
+bool GIAnlgClass::generateConjunctionOfNLGentitiesInSection(int subphraseCountMax, vector<GIANLGentity*>* NLGentitiesInSection)
 {
 	bool result = true;
 	
@@ -718,7 +718,7 @@ bool GIAnlgClass::generateConjunctionOfNLGentitiesInSection(const int subphraseC
 
 
 
-bool GIAnlgClass::generateRelationshipEntityLanguage(GIAentityConnection* relationshipConnection, GIANLGentity** currentNLGentity, const bool sameReferenceSet, bool addAuxiliaryToQualities, bool addRCmodToProperties)
+bool GIAnlgClass::generateRelationshipEntityLanguage(GIAentityConnection* relationshipConnection, GIANLGentity** currentNLGentity, bool sameReferenceSet, bool addAuxiliaryToQualities, bool addRCmodToProperties)
 {
 	bool result = true;
 	
@@ -802,7 +802,7 @@ bool GIAnlgClass::generateRelationshipEntityLanguage(GIAentityConnection* relati
 	return result;
 }
 
-bool GIAnlgClass::generateRelationshipEntityLanguageActionReverse(GIAentityConnection* relationshipConnection, GIANLGentity** currentNLGentity, const bool sameReferenceSet)
+bool GIAnlgClass::generateRelationshipEntityLanguageActionReverse(GIAentityConnection* relationshipConnection, GIANLGentity** currentNLGentity, bool sameReferenceSet)
 {
 	bool result = true;
 	
@@ -827,7 +827,7 @@ bool GIAnlgClass::generateRelationshipEntityLanguageActionReverse(GIAentityConne
 	return result;
 }
 
-bool GIAnlgClass::compareRelationshipConnectionType(GIAentityConnection* relationshipConnection, const int entityType)
+bool GIAnlgClass::compareRelationshipConnectionType(GIAentityConnection* relationshipConnection, int entityType)
 {
 	bool result = false;
 	
@@ -978,7 +978,7 @@ string GIAnlgClass::generateMorphologyRelationshipAuxiliaryHave(GIAentityConnect
 
 
 
-bool GIAnlgClass::generateNounEntityLanguage(GIAentityNode* nounEntity, GIANLGentity** currentNLGentity, const bool definite, const bool parseSameReferenceSetOnly, const bool possessive, const bool determiner)
+bool GIAnlgClass::generateNounEntityLanguage(GIAentityNode* nounEntity, GIANLGentity** currentNLGentity, bool definite, bool parseSameReferenceSetOnly, bool possessive, bool determiner)
 {
 	bool result = true;
 	
@@ -1005,7 +1005,7 @@ bool GIAnlgClass::generateNounEntityLanguage(GIAentityNode* nounEntity, GIANLGen
 	return result;
 }
 
-string GIAnlgClass::calcDeterminate(GIAentityNode* entityNode, const bool definite)
+string GIAnlgClass::calcDeterminate(GIAentityNode* entityNode, bool definite)
 {
 	//first letter is vowel		//added 03 August 2012
 	bool firstLetterIsVowel = false;
@@ -1164,7 +1164,7 @@ string GIAnlgClass::calcDeterminate(GIAentityNode* entityNode, const bool defini
 }
 
 
-string GIAnlgClass::calcNounWord(GIAentityNode* entityNode, const bool possessive)
+string GIAnlgClass::calcNounWord(GIAentityNode* entityNode, bool possessive)
 {
 	string nounWord = "";
 	
@@ -1264,7 +1264,7 @@ string GIAnlgClass::calcNounWord(GIAentityNode* entityNode, const bool possessiv
 }
 
 
-string GIAnlgClass::generatePlurality(const string entityName, const int grammaticalNumber)
+string GIAnlgClass::generatePlurality(string entityName, int grammaticalNumber)
 {
 	string entityMorph = "";
 	if(grammaticalNumber == GRAMMATICAL_NUMBER_PLURAL)

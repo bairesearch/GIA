@@ -26,7 +26,7 @@
  * File Name: GIAdraw.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3o2a 08-November-2020
+ * Project Version: 3o3a 16-November-2020
  * Requirements: 
  * Description: Draw - Draws GIA nodes in GIA network/tree
  * /
@@ -52,7 +52,7 @@ GIAdrawVariables::~GIAdrawVariables(void)
 {
 }
 
-bool GIAdrawClass::printGIAnetworkNodesToSVGstring(GIAtranslatorVariablesClass* translatorVariables, const int width, const int height, int sentenceIndex, string* writeFileStringSVG, GIAentityNode* entityReference)
+bool GIAdrawClass::printGIAnetworkNodesToSVGstring(GIAtranslatorVariablesClass* translatorVariables, int width, int height, int sentenceIndex, string* writeFileStringSVG, GIAentityNode* entityReference)
 {//most of this is copied from CSexecFlow.cpp
 	bool result = true;
 
@@ -74,10 +74,10 @@ bool GIAdrawClass::printGIAnetworkNodesToSVGstring(GIAtranslatorVariablesClass* 
 	determineBasicPrintPositionsOfAllNodes(translatorVariables->entityNodesActiveListComplete, &drawVariables, firstReferenceInPrintList, firstTagInSVGFile);
 	//cout << "firstTagInSVGFile = " << firstTagInSVGFile->name << endl;
 	
-	const int viewBoxMinX = -GIA_DRAW_SVG_VIEWBOX_MIN_X_OFFSET_SINGLE_SENTENCE;
-	const int viewBoxMaxX = width-GIA_DRAW_SVG_VIEWBOX_MIN_X_OFFSET_SINGLE_SENTENCE;
-	const int viewBoxMinY = -GIA_DRAW_SVG_VIEWBOX_MIN_Y_OFFSET_SINGLE_SENTENCE;
-	const int viewBoxMaxY = height-GIA_DRAW_SVG_VIEWBOX_MIN_Y_OFFSET_SINGLE_SENTENCE;
+	int viewBoxMinX = -GIA_DRAW_SVG_VIEWBOX_MIN_X_OFFSET_SINGLE_SENTENCE;
+	int viewBoxMaxX = width-GIA_DRAW_SVG_VIEWBOX_MIN_X_OFFSET_SINGLE_SENTENCE;
+	int viewBoxMinY = -GIA_DRAW_SVG_VIEWBOX_MIN_Y_OFFSET_SINGLE_SENTENCE;
+	int viewBoxMaxY = height-GIA_DRAW_SVG_VIEWBOX_MIN_Y_OFFSET_SINGLE_SENTENCE;
 	if(!LDsvg.writeSVGfile(writeFileStringSVG, firstTagInSVGFile, viewBoxMinX, viewBoxMaxX, viewBoxMinY, viewBoxMaxY))
 	{
 		result = false;
@@ -88,7 +88,7 @@ bool GIAdrawClass::printGIAnetworkNodesToSVGstring(GIAtranslatorVariablesClass* 
 	return result;
 }
 
-bool GIAdrawClass::printGIAnetworkNodes(GIAtranslatorVariablesClass* translatorVariables, const int width, const int height, const string outputFileNameLDR, const string outputFileNameSVG, const string outputFileNamePPM, const bool display, const bool useOutputLDRfile, const bool useOutputSVGfile, const bool useOutputPPMfile)
+bool GIAdrawClass::printGIAnetworkNodes(GIAtranslatorVariablesClass* translatorVariables, int width, int height, string outputFileNameLDR, string outputFileNameSVG, string outputFileNamePPM, bool display, bool useOutputLDRfile, bool useOutputSVGfile, bool useOutputPPMfile)
 {//most of this is copied from CSexecFlow.cpp
 	bool result = true;
 
@@ -116,10 +116,10 @@ bool GIAdrawClass::printGIAnetworkNodes(GIAtranslatorVariablesClass* translatorV
 	
 	if(useOutputSVGfile)
 	{
-		const int viewBoxMinX = GIA_DRAW_SVG_VIEWBOX_MIN_X;
-		const int viewBoxMaxX = GIA_DRAW_SVG_VIEWBOX_MAX_X;
-		const int viewBoxMinY = GIA_DRAW_SVG_VIEWBOX_MIN_Y;
-		const int viewBoxMaxY = GIA_DRAW_SVG_VIEWBOX_MAX_Y;
+		int viewBoxMinX = GIA_DRAW_SVG_VIEWBOX_MIN_X;
+		int viewBoxMaxX = GIA_DRAW_SVG_VIEWBOX_MAX_X;
+		int viewBoxMinY = GIA_DRAW_SVG_VIEWBOX_MIN_Y;
+		int viewBoxMaxY = GIA_DRAW_SVG_VIEWBOX_MAX_Y;
 		if(!LDsvg.writeSVGfile(outputFileNameSVG, firstTagInSVGFile, viewBoxMinX, viewBoxMaxX, viewBoxMinY, viewBoxMaxY))
 		{
 			result = false;
@@ -623,7 +623,7 @@ bool GIAdrawClass::initialiseEntityNodeForPrinting(GIAentityNode* entityNode, in
 
 
 
-bool GIAdrawClass::initialiseTimeConditionNodeForPrinting(GIAtimeConditionNode* timeConditionNode, const int y, const int x, GIAdrawVariables* drawVariables, LDreference** currentReferenceInPrintList, XMLparserTag** currentTag)
+bool GIAdrawClass::initialiseTimeConditionNodeForPrinting(GIAtimeConditionNode* timeConditionNode, int y, int x, GIAdrawVariables* drawVariables, LDreference** currentReferenceInPrintList, XMLparserTag** currentTag)
 {
 	bool result = true;
 	
@@ -700,7 +700,7 @@ bool GIAdrawClass::createReferenceConnectionWithText(vec* pos1, vec* pos2, int c
 	return result;
 }
 
-bool GIAdrawClass::createReferenceConnection(vec* pos1, vec* pos2, int colour, LDreference** currentReferenceInPrintList, XMLparserTag** currentTag, const GIAdrawVariables* drawVariables)
+bool GIAdrawClass::createReferenceConnection(vec* pos1, vec* pos2, int colour, LDreference** currentReferenceInPrintList, XMLparserTag** currentTag, GIAdrawVariables* drawVariables)
 {
 	bool result = true;
 	
@@ -739,7 +739,7 @@ bool GIAdrawClass::createReferenceConnection(vec* pos1, vec* pos2, int colour, L
 
 //consider using elipse instead; <ellipse cx="240" cy="100" rx="220" ry="30">
 
-bool GIAdrawClass::createBox(vec* vect, const double width, const double height, int colour, string* text, LDreference** currentReferenceInPrintList, XMLparserTag** currentTag, const int thickness, const GIAdrawVariables* drawVariables)
+bool GIAdrawClass::createBox(vec* vect, double width, double height, int colour, string* text, LDreference** currentReferenceInPrintList, XMLparserTag** currentTag, int thickness, GIAdrawVariables* drawVariables)
 {
 	bool result = true;
 	

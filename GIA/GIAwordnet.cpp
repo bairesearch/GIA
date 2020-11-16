@@ -26,7 +26,7 @@
  * File Name: GIAwordnet.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3o2a 08-November-2020
+ * Project Version: 3o3a 16-November-2020
  * Requirements: requires wordnet libraries to be installed
  * Description: Wordnet - searches wordnet database and parses wordnet output
  * /
@@ -43,7 +43,7 @@ int GIAwordnetClass::getSynonymnDetectionStatus()
 {
 	return synonymnDetectionStatus;
 }
-void GIAwordnetClass::initialiseWordNet(const int newSynonymnDetectionStatus)
+void GIAwordnetClass::initialiseWordNet(int newSynonymnDetectionStatus)
 {
 	synonymnDetectionStatus = newSynonymnDetectionStatus;
 
@@ -126,7 +126,7 @@ int similarityType =
 
 
 //assumes word and otherWord have the same wordNetPOS
-bool GIAwordnetClass::checkIfWordIsContainedWithinOtherWordsSynsetsOrViceVersa(string* word, string* otherWord, const int wordNetPOS)
+bool GIAwordnetClass::checkIfWordIsContainedWithinOtherWordsSynsetsOrViceVersa(string* word, string* otherWord, int wordNetPOS)
 {
 	bool entityNamesAreSynonymous = false;
 
@@ -147,7 +147,7 @@ bool GIAwordnetClass::checkIfWordIsContainedWithinOtherWordsSynsetsOrViceVersa(s
 	return entityNamesAreSynonymous;
 }
 
-bool GIAwordnetClass::checkIfWordIsContainedWithinAnotherWordsSynsets(const string* word, const string* otherWord, const int wordNetPOS)
+bool GIAwordnetClass::checkIfWordIsContainedWithinAnotherWordsSynsets(string* word, string* otherWord, int wordNetPOS)
 {
 	bool entityNamesAreSynonymous = false;
 
@@ -178,7 +178,7 @@ bool GIAwordnetClass::checkIfWordIsContainedWithinAnotherWordsSynsets(const stri
 }
 
 
-SynsetPtr GIAwordnetClass::findMostPopularSynsets(const string* word, bool* wordIsFound, const int wordNetPOS)
+SynsetPtr GIAwordnetClass::findMostPopularSynsets(string* word, bool* wordIsFound, int wordNetPOS)
 {
 	int maximumNumberOfTagsAcrossSimilarityTypes = 0;
 	SynsetPtr senseOutputWithHighestTagsAcrossSimilarityTypes = NULL;
@@ -230,7 +230,7 @@ SynsetPtr GIAwordnetClass::findMostPopularSynsets(const string* word, bool* word
 	return senseOutputWithHighestTagsAcrossSimilarityTypes;
 }
 
-SynsetPtr GIAwordnetClass::findSynsets(const string* word, bool* wordIsFound, const int wordNetPOS, const int similarityType)
+SynsetPtr GIAwordnetClass::findSynsets(string* word, bool* wordIsFound, int wordNetPOS, int similarityType)
 {
 	char* wordCharStar = const_cast<char*>(word->c_str());
 
@@ -250,7 +250,7 @@ SynsetPtr GIAwordnetClass::findSynsets(const string* word, bool* wordIsFound, co
 	return firstSenseInList;
 }
 
-SynsetPtr GIAwordnetClass::checkIfSynsetListContainsSynonymousEntityNamesAndRecordMostPopularSynset(SynsetPtr firstSenseInList, const int wordNetPOS, int* maximumNumberOfTags, bool* entityNamesAreSynonymous, const string* word, const string* otherWord, const bool compareEntityNames, bool* senseOutputWithHighestTagsPassedNewSynsetMustFree)
+SynsetPtr GIAwordnetClass::checkIfSynsetListContainsSynonymousEntityNamesAndRecordMostPopularSynset(SynsetPtr firstSenseInList, int wordNetPOS, int* maximumNumberOfTags, bool* entityNamesAreSynonymous, string* word, string* otherWord, bool compareEntityNames, bool* senseOutputWithHighestTagsPassedNewSynsetMustFree)
 {
 
 	SynsetPtr currentSenseInList = firstSenseInList;
@@ -378,7 +378,7 @@ SynsetPtr GIAwordnetClass::checkIfSynsetListContainsSynonymousEntityNamesAndReco
 
 
 
-void GIAwordnetClass::findSynonymsOLD(const string word, bool* wordIsFound, string listOfSynonyms[], const int wordNetPOS)
+void GIAwordnetClass::findSynonymsOLD(string word, bool* wordIsFound, string listOfSynonyms[], int wordNetPOS)
 {
 	bool result = true;
 
@@ -499,7 +499,7 @@ void GIAwordnetClass::findSynonymsOLD(const string word, bool* wordIsFound, stri
 	}
 }
 
-bool GIAwordnetClass::recordUntilCharacterOrEscapeCharacterOLD(int charIndex, const char* output, int* newCharIndex, string* lineString, const char characterToRecordUntil, const char escapeCharacter)
+bool GIAwordnetClass::recordUntilCharacterOrEscapeCharacterOLD(int charIndex, char* output, int* newCharIndex, string* lineString, char characterToRecordUntil, char escapeCharacter)
 {
 	*lineString = "";
 

@@ -26,7 +26,7 @@
  * File Name: GIAmain.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3o2a 08-November-2020
+ * Project Version: 3o3a 16-November-2020
  * Requirements: 
  * Description: Main
  * /
@@ -97,10 +97,10 @@
 
 
 #ifdef COMPILE_GIA
-int main(const int argc, const char** argv);
+int main(int argc, char** argv);
 #endif
 #ifdef COMPILE_LRP_WITH_ANN_GENERATE_POS_TAGGER_DATABASE
-int main(const int argc, const char** argv);
+int main(int argc, char** argv);
 #endif
 
 class GIAmainClass

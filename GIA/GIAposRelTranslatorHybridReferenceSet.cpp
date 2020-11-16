@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorHybridReferenceSet.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3o2a 08-November-2020
+ * Project Version: 3o3a 16-November-2020
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Hybrid Reference Set
  * /
@@ -59,7 +59,7 @@ NB there is no easy rcmod detection in these cases
 
 #ifdef GIA_POS_REL_TRANSLATOR_HYBRID_DEPRECIATED
 
-bool GIAposRelTranslatorHybridReferenceSetClass::executeReferenceSetPreprocessor(const vector<LRPpreprocessorPlainTextWord*>* logicReferenceVariableWordList, GIAposRelTranslatorHybridLogicReferenceVariable* logicReferenceVariable, const bool expectToFindSubjectAuxObjectLogicReferenceVariable, const int wordIndexSentence)
+bool GIAposRelTranslatorHybridReferenceSetClass::executeReferenceSetPreprocessor(vector<LRPpreprocessorPlainTextWord*>* logicReferenceVariableWordList, GIAposRelTranslatorHybridLogicReferenceVariable* logicReferenceVariable, bool expectToFindSubjectAuxObjectLogicReferenceVariable, int wordIndexSentence)
 {
 	bool result = true;
 
@@ -731,7 +731,7 @@ bool GIAposRelTranslatorHybridReferenceSetClass::determineIsVerbAndAdjective(LRP
 }	
 #endif	
 				
-void GIAposRelTranslatorHybridReferenceSetClass::updateIndices(const bool currentWordIsReferenceSetDelimiter, bool* referenceSetDelimiterDetected, bool* parsingReferenceSetDelimiter, const int currentDelimiterSpecialCase, const int wordIndexOfHypotheticalPreceedingThatWhich, const bool currentWordIsReferenceSetDelimiterPreceededByThatWhich, bool* referenceSetDelimiterIndicatesSameReferenceSet, int* firstIndexOfReferenceSetDelimiterText, int* lastIndexOfPreviousReferenceSet) 
+void GIAposRelTranslatorHybridReferenceSetClass::updateIndices(bool currentWordIsReferenceSetDelimiter, bool* referenceSetDelimiterDetected, bool* parsingReferenceSetDelimiter, int currentDelimiterSpecialCase, int wordIndexOfHypotheticalPreceedingThatWhich, bool currentWordIsReferenceSetDelimiterPreceededByThatWhich, bool* referenceSetDelimiterIndicatesSameReferenceSet, int* firstIndexOfReferenceSetDelimiterText, int* lastIndexOfPreviousReferenceSet) 
 {
 	if(currentWordIsReferenceSetDelimiter)
 	{
@@ -806,7 +806,7 @@ void GIAposRelTranslatorHybridReferenceSetClass::updateIndices(const bool curren
 }
 
 		
-bool GIAposRelTranslatorHybridReferenceSetClass::formSubReferenceSetTextFromWordList(const vector<LRPpreprocessorPlainTextWord*>* logicReferenceVariableWordList, vector<LRPpreprocessorPlainTextWord*>* subReferenceSetText, const int firstIndexOfSubReferenceSet, const int lastIndexOfSubReferenceSet)
+bool GIAposRelTranslatorHybridReferenceSetClass::formSubReferenceSetTextFromWordList(vector<LRPpreprocessorPlainTextWord*>* logicReferenceVariableWordList, vector<LRPpreprocessorPlainTextWord*>* subReferenceSetText, int firstIndexOfSubReferenceSet, int lastIndexOfSubReferenceSet)
 {
 	bool result = true;
 	
@@ -828,12 +828,12 @@ bool GIAposRelTranslatorHybridReferenceSetClass::formSubReferenceSetTextFromWord
 	return result;
 }
 
-bool GIAposRelTranslatorHybridReferenceSetClass::addReferenceSetToReferenceSet(LRPpreprocessorSubReferenceSet* firstSubReferenceSetInList, vector<LRPpreprocessorPlainTextWord*>* subReferenceSetText, const bool referenceSetDelimiter, const int wordIndexLogicReference, const int wordIndexSentence, const int delimiterType, const int delimiterSpecialCase)
+bool GIAposRelTranslatorHybridReferenceSetClass::addReferenceSetToReferenceSet(LRPpreprocessorSubReferenceSet* firstSubReferenceSetInList, vector<LRPpreprocessorPlainTextWord*>* subReferenceSetText, bool referenceSetDelimiter, int wordIndexLogicReference, int wordIndexSentence, int delimiterType, int delimiterSpecialCase)
 {
 	return addSubReferenceSetToReferenceSet(firstSubReferenceSetInList, subReferenceSetText, referenceSetDelimiter, wordIndexLogicReference, wordIndexSentence, delimiterType, delimiterSpecialCase);
 }
 
-bool GIAposRelTranslatorHybridReferenceSetClass::addSubReferenceSetToReferenceSet(LRPpreprocessorSubReferenceSet* firstSubReferenceSetInList, vector<LRPpreprocessorPlainTextWord*>* subReferenceSetText, const bool referenceSetDelimiter, const int wordIndexLogicReference, const int wordIndexSentence, const int delimiterType, const int delimiterSpecialCase)
+bool GIAposRelTranslatorHybridReferenceSetClass::addSubReferenceSetToReferenceSet(LRPpreprocessorSubReferenceSet* firstSubReferenceSetInList, vector<LRPpreprocessorPlainTextWord*>* subReferenceSetText, bool referenceSetDelimiter, int wordIndexLogicReference, int wordIndexSentence, int delimiterType, int delimiterSpecialCase)
 {
 	bool result = true;
 	
@@ -899,7 +899,7 @@ void GIAposRelTranslatorHybridReferenceSetClass::printSubReferenceSet(LRPpreproc
 
 
 #ifdef GIA_POS_REL_TRANSLATOR_HYBRID_DETERMINE_AMBIGUOUS_PREPOSITION_POS_TYPES_BASED_ON_CONTEXT
-bool GIAposRelTranslatorHybridReferenceSetClass::verifyIsPrepositionNotProgressiveVerbBasedOnContext(const vector<LRPpreprocessorPlainTextWord*>* sentenceContentsWordList, const int prepositionWordIndex, const bool usePOSprelim)
+bool GIAposRelTranslatorHybridReferenceSetClass::verifyIsPrepositionNotProgressiveVerbBasedOnContext(vector<LRPpreprocessorPlainTextWord*>* sentenceContentsWordList, int prepositionWordIndex, bool usePOSprelim)
 {
 	bool result = true;
 

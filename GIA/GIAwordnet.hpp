@@ -26,7 +26,7 @@
  * File Name: GIAwordnet.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3o2a 08-November-2020
+ * Project Version: 3o3a 16-November-2020
  * Requirements: requires wordnet libraries to be installed
  * Description: Wordnet - searches wordnet database and parses wordnet output
  * /
@@ -66,19 +66,19 @@ static int wordnetDataEntryPointersIndicatingSimilarSynsetsArray[WORDNET_DATA_EN
 class GIAwordnetClass
 {
 	private: SHAREDvarsClass SHAREDvars;
-	public: void initialiseWordNet(const int newSynonymnDetectionStatus);
+	public: void initialiseWordNet(int newSynonymnDetectionStatus);
 	public: int getSynonymnDetectionStatus();
 
-	public: bool checkIfWordIsContainedWithinOtherWordsSynsetsOrViceVersa(string* word, string* otherWord, const int wordNetPOS);
-		private: bool checkIfWordIsContainedWithinAnotherWordsSynsets(const string* word, const string* otherWord, const int wordNetPOS);
-	private: SynsetPtr findMostPopularSynsets(const string* word, bool* wordIsFound, const int wordNetPOS);
-			private: SynsetPtr findSynsets(const string* word, bool* wordIsFound, const int wordNetPOS, const int similarityType);
-			private: SynsetPtr checkIfSynsetListContainsSynonymousEntityNamesAndRecordMostPopularSynset(SynsetPtr firstSenseInList, const int wordNetPOS, int* maximumNumberOfTags, bool* entityNamesAreSynonymous, const string* word, const string* otherWord, const bool compareEntityNames, bool* senseOutputWithHighestTagsPassedNewSynsetMustFree);
+	public: bool checkIfWordIsContainedWithinOtherWordsSynsetsOrViceVersa(string* word, string* otherWord, int wordNetPOS);
+		private: bool checkIfWordIsContainedWithinAnotherWordsSynsets(string* word, string* otherWord, int wordNetPOS);
+	private: SynsetPtr findMostPopularSynsets(string* word, bool* wordIsFound, int wordNetPOS);
+			private: SynsetPtr findSynsets(string* word, bool* wordIsFound, int wordNetPOS, int similarityType);
+			private: SynsetPtr checkIfSynsetListContainsSynonymousEntityNamesAndRecordMostPopularSynset(SynsetPtr firstSenseInList, int wordNetPOS, int* maximumNumberOfTags, bool* entityNamesAreSynonymous, string* word, string* otherWord, bool compareEntityNames, bool* senseOutputWithHighestTagsPassedNewSynsetMustFree);
 
 
 
-	private: void findSynonymsOLD(const string word, bool* wordIsFound, string listOfSynonyms[], const int wordNetPOS);
-	private: bool recordUntilCharacterOrEscapeCharacterOLD(int charIndex, const char* output, int* newCharIndex, string* lineString, const char characterToRecordUntil, const char escapeCharacter);
+	private: void findSynonymsOLD(string word, bool* wordIsFound, string listOfSynonyms[], int wordNetPOS);
+	private: bool recordUntilCharacterOrEscapeCharacterOLD(int charIndex, char* output, int* newCharIndex, string* lineString, char characterToRecordUntil, char escapeCharacter);
 };
 
 #endif
