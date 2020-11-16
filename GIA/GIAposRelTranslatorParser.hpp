@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorParser.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3o3a 16-November-2020
+ * Project Version: 3o3b 16-November-2020
  * Requirements: requires text parsed by BAI Sequentially Activated Neuronal Input (SANI)
  * Description: Part-of-speech Relation Translator Parser
  * /
@@ -113,21 +113,21 @@ class GIAposRelTranslatorParserClass
 	
 	public: void createSANItranslatorVariablesFromGIAtranslatorVariables(GIAtranslatorVariablesClass* translatorVariables, SANItranslatorVariablesClass* SANItranslatorVariables);
 
-	public: bool convertSentenceTxtRelationsIntoGIAnetworkNodes(GIAtranslatorVariablesClass* translatorVariables, bool linkPreestablishedReferencesGIA, GIAcoreference* firstGIAcoreferenceInList);
+	public: bool convertSentenceTxtRelationsIntoGIAnetworkNodes(GIAtranslatorVariablesClass* translatorVariables, const bool linkPreestablishedReferencesGIA, GIAcoreference* firstGIAcoreferenceInList);
 		private: bool locateAndAddAllNetworkIndexEntitiesBasedOnTxtRelations(GIAtranslatorVariablesClass* translatorVariables);
 		#ifdef GIA_POS_REL_TRANSLATOR_RULES_CODE_COMPONENT_QUERY
-		private: void identifyComparisonVariable(GIAtranslatorVariablesClass* translatorVariables);
+		private: void identifyComparisonVariable(const GIAtranslatorVariablesClass* translatorVariables);
 		#endif
 		#ifdef GIA_POS_REL_TRANSLATOR_RULES_GIA3_USE_SEM_REL_TRANSLATOR_PARSER
 		public: bool generateSemanticRelationsFromTxtRelationsWrapperSentences(GIAtranslatorVariablesClass* translatorVariables);
 		#endif
 			private: bool generateSemanticRelationsFromTxtRelationsWrapper(GIAtranslatorVariablesClass* translatorVariables);
 				#ifdef GIA_POS_REL_TRANSLATOR_RULES_ASSUME_HIGH_LEVEL_REFERENCE_SETS_DO_NOT_CONTAIN_EXPLICIT_SEMANTIC_RELATION_FUNCTION
-				private: bool reconcileSameReferenceSetConnectionsForAllRelationshipEntities(GIAtranslatorVariablesClass* translatorVariables);
+				private: bool reconcileSameReferenceSetConnectionsForAllRelationshipEntities(const GIAtranslatorVariablesClass* translatorVariables);
 				#endif
-			private: void setPreprocessorSentenceTranslatorEntityReferences(LRPpreprocessorSentence* currentPreprocessorSentenceInList, vector<GIAentityNode*>* GIAentityNodeArray);
+			private: void setPreprocessorSentenceTranslatorEntityReferences(LRPpreprocessorSentence* currentPreprocessorSentenceInList, const vector<GIAentityNode*>* GIAentityNodeArray);
 
-		private: void defineSubstancesBasedOnNetworkAndDeterminerInfo(GIAtranslatorVariablesClass* translatorVariables);
+		private: void defineSubstancesBasedOnNetworkAndDeterminerInfo(const GIAtranslatorVariablesClass* translatorVariables);
 
 	#ifdef GIA_POS_REL_TRANSLATOR_RULES_CODE_SUBJECT_MULTI_POSTHOC_COLLAPSE_CONJUNCTION_ENTITIES
 	private: void collapseConjunctionEntities(GIAtranslatorVariablesClass* translatorVariables);
@@ -136,8 +136,8 @@ class GIAposRelTranslatorParserClass
 	
 	#ifdef SANI_SEMANTICALLY_DETERMINED_DYNAMIC_CONNECTIONS
 	private: bool relinkDynamicConnections(GIAtranslatorVariablesClass* translatorVariables);
-		private: bool findIdealSemanticRelationshipSourceInSentenceSubnet(GIAtranslatorVariablesClass* translatorVariables, bool relationshipSourceIsSubject, GIAentityNode* relationshipEntity, GIAentityNode* relationshipSourceEntity, GIAentityNode* relationshipTargetEntity, GIAentityNode** relationshipSourceNewFound);
-			private: bool calculateSimilarityOfSubnets(GIAtranslatorVariablesClass* translatorVariables, GIAentityNode* relationshipEntity, GIAentityNode* relationshipSourceEntity, GIAentityNode* relationshipTargetEntity, int* subsetSimilarity);
+		private: bool findIdealSemanticRelationshipSourceInSentenceSubnet(const GIAtranslatorVariablesClass* translatorVariables, const bool relationshipSourceIsSubject, const GIAentityNode* relationshipEntity, const GIAentityNode* relationshipSourceEntity, const GIAentityNode* relationshipTargetEntity, constEffective GIAentityNode** relationshipSourceNewFound);
+			private: bool calculateSimilarityOfSubnets(const GIAtranslatorVariablesClass* translatorVariables, const GIAentityNode* relationshipEntity, const GIAentityNode* relationshipSourceEntity, const GIAentityNode* relationshipTargetEntity, const int* subsetSimilarity);
 	#endif
 
 	

@@ -26,7 +26,7 @@
  * File Name: GIAdraw.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3o3a 16-November-2020
+ * Project Version: 3o3b 16-November-2020
  * Requirements: 
  * Description: Draw - Draws GIA nodes in GIA network/tree
  * /
@@ -296,19 +296,19 @@ class GIAdrawClass
 	private: LDspriteClass LDsprite;
 	private: GIAtranslatorOperationsClass GIAtranslatorOperations;
 	
-	public: bool printGIAnetworkNodesToSVGstring(GIAtranslatorVariablesClass* translatorVariables, int width, int height, int sentenceIndex, string* writeFileStringSVG, GIAentityNode* entityReference);
-	public: bool printGIAnetworkNodes(GIAtranslatorVariablesClass* translatorVariables, int width, int height, string outputFileNameLDR, string outputFileNameSVG, string outputFileNamePPM, bool display, bool useOutputLDRfile, bool useOutputSVGfile, bool useOutputPPMfile);
+	public: bool printGIAnetworkNodesToSVGstring(GIAtranslatorVariablesClass* translatorVariables, const int width, const int height, const int sentenceIndex, string* writeFileStringSVG, constEffective GIAentityNode* entityReference);
+	public: bool printGIAnetworkNodes(GIAtranslatorVariablesClass* translatorVariables, int width, int height, string outputFileNameLDR, string outputFileNameSVG, string outputFileNamePPM, const bool display, const bool useOutputLDRfile, const bool useOutputSVGfile, const bool useOutputPPMfile);
 
 	public: bool determineBasicPrintPositionsOfAllNodes(vector<GIAentityNode*>* entityNodesActiveListComplete, GIAdrawVariables* drawVariables, LDreference* firstReferenceInPrintList, XMLparserTag* firstTagInSVGFile);
 
 	private: void initiateMaxXAtParticularY();
 	private: bool initialiseEntityConnectionForPrinting(vec* pos1, GIAentityConnection* entityConnection, GIAdrawVariables* drawVariables, string connectionName, int entityConnectionColour, LDreference** currentReferenceInPrintList, XMLparserTag** currentTag);
-		private: bool initialiseEntityNodeForPrinting(GIAentityNode* entityNode, int y, int x, GIAdrawVariables* drawVariables, LDreference** currentReferenceInPrintList, XMLparserTag** currentTag, int sentenceIndex, bool thisIsDefinitionAndPreviousNodeWasInstance);
-		private: bool initialiseTimeConditionNodeForPrinting(GIAtimeConditionNode* timeConditionNode, int y, int x, GIAdrawVariables* drawVariables, LDreference** currentReferenceInPrintList, XMLparserTag** currentTag);
+		private: bool initialiseEntityNodeForPrinting(GIAentityNode* entityNode, int y, int x, GIAdrawVariables* drawVariables, LDreference** currentReferenceInPrintList, XMLparserTag** currentTag, const int sentenceIndex, bool thisIsDefinitionAndPreviousNodeWasInstance);
+		private: bool initialiseTimeConditionNodeForPrinting(GIAtimeConditionNode* timeConditionNode, const int y, const int x, GIAdrawVariables* drawVariables, LDreference** currentReferenceInPrintList, XMLparserTag** currentTag);
 
 	private: bool createReferenceConnectionWithText(vec* pos1, vec* pos2, int colour, LDreference** currentReferenceInPrintList, XMLparserTag** currentTag, string connectionTypeName, GIAdrawVariables* drawVariables);
-		private: bool createReferenceConnection(vec* pos1, vec* pos2, int colour, LDreference** currentReferenceInPrintList, XMLparserTag** currentTag, GIAdrawVariables* drawVariables);
-	private: bool createBox(vec* vect, double width, double height, int colour, string* text, LDreference** currentReferenceInPrintList, XMLparserTag** currentTag, int thickness, GIAdrawVariables* drawVariables);
+		private: bool createReferenceConnection(vec* pos1, vec* pos2, int colour, LDreference** currentReferenceInPrintList, XMLparserTag** currentTag, const GIAdrawVariables* drawVariables);
+	private: bool createBox(const vec* vect, double width, double height, int colour, string* text, LDreference** currentReferenceInPrintList, XMLparserTag** currentTag, int thickness, GIAdrawVariables* drawVariables);
 
 };
 

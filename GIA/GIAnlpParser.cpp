@@ -26,7 +26,7 @@
  * File Name: GIAnlpParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3o3a 16-November-2020
+ * Project Version: 3o3b 16-November-2020
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: NLP Parser - Parses tabular subsections (Eg <relations>) of RelEx CFF/Stanford Parser File
  * /
@@ -36,7 +36,7 @@
 #include "GIAnlpParser.hpp"
 
 //NB NLPrelexCompatibilityMode mode is only supported when !parseGIA2file; it is a special mode used when parsing Relex relations output with Stanford Compatibility Mode enabled
-void GIAnlpParserClass::GIATHparseStanfordParserRelationsText(string* relationsText, GIAsentence* currentSentenceInList, int* numberOfWordsInSentence, bool featuresNotPreviouslyFilled, bool parseGIA2file, bool NLPrelexCompatibilityMode)
+void GIAnlpParserClass::GIATHparseStanfordParserRelationsText(const string* relationsText, GIAsentence* currentSentenceInList, int* numberOfWordsInSentence, const bool featuresNotPreviouslyFilled, const bool parseGIA2file, const bool NLPrelexCompatibilityMode)
 {
 	GIArelation* firstRelationInList = currentSentenceInList->firstRelationInList;
 	GIAfeature* firstFeatureInList = currentSentenceInList->firstFeatureInList;
@@ -396,10 +396,10 @@ void GIAnlpParserClass::GIATHparseStanfordParserRelationsText(string* relationsT
 	}
 }
 
-bool GIAnlpParserClass::findReplicateRelation(GIAsentence* currentSentenceInList, GIArelation* relation)
+bool GIAnlpParserClass::findReplicateRelation(const GIAsentence* currentSentenceInList, const GIArelation* relation)
 {
 	bool foundReplicateRelation = false;
-	GIArelation* currentRelation = currentSentenceInList->firstRelationInList;
+	const GIArelation* currentRelation = currentSentenceInList->firstRelationInList;
 	while(currentRelation->next != NULL)
 	{
 		if(currentRelation != relation)
@@ -414,7 +414,7 @@ bool GIAnlpParserClass::findReplicateRelation(GIAsentence* currentSentenceInList
 	return foundReplicateRelation;
 }
 
-bool GIAnlpParserClass::compareRelations(GIArelation* relation1, GIArelation* relation2)
+bool GIAnlpParserClass::compareRelations(const GIArelation* relation1, const GIArelation* relation2)
 {
 	bool result = false;
 	if((relation1->relationType == relation2->relationType) &&
@@ -441,14 +441,14 @@ bool GIAnlpParserClass::findString(string entityName, string stringToFind)
 #endif
 
 #ifdef GIA_SEM_REL_TRANSLATOR
-string GIAnlpParserClass::createSameReferenceSetRecord2(bool sameReferenceSet)
+string GIAnlpParserClass::createSameReferenceSetRecord2(const bool sameReferenceSet)
 {
 	string sameReferenceSetRecord = "[sameReferenceSet=" + SHAREDvars.convertBoolToString(sameReferenceSet) + "]";
 	return sameReferenceSetRecord;
 }
 #endif
 
-void GIAnlpParserClass::GIATHparseStanfordParseWordsAndPOStagsText(string* POStagsText, GIAsentence* currentSentenceInList, int* numberOfWordsInSentence, bool createFeaturesGIA2only)
+void GIAnlpParserClass::GIATHparseStanfordParseWordsAndPOStagsText(const string* POStagsText, GIAsentence* currentSentenceInList, int* numberOfWordsInSentence, const bool createFeaturesGIA2only)
 {
 	GIAfeature* firstFeatureInList = currentSentenceInList->firstFeatureInList;
 	GIAfeature* currentFeatureInList = firstFeatureInList;
@@ -588,7 +588,7 @@ void GIAnlpParserClass::convertStanfordRelationToRelex(GIArelation* currentRelat
 }
 
 #ifdef LRP_PREPROCESSOR_WORD_REPLACE_OUTPUT_FOR_NLP_TEMPORARILY
-void GIAnlpParserClass::convertStanfordRelationToRelexLRPreversion(GIArelation* currentRelationInList, GIAsentence* currentSentenceInList, bool stanfordPrepositionFound, string tempRelexPrepositionString, string* relationTypeRelexStandard)
+void GIAnlpParserClass::convertStanfordRelationToRelexLRPreversion(GIArelation* currentRelationInList, GIAsentence* currentSentenceInList, const bool stanfordPrepositionFound, const string tempRelexPrepositionString, string* relationTypeRelexStandard)
 {
 	//if(stanfordPrepositionFound)
 	//{
@@ -731,7 +731,7 @@ void convertGIAsemanticRelationLRPreversion(GIArelation* currentRelationInList, 
 */
 
 //assumes prepositions have previously been converted to stanford prep_preposition format during preprocessor (for robustness)
-string GIAnlpParserClass::convertPrepositionToRelex2(string* preposition, bool* prepositionFound)
+string GIAnlpParserClass::convertPrepositionToRelex2(const string* preposition, bool* prepositionFound)
 {
 	*prepositionFound = false;
 	string relexPreposition = *preposition;
@@ -752,7 +752,7 @@ string GIAnlpParserClass::convertPrepositionToRelex2(string* preposition, bool* 
 	return relexPreposition;
 }
 
-void GIAnlpParserClass::GIATHparseRelexFeaturesText(string* featuresText, GIAsentence* currentSentenceInList, int* numberOfWordsInSentence)
+void GIAnlpParserClass::GIATHparseRelexFeaturesText(const string* featuresText, GIAsentence* currentSentenceInList, int* numberOfWordsInSentence)
 {
 	GIAfeature* firstFeatureInList = currentSentenceInList->firstFeatureInList;
 	*numberOfWordsInSentence = 0;
@@ -883,7 +883,7 @@ void GIAnlpParserClass::GIATHparseRelexFeaturesText(string* featuresText, GIAsen
 
 }
 
-void GIAnlpParserClass::GIATHparseRelexRelationsText(string* relationsText, GIAsentence* currentSentenceInList, int* numberOfWordsInSentence, bool NLPrelexCompatibilityMode)
+void GIAnlpParserClass::GIATHparseRelexRelationsText(const string* relationsText, GIAsentence* currentSentenceInList, int* numberOfWordsInSentence, const bool NLPrelexCompatibilityMode)
 {
 	GIArelation* firstRelationInList = currentSentenceInList->firstRelationInList;
 	int currentSentence = currentSentenceInList->sentenceIndex;
@@ -1035,11 +1035,11 @@ void GIAnlpParserClass::GIATHparseRelexRelationsText(string* relationsText, GIAs
 
 #ifdef GIA_OUTPUT_INTERNAL_RELATIONS_IN_RELEX_FORMAT
 
-string GIAnlpParserClass::generateRelexCFFfeatureTagContent(GIAfeature* firstFeatureInList)
+string GIAnlpParserClass::generateRelexCFFfeatureTagContent(const GIAfeature* firstFeatureInList)
 {
 	string relexCFFFeatureTagContent = "";
 
-	GIAfeature* currentFeatureInList = firstFeatureInList;
+	const GIAfeature* currentFeatureInList = firstFeatureInList;
 	while(currentFeatureInList->next != NULL)
 	{
 		/*
@@ -1091,11 +1091,11 @@ string GIAnlpParserClass::generateRelexCFFfeatureTagContent(GIAfeature* firstFea
 
 }
 
-string GIAnlpParserClass::generateRelexCFFrelationTagContent(GIArelation* firstRelationInList)
+string GIAnlpParserClass::generateRelexCFFrelationTagContent(const GIArelation* firstRelationInList)
 {
 	string relexCFFRelationTagContent = "";
 
-	GIArelation* currentRelationInList = firstRelationInList;
+	const GIArelation* currentRelationInList = firstRelationInList;
 	while(currentRelationInList->next != NULL)
 	{
 		if(!(currentRelationInList->disabled))

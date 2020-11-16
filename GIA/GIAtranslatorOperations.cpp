@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3o3a 16-November-2020
+ * Project Version: 3o3b 16-November-2020
  * Requirements: requires text parsed by X Parser
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
@@ -129,7 +129,7 @@ GIAtranslatorVariablesClass::~GIAtranslatorVariablesClass(void)
 
 
 #ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
-bool GIAtranslatorOperationsClass::connectionIsAlias(GIAentityConnection* connection)
+bool GIAtranslatorOperationsClass::connectionIsAlias(const GIAentityConnection* connection)
 {
 	bool isAlias = false;
 	#ifdef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
@@ -145,10 +145,10 @@ bool GIAtranslatorOperationsClass::connectionIsAlias(GIAentityConnection* connec
 #endif
 
 
-bool GIAtranslatorOperationsClass::connectionTargetIsRelationship(GIAentityConnection* connection)
+bool GIAtranslatorOperationsClass::connectionTargetIsRelationship(const GIAentityConnection* connection)
 {	
 	bool result = false;
-	GIAentityNode* entity = connection->entity;
+	const GIAentityNode* entity = connection->entity;
 	if(GIAentityNodeClass.entityIsRelationship(entity))
 	{
 		result = true;
@@ -184,7 +184,7 @@ bool GIAtranslatorOperationsClass::connectionIsRelationship(GIAentityConnection*
 */
 
 
-int GIAtranslatorOperationsClass::generateConnectionType(int relationshipEntityType)
+int GIAtranslatorOperationsClass::generateConnectionType(const int relationshipEntityType)
 {
 	int connectionType = entityTypesCrossReferenceEntityVectorConnectionArray[relationshipEntityType];
 	if(connectionType == GIA_ENTITY_VECTOR_CONNECTION_TYPE_UNKNOWN)
@@ -195,7 +195,7 @@ int GIAtranslatorOperationsClass::generateConnectionType(int relationshipEntityT
 	return connectionType;
 }
 
-int GIAtranslatorOperationsClass::generateConnectionTypeReverse(int relationshipEntityType)
+int GIAtranslatorOperationsClass::generateConnectionTypeReverse(const int relationshipEntityType)
 {
 	//cout << "relationshipEntityType = " << relationshipEntityType << endl;
 	
@@ -208,7 +208,7 @@ int GIAtranslatorOperationsClass::generateConnectionTypeReverse(int relationship
 	return connectionType;
 }
 
-int GIAtranslatorOperationsClass::generateInvertedConnectionType(GIAentityNode* entity, int connectionType)
+int GIAtranslatorOperationsClass::generateInvertedConnectionType(const GIAentityNode* entity, const int connectionType)
 {
 	int connectionTypeInverted = inverseVectorConnectionsArray[connectionType];
 	if(connectionTypeInverted == GIA_ENTITY_VECTOR_CONNECTION_TYPE_UNKNOWN)
@@ -414,19 +414,19 @@ GIAentityConnection* GIAtranslatorOperationsClass::getRelationshipSubjectEntityC
 
 #ifdef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS
 
-bool GIAtranslatorOperationsClass::connectPropertyToEntity(GIAentityNode* propertyRelationshipSubjectEntity, GIAentityNode* propertyRelationshipObjectEntity, GIAentityNode* propertyRelationshipEntity, bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables)
+bool GIAtranslatorOperationsClass::connectPropertyToEntity(GIAentityNode* propertyRelationshipSubjectEntity, GIAentityNode* propertyRelationshipObjectEntity, GIAentityNode* propertyRelationshipEntity, bool sameReferenceSet, const GIAtranslatorVariablesClass* translatorVariables)
 {
 	return connectRelationshipToEntity(propertyRelationshipSubjectEntity, propertyRelationshipObjectEntity, propertyRelationshipEntity, sameReferenceSet, GIA_ENTITY_TYPE_PROPERTY, translatorVariables);
 }
 
-bool GIAtranslatorOperationsClass::connectDefinitionToEntity(GIAentityNode* definitionRelationshipSubjectEntity, GIAentityNode* definitionRelationshipObjectEntity, GIAentityNode* definitionRelationshipEntity, bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables)
+bool GIAtranslatorOperationsClass::connectDefinitionToEntity(GIAentityNode* definitionRelationshipSubjectEntity, GIAentityNode* definitionRelationshipObjectEntity, GIAentityNode* definitionRelationshipEntity, bool sameReferenceSet, const GIAtranslatorVariablesClass* translatorVariables)
 {
 	return connectRelationshipToEntity(definitionRelationshipSubjectEntity, definitionRelationshipObjectEntity, definitionRelationshipEntity, sameReferenceSet, GIA_ENTITY_TYPE_DEFINITION, translatorVariables);
 }
 
 #ifdef GIA_ALIASES
 #ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
-bool GIAtranslatorOperationsClass::connectDefinitionToEntityMarkConnectionAsAlias(GIAentityNode* definitionRelationshipSubjectEntity, GIAentityNode* definitionRelationshipObjectEntity, GIAentityNode* definitionRelationshipEntity, bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables)
+bool GIAtranslatorOperationsClass::connectDefinitionToEntityMarkConnectionAsAlias(GIAentityNode* definitionRelationshipSubjectEntity, GIAentityNode* definitionRelationshipObjectEntity, GIAentityNode* definitionRelationshipEntity, bool sameReferenceSet, const GIAtranslatorVariablesClass* translatorVariables)
 {
 	bool result = connectDefinitionToEntity(definitionRelationshipSubjectEntity, definitionRelationshipObjectEntity, definitionRelationshipEntity, sameReferenceSet, translatorVariables);
 	definitionRelationshipEntity->isAlias = true;
@@ -436,46 +436,46 @@ bool GIAtranslatorOperationsClass::connectDefinitionToEntityMarkConnectionAsAlia
 #endif
 
 
-bool GIAtranslatorOperationsClass::connectBeingDefinitionToEntity(GIAentityNode* definitionRelationshipObjectEntity, GIAentityNode* definitionRelationshipEntity, bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables)
+bool GIAtranslatorOperationsClass::connectBeingDefinitionToEntity(GIAentityNode* definitionRelationshipObjectEntity, GIAentityNode* definitionRelationshipEntity, bool sameReferenceSet, const GIAtranslatorVariablesClass* translatorVariables)
 {	
 	return connectRelationshipToObject(definitionRelationshipObjectEntity, definitionRelationshipEntity, sameReferenceSet, GIA_ENTITY_TYPE_DEFINITION, translatorVariables);
 }
 
-bool GIAtranslatorOperationsClass::connectHavingPropertyToEntity(GIAentityNode* propertyRelationshipObjectEntity, GIAentityNode* propertyRelationshipEntity, bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables)
+bool GIAtranslatorOperationsClass::connectHavingPropertyToEntity(GIAentityNode* propertyRelationshipObjectEntity, GIAentityNode* propertyRelationshipEntity, bool sameReferenceSet, const GIAtranslatorVariablesClass* translatorVariables)
 {
 	return connectRelationshipToObject(propertyRelationshipObjectEntity, propertyRelationshipEntity, sameReferenceSet, GIA_ENTITY_TYPE_DEFINITION, translatorVariables);
 }
 
 #else
 
-bool GIAtranslatorOperationsClass::connectDirectPropertyToEntity(GIAentityNode* relationshipSubjectEntity, GIAentityNode* relationshipObjectEntity, GIAentityNode* auxHaveEntity, bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables)
+bool GIAtranslatorOperationsClass::connectDirectPropertyToEntity(GIAentityNode* relationshipSubjectEntity, GIAentityNode* relationshipObjectEntity, const GIAentityNode* auxHaveEntity, bool sameReferenceSet, const GIAtranslatorVariablesClass* translatorVariables)
 {
 	return connectDirectRelationshipToEntity(relationshipSubjectEntity, relationshipObjectEntity, auxHaveEntity, sameReferenceSet, GIA_ENTITY_TYPE_PROPERTY, translatorVariables, false);
 }
 
-bool GIAtranslatorOperationsClass::connectDirectDefinitionToEntity(GIAentityNode* relationshipSubjectEntity, GIAentityNode* relationshipObjectEntity, GIAentityNode* auxHaveEntity, bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables)
+bool GIAtranslatorOperationsClass::connectDirectDefinitionToEntity(GIAentityNode* relationshipSubjectEntity, GIAentityNode* relationshipObjectEntity, const GIAentityNode* auxHaveEntity, bool sameReferenceSet, const GIAtranslatorVariablesClass* translatorVariables)
 {
 	return connectDirectRelationshipToEntity(relationshipSubjectEntity, relationshipObjectEntity, auxHaveEntity, sameReferenceSet, GIA_ENTITY_TYPE_DEFINITION, translatorVariables, false);
 }
 
-bool GIAtranslatorOperationsClass::connectDirectPropertyToEntity(GIAentityNode* relationshipSubjectEntity, GIAentityNode* relationshipObjectEntity, bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables)
+bool GIAtranslatorOperationsClass::connectDirectPropertyToEntity(GIAentityNode* relationshipSubjectEntity, GIAentityNode* relationshipObjectEntity, bool sameReferenceSet, const GIAtranslatorVariablesClass* translatorVariables)
 {
 	return connectDirectRelationshipToEntity(relationshipSubjectEntity, relationshipObjectEntity, NULL, sameReferenceSet, GIA_ENTITY_TYPE_PROPERTY, translatorVariables, false);
 }
 
-bool GIAtranslatorOperationsClass::connectDirectDefinitionToEntity(GIAentityNode* relationshipSubjectEntity, GIAentityNode* relationshipObjectEntity, bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables)
+bool GIAtranslatorOperationsClass::connectDirectDefinitionToEntity(GIAentityNode* relationshipSubjectEntity, GIAentityNode* relationshipObjectEntity, bool sameReferenceSet, const GIAtranslatorVariablesClass* translatorVariables)
 {
 	return connectDirectRelationshipToEntity(relationshipSubjectEntity, relationshipObjectEntity, NULL, sameReferenceSet, GIA_ENTITY_TYPE_DEFINITION, translatorVariables, false);
 }
 
 #ifdef GIA_DISABLE_ALIAS_ENTITY_MERGING
-bool GIAtranslatorOperationsClass::connectDirectDefinitionToEntityMarkConnectionAsAlias(GIAentityNode* definitionRelationshipSubjectEntity, GIAentityNode* definitionRelationshipObjectEntity, bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables)
+bool GIAtranslatorOperationsClass::connectDirectDefinitionToEntityMarkConnectionAsAlias(GIAentityNode* definitionRelationshipSubjectEntity, GIAentityNode* definitionRelationshipObjectEntity, bool sameReferenceSet, const GIAtranslatorVariablesClass* translatorVariables)
 {
 	return connectDirectRelationshipToEntity(definitionRelationshipSubjectEntity, definitionRelationshipObjectEntity, NULL, sameReferenceSet, GIA_ENTITY_TYPE_DEFINITION, translatorVariables, true);
 }
 #endif
 
-bool GIAtranslatorOperationsClass::connectDirectRelationshipToEntity(GIAentityNode* relationshipSubjectEntity, GIAentityNode* relationshipObjectEntity, GIAentityNode* auxHaveEntity, bool sameReferenceSet, int relationshipEntityType, GIAtranslatorVariablesClass* translatorVariables, bool markConnectionAsAlias)
+bool GIAtranslatorOperationsClass::connectDirectRelationshipToEntity(GIAentityNode* relationshipSubjectEntity, GIAentityNode* relationshipObjectEntity, const GIAentityNode* auxHaveEntity, bool sameReferenceSet, const int relationshipEntityType, const GIAtranslatorVariablesClass* translatorVariables, const bool markConnectionAsAlias)
 {
 	bool result = true;
 	
@@ -552,12 +552,12 @@ bool GIAtranslatorOperationsClass::connectDirectRelationshipToEntity(GIAentityNo
 
 	//conditions required to be added [eg when, where, how, why]
 	//replace action if already existant
-bool GIAtranslatorOperationsClass::connectActionToEntity(GIAentityNode* actionRelationshipSubjectEntity, GIAentityNode* actionRelationshipObjectEntity, GIAentityNode* actionRelationshipEntity, bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables)
+bool GIAtranslatorOperationsClass::connectActionToEntity(GIAentityNode* actionRelationshipSubjectEntity, GIAentityNode* actionRelationshipObjectEntity, GIAentityNode* actionRelationshipEntity, bool sameReferenceSet, const GIAtranslatorVariablesClass* translatorVariables)
 {
 	return connectRelationshipToEntity(actionRelationshipSubjectEntity, actionRelationshipObjectEntity, actionRelationshipEntity, sameReferenceSet, GIA_ENTITY_TYPE_ACTION, translatorVariables);
 }
 
-bool GIAtranslatorOperationsClass::connectConditionToEntity(GIAentityNode* conditionRelationshipSubjectEntity, GIAentityNode* conditionRelationshipObjectEntity, GIAentityNode* conditionRelationshipEntity, bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables)
+bool GIAtranslatorOperationsClass::connectConditionToEntity(GIAentityNode* conditionRelationshipSubjectEntity, GIAentityNode* conditionRelationshipObjectEntity, GIAentityNode* conditionRelationshipEntity, bool sameReferenceSet, const GIAtranslatorVariablesClass* translatorVariables)
 {
 	bool result = connectRelationshipToEntity(conditionRelationshipSubjectEntity, conditionRelationshipObjectEntity, conditionRelationshipEntity, sameReferenceSet, GIA_ENTITY_TYPE_CONDITION, translatorVariables);
 	
@@ -569,42 +569,42 @@ bool GIAtranslatorOperationsClass::connectConditionToEntity(GIAentityNode* condi
 }
 
 
-bool GIAtranslatorOperationsClass::connectActionToSubject(GIAentityNode* actionRelationshipSubjectEntity, GIAentityNode* actionRelationshipEntity, bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables)
+bool GIAtranslatorOperationsClass::connectActionToSubject(GIAentityNode* actionRelationshipSubjectEntity, GIAentityNode* actionRelationshipEntity, bool sameReferenceSet, const GIAtranslatorVariablesClass* translatorVariables)
 {
 	return connectRelationshipToSubject(actionRelationshipSubjectEntity, actionRelationshipEntity, sameReferenceSet, GIA_ENTITY_TYPE_ACTION, translatorVariables);
 }
 
-bool GIAtranslatorOperationsClass::connectActionToObject(GIAentityNode* actionRelationshipObjectEntity, GIAentityNode* actionRelationshipEntity, bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables)
+bool GIAtranslatorOperationsClass::connectActionToObject(GIAentityNode* actionRelationshipObjectEntity, GIAentityNode* actionRelationshipEntity, bool sameReferenceSet, const GIAtranslatorVariablesClass* translatorVariables)
 {
 	return connectRelationshipToObject(actionRelationshipObjectEntity, actionRelationshipEntity, sameReferenceSet, GIA_ENTITY_TYPE_ACTION, translatorVariables);
 }
 
-bool GIAtranslatorOperationsClass::connectConditionToSubject(GIAentityNode* conditionRelationshipSubjectEntity, GIAentityNode* conditionRelationshipEntity, bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables)
+bool GIAtranslatorOperationsClass::connectConditionToSubject(GIAentityNode* conditionRelationshipSubjectEntity, GIAentityNode* conditionRelationshipEntity, bool sameReferenceSet, const GIAtranslatorVariablesClass* translatorVariables)
 {
 	return connectRelationshipToSubject(conditionRelationshipSubjectEntity, conditionRelationshipEntity, sameReferenceSet, GIA_ENTITY_TYPE_CONDITION, translatorVariables);
 }
 
-bool GIAtranslatorOperationsClass::connectConditionToObject(GIAentityNode* conditionRelationshipObjectEntity, GIAentityNode* conditionRelationshipEntity, bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables)
+bool GIAtranslatorOperationsClass::connectConditionToObject(GIAentityNode* conditionRelationshipObjectEntity, GIAentityNode* conditionRelationshipEntity, bool sameReferenceSet, const GIAtranslatorVariablesClass* translatorVariables)
 {
 	return connectRelationshipToObject(conditionRelationshipObjectEntity, conditionRelationshipEntity, sameReferenceSet, GIA_ENTITY_TYPE_CONDITION, translatorVariables);
 }
 
-bool GIAtranslatorOperationsClass::connectDefinitionToSubject(GIAentityNode* definitionRelationshipSubjectEntity, GIAentityNode* definitionRelationshipEntity, bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables)
+bool GIAtranslatorOperationsClass::connectDefinitionToSubject(GIAentityNode* definitionRelationshipSubjectEntity, GIAentityNode* definitionRelationshipEntity, bool sameReferenceSet, const GIAtranslatorVariablesClass* translatorVariables)
 {
 	return connectRelationshipToSubject(definitionRelationshipSubjectEntity, definitionRelationshipEntity, sameReferenceSet, GIA_ENTITY_TYPE_DEFINITION, translatorVariables);
 }
 
-bool GIAtranslatorOperationsClass::connectDefinitionToObject(GIAentityNode* definitionRelationshipObjectEntity, GIAentityNode* definitionRelationshipEntity, bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables)
+bool GIAtranslatorOperationsClass::connectDefinitionToObject(GIAentityNode* definitionRelationshipObjectEntity, GIAentityNode* definitionRelationshipEntity, bool sameReferenceSet, const GIAtranslatorVariablesClass* translatorVariables)
 {
 	return connectRelationshipToObject(definitionRelationshipObjectEntity, definitionRelationshipEntity, sameReferenceSet, GIA_ENTITY_TYPE_DEFINITION, translatorVariables);
 }
 
-bool GIAtranslatorOperationsClass::connectPropertyToSubject(GIAentityNode* propertyRelationshipSubjectEntity, GIAentityNode* propertyRelationshipEntity, bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables)
+bool GIAtranslatorOperationsClass::connectPropertyToSubject(GIAentityNode* propertyRelationshipSubjectEntity, GIAentityNode* propertyRelationshipEntity, bool sameReferenceSet, const GIAtranslatorVariablesClass* translatorVariables)
 {
 	return connectRelationshipToSubject(propertyRelationshipSubjectEntity, propertyRelationshipEntity, sameReferenceSet, GIA_ENTITY_TYPE_PROPERTY, translatorVariables);
 }
 
-bool GIAtranslatorOperationsClass::connectPropertyToObject(GIAentityNode* propertyRelationshipObjectEntity, GIAentityNode* propertyRelationshipEntity, bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables)
+bool GIAtranslatorOperationsClass::connectPropertyToObject(GIAentityNode* propertyRelationshipObjectEntity, GIAentityNode* propertyRelationshipEntity, bool sameReferenceSet, const GIAtranslatorVariablesClass* translatorVariables)
 {
 	return connectRelationshipToObject(propertyRelationshipObjectEntity, propertyRelationshipEntity, sameReferenceSet, GIA_ENTITY_TYPE_PROPERTY, translatorVariables);
 }
@@ -614,7 +614,7 @@ bool GIAtranslatorOperationsClass::connectPropertyToObject(GIAentityNode* proper
 
 
 
-bool GIAtranslatorOperationsClass::connectRelationshipToEntity(GIAentityNode* relationshipSubjectEntity, GIAentityNode* relationshipObjectEntity, GIAentityNode* relationshipEntity, bool sameReferenceSet, int relationshipEntityType, GIAtranslatorVariablesClass* translatorVariables)
+bool GIAtranslatorOperationsClass::connectRelationshipToEntity(GIAentityNode* relationshipSubjectEntity, GIAentityNode* relationshipObjectEntity, GIAentityNode* relationshipEntity, bool sameReferenceSet, int relationshipEntityType, const GIAtranslatorVariablesClass* translatorVariables)
 {
 	bool result = true;
 	
@@ -647,7 +647,7 @@ bool GIAtranslatorOperationsClass::connectRelationshipToEntity(GIAentityNode* re
 	return result;
 }
 
-bool GIAtranslatorOperationsClass::connectRelationshipToSubject(GIAentityNode* relationshipSubjectEntity, GIAentityNode* relationshipEntity, bool sameReferenceSet, int relationshipEntityType, GIAtranslatorVariablesClass* translatorVariables)
+bool GIAtranslatorOperationsClass::connectRelationshipToSubject(GIAentityNode* relationshipSubjectEntity, GIAentityNode* relationshipEntity, bool sameReferenceSet, int relationshipEntityType, const GIAtranslatorVariablesClass* translatorVariables)
 {
 	bool result = true;
 	
@@ -669,7 +669,7 @@ bool GIAtranslatorOperationsClass::connectRelationshipToSubject(GIAentityNode* r
 	return result;
 }
 
-bool GIAtranslatorOperationsClass::connectRelationshipToObject(GIAentityNode* relationshipObjectEntity, GIAentityNode* relationshipEntity, bool sameReferenceSet, int relationshipEntityType, GIAtranslatorVariablesClass* translatorVariables)
+bool GIAtranslatorOperationsClass::connectRelationshipToObject(GIAentityNode* relationshipObjectEntity, GIAentityNode* relationshipEntity, bool sameReferenceSet, int relationshipEntityType, const GIAtranslatorVariablesClass* translatorVariables)
 {
 	bool result = true;
 	
@@ -692,7 +692,7 @@ bool GIAtranslatorOperationsClass::connectRelationshipToObject(GIAentityNode* re
 }
 
 
-GIAentityNode* GIAtranslatorOperationsClass::useExistingRelationshipIfExistant(GIAentityNode* newOrExistingRelationship, GIAentityNode* relationshipSubjectEntity, GIAentityNode* relationshipObjectEntity, GIAentityNode* relationshipEntity, int relationshipEntityType)
+GIAentityNode* GIAtranslatorOperationsClass::useExistingRelationshipIfExistant(GIAentityNode* newOrExistingRelationship, GIAentityNode* relationshipSubjectEntity, const GIAentityNode* relationshipObjectEntity, const GIAentityNode* relationshipEntity, const int relationshipEntityType)
 {
 	if((relationshipEntityType == GIA_ENTITY_TYPE_ACTION) || (relationshipEntityType == GIA_ENTITY_TYPE_CONDITION))
 	{
@@ -719,7 +719,7 @@ GIAentityNode* GIAtranslatorOperationsClass::useExistingRelationshipIfExistant(G
 }
 
 #ifdef GIA_PREVENT_CONCEPTS_FROM_BEEN_ADDED_AS_CHILDREN_OF_NON_CONCEPTS
-void GIAtranslatorOperationsClass::setRelationshipObjectToSubstanceIfNecessary(GIAentityNode* relationshipSubjectEntity, GIAentityNode* relationshipObjectEntity, int relationshipEntityType)
+void GIAtranslatorOperationsClass::setRelationshipObjectToSubstanceIfNecessary(const GIAentityNode* relationshipSubjectEntity, GIAentityNode* relationshipObjectEntity, const int relationshipEntityType)
 {
 	if((relationshipEntityType == GIA_ENTITY_TYPE_PROPERTY) || (relationshipEntityType == GIA_ENTITY_TYPE_CONDITION))
 	{
@@ -735,21 +735,21 @@ void GIAtranslatorOperationsClass::setRelationshipObjectToSubstanceIfNecessary(G
 }
 #endif
 
-void GIAtranslatorOperationsClass::connectRelationshipInstanceToSubject(GIAentityNode* subjectEntity, GIAentityNode* newOrExistingRelationship, bool sameReferenceSet, int relationshipEntityType, GIAtranslatorVariablesClass* translatorVariables)
+void GIAtranslatorOperationsClass::connectRelationshipInstanceToSubject(GIAentityNode* subjectEntity, GIAentityNode* newOrExistingRelationship, bool sameReferenceSet, const int relationshipEntityType, const GIAtranslatorVariablesClass* translatorVariables)
 {
 	//configure relationship subject entity node
 	int connectionType = generateConnectionType(relationshipEntityType);
 	connectEntities(subjectEntity, newOrExistingRelationship, connectionType, GIA_ENTITY_VECTOR_CONNECTION_TYPE_RELATIONSHIP_SUBJECT, sameReferenceSet, translatorVariables);
 }
 
-void GIAtranslatorOperationsClass::connectRelationshipInstanceToObject(GIAentityNode* objectEntity, GIAentityNode* newOrExistingRelationship, bool sameReferenceSet, int relationshipEntityType, GIAtranslatorVariablesClass* translatorVariables)
+void GIAtranslatorOperationsClass::connectRelationshipInstanceToObject(GIAentityNode* objectEntity, GIAentityNode* newOrExistingRelationship, bool sameReferenceSet, const int relationshipEntityType, const GIAtranslatorVariablesClass* translatorVariables)
 {
 	//configure relationship object entity node
 	int connectionTypeReverse = generateConnectionTypeReverse(relationshipEntityType);
 	connectEntities(objectEntity, newOrExistingRelationship, connectionTypeReverse, GIA_ENTITY_VECTOR_CONNECTION_TYPE_RELATIONSHIP_OBJECT, sameReferenceSet, translatorVariables);
 }
 
-void GIAtranslatorOperationsClass::connectEntities(GIAentityNode* entity1, GIAentityNode* entity2, int connectionType, int connectionTypeInverse, bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables)
+void GIAtranslatorOperationsClass::connectEntities(GIAentityNode* entity1, GIAentityNode* entity2, int connectionType, int connectionTypeInverse, bool sameReferenceSet, const GIAtranslatorVariablesClass* translatorVariables)
 {
 	GIAentityConnection* connection1 = writeVectorConnection(entity1, entity2, connectionType, sameReferenceSet, translatorVariables);
 	GIAentityConnection* connection2 = writeVectorConnection(entity2, entity1, connectionTypeInverse, sameReferenceSet, translatorVariables);
@@ -771,7 +771,7 @@ void GIAtranslatorOperationsClass::connectEntities(GIAentityNode* entity1, GIAen
 
 #ifndef GIA_SYN_REL_TRANSLATOR_GENERIC_DEPENDENCY_RELATION_INTERPRETATION_REDISTRIBUTION
 //this is no longer required with redistributeRelexRelationsAdverbPlusObjectPlusSubjectRelationWhereAdverbHasSameArgumentAsSubjectAsCondition, etc..
-bool GIAtranslatorOperationsClass::isAdjectiveNotAnAdvmodAndRelationGovernorIsNotBe(GIArelation* currentRelationInList, GIAentityNode* GIAentityNodeArray[], int relationGovernorIndex, int NLPdependencyRelationsType)
+bool GIAtranslatorOperationsClass::isAdjectiveNotAnAdvmodAndRelationGovernorIsNotBe(const GIArelation* currentRelationInList, GIAentityNode* GIAentityNodeArray[], int relationGovernorIndex, const int NLPdependencyRelationsType)
 {
 	bool result = true;
 
@@ -794,7 +794,7 @@ bool GIAtranslatorOperationsClass::isAdjectiveNotAnAdvmodAndRelationGovernorIsNo
 }
 
 //this is no longer required with redistributeRelexRelationsAdverbPlusObjectPlusSubjectRelationWhereAdverbHasSameArgumentAsSubjectAsCondition, etc..
-bool GIAtranslatorOperationsClass::isAdjectiveNotConnectedToObjectOrSubject(GIAsentence* currentSentenceInList, GIArelation* currentRelationInList, int NLPdependencyRelationsType)
+bool GIAtranslatorOperationsClass::isAdjectiveNotConnectedToObjectOrSubject(const GIAsentence* currentSentenceInList, const GIArelation* currentRelationInList, const int NLPdependencyRelationsType)
 {
 	bool passed2 = true;
 
@@ -804,7 +804,7 @@ bool GIAtranslatorOperationsClass::isAdjectiveNotConnectedToObjectOrSubject(GIAs
 	#endif
 		if(currentRelationInList->relationType == GIA_SYN_REL_TRANSLATOR_RELATION_TYPE_ADJECTIVE_ADVMOD)
 		{
-			GIArelation* currentRelationInList3 = currentSentenceInList->firstRelationInList;
+			const GIArelation* currentRelationInList3 = currentSentenceInList->firstRelationInList;
  			while(currentRelationInList3->next != NULL)
 			{
 				bool partnerTypeRequiredFound = false;
@@ -1071,7 +1071,7 @@ void addTenseOnlyTimeConditionToSubstance(GIAentityNode* substanceNode, int tens
 void addTenseOnlyTimeConditionToSubstance(GIAentityNode* substanceNode, int tense)
 #endif
 */
-void GIAtranslatorOperationsClass::addTenseOnlyTimeConditionToSubstance(GIAentityNode* substanceNode, int tense, bool isProgressive)
+void GIAtranslatorOperationsClass::addTenseOnlyTimeConditionToSubstance(GIAentityNode* substanceNode, const int tense, const bool isProgressive)
 {
 	substanceNode->conditionType = CONDITION_NODE_TYPE_TIME;
 
@@ -1113,7 +1113,7 @@ void GIAtranslatorOperationsClass::addTenseOnlyTimeConditionToSubstance(GIAentit
 
 
 //assumes prepositions have previously been converted to stanford prep_preposition format during preprocessor (for robustness)
-string GIAtranslatorOperationsClass::convertPrepositionToRelex(string* preposition, bool* prepositionFound)
+string GIAtranslatorOperationsClass::convertPrepositionToRelex(const string* preposition, bool* prepositionFound)
 {
 	*prepositionFound = false;
 	string relexPreposition = *preposition;
@@ -1145,7 +1145,7 @@ GIAentityNode* GIAtranslatorOperationsClass::getComparisonVariableNode()
 {
 	return comparisonVariableNode;
 }
-void GIAtranslatorOperationsClass::setFoundComparisonVariable(bool value)
+void GIAtranslatorOperationsClass::setFoundComparisonVariable(const bool value)
 {
 	foundComparisonVariable = value;
 }
@@ -1157,7 +1157,7 @@ void GIAtranslatorOperationsClass::setComparisonVariableNode(GIAentityNode* newC
 
 
 
-void GIAtranslatorOperationsClass::applyNetworkIndexEntityAlreadyExistsFunction(GIAentityNode* entity, bool entityAlreadyExistant, bool tempEntityEnabled)
+void GIAtranslatorOperationsClass::applyNetworkIndexEntityAlreadyExistsFunction(GIAentityNode* entity, const bool entityAlreadyExistant, const bool tempEntityEnabled)
 {
 	if(entityAlreadyExistant)
 	{
@@ -1272,7 +1272,7 @@ void GIAtranslatorOperationsClass::recordNetworkIndexNodesAsNonPermanentIfTheyAr
 	}
 }
 
-void GIAtranslatorOperationsClass::convertRelexPOStypeToWordnetWordType(string* relexPOStype, int* grammaticalWordTypeTemp, bool grammaticallyStrict)
+void GIAtranslatorOperationsClass::convertRelexPOStypeToWordnetWordType(const string* relexPOStype, int* grammaticalWordTypeTemp, const bool grammaticallyStrict)
 {
 	*grammaticalWordTypeTemp = GRAMMATICAL_WORD_TYPE_UNDEFINED;
 	for(int i=0; i<FEATURE_RELEX_POS_NUMBER_OF_TYPES; i++)
@@ -1284,7 +1284,7 @@ void GIAtranslatorOperationsClass::convertRelexPOStypeToWordnetWordType(string* 
 	}
 }
 
-void GIAtranslatorOperationsClass::convertStanfordPOStagToRelexPOStypeAndWordnetWordType(string* POStag, string* relexPOStype, int* grammaticalWordTypeTemp, bool grammaticallyStrict)
+void GIAtranslatorOperationsClass::convertStanfordPOStagToRelexPOStypeAndWordnetWordType(const string* POStag, string* relexPOStype, int* grammaticalWordTypeTemp, const bool grammaticallyStrict)
 {
 	*relexPOStype = FEATURE_RELEX_POS_TYPE_WORD;
 	
@@ -1334,7 +1334,7 @@ void GIAtranslatorOperationsClass::generateTempFeatureArray(GIAtranslatorVariabl
 	}
 }
 
-bool GIAtranslatorOperationsClass::determineSameReferenceSetValue(bool defaultSameSetValueForRelation, GIArelation* relation)
+bool GIAtranslatorOperationsClass::determineSameReferenceSetValue(bool defaultSameSetValueForRelation, const GIArelation* relation)
 {
 	bool auxiliaryIndicatesDifferentReferenceSet = relation->auxiliaryIndicatesDifferentReferenceSet;
 	bool rcmodIndicatesSameReferenceSet = relation->rcmodIndicatesSameReferenceSet;
@@ -1414,11 +1414,11 @@ GIAentityNode* GIAtranslatorOperationsClass::addRelationshipArtificialToEntity(G
 
 
 #ifdef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS	
-GIAentityNode* GIAtranslatorOperationsClass::findOrAddEntityNodeByNameSimpleWrapperRelationshipArtificialProperty(GIAentityNode* propertyRelationshipSubjectEntity, GIAentityNode* propertyRelationshipObjectEntity, GIAtranslatorVariablesClass* translatorVariables)
+GIAentityNode* GIAtranslatorOperationsClass::findOrAddEntityNodeByNameSimpleWrapperRelationshipArtificialProperty(GIAentityNode* propertyRelationshipSubjectEntity, const GIAentityNode* propertyRelationshipObjectEntity, GIAtranslatorVariablesClass* translatorVariables)
 {
 	return findOrAddEntityNodeByNameSimpleWrapperRelationshipArtificial(propertyRelationshipSubjectEntity, propertyRelationshipObjectEntity, GIA_ENTITY_TYPE_PROPERTY, RELATION_ENTITY_SPECIAL_RELATIONSHIP_NAME_FOR_EFFECTIVE_PROPERTIES, translatorVariables);
 }
-GIAentityNode* GIAtranslatorOperationsClass::findOrAddEntityNodeByNameSimpleWrapperRelationshipArtificialDefinition(GIAentityNode* definitionRelationshipSubjectEntity, GIAentityNode* definitionRelationshipObjectEntity, GIAtranslatorVariablesClass* translatorVariables)
+GIAentityNode* GIAtranslatorOperationsClass::findOrAddEntityNodeByNameSimpleWrapperRelationshipArtificialDefinition(GIAentityNode* definitionRelationshipSubjectEntity, const GIAentityNode* definitionRelationshipObjectEntity, GIAtranslatorVariablesClass* translatorVariables)
 {
 	return findOrAddEntityNodeByNameSimpleWrapperRelationshipArtificial(definitionRelationshipSubjectEntity, definitionRelationshipObjectEntity, GIA_ENTITY_TYPE_DEFINITION, RELATION_ENTITY_SPECIAL_RELATIONSHIP_NAME_FOR_EFFECTIVE_DEFINITIONS, translatorVariables);
 }
@@ -1435,13 +1435,13 @@ GIAentityNode* GIAtranslatorOperationsClass::addEntityNodeByNameSimpleWrapperRel
 #endif
 
 //CHECKTHIS;
-GIAentityNode* GIAtranslatorOperationsClass::findOrAddEntityNodeByNameSimpleWrapperRelationshipArtificialCondition(GIAentityNode* propertyRelationshipSubjectEntity, GIAentityNode* propertyRelationshipObjectEntity, string conditionName, GIAtranslatorVariablesClass* translatorVariables)
+GIAentityNode* GIAtranslatorOperationsClass::findOrAddEntityNodeByNameSimpleWrapperRelationshipArtificialCondition(GIAentityNode* propertyRelationshipSubjectEntity, const GIAentityNode* propertyRelationshipObjectEntity, string conditionName, GIAtranslatorVariablesClass* translatorVariables)
 {
 	return findOrAddEntityNodeByNameSimpleWrapperRelationshipArtificial(propertyRelationshipSubjectEntity, propertyRelationshipObjectEntity, GIA_ENTITY_TYPE_CONDITION, conditionName, translatorVariables);
 }
 
 
-GIAentityNode* GIAtranslatorOperationsClass::findOrAddEntityNodeByNameSimpleWrapperRelationshipArtificial(GIAentityNode* relationshipSubjectEntity, GIAentityNode* relationshipObjectEntity, int relationshipEntityType, string relationshipEntityName, GIAtranslatorVariablesClass* translatorVariables)
+GIAentityNode* GIAtranslatorOperationsClass::findOrAddEntityNodeByNameSimpleWrapperRelationshipArtificial(GIAentityNode* relationshipSubjectEntity, const GIAentityNode* relationshipObjectEntity, int relationshipEntityType, string relationshipEntityName, GIAtranslatorVariablesClass* translatorVariables)
 {
 	GIAentityNode* relationshipEntity = NULL;
 	if(!findExistingRelationshipInSentenceEntityArray(relationshipSubjectEntity, relationshipObjectEntity, relationshipEntityType, relationshipEntityName, &relationshipEntity, translatorVariables))
@@ -1463,7 +1463,7 @@ GIAentityNode* GIAtranslatorOperationsClass::findOrAddEntityNodeByNameSimpleWrap
 	return relationshipEntity;	
 }
 
-bool GIAtranslatorOperationsClass::findExistingRelationshipInSentenceEntityArray(GIAentityNode* relationshipSubjectEntity, GIAentityNode* relationshipObjectEntity, int relationshipEntityType, string relationshipEntityName, GIAentityNode** relationshipEntity, GIAtranslatorVariablesClass* translatorVariables)
+bool GIAtranslatorOperationsClass::findExistingRelationshipInSentenceEntityArray(GIAentityNode* relationshipSubjectEntity, const GIAentityNode* relationshipObjectEntity, const int relationshipEntityType, const string relationshipEntityName, constEffective GIAentityNode** relationshipEntity, const GIAtranslatorVariablesClass* translatorVariables)
 {
 	//if !GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS; this function can only be used for relationshipEntityType == GIA_ENTITY_TYPE_CONDITION
 		
@@ -1667,7 +1667,7 @@ GIAentityNode* GIAtranslatorOperationsClass::addRelationshipArtificialToEntity2(
 	return relationshipEntity;
 }
 #ifdef GIA_ADD_ARTIFICIAL_AUXILIARY_FOR_ALL_PROPERTIES_AND_DEFINITIONS	
-GIAentityNode* GIAtranslatorOperationsClass::findOrAddEntityNodeByNameSimpleWrapperRelationshipArtificial2(GIAentityNode* relationshipSubjectEntity, GIAentityNode* relationshipObjectEntity, int relationshipEntityType, string relationshipEntityName, GIAtranslatorVariablesClass* translatorVariablesSentencesParsed)
+GIAentityNode* GIAtranslatorOperationsClass::findOrAddEntityNodeByNameSimpleWrapperRelationshipArtificial2(GIAentityNode* relationshipSubjectEntity, const GIAentityNode* relationshipObjectEntity, int relationshipEntityType, string relationshipEntityName, GIAtranslatorVariablesClass* translatorVariablesSentencesParsed)
 {
 	GIAentityNode* relationshipEntity = NULL;
 	#ifndef LRP_PREPROCESSOR_FIND_EXISTING_RELATIONSHIP_IN_SENTENCE_ENFORCE_SAME_SENTENCE_CHECKS
@@ -1712,7 +1712,7 @@ GIAentityNode* GIAtranslatorOperationsClass::findOrAddNetworkIndexEntityNodeByNa
 	return findOrAddNetworkIndexEntityNodeByNameSimpleWrapper(entityNodeName, entityAlreadyExistant, translatorVariables, true);
 }
 
-GIAentityNode* GIAtranslatorOperationsClass::findOrAddNetworkIndexEntityNodeByNameSimpleWrapper(string* entityNodeName, bool* entityAlreadyExistant, GIAtranslatorVariablesClass* translatorVariables, bool tempEntityEnabled)
+GIAentityNode* GIAtranslatorOperationsClass::findOrAddNetworkIndexEntityNodeByNameSimpleWrapper(string* entityNodeName, bool* entityAlreadyExistant, GIAtranslatorVariablesClass* translatorVariables, const bool tempEntityEnabled)
 {
 	GIAentityNode* entityNodeFound = NULL;
 
@@ -1728,7 +1728,7 @@ GIAentityNode* GIAtranslatorOperationsClass::findOrAddNetworkIndexEntityNodeByNa
 
 /*these functions have been added for GIA Database compatibility*/
 //this function does write to database, but prepares data structures for write to database (at the end of the user sequence, writeDatabase{} is written...)
-GIAentityConnection* GIAtranslatorOperationsClass::writeVectorConnection(GIAentityNode* entityNode, GIAentityNode* entityNodeToAdd, int connectionType, bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables)
+GIAentityConnection* GIAtranslatorOperationsClass::writeVectorConnection(GIAentityNode* entityNode, GIAentityNode* entityNodeToAdd, int connectionType, bool sameReferenceSet, const GIAtranslatorVariablesClass* translatorVariables)
 {
 	GIAentityConnection* newConnection = NULL;
 	#ifdef GIA_ADVANCED_REFERENCING_PREVENT_DOUBLE_LINKS
@@ -1811,7 +1811,7 @@ GIAentityConnection* GIAtranslatorOperationsClass::writeVectorConnection(GIAenti
 }
 
 
-bool GIAtranslatorOperationsClass::findEntityNodePointerInVector(GIAentityNode* entityNode, GIAentityNode* entityNodeToFind, int connectionType, GIAentityConnection** connectionFound)
+bool GIAtranslatorOperationsClass::findEntityNodePointerInVector(GIAentityNode* entityNode, const GIAentityNode* entityNodeToFind, const int connectionType, GIAentityConnection** connectionFound)
 {
 	bool foundNode = false;
 	for(vector<GIAentityConnection*>::iterator connectionIter = entityNode->entityVectorConnectionsArray[connectionType].begin(); connectionIter != entityNode->entityVectorConnectionsArray[connectionType].end(); connectionIter++)
@@ -1825,7 +1825,7 @@ bool GIAtranslatorOperationsClass::findEntityNodePointerInVector(GIAentityNode* 
 	return foundNode;
 }
 
-bool GIAtranslatorOperationsClass::findSameSentenceEntityNodePointerInVector(GIAentityNode* entityNode, GIAentityNode* entityNodeToFind, int connectionType, GIAentityConnection** connectionFound, int sentenceIndex)
+bool GIAtranslatorOperationsClass::findSameSentenceEntityNodePointerInVector(GIAentityNode* entityNode, const GIAentityNode* entityNodeToFind, const int connectionType, GIAentityConnection** connectionFound, const int sentenceIndex)
 {
 	bool foundNode = false;
 	for(vector<GIAentityConnection*>::iterator connectionIter = entityNode->entityVectorConnectionsArray[connectionType].begin(); connectionIter != entityNode->entityVectorConnectionsArray[connectionType].end(); connectionIter++)
@@ -1842,7 +1842,7 @@ bool GIAtranslatorOperationsClass::findSameSentenceEntityNodePointerInVector(GIA
 	return foundNode;
 }
 
-bool GIAtranslatorOperationsClass::findEntityNodeNameInVector(GIAentityNode* entityNode, string* entityNodeNameToFind, int connectionType, GIAentityConnection** connectionFound)
+bool GIAtranslatorOperationsClass::findEntityNodeNameInVector(GIAentityNode* entityNode, const string* entityNodeNameToFind, const int connectionType, GIAentityConnection** connectionFound)
 {
 	bool foundNode = false;
 	for(vector<GIAentityConnection*>::iterator connectionIter = entityNode->entityVectorConnectionsArray[connectionType].begin(); connectionIter != entityNode->entityVectorConnectionsArray[connectionType].end(); connectionIter++)
@@ -1961,7 +1961,7 @@ void GIAtranslatorOperationsClass::addInstanceEntityNodeToActiveLists(GIAentityN
 
 #ifdef GIA_ALIASES
 #ifndef GIA_DISABLE_ALIAS_ENTITY_MERGING
-bool GIAtranslatorOperationsClass::mergeEntityNodesAddAlias(GIAentityNode* entityNode, GIAentityNode* entityNodeToMerge, GIAtranslatorVariablesClass* translatorVariables)
+bool GIAtranslatorOperationsClass::mergeEntityNodesAddAlias(GIAentityNode* entityNode, GIAentityNode* entityNodeToMerge, const GIAtranslatorVariablesClass* translatorVariables)
 {
 	bool result = true;
 	if(entityNode == entityNodeToMerge)	//before 3a1o: (entityNode->idActiveList == entityNodeToMerge->idActiveList)
@@ -2178,12 +2178,12 @@ NLCpreprocessorSentence* GIAtranslatorOperationsClass::getFirstNLCsentenceInList
 {
 	return firstNLCsentenceInListLocalGIA;
 }
-void GIAtranslatorOperationsClass::setFirstNLCsentenceInListGIA(NLCpreprocessorSentence* firstNLCsentenceInListNew)
+void GIAtranslatorOperationsClass::setFirstNLCsentenceInListGIA(constEffective NLCpreprocessorSentence* firstNLCsentenceInListNew)
 {
 	firstNLCsentenceInListLocalGIA = firstNLCsentenceInListNew;
 }
 #ifdef GIA_NLC_INTEGRATION_DEFINE_REFERENCE_CONTEXT_BY_TEXT_INDENTATION
-bool GIAtranslatorOperationsClass::checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContextGIA(GIAentityNode* indefiniteEntity, GIAentityNode* definiteEntity, int* indentationDifferenceFound)
+bool GIAtranslatorOperationsClass::checkIndefiniteEntityCorrespondingToDefiniteEntityInSameContextGIA(const GIAentityNode* indefiniteEntity, const GIAentityNode* definiteEntity, int* indentationDifferenceFound)
 {
 	bool foundIndefiniteEntity = false;
 
@@ -2251,7 +2251,7 @@ bool GIAtranslatorOperationsClass::checkIndefiniteEntityCorrespondingToDefiniteE
 }
 #endif
 #ifdef GIA_NLC_INTEGRATION_DISABLE_ADVANCED_REFERENCING_FOR_LOGICAL_CONDITIONS_CONCEPTS
-bool GIAtranslatorOperationsClass::checkIfSentenceIsMathTextParsablePhrase(int sentenceIndex)
+bool GIAtranslatorOperationsClass::checkIfSentenceIsMathTextParsablePhrase(const int sentenceIndex)
 {
 	//cout << "df" << endl;
 	bool sentenceIsMathTextParsablePhrase = false;
@@ -2487,7 +2487,7 @@ void GIAtranslatorOperationsClass::createAdditionalSubclassEntities(GIAtranslato
 
 #endif
 
-void GIAtranslatorOperationsClass::linkSubclassEntitiesWithParentClassEntities(GIAentityNode* subclassNetworkIndexEntity, GIAentityNode* parentClassNetworkIndexEntity, bool linkAsAlias, bool onlyLinkIfSubclassOrParentConceptNotFound, GIAtranslatorVariablesClass* translatorVariables)
+void GIAtranslatorOperationsClass::linkSubclassEntitiesWithParentClassEntities(GIAentityNode* subclassNetworkIndexEntity, GIAentityNode* parentClassNetworkIndexEntity, const bool linkAsAlias, const bool onlyLinkIfSubclassOrParentConceptNotFound, GIAtranslatorVariablesClass* translatorVariables)
 {
 	string parentClassName = parentClassNetworkIndexEntity->entityName;
 
@@ -2562,7 +2562,7 @@ void GIAtranslatorOperationsClass::linkSubclassEntitiesWithParentClassEntities(G
 }
 
 #ifdef GIA_TRANSLATOR_INTERPRET_PRENOMINAL_MODIFIER_SUBCLASSES_DETECT_USER_DECLARED_SUBCLASS_ENTITIES
-void GIAtranslatorOperationsClass::detectUserDeclaredSubclassEntities(GIAtranslatorVariablesClass* translatorVariables)
+void GIAtranslatorOperationsClass::detectUserDeclaredSubclassEntities(const GIAtranslatorVariablesClass* translatorVariables)
 {
 	for(int w=0; w<GIAsentenceClass.getMaxIndexOfDynamicallyGeneratedEntity(translatorVariables->currentSentenceInList); w++)
 	{
@@ -2638,7 +2638,7 @@ void GIAtranslatorOperationsClass::createShortcutsToConceptEntities(GIAtranslato
 	}
 }
 
-bool GIAtranslatorOperationsClass::hasSameReferenceSetConnections(GIAentityNode* entity, GIAtranslatorVariablesClass* translatorVariables)
+bool GIAtranslatorOperationsClass::hasSameReferenceSetConnections(GIAentityNode* entity, const GIAtranslatorVariablesClass* translatorVariables)
 {
 	bool sameReferenceSetConnection = false;
 	for(int connectionType = 0; connectionType < GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; connectionType++)
@@ -2672,7 +2672,7 @@ bool GIAtranslatorOperationsClass::hasSameReferenceSetConnections(GIAentityNode*
 
 
 
-bool GIAtranslatorOperationsClass::connectDefinitionAliasWrapper(GIAtranslatorVariablesClass* translatorVariables, GIAentityNode* entitySemanticRelationFunction1, GIAentityNode** entitySemanticRelationFunction2, GIAentityNode* entitySemanticRelationFunction3, bool sameReferenceSet)
+bool GIAtranslatorOperationsClass::connectDefinitionAliasWrapper(const GIAtranslatorVariablesClass* translatorVariables, GIAentityNode* entitySemanticRelationFunction1, GIAentityNode** entitySemanticRelationFunction2, GIAentityNode* entitySemanticRelationFunction3, bool sameReferenceSet)
 {
 	bool result = true;
 	
@@ -2755,7 +2755,7 @@ bool GIAtranslatorOperationsClass::connectPrenominalModifierWrapper(GIAtranslato
 }
 
 #ifdef GIA_POS_REL_TRANSLATOR_RULES_GIA3
-bool GIAtranslatorOperationsClass::connectMultiwordAuxiliaryWrapper(GIAtranslatorVariablesClass* translatorVariables, GIAentityNode* entitySemanticRelationFunction1, GIAentityNode* entitySemanticRelationFunction2, bool sameReferenceSet)
+bool GIAtranslatorOperationsClass::connectMultiwordAuxiliaryWrapper(const GIAtranslatorVariablesClass* translatorVariables, GIAentityNode* entitySemanticRelationFunction1, GIAentityNode* entitySemanticRelationFunction2, const bool sameReferenceSet)
 {
 	bool result = true;
 	entitySemanticRelationFunction1->multiwordAuxiliaryList.push_back(entitySemanticRelationFunction2->entityName);
@@ -2763,7 +2763,7 @@ bool GIAtranslatorOperationsClass::connectMultiwordAuxiliaryWrapper(GIAtranslato
 }
 #endif
 
-bool GIAtranslatorOperationsClass::connectMultiwordPrepositionWrapper(GIAtranslatorVariablesClass* translatorVariables, GIAentityNode* entitySemanticRelationFunction1, GIAentityNode* entitySemanticRelationFunction2, bool sameReferenceSet)
+bool GIAtranslatorOperationsClass::connectMultiwordPrepositionWrapper(const GIAtranslatorVariablesClass* translatorVariables, GIAentityNode* entitySemanticRelationFunction1, GIAentityNode* entitySemanticRelationFunction2, const bool sameReferenceSet)
 {
 	#ifdef LRP_PREPROCESSOR_WORD_MULTIWORD_REDUCTION
 	cout << "GIAtranslatorOperationsClass::connectMultiwordPrepositionWrapper{} warning; LRP_PREPROCESSOR_WORD_MULTIWORD_REDUCTION (multiword prepositions should have been collapsed by GIA preprocessor) - check LRPdata/multiwordlists.txt for presence of 'preposition multiwordlistPreposition.txt'" << endl;
@@ -2775,12 +2775,12 @@ bool GIAtranslatorOperationsClass::connectMultiwordPrepositionWrapper(GIAtransla
 	return connectMultiwordCollapse(translatorVariables, entitySemanticRelationFunction1, entitySemanticRelationFunction2, sameReferenceSet);
 }
 
-bool GIAtranslatorOperationsClass::connectMultiwordAliasWrapper(GIAtranslatorVariablesClass* translatorVariables, GIAentityNode* entitySemanticRelationFunction1, GIAentityNode* entitySemanticRelationFunction2, bool sameReferenceSet)
+bool GIAtranslatorOperationsClass::connectMultiwordAliasWrapper(const GIAtranslatorVariablesClass* translatorVariables, GIAentityNode* entitySemanticRelationFunction1, GIAentityNode* entitySemanticRelationFunction2, const bool sameReferenceSet)
 {
 	return connectMultiwordCollapseReverse(translatorVariables, entitySemanticRelationFunction1, entitySemanticRelationFunction2, sameReferenceSet);
 }
 
-bool GIAtranslatorOperationsClass::connectMultiwordCollapse(GIAtranslatorVariablesClass* translatorVariables, GIAentityNode* entitySemanticRelationFunction1, GIAentityNode* entitySemanticRelationFunction2, bool sameReferenceSet)
+bool GIAtranslatorOperationsClass::connectMultiwordCollapse(const GIAtranslatorVariablesClass* translatorVariables, GIAentityNode* entitySemanticRelationFunction1, GIAentityNode* entitySemanticRelationFunction2, const bool sameReferenceSet)
 {
 	bool result = true;
 	#ifdef GIA_RECORD_WAS_REFERENCE_INFORMATION
@@ -2806,7 +2806,7 @@ bool GIAtranslatorOperationsClass::connectMultiwordCollapse(GIAtranslatorVariabl
 	#endif
 	return result;
 }
-bool GIAtranslatorOperationsClass::connectMultiwordCollapseReverse(GIAtranslatorVariablesClass* translatorVariables, GIAentityNode* entitySemanticRelationFunction1, GIAentityNode* entitySemanticRelationFunction2, bool sameReferenceSet)
+bool GIAtranslatorOperationsClass::connectMultiwordCollapseReverse(const GIAtranslatorVariablesClass* translatorVariables, GIAentityNode* entitySemanticRelationFunction1, GIAentityNode* entitySemanticRelationFunction2, const bool sameReferenceSet)
 {
 	bool result = true;
 	#ifdef GIA_RECORD_WAS_REFERENCE_INFORMATION
@@ -2861,7 +2861,7 @@ void GIAtranslatorOperationsClass::passMultiwordGrammaticalParameters(GIAentityN
 
 
 
-bool GIAtranslatorOperationsClass::connectMultiwordDate(GIAtranslatorVariablesClass* translatorVariables, GIAentityNode* entitySemanticRelationFunction1, GIAentityNode* entitySemanticRelationFunction2, bool sameReferenceSet)
+bool GIAtranslatorOperationsClass::connectMultiwordDate(const GIAtranslatorVariablesClass* translatorVariables, GIAentityNode* entitySemanticRelationFunction1, const GIAentityNode* entitySemanticRelationFunction2, const bool sameReferenceSet)
 {
 	bool result = true;
 	#ifdef GIA_RECORD_WAS_REFERENCE_INFORMATION
@@ -2889,7 +2889,7 @@ bool GIAtranslatorOperationsClass::connectMultiwordDate(GIAtranslatorVariablesCl
 	return result;
 }
 
-bool GIAtranslatorOperationsClass::addTimeConditionProperty(GIAtimeConditionNode* timeConditionNode, GIAentityNode* entity)
+bool GIAtranslatorOperationsClass::addTimeConditionProperty(GIAtimeConditionNode* timeConditionNode, const GIAentityNode* entity)
 {
 	bool result = false;
 	string entityName = entity->entityName;
@@ -2962,7 +2962,7 @@ bool GIAtranslatorOperationsClass::addTimeConditionProperty(GIAtimeConditionNode
 }
 			
 
-bool GIAtranslatorOperationsClass::connectQuantityToEntity(GIAtranslatorVariablesClass* translatorVariables, GIAentityNode* entitySemanticRelationFunction1, GIAentityNode* entitySemanticRelationFunction2, bool sameReferenceSet)
+bool GIAtranslatorOperationsClass::connectQuantityToEntity(const GIAtranslatorVariablesClass* translatorVariables, GIAentityNode* entitySemanticRelationFunction1, const GIAentityNode* entitySemanticRelationFunction2, const bool sameReferenceSet)
 {
 	bool result = true;
 	#ifdef GIA_RECORD_WAS_REFERENCE_INFORMATION
@@ -3091,15 +3091,15 @@ bool GIAtranslatorOperationsClass::connectMeasurePerToEntity(GIAtranslatorVariab
 
 
 #ifdef GIA_POS_REL_TRANSLATOR_LOGIC_REFERENCE
-bool GIAtranslatorOperationsClass::connectLogicReferenceConjunction(GIAtranslatorVariablesClass* translatorVariables, string logicReferenceClassType, GIAentityNode* targetEntity, GIAentityNode* logicReferenceEntity, bool sameReferenceSet)
+bool GIAtranslatorOperationsClass::connectLogicReferenceConjunction(const GIAtranslatorVariablesClass* translatorVariables, string logicReferenceClassType, GIAentityNode* targetEntity, GIAentityNode* logicReferenceEntity, bool sameReferenceSet)
 {
 	return connectLogicReference(translatorVariables, GIA_POS_REL_TRANSLATOR_LOGIC_REFERENCE_CLASS_CONJUNCTION, logicReferenceClassType, NULL, targetEntity, logicReferenceEntity, sameReferenceSet);
 }
-bool GIAtranslatorOperationsClass::connectLogicReferenceConclusion(GIAtranslatorVariablesClass* translatorVariables, string logicReferenceClassType, GIAentityNode* targetEntity, GIAentityNode* logicReferenceEntity, bool sameReferenceSet)
+bool GIAtranslatorOperationsClass::connectLogicReferenceConclusion(const GIAtranslatorVariablesClass* translatorVariables, string logicReferenceClassType, GIAentityNode* targetEntity, GIAentityNode* logicReferenceEntity, bool sameReferenceSet)
 {
 	return connectLogicReference(translatorVariables, GIA_POS_REL_TRANSLATOR_LOGIC_REFERENCE_CLASS_CONCLUSION, logicReferenceClassType,  NULL, targetEntity, logicReferenceEntity, sameReferenceSet);
 }
-bool GIAtranslatorOperationsClass::connectLogicReference(GIAtranslatorVariablesClass* translatorVariables, int logicReferenceClass, string logicReferenceClassType, GIAentityNode* sourceEntity, GIAentityNode* targetEntity, GIAentityNode* logicReferenceEntity, bool sameReferenceSet)
+bool GIAtranslatorOperationsClass::connectLogicReference(const GIAtranslatorVariablesClass* translatorVariables, int logicReferenceClass, string logicReferenceClassType, GIAentityNode* sourceEntity, GIAentityNode* targetEntity, GIAentityNode* logicReferenceEntity, bool sameReferenceSet)
 {
 	bool result = false;
 	
@@ -3133,26 +3133,26 @@ bool GIAtranslatorOperationsClass::connectLogicReference(GIAtranslatorVariablesC
 	return result;
 }
 			
-void GIAtranslatorOperationsClass::connectLogicReferenceRelationshipToTarget(GIAentityNode* relationship, GIAentityNode* targetEntity, bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables)
+void GIAtranslatorOperationsClass::connectLogicReferenceRelationshipToTarget(GIAentityNode* relationship, GIAentityNode* targetEntity, bool sameReferenceSet, const GIAtranslatorVariablesClass* translatorVariables)
 {
 	//cout << "connectLogicReferenceRelationshipToTarget: relationship = " << relationship->entityName << ", targetEntity = " << targetEntity->entityName << endl; 
 	int connectionTypeTargetToRelationship = generateConnectionTypeTargetToLogicReferenceRelationship(relationship);
 	connectEntities(relationship, targetEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_RELATIONSHIP_OBJECT, connectionTypeTargetToRelationship, sameReferenceSet, translatorVariables);
 }
-void GIAtranslatorOperationsClass::connectLogicReferenceRelationshipToSource(GIAentityNode* relationship, GIAentityNode* sourceEntity, bool sameReferenceSet, GIAtranslatorVariablesClass* translatorVariables)
+void GIAtranslatorOperationsClass::connectLogicReferenceRelationshipToSource(GIAentityNode* relationship, GIAentityNode* sourceEntity, bool sameReferenceSet, const GIAtranslatorVariablesClass* translatorVariables)
 {
 	//cout << "connectLogicReferenceRelationshipToSource: relationship = " << relationship->entityName << ", sourceEntity = " << sourceEntity->entityName << endl;
 	int connectionTypeSourceToRelationship = generateConnectionTypeSourceToLogicReferenceRelationship(relationship);
 	connectEntities(relationship, sourceEntity, GIA_ENTITY_VECTOR_CONNECTION_TYPE_RELATIONSHIP_SUBJECT, connectionTypeSourceToRelationship, sameReferenceSet, translatorVariables);
 }
 
-int GIAtranslatorOperationsClass::generateConnectionTypeTargetToLogicReferenceRelationship(GIAentityNode* relationship)
+int GIAtranslatorOperationsClass::generateConnectionTypeTargetToLogicReferenceRelationship(const GIAentityNode* relationship)
 {
 	int connectionTypeTargetToRelationship = generateConnectionTypeReverse(relationship->entityType);
 	return connectionTypeTargetToRelationship;
 }
 
-int GIAtranslatorOperationsClass::generateConnectionTypeSourceToLogicReferenceRelationship(GIAentityNode* relationship)
+int GIAtranslatorOperationsClass::generateConnectionTypeSourceToLogicReferenceRelationship(const GIAentityNode* relationship)
 {
 	int connectionTypeTargetToRelationship = generateConnectionType(relationship->entityType);
 	return connectionTypeTargetToRelationship;
@@ -3181,19 +3181,19 @@ GIAentityNode* GIAsemRelTranslatorParserClass::createNewRelationshipEntitySemant
 
 
 #ifdef GIA_POS_REL_TRANSLATOR_RULES_GIA3
-int GIAtranslatorOperationsClass::getEntityArrayMaxIndex(GIAtranslatorVariablesClass* translatorVariables)
+int GIAtranslatorOperationsClass::getEntityArrayMaxIndex(const GIAtranslatorVariablesClass* translatorVariables)
 {
 	int numberOfWordsInSentence = LRPpreprocessorSentenceClassObject.getSentenceContents(translatorVariables->currentPreprocessorSentenceInList)->size();
 	return GIAsentenceClass.getMaxIndexOfDynamicallyGeneratedEntity(numberOfWordsInSentence);	
 }
 #else
-int GIAtranslatorOperationsClass::getEntityArrayMaxIndex(GIAtranslatorVariablesClass* translatorVariables)
+int GIAtranslatorOperationsClass::getEntityArrayMaxIndex(const GIAtranslatorVariablesClass* translatorVariables)
 {
 	return GIAsentenceClass.getMaxIndexOfDynamicallyGeneratedEntity(translatorVariables->currentSentenceInList);	
 }
 #endif
 
-GIAentityConnection* GIAtranslatorOperationsClass::getConnection(GIAentityNode* entity, GIAentityNode* relationshipEntity)
+GIAentityConnection* GIAtranslatorOperationsClass::getConnection(GIAentityNode* entity, const GIAentityNode* relationshipEntity)
 {
 	GIAentityConnection* connectionFound = NULL;
 	for(int connectionType=0; connectionType<GIA_ENTITY_NUMBER_OF_VECTOR_CONNECTION_TYPES; connectionType++)
@@ -3217,7 +3217,7 @@ GIAentityConnection* GIAtranslatorOperationsClass::getConnection(GIAentityNode* 
 }
 
 
-int GIAtranslatorOperationsClass::getCurrentSentenceIndex(GIAtranslatorVariablesClass* translatorVariables)
+int GIAtranslatorOperationsClass::getCurrentSentenceIndex(const GIAtranslatorVariablesClass* translatorVariables)
 {
 	#ifdef GIA_POS_REL_TRANSLATOR_RULES_GIA3
 	int sentenceIndex = translatorVariables->currentPreprocessorSentenceInList->sentenceIndexOriginal;
@@ -3228,7 +3228,7 @@ int GIAtranslatorOperationsClass::getCurrentSentenceIndex(GIAtranslatorVariables
 	return sentenceIndex;
 }
 
-void GIAtranslatorOperationsClass::updateGrammaticalValuesBasedOnModalAuxiliaryOrCopula(GIAentityNode* entity, string auxiliaryOrCopulaString)
+void GIAtranslatorOperationsClass::updateGrammaticalValuesBasedOnModalAuxiliaryOrCopula(GIAentityNode* entity, const string auxiliaryOrCopulaString)
 {
 	if(SHAREDvars.textInTextArray(auxiliaryOrCopulaString, GIAtranslatorEntityAuxiliaryNotArray, GIA_TRANSLATOR_ENTITY_AUXILIARY_NOT_NUMBER_OF_TYPES))
 	{

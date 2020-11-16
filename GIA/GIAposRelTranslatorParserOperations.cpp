@@ -27,7 +27,7 @@
  * File Name: GIAposRelTranslatorParserOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3o3a 16-November-2020
+ * Project Version: 3o3b 16-November-2020
  * Requirements: requires text parsed by BAI Sequentially Activated Neuronal Input (SANI)
  * Description: Part-of-speech Relation Translator Parser Operations
  * /
@@ -615,7 +615,7 @@ bool GIAposRelTranslatorParserOperationsClass::generateSemanticRelationsFromTxtR
 	return result;
 }
 
-bool GIAposRelTranslatorParserOperationsClass::createSemanticRelationOrdered(GIAtranslatorVariablesClass* translatorVariables, string semanticRelationFunctionName, string semanticRelationFunctionConditionNewName, vector<GIAentityNode*>* entitySemanticRelationFunctionListArray, GIAentityNode* entitySemanticRelationFunctionSubject, GIAentityNode* entitySemanticRelationFunctionObject, GIAentityNode* entitySemanticRelationFunctionDelimiter, bool sameReferenceSet, int layer)
+bool GIAposRelTranslatorParserOperationsClass::createSemanticRelationOrdered(GIAtranslatorVariablesClass* translatorVariables, const string semanticRelationFunctionName, string semanticRelationFunctionConditionNewName, vector<GIAentityNode*>* entitySemanticRelationFunctionListArray, GIAentityNode* entitySemanticRelationFunctionSubject, GIAentityNode* entitySemanticRelationFunctionObject, GIAentityNode* entitySemanticRelationFunctionDelimiter, bool sameReferenceSet, int layer)
 {
 	if(entitySemanticRelationFunctionListArray->empty())
 	{
@@ -664,7 +664,7 @@ bool GIAposRelTranslatorParserOperationsClass::createSemanticRelationOrdered(GIA
 	}
 }
 
-bool GIAposRelTranslatorParserOperationsClass::createSemanticRelationPair(GIAtranslatorVariablesClass* translatorVariables, string semanticRelationFunctionName, GIAentityNode* entitySemanticRelationFunction1, GIAentityNode* entitySemanticRelationFunction2, bool sameReferenceSet, bool semanticRelationReturnConnectionDynamic, int layer)
+bool GIAposRelTranslatorParserOperationsClass::createSemanticRelationPair(GIAtranslatorVariablesClass* translatorVariables, const string semanticRelationFunctionName, GIAentityNode* entitySemanticRelationFunction1, GIAentityNode* entitySemanticRelationFunction2, bool sameReferenceSet, const bool semanticRelationReturnConnectionDynamic, int layer)
 {
 	#ifdef SANI_DEBUG_RULES_PRINT_PARSE_PROCESS2
 	//SANIpropagateOperations.printParseTreeDebugIndentation(layer);
@@ -675,7 +675,7 @@ bool GIAposRelTranslatorParserOperationsClass::createSemanticRelationPair(GIAtra
 }
 
 
-bool GIAposRelTranslatorParserOperationsClass::createSemanticRelation(GIAtranslatorVariablesClass* translatorVariables, string semanticRelationFunctionName, string semanticRelationFunctionConditionNewName, vector<GIAentityNode*>* entitySemanticRelationFunctionListArray, GIAentityNode* entitySemanticRelationFunction1, GIAentityNode* entitySemanticRelationFunction2, GIAentityNode* entitySemanticRelationFunction3, bool sameReferenceSet, bool semanticRelationReturnConnectionDynamic, int layer)
+bool GIAposRelTranslatorParserOperationsClass::createSemanticRelation(GIAtranslatorVariablesClass* translatorVariables, const string semanticRelationFunctionName, string semanticRelationFunctionConditionNewName, vector<GIAentityNode*>* entitySemanticRelationFunctionListArray, GIAentityNode* entitySemanticRelationFunction1, GIAentityNode* entitySemanticRelationFunction2, GIAentityNode* entitySemanticRelationFunction3, bool sameReferenceSet, const bool semanticRelationReturnConnectionDynamic, int layer)
 {
 	#ifdef SANI_DEBUG_RULES_PRINT_PARSE_PROCESS2
 	SANIpropagateOperations.printParseTreeDebugIndentation(layer);
@@ -725,7 +725,7 @@ bool GIAposRelTranslatorParserOperationsClass::createSemanticRelation(GIAtransla
 }
 
 #ifdef GIA_POS_REL_TRANSLATOR_RULES_GIA3_USE_SEM_REL_TRANSLATOR_PARSER
-bool GIAposRelTranslatorParserOperationsClass::createSemanticRelationInMemory(GIAtranslatorVariablesClass* translatorVariables, string semanticRelationFunctionName, string semanticRelationFunctionConditionNewName, vector<GIAentityNode*>* entitySemanticRelationFunctionListArray, GIAentityNode* entitySemanticRelationFunction1, GIAentityNode* entitySemanticRelationFunction2, GIAentityNode* entitySemanticRelationFunction3, bool sameReferenceSet, bool semanticRelationReturnConnectionDynamic)
+bool GIAposRelTranslatorParserOperationsClass::createSemanticRelationInMemory(GIAtranslatorVariablesClass* translatorVariables, const string semanticRelationFunctionName, const string semanticRelationFunctionConditionNewName, vector<GIAentityNode*>* entitySemanticRelationFunctionListArray, const GIAentityNode* entitySemanticRelationFunction1, const GIAentityNode* entitySemanticRelationFunction2, const GIAentityNode* entitySemanticRelationFunction3, bool sameReferenceSet, const bool semanticRelationReturnConnectionDynamic)
 {
 	bool result = true;
 	
@@ -1014,7 +1014,7 @@ bool GIAposRelTranslatorParserOperationsClass::createSemanticRelationInMemory(GI
 	}
 }
 #else
-bool GIAposRelTranslatorParserOperationsClass::createSemanticRelationInNetwork(GIAtranslatorVariablesClass* translatorVariables, string semanticRelationFunctionName, string semanticRelationFunctionConditionNewName, vector<GIAentityNode*>* entitySemanticRelationFunctionListArray, GIAentityNode* entitySemanticRelationFunction1, GIAentityNode* entitySemanticRelationFunction2, GIAentityNode* entitySemanticRelationFunction3, bool sameReferenceSet, bool semanticRelationReturnConnectionDynamic)
+bool GIAposRelTranslatorParserOperationsClass::createSemanticRelationInNetwork(GIAtranslatorVariablesClass* translatorVariables, const string semanticRelationFunctionName, string semanticRelationFunctionConditionNewName, vector<GIAentityNode*>* entitySemanticRelationFunctionListArray, GIAentityNode* entitySemanticRelationFunction1, GIAentityNode* entitySemanticRelationFunction2, GIAentityNode* entitySemanticRelationFunction3, bool sameReferenceSet, const bool semanticRelationReturnConnectionDynamic)
 {
 	bool result = true;
 	

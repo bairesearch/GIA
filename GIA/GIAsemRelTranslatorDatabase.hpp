@@ -26,7 +26,7 @@
  * File Name: GIAsemRelTranslatorDatabase.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3o3a 16-November-2020
+ * Project Version: 3o3b 16-November-2020
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  * Description: Semantic Relation Translator
  * /
@@ -66,36 +66,36 @@ class GIAsemRelTranslatorDatabaseClass
 	
 	#ifdef GIA_SEM_REL_TRANSLATOR
 	
-	public: void initialiseSemanticParserDatabase(string newSemanticParserDatabaseFolderName);
+	public: void initialiseSemanticParserDatabase(const string newSemanticParserDatabaseFolderName);
 	public: void prepareSemanticParserDatabaseForWriting();
-	private: string semanticParserDBgenerateFolderName(GIAfeature* firstFeatureInList);
+	private: string semanticParserDBgenerateFolderName(const GIAfeature* firstFeatureInList);
 
 	#ifdef GIA_SEM_REL_TRANSLATOR_WRITE_SEMANTIC_RELATIONS_UNOPTIMISED_TEXT_CORPUS
 	public: void prepareSemanticParserCorpusDatabaseFileTextForWriting();
-	public: void saveTextLineToCorpusFileString(string sentenceText);
-	public: void saveTextToCorpusFileString(string sentenceText);
+	public: void saveTextLineToCorpusFileString(const string sentenceText);
+	public: void saveTextToCorpusFileString(const string sentenceText);
 	/*
 	void removeTextFromCorpusFileString(string sentenceText);
 	void removeTextLineFromCorpusFileString(string sentenceText);
 	*/
-	public: void writeSemanticParserCorpusFile(GIAfeature* firstFeatureInSentence);
-	public: void writeSemanticParserCorpusFile(GIAfeature* firstFeatureInSentence, string* sentenceSemanticRelationsText);
-	public: bool loadSemanticParserCorpusDatabaseFile(GIAsentence* currentSentenceInList, GIAfeature* firstFeatureInListorSubset);
-	public: string semanticParserCorpusDBgenerateFileName(GIAfeature* firstFeatureInList);
-	private: string generateCorpusFileHeaderText(GIAfeature* firstFeatureInSentence, bool addPOSinfo);
+	public: void writeSemanticParserCorpusFile(const GIAfeature* firstFeatureInSentence);
+	public: void writeSemanticParserCorpusFile(const GIAfeature* firstFeatureInSentence, const string* sentenceSemanticRelationsText);
+	public: bool loadSemanticParserCorpusDatabaseFile(GIAsentence* currentSentenceInList, const GIAfeature* firstFeatureInListorSubset);
+	public: string semanticParserCorpusDBgenerateFileName(const GIAfeature* firstFeatureInList);
+	private: string generateCorpusFileHeaderText(const GIAfeature* firstFeatureInSentence, const bool addPOSinfo);
 	#endif
 
 	#ifdef GIA_SEM_REL_TRANSLATOR_SUBSETS_OPTIMISED_DATABASE
 	#define GIA_SEM_REL_TRANSLATOR_RELATION_TYPE_NON_EXISTENT (INT_DEFAULT_VALUE)
-	public: bool loadSemanticParserOptimisedDatabaseFile(GIAfeature* firstFeatureInListorSubset, int indexOfFirstWordInTupleBeingAssessedForSemanticRelationAssignment, int GIA2semanticDependencyRelationProbabilityArray[], int GIA2semanticDependencyRelationAssignedArray[], int GIA2semanticDependencyRelationRejectedArray[]);
-	public: void writeSemanticParserOptimisedDatabaseFile(GIAfeature* firstFeatureInListorSubset, int firstWordInTupleIndex, int semanticDependencyRelationType, bool directionGovernorToDependent, bool sameReferenceSet);
-	public: void initialiseIntArray(int intArray[], int size, int value);
-	private: int calculateSemanticRelationTypeOptimisedDatabase(int semanticDependencyRelationType, bool directionGovernorToDependent, bool sameReferenceSet);
-	private: bool calculateSemanticRelationTypeDirection(int semanticRelationTypeOptimisedDatabase);
-	private: bool calculateSemanticRelationTypeSameReferenceSet(int semanticRelationTypeOptimisedDatabase);
-	private: int calculateSemanticRelationTypeFromOptimisedDatabaseSemanticRelationType(int semanticRelationTypeOptimisedDatabase);
-	private: string semanticParserOptimisedDBgenerateFileName(GIAfeature* firstFeatureInList, int indexOfFirstWordInTupleBeingAssessedForSemanticRelationAssignment);
-	public: void addTupleSemanticRelationToSentence(GIAsentence* currentSentenceInList, int semanticRelationTypeOptimisedDatabase, int firstWordInTupleIndex, int secondWordInTupleIndex);
+	public: bool loadSemanticParserOptimisedDatabaseFile(const GIAfeature* firstFeatureInListorSubset, const int indexOfFirstWordInTupleBeingAssessedForSemanticRelationAssignment, int GIA2semanticDependencyRelationProbabilityArray[], int GIA2semanticDependencyRelationAssignedArray[], int GIA2semanticDependencyRelationRejectedArray[]);
+	public: void writeSemanticParserOptimisedDatabaseFile(const GIAfeature* firstFeatureInListorSubset, const int firstWordInTupleIndex, const int semanticDependencyRelationType, const bool directionGovernorToDependent, const bool sameReferenceSet);
+	public: void initialiseIntArray(int intArray[], const int size, int value);
+	private: int calculateSemanticRelationTypeOptimisedDatabase(const int semanticDependencyRelationType, const bool directionGovernorToDependent, const bool sameReferenceSet);
+	private: bool calculateSemanticRelationTypeDirection(const int semanticRelationTypeOptimisedDatabase);
+	private: bool calculateSemanticRelationTypeSameReferenceSet(const int semanticRelationTypeOptimisedDatabase);
+	private: int calculateSemanticRelationTypeFromOptimisedDatabaseSemanticRelationType(const int semanticRelationTypeOptimisedDatabase);
+	private: string semanticParserOptimisedDBgenerateFileName(const GIAfeature* firstFeatureInList, const int indexOfFirstWordInTupleBeingAssessedForSemanticRelationAssignment);
+	public: void addTupleSemanticRelationToSentence(GIAsentence* currentSentenceInList, const int semanticRelationTypeOptimisedDatabase, const int firstWordInTupleIndex, const int secondWordInTupleIndex);
 	#endif
 	
 	#endif

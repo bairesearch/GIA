@@ -26,7 +26,7 @@
  * File Name: GIAneuralNetworkNonSemantic.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3o3a 16-November-2020
+ * Project Version: 3o3b 16-November-2020
  * Description: Neural Network - visual representation of GIA contents in prototype biological neural network
  * /
  *******************************************************************************/
@@ -87,29 +87,29 @@ class GIAneuralNetworkNonSemanticClass
 	
 	#ifdef GIA_NEURAL_NETWORK_NON_SEMANTIC_ACTIVE
 	public: bool addTextToNetwork(GIAtranslatorVariablesClass* translatorVariables);
-		private: bool addTextToNetworkLogicReference(GIAneuralNetworkVariablesClass* neuralNetworkVariables, GIAposRelTranslatorHybridLogicReference* firstLogicReferenceInList, ANNneuron* higherLogicReferenceArtificialSynapseNeuron, bool higherLogicReferenceArtificialSynapseNeuronDirection);
+		private: bool addTextToNetworkLogicReference(const GIAneuralNetworkVariablesClass* neuralNetworkVariables, GIAposRelTranslatorHybridLogicReference* firstLogicReferenceInList, ANNneuron* higherLogicReferenceArtificialSynapseNeuron, const bool higherLogicReferenceArtificialSynapseNeuronDirection);
 			#ifdef GIA_NEURAL_NETWORK_NON_SEMANTIC_REPLACE_WORDS_WITH_LEMMAS
-			private: bool replaceWordsWithLemmas(LRPpreprocessorSubReferenceSet* referenceSet);
+			private: bool replaceWordsWithLemmas(const LRPpreprocessorSubReferenceSet* referenceSet);
 			#endif
 			private: bool detectIndefiniteConceptDefinition(LRPpreprocessorSubReferenceSet* referenceSetSubject, LRPpreprocessorSubReferenceSet* referenceSetObject, LRPpreprocessorSubReferenceSet* referenceSetDelimiter);
-			private: bool identifyAndDemarcateConceptsInReferenceSet(GIAneuralNetworkVariablesClass* neuralNetworkVariables, LRPpreprocessorSubReferenceSet* currentSubReferenceSetInList, int referenceSetType, bool indefiniteConceptDefinitionFound, bool* foundConcept, ANNneuron** conceptNeuronFound);
-			private: bool detectIfWordIsConcept(vector<LRPpreprocessorPlainTextWord*>* subReferenceSetContents, int wordIndex, bool* specificConceptDetected, int* indexOfStartOfSpecificConcept, bool indefiniteConceptDefinitionFound);	
-				private: bool detectIfWordIsDeterminer(string word);
-				private: bool findIndexOfStartOfSpecificConcept(vector<LRPpreprocessorPlainTextWord*>* subReferenceSetContents, int startIndexToSearch, int* indexOfStartOfSpecificConcept);
-			private: bool findOrAddReferenceSetInNetwork(GIAneuralNetworkVariablesClass* neuralNetworkVariables, LRPpreprocessorSubReferenceSet* firstSubReferenceSetInList, ANNneuron** referenceSetSubnetEntry, ANNneuron* referenceSetDelimiterSubnetEntry, int referenceSetType);
+			private: bool identifyAndDemarcateConceptsInReferenceSet(const GIAneuralNetworkVariablesClass* neuralNetworkVariables, LRPpreprocessorSubReferenceSet* currentSubReferenceSetInList, const int referenceSetType, const bool indefiniteConceptDefinitionFound, bool* foundConcept, ANNneuron** conceptNeuronFound);
+			private: bool detectIfWordIsConcept(vector<LRPpreprocessorPlainTextWord*>* subReferenceSetContents, int wordIndex, bool* specificConceptDetected, int* indexOfStartOfSpecificConcept, const bool indefiniteConceptDefinitionFound);	
+				private: bool detectIfWordIsDeterminer(const string word);
+				private: bool findIndexOfStartOfSpecificConcept(const vector<LRPpreprocessorPlainTextWord*>* subReferenceSetContents, const int startIndexToSearch, int* indexOfStartOfSpecificConcept);
+			private: bool findOrAddReferenceSetInNetwork(const GIAneuralNetworkVariablesClass* neuralNetworkVariables, LRPpreprocessorSubReferenceSet* firstSubReferenceSetInList, ANNneuron** referenceSetSubnetEntry, ANNneuron* referenceSetDelimiterSubnetEntry, const int referenceSetType);
 				private: void calculateNumberActiveConceptNeuronsInSubnet(ANNneuronConnection* currentNeuronConnectionInInstanceSubnet, int* numberOfActiveConceptNeuronsInSubnet, int64_t* activationAgeOfSubnetSynapsesTotal);
 				private: void calculateNumberActiveConceptNeuronsInSubnetReset(ANNneuronConnection* currentNeuronConnectionInInstanceSubnet);
 				private: void calculateNumberActiveConceptNeuronsInSubnetUpdateActivationAge(ANNneuronConnection* currentNeuronConnectionInInstanceSubnet);
-					private: void calculateNumberActiveConceptNeuronsInSubnet(ANNneuronConnection* currentNeuronConnectionInInstanceSubnet, bool direction, int* numberOfActiveConceptNeuronsInSubnet, int64_t* activationAgeOfSubnetSynapsesTotal, bool reset, bool updateActivationAge);
-				private: bool addReferenceSetInNetwork(GIAneuralNetworkVariablesClass* neuralNetworkVariables, LRPpreprocessorSubReferenceSet* firstSubReferenceSetInList, ANNneuron** referenceSetSubnetEntry, ANNneuron* referenceSetDelimiterSubnetEntry, int referenceSetType);
-			private: bool createDelimiterArtificialSynapseNeuron(GIAneuralNetworkVariablesClass* neuralNetworkVariables, ANNneuron** referenceSetDelimiterSubnetEntry, LRPpreprocessorSubReferenceSet* referenceSetDelimiter);
-			private: bool connectReferenceSetsInNetwork(GIAneuralNetworkVariablesClass* neuralNetworkVariables, ANNneuron* referenceSetSubjectSubnetEntry, ANNneuron* referenceSetObjectSubnetEntry, ANNneuron** referenceSetDelimiterSubnetEntry, LRPpreprocessorSubReferenceSet* referenceSetDelimiter);
-				private: ANNneuron* findOrAddConceptAndConnectNewSynapseArtificialInstanceNeuron(GIAneuralNetworkVariablesClass* neuralNetworkVariables, LRPpreprocessorPlainTextWord* wordTag);
-	public: bool performQuery(GIAtranslatorVariablesClass* translatorVariables, GIAtranslatorVariablesClass* translatorVariablesQuery);
+					private: void calculateNumberActiveConceptNeuronsInSubnet(ANNneuronConnection* currentNeuronConnectionInInstanceSubnet, const bool direction, int* numberOfActiveConceptNeuronsInSubnet, int64_t* activationAgeOfSubnetSynapsesTotal, const bool reset, const bool updateActivationAge);
+				private: bool addReferenceSetInNetwork(const GIAneuralNetworkVariablesClass* neuralNetworkVariables, const LRPpreprocessorSubReferenceSet* firstSubReferenceSetInList, ANNneuron** referenceSetSubnetEntry, ANNneuron* referenceSetDelimiterSubnetEntry, const int referenceSetType);
+			private: bool createDelimiterArtificialSynapseNeuron(const GIAneuralNetworkVariablesClass* neuralNetworkVariables, ANNneuron** referenceSetDelimiterSubnetEntry, LRPpreprocessorSubReferenceSet* referenceSetDelimiter);
+			private: bool connectReferenceSetsInNetwork(const GIAneuralNetworkVariablesClass* neuralNetworkVariables, ANNneuron* referenceSetSubjectSubnetEntry, ANNneuron* referenceSetObjectSubnetEntry, ANNneuron** referenceSetDelimiterSubnetEntry, LRPpreprocessorSubReferenceSet* referenceSetDelimiter);
+				private: ANNneuron* findOrAddConceptAndConnectNewSynapseArtificialInstanceNeuron(const GIAneuralNetworkVariablesClass* neuralNetworkVariables, const LRPpreprocessorPlainTextWord* wordTag);
+	public: bool performQuery(const GIAtranslatorVariablesClass* translatorVariables, const GIAtranslatorVariablesClass* translatorVariablesQuery);
 	public: bool determineReferenceSetDefinite(LRPpreprocessorSubReferenceSet* firstSubReferenceSetInList);
-	private: LRPpreprocessorPlainTextWord* getDelimiterWord(LRPpreprocessorSubReferenceSet* referenceSetDelimiter);
-	private: LRPpreprocessorPlainTextWord* getLogicReferenceWord(GIAposRelTranslatorHybridLogicReference* logicReference);
-	private: int generateArtificialLayer(GIAneuralNetworkVariablesClass* neuralNetworkVariables);
+	private: LRPpreprocessorPlainTextWord* getDelimiterWord(const LRPpreprocessorSubReferenceSet* referenceSetDelimiter);
+	private: LRPpreprocessorPlainTextWord* getLogicReferenceWord(const GIAposRelTranslatorHybridLogicReference* logicReference);
+	private: int generateArtificialLayer(const GIAneuralNetworkVariablesClass* neuralNetworkVariables);
 	#endif
 
 };

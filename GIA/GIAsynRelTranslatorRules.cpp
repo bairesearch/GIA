@@ -26,7 +26,7 @@
  * File Name: GIAsynRelTranslatorRules.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3o3a 16-November-2020
+ * Project Version: 3o3b 16-November-2020
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
@@ -37,7 +37,7 @@
 
 #ifdef GIA_TRANSLATOR_XML_INTERPRETATION
 
-bool GIAsynRelTranslatorRulesClass::applyGIATranslatorGenericXMLfunctions(string translatorFileName, GIAtranslatorVariablesClass* translatorVariables)
+bool GIAsynRelTranslatorRulesClass::applyGIATranslatorGenericXMLfunctions(const string translatorFileName, GIAtranslatorVariablesClass* translatorVariables)
 {
 	//int tempindex = 1;
 
@@ -143,7 +143,7 @@ bool GIAsynRelTranslatorRulesClass::applyGIATranslatorGenericXMLfunctions(string
 	return result;
 }
 
-bool GIAsynRelTranslatorRulesClass::applyGIATranslatorGenericXMLparam(XMLparserTag* currentParamTag, bool depRelOrEntity, bool executeOrReassign, GIAtranslatorVariablesClass* translatorVariables, string functionName)
+bool GIAsynRelTranslatorRulesClass::applyGIATranslatorGenericXMLparam(XMLparserTag* currentParamTag, const bool depRelOrEntity, bool executeOrReassign, GIAtranslatorVariablesClass* translatorVariables, const string functionName)
 {
 	bool result = false;
 	if(currentParamTag->firstLowerLevelTag != NULL)
@@ -459,7 +459,7 @@ bool GIAsynRelTranslatorRulesClass::genericInterpretationGenerateSpecialCase(XML
 	return result;
 }
 
-bool GIAsynRelTranslatorRulesClass::genericDepRelInterpretationApplySpecialCase(GIAentityCharacteristic* entityCharacteristics, GIAgenericDepRelInterpretationParameters* paramDepRel, int REL, int REL_ENT, string type)
+bool GIAsynRelTranslatorRulesClass::genericDepRelInterpretationApplySpecialCase(GIAentityCharacteristic* entityCharacteristics, GIAgenericDepRelInterpretationParameters* paramDepRel, int REL, int REL_ENT, const string type)
 {
 	bool result = true;
 	if(type == "specialCaseCharacteristicsTestAndVector")
@@ -501,10 +501,10 @@ bool GIAsynRelTranslatorRulesClass::genericDepRelInterpretationApplySpecialCase(
 
 //string* convertDelimitedStringToArray(string str, char delimiter)
 
-bool GIAsynRelTranslatorRulesClass::genericDepRelInterpretationApplyOptions(GIAgenericDepRelInterpretationParameters* paramDepRel, XMLparserTag* xmlTag, int REL, int REL_ENT, int FUNC_ENT, int swapIndex)
+bool GIAsynRelTranslatorRulesClass::genericDepRelInterpretationApplyOptions(GIAgenericDepRelInterpretationParameters* paramDepRel, const XMLparserTag* xmlTag, int REL, int REL_ENT, int FUNC_ENT, int swapIndex)
 {
 	bool result = true;
-	XMLparserAttribute* currentAttribute = xmlTag->firstAttribute;
+	const XMLparserAttribute* currentAttribute = xmlTag->firstAttribute;
 	while(currentAttribute->nextAttribute != NULL)
 	{
 		if(!genericDepRelInterpretationApplyOption(paramDepRel, currentAttribute, REL, REL_ENT, FUNC_ENT, swapIndex))
@@ -516,7 +516,7 @@ bool GIAsynRelTranslatorRulesClass::genericDepRelInterpretationApplyOptions(GIAg
 	return result;
 }
 
-bool GIAsynRelTranslatorRulesClass::genericDepRelInterpretationApplyOption(GIAgenericDepRelInterpretationParameters* paramDepRel, XMLparserAttribute* xmlAttribute, int REL, int REL_ENT, int FUNC_ENT, int swapIndex)
+bool GIAsynRelTranslatorRulesClass::genericDepRelInterpretationApplyOption(GIAgenericDepRelInterpretationParameters* paramDepRel, const XMLparserAttribute* xmlAttribute, int REL, int REL_ENT, int FUNC_ENT, int swapIndex)
 {
 	bool foundMatch = false;
 
@@ -614,7 +614,7 @@ bool GIAsynRelTranslatorRulesClass::genericDepRelInterpretationApplyOption(GIAge
 }
 
 
-bool GIAsynRelTranslatorRulesClass::genericEntityInterpretationApplySpecialCase(GIAentityCharacteristic* entityCharacteristics, GIAgenericEntityInterpretationParameters* paramEntity, string type)
+bool GIAsynRelTranslatorRulesClass::genericEntityInterpretationApplySpecialCase(GIAentityCharacteristic* entityCharacteristics, GIAgenericEntityInterpretationParameters* paramEntity, const string type)
 {
 	bool result = true;
 	if(type == "specialCaseCharacteristicsTestAndVector")
@@ -637,10 +637,10 @@ bool GIAsynRelTranslatorRulesClass::genericEntityInterpretationApplySpecialCase(
 	return result;
 }
 
-bool GIAsynRelTranslatorRulesClass::genericEntityInterpretationApplyOptions(GIAgenericEntityInterpretationParameters* paramEntity, XMLparserTag* xmlTag)
+bool GIAsynRelTranslatorRulesClass::genericEntityInterpretationApplyOptions(GIAgenericEntityInterpretationParameters* paramEntity, const XMLparserTag* xmlTag)
 {
 	bool result = true;
-	XMLparserAttribute* currentAttribute = xmlTag->firstAttribute;
+	const XMLparserAttribute* currentAttribute = xmlTag->firstAttribute;
 	while(currentAttribute->nextAttribute != NULL)
 	{
 		if(!genericEntityInterpretationApplyOption(paramEntity, currentAttribute))
@@ -651,7 +651,7 @@ bool GIAsynRelTranslatorRulesClass::genericEntityInterpretationApplyOptions(GIAg
 	}
 	return result;
 }
-bool GIAsynRelTranslatorRulesClass::genericEntityInterpretationApplyOption(GIAgenericEntityInterpretationParameters* paramEntity, XMLparserAttribute* xmlAttribute)
+bool GIAsynRelTranslatorRulesClass::genericEntityInterpretationApplyOption(GIAgenericEntityInterpretationParameters* paramEntity, const XMLparserAttribute* xmlAttribute)
 {
 	bool foundMatch = false;
 
@@ -673,7 +673,7 @@ bool GIAsynRelTranslatorRulesClass::genericEntityInterpretationApplyOption(GIAge
 }
 
 
-bool GIAsynRelTranslatorRulesClass::genericEntityInterpretationApplyOptionbool(bool* paramVal, XMLparserAttribute* xmlAttribute, string iterationVariable, bool* foundMatch)
+bool GIAsynRelTranslatorRulesClass::genericEntityInterpretationApplyOptionbool(bool* paramVal, const XMLparserAttribute* xmlAttribute, const string iterationVariable, bool* foundMatch)
 {
 	bool result = false;
 	if(xmlAttribute->name == iterationVariable)
@@ -699,7 +699,7 @@ bool GIAsynRelTranslatorRulesClass::genericEntityInterpretationApplyOptionbool(b
 	}
 	return result;
 }
-bool GIAsynRelTranslatorRulesClass::genericEntityInterpretationApplyOptionint(int* paramVal, XMLparserAttribute* xmlAttribute, string iterationVariable, bool* foundMatch, bool subtractOne)
+bool GIAsynRelTranslatorRulesClass::genericEntityInterpretationApplyOptionint(int* paramVal, const XMLparserAttribute* xmlAttribute, const string iterationVariable, bool* foundMatch, const bool subtractOne)
 {
 	bool result = false;
 	if(xmlAttribute->name == iterationVariable)
@@ -716,7 +716,7 @@ bool GIAsynRelTranslatorRulesClass::genericEntityInterpretationApplyOptionint(in
 	}
 	return result;
 }
-bool GIAsynRelTranslatorRulesClass::genericEntityInterpretationApplyOptionstring(string* paramVal, XMLparserAttribute* xmlAttribute, string iterationVariable, bool* foundMatch)
+bool GIAsynRelTranslatorRulesClass::genericEntityInterpretationApplyOptionstring(string* paramVal, const XMLparserAttribute* xmlAttribute, const string iterationVariable, bool* foundMatch)
 {
 	bool result = false;
 	if(xmlAttribute->name == iterationVariable)
@@ -729,7 +729,7 @@ bool GIAsynRelTranslatorRulesClass::genericEntityInterpretationApplyOptionstring
 	}
 	return result;
 }
-bool GIAsynRelTranslatorRulesClass::genericEntityInterpretationApplyOptionstringarray(string** paramVal, XMLparserAttribute* xmlAttribute, string iterationVariable, bool* foundMatch)
+bool GIAsynRelTranslatorRulesClass::genericEntityInterpretationApplyOptionstringarray(string** paramVal, const XMLparserAttribute* xmlAttribute, const string iterationVariable, bool* foundMatch)
 {
 	bool result = false;
 	if(xmlAttribute->name == iterationVariable)

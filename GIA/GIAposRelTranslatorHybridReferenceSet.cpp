@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorHybridReferenceSet.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3o3a 16-November-2020
+ * Project Version: 3o3b 16-November-2020
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Hybrid Reference Set
  * /
@@ -59,7 +59,7 @@ NB there is no easy rcmod detection in these cases
 
 #ifdef GIA_POS_REL_TRANSLATOR_HYBRID_DEPRECIATED
 
-bool GIAposRelTranslatorHybridReferenceSetClass::executeReferenceSetPreprocessor(vector<LRPpreprocessorPlainTextWord*>* logicReferenceVariableWordList, GIAposRelTranslatorHybridLogicReferenceVariable* logicReferenceVariable, bool expectToFindSubjectAuxObjectLogicReferenceVariable, int wordIndexSentence)
+bool GIAposRelTranslatorHybridReferenceSetClass::executeReferenceSetPreprocessor(vector<LRPpreprocessorPlainTextWord*>* logicReferenceVariableWordList, GIAposRelTranslatorHybridLogicReferenceVariable* logicReferenceVariable, const bool expectToFindSubjectAuxObjectLogicReferenceVariable, int wordIndexSentence)
 {
 	bool result = true;
 
@@ -717,7 +717,7 @@ bool GIAposRelTranslatorHybridReferenceSetClass::executeReferenceSetPreprocessor
 }
 
 #ifdef GIA_POS_REL_TRANSLATOR_HYBRID_REFERENCE_SET_PREFERENCE_VERB_OR_NOUN_OVER_ADJECTIVE_POS_AMBIGUITY
-bool GIAposRelTranslatorHybridReferenceSetClass::determineIsVerbAndAdjective(LRPpreprocessorPlainTextWord* currentWordTag, bool usePOSprelim, bool grammaticallyStrict)
+bool GIAposRelTranslatorHybridReferenceSetClass::determineIsVerbAndAdjective(const LRPpreprocessorPlainTextWord* currentWordTag, const bool usePOSprelim, const bool grammaticallyStrict)
 {
 	bool verbAndAdjective = false;
 	if(LRPpreprocessorWordIdentification.determineIsVerb(currentWordTag, usePOSprelim, grammaticallyStrict))
@@ -731,7 +731,7 @@ bool GIAposRelTranslatorHybridReferenceSetClass::determineIsVerbAndAdjective(LRP
 }	
 #endif	
 				
-void GIAposRelTranslatorHybridReferenceSetClass::updateIndices(bool currentWordIsReferenceSetDelimiter, bool* referenceSetDelimiterDetected, bool* parsingReferenceSetDelimiter, int currentDelimiterSpecialCase, int wordIndexOfHypotheticalPreceedingThatWhich, bool currentWordIsReferenceSetDelimiterPreceededByThatWhich, bool* referenceSetDelimiterIndicatesSameReferenceSet, int* firstIndexOfReferenceSetDelimiterText, int* lastIndexOfPreviousReferenceSet) 
+void GIAposRelTranslatorHybridReferenceSetClass::updateIndices(const bool currentWordIsReferenceSetDelimiter, bool* referenceSetDelimiterDetected, bool* parsingReferenceSetDelimiter, const int currentDelimiterSpecialCase, int wordIndexOfHypotheticalPreceedingThatWhich, const bool currentWordIsReferenceSetDelimiterPreceededByThatWhich, bool* referenceSetDelimiterIndicatesSameReferenceSet, int* firstIndexOfReferenceSetDelimiterText, int* lastIndexOfPreviousReferenceSet) 
 {
 	if(currentWordIsReferenceSetDelimiter)
 	{
@@ -806,7 +806,7 @@ void GIAposRelTranslatorHybridReferenceSetClass::updateIndices(bool currentWordI
 }
 
 		
-bool GIAposRelTranslatorHybridReferenceSetClass::formSubReferenceSetTextFromWordList(vector<LRPpreprocessorPlainTextWord*>* logicReferenceVariableWordList, vector<LRPpreprocessorPlainTextWord*>* subReferenceSetText, int firstIndexOfSubReferenceSet, int lastIndexOfSubReferenceSet)
+bool GIAposRelTranslatorHybridReferenceSetClass::formSubReferenceSetTextFromWordList(const vector<LRPpreprocessorPlainTextWord*>* logicReferenceVariableWordList, vector<LRPpreprocessorPlainTextWord*>* subReferenceSetText, const int firstIndexOfSubReferenceSet, const int lastIndexOfSubReferenceSet)
 {
 	bool result = true;
 	
@@ -882,12 +882,12 @@ void GIAposRelTranslatorHybridReferenceSetClass::setReferenceSetText(LRPpreproce
 	referenceSet->subReferenceSetContents = *text;
 }
 
-vector<LRPpreprocessorPlainTextWord*> GIAposRelTranslatorHybridReferenceSetClass::getReferenceSetText(LRPpreprocessorSubReferenceSet* referenceSet)
+vector<LRPpreprocessorPlainTextWord*> GIAposRelTranslatorHybridReferenceSetClass::getReferenceSetText(const LRPpreprocessorSubReferenceSet* referenceSet)
 {
 	return referenceSet->subReferenceSetContents;
 }
 
-void GIAposRelTranslatorHybridReferenceSetClass::printSubReferenceSet(LRPpreprocessorSubReferenceSet* currentSubReferenceSetInList)
+void GIAposRelTranslatorHybridReferenceSetClass::printSubReferenceSet(const LRPpreprocessorSubReferenceSet* currentSubReferenceSetInList)
 {
 	for(int i=0; i<(currentSubReferenceSetInList->subReferenceSetContents).size(); i++)
 	{

@@ -26,7 +26,7 @@
  * File Name: GIAsynRelTranslatorGeneric.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3o3a 16-November-2020
+ * Project Version: 3o3b 16-November-2020
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
@@ -146,14 +146,14 @@ GIAgenericDepRelInterpretationParameters::~GIAgenericDepRelInterpretationParamet
 {
 }
 
-void GIAsynRelTranslatorGenericClass::initialiseBoolArray1D(bool* boolArray, int size, int value)
+void GIAsynRelTranslatorGenericClass::initialiseBoolArray1D(bool* boolArray, const int size, int value)
 {
 	for(int i=0; i<size; i++)
 	{
 		boolArray[i] = value;
 	}
 }
-void GIAsynRelTranslatorGenericClass::initialiseBoolArray2D(bool* boolArray, int size1, int size2, int value)
+void GIAsynRelTranslatorGenericClass::initialiseBoolArray2D(bool* boolArray, const int size1, const int size2, int value)
 {
 	for(int i=0; i<size1; i++)
 	{
@@ -163,14 +163,14 @@ void GIAsynRelTranslatorGenericClass::initialiseBoolArray2D(bool* boolArray, int
 		}
 	}
 }
-void GIAsynRelTranslatorGenericClass::initialiseIntArray1D(int* intArray, int size, int value)
+void GIAsynRelTranslatorGenericClass::initialiseIntArray1D(int* intArray, const int size, int value)
 {
 	for(int i=0; i<size; i++)
 	{
 		intArray[i] = value;
 	}
 }
-void GIAsynRelTranslatorGenericClass::initialiseIntArray2D(int* intArray, int size1, int size2, int value)
+void GIAsynRelTranslatorGenericClass::initialiseIntArray2D(int* intArray, const int size1, const int size2, int value)
 {
 	for(int i=0; i<size1; i++)
 	{
@@ -180,7 +180,7 @@ void GIAsynRelTranslatorGenericClass::initialiseIntArray2D(int* intArray, int si
 		}
 	}
 }
-void GIAsynRelTranslatorGenericClass::initialiseIntArray3D(int* intArray, int size1, int size2, int size3, int value)
+void GIAsynRelTranslatorGenericClass::initialiseIntArray3D(int* intArray, const int size1, const int size2, const int size3, int value)
 {
 	for(int i=0; i<size1; i++)
 	{
@@ -1159,7 +1159,7 @@ bool GIAsynRelTranslatorGenericClass::genericEntityInterpretation(GIAgenericEnti
 
 #endif
 
-bool GIAsynRelTranslatorGenericClass::determineFeatureIndexOfPreposition(GIAsentence* currentSentenceInList, GIArelation* prepositionRelation, int* indexOfPreposition)
+bool GIAsynRelTranslatorGenericClass::determineFeatureIndexOfPreposition(GIAsentence* currentSentenceInList, const GIArelation* prepositionRelation, int* indexOfPreposition)
 {
 	string prepositionName = prepositionRelation->relationType;
 

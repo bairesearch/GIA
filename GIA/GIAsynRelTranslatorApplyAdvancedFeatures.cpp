@@ -26,7 +26,7 @@
  * File Name: GIAsynRelTranslatorApplyAdvancedFeatures.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3o3a 16-November-2020
+ * Project Version: 3o3b 16-November-2020
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
@@ -74,7 +74,7 @@ void GIAsynRelTranslatorApplyAdvancedFeaturesClass::extractDates(GIAtranslatorVa
 }
 
 #ifdef GIA_STANFORD_CORENLP
-void GIAsynRelTranslatorApplyAdvancedFeaturesClass::extractDatesStanfordCoreNLP(GIAtranslatorVariablesClass* translatorVariables)
+void GIAsynRelTranslatorApplyAdvancedFeaturesClass::extractDatesStanfordCoreNLP(const GIAtranslatorVariablesClass* translatorVariables)
 {
 	for(int i=0; i<GIAsentenceClass.getMaxIndexOfDynamicallyGeneratedEntity(translatorVariables->currentSentenceInList); i++)
 	{
@@ -689,7 +689,7 @@ void GIAsynRelTranslatorApplyAdvancedFeaturesClass::defineActionConcepts2(GIAtra
 #endif
 
 #ifdef GIA_CREATE_NEW_CONCEPT_FOR_EVERY_REFERENCE_TO_A_CONCEPT
-void GIAsynRelTranslatorApplyAdvancedFeaturesClass::updateConceptDesignationBasedPropertyOwnerContext(GIAtranslatorVariablesClass* translatorVariables)
+void GIAsynRelTranslatorApplyAdvancedFeaturesClass::updateConceptDesignationBasedPropertyOwnerContext(const GIAtranslatorVariablesClass* translatorVariables)
 {
 	/*
 	updateConceptDesignationBasedPropertyOwnerContext() is designed to distinguish between;

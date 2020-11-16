@@ -26,7 +26,7 @@
  * File Name: GIAsemRelTranslatorParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3o3a 16-November-2020
+ * Project Version: 3o3b 16-November-2020
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  * Description: Semantic Relation Translator Parser
  * /
@@ -46,7 +46,7 @@
 #ifdef GIA_SEM_REL_TRANSLATOR
 
 //based on convertSentenceSyntacticRelationsIntoGIAnetworkNodes{}:
-bool GIAsemRelTranslatorParserClass::convertSentenceSemanticRelationsIntoGIAnetworkNodes(GIAtranslatorVariablesClass* translatorVariables, bool linkPreestablishedReferencesGIA, GIAcoreference* firstGIAcoreferenceInList)
+bool GIAsemRelTranslatorParserClass::convertSentenceSemanticRelationsIntoGIAnetworkNodes(GIAtranslatorVariablesClass* translatorVariables, const bool linkPreestablishedReferencesGIA, GIAcoreference* firstGIAcoreferenceInList)
 {
 	bool result = true;
 	
@@ -381,7 +381,7 @@ void GIAsemRelTranslatorParserClass::fillGrammaticalTenseArraysStanfordBasedOnSe
 }
 
 #ifdef GIA_POS_REL_TRANSLATOR_RULES_GIA3
-void GIAsemRelTranslatorParserClass::fillGrammaticalTenseArraysStanfordBasedOnSemanticRelationsMultiwordAuxiliary(GIAtranslatorVariablesClass* translatorVariables, int modalAuxiliaryIndex, GIAentityNode* entity)
+void GIAsemRelTranslatorParserClass::fillGrammaticalTenseArraysStanfordBasedOnSemanticRelationsMultiwordAuxiliary(GIAtranslatorVariablesClass* translatorVariables, const int modalAuxiliaryIndex, const GIAentityNode* entity)
 {
 	//CHECKTHIS
 	GIArelation* currentRelationInList2 = translatorVariables->currentSentenceInList->firstRelationInList;
@@ -542,7 +542,7 @@ void GIAsemRelTranslatorParserClass::defineSubstancesBasedOnSemanticRelations(GI
 }
 
 #ifdef GIA_SEM_REL_TRANSLATOR_SUPPORT_QUERIES
-void GIAsemRelTranslatorParserClass::identifyComparisonVariableBasedOnSemanticRelations(GIAtranslatorVariablesClass* translatorVariables)
+void GIAsemRelTranslatorParserClass::identifyComparisonVariableBasedOnSemanticRelations(const GIAtranslatorVariablesClass* translatorVariables)
 {
 	if(translatorVariables->currentSentenceInList->isQuestion)
 	{
@@ -563,7 +563,7 @@ void GIAsemRelTranslatorParserClass::identifyComparisonVariableBasedOnSemanticRe
 
 	if(translatorVariables->currentSentenceInList->isQuestion)
 	{
-		GIArelation* currentRelationInList = translatorVariables->currentSentenceInList->firstRelationInList;
+		const GIArelation* currentRelationInList = translatorVariables->currentSentenceInList->firstRelationInList;
  		while(currentRelationInList->next != NULL)
 		{
 			GIAentityNode* entityNodes[2];
@@ -984,7 +984,7 @@ void GIAsemRelTranslatorParserClass::defineConnectionsBasedOnSemanticRelations(G
 }
 	
 	
-bool GIAsemRelTranslatorParserClass::findMatchingObject(GIAtranslatorVariablesClass* translatorVariables, string semanticRelationName, int entity2Index, GIArelation** currentRelationInList2, int* entity2Index2)
+bool GIAsemRelTranslatorParserClass::findMatchingObject(constEffective GIAtranslatorVariablesClass* translatorVariables, const string semanticRelationName, const int entity2Index, GIArelation** currentRelationInList2, int* entity2Index2)
 {
 	bool foundMatchingObject = false;
 
@@ -1078,9 +1078,9 @@ void GIAsemRelTranslatorParserClass::applyAdvancedFeaturesBasedOnSemanticRelatio
 	GIAsynRelTranslatorApplyAdvancedFeatures.defineTenseOnlyTimeConditions(translatorVariables);
 }
 
-void GIAsemRelTranslatorParserClass::defineQuantitiesBasedOnSemanticRelations(GIAtranslatorVariablesClass* translatorVariables)
+void GIAsemRelTranslatorParserClass::defineQuantitiesBasedOnSemanticRelations(const GIAtranslatorVariablesClass* translatorVariables)
 {
-	GIArelation* currentRelationInList = translatorVariables->currentSentenceInList->firstRelationInList;
+	const GIArelation* currentRelationInList = translatorVariables->currentSentenceInList->firstRelationInList;
  	while(currentRelationInList->next != NULL)
 	{
 		if(!(currentRelationInList->disabled))
@@ -1352,7 +1352,7 @@ bool GIAsemRelTranslatorParserClass::generateAllPermutationsFromSemanticRelation
 
 #endif
 
-void GIAsemRelTranslatorParserClass::defineQualitiesBasedOnSemanticRelations(GIAtranslatorVariablesClass* translatorVariables)
+void GIAsemRelTranslatorParserClass::defineQualitiesBasedOnSemanticRelations(const GIAtranslatorVariablesClass* translatorVariables)
 {
 	for(int w=0; w<GIAtranslatorOperations.getEntityArrayMaxIndex(translatorVariables); w++)
 	{

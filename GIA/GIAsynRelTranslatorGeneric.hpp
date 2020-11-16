@@ -26,7 +26,7 @@
  * File Name: GIAsynRelTranslatorGeneric.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3o3a 16-November-2020
+ * Project Version: 3o3b 16-November-2020
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
@@ -275,11 +275,11 @@ class GIAsynRelTranslatorGenericClass
 	private: GIAsemRelTranslatorOperationsClass GIAsemRelTranslatorOperations;
 	#endif
 	#ifdef GIA_GENERIC_DEPENDENCY_RELATION_INTERPRETATION	
-	public: void initialiseBoolArray1D(bool* boolArray, int size, int value);
-	public: void initialiseBoolArray2D(bool* boolArray, int size1, int size2, int value);
-	public: void initialiseIntArray1D(int* intArray, int size, int value);
-	public: void initialiseIntArray2D(int* intArray, int size1, int size2, int value);
-	public: void initialiseIntArray3D(int* intArray, int size1, int size2, int size3, int value);
+	public: void initialiseBoolArray1D(bool* boolArray, const int size, int value);
+	public: void initialiseBoolArray2D(bool* boolArray, const int size1, const int size2, int value);
+	public: void initialiseIntArray1D(int* intArray, const int size, int value);
+	public: void initialiseIntArray2D(int* intArray, const int size1, const int size2, int value);
+	public: void initialiseIntArray3D(int* intArray, const int size1, const int size2, const int size3, int value);
 	public: bool genericDependecyRelationInterpretation(GIAgenericDepRelInterpretationParameters* param, int currentRelationID);
 	#endif
 	
@@ -287,7 +287,7 @@ class GIAsynRelTranslatorGenericClass
 	public: bool genericEntityInterpretation(GIAgenericEntityInterpretationParameters* param);
 	#endif
 
-	public: bool determineFeatureIndexOfPreposition(GIAsentence* currentSentenceInList, GIArelation* prepositionRelation, int* indexOfPreposition);
+	public: bool determineFeatureIndexOfPreposition(GIAsentence* currentSentenceInList, const GIArelation* prepositionRelation, int* indexOfPreposition);
 	
 	//GIAentityNode* addRelationshipToEntityAndGenerateSemanticRelations(GIAentityNode* relationshipSubjectEntity, GIAentityNode* relationshipObjectEntity, bool sameReferenceSet, int relationshipEntityType, string relationshipEntityName, GIAtranslatorVariablesClass* translatorVariables, bool isArtificial, int relationshipSubjectEntityIndex, int relationshipObjectEntityIndex);
 };

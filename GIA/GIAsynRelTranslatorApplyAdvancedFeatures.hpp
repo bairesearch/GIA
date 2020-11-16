@@ -26,7 +26,7 @@
  * File Name: GIAsynRelTranslatorApplyAdvancedFeatures.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3o3a 16-November-2020
+ * Project Version: 3o3b 16-November-2020
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
@@ -65,7 +65,7 @@ class GIAsynRelTranslatorApplyAdvancedFeaturesClass
 			private: void extractDatesRelex(GIAtranslatorVariablesClass* translatorVariables);
 			#endif
 			#ifdef GIA_STANFORD_CORENLP
-			private: void extractDatesStanfordCoreNLP(GIAtranslatorVariablesClass* translatorVariables);					//Stanford Specific	[requires NERTemp info to be set, + need to know if timeConditionNodes have already been added; if not add them now]
+			private: void extractDatesStanfordCoreNLP(const GIAtranslatorVariablesClass* translatorVariables);					//Stanford Specific	[requires NERTemp info to be set, + need to know if timeConditionNodes have already been added; if not add them now]
 			#endif
 				public: void addTimeToSubstance(GIAentityNode* timeConditionEntity);
 		private: void extractQuantities(GIAtranslatorVariablesClass* translatorVariables);	//Stanford Compatible
@@ -84,7 +84,7 @@ class GIAsynRelTranslatorApplyAdvancedFeaturesClass
 		#endif
 
 		#ifdef GIA_CREATE_NEW_CONCEPT_FOR_EVERY_REFERENCE_TO_A_CONCEPT
-		private: void updateConceptDesignationBasedPropertyOwnerContext(GIAtranslatorVariablesClass* translatorVariables);
+		private: void updateConceptDesignationBasedPropertyOwnerContext(const GIAtranslatorVariablesClass* translatorVariables);
 		#endif
 };
 	

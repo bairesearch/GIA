@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3o3a 16-November-2020
+ * Project Version: 3o3b 16-November-2020
  * Requirements: requires text parsed by X Parser
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
@@ -36,7 +36,7 @@
 #include "GIAtranslatorReferencing.hpp"
 
 //unordered_map<string,GIAentityNode*>* entityNodesActiveListNetworkIndexes
-void GIAtranslatorReferencingClass::identifyComparisonVariableAlternateMethod(GIAtranslatorVariablesClass* translatorVariables)
+void GIAtranslatorReferencingClass::identifyComparisonVariableAlternateMethod(const GIAtranslatorVariablesClass* translatorVariables)
 {
 	bool expectToFindComparisonVariable = false;
 	if(translatorVariables->currentSentenceInList->isQuestion)
@@ -67,7 +67,7 @@ void GIAtranslatorReferencingClass::identifyComparisonVariableAlternateMethod(GI
 			bool foundComparisonVariableAlternateMethod = false;
 
 			bool foundQueryWordAcceptedByAlternateMethod = false;
-			GIAfeature* currentFeatureInList = translatorVariables->currentSentenceInList->firstFeatureInList;
+			const GIAfeature* currentFeatureInList = translatorVariables->currentSentenceInList->firstFeatureInList;
 			while(currentFeatureInList->next != NULL)
 			{
 				bool passed = false;
@@ -658,13 +658,13 @@ void GIAtranslatorReferencingClass::linkPronounReferencesRelex(GIAtranslatorVari
 
 
 #ifdef GIA_STANFORD_CORENLP
-void GIAtranslatorReferencingClass::linkPronounAndTextualContextReferencesStanfordCoreNLP(GIAtranslatorVariablesClass* translatorVariables, GIAstanfordCoreNLPcoreference* firstCoreferenceInList)
+void GIAtranslatorReferencingClass::linkPronounAndTextualContextReferencesStanfordCoreNLP(GIAtranslatorVariablesClass* translatorVariables, const GIAstanfordCoreNLPcoreference* firstCoreferenceInList)
 {
-	GIAstanfordCoreNLPcoreference* currentCoreferenceInList = firstCoreferenceInList;
+	const GIAstanfordCoreNLPcoreference* currentCoreferenceInList = firstCoreferenceInList;
 	while(currentCoreferenceInList->next != NULL)
 	{
-		GIAstanfordCoreNLPmention* firstMentionInList = currentCoreferenceInList->firstMentionInList;
-		GIAstanfordCoreNLPmention* currentMentionInList = firstMentionInList;
+		const GIAstanfordCoreNLPmention* firstMentionInList = currentCoreferenceInList->firstMentionInList;
+		const GIAstanfordCoreNLPmention* currentMentionInList = firstMentionInList;
 		GIAentityNode* referenceSource = NULL;
 		bool foundReferenceSource = false;
 		while(currentMentionInList->next != NULL)
@@ -983,7 +983,7 @@ void GIAtranslatorReferencingClass::fillExplicitReferenceSameSetTags(GIAsentence
 }
 
 
-int GIAtranslatorReferencingClass::identifyReferenceSets(unordered_map<string,GIAentityNode*>* sentenceNetworkIndexEntityNodesList, bool NLPdependencyRelationsType, vector<GIAentityNode*>* referenceSetDefiniteEntityList)
+int GIAtranslatorReferencingClass::identifyReferenceSets(unordered_map<string,GIAentityNode*>* sentenceNetworkIndexEntityNodesList, const bool NLPdependencyRelationsType, vector<GIAentityNode*>* referenceSetDefiniteEntityList)
 {
 
 	bool haveSentenceEntityIndexOfDeterminers = false;
@@ -1017,7 +1017,7 @@ void GIAtranslatorReferencingClass::resetReferenceSets(unordered_map<string,GIAe
 	}
 }
 
-void GIAtranslatorReferencingClass::identifyReferenceSetNetworkIndexEntityEntrance(GIAentityNode* entityNode, int* referenceSetID, bool haveSentenceEntityIndexOfDeterminers, vector<GIAentityNode*>* referenceSetDefiniteEntityList)
+void GIAtranslatorReferencingClass::identifyReferenceSetNetworkIndexEntityEntrance(GIAentityNode* entityNode, int* referenceSetID, const bool haveSentenceEntityIndexOfDeterminers, vector<GIAentityNode*>* referenceSetDefiniteEntityList)
 {
 
 	if(!(entityNode->entityVectorConnectionsArray[GIA_ENTITY_VECTOR_CONNECTION_TYPE_INSTANCE].empty()))
@@ -1107,7 +1107,7 @@ void GIAtranslatorReferencingClass::identifyReferenceSetNetworkIndexEntityEntran
 #ifdef GIA_ADVANCED_REFERENCING
 
 //based on answerQueryOrFindAndTagForHighlightingMatchingStructureInSemanticNetwork();
-void GIAtranslatorReferencingClass::createGIAcoreferenceInListBasedUponIdentifiedReferenceSets(unordered_map<string,GIAentityNode*>* sentenceNetworkIndexEntityNodesList, unordered_map<string,GIAentityNode*>* entityNodesActiveListNetworkIndexes, GIAcoreference* firstGIAcoreferenceInList, vector<GIAentityNode*>* referenceSetDefiniteEntityList, int sentenceIndex)
+void GIAtranslatorReferencingClass::createGIAcoreferenceInListBasedUponIdentifiedReferenceSets(unordered_map<string,GIAentityNode*>* sentenceNetworkIndexEntityNodesList, unordered_map<string,GIAentityNode*>* entityNodesActiveListNetworkIndexes, GIAcoreference* firstGIAcoreferenceInList, vector<GIAentityNode*>* referenceSetDefiniteEntityList, const int sentenceIndex)
 {
 	#ifdef GIA_DEBUG_QUERY2
 	cout << "**** createGIAcoreferenceInListBasedUponIdentifiedReferenceSets ***" << endl;
@@ -1262,7 +1262,7 @@ void GIAtranslatorReferencingClass::createGIAcoreferenceInListBasedUponIdentifie
 }
 
 
-void GIAtranslatorReferencingClass::createGIAcoreferenceInListBasedUponIdentifiedReferenceSet(unordered_map<string,GIAentityNode*>* entityNodesActiveListNetworkIndexesQuery, unordered_map<string,GIAentityNode*>* entityNodesActiveListNetworkIndexes, GIAreferenceTraceParameters* referenceTraceParameters, int* maxNumberOfMatchedNodes, GIAentityNode** queryEntityWithMaxNumberNodesMatched, GIAentityNode** networkEntityWithMaxNumberNodesMatched, bool* foundAtLeastOneMatch)
+void GIAtranslatorReferencingClass::createGIAcoreferenceInListBasedUponIdentifiedReferenceSet(unordered_map<string,GIAentityNode*>* entityNodesActiveListNetworkIndexesQuery, unordered_map<string,GIAentityNode*>* entityNodesActiveListNetworkIndexes, GIAreferenceTraceParameters* referenceTraceParameters, int* maxNumberOfMatchedNodes, constEffective GIAentityNode** queryEntityWithMaxNumberNodesMatched, GIAentityNode** networkEntityWithMaxNumberNodesMatched, bool* foundAtLeastOneMatch)
 {
 	int referenceSetID = referenceTraceParameters->referenceSetID;
 
@@ -1777,7 +1777,7 @@ void GIAtranslatorReferencingClass::identifyReferenceSetsSpecificConceptsAndLink
 }
 #endif
 
-bool GIAtranslatorReferencingClass::identifyReferenceSetDetermineNextCourseOfAction(GIAentityNode* entityNode, bool sameReferenceSet, int referenceSetID, int minimumEntityIndexOfReferenceSet, GIAentityConnection* connection)
+bool GIAtranslatorReferencingClass::identifyReferenceSetDetermineNextCourseOfAction(GIAentityNode* entityNode, const bool sameReferenceSet, int referenceSetID, int minimumEntityIndexOfReferenceSet, const GIAentityConnection* connection)
 {
 	bool result = false;
 	if(sameReferenceSet)

@@ -26,7 +26,7 @@
  * File Name: GIAconditionNodeClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3o3a 16-November-2020
+ * Project Version: 3o3b 16-November-2020
  * /
  *******************************************************************************/
 
@@ -62,7 +62,7 @@ GIAtimeConditionNode::~GIAtimeConditionNode(void)
 }
 
 
-string GIAconditionNodeClassClass::generateDateTimeConditionName(int dayOfMonth, int month, int64_t year)
+string GIAconditionNodeClassClass::generateDateTimeConditionName(const int dayOfMonth, const int month, const int64_t year)
 {
 	string dayOfMonthString = "";
 	string monthString = "";

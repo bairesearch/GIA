@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorHybridLogicReference.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3o3a 16-November-2020
+ * Project Version: 3o3b 16-November-2020
  * Requirements: requires plain text file
  * Description: Textual Relation Translator Hybrid Logic Reference
  * /
@@ -61,23 +61,23 @@ class GIAposRelTranslatorHybridLogicReferenceClass
 	#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE
 	#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_DEPRECIATED
 	public: bool executeLogicReferencePreprocessor(vector<LRPpreprocessorPlainTextWord*>* sentenceContentsWordList, LRPpreprocessorSentence* currentLRPpreprocessorSentenceInList, vector<XMLparserTag*>* SANIrulesTokenLayers);
-		private: bool logicReferenceClassIsPreposition(GIAposRelTranslatorHybridLogicReference* logicReference);
-		private: bool initialiseNextLogicReferenceConjunction(GIAposRelTranslatorHybridLogicReference** currentLogicReferenceInList, int wordIndexSentence);
-		private: bool initialiseNewSubLogicReferenceConjunctionInferred(GIAposRelTranslatorHybridLogicReference** currentLogicReferenceInList, int wordIndexSentence, bool copySubLogicReferences);
-		private: bool initialiseNewSubLogicReferenceConjunction(GIAposRelTranslatorHybridLogicReference** currentLogicReferenceInList, vector<LRPpreprocessorPlainTextWord*> logicReferenceContents, int logicReferenceClass, string logicReferenceClassType, int wordIndexSentence, bool copySubLogicReferences);
-		private: bool initialiseNewSubLogicReference(GIAposRelTranslatorHybridLogicReference* currentLogicReferenceInList, vector<LRPpreprocessorPlainTextWord*> logicReferenceContents, int logicReferenceClass, string logicReferenceClassType, int wordIndexSentence);
+		private: bool logicReferenceClassIsPreposition(const GIAposRelTranslatorHybridLogicReference* logicReference);
+		private: bool initialiseNextLogicReferenceConjunction(GIAposRelTranslatorHybridLogicReference** currentLogicReferenceInList, const int wordIndexSentence);
+		private: bool initialiseNewSubLogicReferenceConjunctionInferred(GIAposRelTranslatorHybridLogicReference** currentLogicReferenceInList, const int wordIndexSentence, const bool copySubLogicReferences);
+		private: bool initialiseNewSubLogicReferenceConjunction(GIAposRelTranslatorHybridLogicReference** currentLogicReferenceInList, vector<LRPpreprocessorPlainTextWord*> logicReferenceContents, int logicReferenceClass, string logicReferenceClassType, const int wordIndexSentence, const bool copySubLogicReferences);
+		private: bool initialiseNewSubLogicReference(GIAposRelTranslatorHybridLogicReference* currentLogicReferenceInList, vector<LRPpreprocessorPlainTextWord*> logicReferenceContents, int logicReferenceClass, string logicReferenceClassType, const int wordIndexSentence);
 		private: bool fillLogicReferenceVariable(GIAposRelTranslatorHybridLogicReference* currentLogicReferenceInList, vector<LRPpreprocessorPlainTextWord*>* logicReferenceVariableWordList, int* logicReferenceVariableNameIndex, bool* expectToFindSubjectAuxObjectLogicReferenceVariable, int wordIndexSentence);
 		private: bool identifyImplicitLogicReferenceSets(GIAposRelTranslatorHybridLogicReference* explicitConjunctionLogicReferenceInList, vector<LRPpreprocessorPlainTextWord*> logicReferenceContents, int logicReferenceClass, string logicReferenceClassType);
 	#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE_OUTPUT_LOGIC_REFERENCE_SETS_FOR_HIGH_LEVEL_SEMANTIC_PARSE_SUPPORT_VERB_TENSE
-	private: vector<LRPpreprocessorPlainTextWord*> generateLogicReferenceContents(LRPpreprocessorPlainTextWord* logicReferenceWord, string logicReferenceClassType, int logicReferenceClass, vector<LRPpreprocessorPlainTextWord*>* logicReferenceVariableWordList);
+	private: vector<LRPpreprocessorPlainTextWord*> generateLogicReferenceContents(LRPpreprocessorPlainTextWord* logicReferenceWord, const string logicReferenceClassType, const int logicReferenceClass, vector<LRPpreprocessorPlainTextWord*>* logicReferenceVariableWordList);
 	#endif
-	private: vector<LRPpreprocessorPlainTextWord*> generateLogicReferenceContentsBase(LRPpreprocessorPlainTextWord* logicReferenceWord, string logicReferenceClassType);
+	private: vector<LRPpreprocessorPlainTextWord*> generateLogicReferenceContentsBase(LRPpreprocessorPlainTextWord* logicReferenceWord, const string logicReferenceClassType);
 	private: void setLogicReferenceInfo(GIAposRelTranslatorHybridLogicReference* logicReference, vector<LRPpreprocessorPlainTextWord*> logicReferenceContents, int logicReferenceClass, string logicReferenceClassType);
 	#endif
-	public: bool islogicReferenceExplitOrImplicitConjunctionComponent(GIAposRelTranslatorHybridLogicReference* currentLogicReferenceInList);
-	public: bool islogicReferenceConjunctionComponentNotFirst(GIAposRelTranslatorHybridLogicReference* currentLogicReferenceInList, GIAposRelTranslatorHybridLogicReference* firstLogicReferenceInList);
+	public: bool islogicReferenceExplitOrImplicitConjunctionComponent(const GIAposRelTranslatorHybridLogicReference* currentLogicReferenceInList);
+	public: bool islogicReferenceConjunctionComponentNotFirst(const GIAposRelTranslatorHybridLogicReference* currentLogicReferenceInList, const GIAposRelTranslatorHybridLogicReference* firstLogicReferenceInList);
 	#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_LOGIC_REFERENCE_CONJUNCTION_LR_WITH_EMBEDDED_PREPOSITION_VERB_LR
-	public: bool islogicReferenceParentConjunctionComponentNotFirst(GIAposRelTranslatorHybridLogicReference* currentLogicReferenceInList, GIAposRelTranslatorHybridLogicReference* firstLogicReferenceInList);
+	public: bool islogicReferenceParentConjunctionComponentNotFirst(const GIAposRelTranslatorHybridLogicReference* currentLogicReferenceInList, GIAposRelTranslatorHybridLogicReference* firstLogicReferenceInList);
 	#endif
 	#endif
 	#ifdef GIA_POS_REL_TRANSLATOR_HYBRID_PRINT_OUTPUT

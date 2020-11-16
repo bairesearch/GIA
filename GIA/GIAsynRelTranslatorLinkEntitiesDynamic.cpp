@@ -26,7 +26,7 @@
  * File Name: GIAsynRelTranslatorLinkEntitiesDynamic.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3o3a 16-November-2020
+ * Project Version: 3o3b 16-November-2020
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
@@ -139,7 +139,7 @@ void GIAsynRelTranslatorLinkEntitiesDynamicClass::linkEntitiesDynamicPrenominalM
 	}
 }
 
-bool GIAsynRelTranslatorLinkEntitiesDynamicClass::linkEntitiesDynamicPrenominalModifierOfNounDirection(GIArelation* currentRelationInList, GIAtranslatorVariablesClass* translatorVariables, GIAentityNode* entity1, GIAentityNode* entity2, int entity1Index, int entity2Index, int relationTypeIndex, bool direction)
+bool GIAsynRelTranslatorLinkEntitiesDynamicClass::linkEntitiesDynamicPrenominalModifierOfNounDirection(const GIArelation* currentRelationInList, GIAtranslatorVariablesClass* translatorVariables, GIAentityNode* entity1, GIAentityNode* entity2, int entity1Index, int entity2Index, int relationTypeIndex, const bool direction)
 {
 	bool previousRelationshipFound = false;
 	bool previousDefinitionRelationshipFound = false;
@@ -392,7 +392,7 @@ void GIAsynRelTranslatorLinkEntitiesDynamicClass::linkEntitiesDynamicFromConditi
 
 #endif
 
-bool GIAsynRelTranslatorLinkEntitiesDynamicClass::findPreviousRelationship(GIAentityNode* instanceEntity, GIAentityNode* comparisonEntity, GIAentityNode** targetEntityFound, bool* previousDefinitionRelationshipFound, bool* previousPropertyRelationshipFound, bool* previousConditionRelationshipFound)
+bool GIAsynRelTranslatorLinkEntitiesDynamicClass::findPreviousRelationship(GIAentityNode* instanceEntity, const GIAentityNode* comparisonEntity, GIAentityNode** targetEntityFound, bool* previousDefinitionRelationshipFound, bool* previousPropertyRelationshipFound, bool* previousConditionRelationshipFound)
 {
 	bool previousRelationshipFound = false;
 
@@ -491,7 +491,7 @@ void GIAsynRelTranslatorLinkEntitiesDynamicClass::connectPropertyToEntityFull(GI
 	#endif
 }
 
-int GIAsynRelTranslatorLinkEntitiesDynamicClass::connectConditionToEntityFull(GIAtranslatorVariablesClass* translatorVariables, GIAentityNode* entity1, GIAentityNode* entity2, int entity1Index, int entity2Index, string conditionEntityName, int conditionIndex, bool sameReferenceSet)
+int GIAsynRelTranslatorLinkEntitiesDynamicClass::connectConditionToEntityFull(GIAtranslatorVariablesClass* translatorVariables, GIAentityNode* entity1, GIAentityNode* entity2, int entity1Index, int entity2Index, const string conditionEntityName, int conditionIndex, bool sameReferenceSet)
 {
 	GIAentityNode* conditionNetworkIndexEntity;
 	int featureIndexOfPreposition = conditionIndex;
@@ -520,7 +520,7 @@ int GIAsynRelTranslatorLinkEntitiesDynamicClass::connectConditionToEntityFull(GI
 	return featureIndexOfPreposition;
 }
 
-int GIAsynRelTranslatorLinkEntitiesDynamicClass::getEntityIndex(GIAtranslatorVariablesClass* translatorVariables, GIAentityNode* instanceEntity)
+int GIAsynRelTranslatorLinkEntitiesDynamicClass::getEntityIndex(const GIAtranslatorVariablesClass* translatorVariables, const GIAentityNode* instanceEntity)
 {
 	bool foundEntityIndex = false;
 	int instanceEntityIndex = 0;

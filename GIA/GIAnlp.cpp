@@ -26,7 +26,7 @@
  * File Name: GIAnlp.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3o3a 16-November-2020
+ * Project Version: 3o3b 16-November-2020
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: NLP - external natural language processing
  * /
@@ -40,7 +40,7 @@
 #endif
 
 
-void GIAnlpClass::executeNLPparser(string inputTextPlainTXTfileName, string inputTextNLPXMLfileName, GIAtranslatorVariablesClass* translatorVariables, bool parseRelationsOrFeatures)
+void GIAnlpClass::executeNLPparser(const string inputTextPlainTXTfileName, const string inputTextNLPXMLfileName, const GIAtranslatorVariablesClass* translatorVariables, const bool parseRelationsOrFeatures)
 {	
 	int NLPParser = false;
 	if(parseRelationsOrFeatures)
@@ -213,7 +213,7 @@ void GIAnlpClass::executeNLPparser(string inputTextPlainTXTfileName, string inpu
 }
 
 
-bool GIAnlpClass::parseNLPparserFile(string inputTextNLPrelationXMLfileName, string inputTextNLPfeatureXMLfileName, bool isQuery, GIAsentence* firstSentenceInList, int NLPfeatureParser, int NLPdependencyRelationsParser, bool NLPrelexCompatibilityMode)
+bool GIAnlpClass::parseNLPparserFile(const string inputTextNLPrelationXMLfileName, const string inputTextNLPfeatureXMLfileName, const bool isQuery, GIAsentence* firstSentenceInList, const int NLPfeatureParser, const int NLPdependencyRelationsParser, bool NLPrelexCompatibilityMode)
 {
 	bool result = true;
 
@@ -239,7 +239,7 @@ bool GIAnlpClass::parseNLPparserFile(string inputTextNLPrelationXMLfileName, str
 	return result;
 }
 
-bool GIAnlpClass::parseNLPparserFeaturesFile(string inputTextNLPfeatureXMLfileName, bool isQuery, GIAsentence* firstSentenceInList, int NLPfeatureParser, bool* createNewSentences)
+bool GIAnlpClass::parseNLPparserFeaturesFile(const string inputTextNLPfeatureXMLfileName, const bool isQuery, GIAsentence* firstSentenceInList, const int NLPfeatureParser, bool* createNewSentences)
 {
 	bool result = true;
 
@@ -289,7 +289,7 @@ bool GIAnlpClass::parseNLPparserFeaturesFile(string inputTextNLPfeatureXMLfileNa
 	return result;
 }
 
-bool GIAnlpClass::parseNLPparserRelationsFile(string inputTextNLPrelationXMLfileName, bool isQuery, GIAsentence* firstSentenceInList, int NLPdependencyRelationsParser, bool NLPrelexCompatibilityMode, bool createNewSentences, bool onlyParseIfCorpusLookupFailed)
+bool GIAnlpClass::parseNLPparserRelationsFile(const string inputTextNLPrelationXMLfileName, const bool isQuery, GIAsentence* firstSentenceInList, const int NLPdependencyRelationsParser, bool NLPrelexCompatibilityMode, const bool createNewSentences, const bool onlyParseIfCorpusLookupFailed)
 {
 	bool result = true;
 
@@ -325,7 +325,7 @@ bool GIAnlpClass::parseNLPparserRelationsFile(string inputTextNLPrelationXMLfile
 }
 
 #ifdef GIA_RELEX
-bool GIAnlpClass::parseRelexFile(string inputTextNLPrelationXMLfileName, bool isQuery, GIAsentence* firstSentenceInList, bool parseRelations, bool parseFeatures, bool NLPrelexCompatibilityMode, bool createNewSentences, bool onlyParseIfCorpusLookupFailed)
+bool GIAnlpClass::parseRelexFile(const string inputTextNLPrelationXMLfileName, const bool isQuery, GIAsentence* firstSentenceInList, const bool parseRelations, const bool parseFeatures, bool NLPrelexCompatibilityMode, const bool createNewSentences, const bool onlyParseIfCorpusLookupFailed)
 {
 	bool result = true;
 
@@ -463,7 +463,7 @@ bool GIAnlpClass::parseRelexFile(string inputTextNLPrelationXMLfileName, bool is
 
 
 #ifdef GIA_STANFORD_CORENLP
-bool GIAnlpClass::parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileName, bool isQuery, GIAsentence* firstSentenceInList, bool parseRelations, bool parseFeatures, bool createNewSentences, bool onlyParseIfCorpusLookupFailed)
+bool GIAnlpClass::parseStanfordCoreNLPfile(const string inputTextNLPrelationXMLfileName, const bool isQuery, GIAsentence* firstSentenceInList, const bool parseRelations, const bool parseFeatures, const bool createNewSentences, const bool onlyParseIfCorpusLookupFailed)
 {
 	bool result = true;
 
@@ -918,7 +918,7 @@ bool GIAnlpClass::parseStanfordCoreNLPfile(string inputTextNLPrelationXMLfileNam
 
 //http://rosettacode.org/wiki/Count_occurrences_of_a_substring#C.2B.2B
 // returns count of non-overlapping occurrences of 'sub' in 'str'
-int GIAnlpClass::countSubstring(std::string& str, std::string& sub)
+int GIAnlpClass::countSubstring(const std::string& str, const std::string& sub)
 {
     if (sub.length() == 0) return 0;
     int count = 0;
@@ -931,7 +931,7 @@ int GIAnlpClass::countSubstring(std::string& str, std::string& sub)
 }
 
 
-bool GIAnlpClass::parseStanfordParserFile(string inputTextNLPrelationXMLfileName, bool isQuery, GIAsentence* firstSentenceInList, bool createNewSentences, bool onlyParseIfCorpusLookupFailed)
+bool GIAnlpClass::parseStanfordParserFile(const string inputTextNLPrelationXMLfileName, const bool isQuery, GIAsentence* firstSentenceInList, const bool createNewSentences, const bool onlyParseIfCorpusLookupFailed)
 {
 	bool result = true;
 
@@ -943,7 +943,7 @@ bool GIAnlpClass::parseStanfordParserFile(string inputTextNLPrelationXMLfileName
 	return result;
 }
 
-bool GIAnlpClass::parseStanfordParserFile(string inputTextNLPrelationXMLfileName, bool isQuery, GIAsentence* firstSentenceInList, bool createNewSentences, bool parseGIA2file, bool onlyParseIfCorpusLookupFailed)
+bool GIAnlpClass::parseStanfordParserFile(const string inputTextNLPrelationXMLfileName, const bool isQuery, GIAsentence* firstSentenceInList, const bool createNewSentences, bool parseGIA2file, const bool onlyParseIfCorpusLookupFailed)
 {
 	bool result = true;
 
@@ -1095,7 +1095,7 @@ bool GIAnlpClass::parseStanfordParserFile(string inputTextNLPrelationXMLfileName
 
 
 #ifdef GIA_OUTPUT_INTERNAL_RELATIONS_IN_RELEX_FORMAT
-void GIAnlpClass::outputInternalRelationsInRelexFormat(string* nameOfRelexCompactFormatCFFfile, string* originalInputFileName, GIAsentence* firstSentenceInList, int NLPdependencyRelationsParser, int NLPfeatureParser, string NLPexeFolderArray[])
+void GIAnlpClass::outputInternalRelationsInRelexFormat(string* nameOfRelexCompactFormatCFFfile, const string* originalInputFileName, const GIAsentence* firstSentenceInList, const int NLPdependencyRelationsParser, const int NLPfeatureParser, const string NLPexeFolderArray[])
 {
 	bool result = true;
 
@@ -1152,7 +1152,7 @@ void GIAnlpClass::outputInternalRelationsInRelexFormat(string* nameOfRelexCompac
 
 	XMLparserTag* firstTagL1b = currentTagL1;
 	XMLparserTag* currentTagL1b = firstTagL1b;
-	GIAsentence* currentSentence = firstSentenceInList;
+	const GIAsentence* currentSentence = firstSentenceInList;
 	while(currentSentence->next != NULL)
 	{
 		string sentenceIndexString = SHAREDvars.convertIntToString(currentSentence->sentenceIndex);

@@ -26,7 +26,7 @@
  * File Name: GIAposRelTranslatorParser.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3o3a 16-November-2020
+ * Project Version: 3o3b 16-November-2020
  * Requirements: requires text parsed by BAI Sequentially Activated Neuronal Input (SANI)
  * Description: Part-of-speech Relation Translator Parser
  * /
@@ -52,7 +52,7 @@ void GIAposRelTranslatorParserClass::createSANItranslatorVariablesFromGIAtransla
 }
 
 //based on convertSentenceSyntacticRelationsIntoGIAnetworkNodes{}:
-bool GIAposRelTranslatorParserClass::convertSentenceTxtRelationsIntoGIAnetworkNodes(GIAtranslatorVariablesClass* translatorVariables, bool linkPreestablishedReferencesGIA, GIAcoreference* firstGIAcoreferenceInList)
+bool GIAposRelTranslatorParserClass::convertSentenceTxtRelationsIntoGIAnetworkNodes(GIAtranslatorVariablesClass* translatorVariables, const bool linkPreestablishedReferencesGIA, GIAcoreference* firstGIAcoreferenceInList)
 {
 	bool result = true;
 	
@@ -348,7 +348,7 @@ bool GIAposRelTranslatorParserClass::locateAndAddAllNetworkIndexEntitiesBasedOnT
 
 
 #ifdef GIA_POS_REL_TRANSLATOR_RULES_CODE_COMPONENT_QUERY
-void GIAposRelTranslatorParserClass::identifyComparisonVariable(GIAtranslatorVariablesClass* translatorVariables)
+void GIAposRelTranslatorParserClass::identifyComparisonVariable(const GIAtranslatorVariablesClass* translatorVariables)
 {
 	if(translatorVariables->currentSentenceInList->isQuestion)
 	{
@@ -474,7 +474,7 @@ bool GIAposRelTranslatorParserClass::generateSemanticRelationsFromTxtRelationsWr
 #endif
 
 #ifdef GIA_POS_REL_TRANSLATOR_RULES_ASSUME_HIGH_LEVEL_REFERENCE_SETS_DO_NOT_CONTAIN_EXPLICIT_SEMANTIC_RELATION_FUNCTION
-bool GIAposRelTranslatorParserClass::reconcileSameReferenceSetConnectionsForAllRelationshipEntities(GIAtranslatorVariablesClass* translatorVariables)
+bool GIAposRelTranslatorParserClass::reconcileSameReferenceSetConnectionsForAllRelationshipEntities(const GIAtranslatorVariablesClass* translatorVariables)
 {
 	bool result = true;
 	
@@ -553,7 +553,7 @@ bool GIAposRelTranslatorParserClass::reconcileSameReferenceSetConnectionsForAllR
 }
 #endif
 	
-void GIAposRelTranslatorParserClass::setPreprocessorSentenceTranslatorEntityReferences(LRPpreprocessorSentence* currentPreprocessorSentenceInList, vector<GIAentityNode*>* GIAentityNodeArray)
+void GIAposRelTranslatorParserClass::setPreprocessorSentenceTranslatorEntityReferences(LRPpreprocessorSentence* currentPreprocessorSentenceInList, const vector<GIAentityNode*>* GIAentityNodeArray)
 {
 	int numberOfWordsInSentence = LRPpreprocessorSentenceClassObject.getSentenceContents(currentPreprocessorSentenceInList)->size();	//+1?
 	for(int w=LRP_NLP_START_ENTITY_INDEX; w<=numberOfWordsInSentence; w++)
@@ -564,7 +564,7 @@ void GIAposRelTranslatorParserClass::setPreprocessorSentenceTranslatorEntityRefe
 
 
 //this code is based on GIAsemRelTranslatorParserClass::defineSubstancesBasedOnSemanticRelations
-void GIAposRelTranslatorParserClass::defineSubstancesBasedOnNetworkAndDeterminerInfo(GIAtranslatorVariablesClass* translatorVariables)
+void GIAposRelTranslatorParserClass::defineSubstancesBasedOnNetworkAndDeterminerInfo(const GIAtranslatorVariablesClass* translatorVariables)
 {
 	for(int i=0; i<GIAtranslatorOperations.getEntityArrayMaxIndex(translatorVariables); i++)
 	{
@@ -952,7 +952,7 @@ bool GIAposRelTranslatorParserClass::relinkDynamicConnections(GIAtranslatorVaria
 	return result;
 }
 
-bool GIAposRelTranslatorParserClass::findIdealSemanticRelationshipSourceInSentenceSubnet(GIAtranslatorVariablesClass* translatorVariables, bool relationshipSourceIsSubject, GIAentityNode* relationshipEntity, GIAentityNode* relationshipSourceEntity, GIAentityNode* relationshipTargetEntity, GIAentityNode** relationshipSourceNewFound)
+bool GIAposRelTranslatorParserClass::findIdealSemanticRelationshipSourceInSentenceSubnet(const GIAtranslatorVariablesClass* translatorVariables, const bool relationshipSourceIsSubject, const GIAentityNode* relationshipEntity, const GIAentityNode* relationshipSourceEntity, const GIAentityNode* relationshipTargetEntity, constEffective GIAentityNode** relationshipSourceNewFound)
 {
 	int maxSimilarityOfSubnet = 0;
 	bool foundSimilarSubnet = false;
@@ -1045,7 +1045,7 @@ bool GIAposRelTranslatorParserClass::findIdealSemanticRelationshipSourceInSenten
 	return foundSimilarSubnet;
 }
 
-bool GIAposRelTranslatorParserClass::calculateSimilarityOfSubnets(GIAtranslatorVariablesClass* translatorVariables, GIAentityNode* relationshipEntity, GIAentityNode* relationshipSourceEntity, GIAentityNode* relationshipTargetEntity, int* subsetSimilarity)
+bool GIAposRelTranslatorParserClass::calculateSimilarityOfSubnets(const GIAtranslatorVariablesClass* translatorVariables, const GIAentityNode* relationshipEntity, const GIAentityNode* relationshipSourceEntity, const GIAentityNode* relationshipTargetEntity, const int* subsetSimilarity)
 {
 	//TODO: fill this
 	//find existence of exact relationship in [extra-sentence] existing database (relationshipSourceEntity - relationshipEntity - relationshipTargetEntity), or 

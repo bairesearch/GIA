@@ -26,7 +26,7 @@
  * File Name: GIAsentenceClass.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3o3a 16-November-2020
+ * Project Version: 3o3b 16-November-2020
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Sentence Class
  * /
@@ -489,10 +489,10 @@ void GIAsentenceClassClass::copyStanfordMention(GIAstanfordCoreNLPmention* first
 	}
 }
 
-int GIAsentenceClassClass::calculateNumberOfWordsInSentence(GIAfeature* firstFeatureInList)
+int GIAsentenceClassClass::calculateNumberOfWordsInSentence(const GIAfeature* firstFeatureInList)
 {
 	int numberOfWordsInSentence = 0;
-	GIAfeature* currentFeatureInList = firstFeatureInList;
+	const GIAfeature* currentFeatureInList = firstFeatureInList;
 	while(currentFeatureInList->next != NULL)
 	{
 		numberOfWordsInSentence++;
@@ -505,29 +505,29 @@ int GIAsentenceClassClass::calculateNumberOfWordsInSentence(GIAfeature* firstFea
 
 
 
-int GIAsentenceClassClass::getMinIndexOfDynamicallyGeneratedEntity(GIAsentence* currentSentenceInList) 
+int GIAsentenceClassClass::getMinIndexOfDynamicallyGeneratedEntity(const GIAsentence* currentSentenceInList) 
 {
 	return getMinIndexOfDynamicallyGeneratedEntity(currentSentenceInList->numberOfWordsInSentence);
 }
 
-int GIAsentenceClassClass::getMaxIndexOfDynamicallyGeneratedEntity(GIAsentence* currentSentenceInList) 
+int GIAsentenceClassClass::getMaxIndexOfDynamicallyGeneratedEntity(const GIAsentence* currentSentenceInList) 
 {
 	return getMaxIndexOfDynamicallyGeneratedEntity(currentSentenceInList->numberOfWordsInSentence);
 }
 
-int GIAsentenceClassClass::getMinIndexOfDynamicallyGeneratedEntity(int numberOfWordsInSentence) 
+int GIAsentenceClassClass::getMinIndexOfDynamicallyGeneratedEntity(const int numberOfWordsInSentence) 
 {
 	int minIndexOfDynamicallyGeneratedEntity = numberOfWordsInSentence + LRP_NLP_START_ENTITY_INDEX;		//OLD: FEATURE_INDEX_MIN_OF_DYNAMICALLY_GENERATED_ENTITY
 	return minIndexOfDynamicallyGeneratedEntity;	
 }
 
-int GIAsentenceClassClass::getMaxIndexOfDynamicallyGeneratedEntity(int numberOfWordsInSentence) 
+int GIAsentenceClassClass::getMaxIndexOfDynamicallyGeneratedEntity(const int numberOfWordsInSentence) 
 {
 	int maxIndexOfDynamicallyGeneratedEntity = getMinIndexOfDynamicallyGeneratedEntity(numberOfWordsInSentence) + MAX_NUMBER_OF_SPECIAL_WORDS_PER_SENTENCE;
 	return maxIndexOfDynamicallyGeneratedEntity;
 }
 
-bool GIAsentenceClassClass::relationIndexIsNormal(int relationIndex) 
+bool GIAsentenceClassClass::relationIndexIsNormal(const int relationIndex) 
 {
 	//this function is designed to support the creation of semantic dependency relations with special governor/dependent feature indices (<LRP_NLP_START_ENTITY_INDEX, e.g. -2, -1, 0)
 	bool relationIndexIsNormal = false;

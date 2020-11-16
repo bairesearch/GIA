@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorGrammar.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3o3a 16-November-2020
+ * Project Version: 3o3b 16-November-2020
  * Requirements: requires text parsed by X Parser
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
@@ -75,18 +75,18 @@ class GIAtranslatorGrammarClass
 //uses dependency relations to derive grammar [uses stanfordPOS/NER information to derive grammar, if NLPfeatureParser == Stanford Core NLP]
 	#ifdef GIA_STANFORD_DEPENDENCY_RELATIONS
 	public: void fillGrammaticalArraysStanford(GIAtranslatorVariablesClass* translatorVariables);
-		private: void extractPastTense(GIAfeature* featureWithEntityIndex, int entityIndexContainingTenseIndication, GIAfeature* firstFeatureInList, int NLPfeatureParser);
-			private: void extractPastTenseFromPOStag(string* POStag, GIAfeature* feature);
-		public: void extractGrammaticalInformationStanford(GIAfeature* firstFeatureInList, int NLPfeatureParser);
+		private: void extractPastTense(GIAfeature* featureWithEntityIndex, const int entityIndexContainingTenseIndication, const GIAfeature* firstFeatureInList, const int NLPfeatureParser);
+			private: void extractPastTenseFromPOStag(const string* POStag, GIAfeature* feature);
+		public: void extractGrammaticalInformationStanford(GIAfeature* firstFeatureInList, const int NLPfeatureParser);
 			public: void extractPOSrelatedGrammaticalInformationStanford(GIAfeature* currentFeature, bool grammaticallyStrict);
-				private: void extractGrammaticalInformationFromStanfordPOStag(string* POStag, GIAfeature* feature);
+				private: void extractGrammaticalInformationFromStanfordPOStag(const string* POStag, GIAfeature* feature);
 	#endif
 
-	public: void applyGrammaticalInfoToAllEntities(GIAtranslatorVariablesClass* translatorVariables, GIAfeature* firstFeatureInSentence);
+	public: void applyGrammaticalInfoToAllEntities(const GIAtranslatorVariablesClass* translatorVariables, GIAfeature* firstFeatureInSentence);
 		public: void applyPOSrelatedGrammaticalInfoToEntity(GIAentityNode* entity, GIAfeature* currentFeatureInList);
 
 	#ifdef GIA_ADVANCED_REFERENCING_FIND_SUBJ_OBJ_RELATION_MATCHING_AUXILIARY_AND_SET_NOT_SAME_REFERENCE_SET
-	private: void findSubjObjRelationMatchingAuxiliaryAndSetNotSameReferenceSet(GIAsentence* currentSentenceInList, int subjectObjectEntityWithAuxiliaryEntityIndex, string* subjectObjectEntityWithAuxiliaryEntityName);
+	private: void findSubjObjRelationMatchingAuxiliaryAndSetNotSameReferenceSet(GIAsentence* currentSentenceInList, const int subjectObjectEntityWithAuxiliaryEntityIndex, const string* subjectObjectEntityWithAuxiliaryEntityName);
 	#endif
 };
 

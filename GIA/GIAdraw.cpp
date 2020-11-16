@@ -26,7 +26,7 @@
  * File Name: GIAdraw.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3o3a 16-November-2020
+ * Project Version: 3o3b 16-November-2020
  * Requirements: 
  * Description: Draw - Draws GIA nodes in GIA network/tree
  * /
@@ -52,7 +52,7 @@ GIAdrawVariables::~GIAdrawVariables(void)
 {
 }
 
-bool GIAdrawClass::printGIAnetworkNodesToSVGstring(GIAtranslatorVariablesClass* translatorVariables, int width, int height, int sentenceIndex, string* writeFileStringSVG, GIAentityNode* entityReference)
+bool GIAdrawClass::printGIAnetworkNodesToSVGstring(GIAtranslatorVariablesClass* translatorVariables, const int width, const int height, const int sentenceIndex, string* writeFileStringSVG, constEffective GIAentityNode* entityReference)
 {//most of this is copied from CSexecFlow.cpp
 	bool result = true;
 
@@ -88,7 +88,7 @@ bool GIAdrawClass::printGIAnetworkNodesToSVGstring(GIAtranslatorVariablesClass* 
 	return result;
 }
 
-bool GIAdrawClass::printGIAnetworkNodes(GIAtranslatorVariablesClass* translatorVariables, int width, int height, string outputFileNameLDR, string outputFileNameSVG, string outputFileNamePPM, bool display, bool useOutputLDRfile, bool useOutputSVGfile, bool useOutputPPMfile)
+bool GIAdrawClass::printGIAnetworkNodes(GIAtranslatorVariablesClass* translatorVariables, int width, int height, string outputFileNameLDR, string outputFileNameSVG, string outputFileNamePPM, const bool display, const bool useOutputLDRfile, const bool useOutputSVGfile, const bool useOutputPPMfile)
 {//most of this is copied from CSexecFlow.cpp
 	bool result = true;
 
@@ -321,7 +321,7 @@ bool GIAdrawClass::initialiseEntityConnectionForPrinting(vec* pos1, GIAentityCon
 }
 
 
-bool GIAdrawClass::initialiseEntityNodeForPrinting(GIAentityNode* entityNode, int y, int x, GIAdrawVariables* drawVariables, LDreference** currentReferenceInPrintList, XMLparserTag** currentTag, int sentenceIndex, bool thisIsDefinitionAndPreviousNodeWasInstance)
+bool GIAdrawClass::initialiseEntityNodeForPrinting(GIAentityNode* entityNode, int y, int x, GIAdrawVariables* drawVariables, LDreference** currentReferenceInPrintList, XMLparserTag** currentTag, const int sentenceIndex, bool thisIsDefinitionAndPreviousNodeWasInstance)
 {
 	bool result = true;
 	
@@ -623,7 +623,7 @@ bool GIAdrawClass::initialiseEntityNodeForPrinting(GIAentityNode* entityNode, in
 
 
 
-bool GIAdrawClass::initialiseTimeConditionNodeForPrinting(GIAtimeConditionNode* timeConditionNode, int y, int x, GIAdrawVariables* drawVariables, LDreference** currentReferenceInPrintList, XMLparserTag** currentTag)
+bool GIAdrawClass::initialiseTimeConditionNodeForPrinting(GIAtimeConditionNode* timeConditionNode, const int y, const int x, GIAdrawVariables* drawVariables, LDreference** currentReferenceInPrintList, XMLparserTag** currentTag)
 {
 	bool result = true;
 	
@@ -700,7 +700,7 @@ bool GIAdrawClass::createReferenceConnectionWithText(vec* pos1, vec* pos2, int c
 	return result;
 }
 
-bool GIAdrawClass::createReferenceConnection(vec* pos1, vec* pos2, int colour, LDreference** currentReferenceInPrintList, XMLparserTag** currentTag, GIAdrawVariables* drawVariables)
+bool GIAdrawClass::createReferenceConnection(vec* pos1, vec* pos2, int colour, LDreference** currentReferenceInPrintList, XMLparserTag** currentTag, const GIAdrawVariables* drawVariables)
 {
 	bool result = true;
 	
@@ -739,7 +739,7 @@ bool GIAdrawClass::createReferenceConnection(vec* pos1, vec* pos2, int colour, L
 
 //consider using elipse instead; <ellipse cx="240" cy="100" rx="220" ry="30">
 
-bool GIAdrawClass::createBox(vec* vect, double width, double height, int colour, string* text, LDreference** currentReferenceInPrintList, XMLparserTag** currentTag, int thickness, GIAdrawVariables* drawVariables)
+bool GIAdrawClass::createBox(const vec* vect, double width, double height, int colour, string* text, LDreference** currentReferenceInPrintList, XMLparserTag** currentTag, int thickness, GIAdrawVariables* drawVariables)
 {
 	bool result = true;
 	

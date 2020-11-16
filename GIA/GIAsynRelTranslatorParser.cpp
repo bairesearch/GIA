@@ -26,7 +26,7 @@
  * File Name: GIAsynRelTranslatorParser.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2020 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3o3a 16-November-2020
+ * Project Version: 3o3b 16-November-2020
  * Requirements: requires text parsed by NLP Parser (eg Relex; available in .CFF format <relations>)
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
@@ -310,7 +310,7 @@ bool GIAsynRelTranslatorParserClass::convertSentenceSyntacticRelationsIntoGIAnet
 	return result;
 }
 
-bool GIAsynRelTranslatorParserClass::convertSentenceSyntacticRelationsIntoGIAnetworkNodesEndPart1(GIAtranslatorVariablesClass* translatorVariables, vector<GIAentityNode*>* entityNodesActiveListSentence)
+bool GIAsynRelTranslatorParserClass::convertSentenceSyntacticRelationsIntoGIAnetworkNodesEndPart1(const GIAtranslatorVariablesClass* translatorVariables, vector<GIAentityNode*>* entityNodesActiveListSentence)
 {
 	bool result = true;
 	
@@ -696,10 +696,10 @@ bool GIAsynRelTranslatorParserClass::addSentenceToPreprocessorSentence(GIAtransl
 }
 	
 #ifndef GIA_POS_REL_TRANSLATOR_HYBRID			
-bool GIAsynRelTranslatorParserClass::getPreprocessorSentence(LRPpreprocessorSentence* firstLRPpreprocessorSentenceInList, int sentenceIndex, LRPpreprocessorSentence** sentenceFound)
+bool GIAsynRelTranslatorParserClass::getPreprocessorSentence(constEffective LRPpreprocessorSentence* firstLRPpreprocessorSentenceInList, const int sentenceIndex, constEffective LRPpreprocessorSentence** sentenceFound)
 {
 	bool result = false;	
-	LRPpreprocessorSentence* currentLRPpreprocessorSentenceInList = firstLRPpreprocessorSentenceInList;
+	constEffective LRPpreprocessorSentence* currentLRPpreprocessorSentenceInList = firstLRPpreprocessorSentenceInList;
 	while(currentLRPpreprocessorSentenceInList->next != NULL)
 	{
 		//cout << "sentenceIndex = " << sentenceIndex << endl;
@@ -716,11 +716,11 @@ bool GIAsynRelTranslatorParserClass::getPreprocessorSentence(LRPpreprocessorSent
 }
 #endif
 	
-bool GIAsynRelTranslatorParserClass::addSentenceFeatureOutputToPreprocessorSentenceWordList(vector<LRPpreprocessorPlainTextWord*>* preprocessorSentenceWordList, GIAtranslatorVariablesClass* translatorVariables, bool originalNLPfeatures)
+bool GIAsynRelTranslatorParserClass::addSentenceFeatureOutputToPreprocessorSentenceWordList(vector<LRPpreprocessorPlainTextWord*>* preprocessorSentenceWordList, const GIAtranslatorVariablesClass* translatorVariables, const bool originalNLPfeatures)
 {	
 	bool result = true;
 	
-	GIAsentence* currentSentenceInList = translatorVariables->currentSentenceInList;
+	const GIAsentence* currentSentenceInList = translatorVariables->currentSentenceInList;
 	//vector<LRPpreprocessorPlainTextWord*>* preprocessorSentenceWordList = translatorVariables->preprocessorSentenceWordListTemp;
 	
 	int entityIndex = LRP_NLP_START_ENTITY_INDEX;
