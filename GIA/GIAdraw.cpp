@@ -26,7 +26,7 @@
  * File Name: GIAdraw.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2021 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3p1a 04-March-2021
+ * Project Version: 3p2a 17-March-2021
  * Requirements: 
  * Description: Draw - Draws GIA nodes in GIA network/tree
  * /
@@ -454,11 +454,11 @@ bool GIAdrawClass::initialiseEntityNodeForPrinting(GIAentityNode* entityNode, in
 							#ifdef GIA_DRAW_VERBOSE_HIGHLIGHT_REFERENCE_SET_CONNECTIONS_WITH_COLOURS
 							if(connection->sameReferenceSet)
 							{
-								entityConnectionColour = DAT_FILE_COLOUR_GREEN;
+								entityConnectionColour = LRP_SHARED_ENTITY_CONNECTION_TYPE_SAMEREFERENCESET_COLOUR;
 							}
 							else
 							{
-								entityConnectionColour = DAT_FILE_COLOUR_RED;
+								entityConnectionColour = LRP_SHARED_ENTITY_CONNECTION_TYPE_DIFFREFERENCESET_COLOUR;
 							}
 							#endif
 							
@@ -685,7 +685,7 @@ bool GIAdrawClass::createReferenceConnectionWithText(vec* pos1, vec* pos2, int c
 			positionLDR.x = vect.x - GIA_DRAW_BASICENTITY_NODE_WIDTH/4;
 			positionLDR.y = vect.y - GIA_DRAW_BASICENTITY_NODE_HEIGHT/4;
 			positionLDR.z = vect.z - GIA_OUTPUT_Z_POSITION_CONNECTIONS;
-			*currentReferenceInPrintList = LDsprite.LDaddBasicTextualSpriteStringToReferenceList(connectionTypeName, *currentReferenceInPrintList, &positionLDR, &numSpritesAdded, false, DAT_FILE_COLOUR_BLACK, 0.3);	//add sprite text within box
+			*currentReferenceInPrintList = LDsprite.LDaddBasicTextualSpriteStringToReferenceList(connectionTypeName, *currentReferenceInPrintList, &positionLDR, &numSpritesAdded, false, SHARED_COLOUR_BLACK, 0.3);	//add sprite text within box
 		}
 		if(drawVariables->printType[GIA_DRAW_CREATE_SVG_REFERENCES] == true)
 		{
@@ -693,7 +693,7 @@ bool GIAdrawClass::createReferenceConnectionWithText(vec* pos1, vec* pos2, int c
 			positionSVG.x = vect.x - GIA_DRAW_BASICENTITY_NODE_WIDTH/3;
 			positionSVG.y = vect.y - GIA_DRAW_BASICENTITY_NODE_HEIGHT/4;
 			positionSVG.z = GIA_OUTPUT_Z_POSITION_CONNECTIONS;
-			LDsvg.writeSVGtext(currentTag, connectionTypeName, &positionSVG, GIA_SVG_SCALE_FACTOR*GIA_SVG_TEXT_SCALE_FACTOR, DAT_FILE_COLOUR_BLACK, drawVariables->svgTinySpec);
+			LDsvg.writeSVGtext(currentTag, connectionTypeName, &positionSVG, GIA_SVG_SCALE_FACTOR*GIA_SVG_TEXT_SCALE_FACTOR, SHARED_COLOUR_BLACK, drawVariables->svgTinySpec);
 		}
 	}
 
@@ -773,7 +773,7 @@ bool GIAdrawClass::createBox(const vec* vect, double width, double height, int c
 		(*currentReferenceInPrintList) = (*currentReferenceInPrintList)->next;
 
 		(*currentReferenceInPrintList)->type = REFERENCE_TYPE_LINE;
-		(*currentReferenceInPrintList)->colour = DAT_FILE_COLOUR_BLACK;
+		(*currentReferenceInPrintList)->colour = SHARED_COLOUR_BLACK;
 
 		(*currentReferenceInPrintList)->vertex1relativePosition.x = vect->x - width/2.0;
 		(*currentReferenceInPrintList)->vertex1relativePosition.y = vect->y + height/2.0;
@@ -788,7 +788,7 @@ bool GIAdrawClass::createBox(const vec* vect, double width, double height, int c
 		(*currentReferenceInPrintList) = (*currentReferenceInPrintList)->next;
 
 		(*currentReferenceInPrintList)->type = REFERENCE_TYPE_LINE;
-		(*currentReferenceInPrintList)->colour = DAT_FILE_COLOUR_BLACK;
+		(*currentReferenceInPrintList)->colour = SHARED_COLOUR_BLACK;
 
 		(*currentReferenceInPrintList)->vertex1relativePosition.x = vect->x + width/2.0;
 		(*currentReferenceInPrintList)->vertex1relativePosition.y = vect->y + height/2.0;
@@ -803,7 +803,7 @@ bool GIAdrawClass::createBox(const vec* vect, double width, double height, int c
 		(*currentReferenceInPrintList) = (*currentReferenceInPrintList)->next;
 
 		(*currentReferenceInPrintList)->type = REFERENCE_TYPE_LINE;
-		(*currentReferenceInPrintList)->colour = DAT_FILE_COLOUR_BLACK;
+		(*currentReferenceInPrintList)->colour = SHARED_COLOUR_BLACK;
 
 		(*currentReferenceInPrintList)->vertex1relativePosition.x = vect->x + width/2.0;
 		(*currentReferenceInPrintList)->vertex1relativePosition.y = vect->y - height/2.0;
@@ -818,7 +818,7 @@ bool GIAdrawClass::createBox(const vec* vect, double width, double height, int c
 		(*currentReferenceInPrintList) = (*currentReferenceInPrintList)->next;
 
 		(*currentReferenceInPrintList)->type = REFERENCE_TYPE_LINE;
-		(*currentReferenceInPrintList)->colour = DAT_FILE_COLOUR_BLACK;
+		(*currentReferenceInPrintList)->colour = SHARED_COLOUR_BLACK;
 
 		(*currentReferenceInPrintList)->vertex1relativePosition.x = vect->x - width/2.0;
 		(*currentReferenceInPrintList)->vertex1relativePosition.y = vect->y + height/2.0;
@@ -838,7 +838,7 @@ bool GIAdrawClass::createBox(const vec* vect, double width, double height, int c
 		positionLDR.x = vect->x - GIA_DRAW_BASICENTITY_NODE_WIDTH/4;
 		positionLDR.y = vect->y - GIA_DRAW_BASICENTITY_NODE_HEIGHT/4;
 		positionLDR.z = vect->z - GIA_OUTPUT_Z_POSITION_NODES;
-		(*currentReferenceInPrintList) = LDsprite.LDaddBasicTextualSpriteStringToReferenceList(*text, (*currentReferenceInPrintList), &positionLDR, &numSpritesAdded, false, DAT_FILE_COLOUR_BLACK, 0.3);	//add sprite text within box
+		(*currentReferenceInPrintList) = LDsprite.LDaddBasicTextualSpriteStringToReferenceList(*text, (*currentReferenceInPrintList), &positionLDR, &numSpritesAdded, false, SHARED_COLOUR_BLACK, 0.3);	//add sprite text within box
 	}
 
 	if(drawVariables->printType[GIA_DRAW_CREATE_SVG_REFERENCES] == true)
@@ -852,7 +852,7 @@ bool GIAdrawClass::createBox(const vec* vect, double width, double height, int c
 		positionSVG.y = vect->y - GIA_DRAW_BASICENTITY_NODE_HEIGHT/4;
 		positionSVG.z = GIA_OUTPUT_Z_POSITION_TEXT;
 		
-		LDsvg.writeSVGtext(currentTag,* text, &positionSVG, GIA_SVG_SCALE_FACTOR*GIA_SVG_TEXT_SCALE_FACTOR, DAT_FILE_COLOUR_BLACK, drawVariables->svgTinySpec);
+		LDsvg.writeSVGtext(currentTag,* text, &positionSVG, GIA_SVG_SCALE_FACTOR*GIA_SVG_TEXT_SCALE_FACTOR, SHARED_COLOUR_BLACK, drawVariables->svgTinySpec);
 	}
 
 	return result;

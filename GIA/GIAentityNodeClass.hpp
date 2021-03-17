@@ -26,7 +26,7 @@
  * File Name: GIAentityNodeClass.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2021 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3p1a 04-March-2021
+ * Project Version: 3p2a 17-March-2021
  * NB a substance is an instance of an entity, any given entity may contain/comprise/have multiple substances - and substances are unrelated to definitions between entities [they just define what comprises any given entity]
  * /
  *******************************************************************************/
@@ -60,16 +60,16 @@ using namespace std;
 #define GIA_ENTITY_ID_INSTANCE_FIRST_INSTANCE_ENTITY (1)
 
 //entity types added 2n1c
-#define GIA_ENTITY_TYPE_UNDEFINED (-1)
-#define GIA_ENTITY_TYPE_NETWORK_INDEX (0)
-#define GIA_ENTITY_TYPE_SUBSTANCE (1)
-#define GIA_ENTITY_TYPE_CONCEPT (2)
-#define GIA_ENTITY_TYPE_ACTION (3)
-#define GIA_ENTITY_TYPE_CONDITION (4)
-#define GIA_ENTITY_TYPE_PROPERTY (5)
-#define GIA_ENTITY_TYPE_DEFINITION (6)
-#define GIA_ENTITY_TYPE_QUALITY (7)
-#define GIA_ENTITY_NUMBER_OF_TYPES (8)
+#define GIA_ENTITY_TYPE_UNDEFINED (LRP_SHARED_ENTITY_TYPE_UNDEFINED)
+#define GIA_ENTITY_TYPE_NETWORK_INDEX (LRP_SHARED_ENTITY_TYPE_NETWORK_INDEX)
+#define GIA_ENTITY_TYPE_SUBSTANCE (LRP_SHARED_ENTITY_TYPE_SUBSTANCE)
+#define GIA_ENTITY_TYPE_CONCEPT (LRP_SHARED_ENTITY_TYPE_CONCEPT)
+#define GIA_ENTITY_TYPE_ACTION (LRP_SHARED_ENTITY_TYPE_ACTION)
+#define GIA_ENTITY_TYPE_CONDITION (LRP_SHARED_ENTITY_TYPE_CONDITION)
+#define GIA_ENTITY_TYPE_PROPERTY (LRP_SHARED_ENTITY_TYPE_PROPERTY)
+#define GIA_ENTITY_TYPE_DEFINITION (LRP_SHARED_ENTITY_TYPE_DEFINITION)
+#define GIA_ENTITY_TYPE_QUALITY (LRP_SHARED_ENTITY_TYPE_QUALITY)
+#define GIA_ENTITY_NUMBER_OF_TYPES (LRP_SHARED_ENTITY_NUMBER_OF_TYPES)
 #define GIA_ENTITY_TYPE_NETWORK_INDEX_STRING "0"
 #define GIA_ENTITY_TYPE_SUBSTANCE_STRING "1"
 #define GIA_ENTITY_TYPE_ACTION_STRING "2"

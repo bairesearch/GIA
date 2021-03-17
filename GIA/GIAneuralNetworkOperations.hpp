@@ -26,7 +26,7 @@
  * File Name: GIAneuralNetworkOperations.hpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2021 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3p1a 04-March-2021
+ * Project Version: 3p2a 17-March-2021
  * Description: Neural Network - visual representation of GIA contents in prototype biological neural network
  * /
  *******************************************************************************/
@@ -135,10 +135,10 @@ class GIAneuralNetworkOperationsClass
 	public: ANNneuron* getFirstSpecificConceptNeuron(ANNneuron* firstInputNeuronInNetwork);
 	public: ANNneuron* getFirstInstanceNeuron(ANNneuron* firstInputNeuronInNetwork);
 	#ifdef GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS
-	private: ANNneuron* getFirstConceptIndexBitNeuron(ANNneuron* firstInputNeuronInNetwork, const int conceptIndexType);
+	private: ANNneuron* getFirstConceptIndexBitNeuron(const ANNneuron* firstInputNeuronInNetwork, const int conceptIndexType);
 	private: ANNneuron* getFirstConceptIndexBitNeuron(const ANNneuron* firstInputNeuronInNetwork, const GIAentityNode* entity);
-		private: ANNneuron* getFirstSubstanceConceptIndexBitNeuron(ANNneuron* firstInputNeuronInNetwork);
-		private: ANNneuron* getFirstReferenceSetDelimiterConceptIndexBitNeuron(ANNneuron* firstInputNeuronInNetwork);
+		private: ANNneuron* getFirstSubstanceConceptIndexBitNeuron(const ANNneuron* firstInputNeuronInNetwork);
+		private: ANNneuron* getFirstReferenceSetDelimiterConceptIndexBitNeuron(const ANNneuron* firstInputNeuronInNetwork);
 	private: int getConceptIndexType(const GIAentityNode* entity);
 	#endif
 	

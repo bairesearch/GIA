@@ -26,7 +26,7 @@
  * File Name: GIAneuralNetworkOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2021 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3p1a 04-March-2021
+ * Project Version: 3p2a 17-March-2021
  * Description: Neural Network - visual representation of GIA contents in prototype biological neural network
  * /
  *******************************************************************************/
@@ -769,7 +769,7 @@ ANNneuron* GIAneuralNetworkOperationsClass::getFirstInstanceNeuron(ANNneuron* fi
 }
 
 #ifdef GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS
-ANNneuron* GIAneuralNetworkOperationsClass::getFirstConceptIndexBitNeuron(ANNneuron* firstInputNeuronInNetwork, const int conceptIndexType)
+ANNneuron* GIAneuralNetworkOperationsClass::getFirstConceptIndexBitNeuron(const ANNneuron* firstInputNeuronInNetwork, const int conceptIndexType)
 {
 	ANNneuron* firstSpecificConceptNeuron = NULL;
 	if(conceptIndexType == GIA_NEURAL_NETWORK_SYMBOLIC_CORE_CONCEPT_INDEX_BITS_TYPE_SUBSTANCE)
@@ -793,12 +793,12 @@ ANNneuron* GIAneuralNetworkOperationsClass::getFirstConceptIndexBitNeuron(const 
 	ANNneuron* firstSpecificConceptNeuron = getFirstConceptIndexBitNeuron(firstInputNeuronInNetwork, conceptIndexType);
 	return firstSpecificConceptNeuron;
 }
-ANNneuron* GIAneuralNetworkOperationsClass::getFirstSubstanceConceptIndexBitNeuron(ANNneuron* firstInputNeuronInNetwork)
+ANNneuron* GIAneuralNetworkOperationsClass::getFirstSubstanceConceptIndexBitNeuron(const ANNneuron* firstInputNeuronInNetwork)
 {
 	ANNneuron* firstSubstanceConceptIndexBitNeuron = firstInputNeuronInNetwork->firstNeuronInFrontLayer->firstNeuronInFrontLayer->firstNeuronInFrontLayer;	
 	return firstSubstanceConceptIndexBitNeuron;
 }
-ANNneuron* GIAneuralNetworkOperationsClass::getFirstReferenceSetDelimiterConceptIndexBitNeuron(ANNneuron* firstInputNeuronInNetwork)
+ANNneuron* GIAneuralNetworkOperationsClass::getFirstReferenceSetDelimiterConceptIndexBitNeuron(const ANNneuron* firstInputNeuronInNetwork)
 {
 	ANNneuron* firstReferenceSetDelimiterConceptIndexBitNeuron = firstInputNeuronInNetwork->firstNeuronInFrontLayer->firstNeuronInFrontLayer->firstNeuronInFrontLayer->firstNeuronInFrontLayer;	
 	return firstReferenceSetDelimiterConceptIndexBitNeuron;
