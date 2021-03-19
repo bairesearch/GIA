@@ -26,7 +26,7 @@
  * File Name: GIAdraw.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2021 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3p2a 17-March-2021
+ * Project Version: 3p3a 19-March-2021
  * Requirements: 
  * Description: Draw - Draws GIA nodes in GIA network/tree
  * /
@@ -248,7 +248,7 @@
 #define GIA_DRAW_UNDEFINED_CONNECTION_COLOUR (INT_DEFAULT_VALUE)
 
 #ifdef GIA_POS_REL_TRANSLATOR_LOGIC_REFERENCE
-	#define GIA_DRAW_LOGIC_REFERENCE_ENTITY_COLOUR (SHARED_COLOUR_DARKGREEN)
+	#define GIA_DRAW_LOGIC_REFERENCE_ENTITY_COLOUR (LRP_SHARED_ENTITY_TYPE_LOGIC_REFERENCE_COLOUR)
 #endif
 
 #define GIA_DRAW_SENTENCE_INDEX_PRINT_ALL_SENTENCES (0)
