@@ -26,7 +26,7 @@
  * File Name: GIAsemRelTranslatorOperations.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2021 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3p4a 24-March-2021
+ * Project Version: 3p5a 20-May-2021
  * Requirements: requires text parsed by GIA2 Parser (Modified Stanford Parser format)
  * Description: Semantic Relation Translator
  * /
