@@ -26,7 +26,7 @@
  * File Name: GIAtranslatorReferencing.cpp
  * Author: Richard Bruce Baxter - Copyright (c) 2005-2021 Baxter AI (baxterai.com)
  * Project: General Intelligence Algorithm
- * Project Version: 3p6a 07-August-2021
+ * Project Version: 3p6b 07-August-2021
  * Requirements: requires text parsed by X Parser
  * Description: Syntactic Relation Translator - Converts relation objects into GIA nodes (of type entity, action, condition etc) in GIA network/tree
  * /
